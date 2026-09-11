@@ -67,7 +67,12 @@ def load_harvest_policies(
         raise HarvestConfigurationError("language harvest policy ID does not match its file")
     if language.get("language") != profile["language"]:
         raise HarvestConfigurationError("language harvest policy does not match the run")
-    if shared.get("candidate_cap_per_surface") != wsd_budget_per_card(selection):
+    # A flat shared cap and a flat profile budget must agree, as they always
+    # have. A TIERED budget is a per-rank decision the profile owns -- one
+    # number in the shared policy cannot describe it -- so the check applies
+    # only where both sides speak in a single integer.
+    declared = selection.get("wsd_budget_per_card", selection.get("candidate_cap_per_surface"))
+    if not isinstance(declared, list) and shared.get("candidate_cap_per_surface") != wsd_budget_per_card(selection):
         raise HarvestConfigurationError("profile and shared candidate caps disagree")
 
     expected_sources = selection["sources"]
