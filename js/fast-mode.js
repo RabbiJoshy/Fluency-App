@@ -18,16 +18,12 @@
 // page says which part is missing.
 import './state.js?v=20260825ak';
 
-function isVisible(element) {
-    return Boolean(element) && element.style.display !== 'none';
-}
-
 function lemmaAvailable() {
-    return isVisible(document.getElementById('lemmaToggleContainer'));
+    return document.getElementById('lemmaToggleContainer')?.dataset.available === 'true';
 }
 
 function cognateAvailable() {
-    return isVisible(document.getElementById('cognateToggleContainer'));
+    return document.getElementById('cognateToggleContainer')?.dataset.available === 'true';
 }
 
 // Read the buttons rather than the state variables: what the learner sees is
@@ -59,7 +55,7 @@ function currentState() {
 // the deck cannot do.
 function summaryText() {
     const state = currentState();
-    if (state === 'unavailable') return '';
+    if (state === 'unavailable') return 'Off · mappings unavailable';
     if (state === 'on') return 'On · less repetition';
     if (state === 'off') return 'Off · full deck';
     return 'Custom';
@@ -70,6 +66,10 @@ function summaryText() {
 // re-rendering the level bands — happens exactly once and exactly as it does
 // when the learner changes them by hand.
 function applyFastMode(on) {
+    if (!lemmaAvailable() && !cognateAvailable()) {
+        showUnavailableMessage('fast-track');
+        return;
+    }
     if (lemmaAvailable() && lemmaOn() !== on) {
         document.querySelector(`.lemma-toggle-btn[data-lemma="${on ? 'on' : 'off'}"]`)?.click();
     }
@@ -87,29 +87,42 @@ function refresh() {
     const wrapper = document.getElementById('setupOptions');
     if (!wrapper) return;
     const state = currentState();
-    wrapper.style.display = state === 'unavailable' ? 'none' : 'block';
+    const featureCards = ['lemmaToggleContainer', 'cognateToggleContainer']
+        .map(id => document.getElementById(id));
+    const availabilityResolved = featureCards.every(card => card?.dataset.available === 'true'
+        || card?.dataset.available === 'false');
+    wrapper.style.display = availabilityResolved ? 'block' : 'none';
 
-    document.querySelectorAll('.fast-mode-btn').forEach(button => {
-        const selected = button.dataset.fast === state;
-        button.classList.toggle('selected', selected);
-        button.setAttribute('aria-pressed', String(selected));
-    });
+    const button = document.getElementById('fastModeToggleBtn');
+    const on = state === 'on';
+    if (button) {
+        button.dataset.fast = on ? 'on' : 'off';
+        button.classList.toggle('selected', on);
+        button.classList.toggle('is-custom', state === 'custom');
+        button.setAttribute('aria-pressed', String(on));
+    }
     const summary = document.getElementById('fastModeSummary');
     if (summary) summary.textContent = summaryText();
-
-    const availability = document.getElementById('fastModeAvailability');
-    if (availability) {
-        const missing = [];
-        if (!lemmaAvailable()) missing.push('merging word forms');
-        if (!cognateAvailable()) missing.push('skipping familiar words');
-        // Absence is stated rather than left as a control that silently is not
-        // there, so a learner is not left wondering what they are missing.
-        availability.textContent = missing.length
-            ? `This language does not yet support ${missing.join(' or ')}.`
-            : '';
-        availability.style.display = missing.length ? '' : 'none';
-    }
     globalThis.refreshExtrasButton?.();
+}
+
+function languageName(code) {
+    const names = { en: 'English', es: 'Spanish', fr: 'French', pt: 'Portuguese', cs: 'Czech' };
+    return names[code] || String(code || '').toUpperCase();
+}
+
+function showUnavailableMessage(feature) {
+    const target = config?.languages?.[selectedLanguage]?.name || languageName(selectedLanguage);
+    if (feature === 'lemmas') {
+        alert(`Word-form mapping not found for ${target}. Each form will stay on its own card.`);
+        return;
+    }
+    if (feature === 'cognates') {
+        const knownCode = globalThis.activeKnownLanguages?.()[0] || 'en';
+        alert(`${languageName(knownCode)} to ${target} familiar-word mapping not found. Every word will stay in your deck.`);
+        return;
+    }
+    alert(`Fast track mappings have not been published for ${target}. Your full deck is still available.`);
 }
 
 function openFastModePage() {
@@ -122,8 +135,8 @@ function closeFastModePage() {
 }
 
 function init() {
-    document.querySelectorAll('.fast-mode-btn').forEach(button => {
-        button.addEventListener('click', () => applyFastMode(button.dataset.fast === 'on'));
+    document.getElementById('fastModeToggleBtn')?.addEventListener('click', () => {
+        applyFastMode(currentState() !== 'on');
     });
     document.getElementById('fastModeDetailBtn')?.addEventListener('click', openFastModePage);
     document.getElementById('closeFastModeModal')?.addEventListener('click', closeFastModePage);
@@ -157,3 +170,4 @@ if (document.readyState === 'loading') {
 
 globalThis.refreshFastMode = refresh;
 globalThis.openFastModePage = openFastModePage;
+globalThis.showFastModeUnavailable = showUnavailableMessage;

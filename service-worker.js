@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v368';
+const CACHE_NAME = 'flashcards-v370';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -26,12 +26,12 @@ const ASSET_VERSION = '20260825ak';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/css/style.css?v=20260912p',
+  '/css/style.css?v=20260912r',
   '/css/light-theme.css?v=20260828a',
   '/config/config.json',
   '/config/cefr_levels.json',
   '/config/offline-content-manifest.json',
-  '/js/main.js?v=20260912p',
+  '/js/main.js?v=20260912r',
   `/js/theme.js?v=${ASSET_VERSION}`,
   '/js/state.js?v=20260912a',
   `/js/data-contracts.js?v=${ASSET_VERSION}`,
@@ -48,11 +48,11 @@ const urlsToCache = [
   '/js/progress.js?v=20260912c',
   '/js/progress-identity.js?v=20260831a',
   '/js/knowledge.js?v=20260831a',
-  '/js/ui.js?v=20260912n',
+  '/js/ui.js?v=20260912p',
   '/js/vocab.js?v=20260909b',
   '/js/cognates.js?v=20260908d',
   '/js/coverage.js?v=20260909a',
-  '/js/fast-mode.js?v=20260912b',
+  '/js/fast-mode.js?v=20260912d',
   '/js/extras.js?v=20260912e',
   `/js/song-sets-core.js?v=${ASSET_VERSION}`,
   '/js/song-sets.js?v=20260823ae',
