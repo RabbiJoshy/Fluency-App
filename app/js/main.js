@@ -11,12 +11,12 @@ import './estimation.js?v=20260825ak';
 import './config.js?v=20260907a';
 import './progress.js?v=20260912c';
 import './knowledge.js?v=20260831a';
-import './ui.js?v=20260912p';
+import './ui.js?v=20260913b';
 import './vocab.js?v=20260909b';
 import './cognates.js?v=20260908d';
 import './coverage.js?v=20260909a';
-import './fast-mode.js?v=20260912d';
-import './extras.js?v=20260912e';
+import './fast-mode.js?v=20260913b';
+import './extras.js?v=20260913b';
 import './song-sets.js?v=20260823ae';
 import './vocabulary-import.js?v=20260825ak';
 import './flashcards.js?v=20260912a';
@@ -364,6 +364,7 @@ loadConfig().then(async () => {
     setupPercentModeButton();
     setupEstimationModal();
     setupTooltipHandlers();
+    setupSettingsSearch();
 
     const learningContextModal = document.getElementById('learningContextModal');
     const closeLearningContext = () => learningContextModal?.classList.add('hidden');

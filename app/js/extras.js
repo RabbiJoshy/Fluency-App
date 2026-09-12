@@ -164,16 +164,17 @@ function renderExtras() {
     return { cognates, lemmas };
 }
 
-// The button is only honest when there is something behind it, so its label
-// carries the count and it hides itself when the current settings exclude
-// nothing.
+// Keep the audit route discoverable even before anything is skipped. The empty
+// view then explains that Fast track has not removed a separate card yet.
 function refreshExtrasButton() {
     const button = document.getElementById('extrasBtn');
     if (!button) return;
     const { cognates, lemmas } = collectExtras();
     const total = cognates.length + lemmas.length;
-    button.style.display = total > 0 ? 'inline-flex' : 'none';
-    button.textContent = total === 1 ? 'See 1 skipped word' : `See ${total} skipped words`;
+    button.style.display = 'inline-flex';
+    button.textContent = total === 0
+        ? 'See skipped words'
+        : total === 1 ? 'See 1 skipped word' : `See ${total} skipped words`;
 }
 
 function filterExtras(query) {

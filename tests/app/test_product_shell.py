@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v370"
+EXPECTED_CACHE_NAME = "flashcards-v372"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -322,6 +322,11 @@ class ProductShellTests(unittest.TestCase):
         storage = html.index('data-tab="offline"')
         vocabulary = html.index('data-tab="vocabulary"')
         about = html.index('data-tab="about"')
+        self.assertIn('id="settingsSearch"', html)
+        self.assertIn('<span class="settings-nav-label">Learning</span>', html)
+        self.assertIn('<span class="settings-nav-label">App</span>', html)
+        self.assertIn("function setupSettingsSearch()", ui)
+        self.assertIn("grid-template-columns: 168px minmax(0, 1fr)", css)
         self.assertLess(study, review)
         self.assertLess(review, vocabulary)
         self.assertLess(vocabulary, appearance)
@@ -559,7 +564,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260831a", worker)
-        self.assertIn("/js/main.js?v=20260912r", worker)
+        self.assertIn("/js/main.js?v=20260913b", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -762,6 +767,16 @@ class FastModeSurfaceTests(unittest.TestCase):
         # Czech has no lemma mapping; the overall state must not depend on it.
         self.assertIn("if (lemmaAvailable()) parts.push(", self.script)
         self.assertIn("if (cognateAvailable()) parts.push(", self.script)
+
+    def test_master_switch_is_independent_and_details_explain_missing_mappings(self) -> None:
+        self.assertIn("let requestedFastMode = null", self.script)
+        self.assertNotIn("if (!lemmaAvailable() && !cognateAvailable())", self.script)
+        self.assertIn("updateMappingStatus()", self.script)
+        self.assertIn('class="fast-mode-number" aria-hidden="true">1</span>', self.html)
+        self.assertIn('class="fast-mode-number" aria-hidden="true">2</span>', self.html)
+        self.assertIn('id="lemmaMappingStatus"', self.html)
+        self.assertIn('id="cognateMappingStatus"', self.html)
+        self.assertIn("chocolate</b><small>Spanish", self.html)
 
 
 class ReleaseLevelSetsTests(unittest.TestCase):

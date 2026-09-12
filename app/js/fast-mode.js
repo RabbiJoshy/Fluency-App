@@ -18,6 +18,9 @@
 // page says which part is missing.
 import './state.js?v=20260825ak';
 
+let requestedFastMode = null;
+let applyingMasterSwitch = false;
+
 function lemmaAvailable() {
     return document.getElementById('lemmaToggleContainer')?.dataset.available === 'true';
 }
@@ -39,10 +42,11 @@ function cognatesExcluded() {
 // Fast mode is on when every part the release supports is on. With one part
 // available it is that part's state; with neither, there is nothing to report.
 function currentState() {
+    if (requestedFastMode !== null) return requestedFastMode ? 'on' : 'off';
     const parts = [];
     if (lemmaAvailable()) parts.push(lemmaOn());
     if (cognateAvailable()) parts.push(cognatesExcluded());
-    if (parts.length === 0) return 'unavailable';
+    if (parts.length === 0) return 'off';
     if (parts.every(Boolean)) return 'on';
     if (parts.every(part => !part)) return 'off';
     // A learner who set the parts individually is in neither state, and saying
@@ -55,8 +59,7 @@ function currentState() {
 // the deck cannot do.
 function summaryText() {
     const state = currentState();
-    if (state === 'unavailable') return 'Off · mappings unavailable';
-    if (state === 'on') return 'On · less repetition';
+    if (state === 'on') return 'On · use available shortcuts';
     if (state === 'off') return 'Off · full deck';
     return 'Custom';
 }
@@ -66,10 +69,8 @@ function summaryText() {
 // re-rendering the level bands — happens exactly once and exactly as it does
 // when the learner changes them by hand.
 function applyFastMode(on) {
-    if (!lemmaAvailable() && !cognateAvailable()) {
-        showUnavailableMessage('fast-track');
-        return;
-    }
+    requestedFastMode = on;
+    applyingMasterSwitch = true;
     if (lemmaAvailable() && lemmaOn() !== on) {
         document.querySelector(`.lemma-toggle-btn[data-lemma="${on ? 'on' : 'off'}"]`)?.click();
     }
@@ -78,6 +79,7 @@ function applyFastMode(on) {
             `.cognate-toggle-btn[data-cognate="${on ? 'exclude' : 'include'}"]`
         )?.click();
     }
+    applyingMasterSwitch = false;
     // The clicks above each schedule their own refresh; this only restates what
     // the buttons now say.
     setTimeout(refresh, 0);
@@ -103,6 +105,7 @@ function refresh() {
     }
     const summary = document.getElementById('fastModeSummary');
     if (summary) summary.textContent = summaryText();
+    updateMappingStatus();
     globalThis.refreshExtrasButton?.();
 }
 
@@ -123,6 +126,25 @@ function showUnavailableMessage(feature) {
         return;
     }
     alert(`Fast track mappings have not been published for ${target}. Your full deck is still available.`);
+}
+
+function updateMappingStatus() {
+    const target = config?.languages?.[selectedLanguage]?.name || languageName(selectedLanguage);
+    const lemmaStatus = document.getElementById('lemmaMappingStatus');
+    if (lemmaStatus) {
+        lemmaStatus.hidden = lemmaAvailable();
+        lemmaStatus.textContent = lemmaAvailable()
+            ? ''
+            : `Word-form mapping not found for ${target}. This shortcut is currently unavailable.`;
+    }
+    const cognateStatus = document.getElementById('cognateMappingStatus');
+    if (cognateStatus) {
+        const knownCode = globalThis.activeKnownLanguages?.()[0] || 'en';
+        cognateStatus.hidden = cognateAvailable();
+        cognateStatus.textContent = cognateAvailable()
+            ? ''
+            : `${languageName(knownCode)} → ${target} mapping not found. Look-alike words will remain in the deck.`;
+    }
 }
 
 function openFastModePage() {
@@ -153,10 +175,13 @@ function init() {
     const observer = new MutationObserver(refresh);
     for (const id of ['lemmaToggleContainer', 'cognateToggleContainer']) {
         const element = document.getElementById(id);
-        if (element) observer.observe(element, { attributes: true, attributeFilter: ['style'] });
+        if (element) observer.observe(element, { attributes: true, attributeFilter: ['style', 'data-available'] });
     }
     document.querySelectorAll('.lemma-toggle-btn, .cognate-toggle-btn').forEach(button => {
-        button.addEventListener('click', () => setTimeout(refresh, 0));
+        button.addEventListener('click', () => {
+            if (!applyingMasterSwitch) requestedFastMode = null;
+            setTimeout(refresh, 0);
+        });
     });
 
     refresh();
