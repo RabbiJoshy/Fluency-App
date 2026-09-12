@@ -294,8 +294,8 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
     if (!button || !languageConfig) return;
 
     const mode = activeArtist
-        ? `Music & lyrics · ${activeArtist.name || 'Songs'}`
-        : 'Natural speech';
+        ? `Lyrics · ${activeArtist.name || 'Songs'}`
+        : 'Speech';
     const flag = languageConfig.flag || LEARNING_CONTEXT_FLAGS[selectedLanguage] || selectedLanguage.slice(0, 2).toUpperCase();
     const coverage = Number(snapshot?.percentage || 0);
     const coverageLabel = snapshot?.label || (activeArtist ? 'Lyrics understood' : 'Speech understood');
@@ -495,7 +495,7 @@ function setupLanguageTabs() {
             inlinePill.textContent = langConfig ? langConfig.name : selectedLanguage;
             document.getElementById('languageTabs').style.display = 'none';
             inlinePill.style.display = 'inline-flex';
-            sourceLabel.textContent = 'Natural speech';
+            sourceLabel.textContent = 'Speech';
             sourcePill.classList.add('source-pill-inline--pending');
             mergeStandardProgressIntoLanguageStep();
             updateLearningContextUI();
@@ -510,10 +510,10 @@ function setupLanguageTabs() {
             if (speechSourceButton) {
                 speechSourceButton.disabled = !speechAvailable;
                 speechSourceButton.title = speechAvailable
-                    ? 'Start with useful vocabulary from natural dialogue'
-                    : `Natural speech is not ready for ${langConfig?.name || newLanguage} yet`;
+                    ? 'Start with general-purpose vocabulary'
+                    : `Speech vocabulary is not ready for ${langConfig?.name || newLanguage} yet`;
                 const detail = speechSourceButton.querySelector('small');
-                if (detail) detail.textContent = 'Learn the words that recur most in natural dialogue from movie subtitles and other translated speech.';
+                if (detail) detail.textContent = 'Build general-purpose vocabulary from the words used most often in modern movie and television dialogue.';
             }
             if (sourceCardButton) {
                 sourceCardButton.disabled = !lyricsAvailable;
@@ -537,9 +537,9 @@ function setupLanguageTabs() {
                 document.getElementById('step1')?.classList.add('source-speech-active');
                 speechSourceButton?.classList.add('is-selected');
                 sourceCardButton?.classList.remove('is-selected');
-                window.showAppLoading?.('Preparing natural speech', 'Loading levels and your progress…');
+                window.showAppLoading?.('Preparing speech vocabulary', 'Loading levels and your progress…');
                 try {
-                    sourceLabel.textContent = 'Natural speech';
+                    sourceLabel.textContent = 'Speech';
                     sourcePill.classList.remove('source-pill-inline--pending');
                     const loadingIndicator = document.getElementById('dataLoadingIndicator');
                     loadingIndicator.classList.add('visible');
@@ -1655,6 +1655,7 @@ function setupCognateToggle() {
         btn.addEventListener('click', function() {
             // Don't allow selecting "exclude" mode if cognate field not available
             if (this.dataset.cognate === 'exclude' && !cognateFieldAvailable) {
+                globalThis.showFastModeUnavailable?.('cognates');
                 return;
             }
             // Reset all buttons to short text
@@ -1708,6 +1709,7 @@ function setupLemmaToggle() {
         btn.addEventListener('click', async function() {
             // Don't allow selecting "1" mode if lemma field not available
             if (this.dataset.lemma === 'on' && !lemmaFieldAvailable) {
+                globalThis.showFastModeUnavailable?.('lemmas');
                 return;
             }
             // Reset all buttons to short text
@@ -1825,10 +1827,11 @@ async function updateLemmaToggleVisibility() {
         }
     }
 
-    // Merge Lemmas is a learner-facing grouping operation over stable surface
-    // cards. Hide it only when the active release cannot provide a reliable
-    // form-to-headword grouping.
-    lemmaContainer.style.display = lemmaFieldAvailable ? 'block' : 'none';
+    // Keep the explanation and its control visible even before a mapping has
+    // been published. The attempted action then explains the missing mapping
+    // in ordinary language instead of making the feature mysteriously vanish.
+    lemmaContainer.style.display = 'block';
+    lemmaContainer.dataset.available = String(lemmaFieldAvailable);
     rangeStepNumber.textContent = activeArtist ? '2' : '3';
 
     if (lemmaFieldAvailable) {
@@ -1877,13 +1880,15 @@ async function updateCognateToggleVisibility() {
         }
     }
 
+    cognateContainer.style.display = 'block';
+    cognateContainer.dataset.available = String(cognateFieldAvailable);
     if (cognateFieldAvailable) {
-        // Show the container and enable both options
-        cognateContainer.style.display = 'block';
+        // Enable both options
         cognateSelector.classList.remove('cognate-toggle-unavailable');
     } else {
-        // Hide the container entirely if field not available
-        cognateContainer.style.display = 'none';
+        // Retain the explanation and control; trying to exclude gives a clear
+        // language-pair error through showFastModeUnavailable().
+        cognateSelector.classList.add('cognate-toggle-unavailable');
         excludeCognates = false;
     }
 }
@@ -2137,7 +2142,7 @@ async function renderRangeSelector() {
             </button>`;
     }
 
-    const canPersistLevelRouting = currentUser && !currentUser.isGuest;
+    const canPersistLevelRouting = Boolean(window.isAuditAccount?.());
     const levelSuggestionSkipped = canPersistLevelRouting
         && (window.isLevelMarkedDone?.(selectedLevel) || false);
     const levelDoneToggleHTML = canPersistLevelRouting ? `

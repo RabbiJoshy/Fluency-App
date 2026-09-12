@@ -40,14 +40,14 @@
             document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260912p">
+    <link rel="stylesheet" href="css/style.css?v=20260912r">
     <link rel="stylesheet" href="css/light-theme.css?v=20260828a">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260912p">
+    <link rel="modulepreload" href="js/main.js?v=20260912r">
     <link rel="modulepreload" href="js/theme.js?v=20260825ak">
     <link rel="modulepreload" href="js/state.js?v=20260912a">
     <link rel="modulepreload" href="js/data-contracts.js?v=20260825ak">
@@ -63,7 +63,7 @@
     <link rel="modulepreload" href="js/progress.js?v=20260912c">
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20260831a">
-    <link rel="modulepreload" href="js/ui.js?v=20260912n">
+    <link rel="modulepreload" href="js/ui.js?v=20260912p">
     <link rel="modulepreload" href="js/vocab.js?v=20260907a">
     <link rel="modulepreload" href="js/song-sets-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/song-sets.js?v=20260823ae">
@@ -322,7 +322,7 @@
             <div id="topBar" class="setup-step">
                 <div class="step-header top-bar-header">
                     <span id="topBarUserName" class="top-bar-user-name"></span>
-                    <button id="learningContextBtn" class="learning-context-chip" type="button" hidden aria-haspopup="dialog" aria-label="Open learning context">
+                    <button id="learningContextBtn" class="learning-context-chip" type="button" hidden aria-haspopup="dialog" aria-label="Open learning settings">
                         <span id="learningContextFlag" class="learning-context-flag" aria-hidden="true"></span>
                         <span class="learning-context-chip-copy">
                             <strong id="learningContextLanguage"></strong>
@@ -377,8 +377,8 @@
                             <button type="button" id="standardSourceSpeechBtn" class="standard-source-choice-btn" data-source="speech">
                                 <span class="standard-source-choice-icon" aria-hidden="true">1</span>
                                 <span>
-                                    <span class="standard-source-option-title"><strong>Natural speech</strong><em>Recommended</em></span>
-                                    <small>Learn the words that recur most in natural dialogue from movie subtitles and other translated speech.</small>
+                                    <span class="standard-source-option-title"><strong>Speech</strong><em>Recommended</em></span>
+                                    <small>Build general-purpose vocabulary from the words used most often in modern movie and television dialogue.</small>
                                 </span>
                                 <em class="standard-source-choice-arrow" aria-hidden="true">›</em>
                             </button>
@@ -506,16 +506,14 @@
                      release supports neither part. -->
                 <div id="setupOptions" class="setup-options" style="display: none;">
                     <div class="setup-options-bar">
-                        <span class="substep-title fast-track-label"><span aria-hidden="true">⚡</span> Fast track</span>
-                        <div id="fastModeSelector" class="group-size-selector fast-mode-selector">
-                            <button type="button" class="fast-mode-btn" data-fast="off">Off</button>
-                            <button type="button" class="fast-mode-btn" data-fast="on">On</button>
-                        </div>
-                        <span id="fastModeSummary" class="level-info-line fast-mode-summary"></span>
-                        <button type="button" id="fastModeDetailBtn" class="fast-mode-detail-btn" onclick="window.openFastModePage?.()">
-                            Adjust
+                        <button type="button" id="fastModeToggleBtn" class="fast-mode-btn fast-mode-master" data-fast="off" aria-pressed="false">
+                            <span class="fast-mode-master-icon" aria-hidden="true">⚡</span>
+                            <span class="fast-mode-master-copy"><strong>Fast track</strong><small id="fastModeSummary">Off · full deck</small></span>
+                            <span class="fast-mode-master-switch" aria-hidden="true"><i></i></span>
                         </button>
-                        <button type="button" id="extrasBtn" class="extras-btn" style="display: none;"></button>
+                        <button type="button" id="fastModeDetailBtn" class="fast-mode-detail-btn" onclick="window.openFastModePage?.()">
+                            How it works <span aria-hidden="true">›</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -704,31 +702,31 @@
         </div>
     </div>
 
-    <div id="learningContextModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="learningContextTitle">
+    <div id="learningContextModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Your learning settings">
         <div class="modal-content learning-context-sheet">
-            <div class="settings-tabs-header">
-                <h3 id="learningContextTitle">Learning context</h3>
-                <button class="modal-close" id="closeLearningContextModal" aria-label="Close learning context">&#10005;</button>
+            <div class="learning-context-close-row">
+                <button class="modal-close" id="closeLearningContextModal" aria-label="Close learning settings">&#10005;</button>
             </div>
-            <div class="learning-context-summary">
-                <span id="learningContextSheetFlag" class="learning-context-sheet-flag" aria-hidden="true"></span>
-                <div>
-                    <strong id="learningContextSheetLanguage"></strong>
-                    <span id="learningContextSheetMode"></span>
-                </div>
+            <div class="learning-context-switches">
+                <button id="learningContextLanguageBtn" class="learning-context-choice" type="button">
+                    <span id="learningContextSheetFlag" class="learning-context-sheet-flag" aria-hidden="true"></span>
+                    <span><small>Language</small><strong id="learningContextSheetLanguage"></strong></span>
+                    <span aria-hidden="true">›</span>
+                </button>
+                <button id="learningContextSourceBtn" class="learning-context-choice" type="button">
+                    <span class="learning-context-mode-icon" aria-hidden="true">◉</span>
+                    <span><small>Vocabulary</small><strong id="learningContextSheetMode"></strong></span>
+                    <span aria-hidden="true">›</span>
+                </button>
             </div>
-            <div class="learning-context-progress">
+            <button id="learningContextProgressBtn" class="learning-context-progress" type="button">
                 <div class="learning-context-progress-copy">
                     <span id="learningContextProgressLabel">Speech understood</span>
                     <strong id="learningContextProgressValue">0%</strong>
                 </div>
                 <div class="learning-context-progress-track"><i id="learningContextProgressFill"></i></div>
-            </div>
-            <div class="learning-context-actions">
-                <button id="learningContextProgressBtn" class="learning-context-action" type="button"><span>View detailed progress</span><span aria-hidden="true">›</span></button>
-                <button id="learningContextSourceBtn" class="learning-context-action" type="button"><span>Change learning source</span><span aria-hidden="true">›</span></button>
-                <button id="learningContextLanguageBtn" class="learning-context-action" type="button"><span>Change language</span><span aria-hidden="true">›</span></button>
-            </div>
+                <span class="learning-context-progress-link">View progress <span aria-hidden="true">›</span></span>
+            </button>
         </div>
     </div>
 
@@ -803,21 +801,21 @@
     <!-- Short learner-facing introduction to the card tutorial. -->
     <div id="tutorialIntroModal" class="modal hidden product-modal" role="dialog" aria-modal="true" aria-labelledby="tutorialIntroTitle">
         <div class="modal-content tutorial-intro-sheet">
-            <div class="product-modal-header">
-                <div><span class="product-modal-eyebrow">A two-minute tour</span><h2 id="tutorialIntroTitle">Tutorial</h2></div>
+            <div class="tutorial-intro-close-row">
+                <h2 id="tutorialIntroTitle" class="visually-hidden">Tutorial</h2>
                 <button class="modal-close" id="closeTutorialIntroModal" aria-label="Close tutorial introduction">&#10005;</button>
             </div>
             <div id="tutorialWelcomeStep" class="tutorial-intro-step">
-                <p class="tutorial-intro-lead">See how speech and lyrics become small, useful vocabulary sets—and how to read the back of a card.</p>
-                <button class="product-primary-action" id="startCardTutorialBtn" type="button">Start tutorial <span aria-hidden="true">→</span></button>
                 <div class="tutorial-principles">
-                    <p><strong>Learn useful words first.</strong> Common words contribute more to your real-world understanding, so progress is weighted by frequency rather than raw card count.</p>
-                    <p><strong>Learn them in context.</strong> Speech and lyrics use the same study flow, while examples and dictionary detail adapt to the language you choose.</p>
+                    <p>Fluency teaches the most useful words first. Progress reflects how often words occur, rather than how many cards you have seen.</p>
+                    <p><strong>Speech</strong> builds a general vocabulary from modern dialogue. <strong>Lyrics</strong> can personalise that vocabulary around music you choose and play the original lyric as an example.</p>
+                    <p>The back of each card connects a word to its meanings, examples and useful language-specific detail.</p>
                 </div>
+                <button class="product-primary-action" id="startCardTutorialBtn" type="button">Start tutorial <span aria-hidden="true">→</span></button>
             </div>
             <div id="tutorialLanguageStep" class="tutorial-intro-step hidden">
-                <button type="button" id="tutorialLanguageBackBtn" class="product-back-action">← Introduction</button>
-                <h3>Which language are you learning?</h3>
+                <button type="button" id="tutorialLanguageBackBtn" class="product-back-action">← Back</button>
+                <h3>Choose a language</h3>
                 <p>We’ll use a real card and only show features available for that language.</p>
                 <div id="tutorialLanguageChoices" class="tutorial-language-grid" role="list"></div>
             </div>
@@ -944,17 +942,15 @@
         <div class="modal-content fullscreen-modal fast-mode-page">
             <button class="modal-close fast-mode-close" id="closeFastModeModal" aria-label="Close">✕</button>
             <div class="fast-mode-page-body">
-                <span class="product-modal-eyebrow">A shorter route</span>
                 <h2>Fast track</h2>
-                <p class="fast-mode-lede">Move through each level faster by reducing repetition.
-                Nothing is deleted.</p>
+                <p class="fast-mode-lede">Move through each level faster by avoiding cards that repeat something you can learn together or already recognise.</p>
 
                 <div class="fast-mode-controls">
                     <div id="lemmaToggleContainer" class="setup-substep" style="display: none;">
                         <div class="substep-header">
                             <span class="substep-title">Group word forms</span>
                         </div>
-                        <p class="fast-mode-explainer">Study related forms together on one card.</p>
+                        <p class="fast-mode-explainer">Study different forms of the same word together on one card, so you learn the word once without losing its examples.</p>
                         <div class="fast-mode-example" aria-label="Example of grouped word forms"><span>hablo</span><span>habló</span><span>hablar</span><b>→ hablar</b></div>
                         <div id="lemmaToggleSelector" class="group-size-selector">
                             <button class="lemma-toggle-btn selected" data-lemma="off" data-short="Off" data-full="Off">Off</button>
@@ -971,7 +967,7 @@
                         <div class="substep-header">
                             <span class="substep-title">Skip familiar words</span>
                         </div>
-                        <p class="fast-mode-explainer">Set aside words that closely resemble an English word with the same meaning.</p>
+                        <p class="fast-mode-explainer">Leave out words you can already understand because they closely match a word in a language you know.</p>
                         <div class="fast-mode-example" aria-label="Examples of familiar words"><span>animal</span><span>hotel</span><span>chocolate</span></div>
                         <div id="cognateToggleSelector" class="group-size-selector">
                             <button class="cognate-toggle-btn" data-cognate="exclude" data-short="Exclude" data-full="Exclude">Exclude</button>
@@ -983,15 +979,15 @@
                             <div id="knownLanguagesSelector" class="group-size-selector known-languages-selector"></div>
                         </div>
                         <details class="fast-mode-details">
-                            <summary>How words are identified</summary>
-                            <p>The app compares spelling and meaning across languages, with adjustable sensitivity. Its rules aim to keep misleading look-alikes in the study deck.</p>
+                            <summary>Technical details</summary>
+                            <p>These are cognates: words whose spelling and meaning are sufficiently similar across languages. Adjustable thresholds keep less certain matches and misleading look-alikes in the deck.</p>
                         </details>
                     </div>
 
                 </div>
 
-                <p class="fast-mode-note" id="fastModeAvailability"></p>
                 <p class="fast-mode-note">Grouped forms remain on their shared card. Familiar words can be restored at any time.</p>
+                <button type="button" id="extrasBtn" class="extras-btn" style="display: none;"></button>
             </div>
         </div>
     </div>
@@ -1657,6 +1653,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260912p"></script>
+    <script type="module" src="js/main.js?v=20260912r"></script>
 </body>
 </html>

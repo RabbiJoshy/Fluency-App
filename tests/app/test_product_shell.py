@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v368"
+EXPECTED_CACHE_NAME = "flashcards-v370"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -115,12 +115,12 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("releases/${code}/speech/${encodeURIComponent(releaseId)}", config_js)
         self.assertIn("languageConfig.releaseManifestPath = `${base}/manifest.json`", config_js)
 
-    def test_merge_lemma_control_is_capability_gated(self) -> None:
+    def test_merge_lemma_control_explains_missing_capability(self) -> None:
         ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
-        self.assertGreaterEqual(
-            ui.count("lemmaFieldAvailable ? 'block' : 'none'"),
-            2,
-        )
+        fast_mode = (APP_ROOT / "js" / "fast-mode.js").read_text(encoding="utf-8")
+        self.assertIn("lemmaContainer.dataset.available = String(lemmaFieldAvailable)", ui)
+        self.assertIn("showFastModeUnavailable?.('lemmas')", ui)
+        self.assertIn("Word-form mapping not found for", fast_mode)
 
     def test_language_choice_defers_loading_until_source_choice(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
@@ -161,7 +161,10 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("context-ready", ui)
         self.assertIn("id: 'learningSourceChoiceSheet'", main)
         self.assertNotIn("Current learning context", html)
-        self.assertNotIn('<h3 id="learningContextTitle">Your learning</h3>', html)
+        self.assertNotIn('id="learningContextTitle"', html)
+        self.assertIn('aria-label="Your learning settings"', html)
+        self.assertIn('class="learning-context-switches"', html)
+        self.assertIn('class="learning-context-progress" type="button"', html)
         self.assertNotIn("learningContextAction--secondary", html)
         self.assertIn("showSettingsModalWithTab('account')", main)
         self.assertIn("getCurrentCoverageSnapshot", progress)
@@ -170,8 +173,8 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("Review this level", modals)
         self.assertIn("this.dataset.action === 'review-level'", flashcards)
         self.assertNotIn("% accuracy`,", modals)
-        self.assertIn("Natural speech", html)
-        self.assertIn("movie subtitles and other translated speech", html)
+        self.assertNotIn("Natural speech", html)
+        self.assertIn("modern movie and television dialogue", html)
         self.assertIn("import your own Spotify playlist", html)
         self.assertIn("play the lyric moment where each word is used", html)
         self.assertNotIn('id="learningContextMode"', html)
@@ -186,7 +189,7 @@ class ProductShellTests(unittest.TestCase):
         config = json.loads((APP_ROOT / "config" / "config.json").read_text(encoding="utf-8"))
         self.assertTrue(config["languages"]["spanish"]["capabilities"]["mergeLemmas"])
         self.assertIn("window._activeReleaseCapabilities?.mergeLemmas", ui)
-        self.assertIn("learner-facing grouping operation over stable surface", ui)
+        self.assertIn("Keep the explanation and its control visible", ui)
 
     def test_card_back_omits_only_redundant_single_pos_legend(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
@@ -281,9 +284,10 @@ class ProductShellTests(unittest.TestCase):
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
         self.assertIn('<span class="step-title">Your next set</span>', html)
-        self.assertIn('fast-track-label"><span aria-hidden="true">⚡</span> Fast track', html)
+        self.assertIn('id="fastModeToggleBtn"', html)
+        self.assertIn('id="fastModeDetailBtn"', html)
         self.assertIn(".sync-status.is-synced { display: none; }", css)
-        self.assertIn(".setup-options-bar #fastModeSelector { display: none; }", css)
+        self.assertIn(".fast-mode-master-switch", css)
         self.assertIn("#step2,\n#step4 {", css)
         self.assertIn("--accent-primary: #8795ff;", css)
 
@@ -555,7 +559,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260831a", worker)
-        self.assertIn("/js/main.js?v=20260912p", worker)
+        self.assertIn("/js/main.js?v=20260912r", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -689,7 +693,7 @@ class KnownLanguageCognateSurfaceTests(unittest.TestCase):
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
         for required_id in (
             "setupOptions",          # the Fast mode row under the level picker
-            "fastModeSelector",
+            "fastModeToggleBtn",
             "fastModeModal",         # the full page behind it
             "knownLanguagesContainer",
             "knownLanguagesSelector",
@@ -697,6 +701,7 @@ class KnownLanguageCognateSurfaceTests(unittest.TestCase):
             "extrasBtn",
         ):
             self.assertIn(f'id="{required_id}"', html)
+        self.assertIn("Boolean(window.isAuditAccount?.())", (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8"))
 
     def test_the_runtime_modules_ship_and_are_precached(self) -> None:
         worker = (APP_ROOT / "service-worker.js").read_text(encoding="utf-8")

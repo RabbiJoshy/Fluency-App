@@ -11,11 +11,11 @@ import './estimation.js?v=20260825ak';
 import './config.js?v=20260907a';
 import './progress.js?v=20260912c';
 import './knowledge.js?v=20260831a';
-import './ui.js?v=20260912n';
+import './ui.js?v=20260912p';
 import './vocab.js?v=20260909b';
 import './cognates.js?v=20260908d';
 import './coverage.js?v=20260909a';
-import './fast-mode.js?v=20260912b';
+import './fast-mode.js?v=20260912d';
 import './extras.js?v=20260912e';
 import './song-sets.js?v=20260823ae';
 import './vocabulary-import.js?v=20260825ak';
@@ -1162,19 +1162,19 @@ function openLearningSourcePicker() {
     const lyricsAvailable = languageConfig.capabilities?.lyrics !== false;
     showChoiceSheet({
         id: 'learningSourceChoiceSheet',
-        ariaLabel: 'Change learning source',
-        title: 'Change learning source',
+        ariaLabel: 'Choose vocabulary',
+        title: 'Choose vocabulary',
         intro: 'Choose which kind of language should shape your vocabulary list.',
         variant: 'list',
         entries: [
             {
-                label: 'Natural speech',
-                description: 'The most frequent words in movie subtitles and other translated dialogue.',
+                label: 'Speech',
+                description: 'General-purpose vocabulary ranked from modern movie and television dialogue.',
                 fallbackText: '1',
                 selected: !activeArtist,
                 onSelect: () => {
                     if (activeArtist) {
-                        showAppLoading('Switching to natural speech', 'Preparing your language and progress…', true);
+                        showAppLoading('Switching to speech vocabulary', 'Preparing your language and progress…', true);
                         sessionStorage.setItem('fluencyPendingSpeechLanguage', language);
                         window.location.href = window.location.pathname;
                     } else {
