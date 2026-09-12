@@ -112,11 +112,11 @@ function escapeHtml(value) {
 // With more than one known language a bare number says nothing about why the
 // word is free, so name the language that made it so.
 function cognateNote(item) {
-    if (!item.cognate_scores) return Number(item.cognate_score || 0).toFixed(2);
     const strongest = g().strongestKnownLanguage?.(item);
-    if (!strongest) return '';
-    const label = g().knownLanguageLabel ? g().knownLanguageLabel(strongest.code) : strongest.code;
-    return `${escapeHtml(label)} ${strongest.score.toFixed(2)}`;
+    const fallbackCode = g().activeKnownLanguages?.()[0] || 'en';
+    const code = strongest?.code || fallbackCode;
+    const label = g().knownLanguageLabel ? g().knownLanguageLabel(code) : code;
+    return `Looks like ${escapeHtml(label)}`;
 }
 
 function renderRows(entries, kind) {
@@ -128,7 +128,7 @@ function renderRows(entries, kind) {
         // every row. A merged form's useful fact is which card absorbed it.
         const note = kind === 'cognate'
             ? cognateNote(item)
-            : `merged into <strong>${escapeHtml(mergedInto.word)}</strong>`;
+            : `On the <strong>${escapeHtml(mergedInto.word)}</strong> card`;
         return `<li class="extras-row" data-search-text="${escapeHtml(`${item.word} ${translation} ${note.replace(/<[^>]+>/g, '')}`.toLocaleLowerCase())}">
             <span class="extras-word">${escapeHtml(item.word)}</span>
             <span class="extras-translation">${escapeHtml(translation)}</span>
@@ -146,15 +146,21 @@ function renderExtras() {
     const sections = [];
     if (cognates.length > 0) {
         sections.push(`<section class="extras-section">
-            <h4>Familiar words <span class="extras-count">${cognates.length}</span></h4>
-            <p class="extras-blurb">Set aside because they closely resemble a word with the same meaning in a language you already know.</p>
+            <div class="extras-section-header">
+                <h4>Obvious look-alikes <span class="extras-count">${cognates.length}</span></h4>
+                <button type="button" class="extras-restore" data-restore-kind="cognate">Show as cards</button>
+            </div>
+            <p class="extras-blurb">Set aside because their spelling and meaning closely match a language you already know.</p>
             <ul class="extras-list">${renderRows(cognates, 'cognate')}</ul>
         </section>`);
     }
     if (lemmas.length > 0) {
         sections.push(`<section class="extras-section">
-            <h4>Merged forms <span class="extras-count">${lemmas.length}</span></h4>
-            <p class="extras-blurb">Included on the shared card for their dictionary form rather than repeated as separate cards.</p>
+            <div class="extras-section-header">
+                <h4>Word forms learned together <span class="extras-count">${lemmas.length}</span></h4>
+                <button type="button" class="extras-restore" data-restore-kind="lemma">Separate cards</button>
+            </div>
+            <p class="extras-blurb">These forms are still included, but appear on one shared card instead of being repeated.</p>
             <ul class="extras-list">${renderRows(lemmas, 'lemma')}</ul>
         </section>`);
     }
@@ -195,6 +201,21 @@ function closeExtras() {
     document.getElementById('extrasModal')?.classList.add('hidden');
 }
 
+function restoreSection(kind) {
+    const selector = kind === 'cognate'
+        ? '.cognate-toggle-btn[data-cognate="include"]'
+        : kind === 'lemma'
+            ? '.lemma-toggle-btn[data-lemma="off"]'
+            : '';
+    const control = selector ? document.querySelector(selector) : null;
+    if (!control) return;
+    control.click();
+    setTimeout(() => {
+        renderExtras();
+        refreshExtrasButton();
+    }, 0);
+}
+
 function initExtras() {
     document.getElementById('extrasBtn')?.addEventListener('click', openExtras);
     document.getElementById('closeExtrasModal')?.addEventListener('click', closeExtras);
@@ -203,6 +224,11 @@ function initExtras() {
     });
     document.getElementById('extrasSearch')?.addEventListener('input', event => filterExtras(event.currentTarget.value));
     document.getElementById('extrasBody')?.addEventListener('click', async event => {
+        const restore = event.target.closest('.extras-restore');
+        if (restore) {
+            restoreSection(restore.dataset.restoreKind);
+            return;
+        }
         const button = event.target.closest('.extras-open-card');
         const id = button?.dataset.cardId;
         if (!id || !globalThis.popupFoundWord) return;

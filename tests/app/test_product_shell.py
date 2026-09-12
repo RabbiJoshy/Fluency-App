@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v372"
+EXPECTED_CACHE_NAME = "flashcards-v373"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -352,6 +352,9 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('See ${total} skipped words', extras)
         self.assertIn("class=\"extras-open-card\"", extras)
         self.assertIn("globalThis.popupFoundWord", extras)
+        self.assertIn('data-restore-kind="cognate"', extras)
+        self.assertIn('data-restore-kind="lemma"', extras)
+        self.assertIn("function restoreSection(kind)", extras)
         self.assertIn("#settingsModal.product-modal { align-items: flex-start; }", css)
 
     def test_wsd_publication_view_is_user_selectable(self) -> None:
@@ -564,7 +567,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260831a", worker)
-        self.assertIn("/js/main.js?v=20260913b", worker)
+        self.assertIn("/js/main.js?v=20260913c", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
