@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v367"
+EXPECTED_CACHE_NAME = "flashcards-v368"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -74,6 +74,12 @@ class ProductShellTests(unittest.TestCase):
             if value.get("hasData", True)
         }
         self.assertEqual(enabled, {"czech", "french", "portuguese", "spanish"})
+        self.assertEqual(config["languages"]["portuguese"]["name"], "European Portuguese")
+        self.assertEqual(config["languages"]["portuguese"]["flag"], "🇵🇹")
+        self.assertEqual(config["languages"]["portuguese"]["speechLang"], "pt-PT")
+        self.assertFalse(config["languages"]["portuguese_brazilian"]["hasData"])
+        self.assertEqual(config["languages"]["portuguese_brazilian"]["flag"], "🇧🇷")
+        self.assertEqual(config["languages"]["portuguese_brazilian"]["speechLang"], "pt-BR")
         self.assertEqual(
             config["languages"]["spanish"]["studyStructurePath"],
             "Data/Spanish/study-structure.json",
@@ -165,9 +171,11 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("this.dataset.action === 'review-level'", flashcards)
         self.assertNotIn("% accuracy`,", modals)
         self.assertIn("Natural speech", html)
-        self.assertIn("movie subtitles and translated dialogue", html)
-        self.assertIn("for example reggaeton", html)
-        self.assertIn("ranked by frequency", html)
+        self.assertIn("movie subtitles and other translated speech", html)
+        self.assertIn("import your own Spotify playlist", html)
+        self.assertIn("play the lyric moment where each word is used", html)
+        self.assertNotIn('id="learningContextMode"', html)
+        self.assertNotIn('id="learningContextCoverage"', html)
         self.assertIn("Recommended", html)
         self.assertIn("Music &amp; lyrics", html)
         self.assertIn("lyrics collection is available yet", main)
@@ -251,7 +259,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("if (!explicitTutorialLanguageKey()) return false", walkthrough)
         self.assertNotIn("TUTORIAL_DECK_SEQUENCE", walkthrough)
         self.assertIn("spanish: { language: 'Spanish'", walkthrough)
-        self.assertIn("portuguese: { language: 'Portuguese'", walkthrough)
+        self.assertIn("portuguese: { language: 'European Portuguese'", walkthrough)
         self.assertIn("czech: { language: 'Czech'", walkthrough)
         self.assertIn("french: { language: 'French'", walkthrough)
         self.assertNotIn("function renderTabs()", walkthrough)
@@ -417,8 +425,8 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("variant: 'list'", flashcards)
         self.assertIn("id: 'lyricsSourceSheet'", main)
         self.assertIn("id: 'artistChoiceSheet'", main)
-        self.assertIn("label: 'Use a playlist'", main)
-        self.assertIn("Connect or upload a playlist — coming later.", main)
+        self.assertIn("label: 'Import a Spotify playlist'", main)
+        self.assertIn("Use the music you already listen to — coming later.", main)
         self.assertNotIn("id: 'artistRadialPicker'", main)
         self.assertIn(".choice-sheet-grid .choice-sheet-body", css)
         self.assertIn(".choice-sheet-list .choice-sheet-item", css)
@@ -547,7 +555,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260831a", worker)
-        self.assertIn("/js/main.js?v=20260912o", worker)
+        self.assertIn("/js/main.js?v=20260912p", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:

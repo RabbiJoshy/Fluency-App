@@ -40,16 +40,16 @@
             document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260912o">
+    <link rel="stylesheet" href="css/style.css?v=20260912p">
     <link rel="stylesheet" href="css/light-theme.css?v=20260828a">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260912o">
+    <link rel="modulepreload" href="js/main.js?v=20260912p">
     <link rel="modulepreload" href="js/theme.js?v=20260825ak">
-    <link rel="modulepreload" href="js/state.js?v=20260825ak">
+    <link rel="modulepreload" href="js/state.js?v=20260912a">
     <link rel="modulepreload" href="js/data-contracts.js?v=20260825ak">
     <link rel="modulepreload" href="js/offline-db.js?v=20260825ak">
     <link rel="modulepreload" href="js/sync-queue.js?v=20260825ak">
@@ -57,13 +57,13 @@
     <link rel="modulepreload" href="js/speech.js?v=20260824d">
     <link rel="modulepreload" href="js/artist-ui.js?v=20260825ak">
     <link rel="modulepreload" href="js/auth.js?v=20260912a">
-    <link rel="modulepreload" href="js/about-example.js?v=20260912c">
+    <link rel="modulepreload" href="js/about-example.js?v=20260912d">
     <link rel="modulepreload" href="js/estimation.js?v=20260825ak">
     <link rel="modulepreload" href="js/config.js?v=20260907a">
     <link rel="modulepreload" href="js/progress.js?v=20260912c">
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20260831a">
-    <link rel="modulepreload" href="js/ui.js?v=20260912m">
+    <link rel="modulepreload" href="js/ui.js?v=20260912n">
     <link rel="modulepreload" href="js/vocab.js?v=20260907a">
     <link rel="modulepreload" href="js/song-sets-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/song-sets.js?v=20260823ae">
@@ -326,9 +326,7 @@
                         <span id="learningContextFlag" class="learning-context-flag" aria-hidden="true"></span>
                         <span class="learning-context-chip-copy">
                             <strong id="learningContextLanguage"></strong>
-                            <small id="learningContextMode">Natural speech</small>
                         </span>
-                        <span id="learningContextCoverage" class="learning-context-chip-progress"></span>
                         <span class="learning-context-chevron" aria-hidden="true">›</span>
                     </button>
                     <button id="helpBtn" class="top-bar-icon-btn" type="button" title="Tutorial" aria-label="Open tutorial">
@@ -372,15 +370,15 @@
                     </button>
                     <div class="standard-source-choice" aria-labelledby="standardSourceChoiceTitle">
                         <div class="standard-source-choice-intro">
-                            <span class="standard-source-choice-title" id="standardSourceChoiceTitle">Choose the vocabulary you want to learn</span>
-                            <p>Choose the kind of language you want to understand. Fluency builds a vocabulary list from it, ranked by frequency.</p>
+                            <span class="standard-source-choice-title" id="standardSourceChoiceTitle">Choose what you want to understand</span>
+                            <p>Fluency builds your study list from the words used most often in that kind of language.</p>
                         </div>
                         <div class="standard-source-choice-buttons">
                             <button type="button" id="standardSourceSpeechBtn" class="standard-source-choice-btn" data-source="speech">
                                 <span class="standard-source-choice-icon" aria-hidden="true">1</span>
                                 <span>
                                     <span class="standard-source-option-title"><strong>Natural speech</strong><em>Recommended</em></span>
-                                    <small>Build broad vocabulary from movie subtitles and translated dialogue, starting with the words used most often.</small>
+                                    <small>Learn the words that recur most in natural dialogue from movie subtitles and other translated speech.</small>
                                 </span>
                                 <em class="standard-source-choice-arrow" aria-hidden="true">›</em>
                             </button>
@@ -388,7 +386,7 @@
                                 <span class="standard-source-choice-icon" aria-hidden="true">2</span>
                                 <span>
                                     <span class="standard-source-option-title"><strong>Music &amp; lyrics</strong></span>
-                                    <small id="standardLyricsAvailability">Choose music you listen to—for example reggaeton—and learn the words used most often in those lyrics.</small>
+                                    <small id="standardLyricsAvailability">Choose artists and songs in your target language, or import your own Spotify playlist (coming later). Learn the most frequent words, then play the lyric moment where each word is used.</small>
                                 </span>
                                 <em id="standardLyricsStatus" class="standard-source-choice-status" aria-hidden="true">›</em>
                             </button>
@@ -1659,6 +1657,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260912o"></script>
+    <script type="module" src="js/main.js?v=20260912p"></script>
 </body>
 </html>

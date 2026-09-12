@@ -436,7 +436,7 @@
       "speechLang": "pl-PL"
     },
     "portuguese": {
-      "name": "Portuguese",
+      "name": "European Portuguese",
       "indexPath": "releases/pt/speech/pt-speech-european-3000-tiered-20260907/app/vocabulary.index.json",
       "examplesPath": "releases/pt/speech/pt-speech-european-3000-tiered-20260907/app/vocabulary.examples.json",
       "studyStructurePath": "releases/pt/speech/pt-speech-european-3000-tiered-20260907/app/study-structure.json",
@@ -450,8 +450,8 @@
         "lyrics": false
       },
       "colorTheme": {
-        "primary": "#009C3B",
-        "secondary": "#FFDF00"
+        "primary": "#046A38",
+        "secondary": "#DA291C"
       },
       "cefrLevels": [
         {
@@ -497,9 +497,21 @@
         "reverso": "https://context.reverso.net/translation/portuguese-english/{word}",
         "conjugation": "https://conjugator.reverso.net/conjugation-portuguese-verb-{word}.html"
       },
-      "flag": "🇧🇷",
+      "flag": "🇵🇹",
+      "shortCode": "PT",
+      "speechLang": "pt-PT"
+    },
+    "portuguese_brazilian": {
+      "name": "Brazilian Portuguese",
       "shortCode": "BR",
-      "speechLang": "pt-BR"
+      "flag": "🇧🇷",
+      "speechLang": "pt-BR",
+      "hasData": false,
+      "fileFormat": "json",
+      "capabilities": {
+        "speech": false,
+        "lyrics": false
+      }
     },
     "czech": {
       "name": "Czech",
@@ -580,6 +592,7 @@
     "polish",
     "french",
     "portuguese",
+    "portuguese_brazilian",
     "czech",
     "russian"
   ]

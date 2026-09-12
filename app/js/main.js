@@ -1,17 +1,17 @@
 import './theme.js?v=20260825ak';
-import './state.js?v=20260825ak';
+import './state.js?v=20260912a';
 import './offline-db.js?v=20260825ak';
 import './sync-queue.js?v=20260825ak';
 import { initOfflineContent } from './offline-content.js?v=20260825ak';
 import './speech.js?v=20260824d';
 import './artist-ui.js?v=20260825ak';
 import './auth.js?v=20260912a';
-import './about-example.js?v=20260912c';
+import './about-example.js?v=20260912d';
 import './estimation.js?v=20260825ak';
 import './config.js?v=20260907a';
 import './progress.js?v=20260912c';
 import './knowledge.js?v=20260831a';
-import './ui.js?v=20260912m';
+import './ui.js?v=20260912n';
 import './vocab.js?v=20260909b';
 import './cognates.js?v=20260908d';
 import './coverage.js?v=20260909a';
@@ -32,7 +32,7 @@ function openTutorialIntroduction() {
 function renderTutorialLanguageChoices() {
     const container = document.getElementById('tutorialLanguageChoices');
     if (!container || container.childElementCount) return;
-    const flags = { spanish: '🇪🇸', portuguese: '🇧🇷', czech: '🇨🇿', french: '🇫🇷' };
+    const flags = { spanish: '🇪🇸', portuguese: '🇵🇹', czech: '🇨🇿', french: '🇫🇷' };
     const inheritedLanguage = window.getCardTutorialLanguageKey?.();
     (window.getCardTutorialLanguages?.() || []).forEach(({ key, language }) => {
         const profile = window.getCardTutorialProfile?.(key);
@@ -1135,9 +1135,9 @@ function showArtistPicker(anchorBtn, artists) {
         variant: 'list',
         entries: [
             {
-                label: 'Choose available music',
+                label: 'Choose artists or songs',
                 description: hasAvailableMusic
-                    ? 'Pick from the artists and songs already available in Fluency.'
+                    ? 'Build vocabulary from music you like in your target language.'
                     : 'No music collection has been published for this language yet.',
                 fallbackText: '♫',
                 accent: 'var(--accent-primary)',
@@ -1145,8 +1145,8 @@ function showArtistPicker(anchorBtn, artists) {
                 onSelect: () => showAvailableMusicPicker(artists)
             },
             {
-                label: 'Use a playlist',
-                description: 'Connect or upload a playlist — coming later.',
+                label: 'Import a Spotify playlist',
+                description: 'Use the music you already listen to — coming later.',
                 fallbackText: '＋',
                 accent: '#10B981',
                 disabled: true,
@@ -1169,7 +1169,7 @@ function openLearningSourcePicker() {
         entries: [
             {
                 label: 'Natural speech',
-                description: 'Broad vocabulary from movie subtitles and translated dialogue, ranked by frequency.',
+                description: 'The most frequent words in movie subtitles and other translated dialogue.',
                 fallbackText: '1',
                 selected: !activeArtist,
                 onSelect: () => {
@@ -1185,8 +1185,8 @@ function openLearningSourcePicker() {
             {
                 label: 'Music & lyrics',
                 description: lyricsAvailable
-                    ? 'Learn the most frequent words in artists and songs you choose.'
-                    : `Learn the most frequent words in music you choose. No ${languageConfig.name || language} lyrics collection is available yet.`,
+                    ? 'Learn frequent words from artists and songs you like, with lyric playback through Spotify.'
+                    : `Learn frequent words from music you like, with lyric playback through Spotify. No ${languageConfig.name || language} lyrics collection is available yet.`,
                 fallbackText: '2',
                 selected: Boolean(activeArtist),
                 disabled: !lyricsAvailable,
