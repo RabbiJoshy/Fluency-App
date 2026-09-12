@@ -284,7 +284,7 @@ function setActiveSetupStep(stepId) {
 
 const PREFERRED_LANGUAGE_KEY = 'fluencyPreferredLanguageV1';
 const LEARNING_CONTEXT_FLAGS = {
-    spanish: '🇪🇸', portuguese: '🇧🇷', french: '🇫🇷', italian: '🇮🇹',
+    spanish: '🇪🇸', portuguese: '🇵🇹', portuguese_brazilian: '🇧🇷', french: '🇫🇷', italian: '🇮🇹',
     swedish: '🇸🇪', dutch: '🇳🇱', polish: '🇵🇱', russian: '🇷🇺', czech: '🇨🇿'
 };
 
@@ -303,8 +303,6 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
     button.hidden = false;
     document.getElementById('learningContextFlag').textContent = flag;
     document.getElementById('learningContextLanguage').textContent = languageConfig.name || selectedLanguage;
-    document.getElementById('learningContextMode').textContent = mode;
-    document.getElementById('learningContextCoverage').textContent = coverage > 0 ? `${coverage.toFixed(1)}%` : '';
     document.getElementById('learningContextSheetFlag').textContent = flag;
     document.getElementById('learningContextSheetLanguage').textContent = languageConfig.name || selectedLanguage;
     document.getElementById('learningContextSheetMode').textContent = mode;
@@ -515,7 +513,7 @@ function setupLanguageTabs() {
                     ? 'Start with useful vocabulary from natural dialogue'
                     : `Natural speech is not ready for ${langConfig?.name || newLanguage} yet`;
                 const detail = speechSourceButton.querySelector('small');
-                if (detail) detail.textContent = 'Build broad vocabulary from movie subtitles and translated dialogue, starting with the words used most often.';
+                if (detail) detail.textContent = 'Learn the words that recur most in natural dialogue from movie subtitles and other translated speech.';
             }
             if (sourceCardButton) {
                 sourceCardButton.disabled = !lyricsAvailable;
@@ -523,7 +521,7 @@ function setupLanguageTabs() {
                     ? 'Build vocabulary around music you choose'
                     : `Music & lyrics is not available for ${langConfig?.name || newLanguage} yet`;
                 const detail = sourceCardButton.querySelector('small');
-                if (detail) detail.textContent = 'Choose music you listen to—for example reggaeton—and learn the words used most often in those lyrics.';
+                if (detail) detail.textContent = 'Choose artists and songs in your target language, or import your own Spotify playlist (coming later). Learn the most frequent words, then play the lyric moment where each word is used.';
                 if (lyricsStatus) lyricsStatus.textContent = lyricsAvailable ? '›' : 'Coming later';
             }
 
