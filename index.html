@@ -40,14 +40,14 @@
             document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260912r">
+    <link rel="stylesheet" href="css/style.css?v=20260913b">
     <link rel="stylesheet" href="css/light-theme.css?v=20260828a">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260912r">
+    <link rel="modulepreload" href="js/main.js?v=20260913b">
     <link rel="modulepreload" href="js/theme.js?v=20260825ak">
     <link rel="modulepreload" href="js/state.js?v=20260912a">
     <link rel="modulepreload" href="js/data-contracts.js?v=20260825ak">
@@ -63,7 +63,7 @@
     <link rel="modulepreload" href="js/progress.js?v=20260912c">
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20260831a">
-    <link rel="modulepreload" href="js/ui.js?v=20260912p">
+    <link rel="modulepreload" href="js/ui.js?v=20260913b">
     <link rel="modulepreload" href="js/vocab.js?v=20260907a">
     <link rel="modulepreload" href="js/song-sets-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/song-sets.js?v=20260823ae">
@@ -948,15 +948,17 @@
                 <div class="fast-mode-controls">
                     <div id="lemmaToggleContainer" class="setup-substep" style="display: none;">
                         <div class="substep-header">
-                            <span class="substep-title">Group word forms</span>
+                            <span class="fast-mode-number" aria-hidden="true">1</span>
+                            <span class="substep-title">Learn a word once</span>
                         </div>
-                        <p class="fast-mode-explainer">Study different forms of the same word together on one card, so you learn the word once without losing its examples.</p>
+                        <p class="fast-mode-explainer">Forms such as <em>hablo</em>, <em>habló</em> and <em>hablar</em> belong to the same word. Put them on one card so you learn it once while keeping every example.</p>
                         <div class="fast-mode-example" aria-label="Example of grouped word forms"><span>hablo</span><span>habló</span><span>hablar</span><b>→ hablar</b></div>
                         <div id="lemmaToggleSelector" class="group-size-selector">
                             <button class="lemma-toggle-btn selected" data-lemma="off" data-short="Off" data-full="Off">Off</button>
                             <button class="lemma-toggle-btn" data-lemma="on" data-short="On" data-full="On">On</button>
                         </div>
                         <span id="lemmaInfoLine" class="level-info-line substep-info-below" style="display: none;"></span>
+                        <p id="lemmaMappingStatus" class="fast-mode-mapping-status" hidden></p>
                         <details class="fast-mode-details">
                             <summary>Technical details</summary>
                             <p>Inflected forms are grouped by their lemma—the dictionary form of the word. Their frequency and examples are pooled on the shared card.</p>
@@ -965,10 +967,11 @@
 
                     <div id="cognateToggleContainer" class="setup-substep" style="display: none;">
                         <div class="substep-header">
-                            <span class="substep-title">Skip familiar words</span>
+                            <span class="fast-mode-number" aria-hidden="true">2</span>
+                            <span class="substep-title">Skip obvious look-alikes</span>
                         </div>
-                        <p class="fast-mode-explainer">Leave out words you can already understand because they closely match a word in a language you know.</p>
-                        <div class="fast-mode-example" aria-label="Examples of familiar words"><span>animal</span><span>hotel</span><span>chocolate</span></div>
+                        <p class="fast-mode-explainer">Some words already give away their meaning. Set them aside so your study time goes to vocabulary that actually needs learning.</p>
+                        <div class="fast-mode-example fast-mode-example--cognate" aria-label="Example of a Spanish word that is obvious in English"><span><b>chocolate</b><small>Spanish</small></span><strong>=</strong><span><b>chocolate</b><small>English</small></span></div>
                         <div id="cognateToggleSelector" class="group-size-selector">
                             <button class="cognate-toggle-btn" data-cognate="exclude" data-short="Exclude" data-full="Exclude">Exclude</button>
                             <button class="cognate-toggle-btn selected" data-cognate="include" data-short="Include" data-full="Include">Include</button>
@@ -978,6 +981,7 @@
                             <span>Compare with</span>
                             <div id="knownLanguagesSelector" class="group-size-selector known-languages-selector"></div>
                         </div>
+                        <p id="cognateMappingStatus" class="fast-mode-mapping-status" hidden></p>
                         <details class="fast-mode-details">
                             <summary>Technical details</summary>
                             <p>These are cognates: words whose spelling and meaning are sufficiently similar across languages. Adjustable thresholds keep less certain matches and misleading look-alikes in the deck.</p>
@@ -986,8 +990,8 @@
 
                 </div>
 
-                <p class="fast-mode-note">Grouped forms remain on their shared card. Familiar words can be restored at any time.</p>
-                <button type="button" id="extrasBtn" class="extras-btn" style="display: none;"></button>
+                <p class="fast-mode-note">Nothing is deleted. Grouped forms stay on their shared card, and skipped look-alikes can be restored at any time.</p>
+                <button type="button" id="extrasBtn" class="extras-btn">See skipped words</button>
             </div>
         </div>
     </div>
@@ -1286,19 +1290,23 @@
         <div class="modal-content settings-modal-content">
             <div class="settings-tabs-header">
                 <div class="settings-title-block">
-                    <span class="product-modal-eyebrow">Make it yours</span>
                     <h2 id="settingsTitle">Settings</h2>
-                    <strong class="settings-single-tab-title" id="settingsSingleTabTitle" hidden>Study preferences</strong>
                 </div>
-                <button class="modal-close" id="closeSettingsModal" aria-label="Close settings">✕</button>
+                <div class="settings-header-actions">
+                    <label class="settings-search"><span class="visually-hidden">Find a setting</span><input id="settingsSearch" type="search" placeholder="Find a setting" autocomplete="off"></label>
+                    <button class="modal-close" id="closeSettingsModal" aria-label="Close settings">✕</button>
+                </div>
             </div>
             <nav class="settings-tabs" aria-label="Settings sections">
+                    <span class="settings-nav-label">Learning</span>
                     <button class="settings-tab active" data-tab="study">Study</button>
                     <button class="settings-tab" data-tab="review">Review</button>
                     <button class="settings-tab" data-tab="vocabulary">Vocabulary</button>
+                    <span class="settings-nav-label">App</span>
                     <button class="settings-tab" data-tab="appearance">Appearance</button>
                     <button class="settings-tab" data-tab="account">Account</button>
                     <button class="settings-tab" data-tab="about">About</button>
+                    <span class="settings-nav-label settings-nav-label--admin" id="settingsAdminLabel" hidden>Admin</span>
                     <button class="settings-tab" data-tab="offline" id="storageTabBtn" hidden>Storage</button>
                     <button class="settings-tab" data-tab="appData" id="appDataTabBtn" hidden>Developer</button>
             </nav>
@@ -1653,6 +1661,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260912r"></script>
+    <script type="module" src="js/main.js?v=20260913b"></script>
 </body>
 </html>

@@ -1830,8 +1830,8 @@ async function updateLemmaToggleVisibility() {
     // Keep the explanation and its control visible even before a mapping has
     // been published. The attempted action then explains the missing mapping
     // in ordinary language instead of making the feature mysteriously vanish.
-    lemmaContainer.style.display = 'block';
     lemmaContainer.dataset.available = String(lemmaFieldAvailable);
+    lemmaContainer.style.display = 'block';
     rangeStepNumber.textContent = activeArtist ? '2' : '3';
 
     if (lemmaFieldAvailable) {
@@ -1880,8 +1880,8 @@ async function updateCognateToggleVisibility() {
         }
     }
 
-    cognateContainer.style.display = 'block';
     cognateContainer.dataset.available = String(cognateFieldAvailable);
+    cognateContainer.style.display = 'block';
     if (cognateFieldAvailable) {
         // Enable both options
         cognateSelector.classList.remove('cognate-toggle-unavailable');
@@ -2445,8 +2445,10 @@ function showSettingsModalWithTab(tabName, { singleTab = false } = {}) {
     const isJstAccount = Boolean(window.isAuditAccount?.());
     const storageTabBtn = document.getElementById('storageTabBtn');
     const appDataTabBtn = document.getElementById('appDataTabBtn');
+    const adminLabel = document.getElementById('settingsAdminLabel');
     if (storageTabBtn) storageTabBtn.hidden = !isJstAccount;
     if (appDataTabBtn) appDataTabBtn.hidden = !isJstAccount;
+    if (adminLabel) adminLabel.hidden = !isJstAccount;
 
     // Show/hide clear level estimate row
     const estimate = levelEstimates[selectedLanguage] || 0;
@@ -2477,8 +2479,6 @@ function showSettingsModalWithTab(tabName, { singleTab = false } = {}) {
         : 'study';
     const showOnlyStudy = singleTab && requestedTab === 'study';
     settingsModal.classList.toggle('settings-single-tab', showOnlyStudy);
-    const singleTabTitle = document.getElementById('settingsSingleTabTitle');
-    if (singleTabTitle) singleTabTitle.hidden = !showOnlyStudy;
     settingsModal.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
     settingsModal.querySelector(`.settings-tab[data-tab="${requestedTab}"]`)?.classList.add('active');
     settingsModal.querySelectorAll('.settings-tab-content').forEach(c => c.classList.remove('active'));
@@ -2568,7 +2568,13 @@ async function renderDevFooter(freshnessEl) {
 
 
 function hideSettingsModal() {
-    document.getElementById('settingsModal').classList.add('hidden');
+    const modal = document.getElementById('settingsModal');
+    modal.classList.add('hidden');
+    const search = document.getElementById('settingsSearch');
+    if (search?.value) {
+        search.value = '';
+        search.dispatchEvent(new Event('input'));
+    }
 }
 
 async function showTotalStatsModal() {
@@ -2974,8 +2980,33 @@ function setupTabSwitching(modalEl) {
     });
 }
 
+function setupSettingsSearch() {
+    const modal = document.getElementById('settingsModal');
+    const input = document.getElementById('settingsSearch');
+    if (!modal || !input || input.dataset.ready === 'true') return;
+    input.dataset.ready = 'true';
+    input.addEventListener('input', () => {
+        const query = input.value.trim().toLocaleLowerCase();
+        const tabs = Array.from(modal.querySelectorAll('.settings-tab'));
+        let firstMatch = null;
+        tabs.forEach(tab => {
+            const content = document.getElementById(`${tab.dataset.tab}TabContent`);
+            const matches = !query || `${tab.textContent} ${content?.textContent || ''}`
+                .toLocaleLowerCase().includes(query);
+            tab.classList.toggle('settings-search-hidden', !matches);
+            if (matches && !tab.hidden && !firstMatch) firstMatch = tab;
+        });
+        const active = modal.querySelector('.settings-tab.active');
+        if (query && active?.classList.contains('settings-search-hidden') && firstMatch) {
+            showSettingsModalWithTab(firstMatch.dataset.tab);
+            input.focus();
+        }
+    });
+}
+
 window.openHelpModal = openHelpModal;
 window.setupTabSwitching = setupTabSwitching;
+window.setupSettingsSearch = setupSettingsSearch;
 window.setupLemmaToggle = setupLemmaToggle;
 window.setupGlobalStudyDefaults = setupGlobalStudyDefaults;
 window.setupPercentModeButton = setupPercentModeButton;
