@@ -17,6 +17,12 @@ class SenseMenuPolicyTests(unittest.TestCase):
             REPOSITORY_ROOT, policy_id="es-spanishdict-v1", language="es"
         )
         self.assertEqual(policy["provider"], "spanishdict")
+        projection = policy["metadata_projection"]
+        self.assertEqual(projection["context_role"], "mixed_semantic_and_metadata")
+        self.assertEqual(
+            set(projection["canonical_families"]),
+            {"companion", "construction", "domain", "functional", "grammar", "register"},
+        )
         self.assertEqual(policy["card_binding"]["identity"], "surface-card/v1")
         self.assertFalse(policy["lookup_candidates"]["may_replace_surface_card"])
         self.assertEqual(policy["response_mismatch"]["fuzzy_correction"], "quarantine")

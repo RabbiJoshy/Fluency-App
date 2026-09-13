@@ -34,6 +34,7 @@ def metadata_accounting(sense: Mapping[str, Any]) -> MetadataAccounting:
     return MetadataAccounting(
         coverage={
             "context": "parsed",
+            "context_semantic_remainder": "preserved",
             "dictionary_examples": "preserved",
             "regions": "parsed",
             "usage_and_construction_notes": "parsed",

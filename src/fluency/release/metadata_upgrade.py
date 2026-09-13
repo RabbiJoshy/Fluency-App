@@ -81,6 +81,12 @@ def canonicalize_meaning_metadata(
         source = dict(nested) if isinstance(nested, dict) else {}
         source["context"] = provider.get("context") or meaning.get("context") or ""
         source.setdefault("regions", provider.get("regions") or [])
+        # SpanishDict's context classifier is deliberately revisable. Rebuild
+        # provider-derived features from the preserved source instead of
+        # retaining yesterday's broad classification beside today's precise
+        # one. Surface marks come from the resolved card form, not SpanishDict,
+        # and therefore remain valid.
+        existing = [feature for feature in existing if feature.kind == "surface_mark"]
         derived = list(extract_spanishdict(source))
         accounting = account_spanishdict(source)
     else:

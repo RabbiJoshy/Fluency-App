@@ -18,6 +18,7 @@ from fluency.features.metadata import METADATA_CONTRACT_VERSION
 from fluency.features.spanishdict_metadata import (
     metadata_accounting as account_spanishdict_metadata,
 )
+from fluency.features.spanishdict import extract as extract_spanishdict_features
 from fluency.menus import MenuAnalysis, SenseLeaf, build_analysis_id
 
 
@@ -43,57 +44,8 @@ CLITIC_SUFFIXES = (
     "selo", "sela", "melo", "mela", "telo", "tela", "nos", "los", "las",
     "les", "me", "te", "se", "lo", "la", "le", "os",
 )
-DOMAIN_LABELS = frozenset(
-    {
-        "anatomy", "architecture", "art", "biology", "botany", "business",
-        "chemistry", "computing", "economics", "education", "finance",
-        "football", "grammar", "law", "legal", "linguistics", "medicine",
-        "military", "music", "nautical", "politics", "religion", "science",
-        "sports", "technology", "theater", "zoology",
-    }
-)
-REGISTER_LABELS = frozenset(
-    {"archaic", "colloquial", "dated", "formal", "informal", "offensive", "slang", "vulgar"}
-)
-CONSTRUCTION_RE = re.compile(
-    r"^(?:used with|used before|used after|followed by|takes?)(?:\s|\b)", re.IGNORECASE
-)
-
-
-def _region_values(value: Any) -> list[str]:
-    if not isinstance(value, list):
-        return []
-    out: list[str] = []
-    for item in value:
-        if isinstance(item, str) and item.strip():
-            out.append(item.strip())
-        elif isinstance(item, dict):
-            label = item.get("name") or item.get("label") or item.get("region")
-            if isinstance(label, str) and label.strip():
-                out.append(label.strip())
-    return out
-
-
 def _specialist_features(sense: dict[str, Any]) -> tuple[SpecialistFeature, ...]:
-    context = str(sense.get("context") or "").strip()
-    features: list[SpecialistFeature] = []
-    for clause in (
-        item.strip() for item in re.split(r"[;|]", context) if item.strip()
-    ):
-        lowered = clause.casefold().strip(" .;:()[]")
-        if lowered in DOMAIN_LABELS:
-            features.append(SpecialistFeature("domain", "domain_label", lowered, lowered))
-        if lowered in REGISTER_LABELS:
-            features.append(SpecialistFeature("register", "usage_label", lowered, lowered))
-        if CONSTRUCTION_RE.match(clause):
-            features.append(
-                SpecialistFeature("construction", "usage_note", clause, clause)
-            )
-    for region in _region_values(sense.get("regions")):
-        features.append(
-            SpecialistFeature("register", "region", region, region)
-        )
-    return tuple(dict.fromkeys(features))
+    return extract_spanishdict_features(sense)
 
 
 class SpanishDictMenuError(ValueError):

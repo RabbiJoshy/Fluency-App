@@ -12,6 +12,9 @@ class SpanishDictMetadataAccountingTests(unittest.TestCase):
             "provider_only_note": {"label": "something new"},
         })
         self.assertEqual(accounting.coverage["context"], "parsed")
+        self.assertEqual(
+            accounting.coverage["context_semantic_remainder"], "preserved"
+        )
         self.assertEqual(accounting.unclassified, ({
             "source_field": "spanishdict.provider_only_note",
             "value": {"label": "something new"},

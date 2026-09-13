@@ -28,5 +28,28 @@
     "context": "optional",
     "usage_and_construction_notes": "optional_provider_data",
     "dictionary_examples": "optional_provider_data"
+  },
+  "metadata_projection": {
+    "context_role": "mixed_semantic_and_metadata",
+    "context_separators": [";", "|"],
+    "unmatched_context_role": "sense_clarification",
+    "provider_fields": {
+      "context": "parsed_and_preserved",
+      "examples": "preserved",
+      "regions": "parsed_and_preserved"
+    },
+    "canonical_families": [
+      "companion",
+      "construction",
+      "domain",
+      "functional",
+      "grammar",
+      "register"
+    ],
+    "learner_priority": {
+      "sense_defining": ["companion", "construction", "domain", "register", "grammar"],
+      "supporting": ["functional", "optional_companion"],
+      "provider_only": ["examples"]
+    }
   }
 }

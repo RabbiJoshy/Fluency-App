@@ -117,6 +117,36 @@ class MetadataUpgradeTests(unittest.TestCase):
             [item["value"] for item in features].count("aspect=perfective"), 1
         )
 
+    def test_spanishdict_upgrade_retypes_old_context_classifications(self) -> None:
+        meaning = {
+            "translation": "to arrive",
+            "context": 'to reach a place; used with "a"',
+            "metadata": {
+                "source_adapter": "spanishdict-sense-menu/v1",
+                "sense_provider_metadata": {
+                    "context": 'to reach a place; used with "a"',
+                    "spanishdict": {"examples": []},
+                },
+                "specialist_features": [
+                    {
+                        "family": "construction",
+                        "kind": "companion_form",
+                        "value": 'used with "a"',
+                        "embedding_text": 'used with "a"',
+                    }
+                ],
+            },
+        }
+
+        canonicalize_meaning_metadata(meaning, policy=self.policy("es"))
+
+        features = meaning["metadata"]["specialist_features"]
+        self.assertNotIn("companion_form", {item["kind"] for item in features})
+        self.assertIn(
+            ("companion", "required_word", "a"),
+            {(item["family"], item["kind"], item["value"]) for item in features},
+        )
+
     def test_wiktionary_upgrade_retypes_stale_provider_features(self) -> None:
         meaning = {
             "translation": "to have",
