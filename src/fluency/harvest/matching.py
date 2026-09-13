@@ -11,7 +11,14 @@ from typing import Any
 class SurfaceMatcher:
     def __init__(self, cards: list[dict[str, Any]], language_policy: dict[str, Any]):
         self.policy = language_policy
+        self._normalized: dict[str, str] = {}
         self.token_re = re.compile(language_policy["matching"]["token_pattern"], re.UNICODE)
+        # Matching splits on a different rule from scoring. The scoring
+        # tokenizer drops digits, which would find `mi` inside `MI5` and count
+        # an intelligence agency as an example of a possessive. A surface is a
+        # word only when nothing alphanumeric touches it, which is exactly what
+        # the old whole-sentence pattern enforced with its lookarounds.
+        self.match_token_re = re.compile(r"[^\W_]+", re.UNICODE)
         normalized: dict[str, dict[str, Any]] = {}
         for card in cards:
             key = self.normalize(card["display_form"])
@@ -19,10 +26,41 @@ class SurfaceMatcher:
                 raise ValueError(f"surface normalization collision: {key!r}")
             normalized[key] = card
         self.cards_by_match = normalized
-        alternatives = [self._literal_pattern(value) for value in sorted(normalized, key=len, reverse=True)]
-        self.pattern = re.compile("|".join(f"(?:{value})" for value in alternatives), re.UNICODE)
+        # Almost every surface is a single word, and a single word can be found
+        # by looking it up rather than by scanning the sentence for it. Running
+        # one alternation of every surface over every sentence made find_cards
+        # the most expensive thing in the harvest -- 5.3s of a 20s profile, on
+        # a pattern with thousands of branches and a lookaround on each side.
+        # Multi-word surfaces still need the regex, but there are few of them
+        # and the pattern is correspondingly small.
+        # A surface only qualifies for lookup if the tokenizer actually yields
+        # it whole. French `aujourd'hui` has no space but splits in two, so
+        # treating "no space" as "one token" would have made it unfindable.
+        self.single_token_cards: dict[str, dict[str, Any]] = {}
+        multiword_keys: list[str] = []
+        for key, card in normalized.items():
+            if " " not in key and self.match_tokens(key) == [key]:
+                self.single_token_cards[key] = card
+            else:
+                multiword_keys.append(key)
+        multiword = sorted(multiword_keys, key=len, reverse=True)
+        self.pattern = (
+            re.compile(
+                "|".join(f"(?:{self._literal_pattern(value)})" for value in multiword),
+                re.UNICODE,
+            )
+            if multiword
+            else None
+        )
 
     def normalize(self, text: str) -> str:
+        # Called once per token, so roughly twenty times per corpus row and two
+        # million times in a 100,000-row scan. The token vocabulary is bounded
+        # and tiny beside that, so the same few thousand strings were being
+        # decomposed, casefolded and rejoined over and over.
+        cached = self._normalized.get(text)
+        if cached is not None:
+            return cached
         policy = self.policy["normalization"]
         value = unicodedata.normalize(policy["unicode_form"], text)
         for apostrophe in policy["apostrophe_variants"]:
@@ -31,6 +69,8 @@ class SurfaceMatcher:
             value = value.casefold()
         if policy["collapse_whitespace"]:
             value = " ".join(value.split())
+        if len(self._normalized) < 400_000:
+            self._normalized[text] = value
         return value
 
     @staticmethod
@@ -43,14 +83,20 @@ class SurfaceMatcher:
         right = r"(?!\w)" if self._is_word_character(surface[-1:]) else ""
         return f"{left}{escaped}{right}"
 
-    def find_cards(self, text: str) -> list[dict[str, Any]]:
-        normalized_text = self.normalize(text)
+    def match_tokens(self, text: str) -> list[str]:
+        return [self.normalize(token) for token in self.match_token_re.findall(text)]
+
+    def find_cards(self, text: str, tokens: list[str] | None = None) -> list[dict[str, Any]]:
         found: dict[str, dict[str, Any]] = {}
-        for match in self.pattern.finditer(normalized_text):
-            key = " ".join(match.group(0).split())
-            card = self.cards_by_match.get(key)
+        for token in self.match_tokens(text) if tokens is None else tokens:
+            card = self.single_token_cards.get(token)
             if card is not None:
                 found[card["card_id"]] = card
+        if self.pattern is not None:
+            for match in self.pattern.finditer(self.normalize(text)):
+                card = self.cards_by_match.get(" ".join(match.group(0).split()))
+                if card is not None:
+                    found[card["card_id"]] = card
         return list(found.values())
 
     def tokens(self, text: str) -> list[str]:

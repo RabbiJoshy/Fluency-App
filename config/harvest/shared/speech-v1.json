@@ -6,17 +6,27 @@
     "long_penalty_weight": 0.3,
     "preferred_maximum_tokens": 12,
     "preferred_minimum_tokens": 8,
+    "preferred_minimum_tokens_note": "Raised from 6 so the shortest sentences stop winning. A literal calque from English keeps English's short function-word skeleton, which is exactly the shape frequency-burden rewards: on French, 'Nous y allons mais vous non.' ranked FIRST for four separate cards. This does not fix the ranking, it stops the most skeletal sentences taking the head of the queue.",
     "short_penalty_weight": 0.6,
-    "unranked_assumed_rank": 60000,
-    "preferred_minimum_tokens_note": "Raised from 6 so the shortest sentences stop winning. A literal calque from English keeps English's short function-word skeleton, which is exactly the shape frequency-burden rewards: on French, 'Nous y allons mais vous non.' ranked FIRST for four separate cards. This does not fix the ranking, it stops the most skeletal sentences taking the head of the queue."
+    "unranked_assumed_rank": 60000
   },
   "policy_id": "speech-v1",
+  "pooling": {
+    "note": "How wide a card samples before quality cuts it to budget, and what counts against a sentence's form. Every weight here judges how well made a sentence is; none of them can prefer one sense of the target word over another, which is what lets quality be applied as hard as the supply allows. The multiplier is a starting value, not a measured one: comparing sense distributions at 2x, 3x and 5x after a WSD run is what would settle it.",
+    "pool_multiplier": 3,
+    "quality_weights": {
+      "lost_accent": 2.0,
+      "placeholder_name": 1.5,
+      "rare_word": 1.0
+    }
+  },
   "provenance": {
     "require_attribution": true,
     "require_license": true,
     "require_source_record_id": true
   },
   "quality": {
+    "fragment_note": "A subtitle row is a slice of a stream: it can begin partway through one sentence and end partway through the next. A row starting lowercase is a continuation of the row before it, and one ending in a comma, semicolon or colon stops before its clause closes. Both read as broken language rather than as an example. Measured on the shipped decks: 3.4% and 0.7% of Czech displayed examples, 0.4% and 0.3% of Portuguese.",
     "maximum_target_tokens": 16,
     "maximum_translation_ratio": 2.5,
     "maximum_translation_tokens": 24,
@@ -29,18 +39,17 @@
     "minimum_translation_tokens": 2,
     "reject_all_caps": true,
     "reject_identical_sides": true,
+    "reject_lowercase_start": true,
     "reject_markup": true,
     "reject_truncated_fragments": true,
     "reject_truncated_fragments_note": "A line cut mid-thought is grammatical and teaches nothing: the clause the target belongs to was never finished. Measured on the Portuguese pilot: 6.5% of candidates, and no card fell below the five it must display (lowest pool 48 of 60).",
-    "reject_lowercase_start": true,
-    "reject_unterminated": true,
-    "fragment_note": "A subtitle row is a slice of a stream: it can begin partway through one sentence and end partway through the next. A row starting lowercase is a continuation of the row before it, and one ending in a comma, semicolon or colon stops before its clause closes. Both read as broken language rather than as an example. Measured on the shipped decks: 3.4% and 0.7% of Czech displayed examples, 0.4% and 0.3% of Portuguese."
+    "reject_unterminated": true
   },
   "scan": {
-    "stop_when_budget_filled_fraction": 0.95,
     "check_every_records": 50000,
-    "note": "Stop scanning once this fraction of cards has filled its WSD budget. Harvest time is linear in corpus size, but the cards are not: the median Czech card has 1,128 matches and fills its 60 within the first 5% of the corpus, while three cards never fill it at all -- 23, 36 and 43 matches in 7.55M lines. Waiting for every card therefore costs a full scan to serve a handful of rare words. Measured on Czech and Portuguese, which agree closely: 95% of cards are satisfied by 19% of the corpus (5.3x faster), 98% by 30%, 99% by 46%. Past 95% each further percent of cards costs disproportionately more scanning, so that is where this sits. Cards left short are declared, never silently thinned -- shortfall_policy governs what happens to them. Absent means scan everything.",
+    "max_records_note": "A ceiling on how much of a corpus is read, per source. The long tail is what makes a harvest slow: the median card fills within the first 5% of a corpus while three Czech cards never fill at all, so a minimum-per-card target buys a full scan to serve a handful of rare words -- and the sentences it drags back for them are the worst in the corpus. A card that cannot fill within the ceiling has told you the word is rare, which is information, not failure. Tatoeba is smaller than this and is always read whole.",
     "max_records_per_source": 1500000,
-    "max_records_note": "A ceiling on how much of a corpus is read, per source. The long tail is what makes a harvest slow: the median card fills within the first 5% of a corpus while three Czech cards never fill at all, so a minimum-per-card target buys a full scan to serve a handful of rare words -- and the sentences it drags back for them are the worst in the corpus. A card that cannot fill within the ceiling has told you the word is rare, which is information, not failure. Tatoeba is smaller than this and is always read whole."
+    "note": "Stop scanning once this fraction of cards has filled its WSD budget. Harvest time is linear in corpus size, but the cards are not: the median Czech card has 1,128 matches and fills its 60 within the first 5% of the corpus, while three cards never fill it at all -- 23, 36 and 43 matches in 7.55M lines. Waiting for every card therefore costs a full scan to serve a handful of rare words. Measured on Czech and Portuguese, which agree closely: 95% of cards are satisfied by 19% of the corpus (5.3x faster), 98% by 30%, 99% by 46%. Past 95% each further percent of cards costs disproportionately more scanning, so that is where this sits. Cards left short are declared, never silently thinned -- shortfall_policy governs what happens to them. Absent means scan everything.",
+    "stop_when_budget_filled_fraction": 0.95
   }
 }

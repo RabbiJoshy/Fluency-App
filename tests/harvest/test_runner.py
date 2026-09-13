@@ -7,6 +7,7 @@ import unittest
 
 from fluency.core.identity import build_card_id
 from fluency.core.workspace import Workspace
+from fluency.harvest.pooling import phrase_set, redundancy_penalty, token_set
 from fluency.harvest.runner import HarvestRunError, harvest_run_stage
 from fluency.pipeline.planning import create_pipeline_plan, load_pipeline_profile
 
@@ -37,6 +38,13 @@ SURFACES = (
     "sans",
     "temps",
     "voir",
+)
+
+# Three unrelated frames, so a card can legitimately hold three examples.
+FRAMES = (
+    "Voici vraiment {surface} devant nous maintenant.",
+    "Personne ne comprend pourquoi {surface} arrive si tard.",
+    "Elle a dit que {surface} changerait tout cette semaine.",
 )
 
 
@@ -117,7 +125,13 @@ class HarvestRunnerTests(unittest.TestCase):
         link_rows: list[str] = []
         sentence_number = 1000
         for surface in SURFACES:
-            for variant in ("maintenant", "souvent", "ensemble"):
+            # Structurally different sentences, not one sentence three ways.
+            # These used to differ only in a trailing adverb, which is precisely
+            # the agreement family the redundancy rule now collapses -- so the
+            # fixture was testing that rule rather than the pool mechanics it
+            # means to cover. test_collapses_agreement_families pins the
+            # collapse itself.
+            for variant in FRAMES:
                 sentence_number += 2
                 translation_id = sentence_number - 1
                 target_id = sentence_number
@@ -126,7 +140,7 @@ class HarvestRunnerTests(unittest.TestCase):
                     "EnglishUser\t2026-08-01 10:00:00\t\\N"
                 )
                 target_rows.append(
-                    f"{target_id}\tfra\tVoici vraiment {surface} devant nous {variant}.\t"
+                    f"{target_id}\tfra\t{variant.format(surface=surface)}\t"
                     "FrenchUser\t2026-08-01 10:00:00\t\\N"
                 )
                 link_rows.append(f"{translation_id}\t{target_id}")
@@ -215,3 +229,53 @@ class HarvestRunnerTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class RedundancyTests(unittest.TestCase):
+    """An agreement family is one example, however many rows carry it.
+
+    Tatoeba contributors write these on purpose, and they arrived on cards in
+    force: three of `nada`'s five Spanish examples were "Yo no tengo nada que
+    ver con esto/eso/en eso", and a 100-card audit found one sentence repeated
+    on 43 French cards and 22 Portuguese.
+
+    Vocabulary overlap alone cannot see it. On sentences this short the two or
+    three words that differ are a large share of the vocabulary, so any
+    threshold loose enough to catch the family also merges unrelated sentences.
+    The word-for-word run they share is what identifies it.
+    """
+
+    def _redundant(self, first: str, second: str) -> int:
+        return redundancy_penalty(
+            token_set(first),
+            [token_set(second)],
+            subject_phrases=phrase_set(first),
+            other_phrases=[phrase_set(second)],
+        )
+
+    def test_collapses_agreement_families(self) -> None:
+        for first, second in (
+            ("No tengo nada que ver con este asunto", "No tengo nada que ver con él"),
+            ("Vous etes plus grand que moi", "Vous etes plus grande que moi"),
+        ):
+            with self.subTest(first=first):
+                self.assertTrue(self._redundant(first, second))
+
+    def test_keeps_distinct_uses_of_one_expression(self) -> None:
+        # Both use `de vez en cuando`, which is four tokens and so cannot on its
+        # own make two sentences the same example. A card must still be able to
+        # show an expression more than once in different company.
+        self.assertFalse(
+            self._redundant(
+                "Es bueno saber que de vez en cuando",
+                "Estás aquí por mí de vez en cuando",
+            )
+        )
+
+    def test_keeps_unrelated_sentences(self) -> None:
+        self.assertFalse(
+            self._redundant(
+                "Le he visto una vez en el tren",
+                "Él me llamó al teléfono una y otra vez",
+            )
+        )

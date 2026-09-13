@@ -1,0 +1,102 @@
+{
+  "profile_version": "speech-pipeline-profile/v1",
+  "profile_id": "spanish_speech_v1_2000",
+  "language": "es",
+  "locale": "es-ES",
+  "mode": "speech",
+  "identity": {
+    "unit_type": "surface",
+    "identity_version": "surface-card/v1",
+    "allow_lemma_identity": false
+  },
+  "source_policy": {
+    "fresh_snapshots_only": true,
+    "allow_legacy_inputs": false,
+    "allow_recovered_inputs": true,
+    "fallback_policy": "none"
+  },
+  "scope": {
+    "surface_limit": 2000,
+    "examples_per_surface": 3,
+    "shortfall_policy": "publish_explicit",
+    "display_examples_per_card": [
+      {
+        "through_rank": 1000,
+        "examples": 5
+      }
+    ],
+    "limit_note": "A 2,000-card slice of the 9,999 profile, identical in every other respect. Speed is measured here rather than at 300 because the work the pooled sampler avoids is concentrated on cards with hundreds of thousands of matches, and a 300-card run stops before enough of the corpus is read for that to show."
+  },
+  "inventory": {
+    "source_adapter": "recovered-surface-ranking/v1",
+    "language_policy": "es-v1",
+    "source_edition": "fluency-2026-07-28-surface-ranking-v1",
+    "frequency_measure": "recovered_corpus_count_upstream_unknown",
+    "output_schema": "surface-inventory/v1",
+    "identity_unit": "surface",
+    "lemma_role": "excluded"
+  },
+  "sense_menu": {
+    "source_adapter": "spanishdict-sense-menu/v1",
+    "language_policy": "es-spanishdict-v1",
+    "source_edition": "spanishdict-pinned-snapshot",
+    "gloss_language": "en",
+    "snapshot_id": "spanishdict-complete-menu-2026-08-23-v1",
+    "minimum_card_coverage": 0.98,
+    "output_schema": "sense-menu/v1",
+    "join_key": "surface_card_id",
+    "lemma_role": "lookup_metadata_only"
+  },
+  "harvest": {
+    "shared_policy": "speech-v1",
+    "language_policy": "es-v1",
+    "source_policy": "explicit_union",
+    "sources": [
+      "tatoeba",
+      "opensubtitles"
+    ],
+    "candidate_cap_per_surface": 60,
+    "wsd_budget_per_card": [
+      {
+        "through_rank": 1000,
+        "budget": 80
+      },
+      {
+        "through_rank": 3000,
+        "budget": 50
+      },
+      {
+        "through_rank": 9999,
+        "budget": 30
+      }
+    ],
+    "source_share_note": "Spanish leans on film rather than Tatoeba. Its Tatoeba broken rate was the lowest measured at 2.5%, so a 30% share keeps clean sentences on the commonest words where subtitles are most fragmentary, while the bulk comes from 2016-plus film. Note this sets what the POOL holds, not what a card SHOWS: at a 60/40 share the displayed Spanish set still came out 93% Tatoeba, because Tatoeba wins on easiness even as a pool minority. Shifting what a learner sees is a selection preference, retunable without harvesting again.",
+    "source_minimum_per_card": 12,
+    "source_minimum_note": "Each source contributes at least 12 candidates to most cards before the harvest moves on. A share is relative to a budget that may change; a minimum guarantees the pool holds enough of BOTH sources to re-tune selection from later without harvesting again. Bounded by max_records_per_source, so a rare word is not chased through a corpus that does not hold it."
+  },
+  "stage_order": [
+    "inventory",
+    "sense_menu",
+    "sentence_harvest",
+    "wsd_assignments",
+    "example_selection",
+    "release_build"
+  ],
+  "wsd": {
+    "strategy": "language-adapted-closed-menu/v1",
+    "shared_profile": "closed-menu-provider-prior-v1",
+    "language_profile": "es-v2",
+    "model_profile": "es-v10-1",
+    "require_model_pins": true,
+    "execution_status": "ready",
+    "model_revisions": {
+      "gloss.model_revision": "gemini-embedding-001",
+      "occurrence_pos.model_revision": "es_dep_news_trf@3.8.0"
+    },
+    "max_wsd_units_per_run": 110000
+  },
+  "release": {
+    "activation": "manual",
+    "fallback_policy": "none"
+  }
+}

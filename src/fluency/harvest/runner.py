@@ -30,6 +30,18 @@ from fluency.harvest.matching import (
     example_identity,
     quality_rejection,
 )
+from fluency.harvest.pooling import (
+    DEFAULT_POOL_MULTIPLIER,
+    POOLING_POLICY_VERSION,
+    SourcePool,
+    pool_key,
+    deaccented_index,
+    quality_penalty,
+    phrase_set,
+    redundancy_penalty,
+    systematic_sample,
+    token_set,
+)
 from fluency.harvest.records import HarvestRecordError, validate_parallel_sentence
 from fluency.harvest.sources import (
     CorpusAdapter,
@@ -98,58 +110,83 @@ def _implementation_content_id() -> str:
     )
 
 
-def _trim_candidates(
-    candidates: dict[str, dict[str, dict[str, Any]]],
-    *,
-    cap_for: dict[str, int],
-    source_share: dict[str, float] | None = None,
-    only: str | None = None,
-) -> None:
-    """Keep the best candidates per card, without letting one source crowd out
-    the others.
+def _source_quotas(
+    available: dict[str, int], card_cap: int, source_share: dict[str, float]
+) -> dict[str, int]:
+    """How many slots each source may fill on one card.
 
     Ordering the whole pool by source first meant the preferred source filled
     every budget and the other was trimmed away before selection ever saw it --
     a Czech pool came out 99% Tatoeba. Which source a learner should be shown is
     a selection decision that can be retuned forever; which sources survive the
-    harvest is not, because recovering one means harvesting again. So the
-    harvest reserves a share for each source and ranks only within it.
+    harvest is not, because recovering one means harvesting again.
     """
 
-    # One card overflowing said nothing about the other 2,999, but every
-    # overflow rescanned all of them. Common words overflow constantly, so the
-    # work grew with cards x overflows: a 3,000-card harvest spent 104 minutes
-    # where its matching accounts for 3.
-    targets = (
-        [(only, candidates[only])] if only is not None else list(candidates.items())
-    )
-    for card_id, by_identity in targets:
-        card_cap = cap_for[card_id]
-        if len(by_identity) <= card_cap:
-            continue
-        by_source: dict[str, list] = {}
-        for identity, item in by_identity.items():
-            by_source.setdefault(item.get("source", ""), []).append((identity, item))
-        for rows in by_source.values():
-            rows.sort(key=lambda e: (e[1]["metrics"]["score"], e[1]["sentence_id"]))
+    if not available:
+        return {}
+    quotas: dict[str, int] = {}
+    for source, count in available.items():
+        share = source_share.get(source, 1.0 / len(available))
+        quotas[source] = min(count, int(card_cap * share))
+    # Whatever a thin source could not fill goes to the others, so a reserved
+    # share never wastes budget on a source that has nothing to give.
+    spare = card_cap - sum(quotas.values())
+    while spare > 0:
+        grew = False
+        for source, count in available.items():
+            if spare <= 0:
+                break
+            if quotas[source] < count:
+                quotas[source] += 1
+                spare -= 1
+                grew = True
+        if not grew:
+            break
+    return quotas
 
-        kept: dict[str, dict[str, Any]] = {}
-        shares = source_share or {}
-        # First pass: every source gets its reserved share.
-        for source, rows in by_source.items():
-            quota = int(card_cap * shares.get(source, 1.0 / max(len(by_source), 1)))
-            for identity, item in rows[:quota]:
-                kept[identity] = item
-        # Second pass: whatever a source could not fill goes to the best of the
-        # rest, so a reserved share never wastes budget on a source that is thin.
-        if len(kept) < card_cap:
-            leftovers = sorted(
-                ((i, it) for i, it in by_identity.items() if i not in kept),
-                key=lambda e: (e[1]["metrics"]["score"], e[1]["sentence_id"]),
-            )
-            for identity, item in leftovers[: card_cap - len(kept)]:
-                kept[identity] = item
-        candidates[card_id] = kept
+
+def _sample_without_repeats(
+    shortlist: list[tuple[str, dict[str, Any]]], quota: int
+) -> list[tuple[str, dict[str, Any]]]:
+    """Spread the pick across the shortlist, skipping near-repeats.
+
+    Tatoeba contributors write agreement families on purpose, so a card can
+    receive one sentence several times over -- three of `nada`'s five best
+    examples were "Yo no tengo nada que ver con esto/eso/en eso". A repeat is
+    swapped for the next unused entry rather than rejected outright, so a card
+    with nothing else still fills its budget.
+    """
+
+    chosen: list[tuple[str, dict[str, Any]]] = []
+    signatures: list[frozenset[str]] = []
+    phrases: list[frozenset[tuple[str, ...]]] = []
+    used: set[str] = set()
+
+    def admit(identity: str, item: dict[str, Any]) -> bool:
+        signature = token_set(item["text"])
+        phrase = phrase_set(item["text"])
+        if redundancy_penalty(
+            signature, signatures, subject_phrases=phrase, other_phrases=phrases
+        ):
+            return False
+        chosen.append((identity, item))
+        signatures.append(signature)
+        phrases.append(phrase)
+        return True
+
+    for identity, item in systematic_sample(shortlist, quota):
+        used.add(identity)
+        admit(identity, item)
+    # A card that lost picks to repeats backfills from the rest of its
+    # shortlist rather than publishing short.
+    for identity, item in shortlist:
+        if len(chosen) >= quota:
+            break
+        if identity in used:
+            continue
+        used.add(identity)
+        admit(identity, item)
+    return chosen
 
 
 def _reusable_harvest(workspace, run_directory: Path, cache_key: str) -> Path | None:
@@ -339,9 +376,17 @@ def harvest_run_stage(
         for card in cards
     }
     cap = wsd_budget_per_card(profile["harvest"])
-    candidates: dict[str, dict[str, dict[str, Any]]] = {
-        card["card_id"]: {} for card in cards
-    }
+    # A card samples wider than its budget and lets quality cut it down, so the
+    # pool it draws from is neutral on usage and picky about form.
+    pool_multiplier = int(
+        (shared.get("pooling") or {}).get("pool_multiplier") or DEFAULT_POOL_MULTIPLIER
+    )
+    quality_weights = (shared.get("pooling") or {}).get("quality_weights") or {}
+    pools: dict[str, dict[str, SourcePool]] = {card["card_id"]: {} for card in cards}
+    # An example is the same example wherever it turns up. Deduping the stream
+    # once, before matching, costs one set lookup and saves the matcher from
+    # re-tokenising subtitle lines that recur in hundreds of films.
+    seen_identities: set[str] = set()
     sentence_records: dict[str, dict[str, Any]] = {}
     # Every distinct sentence that ever matched a card, counted before the
     # budget trims it. Without this the funnel is unreadable per card: the
@@ -461,7 +506,12 @@ def harvest_run_stage(
                 # precisely the ones the fraction rule is willing to abandon.
                 and is_last_source
                 and scanned_records % check_every == 0
-                and sum(1 for cid, held in candidates.items() if len(held) >= cap_for[cid]) >= stop_after
+                and sum(
+                    1
+                    for cid, by_source in pools.items()
+                    if sum(len(pool.held) for pool in by_source.values()) >= cap_for[cid]
+                )
+                >= stop_after
             ):
                 stopped_early = True
                 break
@@ -473,6 +523,10 @@ def harvest_run_stage(
                 )
             except HarvestRecordError as error:
                 rejections[f"invalid_provenance:{error}"] += 1
+                continue
+            record_identity = example_identity(record["target"]["text"])
+            if record_identity in seen_identities:
+                rejections["duplicate_example"] += 1
                 continue
             matched_cards = matcher.find_cards(record["target"]["text"])
             if not matched_cards:
@@ -491,45 +545,82 @@ def harvest_run_stage(
             variety = detect_variety(record["target"]["text"], language_policy)
             if variety is not None:
                 record["target"]["variety"] = variety
-            sentence_records[record["sentence_id"]] = record
+            seen_identities.add(record_identity)
+            admitted_here = False
             for card in matched_cards:
-                metrics = easiness_metrics(
-                    record["target"]["text"],
-                    card,
-                    matcher=matcher,
-                    frequency_ranks=frequency_ranks,
-                    shared_policy=shared,
-                )
-                candidate = {
-                    "sentence_id": record["sentence_id"],
-                    "metrics": metrics,
-                    "source": source_name,
-                    "source_rank": source_rank,
-                }
-                card_candidates = candidates[card["card_id"]]
-                # A card's candidates are distinct EXAMPLES, not corpus rows.
-                # Keyed by sentence_id, the same subtitle line appearing in many
-                # films entered the pool many times: `que` retained 60
-                # candidates that were only 4 distinct sentences, so every
-                # display slot showed one line four ways. Identical text scores
-                # identically, so the lowest sentence_id wins deterministically.
-                identity = example_identity(record["target"]["text"])
-                held = card_candidates.get(identity)
-                if held is None:
-                    card_candidates[identity] = candidate
-                    accepted_matches += 1
-                    matched_per_card[card["card_id"]] += 1
-                elif candidate["sentence_id"] < held["sentence_id"]:
-                    card_candidates[identity] = candidate
-                if len(card_candidates) > cap_for[card["card_id"]] * 2:
-                    _trim_candidates(
-                        candidates,
-                        cap_for=cap_for,
-                        source_share=source_share,
-                        only=card["card_id"],
-                    )
+                card_id = card["card_id"]
+                matched_per_card[card_id] += 1
+                from_this_source[card_id] += 1
+                accepted_matches += 1
+                by_source = pools[card_id]
+                pool = by_source.get(source_name)
+                if pool is None:
+                    pool = SourcePool(capacity=cap_for[card_id] * pool_multiplier)
+                    by_source[source_name] = pool
 
-    _trim_candidates(candidates, cap_for=cap_for, source_share=source_share)
+                def build(card=card, card_id=card_id) -> dict[str, Any]:
+                    # Only a match that actually enters the pool is scored.
+                    # `que` scored 209,468 sentences to keep 80, and the top
+                    # 100 cards were 55% of all scoring in a 9,999-card run.
+                    return {
+                        "sentence_id": record["sentence_id"],
+                        "metrics": easiness_metrics(
+                            record["target"]["text"],
+                            card,
+                            matcher=matcher,
+                            frequency_ranks=frequency_ranks,
+                            shared_policy=shared,
+                        ),
+                        "source": source_name,
+                        "source_rank": source_rank,
+                        "text": record["target"]["text"],
+                    }
+
+                if pool.offer(pool_key(card_id, record_identity), record_identity, build):
+                    admitted_here = True
+            if admitted_here:
+                sentence_records[record["sentence_id"]] = record
+
+    # Cut each card's uniform sample down to budget: worst third discarded on
+    # form, then spread evenly across what is left. Taking the head of the
+    # quality ranking instead would hand back the concentrating power that
+    # sampling removed -- whatever residual correlation quality has with usage
+    # would apply at full strength to the head and not at all to the rest.
+    deck_size = len(cards)
+    deaccented = deaccented_index(frequency_ranks)
+    candidates: dict[str, dict[str, dict[str, Any]]] = {}
+    for card in cards:
+        card_id = card["card_id"]
+        by_source = pools[card_id]
+        card_cap = cap_for[card_id]
+        quotas = _source_quotas(
+            {name: len(pool.held) for name, pool in by_source.items()},
+            card_cap,
+            source_share,
+        )
+        kept: dict[str, dict[str, Any]] = {}
+        for source_name, pool in by_source.items():
+            quota = quotas.get(source_name, 0)
+            if quota <= 0:
+                continue
+            scored = sorted(
+                pool.held.items(),
+                key=lambda entry: (
+                    quality_penalty(
+                        entry[1]["text"],
+                        frequency_ranks=frequency_ranks,
+                        deck_size=deck_size,
+                        weights=quality_weights,
+                        deaccented=deaccented,
+                    ),
+                    entry[1]["metrics"]["score"],
+                    entry[1]["sentence_id"],
+                ),
+            )
+            shortlist = scored[: max(quota, int(len(scored) * 2 / 3))]
+            for identity, item in _sample_without_repeats(shortlist, quota):
+                kept[identity] = item
+        candidates[card_id] = kept
     live_sentence_ids = {
         item["sentence_id"]
         for by_identity in candidates.values()
@@ -544,14 +635,19 @@ def harvest_run_stage(
     scope = profile["scope"]
     for card in cards:
         final_target = display_examples_for_rank(scope, card["rank"])
-        retained = sorted(
-            candidates[card["card_id"]].values(),
-            key=lambda item: (
-                item.get("source_rank", 0),
-                item["metrics"]["score"],
-                item["sentence_id"],
-            ),
-        )
+        retained = [
+            # The text rode along so quality could be scored without a second
+            # pass over the bank; it lives in the sentence bank, not here.
+            {key: value for key, value in item.items() if key != "text"}
+            for item in sorted(
+                candidates[card["card_id"]].values(),
+                key=lambda item: (
+                    item.get("source_rank", 0),
+                    item["metrics"]["score"],
+                    item["sentence_id"],
+                ),
+            )
+        ]
         candidate_cards.append(
             {
                 "card_id": card["card_id"],
@@ -612,6 +708,17 @@ def harvest_run_stage(
             "stop_when_budget_filled_fraction": stop_fraction,
             "cards_at_budget": sum(
                 1 for item in per_surface if item["candidate_count"] >= cap_for[item["card_id"]]
+            ),
+        },
+        "pooling": {
+            "policy_version": POOLING_POLICY_VERSION,
+            "pool_multiplier": pool_multiplier,
+            "selection": "uniform_hash_sample_then_quality_shortlist_then_spread",
+            "quality_weights": quality_weights,
+            "note": (
+                "Usage is sampled, form is judged. Ranking the pool by easiness "
+                "kept four copies of `de vez en cuando` for `vez` and scored "
+                "209,468 sentences for `que` to keep 80."
             ),
         },
         "surfaces_with_shortfall": sum(item["shortfall"] > 0 for item in per_surface),
