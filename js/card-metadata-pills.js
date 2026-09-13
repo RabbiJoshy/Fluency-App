@@ -175,6 +175,7 @@ export function senseMetadataItems(meaning) {
         // sense qualifier can help choose a meaning; etymology and provider
         // bookkeeping never belong on the card.
         if (!clean || (family === 'grammar' && kind === 'surface_mark')) return;
+        if (family === 'functional' && kind === 'semantic_scope') return;
         if (family === 'source' && kind !== 'qualifier') return;
         const key = `${family}\u0000${clean.toLocaleLowerCase('en')}`;
         if (seen.has(key)) return;
