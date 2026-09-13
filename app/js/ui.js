@@ -40,9 +40,18 @@ function reportSetupTimings(total) {
 // a card is answered, so a longer-lived cache keyed on object identity would
 // go stale without any way to notice.
 let _setupStateMemo = null;
+let _setupStateMemoEpoch = -1;
 
 function resetSetupStateMemo() {
     _setupStateMemo = new Map();
+    _setupStateMemoEpoch = Number(window.__progressEpoch || 0);
+}
+
+function ensureCurrentSetupStateMemo() {
+    const epoch = Number(window.__progressEpoch || 0);
+    if (!_setupStateMemo || _setupStateMemoEpoch !== epoch) {
+        resetSetupStateMemo();
+    }
 }
 
 function readGlobalStudyDefaults() {
@@ -1937,6 +1946,11 @@ const STABLE_SET_SLOT_COUNT = 20;
 function getSetupLearningState(item, { seenLemmas = new Set(), estimatedIds = null, estimate = 0 } = {}) {
     if (!currentUser || currentUser.isGuest || !progressData) return false;
 
+    // Progress changes in place after every answer and after a background
+    // Sheets refresh. A set render can therefore outlive the memo created by
+    // renderLevelSelector. Never let yesterday's "unseen" result disagree
+    // with the deck loader's current progress snapshot.
+    ensureCurrentSetupStateMemo();
     const wordId = getWordId(item);
     if (_setupStateMemo?.has(wordId)) return _setupStateMemo.get(wordId);
     const memoise = value => {
@@ -1988,6 +2002,10 @@ function getSetupLearningState(item, { seenLemmas = new Set(), estimatedIds = nu
 }
 
 async function renderRangeSelector() {
+    // This function is also called directly after progress refreshes and when
+    // returning from a completed deck, without passing through the level
+    // renderer. Give every visible set count one coherent, current snapshot.
+    resetSetupStateMemo();
     const langConfig = config.languages[selectedLanguage];
     const container = document.getElementById('rangeSelector');
     let minWord, maxWord;
@@ -2353,6 +2371,30 @@ async function startNextStudyLevelFirstSet() {
     // set). Verify the rendered sets and keep walking forward until we find
     // real new cards. Never fall back to replaying a completed set: that made
     // continuation appear to "stick" and forced the learner back into setup.
+    // Recount the current level first. stats.nextRange and the rendered dots
+    // were captured before the learner answered this set; merged-lemma and
+    // cross-mode progress can finish that queued set while the current deck is
+    // open. A fresh pass also lets us skip a newly-empty set and continue to a
+    // later genuinely unseen set in the same level.
+    const completedRange = stats.rangeString;
+    await renderRangeSelector();
+    const refreshedDots = Array.from(document.querySelectorAll('#rangeSelector .study-set-dot'));
+    const completedIndex = refreshedDots.findIndex(dot => dot.dataset.range === completedRange);
+    const sameLevelCandidates = (completedIndex >= 0
+        ? refreshedDots.slice(completedIndex + 1)
+        : refreshedDots).filter(dot =>
+        !dot.disabled && Number(dot.dataset.unseen || 0) > 0);
+    for (const dot of sameLevelCandidates) {
+        const built = await loadVocabularyData(dot.dataset.range, {
+            rankBasis: dot.dataset.rankBasis || 'stable',
+            setNumber: Number(dot.dataset.index) + 1,
+            levelSetCount: refreshedDots.length,
+            studyMode: 'new',
+            silentIfEmpty: true
+        });
+        if (built !== false) return;
+    }
+
     const visitedLevels = new Set();
     while (true) {
         const nextMeta = getNextStudyLevelMeta();
@@ -2381,8 +2423,7 @@ async function startNextStudyLevelFirstSet() {
         await next._rangeRenderPromise;
         const setDots = Array.from(document.querySelectorAll('#rangeSelector .study-set-dot'));
         const firstUnseenSet = setDots.find(dot =>
-            !dot.disabled && (Number(dot.dataset.unseen || 0) > 0
-                              || Number(dot.dataset.review || 0) > 0));
+            !dot.disabled && Number(dot.dataset.unseen || 0) > 0);
         if (!firstUnseenSet) continue;
 
         // Same staleness applies here: the dot said this set had cards, but
@@ -2394,6 +2435,7 @@ async function startNextStudyLevelFirstSet() {
             setNumber: Number(firstUnseenSet.dataset.index) + 1,
             levelSetCount: setDots.length,
             levelNumber: nextMeta.levelNumber,
+            studyMode: 'new',
             silentIfEmpty: true
         });
         if (built === false) continue;

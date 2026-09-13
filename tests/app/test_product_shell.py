@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v376"
+EXPECTED_CACHE_NAME = "flashcards-v378"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -567,7 +567,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260831a", worker)
-        self.assertIn("/js/main.js?v=20260913f", worker)
+        self.assertIn("/js/main.js?v=20260913g", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -866,3 +866,34 @@ class CognateSourceUnionTests(unittest.TestCase):
         per_language_line = source.index("const perLanguage = item.cognate_scores;", legacy_line)
         self.assertLess(legacy_line, per_language_line,
                         "the legacy score must be consulted before returning on the map")
+
+
+class StudySetProgressConsistencyTests(unittest.TestCase):
+    """Displayed set counts and the committed deck must use the same current
+    progress snapshot, including after a background refresh or the final
+    answer in the preceding set."""
+
+    def test_set_state_memo_is_invalidated_by_progress_epoch_and_each_render(self) -> None:
+        ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
+        self.assertIn("let _setupStateMemoEpoch = -1;", ui)
+        self.assertIn("_setupStateMemoEpoch !== epoch", ui)
+        range_start = ui.index("async function renderRangeSelector()")
+        reset = ui.index("resetSetupStateMemo();", range_start)
+        first_fetch = ui.index("fetchActiveVocabularyData(langConfig)", range_start)
+        self.assertLess(reset, first_fetch)
+
+    def test_empty_replacement_preserves_the_active_deck_without_an_unseen_popup(self) -> None:
+        vocab = (APP_ROOT / "js" / "vocab.js").read_text(encoding="utf-8")
+        self.assertIn("const previousDeckState = {", vocab)
+        self.assertIn("restorePreviousDeckState();", vocab)
+        self.assertIn("if (!opts.silentIfEmpty) await window.refreshSetupAfterProgress?.();", vocab)
+        self.assertNotIn("No unseen flashcards remain in this set", vocab)
+
+    def test_completion_recounts_same_level_and_only_autostarts_unseen_cards(self) -> None:
+        ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
+        continuation = ui[ui.index("async function startNextStudyLevelFirstSet()"):
+                          ui.index("function showStatsModal()")]
+        self.assertIn("await renderRangeSelector();", continuation)
+        self.assertIn("const sameLevelCandidates", continuation)
+        self.assertIn("Number(dot.dataset.unseen || 0) > 0", continuation)
+        self.assertNotIn("Number(dot.dataset.review || 0) > 0", continuation)
