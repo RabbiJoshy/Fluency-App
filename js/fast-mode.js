@@ -107,7 +107,20 @@ function refresh() {
     const summary = document.getElementById('fastModeSummary');
     if (summary) summary.textContent = summaryText();
     updateMappingStatus();
+    updateStreamlineRecCallout();
     globalThis.refreshExtrasButton?.();
+}
+
+const STREAMLINE_REC_DISMISSED_KEY = 'fluency_streamline_rec_dismissed_v1';
+
+function updateStreamlineRecCallout() {
+    const callout = document.getElementById('streamlineRecCallout');
+    if (!callout) return;
+    let dismissed = false;
+    try {
+        dismissed = localStorage.getItem(STREAMLINE_REC_DISMISSED_KEY) === '1';
+    } catch (_) {}
+    callout.style.display = dismissed ? 'none' : 'flex';
 }
 
 function languageName(code) {
@@ -159,9 +172,20 @@ function closeFastModePage() {
 
 function init() {
     document.getElementById('fastModeToggleBtn')?.addEventListener('click', () => {
+        try { localStorage.setItem(STREAMLINE_REC_DISMISSED_KEY, '1'); } catch (_) {}
+        updateStreamlineRecCallout();
         applyFastMode(currentState() !== 'on');
     });
-    document.getElementById('fastModeDetailBtn')?.addEventListener('click', openFastModePage);
+    document.getElementById('dismissStreamlineRecBtn')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        try { localStorage.setItem(STREAMLINE_REC_DISMISSED_KEY, '1'); } catch (_) {}
+        updateStreamlineRecCallout();
+    });
+    document.getElementById('fastModeDetailBtn')?.addEventListener('click', () => {
+        try { localStorage.setItem(STREAMLINE_REC_DISMISSED_KEY, '1'); } catch (_) {}
+        updateStreamlineRecCallout();
+        openFastModePage();
+    });
     document.getElementById('closeFastModeModal')?.addEventListener('click', closeFastModePage);
     document.getElementById('fastModeModal')?.addEventListener('click', event => {
         if (event.target?.id === 'fastModeModal') closeFastModePage();
