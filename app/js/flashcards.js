@@ -3018,6 +3018,36 @@ function senseMetadataItems(meaning) {
     }
     combine('possibly', 'offensive', 'possibly offensive');
 
+    // SpanishDict often expresses one grammatical reading as several atomic
+    // canonical features: "imperfect indicative" becomes tense + mood and
+    // "third person singular" becomes person + number. Those atoms are useful
+    // to WSD, but four separate learner chips repeat the dictionary sentence
+    // and make the active sense look busier than it is. Reassemble grammar
+    // that belongs to this one sense into one readable, source-ordered detail.
+    const grammarIndexes = items
+        .map((item, index) => item.family === 'grammar' ? index : -1)
+        .filter(index => index >= 0);
+    if (grammarIndexes.length > 1) {
+        const grammarItems = grammarIndexes.map(index => items[index]);
+        const sourceLabels = [];
+        for (const item of grammarItems) {
+            const label = String(item.sourceText || '').trim()
+                || senseMetadataDisplay(item).full;
+            if (label && !sourceLabels.some(existing =>
+                existing.toLocaleLowerCase('en') === label.toLocaleLowerCase('en'))) {
+                sourceLabels.push(label);
+            }
+        }
+        const firstIndex = grammarIndexes[0];
+        for (const index of [...grammarIndexes].reverse()) items.splice(index, 1);
+        items.splice(firstIndex, 0, {
+            family: 'grammar',
+            kind: 'combined_sense_mark',
+            value: sourceLabels.join(' · '),
+            sourceText: sourceLabels.join('; '),
+        });
+    }
+
     const familyOrder = {
         construction: 0,
         companion: 1,
@@ -3125,7 +3155,8 @@ function senseMetadataDisplay(item) {
 }
 
 function isSenseDefiningGrammar(item) {
-    return /^(?:countability|definiteness|formation|function|mood|noun-class|number|person|polarity|position|pronoun-class|pronoun-use|tense|verb-class|voice|word-class)=/u.test(item.value)
+    return item.kind === 'combined_sense_mark'
+        || /^(?:countability|definiteness|formation|function|mood|noun-class|number|person|polarity|position|pronoun-class|pronoun-use|tense|verb-class|voice|word-class)=/u.test(item.value)
         || new Set([
             'reflexive=true',
             'form=personal-infinitive',
@@ -3196,7 +3227,7 @@ function senseMetadataHTML(meaning, active) {
 
 function contextWithoutSenseMetadata(meaning, active) {
     const context = String(meaning?.context || '').trim();
-    if (!active || !context) return context;
+    if (!context) return context;
     const metadata = meaning?.metadata || {};
     const canonical = metadata.sense_metadata || {};
     const provider = canonical.source_metadata || metadata.sense_provider_metadata || {};
@@ -3211,8 +3242,11 @@ function contextWithoutSenseMetadata(meaning, active) {
     const metadataItems = senseMetadataItems(meaning);
     let residual = context;
     // A SpanishDict context can mix an ordinary gloss and metadata in one
-    // string ("to remove; used with de").  Remove only the source span that
+    // string ("to remove; used with de"). Remove only the source span that
     // produced a canonical feature, leaving the semantic clarification intact.
+    // Do this for inactive rows as well: those rows are navigation labels, so
+    // repeating tense/person/region prose there is especially noisy. The
+    // selected row renders the same facts through the structured detail tier.
     for (const item of [...metadataItems].sort((a, b) => (
         String(b.sourceText || '').length - String(a.sourceText || '').length
     ))) {

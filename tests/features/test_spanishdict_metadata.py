@@ -26,6 +26,14 @@ class SpanishDictMetadataAccountingTests(unittest.TestCase):
         self.assertEqual(accounting.unclassified, ())
         self.assertEqual(accounting.coverage["regions"], "parsed")
 
+    def test_english_gloss_region_is_explicitly_ignored_not_lost(self) -> None:
+        accounting = metadata_accounting({"regions": ["United Kingdom", "Spain"]})
+        self.assertEqual(accounting.ignored, ({
+            "source_field": "spanishdict.regions",
+            "value": "United Kingdom",
+            "reason": "English gloss locale, not target-language usage",
+        },))
+
 
 if __name__ == "__main__":
     unittest.main()

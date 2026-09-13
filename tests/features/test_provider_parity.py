@@ -72,6 +72,33 @@ class ProviderParityTests(unittest.TestCase):
         features = spanishdict_extract({"context": "used to indicate the future"})
         self.assertEqual({item.family for item in features}, {"functional"})
 
+    def test_family_relative_is_not_mistaken_for_relative_pronoun_grammar(self) -> None:
+        noun = spanishdict_extract({"pos": "NOUN", "context": "relative"})
+        pronoun = spanishdict_extract({"pos": "PRON", "context": "relative"})
+        self.assertEqual(values(noun, "grammar"), set())
+        self.assertEqual(values(pronoun, "grammar"), {"function=relative"})
+
+    def test_multiword_quoted_companions_remain_complete(self) -> None:
+        features = spanishdict_extract({"context": 'used with "por" or "a por"'})
+        self.assertEqual(values(features, "companion"), {"por", "a por"})
+        self.assertNotIn('por"', values(features, "companion"))
+
+    def test_soft_trailing_companion_is_not_marked_required(self) -> None:
+        features = spanishdict_extract({
+            "context": 'used with "a" or "de" and sometimes preceded by "con"'
+        })
+        self.assertEqual(values(features, "companion"), {"a", "de"})
+        self.assertEqual(
+            values(features, "construction"), {"sometimes preceded by con"}
+        )
+
+    def test_english_gloss_locales_are_not_spanish_regions(self) -> None:
+        features = spanishdict_extract({
+            "context": "dwelling",
+            "regions": ["United Kingdom", "Spain"],
+        })
+        self.assertEqual(values(features, "register"), {"Spain"})
+
 
 if __name__ == "__main__":
     unittest.main()

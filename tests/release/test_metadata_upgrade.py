@@ -147,6 +147,28 @@ class MetadataUpgradeTests(unittest.TestCase):
             {(item["family"], item["kind"], item["value"]) for item in features},
         )
 
+    def test_spanishdict_upgrade_uses_pos_to_disambiguate_relative(self) -> None:
+        family = {
+            "pos": "NOUN",
+            "translation": "grandmother",
+            "context": "relative",
+            "metadata": {
+                "source_adapter": "spanishdict-sense-menu/v1",
+                "sense_provider_metadata": {"context": "relative"},
+            },
+        }
+        pronoun = deepcopy(family)
+        pronoun.update({"pos": "PRON", "translation": "who"})
+
+        canonicalize_meaning_metadata(family, policy=self.policy("es"))
+        canonicalize_meaning_metadata(pronoun, policy=self.policy("es"))
+
+        self.assertEqual(family["metadata"]["specialist_features"], [])
+        self.assertIn(
+            "function=relative",
+            {item["value"] for item in pronoun["metadata"]["specialist_features"]},
+        )
+
     def test_wiktionary_upgrade_retypes_stale_provider_features(self) -> None:
         meaning = {
             "translation": "to have",

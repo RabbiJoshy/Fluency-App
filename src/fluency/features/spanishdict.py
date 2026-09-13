@@ -28,6 +28,11 @@ USED_WITH = re.compile(
     re.IGNORECASE,
 )
 QUOTED_TERM = re.compile(r'["“](?P<term>[^"”]+)["”]')
+SOFT_TRAILING_COMPANION = re.compile(
+    r"\b(?P<soft>commonly|frequently|generally|normally|often|sometimes|typically|usually)\s+"
+    r"(?P<relation>preceded|followed)\s+by\s*$",
+    re.IGNORECASE,
+)
 FUNCTIONAL = re.compile(r"^used to\b", re.IGNORECASE)
 CONSTRUCTION = re.compile(
     r"^(?:followed by|takes?|used after|used before|used in|used with)\b",
@@ -87,17 +92,38 @@ EXACT_GRAMMAR = {
     "relative": "function=relative",
     "subject": "function=subject",
 }
+# Some one-word SpanishDict contexts are ambiguous English labels rather than
+# grammar. ``relative`` describes both a relative pronoun and a family member;
+# POS is the provider evidence that separates those meanings. The same narrow
+# scoping prevents future noun senses of ``subject`` or ``personal`` from being
+# silently promoted into grammatical metadata.
+EXACT_GRAMMAR_POS = {
+    "demonstrative": frozenset({"ADJ", "DET", "PRON"}),
+    "feminine demonstrative": frozenset({"ADJ", "DET", "PRON"}),
+    "indeterminate": frozenset({"ADJ", "DET", "PRON"}),
+    "interrogative": frozenset({"ADJ", "ADV", "DET", "PRON"}),
+    "personal": frozenset({"PRON"}),
+    "possessive": frozenset({"ADJ", "DET", "PRON"}),
+    "relative": frozenset({"ADV", "PRON"}),
+    "subject": frozenset({"PRON"}),
+}
+
+# These tags qualify the English gloss supplied by SpanishDict, not the
+# Spanish expression. Showing them as Spanish dialect labels makes ``piso →
+# storey`` look British Spanish and ``color → color`` look US Spanish.
+ENGLISH_GLOSS_REGIONS = frozenset({"United Kingdom", "United States"})
 
 
 def _clauses(context: str) -> tuple[str, ...]:
     return tuple(part.strip() for part in re.split(r"[;|]", context) if part.strip())
 
 
-def _grammar_features(clause: str) -> tuple[SpecialistFeature, ...]:
+def _grammar_features(clause: str, *, pos: str = "") -> tuple[SpecialistFeature, ...]:
     lowered = clause.casefold().strip(" .;:()[]")
     features: list[SpecialistFeature] = []
     exact = EXACT_GRAMMAR.get(lowered)
-    if exact:
+    allowed_pos = EXACT_GRAMMAR_POS.get(lowered)
+    if exact and (not allowed_pos or pos.upper() in allowed_pos):
         features.append(SpecialistFeature("grammar", "sense_mark", exact, clause))
     # These two labels carry gender as well as demonstrative function.
     if lowered == "feminine demonstrative":
@@ -113,6 +139,7 @@ def extract(sense: Mapping[str, Any]) -> tuple[SpecialistFeature, ...]:
     """Return typed features for one SpanishDict sense."""
 
     features: list[SpecialistFeature] = []
+    pos = str(sense.get("pos") or "").upper()
     context = sense.get("context")
     if isinstance(context, str) and context.strip():
         for clause in _clauses(context):
@@ -132,34 +159,53 @@ def extract(sense: Mapping[str, Any]) -> tuple[SpecialistFeature, ...]:
                         SpecialistFeature("construction", "optional_companion", usage_text, usage_text)
                     )
                     continue
-                quoted = [
-                    match.group("term").strip().casefold()
-                    for match in QUOTED_TERM.finditer(used_with.group("tail"))
-                    if match.group("term").strip()
-                ]
+                tail = used_with.group("tail")
+                quoted = []
+                optional = []
+                for match in QUOTED_TERM.finditer(tail):
+                    term = match.group("term").strip().casefold()
+                    if not term:
+                        continue
+                    prefix = tail[:match.start()].rstrip(' ,;:-')
+                    soft_tail = SOFT_TRAILING_COMPANION.search(prefix)
+                    if soft_tail:
+                        optional.append((soft_tail.group("soft").casefold(), soft_tail.group("relation").casefold(), term))
+                    else:
+                        quoted.append(term)
                 # Quotation is provider evidence that ``a`` is the Spanish
                 # preposition, not the English article in "an infinitive".
-                if quoted and all(" " not in value for value in quoted):
+                if quoted:
                     features.extend(
-                        SpecialistFeature("companion", "required_word", value, usage_text)
+                        SpecialistFeature(
+                            "companion",
+                            "required_phrase" if " " in value else "required_word",
+                            value,
+                            usage_text,
+                        )
                         for value in quoted
                     )
+                features.extend(
+                    SpecialistFeature(
+                        "construction",
+                        "optional_companion",
+                        f"{soft} {relation} by {term}",
+                        usage_text,
+                    )
+                    for soft, relation, term in optional
+                )
+                if quoted or optional:
                     continue
-                unquoted = used_with.group("tail").strip(' .,:[]()"“”').split()[0].casefold()
+                unquoted = tail.strip(' .,:[]()"“”').split()[0].casefold()
                 if unquoted and unquoted not in GRAMMATICAL_FORMS:
-                    features.append(
-                        SpecialistFeature("companion", "required_word", unquoted, usage_text)
-                    )
+                    features.append(SpecialistFeature("companion", "required_word", unquoted, usage_text))
                 else:
-                    features.append(
-                        SpecialistFeature("construction", "companion_form", usage_text, usage_text)
-                    )
+                    features.append(SpecialistFeature("construction", "companion_form", usage_text, usage_text))
                 continue
 
             if FUNCTIONAL.match(clause):
                 features.append(SpecialistFeature("functional", "usage_note", clause, clause))
                 continue
-            grammar = _grammar_features(clause)
+            grammar = _grammar_features(clause, pos=pos)
             if grammar:
                 features.extend(grammar)
                 continue
@@ -172,7 +218,7 @@ def extract(sense: Mapping[str, Any]) -> tuple[SpecialistFeature, ...]:
     for region in sense.get("regions", []) or []:
         if isinstance(region, Mapping):
             region = region.get("name") or region.get("label") or region.get("region")
-        if isinstance(region, str) and region.strip():
+        if isinstance(region, str) and region.strip() and region.strip() not in ENGLISH_GLOSS_REGIONS:
             features.append(
                 SpecialistFeature("register", "region", region.strip(), region.strip())
             )

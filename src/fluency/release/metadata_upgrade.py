@@ -79,6 +79,7 @@ def canonicalize_meaning_metadata(
     elif adapter.startswith("spanishdict-"):
         nested = provider.get("spanishdict") or {}
         source = dict(nested) if isinstance(nested, dict) else {}
+        source["pos"] = meaning.get("pos") or meaning.get("part_of_speech") or ""
         source["context"] = provider.get("context") or meaning.get("context") or ""
         source.setdefault("regions", provider.get("regions") or [])
         # SpanishDict's context classifier is deliberately revisable. Rebuild

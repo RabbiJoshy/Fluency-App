@@ -59,6 +59,21 @@ class MetadataContractUITests(unittest.TestCase):
         self.assertIn(".sense-metadata-tier--details.is-single", styles)
         self.assertIn("text-align: center", styles)
 
+    def test_atomic_grammar_features_recombine_for_the_learner(self) -> None:
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        self.assertIn("kind: 'combined_sense_mark'", flashcards)
+        self.assertIn("sourceLabels.join(' · ')", flashcards)
+        self.assertIn("item.kind === 'combined_sense_mark'", flashcards)
+
+    def test_inactive_spanishdict_rows_keep_semantics_but_drop_typed_metadata(self) -> None:
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        context_renderer = flashcards[
+            flashcards.index("function contextWithoutSenseMetadata"):
+            flashcards.index("function toggleSenseMetadataChip")
+        ]
+        self.assertNotIn("if (!active || !context) return context;", context_renderer)
+        self.assertIn("Do this for inactive rows as well", context_renderer)
+
     def test_canonical_wiktionary_context_is_not_repeated_beside_features(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
         self.assertIn("String(provider.context || '').trim() === context", flashcards)

@@ -38,6 +38,23 @@
       "examples": "preserved",
       "regions": "parsed_and_preserved"
     },
+    "region_semantics": {
+      "target_language": [
+        "Andes",
+        "Argentina",
+        "Caribbean",
+        "Central America",
+        "Cuba",
+        "Latin America",
+        "Mexico",
+        "Panama",
+        "South America",
+        "Southern Cone",
+        "Spain",
+        "Venezuela"
+      ],
+      "english_gloss_locale_ignored": ["United Kingdom", "United States"]
+    },
     "canonical_families": [
       "companion",
       "construction",
