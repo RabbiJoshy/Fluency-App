@@ -46,9 +46,18 @@ obligation` become `functional/modality=obligation`), while `embedding_text`
 retains the provider's complete wording. The card deliberately displays that
 original wording. Unmapped functions remain typed `usage_note` values rather
 than being forced into a broad or misleading bucket.
-The current Spanish projection canonicalizes 1,218 of 1,578 functional feature
-occurrences (77%) across modality, temporal and semantic relations, discourse
-functions, speech acts and emotions; the other 360 retain provider prose.
+The current Spanish projection canonicalizes every one of the 1,578 observed
+functional feature occurrences across modality, temporal and semantic
+relations, discourse functions, speech acts, emotions and semantic scope. New
+or unknown provider wording still falls back safely to a typed `usage_note`.
+
+The residual audit distinguishes learner-facing function from dictionary scope.
+Scope descriptions such as `used to talk about prices` remain canonical WSD
+evidence (`functional/semantic_scope`) but are not rendered as pills; their
+original prose stays naturally beside the gloss. This avoids both losing a
+meaning distinction and presenting dictionary editorial prose as grammar.
+There are 125 observed semantic-scope occurrences; the other 1,453 functional
+occurrences remain eligible for the learner-facing details tier.
 
 ## Shipped Spanish audit
 

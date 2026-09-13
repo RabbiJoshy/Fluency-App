@@ -28,10 +28,17 @@ class ProviderParityTests(unittest.TestCase):
         self.assertEqual(obligation[0].embedding_text, "used to express obligation")
 
     def test_unmapped_functional_prose_remains_a_usage_note(self) -> None:
-        features = spanishdict_extract({"context": "used to toast"})
+        features = spanishdict_extract({"context": "used to perform a future provider action"})
         self.assertEqual(
             {(item.kind, item.value) for item in features},
-            {("usage_note", "used to toast")},
+            {("usage_note", "used to perform a future provider action")},
+        )
+
+    def test_dictionary_scope_is_typed_without_becoming_a_ui_qualifier(self) -> None:
+        features = spanishdict_extract({"context": "used to talk about prices"})
+        self.assertEqual(
+            {(item.kind, item.value, item.embedding_text) for item in features},
+            {("semantic_scope", "prices", "used to talk about prices")},
         )
 
     def test_grammar_marks_share_canonical_values(self) -> None:
