@@ -1,0 +1,73 @@
+{
+  "target_language": "nl",
+  "known_language": "en",
+  "notes": "Dutch read by an English speaker. The skeletons collapse the regular Germanic orthographic correspondences: Dutch spells length by doubling a vowel where English does not (kaas/cheese, boot/boat), writes k where English writes c (boek/book, muziek/music), z where English writes s (zee/sea), and v where English writes f. The digraphs ij, oe, ui and ou answer English simple vowels (mijn/mine, huis/house, koud/cold). Chosen by measuring four candidate rule sets against 29 attested cognate pairs: bare spelling scores 0.626 mean and reaches 0.75 on 12 of them, and these rules score 0.767 and reach it on 20. Digraph rules must precede their component letters. The rule set deliberately does nothing about the eight-pair trap list (slim, brave, rok, mist, angel, bad, dom, staf), which all score above 0.90 on form and are supposed to: form similarity is exactly what makes a false friend dangerous, and it is the meaning axis that has to reject them. Dutch has no release yet, so this is calibrated against the whole 50,000-surface OpenSubtitles frequency list rather than against a deck, exactly as French is. Cutoff 0.80, read against the top 3,000 of the frequency list because there is no deck: 148 words (5%). The band above it is clean (over/over, vriend/friend, probleem/problem, controle/control, speciale/special) and 0.75-0.80 is where it breaks — minuten/minute and koffie/coffee are right, but lekker/leaker, genomen/genome and schade/shade are not, and those are three words a beginner meets constantly. 0.70-0.75 is worse again (horen/horn, peter/meter, laten/late). Of an 18-word trap list only stout reaches the cutoff, at 0.92; Dutch stout is 'naughty' and English stout is 'resolute', which is one sense drifting rather than a coincidence, so the connection is still visible. slim, brave, rok, bad, dom, glad, arm, dun, wet and zin find no match at all.",
+  "target_skeleton": [
+    [
+      "ij",
+      "i"
+    ],
+    [
+      "oe",
+      "u"
+    ],
+    [
+      "ui",
+      "u"
+    ],
+    [
+      "ou",
+      "o"
+    ],
+    [
+      "aa",
+      "a"
+    ],
+    [
+      "ee",
+      "e"
+    ],
+    [
+      "oo",
+      "o"
+    ],
+    [
+      "uu",
+      "u"
+    ],
+    [
+      "k",
+      "c"
+    ],
+    [
+      "z",
+      "s"
+    ],
+    [
+      "v",
+      "f"
+    ]
+  ],
+  "known_skeleton": [
+    [
+      "ou",
+      "o"
+    ],
+    [
+      "ea",
+      "e"
+    ],
+    [
+      "k",
+      "c"
+    ]
+  ],
+  "minimum_length": 4,
+  "length_guard": 0.7,
+  "gloss_maximum_words": 6,
+  "meaning_floor": 0.75,
+  "meaning_weight": 0.25,
+  "candidate_budget": 400,
+  "default_threshold": 0.8,
+  "known_must_be_a_gloss": true
+}
