@@ -108,6 +108,6 @@
   "meaning_weight": 0.25,
   "candidate_budget": 400,
   "default_threshold": 0.75,
-  "notes": "Portuguese read by an English speaker. The transparent pairs are Latinate vocabulary shared through both languages' borrowing (informação/information, possível/possible) plus outright loans. Nasal vowels and the lh/nh digraphs are folded; the rest is edit distance. Threshold 0.70. Cutoff: Above 0.75 is shared Latinate vocabulary a reader cannot miss: base, canal, alternativa/alternative, apartamento/apartment, artista/artist. The band below holds acredita/accredit, which is not what acreditar means.",
+  "notes": "Portuguese read by an English speaker. The transparent pairs are Latinate vocabulary shared through both languages' borrowing (informação/information, possível/possible) plus outright loans. Nasal vowels and the lh/nh digraphs are folded; the rest is edit distance. Threshold 0.70. Cutoff 0.75, unchanged by the move to a dictionary-wide map: 199 of the 3,000-card deck (7%), 3,443 of 19,326 scored surfaces. 0.75-0.80 holds (agente/agent, alarme/alarm, artista/artist, classe/class) and 0.70-0.75 is where half-truths collect (banco/bank, bando/band, chefe/chef). No false friend from the standard list reaches the cutoff: puxar 0.37, pretender 0.71, assistir 0.69, costume 0.52, livraria 0.12, and esquisito and exito find no match at all.",
   "known_must_be_a_gloss": true
 }
