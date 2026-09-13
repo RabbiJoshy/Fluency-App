@@ -609,6 +609,7 @@ function renderArtistSourceSummary() {
     image.style.backgroundImage = art ? `url('${art}')` : '';
     image.style.backgroundColor = art || isCustom ? '' : (activeArtist.colorTheme?.primary || 'var(--accent-primary)');
     artistBtn.textContent = isCustom ? 'Change songs' : 'Change artist';
+    speechBtn.textContent = 'Speech ›';
     step.style.display = 'block';
 
     window.mergeArtistProgressIntoSourceStep?.();

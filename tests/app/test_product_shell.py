@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v393"
+EXPECTED_CACHE_NAME = "flashcards-v394"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -567,7 +567,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260831a", worker)
-        self.assertIn("/js/main.js?v=20260913o", worker)
+        self.assertIn("/js/main.js?v=20260913p", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -910,3 +910,24 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("European Portuguese", main)
         self.assertIn("Brazilian Portuguese", main)
         self.assertIn(".choice-sheet-back", css)
+
+    def test_artist_mode_source_card_is_slim_and_has_parity_with_speech_mode(self) -> None:
+        html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
+        css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
+        main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
+
+        # Header and redundant language picker button are hidden for parity
+        self.assertIn("#artistSourceStep > .artist-source-header,", css)
+        self.assertIn("#artistSourceCard > .artist-source-language-btn", css)
+        self.assertIn("display: none !important;", css)
+
+        # Main choice layout is a horizontal flex row with pill action buttons
+        self.assertIn(".artist-source-main-choice {", css)
+        self.assertIn(".artist-source-secondary-actions {", css)
+        self.assertIn("display: flex;", css)
+        self.assertIn("border-radius: 999px;", css)
+
+        # Button label is concise and non-clunky
+        self.assertIn("speechBtn.textContent = 'Speech ›';", main)
+        self.assertIn('id="artistSourceSpeechBtn" class="artist-source-action-btn">Speech ›</button>', html)
+        self.assertNotIn(">Switch to Speech<", html)
