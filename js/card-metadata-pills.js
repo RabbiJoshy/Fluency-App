@@ -199,18 +199,24 @@ export function senseMetadataItems(meaning) {
             add(feature.family, feature.kind || '', feature.value, feature.embedding_text);
         }
     }
-    for (const region of provider.regions || []) {
-        const label = region && typeof region === 'object'
-            ? (region.name || region.label || region.region)
-            : region;
-        add('register', 'region', label);
-    }
-    for (const topic of provider.topics || []) add('domain', 'topic', topic);
-    if (provider.qualifier) add('source', 'qualifier', provider.qualifier);
-    for (const tag of provider.tags || []) {
-        const lowered = String(tag || '').toLowerCase();
-        if (SENSE_REGISTER_TAGS.has(lowered)) add('register', 'usage_tag', tag);
-        else if (SENSE_CONSTRUCTION_TAGS.has(lowered)) add('construction', 'grammar_tag', tag);
+    // Provider-shaped fallbacks exist only for older releases. Once a release
+    // carries the canonical contract, its adapter is the authority: reading
+    // raw regions/tags again can resurrect values that it explicitly ignored
+    // (for example SpanishDict's UK/Australia English-gloss locales).
+    if (!canonical.contract_version) {
+        for (const region of provider.regions || []) {
+            const label = region && typeof region === 'object'
+                ? (region.name || region.label || region.region)
+                : region;
+            add('register', 'region', label);
+        }
+        for (const topic of provider.topics || []) add('domain', 'topic', topic);
+        if (provider.qualifier) add('source', 'qualifier', provider.qualifier);
+        for (const tag of provider.tags || []) {
+            const lowered = String(tag || '').toLowerCase();
+            if (SENSE_REGISTER_TAGS.has(lowered)) add('register', 'usage_tag', tag);
+            else if (SENSE_CONSTRUCTION_TAGS.has(lowered)) add('construction', 'grammar_tag', tag);
+        }
     }
 
     // Compatibility for releases made before specialist_features crossed the
