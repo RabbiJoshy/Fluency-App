@@ -765,8 +765,7 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
     });
 
     const parsedButtons = [];
-    const cefrLevels = (!percentageMode && (!ppmData || ppmData.length === 0)) ? getCefrLevels(language) : null;
-
+    // CEFR is deprecated; release levels or percentage frequency bands are authoritative.
     for (let buttonIndex = 0; buttonIndex < buttons.length; buttonIndex++) {
         const btn = buttons[buttonIndex];
         let minWord, maxWord;
@@ -775,14 +774,10 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
             minWord = parseInt(btn.dataset.startRank);
             maxWord = parseInt(btn.dataset.endRank);
             rankBasis = 'source';
-        } else if (percentageMode && ppmData && ppmData.length > 0) {
+        } else if (btn.dataset.startRank && btn.dataset.endRank) {
             minWord = parseInt(btn.dataset.startRank);
             maxWord = parseInt(btn.dataset.endRank);
             rankBasis = btn.dataset.rankBasis || 'source';
-        } else if (cefrLevels) {
-            const lv = cefrLevels.find(l => l.level === btn.dataset.level);
-            if (!lv) continue;
-            [minWord, maxWord] = lv.wordCount.split('-').map(Number);
         } else {
             continue;
         }
@@ -889,33 +884,27 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
             description: level.label,
         }));
     }
-    if (usingReleaseLevels || (percentageMode && ppmData && ppmData.length > 0)) {
-        // Smart segment boundaries (both modes): pick stable baseline snap
-        // points that target ~equal cards-per-segment with frequency-cliff labels
-        // where the cliffs exist in the data. Algorithm auto-scales —
-        // artist mode (raw counts 2–500) gets cliffs like ≥50/≥20/…/≥2;
-        // normal mode (occurrences_ppm 1–50000) gets cliffs in the
-        // thousands. Falls back to the legacy coverage-threshold ranges
-        // if the vocab cache isn't available yet.
-        if (!usingReleaseLevels) _smartLevelRangesCache = null;
-        const preparedSamples = await _loadLevelSliderSamples(selectedLanguage);
-        const _raw = _levelSliderRawCache[selectedLanguage];
-        if (_raw && !usingReleaseLevels) {
-            // Level boundaries are built from the stable baseline before any
-            // optional filters. Filters change the eligible card count inside
-            // a level, never the level's identity or rank span.
-            const prepared = getPreparedSetupVocabulary(selectedLanguage, _raw);
-            _smartLevelRangesCache = computeSmartLevelRanges(prepared?.stableBaseline || []);
-            const eligible = prepared?.vocab || [];
-            const lastEligibleRank = eligible.reduce((maxRank, item) =>
-                Math.max(maxRank, Number(item.stableRank) || 0), 0);
-            // Hide only empty trailing levels (most notably the reserved 1×
-            // tail while single-occurrence words are hidden). Re-enabling a
-            // filter appends those levels without changing any earlier cut.
-            _smartLevelRangesCache = _smartLevelRangesCache.filter(range =>
-                range.startRank <= lastEligibleRank);
-        }
-        const percentageRanges = getActiveLevelRanges();
+    // Smart segment boundaries: pick stable baseline snap points that target
+    // ~equal cards-per-segment with frequency-cliff labels.
+    if (!usingReleaseLevels) _smartLevelRangesCache = null;
+    const preparedSamples = await _loadLevelSliderSamples(selectedLanguage);
+    const _raw = _levelSliderRawCache[selectedLanguage];
+    if (_raw && !usingReleaseLevels) {
+        // Level boundaries are built from the stable baseline before any
+        // optional filters. Filters change the eligible card count inside
+        // a level, never the level's identity or rank span.
+        const prepared = getPreparedSetupVocabulary(selectedLanguage, _raw);
+        _smartLevelRangesCache = computeSmartLevelRanges(prepared?.stableBaseline || []);
+        const eligible = prepared?.vocab || [];
+        const lastEligibleRank = eligible.reduce((maxRank, item) =>
+            Math.max(maxRank, Number(item.stableRank) || 0), 0);
+        // Hide only empty trailing levels (most notably the reserved 1×
+        // tail while single-occurrence words are hidden). Re-enabling a
+        // filter appends those levels without changing any earlier cut.
+        _smartLevelRangesCache = _smartLevelRangesCache.filter(range =>
+            range.startRank <= lastEligibleRank);
+    }
+    const percentageRanges = getActiveLevelRanges();
         console.log('Using percentage levels:', percentageRanges);
         const coverageType = activeArtist
             ? 'lyrics comprehension'
@@ -1000,18 +989,6 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
             </div>
             <div class="level-selector-buttons" style="display:none">${buttonsHTML}</div>
         `;
-    } else {
-        container.classList.remove('level-selector--slider');
-        const cefrLevels = getCefrLevels(language);
-        const levelsHTML = cefrLevels.map(level => {
-            const isSelected = level.level === selectedLevel;
-            return `
-            <button class="level-btn${isSelected ? ' selected' : ''}" data-level="${level.level}" data-short="${level.level}" data-full="${level.level}" title="${level.description}">
-                ${level.level}
-            </button>
-        `;}).join('');
-        container.innerHTML = levelsHTML;
-    }
 
     // Add click handlers for level buttons
     document.querySelectorAll('.level-btn').forEach(btn => {
@@ -2138,20 +2115,26 @@ async function renderRangeSelector() {
         maxWord = parseInt(selectedBtn.dataset.endRank);
         rankBasis = selectedBtn.dataset.rankBasis || 'source';
     } else if (releaseStudyStructure?.levels) {
-        const rLevel = releaseStudyStructure.levels.find(item => item.level === selectedLevel);
+        const rLevel = releaseStudyStructure.levels.find(item => item.level === selectedLevel || item.level_id === selectedLevel);
         if (rLevel) {
             minWord = rLevel.startRank;
             maxWord = rLevel.endRank;
             rankBasis = rLevel.rankBasis || 'source';
         } else {
-            const level = getCefrLevels(selectedLanguage).find(item => item.level === selectedLevel);
-            if (!level) return;
-            [minWord, maxWord] = level.wordCount.split('-').map(Number);
+            const ranges = getActiveLevelRanges();
+            const found = ranges.find(item => item.level === selectedLevel) || ranges[0];
+            if (!found) return;
+            minWord = found.startRank;
+            maxWord = found.endRank;
+            rankBasis = found.rankBasis || 'source';
         }
     } else {
-        const level = getCefrLevels(selectedLanguage).find(item => item.level === selectedLevel);
-        if (!level) return;
-        [minWord, maxWord] = level.wordCount.split('-').map(Number);
+        const ranges = getActiveLevelRanges();
+        const found = ranges.find(item => item.level === selectedLevel) || ranges[0];
+        if (!found) return;
+        minWord = found.startRank;
+        maxWord = found.endRank;
+        rankBasis = found.rankBasis || 'source';
     }
     if (!Number.isFinite(minWord) || !Number.isFinite(maxWord)) {
         console.warn('renderRangeSelector: bad level boundary', { minWord, maxWord, selectedLevel });

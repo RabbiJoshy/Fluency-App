@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v394"
+EXPECTED_CACHE_NAME = "flashcards-v395"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -567,7 +567,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260831a", worker)
-        self.assertIn("/js/main.js?v=20260913p", worker)
+        self.assertIn("/js/main.js?v=20260913q", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -931,3 +931,20 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("speechBtn.textContent = 'Speech ›';", main)
         self.assertIn('id="artistSourceSpeechBtn" class="artist-source-action-btn">Speech ›</button>', html)
         self.assertNotIn(">Switch to Speech<", html)
+
+    def test_lyrics_mode_level_and_sets_generation_is_not_blocked_by_release_levels(self) -> None:
+        ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
+        main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
+
+        # In ui.js, if (usingReleaseLevels) must be closed so smart level ranges execute for lyrics mode
+        slider_block = ui[ui.index("const usingReleaseLevels = releaseLevels.length > 0;"):
+                          ui.index("const percentageRanges = getActiveLevelRanges();")]
+        self.assertIn("if (usingReleaseLevels) {\n        _smartLevelRangesCache = releaseLevels.map", slider_block)
+        self.assertIn("        }));\n    }", slider_block)
+        self.assertIn("if (_raw && !usingReleaseLevels) {", slider_block)
+
+        # In main.js, switching from Lyrics to Speech must store pending language and reload to avoid hybrid state
+        speech_btn_block = main[main.index("speechBtn.onclick ="):
+                                main.index("window.renderSetupExtrasSection?.();")]
+        self.assertIn("sessionStorage.setItem('fluencyPendingSpeechLanguage', targetLang);", speech_btn_block)
+        self.assertIn("window.location.href = window.location.pathname;", speech_btn_block)
