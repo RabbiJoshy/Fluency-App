@@ -32,11 +32,12 @@
   "inventory": {
     "source_adapter": "published-surface-frequency-list/v1",
     "language_policy": "cs-v1",
-    "source_edition": "FrequencyWords OpenSubtitles 2018 cs 50k",
+    "source_edition": "FrequencyWords OpenSubtitles 2018 cs, filtered: frequencywords-cs-filtered-2026-09-13",
     "frequency_measure": "surface_token_occurrences",
     "output_schema": "surface-inventory/v1",
     "identity_unit": "surface",
-    "lemma_role": "excluded"
+    "lemma_role": "excluded",
+    "source_note": "Counts come from subtitles because the app teaches speech and the harvest reads subtitles; CNK SYN2015 is written Czech and ranks newspaper vocabulary first. CNK is not discarded -- it corroborates every surface, supplies the capitalisation evidence that removes proper nouns, and enriches lemma/POS afterwards via svk-lookup at 99.9% coverage. See the snapshot's snapshot.json."
   },
   "sense_menu": {
     "source_adapter": "wiktionary-sense-menu/v1",
