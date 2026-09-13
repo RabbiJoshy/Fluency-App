@@ -253,6 +253,7 @@ async function updateExclusionBars() {
     // re-fetch and re-filter what was just computed here.
     globalThis.setupVocabularySnapshot = vocabularyData;
     globalThis.refreshExtrasButton?.();
+    globalThis.refreshFastMode?.();
 
     // Update personal coverage bar
     updatePersonalCoverage(afterCognate);
