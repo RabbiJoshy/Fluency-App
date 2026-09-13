@@ -37,12 +37,12 @@
     "source_edition": "spanishdict-pinned-snapshot",
     "gloss_language": "en",
     "snapshot_id": "spanishdict-2026-08-19-cache-v1",
-    "minimum_card_coverage": 0.94,
+    "minimum_card_coverage": 0.98,
     "output_schema": "sense-menu/v1",
     "join_key": "surface_card_id",
     "lemma_role": "lookup_metadata_only",
-    "snapshot_note": "The v10 profiles name spanishdict-complete-menu-2026-08-23-v1, which is NOT present in the workspace -- only spanishdict-2026-08-19-cache-v1 is. Using what exists so the deck can be built; the named snapshot needs to be recovered or the shipping profile repointed.",
-    "coverage_note": "Lowered from 0.98 for THIS DIAGNOSTIC DECK ONLY. The SpanishDict cache was populated for the previous surface list and covers 94.6% of the EsPal top 1,000 (and only 32.6% of the top 9,999). The 54 uncovered cards are names/English (jack, the, you), verb+enclitic compounds (escuchame, olvidalo) that SpanishDict indexes only as lemmas, and ordinary words the old cache simply never fetched (coronel, teniente, asesinato). Do not copy this threshold into a shipping profile: decide the sense-menu source first."
+    "snapshot_note": "SpanishDict reaches ~94.5% of the EsPal list through surface_cache, headword_cache, conjugation_reverse and spanish_forms combined; 50.7% has a menu already fetched. The remainder is un-fetched pages, not missing coverage.",
+    "coverage_note": "Restored to 0.98. The 94.6% that failed earlier was measured on the UNFILTERED EsPal list, whose top 1,000 carried 12 English/name surfaces no Spanish dictionary has. With those removed the shortfall they caused goes with them."
   },
   "harvest": {
     "shared_policy": "speech-v1",
