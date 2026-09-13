@@ -27,11 +27,20 @@ class SpanishDictMetadataAccountingTests(unittest.TestCase):
         self.assertEqual(accounting.coverage["regions"], "parsed")
 
     def test_english_gloss_region_is_explicitly_ignored_not_lost(self) -> None:
-        accounting = metadata_accounting({"regions": ["United Kingdom", "Spain"]})
-        self.assertEqual(accounting.ignored, ({
+        accounting = metadata_accounting({
+            "regions": [{"name": "Australia"}, "United Kingdom", "Spain"]
+        })
+        self.assertEqual(
+            [item["value"] for item in accounting.ignored],
+            ["Australia", "United Kingdom"],
+        )
+
+    def test_unknown_region_is_retained_for_policy_review(self) -> None:
+        accounting = metadata_accounting({"regions": ["Future provider label"]})
+        self.assertEqual(accounting.unclassified, ({
             "source_field": "spanishdict.regions",
-            "value": "United Kingdom",
-            "reason": "English gloss locale, not target-language usage",
+            "value": "Future provider label",
+            "reason": "region semantics are not mapped by the Spanish language policy",
         },))
 
 

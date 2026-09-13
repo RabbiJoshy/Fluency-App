@@ -95,9 +95,19 @@ class ProviderParityTests(unittest.TestCase):
     def test_english_gloss_locales_are_not_spanish_regions(self) -> None:
         features = spanishdict_extract({
             "context": "dwelling",
-            "regions": ["United Kingdom", "Spain"],
+            "regions": ["Australia", "United Kingdom", "Spain"],
         })
         self.assertEqual(values(features, "register"), {"Spain"})
+
+    def test_unknown_regions_are_not_silently_promoted_to_registers(self) -> None:
+        features = spanishdict_extract({"regions": ["Future provider label"]})
+        self.assertEqual(values(features, "register"), set())
+
+    def test_domain_aliases_match_wiktionary_topic_vocabulary(self) -> None:
+        legal = spanishdict_extract({"context": "legal"})
+        religious = spanishdict_extract({"context": "religious"})
+        self.assertEqual(values(legal, "domain"), {"law"})
+        self.assertEqual(values(religious, "domain"), {"religion"})
 
 
 if __name__ == "__main__":

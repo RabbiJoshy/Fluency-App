@@ -42,18 +42,39 @@
       "target_language": [
         "Andes",
         "Argentina",
+        "Bolivia",
         "Caribbean",
         "Central America",
+        "Chile",
+        "Colombia",
+        "Costa Rica",
         "Cuba",
+        "Dominican Republic",
+        "El Salvador",
+        "Guatemala",
+        "Honduras",
         "Latin America",
         "Mexico",
+        "Nicaragua",
         "Panama",
+        "Paraguay",
+        "Peru",
+        "Puerto Rico",
+        "River Plate",
         "South America",
         "Southern Cone",
         "Spain",
+        "Uruguay",
         "Venezuela"
       ],
-      "english_gloss_locale_ignored": ["United Kingdom", "United States"]
+      "english_gloss_locale_ignored": [
+        "Australia",
+        "Canada",
+        "New Zealand",
+        "United Kingdom",
+        "United States"
+      ],
+      "unknown_region_role": "unclassified"
     },
     "canonical_families": [
       "companion",
@@ -67,6 +88,14 @@
       "sense_defining": ["companion", "construction", "domain", "register", "grammar"],
       "supporting": ["functional", "optional_companion"],
       "provider_only": ["examples"]
+    },
+    "future_wsd_role": {
+      "companion": "strong_lexical_evidence_after_attachment",
+      "construction": "structural_evidence",
+      "domain": "soft_context_evidence",
+      "functional": "semantic_evidence",
+      "grammar": "compatibility_constraint_or_strong_evidence",
+      "register": "soft_context_evidence"
     }
   }
 }

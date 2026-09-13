@@ -5,7 +5,11 @@ from __future__ import annotations
 from typing import Any, Mapping
 
 from fluency.features.metadata import MetadataAccounting
-from fluency.features.spanishdict import ENGLISH_GLOSS_REGIONS
+from fluency.features.spanishdict import (
+    ENGLISH_GLOSS_REGIONS,
+    SPANISH_USAGE_REGIONS,
+    region_label,
+)
 
 
 STANDARD_FIELDS = frozenset({
@@ -23,7 +27,7 @@ STANDARD_FIELDS = frozenset({
 def metadata_accounting(sense: Mapping[str, Any]) -> MetadataAccounting:
     """Keep unfamiliar provider fields visible to the shared audit contract."""
 
-    unclassified = tuple(
+    unclassified = [
         {
             "source_field": f"spanishdict.{field}",
             "value": value,
@@ -31,15 +35,26 @@ def metadata_accounting(sense: Mapping[str, Any]) -> MetadataAccounting:
         }
         for field, value in sorted(sense.items())
         if field not in STANDARD_FIELDS
-    )
-    ignored = tuple(
+    ]
+    ignored = [
         {
             "source_field": "spanishdict.regions",
-            "value": region,
+            "value": region_label(region),
             "reason": "English gloss locale, not target-language usage",
         }
         for region in sense.get("regions", []) or []
-        if isinstance(region, str) and region.strip() in ENGLISH_GLOSS_REGIONS
+        if region_label(region) in ENGLISH_GLOSS_REGIONS
+    ]
+    unclassified.extend(
+        {
+            "source_field": "spanishdict.regions",
+            "value": label,
+            "reason": "region semantics are not mapped by the Spanish language policy",
+        }
+        for region in sense.get("regions", []) or []
+        if (label := region_label(region))
+        and label not in SPANISH_USAGE_REGIONS
+        and label not in ENGLISH_GLOSS_REGIONS
     )
     return MetadataAccounting(
         coverage={
@@ -49,6 +64,6 @@ def metadata_accounting(sense: Mapping[str, Any]) -> MetadataAccounting:
             "regions": "parsed",
             "usage_and_construction_notes": "parsed",
         },
-        unclassified=unclassified,
-        ignored=ignored,
+        unclassified=tuple(unclassified),
+        ignored=tuple(ignored),
     )

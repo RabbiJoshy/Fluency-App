@@ -55,6 +55,12 @@ DOMAIN_LABELS = frozenset(
         "technology", "theater", "zoology",
     }
 )
+DOMAIN_ALIASES = {
+    # SpanishDict uses both noun and adjective labels for the same subject.
+    # Wiktionary topics are noun-like, so normalize at the provider boundary.
+    "legal": "law",
+    "religious": "religion",
+}
 REGISTER_LABELS = frozenset(
     {
         "archaic", "colloquial", "dated", "euphemistic", "formal", "informal",
@@ -108,10 +114,28 @@ EXACT_GRAMMAR_POS = {
     "subject": frozenset({"PRON"}),
 }
 
-# These tags qualify the English gloss supplied by SpanishDict, not the
-# Spanish expression. Showing them as Spanish dialect labels makes ``piso →
-# storey`` look British Spanish and ``color → color`` look US Spanish.
-ENGLISH_GLOSS_REGIONS = frozenset({"United Kingdom", "United States"})
+# SpanishDict's ``regions`` array mixes two concepts: where the Spanish sense
+# is used and which regional English gloss it chose.  Keep the two vocabularies
+# explicit. Unknown values are deliberately not promoted to learner-facing
+# register metadata; metadata_accounting will retain them for the next audit.
+SPANISH_USAGE_REGIONS = frozenset({
+    "Andes", "Argentina", "Bolivia", "Caribbean", "Central America", "Chile",
+    "Colombia", "Costa Rica", "Cuba", "Dominican Republic", "El Salvador",
+    "Guatemala", "Honduras", "Latin America", "Mexico", "Nicaragua", "Panama",
+    "Paraguay", "Peru", "Puerto Rico", "River Plate", "South America",
+    "Southern Cone", "Spain", "Uruguay", "Venezuela",
+})
+ENGLISH_GLOSS_REGIONS = frozenset({
+    "Australia", "Canada", "New Zealand", "United Kingdom", "United States",
+})
+
+
+def region_label(region: Any) -> str:
+    """Return the provider's region label without assigning its semantics."""
+
+    if isinstance(region, Mapping):
+        region = region.get("name") or region.get("label") or region.get("region")
+    return region.strip() if isinstance(region, str) else ""
 
 
 def _clauses(context: str) -> tuple[str, ...]:
@@ -145,7 +169,9 @@ def extract(sense: Mapping[str, Any]) -> tuple[SpecialistFeature, ...]:
         for clause in _clauses(context):
             lowered = clause.casefold().strip(" .;:()[]")
             if lowered in DOMAIN_LABELS:
-                features.append(SpecialistFeature("domain", "domain_label", lowered, clause))
+                features.append(SpecialistFeature(
+                    "domain", "domain_label", DOMAIN_ALIASES.get(lowered, lowered), clause
+                ))
                 continue
             if lowered in REGISTER_LABELS:
                 features.append(SpecialistFeature("register", "usage_label", lowered, clause))
@@ -216,10 +242,9 @@ def extract(sense: Mapping[str, Any]) -> tuple[SpecialistFeature, ...]:
                 features.append(SpecialistFeature("construction", "usage_note", clause, clause))
 
     for region in sense.get("regions", []) or []:
-        if isinstance(region, Mapping):
-            region = region.get("name") or region.get("label") or region.get("region")
-        if isinstance(region, str) and region.strip() and region.strip() not in ENGLISH_GLOSS_REGIONS:
+        label = region_label(region)
+        if label in SPANISH_USAGE_REGIONS:
             features.append(
-                SpecialistFeature("register", "region", region.strip(), region.strip())
+                SpecialistFeature("register", "region", label, label)
             )
     return tuple(dict.fromkeys(features))

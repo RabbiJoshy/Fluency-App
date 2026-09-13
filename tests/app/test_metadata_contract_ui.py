@@ -18,6 +18,15 @@ class MetadataContractUITests(unittest.TestCase):
         self.assertIn("canonical.contract_version ? [] : projectWiktionaryGloss", metadata_pills)
         self.assertIn("if (!canonical.contract_version", metadata_pills)
 
+    def test_canonical_adapter_decisions_are_not_overridden_by_raw_provider_fields(self) -> None:
+        metadata_pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")
+        fallback = metadata_pills[
+            metadata_pills.index("// Provider-shaped fallbacks exist only"):
+            metadata_pills.index("// Compatibility for releases made before")
+        ]
+        self.assertIn("if (!canonical.contract_version)", fallback)
+        self.assertIn("for (const region of provider.regions", fallback)
+
     def test_inactive_wiktionary_subsenses_use_clean_navigation_labels(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
         metadata_pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")
