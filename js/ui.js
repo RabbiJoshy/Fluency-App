@@ -100,7 +100,12 @@ function syncStudyPreferenceControls() {
     const targetBtn = document.getElementById('cardFrontTargetBtn');
     if (targetBtn) {
         const langName = config?.languages?.[selectedLanguage]?.name;
-        targetBtn.textContent = langName || 'Target';
+        targetBtn.textContent = langName || 'Language';
+    }
+    const vocabDesc = document.querySelector('#vocabularySettingsTitle + p');
+    if (vocabDesc) {
+        const langName = config?.languages?.[selectedLanguage]?.name || 'target language';
+        vocabDesc.textContent = `Already know some of these words from another app or course? Upload your list so Fluency starts you further in — paste it or choose a text, CSV or TSV file. Matches exact ${langName} word forms, previews every change first, and never overwrites a newer answer already saved here.`;
     }
     updateCognateSensitivityVisibility();
 }
@@ -2523,7 +2528,7 @@ function renderSetupExtrasSection() {
         const lemmas = extrasData.lemmas || [];
         const totalSkipped = cognates.length + lemmas.length;
         if (eyebrow) eyebrow.textContent = 'Streamline';
-        if (title) title.textContent = 'Skipped words deck';
+        if (title) title.textContent = 'Streamlined & familiar words';
 
         if (totalSkipped > 0) {
             section.style.display = 'block';
@@ -2538,7 +2543,7 @@ function renderSetupExtrasSection() {
                     </div>
                     <div class="extras-deck-actions">
                         <button type="button" class="extras-deck-browse-btn" id="openSpeechExtrasBtn">
-                            Browse skipped words <span aria-hidden="true">›</span>
+                            Browse streamlined words <span aria-hidden="true">›</span>
                         </button>
                     </div>
                 </div>
@@ -2553,7 +2558,7 @@ function renderSetupExtrasSection() {
                     <div class="extras-deck-status">
                         <span class="extras-deck-badge is-muted">Full deck</span>
                         <div class="extras-deck-info">
-                            <strong>No words are currently skipped</strong>
+                            <strong>No words currently streamlined</strong>
                             <p>Streamline is off or full deck is active. Turn on Streamline above to filter out familiar look-alikes.</p>
                         </div>
                     </div>

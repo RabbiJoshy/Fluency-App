@@ -172,8 +172,6 @@ function closeFastModePage() {
 
 function init() {
     document.getElementById('fastModeToggleBtn')?.addEventListener('click', () => {
-        try { localStorage.setItem(STREAMLINE_REC_DISMISSED_KEY, '1'); } catch (_) {}
-        updateStreamlineRecCallout();
         applyFastMode(currentState() !== 'on');
     });
     document.getElementById('dismissStreamlineRecBtn')?.addEventListener('click', (e) => {
@@ -182,8 +180,6 @@ function init() {
         updateStreamlineRecCallout();
     });
     document.getElementById('fastModeDetailBtn')?.addEventListener('click', () => {
-        try { localStorage.setItem(STREAMLINE_REC_DISMISSED_KEY, '1'); } catch (_) {}
-        updateStreamlineRecCallout();
         openFastModePage();
     });
     document.getElementById('closeFastModeModal')?.addEventListener('click', closeFastModePage);

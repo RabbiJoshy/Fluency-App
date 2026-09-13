@@ -179,8 +179,8 @@ function refreshExtrasButton() {
     if (button) {
         button.style.display = 'inline-flex';
         button.textContent = total === 0
-            ? 'See skipped words'
-            : total === 1 ? 'See 1 skipped word' : `See ${total} skipped words`;
+            ? 'See streamlined words'
+            : total === 1 ? 'See 1 streamlined word' : `See ${total} streamlined words`;
     }
     window.renderSetupExtrasSection?.();
 }

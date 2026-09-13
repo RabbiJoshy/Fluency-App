@@ -1092,3 +1092,22 @@
     color: #fff;
     box-shadow: 0 10px 30px rgba(23, 31, 39, 0.22);
 }
+
+/* Modern segmented pill toggles in light mode */
+:root[data-theme="light"] .group-size-selector,
+:root[data-theme="light"] .group-size-selector.settings-toggle,
+:root[data-theme="light"] .group-size-selector.header-toggle {
+    background: rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+:root[data-theme="light"] .group-size-btn:hover:not(.selected),
+:root[data-theme="light"] .settings-toggle .group-size-btn:hover:not(.selected),
+:root[data-theme="light"] .header-toggle .group-size-btn:hover:not(.selected),
+:root[data-theme="light"] .lemma-toggle-btn:hover:not(.selected),
+:root[data-theme="light"] .cognate-toggle-btn:hover:not(.selected) {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--text-primary);
+}
+
