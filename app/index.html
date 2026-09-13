@@ -40,7 +40,7 @@
             document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260913f">
+    <link rel="stylesheet" href="css/style.css?v=20260913g">
     <link rel="stylesheet" href="css/light-theme.css?v=20260828a">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
@@ -63,7 +63,7 @@
     <link rel="modulepreload" href="js/progress.js?v=20260912c">
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20260831a">
-    <link rel="modulepreload" href="js/ui.js?v=20260913h">
+    <link rel="modulepreload" href="js/ui.js?v=20260913i">
     <link rel="modulepreload" href="js/vocab.js?v=20260913g">
     <link rel="modulepreload" href="js/song-sets-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/song-sets.js?v=20260823ae">
@@ -509,12 +509,26 @@
                     <div class="setup-options-bar">
                         <button type="button" id="fastModeToggleBtn" class="fast-mode-btn fast-mode-master" data-fast="off" aria-pressed="false">
                             <span class="fast-mode-master-icon" aria-hidden="true">⚡</span>
-                            <span class="fast-mode-master-copy"><strong>Streamline</strong><small id="fastModeSummary">Off · full deck</small></span>
+                            <span class="fast-mode-master-copy">
+                                <span class="fast-mode-title-row">
+                                    <strong>Streamline</strong>
+                                    <span class="streamline-rec-badge">Recommended</span>
+                                </span>
+                                <small id="fastModeSummary">Off · full deck</small>
+                            </span>
                             <span class="fast-mode-master-switch" aria-hidden="true"><i></i></span>
                         </button>
                         <button type="button" id="fastModeDetailBtn" class="fast-mode-detail-btn" onclick="window.openFastModePage?.()">
                             Customize <span aria-hidden="true">›</span>
                         </button>
+                    </div>
+                    <div class="streamline-rec-callout" id="streamlineRecCallout" style="display: none;">
+                        <div class="streamline-rec-callout-icon" aria-hidden="true">⚡</div>
+                        <div class="streamline-rec-callout-body">
+                            <strong>Why Streamline is recommended</strong>
+                            <p>Merges verb conjugations onto base cards and skips obvious look-alikes from English, so you focus strictly on new vocabulary without missing any examples.</p>
+                        </div>
+                        <button type="button" class="streamline-rec-callout-dismiss" id="dismissStreamlineRecBtn" aria-label="Dismiss recommendation note">✕</button>
                     </div>
                 </div>
             </div>
@@ -546,8 +560,8 @@
             <!-- Extras Deck Section: supplementary cards (Artist extra categories or Speech skipped words) -->
             <div id="extrasDeckSection" class="setup-step extras-deck-section" style="display: none;">
                 <div class="step-header">
-                    <span class="step-eyebrow">Supplementary</span>
-                    <span class="step-title" id="extrasDeckTitle">Extra deck</span>
+                    <span class="step-eyebrow" id="extrasDeckEyebrow">Streamline</span>
+                    <span class="step-title" id="extrasDeckTitle">Skipped words deck</span>
                 </div>
                 <div class="extras-deck-card" id="extrasDeckCard"></div>
             </div>
@@ -952,8 +966,11 @@
         <div class="modal-content fullscreen-modal fast-mode-page">
             <button class="modal-close fast-mode-close" id="closeFastModeModal" aria-label="Close">✕</button>
             <div class="fast-mode-page-body">
-                <h2>Streamline</h2>
-                <p class="fast-mode-lede">Move through each level faster by grouping related word forms and setting aside obvious words you already recognize.</p>
+                <div class="fast-mode-title-row fast-mode-title-row--header">
+                    <h2>Streamline</h2>
+                    <span class="streamline-rec-badge">Recommended</span>
+                </div>
+                <p class="fast-mode-lede"><strong>Recommended for faster progress.</strong> Cuts study time by grouping word forms (like verb conjugations) and setting aside obvious words you already recognize, so you focus strictly on new vocabulary.</p>
 
                 <div class="fast-mode-controls">
                     <div id="lemmaToggleContainer" class="setup-substep" style="display: none;">
@@ -1356,7 +1373,7 @@
                     <!-- Streamline Group -->
                     <div class="settings-preference-group settings-preference-group--primary">
                         <div class="settings-group-heading">
-                            <strong>Streamline</strong>
+                            <strong>Streamline <span class="streamline-rec-badge">Recommended</span></strong>
                             <span>Skip repeats and obvious words to learn faster</span>
                         </div>
                         <div class="settings-default-row">
