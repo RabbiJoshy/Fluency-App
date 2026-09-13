@@ -1621,6 +1621,34 @@ async function loadVocabularyData(rangeString, opts = {}) {
         const element = document.getElementById('appLoadingDetail');
         if (element) element.textContent = detail;
     };
+    // Keep the current deck intact until its replacement has been proved
+    // usable. This matters most for end-of-set continuation: a stale queued
+    // range can legitimately build zero cards after the last answer, and the
+    // learner must not be stranded on the old final-card DOM with its backing
+    // flashcards/stats already erased.
+    const previousDeckState = {
+        flashcards,
+        stats,
+        currentIndex,
+        currentSentenceIndex,
+        currentMeaningIndex,
+        currentExampleIndex,
+        currentMWEIndex,
+        isFlipped,
+        cardNavStack
+    };
+    const restorePreviousDeckState = () => {
+        flashcards = previousDeckState.flashcards;
+        stats = previousDeckState.stats;
+        currentIndex = previousDeckState.currentIndex;
+        currentSentenceIndex = previousDeckState.currentSentenceIndex;
+        currentMeaningIndex = previousDeckState.currentMeaningIndex;
+        currentExampleIndex = previousDeckState.currentExampleIndex;
+        currentMWEIndex = previousDeckState.currentMWEIndex;
+        isFlipped = previousDeckState.isFlipped;
+        cardNavStack = previousDeckState.cardNavStack;
+    };
+
     // Deck construction mutates the selected entries while attaching examples
     // and trimming artist senses. Force setup to rebuild its immutable view
     // when the learner returns to the menu.
@@ -1795,13 +1823,14 @@ async function loadVocabularyData(rangeString, opts = {}) {
         // tapping it; never turn that action into an implicit Study Again that
         // unexpectedly opens the complete set.
         if (filteredData.length === 0) {
-            const emptyMessage = studyMode === 'review'
-                ? 'No cards need review in this level with the current settings.'
-                : 'No unseen flashcards remain in this set with the current settings.';
-            alert(emptyMessage);
+            restorePreviousDeckState();
             document.getElementById('loadingMessage').style.display = 'none';
-            if (studyMode === 'new') await window.renderRangeSelector?.();
-            return;
+            // An empty selection is normally a progress race, not an error:
+            // the setup count was rendered before a remote refresh or before
+            // a related form was answered. Recount in place and let the user
+            // choose the newly highlighted actionable set without a popup.
+            if (!opts.silentIfEmpty) await window.refreshSetupAfterProgress?.();
+            return false;
         }
         updateResumeLoading('Restoring examples and sense assignments…');
 
@@ -2207,12 +2236,9 @@ async function loadVocabularyData(rangeString, opts = {}) {
             // the time the current set ends (lemma merging marks siblings seen
             // across sets), and alerting there stranded the learner on an
             // empty deck with the completion modal already dismissed.
-            if (!opts.silentIfEmpty) {
-                alert(studyMode === 'review'
-                    ? 'No current meanings or expressions remain in this review.'
-                    : 'No flashcards could be built for this set.');
-            }
+            restorePreviousDeckState();
             document.getElementById('loadingMessage').style.display = 'none';
+            if (!opts.silentIfEmpty) await window.refreshSetupAfterProgress?.();
             return false;
         }
 
@@ -2315,13 +2341,16 @@ async function loadVocabularyData(rangeString, opts = {}) {
         else flashcardEl?.classList.remove('flipped');
         saveStudySessionSnapshot();
         buildWordLookupMap();
+        return true;
     } catch (error) {
+        restorePreviousDeckState();
         console.error(`Failed to load vocabulary data:`, error);
         document.getElementById('loadingMessage').style.display = 'none';
         const detail = error instanceof Error && error.message
             ? `\n\n${error.message}`
             : '';
         alert(`This deck could not be loaded.${detail}`);
+        return false;
     }
 }
 
