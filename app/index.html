@@ -40,8 +40,8 @@
             document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260913h">
-    <link rel="stylesheet" href="css/light-theme.css?v=20260828a">
+    <link rel="stylesheet" href="css/style.css?v=20260913i">
+    <link rel="stylesheet" href="css/light-theme.css?v=20260913a">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
@@ -63,7 +63,7 @@
     <link rel="modulepreload" href="js/progress.js?v=20260912c">
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20260831a">
-    <link rel="modulepreload" href="js/ui.js?v=20260913i">
+    <link rel="modulepreload" href="js/ui.js?v=20260913j">
     <link rel="modulepreload" href="js/vocab.js?v=20260913g">
     <link rel="modulepreload" href="js/song-sets-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/song-sets.js?v=20260823ae">
@@ -378,8 +378,8 @@
                             <button type="button" id="standardSourceSpeechBtn" class="standard-source-choice-btn" data-source="speech">
                                 <span class="standard-source-choice-icon" aria-hidden="true">1</span>
                                 <span>
-                                    <span class="standard-source-option-title"><strong>Speech</strong><em>Recommended</em></span>
-                                    <small>Build general-purpose vocabulary from the words used most often in modern movie and television dialogue.</small>
+                                    <span class="standard-source-option-title"><strong>Everyday Speech</strong><em>Recommended</em></span>
+                                    <small>Build conversational vocabulary from the words used most often in modern movie and television dialogue.</small>
                                 </span>
                                 <em class="standard-source-choice-arrow" aria-hidden="true">›</em>
                             </button>
@@ -561,7 +561,7 @@
             <div id="extrasDeckSection" class="setup-step extras-deck-section" style="display: none;">
                 <div class="step-header">
                     <span class="step-eyebrow" id="extrasDeckEyebrow">Streamline</span>
-                    <span class="step-title" id="extrasDeckTitle">Skipped words deck</span>
+                    <span class="step-title" id="extrasDeckTitle">Streamlined &amp; familiar words</span>
                 </div>
                 <div class="extras-deck-card" id="extrasDeckCard"></div>
             </div>
@@ -1018,7 +1018,7 @@
                 </div>
 
                 <p class="fast-mode-note">Nothing is deleted. Grouped forms stay on their shared card, and skipped look-alikes can be restored at any time.</p>
-                <button type="button" id="extrasBtn" class="extras-btn">See skipped words</button>
+                <button type="button" id="extrasBtn" class="extras-btn">See streamlined words</button>
             </div>
         </div>
     </div>
@@ -1029,11 +1029,11 @@
     <div id="extrasModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <div><span class="product-modal-eyebrow">Streamline</span><h3>Skipped words</h3></div>
+                <div><span class="product-modal-eyebrow">Streamline</span><h3>Streamlined words</h3></div>
                 <button class="modal-close" id="closeExtrasModal" aria-label="Close">✕</button>
             </div>
             <p class="extras-intro">Words not shown as separate cards, with the reason for each choice.</p>
-            <input type="search" id="extrasSearch" class="extras-search" placeholder="Search skipped words" autocomplete="off">
+            <input type="search" id="extrasSearch" class="extras-search" placeholder="Search streamlined words" autocomplete="off">
             <div class="extras-body" id="extrasBody"></div>
         </div>
     </div>
@@ -1438,7 +1438,7 @@
                         </div>
                         <div class="settings-default-row">
                             <span class="settings-row-label-block">
-                                <span class="settings-row-label">Practise phrases
+                                <span class="settings-row-label">Practice phrases
                                     <button type="button" class="settings-info-btn" aria-label="Explain phrases mode" aria-expanded="false">?</button>
                                 </span>
                                 <small class="settings-row-explanation" hidden>Drills idiomatic expressions and attached pronouns as their own cards following the base word.</small>
@@ -1464,7 +1464,7 @@
                                 <small class="settings-row-explanation" hidden>Foreign word first tests recognition (reading/listening); English first tests recall (producing the word).</small>
                             </span>
                             <div class="group-size-selector settings-toggle" role="group" aria-label="Default card direction">
-                                <button type="button" class="group-size-btn global-study-default-btn selected" id="cardFrontTargetBtn" data-setting="directionFlipped" data-value="off" aria-pressed="true">Target</button>
+                                <button type="button" class="group-size-btn global-study-default-btn selected" id="cardFrontTargetBtn" data-setting="directionFlipped" data-value="off" aria-pressed="true">Language</button>
                                 <button type="button" class="group-size-btn global-study-default-btn" data-setting="directionFlipped" data-value="on" aria-pressed="false">English</button>
                             </div>
                         </div>
@@ -1523,7 +1523,7 @@
                     <span class="settings-feature-icon" aria-hidden="true">Aa</span>
                     <div>
                         <strong id="vocabularySettingsTitle">Known vocabulary</strong>
-                        <p>Already know some of these words from another app or course? Upload your list so Fluency starts you further in — paste it or choose a text, CSV or TSV file. Matches exact Spanish word forms, previews every change first, and never overwrites a newer answer already saved here.</p>
+                        <p>Already know some of these words from another app or course? Upload your list so Fluency starts you further in — paste it or choose a text, CSV or TSV file. Matches exact word forms in your target language, previews every change first, and never overwrites a newer answer already saved here.</p>
                     </div>
                     <button type="button" class="settings-feature-action" id="openVocabularyImportBtn">Import words</button>
                     <p id="vocabularyImportAvailability" class="settings-feature-note"></p>

@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v388"
+EXPECTED_CACHE_NAME = "flashcards-v389"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -349,7 +349,7 @@ class ProductShellTests(unittest.TestCase):
         extras = (APP_ROOT / "js" / "extras.js").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
         self.assertIn('id="extrasSearch"', html)
-        self.assertIn('See ${total} skipped words', extras)
+        self.assertIn('See ${total} streamlined words', extras)
         self.assertIn("class=\"extras-open-card\"", extras)
         self.assertIn("globalThis.popupFoundWord", extras)
         self.assertIn('data-restore-kind="cognate"', extras)
@@ -494,8 +494,8 @@ class ProductShellTests(unittest.TestCase):
             '.range-btn-new:not(.has-progress):not(:hover)',
             light_css,
         )
-        self.assertIn('css/light-theme.css?v=20260828a', html)
-        self.assertIn('/css/light-theme.css?v=20260828a', worker)
+        self.assertIn('css/light-theme.css?v=20260913a', html)
+        self.assertIn('/css/light-theme.css?v=20260913a', worker)
 
     def test_active_release_aliases_are_never_cached(self) -> None:
         worker = (APP_ROOT / "service-worker.js").read_text(encoding="utf-8")
