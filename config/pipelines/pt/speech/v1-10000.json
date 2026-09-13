@@ -32,11 +32,12 @@
   "inventory": {
     "source_adapter": "published-surface-frequency-list/v1",
     "language_policy": "pt-v1",
-    "source_edition": "FrequencyWords OpenSubtitles 2018 pt 50k (European)",
+    "source_edition": "SUBTLEX-PT (Soares et al. 2015), filtered: subtlex-pt-2026-09-13",
     "frequency_measure": "surface_token_occurrences",
     "output_schema": "surface-inventory/v1",
     "identity_unit": "surface",
-    "lemma_role": "excluded"
+    "lemma_role": "excluded",
+    "source_note": "European Portuguese, 78M tokens of film and TV subtitles. Carries POS on 100% of the top 10,000 and P-PAL printed-corpus frequency per wordform. Filtered to surfaces with either independent corpus corroboration or a Portuguese dictionary entry; see the snapshot's snapshot.json for the rule and what it removed. Lemma is not in the source and is joined later onto these frozen surfaces, which reaches 99.5% on the top 10,000."
   },
   "sense_menu": {
     "source_adapter": "wiktionary-sense-menu/v1",
