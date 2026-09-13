@@ -11,7 +11,7 @@ import './estimation.js?v=20260825ak';
 import './config.js?v=20260907a';
 import './progress.js?v=20260913b';
 import './knowledge.js?v=20260831a';
-import './ui.js?v=20260913n';
+import './ui.js?v=20260913o';
 import './vocab.js?v=20260913g';
 import './cognates.js?v=20260908d';
 import './coverage.js?v=20260909a';
@@ -627,32 +627,11 @@ function renderArtistSourceSummary() {
             (cfg.language || 'spanish') === language));
         showArtistPicker(picker, matchingArtists);
     };
-    speechBtn.onclick = async () => {
-        const targetLang = activeArtist.language || selectedLanguage || 'spanish';
-        window.showAppLoading?.('Switching to Speech', 'Preparing your language and progress…');
-        try {
-            activeArtist = null;
-            window._urlArtistSlug = null;
-            artistVocabularyScope = 'speech';
-            const url = new URL(window.location.href);
-            url.searchParams.delete('artist');
-            url.searchParams.delete('mode');
-            url.searchParams.delete('scope');
-            history.pushState(null, '', url);
-
-            document.getElementById('artistSourceStep').style.display = 'none';
-            document.getElementById('step1').style.display = 'block';
-            window.unmergeArtistProgressFromSourceStep?.();
-
-            const tab = document.querySelector(`.lang-tab[data-lang="${targetLang}"]`);
-            if (tab) {
-                tab.click();
-            } else {
-                window.reopenLanguagePicker?.();
-            }
-        } finally {
-            window.hideAppLoading?.();
-        }
+    speechBtn.onclick = () => {
+        const targetLang = activeArtist?.language || selectedLanguage || 'spanish';
+        window.showAppLoading?.('Switching to Speech', 'Preparing your language and progress…', true);
+        sessionStorage.setItem('fluencyPendingSpeechLanguage', targetLang);
+        window.location.href = window.location.pathname;
     };
 
     window.renderSetupExtrasSection?.();

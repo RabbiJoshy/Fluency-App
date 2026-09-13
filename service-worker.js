@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v394';
+const CACHE_NAME = 'flashcards-v395';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -31,7 +31,7 @@ const urlsToCache = [
   '/config/config.json',
   '/config/cefr_levels.json',
   '/config/offline-content-manifest.json',
-  '/js/main.js?v=20260913p',
+  '/js/main.js?v=20260913q',
   `/js/theme.js?v=${ASSET_VERSION}`,
   '/js/state.js?v=20260912a',
   `/js/data-contracts.js?v=${ASSET_VERSION}`,
@@ -48,7 +48,7 @@ const urlsToCache = [
   '/js/progress.js?v=20260913a',
   '/js/progress-identity.js?v=20260831a',
   '/js/knowledge.js?v=20260831a',
-  '/js/ui.js?v=20260913l',
+  '/js/ui.js?v=20260913o',
   '/js/vocab.js?v=20260913g',
   '/js/cognates.js?v=20260908d',
   '/js/coverage.js?v=20260909a',
