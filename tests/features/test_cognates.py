@@ -366,3 +366,26 @@ class SynthesisedEnglishTests(unittest.TestCase):
         target = {"total": frozenset({"total"}), "entero": frozenset({"total whole"})}
         words = {entry["word"] for entry in _english_index_entries(target)}
         self.assertIn("total", words)
+
+
+class EnglishWordlistTests(unittest.TestCase):
+    """What counts as English cannot be inferred from target-language glosses."""
+
+    def test_a_wordlist_decides_rather_than_the_glosses(self) -> None:
+        from fluency.enrichments.cognates import _english_index_entries
+        # "dans" appears in another French word's gloss, which was enough to
+        # make it an English entry that then matched French dans itself.
+        target = {"dans": frozenset({"in"}), "les": frozenset({"the dans"})}
+        loose = {e["word"] for e in _english_index_entries(target)}
+        self.assertIn("dans", loose)
+        strict = {e["word"] for e in _english_index_entries(target, {"in", "the"})}
+        self.assertNotIn("dans", strict)
+        self.assertIn("the", strict)
+
+    def test_a_wordlist_reads_the_first_column_of_a_table(self) -> None:
+        import tempfile
+        from fluency.enrichments.cognates import read_english_wordlist
+        with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False, encoding="utf-8") as handle:
+            handle.write("about\t/əˈbaʊt/\nhouse\t/haʊs/\n\n")
+            path = Path(handle.name)
+        self.assertEqual(read_english_wordlist(path), {"about", "house"})

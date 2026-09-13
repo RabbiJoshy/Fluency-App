@@ -70,7 +70,34 @@ def _target_glosses(index_rows: Iterable[Mapping[str, Any]], policy: CognatePoli
     return {word: frozenset(glosses) for word, glosses in surfaces.items() if glosses}
 
 
-def _english_index_entries(target: Mapping[str, frozenset[str]]):
+def _extract_target_glosses(path: Path, policy: CognatePolicy, *, limit_to=None):
+    """Surface -> its live English senses, taken from the language's own
+    dictionary rather than from a deck.
+
+    A cognate score belongs to ``(surface, language pair)``, so scoring only the
+    surfaces one release happens to contain was a mistake: French's release is a
+    200-card preview, and the map it produced could say nothing about the other
+    49,800 words the language has. Reading the dictionary covers whatever a deck
+    might later hold, which is also what makes the map survive a re-cut.
+
+    ``limit_to`` bounds the work to a known surface universe — a published
+    frequency list — when one is available.
+    """
+
+    surfaces: dict[str, set[str]] = {}
+    for entry in _extract_entries(path):
+        if not isinstance(entry, Mapping):
+            continue
+        word = str(entry.get("word") or "").strip().lower()
+        if not word or (limit_to is not None and word not in limit_to):
+            continue
+        glosses = surfaces.setdefault(word, set())
+        for gloss in live_glosses(entry, policy.gloss_maximum_words):
+            glosses.add(gloss)
+    return {word: frozenset(g) for word, g in surfaces.items() if g}
+
+
+def _english_index_entries(target: Mapping[str, frozenset[str]], english_words: set[str] | None = None):
     """Treat every English gloss word as its own dictionary entry.
 
     English is the pivot the deck already carries, so a Czech word is compared
@@ -78,14 +105,16 @@ def _english_index_entries(target: Mapping[str, frozenset[str]]):
     scoring engine rather than a second code path for the free case.
     """
 
-    # A gloss is not guaranteed to be English. Wiktionary leaves some target
-    # words untranslated inside their own definition, and such a token becomes
-    # an "English" entry that then matches the very word it came from: French
-    # femme and nous each scored 0.92 against themselves.
+    # A gloss is not guaranteed to be English. Wiktionary leaves target words
+    # untranslated inside their own definitions, so a token lifted from a gloss
+    # can be the very word it is supposed to be compared against — French nous,
+    # dans and cette each scored 0.92 against themselves.
     #
-    # A token is only treated as English if some OTHER surface's gloss also
-    # produced it. That keeps real identical pairs — total, taxi and virus are
-    # each glossed onto several target words — and drops the self-derived ones.
+    # Requiring a second surface to have produced the token held at deck scale
+    # and collapsed at dictionary scale: across 84,000 French entries, nearly
+    # any French word turns up in somebody's gloss. So when an English word list
+    # is supplied, that decides what English is; the weaker rule is kept only
+    # for the case where none is.
     sources: dict[str, set[str]] = {}
     for surface, glosses in target.items():
         for gloss in glosses:
@@ -93,9 +122,29 @@ def _english_index_entries(target: Mapping[str, frozenset[str]]):
                 sources.setdefault(token, set()).add(surface)
 
     for token, surfaces in sources.items():
-        if surfaces == {token}:
+        if english_words is not None:
+            if token not in english_words:
+                continue
+        elif surfaces == {token}:
             continue
         yield {"word": token, "pos": "noun", "senses": [{"glosses": [token]}]}
+
+
+def read_english_wordlist(path: Path) -> set[str]:
+    """The first whitespace-separated field of each line, lowercased.
+
+    Accepts a bare word list or any table whose first column is the word, which
+    covers the pronunciation lists these are usually distributed as.
+    """
+
+    words: set[str] = set()
+    for line in Path(path).read_text(encoding="utf-8").splitlines():
+        token = line.split("\t")[0].split()[0].strip().lower() if line.strip() else ""
+        if token:
+            words.add(token)
+    if not words:
+        raise CognateLayerError(f"no words in the English list at {path}")
+    return words
 
 
 def _extract_entries(path: Path):
@@ -113,10 +162,13 @@ def _extract_entries(path: Path):
 def build_cognate_layer(
     *,
     language: str,
-    release_index: Path,
+    release_index: Path | None,
     known_extracts: Mapping[str, Path | None],
     config_root: Path,
     release_id: str,
+    target_extract: Path | None = None,
+    surface_universe: set[str] | None = None,
+    english_words: set[str] | None = None,
 ) -> dict[str, Any]:
     """Score one deck's surfaces against every known language given.
 
@@ -126,19 +178,27 @@ def build_cognate_layer(
 
     if not known_extracts:
         raise CognateLayerError("a cognate layer needs at least one known language")
-    rows = json.loads(release_index.read_text(encoding="utf-8"))
-    if not isinstance(rows, list):
-        raise CognateLayerError("release index must be a list of deck rows")
+    rows: list[Any] = []
+    if target_extract is None:
+        if release_index is None:
+            raise CognateLayerError("a layer needs either a target extract or a release index")
+        rows = json.loads(Path(release_index).read_text(encoding="utf-8"))
+        if not isinstance(rows, list):
+            raise CognateLayerError("release index must be a list of deck rows")
 
     scores: dict[str, dict[str, Any]] = {}
     coverage: dict[str, Any] = {}
     policies: dict[str, Any] = {}
     for known_language in sorted(known_extracts):
         policy = load_policy(config_root, language, known_language)
-        target = _target_glosses(rows, policy)
+        target = (
+            _extract_target_glosses(Path(target_extract), policy, limit_to=surface_universe)
+            if target_extract is not None
+            else _target_glosses(rows, policy)
+        )
         extract = known_extracts[known_language]
         if known_language == "en" and extract is None:
-            entries = _english_index_entries(target)
+            entries = _english_index_entries(target, english_words)
             source = {"kind": "deck_glosses", "content_id": None}
         else:
             if extract is None:
@@ -171,7 +231,10 @@ def build_cognate_layer(
         # and nothing looks the file up by it.
         "built_from": {
             "release_id": release_id,
-            "release_index_content_id": file_content_id(release_index),
+            "target_source": "dictionary" if target_extract is not None else "release_index",
+            "release_index_content_id": (
+                None if release_index is None else file_content_id(Path(release_index))
+            ),
         },
         "known_languages": sorted(known_extracts),
         "policies": policies,

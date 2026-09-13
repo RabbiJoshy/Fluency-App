@@ -34,7 +34,28 @@ def register(subparsers) -> None:
     )
     cognates.add_argument("--workspace", default=os.environ.get("FLUENCY_WORKSPACE"))
     cognates.add_argument("--language", required=True)
-    cognates.add_argument("--release-index", type=Path, required=True)
+    cognates.add_argument(
+        "--release-index",
+        type=Path,
+        help="deck to take target surfaces from; omit when --target-extract is given",
+    )
+    cognates.add_argument(
+        "--target-extract",
+        type=Path,
+        help="the target language's own dictionary — scores every surface it "
+             "lists rather than only the ones a deck happens to contain",
+    )
+    cognates.add_argument(
+        "--english-wordlist",
+        type=Path,
+        help="an English word list deciding which gloss tokens count as English; "
+             "without it a gloss token can be the target word itself",
+    )
+    cognates.add_argument(
+        "--surface-universe",
+        type=Path,
+        help="a 'surface count' frequency list bounding which surfaces to score",
+    )
     cognates.add_argument(
         "--release-id",
         required=True,
@@ -83,7 +104,19 @@ def handle_enrichment(args: argparse.Namespace) -> int:
             known[code.strip()] = Path(extract) if extract else None
         workspace_root = Workspace.load(_workspace_path(args.workspace)).root
         out = args.out or workspace_root / "cognates" / args.language / "cognates.json"
+        universe = None
+        if getattr(args, "surface_universe", None):
+            from fluency.inventory.coverage import read_frequency_counts
+            counts, _total = read_frequency_counts(args.surface_universe)
+            universe = set(counts)
+        english_words = None
+        if getattr(args, "english_wordlist", None):
+            from fluency.enrichments.cognates import read_english_wordlist
+            english_words = read_english_wordlist(args.english_wordlist)
         layer = build_cognate_layer(
+            english_words=english_words,
+            target_extract=getattr(args, "target_extract", None),
+            surface_universe=universe,
             language=args.language,
             release_index=args.release_index,
             known_extracts=known,
