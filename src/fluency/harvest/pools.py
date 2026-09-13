@@ -215,7 +215,7 @@ def register_pool_from_run(
     report = json.loads(report_path.read_text(encoding="utf-8"))
     profile = json.loads((run_directory / "profile.json").read_text(encoding="utf-8"))
 
-    records = [json.loads(line) for line in bank.read_text(encoding="utf-8").splitlines() if line.strip()]
+    records = [json.loads(line) for line in bank.read_text(encoding="utf-8").split("\n") if line.strip()]
     sources = [
         {
             "name": source.get("source", ""),

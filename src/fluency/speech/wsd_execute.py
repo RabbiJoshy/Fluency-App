@@ -516,7 +516,11 @@ def main() -> None:
     menu_by_card = {card["card_id"]: card for card in menu["cards"]}
     sentences = {
         row["sentence_id"]: row
-        for row in (json.loads(line) for line in bank_path.read_text(encoding="utf-8").splitlines() if line.strip())
+        # split("\n"), never splitlines(). splitlines() also breaks on \x0b,
+        # \x1c-\x1e, \x85, \u2028 and \u2029, none of which end a JSONL record.
+        # One \x85 in a Portuguese subtitle made splitlines() return 55,886 lines
+        # for a 55,885-line bank and failed the whole stage on a truncated row.
+        for row in (json.loads(line) for line in bank_path.read_text(encoding="utf-8").split("\n") if line.strip())
     }
 
     multiword_index = None
