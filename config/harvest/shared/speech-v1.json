@@ -47,9 +47,8 @@
   },
   "scan": {
     "check_every_records": 50000,
-    "max_records_note": "A ceiling on how much of a corpus is read, per source. The long tail is what makes a harvest slow: the median card fills within the first 5% of a corpus while three Czech cards never fill at all, so a minimum-per-card target buys a full scan to serve a handful of rare words -- and the sentences it drags back for them are the worst in the corpus. A card that cannot fill within the ceiling has told you the word is rare, which is information, not failure. Tatoeba is smaller than this and is always read whole.",
-    "max_records_per_source": 1500000,
-    "note": "Stop scanning once this fraction of cards has filled its WSD budget. Harvest time is linear in corpus size, but the cards are not: the median Czech card has 1,128 matches and fills its 60 within the first 5% of the corpus, while three cards never fill it at all -- 23, 36 and 43 matches in 7.55M lines. Waiting for every card therefore costs a full scan to serve a handful of rare words. Measured on Czech and Portuguese, which agree closely: 95% of cards are satisfied by 19% of the corpus (5.3x faster), 98% by 30%, 99% by 46%. Past 95% each further percent of cards costs disproportionately more scanning, so that is where this sits. Cards left short are declared, never silently thinned -- shortfall_policy governs what happens to them. Absent means scan everything.",
-    "stop_when_budget_filled_fraction": 0.95
+    "max_records_per_source": 8000000,
+    "note": "Read every corpus whole. This used to stop once 95% of cards had filled their budget, which was the right trade when a 9,999-card Spanish scan cost 2,001 seconds: 95% of cards were satisfied by 19% of the corpus. The pooled sampler and the matcher rewrite took that scan to 64 seconds, and the stop was demonstrably throwing away real vocabulary -- it read 1,366,962 of Spanish's 4,236,176 subtitle rows, and `arzobispo` (71 occurrences, an ordinary word) harvested nothing because every one of them lay past the cut. Reading the whole corpus costs 130 seconds instead of 64 and takes cards holding fifteen or more candidates from 95.1% to 98.8%, cards under fifteen from 485 to 120, and cards with nothing at all from 19 to 7 -- the 7 being OCR artifacts and film proper nouns that genuinely do not occur. The ceiling stays as a guard against a corpus larger than any we hold (Czech 2015-plus, the biggest, is 7.55M rows).",
+    "stop_when_budget_filled_fraction": null
   }
 }

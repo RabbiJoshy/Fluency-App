@@ -446,7 +446,12 @@ def harvest_run_stage(
     # Stop once enough cards have filled their budget. The rarest cards never
     # fill theirs at all, so waiting for every card is a full scan spent on a
     # handful of words; the policy names the fraction that is worth waiting for.
-    scan_policy = shared.get("scan") or {}
+    # A profile may override the shared scan limits. The shared defaults were
+    # calibrated when a 9,999-card Spanish scan cost 2,001 seconds, so stopping
+    # at 95% of cards bought back most of it. At 64 seconds the trade is no
+    # longer obvious: that stop left 68% of the Spanish subtitle corpus unread,
+    # and `arzobispo` -- 71 occurrences, an ordinary word -- harvested nothing.
+    scan_policy = {**(shared.get("scan") or {}), **(profile["harvest"].get("scan") or {})}
     stop_fraction = scan_policy.get("stop_when_budget_filled_fraction")
     check_every = int(scan_policy.get("check_every_records") or 50_000)
     stop_after = (
@@ -477,6 +482,13 @@ def harvest_run_stage(
     # mix a deck is BUILT from stays a selection decision while the mix the pool
     # CONTAINS is fixed once at harvest.
     source_share = profile["harvest"].get("source_share") or {}
+    # How many candidates each source should contribute to a card before the
+    # harvest moves on. A share is relative to a budget that may change; a
+    # minimum is an absolute guarantee that the pool holds enough of each source
+    # to re-tune from later without harvesting again. Without it the first
+    # source listed fills every budget and the second is barely read at all:
+    # Spanish saw 283,535 Tatoeba rows against 16,962 subtitle rows.
+    source_minimum = int(profile["harvest"].get("source_minimum_per_card") or 0)
     prefer = profile["harvest"].get("source_policy") == "preferred_order"
     for source_index, (source_name, adapter) in enumerate(
         zip(selected_sources, adapters, strict=True)
@@ -491,10 +503,26 @@ def harvest_run_stage(
         if stopped_early:
             break
         source_records = 0
+        from_this_source: Counter[str] = Counter()
         for record in adapter.iter_records():
             scanned_records += 1
             source_records += 1
             if isinstance(max_per_source, int) and source_records > max_per_source:
+                break
+            # Move on from this source once it has given most cards its
+            # minimum. Rare words are not chased: the source ceiling and this
+            # fraction both bound how long one source may run.
+            if (
+                source_minimum
+                # `>= (stop_after or 0)` made a disabled fraction mean "stop
+                # immediately" rather than "never stop", because any count is
+                # at least zero. A profile asking to read everything got one
+                # checkpoint's worth of corpus.
+                and stop_after is not None
+                and scanned_records % check_every == 0
+                and sum(1 for n in from_this_source.values() if n >= source_minimum)
+                >= stop_after
+            ):
                 break
             if (
                 stop_after is not None
@@ -704,6 +732,7 @@ def harvest_run_stage(
         "scan": {
             "stopped_early": stopped_early,
             "max_records_per_source": max_per_source,
+            "source_minimum_per_card": source_minimum,
             "records_examined": scanned_records,
             "stop_when_budget_filled_fraction": stop_fraction,
             "cards_at_budget": sum(
