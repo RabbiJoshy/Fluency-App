@@ -9,9 +9,9 @@ import './auth.js?v=20260912a';
 import './about-example.js?v=20260913f';
 import './estimation.js?v=20260825ak';
 import './config.js?v=20260907a';
-import './progress.js?v=20260913a';
+import './progress.js?v=20260913b';
 import './knowledge.js?v=20260831a';
-import './ui.js?v=20260913l';
+import './ui.js?v=20260913m';
 import './vocab.js?v=20260913g';
 import './cognates.js?v=20260908d';
 import './coverage.js?v=20260909a';
@@ -410,9 +410,11 @@ loadConfig().then(async () => {
         if (event.target === event.currentTarget) closeTutorialIntroduction();
     });
     document.getElementById('topBarGearBtn').addEventListener('click', () => showSettingsModal());
-    // Level-estimate CTA (shown when user has no progress yet, in the slot
-    // where the personal coverage bar will live once they do).
-    document.getElementById('levelEstimateCTABtn').addEventListener('click', () => openEstimationModal());
+    document.getElementById('levelEstimateCTABtn')?.addEventListener('click', () => openEstimationModal());
+    document.getElementById('openEstimationFromLevelHelpBtn')?.addEventListener('click', () => {
+        document.getElementById('step2Tooltip')?.classList.remove('visible');
+        openEstimationModal();
+    });
     document.getElementById('personalProgressInfoBtn')?.addEventListener('click', event => {
         event.stopPropagation();
         showTotalStatsModal();

@@ -259,19 +259,11 @@ async function updateExclusionBars() {
     updatePersonalCoverage(afterCognate);
 }
 
-// Show the "Estimate your level" CTA in the same slot where the coverage bar
-// lives — only when the user has no progress yet AND no prior level estimate
-// for the current language. Hidden as soon as either exists (coverage bar
-// takes over in that case).
+// Level estimate CTA is now housed contextually in the Step 2 Level info modal
+// ("Choose where to begin") rather than displaying as a banner on the landing screen.
 function _toggleLevelEstimateCTA(hasCoverage) {
     const cta = document.getElementById('levelEstimateCTA');
-    if (!cta) return;
-    if (hasCoverage) { cta.style.display = 'none'; return; }
-    const hasEstimate = typeof levelEstimates === 'object'
-        && levelEstimates
-        && levelEstimates[selectedLanguage]
-        && levelEstimates[selectedLanguage] > 0;
-    cta.style.display = (!hasEstimate && selectedLanguage) ? 'flex' : 'none';
+    if (cta) cta.style.display = 'none';
 }
 
 // Personal coverage bar: what % of the lyrics the user has covered,
