@@ -82,6 +82,18 @@ class MetadataContractUITests(unittest.TestCase):
         self.assertIn("window.popupFoundWord", navigation)
         self.assertNotIn("selectedLanguage", navigation)
 
+    def test_related_cards_are_supporting_navigation_not_gloss_text(self) -> None:
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        styles = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
+        self.assertIn("function senseCrossReferenceHTML(meaning, fallbackText, active = true)", flashcards)
+        self.assertIn("if (!active) return fallbackText", flashcards)
+        self.assertIn('class="sense-cross-reference-gloss"', flashcards)
+        self.assertIn('aria-label="Related cards"', flashcards)
+        self.assertIn("Indirect form", flashcards)
+        self.assertIn("After prepositions", flashcards)
+        self.assertIn(".sense-cross-reference-related {", styles)
+        self.assertNotIn('sense-metadata-tier-label">grammar', flashcards)
+
 
 if __name__ == "__main__":
     unittest.main()

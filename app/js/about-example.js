@@ -669,7 +669,7 @@ function walkthroughMetadata(meaning, selected) {
     const primaryHTML = primary.length
         ? `<span class="sense-metadata-tier sense-metadata-tier--primary">${renderItems(primary)}</span>` : '';
     const grammarHTML = grammar.length
-        ? `<span class="sense-metadata-tier sense-metadata-tier--grammar"><span class="sense-metadata-tier-label">grammar</span>${renderItems(grammar)}</span>` : '';
+        ? `<span class="sense-metadata-tier sense-metadata-tier--grammar">${renderItems(grammar)}</span>` : '';
     const supportingHTML = supporting.length
         ? `<span class="sense-metadata-tier sense-metadata-tier--details" hidden>${renderItems(supporting)}</span>` : '';
     const more = supporting.length

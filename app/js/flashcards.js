@@ -2734,7 +2734,12 @@ function senseCrossReferences(meaning) {
     return legacyObjectPronounProjection(meaning?.meaning || meaning?.translation)?.references || [];
 }
 
-function senseCrossReferenceHTML(meaning, fallbackText) {
+function senseCrossReferenceHTML(meaning, fallbackText, active = true) {
+    // Related cards are supporting navigation, not part of the gloss. Keep
+    // them off inactive rows, then give them their own quiet line once this
+    // sense is selected. This prevents a compact menu label from reading like
+    // one long, malformed definition.
+    if (!active) return fallbackText;
     const references = senseCrossReferences(meaning);
     if (!references.length) return fallbackText;
     const link = ({ target }) => {
@@ -2742,19 +2747,21 @@ function senseCrossReferenceHTML(meaning, fallbackText) {
         return `<button type="button" class="sense-cross-reference" data-reference-target="${encoded}" onclick="openSenseCrossReference(event, decodeURIComponent(this.dataset.referenceTarget))" title="Open ${escapeCardText(target)}">${escapeCardText(target)}</button>`;
     };
     if (references.every(reference => reference.relation === 'see')) {
-        const links = references.map(link).join('<span class="sense-cross-reference-separator">,</span> ');
-        return `<span class="sense-cross-reference-prefix">See</span> ${links}`;
+        const links = references.map(reference => (
+            `<span class="sense-cross-reference-item"><span class="sense-cross-reference-prefix">Related</span>${link(reference)}</span>`
+        )).join('');
+        return `<span class="sense-cross-reference-related" aria-label="Related cards">${links}</span>`;
     }
     const labels = {
-        indirect_object: 'indirect',
-        after_prepositions: 'after prep.',
-        see: 'see',
+        indirect_object: 'Indirect form',
+        after_prepositions: 'After prepositions',
+        see: 'Related',
     };
     const related = references.map(reference => (
-        `<span class="sense-cross-reference-prefix">${labels[reference.relation]} →</span> ${link(reference)}`
-    )).join(' <span class="sense-cross-reference-separator">·</span> ');
+        `<span class="sense-cross-reference-item"><span class="sense-cross-reference-prefix">${labels[reference.relation]}</span>${link(reference)}</span>`
+    )).join('');
     const projected = legacyObjectPronounProjection(meaning?.meaning || meaning?.translation);
-    return `${projected?.display || fallbackText} <span class="sense-cross-reference-related">${related}</span>`;
+    return `<span class="sense-cross-reference-gloss">${projected?.display || fallbackText}</span><span class="sense-cross-reference-related" aria-label="Related cards">${related}</span>`;
 }
 
 async function openSenseCrossReference(event, target) {
@@ -3153,7 +3160,7 @@ function senseMetadataHTML(meaning, active) {
         ? `<span class="sense-metadata-tier sense-metadata-tier--primary">${renderItems(primary)}</span>`
         : '';
     const grammarHTML = grammar.length
-        ? `<span class="sense-metadata-tier sense-metadata-tier--grammar"><span class="sense-metadata-tier-label">grammar</span>${renderItems(grammar)}</span>`
+        ? `<span class="sense-metadata-tier sense-metadata-tier--grammar">${renderItems(grammar)}</span>`
         : '';
     const supportingHTML = supporting.length
         ? `<span class="sense-metadata-tier sense-metadata-tier--details" hidden>${renderItems(supporting)}</span>`
@@ -5151,7 +5158,7 @@ function updateCard({ announceHeadword = false } = {}) {
                 : displaySenseGloss(m, rawDisplayMeaning, isSelected);
             const displayMeaningHTML = isMWE
                 ? displayMeaning
-                : senseCrossReferenceHTML(m, displayMeaning);
+                : senseCrossReferenceHTML(m, displayMeaning, isSelected);
             if (isMWE) {
                 if (compactKnowledgeView && !isSelected) return;
                 // Expression row: plain bold expression (left), translation
@@ -5396,7 +5403,7 @@ function updateCard({ announceHeadword = false } = {}) {
                                 isMemberSelected
                             );
                             const transSafe = String(transRaw).replace(/"/g, '&quot;');
-                            varyingHtml = `<span class="row-adaptive-text" style="font-weight: 600; color: var(--text-primary); line-height: 1.25; min-width: 0; overflow: hidden; text-overflow: ellipsis;">${senseCrossReferenceHTML(mm, transSafe)}${senseMetadataHTML(mm, isMemberSelected)}${modelProposalMarkerHTML(mm)}</span>`;
+                            varyingHtml = `<span class="row-adaptive-text" style="font-weight: 600; color: var(--text-primary); line-height: 1.25; min-width: 0; overflow: hidden; text-overflow: ellipsis;">${senseCrossReferenceHTML(mm, transSafe, isMemberSelected)}${senseMetadataHTML(mm, isMemberSelected)}${modelProposalMarkerHTML(mm)}</span>`;
                         }
                         const varyingCol = isTransAxis ? 2 : 1;
                         const varyingCell = `<div class="group-card-varying-cell${isMemberSelected ? ' is-active-subsense' : ''}" onclick="event.stopPropagation(); selectMeaning(${memberIdx})" style="${baseCell} grid-column: ${varyingCol}; min-width: 0; overflow: hidden;">${varyingHtml}</div>`;

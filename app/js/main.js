@@ -6,7 +6,7 @@ import { initOfflineContent } from './offline-content.js?v=20260825ak';
 import './speech.js?v=20260824d';
 import './artist-ui.js?v=20260825ak';
 import './auth.js?v=20260912a';
-import './about-example.js?v=20260912d';
+import './about-example.js?v=20260913d';
 import './estimation.js?v=20260825ak';
 import './config.js?v=20260907a';
 import './progress.js?v=20260912c';
@@ -19,7 +19,7 @@ import './fast-mode.js?v=20260913b';
 import './extras.js?v=20260913c';
 import './song-sets.js?v=20260823ae';
 import './vocabulary-import.js?v=20260825ak';
-import './flashcards.js?v=20260912a';
+import './flashcards.js?v=20260913d';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 function openTutorialIntroduction() {
