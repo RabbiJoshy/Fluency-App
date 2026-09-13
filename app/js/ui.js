@@ -708,9 +708,9 @@ function updateStep2Tooltip() {
     const description = document.getElementById('step2LevelDescription');
     if (activeArtist) {
         const name = activeArtist.name;
-        if (description) description.textContent = `Levels arrange ${name}'s vocabulary from the words used most in these lyrics to the words used least.`;
+        if (description) description.textContent = `Levels arrange ${name}'s vocabulary from the words used most in these lyrics to less frequent ones.`;
     } else if (description) {
-        description.textContent = 'Levels arrange vocabulary from more useful and familiar words to less common ones.';
+        description.textContent = 'Levels arrange vocabulary from the most common daily words to less frequent ones.';
     }
 }
 
@@ -719,9 +719,9 @@ function updateStep5Tooltip() {
     if (!description) return;
     if (activeArtist) {
         const name = activeArtist.name;
-        description.textContent = `The app highlights the next unfinished set from ${name}'s lyrics, so you can simply continue.`;
+        description.textContent = `Fluency highlights the next unfinished set from ${name}'s lyrics, so you can jump right in.`;
     } else {
-        description.textContent = 'The app highlights the next unfinished set, so you can simply continue.';
+        description.textContent = 'Fluency highlights your next unfinished set so you can jump right in.';
     }
 }
 
