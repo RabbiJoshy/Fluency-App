@@ -1,0 +1,81 @@
+{
+  "profile_version": "speech-pipeline-profile/v1",
+  "profile_id": "es_speech_v10_1000x10",
+  "language": "es",
+  "locale": "es-ES",
+  "mode": "speech",
+  "identity": {
+    "unit_type": "surface",
+    "identity_version": "surface-card/v1",
+    "allow_lemma_identity": false
+  },
+  "source_policy": {
+    "fresh_snapshots_only": true,
+    "allow_legacy_inputs": false,
+    "allow_recovered_inputs": false,
+    "fallback_policy": "none"
+  },
+  "scope": {
+    "surface_limit": 1000,
+    "shortfall_policy": "publish_explicit",
+    "display_examples_per_card": 10,
+    "note": "A 1,000-card deck showing 10 examples each, to read the harvest by eye and to see how v10 does on it. Ranks 1-1000 sit at harvest budget 80, so 10 displayed examples draw from a pool eight times that size."
+  },
+  "inventory": {
+    "source_adapter": "published-surface-frequency-list/v1",
+    "language_policy": "es-v1",
+    "source_edition": "EsPal subtitles (Duchon et al. 2013): espal-subtitles-2026-09-13",
+    "frequency_measure": "surface_occurrences_per_billion",
+    "output_schema": "surface-inventory/v1",
+    "identity_unit": "surface",
+    "lemma_role": "excluded",
+    "source_note": "EsPal carries lemma, POS and EAGLES morphology per surface. It does NOT mark English: Freeling gives every string a Spanish analysis, so `the` and `and` sit in the list tagged as nouns beside the genuine loanwords `bar`, `hotel` and `club`. No frequency rule separates them; that is a dictionary question for the cognate stage. The emitted integers are occurrences per BILLION, not counts -- EsPal publishes only a per-million rate -- and only the induced ranking is consumed."
+  },
+  "sense_menu": {
+    "source_adapter": "spanishdict-sense-menu/v1",
+    "language_policy": "es-spanishdict-v1",
+    "source_edition": "spanishdict-pinned-snapshot",
+    "gloss_language": "en",
+    "snapshot_id": "spanishdict-complete-menu-2026-08-23-v1",
+    "minimum_card_coverage": 0.98,
+    "output_schema": "sense-menu/v1",
+    "join_key": "surface_card_id",
+    "lemma_role": "lookup_metadata_only"
+  },
+  "harvest": {
+    "shared_policy": "speech-v1",
+    "language_policy": "es-v1",
+    "source_policy": "exclusive",
+    "sources": [
+      "retained-opensubtitles"
+    ],
+    "candidate_cap_per_surface": 60
+  },
+  "stage_order": [
+    "inventory",
+    "sense_menu",
+    "sentence_harvest",
+    "wsd_assignments",
+    "example_selection",
+    "release_build"
+  ],
+  "wsd": {
+    "strategy": "language-adapted-closed-menu/v1",
+    "shared_profile": "closed-menu-provider-prior-v1",
+    "language_profile": "es-v2",
+    "model_profile": "es-v10-1",
+    "require_model_pins": true,
+    "execution_status": "ready",
+    "model_revisions": {
+      "gloss.model_revision": "gemini-embedding-001",
+      "occurrence_pos.model_revision": "es_dep_news_trf@3.8.0"
+    },
+    "execution_cap_per_card": 10,
+    "max_wsd_units_per_run": 10000,
+    "max_wsd_units_per_run_note": "1,000 surfaces x execution cap 10 = 10,000 units."
+  },
+  "release": {
+    "activation": "manual",
+    "fallback_policy": "none"
+  }
+}
