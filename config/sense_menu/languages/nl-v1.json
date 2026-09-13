@@ -20,6 +20,7 @@
     "predicative", "subordinating"
   ],
   "domain_tags": ["Internet", "Judaism"],
+  "construction_tag_mappings": {},
   "grammar_tags": {},
   "ignored_tags": [
     "abbreviation", "acronym", "alternative", "clipping", "initialism",

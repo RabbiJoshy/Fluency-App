@@ -160,6 +160,9 @@
     "Persian", "physical", "Provençal", "rhetoric", "Roman", "Sanskrit", "Sikhism",
     "Tibetan", "World-War-I"
   ],
+  "construction_tag_mappings": {
+    "auxiliary": {"kind": "auxiliary_frame", "value": "auxiliary"}
+  },
   "grammar_tags": {
     "agent": "noun-class=agent",
     "capitalized": "orthography=capitalized",

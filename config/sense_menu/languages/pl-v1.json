@@ -13,6 +13,7 @@
   ],
   "construction_tags": ["collocation", "prepositional"],
   "domain_tags": ["Internet"],
+  "construction_tag_mappings": {},
   "grammar_tags": {},
   "ignored_tags": [
     "abbreviation", "alternative", "misspelling", "morpheme", "noun-from-verb",

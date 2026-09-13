@@ -95,6 +95,9 @@
     "transitive"
   ],
   "domain_tags": [],
+  "construction_tag_mappings": {
+    "auxiliary": {"kind": "auxiliary_frame", "value": "auxiliary"}
+  },
   "grammar_tags": {},
   "contextual_grammar_tags": {},
   "ignored_tags": []

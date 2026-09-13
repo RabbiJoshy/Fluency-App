@@ -125,6 +125,21 @@ def load_sense_menu_language_policy(
         for tag, value in grammar_tags.items()
     ):
         raise SenseMenuPolicyError("Wiktionary grammar_tags must map strings to strings")
+    construction_mappings = policy.get("construction_tag_mappings")
+    if not isinstance(construction_mappings, dict):
+        raise SenseMenuPolicyError("Wiktionary construction_tag_mappings must be an object")
+    for tag, projection in construction_mappings.items():
+        if not isinstance(tag, str) or not tag or not isinstance(projection, dict):
+            raise SenseMenuPolicyError("construction tag mapping is invalid")
+        if set(projection) != {"kind", "value"} or not all(
+            isinstance(projection[field], str) and projection[field]
+            for field in ("kind", "value")
+        ):
+            raise SenseMenuPolicyError(f"construction tag projection is invalid: {tag}")
+        if tag not in policy["construction_tags"]:
+            raise SenseMenuPolicyError(
+                f"construction tag projection is not declared as a construction: {tag}"
+            )
     contextual = policy.get("contextual_grammar_tags")
     if not isinstance(contextual, dict):
         raise SenseMenuPolicyError("Wiktionary contextual_grammar_tags must be an object")

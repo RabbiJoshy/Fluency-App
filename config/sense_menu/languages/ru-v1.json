@@ -11,6 +11,7 @@
   "register_tags": [],
   "construction_tags": [],
   "domain_tags": [],
+  "construction_tag_mappings": {},
   "grammar_tags": {},
   "ignored_tags": []
 }

@@ -196,6 +196,21 @@ def _is_construction_tag(tag: str, declared: set[str]) -> bool:
     return lowered in declared or lowered.startswith("with-")
 
 
+def _mapped_construction_tag(
+    tag: str, policy: Mapping[str, Any] | None
+) -> SpecialistFeature | None:
+    mappings = (policy or {}).get("construction_tag_mappings")
+    if isinstance(mappings, Mapping) and isinstance(mappings.get(tag), Mapping):
+        projection = mappings[tag]
+        kind = projection.get("kind")
+        value = projection.get("value")
+        if isinstance(kind, str) and kind and isinstance(value, str) and value:
+            return SpecialistFeature("construction", kind, value, tag)
+    if tag.casefold().startswith("with-"):
+        return structured_construction(tag.replace("-", " ", 1))
+    return None
+
+
 def classify_tag(
     tag: str,
     *,
@@ -219,6 +234,8 @@ def classify_tag(
     )
     if grammar_value is not None:
         return SpecialistFeature("grammar", "sense_mark", grammar_value, tag)
+    if mapped := _mapped_construction_tag(tag, policy):
+        return mapped
     if _is_construction_tag(tag, construction):
         return SpecialistFeature("construction", "grammar_tag", tag, tag)
     return None

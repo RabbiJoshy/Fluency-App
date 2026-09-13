@@ -33,6 +33,35 @@ class CrossLanguageMetadataConformanceTests(unittest.TestCase):
                 for slot in list_slots:
                     self.assertIsInstance(policy[slot], list)
                 self.assertIsInstance(policy["grammar_tags"], dict)
+                self.assertIsInstance(policy["construction_tag_mappings"], dict)
+
+    def test_language_tag_adapters_reach_shared_construction_kinds(self) -> None:
+        registry = load_sense_menu_registry(REPOSITORY_ROOT)
+        expected = {
+            "cs": ("auxiliary", "auxiliary_frame", "auxiliary"),
+            "fr": ("direct-object", "object_role", "direct object"),
+            "pt": ("auxiliary", "auxiliary_frame", "auxiliary"),
+        }
+        for language, (tag, kind, value) in expected.items():
+            entry = registry["languages"][language]
+            policy = load_sense_menu_language_policy(
+                REPOSITORY_ROOT, policy_id=entry["policy_id"], language=language
+            )
+            features = extract_wiktionary({}, tags=[tag], policy=policy)
+            self.assertIn(
+                ("construction", kind, value),
+                {(item.family, item.kind, item.value) for item in features},
+            )
+
+    def test_generic_with_form_tag_uses_shared_complement_shape(self) -> None:
+        policy = load_sense_menu_language_policy(
+            REPOSITORY_ROOT, policy_id="pt-v1", language="pt"
+        )
+        features = extract_wiktionary({}, tags=["with-infinitive"], policy=policy)
+        self.assertIn(
+            ("construction", "complement_form", "infinitive"),
+            {(item.family, item.kind, item.value) for item in features},
+        )
 
     def test_every_policy_emits_the_same_envelope_shape(self) -> None:
         registry = load_sense_menu_registry(REPOSITORY_ROOT)
