@@ -15490,6 +15490,49 @@ body {
 .info-sheet-points p { margin: 0 !important; color: var(--text-secondary); }
 .info-sheet-points strong { display: block; margin-bottom: 2px; }
 
+.level-estimate-modal-callout {
+  margin-top: 16px;
+  padding: 16px;
+  background: rgba(var(--accent-primary-rgb), 0.08);
+  border: 1px solid rgba(var(--accent-primary-rgb), 0.28);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.level-estimate-modal-body strong {
+  display: block;
+  font-family: var(--font-emphasis);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+.level-estimate-modal-body p {
+  margin: 0 !important;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+.level-estimate-modal-btn {
+  align-self: flex-start;
+  padding: 8px 16px;
+  background: var(--accent-primary);
+  color: var(--accent-primary-text);
+  border: 1px solid var(--accent-primary);
+  border-radius: 8px;
+  font-family: var(--font-emphasis);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  white-space: nowrap;
+}
+.level-estimate-modal-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(var(--accent-primary-rgb), 0.4);
+}
+
 /* Tutorial starts with three compact principles, then asks for language. */
 .tutorial-intro-sheet {
   width: min(92vw, 540px);

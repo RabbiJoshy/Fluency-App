@@ -395,8 +395,9 @@ function mergeArtistProgressIntoSourceStep() {
 function unmergeArtistProgressFromSourceStep() {
     const wrapper = document.getElementById('personalCoverageWrapper');
     const cta = document.getElementById('levelEstimateCTA');
-    if (!wrapper || !cta) return;
-    cta.after(wrapper);
+    const anchor = cta || document.getElementById('dataLoadingIndicator');
+    if (!wrapper || !anchor) return;
+    anchor.after(wrapper);
     wrapper.classList.remove('personal-coverage-wrapper--merged', 'personal-coverage-wrapper--empty', 'visible');
     wrapper.style.display = 'none';
 }
@@ -411,10 +412,11 @@ function unmergeStandardProgressFromLanguageStep() {
     const sourcePill = document.getElementById('selectedSourceInline');
     const cta = document.getElementById('levelEstimateCTA');
     const sourceCard = document.getElementById('standardSourceCard');
-    if (!step || !header || !title || !wrapper || !inlinePill || !sourcePill || !cta || !sourceCard) return;
+    const anchor = cta || document.getElementById('dataLoadingIndicator');
+    if (!step || !header || !title || !wrapper || !inlinePill || !sourcePill || !anchor || !sourceCard) return;
 
     title.after(inlinePill);
-    cta.after(wrapper);
+    anchor.after(wrapper);
     title.textContent = 'Choose your language';
     step.classList.remove('language-summary-active');
     header.setAttribute('role', 'button');
@@ -706,11 +708,16 @@ function updateStep2Tooltip() {
     const tooltip = document.getElementById('step2Tooltip');
     if (!tooltip) return;
     const description = document.getElementById('step2LevelDescription');
+    const estimateCallout = document.getElementById('step2LevelEstimateCallout');
     if (activeArtist) {
         const name = activeArtist.name;
         if (description) description.textContent = `Levels arrange ${name}'s vocabulary from the words used most in these lyrics to less frequent ones.`;
-    } else if (description) {
-        description.textContent = 'Levels arrange vocabulary from the most common daily words to less frequent ones.';
+        if (estimateCallout) estimateCallout.style.display = 'none';
+    } else {
+        if (description) {
+            description.textContent = 'Levels arrange vocabulary from the most common daily words to less frequent ones.';
+        }
+        if (estimateCallout) estimateCallout.style.display = 'flex';
     }
 }
 

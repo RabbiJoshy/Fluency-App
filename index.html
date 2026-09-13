@@ -40,14 +40,14 @@
             document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260913j">
+    <link rel="stylesheet" href="css/style.css?v=20260913k">
     <link rel="stylesheet" href="css/light-theme.css?v=20260913a">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260913m">
+    <link rel="modulepreload" href="js/main.js?v=20260913n">
     <link rel="modulepreload" href="js/theme.js?v=20260825ak">
     <link rel="modulepreload" href="js/state.js?v=20260912a">
     <link rel="modulepreload" href="js/data-contracts.js?v=20260825ak">
@@ -60,10 +60,10 @@
     <link rel="modulepreload" href="js/about-example.js?v=20260913f">
     <link rel="modulepreload" href="js/estimation.js?v=20260825ak">
     <link rel="modulepreload" href="js/config.js?v=20260907a">
-    <link rel="modulepreload" href="js/progress.js?v=20260913a">
+    <link rel="modulepreload" href="js/progress.js?v=20260913b">
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20260831a">
-    <link rel="modulepreload" href="js/ui.js?v=20260913l">
+    <link rel="modulepreload" href="js/ui.js?v=20260913m">
     <link rel="modulepreload" href="js/vocab.js?v=20260913g">
     <link rel="modulepreload" href="js/song-sets-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/song-sets.js?v=20260823ae">
@@ -434,17 +434,8 @@
                 <span>Loading your progress...</span>
             </div>
 
-            <!-- Level Estimate CTA — shown in place of the progress bar when
-                 the user has no coverage and hasn't estimated their level yet.
-                 Once they've started making progress, or estimated, this
-                 hides and the coverage bar takes over the same slot. -->
-            <div id="levelEstimateCTA" class="level-estimate-cta" style="display: none;">
-                <div class="level-estimate-cta-content">
-                    <div class="level-estimate-cta-title">Not sure where to start?</div>
-                    <div class="level-estimate-cta-desc">Take a quick adaptive test (~30 words) to find a useful starting level.</div>
-                </div>
-                <button class="level-estimate-cta-btn" id="levelEstimateCTABtn" type="button">Estimate my level</button>
-            </div>
+            <!-- Level Estimate CTA retained hidden for DOM anchor backward compatibility -->
+            <div id="levelEstimateCTA" class="level-estimate-cta" style="display: none !important;" aria-hidden="true"></div>
 
             <!-- Personal Progress Bar (standalone, shown after language selection) -->
             <div id="personalCoverageWrapper" class="coverage-bar-wrapper personal-coverage-wrapper" style="display: none;">
@@ -486,6 +477,13 @@
                             <div><span>1</span><p><strong>Start anywhere.</strong> Begin at Level 1 for fundamentals, or jump ahead if you already know the basics.</p></div>
                             <div><span>2</span><p><strong>Bite-sized sets.</strong> Each level is broken into small sets so you can make fast, steady progress without getting overwhelmed.</p></div>
                             <div><span>3</span><p><strong>Streamline saves time.</strong> Groups related word forms and sets aside obvious look-alikes so you focus on new vocabulary.</p></div>
+                        </div>
+                        <div class="level-estimate-modal-callout" id="step2LevelEstimateCallout">
+                            <div class="level-estimate-modal-body">
+                                <strong>Not sure which level is right for you?</strong>
+                                <p>Take a quick adaptive test (~30 words) to estimate your current vocabulary and start at the right level.</p>
+                            </div>
+                            <button type="button" class="level-estimate-modal-btn" id="openEstimationFromLevelHelpBtn">Estimate my level →</button>
                         </div>
                     </div></div>
                 </div>
@@ -1734,6 +1732,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260913m"></script>
+    <script type="module" src="js/main.js?v=20260913n"></script>
 </body>
 </html>
