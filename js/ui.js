@@ -419,6 +419,8 @@ function unmergeStandardProgressFromLanguageStep() {
     wrapper.style.display = 'none';
     sourcePill.style.display = 'none';
     sourceCard.style.display = 'none';
+    const extrasSection = document.getElementById('extrasDeckSection');
+    if (extrasSection) extrasSection.style.display = 'none';
 }
 
 window.mergeArtistProgressIntoSourceStep = mergeArtistProgressIntoSourceStep;
@@ -503,6 +505,8 @@ function setupLanguageTabs() {
         document.getElementById('lemmaToggleContainer').style.display = 'none';
         document.getElementById('cognateToggleContainer').style.display = 'none';
         document.getElementById('step4').style.display = 'none';
+        const extrasSection = document.getElementById('extrasDeckSection');
+        if (extrasSection) extrasSection.style.display = 'none';
         hideAllSelectionPills();
         setActiveSetupStep('step1');
         window.showLanguagePicker?.(config.languages);
@@ -583,6 +587,8 @@ function setupLanguageTabs() {
             document.getElementById('lemmaToggleContainer').style.display = 'none';
             document.getElementById('cognateToggleContainer').style.display = 'none';
             document.getElementById('step4').style.display = 'none';
+            const extrasSection = document.getElementById('extrasDeckSection');
+            if (extrasSection) extrasSection.style.display = 'none';
             hideAllSelectionPills();
 
             const continueToSpeech = async () => {
@@ -2442,9 +2448,26 @@ function renderSetupExtrasSection() {
     const section = document.getElementById('extrasDeckSection');
     const card = document.getElementById('extrasDeckCard');
     const title = document.getElementById('extrasDeckTitle');
+    const eyebrow = document.getElementById('extrasDeckEyebrow');
     if (!section || !card) return;
 
+    // Never show the extras/supplementary section while choosing between
+    // Speech and Lyrics, or before level selection has become active.
+    const step1 = document.getElementById('step1');
+    const isSpeechActive = Boolean(step1?.classList.contains('source-speech-active'));
+    const isArtistActive = Boolean(activeArtist);
+    const step2 = document.getElementById('step2');
+    const step2Visible = Boolean(step2 && step2.style.display !== 'none');
+    const step4 = document.getElementById('step4');
+    const step4Visible = Boolean(step4 && step4.style.display !== 'none');
+
+    if ((!isSpeechActive && !isArtistActive) || (!step2Visible && !step4Visible)) {
+        section.style.display = 'none';
+        return;
+    }
+
     if (activeArtist) {
+        if (eyebrow) eyebrow.textContent = 'Supplementary';
         const artistName = activeArtist.name || 'Artist';
         const extraUnlocked = window.isArtistExtraUnlocked?.();
         const coveragePct = Number(window._artistMainCoveragePct || 0);
@@ -2499,6 +2522,7 @@ function renderSetupExtrasSection() {
         const cognates = extrasData.cognates || [];
         const lemmas = extrasData.lemmas || [];
         const totalSkipped = cognates.length + lemmas.length;
+        if (eyebrow) eyebrow.textContent = 'Streamline';
         if (title) title.textContent = 'Skipped words deck';
 
         if (totalSkipped > 0) {

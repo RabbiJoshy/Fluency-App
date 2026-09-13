@@ -14388,8 +14388,74 @@
 }
 .fast-mode-master-icon { color: var(--accent-primary); font-size: 16px; }
 .fast-mode-master-copy { display: flex; min-width: 0; flex-direction: column; gap: 2px; }
+.fast-mode-title-row { display: inline-flex; align-items: center; gap: 6px; }
+.fast-mode-title-row--header { margin-bottom: 8px; }
+.streamline-rec-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1.5px 6px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-primary) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 38%, transparent);
+  color: var(--accent-primary);
+  font: 700 9.5px/1.1 var(--font-reading);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+}
 .fast-mode-master-copy strong { font: 700 13px/1.2 var(--font-emphasis); }
 .fast-mode-master-copy small { color: var(--text-muted); font: 500 11px/1.2 var(--font-reading); }
+.streamline-rec-callout {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 9px 12px;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--accent-primary) 9%, var(--bg-secondary));
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 22%, var(--border-color));
+  font-size: 12px;
+  line-height: 1.4;
+  position: relative;
+}
+.streamline-rec-callout-icon {
+  font-size: 14px;
+  line-height: 1;
+  color: var(--accent-primary);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.streamline-rec-callout-body {
+  flex: 1;
+  min-width: 0;
+}
+.streamline-rec-callout-body strong {
+  display: block;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+  font-size: 12px;
+}
+.streamline-rec-callout-body p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 11.5px;
+}
+.streamline-rec-callout-dismiss {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px 4px;
+  font-size: 12px;
+  line-height: 1;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.streamline-rec-callout-dismiss:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
 .fast-mode-master-switch {
   position: relative;
   width: 34px;
