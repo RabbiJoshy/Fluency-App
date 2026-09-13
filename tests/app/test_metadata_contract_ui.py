@@ -78,6 +78,7 @@ class MetadataContractUITests(unittest.TestCase):
         self.assertIn("full: `used with ${item.value}`", metadata_pills)
         self.assertIn("item.kind === 'argument_type'", metadata_pills)
         self.assertIn("item.kind === 'clause_context'", metadata_pills)
+        self.assertIn("const label = item.sourceText || item.value", metadata_pills)
 
     def test_inactive_spanishdict_rows_keep_semantics_but_drop_typed_metadata(self) -> None:
         metadata_pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")

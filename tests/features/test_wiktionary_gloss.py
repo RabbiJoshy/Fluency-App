@@ -44,7 +44,7 @@ class WiktionaryGlossProjectionTests(unittest.TestCase):
         self.assertEqual(projection.display_text, "from")
         self.assertEqual(
             [(item.family, item.kind, item.value) for item in projection.specialist_features],
-            [("functional", "usage_note", "used to indicate origin")],
+            [("functional", "semantic_relation", "origin")],
         )
 
     def test_multiple_known_tails_are_projected_in_source_order(self) -> None:

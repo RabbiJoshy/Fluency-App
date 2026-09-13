@@ -326,7 +326,8 @@ export function senseMetadataDisplay(item) {
         return compactConstructionMetadata(item.value);
     }
     if (item.family === 'functional') {
-        return { short: item.value, full: item.value };
+        const label = item.sourceText || item.value;
+        return { short: label, full: label };
     }
     if (item.family === 'grammar') {
         const exact = ({

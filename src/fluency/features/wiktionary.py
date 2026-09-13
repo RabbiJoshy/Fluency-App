@@ -26,6 +26,7 @@ from typing import Any, Mapping, Sequence
 
 from fluency.features.contract import GRAMMATICAL_FORMS, SpecialistFeature
 from fluency.features.construction import structured_construction
+from fluency.features.functional import functional_feature
 from fluency.features.metadata import MetadataAccounting
 from fluency.features.parenthetical import leading_parenthetical, split_top_level_commas
 
@@ -330,12 +331,12 @@ def extract(
     seen: set[tuple[str, str]] = set()
     topic_labels: set[str] = set()
 
-    def add(family: str, kind: str, value: str) -> None:
+    def add(family: str, kind: str, value: str, embedding_text: str | None = None) -> None:
         key = (family, value.lower())
         if key in seen:
             return
         seen.add(key)
-        features.append(SpecialistFeature(family, kind, value, value))
+        features.append(SpecialistFeature(family, kind, value, embedding_text or value))
 
     for topic in sense.get("topics", []) or []:
         if isinstance(topic, str) and topic.strip():
@@ -401,6 +402,7 @@ def extract(
             continue
         for value in values:
             if isinstance(value, str) and FUNCTIONAL.match(value.strip()) is not None:
-                add("functional", "usage_note", value.strip())
+                feature = functional_feature(value.strip())
+                add(feature.family, feature.kind, feature.value, feature.embedding_text)
 
     return tuple(features)

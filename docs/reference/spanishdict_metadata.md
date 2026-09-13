@@ -40,6 +40,16 @@ polarity contexts, comparisons and question contexts no longer survive as an
 opaque `usage_note`. Narrow exact mappings keep looser phrases such as `used in
 games` from being assigned syntactic meaning without enough evidence.
 
+Functional prose has two layers. A stable machine purpose groups established
+aliases across providers (`used to express obligation` and `used to indicate an
+obligation` become `functional/modality=obligation`), while `embedding_text`
+retains the provider's complete wording. The card deliberately displays that
+original wording. Unmapped functions remain typed `usage_note` values rather
+than being forced into a broad or misleading bucket.
+The current Spanish projection canonicalizes 1,218 of 1,578 functional feature
+occurrences (77%) across modality, temporal and semantic relations, discourse
+functions, speech acts and emotions; the other 360 retain provider prose.
+
 ## Shipped Spanish audit
 
 Across the repeated sense appearances in the 2,000-card projection, the current

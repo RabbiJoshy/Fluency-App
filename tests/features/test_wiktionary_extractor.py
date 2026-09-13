@@ -227,7 +227,7 @@ class WiktionaryExtractorTests(unittest.TestCase):
         out = extract({"glosses": ["used to indicate direction"]}, policy=PT)
         self.assertEqual(
             families(out),
-            [("functional", "usage_note", "used to indicate direction")],
+            [("functional", "semantic_relation", "direction")],
         )
 
     def test_parenthetical_must_precede_real_text(self) -> None:

@@ -17,6 +17,7 @@ from typing import Any, Mapping
 
 from fluency.features.contract import GRAMMATICAL_FORMS, SpecialistFeature
 from fluency.features.construction import structured_construction
+from fluency.features.functional import functional_feature
 
 
 # SpanishDict's ``context`` is deliberately overloaded: it may be a semantic
@@ -236,7 +237,7 @@ def extract(sense: Mapping[str, Any]) -> tuple[SpecialistFeature, ...]:
                 continue
 
             if FUNCTIONAL.match(clause):
-                features.append(SpecialistFeature("functional", "usage_note", clause, clause))
+                features.append(functional_feature(clause))
                 continue
             if structured := structured_construction(clause):
                 features.append(structured)

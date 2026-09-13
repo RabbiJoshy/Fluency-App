@@ -15,6 +15,24 @@ class ProviderParityTests(unittest.TestCase):
         spanish = spanishdict_extract({"context": "used to indicate direction"})
         wiki = wiktionary_extract({"glosses": ["used to indicate direction"]})
         self.assertEqual(values(spanish, "functional"), values(wiki, "functional"))
+        self.assertEqual(values(spanish, "functional"), {"direction"})
+
+    def test_functional_aliases_share_stable_machine_purposes(self) -> None:
+        obligation = spanishdict_extract({"context": "used to express obligation"})
+        possibility = spanishdict_extract({"context": "used to describe a possibility"})
+        time = spanishdict_extract({"context": "indicating time"})
+        self.assertEqual(
+            {(item.kind, item.value) for item in (*obligation, *possibility, *time)},
+            {("modality", "obligation"), ("modality", "possibility"), ("temporal_relation", "time")},
+        )
+        self.assertEqual(obligation[0].embedding_text, "used to express obligation")
+
+    def test_unmapped_functional_prose_remains_a_usage_note(self) -> None:
+        features = spanishdict_extract({"context": "used to toast"})
+        self.assertEqual(
+            {(item.kind, item.value) for item in features},
+            {("usage_note", "used to toast")},
+        )
 
     def test_grammar_marks_share_canonical_values(self) -> None:
         spanish = spanishdict_extract(
@@ -141,7 +159,7 @@ class ProviderParityTests(unittest.TestCase):
         features = spanishdict_extract({"context": "indicating time; expressing surprise"})
         self.assertEqual(
             values(features, "functional"),
-            {"indicating time", "expressing surprise"},
+            {"time", "surprise"},
         )
 
     def test_semantic_uses_of_express_and_used_remain_meaning_text(self) -> None:
