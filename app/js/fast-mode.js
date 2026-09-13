@@ -54,14 +54,77 @@ function currentState() {
     return 'custom';
 }
 
-// Describes only the parts this release supports. Czech has no lemma mapping,
-// so a fixed "forms merged, familiar words set aside" would claim something
-// the deck cannot do.
+function getCognateExamples(maxCount = 3) {
+    const vocab = globalThis.setupVocabularySnapshot || globalThis.cachedVocabularyData;
+    if (!Array.isArray(vocab) || vocab.length === 0) return [];
+
+    let startRank = 0;
+    let endRank = Infinity;
+    const selectedBtn = document.querySelector('.level-btn.selected');
+    if (selectedBtn?.dataset.startRank && selectedBtn?.dataset.endRank) {
+        startRank = parseInt(selectedBtn.dataset.startRank, 10);
+        endRank = parseInt(selectedBtn.dataset.endRank, 10);
+    } else {
+        const segBar = document.getElementById('lswSlider');
+        const idx = segBar ? parseInt(segBar.dataset.value || '', 10) : NaN;
+        if (!isNaN(idx) && Array.isArray(window.lastRenderedPercentageRanges) && window.lastRenderedPercentageRanges[idx]) {
+            const range = window.lastRenderedPercentageRanges[idx];
+            startRank = range.startRank ?? range.start ?? 0;
+            endRank = range.endRank ?? range.end ?? Infinity;
+        }
+    }
+
+    const decide = globalThis.isCognateKnown;
+    const isKnown = item => {
+        if (!item || !item.word || item.duplicate) return false;
+        if (decide) return Boolean(decide(item));
+        const legacy = Number(item.cognate_score || 0);
+        return legacy > 0 && legacy >= Number(globalThis.cognateThreshold || 0.7);
+    };
+
+    const levelCognates = [];
+    const allCognates = [];
+    for (const item of vocab) {
+        if (!isKnown(item)) continue;
+        allCognates.push(item);
+        const rank = Number(item.rank ?? item.frequency_rank ?? -1);
+        if (rank >= startRank && rank <= endRank) {
+            levelCognates.push(item);
+        }
+    }
+
+    const source = levelCognates.length > 0 ? levelCognates : allCognates;
+    const seen = new Set();
+    const words = [];
+    for (const item of source) {
+        const w = String(item.word || '').trim();
+        const lower = w.toLowerCase();
+        if (!w || seen.has(lower)) continue;
+        seen.add(lower);
+        words.push(w);
+        if (words.length >= maxCount) break;
+    }
+    return words;
+}
+
+// Offers concrete examples of excluded cognates in the current level/deck
+// rather than repeating that the switch is active.
 function summaryText() {
     const state = currentState();
-    if (state === 'on') return 'Active · skipping repeats';
-    if (state === 'off') return 'Off · full deck';
-    return 'Custom';
+    const words = getCognateExamples(3);
+    const examples = words.length > 0 ? ` (e.g. ${words.join(', ')})` : '';
+
+    if (state === 'on') {
+        return words.length > 0
+            ? `Skipping obvious words${examples}`
+            : 'Skipping obvious look-alikes';
+    }
+    if (state === 'off') {
+        return words.length > 0
+            ? `Full deck · includes obvious words${examples}`
+            : 'Off · full deck';
+    }
+    return words.length > 0 ? `Custom · e.g. skipping ${words.join(', ')}` : 'Custom';
 }
 
 // Turning fast mode on or off drives the real controls, so every side effect

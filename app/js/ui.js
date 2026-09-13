@@ -1574,6 +1574,7 @@ function setLevelSegmentSelection(idx) {
     const levelEl = document.getElementById('lswLevelVal');
     if (levelEl) levelEl.textContent = `Level ${idx + 1}`;
     updateLevelSliderReadout(idx);
+    globalThis.refreshFastMode?.();
 }
 
 // --- Horizontal level scrubber ---------------------------------------------
