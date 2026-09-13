@@ -998,7 +998,7 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
         const after = window.getCurrentCoverageSnapshot?.() || window.currentCoverageSnapshot || before;
         const beforePct = Number(before.percentage || 0);
         const afterPct = Math.max(beforePct, Number(after.percentage || 0));
-        document.getElementById('levelCompleteCoverageLabel').textContent = after.label || 'Speech understood';
+        document.getElementById('levelCompleteCoverageLabel').textContent = after.label || (activeArtist ? 'Lyrics understood' : 'Speech understood');
         document.getElementById('levelCoverageBefore').textContent = `${beforePct.toFixed(1)}%`;
         document.getElementById('levelCoverageAfter').textContent = `${afterPct.toFixed(1)}%`;
         document.getElementById('levelCompleteDescription').textContent = afterPct > beforePct
@@ -1014,6 +1014,28 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
         }));
     } else {
         celebration.classList.remove('is-celebrating');
+    }
+
+    const statsContainer = document.querySelector('.deck-complete-stats');
+    const correctEl = document.getElementById('completeCorrect');
+    const incorrectEl = document.getElementById('completeIncorrect');
+    const accuracyEl = document.getElementById('completeAccuracy');
+    const totalAnswered = (stats.correct || 0) + (stats.incorrect || 0);
+
+    if (statsContainer && correctEl && incorrectEl) {
+        if (!isLevelCompletion && totalAnswered > 0) {
+            correctEl.textContent = String(stats.correct || 0);
+            incorrectEl.textContent = String(stats.incorrect || 0);
+            statsContainer.hidden = false;
+            if (accuracyEl) {
+                const pct = Math.round(((stats.correct || 0) / totalAnswered) * 100);
+                accuracyEl.textContent = `${pct}% accuracy`;
+                accuracyEl.hidden = false;
+            }
+        } else {
+            statsContainer.hidden = true;
+            if (accuracyEl) accuracyEl.hidden = true;
+        }
     }
 
     const messageEl = document.getElementById('completeMessage');

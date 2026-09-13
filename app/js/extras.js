@@ -166,7 +166,7 @@ function renderExtras() {
     }
     body.innerHTML = sections.length > 0
         ? sections.join('')
-        : `<p class="extras-empty">Nothing is being skipped. Fast track is currently showing every word as its own card.</p>`;
+        : `<p class="extras-empty">Nothing is being skipped. Streamline is currently showing every word as its own card.</p>`;
     return { cognates, lemmas };
 }
 
