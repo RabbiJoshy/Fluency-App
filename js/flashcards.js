@@ -2903,7 +2903,7 @@ function splitSenseMetadataClauses(value) {
         const character = text[index];
         if ('([{'.includes(character)) depth++;
         else if (')]}'.includes(character) && depth) depth--;
-        else if (character === ',' && depth === 0) {
+        else if ((character === ',' || character === ';' || character === '|') && depth === 0) {
             const part = text.slice(start, index).trim();
             if (part) parts.push(part);
             start = index + 1;
@@ -2942,7 +2942,7 @@ function senseMetadataItems(meaning) {
     const provider = canonical.source_metadata || metadata.sense_provider_metadata || {};
     const items = [];
     const seen = new Set();
-    const add = (family, kind, value) => {
+    const add = (family, kind, value, sourceText = '') => {
         const clean = String(value || '').trim();
         // Source evidence is preserved in the release for audits, but the
         // learner card is not a dictionary-inspection surface. Only a concise
@@ -2953,7 +2953,7 @@ function senseMetadataItems(meaning) {
         const key = `${family}\u0000${clean.toLocaleLowerCase('en')}`;
         if (seen.has(key)) return;
         seen.add(key);
-        items.push({ family, kind, value: clean });
+        items.push({ family, kind, value: clean, sourceText: String(sourceText || '').trim() });
     };
 
     const normalizedFeatures = [
@@ -2970,7 +2970,7 @@ function senseMetadataItems(meaning) {
             || feature.family === 'companion'
             || feature.family === 'construction' || feature.family === 'grammar'
             || feature.family === 'functional' || feature.family === 'source') {
-            add(feature.family, feature.kind || '', feature.value);
+            add(feature.family, feature.kind || '', feature.value, feature.embedding_text);
         }
     }
     for (const region of provider.regions || []) {
@@ -3125,7 +3125,7 @@ function senseMetadataDisplay(item) {
 }
 
 function isSenseDefiningGrammar(item) {
-    return /^(?:countability|definiteness|formation|function|noun-class|polarity|position|pronoun-class|pronoun-use|verb-class|voice|word-class)=/u.test(item.value)
+    return /^(?:countability|definiteness|formation|function|mood|noun-class|number|person|polarity|position|pronoun-class|pronoun-use|tense|verb-class|voice|word-class)=/u.test(item.value)
         || new Set([
             'reflexive=true',
             'form=personal-infinitive',
@@ -3154,6 +3154,7 @@ function isSupportingSenseMetadata(item) {
     return (item.family === 'grammar' && !isSenseDefiningGrammar(item))
         || item.family === 'functional'
         || item.family === 'source'
+        || (item.family === 'construction' && item.kind === 'optional_companion')
         || (item.family === 'register'
             && SUPPORTING_REGISTER_VALUES.has(item.value.toLocaleLowerCase('en')));
 }
@@ -3207,13 +3208,31 @@ function contextWithoutSenseMetadata(meaning, active) {
         && canonical.contract_version
         && String(provider.context || '').trim() === context) return '';
     const represented = new Set();
-    for (const item of senseMetadataItems(meaning)) {
+    const metadataItems = senseMetadataItems(meaning);
+    let residual = context;
+    // A SpanishDict context can mix an ordinary gloss and metadata in one
+    // string ("to remove; used with de").  Remove only the source span that
+    // produced a canonical feature, leaving the semantic clarification intact.
+    for (const item of [...metadataItems].sort((a, b) => (
+        String(b.sourceText || '').length - String(a.sourceText || '').length
+    ))) {
+        const sourceText = String(item.sourceText || '').trim();
+        if (!sourceText) continue;
+        const index = residual.toLocaleLowerCase('en').indexOf(sourceText.toLocaleLowerCase('en'));
+        if (index >= 0) residual = `${residual.slice(0, index)}${residual.slice(index + sourceText.length)}`;
+    }
+    residual = residual
+        .replace(/^\s*[,;|:]\s*|\s*[,;|:]\s*$/gu, '')
+        .replace(/\s*[,;|:]\s*[,;|:]\s*/gu, '; ')
+        .replace(/\s{2,}/gu, ' ')
+        .trim();
+    for (const item of metadataItems) {
         const display = senseMetadataDisplay(item);
-        for (const value of [item.value, display.short, display.full]) {
+        for (const value of [item.value, item.sourceText, display.short, display.full]) {
             represented.add(String(value || '').trim().toLocaleLowerCase('en'));
         }
     }
-    return splitSenseMetadataClauses(context)
+    return splitSenseMetadataClauses(residual)
         .filter(clause => !represented.has(clause.toLocaleLowerCase('en')))
         .join(', ');
 }
