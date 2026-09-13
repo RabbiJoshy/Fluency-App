@@ -503,19 +503,19 @@ async function buildSeenLemmaSet(vocabData) {
     return seenLemmas;
 }
 
-function relatedWordIds(fullId) {
-    const matchedIds = window.getProgressRecordIdsForCard?.(fullId) || [];
+function relatedWordIds(fullId, word = '') {
+    const matchedIds = window.getProgressRecordIdsForCard?.(fullId, word) || [];
     const crossId = getCrossModeId(fullId);
     return Array.from(new Set([fullId, crossId, ...matchedIds].filter(Boolean)));
 }
 
-function hasRelatedWordProgress(fullId) {
-    return relatedWordIds(fullId).some(id =>
-        getWordProgressState(id).seen || wordHasKnowledgeProgress(id));
+function hasRelatedWordProgress(fullId, word = '') {
+    return relatedWordIds(fullId, word).some(id =>
+        getWordProgressState(id, word).seen || wordHasKnowledgeProgress(id, word));
 }
 
-function relatedWordNeedsReview(fullId) {
-    return relatedWordIds(fullId).some(id => wordNeedsKnowledgeReview(id));
+function relatedWordNeedsReview(fullId, word = '') {
+    return relatedWordIds(fullId, word).some(id => wordNeedsKnowledgeReview(id, word));
 }
 
 /**
@@ -1829,8 +1829,8 @@ async function loadVocabularyData(rangeString, opts = {}) {
                     if (includeWordId && (itemId === includeWordId || item.id === includeWordId)) {
                         return true;
                     }
-                    const hasRelatedProgress = hasRelatedWordProgress(itemId);
-                    if (studyMode === 'review') return relatedWordNeedsReview(itemId);
+                    const hasRelatedProgress = hasRelatedWordProgress(itemId, item.word);
+                    if (studyMode === 'review') return relatedWordNeedsReview(itemId, item.word);
                     if (studyMode === 'all') return true;
 
                     const coveredByEstimate = !hasRelatedProgress && (activeArtist
@@ -1843,8 +1843,8 @@ async function loadVocabularyData(rangeString, opts = {}) {
                 excludedMastered = beforeFiltered - filteredData.length;
                 if (studyMode === 'review') {
                     filteredData.sort((a, b) => {
-                        const aReview = getWordKnowledgeReviewInfo(getWordId(a));
-                        const bReview = getWordKnowledgeReviewInfo(getWordId(b));
+                        const aReview = getWordKnowledgeReviewInfo(getWordId(a), a.word);
+                        const bReview = getWordKnowledgeReviewInfo(getWordId(b), b.word);
                         return (aReview.reviewAt - bReview.reviewAt)
                             || ((a.displayRank || a.rank || 0) - (b.displayRank || b.rank || 0));
                     });
