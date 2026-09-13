@@ -225,6 +225,58 @@ function setupMistakeExport() {
     button.addEventListener('click', exportMistakes);
 }
 
+// Ad hoc ChatGPT hand-off: no API call from Fluency (that's the expensive
+// path), just a prompt built from the words the learner keeps missing,
+// copied to the clipboard, with ChatGPT opened in a new tab for them to
+// paste it into using their own account. A structured round trip back into
+// a dedicated review mode is a possible next step, not this one.
+function buildChatGptPrompt(rows) {
+    const words = rows.map(row => row.word).filter(Boolean);
+    return `I'm learning a language with Fluency and want extra practice with words I keep getting wrong.\n\n`
+        + `Words: ${words.join(', ')}\n\n`
+        + `For each word, write two short example sentences that make its meaning clear from context. `
+        + `Then add three or four longer sentences that naturally combine several of these words together, `
+        + `so I can practise recognising them in combination. Keep the language natural, not textbook-stiff.`;
+}
+
+async function openChatGptForMistakes() {
+    const status = element('chatgptPromptStatus');
+    const fallback = element('chatgptPromptFallback');
+    const rows = buildMistakeExportRows(progressData);
+    if (!rows.length) {
+        if (status) status.textContent = "No mistakes recorded yet on this device.";
+        return;
+    }
+    const prompt = buildChatGptPrompt(rows);
+    let copied = false;
+    try {
+        await navigator.clipboard.writeText(prompt);
+        copied = true;
+    } catch (_) {}
+    window.open('https://chatgpt.com/', '_blank', 'noopener');
+    if (status) {
+        status.textContent = copied
+            ? `Prompt for ${rows.length} word${rows.length === 1 ? '' : 's'} copied — paste it into ChatGPT.`
+            : `Could not copy automatically. Copy the prompt below, then paste it into ChatGPT.`;
+    }
+    if (fallback) {
+        fallback.value = prompt;
+        fallback.hidden = copied;
+    }
+}
+
+function setupChatGptPrompt() {
+    const button = element('openChatGptPromptBtn');
+    if (!button || button.dataset.listenerReady === '1') return;
+    button.dataset.listenerReady = '1';
+    button.addEventListener('click', () => {
+        openChatGptForMistakes().catch(() => {
+            const status = element('chatgptPromptStatus');
+            if (status) status.textContent = 'Could not build a prompt from your mistakes.';
+        });
+    });
+}
+
 function setupVocabularyImport() {
     const open = element('openVocabularyImportBtn');
     const modal = element('vocabularyImportModal');
@@ -265,5 +317,6 @@ function setupVocabularyImport() {
 
 setupVocabularyImport();
 setupMistakeExport();
+setupChatGptPrompt();
 
 window.openVocabularyImportModal = openVocabularyImportModal;

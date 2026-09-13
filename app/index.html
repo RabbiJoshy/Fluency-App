@@ -1345,7 +1345,17 @@
                     </p>
                     <!-- Deck Settings: everything that changes which cards the
                          deck contains. Each row carries a "?" that reveals a
-                         one-line description of what the toggle actually does. -->
+                         one-line description of what the toggle actually does.
+                         Grouped one level higher than the individual toggles:
+                         "Fast track" and "Practice" both change how much you
+                         do with each word (less repetition vs. more drilling),
+                         while "Card experience" is a separate axis — how a
+                         card looks and sounds, not what's inside it. -->
+                    <div class="settings-preference-cluster">
+                    <div class="settings-cluster-heading">
+                        <strong>Workload per word</strong>
+                        <span>How much you do with each one — skip repeats, or drill it further</span>
+                    </div>
                     <div class="settings-preference-group settings-preference-group--primary">
                     <div class="settings-group-heading">
                         <strong>Fast track</strong>
@@ -1426,9 +1436,15 @@
                         </div>
                     </div>
                     </div>
+                    </div>
 
                     <!-- Learning Settings: how the active card looks and behaves.
                          These never change which cards are in the deck. -->
+                    <div class="settings-preference-cluster">
+                    <div class="settings-cluster-heading">
+                        <strong>Card behaviour</strong>
+                        <span>How a card looks and sounds — never what's inside it</span>
+                    </div>
                     <div class="settings-preference-group">
                     <div class="settings-group-heading">
                         <strong>Card experience</strong>
@@ -1457,6 +1473,7 @@
                             <button type="button" class="group-size-btn global-study-default-btn" data-setting="speechEnabled" data-value="off" aria-pressed="false">Off</button>
                             <button type="button" class="group-size-btn global-study-default-btn selected" data-setting="speechEnabled" data-value="on" aria-pressed="true">On</button>
                         </div>
+                    </div>
                     </div>
                     </div>
                 </section>
@@ -1514,6 +1531,16 @@
                     </div>
                     <button type="button" class="settings-feature-action" id="exportMistakesBtn">Download CSV</button>
                     <p id="mistakeExportStatus" class="settings-feature-note" role="status" aria-live="polite"></p>
+                </section>
+                <section class="settings-feature-card" aria-labelledby="chatgptPromptTitle">
+                    <span class="settings-feature-icon" aria-hidden="true">💬</span>
+                    <div>
+                        <strong id="chatgptPromptTitle">Practice sentences from ChatGPT</strong>
+                        <p>Copies a prompt built from the words you keep getting wrong, and opens ChatGPT so you can paste it in — using your own ChatGPT account, not Fluency's.</p>
+                    </div>
+                    <button type="button" class="settings-feature-action" id="openChatGptPromptBtn">Copy prompt &amp; open ChatGPT</button>
+                    <p id="chatgptPromptStatus" class="settings-feature-note" role="status" aria-live="polite"></p>
+                    <textarea id="chatgptPromptFallback" class="vocabulary-import-text" rows="4" readonly hidden style="grid-column: 2 / -1;"></textarea>
                 </section>
             </div>
             <div class="settings-tab-content" id="appearanceTabContent">

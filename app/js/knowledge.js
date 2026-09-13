@@ -545,6 +545,7 @@ function ensureKnowledgeOverviewModal() {
                 </div>
                 <button type="button" class="knowledge-overview-close" aria-label="Close knowledge overview" onclick="closeKnowledgeOverview(event)">×</button>
             </header>
+            <p class="knowledge-overview-intro">This card can hold more than one meaning or expression. Mark each one on its own — separate from grading the card itself: <span class="knowledge-overview-legend-known">✓ Known</span> stops it coming back, <span class="knowledge-overview-legend-review">× Review</span> brings it back sooner.</p>
             <div id="knowledgeOverviewSummary" class="knowledge-overview-summary"></div>
             <div id="knowledgeOverviewList" class="knowledge-overview-list"></div>
         </div>`;
