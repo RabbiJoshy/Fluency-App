@@ -436,7 +436,7 @@
       "speechLang": "pl-PL"
     },
     "portuguese": {
-      "name": "European Portuguese",
+      "name": "Portuguese",
       "indexPath": "releases/pt/speech/pt-speech-european-3000-tiered-20260907/app/vocabulary.index.json",
       "examplesPath": "releases/pt/speech/pt-speech-european-3000-tiered-20260907/app/vocabulary.examples.json",
       "studyStructurePath": "releases/pt/speech/pt-speech-european-3000-tiered-20260907/app/study-structure.json",
@@ -592,7 +592,6 @@
     "polish",
     "french",
     "portuguese",
-    "portuguese_brazilian",
     "czech",
     "russian"
   ]

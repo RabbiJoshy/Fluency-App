@@ -6,12 +6,12 @@ import { initOfflineContent } from './offline-content.js?v=20260825ak';
 import './speech.js?v=20260824d';
 import './artist-ui.js?v=20260825ak';
 import './auth.js?v=20260912a';
-import './about-example.js?v=20260913f';
+import './about-example.js?v=20260913g';
 import './estimation.js?v=20260825ak';
 import './config.js?v=20260907a';
 import './progress.js?v=20260913b';
 import './knowledge.js?v=20260831a';
-import './ui.js?v=20260913m';
+import './ui.js?v=20260913n';
 import './vocab.js?v=20260913g';
 import './cognates.js?v=20260908d';
 import './coverage.js?v=20260909a';
@@ -20,7 +20,7 @@ import './extras.js?v=20260913e';
 import './song-sets.js?v=20260823ae';
 import './spotify-playlist-import.js?v=20260913a';
 import './vocabulary-import.js?v=20260913a';
-import './flashcards.js?v=20260913m';
+import './flashcards.js?v=20260913n';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 function openTutorialIntroduction() {
@@ -976,7 +976,7 @@ window.closeRadialPicker = closeRadialPicker;
 
 // Stable choice surfaces for lists that can grow. Options keep a fixed place,
 // remain discoverable, and can briefly explain the consequence of a choice.
-function showChoiceSheet({ id, ariaLabel, title, intro = '', entries, variant = 'list' }) {
+function showChoiceSheet({ id, ariaLabel, title, intro = '', entries, variant = 'list', onBack = null }) {
     const existing = document.getElementById(id);
     if (existing) { closeChoiceSheet(id); return; }
     if (!entries.length) return;
@@ -992,6 +992,18 @@ function showChoiceSheet({ id, ariaLabel, title, intro = '', entries, variant = 
     panel.className = 'choice-sheet-panel';
     const header = document.createElement('div');
     header.className = 'choice-sheet-header';
+    if (typeof onBack === 'function') {
+        const backBtn = document.createElement('button');
+        backBtn.type = 'button';
+        backBtn.className = 'choice-sheet-back';
+        backBtn.setAttribute('aria-label', 'Back');
+        backBtn.textContent = '‹';
+        backBtn.addEventListener('click', () => {
+            closeChoiceSheet(id);
+            onBack();
+        });
+        header.appendChild(backBtn);
+    }
     const headingGroup = document.createElement('div');
     headingGroup.className = 'choice-sheet-heading';
     const heading = document.createElement('h2');
@@ -1235,6 +1247,38 @@ async function showLyricsPicker(language, anchorBtn = null) {
 window.showLyricsPicker = showLyricsPicker;
 window.showArtistPicker = showArtistPicker;
 
+function showPortugueseVarietyPicker() {
+    showChoiceSheet({
+        id: 'portugueseVarietyChoiceSheet',
+        ariaLabel: 'Choose Portuguese variety',
+        title: 'Portuguese',
+        intro: 'Choose variety',
+        variant: 'list',
+        onBack: () => showLanguagePicker(config.languages),
+        entries: [
+            {
+                label: 'European Portuguese',
+                fallbackText: '🇵🇹',
+                description: 'Available now',
+                accent: (config.languages?.portuguese?.colorTheme?.primary) || '#046A38',
+                selected: selectedLanguage === 'portuguese',
+                onSelect: () => {
+                    document.querySelector('.lang-tab[data-lang="portuguese"]')?.click();
+                }
+            },
+            {
+                label: 'Brazilian Portuguese',
+                fallbackText: '🇧🇷',
+                disabled: true,
+                description: 'Coming soon',
+                accent: '#009c3b'
+            }
+        ]
+    });
+}
+
+window.showPortugueseVarietyPicker = showPortugueseVarietyPicker;
+
 // Standard-mode language adapter: flag pictures + existing hidden language
 // buttons, so all loading/theme/progress behavior stays in ui.js.
 function showLanguagePicker(languages) {
@@ -1247,17 +1291,26 @@ function showLanguagePicker(languages) {
     // declared order alone before, which meant every new language had to be
     // hand-placed ahead of the "soon" ones or it landed among them. Ready
     // languages keep their declared order relative to each other.
+    // Brazilian Portuguese is chosen via the Portuguese variety picker rather
+    // than having a duplicate orphaned tile.
     const ready = key => languages[key].hasData !== false;
-    const ordered = languageOrder.filter(key => languages[key]);
+    const ordered = languageOrder.filter(key => languages[key] && key !== 'portuguese_brazilian');
     const entries = [...ordered.filter(ready), ...ordered.filter(key => !ready(key))].map(key => {
         const cfg = languages[key];
+        const isPortuguese = key === 'portuguese';
         return {
             label: cfg.name,
             fallbackText: flags[key] || '🌐',
             accent: (cfg.colorTheme && cfg.colorTheme.primary) || 'var(--accent-primary)',
             disabled: cfg.hasData === false,
             selected: key === selectedLanguage,
-            onSelect: () => document.querySelector(`.lang-tab[data-lang="${key}"]`)?.click()
+            onSelect: () => {
+                if (isPortuguese) {
+                    showPortugueseVarietyPicker();
+                } else {
+                    document.querySelector(`.lang-tab[data-lang="${key}"]`)?.click();
+                }
+            }
         };
     });
     showChoiceSheet({

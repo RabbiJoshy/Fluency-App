@@ -243,7 +243,7 @@ const ABOUT_EXAMPLE_CARDS = {
 // and one adapter entry instead of a forked tutorial.
 const TUTORIAL_LANGUAGE_ADAPTERS = {
     spanish: { language: 'Spanish', speechCard: 'queSpeech', provider: 'SpanishDict', lyrics: true, usageShares: true },
-    portuguese: { language: 'European Portuguese', speechCard: 'tem', provider: 'Wiktionary', lyrics: false, usageShares: true, crossReferences: true },
+    portuguese: { language: 'Portuguese', speechCard: 'tem', provider: 'Wiktionary', lyrics: false, usageShares: true, crossReferences: true },
     czech: { language: 'Czech', speechCard: 'jeSpeech', provider: 'Wiktionary', lyrics: false, usageShares: true },
     french: { language: 'French', speechCard: 'deSpeech', provider: 'Wiktionary', lyrics: false },
 };

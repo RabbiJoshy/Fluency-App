@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v392';
+const CACHE_NAME = 'flashcards-v393';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -26,12 +26,12 @@ const ASSET_VERSION = '20260825ak';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/css/style.css?v=20260913k',
+  '/css/style.css?v=20260913l',
   '/css/light-theme.css?v=20260913a',
   '/config/config.json',
   '/config/cefr_levels.json',
   '/config/offline-content-manifest.json',
-  '/js/main.js?v=20260913n',
+  '/js/main.js?v=20260913o',
   `/js/theme.js?v=${ASSET_VERSION}`,
   '/js/state.js?v=20260912a',
   `/js/data-contracts.js?v=${ASSET_VERSION}`,
