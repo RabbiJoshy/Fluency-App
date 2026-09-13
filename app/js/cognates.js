@@ -97,12 +97,16 @@ function activeKnownLanguages() {
 // asked separately, at its own cutoff.
 function isCognateKnown(item) {
     if (!item) return false;
+    // Every source is asked, and any one of them saying yes is enough — the
+    // same shape as the languages themselves. A language can hold both: Spanish
+    // has hand-built flags in its artist data and a generated map for its
+    // Speech deck, and the two describe different words on different scales.
+    // Preferring the map would have silently narrowed Spanish Lyrics to
+    // whichever of its words happened to appear in the Speech map.
+    const legacy = Number(item.cognate_score || 0);
+    if (legacy > 0 && legacy >= Number(globalThis.cognateThreshold || 0)) return true;
     const perLanguage = item.cognate_scores;
-    if (!perLanguage) {
-        // Pre-contract release: one score, on its own scale, against the
-        // slider that scale was calibrated for. Spanish lives here.
-        return Number(item.cognate_score || 0) >= Number(globalThis.cognateThreshold || 0);
-    }
+    if (!perLanguage) return false;
     for (const code of activeKnownLanguages()) {
         const score = Number(perLanguage[code] || 0);
         const cutoff = Number(cognateThresholds[code] ?? globalThis.cognateThreshold ?? 1);

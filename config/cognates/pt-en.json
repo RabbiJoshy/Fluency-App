@@ -1,0 +1,112 @@
+{
+  "target_language": "pt",
+  "known_language": "en",
+  "target_skeleton": [
+    [
+      "ã",
+      "a"
+    ],
+    [
+      "õ",
+      "o"
+    ],
+    [
+      "á",
+      "a"
+    ],
+    [
+      "â",
+      "a"
+    ],
+    [
+      "é",
+      "e"
+    ],
+    [
+      "ê",
+      "e"
+    ],
+    [
+      "í",
+      "i"
+    ],
+    [
+      "ó",
+      "o"
+    ],
+    [
+      "ô",
+      "o"
+    ],
+    [
+      "ú",
+      "u"
+    ],
+    [
+      "ç",
+      "s"
+    ],
+    [
+      "lh",
+      "li"
+    ],
+    [
+      "nh",
+      "ni"
+    ],
+    [
+      "qu",
+      "k"
+    ],
+    [
+      "ç",
+      "s"
+    ],
+    [
+      "ph",
+      "f"
+    ],
+    [
+      "th",
+      "t"
+    ],
+    [
+      "y",
+      "i"
+    ],
+    [
+      "c",
+      "k"
+    ]
+  ],
+  "known_skeleton": [
+    [
+      "ph",
+      "f"
+    ],
+    [
+      "ck",
+      "k"
+    ],
+    [
+      "qu",
+      "k"
+    ],
+    [
+      "y",
+      "i"
+    ],
+    [
+      "th",
+      "t"
+    ]
+  ],
+  "minimum_length": 4,
+  "length_guard": 0.7,
+  "gloss_maximum_words": 6,
+  "meaning_floor": 0.75,
+  "meaning_weight": 0.25,
+  "candidate_budget": 400,
+  "default_threshold": 0.7,
+  "notes": "Portuguese read by an English speaker. The transparent pairs are Latinate vocabulary shared through both languages' borrowing (informação/information, possível/possible) plus outright loans. Nasal vowels and the lh/nh digraphs are folded; the rest is edit distance. Threshold 0.70."
+}

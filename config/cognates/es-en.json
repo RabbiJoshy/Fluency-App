@@ -1,0 +1,92 @@
+{
+  "target_language": "es",
+  "known_language": "en",
+  "target_skeleton": [
+    [
+      "á",
+      "a"
+    ],
+    [
+      "é",
+      "e"
+    ],
+    [
+      "í",
+      "i"
+    ],
+    [
+      "ó",
+      "o"
+    ],
+    [
+      "ú",
+      "u"
+    ],
+    [
+      "ñ",
+      "ni"
+    ],
+    [
+      "ll",
+      "i"
+    ],
+    [
+      "j",
+      "h"
+    ],
+    [
+      "qu",
+      "k"
+    ],
+    [
+      "ç",
+      "s"
+    ],
+    [
+      "ph",
+      "f"
+    ],
+    [
+      "th",
+      "t"
+    ],
+    [
+      "y",
+      "i"
+    ],
+    [
+      "c",
+      "k"
+    ]
+  ],
+  "known_skeleton": [
+    [
+      "ph",
+      "f"
+    ],
+    [
+      "ck",
+      "k"
+    ],
+    [
+      "qu",
+      "k"
+    ],
+    [
+      "y",
+      "i"
+    ],
+    [
+      "th",
+      "t"
+    ]
+  ],
+  "minimum_length": 4,
+  "length_guard": 0.7,
+  "gloss_maximum_words": 6,
+  "meaning_floor": 0.75,
+  "meaning_weight": 0.25,
+  "candidate_budget": 400,
+  "default_threshold": 0.7,
+  "notes": "Spanish read by an English speaker, on the standard method. Spanish already ships a bespoke cognate score built from a hand-written suffix table, and that one lives on its own scale for its own slider — the two never meet, because each known language excludes on its own cutoff. This map gives Speech mode a filter it has never had, the legacy flags being present only in artist data. Threshold 0.70."
+}

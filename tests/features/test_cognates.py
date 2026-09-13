@@ -344,3 +344,25 @@ class AppLayerTests(unittest.TestCase):
         self.assertEqual(set(published["thresholds"]), {"en", "pl"})
         self.assertEqual(published["thresholds"]["pl"], 0.70)
         self.assertEqual(published["scores"]["telefon"]["pl"], 0.9)
+
+
+class SynthesisedEnglishTests(unittest.TestCase):
+    """The English side is built from the deck's own glosses, and a gloss is not
+    guaranteed to be English."""
+
+    def test_a_token_only_its_own_surface_produced_is_not_english(self) -> None:
+        # Wiktionary leaves some target words untranslated in their own
+        # definition; French femme then scored 0.92 against itself.
+        from fluency.enrichments.cognates import _english_index_entries
+        target = {"femme": frozenset({"femme"}), "chien": frozenset({"dog"})}
+        words = {entry["word"] for entry in _english_index_entries(target)}
+        self.assertNotIn("femme", words)
+        self.assertIn("dog", words)
+
+    def test_a_token_several_surfaces_produced_survives(self) -> None:
+        # total is glossed onto more than one target word, so it is English
+        # even where a target surface is spelled the same.
+        from fluency.enrichments.cognates import _english_index_entries
+        target = {"total": frozenset({"total"}), "entero": frozenset({"total whole"})}
+        words = {entry["word"] for entry in _english_index_entries(target)}
+        self.assertIn("total", words)

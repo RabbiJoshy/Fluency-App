@@ -78,14 +78,24 @@ def _english_index_entries(target: Mapping[str, frozenset[str]]):
     scoring engine rather than a second code path for the free case.
     """
 
-    seen: set[str] = set()
-    for glosses in target.values():
+    # A gloss is not guaranteed to be English. Wiktionary leaves some target
+    # words untranslated inside their own definition, and such a token becomes
+    # an "English" entry that then matches the very word it came from: French
+    # femme and nous each scored 0.92 against themselves.
+    #
+    # A token is only treated as English if some OTHER surface's gloss also
+    # produced it. That keeps real identical pairs — total, taxi and virus are
+    # each glossed onto several target words — and drops the self-derived ones.
+    sources: dict[str, set[str]] = {}
+    for surface, glosses in target.items():
         for gloss in glosses:
             for token in gloss.split():
-                if token in seen:
-                    continue
-                seen.add(token)
-                yield {"word": token, "pos": "noun", "senses": [{"glosses": [token]}]}
+                sources.setdefault(token, set()).add(surface)
+
+    for token, surfaces in sources.items():
+        if surfaces == {token}:
+            continue
+        yield {"word": token, "pos": "noun", "senses": [{"glosses": [token]}]}
 
 
 def _extract_entries(path: Path):

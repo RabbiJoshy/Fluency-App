@@ -853,3 +853,16 @@ class CognateMapScopeTests(unittest.TestCase):
     def test_a_map_refuses_a_language_it_was_not_built_for(self) -> None:
         cognates = (APP_ROOT / "js" / "cognates.js").read_text(encoding="utf-8")
         self.assertIn("if (languageCode && cognateLanguage && languageCode !== cognateLanguage) return;", cognates)
+
+
+class CognateSourceUnionTests(unittest.TestCase):
+    """A language can hold a hand-built score and a generated map at once —
+    Spanish does. Preferring the map would narrow Lyrics to whichever of its
+    words happened to appear in the Speech deck's map."""
+
+    def test_a_legacy_flag_still_excludes_when_a_map_exists(self) -> None:
+        source = (APP_ROOT / "js" / "cognates.js").read_text(encoding="utf-8")
+        legacy_line = source.index("const legacy = Number(item.cognate_score || 0);")
+        per_language_line = source.index("const perLanguage = item.cognate_scores;", legacy_line)
+        self.assertLess(legacy_line, per_language_line,
+                        "the legacy score must be consulted before returning on the map")

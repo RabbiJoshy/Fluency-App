@@ -1,0 +1,104 @@
+{
+  "target_language": "fr",
+  "known_language": "en",
+  "target_skeleton": [
+    [
+      "é",
+      "e"
+    ],
+    [
+      "è",
+      "e"
+    ],
+    [
+      "ê",
+      "e"
+    ],
+    [
+      "à",
+      "a"
+    ],
+    [
+      "â",
+      "a"
+    ],
+    [
+      "î",
+      "i"
+    ],
+    [
+      "ô",
+      "o"
+    ],
+    [
+      "û",
+      "u"
+    ],
+    [
+      "ù",
+      "u"
+    ],
+    [
+      "ë",
+      "e"
+    ],
+    [
+      "ï",
+      "i"
+    ],
+    [
+      "qu",
+      "k"
+    ],
+    [
+      "ç",
+      "s"
+    ],
+    [
+      "ph",
+      "f"
+    ],
+    [
+      "th",
+      "t"
+    ],
+    [
+      "y",
+      "i"
+    ],
+    [
+      "c",
+      "k"
+    ]
+  ],
+  "known_skeleton": [
+    [
+      "ph",
+      "f"
+    ],
+    [
+      "ck",
+      "k"
+    ],
+    [
+      "qu",
+      "k"
+    ],
+    [
+      "y",
+      "i"
+    ],
+    [
+      "th",
+      "t"
+    ]
+  ],
+  "minimum_length": 4,
+  "length_guard": 0.7,
+  "gloss_maximum_words": 6,
+  "meaning_floor": 0.75,
+  "meaning_weight": 0.25,
+  "candidate_budget": 400,
+  "default_threshold": 0.7,
+  "notes": "French read by an English speaker. English borrowed heavily from French, so a great many pairs are identical once accents are folded (nation, table, question). The skeleton folds French accents and the conventions the two spell differently for one sound; -tion, -ique/-ic and -eur/-or fall out of the edit distance without needing rules of their own. Threshold 0.70, the standard, chosen so a pair has to survive both the form and meaning axes rather than looking alike alone."
+}

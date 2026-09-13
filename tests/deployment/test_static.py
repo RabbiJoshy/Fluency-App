@@ -171,3 +171,13 @@ class CoverageStagingTests(unittest.TestCase):
 
     def test_absence_leaves_no_path_rather_than_a_guess(self) -> None:
         self.assertIn('language_config["coveragePath"] = None', self.source)
+
+
+class LyricsCognateSignalScopeTests(unittest.TestCase):
+    """Artist data only counts where Lyrics is actually reachable."""
+
+    def test_a_disabled_lyrics_mode_cannot_declare_a_cognate_filter(self) -> None:
+        source = (
+            Path(__file__).resolve().parents[2] / "src/fluency/deployment/static.py"
+        ).read_text(encoding="utf-8")
+        self.assertIn("lyrics_enabled and _lyrics_carries_cognate_signal", source)

@@ -277,10 +277,15 @@ def build_static_deployment(
             # the capability from the mapping alone switched off a filter that
             # had been working in Lyrics for a long time. Ask every source the
             # app itself would.
+            # Lyrics data only counts for a language whose Lyrics mode is on.
+            # French's only cognate flags are seven words in a test playlist of
+            # a language with lyrics disabled, which is not reachable in the app
+            # and should never have declared a capability.
+            lyrics_enabled = bool(language_config.get("capabilities", {}).get("lyrics"))
             language_config.setdefault("capabilities", {})["cognateFilter"] = (
                 has_mapping
                 or _carries_cognate_signal(index_rows)
-                or _lyrics_carries_cognate_signal(lyrics_release, language)
+                or (lyrics_enabled and _lyrics_carries_cognate_signal(lyrics_release, language))
             )
             files = _release_files(target, base)
             offline_sources.append({
