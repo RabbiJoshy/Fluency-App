@@ -3061,7 +3061,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 0;
+            gap: 2px;
             width: 100%;
             margin-top: 3px;
             color: var(--text-secondary);
@@ -3075,12 +3075,140 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            align-items: baseline;
+            align-items: center;
             width: 100%;
         }
 
         .sense-metadata-tier[hidden] {
             display: none;
+        }
+
+        .sense-metadata-tier--primary {
+            gap: 4px 6px;
+            margin-top: 2px;
+        }
+
+        .sense-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 3.5px;
+            border-radius: 999px;
+            padding: 1.5px 7.5px;
+            font-size: 10px;
+            line-height: 1.35;
+            font-weight: 600;
+            white-space: nowrap;
+            letter-spacing: 0.01em;
+            box-sizing: border-box;
+            max-width: 100%;
+            transition: background-color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .sense-pill-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            width: 10px;
+            height: 10px;
+        }
+
+        .sense-pill-label {
+            display: inline-block;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Suppress middot between pill badges */
+        .sense-pill + .sense-pill::before {
+            display: none !important;
+        }
+
+        /* Privileged Companion ("Used with") badge */
+        .sense-pill--companion {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.42);
+            color: color-mix(in srgb, #10b981 90%, var(--text-primary));
+            font-weight: 700;
+            box-shadow: 0 1px 2px rgba(16, 185, 129, 0.08);
+        }
+
+        .sense-pill--companion .sense-pill-icon {
+            color: #10b981;
+        }
+
+        .sense-pill--companion:hover {
+            background: rgba(16, 185, 129, 0.18);
+            border-color: rgba(16, 185, 129, 0.6);
+        }
+
+        /* Syntactic Frame / Complement badge */
+        .sense-pill--construction,
+        .sense-pill--syntax {
+            background: rgba(99, 102, 241, 0.10);
+            border: 1px solid rgba(99, 102, 241, 0.32);
+            color: color-mix(in srgb, #818cf8 88%, var(--text-primary));
+            font-weight: 650;
+        }
+
+        .sense-pill--construction:hover,
+        .sense-pill--syntax:hover {
+            background: rgba(99, 102, 241, 0.16);
+            border-color: rgba(99, 102, 241, 0.48);
+        }
+
+        /* Register (region & formality) badge */
+        .sense-pill--register {
+            background: rgba(245, 158, 11, 0.09);
+            border: 1px solid rgba(245, 158, 11, 0.30);
+            color: color-mix(in srgb, #d97706 84%, var(--text-primary));
+            font-weight: 600;
+        }
+
+        .sense-pill--register:hover {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: rgba(245, 158, 11, 0.45);
+        }
+
+        /* Domain / Subject topic badge */
+        .sense-pill--domain {
+            background: rgba(59, 130, 246, 0.09);
+            border: 1px solid rgba(59, 130, 246, 0.30);
+            color: color-mix(in srgb, #2563eb 84%, var(--text-primary));
+            font-weight: 600;
+        }
+
+        .sense-pill--domain:hover {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.45);
+        }
+
+        /* Adaptive density when card has 3+ or 5+ sense rows */
+        .sense-metadata-list.is-dense {
+            margin-top: 2px;
+            gap: 1px;
+        }
+
+        .sense-metadata-list.is-dense .sense-metadata-tier--primary {
+            gap: 2.5px 4.5px;
+            margin-top: 1px;
+        }
+
+        .sense-metadata-list.is-dense .sense-pill {
+            padding: 1px 6px;
+            font-size: 9.5px;
+            gap: 3px;
+        }
+
+        .sense-metadata-list.is-dense .sense-pill-icon {
+            width: 9px;
+            height: 9px;
+        }
+
+        .sense-metadata-list.is-very-dense .sense-pill {
+            padding: 0.5px 5px;
+            font-size: 9px;
         }
 
         .sense-metadata-tier--grammar {

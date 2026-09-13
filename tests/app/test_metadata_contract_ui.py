@@ -137,6 +137,41 @@ class MetadataContractUITests(unittest.TestCase):
         self.assertIn(".sense-cross-reference-related {", styles)
         self.assertNotIn('sense-metadata-tier-label">grammar', flashcards)
 
+    def test_privileged_companion_and_adaptive_density_ui(self) -> None:
+        metadata_pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        styles = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
+        about_example = (APP_ROOT / "js" / "about-example.js").read_text(encoding="utf-8")
+
+        # Privileged companion ordering and icon
+        self.assertIn("companion: 0,", metadata_pills)
+        self.assertIn("construction: 1,", metadata_pills)
+        self.assertIn("export const COMPANION_ICON_SVG =", metadata_pills)
+        self.assertIn("sense-pill--companion sense-pill--privileged", metadata_pills)
+        self.assertIn("Used with &quot;${escapeCardText(item.value)}&quot;", metadata_pills)
+
+        # Syntax frames and pills
+        self.assertIn("sense-pill--syntax", metadata_pills)
+        self.assertIn("sense-pill--${family}", metadata_pills)
+
+        # Adaptive density based on sense count
+        self.assertIn("senseCount >= 3", metadata_pills)
+        self.assertIn("overflowContext", metadata_pills)
+        self.assertIn("is-dense", metadata_pills)
+        self.assertIn("senseCount: card.meanings?.length", flashcards)
+
+        # Walkthrough demo alignment
+        self.assertIn("sense-pill--companion", about_example)
+        self.assertIn("sense-pill--syntax", about_example)
+
+        # CSS styling for pills and adaptive density
+        self.assertIn(".sense-pill--companion {", styles)
+        self.assertIn(".sense-pill--construction,", styles)
+        self.assertIn(".sense-pill--register {", styles)
+        self.assertIn(".sense-pill--domain {", styles)
+        self.assertIn(".sense-metadata-list.is-dense {", styles)
+        self.assertIn(".sense-pill + .sense-pill::before {", styles)
+
 
 if __name__ == "__main__":
     unittest.main()

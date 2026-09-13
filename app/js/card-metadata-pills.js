@@ -282,8 +282,8 @@ export function senseMetadataItems(meaning) {
     }
 
     const familyOrder = {
-        construction: 0,
-        companion: 1,
+        companion: 0,
+        construction: 1,
         register: 2,
         domain: 3,
         grammar: 4,
@@ -303,6 +303,8 @@ export function senseMetadataItems(meaning) {
             )) === index;
         });
 }
+
+export const COMPANION_ICON_SVG = '<svg class="sense-pill-icon sense-pill-icon--companion" viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 9.5l3-3"/><path d="M4 8.5l-1.5 1.5a2.5 2.5 0 1 0 3.5 3.5L7.5 12"/><path d="M12 7.5l1.5-1.5a2.5 2.5 0 1 0-3.5-3.5L8.5 4"/></svg>';
 
 export function senseMetadataDisplay(item) {
     if (item.family === 'companion') {
@@ -440,16 +442,34 @@ export function isSupportingSenseMetadata(item) {
             && SUPPORTING_REGISTER_VALUES.has(item.value.toLocaleLowerCase('en')));
 }
 
-export function senseMetadataHTML(meaning, active) {
+export function senseMetadataHTML(meaning, active, options = {}) {
     if (!active) return '';
     const items = senseMetadataItems(meaning);
-    const renderItems = (values) => values.map((item) => {
+    const senseCount = Number(options?.senseCount) || 1;
+    const isDense = senseCount >= 3;
+    const isVeryDense = senseCount >= 5;
+
+    const renderItems = (values, isPillTier = true) => values.map((item) => {
         const display = senseMetadataDisplay(item);
         const family = escapeCardText(item.family);
         const shortLabel = escapeCardText(display.short);
         const fullLabel = escapeCardText(display.full);
-        return `<span class="sense-metadata-detail" data-family="${family}" title="${family}: ${fullLabel}" aria-label="${fullLabel}">${shortLabel}</span>`;
+        if (!isPillTier) {
+            return `<span class="sense-metadata-detail" data-family="${family}" title="${family}: ${fullLabel}" aria-label="${fullLabel}">${shortLabel}</span>`;
+        }
+        const isCompanion = item.family === 'companion';
+        const isSyntax = item.family === 'construction';
+        const icon = isCompanion ? COMPANION_ICON_SVG : '';
+        const pillClass = `sense-metadata-detail sense-pill sense-pill--${family}${isSyntax ? ' sense-pill--syntax' : ''}${isCompanion ? ' sense-pill--companion sense-pill--privileged' : ''}`;
+        const titleAttr = isCompanion
+            ? `Used with &quot;${escapeCardText(item.value)}&quot;`
+            : `${family}: ${fullLabel}`;
+        const ariaLabel = isCompanion
+            ? `Used with ${escapeCardText(item.value)}`
+            : fullLabel;
+        return `<span class="${pillClass}" data-family="${family}" title="${titleAttr}" aria-label="${ariaLabel}">${icon}<span class="sense-pill-label">${shortLabel}</span></span>`;
     }).join('');
+
     const primary = items.filter(item => (
         ['construction', 'companion', 'register', 'domain'].includes(item.family)
         && !isSupportingSenseMetadata(item)
@@ -458,21 +478,35 @@ export function senseMetadataHTML(meaning, active) {
     // inflectional detail is still available, but does not compete with the
     // gloss and example until the learner asks for it.
     const grammar = items.filter(item => item.family === 'grammar' && isSenseDefiningGrammar(item));
-    const supporting = items.filter(isSupportingSenseMetadata);
-    if (!primary.length && !grammar.length && !supporting.length) return '';
-    const primaryHTML = primary.length
-        ? `<span class="sense-metadata-tier sense-metadata-tier--primary">${renderItems(primary)}</span>`
+    const baseSupporting = items.filter(isSupportingSenseMetadata);
+
+    let displayPrimary = primary;
+    let supporting = baseSupporting;
+    if (isDense && primary.length > 2) {
+        const syntaxItems = primary.filter(item => item.family === 'companion' || item.family === 'construction');
+        const contextItems = primary.filter(item => item.family !== 'companion' && item.family !== 'construction');
+        const maxContext = isVeryDense ? 0 : 1;
+        const visibleContext = contextItems.slice(0, maxContext);
+        const overflowContext = contextItems.slice(maxContext);
+        displayPrimary = syntaxItems.length ? [...syntaxItems, ...visibleContext] : primary.slice(0, 2);
+        supporting = [...baseSupporting, ...overflowContext];
+    }
+
+    if (!displayPrimary.length && !grammar.length && !supporting.length) return '';
+    const densityClass = isVeryDense ? ' is-dense is-very-dense' : (isDense ? ' is-dense' : '');
+    const primaryHTML = displayPrimary.length
+        ? `<span class="sense-metadata-tier sense-metadata-tier--primary">${renderItems(displayPrimary, true)}</span>`
         : '';
     const grammarHTML = grammar.length
-        ? `<span class="sense-metadata-tier sense-metadata-tier--grammar">${renderItems(grammar)}</span>`
+        ? `<span class="sense-metadata-tier sense-metadata-tier--grammar">${renderItems(grammar, false)}</span>`
         : '';
     const supportingHTML = supporting.length
-        ? `<span class="sense-metadata-tier sense-metadata-tier--details${supporting.length === 1 ? ' is-single' : ''}"${supporting.length > 1 ? ' hidden' : ''}>${renderItems(supporting)}</span>`
+        ? `<span class="sense-metadata-tier sense-metadata-tier--details${supporting.length === 1 ? ' is-single' : ''}"${supporting.length > 1 ? ' hidden' : ''}>${renderItems(supporting, false)}</span>`
         : '';
     const more = supporting.length > 1
         ? `<button type="button" class="sense-metadata-more" aria-expanded="false" onclick="toggleSenseMetadataOverflow(event, this)" data-count="${supporting.length}" aria-label="Show ${supporting.length} supporting details"><span class="sense-metadata-more-label">More details</span><span class="sense-metadata-more-count">${supporting.length}</span></button>`
         : '';
-    return `<span class="sense-metadata-list" aria-label="Sense details">${primaryHTML}${grammarHTML}${more}${supportingHTML}</span>`;
+    return `<span class="sense-metadata-list${densityClass}" aria-label="Sense details">${primaryHTML}${grammarHTML}${more}${supportingHTML}</span>`;
 }
 
 export function contextWithoutSenseMetadata(meaning, active) {
