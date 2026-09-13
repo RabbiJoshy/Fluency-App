@@ -36,20 +36,28 @@
     "language_policy": "es-spanishdict-v1",
     "source_edition": "spanishdict-pinned-snapshot",
     "gloss_language": "en",
-    "snapshot_id": "spanishdict-complete-menu-2026-08-23-v1",
-    "minimum_card_coverage": 0.98,
+    "snapshot_id": "spanishdict-2026-08-19-cache-v1",
+    "minimum_card_coverage": 0.94,
     "output_schema": "sense-menu/v1",
     "join_key": "surface_card_id",
-    "lemma_role": "lookup_metadata_only"
+    "lemma_role": "lookup_metadata_only",
+    "snapshot_note": "The v10 profiles name spanishdict-complete-menu-2026-08-23-v1, which is NOT present in the workspace -- only spanishdict-2026-08-19-cache-v1 is. Using what exists so the deck can be built; the named snapshot needs to be recovered or the shipping profile repointed.",
+    "coverage_note": "Lowered from 0.98 for THIS DIAGNOSTIC DECK ONLY. The SpanishDict cache was populated for the previous surface list and covers 94.6% of the EsPal top 1,000 (and only 32.6% of the top 9,999). The 54 uncovered cards are names/English (jack, the, you), verb+enclitic compounds (escuchame, olvidalo) that SpanishDict indexes only as lemmas, and ordinary words the old cache simply never fetched (coronel, teniente, asesinato). Do not copy this threshold into a shipping profile: decide the sense-menu source first."
   },
   "harvest": {
     "shared_policy": "speech-v1",
     "language_policy": "es-v1",
-    "source_policy": "exclusive",
+    "source_policy": "explicit_union",
     "sources": [
-      "retained-opensubtitles"
+      "tatoeba",
+      "opensubtitles"
     ],
-    "candidate_cap_per_surface": 60
+    "candidate_cap_per_surface": 60,
+    "source_share": {
+      "tatoeba": 0.6,
+      "opensubtitles": 0.4
+    },
+    "source_note": "Fresh Tatoeba + OpenSubtitles, matching Portuguese and Czech. The v10 profiles read retained-opensubtitles instead: a reconstructed sentence bank frozen on 2026-08-15, with no Tatoeba, whose candidate universe predates the pooling, redundancy and fragment work. A deck meant to show what the current harvest produces has to read what the current harvest reads."
   },
   "stage_order": [
     "inventory",

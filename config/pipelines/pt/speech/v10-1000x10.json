@@ -43,11 +43,17 @@
   "harvest": {
     "shared_policy": "speech-v1",
     "language_policy": "pt-v1",
-    "source_policy": "exclusive",
+    "source_policy": "explicit_union",
     "sources": [
+      "tatoeba",
       "opensubtitles"
     ],
-    "wsd_budget_per_card": 60
+    "wsd_budget_per_card": 60,
+    "source_share": {
+      "tatoeba": 0.6,
+      "opensubtitles": 0.4
+    },
+    "source_note": "Fresh Tatoeba + OpenSubtitles. pt v10-2000x3 reads opensubtitles exclusively; this deck matches the audited policy."
   },
   "stage_order": [
     "inventory",
