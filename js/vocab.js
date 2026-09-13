@@ -202,7 +202,27 @@ function clearStudySessionSnapshot() {
     document.getElementById('resumeLastSetCard')?.remove();
 }
 
-function saveStudySessionSnapshot() {
+let _saveSnapshotTimer = null;
+
+function saveStudySessionSnapshot({ immediate = false } = {}) {
+    if (!flashcards.length || cardNavStack.length > 0 || !stats.rangeString) return;
+    const appContent = document.getElementById('appContent');
+    if (!appContent || appContent.classList.contains('hidden')) return;
+
+    if (_saveSnapshotTimer) {
+        clearTimeout(_saveSnapshotTimer);
+        _saveSnapshotTimer = null;
+    }
+
+    if (immediate) {
+        _writeStudySessionSnapshot();
+    } else {
+        _saveSnapshotTimer = setTimeout(_writeStudySessionSnapshot, 250);
+    }
+}
+
+function _writeStudySessionSnapshot() {
+    _saveSnapshotTimer = null;
     if (!flashcards.length || cardNavStack.length > 0 || !stats.rangeString) return;
     const appContent = document.getElementById('appContent');
     if (!appContent || appContent.classList.contains('hidden')) return;
@@ -260,6 +280,10 @@ function saveStudySessionSnapshot() {
     } catch (error) {
         // Storage can be unavailable in hardened/private contexts.
     }
+}
+
+if (typeof window !== 'undefined') {
+    window.addEventListener('pagehide', () => saveStudySessionSnapshot({ immediate: true }));
 }
 
 async function resumeLastStudySession() {
@@ -432,16 +456,19 @@ async function buildEstimatedKnownIds(estimate) {
 }
 
 async function buildSeenLemmaSet(vocabData) {
-    if (!useLemmaMode || !lemmaFieldAvailable || !progressData) return new Set();
+    const hasLemmas = lemmaFieldAvailable || (Array.isArray(vocabData) && vocabData.some(item => lemmaGroupKey(item)));
+    if (!useLemmaMode || !hasLemmas || !progressData) return new Set();
+    if (!lemmaFieldAvailable && hasLemmas) lemmaFieldAvailable = true;
 
     const lemmaById = new Map();
     const lemmaBySurface = new Map();
     const addEntries = entries => {
         for (const entry of entries || []) {
-            if (!entry?.lemma) continue;
-            if (entry.id) lemmaById.set(entry.id, entry.lemma);
+            const lemma = lemmaGroupKey(entry);
+            if (!lemma) continue;
+            if (entry.id) lemmaById.set(entry.id, lemma);
             const surface = window.normalizeProgressSurface?.(entry.word);
-            if (surface) lemmaBySurface.set(surface, entry.lemma);
+            if (surface) lemmaBySurface.set(surface, lemma);
         }
     };
     addEntries(vocabData);
@@ -1452,6 +1479,15 @@ function buildFilteredVocab(vocabData) {
     // Assign stable rank from array position (pipeline sort order)
     const stableBaseline = assignStableVocabularyRanks(vocabData, spuriousSelfInfinitives);
 
+    if (!cognateFieldAvailable && Array.isArray(vocabData)) {
+        cognateFieldAvailable = vocabData.some(item =>
+            (item.cognate_score > 0) || item.cognate_scores || item.cognet_cognate || item.is_transparent_cognate
+        );
+    }
+    if (!lemmaFieldAvailable && Array.isArray(vocabData)) {
+        lemmaFieldAvailable = vocabData.some(item => lemmaGroupKey(item));
+    }
+
     // Single-pass filter combining: basic validity → POS=X placeholder
     // strip → artist scope → artist-mode flags → cognates → lemma mode.
     // Order is preserved so counts reflect what the chained .filter() calls
@@ -1763,6 +1799,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
             filteredData = filteredData.filter(item => {
                 const rangeRank = rangeBasis === 'category' ? item.categoryRank
                     : rangeBasis === 'stable' ? item.stableRank
+                    : rangeBasis === 'source' ? item.rank
                     : item.displayRank;
                 return rangeRank >= rangeStart && rangeRank < rangeEnd;
             });
@@ -1801,7 +1838,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
                         : item.rank <= estimate);
                     return !coveredByEstimate
                         && !hasRelatedProgress
-                        && !seenLemmas.has(item.lemma);
+                        && !seenLemmas.has(lemmaGroupKey(item) || item.lemma);
                 });
                 excludedMastered = beforeFiltered - filteredData.length;
                 if (studyMode === 'review') {

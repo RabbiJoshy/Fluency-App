@@ -356,6 +356,41 @@ function mergeStandardProgressIntoLanguageStep() {
     sourceCard.style.display = 'grid';
 }
 
+function mergeArtistProgressIntoSourceStep() {
+    const wrapper = document.getElementById('personalCoverageWrapper');
+    const progressSlot = document.getElementById('artistSourceProgress');
+    const languageName = document.getElementById('artistSourceLanguageName');
+    const languageIcon = document.getElementById('artistSourceLanguageIcon');
+    const languageBtn = document.getElementById('artistSourceLanguageBtn');
+    if (!wrapper || !progressSlot) return;
+
+    const flagMap = {
+        spanish: '🇪🇸', swedish: '🇸🇪', italian: '🇮🇹', dutch: '🇳🇱',
+        polish: '🇵🇱', french: '🇫🇷', russian: '🇷🇺', czech: '🇨🇿',
+        portuguese: '🇵🇹', portuguese_brazilian: '🇧🇷'
+    };
+    const lang = activeArtist?.language || selectedLanguage || 'spanish';
+    if (languageName) languageName.textContent = config.languages[lang]?.name || lang;
+    if (languageIcon) languageIcon.textContent = config.languages[lang]?.flag || flagMap[lang] || lang.slice(0, 2).toUpperCase();
+    if (languageBtn) {
+        languageBtn.onclick = () => window.showLanguagePicker?.(config.languages);
+    }
+
+    progressSlot.appendChild(wrapper);
+    wrapper.classList.add('personal-coverage-wrapper--merged', 'visible');
+    wrapper.classList.remove('personal-coverage-wrapper--empty');
+    wrapper.style.display = 'block';
+}
+
+function unmergeArtistProgressFromSourceStep() {
+    const wrapper = document.getElementById('personalCoverageWrapper');
+    const cta = document.getElementById('levelEstimateCTA');
+    if (!wrapper || !cta) return;
+    cta.after(wrapper);
+    wrapper.classList.remove('personal-coverage-wrapper--merged', 'personal-coverage-wrapper--empty', 'visible');
+    wrapper.style.display = 'none';
+}
+
 function unmergeStandardProgressFromLanguageStep() {
     if (activeArtist) return;
     const step = document.getElementById('step1');
@@ -380,6 +415,10 @@ function unmergeStandardProgressFromLanguageStep() {
     sourcePill.style.display = 'none';
     sourceCard.style.display = 'none';
 }
+
+window.mergeArtistProgressIntoSourceStep = mergeArtistProgressIntoSourceStep;
+window.unmergeArtistProgressFromSourceStep = unmergeArtistProgressFromSourceStep;
+window.unmergeStandardProgressFromLanguageStep = unmergeStandardProgressFromLanguageStep;
 
 function renderLanguageTabs() {
     const tabsContainer = document.getElementById('languageTabs');
@@ -701,6 +740,14 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
     let lastAvailable = null;
     let lastSuggestionLevel = null;
 
+    const sliderSegmentMap = new Map();
+    document.querySelectorAll('#lswSlider .lsw-seg').forEach(seg => {
+        if (seg.dataset.i !== undefined) sliderSegmentMap.set(seg.dataset.i, seg);
+    });
+
+    const parsedButtons = [];
+    const cefrLevels = (!percentageMode && (!ppmData || ppmData.length === 0)) ? getCefrLevels(language) : null;
+
     for (let buttonIndex = 0; buttonIndex < buttons.length; buttonIndex++) {
         const btn = buttons[buttonIndex];
         let minWord, maxWord;
@@ -713,16 +760,40 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
             minWord = parseInt(btn.dataset.startRank);
             maxWord = parseInt(btn.dataset.endRank);
             rankBasis = btn.dataset.rankBasis || 'source';
-        } else {
-            const cefrLevels = getCefrLevels(language);
+        } else if (cefrLevels) {
             const lv = cefrLevels.find(l => l.level === btn.dataset.level);
             if (!lv) continue;
             [minWord, maxWord] = lv.wordCount.split('-').map(Number);
+        } else {
+            continue;
         }
-        const wordsInLevel = filteredVocab.filter(it => {
-            const rank = _levelRankAccessor(rankBasis)(it);
-            return rank >= minWord && rank < maxWord;
+        parsedButtons.push({
+            btn,
+            buttonIndex,
+            minWord,
+            maxWord,
+            rankFn: _levelRankAccessor(rankBasis),
+            words: []
         });
+    }
+
+    if (parsedButtons.length > 0) {
+        // Distribute vocabulary in a single pass, breaking as soon as the matching range is found
+        for (let i = 0; i < filteredVocab.length; i++) {
+            const it = filteredVocab[i];
+            for (let j = 0; j < parsedButtons.length; j++) {
+                const p = parsedButtons[j];
+                const rank = p.rankFn(it);
+                if (rank >= p.minWord && rank < p.maxWord) {
+                    p.words.push(it);
+                    break;
+                }
+            }
+        }
+    }
+
+    for (let i = 0; i < parsedButtons.length; i++) {
+        const { btn, buttonIndex, words: wordsInLevel } = parsedButtons[i];
         if (wordsInLevel.length === 0) continue;
         lastAvailable = btn;
         const suggestionSkipped = window.isLevelMarkedDone?.(btn.dataset.level) || false;
@@ -736,7 +807,7 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
         btn.classList.toggle('is-suggestion-skipped', suggestionSkipped);
         btn.style.setProperty('--level-progress', `${completion}%`);
 
-        const visibleSegment = document.querySelector(`#lswSlider .lsw-seg[data-i="${buttonIndex}"]`);
+        const visibleSegment = sliderSegmentMap.get(String(buttonIndex));
         if (visibleSegment) {
             visibleSegment.dataset.progressPct = String(completion);
             visibleSegment.classList.toggle('has-partial-progress', isPartial);
@@ -1699,6 +1770,7 @@ function setupCognateToggle() {
 }
 
 function _refreshAfterCognateChange() {
+    invalidatePreparedSetupVocabulary();
     renderLevelSelector(selectedLanguage);
     if (selectedLevel) {
         const levelBtn = document.querySelector(`.level-btn[data-level="${selectedLevel}"]`);
@@ -1730,6 +1802,7 @@ function setupLemmaToggle() {
             this.classList.add('selected');
             this.textContent = this.dataset.full;
             useLemmaMode = this.dataset.lemma === 'on';
+            invalidatePreparedSetupVocabulary();
 
             // Re-render level selector with new word counts, and re-render range selector if a level is selected
             const loadingIndicator = document.getElementById('dataLoadingIndicator');
@@ -1841,7 +1914,7 @@ async function updateLemmaToggleVisibility() {
     // in ordinary language instead of making the feature mysteriously vanish.
     lemmaContainer.dataset.available = String(lemmaFieldAvailable);
     lemmaContainer.style.display = 'block';
-    rangeStepNumber.textContent = activeArtist ? '2' : '3';
+    rangeStepNumber.textContent = '3';
 
     if (lemmaFieldAvailable) {
         // Enable both options
@@ -1980,14 +2053,15 @@ function getSetupLearningState(item, { seenLemmas = new Set(), estimatedIds = nu
         });
     }
     if (recorded?.seen) return memoise(recorded);
-    if (relatedIds.some(id => wordHasKnowledgeProgress(id))) {
+    if (relatedIds.some(id => getWordProgressState(id).seen || wordHasKnowledgeProgress(id))) {
         return memoise({ ...recorded, seen: true });
     }
 
     // Merge Lemmas treats progress on any surface form as progress on the
     // shared lemma. This is the same set used by Learn New during deck build,
     // so the button count cannot advertise cards that will then be removed.
-    if (seenLemmas.has(item.lemma)) {
+    const lemmaKey = globalThis.lemmaGroupKey?.(item) || item.lemma;
+    if (lemmaKey && seenLemmas.has(lemmaKey)) {
         return memoise({ ...recorded, seen: true, needsReview: false, learned: true, inheritedLemma: true });
     }
 
@@ -2080,21 +2154,35 @@ async function renderRangeSelector() {
     // Sets use fixed baseline slots. Filters can make a set shorter, but
     // never refill it from its neighbour; this preserves membership, progress,
     // and the nearby-rank example neighbourhood across setting changes.
+    const slotCount = Math.max(0, Math.ceil((maxWord - minWord) / STABLE_SET_SLOT_COUNT));
+    const slots = Array.from({ length: slotCount }, () => []);
+    for (let i = 0; i < wordsInLevel.length; i++) {
+        const item = wordsInLevel[i];
+        const rank = rankOf(item);
+        const slotIdx = Math.floor((rank - minWord) / STABLE_SET_SLOT_COUNT);
+        if (slotIdx >= 0 && slotIdx < slotCount) {
+            slots[slotIdx].push(item);
+        }
+    }
+
     const ranges = [];
-    for (let start = minWord; start < maxWord; start += STABLE_SET_SLOT_COUNT) {
+    for (let slotIdx = 0; slotIdx < slotCount; slotIdx++) {
+        const start = minWord + slotIdx * STABLE_SET_SLOT_COUNT;
         const end = Math.min(start + STABLE_SET_SLOT_COUNT, maxWord);
-        const words = wordsInLevel.filter(item => {
-            const rank = rankOf(item);
-            return rank >= start && rank < end;
-        });
-        const states = words.map(item => getSetupLearningState(item, {
-            seenLemmas,
-            estimatedIds,
-            estimate
-        }));
-        const seenCount = states.filter(state => state?.seen).length;
-        const reviewCount = states.filter(state => state?.needsReview).length;
-        const dueCount = states.filter(state => state?.reviewReason === 'due').length;
+        const words = slots[slotIdx];
+        let seenCount = 0;
+        let reviewCount = 0;
+        let dueCount = 0;
+        for (let i = 0; i < words.length; i++) {
+            const state = getSetupLearningState(words[i], {
+                seenLemmas,
+                estimatedIds,
+                estimate
+            });
+            if (state?.seen) seenCount++;
+            if (state?.needsReview) reviewCount++;
+            if (state?.reviewReason === 'due') dueCount++;
+        }
         const knownCount = Math.max(0, seenCount - reviewCount);
         const unseenCount = words.length - seenCount;
         ranges.push({
@@ -2310,6 +2398,114 @@ async function renderRangeSelector() {
             console.error('Could not save level suggestion preference:', error);
         });
     });
+    renderSetupExtrasSection();
+}
+
+function _escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+}
+
+function renderSetupExtrasSection() {
+    const section = document.getElementById('extrasDeckSection');
+    const card = document.getElementById('extrasDeckCard');
+    const title = document.getElementById('extrasDeckTitle');
+    if (!section || !card) return;
+
+    if (activeArtist) {
+        const artistName = activeArtist.name || 'Artist';
+        const extraUnlocked = window.isArtistExtraUnlocked?.();
+        const coveragePct = Number(window._artistMainCoveragePct || 0);
+        if (title) title.textContent = 'Extra lyrics deck';
+        section.style.display = 'block';
+
+        if (extraUnlocked) {
+            const isCurrentlyInExtra = artistVocabularyScope === 'extra';
+            card.innerHTML = `
+                <div class="extras-deck-content">
+                    <div class="extras-deck-status">
+                        <span class="extras-deck-badge is-unlocked">Unlocked</span>
+                        <div class="extras-deck-info">
+                            <strong>Supplementary ${_escapeHtml(artistName)} vocabulary</strong>
+                            <p>One-off words, loanwords, slang, and names from these lyrics outside the main frequent deck.</p>
+                        </div>
+                    </div>
+                    <div class="extras-deck-actions">
+                        <button type="button" class="extras-deck-toggle-btn ${isCurrentlyInExtra ? 'is-active' : ''}" id="toggleArtistExtraBtn">
+                            ${isCurrentlyInExtra ? '← Back to Main levels' : `Study ${_escapeHtml(artistName)} Extras →`}
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('toggleArtistExtraBtn')?.addEventListener('click', () => {
+                if (isCurrentlyInExtra) {
+                    window.setArtistVocabularyScope?.('main');
+                } else {
+                    window.setArtistVocabularyScope?.('extra');
+                }
+            });
+        } else {
+            const needed = Math.max(0, 60 - coveragePct).toFixed(1);
+            card.innerHTML = `
+                <div class="extras-deck-content is-locked">
+                    <div class="extras-deck-status">
+                        <span class="extras-deck-badge is-locked">🔒 Unlocks at 60%</span>
+                        <div class="extras-deck-info">
+                            <strong>Supplementary ${_escapeHtml(artistName)} vocabulary</strong>
+                            <p>Focuses on core song words first. Unlocks at 60% lyrics understood (${coveragePct.toFixed(1)}% now, ${needed}% to go).</p>
+                        </div>
+                    </div>
+                    <div class="extras-deck-progress-track">
+                        <div class="extras-deck-progress-fill" style="width: ${Math.min(100, (coveragePct / 60) * 100)}%"></div>
+                    </div>
+                </div>
+            `;
+        }
+    } else {
+        // Speech mode: Fast track skipped words
+        const extrasData = globalThis.collectExtras ? globalThis.collectExtras() : { cognates: [], lemmas: [] };
+        const cognates = extrasData.cognates || [];
+        const lemmas = extrasData.lemmas || [];
+        const totalSkipped = cognates.length + lemmas.length;
+        if (title) title.textContent = 'Skipped words deck';
+
+        if (totalSkipped > 0) {
+            section.style.display = 'block';
+            card.innerHTML = `
+                <div class="extras-deck-content">
+                    <div class="extras-deck-status">
+                        <span class="extras-deck-badge is-info">Fast track</span>
+                        <div class="extras-deck-info">
+                            <strong>${totalSkipped} word${totalSkipped === 1 ? '' : 's'} set aside by Fast track</strong>
+                            <p>${cognates.length} obvious look-alikes · ${lemmas.length} forms merged into their base card.</p>
+                        </div>
+                    </div>
+                    <div class="extras-deck-actions">
+                        <button type="button" class="extras-deck-browse-btn" id="openSpeechExtrasBtn">
+                            Browse skipped words <span aria-hidden="true">›</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('openSpeechExtrasBtn')?.addEventListener('click', () => {
+                globalThis.openExtras?.();
+            });
+        } else {
+            section.style.display = 'block';
+            card.innerHTML = `
+                <div class="extras-deck-content is-empty">
+                    <div class="extras-deck-status">
+                        <span class="extras-deck-badge is-muted">Full deck</span>
+                        <div class="extras-deck-info">
+                            <strong>No words are currently skipped</strong>
+                            <p>Fast track is off or full deck is active. Turn on Fast track above to filter out familiar look-alikes.</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    }
 }
 
 function getNextStudySetMeta(rangeString) {
@@ -3083,3 +3279,4 @@ window.showTotalStatsModal = showTotalStatsModal;
 window.hideTotalStatsModal = hideTotalStatsModal;
 window.updateTotalStatsButtonVisibility = updateTotalStatsButtonVisibility;
 window.updateStatsModal = updateStatsModal;
+window.renderSetupExtrasSection = renderSetupExtrasSection;

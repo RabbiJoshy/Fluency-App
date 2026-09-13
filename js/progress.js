@@ -318,7 +318,8 @@ function updatePersonalCoverage(filteredVocab) {
     if (!wrapper || !fill || !label) return;
 
     const showEmptyStandardSummary = () => {
-        const merged = !activeArtist && document.getElementById('step1')?.classList.contains('language-summary-active');
+        const merged = (!activeArtist && document.getElementById('step1')?.classList.contains('language-summary-active'))
+            || (activeArtist && document.getElementById('artistSourceStep')?.style.display !== 'none');
         if (merged) {
             wrapper.style.display = 'block';
             wrapper.classList.add('personal-coverage-wrapper--empty', 'visible');

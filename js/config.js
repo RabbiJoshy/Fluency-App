@@ -9,6 +9,19 @@ async function loadConfig() {
         config = await configResponse.json();
         cefrLevelsConfig = await cefrResponse.json();
 
+        const params = new URLSearchParams(window.location?.search || '');
+        const speechRelease = params.get('speechRelease');
+        if (speechRelease) {
+            for (const [code, languageConfig] of Object.entries(config.languages || {})) {
+                const releaseId = speechRelease;
+                const base = `releases/${code}/speech/${encodeURIComponent(releaseId)}`;
+                languageConfig.releaseManifestPath = `${base}/manifest.json`;
+                languageConfig.releaseCompositionPath = `${base}/composition.json`;
+                languageConfig.studyStructurePath = `${base}/study-structure.json`;
+                languageConfig.dataPath = `${base}/vocabulary.json`;
+            }
+        }
+
         // Sense-assignment provenance registry (prompt_id -> model/family/notes).
         // Resolves the compact prompt_id join keys carried on card meanings into
         // the human-readable provenance shown in the card's info panel. Optional:

@@ -503,11 +503,6 @@ loadConfig().then(async () => {
             // Hide step 1 entirely (language auto-selected)
             document.getElementById('step1').style.display = 'none';
             renderArtistSourceSummary();
-            // Renumber steps: in artist mode the language step is hidden,
-            // so Choose Level becomes step 1 and Continue Level becomes step 2.
-            // Lemma/cognate are sub-settings inside Choose Level — they
-            // no longer carry their own numbers.
-            document.querySelector('#step2 .step-number').textContent = '1';
             await loadPpmData(activeArtist.language || 'spanish');
             document.getElementById('step2').style.display = 'block';
             // Title is now static ("Choose level" in the HTML); the
@@ -589,6 +584,17 @@ function renderArtistSourceSummary() {
     const image = document.getElementById('artistSourceImage');
     if (!step || !picker || !artistBtn || !speechBtn || !name || !image || !activeArtist) return;
 
+    const lang = activeArtist.language || selectedLanguage || 'spanish';
+    const langCfg = config?.languages?.[lang] || {};
+    const langNameEl = document.getElementById('artistSourceLanguageName');
+    const langIconEl = document.getElementById('artistSourceLanguageIcon');
+    const langBtn = document.getElementById('artistSourceLanguageBtn');
+    if (langNameEl) langNameEl.textContent = langCfg.name || lang;
+    if (langIconEl) langIconEl.textContent = langCfg.flag || lang.slice(0, 2).toUpperCase();
+    if (langBtn) {
+        langBtn.onclick = () => window.showLanguagePicker?.(config.languages);
+    }
+
     const artistName = activeArtist.name || 'Artist';
     const art = artistPickerImage(activeArtist);
     const isCustom = activeArtist.customSongSource === true;
@@ -600,46 +606,10 @@ function renderArtistSourceSummary() {
     image.classList.toggle('artist-source-image--custom', isCustom);
     image.style.backgroundImage = art ? `url('${art}')` : '';
     image.style.backgroundColor = art || isCustom ? '' : (activeArtist.colorTheme?.primary || 'var(--accent-primary)');
-    artistBtn.textContent = isCustom ? 'Change source' : 'Change artist';
+    artistBtn.textContent = isCustom ? 'Change songs' : 'Change artist';
     step.style.display = 'block';
 
-    const scopeHint = document.getElementById('artistVocabularyScopeHint');
-    const extraUnlocked = isArtistExtraUnlocked();
-    if (artistVocabularyScope === 'extra' && !extraUnlocked) {
-        artistVocabularyScope = 'main';
-        const url = new URL(window.location.href);
-        url.searchParams.delete('scope');
-        history.replaceState(null, '', url);
-    }
-    document.querySelectorAll('.artist-vocabulary-scope-btn').forEach(button => {
-        const selected = button.dataset.artistScope === artistVocabularyScope;
-        const locked = button.dataset.artistScope === 'extra' && !extraUnlocked;
-        button.classList.toggle('selected', selected);
-        button.classList.toggle('is-locked', locked);
-        button.setAttribute('aria-pressed', selected ? 'true' : 'false');
-        button.disabled = locked;
-        button.textContent = locked ? 'Extra · 60%' : (button.dataset.artistScope === 'extra' ? 'Extra' : 'Main');
-        button.title = locked ? 'Unlocks at 60% lyrics understood' : '';
-        button.onclick = () => {
-            const scope = button.dataset.artistScope;
-            // Extra is deliberately not a plain toggle — confirm via explainer
-            // so it can't be switched on by accident. Main switches directly.
-            if (scope === 'extra' && artistVocabularyScope !== 'extra') {
-                openExtraScopeModal();
-            } else {
-                setArtistVocabularyScope(scope);
-            }
-        };
-    });
-    if (scopeHint) {
-        scopeHint.textContent = artistVocabularyScope === 'extra'
-            ? isCustom
-                ? 'One-off lemma families from your selected songs'
-                : `One-off ${artistName} lemma families, supported by shared Speech examples where available`
-            : extraUnlocked
-                ? 'Recurring lemma families · Extra unlocked'
-                : `Extra unlocks at 60% lyrics understood · ${Math.min(59.9, window._artistMainCoveragePct || 0).toFixed(1)}% now`;
-    }
+    window.mergeArtistProgressIntoSourceStep?.();
 
     picker.onclick = () => {
         if (artistSongCatalog?.songs?.length && window.showSongSetPicker) {
@@ -654,11 +624,35 @@ function renderArtistSourceSummary() {
             (cfg.language || 'spanish') === language));
         showArtistPicker(picker, matchingArtists);
     };
-    speechBtn.onclick = () => {
-        showAppLoading('Switching to Speech', 'Preparing your language and progress…', true);
-        sessionStorage.setItem('fluencyPendingSpeechLanguage', activeArtist.language || 'spanish');
-        window.location.href = window.location.pathname;
+    speechBtn.onclick = async () => {
+        const targetLang = activeArtist.language || selectedLanguage || 'spanish';
+        window.showAppLoading?.('Switching to Speech', 'Preparing your language and progress…');
+        try {
+            activeArtist = null;
+            window._urlArtistSlug = null;
+            artistVocabularyScope = 'speech';
+            const url = new URL(window.location.href);
+            url.searchParams.delete('artist');
+            url.searchParams.delete('mode');
+            url.searchParams.delete('scope');
+            history.pushState(null, '', url);
+
+            document.getElementById('artistSourceStep').style.display = 'none';
+            document.getElementById('step1').style.display = 'block';
+            window.unmergeArtistProgressFromSourceStep?.();
+
+            const tab = document.querySelector(`.lang-tab[data-lang="${targetLang}"]`);
+            if (tab) {
+                tab.click();
+            } else {
+                window.reopenLanguagePicker?.();
+            }
+        } finally {
+            window.hideAppLoading?.();
+        }
     };
+
+    window.renderSetupExtrasSection?.();
 }
 
 window.renderArtistSourceSummary = renderArtistSourceSummary;

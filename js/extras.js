@@ -174,13 +174,15 @@ function renderExtras() {
 // view then explains that Fast track has not removed a separate card yet.
 function refreshExtrasButton() {
     const button = document.getElementById('extrasBtn');
-    if (!button) return;
     const { cognates, lemmas } = collectExtras();
     const total = cognates.length + lemmas.length;
-    button.style.display = 'inline-flex';
-    button.textContent = total === 0
-        ? 'See skipped words'
-        : total === 1 ? 'See 1 skipped word' : `See ${total} skipped words`;
+    if (button) {
+        button.style.display = 'inline-flex';
+        button.textContent = total === 0
+            ? 'See skipped words'
+            : total === 1 ? 'See 1 skipped word' : `See ${total} skipped words`;
+    }
+    window.renderSetupExtrasSection?.();
 }
 
 function filterExtras(query) {
@@ -252,3 +254,4 @@ if (document.readyState === 'loading') {
 // count is refreshed on demand by whoever changes a setting.
 globalThis.refreshExtrasButton = refreshExtrasButton;
 globalThis.openExtras = openExtras;
+globalThis.collectExtras = collectExtras;
