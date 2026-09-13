@@ -34,6 +34,12 @@ as embedding evidence. Unmistakable functional labels written as participles
 (`indicating time`, `expressing surprise`) join `used to ...` notes, while
 ordinary meanings such as `to express` remain semantic text.
 
+Recurring closed frames are atomic too: progressive and compound-tense
+auxiliaries, verb substitution, argument types (`with dates`, `with pronouns`),
+polarity contexts, comparisons and question contexts no longer survive as an
+opaque `usage_note`. Narrow exact mappings keep looser phrases such as `used in
+games` from being assigned syntactic meaning without enough evidence.
+
 ## Shipped Spanish audit
 
 Across the repeated sense appearances in the 2,000-card projection, the current

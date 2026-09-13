@@ -314,6 +314,15 @@ export function senseMetadataDisplay(item) {
         if (item.kind === 'complement_form') {
             return { short: `+ ${item.value}`, full: `used with ${item.value}` };
         }
+        if (item.kind === 'argument_type') {
+            return { short: `with ${item.value}`, full: `used with ${item.value}` };
+        }
+        if (item.kind === 'polarity_context') {
+            return { short: `in ${item.value} forms`, full: `used in ${item.value} forms` };
+        }
+        if (item.kind === 'clause_context') {
+            return { short: `in ${item.value}`, full: `used in ${item.value}` };
+        }
         return compactConstructionMetadata(item.value);
     }
     if (item.family === 'functional') {

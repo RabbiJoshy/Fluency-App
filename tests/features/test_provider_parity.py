@@ -148,6 +148,31 @@ class ProviderParityTests(unittest.TestCase):
         for context in ("to express", "to express a thought to oneself", "to be used up"):
             self.assertEqual(spanishdict_extract({"context": context}), ())
 
+    def test_recurring_spanishdict_frames_are_not_opaque_usage_notes(self) -> None:
+        features = spanishdict_extract({
+            "context": "used in progressive constructions; used in compound tenses; "
+            "with dates; with indirect questions; used in comparisons"
+        })
+        self.assertEqual(
+            {(item.kind, item.value) for item in features},
+            {
+                ("auxiliary_frame", "progressive construction"),
+                ("auxiliary_frame", "compound tense"),
+                ("argument_type", "dates"),
+                ("clause_context", "indirect questions"),
+                ("clause_context", "comparisons"),
+            },
+        )
+
+    def test_specialized_participle_frame_retains_its_semantic_constraint(self) -> None:
+        features = spanishdict_extract({
+            "context": "used with a participle to describe a state"
+        })
+        self.assertEqual(
+            {(item.kind, item.value) for item in features},
+            {("complement_form", "participle describing a state")},
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
