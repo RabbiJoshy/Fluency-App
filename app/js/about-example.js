@@ -490,7 +490,7 @@ const ABOUT_EXAMPLE_DECKS = [
                         anchor: '.sense-metadata-list',
                         title: 'Metadata, in a stable order',
                         text: 'Grammar and construction come first, then companion words, register, '
-                            + 'region and domain. Tap <em>+N</em> only when there is more.',
+                            + 'region and domain. A lone detail appears directly; larger groups stay behind <em>More details</em>.',
                         interactive: true,
                     },
                     {
@@ -663,18 +663,21 @@ function walkthroughMetadata(meaning, selected) {
         `<span class="sense-metadata-detail" data-family="${esc(item.family)}" `
         + `title="${esc(`${item.family}: ${item.full}`)}">${esc(item.short)}</span>`
     )).join('');
-    const primary = meaning.metadata.filter(item => item.family !== 'grammar' && item.family !== 'functional');
+    const softRegister = new Set(['broadly', 'especially', 'figuratively', 'literally', 'metonymically', 'mildly', 'often', 'possibly', 'sometimes', 'specifically', 'standard', 'usually']);
+    const isSupporting = item => item.family === 'functional'
+        || (item.family === 'register' && softRegister.has(item.short.toLocaleLowerCase('en')));
+    const primary = meaning.metadata.filter(item => item.family !== 'grammar' && !isSupporting(item));
     const grammar = meaning.metadata.filter(item => item.family === 'grammar');
-    const supporting = meaning.metadata.filter(item => item.family === 'functional');
+    const supporting = meaning.metadata.filter(isSupporting);
     const primaryHTML = primary.length
         ? `<span class="sense-metadata-tier sense-metadata-tier--primary">${renderItems(primary)}</span>` : '';
     const grammarHTML = grammar.length
         ? `<span class="sense-metadata-tier sense-metadata-tier--grammar">${renderItems(grammar)}</span>` : '';
     const supportingHTML = supporting.length
-        ? `<span class="sense-metadata-tier sense-metadata-tier--details" hidden>${renderItems(supporting)}</span>` : '';
-    const more = supporting.length
-        ? `<button type="button" class="sense-metadata-more" aria-expanded="false" data-count="${supporting.length}">Details +${supporting.length}</button>` : '';
-    return `<span class="sense-metadata-list" aria-label="Sense details">${primaryHTML}${grammarHTML}${supportingHTML}${more}</span>`;
+        ? `<span class="sense-metadata-tier sense-metadata-tier--details${supporting.length === 1 ? ' is-single' : ''}"${supporting.length > 1 ? ' hidden' : ''}>${renderItems(supporting)}</span>` : '';
+    const more = supporting.length > 1
+        ? `<button type="button" class="sense-metadata-more" aria-expanded="false" data-count="${supporting.length}" aria-label="Show ${supporting.length} supporting details"><span class="sense-metadata-more-label">More details</span><span class="sense-metadata-more-count">${supporting.length}</span></button>` : '';
+    return `<span class="sense-metadata-list" aria-label="Sense details">${primaryHTML}${grammarHTML}${more}${supportingHTML}</span>`;
 }
 
 function renderMeaningRows(card, selectedIdx) {
@@ -972,7 +975,8 @@ function wireBack(stage) {
         const details = list?.querySelector('.sense-metadata-tier--details');
         if (details) details.hidden = expanded;
         control.setAttribute('aria-expanded', String(!expanded));
-        control.textContent = expanded ? `Details +${control.dataset.count}` : 'Hide details';
+        const label = control.querySelector('.sense-metadata-more-label');
+        if (label) label.textContent = expanded ? 'More details' : 'Hide details';
         control.setAttribute('aria-label', expanded
             ? `Show ${control.dataset.count} supporting details`
             : 'Hide supporting details');

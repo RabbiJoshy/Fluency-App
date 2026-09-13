@@ -44,9 +44,16 @@ class MetadataContractUITests(unittest.TestCase):
         self.assertIn("if (family === 'source' && kind !== 'qualifier') return;", flashcards)
         self.assertIn("function isSenseDefiningGrammar(item)", flashcards)
         self.assertIn("item.family === 'grammar' && !isSenseDefiningGrammar(item)", flashcards)
+        self.assertIn("function isSupportingSenseMetadata(item)", flashcards)
+        self.assertIn("supporting.length === 1 ? ' is-single'", flashcards)
+        self.assertIn("supporting.length > 1", flashcards)
+        self.assertIn("sense-metadata-more-label", flashcards)
+        self.assertIn("${primaryHTML}${grammarHTML}${more}${supportingHTML}", flashcards)
         self.assertIn("combine('Early', 'Modern', 'Early Modern')", flashcards)
         self.assertNotIn("short.slice(0, 31)", flashcards)
         self.assertIn(".sense-metadata-more", styles)
+        self.assertIn(".sense-metadata-tier--details.is-single", styles)
+        self.assertIn("text-align: center", styles)
 
     def test_canonical_wiktionary_context_is_not_repeated_beside_features(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")

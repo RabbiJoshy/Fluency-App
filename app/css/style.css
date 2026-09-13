@@ -3091,15 +3091,23 @@
         }
 
         .sense-metadata-tier--details {
-            margin-top: 2px;
+            justify-content: center;
+            gap: 2px 0;
+            margin-top: 4px;
+            font-size: 11px;
             font-weight: 500;
-            text-align: left;
+            text-align: center;
             line-height: 1.45;
         }
 
         .sense-metadata-tier--details .sense-metadata-detail {
-            width: 100%;
+            width: auto;
+            max-width: 100%;
             overflow-wrap: anywhere;
+        }
+
+        .sense-metadata-tier--details.is-single {
+            margin-top: 2px;
         }
 
         .sense-metadata-tier-label {
@@ -3128,17 +3136,37 @@
 
         .sense-metadata-more {
             appearance: none;
-            border: 0;
-            border-bottom: 1px solid currentColor;
-            border-radius: 0;
-            padding: 0;
-            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            width: min(100%, 180px);
+            min-height: 26px;
+            border: 1px solid rgba(var(--sense-match-rgb), 0.24);
+            border-radius: 999px;
+            padding: 3px 10px;
+            background: rgba(var(--sense-match-rgb), 0.06);
             color: rgb(var(--sense-match-rgb));
             font: inherit;
-            margin-top: 2px;
+            font-size: 10.5px;
+            margin: 4px auto 0;
             font-weight: 650;
-            line-height: inherit;
+            line-height: 1.2;
             cursor: pointer;
+        }
+
+        .sense-metadata-more:hover {
+            background: rgba(var(--sense-match-rgb), 0.11);
+        }
+
+        .sense-metadata-more-count {
+            min-width: 17px;
+            border-radius: 999px;
+            padding: 1px 5px;
+            background: rgba(var(--sense-match-rgb), 0.13);
+            font-family: var(--font-data);
+            font-size: 9px;
+            line-height: 1.4;
         }
 
         .sense-metadata-more:focus-visible {

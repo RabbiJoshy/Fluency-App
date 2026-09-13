@@ -3135,6 +3135,29 @@ function isSenseDefiningGrammar(item) {
         ]).has(item.value);
 }
 
+const SUPPORTING_REGISTER_VALUES = new Set([
+    'broadly',
+    'especially',
+    'figuratively',
+    'literally',
+    'metonymically',
+    'mildly',
+    'often',
+    'possibly',
+    'sometimes',
+    'specifically',
+    'standard',
+    'usually',
+]);
+
+function isSupportingSenseMetadata(item) {
+    return (item.family === 'grammar' && !isSenseDefiningGrammar(item))
+        || item.family === 'functional'
+        || item.family === 'source'
+        || (item.family === 'register'
+            && SUPPORTING_REGISTER_VALUES.has(item.value.toLocaleLowerCase('en')));
+}
+
 function senseMetadataHTML(meaning, active) {
     if (!active) return '';
     const items = senseMetadataItems(meaning);
@@ -3145,16 +3168,15 @@ function senseMetadataHTML(meaning, active) {
         const fullLabel = escapeCardText(display.full);
         return `<span class="sense-metadata-detail" data-family="${family}" title="${family}: ${fullLabel}" aria-label="${fullLabel}">${shortLabel}</span>`;
     }).join('');
-    const primary = items.filter(item => ['construction', 'companion', 'register', 'domain'].includes(item.family));
+    const primary = items.filter(item => (
+        ['construction', 'companion', 'register', 'domain'].includes(item.family)
+        && !isSupportingSenseMetadata(item)
+    ));
     // Grammar that changes which sense applies is a navigation cue. Routine
     // inflectional detail is still available, but does not compete with the
     // gloss and example until the learner asks for it.
     const grammar = items.filter(item => item.family === 'grammar' && isSenseDefiningGrammar(item));
-    const supporting = items.filter(item => (
-        (item.family === 'grammar' && !isSenseDefiningGrammar(item))
-        || item.family === 'functional'
-        || item.family === 'source'
-    ));
+    const supporting = items.filter(isSupportingSenseMetadata);
     if (!primary.length && !grammar.length && !supporting.length) return '';
     const primaryHTML = primary.length
         ? `<span class="sense-metadata-tier sense-metadata-tier--primary">${renderItems(primary)}</span>`
@@ -3163,12 +3185,12 @@ function senseMetadataHTML(meaning, active) {
         ? `<span class="sense-metadata-tier sense-metadata-tier--grammar">${renderItems(grammar)}</span>`
         : '';
     const supportingHTML = supporting.length
-        ? `<span class="sense-metadata-tier sense-metadata-tier--details" hidden>${renderItems(supporting)}</span>`
+        ? `<span class="sense-metadata-tier sense-metadata-tier--details${supporting.length === 1 ? ' is-single' : ''}"${supporting.length > 1 ? ' hidden' : ''}>${renderItems(supporting)}</span>`
         : '';
-    const more = supporting.length
-        ? `<button type="button" class="sense-metadata-more" aria-expanded="false" onclick="toggleSenseMetadataOverflow(event, this)" data-count="${supporting.length}" aria-label="Show ${supporting.length} supporting details">Details +${supporting.length}</button>`
+    const more = supporting.length > 1
+        ? `<button type="button" class="sense-metadata-more" aria-expanded="false" onclick="toggleSenseMetadataOverflow(event, this)" data-count="${supporting.length}" aria-label="Show ${supporting.length} supporting details"><span class="sense-metadata-more-label">More details</span><span class="sense-metadata-more-count">${supporting.length}</span></button>`
         : '';
-    return `<span class="sense-metadata-list" aria-label="Sense details">${primaryHTML}${grammarHTML}${supportingHTML}${more}</span>`;
+    return `<span class="sense-metadata-list" aria-label="Sense details">${primaryHTML}${grammarHTML}${more}${supportingHTML}</span>`;
 }
 
 function contextWithoutSenseMetadata(meaning, active) {
@@ -3216,7 +3238,8 @@ function toggleSenseMetadataOverflow(event, control) {
     const count = Number(control.dataset.count) || 0;
     control.setAttribute('aria-expanded', String(expand));
     control.setAttribute('aria-label', expand ? 'Hide supporting details' : `Show ${count} supporting details`);
-    control.textContent = expand ? 'Hide details' : `Details +${count}`;
+    const label = control.querySelector('.sense-metadata-more-label');
+    if (label) label.textContent = expand ? 'Hide details' : 'More details';
 }
 
 function highlightPossibleSpanishDictUsage(sentenceHTML, usage, targetWord = '') {
