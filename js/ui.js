@@ -347,12 +347,8 @@ function mergeStandardProgressIntoLanguageStep() {
     if (!step || !header || !title || !wrapper || !progressHeader || !inlinePill || !sourcePill
         || !sourceCard || !progressSlot || !languageName || !languageIcon) return;
 
-    const flagMap = {
-        spanish: '🇪🇸', swedish: '🇸🇪', italian: '🇮🇹', dutch: '🇳🇱',
-        polish: '🇵🇱', french: '🇫🇷', russian: '🇷🇺'
-    };
     languageName.textContent = config.languages[selectedLanguage]?.name || selectedLanguage;
-    languageIcon.textContent = flagMap[selectedLanguage] || selectedLanguage.slice(0, 2).toUpperCase();
+    languageIcon.textContent = config.languages[selectedLanguage]?.flag || LEARNING_CONTEXT_FLAGS[selectedLanguage] || selectedLanguage.slice(0, 2).toUpperCase();
     progressSlot.appendChild(wrapper);
     title.textContent = 'Language';
     step.classList.add('language-summary-active');

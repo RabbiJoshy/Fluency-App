@@ -6466,10 +6466,12 @@ function updateReverseButton() {
         'italian': '🇮🇹',
         'french': '🇫🇷',
         'russian': '🇷🇺',
-        'swedish': '🇸🇪'
+        'swedish': '🇸🇪',
+        'portuguese': '🇵🇹',
+        'czech': '🇨🇿'
     };
 
-    const targetFlag = flagMap[selectedLanguage] || '🇸🇪';
+    const targetFlag = config.languages?.[selectedLanguage]?.flag || flagMap[selectedLanguage] || '🇵🇹';
     const englishFlag = '🇬🇧';
 
     const fromFlag = isFlipped ? englishFlag : targetFlag;

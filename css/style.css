@@ -11886,18 +11886,39 @@
             font-size: 20px;
             font-weight: 750;
         }
-        .choice-sheet-heading { min-width: 0; }
+        .choice-sheet-heading { min-width: 0; flex: 1; }
         .choice-sheet-heading p {
             max-width: 45ch;
             margin: 5px 0 0;
             color: var(--text-muted);
             font: 400 12px/1.4 var(--font-reading);
         }
+        .choice-sheet-back {
+            width: 34px;
+            height: 34px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            margin-right: 6px;
+            border: 0;
+            border-radius: 50%;
+            padding: 0 2px 2px 0;
+            background: rgba(255, 255, 255, 0.07);
+            color: var(--text-secondary);
+            font: 400 24px/1 var(--font-emphasis);
+            cursor: pointer;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+        .choice-sheet-back:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: var(--text-primary);
+        }
         .choice-sheet-close {
             width: 34px;
             height: 34px;
             display: grid;
             place-items: center;
+            flex-shrink: 0;
             border: 0;
             border-radius: 50%;
             padding: 0 0 2px;
