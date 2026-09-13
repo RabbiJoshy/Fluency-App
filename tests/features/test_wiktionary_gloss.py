@@ -55,9 +55,17 @@ class WiktionaryGlossProjectionTests(unittest.TestCase):
         self.assertEqual(
             [(item.family, item.value) for item in projection.specialist_features],
             [
-                ("construction", "preceding adjectives"),
+                ("construction", "before adjective"),
                 ("functional", "indicates surprise or delight"),
             ],
+        )
+
+    def test_common_frame_prose_has_provider_neutral_shape(self) -> None:
+        projection = project_gloss("set (with an infinitive)")
+        self.assertEqual(projection.display_text, "set")
+        self.assertEqual(
+            [(item.family, item.kind, item.value) for item in projection.specialist_features],
+            [("construction", "complement_form", "infinitive")],
         )
 
     def test_unrecognized_outer_tail_keeps_the_whole_gloss(self) -> None:

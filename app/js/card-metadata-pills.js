@@ -307,7 +307,15 @@ export function senseMetadataDisplay(item) {
     if (item.family === 'companion') {
         return { short: `+ ${item.value}`, full: `used with ${item.value}` };
     }
-    if (item.family === 'construction') return compactConstructionMetadata(item.value);
+    if (item.family === 'construction') {
+        // Canonical frame kinds are intentionally provider-neutral. Give their
+        // atomic values enough syntax to remain clear to a learner: a bare
+        // "infinitive" is ambiguous, while "+ infinitive" reads as a frame.
+        if (item.kind === 'complement_form') {
+            return { short: `+ ${item.value}`, full: `used with ${item.value}` };
+        }
+        return compactConstructionMetadata(item.value);
+    }
     if (item.family === 'functional') {
         return { short: item.value, full: item.value };
     }

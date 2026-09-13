@@ -16,6 +16,7 @@ import re
 from typing import Any, Mapping
 
 from fluency.features.contract import GRAMMATICAL_FORMS, SpecialistFeature
+from fluency.features.construction import structured_construction
 
 
 # SpanishDict's ``context`` is deliberately overloaded: it may be a semantic
@@ -33,7 +34,11 @@ SOFT_TRAILING_COMPANION = re.compile(
     r"(?P<relation>preceded|followed)\s+by\s*$",
     re.IGNORECASE,
 )
-FUNCTIONAL = re.compile(r"^used to\b", re.IGNORECASE)
+FUNCTIONAL = re.compile(
+    r"^(?:used to\b|used for emphasis\b|used as (?:a |an )?(?:command|filler|reply)\b|"
+    r"used when answering\b|indicating\s+|expressing\s+)",
+    re.IGNORECASE,
+)
 CONSTRUCTION = re.compile(
     r"^(?:followed by|takes?|used after|used before|used in|used with)\b",
     re.IGNORECASE,
@@ -85,9 +90,8 @@ GRAMMAR_PATTERNS = (
     (re.compile(r"\binfinitive\b", re.I), "form=infinitive"),
     (re.compile(r"\breflexive\b", re.I), "reflexive=true"),
     (re.compile(r"\bpassive voice\b", re.I), "voice=passive"),
-    (re.compile(r"\bdirect object\b", re.I), "function=direct-object"),
-    (re.compile(r"\bindirect object\b", re.I), "function=indirect-object"),
 )
+
 EXACT_GRAMMAR = {
     "demonstrative": "function=demonstrative",
     "feminine demonstrative": "function=demonstrative",
@@ -221,6 +225,9 @@ def extract(sense: Mapping[str, Any]) -> tuple[SpecialistFeature, ...]:
                 )
                 if quoted or optional:
                     continue
+                if structured := structured_construction(usage_text):
+                    features.append(structured)
+                    continue
                 unquoted = tail.strip(' .,:[]()"“”').split()[0].casefold()
                 if unquoted and unquoted not in GRAMMATICAL_FORMS:
                     features.append(SpecialistFeature("companion", "required_word", unquoted, usage_text))
@@ -230,6 +237,9 @@ def extract(sense: Mapping[str, Any]) -> tuple[SpecialistFeature, ...]:
 
             if FUNCTIONAL.match(clause):
                 features.append(SpecialistFeature("functional", "usage_note", clause, clause))
+                continue
+            if structured := structured_construction(clause):
+                features.append(structured)
                 continue
             grammar = _grammar_features(clause, pos=pos)
             if grammar:

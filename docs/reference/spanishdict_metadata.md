@@ -25,18 +25,28 @@ the original provider fields remain in `source_metadata`, and unknown future
 fields enter `unclassified`. A metadata upgrade reprojects from that preserved
 source, so improving these rules does not retain stale older classifications.
 
+Argument structure is normalized rather than merely placed in the right broad
+family. SpanishDict's `direct object` now matches Wiktionary's
+`construction/object_role`; complement prose such as `used with an infinitive`
+becomes `construction/complement_form=infinitive`; and `before adjective`
+becomes `construction/position=before adjective`. The original wording remains
+as embedding evidence. Unmistakable functional labels written as participles
+(`indicating time`, `expressing surprise`) join `used to ...` notes, while
+ordinary meanings such as `to express` remain semantic text.
+
 ## Shipped Spanish audit
 
-The 2,000-card release contains 3,401 senses and 3,389 non-empty contexts. With
-the current projection it yields 837 typed features: 58 companions, 44
-constructions, 124 domains, 201 functional notes, 370 grammar marks and 40
-regions/registers. The lower grammar and region totals are deliberate quality
-corrections: family-member senses such as `abuela — relative` are not relative
-pronoun grammar, and `United States` / `United Kingdom` labels describe the
-English gloss chosen by SpanishDict rather than a variety of Spanish. Those
-gloss-locale labels remain preserved and explicitly accounted for as ignored.
-The remaining context is intentionally semantic text rather than uncategorised
-metadata.
+Across the repeated sense appearances in the 2,000-card projection, the current
+release carries 7,384 typed feature occurrences: 1,657 companions, 637
+constructions, 1,056 domains, 1,578 functional notes, 1,166 grammar marks and
+1,290 regions/registers. The construction total includes 202 normalized frame
+occurrences (116 complement forms, 54 positions and 32 object roles). The
+grammar and region boundaries are deliberate quality corrections:
+family-member senses such as `abuela — relative` are not relative-pronoun
+grammar, and `United States` / `United Kingdom` labels describe the English
+gloss chosen by SpanishDict rather than a variety of Spanish. Those gloss-locale
+labels remain preserved and explicitly accounted for as ignored. The remaining
+context is intentionally semantic text rather than uncategorised metadata.
 
 The language policy also records a non-operative future-WSD role for each
 family. It does not change v10 scoring. It preserves the distinction between

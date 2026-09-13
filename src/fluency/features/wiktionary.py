@@ -25,6 +25,7 @@ import re
 from typing import Any, Mapping, Sequence
 
 from fluency.features.contract import GRAMMATICAL_FORMS, SpecialistFeature
+from fluency.features.construction import structured_construction
 from fluency.features.metadata import MetadataAccounting
 from fluency.features.parenthetical import leading_parenthetical, split_top_level_commas
 
@@ -366,7 +367,11 @@ def extract(
         elif expansion:
             # "[with adjective]", "[with gerund]" -- a form, not a word to look
             # for, so it constrains construction rather than companionship.
-            add("construction", "companion_form", expansion)
+            structured = structured_construction(expansion)
+            if structured:
+                add(structured.family, structured.kind, structured.value)
+            else:
+                add("construction", "companion_form", expansion)
 
     for part in _split_parenthetical(sense):
         lowered = part.lower()
@@ -381,6 +386,8 @@ def extract(
             add("register", "gloss_note", part)
         elif (grammar_value := _grammar_value(lowered, policy)) is not None:
             add("grammar", "sense_mark", grammar_value)
+        elif (structured := structured_construction(part)) is not None:
+            add(structured.family, structured.kind, structured.value)
         elif _is_construction_tag(lowered, construction):
             add("construction", "gloss_note", part)
         else:

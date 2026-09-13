@@ -11,6 +11,7 @@ from dataclasses import dataclass
 import re
 
 from fluency.features.contract import SpecialistFeature
+from fluency.features.construction import structured_construction
 
 
 @dataclass(frozen=True, slots=True)
@@ -95,6 +96,8 @@ def _note_feature(note: str) -> SpecialistFeature:
     family = _note_family(note)
     if family is None:  # Guarded by _trailing_parentheticals.
         raise ValueError("unrecognized Wiktionary gloss note")
+    if family == "construction" and (structured := structured_construction(note)):
+        return structured
     kind = "usage_note" if family == "functional" else (
         "gloss_note" if family == "grammar" else "gloss_phrase"
     )

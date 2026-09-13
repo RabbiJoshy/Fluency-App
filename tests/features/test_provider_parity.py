@@ -109,6 +109,45 @@ class ProviderParityTests(unittest.TestCase):
         self.assertEqual(values(legal, "domain"), {"law"})
         self.assertEqual(values(religious, "domain"), {"religion"})
 
+    def test_spanishdict_object_roles_use_wiktionarys_construction_shape(self) -> None:
+        spanish = spanishdict_extract({"context": "direct object"})
+        wiki = wiktionary_extract({
+            "raw_glosses": ["(direct object) him"],
+        })
+        self.assertEqual(
+            {(item.family, item.kind, item.value) for item in spanish},
+            {("construction", "object_role", "direct object")},
+        )
+        self.assertEqual(
+            {(item.family, item.kind, item.value) for item in spanish},
+            {(item.family, item.kind, item.value) for item in wiki},
+        )
+        self.assertEqual(values(spanish, "grammar"), set())
+
+    def test_spanishdict_prose_frames_become_atomic_constructions(self) -> None:
+        features = spanishdict_extract({
+            "context": "before adjective; used with an infinitive; with participle"
+        })
+        self.assertEqual(
+            {(item.kind, item.value) for item in features if item.family == "construction"},
+            {
+                ("position", "before adjective"),
+                ("complement_form", "infinitive"),
+                ("complement_form", "participle"),
+            },
+        )
+
+    def test_clear_functional_participles_are_not_left_as_semantic_prose(self) -> None:
+        features = spanishdict_extract({"context": "indicating time; expressing surprise"})
+        self.assertEqual(
+            values(features, "functional"),
+            {"indicating time", "expressing surprise"},
+        )
+
+    def test_semantic_uses_of_express_and_used_remain_meaning_text(self) -> None:
+        for context in ("to express", "to express a thought to oneself", "to be used up"):
+            self.assertEqual(spanishdict_extract({"context": context}), ())
+
 
 if __name__ == "__main__":
     unittest.main()
