@@ -107,6 +107,7 @@
   "meaning_floor": 0.75,
   "meaning_weight": 0.25,
   "candidate_budget": 400,
-  "default_threshold": 0.7,
-  "notes": "Portuguese read by an English speaker. The transparent pairs are Latinate vocabulary shared through both languages' borrowing (informação/information, possível/possible) plus outright loans. Nasal vowels and the lh/nh digraphs are folded; the rest is edit distance. Threshold 0.70."
+  "default_threshold": 0.75,
+  "notes": "Portuguese read by an English speaker. The transparent pairs are Latinate vocabulary shared through both languages' borrowing (informação/information, possível/possible) plus outright loans. Nasal vowels and the lh/nh digraphs are folded; the rest is edit distance. Threshold 0.70. Cutoff: Above 0.75 is shared Latinate vocabulary a reader cannot miss: base, canal, alternativa/alternative, apartamento/apartment, artista/artist. The band below holds acredita/accredit, which is not what acreditar means.",
+  "known_must_be_a_gloss": true
 }

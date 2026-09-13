@@ -122,6 +122,14 @@ class CognatePolicy:
     # per pair rather than one shared slider, because each known language
     # decides alone — these scores are never compared with one another.
     default_threshold: float = 0.70
+    # Only meaningful where the known language IS the gloss language, i.e.
+    # English. There a candidate is an English word lifted from the target's
+    # own gloss, so the meaning axis can only re-confirm the token that
+    # produced the candidate — it cannot independently disagree. Demanding the
+    # candidate be a WHOLE gloss restores a real check: "nation" glossed
+    # "nation" is a translation, while "nous" inside "the nous, (divine) reason
+    # in philosophy" is a word the definition happens to mention.
+    known_must_be_a_gloss: bool = False
     notes: str = ""
 
     def __post_init__(self) -> None:
@@ -164,6 +172,7 @@ class CognatePolicy:
             meaning_floor=float(known.get("meaning_floor", 0.75)),
             meaning_weight=float(known.get("meaning_weight", 0.25)),
             default_threshold=float(known.get("default_threshold", 0.70)),
+            known_must_be_a_gloss=bool(known.get("known_must_be_a_gloss", False)),
             notes=str(known.get("notes", "")),
         )
 
@@ -180,6 +189,7 @@ class CognatePolicy:
             "meaning_floor": self.meaning_floor,
             "meaning_weight": self.meaning_weight,
             "default_threshold": self.default_threshold,
+            "known_must_be_a_gloss": self.known_must_be_a_gloss,
             "notes": self.notes,
         }
 
@@ -447,7 +457,10 @@ def best_match(
     if not target_tokens:
         return None
     best: CognateMatch | None = None
+    whole_glosses = {g.strip().lower() for g in target_glosses}
     for known_word in index.candidates(target_glosses):
+        if policy.known_must_be_a_gloss and known_word not in whole_glosses:
+            continue
         if not passes_length_guard(target_word, known_word, policy):
             continue
         form = form_score(target_word, known_word, policy)

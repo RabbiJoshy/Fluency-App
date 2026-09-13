@@ -40,6 +40,13 @@ from fluency.features.cognates import (
 
 LAYER_VERSION = "cognate-layer/v1"
 
+# Names carry no meaning to recognise, and an affix is not a word a learner
+# meets on a card.
+EXCLUDED_TARGET_POS = frozenset({
+    "name", "prefix", "suffix", "infix", "affix", "character", "punct",
+    "phrase", "prov", "abbrev", "symbol", "num",
+})
+
 
 class CognateLayerError(ValueError):
     """The inputs cannot produce a layer that could be trusted."""
@@ -90,6 +97,13 @@ def _extract_target_glosses(path: Path, policy: CognatePolicy, *, limit_to=None)
             continue
         word = str(entry.get("word") or "").strip().lower()
         if not word or (limit_to is not None and word not in limit_to):
+            continue
+        # The deck path never sees these because a release has already dropped
+        # them; reading the dictionary direct puts them back. A French map built
+        # without this is mostly Aaron, Abbeville and -esque.
+        if entry.get("pos") in EXCLUDED_TARGET_POS:
+            continue
+        if "-" in word or " " in word:
             continue
         glosses = surfaces.setdefault(word, set())
         for gloss in live_glosses(entry, policy.gloss_maximum_words):

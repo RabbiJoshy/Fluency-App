@@ -99,6 +99,7 @@
   "meaning_floor": 0.75,
   "meaning_weight": 0.25,
   "candidate_budget": 400,
-  "default_threshold": 0.7,
-  "notes": "French read by an English speaker. English borrowed heavily from French, so a great many pairs are identical once accents are folded (nation, table, question). The skeleton folds French accents and the conventions the two spell differently for one sound; -tion, -ique/-ic and -eur/-or fall out of the edit distance without needing rules of their own. Threshold 0.70, the standard, chosen so a pair has to survive both the form and meaning axes rather than looking alike alone."
+  "default_threshold": 0.8,
+  "notes": "French read by an English speaker. English borrowed heavily from French, so a great many pairs are identical once accents are folded (nation, table, question). The skeleton folds French accents and the conventions the two spell differently for one sound; -tion, -ique/-ic and -eur/-or fall out of the edit distance without needing rules of their own. Threshold 0.70, the standard, chosen so a pair has to survive both the form and meaning axes rather than looking alike alone. Cutoff: Set by a single pair. French and English share so much that 0.75 looks safe until preservatif scores 0.76 against preservative, which is the most consequential false friend the language has. Above 0.80: abondance/abundance, abreviation/abbreviation, absurde/absurd, abdication. The rest of the classic traps — librairie, assister, blesser — never match at all, because the whole-gloss rule denies them a meaning link.",
+  "known_must_be_a_gloss": true
 }

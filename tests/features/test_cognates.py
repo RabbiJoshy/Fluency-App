@@ -342,7 +342,9 @@ class AppLayerTests(unittest.TestCase):
         }
         published = build_app_cognates(layer)
         self.assertEqual(set(published["thresholds"]), {"en", "pl"})
-        self.assertEqual(published["thresholds"]["pl"], 0.70)
+        # Slavic pairs carry the most look-alikes that are not the same word,
+        # so cs-pl is the most conservative cutoff shipped.
+        self.assertEqual(published["thresholds"]["pl"], 0.80)
         self.assertEqual(published["scores"]["telefon"]["pl"], 0.9)
 
 
