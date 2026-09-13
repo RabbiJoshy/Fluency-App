@@ -3026,6 +3026,36 @@
             opacity: 0.72;
         }
 
+        .sense-cross-reference-gloss {
+            display: block;
+        }
+
+        .sense-cross-reference-related {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 3px 10px;
+            width: 100%;
+            margin-top: 3px;
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: 550;
+            line-height: 1.35;
+        }
+
+        .sense-cross-reference-item {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 4px;
+            white-space: nowrap;
+        }
+
+        .sense-cross-reference-related .sense-cross-reference {
+            color: rgb(var(--sense-match-rgb));
+            font-weight: 700;
+        }
+
         .sense-metadata-list {
             display: flex;
             flex-direction: column;
