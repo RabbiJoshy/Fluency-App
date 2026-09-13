@@ -659,10 +659,20 @@ function walkthroughSenseText(meaning, selected) {
 
 function walkthroughMetadata(meaning, selected) {
     if (!selected || !Array.isArray(meaning.metadata) || !meaning.metadata.length) return '';
-    const renderItems = items => items.map(item => (
-        `<span class="sense-metadata-detail" data-family="${esc(item.family)}" `
-        + `title="${esc(`${item.family}: ${item.full}`)}">${esc(item.short)}</span>`
-    )).join('');
+    const renderItems = (items, isPillTier = true) => items.map(item => {
+        const family = esc(item.family);
+        if (!isPillTier) {
+            return `<span class="sense-metadata-detail" data-family="${family}" title="${esc(`${item.family}: ${item.full}`)}">${esc(item.short)}</span>`;
+        }
+        const isCompanion = item.family === 'companion' || (item.short && item.short.startsWith('+ '));
+        const isSyntax = item.family === 'construction';
+        const icon = isCompanion ? '<svg class="sense-pill-icon sense-pill-icon--companion" viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 9.5l3-3"/><path d="M4 8.5l-1.5 1.5a2.5 2.5 0 1 0 3.5 3.5L7.5 12"/><path d="M12 7.5l1.5-1.5a2.5 2.5 0 1 0-3.5-3.5L8.5 4"/></svg>' : '';
+        const pillClass = `sense-metadata-detail sense-pill sense-pill--${family}${isSyntax ? ' sense-pill--syntax' : ''}${isCompanion ? ' sense-pill--companion sense-pill--privileged' : ''}`;
+        const titleAttr = isCompanion
+            ? `Used with &quot;${esc(item.full || item.short)}&quot;`
+            : esc(`${item.family}: ${item.full}`);
+        return `<span class="${pillClass}" data-family="${family}" title="${titleAttr}">${icon}<span class="sense-pill-label">${esc(item.short)}</span></span>`;
+    }).join('');
     const softRegister = new Set(['broadly', 'especially', 'figuratively', 'literally', 'metonymically', 'mildly', 'often', 'possibly', 'sometimes', 'specifically', 'standard', 'usually']);
     const isSupporting = item => item.family === 'functional'
         || (item.family === 'register' && softRegister.has(item.short.toLocaleLowerCase('en')));
@@ -670,11 +680,11 @@ function walkthroughMetadata(meaning, selected) {
     const grammar = meaning.metadata.filter(item => item.family === 'grammar');
     const supporting = meaning.metadata.filter(isSupporting);
     const primaryHTML = primary.length
-        ? `<span class="sense-metadata-tier sense-metadata-tier--primary">${renderItems(primary)}</span>` : '';
+        ? `<span class="sense-metadata-tier sense-metadata-tier--primary">${renderItems(primary, true)}</span>` : '';
     const grammarHTML = grammar.length
-        ? `<span class="sense-metadata-tier sense-metadata-tier--grammar">${renderItems(grammar)}</span>` : '';
+        ? `<span class="sense-metadata-tier sense-metadata-tier--grammar">${renderItems(grammar, false)}</span>` : '';
     const supportingHTML = supporting.length
-        ? `<span class="sense-metadata-tier sense-metadata-tier--details${supporting.length === 1 ? ' is-single' : ''}"${supporting.length > 1 ? ' hidden' : ''}>${renderItems(supporting)}</span>` : '';
+        ? `<span class="sense-metadata-tier sense-metadata-tier--details${supporting.length === 1 ? ' is-single' : ''}"${supporting.length > 1 ? ' hidden' : ''}>${renderItems(supporting, false)}</span>` : '';
     const more = supporting.length > 1
         ? `<button type="button" class="sense-metadata-more" aria-expanded="false" data-count="${supporting.length}" aria-label="Show ${supporting.length} supporting details"><span class="sense-metadata-more-label">More details</span><span class="sense-metadata-more-count">${supporting.length}</span></button>` : '';
     return `<span class="sense-metadata-list" aria-label="Sense details">${primaryHTML}${grammarHTML}${more}${supportingHTML}</span>`;

@@ -5003,7 +5003,9 @@ function updateCard({ announceHeadword = false } = {}) {
                         let varyingHtml;
                         if (isTransAxis) {
                             const ctxRaw = contextWithoutSenseMetadata(mm, isMemberSelected);
-                            const metadataHTML = senseMetadataHTML(mm, isMemberSelected);
+                            const metadataHTML = senseMetadataHTML(mm, isMemberSelected, {
+                                senseCount: card.meanings?.length || orderedMembers.length,
+                            });
                             varyingHtml = ctxRaw || metadataHTML
                                 ? `<span class="meaning-context-cell" style="line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${renderSenseContextHTML(ctxRaw, { leadingDot: false })}${metadataHTML}</span>`
                                 : `<span style="opacity: 0.4; font-style: italic; font-size: 12px;">—</span>`;
@@ -5014,7 +5016,7 @@ function updateCard({ announceHeadword = false } = {}) {
                                 isMemberSelected
                             );
                             const transSafe = String(transRaw).replace(/"/g, '&quot;');
-                            varyingHtml = `<span class="row-adaptive-text" style="font-weight: 600; color: var(--text-primary); line-height: 1.25; min-width: 0; overflow: hidden; text-overflow: ellipsis;">${senseCrossReferenceHTML(mm, transSafe, isMemberSelected)}${senseMetadataHTML(mm, isMemberSelected)}${modelProposalMarkerHTML(mm)}</span>`;
+                            varyingHtml = `<span class="row-adaptive-text" style="font-weight: 600; color: var(--text-primary); line-height: 1.25; min-width: 0; overflow: hidden; text-overflow: ellipsis;">${senseCrossReferenceHTML(mm, transSafe, isMemberSelected)}${senseMetadataHTML(mm, isMemberSelected, { senseCount: card.meanings?.length || orderedMembers.length })}${modelProposalMarkerHTML(mm)}</span>`;
                         }
                         const varyingCol = isTransAxis ? 2 : 1;
                         const varyingCell = `<div class="group-card-varying-cell${isMemberSelected ? ' is-active-subsense' : ''}" onclick="event.stopPropagation(); selectMeaning(${memberIdx})" style="${baseCell} grid-column: ${varyingCol}; min-width: 0; overflow: hidden;">${varyingHtml}</div>`;
@@ -5068,7 +5070,9 @@ function updateCard({ announceHeadword = false } = {}) {
                     if (compactContext) {
                         contextInline = ` ${renderSenseContextHTML(compactContext)}`;
                     }
-                    contextInline += senseMetadataHTML(m, isSelected);
+                    contextInline += senseMetadataHTML(m, isSelected, {
+                        senseCount: card.meanings?.length || 1,
+                    });
                     contextInline += registerTagHTML(m);
                     contextInline += modelProposalMarkerHTML(m);
                     const singletonTextClass = adaptiveRowTextClass(displayMeaning, m.context || '');
