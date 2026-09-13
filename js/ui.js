@@ -97,6 +97,11 @@ function syncStudyPreferenceControls() {
         button.classList.toggle('selected', selected);
         button.setAttribute('aria-pressed', selected ? 'true' : 'false');
     });
+    const targetBtn = document.getElementById('cardFrontTargetBtn');
+    if (targetBtn) {
+        const langName = config?.languages?.[selectedLanguage]?.name;
+        targetBtn.textContent = langName || 'Target';
+    }
     updateCognateSensitivityVisibility();
 }
 
@@ -967,7 +972,7 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
             <div class="level-slider-wrap">
                 <div class="lsw-readout">
                     <span class="lsw-rank"><strong id="lswLevelVal">Level ${initialIdx + 1}</strong></span>
-                    <span class="lsw-range">Ranks <strong id="lswRankVal">${initialMetrics.start.toLocaleString()}–${initialMetrics.end.toLocaleString()}</strong> <span class="lsw-deck-total" id="lswDeckTotal" aria-label="${initialDeckTotal.toLocaleString()} cards in deck">/ ${initialDeckTotal.toLocaleString()}</span></span>
+                    <span class="lsw-range">Words <strong id="lswRankVal">${initialMetrics.start.toLocaleString()}–${initialMetrics.end.toLocaleString()}</strong> <span class="lsw-deck-total" id="lswDeckTotal" aria-label="${initialDeckTotal.toLocaleString()} cards in deck">/ ${initialDeckTotal.toLocaleString()}</span></span>
                     <span class="lsw-coverage"${initialCoverage ? '' : ' hidden'}>~<strong id="lswCovVal">${initialCoverage}</strong> ${coverageType}</span>
                 </div>
                 <div id="lswSlider" class="lsw-segments lsw-scrubber" role="radiogroup" aria-label="Level scrubber" data-value="${initialIdx}">
@@ -2501,9 +2506,9 @@ function renderSetupExtrasSection() {
             card.innerHTML = `
                 <div class="extras-deck-content">
                     <div class="extras-deck-status">
-                        <span class="extras-deck-badge is-info">Fast track</span>
+                        <span class="extras-deck-badge is-info">Streamline</span>
                         <div class="extras-deck-info">
-                            <strong>${totalSkipped} word${totalSkipped === 1 ? '' : 's'} set aside by Fast track</strong>
+                            <strong>${totalSkipped} word${totalSkipped === 1 ? '' : 's'} set aside by Streamline</strong>
                             <p>${cognates.length} obvious look-alikes · ${lemmas.length} forms merged into their base card.</p>
                         </div>
                     </div>
@@ -2525,7 +2530,7 @@ function renderSetupExtrasSection() {
                         <span class="extras-deck-badge is-muted">Full deck</span>
                         <div class="extras-deck-info">
                             <strong>No words are currently skipped</strong>
-                            <p>Fast track is off or full deck is active. Turn on Fast track above to filter out familiar look-alikes.</p>
+                            <p>Streamline is off or full deck is active. Turn on Streamline above to filter out familiar look-alikes.</p>
                         </div>
                     </div>
                 </div>

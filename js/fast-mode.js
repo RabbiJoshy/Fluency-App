@@ -59,7 +59,7 @@ function currentState() {
 // the deck cannot do.
 function summaryText() {
     const state = currentState();
-    if (state === 'on') return 'On · use available shortcuts';
+    if (state === 'on') return 'Active · skipping repeats';
     if (state === 'off') return 'Off · full deck';
     return 'Custom';
 }
@@ -126,7 +126,7 @@ function showUnavailableMessage(feature) {
         alert(`${languageName(knownCode)} to ${target} familiar-word mapping not found. Every word will stay in your deck.`);
         return;
     }
-    alert(`Fast track mappings have not been published for ${target}. Your full deck is still available.`);
+    alert(`Streamline mappings have not been published for ${target}. Your full deck is still available.`);
 }
 
 function updateMappingStatus() {
