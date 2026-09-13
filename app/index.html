@@ -399,32 +399,32 @@
 
             <div id="artistSourceStep" class="setup-step artist-source-step" style="display: none;">
                 <div class="step-header artist-source-header">
-                    <div>
-                        <span class="artist-source-eyebrow">Learning from lyrics</span>
-                        <span class="step-title">Songs</span>
-                    </div>
+                    <span class="step-title">Lyrics</span>
                 </div>
-                <div class="artist-source-card">
-                    <button type="button" id="artistSourcePickerBtn" class="artist-source-picker" aria-haspopup="dialog">
-                        <span id="artistSourceImage" class="artist-source-image" aria-hidden="true"></span>
+                <div class="artist-source-card standard-source-card" id="artistSourceCard">
+                    <button type="button" id="artistSourceLanguageBtn" class="artist-source-picker artist-source-language-btn" aria-haspopup="dialog">
+                        <span id="artistSourceLanguageIcon" class="artist-source-image standard-source-language-icon" aria-hidden="true"></span>
                         <span class="artist-source-copy">
-                            <span id="artistSourceName" class="artist-source-name"></span>
-                            <span id="artistSourceSelectionLabel">Choose songs</span>
+                            <span id="artistSourceLanguageName" class="artist-source-name"></span>
+                            <span>Choose another language</span>
                         </span>
                         <span class="language-picker-btn-arrow" aria-hidden="true">›</span>
                     </button>
-                    <div class="artist-source-secondary-actions">
-                        <button type="button" id="artistSourceArtistBtn" class="artist-source-speech-btn">Change source</button>
-                        <button type="button" id="artistSourceSpeechBtn" class="artist-source-speech-btn">Switch to Speech</button>
-                    </div>
-                    <div class="artist-vocabulary-scope" id="artistVocabularyScope" role="group" aria-label="Artist vocabulary">
-                        <span class="artist-vocabulary-scope-title">Vocabulary set</span>
-                        <div class="artist-vocabulary-scope-buttons">
-                            <button type="button" class="artist-vocabulary-scope-btn selected" data-artist-scope="main" aria-pressed="true">Main</button>
-                            <button type="button" class="artist-vocabulary-scope-btn" data-artist-scope="extra" aria-pressed="false">Extra</button>
+                    <div class="artist-source-main-choice">
+                        <button type="button" id="artistSourcePickerBtn" class="artist-source-picker" aria-haspopup="dialog">
+                            <span id="artistSourceImage" class="artist-source-image" aria-hidden="true"></span>
+                            <span class="artist-source-copy">
+                                <span id="artistSourceName" class="artist-source-name"></span>
+                                <span id="artistSourceSelectionLabel">Choose songs</span>
+                            </span>
+                            <span class="language-picker-btn-arrow" aria-hidden="true">›</span>
+                        </button>
+                        <div class="artist-source-secondary-actions">
+                            <button type="button" id="artistSourceArtistBtn" class="artist-source-action-btn">Change artist</button>
+                            <button type="button" id="artistSourceSpeechBtn" class="artist-source-action-btn">Switch to Speech</button>
                         </div>
-                        <span id="artistVocabularyScopeHint">Recurring lemma families</span>
                     </div>
+                    <div id="artistSourceProgress" class="standard-source-progress"></div>
                 </div>
             </div>
 
@@ -541,6 +541,15 @@
                     </div></div>
                 </div>
                 <div id="rangeSelector" class="range-selector"></div>
+            </div>
+
+            <!-- Extras Deck Section: supplementary cards (Artist extra categories or Speech skipped words) -->
+            <div id="extrasDeckSection" class="setup-step extras-deck-section" style="display: none;">
+                <div class="step-header">
+                    <span class="step-eyebrow">Supplementary</span>
+                    <span class="step-title" id="extrasDeckTitle">Extra deck</span>
+                </div>
+                <div class="extras-deck-card" id="extrasDeckCard"></div>
             </div>
 
             <div id="loadingMessage" style="margin-top: 20px; color: var(--accent-green); display: none; text-align: center; font-weight: 600;"></div>

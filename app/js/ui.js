@@ -356,6 +356,41 @@ function mergeStandardProgressIntoLanguageStep() {
     sourceCard.style.display = 'grid';
 }
 
+function mergeArtistProgressIntoSourceStep() {
+    const wrapper = document.getElementById('personalCoverageWrapper');
+    const progressSlot = document.getElementById('artistSourceProgress');
+    const languageName = document.getElementById('artistSourceLanguageName');
+    const languageIcon = document.getElementById('artistSourceLanguageIcon');
+    const languageBtn = document.getElementById('artistSourceLanguageBtn');
+    if (!wrapper || !progressSlot) return;
+
+    const flagMap = {
+        spanish: '🇪🇸', swedish: '🇸🇪', italian: '🇮🇹', dutch: '🇳🇱',
+        polish: '🇵🇱', french: '🇫🇷', russian: '🇷🇺', czech: '🇨🇿',
+        portuguese: '🇵🇹', portuguese_brazilian: '🇧🇷'
+    };
+    const lang = activeArtist?.language || selectedLanguage || 'spanish';
+    if (languageName) languageName.textContent = config.languages[lang]?.name || lang;
+    if (languageIcon) languageIcon.textContent = config.languages[lang]?.flag || flagMap[lang] || lang.slice(0, 2).toUpperCase();
+    if (languageBtn) {
+        languageBtn.onclick = () => window.showLanguagePicker?.(config.languages);
+    }
+
+    progressSlot.appendChild(wrapper);
+    wrapper.classList.add('personal-coverage-wrapper--merged', 'visible');
+    wrapper.classList.remove('personal-coverage-wrapper--empty');
+    wrapper.style.display = 'block';
+}
+
+function unmergeArtistProgressFromSourceStep() {
+    const wrapper = document.getElementById('personalCoverageWrapper');
+    const cta = document.getElementById('levelEstimateCTA');
+    if (!wrapper || !cta) return;
+    cta.after(wrapper);
+    wrapper.classList.remove('personal-coverage-wrapper--merged', 'personal-coverage-wrapper--empty', 'visible');
+    wrapper.style.display = 'none';
+}
+
 function unmergeStandardProgressFromLanguageStep() {
     if (activeArtist) return;
     const step = document.getElementById('step1');
@@ -380,6 +415,10 @@ function unmergeStandardProgressFromLanguageStep() {
     sourcePill.style.display = 'none';
     sourceCard.style.display = 'none';
 }
+
+window.mergeArtistProgressIntoSourceStep = mergeArtistProgressIntoSourceStep;
+window.unmergeArtistProgressFromSourceStep = unmergeArtistProgressFromSourceStep;
+window.unmergeStandardProgressFromLanguageStep = unmergeStandardProgressFromLanguageStep;
 
 function renderLanguageTabs() {
     const tabsContainer = document.getElementById('languageTabs');
@@ -1875,7 +1914,7 @@ async function updateLemmaToggleVisibility() {
     // in ordinary language instead of making the feature mysteriously vanish.
     lemmaContainer.dataset.available = String(lemmaFieldAvailable);
     lemmaContainer.style.display = 'block';
-    rangeStepNumber.textContent = activeArtist ? '2' : '3';
+    rangeStepNumber.textContent = '3';
 
     if (lemmaFieldAvailable) {
         // Enable both options
@@ -2359,6 +2398,114 @@ async function renderRangeSelector() {
             console.error('Could not save level suggestion preference:', error);
         });
     });
+    renderSetupExtrasSection();
+}
+
+function _escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+}
+
+function renderSetupExtrasSection() {
+    const section = document.getElementById('extrasDeckSection');
+    const card = document.getElementById('extrasDeckCard');
+    const title = document.getElementById('extrasDeckTitle');
+    if (!section || !card) return;
+
+    if (activeArtist) {
+        const artistName = activeArtist.name || 'Artist';
+        const extraUnlocked = window.isArtistExtraUnlocked?.();
+        const coveragePct = Number(window._artistMainCoveragePct || 0);
+        if (title) title.textContent = 'Extra lyrics deck';
+        section.style.display = 'block';
+
+        if (extraUnlocked) {
+            const isCurrentlyInExtra = artistVocabularyScope === 'extra';
+            card.innerHTML = `
+                <div class="extras-deck-content">
+                    <div class="extras-deck-status">
+                        <span class="extras-deck-badge is-unlocked">Unlocked</span>
+                        <div class="extras-deck-info">
+                            <strong>Supplementary ${_escapeHtml(artistName)} vocabulary</strong>
+                            <p>One-off words, loanwords, slang, and names from these lyrics outside the main frequent deck.</p>
+                        </div>
+                    </div>
+                    <div class="extras-deck-actions">
+                        <button type="button" class="extras-deck-toggle-btn ${isCurrentlyInExtra ? 'is-active' : ''}" id="toggleArtistExtraBtn">
+                            ${isCurrentlyInExtra ? '← Back to Main levels' : `Study ${_escapeHtml(artistName)} Extras →`}
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('toggleArtistExtraBtn')?.addEventListener('click', () => {
+                if (isCurrentlyInExtra) {
+                    window.setArtistVocabularyScope?.('main');
+                } else {
+                    window.setArtistVocabularyScope?.('extra');
+                }
+            });
+        } else {
+            const needed = Math.max(0, 60 - coveragePct).toFixed(1);
+            card.innerHTML = `
+                <div class="extras-deck-content is-locked">
+                    <div class="extras-deck-status">
+                        <span class="extras-deck-badge is-locked">🔒 Unlocks at 60%</span>
+                        <div class="extras-deck-info">
+                            <strong>Supplementary ${_escapeHtml(artistName)} vocabulary</strong>
+                            <p>Focuses on core song words first. Unlocks at 60% lyrics understood (${coveragePct.toFixed(1)}% now, ${needed}% to go).</p>
+                        </div>
+                    </div>
+                    <div class="extras-deck-progress-track">
+                        <div class="extras-deck-progress-fill" style="width: ${Math.min(100, (coveragePct / 60) * 100)}%"></div>
+                    </div>
+                </div>
+            `;
+        }
+    } else {
+        // Speech mode: Fast track skipped words
+        const extrasData = globalThis.collectExtras ? globalThis.collectExtras() : { cognates: [], lemmas: [] };
+        const cognates = extrasData.cognates || [];
+        const lemmas = extrasData.lemmas || [];
+        const totalSkipped = cognates.length + lemmas.length;
+        if (title) title.textContent = 'Skipped words deck';
+
+        if (totalSkipped > 0) {
+            section.style.display = 'block';
+            card.innerHTML = `
+                <div class="extras-deck-content">
+                    <div class="extras-deck-status">
+                        <span class="extras-deck-badge is-info">Fast track</span>
+                        <div class="extras-deck-info">
+                            <strong>${totalSkipped} word${totalSkipped === 1 ? '' : 's'} set aside by Fast track</strong>
+                            <p>${cognates.length} obvious look-alikes · ${lemmas.length} forms merged into their base card.</p>
+                        </div>
+                    </div>
+                    <div class="extras-deck-actions">
+                        <button type="button" class="extras-deck-browse-btn" id="openSpeechExtrasBtn">
+                            Browse skipped words <span aria-hidden="true">›</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('openSpeechExtrasBtn')?.addEventListener('click', () => {
+                globalThis.openExtras?.();
+            });
+        } else {
+            section.style.display = 'block';
+            card.innerHTML = `
+                <div class="extras-deck-content is-empty">
+                    <div class="extras-deck-status">
+                        <span class="extras-deck-badge is-muted">Full deck</span>
+                        <div class="extras-deck-info">
+                            <strong>No words are currently skipped</strong>
+                            <p>Fast track is off or full deck is active. Turn on Fast track above to filter out familiar look-alikes.</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    }
 }
 
 function getNextStudySetMeta(rangeString) {
@@ -3132,3 +3279,4 @@ window.showTotalStatsModal = showTotalStatsModal;
 window.hideTotalStatsModal = hideTotalStatsModal;
 window.updateTotalStatsButtonVisibility = updateTotalStatsButtonVisibility;
 window.updateStatsModal = updateStatsModal;
+window.renderSetupExtrasSection = renderSetupExtrasSection;
