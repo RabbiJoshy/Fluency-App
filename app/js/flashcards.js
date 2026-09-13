@@ -838,25 +838,49 @@ function computeLinesUnderstood(allowedEntryIds = null) {
 
 // --- Example relevance sorting ---
 let _cachedDeckWords = null;
-let _cachedDeckId = null;  // track which deck set we computed for
+let _cachedDeckRef = null;
+let _cachedDeckLength = -1;
+let _cachedDeckFirstId = null;
+let _cachedDeckLastId = null;
 
 function getDeckWords() {
-    // Cache per exact small set. A first-card-only key could stay unchanged
-    // after a filter toggle even though the rest of the stable set changed.
-    const deckId = flashcards.map(card => card.fullId).join('|');
-    if (_cachedDeckId === deckId && _cachedDeckWords) return _cachedDeckWords;
+    if (!flashcards || flashcards.length === 0) return new Set();
+    const firstId = flashcards[0]?.fullId;
+    const lastId = flashcards[flashcards.length - 1]?.fullId;
+    if (_cachedDeckWords && _cachedDeckRef === flashcards && _cachedDeckLength === flashcards.length
+        && _cachedDeckFirstId === firstId && _cachedDeckLastId === lastId) {
+        return _cachedDeckWords;
+    }
     _cachedDeckWords = new Set();
-    flashcards.forEach(card => {
-        [card.targetWord, card.lemma, card.displaySurface, card.citationForm, card.productionAnswer]
-            .filter(Boolean)
-            .forEach(form => _cachedDeckWords.add(String(form).toLowerCase()));
-    });
-    _cachedDeckId = deckId;
+    for (let i = 0; i < flashcards.length; i++) {
+        const card = flashcards[i];
+        if (card.targetWord) _cachedDeckWords.add(String(card.targetWord).toLowerCase());
+        if (card.lemma) _cachedDeckWords.add(String(card.lemma).toLowerCase());
+        if (card.displaySurface) _cachedDeckWords.add(String(card.displaySurface).toLowerCase());
+        if (card.citationForm) _cachedDeckWords.add(String(card.citationForm).toLowerCase());
+        if (card.productionAnswer) _cachedDeckWords.add(String(card.productionAnswer).toLowerCase());
+    }
+    _cachedDeckRef = flashcards;
+    _cachedDeckLength = flashcards.length;
+    _cachedDeckFirstId = firstId;
+    _cachedDeckLastId = lastId;
     return _cachedDeckWords;
 }
 
+let _cachedWrongWordsEpoch = -1;
+let _cachedWrongWords = null;
+let _cachedWrongWordsTime = 0;
+
 function getRecentWrongWords() {
-    return collectRecentWrongWords(progressData);
+    const epoch = window.__progressEpoch || 0;
+    const now = Date.now();
+    if (_cachedWrongWords && _cachedWrongWordsEpoch === epoch && (now - _cachedWrongWordsTime) < 60000) {
+        return _cachedWrongWords;
+    }
+    _cachedWrongWords = collectRecentWrongWords(progressData, now);
+    _cachedWrongWordsEpoch = epoch;
+    _cachedWrongWordsTime = now;
+    return _cachedWrongWords;
 }
 
 // Count "content" tokens after stripping ad-libs/brackets/parentheticals —

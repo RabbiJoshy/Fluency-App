@@ -2112,21 +2112,35 @@ async function renderRangeSelector() {
     // Sets use fixed baseline slots. Filters can make a set shorter, but
     // never refill it from its neighbour; this preserves membership, progress,
     // and the nearby-rank example neighbourhood across setting changes.
+    const slotCount = Math.max(0, Math.ceil((maxWord - minWord) / STABLE_SET_SLOT_COUNT));
+    const slots = Array.from({ length: slotCount }, () => []);
+    for (let i = 0; i < wordsInLevel.length; i++) {
+        const item = wordsInLevel[i];
+        const rank = rankOf(item);
+        const slotIdx = Math.floor((rank - minWord) / STABLE_SET_SLOT_COUNT);
+        if (slotIdx >= 0 && slotIdx < slotCount) {
+            slots[slotIdx].push(item);
+        }
+    }
+
     const ranges = [];
-    for (let start = minWord; start < maxWord; start += STABLE_SET_SLOT_COUNT) {
+    for (let slotIdx = 0; slotIdx < slotCount; slotIdx++) {
+        const start = minWord + slotIdx * STABLE_SET_SLOT_COUNT;
         const end = Math.min(start + STABLE_SET_SLOT_COUNT, maxWord);
-        const words = wordsInLevel.filter(item => {
-            const rank = rankOf(item);
-            return rank >= start && rank < end;
-        });
-        const states = words.map(item => getSetupLearningState(item, {
-            seenLemmas,
-            estimatedIds,
-            estimate
-        }));
-        const seenCount = states.filter(state => state?.seen).length;
-        const reviewCount = states.filter(state => state?.needsReview).length;
-        const dueCount = states.filter(state => state?.reviewReason === 'due').length;
+        const words = slots[slotIdx];
+        let seenCount = 0;
+        let reviewCount = 0;
+        let dueCount = 0;
+        for (let i = 0; i < words.length; i++) {
+            const state = getSetupLearningState(words[i], {
+                seenLemmas,
+                estimatedIds,
+                estimate
+            });
+            if (state?.seen) seenCount++;
+            if (state?.needsReview) reviewCount++;
+            if (state?.reviewReason === 'due') dueCount++;
+        }
         const knownCount = Math.max(0, seenCount - reviewCount);
         const unseenCount = words.length - seenCount;
         ranges.push({

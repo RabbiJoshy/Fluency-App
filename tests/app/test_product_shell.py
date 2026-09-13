@@ -438,7 +438,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("id: 'lyricsSourceSheet'", main)
         self.assertIn("id: 'artistChoiceSheet'", main)
         self.assertIn("label: 'Import a Spotify playlist'", main)
-        self.assertIn("Use the music you already listen to — coming later.", main)
+        self.assertIn("Match a playlist you already have against the songs Fluency knows.", main)
         self.assertNotIn("id: 'artistRadialPicker'", main)
         self.assertIn(".choice-sheet-grid .choice-sheet-body", css)
         self.assertIn(".choice-sheet-list .choice-sheet-item", css)
