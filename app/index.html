@@ -67,8 +67,9 @@
     <link rel="modulepreload" href="js/vocab.js?v=20260907a">
     <link rel="modulepreload" href="js/song-sets-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/song-sets.js?v=20260823ae">
+    <link rel="modulepreload" href="js/spotify-playlist-import.js?v=20260913a">
     <link rel="modulepreload" href="js/vocabulary-import-core.js?v=20260825ak">
-    <link rel="modulepreload" href="js/vocabulary-import.js?v=20260825ak">
+    <link rel="modulepreload" href="js/vocabulary-import.js?v=20260913a">
     <link rel="modulepreload" href="js/spanishdict-usage.js?v=20260825ak">
     <link rel="modulepreload" href="js/reverse-cues.js?v=20260825ak">
     <link rel="modulepreload" href="js/flashcards.js?v=20260913f">
@@ -1259,6 +1260,28 @@
         </div>
     </div>
 
+    <!-- Spotify playlist import: pick a playlist, match it against the songs
+         Fluency already has lyrics/vocabulary for, then build a deck from the
+         matches. -->
+    <div id="spotifyPlaylistModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="spotifyPlaylistTitle">
+        <div class="modal-content song-set-modal-content">
+            <div class="modal-header">
+                <div>
+                    <span class="progress-modal-eyebrow">Lyrics source</span>
+                    <h3 id="spotifyPlaylistTitle">Import a Spotify playlist</h3>
+                </div>
+                <button type="button" class="modal-close" id="closeSpotifyPlaylistModal" aria-label="Close playlist import">✕</button>
+            </div>
+            <p id="spotifyPlaylistIntro" class="settings-data-intro">Choose one of your playlists. Fluency will build a deck from whichever of its songs are already in the library.</p>
+            <div id="spotifyPlaylistList" class="song-set-list"></div>
+            <p id="spotifyPlaylistStatus" class="vocabulary-import-status" role="status" aria-live="polite"></p>
+            <div class="song-set-footer">
+                <button type="button" id="cancelSpotifyPlaylistBtn" class="secondary-btn">Cancel</button>
+                <button type="button" id="useSpotifyMatchesBtn" hidden>Build deck from matches</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Total Stats Modal (All-time stats for the current language) -->
     <div id="totalStatsModal" class="modal hidden">
         <div class="modal-content progress-modal-content total-progress-modal-content">
@@ -1301,7 +1324,7 @@
                     <span class="settings-nav-label">Learning</span>
                     <button class="settings-tab active" data-tab="study">Study</button>
                     <button class="settings-tab" data-tab="review">Review</button>
-                    <button class="settings-tab" data-tab="vocabulary">Vocabulary</button>
+                    <button class="settings-tab" data-tab="vocabulary">Other apps</button>
                     <span class="settings-nav-label">App</span>
                     <button class="settings-tab" data-tab="appearance">Appearance</button>
                     <button class="settings-tab" data-tab="account">Account</button>
@@ -1464,15 +1487,33 @@
                 </section>
             </div>
             <div class="settings-tab-content" id="vocabularyTabContent">
-                <p class="settings-section-intro">Bring words you already know into Fluency so your progress and study sets start in the right place.</p>
+                <p class="settings-section-intro">Move vocabulary between Fluency and other places you study — bring in a known-words list, or take your data with you.</p>
+                <section class="settings-feature-card" aria-labelledby="spotifyConnectionTitle">
+                    <span class="settings-feature-icon" id="spotifyConnectionIcon" aria-hidden="true">♫</span>
+                    <div>
+                        <strong id="spotifyConnectionTitle">Spotify</strong>
+                        <p>Stay connected so lyric playback just works, and so you can build a deck straight from one of your playlists.</p>
+                    </div>
+                    <button type="button" class="settings-feature-action" id="spotifyConnectBtn">Connect</button>
+                    <p id="spotifyConnectionStatus" class="settings-feature-note"></p>
+                </section>
                 <section class="settings-feature-card" aria-labelledby="vocabularySettingsTitle">
                     <span class="settings-feature-icon" aria-hidden="true">Aa</span>
                     <div>
-                        <strong id="vocabularySettingsTitle">Import known vocabulary</strong>
-                        <p>Paste a list or upload a text, CSV or TSV file. Fluency matches exact Spanish word forms, previews every change, and preserves newer answers already saved here.</p>
+                        <strong id="vocabularySettingsTitle">Known vocabulary</strong>
+                        <p>Already know some of these words from another app or course? Upload your list so Fluency starts you further in — paste it or choose a text, CSV or TSV file. Matches exact Spanish word forms, previews every change first, and never overwrites a newer answer already saved here.</p>
                     </div>
                     <button type="button" class="settings-feature-action" id="openVocabularyImportBtn">Import words</button>
                     <p id="vocabularyImportAvailability" class="settings-feature-note"></p>
+                </section>
+                <section class="settings-feature-card" aria-labelledby="mistakeExportTitle">
+                    <span class="settings-feature-icon" aria-hidden="true">↓</span>
+                    <div>
+                        <strong id="mistakeExportTitle">Export mistakes</strong>
+                        <p>Download every word you've ever gotten wrong here — how many times, when you were last wrong, and where it stands with the review scheduler — as a CSV you can take into another app.</p>
+                    </div>
+                    <button type="button" class="settings-feature-action" id="exportMistakesBtn">Download CSV</button>
+                    <p id="mistakeExportStatus" class="settings-feature-note" role="status" aria-live="polite"></p>
                 </section>
             </div>
             <div class="settings-tab-content" id="appearanceTabContent">

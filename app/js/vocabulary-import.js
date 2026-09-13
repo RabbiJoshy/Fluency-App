@@ -168,6 +168,63 @@ async function confirmVocabularyImport() {
     }
 }
 
+function csvCell(value) {
+    const text = String(value ?? '');
+    return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+}
+
+// Reads straight off in-memory progress and the already-computed review
+// schedule (see getProgressState in progress.js) — no re-scoring, so this
+// stays instant regardless of deck size.
+function buildMistakeExportRows(progress) {
+    const rows = [];
+    for (const entry of Object.values(progress || {})) {
+        if (!(Number(entry?.wrong) > 0)) continue;
+        const state = window.getProgressState?.(entry) || {};
+        rows.push({
+            word: entry.word || '',
+            wrong: Number(entry.wrong) || 0,
+            correct: Number(entry.correct) || 0,
+            lastWrong: entry.lastWrong || '',
+            status: state.isDue ? 'due' : (state.needsReview ? 'review' : 'learned'),
+            nextReview: state.nextReviewAt ? new Date(state.nextReviewAt).toISOString() : ''
+        });
+    }
+    rows.sort((a, b) => String(b.lastWrong).localeCompare(String(a.lastWrong)));
+    return rows;
+}
+
+function exportMistakes() {
+    const status = element('mistakeExportStatus');
+    const rows = buildMistakeExportRows(progressData);
+    if (!rows.length) {
+        if (status) status.textContent = "No mistakes recorded yet on this device.";
+        return;
+    }
+    const header = ['word', 'times_wrong', 'times_correct', 'last_wrong', 'review_status', 'next_review'];
+    const lines = [header.join(',')];
+    for (const row of rows) {
+        lines.push([row.word, row.wrong, row.correct, row.lastWrong, row.status, row.nextReview].map(csvCell).join(','));
+    }
+    const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `fluency-mistakes-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    if (status) status.textContent = `Exported ${rows.length} word${rows.length === 1 ? '' : 's'} you've gotten wrong.`;
+}
+
+function setupMistakeExport() {
+    const button = element('exportMistakesBtn');
+    if (!button || button.dataset.listenerReady === '1') return;
+    button.dataset.listenerReady = '1';
+    button.addEventListener('click', exportMistakes);
+}
+
 function setupVocabularyImport() {
     const open = element('openVocabularyImportBtn');
     const modal = element('vocabularyImportModal');
@@ -207,5 +264,6 @@ function setupVocabularyImport() {
 }
 
 setupVocabularyImport();
+setupMistakeExport();
 
 window.openVocabularyImportModal = openVocabularyImportModal;
