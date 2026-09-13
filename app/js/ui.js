@@ -905,9 +905,10 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
                 : 'speech comprehension');
         const buttonsHTML = percentageRanges.map(level => {
             const description = level.description || `${level.level} ${coverageType}`;
+            const isSelected = level.level === selectedLevel;
             return `
-            <button class="level-btn" data-level="${level.level}" data-short="${level.level}" data-full="${description}" data-start-rank="${level.startRank}" data-end-rank="${level.endRank}" data-rank-basis="${level.rankBasis || 'source'}"${usingReleaseLevels ? ' data-release-level="true"' : ''} title="${description}">
-                ${level.level}
+            <button class="level-btn${isSelected ? ' selected' : ''}" data-level="${level.level}" data-short="${level.level}" data-full="${description}" data-start-rank="${level.startRank}" data-end-rank="${level.endRank}" data-rank-basis="${level.rankBasis || 'source'}"${usingReleaseLevels ? ' data-release-level="true"' : ''} title="${description}">
+                ${isSelected ? description : level.level}
             </button>
         `}).join('');
 
@@ -983,11 +984,13 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
     } else {
         container.classList.remove('level-selector--slider');
         const cefrLevels = getCefrLevels(language);
-        const levelsHTML = cefrLevels.map(level => `
-            <button class="level-btn" data-level="${level.level}" data-short="${level.level}" data-full="${level.level}" title="${level.description}">
+        const levelsHTML = cefrLevels.map(level => {
+            const isSelected = level.level === selectedLevel;
+            return `
+            <button class="level-btn${isSelected ? ' selected' : ''}" data-level="${level.level}" data-short="${level.level}" data-full="${level.level}" title="${level.description}">
                 ${level.level}
             </button>
-        `).join('');
+        `;}).join('');
         container.innerHTML = levelsHTML;
     }
 
@@ -1080,6 +1083,11 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
             await target._rangeRenderPromise;
         }
     } else {
+        const matchingBtn = levelButtons.find(b => b.dataset.level === selectedLevel);
+        if (matchingBtn && !document.querySelector('.level-btn.selected')) {
+            matchingBtn.click();
+            await matchingBtn._rangeRenderPromise;
+        }
         levelProgressPromise.catch(err =>
             console.warn('Level progress indicators unavailable', err));
     }
@@ -1769,16 +1777,16 @@ function setupCognateToggle() {
     updateCognateSensitivityVisibility();
 }
 
-function _refreshAfterCognateChange() {
+async function _refreshAfterCognateChange() {
     invalidatePreparedSetupVocabulary();
-    renderLevelSelector(selectedLanguage);
+    await renderLevelSelector(selectedLanguage);
     if (selectedLevel) {
         const levelBtn = document.querySelector(`.level-btn[data-level="${selectedLevel}"]`);
         if (levelBtn) {
             levelBtn.classList.add('selected');
             levelBtn.textContent = levelBtn.dataset.full;
         }
-        renderRangeSelector().catch(err => console.error('Error rendering ranges:', err));
+        await renderRangeSelector().catch(err => console.error('Error rendering ranges:', err));
     }
     updateExclusionBars();
     updateCognateSensitivityVisibility();
@@ -2032,7 +2040,7 @@ function getSetupLearningState(item, { seenLemmas = new Set(), estimatedIds = nu
     };
     const relatedIds = window.getProgressRecordIdsForCard?.(wordId, item.word) || [wordId];
     const recorded = getWordProgressState(wordId, item.word);
-    const reviewInfo = getWordKnowledgeReviewInfo(wordId);
+    const reviewInfo = getWordKnowledgeReviewInfo(wordId, item.word);
 
     // A real answer is more specific than the estimated starting level;
     // in particular, a later wrong must remain reviewable. Setup and deck
@@ -2085,7 +2093,14 @@ async function renderRangeSelector() {
     let minWord, maxWord;
     let rankBasis = 'source';
 
-    const selectedLevelBtn = document.querySelector('.level-btn.selected');
+    let selectedLevelBtn = document.querySelector('.level-btn.selected');
+    if (!selectedLevelBtn && selectedLevel) {
+        selectedLevelBtn = document.querySelector(`.level-btn[data-level="${selectedLevel}"]`);
+        if (selectedLevelBtn) {
+            selectedLevelBtn.classList.add('selected');
+            selectedLevelBtn.textContent = selectedLevelBtn.dataset.full || selectedLevelBtn.textContent;
+        }
+    }
     // Artist Extra category groups carry their own rank block on the selected
     // level button and are independent of percentage/CEFR mode.
     if (selectedLevelBtn?.dataset.releaseLevel === 'true') {
@@ -2102,6 +2117,17 @@ async function renderRangeSelector() {
         minWord = parseInt(selectedBtn.dataset.startRank);
         maxWord = parseInt(selectedBtn.dataset.endRank);
         rankBasis = selectedBtn.dataset.rankBasis || 'source';
+    } else if (releaseStudyStructure?.levels) {
+        const rLevel = releaseStudyStructure.levels.find(item => item.level === selectedLevel);
+        if (rLevel) {
+            minWord = rLevel.startRank;
+            maxWord = rLevel.endRank;
+            rankBasis = rLevel.rankBasis || 'source';
+        } else {
+            const level = getCefrLevels(selectedLanguage).find(item => item.level === selectedLevel);
+            if (!level) return;
+            [minWord, maxWord] = level.wordCount.split('-').map(Number);
+        }
     } else {
         const level = getCefrLevels(selectedLanguage).find(item => item.level === selectedLevel);
         if (!level) return;
@@ -2522,7 +2548,7 @@ function getNextStudySetMeta(rangeString) {
     if (!next) return null;
     return {
         range: next.dataset.range,
-        rankBasis: next.dataset.rankBasis || 'stable',
+        rankBasis: next.dataset.rankBasis || (releaseStudyStructure?.levels ? 'source' : 'stable'),
         setNumber: Number(next.dataset.index) + 1,
         levelSetCount: dots.length
     };
@@ -2582,7 +2608,7 @@ async function startNextStudyLevelFirstSet() {
         !dot.disabled && Number(dot.dataset.unseen || 0) > 0);
     for (const dot of sameLevelCandidates) {
         const built = await loadVocabularyData(dot.dataset.range, {
-            rankBasis: dot.dataset.rankBasis || 'stable',
+            rankBasis: dot.dataset.rankBasis || (releaseStudyStructure?.levels ? 'source' : 'stable'),
             setNumber: Number(dot.dataset.index) + 1,
             levelSetCount: refreshedDots.length,
             studyMode: 'new',
@@ -2627,7 +2653,7 @@ async function startNextStudyLevelFirstSet() {
         // still come back empty. Keep walking to the next level rather than
         // alerting and abandoning the search mid-way.
         const built = await loadVocabularyData(firstUnseenSet.dataset.range, {
-            rankBasis: firstUnseenSet.dataset.rankBasis || 'stable',
+            rankBasis: firstUnseenSet.dataset.rankBasis || (releaseStudyStructure?.levels ? 'source' : 'stable'),
             setNumber: Number(firstUnseenSet.dataset.index) + 1,
             levelSetCount: setDots.length,
             levelNumber: nextMeta.levelNumber,

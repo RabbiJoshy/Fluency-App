@@ -313,18 +313,18 @@ function getItemProgressForParent(parentWordId) {
     return itemProgressByParent.get(parentWordId) || [];
 }
 
-function wordHasKnowledgeProgress(parentWordId) {
-    const parentIds = window.getProgressRecordIdsForCard?.(parentWordId) || [parentWordId];
+function wordHasKnowledgeProgress(parentWordId, surface = '') {
+    const parentIds = window.getProgressRecordIdsForCard?.(parentWordId, surface) || [parentWordId];
     return parentIds.some(id =>
         getItemProgressForParent(id).some(item => getProgressState(item).seen));
 }
 
-function getWordKnowledgeReviewInfo(parentWordId) {
-    const parent = window.getMergedWordProgress?.(parentWordId)
+function getWordKnowledgeReviewInfo(parentWordId, surface = '') {
+    const parent = window.getMergedWordProgress?.(parentWordId, surface)
         || progressData?.[parentWordId]
         || null;
     const parentState = getProgressState(parent);
-    const parentIds = window.getProgressRecordIdsForCard?.(parentWordId) || [parentWordId];
+    const parentIds = window.getProgressRecordIdsForCard?.(parentWordId, surface) || [parentWordId];
     const itemRows = parentIds.flatMap(id => getItemProgressForParent(id));
     const itemStates = itemRows.map(item => ({
         row: item,
@@ -364,8 +364,8 @@ function getWordKnowledgeReviewInfo(parentWordId) {
     };
 }
 
-function wordNeedsKnowledgeReview(parentWordId) {
-    return getWordKnowledgeReviewInfo(parentWordId).needsReview;
+function wordNeedsKnowledgeReview(parentWordId, surface = '') {
+    return getWordKnowledgeReviewInfo(parentWordId, surface).needsReview;
 }
 
 function buildFocusedReviewCard(card) {
