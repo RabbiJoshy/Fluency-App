@@ -80,6 +80,7 @@ function applyFastMode(on) {
         )?.click();
     }
     applyingMasterSwitch = false;
+    window.invalidatePreparedSetupVocabulary?.();
     // The clicks above each schedule their own refresh; this only restates what
     // the buttons now say.
     setTimeout(refresh, 0);

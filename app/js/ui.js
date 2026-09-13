@@ -1731,6 +1731,7 @@ function setupCognateToggle() {
 }
 
 function _refreshAfterCognateChange() {
+    invalidatePreparedSetupVocabulary();
     renderLevelSelector(selectedLanguage);
     if (selectedLevel) {
         const levelBtn = document.querySelector(`.level-btn[data-level="${selectedLevel}"]`);
@@ -1762,6 +1763,7 @@ function setupLemmaToggle() {
             this.classList.add('selected');
             this.textContent = this.dataset.full;
             useLemmaMode = this.dataset.lemma === 'on';
+            invalidatePreparedSetupVocabulary();
 
             // Re-render level selector with new word counts, and re-render range selector if a level is selected
             const loadingIndicator = document.getElementById('dataLoadingIndicator');
@@ -2012,14 +2014,15 @@ function getSetupLearningState(item, { seenLemmas = new Set(), estimatedIds = nu
         });
     }
     if (recorded?.seen) return memoise(recorded);
-    if (relatedIds.some(id => wordHasKnowledgeProgress(id))) {
+    if (relatedIds.some(id => getWordProgressState(id).seen || wordHasKnowledgeProgress(id))) {
         return memoise({ ...recorded, seen: true });
     }
 
     // Merge Lemmas treats progress on any surface form as progress on the
     // shared lemma. This is the same set used by Learn New during deck build,
     // so the button count cannot advertise cards that will then be removed.
-    if (seenLemmas.has(item.lemma)) {
+    const lemmaKey = globalThis.lemmaGroupKey?.(item) || item.lemma;
+    if (lemmaKey && seenLemmas.has(lemmaKey)) {
         return memoise({ ...recorded, seen: true, needsReview: false, learned: true, inheritedLemma: true });
     }
 
