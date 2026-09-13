@@ -40,14 +40,14 @@
             document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260913l">
+    <link rel="stylesheet" href="css/style.css?v=20260913m">
     <link rel="stylesheet" href="css/light-theme.css?v=20260913a">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260913o">
+    <link rel="modulepreload" href="js/main.js?v=20260913p">
     <link rel="modulepreload" href="js/theme.js?v=20260825ak">
     <link rel="modulepreload" href="js/state.js?v=20260912a">
     <link rel="modulepreload" href="js/data-contracts.js?v=20260825ak">
@@ -401,7 +401,7 @@
                 <div class="step-header artist-source-header">
                     <span class="step-title">Lyrics</span>
                 </div>
-                <div class="artist-source-card standard-source-card" id="artistSourceCard">
+                <div class="artist-source-card" id="artistSourceCard">
                     <button type="button" id="artistSourceLanguageBtn" class="artist-source-picker artist-source-language-btn" aria-haspopup="dialog">
                         <span id="artistSourceLanguageIcon" class="artist-source-image standard-source-language-icon" aria-hidden="true"></span>
                         <span class="artist-source-copy">
@@ -421,7 +421,7 @@
                         </button>
                         <div class="artist-source-secondary-actions">
                             <button type="button" id="artistSourceArtistBtn" class="artist-source-action-btn">Change artist</button>
-                            <button type="button" id="artistSourceSpeechBtn" class="artist-source-action-btn">Switch to Speech</button>
+                            <button type="button" id="artistSourceSpeechBtn" class="artist-source-action-btn">Speech ›</button>
                         </div>
                     </div>
                     <div id="artistSourceProgress" class="standard-source-progress"></div>
@@ -1732,6 +1732,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260913o"></script>
+    <script type="module" src="js/main.js?v=20260913p"></script>
 </body>
 </html>

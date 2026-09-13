@@ -6806,7 +6806,12 @@
         }
 
         .artist-source-step {
-            padding-bottom: 15px;
+            margin-bottom: 12px;
+            padding-bottom: 0;
+        }
+        #artistSourceStep > .artist-source-header,
+        #artistSourceCard > .artist-source-language-btn {
+            display: none !important;
         }
         .artist-source-header {
             align-items: flex-end;
@@ -6826,23 +6831,23 @@
             color: var(--text-muted);
         }
         .artist-source-card {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) auto;
-            gap: 8px;
-            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            padding: 10px 14px;
             border: 1px solid var(--border-color);
             border-radius: 14px;
-            background: var(--bg-tertiary);
+            background: var(--bg-card);
+            gap: 0;
         }
         .artist-source-picker {
-            min-width: 0;
-            display: grid;
-            grid-template-columns: auto minmax(0, 1fr) auto;
+            display: flex;
             align-items: center;
-            gap: 11px;
-            padding: 4px 7px 4px 4px;
+            gap: 10px;
+            min-width: 0;
+            flex: 1;
+            padding: 2px 0;
             border: 0;
-            border-radius: 10px;
+            border-radius: 8px;
             background: transparent;
             color: var(--text-primary);
             cursor: pointer;
@@ -6850,12 +6855,16 @@
         }
         .artist-source-picker:hover,
         .artist-source-picker:focus-visible {
-            background: var(--bg-card-hover);
+            background: transparent;
             outline: none;
         }
+        .artist-source-picker .language-picker-btn-arrow {
+            display: none !important;
+        }
         .artist-source-image {
-            width: 42px;
-            height: 42px;
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
             display: grid;
             place-items: center;
             flex-shrink: 0;
@@ -6864,7 +6873,7 @@
             background-size: cover;
             color: #fff;
             font-family: var(--font-emphasis);
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 800;
             letter-spacing: 0.03em;
             box-shadow: inset 0 0 0 1px rgba(255,255,255,0.22);
@@ -6887,45 +6896,85 @@
             font-family: var(--font-emphasis);
             font-size: 15px;
             font-weight: 700;
+            line-height: 1.2;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
+        #artistSourceSelectionLabel {
+            font-family: var(--font-reading);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent-primary);
+            line-height: 1.2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        #artistSourceSelectionLabel::after {
+            content: ' ›';
+            font-size: 11px;
+            opacity: 0.75;
+        }
         .artist-source-speech-btn,
         .artist-source-action-btn {
-            align-self: stretch;
-            padding: 7px 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px 11px;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background: var(--bg-card);
+            border-radius: 999px;
+            background: var(--bg-tertiary);
             color: var(--text-secondary);
             font-family: var(--font-emphasis);
             font-size: 11px;
             font-weight: 600;
+            line-height: 1.3;
             cursor: pointer;
             white-space: nowrap;
-            transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+            transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
         }
         .artist-source-speech-btn:hover,
         .artist-source-speech-btn:focus-visible,
         .artist-source-action-btn:hover,
         .artist-source-action-btn:focus-visible {
-            border-color: var(--accent-secondary);
-            background: color-mix(in srgb, var(--accent-secondary) 12%, var(--bg-card));
+            border-color: var(--accent-primary);
+            background: color-mix(in srgb, var(--accent-primary) 12%, var(--bg-card));
             color: var(--text-primary);
             outline: none;
         }
         .artist-source-main-choice {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) auto;
+            display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 8px 6px;
-            border-top: 1px solid var(--border-color);
+            justify-content: space-between;
+            gap: 10px;
+            padding: 0;
+            border: 0 !important;
+            width: 100%;
         }
         .artist-source-secondary-actions {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
+            align-items: center;
             gap: 6px;
+            flex-shrink: 0;
+        }
+        #artistSourceProgress {
+            width: 100%;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--border-color);
+        }
+        #artistSourceProgress:empty {
+            display: none;
+            margin-top: 0;
+            padding-top: 0;
+            border-top: 0;
+        }
+        #artistSourceProgress .personal-coverage-wrapper {
+            padding: 0 !important;
+            background: transparent !important;
+            border: 0 !important;
+            margin-bottom: 0 !important;
         }
         .artist-vocabulary-scope {
             grid-column: 1 / -1;
@@ -6987,14 +7036,16 @@
             line-height: 1.35;
         }
         @media (max-width: 430px) {
-            .artist-source-card {
-                grid-template-columns: 1fr;
-            }
-            .artist-source-speech-btn {
-                min-height: 38px;
+            .artist-source-main-choice {
+                flex-wrap: wrap;
+                gap: 8px;
             }
             .artist-source-secondary-actions {
-                grid-template-columns: 1fr 1fr;
+                margin-left: auto;
+            }
+            .artist-source-speech-btn,
+            .artist-source-action-btn {
+                min-height: auto;
             }
             .artist-vocabulary-scope {
                 grid-template-columns: 1fr;
