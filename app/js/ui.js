@@ -701,6 +701,14 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
     let lastAvailable = null;
     let lastSuggestionLevel = null;
 
+    const sliderSegmentMap = new Map();
+    document.querySelectorAll('#lswSlider .lsw-seg').forEach(seg => {
+        if (seg.dataset.i !== undefined) sliderSegmentMap.set(seg.dataset.i, seg);
+    });
+
+    const parsedButtons = [];
+    const cefrLevels = (!percentageMode && (!ppmData || ppmData.length === 0)) ? getCefrLevels(language) : null;
+
     for (let buttonIndex = 0; buttonIndex < buttons.length; buttonIndex++) {
         const btn = buttons[buttonIndex];
         let minWord, maxWord;
@@ -713,16 +721,40 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
             minWord = parseInt(btn.dataset.startRank);
             maxWord = parseInt(btn.dataset.endRank);
             rankBasis = btn.dataset.rankBasis || 'source';
-        } else {
-            const cefrLevels = getCefrLevels(language);
+        } else if (cefrLevels) {
             const lv = cefrLevels.find(l => l.level === btn.dataset.level);
             if (!lv) continue;
             [minWord, maxWord] = lv.wordCount.split('-').map(Number);
+        } else {
+            continue;
         }
-        const wordsInLevel = filteredVocab.filter(it => {
-            const rank = _levelRankAccessor(rankBasis)(it);
-            return rank >= minWord && rank < maxWord;
+        parsedButtons.push({
+            btn,
+            buttonIndex,
+            minWord,
+            maxWord,
+            rankFn: _levelRankAccessor(rankBasis),
+            words: []
         });
+    }
+
+    if (parsedButtons.length > 0) {
+        // Distribute vocabulary in a single pass, breaking as soon as the matching range is found
+        for (let i = 0; i < filteredVocab.length; i++) {
+            const it = filteredVocab[i];
+            for (let j = 0; j < parsedButtons.length; j++) {
+                const p = parsedButtons[j];
+                const rank = p.rankFn(it);
+                if (rank >= p.minWord && rank < p.maxWord) {
+                    p.words.push(it);
+                    break;
+                }
+            }
+        }
+    }
+
+    for (let i = 0; i < parsedButtons.length; i++) {
+        const { btn, buttonIndex, words: wordsInLevel } = parsedButtons[i];
         if (wordsInLevel.length === 0) continue;
         lastAvailable = btn;
         const suggestionSkipped = window.isLevelMarkedDone?.(btn.dataset.level) || false;
@@ -736,7 +768,7 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
         btn.classList.toggle('is-suggestion-skipped', suggestionSkipped);
         btn.style.setProperty('--level-progress', `${completion}%`);
 
-        const visibleSegment = document.querySelector(`#lswSlider .lsw-seg[data-i="${buttonIndex}"]`);
+        const visibleSegment = sliderSegmentMap.get(String(buttonIndex));
         if (visibleSegment) {
             visibleSegment.dataset.progressPct = String(completion);
             visibleSegment.classList.toggle('has-partial-progress', isPartial);

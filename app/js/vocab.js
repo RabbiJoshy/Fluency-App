@@ -202,7 +202,27 @@ function clearStudySessionSnapshot() {
     document.getElementById('resumeLastSetCard')?.remove();
 }
 
-function saveStudySessionSnapshot() {
+let _saveSnapshotTimer = null;
+
+function saveStudySessionSnapshot({ immediate = false } = {}) {
+    if (!flashcards.length || cardNavStack.length > 0 || !stats.rangeString) return;
+    const appContent = document.getElementById('appContent');
+    if (!appContent || appContent.classList.contains('hidden')) return;
+
+    if (_saveSnapshotTimer) {
+        clearTimeout(_saveSnapshotTimer);
+        _saveSnapshotTimer = null;
+    }
+
+    if (immediate) {
+        _writeStudySessionSnapshot();
+    } else {
+        _saveSnapshotTimer = setTimeout(_writeStudySessionSnapshot, 250);
+    }
+}
+
+function _writeStudySessionSnapshot() {
+    _saveSnapshotTimer = null;
     if (!flashcards.length || cardNavStack.length > 0 || !stats.rangeString) return;
     const appContent = document.getElementById('appContent');
     if (!appContent || appContent.classList.contains('hidden')) return;
@@ -260,6 +280,10 @@ function saveStudySessionSnapshot() {
     } catch (error) {
         // Storage can be unavailable in hardened/private contexts.
     }
+}
+
+if (typeof window !== 'undefined') {
+    window.addEventListener('pagehide', () => saveStudySessionSnapshot({ immediate: true }));
 }
 
 async function resumeLastStudySession() {
