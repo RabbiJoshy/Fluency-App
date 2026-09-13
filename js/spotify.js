@@ -2,7 +2,7 @@
 // Key functions: spotifyLogin(), spotifyPlayTrack(trackId, positionMs), isSpotifyConnected().
 import './state.js?v=20260825ak';
 
-const SPOTIFY_SCOPES = 'streaming user-modify-playback-state user-read-playback-state user-read-email user-read-private';
+const SPOTIFY_SCOPES = 'streaming user-modify-playback-state user-read-playback-state user-read-email user-read-private playlist-read-private playlist-read-collaborative';
 const _isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 let _player = null;
 let _deviceId = null;
@@ -296,11 +296,150 @@ function isSpotifyConnected() {
     return !!localStorage.getItem('spotify_access_token');
 }
 
+// --- Profile (drives the "connected as X" settings UI) ---
+
+function cachedSpotifyProfile() {
+    try {
+        return JSON.parse(localStorage.getItem('spotify_profile') || 'null');
+    } catch (_) {
+        return null;
+    }
+}
+
+// Fetched once per connection and cached — the profile rarely changes, and
+// the settings panel should render the "connected" state instantly rather
+// than waiting on a network round trip every time it opens.
+async function getSpotifyProfile({ forceRefresh = false } = {}) {
+    if (!forceRefresh) {
+        const cached = cachedSpotifyProfile();
+        if (cached) return cached;
+    }
+    const token = await getSpotifyToken();
+    if (!token) return null;
+    try {
+        const resp = await fetch('https://api.spotify.com/v1/me', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!resp.ok) throw new Error(`Profile fetch HTTP ${resp.status}`);
+        const data = await resp.json();
+        const profile = {
+            displayName: data.display_name || data.id || 'Spotify',
+            imageUrl: data.images?.[data.images.length - 1]?.url || ''
+        };
+        localStorage.setItem('spotify_profile', JSON.stringify(profile));
+        return profile;
+    } catch (err) {
+        _debugLog('Profile fetch failed: ' + err.message);
+        return cachedSpotifyProfile();
+    }
+}
+
+// --- Playlists (backs "Import a Spotify playlist") ---
+
+// Scoped fetch helper: retries once after a fresh login if the stored token
+// predates the playlist scopes (an account connected before this feature
+// shipped only has the older streaming/profile scopes).
+async function _spotifyApiFetch(url, { allowReauth = true } = {}) {
+    const token = await getSpotifyToken();
+    if (!token) throw new Error('Not connected to Spotify.');
+    const resp = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+    if ((resp.status === 401 || resp.status === 403) && allowReauth) {
+        const reconnected = await spotifyLogin();
+        if (reconnected) return _spotifyApiFetch(url, { allowReauth: false });
+    }
+    if (!resp.ok) throw new Error(`Spotify API HTTP ${resp.status}`);
+    return resp.json();
+}
+
+async function fetchSpotifyPlaylists() {
+    const playlists = [];
+    let url = 'https://api.spotify.com/v1/me/playlists?limit=50';
+    while (url) {
+        const page = await _spotifyApiFetch(url);
+        for (const item of page.items || []) {
+            if (!item?.id) continue;
+            playlists.push({
+                id: item.id,
+                name: item.name || 'Untitled playlist',
+                trackCount: item.tracks?.total || 0,
+                imageUrl: item.images?.[item.images.length - 1]?.url || ''
+            });
+        }
+        url = page.next || null;
+    }
+    return playlists;
+}
+
+// Returns the set of Spotify track IDs in a playlist, used to match against
+// each song catalog entry's own spotifyTrackId. Local files and removed
+// tracks report a null id and are skipped.
+async function fetchSpotifyPlaylistTrackIds(playlistId) {
+    const ids = new Set();
+    let url = `https://api.spotify.com/v1/playlists/${encodeURIComponent(playlistId)}/tracks`
+        + '?fields=items(track(id)),next&limit=100';
+    while (url) {
+        const page = await _spotifyApiFetch(url);
+        for (const item of page.items || []) {
+            const id = item?.track?.id;
+            if (id) ids.add(id);
+        }
+        url = page.next || null;
+    }
+    return ids;
+}
+
+// --- Settings "connected" UI ---
+
+async function refreshSpotifyConnectionUI() {
+    const button = document.getElementById('spotifyConnectBtn');
+    const status = document.getElementById('spotifyConnectionStatus');
+    const icon = document.getElementById('spotifyConnectionIcon');
+    if (!button) return;
+    if (!isSpotifyConnected()) {
+        button.textContent = 'Connect';
+        button.classList.remove('settings-feature-action--danger');
+        if (status) status.textContent = '';
+        if (icon) icon.classList.remove('is-connected');
+        return;
+    }
+    button.textContent = 'Disconnect';
+    button.classList.add('settings-feature-action--danger');
+    if (icon) icon.classList.add('is-connected');
+    if (status) status.textContent = 'Connected';
+    const profile = await getSpotifyProfile();
+    if (status && profile) status.textContent = `Connected as ${profile.displayName}`;
+}
+
+function setupSpotifyConnectionUI() {
+    const button = document.getElementById('spotifyConnectBtn');
+    if (!button || button.dataset.listenerReady === '1') return;
+    button.dataset.listenerReady = '1';
+    button.addEventListener('click', async () => {
+        if (isSpotifyConnected()) {
+            spotifyLogout();
+            return;
+        }
+        button.disabled = true;
+        try {
+            const connected = await spotifyLogin();
+            if (connected) await getSpotifyProfile({ forceRefresh: true });
+        } finally {
+            button.disabled = false;
+            refreshSpotifyConnectionUI();
+        }
+    });
+    refreshSpotifyConnectionUI();
+}
+
+setupSpotifyConnectionUI();
+
 function spotifyLogout() {
     cancelSpotifySnippet(false);
     localStorage.removeItem('spotify_access_token');
     localStorage.removeItem('spotify_refresh_token');
     localStorage.removeItem('spotify_token_expiry');
+    localStorage.removeItem('spotify_profile');
+    refreshSpotifyConnectionUI();
     _connectDeviceId = null;
     _playbackBackend = null;
     _sdkElementActivated = false;
@@ -1320,3 +1459,7 @@ window.cancelSpotifySnippet = cancelSpotifySnippet;
 window.spotifySnippetSupported = spotifySnippetSupported;
 window.isSpotifyConnected = isSpotifyConnected;
 window.spotifyLogout = spotifyLogout;
+window.getSpotifyProfile = getSpotifyProfile;
+window.fetchSpotifyPlaylists = fetchSpotifyPlaylists;
+window.fetchSpotifyPlaylistTrackIds = fetchSpotifyPlaylistTrackIds;
+window.refreshSpotifyConnectionUI = refreshSpotifyConnectionUI;

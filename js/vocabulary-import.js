@@ -168,6 +168,115 @@ async function confirmVocabularyImport() {
     }
 }
 
+function csvCell(value) {
+    const text = String(value ?? '');
+    return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+}
+
+// Reads straight off in-memory progress and the already-computed review
+// schedule (see getProgressState in progress.js) — no re-scoring, so this
+// stays instant regardless of deck size.
+function buildMistakeExportRows(progress) {
+    const rows = [];
+    for (const entry of Object.values(progress || {})) {
+        if (!(Number(entry?.wrong) > 0)) continue;
+        const state = window.getProgressState?.(entry) || {};
+        rows.push({
+            word: entry.word || '',
+            wrong: Number(entry.wrong) || 0,
+            correct: Number(entry.correct) || 0,
+            lastWrong: entry.lastWrong || '',
+            status: state.isDue ? 'due' : (state.needsReview ? 'review' : 'learned'),
+            nextReview: state.nextReviewAt ? new Date(state.nextReviewAt).toISOString() : ''
+        });
+    }
+    rows.sort((a, b) => String(b.lastWrong).localeCompare(String(a.lastWrong)));
+    return rows;
+}
+
+function exportMistakes() {
+    const status = element('mistakeExportStatus');
+    const rows = buildMistakeExportRows(progressData);
+    if (!rows.length) {
+        if (status) status.textContent = "No mistakes recorded yet on this device.";
+        return;
+    }
+    const header = ['word', 'times_wrong', 'times_correct', 'last_wrong', 'review_status', 'next_review'];
+    const lines = [header.join(',')];
+    for (const row of rows) {
+        lines.push([row.word, row.wrong, row.correct, row.lastWrong, row.status, row.nextReview].map(csvCell).join(','));
+    }
+    const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `fluency-mistakes-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    if (status) status.textContent = `Exported ${rows.length} word${rows.length === 1 ? '' : 's'} you've gotten wrong.`;
+}
+
+function setupMistakeExport() {
+    const button = element('exportMistakesBtn');
+    if (!button || button.dataset.listenerReady === '1') return;
+    button.dataset.listenerReady = '1';
+    button.addEventListener('click', exportMistakes);
+}
+
+// Ad hoc ChatGPT hand-off: no API call from Fluency (that's the expensive
+// path), just a prompt built from the words the learner keeps missing,
+// copied to the clipboard, with ChatGPT opened in a new tab for them to
+// paste it into using their own account. A structured round trip back into
+// a dedicated review mode is a possible next step, not this one.
+function buildChatGptPrompt(rows) {
+    const words = rows.map(row => row.word).filter(Boolean);
+    return `I'm learning a language with Fluency and want extra practice with words I keep getting wrong.\n\n`
+        + `Words: ${words.join(', ')}\n\n`
+        + `For each word, write two short example sentences that make its meaning clear from context. `
+        + `Then add three or four longer sentences that naturally combine several of these words together, `
+        + `so I can practise recognising them in combination. Keep the language natural, not textbook-stiff.`;
+}
+
+async function openChatGptForMistakes() {
+    const status = element('chatgptPromptStatus');
+    const fallback = element('chatgptPromptFallback');
+    const rows = buildMistakeExportRows(progressData);
+    if (!rows.length) {
+        if (status) status.textContent = "No mistakes recorded yet on this device.";
+        return;
+    }
+    const prompt = buildChatGptPrompt(rows);
+    let copied = false;
+    try {
+        await navigator.clipboard.writeText(prompt);
+        copied = true;
+    } catch (_) {}
+    window.open('https://chatgpt.com/', '_blank', 'noopener');
+    if (status) {
+        status.textContent = copied
+            ? `Prompt for ${rows.length} word${rows.length === 1 ? '' : 's'} copied — paste it into ChatGPT.`
+            : `Could not copy automatically. Copy the prompt below, then paste it into ChatGPT.`;
+    }
+    if (fallback) {
+        fallback.value = prompt;
+        fallback.hidden = copied;
+    }
+}
+
+function setupChatGptPrompt() {
+    const button = element('openChatGptPromptBtn');
+    if (!button || button.dataset.listenerReady === '1') return;
+    button.dataset.listenerReady = '1';
+    button.addEventListener('click', () => {
+        openChatGptForMistakes().catch(() => {
+            const status = element('chatgptPromptStatus');
+            if (status) status.textContent = 'Could not build a prompt from your mistakes.';
+        });
+    });
+}
+
 function setupVocabularyImport() {
     const open = element('openVocabularyImportBtn');
     const modal = element('vocabularyImportModal');
@@ -207,5 +316,7 @@ function setupVocabularyImport() {
 }
 
 setupVocabularyImport();
+setupMistakeExport();
+setupChatGptPrompt();
 
 window.openVocabularyImportModal = openVocabularyImportModal;

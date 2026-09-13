@@ -18,7 +18,8 @@ import './coverage.js?v=20260909a';
 import './fast-mode.js?v=20260913b';
 import './extras.js?v=20260913c';
 import './song-sets.js?v=20260823ae';
-import './vocabulary-import.js?v=20260825ak';
+import './spotify-playlist-import.js?v=20260913a';
+import './vocabulary-import.js?v=20260913a';
 import './flashcards.js?v=20260913f';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
@@ -1124,10 +1125,9 @@ function showAvailableMusicPicker(artists) {
 }
 
 // Music setup begins with the source method, then opens the growing catalogue.
-// Playlist import is deliberately visible so the intended workflow is clear,
-// but disabled until its data connection exists.
 function showArtistPicker(anchorBtn, artists) {
     const hasAvailableMusic = Object.keys(artists || {}).length > 0;
+    const language = Object.values(artists || {})[0]?.language || selectedLanguage || 'spanish';
     showChoiceSheet({
         id: 'lyricsSourceSheet',
         ariaLabel: 'Choose how to add music',
@@ -1147,11 +1147,13 @@ function showArtistPicker(anchorBtn, artists) {
             },
             {
                 label: 'Import a Spotify playlist',
-                description: 'Use the music you already listen to — coming later.',
+                description: hasAvailableMusic
+                    ? 'Match a playlist you already have against the songs Fluency knows.'
+                    : 'No music collection has been published for this language yet.',
                 fallbackText: '＋',
                 accent: '#10B981',
-                disabled: true,
-                onSelect: () => {}
+                disabled: !hasAvailableMusic,
+                onSelect: () => window.openSpotifyPlaylistImport?.(artists, language)
             }
         ]
     });

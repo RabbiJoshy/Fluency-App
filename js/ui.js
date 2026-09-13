@@ -2442,6 +2442,18 @@ function showSettingsModalWithTab(tabName, { singleTab = false } = {}) {
                 : 'Continue with initials to import and save vocabulary.';
         }
     }
+    // Spotify's controls live in a sizeable module that normal Speech-mode
+    // startup never loads (see main.js). The settings panel is the one place
+    // a Speech-mode learner can still connect ahead of switching to Lyrics,
+    // so load it here on demand instead — a repeat import of the same
+    // versioned URL just resolves to the already-loaded module.
+    if (window.refreshSpotifyConnectionUI) {
+        window.refreshSpotifyConnectionUI();
+    } else {
+        import('./spotify.js?v=20260831a')
+            .then(() => window.refreshSpotifyConnectionUI?.())
+            .catch(error => console.warn('Spotify controls deferred:', error));
+    }
     const isJstAccount = Boolean(window.isAuditAccount?.());
     const storageTabBtn = document.getElementById('storageTabBtn');
     const appDataTabBtn = document.getElementById('appDataTabBtn');
