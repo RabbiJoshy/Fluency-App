@@ -23,6 +23,7 @@ from fluency.features.cognates import (
     combine,
     expand_surfaces,
     form_score,
+    gloss_alternatives,
     gloss_tokens,
     live_glosses,
     load_policy,
@@ -308,6 +309,38 @@ class SerialisationTests(unittest.TestCase):
     def test_a_policy_round_trips(self) -> None:
         policy = load_policy(CONFIG_ROOT, "cs", "pl")
         self.assertEqual(CognatePolicy.from_dict(policy.to_dict()), policy)
+
+
+class GlossListTests(unittest.TestCase):
+    """A sense's translations are written as a list, not as one phrase."""
+
+    def test_a_listed_gloss_yields_each_translation(self) -> None:
+        # normalise_gloss strips the comma, so "fable, story" became the single
+        # string "fable story" and the whole-gloss rule could match neither
+        # member — French fable was invisible to English fable.
+        parts = gloss_alternatives("fable, story")
+        self.assertIn("fable", parts)
+        self.assertIn("story", parts)
+
+    def test_the_unsplit_gloss_is_kept_too(self) -> None:
+        # A comma is not always a list separator.
+        parts = gloss_alternatives("a large, flat fish")
+        self.assertIn("large flat fish", parts)
+
+    def test_a_semicolon_separates_as_a_comma_does(self) -> None:
+        self.assertIn("harbour", gloss_alternatives("port; harbour"))
+
+    def test_an_unlisted_gloss_is_left_alone(self) -> None:
+        self.assertEqual(gloss_alternatives("slaughterhouse"), ["slaughterhouse"])
+
+    def test_a_listed_translation_is_reachable_as_a_whole_gloss(self) -> None:
+        policy = CognatePolicy(
+            target_language="fr", known_language="en", known_must_be_a_gloss=True
+        )
+        index = build_known_index([entry("fable", ["fable"])], policy)
+        match = best_match("fable", live_glosses(entry("x", ["fable, story"]), 6), index)
+        self.assertIsNotNone(match)
+        self.assertEqual(match.known_word, "fable")
 
 
 class SurfaceExpansionTests(unittest.TestCase):

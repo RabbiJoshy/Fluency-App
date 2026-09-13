@@ -85,6 +85,8 @@ GLOSS_STOP_WORDS = frozenset(
 
 _PARENTHETICAL = re.compile(r"\([^)]*\)")
 _NON_GLOSS = re.compile(r"[^a-z' ]+")
+# A sense's translations are written as a list; these separate them.
+_GLOSS_SEPARATOR = re.compile(r"[,;]")
 
 
 class CognatePolicyError(ValueError):
@@ -273,6 +275,33 @@ def gloss_tokens(glosses: Iterable[str]) -> frozenset[str]:
 NON_FORM_TAGS = frozenset({"table-tags", "inflection-template"})
 
 
+def gloss_alternatives(gloss: str) -> list[str]:
+    """One raw gloss into the separate translations it lists.
+
+    Wiktionary writes a sense's translations as a comma- or semicolon-separated
+    list — "fable, story", "abattoir, slaughterhouse" — and ``normalise_gloss``
+    strips the punctuation, leaving the single string "fable story". Everything
+    downstream then treats that as one two-word translation, which is wrong in
+    both directions: the whole-gloss rule can never match either member (French
+    fable was invisible to English fable), and the meaning axis compares a
+    made-up phrase instead of the translation a learner would be given.
+
+    The unsplit form is kept alongside the parts, because a comma is not always
+    a list separator — "a large, flat fish" is one gloss — and dropping the
+    whole would lose that.
+    """
+
+    whole = normalise_gloss(gloss)
+    out = [whole] if whole else []
+    if not _GLOSS_SEPARATOR.search(gloss or ""):
+        return out
+    for part in _GLOSS_SEPARATOR.split(gloss or ""):
+        text = normalise_gloss(part)
+        if text and text != whole:
+            out.append(text)
+    return out
+
+
 def live_glosses(entry: Mapping[str, Any], maximum_words: int) -> frozenset[str]:
     """Short English glosses from senses that are still current.
 
@@ -288,9 +317,9 @@ def live_glosses(entry: Mapping[str, Any], maximum_words: int) -> frozenset[str]
         if DEAD_SENSE_TAGS & {str(tag) for tag in (sense.get("tags") or [])}:
             continue
         for gloss in sense.get("glosses") or []:
-            text = normalise_gloss(str(gloss))
-            if text and len(text.split()) <= maximum_words:
-                out.add(text)
+            for text in gloss_alternatives(str(gloss)):
+                if len(text.split()) <= maximum_words:
+                    out.add(text)
     return frozenset(out)
 
 
