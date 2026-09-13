@@ -67,6 +67,9 @@ src/fluency/
   wsd/            the classifier: optional enrichment, runs two stages late
   release/        composition, validation, activation
 config/           policies per language, mode, provider and model
+app/              vanilla-JS client; see REPO_MAP.md for module & window.* registry
+  js/card-metadata-pills.js  sense metadata, grammar chips & qualifiers
+  js/flashcards.js           card rendering & flip (read targeted ranges, never in full)
 ```
 
 The three marked *NOT under wsd/* are placed deliberately: a menu or a release
@@ -92,10 +95,13 @@ are rejected because they are not hex.
 **WSD is optional.** A deck ships with every example marked explicitly
 unassigned rather than blocking. Portuguese and Spanish both have such releases.
 
-Languages with profiles: `es`, `fr`, `pt`. Modes: speech, lyrics, artist.
+Languages with profiles or packages: `es`, `fr`, `pt`, `cs`, `nl`, `pl`. Modes: speech, lyrics, artist.
 
 ## Working with Josh
 
+- **Token discipline on large files.** Consult `REPO_MAP.md` before exploring.
+  Never read `flashcards.js` or `style.css` in full; inspect targeted line ranges.
+  Do not grep raw dataset folders (`app/lyrics-audit/data/` or `research/**/results/`).
 - **Verify before recommending.** Read the file, not the label. Repeated errors
   here came from trusting a name (`retained_materialized_assignments`), a
   constant (`SPACY_POS_MODEL`), or a single record (axis margins) and
@@ -114,7 +120,7 @@ Languages with profiles: `es`, `fr`, `pt`. Modes: speech, lyrics, artist.
 ## Commands
 
 ```bash
-make test        # unittest discovery, currently 422
+make test        # unittest discovery, currently 722
 PYTHONPATH=src python -m fluency pipeline plan --profile config/pipelines/<lang>/speech/<profile>.json
 PYTHONPATH=src python -m fluency pipeline inventory|sense-menu|harvest|wsd-import|build-run-release
 PYTHONPATH=src python -m fluency pools list --language <lang>
