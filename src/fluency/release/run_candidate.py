@@ -78,10 +78,15 @@ def _object(path: Path) -> dict[str, Any]:
 def _sentence_bank(path: Path) -> dict[str, dict[str, Any]]:
     records: dict[str, dict[str, Any]] = {}
     try:
-        lines = path.read_text(encoding="utf-8").splitlines()
+        # split("\n"), never splitlines(): splitlines() also breaks on \x85,
+        # \u2028 and friends, none of which end a JSONL record. One \x85 in a
+        # Portuguese subtitle split a row in half and failed the whole stage.
+        lines = path.read_text(encoding="utf-8").split("\n")
     except FileNotFoundError as error:
         raise RunCandidateError(f"missing sentence bank: {path}") from error
     for number, line in enumerate(lines, start=1):
+        if not line.strip():
+            continue
         try:
             record = json.loads(line)
         except json.JSONDecodeError as error:
@@ -102,7 +107,7 @@ def _load_assignments(
     if not path.exists():
         return {}
     rows: dict[tuple[str, str], dict[str, Any]] = {}
-    for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+    for number, line in enumerate(path.read_text(encoding="utf-8").split("\n"), start=1):
         if not line.strip():
             continue
         try:
@@ -130,6 +135,84 @@ def _example_id(card_id: str, sentence_id: str) -> str:
         {"card_id": card_id, "sentence_id": sentence_id}
     ).removeprefix("sha256:")
     return f"example_{digest[:32]}"
+
+
+
+# Selection ranks on FORM, never on how easy a sentence is to read.
+#
+# Easiness ranked the pool for a long time and it cannot tell simple from
+# broken: word salad built from the commonest words carries the lowest possible
+# frequency burden, so it wins. Measured on Spanish, the top example for `que`
+# -- the commonest word in the language -- was the ungrammatical fragment
+# "el Que le que?", because nothing cheaper exists. The harvest already stopped
+# ranking by easiness for the same reason; taking the head of that ranking here
+# handed the concentration straight back.
+#
+# Burden still matters, but as a CEILING rather than an ordering: a learner
+# should not meet a sentence far denser than the card warrants. Applied as a
+# band it keeps that protection without letting the floor decide the winner.
+_SELECTION_FUNCTION_WORD_RANK = 200
+_COMFORTABLE_TOKENS = (5, 14)
+_MUSIC_OR_MARKUP = re.compile(r"[¶♪♫#*<>]")
+_LEADING_DASH = re.compile(r"^\s*[-\u2013\u2014]")
+_TERMINATED = re.compile(r'[.!?\u2026"\'\u00bb)\]]\s*$')
+_TOKENS = re.compile(r"[^\W\d_]+", re.UNICODE)
+
+
+def _form_penalty(text: str, *, common_words: frozenset[str]) -> float:
+    """How badly made a sentence is. Lower is better; all signals are formal.
+
+    Every term here is a property of the text itself, never of which sense the
+    target carries, so applying it cannot prefer one meaning over another.
+    """
+
+    penalty = 0.0
+    stripped = text.strip()
+    if not _TERMINATED.search(stripped):
+        # Subtitles routinely drop a final period, so this is a mild preference
+        # rather than the rejection it would have to be in the harvest.
+        penalty += 0.5
+    if _LEADING_DASH.match(stripped):
+        penalty += 0.3
+    if _MUSIC_OR_MARKUP.search(stripped):
+        penalty += 2.0
+    if stripped.count('"') % 2 == 1:
+        penalty += 0.4
+    tokens = _TOKENS.findall(stripped)
+    low, high = _COMFORTABLE_TOKENS
+    if len(tokens) < low:
+        penalty += (low - len(tokens)) * 0.4
+    elif len(tokens) > high:
+        penalty += (len(tokens) - high) * 0.25
+    # A capitalised function word mid-sentence is the signature of two subtitle
+    # rows glued together. Too risky as a harvest gate -- in Czech the name Tom
+    # is a homograph of a top-200 function word -- but safe here, where it only
+    # moves a sentence down a list that has dozens of alternatives.
+    for match in re.finditer(r"[^\W\d_]+", stripped):
+        word = match.group(0)
+        if not word[:1].isupper() or word.lower() not in common_words:
+            continue
+        before = stripped[: match.start()].rstrip()
+        if before and not re.search(r'[.!?¡¿:;"«\-\u2013\u2014]$', before):
+            penalty += 1.5
+            break
+    if has_placeholder_name(stripped):
+        # Tom and Mary are 7-17% of Tatoeba and arrive over-represented because
+        # their sentences are short and common. Preferred against, never
+        # rejected: on a thin card a Tom sentence beats nothing.
+        penalty += 0.6
+    return penalty
+
+
+def _burden_ceiling(items: list[dict[str, Any]]) -> float:
+    """Keep the lower two thirds of a card's own burden spread, never fewer than
+    a card can display. Relative, because what counts as dense depends on the
+    word: a rank-9000 noun has no cheap sentences and should not be starved."""
+
+    scores = sorted(item["metrics"]["score"] for item in items)
+    if len(scores) <= 12:
+        return scores[-1]
+    return scores[int(len(scores) * 2 / 3)]
 
 
 def build_inactive_run_candidate(
@@ -221,6 +304,15 @@ def build_inactive_run_candidate(
     menu_adapter = str(menus.get("source_adapter", ""))
     menu_provider = "spanishdict" if menu_adapter.startswith("spanishdict-") else "wiktionary"
 
+    # The commonest words in this deck, used only to spot a capitalised
+    # function word sitting mid-sentence -- the signature of two subtitle rows
+    # glued into one.
+    common_words = frozenset(
+        str(entry.get("surface_key", "")).lower()
+        for entry in inventory.get("cards", [])
+        if int(entry.get("rank", 0)) <= _SELECTION_FUNCTION_WORD_RANK
+    )
+
     selection_cards: list[dict[str, Any]] = []
     cards: list[dict[str, Any]] = []
     selected_count = 0
@@ -231,9 +323,21 @@ def build_inactive_run_candidate(
         if candidate_card is None or menu_card is None:
             raise RunCandidateError(f"run layers do not cover card {card_id}")
         limit = display_examples_for_rank(scope, card["rank"])
+        pool = candidate_card.get("candidates", [])
+        # Band, then rank on form. See _form_penalty: burden is a ceiling here,
+        # not an ordering, so a sentence is never chosen merely for being cheap.
+        ceiling = _burden_ceiling(pool) if pool else 0.0
+        banded = [item for item in pool if item["metrics"]["score"] <= ceiling] or pool
         ranked = sorted(
-            candidate_card.get("candidates", []),
-            key=lambda item: (item["metrics"]["score"], item["sentence_id"]),
+            banded,
+            key=lambda item: (
+                _form_penalty(
+                    (sentences.get(item["sentence_id"]) or {}).get("target", {}).get("text", ""),
+                    common_words=common_words,
+                ),
+                item["metrics"]["score"],
+                item["sentence_id"],
+            ),
         )
         # Take the best of each distinct example rather than the best `limit`
         # rows, which would spend all three slots on one sentence's variants.
@@ -254,10 +358,30 @@ def build_inactive_run_candidate(
         selected = []
         seen: set[str] = set()
         chosen_texts: list[str] = []
-        for strict in (True, False):
+        # Which sense each candidate was assigned, so the slots can be spread
+        # across a word's meanings instead of landing on its commonest one.
+        # Measured on 999 Portuguese cards: the five best-formed examples cover
+        # 1.89 senses, the same five chosen sense-first cover 2.42, and 40% of
+        # cards gain at least one meaning they would otherwise never show.
+        sense_of: dict[str, str] = {}
+        for item in ranked:
+            row = assignments.get((card_id, item["sentence_id"]))
+            if row and row.get("selected_sense_id") and row.get("menu_analysis_id"):
+                sense_of[item["sentence_id"]] = _scoped_sense_id(
+                    card_id, row["menu_analysis_id"], row["selected_sense_id"]
+                )
+        covered: set[str] = set()
+        # Pass 1 and 2 take the best-formed example of each unseen sense; 3 and
+        # 4 fill any remaining slots. An unassigned candidate has no sense to
+        # spread, so it waits for the filling passes rather than blocking one.
+        for phase, strict in ((True, True), (True, False), (False, True), (False, False)):
             if len(selected) == limit:
                 break
             for item in ranked:
+                if phase:
+                    sense = sense_of.get(item["sentence_id"])
+                    if sense is None or sense in covered:
+                        continue
                 if not passes(item, strict):
                     continue
                 sentence = sentences.get(item["sentence_id"])
@@ -286,6 +410,9 @@ def build_inactive_run_candidate(
                 if text:
                     chosen_texts.append(text)
                     reuse[identity] += 1
+                sense = sense_of.get(item["sentence_id"])
+                if sense:
+                    covered.add(sense)
                 selected.append(item)
                 if len(selected) == limit:
                     break
