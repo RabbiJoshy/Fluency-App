@@ -8,87 +8,89 @@ APP_ROOT = Path(__file__).resolve().parents[2] / "app"
 
 class MetadataContractUITests(unittest.TestCase):
     def test_card_ui_prefers_canonical_features_and_source_metadata(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
-        self.assertIn("const canonical = metadata.sense_metadata || {};", flashcards)
-        self.assertIn("canonical.source_metadata || metadata.sense_provider_metadata", flashcards)
-        self.assertIn("Array.isArray(canonical.features)", flashcards)
+        metadata_pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")
+        self.assertIn("const canonical = metadata.sense_metadata || {};", metadata_pills)
+        self.assertIn("canonical.source_metadata || metadata.sense_provider_metadata", metadata_pills)
+        self.assertIn("Array.isArray(canonical.features)", metadata_pills)
 
     def test_legacy_string_parsing_is_only_a_pre_contract_compatibility_path(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
-        self.assertIn("canonical.contract_version ? [] : projectWiktionaryGloss", flashcards)
-        self.assertIn("if (!canonical.contract_version", flashcards)
+        metadata_pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")
+        self.assertIn("canonical.contract_version ? [] : projectWiktionaryGloss", metadata_pills)
+        self.assertIn("if (!canonical.contract_version", metadata_pills)
 
     def test_inactive_wiktionary_subsenses_use_clean_navigation_labels(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        metadata_pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")
         styles = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
         self.assertIn("function displaySenseGloss(meaning, value, active = true)", flashcards)
         self.assertIn("return senseSummaryText(projected) || projected;", flashcards)
-        self.assertIn('class="sense-metadata-tier sense-metadata-tier--primary"', flashcards)
+        self.assertIn('class="sense-metadata-tier sense-metadata-tier--primary"', metadata_pills)
         self.assertIn(".sense-metadata-detail + .sense-metadata-detail::before", styles)
         self.assertIn("group-card-varying-cell${isMemberSelected ? ' is-active-subsense' : ''}", flashcards)
         self.assertIn(".group-card-varying-cell:not(.is-active-subsense)", styles)
         self.assertIn(".meaning-row-regular:not(.is-current-sense)", styles)
 
     def test_active_metadata_is_ordered_compact_and_disclosable(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        metadata_pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")
         styles = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
-        self.assertIn("const familyOrder = {", flashcards)
-        self.assertIn("const primary = items.filter", flashcards)
-        self.assertIn("const grammar = items.filter", flashcards)
-        self.assertIn("display.short", flashcards)
-        self.assertIn("toggleSenseMetadataOverflow(event, this)", flashcards)
-        self.assertIn("'gender=variable-by-person': 'varies by gender'", flashcards)
-        self.assertIn("'form=personal-infinitive': 'personal infinitive'", flashcards)
-        self.assertIn("'pronoun-class=personal': 'personal pronoun'", flashcards)
-        self.assertNotIn("if (provider.etymology_text) add('source', 'etymology'", flashcards)
-        self.assertIn("if (family === 'source' && kind !== 'qualifier') return;", flashcards)
-        self.assertIn("function isSenseDefiningGrammar(item)", flashcards)
-        self.assertIn("item.family === 'grammar' && !isSenseDefiningGrammar(item)", flashcards)
-        self.assertIn("function isSupportingSenseMetadata(item)", flashcards)
-        self.assertIn("feature.embedding_text", flashcards)
-        self.assertIn("String(b.sourceText || '').length", flashcards)
-        self.assertIn("item.kind === 'optional_companion'", flashcards)
-        self.assertIn("function|mood|noun-class|number|person", flashcards)
-        self.assertIn("supporting.length === 1 ? ' is-single'", flashcards)
-        self.assertIn("supporting.length > 1", flashcards)
-        self.assertIn("sense-metadata-more-label", flashcards)
-        self.assertIn("${primaryHTML}${grammarHTML}${more}${supportingHTML}", flashcards)
-        self.assertIn("combine('Early', 'Modern', 'Early Modern')", flashcards)
-        self.assertNotIn("short.slice(0, 31)", flashcards)
+        self.assertIn("const familyOrder = {", metadata_pills)
+        self.assertIn("const primary = items.filter", metadata_pills)
+        self.assertIn("const grammar = items.filter", metadata_pills)
+        self.assertIn("display.short", metadata_pills)
+        self.assertIn("toggleSenseMetadataOverflow(event, this)", metadata_pills)
+        self.assertIn("'gender=variable-by-person': 'varies by gender'", metadata_pills)
+        self.assertIn("'form=personal-infinitive': 'personal infinitive'", metadata_pills)
+        self.assertIn("'pronoun-class=personal': 'personal pronoun'", metadata_pills)
+        self.assertNotIn("if (provider.etymology_text) add('source', 'etymology'", metadata_pills)
+        self.assertIn("if (family === 'source' && kind !== 'qualifier') return;", metadata_pills)
+        self.assertIn("function isSenseDefiningGrammar(item)", metadata_pills)
+        self.assertIn("item.family === 'grammar' && !isSenseDefiningGrammar(item)", metadata_pills)
+        self.assertIn("function isSupportingSenseMetadata(item)", metadata_pills)
+        self.assertIn("feature.embedding_text", metadata_pills)
+        self.assertIn("String(b.sourceText || '').length", metadata_pills)
+        self.assertIn("item.kind === 'optional_companion'", metadata_pills)
+        self.assertIn("function|mood|noun-class|number|person", metadata_pills)
+        self.assertIn("supporting.length === 1 ? ' is-single'", metadata_pills)
+        self.assertIn("supporting.length > 1", metadata_pills)
+        self.assertIn("sense-metadata-more-label", metadata_pills)
+        self.assertIn("${primaryHTML}${grammarHTML}${more}${supportingHTML}", metadata_pills)
+        self.assertIn("combine('Early', 'Modern', 'Early Modern')", metadata_pills)
+        self.assertNotIn("short.slice(0, 31)", metadata_pills)
         self.assertIn(".sense-metadata-more", styles)
         self.assertIn(".sense-metadata-tier--details.is-single", styles)
         self.assertIn("text-align: center", styles)
 
     def test_atomic_grammar_features_recombine_for_the_learner(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
-        self.assertIn("kind: 'combined_sense_mark'", flashcards)
-        self.assertIn("sourceLabels.join(' · ')", flashcards)
-        self.assertIn("item.kind === 'combined_sense_mark'", flashcards)
+        metadata_pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")
+        self.assertIn("kind: 'combined_sense_mark'", metadata_pills)
+        self.assertIn("sourceLabels.join(' · ')", metadata_pills)
+        self.assertIn("item.kind === 'combined_sense_mark'", metadata_pills)
 
     def test_inactive_spanishdict_rows_keep_semantics_but_drop_typed_metadata(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
-        context_renderer = flashcards[
-            flashcards.index("function contextWithoutSenseMetadata"):
-            flashcards.index("function toggleSenseMetadataChip")
+        metadata_pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")
+        context_renderer = metadata_pills[
+            metadata_pills.index("function contextWithoutSenseMetadata"):
+            metadata_pills.index("function toggleSenseMetadataChip")
         ]
         self.assertNotIn("if (!active || !context) return context;", context_renderer)
         self.assertIn("Do this for inactive rows as well", context_renderer)
 
     def test_canonical_wiktionary_context_is_not_repeated_beside_features(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
-        self.assertIn("String(provider.context || '').trim() === context", flashcards)
-        self.assertIn("pure duplication", flashcards)
+        metadata_pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")
+        self.assertIn("String(provider.context || '').trim() === context", metadata_pills)
+        self.assertIn("pure duplication", metadata_pills)
 
     def test_one_shared_metadata_renderer_serves_every_active_dictionary_language(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        metadata_pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")
         config = json.loads((APP_ROOT / "config" / "config.json").read_text(encoding="utf-8"))
         gloss_renderer = flashcards[
             flashcards.index("function displaySenseGloss"):
             flashcards.index("function senseCrossReferences")
         ]
-        metadata_renderer = flashcards[
-            flashcards.index("function senseMetadataItems"):
-            flashcards.index("function contextWithoutSenseMetadata")
+        metadata_renderer = metadata_pills[
+            metadata_pills.index("function senseMetadataItems"):
+            metadata_pills.index("function contextWithoutSenseMetadata")
         ]
         self.assertNotIn("selectedLanguage", gloss_renderer)
         self.assertNotIn("selectedLanguage", metadata_renderer)

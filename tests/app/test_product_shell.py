@@ -242,11 +242,11 @@ class ProductShellTests(unittest.TestCase):
         )
 
     def test_wiktionary_grammar_tails_become_compact_metadata(self) -> None:
-        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
-        self.assertIn("function isWiktionaryGrammarNote(note)", flashcards)
-        self.assertIn("family === 'grammar' ? 'gloss_note'", flashcards)
-        self.assertIn(".replace(/\\bsingular\\b/gi, 'sg.')", flashcards)
-        self.assertIn(".replace(/\\bplural\\b/gi, 'pl.')", flashcards)
+        metadata_pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")
+        self.assertIn("function isWiktionaryGrammarNote(note)", metadata_pills)
+        self.assertIn("family === 'grammar' ? 'gloss_note'", metadata_pills)
+        self.assertIn(".replace(/\\bsingular\\b/gi, 'sg.')", metadata_pills)
+        self.assertIn(".replace(/\\bplural\\b/gi, 'pl.')", metadata_pills)
 
     def test_first_run_walkthrough_is_once_only_and_replayable(self) -> None:
         auth = (APP_ROOT / "js" / "auth.js").read_text(encoding="utf-8")
