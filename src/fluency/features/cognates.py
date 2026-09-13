@@ -268,6 +268,11 @@ def gloss_tokens(glosses: Iterable[str]) -> frozenset[str]:
     return frozenset(tokens)
 
 
+# Rows in a Wiktionary ``forms`` array that are not word forms: the table's own
+# header and the template that generated it.
+NON_FORM_TAGS = frozenset({"table-tags", "inflection-template"})
+
+
 def live_glosses(entry: Mapping[str, Any], maximum_words: int) -> frozenset[str]:
     """Short English glosses from senses that are still current.
 
@@ -287,6 +292,92 @@ def live_glosses(entry: Mapping[str, Any], maximum_words: int) -> frozenset[str]
             if text and len(text.split()) <= maximum_words:
                 out.add(text)
     return frozenset(out)
+
+
+
+def _is_scorable_surface(word: str) -> bool:
+    return bool(word) and "-" not in word and " " not in word
+
+
+def expand_surfaces(
+    entries: Iterable[Mapping[str, Any]],
+    policy: CognatePolicy,
+    *,
+    limit_to: set[str] | None = None,
+    excluded_pos: frozenset[str] = EXCLUDED_PARTS_OF_SPEECH,
+) -> dict[str, frozenset[str]]:
+    """Every surface a dictionary implies, mapped to its live English glosses.
+
+    A dictionary is written around lemmas and a deck is not: card identity is
+    the observed surface form, so ``bratra`` and ``bere`` are cards in their own
+    right. Reading only the entries a dictionary happens to headword left most
+    of a deck unscored — of 2,989 Czech deck surfaces, 874 had no entry at all
+    and a further 952 had one whose every sense is tagged ``form-of``, which is
+    correctly treated as dead because "third-person singular present indicative
+    of brát" is a description, not a translation.
+
+    An inflected surface is exactly as transparent as its lemma's meaning makes
+    it, and often *more* transparent in form: Polish ``brata`` answers Czech
+    ``bratra`` where the bare lemma ``brat`` fails the length guard outright. So
+    a surface inherits its lemma's glosses, gathered from both directions
+    Wiktionary records them:
+
+        forms[].form        inflections listed under the lemma
+        senses[].form_of    an inflection's own entry naming its lemma
+
+    Doing this on both sides of the pair is what makes the mapping survive a
+    re-cut: it describes the language, not the deck, so whichever surfaces the
+    next release selects are already scored.
+    """
+
+    lemma_glosses: dict[str, set[str]] = {}
+    # surface -> the lemmas it inflects. A surface can inherit from more than
+    # one lemma (Czech ``stát`` alone yields several), and taking all of them
+    # matches what a reader could recognise it as.
+    inflections: dict[str, set[str]] = {}
+
+    for entry in entries:
+        if not isinstance(entry, Mapping):
+            continue
+        if str(entry.get("pos") or "") in excluded_pos:
+            continue
+        word = str(entry.get("word") or "").strip().lower()
+        if not _is_scorable_surface(word):
+            continue
+        glosses = live_glosses(entry, policy.gloss_maximum_words)
+        if glosses:
+            lemma_glosses.setdefault(word, set()).update(glosses)
+        for sense in entry.get("senses") or []:
+            if not isinstance(sense, Mapping):
+                continue
+            for reference in sense.get("form_of") or []:
+                if not isinstance(reference, Mapping):
+                    continue
+                lemma = str(reference.get("word") or "").strip().lower()
+                if _is_scorable_surface(lemma) and lemma != word:
+                    inflections.setdefault(word, set()).add(lemma)
+        for form in entry.get("forms") or []:
+            if not isinstance(form, Mapping):
+                continue
+            if NON_FORM_TAGS & {str(tag) for tag in (form.get("tags") or [])}:
+                continue
+            surface = str(form.get("form") or "").strip().lower()
+            if _is_scorable_surface(surface) and surface != word:
+                inflections.setdefault(surface, set()).add(word)
+
+    surfaces: dict[str, frozenset[str]] = {}
+    for word, glosses in lemma_glosses.items():
+        if limit_to is None or word in limit_to:
+            surfaces[word] = frozenset(glosses)
+    for surface, lemmas in inflections.items():
+        if limit_to is not None and surface not in limit_to:
+            continue
+        inherited: set[str] = set(surfaces.get(surface, ()))
+        for lemma in lemmas:
+            inherited.update(lemma_glosses.get(lemma, ()))
+        if inherited:
+            surfaces[surface] = frozenset(inherited)
+    return surfaces
 
 
 # -------------------------------------------------------------------- scoring
@@ -331,19 +422,45 @@ def form_score(target_word: str, known_word: str, policy: CognatePolicy) -> floa
     return max(raw, mapped)
 
 
-def meaning_score(target_tokens: frozenset[str], known_tokens: frozenset[str]) -> float:
-    """Overlap of the two words' live meaning, against the smaller sense set.
+def meaning_score(
+    target_glosses: frozenset[str], known_glosses: frozenset[str]
+) -> float:
+    """How well the best-agreeing pair of senses agrees.
+
+    Sense by sense, not bag by bag. Pooling every gloss on each side and
+    intersecting the result made the score a function of how many senses a
+    dictionary happens to record, which is an editorial fact about Wiktionary
+    and not a fact about the language: Czech ``moře`` glossed "sea" matched
+    Polish ``morze`` outright, and the same word read from the dictionary — sea,
+    pickle, stain, disinfect, toil — scored 0.21 and fell out. A cognate
+    relationship holds between two *senses*, so that is the unit compared, and
+    the strongest one carries the pair.
 
     The ``+ 0.5`` damping keeps a single shared token from reading as total
-    agreement when one side has one gloss and the other has twenty.
+    agreement when one gloss is one word and the other is five.
     """
 
-    if not target_tokens or not known_tokens:
+    if not target_glosses or not known_glosses:
         return 0.0
-    shared = len(target_tokens & known_tokens)
-    if shared == 0:
+    known_sides = [gloss_tokens((gloss,)) for gloss in known_glosses]
+    known_sides = [tokens for tokens in known_sides if tokens]
+    if not known_sides:
         return 0.0
-    return shared / (min(len(target_tokens), len(known_tokens)) + 0.5)
+    best = 0.0
+    for gloss in target_glosses:
+        left = gloss_tokens((gloss,))
+        if not left:
+            continue
+        for right in known_sides:
+            shared = len(left & right)
+            if not shared:
+                continue
+            agreement = shared / (min(len(left), len(right)) + 0.5)
+            if agreement > best:
+                best = agreement
+                if best >= 1.0:
+                    return best
+    return best
 
 
 def passes_length_guard(target_word: str, known_word: str, policy: CognatePolicy) -> bool:
@@ -388,9 +505,18 @@ class KnownLanguageIndex:
     policy: CognatePolicy
     words: dict[str, frozenset[str]] = field(default_factory=dict)
     by_token: dict[str, list[str]] = field(default_factory=lambda: defaultdict(list))
+    # Known words reachable by written form rather than by meaning. The gloss
+    # index can miss the most obvious pair in the language: Czech ``roku`` is
+    # defined "year, exactly ... days", whose rarest token is "exactly", and the
+    # search spent its whole allowance there without ever reaching the bucket
+    # holding the identically spelled Polish ``roku``. A word that looks the
+    # same after both skeletons are applied is always worth scoring, and the
+    # meaning axis still has to agree before it counts, so this widens what is
+    # considered without weakening what is required.
+    by_skeleton: dict[str, list[str]] = field(default_factory=lambda: defaultdict(list))
 
-    def candidates(self, target_glosses: frozenset[str]) -> set[str]:
-        """Known words sharing a gloss word with the target, rarest word first.
+    def candidates(self, target_word: str, target_glosses: frozenset[str]) -> set[str]:
+        """Known words reachable from the target's glosses, one sense at a time.
 
         Matching whole glosses only is too strict — one dictionary writes "to
         write", the other "write in ink". Matching on every token is too loose,
@@ -402,44 +528,59 @@ class KnownLanguageIndex:
         any threshold. Instead the tokens are spent rarest-first and stop at a
         budget, so a discriminating word is always preferred but a common one
         is still used when it is all the pair has.
+
+        The budget is spent **per gloss** rather than once over every token the
+        word has. Pooling them let a marginal sense spend the whole allowance
+        and leave the main one unsearched: Czech ``roku`` read from the
+        dictionary as "year, exactly days" ranked "exactly" rarest, exhausted
+        the budget on it, and never reached the bucket holding Polish ``roku``
+        — an identical form, missed entirely. Per sense, every sense gets its
+        own search and the word's total cost stays bounded by how many senses
+        it has.
         """
 
-        ranked = sorted(
-            gloss_tokens(target_glosses),
-            key=lambda token: len(self.by_token.get(token, ())),
-        )
         found: set[str] = set()
-        for position, token in enumerate(ranked):
-            bucket = self.by_token.get(token)
-            if not bucket:
-                continue
-            # The rarest token is the best evidence the pair has, so it is
-            # always spent in full even when its bucket is large — that is the
-            # case a frequency cap used to lose. Every later token is optional
-            # and only widens the search while the budget allows.
-            if position > 0 and len(found) + len(bucket) > self.policy.candidate_budget:
-                break
-            found.update(bucket)
+        for gloss in sorted(target_glosses):
+            ranked = sorted(
+                gloss_tokens((gloss,)),
+                key=lambda token: len(self.by_token.get(token, ())),
+            )
+            spent = 0
+            for position, token in enumerate(ranked):
+                bucket = self.by_token.get(token)
+                if not bucket:
+                    continue
+                # The rarest token is the best evidence this sense has, so it is
+                # always spent in full even when its bucket is large — that is
+                # the case a frequency cap used to lose. Every later token is
+                # optional and only widens the search while the budget allows.
+                if position > 0 and spent + len(bucket) > self.policy.candidate_budget:
+                    break
+                spent += len(bucket)
+                found.update(bucket)
+        found.update(self.by_skeleton.get(skeleton(target_word, self.policy.target_skeleton), ()))
         return found
 
 
 def build_known_index(
     entries: Iterable[Mapping[str, Any]], policy: CognatePolicy
 ) -> KnownLanguageIndex:
+    """Index the known language by surface, inflections included.
+
+    The known side is expanded for the same reason the target side is, and it
+    changes outcomes rather than just widening the search: Czech ``bratra`` is
+    recognisable to a Polish reader as ``brata``, and against the bare lemma
+    ``brat`` the pair fails the length guard before it is ever scored. A reader
+    meets inflected text, so the thing they are being credited with recognising
+    has to be an inflected form.
+    """
+
     index = KnownLanguageIndex(policy=policy)
-    for entry in entries:
-        if str(entry.get("pos") or "") in EXCLUDED_PARTS_OF_SPEECH:
-            continue
-        word = str(entry.get("word") or "").lower()
-        if not word or "-" in word or " " in word:
-            continue
-        glosses = live_glosses(entry, policy.gloss_maximum_words)
-        if not glosses:
-            continue
-        index.words[word] = index.words.get(word, frozenset()) | glosses
+    index.words = dict(expand_surfaces(entries, policy))
     for word, glosses in index.words.items():
         for token in gloss_tokens(glosses):
             index.by_token[token].append(word)
+        index.by_skeleton[skeleton(word, policy.known_skeleton)].append(word)
     return index
 
 
@@ -453,18 +594,17 @@ def best_match(
     policy = index.policy
     if len(strip_accents(target_word)) < policy.minimum_length:
         return None
-    target_tokens = gloss_tokens(target_glosses)
-    if not target_tokens:
+    if not gloss_tokens(target_glosses):
         return None
     best: CognateMatch | None = None
     whole_glosses = {g.strip().lower() for g in target_glosses}
-    for known_word in index.candidates(target_glosses):
+    for known_word in index.candidates(target_word, target_glosses):
         if policy.known_must_be_a_gloss and known_word not in whole_glosses:
             continue
         if not passes_length_guard(target_word, known_word, policy):
             continue
         form = form_score(target_word, known_word, policy)
-        meaning = meaning_score(target_tokens, gloss_tokens(index.words[known_word]))
+        meaning = meaning_score(target_glosses, index.words[known_word])
         if meaning <= 0.0:
             continue
         score = combine(form, meaning, policy)

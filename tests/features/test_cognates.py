@@ -21,6 +21,7 @@ from fluency.features.cognates import (
     best_match,
     build_known_index,
     combine,
+    expand_surfaces,
     form_score,
     gloss_tokens,
     live_glosses,
@@ -140,15 +141,27 @@ class MeaningTests(unittest.TestCase):
         self.assertEqual(live_glosses(wordy, 6), frozenset())
 
     def test_overlap_is_damped_so_one_token_is_not_total_agreement(self) -> None:
-        # The denominator is the smaller sense set, so overlap measures how
-        # fully the narrower word is covered. Damping keeps a lone shared token
-        # short of certainty; more shared meaning still scores higher.
+        # The denominator is the smaller of the two senses being compared, so
+        # overlap measures how fully the narrower one is covered. Damping keeps
+        # a lone shared token short of certainty; a sense that agrees on more
+        # of itself still scores higher.
         one_token = meaning_score(frozenset({"write"}), frozenset({"write"}))
         self.assertLess(one_token, 1.0)
         two_tokens = meaning_score(
-            frozenset({"write", "inscribe"}), frozenset({"write", "inscribe"})
+            frozenset({"write inscribe"}), frozenset({"write inscribe"})
         )
         self.assertGreater(two_tokens, one_token)
+
+    def test_extra_senses_cannot_weaken_the_one_that_agrees(self) -> None:
+        # Comparing sense against sense rather than bag against bag. How many
+        # meanings a dictionary records for a word is an editorial fact about
+        # the dictionary; it must not change how recognisable the word is.
+        alone = meaning_score(frozenset({"sea"}), frozenset({"sea"}))
+        crowded = meaning_score(
+            frozenset({"sea", "pickle", "stain", "disinfect", "toil"}),
+            frozenset({"sea", "border", "expanse"}),
+        )
+        self.assertEqual(crowded, alone)
 
     def test_a_polysemous_partner_does_not_dilute_a_narrow_word(self) -> None:
         # Coverage of the smaller side is deliberate: a Czech word with one
@@ -224,7 +237,7 @@ class MatchingTests(unittest.TestCase):
         # "technique" identifies one word and "way" three hundred, so the rare
         # token is spent first. The common one may still widen the search while
         # the budget allows, which is what keeps způsob/sposób reachable.
-        candidates = index.candidates(frozenset({"way technique"}))
+        candidates = index.candidates("způsob", frozenset({"way technique"}))
         self.assertIn("sposób", candidates)
         self.assertLessEqual(len(candidates), self.policy.candidate_budget)
 
@@ -244,9 +257,9 @@ class MatchingTests(unittest.TestCase):
         crowd = [entry(f"slowo{i}", ["thing"]) for i in range(900)]
         crowd += [entry(f"inne{i}", ["stuff"]) for i in range(900)]
         index = self.index_of(crowd)
-        only_one = index.candidates(frozenset({"thing"}))
+        only_one = index.candidates("věc", frozenset({"thing"}))
         self.assertEqual(len(only_one), 900)
-        both = index.candidates(frozenset({"thing stuff"}))
+        both = index.candidates("věc", frozenset({"thing stuff"}))
         self.assertEqual(len(both), 900)
 
     def test_a_match_that_scores_nothing_is_not_recorded(self) -> None:
@@ -295,6 +308,74 @@ class SerialisationTests(unittest.TestCase):
     def test_a_policy_round_trips(self) -> None:
         policy = load_policy(CONFIG_ROOT, "cs", "pl")
         self.assertEqual(CognatePolicy.from_dict(policy.to_dict()), policy)
+
+
+class SurfaceExpansionTests(unittest.TestCase):
+    """A dictionary is organised around lemmas and a deck is not."""
+
+    policy = CognatePolicy(target_language="cs", known_language="pl")
+
+    def test_an_inflection_listed_under_its_lemma_becomes_a_surface(self) -> None:
+        lemma = entry("bratr", ["brother"])
+        lemma["forms"] = [
+            {"form": "bratra", "tags": ["genitive", "singular"]},
+            {"form": "bratři", "tags": ["nominative", "plural"]},
+        ]
+        surfaces = expand_surfaces([lemma], self.policy)
+        self.assertEqual(surfaces["bratra"], frozenset({"brother"}))
+        self.assertEqual(surfaces["bratři"], frozenset({"brother"}))
+
+    def test_the_declension_tables_own_rows_are_not_words(self) -> None:
+        # A kaikki forms array carries the table header and the template that
+        # produced it alongside the actual forms.
+        lemma = entry("bratr", ["brother"])
+        lemma["forms"] = [
+            {"form": "animate", "tags": ["table-tags"]},
+            {"form": "cs-ndecl", "tags": ["inflection-template"]},
+        ]
+        surfaces = expand_surfaces([lemma], self.policy)
+        self.assertNotIn("animate", surfaces)
+        self.assertNotIn("cs-ndecl", surfaces)
+
+    def test_an_inflection_with_its_own_entry_inherits_its_lemma(self) -> None:
+        # "third-person singular present indicative of brát" is a description,
+        # not a translation, so the entry's own gloss is correctly dead. The
+        # meaning has to come from the lemma it names.
+        lemma = entry("brát", ["take"])
+        form = entry("bere", ["third-person singular present indicative of brát"])
+        form["senses"][0]["tags"] = ["form-of", "present"]
+        form["senses"][0]["form_of"] = [{"word": "brát"}]
+        surfaces = expand_surfaces([form, lemma], self.policy)
+        self.assertEqual(surfaces["bere"], frozenset({"take"}))
+
+    def test_a_surface_the_universe_excludes_is_not_built(self) -> None:
+        lemma = entry("bratr", ["brother"])
+        lemma["forms"] = [{"form": "bratra", "tags": ["genitive"]}]
+        surfaces = expand_surfaces([lemma], self.policy, limit_to={"bratra"})
+        self.assertEqual(set(surfaces), {"bratra"})
+
+
+class FormRouteTests(unittest.TestCase):
+    """The gloss index can miss the most obvious pair in the language."""
+
+    policy = CognatePolicy(target_language="cs", known_language="pl")
+
+    def test_an_identical_form_is_reachable_past_a_spent_budget(self) -> None:
+        # Czech roku is defined "year, exactly ... days". Ranked rarest-first
+        # that spends the whole allowance on "exactly" and never reaches the
+        # bucket holding the identically spelled Polish roku.
+        crowd = [entry(f"slowo{i}", ["exactly"]) for i in range(500)]
+        crowd.append(entry("roku", ["year"]))
+        index = build_known_index(crowd, self.policy)
+        match = best_match("roku", frozenset({"year exactly days"}), index)
+        self.assertIsNotNone(match)
+        self.assertEqual(match.known_word, "roku")
+
+    def test_the_form_route_still_requires_the_meaning_to_agree(self) -> None:
+        # Widening what is considered must not weaken what is required: an
+        # identical spelling with no shared sense is still not a cognate.
+        index = build_known_index([entry("sklep", ["shop", "store"])], self.policy)
+        self.assertIsNone(best_match("sklep", frozenset({"cellar", "basement"}), index))
 
 
 if __name__ == "__main__":

@@ -31,6 +31,7 @@ from fluency.features.cognates import (
     COGNATE_SCORE_SCHEMA,
     CognatePolicy,
     build_known_index,
+    expand_surfaces,
     live_glosses,
     load_policy,
     normalise_gloss,
@@ -87,28 +88,22 @@ def _extract_target_glosses(path: Path, policy: CognatePolicy, *, limit_to=None)
     49,800 words the language has. Reading the dictionary covers whatever a deck
     might later hold, which is also what makes the map survive a re-cut.
 
+    Inflected surfaces are expanded in, because a card's identity is the surface
+    form and a dictionary is organised around lemmas. Without that the two paths
+    disagreed badly — the dictionary reached only 1,163 of Czech's 2,989 deck
+    surfaces, so a wider map set aside fewer of the learner's own words than the
+    narrow one did.
+
     ``limit_to`` bounds the work to a known surface universe — a published
     frequency list — when one is available.
     """
 
-    surfaces: dict[str, set[str]] = {}
-    for entry in _extract_entries(path):
-        if not isinstance(entry, Mapping):
-            continue
-        word = str(entry.get("word") or "").strip().lower()
-        if not word or (limit_to is not None and word not in limit_to):
-            continue
-        # The deck path never sees these because a release has already dropped
-        # them; reading the dictionary direct puts them back. A French map built
-        # without this is mostly Aaron, Abbeville and -esque.
-        if entry.get("pos") in EXCLUDED_TARGET_POS:
-            continue
-        if "-" in word or " " in word:
-            continue
-        glosses = surfaces.setdefault(word, set())
-        for gloss in live_glosses(entry, policy.gloss_maximum_words):
-            glosses.add(gloss)
-    return {word: frozenset(g) for word, g in surfaces.items() if g}
+    return expand_surfaces(
+        _extract_entries(path),
+        policy,
+        limit_to=limit_to,
+        excluded_pos=EXCLUDED_TARGET_POS,
+    )
 
 
 def _english_index_entries(target: Mapping[str, frozenset[str]], english_words: set[str] | None = None):
