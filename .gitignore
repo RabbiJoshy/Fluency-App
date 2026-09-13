@@ -15,3 +15,9 @@ dist/
 artifacts/
 cache/
 runs/
+
+# Large datasets, model artifacts, and research outputs
+research/**/results/
+*.jsonl
+*.npz
+*.joblib

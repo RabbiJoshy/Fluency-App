@@ -11,6 +11,8 @@ still the live app; treat it as reference, not a target.
 
 ## Read first
 
+**`REPO_MAP.md`** — dense architecture map, pipeline dataflow, and frontend `window.*` globals registry. Consult this before running exploratory searches or reading large files.
+
 **`docs/INVARIANTS.md`** — the five rules that constrain every change. Read
 before altering architecture, contracts or provenance.
 

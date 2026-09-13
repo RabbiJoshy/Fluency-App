@@ -1,0 +1,14 @@
+# Ripgrep & LLM search tool ignore rules
+# These patterns keep massive data files out of search results, preventing context-window blowout.
+
+# Massive lyrics audit JSON dumps (e.g. 6.5MB estamos-arriba.json)
+app/lyrics-audit/data/*.json
+
+# Large research outputs, embeddings, and models
+research/**/results/
+**/*.jsonl
+**/*.npz
+**/*.joblib
+
+# Scratch and log artifacts
+*.log
