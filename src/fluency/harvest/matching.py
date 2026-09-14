@@ -192,6 +192,19 @@ def quality_rejection(
         return "target_all_caps"
     if quality["reject_markup"] and any(char in target or char in translation for char in "<>"):
         return "markup"
+    # Spanish opens a question with an inverted mark, so a bare "?" is not a
+    # style choice but a sentence that was written by a machine. Measured on
+    # this deck: 0 of 5,677 Tatoeba sentences trip this rule and 60 of 4,323
+    # OpenSubtitles rows do -- "No voy a hacer una carrera de ello!", "El
+    # enemigo no esta aqui en la ciudad!" -- every one of them a subtitle track
+    # translated automatically from the English. Nothing is lost by dropping
+    # them: the harvest keeps roughly sixty candidates for the ten a card
+    # shows.
+    if language_rules.get("require_inverted_punctuation"):
+        if target.count("?") > target.count("\u00bf"):
+            return "missing_inverted_question"
+        if target.count("!") > target.count("\u00a1"):
+            return "missing_inverted_exclamation"
     if language_rules["reject_contains_apostrophe"] and any(char in target for char in "'’"):
         return "language_apostrophe_rule"
     if language_rules["reject_contains_hyphen"] and "-" in target:

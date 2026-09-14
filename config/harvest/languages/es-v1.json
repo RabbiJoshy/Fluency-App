@@ -22,6 +22,7 @@
   "sentence_rules": {
     "reject_contains_apostrophe": false,
     "reject_contains_hyphen": false,
+    "require_inverted_punctuation": true,
     "forbidden_substrings": [
       "http://",
       "https://",
@@ -40,5 +41,6 @@
       "\\b\\w+(áis|éis|ís)\\b"
     ]
   },
-  "variety_note": "Peninsular against Latin American. vosotros/ustedes is the reliable structural split; lexis is weaker because much is shared."
+  "variety_note": "Peninsular against Latin American. vosotros/ustedes is the reliable structural split; lexis is weaker because much is shared.",
+  "sentence_rules_note": "require_inverted_punctuation drops any target with more '?' than '¿' or more '!' than '¡'. Spanish only: it is the cheapest reliable marker of a machine-translated subtitle track."
 }
