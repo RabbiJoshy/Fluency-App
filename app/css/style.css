@@ -2273,6 +2273,8 @@
             width: 100%;
             overflow-y: auto;
             margin-top: 0;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
             /* No bottom padding: the row's own margin-bottom (6px) is
                the only gap between the last sense and whatever follows
                (tray's divider line, or the example sentence). Matches
@@ -2284,6 +2286,19 @@
                the row and read as a "halo" artefact. Native scrollbar
                is the clearer affordance when overflow actually happens. */
             padding-bottom: 0;
+        }
+        #backContent > .meanings-scroll::-webkit-scrollbar,
+        .about-example-card-inner .card-details > .meanings-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        #backContent > .meanings-scroll::-webkit-scrollbar-track,
+        .about-example-card-inner .card-details > .meanings-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #backContent > .meanings-scroll::-webkit-scrollbar-thumb,
+        .about-example-card-inner .card-details > .meanings-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.28);
+            border-radius: 4px;
         }
 
         /* Pinned tray for MWE / CLITIC rows — only rendered when "Phrases
@@ -3166,6 +3181,40 @@
             overflow-wrap: anywhere;
             word-break: break-word;
             max-width: 100%;
+        }
+
+        .meaning-row-gloss {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.25;
+            min-width: 0;
+            text-align: center;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+        .meaning-row.is-current-sense .meaning-row-gloss {
+            font-weight: 700;
+            color: #ffffff;
+        }
+        .meaning-row-sub {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            font-weight: 400;
+            color: #9ba8b8;
+            line-height: 1.25;
+            margin-top: 2px;
+            min-width: 0;
+            text-align: center;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+        .meaning-row.is-current-sense .meaning-row-sub {
+            color: #c9d5e4;
         }
 
         .sense-cross-reference {

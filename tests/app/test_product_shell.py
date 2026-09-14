@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v402"
+EXPECTED_CACHE_NAME = "flashcards-v403"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -491,8 +491,8 @@ class ProductShellTests(unittest.TestCase):
             '.range-btn-new:not(.has-progress):not(:hover)',
             light_css,
         )
-        self.assertIn('css/light-theme.css?v=20260914d', html)
-        self.assertIn('/css/light-theme.css?v=20260914d', worker)
+        self.assertIn('css/light-theme.css?v=20260914e', html)
+        self.assertIn('/css/light-theme.css?v=20260914e', worker)
 
     def test_active_release_aliases_are_never_cached(self) -> None:
         worker = (APP_ROOT / "service-worker.js").read_text(encoding="utf-8")
@@ -1102,14 +1102,20 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn(".find-word-filters", css)
         self.assertIn(".find-word-filter-btn.is-active", css)
 
-    def test_ambient_artist_glow_in_lyrics_mode(self) -> None:
-        main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
+    def test_back_of_card_sense_deduplication_and_2line_presentation(self) -> None:
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
         light = (APP_ROOT / "css" / "light-theme.css").read_text(encoding="utf-8")
-        self.assertIn("--artist-ambient-glow", main)
-        self.assertIn("body.artist-mode #flashcardMode::before", css)
-        self.assertIn("var(--artist-ambient-glow", css)
-        self.assertIn("body.artist-mode #flashcardMode::before", light)
+
+        self.assertIn("function cleanSenseContext(rawContext, mainGloss)", flashcards)
+        self.assertIn("window.cleanSenseContext = cleanSenseContext;", flashcards)
+        self.assertIn("meaning-row-gloss", flashcards)
+        self.assertIn("meaning-row-sub", flashcards)
+        self.assertIn(".meaning-row-gloss", css)
+        self.assertIn(".meaning-row-sub", css)
+        self.assertIn(".meaning-row-sub", light)
+        self.assertIn("#backContent > .meanings-scroll::-webkit-scrollbar", css)
+        self.assertIn("#backContent > .meanings-scroll::-webkit-scrollbar-thumb", light)
 
 
 
