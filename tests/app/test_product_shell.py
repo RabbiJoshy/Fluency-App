@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v401"
+EXPECTED_CACHE_NAME = "flashcards-v402"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -82,29 +82,26 @@ class ProductShellTests(unittest.TestCase):
         self.assertEqual(config["languages"]["portuguese_brazilian"]["speechLang"], "pt-BR")
         self.assertEqual(
             config["languages"]["spanish"]["studyStructurePath"],
-            "Data/Spanish/study-structure.json",
+            "releases/es/speech/es-speech-1000x10/app/study-structure.json",
         )
         self.assertEqual(
             config["languages"]["spanish"]["releaseManifestPath"],
-            "Data/Spanish/release-manifest.json",
+            "releases/es/speech/es-speech-1000x10/manifest.json",
         )
         self.assertEqual(
             config["languages"]["spanish"]["releaseCompositionPath"],
-            "Data/Spanish/release-composition.json",
+            "releases/es/speech/es-speech-1000x10/composition.json",
         )
         for legacy_path in (
             "conjugatedEnglishPath",
             "ppmDataPath",
         ):
             self.assertNotIn(legacy_path, config["languages"]["spanish"])
-        self.assertEqual(
-            config["languages"]["spanish"]["conjugationsPath"],
-            "Data/Spanish/conjugations.json",
-        )
+        self.assertIsNone(config["languages"]["spanish"]["conjugationsPath"])
         self.assertNotIn("ppmDataPath", config["languages"]["french"])
         self.assertEqual(
             config["languages"]["french"]["studyStructurePath"],
-            "Data/French/study-structure.json",
+            "releases/fr/speech/fr-speech-v7-dual-metadata-v4-20260913/app/study-structure.json",
         )
         self.assertFalse((APP_ROOT / "Data").exists())
         self.assertFalse((APP_ROOT / "Artists").exists())
@@ -647,7 +644,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("Release ID:", modals)
         self.assertEqual(
             config["languages"]["french"]["releaseManifestPath"],
-            "Data/French/release-manifest.json",
+            "releases/fr/speech/fr-speech-v7-dual-metadata-v4-20260913/manifest.json",
         )
 
     def test_song_sets_retain_contributing_artist_slugs(self) -> None:

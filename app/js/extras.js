@@ -128,7 +128,9 @@ function renderRows(entries, kind) {
         // every row. A merged form's useful fact is which card absorbed it.
         const note = kind === 'cognate'
             ? cognateNote(item)
-            : `On the <strong>${escapeHtml(mergedInto.word)}</strong> card`;
+            : (mergedInto?.word
+                ? `On the <strong>${escapeHtml(mergedInto.word)}</strong> card`
+                : 'Grouped form');
         return `<li class="extras-row" data-search-text="${escapeHtml(`${item.word} ${translation} ${note.replace(/<[^>]+>/g, '')}`.toLocaleLowerCase())}">
             <span class="extras-word">${escapeHtml(item.word)}</span>
             <span class="extras-translation">${escapeHtml(translation)}</span>
