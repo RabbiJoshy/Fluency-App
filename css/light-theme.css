@@ -360,6 +360,24 @@
     color: var(--text-primary);
 }
 
+:root[data-theme="light"] #backContent > .meanings-scroll,
+:root[data-theme="light"] .about-example-card-inner .card-details > .meanings-scroll {
+    scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
+}
+:root[data-theme="light"] #backContent > .meanings-scroll::-webkit-scrollbar-thumb,
+:root[data-theme="light"] .about-example-card-inner .card-details > .meanings-scroll::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.25);
+}
+:root[data-theme="light"] .meaning-row-sub {
+    color: #596779;
+}
+:root[data-theme="light"] .meaning-row.is-current-sense .meaning-row-sub {
+    color: #2b394a;
+}
+:root[data-theme="light"] .meaning-row.is-current-sense .meaning-row-gloss {
+    color: #111827;
+}
+
 :root[data-theme="light"] .mwe-expression,
 :root[data-theme="light"] .card-details .special-meaning-copy strong,
 :root[data-theme="light"] .card-word,

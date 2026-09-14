@@ -2846,9 +2846,58 @@ function condenseSenseContext(raw) {
     return text;
 }
 
-function renderSenseContextHTML(context, { leadingDot = true } = {}) {
-    const raw = String(context || '').trim();
+function cleanSenseContext(rawContext, mainGloss) {
+    let raw = String(rawContext || '').trim();
     if (!raw) return '';
+    const gloss = String(mainGloss || '').trim();
+    if (!gloss) return raw;
+
+    const normRaw = raw.toLowerCase().replace(/^[^\w]+|[^\w]+$/g, '');
+    const normGloss = gloss.toLowerCase().replace(/^[^\w]+|[^\w]+$/g, '');
+
+    // 1. Direct identity or trivial punctuation/case difference
+    if (normRaw === normGloss) return '';
+
+    // 2. Exact substring match where gloss already encapsulates the entire context
+    if (normGloss.includes(normRaw) && normGloss.length >= normRaw.length) return '';
+
+    // 3. Context starts with the gloss, e.g. gloss: "to be", context: "to be located" -> "located"
+    const glossRegex = new RegExp('^' + normGloss.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b\\s*[-:·]?\\s*', 'i');
+    if (glossRegex.test(raw)) {
+        raw = raw.replace(glossRegex, '').trim();
+    } else {
+        // Also handle infinitive "to X": e.g. gloss "to be", context "to be located" or gloss "be"
+        if (normGloss.startsWith('to ')) {
+            const verbOnly = normGloss.slice(3).trim();
+            const verbRegex = new RegExp('^(?:to\\s+)?' + verbOnly.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b\\s*[-:·]?\\s*', 'i');
+            if (verbRegex.test(raw)) {
+                raw = raw.replace(verbRegex, '').trim();
+            }
+        }
+    }
+
+    // 4. "act of [gloss]" e.g. gloss: "wait", context: "act of waiting"
+    if (/^act of\s+/i.test(raw)) {
+        const afterAct = raw.replace(/^act of\s+/i, '').trim().toLowerCase();
+        if (normGloss.startsWith(afterAct.slice(0, 4)) || afterAct.startsWith(normGloss.slice(0, 4))) {
+            return '';
+        }
+    }
+
+    // 5. If the remaining text is trivial (1 char or punctuation), discard it
+    if (raw.replace(/[^\w]/g, '').length <= 1) return '';
+
+    return raw;
+}
+window.cleanSenseContext = cleanSenseContext;
+
+function renderSenseContextHTML(context, { leadingDot = true, gloss = null } = {}) {
+    let raw = String(context || '').trim();
+    if (!raw) return '';
+    if (gloss) {
+        raw = cleanSenseContext(raw, gloss);
+        if (!raw) return '';
+    }
     const usage = selectedLanguage === 'spanish'
         ? parseSpanishDictUsageContext(raw)
         : null;
@@ -3267,9 +3316,12 @@ function selectLemmaPosGroup(event, key, meaningIndex) {
     if (!card || !meaning) return;
     const real = String(key).replace(/~~/g, '\u0000');
     card._backSectionsManuallySet = true;
-    // Keep only the active group's sub-senses on screen. Leaving previously
-    // visited groups expanded weakens the visual link to the sentence below.
-    card._expandedPos = new Set([real]);
+    card._expandedPos = card._expandedPos || new Set();
+    if (card._expandedPos.has(real)) {
+        card._expandedPos.delete(real);
+    } else {
+        card._expandedPos.add(real);
+    }
 
     const alreadyActive = lemmaPosGroupKeyForMeaning(card.meanings[currentMeaningIndex]) === real
         && !currentGroupSelection;
@@ -3892,7 +3944,11 @@ function toggleRareSenses(event) {
     if (!card) return;
     card._showRareSenses = !card._showRareSenses;
     card._grouping = null;
-    if (!card._showRareSenses) {
+    if (card._showRareSenses) {
+        // When showing rare senses, ensure all sections remain open so all senses are findable and scrollable
+        card._expandedPos = null;
+        card._backSectionsManuallySet = false;
+    } else {
         if (card._baseMeanings && currentMeaningIndex >= card._baseMeanings.length) {
             currentMeaningIndex = 0;
         }
@@ -4700,7 +4756,16 @@ function updateCard({ announceHeadword = false } = {}) {
                     ? (currentMeaning.cycle_pos || 'X') : currentMeaning.pos)
                     + '\u0000' + (currentMeaning.headword || '')
                 : null;
-            card._expandedPos = new Set(cur ? [cur] : []);
+            if (card._showRareSenses) {
+                // When rare senses are shown, expand all sections so every sense is accessible via the scroll bar
+                card._expandedPos = new Set(Array.from(groupInfo.keys()));
+            } else {
+                card._expandedPos = new Set(cur ? [cur] : []);
+            }
+        } else if (card._showRareSenses && !card._backSectionsManuallySet) {
+            for (const k of groupInfo.keys()) {
+                card._expandedPos.add(k);
+            }
         }
         const activeLemmaPosKey = lemmaPosGroupKeyForMeaning(currentMeaning);
         const activeGroupSenseRaw = String(
@@ -4782,10 +4847,8 @@ function updateCard({ announceHeadword = false } = {}) {
         //            shared = "to say", varying = contexts
         //   `su`   → 5 senses share possessive context → context-axis group
         //            shared = context,  varying = translations
-        // Each list item stays an independently clickable selectMeaning
-        // target. Pure render layer; data is untouched. Flip to false to
-        // revert to flat one-row-per-meaning.
-        const GROUP_DUPLICATE_MEANINGS = true;
+        const activeMeaningsCount = (card.meanings || []).filter(m => m && !m.exampleOnly).length;
+        const GROUP_DUPLICATE_MEANINGS = activeMeaningsCount > 2;
         // Per-meaning-idx axis assignment: 'translation' | 'context' |
         // 'singleton' | 'special' (MWE/CLITIC/SENSE_CYCLE — opted out).
         // Cached on the card after first compute — meanings don't mutate
@@ -5158,12 +5221,13 @@ function updateCard({ announceHeadword = false } = {}) {
                         // Varying cell.
                         let varyingHtml;
                         if (isTransAxis) {
-                            const ctxRaw = contextWithoutSenseMetadata(mm, isMemberSelected);
+                            const rawCtx = contextWithoutSenseMetadata(mm, isMemberSelected);
+                            const cleanedCtx = cleanSenseContext(rawCtx, sharedText);
                             const metadataHTML = senseMetadataHTML(mm, isMemberSelected, {
                                 senseCount: card.meanings?.length || orderedMembers.length,
                             });
-                            varyingHtml = ctxRaw || metadataHTML
-                                ? `<span class="meaning-context-cell" style="line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${renderSenseContextHTML(ctxRaw, { leadingDot: false })}${metadataHTML}</span>`
+                            varyingHtml = cleanedCtx || metadataHTML
+                                ? `<span class="meaning-context-cell" style="line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${renderSenseContextHTML(cleanedCtx, { leadingDot: false })}${metadataHTML}</span>`
                                 : `<span style="opacity: 0.4; font-style: italic; font-size: 12px;">—</span>`;
                         } else {
                             const transRaw = displaySenseGloss(
@@ -5224,24 +5288,24 @@ function updateCard({ announceHeadword = false } = {}) {
                     `);
                 } else {
                     if (compactKnowledgeView && !isSelected) return;
-                    // Singleton: centred translation with optional inline
-                    // context. POS is represented by the header legend and tint.
-                    let contextInline = '';
-                    const compactContext = contextWithoutSenseMetadata(m, isSelected);
-                    if (compactContext) {
-                        contextInline = ` ${renderSenseContextHTML(compactContext)}`;
+                    // Individual sense row: 2-line presentation when space permits
+                    // Primary gloss on top, cleaned context underneath (no redundant repetition of the gloss).
+                    const rawContext = contextWithoutSenseMetadata(m, isSelected);
+                    const cleanedContext = cleanSenseContext(rawContext, displayMeaning);
+                    let subContent = '';
+                    if (cleanedContext) {
+                        subContent += renderSenseContextHTML(cleanedContext, { leadingDot: false });
                     }
-                    contextInline += senseMetadataHTML(m, isSelected, {
+                    const metadataHtml = senseMetadataHTML(m, isSelected, {
                         senseCount: card.meanings?.length || 1,
                     });
-                    contextInline += registerTagHTML(m);
-                    contextInline += modelProposalMarkerHTML(m);
-                    const singletonTextClass = adaptiveRowTextClass(displayMeaning, m.context || '');
-                    // Pct pinned to the row's right edge (not body's), so it
-                    // hugs the row outline rather than sitting inside body
-                    // padding. pointer-events:none lets the row's selectMeaning
-                    // still fire through. right:8px matches the group pct's
-                    // effective right offset for vertical alignment.
+                    if (metadataHtml) subContent += (subContent ? ' ' : '') + metadataHtml;
+                    const regTag = registerTagHTML(m);
+                    if (regTag) subContent += (subContent ? ' ' : '') + regTag;
+                    const aiTag = modelProposalMarkerHTML(m);
+                    if (aiTag) subContent += (subContent ? ' ' : '') + aiTag;
+
+                    const singletonTextClass = adaptiveRowTextClass(displayMeaning, cleanedContext || '');
                     const useProminenceLabels = (typeof senseProminenceMode !== 'undefined' ? senseProminenceMode : globalThis.state?.senseProminenceMode) !== 'percentages';
                     const promInfo = getSenseProminenceInfo(m);
                     const rareRowClass = (m.unassigned || m.isRareSense || m.prominenceLabel === 'Rare') ? ' meaning-row-rare' : '';
@@ -5251,10 +5315,11 @@ function updateCard({ announceHeadword = false } = {}) {
                             ? `<span class="sense-percentage sense-percentage-tail" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">${pctVal}%</span>`
                             : (m.unassigned ? `<span class="sense-prominence-badge prominence-rare" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">Rare</span>` : ''));
                     target.push(`
-                    <div class="meaning-row meaning-row-regular ${singletonTextClass}${isSelected ? ' selected' : ''}${rowStateClasses}${rareRowClass}" style="position: relative; display: grid; grid-template-columns: 1fr; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 39px;" onclick="selectMeaning(${idx})">
+                    <div class="meaning-row meaning-row-regular ${singletonTextClass}${isSelected ? ' selected' : ''}${rowStateClasses}${rareRowClass}" style="position: relative; display: flex; align-items: center; padding: 2px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 44px;" onclick="selectMeaning(${idx})">
                         ${renderRowCheckSlot(isSelected)}
-                        <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: stretch; justify-content: center; min-width: 0; padding: 0 ${useProminenceLabels ? '80px' : (!m.unassigned && pctVal < 100 ? '42px' : '8px')} 0 8px;">
-                            <span class="meaning-row-translation row-adaptive-text" style="font-weight: ${isSelected ? 700 : 500}; color: ${textColor}; text-align: center; width: 100%;">${displayMeaningHTML}${contextInline}</span>
+                        <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; width: 100%; padding: 2px ${useProminenceLabels ? '80px' : (!m.unassigned && pctVal < 100 ? '42px' : '10px')} 2px 8px;">
+                            <span class="meaning-row-translation meaning-row-gloss row-adaptive-text" style="font-weight: ${isSelected ? 700 : 600}; color: ${textColor}; text-align: center; width: 100%; line-height: 1.25;">${displayMeaningHTML}</span>
+                            ${subContent ? `<span class="meaning-row-sub" style="text-align: center; width: 100%;">${subContent}</span>` : ''}
                         </div>
                         ${pctTail}
                     </div>
@@ -5835,7 +5900,7 @@ function updateCard({ announceHeadword = false } = {}) {
                 // 60px so the scroller stays usable even when overhead is
                 // tight, instead of silently disabling the cap.
                 if (scroll.scrollHeight > availableForScroll) {
-                    scroll.style.maxHeight = Math.max(60, availableForScroll) + 'px';
+                    scroll.style.maxHeight = Math.max(100, availableForScroll) + 'px';
                     // Keep the stable menu order and move only the viewport.
                     // `nearest` avoids a jump when the selected row is already
                     // visible while still exposing a selection below the fold.
@@ -6283,7 +6348,8 @@ function selectMeaning(index) {
     if (selecting?.meanings?.[index] && !selecting.isChainChild) {
         const key = lemmaPosGroupKeyForMeaning(selecting.meanings[index]);
         if (key) {
-            selecting._expandedPos = new Set([key]);
+            selecting._expandedPos = selecting._expandedPos || new Set();
+            selecting._expandedPos.add(key);
             selecting._backSectionsManuallySet = true;
         }
     }
