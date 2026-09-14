@@ -1,11 +1,13 @@
 {
+  "alignment_floor": 0.7,
+  "alignment_floor_note": "Portuguese is the deck being shown, so it takes the strictest floor. Supply makes this nearly free: the harvest holds 44.6 candidates for the 10 a card displays, so a rejected candidate is replaced by the next subtitle row rather than by Tatoeba. Measured over the 10,000-card harvest, moving 0.30 -> 0.70 costs 76 of 99,719 displayed examples (0.08%), takes cards short of ten from 54 to 65, and moves the Tatoeba share only 27.6% -> 29.5% -- the subtitle register survives. The worst one percent of the deck improves from 0.502 to 0.708. Above 0.80 it starts to bite (118 short cards).",
   "config_version": "harvest-language-policy/v1",
-  "policy_id": "pt-v1",
   "language": "pt",
+  "matching": {
+    "boundary_policy": "unicode_word",
+    "token_pattern": "[^\\W\\d_]+(?:['’-][^\\W\\d_]+)*"
+  },
   "normalization": {
-    "unicode_form": "NFC",
-    "casefold": true,
-    "canonical_apostrophe": "'",
     "apostrophe_variants": [
       "’",
       "‘",
@@ -13,15 +15,13 @@
       "‛",
       "＇"
     ],
-    "collapse_whitespace": true
+    "canonical_apostrophe": "'",
+    "casefold": true,
+    "collapse_whitespace": true,
+    "unicode_form": "NFC"
   },
-  "matching": {
-    "boundary_policy": "unicode_word",
-    "token_pattern": "[^\\W\\d_]+(?:['’-][^\\W\\d_]+)*"
-  },
+  "policy_id": "pt-v1",
   "sentence_rules": {
-    "reject_contains_apostrophe": false,
-    "reject_contains_hyphen": false,
     "forbidden_substrings": [
       "http://",
       "https://",
@@ -29,7 +29,9 @@
       ">",
       "♪",
       "♫"
-    ]
+    ],
+    "reject_contains_apostrophe": false,
+    "reject_contains_hyphen": false
   },
   "variety_markers": {
     "br": [

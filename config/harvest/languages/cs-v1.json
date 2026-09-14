@@ -1,11 +1,13 @@
 {
+  "alignment_floor": 0.45,
+  "alignment_floor_note": "Czech is 70% subtitles, so it needs more than the base floor, but its harvest is thinner than Portuguese's (mean 38.7 at 10,000 cards) and it has no machine-translation gate of its own -- Czech has no inverted punctuation to lose and diacritic-stripping fires more on Tatoeba than on subtitles, so it cannot be used. Re-measure against a scored Czech harvest before raising this.",
   "config_version": "harvest-language-policy/v1",
-  "policy_id": "cs-v1",
   "language": "cs",
+  "matching": {
+    "boundary_policy": "unicode_word",
+    "token_pattern": "[^\\W\\d_]+(?:['’-][^\\W\\d_]+)*"
+  },
   "normalization": {
-    "unicode_form": "NFC",
-    "casefold": true,
-    "canonical_apostrophe": "'",
     "apostrophe_variants": [
       "’",
       "‘",
@@ -13,15 +15,13 @@
       "‛",
       "＇"
     ],
-    "collapse_whitespace": true
+    "canonical_apostrophe": "'",
+    "casefold": true,
+    "collapse_whitespace": true,
+    "unicode_form": "NFC"
   },
-  "matching": {
-    "boundary_policy": "unicode_word",
-    "token_pattern": "[^\\W\\d_]+(?:['’-][^\\W\\d_]+)*"
-  },
+  "policy_id": "cs-v1",
   "sentence_rules": {
-    "reject_contains_apostrophe": false,
-    "reject_contains_hyphen": false,
     "forbidden_substrings": [
       "http://",
       "https://",
@@ -29,6 +29,8 @@
       ">",
       "♪",
       "♫"
-    ]
+    ],
+    "reject_contains_apostrophe": false,
+    "reject_contains_hyphen": false
   }
 }

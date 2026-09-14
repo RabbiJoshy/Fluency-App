@@ -1,11 +1,13 @@
 {
+  "alignment_floor": 0.45,
+  "alignment_floor_note": "Spanish already has the inverted-punctuation gate removing its machine-translated rows, and a 14,040-surface list with less headroom than Portuguese. Middle floor.",
   "config_version": "harvest-language-policy/v1",
-  "policy_id": "es-v1",
   "language": "es",
+  "matching": {
+    "boundary_policy": "unicode_word",
+    "token_pattern": "[^\\W\\d_]+(?:['’-][^\\W\\d_]+)*"
+  },
   "normalization": {
-    "unicode_form": "NFC",
-    "casefold": true,
-    "canonical_apostrophe": "'",
     "apostrophe_variants": [
       "’",
       "‘",
@@ -13,16 +15,13 @@
       "‛",
       "＇"
     ],
-    "collapse_whitespace": true
+    "canonical_apostrophe": "'",
+    "casefold": true,
+    "collapse_whitespace": true,
+    "unicode_form": "NFC"
   },
-  "matching": {
-    "boundary_policy": "unicode_word",
-    "token_pattern": "[^\\W\\d_]+(?:['’-][^\\W\\d_]+)*"
-  },
+  "policy_id": "es-v1",
   "sentence_rules": {
-    "reject_contains_apostrophe": false,
-    "reject_contains_hyphen": false,
-    "require_inverted_punctuation": true,
     "forbidden_substrings": [
       "http://",
       "https://",
@@ -30,8 +29,12 @@
       ">",
       "♪",
       "♫"
-    ]
+    ],
+    "reject_contains_apostrophe": false,
+    "reject_contains_hyphen": false,
+    "require_inverted_punctuation": true
   },
+  "sentence_rules_note": "require_inverted_punctuation drops any target with more '?' than '¿' or more '!' than '¡'. Spanish only: it is the cheapest reliable marker of a machine-translated subtitle track.",
   "variety_markers": {
     "419": [
       "\\b(ustedes|carro|celular|papá|mamá|allá|acá|plata|manejar|computadora)\\b"
@@ -41,6 +44,5 @@
       "\\b\\w+(áis|éis|ís)\\b"
     ]
   },
-  "variety_note": "Peninsular against Latin American. vosotros/ustedes is the reliable structural split; lexis is weaker because much is shared.",
-  "sentence_rules_note": "require_inverted_punctuation drops any target with more '?' than '¿' or more '!' than '¡'. Spanish only: it is the cheapest reliable marker of a machine-translated subtitle track."
+  "variety_note": "Peninsular against Latin American. vosotros/ustedes is the reliable structural split; lexis is weaker because much is shared."
 }
