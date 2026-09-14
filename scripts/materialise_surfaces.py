@@ -108,7 +108,7 @@ def main() -> int:
         lemmas, pos, evidence = [], [], {}
         for event in items:
             code, data = event["reason_code"], event.get("evidence") or {}
-            if code == "lemma_resolved":
+            if code in ("lemma_resolved", "lemma_is_headword") and not lemmas:
                 lemmas = data.get("lemmas") or []
                 pos = data.get("pos") or []
             if data:

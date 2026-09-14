@@ -53,6 +53,7 @@ DEFAULT_POLICY: dict[str, str] = {
     "dictionary_spelling_substitution": KEEP,
     "dictionary_pos_gloss_mismatch": EXCLUDE,
     "lemma_resolved": KEEP,
+    "lemma_is_headword": KEEP,
     "lemma_absent_from_dictionary": KEEP,
     "human_review": EXCLUDE,
     "adjudicated_exclude": EXCLUDE,

@@ -55,6 +55,14 @@ REASON_CODES = frozenset({
     "dictionary_pos_gloss_mismatch",
     # from an external morphology source
     "lemma_resolved",
+    # Distinct from the above on purpose. "policii is a form of policie" is a
+    # morphological claim; "house appears as a headword" only says the string is
+    # documented somewhere in the language, which Wiktionary does for loanwords,
+    # rare senses and internet usages alike -- house as a music genre, when as a
+    # meme conjunction, her as an archaic form of hacer. That is not evidence
+    # about what the word is doing at rank 2,681 of a subtitle corpus, so it
+    # must not overturn a judgement the corpus made.
+    "lemma_is_headword",
     "lemma_absent_from_dictionary",
     # someone settled the case by reading it. Adjudication carries its own
     # direction because the answer is as often "this is a word" as "it is not",
@@ -85,6 +93,14 @@ DURABLE = frozenset({
     "dictionary_spelling_substitution",
     "dictionary_pos_gloss_mismatch",
     "lemma_resolved",
+    # Distinct from the above on purpose. "policii is a form of policie" is a
+    # morphological claim; "house appears as a headword" only says the string is
+    # documented somewhere in the language, which Wiktionary does for loanwords,
+    # rare senses and internet usages alike -- house as a music genre, when as a
+    # meme conjunction, her as an archaic form of hacer. That is not evidence
+    # about what the word is doing at rank 2,681 of a subtitle corpus, so it
+    # must not overturn a judgement the corpus made.
+    "lemma_is_headword",
     "lemma_absent_from_dictionary",
     "human_review",
     "adjudicated_keep",
