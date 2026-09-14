@@ -40,14 +40,14 @@
             document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260914b">
-    <link rel="stylesheet" href="css/light-theme.css?v=20260914b">
+    <link rel="stylesheet" href="css/style.css?v=20260914d">
+    <link rel="stylesheet" href="css/light-theme.css?v=20260914d">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260914c">
+    <link rel="modulepreload" href="js/main.js?v=20260914d">
     <link rel="modulepreload" href="js/theme.js?v=20260825ak">
     <link rel="modulepreload" href="js/state.js?v=20260914c">
     <link rel="modulepreload" href="js/data-contracts.js?v=20260825ak">
@@ -72,7 +72,7 @@
     <link rel="modulepreload" href="js/vocabulary-import.js?v=20260913a">
     <link rel="modulepreload" href="js/spanishdict-usage.js?v=20260825ak">
     <link rel="modulepreload" href="js/reverse-cues.js?v=20260825ak">
-    <link rel="modulepreload" href="js/flashcards.js?v=20260914c">
+    <link rel="modulepreload" href="js/flashcards.js?v=20260914d">
     <link rel="modulepreload" href="js/example-personalisation.js?v=20260825ak">
     <script>
         // Fail open if a boot-time script error prevents main.js from taking
@@ -916,6 +916,7 @@
     <div id="deckCompleteModal" class="modal hidden">
         <div class="modal-content deck-complete-content">
             <div class="deck-complete-header">
+                <canvas id="deckCompleteConfetti" class="deck-complete-confetti" aria-hidden="true"></canvas>
                 <span class="deck-complete-eyebrow" id="deckCompleteEyebrow">Study set</span>
                 <div class="deck-complete-score-container" id="deckCompleteScoreContainer" hidden>
                     <div class="deck-score-ring-wrap">
@@ -1223,6 +1224,70 @@
         </div>
     </div>
 
+    <!-- Keyboard Shortcuts Modal -->
+    <div id="keyboardShortcutsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="keyboardShortcutsTitle">
+        <div class="modal-content keyboard-shortcuts-content" style="max-width: 480px;">
+            <div class="modal-header">
+                <h3 id="keyboardShortcutsTitle">Keyboard Shortcuts</h3>
+                <button class="modal-close" id="closeKeyboardShortcutsModal" aria-label="Close shortcuts modal">✕</button>
+            </div>
+            <div class="keyboard-shortcuts-body">
+                <div class="shortcut-group">
+                    <span class="shortcut-group-title">Study & Navigation</span>
+                    <div class="shortcut-row">
+                        <span class="shortcut-desc">Flip flashcard</span>
+                        <kbd class="shortcut-kbd">Space</kbd>
+                    </div>
+                    <div class="shortcut-row">
+                        <span class="shortcut-desc">Previous / Next card</span>
+                        <div class="shortcut-kbd-group">
+                            <kbd class="shortcut-kbd">←</kbd>
+                            <kbd class="shortcut-kbd">→</kbd>
+                        </div>
+                    </div>
+                </div>
+                <div class="shortcut-group">
+                    <span class="shortcut-group-title">Card Review</span>
+                    <div class="shortcut-row">
+                        <span class="shortcut-desc">Got it / Mark known</span>
+                        <div class="shortcut-kbd-group">
+                            <kbd class="shortcut-kbd">Enter</kbd>
+                            <span class="shortcut-or">or</span>
+                            <kbd class="shortcut-kbd">C</kbd>
+                        </div>
+                    </div>
+                    <div class="shortcut-row">
+                        <span class="shortcut-desc">Again / Needs review</span>
+                        <div class="shortcut-kbd-group">
+                            <kbd class="shortcut-kbd">X</kbd>
+                            <span class="shortcut-or">or</span>
+                            <kbd class="shortcut-kbd">1</kbd>
+                        </div>
+                    </div>
+                </div>
+                <div class="shortcut-group">
+                    <span class="shortcut-group-title">Audio & Tools</span>
+                    <div class="shortcut-row">
+                        <span class="shortcut-desc">Pronounce headword</span>
+                        <kbd class="shortcut-kbd">A</kbd>
+                    </div>
+                    <div class="shortcut-row">
+                        <span class="shortcut-desc">Find a word</span>
+                        <kbd class="shortcut-kbd">F</kbd>
+                    </div>
+                    <div class="shortcut-row">
+                        <span class="shortcut-desc">Toggle shortcuts guide</span>
+                        <kbd class="shortcut-kbd">?</kbd>
+                    </div>
+                    <div class="shortcut-row">
+                        <span class="shortcut-desc">Close open modal</span>
+                        <kbd class="shortcut-kbd">Esc</kbd>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Word Popup (floating, positioned by JS) -->
     <div id="wordPopup" class="word-popup hidden"></div>
 
@@ -1242,6 +1307,12 @@
                     autocomplete="off"
                     spellcheck="false"
                 />
+                <div class="find-word-filters" id="findWordFilters">
+                    <button type="button" class="find-word-filter-btn is-active" data-filter="all">All</button>
+                    <button type="button" class="find-word-filter-btn" data-filter="learned">Known</button>
+                    <button type="button" class="find-word-filter-btn" data-filter="review">Review</button>
+                    <button type="button" class="find-word-filter-btn" data-filter="unseen">Not seen</button>
+                </div>
                 <div id="findWordStatus" class="find-word-status"></div>
                 <div id="findWordResults" class="find-word-results"></div>
             </div>
@@ -1774,6 +1845,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260914c"></script>
+    <script type="module" src="js/main.js?v=20260914d"></script>
 </body>
 </html>

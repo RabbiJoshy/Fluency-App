@@ -20,7 +20,7 @@ import './extras.js?v=20260913e';
 import './song-sets.js?v=20260823ae';
 import './spotify-playlist-import.js?v=20260913a';
 import './vocabulary-import.js?v=20260913a';
-import './flashcards.js?v=20260914c';
+import './flashcards.js?v=20260914d';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 function openTutorialIntroduction() {
@@ -330,6 +330,8 @@ window._selectedArtistSlugs = selectedArtistSlugs;
 // Add artist mode class to body and load albums dictionary
 if (activeArtist) {
     document.body.classList.add('artist-mode');
+    const artistColor = (activeArtist.colorTheme && activeArtist.colorTheme.primary) || 'var(--accent-primary)';
+    document.documentElement.style.setProperty('--artist-ambient-glow', artistColor);
     if (activeArtist.customSongSource) {
         loadMultiArtistAlbumsDictionaries(selectedArtistSlugs, allArtistsConfig);
     } else {
@@ -1378,6 +1380,7 @@ async function buildFindWordIndex() {
             displayRank: byRank.get(item.rank) || null,
             id: item.id || window.getWordId(item),
             firstMeaning: firstMeaning ? firstMeaning.translation : '',
+            firstMeaningObj: firstMeaning || null,
             exclusionReason: window.getVocabularyExclusionReason?.(item) || null,
             examplesOnly: matchedMeanings.length === 0,
             sourceEntry: item
@@ -1387,6 +1390,8 @@ async function buildFindWordIndex() {
     _findWordIndexKey = key;
     return idx;
 }
+
+let _findWordFilter = 'all';
 
 function renderFindResults(query) {
     const resultsEl = document.getElementById('findWordResults');
@@ -1414,12 +1419,21 @@ function renderFindResults(query) {
         if (matches.length > 300) break;
     }
     matches.sort((a, b) => a.score - b.score || (a.entry.rank || 1e9) - (b.entry.rank || 1e9));
-    const top = matches.slice(0, 30);
+    const filteredMatches = [];
+    for (const match of matches) {
+        if (_findWordFilter !== 'all') {
+            const progress = window.getMergedWordProgress?.(match.entry.fullId, match.entry.targetWord);
+            const state = window.getProgressState?.(progress) || { status: 'unseen' };
+            if (state.status !== _findWordFilter) continue;
+        }
+        filteredMatches.push(match);
+    }
+    const top = filteredMatches.slice(0, 30);
     if (top.length === 0) {
         statusEl.textContent = 'No matches';
         return;
     }
-    statusEl.textContent = `${matches.length} match${matches.length === 1 ? '' : 'es'}${matches.length > top.length ? ` — showing top ${top.length}` : ''}`;
+    statusEl.textContent = `${filteredMatches.length} match${filteredMatches.length === 1 ? '' : 'es'}${filteredMatches.length > top.length ? ` — showing top ${top.length}` : ''}`;
     for (const { entry } of top) {
         const btn = document.createElement('button');
         btn.type = 'button';
@@ -1449,6 +1463,14 @@ function renderFindResults(query) {
                 : '<span class="fw-done fw-done--review">Review</span>';
         }
 
+        let promBadgeHTML = '';
+        if (entry.firstMeaningObj && typeof window.getSenseProminenceInfo === 'function') {
+            const prom = window.getSenseProminenceInfo(entry.firstMeaningObj);
+            if (prom && prom.label) {
+                promBadgeHTML = `<span class="sense-prominence-badge prominence-${prom.key}">${prom.label}</span>`;
+            }
+        }
+
         const statusHTML = entry.exclusionReason
             ? `<span class="fw-status fw-status--excluded">Excluded · ${entry.exclusionReason}</span>`
             : (entry.examplesOnly
@@ -1457,7 +1479,10 @@ function renderFindResults(query) {
         btn.innerHTML = `
             <span class="fw-word">${entry.targetWord}</span>
             ${lemmaHTML}
-            <span class="fw-meaning">${(entry.firstMeaning || '').replace(/</g, '&lt;')}</span>
+            <span class="fw-meaning-group">
+                <span class="fw-meaning">${(entry.firstMeaning || '').replace(/</g, '&lt;')}</span>
+                ${promBadgeHTML}
+            </span>
             ${doneHTML}
             ${statusHTML}`;
         btn.addEventListener('click', () => jumpToFoundWord(entry));
@@ -1493,11 +1518,30 @@ function setupFindWord() {
     const modal = document.getElementById('findWordModal');
     const closeBtn = document.getElementById('closeFindWordModal');
     const input = document.getElementById('findWordInput');
+    const filterContainer = document.getElementById('findWordFilters');
     if (!btn || !modal || !input) return;
+
+    if (filterContainer && !filterContainer._filterWired) {
+        filterContainer._filterWired = true;
+        filterContainer.addEventListener('click', (e) => {
+            const chip = e.target.closest('.find-word-filter-btn');
+            if (!chip) return;
+            filterContainer.querySelectorAll('.find-word-filter-btn').forEach(b => b.classList.remove('is-active'));
+            chip.classList.add('is-active');
+            _findWordFilter = chip.dataset.filter || 'all';
+            renderFindResults(input.value);
+        });
+    }
 
     btn.addEventListener('click', async () => {
         modal.classList.remove('hidden');
         input.value = '';
+        _findWordFilter = 'all';
+        if (filterContainer) {
+            filterContainer.querySelectorAll('.find-word-filter-btn').forEach(b => {
+                b.classList.toggle('is-active', b.dataset.filter === 'all');
+            });
+        }
         document.getElementById('findWordResults').innerHTML = '';
         document.getElementById('findWordStatus').textContent = 'Loading vocabulary…';
         setTimeout(() => input.focus(), 50);

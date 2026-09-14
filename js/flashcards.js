@@ -2161,7 +2161,30 @@ function updateSpeakIcons() {
     });
 }
 
+function toggleKeyboardShortcutsModal(force) {
+    const modal = document.getElementById('keyboardShortcutsModal');
+    if (!modal) return;
+    const shouldOpen = typeof force === 'boolean' ? force : modal.classList.contains('hidden');
+    if (shouldOpen) {
+        modal.classList.remove('hidden');
+    } else {
+        modal.classList.add('hidden');
+    }
+}
+window.toggleKeyboardShortcutsModal = toggleKeyboardShortcutsModal;
+
 function setupKeyboardShortcuts() {
+    const shortcutsModal = document.getElementById('keyboardShortcutsModal');
+    if (shortcutsModal && !shortcutsModal._shortcutsWired) {
+        shortcutsModal._shortcutsWired = true;
+        document.getElementById('closeKeyboardShortcutsModal')?.addEventListener('click', () => {
+            toggleKeyboardShortcutsModal(false);
+        });
+        shortcutsModal.addEventListener('click', (ev) => {
+            if (ev.target === shortcutsModal) toggleKeyboardShortcutsModal(false);
+        });
+    }
+
     document.addEventListener('keydown', function(e) {
         // Ignore if typing in an input field
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
@@ -2191,6 +2214,13 @@ function setupKeyboardShortcuts() {
         // card underneath.
         const _flagMenuEl = document.getElementById('flagMenu');
         if (_flagMenuEl && !_flagMenuEl.hidden) return;
+
+        // Toggle keyboard shortcuts cheat sheet
+        if (e.key === '?' || (e.key === '/' && e.shiftKey)) {
+            e.preventDefault();
+            toggleKeyboardShortcutsModal();
+            return;
+        }
 
         const commandModifier = e.ctrlKey || e.metaKey;
         const commandKey = String(e.key || '').toLowerCase();
@@ -2262,15 +2292,28 @@ function setupKeyboardShortcuts() {
                 cycleExampleForward();
             }
         }
-        // Enter = correct
-        else if (e.key === 'Enter') {
+        // Enter or C = correct
+        else if (e.key === 'Enter' || e.key === 'c' || e.key === 'C') {
             e.preventDefault();
             handleSwipeAction('correct');
         }
-        // X = incorrect
-        else if (e.key === 'x' || e.key === 'X') {
+        // X or 1 = incorrect
+        else if (e.key === 'x' || e.key === 'X' || e.key === '1') {
             e.preventDefault();
             handleSwipeAction('incorrect');
+        }
+        // A = pronounce headword
+        else if (e.key === 'a' || e.key === 'A') {
+            e.preventDefault();
+            const card = flashcards[currentIndex];
+            if (card && typeof window.speakWord === 'function') {
+                window.speakWord(getDisplayedTargetHeadword(card));
+            }
+        }
+        // F = open find a word modal (for non-audit users)
+        else if ((e.key === 'f' || e.key === 'F') && !canFlag) {
+            e.preventDefault();
+            document.getElementById('findWordBtn')?.click();
         }
         // Legacy single-key shortcut retained for the owner audit workflow.
         else if ((e.key === 'f' || e.key === 'F') && canFlag) {
@@ -2285,10 +2328,13 @@ function setupKeyboardShortcuts() {
         // Escape = close modal or smart-back (pop nav stack, else return to setup)
         else if (e.key === 'Escape') {
             e.preventDefault();
+            const scModal = document.getElementById('keyboardShortcutsModal');
             const deckModal = document.getElementById('deckCompleteModal');
             const statsModal = document.getElementById('statsModal');
             const provenancePanel = document.getElementById('provenancePanel');
-            if (provenancePanel && provenancePanel.style.display !== 'none') {
+            if (scModal && !scModal.classList.contains('hidden')) {
+                toggleKeyboardShortcutsModal(false);
+            } else if (provenancePanel && provenancePanel.style.display !== 'none') {
                 toggleProvenancePanel(false);
             } else if (deckModal && !deckModal.classList.contains('hidden')) {
                 hideDeckCompleteModal();
@@ -3808,7 +3854,8 @@ function getQualifyingRareSenses(card) {
             return {
                 ...unused,
                 meaning: unused.meaning || unused.translation || '',
-                unassigned: true,
+                unassigned: false,
+                isRareSense: true,
                 percentage: 0,
                 prominenceLabel: 'Rare',
                 targetSentence: firstEx.target,
@@ -3837,6 +3884,7 @@ function getSenseProminenceInfo(meaning) {
         return { label: 'Rare', key: 'rare' };
     }
 }
+window.getSenseProminenceInfo = getSenseProminenceInfo;
 
 function toggleRareSenses(event) {
     event?.stopPropagation?.();
@@ -4623,15 +4671,20 @@ function updateCard({ announceHeadword = false } = {}) {
                     senses: [],
                     pct: 0,
                     hasAssignedEvidence: false,
+                    hasOnlyRareSenses: true,
                     firstMeaningIndex: meaningIndex,
                 });
             }
             const g = groupInfo.get(key);
-            // Normalization gives dictionary-only menus synthetic percentages
-            // so the UI can choose a stable default. Those numbers are not WSD
-            // evidence and must never be presented as assignment confidence.
+            if (!m.isRareSense) {
+                g.hasOnlyRareSenses = false;
+            }
             if (!m.unassigned) {
-                g.pct += Number(m.percentage || 0);
+                if (!m.isRareSense) {
+                    g.pct += Number(m.percentage || 0);
+                }
+                g.hasAssignedEvidence = true;
+            } else if (m.isRareSense) {
                 g.hasAssignedEvidence = true;
             }
             const rawText = String(getProductionEnglishCue(card, m) || m.meaning || '').trim();
@@ -4690,10 +4743,14 @@ function updateCard({ announceHeadword = false } = {}) {
                     .join('');
                 const extra = summarySenses.length > 1
                     ? `<span class="pos-pill-more" hidden>+${summarySenses.length - 1}</span>` : '';
-                const pct = g.pct > 0
+                const useProminenceLabels = (typeof senseProminenceMode !== 'undefined' ? senseProminenceMode : globalThis.state?.senseProminenceMode) !== 'percentages';
+                // Only show percentage in percentage mode, and don't show a redundant "100%" if this is the only POS group
+                const pct = (!useProminenceLabels && g.pct > 0 && !(groupInfo.size === 1 && Math.round(g.pct * 100) >= 100))
                     ? `<span class="pos-pill-pct sense-percentage">${Math.round(g.pct * 100)}%</span>` : '';
-                const assignmentState = !g.hasAssignedEvidence
-                    ? '<span class="pos-pill-unassigned">Unassigned</span>' : '';
+                // Don't label genuine rare dictionary senses as "Unassigned"
+                const assignmentState = (!g.hasAssignedEvidence && !g.hasOnlyRareSenses)
+                    ? '<span class="pos-pill-unassigned">Unassigned</span>'
+                    : (g.hasOnlyRareSenses ? '<span class="sense-prominence-badge prominence-rare">Rare</span>' : '');
                 // No known-tick here. A check mark on this row read as "you
                 // answered this", which is what the tick means everywhere else
                 // on the card; here it meant something narrower and only added
@@ -5187,7 +5244,7 @@ function updateCard({ announceHeadword = false } = {}) {
                     // effective right offset for vertical alignment.
                     const useProminenceLabels = (typeof senseProminenceMode !== 'undefined' ? senseProminenceMode : globalThis.state?.senseProminenceMode) !== 'percentages';
                     const promInfo = getSenseProminenceInfo(m);
-                    const rareRowClass = (m.unassigned || m.prominenceLabel === 'Rare') ? ' meaning-row-rare' : '';
+                    const rareRowClass = (m.unassigned || m.isRareSense || m.prominenceLabel === 'Rare') ? ' meaning-row-rare' : '';
                     const pctTail = useProminenceLabels
                         ? `<span class="sense-prominence-badge prominence-${promInfo.key}" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">${escapeCardText(promInfo.label)}</span>`
                         : (!m.unassigned && pctVal < 100
@@ -7313,7 +7370,7 @@ document.addEventListener('click', (e) => {
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
 const ASSET_VERSION = '20260825ak';
-const MODALS_ASSET_VERSION = '20260914c';
+const MODALS_ASSET_VERSION = '20260914d';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

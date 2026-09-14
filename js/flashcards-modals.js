@@ -965,6 +965,60 @@ function _cancelDeckCompleteAutoContinue() {
     _deckCompleteAutoTimer = null;
 }
 
+function triggerDeckCompleteConfetti() {
+    const canvas = document.getElementById('deckCompleteConfetti');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width || 340;
+    canvas.height = rect.height || 180;
+
+    const colors = ['#10b981', '#34d399', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6'];
+    const particles = Array.from({ length: 48 }, () => ({
+        x: canvas.width / 2 + (Math.random() - 0.5) * 60,
+        y: canvas.height * 0.42,
+        vx: (Math.random() - 0.5) * 7,
+        vy: -(Math.random() * 5.5 + 3.2),
+        size: Math.random() * 5 + 3.5,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rotation: Math.random() * 360,
+        vRot: (Math.random() - 0.5) * 12,
+        opacity: 1,
+    }));
+
+    const start = performance.now();
+    function render(now) {
+        const elapsed = (now - start) / 1000;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        particles.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.2;
+            p.rotation += p.vRot;
+            p.opacity = Math.max(0, 1 - (elapsed / 2.2));
+            if (p.opacity > 0) {
+                alive = true;
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate((p.rotation * Math.PI) / 180);
+                ctx.globalAlpha = p.opacity;
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.65);
+                ctx.restore();
+            }
+        });
+        if (alive && elapsed < 2.4) {
+            requestAnimationFrame(render);
+        } else {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    }
+    requestAnimationFrame(render);
+}
+
 function showEndOfDeckOptions({ autoContinue = true } = {}) {
     _cancelDeckCompleteAutoContinue();
     // A completed deck is no longer resumable. Starting a follow-up or redo
@@ -1041,6 +1095,13 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
                 scoreContainer.hidden = false;
                 if (defaultIcon) defaultIcon.hidden = true;
                 if (scoreNum) scoreNum.textContent = `${pct}%`;
+                if (pct === 100) {
+                    scoreContainer.classList.add('is-perfect');
+                    if (titleEl && !isLevelCompletion) titleEl.textContent = '🌟 Perfect Set!';
+                    triggerDeckCompleteConfetti();
+                } else {
+                    scoreContainer.classList.remove('is-perfect');
+                }
                 if (ringFill) {
                     const circumference = 264;
                     const offset = circumference * (1 - (pct / 100));

@@ -1210,7 +1210,7 @@ function _setPlayingIndicator(on) {
             const visualizer = document.createElement('span');
             visualizer.className = 'spotify-music-visualizer';
             visualizer.setAttribute('aria-hidden', 'true');
-            for (let index = 0; index < 16; index++) {
+            for (let index = 0; index < 4; index++) {
                 const bar = document.createElement('i');
                 bar.style.setProperty('--bar-index', index);
                 visualizer.appendChild(bar);
