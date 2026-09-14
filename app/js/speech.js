@@ -176,7 +176,7 @@ function speakWord(text, useEnglish = false, onComplete = null) {
            || speechLangCodes[selectedLanguage]
            || 'es-ES');
     utterance.lang = langCode;
-    utterance.rate = 0.9;
+    utterance.rate = Number(window.state?.speechRate) || 0.9;
 
     const voices = window.speechSynthesis.getVoices();
     if (voices.length > 0) {
@@ -189,6 +189,20 @@ function speakWord(text, useEnglish = false, onComplete = null) {
 
     window.speechSynthesis.speak(utterance);
 }
+
+function getSpeechRate() {
+    return Number(window.state?.speechRate) || 0.9;
+}
+
+function setSpeechRate(rate) {
+    const val = Number(rate);
+    if (!Number.isFinite(val) || val < 0.5 || val > 1.5) return;
+    if (window.state) window.state.speechRate = val;
+    try { localStorage.setItem('fluency_speech_rate_v1', String(val)); } catch (_) {}
+}
+
+window.getSpeechRate = getSpeechRate;
+window.setSpeechRate = setSpeechRate;
 
 // Preload voices (they may not be available immediately)
 if (window.speechSynthesis) {

@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v396"
+EXPECTED_CACHE_NAME = "flashcards-v397"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -494,8 +494,8 @@ class ProductShellTests(unittest.TestCase):
             '.range-btn-new:not(.has-progress):not(:hover)',
             light_css,
         )
-        self.assertIn('css/light-theme.css?v=20260914a', html)
-        self.assertIn('/css/light-theme.css?v=20260914a', worker)
+        self.assertIn('css/light-theme.css?v=20260914b', html)
+        self.assertIn('/css/light-theme.css?v=20260914b', worker)
 
     def test_active_release_aliases_are_never_cached(self) -> None:
         worker = (APP_ROOT / "service-worker.js").read_text(encoding="utf-8")
@@ -567,7 +567,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260831a", worker)
-        self.assertIn("/js/main.js?v=20260914a", worker)
+        self.assertIn("/js/main.js?v=20260914b", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -995,4 +995,52 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("window.toggleRareSenses = toggleRareSenses;", flashcards)
         self.assertIn(".rare-senses-toggle-btn", css)
         self.assertIn(".rare-senses-toggle-wrap", css)
+
+    def test_rare_senses_dictionary_provenance_and_accordion(self) -> None:
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
+        light = (APP_ROOT / "css" / "light-theme.css").read_text(encoding="utf-8")
+
+        self.assertIn("dictionary-provenance-badge", flashcards)
+        self.assertIn("dict-provenance-icon", flashcards)
+        self.assertIn("meaning-row-rare", flashcards)
+        self.assertIn("rare-senses-chevron", flashcards)
+        self.assertIn(".dictionary-provenance-badge", css)
+        self.assertIn(".meaning-row.meaning-row-rare", css)
+        self.assertIn(".dictionary-provenance-badge", light)
+
+    def test_deck_complete_circular_score_ring_and_stat_cards(self) -> None:
+        html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
+        modals = (APP_ROOT / "js" / "flashcards-modals.js").read_text(encoding="utf-8")
+        css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
+        light = (APP_ROOT / "css" / "light-theme.css").read_text(encoding="utf-8")
+
+        self.assertIn('id="deckCompleteScoreContainer"', html)
+        self.assertIn('id="deckScoreRingFill"', html)
+        self.assertIn('id="completeAccuracyNumber"', html)
+        self.assertIn('class="deck-stat-badge"', html)
+
+        self.assertIn("deckCompleteScoreContainer", modals)
+        self.assertIn("deckScoreRingFill", modals)
+        self.assertIn("ringFill.style.strokeDashoffset", modals)
+
+        self.assertIn(".deck-score-ring", css)
+        self.assertIn(".deck-score-ring-fill", css)
+        self.assertIn(".deck-score-number", css)
+        self.assertIn(".deck-score-ring-bg", light)
+
+    def test_audio_playback_word_highlight_sync_states(self) -> None:
+        spotify = (APP_ROOT / "js" / "spotify.js").read_text(encoding="utf-8")
+        speech = (APP_ROOT / "js" / "speech.js").read_text(encoding="utf-8")
+        state = (APP_ROOT / "js" / "state.js").read_text(encoding="utf-8")
+        css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
+
+        self.assertIn("is-spotify-playing", spotify)
+        self.assertIn("is-speaking-active", speech)
+        self.assertIn("speechRate: 0.9", state)
+        self.assertIn("window.getSpeechRate = getSpeechRate;", speech)
+        self.assertIn("window.setSpeechRate = setSpeechRate;", speech)
+        self.assertIn("body.is-spotify-playing .sentence .example-word-highlight", css)
+        self.assertIn("body.is-speaking-active .sentence .example-word-highlight", css)
+
 

@@ -83,6 +83,8 @@ export const state = {
     spacedRepetitionEnabled: true,
     // Frequency display on back of cards: 'labels' (Common, Uncommon, Rare) or 'percentages' (78%)
     senseProminenceMode: 'labels',
+    // Speech pronunciation rate: 0.9 (normal) or 0.75 (slow practice)
+    speechRate: 0.9,
 
     // Config / data
     config: null,
