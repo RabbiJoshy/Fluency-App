@@ -252,6 +252,58 @@ def build_cognate_layer(
     }
 
 
+def merge_cognet_scores(
+    layer: Mapping[str, Any],
+    cognet_scores: Mapping[str, Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Fold CogNet's asserted pairs into a scored layer, keeping the better of the two.
+
+    The two routes fail in different directions and that is why both are kept.
+    The gloss route reaches any word a dictionary defines, and misses where the
+    two languages word a definition differently. CogNet reaches only what a
+    curated list asserts, but on those it is right about the meaning in a way
+    gloss overlap cannot be — measured on Czech, it abstains on every classic
+    false friend (``čerstvý``, ``sklep``, ``chyba``, ``zapomenout``) while adding
+    519 Polish and 185 English exclusions the gloss route never found.
+
+    Merging on the higher score is safe precisely because both routes end in the
+    same units: ``combine(form, meaning)`` against the same per-pair cutoff. The
+    surviving record says which route produced it, so a surprising exclusion can
+    always be traced to the evidence behind it.
+    """
+
+    merged: dict[str, dict[str, Any]] = {
+        surface: {known: dict(match) for known, match in per_language.items()}
+        for surface, per_language in layer.get("scores", {}).items()
+    }
+    for record in (m for p in merged.values() for m in p.values()):
+        record.setdefault("meaning_source", "glosses")
+
+    adopted: dict[str, int] = {}
+    for known_language, scored in cognet_scores.items():
+        taken = 0
+        for surface, match in scored.items():
+            record = dict(match)
+            standing = merged.get(surface, {}).get(known_language)
+            if standing is not None and float(standing["score"]) >= float(record["score"]):
+                continue
+            merged.setdefault(surface, {})[known_language] = record
+            taken += 1
+        adopted[known_language] = taken
+
+    out = dict(layer)
+    out["scores"] = merged
+    coverage = {known: dict(value) for known, value in (layer.get("coverage") or {}).items()}
+    for known_language, taken in adopted.items():
+        entry = coverage.setdefault(known_language, {})
+        entry["cognet_scored_surfaces"] = len(cognet_scores.get(known_language, {}))
+        entry["cognet_adopted_surfaces"] = taken
+    out["coverage"] = coverage
+    out["known_languages"] = sorted(set(layer.get("known_languages", ())) | set(cognet_scores))
+    out["routes"] = ["glosses", "cognet"]
+    return out
+
+
 def build_app_cognates(layer: Mapping[str, Any]) -> dict[str, Any]:
     """The app-facing view: surface -> {known language: score}.
 

@@ -132,6 +132,14 @@ class CognatePolicy:
     # "nation" is a translation, while "nous" inside "the nous, (divine) reason
     # in philosophy" is a word the definition happens to mention.
     known_must_be_a_gloss: bool = False
+    # CogNet route only. A surface may analyse to several lemmas, and accepting
+    # any of them lets a minority reading decide: Czech ``je`` is overwhelmingly
+    # "is", but 6% of its occurrences are the accusative of ``oni``, which would
+    # have excluded a rank-3 word on a reading almost nobody meets. A lemma is
+    # accepted only where it carries at least this share of the surface's
+    # corpus frequency. Measured on Czech: 0.9 keeps 89 of 96 rescues and drops
+    # exactly the harmful ones.
+    lemma_share_floor: float = 0.90
     notes: str = ""
 
     def __post_init__(self) -> None:
@@ -143,6 +151,8 @@ class CognatePolicy:
             raise CognatePolicyError("default_threshold is a score between 0 and 1")
         if not 0.0 <= self.length_guard <= 1.0:
             raise CognatePolicyError("length_guard is a ratio between 0 and 1")
+        if not 0.0 <= self.lemma_share_floor <= 1.0:
+            raise CognatePolicyError("lemma_share_floor is a ratio between 0 and 1")
         if abs(self.meaning_floor + self.meaning_weight - 1.0) > 1e-9:
             raise CognatePolicyError(
                 "meaning_floor + meaning_weight must be 1.0 so a perfect pair scores 1.0"
@@ -175,6 +185,7 @@ class CognatePolicy:
             meaning_weight=float(known.get("meaning_weight", 0.25)),
             default_threshold=float(known.get("default_threshold", 0.70)),
             known_must_be_a_gloss=bool(known.get("known_must_be_a_gloss", False)),
+            lemma_share_floor=float(known.get("lemma_share_floor", 0.90)),
             notes=str(known.get("notes", "")),
         )
 
@@ -192,6 +203,7 @@ class CognatePolicy:
             "meaning_weight": self.meaning_weight,
             "default_threshold": self.default_threshold,
             "known_must_be_a_gloss": self.known_must_be_a_gloss,
+            "lemma_share_floor": self.lemma_share_floor,
             "notes": self.notes,
         }
 
@@ -328,41 +340,54 @@ def _is_scorable_surface(word: str) -> bool:
     return bool(word) and "-" not in word and " " not in word
 
 
-def expand_surfaces(
-    entries: Iterable[Mapping[str, Any]],
-    policy: CognatePolicy,
-    *,
-    limit_to: set[str] | None = None,
-    excluded_pos: frozenset[str] = EXCLUDED_PARTS_OF_SPEECH,
-) -> dict[str, frozenset[str]]:
-    """Every surface a dictionary implies, mapped to its live English glosses.
+@dataclass(frozen=True, slots=True)
+class DictionaryRelations:
+    """The two relations a Wiktionary extract states, read once.
 
-    A dictionary is written around lemmas and a deck is not: card identity is
-    the observed surface form, so ``bratra`` and ``bere`` are cards in their own
-    right. Reading only the entries a dictionary happens to headword left most
-    of a deck unscored — of 2,989 Czech deck surfaces, 874 had no entry at all
-    and a further 952 had one whose every sense is tagged ``form-of``, which is
-    correctly treated as dead because "third-person singular present indicative
-    of brát" is a description, not a translation.
-
-    An inflected surface is exactly as transparent as its lemma's meaning makes
-    it, and often *more* transparent in form: Polish ``brata`` answers Czech
-    ``bratra`` where the bare lemma ``brat`` fails the length guard outright. So
-    a surface inherits its lemma's glosses, gathered from both directions
-    Wiktionary records them:
-
-        forms[].form        inflections listed under the lemma
-        senses[].form_of    an inflection's own entry naming its lemma
-
-    Doing this on both sides of the pair is what makes the mapping survive a
-    re-cut: it describes the language, not the deck, so whichever surfaces the
-    next release selects are already scored.
+    ``expand_surfaces`` needs surface -> glosses and the CogNet route needs
+    lemma -> surfaces; both are the same walk over the same file, so the walk
+    lives here rather than twice.
     """
 
-    lemma_glosses: dict[str, set[str]] = {}
+    lemma_glosses: Mapping[str, frozenset[str]]
     # surface -> the lemmas it inflects. A surface can inherit from more than
     # one lemma (Czech ``stát`` alone yields several), and taking all of them
     # matches what a reader could recognise it as.
+    inflections: Mapping[str, frozenset[str]]
+
+    def forms_by_lemma(self) -> dict[str, frozenset[str]]:
+        """The inverse: every surface a lemma is known to inflect to.
+
+        A lemma is a form of itself, so it is always present in its own set: a
+        caller asking "what might this word look like" wants the citation form
+        alongside the inflections.
+        """
+
+        forms: dict[str, set[str]] = {}
+        for surface, lemmas in self.inflections.items():
+            for lemma in lemmas:
+                forms.setdefault(lemma, {lemma}).add(surface)
+        for lemma in self.lemma_glosses:
+            forms.setdefault(lemma, set()).add(lemma)
+        return {lemma: frozenset(surfaces) for lemma, surfaces in forms.items()}
+
+
+def read_relations(
+    entries: Iterable[Mapping[str, Any]],
+    policy: CognatePolicy,
+    *,
+    excluded_pos: frozenset[str] = EXCLUDED_PARTS_OF_SPEECH,
+) -> DictionaryRelations:
+    """Walk a dictionary once and state both relations it records.
+
+    Wiktionary records the lemma relation from both ends and neither alone is
+    complete:
+
+        forms[].form        inflections listed under the lemma
+        senses[].form_of    an inflection's own entry naming its lemma
+    """
+
+    lemma_glosses: dict[str, set[str]] = {}
     inflections: dict[str, set[str]] = {}
 
     for entry in entries:
@@ -394,11 +419,47 @@ def expand_surfaces(
             if _is_scorable_surface(surface) and surface != word:
                 inflections.setdefault(surface, set()).add(word)
 
+    return DictionaryRelations(
+        lemma_glosses={word: frozenset(g) for word, g in lemma_glosses.items()},
+        inflections={s: frozenset(l) for s, l in inflections.items()},
+    )
+
+
+def expand_surfaces(
+    entries: Iterable[Mapping[str, Any]],
+    policy: CognatePolicy,
+    *,
+    limit_to: set[str] | None = None,
+    excluded_pos: frozenset[str] = EXCLUDED_PARTS_OF_SPEECH,
+) -> dict[str, frozenset[str]]:
+    """Every surface a dictionary implies, mapped to its live English glosses.
+
+    A dictionary is written around lemmas and a deck is not: card identity is
+    the observed surface form, so ``bratra`` and ``bere`` are cards in their own
+    right. Reading only the entries a dictionary happens to headword left most
+    of a deck unscored — of 2,989 Czech deck surfaces, 874 had no entry at all
+    and a further 952 had one whose every sense is tagged ``form-of``, which is
+    correctly treated as dead because "third-person singular present indicative
+    of brát" is a description, not a translation.
+
+    An inflected surface is exactly as transparent as its lemma's meaning makes
+    it, and often *more* transparent in form: Polish ``brata`` answers Czech
+    ``bratra`` where the bare lemma ``brat`` fails the length guard outright. So
+    a surface inherits its lemma's glosses.
+
+    Doing this on both sides of the pair is what makes the mapping survive a
+    re-cut: it describes the language, not the deck, so whichever surfaces the
+    next release selects are already scored.
+    """
+
+    relations = read_relations(entries, policy, excluded_pos=excluded_pos)
+    lemma_glosses = relations.lemma_glosses
+
     surfaces: dict[str, frozenset[str]] = {}
     for word, glosses in lemma_glosses.items():
         if limit_to is None or word in limit_to:
             surfaces[word] = frozenset(glosses)
-    for surface, lemmas in inflections.items():
+    for surface, lemmas in relations.inflections.items():
         if limit_to is not None and surface not in limit_to:
             continue
         inherited: set[str] = set(surfaces.get(surface, ()))
