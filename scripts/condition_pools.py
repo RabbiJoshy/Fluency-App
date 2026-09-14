@@ -106,6 +106,7 @@ def main() -> int:
                     source=source,
                     alignment=scores.get(sentence_id),
                     alignment_floor=args.alignment_floor,
+                    language=language,
                 )
             )
         cards.append(

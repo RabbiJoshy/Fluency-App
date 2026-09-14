@@ -115,3 +115,23 @@ class VarietyTaggingTests(unittest.TestCase):
             alignment_floor=0.70,
         )
         self.assertTrue(entry["eligible"])
+
+
+class VarietyIsLanguageScopedTests(unittest.TestCase):
+    """The variety patterns describe Portuguese and nothing else.
+
+    Run against Spanish they match ordinary grammar: "estoy haciendo" is how
+    Spanish forms the progressive, not evidence of anything. A first run over
+    the Spanish pool tagged 7,396 candidates Brazilian on exactly that basis.
+    """
+
+    def test_spanish_is_not_given_a_portuguese_verdict(self) -> None:
+        from fluency.harvest.conditioning import variety
+
+        self.assertEqual(variety("Estoy haciendo la cena.", "es")[0], "not_applicable")
+        self.assertEqual(variety("Ella está comiendo ahora.", "es")[0], "not_applicable")
+
+    def test_portuguese_still_is(self) -> None:
+        from fluency.harvest.conditioning import variety
+
+        self.assertEqual(variety("Estou fazendo o jantar.", "pt")[0], "brazilian")

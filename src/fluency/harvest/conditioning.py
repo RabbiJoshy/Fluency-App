@@ -46,12 +46,23 @@ _EUROPEAN = (
 )
 
 
-def variety(text: str) -> tuple[str, tuple[str, ...]]:
-    """Which side of the Atlantic a sentence sounds like, and why.
+# The patterns below are Portuguese. Run against Spanish they match ordinary
+# grammar -- "estoy haciendo" is not Brazilian, it is how Spanish forms the
+# progressive -- so the tag is only meaningful for the language it describes.
+_VARIETY_LANGUAGES = {"pt"}
+
+
+def variety(text: str, language: str = "pt") -> tuple[str, tuple[str, ...]]:
+    """Which side of the Atlantic a Portuguese sentence sounds like, and why.
+
+    Returns "not_applicable" for any other language rather than a tag derived
+    from patterns that do not describe it.
 
     "fato" is deliberately in neither list: it is a suit in Lisbon and a fact
     in Sao Paulo, so it says nothing on its own.
     """
+    if language not in _VARIETY_LANGUAGES:
+        return "not_applicable", ()
     brazilian = tuple(name for pattern, name in _BRAZILIAN if pattern.search(text))
     european = tuple(name for pattern, name in _EUROPEAN if pattern.search(text))
     if brazilian and european:
@@ -89,10 +100,11 @@ def condition_candidate(
     source: str,
     alignment: float | None,
     alignment_floor: float,
+    language: str = "pt",
 ) -> dict[str, Any]:
     metrics = candidate.get("metrics") or {}
     score = float(metrics.get("score") or 0.0)
-    kind, evidence = variety(text)
+    kind, evidence = variety(text, language)
     # An unscored pair keeps its place: silence is not evidence of misalignment.
     rejected = (
         "below_alignment_floor"
