@@ -153,6 +153,53 @@ def read_surface_lemmas(path: Path | str) -> dict[str, tuple[LemmaAnalysis, ...]
     return out
 
 
+def read_ledger(path: Path | str) -> dict[str, tuple[LemmaAnalysis, ...]]:
+    """Read a surface ledger, whose lemma has already been *elected*.
+
+    The earlier surface-view file offered a bag of readings and left the choosing
+    here, which is why ``lemma_share_floor`` exists: something had to stop a 6%
+    reading speaking for a rank-3 word. A ledger states one ``lemma`` with its
+    ``lemma_provenance``, so the election is already made, by a process that saw
+    more evidence than a frequency ratio — Wiktionary headwords, form_of links,
+    SpanishDict, reverse conjugation, and manual corrections.
+
+    So the elected lemma takes the full share and alternates take none. They are
+    still carried, because a surface that inflects two lemmas is a real thing and
+    a per-sense exclusion will want them; they simply do not speak for the
+    surface on their own.
+    """
+
+    source = Path(path)
+    if not source.is_file():
+        raise CognetSourceError(f"no surface ledger at {source}")
+    payload = json.loads(source.read_text(encoding="utf-8"))
+    surfaces = payload.get("surfaces")
+    if not isinstance(surfaces, Mapping):
+        raise CognetSourceError(f"{source} has no surfaces map")
+
+    out: dict[str, tuple[LemmaAnalysis, ...]] = {}
+    for surface, record in surfaces.items():
+        if not isinstance(record, Mapping):
+            continue
+        if record.get("verdict") == "exclude":
+            # The ledger has already ruled this surface out of the deck; scoring
+            # it would publish a verdict on a card that will not exist.
+            continue
+        elected = str(record.get("lemma") or "").strip().lower()
+        if not elected:
+            continue
+        parts = frozenset(str(p) for p in (record.get("part_of_speech") or []) if p)
+        readings = [LemmaAnalysis(elected, 1.0, parts)]
+        for alternate in record.get("lemma_alternates") or []:
+            if not isinstance(alternate, Mapping):
+                continue
+            lemma = str(alternate.get("lemma") or "").strip().lower()
+            if lemma and lemma != elected:
+                readings.append(LemmaAnalysis(lemma, 0.0, parts))
+        out[str(surface).strip().lower()] = tuple(readings)
+    return out
+
+
 # ------------------------------------------------------------------- the pairs
 
 

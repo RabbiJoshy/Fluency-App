@@ -392,3 +392,61 @@ class MergeTests(unittest.TestCase):
             {"sk": {"stopa": {"known_surface": "stopa", "score": 0.9, "meaning_source": "cognet"}}},
         )
         self.assertEqual(merged["known_languages"], ["pl", "sk"])
+
+
+class LedgerTests(unittest.TestCase):
+    """A ledger has already elected the lemma; this route honours the election."""
+
+    def ledger(self, surfaces: dict) -> Path:
+        handle = tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8")
+        json.dump({"language": "cs", "surfaces": surfaces}, handle, ensure_ascii=False)
+        handle.close()
+        return Path(handle.name)
+
+    def test_the_elected_lemma_speaks_for_the_surface(self):
+        from fluency.features.cognet import read_ledger
+
+        path = self.ledger({"je": {"lemma": "být", "verdict": "keep"}})
+        analyses = read_ledger(path)["je"]
+        self.assertEqual(analyses[0].lemma, "být")
+        self.assertEqual(analyses[0].share, 1.0)
+
+    def test_alternates_are_carried_but_do_not_speak_alone(self):
+        from fluency.features.cognet import read_ledger
+
+        path = self.ledger(
+            {
+                "je": {
+                    "lemma": "být",
+                    "verdict": "keep",
+                    "lemma_alternates": [{"lemma": "oni", "provenance": "CNK"}],
+                }
+            }
+        )
+        analyses = {a.lemma: a.share for a in read_ledger(path)["je"]}
+        self.assertEqual(analyses["být"], 1.0)
+        self.assertEqual(analyses["oni"], 0.0)
+
+    def test_a_surface_the_ledger_excluded_is_never_scored(self):
+        from fluency.features.cognet import read_ledger
+
+        path = self.ledger({"fscx100": {"lemma": "fscx100", "verdict": "exclude"}})
+        self.assertEqual(read_ledger(path), {})
+
+    def test_a_surface_with_no_elected_lemma_is_absent(self):
+        from fluency.features.cognet import read_ledger
+
+        path = self.ledger({"x": {"verdict": "keep"}})
+        self.assertEqual(read_ledger(path), {})
+
+    def test_part_of_speech_rides_along_with_the_election(self):
+        from fluency.features.cognet import read_ledger
+
+        path = self.ledger({"pes": {"lemma": "pes", "verdict": "keep", "part_of_speech": ["noun"]}})
+        self.assertEqual(read_ledger(path)["pes"][0].parts_of_speech, frozenset({"noun"}))
+
+    def test_a_missing_ledger_says_so(self):
+        from fluency.features.cognet import CognetSourceError, read_ledger
+
+        with self.assertRaises(CognetSourceError):
+            read_ledger(Path("/nonexistent/ledger.json"))
