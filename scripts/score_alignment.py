@@ -35,6 +35,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-dir", type=Path, required=True)
     parser.add_argument("--out", type=Path)
+    parser.add_argument("--shared-cache", type=Path,
+                        help="cross-run score store (default: <workspace>/embeddings/alignment/<lang>.json)")
     parser.add_argument("--batch-size", type=int, default=256)
     parser.add_argument("--device")
     parser.add_argument("--floor", type=float, default=DEFAULT_ALIGNMENT_FLOOR)
@@ -42,6 +44,14 @@ def main() -> int:
 
     harvest = args.run_dir / "stages/03_sentence_harvest/output"
     out = args.out or (args.run_dir / "stages/03b_alignment/output/alignment.json")
+    # A sentence id is derived from the sentence, so a score stays true across
+    # runs. Keeping the cache beside the run would make every re-harvest pay the
+    # full scoring cost again -- 26 minutes a language -- for sentences already
+    # scored. The run keeps its own copy for provenance; this one is the store.
+    language = args.run_dir.resolve().parents[1].name
+    shared = args.shared_cache or (
+        args.run_dir.resolve().parents[3] / f"embeddings/alignment/{language}.json"
+    )
 
     bank: dict[str, tuple[str, str]] = {}
     with (harvest / "sentence-bank.jsonl").open(encoding="utf-8") as handle:
@@ -64,9 +74,11 @@ def main() -> int:
     needed &= bank.keys()
 
     # Scoring is deterministic per sentence, so a rerun only pays for what is new.
-    known = read_cache(out)
+    known = read_cache(shared)
+    known.update(read_cache(out))
     todo = sorted(needed - known.keys())
-    print(f"candidates: {len(needed):,} ({len(known):,} cached, {len(todo):,} to score)")
+    print(f"shared cache: {shared} ({len(known):,} known)")
+    print(f"candidates: {len(needed):,} ({len(needed & known.keys()):,} cached, {len(todo):,} to score)")
     if todo:
         started = time.time()
         scores = score_pairs(
@@ -77,7 +89,10 @@ def main() -> int:
         elapsed = time.time() - started
         print(f"scored {len(todo):,} in {elapsed:.0f}s ({len(todo)/max(elapsed,1e-9):,.0f}/s)")
         known.update(dict(zip(todo, scores)))
-    write_cache(out, known)
+    write_cache(shared, known)
+    # The run keeps only what it actually used, so its artifact stays a record
+    # of this harvest rather than of every harvest before it.
+    write_cache(out, {k: v for k, v in known.items() if k in needed})
 
     values = [known[k] for k in needed if k in known]
     below = sum(1 for v in values if v < args.floor)
