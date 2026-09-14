@@ -95,23 +95,25 @@ def select_occurrences(
     policy: OccurrenceSamplingPolicy,
     *,
     card_id: str,
-    misaligned: AbstractSet[str] | None = None,
+    ineligible: AbstractSet[str] | None = None,
 ) -> SurfaceSelection:
     """Deterministically choose which occurrences reach WSD for one card.
 
-    `misaligned` names sentences whose translation failed the alignment floor.
-    They are dropped before the cap rather than ranked below it: embedding one
-    spends a model call on a pair that must not be displayed whatever WSD says
-    about it. Measured on Portuguese, the harvest holds 44.8 candidates a card
-    and the floor removes 0.55%, so dropping them costs no supply. They are
+    `ineligible` names sentences the conditioning step ruled out at the end of
+    harvesting -- a translation that failed the alignment floor, say. The
+    verdict is read, never re-derived here: WSD judges senses and nothing else.
+    They are dropped before the cap rather than ranked below it, because
+    embedding one spends a model call on a pair that must not be displayed
+    whatever WSD says about it. Supply absorbs the loss: the Portuguese harvest
+    holds 40 eligible candidates a card against the 10 a card shows. They are
     reported as overflow, which is already the channel for "harvested, not
     evaluated".
     """
 
     ordered = sorted(candidates, key=_rank_key)
-    if misaligned:
-        eligible = [item for item in ordered if str(item["sentence_id"]) not in misaligned]
-        rejected = [item for item in ordered if str(item["sentence_id"]) in misaligned]
+    if ineligible:
+        eligible = [item for item in ordered if str(item["sentence_id"]) not in ineligible]
+        rejected = [item for item in ordered if str(item["sentence_id"]) in ineligible]
     else:
         eligible, rejected = list(ordered), []
     chosen = eligible[: policy.cap_per_surface]

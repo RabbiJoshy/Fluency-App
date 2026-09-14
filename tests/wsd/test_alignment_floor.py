@@ -24,7 +24,7 @@ class AlignmentFloorTests(unittest.TestCase):
 
     def test_a_misaligned_pair_yields_its_slot_to_the_next_candidate(self) -> None:
         selection = select_occurrences(
-            self.candidates, self.policy, card_id="card", misaligned={"b"}
+            self.candidates, self.policy, card_id="card", ineligible={"b"}
         )
         self.assertEqual(selection.selected, ("a", "c"))
         self.assertIn("b", selection.overflow)
@@ -35,7 +35,7 @@ class AlignmentFloorTests(unittest.TestCase):
 
     def test_every_candidate_is_still_accounted_for(self) -> None:
         selection = select_occurrences(
-            self.candidates, self.policy, card_id="card", misaligned={"a"}
+            self.candidates, self.policy, card_id="card", ineligible={"a"}
         )
         self.assertEqual(
             sorted(selection.selected + selection.overflow), ["a", "b", "c"]
@@ -55,3 +55,63 @@ class AlignmentFloorTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class VarietyTaggingTests(unittest.TestCase):
+    """European and Brazilian Portuguese are tagged, not filtered.
+
+    Measured on the 375,598-sentence Portuguese bank: Tatoeba is 17.4%
+    Brazilian against 2.6% European, OpenSubtitles 14.8% European against 8.5%
+    Brazilian. For a European deck it is Tatoeba, not the subtitles, that pulls
+    the wrong way. 76% of sentences signal neither, so a tag is the right
+    output and a filter is not.
+    """
+
+    def test_the_progressive_separates_the_two(self) -> None:
+        from fluency.harvest.conditioning import variety
+
+        self.assertEqual(variety("Estou a fazer o jantar.")[0], "european")
+        self.assertEqual(variety("Estou fazendo o jantar.")[0], "brazilian")
+
+    def test_everyday_lexis_separates_them(self) -> None:
+        from fluency.harvest.conditioning import variety
+
+        self.assertEqual(variety("Apanhei o autocarro para casa.")[0], "european")
+        self.assertEqual(variety("Peguei o ônibus para casa.")[0], "brazilian")
+
+    def test_most_sentences_belong_to_neither(self) -> None:
+        from fluency.harvest.conditioning import variety
+
+        self.assertEqual(variety("O livro está na mesa.")[0], "neutral")
+
+    def test_fato_is_claimed_by_neither(self) -> None:
+        """A suit in Lisbon and a fact in Sao Paulo: it says nothing alone."""
+        from fluency.harvest.conditioning import variety
+
+        self.assertEqual(variety("Ele comprou um fato novo.")[0], "neutral")
+
+    def test_a_rejected_candidate_keeps_its_reason(self) -> None:
+        from fluency.harvest.conditioning import condition_candidate
+
+        entry = condition_candidate(
+            {"sentence_id": "s", "metrics": {"score": 1.0, "target_tokens": 8}},
+            text="Estou a fazer o jantar.",
+            source="opensubtitles",
+            alignment=0.12,
+            alignment_floor=0.70,
+        )
+        self.assertFalse(entry["eligible"])
+        self.assertEqual(entry["rejected_for"], "below_alignment_floor")
+        self.assertEqual(entry["tags"]["variety"], "european")
+
+    def test_an_unscored_pair_stays_eligible(self) -> None:
+        from fluency.harvest.conditioning import condition_candidate
+
+        entry = condition_candidate(
+            {"sentence_id": "s", "metrics": {"score": 1.0, "target_tokens": 8}},
+            text="O livro está na mesa.",
+            source="tatoeba",
+            alignment=None,
+            alignment_floor=0.70,
+        )
+        self.assertTrue(entry["eligible"])

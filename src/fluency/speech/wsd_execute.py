@@ -47,11 +47,6 @@ from fluency.wsd.sampling import (
     select_occurrences,
 )
 from fluency.wsd.sampling import sole_leaf
-from fluency.harvest.alignment import (
-    DEFAULT_ALIGNMENT_FLOOR,
-    below_floor,
-    read_cache as read_alignment,
-)
 from fluency.wsd.runner import (
     ClosedMenuWSDRunner,
     WSDComponents,
@@ -465,12 +460,8 @@ def main() -> None:
              "everything each time and destroys the amortisation.",
     )
     parser.add_argument(
-        "--alignment", type=Path,
-        help="alignment-score artifact; pairs below the floor are dropped before the cap",
-    )
-    parser.add_argument(
-        "--alignment-floor", type=float, default=DEFAULT_ALIGNMENT_FLOOR,
-        help="LaBSE cosine below which a translation is treated as misaligned",
+        "--pools", type=Path,
+        help="conditioned-pool artifact; candidates it marks ineligible never reach the cap",
     )
     parser.add_argument(
         "--execution-cap", type=int, default=DEFAULT_EXECUTION_CAP,
@@ -564,10 +555,20 @@ def main() -> None:
 
     # --- gather every exact text the run needs, then embed the misses ---
     policy = OccurrenceSamplingPolicy(cap_per_surface=args.execution_cap)
-    alignment_scores = read_alignment(args.alignment) if args.alignment else {}
-    if args.alignment:
-        print(f"alignment scores: {len(alignment_scores):,} sentences, floor {args.alignment_floor}")
-    dropped_misaligned = 0
+    # The pool carries a verdict per candidate, reached by the conditioning step
+    # that runs at the end of harvesting. WSD reads it; it does not re-derive it,
+    # and it does not judge a sentence on anything but its senses.
+    ineligible: set[str] = set()
+    if args.pools:
+        pools = json.loads(args.pools.read_text(encoding="utf-8"))
+        for pool_card in pools.get("cards", []):
+            for entry in pool_card.get("candidates", []):
+                if not entry.get("eligible", True):
+                    ineligible.add(str(entry["sentence_id"]))
+        print(
+            f"conditioned pool: {args.pools.name}, "
+            f"{len(ineligible):,} candidates marked ineligible"
+        )
     needed: set[str] = set()
     work: list[tuple[dict[str, Any], dict[str, Any], str, str, str]] = []
     embedding_scored_cards: set[str] = set()
@@ -577,18 +578,8 @@ def main() -> None:
     for card in candidates["cards"]:
         card_id = card["card_id"]
         menu_card = menu_by_card.get(card_id)
-        misaligned = (
-            below_floor(
-                alignment_scores,
-                (str(item["sentence_id"]) for item in card["candidates"]),
-                args.alignment_floor,
-            )
-            if alignment_scores
-            else set()
-        )
-        dropped_misaligned += len(misaligned)
         selection = select_occurrences(
-            card["candidates"], policy, card_id=card_id, misaligned=misaligned
+            card["candidates"], policy, card_id=card_id, ineligible=ineligible
         )
         selections.append(selection)
         for sentence_id in selection.overflow:
