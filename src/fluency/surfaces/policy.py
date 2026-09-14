@@ -120,6 +120,13 @@ def verdict(
     if decision == EXCLUDE and (present & VETOES) and not (present & settled):
         decision = REVIEW
         reasons.append("vetoed_by:" + ",".join(sorted(present & VETOES)))
+    # Reading the case closes it. Review means "nobody has looked yet", so an
+    # adjudication that says the surface is a word has to clear the flag that
+    # raised it -- otherwise the queue never empties and the same surfaces come
+    # back every time it is regenerated.
+    if "adjudicated_keep" in present and not (present & settled):
+        decision = KEEP
+        reasons = ["adjudicated_keep"]
     return {
         "verdict": decision,
         "reason_codes": sorted(set(reasons)),

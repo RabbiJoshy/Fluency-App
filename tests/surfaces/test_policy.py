@@ -65,3 +65,36 @@ class VerdictTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class AdjudicationTests(unittest.TestCase):
+    """Reading a case closes it, in whichever direction the reading went."""
+
+    def test_keeping_clears_the_flag_that_raised_the_review(self) -> None:
+        """Londres is capitalised because of what it names, not because it is
+        foreign. If the adjudication cannot clear the flag, the queue never
+        empties and the same surfaces return every time it is regenerated."""
+        found = verdict([obs("capitalised_in_corpus"), obs("adjudicated_keep")],
+                        DEFAULT_POLICY)
+        self.assertEqual(found["verdict"], KEEP)
+
+    def test_keeping_also_beats_a_conjunction(self) -> None:
+        """"dele" is de + le; SpanishDict answered in English but the surface
+        is Spanish."""
+        found = verdict([obs("english_wordlist"), obs("dictionary_entry_language"),
+                         obs("adjudicated_keep")], DEFAULT_POLICY)
+        self.assertEqual(found["verdict"], KEEP)
+
+    def test_excluding_is_not_undone_by_a_veto(self) -> None:
+        found = verdict([obs("lemma_resolved"), obs("adjudicated_exclude")],
+                        DEFAULT_POLICY)
+        self.assertEqual(found["verdict"], EXCLUDE)
+
+    def test_a_bare_dictionary_hit_is_no_longer_a_suspicion(self) -> None:
+        """Webster's Second lists no, a, la, y, es, en, para, bien and dinero."""
+        self.assertEqual(verdict([obs("english_wordlist")], DEFAULT_POLICY)["verdict"], KEEP)
+
+    def test_a_conjunction_still_convicts(self) -> None:
+        self.assertEqual(
+            verdict([obs("english_wordlist"), obs("dictionary_entry_language")],
+                    DEFAULT_POLICY)["verdict"], EXCLUDE)
