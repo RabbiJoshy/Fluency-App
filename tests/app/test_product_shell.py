@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v398"
+EXPECTED_CACHE_NAME = "flashcards-v399"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -494,8 +494,8 @@ class ProductShellTests(unittest.TestCase):
             '.range-btn-new:not(.has-progress):not(:hover)',
             light_css,
         )
-        self.assertIn('css/light-theme.css?v=20260914b', html)
-        self.assertIn('/css/light-theme.css?v=20260914b', worker)
+        self.assertIn('css/light-theme.css?v=20260914d', html)
+        self.assertIn('/css/light-theme.css?v=20260914d', worker)
 
     def test_active_release_aliases_are_never_cached(self) -> None:
         worker = (APP_ROOT / "service-worker.js").read_text(encoding="utf-8")
@@ -566,8 +566,8 @@ class ProductShellTests(unittest.TestCase):
             spotify.index("_loadSpotifyPlaybackSdk();"),
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
-        self.assertIn("/js/spotify.js?v=20260831a", worker)
-        self.assertIn("/js/main.js?v=20260914c", worker)
+        self.assertIn("/js/spotify.js?v=20260914d", worker)
+        self.assertIn("/js/main.js?v=20260914d", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -630,7 +630,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("spotify-music-visualizer", spotify)
         self.assertIn("spotify-playing-amplitude", css)
         self.assertNotIn("spotify-playing-ripple", css)
-        self.assertIn("/js/spotify.js?v=20260831a", worker)
+        self.assertIn("/js/spotify.js?v=20260914d", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_audit_accounts_and_flags_use_release_provenance(self) -> None:
@@ -1051,6 +1051,68 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("globalThis.state = state;", state_js)
         self.assertNotIn("state.senseProminenceMode || 'labels'", ui_js)
         self.assertNotIn("const useProminenceLabels = state.senseProminenceMode", flashcards_js)
+
+    def test_sense_display_and_rare_sense_attribution(self) -> None:
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        self.assertIn("isRareSense: true", flashcards)
+        self.assertIn("prominenceLabel: 'Rare'", flashcards)
+        self.assertIn("hasOnlyRareSenses: true", flashcards)
+        self.assertIn("sense-prominence-badge prominence-rare", flashcards)
+        self.assertIn("groupInfo.size === 1 && Math.round(g.pct * 100) >= 100", flashcards)
+        self.assertIn("window.getSenseProminenceInfo = getSenseProminenceInfo;", flashcards)
+
+    def test_spotify_soundwave_equalizer_structure(self) -> None:
+        spotify = (APP_ROOT / "js" / "spotify.js").read_text(encoding="utf-8")
+        css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
+        self.assertIn("for (let index = 0; index < 4; index++)", spotify)
+        self.assertIn("spotify-music-visualizer", spotify)
+        self.assertIn("spotify-playing-amplitude", css)
+        self.assertNotIn("rotate(calc(var(--bar-index)", css)
+
+    def test_perfect_set_celebration_and_confetti(self) -> None:
+        html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
+        modals = (APP_ROOT / "js" / "flashcards-modals.js").read_text(encoding="utf-8")
+        css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
+        self.assertIn('id="deckCompleteConfetti"', html)
+        self.assertIn("triggerDeckCompleteConfetti", modals)
+        self.assertIn("scoreContainer.classList.add('is-perfect')", modals)
+        self.assertIn("🌟 Perfect Set!", modals)
+        self.assertIn(".deck-complete-confetti", css)
+        self.assertIn(".deck-complete-score-container.is-perfect", css)
+
+    def test_keyboard_shortcuts_cheat_sheet_modal(self) -> None:
+        html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
+        self.assertIn('id="keyboardShortcutsModal"', html)
+        self.assertIn('id="closeKeyboardShortcutsModal"', html)
+        self.assertIn("toggleKeyboardShortcutsModal", flashcards)
+        self.assertIn("e.key === '?'", flashcards)
+        self.assertIn(".keyboard-shortcuts-content", css)
+        self.assertIn(".shortcut-kbd", css)
+
+    def test_find_word_filter_chips_and_prominence_badges(self) -> None:
+        html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
+        main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
+        css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
+        self.assertIn('id="findWordFilters"', html)
+        self.assertIn('data-filter="learned"', html)
+        self.assertIn('data-filter="review"', html)
+        self.assertIn('data-filter="unseen"', html)
+        self.assertIn("_findWordFilter", main)
+        self.assertIn("fw-meaning-group", main)
+        self.assertIn(".find-word-filters", css)
+        self.assertIn(".find-word-filter-btn.is-active", css)
+
+    def test_ambient_artist_glow_in_lyrics_mode(self) -> None:
+        main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
+        css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
+        light = (APP_ROOT / "css" / "light-theme.css").read_text(encoding="utf-8")
+        self.assertIn("--artist-ambient-glow", main)
+        self.assertIn("body.artist-mode #flashcardMode::before", css)
+        self.assertIn("var(--artist-ambient-glow", css)
+        self.assertIn("body.artist-mode #flashcardMode::before", light)
+
 
 
 

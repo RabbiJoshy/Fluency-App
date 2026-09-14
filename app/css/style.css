@@ -8487,58 +8487,63 @@
             }
         }
 
-        /* Confirmed playback uses the familiar circular audio-spectrum idiom:
-           sixteen radial bars change amplitude around the Spotify mark. The
-           element is injected by spotify.js only after Spotify reports that
-           audio is actually playing; a tap or accepted command cannot show it. */
+        /* Confirmed playback uses an authentic 4-bar soundwave equalizer
+           oscillation. The element is injected by spotify.js only after Spotify
+           reports that audio is actually playing. */
         .spotify-music-visualizer {
             position: absolute;
-            inset: -4px;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2.5px;
             border-radius: 50%;
+            background: rgba(10, 14, 20, 0.84);
             pointer-events: none;
             opacity: 0;
-            transition: opacity 0.16s ease;
+            transition: opacity 0.18s ease;
+            z-index: 2;
         }
         .spotify-btn.spotify-playing:not(.spotify-loading) .spotify-music-visualizer {
             opacity: 1;
         }
         .spotify-music-visualizer i {
-            position: absolute;
-            inset: 0;
-            transform: rotate(calc(var(--bar-index) * 22.5deg));
-        }
-        .spotify-music-visualizer i::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
+            display: block;
             width: 2.5px;
-            height: 7px;
+            height: 14px;
             border-radius: 999px;
             background: #1db954;
-            box-shadow: 0 0 4px rgba(29, 185, 84, 0.4);
-            transform: translateX(-50%) scaleY(0.38);
+            box-shadow: 0 0 5px rgba(29, 185, 84, 0.45);
             transform-origin: 50% 100%;
-            animation: spotify-playing-amplitude 0.68s ease-in-out infinite alternate;
-            animation-delay: calc(var(--bar-index) * -47ms);
+            animation: spotify-playing-amplitude 0.75s ease-in-out infinite alternate;
         }
-        .spotify-music-visualizer i:nth-child(3n)::before {
-            animation-duration: 0.52s;
+        .spotify-music-visualizer i:nth-child(1) {
+            animation-delay: 0s;
+            animation-duration: 0.62s;
         }
-        .spotify-music-visualizer i:nth-child(4n)::before {
-            animation-duration: 0.83s;
+        .spotify-music-visualizer i:nth-child(2) {
+            animation-delay: -0.28s;
+            animation-duration: 0.84s;
+        }
+        .spotify-music-visualizer i:nth-child(3) {
+            animation-delay: -0.5s;
+            animation-duration: 0.7s;
+        }
+        .spotify-music-visualizer i:nth-child(4) {
+            animation-delay: -0.15s;
+            animation-duration: 0.78s;
         }
         @keyframes spotify-playing-amplitude {
-            0% { transform: translateX(-50%) scaleY(0.32); opacity: 0.55; }
-            55% { transform: translateX(-50%) scaleY(0.72); opacity: 0.85; }
-            100% { transform: translateX(-50%) scaleY(1); opacity: 1; }
+            0% { transform: scaleY(0.22); opacity: 0.6; }
+            45% { transform: scaleY(0.95); opacity: 1; }
+            100% { transform: scaleY(0.38); opacity: 0.75; }
         }
-        /* Reduced motion keeps a static circular equalizer as the playing cue. */
+        /* Reduced motion keeps static equalizer bars as the playing cue. */
         @media (prefers-reduced-motion: reduce) {
-            .spotify-music-visualizer i::before {
+            .spotify-music-visualizer i {
                 animation: none;
-                transform: translateX(-50%) scaleY(0.65);
-                opacity: 0.85;
+                transform: scaleY(0.65);
+                opacity: 0.9;
             }
         }
 
@@ -16536,5 +16541,181 @@ body {
   height: 100%;
   background: var(--accent-primary);
   transition: width 0.3s ease;
+}
+
+/* 100% Set Accuracy Celebration & Confetti */
+.deck-complete-header {
+  position: relative;
+}
+
+.deck-complete-confetti {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.deck-complete-score-container.is-perfect .deck-score-ring-fill {
+  stroke: #fbbf24;
+  filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.7));
+}
+
+.deck-complete-score-container.is-perfect .deck-score-number {
+  color: #fbbf24;
+  text-shadow: 0 0 12px rgba(251, 191, 36, 0.5);
+  animation: perfect-score-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes perfect-score-pop {
+  0% { transform: scale(0.8); opacity: 0; }
+  60% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+/* Keyboard Shortcuts Modal */
+.keyboard-shortcuts-content {
+  padding: 0;
+  background: var(--bg-secondary);
+  border-radius: 14px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+}
+
+.keyboard-shortcuts-body {
+  padding: 16px 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.shortcut-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.shortcut-group-title {
+  font-family: var(--font-data);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent-primary);
+  margin-bottom: 2px;
+}
+
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--border-color) 45%, transparent);
+}
+
+.shortcut-row:last-child {
+  border-bottom: none;
+}
+
+.shortcut-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-family: var(--font-primary);
+}
+
+.shortcut-kbd-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.shortcut-or {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.shortcut-kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Find-a-Word Filter Chips & Meaning Prominence Group */
+.find-word-filters {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.find-word-filter-btn {
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-emphasis);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.find-word-filter-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--text-muted);
+}
+
+.find-word-filter-btn.is-active {
+  background: var(--accent-primary);
+  color: var(--accent-primary-text, #ffffff);
+  border-color: var(--accent-primary);
+}
+
+.find-word-result .fw-meaning-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Ambient Artist Atmospheric Glow in Lyrics Mode */
+body.artist-mode #flashcardMode {
+  position: relative;
+}
+
+body.artist-mode #flashcardMode::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(580px, 94vw);
+  height: min(680px, 86vh);
+  background: radial-gradient(ellipse at center, color-mix(in srgb, var(--artist-ambient-glow, var(--accent-primary)) 16%, transparent), transparent 72%);
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(28px);
+  opacity: 0.85;
 }
 
