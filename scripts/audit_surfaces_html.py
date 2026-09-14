@@ -60,95 +60,120 @@ def main() -> int:
     summary = view.get("summary", {})
     doc = f"""<!doctype html><meta charset="utf-8"><title>{lang} pre-WSD audit</title>
 <style>
-:root{{--bg:#fbfbfa;--fg:#1a1a18;--mut:#6b6b66;--line:#e2e2dd;--card:#fff;
+:root{{--bg:#fbfbfa;--fg:#1a1a18;--mut:#6f6f69;--line:#e4e4df;--card:#fff;--hov:#f3f3ef;
 --keep:#2f7d4f;--review:#9a6b00;--exclude:#b3261e}}
-@media(prefers-color-scheme:dark){{:root{{--bg:#161614;--fg:#eceae4;--mut:#9b978d;
---line:#2f2d28;--card:#1e1c19;--keep:#6fbf8b;--review:#d9a640;--exclude:#e8776d}}}}
-*{{box-sizing:border-box}}body{{margin:0;background:var(--bg);color:var(--fg);
-font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}}
-header{{position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--line);
-padding:14px 18px;z-index:5}}
-h1{{margin:0 0 8px;font-size:16px;font-weight:600}}
-.sum{{color:var(--mut);font-size:12.5px;margin-bottom:10px}}
-input,select{{font:inherit;padding:6px 9px;border:1px solid var(--line);border-radius:6px;
-background:var(--card);color:var(--fg);margin-right:8px}}
-input[type=search]{{width:260px}}
-main{{padding:12px 18px 60px;max-width:1180px}}
-.card{{background:var(--card);border:1px solid var(--line);border-radius:9px;
-padding:11px 13px;margin-bottom:9px}}
-.hd{{display:flex;flex-wrap:wrap;gap:9px;align-items:baseline}}
-.w{{font-weight:650;font-size:15px}}
-.rank{{color:var(--mut);font-variant-numeric:tabular-nums;font-size:12.5px}}
-.v{{font-size:11px;font-weight:650;text-transform:uppercase;letter-spacing:.04em;
-padding:1px 7px;border-radius:99px;border:1px solid currentColor}}
+@media(prefers-color-scheme:dark){{:root{{--bg:#141412;--fg:#ecebe5;--mut:#96938a;
+--line:#2d2b26;--card:#1c1a17;--hov:#232019;--keep:#6fbf8b;--review:#d9a640;--exclude:#e8776d}}}}
+*{{box-sizing:border-box}}
+body{{margin:0;background:var(--bg);color:var(--fg);
+font:13px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}}
+header{{position:sticky;top:0;z-index:9;background:var(--bg);
+border-bottom:1px solid var(--line);padding:12px 16px}}
+h1{{margin:0 0 6px;font-size:15px;font-weight:600}}
+.sum{{color:var(--mut);font-size:12px;margin-bottom:9px}}
+input,select{{font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:6px;
+background:var(--card);color:var(--fg);margin-right:7px}}
+input[type=search]{{width:230px}}
+table{{width:100%;border-collapse:collapse}}
+thead th{{position:sticky;top:96px;background:var(--bg);text-align:left;font-size:11px;
+text-transform:uppercase;letter-spacing:.05em;color:var(--mut);font-weight:600;
+padding:7px 9px;border-bottom:1px solid var(--line);z-index:8;white-space:nowrap}}
+tbody tr.r{{border-bottom:1px solid var(--line);cursor:pointer}}
+tbody tr.r:hover{{background:var(--hov)}}
+td{{padding:5px 9px;vertical-align:top}}
+td.n{{font-variant-numeric:tabular-nums;text-align:right;color:var(--mut);white-space:nowrap}}
+td.w{{font-weight:620}}
+.v{{font-size:10.5px;font-weight:650;text-transform:uppercase;letter-spacing:.04em}}
 .keep{{color:var(--keep)}}.review{{color:var(--review)}}.exclude{{color:var(--exclude)}}
-.tag{{font-size:11px;color:var(--mut);background:var(--bg);border:1px solid var(--line);
-padding:1px 6px;border-radius:4px}}
-.sup{{color:var(--mut);font-size:12.5px;font-variant-numeric:tabular-nums;margin-left:auto}}
-.lem{{font-size:12.5px;color:var(--mut);margin-top:3px}}
-table{{width:100%;border-collapse:collapse;margin-top:8px;font-size:13px}}
-td{{padding:3px 8px 3px 0;vertical-align:top;border-top:1px solid var(--line)}}
-td.s{{color:var(--mut);font-size:11px;width:26px;white-space:nowrap}}
-td.en{{color:var(--mut)}}
+.tag{{display:inline-block;font-size:10.5px;color:var(--mut);border:1px solid var(--line);
+padding:0 5px;border-radius:4px;margin:1px 3px 1px 0;white-space:nowrap}}
 .thin{{color:var(--exclude);font-weight:650}}
-.none{{color:var(--mut);font-style:italic;font-size:12.5px;margin-top:6px}}
-#more{{margin:18px 0;padding:9px 16px;font:inherit;border:1px solid var(--line);
+tr.d>td{{background:var(--card);padding:2px 9px 11px 30px}}
+tr.d table{{margin-top:4px}}
+tr.d td{{padding:3px 9px 3px 0;border-top:1px solid var(--line)}}
+tr.d td.s{{color:var(--mut);font-size:10.5px;width:24px}}
+.en{{color:var(--mut)}}
+.none{{color:var(--mut);font-style:italic}}
+.caret{{color:var(--mut);display:inline-block;width:11px}}
+#more{{margin:16px;padding:8px 15px;font:inherit;border:1px solid var(--line);
 border-radius:7px;background:var(--card);color:var(--fg);cursor:pointer}}
 </style>
 <header>
 <h1>{lang} &middot; pre-WSD audit</h1>
-<div class="sum">{view['derived_from']['surfaces']:,} surfaces &middot; {html.escape(json.dumps(summary))} &middot; sentences shown are the eligible ones the WSD cap would take first</div>
+<div class="sum">{view['derived_from']['surfaces']:,} surfaces &middot; {html.escape(json.dumps(summary))} &middot; click a row for the sentences the WSD cap would take first</div>
 <input type="search" id="q" placeholder="surface, lemma or tag">
 <select id="v"><option value="">any verdict</option><option>keep</option><option>review</option><option>exclude</option></select>
 <select id="f"><option value="">all cards</option><option value="thin">under 10 eligible</option>
 <option value="tagged">has a tag</option><option value="lemma">has a lemma</option>
-<option value="rej">something rejected</option></select>
+<option value="rej">something rejected</option><option value="nosent">no sentences</option></select>
+<select id="sort"><option value="r">by rank</option><option value="e">by eligible</option>
+<option value="t">by tag count</option></select>
 </header>
-<main><div id="list"></div><button id="more">show more</button></main>
+<table><thead><tr>
+<th style="width:26px"></th><th style="width:62px">rank</th><th>surface</th>
+<th style="width:74px">verdict</th><th>tags</th><th>lemma</th>
+<th style="width:58px">harv</th><th style="width:58px">elig</th><th>sources / cut</th>
+</tr></thead><tbody id="body"></tbody></table>
+<button id="more">show more</button>
 <script>
 const ROWS={json.dumps(rows, ensure_ascii=False)};
 const esc=s=>String(s??"").replace(/[&<>]/g,c=>({{"&":"&amp;","<":"&lt;",">":"&gt;"}})[c]);
 let shown=0,view=ROWS;
-function match(){{
+function apply(){{
   const q=document.getElementById("q").value.toLowerCase().trim();
-  const v=document.getElementById("v").value, f=document.getElementById("f").value;
+  const v=document.getElementById("v").value,f=document.getElementById("f").value;
+  const k=document.getElementById("sort").value;
   view=ROWS.filter(r=>{{
     if(v&&r.v!==v)return false;
     if(f==="thin"&&!(r.e!=null&&r.e<10))return false;
     if(f==="tagged"&&!r.t.length)return false;
     if(f==="lemma"&&!r.l.length)return false;
     if(f==="rej"&&!Object.keys(r.rej).length)return false;
+    if(f==="nosent"&&r.s.length)return false;
     if(q&&!(r.w.toLowerCase().includes(q)||r.l.join(" ").toLowerCase().includes(q)
         ||r.t.join(" ").toLowerCase().includes(q)))return false;
     return true;
   }});
-  shown=0;document.getElementById("list").innerHTML="";draw();
+  if(k==="e")view=[...view].sort((a,b)=>(a.e??1e9)-(b.e??1e9));
+  else if(k==="t")view=[...view].sort((a,b)=>b.t.length-a.t.length);
+  else view=[...view].sort((a,b)=>(a.r??1e9)-(b.r??1e9));
+  shown=0;document.getElementById("body").innerHTML="";draw();
 }}
 function draw(){{
-  const el=document.getElementById("list"),n=Math.min(shown+60,view.length);
+  const body=document.getElementById("body"),n=Math.min(shown+120,view.length);
   let out="";
   for(let i=shown;i<n;i++){{
     const r=view[i];
-    const src=Object.entries(r.src).map(([k,v])=>k.slice(0,3)+" "+v).join(" / ");
-    const rej=Object.entries(r.rej).map(([k,v])=>k+" "+v).join(", ");
-    out+=`<div class="card"><div class="hd"><span class="w">${{esc(r.w)}}</span>`
-      +`<span class="rank">#${{r.r??"-"}}</span>`
-      +`<span class="v ${{r.v}}">${{r.v}}</span>`
-      +r.t.map(t=>`<span class="tag">${{esc(t)}}</span>`).join("")
-      +`<span class="sup">${{r.h??"-"}} harvested &rarr; <b class="${{r.e!=null&&r.e<10?"thin":""}}">${{r.e??"-"}}</b> eligible`
-      +(src?` &middot; ${{esc(src)}}`:"")+(rej?` &middot; cut: ${{esc(rej)}}`:"")+`</span></div>`
-      +(r.l.length?`<div class="lem">lemma ${{esc(r.l.join(", "))}}${{r.p.length?" &middot; "+esc(r.p.join(", ")):""}}</div>`:"")
-      +(r.s.length?`<table>`+r.s.map(s=>`<tr><td class="s">${{esc(s[2])}}</td><td>${{esc(s[0])}}<br><span class="en">${{esc(s[1])}}</span></td></tr>`).join("")+`</table>`
-                  :`<div class="none">no eligible sentences</div>`)
-      +`</div>`;
+    const src=Object.entries(r.src).map(([a,b])=>a.slice(0,3)+" "+b).join(" / ");
+    const rej=Object.entries(r.rej).map(([a,b])=>a.replace("below_alignment_floor","align")+" "+b).join(", ");
+    out+=`<tr class="r" data-i="${{i}}"><td class="caret">&#9656;</td>`
+      +`<td class="n">${{r.r??"&ndash;"}}</td><td class="w">${{esc(r.w)}}</td>`
+      +`<td><span class="v ${{r.v}}">${{r.v}}</span></td>`
+      +`<td>${{r.t.map(t=>`<span class="tag">${{esc(t)}}</span>`).join("")}}</td>`
+      +`<td>${{esc(r.l.join(", "))}}${{r.p.length?` <span class="en">${{esc(r.p[0])}}</span>`:""}}</td>`
+      +`<td class="n">${{r.h??"&ndash;"}}</td>`
+      +`<td class="n ${{r.e!=null&&r.e<10?"thin":""}}">${{r.e??"&ndash;"}}</td>`
+      +`<td class="en">${{esc(src)}}${{rej?` &middot; cut ${{esc(rej)}}`:""}}</td></tr>`;
   }}
-  el.insertAdjacentHTML("beforeend",out);shown=n;
-  document.getElementById("more").style.display=shown<view.length?"block":"none";
-  document.getElementById("more").textContent=`show more (${{view.length-shown}} left)`;
+  body.insertAdjacentHTML("beforeend",out);shown=n;
+  const m=document.getElementById("more");
+  m.style.display=shown<view.length?"block":"none";
+  m.textContent=`show more (${{view.length-shown}} left)`;
 }}
+document.getElementById("body").onclick=e=>{{
+  const tr=e.target.closest("tr.r");if(!tr)return;
+  const nxt=tr.nextElementSibling;
+  if(nxt&&nxt.classList.contains("d")){{nxt.remove();tr.firstChild.innerHTML="&#9656;";return;}}
+  const r=view[+tr.dataset.i];
+  const inner=r.s.length
+    ? `<table>`+r.s.map(s=>`<tr><td class="s">${{esc(s[2])}}</td><td>${{esc(s[0])}}<br><span class="en">${{esc(s[1])}}</span></td></tr>`).join("")+`</table>`
+    : `<div class="none">no eligible sentences</div>`;
+  tr.insertAdjacentHTML("afterend",`<tr class="d"><td colspan="9">${{inner}}</td></tr>`);
+  tr.firstChild.innerHTML="&#9662;";
+}};
 document.getElementById("more").onclick=draw;
-for(const id of ["q","v","f"])document.getElementById(id).oninput=match;
-match();
+for(const id of ["q","v","f","sort"])document.getElementById(id).oninput=apply;
+apply();
 </script>"""
     out = args.out or (ws / f"raw/surfaces/{lang}/audit.html")
     out.write_text(doc, encoding="utf-8")

@@ -125,6 +125,19 @@ def main() -> int:
             "observations": len(items),
             "supply": supply.get(surface),
         }
+        # An excluded surface keeps its row -- the verdict and the reasons are
+        # the point of it -- but not its sentences. Nothing downstream should
+        # teach a word the list says is not a word, and carrying the ids invites
+        # exactly that. The harvest counts stay, so the row still explains
+        # itself.
+        entry = surfaces[surface]
+        if entry["verdict"] == "exclude" and entry["supply"]:
+            entry["supply"] = {
+                **entry["supply"],
+                "eligible_sentence_ids": [],
+                "rejected_sentence_ids": {},
+                "sentences_withheld": "surface excluded",
+            }
 
     out = args.out or (ws / f"raw/surfaces/{lang}/surfaces.json")
     out.parent.mkdir(parents=True, exist_ok=True)
