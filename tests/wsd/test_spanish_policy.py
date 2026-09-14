@@ -276,5 +276,67 @@ class SpanishV5CandidatePolicyTests(unittest.TestCase):
             "empty",
         )
 
+    def test_pronominal_gate_prunes_when_no_clitic(self):
+        plain = self.verb.senses[0]
+        pronominal = SenseLeaf(
+            "die", "to pass away", "pronominal", "ref:die", {},
+            specialist_features=(
+                SpecialistFeature("construction", "grammar_tag", "pronominal", "pronominal"),
+            ),
+        )
+        verb_with_pronominal = replace(self.verb, senses=(plain, pronominal))
+        policy = SpanishV5CandidatePolicy(language="pt", constraint_mode="filter", pronominal_gate=True)
+        prepared = policy.prepare(
+            sentence="Nós vamos agora",
+            surface_form="vamos",
+            observed_pos="VERB",
+            analyses=(verb_with_pronominal,),
+        )
+        self.assertEqual(len(prepared.analyses[0].senses), 1)
+        self.assertEqual(prepared.analyses[0].senses[0].sense_id, plain.sense_id)
+        self.assertEqual(
+            prepared.evidence["pronominal_rejected_leaf_refs"][0]["sense_id"],
+            "die",
+        )
+
+    def test_pronominal_gate_preserves_when_clitic_present(self):
+        plain = self.verb.senses[0]
+        pronominal = SenseLeaf(
+            "die", "to pass away", "pronominal", "ref:die", {},
+            specialist_features=(
+                SpecialistFeature("construction", "grammar_tag", "pronominal", "pronominal"),
+            ),
+        )
+        verb_with_pronominal = replace(self.verb, senses=(plain, pronominal))
+        policy = SpanishV5CandidatePolicy(language="pt", constraint_mode="filter", pronominal_gate=True)
+        prepared = policy.prepare(
+            sentence="Ele foi-se embora",
+            surface_form="foi",
+            observed_pos="VERB",
+            analyses=(verb_with_pronominal,),
+        )
+        self.assertEqual(len(prepared.analyses[0].senses), 2)
+        self.assertEqual(len(prepared.evidence["pronominal_rejected_leaf_refs"]), 0)
+
+    def test_domain_and_register_penalty(self):
+        standard = SenseLeaf("standard", "service", "work", "ref:std", {})
+        sports = SenseLeaf(
+            "sports", "serve", "tennis serve", "ref:spt", {},
+            specialist_features=(
+                SpecialistFeature("domain", "topic", "sports", "sports"),
+            ),
+        )
+        analysis_item = replace(self.noun, senses=(standard, sports))
+        policy = SpanishV5CandidatePolicy(domain_penalty=0.04)
+        scores = (
+            LeafScore(analysis_item.menu_analysis_id, "standard", 0.50),
+            LeafScore(analysis_item.menu_analysis_id, "sports", 0.51),
+        )
+        adjusted = policy.adjust_scores(scores, (analysis_item,))
+        # sports had 0.51, but gets -0.04 penalty (effective 0.47) plus menu prior
+        # standard had 0.50 + 0.02 menu prior = 0.52
+        self.assertEqual(adjusted[0].sense_id, "standard")
+
+
 if __name__ == "__main__":
     unittest.main()

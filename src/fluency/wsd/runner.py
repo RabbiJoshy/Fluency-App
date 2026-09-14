@@ -315,8 +315,13 @@ class ClosedMenuWSDRunner:
                     )
                 )
 
+        score_kwargs: dict[str, Any] = {}
+        import inspect
+        sig = inspect.signature(self.components.gloss.score)
+        if "translation" in sig.parameters and request.translation:
+            score_kwargs["translation"] = request.translation
         raw_combined_ranked = validated_leaf_scores(
-            self.components.gloss.score(request.sentence, combined_analyses),
+            self.components.gloss.score(request.sentence, combined_analyses, **score_kwargs),
             combined_analyses,
         )
         combined_ranked = (

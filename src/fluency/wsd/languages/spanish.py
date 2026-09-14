@@ -41,6 +41,89 @@ POS_BRIDGE = {
     # SpanishDict files their ordinary analyses as CONTRACTION.
     "ADP": frozenset({"ADP", "CONTRACTION"}),
 }
+
+SPECIALIZED_DOMAINS = frozenset({
+    "sports", "anatomy", "medicine", "law", "computing", "botany",
+    "zoology", "chemistry", "rail", "nautical", "aviation", "military",
+})
+
+NON_STANDARD_REGISTERS = frozenset({
+    "slang", "vulgar", "pejorative", "taboo", "archaic", "dated", "obsolete",
+})
+
+CLITICS_BY_LANG = {
+    "es": frozenset({"me", "te", "se", "nos", "os"}),
+    "pt": frozenset({"me", "te", "se", "nos", "vos", "lhe", "lhes"}),
+    "cs": frozenset({"se", "si", "ses", "sis"}),
+    "fr": frozenset({"me", "te", "se", "nous", "vous"}),
+}
+
+
+def _sentence_has_clitic(sentence: str, language: str = "es") -> bool:
+    clitics = CLITICS_BY_LANG.get(language, CLITICS_BY_LANG["es"])
+    tokens = re.findall(
+        r"[0-9A-Za-zÁÂÃÀÉÊÍÓÔÕÚÜÇáâãàéêíóôõúüçÁÄÉĚÍÓÖÚŮÜÝČĎŇŘŠŤŽáäéěíóöúüýčďňřšťžñ-]+",
+        sentence.lower(),
+    )
+    for token in tokens:
+        if token in clitics:
+            return True
+        if "-" in token:
+            for part in token.split("-"):
+                if part in clitics:
+                    return True
+        if "'" in token:
+            for part in token.split("'"):
+                if part in clitics:
+                    return True
+    return False
+
+
+def is_pronominal_leaf(leaf: SenseLeaf) -> bool:
+    features = leaf.specialist_features
+    ctx = (leaf.definition or "").lower()
+    for f in features:
+        val = str(f.value).lower()
+        fam = str(f.family).lower()
+        if fam == "construction" and ("pronominal" in val or "reflexive" in val):
+            return True
+        if fam == "grammar" and ("reflexive=true" in val or "pronominal" in val):
+            return True
+    if any(kw in ctx for kw in ("pronominal", "reflexive", "reflexive with se", "reflexive with si")):
+        return True
+    return False
+
+
+def _leaf_domain_or_register_penalty(leaf: SenseLeaf, penalty_value: float = -0.04) -> float:
+    features = leaf.specialist_features
+    ctx = (leaf.definition or "").lower()
+    for f in features:
+        val = str(f.value).lower()
+        fam = str(f.family).lower()
+        kind = str(f.kind).lower()
+        if fam == "domain" or "domain" in kind:
+            if any(d in val for d in SPECIALIZED_DOMAINS):
+                return penalty_value
+        if fam == "register" or kind in ("register_label", "style"):
+            if any(r in val for r in NON_STANDARD_REGISTERS):
+                return penalty_value
+    meta = getattr(leaf, "metadata", {}) or {}
+    sense_meta = meta.get("sense_metadata") or meta
+    for topic in sense_meta.get("topics", ()):
+        if any(d in str(topic).lower() for d in SPECIALIZED_DOMAINS):
+            return penalty_value
+    for tag in sense_meta.get("tags", ()):
+        tag_str = str(tag).lower()
+        if any(r in tag_str for r in NON_STANDARD_REGISTERS) or any(d in tag_str for d in SPECIALIZED_DOMAINS):
+            return penalty_value
+
+    for d in SPECIALIZED_DOMAINS:
+        if re.search(rf"\b{d}\b", ctx):
+            return penalty_value
+    for r in NON_STANDARD_REGISTERS:
+        if re.search(rf"\b{r}\b", ctx):
+            return penalty_value
+    return 0.0
 # AUX is the same UD/SpanishDict mismatch as DET and was missed when DET was
 # bridged. SpanishDict has no AUX category and files every auxiliary and modal
 # as VERB, while the tagger emits AUX. Unbridged, this function rejects VERB
@@ -163,14 +246,20 @@ class SpanishV5CandidatePolicy:
     def __init__(
         self,
         *,
+        language: str = "es",
         menu_prior: float = 0.02,
         menu_prior_decay: float = 0.5,
         constraint_mode: str = "filter",
         sense_compatible: Callable[[str, str], bool] | None = None,
         pos_is_orthogonal: Callable[[str], bool] | None = None,
         clitic_gate: bool = True,
+        pronominal_gate: bool = True,
+        domain_penalty: float = 0.04,
         normalized_leaf_gates: bool = False,
     ) -> None:
+        self.language = language
+        self.pronominal_gate = pronominal_gate
+        self.domain_penalty = domain_penalty
         # The POS gate is a property of the DICTIONARY, not the language: the
         # bridge below reconciles a tagger's UD tags with SpanishDict's tagset.
         # A Wiktionary-backed language must supply its own, or the filter
@@ -269,9 +358,24 @@ class SpanishV5CandidatePolicy:
                 if analysis.headword.casefold().endswith("se") is evidence
             }
             compatible &= keep_ids
-            if compatible:
-                clitic_removed = sorted(keep_ids - compatible)
-                keep_ids &= compatible
+        if self.language == "cs":
+            surface_lower = surface_form.casefold()
+            if surface_lower == "že":
+                match = re.search(r"\bže\b(\s*[,\.?!]|\s*$)", sentence, re.IGNORECASE)
+                is_tag_question = bool(match) and not re.search(r"\bže\s+[a-zA-Záäéěíóöúůüýčďňřšťž]", sentence, re.IGNORECASE)
+                if not is_tag_question:
+                    conj_ids = {
+                        a.menu_analysis_id for a in analyses if str(a.part_of_speech).upper() in {"CONJ", "SCONJ", "CCONJ"}
+                    }
+                    if conj_ids & keep_ids:
+                        keep_ids &= conj_ids
+            elif surface_lower == "se":
+                if re.search(r"\bse\s+(mnou|sebou|všemi|svými)\b", sentence, re.IGNORECASE):
+                    adp_ids = {
+                        a.menu_analysis_id for a in analyses if str(a.part_of_speech).upper() in {"ADP", "PREP"}
+                    }
+                    if adp_ids & keep_ids:
+                        keep_ids &= adp_ids
 
         structurally_kept = tuple(
             analysis for analysis in analyses if analysis.menu_analysis_id in keep_ids
@@ -318,6 +422,17 @@ class SpanishV5CandidatePolicy:
             observed_grammar or {},
             features_of=lambda item: item[1].specialist_features,
         )
+        pronominal_rejected = ()
+        if self.pronominal_gate and not _sentence_has_clitic(sentence, self.language):
+            surviving_non_pronominal = tuple(
+                (analysis, leaf) for analysis, leaf in grammar_kept if not is_pronominal_leaf(leaf)
+            )
+            if surviving_non_pronominal:
+                pronominal_rejected = tuple(
+                    (analysis, leaf) for analysis, leaf in grammar_kept if is_pronominal_leaf(leaf)
+                )
+                grammar_kept = surviving_non_pronominal
+
         kept_leaf_refs = {
             (analysis.menu_analysis_id, leaf.sense_id)
             for analysis, leaf in grammar_kept
@@ -340,7 +455,7 @@ class SpanishV5CandidatePolicy:
             analyses
             if self.constraint_mode == "evidence_only"
             else filtered_analyses
-            if self.normalized_leaf_gates
+            if (self.normalized_leaf_gates or (self.pronominal_gate and pronominal_rejected))
             else structurally_kept
         )
 
@@ -371,6 +486,7 @@ class SpanishV5CandidatePolicy:
                 "companion_rejected_leaf_refs": refs(companion_rejected_evidence),
                 "companion_matched_leaf_refs": refs(companion_matched),
                 "grammar_rejected_leaf_refs": refs(grammar_rejected),
+                "pronominal_rejected_leaf_refs": refs(pronominal_rejected),
                 "constraint_supported_leaf_refs": refs(grammar_kept),
                 "indistinguishable_leaf_refs": _indistinguishable_leaf_refs(
                     structurally_kept
@@ -389,13 +505,26 @@ class SpanishV5CandidatePolicy:
                 (item for analysis in analyses for item in ((analysis, leaf) for leaf in analysis.senses))
             )
         }
+        leaf_by_ref = {
+            (analysis.menu_analysis_id, leaf.sense_id): leaf
+            for analysis in analyses
+            for leaf in analysis.senses
+        }
         adjusted = [
             replace(
                 score,
                 score=score.score
                 + self.menu_prior
                 * self.menu_prior_decay
-                ** order[(score.menu_analysis_id, score.sense_id)],
+                ** order[(score.menu_analysis_id, score.sense_id)]
+                + (
+                    _leaf_domain_or_register_penalty(
+                        leaf_by_ref[(score.menu_analysis_id, score.sense_id)],
+                        penalty_value=-self.domain_penalty,
+                    )
+                    if self.domain_penalty > 0 and (score.menu_analysis_id, score.sense_id) in leaf_by_ref
+                    else 0.0
+                ),
             )
             for score in scores
         ]

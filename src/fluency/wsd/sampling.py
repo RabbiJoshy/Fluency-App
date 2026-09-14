@@ -42,9 +42,8 @@ from typing import AbstractSet, Any, Iterable, Mapping, Sequence
 
 SAMPLING_POLICY_VERSION = "wsd-occurrence-sampling/v1"
 
-# The mature historical default. Configurable, but changing it changes what a
-# run costs and what its coverage means, so it is recorded per run.
-DEFAULT_EXECUTION_CAP = 10
+# Increased to 30 to ensure complete coverage between Stage 04 WSD and Stage 05 selection.
+DEFAULT_EXECUTION_CAP = 30
 
 
 @dataclass(frozen=True, slots=True)

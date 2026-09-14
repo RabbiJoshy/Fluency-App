@@ -1,0 +1,6 @@
+{
+  "policy_version": "surface-policy/v1",
+  "language": "pt",
+  "note": "Starts identical to every other language. Add an override here only when a measurement says this language should differ -- not because a decision was once taken and never revisited.",
+  "reason_codes": {}
+}

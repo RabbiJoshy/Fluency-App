@@ -77,6 +77,9 @@ SUPPORTED_PROFILE_CONSTRAINT_MODES = {
     # sense; the mode is still "filter" because that is what the executor does
     # with whatever gate it is handed, and the id is provenance.
     "cs-v10-1": "filter",
+    "es-v11-1": "filter",
+    "pt-v11-1": "filter",
+    "cs-v11-1": "filter",
 }
 PROFILE_LANGUAGES = {
     "es-v6-1": "es", "es-v7-1": "es", "pt-v7-1": "pt",
@@ -84,12 +87,13 @@ PROFILE_LANGUAGES = {
     "pt-v9-1": "pt", "pt-v10-1": "pt",
     "es-v8-english-1": "es", "pt-v8-english-1": "pt",
     "cs-v10-1": "cs",
+    "es-v11-1": "es", "pt-v11-1": "pt", "cs-v11-1": "cs",
 }
 ALIGNMENT_PROFILES = frozenset({"es-v8-english-1", "pt-v8-english-1"})
 RANK_AGREEMENT_PROFILES = frozenset(
-    {"es-v9-1", "es-v9-2", "es-v10-1", "pt-v9-1", "pt-v10-1", "cs-v10-1"}
+    {"es-v9-1", "es-v9-2", "es-v10-1", "pt-v9-1", "pt-v10-1", "cs-v10-1", "es-v11-1", "pt-v11-1", "cs-v11-1"}
 )
-EVIDENCE_GUARD_PROFILES = frozenset({"es-v10-1", "pt-v10-1", "cs-v10-1"})
+EVIDENCE_GUARD_PROFILES = frozenset({"es-v10-1", "pt-v10-1", "cs-v10-1", "es-v11-1", "pt-v11-1", "cs-v11-1"})
 
 MORPH_VALUE_MAP = {
     ("Number", "Sing"): ("number", "singular"),
@@ -340,6 +344,34 @@ def occurrence_pos_tags(
     return observed, diagnostics
 
 
+def _translation_overlap_bonus(leaf: SenseLeaf, english_sentence: str, bonus_value: float = 0.04) -> float:
+    if not english_sentence:
+        return 0.0
+    text_lower = english_sentence.lower()
+    en_tokens = set(re.findall(r"[a-z0-9']+", text_lower))
+
+    raw_trans = (leaf.translation or "").lower().strip()
+    if raw_trans:
+        candidates = [c.strip() for c in re.split(r"[,;/]", raw_trans) if c.strip()]
+        for cand in candidates:
+            cand_core = cand.removeprefix("to ").strip()
+            if " " in cand_core:
+                if re.search(rf"\b{re.escape(cand_core)}\b", text_lower):
+                    return bonus_value
+            elif cand_core and (cand_core in en_tokens or re.search(rf"\b{re.escape(cand_core)}\b", text_lower)):
+                return bonus_value
+            if len(cand_core) > 4:
+                stem = cand_core.rstrip("e")
+                if any(tok.startswith(stem) for tok in en_tokens if len(tok) >= len(stem)):
+                    return bonus_value * 0.75
+
+    ctx = (leaf.definition or "").lower()
+    if "possession" in ctx or "possess" in ctx:
+        if any(tok.endswith("'s") or tok == "of" for tok in en_tokens):
+            return bonus_value
+    return 0.0
+
+
 class ExactTextGlossScorer:
     """Cosine between the sentence vector and each leaf's gloss vector.
 
@@ -353,7 +385,12 @@ class ExactTextGlossScorer:
     def __init__(self, vectors: dict[str, Any]) -> None:
         self.vectors = vectors
 
-    def score(self, sentence: str, analyses: tuple[MenuAnalysis, ...]) -> Sequence[LeafScore]:
+    def score(
+        self,
+        sentence: str,
+        analyses: tuple[MenuAnalysis, ...],
+        translation: str = "",
+    ) -> Sequence[LeafScore]:
         import numpy as np
 
         leaves = [
@@ -384,6 +421,8 @@ class ExactTextGlossScorer:
                     if vector is None:
                         raise KeyError(f"missing exact-text embedding for gloss: {gloss!r}")
                     value = float(np.dot(query, vector))
+                if translation:
+                    value += _translation_overlap_bonus(leaf, translation)
                 scores.append(
                     LeafScore(
                         menu_analysis_id=analysis.menu_analysis_id,
@@ -721,11 +760,14 @@ def main() -> None:
         language=binding.adapter_factory(),
         gloss=ExactTextGlossScorer(vectors),
         candidate_policy=SpanishV5CandidatePolicy(
+            language=run_language,
             constraint_mode=SUPPORTED_PROFILE_CONSTRAINT_MODES[args.profile_id],
             # The POS gate follows the dictionary, not the language.
             sense_compatible=sense_compatible,
             pos_is_orthogonal=pos_is_orthogonal,
-            clitic_gate=run_language == "es",
+            clitic_gate=run_language in {"es", "pt", "cs"},
+            pronominal_gate=True,
+            domain_penalty=0.04,
             normalized_leaf_gates=args.profile_id in EVIDENCE_GUARD_PROFILES,
         ),
         aligner=aligner,
