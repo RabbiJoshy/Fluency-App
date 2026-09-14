@@ -16,18 +16,20 @@ def obs(code, language="pt", surface="x", evidence=None):
              "abbreviation_form": "list", "capitalised_in_corpus": "harvest",
              "dictionary_absent": "menu", "dictionary_entry_language": "menu",
              "dictionary_pos_gloss_mismatch": "menu", "lemma_resolved": "lemma",
-             "human_review": "review"}[code]
+             "human_review": "review", "adjudicated_keep": "review",
+             "adjudicated_exclude": "review"}[code]
     return build_event(surface=surface, language=language, phase=phase,
                        reason_code=code, observer="test", evidence=evidence or {})
 
 
 class VerdictTests(unittest.TestCase):
-    def test_a_minimal_pair_is_not_a_misspelling(self) -> None:
+    def test_a_minimal_pair_is_not_even_a_suspicion(self) -> None:
         """"a" is the unaccented spelling of "a-grave" and also the commonest
-        word in Portuguese. Treating the coincidence as grounds to exclude
-        removed que, a, de, para, se and tem from the deck."""
+        word in Portuguese; que/que-acute, el/el-acute and ne/ne-caron are the
+        same. Differing from another surface by accents is ordinary vocabulary
+        in all three languages, so it is recorded and nothing more."""
         self.assertEqual(
-            verdict([obs("accent_stripped_duplicate")], DEFAULT_POLICY)["verdict"], REVIEW)
+            verdict([obs("accent_stripped_duplicate")], DEFAULT_POLICY)["verdict"], KEEP)
 
     def test_a_sparse_dictionary_does_not_convict(self) -> None:
         """Czech Wiktionary is absent for 43% of surfaces, so "no entry" adds

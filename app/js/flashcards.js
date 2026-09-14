@@ -2846,9 +2846,58 @@ function condenseSenseContext(raw) {
     return text;
 }
 
-function renderSenseContextHTML(context, { leadingDot = true } = {}) {
-    const raw = String(context || '').trim();
+function cleanSenseContext(rawContext, mainGloss) {
+    let raw = String(rawContext || '').trim();
     if (!raw) return '';
+    const gloss = String(mainGloss || '').trim();
+    if (!gloss) return raw;
+
+    const normRaw = raw.toLowerCase().replace(/^[^\w]+|[^\w]+$/g, '');
+    const normGloss = gloss.toLowerCase().replace(/^[^\w]+|[^\w]+$/g, '');
+
+    // 1. Direct identity or trivial punctuation/case difference
+    if (normRaw === normGloss) return '';
+
+    // 2. Exact substring match where gloss already encapsulates the entire context
+    if (normGloss.includes(normRaw) && normGloss.length >= normRaw.length) return '';
+
+    // 3. Context starts with the gloss, e.g. gloss: "to be", context: "to be located" -> "located"
+    const glossRegex = new RegExp('^' + normGloss.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*[-:·]?\\s*', 'i');
+    if (glossRegex.test(raw)) {
+        raw = raw.replace(glossRegex, '').trim();
+    } else {
+        // Also handle infinitive "to X": e.g. gloss "to be", context "to be located" or gloss "be"
+        if (normGloss.startsWith('to ')) {
+            const verbOnly = normGloss.slice(3).trim();
+            const verbRegex = new RegExp('^(?:to\\s+)?' + verbOnly.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*[-:·]?\\s*', 'i');
+            if (verbRegex.test(raw)) {
+                raw = raw.replace(verbRegex, '').trim();
+            }
+        }
+    }
+
+    // 4. "act of [gloss]" e.g. gloss: "wait", context: "act of waiting"
+    if (/^act of\s+/i.test(raw)) {
+        const afterAct = raw.replace(/^act of\s+/i, '').trim().toLowerCase();
+        if (normGloss.startsWith(afterAct.slice(0, 4)) || afterAct.startsWith(normGloss.slice(0, 4))) {
+            return '';
+        }
+    }
+
+    // 5. If the remaining text is trivial (1 char or punctuation), discard it
+    if (raw.replace(/[^\w]/g, '').length <= 1) return '';
+
+    return raw;
+}
+window.cleanSenseContext = cleanSenseContext;
+
+function renderSenseContextHTML(context, { leadingDot = true, gloss = null } = {}) {
+    let raw = String(context || '').trim();
+    if (!raw) return '';
+    if (gloss) {
+        raw = cleanSenseContext(raw, gloss);
+        if (!raw) return '';
+    }
     const usage = selectedLanguage === 'spanish'
         ? parseSpanishDictUsageContext(raw)
         : null;
