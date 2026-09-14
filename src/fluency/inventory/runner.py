@@ -15,6 +15,7 @@ from fluency.core.identity import build_card_id
 from fluency.core.manifests import StageManifest, build_stage_cache_key
 from fluency.core.workspace import Workspace
 from fluency.inventory.config import load_inventory_language_policy
+from fluency.surfaces.ledger import ledger_path
 from fluency.inventory.corpus_frequency import (
     FREQUENCY_UNIT as CORPUS_FREQUENCY_UNIT,
     ADAPTER_ID as CORPUS_ADAPTER_ID,
@@ -91,7 +92,7 @@ def _store_exclusions(workspace: Workspace, language: str) -> dict[str, dict]:
     Absent or unreadable, the store simply contributes nothing: a missing file
     must not silently empty a deck.
     """
-    view = workspace.root / "raw" / "surfaces" / language / "surfaces.json"
+    view = ledger_path(workspace.root, language)
     if not view.exists():
         return {}
     try:

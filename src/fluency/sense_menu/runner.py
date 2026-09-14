@@ -15,6 +15,7 @@ from fluency.core.manifests import StageManifest, build_stage_cache_key
 from fluency.core.workspace import Workspace
 from fluency.harvest.inventory import load_harvest_inventory
 from fluency.pipeline.planning import load_pipeline_profile
+from fluency.surfaces.ledger import ledger_path
 from fluency.core.io import atomic_write, json_bytes
 from fluency.sense_menu.config import load_sense_menu_language_policy
 from fluency.sense_menu.kaikki import ADAPTER_ID as KAIKKI_ADAPTER_ID, KaikkiSenseMenuAdapter
@@ -78,7 +79,7 @@ def _store_lemmas(workspace, language: str) -> dict[str, list[str]]:
     merely its own headword adds no hop the builder does not already have, and
     passing it would make every card look externally resolved.
     """
-    view = workspace.root / "raw" / "surfaces" / language / "surfaces.json"
+    view = ledger_path(workspace.root, language)
     if not view.exists():
         return {}
     try:

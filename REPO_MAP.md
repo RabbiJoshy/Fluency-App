@@ -21,13 +21,20 @@ Data flows through 5 strict, schema-validated stages:
 
 ```mermaid
 graph TD
-    A["Harvest<br/>(Tatoeba, OpenSubtitles)"] -->|parallel-sentence/v1| B["Harvest Pool<br/>(Deduplicated sentences)"]
+    A["1. Harvest<br/>cheap irreversible gates"] -->|parallel-sentence/v1| B["Harvest Pool"]
     C["Inventory<br/>(Frequency lists)"] -->|surface-inventory/v1| D["Lexical Selection"]
     B & D --> E["Sense Menus<br/>(Kaikki, SpanishDict)"]
-    E -->|sense-menu/v1| F["WSD Engine<br/>(Disambiguation)"]
+    B --> P["2. Cleaning<br/>condition_pools.py<br/>tags rejects, deletes nothing"]
+    E & P & O["Observation store<br/>events.jsonl (append-only)"] --> L["SURFACE LEDGER<br/>ledger.json · surface-ledger/v1"]
+    L -->|filtered view| F["3. WSD Engine<br/>disambiguation only"]
     F -->|wsd-assignment/v1| G["Release Assembly<br/>(run_candidate.py)"]
     G -->|active-release/v1| H["Frontend Deck<br/>(app/)"]
 ```
+
+**The ledger is the readiness contract.** A language is ready for WSD when its
+ledger is complete; everything downstream reads it rather than reconstructing
+it. Resolve its path with `fluency.surfaces.ledger.ledger_path()`, never as a
+literal filename. See `docs/decisions/0021-*` and `docs/runbooks/surface-ledger.md`.
 
 | Component | Directory | Primary Entry Point | Output / Schema |
 | :--- | :--- | :--- | :--- |
@@ -35,10 +42,28 @@ graph TD
 | **Harvest** | `src/fluency/harvest/` | `runner.py`, `tatoeba.py`, `opensubtitles.py` | `schemas/parallel-sentence.schema.json`, `schemas/harvest-pool.schema.json` |
 | **Sense Menus** | `src/fluency/sense_menu/`| `kaikki.py` (multi-lang), `spanishdict.py` (es) | `schemas/sense-menu.schema.json` |
 | **Features & Parity**| `src/fluency/features/`| `cognates.py`, `spanishdict.py`, `spanishdict_metadata.py` | Metadata projection & cross-lang cognates |
+| **Surface ledger** | `src/fluency/surfaces/` | `events.py` (append-only log), `policy.py` (fold → verdict), `ledger.py` (path + contract) | `raw/surfaces/<lang>/ledger.json` |
 | **WSD** | `src/fluency/wsd/` | `runner.py`, `importer.py` | `schemas/wsd-request-v2.schema.json`, `schemas/wsd-assignment.schema.json` |
 | **Release** | `src/fluency/release/` | `run_candidate.py`, `metadata_upgrade.py` | `schemas/release-manifest.schema.json`, `schemas/active-release.schema.json` |
 | **Lyrics & Artists**| `src/fluency/lyrics/` | `process.py`, `lexical.py`, `consolidate.py`, `audit.py` | `schemas/lyrics-consolidated-card.schema.json` |
 | **CLI Dispatcher** | `src/fluency/cli/` | `registry.py`, `commands/` | Terminal commands (`fluency ...`) |
+
+---
+
+## 2b. Ledger Tooling (`scripts/`)
+
+Operational scripts, run by hand rather than by the stage runner. Full sequence
+in `docs/runbooks/surface-ledger.md`.
+
+| Script | Does |
+| :--- | :--- |
+| `backfill_surface_events.py` | Derives observation events from artifacts already on disk |
+| `observe_lemmas.py` | Resolves lemmas from every source, authority-first, with provenance |
+| `materialise_surfaces.py` | Folds events through the policy table into `ledger.json` |
+| `audit_surfaces_html.py` | Self-contained filterable HTML table of the ledger |
+| `condition_pools.py` | The cleaning stage: alignment scoring, variety/hardness/length tags |
+| `fetch_spanishdict.py` | Paced, resumable SpanishDict fetcher (0.35s, fsync per word) |
+| `merge_spanishdict_refetch.py` | Merges refetches into a **new** snapshot, recomputing hashes |
 
 ---
 

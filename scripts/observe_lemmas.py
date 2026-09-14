@@ -22,6 +22,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from fluency.surfaces.events import append, build_event, store_path  # noqa: E402
+from fluency.surfaces.ledger import ledger_path  # noqa: E402
 
 WIKTIONARY = {
     "pt": "enwiktionary-2026-08-20/kaikki.org-dictionary-Portuguese.jsonl",
@@ -111,7 +112,7 @@ def main() -> int:
     args = ap.parse_args()
     ws, lang = args.workspace, args.language
 
-    view = json.loads((ws / f"raw/surfaces/{lang}/surfaces.json").read_text())
+    view = json.loads(ledger_path(ws, lang).read_text())
     cards = {w for w, r in view["surfaces"].items() if r["rank"]}
 
     sources: list[tuple[str, dict[str, set[str]]]] = []
@@ -137,12 +138,16 @@ def main() -> int:
                     table.setdefault(surface.lower(), set()).add(lemma)
         sources.append(("spanishdict-reverse-conjugation", table))
 
+        # A surface SpanishDict lists under its own spelling is its own lemma.
+        # Skipping that case asked the store for resolutions only and left 45%
+        # of Spanish with no authoritative lemma at all, when SpanishDict knew
+        # the word perfectly well.
         cache = json.loads((ws / SD / "surface_cache.json").read_text())
         heads: dict[str, set[str]] = {}
         for surface, entry in cache.items():
             for analysis in entry.get("dictionary_analyses") or []:
-                head = (analysis.get("headword") or "").strip().lower()
-                if head and head != surface.lower():
+                head = (analysis.get("headword") or "").strip()
+                if head:
                     heads.setdefault(surface.lower(), set()).add(head)
         sources.append(("spanishdict-surface-cache", heads))
 
@@ -152,8 +157,8 @@ def main() -> int:
             for line in refetch.open(encoding="utf-8"):
                 row = json.loads(line)
                 for analysis in row.get("analyses") or []:
-                    head = (analysis.get("headword") or "").strip().lower()
-                    if head and head != row["word"].lower():
+                    head = (analysis.get("headword") or "").strip()
+                    if head:
                         fresh.setdefault(row["word"].lower(), set()).add(head)
             sources.append(("spanishdict-refetch-2026-09-14", fresh))
 

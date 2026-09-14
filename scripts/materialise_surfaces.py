@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
-"""Fold the observation log into one file per language: the current view.
+"""Fold the observation log into the surface ledger: one file per language.
 
-The log is the record and this is the answer -- surface, verdict, why, and
+The log is the record and the ledger is the answer -- surface, verdict, why, and
 whatever morphology is known. It is derived, so it is safe to delete and
 regenerate, and it records which events produced it. Nothing reads the raw log
-in anger; stages read this.
+in anger; stages read the ledger.
+
+The ledger is the readiness contract for a language: a language is ready for WSD
+when its ledger is complete, and everything downstream -- WSD, cognate mapping,
+a future language -- reads it rather than reconstructing it.
 
     python scripts/materialise_surfaces.py --workspace <ws> --language cs
 """
@@ -17,9 +21,41 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from fluency.surfaces.events import by_surface, read, scope, store_path  # noqa: E402
+from fluency.surfaces.ledger import LEDGER_VERSION, ledger_write_path  # noqa: E402
 from fluency.surfaces.policy import load_policy, verdict  # noqa: E402
 
-VIEW_VERSION = "surface-view/v1"
+# Whoever supplies a language's sense menus is the authority on its lemmas,
+# because the lemma's job is to find a menu. A lemma from anywhere else may name
+# a headword the menu provider has never heard of, which reads as resolution and
+# resolves nothing. Spanish menus come from SpanishDict, so SpanishDict decides;
+# Portuguese and Czech menus come from Wiktionary, so it decides there. Other
+# sources are kept beside it rather than discarded -- they are correct
+# morphology, and cognate work wants them -- but they never lead.
+AUTHORITY = {
+    "es": ("spanishdict-surface-cache", "spanishdict-refetch",
+           "spanishdict-reverse-conjugation"),
+    "pt": ("enwiktionary-closed-class-headword", "enwiktionary-form-of",
+           "enwiktionary-is-headword"),
+    "cs": ("cnk-word-at-a-glance", "enwiktionary-closed-class-headword",
+           "enwiktionary-form-of", "enwiktionary-is-headword"),
+}
+PROVENANCE_LABEL = {
+    "spanishdict-surface-cache": "spanishdict headword",
+    "spanishdict-refetch": "spanishdict headword (refetched)",
+    "spanishdict-reverse-conjugation": "supplied by reverse conjugation",
+    "enwiktionary-closed-class-headword": "wiktionary headword (closed class)",
+    "enwiktionary-form-of": "wiktionary form_of",
+    "enwiktionary-is-headword": "wiktionary headword",
+    "cnk-word-at-a-glance": "CNK word at a glance",
+    "hand-written": "manual",
+}
+
+
+def _authority_rank(language: str, provider: str) -> int | None:
+    for index, prefix in enumerate(AUTHORITY.get(language, ())):
+        if provider.startswith(prefix):
+            return index
+    return None
 
 
 def main() -> int:
@@ -103,6 +139,7 @@ def main() -> int:
         grouped.setdefault(surface, [])
 
     surfaces = {}
+    lang = args.language
     for surface, items in sorted(grouped.items()):
         found = verdict(items, policy)
         lemmas, pos, evidence = [], [], {}
@@ -110,9 +147,10 @@ def main() -> int:
         for event in items:
             code, data = event["reason_code"], event.get("evidence") or {}
             if code in ("lemma_resolved", "lemma_is_headword"):
-                rank_of = data.get("priority", 1)
+                provider = data.get("provider") or ""
+                authority = _authority_rank(lang, provider)
                 for lemma in data.get("lemmas") or []:
-                    candidates.append((rank_of, lemma))
+                    candidates.append((data.get("priority", 1), lemma, provider, authority))
                 pos = pos or data.get("pos") or []
             if data:
                 evidence[code] = data
@@ -134,18 +172,33 @@ def main() -> int:
         # single correct lemma is not derivable here. So the list is ordered and
         # kept whole, and the residual cost is named: "é" and "je" lead with
         # their interjection and pronoun senses, with ser and být behind them.
-        seen_lemma: set[str] = set()
-        lemmas = []
-        for _, lemma in sorted(candidates, key=lambda c: (c[0], ranks.get(c[1], 10**9), c[1])):
-            if lemma not in seen_lemma:
-                seen_lemma.add(lemma)
-                lemmas.append(lemma)
+        def order(c):
+            priority, lemma, provider, authority = c
+            return (priority, ranks.get(lemma, 10**9), lemma)
+
+        primary, provenance, alternates = None, None, []
+        seen_alt: set[str] = set()
+        for _, lemma, provider, authority in sorted(candidates, key=order):
+            label = PROVENANCE_LABEL.get(provider.split(":")[0], provider)
+            if provider == "hand-written":
+                label = "manual"
+            if authority is not None or provider == "hand-written":
+                if primary is None:
+                    primary, provenance = lemma, label
+                    continue
+            if lemma != primary and lemma not in seen_alt:
+                seen_alt.add(lemma)
+                alternates.append({"lemma": lemma, "provenance": label})
+        lemmas = [primary] if primary else []
         surfaces[surface] = {
             "surface": surface,
             "rank": ranks.get(surface),
             "verdict": found["verdict"],
             "reason_codes": found["reason_codes"],
             "tags": sorted({e["reason_code"] for e in items}),
+            "lemma": primary,
+            "lemma_provenance": provenance,
+            "lemma_alternates": alternates,
             "lemmas": lemmas,
             "part_of_speech": pos,
             "evidence": evidence,
@@ -173,11 +226,11 @@ def main() -> int:
                 "sentences_withheld": "surface excluded",
             }
 
-    out = args.out or (ws / f"raw/surfaces/{lang}/surfaces.json")
+    out = args.out or ledger_write_path(ws, lang)
     out.parent.mkdir(parents=True, exist_ok=True)
     counts = collections.Counter(s["verdict"] for s in surfaces.values())
     out.write_text(json.dumps({
-        "view_version": VIEW_VERSION,
+        "ledger_version": LEDGER_VERSION,
         "language": lang,
         "derived_from": {"events": len(events), "surfaces": len(surfaces)},
         "summary": dict(counts),

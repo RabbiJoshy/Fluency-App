@@ -16,6 +16,10 @@ from __future__ import annotations
 import argparse, html, json, sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+from fluency.surfaces.ledger import ledger_path  # noqa: E402
+
 SENTENCES_PER_CARD = 6
 
 
@@ -28,7 +32,7 @@ def main() -> int:
     args = ap.parse_args()
     ws, lang = args.workspace, args.language
 
-    view = json.loads((ws / f"raw/surfaces/{lang}/surfaces.json").read_text())
+    view = json.loads(ledger_path(ws, lang).read_text())
     marker = ws / f"runs/{lang}/speech/LATEST_V11"
     run = ws / f"runs/{lang}/speech/{marker.read_text().strip()}"
     bank = {}

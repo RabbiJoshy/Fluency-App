@@ -239,6 +239,83 @@ Once a set has been tuned on it is not a holdout again. **Rosalía was tuned on
 during v7**, so it is a regression check -- did this break what worked -- rather
 than a score. Portuguese has never been tuned on.
 
+## the surface ledger
+
+**The per-language table that says a language is ready.**
+`<workspace>/raw/surfaces/<language>/ledger.json`, contract `surface-ledger/v1`.
+One row per surface: verdict, reason codes, tags, lemma and its provenance,
+alternates, part of speech, and the harvest/eligible/rejected sentence counts
+with their ids.
+
+A language is **ready for WSD when its ledger is complete**. That is the whole
+definition. WSD, cognate mapping and any future language read the ledger rather
+than reconstructing what it contains.
+
+It was called `surfaces.json` / `surface-view/v2` while it was a byproduct. Do
+not call it a view: a view is derived and disposable, and this is the contract.
+Read its path from `fluency.surfaces.ledger.ledger_path()`, never as a literal.
+
+## event, verdict
+
+The two halves of the ledger, which must not be conflated:
+
+- **event** — an observation, appended to `events.jsonl` and never rewritten.
+  *What was seen.* `accent_stripped_duplicate`, `dictionary_absent`.
+- **verdict** — `keep` / `review` / `exclude`, computed by folding a surface's
+  events through the policy table **at read time**. *What to do about it.*
+
+**Events are facts; verdicts are policy.** Changing a judgement means editing
+`policy.py` and re-materialising — never editing history. Several reason codes
+have had their verdict inverted after the fact at no cost because of this.
+
+## durable, run-scoped
+
+Two kinds of evidence, partitioned in `events.py`:
+
+- **durable** — a fact about the word. Survives a re-harvest. 94–99% of events.
+- **run-scoped** — a fact about one corpus pass: `capitalised_in_corpus`,
+  `low_harvest_yield`. Expires with the run that saw it.
+
+This is why a re-harvest is cheap. It refills freed ranks; it does not rebuild
+knowledge. Saying "the store is stale after a re-harvest" overstates it by
+roughly twentyfold.
+
+## authority
+
+**The provider entitled to supply a language's primary lemma** — which is
+always whoever supplies that language's *sense menus*, because a lemma's job is
+to find a menu. SpanishDict for `es`; Wiktionary for `pt`; ČNK then Wiktionary
+for `cs`.
+
+A lemma from a non-authority source is not wrong, it is **unusable for its
+purpose**: it may name a headword the menu provider has never heard of, which
+reads as resolution and resolves nothing. Those go to `lemma_alternates`, kept
+because they are correct morphology, and they never lead.
+
+## harvest, cleaning, WSD
+
+The three stages, split by *cost and reversibility* rather than by topic:
+
+| | | |
+|---|---|---|
+| **harvest** | cheap, irreversible gates | keeps everything that passes |
+| **cleaning** | expensive narrowing | tags rejects, deletes nothing |
+| **WSD** | disambiguation only | reads a filtered view of the ledger |
+
+"It's a harvest gate" is a claim about *cost*, not about correctness. A test
+that is right but slow belongs in cleaning. A test that is cheap but discards
+evidence you may want back belongs nowhere.
+
+## alignment score
+
+**A LaBSE cosine between a sentence and its translation.** It measures
+**literalness, not correctness** — a correct idiomatic translation scores low
+(`The sands are running out.` at `0.353`). Floors are set to catch garbage, not
+to rank quality, which is why they sit near `0.30`–`0.45` rather than high.
+
+Do not call it a quality score; that reading is what first set the floor at
+`0.67` and stripped idiom.
+
 ## card identity
 
 **The observed surface form.** `card_id = f(language, surface_key)` and nothing

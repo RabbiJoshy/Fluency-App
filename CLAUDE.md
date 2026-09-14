@@ -42,6 +42,27 @@ It also names the app's parts (setup flow, study view, card faces, pills,
 modals) and the four words that mean different things on screen and in the data:
 `tag`, `context`, `source`, `level`.
 
+## The readiness contract
+
+**A language is ready for WSD when its surface ledger is complete.** The ledger
+is `<workspace>/raw/surfaces/<lang>/ledger.json` (`surface-ledger/v1`): one row
+per surface, carrying verdict, reason codes, tags, the authority lemma with its
+provenance, alternates, and harvest/eligible/rejected sentence counts with ids.
+
+Beneath it sits an **append-only observation store**. Events are facts
+(`accent_stripped_duplicate`, `dictionary_absent`); verdicts are policy, folded
+from those events **at read time** by `surfaces/policy.py`. Changing a judgement
+edits the policy table and re-materialises — it never rewrites history. Several
+reason codes have had their verdict inverted at zero cost because of this.
+
+The pipeline is three stages split by **cost and reversibility**: harvest applies
+cheap irreversible gates, cleaning narrows expensively and *tags* rejects rather
+than deleting them, WSD only disambiguates.
+
+Resolve the path with `fluency.surfaces.ledger.ledger_path()`, never as a
+literal. Full detail in `docs/decisions/0021-surface-ledger-and-observation-store.md`;
+the command sequence is `docs/runbooks/surface-ledger.md`.
+
 ## The load-bearing fact
 
 **A card's identity is the observed surface form.** `card_id = f(language,
@@ -60,6 +81,8 @@ src/fluency/
   inventory/      4 frequency adapters   -> surface-inventory/v1
   sense_menu/     kaikki + spanishdict   -> sense-menu/v1
   harvest/        tatoeba + opensubtitles -> parallel-sentence/v1, and pools
+  surfaces/       events.py (append-only log), policy.py (fold -> verdict),
+                  ledger.py (path + contract)      -> surface-ledger/v1
   features/       provider-neutral sense features   (NOT under wsd/)
   menus.py        sense-menu contract                (NOT under wsd/)
   projections.py  release-facing view                (NOT under wsd/)
@@ -120,7 +143,10 @@ Languages with profiles or packages: `es`, `fr`, `pt`, `cs`, `nl`, `pl`. Modes: 
 ## Commands
 
 ```bash
-make test        # unittest discovery, currently 722
+make test        # unittest discovery
+PYTHONPATH=src .venv/bin/python -m pytest -q   # 879 pass, 4 known failures
+python scripts/materialise_surfaces.py --workspace $W --language <lang>  # rebuild the ledger
+python scripts/audit_surfaces_html.py  --workspace $W --language <lang>  # audit it in a browser
 PYTHONPATH=src python -m fluency pipeline plan --profile config/pipelines/<lang>/speech/<profile>.json
 PYTHONPATH=src python -m fluency pipeline inventory|sense-menu|harvest|wsd-import|build-run-release
 PYTHONPATH=src python -m fluency pools list --language <lang>
