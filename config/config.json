@@ -6,12 +6,12 @@
   "languages": {
     "spanish": {
       "name": "Spanish",
-      "indexPath": "Data/Spanish/vocabulary.index.json",
-      "examplesPath": "Data/Spanish/vocabulary.examples.json",
-      "studyStructurePath": "Data/Spanish/study-structure.json",
-      "releaseManifestPath": "Data/Spanish/release-manifest.json",
-      "releaseCompositionPath": "Data/Spanish/release-composition.json",
-      "conjugationsPath": "Data/Spanish/conjugations.json",
+      "indexPath": "releases/es/speech/es-speech-1000x10/app/vocabulary.index.json",
+      "examplesPath": "releases/es/speech/es-speech-1000x10/app/vocabulary.examples.json",
+      "studyStructurePath": "releases/es/speech/es-speech-1000x10/app/study-structure.json",
+      "releaseManifestPath": "releases/es/speech/es-speech-1000x10/manifest.json",
+      "releaseCompositionPath": "releases/es/speech/es-speech-1000x10/composition.json",
+      "conjugationsPath": null,
       "exampleTargetField": "example_spanish",
       "exampleEnglishField": "example_english",
       "pipelineDefaults": {
@@ -77,7 +77,9 @@
       "hasData": true,
       "flag": "🇪🇸",
       "shortCode": "ES",
-      "speechLang": "es-ES"
+      "speechLang": "es-ES",
+      "cognatesPath": "cognates/es/cognates.json",
+      "coveragePath": "coverage/es/coverage.json"
     },
     "swedish": {
       "name": "Swedish",
@@ -255,17 +257,19 @@
     },
     "french": {
       "name": "French",
-      "indexPath": "Data/French/vocabulary.index.json",
-      "examplesPath": "Data/French/vocabulary.examples.json",
-      "studyStructurePath": "Data/French/study-structure.json",
-      "releaseManifestPath": "Data/French/release-manifest.json",
-      "releaseCompositionPath": "Data/French/release-composition.json",
+      "indexPath": "releases/fr/speech/fr-speech-v7-dual-metadata-v4-20260913/app/vocabulary.index.json",
+      "examplesPath": "releases/fr/speech/fr-speech-v7-dual-metadata-v4-20260913/app/vocabulary.examples.json",
+      "studyStructurePath": "releases/fr/speech/fr-speech-v7-dual-metadata-v4-20260913/app/study-structure.json",
+      "releaseManifestPath": "releases/fr/speech/fr-speech-v7-dual-metadata-v4-20260913/manifest.json",
+      "releaseCompositionPath": "releases/fr/speech/fr-speech-v7-dual-metadata-v4-20260913/composition.json",
       "exampleTargetField": "example_french",
       "exampleEnglishField": "example_english",
       "hasData": true,
       "capabilities": {
         "speech": true,
-        "lyrics": false
+        "lyrics": false,
+        "mergeLemmas": false,
+        "cognateFilter": true
       },
       "colorTheme": {
         "primary": "#4A7FFF",
@@ -317,7 +321,9 @@
       },
       "flag": "🇫🇷",
       "shortCode": "FR",
-      "speechLang": "fr-FR"
+      "speechLang": "fr-FR",
+      "cognatesPath": "cognates/fr/cognates.json",
+      "coveragePath": null
     },
     "russian": {
       "name": "Russian",
@@ -437,17 +443,19 @@
     },
     "portuguese": {
       "name": "Portuguese",
-      "indexPath": "releases/pt/speech/pt-speech-european-3000-tiered-20260907/app/vocabulary.index.json",
-      "examplesPath": "releases/pt/speech/pt-speech-european-3000-tiered-20260907/app/vocabulary.examples.json",
-      "studyStructurePath": "releases/pt/speech/pt-speech-european-3000-tiered-20260907/app/study-structure.json",
-      "releaseManifestPath": "releases/pt/speech/pt-speech-european-3000-tiered-20260907/manifest.json",
-      "releaseCompositionPath": "releases/pt/speech/pt-speech-european-3000-tiered-20260907/composition.json",
+      "indexPath": "releases/pt/speech/pt-speech-1000x10/app/vocabulary.index.json",
+      "examplesPath": "releases/pt/speech/pt-speech-1000x10/app/vocabulary.examples.json",
+      "studyStructurePath": "releases/pt/speech/pt-speech-1000x10/app/study-structure.json",
+      "releaseManifestPath": "releases/pt/speech/pt-speech-1000x10/manifest.json",
+      "releaseCompositionPath": "releases/pt/speech/pt-speech-1000x10/composition.json",
       "exampleTargetField": "example_portuguese",
       "exampleEnglishField": "example_english",
       "hasData": true,
       "capabilities": {
         "speech": true,
-        "lyrics": false
+        "lyrics": false,
+        "mergeLemmas": true,
+        "cognateFilter": true
       },
       "colorTheme": {
         "primary": "#046A38",
@@ -499,7 +507,9 @@
       },
       "flag": "🇵🇹",
       "shortCode": "PT",
-      "speechLang": "pt-PT"
+      "speechLang": "pt-PT",
+      "cognatesPath": "cognates/pt/cognates.json",
+      "coveragePath": "coverage/pt/coverage.json"
     },
     "portuguese_brazilian": {
       "name": "Brazilian Portuguese",
@@ -523,7 +533,8 @@
       "capabilities": {
         "lyrics": false,
         "speech": true,
-        "cognateFilter": false
+        "cognateFilter": true,
+        "mergeLemmas": true
       },
       "colorTheme": {
         "primary": "#11457E",
@@ -576,12 +587,13 @@
         "wordReference": "https://en.wiktionary.org/wiki/{word}#Czech",
         "conjugation": "https://en.wiktionary.org/wiki/{word}#Czech"
       },
-      "indexPath": "releases/cs/speech/cs-speech-3000-tiered-20260907/app/vocabulary.index.json",
-      "examplesPath": "releases/cs/speech/cs-speech-3000-tiered-20260907/app/vocabulary.examples.json",
-      "studyStructurePath": "releases/cs/speech/cs-speech-3000-tiered-20260907/app/study-structure.json",
-      "releaseManifestPath": "releases/cs/speech/cs-speech-3000-tiered-20260907/manifest.json",
-      "releaseCompositionPath": "releases/cs/speech/cs-speech-3000-tiered-20260907/composition.json",
-      "cognatesPath": null
+      "indexPath": "releases/cs/speech/cs-speech-1000x10/app/vocabulary.index.json",
+      "examplesPath": "releases/cs/speech/cs-speech-1000x10/app/vocabulary.examples.json",
+      "studyStructurePath": "releases/cs/speech/cs-speech-1000x10/app/study-structure.json",
+      "releaseManifestPath": "releases/cs/speech/cs-speech-1000x10/manifest.json",
+      "releaseCompositionPath": "releases/cs/speech/cs-speech-1000x10/composition.json",
+      "cognatesPath": "cognates/cs/cognates.json",
+      "coveragePath": "coverage/cs/coverage.json"
     }
   },
   "languageDisplayOrder": [

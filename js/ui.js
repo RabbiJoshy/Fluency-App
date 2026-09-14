@@ -1021,6 +1021,11 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
         // the first, and the actionable-level pass refines it from there.
         const initialIdx = savedIdx >= 0 ? savedIdx : (usingReleaseLevels ? 0 : lastIdx);
         const initial = percentageRanges[initialIdx];
+        if (!initial) {
+            console.warn('No level ranges available for', language);
+            container.innerHTML = '<div class="level-selector-empty">No levels available</div>';
+            return;
+        }
         const initialMetrics = _levelBandMetrics(initial, preparedSamples);
         const initialDeckTotal = _levelDeckTotal(percentageRanges, preparedSamples);
         // Coverage display: use threshold for smart ranges, level string for legacy.
