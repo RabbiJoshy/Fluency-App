@@ -126,22 +126,24 @@ def main() -> int:
                 # The ids, not the sentences. WSD joins them against the
                 # sentence bank; duplicating 375,000 sentences into a per-surface
                 # file would make this unreadable and immediately stale.
-                # Eligible ids are ordered as the WSD cap will take them, so
-                # the head of this list is what gets scored and, eventually,
-                # what a learner sees. Ordering by hardness alone took an
-                # arbitrary N rather than the best N: `que`, rank 1, led with
-                # "el Que le que?" against "I'm sucking his what?" -- a
-                # misaligned subtitle pair that scored 0.695, comfortably above
-                # the 0.45 floor, because both sides are four-word questions and
-                # LaBSE reads the shape. 41.6% of Spanish cards had a sentence
-                # under 0.70 in their top ten.
+                # The order WSD will consume, so it is the order that decides
+                # which sentences get a model call and which reach a learner.
                 #
-                # Alignment therefore leads, but banded rather than raw:
-                # sorting on a continuous score would let a 0.001 difference
-                # override easiness entirely, and within a band the sentences
-                # are equally well aligned, so the original intent -- prefer the
-                # ones a classifier finds easy -- still decides. Banding at 0.05
-                # takes that 41.6% to 0.5%.
+                # Hardness alone took an arbitrary N rather than the best N. On
+                # `que` -- rank 1, the commonest surface in Spanish -- it led
+                # with "el Que le que?" against "I'm sucking his what?": a
+                # misaligned subtitle pair scoring 0.695, comfortably above the
+                # 0.45 floor, because both sides are four-word questions and
+                # LaBSE reads the shape. Short sentences are where the alignment
+                # gate is blindest, and easiest-first selects for short. 41.6% of
+                # Spanish cards carried a sub-0.70 sentence in their top ten, on
+                # data where every eligible sentence had already been scored.
+                #
+                # Alignment therefore leads, banded rather than raw: a continuous
+                # sort would let a 0.001 difference override easiness entirely,
+                # whereas within a band the sentences are equally well aligned
+                # and the original intent -- prefer what a classifier finds easy
+                # -- still decides. That takes 41.6% to 0.6%.
                 order = sorted(
                     (i for i in items if i["eligible"]),
                     key=lambda i: (
