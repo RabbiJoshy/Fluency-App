@@ -188,8 +188,28 @@ function updateStreamlineRecCallout() {
 }
 
 function languageName(code) {
-    const names = { en: 'English', es: 'Spanish', fr: 'French', pt: 'Portuguese', cs: 'Czech' };
+    const names = { en: 'English', es: 'Spanish', fr: 'French', pt: 'Portuguese', cs: 'Czech', nl: 'Dutch', pl: 'Polish' };
     return names[code] || String(code || '').toUpperCase();
+}
+
+// Every string below used to say "English", because English was the only
+// language a map had ever shipped scores for. Czech now ships Polish too, so
+// the copy has to read the learner's actual choice or it describes a filter
+// they have not switched on. cognates.js owns the names; this falls back to
+// them only when it has not loaded yet.
+function knownLanguageLabels() {
+    const active = globalThis.activeKnownLanguages?.() || [];
+    const label = globalThis.knownLanguageLabel || languageName;
+    return active.map(code => label(code));
+}
+
+// "English", "Polish", "English or Polish" -- the phrase that reads correctly
+// inside a sentence about what gets set aside.
+function knownLanguagePhrase(joiner = 'or') {
+    const labels = knownLanguageLabels();
+    if (labels.length === 0) return 'a language you already know';
+    if (labels.length === 1) return labels[0];
+    return `${labels.slice(0, -1).join(', ')} ${joiner} ${labels[labels.length - 1]}`;
 }
 
 function showUnavailableMessage(feature) {
@@ -229,40 +249,100 @@ const STREAMLINE_LANGUAGE_EXAMPLES = {
     spanish: {
         name: 'Spanish',
         lemmaExplainer: 'Forms such as <em>hablo</em>, <em>habló</em> and <em>hablar</em> belong to the same word. Put them on one card so you learn it once while keeping every example.',
-        lemmaExample: '<span>hablo</span><span>habló</span><span>hablar</span><b>→ hablar</b>',
-        cognateExample: '<span><b>chocolate</b><small>Spanish</small></span><strong>=</strong><span><b>chocolate</b><small>English</small></span>'
+        lemmaExample: '<span>hablo</span><span>habló</span><span>hablar</span><b>→ hablar</b>'
     },
     french: {
         name: 'French',
         lemmaExplainer: 'Forms such as <em>parle</em>, <em>parla</em> and <em>parler</em> belong to the same word. Put them on one card so you learn it once while keeping every example.',
-        lemmaExample: '<span>parle</span><span>parla</span><span>parler</span><b>→ parler</b>',
-        cognateExample: '<span><b>important</b><small>French</small></span><strong>=</strong><span><b>important</b><small>English</small></span>'
+        lemmaExample: '<span>parle</span><span>parla</span><span>parler</span><b>→ parler</b>'
     },
     portuguese: {
         name: 'Portuguese',
         lemmaExplainer: 'Forms such as <em>falo</em>, <em>falou</em> and <em>falar</em> belong to the same word. Put them on one card so you learn it once while keeping every example.',
-        lemmaExample: '<span>falo</span><span>falou</span><span>falar</span><b>→ falar</b>',
-        cognateExample: '<span><b>hotel</b><small>Portuguese</small></span><strong>=</strong><span><b>hotel</b><small>English</small></span>'
+        lemmaExample: '<span>falo</span><span>falou</span><span>falar</span><b>→ falar</b>'
     },
     italian: {
         name: 'Italian',
         lemmaExplainer: 'Forms such as <em>parlo</em>, <em>parlò</em> and <em>parlare</em> belong to the same word. Put them on one card so you learn it once while keeping every example.',
-        lemmaExample: '<span>parlo</span><span>parlò</span><span>parlare</span><b>→ parlare</b>',
-        cognateExample: '<span><b>problema</b><small>Italian</small></span><strong>=</strong><span><b>problema</b><small>English</small></span>'
+        lemmaExample: '<span>parlo</span><span>parlò</span><span>parlare</span><b>→ parlare</b>'
     },
     german: {
         name: 'German',
         lemmaExplainer: 'Forms such as <em>spreche</em>, <em>sprach</em> and <em>sprechen</em> belong to the same word. Put them on one card so you learn it once while keeping every example.',
-        lemmaExample: '<span>spreche</span><span>sprach</span><span>sprechen</span><b>→ sprechen</b>',
-        cognateExample: '<span><b>musik</b><small>German</small></span><strong>=</strong><span><b>music</b><small>English</small></span>'
+        lemmaExample: '<span>spreche</span><span>sprach</span><span>sprechen</span><b>→ sprechen</b>'
     },
     czech: {
         name: 'Czech',
         lemmaExplainer: 'Forms such as <em>dělám</em>, <em>dělal</em> and <em>dělat</em> belong to the same word. Put them on one card so you learn it once while keeping every example.',
-        lemmaExample: '<span>dělám</span><span>dělal</span><span>dělat</span><b>→ dělat</b>',
-        cognateExample: '<span><b>film</b><small>Czech</small></span><strong>=</strong><span><b>film</b><small>English</small></span>'
+        lemmaExample: '<span>dělám</span><span>dělal</span><span>dělat</span><b>→ dělat</b>'
     }
 };
+
+// A worked pair needs BOTH languages, so it is keyed by target and known
+// language together. Only pairs that are genuinely cognate are listed; where
+// none is listed the example is drawn from the deck instead, which is honest
+// about what it knows rather than inventing a counterpart spelling.
+const COGNATE_EXAMPLES = {
+    'spanish:en': { target: 'chocolate', known: 'chocolate' },
+    'french:en': { target: 'important', known: 'important' },
+    'portuguese:en': { target: 'hotel', known: 'hotel' },
+    'italian:en': { target: 'problema', known: 'problema' },
+    'german:en': { target: 'musik', known: 'music' },
+    'czech:en': { target: 'film', known: 'film' },
+    'czech:pl': { target: 'ale', known: 'ale' },
+    'dutch:en': { target: 'water', known: 'water' },
+};
+
+// The highest-ranked word this one language sets aside, read from the deck the
+// learner is actually looking at. Used when no pair is curated, so a newly
+// shipped language pair still shows a true example on its first day.
+function liveCognateExample(code) {
+    const vocab = globalThis.setupVocabularySnapshot || globalThis.cachedVocabularyData;
+    const cutoff = globalThis.cognateThresholdFor?.(code);
+    if (!Array.isArray(vocab) || !Number.isFinite(cutoff)) return null;
+    let best = null;
+    for (const item of vocab) {
+        const score = Number(item?.cognate_scores?.[code] || 0);
+        if (score < cutoff) continue;
+        if (best === null || (item.rank ?? Infinity) < (best.rank ?? Infinity)) best = item;
+    }
+    return best ? best.word : null;
+}
+
+function escapeExample(value) {
+    return String(value ?? '').replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+}
+
+// Prefer a curated pair for a language the learner has actually selected; fall
+// back to a real excluded word; show nothing rather than an English pair the
+// setting does not describe.
+function cognateExampleHtml(langKey, targetName) {
+    const active = globalThis.activeKnownLanguages?.() || [];
+    const label = globalThis.knownLanguageLabel || languageName;
+    for (const code of active) {
+        const pair = COGNATE_EXAMPLES[`${langKey}:${code}`];
+        if (!pair) continue;
+        return {
+            html: `<span><b>${escapeExample(pair.target)}</b><small>${escapeExample(targetName)}</small></span>`
+                + `<strong>=</strong>`
+                + `<span><b>${escapeExample(pair.known)}</b><small>${escapeExample(label(code))}</small></span>`,
+            note: `Example of a ${targetName} word that is obvious in ${label(code)}`,
+        };
+    }
+    for (const code of active) {
+        const word = liveCognateExample(code);
+        if (!word) continue;
+        return {
+            html: `<span><b>${escapeExample(word)}</b><small>${escapeExample(targetName)}</small></span>`
+                + `<strong>=</strong>`
+                + `<span><small>already clear in ${escapeExample(label(code))}</small></span>`,
+            note: `Example of a ${targetName} word that is obvious in ${label(code)}`,
+        };
+    }
+    return null;
+}
 
 function updateStreamlineLanguageExamples() {
     const langKey = String(globalThis.selectedLanguage || 'spanish').toLowerCase();
@@ -278,8 +358,32 @@ function updateStreamlineLanguageExamples() {
     }
     const cognateExample = document.querySelector('#cognateToggleContainer .fast-mode-example--cognate');
     if (cognateExample) {
-        cognateExample.innerHTML = config.cognateExample;
-        cognateExample.setAttribute('aria-label', `Example of a ${config.name} word that is obvious in English`);
+        const example = cognateExampleHtml(langKey, config.name);
+        cognateExample.innerHTML = example ? example.html : '';
+        cognateExample.hidden = !example;
+        if (example) cognateExample.setAttribute('aria-label', example.note);
+    }
+    updateKnownLanguageCopy();
+}
+
+// The three sentences that named English outright. Each is rewritten in place
+// from the learner's selection, so turning English off and Polish on changes
+// what the page says it will do as well as what it does.
+function updateKnownLanguageCopy() {
+    const phrase = knownLanguagePhrase();
+    const callout = document.getElementById('streamlineRecCalloutText');
+    if (callout) {
+        callout.textContent = `Merges verb conjugations onto base cards and skips obvious look-alikes from ${phrase}, `
+            + 'so you focus strictly on new vocabulary without missing any examples.';
+    }
+    const familiar = document.getElementById('cognateSettingExplanation');
+    if (familiar) {
+        familiar.textContent = `Sets aside words whose meaning is already obvious from ${phrase}.`;
+    }
+    const sensitivity = document.getElementById('cognateSensitivityExplanationText');
+    if (sensitivity) {
+        sensitivity.textContent = `Sets how similar to ${phrase} a word must be before it is skipped: `
+            + 'Loose skips only identical words; Strict skips looser look-alikes.';
     }
 }
 
@@ -341,3 +445,4 @@ globalThis.refreshFastMode = refresh;
 globalThis.openFastModePage = openFastModePage;
 globalThis.showFastModeUnavailable = showUnavailableMessage;
 globalThis.updateStreamlineLanguageExamples = updateStreamlineLanguageExamples;
+globalThis.updateKnownLanguageCopy = updateKnownLanguageCopy;
