@@ -384,6 +384,7 @@ class KaikkiSenseMenuAdapter:
         source_edition: str = "enwiktionary",
         language_policy: dict[str, Any] | None = None,
         max_redirect_hops: int = 5,
+        external_lemmas: dict[str, list[str]] | None = None,
     ) -> None:
         self.path = path.resolve()
         if not self.path.is_file():
@@ -403,6 +404,17 @@ class KaikkiSenseMenuAdapter:
         self._normalize = normalizer_for_language(language_code)
         self._canonicalize = typography_canonicalizer_for_language(language_code)
         self.max_redirect_hops = max_redirect_hops
+        # Wiktionary can only redirect from a row it has. A heavily inflected
+        # language leaves most surfaces with no row at all -- Czech Wiktionary
+        # holds 68,420 headwords against a language that declines everything --
+        # so the redirect graph never starts and the card gets no menu. An
+        # external morphology source supplies the missing first hop: CNK says
+        # "policii" is a form of "policie", and the builder can take it from
+        # there. Measured on Czech: 4,294 cards with no menu, of which 3,920
+        # resolve to a lemma Wiktionary does hold.
+        self.external_lemmas = {
+            surface: tuple(lemmas) for surface, lemmas in (external_lemmas or {}).items() if lemmas
+        }
         self.snapshot_content_id = file_content_id(self.path)
 
     def _collect(
@@ -422,6 +434,12 @@ class KaikkiSenseMenuAdapter:
         allowed_positions: dict[str, dict[str, set[str] | None]] = {
             surface: {surface: None} for surface in surfaces
         }
+        for surface in surfaces:
+            for lemma in self.external_lemmas.get(surface, ()):  # the missing first hop
+                normalized = self._normalize(lemma)
+                if normalized and normalized not in paths[surface]:
+                    paths[surface][normalized] = (surface, normalized)
+                    allowed_positions[surface][normalized] = None
         scanned: set[str] = set()
         rows_read = 0
         passes = 0

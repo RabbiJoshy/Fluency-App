@@ -32,25 +32,76 @@ SD = "raw/dictionaries/es/spanishdict/spanishdict-complete-menu-2026-08-23-v1"
 
 
 def wiktionary_forms(path: Path) -> tuple[dict[str, set[str]], set[str]]:
-    """surface -> lemma, from the form_of and alt_of links in the dump."""
+    """surface -> lemma, from the form_of and alt_of links in the dump.
+
+    Two things the naive reading gets wrong, both visible on the commonest
+    words in Spanish.
+
+    Wiktionary carries uppercase abbreviation entries beside ordinary words,
+    and matching case-insensitively pulls their expansions in as though they
+    were morphology: "no" came back as noroeste and número, "me" as muerte
+    encefálica, "se" as sudeste, "al" as América Latina. The spelling is
+    therefore matched exactly.
+
+    And a surface that is its own headword is its own lemma, whatever else
+    links to it. "una" really is the third person of unir and "para" of parar,
+    but at ranks 15 and 22 of a subtitle list they are the article and the
+    preposition, and a rare homograph must not displace the word being taught.
+    """
     forms: dict[str, set[str]] = {}
-    heads: set[str] = set()
+    heads_exact: set[str] = set()
+    # Closed-class words -- articles, pronouns, prepositions, conjunctions,
+    # determiners, adverbs, interjections -- are not in practice inflected
+    # forms of anything else. When one is its own headword it is its own lemma,
+    # and a rare open-class homograph must not displace it: "una" is the third
+    # person of unir and "para" of parar, but at ranks 15 and 22 of a subtitle
+    # list they are the article and the preposition. An open-class surface is
+    # left alone, so "es" still resolves to "ser".
+    closed: set[str] = set()
+    CLOSED_POS = {"article", "det", "pron", "prep", "conj", "adv", "intj",
+                  "particle", "contraction", "postp"}
     with path.open(encoding="utf-8") as handle:
         for line in handle:
             if not line.strip():
                 continue
             row = json.loads(line)
-            word = (row.get("word") or "").lower()
+            word = row.get("word") or ""
             if not word:
                 continue
-            heads.add(word)
+            heads_exact.add(word)
+            if (row.get("pos") or "") in CLOSED_POS:
+                closed.add(word)
             for sense in row.get("senses") or []:
                 for key in ("form_of", "alt_of"):
                     for item in sense.get(key) or []:
-                        target = (item.get("word") or "").lower()
+                        target = (item.get("word") or "").strip()
                         if target and target != word:
                             forms.setdefault(word, set()).add(target)
-    return forms, heads
+    # Note: an inflected form has a headword entry of its own -- that is how
+    # form_of is expressed at all, the entry's word being the inflection and
+    # its sense naming the lemma. Dropping every headword from the table
+    # therefore deletes the resolutions worth having: "é" stopped resolving to
+    # "ser" and "está" to "estar". Precedence is handled by ordering the
+    # closed-class source first, not by deleting links.
+    return forms, {w.lower() for w in heads_exact} | heads_exact, closed
+
+
+def _priority(provider: str) -> int:
+    """How much a source's answer is worth when several disagree.
+
+    A closed-class word that is its own headword is its own lemma and nothing
+    outranks that: articles, pronouns and prepositions are not inflections of
+    anything, so "una" is the article and not the third person of unir.
+    Morphological resolution comes next, because that is what a lemma is for:
+    "es" to ser, "é" to ser, "jsem" to být. A bare headword entry is the
+    fallback -- it says only that the string is documented, which is also true
+    of the letter "e".
+    """
+    if "closed-class-headword" in provider:
+        return 0
+    if "is-headword" in provider:
+        return 2
+    return 1
 
 
 def main() -> int:
@@ -68,7 +119,12 @@ def main() -> int:
 
     wikt = ws / "raw/wiktionary" / WIKTIONARY[lang]
     if wikt.exists():
-        forms, headwords = wiktionary_forms(wikt)
+        forms, headwords, closed_class = wiktionary_forms(wikt)
+        # Recorded before every other source, so a closed-class word keeps its
+        # own lemma rather than a conjugation table's homograph.
+        if closed_class:
+            sources.append((f"enwiktionary-closed-class-headword:{wikt.parent.name}",
+                            {w: {w} for w in closed_class}))
         sources.append((f"enwiktionary-form-of:{wikt.parent.name}", forms))
 
     if lang == "es":
@@ -106,21 +162,22 @@ def main() -> int:
     # conclusive than it is: "casa" needs no resolution, it IS the lemma.
     if headwords:
         sources.append((f"enwiktionary-is-headword:{wikt.parent.name}",
-                        {w: {w.lower()} for w in headwords}))
+                        {w: {w} for w in headwords}))
 
     events, resolved = [], set()
     for provider, table in sources:
         for surface in cards:
-            lemmas = table.get(surface.lower())
+            lemmas = table.get(surface) or table.get(surface.lower())
             if not lemmas:
                 continue
             resolved.add(surface)
-            code = ("lemma_is_headword" if provider.startswith("enwiktionary-is-headword")
+            code = ("lemma_is_headword" if "headword" in provider
                     else "lemma_resolved")
             events.append(build_event(
                 surface=surface, language=lang, phase="lemma",
                 reason_code=code, observer=f"observe_lemmas/{provider}",
-                evidence={"lemmas": sorted(lemmas)[:6], "provider": provider}))
+                evidence={"lemmas": sorted(lemmas)[:6], "provider": provider,
+                          "priority": _priority(provider)}))
 
     written = append(store_path(ws, lang), events)
     print(f"{lang}: {len(cards):,} cards")

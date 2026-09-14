@@ -71,6 +71,28 @@ def _implementation_content_id() -> str:
     )
 
 
+def _store_lemmas(workspace, language: str) -> dict[str, list[str]]:
+    """Surface to lemma, as the observation store records it.
+
+    Only lemmas that were actually resolved are handed over: a surface that is
+    merely its own headword adds no hop the builder does not already have, and
+    passing it would make every card look externally resolved.
+    """
+    view = workspace.root / "raw" / "surfaces" / language / "surfaces.json"
+    if not view.exists():
+        return {}
+    try:
+        payload = json.loads(view.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    out: dict[str, list[str]] = {}
+    for surface, row in (payload.get("surfaces") or {}).items():
+        lemmas = [lemma for lemma in (row.get("lemmas") or []) if lemma and lemma != surface]
+        if lemmas:
+            out[surface] = lemmas
+    return out
+
+
 def build_sense_menu_stage(
     repository_root: Path,
     workspace: Workspace,
@@ -129,6 +151,7 @@ def build_sense_menu_stage(
             gloss_language=profile["sense_menu"]["gloss_language"],
             source_edition=profile["sense_menu"]["source_edition"],
             language_policy=language_policy,
+            external_lemmas=_store_lemmas(workspace, language),
         )
     elif source_adapter == SPANISHDICT_ADAPTER_ID:
         adapter = SpanishDictSenseMenuAdapter(

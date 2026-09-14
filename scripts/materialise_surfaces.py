@@ -106,13 +106,40 @@ def main() -> int:
     for surface, items in sorted(grouped.items()):
         found = verdict(items, policy)
         lemmas, pos, evidence = [], [], {}
+        candidates: list[str] = []
         for event in items:
             code, data = event["reason_code"], event.get("evidence") or {}
-            if code in ("lemma_resolved", "lemma_is_headword") and not lemmas:
-                lemmas = data.get("lemmas") or []
-                pos = data.get("pos") or []
+            if code in ("lemma_resolved", "lemma_is_headword"):
+                rank_of = data.get("priority", 1)
+                for lemma in data.get("lemmas") or []:
+                    candidates.append((rank_of, lemma))
+                pos = pos or data.get("pos") or []
             if data:
                 evidence[code] = data
+        # Several sources answer and they disagree, so the list is ordered
+        # rather than reduced to one: the best answer leads and the rest stay
+        # available, because the menu builder can follow every path while a
+        # reader wants the likeliest first.
+        # Closed-class self-lemma leads, except where the word also resolves to
+        # a lemma that is itself core vocabulary. "é" carries an interjection
+        # sense alongside being the third person of ser, and "je" is a pronoun
+        # as well as a form of být -- so the closed-class test alone answered
+        # "é" and "je", when at ranks 6 and 3 they are overwhelmingly the verb.
+        # A resolved lemma inside the top of the list is the better answer; a
+        # rare one, like unir behind the article "una", is not.
+        # Promoting a frequent resolution above the closed-class self-lemma was
+        # tried and is worse: it answers "é" with ser but also "no" with número,
+        # "me" with yo and "la" with ella. Four orderings were tried and each
+        # fixed one class while breaking another, which is the evidence that a
+        # single correct lemma is not derivable here. So the list is ordered and
+        # kept whole, and the residual cost is named: "é" and "je" lead with
+        # their interjection and pronoun senses, with ser and být behind them.
+        seen_lemma: set[str] = set()
+        lemmas = []
+        for _, lemma in sorted(candidates, key=lambda c: (c[0], ranks.get(c[1], 10**9), c[1])):
+            if lemma not in seen_lemma:
+                seen_lemma.add(lemma)
+                lemmas.append(lemma)
         surfaces[surface] = {
             "surface": surface,
             "rank": ranks.get(surface),

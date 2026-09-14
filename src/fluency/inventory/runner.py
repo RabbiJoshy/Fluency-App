@@ -85,6 +85,31 @@ def _implementation_content_id(adapter_id: str) -> str:
     )
 
 
+def _store_exclusions(workspace: Workspace, language: str) -> dict[str, dict]:
+    """Surfaces the observation store has judged not to be words of this language.
+
+    Absent or unreadable, the store simply contributes nothing: a missing file
+    must not silently empty a deck.
+    """
+    view = workspace.root / "raw" / "surfaces" / language / "surfaces.json"
+    if not view.exists():
+        return {}
+    try:
+        payload = json.loads(view.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    out: dict[str, dict] = {}
+    for surface, row in (payload.get("surfaces") or {}).items():
+        if row.get("verdict") != "exclude":
+            continue
+        out[surface] = {
+            "reason": "surface_store_verdict",
+            "reason_codes": row.get("reason_codes") or [],
+            "observations": row.get("observations"),
+        }
+    return out
+
+
 def build_inventory_stage(
     repository_root: Path,
     workspace: Workspace,
@@ -214,7 +239,13 @@ def build_inventory_stage(
             "recovered_from": recovered.manifest["recovered_from"],
         }
         upstream_inputs = {}
-    exclusions = language_policy["surface_exclusions"]
+    exclusions = dict(language_policy["surface_exclusions"])
+    # The surface store holds what every stage has learned about a word, and a
+    # verdict of "exclude" is the conclusion drawn from it. Reading it here is
+    # what stops an excluded surface becoming a card at all; excluding later
+    # would leave the deck short rather than promote the next real word into
+    # the freed rank.
+    exclusions.update(_store_exclusions(workspace, language))
     excluded = [
         {
             "surface": surface,
