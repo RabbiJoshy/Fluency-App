@@ -141,6 +141,51 @@ def detect_variety(text: str, language_policy: dict[str, Any]) -> str | None:
     return hits[0] if len(hits) == 1 else None
 
 
+# A subtitle row carries production notes the translator never meant as
+# language: a speaker label ("HENRY:"), a sound cue ("[Groans]", "(phone
+# rings)"), and the dash that separates two speakers' turns inside one row.
+# The target side is already gated on form; the English side never was, so
+# these reached the deck as the thing a learner reads for meaning.
+_SPEAKER_LABEL = re.compile(r"^\s*[-\u2013\u2014\s]*[A-Z][A-Z0-9 .'\-]{1,24}:\s")
+_BRACKETED_ANNOTATION = re.compile(r"[\[(][^\])]{0,60}[\])]")
+_DIALOGUE_TURN = re.compile(r"\S\s+[-\u2013\u2014]\s+\S")
+_LEADING_DASH = re.compile(r"^\s*[-\u2013\u2014]\s*")
+
+
+
+def _is_bracketed_annotation(text: str) -> bool:
+    """True for a production cue, false for speech that merely wears brackets.
+
+    "(Ale co budeme delat ted a zitra?)" is a whole sentence a speaker says; a
+    cue is either set beside real text -- "Why didn't he say something?
+    (Conversation continues in distance)" -- or is the entire side and carries
+    no sentence of its own, as in "[gentle electric guitar music]".
+    """
+    if not _BRACKETED_ANNOTATION.search(text):
+        return False
+    residue = _BRACKETED_ANNOTATION.sub("", text).strip(" \t\"'\u00ab\u00bb-\u2013\u2014")
+    if residue:
+        return True
+    inner = "".join(m.group(0)[1:-1] for m in _BRACKETED_ANNOTATION.finditer(text)).strip()
+    return not inner.endswith((".", "!", "?", "\u2026"))
+
+
+def _malformed_side(text: str, quality: dict[str, Any]) -> str | None:
+    """Form rules that hold of any sentence, whichever language it is in."""
+    if quality.get("reject_lowercase_start"):
+        if text.strip().lstrip("\"'\u00ab([-\u2013\u2014 ")[:1].islower():
+            return "starts_mid_sentence"
+    if quality.get("reject_unterminated") and text.strip().endswith((",", ";", ":")):
+        return "ends_mid_sentence"
+    if quality.get("reject_truncated_fragments"):
+        stripped = text.strip()
+        if stripped.startswith(("...", "\u2026")) or stripped.endswith(("...", "\u2026")):
+            return "truncated_fragment"
+    if quality.get("reject_all_caps") and text.isupper() and any(c.isalpha() for c in text):
+        return "all_caps"
+    return None
+
+
 def quality_rejection(
     target: str,
     translation: str,
@@ -222,6 +267,23 @@ def quality_rejection(
         return "starts_mid_sentence"
     if quality.get("reject_unterminated") and target.strip().endswith((",", ";", ":")):
         return "ends_mid_sentence"
+    # The four rules above judge the target's form. The English side is what a
+    # learner reads for meaning, and a fragment there is exactly as useless --
+    # "What was he doing", "- Delhi flight until now... Was it really your dead
+    # mother's birthday that day?". Measured on the shipped decks, mirroring
+    # them onto the translation reaches 0.4% to 1.2% of displayed examples.
+    if quality.get("apply_form_rules_to_translation"):
+        reason = _malformed_side(translation, quality)
+        if reason is not None:
+            return f"translation_{reason}"
+    if quality.get("reject_subtitle_annotations"):
+        for side, text in (("target", target), ("translation", translation)):
+            if _SPEAKER_LABEL.match(text):
+                return f"{side}_speaker_label"
+            if _is_bracketed_annotation(text):
+                return f"{side}_bracketed_annotation"
+            if _DIALOGUE_TURN.search(_LEADING_DASH.sub("", text)):
+                return f"{side}_dialogue_turn"
     return None
 
 

@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[2]
 SHARED = json.loads((ROOT / "config/harvest/shared/speech-v1.json").read_text())
 CS = json.loads((ROOT / "config/harvest/languages/cs-v1.json").read_text())
 PT = json.loads((ROOT / "config/harvest/languages/pt-v1.json").read_text())
-TRANSLATION = "a translation long enough to clear every ratio gate in the policy"
+TRANSLATION = "This translation is long enough to clear every ratio gate in the policy."
 
 
 def reject(sentence, policy=None, language=CS):

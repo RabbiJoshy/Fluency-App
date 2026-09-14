@@ -26,6 +26,8 @@
     "require_source_record_id": true
   },
   "quality": {
+    "apply_form_rules_to_translation": true,
+    "apply_form_rules_to_translation_note": "The form rules above were written for the target and applied only there. The English side is what a learner reads for meaning, so a fragment there is exactly as useless: \"What was he doing\", \"I bought the agreement back from them for two million...\" cut mid-clause. Measured on the shipped 1,000-card decks: 0.4% of Portuguese displayed examples, 0.4% of Spanish, 1.2% of Czech.",
     "fragment_note": "A subtitle row is a slice of a stream: it can begin partway through one sentence and end partway through the next. A row starting lowercase is a continuation of the row before it, and one ending in a comma, semicolon or colon stops before its clause closes. Both read as broken language rather than as an example. Measured on the shipped decks: 3.4% and 0.7% of Czech displayed examples, 0.4% and 0.3% of Portuguese.",
     "maximum_target_tokens": 16,
     "maximum_translation_ratio": 2.5,
@@ -41,6 +43,8 @@
     "reject_identical_sides": true,
     "reject_lowercase_start": true,
     "reject_markup": true,
+    "reject_subtitle_annotations": true,
+    "reject_subtitle_annotations_note": "Speaker labels (\"HENRY:\"), sound cues (\"[Groans]\", \"(phone rings)\") and the dash separating two speakers inside one subtitle row are production notes, not language. Applied to both sides. Measured on the shipped decks: 0.5% of Portuguese displayed examples, 0.3% of Spanish, 0.7% of Czech. Two Spanish examples had a sound cue as the entire English side.",
     "reject_truncated_fragments": true,
     "reject_truncated_fragments_note": "A line cut mid-thought is grammatical and teaches nothing: the clause the target belongs to was never finished. Measured on the Portuguese pilot: 6.5% of candidates, and no card fell below the five it must display (lowest pool 48 of 60).",
     "reject_unterminated": true

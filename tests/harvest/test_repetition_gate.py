@@ -24,7 +24,7 @@ from fluency.harvest.matching import SurfaceMatcher, easiness_metrics, quality_r
 ROOT = Path(__file__).resolve().parents[2]
 SHARED = json.loads((ROOT / "config/harvest/shared/speech-v1.json").read_text())
 PT = json.loads((ROOT / "config/harvest/languages/pt-v1.json").read_text())
-TRANSLATION = "a translation long enough to pass the ratio gate"
+TRANSLATION = "This translation is long enough to pass the ratio gate."
 # Every word here is ranked: in a real run the commonest words always are, and
 # leaving one out silently makes it look rare enough to dominate the score.
 RANKS = {"não": 4, "e": 8, "sei": 300, "o": 2, "que": 1, "é": 6}
@@ -34,7 +34,7 @@ RANKS = {"não": 4, "e": 8, "sei": 300, "o": 2, "que": 1, "é": 6}
 # threshold and so does not trip it. Isolating one gate needs a probe the other
 # cannot reach.
 TOO_FEW_WORDS = "Sei o que sei."
-TOO_FEW_WORDS_TRANSLATION = "I know what I know"
+TOO_FEW_WORDS_TRANSLATION = "I know what I know."
 # Rejected by the ratio gate alone: seven distinct tokens, ten in total.
 MOSTLY_ECHO = "Eu não sei o que tu queres, eu não sei."
 
