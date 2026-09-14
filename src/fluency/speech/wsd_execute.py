@@ -20,6 +20,7 @@ import argparse
 from collections import defaultdict
 import json
 import os
+import re
 import time
 from pathlib import Path
 from typing import Any, Iterable, Sequence
@@ -503,9 +504,9 @@ def main() -> None:
         help="conditioned-pool artifact; candidates it marks ineligible never reach the cap",
     )
     parser.add_argument(
-        "--execution-cap", type=int, default=DEFAULT_EXECUTION_CAP,
-        help="max occurrences per surface card that reach WSD (default: the "
-             "mature historical 10). Separate from the study-example cap.",
+        "--execution-cap", type=int, default=30,
+        help="max occurrences per surface card that reach WSD (default: 30 "
+             "to ensure complete coverage with Stage 05 selection).",
     )
     parser.add_argument(
         "--offline-only",

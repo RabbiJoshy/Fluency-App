@@ -358,6 +358,9 @@ class SpanishV5CandidatePolicy:
                 if analysis.headword.casefold().endswith("se") is evidence
             }
             compatible &= keep_ids
+            if compatible:
+                clitic_removed = sorted(keep_ids - compatible)
+                keep_ids &= compatible
         if self.language == "cs":
             surface_lower = surface_form.casefold()
             if surface_lower == "že":

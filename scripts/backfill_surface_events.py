@@ -137,8 +137,17 @@ def main() -> int:
             lemmas = [a["lemma"] for a in row["analyses"] if a.get("lemma")]
             if not lemmas:
                 continue
+            analyses = [
+                {"lemma": a.get("lemma"),
+                 "pos": [x for x in (a.get("pos_label") or []) if x],
+                 "ipm": a.get("ipm")}
+                for a in row["analyses"] if a.get("lemma")
+            ][:6]
             note(row["word"], "lemma", "lemma_resolved",
-                 {"lemmas": lemmas[:4], "provider": "cnk-word-at-a-glance"})
+                 {"lemmas": lemmas[:4],
+                  "pos": sorted({p for a in analyses for p in a["pos"]}),
+                  "analyses": analyses,
+                  "provider": "cnk-word-at-a-glance"})
             if heads and not any(l.lower() in heads for l in lemmas):
                 note(row["word"], "lemma", "lemma_absent_from_dictionary",
                      {"lemmas": lemmas[:4], "dictionary": "enwiktionary-cs"})

@@ -42,5 +42,89 @@ class CzechAdapterTests(unittest.TestCase):
         self.assertEqual(adapter.locate("Mám malý byt.", "být"), ())
 
 
+class CzechHomographTests(unittest.TestCase):
+    def setUp(self):
+        from fluency.wsd.menus import MenuAnalysis, SenseLeaf, build_analysis_id
+
+        self.conj_ze = MenuAnalysis(
+            menu_analysis_id=build_analysis_id(card_id="c1", source_adapter="wik", source_analysis_key="ze:conj"),
+            card_id="c1", surface_form="že", headword="že", part_of_speech="CONJ",
+            source_adapter="wik", source_analysis_key="ze:conj",
+            senses=(SenseLeaf("s_conj", "that", "", "ref", {}),),
+            provider_metadata={},
+        )
+        self.intj_ze = MenuAnalysis(
+            menu_analysis_id=build_analysis_id(card_id="c1", source_adapter="wik", source_analysis_key="ze:intj"),
+            card_id="c1", surface_form="že", headword="že", part_of_speech="INTJ",
+            source_adapter="wik", source_analysis_key="ze:intj",
+            senses=(SenseLeaf("s_intj", "right?", "", "ref", {}),),
+            provider_metadata={},
+        )
+        self.prep_se = MenuAnalysis(
+            menu_analysis_id=build_analysis_id(card_id="c2", source_adapter="wik", source_analysis_key="se:prep"),
+            card_id="c2", surface_form="se", headword="s", part_of_speech="ADP",
+            source_adapter="wik", source_analysis_key="se:prep",
+            senses=(SenseLeaf("s_prep", "with", "", "ref", {}),),
+            provider_metadata={},
+        )
+        self.pron_se = MenuAnalysis(
+            menu_analysis_id=build_analysis_id(card_id="c2", source_adapter="wik", source_analysis_key="se:pron"),
+            card_id="c2", surface_form="se", headword="se", part_of_speech="PRON",
+            source_adapter="wik", source_analysis_key="se:pron",
+            senses=(SenseLeaf("s_pron", "oneself", "", "ref", {}),),
+            provider_metadata={},
+        )
+
+    def test_ze_subordinating_clause_prunes_interjection(self):
+        from fluency.wsd.languages.spanish import SpanishV5CandidatePolicy
+
+        policy = SpanishV5CandidatePolicy(language="cs", constraint_mode="filter")
+        prepared = policy.prepare(
+            sentence="Jak to, že tohle je v pořádku?",
+            surface_form="že",
+            observed_pos=None,
+            analyses=(self.conj_ze, self.intj_ze),
+        )
+        self.assertEqual(len(prepared.analyses), 1)
+        self.assertEqual(prepared.analyses[0].part_of_speech, "CONJ")
+
+    def test_ze_tag_question_keeps_interjection(self):
+        from fluency.wsd.languages.spanish import SpanishV5CandidatePolicy
+
+        policy = SpanishV5CandidatePolicy(language="cs", constraint_mode="filter")
+        prepared = policy.prepare(
+            sentence="Byl tam taky, že?",
+            surface_form="že",
+            observed_pos=None,
+            analyses=(self.conj_ze, self.intj_ze),
+        )
+        self.assertEqual(len(prepared.analyses), 2)
+
+    def test_se_instrumental_prunes_pronoun(self):
+        from fluency.wsd.languages.spanish import SpanishV5CandidatePolicy
+
+        policy = SpanishV5CandidatePolicy(language="cs", constraint_mode="filter")
+        prepared = policy.prepare(
+            sentence="Pojď se mnou.",
+            surface_form="se",
+            observed_pos=None,
+            analyses=(self.prep_se, self.pron_se),
+        )
+        self.assertEqual(len(prepared.analyses), 1)
+        self.assertEqual(prepared.analyses[0].part_of_speech, "ADP")
+
+    def test_se_reflexive_preserves_pronoun(self):
+        from fluency.wsd.languages.spanish import SpanishV5CandidatePolicy
+
+        policy = SpanishV5CandidatePolicy(language="cs", constraint_mode="filter")
+        prepared = policy.prepare(
+            sentence="On se směje.",
+            surface_form="se",
+            observed_pos=None,
+            analyses=(self.prep_se, self.pron_se),
+        )
+        self.assertEqual(len(prepared.analyses), 2)
+
+
 if __name__ == "__main__":
     unittest.main()
