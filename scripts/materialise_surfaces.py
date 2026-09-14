@@ -57,6 +57,9 @@ PROVENANCE_LABEL = {
 }
 
 
+ALIGNMENT_BAND = 0.05
+
+
 def _provenance_label(provider: str) -> str:
     """Human-readable provenance for a provider id.
 
@@ -123,11 +126,29 @@ def main() -> int:
                 # The ids, not the sentences. WSD joins them against the
                 # sentence bank; duplicating 375,000 sentences into a per-surface
                 # file would make this unreadable and immediately stale.
-                # Eligible ids are ordered as the WSD cap will take them --
-                # easiest first -- so the head of the list is what gets scored.
+                # Eligible ids are ordered as the WSD cap will take them, so
+                # the head of this list is what gets scored and, eventually,
+                # what a learner sees. Ordering by hardness alone took an
+                # arbitrary N rather than the best N: `que`, rank 1, led with
+                # "el Que le que?" against "I'm sucking his what?" -- a
+                # misaligned subtitle pair that scored 0.695, comfortably above
+                # the 0.45 floor, because both sides are four-word questions and
+                # LaBSE reads the shape. 41.6% of Spanish cards had a sentence
+                # under 0.70 in their top ten.
+                #
+                # Alignment therefore leads, but banded rather than raw:
+                # sorting on a continuous score would let a 0.001 difference
+                # override easiness entirely, and within a band the sentences
+                # are equally well aligned, so the original intent -- prefer the
+                # ones a classifier finds easy -- still decides. Banding at 0.05
+                # takes that 41.6% to 0.5%.
                 order = sorted(
                     (i for i in items if i["eligible"]),
-                    key=lambda i: (i["metrics"].get("score", float("inf")), i["sentence_id"]),
+                    key=lambda i: (
+                        -round((i["tags"].get("alignment") or 0.0) / ALIGNMENT_BAND),
+                        i["metrics"].get("score", float("inf")),
+                        i["sentence_id"],
+                    ),
                 )
                 dropped: dict[str, list[str]] = {}
                 for i in items:

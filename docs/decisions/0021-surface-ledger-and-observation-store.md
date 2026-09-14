@@ -86,6 +86,52 @@ each fixed one class and broke another (`es`→`ser` against `no`→`número`). 
 ledger therefore ships an *ordered list*, authority first, and lets the consumer
 decide how far down to read.
 
+## Reverse conjugation leads only where the surface is known to be a verb
+
+The authority order for Spanish is surface cache → refetch → reverse conjugation
+→ clitic stripping. SpanishDict leads; reverse conjugation is a fallback. That
+ordering is not arbitrary and was measured before being fixed.
+
+Of 4,133 Spanish surfaces whose primary lemma is the surface itself, only 23
+have a competing reverse-conjugation claim — and SpanishDict is right in all 23:
+
+    chica -> chicar     coche -> cochar     para    -> par
+    incluso -> incluir  minuto -> minutar   jamás   -> jamar
+
+`chica` is a girl, not a form of *chicar*. Reverse conjugation over-generates:
+it will invent an infinitive for almost any noun ending in `-a` or `-o`. Letting
+it lead generally would corrupt four thousand cards to fix none.
+
+`scripts/resolve_clitic_lemmas.py` inverts that order, and only there. A clitic
+attaches only to a verb, so the stripped base is known *a priori* to be a verb
+form, and in that narrow case the usual hazard flips: the surface cache lists
+conjugated forms under their own spelling — the self-headword inclusion that
+won ~1,250 lemmas and was right to add — so consulting it first answered
+`mírelo -> mire` and `llévenselo -> lleven`, conjugations presented as lemmas.
+
+**The rule is conditional, not a ranking.** Reverse conjugation leads where the
+surface is already known to be a verb form; SpanishDict leads everywhere else.
+
+## What SpanishDict does with a word it does not have
+
+The 82 clitic-attached surfaces did not come back empty. Measured over the
+refetch: 68 fuzzy-matched a different word, 10 answered in English, 0 returned
+nothing. SpanishDict substitutes the nearest spelling — roughly one character's
+edit distance — and lands on a **real but unrelated verb**, which is the worst
+kind of wrong because it is plausible:
+
+| asked | answered about | would have given | correct |
+|---|---|---|---|
+| `llévatelo` | `llégatelo` | llegar | llevar |
+| `mírelo` | `mínelo` | minar | mirar |
+| `pásamelo` | `páramelo` | parar / parir | pasar |
+| `haberles` | `hacerles` | hacer | haber |
+| `verles` | `verdes` | verde | ver |
+
+That is 25 wrong lemmas the `spelling_substitution` gate prevented in one class
+of one language. The gate is not tidiness; it is the only thing between
+`llévatelo` and *llegar*.
+
 ## Fuzzy matches are never evidence
 
 SpanishDict answers a miss with a different word: *"Showing results for cómelo.
@@ -116,6 +162,38 @@ Heuristics rejected after measurement, so they are not re-proposed:
 
 The method that made those calls is worth keeping: **Tatoeba as control.** A
 human-aligned corpus gives any heuristic a free false-positive rate.
+
+## The cap must take the best N, not an arbitrary N
+
+Eligible sentence ids are ordered as the WSD cap will consume them, so the head
+of that list is what gets scored and eventually what a learner sees. They were
+ordered by hardness alone, easiest first.
+
+That ordering put this first on `que`, rank 1, the commonest surface in Spanish:
+
+    ¿el Que le qué?   ->   I'm sucking his what?
+
+A misaligned subtitle pair, scoring **0.695** — comfortably above the 0.45
+floor, because both sides are four-word questions and LaBSE reads the shape.
+This is the literalness/correctness confusion in its second direction: the score
+fails to convict a bad pair when both sides are short, since there is little
+content and the embedding is dominated by form. Short sentences are where the
+gate is blindest, and "easiest first" selects for short.
+
+**41.6% of Spanish cards had a sentence scoring under 0.70 in their top ten**,
+on data where every eligible sentence had already been scored. The score was
+computed and then not used to order.
+
+Alignment now leads, **banded at 0.05 rather than raw**: sorting on a continuous
+score would let a 0.001 difference override easiness entirely, whereas within a
+band the sentences are equally well aligned and the original intent — prefer
+what a classifier finds easy — still decides.
+
+| cards with a sub-0.70 sentence in their top ten | before | after |
+|---|---:|---:|
+| `es` | 41.6% | 0.6% |
+| `pt` | — | 0.0% |
+| `cs` | — | 0.1% |
 
 ## Consequences
 
