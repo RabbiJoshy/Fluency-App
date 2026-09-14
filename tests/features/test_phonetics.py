@@ -7,9 +7,9 @@ import unittest
 from fluency.features.phonetics import (
     best_pronunciation_similarity,
     normalise_ipa,
-    phone_distance,
     phonetic_similarity,
     segments,
+    sound_classes,
 )
 
 
@@ -41,33 +41,15 @@ class SegmentationTests(unittest.TestCase):
         self.assertEqual(segments("/sklɛp/"), ("s", "k", "l", "ɛ", "p"))
 
 
-class PhoneDistanceTests(unittest.TestCase):
-    def test_a_phone_is_identical_to_itself(self):
-        self.assertEqual(phone_distance("p", "p"), 0.0)
+class SoundClassTests(unittest.TestCase):
+    """Dolgopolsky classes: the representation the similarity is computed over."""
 
-    def test_voicing_alone_is_the_cheapest_difference(self):
-        voicing = phone_distance("p", "b")
-        place = phone_distance("p", "t")
-        self.assertLess(voicing, place)
+    def test_the_same_sound_spelt_two_ways_gives_the_same_classes(self):
+        self.assertEqual(sound_classes("/ˈt͡ʃas/"), sound_classes("/ˈt͡ʂas/"))
 
-    def test_place_cost_grows_with_distance_along_the_mouth(self):
-        self.assertLess(phone_distance("p", "t"), phone_distance("p", "k"))
-
-    def test_a_consonant_against_a_vowel_is_maximal(self):
-        self.assertEqual(phone_distance("p", "a"), 1.0)
-
-    def test_neighbouring_vowels_are_closer_than_opposite_ones(self):
-        self.assertLess(phone_distance("i", "ɪ"), phone_distance("i", "ɑ"))
-
-    def test_an_unknown_symbol_never_manufactures_similarity(self):
-        self.assertEqual(phone_distance("p", "ʔʔ"), 1.0)
-        self.assertEqual(phone_distance("§", "p"), 1.0)
-
-    def test_distance_is_symmetric(self):
-        for left, right in (("p", "k"), ("i", "u"), ("s", "ʃ"), ("m", "n")):
-            self.assertAlmostEqual(
-                phone_distance(left, right), phone_distance(right, left)
-            )
+    def test_an_unreadable_transcription_is_empty_not_a_guess(self):
+        self.assertEqual(sound_classes(""), "")
+        self.assertEqual(sound_classes("//"), "")
 
 
 class SimilarityTests(unittest.TestCase):
@@ -77,7 +59,7 @@ class SimilarityTests(unittest.TestCase):
     def test_an_orthographic_difference_that_is_not_a_sound_difference(self):
         """Czech ``čas`` and Polish ``czas``: two letters apart, one sound."""
 
-        self.assertGreater(phonetic_similarity("/ˈt͡ʃas/", "/ˈt͡ʂas/"), 0.9)
+        self.assertEqual(phonetic_similarity("/ˈt͡ʃas/", "/ˈt͡ʂas/"), 1.0)
 
     def test_a_correspondence_no_rewrite_rule_captures(self):
         """Czech ``hlava`` against Polish ``głowa`` — 0.20 on letters."""
@@ -85,13 +67,7 @@ class SimilarityTests(unittest.TestCase):
         self.assertGreater(phonetic_similarity("/ˈɦlava/", "/ˈɡwova/"), 0.6)
 
     def test_unrelated_words_sit_far_below_any_cutoff(self):
-        """Feature weighting gives partial credit, so the floor is not zero.
-
-        It only has to stay well clear of the loosest cutoff a pair ships
-        (0.75), which it does by a wide margin.
-        """
-
-        self.assertLess(phonetic_similarity("/ˈsklɛp/", "/ˈkɲiʐka/"), 0.5)
+        self.assertLess(phonetic_similarity("/ˈsklɛp/", "/ˈkɲiʐka/"), 0.3)
 
     def test_an_absent_transcription_scores_zero_rather_than_matching(self):
         self.assertEqual(phonetic_similarity("", "/ˈsklɛp/"), 0.0)
@@ -103,8 +79,11 @@ class SimilarityTests(unittest.TestCase):
             phonetic_similarity("/ˈɡwova/", "/ˈɦlava/"),
         )
 
-    def test_a_score_is_never_negative(self):
-        self.assertGreaterEqual(phonetic_similarity("/a/", "/ˈkɲiʐka/"), 0.0)
+    def test_a_score_stays_inside_the_unit_interval(self):
+        for left, right in (("/a/", "/ˈkɲiʐka/"), ("/ˈkɲiʐka/", "/a/"), ("/a/", "/a/")):
+            score = phonetic_similarity(left, right)
+            self.assertGreaterEqual(score, 0.0)
+            self.assertLessEqual(score, 1.0)
 
 
 class BestPronunciationTests(unittest.TestCase):

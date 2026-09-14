@@ -11,6 +11,12 @@ requires-python = ">=3.12,<3.14"
 dependencies = []
 
 [project.optional-dependencies]
+# Cognate mapping runs offline, once, to produce a map that then ships as data.
+# panphon carries the 6,367-segment IPA feature table behind the pronunciation
+# tier of the form score; nothing at runtime and nothing in the app needs it.
+cognates = [
+  "panphon>=0.22",
+]
 wsd-es = [
   "google-genai>=1.0",
   "joblib>=1.4",
