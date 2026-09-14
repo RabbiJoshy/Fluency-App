@@ -524,7 +524,7 @@
                         <div class="streamline-rec-callout-icon" aria-hidden="true">⚡</div>
                         <div class="streamline-rec-callout-body">
                             <strong>Why Streamline is recommended</strong>
-                            <p>Merges verb conjugations onto base cards and skips obvious look-alikes from English, so you focus strictly on new vocabulary without missing any examples.</p>
+                            <p id="streamlineRecCalloutText">Merges verb conjugations onto base cards and skips obvious look-alikes from English, so you focus strictly on new vocabulary without missing any examples.</p>
                         </div>
                         <button type="button" class="streamline-rec-callout-dismiss" id="dismissStreamlineRecBtn" aria-label="Dismiss recommendation note">✕</button>
                     </div>
@@ -1492,7 +1492,7 @@
                                 <span class="settings-row-label">Familiar cognates
                                     <button type="button" class="settings-info-btn" aria-label="Explain cognate inclusion" aria-expanded="false">?</button>
                                 </span>
-                                <small class="settings-row-explanation" hidden>Sets aside words whose meaning is already obvious from English (e.g. chocolate, hotel, animal).</small>
+                                <small class="settings-row-explanation" id="cognateSettingExplanation" hidden>Sets aside words whose meaning is already obvious from English.</small>
                             </span>
                             <div class="group-size-selector settings-toggle" role="group" aria-label="Default cognate inclusion setting">
                                 <button type="button" class="group-size-btn global-study-default-btn selected" data-setting="excludeCognates" data-value="off" aria-pressed="true">Include</button>
@@ -1507,7 +1507,7 @@
                                             aria-label="Explain cognate filter sensitivity" aria-expanded="false"
                                             aria-controls="cognateSensitivityExplanation">?</button>
                                 </span>
-                                <small class="settings-row-explanation" hidden>Sets how similar to English a word must be before it is skipped: Loose skips only identical words; Strict skips looser look-alikes.</small>
+                                <small class="settings-row-explanation" id="cognateSensitivityExplanationText" hidden>Sets how similar to English a word must be before it is skipped: Loose skips only identical words; Strict skips looser look-alikes.</small>
                             </span>
                             <div id="cognateSensitivitySelector" class="group-size-selector settings-toggle">
                                 <button class="cognate-sens-btn group-size-btn" data-threshold="0.95" title="Only obvious cognates (e.g. animal, hotel)">Loose</button>

@@ -217,11 +217,23 @@ function toggleKnownLanguage(code) {
     renderKnownLanguagePicker();
     // The deck composition just changed, so every count on the setup screen is
     // now stale. These are the same refreshes a cognate-toggle click performs.
+    // The explainer copy names the selected languages, so it is as stale as the
+    // counts are until it is told.
+    globalThis.updateKnownLanguageCopy?.();
     globalThis.updateExclusionBars?.();
     globalThis.updateLevelSelector?.();
     globalThis.refreshFastMode?.();
 }
 
+// The cutoff a single language decides at. Exposed because the explainer copy
+// has to name a word this language actually sets aside, and asking
+// isCognateKnown() would answer for the whole active set instead of for one.
+function cognateThresholdFor(code) {
+    const shipped = cognateThresholds[code];
+    return Number.isFinite(Number(shipped)) ? Number(shipped) : null;
+}
+
+globalThis.cognateThresholdFor = cognateThresholdFor;
 globalThis.isCognateKnown = isCognateKnown;
 globalThis.strongestKnownLanguage = strongestKnownLanguage;
 globalThis.applyCognateScores = applyCognateScores;
