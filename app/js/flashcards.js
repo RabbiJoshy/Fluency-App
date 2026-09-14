@@ -3316,9 +3316,12 @@ function selectLemmaPosGroup(event, key, meaningIndex) {
     if (!card || !meaning) return;
     const real = String(key).replace(/~~/g, '\u0000');
     card._backSectionsManuallySet = true;
-    // Keep only the active group's sub-senses on screen. Leaving previously
-    // visited groups expanded weakens the visual link to the sentence below.
-    card._expandedPos = new Set([real]);
+    card._expandedPos = card._expandedPos || new Set();
+    if (card._expandedPos.has(real)) {
+        card._expandedPos.delete(real);
+    } else {
+        card._expandedPos.add(real);
+    }
 
     const alreadyActive = lemmaPosGroupKeyForMeaning(card.meanings[currentMeaningIndex]) === real
         && !currentGroupSelection;
@@ -3941,7 +3944,11 @@ function toggleRareSenses(event) {
     if (!card) return;
     card._showRareSenses = !card._showRareSenses;
     card._grouping = null;
-    if (!card._showRareSenses) {
+    if (card._showRareSenses) {
+        // When showing rare senses, ensure all sections remain open so all senses are findable and scrollable
+        card._expandedPos = null;
+        card._backSectionsManuallySet = false;
+    } else {
         if (card._baseMeanings && currentMeaningIndex >= card._baseMeanings.length) {
             currentMeaningIndex = 0;
         }
@@ -4749,7 +4756,16 @@ function updateCard({ announceHeadword = false } = {}) {
                     ? (currentMeaning.cycle_pos || 'X') : currentMeaning.pos)
                     + '\u0000' + (currentMeaning.headword || '')
                 : null;
-            card._expandedPos = new Set(cur ? [cur] : []);
+            if (card._showRareSenses) {
+                // When rare senses are shown, expand all sections so every sense is accessible via the scroll bar
+                card._expandedPos = new Set(Array.from(groupInfo.keys()));
+            } else {
+                card._expandedPos = new Set(cur ? [cur] : []);
+            }
+        } else if (card._showRareSenses && !card._backSectionsManuallySet) {
+            for (const k of groupInfo.keys()) {
+                card._expandedPos.add(k);
+            }
         }
         const activeLemmaPosKey = lemmaPosGroupKeyForMeaning(currentMeaning);
         const activeGroupSenseRaw = String(
@@ -4831,10 +4847,8 @@ function updateCard({ announceHeadword = false } = {}) {
         //            shared = "to say", varying = contexts
         //   `su`   → 5 senses share possessive context → context-axis group
         //            shared = context,  varying = translations
-        // Each list item stays an independently clickable selectMeaning
-        // target. Pure render layer; data is untouched. Flip to false to
-        // revert to flat one-row-per-meaning.
-        const GROUP_DUPLICATE_MEANINGS = true;
+        const activeMeaningsCount = (card.meanings || []).filter(m => m && !m.exampleOnly).length;
+        const GROUP_DUPLICATE_MEANINGS = activeMeaningsCount > 2;
         // Per-meaning-idx axis assignment: 'translation' | 'context' |
         // 'singleton' | 'special' (MWE/CLITIC/SENSE_CYCLE — opted out).
         // Cached on the card after first compute — meanings don't mutate
