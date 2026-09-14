@@ -2779,6 +2779,50 @@
             border-style: solid;
             border-color: rgba(var(--accent-primary-rgb), 0.3);
         }
+        .rare-senses-chevron {
+            display: inline-block;
+            font-size: 8px;
+            transition: transform 0.2s ease;
+        }
+        .rare-senses-toggle-btn.is-expanded .rare-senses-chevron {
+            transform: rotate(180deg);
+        }
+        .meaning-row.meaning-row-rare {
+            animation: rareSenseRowFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes rareSenseRowFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-4px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .dictionary-provenance-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 6px;
+            padding: 2px 7px;
+            margin-right: auto;
+            letter-spacing: 0.01em;
+        }
+        .dictionary-provenance-badge .dict-provenance-icon {
+            font-size: 11px;
+            line-height: 1;
+        }
+        body.is-spotify-playing .sentence .example-word-highlight,
+        body.is-speaking-active .sentence .example-word-highlight {
+            animation: word-audio-pulse 1.25s ease-in-out infinite alternate;
+            box-shadow: 0 0 12px rgba(var(--sense-match-rgb, 99, 102, 241), 0.6), inset 0 -3px 0 rgb(var(--sense-match-rgb, 99, 102, 241));
+        }
 
         .pos-collapsible .pos-pill-unassigned {
             flex-shrink: 0;
@@ -10796,6 +10840,71 @@
             margin: 0;
         }
 
+        .deck-complete-score-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 4px 0 10px;
+        }
+
+        .deck-score-ring-wrap {
+            position: relative;
+            width: 104px;
+            height: 104px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .deck-score-ring {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .deck-score-ring-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.08);
+            stroke-width: 7;
+        }
+
+        .deck-score-ring-fill {
+            fill: none;
+            stroke: var(--accent-green, #10b981);
+            stroke-width: 7;
+            stroke-linecap: round;
+            stroke-dasharray: 264;
+            stroke-dashoffset: 264;
+            filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.45));
+        }
+
+        .deck-score-center {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .deck-score-number {
+            font-family: var(--font-emphasis);
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .deck-score-label {
+            font-family: var(--font-data);
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
         .deck-complete-accuracy {
             font-family: var(--font-data);
             font-size: 13px;
@@ -10811,6 +10920,12 @@
 
         .deck-complete-body {
             padding: 0;
+        }
+
+        .deck-stat-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .deck-complete-stats {

@@ -1022,19 +1022,43 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
     const accuracyEl = document.getElementById('completeAccuracy');
     const totalAnswered = (stats.correct || 0) + (stats.incorrect || 0);
 
+    const scoreContainer = document.getElementById('deckCompleteScoreContainer');
+    const defaultIcon = document.getElementById('deckCompleteIcon');
+    const scoreNum = document.getElementById('completeAccuracyNumber');
+    const ringFill = document.getElementById('deckScoreRingFill');
+
     if (statsContainer && correctEl && incorrectEl) {
         if (!isLevelCompletion && totalAnswered > 0) {
             correctEl.textContent = String(stats.correct || 0);
             incorrectEl.textContent = String(stats.incorrect || 0);
             statsContainer.hidden = false;
+            const pct = Math.round(((stats.correct || 0) / totalAnswered) * 100);
             if (accuracyEl) {
-                const pct = Math.round(((stats.correct || 0) / totalAnswered) * 100);
                 accuracyEl.textContent = `${pct}% accuracy`;
                 accuracyEl.hidden = false;
+            }
+            if (scoreContainer) {
+                scoreContainer.hidden = false;
+                if (defaultIcon) defaultIcon.hidden = true;
+                if (scoreNum) scoreNum.textContent = `${pct}%`;
+                if (ringFill) {
+                    const circumference = 264;
+                    const offset = circumference * (1 - (pct / 100));
+                    ringFill.style.strokeDasharray = `${circumference}`;
+                    ringFill.style.strokeDashoffset = `${circumference}`;
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            ringFill.style.transition = 'stroke-dashoffset 1s cubic-bezier(0.16, 1, 0.3, 1)';
+                            ringFill.style.strokeDashoffset = `${offset}`;
+                        });
+                    });
+                }
             }
         } else {
             statsContainer.hidden = true;
             if (accuracyEl) accuracyEl.hidden = true;
+            if (scoreContainer) scoreContainer.hidden = true;
+            if (defaultIcon) defaultIcon.hidden = false;
         }
     }
 

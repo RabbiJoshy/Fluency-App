@@ -1154,3 +1154,22 @@
     background: rgba(0, 0, 0, 0.07);
 }
 
+:root[data-theme="light"] .dictionary-provenance-badge {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: var(--text-secondary);
+}
+
+:root[data-theme="light"] .deck-score-ring-bg {
+    stroke: rgba(0, 0, 0, 0.08);
+}
+
+:root[data-theme="light"] .deck-score-number {
+    color: var(--text-primary);
+}
+
+:root[data-theme="light"] .deck-score-label {
+    color: var(--text-muted);
+}
+
+

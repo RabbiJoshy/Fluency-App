@@ -40,21 +40,21 @@
             document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260914a">
-    <link rel="stylesheet" href="css/light-theme.css?v=20260914a">
+    <link rel="stylesheet" href="css/style.css?v=20260914b">
+    <link rel="stylesheet" href="css/light-theme.css?v=20260914b">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260914a">
+    <link rel="modulepreload" href="js/main.js?v=20260914b">
     <link rel="modulepreload" href="js/theme.js?v=20260825ak">
-    <link rel="modulepreload" href="js/state.js?v=20260914a">
+    <link rel="modulepreload" href="js/state.js?v=20260914b">
     <link rel="modulepreload" href="js/data-contracts.js?v=20260825ak">
     <link rel="modulepreload" href="js/offline-db.js?v=20260825ak">
     <link rel="modulepreload" href="js/sync-queue.js?v=20260825ak">
     <link rel="modulepreload" href="js/offline-content.js?v=20260825ak">
-    <link rel="modulepreload" href="js/speech.js?v=20260914a">
+    <link rel="modulepreload" href="js/speech.js?v=20260914b">
     <link rel="modulepreload" href="js/artist-ui.js?v=20260825ak">
     <link rel="modulepreload" href="js/auth.js?v=20260912a">
     <link rel="modulepreload" href="js/about-example.js?v=20260913g">
@@ -72,7 +72,7 @@
     <link rel="modulepreload" href="js/vocabulary-import.js?v=20260913a">
     <link rel="modulepreload" href="js/spanishdict-usage.js?v=20260825ak">
     <link rel="modulepreload" href="js/reverse-cues.js?v=20260825ak">
-    <link rel="modulepreload" href="js/flashcards.js?v=20260914a">
+    <link rel="modulepreload" href="js/flashcards.js?v=20260914b">
     <link rel="modulepreload" href="js/example-personalisation.js?v=20260825ak">
     <script>
         // Fail open if a boot-time script error prevents main.js from taking
@@ -917,7 +917,19 @@
         <div class="modal-content deck-complete-content">
             <div class="deck-complete-header">
                 <span class="deck-complete-eyebrow" id="deckCompleteEyebrow">Study set</span>
-                <div class="deck-complete-icon" aria-hidden="true">
+                <div class="deck-complete-score-container" id="deckCompleteScoreContainer" hidden>
+                    <div class="deck-score-ring-wrap">
+                        <svg class="deck-score-ring" viewBox="0 0 100 100" aria-hidden="true">
+                            <circle class="deck-score-ring-bg" cx="50" cy="50" r="42"></circle>
+                            <circle class="deck-score-ring-fill" id="deckScoreRingFill" cx="50" cy="50" r="42"></circle>
+                        </svg>
+                        <div class="deck-score-center">
+                            <span class="deck-score-number" id="completeAccuracyNumber">0%</span>
+                            <span class="deck-score-label">accuracy</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="deck-complete-icon" id="deckCompleteIcon" aria-hidden="true">
                     <svg viewBox="0 0 24 24"><path d="m7 12 3 3 7-7"></path></svg>
                 </div>
                 <h3 id="deckCompleteTitle">Set Complete!</h3>
@@ -926,13 +938,17 @@
             <div class="deck-complete-body">
                 <div class="deck-complete-stats" hidden>
                     <div class="deck-stat correct-stat">
-                        <span class="deck-stat-emoji">✓</span>
-                        <span class="deck-stat-value" id="completeCorrect">0</span>
+                        <span class="deck-stat-badge">
+                            <span class="deck-stat-emoji">✓</span>
+                            <span class="deck-stat-value" id="completeCorrect">0</span>
+                        </span>
                         <span class="deck-stat-label">Correct</span>
                     </div>
                     <div class="deck-stat incorrect-stat">
-                        <span class="deck-stat-emoji">✗</span>
-                        <span class="deck-stat-value" id="completeIncorrect">0</span>
+                        <span class="deck-stat-badge">
+                            <span class="deck-stat-emoji">✗</span>
+                            <span class="deck-stat-value" id="completeIncorrect">0</span>
+                        </span>
                         <span class="deck-stat-label">Missed</span>
                     </div>
                 </div>
@@ -1758,6 +1774,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260914a"></script>
+    <script type="module" src="js/main.js?v=20260914b"></script>
 </body>
 </html>

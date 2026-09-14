@@ -3779,17 +3779,20 @@ function extractCanonicalDictionaryExamples(meaning) {
         return meaning.allExamples;
     }
     const meta = meaning?.metadata;
+    const isSd = Boolean(meta?.sense_provider_metadata?.spanishdict?.examples);
     const examples = meta?.sense_provider_metadata?.spanishdict?.examples
         || meta?.source_metadata?.examples
         || [];
     if (!Array.isArray(examples)) return [];
+    const dictName = isSd ? 'SpanishDict' : (meta?.source_provider || meaning?.source || 'Wiktionary');
     return examples.map(ex => ({
         target: ex.original || ex.target || ex.spanish || '',
         english: ex.translated || ex.english || '',
         targetSentence: ex.original || ex.target || ex.spanish || '',
         englishSentence: ex.translated || ex.english || '',
-        source: meaning.source || 'dictionary',
-        evidence: 'dictionary'
+        source: dictName.toLowerCase(),
+        evidence: 'dictionary',
+        dictionarySource: dictName
     })).filter(ex => ex.target && ex.english);
 }
 
@@ -5184,13 +5187,14 @@ function updateCard({ announceHeadword = false } = {}) {
                     // effective right offset for vertical alignment.
                     const useProminenceLabels = state.senseProminenceMode !== 'percentages';
                     const promInfo = getSenseProminenceInfo(m);
+                    const rareRowClass = (m.unassigned || m.prominenceLabel === 'Rare') ? ' meaning-row-rare' : '';
                     const pctTail = useProminenceLabels
                         ? `<span class="sense-prominence-badge prominence-${promInfo.key}" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">${escapeCardText(promInfo.label)}</span>`
                         : (!m.unassigned && pctVal < 100
                             ? `<span class="sense-percentage sense-percentage-tail" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">${pctVal}%</span>`
                             : (m.unassigned ? `<span class="sense-prominence-badge prominence-rare" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">Rare</span>` : ''));
                     target.push(`
-                    <div class="meaning-row meaning-row-regular ${singletonTextClass}${isSelected ? ' selected' : ''}${rowStateClasses}" style="position: relative; display: grid; grid-template-columns: 1fr; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 39px;" onclick="selectMeaning(${idx})">
+                    <div class="meaning-row meaning-row-regular ${singletonTextClass}${isSelected ? ' selected' : ''}${rowStateClasses}${rareRowClass}" style="position: relative; display: grid; grid-template-columns: 1fr; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 39px;" onclick="selectMeaning(${idx})">
                         ${renderRowCheckSlot(isSelected)}
                         <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: stretch; justify-content: center; min-width: 0; padding: 0 ${useProminenceLabels ? '80px' : (!m.unassigned && pctVal < 100 ? '42px' : '8px')} 0 8px;">
                             <span class="meaning-row-translation row-adaptive-text" style="font-weight: ${isSelected ? 700 : 500}; color: ${textColor}; text-align: center; width: 100%;">${displayMeaningHTML}${contextInline}</span>
@@ -5211,7 +5215,7 @@ function updateCard({ announceHeadword = false } = {}) {
             const isExpanded = card._showRareSenses === true;
             backHTML += `<div class="rare-senses-toggle-wrap">
                 <button type="button" class="rare-senses-toggle-btn${isExpanded ? ' is-expanded' : ''}" onclick="toggleRareSenses(event)">
-                    ${isExpanded ? 'Hide rare senses' : `+ Show rare senses (${qualifyingRare.length})`}
+                    <span class="rare-senses-chevron" aria-hidden="true">${isExpanded ? '▲ ' : '▼ '}</span>${isExpanded ? 'Hide rare senses' : `+ Show rare senses (${qualifyingRare.length})`}
                 </button>
             </div>`;
         }
@@ -5283,14 +5287,20 @@ function updateCard({ announceHeadword = false } = {}) {
                 const exIdx = currentExampleIndex % activeExamples.length;
                 const example = activeExamples[exIdx];
                 currentExample = example;
+                const dictName = example.dictionarySource
+                    || (example.source === 'wiktionary' ? 'Wiktionary'
+                        : (example.source === 'spanishdict' ? 'SpanishDict'
+                            : (example.evidence === 'dictionary' ? 'Dictionary' : null)));
+                const dictLabel = dictName === 'SpanishDict'
+                    ? 'SpanishDict example'
+                    : (dictName === 'Wiktionary' ? 'Wiktionary example' : `${dictName} example`);
                 exampleSourceLabel = example.personalised
                     ? `Personalised practice · ${example.reinforcement_word}`
-                    : (example.source === 'wiktionary'
-                        ? 'Wiktionary example'
+                    : (dictName
+                        ? `<span class="dictionary-provenance-badge" title="Canonical dictionary example"><span class="dict-provenance-icon" aria-hidden="true">📖</span> ${dictLabel}</span>`
                         : (example.source_mode === 'speech'
                         ? 'Speech example'
-                        : (example.source === 'spanishdict' ? 'SpanishDict example'
-                            : exampleProvenanceHTML(example))));
+                        : exampleProvenanceHTML(example)));
                 window._currentDisplayedExample = example;
                 const exTarget = example.target || example.spanish || '';
                 const exEnglish = example.english || '';

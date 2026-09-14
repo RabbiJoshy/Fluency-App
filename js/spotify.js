@@ -1200,6 +1200,7 @@ function _playingTargetButton() {
 
 function _setPlayingIndicator(on) {
     const target = on ? _playingTargetButton() : null;
+    document.body.classList.toggle('is-spotify-playing', Boolean(on));
     // Card re-renders replace button nodes, so clear by query rather than
     // trusting a retained reference.
     document.querySelectorAll('.spotify-btn.spotify-playing')
