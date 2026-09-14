@@ -5122,7 +5122,7 @@ function updateCard({ announceHeadword = false } = {}) {
                         return varyingCell;
                     }).join('');
 
-                    const useProminenceLabels = state.senseProminenceMode !== 'percentages';
+                    const useProminenceLabels = (typeof senseProminenceMode !== 'undefined' ? senseProminenceMode : globalThis.state?.senseProminenceMode) !== 'percentages';
                     // Pct stack — lives outside the highlight box, in its own
                     // outer-grid column on the right edge of the row, so the
                     // %s align with singleton-card %s.
@@ -5185,7 +5185,7 @@ function updateCard({ announceHeadword = false } = {}) {
                     // padding. pointer-events:none lets the row's selectMeaning
                     // still fire through. right:8px matches the group pct's
                     // effective right offset for vertical alignment.
-                    const useProminenceLabels = state.senseProminenceMode !== 'percentages';
+                    const useProminenceLabels = (typeof senseProminenceMode !== 'undefined' ? senseProminenceMode : globalThis.state?.senseProminenceMode) !== 'percentages';
                     const promInfo = getSenseProminenceInfo(m);
                     const rareRowClass = (m.unassigned || m.prominenceLabel === 'Rare') ? ' meaning-row-rare' : '';
                     const pctTail = useProminenceLabels
@@ -7313,7 +7313,7 @@ document.addEventListener('click', (e) => {
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
 const ASSET_VERSION = '20260825ak';
-const MODALS_ASSET_VERSION = '20260913d';
+const MODALS_ASSET_VERSION = '20260914c';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

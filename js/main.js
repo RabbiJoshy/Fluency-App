@@ -1,5 +1,5 @@
 import './theme.js?v=20260825ak';
-import './state.js?v=20260914b';
+import './state.js?v=20260914c';
 import './offline-db.js?v=20260825ak';
 import './sync-queue.js?v=20260825ak';
 import { initOfflineContent } from './offline-content.js?v=20260825ak';
@@ -11,7 +11,7 @@ import './estimation.js?v=20260825ak';
 import './config.js?v=20260907a';
 import './progress.js?v=20260913b';
 import './knowledge.js?v=20260831a';
-import './ui.js?v=20260914a';
+import './ui.js?v=20260914b';
 import './vocab.js?v=20260913g';
 import './cognates.js?v=20260908d';
 import './coverage.js?v=20260909a';
@@ -20,7 +20,7 @@ import './extras.js?v=20260913e';
 import './song-sets.js?v=20260823ae';
 import './spotify-playlist-import.js?v=20260913a';
 import './vocabulary-import.js?v=20260913a';
-import './flashcards.js?v=20260914b';
+import './flashcards.js?v=20260914c';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 function openTutorialIntroduction() {
