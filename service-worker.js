@@ -15,7 +15,7 @@ const scopedPath = path => `${SCOPE_PATH}${path}`;
 // Single source of truth for the module/CSS version tags. Must match
 // js/main.js's import URLs and index.html's modulepreload links. When you
 // bump the ?v= tags, change this and bump CACHE_NAME above.
-const ASSET_VERSION = '20260914a';
+const ASSET_VERSION = '20260825ak';
 
 // Pre-cache the boot-critical static assets on install. Without this, the
 // first install populates the cache lazily — visit 1 doesn't go through
@@ -26,19 +26,19 @@ const ASSET_VERSION = '20260914a';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/css/style.css?v=20260913m',
-  '/css/light-theme.css?v=20260913a',
+  '/css/style.css?v=20260914a',
+  '/css/light-theme.css?v=20260914a',
   '/config/config.json',
   '/config/cefr_levels.json',
   '/config/offline-content-manifest.json',
-  '/js/main.js?v=20260913q',
+  '/js/main.js?v=20260914a',
   `/js/theme.js?v=${ASSET_VERSION}`,
-  '/js/state.js?v=20260912a',
+  '/js/state.js?v=20260914a',
   `/js/data-contracts.js?v=${ASSET_VERSION}`,
   `/js/offline-db.js?v=${ASSET_VERSION}`,
   `/js/sync-queue.js?v=${ASSET_VERSION}`,
   `/js/offline-content.js?v=${ASSET_VERSION}`,
-  '/js/speech.js?v=20260824d',
+  '/js/speech.js?v=20260914a',
   `/js/artist-ui.js?v=${ASSET_VERSION}`,
   '/js/auth.js?v=20260912a',
   '/js/about-example.js?v=20260913f',
@@ -48,11 +48,11 @@ const urlsToCache = [
   '/js/progress.js?v=20260913a',
   '/js/progress-identity.js?v=20260831a',
   '/js/knowledge.js?v=20260831a',
-  '/js/ui.js?v=20260913o',
+  '/js/ui.js?v=20260914a',
   '/js/vocab.js?v=20260913g',
   '/js/cognates.js?v=20260908d',
   '/js/coverage.js?v=20260909a',
-  '/js/fast-mode.js?v=20260913f',
+  '/js/fast-mode.js?v=20260914a',
   '/js/extras.js?v=20260913e',
   `/js/song-sets-core.js?v=${ASSET_VERSION}`,
   '/js/song-sets.js?v=20260823ae',
@@ -62,7 +62,7 @@ const urlsToCache = [
   `/js/spanishdict-usage.js?v=${ASSET_VERSION}`,
   `/js/reverse-cues.js?v=${ASSET_VERSION}`,
   '/js/card-metadata-pills.js?v=20260913f',
-  '/js/flashcards.js?v=20260913m',
+  '/js/flashcards.js?v=20260914a',
   `/js/example-personalisation.js?v=${ASSET_VERSION}`,
   '/js/flashcards-modals.js?v=20260913d',
   `/js/flashcards-conj.js?v=${ASSET_VERSION}`

@@ -3774,8 +3774,104 @@ function finishPhraseChain(isCorrect) {
     }
 }
 
+function extractCanonicalDictionaryExamples(meaning) {
+    if (Array.isArray(meaning?.allExamples) && meaning.allExamples.length > 0) {
+        return meaning.allExamples;
+    }
+    const meta = meaning?.metadata;
+    const examples = meta?.sense_provider_metadata?.spanishdict?.examples
+        || meta?.source_metadata?.examples
+        || [];
+    if (!Array.isArray(examples)) return [];
+    return examples.map(ex => ({
+        target: ex.original || ex.target || ex.spanish || '',
+        english: ex.translated || ex.english || '',
+        targetSentence: ex.original || ex.target || ex.spanish || '',
+        englishSentence: ex.translated || ex.english || '',
+        source: meaning.source || 'dictionary',
+        evidence: 'dictionary'
+    })).filter(ex => ex.target && ex.english);
+}
+
+function getQualifyingRareSenses(card) {
+    if (!card || !Array.isArray(card.unusedMenuSenses)) return [];
+    if (!card._cachedQualifyingRareSenses) {
+        card._cachedQualifyingRareSenses = card.unusedMenuSenses.filter(unused => {
+            const examples = extractCanonicalDictionaryExamples(unused);
+            return examples.length > 0 && (unused.meaning || unused.translation);
+        }).map(unused => {
+            const examples = extractCanonicalDictionaryExamples(unused);
+            const firstEx = examples[0];
+            return {
+                ...unused,
+                meaning: unused.meaning || unused.translation || '',
+                unassigned: true,
+                percentage: 0,
+                prominenceLabel: 'Rare',
+                targetSentence: firstEx.target,
+                englishSentence: firstEx.english,
+                allExamples: examples
+            };
+        });
+    }
+    return card._cachedQualifyingRareSenses;
+}
+
+function getSenseProminenceInfo(meaning) {
+    if (meaning.prominenceLabel) {
+        const label = String(meaning.prominenceLabel).trim();
+        return { label, key: label.toLowerCase() };
+    }
+    if (meaning.unassigned) {
+        return { label: 'Rare', key: 'rare' };
+    }
+    const p = Number(meaning.percentage) || 0;
+    if (p >= 0.20) {
+        return { label: 'Common', key: 'common' };
+    } else if (p >= 0.05) {
+        return { label: 'Uncommon', key: 'uncommon' };
+    } else {
+        return { label: 'Rare', key: 'rare' };
+    }
+}
+
+function toggleRareSenses(event) {
+    event?.stopPropagation?.();
+    const card = flashcards[currentIndex];
+    if (!card) return;
+    card._showRareSenses = !card._showRareSenses;
+    card._grouping = null;
+    if (!card._showRareSenses) {
+        if (card._baseMeanings && currentMeaningIndex >= card._baseMeanings.length) {
+            currentMeaningIndex = 0;
+        }
+    }
+    updateCard();
+}
+window.toggleRareSenses = toggleRareSenses;
+
 function updateCard({ announceHeadword = false } = {}) {
     const card = flashcards[currentIndex];
+    if (card) {
+        const qualifyingRare = getQualifyingRareSenses(card);
+        if (card._showRareSenses && qualifyingRare.length > 0) {
+            if (!card._baseMeanings) {
+                card._baseMeanings = [...card.meanings];
+            }
+            if (card.meanings.length === card._baseMeanings.length) {
+                card.meanings = [...card._baseMeanings, ...qualifyingRare];
+                card._grouping = null;
+            }
+        } else if (!card._showRareSenses && card._baseMeanings) {
+            if (card.meanings.length !== card._baseMeanings.length) {
+                card.meanings = [...card._baseMeanings];
+                card._grouping = null;
+                if (currentMeaningIndex >= card.meanings.length) {
+                    currentMeaningIndex = 0;
+                }
+            }
+        }
+    }
     const langConfig = config.languages[selectedLanguage];
     const displaySurface = card.displaySurface || card.targetWord;
     // A surface-keyed card can hold senses from several headwords. Start with
@@ -5023,11 +5119,16 @@ function updateCard({ announceHeadword = false } = {}) {
                         return varyingCell;
                     }).join('');
 
+                    const useProminenceLabels = state.senseProminenceMode !== 'percentages';
                     // Pct stack — lives outside the highlight box, in its own
                     // outer-grid column on the right edge of the row, so the
                     // %s align with singleton-card %s.
                     const pctStackHtml = orderedMembers.map((memberIdx) => {
                         const mm = card.meanings[memberIdx];
+                        if (useProminenceLabels) {
+                            const pInfo = getSenseProminenceInfo(mm);
+                            return `<div class="sense-prominence-cell" onclick="event.stopPropagation(); selectMeaning(${memberIdx})" style="min-height: 25px; padding: 2px 6px; display: flex; align-items: center; justify-content: flex-end; cursor: pointer;"><span class="sense-prominence-badge prominence-${pInfo.key}">${escapeCardText(pInfo.label)}</span></div>`;
+                        }
                         const memberPct = Math.round((mm.percentage || 0) * 100);
                         if (mm.unassigned || memberPct >= 100) {
                             return '<div style="min-height: 25px; padding: 2px 6px;"></div>';
@@ -5081,15 +5182,17 @@ function updateCard({ announceHeadword = false } = {}) {
                     // padding. pointer-events:none lets the row's selectMeaning
                     // still fire through. right:8px matches the group pct's
                     // effective right offset for vertical alignment.
-                    const pctTail = !m.unassigned && prominenceText
-                        ? `<span class="sense-prominence-label ${String(m.prominenceLabel || '').toLowerCase()}">${prominenceText}</span>`
+                    const useProminenceLabels = state.senseProminenceMode !== 'percentages';
+                    const promInfo = getSenseProminenceInfo(m);
+                    const pctTail = useProminenceLabels
+                        ? `<span class="sense-prominence-badge prominence-${promInfo.key}" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">${escapeCardText(promInfo.label)}</span>`
                         : (!m.unassigned && pctVal < 100
                             ? `<span class="sense-percentage sense-percentage-tail" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">${pctVal}%</span>`
-                            : '');
+                            : (m.unassigned ? `<span class="sense-prominence-badge prominence-rare" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">Rare</span>` : ''));
                     target.push(`
                     <div class="meaning-row meaning-row-regular ${singletonTextClass}${isSelected ? ' selected' : ''}${rowStateClasses}" style="position: relative; display: grid; grid-template-columns: 1fr; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 39px;" onclick="selectMeaning(${idx})">
                         ${renderRowCheckSlot(isSelected)}
-                        <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: stretch; justify-content: center; min-width: 0; padding: 0 ${!m.unassigned && prominenceText ? '86px' : (!m.unassigned && pctVal < 100 ? '42px' : '8px')} 0 8px;">
+                        <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: stretch; justify-content: center; min-width: 0; padding: 0 ${useProminenceLabels ? '80px' : (!m.unassigned && pctVal < 100 ? '42px' : '8px')} 0 8px;">
                             <span class="meaning-row-translation row-adaptive-text" style="font-weight: ${isSelected ? 700 : 500}; color: ${textColor}; text-align: center; width: 100%;">${displayMeaningHTML}${contextInline}</span>
                         </div>
                         ${pctTail}
@@ -5102,6 +5205,15 @@ function updateCard({ announceHeadword = false } = {}) {
         // (MWE/CLITIC rows that stay visible when the user scrolls).
         if (scrollSections.size > 0) {
             backHTML += `<div class="meanings-scroll">${renderSections(scrollSections)}</div>`;
+        }
+        const qualifyingRare = getQualifyingRareSenses(card);
+        if (qualifyingRare.length > 0) {
+            const isExpanded = card._showRareSenses === true;
+            backHTML += `<div class="rare-senses-toggle-wrap">
+                <button type="button" class="rare-senses-toggle-btn${isExpanded ? ' is-expanded' : ''}" onclick="toggleRareSenses(event)">
+                    ${isExpanded ? 'Hide rare senses' : `+ Show rare senses (${qualifyingRare.length})`}
+                </button>
+            </div>`;
         }
         // Phrases mode off restores the pinned tray; on, MWE/CLITIC entries
         // leave silently as chain children (no on-card announcement).
@@ -7065,6 +7177,7 @@ window.focusKnowledgeCardItem = focusKnowledgeCardItem;
 window.selectGroup = selectGroup;
 window.previousCard = previousCard;
 window.nextCard = nextCard;
+window.advanceToNextDeckCard = advanceToNextDeckCard;
 window.shuffleCards = shuffleCards;
 
 window.showFreqInfo = function showFreqInfo(event, count) {

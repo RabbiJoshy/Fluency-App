@@ -40,21 +40,21 @@
             document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260913m">
-    <link rel="stylesheet" href="css/light-theme.css?v=20260913a">
+    <link rel="stylesheet" href="css/style.css?v=20260914a">
+    <link rel="stylesheet" href="css/light-theme.css?v=20260914a">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260913q">
+    <link rel="modulepreload" href="js/main.js?v=20260914a">
     <link rel="modulepreload" href="js/theme.js?v=20260825ak">
-    <link rel="modulepreload" href="js/state.js?v=20260912a">
+    <link rel="modulepreload" href="js/state.js?v=20260914a">
     <link rel="modulepreload" href="js/data-contracts.js?v=20260825ak">
     <link rel="modulepreload" href="js/offline-db.js?v=20260825ak">
     <link rel="modulepreload" href="js/sync-queue.js?v=20260825ak">
     <link rel="modulepreload" href="js/offline-content.js?v=20260825ak">
-    <link rel="modulepreload" href="js/speech.js?v=20260824d">
+    <link rel="modulepreload" href="js/speech.js?v=20260914a">
     <link rel="modulepreload" href="js/artist-ui.js?v=20260825ak">
     <link rel="modulepreload" href="js/auth.js?v=20260912a">
     <link rel="modulepreload" href="js/about-example.js?v=20260913g">
@@ -63,7 +63,7 @@
     <link rel="modulepreload" href="js/progress.js?v=20260913b">
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20260831a">
-    <link rel="modulepreload" href="js/ui.js?v=20260913o">
+    <link rel="modulepreload" href="js/ui.js?v=20260914a">
     <link rel="modulepreload" href="js/vocab.js?v=20260913g">
     <link rel="modulepreload" href="js/song-sets-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/song-sets.js?v=20260823ae">
@@ -72,7 +72,7 @@
     <link rel="modulepreload" href="js/vocabulary-import.js?v=20260913a">
     <link rel="modulepreload" href="js/spanishdict-usage.js?v=20260825ak">
     <link rel="modulepreload" href="js/reverse-cues.js?v=20260825ak">
-    <link rel="modulepreload" href="js/flashcards.js?v=20260913m">
+    <link rel="modulepreload" href="js/flashcards.js?v=20260914a">
     <link rel="modulepreload" href="js/example-personalisation.js?v=20260825ak">
     <script>
         // Fail open if a boot-time script error prevents main.js from taking
@@ -615,6 +615,13 @@
                                  and turn every pill press into a card flip. -->
                             <div class="card-pos-list" id="frontPOS"></div>
                             <div class="card-ranking" id="frontRanking"></div>
+                            <div class="card-desktop-shortcuts desktop-front-shortcuts" aria-hidden="true">
+                                <span class="desktop-shortcut-item"><kbd class="desktop-kbd">Space</kbd> Flip</span>
+                                <span class="desktop-shortcut-sep">·</span>
+                                <span class="desktop-shortcut-item"><kbd class="desktop-kbd">←</kbd> Prev</span>
+                                <span class="desktop-shortcut-sep">·</span>
+                                <span class="desktop-shortcut-item">Next <kbd class="desktop-kbd">→</kbd></span>
+                            </div>
                             <!-- Desktop: Left/right nav buttons (hidden on desktop, moved outside card) -->
                             <div class="desktop-nav-row desktop-front-nav-hidden" style="display: flex; justify-content: space-between; align-items: center; width: 100%; position: absolute; top: 50%; transform: translateY(-50%); left: 0; padding: 0 20px; z-index: 5; pointer-events: none;">
                                 <button class="nav-btn-inline" id="prevBtnFront" style="pointer-events: auto;">←</button>
@@ -638,6 +645,13 @@
                                 </svg>
                             </button>
                             <div class="card-details" id="backContent"></div>
+                            <div class="card-desktop-shortcuts desktop-back-shortcuts" aria-hidden="true">
+                                <span class="desktop-shortcut-item"><kbd class="desktop-kbd">Space</kbd> Flip</span>
+                                <span class="desktop-shortcut-sep">·</span>
+                                <span class="desktop-shortcut-item desktop-shortcut-wrong"><kbd class="desktop-kbd">X</kbd> Again</span>
+                                <span class="desktop-shortcut-sep">·</span>
+                                <span class="desktop-shortcut-item desktop-shortcut-right">Got it <kbd class="desktop-kbd">Enter</kbd></span>
+                            </div>
                             <div class="swipe-legend" aria-hidden="true">
                                 <span class="swipe-legend-wrong">← Again</span>
                                 <span class="swipe-legend-sep"></span>
@@ -1478,6 +1492,18 @@
                                 <button type="button" class="group-size-btn global-study-default-btn selected" data-setting="speechEnabled" data-value="on" aria-pressed="true">On</button>
                             </div>
                         </div>
+                        <div class="settings-default-row">
+                            <span class="settings-row-label-block">
+                                <span class="settings-row-label">Sense frequency format
+                                    <button type="button" class="settings-info-btn" aria-label="Explain sense frequency format" aria-expanded="false">?</button>
+                                </span>
+                                <small class="settings-row-explanation" hidden>Common/Rare groups word senses into intuitive familiarity categories (Common, Uncommon, Rare). Percentages % shows exact corpus occurrence shares.</small>
+                            </span>
+                            <div class="group-size-selector settings-toggle" id="senseProminenceSelector" role="group" aria-label="Sense frequency format">
+                                <button type="button" class="group-size-btn sense-prominence-btn selected" data-prominence="labels" aria-pressed="true">Common / Rare</button>
+                                <button type="button" class="group-size-btn sense-prominence-btn" data-prominence="percentages" aria-pressed="false">Percentages %</button>
+                            </div>
+                        </div>
                     </div>
                 </section>
                 <div class="settings-inline-explanation" id="cognateSensitivityExplanation" hidden>
@@ -1732,6 +1758,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260913q"></script>
+    <script type="module" src="js/main.js?v=20260914a"></script>
 </body>
 </html>

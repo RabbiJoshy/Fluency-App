@@ -151,13 +151,18 @@ function speakWord(text, useEnglish = false, onComplete = null) {
 
     // Cancel any ongoing speech
     window.speechSynthesis.cancel();
+    document.body.classList.remove('is-speaking-active');
 
     const utterance = new SpeechSynthesisUtterance(text);
     let completed = false;
     const complete = () => {
         if (completed) return;
         completed = true;
+        document.body.classList.remove('is-speaking-active');
         if (typeof onComplete === 'function') onComplete();
+    };
+    utterance.onstart = () => {
+        document.body.classList.add('is-speaking-active');
     };
     utterance.onend = complete;
     utterance.onerror = complete;
