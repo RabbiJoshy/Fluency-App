@@ -60,11 +60,27 @@ def main() -> int:
                 sources = collections.Counter(
                     i["tags"]["source"] for i in items if i["eligible"]
                 )
+                # The ids, not the sentences. WSD joins them against the
+                # sentence bank; duplicating 375,000 sentences into a per-surface
+                # file would make this unreadable and immediately stale.
+                # Eligible ids are ordered as the WSD cap will take them --
+                # easiest first -- so the head of the list is what gets scored.
+                order = sorted(
+                    (i for i in items if i["eligible"]),
+                    key=lambda i: (i["metrics"].get("score", float("inf")), i["sentence_id"]),
+                )
+                dropped: dict[str, list[str]] = {}
+                for i in items:
+                    if not i["eligible"]:
+                        dropped.setdefault(i["rejected_for"] or "unknown", []).append(
+                            i["sentence_id"])
                 supply[form] = {
                     "harvested": len(items),
-                    "eligible": sum(1 for i in items if i["eligible"]),
+                    "eligible": len(order),
                     "rejected": {k: v for k, v in rejected.items() if k},
                     "eligible_by_source": dict(sources),
+                    "eligible_sentence_ids": [i["sentence_id"] for i in order],
+                    "rejected_sentence_ids": dropped,
                 }
         else:
             cand = run / "stages/03_sentence_harvest/output/candidates.json"
