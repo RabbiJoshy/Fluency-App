@@ -42,6 +42,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
 
+from fluency.features.phonetics import best_pronunciation_similarity
+
 
 COGNATE_SCORE_SCHEMA = "cognate-score/v1"
 
@@ -140,6 +142,11 @@ class CognatePolicy:
     # corpus frequency. Measured on Czech: 0.9 keeps 89 of 96 rescues and drops
     # exactly the harmful ones.
     lemma_share_floor: float = 0.90
+    # Whether the form axis may also read the pair's pronunciations. Off by
+    # default because turning it on can only raise a form score — it is a third
+    # max() term — so every cutoff calibrated without it would silently loosen.
+    # A pair enables it and recalibrates together.
+    use_pronunciation: bool = False
     notes: str = ""
 
     def __post_init__(self) -> None:
@@ -186,6 +193,7 @@ class CognatePolicy:
             default_threshold=float(known.get("default_threshold", 0.70)),
             known_must_be_a_gloss=bool(known.get("known_must_be_a_gloss", False)),
             lemma_share_floor=float(known.get("lemma_share_floor", 0.90)),
+            use_pronunciation=bool(known.get("use_pronunciation", False)),
             notes=str(known.get("notes", "")),
         )
 
@@ -204,6 +212,7 @@ class CognatePolicy:
             "default_threshold": self.default_threshold,
             "known_must_be_a_gloss": self.known_must_be_a_gloss,
             "lemma_share_floor": self.lemma_share_floor,
+            "use_pronunciation": self.use_pronunciation,
             "notes": self.notes,
         }
 
@@ -350,6 +359,11 @@ class DictionaryRelations:
     """
 
     lemma_glosses: Mapping[str, frozenset[str]]
+    # surface -> every IPA transcription the dictionary records for it. Kept
+    # per surface rather than per lemma because inflections carry their own:
+    # 99.3% of Czech form-of entries have one, which is what lets the form axis
+    # read sounds at the level cards actually live at.
+    pronunciations: Mapping[str, frozenset[str]]
     # surface -> the lemmas it inflects. A surface can inherit from more than
     # one lemma (Czech ``stát`` alone yields several), and taking all of them
     # matches what a reader could recognise it as.
@@ -389,6 +403,7 @@ def read_relations(
 
     lemma_glosses: dict[str, set[str]] = {}
     inflections: dict[str, set[str]] = {}
+    pronunciations: dict[str, set[str]] = {}
 
     for entry in entries:
         if not isinstance(entry, Mapping):
@@ -401,6 +416,9 @@ def read_relations(
         glosses = live_glosses(entry, policy.gloss_maximum_words)
         if glosses:
             lemma_glosses.setdefault(word, set()).update(glosses)
+        for sound in entry.get("sounds") or []:
+            if isinstance(sound, Mapping) and sound.get("ipa"):
+                pronunciations.setdefault(word, set()).add(str(sound["ipa"]))
         for sense in entry.get("senses") or []:
             if not isinstance(sense, Mapping):
                 continue
@@ -421,6 +439,7 @@ def read_relations(
 
     return DictionaryRelations(
         lemma_glosses={word: frozenset(g) for word, g in lemma_glosses.items()},
+        pronunciations={w: frozenset(p) for w, p in pronunciations.items()},
         inflections={s: frozenset(l) for s, l in inflections.items()},
     )
 
@@ -453,8 +472,17 @@ def expand_surfaces(
     """
 
     relations = read_relations(entries, policy, excluded_pos=excluded_pos)
-    lemma_glosses = relations.lemma_glosses
+    return _inherit_glosses(relations, limit_to=limit_to)
 
+
+def _inherit_glosses(
+    relations: DictionaryRelations,
+    *,
+    limit_to: set[str] | None,
+) -> dict[str, frozenset[str]]:
+    """Hand every inflection the glosses of the lemmas it inflects."""
+
+    lemma_glosses = relations.lemma_glosses
     surfaces: dict[str, frozenset[str]] = {}
     for word, glosses in lemma_glosses.items():
         if limit_to is None or word in limit_to:
@@ -501,15 +529,37 @@ def similarity(left: str, right: str) -> float:
     return 1.0 - edit_distance(left, right) / max(len(left), len(right))
 
 
-def form_score(target_word: str, known_word: str, policy: CognatePolicy) -> float:
-    """Best of raw spelling and the pair's shared skeleton."""
+def form_score(
+    target_word: str,
+    known_word: str,
+    policy: CognatePolicy,
+    *,
+    target_sounds: Iterable[str] = (),
+    known_sounds: Iterable[str] = (),
+) -> float:
+    """Best of three readings of the same question: could this be recognised?
+
+    Raw spelling answers it for a pair that writes a shared word the same way.
+    The skeleton answers it where orthography hides a regular correspondence the
+    policy names by hand. Pronunciation answers it where the correspondence was
+    never written down — Czech ``hlava`` against Polish ``głowa`` scores 0.20 on
+    letters and 0.66 on sounds — and needs no rules, which is what lets a new
+    pair score properly on the day its dictionary arrives.
+
+    Taking the best of the three, rather than averaging, is deliberate: each is
+    sufficient on its own. A learner who recognises a word from its spelling is
+    not helped less because it is said differently.
+    """
 
     raw = similarity(strip_accents(target_word), strip_accents(known_word))
     mapped = similarity(
         skeleton(target_word, policy.target_skeleton),
         skeleton(known_word, policy.known_skeleton),
     )
-    return max(raw, mapped)
+    best = max(raw, mapped)
+    if policy.use_pronunciation and best < 1.0:
+        best = max(best, best_pronunciation_similarity(target_sounds, known_sounds))
+    return best
 
 
 def meaning_score(
@@ -604,6 +654,7 @@ class KnownLanguageIndex:
     # meaning axis still has to agree before it counts, so this widens what is
     # considered without weakening what is required.
     by_skeleton: dict[str, list[str]] = field(default_factory=lambda: defaultdict(list))
+    pronunciations: dict[str, frozenset[str]] = field(default_factory=dict)
 
     def candidates(self, target_word: str, target_glosses: frozenset[str]) -> set[str]:
         """Known words reachable from the target's glosses, one sense at a time.
@@ -666,7 +717,9 @@ def build_known_index(
     """
 
     index = KnownLanguageIndex(policy=policy)
-    index.words = dict(expand_surfaces(entries, policy))
+    relations = read_relations(entries, policy)
+    index.words = dict(_inherit_glosses(relations, limit_to=None))
+    index.pronunciations = dict(relations.pronunciations)
     for word, glosses in index.words.items():
         for token in gloss_tokens(glosses):
             index.by_token[token].append(word)
@@ -678,6 +731,8 @@ def best_match(
     target_word: str,
     target_glosses: frozenset[str],
     index: KnownLanguageIndex,
+    *,
+    target_sounds: Iterable[str] = (),
 ) -> CognateMatch | None:
     """The known-language word that makes this deck word most recognisable."""
 
@@ -693,7 +748,13 @@ def best_match(
             continue
         if not passes_length_guard(target_word, known_word, policy):
             continue
-        form = form_score(target_word, known_word, policy)
+        form = form_score(
+            target_word,
+            known_word,
+            policy,
+            target_sounds=target_sounds,
+            known_sounds=index.pronunciations.get(known_word, ()),
+        )
         meaning = meaning_score(target_glosses, index.words[known_word])
         if meaning <= 0.0:
             continue
@@ -708,6 +769,8 @@ def best_match(
 def score_deck(
     deck_entries: Mapping[str, frozenset[str]],
     index: KnownLanguageIndex,
+    *,
+    deck_sounds: Mapping[str, frozenset[str]] | None = None,
 ) -> dict[str, CognateMatch]:
     """Score every deck word that finds a counterpart. Words that find none are
     simply absent from the result — never present with a zero, which would be a
@@ -715,9 +778,10 @@ def score_deck(
     reachable at all.
     """
 
+    sounds = deck_sounds or {}
     scored: dict[str, CognateMatch] = {}
     for word, glosses in deck_entries.items():
-        match = best_match(word, glosses, index)
+        match = best_match(word, glosses, index, target_sounds=sounds.get(word, ()))
         if match is not None:
             scored[word] = match
     return scored

@@ -261,6 +261,8 @@ def best_match(
     policy: CognatePolicy,
     *,
     require_pos_agreement: bool = False,
+    target_sounds: Iterable[str] = (),
+    known_sounds: Mapping[str, frozenset[str]] | None = None,
 ) -> CognetMatch | None:
     """The most recognisable form of any lemma CogNet says this is cognate with."""
 
@@ -280,7 +282,13 @@ def best_match(
             for known_surface in known_forms.get(pair.known_lemma, frozenset({pair.known_lemma})):
                 if not passes_length_guard(surface, known_surface, policy):
                     continue
-                form = form_score(surface, known_surface, policy)
+                form = form_score(
+                    surface,
+                    known_surface,
+                    policy,
+                    target_sounds=target_sounds,
+                    known_sounds=(known_sounds or {}).get(known_surface, ()),
+                )
                 score = combine(form, 1.0, policy)
                 if best is None or score > best.score:
                     best = CognetMatch(
@@ -302,9 +310,12 @@ def score_surfaces(
     policy: CognatePolicy,
     *,
     require_pos_agreement: bool = False,
+    target_sounds: Mapping[str, frozenset[str]] | None = None,
+    known_sounds: Mapping[str, frozenset[str]] | None = None,
 ) -> dict[str, CognetMatch]:
     """Score every surface the lemma file knows about."""
 
+    sounds = target_sounds or {}
     scored: dict[str, CognetMatch] = {}
     for surface, analyses in surface_lemmas.items():
         match = best_match(
@@ -314,6 +325,8 @@ def score_surfaces(
             known_forms,
             policy,
             require_pos_agreement=require_pos_agreement,
+            target_sounds=sounds.get(surface, ()),
+            known_sounds=known_sounds,
         )
         if match is not None:
             scored[surface] = match
