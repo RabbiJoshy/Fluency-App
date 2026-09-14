@@ -1,6 +1,6 @@
 {
   "profile_version": "speech-pipeline-profile/v1",
-  "profile_id": "es_speech_v10_1000x10",
+  "profile_id": "es_speech_v10_9999x3_fresh",
   "language": "es",
   "locale": "es-ES",
   "mode": "speech",
@@ -16,10 +16,9 @@
     "fallback_policy": "none"
   },
   "scope": {
-    "surface_limit": 1000,
-    "shortfall_policy": "publish_explicit",
-    "display_examples_per_card": 10,
-    "note": "A 1,000-card deck showing 10 examples each, to read the harvest by eye and to see how v10 does on it. Ranks 1-1000 sit at harvest budget 80, so 10 displayed examples draw from a pool eight times that size."
+    "surface_limit": 9999,
+    "examples_per_surface": 3,
+    "shortfall_policy": "publish_explicit"
   },
   "inventory": {
     "source_adapter": "published-surface-frequency-list/v1",
@@ -37,7 +36,7 @@
     "source_edition": "spanishdict-pinned-snapshot",
     "gloss_language": "en",
     "snapshot_id": "spanishdict-complete-menu-2026-08-23-v1",
-    "minimum_card_coverage": 0.98,
+    "minimum_card_coverage": 0.55,
     "output_schema": "sense-menu/v1",
     "join_key": "surface_card_id",
     "lemma_role": "lookup_metadata_only"
@@ -55,7 +54,7 @@
       "tatoeba": 0.6,
       "opensubtitles": 0.4
     },
-    "source_note": "Fresh Tatoeba + OpenSubtitles, matching Portuguese and Czech. The v10 profiles read retained-opensubtitles instead: a reconstructed sentence bank frozen on 2026-08-15, with no Tatoeba, whose candidate universe predates the pooling, redundancy and fragment work. A deck meant to show what the current harvest produces has to read what the current harvest reads."
+    "source_note": "Fresh Tatoeba + OpenSubtitles rather than the frozen 2026-08-15 retained bank, so Spanish is harvested by the same policy and from the same corpora as Portuguese and Czech."
   },
   "stage_order": [
     "inventory",
@@ -75,10 +74,7 @@
     "model_revisions": {
       "gloss.model_revision": "gemini-embedding-001",
       "occurrence_pos.model_revision": "es_dep_news_trf@3.8.0"
-    },
-    "execution_cap_per_card": 10,
-    "max_wsd_units_per_run": 10000,
-    "max_wsd_units_per_run_note": "1,000 surfaces x execution cap 10 = 10,000 units."
+    }
   },
   "release": {
     "activation": "manual",

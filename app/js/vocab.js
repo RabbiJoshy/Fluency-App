@@ -2423,6 +2423,21 @@ async function loadLevelReviewSet(rangeString, opts = {}) {
     });
 }
 
+// Global level-agnostic review deck across all due words in the language
+async function loadDailyReviewDeck(opts = {}) {
+    if (!currentUser || currentUser.isGuest) {
+        alert('Please log in to review due cards.');
+        return;
+    }
+    return loadVocabularyData('1-50000', {
+        ...opts,
+        studyMode: 'review',
+        rankBasis: 'source',
+        setNumber: null,
+        levelSetCount: null
+    });
+}
+
 // Truncate text to a maximum number of words, adding ellipsis if truncated
 function truncateText(text, maxWords) {
     if (!text) return '';
@@ -3012,6 +3027,7 @@ window.resumeLastStudySession = resumeLastStudySession;
 window.saveStudySessionSnapshot = saveStudySessionSnapshot;
 window.clearStudySessionSnapshot = clearStudySessionSnapshot;
 window.loadLevelReviewSet = loadLevelReviewSet;
+window.loadDailyReviewDeck = loadDailyReviewDeck;
 window.truncateText = truncateText;
 window.cleanValue = cleanValue;
 window.generateLinks = generateLinks;

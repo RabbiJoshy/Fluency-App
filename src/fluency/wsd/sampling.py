@@ -37,7 +37,7 @@ go into the run record.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Iterable, Mapping, Sequence
+from typing import AbstractSet, Any, Iterable, Mapping, Sequence
 
 
 SAMPLING_POLICY_VERSION = "wsd-occurrence-sampling/v1"
@@ -95,12 +95,27 @@ def select_occurrences(
     policy: OccurrenceSamplingPolicy,
     *,
     card_id: str,
+    misaligned: AbstractSet[str] | None = None,
 ) -> SurfaceSelection:
-    """Deterministically choose which occurrences reach WSD for one card."""
+    """Deterministically choose which occurrences reach WSD for one card.
+
+    `misaligned` names sentences whose translation failed the alignment floor.
+    They are dropped before the cap rather than ranked below it: embedding one
+    spends a model call on a pair that must not be displayed whatever WSD says
+    about it. Measured on Portuguese, the harvest holds 44.8 candidates a card
+    and the floor removes 0.55%, so dropping them costs no supply. They are
+    reported as overflow, which is already the channel for "harvested, not
+    evaluated".
+    """
 
     ordered = sorted(candidates, key=_rank_key)
-    chosen = ordered[: policy.cap_per_surface]
-    rest = ordered[policy.cap_per_surface :]
+    if misaligned:
+        eligible = [item for item in ordered if str(item["sentence_id"]) not in misaligned]
+        rejected = [item for item in ordered if str(item["sentence_id"]) in misaligned]
+    else:
+        eligible, rejected = list(ordered), []
+    chosen = eligible[: policy.cap_per_surface]
+    rest = eligible[policy.cap_per_surface :] + rejected
     return SurfaceSelection(
         card_id=card_id,
         selected=tuple(str(item["sentence_id"]) for item in chosen),

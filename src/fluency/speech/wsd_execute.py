@@ -45,7 +45,12 @@ from fluency.wsd.sampling import (
     OccurrenceSamplingPolicy,
     sampling_report,
     select_occurrences,
-    sole_leaf,
+)
+from fluency.wsd.sampling import sole_leaf
+from fluency.harvest.alignment import (
+    DEFAULT_ALIGNMENT_FLOOR,
+    below_floor,
+    read_cache as read_alignment,
 )
 from fluency.wsd.runner import (
     ClosedMenuWSDRunner,
@@ -460,6 +465,14 @@ def main() -> None:
              "everything each time and destroys the amortisation.",
     )
     parser.add_argument(
+        "--alignment", type=Path,
+        help="alignment-score artifact; pairs below the floor are dropped before the cap",
+    )
+    parser.add_argument(
+        "--alignment-floor", type=float, default=DEFAULT_ALIGNMENT_FLOOR,
+        help="LaBSE cosine below which a translation is treated as misaligned",
+    )
+    parser.add_argument(
         "--execution-cap", type=int, default=DEFAULT_EXECUTION_CAP,
         help="max occurrences per surface card that reach WSD (default: the "
              "mature historical 10). Separate from the study-example cap.",
@@ -551,6 +564,10 @@ def main() -> None:
 
     # --- gather every exact text the run needs, then embed the misses ---
     policy = OccurrenceSamplingPolicy(cap_per_surface=args.execution_cap)
+    alignment_scores = read_alignment(args.alignment) if args.alignment else {}
+    if args.alignment:
+        print(f"alignment scores: {len(alignment_scores):,} sentences, floor {args.alignment_floor}")
+    dropped_misaligned = 0
     needed: set[str] = set()
     work: list[tuple[dict[str, Any], dict[str, Any], str, str, str]] = []
     embedding_scored_cards: set[str] = set()
@@ -560,7 +577,19 @@ def main() -> None:
     for card in candidates["cards"]:
         card_id = card["card_id"]
         menu_card = menu_by_card.get(card_id)
-        selection = select_occurrences(card["candidates"], policy, card_id=card_id)
+        misaligned = (
+            below_floor(
+                alignment_scores,
+                (str(item["sentence_id"]) for item in card["candidates"]),
+                args.alignment_floor,
+            )
+            if alignment_scores
+            else set()
+        )
+        dropped_misaligned += len(misaligned)
+        selection = select_occurrences(
+            card["candidates"], policy, card_id=card_id, misaligned=misaligned
+        )
         selections.append(selection)
         for sentence_id in selection.overflow:
             capped.append((card, menu_card, sentence_id))

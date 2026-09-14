@@ -42,7 +42,10 @@ from fluency.projections import (
 
 
 SELECTION_VERSION = "example-selection/v1"
-POLICY_VERSION = "harvest-easiness-order/v1"
+# Named for what selection actually does now: band on burden, rank on form,
+# spread across senses. The old name said easiness-order, which stopped being
+# true when ranking moved off the easiness score.
+POLICY_VERSION = "selection-form-and-sense/v2"
 
 _WORDS = re.compile(r"[^\W\d_]+", re.UNICODE)
 

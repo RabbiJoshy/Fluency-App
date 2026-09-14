@@ -233,16 +233,26 @@ function mergeKnowledgeProgress(parent, item) {
         parseProgressTimestamp(item?.lastCorrect),
         parseProgressTimestamp(item?.lastWrong)
     );
+    const itemLastWrong = parseProgressTimestamp(item?.lastWrong);
+    const itemLastCorrect = parseProgressTimestamp(item?.lastCorrect);
+    const itemUnresolvedWrong = itemLastWrong > 0 && itemLastWrong >= itemLastCorrect;
+
     const newest = itemTime > parentTime ? item : parent;
     return {
         correct: (Number(parent?.correct) || 0) + (Number(item?.correct) || 0),
         wrong: (Number(parent?.wrong) || 0) + (Number(item?.wrong) || 0),
-        lastCorrect: newestIso(parent?.lastCorrect, item?.lastCorrect),
+        // If the item has an unresolved explicit wrong, a general parent card "yes"
+        // must not overwrite it: only an explicit item-level correct can resolve it.
+        lastCorrect: itemUnresolvedWrong
+            ? (item?.lastCorrect || null)
+            : newestIso(parent?.lastCorrect, item?.lastCorrect),
         lastWrong: newestIso(parent?.lastWrong, item?.lastWrong),
         lastSeen: newestIso(parent?.lastSeen, item?.lastSeen),
         // The schedule belongs to the newest answer source. Combined lifetime
         // counts are retained for history but must not inflate its interval.
-        srsStage: newest ? getSrsStage(newest) : undefined
+        srsStage: itemUnresolvedWrong
+            ? (item ? getSrsStage(item) : 0)
+            : (newest ? getSrsStage(newest) : undefined)
     };
 }
 
@@ -548,6 +558,9 @@ function ensureKnowledgeOverviewModal() {
             <p class="knowledge-overview-intro">This card can hold more than one meaning or expression. Mark each one on its own — separate from grading the card itself: <span class="knowledge-overview-legend-known">✓ Known</span> stops it coming back, <span class="knowledge-overview-legend-review">× Review</span> brings it back sooner.</p>
             <div id="knowledgeOverviewSummary" class="knowledge-overview-summary"></div>
             <div id="knowledgeOverviewList" class="knowledge-overview-list"></div>
+            <div class="knowledge-overview-footer" style="display: flex; justify-content: flex-end; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-color, rgba(255,255,255,0.1));">
+                <button type="button" class="knowledge-overview-advance-btn" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: var(--accent, #10b981); color: #fff; border: none; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer;" onclick="saveAndNextCardFromKnowledge(event)">Save &amp; Next Card →</button>
+            </div>
         </div>`;
     modal.addEventListener('click', event => {
         if (event.target === modal) closeKnowledgeOverview(event);
@@ -665,11 +678,37 @@ function focusKnowledgeOverviewItem(event, index) {
 async function markKnowledgeOverviewItem(event, index, isCorrect) {
     event?.stopPropagation();
     const card = flashcards[currentIndex];
-    const item = getCardKnowledgeItems(card)[index];
+    const items = getCardKnowledgeItems(card);
+    const item = items[index];
     if (!card || !item) return;
+
+    // 1-tap exception flow: if the learner marks one sense as unknown (isCorrect === false),
+    // automatically mark all other unmarked items on this card as known (true) so the learner
+    // only has to tap the single exception they missed.
+    if (!isCorrect) {
+        const unmarkedSiblings = items.filter((sibling, sibIdx) => {
+            if (sibIdx === index) return false;
+            const state = getKnowledgeItemState(card, sibling);
+            return !state.seen;
+        });
+        if (unmarkedSiblings.length > 0) {
+            await saveKnowledgeProgress(card, unmarkedSiblings, true);
+        }
+    }
+
     await saveKnowledgeProgress(card, [item], isCorrect);
     updateCard();
     renderKnowledgeOverview(card);
+}
+
+function saveAndNextCardFromKnowledge(event) {
+    event?.stopPropagation();
+    closeKnowledgeOverview(event);
+    if (typeof window.advanceToNextDeckCard === 'function') {
+        window.advanceToNextDeckCard();
+    } else if (typeof window.nextCard === 'function') {
+        window.nextCard();
+    }
 }
 
 // Kept as an empty compatibility hook for cached flashcards.js versions.
@@ -707,6 +746,7 @@ window.showKnowledgeOverview = showKnowledgeOverview;
 window.closeKnowledgeOverview = closeKnowledgeOverview;
 window.focusKnowledgeOverviewItem = focusKnowledgeOverviewItem;
 window.markKnowledgeOverviewItem = markKnowledgeOverviewItem;
+window.saveAndNextCardFromKnowledge = saveAndNextCardFromKnowledge;
 window.cacheItemProgress = cacheItemProgress;
 
 document.addEventListener('keydown', event => {
