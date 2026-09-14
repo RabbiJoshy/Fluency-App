@@ -1,0 +1,103 @@
+{
+  "profile_version": "speech-pipeline-profile/v1",
+  "profile_id": "es_speech_v11_10000x10",
+  "language": "es",
+  "locale": "es-ES",
+  "mode": "speech",
+  "identity": {
+    "unit_type": "surface",
+    "identity_version": "surface-card/v1",
+    "allow_lemma_identity": false
+  },
+  "source_policy": {
+    "fresh_snapshots_only": true,
+    "allow_legacy_inputs": false,
+    "allow_recovered_inputs": false,
+    "fallback_policy": "none"
+  },
+  "scope": {
+    "surface_limit": 10000,
+    "shortfall_policy": "publish_explicit",
+    "display_examples_per_card": 10,
+    "note": "Ten examples for every surface, which is the shape the deck is heading for. The harvest keeps 40 at the tail and WSD scores 20, so selection chooses ten from twenty rather than ten from ten."
+  },
+  "inventory": {
+    "source_adapter": "published-surface-frequency-list/v1",
+    "language_policy": "es-v1",
+    "source_edition": "EsPal subtitles (Duchon et al. 2013): espal-subtitles-2026-09-13",
+    "frequency_measure": "surface_occurrences_per_billion",
+    "output_schema": "surface-inventory/v1",
+    "identity_unit": "surface",
+    "lemma_role": "excluded",
+    "source_note": "EsPal carries lemma, POS and EAGLES morphology per surface. It does NOT mark English: Freeling gives every string a Spanish analysis, so `the` and `and` sit in the list tagged as nouns beside the genuine loanwords `bar`, `hotel` and `club`. No frequency rule separates them; that is a dictionary question for the cognate stage. The emitted integers are occurrences per BILLION, not counts -- EsPal publishes only a per-million rate -- and only the induced ranking is consumed."
+  },
+  "sense_menu": {
+    "source_adapter": "spanishdict-sense-menu/v1",
+    "language_policy": "es-spanishdict-v1",
+    "source_edition": "spanishdict-pinned-snapshot",
+    "gloss_language": "en",
+    "snapshot_id": "spanishdict-complete-menu-2026-08-23-v1",
+    "minimum_card_coverage": 0.88,
+    "output_schema": "sense-menu/v1",
+    "join_key": "surface_card_id",
+    "lemma_role": "lookup_metadata_only",
+    "coverage_note": "Lowered from 0.98 for this size only. The Spanish list holds 14,040 surfaces, so a 10,000-card deck reaches rank 10,000 of 14,040 -- the tail where SpanishDict pages were never fetched. Measured coverage at this size is 91.14%. The ~880 cards without a menu are published as explicit no_menu cases, the same way Czech already ships; they are not given invented senses. Raising this back to 0.98 is what the outstanding SpanishDict fetch of ~4,400 pages is for."
+  },
+  "harvest": {
+    "shared_policy": "speech-v1",
+    "language_policy": "es-v1",
+    "source_policy": "explicit_union",
+    "sources": [
+      "tatoeba",
+      "opensubtitles"
+    ],
+    "candidate_cap_per_surface": 60,
+    "source_share": {
+      "tatoeba": 0.6,
+      "opensubtitles": 0.4
+    },
+    "source_note": "Fresh Tatoeba + OpenSubtitles, matching Portuguese and Czech. The v10 profiles read retained-opensubtitles instead: a reconstructed sentence bank frozen on 2026-08-15, with no Tatoeba, whose candidate universe predates the pooling, redundancy and fragment work. A deck meant to show what the current harvest produces has to read what the current harvest reads.",
+    "wsd_budget_per_card": [
+      {
+        "through_rank": 1000,
+        "budget": 80
+      },
+      {
+        "through_rank": 3000,
+        "budget": 50
+      },
+      {
+        "through_rank": 10000,
+        "budget": 40
+      }
+    ],
+    "budget_note": "Tail raised from 30 to 40. At 30 the budget was cutting exactly at the measured mean pool of 29, so it was the binding constraint rather than the corpus; the English-side form gates then remove another 1-2%. Retaining more costs harvest time and disk only -- what reaches WSD is execution_cap_per_card. This is the number that cannot be raised later without harvesting again."
+  },
+  "stage_order": [
+    "inventory",
+    "sense_menu",
+    "sentence_harvest",
+    "wsd_assignments",
+    "example_selection",
+    "release_build"
+  ],
+  "wsd": {
+    "strategy": "language-adapted-closed-menu/v1",
+    "shared_profile": "closed-menu-provider-prior-v1",
+    "language_profile": "es-v2",
+    "model_profile": "es-v10-1",
+    "require_model_pins": true,
+    "execution_status": "ready",
+    "model_revisions": {
+      "gloss.model_revision": "gemini-embedding-001",
+      "occurrence_pos.model_revision": "es_dep_news_trf@3.8.0"
+    },
+    "execution_cap_per_card": 20,
+    "max_wsd_units_per_run": 210000,
+    "max_wsd_units_per_run_note": "10,000 surfaces x execution cap 20 = 200,000 units, plus margin. The cap was 10 and the display count was 10, which meant WSD scored exactly the ten sentences the easiness ranker already picked and selection had no choice to make. Twenty is what gives a translation-quality filter somewhere to reject into."
+  },
+  "release": {
+    "activation": "manual",
+    "fallback_policy": "none"
+  }
+}
