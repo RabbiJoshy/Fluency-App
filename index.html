@@ -40,7 +40,7 @@
             document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260914d">
+    <link rel="stylesheet" href="css/style.css?v=20260914e">
     <link rel="stylesheet" href="css/light-theme.css?v=20260914d">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
@@ -63,7 +63,7 @@
     <link rel="modulepreload" href="js/progress.js?v=20260913b">
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20260831a">
-    <link rel="modulepreload" href="js/ui.js?v=20260914b">
+    <link rel="modulepreload" href="js/ui.js?v=20260914c">
     <link rel="modulepreload" href="js/vocab.js?v=20260913g">
     <link rel="modulepreload" href="js/song-sets-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/song-sets.js?v=20260823ae">
@@ -455,6 +455,9 @@
                 </div>
             </div>
 
+            <!-- Global Daily Due Banner -->
+            <div id="globalDailyDueBanner" class="global-daily-due-banner" style="display: none; margin: 0 0 16px 0;"></div>
+
             <!-- Step 2: Level Selection -->
             <div id="step2" class="setup-step" style="display: none;">
                 <div class="step-header step-header-with-help">
@@ -476,7 +479,7 @@
                         <div class="info-sheet-points">
                             <div><span>1</span><p><strong>Start anywhere.</strong> Begin at Level 1 for fundamentals, or jump ahead if you already know the basics.</p></div>
                             <div><span>2</span><p><strong>Bite-sized sets.</strong> Each level is broken into small sets so you can make fast, steady progress without getting overwhelmed.</p></div>
-                            <div><span>3</span><p><strong>Streamline saves time.</strong> Groups related word forms and sets aside obvious look-alikes so you focus on new vocabulary.</p></div>
+                            <div><span>3</span><p><strong>Fast Track saves time.</strong> Groups related word forms and sets aside obvious look-alikes so you focus on new vocabulary.</p></div>
                         </div>
                         <div class="level-estimate-modal-callout" id="step2LevelEstimateCallout">
                             <div class="level-estimate-modal-body">
@@ -489,42 +492,29 @@
                 </div>
                 <div id="levelSelector" class="level-selector"></div>
 
-                <!-- Lemma + cognate sub-settings, side-by-side. The wrapper
-                     becomes a flex row at desktop widths; below the
-                     breakpoint it stacks back to its prior single-column
-                     layout. The "X excluded" info line moved below each
-                     toggle so it doesn't compete with the help button on
-                     the right (and so the headers stay tight when both
-                     substeps are visible side-by-side). -->
-                <!-- Fast mode is one decision: fewer cards, by merging word
-                     forms and skipping words you already recognise. The parts it
-                     bundles (Merge Lemmas, Cognates, the languages you read) are
-                     real choices but not ones a learner can make before seeing a
-                     card, so they live on the Fast mode page rather than here.
-                     Shown in both Speech and Lyrics; hidden only when the active
-                     release supports neither part. -->
+                <!-- Fast Track setup options bar -->
                 <div id="setupOptions" class="setup-options" style="display: none;">
                     <div class="setup-options-bar">
                         <button type="button" id="fastModeToggleBtn" class="fast-mode-btn fast-mode-master" data-fast="off" aria-pressed="false">
                             <span class="fast-mode-master-icon" aria-hidden="true">⚡</span>
                             <span class="fast-mode-master-copy">
                                 <span class="fast-mode-title-row">
-                                    <strong>Streamline</strong>
+                                    <strong>Fast Track</strong>
                                     <span class="streamline-rec-badge">Recommended</span>
                                 </span>
-                                <small id="fastModeSummary">Off · full deck</small>
+                                <small id="fastModeSummary">Full deck · includes all words</small>
                             </span>
                             <span class="fast-mode-master-switch" aria-hidden="true"><i></i></span>
                         </button>
                         <button type="button" id="fastModeDetailBtn" class="fast-mode-detail-btn" onclick="window.openFastModePage?.()">
-                            More details <span aria-hidden="true">›</span>
+                            Details <span aria-hidden="true">›</span>
                         </button>
                     </div>
                     <div class="streamline-rec-callout" id="streamlineRecCallout" style="display: none;">
                         <div class="streamline-rec-callout-icon" aria-hidden="true">⚡</div>
                         <div class="streamline-rec-callout-body">
-                            <strong>Why Streamline is recommended</strong>
-                            <p id="streamlineRecCalloutText">Merges verb conjugations onto base cards and skips obvious look-alikes from English, so you focus strictly on new vocabulary without missing any examples.</p>
+                            <strong>Why Fast Track is recommended</strong>
+                            <p id="streamlineRecCalloutText">Merges verb conjugations onto base cards and skips obvious look-alikes, so you focus strictly on new vocabulary without missing any examples.</p>
                         </div>
                         <button type="button" class="streamline-rec-callout-dismiss" id="dismissStreamlineRecBtn" aria-label="Dismiss recommendation note">✕</button>
                     </div>
@@ -558,8 +548,8 @@
             <!-- Extras Deck Section: supplementary cards (Artist extra categories or Speech skipped words) -->
             <div id="extrasDeckSection" class="setup-step extras-deck-section" style="display: none;">
                 <div class="step-header">
-                    <span class="step-eyebrow" id="extrasDeckEyebrow">Streamline</span>
-                    <span class="step-title" id="extrasDeckTitle">Streamlined &amp; familiar words</span>
+                    <span class="step-eyebrow" id="extrasDeckEyebrow">Fast Track</span>
+                    <span class="step-title" id="extrasDeckTitle">Fast Track vocabulary</span>
                 </div>
                 <div class="extras-deck-card" id="extrasDeckCard"></div>
             </div>
@@ -996,74 +986,107 @@
             <button class="modal-close fast-mode-close" id="closeFastModeModal" aria-label="Close">✕</button>
             <div class="fast-mode-page-body">
                 <div class="fast-mode-title-row fast-mode-title-row--header">
-                    <h2>Streamline</h2>
+                    <h2>Fast Track</h2>
                     <span class="streamline-rec-badge">Recommended</span>
                 </div>
-                <p class="fast-mode-lede"><strong>Recommended for faster progress.</strong> Cuts study time by grouping word forms (like verb conjugations) and setting aside obvious words you already recognize, so you focus strictly on new vocabulary.</p>
+                <p class="fast-mode-lede">Cuts study time by grouping word forms and skipping words you already recognize, so you focus strictly on new vocabulary.</p>
 
                 <div class="fast-mode-controls">
                     <div id="lemmaToggleContainer" class="setup-substep" style="display: none;">
                         <div class="substep-header">
                             <span class="fast-mode-number" aria-hidden="true">1</span>
-                            <span class="substep-title">Learn a word once</span>
+                            <span class="substep-title">Merge word forms</span>
                         </div>
                         <p class="fast-mode-explainer">Forms such as <em>hablo</em>, <em>habló</em> and <em>hablar</em> belong to the same word. Put them on one card so you learn it once while keeping every example.</p>
                         <div class="fast-mode-example" aria-label="Example of grouped word forms"><span>hablo</span><span>habló</span><span>hablar</span><b>→ hablar</b></div>
-                        <div id="lemmaToggleSelector" class="group-size-selector">
-                            <button class="lemma-toggle-btn selected" data-lemma="off" data-short="Off" data-full="Off">Off</button>
-                            <button class="lemma-toggle-btn" data-lemma="on" data-short="On" data-full="On">On</button>
+                        <div class="fast-mode-control-row">
+                            <div id="lemmaToggleSelector" class="group-size-selector">
+                                <button class="lemma-toggle-btn selected" data-lemma="off" data-short="Off" data-full="Off">Off</button>
+                                <button class="lemma-toggle-btn" data-lemma="on" data-short="On" data-full="On">On</button>
+                            </div>
+                            <button type="button" id="viewMergedFormsBtn" class="fast-mode-view-items-btn" style="display: none;">
+                                View merged forms <span class="fast-mode-btn-count" id="mergedFormsCount"></span> ›
+                            </button>
                         </div>
                         <span id="lemmaInfoLine" class="level-info-line substep-info-below" style="display: none;"></span>
-                        <p id="lemmaMappingStatus" class="fast-mode-mapping-status" hidden></p>
-                        <details class="fast-mode-details">
-                            <summary>Technical details</summary>
-                            <p>Inflected forms are grouped by their lemma—the dictionary form of the word. Their frequency and examples are pooled on the shared card.</p>
-                        </details>
                     </div>
 
                     <div id="cognateToggleContainer" class="setup-substep" style="display: none;">
                         <div class="substep-header">
                             <span class="fast-mode-number" aria-hidden="true">2</span>
-                            <span class="substep-title">Skip obvious look-alikes</span>
+                            <span class="substep-title">Skip obvious words</span>
                         </div>
                         <p class="fast-mode-explainer">Some words already give away their meaning. Set them aside so your study time goes to vocabulary that actually needs learning.</p>
                         <div class="fast-mode-example fast-mode-example--cognate" aria-label="Example of a Spanish word that is obvious in English"><span><b>chocolate</b><small>Spanish</small></span><strong>=</strong><span><b>chocolate</b><small>English</small></span></div>
-                        <div id="cognateToggleSelector" class="group-size-selector">
-                            <button class="cognate-toggle-btn" data-cognate="exclude" data-short="Exclude" data-full="Exclude">Exclude</button>
-                            <button class="cognate-toggle-btn selected" data-cognate="include" data-short="Include" data-full="Include">Include</button>
+                        <div class="fast-mode-control-row">
+                            <div id="cognateToggleSelector" class="group-size-selector">
+                                <button class="cognate-toggle-btn" data-cognate="exclude" data-short="Exclude" data-full="Exclude">Exclude</button>
+                                <button class="cognate-toggle-btn selected" data-cognate="include" data-short="Include" data-full="Include">Include</button>
+                            </div>
+                            <button type="button" id="viewSkippedWordsBtn" class="fast-mode-view-items-btn" style="display: none;">
+                                View skipped words <span class="fast-mode-btn-count" id="skippedWordsCount"></span> ›
+                            </button>
                         </div>
                         <span id="cognateInfoLine" class="level-info-line substep-info-below" style="display: none;"></span>
                         <div id="knownLanguagesContainer" class="known-languages-context" style="display: none;">
-                            <span>Compare with</span>
-                            <div id="knownLanguagesSelector" class="group-size-selector known-languages-selector"></div>
+                            <div class="known-languages-header">
+                                <strong>Languages you already know</strong>
+                                <small>Skip words that look similar in:</small>
+                            </div>
+                            <div id="knownLanguagesSelector" class="known-languages-selector"></div>
                         </div>
-                        <p id="cognateMappingStatus" class="fast-mode-mapping-status" hidden></p>
-                        <details class="fast-mode-details">
-                            <summary>Technical details</summary>
-                            <p>These are cognates: words whose spelling and meaning are sufficiently similar across languages. Adjustable thresholds keep less certain matches and misleading look-alikes in the deck.</p>
-                        </details>
                     </div>
 
                 </div>
 
-                <p class="fast-mode-note">Nothing is deleted. Grouped forms stay on their shared card, and skipped look-alikes can be restored at any time.</p>
-                <button type="button" id="extrasBtn" class="extras-btn">See streamlined words</button>
+                <!-- Admin / Diagnostic Technical Details (strictly gated to owner/admin) -->
+                <div id="fastModeAdminDetails" class="fast-mode-admin-details" style="display: none;">
+                    <h4>Technical &amp; Audit Details (Admin Only)</h4>
+                    <p id="lemmaMappingStatus" class="fast-mode-mapping-status" hidden></p>
+                    <p id="cognateMappingStatus" class="fast-mode-mapping-status" hidden></p>
+                    <p>Inflected forms are grouped by dictionary lemma. Cognate thresholds are determined by cross-language phonetic/orthographic scoring.</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Extras Modal — the words the current settings keep out of the deck.
-         Populated by extras.js from the loaded vocabulary; two groups only,
-         cognates and merged forms. -->
-    <div id="extrasModal" class="modal hidden">
+    <!-- Merged Forms Modal — word forms grouped onto a base card -->
+    <div id="mergedFormsModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <div><span class="product-modal-eyebrow">Streamline</span><h3>Streamlined words</h3></div>
+                <div><span class="product-modal-eyebrow">Fast Track</span><h3>Merged word forms</h3></div>
+                <button class="modal-close" id="closeMergedFormsModal" aria-label="Close">✕</button>
+            </div>
+            <p class="extras-intro">Word forms grouped onto a shared base card so you learn them together.</p>
+            <input type="search" id="mergedFormsSearch" class="extras-search" placeholder="Search merged forms" autocomplete="off">
+            <div class="extras-body" id="mergedFormsBody"></div>
+        </div>
+    </div>
+
+    <!-- Skipped Words Modal — words set aside by known languages -->
+    <div id="skippedWordsModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div><span class="product-modal-eyebrow">Fast Track</span><h3>Skipped obvious words</h3></div>
+                <button class="modal-close" id="closeSkippedWordsModal" aria-label="Close">✕</button>
+            </div>
+            <p class="extras-intro">Words set aside because their spelling and meaning match a language you already know.</p>
+            <input type="search" id="skippedWordsSearch" class="extras-search" placeholder="Search skipped words" autocomplete="off">
+            <div class="extras-body" id="skippedWordsBody"></div>
+        </div>
+    </div>
+
+    <!-- Legacy / fallback Extras Modal -->
+    <div id="extrasModal" class="modal hidden" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div><span class="product-modal-eyebrow">Fast Track</span><h3>Fast Track vocabulary</h3></div>
                 <button class="modal-close" id="closeExtrasModal" aria-label="Close">✕</button>
             </div>
             <p class="extras-intro">Words not shown as separate cards, with the reason for each choice.</p>
-            <input type="search" id="extrasSearch" class="extras-search" placeholder="Search streamlined words" autocomplete="off">
+            <input type="search" id="extrasSearch" class="extras-search" placeholder="Search Fast Track words" autocomplete="off">
             <div class="extras-body" id="extrasBody"></div>
+            <button type="button" id="extrasBtn" class="extras-btn" style="display: none;">See Fast Track words</button>
         </div>
     </div>
 
@@ -1469,10 +1492,10 @@
                         These choices apply to new sets. A set already in progress keeps the choices it started with.
                     </p>
 
-                    <!-- Streamline Group -->
+                    <!-- Fast Track Group -->
                     <div class="settings-preference-group settings-preference-group--primary">
                         <div class="settings-group-heading">
-                            <strong>Streamline <span class="streamline-rec-badge">Recommended</span></strong>
+                            <strong>Fast Track <span class="streamline-rec-badge">Recommended</span></strong>
                             <span>Skip repeats and obvious words to learn faster</span>
                         </div>
                         <div class="settings-default-row">
@@ -1829,7 +1852,7 @@
             <!-- How to Study tab -->
             <div class="settings-tab-content" id="helpStudyTabContent">
                 <div class="help-content">
-                    <p><strong>Picking a set:</strong> Choose Everyday Speech or Music &amp; Lyrics, then pick a level. Fluency automatically highlights your next unfinished set. Turn on Streamline to focus on high-impact vocabulary and group related word forms together.</p>
+                    <p><strong>Picking a set:</strong> Choose Everyday Speech or Music &amp; Lyrics, then pick a level. Fluency automatically highlights your next unfinished set. Turn on Fast Track to focus on high-impact vocabulary and group related word forms together.</p>
                     <p><strong>Learning and review:</strong> Learn new contains only cards you have not attempted. Incorrect or partly learned cards move into the selected level's separate Review queue. Correct recalls return after 1, 3, 7, 14, 30, 60, and 120 days; mistakes reset the schedule.</p>
                     <p><strong>Continuing:</strong> If you leave an unfinished set, a Welcome back prompt offers to restore the exact card, order, card side, and settings next time you enter. Finishing the set clears it.</p>
                     <p><strong>Tap card</strong> to flip and see the translation</p>

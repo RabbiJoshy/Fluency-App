@@ -39,92 +39,22 @@ function cognatesExcluded() {
     return document.querySelector('.cognate-toggle-btn.selected')?.dataset.cognate === 'exclude';
 }
 
-// Fast mode is on when every part the release supports is on. With one part
-// available it is that part's state; with neither, there is nothing to report.
+// Fast Track is on when any supported part is on, off when none is.
 function currentState() {
     if (requestedFastMode !== null) return requestedFastMode ? 'on' : 'off';
     const parts = [];
     if (lemmaAvailable()) parts.push(lemmaOn());
     if (cognateAvailable()) parts.push(cognatesExcluded());
     if (parts.length === 0) return 'off';
-    if (parts.every(Boolean)) return 'on';
-    if (parts.every(part => !part)) return 'off';
-    // A learner who set the parts individually is in neither state, and saying
-    // "on" or "off" would be a lie about their deck.
-    return 'custom';
+    return parts.some(Boolean) ? 'on' : 'off';
 }
 
-function getCognateExamples(maxCount = 3) {
-    const vocab = globalThis.setupVocabularySnapshot || globalThis.cachedVocabularyData;
-    if (!Array.isArray(vocab) || vocab.length === 0) return [];
-
-    let startRank = 0;
-    let endRank = Infinity;
-    const selectedBtn = document.querySelector('.level-btn.selected');
-    if (selectedBtn?.dataset.startRank && selectedBtn?.dataset.endRank) {
-        startRank = parseInt(selectedBtn.dataset.startRank, 10);
-        endRank = parseInt(selectedBtn.dataset.endRank, 10);
-    } else {
-        const segBar = document.getElementById('lswSlider');
-        const idx = segBar ? parseInt(segBar.dataset.value || '', 10) : NaN;
-        if (!isNaN(idx) && Array.isArray(window.lastRenderedPercentageRanges) && window.lastRenderedPercentageRanges[idx]) {
-            const range = window.lastRenderedPercentageRanges[idx];
-            startRank = range.startRank ?? range.start ?? 0;
-            endRank = range.endRank ?? range.end ?? Infinity;
-        }
-    }
-
-    const decide = globalThis.isCognateKnown;
-    const isKnown = item => {
-        if (!item || !item.word || item.duplicate) return false;
-        if (decide) return Boolean(decide(item));
-        const legacy = Number(item.cognate_score || 0);
-        return legacy > 0 && legacy >= Number(globalThis.cognateThreshold || 0.7);
-    };
-
-    const levelCognates = [];
-    const allCognates = [];
-    for (const item of vocab) {
-        if (!isKnown(item)) continue;
-        allCognates.push(item);
-        const rank = Number(item.rank ?? item.frequency_rank ?? -1);
-        if (rank >= startRank && rank <= endRank) {
-            levelCognates.push(item);
-        }
-    }
-
-    const source = levelCognates.length > 0 ? levelCognates : allCognates;
-    const seen = new Set();
-    const words = [];
-    for (const item of source) {
-        const w = String(item.word || '').trim();
-        const lower = w.toLowerCase();
-        if (!w || seen.has(lower)) continue;
-        seen.add(lower);
-        words.push(w);
-        if (words.length >= maxCount) break;
-    }
-    return words;
-}
-
-// Offers concrete examples of excluded cognates in the current level/deck
-// rather than repeating that the switch is active.
 function summaryText() {
     const state = currentState();
-    const words = getCognateExamples(3);
-    const examples = words.length > 0 ? ` (e.g. ${words.join(', ')})` : '';
-
     if (state === 'on') {
-        return words.length > 0
-            ? `Skipping obvious words${examples}`
-            : 'Skipping obvious look-alikes';
+        return 'Focus on new vocabulary';
     }
-    if (state === 'off') {
-        return words.length > 0
-            ? `Full deck · includes obvious words${examples}`
-            : 'Off · full deck';
-    }
-    return words.length > 0 ? `Custom · e.g. skipping ${words.join(', ')}` : 'Custom';
+    return 'Full deck · includes all words';
 }
 
 // Turning fast mode on or off drives the real controls, so every side effect
@@ -164,7 +94,7 @@ function refresh() {
     if (button) {
         button.dataset.fast = on ? 'on' : 'off';
         button.classList.toggle('selected', on);
-        button.classList.toggle('is-custom', state === 'custom');
+        button.classList.remove('is-custom');
         button.setAttribute('aria-pressed', String(on));
     }
     const summary = document.getElementById('fastModeSummary');
@@ -172,6 +102,7 @@ function refresh() {
     updateMappingStatus();
     updateStreamlineRecCallout();
     updateStreamlineLanguageExamples();
+    globalThis.refreshExtrasButtons?.();
     globalThis.refreshExtrasButton?.();
 }
 
@@ -223,10 +154,17 @@ function showUnavailableMessage(feature) {
         alert(`${languageName(knownCode)} to ${target} familiar-word mapping not found. Every word will stay in your deck.`);
         return;
     }
-    alert(`Streamline mappings have not been published for ${target}. Your full deck is still available.`);
+    alert(`Fast Track mappings have not been published for ${target}. Your full deck is still available.`);
 }
 
 function updateMappingStatus() {
+    const adminDetails = document.getElementById('fastModeAdminDetails');
+    const isAdmin = Boolean(window.isAuditAccount?.());
+    if (adminDetails) {
+        adminDetails.style.display = isAdmin ? 'block' : 'none';
+    }
+    if (!isAdmin) return;
+
     const target = config?.languages?.[selectedLanguage]?.name || languageName(selectedLanguage);
     const lemmaStatus = document.getElementById('lemmaMappingStatus');
     if (lemmaStatus) {

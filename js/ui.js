@@ -69,7 +69,7 @@ function applyGlobalStudyDefaults() {
     excludeCognates = saved.excludeCognates === true;
     isFlipped = saved.directionFlipped === true;
     speechEnabled = saved.speechEnabled !== false;
-    spacedRepetitionEnabled = saved.spacedRepetitionEnabled === true;
+    spacedRepetitionEnabled = saved.spacedRepetitionEnabled !== false;
     phrasesModeEnabled = saved.phrasesMode !== false;
     extraExamplesEnabled = saved.extraExamples !== false;
     try {
@@ -94,7 +94,7 @@ function syncStudyPreferenceControls() {
         excludeCognates: saved.excludeCognates === true,
         directionFlipped: saved.directionFlipped === true,
         speechEnabled: saved.speechEnabled !== false,
-        spacedRepetitionEnabled: saved.spacedRepetitionEnabled === true,
+        spacedRepetitionEnabled: saved.spacedRepetitionEnabled !== false,
         phrasesMode: saved.phrasesMode !== false,
         extraExamples: saved.extraExamples !== false
     };
@@ -320,9 +320,51 @@ function updateIncorrectButtonVisibility() {
     }
 }
 
+function updateDailyReviewBanner() {
+    const banner = document.getElementById('globalDailyDueBanner');
+    if (!banner) return;
+    if (!currentUser || currentUser.isGuest) {
+        banner.style.display = 'none';
+        return;
+    }
+    const dueWords = window.getGlobalDueReviewWords?.(selectedLanguage) || [];
+    if (dueWords.length === 0) {
+        banner.style.display = 'none';
+        return;
+    }
+    const count = dueWords.length;
+    const langDisplay = selectedLanguage ? selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1) : '';
+    banner.style.display = 'block';
+    banner.innerHTML = `
+        <button type="button" class="daily-due-btn" onclick="startDailyReview()" style="width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(245, 158, 11, 0.12)); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 12px; color: inherit; cursor: pointer; text-align: left; font-family: inherit;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 1.4rem; line-height: 1;">⚡</span>
+                <div>
+                    <strong style="display: block; font-size: 0.95rem; line-height: 1.2;">Daily Review</strong>
+                    <span style="font-size: 0.82rem; opacity: 0.85;">${count} card${count === 1 ? '' : 's'} due for review in ${langDisplay}</span>
+                </div>
+            </div>
+            <span style="font-weight: 600; font-size: 0.85rem; padding: 6px 12px; background: var(--accent, #10b981); color: #fff; border-radius: 8px; white-space: nowrap;">Start Review →</span>
+        </button>
+    `;
+}
+
+async function startDailyReview() {
+    const loadingMessage = document.getElementById('loadingMessage');
+    if (loadingMessage) {
+        loadingMessage.style.display = 'block';
+        loadingMessage.textContent = 'Collecting cards due for spaced review…';
+    }
+    window.showAppLoading?.('Loading Daily Review', 'Collecting cards due for spaced review…');
+    await window.loadDailyReviewDeck?.();
+}
+
 function setActiveSetupStep(stepId) {
     document.querySelectorAll('#step1 .step-number, #step2 .step-number, #step4 .step-number')
         .forEach(number => number.classList.toggle('--active', number.closest('.setup-step')?.id === stepId));
+    if (stepId === 'step2') {
+        updateDailyReviewBanner();
+    }
 }
 
 const PREFERRED_LANGUAGE_KEY = 'fluencyPreferredLanguageV1';
@@ -2539,29 +2581,35 @@ function renderSetupExtrasSection() {
         const cognates = extrasData.cognates || [];
         const lemmas = extrasData.lemmas || [];
         const totalSkipped = cognates.length + lemmas.length;
-        if (eyebrow) eyebrow.textContent = 'Streamline';
-        if (title) title.textContent = 'Streamlined & familiar words';
+        if (eyebrow) eyebrow.textContent = 'Fast Track';
+        if (title) title.textContent = 'Fast Track vocabulary';
 
         if (totalSkipped > 0) {
             section.style.display = 'block';
             card.innerHTML = `
                 <div class="extras-deck-content">
                     <div class="extras-deck-status">
-                        <span class="extras-deck-badge is-info">Streamline</span>
+                        <span class="extras-deck-badge is-info">Fast Track</span>
                         <div class="extras-deck-info">
-                            <strong>${totalSkipped} word${totalSkipped === 1 ? '' : 's'} set aside by Streamline</strong>
+                            <strong>${totalSkipped} word${totalSkipped === 1 ? '' : 's'} set aside by Fast Track</strong>
                             <p>${cognates.length} obvious look-alikes · ${lemmas.length} forms merged into their base card.</p>
                         </div>
                     </div>
                     <div class="extras-deck-actions">
                         <button type="button" class="extras-deck-browse-btn" id="openSpeechExtrasBtn">
-                            Browse streamlined words <span aria-hidden="true">›</span>
+                            Browse Fast Track words <span aria-hidden="true">›</span>
                         </button>
                     </div>
                 </div>
             `;
             document.getElementById('openSpeechExtrasBtn')?.addEventListener('click', () => {
-                globalThis.openExtras?.();
+                if (lemmas.length > 0 && cognates.length === 0) {
+                    globalThis.openMergedForms?.();
+                } else if (cognates.length > 0 && lemmas.length === 0) {
+                    globalThis.openSkippedWords?.();
+                } else {
+                    globalThis.openExtras?.();
+                }
             });
         } else {
             section.style.display = 'block';
@@ -2570,8 +2618,8 @@ function renderSetupExtrasSection() {
                     <div class="extras-deck-status">
                         <span class="extras-deck-badge is-muted">Full deck</span>
                         <div class="extras-deck-info">
-                            <strong>No words currently streamlined</strong>
-                            <p>Streamline is off or full deck is active. Turn on Streamline above to filter out familiar look-alikes.</p>
+                            <strong>No words currently skipped</strong>
+                            <p>Fast Track is off. Every word form and look-alike appears as its own card.</p>
                         </div>
                     </div>
                 </div>
@@ -3352,3 +3400,5 @@ window.hideTotalStatsModal = hideTotalStatsModal;
 window.updateTotalStatsButtonVisibility = updateTotalStatsButtonVisibility;
 window.updateStatsModal = updateStatsModal;
 window.renderSetupExtrasSection = renderSetupExtrasSection;
+window.updateDailyReviewBanner = updateDailyReviewBanner;
+window.startDailyReview = startDailyReview;

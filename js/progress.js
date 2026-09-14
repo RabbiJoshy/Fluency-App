@@ -7,7 +7,7 @@ import {
 } from './progress-identity.js?v=20260831a';
 
 const SRS_DAY_MS = 24 * 60 * 60 * 1000;
-const SRS_INTERVAL_DAYS = [1, 3, 7, 14, 30, 60, 120];
+const SRS_INTERVAL_DAYS = [1, 3, 7, 14, 30, 60, 120, 240, 365];
 
 function parseProgressTimestamp(value) {
     if (!value) return 0;
@@ -15,9 +15,9 @@ function parseProgressTimestamp(value) {
     return Number.isFinite(timestamp) ? timestamp : 0;
 }
 
-// A compact, transparent v1 schedule: successful recalls graduate through
-// 1, 3, 7, 14, 30, 60, and 120 days. New writes persist an explicit stage;
-// legacy rows derive a conservative initial stage from their lifetime totals.
+// Adaptive schedule: successful recalls graduate through intervals [1..365] days,
+// fine-tuned by the learner's personal error rate on the card.
+// Explicit stages are preserved; legacy rows derive an initial stage from lifetime totals.
 function getSrsStage(progress) {
     const explicit = Number(progress?.srsStage);
     if (progress?.srsStage !== null && progress?.srsStage !== ''
@@ -32,12 +32,25 @@ function getSrsStage(progress) {
 
 function getSrsIntervalDays(progress) {
     const stage = getSrsStage(progress);
-    return stage > 0 ? SRS_INTERVAL_DAYS[stage - 1] : null;
+    if (stage <= 0) return null;
+    const baseDays = SRS_INTERVAL_DAYS[stage - 1];
+    const correct = Math.max(0, Number(progress?.correct) || 0);
+    const wrong = Math.max(0, Number(progress?.wrong) || 0);
+    if (correct + wrong === 0) return baseDays;
+    const failRate = wrong / (correct + wrong);
+    // Personal multiplier: scales between 0.75x (frequent errors) and 1.25x (clean recall)
+    const factor = Math.max(0.75, Math.min(1.25, 1.25 - (failRate * 0.55)));
+    return Math.max(1, Math.round(baseDays * factor));
 }
 
 function advanceSrsStage(progress, isCorrect) {
-    if (!isCorrect) return 0;
-    return Math.min(getSrsStage(progress) + 1, SRS_INTERVAL_DAYS.length);
+    const current = getSrsStage(progress);
+    if (!isCorrect) {
+        // Soft drop: drop 2 stages instead of a hard reset to 0. A never-learned card stays at 0.
+        if (current === 0) return 0;
+        return Math.max(1, current - 2);
+    }
+    return Math.min(current + 1, SRS_INTERVAL_DAYS.length);
 }
 
 // The learner's current relationship with a card. Counts preserve history;
@@ -370,8 +383,48 @@ function updatePersonalCoverage(filteredVocab) {
             fill.style.transition = 'width 1s ease-out';
             fill.style.width = Math.min(coveragePct, 100) + '%';
             wrapper.classList.add('visible');
+            window.updateDailyReviewBanner?.();
         });
     });
+}
+
+function getGlobalDueReviewWords(language = '') {
+    const data = typeof progressData !== 'undefined' ? progressData : (window.progressData || {});
+    if (!data) return [];
+    const dueWords = [];
+    const seenSurfaces = new Set();
+    const targetLang = String(language || window.selectedLanguage || '').trim().toLowerCase();
+
+    for (const [id, record] of Object.entries(data)) {
+        if (!record || !record.word) continue;
+        const recLang = String(record.language || '').trim().toLowerCase();
+        if (targetLang && recLang && recLang !== targetLang) {
+            continue;
+        }
+        const surface = record.word.toLowerCase();
+        if (seenSurfaces.has(surface)) continue;
+
+        const reviewInfo = typeof window.getWordKnowledgeReviewInfo === 'function'
+            ? window.getWordKnowledgeReviewInfo(id, record.word)
+            : null;
+        const state = typeof window.getProgressState === 'function'
+            ? window.getProgressState(record)
+            : null;
+
+        const needsReview = (reviewInfo && reviewInfo.needsReview) || (state && state.needsReview);
+        if (needsReview) {
+            seenSurfaces.add(surface);
+            const reviewAt = reviewInfo?.reviewAt || state?.reviewAt || 0;
+            dueWords.push({
+                id,
+                word: record.word,
+                record,
+                reviewAt
+            });
+        }
+    }
+    dueWords.sort((a, b) => (a.reviewAt || 0) - (b.reviewAt || 0));
+    return dueWords;
 }
 
 window.getCurrentCoverageSnapshot = getCurrentCoverageSnapshot;
@@ -390,5 +443,6 @@ window.getProgressRecordsForCard = getProgressRecordsForCard;
 window.getProgressRecordIdsForCard = getProgressRecordIdsForCard;
 window.getMergedWordProgress = getMergedWordProgress;
 window.getWordProgressState = getWordProgressState;
+window.getGlobalDueReviewWords = getGlobalDueReviewWords;
 window.updateExclusionBars = updateExclusionBars;
 window.updatePersonalCoverage = updatePersonalCoverage;

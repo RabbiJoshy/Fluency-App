@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "date": "2026-09-13",
+      "commit": "pending",
+      "summary": "Adaptive spaced repetition, sticky sense-level exceptions, and global daily review",
+      "detail": [
+        "Intervals adapt to learner failure history with soft drops on mistake (down 2 stages instead of resetting to day 0) and graduation to 365 days.",
+        "Sense-level knowledge marking in the card modal now treats unmarked senses as known when marking an exception, makes explicit 'No' sticky against whole-card swipes, and adds a Save & Next Card action.",
+        "A level-agnostic Daily Review banner on setup provides 1-tap review for all due cards in the language, and dead CEFR fallback paths are removed."
+      ]
+    },
+    {
       "date": "2026-08-31",
       "commit": "497ea45",
       "summary": "Speech and Lyrics now share saved progress, with an honest Spotify indicator",
