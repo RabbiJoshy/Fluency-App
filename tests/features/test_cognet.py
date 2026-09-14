@@ -450,3 +450,106 @@ class LedgerTests(unittest.TestCase):
 
         with self.assertRaises(CognetSourceError):
             read_ledger(Path("/nonexistent/ledger.json"))
+
+
+class PerLemmaTests(unittest.TestCase):
+    """Form at the surface, cognateness at the lemma, keyed on both."""
+
+    def rows(self, **overrides):
+        from fluency.features.cognet import score_pairs
+
+        # ``stavu`` is both a case of ``stav`` and a form of ``stavit``. The
+        # shares are lopsided; under (surface, lemma) keying neither has to win.
+        settings = dict(
+            surface_lemmas={
+                "stavu": (
+                    LemmaAnalysis("stav", 1.0, frozenset()),
+                    LemmaAnalysis("stavit", 0.0, frozenset()),
+                ),
+            },
+            pairs={"stavit": (CognetPair("stawic", frozenset()),)},
+            known_forms={},
+            policy=policy(),
+        )
+        settings.update(overrides)
+        return score_pairs(**settings)
+
+    def test_a_minority_lemma_no_longer_has_to_be_discarded(self):
+        """Its share is 0.0 and it still gets a row; nothing is elected away."""
+
+        rows = self.rows()
+        self.assertEqual(set(rows["stavu"]), {"stavit"})
+        self.assertEqual(rows["stavu"]["stavit"].lemma_share, 0.0)
+
+    def test_each_lemma_gets_its_own_verdict(self):
+        rows = self.rows(
+            pairs={
+                "stavit": (CognetPair("stawic", frozenset()),),
+                "stav": (CognetPair("stawu", frozenset()),),
+            }
+        )
+        self.assertEqual(set(rows["stavu"]), {"stavit", "stav"})
+        self.assertNotEqual(
+            rows["stavu"]["stav"].score, rows["stavu"]["stavit"].score
+        )
+
+    def test_a_surface_no_lemma_can_speak_for_is_absent(self):
+        self.assertEqual(self.rows(pairs={}), {})
+
+    def test_the_length_guard_still_applies_per_row(self):
+        """``je``/``oni`` is 0.667 on min/max and is refused, as it should be."""
+
+        self.assertEqual(
+            self.rows(
+                surface_lemmas={"je": (LemmaAnalysis("oni", 0.0, frozenset()),)},
+                pairs={"oni": (CognetPair("oni", frozenset()),)},
+                policy=policy(minimum_length=2),
+            ),
+            {},
+        )
+
+    def test_form_is_measured_at_the_surface_not_the_lemma(self):
+        """``hoteles`` is scored against ``hotels``, never ``hotel``/``hotel``."""
+
+        from fluency.features.cognet import score_pairs
+
+        rows = score_pairs(
+            {"hoteles": (LemmaAnalysis("hotel", 1.0, frozenset()),)},
+            {"hotel": (CognetPair("hotel", frozenset()),)},
+            {"hotel": frozenset({"hotel", "hotels"})},
+            policy(known_language="en"),
+        )
+        match = rows["hoteles"]["hotel"]
+        self.assertEqual(match.known_surface, "hotels")
+        self.assertLess(match.score, 1.0)
+
+
+class AppPayloadTests(unittest.TestCase):
+    def payload(self):
+        from fluency.enrichments.cognates import build_app_cognet
+
+        return build_app_cognet(
+            language="cs",
+            rows={
+                "en": {"doktor": {"doktor": {"score": 0.917}}},
+                "pl": {"doktor": {"doktor": {"score": 0.95}}, "ale": {"ale": {"score": 0.917}}},
+            },
+            thresholds={"en": 0.75, "pl": 0.8},
+        )
+
+    def test_the_outer_key_is_still_the_surface(self):
+        """Card identity is the surface; the lemma is a dimension of the verdict."""
+
+        self.assertEqual(set(self.payload()["scores"]), {"doktor", "ale"})
+
+    def test_a_surface_carries_its_lemmas_and_each_lemma_its_languages(self):
+        scores = self.payload()["scores"]
+        self.assertEqual(scores["doktor"]["doktor"], {"en": 0.917, "pl": 0.95})
+
+    def test_known_languages_are_declared_not_inferred(self):
+        payload = self.payload()
+        self.assertEqual(payload["known_languages"], ["en", "pl"])
+        self.assertEqual(payload["schema"], "cognate-score/v2")
+
+    def test_a_language_that_scored_nothing_for_a_surface_is_simply_absent(self):
+        self.assertEqual(self.payload()["scores"]["ale"]["ale"], {"pl": 0.917})

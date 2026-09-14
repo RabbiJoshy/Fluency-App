@@ -252,6 +252,50 @@ def build_cognate_layer(
     }
 
 
+COGNET_APP_SCHEMA = "cognate-score/v2"
+
+
+def build_app_cognet(
+    *,
+    language: str,
+    rows: Mapping[str, Mapping[str, Mapping[str, Any]]],
+    thresholds: Mapping[str, float],
+    built_from: str | None = None,
+) -> dict[str, Any]:
+    """The app-facing view of the (surface, lemma) route.
+
+    ``rows`` is keyed known language -> surface -> lemma -> match.
+
+    v1 shipped ``surface -> {language: score}``. v2 adds the lemma between them,
+    because the two halves of a score are settled at different levels and the
+    app needs both: the surface score to decide a card, and the per-lemma score
+    to decide a sense on a card whose other senses stay.
+
+    Card identity is untouched. The outer key is still the observed surface
+    form, so nothing is looked up by lemma -- the lemma is a dimension of the
+    verdict, never of the card.
+    """
+
+    scores: dict[str, dict[str, dict[str, float]]] = {}
+    for known_language, surfaces in rows.items():
+        for surface, lemmas in surfaces.items():
+            for lemma, match in lemmas.items():
+                entry = scores.setdefault(surface, {}).setdefault(lemma, {})
+                entry[known_language] = round(float(match["score"]), 3)
+    return {
+        "schema": COGNET_APP_SCHEMA,
+        "language": language,
+        "known_languages": sorted(rows),
+        "built_from_release_id": built_from,
+        "thresholds": {code: float(value) for code, value in sorted(thresholds.items())},
+        # surface -> lemma -> known language -> score
+        "scores": {
+            surface: {lemma: dict(sorted(langs.items())) for lemma, langs in sorted(lemmas.items())}
+            for surface, lemmas in sorted(scores.items())
+        },
+    }
+
+
 def merge_cognet_scores(
     layer: Mapping[str, Any],
     cognet_scores: Mapping[str, Mapping[str, Any]],

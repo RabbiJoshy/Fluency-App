@@ -35,7 +35,7 @@ does not: an external lemmatiser. A surface-to-lemma relation is one-to-many, so
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any, Iterable, Mapping
 
@@ -365,6 +365,92 @@ def best_match(
                         score=score,
                     )
     return best
+
+
+def match_by_lemma(
+    surface: str,
+    analyses: Iterable[LemmaAnalysis],
+    pairs: Mapping[str, tuple[CognetPair, ...]],
+    known_forms: Mapping[str, frozenset[str]],
+    policy: CognatePolicy,
+    *,
+    require_pos_agreement: bool = False,
+    target_sounds: Iterable[str] = (),
+    known_sounds: Mapping[str, frozenset[str]] | None = None,
+    correspondences: Correspondences | None = None,
+    target_glosses: frozenset[str] = frozenset(),
+) -> dict[str, CognetMatch]:
+    """One verdict per lemma this surface can be, rather than one per surface.
+
+    The two halves of the score live at different levels and collapsing them to
+    a single row per surface loses that. *Form* is a property of what is on the
+    page, so it is measured surface to surface: ``hoteles`` against ``hotels``,
+    not ``hotel`` against ``hotel``. *Cognateness* is a property of the word, so
+    it is settled once at the lemma and not re-litigated for every inflection.
+
+    Keying on (surface, lemma) is what lets both be true at once, and it retires
+    the majority-reading gate: Czech ``je`` is být and oni, and rather than
+    choosing between them each becomes a row. A caller wanting today's behaviour
+    takes the best row for the surface; a caller wanting per-sense exclusion
+    hides only the sense whose lemma lost.
+    """
+
+    out: dict[str, CognetMatch] = {}
+    for analysis in analyses:
+        # The share floor exists to stop a minority reading speaking for a whole
+        # surface. Here nothing speaks for the whole surface -- each reading is
+        # its own row -- so the gate has no work to do and would only delete
+        # rows. The true share is restored on the match below, as data.
+        match = best_match(
+            surface,
+            [replace(analysis, share=1.0)],
+            pairs,
+            known_forms,
+            policy,
+            require_pos_agreement=require_pos_agreement,
+            target_sounds=target_sounds,
+            known_sounds=known_sounds,
+            correspondences=correspondences,
+            target_glosses=target_glosses,
+        )
+        if match is not None:
+            out[analysis.lemma] = replace(match, lemma_share=analysis.share)
+    return out
+
+
+def score_pairs(
+    surface_lemmas: Mapping[str, tuple[LemmaAnalysis, ...]],
+    pairs: Mapping[str, tuple[CognetPair, ...]],
+    known_forms: Mapping[str, frozenset[str]],
+    policy: CognatePolicy,
+    *,
+    require_pos_agreement: bool = False,
+    target_sounds: Mapping[str, frozenset[str]] | None = None,
+    known_sounds: Mapping[str, frozenset[str]] | None = None,
+    correspondences: Correspondences | None = None,
+    target_glosses: Mapping[str, frozenset[str]] | None = None,
+) -> dict[str, dict[str, CognetMatch]]:
+    """Every (surface, lemma) this route can speak for."""
+
+    sounds = target_sounds or {}
+    glosses = target_glosses or {}
+    scored: dict[str, dict[str, CognetMatch]] = {}
+    for surface, analyses in surface_lemmas.items():
+        rows = match_by_lemma(
+            surface,
+            analyses,
+            pairs,
+            known_forms,
+            policy,
+            require_pos_agreement=require_pos_agreement,
+            target_sounds=sounds.get(surface, ()),
+            known_sounds=known_sounds,
+            correspondences=correspondences,
+            target_glosses=glosses.get(surface, frozenset()),
+        )
+        if rows:
+            scored[surface] = rows
+    return scored
 
 
 def score_surfaces(
