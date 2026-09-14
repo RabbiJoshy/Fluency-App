@@ -202,8 +202,8 @@ for (const key of Object.keys(state)) {
         enumerable: true,
     });
 }
-
-// Expose constants on globalThis as read-only
+// Expose state object and constants on globalThis
+globalThis.state = state;
 globalThis.percentageLevels = percentageLevels;
 globalThis.speechLangCodes  = speechLangCodes;
 

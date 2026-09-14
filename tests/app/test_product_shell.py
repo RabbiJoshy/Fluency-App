@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v397"
+EXPECTED_CACHE_NAME = "flashcards-v398"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -567,7 +567,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260831a", worker)
-        self.assertIn("/js/main.js?v=20260914b", worker)
+        self.assertIn("/js/main.js?v=20260914c", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -1042,5 +1042,15 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("window.setSpeechRate = setSpeechRate;", speech)
         self.assertIn("body.is-spotify-playing .sentence .example-word-highlight", css)
         self.assertIn("body.is-speaking-active .sentence .example-word-highlight", css)
+
+    def test_global_state_binding_and_ui_safety(self) -> None:
+        state_js = (APP_ROOT / "js" / "state.js").read_text(encoding="utf-8")
+        ui_js = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
+        flashcards_js = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+
+        self.assertIn("globalThis.state = state;", state_js)
+        self.assertNotIn("state.senseProminenceMode || 'labels'", ui_js)
+        self.assertNotIn("const useProminenceLabels = state.senseProminenceMode", flashcards_js)
+
 
 

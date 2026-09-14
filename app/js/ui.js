@@ -74,7 +74,10 @@ function applyGlobalStudyDefaults() {
     extraExamplesEnabled = saved.extraExamples !== false;
     try {
         const savedMode = localStorage.getItem('fluency_sense_prominence_mode_v1');
-        if (savedMode) state.senseProminenceMode = savedMode;
+        if (savedMode) {
+            senseProminenceMode = savedMode;
+            if (globalThis.state) globalThis.state.senseProminenceMode = savedMode;
+        }
     } catch (_) {}
     syncStudyPreferenceControls();
 }
@@ -101,7 +104,7 @@ function syncStudyPreferenceControls() {
         button.classList.toggle('selected', selected);
         button.setAttribute('aria-pressed', selected ? 'true' : 'false');
     });
-    const currentProm = state.senseProminenceMode || 'labels';
+    const currentProm = (typeof senseProminenceMode !== 'undefined' ? senseProminenceMode : globalThis.state?.senseProminenceMode) || 'labels';
     document.querySelectorAll('.sense-prominence-btn').forEach(button => {
         const selected = button.dataset.prominence === currentProm;
         button.classList.toggle('selected', selected);
@@ -228,7 +231,8 @@ function setupGlobalStudyDefaults() {
         button.addEventListener('click', function() {
             const mode = this.dataset.prominence;
             if (!mode) return;
-            state.senseProminenceMode = mode;
+            senseProminenceMode = mode;
+            if (globalThis.state) globalThis.state.senseProminenceMode = mode;
             try { localStorage.setItem('fluency_sense_prominence_mode_v1', mode); } catch (_) {}
             syncStudyPreferenceControls();
             if (flashcards.length > 0) window.updateCard?.();
