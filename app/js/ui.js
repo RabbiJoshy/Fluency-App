@@ -2581,29 +2581,35 @@ function renderSetupExtrasSection() {
         const cognates = extrasData.cognates || [];
         const lemmas = extrasData.lemmas || [];
         const totalSkipped = cognates.length + lemmas.length;
-        if (eyebrow) eyebrow.textContent = 'Streamline';
-        if (title) title.textContent = 'Streamlined & familiar words';
+        if (eyebrow) eyebrow.textContent = 'Fast Track';
+        if (title) title.textContent = 'Fast Track vocabulary';
 
         if (totalSkipped > 0) {
             section.style.display = 'block';
             card.innerHTML = `
                 <div class="extras-deck-content">
                     <div class="extras-deck-status">
-                        <span class="extras-deck-badge is-info">Streamline</span>
+                        <span class="extras-deck-badge is-info">Fast Track</span>
                         <div class="extras-deck-info">
-                            <strong>${totalSkipped} word${totalSkipped === 1 ? '' : 's'} set aside by Streamline</strong>
+                            <strong>${totalSkipped} word${totalSkipped === 1 ? '' : 's'} set aside by Fast Track</strong>
                             <p>${cognates.length} obvious look-alikes · ${lemmas.length} forms merged into their base card.</p>
                         </div>
                     </div>
                     <div class="extras-deck-actions">
                         <button type="button" class="extras-deck-browse-btn" id="openSpeechExtrasBtn">
-                            Browse streamlined words <span aria-hidden="true">›</span>
+                            Browse Fast Track words <span aria-hidden="true">›</span>
                         </button>
                     </div>
                 </div>
             `;
             document.getElementById('openSpeechExtrasBtn')?.addEventListener('click', () => {
-                globalThis.openExtras?.();
+                if (lemmas.length > 0 && cognates.length === 0) {
+                    globalThis.openMergedForms?.();
+                } else if (cognates.length > 0 && lemmas.length === 0) {
+                    globalThis.openSkippedWords?.();
+                } else {
+                    globalThis.openExtras?.();
+                }
             });
         } else {
             section.style.display = 'block';
@@ -2612,8 +2618,8 @@ function renderSetupExtrasSection() {
                     <div class="extras-deck-status">
                         <span class="extras-deck-badge is-muted">Full deck</span>
                         <div class="extras-deck-info">
-                            <strong>No words currently streamlined</strong>
-                            <p>Streamline is off or full deck is active. Turn on Streamline above to filter out familiar look-alikes.</p>
+                            <strong>No words currently skipped</strong>
+                            <p>Fast Track is off. Every word form and look-alike appears as its own card.</p>
                         </div>
                     </div>
                 </div>

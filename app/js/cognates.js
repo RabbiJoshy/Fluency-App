@@ -198,7 +198,7 @@ function renderKnownLanguagePicker() {
     selector.innerHTML = available.map(code => `
         <button type="button" class="known-language-btn${active.has(code) ? ' selected' : ''}"
                 data-known-language="${code}" aria-pressed="${active.has(code)}">
-            ${languageLabel(code)}
+            ${active.has(code) ? '✓ ' : ''}${languageLabel(code)}
         </button>`).join('');
     selector.querySelectorAll('.known-language-btn').forEach(button => {
         button.addEventListener('click', () => toggleKnownLanguage(button.dataset.knownLanguage));

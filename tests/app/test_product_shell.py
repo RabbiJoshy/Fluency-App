@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v399"
+EXPECTED_CACHE_NAME = "flashcards-v401"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -349,7 +349,7 @@ class ProductShellTests(unittest.TestCase):
         extras = (APP_ROOT / "js" / "extras.js").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
         self.assertIn('id="extrasSearch"', html)
-        self.assertIn('See ${total} streamlined words', extras)
+        self.assertIn('See ${total} Fast Track words', extras)
         self.assertIn("class=\"extras-open-card\"", extras)
         self.assertIn("globalThis.popupFoundWord", extras)
         self.assertIn('data-restore-kind="cognate"', extras)
@@ -763,8 +763,9 @@ class FastModeSurfaceTests(unittest.TestCase):
         self.assertIn(".cognate-toggle-btn[data-cognate=", self.script)
         self.assertIn("?.click();", self.script)
 
-    def test_a_hand_set_combination_reports_itself_as_custom(self) -> None:
-        self.assertIn("return 'custom'", self.script)
+    def test_fast_track_reports_binary_on_or_off_without_custom_state(self) -> None:
+        self.assertIn("return parts.some(Boolean) ? 'on' : 'off';", self.script)
+        self.assertNotIn("return 'custom'", self.script)
 
     def test_fast_track_state_only_uses_parts_the_release_supports(self) -> None:
         # Czech has no lemma mapping; the overall state must not depend on it.
