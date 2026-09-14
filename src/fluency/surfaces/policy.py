@@ -26,14 +26,25 @@ _ORDER = {KEEP: 0, REVIEW: 1, EXCLUDE: 2}
 # absent from a policy is "keep": silence about a fact is not grounds to drop a
 # word.
 DEFAULT_POLICY: dict[str, str] = {
-    "english_wordlist": REVIEW,
+    # Recorded, but not grounds for review by itself. The wordlist behind it is
+    # Webster's Second, 236,000 entries deep in archaic and dialectal English,
+    # and it contains no, a, la, y, es, en, lo, un, me, al, del, con, para,
+    # bien, ella, favor, hasta, solo, padre, dinero and claro. On its own it
+    # flagged the thirty commonest words in Spanish. A length guard does not
+    # rescue it: at four letters and over it still flags para and dinero while
+    # losing out, go, see and boy. It earns its place only in conjunction --
+    # see COMBINATIONS, where it must agree with the dictionary's own verdict.
+    "english_wordlist": KEEP,
     "foreign_frequency_list": REVIEW,
     # On its own this means only "another surface in the list carries accents
     # over these letters", which is true of "a" beside "a-grave" and "de"
     # beside "de-acute" -- minimal pairs where both spellings are real words.
     # Taken as grounds to exclude it deletes the commonest words in the
     # language. It becomes conclusive only in company: see COMBINATIONS.
-    "accent_stripped_duplicate": REVIEW,
+    # Same story: a coincidence of spelling with an accented word is a fact,
+    # not a suspicion. On its own it put que, de, el, te, se, mi and si under
+    # review -- noise a person has to read past to reach the real cases.
+    "accent_stripped_duplicate": KEEP,
     "abbreviation_form": KEEP,
     "capitalised_in_corpus": REVIEW,
     "low_harvest_yield": KEEP,
@@ -44,6 +55,8 @@ DEFAULT_POLICY: dict[str, str] = {
     "lemma_resolved": KEEP,
     "lemma_absent_from_dictionary": KEEP,
     "human_review": EXCLUDE,
+    "adjudicated_exclude": EXCLUDE,
+    "adjudicated_keep": KEEP,
 }
 
 
@@ -62,7 +75,7 @@ COMBINATIONS: list[tuple[frozenset[str], str]] = [
 # needs this -- its dictionary is absent for 43% of surfaces, so "dictionary
 # has no entry" carries almost no information there, and combining it with
 # anything produced verdicts against "policii", "filmu" and "stalo".
-VETOES = frozenset({"lemma_resolved", "abbreviation_form"})
+VETOES = frozenset({"lemma_resolved", "abbreviation_form", "adjudicated_keep"})
 
 # Note on accent stripping: there is no reliable automatic test. "radio" for
 # "radio-acute" is a stripping; "estas" beside "estas-acute", and the clitics
@@ -103,7 +116,8 @@ def verdict(
         if codes <= present and _ORDER[outcome] > _ORDER[decision]:
             decision = outcome
             reasons.extend(codes)
-    if decision == EXCLUDE and (present & VETOES) and "human_review" not in present:
+    settled = {"human_review", "adjudicated_exclude"}
+    if decision == EXCLUDE and (present & VETOES) and not (present & settled):
         decision = REVIEW
         reasons.append("vetoed_by:" + ",".join(sorted(present & VETOES)))
     return {

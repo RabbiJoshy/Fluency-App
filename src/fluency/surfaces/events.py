@@ -56,8 +56,12 @@ REASON_CODES = frozenset({
     # from an external morphology source
     "lemma_resolved",
     "lemma_absent_from_dictionary",
-    # a person said so
+    # someone settled the case by reading it. Adjudication carries its own
+    # direction because the answer is as often "this is a word" as "it is not",
+    # and a verdict that can only ever exclude is not a judgement.
     "human_review",
+    "adjudicated_keep",
+    "adjudicated_exclude",
 })
 
 
