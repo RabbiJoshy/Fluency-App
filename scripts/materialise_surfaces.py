@@ -32,8 +32,13 @@ from fluency.surfaces.policy import load_policy, verdict  # noqa: E402
 # sources are kept beside it rather than discarded -- they are correct
 # morphology, and cognate work wants them -- but they never lead.
 AUTHORITY = {
+    # Clitic stripping ranks below the answers SpanishDict states directly,
+    # because it infers rather than reads: it removes the enclitic pronouns,
+    # undoes the stress accent they force, and looks the base form up. It is
+    # still SpanishDict's own answer about a verb SpanishDict files -- just
+    # reached in two steps, which the provenance label says.
     "es": ("spanishdict-surface-cache", "spanishdict-refetch",
-           "spanishdict-reverse-conjugation"),
+           "spanishdict-reverse-conjugation", "spanishdict-clitic-stripping"),
     "pt": ("enwiktionary-closed-class-headword", "enwiktionary-form-of",
            "enwiktionary-is-headword"),
     "cs": ("cnk-word-at-a-glance", "enwiktionary-closed-class-headword",
@@ -43,12 +48,31 @@ PROVENANCE_LABEL = {
     "spanishdict-surface-cache": "spanishdict headword",
     "spanishdict-refetch": "spanishdict headword (refetched)",
     "spanishdict-reverse-conjugation": "supplied by reverse conjugation",
+    "spanishdict-clitic-stripping": "supplied by clitic stripping",
     "enwiktionary-closed-class-headword": "wiktionary headword (closed class)",
     "enwiktionary-form-of": "wiktionary form_of",
     "enwiktionary-is-headword": "wiktionary headword",
     "cnk-word-at-a-glance": "CNK word at a glance",
     "hand-written": "manual",
 }
+
+
+def _provenance_label(provider: str) -> str:
+    """Human-readable provenance for a provider id.
+
+    Matched by prefix, the same way authority is, because a provider id may
+    carry a dated suffix (`spanishdict-refetch-2026-09-14`) or a snapshot
+    suffix after a colon. Matching exactly leaked those raw ids into the ledger
+    beside properly labelled ones.
+    """
+
+    head = provider.split(":")[0]
+    if head in PROVENANCE_LABEL:
+        return PROVENANCE_LABEL[head]
+    for prefix, label in PROVENANCE_LABEL.items():
+        if head.startswith(prefix):
+            return label
+    return provider
 
 
 def _authority_rank(language: str, provider: str) -> int | None:
@@ -179,7 +203,7 @@ def main() -> int:
         primary, provenance, alternates = None, None, []
         seen_alt: set[str] = set()
         for _, lemma, provider, authority in sorted(candidates, key=order):
-            label = PROVENANCE_LABEL.get(provider.split(":")[0], provider)
+            label = _provenance_label(provider)
             if provider == "hand-written":
                 label = "manual"
             if authority is not None or provider == "hand-written":

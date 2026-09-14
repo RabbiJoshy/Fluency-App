@@ -29,7 +29,12 @@ WIKTIONARY = {
     "es": "enwiktionary-2026-09-13/kaikki.org-dictionary-Spanish.jsonl",
     "cs": "enwiktionary-2026-09-06/kaikki.org-dictionary-Czech.jsonl",
 }
-SD = "raw/dictionaries/es/spanishdict/spanishdict-complete-menu-2026-08-23-v1"
+# The merged snapshot, which already contains every refetch that was not
+# withheld. Reading it rather than the base snapshot plus a list of refetch
+# files means a new refetch reaches the lemmas by being merged, not by being
+# named here -- the hardcoded filename is exactly what silently dropped 3,237
+# answers once already.
+SD = "raw/dictionaries/es/spanishdict/spanishdict-complete-menu-2026-09-15-v3"
 
 
 def wiktionary_forms(path: Path) -> tuple[dict[str, set[str]], set[str]]:
@@ -151,16 +156,11 @@ def main() -> int:
                     heads.setdefault(surface.lower(), set()).add(head)
         sources.append(("spanishdict-surface-cache", heads))
 
-        refetch = ws / "raw/dictionaries/es/spanishdict/refetch-menuless.jsonl"
-        if refetch.exists():
-            fresh: dict[str, set[str]] = {}
-            for line in refetch.open(encoding="utf-8"):
-                row = json.loads(line)
-                for analysis in row.get("analyses") or []:
-                    head = (analysis.get("headword") or "").strip()
-                    if head:
-                        fresh.setdefault(row["word"].lower(), set()).add(head)
-            sources.append(("spanishdict-refetch-2026-09-14", fresh))
+        # Refetches are not read separately any more. A row withheld from the
+        # merge was withheld for a reason -- SpanishDict substituted a spelling
+        # or answered in English -- and a fuzzy match is not a lemma any more
+        # than it is a menu. Reading the merged cache applies that judgement
+        # once instead of re-deciding it here.
 
     # A surface that is itself a headword is its own lemma. It never appears in
     # a form_of table, so counting it as unresolved makes the file look far less

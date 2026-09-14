@@ -99,6 +99,12 @@ def main() -> int:
         if digest != record.get("sha256"):
             record["sha256"] = digest
             record["bytes"] = target.stat().st_size
+    # The copy is a new snapshot, so it must say so. Leaving the source's
+    # snapshot_id in place produced a directory that claimed to be the artifact
+    # it was derived from, and the menu build rejected it -- correctly, since
+    # the id is what pins a run to its evidence.
+    artifact["snapshot_id"] = args.out_id
+    artifact["derived_from_snapshot_id"] = args.snapshot
     artifact["coverage"]["surface_cache_entries"] = len(cache)
     artifact.setdefault("notes", []).append(
         "Extended by " + ", ".join(f"{name} (+{n})" for name, n in sorted(per_file.items()))

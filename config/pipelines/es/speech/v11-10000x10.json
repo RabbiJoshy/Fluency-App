@@ -36,12 +36,12 @@
     "language_policy": "es-spanishdict-v1",
     "source_edition": "spanishdict-pinned-snapshot",
     "gloss_language": "en",
-    "snapshot_id": "spanishdict-complete-menu-2026-08-23-v1",
-    "minimum_card_coverage": 0.88,
+    "snapshot_id": "spanishdict-complete-menu-2026-09-15-v3",
+    "minimum_card_coverage": 0.98,
     "output_schema": "sense-menu/v1",
     "join_key": "surface_card_id",
     "lemma_role": "lookup_metadata_only",
-    "coverage_note": "Lowered from 0.98 for this size only. The Spanish list holds 14,040 surfaces, so a 10,000-card deck reaches rank 10,000 of 14,040 -- the tail where SpanishDict pages were never fetched. Measured coverage at this size is 91.14%. The ~880 cards without a menu are published as explicit no_menu cases, the same way Czech already ships; they are not given invented senses. Raising this back to 0.98 is what the outstanding SpanishDict fetch of ~4,400 pages is for."
+    "coverage_note": "Restored to 0.98 on 2026-09-15. The floor was lowered to 0.88 because the 10,000-card deck reached rank 10,000 of the 14,040-surface Spanish list -- the tail where SpanishDict pages had never been fetched -- and measured 91.14%. The outstanding fetch that note referred to has now run: 4,027 surfaces were merged into snapshot spanishdict-complete-menu-2026-09-15-v3 and measured coverage is 98.94%. The remaining 106 cards ship as explicit no_menu cases, the same way Czech does; they are not given invented senses."
   },
   "harvest": {
     "shared_policy": "speech-v1",

@@ -455,3 +455,84 @@ uses the fresh Tatoeba run and makes no WSD or corpus-coverage claims.
   2,000 cards, 5,962 assigned examples and 35 explicitly unassigned examples.
   The running development server serves this release through the ordinary
   Spanish app aliases; no production deployment changed.
+
+## Gate 51 — Three languages complete to the surface ledger
+
+The pre-WSD table was named, the pipeline split into three stages, and `pt`,
+`es` and `cs` were each brought to a complete ledger. See
+`docs/decisions/0021-surface-ledger-and-observation-store.md` for the
+architecture and `docs/runbooks/surface-ledger.md` for the command sequence.
+
+### State at the gate
+
+| | keep | exclude | review | lemma coverage | eligible mean / median |
+|---|---:|---:|---:|---:|---:|
+| `pt` | 10,000 | 105 | 0 | 100.00% | 40.0 / 36 |
+| `es` | 10,000 | 134 | 0 | 99.96% | 44.2 / 40 |
+| `cs` | 9,996 | 127 | 0 | 100.00% | 44.8 / 40 |
+
+Review queues are empty in all three; every surface carries either a lemma or a
+recorded reason it has none. The four Spanish blanks are `bum` (onomatopoeia),
+`ferrari` (a marque), `off` (English) and `tai` (half of a borrowed phrase).
+
+Czech sits at 9,996 rather than 10,000 because five surfaces were excluded at
+this gate after their corpus evidence was read. Excluding is subtractive; a
+re-harvest refills the freed ranks.
+
+### Spanish menu coverage restored
+
+The v11 profile's `minimum_card_coverage` had been lowered from 0.98 to 0.88
+with a note saying an outstanding SpanishDict fetch was what would raise it
+again. That fetch ran: 3,319 surfaces in 19m51s, 97.5% answered.
+
+Merged with the earlier menuless refetch into
+`spanishdict-complete-menu-2026-09-15-v3`, the surface cache went 6,513 →
+10,534 and measured menu coverage went **91.14% → 98.94%**. The floor is back
+at 0.98. The remaining 106 cards ship as explicit `no_menu`, as Czech does.
+
+### Spanish lemma authority
+
+SpanishDict supplies Spanish menus, so it is the authority on Spanish lemmas;
+the primary column carries only its headwords, and every entry is labelled with
+how it was reached.
+
+| provenance | surfaces |
+|---|---:|
+| spanishdict headword | 5,309 |
+| supplied by reverse conjugation | 3,939 |
+| spanishdict headword (refetched) | 663 |
+| supplied by clitic stripping | 72 |
+| manual | 13 |
+
+`scripts/resolve_clitic_lemmas.py` is new and closes the largest remaining
+class. SpanishDict has no page for `díselo` or `vayámonos` — it files the verb,
+not every enclitic bundle — so the resolver strips the pronouns, undoes the
+stress accent they force, and looks the base up. It abstains rather than guesses
+in two cases that first produced confident wrong answers: it consults only
+reverse conjugation, because a clitic base is always a verb form and the general
+cache read `dele` as the preposition `de`; and it declines an ambiguous base,
+because `díselo` strips to `di`, which is imperative of *decir* and preterite of
+*dar*.
+
+### Two defects of the same shape
+
+Both would have looked like success:
+
+- `merge_spanishdict_refetch.py` read one hardcoded refetch filename and would
+  have silently ignored 3,237 answers. It now globs every `refetch-*.jsonl`.
+- It also copied the source snapshot's `snapshot_id` into the new directory, so
+  the merged snapshot claimed to be the artifact it was derived from. The menu
+  build rejected it, correctly — the id is what pins a run to its evidence.
+
+`observe_lemmas.py` had the same hardcoded-path shape and now reads the merged
+snapshot, so a future refetch reaches the lemmas by being merged rather than by
+being named in the script.
+
+### Known and open
+
+- `cs` `alignment_floor` of 0.45 is a guess, not a measured sweep.
+- Observers run as a backfill script rather than inside the stages;
+  `low_harvest_yield` is defined but never emitted.
+- `external_lemmas` is wired into the Kaikki adapter only, not SpanishDict.
+- 4 pre-existing test failures (pipeline planning ×2, spanishdict conjugation
+  ×2), unchanged by this gate. 879 tests pass.
