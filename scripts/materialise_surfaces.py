@@ -16,7 +16,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from fluency.surfaces.events import by_surface, read, store_path  # noqa: E402
+from fluency.surfaces.events import by_surface, read, scope, store_path  # noqa: E402
 from fluency.surfaces.policy import load_policy, verdict  # noqa: E402
 
 VIEW_VERSION = "surface-view/v1"
@@ -123,6 +123,13 @@ def main() -> int:
             "part_of_speech": pos,
             "evidence": evidence,
             "observations": len(items),
+            # Split so a rerun can be reasoned about: the durable tags are
+            # facts about the word and survive any harvest, while these two
+            # depend on the corpus that was read.
+            "durable_tags": sorted({e["reason_code"] for e in items
+                                    if scope(e["reason_code"]) == "durable"}),
+            "run_scoped_tags": sorted({e["reason_code"] for e in items
+                                       if scope(e["reason_code"]) == "run_scoped"}),
             "supply": supply.get(surface),
         }
         # An excluded surface keeps its row -- the verdict and the reasons are

@@ -65,6 +65,38 @@ REASON_CODES = frozenset({
 })
 
 
+# Most of what is learned about a surface is true of the word and not of the
+# run that noticed it. "out" is an English word; "policii" is a form of
+# "policie"; a reading that settled the case stays settled. None of that
+# changes when a harvest is rerun, and treating the whole store as run-scoped
+# would mean re-deriving facts that cannot have moved.
+#
+# Only two kinds genuinely depend on a run: what the corpus shows about how a
+# surface is written, and how much of it there is. Even those are stable while
+# the corpus snapshot is pinned -- rerunning the same harvest reproduces them --
+# so they go stale only when a source snapshot changes.
+DURABLE = frozenset({
+    "english_wordlist",
+    "foreign_frequency_list",
+    "accent_stripped_duplicate",
+    "abbreviation_form",
+    "dictionary_absent",
+    "dictionary_entry_language",
+    "dictionary_spelling_substitution",
+    "dictionary_pos_gloss_mismatch",
+    "lemma_resolved",
+    "lemma_absent_from_dictionary",
+    "human_review",
+    "adjudicated_keep",
+    "adjudicated_exclude",
+})
+RUN_SCOPED = frozenset({"capitalised_in_corpus", "low_harvest_yield"})
+
+
+def scope(reason_code: str) -> str:
+    return "durable" if reason_code in DURABLE else "run_scoped"
+
+
 def build_event(
     *,
     surface: str,
