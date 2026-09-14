@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v395"
+EXPECTED_CACHE_NAME = "flashcards-v396"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -494,8 +494,8 @@ class ProductShellTests(unittest.TestCase):
             '.range-btn-new:not(.has-progress):not(:hover)',
             light_css,
         )
-        self.assertIn('css/light-theme.css?v=20260913a', html)
-        self.assertIn('/css/light-theme.css?v=20260913a', worker)
+        self.assertIn('css/light-theme.css?v=20260914a', html)
+        self.assertIn('/css/light-theme.css?v=20260914a', worker)
 
     def test_active_release_aliases_are_never_cached(self) -> None:
         worker = (APP_ROOT / "service-worker.js").read_text(encoding="utf-8")
@@ -567,7 +567,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260831a", worker)
-        self.assertIn("/js/main.js?v=20260913q", worker)
+        self.assertIn("/js/main.js?v=20260914a", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -948,3 +948,51 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
                                 main.index("window.renderSetupExtrasSection?.();")]
         self.assertIn("sessionStorage.setItem('fluencyPendingSpeechLanguage', targetLang);", speech_btn_block)
         self.assertIn("window.location.href = window.location.pathname;", speech_btn_block)
+
+    def test_language_aware_streamline_examples_adapt_to_active_language(self) -> None:
+        fast_mode = (APP_ROOT / "js" / "fast-mode.js").read_text(encoding="utf-8")
+        self.assertIn("const STREAMLINE_LANGUAGE_EXAMPLES = {", fast_mode)
+        self.assertIn("french:", fast_mode)
+        self.assertIn("portuguese:", fast_mode)
+        self.assertIn("italian:", fast_mode)
+        self.assertIn("german:", fast_mode)
+        self.assertIn("czech:", fast_mode)
+        self.assertIn("updateStreamlineLanguageExamples()", fast_mode)
+        self.assertIn("globalThis.updateStreamlineLanguageExamples = updateStreamlineLanguageExamples;", fast_mode)
+
+    def test_desktop_keyboard_shortcut_cues_are_present(self) -> None:
+        html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
+        css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
+
+        self.assertIn("desktop-front-shortcuts", html)
+        self.assertIn("desktop-back-shortcuts", html)
+        self.assertIn("<kbd class=\"desktop-kbd\">Space</kbd> Flip", html)
+        self.assertIn(".card-desktop-shortcuts {", css)
+        self.assertIn(".desktop-kbd {", css)
+
+    def test_sense_prominence_mode_supports_labels_and_percentages(self) -> None:
+        state = (APP_ROOT / "js" / "state.js").read_text(encoding="utf-8")
+        html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
+
+        self.assertIn("senseProminenceMode: 'labels',", state)
+        self.assertIn('id="senseProminenceSelector"', html)
+        self.assertIn('data-prominence="labels"', html)
+        self.assertIn('data-prominence="percentages"', html)
+        self.assertIn("function getSenseProminenceInfo(meaning)", flashcards)
+        self.assertIn(".sense-prominence-badge {", css)
+        self.assertIn(".sense-prominence-badge.prominence-common", css)
+        self.assertIn(".sense-prominence-badge.prominence-rare", css)
+
+    def test_rare_dictionary_senses_expansion_and_canonical_examples(self) -> None:
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
+
+        self.assertIn("function extractCanonicalDictionaryExamples(meaning)", flashcards)
+        self.assertIn("function getQualifyingRareSenses(card)", flashcards)
+        self.assertIn("function toggleRareSenses(event)", flashcards)
+        self.assertIn("window.toggleRareSenses = toggleRareSenses;", flashcards)
+        self.assertIn(".rare-senses-toggle-btn", css)
+        self.assertIn(".rare-senses-toggle-wrap", css)
+

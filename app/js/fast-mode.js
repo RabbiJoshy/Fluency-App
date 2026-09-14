@@ -171,6 +171,7 @@ function refresh() {
     if (summary) summary.textContent = summaryText();
     updateMappingStatus();
     updateStreamlineRecCallout();
+    updateStreamlineLanguageExamples();
     globalThis.refreshExtrasButton?.();
 }
 
@@ -224,8 +225,67 @@ function updateMappingStatus() {
     }
 }
 
+const STREAMLINE_LANGUAGE_EXAMPLES = {
+    spanish: {
+        name: 'Spanish',
+        lemmaExplainer: 'Forms such as <em>hablo</em>, <em>habló</em> and <em>hablar</em> belong to the same word. Put them on one card so you learn it once while keeping every example.',
+        lemmaExample: '<span>hablo</span><span>habló</span><span>hablar</span><b>→ hablar</b>',
+        cognateExample: '<span><b>chocolate</b><small>Spanish</small></span><strong>=</strong><span><b>chocolate</b><small>English</small></span>'
+    },
+    french: {
+        name: 'French',
+        lemmaExplainer: 'Forms such as <em>parle</em>, <em>parla</em> and <em>parler</em> belong to the same word. Put them on one card so you learn it once while keeping every example.',
+        lemmaExample: '<span>parle</span><span>parla</span><span>parler</span><b>→ parler</b>',
+        cognateExample: '<span><b>important</b><small>French</small></span><strong>=</strong><span><b>important</b><small>English</small></span>'
+    },
+    portuguese: {
+        name: 'Portuguese',
+        lemmaExplainer: 'Forms such as <em>falo</em>, <em>falou</em> and <em>falar</em> belong to the same word. Put them on one card so you learn it once while keeping every example.',
+        lemmaExample: '<span>falo</span><span>falou</span><span>falar</span><b>→ falar</b>',
+        cognateExample: '<span><b>hotel</b><small>Portuguese</small></span><strong>=</strong><span><b>hotel</b><small>English</small></span>'
+    },
+    italian: {
+        name: 'Italian',
+        lemmaExplainer: 'Forms such as <em>parlo</em>, <em>parlò</em> and <em>parlare</em> belong to the same word. Put them on one card so you learn it once while keeping every example.',
+        lemmaExample: '<span>parlo</span><span>parlò</span><span>parlare</span><b>→ parlare</b>',
+        cognateExample: '<span><b>problema</b><small>Italian</small></span><strong>=</strong><span><b>problema</b><small>English</small></span>'
+    },
+    german: {
+        name: 'German',
+        lemmaExplainer: 'Forms such as <em>spreche</em>, <em>sprach</em> and <em>sprechen</em> belong to the same word. Put them on one card so you learn it once while keeping every example.',
+        lemmaExample: '<span>spreche</span><span>sprach</span><span>sprechen</span><b>→ sprechen</b>',
+        cognateExample: '<span><b>musik</b><small>German</small></span><strong>=</strong><span><b>music</b><small>English</small></span>'
+    },
+    czech: {
+        name: 'Czech',
+        lemmaExplainer: 'Forms such as <em>dělám</em>, <em>dělal</em> and <em>dělat</em> belong to the same word. Put them on one card so you learn it once while keeping every example.',
+        lemmaExample: '<span>dělám</span><span>dělal</span><span>dělat</span><b>→ dělat</b>',
+        cognateExample: '<span><b>film</b><small>Czech</small></span><strong>=</strong><span><b>film</b><small>English</small></span>'
+    }
+};
+
+function updateStreamlineLanguageExamples() {
+    const langKey = String(globalThis.selectedLanguage || 'spanish').toLowerCase();
+    const config = STREAMLINE_LANGUAGE_EXAMPLES[langKey] || STREAMLINE_LANGUAGE_EXAMPLES.spanish;
+
+    const lemmaExplainer = document.querySelector('#lemmaToggleContainer .fast-mode-explainer');
+    if (lemmaExplainer) {
+        lemmaExplainer.innerHTML = config.lemmaExplainer;
+    }
+    const lemmaExample = document.querySelector('#lemmaToggleContainer .fast-mode-example');
+    if (lemmaExample) {
+        lemmaExample.innerHTML = config.lemmaExample;
+    }
+    const cognateExample = document.querySelector('#cognateToggleContainer .fast-mode-example--cognate');
+    if (cognateExample) {
+        cognateExample.innerHTML = config.cognateExample;
+        cognateExample.setAttribute('aria-label', `Example of a ${config.name} word that is obvious in English`);
+    }
+}
+
 function openFastModePage() {
     refresh();
+    updateStreamlineLanguageExamples();
     document.getElementById('fastModeModal')?.classList.remove('hidden');
 }
 
@@ -280,3 +340,4 @@ if (document.readyState === 'loading') {
 globalThis.refreshFastMode = refresh;
 globalThis.openFastModePage = openFastModePage;
 globalThis.showFastModeUnavailable = showUnavailableMessage;
+globalThis.updateStreamlineLanguageExamples = updateStreamlineLanguageExamples;

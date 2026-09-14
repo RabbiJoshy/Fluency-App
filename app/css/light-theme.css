@@ -333,6 +333,33 @@
     background: rgba(var(--sense-match-rgb), 0.11) !important;
 }
 
+:root[data-theme="light"] .sense-prominence-badge.prominence-common {
+    background: rgba(16, 185, 129, 0.12);
+    color: #059669;
+    border-color: rgba(16, 185, 129, 0.25);
+}
+:root[data-theme="light"] .sense-prominence-badge.prominence-uncommon {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--text-secondary);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+:root[data-theme="light"] .sense-prominence-badge.prominence-rare {
+    background: rgba(245, 158, 11, 0.12);
+    color: #d97706;
+    border-color: rgba(245, 158, 11, 0.25);
+}
+
+:root[data-theme="light"] .rare-senses-toggle-btn {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.15);
+    color: var(--text-secondary);
+}
+:root[data-theme="light"] .rare-senses-toggle-btn:hover {
+    background: rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.25);
+    color: var(--text-primary);
+}
+
 :root[data-theme="light"] .mwe-expression,
 :root[data-theme="light"] .card-details .special-meaning-copy strong,
 :root[data-theme="light"] .card-word,
@@ -866,6 +893,13 @@
     background: var(--border-color);
 }
 
+:root[data-theme="light"] .desktop-kbd {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.14);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+    color: var(--text-primary);
+}
+
 :root[data-theme="light"] .deck-progress-segment.is-current {
     color: var(--text-primary);
     border-color: color-mix(in srgb, var(--accent-primary) 70%, #17212b);
@@ -1109,5 +1143,14 @@
 :root[data-theme="light"] .cognate-toggle-btn:hover:not(.selected) {
     background: rgba(0, 0, 0, 0.05);
     color: var(--text-primary);
+}
+
+:root[data-theme="light"] .lsw-segments:not(.lsw-scrubber) {
+    background: rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+:root[data-theme="light"] .lsw-segments:not(.lsw-scrubber) .lsw-seg {
+    background: rgba(0, 0, 0, 0.07);
 }
 

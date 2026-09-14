@@ -72,6 +72,10 @@ function applyGlobalStudyDefaults() {
     spacedRepetitionEnabled = saved.spacedRepetitionEnabled === true;
     phrasesModeEnabled = saved.phrasesMode !== false;
     extraExamplesEnabled = saved.extraExamples !== false;
+    try {
+        const savedMode = localStorage.getItem('fluency_sense_prominence_mode_v1');
+        if (savedMode) state.senseProminenceMode = savedMode;
+    } catch (_) {}
     syncStudyPreferenceControls();
 }
 
@@ -94,6 +98,12 @@ function syncStudyPreferenceControls() {
     document.querySelectorAll('.global-study-default-btn').forEach(button => {
         const value = button.dataset.value === 'on';
         const selected = value === effective[button.dataset.setting];
+        button.classList.toggle('selected', selected);
+        button.setAttribute('aria-pressed', selected ? 'true' : 'false');
+    });
+    const currentProm = state.senseProminenceMode || 'labels';
+    document.querySelectorAll('.sense-prominence-btn').forEach(button => {
+        const selected = button.dataset.prominence === currentProm;
         button.classList.toggle('selected', selected);
         button.setAttribute('aria-pressed', selected ? 'true' : 'false');
     });
@@ -212,6 +222,16 @@ function setupGlobalStudyDefaults() {
             if (this.dataset.wsdPublication !== publication) {
                 window.setWsdPublicationProjection?.(this.dataset.wsdPublication);
             }
+        });
+    });
+    document.querySelectorAll('.sense-prominence-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const mode = this.dataset.prominence;
+            if (!mode) return;
+            state.senseProminenceMode = mode;
+            try { localStorage.setItem('fluency_sense_prominence_mode_v1', mode); } catch (_) {}
+            syncStudyPreferenceControls();
+            if (flashcards.length > 0) window.updateCard?.();
         });
     });
 }
@@ -2258,6 +2278,7 @@ async function renderRangeSelector() {
                     style="--set-known-end: ${range.knownPct}%; --set-review-end: ${range.reviewEndPct}%"
                     role="radio" aria-checked="${index === initialIndex ? 'true' : 'false'}"
                     aria-label="Set ${index + 1}: ${range.knownCount} known, ${range.reviewCount} to review, ${range.unseenCount} unseen"
+                    title="Set ${index + 1} · ${range.knownCount} known · ${range.reviewCount} review · ${range.unseenCount} new"
                     ${range.available ? '' : 'disabled'}><span>${index + 1}</span></button>`;
     }).join('');
 

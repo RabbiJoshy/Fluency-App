@@ -78,10 +78,11 @@ export const state = {
     // Hidden by default; toggle to study them.
     excludeEnglishLoanwords: true,
     speechEnabled: true,
-    // Optional while the app/content are still being developed. When off,
-    // time-based due cards remain Known; explicit mistakes and partial cards
-    // still enter Review. Existing stages/timestamps are preserved.
-    spacedRepetitionEnabled: false,
+    // Spaced repetition schedule. When off, time-based due cards remain Known;
+    // explicit mistakes and partial cards still enter Review.
+    spacedRepetitionEnabled: true,
+    // Frequency display on back of cards: 'labels' (Common, Uncommon, Rare) or 'percentages' (78%)
+    senseProminenceMode: 'labels',
 
     // Config / data
     config: null,

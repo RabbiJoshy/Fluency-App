@@ -1,9 +1,9 @@
 import './theme.js?v=20260825ak';
-import './state.js?v=20260912a';
+import './state.js?v=20260914a';
 import './offline-db.js?v=20260825ak';
 import './sync-queue.js?v=20260825ak';
 import { initOfflineContent } from './offline-content.js?v=20260825ak';
-import './speech.js?v=20260824d';
+import './speech.js?v=20260914a';
 import './artist-ui.js?v=20260825ak';
 import './auth.js?v=20260912a';
 import './about-example.js?v=20260913g';
@@ -11,16 +11,16 @@ import './estimation.js?v=20260825ak';
 import './config.js?v=20260907a';
 import './progress.js?v=20260913b';
 import './knowledge.js?v=20260831a';
-import './ui.js?v=20260913o';
+import './ui.js?v=20260914a';
 import './vocab.js?v=20260913g';
 import './cognates.js?v=20260908d';
 import './coverage.js?v=20260909a';
-import './fast-mode.js?v=20260913f';
+import './fast-mode.js?v=20260914a';
 import './extras.js?v=20260913e';
 import './song-sets.js?v=20260823ae';
 import './spotify-playlist-import.js?v=20260913a';
 import './vocabulary-import.js?v=20260913a';
-import './flashcards.js?v=20260913n';
+import './flashcards.js?v=20260914a';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 function openTutorialIntroduction() {
