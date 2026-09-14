@@ -48,6 +48,10 @@ let cognateLanguages = [];
 // override can come later; until then the words a slightly wrong number moves
 // are not lost, only relocated to Extras.
 let cognateThresholds = {};
+// Which shape the loaded map is. v1 is surface -> {language: score}; v2 adds a
+// lemma level between them. Read from the payload rather than sniffed, so a
+// malformed file fails loudly instead of being guessed at.
+let cognateSchema = 'cognate-score/v1';
 // The language the loaded map was built for. Scores are keyed by bare surface,
 // which several languages share, so the map must never outlive its language.
 let cognateLanguage = null;
@@ -141,9 +145,48 @@ function applyCognateScores(vocabularyData, languageCode) {
     // across the two.
     if (languageCode && cognateLanguage && languageCode !== cognateLanguage) return;
     for (const item of vocabularyData) {
-        const scores = cognateScores[String(item.word || '').toLowerCase()];
-        if (scores) item.cognate_scores = scores;
+        const entry = cognateScores[String(item.word || '').toLowerCase()];
+        if (!entry) continue;
+        if (cognateSchema === 'cognate-score/v2') {
+            // v2 keys surface -> lemma -> language, because form is settled at
+            // the surface and cognateness at the lemma. A card is a surface, so
+            // the card's score is the best any of its lemmas can claim: if one
+            // of its meanings is already free, the word is already free.
+            item.cognate_lemma_scores = entry;
+            item.cognate_scores = bestPerLanguage(entry);
+        } else {
+            item.cognate_scores = entry;
+        }
     }
+}
+
+// surface -> {language: best score across its lemmas}
+function bestPerLanguage(byLemma) {
+    const best = {};
+    for (const langs of Object.values(byLemma || {})) {
+        for (const [code, value] of Object.entries(langs || {})) {
+            const score = Number(value) || 0;
+            if (!(code in best) || score > best[code]) best[code] = score;
+        }
+    }
+    return best;
+}
+
+// Which of a card's lemmas a known language already gives the learner. Nothing
+// reads this yet; it is what per-sense exclusion will ask, so that a card with
+// one transparent sense and three opaque ones loses only the one.
+function knownLemmas(item) {
+    const byLemma = item && item.cognate_lemma_scores;
+    if (!byLemma) return [];
+    const active = activeKnownLanguages();
+    const out = [];
+    for (const [lemma, langs] of Object.entries(byLemma)) {
+        for (const code of active) {
+            const cutoff = Number(cognateThresholds[code] ?? globalThis.cognateThreshold ?? 1);
+            if (Number(langs[code] || 0) >= cutoff) { out.push(lemma); break; }
+        }
+    }
+    return out;
 }
 
 async function loadCognateScores(langConfig) {
@@ -151,6 +194,7 @@ async function loadCognateScores(langConfig) {
     cognateLanguages = [];
     cognateThresholds = {};
     cognateLanguage = null;
+    cognateSchema = 'cognate-score/v1';
     const path = langConfig && langConfig.cognatesPath;
     if (!path) return;
     try {
@@ -160,10 +204,16 @@ async function loadCognateScores(langConfig) {
         const scores = payload && payload.scores;
         if (!scores || typeof scores !== 'object') throw new Error('no scores in cognate file');
         cognateScores = scores;
+        cognateSchema = String(payload.schema || 'cognate-score/v1');
         cognateLanguage = payload.language || null;
         cognateLanguages = Array.isArray(payload.known_languages)
             ? payload.known_languages.slice()
             : Object.keys(Object.values(scores)[0] || {});
+        if (cognateSchema === 'cognate-score/v2' && !Array.isArray(payload.known_languages)) {
+            // v2's first value is a lemma map, so its keys are lemmas, not
+            // languages. Only a declared list is trustworthy here.
+            cognateLanguages = [];
+        }
         cognateThresholds = (payload.thresholds && typeof payload.thresholds === 'object')
             ? payload.thresholds
             : {};
@@ -176,6 +226,7 @@ async function loadCognateScores(langConfig) {
         cognateLanguages = [];
         cognateThresholds = {};
         cognateLanguage = null;
+        cognateSchema = 'cognate-score/v1';
     }
     renderKnownLanguagePicker();
 }
@@ -241,4 +292,5 @@ globalThis.loadCognateScores = loadCognateScores;
 globalThis.availableKnownLanguages = availableKnownLanguages;
 globalThis.activeKnownLanguages = activeKnownLanguages;
 globalThis.renderKnownLanguagePicker = renderKnownLanguagePicker;
+globalThis.knownLemmas = knownLemmas;
 globalThis.knownLanguageLabel = languageLabel;
