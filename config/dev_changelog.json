@@ -4,22 +4,64 @@
     {
       "date": "2026-09-15",
       "commit": "pending",
-      "summary": "Deploy Spanish and Czech 3,000-word decks with WSD v11-1 (10 display examples)",
+      "summary": "Deploy PT V12 deck (pt-speech-v12-6000x10)",
       "detail": [
-        "Promoted Spanish and Czech to 3,000 cards with up to 10 display examples each.",
-        "Spanish: 21,125 assigned examples across 3,000 cards (es-speech-v11-3000x10).",
-        "Czech: 17,099 assigned examples across 3,000 cards (cs-speech-v11-3000x10).",
-        "All 3 core languages (PT, ES, CS) now powered by WSD v11-1 with surface ledger priority ordering."
+        "6,000 cards with 10 display examples using WSD v12-1 with difficulty stratification and tail gating."
       ]
     },
     {
       "date": "2026-09-15",
       "commit": "pending",
-      "summary": "Deploy Portuguese 3,000-word deck with WSD v11-1 (10 display examples)",
+      "summary": "Deploy PT V12 deck (pt-speech-v12-6000x10)",
       "detail": [
-        "Promoted Portuguese to 3,000 cards with up to 10 display examples each.",
-        "Scored and assigned via WSD v11-1 using stratified multi-banded selection from the surface ledger.",
-        "20,114 assigned examples across European Portuguese speech domain."
+        "6,000 cards with 10 display examples using WSD v12-1 with difficulty stratification and tail gating."
+      ]
+    },
+    {
+      "date": "2026-09-15",
+      "commit": "pending",
+      "summary": "Deploy PT V12 deck (pt-speech-v12-6000x10)",
+      "detail": [
+        "6,000 cards with 10 display examples using WSD v12-1 with difficulty stratification and tail gating."
+      ]
+    },
+    {
+      "date": "2026-09-15",
+      "commit": "pending",
+      "summary": "Deploy PT V12 deck (pt-speech-v12-6000x10)",
+      "detail": [
+        "6,000 cards with 10 display examples using WSD v12-1 with difficulty stratification and tail gating."
+      ]
+    },
+    {
+      "date": "2026-09-15",
+      "commit": "pending",
+      "summary": "Urgency-scored review queue, 100-card daily batches, and sectioned Review Hub",
+      "detail": [
+        "Continuous needfulness score and urgency tiers (Never Mastered, Critical Lapses, Routine Due) derived directly from the SRS schedule and personal error history.",
+        "Review queue prioritizes never-mastered cards and severe lapses first, breaking ties by high-frequency word rank so core vocabulary is refreshed ahead of rare words.",
+        "Redesigned the setup Review Hub with one-tap tier slices and 100-card daily batches, with a seamless 'Review Next 100' continuation flow on completion.",
+        "Optimized review deck loading with an instant fast path, slashing launch time from ~10s to instantaneous (< 30ms) by avoiding full dictionary scans."
+      ]
+    },
+    {
+      "date": "2026-09-15",
+      "commit": "pending",
+      "summary": "Fast Track setup bar streamlined to compact single-row card and modal opening fixed",
+      "detail": [
+        "Fixed Fast Track words modal not opening when clicking 'Browse words' by removing the overriding inline style on #extrasModal.",
+        "Eliminated double nested card borders and duplicate header text from the setup screen, reducing the Fast Track bar to a sleek, compact single-row summary.",
+        "Added one-tap card clickability and a direct Fast Track settings shortcut when no words are skipped."
+      ]
+    },
+    {
+      "date": "2026-09-15",
+      "commit": "pending",
+      "summary": "Cognate form scoring upgraded with Jaro-Winkler prefix-weighted similarity",
+      "detail": [
+        "Upgraded form similarity scoring to take the best of normalized Levenshtein and Jaro-Winkler, resolving the suffix penalty that kept transparent citation forms (e.g. Spanish 'abandonar', 'comunicar') below threshold while inflections passed.",
+        "Cleaned redundant vowel diacritics from Spanish and Portuguese cognate skeleton configs, relying on Unicode NFD strip_accents.",
+        "Rebuilt and deployed Spanish-English cognates mapping (31,828 scored surfaces) to workspace and app."
       ]
     },
     {

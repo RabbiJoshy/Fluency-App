@@ -1,0 +1,1869 @@
+<!DOCTYPE html>
+<html lang="en" class="app-booting">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0e14">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Flashcards">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='70' font-size='60' text-anchor='middle' fill='white'%3E📚%3C/text%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Trimmed from 11 weights to 6: dropped DM Sans 500 + italic 400 (sys
+         italic fallback), JetBrains Mono 500/600 (mono weights barely differ),
+         and Space Grotesk 500. Google Fonts are cross-origin so they bypass
+         our service worker's cache and re-fetch on every load — fewer
+         weights = fewer round trips to fonts.gstatic.com on cold start. -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <title>Language Flashcards</title>
+    <script>
+        // Apply appearance before the stylesheets paint. Dark remains the
+        // backward-compatible default; System is only followed after a user
+        // explicitly chooses it in Settings.
+        (function() {
+            var key = 'fluency_theme_preference_v1';
+            var preference = 'dark';
+            try {
+                var saved = localStorage.getItem(key);
+                if (saved === 'dark' || saved === 'light' || saved === 'system') preference = saved;
+            } catch (_) {}
+            var theme = preference === 'system'
+                ? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+                : preference;
+            var root = document.documentElement;
+            root.dataset.themePreference = preference;
+            root.dataset.theme = theme;
+            root.style.colorScheme = theme;
+            document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
+        })();
+    </script>
+    <link rel="stylesheet" href="css/style.css?v=20260915c">
+    <link rel="stylesheet" href="css/light-theme.css?v=20260914e">
+    <!-- Module preloads. Without these the browser waits to discover the
+         imports inside main.js before kicking off the per-module fetches,
+         which serializes ~11 round trips behind the main.js parse step.
+         Preload starts them all in parallel during HTML parse. Versions
+         must stay in lockstep with main.js's import URLs. -->
+    <link rel="modulepreload" href="js/main.js?v=20260914d">
+    <link rel="modulepreload" href="js/theme.js?v=20260825ak">
+    <link rel="modulepreload" href="js/state.js?v=20260914c">
+    <link rel="modulepreload" href="js/data-contracts.js?v=20260825ak">
+    <link rel="modulepreload" href="js/offline-db.js?v=20260825ak">
+    <link rel="modulepreload" href="js/sync-queue.js?v=20260825ak">
+    <link rel="modulepreload" href="js/offline-content.js?v=20260825ak">
+    <link rel="modulepreload" href="js/speech.js?v=20260914b">
+    <link rel="modulepreload" href="js/artist-ui.js?v=20260825ak">
+    <link rel="modulepreload" href="js/auth.js?v=20260912a">
+    <link rel="modulepreload" href="js/about-example.js?v=20260913g">
+    <link rel="modulepreload" href="js/estimation.js?v=20260825ak">
+    <link rel="modulepreload" href="js/config.js?v=20260907a">
+    <link rel="modulepreload" href="js/progress.js?v=20260915b">
+    <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
+    <link rel="modulepreload" href="js/knowledge.js?v=20260915a">
+    <link rel="modulepreload" href="js/ui.js?v=20260915c">
+    <link rel="modulepreload" href="js/vocab.js?v=20260915c">
+    <link rel="modulepreload" href="js/song-sets-core.js?v=20260825ak">
+    <link rel="modulepreload" href="js/song-sets.js?v=20260823ae">
+    <link rel="modulepreload" href="js/spotify-playlist-import.js?v=20260913a">
+    <link rel="modulepreload" href="js/vocabulary-import-core.js?v=20260825ak">
+    <link rel="modulepreload" href="js/vocabulary-import.js?v=20260913a">
+    <link rel="modulepreload" href="js/spanishdict-usage.js?v=20260825ak">
+    <link rel="modulepreload" href="js/reverse-cues.js?v=20260825ak">
+    <link rel="modulepreload" href="js/flashcards.js?v=20260915c">
+    <link rel="modulepreload" href="js/example-personalisation.js?v=20260825ak">
+    <script>
+        // Fail open if a boot-time script error prevents main.js from taking
+        // ownership of the loading screen. Normal boot removes this class as
+        // soon as authentication and the selected source are coherent.
+        setTimeout(function() {
+            if (!document.documentElement.classList.contains('app-booting')) return;
+            document.documentElement.classList.remove('app-booting');
+            document.getElementById('appLoadingScreen')?.classList.add('is-hidden');
+        }, 12000);
+
+        // Authentication must remain usable even if Safari aborts evaluation
+        // of the ES-module graph. These tiny handlers deliberately depend on
+        // no imported code; main.js attaches the full handlers when available.
+        window.fluencyAuthFallback = {
+            finish: function() {
+                document.documentElement.classList.remove('app-booting');
+                document.body.classList.remove('auth-active');
+                document.getElementById('appLoadingScreen')?.classList.add('is-hidden');
+                document.getElementById('authModal')?.classList.add('hidden');
+                var setup = document.getElementById('setupPanel');
+                if (setup) setup.style.display = 'block';
+            },
+            openLogin: function() {
+                document.getElementById('guestModeBtn').style.display = 'none';
+                document.getElementById('loginModeRow').style.display = 'none';
+                document.getElementById('aboutProjectBtn').style.display = 'none';
+                document.getElementById('loginInfoNote').classList.add('hidden');
+                document.querySelector('#authModal .auth-modal-content')?.classList.add('is-login-form');
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('userInitials').focus();
+            },
+            cancelLogin: function() {
+                document.getElementById('guestModeBtn').style.display = 'flex';
+                document.getElementById('loginModeRow').style.display = 'flex';
+                document.getElementById('aboutProjectBtn').style.display = '';
+                document.querySelector('#authModal .auth-modal-content')?.classList.remove('is-login-form');
+                document.getElementById('loginForm').classList.add('hidden');
+            },
+            guest: function() {
+                try { sessionStorage.setItem('flashcardGuestSession', '1'); } catch (_) {}
+                this.finish();
+            },
+            submit: function() {
+                var input = document.getElementById('userInitials');
+                var initials = input.value.trim().toUpperCase();
+                if (!/^[A-Z]{2,4}$/.test(initials)) return;
+                try { localStorage.setItem('flashcardUser', JSON.stringify({ initials: initials, isGuest: false })); } catch (_) {}
+                this.finish();
+                window.dispatchEvent(new CustomEvent('fluency-fallback-login', { detail: { initials: initials } }));
+            }
+        };
+    </script>
+</head>
+<body>
+    <div id="appLoadingScreen" class="app-loading-screen" role="status" aria-live="polite" aria-busy="true">
+        <div class="app-loading-card">
+            <div class="app-loading-mark" aria-hidden="true">F</div>
+            <div class="app-loading-spinner" aria-hidden="true"></div>
+            <strong id="appLoadingTitle">Getting things ready</strong>
+            <span id="appLoadingDetail">Loading your language and progress…</span>
+        </div>
+    </div>
+
+    <!-- User Info Display -->
+    <div id="userInfo" class="user-info hidden">
+        <!-- Floating buttons (shown only during flashcard view) -->
+        <div id="floatingBtns" class="floating-btns">
+            <button class="gear-btn" id="backBtnFloating" title="Back to menu">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 14 4 9 9 4"></polyline>
+                    <path d="M20 20v-7a4 4 0 0 0-4-4H4"></path>
+                </svg>
+            </button>
+            <button class="gear-btn" id="statsBtnFloating" title="View stats">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 20V10"></path>
+                    <path d="M12 20V4"></path>
+                    <path d="M6 20v-6"></path>
+                </svg>
+            </button>
+            <button class="gear-btn" id="reverseLangBtn" title="Reverse language direction"></button>
+            <button class="gear-btn" id="speakBtn" title="Toggle auto-speak">
+                <svg id="speakBtnIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path class="speak-on-indicator" d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                    <path class="speak-on-indicator" d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                    <line class="speak-off-indicator" x1="23" y1="9" x2="17" y2="15" style="display:none"></line>
+                    <line class="speak-off-indicator" x1="17" y1="9" x2="23" y2="15" style="display:none"></line>
+                </svg>
+            </button>
+            <button class="gear-btn" id="kbToggleSidebar" title="Toggle keyboard shortcuts" aria-label="Toggle keyboard shortcuts">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="6" width="20" height="12" rx="2" ry="2"></rect>
+                    <line x1="6" y1="10" x2="6" y2="10"></line>
+                    <line x1="10" y1="10" x2="10" y2="10"></line>
+                    <line x1="14" y1="10" x2="14" y2="10"></line>
+                    <line x1="18" y1="10" x2="18" y2="10"></line>
+                    <line x1="7" y1="14" x2="17" y2="14"></line>
+                </svg>
+            </button>
+        </div>
+        <button class="gear-btn" id="gearBtn" title="Settings" style="display: none;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Desktop: keyboard shortcut guide (left side, viewport-fixed).
+         Toggled from the right-edge sidebar (#kbToggleSidebar). -->
+    <div class="desktop-keyboard-guide" id="desktopKeyboardGuide">
+        <div class="kb-content">
+            <div class="kb-section">
+                <div class="kb-row">
+                    <kbd class="kb-key" title="Correct">Enter</kbd>
+                    <span class="kb-hint correct">✓</span>
+                </div>
+                <div class="kb-row">
+                    <kbd class="kb-key" title="Incorrect">X</kbd>
+                    <span class="kb-hint incorrect">✗</span>
+                </div>
+            </div>
+            <div class="kb-section kb-arrows">
+                <div class="kb-arrow-row">
+                    <kbd class="kb-key arrow">↑</kbd>
+                </div>
+                <div class="kb-arrow-row">
+                    <kbd class="kb-key arrow">←</kbd>
+                    <kbd class="kb-key arrow">↓</kbd>
+                    <kbd class="kb-key arrow">→</kbd>
+                </div>
+                <div class="kb-arrow-labels">
+                    <span class="kb-hint">prev</span>
+                    <span class="kb-hint">meaning</span>
+                    <span class="kb-hint">next</span>
+                </div>
+            </div>
+            <div class="kb-section">
+                <kbd class="kb-key wide" title="Flip card">Space</kbd>
+                <span class="kb-hint">flip</span>
+            </div>
+            <div class="kb-section">
+                <kbd class="kb-key wide" title="Cycle examples / expressions">Tab</kbd>
+                <span class="kb-hint">cycle</span>
+            </div>
+            <div class="kb-section">
+                <kbd class="kb-key" title="Back to menu">Esc</kbd>
+                <span class="kb-hint">menu</span>
+            </div>
+            <div class="kb-section kb-command-section">
+                <div class="kb-row">
+                    <kbd class="kb-key combo" title="Open study progress">Ctrl S</kbd>
+                    <span class="kb-hint">progress</span>
+                </div>
+                <div class="kb-row">
+                    <kbd class="kb-key combo" title="Open study preferences">Ctrl P</kbd>
+                    <span class="kb-hint">preferences</span>
+                </div>
+            </div>
+            <div class="kb-section kb-command-section kb-flag-section">
+                <button id="cardMetaBtn" class="kb-key kb-info-btn" title="Report a card issue" aria-label="Report a card issue">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 21V4"></path><path d="M5 5h11l-2 4 2 4H5"></path>
+                    </svg>
+                </button>
+                <span class="kb-hint">flag menu</span>
+                <div class="kb-row">
+                    <kbd class="kb-key combo" title="Open data and model info (Command-I on Mac)">Ctrl I</kbd>
+                    <span class="kb-hint">model info</span>
+                </div>
+                <div class="kb-row">
+                    <kbd class="kb-key combo" title="Flag the whole card">Ctrl F</kbd>
+                    <span class="kb-hint">whole card</span>
+                </div>
+                <div class="kb-row">
+                    <kbd class="kb-key combo" title="Open the flag menu">Ctrl Shift F</kbd>
+                    <span class="kb-hint">flag menu</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Audit flag menu: one note composer, a few direct classifications,
+         a dedicated sense-pairing view, and one primary whole-card action. -->
+    <div id="flagMenu" class="card-meta-popover flag-menu" role="dialog" aria-hidden="true" aria-label="Flag a card" hidden>
+        <div class="card-meta-modal-content" id="flagMenuContent">
+            <div class="card-meta-header">
+                <span class="card-meta-title" id="flagMenuTitle">Flag a card</span>
+                <button class="card-meta-close" id="flagMenuClose" aria-label="Close">×</button>
+            </div>
+            <div class="card-meta-body">
+                <div class="flag-menu-hint">Choose one action. A flag is only sent when you press its clearly labelled button.</div>
+                <div id="flagMenuProvenance" class="flag-menu-provenance" aria-label="Attached flag provenance"></div>
+                <div id="flagMenuStatus" class="flag-menu-status" role="status" aria-live="polite" hidden></div>
+
+                <div id="flagMenuMainView">
+                    <section class="card-meta-section flag-simple-note-section">
+                        <h4>Send a note</h4>
+                        <label class="flag-menu-note-label" for="flagMenuNote">Your note</label>
+                        <textarea id="flagMenuNote" class="flag-menu-note" rows="5" maxlength="600" placeholder="What did you notice? Include the correction if you know it."></textarea>
+                        <button class="flag-simple-send-note" id="flagSimpleSendNote" type="button" disabled>Send note</button>
+                    </section>
+
+                    <section class="card-meta-section">
+                        <h4>Flag a specific problem</h4>
+                        <div class="flag-simple-actions">
+                            <button type="button" data-simple-flag="propernoun">Proper noun</button>
+                            <button type="button" data-simple-flag="english">English</button>
+                            <button type="button" data-simple-flag="cognate">Cognate</button>
+                            <button type="button" data-simple-flag="lemma">Wrong lemma</button>
+                            <button type="button" data-simple-flag="elision">Wrong elision correction</button>
+                            <button type="button" data-simple-flag="card-pos">Wrong card POS</button>
+                        </div>
+                    </section>
+
+                    <section class="card-meta-section">
+                        <button type="button" class="flag-senses-route" id="flagOpenSenses">
+                            <span><strong>Sense–meaning pairings</strong><small>Choose and flag a particular pairing</small></span>
+                            <span aria-hidden="true">›</span>
+                        </button>
+                    </section>
+                </div>
+
+                <div id="flagMenuSensesView" hidden>
+                    <button type="button" class="flag-senses-back" id="flagSensesBack">‹ Back</button>
+                    <h4>Flag a sense–meaning pairing</h4>
+                    <div class="flag-simple-senses" id="flagSimpleSenses"></div>
+                </div>
+            </div>
+            <div class="card-meta-footer">
+                <button class="card-meta-flag-btn flag-whole-card-btn" id="flagWholeCard" type="button">Flag whole card</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="flagSentToast" class="flag-sent-toast" role="status" aria-live="polite" aria-atomic="true" hidden>
+        <span class="flag-sent-toast-icon" aria-hidden="true">✓</span>
+        <span class="flag-sent-toast-copy">
+            <strong id="flagSentToastTitle">Card flagged</strong>
+            <span id="flagSentToastType"></span>
+        </span>
+    </div>
+
+    <div class="container">
+        <div class="file-upload" id="setupPanel">
+            <!-- Top bar: Tutorial, Estimate Level, gear (shared by both modes) -->
+            <div id="topBar" class="setup-step">
+                <div class="step-header top-bar-header">
+                    <span id="topBarUserName" class="top-bar-user-name"></span>
+                    <button id="learningContextBtn" class="learning-context-chip" type="button" hidden aria-haspopup="dialog" aria-label="Open learning settings">
+                        <span id="learningContextFlag" class="learning-context-flag" aria-hidden="true"></span>
+                        <span class="learning-context-chip-copy">
+                            <strong id="learningContextLanguage"></strong>
+                        </span>
+                        <span class="learning-context-chevron" aria-hidden="true">›</span>
+                    </button>
+                    <button id="helpBtn" class="top-bar-icon-btn" type="button" title="Tutorial" aria-label="Open tutorial">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.8 9a2.3 2.3 0 0 1 4.45.8c0 1.7-2.25 1.95-2.25 3.45"></path><path d="M12 17h.01"></path></svg>
+                    </button>
+                    <!-- Offline / sync-pending status pill. Hidden when online with an empty queue. -->
+                    <button id="syncStatusIndicator" class="sync-status is-synced" type="button" title="Open synchronization details" onclick="showSettingsModalWithTab('offline')">Synced</button>
+                    <button class="gear-btn top-bar-find" id="findWordBtn" title="Find a word">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="7"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                    <button class="gear-btn top-bar-gear" id="topBarGearBtn" title="Settings">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 1: Language Selection (non-Bad-Bunny mode) -->
+            <div id="step1" class="setup-step">
+                <div class="step-header step-header-with-help" id="step1Header">
+                    <span class="step-title" id="step1Title">Choose your language</span>
+                    <span id="selectedLanguageInline" class="selection-pill-inline" style="display: none;"></span>
+                    <span id="step1PromptArrow" class="language-step-prompt-arrow" aria-hidden="true">›</span>
+                </div>
+                <div class="language-tabs" id="languageTabs">
+                    <!-- Language tabs will be dynamically generated -->
+                </div>
+                <div id="standardSourceCard" class="artist-source-card standard-source-card" style="display: none;">
+                    <button type="button" id="standardSourceLanguageBtn" class="artist-source-picker" aria-haspopup="dialog">
+                        <span id="standardSourceLanguageIcon" class="artist-source-image standard-source-language-icon" aria-hidden="true"></span>
+                        <span class="artist-source-copy">
+                            <span id="standardSourceLanguageName" class="artist-source-name"></span>
+                            <span>Choose another language</span>
+                        </span>
+                        <span class="language-picker-btn-arrow" aria-hidden="true">›</span>
+                    </button>
+                    <div class="standard-source-choice" aria-labelledby="standardSourceChoiceTitle">
+                        <div class="standard-source-choice-intro">
+                            <span class="standard-source-choice-title" id="standardSourceChoiceTitle">Choose what you want to understand</span>
+                            <p>Fluency builds your study list from the words used most often in that kind of language.</p>
+                        </div>
+                        <div class="standard-source-choice-buttons">
+                            <button type="button" id="standardSourceSpeechBtn" class="standard-source-choice-btn" data-source="speech">
+                                <span class="standard-source-choice-icon" aria-hidden="true">1</span>
+                                <span>
+                                    <span class="standard-source-option-title"><strong>Everyday Speech</strong><em>Recommended</em></span>
+                                    <small>Build conversational vocabulary from the words used most often in modern movie and television dialogue.</small>
+                                </span>
+                                <em class="standard-source-choice-arrow" aria-hidden="true">›</em>
+                            </button>
+                            <button type="button" id="standardSourcePickerBtn" class="standard-source-choice-btn" data-source="lyrics">
+                                <span class="standard-source-choice-icon" aria-hidden="true">2</span>
+                                <span>
+                                    <span class="standard-source-option-title"><strong>Music &amp; lyrics</strong></span>
+                                    <small id="standardLyricsAvailability">Choose artists and songs in your target language, or import your own Spotify playlist (coming later). Learn the most frequent words, then play the lyric moment where each word is used.</small>
+                                </span>
+                                <em id="standardLyricsStatus" class="standard-source-choice-status" aria-hidden="true">›</em>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="standardSourceProgress" class="standard-source-progress"></div>
+                </div>
+            </div>
+
+            <div id="artistSourceStep" class="setup-step artist-source-step" style="display: none;">
+                <div class="step-header artist-source-header">
+                    <span class="step-title">Lyrics</span>
+                </div>
+                <div class="artist-source-card" id="artistSourceCard">
+                    <button type="button" id="artistSourceLanguageBtn" class="artist-source-picker artist-source-language-btn" aria-haspopup="dialog">
+                        <span id="artistSourceLanguageIcon" class="artist-source-image standard-source-language-icon" aria-hidden="true"></span>
+                        <span class="artist-source-copy">
+                            <span id="artistSourceLanguageName" class="artist-source-name"></span>
+                            <span>Choose another language</span>
+                        </span>
+                        <span class="language-picker-btn-arrow" aria-hidden="true">›</span>
+                    </button>
+                    <div class="artist-source-main-choice">
+                        <button type="button" id="artistSourcePickerBtn" class="artist-source-picker" aria-haspopup="dialog">
+                            <span id="artistSourceImage" class="artist-source-image" aria-hidden="true"></span>
+                            <span class="artist-source-copy">
+                                <span id="artistSourceName" class="artist-source-name"></span>
+                                <span id="artistSourceSelectionLabel">Choose songs</span>
+                            </span>
+                            <span class="language-picker-btn-arrow" aria-hidden="true">›</span>
+                        </button>
+                        <div class="artist-source-secondary-actions">
+                            <button type="button" id="artistSourceArtistBtn" class="artist-source-action-btn">Change artist</button>
+                            <button type="button" id="artistSourceSpeechBtn" class="artist-source-action-btn">Speech ›</button>
+                        </div>
+                    </div>
+                    <div id="artistSourceProgress" class="standard-source-progress"></div>
+                </div>
+            </div>
+
+            <!-- Data Loading Indicator -->
+            <div class="data-loading-indicator" id="dataLoadingIndicator">
+                <div class="spinner"></div>
+                <span>Loading your progress...</span>
+            </div>
+
+            <!-- Level Estimate CTA retained hidden for DOM anchor backward compatibility -->
+            <div id="levelEstimateCTA" class="level-estimate-cta" style="display: none !important;" aria-hidden="true"></div>
+
+            <!-- Personal Progress Bar (standalone, shown after language selection) -->
+            <div id="personalCoverageWrapper" class="coverage-bar-wrapper personal-coverage-wrapper" style="display: none;">
+                <div class="personal-progress-header">
+                    <span class="personal-progress-title">Your progress</span>
+                    <button type="button" id="selectedSourceInline" class="source-pill-inline" style="display: none;" aria-haspopup="dialog">
+                        <span id="selectedSourceInlineLabel">Choose source</span>
+                        <span aria-hidden="true">›</span>
+                    </button>
+                    <button class="progress-info-btn" id="personalProgressInfoBtn" type="button" title="Open progress details" aria-label="Open progress details">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg>
+                    </button>
+                    <span id="personalCoverageLabel" class="personal-progress-info"></span>
+                </div>
+                <div class="coverage-bar-container">
+                    <div id="personalCoverageFill" class="coverage-bar-fill personal-coverage-fill"></div>
+                </div>
+            </div>
+
+            <!-- Global Daily Due Banner -->
+            <div id="globalDailyDueBanner" class="global-daily-due-banner" style="display: none; margin: 0 0 16px 0;"></div>
+
+            <!-- Step 2: Level Selection -->
+            <div id="step2" class="setup-step" style="display: none;">
+                <div class="step-header step-header-with-help">
+                    <span class="step-number">2</span>
+                    <span class="step-title">Choose level</span>
+                    <div class="step-header-actions">
+                        <span id="levelInfoLine" class="level-info-line" style="display: none;"></span>
+                        <button type="button" id="levelModeToggle" class="level-mode-btn" style="display: none;" aria-hidden="true" tabindex="-1">CEFR</button>
+                        <button class="step-help-btn" data-tooltip="step2Tooltip" title="About levels" aria-label="About levels">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg>
+                        </button>
+                    </div>
+                    <div id="step2Tooltip" class="step-info-tooltip setup-info-modal" role="dialog" aria-modal="true" aria-labelledby="levelHelpTitle"><div class="step-info-tooltip-inner">
+                        <div class="info-sheet-header">
+                            <div><span class="info-sheet-eyebrow">Levels</span><h3 id="levelHelpTitle">Choose where to begin</h3></div>
+                            <button type="button" class="info-sheet-close" aria-label="Close level information">&#10005;</button>
+                        </div>
+                        <p class="info-sheet-lead" id="step2LevelDescription">Levels arrange vocabulary from the most common daily words to less frequent ones.</p>
+                        <div class="info-sheet-points">
+                            <div><span>1</span><p><strong>Start anywhere.</strong> Begin at Level 1 for fundamentals, or jump ahead if you already know the basics.</p></div>
+                            <div><span>2</span><p><strong>Bite-sized sets.</strong> Each level is broken into small sets so you can make fast, steady progress without getting overwhelmed.</p></div>
+                            <div><span>3</span><p><strong>Fast Track saves time.</strong> Groups related word forms and sets aside obvious look-alikes so you focus on new vocabulary.</p></div>
+                        </div>
+                        <div class="level-estimate-modal-callout" id="step2LevelEstimateCallout">
+                            <div class="level-estimate-modal-body">
+                                <strong>Not sure which level is right for you?</strong>
+                                <p>Take a quick adaptive test (~30 words) to estimate your current vocabulary and start at the right level.</p>
+                            </div>
+                            <button type="button" class="level-estimate-modal-btn" id="openEstimationFromLevelHelpBtn">Estimate my level →</button>
+                        </div>
+                    </div></div>
+                </div>
+                <div id="levelSelector" class="level-selector"></div>
+
+                <!-- Fast Track setup options bar -->
+                <div id="setupOptions" class="setup-options" style="display: none;">
+                    <div class="setup-options-bar">
+                        <button type="button" id="fastModeToggleBtn" class="fast-mode-btn fast-mode-master" data-fast="off" aria-pressed="false">
+                            <span class="fast-mode-master-icon" aria-hidden="true">⚡</span>
+                            <span class="fast-mode-master-copy">
+                                <span class="fast-mode-title-row">
+                                    <strong>Fast Track</strong>
+                                    <span class="streamline-rec-badge">Recommended</span>
+                                </span>
+                                <small id="fastModeSummary">Full deck · includes all words</small>
+                            </span>
+                            <span class="fast-mode-master-switch" aria-hidden="true"><i></i></span>
+                        </button>
+                        <button type="button" id="fastModeDetailBtn" class="fast-mode-detail-btn" onclick="window.openFastModePage?.()">
+                            Details <span aria-hidden="true">›</span>
+                        </button>
+                    </div>
+                    <div class="streamline-rec-callout" id="streamlineRecCallout" style="display: none;">
+                        <div class="streamline-rec-callout-icon" aria-hidden="true">⚡</div>
+                        <div class="streamline-rec-callout-body">
+                            <strong>Why Fast Track is recommended</strong>
+                            <p id="streamlineRecCalloutText">Merges verb conjugations onto base cards and skips obvious look-alikes, so you focus strictly on new vocabulary without missing any examples.</p>
+                        </div>
+                        <button type="button" class="streamline-rec-callout-dismiss" id="dismissStreamlineRecBtn" aria-label="Dismiss recommendation note">✕</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: automatically selected next stable set -->
+            <div id="step4" class="setup-step" style="display: none;">
+                <div class="step-header step-header-with-help">
+                    <span class="step-number" id="rangeStepNumber">3</span>
+                    <span class="step-title">Your next set</span>
+                    <button class="step-help-btn" data-tooltip="step5Tooltip" title="About study sets" aria-label="About study sets">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg>
+                    </button>
+                    <div id="step5Tooltip" class="step-info-tooltip setup-info-modal" role="dialog" aria-modal="true" aria-labelledby="setHelpTitle"><div class="step-info-tooltip-inner">
+                        <div class="info-sheet-header">
+                            <div><span class="info-sheet-eyebrow">Study sets</span><h3 id="setHelpTitle">One finishable set at a time</h3></div>
+                            <button type="button" class="info-sheet-close" aria-label="Close set information">&#10005;</button>
+                        </div>
+                        <p class="info-sheet-lead" id="step5Description">Fluency highlights your next unfinished set so you can jump right in.</p>
+                        <div class="info-sheet-points">
+                            <div><span>New</span><p>Learn fresh words you haven't seen before, card by card.</p></div>
+                            <div><span>Review</span><p>Tricky cards stay in your review queue for extra practice.</p></div>
+                            <div><span>Done</span><p>Finishing a set saves your progress and unlocks the next one.</p></div>
+                        </div>
+                    </div></div>
+                </div>
+                <div id="rangeSelector" class="range-selector"></div>
+            </div>
+
+            <!-- Extras Deck Section: supplementary cards (Artist extra categories or Speech skipped words) -->
+            <div id="extrasDeckSection" class="extras-deck-section" style="display: none;">
+                <div class="extras-deck-card" id="extrasDeckCard"></div>
+            </div>
+
+            <div id="loadingMessage" style="margin-top: 20px; color: var(--accent-green); display: none; text-align: center; font-weight: 600;"></div>
+        </div>
+
+        <div id="appContent" class="hidden">
+            <!-- Flashcard Mode -->
+            <div id="flashcardMode">
+                <div class="card-container">
+                    <!-- Desktop ghost cards: staircase of 2 per side. DOM order = stacking order,
+                         so -2 (deeper) must come before -1 (nearer) on each side. -->
+                    <div class="deck-ghost-prev deck-ghost-prev-2" aria-hidden="true"></div>
+                    <div class="deck-ghost-prev deck-ghost-prev-1" aria-hidden="true"></div>
+                    <div class="deck-ghost-next deck-ghost-next-2" aria-hidden="true"></div>
+                    <div class="deck-ghost-next deck-ghost-next-1" aria-hidden="true"></div>
+                    <div class="swipe-indicator incorrect" id="incorrectIndicator">✗</div>
+                    <div class="swipe-indicator correct" id="correctIndicator">✓</div>
+                    <div class="card" id="flashcard" data-rank="">
+                        <div class="card-face card-front">
+                            <!-- Mobile top banner: prev far-left, [back][gear] paired in middle, next far-right -->
+                            <div class="mobile-nav-row card-top-banner" style="display: none; position: absolute; top: 0; left: 0; right: 0; height: 72px; padding: 4px 12px; box-sizing: border-box; z-index: 5; pointer-events: none; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+                                <button class="nav-btn-inline" id="prevBtnFrontMobile" style="pointer-events: auto;">←</button>
+                                <div class="banner-center" style="display: flex; gap: 4px; pointer-events: auto;">
+                                    <button class="gear-btn nav-row-icon" id="backBtnFrontMobile" title="Back" style="pointer-events: auto;">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="9 14 4 9 9 4"></polyline>
+                                            <path d="M20 20v-7a4 4 0 0 0-4-4H4"></path>
+                                        </svg>
+                                    </button>
+                                    <button class="gear-btn nav-row-icon" id="actionsGearFront" title="More actions" style="pointer-events: auto;">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <button class="nav-btn-inline" id="nextBtnFrontMobile" style="pointer-events: auto;">→</button>
+                            </div>
+                            <button id="flipBtn" style="background: transparent; border: none; cursor: pointer; outline: none; padding: 60px; border-radius: 50%; width: 100%; z-index: 1;">
+                                <div class="card-word" id="frontWord"></div>
+                                <div class="surface-relation-cue front-surface-relation" id="frontSurfaceRelation" hidden></div>
+                                <div class="card-meanings-front" id="frontMeanings"></div>
+                                <div class="card-lemma" id="frontLemma"></div>
+                                <div class="card-morph" id="frontMorph"></div>
+                            </button>
+                            <div class="front-production-hint" id="frontProductionHint" hidden></div>
+                            <!-- POS pill(s) sit in the same fixed top-right header bay as
+                                 on the back face. Deliberately a sibling of #flipBtn rather than a
+                                 child: the pill is a real button (morphology toggle), and a
+                                 button nested inside the flip button would both be invalid
+                                 and turn every pill press into a card flip. -->
+                            <div class="card-pos-list" id="frontPOS"></div>
+                            <div class="card-ranking" id="frontRanking"></div>
+                            <div class="card-desktop-shortcuts desktop-front-shortcuts" aria-hidden="true">
+                                <span class="desktop-shortcut-item"><kbd class="desktop-kbd">Space</kbd> Flip</span>
+                                <span class="desktop-shortcut-sep">·</span>
+                                <span class="desktop-shortcut-item"><kbd class="desktop-kbd">←</kbd> Prev</span>
+                                <span class="desktop-shortcut-sep">·</span>
+                                <span class="desktop-shortcut-item">Next <kbd class="desktop-kbd">→</kbd></span>
+                            </div>
+                            <!-- Desktop: Left/right nav buttons (hidden on desktop, moved outside card) -->
+                            <div class="desktop-nav-row desktop-front-nav-hidden" style="display: flex; justify-content: space-between; align-items: center; width: 100%; position: absolute; top: 50%; transform: translateY(-50%); left: 0; padding: 0 20px; z-index: 5; pointer-events: none;">
+                                <button class="nav-btn-inline" id="prevBtnFront" style="pointer-events: auto;">←</button>
+                                <button class="nav-btn-inline" id="nextBtnFront" style="pointer-events: auto;">→</button>
+                            </div>
+                            <!-- X button: shown when card was opened via search/synonym/lyric jump -->
+                            <button class="stacked-exit-btn" id="stackedExitFront" aria-label="Return to deck">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                            <div class="card-tint" aria-hidden="true"></div>
+                        </div>
+                        <div class="card-face card-back">
+                            <!-- X button: shown when card was opened via search/synonym/lyric jump -->
+                            <button class="stacked-exit-btn" id="stackedExitBack" aria-label="Return to deck">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                            <div class="card-details" id="backContent"></div>
+                            <div class="card-desktop-shortcuts desktop-back-shortcuts" aria-hidden="true">
+                                <span class="desktop-shortcut-item"><kbd class="desktop-kbd">Space</kbd> Flip</span>
+                                <span class="desktop-shortcut-sep">·</span>
+                                <span class="desktop-shortcut-item desktop-shortcut-wrong"><kbd class="desktop-kbd">X</kbd> Again</span>
+                                <span class="desktop-shortcut-sep">·</span>
+                                <span class="desktop-shortcut-item desktop-shortcut-right">Got it <kbd class="desktop-kbd">Enter</kbd></span>
+                            </div>
+                            <div class="swipe-legend" aria-hidden="true">
+                                <span class="swipe-legend-wrong">← Again</span>
+                                <span class="swipe-legend-sep"></span>
+                                <span class="swipe-legend-right">Got it →</span>
+                                <span class="swipe-legend-commit"></span>
+                            </div>
+                            <div class="card-tint" aria-hidden="true"></div>
+                        </div>
+                    </div>
+                    <!-- Hidden: keep IDs for pressAnswerBtn animation -->
+                    <button id="incorrectBtnOutside" class="hidden" aria-hidden="true"></button>
+                    <button id="correctBtnOutside" class="hidden" aria-hidden="true"></button>
+                    <button id="prevBtnFrontOutside" class="hidden" aria-hidden="true"></button>
+                    <button id="nextBtnFrontOutside" class="hidden" aria-hidden="true"></button>
+                    <!-- Active-set scrubber: numbered card positions with direct navigation.
+                         Desktop only now — see .card-back-scrubber below for the mobile
+                         redesign, which sits in this same reserved strip above the card. -->
+                    <div id="deckProgressTrack" class="deck-progress-track" aria-label="Card position in active set">
+                        <div id="deckProgressSegments" class="deck-progress-segments" role="group" aria-label="Cards in this set"></div>
+                        <button type="button" id="studyMenuBtn" class="gear-btn study-menu-btn" aria-label="Open study options" title="Study options">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.05.05-2.86 2.86-.05-.05A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 1.55V21h-4v-.05a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.88.34l-.05.05-2.86-2.86.05-.05A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3v-4h.05A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.88l-.05-.05 2.86-2.86.05.05A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3h4v.05a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.88-.34l.05-.05 2.86 2.86-.05.05A1.7 1.7 0 0 0 19.4 9a1.7 1.7 0 0 0 1.55 1H21v4h-.05A1.7 1.7 0 0 0 19.4 15z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <!-- Inline set scrubber — mobile only, replaces #deckProgressTrack in
+                         this same reserved strip above the card (not on the card face). -->
+                    <div class="card-back-scrubber" id="cardBackScrubber" aria-label="Card position in active set">
+                        <div class="cbs-strip">
+                            <button type="button" class="cbs-chevron cbs-chevron-prev" id="prevBtnBack" aria-label="Previous card" onpointerdown="event.stopPropagation()">‹</button>
+                            <div class="cbs-pips" id="cardBackPips" role="group" aria-label="Card position in this set"></div>
+                            <!-- Child cards (search / synonym / lyric jump) replace the pip
+                                 row with this labelled return control, so the way back is in
+                                 the same top bar as every other card action instead of a
+                                 separate X disc floating on the card face. -->
+                            <button type="button" class="cbs-return" id="cardBackReturn" hidden onpointerdown="event.stopPropagation()">
+                                <span class="cbs-return-arrow" aria-hidden="true">‹</span>
+                                <span class="cbs-return-text">
+                                    <span class="cbs-return-kicker">Back to</span>
+                                    <span class="cbs-return-label" id="cardBackReturnLabel">the set</span>
+                                </span>
+                            </button>
+                            <button type="button" class="cbs-chevron cbs-chevron-next" id="nextBtnBack" aria-label="Next card" onpointerdown="event.stopPropagation()">›</button>
+                        </div>
+                        <button type="button" class="cbs-gear" id="actionsGearBack" title="More actions" aria-label="More actions">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <!-- Mobile actions popup: position:fixed, sits just below the top banner.
+                     Both front-face and back-face gear buttons toggle this single popup.
+                     Outside the card's preserve-3d context so there are no z-fighting or
+                     axis-reversal issues. Never shown on desktop (desktop media query). -->
+                <div class="card-actions-popup" id="cardActionsPopup">
+                    <button class="gear-btn" id="reverseLangBtnPopup" title="Reverse language direction">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="17 1 21 5 17 9"></polyline>
+                            <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                            <polyline points="7 23 3 19 7 15"></polyline>
+                            <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+                        </svg>
+                    </button>
+                    <button class="gear-btn" id="speakBtnPopup" title="Toggle auto-speak">
+                        <svg id="speakBtnPopupIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <path class="speak-on-indicator" d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                            <line class="speak-off-indicator" x1="23" y1="9" x2="17" y2="15" style="display:none"></line>
+                            <line class="speak-off-indicator" x1="17" y1="9" x2="23" y2="15" style="display:none"></line>
+                        </svg>
+                    </button>
+                    <button class="gear-btn" id="statsBtnPopup" title="View stats">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 20V10"></path>
+                            <path d="M12 20V4"></path>
+                            <path d="M6 20v-6"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="learningContextModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Your learning settings">
+        <div class="modal-content learning-context-sheet">
+            <div class="learning-context-close-row">
+                <button class="modal-close" id="closeLearningContextModal" aria-label="Close learning settings">&#10005;</button>
+            </div>
+            <div class="learning-context-switches">
+                <button id="learningContextLanguageBtn" class="learning-context-choice" type="button">
+                    <span id="learningContextSheetFlag" class="learning-context-sheet-flag" aria-hidden="true"></span>
+                    <span><small>Language</small><strong id="learningContextSheetLanguage"></strong></span>
+                    <span aria-hidden="true">›</span>
+                </button>
+                <button id="learningContextSourceBtn" class="learning-context-choice" type="button">
+                    <span class="learning-context-mode-icon" aria-hidden="true">◉</span>
+                    <span><small>Vocabulary</small><strong id="learningContextSheetMode"></strong></span>
+                    <span aria-hidden="true">›</span>
+                </button>
+            </div>
+            <button id="learningContextProgressBtn" class="learning-context-progress" type="button">
+                <div class="learning-context-progress-copy">
+                    <span id="learningContextProgressLabel">Speech understood</span>
+                    <strong id="learningContextProgressValue">0%</strong>
+                </div>
+                <div class="learning-context-progress-track"><i id="learningContextProgressFill"></i></div>
+                <span class="learning-context-progress-link">View progress <span aria-hidden="true">›</span></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Authentication Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content auth-modal-content">
+            <div class="auth-welcome-mark" aria-hidden="true">F</div>
+            <div class="auth-welcome-copy">
+                <span class="auth-welcome-eyebrow">Welcome to Fluency</span>
+                <h3>Learn from language<br>you actually hear.</h3>
+                <p>Build useful vocabulary from speech and lyrics, one finishable set at a time.</p>
+            </div>
+            <div class="auth-body">
+                <div class="auth-btn-row" id="loginModeRow">
+                    <button class="auth-btn login-btn" id="loginModeBtn" type="button" onclick="window.fluencyAuthFallback.openLogin()">
+                        <span class="auth-choice-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c.6-4 3-6 7-6s6.4 2 7 6"></path></svg>
+                        </span>
+                        <div class="auth-btn-content">
+                            <span class="auth-btn-title">Continue with initials</span>
+                            <span class="auth-btn-desc">Keep your progress across devices</span>
+                        </div>
+                        <span class="auth-choice-arrow" aria-hidden="true">→</span>
+                    </button>
+                    <button class="auth-info-btn" id="loginInfoBtn" type="button" aria-label="Why are initials used without a password?" title="Why no password?">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg>
+                    </button>
+                </div>
+                <div id="loginInfoNote" class="auth-info-note hidden">
+                    This small beta uses initials instead of accounts. Pick something personal enough that another learner will not enter it by accident. There is no email or password yet.
+                </div>
+
+                <button class="auth-btn guest-btn" id="guestModeBtn" type="button" onclick="window.fluencyAuthFallback.guest()">
+                    <span class="auth-choice-icon auth-choice-icon--guest" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M4 12h16"></path><path d="m14 6 6 6-6 6"></path></svg>
+                    </span>
+                    <div class="auth-btn-content">
+                        <span class="auth-btn-title">Explore as a guest</span>
+                        <span class="auth-btn-desc">Try the app without saving progress</span>
+                    </div>
+                </button>
+
+                <button class="auth-about-link" id="aboutProjectBtn" type="button">
+                    About this project
+                </button>
+
+                <div id="loginForm" class="login-form hidden">
+                    <div class="auth-form-heading">
+                        <span class="auth-welcome-eyebrow">Your learning profile</span>
+                        <h4>Enter your initials</h4>
+                        <p>Use 2–4 letters you will remember.</p>
+                    </div>
+                    <label for="userInitials" class="auth-input-label">Initials</label>
+                    <input
+                        type="text"
+                        id="userInitials"
+                        class="initials-input"
+                        placeholder="TEST"
+                        maxlength="4"
+                        autocomplete="off"
+                        autocapitalize="characters"
+                    />
+                    <div class="login-form-actions">
+                        <button class="auth-submit-btn" id="submitInitialsBtn" type="button" onclick="window.fluencyAuthFallback.submit()">Continue</button>
+                        <button class="auth-cancel-btn" id="cancelLoginBtn" type="button" onclick="window.fluencyAuthFallback.cancelLogin()">← Back</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Short learner-facing introduction to the card tutorial. -->
+    <div id="tutorialIntroModal" class="modal hidden product-modal" role="dialog" aria-modal="true" aria-labelledby="tutorialIntroTitle">
+        <div class="modal-content tutorial-intro-sheet">
+            <div class="tutorial-intro-close-row">
+                <h2 id="tutorialIntroTitle" class="visually-hidden">Tutorial</h2>
+                <button class="modal-close" id="closeTutorialIntroModal" aria-label="Close tutorial introduction">&#10005;</button>
+            </div>
+            <div id="tutorialWelcomeStep" class="tutorial-intro-step">
+                <div class="tutorial-principles">
+                    <p>Fluency teaches the most useful words first. Progress reflects how often words occur, rather than how many cards you have seen.</p>
+                    <p><strong>Speech</strong> builds a general vocabulary from modern dialogue. <strong>Lyrics</strong> can personalise that vocabulary around music you choose and play the original lyric as an example.</p>
+                    <p>The back of each card connects a word to its meanings, examples and useful language-specific detail.</p>
+                </div>
+                <button class="product-primary-action" id="startCardTutorialBtn" type="button">Start tutorial <span aria-hidden="true">→</span></button>
+            </div>
+            <div id="tutorialLanguageStep" class="tutorial-intro-step hidden">
+                <button type="button" id="tutorialLanguageBackBtn" class="product-back-action">← Back</button>
+                <h3>Choose a language</h3>
+                <p>We’ll use a real card and only show features available for that language.</p>
+                <div id="tutorialLanguageChoices" class="tutorial-language-grid" role="list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Portfolio/CV About page; deliberately separate from the learner intro. -->
+    <div id="aboutProjectModal" class="modal hidden">
+        <div class="modal-content fullscreen-modal about-project-modal">
+            <button class="modal-close about-close-floating" id="closeAboutProjectModal" aria-label="Close">✕</button>
+            <div id="aboutProjectBody" class="about-project-body">
+                <div class="about-loading">Loading…</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- See Example: annotated walkthrough of real cards. Content is rendered
+         by js/about-example.js; the card inside #aboutExampleStage reuses the
+         app's own .card CSS so it is a true replica rather than a mock-up. -->
+    <div id="aboutExampleModal" class="modal hidden">
+        <div class="modal-content fullscreen-modal about-example-modal">
+            <div class="about-example-body" id="aboutExampleBody">
+                <!-- One row, not a banner above a summary: chapter progress left,
+                     the summary itself in the middle, exit right. Vertical
+                     space is the scarce thing here — the card and its
+                     annotations have to fit on screen together, so nothing
+                     gets a whole band of its own.
+                     Speech leads naturally into Lyrics; which face you are
+                     reading is decided by flipping the card, and the
+                     annotations follow the face. -->
+                <div class="about-example-topbar">
+                    <div class="about-example-sequence" id="aboutExampleSequence" aria-live="polite"></div>
+                    <div class="about-example-intro" id="aboutExampleIntro"></div>
+                    <button class="modal-close about-example-close" id="closeAboutExampleModal" aria-label="Close walkthrough" title="Close walkthrough">✕</button>
+                </div>
+                <div class="about-example-columns">
+                    <div class="about-example-notes about-example-notes-left" id="aboutExampleNotesLeft"></div>
+                    <div class="about-example-stage-col">
+                        <div class="about-example-stage-wrap">
+                            <div class="about-example-stage" id="aboutExampleStage"></div>
+                            <div class="about-example-markers" id="aboutExampleMarkers" aria-hidden="true"></div>
+                        </div>
+                        <button type="button" class="about-example-flip" id="aboutExampleFlip">⟲  Show the front</button>
+                        <button type="button" class="about-example-continue" id="aboutExampleContinue" hidden></button>
+                    </div>
+                    <div class="about-example-notes about-example-notes-right" id="aboutExampleNotesRight"></div>
+                </div>
+                <section class="about-example-mobile-coach" id="aboutExampleMobileCoach" aria-live="polite" hidden>
+                    <div class="about-example-mobile-progress" id="aboutExampleMobileProgress"></div>
+                    <strong id="aboutExampleMobileTitle"></strong>
+                    <p id="aboutExampleMobileText"></p>
+                    <div class="about-example-mobile-actions">
+                        <button type="button" id="aboutExampleMobileBack">Back</button>
+                        <button type="button" id="aboutExampleMobileNext">Next</button>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deck Complete Modal -->
+    <div id="deckCompleteModal" class="modal hidden">
+        <div class="modal-content deck-complete-content">
+            <div class="deck-complete-header">
+                <canvas id="deckCompleteConfetti" class="deck-complete-confetti" aria-hidden="true"></canvas>
+                <span class="deck-complete-eyebrow" id="deckCompleteEyebrow">Study set</span>
+                <div class="deck-complete-score-container" id="deckCompleteScoreContainer" hidden>
+                    <div class="deck-score-ring-wrap">
+                        <svg class="deck-score-ring" viewBox="0 0 100 100" aria-hidden="true">
+                            <circle class="deck-score-ring-bg" cx="50" cy="50" r="42"></circle>
+                            <circle class="deck-score-ring-fill" id="deckScoreRingFill" cx="50" cy="50" r="42"></circle>
+                        </svg>
+                        <div class="deck-score-center">
+                            <span class="deck-score-number" id="completeAccuracyNumber">0%</span>
+                            <span class="deck-score-label">accuracy</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="deck-complete-icon" id="deckCompleteIcon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="m7 12 3 3 7-7"></path></svg>
+                </div>
+                <h3 id="deckCompleteTitle">Set Complete!</h3>
+                <div id="completeAccuracy" class="deck-complete-accuracy" hidden></div>
+            </div>
+            <div class="deck-complete-body">
+                <div class="deck-complete-stats" hidden>
+                    <div class="deck-stat correct-stat">
+                        <span class="deck-stat-badge">
+                            <span class="deck-stat-emoji">✓</span>
+                            <span class="deck-stat-value" id="completeCorrect">0</span>
+                        </span>
+                        <span class="deck-stat-label">Correct</span>
+                    </div>
+                    <div class="deck-stat incorrect-stat">
+                        <span class="deck-stat-badge">
+                            <span class="deck-stat-emoji">✗</span>
+                            <span class="deck-stat-value" id="completeIncorrect">0</span>
+                        </span>
+                        <span class="deck-stat-label">Missed</span>
+                    </div>
+                </div>
+                <section id="levelCompleteCelebration" class="level-complete-celebration" hidden aria-live="polite">
+                    <span class="level-complete-kicker" id="levelCompleteCoverageLabel">Speech understood</span>
+                    <div class="level-complete-values">
+                        <span id="levelCoverageBefore">0%</span>
+                        <span aria-hidden="true">→</span>
+                        <strong id="levelCoverageAfter">0%</strong>
+                    </div>
+                    <div class="level-complete-track"><i id="levelCompleteFill"></i></div>
+                    <p id="levelCompleteDescription"></p>
+                </section>
+                <div id="completeMessage" class="deck-complete-message"></div>
+                <button class="deck-complete-btn exit-btn" id="markCompleteBtn">
+                    <span class="btn-icon" id="markCompleteIcon">↩</span>
+                    <span id="markCompleteLabel">Back to Menu</span>
+                </button>
+                <div class="deck-complete-actions">
+                    <button class="deck-complete-btn menu-btn" id="deckCompleteMenuBtn" type="button">
+                        <svg class="secondary-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M3 11.5 12 4l9 7.5"></path>
+                            <path d="M5.5 10.5V20h13v-9.5"></path>
+                        </svg>
+                        <span>Main menu</span>
+                    </button>
+                    <button class="deck-complete-btn restart-btn" id="restartAllBtn">
+                        <svg class="secondary-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M4 10a8 8 0 1 1 2.35 7.65"></path>
+                            <path d="M4 4v6h6"></path>
+                        </svg>
+                        <span>Redo set</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fast mode page — the whole explanation plus the individual controls,
+         so "what did this do to my deck?" is answerable in one place instead of
+         being split between a toggle and a help tooltip. -->
+    <div id="fastModeModal" class="modal hidden">
+        <div class="modal-content fullscreen-modal fast-mode-page">
+            <button class="modal-close fast-mode-close" id="closeFastModeModal" aria-label="Close">✕</button>
+            <div class="fast-mode-page-body">
+                <div class="fast-mode-title-row fast-mode-title-row--header">
+                    <h2>Fast Track</h2>
+                    <span class="streamline-rec-badge">Recommended</span>
+                </div>
+                <p class="fast-mode-lede">Cuts study time by grouping word forms and skipping words you already recognize, so you focus strictly on new vocabulary.</p>
+
+                <div class="fast-mode-controls">
+                    <div id="lemmaToggleContainer" class="setup-substep" style="display: none;">
+                        <div class="substep-header">
+                            <span class="fast-mode-number" aria-hidden="true">1</span>
+                            <span class="substep-title">Merge word forms</span>
+                        </div>
+                        <p class="fast-mode-explainer">Forms such as <em>hablo</em>, <em>habló</em> and <em>hablar</em> belong to the same word. Put them on one card so you learn it once while keeping every example.</p>
+                        <div class="fast-mode-example" aria-label="Example of grouped word forms"><span>hablo</span><span>habló</span><span>hablar</span><b>→ hablar</b></div>
+                        <div class="fast-mode-control-row">
+                            <div id="lemmaToggleSelector" class="group-size-selector">
+                                <button class="lemma-toggle-btn selected" data-lemma="off" data-short="Off" data-full="Off">Off</button>
+                                <button class="lemma-toggle-btn" data-lemma="on" data-short="On" data-full="On">On</button>
+                            </div>
+                            <button type="button" id="viewMergedFormsBtn" class="fast-mode-view-items-btn" style="display: none;">
+                                View merged forms <span class="fast-mode-btn-count" id="mergedFormsCount"></span> ›
+                            </button>
+                        </div>
+                        <span id="lemmaInfoLine" class="level-info-line substep-info-below" style="display: none;"></span>
+                    </div>
+
+                    <div id="cognateToggleContainer" class="setup-substep" style="display: none;">
+                        <div class="substep-header">
+                            <span class="fast-mode-number" aria-hidden="true">2</span>
+                            <span class="substep-title">Skip obvious words</span>
+                        </div>
+                        <p class="fast-mode-explainer">Some words already give away their meaning. Set them aside so your study time goes to vocabulary that actually needs learning.</p>
+                        <div class="fast-mode-example fast-mode-example--cognate" aria-label="Example of a Spanish word that is obvious in English"><span><b>chocolate</b><small>Spanish</small></span><strong>=</strong><span><b>chocolate</b><small>English</small></span></div>
+                        <div class="fast-mode-control-row">
+                            <div id="cognateToggleSelector" class="group-size-selector">
+                                <button class="cognate-toggle-btn" data-cognate="exclude" data-short="Exclude" data-full="Exclude">Exclude</button>
+                                <button class="cognate-toggle-btn selected" data-cognate="include" data-short="Include" data-full="Include">Include</button>
+                            </div>
+                            <button type="button" id="viewSkippedWordsBtn" class="fast-mode-view-items-btn" style="display: none;">
+                                View skipped words <span class="fast-mode-btn-count" id="skippedWordsCount"></span> ›
+                            </button>
+                        </div>
+                        <span id="cognateInfoLine" class="level-info-line substep-info-below" style="display: none;"></span>
+                        <div id="knownLanguagesContainer" class="known-languages-context" style="display: none;">
+                            <div class="known-languages-header">
+                                <strong>Languages you already know</strong>
+                                <small>Skip words that look similar in:</small>
+                            </div>
+                            <div id="knownLanguagesSelector" class="known-languages-selector"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Admin / Diagnostic Technical Details (strictly gated to owner/admin) -->
+                <div id="fastModeAdminDetails" class="fast-mode-admin-details" style="display: none;">
+                    <h4>Technical &amp; Audit Details (Admin Only)</h4>
+                    <p id="lemmaMappingStatus" class="fast-mode-mapping-status" hidden></p>
+                    <p id="cognateMappingStatus" class="fast-mode-mapping-status" hidden></p>
+                    <p>Inflected forms are grouped by dictionary lemma. Cognate thresholds are determined by cross-language phonetic/orthographic scoring.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Merged Forms Modal — word forms grouped onto a base card -->
+    <div id="mergedFormsModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div><span class="product-modal-eyebrow">Fast Track</span><h3>Merged word forms</h3></div>
+                <button class="modal-close" id="closeMergedFormsModal" aria-label="Close">✕</button>
+            </div>
+            <p class="extras-intro">Word forms grouped onto a shared base card so you learn them together.</p>
+            <input type="search" id="mergedFormsSearch" class="extras-search" placeholder="Search merged forms" autocomplete="off">
+            <div class="extras-body" id="mergedFormsBody"></div>
+        </div>
+    </div>
+
+    <!-- Skipped Words Modal — words set aside by known languages -->
+    <div id="skippedWordsModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div><span class="product-modal-eyebrow">Fast Track</span><h3>Skipped obvious words</h3></div>
+                <button class="modal-close" id="closeSkippedWordsModal" aria-label="Close">✕</button>
+            </div>
+            <p class="extras-intro">Words set aside because their spelling and meaning match a language you already know.</p>
+            <input type="search" id="skippedWordsSearch" class="extras-search" placeholder="Search skipped words" autocomplete="off">
+            <div class="extras-body" id="skippedWordsBody"></div>
+        </div>
+    </div>
+
+    <!-- Legacy / fallback Extras Modal -->
+    <div id="extrasModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div><span class="product-modal-eyebrow">Fast Track</span><h3>Fast Track vocabulary</h3></div>
+                <button class="modal-close" id="closeExtrasModal" aria-label="Close">✕</button>
+            </div>
+            <p class="extras-intro">Words not shown as separate cards, with the reason for each choice.</p>
+            <input type="search" id="extrasSearch" class="extras-search" placeholder="Search Fast Track words" autocomplete="off">
+            <div class="extras-body" id="extrasBody"></div>
+            <button type="button" id="extrasBtn" class="extras-btn" style="display: none;">See Fast Track words</button>
+        </div>
+    </div>
+
+    <!-- Cognate Rules Modal -->
+    <div id="cognateRulesModal" class="modal hidden">
+        <div class="modal-content fullscreen-modal">
+            <div class="modal-header">
+                <h3>Cognate Detection Rules</h3>
+                <button class="modal-close" id="closeCognateRulesModal">✕</button>
+            </div>
+            <div class="cognate-rules-body">
+                <p class="rules-intro">A word is marked as a <strong>transparent cognate</strong> if it matches any of these patterns when comparing the Spanish word to its English translation:</p>
+
+                <div class="rule-section">
+                    <h4>Suffix Transformations</h4>
+                    <p>Spanish suffixes that map to English equivalents:</p>
+
+                    <div class="suffix-rule">
+                        <code>-ción → -tion</code>
+                        <div class="rule-examples">
+                            <span class="example">información → information</span>
+                            <span class="example">nación → nation</span>
+                            <span class="example">educación → education</span>
+                        </div>
+                    </div>
+
+                    <div class="suffix-rule">
+                        <code>-ista → -ist</code>
+                        <div class="rule-examples">
+                            <span class="example">artista → artist</span>
+                            <span class="example">pianista → pianist</span>
+                            <span class="example">terrorista → terrorist</span>
+                        </div>
+                    </div>
+
+                    <div class="suffix-rule">
+                        <code>-dad → -ty</code>
+                        <div class="rule-examples">
+                            <span class="example">universidad → university</span>
+                            <span class="example">realidad → reality</span>
+                            <span class="example">identidad → identity</span>
+                        </div>
+                    </div>
+
+                    <div class="suffix-rule">
+                        <code>-mente → -ly</code>
+                        <div class="rule-examples">
+                            <span class="example">normalmente → normally</span>
+                            <span class="example">exactamente → exactly</span>
+                            <span class="example">finalmente → finally</span>
+                        </div>
+                    </div>
+
+                    <div class="suffix-rule">
+                        <code>-oso/-osa → -ous</code>
+                        <div class="rule-examples">
+                            <span class="example">famoso → famous</span>
+                            <span class="example">nervioso → nervous</span>
+                            <span class="example">deliciosa → delicious</span>
+                        </div>
+                    </div>
+
+                    <div class="suffix-rule">
+                        <code>-ar → -ate</code>
+                        <div class="rule-examples">
+                            <span class="example">celebrar → celebrate</span>
+                            <span class="example">separar → separate</span>
+                        </div>
+                    </div>
+
+                    <div class="suffix-rule">
+                        <code>-ado/-ada → -ated / -ed</code>
+                        <div class="rule-examples">
+                            <span class="example">activado → activated</span>
+                            <span class="example">preparado → prepared</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rule-section">
+                    <h4>Phonetic Matching</h4>
+                    <p>English digraphs are normalized to Spanish equivalents before comparing:</p>
+                    <div class="suffix-rule">
+                        <code>ph → f, th → t</code>
+                        <div class="rule-examples">
+                            <span class="example">euforia → euphoria</span>
+                            <span class="example">farmacia → pharmacy</span>
+                            <span class="example">teatro → theater</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rule-section">
+                    <h4>Why Exclude Cognates?</h4>
+                    <p>Transparent cognates are "free" vocabulary - you likely already recognize them from English. Excluding them lets you focus study time on words that actually require memorization.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Level Estimation Modal -->
+    <div id="estimationModal" class="modal hidden">
+        <div class="modal-content fullscreen-modal">
+            <div class="modal-header">
+                <h3 id="estimationTitle">Level Estimation</h3>
+                <button class="modal-close" id="closeEstimationModal">✕</button>
+            </div>
+            <div class="estimation-body">
+                <div id="estimationIntro">
+                    <p style="text-align: center; color: var(--text-secondary); margin-bottom: 20px;">
+                        Check 30 words sampled across the frequency range to find a useful starting level.
+                    </p>
+                    <p style="text-align: center; color: var(--text-muted); margin-bottom: 20px; font-size: 14px;">
+                        Think of the meaning first, then reveal it and say whether you knew it beforehand.
+                    </p>
+                    <button class="estimation-start-btn" id="startEstimationBtn">Start</button>
+                </div>
+                <div id="estimationTest" style="display: none;">
+                    <div class="estimation-progress">
+                        <span id="estimationLevel">Finding your range</span>
+                        <span id="estimationCount">0/30</span>
+                    </div>
+                    <div class="estimation-word-area">
+                        <div class="estimation-word" id="estimationWord">palabra</div>
+                        <div class="estimation-lemma" id="estimationLemma"></div>
+                        <div class="estimation-pos" id="estimationPOS">noun</div>
+                        <div class="estimation-translation" id="estimationTranslation"></div>
+                        <button class="estimation-reveal" id="estimationReveal" type="button" onclick="revealTranslation()">Check meaning</button>
+                    </div>
+                    <div class="estimation-buttons" id="estimationButtons" style="display: none;">
+                        <button class="estimation-btn know-btn" onclick="handleAnswer(true)">I knew it before</button>
+                        <button class="estimation-btn dont-know-btn" onclick="handleAnswer(false)">I didn't know</button>
+                    </div>
+                </div>
+                <div id="estimationResult" style="display: none;">
+                    <p style="text-align: center; color: var(--text-secondary); margin-bottom: 10px;">
+                        Your likely receptive vocabulary:
+                    </p>
+                    <div class="estimation-result-level" id="estimationResultLevel">1,800–2,400 words</div>
+                    <p style="text-align: center; color: var(--text-muted); margin-bottom: 25px; font-size: 14px;" id="estimationResultDesc">
+                        A short check gives a useful range rather than an exact score.
+                    </p>
+                    <button class="estimation-start-btn" id="useEstimatedLevelBtn">Use Suggested Level</button>
+                    <button class="estimation-retry-btn" id="retryEstimationBtn" onclick="retryEstimation()">Try Again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lyric Breakdown Modal -->
+    <div id="lyricBreakdownModal" class="modal hidden">
+        <div class="modal-content fullscreen-modal">
+            <div class="modal-header">
+                <h3>Lyric Breakdown</h3>
+                <button class="modal-close" id="closeLyricBreakdown">✕</button>
+            </div>
+            <div id="lyricBreakdownBody" class="lyric-breakdown-body"></div>
+        </div>
+    </div>
+
+    <!-- Keyboard Shortcuts Modal -->
+    <div id="keyboardShortcutsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="keyboardShortcutsTitle">
+        <div class="modal-content keyboard-shortcuts-content" style="max-width: 480px;">
+            <div class="modal-header">
+                <h3 id="keyboardShortcutsTitle">Keyboard Shortcuts</h3>
+                <button class="modal-close" id="closeKeyboardShortcutsModal" aria-label="Close shortcuts modal">✕</button>
+            </div>
+            <div class="keyboard-shortcuts-body">
+                <div class="shortcut-group">
+                    <span class="shortcut-group-title">Study & Navigation</span>
+                    <div class="shortcut-row">
+                        <span class="shortcut-desc">Flip flashcard</span>
+                        <kbd class="shortcut-kbd">Space</kbd>
+                    </div>
+                    <div class="shortcut-row">
+                        <span class="shortcut-desc">Previous / Next card</span>
+                        <div class="shortcut-kbd-group">
+                            <kbd class="shortcut-kbd">←</kbd>
+                            <kbd class="shortcut-kbd">→</kbd>
+                        </div>
+                    </div>
+                </div>
+                <div class="shortcut-group">
+                    <span class="shortcut-group-title">Card Review</span>
+                    <div class="shortcut-row">
+                        <span class="shortcut-desc">Got it / Mark known</span>
+                        <div class="shortcut-kbd-group">
+                            <kbd class="shortcut-kbd">Enter</kbd>
+                            <span class="shortcut-or">or</span>
+                            <kbd class="shortcut-kbd">C</kbd>
+                        </div>
+                    </div>
+                    <div class="shortcut-row">
+                        <span class="shortcut-desc">Again / Needs review</span>
+                        <div class="shortcut-kbd-group">
+                            <kbd class="shortcut-kbd">X</kbd>
+                            <span class="shortcut-or">or</span>
+                            <kbd class="shortcut-kbd">1</kbd>
+                        </div>
+                    </div>
+                </div>
+                <div class="shortcut-group">
+                    <span class="shortcut-group-title">Audio & Tools</span>
+                    <div class="shortcut-row">
+                        <span class="shortcut-desc">Pronounce headword</span>
+                        <kbd class="shortcut-kbd">A</kbd>
+                    </div>
+                    <div class="shortcut-row">
+                        <span class="shortcut-desc">Find a word</span>
+                        <kbd class="shortcut-kbd">F</kbd>
+                    </div>
+                    <div class="shortcut-row">
+                        <span class="shortcut-desc">Toggle shortcuts guide</span>
+                        <kbd class="shortcut-kbd">?</kbd>
+                    </div>
+                    <div class="shortcut-row">
+                        <span class="shortcut-desc">Close open modal</span>
+                        <kbd class="shortcut-kbd">Esc</kbd>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Word Popup (floating, positioned by JS) -->
+    <div id="wordPopup" class="word-popup hidden"></div>
+
+    <!-- Find Word Modal -->
+    <div id="findWordModal" class="modal hidden">
+        <div class="modal-content" style="max-width: 520px;">
+            <div class="modal-header">
+                <h3>Find a word</h3>
+                <button class="modal-close" id="closeFindWordModal">✕</button>
+            </div>
+            <div class="find-word-body">
+                <input
+                    type="text"
+                    id="findWordInput"
+                    class="find-word-input"
+                    placeholder="Type a word or lemma…"
+                    autocomplete="off"
+                    spellcheck="false"
+                />
+                <div class="find-word-filters" id="findWordFilters">
+                    <button type="button" class="find-word-filter-btn is-active" data-filter="all">All</button>
+                    <button type="button" class="find-word-filter-btn" data-filter="learned">Known</button>
+                    <button type="button" class="find-word-filter-btn" data-filter="review">Review</button>
+                    <button type="button" class="find-word-filter-btn" data-filter="unseen">Not seen</button>
+                </div>
+                <div id="findWordStatus" class="find-word-status"></div>
+                <div id="findWordResults" class="find-word-results"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Extra vocabulary explainer / confirm modal -->
+    <div id="extraScopeModal" class="modal hidden">
+        <div class="modal-content extra-scope-modal-content" style="max-width: 520px;">
+            <div class="modal-header">
+                <h3>Switch to Extra vocabulary?</h3>
+                <button class="modal-close" id="closeExtraScopeModal" aria-label="Close">✕</button>
+            </div>
+            <div class="extra-scope-body">
+                <p class="extra-scope-lead"><strong id="extraScopeArtistName">Extra</strong> is a second, supplementary set of vocabulary — separate from the Main deck you've been studying.</p>
+                <p>It collects the words that don't recur across the lyrics:</p>
+                <ul class="extra-scope-points">
+                    <li>Words that appear only once</li>
+                    <li>Loanwords and English code-switches</li>
+                    <li>Names, places, and slang</li>
+                </ul>
+                <p class="extra-scope-note">It's grouped by kind rather than by frequency, and it's best tackled once you've mostly finished Main. Your Main progress stays exactly where it is — you can switch back any time.</p>
+            </div>
+            <div class="extra-scope-actions">
+                <button type="button" class="extra-scope-cancel" id="cancelExtraScopeBtn">Stay on Main</button>
+                <button type="button" class="range-btn-new extra-scope-confirm" id="confirmExtraScopeBtn">Switch to Extra mode</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Modal -->
+    <div id="statsModal" class="modal hidden">
+        <div class="modal-content progress-modal-content">
+            <div class="modal-header">
+                <h3>Study progress<span id="statsSetLabel" style="margin-left: 8px; color: var(--text-muted); font-weight: normal;"></span></h3>
+                <button class="modal-close" id="closeStatsModal">✕</button>
+            </div>
+            <div class="stats-body active-set-progress-body">
+                <p class="active-set-progress-intro">Every card in this set is shown below. Expand one to see this session’s attempts and all card-history timestamps retained by Progress.</p>
+                <div id="activeSetProgressList" class="active-set-progress-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Per-song Lyrics source picker -->
+    <div id="songSetModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="songSetTitle">
+        <div class="modal-content song-set-modal-content">
+            <div class="modal-header">
+                <div>
+                    <span class="progress-modal-eyebrow">Lyrics source</span>
+                    <h3 id="songSetTitle">Choose songs</h3>
+                </div>
+                <button type="button" class="modal-close" id="closeSongSetModal" aria-label="Close song picker">✕</button>
+            </div>
+            <p id="songSetIntro" class="settings-data-intro">Cards and lyric examples will come from the songs you select.</p>
+            <div class="song-set-toolbar">
+                <input type="search" id="songSetSearch" placeholder="Search songs or artists" autocomplete="off">
+                <span id="songSetCount" aria-live="polite"></span>
+            </div>
+            <div class="song-set-bulk-actions">
+                <button type="button" id="selectAllSongsBtn">Select all</button>
+                <button type="button" id="clearAllSongsBtn">Clear all</button>
+            </div>
+            <div id="songSetList" class="song-set-list"></div>
+            <p id="songSetStatus" class="vocabulary-import-status" role="status" aria-live="polite"></p>
+            <div class="song-set-footer">
+                <button type="button" id="cancelSongSetBtn" class="secondary-btn">Cancel</button>
+                <button type="button" id="applySongSetBtn">Use selected songs</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Spotify playlist import: pick a playlist, match it against the songs
+         Fluency already has lyrics/vocabulary for, then build a deck from the
+         matches. -->
+    <div id="spotifyPlaylistModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="spotifyPlaylistTitle">
+        <div class="modal-content song-set-modal-content">
+            <div class="modal-header">
+                <div>
+                    <span class="progress-modal-eyebrow">Lyrics source</span>
+                    <h3 id="spotifyPlaylistTitle">Import a Spotify playlist</h3>
+                </div>
+                <button type="button" class="modal-close" id="closeSpotifyPlaylistModal" aria-label="Close playlist import">✕</button>
+            </div>
+            <p id="spotifyPlaylistIntro" class="settings-data-intro">Choose one of your playlists. Fluency will build a deck from whichever of its songs are already in the library.</p>
+            <div id="spotifyPlaylistList" class="song-set-list"></div>
+            <p id="spotifyPlaylistStatus" class="vocabulary-import-status" role="status" aria-live="polite"></p>
+            <div class="song-set-footer">
+                <button type="button" id="cancelSpotifyPlaylistBtn" class="secondary-btn">Cancel</button>
+                <button type="button" id="useSpotifyMatchesBtn" hidden>Build deck from matches</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Stats Modal (All-time stats for the current language) -->
+    <div id="totalStatsModal" class="modal hidden">
+        <div class="modal-content progress-modal-content total-progress-modal-content">
+            <div class="modal-header">
+                <div>
+                    <span class="progress-modal-eyebrow">All-time progress</span>
+                    <h3><span id="totalStatsLanguage">Spanish</span></h3>
+                </div>
+                <button class="modal-close" id="closeTotalStatsModal">✕</button>
+            </div>
+            <div class="stats-body total-progress-body">
+                <p class="progress-modal-explainer">Coverage weights common words more heavily, so it estimates how much real language you can understand—not merely how many cards you have seen.</p>
+                <div class="total-progress-hero">
+                    <span id="totalStatsCoverageLabel">Comprehension</span>
+                    <strong id="totalStatsCoverage">—</strong>
+                </div>
+                <div class="total-progress-grid">
+                    <div class="stat-row" id="totalStatsLinesRow"><span id="totalStatsLinesLabel">Full sentences:</span><span id="totalStatsLinesUnderstood">—</span></div>
+                    <div class="stat-row"><span>Words understood:</span><span id="totalStatsWords">—</span></div>
+                    <div class="stat-row"><span>Correct:</span><span id="totalWordsCorrect">0</span></div>
+                    <div class="stat-row"><span>Incorrect:</span><span id="totalWordsIncorrect">0</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal with Tabs -->
+    <div id="settingsModal" class="modal hidden product-modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+        <div class="modal-content settings-modal-content">
+            <div class="settings-tabs-header">
+                <div class="settings-title-block">
+                    <h2 id="settingsTitle">Settings</h2>
+                </div>
+                <div class="settings-header-actions">
+                    <label class="settings-search"><span class="visually-hidden">Find a setting</span><input id="settingsSearch" type="search" placeholder="Find a setting" autocomplete="off"></label>
+                    <button class="modal-close" id="closeSettingsModal" aria-label="Close settings">✕</button>
+                </div>
+            </div>
+            <nav class="settings-tabs" aria-label="Settings sections">
+                    <span class="settings-nav-label">Learning</span>
+                    <button class="settings-tab active" data-tab="study">Study</button>
+                    <button class="settings-tab" data-tab="review">Spaced Repetition</button>
+                    <button class="settings-tab" data-tab="vocabulary">Integrations &amp; Data</button>
+                    <span class="settings-nav-label">App</span>
+                    <button class="settings-tab" data-tab="appearance">Appearance</button>
+                    <button class="settings-tab" data-tab="account">Account</button>
+                    <button class="settings-tab" data-tab="about">About</button>
+                    <span class="settings-nav-label settings-nav-label--admin" id="settingsAdminLabel" hidden>Admin</span>
+                    <button class="settings-tab" data-tab="offline" id="storageTabBtn" hidden>Storage</button>
+                    <button class="settings-tab" data-tab="appData" id="appDataTabBtn" hidden>Developer</button>
+            </nav>
+            <!-- Settings tab content -->
+            <div class="settings-tab-content" id="studyTabContent">
+                <section class="settings-defaults-card" aria-labelledby="studyDefaultsTitle">
+                    <div class="settings-defaults-heading">
+                        <strong id="studyDefaultsTitle">Study preferences</strong>
+                        <span>Defaults for new sets</span>
+                    </div>
+                    <p class="settings-defaults-warning">
+                        These choices apply to new sets. A set already in progress keeps the choices it started with.
+                    </p>
+
+                    <!-- Fast Track Group -->
+                    <div class="settings-preference-group settings-preference-group--primary">
+                        <div class="settings-group-heading">
+                            <strong>Fast Track <span class="streamline-rec-badge">Recommended</span></strong>
+                            <span>Skip repeats and obvious words to learn faster</span>
+                        </div>
+                        <div class="settings-default-row">
+                            <span class="settings-row-label-block">
+                                <span class="settings-row-label">Group word forms
+                                    <button type="button" class="settings-info-btn" aria-label="Explain grouping word forms" aria-expanded="false">?</button>
+                                </span>
+                                <small class="settings-row-explanation" hidden>Collapses inflected forms (e.g. hablo, habló) onto one card for the base dictionary word, keeping all examples together.</small>
+                            </span>
+                            <div class="group-size-selector settings-toggle" role="group" aria-label="Default Merge Lemmas setting">
+                                <button type="button" class="group-size-btn global-study-default-btn selected" data-setting="mergeLemmas" data-value="off" aria-pressed="true">Off</button>
+                                <button type="button" class="group-size-btn global-study-default-btn" data-setting="mergeLemmas" data-value="on" aria-pressed="false">On</button>
+                            </div>
+                        </div>
+                        <div class="settings-default-row">
+                            <span class="settings-row-label-block">
+                                <span class="settings-row-label">Familiar cognates
+                                    <button type="button" class="settings-info-btn" aria-label="Explain cognate inclusion" aria-expanded="false">?</button>
+                                </span>
+                                <small class="settings-row-explanation" id="cognateSettingExplanation" hidden>Sets aside words whose meaning is already obvious from English.</small>
+                            </span>
+                            <div class="group-size-selector settings-toggle" role="group" aria-label="Default cognate inclusion setting">
+                                <button type="button" class="group-size-btn global-study-default-btn selected" data-setting="excludeCognates" data-value="off" aria-pressed="true">Include</button>
+                                <button type="button" class="group-size-btn global-study-default-btn" data-setting="excludeCognates" data-value="on" aria-pressed="false">Exclude</button>
+                            </div>
+                        </div>
+                        <!-- Cognate exclusion sensitivity -->
+                        <div class="settings-default-row" id="cognateSensitivityRow" style="display: none;">
+                            <span class="settings-row-label-block">
+                                <span class="settings-row-label">Filter sensitivity
+                                    <button type="button" class="settings-info-btn" id="cognateSensitivityInfoBtn"
+                                            aria-label="Explain cognate filter sensitivity" aria-expanded="false"
+                                            aria-controls="cognateSensitivityExplanation">?</button>
+                                </span>
+                                <small class="settings-row-explanation" id="cognateSensitivityExplanationText" hidden>Sets how similar to English a word must be before it is skipped: Loose skips only identical words; Strict skips looser look-alikes.</small>
+                            </span>
+                            <div id="cognateSensitivitySelector" class="group-size-selector settings-toggle">
+                                <button class="cognate-sens-btn group-size-btn" data-threshold="0.95" title="Only obvious cognates (e.g. animal, hotel)">Loose</button>
+                                <button class="cognate-sens-btn group-size-btn selected" data-threshold="0.85" title="Default cutoff">Default</button>
+                                <button class="cognate-sens-btn group-size-btn" data-threshold="0.75" title="Skip more cognate-like words">Strict</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Context & Practice Group -->
+                    <div class="settings-preference-group">
+                        <div class="settings-group-heading">
+                            <strong>Context &amp; Practice</strong>
+                            <span>Sentence drilling and attached phrases</span>
+                        </div>
+                        <div class="settings-default-row">
+                            <span class="settings-row-label-block">
+                                <span class="settings-row-label">Sentence examples
+                                    <button type="button" class="settings-info-btn" aria-label="Explain extra examples" aria-expanded="false">?</button>
+                                </span>
+                                <small class="settings-row-explanation" hidden>Adds a follow-up card with real sentences after each word to show how it is used in context.</small>
+                            </span>
+                            <div class="group-size-selector settings-toggle" role="group" aria-label="Extra examples setting">
+                                <button type="button" class="group-size-btn global-study-default-btn" data-setting="extraExamples" data-value="off" aria-pressed="false">Off</button>
+                                <button type="button" class="group-size-btn global-study-default-btn selected" data-setting="extraExamples" data-value="on" aria-pressed="true">On</button>
+                            </div>
+                        </div>
+                        <div class="settings-default-row">
+                            <span class="settings-row-label-block">
+                                <span class="settings-row-label">Practice phrases
+                                    <button type="button" class="settings-info-btn" aria-label="Explain phrases mode" aria-expanded="false">?</button>
+                                </span>
+                                <small class="settings-row-explanation" hidden>Drills idiomatic expressions and attached pronouns as their own cards following the base word.</small>
+                            </span>
+                            <div class="group-size-selector settings-toggle" role="group" aria-label="Phrases mode setting">
+                                <button type="button" class="group-size-btn global-study-default-btn" data-setting="phrasesMode" data-value="off" aria-pressed="false">Off</button>
+                                <button type="button" class="group-size-btn global-study-default-btn selected" data-setting="phrasesMode" data-value="on" aria-pressed="true">On</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Display & Audio Group -->
+                    <div class="settings-preference-group">
+                        <div class="settings-group-heading">
+                            <strong>Card Display &amp; Audio</strong>
+                            <span>How flashcards look, sound, and prompt you</span>
+                        </div>
+                        <div class="settings-default-row">
+                            <span class="settings-row-label-block">
+                                <span class="settings-row-label">Prompt side
+                                    <button type="button" class="settings-info-btn" aria-label="Explain card front" aria-expanded="false">?</button>
+                                </span>
+                                <small class="settings-row-explanation" hidden>Foreign word first tests recognition (reading/listening); English first tests recall (producing the word).</small>
+                            </span>
+                            <div class="group-size-selector settings-toggle" role="group" aria-label="Default card direction">
+                                <button type="button" class="group-size-btn global-study-default-btn selected" id="cardFrontTargetBtn" data-setting="directionFlipped" data-value="off" aria-pressed="true">Language</button>
+                                <button type="button" class="group-size-btn global-study-default-btn" data-setting="directionFlipped" data-value="on" aria-pressed="false">English</button>
+                            </div>
+                        </div>
+                        <div class="settings-default-row">
+                            <span class="settings-row-label-block">
+                                <span class="settings-row-label">Read answers aloud
+                                    <button type="button" class="settings-info-btn" aria-label="Explain automatic speech" aria-expanded="false">?</button>
+                                </span>
+                                <small class="settings-row-explanation" hidden>Automatically pronounces the foreign word aloud as each card is shown; speaker button remains available when off.</small>
+                            </span>
+                            <div class="group-size-selector settings-toggle" role="group" aria-label="Default automatic speech setting">
+                                <button type="button" class="group-size-btn global-study-default-btn" data-setting="speechEnabled" data-value="off" aria-pressed="false">Off</button>
+                                <button type="button" class="group-size-btn global-study-default-btn selected" data-setting="speechEnabled" data-value="on" aria-pressed="true">On</button>
+                            </div>
+                        </div>
+                        <div class="settings-default-row">
+                            <span class="settings-row-label-block">
+                                <span class="settings-row-label">Sense frequency format
+                                    <button type="button" class="settings-info-btn" aria-label="Explain sense frequency format" aria-expanded="false">?</button>
+                                </span>
+                                <small class="settings-row-explanation" hidden>Common/Rare groups word senses into intuitive familiarity categories (Common, Uncommon, Rare). Percentages % shows exact corpus occurrence shares.</small>
+                            </span>
+                            <div class="group-size-selector settings-toggle" id="senseProminenceSelector" role="group" aria-label="Sense frequency format">
+                                <button type="button" class="group-size-btn sense-prominence-btn selected" data-prominence="labels" aria-pressed="true">Common / Rare</button>
+                                <button type="button" class="group-size-btn sense-prominence-btn" data-prominence="percentages" aria-pressed="false">Percentages %</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <div class="settings-inline-explanation" id="cognateSensitivityExplanation" hidden>
+                    <strong>How sensitivity works</strong>
+                    <p><b>Loose</b> excludes only the most obvious look-alikes. <b>Default</b> balances confidence and coverage. <b>Strict</b> also excludes less certain cognate-like words, leaving a smaller study deck.</p>
+                </div>
+            </div>
+            <div class="settings-tab-content" id="reviewTabContent">
+                <p class="settings-section-intro">Configure how spaced repetition schedules cards for long-term memory.</p>
+                <section class="settings-feature-card review-settings-card" aria-labelledby="reviewSettingsTitle">
+                    <span class="settings-feature-icon" aria-hidden="true">↻</span>
+                    <div>
+                        <strong id="reviewSettingsTitle">Spaced Repetition</strong>
+                        <p>Recalled cards return on expanding intervals (1, 3, 7, 14, 30, 60, 120 days). Mistakes reset the interval so difficult words repeat sooner.</p>
+                    </div>
+                    <div class="settings-default-row settings-default-row--standalone">
+                        <span class="settings-row-label-block">
+                            <span class="settings-row-label">Enable spaced repetition</span>
+                            <small>When off, due cards stay in Known and only fresh mistakes enter Review.</small>
+                        </span>
+                        <div class="group-size-selector settings-toggle" role="group" aria-label="Spaced repetition setting">
+                            <button type="button" class="group-size-btn global-study-default-btn selected" data-setting="spacedRepetitionEnabled" data-value="off" aria-pressed="true">Off</button>
+                            <button type="button" class="group-size-btn global-study-default-btn" data-setting="spacedRepetitionEnabled" data-value="on" aria-pressed="false">On</button>
+                        </div>
+                    </div>
+                    <p class="settings-feature-note">Interval multipliers, daily limits, and review notifications will be configurable here.</p>
+                </section>
+            </div>
+            <div class="settings-tab-content" id="vocabularyTabContent">
+                <p class="settings-section-intro">Connect your favorite music and study tools, import external vocabulary, or export your mistake history.</p>
+                <section class="settings-feature-card" aria-labelledby="spotifyConnectionTitle">
+                    <span class="settings-feature-icon" id="spotifyConnectionIcon" aria-hidden="true">♫</span>
+                    <div>
+                        <strong id="spotifyConnectionTitle">Spotify</strong>
+                        <p>Stay connected so lyric playback just works, and so you can build a deck straight from one of your playlists.</p>
+                    </div>
+                    <button type="button" class="settings-feature-action" id="spotifyConnectBtn">Connect</button>
+                    <p id="spotifyConnectionStatus" class="settings-feature-note"></p>
+                </section>
+                <section class="settings-feature-card" aria-labelledby="vocabularySettingsTitle">
+                    <span class="settings-feature-icon" aria-hidden="true">Aa</span>
+                    <div>
+                        <strong id="vocabularySettingsTitle">Known vocabulary</strong>
+                        <p>Already know some of these words from another app or course? Upload your list so Fluency starts you further in — paste it or choose a text, CSV or TSV file. Matches exact word forms in your target language, previews every change first, and never overwrites a newer answer already saved here.</p>
+                    </div>
+                    <button type="button" class="settings-feature-action" id="openVocabularyImportBtn">Import words</button>
+                    <p id="vocabularyImportAvailability" class="settings-feature-note"></p>
+                </section>
+                <section class="settings-feature-card" aria-labelledby="mistakeExportTitle">
+                    <span class="settings-feature-icon" aria-hidden="true">↓</span>
+                    <div>
+                        <strong id="mistakeExportTitle">Export mistakes</strong>
+                        <p>Download every word you've ever gotten wrong here — how many times, when you were last wrong, and where it stands with the review scheduler — as a CSV you can take into another app.</p>
+                    </div>
+                    <button type="button" class="settings-feature-action" id="exportMistakesBtn">Download CSV</button>
+                    <p id="mistakeExportStatus" class="settings-feature-note" role="status" aria-live="polite"></p>
+                </section>
+                <section class="settings-feature-card" aria-labelledby="chatgptPromptTitle">
+                    <span class="settings-feature-icon" aria-hidden="true">💬</span>
+                    <div>
+                        <strong id="chatgptPromptTitle">Practice sentences from ChatGPT</strong>
+                        <p>Copies a prompt built from the words you keep getting wrong, and opens ChatGPT so you can paste it in — using your own ChatGPT account, not Fluency's.</p>
+                    </div>
+                    <button type="button" class="settings-feature-action" id="openChatGptPromptBtn">Copy prompt &amp; open ChatGPT</button>
+                    <p id="chatgptPromptStatus" class="settings-feature-note" role="status" aria-live="polite"></p>
+                    <textarea id="chatgptPromptFallback" class="vocabulary-import-text" rows="4" readonly hidden style="grid-column: 2 / -1;"></textarea>
+                </section>
+            </div>
+            <div class="settings-tab-content" id="appearanceTabContent">
+                <p class="settings-section-intro">Choose the appearance that feels most comfortable on this device.</p>
+                <section class="appearance-settings-card" aria-labelledby="appearanceSettingsTitle">
+                    <div class="appearance-settings-copy">
+                        <strong id="appearanceSettingsTitle">Colour theme</strong>
+                        <small>System changes automatically with this device.</small>
+                    </div>
+                    <div class="group-size-selector settings-toggle appearance-selector"
+                         role="radiogroup" aria-label="App appearance">
+                        <button type="button" class="group-size-btn theme-preference-btn selected"
+                                data-theme-preference="dark" role="radio" aria-checked="true" tabindex="0">Dark</button>
+                        <button type="button" class="group-size-btn theme-preference-btn"
+                                data-theme-preference="light" role="radio" aria-checked="false" tabindex="-1">Light</button>
+                        <button type="button" class="group-size-btn theme-preference-btn"
+                                data-theme-preference="system" role="radio" aria-checked="false" tabindex="-1">System</button>
+                    </div>
+                </section>
+            </div>
+            <!-- Account tab content -->
+            <div class="settings-tab-content" id="accountTabContent">
+                <p class="settings-section-intro">Manage the profile used to save progress on this device.</p>
+                <div class="stat-row">
+                    <span>Your profile</span>
+                    <span id="accountUserBadge" style="font-weight: 700;">GUEST</span>
+                </div>
+                <div class="stat-row" style="cursor: pointer;" id="logoutBtn">
+                    <span>Logout</span>
+                    <span style="color: var(--error);">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+            <div class="settings-tab-content" id="aboutTabContent">
+                <p class="settings-section-intro">Learn why Fluency is organised around frequency, context and finishable sets.</p>
+                <button type="button" class="settings-feature-card settings-feature-card--button" id="aboutProjectSettingsRow">
+                    <span class="settings-feature-icon" aria-hidden="true">F</span>
+                    <span><strong>About Fluency</strong><small>The thinking, data and design behind the project</small></span>
+                    <span class="settings-feature-arrow" aria-hidden="true">→</span>
+                </button>
+            </div>
+            <!-- Offline and synchronization tab content -->
+            <div class="settings-tab-content" id="offlineTabContent">
+                <p class="settings-section-intro">Manage lessons stored on this device and check whether your progress is safely synchronized.</p>
+                <section class="offline-panel" aria-labelledby="syncPanelTitle">
+                    <div class="offline-panel-heading">
+                        <div><strong id="syncPanelTitle">Progress sync</strong><small><span id="syncPendingCount">0</span> pending · Last synced <span id="syncLastSuccess">Not yet</span></small></div>
+                        <button type="button" id="syncNowBtn">Sync now</button>
+                    </div>
+                    <p id="syncLastError" class="offline-error" hidden></p>
+                    <details>
+                        <summary>Inspect queued changes</summary>
+                        <ul id="syncQueueList" class="sync-queue-list"><li class="sync-queue-empty">No pending changes.</li></ul>
+                    </details>
+                </section>
+                <section class="offline-panel" aria-labelledby="offlineContentTitle">
+                    <div class="offline-panel-heading">
+                        <div><strong id="offlineContentTitle">Offline content</strong><small>Available without a connection after download</small></div>
+                        <button type="button" id="downloadEverythingBtn">Download everything</button>
+                    </div>
+                    <div id="offlineContentList" class="offline-content-list" aria-live="polite"></div>
+                    <button type="button" id="cancelOfflineDownloadBtn" class="offline-cancel">Cancel current download</button>
+                    <p class="settings-data-intro">Storage estimates include source JSON, but browser cache bookkeeping and migration space can require more. Removing content never removes progress.</p>
+                </section>
+                <div class="stat-row" style="cursor: pointer; display: none;" id="clearLevelEstimateRow">
+                    <span>Level estimate: <span id="levelEstimateDisplay" style="color: var(--accent-primary);"></span></span>
+                    <span class="settings-row-action">Clear</span>
+                </div>
+                <div class="stat-row" style="cursor: pointer; display: none;" id="refreshSetToggle"
+                     title="Resets your saved progress for the words in the set you're currently studying. Other sets are not affected.">
+                    <span>Reset progress for current set</span>
+                    <span class="settings-row-action settings-row-action--warning">Reset</span>
+                </div>
+            </div>
+            <!-- JST-only app/data deployment audit -->
+            <div class="settings-tab-content" id="appDataTabContent">
+                <p class="settings-data-intro">Developer audit for the app build and vocabulary files loaded on this device.</p>
+                <div class="settings-default-row" id="wsdPublicationRow">
+                    <span class="settings-row-label-block">
+                        <span class="settings-row-label">Sense publication</span>
+                        <small class="settings-row-explanation">Choose whether diagnostics force a leaf sense or stop at the specificity supported by evidence.</small>
+                    </span>
+                    <div class="group-size-selector settings-toggle" role="group" aria-label="Sense confidence publication">
+                        <button type="button" class="group-size-btn wsd-publication-btn selected" data-wsd-publication="forced_leaf" aria-pressed="true" onclick="event.stopImmediatePropagation();if(window.selectWsdPublicationView){window.selectWsdPublicationView('forced_leaf',this)}else{const u=new URL(location.href);u.searchParams.set('wsdPublication','forced_leaf');location.assign(u)}">Forced leaf</button>
+                        <button type="button" class="group-size-btn wsd-publication-btn" data-wsd-publication="supported_specificity" aria-pressed="false" onclick="event.stopImmediatePropagation();if(window.selectWsdPublicationView){window.selectWsdPublicationView('supported_specificity',this)}else{const u=new URL(location.href);u.searchParams.set('wsdPublication','supported_specificity');location.assign(u)}">Supported</button>
+                    </div>
+                </div>
+                <!-- Filled on open from the vocab files' Last-Modified headers;
+                     an old date here means the service worker served cached data. -->
+                <div id="dataFreshnessFooter" class="data-freshness-footer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Surface-keyed Spanish Speech vocabulary import -->
+    <div id="vocabularyImportModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="vocabularyImportTitle">
+        <div class="modal-content vocabulary-import-modal-content">
+            <div class="modal-header">
+                <div>
+                    <span class="progress-modal-eyebrow">Account progress</span>
+                    <h3 id="vocabularyImportTitle">Import Spanish Speech vocabulary</h3>
+                </div>
+                <button type="button" class="modal-close" id="closeVocabularyImportModal" aria-label="Close vocabulary import">✕</button>
+            </div>
+            <p class="settings-data-intro">
+                Paste one exact Spanish surface form per line, or use UTF-8 CSV/TSV with
+                <code>surface</code> and optional <code>lemma</code>, <code>last_correct</code>,
+                and <code>last_incorrect</code> columns. Accents and punctuation distinguish cards;
+                lemma is accepted for interoperability but never used to match.
+            </p>
+            <label class="vocabulary-import-input-label" for="vocabularyImportText">Vocabulary list</label>
+            <textarea id="vocabularyImportText" class="vocabulary-import-text" rows="9"
+                      placeholder="hablo&#10;comieron&#10;sí" spellcheck="false"></textarea>
+            <div class="vocabulary-import-actions vocabulary-import-actions--source">
+                <label class="secondary-btn vocabulary-import-file-label" for="vocabularyImportFile">Choose .txt, .csv or .tsv</label>
+                <input type="file" id="vocabularyImportFile" accept=".txt,.csv,.tsv,text/plain,text/csv,text/tab-separated-values" hidden>
+                <button type="button" id="previewVocabularyImportBtn">Preview import</button>
+            </div>
+            <p id="vocabularyImportStatus" class="vocabulary-import-status" role="status" aria-live="polite"></p>
+            <section id="vocabularyImportPreview" class="vocabulary-import-preview" hidden aria-labelledby="vocabularyImportPreviewTitle">
+                <h4 id="vocabularyImportPreviewTitle">Preview</h4>
+                <div id="vocabularyImportSummary" class="vocabulary-import-summary"></div>
+                <details id="vocabularyImportSkipped" hidden>
+                    <summary>Review skipped rows</summary>
+                    <pre id="vocabularyImportSkippedText"></pre>
+                </details>
+                <p class="settings-data-intro">
+                    Existing newer answers, counts and review stages are preserved. A newer imported
+                    incorrect date stays in Review; rows without dates are marked correct now.
+                </p>
+                <div class="vocabulary-import-actions">
+                    <button type="button" id="confirmVocabularyImportBtn" disabled>Confirm import</button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="modal hidden">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="settings-tabs-header">
+                <div class="settings-tabs">
+                    <button class="settings-tab active" data-tab="helpAbout">Welcome</button>
+                    <button class="settings-tab" data-tab="helpStudy">How to Study</button>
+                </div>
+                <button class="modal-close" id="closeHelpModal">&#10005;</button>
+            </div>
+            <!-- About tab -->
+            <div class="settings-tab-content active" id="helpAboutTabContent">
+                <div class="help-content">
+                    <p><strong>What is this?</strong></p>
+                    <p>This app teaches vocabulary from either subtitle speech or an artist's lyrics, starting with the most useful words.</p>
+                    <p><strong>Why frequency order?</strong></p>
+                    <p>Language follows a power law: a small number of words make up the vast majority of speech. By learning the most frequent words first, you understand more lyrics faster.</p>
+                    <p><strong>How are percentages calculated?</strong></p>
+                    <p>The coverage percentage tells you what fraction of all words in the lyrics you'd recognize. For example, at 70% coverage you know enough words to understand roughly 70% of the words in any song. The remaining 30% are rarer words that appear less often.</p>
+                    <p><strong>How does it work?</strong></p>
+                    <p>Choose a language, then pick Everyday Speech or Music &amp; Lyrics. Select a level to learn bite-sized sets of the most common words. Any cards you miss stay in review so you can master them.</p>
+                    <p>The progress bar tracks your coverage based on the frequency of words you've learned — learning a common word contributes more to your coverage than a rare one.</p>
+                    <p style="margin-top: 18px;">
+                        <button class="help-more-info-btn" id="helpMoreInfoBtn" type="button">More about this project →</button>
+                    </p>
+                </div>
+            </div>
+            <!-- How to Study tab -->
+            <div class="settings-tab-content" id="helpStudyTabContent">
+                <div class="help-content">
+                    <p><strong>Picking a set:</strong> Choose Everyday Speech or Music &amp; Lyrics, then pick a level. Fluency automatically highlights your next unfinished set. Turn on Fast Track to focus on high-impact vocabulary and group related word forms together.</p>
+                    <p><strong>Learning and review:</strong> Learn new contains only cards you have not attempted. Incorrect or partly learned cards move into the selected level's separate Review queue. Correct recalls return after 1, 3, 7, 14, 30, 60, and 120 days; mistakes reset the schedule.</p>
+                    <p><strong>Continuing:</strong> If you leave an unfinished set, a Welcome back prompt offers to restore the exact card, order, card side, and settings next time you enter. Finishing the set clears it.</p>
+                    <p><strong>Tap card</strong> to flip and see the translation</p>
+                    <p><strong>Swipe right</strong> if you know the word &#10003;</p>
+                    <p><strong>Swipe left</strong> if you don't know it &#10007;</p>
+                    <p id="helpStudyLyricsLine"><strong>Lyric examples:</strong> tap the sentence to cycle manually, or use the small desktop play control to hear each sense label and its timestamped lyric lines in order.</p>
+                    <p><strong>Words with multiple meanings:</strong> A grouped row starts on its shared meaning; pick a colored sub-sense to narrow the examples. Its color links it to the matching example.</p>
+                    <p><strong>Card scrubber:</strong> The numbered strip shows your current position in the active set. Swipe it or choose a number to move directly to that card.</p>
+                    <p><strong>Study options:</strong> Use the button beside the scrubber for the main menu, card language order, automatic speech, progress, and study preferences.</p>
+                    <p><strong>At the end of each set</strong>, you'll see your accuracy and can repeat mistakes from that session or continue to the next unseen set.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/main.js?v=20260914d"></script>
+</body>
+</html>

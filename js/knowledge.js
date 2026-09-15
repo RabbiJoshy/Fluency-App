@@ -367,10 +367,26 @@ function getWordKnowledgeReviewInfo(parentWordId, surface = '') {
             if (state.lastSeen) relevantTimes.push(state.lastSeen);
         });
     }
+    let maxNeedfulnessScore = 0;
+    let urgencyTier = null;
+    if (needsReview) {
+        const reviewStates = allStates.filter(s => s.needsReview);
+        maxNeedfulnessScore = Math.max(0, ...reviewStates.map(s => s.needfulnessScore || 0));
+        if (reviewStates.some(s => s.urgencyTier === 'never_right')) {
+            urgencyTier = 'never_right';
+        } else if (reviewStates.some(s => s.urgencyTier === 'critical')) {
+            urgencyTier = 'critical';
+        } else {
+            urgencyTier = 'due';
+        }
+    }
+
     return {
         needsReview,
         reason: hasIncorrect ? 'incorrect' : (hasDue ? 'due' : (isPartial ? 'partial' : null)),
-        reviewAt: relevantTimes.length ? Math.min(...relevantTimes) : 0
+        reviewAt: relevantTimes.length ? Math.min(...relevantTimes) : 0,
+        urgencyTier,
+        needfulnessScore: maxNeedfulnessScore
     };
 }
 

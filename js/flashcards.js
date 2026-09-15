@@ -27,6 +27,8 @@ import {
     isWiktionaryGrammarNote,
     legacyObjectPronounProjection,
     projectWiktionaryGloss,
+    resolveMeaningDifferentiator,
+    scoreSenseMetadata,
     senseMetadataDisplay,
     senseMetadataHTML,
     senseMetadataItems,
@@ -36,7 +38,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=20260915c';
+} from './card-metadata-pills.js?v=20260915d';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -4787,11 +4789,15 @@ function updateCard({ announceHeadword = false } = {}) {
             } else if (m.isRareSense) {
                 g.hasAssignedEvidence = true;
             }
-            const rawText = String(getProductionEnglishCue(card, m) || m.meaning || '').trim();
+            const rawText = String(getProductionEnglishCue(card, m) || m.meaning || m.translation || '').trim();
             const text = senseSummaryText(projectWiktionaryGloss(m, rawText).display);
-            // Main senses only. Two rows sharing a translation are one meaning
-            // seen in two contexts; the contexts belong in the expanded view.
-            if (text && !g.senses.includes(text)) g.senses.push(text);
+            // Main senses only. Store as a strict normalized Set so no duplicate
+            // gloss strings are ever added.
+            if (text) {
+                const normKey = text.toLowerCase().replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '').trim();
+                const alreadyPresent = g.senses.some(s => s.toLowerCase().replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '').trim() === normKey);
+                if (!alreadyPresent) g.senses.push(text);
+            }
         });
 
         if (!card._expandedPos) {
@@ -4813,7 +4819,7 @@ function updateCard({ announceHeadword = false } = {}) {
         }
         const activeLemmaPosKey = lemmaPosGroupKeyForMeaning(currentMeaning);
         const activeGroupSenseRaw = String(
-            getProductionEnglishCue(card, currentMeaning) || currentMeaning?.meaning || ''
+            getProductionEnglishCue(card, currentMeaning) || currentMeaning?.meaning || currentMeaning?.translation || ''
         ).trim();
         const activeGroupSense = senseSummaryText(projectWiktionaryGloss(
             currentMeaning,
@@ -4845,8 +4851,17 @@ function updateCard({ announceHeadword = false } = {}) {
                 // order. A post-render measurement decides how many fit; +N
                 // is a genuine overflow indicator rather than a hard-coded
                 // substitute for every sense after the first.
-                const summarySenses = [summarySense, ...g.senses]
-                    .filter((sense, index, all) => sense && all.indexOf(sense) === index);
+                // Strict normalized Set deduplication ensures no duplicate sense ever renders.
+                const candidateSenses = [summarySense, ...g.senses];
+                const summarySenses = [];
+                const seenSummaryKeys = new Set();
+                for (const sense of candidateSenses) {
+                    if (!sense) continue;
+                    const normKey = sense.toLowerCase().replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '').trim();
+                    if (!normKey || seenSummaryKeys.has(normKey)) continue;
+                    seenSummaryKeys.add(normKey);
+                    summarySenses.push(sense);
+                }
                 const summaryHTML = summarySenses
                     .map(sense => `<span class="pos-summary-sense">${escapeCardText(sense)}</span>`)
                     .join('');
@@ -4918,7 +4933,7 @@ function updateCard({ announceHeadword = false } = {}) {
                         return;
                     }
                     const groupPrefix = `${m.pos}\u0000${m.headword || ''}\u0000`;
-                    const tk = `${groupPrefix}${m.meaning || ''}`;
+                    const tk = `${groupPrefix}${m.meaning || m.translation || ''}`;
                     transRawSize.set(tk, (transRawSize.get(tk) || 0) + 1);
                     if (m.context) {
                         const ck = `${groupPrefix}${m.context}`;
@@ -4930,7 +4945,7 @@ function updateCard({ announceHeadword = false } = {}) {
                 // on a single sense, which manifests as duplicate translations).
                 card.meanings.forEach((m, idx) => {
                     if (axisOf.get(idx) === 'special') return;
-                    const tk = m.meaning || '';
+                    const tk = m.meaning || m.translation || '';
                     const groupPrefix = `${m.pos}\u0000${m.headword || ''}\u0000`;
                     const ts = transRawSize.get(`${groupPrefix}${tk}`) || 0;
                     const ck = m.context || null;
@@ -5026,7 +5041,7 @@ function updateCard({ announceHeadword = false } = {}) {
             const cleanMweMeaning = isMWE ? mweMeaning.replace(/\s*\(elided\)/gi, '') : '';
             const rawDisplayMeaning = isMWE
                 ? (cleanMweMeaning || '<span style="font-style: italic; opacity: 0.5;">Translation unavailable</span>')
-                : (getProductionEnglishCue(card, m) || m.meaning);
+                : (getProductionEnglishCue(card, m) || m.meaning || m.translation || '');
             const displayMeaning = isMWE
                 ? rawDisplayMeaning
                 : displaySenseGloss(m, rawDisplayMeaning, isSelected);

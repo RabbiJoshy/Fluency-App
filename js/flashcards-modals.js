@@ -1134,7 +1134,21 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
         // later set was completed previously. In that case advance directly
         // to the next actionable level instead of hiding the continuation.
         finishBtn.dataset.action = '';
-        if (stats.nextRange) {
+        if (stats.isDailyReview) {
+            const remaining = Number(stats.remainingDueCount || 0);
+            if (remaining > 0) {
+                const batchSize = Math.min(stats.dailyReviewLimit || 100, remaining);
+                finishLabel.textContent = `Review Next ${batchSize}`;
+                finishIcon.textContent = '→';
+                finishBtn.dataset.action = 'next-daily-review';
+                finishBtn.classList.add('has-next-set');
+                finishBtn.style.display = '';
+                hasContinuation = true;
+            } else {
+                finishBtn.classList.remove('has-next-set');
+                finishBtn.style.display = 'none';
+            }
+        } else if (stats.nextRange) {
             finishLabel.textContent = `Start Set ${stats.nextSetNumber}`;
             finishIcon.textContent = '→';
             finishBtn.dataset.action = 'next-set';
@@ -1164,7 +1178,11 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
         autoContinue && hasContinuation && stats.studyMode === 'new' && !isLevelCompletion);
     messageEl.textContent = shouldAutoContinue
         ? `${finishLabel.textContent} automatically…`
-        : isLevelCompletion
+        : stats.isDailyReview
+            ? (stats.remainingDueCount > 0
+                ? `${stats.remainingDueCount} more word${stats.remainingDueCount === 1 ? '' : 's'} waiting in this review queue.`
+                : 'All caught up on this review queue!')
+            : isLevelCompletion
             ? 'Take the win, or keep the momentum going.'
             : stats.levelSetCount && stats.setNumber
                 ? `Set ${stats.setNumber} of ${stats.levelSetCount} finished.`

@@ -101,6 +101,39 @@ function getProgressState(progress, now = Date.now()) {
     const isDue = scheduleEnabled && !unresolved && nextReviewAt > 0 && nowTime >= nextReviewAt;
     needsReview = unresolved || isDue;
 
+    let urgencyTier = null;
+    let needfulnessScore = 0;
+    let overdueRatio = 0;
+
+    if (needsReview) {
+        if (correct === 0 && (wrong > 0 || lastWrong > 0 || unresolved)) {
+            // Level 1: Never right. Zero lifetime correct answers; maximum urgency.
+            urgencyTier = 'never_right';
+            needfulnessScore = 1000 + Math.min(200, wrong * 20);
+        } else if (unresolved) {
+            // Level 2a: Recent mistake on a previously known card.
+            urgencyTier = 'critical';
+            needfulnessScore = 700 + Math.min(200, wrong * 10);
+        } else if (isDue) {
+            const intervalMs = (intervalDays || 1) * SRS_DAY_MS;
+            const overdueMs = Math.max(0, nowTime - nextReviewAt);
+            overdueRatio = intervalMs > 0 ? (overdueMs / intervalMs) : 0;
+            if (overdueRatio >= 2.0) {
+                // Level 2b: Severely overdue (2x or more past interval). High decay risk.
+                urgencyTier = 'critical';
+                needfulnessScore = 500 + Math.min(190, overdueRatio * 25);
+            } else if (overdueRatio >= 1.0) {
+                // Level 3: Overdue by 1-2 intervals.
+                urgencyTier = 'due';
+                needfulnessScore = 200 + Math.min(290, overdueRatio * 100);
+            } else {
+                // Level 4: Due today.
+                urgencyTier = 'due';
+                needfulnessScore = 100 + Math.min(99, overdueRatio * 100);
+            }
+        }
+    }
+
     return {
         status: needsReview ? 'review' : 'learned',
         seen: true,
@@ -114,6 +147,9 @@ function getProgressState(progress, now = Date.now()) {
         intervalDays,
         nextReviewAt,
         reviewAt: unresolved ? (lastWrong || lastSeen) : (isDue ? nextReviewAt : 0),
+        urgencyTier,
+        needfulnessScore,
+        overdueRatio,
         lastCorrect,
         lastWrong,
         lastSeen
@@ -388,6 +424,10 @@ function updatePersonalCoverage(filteredVocab) {
     });
 }
 
+let _cachedDueSummary = null;
+let _cachedDueSummaryLang = null;
+let _cachedDueSummaryEpoch = -1;
+
 function getGlobalDueReviewWords(language = '') {
     const data = typeof progressData !== 'undefined' ? progressData : (window.progressData || {});
     if (!data) return [];
@@ -407,24 +447,47 @@ function getGlobalDueReviewWords(language = '') {
         const reviewInfo = typeof window.getWordKnowledgeReviewInfo === 'function'
             ? window.getWordKnowledgeReviewInfo(id, record.word)
             : null;
-        const state = typeof window.getProgressState === 'function'
+        const state = !reviewInfo && typeof window.getProgressState === 'function'
             ? window.getProgressState(record)
             : null;
 
-        const needsReview = (reviewInfo && reviewInfo.needsReview) || (state && state.needsReview);
+        const needsReview = reviewInfo ? reviewInfo.needsReview : (state && state.needsReview);
         if (needsReview) {
             seenSurfaces.add(surface);
             const reviewAt = reviewInfo?.reviewAt || state?.reviewAt || 0;
+            const urgencyTier = reviewInfo?.urgencyTier || state?.urgencyTier || 'due';
+            const needfulnessScore = reviewInfo?.needfulnessScore ?? state?.needfulnessScore ?? 100;
             dueWords.push({
                 id,
                 word: record.word,
                 record,
-                reviewAt
+                reviewAt,
+                urgencyTier,
+                needfulnessScore
             });
         }
     }
-    dueWords.sort((a, b) => (a.reviewAt || 0) - (b.reviewAt || 0));
+    dueWords.sort((a, b) => (b.needfulnessScore || 0) - (a.needfulnessScore || 0) || (a.reviewAt || 0) - (b.reviewAt || 0));
     return dueWords;
+}
+
+function getGlobalDueReviewSummary(language = '') {
+    const targetLang = String(language || window.selectedLanguage || '').trim().toLowerCase();
+    const currentEpoch = window.__progressEpoch || 0;
+    if (_cachedDueSummary && _cachedDueSummaryLang === targetLang && _cachedDueSummaryEpoch === currentEpoch) {
+        return _cachedDueSummary;
+    }
+    const all = getGlobalDueReviewWords(targetLang);
+    _cachedDueSummary = {
+        total: all.length,
+        neverRight: all.filter(w => w.urgencyTier === 'never_right'),
+        critical: all.filter(w => w.urgencyTier === 'critical'),
+        due: all.filter(w => w.urgencyTier === 'due' || w.urgencyTier === 'upcoming'),
+        all
+    };
+    _cachedDueSummaryLang = targetLang;
+    _cachedDueSummaryEpoch = currentEpoch;
+    return _cachedDueSummary;
 }
 
 window.getCurrentCoverageSnapshot = getCurrentCoverageSnapshot;
@@ -444,5 +507,6 @@ window.getProgressRecordIdsForCard = getProgressRecordIdsForCard;
 window.getMergedWordProgress = getMergedWordProgress;
 window.getWordProgressState = getWordProgressState;
 window.getGlobalDueReviewWords = getGlobalDueReviewWords;
+window.getGlobalDueReviewSummary = getGlobalDueReviewSummary;
 window.updateExclusionBars = updateExclusionBars;
 window.updatePersonalCoverage = updatePersonalCoverage;

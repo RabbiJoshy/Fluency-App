@@ -613,8 +613,98 @@ export function toggleSenseMetadataOverflow(event, control) {
     if (label) label.textContent = expand ? 'Hide details' : 'More details';
 }
 
+export function scoreSenseMetadata(item) {
+    if (!item) return 0;
+    const family = item.family;
+    const kind = item.kind;
+    const val = String(item.value || '').toLowerCase();
+
+    // Tier 1 (Score 100): Semantic Qualifier / Context
+    if (family === 'context' || kind === 'qualifier' || (family === 'source' && kind === 'qualifier')) {
+        return 100;
+    }
+    // Tier 2 (Score 80): Syntax / Grammatical Construction Frame & Privileged Companions
+    if (family === 'companion') {
+        return 80;
+    }
+    if (family === 'construction') {
+        if (['reflexive', 'refl.', 'pronominal', 'impersonal', 'copulative'].includes(val)
+            || item.kind === 'complement_form'
+            || item.kind === 'argument_type'
+            || item.kind === 'clause_context'
+            || item.kind === 'object_role') {
+            return 80;
+        }
+        // Plain transitive / intransitive tags alone are less informative when the gloss is identical
+        if (['transitive', 'intransitive', 'ditransitive'].includes(val)) {
+            return 50;
+        }
+        return 80;
+    }
+    // Tier 3 (Score 60): Domain and Register
+    if (family === 'domain') {
+        return 60;
+    }
+    if (family === 'register') {
+        if (SUPPORTING_REGISTER_VALUES.has(val)) return 20;
+        return 60;
+    }
+    // Sense defining grammar (e.g. reflexive=true, personal-infinitive, plural-only)
+    if (family === 'grammar' && isSenseDefiningGrammar(item)) {
+        return 50;
+    }
+    // Tier 4 (Score 10): Low-level inflection, technical grammar, routine source notes
+    return 10;
+}
+
+export function resolveMeaningDifferentiator(meaning, peerMeanings, gloss = '', cleanContextFn = null) {
+    if (!meaning) return null;
+    const rawContext = meaning.context || '';
+    const cleanedContext = cleanContextFn ? cleanContextFn(meaning, gloss) : rawContext;
+
+    // Check if cleaned context differs from all peers
+    const peerCleanedContexts = (peerMeanings || [])
+        .filter(p => p !== meaning)
+        .map(p => (cleanContextFn ? cleanContextFn(p, gloss) : (p.context || '')).trim().toLowerCase());
+
+    const myCtxNorm = cleanedContext.trim().toLowerCase();
+    if (myCtxNorm && !peerCleanedContexts.includes(myCtxNorm)) {
+        return {
+            score: 100,
+            type: 'context',
+            label: cleanedContext,
+        };
+    }
+
+    // Check metadata items
+    const items = senseMetadataItems(meaning);
+    const peerItems = (peerMeanings || [])
+        .filter(p => p !== meaning)
+        .flatMap(p => senseMetadataItems(p).map(it => `${it.family}\u0000${String(it.value || '').toLowerCase()}`));
+    const peerItemsSet = new Set(peerItems);
+
+    let bestDiff = null;
+    for (const item of items) {
+        const key = `${item.family}\u0000${String(item.value || '').toLowerCase()}`;
+        if (peerItemsSet.has(key)) continue; // Not unique to this meaning
+        const score = scoreSenseMetadata(item);
+        if (!bestDiff || score > bestDiff.score) {
+            const display = senseMetadataDisplay(item);
+            bestDiff = {
+                score,
+                type: item.family,
+                label: display.short,
+                item,
+            };
+        }
+    }
+    return bestDiff;
+}
+
 // Window attachments for inline HTML onclick handlers
 if (typeof window !== 'undefined') {
     window.toggleSenseMetadataChip = toggleSenseMetadataChip;
     window.toggleSenseMetadataOverflow = toggleSenseMetadataOverflow;
+    window.scoreSenseMetadata = scoreSenseMetadata;
+    window.resolveMeaningDifferentiator = resolveMeaningDifferentiator;
 }
