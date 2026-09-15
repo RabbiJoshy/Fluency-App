@@ -47,7 +47,7 @@
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260916i">
+    <link rel="modulepreload" href="js/main.js?v=20260916j">
     <link rel="modulepreload" href="js/theme.js?v=20260825ak">
     <link rel="modulepreload" href="js/state.js?v=20260914c">
     <link rel="modulepreload" href="js/data-contracts.js?v=20260825ak">
@@ -63,7 +63,7 @@
     <link rel="modulepreload" href="js/progress.js?v=20260916h">
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20260915a">
-    <link rel="modulepreload" href="js/ui.js?v=20260916h">
+    <link rel="modulepreload" href="js/ui.js?v=20260916j">
     <link rel="modulepreload" href="js/vocab.js?v=20260915d">
     <link rel="modulepreload" href="js/song-sets-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/song-sets.js?v=20260823ae">
@@ -1493,6 +1493,7 @@
             <nav class="settings-tabs" aria-label="Settings sections">
                     <span class="settings-nav-label">Learning</span>
                     <button class="settings-tab active" data-tab="study">Study</button>
+                    <button class="settings-tab" data-tab="lookup">Lookup</button>
                     <button class="settings-tab" data-tab="review">Spaced Repetition</button>
                     <button class="settings-tab" data-tab="vocabulary">Integrations &amp; Data</button>
                     <span class="settings-nav-label">App</span>
@@ -1562,100 +1563,58 @@
                         </div>
                     </div>
 
-                    <!-- Context & Practice Group -->
+                    <!-- After a correct card -->
                     <div class="settings-preference-group">
                         <div class="settings-group-heading">
-                            <strong>Lookup</strong>
-                            <span>Find a word in this language, including words not in the current set</span>
+                            <strong>After a correct card</strong>
+                            <span>Optional extras before the next word</span>
                         </div>
                         <div class="settings-default-row">
                             <span class="settings-row-label-block">
-                                <span class="settings-row-label">Find a word</span>
-                                <small class="settings-row-explanation">Shortcut: F while studying</small>
+                                <span class="settings-row-label">More sentences</span>
+                                <small class="settings-row-explanation">Show extra real sentences that use the word.</small>
                             </span>
-                            <button type="button" class="group-size-btn" id="settingsFindWordBtn">Open</button>
-                        </div>
-                        <div class="settings-default-row">
-                            <span class="settings-row-label-block">
-                                <span class="settings-row-label">Saved words</span>
-                                <small class="settings-row-explanation">Words you marked while reading a sentence</small>
-                            </span>
-                            <button type="button" class="group-size-btn" id="settingsSavedWordsBtn">Open</button>
-                        </div>
-                    </div>
-
-                    <!-- Context & Practice Group -->
-                    <div class="settings-preference-group">
-                        <div class="settings-group-heading">
-                            <strong>Context &amp; Practice</strong>
-                            <span>Sentence drilling and attached phrases</span>
-                        </div>
-                        <div class="settings-default-row">
-                            <span class="settings-row-label-block">
-                                <span class="settings-row-label">Sentence examples
-                                    <button type="button" class="settings-info-btn" aria-label="Explain extra examples" aria-expanded="false">?</button>
-                                </span>
-                                <small class="settings-row-explanation" hidden>Adds a follow-up card with real sentences after each word to show how it is used in context.</small>
-                            </span>
-                            <div class="group-size-selector settings-toggle" role="group" aria-label="Extra examples setting">
+                            <div class="group-size-selector settings-toggle" role="group" aria-label="Extra sentences after a correct card">
                                 <button type="button" class="group-size-btn global-study-default-btn" data-setting="extraExamples" data-value="off" aria-pressed="false">Off</button>
                                 <button type="button" class="group-size-btn global-study-default-btn selected" data-setting="extraExamples" data-value="on" aria-pressed="true">On</button>
                             </div>
                         </div>
                         <div class="settings-default-row">
                             <span class="settings-row-label-block">
-                                <span class="settings-row-label">Practice phrases
-                                    <button type="button" class="settings-info-btn" aria-label="Explain phrases mode" aria-expanded="false">?</button>
-                                </span>
-                                <small class="settings-row-explanation" hidden>Drills idiomatic expressions and attached pronouns as their own cards following the base word.</small>
+                                <span class="settings-row-label">Set phrases</span>
+                                <small class="settings-row-explanation">Practise common phrases that include the word.</small>
                             </span>
-                            <div class="group-size-selector settings-toggle" role="group" aria-label="Phrases mode setting">
+                            <div class="group-size-selector settings-toggle" role="group" aria-label="Phrase practice after a correct card">
                                 <button type="button" class="group-size-btn global-study-default-btn" data-setting="phrasesMode" data-value="off" aria-pressed="false">Off</button>
                                 <button type="button" class="group-size-btn global-study-default-btn selected" data-setting="phrasesMode" data-value="on" aria-pressed="true">On</button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Card Display & Audio Group -->
+                    <!-- Card front & speech -->
                     <div class="settings-preference-group">
                         <div class="settings-group-heading">
-                            <strong>Card Display &amp; Audio</strong>
-                            <span>How flashcards look, sound, and prompt you</span>
+                            <strong>How each card starts</strong>
+                            <span>What you see and hear first</span>
                         </div>
                         <div class="settings-default-row">
                             <span class="settings-row-label-block">
-                                <span class="settings-row-label">Prompt side
-                                    <button type="button" class="settings-info-btn" aria-label="Explain card front" aria-expanded="false">?</button>
-                                </span>
-                                <small class="settings-row-explanation" hidden>Foreign word first tests recognition (reading/listening); English first tests recall (producing the word).</small>
+                                <span class="settings-row-label">Show first</span>
+                                <small class="settings-row-explanation">The word first: guess the English. English first: say the word.</small>
                             </span>
-                            <div class="group-size-selector settings-toggle" role="group" aria-label="Default card direction">
+                            <div class="group-size-selector settings-toggle" role="group" aria-label="What appears on the front of the card">
                                 <button type="button" class="group-size-btn global-study-default-btn selected" id="cardFrontTargetBtn" data-setting="directionFlipped" data-value="off" aria-pressed="true">Language</button>
                                 <button type="button" class="group-size-btn global-study-default-btn" data-setting="directionFlipped" data-value="on" aria-pressed="false">English</button>
                             </div>
                         </div>
                         <div class="settings-default-row">
                             <span class="settings-row-label-block">
-                                <span class="settings-row-label">Read answers aloud
-                                    <button type="button" class="settings-info-btn" aria-label="Explain automatic speech" aria-expanded="false">?</button>
-                                </span>
-                                <small class="settings-row-explanation" hidden>Automatically pronounces the foreign word aloud as each card is shown; speaker button remains available when off.</small>
+                                <span class="settings-row-label">Speak the word</span>
+                                <small class="settings-row-explanation">Reads it out when a new card appears. You can still tap the speaker when this is off.</small>
                             </span>
-                            <div class="group-size-selector settings-toggle" role="group" aria-label="Default automatic speech setting">
+                            <div class="group-size-selector settings-toggle" role="group" aria-label="Speak the word when a card appears">
                                 <button type="button" class="group-size-btn global-study-default-btn" data-setting="speechEnabled" data-value="off" aria-pressed="false">Off</button>
                                 <button type="button" class="group-size-btn global-study-default-btn selected" data-setting="speechEnabled" data-value="on" aria-pressed="true">On</button>
-                            </div>
-                        </div>
-                        <div class="settings-default-row">
-                            <span class="settings-row-label-block">
-                                <span class="settings-row-label">Sense frequency format
-                                    <button type="button" class="settings-info-btn" aria-label="Explain sense frequency format" aria-expanded="false">?</button>
-                                </span>
-                                <small class="settings-row-explanation" hidden>Common/Rare groups word senses into intuitive familiarity categories (Common, Uncommon, Rare). Percentages % shows exact corpus occurrence shares.</small>
-                            </span>
-                            <div class="group-size-selector settings-toggle" id="senseProminenceSelector" role="group" aria-label="Sense frequency format">
-                                <button type="button" class="group-size-btn sense-prominence-btn selected" data-prominence="labels" aria-pressed="true">Common / Rare</button>
-                                <button type="button" class="group-size-btn sense-prominence-btn" data-prominence="percentages" aria-pressed="false">Percentages %</button>
                             </div>
                         </div>
                     </div>
@@ -1665,26 +1624,29 @@
                     <p><b>Loose</b> excludes only the most obvious look-alikes. <b>Default</b> balances confidence and coverage. <b>Strict</b> also excludes less certain cognate-like words, leaving a smaller study deck.</p>
                 </div>
             </div>
-            <div class="settings-tab-content" id="reviewTabContent">
-                <p class="settings-section-intro">Configure how spaced repetition schedules cards for long-term memory.</p>
-                <section class="settings-feature-card review-settings-card" aria-labelledby="reviewSettingsTitle">
-                    <span class="settings-feature-icon" aria-hidden="true">↻</span>
+            <div class="settings-tab-content" id="lookupTabContent">
+                <p class="settings-section-intro">Look up any word in this language, including words that are not in the set you are studying.</p>
+                <section class="settings-feature-card" aria-labelledby="lookupSettingsTitle">
+                    <span class="settings-feature-icon" aria-hidden="true">Aa</span>
                     <div>
-                        <strong id="reviewSettingsTitle">Spaced Repetition</strong>
-                        <p>Recalled cards return on expanding intervals (1, 3, 7, 14, 30, 60, 120 days). Mistakes reset the interval so difficult words repeat sooner.</p>
+                        <strong id="lookupSettingsTitle">Find a word</strong>
+                        <p>Opens a search over the full vocabulary for this language. Shortcut: F while studying.</p>
                     </div>
-                    <div class="settings-default-row settings-default-row--standalone">
-                        <span class="settings-row-label-block">
-                            <span class="settings-row-label">Enable spaced repetition</span>
-                            <small>When off, due cards stay in Known and only fresh mistakes enter Review.</small>
-                        </span>
-                        <div class="group-size-selector settings-toggle" role="group" aria-label="Spaced repetition setting">
-                            <button type="button" class="group-size-btn global-study-default-btn selected" data-setting="spacedRepetitionEnabled" data-value="off" aria-pressed="true">Off</button>
-                            <button type="button" class="group-size-btn global-study-default-btn" data-setting="spacedRepetitionEnabled" data-value="on" aria-pressed="false">On</button>
-                        </div>
-                    </div>
-                    <p class="settings-feature-note">Interval multipliers, daily limits, and review notifications will be configurable here.</p>
+                    <button type="button" class="settings-feature-action" id="settingsFindWordBtn">Open</button>
                 </section>
+            </div>
+            <div class="settings-tab-content" id="reviewTabContent">
+                <p class="settings-section-intro">Turn this on if you want words you already got right to come back later, so they stay in memory. A correct word returns after 1 day, then 3, 7, 14, 30, 60, and 120 days. A mistake starts that wait over.</p>
+                <p class="settings-section-intro">Leave it off if Review should only hold words you just got wrong. Known words stay put and are not brought back on a timer.</p>
+                <div class="settings-default-row settings-default-row--standalone">
+                    <span class="settings-row-label-block">
+                        <span class="settings-row-label">Spaced repetition</span>
+                    </span>
+                    <div class="group-size-selector settings-toggle" role="group" aria-label="Spaced repetition setting">
+                        <button type="button" class="group-size-btn global-study-default-btn selected" data-setting="spacedRepetitionEnabled" data-value="off" aria-pressed="true">Off</button>
+                        <button type="button" class="group-size-btn global-study-default-btn" data-setting="spacedRepetitionEnabled" data-value="on" aria-pressed="false">On</button>
+                    </div>
+                </div>
             </div>
             <div class="settings-tab-content" id="vocabularyTabContent">
                 <p class="settings-section-intro">Connect your favorite music and study tools, import external vocabulary, or export your mistake history.</p>
@@ -1696,6 +1658,14 @@
                     </div>
                     <button type="button" class="settings-feature-action" id="spotifyConnectBtn">Connect</button>
                     <p id="spotifyConnectionStatus" class="settings-feature-note"></p>
+                </section>
+                <section class="settings-feature-card" aria-labelledby="savedWordsSettingsTitle">
+                    <span class="settings-feature-icon" aria-hidden="true">★</span>
+                    <div>
+                        <strong id="savedWordsSettingsTitle">Saved words</strong>
+                        <p>Words you marked while reading a sentence. This is a personal list, not a study set.</p>
+                    </div>
+                    <button type="button" class="settings-feature-action" id="settingsSavedWordsBtn">Open</button>
                 </section>
                 <section class="settings-feature-card" aria-labelledby="vocabularySettingsTitle">
                     <span class="settings-feature-icon" aria-hidden="true">Aa</span>
@@ -1806,6 +1776,16 @@
             <!-- JST-only app/data deployment audit -->
             <div class="settings-tab-content" id="appDataTabContent">
                 <p class="settings-data-intro">Developer audit for the app build and vocabulary files loaded on this device.</p>
+                <div class="settings-default-row" id="senseProminenceRow">
+                    <span class="settings-row-label-block">
+                        <span class="settings-row-label">Sense frequency format</span>
+                        <small class="settings-row-explanation">Developer-only: Common / Uncommon / Rare versus exact corpus percentages on the card back.</small>
+                    </span>
+                    <div class="group-size-selector settings-toggle" id="senseProminenceSelector" role="group" aria-label="Sense frequency format">
+                        <button type="button" class="group-size-btn sense-prominence-btn selected" data-prominence="labels" aria-pressed="true">Common / Rare</button>
+                        <button type="button" class="group-size-btn sense-prominence-btn" data-prominence="percentages" aria-pressed="false">Percentages %</button>
+                    </div>
+                </div>
                 <div class="settings-default-row" id="wsdPublicationRow">
                     <span class="settings-row-label-block">
                         <span class="settings-row-label">Sense publication</span>
@@ -1912,6 +1892,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260916i"></script>
+    <script type="module" src="js/main.js?v=20260916j"></script>
 </body>
 </html>

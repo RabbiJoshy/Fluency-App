@@ -2875,6 +2875,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false } = {}) {
     const tabContentIds = {
         account: 'accountTabContent',
         study: 'studyTabContent',
+        lookup: 'lookupTabContent',
         review: 'reviewTabContent',
         vocabulary: 'vocabularyTabContent',
         appearance: 'appearanceTabContent',

@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v427"
+EXPECTED_CACHE_NAME = "flashcards-v428"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -335,6 +335,7 @@ class ProductShellTests(unittest.TestCase):
         ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
         study = html.index('data-tab="study"')
+        lookup = html.index('data-tab="lookup"')
         review = html.index('data-tab="review"')
         appearance = html.index('data-tab="appearance"')
         account = html.index('data-tab="account"')
@@ -346,14 +347,28 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('<span class="settings-nav-label">App</span>', html)
         self.assertIn("function setupSettingsSearch()", ui)
         self.assertIn("grid-template-columns: 168px minmax(0, 1fr)", css)
-        self.assertLess(study, review)
+        self.assertLess(study, lookup)
+        self.assertLess(lookup, review)
         self.assertLess(review, vocabulary)
         self.assertLess(vocabulary, appearance)
         self.assertLess(appearance, account)
         self.assertLess(account, about)
         self.assertLess(about, storage)
+        self.assertIn('id="lookupTabContent"', html)
+        self.assertIn('id="settingsFindWordBtn"', html[html.index('id="lookupTabContent"'):])
+        self.assertIn('id="settingsSavedWordsBtn"', html[html.index('id="vocabularyTabContent"'):html.index('id="appearanceTabContent"')])
+        self.assertNotIn('id="settingsFindWordBtn"', html[html.index('id="studyTabContent"'):html.index('id="lookupTabContent"')])
+        self.assertIn('id="senseProminenceSelector"', html[html.index('id="appDataTabContent"'):])
+        self.assertNotIn('id="senseProminenceSelector"', html[html.index('id="studyTabContent"'):html.index('id="lookupTabContent"')])
+        self.assertIn("Show first", html)
+        self.assertIn("Speak the word", html)
+        self.assertIn("The word first: guess the English. English first: say the word.", html)
+        self.assertIn("Reads it out when a new card appears.", html)
+        self.assertIn("Turn this on if you want words you already got right to come back later", html)
+        self.assertNotIn("Interval multipliers, daily limits, and review notifications will be configurable here.", html)
         self.assertIn('data-tab="offline" id="storageTabBtn" hidden', html)
         self.assertIn("showSettingsModalWithTab('study')", ui)
+        self.assertIn("lookup: 'lookupTabContent'", ui)
         self.assertIn("review: 'reviewTabContent'", ui)
         self.assertIn("appearance: 'appearanceTabContent'", ui)
         self.assertIn("vocabulary: 'vocabularyTabContent'", ui)
@@ -586,7 +601,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260914d", worker)
-        self.assertIn("/js/main.js?v=20260916i", worker)
+        self.assertIn("/js/main.js?v=20260916j", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -997,7 +1012,7 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
 
         self.assertIn("senseProminenceMode: 'labels',", state)
-        self.assertIn('id="senseProminenceSelector"', html)
+        self.assertGreater(html.index('id="senseProminenceSelector"'), html.index('id="appDataTabContent"'))
         self.assertIn('data-prominence="labels"', html)
         self.assertIn('data-prominence="percentages"', html)
         self.assertIn("function getSenseProminenceInfo(meaning)", flashcards)
