@@ -45,7 +45,7 @@ CONFIG = {
             ("opensubtitles", "raw/opensubtitles/opensubtitles-v2018-en-es-2016plus"),
         ],
         "wsd_profile": "es-v12-1",
-        "pos_batch_size": 64,
+        "pos_batch_size": 256,
         "release_id": "es-speech-v12-6000x10",
     },
     "cs": {
@@ -62,6 +62,12 @@ CONFIG = {
         "pos_batch_size": None,
         "release_id": "cs-speech-v12-4000x10",
     },
+}
+
+LANG_KEY_MAP = {
+    "pt": "portuguese",
+    "es": "spanish",
+    "cs": "czech",
 }
 
 
@@ -88,51 +94,66 @@ def deploy_language_release(workspace: Path, language: str, release_id: str) -> 
 
     # 1. Update dev_changelog.json
     changelog_path = REPO_ROOT / "app/config/dev_changelog.json"
-    changelog = json.loads(changelog_path.read_text())
+    changelog = json.loads(changelog_path.read_text(encoding="utf-8"))
+    card_count = "6,000" if language in ("pt", "es") else "4,000"
     entry = {
         "date": time.strftime("%Y-%m-%d"),
-        "title": f"Deploy {language.upper()} V12 deck ({release_id})",
-        "details": f"6,000/4,000 cards with 10 display examples using WSD v12-1 with difficulty stratification and tail gating."
+        "commit": "pending",
+        "summary": f"Deploy {language.upper()} V12 deck ({release_id})",
+        "detail": [
+            f"{card_count} cards with 10 display examples using WSD v12-1 with difficulty stratification and tail gating."
+        ],
     }
-    changelog.insert(0, entry)
-    changelog_path.write_text(json.dumps(changelog, indent=2, ensure_ascii=False) + "\n")
+    changelog.setdefault("entries", []).insert(0, entry)
+    changelog_text = json.dumps(changelog, indent=2, ensure_ascii=False) + "\n"
+    changelog_path.write_text(changelog_text, encoding="utf-8")
 
     # 2. Update config/config.json
     config_path = REPO_ROOT / "app/config/config.json"
-    cfg_data = json.loads(config_path.read_text())
-    cfg_data.setdefault("releases", {}).setdefault(language, {})["speech"] = f"releases/{language}/speech/{release_id}"
-    config_path.write_text(json.dumps(cfg_data, indent=2, ensure_ascii=False) + "\n")
+    cfg_data = json.loads(config_path.read_text(encoding="utf-8"))
+    lang_key = LANG_KEY_MAP[language]
+    lang_cfg = cfg_data.setdefault("languages", {}).setdefault(lang_key, {})
+    lang_cfg["indexPath"] = f"releases/{language}/speech/{release_id}/app/vocabulary.index.json"
+    lang_cfg["examplesPath"] = f"releases/{language}/speech/{release_id}/app/vocabulary.examples.json"
+    lang_cfg["studyStructurePath"] = f"releases/{language}/speech/{release_id}/app/study-structure.json"
+    lang_cfg["releaseManifestPath"] = f"releases/{language}/speech/{release_id}/manifest.json"
+    lang_cfg["releaseCompositionPath"] = f"releases/{language}/speech/{release_id}/composition.json"
+    config_text = json.dumps(cfg_data, indent=2, ensure_ascii=False) + "\n"
+    config_path.write_text(config_text, encoding="utf-8")
 
     # 3. Bump Service Worker cache version
     sw_path = REPO_ROOT / "app/service-worker.js"
-    sw_text = sw_path.read_text()
+    sw_text = sw_path.read_text(encoding="utf-8")
     match = re.search(r"CACHE_NAME = ['\"]flashcards-v(\d+)['\"]", sw_text)
     if match:
         old_v = int(match.group(1))
         new_v = old_v + 1
         sw_text = sw_text.replace(f"flashcards-v{old_v}", f"flashcards-v{new_v}")
-        sw_path.write_text(sw_text)
+        sw_path.write_text(sw_text, encoding="utf-8")
         print(f"Bumped service worker cache to flashcards-v{new_v}")
 
     # 4. Sync files to gh-pages branch
     # Create / update release files on gh-pages without deck.json (>100MB)
     run_cmd(["git", "checkout", "gh-pages"], cwd=REPO_ROOT)
     run_cmd(["git", "pull", "--rebase", "origin", "gh-pages"], cwd=REPO_ROOT)
-    
+
     # Target release folder in gh-pages
     target_rel = REPO_ROOT / "releases" / language / "speech" / release_id
     target_rel.mkdir(parents=True, exist_ok=True)
-    
+
     # Rsync excluding deck.json
     run_cmd([
         "rsync", "-av", "--exclude=deck.json",
         f"{rel_dir}/", f"{target_rel}/"
     ], cwd=REPO_ROOT)
-    
-    # Sync app config & sw
-    run_cmd(["cp", str(changelog_path), str(REPO_ROOT / "app/config/dev_changelog.json")], cwd=REPO_ROOT)
-    run_cmd(["cp", str(config_path), str(REPO_ROOT / "app/config/config.json")], cwd=REPO_ROOT)
-    run_cmd(["cp", str(sw_path), str(REPO_ROOT / "app/service-worker.js")], cwd=REPO_ROOT)
+
+    # Sync config, sw, and app assets to gh-pages root
+    (REPO_ROOT / "config/dev_changelog.json").write_text(changelog_text, encoding="utf-8")
+    (REPO_ROOT / "config/config.json").write_text(config_text, encoding="utf-8")
+    (REPO_ROOT / "service-worker.js").write_text(sw_text, encoding="utf-8")
+    run_cmd(["rsync", "-av", f"{REPO_ROOT / 'app/js'}/", f"{REPO_ROOT / 'js'}/"], cwd=REPO_ROOT)
+    run_cmd(["rsync", "-av", f"{REPO_ROOT / 'app/css'}/", f"{REPO_ROOT / 'css'}/"], cwd=REPO_ROOT)
+    run_cmd(["cp", str(REPO_ROOT / "app/index.html"), str(REPO_ROOT / "index.html")], cwd=REPO_ROOT)
 
     run_cmd(["git", "add", "."], cwd=REPO_ROOT)
     run_cmd(["git", "commit", "-m", f"Deploy: {language.upper()} V12 deck ({release_id})"], cwd=REPO_ROOT)
@@ -140,7 +161,7 @@ def deploy_language_release(workspace: Path, language: str, release_id: str) -> 
 
     # Return to main branch and commit config updates
     run_cmd(["git", "checkout", "main"], cwd=REPO_ROOT)
-    run_cmd(["git", "add", "."], cwd=REPO_ROOT)
+    run_cmd(["git", "add", "app/config/dev_changelog.json", "app/config/config.json", "app/service-worker.js"], cwd=REPO_ROOT)
     run_cmd(["git", "commit", "-m", f"Update config and changelog for {language.upper()} V12 release ({release_id})"], cwd=REPO_ROOT)
     run_cmd(["git", "push", "origin", "main"], cwd=REPO_ROOT)
     print(f"Successfully deployed {release_id} to gh-pages and synchronized main!")
