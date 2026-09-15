@@ -44,7 +44,11 @@ def load_pinned(pin: str, *, model: Any | None = None) -> Any:
 
     import spacy
 
-    spacy.prefer_gpu()
+    if hasattr(spacy, "prefer_gpu"):
+        try:
+            spacy.prefer_gpu()
+        except Exception:
+            pass
     model = spacy.load(name)
     actual = str((getattr(model, "meta", None) or {}).get("version") or "")
     if actual != version:
