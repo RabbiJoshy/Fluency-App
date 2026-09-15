@@ -58,6 +58,7 @@ PROVENANCE_LABEL = {
 }
 
 
+KEEP_VERDICT = "keep"
 ALIGNMENT_BAND = 0.05
 
 
@@ -112,6 +113,11 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--workspace", type=Path, required=True)
     ap.add_argument("--language", required=True)
+    ap.add_argument("--supply-only", action="store_true",
+                    help="write this run's supply document and leave the ledger "
+                         "alone. Use it for a partial run -- a probe, or a deck "
+                         "smaller than the full inventory -- so a narrow run can "
+                         "never thin the language's ledger.")
     ap.add_argument("--run-id", action="append", default=None,
                     help="explicit run, as <lang>=<run-id>. Prefer this over LATEST_V11, which tracks whatever ran last -- small probe runs and the full-deck run share the marker, so following it can build a 10,000-surface ledger whose supply covers 3,000.")
     ap.add_argument("--out", type=Path)
@@ -290,13 +296,51 @@ def main() -> int:
     out = args.out or ledger_write_path(ws, lang)
     out.parent.mkdir(parents=True, exist_ok=True)
     counts = collections.Counter(s["verdict"] for s in surfaces.values())
+    run_id = run.name if run is not None else None
+    covered = sum(1 for s in surfaces.values() if s.get("supply"))
+    keep = sum(1 for s in surfaces.values() if s["verdict"] == KEEP_VERDICT)
+
+    # The ledger is two documents sharing a filename. The durable half --
+    # verdict, reason codes, tags, lemma -- is folded from events and belongs to
+    # the language. The supply half is derived from one run's pools and belongs
+    # to that run. Writing both into one file meant materialising against a
+    # 6,000-card run overwrote a 10,000-card ledger, and the durable half took
+    # collateral damage from a decision that only concerned the run half.
+    #
+    # Supply is now also written per run, so any run's supply can be restored
+    # without re-conditioning. The inline copy stays for readers that expect it.
+    if run_id:
+        supply_dir = out.parent / "supply"
+        supply_dir.mkdir(parents=True, exist_ok=True)
+        (supply_dir / f"{run_id}.json").write_text(json.dumps({
+            "supply_version": "surface-supply/v1",
+            "language": lang,
+            "run_id": run_id,
+            "surfaces_covered": covered,
+            "supply": {k: v["supply"] for k, v in surfaces.items() if v.get("supply")},
+        }, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+
+    if args.supply_only:
+        print(f"{lang}: supply only, run {run_id}, {covered:,} surfaces covered. "
+              f"Ledger left unchanged.")
+        return 0
+
     out.write_text(json.dumps({
         "ledger_version": LEDGER_VERSION,
         "language": lang,
+        # Which run the supply came from, and how much of the deck it covers.
+        # A ledger whose supply covers less than it keeps is thin -- readable at
+        # a glance instead of discovered downstream by an empty card.
+        "supply_run_id": run_id,
+        "supply_coverage": {"keep": keep, "with_supply": covered,
+                            "complete": covered >= keep},
         "derived_from": {"events": len(events), "surfaces": len(surfaces)},
         "summary": dict(counts),
         "surfaces": surfaces,
     }, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if covered < keep:
+        print(f"  WARNING: supply covers {covered:,} of {keep:,} keep surfaces. "
+              f"{keep - covered:,} cards would reach WSD with no candidates.")
     print(f"{lang}: {len(surfaces):,} surfaces from {len(events):,} events -> {dict(counts)}")
     print(f"  with a lemma: {sum(1 for s in surfaces.values() if s['lemmas']):,}")
     have = [s["supply"] for s in surfaces.values() if s.get("supply")]
