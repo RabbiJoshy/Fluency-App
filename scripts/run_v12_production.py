@@ -11,6 +11,7 @@ import argparse
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -175,6 +176,7 @@ def deploy_language_release(workspace: Path, language: str, release_id: str) -> 
 
     # Return to main branch
     run_cmd(["git", "checkout", "main"], cwd=REPO_ROOT)
+    run_cmd(["git", "checkout", "HEAD", "--", "app"], cwd=REPO_ROOT)
     print(f"Successfully deployed {release_id} to gh-pages and synchronized main!")
 
 
