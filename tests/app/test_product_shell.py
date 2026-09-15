@@ -82,15 +82,15 @@ class ProductShellTests(unittest.TestCase):
         self.assertEqual(config["languages"]["portuguese_brazilian"]["speechLang"], "pt-BR")
         self.assertEqual(
             config["languages"]["spanish"]["studyStructurePath"],
-            "releases/es/speech/es-speech-v11-3000x10/app/study-structure.json",
+            "releases/es/speech/es-speech-v12-6000x10/app/study-structure.json",
         )
         self.assertEqual(
             config["languages"]["spanish"]["releaseManifestPath"],
-            "releases/es/speech/es-speech-v11-3000x10/manifest.json",
+            "releases/es/speech/es-speech-v12-6000x10/manifest.json",
         )
         self.assertEqual(
             config["languages"]["spanish"]["releaseCompositionPath"],
-            "releases/es/speech/es-speech-v11-3000x10/composition.json",
+            "releases/es/speech/es-speech-v12-6000x10/composition.json",
         )
         for legacy_path in (
             "conjugatedEnglishPath",
