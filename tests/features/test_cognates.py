@@ -25,6 +25,7 @@ from fluency.features.cognates import (
     form_score,
     gloss_alternatives,
     gloss_tokens,
+    jaro_winkler_similarity,
     live_glosses,
     load_policy,
     meaning_score,
@@ -120,6 +121,17 @@ class FormTests(unittest.TestCase):
     def test_form_takes_the_better_of_raw_and_skeleton(self) -> None:
         # An identical borrowing needs no rewriting and must not be harmed by it.
         self.assertEqual(form_score("telefon", "telefon", self.policy), 1.0)
+
+    def test_jaro_winkler_rewards_stem_matches(self) -> None:
+        # Standard Levenshtein treats suffixes equally with roots; Jaro-Winkler
+        # rewards common prefixes so inflected verbs score higher.
+        self.assertGreater(jaro_winkler_similarity("comunicar", "communicate"), 0.88)
+        self.assertGreater(jaro_winkler_similarity("abandonar", "abandon"), 0.90)
+
+    def test_spanish_inflections_score_strongly_on_form(self) -> None:
+        es_policy = load_policy(CONFIG_ROOT, "es", "en")
+        self.assertGreater(form_score("abandonar", "abandon", es_policy), 0.90)
+        self.assertGreater(form_score("comunicar", "communicate", es_policy), 0.90)
 
 
 class MeaningTests(unittest.TestCase):

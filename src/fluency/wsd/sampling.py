@@ -96,6 +96,7 @@ def select_occurrences(
     *,
     card_id: str,
     ineligible: AbstractSet[str] | None = None,
+    preferred_order: Sequence[str] | None = None,
 ) -> SurfaceSelection:
     """Deterministically choose which occurrences reach WSD for one card.
 
@@ -108,7 +109,28 @@ def select_occurrences(
     holds 40 eligible candidates a card against the 10 a card shows. They are
     reported as overflow, which is already the channel for "harvested, not
     evaluated".
+
+    `preferred_order` names the exact sentence order supplied by the surface
+    ledger -- taking alignment bands ahead of raw score, and passing an empty
+    sequence for excluded surfaces so their sentences are entirely withheld.
     """
+
+    if preferred_order is not None:
+        candidates_by_id = {str(item["sentence_id"]): item for item in candidates}
+        eligible_items = [
+            candidates_by_id[sid]
+            for sid in preferred_order
+            if sid in candidates_by_id and (not ineligible or sid not in ineligible)
+        ]
+        chosen = eligible_items[: policy.cap_per_surface]
+        chosen_ids = {str(item["sentence_id"]) for item in chosen}
+        # Every occurrence not chosen is reported as overflow to maintain complete accounting
+        rest = [item for item in candidates if str(item["sentence_id"]) not in chosen_ids]
+        return SurfaceSelection(
+            card_id=card_id,
+            selected=tuple(str(item["sentence_id"]) for item in chosen),
+            overflow=tuple(str(item["sentence_id"]) for item in rest),
+        )
 
     ordered = sorted(candidates, key=_rank_key)
     if ineligible:

@@ -1,8 +1,8 @@
 {
   "profile_version": "speech-pipeline-profile/v1",
-  "profile_id": "pt_speech_v11_10000x10",
-  "language": "pt",
-  "locale": "pt-PT",
+  "profile_id": "cs_speech_v11_3000x10",
+  "language": "cs",
+  "locale": "cs-CZ",
   "mode": "speech",
   "identity": {
     "unit_type": "surface",
@@ -16,23 +16,24 @@
     "fallback_policy": "none"
   },
   "scope": {
-    "surface_limit": 10000,
+    "surface_limit": 3000,
     "shortfall_policy": "publish_explicit",
     "display_examples_per_card": 10,
-    "note": "Ten examples for every surface, which is the shape the deck is heading for. The harvest keeps 40 at the tail and WSD scores 20, so selection chooses ten from twenty rather than ten from ten."
+    "note": "A 3,000-card deck showing 10 examples each, evaluating WSD v11-1 with execution cap 30."
   },
   "inventory": {
     "source_adapter": "published-surface-frequency-list/v1",
-    "language_policy": "pt-v1",
-    "source_edition": "FrequencyWords OpenSubtitles 2018 pt 50k (European)",
+    "language_policy": "cs-v1",
+    "source_edition": "FrequencyWords OpenSubtitles 2018 cs, filtered: frequencywords-cs-filtered-2026-09-13",
     "frequency_measure": "surface_token_occurrences",
     "output_schema": "surface-inventory/v1",
     "identity_unit": "surface",
-    "lemma_role": "excluded"
+    "lemma_role": "excluded",
+    "source_note": "Counts come from subtitles because the app teaches speech and the harvest reads subtitles; CNK SYN2015 is written Czech and ranks newspaper vocabulary first. CNK is not discarded -- it corroborates every surface, supplies the capitalisation evidence that removes proper nouns, and enriches lemma/POS afterwards via svk-lookup at 99.9% coverage. See the snapshot's snapshot.json."
   },
   "sense_menu": {
     "source_adapter": "wiktionary-sense-menu/v1",
-    "language_policy": "pt-v1",
+    "language_policy": "cs-v1",
     "source_edition": "enwiktionary",
     "gloss_language": "en",
     "snapshot_id": null,
@@ -42,7 +43,7 @@
   },
   "harvest": {
     "shared_policy": "speech-v1",
-    "language_policy": "pt-v1",
+    "language_policy": "cs-v1",
     "source_policy": "explicit_union",
     "sources": [
       "tatoeba",
@@ -56,18 +57,13 @@
       {
         "through_rank": 3000,
         "budget": 50
-      },
-      {
-        "through_rank": 10000,
-        "budget": 40
       }
     ],
+    "source_note": "Tatoeba first, OpenSubtitles for the tail.",
     "source_share": {
       "tatoeba": 0.6,
       "opensubtitles": 0.4
-    },
-    "source_note": "Fresh Tatoeba + OpenSubtitles. pt v10-2000x3 reads opensubtitles exclusively; this deck matches the audited policy.",
-    "budget_note": "Tail raised from 30 to 40. At 30 the budget was cutting exactly at the measured mean pool of 29, so it was the binding constraint rather than the corpus; the English-side form gates then remove another 1-2%. Retaining more costs harvest time and disk only -- what reaches WSD is execution_cap_per_card. This is the number that cannot be raised later without harvesting again."
+    }
   },
   "stage_order": [
     "inventory",
@@ -80,17 +76,16 @@
   "wsd": {
     "strategy": "language-adapted-closed-menu/v1",
     "shared_profile": "closed-menu-provider-prior-v1",
-    "language_profile": "pt-v1",
-    "model_profile": "pt-v11-1",
+    "language_profile": "cs-v1",
+    "model_profile": "cs-v11-1",
     "require_model_pins": true,
     "execution_status": "ready",
     "model_revisions": {
-      "gloss.model_revision": "gemini-embedding-001",
-      "occurrence_pos.model_revision": "pt_core_news_lg@3.8.0"
+      "gloss.model_revision": "gemini-embedding-001"
     },
-    "max_wsd_units_per_run": 310000,
     "execution_cap_per_card": 30,
-    "max_wsd_units_per_run_note": "10,000 surfaces x execution cap 30 = 300,000 units, plus margin. The cap was 10 and the display count was 10, which meant WSD scored exactly the ten sentences the easiness ranker already picked and selection had no choice to make. Thirty is what gives a translation-quality filter somewhere to reject into."
+    "max_wsd_units_per_run": 100000,
+    "max_wsd_units_per_run_note": "3,000 surfaces x execution cap 30 = 90,000 units, plus margin."
   },
   "release": {
     "activation": "manual",

@@ -379,6 +379,19 @@ class SpanishV5CandidatePolicy:
                     }
                     if adp_ids & keep_ids:
                         keep_ids &= adp_ids
+            elif surface_lower == "si":
+                sebe_ids = {
+                    a.menu_analysis_id for a in analyses if a.headword == "sebe" or str(a.part_of_speech).upper() in {"PRON"}
+                }
+                if sebe_ids & keep_ids:
+                    keep_ids &= sebe_ids
+            elif surface_lower == "je":
+                if re.search(r"\b(to\s+je|je\s+to|co\s+je|kde\s+je|kdo\s+je|jak\s+je|tam\s+je|tady\s+je|kter[ýáé]\s+je)\b", sentence, re.IGNORECASE):
+                    byt_ids = {
+                        a.menu_analysis_id for a in analyses if a.headword == "být" or str(a.part_of_speech).upper() in {"VERB"}
+                    }
+                    if byt_ids & keep_ids:
+                        keep_ids &= byt_ids
 
         structurally_kept = tuple(
             analysis for analysis in analyses if analysis.menu_analysis_id in keep_ids

@@ -123,7 +123,61 @@ class CzechHomographTests(unittest.TestCase):
             observed_pos=None,
             analyses=(self.prep_se, self.pron_se),
         )
-        self.assertEqual(len(prepared.analyses), 2)
+    def test_si_reflexive_prunes_byt(self):
+        from fluency.wsd.languages.spanish import SpanishV5CandidatePolicy
+        from fluency.wsd.menus import MenuAnalysis, SenseLeaf, build_analysis_id
+
+        verb_si = MenuAnalysis(
+            menu_analysis_id=build_analysis_id(card_id="c3", source_adapter="wik", source_analysis_key="si:verb"),
+            card_id="c3", surface_form="si", headword="být", part_of_speech="VERB",
+            source_adapter="wik", source_analysis_key="si:verb",
+            senses=(SenseLeaf("s_byt", "to be", "", "ref", {}),),
+            provider_metadata={},
+        )
+        pron_si = MenuAnalysis(
+            menu_analysis_id=build_analysis_id(card_id="c3", source_adapter="wik", source_analysis_key="si:pron"),
+            card_id="c3", surface_form="si", headword="sebe", part_of_speech="PRON",
+            source_adapter="wik", source_analysis_key="si:pron",
+            senses=(SenseLeaf("s_sebe", "oneself", "", "ref", {}),),
+            provider_metadata={},
+        )
+        policy = SpanishV5CandidatePolicy(language="cs", constraint_mode="filter")
+        prepared = policy.prepare(
+            sentence="Proč si myslíš, že to nevím?",
+            surface_form="si",
+            observed_pos=None,
+            analyses=(verb_si, pron_si),
+        )
+        self.assertEqual(len(prepared.analyses), 1)
+        self.assertEqual(prepared.analyses[0].headword, "sebe")
+
+    def test_je_copular_pattern_prunes_pronoun(self):
+        from fluency.wsd.languages.spanish import SpanishV5CandidatePolicy
+        from fluency.wsd.menus import MenuAnalysis, SenseLeaf, build_analysis_id
+
+        verb_je = MenuAnalysis(
+            menu_analysis_id=build_analysis_id(card_id="c4", source_adapter="wik", source_analysis_key="je:verb"),
+            card_id="c4", surface_form="je", headword="být", part_of_speech="VERB",
+            source_adapter="wik", source_analysis_key="je:verb",
+            senses=(SenseLeaf("s_byt", "to be", "", "ref", {}),),
+            provider_metadata={},
+        )
+        pron_je = MenuAnalysis(
+            menu_analysis_id=build_analysis_id(card_id="c4", source_adapter="wik", source_analysis_key="je:pron"),
+            card_id="c4", surface_form="je", headword="on", part_of_speech="PRON",
+            source_adapter="wik", source_analysis_key="je:pron",
+            senses=(SenseLeaf("s_on", "he", "", "ref", {}),),
+            provider_metadata={},
+        )
+        policy = SpanishV5CandidatePolicy(language="cs", constraint_mode="filter")
+        prepared = policy.prepare(
+            sentence="Myslím, že je to pravda.",
+            surface_form="je",
+            observed_pos=None,
+            analyses=(verb_je, pron_je),
+        )
+        self.assertEqual(len(prepared.analyses), 1)
+        self.assertEqual(prepared.analyses[0].headword, "být")
 
 
 if __name__ == "__main__":

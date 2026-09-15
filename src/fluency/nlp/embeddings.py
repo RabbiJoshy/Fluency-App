@@ -91,6 +91,64 @@ def _embed_batch(client: Any, batch: Sequence[str], types_module: Any) -> Any:
     )
 
 
+def _embed_batch_worker(
+    batch: Sequence[str],
+    *,
+    api_key: str,
+    types_module: Any,
+    max_retries: int = MAX_QUOTA_RETRIES,
+    min_seconds: float = 1.0,
+    log: Callable[[str], None] = print,
+) -> tuple[Sequence[str], Any]:
+    import numpy as np
+    from google import genai
+
+    client = genai.Client(api_key=api_key)
+    attempts = 0
+    while True:
+        started = time.monotonic()
+        try:
+            response = _embed_batch(client, batch, types_module)
+            values = np.asarray([item.values for item in response.embeddings], dtype=np.float32)
+            if len(values) != len(batch):
+                raise EmbeddingStoreError("provider returned an incomplete embedding batch")
+            values /= np.linalg.norm(values, axis=1, keepdims=True) + 1e-9
+            elapsed = time.monotonic() - started
+            if min_seconds > 0 and elapsed < min_seconds:
+                time.sleep(min_seconds - elapsed)
+            return batch, values
+        except Exception as error:
+            status = getattr(error, "status_code", None) or getattr(error, "code", None)
+            err_str = str(error)
+            is_quota = status == 429 or "429" in err_str or "RESOURCE_EXHAUSTED" in err_str
+            is_transient = (
+                is_quota
+                or (isinstance(status, int) and 500 <= status < 600)
+                or any(code in err_str for code in ("500", "502", "503", "504", "UNAVAILABLE"))
+                or isinstance(error, (ConnectionError, OSError, TimeoutError))
+                or any(phrase in err_str.lower() for phrase in ("connection reset", "readerror", "connecterror", "remotedisconnected", "broken pipe", "timeout"))
+            )
+            if not is_transient:
+                raise
+            attempts += 1
+            if attempts > max_retries:
+                raise EmbeddingStoreError(
+                    f"embedding request failed after {max_retries} resumable retries: {error}"
+                ) from error
+            if is_quota:
+                hint = _RETRY_HINT.search(err_str)
+                delay = min(60.0, (float(hint.group(1)) + 2.0) if hint else 20.0)
+                log(f"  quota pause; retrying batch of {len(batch)} in {delay:.1f}s...")
+            else:
+                delay = min(60.0, 3.0 * attempts)
+                log(f"  transient error ({error.__class__.__name__}); retrying batch of {len(batch)} in {delay:.1f}s...")
+                try:
+                    client = genai.Client(api_key=api_key)
+                except Exception:
+                    pass
+            time.sleep(delay)
+
+
 def ensure_embeddings(
     cache_path: Path,
     needed: Iterable[str],
@@ -105,6 +163,7 @@ def ensure_embeddings(
     is merged into the cache only once the run completes.
     """
 
+    from concurrent.futures import ThreadPoolExecutor, as_completed
     import numpy as np
 
     vectors = load_cache(cache_path)
@@ -116,10 +175,8 @@ def ensure_embeddings(
             f"{len(missing):,} exact-text embeddings are missing; provide an API key to create them"
         )
 
-    from google import genai
     from google.genai import types
 
-    client = genai.Client(api_key=api_key)
     delta = delta_directory(cache_path)
     width = next(iter(vectors.values())).shape[0] if vectors else 0
     delta_index, delta_matrix = _load_delta(delta, width)
@@ -136,55 +193,39 @@ def ensure_embeddings(
         os.replace(vector_temporary, delta / "vec.npy")
         os.replace(index_temporary, delta / "index.json")
 
-    log(f"embedding {len(missing):,} cache misses into a resumable delta...")
+    workers = setting(_ROLE, "workers", 2)
+    min_seconds = setting(_ROLE, "min_seconds_per_batch", 1.2)
+    batches = [missing[offset : offset + BATCH_SIZE] for offset in range(0, len(missing), BATCH_SIZE)]
+    log(f"embedding {len(missing):,} cache misses across {len(batches):,} batches ({workers} workers)...")
+
     since_checkpoint = 0
-    for offset in range(0, len(missing), BATCH_SIZE):
-        batch = missing[offset : offset + BATCH_SIZE]
-        attempts = 0
-        while True:
-            started = time.monotonic()
-            try:
-                response = _embed_batch(client, batch, types)
-                break
-            except Exception as error:
-                status = getattr(error, "status_code", None) or getattr(error, "code", None)
-                if status != 429 and "429" not in str(error):
-                    checkpoint()
-                    raise
-                attempts += 1
+    done = 0
+    with ThreadPoolExecutor(max_workers=workers) as executor:
+        future_to_batch = {
+            executor.submit(
+                _embed_batch_worker,
+                batch,
+                api_key=api_key,
+                types_module=types,
+                max_retries=MAX_QUOTA_RETRIES,
+                min_seconds=min_seconds,
+                log=log,
+            ): batch
+            for batch in batches
+        }
+        for future in as_completed(future_to_batch):
+            batch, values = future.result()
+            start = len(delta_matrix)
+            delta_matrix = np.vstack([delta_matrix, values]) if len(delta_matrix) else values
+            for position, text in enumerate(batch, start=start):
+                delta_index[text] = position
+
+            since_checkpoint += len(batch)
+            done += len(batch)
+            if since_checkpoint >= CHECKPOINT_EVERY or done == len(missing):
                 checkpoint()
-                if attempts > MAX_QUOTA_RETRIES:
-                    raise EmbeddingStoreError(
-                        f"quota remained unavailable after {MAX_QUOTA_RETRIES} resumable retries"
-                    ) from error
-                hint = _RETRY_HINT.search(str(error))
-                delay = min(60.0, (float(hint.group(1)) + 2.0) if hint else 20.0)
-                log(
-                    f"  quota pause; checkpointed {len(delta_index):,} vectors, "
-                    f"retrying in {delay:.1f}s..."
-                )
-                time.sleep(delay)
-
-        values = np.asarray([item.values for item in response.embeddings], dtype=np.float32)
-        if len(values) != len(batch):
-            checkpoint()
-            raise EmbeddingStoreError("provider returned an incomplete embedding batch")
-        values /= np.linalg.norm(values, axis=1, keepdims=True) + 1e-9
-        start = len(delta_matrix)
-        delta_matrix = np.vstack([delta_matrix, values]) if len(delta_matrix) else values
-        for position, text in enumerate(batch, start=start):
-            delta_index[text] = position
-
-        since_checkpoint += len(batch)
-        done = min(offset + len(batch), len(missing))
-        if since_checkpoint >= CHECKPOINT_EVERY or done == len(missing):
-            checkpoint()
-            since_checkpoint = 0
-        log(f"  embedded {done:,}/{len(missing):,}")
-
-        elapsed = time.monotonic() - started
-        if done < len(missing) and elapsed < MIN_SECONDS_PER_BATCH:
-            time.sleep(MIN_SECONDS_PER_BATCH - elapsed)
+                since_checkpoint = 0
+            log(f"  embedded {done:,}/{len(missing):,}")
 
     for text, position in delta_index.items():
         vectors[text] = delta_matrix[position]

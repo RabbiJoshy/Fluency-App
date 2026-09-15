@@ -1,6 +1,6 @@
 {
   "profile_version": "speech-pipeline-profile/v1",
-  "profile_id": "es_speech_v11_10000x10",
+  "profile_id": "es_speech_v11_3000x10",
   "language": "es",
   "locale": "es-ES",
   "mode": "speech",
@@ -16,10 +16,10 @@
     "fallback_policy": "none"
   },
   "scope": {
-    "surface_limit": 10000,
+    "surface_limit": 3000,
     "shortfall_policy": "publish_explicit",
     "display_examples_per_card": 10,
-    "note": "Ten examples for every surface, which is the shape the deck is heading for. The harvest keeps 40 at the tail and WSD scores 20, so selection chooses ten from twenty rather than ten from ten."
+    "note": "A 3,000-card deck showing 10 examples each, evaluating WSD v11-1 with execution cap 30."
   },
   "inventory": {
     "source_adapter": "published-surface-frequency-list/v1",
@@ -40,8 +40,7 @@
     "minimum_card_coverage": 0.98,
     "output_schema": "sense-menu/v1",
     "join_key": "surface_card_id",
-    "lemma_role": "lookup_metadata_only",
-    "coverage_note": "Restored to 0.98 on 2026-09-15. The floor was lowered to 0.88 because the 10,000-card deck reached rank 10,000 of the 14,040-surface Spanish list -- the tail where SpanishDict pages had never been fetched -- and measured 91.14%. The outstanding fetch that note referred to has now run: 4,027 surfaces were merged into snapshot spanishdict-complete-menu-2026-09-15-v3 and measured coverage is 98.94%. The remaining 106 cards ship as explicit no_menu cases, the same way Czech does; they are not given invented senses."
+    "lemma_role": "lookup_metadata_only"
   },
   "harvest": {
     "shared_policy": "speech-v1",
@@ -56,7 +55,7 @@
       "tatoeba": 0.6,
       "opensubtitles": 0.4
     },
-    "source_note": "Fresh Tatoeba + OpenSubtitles, matching Portuguese and Czech. The v10 profiles read retained-opensubtitles instead: a reconstructed sentence bank frozen on 2026-08-15, with no Tatoeba, whose candidate universe predates the pooling, redundancy and fragment work. A deck meant to show what the current harvest produces has to read what the current harvest reads.",
+    "source_note": "Fresh Tatoeba + OpenSubtitles.",
     "wsd_budget_per_card": [
       {
         "through_rank": 1000,
@@ -65,13 +64,8 @@
       {
         "through_rank": 3000,
         "budget": 50
-      },
-      {
-        "through_rank": 10000,
-        "budget": 40
       }
-    ],
-    "budget_note": "Tail raised from 30 to 40. At 30 the budget was cutting exactly at the measured mean pool of 29, so it was the binding constraint rather than the corpus; the English-side form gates then remove another 1-2%. Retaining more costs harvest time and disk only -- what reaches WSD is execution_cap_per_card. This is the number that cannot be raised later without harvesting again."
+    ]
   },
   "stage_order": [
     "inventory",
@@ -93,8 +87,8 @@
       "occurrence_pos.model_revision": "es_dep_news_trf@3.8.0"
     },
     "execution_cap_per_card": 30,
-    "max_wsd_units_per_run": 310000,
-    "max_wsd_units_per_run_note": "10,000 surfaces x execution cap 30 = 300,000 units, plus margin. The cap was 10 and the display count was 10, which meant WSD scored exactly the ten sentences the easiness ranker already picked and selection had no choice to make. Thirty is what gives a translation-quality filter somewhere to reject into."
+    "max_wsd_units_per_run": 100000,
+    "max_wsd_units_per_run_note": "3,000 surfaces x execution cap 30 = 90,000 units, plus margin."
   },
   "release": {
     "activation": "manual",

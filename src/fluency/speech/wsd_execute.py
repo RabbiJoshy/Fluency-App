@@ -29,6 +29,7 @@ from fluency.nlp.models import pin, setting
 from fluency.nlp.embeddings import ensure_embeddings, load_cache
 from fluency.nlp.pos import load_pinned
 from fluency.core.hashing import canonical_content_id, file_content_id
+from fluency.surfaces.ledger import ledger_path
 from fluency.wsd.commit import CommitPolicy
 from fluency.wsd.companion_gate import CONTRACTION_PARTS
 from fluency.features import MetadataAccounting
@@ -345,30 +346,65 @@ def occurrence_pos_tags(
     return observed, diagnostics
 
 
+_IRREGULAR_VERBS = {
+    "be": {"be", "is", "are", "am", "was", "were", "been", "being", "'s", "isn't", "aren't", "wasn't", "weren't"},
+    "have": {"have", "has", "had", "having", "'ve", "'d", "haven't", "hasn't", "hadn't"},
+    "do": {"do", "does", "did", "done", "doing", "don't", "doesn't", "didn't"},
+    "go": {"go", "goes", "went", "gone", "going"},
+    "say": {"say", "says", "said", "saying"},
+    "see": {"see", "sees", "saw", "seen", "seeing"},
+    "come": {"come", "comes", "came", "coming"},
+    "make": {"make", "makes", "made", "making"},
+    "give": {"give", "gives", "gave", "given", "giving"},
+    "take": {"take", "takes", "took", "taken", "taking"},
+}
+_PRONOUN_EXPANSIONS = {
+    "he": {"he", "him", "his"},
+    "she": {"she", "her", "hers"},
+    "they": {"they", "them", "their", "theirs"},
+    "we": {"we", "us", "our", "ours"},
+    "it": {"it", "its"},
+}
+
+
 def _translation_overlap_bonus(leaf: SenseLeaf, english_sentence: str, bonus_value: float = 0.04) -> float:
     if not english_sentence:
         return 0.0
     text_lower = english_sentence.lower()
     en_tokens = set(re.findall(r"[a-z0-9']+", text_lower))
+    expanded_tokens = set(en_tokens)
+    for tok in en_tokens:
+        if "'" in tok:
+            expanded_tokens.update(tok.split("'"))
+            expanded_tokens.add("'" + tok.split("'")[-1])
 
     raw_trans = (leaf.translation or "").lower().strip()
     if raw_trans:
-        candidates = [c.strip() for c in re.split(r"[,;/]", raw_trans) if c.strip()]
+        cleaned_trans = re.sub(r"\(.*?\)", "", raw_trans).strip()
+        candidates = [c.strip() for c in re.split(r"[,;/]", cleaned_trans) if c.strip()]
         for cand in candidates:
             cand_core = cand.removeprefix("to ").strip()
+            if not cand_core:
+                continue
+            if cand_core in _IRREGULAR_VERBS:
+                if any(form in expanded_tokens for form in _IRREGULAR_VERBS[cand_core]):
+                    return bonus_value
+            if cand_core in _PRONOUN_EXPANSIONS:
+                if any(form in expanded_tokens for form in _PRONOUN_EXPANSIONS[cand_core]):
+                    return bonus_value
             if " " in cand_core:
                 if re.search(rf"\b{re.escape(cand_core)}\b", text_lower):
                     return bonus_value
-            elif cand_core and (cand_core in en_tokens or re.search(rf"\b{re.escape(cand_core)}\b", text_lower)):
+            elif cand_core in expanded_tokens or re.search(rf"\b{re.escape(cand_core)}\b", text_lower):
                 return bonus_value
             if len(cand_core) > 4:
                 stem = cand_core.rstrip("e")
-                if any(tok.startswith(stem) for tok in en_tokens if len(tok) >= len(stem)):
+                if any(tok.startswith(stem) for tok in expanded_tokens if len(tok) >= len(stem)):
                     return bonus_value * 0.75
 
     ctx = (leaf.definition or "").lower()
     if "possession" in ctx or "possess" in ctx:
-        if any(tok.endswith("'s") or tok == "of" for tok in en_tokens):
+        if any(tok.endswith("'s") or tok == "of" for tok in expanded_tokens):
             return bonus_value
     return 0.0
 
@@ -504,6 +540,10 @@ def main() -> None:
         help="conditioned-pool artifact; candidates it marks ineligible never reach the cap",
     )
     parser.add_argument(
+        "--ledger", type=Path,
+        help="surface ledger artifact; dictates exclusion and alignment-banded sentence ordering",
+    )
+    parser.add_argument(
         "--execution-cap", type=int, default=30,
         help="max occurrences per surface card that reach WSD (default: 30 "
              "to ensure complete coverage with Stage 05 selection).",
@@ -512,6 +552,18 @@ def main() -> None:
         "--offline-only",
         action="store_true",
         help="use only the existing local embedding cache and fail on any miss",
+    )
+    parser.add_argument(
+        "--limit-cards",
+        type=int,
+        default=None,
+        help="only evaluate the first N cards (for small-batch pilot validation)",
+    )
+    parser.add_argument(
+        "--target-surfaces",
+        nargs="+",
+        default=None,
+        help="only evaluate cards with these specific display_form surfaces",
     )
     args = parser.parse_args()
 
@@ -595,6 +647,24 @@ def main() -> None:
 
     # --- gather every exact text the run needs, then embed the misses ---
     policy = OccurrenceSamplingPolicy(cap_per_surface=args.execution_cap)
+    workspace_root = args.run_dir.resolve().parents[3]
+
+    # The ledger carries the per-surface verdict, authority lemma, and the
+    # alignment-banded priority ordering of eligible sentences.
+    ledger_path_to_use = args.ledger
+    if ledger_path_to_use is None:
+        candidate_ledger = ledger_path(workspace_root, run_language)
+        if candidate_ledger.is_file():
+            ledger_path_to_use = candidate_ledger
+    ledger_surfaces: dict[str, Any] = {}
+    if ledger_path_to_use and ledger_path_to_use.is_file():
+        ledger_data = json.loads(ledger_path_to_use.read_text(encoding="utf-8"))
+        ledger_surfaces = ledger_data.get("surfaces", {})
+        print(
+            f"surface ledger: {ledger_path_to_use.name}, "
+            f"{len(ledger_surfaces):,} surfaces loaded"
+        )
+
     # The pool carries a verdict per candidate, reached by the conditioning step
     # that runs at the end of harvesting. WSD reads it; it does not re-derive it,
     # and it does not judge a sentence on anything but its senses.
@@ -615,11 +685,31 @@ def main() -> None:
     capped: list[tuple[dict[str, Any], dict[str, Any], str]] = []
     deterministic: list[tuple[dict[str, Any], dict[str, Any], str]] = []
     selections = []
-    for card in candidates["cards"]:
+    cards_to_process = candidates["cards"]
+    if args.target_surfaces:
+        target_set = set(args.target_surfaces)
+        cards_to_process = [c for c in cards_to_process if c.get("display_form") in target_set]
+        print(f"filtered to {len(cards_to_process)} target surfaces")
+    if args.limit_cards:
+        cards_to_process = cards_to_process[: args.limit_cards]
+        print(f"limited to first {len(cards_to_process)} cards")
+    for card in cards_to_process:
         card_id = card["card_id"]
         menu_card = menu_by_card.get(card_id)
+        display_form = card.get("display_form")
+        preferred_order = None
+        if display_form and display_form in ledger_surfaces:
+            entry = ledger_surfaces[display_form]
+            if entry.get("verdict") == "exclude":
+                preferred_order = ()
+            elif entry.get("supply") and entry["supply"].get("eligible_sentence_ids") is not None:
+                preferred_order = entry["supply"]["eligible_sentence_ids"]
         selection = select_occurrences(
-            card["candidates"], policy, card_id=card_id, ineligible=ineligible
+            card["candidates"],
+            policy,
+            card_id=card_id,
+            ineligible=ineligible,
+            preferred_order=preferred_order,
         )
         selections.append(selection)
         for sentence_id in selection.overflow:

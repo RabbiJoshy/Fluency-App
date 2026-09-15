@@ -1830,8 +1830,20 @@ function initializeApp() {
         const loadingTitle = action === 'next-set' && nextSetNumber
             ? `Loading Set ${nextSetNumber}`
             : 'Loading the Next Level';
-        window.showAppLoading?.(loadingTitle, 'Preparing your next cards…');
         hideDeckCompleteModal();
+        if (action === 'next-daily-review') {
+            window.showAppLoading?.('Loading Daily Review', 'Preparing your next review cards…');
+            try {
+                await window.loadDailyReviewDeck?.({
+                    urgencyTier: stats.dailyReviewTier,
+                    limit: stats.dailyReviewLimit
+                });
+            } catch (error) {
+                console.error('Could not continue daily review:', error);
+                await window.showEndOfDeckOptions?.({ autoContinue: false });
+            }
+            return;
+        }
         try {
             // The set dots were counted when setup last rendered, which can be
             // several sets ago: lemma merging marks siblings seen across sets,
@@ -7436,7 +7448,7 @@ document.addEventListener('click', (e) => {
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
 const ASSET_VERSION = '20260825ak';
-const MODALS_ASSET_VERSION = '20260914d';
+const MODALS_ASSET_VERSION = '20260915a';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

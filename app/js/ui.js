@@ -327,36 +327,84 @@ function updateDailyReviewBanner() {
         banner.style.display = 'none';
         return;
     }
-    const dueWords = window.getGlobalDueReviewWords?.(selectedLanguage) || [];
-    if (dueWords.length === 0) {
+    const summary = window.getGlobalDueReviewSummary?.(selectedLanguage) || { total: 0, neverRight: [], critical: [], due: [] };
+    if (!summary.total || summary.total === 0) {
         banner.style.display = 'none';
         return;
     }
-    const count = dueWords.length;
+    const total = summary.total;
+    const neverRightCount = summary.neverRight.length;
+    const criticalCount = summary.critical.length;
+    const dueCount = summary.due.length;
     const langDisplay = selectedLanguage ? selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1) : '';
+
+    const heroLabel = total <= 100 ? `Review All ${total} →` : 'Review Top 100 →';
+    const nrLabel = neverRightCount <= 100 ? `Study All (${neverRightCount}) ›` : 'Study 100 ›';
+    const critLabel = criticalCount <= 100 ? `Study All (${criticalCount}) ›` : 'Study 100 ›';
+    const dueLabel = dueCount <= 100 ? `Study All (${dueCount}) ›` : 'Study 100 ›';
+
     banner.style.display = 'block';
     banner.innerHTML = `
-        <button type="button" class="daily-due-btn" onclick="startDailyReview()" style="width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(245, 158, 11, 0.12)); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 12px; color: inherit; cursor: pointer; text-align: left; font-family: inherit;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <span style="font-size: 1.4rem; line-height: 1;">⚡</span>
-                <div>
-                    <strong style="display: block; font-size: 0.95rem; line-height: 1.2;">Daily Review</strong>
-                    <span style="font-size: 0.82rem; opacity: 0.85;">${count} card${count === 1 ? '' : 's'} due for review in ${langDisplay}</span>
+        <div class="daily-review-card">
+            <div class="daily-review-header">
+                <div class="daily-review-title-group">
+                    <span class="daily-review-icon" aria-hidden="true">⚡</span>
+                    <div>
+                        <strong class="daily-review-title">Daily Review</strong>
+                        <span class="daily-review-subtitle">${total} card${total === 1 ? '' : 's'} due for review in ${langDisplay}</span>
+                    </div>
                 </div>
+                <button type="button" class="daily-review-hero-btn" onclick="startDailyReview({ limit: 100, urgencyTier: 'all' })">
+                    ${heroLabel}
+                </button>
             </div>
-            <span style="font-weight: 600; font-size: 0.85rem; padding: 6px 12px; background: var(--accent, #10b981); color: #fff; border-radius: 8px; white-space: nowrap;">Start Review →</span>
-        </button>
+            ${(neverRightCount > 0 || criticalCount > 0) ? `
+                <div class="daily-review-tiers">
+                    ${neverRightCount > 0 ? `
+                        <button type="button" class="daily-review-tier-btn is-never-right" onclick="startDailyReview({ urgencyTier: 'never_right', limit: 100 })">
+                            <div class="daily-review-tier-badge">
+                                <span>● Never Mastered</span>
+                                <span>${neverRightCount}</span>
+                            </div>
+                            <span class="daily-review-tier-sub">Missed words with 0 successful recalls</span>
+                            <span class="daily-review-tier-action">${nrLabel}</span>
+                        </button>
+                    ` : ''}
+                    ${criticalCount > 0 ? `
+                        <button type="button" class="daily-review-tier-btn is-critical" onclick="startDailyReview({ urgencyTier: 'critical', limit: 100 })">
+                            <div class="daily-review-tier-badge">
+                                <span>▲ Critical Lapses</span>
+                                <span>${criticalCount}</span>
+                            </div>
+                            <span class="daily-review-tier-sub">Recent errors &amp; 2x overdue</span>
+                            <span class="daily-review-tier-action">${critLabel}</span>
+                        </button>
+                    ` : ''}
+                    <button type="button" class="daily-review-tier-btn is-due" onclick="startDailyReview({ urgencyTier: 'due', limit: 100 })">
+                        <div class="daily-review-tier-badge">
+                            <span>✓ Routine Due</span>
+                            <span>${dueCount}</span>
+                        </div>
+                        <span class="daily-review-tier-sub">Spaced memory upkeep</span>
+                        <span class="daily-review-tier-action">${dueLabel}</span>
+                    </button>
+                </div>
+            ` : ''}
+        </div>
     `;
 }
 
-async function startDailyReview() {
+async function startDailyReview(opts = {}) {
     const loadingMessage = document.getElementById('loadingMessage');
+    const tierName = opts.urgencyTier === 'never_right'
+        ? 'Never Mastered words'
+        : (opts.urgencyTier === 'critical' ? 'critical lapses' : 'cards due for review');
     if (loadingMessage) {
         loadingMessage.style.display = 'block';
-        loadingMessage.textContent = 'Collecting cards due for spaced review…';
+        loadingMessage.textContent = `Collecting ${tierName}…`;
     }
-    window.showAppLoading?.('Loading Daily Review', 'Collecting cards due for spaced review…');
-    await window.loadDailyReviewDeck?.();
+    window.showAppLoading?.('Loading Daily Review', `Preparing review batch of ${tierName}…`);
+    await window.loadDailyReviewDeck?.(opts);
 }
 
 function setActiveSetupStep(stepId) {
@@ -2531,6 +2579,8 @@ function renderSetupExtrasSection() {
     }
 
     if (activeArtist) {
+        card.onclick = null;
+        card.style.cursor = 'default';
         if (eyebrow) eyebrow.textContent = 'Supplementary';
         const artistName = activeArtist.name || 'Artist';
         const extraUnlocked = window.isArtistExtraUnlocked?.();
@@ -2596,18 +2646,18 @@ function renderSetupExtrasSection() {
                     <div class="extras-deck-status">
                         <span class="extras-deck-badge is-info">Fast Track</span>
                         <div class="extras-deck-info">
-                            <strong>${totalSkipped} word${totalSkipped === 1 ? '' : 's'} set aside by Fast Track</strong>
-                            <p>${cognates.length} obvious look-alikes · ${lemmas.length} forms merged into their base card.</p>
+                            <strong>${totalSkipped} word${totalSkipped === 1 ? '' : 's'} set aside</strong>
+                            <p>${cognates.length} look-alikes · ${lemmas.length} merged forms</p>
                         </div>
                     </div>
                     <div class="extras-deck-actions">
                         <button type="button" class="extras-deck-browse-btn" id="openSpeechExtrasBtn">
-                            Browse Fast Track words <span aria-hidden="true">›</span>
+                            Browse words <span aria-hidden="true">›</span>
                         </button>
                     </div>
                 </div>
             `;
-            document.getElementById('openSpeechExtrasBtn')?.addEventListener('click', () => {
+            const openModal = () => {
                 if (lemmas.length > 0 && cognates.length === 0) {
                     globalThis.openMergedForms?.();
                 } else if (cognates.length > 0 && lemmas.length === 0) {
@@ -2615,7 +2665,13 @@ function renderSetupExtrasSection() {
                 } else {
                     globalThis.openExtras?.();
                 }
+            };
+            document.getElementById('openSpeechExtrasBtn')?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openModal();
             });
+            card.style.cursor = 'pointer';
+            card.onclick = openModal;
         } else {
             section.style.display = 'block';
             card.innerHTML = `
@@ -2623,12 +2679,24 @@ function renderSetupExtrasSection() {
                     <div class="extras-deck-status">
                         <span class="extras-deck-badge is-muted">Full deck</span>
                         <div class="extras-deck-info">
-                            <strong>No words currently skipped</strong>
-                            <p>Fast Track is off. Every word form and look-alike appears as its own card.</p>
+                            <strong>All words included</strong>
+                            <p>Fast Track is off. Word forms and look-alikes appear as cards.</p>
                         </div>
+                    </div>
+                    <div class="extras-deck-actions">
+                        <button type="button" class="extras-deck-browse-btn" id="openFastModeSettingsBtn">
+                            Fast Track settings <span aria-hidden="true">›</span>
+                        </button>
                     </div>
                 </div>
             `;
+            const openSettings = () => window.openFastModePage?.();
+            document.getElementById('openFastModeSettingsBtn')?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openSettings();
+            });
+            card.style.cursor = 'pointer';
+            card.onclick = openSettings;
         }
     }
 }

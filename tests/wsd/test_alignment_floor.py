@@ -52,6 +52,39 @@ class AlignmentFloorTests(unittest.TestCase):
         correct, and exactly the subtitle register the decks are for."""
         self.assertEqual(below_floor({"x": 0.58}, ["x"], DEFAULT_ALIGNMENT_FLOOR), set())
 
+    def test_preferred_order_from_ledger_dictates_selection(self) -> None:
+        selection = select_occurrences(
+            self.candidates,
+            self.policy,
+            card_id="card",
+            preferred_order=["c", "a", "b"],
+        )
+        self.assertEqual(selection.selected, ("c", "a"))
+        self.assertEqual(selection.overflow, ("b",))
+
+    def test_preferred_order_empty_withholds_all_candidates(self) -> None:
+        selection = select_occurrences(
+            self.candidates,
+            self.policy,
+            card_id="card",
+            preferred_order=(),
+        )
+        self.assertEqual(selection.selected, ())
+        self.assertEqual(
+            sorted(selection.overflow), ["a", "b", "c"]
+        )
+
+    def test_preferred_order_respects_ineligible(self) -> None:
+        selection = select_occurrences(
+            self.candidates,
+            self.policy,
+            card_id="card",
+            preferred_order=["c", "a", "b"],
+            ineligible={"c"},
+        )
+        self.assertEqual(selection.selected, ("a", "b"))
+        self.assertEqual(selection.overflow, ("c",))
+
 
 if __name__ == "__main__":
     unittest.main()

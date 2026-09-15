@@ -56,6 +56,8 @@ export function isWiktionaryGrammarNote(note) {
     return words.some(word => WIKTIONARY_GRAMMAR_NOTE_SIGNALS.has(word));
 }
 
+const WIKTIONARY_PRONOUN_DEFINITION = /^(?:(?:first|second|third)-person[a-z0-9\s,–-]+(?:pronoun|determiner|article)(?:,\s*when\s+used\s+with\s+[^\;]+)?);\s*(.+)$/i;
+
 export function projectWiktionaryGloss(meaning, value) {
     const text = String(value || '').trim();
     const metadata = meaning?.metadata || {};
@@ -72,6 +74,17 @@ export function projectWiktionaryGloss(meaning, value) {
 
     let remaining = text;
     const notes = [];
+    const pronounMatch = WIKTIONARY_PRONOUN_DEFINITION.exec(remaining);
+    if (pronounMatch) {
+        const extractedPrefixNote = remaining.slice(0, remaining.length - pronounMatch[1].length).replace(/;\s*$/, '').trim();
+        remaining = pronounMatch[1].trim();
+        notes.push({
+            family: 'grammar',
+            kind: 'gloss_note',
+            value: extractedPrefixNote,
+        });
+    }
+
     while (remaining.endsWith(')')) {
         let depth = 0;
         let opening = -1;
@@ -89,16 +102,37 @@ export function projectWiktionaryGloss(meaning, value) {
             : (WIKTIONARY_CONSTRUCTION_NOTE.test(note)
                 ? 'construction'
                 : (isWiktionaryGrammarNote(note) ? 'grammar' : null));
-        if (!family) break;
-        notes.unshift({
-            family,
-            kind: family === 'functional' ? 'usage_note'
-                : (family === 'grammar' ? 'gloss_note' : 'gloss_phrase'),
-            value: note,
-        });
-        remaining = remaining.slice(0, opening).trimEnd();
+        if (family) {
+            notes.unshift({
+                family,
+                kind: family === 'functional' ? 'usage_note'
+                    : (family === 'grammar' ? 'gloss_note' : 'gloss_phrase'),
+                value: note,
+            });
+            remaining = remaining.slice(0, opening).trimEnd();
+        } else if (note.length >= 40) {
+            // Drop runaway encyclopedic parenthetical definitions (e.g. "the definite grammatical article...")
+            if (/definite/i.test(note)) {
+                notes.unshift({ family: 'grammar', kind: 'gloss_note', value: 'definite article' });
+            }
+            remaining = remaining.slice(0, opening).trimEnd();
+        } else if (remaining.slice(0, opening).trim().length > 0) {
+            // General semantic qualifier in parens (e.g. "of (in relation to)", "with (as a consequence of)")
+            notes.unshift({
+                family: 'context',
+                kind: 'qualifier',
+                value: note,
+            });
+            remaining = remaining.slice(0, opening).trimEnd();
+        } else {
+            break;
+        }
     }
-    return { display: remaining || text, features: notes };
+    return {
+        display: remaining || text,
+        features: notes,
+        qualifier: notes.find(n => n.family === 'context' || n.kind === 'gloss_note')?.value || '',
+    };
 }
 
 export const SENSE_CONSTRUCTION_TAGS = new Set([

@@ -530,6 +530,62 @@ def similarity(left: str, right: str) -> float:
     return 1.0 - edit_distance(left, right) / max(len(left), len(right))
 
 
+def jaro_winkler_similarity(s1: str, s2: str, prefix_weight: float = 0.1) -> float:
+    """Jaro-Winkler similarity with prefix bonus.
+
+    Standard Levenshtein treats all edits equally, punishing inflected suffixes
+    (comunicar vs communicate, abandonar vs abandon). Jaro-Winkler weights common
+    prefixes heavily while tolerating differences at the tail.
+    """
+
+    if s1 == s2:
+        return 1.0 if s1 else 0.0
+    len1, len2 = len(s1), len(s2)
+    if not len1 or not len2:
+        return 0.0
+
+    max_dist = max(len1, len2) // 2 - 1
+    s1_matches = [False] * len1
+    s2_matches = [False] * len2
+    matches = 0
+
+    for i in range(len1):
+        start = max(0, i - max_dist)
+        end = min(i + max_dist + 1, len2)
+        for j in range(start, end):
+            if not s2_matches[j] and s1[i] == s2[j]:
+                s1_matches[i] = True
+                s2_matches[j] = True
+                matches += 1
+                break
+
+    if matches == 0:
+        return 0.0
+
+    k = 0
+    transpositions = 0
+    for i in range(len1):
+        if not s1_matches[i]:
+            continue
+        while not s2_matches[k]:
+            k += 1
+        if s1[i] != s2[k]:
+            transpositions += 1
+        k += 1
+
+    t = transpositions // 2
+    jaro = (matches / len1 + matches / len2 + (matches - t) / matches) / 3.0
+
+    prefix = 0
+    for c1, c2 in zip(s1[:4], s2[:4]):
+        if c1 == c2:
+            prefix += 1
+        else:
+            break
+
+    return jaro + prefix * prefix_weight * (1.0 - jaro)
+
+
 def form_score(
     target_word: str,
     known_word: str,
@@ -548,7 +604,7 @@ def form_score(
     nothing, instead of a zero that would argue against the pair.
 
         tier                        needs                 cs-pl recall @ 0.80
-        raw spelling                nothing                            0.479
+        raw spelling (Levenshtein + JW)  nothing                       0.479
         learned correspondences     nothing                            0.616
         hand skeleton               rules someone wrote                0.670
         pronunciation               IPA on both sides                  0.776
@@ -558,12 +614,13 @@ def form_score(
     """
 
     left, right = strip_accents(target_word), strip_accents(known_word)
+    skel_left = skeleton(target_word, policy.target_skeleton)
+    skel_right = skeleton(known_word, policy.known_skeleton)
     best = max(
         similarity(left, right),
-        similarity(
-            skeleton(target_word, policy.target_skeleton),
-            skeleton(known_word, policy.known_skeleton),
-        ),
+        jaro_winkler_similarity(left, right),
+        similarity(skel_left, skel_right),
+        jaro_winkler_similarity(skel_left, skel_right),
     )
     if correspondences is not None and best < 1.0:
         best = max(best, correspondences.similarity(left, right))

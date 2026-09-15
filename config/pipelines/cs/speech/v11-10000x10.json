@@ -82,15 +82,15 @@
     "strategy": "language-adapted-closed-menu/v1",
     "shared_profile": "closed-menu-provider-prior-v1",
     "language_profile": "cs-v1",
-    "model_profile": "cs-v10-1",
+    "model_profile": "cs-v11-1",
     "require_model_pins": true,
     "execution_status": "ready",
     "model_revisions": {
       "gloss.model_revision": "gemini-embedding-001"
     },
-    "execution_cap_per_card": 20,
-    "max_wsd_units_per_run": 210000,
-    "max_wsd_units_per_run_note": "10,000 surfaces x execution cap 20 = 200,000 units, plus margin. The cap was 10 and the display count was 10, which meant WSD scored exactly the ten sentences the easiness ranker already picked and selection had no choice to make. Twenty is what gives a translation-quality filter somewhere to reject into.",
+    "execution_cap_per_card": 30,
+    "max_wsd_units_per_run": 310000,
+    "max_wsd_units_per_run_note": "10,000 surfaces x execution cap 30 = 300,000 units, plus margin. The cap was 10 and the display count was 10, which meant WSD scored exactly the ten sentences the easiness ranker already picked and selection had no choice to make. Thirty is what gives a translation-quality filter somewhere to reject into.",
     "occurrence_pos_note": "Czech declares no occurrence POS: spaCy publishes no Czech pipeline, and a POS filter can only subtract candidates, so an unvalidated one deletes correct senses. See cs-v10-1."
   },
   "release": {

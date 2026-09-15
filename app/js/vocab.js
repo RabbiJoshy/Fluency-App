@@ -1785,7 +1785,31 @@ async function loadVocabularyData(rangeString, opts = {}) {
         const resumeSnapshot = opts.resumeSnapshot || null;
         let totalInRange;
         let allInRange;
-        if (resumeSnapshot?.order?.length) {
+        if (opts.targetReviewWords) {
+            // Instant fast path for daily review: target words are already pre-selected
+            // and prioritized from user progress. Just extract them from vocabularyData.
+            filteredData = filteredData.filter(item => {
+                const itemId = getWordId(item);
+                return (opts.targetReviewIds && (opts.targetReviewIds.has(itemId) || opts.targetReviewIds.has(item.id)))
+                    || opts.targetReviewWords.has(String(item.word || '').toLowerCase());
+            });
+            if (Array.isArray(opts.targetReviewOrder)) {
+                const orderMap = new Map(opts.targetReviewOrder.map((w, idx) => [w, idx]));
+                filteredData.sort((a, b) => {
+                    const aKey = String(a.word || '').toLowerCase();
+                    const bKey = String(b.word || '').toLowerCase();
+                    const aIdx = orderMap.has(aKey) ? orderMap.get(aKey) : 9999;
+                    const bIdx = orderMap.has(bKey) ? orderMap.get(bKey) : 9999;
+                    return aIdx - bIdx;
+                });
+            }
+            if (opts.limit && opts.limit > 0 && filteredData.length > opts.limit) {
+                filteredData = filteredData.slice(0, opts.limit);
+            }
+            totalInRange = opts.totalAvailableReview || filteredData.length;
+            stats.totalAvailableReview = totalInRange;
+            allInRange = filteredData.slice();
+        } else if (resumeSnapshot?.order?.length) {
             const orderIndex = new Map(resumeSnapshot.order.map((id, index) => [id, index]));
             filteredData = filteredData
                 .filter(item => orderIndex.has(getWordId(item)))
@@ -1842,12 +1866,36 @@ async function loadVocabularyData(rangeString, opts = {}) {
                 });
                 excludedMastered = beforeFiltered - filteredData.length;
                 if (studyMode === 'review') {
+                    const reviewCache = new Map();
+                    const getCachedReview = (item) => {
+                        const key = getWordId(item) || item.word;
+                        let rev = reviewCache.get(key);
+                        if (!rev) {
+                            rev = getWordKnowledgeReviewInfo(getWordId(item), item.word);
+                            reviewCache.set(key, rev);
+                        }
+                        return rev;
+                    };
+                    if (opts.urgencyTier && opts.urgencyTier !== 'all') {
+                        filteredData = filteredData.filter(item => {
+                            const rev = getCachedReview(item);
+                            if (opts.urgencyTier === 'never_right') return rev.urgencyTier === 'never_right';
+                            if (opts.urgencyTier === 'critical') return rev.urgencyTier === 'critical';
+                            if (opts.urgencyTier === 'due') return rev.urgencyTier === 'due' || rev.urgencyTier === 'upcoming';
+                            return true;
+                        });
+                    }
                     filteredData.sort((a, b) => {
-                        const aReview = getWordKnowledgeReviewInfo(getWordId(a), a.word);
-                        const bReview = getWordKnowledgeReviewInfo(getWordId(b), b.word);
-                        return (aReview.reviewAt - bReview.reviewAt)
-                            || ((a.displayRank || a.rank || 0) - (b.displayRank || b.rank || 0));
+                        const aReview = getCachedReview(a);
+                        const bReview = getCachedReview(b);
+                        return ((bReview.needfulnessScore || 0) - (aReview.needfulnessScore || 0))
+                            || ((a.displayRank || a.rank || 0) - (b.displayRank || b.rank || 0))
+                            || ((aReview.reviewAt || 0) - (bReview.reviewAt || 0));
                     });
+                    if (opts.limit && opts.limit > 0 && filteredData.length > opts.limit) {
+                        stats.totalAvailableReview = filteredData.length;
+                        filteredData = filteredData.slice(0, opts.limit);
+                    }
                 }
                 if (excludedMastered > 0) {
                     console.log(`Filtered out ${excludedMastered} cards outside ${studyMode} mode`);
@@ -2303,11 +2351,27 @@ async function loadVocabularyData(rangeString, opts = {}) {
         // Inclusive label for display, e.g. "475-499" for rangeString "475-500"
         // (rangeEnd is exclusive in the filter above).
         const rankLabel = `${rangeStart}-${rangeEnd - 1}`;
-        stats.setLabel = stats.studyMode === 'review'
-            ? `Level ${stats.levelNumber || ''} review · ranks ${rankLabel}`.replace('Level  review', 'Level review')
-            : stats.setNumber
-            ? `Set ${stats.setNumber}${stats.levelSetCount ? `/${stats.levelSetCount}` : ''} · ranks ${rankLabel}`
-            : rankLabel;
+        if (opts.isDailyReview) {
+            const tierNames = {
+                never_right: 'Never Mastered',
+                critical: 'Critical Review',
+                due: 'Routine Due',
+                all: 'Daily Review'
+            };
+            const tierLabel = tierNames[opts.urgencyTier] || 'Daily Review';
+            stats.setLabel = `${tierLabel} · ${flashcards.length} cards`;
+            stats.isDailyReview = true;
+            stats.dailyReviewTier = opts.urgencyTier || 'all';
+            stats.dailyReviewLimit = opts.limit || 100;
+            const remaining = (stats.totalAvailableReview || flashcards.length) - flashcards.length;
+            stats.remainingDueCount = Math.max(0, remaining);
+        } else {
+            stats.setLabel = stats.studyMode === 'review'
+                ? `Level ${stats.levelNumber || ''} review · ranks ${rankLabel}`.replace('Level  review', 'Level review')
+                : stats.setNumber
+                ? `Set ${stats.setNumber}${stats.levelSetCount ? `/${stats.levelSetCount}` : ''} · ranks ${rankLabel}`
+                : rankLabel;
+        }
         const statsWords = stats.studyMode === 'review' ? filteredData : allInRange;
         stats.allWords = statsWords.map(it => ({
             id: it.id,
@@ -2427,14 +2491,39 @@ async function loadLevelReviewSet(rangeString, opts = {}) {
 async function loadDailyReviewDeck(opts = {}) {
     if (!currentUser || currentUser.isGuest) {
         alert('Please log in to review due cards.');
-        return;
+        return false;
     }
+    const summary = window.getGlobalDueReviewSummary?.(selectedLanguage) || { all: [], neverRight: [], critical: [], due: [] };
+    const tier = opts.urgencyTier || 'all';
+    let pool = summary.all;
+    if (tier === 'never_right') pool = summary.neverRight;
+    else if (tier === 'critical') pool = summary.critical;
+    else if (tier === 'due') pool = summary.due;
+
+    if (!pool || pool.length === 0) {
+        alert('No cards due for review in this queue.');
+        return false;
+    }
+
+    const limit = opts.limit !== undefined ? opts.limit : 100;
+    const targetSlice = pool.slice(0, limit);
+    const targetIds = new Set(targetSlice.map(w => w.id));
+    const targetWords = new Set(targetSlice.map(w => String(w.word || '').toLowerCase()));
+    const totalAvailableReview = pool.length;
+
     return loadVocabularyData('1-50000', {
         ...opts,
         studyMode: 'review',
         rankBasis: 'source',
         setNumber: null,
-        levelSetCount: null
+        levelSetCount: null,
+        limit,
+        urgencyTier: tier,
+        isDailyReview: true,
+        targetReviewIds: targetIds,
+        targetReviewWords: targetWords,
+        targetReviewOrder: targetSlice.map(w => String(w.word || '').toLowerCase()),
+        totalAvailableReview
     });
 }
 
