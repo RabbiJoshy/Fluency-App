@@ -156,11 +156,14 @@ def deploy_language_release(workspace: Path, language: str, release_id: str) -> 
     (REPO_ROOT / "config/dev_changelog.json").write_text(changelog_text, encoding="utf-8")
     (REPO_ROOT / "config/config.json").write_text(config_text, encoding="utf-8")
     (REPO_ROOT / "service-worker.js").write_text(sw_text, encoding="utf-8")
+    run_cmd(["git", "checkout", "main", "--", "app/js", "app/css", "app/index.html"], cwd=REPO_ROOT)
     run_cmd(["rsync", "-av", f"{REPO_ROOT / 'app/js'}/", f"{REPO_ROOT / 'js'}/"], cwd=REPO_ROOT)
     run_cmd(["rsync", "-av", f"{REPO_ROOT / 'app/css'}/", f"{REPO_ROOT / 'css'}/"], cwd=REPO_ROOT)
     run_cmd(["cp", str(REPO_ROOT / "app/index.html"), str(REPO_ROOT / "index.html")], cwd=REPO_ROOT)
+    if (REPO_ROOT / "app").exists():
+        shutil.rmtree(REPO_ROOT / "app")
 
-    run_cmd(["git", "add", "."], cwd=REPO_ROOT)
+    run_cmd(["git", "add", "releases", "config", "service-worker.js", "js", "css", "index.html"], cwd=REPO_ROOT)
     run_cmd(["git", "commit", "-m", f"Deploy: {language.upper()} V12 deck ({release_id})"], cwd=REPO_ROOT)
     run_cmd(["git", "push", "origin", "gh-pages"], cwd=REPO_ROOT)
 

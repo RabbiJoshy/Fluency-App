@@ -57,7 +57,13 @@ def build_app_compatibility_assets(
             if "easiness" in example:
                 record["easiness"] = example["easiness"]
             if "metadata" in example:
-                record["metadata"] = example["metadata"]
+                meta = dict(example["metadata"])
+                if "source" in meta and isinstance(meta["source"], dict):
+                    meta["source"] = {
+                        "name": meta["source"].get("name"),
+                        "document": meta["source"].get("document"),
+                    }
+                record["metadata"] = meta
                 source = example["metadata"].get("source") or {}
                 document = source.get("document") or {}
                 if document:
@@ -111,10 +117,21 @@ def build_app_compatibility_assets(
             for field in ("headword", "menu_analysis_id", "source_sense_id", "source_reference"):
                 if meaning.get(field):
                     old_meaning[field] = meaning[field]
-            if "metadata" in meaning:
-                old_meaning["metadata"] = meaning["metadata"]
+            if "metadata" in meaning and isinstance(meaning["metadata"], dict):
+                clean_meta = {
+                    k: v for k, v in meaning["metadata"].items()
+                    if k != "analysis_provider_metadata"
+                }
+                old_meaning["metadata"] = clean_meta
             if meaning["assignment_status"] == "unassigned":
                 old_meaning["unassigned"] = True
+                if "metadata" in old_meaning and isinstance(old_meaning["metadata"], dict):
+                    unused_meta = {}
+                    if "sense_metadata" in old_meaning["metadata"]:
+                        unused_meta["sense_metadata"] = old_meaning["metadata"]["sense_metadata"]
+                    if "source_adapter" in old_meaning["metadata"]:
+                        unused_meta["source_adapter"] = old_meaning["metadata"]["source_adapter"]
+                    old_meaning["metadata"] = unused_meta if unused_meta else None
                 unassigned_senses.append(old_meaning)
             else:
                 meanings.append(old_meaning)
