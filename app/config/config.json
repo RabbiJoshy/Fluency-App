@@ -6,11 +6,11 @@
   "languages": {
     "spanish": {
       "name": "Spanish",
-      "indexPath": "releases/es/speech/es-speech-v11-3000x10/app/vocabulary.index.json",
-      "examplesPath": "releases/es/speech/es-speech-v11-3000x10/app/vocabulary.examples.json",
-      "studyStructurePath": "releases/es/speech/es-speech-v11-3000x10/app/study-structure.json",
-      "releaseManifestPath": "releases/es/speech/es-speech-v11-3000x10/manifest.json",
-      "releaseCompositionPath": "releases/es/speech/es-speech-v11-3000x10/composition.json",
+      "indexPath": "releases/es/speech/es-speech-v12-6000x10/app/vocabulary.index.json",
+      "examplesPath": "releases/es/speech/es-speech-v12-6000x10/app/vocabulary.examples.json",
+      "studyStructurePath": "releases/es/speech/es-speech-v12-6000x10/app/study-structure.json",
+      "releaseManifestPath": "releases/es/speech/es-speech-v12-6000x10/manifest.json",
+      "releaseCompositionPath": "releases/es/speech/es-speech-v12-6000x10/composition.json",
       "conjugationsPath": null,
       "exampleTargetField": "example_spanish",
       "exampleEnglishField": "example_english",
