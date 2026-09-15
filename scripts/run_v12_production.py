@@ -132,7 +132,12 @@ def deploy_language_release(workspace: Path, language: str, release_id: str) -> 
         sw_path.write_text(sw_text, encoding="utf-8")
         print(f"Bumped service worker cache to flashcards-v{new_v}")
 
-    # 4. Sync files to gh-pages branch
+    # 4. Commit config updates on main before switching branch
+    run_cmd(["git", "add", "app/config/dev_changelog.json", "app/config/config.json", "app/service-worker.js"], cwd=REPO_ROOT)
+    run_cmd(["git", "commit", "-m", f"Update config and changelog for {language.upper()} V12 release ({release_id})"], cwd=REPO_ROOT)
+    run_cmd(["git", "push", "origin", "main"], cwd=REPO_ROOT)
+
+    # 5. Sync files to gh-pages branch
     # Create / update release files on gh-pages without deck.json (>100MB)
     run_cmd(["git", "checkout", "gh-pages"], cwd=REPO_ROOT)
     run_cmd(["git", "pull", "--rebase", "origin", "gh-pages"], cwd=REPO_ROOT)
@@ -159,11 +164,8 @@ def deploy_language_release(workspace: Path, language: str, release_id: str) -> 
     run_cmd(["git", "commit", "-m", f"Deploy: {language.upper()} V12 deck ({release_id})"], cwd=REPO_ROOT)
     run_cmd(["git", "push", "origin", "gh-pages"], cwd=REPO_ROOT)
 
-    # Return to main branch and commit config updates
+    # Return to main branch
     run_cmd(["git", "checkout", "main"], cwd=REPO_ROOT)
-    run_cmd(["git", "add", "app/config/dev_changelog.json", "app/config/config.json", "app/service-worker.js"], cwd=REPO_ROOT)
-    run_cmd(["git", "commit", "-m", f"Update config and changelog for {language.upper()} V12 release ({release_id})"], cwd=REPO_ROOT)
-    run_cmd(["git", "push", "origin", "main"], cwd=REPO_ROOT)
     print(f"Successfully deployed {release_id} to gh-pages and synchronized main!")
 
 
