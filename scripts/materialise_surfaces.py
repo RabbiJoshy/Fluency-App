@@ -60,6 +60,28 @@ PROVENANCE_LABEL = {
 ALIGNMENT_BAND = 0.05
 
 
+def resolve_run(ws: Path, lang: str, overrides: list[str] | None) -> Path | None:
+    """The run to read for ``lang``: an explicit --run-id, else LATEST_V11.
+
+    LATEST_V11 tracks whatever ran last, and small probe runs share the marker
+    with the full-deck run -- deliberately, since probes exist to find problems
+    before the real run. That makes it the wrong thing for the ledger to follow:
+    it will happily build a 10,000-surface ledger whose supply covers 3,000.
+    Name the run instead wherever the caller knows which one it means.
+    """
+
+    for item in overrides or ():
+        key, _, value = item.partition("=")
+        if not value:
+            key, value = lang, key
+        if key == lang:
+            return ws / f"runs/{lang}/speech/{value.strip()}"
+    marker = ws / f"runs/{lang}/speech/LATEST_V11"
+    if marker.exists():
+        return ws / f"runs/{lang}/speech/{marker.read_text().strip()}"
+    return None
+
+
 def _provenance_label(provider: str) -> str:
     """Human-readable provenance for a provider id.
 
@@ -89,6 +111,8 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--workspace", type=Path, required=True)
     ap.add_argument("--language", required=True)
+    ap.add_argument("--run-id", action="append", default=None,
+                    help="explicit run, as <lang>=<run-id>. Prefer this over LATEST_V11, which tracks whatever ran last -- small probe runs and the full-deck run share the marker, so following it can build a 10,000-surface ledger whose supply covers 3,000.")
     ap.add_argument("--out", type=Path)
     args = ap.parse_args()
     ws, lang = args.workspace, args.language
@@ -101,9 +125,8 @@ def main() -> int:
 
     ranks: dict[str, int] = {}
     supply: dict[str, dict] = {}
-    marker = ws / f"runs/{lang}/speech/LATEST_V11"
-    if marker.exists():
-        run = ws / f"runs/{lang}/speech/{marker.read_text().strip()}"
+    run = resolve_run(ws, lang, args.run_id)
+    if run is not None and run.exists():
         inv = json.loads((run / "stages/01_inventory/output/inventory.json").read_text())
         ranks = {c["display_form"]: c["rank"] for c in inv["cards"]}
         # What the harvest found, and what survived cleaning. Carrying both on

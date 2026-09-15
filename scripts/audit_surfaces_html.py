@@ -106,9 +106,30 @@ def build_rows(view: dict, bank: dict, limit: int, pool: Intern) -> list[dict]:
     return rows
 
 
-def load_bank(ws: Path, lang: str) -> dict:
+def resolve_run(ws: Path, lang: str, overrides: list[str] | None) -> Path | None:
+    """The run to read for ``lang``: an explicit --run-id, else LATEST_V11.
+
+    LATEST_V11 tracks whatever ran last, and small probe runs share the marker
+    with the full-deck run -- deliberately, since probes exist to find problems
+    before the real run. That makes it the wrong thing for the ledger to follow:
+    it will happily build a 10,000-surface ledger whose supply covers 3,000.
+    Name the run instead wherever the caller knows which one it means.
+    """
+
+    for item in overrides or ():
+        key, _, value = item.partition("=")
+        if not value:
+            key, value = lang, key
+        if key == lang:
+            return ws / f"runs/{lang}/speech/{value.strip()}"
     marker = ws / f"runs/{lang}/speech/LATEST_V11"
-    run = ws / f"runs/{lang}/speech/{marker.read_text().strip()}"
+    if marker.exists():
+        return ws / f"runs/{lang}/speech/{marker.read_text().strip()}"
+    return None
+
+
+def load_bank(ws: Path, lang: str, overrides: list[str] | None = None) -> dict:
+    run = resolve_run(ws, lang, overrides)
     bank = {}
     path = run / "stages/03_sentence_harvest/output/sentence-bank.jsonl"
     with path.open(encoding="utf-8") as fh:
@@ -330,6 +351,8 @@ def main() -> int:
     ap.add_argument("--language", action="append",
                     help="repeatable; defaults to every language with a ledger")
     ap.add_argument("--out", type=Path)
+    ap.add_argument("--run-id", action="append", default=None,
+                    help="explicit run, as <lang>=<run-id>. Prefer this over LATEST_V11, which tracks whatever ran last -- small probe runs and the full-deck run share the marker, so following it can build a 10,000-surface ledger whose supply covers 3,000.")
     ap.add_argument("--sentences", type=int, default=SENTENCES_PER_CARD)
     args = ap.parse_args()
     ws = args.workspace
@@ -344,7 +367,7 @@ def main() -> int:
     for lang in languages:
         view = json.loads(ledger_path(ws, lang).read_text())
         pool = Intern()
-        rows = build_rows(view, load_bank(ws, lang), args.sentences, pool)
+        rows = build_rows(view, load_bank(ws, lang, args.run_id), args.sentences, pool)
         counts = view.get("summary", {})
         lemma = sum(1 for r in rows if r["v"] == "keep" and r["l"])
         keep = sum(1 for r in rows if r["v"] == "keep")

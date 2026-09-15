@@ -104,6 +104,20 @@ def condition_candidate(
 ) -> dict[str, Any]:
     metrics = candidate.get("metrics") or {}
     score = float(metrics.get("score") or 0.0)
+    # Frequency burden scores the words; this scores the grammar, which the
+    # words alone do not reveal: six common words in the imperfect subjunctive
+    # score as easy as the present tense.
+    #
+    # Added as its own columns rather than folded into `score`. The harvest's
+    # score keeps meaning exactly what it meant, and a downstream consumer
+    # chooses whether to spend the grammar signal -- which is the point of
+    # putting it in the ledger rather than acting on it here.
+    penalty, constructions = grammar_load(text, language)
+    metrics = {
+        **metrics,
+        "grammar_penalty": penalty,
+        "difficulty": round(score + penalty, 6),
+    }
     kind, evidence = variety(text, language)
     # An unscored pair keeps its place: silence is not evidence of misalignment.
     rejected = (
@@ -120,6 +134,7 @@ def condition_candidate(
             "variety": kind,
             "variety_evidence": list(evidence),
             "hardness": hardness_band(score),
+            "grammar": list(constructions),
             "length": length_band(int(metrics.get("target_tokens") or 0)),
         },
         "eligible": rejected is None,
@@ -153,3 +168,83 @@ def pool_report(cards: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
             "cards_under_15": sum(1 for n in eligible_per_card if n < 15),
         },
     }
+
+
+# --- grammatical difficulty -------------------------------------------------
+#
+# Frequency burden asks whether a learner knows the *words*. It says nothing
+# about whether they can read the *grammar*, so a sentence of six common words
+# in the imperfect subjunctive scores as easy as one in the present tense. That
+# is wrong for the first few hundred cards, where the grammar is the obstacle.
+#
+# These are deliberately narrow. A wide net here costs good sentences, and the
+# ambiguous endings are the tempting ones: Spanish `-ara`/`-iera` are imperfect
+# subjunctive but also ordinary nouns (`cara`, `manera`, `espera`), and
+# Portuguese `-ara`/`-era` are pluperfect but also `para`, `era`. Those are
+# omitted rather than guessed at. Missing a hard sentence costs a little;
+# penalising `cara` costs a lot, on every card that uses it.
+
+_GRAMMAR: dict[str, tuple[tuple[str, "re.Pattern[str]", float], ...]] = {
+    "es": (
+        # Unambiguous imperfect-subjunctive endings, plus the irregular stems
+        # that carry most of its real use.
+        ("imperfect_subjunctive", re.compile(
+            r"\b\w{3,}(?:ase|ese|iese|ásemos|ésemos|iésemos|aseis|eseis|ieseis|asen|esen|iesen)\b"
+            r"|\b(?:hubiera|hubiese|hubieran|hubiesen|fuera|fuese|fueran|fuesen|tuviera|tuviese"
+            r"|estuviera|estuviese|pudiera|pudiese|quisiera|quisiese|hiciera|hiciese|dijera"
+            r"|dijese|viniera|viniese|supiera|supiese)\b", re.I), 1.2),
+        ("conditional_perfect", re.compile(
+            r"\b(?:habría|habrías|habríamos|habrían|habríais)\b", re.I), 1.0),
+        # Peninsular second-person plural. Correct Spanish, but absent from
+        # Latin American input and an extra paradigm a beginner does not need.
+        ("vosotros", re.compile(
+            r"\bvosotros\b|\b\w{3,}(?:áis|éis)\b|\bos\s+\w+(?:áis|éis|ad|ed|id)\b", re.I), 0.8),
+        # The stem must carry a written accent, which an enclitic verb always
+        # does and an ordinary noun does not. Without it `caramelos`,
+        # `pasteles` and `carteles` all parse as stem + two clitics.
+        ("stacked_clitics", re.compile(
+            r"\b\w*[áéíóú]\w*(?:me|te|se|nos|os)(?:lo|la|los|las|le|les)\b", re.I), 0.9),
+    ),
+    "pt": (
+        ("imperfect_subjunctive", re.compile(
+            r"\b\w{3,}(?:asse|esse|isse|ássemos|êssemos|íssemos|assem|essem|issem"
+            r"|asses|esses|isses)\b", re.I), 1.2),
+        # Mesoclisis: the pronoun inside the verb. Rare, and very hard.
+        ("mesoclisis", re.compile(
+            r"\b\w{2,}-(?:me|te|lhe|lhes|nos|vos|o|a|os|as)-(?:ei|ás|á|emos|eis|ão|ia|ias|íamos|iam)\b",
+            re.I), 1.5),
+        ("conditional_perfect", re.compile(
+            r"\b(?:teria|terias|teríamos|teriam|haveria|haveriam)\b", re.I), 1.0),
+        # European second person singular, absent from Brazilian input.
+        # Only the unambiguous endings. `-ares`, `-eres`, `-ires` and `-estes`
+        # are future subjunctive, but far more often ordinary plurals --
+        # `dolares`, `mulheres`, `lugares`, `milhares`, `estes`.
+        ("tu_conjugation", re.compile(
+            r"\b\w{3,}(?:sses|astes|istes)\b", re.I), 0.7),
+    ),
+    "cs": (
+        # Conditional auxiliaries. Unambiguous closed class.
+        ("conditional", re.compile(
+            r"\b(?:bych|bys|bychom|byste|abych|abys|abychom|abyste|kdybych|kdybys"
+            r"|kdybychom|kdybyste)\b", re.I), 1.0),
+        # `-án`, `-ána` and `-ěna` are dropped: kapitán, oceán, odměna.
+        ("passive_participle", re.compile(
+            r"\b\w{3,}(?:áno|ěno|ováno|ována|ěn|eni|ěni)\b", re.I), 0.8),
+    ),
+}
+
+
+def grammar_load(text: str, language: str) -> tuple[float, tuple[str, ...]]:
+    """Extra difficulty from grammar the words alone do not reveal.
+
+    Returns the penalty and the constructions found, so a card can be audited
+    on why a sentence was judged hard rather than only on the number.
+    """
+
+    found: list[str] = []
+    penalty = 0.0
+    for name, pattern, weight in _GRAMMAR.get(language, ()):
+        if pattern.search(text):
+            found.append(name)
+            penalty += weight
+    return round(penalty, 6), tuple(found)
