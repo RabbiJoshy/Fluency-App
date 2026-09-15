@@ -372,6 +372,7 @@ def main() -> int:
                     fh.write(payload + "\n")
                     sentence_order.append(row["sentence_id"])
                     prewsd_rows.append({
+                        "sentence_id": row["sentence_id"],
                         "target": (row.get("target") or {}).get("text") or "",
                         "translation": (row.get("translation") or {}).get("text") or "",
                         "source": (row.get("source") or {}).get("name") or "",
@@ -388,8 +389,12 @@ def main() -> int:
         for form, entry in surfaces.items():
             sup = entry.get("supply") or {}
             ids = sup.get("eligible_sentence_ids") or []
-            if not ids:
+            if not ids and entry["verdict"] != "exclude":
                 continue
+            # An excluded surface is carried with an empty list rather than
+            # omitted. Absent means "unknown to this set" and would fall back to
+            # some other ordering; empty means "this surface contributes
+            # nothing", which is the verdict.
             prewsd_surfaces[form] = {
                 "eligible": [order_index[i] for i in ids if i in order_index],
                 **(sup.get("_pairs") or {}),

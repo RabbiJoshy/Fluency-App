@@ -554,6 +554,13 @@ def main() -> None:
         help="conditioned-pool artifact; candidates it marks ineligible never reach the cap",
     )
     parser.add_argument(
+        "--prewsd", type=Path,
+        help="frozen pre-WSD set directory (raw/surfaces/<lang>/prewsd/<run-id>). "
+             "Supplies the sentences, the per-card eligible lists and the "
+             "exclusions from one hash-pinned artifact, so nothing is read out "
+             "of mutable shared state. Supersedes --ledger and --pools.",
+    )
+    parser.add_argument(
         "--ledger", type=Path,
         help="surface ledger artifact; dictates exclusion and alignment-banded sentence ordering",
     )
@@ -665,6 +672,34 @@ def main() -> None:
 
     # The ledger carries the per-surface verdict, authority lemma, and the
     # alignment-banded priority ordering of eligible sentences.
+    # The frozen set, when given, replaces the ledger, the pools and the
+    # sentence bank at once. It is hash-pinned and named by run, so WSD cannot
+    # be handed a ledger that was rewritten between conditioning and execution
+    # -- which is exactly what a shared raw/surfaces/<lang>/ledger.json allows.
+    prewsd_set = None
+    if args.prewsd:
+        from fluency.surfaces.prewsd import ID_PREFIX, verify
+
+        drifted = verify(args.prewsd)
+        if drifted:
+            raise SystemExit(
+                f"pre-WSD set does not match its manifest: {', '.join(drifted)}")
+        ex = json.loads((args.prewsd / "examples.json").read_text(encoding="utf-8"))
+        pr = json.loads((args.prewsd / "pairs.json").read_text(encoding="utf-8"))
+        cols = ex["columns"]
+        ids = [ID_PREFIX + i for i in cols["sentence_id"]]
+        sentences = {
+            sid: {"sentence_id": sid,
+                  "target": {"text": cols["target"][n]},
+                  "translation": {"text": cols["translation"][n]}}
+            for n, sid in enumerate(ids)
+        }
+        prewsd_set = {form: [ids[i] for i in entry["eligible"]]
+                      for form, entry in pr["surfaces"].items()}
+        manifest = json.loads((args.prewsd / "manifest.json").read_text(encoding="utf-8"))
+        print(f"pre-WSD set: {args.prewsd.name}, {manifest['sentences']:,} sentences, "
+              f"{manifest['surfaces']:,} surfaces, hashes verified")
+
     ledger_path_to_use = args.ledger
     if ledger_path_to_use is None:
         candidate_ledger = ledger_path(workspace_root, run_language)
@@ -712,7 +747,11 @@ def main() -> None:
         menu_card = menu_by_card.get(card_id)
         display_form = card.get("display_form")
         preferred_order = None
-        if display_form and display_form in ledger_surfaces:
+        if prewsd_set is not None:
+            # Absent from the set means the set does not describe this card, so
+            # fall through. An empty list means excluded, which is a verdict.
+            preferred_order = prewsd_set.get(display_form)
+        elif display_form and display_form in ledger_surfaces:
             entry = ledger_surfaces[display_form]
             if entry.get("verdict") == "exclude":
                 preferred_order = ()

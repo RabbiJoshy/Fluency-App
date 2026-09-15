@@ -72,7 +72,13 @@ LANG_KEY_MAP = {
 }
 
 
+DRY_RUN = False
+
+
 def run_cmd(cmd: list[str], env: dict[str, str] | None = None, cwd: Path | None = None) -> str:
+    if DRY_RUN:
+        print("  DRY  " + " ".join(str(c) for c in cmd))
+        return
     display = " ".join(cmd)
     print(f"\n>>> [{cwd or '.'}] Running: {display}\n", flush=True)
     t0 = time.time()
@@ -199,6 +205,8 @@ def run_pipeline_for_language(workspace: Path, language: str, run_id: str | None
             "--profile", str(REPO_ROOT / cfg["profile"]),
         ]
         out = run_cmd(plan_cmd, env=env)
+        if DRY_RUN and not out:
+            out = f"/runs/{language}/speech/DRYRUN0000000Z-00000000"
         match = re.search(r"/runs/[a-z]+/speech/([0-9A-Za-z_-]+)", out)
         if not match:
             raise RuntimeError("Could not determine run_id from plan output")
@@ -241,12 +249,19 @@ def run_pipeline_for_language(workspace: Path, language: str, run_id: str | None
         "--run-dir", str(run_dir),
     ], env=env)
 
-    # 6. Materialise Surfaces Ledger
+    # 6. Build this run's frozen pre-WSD set.
+    #
+    # --supply-only, because a v12 deck is smaller than the language's
+    # inventory: 6,000 cards against a 10,000-surface ledger. Without it,
+    # materialising rewrites the ledger with this run's narrower supply, and
+    # 4,000 cards are left with no candidates at all. That is not hypothetical;
+    # it is what happened, twice.
     run_cmd([
         str(PYTHON_BIN), str(REPO_ROOT / "scripts/materialise_surfaces.py"),
         "--workspace", str(workspace),
         "--language", language,
         "--run-id", f"{language}={run_id}",
+        "--supply-only",
     ], env=env)
 
     # 7. WSD Execute
@@ -258,8 +273,10 @@ def run_pipeline_for_language(workspace: Path, language: str, run_id: str | None
         "--out", str(bundle_path),
         "--profile-id", cfg["wsd_profile"],
         "--execution-cap", "30",
-        "--ledger", str(workspace / "raw/surfaces" / language / "ledger.json"),
-        "--pools", str(run_dir / "stages/04_pools/output/pools.json"),
+        # The frozen set for THIS run, hash-verified on read. Not the shared
+        # ledger.json, which any other run or session can rewrite between
+        # conditioning and execution.
+        "--prewsd", str(workspace / "raw/surfaces" / language / "prewsd" / run_id),
     ]
     if cfg["pos_batch_size"] is not None:
         wsd_cmd.extend(["--pos-batch-size", str(cfg["pos_batch_size"])])
@@ -309,7 +326,12 @@ def main():
     ap.add_argument("--workspace", type=Path, default=Path(os.environ.get("FLUENCY_WORKSPACE", "~/PycharmProjects/Fluency-Workspace")).expanduser())
     ap.add_argument("--language", choices=("pt", "es", "cs", "all"), default="all")
     ap.add_argument("--run-id", help="Optional existing run_id to resume")
+    ap.add_argument("--dry-run", action="store_true",
+                    help="print every command without running it, so the wiring "
+                         "can be checked before a multi-hour pipeline commits to it")
     args = ap.parse_args()
+    global DRY_RUN
+    DRY_RUN = args.dry_run
 
     languages = ["pt", "es", "cs"] if args.language == "all" else [args.language]
     for lang in languages:

@@ -30,6 +30,9 @@ SET_VERSION = "prewsd-set/v1"
 EXAMPLES_VERSION = "prewsd-examples/v1"
 PAIRS_VERSION = "prewsd-pairs/v1"
 
+#: Every sentence id begins with this; storing it 364,000 times is waste.
+ID_PREFIX = "sentence_"
+
 
 def _write(path: Path, payload: Mapping[str, Any]) -> dict[str, Any]:
     """Write compactly and return the record the manifest pins it by."""
@@ -74,11 +77,17 @@ def build(
         return table.index(value)
 
     cols: dict[str, list[Any]] = {
+        # The id is carried with its constant "sentence_" prefix stripped and
+        # restored on read. The set has to be joinable -- assignments are keyed
+        # by sentence id, and so is everything downstream -- so dropping it
+        # entirely made the set self-contained and useless at the same time.
+        "sentence_id": [],
         "target": [], "translation": [], "source": [], "alignment": [],
         "target_tokens": [], "grammar": [], "grammar_penalty": [],
         "translation_length_ratio": [], "variety": [], "length_band": [],
     }
     for row in sentences:
+        cols["sentence_id"].append(str(row.get("sentence_id") or "").removeprefix(ID_PREFIX))
         cols["target"].append(row.get("target") or "")
         cols["translation"].append(row.get("translation") or "")
         cols["source"].append(intern(source_names, row.get("source")))
