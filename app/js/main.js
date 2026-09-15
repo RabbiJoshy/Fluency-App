@@ -8,10 +8,10 @@ import './artist-ui.js?v=20260825ak';
 import './auth.js?v=20260912a';
 import './about-example.js?v=20260916a';
 import './estimation.js?v=20260825ak';
-import './config.js?v=20260907a';
+import './config.js?v=20260916f';
 import './progress.js?v=20260915b';
 import './knowledge.js?v=20260915a';
-import './ui.js?v=20260916a';
+import './ui.js?v=20260916g';
 import './vocab.js?v=20260915d';
 import './cognates.js?v=20260914e';
 import './coverage.js?v=20260909a';
@@ -395,6 +395,13 @@ loadConfig().then(async () => {
     document.getElementById('learningContextSourceBtn')?.addEventListener('click', () => {
         closeLearningContext();
         window.openLearningSourcePicker?.();
+    });
+
+    document.getElementById('dailyReviewBtn')?.addEventListener('click', () => {
+        const button = document.getElementById('dailyReviewBtn');
+        const limit = Number(button?.dataset.limit || 100);
+        closeLearningContext();
+        window.startDailyReview?.({ limit, urgencyTier: 'all' });
     });
 
     // Keep the short learner tutorial separate from the portfolio /about page.

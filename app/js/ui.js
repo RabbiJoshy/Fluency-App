@@ -321,91 +321,48 @@ function updateIncorrectButtonVisibility() {
 }
 
 function updateDailyReviewBanner() {
-    const banner = document.getElementById('globalDailyDueBanner');
-    if (!banner) return;
+    const reviewButton = document.getElementById('dailyReviewBtn');
+    const label = document.getElementById('dailyReviewLabel');
+    if (!reviewButton) return;
+
+    const hide = () => {
+        reviewButton.hidden = true;
+        reviewButton.removeAttribute('aria-label');
+        reviewButton.removeAttribute('data-limit');
+    };
+
     if (!currentUser || currentUser.isGuest) {
-        banner.style.display = 'none';
+        hide();
         return;
     }
-    const summary = window.getGlobalDueReviewSummary?.(selectedLanguage) || { total: 0, neverRight: [], critical: [], due: [] };
-    if (!summary.total || summary.total === 0) {
-        banner.style.display = 'none';
+    const summary = window.getGlobalDueReviewSummary?.(selectedLanguage) || { total: 0 };
+    const total = summary.total || 0;
+    if (!total) {
+        hide();
         return;
     }
-    const total = summary.total;
-    const neverRightCount = summary.neverRight.length;
-    const criticalCount = summary.critical.length;
-    const dueCount = summary.due.length;
-    const langDisplay = selectedLanguage ? selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1) : '';
 
-    const heroLabel = total <= 100 ? `Review All ${total} →` : 'Review Top 100 →';
-    const nrLabel = neverRightCount <= 100 ? `Study All (${neverRightCount}) ›` : 'Study 100 ›';
-    const critLabel = criticalCount <= 100 ? `Study All (${criticalCount}) ›` : 'Study 100 ›';
-    const dueLabel = dueCount <= 100 ? `Study All (${dueCount}) ›` : 'Study 100 ›';
-
-    banner.style.display = 'block';
-    banner.innerHTML = `
-        <div class="daily-review-card">
-            <div class="daily-review-header">
-                <div class="daily-review-title-group">
-                    <span class="daily-review-icon" aria-hidden="true">⚡</span>
-                    <div>
-                        <strong class="daily-review-title">Daily Review</strong>
-                        <span class="daily-review-subtitle">${total} card${total === 1 ? '' : 's'} due for review in ${langDisplay}</span>
-                    </div>
-                </div>
-                <button type="button" class="daily-review-hero-btn" onclick="startDailyReview({ limit: 100, urgencyTier: 'all' })">
-                    ${heroLabel}
-                </button>
-            </div>
-            ${(neverRightCount > 0 || criticalCount > 0) ? `
-                <div class="daily-review-tiers">
-                    ${neverRightCount > 0 ? `
-                        <button type="button" class="daily-review-tier-btn is-never-right" onclick="startDailyReview({ urgencyTier: 'never_right', limit: 100 })">
-                            <div class="daily-review-tier-badge">
-                                <span>● Never Mastered</span>
-                                <span>${neverRightCount}</span>
-                            </div>
-                            <span class="daily-review-tier-sub">Missed words with 0 successful recalls</span>
-                            <span class="daily-review-tier-action">${nrLabel}</span>
-                        </button>
-                    ` : ''}
-                    ${criticalCount > 0 ? `
-                        <button type="button" class="daily-review-tier-btn is-critical" onclick="startDailyReview({ urgencyTier: 'critical', limit: 100 })">
-                            <div class="daily-review-tier-badge">
-                                <span>▲ Critical Lapses</span>
-                                <span>${criticalCount}</span>
-                            </div>
-                            <span class="daily-review-tier-sub">Recent errors &amp; 2x overdue</span>
-                            <span class="daily-review-tier-action">${critLabel}</span>
-                        </button>
-                    ` : ''}
-                    <button type="button" class="daily-review-tier-btn is-due" onclick="startDailyReview({ urgencyTier: 'due', limit: 100 })">
-                        <div class="daily-review-tier-badge">
-                            <span>✓ Routine Due</span>
-                            <span>${dueCount}</span>
-                        </div>
-                        <span class="daily-review-tier-sub">Spaced memory upkeep</span>
-                        <span class="daily-review-tier-action">${dueLabel}</span>
-                    </button>
-                </div>
-            ` : ''}
-        </div>
-    `;
+    const batch = Math.min(total, 100);
+    reviewButton.hidden = false;
+    reviewButton.dataset.limit = String(batch);
+    reviewButton.setAttribute('aria-label', `Review ${batch} of ${total} cards waiting`);
+    if (label) {
+        label.textContent = total === 1 ? '1 card waiting' : `${total} cards waiting`;
+    }
 }
 
 async function startDailyReview(opts = {}) {
     const loadingMessage = document.getElementById('loadingMessage');
-    const tierName = opts.urgencyTier === 'never_right'
-        ? 'Never Mastered words'
-        : (opts.urgencyTier === 'critical' ? 'critical lapses' : 'cards due for review');
     if (loadingMessage) {
         loadingMessage.style.display = 'block';
-        loadingMessage.textContent = `Collecting ${tierName}…`;
+        loadingMessage.textContent = 'Collecting cards due for review…';
     }
-    window.showAppLoading?.('Loading Daily Review', `Preparing review batch of ${tierName}…`);
+    window.showAppLoading?.('Loading review', 'Preparing your cards…');
     try {
-        await window.loadDailyReviewDeck?.(opts);
+        await window.loadDailyReviewDeck?.({
+            limit: opts.limit || 100,
+            urgencyTier: opts.urgencyTier || 'all'
+        });
     } catch (err) {
         console.error('Error starting daily review:', err);
     } finally {
@@ -449,7 +406,7 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
     document.getElementById('learningContextProgressLabel').textContent = coverageLabel;
     document.getElementById('learningContextProgressValue').textContent = `${coverage.toFixed(1)}%`;
     document.getElementById('learningContextProgressFill').style.width = `${Math.min(coverage, 100)}%`;
-
+    updateDailyReviewBanner();
 }
 
 function mergeStandardProgressIntoLanguageStep() {
