@@ -6,12 +6,12 @@ import { initOfflineContent } from './offline-content.js?v=20260825ak';
 import './speech.js?v=20260914b';
 import './artist-ui.js?v=20260825ak';
 import './auth.js?v=20260912a';
-import './about-example.js?v=20260916a';
+import './about-example.js?v=20260916i';
 import './estimation.js?v=20260825ak';
-import './config.js?v=20260907a';
-import './progress.js?v=20260915b';
+import './config.js?v=20260916f';
+import './progress.js?v=20260916h';
 import './knowledge.js?v=20260915a';
-import './ui.js?v=20260916a';
+import './ui.js?v=20260916j';
 import './vocab.js?v=20260915d';
 import './cognates.js?v=20260914e';
 import './coverage.js?v=20260909a';
@@ -20,8 +20,20 @@ import './extras.js?v=20260916a';
 import './song-sets.js?v=20260823ae';
 import './spotify-playlist-import.js?v=20260913a';
 import './vocabulary-import.js?v=20260913a';
-import './flashcards.js?v=20260916a';
+import './flashcards.js?v=20260916i';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
+
+function startCardTutorial() {
+    const knownLanguage = window.getCardTutorialLanguageKey?.();
+    if (knownLanguage) {
+        window.setCardTutorialLanguage?.(knownLanguage);
+        closeTutorialIntroduction();
+        window.openAboutExample?.();
+        return;
+    }
+    document.getElementById('tutorialWelcomeStep')?.classList.add('hidden');
+    document.getElementById('tutorialLanguageStep')?.classList.remove('hidden');
+}
 
 function openTutorialIntroduction() {
     document.getElementById('tutorialWelcomeStep')?.classList.remove('hidden');
@@ -397,13 +409,17 @@ loadConfig().then(async () => {
         window.openLearningSourcePicker?.();
     });
 
+    document.getElementById('dailyReviewBtn')?.addEventListener('click', () => {
+        const button = document.getElementById('dailyReviewBtn');
+        const limit = Number(button?.dataset.limit || 100);
+        closeLearningContext();
+        window.startDailyReview?.({ limit, urgencyTier: 'all' });
+    });
+
     // Keep the short learner tutorial separate from the portfolio /about page.
     document.getElementById('helpBtn').addEventListener('click', openTutorialIntroduction);
     document.getElementById('closeTutorialIntroModal')?.addEventListener('click', closeTutorialIntroduction);
-    document.getElementById('startCardTutorialBtn')?.addEventListener('click', () => {
-        document.getElementById('tutorialWelcomeStep')?.classList.add('hidden');
-        document.getElementById('tutorialLanguageStep')?.classList.remove('hidden');
-    });
+    document.getElementById('startCardTutorialBtn')?.addEventListener('click', startCardTutorial);
     document.getElementById('tutorialLanguageBackBtn')?.addEventListener('click', () => {
         document.getElementById('tutorialLanguageStep')?.classList.add('hidden');
         document.getElementById('tutorialWelcomeStep')?.classList.remove('hidden');

@@ -17,7 +17,7 @@ import {
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=20260825ak';
+} from './reverse-cues.js?v=20260916i';
 import {
     compactConstructionMetadata,
     contextWithoutSenseMetadata,
@@ -4000,12 +4000,8 @@ function getSenseProminenceInfo(meaning) {
 window.getSenseProminenceInfo = getSenseProminenceInfo;
 
 function prominenceBadgeHTML(promInfo, extraStyle = '') {
-    const filled = promInfo.key === 'common' ? 3 : (promInfo.key === 'uncommon' ? 2 : 1);
-    const dots = [1, 2, 3].map(i =>
-        `<span class="prominence-dot${i <= filled ? ' is-filled' : ''}"></span>`
-    ).join('');
     const style = extraStyle ? ` style="${extraStyle}"` : '';
-    return `<span class="sense-prominence-badge prominence-${escapeCardText(promInfo.key)}" title="${escapeCardText(promInfo.label)}" aria-label="${escapeCardText(promInfo.label)}"${style}><span class="sense-prominence-dots">${dots}</span></span>`;
+    return `<span class="sense-prominence-badge prominence-${escapeCardText(promInfo.key)}" title="${escapeCardText(promInfo.label)} — how often this meaning is used" aria-label="${escapeCardText(promInfo.label)}"${style}>${escapeCardText(promInfo.label)}</span>`;
 }
 
 function toggleRareSenses(event) {
@@ -5928,7 +5924,8 @@ function updateCard({ announceHeadword = false } = {}) {
         </button>`;
     }
 
-    if (isVerb) {
+    const hasConjugationTable = Boolean(config.languages?.[selectedLanguage]?.conjugationsPath);
+    if (isVerb && hasConjugationTable) {
         backHTML += `<button class="ref-tile ref-conj-btn" onclick="toggleConjugationTable()">
             <svg class="ref-tile-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <g font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="9.4" text-anchor="middle" letter-spacing="0.3" fill="currentColor">

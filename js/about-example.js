@@ -114,7 +114,7 @@ const ABOUT_EXAMPLE_CARDS = {
         meanings: [
             {
                 pos: 'VERB',
-                translation: 'to have (to possess or hold something)',
+                translation: 'he/she/it has (possesses or holds something)',
                 context: 'to be in possession of something',
                 pct: 50,
                 metadata: [
@@ -130,7 +130,7 @@ const ABOUT_EXAMPLE_CARDS = {
             },
             {
                 pos: 'VERB',
-                translation: 'to have to; must',
+                translation: 'he/she/it has to; must',
                 context: null,
                 pct: 30,
                 metadata: [
@@ -147,7 +147,7 @@ const ABOUT_EXAMPLE_CARDS = {
             },
             {
                 pos: 'VERB',
-                translation: 'there be (to exist physically or abstractly)',
+                translation: 'there is (to exist physically or abstractly)',
                 context: null,
                 pct: 15,
                 metadata: [
@@ -209,12 +209,12 @@ const ABOUT_EXAMPLE_CARDS = {
         frequencyLabel: 'Frequency from the Czech release',
         meanings: [
             {
-                pos: 'VERB', translation: 'to be (to exist)', pct: 40,
+                pos: 'VERB', translation: 'he/she/it is (exists)', pct: 40,
                 metadata: [{ short: 'impf.', full: 'imperfective', family: 'grammar' }],
                 examples: [{ target: 'A co myslíš, že to je?', english: 'And what do you think it is?', sourceLabel: 'Speech example' }],
             },
             {
-                pos: 'VERB', translation: 'to be', pct: 60,
+                pos: 'VERB', translation: 'he/she/it is', pct: 60,
                 metadata: [{ short: '3rd sg. present', full: 'third-person singular present', family: 'grammar' }],
                 examples: [{ target: 'Ten kabát je vlhký.', english: 'The coat is wet.', sourceLabel: 'Wiktionary example' }],
             },
@@ -328,52 +328,48 @@ const ABOUT_EXAMPLE_DECKS = [
         tab: 'Lyrics',
         faces: {
             back: {
-                title: 'What the app actually teaches you',
-                blurb: 'This is the answer side of a flashcard. Instead of giving one '
-                     + 'translation and hiding the rest, it shows every meaning the word has, '
-                     + 'how often each one is really used, and a line from a song using it.',
+                title: 'The answer side',
+                blurb: 'Flip the card and you see every meaning of the word, how common each '
+                     + 'one is, and a real line from a song.',
                 notes: [
                     {
                         side: 'left',
                         anchor: '.back-headword',
                         title: 'The word',
-                        text: 'Repeated at the top so you keep your place reading down.',
+                        text: 'Shown again at the top so you can keep your place.',
                     },
                     {
                         side: 'right',
                         anchor: '.pos-section-head',
-                        title: 'Meaning section',
-                        text: 'The part of speech labels the whole group once. Its colour carries '
-                            + 'through the rows, without repeating a tag beside every meaning.',
+                        title: 'Kind of word',
+                        text: 'Noun, verb, and so on. Meanings of the same kind sit together.',
                     },
                     {
                         side: 'left',
                         anchor: '.meanings-scroll .meaning-row:nth-child(1)',
-                        title: 'Its most common meaning',
-                        text: '“heaven” is how this word is used about 70% of the time across '
-                            + 'his songs. The highlighted row is the one you’re looking at.',
+                        title: 'The usual meaning',
+                        text: 'This is the sense you will hear most. The highlighted row is the '
+                            + 'one the example below is using.',
                     },
                     {
                         side: 'left',
                         anchor: '.meanings-scroll .meaning-row:nth-child(2)',
-                        title: 'Its other meanings',
-                        text: 'Tap one to switch. The lyric underneath changes to a line where '
-                            + 'that meaning is the one being used.',
+                        title: 'Other meanings',
+                        text: 'Tap a row to switch. The lyric changes to a line that uses that meaning.',
                         interactive: true,
                     },
                     {
                         side: 'right',
                         anchor: '.about-example-pct',
-                        title: 'How often each is used',
-                        text: 'Every line in his songs containing this word was read and sorted '
-                            + 'by meaning, so these are his real proportions — not a dictionary’s '
-                            + 'ordering.',
+                        title: 'How common this meaning is',
+                        text: 'Common, Uncommon, or Rare. It is how often this meaning shows up '
+                            + 'in the songs — not a dictionary ranking.',
                     },
                     {
                         side: 'right',
                         anchor: '.example-word-highlight',
                         title: 'The word in a real line',
-                        text: 'Marked inside the lyric, in whatever form it takes there.',
+                        text: 'Highlighted in the lyric, even if the form is slightly different.',
                     },
                     {
                         side: 'left',
@@ -384,59 +380,53 @@ const ABOUT_EXAMPLE_DECKS = [
                     {
                         side: 'left',
                         anchor: '.example-song-credit',
-                        title: 'Which song it’s from',
+                        title: 'Which song it is from',
                         text: 'Plus any guest artist singing that line.',
                     },
                     {
                         side: 'right',
                         anchor: '.spotify-btn',
-                        title: 'Play it — really',
-                        text: 'A working button. It plays the song in your own Spotify, starting '
-                            + 'at the second that line is sung. Spotify Premium required.',
+                        title: 'Play the line',
+                        text: 'Plays that moment in your own Spotify. Spotify Premium required.',
                         interactive: true,
                     },
                     {
                         side: 'right',
                         anchor: '.example-counter-group',
-                        title: 'More than one example',
-                        text: 'Where a meaning turns up in several songs, tap the lyric to move '
-                            + 'through them.',
+                        title: 'More examples',
+                        text: 'If this meaning appears in more than one song, tap the lyric to see the next one.',
                         interactive: true,
                     },
                 ],
             },
             front: {
                 title: 'The question side',
-                blurb: 'You see the word on its own and try to recall it. The two figures '
-                     + 'underneath say how common it is, which is how the app decides the order '
-                     + 'you meet words in.',
+                blurb: 'You see the word and try to remember it before flipping. The numbers '
+                     + 'underneath say how often it comes up in the songs.',
                 notes: [
                     {
                         side: 'left',
                         anchor: '.card-word',
                         title: 'The word',
-                        text: 'Try to recall what it means before turning the card over. The '
-                            + 'effort of remembering is what makes it stick.',
+                        text: 'Try to recall what it means before you flip. That pause is what helps it stick.',
                     },
                     {
                         side: 'left',
                         anchor: '.card-rank-label',
-                        title: 'How common it is',
-                        text: 'The 344th most-used word across his songs. Words are taught in '
-                            + 'that order — the ones you’ll hear most, first.',
+                        title: 'How common the word is',
+                        text: 'Words you will hear most are taught first.',
                     },
                     {
                         side: 'right',
                         anchor: '.card-pos-list',
-                        title: 'Part of speech',
-                        text: 'A compact hint on the question side. On the answer side it becomes '
-                            + 'the heading for the meanings it belongs to.',
+                        title: 'Kind of word',
+                        text: 'A small hint. On the back it becomes the heading for the meanings.',
                     },
                     {
                         side: 'right',
                         anchor: '.card-freq-label',
-                        title: 'How much evidence there is',
-                        text: 'The number of lines in his songs that use this word.',
+                        title: 'How many lines use it',
+                        text: 'How often this word appears in the songs.',
                     },
                 ],
             },
@@ -449,103 +439,92 @@ const ABOUT_EXAMPLE_DECKS = [
         tab: 'Speech',
         faces: {
             back: {
-                title: 'A dictionary-rich card without the dictionary clutter',
-                blurb: 'This {language} speech card has several {provider} senses. The overview '
-                     + 'stays brief; the selected sense reveals its full wording and compact '
-                     + 'grammar, register and region details beside the matching sentence.',
+                title: 'The answer side',
+                blurb: 'This {language} card shows the meanings you will actually meet, how '
+                     + 'common each one is, and a real spoken example.',
                 notes: [
                     {
                         side: 'left',
                         anchor: '.back-headword',
-                        title: 'The surface form',
-                        text: 'The word is shown as it actually appears in {language} speech. The card '
-                            + 'can still connect the surface form to its dictionary analysis.',
+                        title: 'The word',
+                        text: 'Exactly as it appears in {language} speech — not always the dictionary’s base form.',
                     },
                     {
                         side: 'left',
                         anchor: '.pos-section-head',
-                        title: 'A clean sense overview',
-                        text: 'Parenthetical notes stay out of this header. It fits every complete '
-                            + 'sense label it can, then uses one unambiguous <em>+N</em> count.',
+                        title: 'The meanings at a glance',
+                        text: 'A short list of the senses. Tap the heading if you want to open or close the group.',
                         interactive: true,
                     },
                     {
                         side: 'left',
                         anchor: '.meaning-row.is-current-sense',
-                        title: 'One fully open subsense',
-                        text: 'The selected row grows to show the full definition. Other rows are '
-                            + 'compact choices, and another part of speech stays closed.',
+                        title: 'The meaning you tapped',
+                        text: 'The selected row shows the full wording. The others stay short so the card stays readable.',
                         interactive: true,
                     },
                     {
                         side: 'left',
                         anchor: '.sense-cross-reference',
                         requires: 'crossReferences',
-                        title: 'References become navigation',
-                        text: 'A {provider} “See” target is a real card link in the app, instead '
-                            + 'of dead editorial text.',
+                        title: 'A link to another card',
+                        text: 'If the dictionary says “see this other word”, that is a real link here.',
                     },
                     {
                         side: 'right',
                         anchor: '.sense-metadata-list',
-                        title: 'Metadata, in a stable order',
-                        text: 'Grammar and construction come first, then companion words, register, '
-                            + 'region and domain. A lone detail appears directly; larger groups stay behind <em>More details</em>.',
+                        title: 'Useful extras',
+                        text: 'Small notes such as grammar, what the word pairs with, or how formal it is. Extra ones hide behind More details.',
                         interactive: true,
                     },
                     {
                         side: 'right',
                         anchor: '.about-example-pct',
                         requires: 'usageShares',
-                        title: 'Usage share stays separate',
-                        text: 'Dictionary examples and metadata do not change these percentages; '
-                            + 'they describe the speech evidence assigned to each sense.',
+                        title: 'How common this meaning is',
+                        text: 'Common, Uncommon, or Rare. That is how often this meaning shows up in real speech.',
                     },
                     {
                         side: 'right',
                         anchor: '.example-word-highlight',
-                        title: 'The matching sentence',
-                        text: 'Changing the active sense changes this sentence, making the link '
-                            + 'between the meaning and its evidence explicit.',
+                        title: 'A real example',
+                        text: 'Tap a different meaning and this sentence changes to match it.',
                     },
                     {
                         side: 'right',
                         anchor: '.example-song-credit',
-                        title: 'Examples may come from two places',
-                        text: 'Speech evidence and dictionary examples can both help, while only '
-                            + 'the speech evidence contributes to usage share.',
+                        title: 'Where the example is from',
+                        text: 'Usually spoken {language}. A dictionary example is used only when speech does not have a good one.',
                     },
                 ],
             },
             front: {
-                title: 'The question side, away from music',
-                blurb: 'Identical to a song card, with one number swapped.',
+                title: 'The question side',
+                blurb: 'Same idea as a song card: see the word, try to remember it, then flip.',
                 notes: [
                     {
                         side: 'left',
                         anchor: '.card-word',
                         title: 'The word',
-                        text: 'The same prompt, whichever set of cards you’re in.',
+                        text: 'Try to recall it before you flip.',
                     },
                     {
                         side: 'left',
                         anchor: '.card-rank-label',
-                        title: 'How common it is',
-                        text: 'Its rank shows where this form sits in the {language} speech deck.',
+                        title: 'How common the word is',
+                        text: 'Where this word sits in the {language} deck. More common words come first.',
                     },
                     {
                         side: 'right',
                         anchor: '.card-pos-list',
-                        title: 'Part of speech',
-                        text: 'A compact hint here; on the back, the verb heading organises all '
-                            + 'of the visible subsenses.',
+                        title: 'Kind of word',
+                        text: 'A small hint. On the back it becomes the heading for the meanings.',
                     },
                     {
                         side: 'right',
                         anchor: '.card-freq-label',
-                        title: 'The figure that changes',
-                        text: 'How often it appears per million words of dialogue. On a song card '
-                            + 'this slot counts lyric lines instead.',
+                        title: 'How often it is said',
+                        text: 'How often it appears in spoken {language}. On a song card this counts lyric lines instead.',
                     },
                 ],
             },
@@ -690,6 +669,13 @@ function walkthroughMetadata(meaning, selected) {
     return `<span class="sense-metadata-list" aria-label="Sense details">${primaryHTML}${grammarHTML}${more}${supportingHTML}</span>`;
 }
 
+function walkthroughProminence(pct) {
+    if (!(Number(pct) < 100)) return null;
+    if (pct >= 20) return { label: 'Common', key: 'common' };
+    if (pct >= 5) return { label: 'Uncommon', key: 'uncommon' };
+    return { label: 'Rare', key: 'rare' };
+}
+
 function renderMeaningRows(card, selectedIdx) {
     const rows = card.meanings.map((m, idx) => {
         const isSelected = idx === selectedIdx;
@@ -698,8 +684,9 @@ function renderMeaningRows(card, selectedIdx) {
         const ctx = m.context
             ? ` <span class="meaning-context">· ${esc(m.context)}</span>`
             : '';
-        const pct = m.pct < 100
-            ? `<span class="about-example-pct sense-percentage sense-percentage-tail" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); white-space: nowrap; pointer-events: none;">${m.pct}%</span>`
+        const prominence = walkthroughProminence(m.pct);
+        const pct = prominence
+            ? `<span class="about-example-pct sense-prominence-badge prominence-${esc(prominence.key)}" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); white-space: nowrap; pointer-events: none;">${esc(prominence.label)}</span>`
             : '';
         const check = isSelected
             ? '<svg class="meaning-row-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgb(var(--sense-match-rgb))" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>'
@@ -707,7 +694,7 @@ function renderMeaningRows(card, selectedIdx) {
         return `
             <div class="meaning-row meaning-row-regular${isSelected ? ' selected is-current-sense' : ''}" data-meaning-index="${idx}" style="position: relative; display: grid; grid-template-columns: 1fr; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${bg}; border-radius: 8px; cursor: pointer; min-height: 39px;">
                 ${check}
-                <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: stretch; justify-content: center; min-width: 0; padding: 0 ${m.pct < 100 ? '42px' : '8px'} 0 8px;">
+                <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: stretch; justify-content: center; min-width: 0; padding: 0 ${prominence ? '72px' : '8px'} 0 8px;">
                     <span class="meaning-row-translation row-adaptive-text" style="font-weight: ${isSelected ? 700 : 500}; color: ${textColor}; text-align: center; width: 100%;">${walkthroughSenseText(m, isSelected)}${ctx}</span>
                     ${walkthroughMetadata(m, isSelected)}
                 </div>
@@ -738,7 +725,7 @@ function renderMeaningRows(card, selectedIdx) {
 // strip degrades to a right-aligned source label, exactly as on a live card.
 function renderCredit(card, meaning, example, exampleIdx) {
     const counter = meaning.examples.length > 1
-        ? `<span class="example-counter-group"><span class="compact-example-counter" aria-label="example ${exampleIdx + 1} of ${meaning.examples.length}">${exampleIdx + 1} of ${meaning.examples.length}</span></span>`
+        ? `<span class="example-counter-group"><span class="compact-example-counter" aria-label="example ${exampleIdx + 1} of ${meaning.examples.length}"><span class="compact-example-counter-label">${exampleIdx + 1} of ${meaning.examples.length}</span></span></span>`
         : '';
 
     if (example.trackId) {
