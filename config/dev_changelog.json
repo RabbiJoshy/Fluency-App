@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "date": "2026-09-15",
+      "commit": "pending",
+      "summary": "Deploy Portuguese 3,000-word deck with WSD v11-1 (10 display examples)",
+      "detail": [
+        "Promoted Portuguese to 3,000 cards with up to 10 display examples each.",
+        "Scored and assigned via WSD v11-1 using stratified multi-banded selection from the surface ledger.",
+        "20,114 assigned examples across European Portuguese speech domain."
+      ]
+    },
+    {
       "date": "2026-09-13",
       "commit": "pending",
       "summary": "Adaptive spaced repetition, sticky sense-level exceptions, and global daily review",
