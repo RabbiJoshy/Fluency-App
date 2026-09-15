@@ -101,6 +101,8 @@ def condition_candidate(
     alignment: float | None,
     alignment_floor: float,
     language: str = "pt",
+    surface: str = "",
+    translation: str = "",
 ) -> dict[str, Any]:
     metrics = candidate.get("metrics") or {}
     score = float(metrics.get("score") or 0.0)
@@ -113,10 +115,14 @@ def condition_candidate(
     # chooses whether to spend the grammar signal -- which is the point of
     # putting it in the ledger rather than acting on it here.
     penalty, constructions = grammar_load(text, language)
+    position, occurrences = placement(text, surface) if surface else (None, 0)
     metrics = {
         **metrics,
         "grammar_penalty": penalty,
         "difficulty": round(score + penalty, 6),
+        "surface_position": position,
+        "surface_occurrences": occurrences,
+        "translation_length_ratio": length_ratio(text, translation) if translation else None,
     }
     kind, evidence = variety(text, language)
     # An unscored pair keeps its place: silence is not evidence of misalignment.
@@ -248,3 +254,47 @@ def grammar_load(text: str, language: str) -> tuple[float, tuple[str, ...]]:
             found.append(name)
             penalty += weight
     return round(penalty, 6), tuple(found)
+
+_WORD = re.compile(r"\w+", re.UNICODE)
+
+
+def placement(text: str, surface: str) -> tuple[float | None, int]:
+    """Where the taught word sits in the row, and how often it appears.
+
+    A subtitle row is a unit of display, not of language: it often carries a
+    whole exchange, and the word being taught frequently sits in only one half,
+    leaving the rest as text the learner reads past. Position says which half.
+
+    0.0 is the first token and 1.0 the last. None means the surface was not
+    found as a whole token -- an inflected match the harvest accepted on a
+    looser rule -- which is information rather than an error, so it is recorded
+    as absent rather than guessed at.
+    """
+
+    tokens = [t.casefold() for t in _WORD.findall(text)]
+    target = surface.casefold()
+    hits = [i for i, t in enumerate(tokens) if t == target]
+    if not hits or len(tokens) < 2:
+        return (0.0 if hits else None), len(hits)
+    return round(hits[0] / (len(tokens) - 1), 4), len(hits)
+
+
+def length_ratio(text: str, translation: str) -> float | None:
+    """Target tokens over translation tokens.
+
+    Catches the misalignment class the alignment score cannot: a credit line
+    against a real sentence -- "Traducao e legendagem zapTT" against "I'm in
+    trouble, Sam." -- reads as similar in embedding space because both are
+    short fragments, but the token ratio is plainly wrong. Cheap, and
+    orthogonal to anything LaBSE measures.
+
+    A ratio near 1.0 is unremarkable; far from it in either direction is worth
+    a second look. None when either side is empty.
+    """
+
+    target = len(_WORD.findall(text))
+    other = len(_WORD.findall(translation))
+    if not target or not other:
+        return None
+    return round(target / other, 4)
+

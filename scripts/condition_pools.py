@@ -96,7 +96,7 @@ def main() -> int:
         conditioned = []
         for item in card.get("candidates", []):
             sentence_id = str(item["sentence_id"])
-            text, _translation, source = bank.get(sentence_id, ("", "", ""))
+            text, translation, source = bank.get(sentence_id, ("", "", ""))
             if not text:
                 continue
             conditioned.append(
@@ -107,6 +107,8 @@ def main() -> int:
                     alignment=scores.get(sentence_id),
                     alignment_floor=args.alignment_floor,
                     language=language,
+                    surface=card.get("display_form") or "",
+                    translation=translation,
                 )
             )
         cards.append(
