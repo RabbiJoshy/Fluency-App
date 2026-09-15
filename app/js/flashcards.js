@@ -5002,8 +5002,74 @@ function updateCard({ announceHeadword = false } = {}) {
         // deliberately opts out because it walks those sub-senses itself.
         selectInitialMeaningGroup(card, card._grouping);
 
+        // Precompute singleton fold leaders and followers for identical display senses
+        // within the same POS section. If differentiators between identical glosses score
+        // >= 60, they remain separate rows and show the differentiator; otherwise they
+        // fold together into a single clean row taking the highest prominence badge.
+        const singletonFoldFollowers = new Set();
+        const singletonFoldLeaders = new Map();
+        const singletonDiffByMeaningIndex = new Map();
+        const singletonsBySectionGloss = new Map();
+
+        card.meanings.forEach((m, idx) => {
+            if (!m || m.exampleOnly) return;
+            const ax = GROUP_DUPLICATE_MEANINGS ? (axisOf.get(idx) || 'singleton') : 'singleton';
+            if (ax !== 'singleton') return;
+            const pos = m.pos === 'SENSE_CYCLE' ? (m.cycle_pos || 'X') : m.pos;
+            if (pos === 'MWE' || pos === 'CLITIC') return;
+            const rawGloss = String(getProductionEnglishCue(card, m) || m.meaning || m.translation || '').trim();
+            const proj = projectWiktionaryGloss(m, rawGloss);
+            const normKey = `${pos}\u0000${m.headword || ''}\u0000${senseSummaryText(proj.display).toLowerCase().replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '').replace(/\s+/g, ' ').trim()}`;
+            if (!singletonsBySectionGloss.has(normKey)) singletonsBySectionGloss.set(normKey, []);
+            singletonsBySectionGloss.get(normKey).push({ m, idx });
+        });
+
+        for (const [, entries] of singletonsBySectionGloss) {
+            if (entries.length < 2) continue;
+            const groupMeanings = entries.map(e => e.m);
+            const diffs = entries.map(e => resolveMeaningDifferentiator(
+                e.m,
+                groupMeanings,
+                e.m.meaning || e.m.translation || '',
+                (m, g) => cleanSenseContext(contextWithoutSenseMetadata(m, false), g)
+            ));
+
+            entries.forEach((e, i) => {
+                if (diffs[i]) singletonDiffByMeaningIndex.set(e.idx, diffs[i]);
+            });
+
+            const lowScoreEntries = entries.filter((e, i) => !diffs[i] || diffs[i].score < 60);
+            if (lowScoreEntries.length >= 2) {
+                const bestEntry = lowScoreEntries.find(e => getSenseProminenceInfo(e.m).key === 'common')
+                    || lowScoreEntries.find(e => getSenseProminenceInfo(e.m).key === 'uncommon')
+                    || lowScoreEntries[0];
+                const leaderIdx = bestEntry.idx;
+                const followers = lowScoreEntries.filter(e => e.idx !== leaderIdx).map(e => e.idx);
+                followers.forEach(fi => singletonFoldFollowers.add(fi));
+
+                const allFoldIndices = [leaderIdx, ...followers];
+                const allFoldMeanings = allFoldIndices.map(i => card.meanings[i]);
+                const bestPromInfo = getSenseProminenceInfo(bestEntry.m);
+                const sumPctVal = Math.min(100, Math.round(allFoldMeanings.reduce((acc, m) => acc + (Number(m.percentage) || 0), 0) * 100));
+                const hasOnlyRare = allFoldMeanings.every(m => m.unassigned || m.isRareSense || m.prominenceLabel === 'Rare');
+
+                const pooled = dedupeExamples(allFoldMeanings.flatMap(m => m.allExamples || m.examples || []));
+                if (pooled.length) {
+                    card.meanings[leaderIdx].allExamples = pooled;
+                }
+
+                singletonFoldLeaders.set(leaderIdx, {
+                    allIndices: allFoldIndices,
+                    bestPromInfo,
+                    sumPctVal,
+                    hasOnlyRare,
+                });
+            }
+        }
+
         orderMeaningEntriesForDisplay(card.meanings).forEach(({ meaning: m, index: idx }) => {
             if (m.exampleOnly) return;
+            if (singletonFoldFollowers.has(idx)) return;
             const isSelected = idx === currentMeaningIndex;
             const rowStateClasses = isSelected ? ' is-current-sense' : '';
             // One flat fill for every row, matching the POS header above them
@@ -5347,15 +5413,21 @@ function updateCard({ announceHeadword = false } = {}) {
                     `);
                 } else {
                     if (compactKnowledgeView && !isSelected) return;
+                    const foldInfo = singletonFoldLeaders.get(idx);
+                    const isFoldedLeader = !!foldInfo;
+                    const isFoldActive = isFoldedLeader && foldInfo.allIndices.includes(currentMeaningIndex);
+                    const isRowSelected = isFoldedLeader ? isFoldActive : isSelected;
+                    const rowSelectedClasses = isRowSelected ? ' is-current-sense' : '';
+
                     // Individual sense row: 2-line presentation when space permits
                     // Primary gloss on top, cleaned context underneath (no redundant repetition of the gloss).
-                    const rawContext = contextWithoutSenseMetadata(m, isSelected);
+                    const rawContext = contextWithoutSenseMetadata(m, isRowSelected);
                     const cleanedContext = cleanSenseContext(rawContext, displayMeaning);
                     let subContent = '';
                     if (cleanedContext) {
                         subContent += renderSenseContextHTML(cleanedContext, { leadingDot: false });
                     }
-                    const metadataHtml = senseMetadataHTML(m, isSelected, {
+                    const metadataHtml = senseMetadataHTML(m, isRowSelected, {
                         senseCount: card.meanings?.length || 1,
                     });
                     if (metadataHtml) subContent += (subContent ? ' ' : '') + metadataHtml;
@@ -5364,20 +5436,35 @@ function updateCard({ announceHeadword = false } = {}) {
                     const aiTag = modelProposalMarkerHTML(m);
                     if (aiTag) subContent += (subContent ? ' ' : '') + aiTag;
 
-                    const singletonTextClass = adaptiveRowTextClass(displayMeaning, cleanedContext || '');
+                    const differentiator = singletonDiffByMeaningIndex.get(idx);
+                    if (differentiator && differentiator.score >= 60 && !subContent) {
+                        if (differentiator.type === 'context') {
+                            subContent = renderSenseContextHTML(differentiator.label, { leadingDot: false });
+                        } else {
+                            const family = escapeCardText(differentiator.type);
+                            const shortLabel = escapeCardText(differentiator.label);
+                            subContent = `<span class="sense-metadata-detail sense-pill sense-pill--${family}" data-family="${family}"><span class="sense-pill-label">${shortLabel}</span></span>`;
+                        }
+                    }
+
+                    const singletonTextClass = adaptiveRowTextClass(displayMeaning, cleanedContext || differentiator?.label || '');
                     const useProminenceLabels = (typeof senseProminenceMode !== 'undefined' ? senseProminenceMode : globalThis.state?.senseProminenceMode) !== 'percentages';
-                    const promInfo = getSenseProminenceInfo(m);
-                    const rareRowClass = (m.unassigned || m.isRareSense || m.prominenceLabel === 'Rare') ? ' meaning-row-rare' : '';
+                    const promInfo = isFoldedLeader ? foldInfo.bestPromInfo : getSenseProminenceInfo(m);
+                    const displayPctVal = isFoldedLeader ? foldInfo.sumPctVal : pctVal;
+                    const rareRowClass = isFoldedLeader
+                        ? (foldInfo.hasOnlyRare ? ' meaning-row-rare' : '')
+                        : ((m.unassigned || m.isRareSense || m.prominenceLabel === 'Rare') ? ' meaning-row-rare' : '');
                     const pctTail = useProminenceLabels
                         ? `<span class="sense-prominence-badge prominence-${promInfo.key}" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">${escapeCardText(promInfo.label)}</span>`
-                        : (!m.unassigned && pctVal < 100
-                            ? `<span class="sense-percentage sense-percentage-tail" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">${pctVal}%</span>`
+                        : (!m.unassigned && displayPctVal < 100
+                            ? `<span class="sense-percentage sense-percentage-tail" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">${displayPctVal}%</span>`
                             : (m.unassigned ? `<span class="sense-prominence-badge prominence-rare" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">Rare</span>` : ''));
+                    const rowTextColor = isRowSelected ? 'var(--text-primary)' : 'var(--text-primary)';
                     target.push(`
-                    <div class="meaning-row meaning-row-regular ${singletonTextClass}${isSelected ? ' selected' : ''}${rowStateClasses}${rareRowClass}" style="position: relative; display: flex; align-items: center; padding: 2px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 44px;" onclick="selectMeaning(${idx})">
-                        ${renderRowCheckSlot(isSelected)}
-                        <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; width: 100%; padding: 2px ${useProminenceLabels ? '48px' : (!m.unassigned && pctVal < 100 ? '42px' : '10px')} 2px 8px;">
-                            <span class="meaning-row-translation meaning-row-gloss row-adaptive-text" style="font-weight: ${isSelected ? 700 : 600}; color: ${textColor}; text-align: center; width: 100%; line-height: 1.25;">${displayMeaningHTML}</span>
+                    <div class="meaning-row meaning-row-regular ${singletonTextClass}${isRowSelected ? ' selected' : ''}${rowSelectedClasses}${rareRowClass}" style="position: relative; display: flex; align-items: center; padding: 2px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 44px;" onclick="selectMeaning(${idx})">
+                        ${renderRowCheckSlot(isRowSelected)}
+                        <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; width: 100%; padding: 2px ${useProminenceLabels ? '48px' : (!m.unassigned && displayPctVal < 100 ? '42px' : '10px')} 2px 8px;">
+                            <span class="meaning-row-translation meaning-row-gloss row-adaptive-text" style="font-weight: ${isRowSelected ? 700 : 600}; color: ${rowTextColor}; text-align: center; width: 100%; line-height: 1.25;">${displayMeaningHTML}</span>
                             ${subContent ? `<span class="meaning-row-sub" style="text-align: center; width: 100%;">${subContent}</span>` : ''}
                         </div>
                         ${pctTail}
