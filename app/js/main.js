@@ -6,21 +6,21 @@ import { initOfflineContent } from './offline-content.js?v=20260825ak';
 import './speech.js?v=20260914b';
 import './artist-ui.js?v=20260825ak';
 import './auth.js?v=20260912a';
-import './about-example.js?v=20260913g';
+import './about-example.js?v=20260916a';
 import './estimation.js?v=20260825ak';
 import './config.js?v=20260907a';
 import './progress.js?v=20260915b';
 import './knowledge.js?v=20260915a';
-import './ui.js?v=20260915c';
-import './vocab.js?v=20260915c';
+import './ui.js?v=20260916a';
+import './vocab.js?v=20260915d';
 import './cognates.js?v=20260914e';
 import './coverage.js?v=20260909a';
-import './fast-mode.js?v=20260914b';
-import './extras.js?v=20260914g';
+import './fast-mode.js?v=20260916a';
+import './extras.js?v=20260916a';
 import './song-sets.js?v=20260823ae';
 import './spotify-playlist-import.js?v=20260913a';
 import './vocabulary-import.js?v=20260913a';
-import './flashcards.js?v=20260915d';
+import './flashcards.js?v=20260916a';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 function openTutorialIntroduction() {
@@ -422,6 +422,7 @@ loadConfig().then(async () => {
         showTotalStatsModal();
     });
     setupFindWord();
+    setupFrequencyIntro();
     document.getElementById('topBarUserName').addEventListener('click', () => {
         if (currentUser && !currentUser.isGuest) showSettingsModalWithTab('account');
     });
@@ -1514,12 +1515,11 @@ async function jumpToFoundWord(entry) {
 }
 
 function setupFindWord() {
-    const btn = document.getElementById('findWordBtn');
     const modal = document.getElementById('findWordModal');
     const closeBtn = document.getElementById('closeFindWordModal');
     const input = document.getElementById('findWordInput');
     const filterContainer = document.getElementById('findWordFilters');
-    if (!btn || !modal || !input) return;
+    if (!modal || !input) return;
 
     if (filterContainer && !filterContainer._filterWired) {
         filterContainer._filterWired = true;
@@ -1533,7 +1533,8 @@ function setupFindWord() {
         });
     }
 
-    btn.addEventListener('click', async () => {
+    async function openFindWord() {
+        document.getElementById('settingsModal')?.classList.add('hidden');
         modal.classList.remove('hidden');
         input.value = '';
         _findWordFilter = 'all';
@@ -1552,6 +1553,11 @@ function setupFindWord() {
             console.error('Find-word: failed to build index', e);
             document.getElementById('findWordStatus').textContent = 'Could not load vocabulary.';
         }
+    }
+    window.openFindWord = openFindWord;
+
+    document.getElementById('settingsFindWordBtn')?.addEventListener('click', () => {
+        openFindWord();
     });
 
     closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
@@ -1575,4 +1581,41 @@ function setupFindWord() {
             if (first) first.click();
         }
     });
+}
+
+const FREQUENCY_INTRO_KEY = 'fluencySeenFrequencyIntroV1';
+
+function closeFrequencyIntro() {
+    document.getElementById('frequencyIntroModal')?.classList.add('hidden');
+}
+
+function markFrequencyIntroSeen() {
+    try { localStorage.setItem(FREQUENCY_INTRO_KEY, '1'); } catch (_) {}
+}
+
+function maybeShowFrequencyIntro() {
+    try {
+        if (localStorage.getItem(FREQUENCY_INTRO_KEY) === '1') return;
+    } catch (_) {}
+    window.closeChoiceSheet?.('languageChoiceSheet');
+    document.getElementById('frequencyIntroModal')?.classList.remove('hidden');
+}
+
+function setupFrequencyIntro() {
+    document.getElementById('skipFrequencyIntroBtn')?.addEventListener('click', () => {
+        markFrequencyIntroSeen();
+        closeFrequencyIntro();
+    });
+    document.getElementById('frequencyIntroTutorialBtn')?.addEventListener('click', () => {
+        markFrequencyIntroSeen();
+        closeFrequencyIntro();
+        openTutorialIntroduction();
+    });
+    document.getElementById('frequencyIntroModal')?.addEventListener('click', event => {
+        if (event.target === event.currentTarget) {
+            markFrequencyIntroSeen();
+            closeFrequencyIntro();
+        }
+    });
+    window.maybeShowFrequencyIntro = maybeShowFrequencyIntro;
 }

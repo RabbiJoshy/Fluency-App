@@ -236,6 +236,7 @@ function resolveToken(token) {
 
 // Store current breakdown for popup access
 let currentBreakdownResults = [];
+let currentBreakdownSentence = { target: '', english: '' };
 
 function showLyricBreakdown(event) {
     event.stopPropagation();
@@ -268,6 +269,8 @@ function showLyricBreakdown(event) {
     }
 
     if (!targetSentence) return;
+
+    currentBreakdownSentence = { target: targetSentence, english: englishSentence };
 
     // Tokenize and resolve each word
     const tokens = tokenizeLyricLine(targetSentence);
@@ -303,17 +306,48 @@ function showLyricBreakdown(event) {
 
         const posClass = pos ? getPosColorClass(pos) : '';
         const posHTML = pos ? `<span class="word-pos card-pos ${posClass}">${pos}</span>` : '';
+        const surface = result.token.clean;
+        const saved = Boolean(window.isWordSaved?.(surface, targetSentence, selectedLanguage));
+        const saveHTML = `<button type="button" class="word-save${saved ? ' is-saved' : ''}" data-breakdown-save="${idx}">${saved ? 'Saved' : 'Save'}</button>`;
 
         html += `
             <div class="${rowClass}" onclick="showWordPopup(event, ${idx})">
-                <span class="word-spanish">${result.token.clean}</span>
-                <span class="word-translation">${translation || '<span style="opacity:0.4;">—</span>'}</span>
+                <span class="word-spanish">${surface}</span>
+                <span class="word-translation">${translation || '<span style="color: var(--text-secondary);">—</span>'}</span>
                 ${posHTML}
+                ${saveHTML}
             </div>
         `;
     });
 
     document.getElementById('lyricBreakdownBody').innerHTML = html;
+    document.getElementById('lyricBreakdownBody')?.querySelectorAll('[data-breakdown-save]').forEach(button => {
+        button.addEventListener('click', event => {
+            event.stopPropagation();
+            event.preventDefault();
+            const idx = Number(button.dataset.breakdownSave);
+            const result = currentBreakdownResults[idx];
+            if (!result?.token?.clean) return;
+            let gloss = '';
+            let pos = '';
+            if (result.entry) {
+                gloss = result.source === 'deck'
+                    ? (result.entry.meanings?.[0]?.meaning || result.entry.translation || '')
+                    : (result.entry.meanings?.[0]?.translation || '');
+                pos = result.entry.meanings?.[0]?.pos || '';
+            }
+            const saved = window.toggleSavedWord?.({
+                surface: result.token.clean,
+                gloss,
+                pos,
+                sentence: currentBreakdownSentence.target,
+                english: currentBreakdownSentence.english,
+                language: selectedLanguage,
+            });
+            button.classList.toggle('is-saved', Boolean(saved));
+            button.textContent = saved ? 'Saved' : 'Save';
+        });
+    });
     document.getElementById('lyricBreakdownModal').classList.remove('hidden');
 }
 

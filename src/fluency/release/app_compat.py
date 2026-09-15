@@ -59,10 +59,35 @@ def build_app_compatibility_assets(
             if "metadata" in example:
                 meta = dict(example["metadata"])
                 if "source" in meta and isinstance(meta["source"], dict):
-                    meta["source"] = {
-                        "name": meta["source"].get("name"),
-                        "document": meta["source"].get("document"),
+                    source_meta = meta["source"]
+                    kept_source = {
+                        key: source_meta.get(key)
+                        for key in (
+                            "name",
+                            "adapter",
+                            "snapshot_id",
+                            "source_record_id",
+                            "url",
+                            "attribution",
+                            "license",
+                            "document",
+                        )
+                        if source_meta.get(key) not in (None, "", {}, [])
                     }
+                    meta["source"] = kept_source
+                    if source_meta.get("source_record_id"):
+                        record["source_record_id"] = source_meta["source_record_id"]
+                    if source_meta.get("url"):
+                        record["source_url"] = source_meta["url"]
+                    if source_meta.get("attribution"):
+                        record["attribution"] = source_meta["attribution"]
+                    if source_meta.get("license"):
+                        record["license"] = source_meta["license"]
+                target_meta = meta.get("target") if isinstance(meta.get("target"), dict) else {}
+                if target_meta.get("contributor"):
+                    record["contributor"] = target_meta["contributor"]
+                if target_meta.get("url"):
+                    record["sentence_url"] = target_meta["url"]
                 record["metadata"] = meta
                 source = example["metadata"].get("source") or {}
                 document = source.get("document") or {}

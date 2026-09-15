@@ -104,6 +104,34 @@ class AppCompatibilityTests(unittest.TestCase):
         self.assertEqual(record["provenance"]["line"], "77")
         self.assertEqual(record["source_title"]["series"], "Without a Trace")
 
+    def test_tatoeba_source_fields_reach_the_app_example_record(self) -> None:
+        seed = json.loads(default_seed_path().read_text(encoding="utf-8"))
+        deck = build_pilot_deck(seed)
+        example = deck["cards"][0]["examples"][0]
+        example["source"] = "tatoeba"
+        example["provenance"] = "tatoeba"
+        example["metadata"] = {
+            "source": {
+                "name": "tatoeba",
+                "adapter": "tatoeba/v1",
+                "source_record_id": "202:101",
+                "url": "https://tatoeba.org/en/sentences/show/202",
+                "attribution": "Tatoeba sentence #202 by Émile",
+                "license": "CC BY 2.0 FR",
+            },
+            "target": {
+                "contributor": "Émile",
+                "url": "https://tatoeba.org/en/sentences/show/202",
+            },
+        }
+
+        index, examples = build_app_compatibility_assets(deck)
+        record = examples[index[0]["id"]]["m"][0][0]
+        self.assertEqual(record["source_record_id"], "202:101")
+        self.assertEqual(record["source_url"], "https://tatoeba.org/en/sentences/show/202")
+        self.assertEqual(record["contributor"], "Émile")
+        self.assertIn("source_record_id", record["metadata"]["source"])
+
     def test_partially_assigned_card_keeps_unused_menu_out_of_learner_meanings(self) -> None:
         seed = json.loads(default_seed_path().read_text(encoding="utf-8"))
         deck = build_pilot_deck(seed)
