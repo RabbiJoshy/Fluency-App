@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v413"
+EXPECTED_CACHE_NAME = "flashcards-v414"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -1133,3 +1133,24 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn(".sense-prominence-badge {", css)
         self.assertIn("font-family: system-ui, -apple-system, BlinkMacSystemFont", css)
         self.assertIn("padding-right: 42px !important;", css)
+
+    def test_pos_summary_strict_set_and_differential_metadata_folding(self) -> None:
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")
+
+        # 4-tier metadata scoring and differentiator resolution
+        self.assertIn("function scoreSenseMetadata(item)", pills)
+        self.assertIn("function resolveMeaningDifferentiator(meaning, peerMeanings, gloss = '', cleanContextFn = null)", pills)
+        self.assertIn("window.scoreSenseMetadata = scoreSenseMetadata;", pills)
+        self.assertIn("window.resolveMeaningDifferentiator = resolveMeaningDifferentiator;", pills)
+
+        # POS section summary strict Set deduplication
+        self.assertIn("seenSummaryKeys = new Set()", flashcards)
+        self.assertIn(r"normKey = sense.toLowerCase().replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '').trim()", flashcards)
+
+        # Singleton fold leader and follower precomputation
+        self.assertIn("const singletonFoldFollowers = new Set();", flashcards)
+        self.assertIn("const singletonFoldLeaders = new Map();", flashcards)
+        self.assertIn("if (singletonFoldFollowers.has(idx)) return;", flashcards)
+        self.assertIn("foldInfo.allIndices.includes(currentMeaningIndex)", flashcards)
+
