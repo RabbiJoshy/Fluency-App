@@ -32,7 +32,7 @@
   },
   "sense_menu": {
     "source_adapter": "spanishdict-sense-menu/v1",
-    "language_policy": "es-v1",
+    "language_policy": "es-spanishdict-v1",
     "source_edition": "spanishdict-complete-menu-2026-09-15-v3",
     "gloss_language": "en",
     "snapshot_id": null,
