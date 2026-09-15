@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v424';
+const CACHE_NAME = 'flashcards-v425';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -31,7 +31,7 @@ const urlsToCache = [
   '/config/config.json',
   '/config/cefr_levels.json',
   '/config/offline-content-manifest.json',
-  '/js/main.js?v=20260916g',
+  '/js/main.js?v=20260916h',
   `/js/theme.js?v=${ASSET_VERSION}`,
   '/js/state.js?v=20260914c',
   `/js/data-contracts.js?v=${ASSET_VERSION}`,
@@ -45,10 +45,10 @@ const urlsToCache = [
   '/js/spotify.js?v=20260914d',
   `/js/estimation.js?v=${ASSET_VERSION}`,
   '/js/config.js?v=20260916f',
-  '/js/progress.js?v=20260915b',
+  '/js/progress.js?v=20260916h',
   '/js/progress-identity.js?v=20260831a',
   '/js/knowledge.js?v=20260915a',
-  '/js/ui.js?v=20260916g',
+  '/js/ui.js?v=20260916h',
   '/js/vocab.js?v=20260915d',
   '/js/cognates.js?v=20260914e',
   '/js/coverage.js?v=20260909a',

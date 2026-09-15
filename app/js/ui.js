@@ -320,7 +320,7 @@ function updateIncorrectButtonVisibility() {
     }
 }
 
-function updateDailyReviewBanner() {
+function updateReviewAccess() {
     const reviewButton = document.getElementById('dailyReviewBtn');
     const label = document.getElementById('dailyReviewLabel');
     if (!reviewButton) return;
@@ -375,7 +375,7 @@ function setActiveSetupStep(stepId) {
     document.querySelectorAll('#step1 .step-number, #step2 .step-number, #step4 .step-number')
         .forEach(number => number.classList.toggle('--active', number.closest('.setup-step')?.id === stepId));
     if (stepId === 'step2') {
-        updateDailyReviewBanner();
+        updateReviewAccess();
     }
 }
 
@@ -406,7 +406,7 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
     document.getElementById('learningContextProgressLabel').textContent = coverageLabel;
     document.getElementById('learningContextProgressValue').textContent = `${coverage.toFixed(1)}%`;
     document.getElementById('learningContextProgressFill').style.width = `${Math.min(coverage, 100)}%`;
-    updateDailyReviewBanner();
+    updateReviewAccess();
 }
 
 function mergeStandardProgressIntoLanguageStep() {
@@ -3439,5 +3439,5 @@ window.hideTotalStatsModal = hideTotalStatsModal;
 window.updateTotalStatsButtonVisibility = updateTotalStatsButtonVisibility;
 window.updateStatsModal = updateStatsModal;
 window.renderSetupExtrasSection = renderSetupExtrasSection;
-window.updateDailyReviewBanner = updateDailyReviewBanner;
+window.updateReviewAccess = updateReviewAccess;
 window.startDailyReview = startDailyReview;
