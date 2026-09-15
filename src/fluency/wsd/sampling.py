@@ -81,11 +81,70 @@ class SurfaceSelection:
         return len(self.selected) + len(self.overflow)
 
 
+ALIGNMENT_BAND = 0.05
+MIN_LENGTH_RATIO = 0.35
+MAX_LENGTH_RATIO = 2.80
+
+
+def is_admissible_candidate(item: Mapping[str, Any]) -> bool:
+    """Sanity checks: exact full token and reasonable length ratio."""
+    metrics = item.get("metrics") or {}
+    if metrics.get("surface_position") is None and "surface_position" in metrics:
+        return False
+    ratio = metrics.get("translation_length_ratio")
+    if ratio is not None:
+        if ratio < MIN_LENGTH_RATIO or ratio > MAX_LENGTH_RATIO:
+            return False
+    return True
+
+
+def order_candidates_for_wsd(
+    items: Sequence[Mapping[str, Any]],
+    *,
+    alignment_band: float = ALIGNMENT_BAND,
+    min_candidates_floor: int = 10,
+) -> list[Mapping[str, Any]]:
+    """Deterministically order candidates for WSD evaluation.
+
+    1. Filter out candidate tail anomalies (missing token position, extreme length ratios).
+       If filtered candidates < min_candidates_floor, fall back to admitting all eligible.
+    2. Sort by alignment band descending (0.05 bins), then difficulty ascending, then sentence_id.
+    """
+    eligible = [i for i in items if i.get("eligible", True)]
+    admissible = [i for i in eligible if is_admissible_candidate(i)]
+    pool = (
+        admissible
+        if len(admissible) >= min_candidates_floor or len(admissible) >= len(eligible)
+        else eligible
+    )
+
+    def get_band(i: Mapping[str, Any]) -> int:
+        tags = i.get("tags") or {}
+        align = tags.get("alignment") or 0.0
+        return int(round(float(align) / alignment_band))
+
+    def get_difficulty(i: Mapping[str, Any]) -> float:
+        metrics = i.get("metrics") or {}
+        if "difficulty" in metrics and metrics["difficulty"] is not None:
+            return float(metrics["difficulty"])
+        score = float(metrics.get("score") or 0.0)
+        penalty = float(metrics.get("grammar_penalty") or 0.0)
+        return round(score + penalty, 6)
+
+    return sorted(
+        pool,
+        key=lambda i: (
+            -get_band(i),
+            get_difficulty(i),
+            str(i.get("sentence_id") or ""),
+        ),
+    )
+
+
 def _rank_key(candidate: Mapping[str, Any]) -> tuple[float, str]:
     metrics = candidate.get("metrics") or {}
-    score = metrics.get("score")
-    # Lower harvest score means an easier, better example, so ascending score is
-    # the preference order. A missing score sorts last rather than crashing.
+    score = metrics.get("difficulty") if metrics.get("difficulty") is not None else metrics.get("score")
+    # Lower harvest score/difficulty means an easier, better example.
     ordered = float(score) if isinstance(score, (int, float)) else float("inf")
     return (ordered, str(candidate.get("sentence_id") or ""))
 
@@ -132,14 +191,15 @@ def select_occurrences(
             overflow=tuple(str(item["sentence_id"]) for item in rest),
         )
 
-    ordered = sorted(candidates, key=_rank_key)
+    ordered = order_candidates_for_wsd(candidates)
     if ineligible:
         eligible = [item for item in ordered if str(item["sentence_id"]) not in ineligible]
         rejected = [item for item in ordered if str(item["sentence_id"]) in ineligible]
     else:
         eligible, rejected = list(ordered), []
     chosen = eligible[: policy.cap_per_surface]
-    rest = eligible[policy.cap_per_surface :] + rejected
+    chosen_ids = {str(item["sentence_id"]) for item in chosen}
+    rest = [item for item in candidates if str(item["sentence_id"]) not in chosen_ids]
     return SurfaceSelection(
         card_id=card_id,
         selected=tuple(str(item["sentence_id"]) for item in chosen),

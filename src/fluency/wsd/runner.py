@@ -629,6 +629,13 @@ class ClosedMenuWSDRunner:
             elif selected_ref in indistinguishable_refs:
                 emitted_level = "tuple"
                 evidence_guard_reasons.append("dictionary_does_not_distinguish_sibling_leaves")
+            elif (
+                candidate_leaf_count > 1
+                and commit_decision.margins.get("tuple", 1.0) < 0.015
+                and preparation_evidence.get("pos_match_kind") != "exact"
+            ):
+                emitted_level = "tuple"
+                evidence_guard_reasons.append("low_margin_discourse_or_filler_ambiguity")
         evidence["commit"] = {
             "selected_ref": {
                 "menu_analysis_id": selected_analysis.menu_analysis_id,

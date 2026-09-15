@@ -82,6 +82,9 @@ SUPPORTED_PROFILE_CONSTRAINT_MODES = {
     "es-v11-1": "filter",
     "pt-v11-1": "filter",
     "cs-v11-1": "filter",
+    "es-v12-1": "filter",
+    "pt-v12-1": "filter",
+    "cs-v12-1": "filter",
 }
 PROFILE_LANGUAGES = {
     "es-v6-1": "es", "es-v7-1": "es", "pt-v7-1": "pt",
@@ -90,12 +93,23 @@ PROFILE_LANGUAGES = {
     "es-v8-english-1": "es", "pt-v8-english-1": "pt",
     "cs-v10-1": "cs",
     "es-v11-1": "es", "pt-v11-1": "pt", "cs-v11-1": "cs",
+    "es-v12-1": "es", "pt-v12-1": "pt", "cs-v12-1": "cs",
 }
 ALIGNMENT_PROFILES = frozenset({"es-v8-english-1", "pt-v8-english-1"})
 RANK_AGREEMENT_PROFILES = frozenset(
-    {"es-v9-1", "es-v9-2", "es-v10-1", "pt-v9-1", "pt-v10-1", "cs-v10-1", "es-v11-1", "pt-v11-1", "cs-v11-1"}
+    {
+        "es-v9-1", "es-v9-2", "es-v10-1", "pt-v9-1", "pt-v10-1", "cs-v10-1",
+        "es-v11-1", "pt-v11-1", "cs-v11-1",
+        "es-v12-1", "pt-v12-1", "cs-v12-1",
+    }
 )
-EVIDENCE_GUARD_PROFILES = frozenset({"es-v10-1", "pt-v10-1", "cs-v10-1", "es-v11-1", "pt-v11-1", "cs-v11-1"})
+EVIDENCE_GUARD_PROFILES = frozenset(
+    {
+        "es-v10-1", "pt-v10-1", "cs-v10-1",
+        "es-v11-1", "pt-v11-1", "cs-v11-1",
+        "es-v12-1", "pt-v12-1", "cs-v12-1",
+    }
+)
 
 MORPH_VALUE_MAP = {
     ("Number", "Sing"): ("number", "singular"),
@@ -521,7 +535,7 @@ def main() -> None:
         help="override the POS model; defaults to the pin the run's language declares",
     )
     parser.add_argument(
-        "--pos-batch-size", type=int, default=1,
+        "--pos-batch-size", type=int, default=64,
         help="spaCy pipe batch size for occurrence POS tagging. Batching does "
              "not change per-document tags; it was 1, which made tagging the "
              "bottleneck of a 2,000-card run.",

@@ -23,6 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from fluency.surfaces.events import by_surface, read, scope, store_path  # noqa: E402
 from fluency.surfaces.ledger import LEDGER_VERSION, ledger_write_path  # noqa: E402
 from fluency.surfaces.policy import load_policy, verdict  # noqa: E402
+from fluency.wsd.sampling import order_candidates_for_wsd  # noqa: E402
 
 # Whoever supplies a language's sense menus is the authority on its lemmas,
 # because the lemma's job is to find a menu. A lemma from anywhere else may name
@@ -162,19 +163,9 @@ def main() -> int:
                 # Spanish cards carried a sub-0.70 sentence in their top ten, on
                 # data where every eligible sentence had already been scored.
                 #
-                # Alignment therefore leads, banded rather than raw: a continuous
-                # sort would let a 0.001 difference override easiness entirely,
-                # whereas within a band the sentences are equally well aligned
-                # and the original intent -- prefer what a classifier finds easy
-                # -- still decides. That takes 41.6% to 0.6%.
-                order = sorted(
-                    (i for i in items if i["eligible"]),
-                    key=lambda i: (
-                        -round((i["tags"].get("alignment") or 0.0) / ALIGNMENT_BAND),
-                        i["metrics"].get("score", float("inf")),
-                        i["sentence_id"],
-                    ),
-                )
+                # Alignment leads, banded into 0.05 bins, with difficulty (frequency burden + grammar penalty)
+                # deciding within each band, and tail anomalies (missing token, extreme ratio) filtered.
+                order = order_candidates_for_wsd(items)
                 dropped: dict[str, list[str]] = {}
                 for i in items:
                     if not i["eligible"]:
