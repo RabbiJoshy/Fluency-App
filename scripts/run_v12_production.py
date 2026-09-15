@@ -132,8 +132,14 @@ def deploy_language_release(workspace: Path, language: str, release_id: str) -> 
         sw_path.write_text(sw_text, encoding="utf-8")
         print(f"Bumped service worker cache to flashcards-v{new_v}")
 
+        test_shell_path = REPO_ROOT / "tests/app/test_product_shell.py"
+        if test_shell_path.exists():
+            test_text = test_shell_path.read_text(encoding="utf-8")
+            test_text = re.sub(r'EXPECTED_CACHE_NAME = "flashcards-v\d+"', f'EXPECTED_CACHE_NAME = "flashcards-v{new_v}"', test_text)
+            test_shell_path.write_text(test_text, encoding="utf-8")
+
     # 4. Commit config updates on main before switching branch
-    run_cmd(["git", "add", "app/config/dev_changelog.json", "app/config/config.json", "app/service-worker.js"], cwd=REPO_ROOT)
+    run_cmd(["git", "add", "app/config/dev_changelog.json", "app/config/config.json", "app/service-worker.js", "tests/app/test_product_shell.py"], cwd=REPO_ROOT)
     run_cmd(["git", "commit", "-m", f"Update config and changelog for {language.upper()} V12 release ({release_id})"], cwd=REPO_ROOT)
     run_cmd(["git", "push", "origin", "main"], cwd=REPO_ROOT)
 
