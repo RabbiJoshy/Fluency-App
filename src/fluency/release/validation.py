@@ -68,6 +68,7 @@ def validate_deck(deck: dict[str, Any]) -> None:
     card_ids: set[str] = set()
     sense_ids: set[str] = set()
     example_ids: set[str] = set()
+    canonical_texts: set[tuple[str, str]] = set()
     for expected_rank, card in enumerate(cards, start=1):
         _require(isinstance(card, dict), f"card {expected_rank} must be an object")
         for forbidden in ("coverage", "percentage", "corpus_count"):
@@ -123,6 +124,25 @@ def validate_deck(deck: dict[str, Any]) -> None:
                     "blank meaning requires explicit missing status and context",
                 )
             _require("legacy_sources" not in meaning, "legacy meaning sources are not allowed")
+            canonical_example = meaning.get("canonical_example")
+            if canonical_example is not None:
+                _require(isinstance(canonical_example, dict), "canonical_example must be an object")
+                _require(
+                    isinstance(canonical_example.get("text"), str) and canonical_example["text"],
+                    "canonical_example text is required",
+                )
+                _require(
+                    isinstance(canonical_example.get("translation"), str)
+                    and canonical_example["translation"],
+                    "canonical_example translation is required",
+                )
+                _require(
+                    "easiness" not in canonical_example,
+                    "canonical examples cannot carry corpus easiness",
+                )
+                identity = (canonical_example["text"], canonical_example["translation"])
+                _require(identity not in canonical_texts, "duplicate canonical example in deck")
+                canonical_texts.add(identity)
             if metadata_contract == METADATA_CONTRACT_VERSION:
                 metadata = meaning.get("metadata")
                 _require(isinstance(metadata, dict), "canonical meaning metadata is required")

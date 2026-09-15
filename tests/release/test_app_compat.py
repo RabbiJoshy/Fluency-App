@@ -151,6 +151,34 @@ class AppCompatibilityTests(unittest.TestCase):
             "sense_unused_menu_leaf",
         )
 
+    def test_canonical_example_reaches_assigned_and_unused_app_meanings(self) -> None:
+        seed = json.loads(default_seed_path().read_text(encoding="utf-8"))
+        deck = build_pilot_deck(seed)
+        card = deck["cards"][0]
+        chosen = {
+            "text": "La vi en la calle.",
+            "translation": "I saw her in the street.",
+            "bold_text_offsets": [[0, 2]],
+        }
+        card["meanings"][0]["canonical_example"] = chosen
+        unused = deepcopy(card["meanings"][0])
+        unused["sense_id"] = "sense_unused_canonical"
+        unused["translation"] = "unused alternative"
+        unused["assignment_status"] = "unassigned"
+        unused["canonical_example"] = {
+            "text": "Otra frase.",
+            "translation": "Another sentence.",
+        }
+        card["meanings"].append(unused)
+
+        index, _ = build_app_compatibility_assets(deck)
+        app_card = index[0]
+        self.assertEqual(app_card["meanings"][0]["canonical_example"]["text"], chosen["text"])
+        self.assertEqual(
+            app_card["unused_menu_senses"][0]["canonical_example"]["text"],
+            "Otra frase.",
+        )
+
     def test_wsd_distribution_keeps_unresolved_mass_in_the_denominator(self) -> None:
         seed = json.loads(default_seed_path().read_text(encoding="utf-8"))
         deck = build_pilot_deck(seed)

@@ -33,6 +33,7 @@ from fluency.core.io import atomic_write, json_bytes
 from fluency.release.study_structure import build_study_structure
 from fluency.release.validation import SPEECH_DECK_VERSION
 from fluency.pipeline.budget import display_examples_for_rank
+from fluency.sense_menu.canonical import choose as choose_canonical_example
 from fluency.projections import (
     PUBLICATION_PROJECTIONS,
     SELECTION_PROJECTIONS,
@@ -45,7 +46,7 @@ SELECTION_VERSION = "example-selection/v1"
 # Named for what selection actually does now: band on burden, rank on form,
 # spread across senses. The old name said easiness-order, which stopped being
 # true when ranking moved off the easiness score.
-POLICY_VERSION = "selection-form-and-sense/v2"
+POLICY_VERSION = "selection-wsd-only-form-and-sense/v3"
 
 _WORDS = re.compile(r"[^\W\d_]+", re.UNICODE)
 
@@ -138,6 +139,45 @@ def _example_id(card_id: str, sentence_id: str) -> str:
         {"card_id": card_id, "sentence_id": sentence_id}
     ).removeprefix("sha256:")
     return f"example_{digest[:32]}"
+
+
+def display_pool_for_card(
+    pool: list[dict[str, Any]],
+    assignments: dict[tuple[str, str], dict[str, Any]],
+    card_id: str,
+    *,
+    wsd_ran: bool,
+) -> list[dict[str, Any]]:
+    """The sentences stage 5 may show.
+
+    When WSD ran, only sentences that received a ``selected_sense_id``. When
+    stage 04 is absent the French optional-WSD path still builds, with every
+    example declared unassigned. Restricting an empty assignment set would
+    empty every card rather than describe a missing stage.
+    """
+
+    if not wsd_ran:
+        return list(pool)
+    return [
+        item
+        for item in pool
+        if (assignments.get((card_id, item["sentence_id"])) or {}).get("selected_sense_id")
+    ]
+
+
+def without_canonical_example_lists(payload: Any) -> Any:
+    """Drop dictionary example arrays now published as ``canonical_example``."""
+
+    if isinstance(payload, dict):
+        cleaned = {
+            key: without_canonical_example_lists(value)
+            for key, value in payload.items()
+            if key != "examples"
+        }
+        return cleaned
+    if isinstance(payload, list):
+        return [without_canonical_example_lists(item) for item in payload]
+    return payload
 
 
 
@@ -319,6 +359,7 @@ def build_inactive_run_candidate(
     selection_cards: list[dict[str, Any]] = []
     cards: list[dict[str, Any]] = []
     selected_count = 0
+    seen_canonical: set[tuple[str, str]] = set()
     for card in inventory.get("cards", []):
         card_id = card["card_id"]
         candidate_card = candidates_by_card.get(card_id)
@@ -326,7 +367,12 @@ def build_inactive_run_candidate(
         if candidate_card is None or menu_card is None:
             raise RunCandidateError(f"run layers do not cover card {card_id}")
         limit = display_examples_for_rank(scope, card["rank"])
-        pool = candidate_card.get("candidates", [])
+        pool = display_pool_for_card(
+            candidate_card.get("candidates", []) or [],
+            assignments,
+            card_id,
+            wsd_ran=bool(assignments),
+        )
         # Band, then rank on form. See _form_penalty: burden is a ceiling here,
         # not an ordering, so a sentence is never chosen merely for being cheap.
         ceiling = _burden_ceiling(pool) if pool else 0.0
@@ -467,10 +513,24 @@ def build_inactive_run_candidate(
                         "source_adapter": menu_adapter,
                         "source_edition": menus.get("source_edition"),
                         "source_analysis_key": analysis.get("source_analysis_key"),
-                        "analysis_provider_metadata": analysis.get("provider_metadata", {}),
-                        "sense_provider_metadata": sense.get("provider_metadata", {}),
+                        "analysis_provider_metadata": without_canonical_example_lists(
+                            analysis.get("provider_metadata", {})
+                        ),
+                        "sense_provider_metadata": without_canonical_example_lists(
+                            sense.get("provider_metadata", {})
+                        ),
                     },
                 }
+                chosen = choose_canonical_example(sense)
+                if chosen:
+                    key = (chosen["text"], chosen["translation"])
+                    if key not in seen_canonical:
+                        seen_canonical.add(key)
+                        meaning["canonical_example"] = chosen
+                    else:
+                        meaning["canonical_example"] = None
+                else:
+                    meaning["canonical_example"] = None
                 # Provider-neutral fields have already been extracted and
                 # typed by the sense-menu adapter. Preserve them for the
                 # learner UI instead of forcing it to parse Wiktionary tags
@@ -480,7 +540,9 @@ def build_inactive_run_candidate(
                         "specialist_features"
                     ]
                 if sense.get("metadata"):
-                    meaning["metadata"]["sense_metadata"] = sense["metadata"]
+                    meaning["metadata"]["sense_metadata"] = without_canonical_example_lists(
+                        sense["metadata"]
+                    )
                 if sense.get("definition"):
                     meaning["context"] = sense["definition"]
                 meanings.append(meaning)
@@ -515,6 +577,7 @@ def build_inactive_run_candidate(
                     "source_reference": "mwe-merged/v1",
                     "source": "mwe-merged",
                     "assignment_status": "assigned",
+                    "canonical_example": None,
                     # No context. It used to carry MULTIWORD_DEFINITION, which
                     # is the literal string "multiword expression" — the same
                     # thing part_of_speech already says two lines up. It filled

@@ -3938,9 +3938,72 @@ function finishPhraseChain(isCorrect) {
     }
 }
 
+function canonicalRecord(meaning) {
+    if (!meaning) return null;
+    if (meaning.pos === 'SENSE_CYCLE' && meaning.allSenses?.length) {
+        const item = meaning.allSenses[currentMWEIndex % meaning.allSenses.length]
+            || meaning.allSenses[0];
+        return item?.canonicalExample || item?.canonical_example || null;
+    }
+    return meaning.canonicalExample || meaning.canonical_example || null;
+}
+
+function highlightWithDeclaredOffsets(text, offsets) {
+    const raw = String(text || '');
+    if (!raw) return '';
+    const ranges = (Array.isArray(offsets) ? offsets : [])
+        .map(item => Array.isArray(item) ? [Number(item[0]), Number(item[1])] : null)
+        .filter(item => (
+            item
+            && Number.isFinite(item[0])
+            && Number.isFinite(item[1])
+            && item[1] > item[0]
+            && item[0] >= 0
+            && item[1] <= raw.length
+        ))
+        .sort((a, b) => a[0] - b[0]);
+    if (!ranges.length) return escapeCardText(raw);
+    let html = '';
+    let cursor = 0;
+    for (const [start, end] of ranges) {
+        if (start < cursor) continue;
+        html += escapeCardText(raw.slice(cursor, start));
+        html += `<span class="example-word-highlight">${escapeCardText(raw.slice(start, end))}</span>`;
+        cursor = end;
+    }
+    html += escapeCardText(raw.slice(cursor));
+    return html;
+}
+
+function canonicalExampleHTML(meaning) {
+    const canonical = canonicalRecord(meaning);
+    const text = String(canonical?.text || '').trim();
+    const translation = String(canonical?.translation || canonical?.english || '').trim();
+    if (!text || !translation) return '';
+    return `<div class="sentence canonical-example">
+        <div class="breakdown-trigger" style="margin-bottom: 8px;">${highlightWithDeclaredOffsets(text, canonical.bold_text_offsets)}</div>
+        <div class="translation">${highlightWithDeclaredOffsets(translation, canonical.bold_translation_offsets)}</div>
+        <div class="example-credit-row" style="display: flex; justify-content: flex-end; align-items: center; font-size: 13px; margin-top: 8px;">
+            <span class="example-song-credit" style="margin-right:auto;"><span class="dictionary-provenance-badge" title="Canonical dictionary example"><span class="dict-provenance-icon" aria-hidden="true">📖</span> Dictionary example</span></span>
+        </div>
+    </div>`;
+}
+
 function extractCanonicalDictionaryExamples(meaning) {
-    if (Array.isArray(meaning?.allExamples) && meaning.allExamples.length > 0) {
-        return meaning.allExamples;
+    const canonical = canonicalRecord(meaning);
+    const text = String(canonical?.text || '').trim();
+    const translation = String(canonical?.translation || canonical?.english || '').trim();
+    if (text && translation) {
+        return [{
+            target: text,
+            english: translation,
+            targetSentence: text,
+            englishSentence: translation,
+            source: 'dictionary',
+            evidence: 'dictionary',
+            dictionarySource: 'Dictionary',
+            canonical: true,
+        }];
     }
     const meta = meaning?.metadata;
     const isSd = Boolean(meta?.sense_provider_metadata?.spanishdict?.examples);
@@ -3967,8 +4030,11 @@ function getQualifyingRareSenses(card) {
             const examples = extractCanonicalDictionaryExamples(unused);
             return examples.length > 0 && (unused.meaning || unused.translation);
         }).map(unused => {
-            const examples = extractCanonicalDictionaryExamples(unused);
-            const firstEx = examples[0];
+            const firstEx = extractCanonicalDictionaryExamples(unused)[0];
+            const canonical = unused.canonicalExample || unused.canonical_example || {
+                text: firstEx.target,
+                translation: firstEx.english,
+            };
             return {
                 ...unused,
                 meaning: unused.meaning || unused.translation || '',
@@ -3976,9 +4042,10 @@ function getQualifyingRareSenses(card) {
                 isRareSense: true,
                 percentage: 0,
                 prominenceLabel: 'Rare',
-                targetSentence: firstEx.target,
-                englishSentence: firstEx.english,
-                allExamples: examples
+                canonicalExample: canonical,
+                targetSentence: unused.targetSentence || '',
+                englishSentence: unused.englishSentence || '',
+                allExamples: unused.allExamples || [],
             };
         });
     }
@@ -5546,6 +5613,10 @@ function updateCard({ announceHeadword = false } = {}) {
             backHTML += `<div class="example-autoplay-fallback">${cardAutoplayButton}</div>`;
         }
 
+        if (currentMeaning && !currentMeaning.allMWEs && !currentMeaning.allClitics) {
+            backHTML += canonicalExampleHTML(currentMeaning);
+        }
+
         if (currentMeaning && currentMeaning.targetSentence && cycleHasExamples) {
             // For MWE senses, get examples from the current MWE expression's own array
             let activeMweIdx = 0;
@@ -7069,10 +7140,7 @@ function buildSpanishDictPanelHTML(card) {
         const rawContext = String(meaning.context || '').trim();
         const usage = rawContext ? parseSpanishDictUsageContext(rawContext) : null;
         const candidates = usage ? spanishDictUsageCandidateForms(usage) : [];
-        const dictionaryExamples = (meaning.allExamples || []).filter(example => (
-            String(example?.source || '').toLocaleLowerCase('en') === 'spanishdict'
-            || String(example?.evidence || '').toLocaleLowerCase('en') === 'dictionary'
-        ));
+        const dictionaryExamples = extractCanonicalDictionaryExamples(meaning);
         const exampleHTML = dictionaryExamples.length
             ? dictionaryExamples.map(example => `<div class="sd-meta-example">
                 <div class="sd-meta-example-target">${escapeCardText(example.target || example.spanish || '')}</div>

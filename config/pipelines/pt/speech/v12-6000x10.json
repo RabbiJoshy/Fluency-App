@@ -18,8 +18,12 @@
   "scope": {
     "surface_limit": 6000,
     "shortfall_policy": "publish_explicit",
-    "display_examples_per_card": 10,
-    "note": "A 6,000-card deck showing 10 examples each, evaluating WSD v12-1 with execution cap 30."
+    "display_examples_per_card": [
+      {"through_rank": 1000, "examples": 12},
+      {"through_rank": 3000, "examples": 8},
+      {"through_rank": 6000, "examples": 5}
+    ],
+    "note": "A 6,000-card deck. Display tapers with rank; WSD execution cap stays 30."
   },
   "inventory": {
     "source_adapter": "published-surface-frequency-list/v1",

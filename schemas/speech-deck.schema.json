@@ -63,6 +63,24 @@
         "source_sense_id": {"type": "string", "minLength": 1},
         "source_reference": {"type": "string", "minLength": 1},
         "assignment_status": {"type": "string", "minLength": 1},
+        "canonical_example": {
+          "oneOf": [
+            {"type": "null"},
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["text", "translation"],
+              "properties": {
+                "text": {"type": "string", "minLength": 1},
+                "translation": {"type": "string", "minLength": 1},
+                "bold_text_offsets": {"type": "array"},
+                "bold_translation_offsets": {"type": "array"},
+                "literal_meaning": {"type": "string"},
+                "tags": {"type": "array", "items": {"type": "string"}}
+              }
+            }
+          ]
+        },
         "metadata": {"type": "object"}
       }
     },

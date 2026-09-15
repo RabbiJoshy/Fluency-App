@@ -4836,6 +4836,11 @@
             box-shadow: none;
         }
 
+        .sentence.canonical-example {
+            margin-top: 12px;
+            border-left-color: rgba(255, 255, 255, 0.28);
+        }
+
         .example-word-highlight,
         .example-related-highlight {
             color: #fff;

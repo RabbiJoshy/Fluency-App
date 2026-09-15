@@ -55,6 +55,27 @@ class ReleaseValidationTests(unittest.TestCase):
         ):
             validate_deck(deck)
 
+    def test_duplicate_canonical_examples_are_rejected(self) -> None:
+        deck = deepcopy(self.deck)
+        chosen = {
+            "text": "La vi en la calle.",
+            "translation": "I saw her in the street.",
+        }
+        deck["cards"][0]["meanings"][0]["canonical_example"] = chosen
+        deck["cards"][1]["meanings"][0]["canonical_example"] = dict(chosen)
+        with self.assertRaisesRegex(ReleaseValidationError, "duplicate canonical example"):
+            validate_deck(deck)
+
+    def test_canonical_examples_cannot_carry_easiness(self) -> None:
+        deck = deepcopy(self.deck)
+        deck["cards"][0]["meanings"][0]["canonical_example"] = {
+            "text": "La vi en la calle.",
+            "translation": "I saw her in the street.",
+            "easiness": 1.2,
+        }
+        with self.assertRaisesRegex(ReleaseValidationError, "easiness"):
+            validate_deck(deck)
+
     def test_blank_translation_requires_explicit_provider_status_and_context(self) -> None:
         deck = deepcopy(self.deck)
         meaning = deck["cards"][0]["meanings"][0]

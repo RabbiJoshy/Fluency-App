@@ -106,9 +106,26 @@
           ]
         },
         "display_examples_per_card": {
-          "const": 3,
-          "description": "Examples the finished card shows. Costs bytes only. Replaces examples_per_surface."
-        }
+          "description": "Examples the finished card shows. Costs bytes only. A plain integer is one tier for every rank; a list tapers by frequency.",
+          "oneOf": [
+            {"type": "integer", "minimum": 1},
+            {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["through_rank", "examples"],
+                "properties": {
+                  "through_rank": {"type": "integer", "minimum": 1},
+                  "examples": {"type": "integer", "minimum": 1}
+                }
+              }
+            }
+          ]
+        },
+        "note": {"type": "string"},
+        "max_cards_sharing_an_example": {"type": "integer", "minimum": 1}
       },
       "anyOf": [
         {

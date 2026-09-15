@@ -148,8 +148,8 @@ def validate_pipeline_profile(profile: dict[str, Any]) -> None:
     # the upper end -- display examples cost bytes in every card of every deck.
     _display = display_examples_per_card(scope)
     _require(
-        1 <= _display <= 10,
-        f"a Speech profile must show between 1 and 10 final examples per surface, not {_display}",
+        1 <= _display <= 12,
+        f"a Speech profile must show between 1 and 12 final examples per surface, not {_display}",
     )
     _require(
         scope.get("shortfall_policy") in {"block_release", "publish_explicit"},

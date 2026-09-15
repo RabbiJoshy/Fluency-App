@@ -142,6 +142,8 @@ def build_app_compatibility_assets(
             for field in ("headword", "menu_analysis_id", "source_sense_id", "source_reference"):
                 if meaning.get(field):
                     old_meaning[field] = meaning[field]
+            if meaning.get("canonical_example"):
+                old_meaning["canonical_example"] = meaning["canonical_example"]
             if "metadata" in meaning and isinstance(meaning["metadata"], dict):
                 clean_meta = {
                     k: v for k, v in meaning["metadata"].items()

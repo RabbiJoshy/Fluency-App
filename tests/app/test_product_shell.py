@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v430"
+EXPECTED_CACHE_NAME = "flashcards-v431"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -224,9 +224,12 @@ class ProductShellTests(unittest.TestCase):
     def test_speech_cards_keep_dictionary_examples_separate_from_usage_share(self) -> None:
         vocab = (APP_ROOT / "js" / "vocab.js").read_text(encoding="utf-8")
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
-        self.assertIn("examples: mergeReferenceExamples(m.examples || [], m)", vocab)
+        self.assertNotIn("examples: mergeReferenceExamples(m.examples || [], m)", vocab)
+        self.assertIn("if (m.canonical_example) meaning.canonicalExample = m.canonical_example;", vocab)
         self.assertGreaterEqual(vocab.count("source_mode: 'reference'"), 2)
-        self.assertIn("never enter the frequency calculation above", vocab)
+        self.assertIn("be merged into corpus ticks", vocab)
+        self.assertIn("function canonicalExampleHTML(meaning)", flashcards)
+        self.assertIn("function highlightWithDeclaredOffsets(text, offsets)", flashcards)
         self.assertIn("'Wiktionary example'", flashcards)
         self.assertIn("'SpanishDict example'", flashcards)
         self.assertIn("function exampleTicksHTML(current, total, label = 'example')", flashcards)
@@ -531,8 +534,8 @@ class ProductShellTests(unittest.TestCase):
             '.range-btn-new:not(.has-progress):not(:hover)',
             light_css,
         )
-        self.assertIn('css/light-theme.css?v=20260914e', html)
-        self.assertIn('/css/light-theme.css?v=20260914e', worker)
+        self.assertIn('css/light-theme.css?v=20260916m', html)
+        self.assertIn('/css/light-theme.css?v=20260916m', worker)
 
     def test_active_release_aliases_are_never_cached(self) -> None:
         worker = (APP_ROOT / "service-worker.js").read_text(encoding="utf-8")
@@ -604,7 +607,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260914d", worker)
-        self.assertIn("/js/main.js?v=20260916l", worker)
+        self.assertIn("/js/main.js?v=20260916m", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -1028,6 +1031,7 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
 
         self.assertIn("function extractCanonicalDictionaryExamples(meaning)", flashcards)
+        self.assertIn("function canonicalExampleHTML(meaning)", flashcards)
         self.assertIn("function getQualifyingRareSenses(card)", flashcards)
         self.assertIn("function toggleRareSenses(event)", flashcards)
         self.assertIn("window.toggleRareSenses = toggleRareSenses;", flashcards)

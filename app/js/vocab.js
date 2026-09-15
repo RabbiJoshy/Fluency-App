@@ -2040,10 +2040,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
 
         for (const item of filteredData) {
             const meanings = item.meanings.map(m => {
-                const displayMeaning = activeArtist
-                    ? m
-                    : { ...m, examples: mergeReferenceExamples(m.examples || [], m) };
-                const { targetSentence, englishSentence, allExamples } = getExampleFromMeaning(displayMeaning, exampleTargetField, exampleEnglishField);
+                const { targetSentence, englishSentence, allExamples } = getExampleFromMeaning(m, exampleTargetField, exampleEnglishField);
                 const meaning = {
                     pos: m.pos,
                     meaning: m.translation,
@@ -2052,6 +2049,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
                     englishSentence,
                     allExamples
                 };
+                if (m.canonical_example) meaning.canonicalExample = m.canonical_example;
                 if (m.unassigned) meaning.unassigned = true;
                 if (m.assignment_method) meaning.assignment_method = m.assignment_method;
                 if (m.prompt_id) meaning.prompt_id = m.prompt_id;
@@ -2276,6 +2274,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
                     headword: m.headword || '',
                     regions: Array.isArray(m.regions) ? [...m.regions] : [],
                     metadata: m.metadata || null,
+                    canonicalExample: m.canonical_example || null,
                     allExamples: [],
                 })),
                 translation: meanings[0]?.meaning || '',
@@ -2550,11 +2549,11 @@ function generateLinks(word, lemma, linkTemplates) {
     return links;
 }
 
-// Dictionary examples describe a sense but are not WSD observations. Speech
-// cards can still teach with them as long as they remain visibly sourced and
-// never enter the frequency calculation above. Both providers already survive
-// release composition inside sense_provider_metadata; normalize their two raw
-// shapes here at the final UI boundary.
+// Dictionary illustrations live on meaning.canonical_example. They must never
+// be merged into corpus ticks: they are not WSD observations and must not
+// enter frequency, hardness, or commonness. The helpers below remain only so
+// older decks that still nest provider example lists can be read at the UI
+// boundary without counting those lists as usage.
 function referenceExamplesForMeaning(meaning) {
     const senses = [meaning, ...(Array.isArray(meaning?.allSenses) ? meaning.allSenses : [])];
     const examples = [];

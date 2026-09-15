@@ -6,6 +6,7 @@ import tempfile
 import unittest
 
 from fluency.core.workspace import Workspace
+from fluency.pipeline.budget import display_examples_for_rank
 from fluency.pipeline.planning import (
     PipelineProfileError,
     STAGE_ORDER,
@@ -151,6 +152,18 @@ class PipelinePlanningTests(unittest.TestCase):
                 selection_contract["requires_stage_outputs"],
                 ["inventory", "sentence_harvest"],
             )
+
+    def test_v12_spanish_profile_states_rank_tiered_display(self) -> None:
+        profile = load_pipeline_profile(
+            REPOSITORY_ROOT / "config" / "pipelines" / "es" / "speech" / "v12-6000x10.json"
+        )
+        scope = profile["scope"]
+        self.assertEqual(display_examples_for_rank(scope, 1), 12)
+        self.assertEqual(display_examples_for_rank(scope, 1000), 12)
+        self.assertEqual(display_examples_for_rank(scope, 1001), 8)
+        self.assertEqual(display_examples_for_rank(scope, 3000), 8)
+        self.assertEqual(display_examples_for_rank(scope, 3001), 5)
+        self.assertEqual(display_examples_for_rank(scope, 6000), 5)
 
 
 if __name__ == "__main__":
