@@ -6,11 +6,11 @@
   "languages": {
     "spanish": {
       "name": "Spanish",
-      "indexPath": "releases/es/speech/es-speech-1000x10/app/vocabulary.index.json",
-      "examplesPath": "releases/es/speech/es-speech-1000x10/app/vocabulary.examples.json",
-      "studyStructurePath": "releases/es/speech/es-speech-1000x10/app/study-structure.json",
-      "releaseManifestPath": "releases/es/speech/es-speech-1000x10/manifest.json",
-      "releaseCompositionPath": "releases/es/speech/es-speech-1000x10/composition.json",
+      "indexPath": "releases/es/speech/es-speech-v11-3000x10/app/vocabulary.index.json",
+      "examplesPath": "releases/es/speech/es-speech-v11-3000x10/app/vocabulary.examples.json",
+      "studyStructurePath": "releases/es/speech/es-speech-v11-3000x10/app/study-structure.json",
+      "releaseManifestPath": "releases/es/speech/es-speech-v11-3000x10/manifest.json",
+      "releaseCompositionPath": "releases/es/speech/es-speech-v11-3000x10/composition.json",
       "conjugationsPath": null,
       "exampleTargetField": "example_spanish",
       "exampleEnglishField": "example_english",
@@ -587,11 +587,11 @@
         "wordReference": "https://en.wiktionary.org/wiki/{word}#Czech",
         "conjugation": "https://en.wiktionary.org/wiki/{word}#Czech"
       },
-      "indexPath": "releases/cs/speech/cs-speech-1000x10/app/vocabulary.index.json",
-      "examplesPath": "releases/cs/speech/cs-speech-1000x10/app/vocabulary.examples.json",
-      "studyStructurePath": "releases/cs/speech/cs-speech-1000x10/app/study-structure.json",
-      "releaseManifestPath": "releases/cs/speech/cs-speech-1000x10/manifest.json",
-      "releaseCompositionPath": "releases/cs/speech/cs-speech-1000x10/composition.json",
+      "indexPath": "releases/cs/speech/cs-speech-v11-3000x10/app/vocabulary.index.json",
+      "examplesPath": "releases/cs/speech/cs-speech-v11-3000x10/app/vocabulary.examples.json",
+      "studyStructurePath": "releases/cs/speech/cs-speech-v11-3000x10/app/study-structure.json",
+      "releaseManifestPath": "releases/cs/speech/cs-speech-v11-3000x10/manifest.json",
+      "releaseCompositionPath": "releases/cs/speech/cs-speech-v11-3000x10/composition.json",
       "cognatesPath": "cognates/cs/cognates.json",
       "coveragePath": "coverage/cs/coverage.json"
     }

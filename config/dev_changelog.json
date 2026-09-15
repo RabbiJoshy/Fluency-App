@@ -4,6 +4,17 @@
     {
       "date": "2026-09-15",
       "commit": "pending",
+      "summary": "Deploy Spanish and Czech 3,000-word decks with WSD v11-1 (10 display examples)",
+      "detail": [
+        "Promoted Spanish and Czech to 3,000 cards with up to 10 display examples each.",
+        "Spanish: 21,125 assigned examples across 3,000 cards (es-speech-v11-3000x10).",
+        "Czech: 17,099 assigned examples across 3,000 cards (cs-speech-v11-3000x10).",
+        "All 3 core languages (PT, ES, CS) now powered by WSD v11-1 with surface ledger priority ordering."
+      ]
+    },
+    {
+      "date": "2026-09-15",
+      "commit": "pending",
       "summary": "Deploy Portuguese 3,000-word deck with WSD v11-1 (10 display examples)",
       "detail": [
         "Promoted Portuguese to 3,000 cards with up to 10 display examples each.",
