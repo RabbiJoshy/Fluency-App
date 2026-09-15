@@ -15,7 +15,7 @@ a future language -- reads it rather than reconstructing it.
 
 from __future__ import annotations
 
-import argparse, collections, json, sys
+import argparse, collections, hashlib, json, sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
@@ -23,6 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from fluency.surfaces.events import by_surface, read, scope, store_path  # noqa: E402
 from fluency.surfaces.ledger import LEDGER_VERSION, ledger_write_path  # noqa: E402
 from fluency.surfaces.policy import load_policy, verdict  # noqa: E402
+from fluency.surfaces import prewsd  # noqa: E402
 from fluency.wsd.sampling import order_candidates_for_wsd  # noqa: E402
 
 # Whoever supplies a language's sense menus is the authority on its lemmas,
@@ -177,7 +178,31 @@ def main() -> int:
                     if not i["eligible"]:
                         dropped.setdefault(i["rejected_for"] or "unknown", []).append(
                             i["sentence_id"])
+                # Carried only as far as the examples writer, which needs the
+                # sentence-intrinsic tags without re-reading the pool. Stripped
+                # before anything is written, since a fact about a sentence does
+                # not belong under a surface.
+                intrinsic = [{
+                    "sentence_id": i["sentence_id"],
+                    "alignment": i["tags"].get("alignment"),
+                    "grammar": list(i["tags"].get("grammar") or ()),
+                    "variety": i["tags"].get("variety"),
+                    "length_band": i["tags"].get("length"),
+                    "target_tokens": i["metrics"].get("target_tokens"),
+                    "grammar_penalty": i["metrics"].get("grammar_penalty"),
+                    "translation_length_ratio": i["metrics"].get("translation_length_ratio"),
+                } for i in order]
+                pairs = {
+                    "frequency_burden": [i["metrics"].get("frequency_burden") for i in order],
+                    "score": [i["metrics"].get("score") for i in order],
+                    "difficulty": [i["metrics"].get("difficulty") for i in order],
+                    "surface_position": [i["metrics"].get("surface_position") for i in order],
+                    "surface_occurrences": [i["metrics"].get("surface_occurrences") for i in order],
+                    "harder_tokens": [i["metrics"].get("harder_tokens") for i in order],
+                }
                 supply[form] = {
+                    "_intrinsic": intrinsic,
+                    "_pairs": pairs,
                     "harvested": len(items),
                     "eligible": len(order),
                     "rejected": {k: v for k, v in rejected.items() if k},
@@ -310,6 +335,78 @@ def main() -> int:
     # Supply is now also written per run, so any run's supply can be restored
     # without re-conditioning. The inline copy stays for readers that expect it.
     if run_id:
+        # The examples document: one row per distinct eligible sentence, with
+        # the text and the metadata that is a property of the sentence itself.
+        # Written so the pre-WSD trio is self-sufficient -- WSD reads the ledger
+        # for decisions, this for sentences, and the pool for the numbers that
+        # depend on which card a sentence is serving. It should not have to
+        # reach back into the run's sentence bank for text.
+        examples_dir = out.parent / "examples"
+        examples_dir.mkdir(parents=True, exist_ok=True)
+        examples_file = examples_dir / f"{run_id}.jsonl"
+        bank_path = run / "stages/03_sentence_harvest/output/sentence-bank.jsonl"
+        wanted: dict[str, dict] = {}
+        for entry in surfaces.values():
+            for item in (entry.get("supply") or {}).get("_intrinsic", ()):
+                wanted.setdefault(item["sentence_id"], item)
+        written = 0
+        sentence_order: list[str] = []
+        prewsd_rows: list[dict] = []
+        digest = hashlib.sha256()
+        with examples_file.open("w", encoding="utf-8") as fh:
+            if bank_path.is_file():
+                for line in bank_path.open(encoding="utf-8"):
+                    if not line.strip():
+                        continue
+                    row = json.loads(line)
+                    meta = wanted.get(row["sentence_id"])
+                    if meta is None:
+                        continue
+                    payload = json.dumps({
+                        "sentence_id": row["sentence_id"],
+                        "target": (row.get("target") or {}).get("text") or "",
+                        "translation": (row.get("translation") or {}).get("text") or "",
+                        "source": (row.get("source") or {}).get("name") or "",
+                        **{k: v for k, v in meta.items() if k != "sentence_id"},
+                    }, ensure_ascii=False, separators=(",", ":"))
+                    fh.write(payload + "\n")
+                    sentence_order.append(row["sentence_id"])
+                    prewsd_rows.append({
+                        "target": (row.get("target") or {}).get("text") or "",
+                        "translation": (row.get("translation") or {}).get("text") or "",
+                        "source": (row.get("source") or {}).get("name") or "",
+                        **{k: v for k, v in meta.items() if k != "sentence_id"},
+                    })
+                    digest.update(payload.encode("utf-8"))
+                    written += 1
+        # The frozen pre-WSD set: sentences in a fixed order, surfaces
+        # referencing them by index, field names written once. See prewsd.py
+        # for why -- 402MB of JSON across three documents was almost entirely
+        # repeated field names and 41-character id strings.
+        order_index = {sid: n for n, sid in enumerate(sentence_order)}
+        prewsd_surfaces = {}
+        for form, entry in surfaces.items():
+            sup = entry.get("supply") or {}
+            ids = sup.get("eligible_sentence_ids") or []
+            if not ids:
+                continue
+            prewsd_surfaces[form] = {
+                "eligible": [order_index[i] for i in ids if i in order_index],
+                **(sup.get("_pairs") or {}),
+            }
+        manifest = prewsd.build(
+            out.parent / "prewsd" / run_id,
+            language=lang, run_id=run_id,
+            sentences=prewsd_rows, surfaces=prewsd_surfaces)
+        total = sum(d["bytes"] for d in manifest["documents"])
+        print(f"  frozen pre-WSD set: {manifest['sentences']:,} sentences, "
+              f"{manifest['surfaces']:,} surfaces, {total/1e6:.1f} MB")
+
+        examples_record = {"path": f"examples/{run_id}.jsonl",
+                           "rows": written,
+                           "sha256": digest.hexdigest()}
+        print(f"  examples: {written:,} distinct eligible sentences -> {examples_file.name}")
+
         supply_dir = out.parent / "supply"
         supply_dir.mkdir(parents=True, exist_ok=True)
         (supply_dir / f"{run_id}.json").write_text(json.dumps({
@@ -317,13 +414,20 @@ def main() -> int:
             "language": lang,
             "run_id": run_id,
             "surfaces_covered": covered,
-            "supply": {k: v["supply"] for k, v in surfaces.items() if v.get("supply")},
+            "supply": {k: {kk: vv for kk, vv in v["supply"].items()
+                           if not kk.startswith("_")}
+                       for k, v in surfaces.items() if v.get("supply")},
         }, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 
     if args.supply_only:
         print(f"{lang}: supply only, run {run_id}, {covered:,} surfaces covered. "
               f"Ledger left unchanged.")
         return 0
+
+    for entry in surfaces.values():
+        if entry.get("supply"):
+            entry["supply"].pop("_intrinsic", None)
+            entry["supply"].pop("_pairs", None)
 
     out.write_text(json.dumps({
         "ledger_version": LEDGER_VERSION,
@@ -332,6 +436,7 @@ def main() -> int:
         # A ledger whose supply covers less than it keeps is thin -- readable at
         # a glance instead of discovered downstream by an empty card.
         "supply_run_id": run_id,
+        "examples_document": examples_record,
         "supply_coverage": {"keep": keep, "with_supply": covered,
                             "complete": covered >= keep},
         "derived_from": {"events": len(events), "surfaces": len(surfaces)},
