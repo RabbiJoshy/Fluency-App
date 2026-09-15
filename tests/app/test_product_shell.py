@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v404"
+EXPECTED_CACHE_NAME = "flashcards-v409"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -82,15 +82,15 @@ class ProductShellTests(unittest.TestCase):
         self.assertEqual(config["languages"]["portuguese_brazilian"]["speechLang"], "pt-BR")
         self.assertEqual(
             config["languages"]["spanish"]["studyStructurePath"],
-            "releases/es/speech/es-speech-1000x10/app/study-structure.json",
+            "releases/es/speech/es-speech-v11-3000x10/app/study-structure.json",
         )
         self.assertEqual(
             config["languages"]["spanish"]["releaseManifestPath"],
-            "releases/es/speech/es-speech-1000x10/manifest.json",
+            "releases/es/speech/es-speech-v11-3000x10/manifest.json",
         )
         self.assertEqual(
             config["languages"]["spanish"]["releaseCompositionPath"],
-            "releases/es/speech/es-speech-1000x10/composition.json",
+            "releases/es/speech/es-speech-v11-3000x10/composition.json",
         )
         for legacy_path in (
             "conjugatedEnglishPath",
@@ -1117,6 +1117,19 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("#backContent > .meanings-scroll::-webkit-scrollbar", css)
         self.assertIn("#backContent > .meanings-scroll::-webkit-scrollbar-thumb", light)
 
+    def test_back_of_card_declutter_prominence_and_lexicographic_extraction(self) -> None:
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")
+        css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
 
+        # Checkmark removed on sense rows
+        self.assertIn("function renderRowCheckSlot(isSelected) {\n    return '';\n}", flashcards)
 
+        # Lexicographical definition prefix extraction
+        self.assertIn("WIKTIONARY_PRONOUN_DEFINITION", pills)
+        self.assertIn("extractedPrefixNote", pills)
 
+        # Space efficient prominence badge font and mobile rules
+        self.assertIn(".sense-prominence-badge {", css)
+        self.assertIn("font-family: system-ui, -apple-system, BlinkMacSystemFont", css)
+        self.assertIn("padding-right: 42px !important;", css)

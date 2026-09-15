@@ -2736,15 +2736,26 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-family: var(--font-data, monospace);
-            font-size: 10px;
-            font-weight: 700;
-            line-height: 1;
-            padding: 3px 7px;
-            border-radius: 999px;
-            text-transform: capitalize;
-            letter-spacing: 0.02em;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-size: 9px;
+            font-weight: 600;
+            line-height: 1.2;
+            padding: 1.5px 5px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
             white-space: nowrap;
+        }
+        @media (max-width: 480px) {
+            .meaning-row .meaning-row-body {
+                padding-right: 42px !important;
+                padding-left: 6px !important;
+            }
+            .sense-prominence-badge {
+                font-size: 8px;
+                padding: 1px 4px;
+                letter-spacing: 0.02em;
+            }
         }
         .sense-prominence-badge.prominence-common {
             background: rgba(16, 185, 129, 0.15);
