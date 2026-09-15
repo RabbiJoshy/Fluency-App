@@ -404,7 +404,14 @@ async function startDailyReview(opts = {}) {
         loadingMessage.textContent = `Collecting ${tierName}…`;
     }
     window.showAppLoading?.('Loading Daily Review', `Preparing review batch of ${tierName}…`);
-    await window.loadDailyReviewDeck?.(opts);
+    try {
+        await window.loadDailyReviewDeck?.(opts);
+    } catch (err) {
+        console.error('Error starting daily review:', err);
+    } finally {
+        window.hideAppLoading?.();
+        if (loadingMessage) loadingMessage.style.display = 'none';
+    }
 }
 
 function setActiveSetupStep(stepId) {
@@ -687,7 +694,7 @@ function setupLanguageTabs() {
                     ? 'Start with general-purpose vocabulary'
                     : `Speech vocabulary is not ready for ${langConfig?.name || newLanguage} yet`;
                 const detail = speechSourceButton.querySelector('small');
-                if (detail) detail.textContent = 'Build general-purpose vocabulary from the words used most often in modern movie and television dialogue.';
+                if (detail) detail.textContent = 'The words people say in films and TV. Best if you want conversation.';
             }
             if (sourceCardButton) {
                 sourceCardButton.disabled = !lyricsAvailable;
@@ -695,7 +702,7 @@ function setupLanguageTabs() {
                     ? 'Build vocabulary around music you choose'
                     : `Music & lyrics is not available for ${langConfig?.name || newLanguage} yet`;
                 const detail = sourceCardButton.querySelector('small');
-                if (detail) detail.textContent = 'Choose artists and songs in your target language, or import your own Spotify playlist (coming later). Learn the most frequent words, then play the lyric moment where each word is used.';
+                if (detail) detail.textContent = 'The words in songs you choose, with the original line as the example. Best if music is how you listen.';
                 if (lyricsStatus) lyricsStatus.textContent = lyricsAvailable ? '›' : 'Coming later';
             }
 
@@ -787,6 +794,8 @@ function setupLanguageTabs() {
                 if (speechSourceButton.disabled) return;
                 continueToSpeech();
             };
+
+            window.maybeShowFrequencyIntro?.();
 
             const pendingSpeechLanguage = sessionStorage.getItem('fluencyPendingSpeechLanguage');
             if (pendingSpeechLanguage === newLanguage) {

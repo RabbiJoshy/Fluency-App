@@ -367,10 +367,108 @@ function initExtras() {
             closeMergedForms();
             closeSkippedWords();
             closeExtras();
+            closeSavedWords();
         }
     });
 
+    document.getElementById('closeSavedWordsModal')?.addEventListener('click', closeSavedWords);
+    document.getElementById('savedWordsModal')?.addEventListener('click', event => {
+        if (event.target?.id === 'savedWordsModal') closeSavedWords();
+    });
+    document.getElementById('downloadSavedWordsBtn')?.addEventListener('click', downloadSavedWords);
+    document.getElementById('settingsSavedWordsBtn')?.addEventListener('click', () => {
+        document.getElementById('settingsModal')?.classList.add('hidden');
+        openSavedWords();
+    });
+
     refreshExtrasButtons();
+}
+
+const SAVED_WORDS_KEY = 'fluency_saved_words_v1';
+
+function loadSavedWords() {
+    try {
+        const raw = localStorage.getItem(SAVED_WORDS_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (_) {
+        return [];
+    }
+}
+
+function writeSavedWords(items) {
+    localStorage.setItem(SAVED_WORDS_KEY, JSON.stringify(items));
+}
+
+function savedWordKey(item) {
+    return `${item.language || ''}\0${item.surface || ''}\0${item.sentence || ''}`;
+}
+
+function isWordSaved(surface, sentence, language) {
+    const key = savedWordKey({ language, surface, sentence });
+    return loadSavedWords().some(item => savedWordKey(item) === key);
+}
+
+function toggleSavedWord(entry) {
+    const language = entry.language || g().selectedLanguage || '';
+    const next = {
+        language,
+        surface: entry.surface,
+        gloss: entry.gloss || '',
+        pos: entry.pos || '',
+        sentence: entry.sentence || '',
+        english: entry.english || '',
+        savedAt: new Date().toISOString(),
+    };
+    const items = loadSavedWords();
+    const key = savedWordKey(next);
+    const index = items.findIndex(item => savedWordKey(item) === key);
+    if (index >= 0) items.splice(index, 1);
+    else items.unshift(next);
+    writeSavedWords(items);
+    renderSavedWords();
+    return index < 0;
+}
+
+function renderSavedWords() {
+    const body = document.getElementById('savedWordsBody');
+    if (!body) return;
+    const items = loadSavedWords();
+    if (items.length === 0) {
+        body.innerHTML = '<p class="saved-words-empty">No saved words yet. Save one from Word by word on a sentence.</p>';
+        return;
+    }
+    body.innerHTML = `<ul class="extras-list">${items.map(item => `
+        <li class="extras-row">
+            <span class="extras-word">${_escapeHtml(item.surface)}</span>
+            <span class="extras-note">${_escapeHtml([item.gloss, item.language].filter(Boolean).join(' · '))}</span>
+            <span class="extras-note">${_escapeHtml(item.sentence)}</span>
+        </li>`).join('')}</ul>`;
+}
+
+function _escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+}
+
+function openSavedWords() {
+    renderSavedWords();
+    document.getElementById('savedWordsModal')?.classList.remove('hidden');
+}
+
+function closeSavedWords() {
+    document.getElementById('savedWordsModal')?.classList.add('hidden');
+}
+
+function downloadSavedWords() {
+    const blob = new Blob([JSON.stringify(loadSavedWords(), null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'fluency-saved-words.json';
+    a.click();
+    URL.revokeObjectURL(url);
 }
 
 if (document.readyState === 'loading') {
@@ -384,4 +482,7 @@ globalThis.refreshExtrasButton = refreshExtrasButtons;
 globalThis.openMergedForms = openMergedForms;
 globalThis.openSkippedWords = openSkippedWords;
 globalThis.openExtras = openExtras;
+globalThis.openSavedWords = openSavedWords;
+globalThis.toggleSavedWord = toggleSavedWord;
+globalThis.isWordSaved = isWordSaved;
 globalThis.collectExtras = collectExtras;

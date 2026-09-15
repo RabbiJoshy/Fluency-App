@@ -52,9 +52,9 @@ function currentState() {
 function summaryText() {
     const state = currentState();
     if (state === 'on') {
-        return 'Focus on new vocabulary';
+        return 'Fewer cards: related forms share one card, and obvious English look-alikes are set aside';
     }
-    return 'Full deck · includes all words';
+    return 'Full deck · every word form is its own card';
 }
 
 // Turning fast mode on or off drives the real controls, so every side effect
@@ -311,8 +311,8 @@ function updateKnownLanguageCopy() {
     const phrase = knownLanguagePhrase();
     const callout = document.getElementById('streamlineRecCalloutText');
     if (callout) {
-        callout.textContent = `Merges verb conjugations onto base cards and skips obvious look-alikes from ${phrase}, `
-            + 'so you focus strictly on new vocabulary without missing any examples.';
+        callout.textContent = `Related word forms share one card, and obvious look-alikes from ${phrase} are set aside, `
+            + 'so you study fewer cards without missing examples.';
     }
     const familiar = document.getElementById('cognateSettingExplanation');
     if (familiar) {

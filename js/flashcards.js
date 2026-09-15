@@ -1384,11 +1384,16 @@ function dedupeExamples(examples) {
 
 function compactCounterHTML(current, total, label = 'example') {
     if (total < 2) return '';
-    const text = `${current + 1}\u2044${total}`;
-    const visibleLabel = label === 'example'
-        ? '<span class="compact-example-counter-label" aria-hidden="true">ex</span>'
-        : '';
-    return `<span class="compact-example-counter" aria-label="${escapeCardText(`${label} ${current + 1} of ${total}`)}">${visibleLabel}${text}</span>`;
+    const text = `${current + 1} of ${total}`;
+    return `<span class="compact-example-counter" aria-label="${escapeCardText(`${label} ${current + 1} of ${total}`)}">${text}</span>`;
+}
+
+function exampleTicksHTML(current, total) {
+    if (total < 2) return '';
+    const ticks = Array.from({ length: total }, (_, i) =>
+        `<span class="example-tick${i === current ? ' is-current' : ''}"></span>`
+    ).join('');
+    return `<div class="example-ticks" aria-hidden="true">${ticks}</div>`;
 }
 
 function initializeApp() {
@@ -1422,7 +1427,9 @@ function initializeApp() {
                 ? icon('<path d="M11 5 6 9H3v6h3l5 4z"></path><path d="M15 9a4 4 0 0 1 0 6"></path><path d="M18 6a8 8 0 0 1 0 12"></path>')
                 : icon('<path d="M11 5 6 9H3v6h3l5 4z"></path><path d="m16 10 5 5"></path><path d="m21 10-5 5"></path>'), onSelect: () => toggleAutoSpeak() },
             { label: 'Set progress', iconHTML: icon('<path d="M4 19V9"></path><path d="M10 19V5"></path><path d="M16 19v-7"></path><path d="M22 19H2"></path>'), onSelect: () => showStatsModal() },
-            { label: 'Study preferences', iconHTML: icon('<path d="M4 6h10"></path><path d="M18 6h2"></path><circle cx="16" cy="6" r="2"></circle><path d="M4 12h2"></path><path d="M10 12h10"></path><circle cx="8" cy="12" r="2"></circle><path d="M4 18h8"></path><path d="M16 18h4"></path><circle cx="14" cy="18" r="2"></circle>'), onSelect: () => showSettingsModalWithTab('study', { singleTab: true }) }
+            { label: 'Study preferences', iconHTML: icon('<path d="M4 6h10"></path><path d="M18 6h2"></path><circle cx="16" cy="6" r="2"></circle><path d="M4 12h2"></path><path d="M10 12h10"></path><circle cx="8" cy="12" r="2"></circle><path d="M4 18h8"></path><path d="M16 18h4"></path><circle cx="14" cy="18" r="2"></circle>'), onSelect: () => showSettingsModalWithTab('study', { singleTab: true }) },
+            { label: 'Find a word', iconHTML: icon('<circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>'), onSelect: () => window.openFindWord?.() },
+            { label: 'Saved words', iconHTML: icon('<path d="M6 4h12v16l-6-3-6 3z"></path>'), onSelect: () => window.openSavedWords?.() }
         ];
         // Card data is a product-level audit surface: it stays available when
         // optional model stamps are absent and does not require an owner login.
@@ -1843,6 +1850,8 @@ function initializeApp() {
             } catch (error) {
                 console.error('Could not continue daily review:', error);
                 await window.showEndOfDeckOptions?.({ autoContinue: false });
+            } finally {
+                window.hideAppLoading?.();
             }
             return;
         }
@@ -2327,7 +2336,7 @@ function setupKeyboardShortcuts() {
         // F = open find a word modal (for non-audit users)
         else if ((e.key === 'f' || e.key === 'F') && !canFlag) {
             e.preventDefault();
-            document.getElementById('findWordBtn')?.click();
+            window.openFindWord?.();
         }
         // Legacy single-key shortcut retained for the owner audit workflow.
         else if ((e.key === 'f' || e.key === 'F') && canFlag) {
@@ -3403,12 +3412,18 @@ function normalizedExampleProvenance(example) {
         ? example.provenance : {};
     const source = example?.metadata?.source || {};
     const document = source.document || {};
+    const target = example?.metadata?.target || {};
     return {
         corpus: legacy.corpus || source.name || example?.source || '',
         title_id: legacy.title_id || document.title_id || '',
         subtitle_id: legacy.subtitle_id || document.subtitle_id || '',
         line: legacy.line || document.line || '',
         source_title: example?.source_title || example?.metadata?.source_title || null,
+        source_record_id: example?.source_record_id || source.source_record_id || '',
+        url: example?.source_url || example?.sentence_url || source.url || target.url || '',
+        attribution: example?.attribution || source.attribution || '',
+        contributor: example?.contributor || target.contributor || '',
+        license: example?.license || source.license || '',
     };
 }
 
@@ -3984,6 +3999,15 @@ function getSenseProminenceInfo(meaning) {
 }
 window.getSenseProminenceInfo = getSenseProminenceInfo;
 
+function prominenceBadgeHTML(promInfo, extraStyle = '') {
+    const filled = promInfo.key === 'common' ? 3 : (promInfo.key === 'uncommon' ? 2 : 1);
+    const dots = [1, 2, 3].map(i =>
+        `<span class="prominence-dot${i <= filled ? ' is-filled' : ''}"></span>`
+    ).join('');
+    const style = extraStyle ? ` style="${extraStyle}"` : '';
+    return `<span class="sense-prominence-badge prominence-${escapeCardText(promInfo.key)}" title="${escapeCardText(promInfo.label)}" aria-label="${escapeCardText(promInfo.label)}"${style}><span class="sense-prominence-dots">${dots}</span></span>`;
+}
+
 function toggleRareSenses(event) {
     event?.stopPropagation?.();
     const card = flashcards[currentIndex];
@@ -4377,15 +4401,13 @@ function updateCard({ announceHeadword = false } = {}) {
         const { meanings: fMeanings } = flippedFrontMeanings;
         const fontSize = fMeanings.length > 2 ? 28 : (fMeanings.length > 1 ? 36 : 52);
         let html = '';
-        // POS lives in the card's top-right corner in this direction too. It
-        // used to be a badge inside each meaning row, which put the grammar
-        // halfway down the card on the one face where it moved — the corner
-        // is where it sits on the Spanish→English front and on the back, so
-        // flipping no longer relocates it. Rare multi-POS cards collapse to
-        // one pill per distinct POS up there rather than repeating per row.
         for (const m of fMeanings) {
             const productionGloss = getProductionEnglishCue(card, m) || m.meaning;
+            const posChip = m.pos && !['MWE', 'CLITIC', 'SENSE_CYCLE', 'EXAMPLE_ONLY'].includes(m.pos)
+                ? renderFrontPosUnit(m.pos, isVerbPos(m.pos), 'card-pos front-meaning-pos')
+                : '';
             html += `<div class="front-meaning-row">
+                ${posChip}
                 <span class="front-meaning-text" style="font-size: ${fontSize}px;">${escapeCardText(productionGloss)}</span>
             </div>`;
         }
@@ -4410,60 +4432,49 @@ function updateCard({ announceHeadword = false } = {}) {
     const frontPOSEl = document.getElementById('frontPOS');
     frontPOSEl.className = 'card-pos-list';
     frontPOSEl.innerHTML = '';
-    // Both directions render into this one corner element. The English→Target
-    // front used to opt out and put its POS badge inside the meaning rows,
-    // which was the only place on any face where the grammar sat mid-card.
-    // Source: the meanings actually on screen — the flipped front shows a
-    // filtered subset, so reading card.meanings there would advertise a POS
-    // the learner cannot see.
     const posSource = flippedFrontMeanings
         ? flippedFrontMeanings.meanings
         : ((card.isMultiMeaning && card.meanings) || []);
-    if (posSource.length > 0) {
-        // Each grammatical POS gets its own colour. Morphology nests beneath
-        // VERB so it reads as a property of that POS, not the word as a
-        // whole. Expressions/clitics are self-evident rows, not POS badges.
-        const posTotals = new Map();
-        posSource.forEach((meaning, index) => {
+    if (flippedFrontMeanings) {
+        // Production: POS sits on each gloss row, not in the corner stack.
+        frontPOSEl.style.display = 'none';
+    } else if (posSource.length > 0 || card.partOfSpeech) {
+        const pairs = [];
+        const seenPairs = new Set();
+        (posSource.length ? posSource : [{ pos: card.partOfSpeech, headword: citationForm }]).forEach(meaning => {
             if (['MWE', 'CLITIC', 'SENSE_CYCLE', 'EXAMPLE_ONLY'].includes(meaning.pos)) return;
-            const entry = posTotals.get(meaning.pos) || { pos: meaning.pos, weight: 0, index };
-            entry.weight += Number(meaning.percentage ?? meaning.frequency ?? meaning.count) || 0;
-            posTotals.set(meaning.pos, entry);
+            const lemma = String(meaning.headword || citationForm || displayedTargetHeadword || '').trim();
+            const key = `${lemma}\0${meaning.pos}`;
+            if (!meaning.pos || seenPairs.has(key)) return;
+            seenPairs.add(key);
+            pairs.push({ lemma, pos: meaning.pos });
         });
-        const allPOS = [...new Set(posSource
-            .filter(m => m.pos !== 'MWE' && m.pos !== 'CLITIC'
-                && m.pos !== 'SENSE_CYCLE' && m.pos !== 'EXAMPLE_ONLY')
-            .map(m => m.pos))].sort((a, b) => {
-                const left = posTotals.get(a);
-                const right = posTotals.get(b);
-                return ((right?.weight || 0) - (left?.weight || 0))
-                    || ((left?.index || 0) - (right?.index || 0));
-            });
-        const stacked = allPOS.length > 1;
-        frontPOSEl.classList.add(`pos-count-${Math.min(allPOS.length, 4)}`);
-        frontPOSEl.innerHTML = allPOS.map(pos =>
-            renderFrontPosUnit(
-                pos,
-                isVerbPos(pos),
-                'card-pos',
-                stacked ? (pos === activeDisplayPos ? 'is-active' : 'is-inactive') : ''
-            )
-        ).join('');
-        frontPOSEl.style.display = allPOS.length > 0 ? 'grid' : 'none';
-    } else if (card.partOfSpeech) {
-        frontPOSEl.innerHTML = renderFrontPosUnit(
-            card.partOfSpeech,
-            isVerbPos(card.partOfSpeech)
-        );
-        frontPOSEl.style.display = 'grid';
+        const surfaceFold = foldSurfaceForm(displayedTargetHeadword || '');
+        const uniqueLemmas = new Set(pairs.map(pair => foldSurfaceForm(pair.lemma)));
+        if (pairs.length === 0) {
+            frontPOSEl.style.display = 'none';
+        } else {
+            frontPOSEl.classList.add('is-lemma-map', `pos-count-${Math.min(pairs.length, 4)}`);
+            frontPOSEl.innerHTML = pairs.map(pair => {
+                const showLemma = uniqueLemmas.size > 1
+                    || foldSurfaceForm(pair.lemma) !== surfaceFold;
+                return `<span class="front-lemma-pair">${showLemma ? `<span class="front-lemma-name">${escapeCardText(pair.lemma)}</span>` : ''}${renderFrontPosUnit(pair.pos, isVerbPos(pair.pos))}</span>`;
+            }).join('');
+            frontPOSEl.style.display = 'flex';
+        }
     } else {
         frontPOSEl.style.display = 'none';
     }
 
-    // Display lemma on front if different from target word
+    // Display lemma on front if different from target word and the POS map
+    // is not already naming that lemma.
     const frontLemmaEl = document.getElementById('frontLemma');
+    const lemmaMapNamesLemma = !flippedFrontMeanings
+        && frontPOSEl.classList.contains('is-lemma-map')
+        && frontPOSEl.querySelector('.front-lemma-name');
     if (!isFlipped && citationForm
-        && foldSurfaceForm(citationForm) !== foldSurfaceForm(displayedTargetHeadword)) {
+        && foldSurfaceForm(citationForm) !== foldSurfaceForm(displayedTargetHeadword)
+        && !lemmaMapNamesLemma) {
         frontLemmaEl.textContent = citationForm;
         frontLemmaEl.dataset.formNote = formNote;
         frontLemmaEl.classList.toggle('has-form-note', Boolean(formNote));
@@ -4874,7 +4885,7 @@ function updateCard({ announceHeadword = false } = {}) {
                 // Don't label genuine rare dictionary senses as "Unassigned"
                 const assignmentState = (!g.hasAssignedEvidence && !g.hasOnlyRareSenses)
                     ? '<span class="pos-pill-unassigned">Unassigned</span>'
-                    : (g.hasOnlyRareSenses ? '<span class="sense-prominence-badge prominence-rare">Rare</span>' : '');
+                    : (g.hasOnlyRareSenses ? prominenceBadgeHTML({ label: 'Rare', key: 'rare' }) : '');
                 // No known-tick here. A check mark on this row read as "you
                 // answered this", which is what the tick means everywhere else
                 // on the card; here it meant something narrower and only added
@@ -5376,7 +5387,7 @@ function updateCard({ announceHeadword = false } = {}) {
                         const mm = card.meanings[memberIdx];
                         if (useProminenceLabels) {
                             const pInfo = getSenseProminenceInfo(mm);
-                            return `<div class="sense-prominence-cell" onclick="event.stopPropagation(); selectMeaning(${memberIdx})" style="min-height: 25px; padding: 2px 6px; display: flex; align-items: center; justify-content: flex-end; cursor: pointer;"><span class="sense-prominence-badge prominence-${pInfo.key}">${escapeCardText(pInfo.label)}</span></div>`;
+                            return `<div class="sense-prominence-cell" onclick="event.stopPropagation(); selectMeaning(${memberIdx})" style="min-height: 25px; padding: 2px 6px; display: flex; align-items: center; justify-content: flex-end; cursor: pointer;">${prominenceBadgeHTML(pInfo)}</div>`;
                         }
                         const memberPct = Math.round((mm.percentage || 0) * 100);
                         if (mm.unassigned || memberPct >= 100) {
@@ -5455,10 +5466,10 @@ function updateCard({ announceHeadword = false } = {}) {
                         ? (foldInfo.hasOnlyRare ? ' meaning-row-rare' : '')
                         : ((m.unassigned || m.isRareSense || m.prominenceLabel === 'Rare') ? ' meaning-row-rare' : '');
                     const pctTail = useProminenceLabels
-                        ? `<span class="sense-prominence-badge prominence-${promInfo.key}" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">${escapeCardText(promInfo.label)}</span>`
+                        ? prominenceBadgeHTML(promInfo, 'position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;')
                         : (!m.unassigned && displayPctVal < 100
                             ? `<span class="sense-percentage sense-percentage-tail" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">${displayPctVal}%</span>`
-                            : (m.unassigned ? `<span class="sense-prominence-badge prominence-rare" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">Rare</span>` : ''));
+                            : (m.unassigned ? prominenceBadgeHTML({ label: 'Rare', key: 'rare' }, 'position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;') : ''));
                     const rowTextColor = isRowSelected ? 'var(--text-primary)' : 'var(--text-primary)';
                     target.push(`
                     <div class="meaning-row meaning-row-regular ${singletonTextClass}${isRowSelected ? ' selected' : ''}${rowSelectedClasses}${rareRowClass}" style="position: relative; display: flex; align-items: center; padding: 2px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 44px;" onclick="selectMeaning(${idx})">
@@ -5483,8 +5494,9 @@ function updateCard({ announceHeadword = false } = {}) {
             const isExpanded = card._showRareSenses === true;
             backHTML += `<div class="rare-senses-toggle-wrap">
                 <button type="button" class="rare-senses-toggle-btn${isExpanded ? ' is-expanded' : ''}" onclick="toggleRareSenses(event)">
-                    <span class="rare-senses-chevron" aria-hidden="true">${isExpanded ? '▲ ' : '▼ '}</span>${isExpanded ? 'Hide rare senses' : `+ Show rare senses (${qualifyingRare.length})`}
+                    <span class="rare-senses-chevron" aria-hidden="true">${isExpanded ? '▲ ' : '▼ '}</span>${isExpanded ? 'Hide other dictionary meanings' : `Show other dictionary meanings (${qualifyingRare.length})`}
                 </button>
+                ${isExpanded ? '<p class="rare-senses-toggle-hint">These meanings are in the dictionary but were not used in your examples.</p>' : ''}
             </div>`;
         }
         // Phrases mode off restores the pinned tray; on, MWE/CLITIC entries
@@ -5731,12 +5743,12 @@ function updateCard({ announceHeadword = false } = {}) {
             // Spotify link at all.
             const autoplayBtn = spotifyTrackId ? '' : cardAutoplayButton;
             const songNameDisplay = songName ? `
-                <div style="display: flex; justify-content: space-between; align-items: center; color: #b9c2cd; font-size: 13px; margin-top: 8px; font-style: italic;">
+                <div class="example-credit-row" style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-top: 8px; font-style: italic;">
                     <span class="example-song-credit">— ${songName}${vocalistCredit ? `<span class="example-vocalist-credit"> · ${vocalistCredit}</span>` : ''}</span>
                     <span style="display: flex; align-items: center; gap: 6px;">${autoplayBtn}${spotifyBtn}${exampleCounter}</span>
                 </div>
             ` : ((exampleSourceLabel || exampleCounter || autoplayBtn) ? `
-                <div style="display: flex; justify-content: flex-end; align-items: center; color: #b9c2cd; font-size: 13px; margin-top: 8px;">
+                <div class="example-credit-row" style="display: flex; justify-content: flex-end; align-items: center; font-size: 13px; margin-top: 8px;">
                     ${exampleSourceLabel ? `<span class="example-song-credit" style="margin-right:auto;">${exampleSourceLabel}</span>` : ''}
                     <span style="display: flex; align-items: center; gap: 6px;">${autoplayBtn}${exampleCounter}</span>
                 </div>
@@ -5787,8 +5799,9 @@ function updateCard({ announceHeadword = false } = {}) {
                 backHTML += `
                     <div class="sentence${exampleAssigned ? ' example-is-matched' : ''}" style="text-align: center; ${cursorStyle} ${sentenceStyle}" ${cycleHandler}>
                         ${showExampleProductionForm ? `<div class="reverse-example-form"><span>In this example</span><strong>${escapeCardText(exampleProductionForm)}</strong></div>` : ''}
-                        <div class="breakdown-trigger" style="margin-bottom: 8px; cursor: pointer;" onclick="showLyricBreakdown(event); event.stopPropagation();" title="Tap for word-by-word breakdown">${displayTargetSentence}</div>
+                        <div class="breakdown-trigger" style="margin-bottom: 8px; cursor: pointer;" onclick="showLyricBreakdown(event); event.stopPropagation();" title="Word by word">${displayTargetSentence}</div>
                         <div class="translation">${displayEnglishSentence}</div>
+                        ${exampleTicksHTML(hasMultipleExamples ? currentExampleIndex % exampleCount : 0, exampleCount)}
                         ${songNameDisplay}
                     </div>
                 `;
@@ -7245,6 +7258,8 @@ function buildProvenancePanelHTML(card) {
                     const title = sourceTitleLabel(pv);
                     src = `<a class="prov-ex-src" href="https://www.imdb.com/title/${tt}/"
                               target="_blank" rel="noopener noreferrer">${title ? esc(title) : tt}</a>`;
+                } else if (pv && (pv.corpus === 'tatoeba' || String(x.source || '').toLowerCase() === 'tatoeba') && pv.url) {
+                    src = `<a class="prov-ex-src" href="${esc(pv.url)}" target="_blank" rel="noopener noreferrer">Tatoeba</a>`;
                 } else if (x.source) {
                     src = `<span class="prov-ex-src">${esc(x.source)}</span>`;
                 }
@@ -7258,7 +7273,9 @@ function buildProvenancePanelHTML(card) {
                     ['Sense', x.sense_id], ['WSD request', x.wsd_request_id],
                     ['WSD result', x.wsd_result_id], ['Method', x.assignment_method],
                     ['Decision path', Array.isArray(x.decision_path) ? x.decision_path.join(' → ') : x.decision_path],
-                    ['Source record', x.source_record_id], ['Source snapshot', x.source_snapshot_content_id],
+                    ['Source record', x.source_record_id || pv.source_record_id], ['Source snapshot', x.source_snapshot_content_id],
+                    ['Source URL', x.source_url || pv.url], ['Attribution', x.attribution || pv.attribution],
+                    ['Contributor', x.contributor || pv.contributor], ['License', x.license || pv.license],
                     ['Alignment', x.alignment_id], ['Alignment snapshot', x.alignment_snapshot_content_id],
                     ['Translation source', x.translation_source], ['Song ID', x.song],
                     ['Vocalists', Array.isArray(x.vocalists) ? x.vocalists.join(', ') : x.vocalists],
@@ -7582,7 +7599,7 @@ document.addEventListener('click', (e) => {
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
 const ASSET_VERSION = '20260825ak';
-const MODALS_ASSET_VERSION = '20260915a';
+const MODALS_ASSET_VERSION = '20260916a';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
