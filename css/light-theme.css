@@ -1178,6 +1178,10 @@
     color: var(--text-secondary);
 }
 
+:root[data-theme="light"] .sentence.canonical-example {
+    border-left-color: rgba(0, 0, 0, 0.18);
+}
+
 :root[data-theme="light"] .deck-score-ring-bg {
     stroke: rgba(0, 0, 0, 0.08);
 }

@@ -17,7 +17,7 @@ import {
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=20260825ak';
+} from './reverse-cues.js?v=20260916i';
 import {
     compactConstructionMetadata,
     contextWithoutSenseMetadata,
@@ -27,6 +27,9 @@ import {
     isWiktionaryGrammarNote,
     legacyObjectPronounProjection,
     projectWiktionaryGloss,
+    compactLearnerSenseMetadata,
+    contextCollidesWithMetadata,
+    metadataTextIsRedundant,
     resolveMeaningDifferentiator,
     scoreSenseMetadata,
     senseMetadataDisplay,
@@ -38,7 +41,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=20260915d';
+} from './card-metadata-pills.js?v=20260916l';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -1384,11 +1387,17 @@ function dedupeExamples(examples) {
 
 function compactCounterHTML(current, total, label = 'example') {
     if (total < 2) return '';
-    const text = `${current + 1}\u2044${total}`;
-    const visibleLabel = label === 'example'
-        ? '<span class="compact-example-counter-label" aria-hidden="true">ex</span>'
-        : '';
-    return `<span class="compact-example-counter" aria-label="${escapeCardText(`${label} ${current + 1} of ${total}`)}">${visibleLabel}${text}</span>`;
+    const text = `${current + 1} of ${total}`;
+    return `<span class="compact-example-counter" aria-label="${escapeCardText(`${label} ${current + 1} of ${total}`)}">${text}</span>`;
+}
+
+function exampleTicksHTML(current, total, label = 'example') {
+    if (total < 2) return '';
+    const dense = total > 16;
+    const ticks = Array.from({ length: total }, (_, i) =>
+        `<span class="example-tick${i === current ? ' is-current' : ''}"></span>`
+    ).join('');
+    return `<div class="example-ticks${dense ? ' is-dense' : ''}" role="img" aria-label="${escapeCardText(`${label} ${current + 1} of ${total}`)}">${ticks}</div>`;
 }
 
 function initializeApp() {
@@ -1422,7 +1431,9 @@ function initializeApp() {
                 ? icon('<path d="M11 5 6 9H3v6h3l5 4z"></path><path d="M15 9a4 4 0 0 1 0 6"></path><path d="M18 6a8 8 0 0 1 0 12"></path>')
                 : icon('<path d="M11 5 6 9H3v6h3l5 4z"></path><path d="m16 10 5 5"></path><path d="m21 10-5 5"></path>'), onSelect: () => toggleAutoSpeak() },
             { label: 'Set progress', iconHTML: icon('<path d="M4 19V9"></path><path d="M10 19V5"></path><path d="M16 19v-7"></path><path d="M22 19H2"></path>'), onSelect: () => showStatsModal() },
-            { label: 'Study preferences', iconHTML: icon('<path d="M4 6h10"></path><path d="M18 6h2"></path><circle cx="16" cy="6" r="2"></circle><path d="M4 12h2"></path><path d="M10 12h10"></path><circle cx="8" cy="12" r="2"></circle><path d="M4 18h8"></path><path d="M16 18h4"></path><circle cx="14" cy="18" r="2"></circle>'), onSelect: () => showSettingsModalWithTab('study', { singleTab: true }) }
+            { label: 'Study preferences', iconHTML: icon('<path d="M4 6h10"></path><path d="M18 6h2"></path><circle cx="16" cy="6" r="2"></circle><path d="M4 12h2"></path><path d="M10 12h10"></path><circle cx="8" cy="12" r="2"></circle><path d="M4 18h8"></path><path d="M16 18h4"></path><circle cx="14" cy="18" r="2"></circle>'), onSelect: () => showSettingsModalWithTab('study', { singleTab: true }) },
+            { label: 'Find a word', iconHTML: icon('<circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>'), onSelect: () => window.openFindWord?.() },
+            { label: 'Saved words', iconHTML: icon('<path d="M6 4h12v16l-6-3-6 3z"></path>'), onSelect: () => window.openSavedWords?.() }
         ];
         // Card data is a product-level audit surface: it stays available when
         // optional model stamps are absent and does not require an owner login.
@@ -1843,6 +1854,8 @@ function initializeApp() {
             } catch (error) {
                 console.error('Could not continue daily review:', error);
                 await window.showEndOfDeckOptions?.({ autoContinue: false });
+            } finally {
+                window.hideAppLoading?.();
             }
             return;
         }
@@ -2327,7 +2340,7 @@ function setupKeyboardShortcuts() {
         // F = open find a word modal (for non-audit users)
         else if ((e.key === 'f' || e.key === 'F') && !canFlag) {
             e.preventDefault();
-            document.getElementById('findWordBtn')?.click();
+            window.openFindWord?.();
         }
         // Legacy single-key shortcut retained for the owner audit workflow.
         else if ((e.key === 'f' || e.key === 'F') && canFlag) {
@@ -2884,8 +2897,9 @@ function cleanSenseContext(rawContext, mainGloss) {
     const normRaw = raw.toLowerCase().replace(/^[^\w]+|[^\w]+$/g, '');
     const normGloss = gloss.toLowerCase().replace(/^[^\w]+|[^\w]+$/g, '');
 
-    // 2. Direct identity or trivial punctuation/case difference
-    if (normRaw === normGloss) return '';
+    // 2. Direct identity or trivial punctuation/case difference, including
+    // construction aliases such as intransitive / intr.
+    if (normRaw === normGloss || metadataTextIsRedundant(raw, gloss)) return '';
 
     // 3. Exact substring match where gloss already encapsulates the entire context
     if (normGloss.includes(normRaw) && normGloss.length >= normRaw.length) return '';
@@ -3403,12 +3417,18 @@ function normalizedExampleProvenance(example) {
         ? example.provenance : {};
     const source = example?.metadata?.source || {};
     const document = source.document || {};
+    const target = example?.metadata?.target || {};
     return {
         corpus: legacy.corpus || source.name || example?.source || '',
         title_id: legacy.title_id || document.title_id || '',
         subtitle_id: legacy.subtitle_id || document.subtitle_id || '',
         line: legacy.line || document.line || '',
         source_title: example?.source_title || example?.metadata?.source_title || null,
+        source_record_id: example?.source_record_id || source.source_record_id || '',
+        url: example?.source_url || example?.sentence_url || source.url || target.url || '',
+        attribution: example?.attribution || source.attribution || '',
+        contributor: example?.contributor || target.contributor || '',
+        license: example?.license || source.license || '',
     };
 }
 
@@ -3918,9 +3938,72 @@ function finishPhraseChain(isCorrect) {
     }
 }
 
+function canonicalRecord(meaning) {
+    if (!meaning) return null;
+    if (meaning.pos === 'SENSE_CYCLE' && meaning.allSenses?.length) {
+        const item = meaning.allSenses[currentMWEIndex % meaning.allSenses.length]
+            || meaning.allSenses[0];
+        return item?.canonicalExample || item?.canonical_example || null;
+    }
+    return meaning.canonicalExample || meaning.canonical_example || null;
+}
+
+function highlightWithDeclaredOffsets(text, offsets) {
+    const raw = String(text || '');
+    if (!raw) return '';
+    const ranges = (Array.isArray(offsets) ? offsets : [])
+        .map(item => Array.isArray(item) ? [Number(item[0]), Number(item[1])] : null)
+        .filter(item => (
+            item
+            && Number.isFinite(item[0])
+            && Number.isFinite(item[1])
+            && item[1] > item[0]
+            && item[0] >= 0
+            && item[1] <= raw.length
+        ))
+        .sort((a, b) => a[0] - b[0]);
+    if (!ranges.length) return escapeCardText(raw);
+    let html = '';
+    let cursor = 0;
+    for (const [start, end] of ranges) {
+        if (start < cursor) continue;
+        html += escapeCardText(raw.slice(cursor, start));
+        html += `<span class="example-word-highlight">${escapeCardText(raw.slice(start, end))}</span>`;
+        cursor = end;
+    }
+    html += escapeCardText(raw.slice(cursor));
+    return html;
+}
+
+function canonicalExampleHTML(meaning) {
+    const canonical = canonicalRecord(meaning);
+    const text = String(canonical?.text || '').trim();
+    const translation = String(canonical?.translation || canonical?.english || '').trim();
+    if (!text || !translation) return '';
+    return `<div class="sentence canonical-example">
+        <div class="breakdown-trigger" style="margin-bottom: 8px;">${highlightWithDeclaredOffsets(text, canonical.bold_text_offsets)}</div>
+        <div class="translation">${highlightWithDeclaredOffsets(translation, canonical.bold_translation_offsets)}</div>
+        <div class="example-credit-row" style="display: flex; justify-content: flex-end; align-items: center; font-size: 13px; margin-top: 8px;">
+            <span class="example-song-credit" style="margin-right:auto;"><span class="dictionary-provenance-badge" title="Canonical dictionary example"><span class="dict-provenance-icon" aria-hidden="true">📖</span> Dictionary example</span></span>
+        </div>
+    </div>`;
+}
+
 function extractCanonicalDictionaryExamples(meaning) {
-    if (Array.isArray(meaning?.allExamples) && meaning.allExamples.length > 0) {
-        return meaning.allExamples;
+    const canonical = canonicalRecord(meaning);
+    const text = String(canonical?.text || '').trim();
+    const translation = String(canonical?.translation || canonical?.english || '').trim();
+    if (text && translation) {
+        return [{
+            target: text,
+            english: translation,
+            targetSentence: text,
+            englishSentence: translation,
+            source: 'dictionary',
+            evidence: 'dictionary',
+            dictionarySource: 'Dictionary',
+            canonical: true,
+        }];
     }
     const meta = meaning?.metadata;
     const isSd = Boolean(meta?.sense_provider_metadata?.spanishdict?.examples);
@@ -3947,8 +4030,11 @@ function getQualifyingRareSenses(card) {
             const examples = extractCanonicalDictionaryExamples(unused);
             return examples.length > 0 && (unused.meaning || unused.translation);
         }).map(unused => {
-            const examples = extractCanonicalDictionaryExamples(unused);
-            const firstEx = examples[0];
+            const firstEx = extractCanonicalDictionaryExamples(unused)[0];
+            const canonical = unused.canonicalExample || unused.canonical_example || {
+                text: firstEx.target,
+                translation: firstEx.english,
+            };
             return {
                 ...unused,
                 meaning: unused.meaning || unused.translation || '',
@@ -3956,9 +4042,10 @@ function getQualifyingRareSenses(card) {
                 isRareSense: true,
                 percentage: 0,
                 prominenceLabel: 'Rare',
-                targetSentence: firstEx.target,
-                englishSentence: firstEx.english,
-                allExamples: examples
+                canonicalExample: canonical,
+                targetSentence: unused.targetSentence || '',
+                englishSentence: unused.englishSentence || '',
+                allExamples: unused.allExamples || [],
             };
         });
     }
@@ -3983,6 +4070,11 @@ function getSenseProminenceInfo(meaning) {
     }
 }
 window.getSenseProminenceInfo = getSenseProminenceInfo;
+
+function prominenceBadgeHTML(promInfo, extraStyle = '') {
+    const style = extraStyle ? ` style="${extraStyle}"` : '';
+    return `<span class="sense-prominence-badge prominence-${escapeCardText(promInfo.key)}" title="${escapeCardText(promInfo.label)} — how often this meaning is used" aria-label="${escapeCardText(promInfo.label)}"${style}>${escapeCardText(promInfo.label)}</span>`;
+}
 
 function toggleRareSenses(event) {
     event?.stopPropagation?.();
@@ -4377,15 +4469,13 @@ function updateCard({ announceHeadword = false } = {}) {
         const { meanings: fMeanings } = flippedFrontMeanings;
         const fontSize = fMeanings.length > 2 ? 28 : (fMeanings.length > 1 ? 36 : 52);
         let html = '';
-        // POS lives in the card's top-right corner in this direction too. It
-        // used to be a badge inside each meaning row, which put the grammar
-        // halfway down the card on the one face where it moved — the corner
-        // is where it sits on the Spanish→English front and on the back, so
-        // flipping no longer relocates it. Rare multi-POS cards collapse to
-        // one pill per distinct POS up there rather than repeating per row.
         for (const m of fMeanings) {
             const productionGloss = getProductionEnglishCue(card, m) || m.meaning;
+            const posChip = m.pos && !['MWE', 'CLITIC', 'SENSE_CYCLE', 'EXAMPLE_ONLY'].includes(m.pos)
+                ? renderFrontPosUnit(m.pos, isVerbPos(m.pos), 'card-pos front-meaning-pos')
+                : '';
             html += `<div class="front-meaning-row">
+                ${posChip}
                 <span class="front-meaning-text" style="font-size: ${fontSize}px;">${escapeCardText(productionGloss)}</span>
             </div>`;
         }
@@ -4410,60 +4500,48 @@ function updateCard({ announceHeadword = false } = {}) {
     const frontPOSEl = document.getElementById('frontPOS');
     frontPOSEl.className = 'card-pos-list';
     frontPOSEl.innerHTML = '';
-    // Both directions render into this one corner element. The English→Target
-    // front used to opt out and put its POS badge inside the meaning rows,
-    // which was the only place on any face where the grammar sat mid-card.
-    // Source: the meanings actually on screen — the flipped front shows a
-    // filtered subset, so reading card.meanings there would advertise a POS
-    // the learner cannot see.
     const posSource = flippedFrontMeanings
         ? flippedFrontMeanings.meanings
         : ((card.isMultiMeaning && card.meanings) || []);
-    if (posSource.length > 0) {
-        // Each grammatical POS gets its own colour. Morphology nests beneath
-        // VERB so it reads as a property of that POS, not the word as a
-        // whole. Expressions/clitics are self-evident rows, not POS badges.
-        const posTotals = new Map();
-        posSource.forEach((meaning, index) => {
+    if (flippedFrontMeanings) {
+        // Production: POS sits on each gloss row, not in the corner stack.
+        frontPOSEl.style.display = 'none';
+    } else if (posSource.length > 0 || card.partOfSpeech) {
+        const pairs = [];
+        const seenPairs = new Set();
+        (posSource.length ? posSource : [{ pos: card.partOfSpeech, headword: citationForm }]).forEach(meaning => {
             if (['MWE', 'CLITIC', 'SENSE_CYCLE', 'EXAMPLE_ONLY'].includes(meaning.pos)) return;
-            const entry = posTotals.get(meaning.pos) || { pos: meaning.pos, weight: 0, index };
-            entry.weight += Number(meaning.percentage ?? meaning.frequency ?? meaning.count) || 0;
-            posTotals.set(meaning.pos, entry);
+            const lemma = String(meaning.headword || citationForm || displayedTargetHeadword || '').trim();
+            const key = `${lemma}\0${meaning.pos}`;
+            if (!meaning.pos || seenPairs.has(key)) return;
+            seenPairs.add(key);
+            pairs.push({ lemma, pos: meaning.pos });
         });
-        const allPOS = [...new Set(posSource
-            .filter(m => m.pos !== 'MWE' && m.pos !== 'CLITIC'
-                && m.pos !== 'SENSE_CYCLE' && m.pos !== 'EXAMPLE_ONLY')
-            .map(m => m.pos))].sort((a, b) => {
-                const left = posTotals.get(a);
-                const right = posTotals.get(b);
-                return ((right?.weight || 0) - (left?.weight || 0))
-                    || ((left?.index || 0) - (right?.index || 0));
-            });
-        const stacked = allPOS.length > 1;
-        frontPOSEl.classList.add(`pos-count-${Math.min(allPOS.length, 4)}`);
-        frontPOSEl.innerHTML = allPOS.map(pos =>
-            renderFrontPosUnit(
-                pos,
-                isVerbPos(pos),
-                'card-pos',
-                stacked ? (pos === activeDisplayPos ? 'is-active' : 'is-inactive') : ''
-            )
-        ).join('');
-        frontPOSEl.style.display = allPOS.length > 0 ? 'grid' : 'none';
-    } else if (card.partOfSpeech) {
-        frontPOSEl.innerHTML = renderFrontPosUnit(
-            card.partOfSpeech,
-            isVerbPos(card.partOfSpeech)
-        );
-        frontPOSEl.style.display = 'grid';
+        if (pairs.length === 0) {
+            frontPOSEl.style.display = 'none';
+        } else {
+            frontPOSEl.classList.add('is-lemma-map', `pos-count-${Math.min(pairs.length, 4)}`);
+            frontPOSEl.innerHTML = pairs.map(pair => {
+                const lemmaLabel = pair.lemma
+                    ? `<span class="front-lemma-name">${escapeCardText(pair.lemma)}</span>`
+                    : '';
+                return `<span class="front-lemma-pair">${lemmaLabel}${renderFrontPosUnit(pair.pos, isVerbPos(pair.pos))}</span>`;
+            }).join('');
+            frontPOSEl.style.display = 'flex';
+        }
     } else {
         frontPOSEl.style.display = 'none';
     }
 
-    // Display lemma on front if different from target word
+    // Display lemma on front if different from target word and the POS map
+    // is not already naming that lemma.
     const frontLemmaEl = document.getElementById('frontLemma');
+    const lemmaMapNamesLemma = !flippedFrontMeanings
+        && frontPOSEl.classList.contains('is-lemma-map')
+        && frontPOSEl.querySelector('.front-lemma-name');
     if (!isFlipped && citationForm
-        && foldSurfaceForm(citationForm) !== foldSurfaceForm(displayedTargetHeadword)) {
+        && foldSurfaceForm(citationForm) !== foldSurfaceForm(displayedTargetHeadword)
+        && !lemmaMapNamesLemma) {
         frontLemmaEl.textContent = citationForm;
         frontLemmaEl.dataset.formNote = formNote;
         frontLemmaEl.classList.toggle('has-form-note', Boolean(formNote));
@@ -4842,7 +4920,6 @@ function updateCard({ announceHeadword = false } = {}) {
                 // the centred card header; repeat the lemma only when it adds
                 // information (for example, an inflected surface).
                 const hw = g.headword
-                    && foldSurfaceForm(g.headword) !== foldSurfaceForm(card.targetWord)
                     ? `<span class="pos-pill-lemma">${escapeCardText(g.headword)}</span>` : '';
                 const summarySense = key === activeLemmaPosKey && activeGroupSense
                     ? activeGroupSense
@@ -4874,7 +4951,7 @@ function updateCard({ announceHeadword = false } = {}) {
                 // Don't label genuine rare dictionary senses as "Unassigned"
                 const assignmentState = (!g.hasAssignedEvidence && !g.hasOnlyRareSenses)
                     ? '<span class="pos-pill-unassigned">Unassigned</span>'
-                    : (g.hasOnlyRareSenses ? '<span class="sense-prominence-badge prominence-rare">Rare</span>' : '');
+                    : (g.hasOnlyRareSenses ? prominenceBadgeHTML({ label: 'Rare', key: 'rare' }) : '');
                 // No known-tick here. A check mark on this row read as "you
                 // answered this", which is what the tick means everywhere else
                 // on the card; here it meant something narrower and only added
@@ -5347,10 +5424,19 @@ function updateCard({ announceHeadword = false } = {}) {
                         let varyingHtml;
                         if (isTransAxis) {
                             const rawCtx = contextWithoutSenseMetadata(mm, isMemberSelected);
-                            const cleanedCtx = cleanSenseContext(rawCtx, sharedText);
-                            const metadataHTML = senseMetadataHTML(mm, isMemberSelected, {
+                            const metaOptions = {
                                 senseCount: card.meanings?.length || orderedMembers.length,
-                            });
+                                gloss: sharedText,
+                                peerMeanings: card.meanings.filter((_, otherIdx) => otherIdx !== memberIdx),
+                            };
+                            let cleanedCtx = cleanSenseContext(rawCtx, sharedText);
+                            if (cleanedCtx && contextCollidesWithMetadata(
+                                cleanedCtx,
+                                compactLearnerSenseMetadata(senseMetadataItems(mm), mm, metaOptions)
+                            )) {
+                                cleanedCtx = '';
+                            }
+                            const metadataHTML = senseMetadataHTML(mm, isMemberSelected, metaOptions);
                             varyingHtml = cleanedCtx || metadataHTML
                                 ? `<span class="meaning-context-cell" style="line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${renderSenseContextHTML(cleanedCtx, { leadingDot: false })}${metadataHTML}</span>`
                                 : `<span style="opacity: 0.4; font-style: italic; font-size: 12px;">—</span>`;
@@ -5361,7 +5447,7 @@ function updateCard({ announceHeadword = false } = {}) {
                                 isMemberSelected
                             );
                             const transSafe = String(transRaw).replace(/"/g, '&quot;');
-                            varyingHtml = `<span class="row-adaptive-text" style="font-weight: 600; color: var(--text-primary); line-height: 1.25; min-width: 0; overflow: hidden; text-overflow: ellipsis;">${senseCrossReferenceHTML(mm, transSafe, isMemberSelected)}${senseMetadataHTML(mm, isMemberSelected, { senseCount: card.meanings?.length || orderedMembers.length })}${modelProposalMarkerHTML(mm)}</span>`;
+                            varyingHtml = `<span class="row-adaptive-text" style="font-weight: 600; color: var(--text-primary); line-height: 1.25; min-width: 0; overflow: hidden; text-overflow: ellipsis;">${senseCrossReferenceHTML(mm, transSafe, isMemberSelected)}${senseMetadataHTML(mm, isMemberSelected, { senseCount: card.meanings?.length || orderedMembers.length, gloss: transRaw, peerMeanings: card.meanings.filter((_, otherIdx) => otherIdx !== memberIdx) })}${modelProposalMarkerHTML(mm)}</span>`;
                         }
                         const varyingCol = isTransAxis ? 2 : 1;
                         const varyingCell = `<div class="group-card-varying-cell${isMemberSelected ? ' is-active-subsense' : ''}" onclick="event.stopPropagation(); selectMeaning(${memberIdx})" style="${baseCell} grid-column: ${varyingCol}; min-width: 0; overflow: hidden;">${varyingHtml}</div>`;
@@ -5376,7 +5462,7 @@ function updateCard({ announceHeadword = false } = {}) {
                         const mm = card.meanings[memberIdx];
                         if (useProminenceLabels) {
                             const pInfo = getSenseProminenceInfo(mm);
-                            return `<div class="sense-prominence-cell" onclick="event.stopPropagation(); selectMeaning(${memberIdx})" style="min-height: 25px; padding: 2px 6px; display: flex; align-items: center; justify-content: flex-end; cursor: pointer;"><span class="sense-prominence-badge prominence-${pInfo.key}">${escapeCardText(pInfo.label)}</span></div>`;
+                            return `<div class="sense-prominence-cell" onclick="event.stopPropagation(); selectMeaning(${memberIdx})" style="min-height: 25px; padding: 2px 6px; display: flex; align-items: center; justify-content: flex-end; cursor: pointer;">${prominenceBadgeHTML(pInfo)}</div>`;
                         }
                         const memberPct = Math.round((mm.percentage || 0) * 100);
                         if (mm.unassigned || memberPct >= 100) {
@@ -5422,14 +5508,23 @@ function updateCard({ announceHeadword = false } = {}) {
                     // Individual sense row: 2-line presentation when space permits
                     // Primary gloss on top, cleaned context underneath (no redundant repetition of the gloss).
                     const rawContext = contextWithoutSenseMetadata(m, isRowSelected);
-                    const cleanedContext = cleanSenseContext(rawContext, displayMeaning);
+                    const metadataOptions = {
+                        senseCount: card.meanings?.length || 1,
+                        gloss: displayMeaning,
+                        peerMeanings: card.meanings.filter((_, otherIdx) => otherIdx !== idx),
+                    };
+                    let cleanedContext = cleanSenseContext(rawContext, displayMeaning);
+                    if (cleanedContext && contextCollidesWithMetadata(
+                        cleanedContext,
+                        compactLearnerSenseMetadata(senseMetadataItems(m), m, metadataOptions)
+                    )) {
+                        cleanedContext = '';
+                    }
                     let subContent = '';
                     if (cleanedContext) {
                         subContent += renderSenseContextHTML(cleanedContext, { leadingDot: false });
                     }
-                    const metadataHtml = senseMetadataHTML(m, isRowSelected, {
-                        senseCount: card.meanings?.length || 1,
-                    });
+                    const metadataHtml = senseMetadataHTML(m, isRowSelected, metadataOptions);
                     if (metadataHtml) subContent += (subContent ? ' ' : '') + metadataHtml;
                     const regTag = registerTagHTML(m);
                     if (regTag) subContent += (subContent ? ' ' : '') + regTag;
@@ -5455,10 +5550,10 @@ function updateCard({ announceHeadword = false } = {}) {
                         ? (foldInfo.hasOnlyRare ? ' meaning-row-rare' : '')
                         : ((m.unassigned || m.isRareSense || m.prominenceLabel === 'Rare') ? ' meaning-row-rare' : '');
                     const pctTail = useProminenceLabels
-                        ? `<span class="sense-prominence-badge prominence-${promInfo.key}" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">${escapeCardText(promInfo.label)}</span>`
+                        ? prominenceBadgeHTML(promInfo, 'position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;')
                         : (!m.unassigned && displayPctVal < 100
                             ? `<span class="sense-percentage sense-percentage-tail" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">${displayPctVal}%</span>`
-                            : (m.unassigned ? `<span class="sense-prominence-badge prominence-rare" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">Rare</span>` : ''));
+                            : (m.unassigned ? prominenceBadgeHTML({ label: 'Rare', key: 'rare' }, 'position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;') : ''));
                     const rowTextColor = isRowSelected ? 'var(--text-primary)' : 'var(--text-primary)';
                     target.push(`
                     <div class="meaning-row meaning-row-regular ${singletonTextClass}${isRowSelected ? ' selected' : ''}${rowSelectedClasses}${rareRowClass}" style="position: relative; display: flex; align-items: center; padding: 2px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 44px;" onclick="selectMeaning(${idx})">
@@ -5483,8 +5578,9 @@ function updateCard({ announceHeadword = false } = {}) {
             const isExpanded = card._showRareSenses === true;
             backHTML += `<div class="rare-senses-toggle-wrap">
                 <button type="button" class="rare-senses-toggle-btn${isExpanded ? ' is-expanded' : ''}" onclick="toggleRareSenses(event)">
-                    <span class="rare-senses-chevron" aria-hidden="true">${isExpanded ? '▲ ' : '▼ '}</span>${isExpanded ? 'Hide rare senses' : `+ Show rare senses (${qualifyingRare.length})`}
+                    <span class="rare-senses-chevron" aria-hidden="true">${isExpanded ? '▲ ' : '▼ '}</span>${isExpanded ? 'Hide other dictionary meanings' : `Show other dictionary meanings (${qualifyingRare.length})`}
                 </button>
+                ${isExpanded ? '<p class="rare-senses-toggle-hint">These meanings are in the dictionary but were not used in your examples.</p>' : ''}
             </div>`;
         }
         // Phrases mode off restores the pinned tray; on, MWE/CLITIC entries
@@ -5515,6 +5611,10 @@ function updateCard({ announceHeadword = false } = {}) {
         // has none but a later sense has a playable lyric).
         if ((!currentMeaning?.targetSentence || !cycleHasExamples) && cardAutoplayButton) {
             backHTML += `<div class="example-autoplay-fallback">${cardAutoplayButton}</div>`;
+        }
+
+        if (currentMeaning && !currentMeaning.allMWEs && !currentMeaning.allClitics) {
+            backHTML += canonicalExampleHTML(currentMeaning);
         }
 
         if (currentMeaning && currentMeaning.targetSentence && cycleHasExamples) {
@@ -5707,13 +5807,11 @@ function updateCard({ announceHeadword = false } = {}) {
             }
 
             // Build example counter: shows count for current MWE's examples, not total MWEs
-            let exampleCounter = '';
-            if (hasMultipleExamples) {
-                const exIdx = currentExampleIndex % exampleCount;
-                // No prev/next buttons — tapping the sentence itself already
-                // cycles through examples (see the .sentence onclick below).
-                exampleCounter = `<span class="example-counter-group">${compactCounterHTML(exIdx, exampleCount)}</span>`;
-            }
+            // The dotted strip is the only visible position cue; the fraction
+            // lived next to it and forced the learner to read "5 of 30".
+            const exampleTicks = hasMultipleExamples
+                ? exampleTicksHTML(currentExampleIndex % exampleCount, exampleCount)
+                : '';
             // Breakdown button removed — English translation is now clickable instead
             const spotifySvg = `<svg width="44" height="44" viewBox="0 0 24 24" fill="#1DB954"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>`;
             // A press-and-hold on the Spotify button toggles card-wide
@@ -5731,14 +5829,14 @@ function updateCard({ announceHeadword = false } = {}) {
             // Spotify link at all.
             const autoplayBtn = spotifyTrackId ? '' : cardAutoplayButton;
             const songNameDisplay = songName ? `
-                <div style="display: flex; justify-content: space-between; align-items: center; color: #b9c2cd; font-size: 13px; margin-top: 8px; font-style: italic;">
+                <div class="example-credit-row" style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-top: 8px; font-style: italic;">
                     <span class="example-song-credit">— ${songName}${vocalistCredit ? `<span class="example-vocalist-credit"> · ${vocalistCredit}</span>` : ''}</span>
-                    <span style="display: flex; align-items: center; gap: 6px;">${autoplayBtn}${spotifyBtn}${exampleCounter}</span>
+                    <span style="display: flex; align-items: center; gap: 6px;">${autoplayBtn}${spotifyBtn}</span>
                 </div>
-            ` : ((exampleSourceLabel || exampleCounter || autoplayBtn) ? `
-                <div style="display: flex; justify-content: flex-end; align-items: center; color: #b9c2cd; font-size: 13px; margin-top: 8px;">
+            ` : ((exampleSourceLabel || autoplayBtn) ? `
+                <div class="example-credit-row" style="display: flex; justify-content: flex-end; align-items: center; font-size: 13px; margin-top: 8px;">
                     ${exampleSourceLabel ? `<span class="example-song-credit" style="margin-right:auto;">${exampleSourceLabel}</span>` : ''}
-                    <span style="display: flex; align-items: center; gap: 6px;">${autoplayBtn}${exampleCounter}</span>
+                    <span style="display: flex; align-items: center; gap: 6px;">${autoplayBtn}</span>
                 </div>
             ` : '');
 
@@ -5787,8 +5885,9 @@ function updateCard({ announceHeadword = false } = {}) {
                 backHTML += `
                     <div class="sentence${exampleAssigned ? ' example-is-matched' : ''}" style="text-align: center; ${cursorStyle} ${sentenceStyle}" ${cycleHandler}>
                         ${showExampleProductionForm ? `<div class="reverse-example-form"><span>In this example</span><strong>${escapeCardText(exampleProductionForm)}</strong></div>` : ''}
-                        <div class="breakdown-trigger" style="margin-bottom: 8px; cursor: pointer;" onclick="showLyricBreakdown(event); event.stopPropagation();" title="Tap for word-by-word breakdown">${displayTargetSentence}</div>
+                        <div class="breakdown-trigger" style="margin-bottom: 8px; cursor: pointer;" onclick="showLyricBreakdown(event); event.stopPropagation();" title="Word by word">${displayTargetSentence}</div>
                         <div class="translation">${displayEnglishSentence}</div>
+                        ${exampleTicks}
                         ${songNameDisplay}
                     </div>
                 `;
@@ -5915,7 +6014,8 @@ function updateCard({ announceHeadword = false } = {}) {
         </button>`;
     }
 
-    if (isVerb) {
+    const hasConjugationTable = Boolean(config.languages?.[selectedLanguage]?.conjugationsPath);
+    if (isVerb && hasConjugationTable) {
         backHTML += `<button class="ref-tile ref-conj-btn" onclick="toggleConjugationTable()">
             <svg class="ref-tile-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <g font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="9.4" text-anchor="middle" letter-spacing="0.3" fill="currentColor">
@@ -7040,10 +7140,7 @@ function buildSpanishDictPanelHTML(card) {
         const rawContext = String(meaning.context || '').trim();
         const usage = rawContext ? parseSpanishDictUsageContext(rawContext) : null;
         const candidates = usage ? spanishDictUsageCandidateForms(usage) : [];
-        const dictionaryExamples = (meaning.allExamples || []).filter(example => (
-            String(example?.source || '').toLocaleLowerCase('en') === 'spanishdict'
-            || String(example?.evidence || '').toLocaleLowerCase('en') === 'dictionary'
-        ));
+        const dictionaryExamples = extractCanonicalDictionaryExamples(meaning);
         const exampleHTML = dictionaryExamples.length
             ? dictionaryExamples.map(example => `<div class="sd-meta-example">
                 <div class="sd-meta-example-target">${escapeCardText(example.target || example.spanish || '')}</div>
@@ -7245,6 +7342,8 @@ function buildProvenancePanelHTML(card) {
                     const title = sourceTitleLabel(pv);
                     src = `<a class="prov-ex-src" href="https://www.imdb.com/title/${tt}/"
                               target="_blank" rel="noopener noreferrer">${title ? esc(title) : tt}</a>`;
+                } else if (pv && (pv.corpus === 'tatoeba' || String(x.source || '').toLowerCase() === 'tatoeba') && pv.url) {
+                    src = `<a class="prov-ex-src" href="${esc(pv.url)}" target="_blank" rel="noopener noreferrer">Tatoeba</a>`;
                 } else if (x.source) {
                     src = `<span class="prov-ex-src">${esc(x.source)}</span>`;
                 }
@@ -7258,7 +7357,9 @@ function buildProvenancePanelHTML(card) {
                     ['Sense', x.sense_id], ['WSD request', x.wsd_request_id],
                     ['WSD result', x.wsd_result_id], ['Method', x.assignment_method],
                     ['Decision path', Array.isArray(x.decision_path) ? x.decision_path.join(' → ') : x.decision_path],
-                    ['Source record', x.source_record_id], ['Source snapshot', x.source_snapshot_content_id],
+                    ['Source record', x.source_record_id || pv.source_record_id], ['Source snapshot', x.source_snapshot_content_id],
+                    ['Source URL', x.source_url || pv.url], ['Attribution', x.attribution || pv.attribution],
+                    ['Contributor', x.contributor || pv.contributor], ['License', x.license || pv.license],
                     ['Alignment', x.alignment_id], ['Alignment snapshot', x.alignment_snapshot_content_id],
                     ['Translation source', x.translation_source], ['Song ID', x.song],
                     ['Vocalists', Array.isArray(x.vocalists) ? x.vocalists.join(', ') : x.vocalists],
@@ -7582,7 +7683,7 @@ document.addEventListener('click', (e) => {
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
 const ASSET_VERSION = '20260825ak';
-const MODALS_ASSET_VERSION = '20260915a';
+const MODALS_ASSET_VERSION = '20260916a';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
