@@ -47,7 +47,7 @@
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260916h">
+    <link rel="modulepreload" href="js/main.js?v=20260916i">
     <link rel="modulepreload" href="js/theme.js?v=20260825ak">
     <link rel="modulepreload" href="js/state.js?v=20260914c">
     <link rel="modulepreload" href="js/data-contracts.js?v=20260825ak">
@@ -57,7 +57,7 @@
     <link rel="modulepreload" href="js/speech.js?v=20260914b">
     <link rel="modulepreload" href="js/artist-ui.js?v=20260825ak">
     <link rel="modulepreload" href="js/auth.js?v=20260912a">
-    <link rel="modulepreload" href="js/about-example.js?v=20260916a">
+    <link rel="modulepreload" href="js/about-example.js?v=20260916i">
     <link rel="modulepreload" href="js/estimation.js?v=20260825ak">
     <link rel="modulepreload" href="js/config.js?v=20260916f">
     <link rel="modulepreload" href="js/progress.js?v=20260916h">
@@ -71,8 +71,8 @@
     <link rel="modulepreload" href="js/vocabulary-import-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/vocabulary-import.js?v=20260913a">
     <link rel="modulepreload" href="js/spanishdict-usage.js?v=20260825ak">
-    <link rel="modulepreload" href="js/reverse-cues.js?v=20260825ak">
-    <link rel="modulepreload" href="js/flashcards.js?v=20260916a">
+    <link rel="modulepreload" href="js/reverse-cues.js?v=20260916i">
+    <link rel="modulepreload" href="js/flashcards.js?v=20260916i">
     <link rel="modulepreload" href="js/example-personalisation.js?v=20260825ak">
     <script>
         // Fail open if a boot-time script error prevents main.js from taking
@@ -841,9 +841,8 @@
             </div>
             <div id="tutorialWelcomeStep" class="tutorial-intro-step">
                 <div class="tutorial-principles">
-                    <p>Fluency teaches the most useful words first. Progress reflects how often words occur, rather than how many cards you have seen.</p>
-                    <p><strong>Speech</strong> builds a general vocabulary from modern dialogue. <strong>Lyrics</strong> can personalise that vocabulary around music you choose and play the original lyric as an example.</p>
-                    <p>The back of each card connects a word to its meanings, examples and useful language-specific detail.</p>
+                    <p>Each card shows a word, what it can mean, and a real example. Common / Uncommon / Rare tells you how often that meaning is used.</p>
+                    <p><strong>Speech</strong> is everyday language. <strong>Lyrics</strong> can follow music you choose and play the original line.</p>
                 </div>
                 <button class="product-primary-action" id="startCardTutorialBtn" type="button">Start tutorial <span aria-hidden="true">→</span></button>
             </div>
@@ -1913,6 +1912,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260916h"></script>
+    <script type="module" src="js/main.js?v=20260916i"></script>
 </body>
 </html>

@@ -190,6 +190,92 @@ function nounProductionCue(card, meaning, translation) {
     return pluralizeEnglishWord(translation);
 }
 
+function foldCueForm(value) {
+    return String(value || '').normalize('NFC').toLocaleLowerCase().trim();
+}
+
+function meaningFeatureList(meaning) {
+    const metadata = meaning?.metadata || {};
+    const listed = metadata.sense_metadata?.features
+        || metadata.specialist_features
+        || meaning?.specialist_features
+        || [];
+    return Array.isArray(listed) ? listed : [];
+}
+
+function surfaceGrammarFromMeaning(meaning) {
+    const grammar = {};
+    for (const feature of meaningFeatureList(meaning)) {
+        if (feature?.kind !== 'surface_mark') continue;
+        const value = String(feature.value || '');
+        const splitAt = value.indexOf('=');
+        if (splitAt <= 0) continue;
+        grammar[value.slice(0, splitAt)] = value.slice(splitAt + 1);
+    }
+    return grammar;
+}
+
+function personIndexFromGrammar(grammar) {
+    const person = String(grammar.person || '');
+    if (!person) return undefined;
+    const number = grammar.number === 'plural' || grammar.number === 'dual' ? 'p' : 's';
+    return PERSON_TO_INDEX[`${person}${number}`];
+}
+
+const IRREGULAR_ENGLISH_PRESENT = {
+    be: ['am', 'are', 'is', 'are', 'are', 'are'],
+    have: ['have', 'have', 'has', 'have', 'have', 'have'],
+    do: ['do', 'do', 'does', 'do', 'do', 'do'],
+    go: ['go', 'go', 'goes', 'go', 'go', 'go'],
+};
+
+function thirdPersonSingular(verb) {
+    const lower = String(verb || '').toLocaleLowerCase('en');
+    if (/(?:s|x|z|ch|sh)$/u.test(lower)) return `${lower}es`;
+    if (/[^aeiou]y$/u.test(lower)) return `${lower.slice(0, -1)}ies`;
+    return `${lower}s`;
+}
+
+function inflectEnglishPresent(verb, personIdx) {
+    const lower = String(verb || '').toLocaleLowerCase('en');
+    const irregular = IRREGULAR_ENGLISH_PRESENT[lower];
+    if (irregular) return irregular[personIdx];
+    return personIdx === 2 ? thirdPersonSingular(lower) : lower;
+}
+
+function isUsageNoteGloss(translation) {
+    return /^(?:see |used |indicates |forms? )/i.test(String(translation || '').trim());
+}
+
+/**
+ * Inflect a Wiktionary infinitive gloss from the person/number already on
+ * the sense. SpanishDict cards do not carry those surface marks; they keep
+ * using the optional conjugated-English table when one is present.
+ */
+export function grammarProductionCue(card, meaning, translation) {
+    if (!card || !meaning) return null;
+    const pos = String(meaning.pos || '').toUpperCase();
+    if (pos && !VERB_POS.has(pos)) return null;
+    if (isUsageNoteGloss(translation)) return null;
+
+    const surface = card.productionAnswer || card.displaySurface || card.targetWord || '';
+    const lemma = meaning.headword || card.lemma || '';
+    if (!surface || !lemma || foldCueForm(surface) === foldCueForm(lemma)) return null;
+
+    const grammar = surfaceGrammarFromMeaning(meaning);
+    if (grammar.mood && grammar.mood !== 'indicative') return null;
+    if (grammar.tense && grammar.tense !== 'present') return null;
+    const personIdx = personIndexFromGrammar(grammar);
+    if (personIdx === undefined) return null;
+
+    const parts = infinitiveParts(translation);
+    if (!parts) return null;
+    const inflected = inflectEnglishPresent(parts.head, personIdx);
+    if (!inflected) return null;
+    const form = `${ENGLISH_PRONOUNS[personIdx]} ${inflected}${parts.rest}`;
+    return personIdx === 2 ? expandThirdSingular(form) : form;
+}
+
 function normalizeAnalysis(morph) {
     let mood = String(morph?.mood || '').toLocaleLowerCase('es');
     let tense = String(morph?.tense || '').toLocaleLowerCase('es');
@@ -279,24 +365,27 @@ export function englishProductionCue(card, meaningOrTranslation, conjugatedEngli
 
     const pos = String(meaning?.pos || '').toUpperCase();
     if (pos && !VERB_POS.has(pos)) return null;
-    if (!conjugatedEnglishData) return null;
 
-    const lemma = String(meaning?.headword || card.lemma || '').toLocaleLowerCase('es');
-    const analysisRows = conjugatedEnglishData?.[lemma]?.[translation];
-    if (!analysisRows) return null;
+    if (conjugatedEnglishData) {
+        const lemma = String(meaning?.headword || card.lemma || '').toLocaleLowerCase('es');
+        const analysisRows = conjugatedEnglishData?.[lemma]?.[translation];
+        if (analysisRows) {
+            const rawMorph = card.mergedLemma ? card._activeExampleMorphology : card.morphology;
+            const morphCandidates = (Array.isArray(rawMorph) ? rawMorph : [rawMorph]).filter(Boolean);
+            const forms = morphCandidates
+                .map(morph => cueForAnalysis(analysisRows, morph, translation))
+                .filter((form, index, all) => form && all.indexOf(form) === index);
+            if (forms.length) {
+                // Some Spanish surfaces genuinely encode more than one supported
+                // reading (da = indicative "gives" or command "give!"). Showing
+                // both compactly is more useful than reverting the entire card
+                // to an uninflected dictionary gloss.
+                return forms.join(' / ');
+            }
+        }
+    }
 
-    const rawMorph = card.mergedLemma ? card._activeExampleMorphology : card.morphology;
-    const morphCandidates = (Array.isArray(rawMorph) ? rawMorph : [rawMorph]).filter(Boolean);
-    const forms = morphCandidates
-        .map(morph => cueForAnalysis(analysisRows, morph, translation))
-        .filter((form, index, all) => form && all.indexOf(form) === index);
-    if (!forms.length) return null;
-
-    // Some Spanish surfaces genuinely encode more than one supported reading
-    // (da = indicative "gives" or command "give!"). Showing both compactly is
-    // more useful than reverting the entire card to an uninflected dictionary
-    // gloss; unsupported/context-sensitive analyses simply abstain.
-    return forms.join(' / ');
+    return meaning ? grammarProductionCue(card, meaning, translation) : null;
 }
 
 /**

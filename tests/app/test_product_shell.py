@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v416"
+EXPECTED_CACHE_NAME = "flashcards-v427"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -298,9 +298,31 @@ class ProductShellTests(unittest.TestCase):
         self.assertNotIn('id="tutorialLanguageSelect"', html)
 
         self.assertIn("window.openAboutExample?.()", main)
+        self.assertIn("function startCardTutorial()", main)
         self.assertIn("function renderTutorialLanguageChoices()", main)
         self.assertIn("tutorialLanguageStep')?.classList.remove('hidden')", main)
+        self.assertIn("window.getCardTutorialLanguageKey?.()", main)
         self.assertIn("window.setCardTutorialLanguage?.(key)", main)
+        self.assertIn("How common this meaning is", (APP_ROOT / "js" / "about-example.js").read_text(encoding="utf-8"))
+        self.assertIn("Common / Uncommon / Rare tells you how often that meaning is used", html)
+
+    def test_sense_frequency_uses_readable_labels_not_mystery_dots(self) -> None:
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        walkthrough = (APP_ROOT / "js" / "about-example.js").read_text(encoding="utf-8")
+        self.assertIn("function prominenceBadgeHTML(promInfo, extraStyle = '')", flashcards)
+        self.assertIn("${escapeCardText(promInfo.label)}", flashcards)
+        self.assertNotIn("sense-prominence-dots", flashcards)
+        self.assertIn("conjugationsPath)", flashcards)
+        self.assertIn("function walkthroughProminence(pct)", walkthrough)
+        self.assertIn("How common this meaning is", walkthrough)
+
+    def test_in_app_tutorial_skips_language_choice_when_one_is_already_selected(self) -> None:
+        main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
+        self.assertIn("function startCardTutorial()", main)
+        start = main.index("function startCardTutorial()")
+        language_step = main.index("tutorialLanguageStep')?.classList.remove('hidden')", start)
+        self.assertLess(main.index("getCardTutorialLanguageKey?.()", start), language_step)
+        self.assertLess(main.index("setCardTutorialLanguage?.(knownLanguage)", start), language_step)
 
     def test_cognate_setting_uses_positive_inclusion_copy(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
@@ -564,7 +586,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260914d", worker)
-        self.assertIn("/js/main.js?v=20260914d", worker)
+        self.assertIn("/js/main.js?v=20260916i", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -1055,7 +1077,8 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("isRareSense: true", flashcards)
         self.assertIn("prominenceLabel: 'Rare'", flashcards)
         self.assertIn("hasOnlyRareSenses: true", flashcards)
-        self.assertIn("sense-prominence-badge prominence-rare", flashcards)
+        self.assertIn("prominence-${escapeCardText(promInfo.key)}", flashcards)
+        self.assertIn("${escapeCardText(promInfo.label)}", flashcards)
         self.assertIn("groupInfo.size === 1 && Math.round(g.pct * 100) >= 100", flashcards)
         self.assertIn("window.getSenseProminenceInfo = getSenseProminenceInfo;", flashcards)
 
