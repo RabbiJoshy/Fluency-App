@@ -631,7 +631,10 @@ def main() -> None:
     candidates = load_json(candidates_path)
     run_id = candidates["run_id"]
     menu_by_card = {card["card_id"]: card for card in menu["cards"]}
-    sentences = {
+    # Skipped entirely when a frozen set supplies the sentences. Reading it
+    # anyway would keep the dependency the set exists to remove, and builds a
+    # 375,000-entry dict to throw away.
+    sentences = {} if args.prewsd else {
         row["sentence_id"]: row
         # split("\n"), never splitlines(). splitlines() also breaks on \x0b,
         # \x1c-\x1e, \x85, \u2028 and \u2029, none of which end a JSONL record.
@@ -700,8 +703,8 @@ def main() -> None:
         print(f"pre-WSD set: {args.prewsd.name}, {manifest['sentences']:,} sentences, "
               f"{manifest['surfaces']:,} surfaces, hashes verified")
 
-    ledger_path_to_use = args.ledger
-    if ledger_path_to_use is None:
+    ledger_path_to_use = None if prewsd_set is not None else args.ledger
+    if ledger_path_to_use is None and prewsd_set is None:
         candidate_ledger = ledger_path(workspace_root, run_language)
         if candidate_ledger.is_file():
             ledger_path_to_use = candidate_ledger
