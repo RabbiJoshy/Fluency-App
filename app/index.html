@@ -40,14 +40,14 @@
             document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260916g">
+    <link rel="stylesheet" href="css/style.css?v=20260916i">
     <link rel="stylesheet" href="css/light-theme.css?v=20260914e">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260916j">
+    <link rel="modulepreload" href="js/main.js?v=20260916l">
     <link rel="modulepreload" href="js/theme.js?v=20260825ak">
     <link rel="modulepreload" href="js/state.js?v=20260914c">
     <link rel="modulepreload" href="js/data-contracts.js?v=20260825ak">
@@ -57,13 +57,13 @@
     <link rel="modulepreload" href="js/speech.js?v=20260914b">
     <link rel="modulepreload" href="js/artist-ui.js?v=20260825ak">
     <link rel="modulepreload" href="js/auth.js?v=20260912a">
-    <link rel="modulepreload" href="js/about-example.js?v=20260916i">
+    <link rel="modulepreload" href="js/about-example.js?v=20260916l">
     <link rel="modulepreload" href="js/estimation.js?v=20260825ak">
     <link rel="modulepreload" href="js/config.js?v=20260916f">
     <link rel="modulepreload" href="js/progress.js?v=20260916h">
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20260915a">
-    <link rel="modulepreload" href="js/ui.js?v=20260916j">
+    <link rel="modulepreload" href="js/ui.js?v=20260916k">
     <link rel="modulepreload" href="js/vocab.js?v=20260915d">
     <link rel="modulepreload" href="js/song-sets-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/song-sets.js?v=20260823ae">
@@ -72,7 +72,7 @@
     <link rel="modulepreload" href="js/vocabulary-import.js?v=20260913a">
     <link rel="modulepreload" href="js/spanishdict-usage.js?v=20260825ak">
     <link rel="modulepreload" href="js/reverse-cues.js?v=20260916i">
-    <link rel="modulepreload" href="js/flashcards.js?v=20260916i">
+    <link rel="modulepreload" href="js/flashcards.js?v=20260916l">
     <link rel="modulepreload" href="js/example-personalisation.js?v=20260825ak">
     <script>
         // Fail open if a boot-time script error prevents main.js from taking
@@ -1545,22 +1545,7 @@
                                 <button type="button" class="group-size-btn global-study-default-btn" data-setting="excludeCognates" data-value="on" aria-pressed="false">Exclude</button>
                             </div>
                         </div>
-                        <!-- Cognate exclusion sensitivity -->
-                        <div class="settings-default-row" id="cognateSensitivityRow" style="display: none;">
-                            <span class="settings-row-label-block">
-                                <span class="settings-row-label">Filter sensitivity
-                                    <button type="button" class="settings-info-btn" id="cognateSensitivityInfoBtn"
-                                            aria-label="Explain cognate filter sensitivity" aria-expanded="false"
-                                            aria-controls="cognateSensitivityExplanation">?</button>
-                                </span>
-                                <small class="settings-row-explanation" id="cognateSensitivityExplanationText" hidden>Sets how similar to English a word must be before it is skipped: Loose skips only identical words; Strict skips looser look-alikes.</small>
-                            </span>
-                            <div id="cognateSensitivitySelector" class="group-size-selector settings-toggle">
-                                <button class="cognate-sens-btn group-size-btn" data-threshold="0.95" title="Only obvious cognates (e.g. animal, hotel)">Loose</button>
-                                <button class="cognate-sens-btn group-size-btn selected" data-threshold="0.85" title="Default cutoff">Default</button>
-                                <button class="cognate-sens-btn group-size-btn" data-threshold="0.75" title="Skip more cognate-like words">Strict</button>
-                            </div>
-                        </div>
+                        <!-- Cognate exclusion sensitivity moved to Developer -->
                     </div>
 
                     <!-- After a correct card -->
@@ -1619,10 +1604,6 @@
                         </div>
                     </div>
                 </section>
-                <div class="settings-inline-explanation" id="cognateSensitivityExplanation" hidden>
-                    <strong>How sensitivity works</strong>
-                    <p><b>Loose</b> excludes only the most obvious look-alikes. <b>Default</b> balances confidence and coverage. <b>Strict</b> also excludes less certain cognate-like words, leaving a smaller study deck.</p>
-                </div>
             </div>
             <div class="settings-tab-content" id="lookupTabContent">
                 <p class="settings-section-intro">Look up any word in this language, including words that are not in the set you are studying.</p>
@@ -1786,6 +1767,25 @@
                         <button type="button" class="group-size-btn sense-prominence-btn" data-prominence="percentages" aria-pressed="false">Percentages %</button>
                     </div>
                 </div>
+                <div class="settings-default-row" id="cognateSensitivityRow" style="display: none;">
+                    <span class="settings-row-label-block">
+                        <span class="settings-row-label">Cognate filter sensitivity
+                            <button type="button" class="settings-info-btn" id="cognateSensitivityInfoBtn"
+                                    aria-label="Explain cognate filter sensitivity" aria-expanded="false"
+                                    aria-controls="cognateSensitivityExplanation">?</button>
+                        </span>
+                        <small class="settings-row-explanation" id="cognateSensitivityExplanationText" hidden>Sets how similar to English a word must be before it is skipped: Loose skips only identical words; Strict skips looser look-alikes.</small>
+                    </span>
+                    <div id="cognateSensitivitySelector" class="group-size-selector settings-toggle">
+                        <button class="cognate-sens-btn group-size-btn" data-threshold="0.95" title="Only obvious cognates (e.g. animal, hotel)">Loose</button>
+                        <button class="cognate-sens-btn group-size-btn selected" data-threshold="0.85" title="Default cutoff">Default</button>
+                        <button class="cognate-sens-btn group-size-btn" data-threshold="0.75" title="Skip more cognate-like words">Strict</button>
+                    </div>
+                </div>
+                <div class="settings-inline-explanation" id="cognateSensitivityExplanation" hidden>
+                    <strong>How sensitivity works</strong>
+                    <p><b>Loose</b> excludes only the most obvious look-alikes. <b>Default</b> balances confidence and coverage. <b>Strict</b> also excludes less certain cognate-like words, leaving a smaller study deck.</p>
+                </div>
                 <div class="settings-default-row" id="wsdPublicationRow">
                     <span class="settings-row-label-block">
                         <span class="settings-row-label">Sense publication</span>
@@ -1892,6 +1892,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260916j"></script>
+    <script type="module" src="js/main.js?v=20260916l"></script>
 </body>
 </html>

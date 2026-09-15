@@ -3367,17 +3367,25 @@
             display: none !important;
         }
 
-        /* Privileged Companion ("Used with") badge */
+        /* Privileged companion: readable "used with" + the collocate */
         .sense-pill--companion {
             background: rgba(16, 185, 129, 0.12);
             border: 1px solid rgba(16, 185, 129, 0.42);
             color: color-mix(in srgb, #10b981 90%, var(--text-primary));
             font-weight: 700;
             box-shadow: 0 1px 2px rgba(16, 185, 129, 0.08);
+            gap: 0.15em;
         }
 
-        .sense-pill--companion .sense-pill-icon {
-            color: #10b981;
+        .sense-pill--companion .sense-pill-prefix {
+            font-weight: 600;
+            opacity: 0.72;
+            letter-spacing: 0.01em;
+        }
+
+        .sense-pill--companion .sense-pill-token {
+            font-weight: 800;
+            font-style: italic;
         }
 
         .sense-pill--companion:hover {
@@ -5014,15 +5022,24 @@
         }
         .example-ticks {
             display: flex;
+            flex-wrap: wrap;
             justify-content: center;
             gap: 5px;
             margin-top: 8px;
+            max-width: 100%;
+        }
+        .example-ticks.is-dense {
+            gap: 3px;
         }
         .example-tick {
             width: 7px;
             height: 7px;
             border-radius: 999px;
             background: color-mix(in srgb, var(--text-secondary) 38%, transparent);
+        }
+        .example-ticks.is-dense .example-tick {
+            width: 5px;
+            height: 5px;
         }
         .example-tick.is-current {
             background: var(--text-primary);
@@ -17068,28 +17085,47 @@ body.artist-mode #flashcardMode::before {
 }
 
 .card-front .card-pos-list.is-lemma-map {
-  top: auto;
+  top: 22px;
   left: 50%;
   right: auto;
-  bottom: 18%;
+  bottom: auto;
   width: auto;
   min-height: 0;
   transform: translateX(-50%);
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   grid-template-columns: none;
+  max-width: calc(100% - 48px);
+}
+@media (max-width: 767px) {
+  .card-front .card-pos-list.is-lemma-map {
+    top: 76px;
+    padding: 0 12px;
+    max-width: 100%;
+  }
 }
 .front-lemma-pair {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  padding: 4px 6px 4px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-tertiary) 82%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-color) 80%, transparent);
   color: var(--text-secondary);
   font: 600 13px/1.2 var(--font-reading);
 }
 .front-lemma-pair .front-lemma-name {
   color: var(--text-primary);
+  font-style: italic;
+  font-weight: 650;
+}
+.front-lemma-pair .front-pos-unit {
+  display: inline-flex;
 }
 .front-meaning-pos {
   font-size: 11px;

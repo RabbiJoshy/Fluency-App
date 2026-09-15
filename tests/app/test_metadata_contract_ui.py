@@ -143,12 +143,15 @@ class MetadataContractUITests(unittest.TestCase):
         styles = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
         about_example = (APP_ROOT / "js" / "about-example.js").read_text(encoding="utf-8")
 
-        # Privileged companion ordering and icon
+        # Privileged companion as readable "used with" copy, not a link icon
         self.assertIn("companion: 0,", metadata_pills)
         self.assertIn("construction: 1,", metadata_pills)
-        self.assertIn("export const COMPANION_ICON_SVG =", metadata_pills)
+        self.assertIn("sense-pill-prefix", metadata_pills)
+        self.assertIn("sense-pill-token", metadata_pills)
+        self.assertIn("function compactLearnerSenseMetadata(items, meaning, options = {})", metadata_pills)
         self.assertIn("sense-pill--companion sense-pill--privileged", metadata_pills)
         self.assertIn("Used with &quot;${escapeCardText(item.value)}&quot;", metadata_pills)
+        self.assertNotIn("export const COMPANION_ICON_SVG =", metadata_pills)
 
         # Syntax frames and pills
         self.assertIn("sense-pill--syntax", metadata_pills)
@@ -166,6 +169,8 @@ class MetadataContractUITests(unittest.TestCase):
 
         # CSS styling for pills and adaptive density
         self.assertIn(".sense-pill--companion {", styles)
+        self.assertIn(".sense-pill--companion .sense-pill-prefix", styles)
+        self.assertIn(".sense-pill--companion .sense-pill-token", styles)
         self.assertIn(".sense-pill--construction,", styles)
         self.assertIn(".sense-pill--register {", styles)
         self.assertIn(".sense-pill--domain {", styles)

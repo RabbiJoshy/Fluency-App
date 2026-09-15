@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v428"
+EXPECTED_CACHE_NAME = "flashcards-v430"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -200,8 +200,8 @@ class ProductShellTests(unittest.TestCase):
         self.assertNotIn('<div class="back-pos-legend"', walkthrough)
         self.assertIn('class="pos-section-head"', walkthrough)
         self.assertIn('class="meaning-row-check"', walkthrough)
-        self.assertIn('class="compact-example-counter"', walkthrough)
-        self.assertIn('class="compact-example-counter-label"', walkthrough)
+        self.assertIn('class="example-ticks"', walkthrough)
+        self.assertNotIn('class="compact-example-counter-label"', walkthrough)
         self.assertIn("speechCard: 'tem'", walkthrough)
         self.assertIn('class="sense-metadata-tier sense-metadata-tier--primary"', walkthrough)
         self.assertIn('class="sense-metadata-more"', walkthrough)
@@ -229,7 +229,8 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("never enter the frequency calculation above", vocab)
         self.assertIn("'Wiktionary example'", flashcards)
         self.assertIn("'SpanishDict example'", flashcards)
-        self.assertIn('compact-example-counter-label', flashcards)
+        self.assertIn("function exampleTicksHTML(current, total, label = 'example')", flashcards)
+        self.assertNotIn('compact-example-counter-label', flashcards)
 
     def test_only_the_active_meaning_group_exposes_subsenses(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
@@ -359,7 +360,9 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="settingsSavedWordsBtn"', html[html.index('id="vocabularyTabContent"'):html.index('id="appearanceTabContent"')])
         self.assertNotIn('id="settingsFindWordBtn"', html[html.index('id="studyTabContent"'):html.index('id="lookupTabContent"')])
         self.assertIn('id="senseProminenceSelector"', html[html.index('id="appDataTabContent"'):])
+        self.assertIn('id="cognateSensitivityRow"', html[html.index('id="appDataTabContent"'):])
         self.assertNotIn('id="senseProminenceSelector"', html[html.index('id="studyTabContent"'):html.index('id="lookupTabContent"')])
+        self.assertNotIn('id="cognateSensitivityRow"', html[html.index('id="studyTabContent"'):html.index('id="lookupTabContent"')])
         self.assertIn("Show first", html)
         self.assertIn("Speak the word", html)
         self.assertIn("The word first: guess the English. English first: say the word.", html)
@@ -601,7 +604,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260914d", worker)
-        self.assertIn("/js/main.js?v=20260916j", worker)
+        self.assertIn("/js/main.js?v=20260916l", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -1178,6 +1181,7 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
 
         # 4-tier metadata scoring and differentiator resolution
         self.assertIn("function scoreSenseMetadata(item)", pills)
+        self.assertIn("function compactLearnerSenseMetadata(items, meaning, options = {})", pills)
         self.assertIn("function resolveMeaningDifferentiator(meaning, peerMeanings, gloss = '', cleanContextFn = null)", pills)
         self.assertIn("window.scoreSenseMetadata = scoreSenseMetadata;", pills)
         self.assertIn("window.resolveMeaningDifferentiator = resolveMeaningDifferentiator;", pills)
