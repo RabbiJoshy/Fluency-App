@@ -4,6 +4,14 @@
     {
       "date": "2026-09-15",
       "commit": "pending",
+      "summary": "Deploy CS V12 deck (cs-speech-v12-4000x10)",
+      "detail": [
+        "4,000 cards with 10 display examples using WSD v12-1 with difficulty stratification and tail gating."
+      ]
+    },
+    {
+      "date": "2026-09-15",
+      "commit": "pending",
       "summary": "Deploy ES V12 deck (es-speech-v12-6000x10)",
       "detail": [
         "6,000 cards with 10 display examples using WSD v12-1 with difficulty stratification and tail gating."
