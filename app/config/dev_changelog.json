@@ -20,6 +20,14 @@
     {
       "date": "2026-09-15",
       "commit": "pending",
+      "summary": "Deploy PT V12 deck (pt-speech-v12-6000x10)",
+      "detail": [
+        "6,000 cards with 10 display examples using WSD v12-1 with difficulty stratification and tail gating."
+      ]
+    },
+    {
+      "date": "2026-09-15",
+      "commit": "pending",
       "summary": "Urgency-scored review queue, 100-card daily batches, and sectioned Review Hub",
       "detail": [
         "Continuous needfulness score and urgency tiers (Never Mastered, Critical Lapses, Routine Due) derived directly from the SRS schedule and personal error history.",
