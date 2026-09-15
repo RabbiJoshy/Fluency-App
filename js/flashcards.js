@@ -36,7 +36,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=20260913f';
+} from './card-metadata-pills.js?v=20260915c';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -1830,8 +1830,20 @@ function initializeApp() {
         const loadingTitle = action === 'next-set' && nextSetNumber
             ? `Loading Set ${nextSetNumber}`
             : 'Loading the Next Level';
-        window.showAppLoading?.(loadingTitle, 'Preparing your next cards…');
         hideDeckCompleteModal();
+        if (action === 'next-daily-review') {
+            window.showAppLoading?.('Loading Daily Review', 'Preparing your next review cards…');
+            try {
+                await window.loadDailyReviewDeck?.({
+                    urgencyTier: stats.dailyReviewTier,
+                    limit: stats.dailyReviewLimit
+                });
+            } catch (error) {
+                console.error('Could not continue daily review:', error);
+                await window.showEndOfDeckOptions?.({ autoContinue: false });
+            }
+            return;
+        }
         try {
             // The set dots were counted when setup last rendered, which can be
             // several sets ago: lemma merging marks siblings seen across sets,
@@ -2674,10 +2686,10 @@ function getExampleOccurrenceSurface(card, example, sentence) {
 // checkmark; unselected rows get nothing — but the slot is always reserved
 // (via CSS padding on .meaning-row) so text stays aligned across rows.
 // Color alone no longer carries the selection state.
+// Checkmarks removed per learner request to maximize horizontal width
+// and eliminate visual clutter; row highlight and border already convey selection.
 function renderRowCheckSlot(isSelected) {
-    return isSelected
-        ? `<svg class="meaning-row-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgb(var(--sense-match-rgb))" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>`
-        : '';
+    return '';
 }
 
 // Note: escapeCardText, legacyObjectPronounProjection, isWiktionaryGrammarNote,
@@ -2852,31 +2864,58 @@ function cleanSenseContext(rawContext, mainGloss) {
     const gloss = String(mainGloss || '').trim();
     if (!gloss) return raw;
 
+    // 1. Deduplicate identical clauses separated by semicolons
+    if (raw.includes(';')) {
+        const clauses = raw.split(';').map(c => c.trim()).filter(Boolean);
+        const seen = new Set();
+        const deduped = [];
+        for (const c of clauses) {
+            const key = c.toLowerCase();
+            if (!seen.has(key)) {
+                seen.add(key);
+                deduped.push(c);
+            }
+        }
+        raw = deduped.join('; ');
+    }
+
     const normRaw = raw.toLowerCase().replace(/^[^\w]+|[^\w]+$/g, '');
     const normGloss = gloss.toLowerCase().replace(/^[^\w]+|[^\w]+$/g, '');
 
-    // 1. Direct identity or trivial punctuation/case difference
+    // 2. Direct identity or trivial punctuation/case difference
     if (normRaw === normGloss) return '';
 
-    // 2. Exact substring match where gloss already encapsulates the entire context
+    // 3. Exact substring match where gloss already encapsulates the entire context
     if (normGloss.includes(normRaw) && normGloss.length >= normRaw.length) return '';
 
-    // 3. Context starts with the gloss, e.g. gloss: "to be", context: "to be located" -> "located"
+    // 4. Context starts with the gloss, e.g. gloss: "to be", context: "to be located" -> "located"
     const glossRegex = new RegExp('^' + normGloss.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b\\s*[-:·]?\\s*', 'i');
     if (glossRegex.test(raw)) {
         raw = raw.replace(glossRegex, '').trim();
-    } else {
+    } else if (normGloss.startsWith('to ')) {
         // Also handle infinitive "to X": e.g. gloss "to be", context "to be located" or gloss "be"
-        if (normGloss.startsWith('to ')) {
-            const verbOnly = normGloss.slice(3).trim();
-            const verbRegex = new RegExp('^(?:to\\s+)?' + verbOnly.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b\\s*[-:·]?\\s*', 'i');
-            if (verbRegex.test(raw)) {
-                raw = raw.replace(verbRegex, '').trim();
-            }
+        const verbOnly = normGloss.slice(3).trim();
+        const verbRegex = new RegExp('^(?:to\\s+)?' + verbOnly.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b\\s*[-:·]?\\s*', 'i');
+        if (verbRegex.test(raw)) {
+            raw = raw.replace(verbRegex, '').trim();
         }
     }
 
-    // 4. "act of [gloss]" e.g. gloss: "wait", context: "act of waiting"
+    // 5. Context starts with headword of gloss (e.g. gloss: "of", context: "of (being a part of)" -> "being a part of")
+    const headGloss = normGloss.split(/[;,(]/)[0].trim();
+    if (headGloss && headGloss.length >= 2) {
+        const headRegex = new RegExp('^' + headGloss.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b\\s*[-:·;]?\\s*', 'i');
+        if (headRegex.test(raw)) {
+            raw = raw.replace(headRegex, '').trim();
+        }
+    }
+
+    // 6. Unwrap outer parentheses if remaining text is enclosed: "(being a part of)" -> "being a part of"
+    if (raw.startsWith('(') && raw.endsWith(')')) {
+        raw = raw.slice(1, -1).trim();
+    }
+
+    // 7. "act of [gloss]" e.g. gloss: "wait", context: "act of waiting"
     if (/^act of\s+/i.test(raw)) {
         const afterAct = raw.replace(/^act of\s+/i, '').trim().toLowerCase();
         if (normGloss.startsWith(afterAct.slice(0, 4)) || afterAct.startsWith(normGloss.slice(0, 4))) {
@@ -2884,7 +2923,12 @@ function cleanSenseContext(rawContext, mainGloss) {
         }
     }
 
-    // 5. If the remaining text is trivial (1 char or punctuation), discard it
+    // 8. Truncate runaway encyclopedic sentences (>80 chars) on mobile/card view
+    if (raw.length > 80) {
+        raw = raw.slice(0, 77).replace(/[,;:\s]+$/, '') + '…';
+    }
+
+    // 9. If the remaining text is trivial (1 char or punctuation), discard it
     if (raw.replace(/[^\w]/g, '').length <= 1) return '';
 
     return raw;
@@ -5317,7 +5361,7 @@ function updateCard({ announceHeadword = false } = {}) {
                     target.push(`
                     <div class="meaning-row meaning-row-regular ${singletonTextClass}${isSelected ? ' selected' : ''}${rowStateClasses}${rareRowClass}" style="position: relative; display: flex; align-items: center; padding: 2px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 44px;" onclick="selectMeaning(${idx})">
                         ${renderRowCheckSlot(isSelected)}
-                        <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; width: 100%; padding: 2px ${useProminenceLabels ? '80px' : (!m.unassigned && pctVal < 100 ? '42px' : '10px')} 2px 8px;">
+                        <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; width: 100%; padding: 2px ${useProminenceLabels ? '48px' : (!m.unassigned && pctVal < 100 ? '42px' : '10px')} 2px 8px;">
                             <span class="meaning-row-translation meaning-row-gloss row-adaptive-text" style="font-weight: ${isSelected ? 700 : 600}; color: ${textColor}; text-align: center; width: 100%; line-height: 1.25;">${displayMeaningHTML}</span>
                             ${subContent ? `<span class="meaning-row-sub" style="text-align: center; width: 100%;">${subContent}</span>` : ''}
                         </div>
@@ -7436,7 +7480,7 @@ document.addEventListener('click', (e) => {
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
 const ASSET_VERSION = '20260825ak';
-const MODALS_ASSET_VERSION = '20260914d';
+const MODALS_ASSET_VERSION = '20260915a';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

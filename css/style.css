@@ -2736,15 +2736,26 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-family: var(--font-data, monospace);
-            font-size: 10px;
-            font-weight: 700;
-            line-height: 1;
-            padding: 3px 7px;
-            border-radius: 999px;
-            text-transform: capitalize;
-            letter-spacing: 0.02em;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-size: 9px;
+            font-weight: 600;
+            line-height: 1.2;
+            padding: 1.5px 5px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
             white-space: nowrap;
+        }
+        @media (max-width: 480px) {
+            .meaning-row .meaning-row-body {
+                padding-right: 42px !important;
+                padding-left: 6px !important;
+            }
+            .sense-prominence-badge {
+                font-size: 8px;
+                padding: 1px 4px;
+                letter-spacing: 0.02em;
+            }
         }
         .sense-prominence-badge.prominence-common {
             background: rgba(16, 185, 129, 0.15);
@@ -16560,28 +16571,31 @@ body {
 
 /* Extras Deck Section (bottom of setup) */
 .extras-deck-section {
-  margin-top: 28px;
-  margin-bottom: 32px;
+  margin-top: 14px;
+  margin-bottom: 20px;
 }
 .extras-deck-card {
   border: 1px solid var(--border-color);
   border-radius: 12px;
   background: var(--bg-card);
-  padding: 14px 16px;
+  padding: 10px 14px;
   display: grid;
-  gap: 10px;
+  gap: 8px;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.extras-deck-card:hover {
+  border-color: color-mix(in srgb, var(--accent-primary) 40%, var(--border-color));
 }
 .extras-deck-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
-  flex-wrap: wrap;
+  gap: 12px;
 }
 .extras-deck-status {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
   flex: 1;
 }
@@ -16592,6 +16606,7 @@ body {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 .extras-deck-badge.is-unlocked {
   background: color-mix(in srgb, var(--accent-green) 18%, var(--bg-card));
@@ -16613,19 +16628,31 @@ body {
   color: var(--text-muted);
   border: 1px solid var(--border-color);
 }
+.extras-deck-info {
+  min-width: 0;
+}
 .extras-deck-info strong {
   display: block;
   font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
   color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .extras-deck-info p {
-  margin: 2px 0 0;
+  margin: 1px 0 0;
   font-size: 12px;
+  line-height: 1.3;
   color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .extras-deck-toggle-btn,
 .extras-deck-browse-btn {
-  padding: 7px 14px;
+  padding: 6px 12px;
   border: 1px solid var(--border-color);
   border-radius: 8px;
   background: var(--bg-surface);
@@ -16634,6 +16661,7 @@ body {
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 .extras-deck-toggle-btn:hover,
 .extras-deck-browse-btn:hover {
@@ -16657,6 +16685,22 @@ body {
   height: 100%;
   background: var(--accent-primary);
   transition: width 0.3s ease;
+}
+
+@media (max-width: 520px) {
+  .extras-deck-content {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .extras-deck-info strong,
+  .extras-deck-info p {
+    white-space: normal;
+  }
+  .extras-deck-actions {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
 }
 
 /* 100% Set Accuracy Celebration & Confetti */
@@ -16833,5 +16877,136 @@ body.artist-mode #flashcardMode::before {
   z-index: 0;
   filter: blur(28px);
   opacity: 0.85;
+}
+
+/* Global Daily Review Hub */
+.global-daily-due-banner {
+  margin: 0 0 16px 0;
+}
+.daily-review-card {
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 35%, var(--border-color));
+  border-radius: 14px;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--accent-primary) 10%, var(--bg-card)),
+    var(--bg-card) 75%
+  );
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.daily-review-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.daily-review-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.daily-review-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+.daily-review-title {
+  display: block;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+.daily-review-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+.daily-review-hero-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--accent, #10b981);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font: 600 0.85rem var(--font-emphasis);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+.daily-review-hero-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+.daily-review-tiers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+}
+.daily-review-tier-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+  gap: 2px;
+  font-family: inherit;
+}
+.daily-review-tier-btn:hover {
+  border-color: var(--accent-primary);
+  background: color-mix(in srgb, var(--accent-primary) 8%, var(--bg-surface));
+}
+.daily-review-tier-btn.is-never-right {
+  border-color: color-mix(in srgb, #ef4444 40%, var(--border-color));
+}
+.daily-review-tier-btn.is-never-right:hover {
+  border-color: #ef4444;
+  background: color-mix(in srgb, #ef4444 10%, var(--bg-surface));
+}
+.daily-review-tier-btn.is-critical {
+  border-color: color-mix(in srgb, #f59e0b 40%, var(--border-color));
+}
+.daily-review-tier-btn.is-critical:hover {
+  border-color: #f59e0b;
+  background: color-mix(in srgb, #f59e0b 10%, var(--bg-surface));
+}
+.daily-review-tier-badge {
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.daily-review-tier-btn.is-never-right .daily-review-tier-badge {
+  color: #ef4444;
+}
+.daily-review-tier-btn.is-critical .daily-review-tier-badge {
+  color: #f59e0b;
+}
+.daily-review-tier-btn.is-due .daily-review-tier-badge {
+  color: var(--text-primary);
+}
+.daily-review-tier-sub {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  line-height: 1.2;
+}
+.daily-review-tier-action {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+  margin-top: 3px;
 }
 
