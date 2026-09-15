@@ -419,7 +419,7 @@ function updatePersonalCoverage(filteredVocab) {
             fill.style.transition = 'width 1s ease-out';
             fill.style.width = Math.min(coveragePct, 100) + '%';
             wrapper.classList.add('visible');
-            window.updateDailyReviewBanner?.();
+            window.updateReviewAccess?.();
         });
     });
 }

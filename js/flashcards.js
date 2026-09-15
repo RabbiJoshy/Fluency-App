@@ -27,6 +27,9 @@ import {
     isWiktionaryGrammarNote,
     legacyObjectPronounProjection,
     projectWiktionaryGloss,
+    compactLearnerSenseMetadata,
+    contextCollidesWithMetadata,
+    metadataTextIsRedundant,
     resolveMeaningDifferentiator,
     scoreSenseMetadata,
     senseMetadataDisplay,
@@ -38,7 +41,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=20260915d';
+} from './card-metadata-pills.js?v=20260916l';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -1388,12 +1391,13 @@ function compactCounterHTML(current, total, label = 'example') {
     return `<span class="compact-example-counter" aria-label="${escapeCardText(`${label} ${current + 1} of ${total}`)}">${text}</span>`;
 }
 
-function exampleTicksHTML(current, total) {
+function exampleTicksHTML(current, total, label = 'example') {
     if (total < 2) return '';
+    const dense = total > 16;
     const ticks = Array.from({ length: total }, (_, i) =>
         `<span class="example-tick${i === current ? ' is-current' : ''}"></span>`
     ).join('');
-    return `<div class="example-ticks" aria-hidden="true">${ticks}</div>`;
+    return `<div class="example-ticks${dense ? ' is-dense' : ''}" role="img" aria-label="${escapeCardText(`${label} ${current + 1} of ${total}`)}">${ticks}</div>`;
 }
 
 function initializeApp() {
@@ -2893,8 +2897,9 @@ function cleanSenseContext(rawContext, mainGloss) {
     const normRaw = raw.toLowerCase().replace(/^[^\w]+|[^\w]+$/g, '');
     const normGloss = gloss.toLowerCase().replace(/^[^\w]+|[^\w]+$/g, '');
 
-    // 2. Direct identity or trivial punctuation/case difference
-    if (normRaw === normGloss) return '';
+    // 2. Direct identity or trivial punctuation/case difference, including
+    // construction aliases such as intransitive / intr.
+    if (normRaw === normGloss || metadataTextIsRedundant(raw, gloss)) return '';
 
     // 3. Exact substring match where gloss already encapsulates the entire context
     if (normGloss.includes(normRaw) && normGloss.length >= normRaw.length) return '';
@@ -4445,16 +4450,15 @@ function updateCard({ announceHeadword = false } = {}) {
             seenPairs.add(key);
             pairs.push({ lemma, pos: meaning.pos });
         });
-        const surfaceFold = foldSurfaceForm(displayedTargetHeadword || '');
-        const uniqueLemmas = new Set(pairs.map(pair => foldSurfaceForm(pair.lemma)));
         if (pairs.length === 0) {
             frontPOSEl.style.display = 'none';
         } else {
             frontPOSEl.classList.add('is-lemma-map', `pos-count-${Math.min(pairs.length, 4)}`);
             frontPOSEl.innerHTML = pairs.map(pair => {
-                const showLemma = uniqueLemmas.size > 1
-                    || foldSurfaceForm(pair.lemma) !== surfaceFold;
-                return `<span class="front-lemma-pair">${showLemma ? `<span class="front-lemma-name">${escapeCardText(pair.lemma)}</span>` : ''}${renderFrontPosUnit(pair.pos, isVerbPos(pair.pos))}</span>`;
+                const lemmaLabel = pair.lemma
+                    ? `<span class="front-lemma-name">${escapeCardText(pair.lemma)}</span>`
+                    : '';
+                return `<span class="front-lemma-pair">${lemmaLabel}${renderFrontPosUnit(pair.pos, isVerbPos(pair.pos))}</span>`;
             }).join('');
             frontPOSEl.style.display = 'flex';
         }
@@ -4849,7 +4853,6 @@ function updateCard({ announceHeadword = false } = {}) {
                 // the centred card header; repeat the lemma only when it adds
                 // information (for example, an inflected surface).
                 const hw = g.headword
-                    && foldSurfaceForm(g.headword) !== foldSurfaceForm(card.targetWord)
                     ? `<span class="pos-pill-lemma">${escapeCardText(g.headword)}</span>` : '';
                 const summarySense = key === activeLemmaPosKey && activeGroupSense
                     ? activeGroupSense
@@ -5354,10 +5357,19 @@ function updateCard({ announceHeadword = false } = {}) {
                         let varyingHtml;
                         if (isTransAxis) {
                             const rawCtx = contextWithoutSenseMetadata(mm, isMemberSelected);
-                            const cleanedCtx = cleanSenseContext(rawCtx, sharedText);
-                            const metadataHTML = senseMetadataHTML(mm, isMemberSelected, {
+                            const metaOptions = {
                                 senseCount: card.meanings?.length || orderedMembers.length,
-                            });
+                                gloss: sharedText,
+                                peerMeanings: card.meanings.filter((_, otherIdx) => otherIdx !== memberIdx),
+                            };
+                            let cleanedCtx = cleanSenseContext(rawCtx, sharedText);
+                            if (cleanedCtx && contextCollidesWithMetadata(
+                                cleanedCtx,
+                                compactLearnerSenseMetadata(senseMetadataItems(mm), mm, metaOptions)
+                            )) {
+                                cleanedCtx = '';
+                            }
+                            const metadataHTML = senseMetadataHTML(mm, isMemberSelected, metaOptions);
                             varyingHtml = cleanedCtx || metadataHTML
                                 ? `<span class="meaning-context-cell" style="line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${renderSenseContextHTML(cleanedCtx, { leadingDot: false })}${metadataHTML}</span>`
                                 : `<span style="opacity: 0.4; font-style: italic; font-size: 12px;">—</span>`;
@@ -5368,7 +5380,7 @@ function updateCard({ announceHeadword = false } = {}) {
                                 isMemberSelected
                             );
                             const transSafe = String(transRaw).replace(/"/g, '&quot;');
-                            varyingHtml = `<span class="row-adaptive-text" style="font-weight: 600; color: var(--text-primary); line-height: 1.25; min-width: 0; overflow: hidden; text-overflow: ellipsis;">${senseCrossReferenceHTML(mm, transSafe, isMemberSelected)}${senseMetadataHTML(mm, isMemberSelected, { senseCount: card.meanings?.length || orderedMembers.length })}${modelProposalMarkerHTML(mm)}</span>`;
+                            varyingHtml = `<span class="row-adaptive-text" style="font-weight: 600; color: var(--text-primary); line-height: 1.25; min-width: 0; overflow: hidden; text-overflow: ellipsis;">${senseCrossReferenceHTML(mm, transSafe, isMemberSelected)}${senseMetadataHTML(mm, isMemberSelected, { senseCount: card.meanings?.length || orderedMembers.length, gloss: transRaw, peerMeanings: card.meanings.filter((_, otherIdx) => otherIdx !== memberIdx) })}${modelProposalMarkerHTML(mm)}</span>`;
                         }
                         const varyingCol = isTransAxis ? 2 : 1;
                         const varyingCell = `<div class="group-card-varying-cell${isMemberSelected ? ' is-active-subsense' : ''}" onclick="event.stopPropagation(); selectMeaning(${memberIdx})" style="${baseCell} grid-column: ${varyingCol}; min-width: 0; overflow: hidden;">${varyingHtml}</div>`;
@@ -5429,14 +5441,23 @@ function updateCard({ announceHeadword = false } = {}) {
                     // Individual sense row: 2-line presentation when space permits
                     // Primary gloss on top, cleaned context underneath (no redundant repetition of the gloss).
                     const rawContext = contextWithoutSenseMetadata(m, isRowSelected);
-                    const cleanedContext = cleanSenseContext(rawContext, displayMeaning);
+                    const metadataOptions = {
+                        senseCount: card.meanings?.length || 1,
+                        gloss: displayMeaning,
+                        peerMeanings: card.meanings.filter((_, otherIdx) => otherIdx !== idx),
+                    };
+                    let cleanedContext = cleanSenseContext(rawContext, displayMeaning);
+                    if (cleanedContext && contextCollidesWithMetadata(
+                        cleanedContext,
+                        compactLearnerSenseMetadata(senseMetadataItems(m), m, metadataOptions)
+                    )) {
+                        cleanedContext = '';
+                    }
                     let subContent = '';
                     if (cleanedContext) {
                         subContent += renderSenseContextHTML(cleanedContext, { leadingDot: false });
                     }
-                    const metadataHtml = senseMetadataHTML(m, isRowSelected, {
-                        senseCount: card.meanings?.length || 1,
-                    });
+                    const metadataHtml = senseMetadataHTML(m, isRowSelected, metadataOptions);
                     if (metadataHtml) subContent += (subContent ? ' ' : '') + metadataHtml;
                     const regTag = registerTagHTML(m);
                     if (regTag) subContent += (subContent ? ' ' : '') + regTag;
@@ -5715,13 +5736,11 @@ function updateCard({ announceHeadword = false } = {}) {
             }
 
             // Build example counter: shows count for current MWE's examples, not total MWEs
-            let exampleCounter = '';
-            if (hasMultipleExamples) {
-                const exIdx = currentExampleIndex % exampleCount;
-                // No prev/next buttons — tapping the sentence itself already
-                // cycles through examples (see the .sentence onclick below).
-                exampleCounter = `<span class="example-counter-group">${compactCounterHTML(exIdx, exampleCount)}</span>`;
-            }
+            // The dotted strip is the only visible position cue; the fraction
+            // lived next to it and forced the learner to read "5 of 30".
+            const exampleTicks = hasMultipleExamples
+                ? exampleTicksHTML(currentExampleIndex % exampleCount, exampleCount)
+                : '';
             // Breakdown button removed — English translation is now clickable instead
             const spotifySvg = `<svg width="44" height="44" viewBox="0 0 24 24" fill="#1DB954"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>`;
             // A press-and-hold on the Spotify button toggles card-wide
@@ -5741,12 +5760,12 @@ function updateCard({ announceHeadword = false } = {}) {
             const songNameDisplay = songName ? `
                 <div class="example-credit-row" style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-top: 8px; font-style: italic;">
                     <span class="example-song-credit">— ${songName}${vocalistCredit ? `<span class="example-vocalist-credit"> · ${vocalistCredit}</span>` : ''}</span>
-                    <span style="display: flex; align-items: center; gap: 6px;">${autoplayBtn}${spotifyBtn}${exampleCounter}</span>
+                    <span style="display: flex; align-items: center; gap: 6px;">${autoplayBtn}${spotifyBtn}</span>
                 </div>
-            ` : ((exampleSourceLabel || exampleCounter || autoplayBtn) ? `
+            ` : ((exampleSourceLabel || autoplayBtn) ? `
                 <div class="example-credit-row" style="display: flex; justify-content: flex-end; align-items: center; font-size: 13px; margin-top: 8px;">
                     ${exampleSourceLabel ? `<span class="example-song-credit" style="margin-right:auto;">${exampleSourceLabel}</span>` : ''}
-                    <span style="display: flex; align-items: center; gap: 6px;">${autoplayBtn}${exampleCounter}</span>
+                    <span style="display: flex; align-items: center; gap: 6px;">${autoplayBtn}</span>
                 </div>
             ` : '');
 
@@ -5797,7 +5816,7 @@ function updateCard({ announceHeadword = false } = {}) {
                         ${showExampleProductionForm ? `<div class="reverse-example-form"><span>In this example</span><strong>${escapeCardText(exampleProductionForm)}</strong></div>` : ''}
                         <div class="breakdown-trigger" style="margin-bottom: 8px; cursor: pointer;" onclick="showLyricBreakdown(event); event.stopPropagation();" title="Word by word">${displayTargetSentence}</div>
                         <div class="translation">${displayEnglishSentence}</div>
-                        ${exampleTicksHTML(hasMultipleExamples ? currentExampleIndex % exampleCount : 0, exampleCount)}
+                        ${exampleTicks}
                         ${songNameDisplay}
                     </div>
                 `;

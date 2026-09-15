@@ -392,9 +392,9 @@ const ABOUT_EXAMPLE_DECKS = [
                     },
                     {
                         side: 'right',
-                        anchor: '.example-counter-group',
+                        anchor: '.example-ticks',
                         title: 'More examples',
-                        text: 'If this meaning appears in more than one song, tap the lyric to see the next one.',
+                        text: 'If this meaning has more than one example, tap the lyric to see the next one. The dots show where you are.',
                         interactive: true,
                     },
                 ],
@@ -643,14 +643,16 @@ function walkthroughMetadata(meaning, selected) {
         if (!isPillTier) {
             return `<span class="sense-metadata-detail" data-family="${family}" title="${esc(`${item.family}: ${item.full}`)}">${esc(item.short)}</span>`;
         }
-        const isCompanion = item.family === 'companion' || (item.short && item.short.startsWith('+ '));
+        const isCompanion = item.family === 'companion' || (item.short && /^used with /i.test(item.short));
         const isSyntax = item.family === 'construction';
-        const icon = isCompanion ? '<svg class="sense-pill-icon sense-pill-icon--companion" viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 9.5l3-3"/><path d="M4 8.5l-1.5 1.5a2.5 2.5 0 1 0 3.5 3.5L7.5 12"/><path d="M12 7.5l1.5-1.5a2.5 2.5 0 1 0-3.5-3.5L8.5 4"/></svg>' : '';
         const pillClass = `sense-metadata-detail sense-pill sense-pill--${family}${isSyntax ? ' sense-pill--syntax' : ''}${isCompanion ? ' sense-pill--companion sense-pill--privileged' : ''}`;
         const titleAttr = isCompanion
-            ? `Used with &quot;${esc(item.full || item.short)}&quot;`
+            ? `Used with &quot;${esc(item.value || item.full || item.short)}&quot;`
             : esc(`${item.family}: ${item.full}`);
-        return `<span class="${pillClass}" data-family="${family}" title="${titleAttr}">${icon}<span class="sense-pill-label">${esc(item.short)}</span></span>`;
+        const label = isCompanion
+            ? `<span class="sense-pill-label"><span class="sense-pill-prefix">used with</span> <span class="sense-pill-token">${esc(item.value || String(item.short || '').replace(/^used with /i, '').replace(/^\+\s*/, ''))}</span></span>`
+            : `<span class="sense-pill-label">${esc(item.short)}</span>`;
+        return `<span class="${pillClass}" data-family="${family}" title="${titleAttr}">${label}</span>`;
     }).join('');
     const softRegister = new Set(['broadly', 'especially', 'figuratively', 'literally', 'metonymically', 'mildly', 'often', 'possibly', 'sometimes', 'specifically', 'standard', 'usually']);
     const isSupporting = item => item.family === 'functional'
@@ -723,17 +725,16 @@ function renderMeaningRows(card, selectedIdx) {
 // Credit strip beneath the lyric: song + vocalists on the left, autoplay /
 // Spotify / example counter on the right. Speech cards have no track, so the
 // strip degrades to a right-aligned source label, exactly as on a live card.
-function renderCredit(card, meaning, example, exampleIdx) {
-    const counter = meaning.examples.length > 1
-        ? `<span class="example-counter-group"><span class="compact-example-counter" aria-label="example ${exampleIdx + 1} of ${meaning.examples.length}"><span class="compact-example-counter-label">${exampleIdx + 1} of ${meaning.examples.length}</span></span></span>`
-        : '';
+function walkthroughExampleTicks(current, total) {
+    if (total < 2) return '';
+    const ticks = Array.from({ length: total }, (_, i) =>
+        `<span class="example-tick${i === current ? ' is-current' : ''}"></span>`
+    ).join('');
+    return `<div class="example-ticks" role="img" aria-label="example ${current + 1} of ${total}">${ticks}</div>`;
+}
 
+function renderCredit(card, meaning, example, exampleIdx) {
     if (example.trackId) {
-        // The live handler on the real card. It resolves the Spotify token,
-        // starts the PKCE login when there isn't one, and picks the Web
-        // Playback SDK or Connect depending on the device — all of which we
-        // want here unchanged, which is why this defers to the global rather
-        // than reimplementing any of it.
         const btn = `<button type="button" class="spotify-btn link-btn"
                 data-track-id="${esc(example.trackId)}" data-position-ms="${example.positionMs}"
                 title="Play in Spotify" style="cursor:pointer; margin:0; position:relative; z-index:999;"
@@ -744,17 +745,17 @@ function renderCredit(card, meaning, example, exampleIdx) {
         return `
             <div style="display: flex; justify-content: space-between; align-items: center; color: #b9c2cd; font-size: 13px; margin-top: 8px; font-style: italic;">
                 <span class="example-song-credit">— ${esc(example.song)}${vocalists}</span>
-                <span style="display: flex; align-items: center; gap: 6px;">${btn}${counter}</span>
+                <span style="display: flex; align-items: center; gap: 6px;">${btn}</span>
             </div>`;
     }
 
     const label = example.sourceLabel
         ? `<span class="example-song-credit" style="margin-right:auto;">${esc(example.sourceLabel)}</span>`
         : '';
-    if (!label && !counter) return '';
+    if (!label) return '';
     return `
         <div style="display: flex; justify-content: flex-end; align-items: center; color: #b9c2cd; font-size: 13px; margin-top: 8px;">
-            ${label}<span style="display: flex; align-items: center; gap: 6px;">${counter}</span>
+            ${label}
         </div>`;
 }
 
@@ -777,6 +778,7 @@ function renderBack(card, selectedIdx, exampleIdx) {
                 <div class="sentence example-is-matched" style="text-align: center; ${cursor}" data-about-example-cycle="${meaning.examples.length > 1 ? '1' : '0'}">
                     <div class="breakdown-trigger" style="margin-bottom: 8px;">${highlightWord(example.target, card.word)}</div>
                     <div class="translation">${esc(example.english)}</div>
+                    ${walkthroughExampleTicks(exampleIdx % meaning.examples.length, meaning.examples.length)}
                     ${renderCredit(card, meaning, example, exampleIdx % meaning.examples.length)}
                 </div>
             </div>
