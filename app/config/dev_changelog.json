@@ -4,6 +4,14 @@
     {
       "date": "2026-09-16",
       "commit": "pending",
+      "summary": "Dictionary examples now show on every form of a word",
+      "detail": [
+        "hablo and hablas can share the same dictionary sentence. The live Spanish, Portuguese and Czech decks were rebuilt for that."
+      ]
+    },
+    {
+      "date": "2026-09-16",
+      "commit": "pending",
       "summary": "Study sets load from the skinny index again",
       "detail": [
         "Language pick still loads identity columns only. Sets were empty because those rows have no senses until the set shard arrives; they now count as cards and hydrate when you open a set."

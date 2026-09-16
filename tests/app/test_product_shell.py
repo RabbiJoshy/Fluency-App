@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v438"
+EXPECTED_CACHE_NAME = "flashcards-v439"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -82,15 +82,15 @@ class ProductShellTests(unittest.TestCase):
         self.assertEqual(config["languages"]["portuguese_brazilian"]["speechLang"], "pt-BR")
         self.assertEqual(
             config["languages"]["spanish"]["studyStructurePath"],
-            "releases/es/speech/es-speech-v12-6000x10-display-v3/app/study-structure.json",
+            "releases/es/speech/es-speech-v12-6000x10-display-v4/app/study-structure.json",
         )
         self.assertEqual(
             config["languages"]["spanish"]["releaseManifestPath"],
-            "releases/es/speech/es-speech-v12-6000x10-display-v3/manifest.json",
+            "releases/es/speech/es-speech-v12-6000x10-display-v4/manifest.json",
         )
         self.assertEqual(
             config["languages"]["spanish"]["releaseCompositionPath"],
-            "releases/es/speech/es-speech-v12-6000x10-display-v3/composition.json",
+            "releases/es/speech/es-speech-v12-6000x10-display-v4/composition.json",
         )
         for legacy_path in (
             "conjugatedEnglishPath",
@@ -103,7 +103,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertEqual(
             config["languages"]["portuguese"]["indexPath"],
-            "releases/pt/speech/pt-speech-v12-6000x10-display-v3/app/vocabulary.index.json",
+            "releases/pt/speech/pt-speech-v12-6000x10-display-v4/app/vocabulary.index.json",
         )
         self.assertEqual(
             config["languages"]["portuguese"]["conjugationsPath"],
@@ -111,7 +111,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertEqual(
             config["languages"]["czech"]["indexPath"],
-            "releases/cs/speech/cs-speech-v12-4000x10-display-v3/app/vocabulary.index.json",
+            "releases/cs/speech/cs-speech-v12-4000x10-display-v4/app/vocabulary.index.json",
         )
         self.assertEqual(
             config["languages"]["czech"]["conjugationsPath"],
