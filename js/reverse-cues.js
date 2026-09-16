@@ -229,6 +229,45 @@ const IRREGULAR_ENGLISH_PRESENT = {
     go: ['go', 'go', 'goes', 'go', 'go', 'go'],
 };
 
+const IRREGULAR_ENGLISH_PAST = {
+    be: ['was', 'were', 'was', 'were', 'were', 'were'],
+    have: 'had', do: 'did', go: 'went', say: 'said', make: 'made',
+    take: 'took', come: 'came', see: 'saw', know: 'knew', get: 'got',
+    give: 'gave', find: 'found', think: 'thought', tell: 'told',
+    become: 'became', leave: 'left', feel: 'felt', put: 'put',
+    keep: 'kept', let: 'let', begin: 'began', hear: 'heard',
+    sit: 'sat', stand: 'stood', win: 'won', lose: 'lost', run: 'ran',
+    eat: 'ate', drink: 'drank', write: 'wrote', read: 'read',
+    speak: 'spoke', sleep: 'slept', fall: 'fell', hold: 'held',
+    bring: 'brought', buy: 'bought', catch: 'caught', teach: 'taught',
+    build: 'built', send: 'sent', spend: 'spent', pay: 'paid',
+    sell: 'sold', meet: 'met', lead: 'led', break: 'broke',
+    choose: 'chose', drive: 'drove', grow: 'grew', hide: 'hid',
+    ride: 'rode', rise: 'rose', sing: 'sang', swim: 'swam',
+    throw: 'threw', wear: 'wore', forget: 'forgot', understand: 'understood',
+};
+
+const IRREGULAR_ENGLISH_PP = {
+    be: 'been', have: 'had', do: 'done', go: 'gone', say: 'said',
+    make: 'made', take: 'taken', come: 'come', see: 'seen', know: 'known',
+    get: 'got', give: 'given', find: 'found', think: 'thought', tell: 'told',
+    speak: 'spoken', write: 'written', eat: 'eaten', break: 'broken',
+    choose: 'chosen', drive: 'driven', forget: 'forgotten',
+};
+
+const TENSE_KIND = {
+    Presente: 'present', Present: 'present', Présent: 'present',
+    Pretérito: 'past', 'Passé simple': 'past',
+    Imperfecto: 'imperfect', Imperfeito: 'imperfect', Imparfait: 'imperfect',
+    Futuro: 'future', Futur: 'future',
+    Condicional: 'conditional', Conditionnel: 'conditional',
+    Imperativo: 'imperative', Impératif: 'imperative', Imperative: 'imperative',
+    'Imp. Negativo': 'imperative_neg',
+    'Subj. Presente': 'present', 'Subj. Présent': 'present',
+    'Subj. Imperfecto': 'imperfect', 'Subj. Imperfeito': 'imperfect',
+    'Subj. Imparfait': 'imperfect', 'Subj. Futuro': 'future',
+};
+
 function thirdPersonSingular(verb) {
     const lower = String(verb || '').toLocaleLowerCase('en');
     if (/(?:s|x|z|ch|sh)$/u.test(lower)) return `${lower}es`;
@@ -241,6 +280,91 @@ function inflectEnglishPresent(verb, personIdx) {
     const irregular = IRREGULAR_ENGLISH_PRESENT[lower];
     if (irregular) return irregular[personIdx];
     return personIdx === 2 ? thirdPersonSingular(lower) : lower;
+}
+
+function inflectEnglishPast(verb, personIdx) {
+    const lower = String(verb || '').toLocaleLowerCase('en');
+    const irregular = IRREGULAR_ENGLISH_PAST[lower];
+    if (Array.isArray(irregular)) return irregular[personIdx];
+    if (typeof irregular === 'string') return irregular;
+    if (/e$/u.test(lower)) return `${lower}d`;
+    if (/[^aeiou]y$/u.test(lower)) return `${lower.slice(0, -1)}ied`;
+    return `${lower}ed`;
+}
+
+function englishIng(verb) {
+    const lower = String(verb || '').toLocaleLowerCase('en');
+    if (lower === 'be') return 'being';
+    if (/ie$/u.test(lower)) return `${lower.slice(0, -2)}ying`;
+    if (/e$/u.test(lower) && !/ee$/u.test(lower)) return `${lower.slice(0, -1)}ing`;
+    return `${lower}ing`;
+}
+
+function englishPastParticiple(verb) {
+    const lower = String(verb || '').toLocaleLowerCase('en');
+    if (IRREGULAR_ENGLISH_PP[lower]) return IRREGULAR_ENGLISH_PP[lower];
+    return inflectEnglishPast(lower, 0);
+}
+
+function finiteEnglishCue(kind, personIdx, head, rest) {
+    const tail = rest || '';
+    const base = String(head || '').toLocaleLowerCase('en');
+    if (kind === 'imperative') {
+        if (personIdx === 0) return null;
+        return personIdx === 3 ? `let's ${base}${tail}!` : `${base}${tail}!`;
+    }
+    if (kind === 'imperative_neg') {
+        if (personIdx === 0) return null;
+        return personIdx === 3 ? `let's not ${base}${tail}!` : `don't ${base}${tail}!`;
+    }
+    const pronoun = ENGLISH_PRONOUNS[personIdx];
+    if (!pronoun) return null;
+    let body;
+    if (kind === 'present') body = inflectEnglishPresent(head, personIdx);
+    else if (kind === 'past') body = inflectEnglishPast(head, personIdx);
+    else if (kind === 'imperfect') {
+        const aux = (personIdx === 0 || personIdx === 2) ? 'was' : 'were';
+        body = `${aux} ${englishIng(head)}`;
+    } else if (kind === 'future') body = `will ${base}`;
+    else if (kind === 'conditional') body = `would ${base}`;
+    else return null;
+    if (!body) return null;
+    const form = `${pronoun} ${body}${tail}`;
+    return personIdx === 2 ? expandThirdSingular(form) : form;
+}
+
+function conjugationTableCue(card, meaning, translation, conjugationData) {
+    if (!conjugationData || !meaning) return null;
+    if (isUsageNoteGloss(translation)) return null;
+    const lemma = String(meaning.headword || card.lemma || '').trim();
+    const surface = String(card.productionAnswer || card.displaySurface || card.targetWord || '').trim();
+    if (!lemma || !surface || foldCueForm(surface) === foldCueForm(lemma)) return null;
+    const entry = conjugationData[lemma] || conjugationData[foldCueForm(lemma)];
+    if (!entry || typeof entry !== 'object') return null;
+    const parts = infinitiveParts(translation);
+    if (!parts) return null;
+    const surfaceFold = foldCueForm(surface);
+    if (entry.gerund && foldCueForm(entry.gerund) === surfaceFold) {
+        return `${englishIng(parts.head)}${parts.rest}`;
+    }
+    if (entry.past_participle && foldCueForm(entry.past_participle) === surfaceFold) {
+        return `${englishPastParticiple(parts.head)}${parts.rest}`;
+    }
+    const cues = [];
+    const seen = new Set();
+    for (const [tenseName, forms] of Object.entries(entry.tenses || {})) {
+        const kind = TENSE_KIND[tenseName];
+        if (!kind || !Array.isArray(forms)) continue;
+        forms.forEach((form, personIdx) => {
+            if (!form || form === '—' || foldCueForm(form) !== surfaceFold) return;
+            const cue = finiteEnglishCue(kind, personIdx, parts.head, parts.rest);
+            if (cue && !seen.has(cue)) {
+                seen.add(cue);
+                cues.push(cue);
+            }
+        });
+    }
+    return cues.length ? cues.join(' / ') : null;
 }
 
 function isUsageNoteGloss(translation) {
@@ -365,6 +489,11 @@ export function englishProductionCue(card, meaningOrTranslation, conjugatedEngli
 
     const pos = String(meaning?.pos || '').toUpperCase();
     if (pos && !VERB_POS.has(pos)) return null;
+
+    const tableCue = meaning
+        ? conjugationTableCue(card, meaning, translation, options.conjugationData)
+        : null;
+    if (tableCue) return tableCue;
 
     if (conjugatedEnglishData) {
         const lemma = String(meaning?.headword || card.lemma || '').toLocaleLowerCase('es');

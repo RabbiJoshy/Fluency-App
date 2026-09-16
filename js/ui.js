@@ -693,10 +693,14 @@ function setupLanguageTabs() {
                     // Spanish rank and conjugated-English assets belong to
                     // Speech setup. Do not start them merely because Spanish
                     // was chosen when the learner may be heading to Lyrics.
+                    // Conjugation tables feed both the Conjugate drawer and
+                    // inflected English glosses, so load them for any Speech
+                    // language that declares conjugationsPath.
                     if (newLanguage === 'spanish') {
                         if (window.loadSpanishRanks) window.loadSpanishRanks();
                         if (window.loadConjugatedEnglishData) window.loadConjugatedEnglishData();
                     }
+                    if (window.loadConjugationData) await window.loadConjugationData();
 
                     // Always load PPM data if available (needed for coverage bar even in CEFR mode).
                     const langPpmPath = config.languages[selectedLanguage] && config.languages[selectedLanguage].ppmDataPath;

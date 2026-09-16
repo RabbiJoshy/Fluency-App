@@ -1,6 +1,6 @@
 // Lazy-loaded conjugation table for js/flashcards.js. Loaded on first
 // click of the conjugation toggle. The data cache (window._conjugationData)
-// is populated by core's loadConjugationData on Spanish boot; this module
+// is populated by core's loadConjugationData on Speech boot; this module
 // reads it through globalThis.
 //
 // Render-on-toggle pattern: updateCard renders only an empty placeholder
@@ -14,48 +14,99 @@
 // (e.g. "soy" → "eres" for ser). Cards are torn down on every updateCard,
 // so the cache lives in this module's scope, not on the DOM.
 
-const CONJ_PRONOUNS_FULL = ['yo', 'tú', 'él / ella', 'nosotros', 'vosotros', 'ellos / ellas'];
-
-// Tense → mood mapping. Tenses we currently ship are just the first six;
-// the Imperative + compound entries are scaffolded so future data slots in
-// without a renderer change. Unknown tenses fall under "Other".
-//
-// Mood keys are display labels (English). Tense keys must match the Spanish
-// labels in `conjEntry.tenses` (the conjugation data is keyed by Spanish
-// tense names from verbecc). `CONJ_TENSE_DISPLAY` below maps each Spanish
-// key to a short English label for the toggle buttons.
-const CONJ_MOOD_GROUPS = {
-    // Moods stay distinguishable inside the VERB colour family rather than
-    // borrowing blue/purple/pink, which read as unrelated categories on a
-    // panel that is entirely about one verb. Hue steps within the green,
-    // not a change of colour.
-    'Indicative': {
-        tenses: ['Presente', 'Pretérito', 'Imperfecto', 'Futuro', 'Condicional'],
-        accent: 'rgba(0, 212, 170, 0.72)',   // core verb green
+const CONJ_UI = {
+    spanish: {
+        pronouns: ['yo', 'tú', 'él / ella', 'nosotros', 'vosotros', 'ellos / ellas'],
+        defaultTense: 'Presente',
+        infinitiveEndings: ['ar', 'er', 'ir'],
+        moodOrder: ['Indicative', 'Subjunctive', 'Imperative'],
+        moodGroups: {
+            Indicative: { tenses: ['Presente', 'Pretérito', 'Imperfecto', 'Futuro', 'Condicional'], accent: 'rgba(0, 212, 170, 0.72)' },
+            Subjunctive: { tenses: ['Subj. Presente', 'Subj. Imperfecto', 'Subj. Futuro'], accent: 'rgba(52, 211, 153, 0.62)' },
+            Imperative: { tenses: ['Imperativo', 'Imp. Negativo'], accent: 'rgba(13, 148, 136, 0.72)' },
+        },
+        tenseDisplay: {
+            Presente: 'pres', Pretérito: 'pret', Imperfecto: 'imperf', Futuro: 'fut', Condicional: 'cond',
+            'Subj. Presente': 'pres', 'Subj. Imperfecto': 'imperf', 'Subj. Futuro': 'fut',
+            Imperativo: 'affirm', 'Imp. Negativo': 'neg',
+        },
     },
-    'Subjunctive': {
-        tenses: ['Subj. Presente', 'Subj. Imperfecto', 'Subj. Futuro'],
-        accent: 'rgba(52, 211, 153, 0.62)',  // emerald
+    portuguese: {
+        pronouns: ['eu', 'tu', 'ele / ela', 'nós', 'vós', 'eles / elas'],
+        defaultTense: 'Presente',
+        infinitiveEndings: ['ar', 'er', 'ir', 'or', 'ôr'],
+        moodOrder: ['Indicative', 'Subjunctive', 'Imperative'],
+        moodGroups: {
+            Indicative: { tenses: ['Presente', 'Pretérito', 'Imperfeito', 'Futuro', 'Condicional'], accent: 'rgba(0, 212, 170, 0.72)' },
+            Subjunctive: { tenses: ['Subj. Presente', 'Subj. Imperfeito', 'Subj. Futuro'], accent: 'rgba(52, 211, 153, 0.62)' },
+            Imperative: { tenses: ['Imperativo', 'Imp. Negativo'], accent: 'rgba(13, 148, 136, 0.72)' },
+        },
+        tenseDisplay: {
+            Presente: 'pres', Pretérito: 'pret', Imperfeito: 'imperf', Futuro: 'fut', Condicional: 'cond',
+            'Subj. Presente': 'pres', 'Subj. Imperfeito': 'imperf', 'Subj. Futuro': 'fut',
+            Imperativo: 'affirm', 'Imp. Negativo': 'neg',
+        },
     },
-    'Imperative': {
-        tenses: ['Imperativo', 'Imp. Negativo'],
-        accent: 'rgba(13, 148, 136, 0.72)',  // deep teal
+    french: {
+        pronouns: ['je', 'tu', 'il / elle', 'nous', 'vous', 'ils / elles'],
+        defaultTense: 'Présent',
+        infinitiveEndings: ['er', 'ir', 're'],
+        moodOrder: ['Indicative', 'Subjunctive', 'Imperative'],
+        moodGroups: {
+            Indicative: { tenses: ['Présent', 'Imparfait', 'Passé simple', 'Futur', 'Conditionnel'], accent: 'rgba(0, 212, 170, 0.72)' },
+            Subjunctive: { tenses: ['Subj. Présent', 'Subj. Imparfait'], accent: 'rgba(52, 211, 153, 0.62)' },
+            Imperative: { tenses: ['Impératif'], accent: 'rgba(13, 148, 136, 0.72)' },
+        },
+        tenseDisplay: {
+            Présent: 'prés', Imparfait: 'impf', 'Passé simple': 'ps', Futur: 'fut', Conditionnel: 'cond',
+            'Subj. Présent': 'prés', 'Subj. Imparfait': 'impf', Impératif: 'impér',
+        },
+    },
+    czech: {
+        pronouns: ['já', 'ty', 'on / ona', 'my', 'vy', 'oni / ony'],
+        defaultTense: 'Present',
+        infinitiveEndings: [],
+        moodOrder: ['Indicative', 'Imperative'],
+        moodGroups: {
+            Indicative: { tenses: ['Present'], accent: 'rgba(0, 212, 170, 0.72)' },
+            Imperative: { tenses: ['Imperative'], accent: 'rgba(13, 148, 136, 0.72)' },
+        },
+        tenseDisplay: { Present: 'pres', Imperative: 'imp' },
+    },
+    dutch: {
+        pronouns: ['ik', 'jij', 'hij / zij', 'wij', 'jullie', 'zij'],
+        defaultTense: 'Present',
+        infinitiveEndings: ['en'],
+        moodOrder: ['Indicative', 'Imperative'],
+        moodGroups: {
+            Indicative: { tenses: ['Present', 'Past'], accent: 'rgba(0, 212, 170, 0.72)' },
+            Imperative: { tenses: ['Imperative'], accent: 'rgba(13, 148, 136, 0.72)' },
+        },
+        tenseDisplay: { Present: 'pres', Past: 'past', Imperative: 'imp' },
     },
 };
-const CONJ_MOOD_ORDER = ['Indicative', 'Subjunctive', 'Imperative'];
 
-const CONJ_TENSE_DISPLAY = {
-    'Presente': 'pres',
-    'Pretérito': 'pret',
-    'Imperfecto': 'imperf',
-    'Futuro': 'fut',
-    'Condicional': 'cond',
-    'Subj. Presente': 'pres',
-    'Subj. Imperfecto': 'imperf',
-    'Subj. Futuro': 'fut',
-    'Imperativo': 'affirm',
-    'Imp. Negativo': 'neg',
-};
+function conjUiForLanguage() {
+    const lang = (typeof selectedLanguage === 'string' && selectedLanguage) || 'spanish';
+    return CONJ_UI[lang] || CONJ_UI.spanish;
+}
+
+function conjugationLookupUrl(lemma) {
+    const lang = (typeof selectedLanguage === 'string' && selectedLanguage) || 'spanish';
+    const cfg = (typeof config !== 'undefined' && config) || window.config;
+    const template = cfg?.languages?.[lang]?.referenceLinks?.conjugation;
+    const word = lemma || '';
+    if (template && template.includes('{word}')) return template.replaceAll('{word}', encodeURIComponent(word));
+    if (lang === 'portuguese') return `https://conjugator.reverso.net/conjugation-portuguese-verb-${encodeURIComponent(word)}.html`;
+    if (lang === 'french') return `https://conjugator.reverso.net/conjugation-french-verb-${encodeURIComponent(word)}.html`;
+    if (lang === 'czech') return `https://en.wiktionary.org/wiki/${encodeURIComponent(word)}#Czech`;
+    if (lang === 'dutch') return `https://www.verbix.com/webverbix/Dutch/${encodeURIComponent(word)}`;
+    return `https://www.spanishdict.com/conjugate/${encodeURIComponent(word)}`;
+}
+
+function conjugationLookupHost(url) {
+    try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return 'reference'; }
+}
 
 // Built-panel HTML cache, keyed by `${ownerLemma}::${targetWord}::${isRelated}`.
 // targetWord is part of the key because buildConjugationTableHTML picks the
@@ -75,14 +126,14 @@ const _builtPanelCache = new Map();
 // Using the full infinitive as the reference was wrong: the "a" in the
 // middle of "hablar" matched the "a" ending of "habla", stealing it into
 // the stem.
-function splitStemEnding(form, infinitive) {
+function splitStemEnding(form, infinitive, endings) {
     if (!form) return { stem: '', ending: '' };
     const src = (infinitive || '').toLowerCase();
     const dst = form.toLowerCase();
-    // Spanish infinitives always end in -ar / -er / -ir. Strip those two
-    // chars to get the stem reference; fall back to the full infinitive if
-    // it's shorter than 2 chars (defensive — shouldn't happen in practice).
-    const stemLen = src.length >= 2 ? src.length - 2 : src.length;
+    const listed = Array.isArray(endings) ? endings : [];
+    const matched = listed.find(end => src.endsWith(end));
+    const stemLen = matched ? src.length - matched.length
+        : (listed.length === 0 ? src.length : (src.length >= 2 ? src.length - 2 : src.length));
     let i = 0;
     while (i < stemLen && i < dst.length && src[i] === dst[i]) i++;
     return { stem: form.slice(0, i), ending: form.slice(i) };
@@ -93,22 +144,20 @@ function buildConjugationTableHTML(conjEntry, targetWord, lemma, opts) {
     const relatedLemma = opts.relatedLemma || null;
     const isRelatedParadigm = !!opts.isRelatedParadigm;
 
-    // No inline data (conjEntry absent or empty): render a small
-    // "no-data" panel with the card's own lemma + a prominent SpanishDict
-    // link. If the card has a `relatedLemma` pointer (SpanishDict flagged
-    // it as a conjugation of another verb), surface that relationship so
-    // the user knows where to go for the paradigm.
+    const ui = conjUiForLanguage();
+    const pronouns = ui.pronouns;
     const hasData = conjEntry && Object.keys(conjEntry.tenses || {}).length > 0;
     if (!hasData) {
         const displayLemma = (lemma || targetWord || '').toLowerCase();
         const sdTarget = relatedLemma || displayLemma;
-        const sdUrl = `https://www.spanishdict.com/conjugate/${encodeURIComponent(sdTarget)}`;
+        const lookupUrl = conjugationLookupUrl(sdTarget);
+        const lookupHost = conjugationLookupHost(lookupUrl);
         const emptyMsg = relatedLemma
             ? `<strong>${displayLemma}</strong> is a lexicalised form related to <strong>${relatedLemma}</strong>. We don't have its conjugation inline.`
             : `No conjugation data available for this verb.`;
-        const sdLabel = relatedLemma
-            ? `Conjugate ${relatedLemma} on SpanishDict`
-            : `Conjugate on SpanishDict`;
+        const lookupLabel = relatedLemma
+            ? `Conjugate ${relatedLemma} on ${lookupHost}`
+            : `Conjugate on ${lookupHost}`;
         return `
             <div id="conjugationTable" class="conjugation-panel">
                 <button class="conj-close-btn" onclick="toggleConjugationTable()" aria-label="Close">&times;</button>
@@ -120,9 +169,9 @@ function buildConjugationTableHTML(conjEntry, targetWord, lemma, opts) {
                 <div class="conj-empty-msg">
                     ${emptyMsg}
                 </div>
-                <a href="${sdUrl}" target="_blank" class="conj-sd-link conj-sd-link-prominent" title="${sdLabel}">
-                    <img src="https://www.google.com/s2/favicons?domain=spanishdict.com&sz=64" width="18" height="18" alt="" style="border-radius:3px">
-                    <span>${sdLabel}</span>
+                <a href="${lookupUrl}" target="_blank" class="conj-sd-link conj-sd-link-prominent" title="${lookupLabel}">
+                    <img src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(lookupHost)}&sz=64" width="18" height="18" alt="" style="border-radius:3px">
+                    <span>${lookupLabel}</span>
                 </a>
             </div>
         `;
@@ -137,7 +186,7 @@ function buildConjugationTableHTML(conjEntry, targetWord, lemma, opts) {
     const infinitive = (conjEntry.infinitive || conjOwnerLemma).toLowerCase();
 
     // Pick the tense containing targetWord as the default; Presente otherwise.
-    let defaultTense = tenses['Presente'] ? 'Presente' : tenseNames[0];
+    let defaultTense = tenses[ui.defaultTense] ? ui.defaultTense : tenseNames[0];
     for (const [tenseName, forms] of Object.entries(tenses)) {
         if (forms.some(f => f.toLowerCase() === targetLower)) {
             defaultTense = tenseName;
@@ -150,8 +199,8 @@ function buildConjugationTableHTML(conjEntry, targetWord, lemma, opts) {
     // never drops data on the floor.
     const grouped = [];
     const seen = new Set();
-    for (const moodName of CONJ_MOOD_ORDER) {
-        const cfg = CONJ_MOOD_GROUPS[moodName];
+    for (const moodName of ui.moodOrder) {
+        const cfg = ui.moodGroups[moodName];
         const present = cfg.tenses.filter(t => tenses[t]);
         if (!present.length) continue;
         grouped.push({ mood: moodName, accent: cfg.accent, tenses: present });
@@ -190,7 +239,7 @@ function buildConjugationTableHTML(conjEntry, targetWord, lemma, opts) {
         const styleStr = `--mood-accent: ${g.accent};${isActiveMood ? '' : ' display: none;'}`;
         const btns = g.tenses.map(t => {
             const active = t === defaultTense ? ' conj-tense-active' : '';
-            const display = CONJ_TENSE_DISPLAY[t] || t;
+            const display = ui.tenseDisplay[t] || t;
             return `<button class="conj-tense-btn${active}" data-tense="${t}" onclick="switchConjTense('${t}')">${display}</button>`;
         }).join('');
         return `<div class="conj-tense-toggle" data-mood="${g.mood}" style="${styleStr}">${btns}</div>`;
@@ -205,13 +254,13 @@ function buildConjugationTableHTML(conjEntry, targetWord, lemma, opts) {
             const form = forms[i];
             const isActive = form.toLowerCase() === targetLower;
             const cls = isActive ? ' conj-active' : '';
-            const { stem, ending } = splitStemEnding(form, infinitive);
+            const { stem, ending } = splitStemEnding(form, infinitive, ui.infinitiveEndings);
             // Stem is muted; ending is accent-colored — makes regular
             // patterns rhyme and irregular stems stand out.
             const formHTML = stem
                 ? `<span class="conj-stem">${stem}</span><span class="conj-ending">${ending}</span>`
                 : `<span class="conj-ending conj-ending-full">${ending}</span>`;
-            rows += `<tr class="${cls}"><td class="conj-pronoun">${CONJ_PRONOUNS_FULL[i]}</td><td class="conj-form">${formHTML}</td></tr>`;
+            rows += `<tr class="${cls}"><td class="conj-pronoun">${pronouns[i] || ''}</td><td class="conj-form">${formHTML}</td></tr>`;
         }
         tenseTables += `<table class="conj-table" data-tense="${tenseName}"${hidden}>${rows}</table>`;
     }
@@ -221,9 +270,9 @@ function buildConjugationTableHTML(conjEntry, targetWord, lemma, opts) {
     // The gerund and past participle are reference detail rather than a
     // paradigm the learner is drilling, so they sit in a quiet strip below
     // the table instead of competing with the headword.
-    const infEnd = infinitive.slice(-2).toUpperCase();
-    const typeBadge = ['AR', 'ER', 'IR'].includes(infEnd)
-        ? `<span class="conj-type-badge">-${infEnd}</span>`
+    const matchedEnding = (ui.infinitiveEndings || []).find(end => infinitive.endsWith(end));
+    const typeBadge = matchedEnding
+        ? `<span class="conj-type-badge">-${matchedEnding.toUpperCase()}</span>`
         : '';
     const translation = conjEntry.translation || '';
     const gerActive = conjEntry.gerund && conjEntry.gerund.toLowerCase() === targetLower ? ' is-active' : '';
@@ -240,14 +289,15 @@ function buildConjugationTableHTML(conjEntry, targetWord, lemma, opts) {
             </div>` : ''}
         </div>` : '';
 
-    // Link to SpanishDict's full paradigm page — the in-app panel covers
+    // Link to the language's full paradigm page — the in-app panel covers
     // the high-frequency tenses; this covers "I want to see every tense
     // incl. compound + imperative forms we don't ship locally".
-    const sdUrl = `https://www.spanishdict.com/conjugate/${encodeURIComponent(infinitive)}`;
+    const lookupUrl = conjugationLookupUrl(infinitive);
+    const lookupHost = conjugationLookupHost(lookupUrl);
     const sdLinkHTML = `
-        <a href="${sdUrl}" target="_blank" class="conj-sd-link" title="Full paradigm on SpanishDict">
-            <img src="https://www.google.com/s2/favicons?domain=spanishdict.com&sz=64" width="16" height="16" alt="" style="border-radius:3px">
-            <span>Full paradigm on SpanishDict</span>
+        <a href="${lookupUrl}" target="_blank" class="conj-sd-link" title="Full paradigm on ${lookupHost}">
+            <img src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(lookupHost)}&sz=64" width="16" height="16" alt="" style="border-radius:3px">
+            <span>Full paradigm on ${lookupHost}</span>
         </a>`;
 
     // When we're rendering a related verb's paradigm (e.g. haber for a

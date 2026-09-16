@@ -17,7 +17,7 @@ import {
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=20260916i';
+} from './reverse-cues.js?v=20260916n';
 import {
     compactConstructionMetadata,
     contextWithoutSenseMetadata,
@@ -109,6 +109,7 @@ function _matchedMweForm(mwe, text, preferred = '') {
 function getProductionEnglishCue(card, meaningOrTranslation) {
     return englishProductionCue(card, meaningOrTranslation, _conjugatedEnglishData, {
         reverseDirection: isFlipped,
+        conjugationData: _conjugationData,
     });
 }
 
