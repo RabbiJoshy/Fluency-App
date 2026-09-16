@@ -114,7 +114,7 @@ const ABOUT_EXAMPLE_CARDS = {
         meanings: [
             {
                 pos: 'VERB',
-                translation: 'he/she/it has (possesses or holds something)',
+                translation: 'he/she has (possesses or holds something)',
                 context: 'to be in possession of something',
                 pct: 50,
                 metadata: [
@@ -130,7 +130,7 @@ const ABOUT_EXAMPLE_CARDS = {
             },
             {
                 pos: 'VERB',
-                translation: 'he/she/it has to; must',
+                translation: 'he/she has to; must',
                 context: null,
                 pct: 30,
                 metadata: [
@@ -209,12 +209,12 @@ const ABOUT_EXAMPLE_CARDS = {
         frequencyLabel: 'Frequency from the Czech release',
         meanings: [
             {
-                pos: 'VERB', translation: 'he/she/it is (exists)', pct: 40,
+                pos: 'VERB', translation: 'he/she is (exists)', pct: 40,
                 metadata: [{ short: 'impf.', full: 'imperfective', family: 'grammar' }],
                 examples: [{ target: 'A co myslíš, že to je?', english: 'And what do you think it is?', sourceLabel: 'Speech example' }],
             },
             {
-                pos: 'VERB', translation: 'he/she/it is', pct: 60,
+                pos: 'VERB', translation: 'he/she is', pct: 60,
                 metadata: [{ short: '3rd sg. present', full: 'third-person singular present', family: 'grammar' }],
                 examples: [{ target: 'Ten kabát je vlhký.', english: 'The coat is wet.', sourceLabel: 'Wiktionary example' }],
             },

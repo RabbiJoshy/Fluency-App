@@ -18,7 +18,7 @@ import {
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=20260916o';
+} from './reverse-cues.js?v=20260916q';
 import {
     compactConstructionMetadata,
     contextWithoutSenseMetadata,
@@ -3437,8 +3437,16 @@ function normalizedExampleProvenance(example) {
     };
 }
 
+function sourceTitleRecord(provenance) {
+    const attached = provenance?.source_title;
+    if (attached && attached.title) return attached;
+    const titleId = provenance?.title_id;
+    if (!titleId || !_sourceTitles) return null;
+    return _sourceTitles[titleId] || _sourceTitles[String(titleId)] || null;
+}
+
 function sourceTitleLabel(provenance) {
-    const metadata = provenance?.source_title;
+    const metadata = sourceTitleRecord(provenance);
     if (!metadata?.title) return '';
     let label = metadata.series
         ? `${metadata.series} — ${metadata.title}`
@@ -3447,23 +3455,58 @@ function sourceTitleLabel(provenance) {
     return label;
 }
 
-// Where a corpus example actually came from. OpenSubtitles ships an .ids file
-// aligned line-for-line with the text. Its title_id is an IMDb tconst without
-// the `tt` prefix. A pinned IMDb lookup adds a human title where available;
-// the exact IMDb link remains useful even when no title resolves.
+let _sourceTitles = null;
+let _sourceTitlesPromise = null;
+
+async function loadSourceTitles() {
+    if (_sourceTitles) return _sourceTitles;
+    if (_sourceTitlesPromise) return _sourceTitlesPromise;
+    const path = (typeof config !== 'undefined' && config?.sourceTitlesPath)
+        || 'data/source_titles.json';
+    _sourceTitlesPromise = fetch(path).then(async (response) => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        _sourceTitles = await response.json();
+        return _sourceTitles;
+    }).catch((error) => {
+        console.warn('Source titles unavailable:', error);
+        _sourceTitles = {};
+        return _sourceTitles;
+    }).finally(() => {
+        _sourceTitlesPromise = null;
+    });
+    return _sourceTitlesPromise;
+}
+
+function exampleLinkHTML(href, label) {
+    if (!href) return escapeCardText(label);
+    return `<a href="${escapeCardText(href)}" target="_blank" rel="noopener noreferrer">${escapeCardText(label)}</a>`;
+}
+
+// Where a corpus example actually came from. Every displayed sentence should
+// name its source: OpenSubtitles with a film/series title when the IMDb map
+// has one, Tatoeba with a sentence link, or the dictionary that filed it.
 function exampleProvenanceHTML(example) {
     const p = normalizedExampleProvenance(example);
-    if (!p || p.corpus !== 'opensubtitles') return null;
-    const bits = [];
-    if (p.title_id) {
-        const tt = 'tt' + String(p.title_id).padStart(7, '0');
-        const title = sourceTitleLabel(p);
-        bits.push(`<a href="https://www.imdb.com/title/${tt}/" target="_blank" ` +
-                  `rel="noopener noreferrer">${title ? escapeCardText(title) : tt}</a>`);
-    } else {
-        bits.push('OpenSubtitles');
+    const corpus = String(p?.corpus || '').toLowerCase();
+    if (corpus === 'opensubtitles' || p.title_id) {
+        if (p.title_id) {
+            const tt = 'tt' + String(p.title_id).padStart(7, '0');
+            const title = sourceTitleLabel(p);
+            return exampleLinkHTML(`https://www.imdb.com/title/${tt}/`, title || tt);
+        }
+        return 'OpenSubtitles';
     }
-    return bits.join(' · ');
+    if (corpus === 'tatoeba') {
+        return exampleLinkHTML(p.url, 'Tatoeba');
+    }
+    if (corpus === 'wiktionary') {
+        return exampleLinkHTML(p.url, 'Wiktionary');
+    }
+    if (corpus === 'spanishdict') {
+        return exampleLinkHTML(p.url, 'SpanishDict');
+    }
+    if (corpus) return escapeCardText(corpus);
+    return null;
 }
 
 function cliticExampleHTML(example, form) {
@@ -5671,9 +5714,7 @@ function updateCard({ announceHeadword = false } = {}) {
                     ? `Personalised practice · ${example.reinforcement_word}`
                     : (dictName
                         ? `<span class="dictionary-provenance-badge" title="Canonical dictionary example"><span class="dict-provenance-icon" aria-hidden="true">📖</span> ${dictLabel}</span>`
-                        : (example.source_mode === 'speech'
-                        ? 'Speech example'
-                        : exampleProvenanceHTML(example)));
+                        : exampleProvenanceHTML(example));
                 window._currentDisplayedExample = example;
                 const exTarget = example.target || example.spanish || '';
                 const exEnglish = example.english || '';
@@ -7348,14 +7389,9 @@ function buildProvenancePanelHTML(card) {
             // evidence it decided on, which is the only thing worth auditing.
             const exs = pex.map((x, exampleIndex) => {
                 const pv = normalizedExampleProvenance(x);
-                let src = '';
-                if (pv && pv.corpus === 'opensubtitles' && pv.title_id) {
-                    const tt = 'tt' + String(pv.title_id).padStart(7, '0');
-                    const title = sourceTitleLabel(pv);
-                    src = `<a class="prov-ex-src" href="https://www.imdb.com/title/${tt}/"
-                              target="_blank" rel="noopener noreferrer">${title ? esc(title) : tt}</a>`;
-                } else if (pv && (pv.corpus === 'tatoeba' || String(x.source || '').toLowerCase() === 'tatoeba') && pv.url) {
-                    src = `<a class="prov-ex-src" href="${esc(pv.url)}" target="_blank" rel="noopener noreferrer">Tatoeba</a>`;
+                let src = exampleProvenanceHTML(x) || '';
+                if (src) {
+                    src = src.replace('<a ', '<a class="prov-ex-src" ');
                 } else if (x.source) {
                     src = `<span class="prov-ex-src">${esc(x.source)}</span>`;
                 }
@@ -7532,6 +7568,7 @@ window.toggleLookupSheet = toggleLookupSheet;
 window.computeLinesUnderstood = computeLinesUnderstood;
 window.loadSpanishRanks = loadSpanishRanks;
 window.loadConjugationData = loadConjugationData;
+window.loadSourceTitles = loadSourceTitles;
 window.loadConjugatedEnglishData = loadConjugatedEnglishData;
 window.resetLanguageOptionalData = resetLanguageOptionalData;
 window.toggleSynonymsPanel = toggleSynonymsPanel;
@@ -7695,7 +7732,7 @@ document.addEventListener('click', (e) => {
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
 const ASSET_VERSION = '20260916o';
-const MODALS_ASSET_VERSION = '20260916o';
+const MODALS_ASSET_VERSION = '20260916s';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

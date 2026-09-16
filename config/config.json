@@ -3,6 +3,7 @@
     "spotifyClientId": "f2341f303cff471ea80d3fcdefbb6d7d",
     "progressSyncUrl": "https://fluency-api.rabbijoshy.workers.dev"
   },
+  "sourceTitlesPath": "data/source_titles.json",
   "languages": {
     "spanish": {
       "name": "Spanish",

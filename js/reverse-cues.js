@@ -461,8 +461,10 @@ function normalizeAnalysis(morph) {
 }
 
 function expandThirdSingular(form) {
-    if (/^he\s/iu.test(form)) return form.replace(/^he\s/iu, 'he/she/it ');
-    if (/^he'/iu.test(form)) return form.replace(/^he'/iu, "he/she/it'");
+    // 3sg also covers it and formal you, but "they" would collide with 3pl
+    // (habla vs hablan) and "he/she/it" is longer than the table's él/ella.
+    if (/^he\s/iu.test(form)) return form.replace(/^he\s/iu, 'he/she ');
+    if (/^he'/iu.test(form)) return form.replace(/^he'/iu, "he/she'");
     return form;
 }
 
@@ -514,8 +516,8 @@ function cueForAnalysis(analysisRows, morph, translation) {
     const form = row[personIdx] || null;
     if (!form) return null;
 
-    // Spanish indicative/conditional 3sg covers he, she, it, and formal you.
-    // Imperative 3sg is instead an usted command, so its subject stays implicit.
+    // 3sg English is labelled he/she (matching él/ella). Imperative 3sg is
+    // an usted command, so its subject stays implicit.
     return personIdx === 2 && analysis.mood !== 'imperativo'
         ? expandThirdSingular(form)
         : form;

@@ -696,11 +696,15 @@ function setupLanguageTabs() {
                     // Conjugation tables feed both the Conjugate drawer and
                     // inflected English glosses, so load them for any Speech
                     // language that declares conjugationsPath.
+                    // Conjugation tables feed the Conjugate drawer. Prefetch
+                    // them without blocking Speech setup: Portuguese's file is
+                    // a megabyte, and the 75 MB index is the actual wait.
                     if (newLanguage === 'spanish') {
                         if (window.loadSpanishRanks) window.loadSpanishRanks();
                         if (window.loadConjugatedEnglishData) window.loadConjugatedEnglishData();
                     }
-                    if (window.loadConjugationData) await window.loadConjugationData();
+                    if (window.loadConjugationData) window.loadConjugationData();
+                    if (window.loadSourceTitles) window.loadSourceTitles();
 
                     // Always load PPM data if available (needed for coverage bar even in CEFR mode).
                     const langPpmPath = config.languages[selectedLanguage] && config.languages[selectedLanguage].ppmDataPath;
@@ -3016,13 +3020,17 @@ async function showTotalStatsModal() {
     if (langConfig && langConfig.examplesPath && (
         !window._cachedExamplesData
         || window._cachedExamplesDataPath !== langConfig.examplesPath
-    )) {
+    ) && !window.exampleShardsActive?.()) {
         try {
-            const r = await fetch(langConfig.examplesPath);
-            if (r.ok) {
-                const examples = await r.json();
-                window.setActiveExamplesData?.(examples, langConfig.examplesPath)
-                    || (window._cachedExamplesData = examples);
+            if (window.ensureExamplesForRange) {
+                await window.ensureExamplesForRange(langConfig, 1, 21);
+            } else {
+                const r = await fetch(langConfig.examplesPath);
+                if (r.ok) {
+                    const examples = await r.json();
+                    window.setActiveExamplesData?.(examples, langConfig.examplesPath)
+                        || (window._cachedExamplesData = examples);
+                }
             }
         } catch (e) {
             console.warn('Could not load examples for stats:', e);
