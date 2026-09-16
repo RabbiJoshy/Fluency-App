@@ -359,7 +359,6 @@ def build_inactive_run_candidate(
     selection_cards: list[dict[str, Any]] = []
     cards: list[dict[str, Any]] = []
     selected_count = 0
-    seen_canonical: set[tuple[str, str]] = set()
     for card in inventory.get("cards", []):
         card_id = card["card_id"]
         candidate_card = candidates_by_card.get(card_id)
@@ -494,6 +493,7 @@ def build_inactive_run_candidate(
         multiword_meanings: dict[str, dict[str, Any]] = {}
 
         meanings: list[dict[str, Any]] = []
+        seen_canonical_on_card: set[tuple[str, str]] = set()
         for analysis in menu_card.get("analyses", []):
             for sense in analysis.get("senses", []):
                 source_sense_id = sense["sense_id"]
@@ -524,8 +524,8 @@ def build_inactive_run_candidate(
                 chosen = choose_canonical_example(sense)
                 if chosen:
                     key = (chosen["text"], chosen["translation"])
-                    if key not in seen_canonical:
-                        seen_canonical.add(key)
+                    if key not in seen_canonical_on_card:
+                        seen_canonical_on_card.add(key)
                         meaning["canonical_example"] = chosen
                     else:
                         meaning["canonical_example"] = None

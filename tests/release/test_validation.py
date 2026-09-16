@@ -55,7 +55,22 @@ class ReleaseValidationTests(unittest.TestCase):
         ):
             validate_deck(deck)
 
-    def test_duplicate_canonical_examples_are_rejected(self) -> None:
+    def test_duplicate_canonical_examples_are_rejected_on_the_same_card(self) -> None:
+        deck = deepcopy(self.deck)
+        chosen = {
+            "text": "La vi en la calle.",
+            "translation": "I saw her in the street.",
+        }
+        deck["cards"][0]["meanings"][0]["canonical_example"] = chosen
+        if len(deck["cards"][0]["meanings"]) < 2:
+            extra = deepcopy(deck["cards"][0]["meanings"][0])
+            extra["sense_id"] = extra["sense_id"] + "_dup"
+            deck["cards"][0]["meanings"].append(extra)
+        deck["cards"][0]["meanings"][1]["canonical_example"] = dict(chosen)
+        with self.assertRaisesRegex(ReleaseValidationError, "duplicate canonical example on card"):
+            validate_deck(deck)
+
+    def test_the_same_canonical_example_may_appear_on_inflected_cards(self) -> None:
         deck = deepcopy(self.deck)
         chosen = {
             "text": "La vi en la calle.",
@@ -63,8 +78,7 @@ class ReleaseValidationTests(unittest.TestCase):
         }
         deck["cards"][0]["meanings"][0]["canonical_example"] = chosen
         deck["cards"][1]["meanings"][0]["canonical_example"] = dict(chosen)
-        with self.assertRaisesRegex(ReleaseValidationError, "duplicate canonical example"):
-            validate_deck(deck)
+        validate_deck(deck)
 
     def test_canonical_examples_cannot_carry_easiness(self) -> None:
         deck = deepcopy(self.deck)

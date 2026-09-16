@@ -68,7 +68,6 @@ def validate_deck(deck: dict[str, Any]) -> None:
     card_ids: set[str] = set()
     sense_ids: set[str] = set()
     example_ids: set[str] = set()
-    canonical_texts: set[tuple[str, str]] = set()
     for expected_rank, card in enumerate(cards, start=1):
         _require(isinstance(card, dict), f"card {expected_rank} must be an object")
         for forbidden in ("coverage", "percentage", "corpus_count"):
@@ -97,6 +96,7 @@ def validate_deck(deck: dict[str, Any]) -> None:
         _require(isinstance(meanings, list), f"card {surface_key} meanings must be a list")
         local_sense_ids: set[str] = set()
         local_sense_statuses: dict[str, str] = {}
+        local_canonical: set[tuple[str, str]] = set()
         for meaning in meanings:
             _require(isinstance(meaning, dict), "meaning must be an object")
             sense_id = meaning.get("sense_id")
@@ -141,8 +141,8 @@ def validate_deck(deck: dict[str, Any]) -> None:
                     "canonical examples cannot carry corpus easiness",
                 )
                 identity = (canonical_example["text"], canonical_example["translation"])
-                _require(identity not in canonical_texts, "duplicate canonical example in deck")
-                canonical_texts.add(identity)
+                _require(identity not in local_canonical, "duplicate canonical example on card")
+                local_canonical.add(identity)
             if metadata_contract == METADATA_CONTRACT_VERSION:
                 metadata = meaning.get("metadata")
                 _require(isinstance(metadata, dict), "canonical meaning metadata is required")

@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v437"
+EXPECTED_CACHE_NAME = "flashcards-v438"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -257,6 +257,7 @@ class ProductShellTests(unittest.TestCase):
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
         self.assertNotIn("examples: mergeReferenceExamples(m.examples || [], m)", vocab)
         self.assertIn("if (m.canonical_example) meaning.canonicalExample = m.canonical_example;", vocab)
+        self.assertIn("item._indexRowsPending === true", vocab)
         self.assertGreaterEqual(vocab.count("source_mode: 'reference'"), 2)
         self.assertIn("be merged into corpus ticks", vocab)
         self.assertIn("function canonicalExampleHTML(meaning)", flashcards)
