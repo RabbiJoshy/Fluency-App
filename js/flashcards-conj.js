@@ -86,6 +86,21 @@ const CONJ_UI = {
     },
 };
 
+function foldConjForm(value) {
+    return String(value || '').normalize('NFC').toLocaleLowerCase().trim();
+}
+
+function lookupConjEntry(data, lemma) {
+    if (!data || !lemma) return null;
+    if (data[lemma]) return data[lemma];
+    const folded = foldConjForm(lemma);
+    if (data[folded]) return data[folded];
+    for (const key of Object.keys(data)) {
+        if (foldConjForm(key) === folded) return data[key];
+    }
+    return null;
+}
+
 function conjUiForLanguage() {
     const lang = (typeof selectedLanguage === 'string' && selectedLanguage) || 'spanish';
     return CONJ_UI[lang] || CONJ_UI.spanish;
@@ -178,7 +193,7 @@ function buildConjugationTableHTML(conjEntry, targetWord, lemma, opts) {
     }
     const tenses = conjEntry.tenses;
     const tenseNames = Object.keys(tenses);
-    const targetLower = targetWord.toLowerCase();
+    const targetLower = foldConjForm(targetWord);
     // Prefer an explicit infinitive on the conj entry; fall back to
     // the lemma (or relatedLemma when we're rendering a related
     // verb's paradigm), then targetWord as a last resort.
@@ -187,10 +202,12 @@ function buildConjugationTableHTML(conjEntry, targetWord, lemma, opts) {
 
     // Pick the tense containing targetWord as the default; Presente otherwise.
     let defaultTense = tenses[ui.defaultTense] ? ui.defaultTense : tenseNames[0];
-    for (const [tenseName, forms] of Object.entries(tenses)) {
-        if (forms.some(f => f.toLowerCase() === targetLower)) {
-            defaultTense = tenseName;
-            break;
+    if (targetLower) {
+        for (const [tenseName, forms] of Object.entries(tenses)) {
+            if (Array.isArray(forms) && forms.some(f => f !== '—' && foldConjForm(f) === targetLower)) {
+                defaultTense = tenseName;
+                break;
+            }
         }
     }
 
@@ -252,7 +269,7 @@ function buildConjugationTableHTML(conjEntry, targetWord, lemma, opts) {
         let rows = '';
         for (let i = 0; i < forms.length; i++) {
             const form = forms[i];
-            const isActive = form.toLowerCase() === targetLower;
+            const isActive = !!(targetLower && form && form !== '—' && foldConjForm(form) === targetLower);
             const cls = isActive ? ' conj-active' : '';
             const { stem, ending } = splitStemEnding(form, infinitive, ui.infinitiveEndings);
             // Stem is muted; ending is accent-colored — makes regular
@@ -275,8 +292,8 @@ function buildConjugationTableHTML(conjEntry, targetWord, lemma, opts) {
         ? `<span class="conj-type-badge">-${matchedEnding.toUpperCase()}</span>`
         : '';
     const translation = conjEntry.translation || '';
-    const gerActive = conjEntry.gerund && conjEntry.gerund.toLowerCase() === targetLower ? ' is-active' : '';
-    const ppActive = conjEntry.past_participle && conjEntry.past_participle.toLowerCase() === targetLower ? ' is-active' : '';
+    const gerActive = conjEntry.gerund && targetLower && foldConjForm(conjEntry.gerund) === targetLower ? ' is-active' : '';
+    const ppActive = conjEntry.past_participle && targetLower && foldConjForm(conjEntry.past_participle) === targetLower ? ' is-active' : '';
     const nonFiniteHTML = (conjEntry.gerund || conjEntry.past_participle) ? `
         <div class="conj-nonfinite">
             ${conjEntry.gerund ? `<div class="conj-nf-item${gerActive}">
@@ -413,15 +430,11 @@ async function toggleConjugationTable() {
         const related = panel.dataset.related || '';
         const target = panel.dataset.target || '';
         const data = window._conjugationData;
-        let conjEntry = null;
+        let conjEntry = lookupConjEntry(data, lemma);
         let isRelated = false;
-        if (data) {
-            if (data[lemma]) {
-                conjEntry = data[lemma];
-            } else if (related && data[related]) {
-                conjEntry = data[related];
-                isRelated = true;
-            }
+        if (!conjEntry && related) {
+            conjEntry = lookupConjEntry(data, related);
+            isRelated = !!conjEntry;
         }
         const ownerLemma = isRelated ? (related || lemma) : lemma;
         const cacheKey = `${ownerLemma}::${target}::${isRelated ? 1 : 0}`;

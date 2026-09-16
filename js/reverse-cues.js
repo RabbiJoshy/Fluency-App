@@ -82,7 +82,7 @@ function meaningMatchesSurfaceReading(card, meaning) {
     if (VERB_POS.has(pos)) return true;
     const lemma = meaning?.headword;
     if (!lemma) return true;
-    const surface = card.productionAnswer || card.displaySurface || card.targetWord || '';
+    const surface = card.productionAnswer || card.displaySurface || card.targetWord || card.word || '';
     return isNominalSurfaceOf(surface, lemma);
 }
 
@@ -192,6 +192,59 @@ function nounProductionCue(card, meaning, translation) {
 
 function foldCueForm(value) {
     return String(value || '').normalize('NFC').toLocaleLowerCase().trim();
+}
+
+function meaningIsVerb(meaning) {
+    const pos = String(meaning?.pos || '').toUpperCase();
+    if (!pos) return true;
+    if (VERB_POS.has(pos)) return true;
+    if (pos === 'SENSE_CYCLE') {
+        return VERB_POS.has(String(meaning?.cycle_pos || '').toUpperCase());
+    }
+    return false;
+}
+
+function conjugationLemma(card, meaning) {
+    const fromSense = String(meaning?.headword || '').trim();
+    if (fromSense) return fromSense;
+    if (String(meaning?.pos || '').toUpperCase() === 'SENSE_CYCLE' && Array.isArray(meaning?.allSenses)) {
+        const fromCycle = meaning.allSenses.find(sense => String(sense?.headword || '').trim());
+        if (fromCycle) return String(fromCycle.headword).trim();
+    }
+    return String(card?.citationForm || card?.lemma || '').trim();
+}
+
+function conjugationEntry(conjugationData, lemma) {
+    if (!conjugationData || !lemma) return null;
+    if (conjugationData[lemma]) return conjugationData[lemma];
+    const folded = foldCueForm(lemma);
+    if (conjugationData[folded]) return conjugationData[folded];
+    for (const key of Object.keys(conjugationData)) {
+        if (foldCueForm(key) === folded) return conjugationData[key];
+    }
+    return null;
+}
+
+export function conjugationLookupSurface(card) {
+    if (!card) return '';
+    const lemma = String(card.citationForm || card.lemma || '').trim();
+    const candidates = [
+        card._activeExampleSurface,
+        card.mergedLemma ? '' : card.productionAnswer,
+        card.mergedLemma ? '' : card.displaySurface,
+        card.representativeSurface,
+        card.targetWord,
+        card.word,
+    ];
+    for (const value of candidates) {
+        const surface = String(value || '').trim();
+        if (!surface) continue;
+        if (lemma && foldCueForm(surface) === foldCueForm(lemma)) continue;
+        return surface;
+    }
+    return String(
+        card.targetWord || card.word || card.displaySurface || card.productionAnswer || ''
+    ).trim();
 }
 
 function meaningFeatureList(meaning) {
@@ -336,10 +389,10 @@ function finiteEnglishCue(kind, personIdx, head, rest) {
 function conjugationTableCue(card, meaning, translation, conjugationData) {
     if (!conjugationData || !meaning) return null;
     if (isUsageNoteGloss(translation)) return null;
-    const lemma = String(meaning.headword || card.lemma || '').trim();
-    const surface = String(card.productionAnswer || card.displaySurface || card.targetWord || '').trim();
+    const lemma = conjugationLemma(card, meaning);
+    const surface = conjugationLookupSurface(card);
     if (!lemma || !surface || foldCueForm(surface) === foldCueForm(lemma)) return null;
-    const entry = conjugationData[lemma] || conjugationData[foldCueForm(lemma)];
+    const entry = conjugationEntry(conjugationData, lemma);
     if (!entry || typeof entry !== 'object') return null;
     const parts = infinitiveParts(translation);
     if (!parts) return null;
@@ -378,12 +431,11 @@ function isUsageNoteGloss(translation) {
  */
 export function grammarProductionCue(card, meaning, translation) {
     if (!card || !meaning) return null;
-    const pos = String(meaning.pos || '').toUpperCase();
-    if (pos && !VERB_POS.has(pos)) return null;
+    if (!meaningIsVerb(meaning)) return null;
     if (isUsageNoteGloss(translation)) return null;
 
-    const surface = card.productionAnswer || card.displaySurface || card.targetWord || '';
-    const lemma = meaning.headword || card.lemma || '';
+    const surface = conjugationLookupSurface(card);
+    const lemma = conjugationLemma(card, meaning);
     if (!surface || !lemma || foldCueForm(surface) === foldCueForm(lemma)) return null;
 
     const grammar = surfaceGrammarFromMeaning(meaning);
@@ -487,8 +539,7 @@ export function englishProductionCue(card, meaningOrTranslation, conjugatedEngli
     const nounCue = meaning ? nounProductionCue(card, meaning, translation) : null;
     if (nounCue) return nounCue;
 
-    const pos = String(meaning?.pos || '').toUpperCase();
-    if (pos && !VERB_POS.has(pos)) return null;
+    if (meaning && !meaningIsVerb(meaning)) return null;
 
     const tableCue = meaning
         ? conjugationTableCue(card, meaning, translation, options.conjugationData)
@@ -496,7 +547,7 @@ export function englishProductionCue(card, meaningOrTranslation, conjugatedEngli
     if (tableCue) return tableCue;
 
     if (conjugatedEnglishData) {
-        const lemma = String(meaning?.headword || card.lemma || '').toLocaleLowerCase('es');
+        const lemma = foldCueForm(conjugationLemma(card, meaning));
         const analysisRows = conjugatedEnglishData?.[lemma]?.[translation];
         if (analysisRows) {
             const rawMorph = card.mergedLemma ? card._activeExampleMorphology : card.morphology;

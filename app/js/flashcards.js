@@ -13,11 +13,12 @@ import {
     spanishDictUsageCandidateForms,
 } from './spanishdict-usage.js?v=20260825ak';
 import {
+    conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=20260916i';
+} from './reverse-cues.js?v=20260916o';
 import {
     compactConstructionMetadata,
     contextWithoutSenseMetadata,
@@ -109,6 +110,7 @@ function _matchedMweForm(mwe, text, preferred = '') {
 function getProductionEnglishCue(card, meaningOrTranslation) {
     return englishProductionCue(card, meaningOrTranslation, _conjugatedEnglishData, {
         reverseDirection: isFlipped,
+        conjugationData: _conjugationData,
     });
 }
 
@@ -443,6 +445,9 @@ async function loadConjugationData() {
             if (resp.ok) {
                 _conjugationData = await resp.json();
                 window._conjugationData = _conjugationData;
+                if (Array.isArray(flashcards) && flashcards.length) {
+                    try { updateCard(); } catch (_) { /* first paint may precede card DOM */ }
+                }
             }
         } catch (e) {
             // Non-fatal — conjugation panel just won't have inline data
@@ -6063,8 +6068,15 @@ function updateCard({ announceHeadword = false } = {}) {
         // Surface-only cards intentionally have no identity lemma. The
         // selected dictionary headword is lookup/display metadata and is the
         // correct join key for an optional conjugation layer.
-        const conjugationHeadword = currentMeaning?.headword || card.lemma || card.targetWord;
-        backHTML += `<div id="conjugationTable" class="conjugation-panel" data-lemma="${attr(conjugationHeadword)}" data-related="${attr(card.relatedLemma)}" data-target="${attr(card.targetWord)}"></div>`;
+        const conjugationHeadword = currentMeaning?.headword
+            || (currentMeaning?.pos === 'SENSE_CYCLE'
+                ? currentMeaning.allSenses?.find(sense => sense?.headword)?.headword
+                : '')
+            || card.citationForm
+            || card.lemma
+            || card.targetWord;
+        const conjugationTarget = conjugationLookupSurface(card);
+        backHTML += `<div id="conjugationTable" class="conjugation-panel" data-lemma="${attr(conjugationHeadword)}" data-related="${attr(card.relatedLemma)}" data-target="${attr(conjugationTarget)}"></div>`;
     }
 
     if (hasSynonyms) {
@@ -7682,8 +7694,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '20260825ak';
-const MODALS_ASSET_VERSION = '20260916a';
+const ASSET_VERSION = '20260916o';
+const MODALS_ASSET_VERSION = '20260916o';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

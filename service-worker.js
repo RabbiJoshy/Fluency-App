@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v432';
+const CACHE_NAME = 'flashcards-v433';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -31,7 +31,7 @@ const urlsToCache = [
   '/config/config.json',
   '/config/cefr_levels.json',
   '/config/offline-content-manifest.json',
-  '/js/main.js?v=20260916n',
+  '/js/main.js?v=20260916o',
   `/js/theme.js?v=${ASSET_VERSION}`,
   '/js/state.js?v=20260914c',
   `/js/data-contracts.js?v=${ASSET_VERSION}`,
@@ -60,12 +60,12 @@ const urlsToCache = [
   `/js/vocabulary-import-core.js?v=${ASSET_VERSION}`,
   '/js/vocabulary-import.js?v=20260913a',
   `/js/spanishdict-usage.js?v=${ASSET_VERSION}`,
-  '/js/reverse-cues.js?v=20260916n',
+  '/js/reverse-cues.js?v=20260916o',
   '/js/card-metadata-pills.js?v=20260916l',
-  '/js/flashcards.js?v=20260916n',
+  '/js/flashcards.js?v=20260916o',
   `/js/example-personalisation.js?v=${ASSET_VERSION}`,
-  '/js/flashcards-modals.js?v=20260916a',
-  `/js/flashcards-conj.js?v=${ASSET_VERSION}`
+  '/js/flashcards-modals.js?v=20260916o',
+  '/js/flashcards-conj.js?v=20260916o'
 ];
 
 self.addEventListener('install', event => {

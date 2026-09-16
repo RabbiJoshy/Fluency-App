@@ -55,6 +55,29 @@ const POS_INFO = {
             description: "Part of speech couldn't be determined for this sense." },
 };
 
+function projectInspectableMeaning(m, exampleTargetField, exampleEnglishField) {
+    const getter = (typeof getExampleFromMeaning === 'function' && getExampleFromMeaning)
+        || window.getExampleFromMeaning;
+    const ex = getter(m, exampleTargetField, exampleEnglishField);
+    const meaning = {
+        pos: m.pos,
+        meaning: m.translation,
+        percentage: parseFloat(m.display_frequency ?? m.frequency) || 0,
+        targetSentence: ex.targetSentence,
+        englishSentence: ex.englishSentence,
+        allExamples: ex.allExamples
+    };
+    if (m.unassigned) meaning.unassigned = true;
+    if (m.assignment_method) meaning.assignment_method = m.assignment_method;
+    if (m.source) meaning.source = m.source;
+    if (m.context) meaning.context = m.context;
+    if (m.headword) meaning.headword = m.headword;
+    if (m.metadata) meaning.metadata = m.metadata;
+    if (m.allSenses) meaning.allSenses = m.allSenses;
+    if (m.cycle_pos) meaning.cycle_pos = m.cycle_pos;
+    return meaning;
+}
+
 // Show an info popover describing a part of speech. The pill is tappable;
 // a tap on the pill opens a full-screen semi-transparent overlay holding
 // a small card with the POS name + description. If a percentage is
@@ -500,17 +523,9 @@ function navigateToVocabCard(tokenIndex) {
         }
     }
 
-    const meanings = (vocabEntry.meanings || []).map(m => {
-        const ex = getExampleFromMeaning(m, exampleTargetField, exampleEnglishField);
-        return {
-            pos: m.pos,
-            meaning: m.translation,
-            percentage: parseFloat(m.frequency) || 0,
-            targetSentence: ex.targetSentence,
-            englishSentence: ex.englishSentence,
-            allExamples: ex.allExamples
-        };
-    });
+    const meanings = (vocabEntry.meanings || []).map(m =>
+        projectInspectableMeaning(m, exampleTargetField, exampleEnglishField)
+    );
 
     // Synthesize MWE / CLITIC / SENSE_CYCLE meanings, mirroring
     // loadVocabularyData. The popup paths previously skipped this and so
@@ -652,25 +667,9 @@ async function popupFoundWord(entry, opts) {
         const sourceMeanings = (vocabEntry.meanings || []).filter(m =>
             String(m?.translation || '').trim()
             && (!activeArtist || Number(m.frequency || 0) > 0));
-        const meanings = sourceMeanings.map(m => {
-            const ex = window.getExampleFromMeaning(m, exampleTargetField, exampleEnglishField);
-            const meaning = {
-                pos: m.pos,
-                meaning: m.translation,
-                percentage: parseFloat(m.frequency) || 0,
-                targetSentence: ex.targetSentence,
-                englishSentence: ex.englishSentence,
-                allExamples: ex.allExamples
-            };
-            if (m.unassigned) meaning.unassigned = true;
-            if (m.assignment_method) meaning.assignment_method = m.assignment_method;
-            if (m.source) meaning.source = m.source;
-            if (m.context) meaning.context = m.context;
-            if (m.metadata) meaning.metadata = m.metadata;
-            if (m.allSenses) meaning.allSenses = m.allSenses;
-            if (m.cycle_pos) meaning.cycle_pos = m.cycle_pos;
-            return meaning;
-        });
+        const meanings = sourceMeanings.map(m =>
+            projectInspectableMeaning(m, exampleTargetField, exampleEnglishField)
+        );
 
         // A searchable source entry can legitimately have corpus examples but
         // no usable translation or artist-matched sense. Keep it inspectable:
@@ -926,17 +925,9 @@ function peekHomograph(siblingId) {
     const exampleTargetField = langConfig.exampleTargetField || 'example_spanish';
     const exampleEnglishField = langConfig.exampleEnglishField || 'example_english';
 
-    const meanings = (vocabEntry.meanings || []).map(m => {
-        const ex = getExampleFromMeaning(m, exampleTargetField, exampleEnglishField);
-        return {
-            pos: m.pos,
-            meaning: m.translation,
-            percentage: parseFloat(m.frequency) || 0,
-            targetSentence: ex.targetSentence,
-            englishSentence: ex.englishSentence,
-            allExamples: ex.allExamples
-        };
-    });
+    const meanings = (vocabEntry.meanings || []).map(m =>
+        projectInspectableMeaning(m, exampleTargetField, exampleEnglishField)
+    );
 
     const firstExample = meanings.length > 0
         ? { targetSentence: meanings[0].targetSentence, englishSentence: meanings[0].englishSentence }
