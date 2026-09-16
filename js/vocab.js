@@ -1791,12 +1791,18 @@ function buildFilteredVocab(vocabData) {
         const allowsRawArtistCard = activeArtist && (
             artistVocabularyScope === 'extra' || Number(item.corpus_count) <= 1
         );
-        if ((!item.meanings || item.meanings.length === 0) && !allowsRawArtistCard) continue;
+        // Skinny index columns ship with empty meanings until the study-set
+        // row shard lands. Search hydrates one card; set setup must still
+        // count these rows or every set looks empty.
+        const rowsPending = item._indexRowsPending === true;
+        if ((!item.meanings || item.meanings.length === 0) && !allowsRawArtistCard && !rowsPending) continue;
         // Strip any meaning with no translation (POS=X placeholders from
         // --no-gemini runs, plus SpanishDict rows that captured a usage label
         // but an empty gloss). Mutates the item, matching prior behavior.
-        item.meanings = (item.meanings || []).filter(m => m.translation && m.translation.trim());
-        if (item.meanings.length === 0 && !allowsRawArtistCard) continue;
+        if (!rowsPending) {
+            item.meanings = (item.meanings || []).filter(m => m.translation && m.translation.trim());
+            if (item.meanings.length === 0 && !allowsRawArtistCard) continue;
+        }
         // Artist Extra deliberately KEEPS the over-tagged words (English,
         // loanwords, proper nouns, noise) instead of dropping them, so they
         // surface grouped by their `extra_category` rather than vanishing.
@@ -2227,6 +2233,25 @@ async function loadVocabularyData(rangeString, opts = {}) {
         // language-pick payload. Examples stay on the same study-set shards.
         const ranks = filteredData.map(item => Number(item.rank));
         await ensureIndexRowsForRange(langConfig, rangeStart, rangeEnd, ranks);
+        filteredData = filteredData.filter(item => {
+            const allowsRawArtistCard = activeArtist && (
+                artistVocabularyScope === 'extra' || Number(item.corpus_count) <= 1
+            );
+            if (item._indexRowsPending && !allowsRawArtistCard) return false;
+            if (!allowsRawArtistCard) {
+                item.meanings = (item.meanings || []).filter(m =>
+                    m.translation && String(m.translation).trim()
+                );
+                return item.meanings.length > 0;
+            }
+            return true;
+        });
+        if (filteredData.length === 0) {
+            restorePreviousDeckState();
+            document.getElementById('loadingMessage').style.display = 'none';
+            if (!opts.silentIfEmpty) await window.refreshSetupAfterProgress?.();
+            return false;
+        }
         let allCorpusExamples = [];
         if (langConfig.examplesPath) {
             await ensureExamplesForRange(langConfig, rangeStart, rangeEnd, ranks);

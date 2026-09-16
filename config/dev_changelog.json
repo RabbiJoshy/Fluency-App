@@ -4,6 +4,14 @@
     {
       "date": "2026-09-16",
       "commit": "pending",
+      "summary": "Study sets load from the skinny index again",
+      "detail": [
+        "Language pick still loads identity columns only. Sets were empty because those rows have no senses until the set shard arrives; they now count as cards and hydrate when you open a set."
+      ]
+    },
+    {
+      "date": "2026-09-16",
+      "commit": "pending",
       "summary": "Spanish, Portuguese and Czech now show only labelled examples",
       "detail": [
         "Usage ticks on the live decks are sentences WSD actually scored for that sense. Dictionary illustrations sit above the ticks, not among them."
