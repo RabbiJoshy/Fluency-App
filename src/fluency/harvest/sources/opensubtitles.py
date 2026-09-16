@@ -81,6 +81,19 @@ class OpenSubtitlesAdapter:
         self.rejections = Counter()
 
     @staticmethod
+    def title_id_from_ids_line(raw: str) -> str | None:
+        """Return the IMDb title id encoded in an OpenSubtitles `.ids` row."""
+
+        parts = raw.split("\t", 2)
+        if len(parts) < 2:
+            return None
+        segments = parts[1].split("/")
+        if len(segments) < 3:
+            return None
+        title_id = segments[2]
+        return title_id if title_id.isdigit() else None
+
+    @staticmethod
     def _provenance(raw: str, row_number: int) -> dict[str, str | int] | None:
         parts = raw.rstrip("\n").split("\t")
         if len(parts) < 4:

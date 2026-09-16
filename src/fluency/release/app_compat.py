@@ -16,6 +16,35 @@ APP_TENSE_LABELS = {
     ("subjuntivo", "presente"): "Subj. Presente",
     ("subjuntivo", "imperfecto"): "Subj. Imperfecto",
 }
+APP_TENSE_LABELS_BY_LANGUAGE = {
+    "es": APP_TENSE_LABELS,
+    "pt": {
+        ("indicativo", "presente"): "Presente",
+        ("indicativo", "pretérito-perfeito"): "Pretérito",
+        ("indicativo", "pretérito-imperfeito"): "Imperfeito",
+        ("indicativo", "futuro-do-presente"): "Futuro",
+        ("condicional", "futuro-do-pretérito"): "Condicional",
+        ("subjuntivo", "presente"): "Subj. Presente",
+        ("subjuntivo", "pretérito-imperfeito"): "Subj. Imperfeito",
+        ("subjuntivo", "futuro"): "Subj. Futuro",
+        ("imperativo", "afirmativo"): "Imperativo",
+        ("imperativo", "negativo"): "Imp. Negativo",
+    },
+    "fr": {
+        ("indicatif", "présent"): "Présent",
+        ("indicatif", "imparfait"): "Imparfait",
+        ("indicatif", "futur-simple"): "Futur",
+        ("indicatif", "passé-simple"): "Passé simple",
+        ("conditionnel", "présent"): "Conditionnel",
+        ("subjonctif", "présent"): "Subj. Présent",
+        ("subjonctif", "imparfait"): "Subj. Imparfait",
+        ("imperatif", "imperatif-présent"): "Impératif",
+    },
+    "cs": {
+        ("indicative", "present"): "Present",
+        ("imperative", "present"): "Imperative",
+    },
+}
 APP_PERSON_ORDER = ("1s", "2s", "3s", "1p", "2p", "3p")
 
 
@@ -232,12 +261,13 @@ def build_app_conjugations(layer: dict[str, Any]) -> dict[str, dict[str, Any]]:
             entry["gerund"] = nonfinite["gerund"]
         if nonfinite.get("past_participle"):
             entry["past_participle"] = nonfinite["past_participle"]
+        labels = APP_TENSE_LABELS_BY_LANGUAGE.get(str(layer.get("language") or ""), APP_TENSE_LABELS)
         for paradigm in record.get("paradigms", []):
             key = (
                 str(paradigm.get("mood", "")).casefold(),
                 str(paradigm.get("tense", "")).casefold(),
             )
-            label = APP_TENSE_LABELS.get(key)
+            label = labels.get(key)
             if label is None:
                 continue
             by_person = {

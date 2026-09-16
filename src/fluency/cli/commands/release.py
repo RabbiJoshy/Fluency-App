@@ -33,6 +33,30 @@ def register(subparsers) -> None:
     compose.add_argument("--workspace", default=os.environ.get("FLUENCY_WORKSPACE"))
     compose.add_argument("--composition", type=Path, required=True, help="exact release-composition JSON")
     compose.add_argument("--deck", type=Path, required=True, help="already assembled compact deck JSON")
+    shard = release_actions.add_parser(
+        "shard-examples",
+        help="split vocabulary.examples.json into per-study-set shards for greedy loading",
+    )
+    shard.add_argument("--workspace", default=os.environ.get("FLUENCY_WORKSPACE"))
+    shard.add_argument("--language", required=True)
+    shard.add_argument("--mode", default="speech")
+    shard.add_argument("--release-id", required=True)
+    index_shard = release_actions.add_parser(
+        "shard-index",
+        help="split vocabulary.index.json into skinny columns plus per-study-set rows",
+    )
+    index_shard.add_argument("--workspace", default=os.environ.get("FLUENCY_WORKSPACE"))
+    index_shard.add_argument("--language", required=True)
+    index_shard.add_argument("--mode", default="speech")
+    index_shard.add_argument("--release-id", required=True)
+    payload = release_actions.add_parser(
+        "shard-speech-payload",
+        help="split both the speech index and examples for greedy set loading",
+    )
+    payload.add_argument("--workspace", default=os.environ.get("FLUENCY_WORKSPACE"))
+    payload.add_argument("--language", required=True)
+    payload.add_argument("--mode", default="speech")
+    payload.add_argument("--release-id", required=True)
 
 
 def handle_release(args: argparse.Namespace) -> int:
@@ -56,6 +80,24 @@ def handle_release(args: argparse.Namespace) -> int:
     if args.release_command == "catalog":
         path = write_catalog(workspace, args.language, args.mode)
         print(f"Wrote release catalog: {path}")
+        return 0
+    if args.release_command in {"shard-examples", "shard-index", "shard-speech-payload"}:
+        from fluency.release.example_shards import shard_app_examples
+        from fluency.release.index_shards import shard_app_index
+
+        app_dir = (
+            workspace.root / "releases" / args.language / args.mode / args.release_id / "app"
+        )
+        if args.release_command in {"shard-index", "shard-speech-payload"}:
+            manifest = shard_app_index(app_dir)
+            print(f"Wrote {manifest['shard_count']} index row shards under {app_dir}")
+            if manifest["missing_cards"]:
+                print(f"Missing index cards: {manifest['missing_cards']}")
+        if args.release_command in {"shard-examples", "shard-speech-payload"}:
+            manifest = shard_app_examples(app_dir)
+            print(f"Wrote {manifest['shard_count']} example shards under {app_dir}")
+            if manifest["missing_cards"]:
+                print(f"Missing example cards: {manifest['missing_cards']}")
         return 0
     if args.release_command == "list":
         catalog = build_catalog(workspace, args.language, args.mode)

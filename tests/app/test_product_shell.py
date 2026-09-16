@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v431"
+EXPECTED_CACHE_NAME = "flashcards-v436"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -97,7 +97,35 @@ class ProductShellTests(unittest.TestCase):
             "ppmDataPath",
         ):
             self.assertNotIn(legacy_path, config["languages"]["spanish"])
-        self.assertIsNone(config["languages"]["spanish"]["conjugationsPath"])
+        self.assertEqual(
+            config["languages"]["spanish"]["conjugationsPath"],
+            "releases/es/speech/es-speech-v12-6000x10-conj/app/conjugations.json",
+        )
+        self.assertEqual(
+            config["languages"]["portuguese"]["indexPath"],
+            "releases/pt/speech/pt-speech-v12-6000x10/app/vocabulary.index.json",
+        )
+        self.assertEqual(
+            config["languages"]["portuguese"]["conjugationsPath"],
+            "releases/pt/speech/pt-speech-v12-6000x10-conj/app/conjugations.json",
+        )
+        self.assertEqual(
+            config["languages"]["czech"]["indexPath"],
+            "releases/cs/speech/cs-speech-v12-4000x10/app/vocabulary.index.json",
+        )
+        self.assertEqual(
+            config["languages"]["czech"]["conjugationsPath"],
+            "releases/cs/speech/cs-speech-v12-4000x10-conj/app/conjugations.json",
+        )
+        self.assertEqual(
+            config["languages"]["french"]["indexPath"],
+            "releases/fr/speech/fr-speech-v7-dual-metadata-v4-20260913/app/vocabulary.index.json",
+        )
+        self.assertEqual(
+            config["languages"]["french"]["conjugationsPath"],
+            "releases/fr/speech/fr-speech-v7-dual-metadata-v3-20260910-conj/app/conjugations.json",
+        )
+        self.assertIsNone(config["languages"]["dutch"]["conjugationsPath"])
         self.assertNotIn("ppmDataPath", config["languages"]["french"])
         self.assertEqual(
             config["languages"]["french"]["studyStructurePath"],
@@ -131,7 +159,10 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("speechSourceButton.onclick", ui)
         self.assertIn("sourceCardButton.onclick = openLyrics", ui)
         self.assertNotIn("sessionStorage.removeItem('fluencyPendingSpeechLanguage');\n            await continueToSpeech();", ui)
-        self.assertIn("if (isResumeNavigation && !activeArtist && selectedLanguage === 'spanish')", main)
+        self.assertIn("if (isResumeNavigation && !activeArtist) {", main)
+        self.assertIn("if (window.loadConjugationData) await window.loadConjugationData();", main)
+        self.assertIn("if (window.loadConjugationData) window.loadConjugationData();", ui)
+        self.assertNotIn("if (window.loadConjugationData) await window.loadConjugationData();", ui)
         self.assertTrue(config["languages"]["spanish"]["capabilities"]["speech"])
         self.assertTrue(config["languages"]["spanish"]["capabilities"]["lyrics"])
         self.assertTrue(config["languages"]["french"]["capabilities"]["speech"])
@@ -317,6 +348,8 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("${escapeCardText(promInfo.label)}", flashcards)
         self.assertNotIn("sense-prominence-dots", flashcards)
         self.assertIn("conjugationsPath)", flashcards)
+        self.assertIn("conjugationData: _conjugationData", flashcards)
+        self.assertIn("window.loadConjugationData()", (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8"))
         self.assertIn("function walkthroughProminence(pct)", walkthrough)
         self.assertIn("How common this meaning is", walkthrough)
 
@@ -507,10 +540,8 @@ class ProductShellTests(unittest.TestCase):
 
     def test_optional_conjugations_join_by_dictionary_headword_not_identity_lemma(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
-        self.assertIn(
-            "currentMeaning?.headword || card.lemma || card.targetWord",
-            flashcards,
-        )
+        self.assertIn("currentMeaning?.headword", flashcards)
+        self.assertIn("conjugationLookupSurface(card)", flashcards)
         self.assertIn("currentMeaning.cycle_pos", flashcards)
 
     def test_approved_numbered_scrubber_animation_is_retained(self) -> None:
@@ -607,7 +638,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260914d", worker)
-        self.assertIn("/js/main.js?v=20260916m", worker)
+        self.assertIn("/js/main.js?v=20260916q", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -710,7 +741,11 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("export function clearActiveExamplesData", song_sets)
         self.assertIn("window._cachedExamplesDataPath = resolvedSource", song_sets)
         self.assertIn("function resetLanguageOptionalData", flashcards)
-        self.assertIn("window._cachedExamplesDataPath !== langConfig.examplesPath", vocab)
+        self.assertIn("ensureExampleShardsForRange", vocab)
+        self.assertIn("prefetchStudySetPayload", vocab)
+        self.assertIn("vocabulary.examples.manifest.json", vocab)
+        self.assertIn("vocabulary.index.columns.json", vocab)
+        self.assertIn("vocabulary.index.manifest.json", vocab)
 
     def test_pilot_interface_remains_a_readable_reference(self) -> None:
         reference = REPOSITORY_ROOT / "docs" / "reference" / "pilot-ui-v1.html"
@@ -727,6 +762,18 @@ class ProductShellTests(unittest.TestCase):
                 resolved = (module.parent / clean_target).resolve()
                 with self.subTest(module=module.name, target=target):
                     self.assertTrue(resolved.is_file())
+
+    def test_every_example_names_its_corpus(self) -> None:
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        config = json.loads((APP_ROOT / "config" / "config.json").read_text(encoding="utf-8"))
+        titles = APP_ROOT / "data" / "source_titles.json"
+
+        self.assertEqual(config["sourceTitlesPath"], "data/source_titles.json")
+        self.assertTrue(titles.is_file())
+        self.assertIn("corpus === 'tatoeba'", flashcards)
+        self.assertIn("exampleLinkHTML(p.url, 'Tatoeba')", flashcards)
+        self.assertIn("loadSourceTitles", flashcards)
+        self.assertNotIn("source_mode === 'speech'", flashcards)
 
 
 if __name__ == "__main__":

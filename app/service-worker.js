@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v431';
+const CACHE_NAME = 'flashcards-v436';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -31,7 +31,7 @@ const urlsToCache = [
   '/config/config.json',
   '/config/cefr_levels.json',
   '/config/offline-content-manifest.json',
-  '/js/main.js?v=20260916m',
+  '/js/main.js?v=20260916q',
   `/js/theme.js?v=${ASSET_VERSION}`,
   '/js/state.js?v=20260914c',
   `/js/data-contracts.js?v=${ASSET_VERSION}`,
@@ -41,15 +41,15 @@ const urlsToCache = [
   '/js/speech.js?v=20260914b',
   `/js/artist-ui.js?v=${ASSET_VERSION}`,
   '/js/auth.js?v=20260912a',
-  '/js/about-example.js?v=20260916l',
+  '/js/about-example.js?v=20260916q',
   '/js/spotify.js?v=20260914d',
   `/js/estimation.js?v=${ASSET_VERSION}`,
   '/js/config.js?v=20260916f',
   '/js/progress.js?v=20260916h',
   '/js/progress-identity.js?v=20260831a',
   '/js/knowledge.js?v=20260915a',
-  '/js/ui.js?v=20260916k',
-  '/js/vocab.js?v=20260916m',
+  '/js/ui.js?v=20260916r',
+  '/js/vocab.js?v=20260916s',
   '/js/cognates.js?v=20260914e',
   '/js/coverage.js?v=20260909a',
   '/js/fast-mode.js?v=20260916a',
@@ -60,12 +60,12 @@ const urlsToCache = [
   `/js/vocabulary-import-core.js?v=${ASSET_VERSION}`,
   '/js/vocabulary-import.js?v=20260913a',
   `/js/spanishdict-usage.js?v=${ASSET_VERSION}`,
-  '/js/reverse-cues.js?v=20260916i',
+  '/js/reverse-cues.js?v=20260916q',
   '/js/card-metadata-pills.js?v=20260916l',
-  '/js/flashcards.js?v=20260916m',
+  '/js/flashcards.js?v=20260916s',
   `/js/example-personalisation.js?v=${ASSET_VERSION}`,
-  '/js/flashcards-modals.js?v=20260916a',
-  `/js/flashcards-conj.js?v=${ASSET_VERSION}`
+  '/js/flashcards-modals.js?v=20260916s',
+  '/js/flashcards-conj.js?v=20260916o'
 ];
 
 self.addEventListener('install', event => {

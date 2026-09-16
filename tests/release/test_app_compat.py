@@ -224,6 +224,51 @@ class AppCompatibilityTests(unittest.TestCase):
         ])
         self.assertEqual(result["hablar"]["gerund"], "hablando")
 
+    def test_conjugation_tense_labels_are_language_specific(self) -> None:
+        portuguese = build_app_conjugations({
+            "layer_version": "conjugation-layer/v1",
+            "language": "pt",
+            "records": [{
+                "headword": "ser",
+                "translation": None,
+                "nonfinite": {"gerund": "sendo", "past_participle": "sido"},
+                "paradigms": [
+                    {"mood": "indicativo", "tense": "presente", "forms": [{"person": "1s", "form": "sou"}]},
+                    {"mood": "indicativo", "tense": "pretérito-perfeito", "forms": [{"person": "1s", "form": "fui"}]},
+                ],
+            }],
+        })
+        self.assertEqual(portuguese["ser"]["tenses"]["Presente"][0], "sou")
+        self.assertEqual(portuguese["ser"]["tenses"]["Pretérito"][0], "fui")
+
+        french = build_app_conjugations({
+            "layer_version": "conjugation-layer/v1",
+            "language": "fr",
+            "records": [{
+                "headword": "être",
+                "translation": None,
+                "nonfinite": {"gerund": None, "past_participle": "été"},
+                "paradigms": [
+                    {"mood": "indicatif", "tense": "présent", "forms": [{"person": "1s", "form": "suis"}]},
+                ],
+            }],
+        })
+        self.assertEqual(french["être"]["tenses"]["Présent"][0], "suis")
+
+        czech = build_app_conjugations({
+            "layer_version": "conjugation-layer/v1",
+            "language": "cs",
+            "records": [{
+                "headword": "být",
+                "translation": "to be",
+                "nonfinite": {"gerund": None, "past_participle": "byl"},
+                "paradigms": [
+                    {"mood": "indicative", "tense": "present", "forms": [{"person": "1s", "form": "jsem"}]},
+                ],
+            }],
+        })
+        self.assertEqual(czech["být"]["tenses"]["Present"][0], "jsem")
+
 
 if __name__ == "__main__":
     unittest.main()

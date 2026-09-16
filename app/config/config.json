@@ -3,6 +3,7 @@
     "spotifyClientId": "f2341f303cff471ea80d3fcdefbb6d7d",
     "progressSyncUrl": "https://fluency-api.rabbijoshy.workers.dev"
   },
+  "sourceTitlesPath": "data/source_titles.json",
   "languages": {
     "spanish": {
       "name": "Spanish",
@@ -11,7 +12,7 @@
       "studyStructurePath": "releases/es/speech/es-speech-v12-6000x10/app/study-structure.json",
       "releaseManifestPath": "releases/es/speech/es-speech-v12-6000x10/manifest.json",
       "releaseCompositionPath": "releases/es/speech/es-speech-v12-6000x10/composition.json",
-      "conjugationsPath": null,
+      "conjugationsPath": "releases/es/speech/es-speech-v12-6000x10-conj/app/conjugations.json",
       "exampleTargetField": "example_spanish",
       "exampleEnglishField": "example_english",
       "pipelineDefaults": {
@@ -200,6 +201,7 @@
     "dutch": {
       "name": "Dutch",
       "dataPath": "Data/Dutch/vocabulary.json",
+      "conjugationsPath": null,
       "exampleTargetField": "example_dutch",
       "exampleEnglishField": "example_english",
       "colorTheme": {
@@ -262,6 +264,7 @@
       "studyStructurePath": "releases/fr/speech/fr-speech-v7-dual-metadata-v4-20260913/app/study-structure.json",
       "releaseManifestPath": "releases/fr/speech/fr-speech-v7-dual-metadata-v4-20260913/manifest.json",
       "releaseCompositionPath": "releases/fr/speech/fr-speech-v7-dual-metadata-v4-20260913/composition.json",
+      "conjugationsPath": "releases/fr/speech/fr-speech-v7-dual-metadata-v3-20260910-conj/app/conjugations.json",
       "exampleTargetField": "example_french",
       "exampleEnglishField": "example_english",
       "hasData": true,
@@ -448,6 +451,7 @@
       "studyStructurePath": "releases/pt/speech/pt-speech-v12-6000x10/app/study-structure.json",
       "releaseManifestPath": "releases/pt/speech/pt-speech-v12-6000x10/manifest.json",
       "releaseCompositionPath": "releases/pt/speech/pt-speech-v12-6000x10/composition.json",
+      "conjugationsPath": "releases/pt/speech/pt-speech-v12-6000x10-conj/app/conjugations.json",
       "exampleTargetField": "example_portuguese",
       "exampleEnglishField": "example_english",
       "hasData": true,
@@ -540,7 +544,7 @@
         "primary": "#11457E",
         "secondary": "#D7141A"
       },
-      "conjugationsPath": null,
+      "conjugationsPath": "releases/cs/speech/cs-speech-v12-4000x10-conj/app/conjugations.json",
       "exampleTargetField": "example_czech",
       "exampleEnglishField": "example_english",
       "cefrLevels": [

@@ -45,6 +45,7 @@ literal filename. See `docs/decisions/0021-*` and `docs/runbooks/surface-ledger.
 | **Surface ledger** | `src/fluency/surfaces/` | `events.py` (append-only log), `policy.py` (fold → verdict), `ledger.py` (path + contract) | `raw/surfaces/<lang>/ledger.json` |
 | **WSD** | `src/fluency/wsd/` | `runner.py`, `importer.py` | `schemas/wsd-request-v2.schema.json`, `schemas/wsd-assignment.schema.json` |
 | **Release** | `src/fluency/release/` | `run_candidate.py`, `metadata_upgrade.py` | `schemas/release-manifest.schema.json`, `schemas/active-release.schema.json` |
+| **Conjugations** | `src/fluency/enrichments/` | `conjugations.py` (layer envelope), `kaikki_conjugations.py` (cs), `verbecc_conjugations.py` (pt/fr, ML off) | `schemas/conjugation-layer.schema.json` |
 | **Lyrics & Artists**| `src/fluency/lyrics/` | `process.py`, `lexical.py`, `consolidate.py`, `audit.py` | `schemas/lyrics-consolidated-card.schema.json` |
 | **CLI Dispatcher** | `src/fluency/cli/` | `registry.py`, `commands/` | Terminal commands (`fluency ...`) |
 
@@ -75,12 +76,12 @@ The frontend is a vanilla ES-module application (`app/index.html` $\rightarrow$ 
 
 | File | Primary Responsibility | Key Exposed `window` Functions |
 | :--- | :--- | :--- |
-| [app/js/flashcards.js](file:///Users/joshuathomasamar/PycharmProjects/Fluency-Next/app/js/flashcards.js) | Card rendering, flip, swipe, keyboard shortcuts, personal easiness. | `updateCard()`, `flipCard()`, `nextCard()`, `handleSwipeAction()`, `selectMeaning()`, `cycleExample()` |
+| [app/js/flashcards.js](file:///Users/joshuathomasamar/PycharmProjects/Fluency-Next/app/js/flashcards.js) | Card rendering, flip, swipe, keyboard shortcuts, personal easiness. | `updateCard()`, `flipCard()`, `nextCard()`, `handleSwipeAction()`, `selectMeaning()`, `cycleExample()`, `loadConjugationData()` |
 | [app/js/card-metadata-pills.js](file:///Users/joshuathomasamar/PycharmProjects/Fluency-Next/app/js/card-metadata-pills.js) | Sense metadata pills, grammar chips, qualifiers, canonical features. | `senseMetadataHTML()`, `senseMetadataItems()`, `toggleSenseMetadataChip()`, `toggleSenseMetadataOverflow()` |
 | [app/js/flashcards-modals.js](file:///Users/joshuathomasamar/PycharmProjects/Fluency-Next/app/js/flashcards-modals.js) | Flag menu, breakdown modals, deck complete modal. | `openFlagMenu()`, `hideFlagMenu()`, `showLyricBreakdown()`, `hideLyricBreakdown()`, `showDeckCompleteModal()` |
-| [app/js/flashcards-conj.js](file:///Users/joshuathomasamar/PycharmProjects/Fluency-Next/app/js/flashcards-conj.js) | Verb conjugation drawer rendering and tabs. | `loadConjugationData()`, `toggleConjugationTable()`, `switchConjMood()`, `switchConjTense()` |
+| [app/js/flashcards-conj.js](file:///Users/joshuathomasamar/PycharmProjects/Fluency-Next/app/js/flashcards-conj.js) | Verb conjugation drawer rendering and tabs. | `toggleConjugationTable()`, `switchConjMood()`, `switchConjTense()` |
 | [app/js/knowledge.js](file:///Users/joshuathomasamar/PycharmProjects/Fluency-Next/app/js/knowledge.js) | Card item knowledge state (Known / Review / Unseen). | `openCardKnowledgeModal()`, `getCardKnowledgeItems()`, `toggleKnowledgeItemState()`, `cacheItemProgress()` |
-| [app/js/vocab.js](file:///Users/joshuathomasamar/PycharmProjects/Fluency-Next/app/js/vocab.js) | Deck and vocabulary loading, index merging, caching. | `loadMasterVocabulary()`, `loadDeckData()`, `buildVocabularyIndex()`, `LANG_CODES` |
+| [app/js/vocab.js](file:///Users/joshuathomasamar/PycharmProjects/Fluency-Next/app/js/vocab.js) | Deck and vocabulary loading. Speech setup reads skinny index columns; a set loads ~20 fat rows plus example shards and prefetches the next set. | `loadVocabularyData()`, `ensureExamplesForRange()`, `ensureIndexRowsForRange()`, `prefetchStudySetPayload()`, `LANG_CODES` |
 | [app/js/ui.js](file:///Users/joshuathomasamar/PycharmProjects/Fluency-Next/app/js/ui.js) | Setup screen, study settings, theme colors, level selection. | `applyLanguageColorTheme()`, `openSetupView()`, `applyGlobalStudyDefaults()`, `renderStudySettings()` |
 | [app/js/progress.js](file:///Users/joshuathomasamar/PycharmProjects/Fluency-Next/app/js/progress.js) | SRS stage transitions, coverage calculations. | `advanceSrsStage()`, `calculateCoveragePercent()`, `getProgressState()`, `getMergedWordProgress()` |
 | [app/js/auth.js](file:///Users/joshuathomasamar/PycharmProjects/Fluency-Next/app/js/auth.js) | Guest mode, session persistence, sync queue, word flags. | `checkAuthentication()`, `enterGuestMode()`, `flagWord()`, `cacheProgressLocally()`, `flushProgressCache()` |
