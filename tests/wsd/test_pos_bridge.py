@@ -13,7 +13,9 @@ from fluency.wsd.pos_bridge import (
     PosBridgeError,
     acceptable_categories,
     compatible,
+    dictionary_pos_family,
     is_orthogonal,
+    tagger_pos_is_noise_against_single_family,
 )
 
 
@@ -30,8 +32,20 @@ class WiktionaryBridgeTests(unittest.TestCase):
 
         self.assertTrue(compatible("wiktionary", "AUX", "verb"))
 
-    def test_determiners_reach_article(self) -> None:
+    def test_determiners_do_not_keep_object_pronouns(self) -> None:
+        """as pessoas is DET "the"; vi-as is PRON "them"."""
+
+        self.assertFalse(compatible("wiktionary", "DET", "pron"))
+        self.assertTrue(compatible("wiktionary", "PRON", "pron"))
         self.assertTrue(compatible("wiktionary", "DET", "article"))
+
+    def test_fused_prepositional_pronouns_filed_as_adv_survive_a_pron_tag(self) -> None:
+        self.assertTrue(
+            tagger_pos_is_noise_against_single_family(
+                dictionary_parts_of_speech=("adv",),
+                observed_pos="PRON",
+            )
+        )
 
     def test_genuine_mismatches_are_still_rejected(self) -> None:
         """The bridge must widen the filter, not disable it."""
@@ -58,6 +72,47 @@ class WiktionaryBridgeTests(unittest.TestCase):
     def test_unknown_provider_is_refused(self) -> None:
         with self.assertRaises(PosBridgeError):
             acceptable_categories("spanishdict-unbridged", "NOUN")
+
+    def test_verb_subtypes_share_a_family_on_both_providers(self) -> None:
+        self.assertEqual(dictionary_pos_family("transitive verb"), "verb")
+        self.assertEqual(dictionary_pos_family("verb"), "verb")
+        self.assertEqual(dictionary_pos_family("PHRASE"), "phrase")
+
+    def test_a_one_category_verb_menu_survives_a_subordinator_tag(self) -> None:
+        self.assertTrue(
+            tagger_pos_is_noise_against_single_family(
+                dictionary_parts_of_speech=("verb",),
+                observed_pos="NOUN",
+            )
+        )
+        self.assertTrue(
+            tagger_pos_is_noise_against_single_family(
+                dictionary_parts_of_speech=("verb",),
+                observed_pos="SCONJ",
+            )
+        )
+        self.assertTrue(
+            tagger_pos_is_noise_against_single_family(
+                dictionary_parts_of_speech=("PHRASE",),
+                observed_pos="VERB",
+            )
+        )
+
+    def test_a_two_category_menu_is_a_real_fight(self) -> None:
+        self.assertFalse(
+            tagger_pos_is_noise_against_single_family(
+                dictionary_parts_of_speech=("prep", "verb"),
+                observed_pos="PRON",
+            )
+        )
+
+    def test_noun_menu_does_not_absorb_a_verb_tag(self) -> None:
+        self.assertFalse(
+            tagger_pos_is_noise_against_single_family(
+                dictionary_parts_of_speech=("NOUN",),
+                observed_pos="VERB",
+            )
+        )
 
 
 class RegressionTests(unittest.TestCase):

@@ -198,6 +198,37 @@ class WSDRunnerTests(unittest.TestCase):
         )
         self.assertEqual(assignment.decision_path[-1], "commit")
 
+    def test_unresolved_commit_can_abstain_instead_of_forcing_a_leaf(self):
+        profile = WSDExecutionProfile(
+            token_tuple_vote=False,
+            tuple_vote_minimum_margin=0.0,
+            calibration=False,
+            alignment=False,
+            generative_escalation=False,
+            disposition=DispositionPolicy(None, "retain"),
+            commit=CommitPolicy(strategy="rank_agreement", unresolved_outcome="abstain"),
+        )
+        assignment = ClosedMenuWSDRunner(
+            profile,
+            WSDComponents(FrenchWSDAdapter(), FakeGloss(self.scores)),
+        ).assign(self.request)
+
+        self.assertEqual(assignment.status, "abstained")
+        self.assertIsNone(assignment.selected_sense_id)
+        self.assertIsNone(assignment.emitted_level)
+        self.assertEqual(
+            assignment.evidence["commit"]["emitted_level"],
+            "unresolved",
+        )
+        self.assertEqual(
+            assignment.evidence["commit"]["selected_ref"]["sense_id"],
+            "vow",
+        )
+        self.assertEqual(
+            assignment.evidence["disposition"]["reason"],
+            "commit_unresolved",
+        )
+
     def test_tuple_vote_selects_exact_analysis_and_leaf_inside_it(self):
         profile = WSDExecutionProfile(
             token_tuple_vote=True,

@@ -13,18 +13,20 @@ from __future__ import annotations
 import re
 
 from fluency.languages.czech.surfaces import normalize_surface
-from fluency.wsd.languages.base import TargetOccurrence
+from fluency.wsd.languages.base import TargetOccurrence, hyphenated_surface_occurrences
 
 
 class CzechWSDAdapter:
     language = "cs"
 
     # Czech uses the caron (háček), the acute (čárka) and the ring (kroužek).
-    _WORD = re.compile(r"[0-9A-Za-zÁÄÉĚÍÓÖÚŮÜÝČĎŇŘŠŤŽáäéěíóöúůüýčďňřšťž]+")
+    _WORD_CHARS = r"0-9A-Za-zÁÄÉĚÍÓÖÚŮÜÝČĎŇŘŠŤŽáäéěíóöúůüýčďňřšťž"
+    _WORD = re.compile(rf"[{_WORD_CHARS}]+")
 
     def locate(self, sentence: str, surface_form: str) -> tuple[TargetOccurrence, ...]:
         surface_key = normalize_surface(surface_form)
         found: list[TargetOccurrence] = []
+        seen: set[tuple[int, int]] = set()
         for match in self._WORD.finditer(sentence or ""):
             observed = match.group(0)
             if normalize_surface(observed) != surface_key:
@@ -37,4 +39,15 @@ class CzechWSDAdapter:
                     end=match.end(),
                 )
             )
+            seen.add((match.start(), match.end()))
+        for item in hyphenated_surface_occurrences(
+            sentence,
+            surface_form,
+            normalize=normalize_surface,
+            word_chars=self._WORD_CHARS,
+        ):
+            span = (item.start, item.end)
+            if span not in seen:
+                found.append(item)
+                seen.add(span)
         return tuple(found)

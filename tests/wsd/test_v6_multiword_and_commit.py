@@ -214,6 +214,33 @@ class Commit(unittest.TestCase):
 
         self.assertEqual(decision.level, "glosskey")
 
+    def test_shared_english_licenses_glosskey_across_dictionary_pos(self):
+        adj = analysis("dos", "ADJ", (("a1", "two"),))
+        num = analysis("dos", "NUM", (("n1", "two"),))
+        scores = (
+            LeafScore(adj.menu_analysis_id, "a1", 0.8),
+            LeafScore(num.menu_analysis_id, "n1", 0.7),
+        )
+        refs = (
+            (adj.menu_analysis_id, "a1"),
+            (num.menu_analysis_id, "n1"),
+            (adj.menu_analysis_id, "a1"),
+        )
+        still_unresolved = decide(
+            scores, (adj, num), CommitPolicy(strategy="rank_agreement"),
+            rank_agreement_refs=refs,
+        )
+        licensed = decide(
+            scores, (adj, num),
+            CommitPolicy(
+                strategy="rank_agreement",
+                shared_translation_licenses_glosskey=True,
+            ),
+            rank_agreement_refs=refs,
+        )
+        self.assertEqual(still_unresolved.level, "unresolved")
+        self.assertEqual(licensed.level, "glosskey")
+
     def test_a_weak_gloss_margin_publishes_less_without_escalating(self):
         decision = decide(self.scores(0.5, 0.5), NUEVO, CommitPolicy(leaf_minimum=0.9))
         self.assertEqual(decision.level, "glosskey")

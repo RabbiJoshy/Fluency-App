@@ -66,6 +66,7 @@ from fluency.wsd.menus import MenuAnalysis, require_analysis
 
 EmitLevel = Literal["leaf", "glosskey", "tuple", "unresolved"]
 UncertainAxis = Literal["none", "gloss", "tuple"]
+UnresolvedOutcome = Literal["assign", "abstain"]
 
 EMIT_LEVELS: tuple[EmitLevel, ...] = ("leaf", "glosskey", "tuple", "unresolved")
 
@@ -86,6 +87,8 @@ class CommitPolicy:
     temperature: float = 0.02
     strategy: Literal["margin", "rank_agreement"] = "margin"
     evidence_guards: bool = False
+    unresolved_outcome: UnresolvedOutcome = "assign"
+    shared_translation_licenses_glosskey: bool = False
 
     def __post_init__(self) -> None:
         for name, value in (
@@ -99,6 +102,8 @@ class CommitPolicy:
             raise ValueError("temperature must be positive")
         if self.strategy not in {"margin", "rank_agreement"}:
             raise ValueError("unsupported commit strategy")
+        if self.unresolved_outcome not in {"assign", "abstain"}:
+            raise ValueError("unsupported unresolved outcome")
 
     @property
     def enabled(self) -> bool:
@@ -191,6 +196,7 @@ def decide(
         leaves = []
         glosskeys = []
         tuples = []
+        translations = []
         for menu_analysis_id, sense_id in rank_agreement_refs:
             analysis = require_analysis(analyses, menu_analysis_id)
             sense = analysis.sense(sense_id)
@@ -203,12 +209,20 @@ def decide(
                 )
             )
             tuples.append((analysis.part_of_speech, analysis.headword.casefold()))
+            translations.append((sense.translation or "").casefold().strip())
         if len(set(leaves)) == 1:
             return CommitDecision("leaf", "none", margins, False)
         if len(set(glosskeys)) == 1:
             return CommitDecision("glosskey", "gloss", margins, False)
         if len(set(tuples)) == 1:
             return CommitDecision("tuple", "gloss", margins, False)
+        if (
+            policy.shared_translation_licenses_glosskey
+            and translations
+            and all(translations)
+            and len(set(translations)) == 1
+        ):
+            return CommitDecision("glosskey", "gloss", margins, False)
         return CommitDecision("unresolved", "tuple", margins, True)
     if margins["tuple"] < policy.tuple_minimum:
         return CommitDecision(

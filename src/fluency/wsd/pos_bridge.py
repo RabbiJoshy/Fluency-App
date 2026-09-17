@@ -26,6 +26,8 @@ Wiktionary
 
 from __future__ import annotations
 
+from typing import Sequence
+
 
 # Dictionary categories that say nothing about part of speech, so a mismatch
 # against them is not evidence of a wrong sense.
@@ -46,7 +48,11 @@ WIKTIONARY_BRIDGE = {
     # `contraction` appears wherever a preposition has fused with an article,
     # which Universal Dependencies expresses as ADP or DET on the fused token.
     "ADP": frozenset({"prep", "contraction"}),
-    "DET": frozenset({"det", "article", "contraction", "adj", "pron"}),
+    # DET must not keep ``pron``. Portuguese ``as`` is tagged DET in
+    # ``as pessoas`` and PRON in ``vi-as``; leaving both analyses in for DET
+    # made rank-agreement unresolved between "the" and "them". Object
+    # pronouns still match on the PRON tag.
+    "DET": frozenset({"det", "article", "contraction", "adj"}),
     "PRON": frozenset({"pron", "det", "article", "contraction"}),
     "NUM": frozenset({"num", "adj", "det"}),
     "PART": frozenset({"particle", "adv", "prep"}),
@@ -91,6 +97,67 @@ def is_orthogonal(provider: str, dictionary_pos: str) -> bool:
         raise PosBridgeError(f"no POS bridge for provider {provider!r}")
     _mapping, orthogonal = bridge
     return (dictionary_pos or "").lower() in orthogonal
+
+
+def dictionary_pos_family(dictionary_pos: str) -> str:
+    """Collapse provider POS labels to one family.
+
+    SpanishDict files verbs as ``transitive verb`` / ``pronominal verb``.
+    Wiktionary uses ``verb``. The family is what a one-category menu is claiming,
+    not a UD tag.
+    """
+
+    pos = (dictionary_pos or "").strip().lower()
+    if "verb" in pos or pos == "aux":
+        return "verb"
+    if pos in {"noun", "name", "propn"}:
+        return "noun"
+    if pos in {"adj", "det", "article", "num"}:
+        return "adj"
+    if pos in {"pron"}:
+        return "pron"
+    if pos in {"prep", "adp", "contraction"}:
+        return "adp"
+    if pos in {"adv", "particle"}:
+        return "adv"
+    if pos in {"intj", "interjection"}:
+        return "intj"
+    if pos in {"conj", "cconj", "sconj"}:
+        return "conj"
+    if pos in {"phrase", "proverb", "prep_phrase"}:
+        return "phrase"
+    return pos or "unknown"
+
+
+# UD tags a closed one-category menu is still allowed to wear. Inflected verbs
+# in subtitles are routinely tagged NOUN/PROPN/ADJ; clitic commands are filed
+# as PHRASE; fused prepositions as PRON. This is not a POS filter — it only
+# decides whether a total POS miss is tagger noise or a real two-word fight.
+_FAMILY_TAGGER_ALIASES = {
+    "verb": frozenset({"VERB", "AUX", "NOUN", "PROPN", "ADJ", "ADV", "INTJ", "PRON", "SCONJ", "PART", "X"}),
+    "phrase": frozenset({"VERB", "AUX", "INTJ", "NOUN", "PROPN"}),
+    "intj": frozenset({"INTJ", "PROPN", "NOUN", "X", "ADV", "VERB"}),
+    "adj": frozenset({"ADJ", "NOUN", "PROPN", "DET", "NUM"}),
+    "noun": frozenset({"NOUN", "PROPN", "INTJ"}),
+    "adp": frozenset({"ADP", "DET", "PRON", "SCONJ", "PART"}),
+    "adv": frozenset({"ADV", "ADJ", "PRON", "ADP"}),
+    "pron": frozenset({"PRON", "DET"}),
+    "conj": frozenset({"CCONJ", "SCONJ", "ADP"}),
+}
+
+
+def tagger_pos_is_noise_against_single_family(
+    *,
+    dictionary_parts_of_speech: Sequence[str],
+    observed_pos: str | None,
+) -> bool:
+    """True when the menu is one family and the tagger's tag is a known alias."""
+
+    families = {dictionary_pos_family(pos) for pos in dictionary_parts_of_speech}
+    if len(families) != 1 or not observed_pos:
+        return False
+    family = next(iter(families))
+    return observed_pos.upper() in _FAMILY_TAGGER_ALIASES.get(family, frozenset())
 
 
 def compatible(provider: str, observed_pos: str | None, dictionary_pos: str) -> bool:

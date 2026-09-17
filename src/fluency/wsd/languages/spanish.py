@@ -31,7 +31,7 @@ ORTHOGONAL_POS = frozenset({"PHRASE"})
 TRUSTED_POS = frozenset({"VERB", "NOUN", "ADJ", "ADV", "INTJ"})
 POS_BRIDGE = {
     "DET": frozenset({"ADJ", "DET", "PRON"}),
-    "PRON": frozenset({"PRON", "ADJ", "DET"}),
+    "PRON": frozenset({"PRON", "ADJ", "DET", "ADV"}),
     "NUM": frozenset({"ADJ", "NOUN", "DET"}),
     "PART": frozenset({"ADV", "ADP", "PRON"}),
     "PROPN": frozenset({"PROPN", "NOUN"}),
@@ -145,8 +145,23 @@ def _deaccent(value: str) -> str:
     )
 
 
+def _canonical_spanishdict_pos(sense_pos: str) -> str:
+    """SpanishDict verb subtypes are still verbs.
+
+    The menu writes ``transitive verb``, ``intransitive verb``, ``pronominal
+    verb``. The tagger writes ``VERB``. Comparing the strings made every
+    analysis fail, the empty-set fallback fire, and v13 abstain on inflected
+    forms such as ``celebrarlo`` / ``dárselo``.
+    """
+
+    pos = str(sense_pos or "").strip().upper()
+    if "VERB" in pos:
+        return "VERB"
+    return pos
+
+
 def sense_compatible_bridged(sense_pos: str, observed_pos: str) -> bool:
-    sense_pos = str(sense_pos or "").upper()
+    sense_pos = _canonical_spanishdict_pos(sense_pos)
     observed_pos = str(observed_pos or "").upper()
     if sense_pos in ORTHOGONAL_POS:
         return True
@@ -584,13 +599,16 @@ class SpanishWSDAdapter:
 
     language = "es"
 
-    _WORD = re.compile(r"[0-9A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+")
+    _WORD_CHARS = r"0-9A-Za-zÁÉÍÓÚÜÑáéíóúüñ"
+    _WORD = re.compile(rf"[{_WORD_CHARS}]+")
 
     def locate(self, sentence: str, surface_form: str) -> tuple[TargetOccurrence, ...]:
         from fluency.languages.spanish.surfaces import normalize_surface
+        from fluency.wsd.languages.base import hyphenated_surface_occurrences
 
         surface_key = normalize_surface(surface_form)
         found: list[TargetOccurrence] = []
+        seen: set[tuple[int, int]] = set()
         for match in self._WORD.finditer(sentence or ""):
             observed = match.group(0)
             if normalize_surface(observed) != surface_key:
@@ -603,4 +621,15 @@ class SpanishWSDAdapter:
                     end=match.end(),
                 )
             )
+            seen.add((match.start(), match.end()))
+        for item in hyphenated_surface_occurrences(
+            sentence,
+            surface_form,
+            normalize=normalize_surface,
+            word_chars=self._WORD_CHARS,
+        ):
+            span = (item.start, item.end)
+            if span not in seen:
+                found.append(item)
+                seen.add(span)
         return tuple(found)

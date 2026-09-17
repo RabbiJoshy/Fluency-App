@@ -6,11 +6,10 @@ module. French requires one because of elision (``l'eau``), which Portuguese
 does not have.
 
 Hyphenated clitics (``da-me``, ``ve-lo``) and mesoclisis (``far-me-ia``) are
-deliberately NOT joined into one token here. The inventory is built from a
-frequency list whose tokenizer split on hyphens, so no hyphenated card exists to
-locate; scanning for the parts is what matches the cards that do exist. This
-mirrors how the harvester already matches them -- hyphen is a word boundary for
-`SurfaceMatcher`, so ``Da-me o livro`` yields the `da`, `me` and `livro` cards.
+deliberately NOT joined into one token when locating the *parts*: the frequency
+list's tokenizer split on hyphens, so ``Da-me o livro`` still yields the ``da``
+and ``me`` cards. Lexical hyphenated cards that the inventory *does* keep
+(``bem-vindo``, ``hei-de``) are located as the hyphenated span itself.
 """
 
 from __future__ import annotations
@@ -18,7 +17,7 @@ from __future__ import annotations
 import re
 
 from fluency.languages.portuguese.surfaces import normalize_surface
-from fluency.wsd.languages.base import TargetOccurrence
+from fluency.wsd.languages.base import TargetOccurrence, hyphenated_surface_occurrences
 
 
 class PortugueseWSDAdapter:
@@ -26,11 +25,13 @@ class PortugueseWSDAdapter:
 
     # Portuguese uses acute, circumflex, grave, tilde and cedilla. Accents are
     # contrastive at the surface, so they are matched, never folded away.
-    _WORD = re.compile(r"[0-9A-Za-zÁÂÃÀÉÊÍÓÔÕÚÜÇáâãàéêíóôõúüç]+")
+    _WORD_CHARS = r"0-9A-Za-zÁÂÃÀÉÊÍÓÔÕÚÜÇáâãàéêíóôõúüç"
+    _WORD = re.compile(rf"[{_WORD_CHARS}]+")
 
     def locate(self, sentence: str, surface_form: str) -> tuple[TargetOccurrence, ...]:
         surface_key = normalize_surface(surface_form)
         found: list[TargetOccurrence] = []
+        seen: set[tuple[int, int]] = set()
         for match in self._WORD.finditer(sentence or ""):
             observed = match.group(0)
             if normalize_surface(observed) != surface_key:
@@ -43,4 +44,15 @@ class PortugueseWSDAdapter:
                     end=match.end(),
                 )
             )
+            seen.add((match.start(), match.end()))
+        for item in hyphenated_surface_occurrences(
+            sentence,
+            surface_form,
+            normalize=normalize_surface,
+            word_chars=self._WORD_CHARS,
+        ):
+            span = (item.start, item.end)
+            if span not in seen:
+                found.append(item)
+                seen.add(span)
         return tuple(found)

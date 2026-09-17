@@ -61,6 +61,18 @@ class SpanishV5CandidatePolicyTests(unittest.TestCase):
         self.assertTrue(sense_compatible_bridged("CONTRACTION", "ADP"))
         self.assertTrue(sense_compatible_bridged("ADP", "ADP"))
 
+    def test_interrogative_adverbs_survive_a_pronoun_tag(self) -> None:
+        """spaCy tags ¿cómo / dónde / cuándo as PRON; the menu is ADV."""
+
+        self.assertTrue(sense_compatible_bridged("ADV", "PRON"))
+        self.assertFalse(sense_compatible_bridged("INTJ", "PRON"))
+
+    def test_spanishdict_verb_subtypes_are_verbs(self) -> None:
+        self.assertTrue(sense_compatible_bridged("transitive verb", "VERB"))
+        self.assertTrue(sense_compatible_bridged("pronominal verb", "AUX"))
+        self.assertTrue(sense_compatible_bridged("intransitive verb", "VERB"))
+        self.assertFalse(sense_compatible_bridged("transitive verb", "DET"))
+
     def test_se_only_gate_is_conservative(self):
         self.assertTrue(se_reflexive_evidence("casa", "Se casa hoy"))
         self.assertFalse(se_reflexive_evidence("casa", "Casa a la pareja"))

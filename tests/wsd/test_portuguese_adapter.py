@@ -24,10 +24,18 @@ class PortugueseLocateTests(unittest.TestCase):
         self.assertEqual(self.spans("Esta é a minha casa.", "casa"), [("casa", 15, 19)])
 
     def test_hyphen_is_a_boundary_so_clitics_are_reachable(self) -> None:
-        """The frequency list split on hyphens, so no `da-me` card exists."""
+        """Clitic parts stay findable even though the written form is hyphenated."""
 
         self.assertEqual(self.spans("Dá-me o livro", "me"), [("me", 3, 5)])
         self.assertEqual(self.spans("Dá-me o livro", "dá"), [("Dá", 0, 2)])
+
+    def test_lexical_hyphenated_cards_locate_the_whole_span(self) -> None:
+        found = self.adapter.locate("Ei, bem-vindo ao sítio.", "bem-vindo")
+        self.assertEqual(found[0].observed_text, "bem-vindo")
+        found = self.adapter.locate("Não sei o que hei-de fazer.", "hei-de")
+        self.assertEqual(found[0].observed_text, "hei-de")
+        found = self.adapter.locate("Foi no último fim-de-semana.", "fim-de-semana")
+        self.assertEqual(found[0].observed_text, "fim-de-semana")
 
     def test_accents_are_contrastive(self) -> None:
         """acao is not a spelling of ação; matching it would merge two cards."""

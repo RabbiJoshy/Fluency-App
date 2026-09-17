@@ -14,6 +14,10 @@ from fluency.wsd.alignment import AlignmentCorrector
 from fluency.wsd.candidate_policy import CandidatePolicy
 from fluency.wsd.calibration import Calibrator
 from fluency.wsd.commit import CommitPolicy, decide as commit_decide
+from fluency.wsd.pos_bridge import (
+    dictionary_pos_family,
+    tagger_pos_is_noise_against_single_family,
+)
 from fluency.wsd.contracts import (
     SelectedTuple,
     SelectionProjection,
@@ -605,12 +609,28 @@ class ClosedMenuWSDRunner:
                 for item in preparation_evidence.get("indistinguishable_leaf_refs", ())
             }
             if preparation_evidence.get("pos_match_status") == "no_compatible_analysis":
-                emitted_level = "unresolved"
-                evidence_guard_reasons.append("dictionary_has_no_matching_part_of_speech")
+                if tagger_pos_is_noise_against_single_family(
+                    dictionary_parts_of_speech=tuple(
+                        analysis.part_of_speech for analysis in provider_analyses
+                    ),
+                    observed_pos=preparation_evidence.get("observed_pos"),
+                ):
+                    # Menu is one category; the tagger named a known alias.
+                    # License the parent, not a leaf and not an abstain.
+                    if emitted_level in {"leaf", "unresolved"}:
+                        emitted_level = "tuple"
+                    evidence_guard_reasons.append(
+                        "tagger_pos_disagrees_with_single_menu_category"
+                    )
+                else:
+                    emitted_level = "unresolved"
+                    evidence_guard_reasons.append(
+                        "dictionary_has_no_matching_part_of_speech"
+                    )
             elif (
                 preparation_evidence.get("pos_match_kind") == "bridged_only"
                 and str(preparation_evidence.get("observed_pos") or "").upper() == "PRON"
-                and str(selected_analysis.part_of_speech or "").upper() in {"ADJ", "DET"}
+                and dictionary_pos_family(selected_analysis.part_of_speech) == "adj"
             ):
                 emitted_level = "unresolved"
                 evidence_guard_reasons.append("pronoun_only_matches_possessive_bridge")
@@ -655,6 +675,10 @@ class ClosedMenuWSDRunner:
                 "glosskey_minimum": self.profile.commit.glosskey_minimum,
                 "tuple_minimum": self.profile.commit.tuple_minimum,
                 "evidence_guards": self.profile.commit.evidence_guards,
+                "unresolved_outcome": self.profile.commit.unresolved_outcome,
+                "shared_translation_licenses_glosskey": (
+                    self.profile.commit.shared_translation_licenses_glosskey
+                ),
             },
         }
         if evidence_guard_reasons:
@@ -743,6 +767,32 @@ class ClosedMenuWSDRunner:
                 combined_ranked=combined_ranked,
                 emitted_level=augmented_commit.level,
                 raw_axis_margins=augmented_commit.margins,
+            )
+
+        if (
+            self.profile.commit.unresolved_outcome == "abstain"
+            and emitted_level == "unresolved"
+        ):
+            evidence["disposition"] = {
+                "status": "abstained",
+                "recommended_publication_status": "abstained",
+                "minimum_confidence": self.profile.disposition.minimum_confidence,
+                "weak": self.profile.disposition.weak,
+                "reason": "commit_unresolved",
+            }
+            return WSDAssignment(
+                card_id=request.card_id,
+                surface_form=request.surface_form,
+                sentence_id=request.sentence_id,
+                status="abstained",
+                sense_menu_content_id=request.sense_menu_content_id,
+                menu_analysis_id=None,
+                selected_sense_id=None,
+                selected_tuple=None,
+                decision_path=tuple(decision_path),
+                evidence=evidence,
+                confidence=None,
+                model_revisions=self._model_revisions(),
             )
 
         recommended_status = self.profile.disposition.status(confidence)

@@ -104,6 +104,26 @@ class WSDProfileTests(unittest.TestCase):
                 self.assertFalse(profile["alignment"]["enabled"])
                 self.assertNotIn("alignment.model_revision", model_revisions(profile))
 
+    def test_v13_profiles_abstain_when_unresolved_for_every_provider(self):
+        for language in ("es", "pt", "cs"):
+            with self.subTest(language=language):
+                path = (
+                    REPOSITORY_ROOT
+                    / "config"
+                    / "wsd"
+                    / "models"
+                    / f"{language}-v13-1.json"
+                )
+                profile = json.loads(path.read_text(encoding="utf-8"))
+                self.assertEqual(
+                    profile["source_method_id"],
+                    "provider-neutral-v13-abstain-unresolved",
+                )
+                self.assertEqual(profile["commit"]["unresolved_outcome"], "abstain")
+                self.assertTrue(profile["commit"]["shared_translation_licenses_glosskey"])
+                self.assertFalse(profile["multiword"]["enabled"])
+                self.assertFalse(profile["alignment"]["enabled"])
+
 
 if __name__ == "__main__":
     unittest.main()
