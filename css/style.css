@@ -5078,8 +5078,8 @@
             justify-content: flex-end;
             align-items: center;
             gap: 5px;
-            flex: 0 1 auto;
-            max-width: 42%;
+            flex: 0 0 auto;
+            max-width: none;
             margin: 0;
         }
         .example-ticks.is-dense {
