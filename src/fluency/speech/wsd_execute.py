@@ -23,7 +23,7 @@ import os
 import re
 import time
 from pathlib import Path
-from typing import Any, Iterable, Sequence
+from typing import Any, Iterable, Mapping, Sequence
 
 from fluency.nlp.models import pin, setting
 from fluency.nlp.embeddings import ensure_embeddings, load_cache
@@ -88,6 +88,9 @@ SUPPORTED_PROFILE_CONSTRAINT_MODES = {
     "es-v13-1": "filter",
     "pt-v13-1": "filter",
     "cs-v13-1": "filter",
+    "es-v14-1": "filter",
+    "pt-v14-1": "filter",
+    "cs-v14-1": "filter",
 }
 PROFILE_LANGUAGES = {
     "es-v6-1": "es", "es-v7-1": "es", "pt-v7-1": "pt",
@@ -98,6 +101,7 @@ PROFILE_LANGUAGES = {
     "es-v11-1": "es", "pt-v11-1": "pt", "cs-v11-1": "cs",
     "es-v12-1": "es", "pt-v12-1": "pt", "cs-v12-1": "cs",
     "es-v13-1": "es", "pt-v13-1": "pt", "cs-v13-1": "cs",
+    "es-v14-1": "es", "pt-v14-1": "pt", "cs-v14-1": "cs",
 }
 ALIGNMENT_PROFILES = frozenset({"es-v8-english-1", "pt-v8-english-1"})
 RANK_AGREEMENT_PROFILES = frozenset(
@@ -106,6 +110,7 @@ RANK_AGREEMENT_PROFILES = frozenset(
         "es-v11-1", "pt-v11-1", "cs-v11-1",
         "es-v12-1", "pt-v12-1", "cs-v12-1",
         "es-v13-1", "pt-v13-1", "cs-v13-1",
+        "es-v14-1", "pt-v14-1", "cs-v14-1",
     }
 )
 EVIDENCE_GUARD_PROFILES = frozenset(
@@ -114,9 +119,12 @@ EVIDENCE_GUARD_PROFILES = frozenset(
         "es-v11-1", "pt-v11-1", "cs-v11-1",
         "es-v12-1", "pt-v12-1", "cs-v12-1",
         "es-v13-1", "pt-v13-1", "cs-v13-1",
+        "es-v14-1", "pt-v14-1", "cs-v14-1",
     }
 )
-ABSTAIN_UNRESOLVED_PROFILES = frozenset({"es-v13-1", "pt-v13-1", "cs-v13-1"})
+ABSTAIN_UNRESOLVED_PROFILES = frozenset(
+    {"es-v13-1", "pt-v13-1", "cs-v13-1", "es-v14-1", "pt-v14-1", "cs-v14-1"}
+)
 
 MORPH_VALUE_MAP = {
     ("Number", "Sing"): ("number", "singular"),
@@ -231,6 +239,7 @@ def occurrence_pos_tags(
     model_pin: str = SPACY_POS_MODEL,
     model: Any | None = None,
     adapter: Any | None = None,
+    cached_by_surface: Mapping[tuple[str, str], str] | None = None,
     # Defaults to v7's pinned batch size of 1. Batching does not change
     # per-document tags, but a transformer at batch size 1 made tagging the
     # bottleneck of a 2,000-card run, so callers may raise it deliberately.
@@ -245,6 +254,9 @@ def occurrence_pos_tags(
     runner but never populated it, so its AUX bridge could not affect a deck.
     Repeated surface occurrences are used only when every occurrence has the
     same observed POS; disagreement is explicit and passes ``None``.
+
+    ``cached_by_surface`` is ``(display_form, sentence_id) -> tag`` from the
+    pre-WSD pairs document. Hits are not sent to spaCy.
     """
 
     pinned_name, _pinned_version = model_pin.split("@", 1)
@@ -252,6 +264,30 @@ def occurrence_pos_tags(
         raise RuntimeError(
             f"occurrence POS model {model_name!r} does not match the pinned revision {model_pin}"
         )
+    observed: dict[tuple[str, str], str | None] = {}
+    diagnostics: dict[tuple[str, str], dict[str, Any]] = {}
+    uncached: list[tuple[dict[str, Any], dict[str, Any], str, str, str]] = []
+    cache = cached_by_surface or {}
+    for item in work:
+        card, _menu_card, sentence_id, _text, _translation = item
+        key = (card["card_id"], sentence_id)
+        frozen = cache.get((card["display_form"], sentence_id))
+        if frozen is not None:
+            observed[key] = frozen
+            diagnostics[key] = {
+                "status": "observed",
+                "observed_pos": frozen,
+                "occurrence_tags": [frozen],
+                "observed_grammar": {},
+                "canonicalized_target_for_model": False,
+                "model_revision": model_pin,
+                "source": "prewsd-pairs",
+            }
+        else:
+            uncached.append(item)
+    if not uncached:
+        return observed, diagnostics
+    work = uncached
     model = load_pinned(model_pin, model=model)
     grouped: dict[
         str,
@@ -293,8 +329,6 @@ def occurrence_pos_tags(
     # therefore cannot find "acao" at all -- it would return no occurrence and
     # the tag would silently be None.
     adapter = adapter or SpanishWSDAdapter()
-    observed: dict[tuple[str, str], str | None] = {}
-    diagnostics: dict[tuple[str, str], dict[str, Any]] = {}
     for document, text in zip(model.pipe(grouped, batch_size=batch_size), grouped):
         for (
             key,
@@ -666,6 +700,11 @@ def main() -> None:
         disposition=DispositionPolicy(minimum_confidence=None, weak="retain"),
         candidate_preparation=True,
         multiword_candidates=multiword_index is not None,
+        active_projection=(
+            "mwe_augmented"
+            if multiword_index is not None and args.profile_id.endswith("-v14-1")
+            else "provider_only"
+        ),
         commit=CommitPolicy(
             strategy=(
                 "rank_agreement"
@@ -695,8 +734,9 @@ def main() -> None:
     # be handed a ledger that was rewritten between conditioning and execution
     # -- which is exactly what a shared raw/surfaces/<lang>/ledger.json allows.
     prewsd_set = None
+    prewsd_pos: dict[tuple[str, str], str] = {}
     if args.prewsd:
-        from fluency.surfaces.prewsd import ID_PREFIX, verify
+        from fluency.surfaces.prewsd import ID_PREFIX, occurrence_pos_lookup, verify
 
         drifted = verify(args.prewsd)
         if drifted:
@@ -705,7 +745,10 @@ def main() -> None:
         ex = json.loads((args.prewsd / "examples.json").read_text(encoding="utf-8"))
         pr = json.loads((args.prewsd / "pairs.json").read_text(encoding="utf-8"))
         cols = ex["columns"]
-        ids = [ID_PREFIX + i for i in cols["sentence_id"]]
+        ids = [
+            i if str(i).startswith(ID_PREFIX) else ID_PREFIX + str(i)
+            for i in cols["sentence_id"]
+        ]
         sentences = {
             sid: {"sentence_id": sid,
                   "target": {"text": cols["target"][n]},
@@ -714,9 +757,13 @@ def main() -> None:
         }
         prewsd_set = {form: [ids[i] for i in entry["eligible"]]
                       for form, entry in pr["surfaces"].items()}
+        prewsd_pos = occurrence_pos_lookup(ex, pr)
         manifest = json.loads((args.prewsd / "manifest.json").read_text(encoding="utf-8"))
         print(f"pre-WSD set: {args.prewsd.name}, {manifest['sentences']:,} sentences, "
               f"{manifest['surfaces']:,} surfaces, hashes verified")
+        if prewsd_pos:
+            pin_note = pr.get("occurrence_pos_model") or "unpinned"
+            print(f"  occurrence POS: {len(prewsd_pos):,} frozen pairs ({pin_note})")
 
     ledger_path_to_use = None if prewsd_set is not None else args.ledger
     if ledger_path_to_use is None and prewsd_set is None:
@@ -854,6 +901,7 @@ def main() -> None:
             model_name=args.spacy_model or pos_pin.split("@", 1)[0],
             model_pin=pos_pin,
             adapter=binding.adapter_factory(),
+            cached_by_surface=prewsd_pos,
             batch_size=args.pos_batch_size,
         )
     if multiword_index is not None:

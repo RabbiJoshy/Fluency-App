@@ -21,6 +21,7 @@ from fluency.wsd.pos_bridge import (
 from fluency.wsd.contracts import (
     SelectedTuple,
     SelectionProjection,
+    SelectionProjectionName,
     WSDAssignment,
 )
 from fluency.wsd.multiword import (
@@ -50,6 +51,7 @@ class WSDExecutionProfile:
     multiword_candidates: bool = False
     specialists: bool = False
     commit: CommitPolicy = CommitPolicy()
+    active_projection: SelectionProjectionName = "provider_only"
 
     def __post_init__(self) -> None:
         if self.tuple_vote_minimum_margin < 0:
@@ -68,6 +70,7 @@ class WSDComponents:
     candidate_policy: CandidatePolicy | None = None
     multiword_index: Mapping[str, Sequence[MultiwordEntry]] | None = None
     multiword_inventory_content_id: str | None = None
+    overlay_provider: Any | None = None
     specialists: tuple[Specialist, ...] = ()
     representations: Mapping[RepresentationRef, Any] | None = None
     context_model_revisions: Mapping[str, str] = field(default_factory=dict)
@@ -167,12 +170,17 @@ class ClosedMenuWSDRunner:
     ) -> None:
         self.profile = profile
         self.components = components
+        candidate_source = (
+            components.multiword_index
+            if components.multiword_index is not None
+            else components.overlay_provider
+        )
         required = (
             ("token reranker", profile.token_tuple_vote, components.token_reranker),
             ("calibrator", profile.calibration, components.calibrator),
             ("aligner", profile.alignment, components.aligner),
             ("candidate policy", profile.candidate_preparation, components.candidate_policy),
-            ("multiword index", profile.multiword_candidates, components.multiword_index),
+            ("multiword index", profile.multiword_candidates, candidate_source),
         )
         for name, enabled, component in required:
             if enabled and component is None:
@@ -318,6 +326,26 @@ class ClosedMenuWSDRunner:
                         inventory_content_id=self.components.multiword_inventory_content_id,
                     )
                 )
+
+        if self.components.overlay_provider is not None:
+            occ_span = (occurrences[0].start, occurrences[0].end) if occurrences else None
+            for analysis, overlay_entry, span in self.components.overlay_provider.candidates_for_occurrence(
+                card_id=request.card_id,
+                surface_form=request.surface_form,
+                sentence=request.sentence,
+                occurrence_span=occ_span,
+            ):
+                combined_analyses = combined_analyses + (analysis,)
+                multiword_records.append({
+                    "expression": overlay_entry.expression,
+                    "expression_id": overlay_entry.entry_id,
+                    "kind": overlay_entry.kind,
+                    "span": list(span),
+                    "corpus_frequency": overlay_entry.corpus_frequency,
+                    "menu_analysis_id": analysis.menu_analysis_id,
+                    "translation": overlay_entry.translations[0] if overlay_entry.translations else "",
+                    "domain_tags": list(overlay_entry.domain_tags),
+                })
 
         score_kwargs: dict[str, Any] = {}
         import inspect
@@ -721,6 +749,7 @@ class ClosedMenuWSDRunner:
                 raw_axis_margins=commit_decision.margins,
             )
         }
+        word_leaf_record: dict[str, Any] | None = None
         if multiword_records:
             augmented_analysis = require_analysis(
                 combined_analyses, augmented_selected_score.menu_analysis_id
@@ -768,10 +797,47 @@ class ClosedMenuWSDRunner:
                 emitted_level=augmented_commit.level,
                 raw_axis_margins=augmented_commit.margins,
             )
+            # Dual-write: whenever an MWE candidate is selected/wins, capture
+            # the best licensed provider word-leaf beside it.
+            if is_multiword_analysis(augmented_analysis):
+                word_leaf_record = {
+                    "menu_analysis_id": selected_analysis.menu_analysis_id,
+                    "sense_id": selected_sense.sense_id,
+                    "headword": selected_analysis.headword,
+                    "part_of_speech": selected_analysis.part_of_speech,
+                    "translation": selected_sense.translation,
+                    "score": selected_score.score,
+                    "emitted_level": emitted_level,
+                }
+        evidence["word_leaf"] = word_leaf_record
+
+        active_proj_name: SelectionProjectionName = "provider_only"
+        final_analysis = selected_analysis
+        final_sense = selected_sense
+        final_level = emitted_level
+
+        if (
+            self.profile.active_projection == "mwe_augmented"
+            and "mwe_augmented" in projections
+        ):
+            active_proj_name = "mwe_augmented"
+            augmented_proj = projections["mwe_augmented"]
+            if augmented_proj.source_kind == "multiword":
+                final_analysis = augmented_analysis
+                final_sense = augmented_analysis.sense(augmented_selected_score.sense_id)
+                final_level = augmented_commit.level
+                evidence["selected_multiword"] = augmented_analysis.headword
+            else:
+                final_analysis = selected_analysis
+                final_sense = selected_sense
+                final_level = emitted_level
+                evidence["selected_multiword"] = None
+        else:
+            evidence["selected_multiword"] = None
 
         if (
             self.profile.commit.unresolved_outcome == "abstain"
-            and emitted_level == "unresolved"
+            and final_level == "unresolved"
         ):
             evidence["disposition"] = {
                 "status": "abstained",
@@ -808,18 +874,18 @@ class ClosedMenuWSDRunner:
             sentence_id=request.sentence_id,
             status="assigned",
             sense_menu_content_id=request.sense_menu_content_id,
-            menu_analysis_id=selected_analysis.menu_analysis_id,
-            selected_sense_id=selected_sense.sense_id,
+            menu_analysis_id=final_analysis.menu_analysis_id,
+            selected_sense_id=final_sense.sense_id,
             selected_tuple=SelectedTuple(
-                headword=selected_analysis.headword,
-                part_of_speech=selected_analysis.part_of_speech,
+                headword=final_analysis.headword,
+                part_of_speech=final_analysis.part_of_speech,
             ),
             decision_path=tuple(decision_path),
             evidence=evidence,
             confidence=confidence,
             model_revisions=self._model_revisions(),
-            emitted_level=emitted_level,
+            emitted_level=final_level,
             decision_kind=decision_kind,
             selection_projections=projections,
-            active_selection_projection="provider_only",
+            active_selection_projection=active_proj_name,
         )

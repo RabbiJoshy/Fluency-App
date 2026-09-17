@@ -114,7 +114,9 @@ class SpeechOccurrencePOSTests(unittest.TestCase):
 
         with patch.dict(sys.modules, {"spacy": fake_spacy}):
             with self.assertRaisesRegex(RuntimeError, "pinned revision"):
-                occurrence_pos_tags(())
+                occurrence_pos_tags(
+                    (work_item("card_es_" + "z" * 32, "hola", "sentence_" + "z" * 32, "Hola."),)
+                )
 
     def test_unique_occurrence_supplies_observed_pos_and_pinned_evidence(self):
         sentence = "Yo quiero ir."
@@ -138,6 +140,19 @@ class SpeechOccurrencePOSTests(unittest.TestCase):
         self.assertEqual(evidence[key]["occurrence_tags"], ["VERB"])
         self.assertEqual(evidence[key]["model_revision"], SPACY_POS_MODEL)
         self.assertEqual(model.batch_sizes, [1], "v7 pinned batch size 1; keep it the default")
+
+    def test_frozen_pair_pos_is_not_sent_to_spacy(self):
+        sentence = "Te tomo en serio."
+        model = FakeModel({})
+        key = ("card_es_" + "c" * 32, "sentence_" + "3" * 32)
+        observed, evidence = occurrence_pos_tags(
+            (work_item(key[0], "serio", key[1], sentence),),
+            model=model,
+            cached_by_surface={("serio", key[1]): "ADV"},
+        )
+        self.assertEqual(observed[key], "ADV")
+        self.assertEqual(evidence[key]["source"], "prewsd-pairs")
+        self.assertEqual(model.batch_sizes, [])
 
     def test_repeated_occurrences_with_conflicting_pos_do_not_guess(self):
         sentence = "Como pan como siempre."

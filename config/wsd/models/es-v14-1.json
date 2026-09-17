@@ -1,0 +1,82 @@
+{
+  "config_version": "wsd-model-profile/v1",
+  "profile_id": "es-v14-1",
+  "language": "es",
+  "execution_status": "ready",
+  "source_method_id": "provider-neutral-v14-mwe-offered",
+  "method_summary": "v13 abstain-unresolved plus MWE candidate injection with non-decomposition policy and dual-write word-leaf.",
+  "provider_prior": {
+    "enabled": true,
+    "source": "wiktionary_menu_order",
+    "weight": 0.02,
+    "decay": 0.5
+  },
+  "gloss": {
+    "enabled": true,
+    "model_revision": "gemini-embedding-001",
+    "task_type": "SEMANTIC_SIMILARITY",
+    "dimensions": 3072,
+    "cache_lookup": "exact_text",
+    "translation_overlap_bonus": 0.04
+  },
+  "occurrence_pos": {
+    "enabled": true,
+    "model_revision": "es_dep_news_trf@3.8.0",
+    "role": "provider-neutral_pos_and_grammar_evidence"
+  },
+  "constrain": {
+    "pos_filter": "wiktionary_pos_bridge",
+    "grammar_gate": "wiktionary_machine_readable_contradictions_removed",
+    "companion_gate": "wiktionary_required_companion_attached_to_target",
+    "clitic_gate": "active_es_clitic_pronoun_filter",
+    "pronominal_gate": "active_prunes_pronominal_senses_when_clitic_absent",
+    "domain_penalty": 0.04
+  },
+  "multiword": {
+    "enabled": true,
+    "inventory": "mwe_merged/v1",
+    "snapshot_path": "raw/mwe/mwe-es-2026-09-17-v14/mwe_merged.json",
+    "filter_policy": "v14_non_decomposition",
+    "minimum_corpus_frequency": 1,
+    "role": "stored_mwe_augmented_projection",
+    "active_projection": "mwe_augmented",
+    "dual_write_word_leaf": true,
+    "single_scoring_pass": true
+  },
+  "commit": {
+    "strategy": "rank_agreement_with_machine_readable_guards",
+    "choices": [
+      "provider_order",
+      "raw_gloss",
+      "forced_selection"
+    ],
+    "status": "unresolved_abstains_parent_or_leaf_when_licensed",
+    "unresolved_outcome": "abstain",
+    "shared_translation_licenses_glosskey": true,
+    "raw_margins_are_confidence": false
+  },
+  "specialists": {
+    "enabled": false
+  },
+  "token_tuple_vote": {
+    "enabled": false
+  },
+  "calibration": {
+    "enabled": false
+  },
+  "alignment": {
+    "enabled": false
+  },
+  "generative_escalation": false,
+  "asset_gate": {
+    "required_before_ready": [
+      "gemini_exact_text_embedding_cache",
+      "es_dep_news_trf",
+      "mwe_merged_inventory"
+    ],
+    "derived_per_run": [
+      "gemini_exact_text_cache_delta"
+    ],
+    "assignment_outputs_are_inputs": false
+  }
+}

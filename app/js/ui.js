@@ -71,7 +71,7 @@ function applyGlobalStudyDefaults() {
     speechEnabled = saved.speechEnabled !== false;
     spacedRepetitionEnabled = saved.spacedRepetitionEnabled !== false;
     phrasesModeEnabled = saved.phrasesMode !== false;
-    extraExamplesEnabled = saved.extraExamples !== false;
+    extraExamplesEnabled = false;
     try {
         const savedMode = localStorage.getItem('fluency_sense_prominence_mode_v1');
         if (savedMode) {
@@ -96,7 +96,7 @@ function syncStudyPreferenceControls() {
         speechEnabled: saved.speechEnabled !== false,
         spacedRepetitionEnabled: saved.spacedRepetitionEnabled !== false,
         phrasesMode: saved.phrasesMode !== false,
-        extraExamples: saved.extraExamples !== false
+        extraExamples: false
     };
     document.querySelectorAll('.global-study-default-btn').forEach(button => {
         const value = button.dataset.value === 'on';

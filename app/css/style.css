@@ -2360,6 +2360,29 @@
             border: 1px solid rgba(20, 184, 166, 0.55);
             color: #7ce6d8;
         }
+        .phrase-kind-badge.badge-rare {
+            background: rgba(245, 158, 11, 0.18);
+            border: 1px solid rgba(245, 158, 11, 0.55);
+            color: #fbbf24;
+        }
+        .rare-child-back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-primary, #fff);
+            font-family: var(--font-reading);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.18s ease;
+        }
+        .rare-child-back-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
         /* Build-provenance letter, JST account only. Deliberately quieter than
            .phrase-kind-badge and than the POS colour treatment: no fill, thin
            border, low-opacity ink. It is a diagnostic sitting next to learner
@@ -2836,6 +2859,35 @@
         }
         .rare-senses-count {
             font-variant-numeric: tabular-nums;
+        }
+        .rare-expressions-trigger-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin: 6px 0 4px;
+        }
+        .rare-expressions-trigger-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 14px;
+            border-radius: 999px;
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px dashed rgba(245, 158, 11, 0.45);
+            color: #fbbf24;
+            font-family: var(--font-reading);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            text-align: center;
+        }
+        .rare-expressions-trigger-btn:hover {
+            background: rgba(245, 158, 11, 0.22);
+            border-color: rgba(245, 158, 11, 0.7);
+            color: #fde68a;
+            transform: translateY(-1px);
         }
         .meaning-row.meaning-row-rare {
             animation: rareSenseRowFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;

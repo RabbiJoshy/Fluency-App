@@ -1,0 +1,81 @@
+{
+  "config_version": "wsd-model-profile/v1",
+  "profile_id": "cs-v14-1",
+  "language": "cs",
+  "execution_status": "ready",
+  "source_method_id": "provider-neutral-v14-mwe-offered",
+  "method_summary": "v13 abstain-unresolved plus MWE candidate injection with non-decomposition policy and dual-write word-leaf.",
+  "provider_prior": {
+    "enabled": true,
+    "source": "wiktionary_menu_order",
+    "weight": 0.02,
+    "decay": 0.5
+  },
+  "gloss": {
+    "enabled": true,
+    "model_revision": "gemini-embedding-001",
+    "task_type": "SEMANTIC_SIMILARITY",
+    "dimensions": 3072,
+    "cache_lookup": "exact_text",
+    "translation_overlap_bonus": 0.04
+  },
+  "occurrence_pos": {
+    "enabled": false,
+    "model_revision": "none",
+    "role": "unconstrained_no_pos_model"
+  },
+  "constrain": {
+    "pos_filter": "unconstrained_no_pos_model",
+    "grammar_gate": "none",
+    "companion_gate": "none",
+    "clitic_gate": "none",
+    "pronominal_gate": "none",
+    "domain_penalty": 0.04
+  },
+  "multiword": {
+    "enabled": true,
+    "inventory": "mwe_merged/v1",
+    "snapshot_path": "raw/mwe/mwe-cs-2026-09-17-v14/mwe_merged.json",
+    "filter_policy": "v14_non_decomposition",
+    "minimum_corpus_frequency": 1,
+    "role": "stored_mwe_augmented_projection",
+    "active_projection": "mwe_augmented",
+    "dual_write_word_leaf": true,
+    "single_scoring_pass": true
+  },
+  "commit": {
+    "strategy": "rank_agreement_with_machine_readable_guards",
+    "choices": [
+      "provider_order",
+      "raw_gloss",
+      "forced_selection"
+    ],
+    "status": "unresolved_abstains_parent_or_leaf_when_licensed",
+    "unresolved_outcome": "abstain",
+    "shared_translation_licenses_glosskey": true,
+    "raw_margins_are_confidence": false
+  },
+  "specialists": {
+    "enabled": false
+  },
+  "token_tuple_vote": {
+    "enabled": false
+  },
+  "calibration": {
+    "enabled": false
+  },
+  "alignment": {
+    "enabled": false
+  },
+  "generative_escalation": false,
+  "asset_gate": {
+    "required_before_ready": [
+      "gemini_exact_text_embedding_cache",
+      "mwe_merged_inventory"
+    ],
+    "derived_per_run": [
+      "gemini_exact_text_cache_delta"
+    ],
+    "assignment_outputs_are_inputs": false
+  }
+}

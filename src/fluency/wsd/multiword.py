@@ -91,12 +91,16 @@ def index_multiword_senses(
     payload: Mapping[str, Any],
     *,
     minimum_corpus_frequency: int = 1,
+    filter_compositional: bool = True,
 ) -> dict[str, tuple[MultiwordEntry, ...]]:
-    """Attach-word index over tier-1 entries only.
+    """Attach-word index over tier-1 non-compositional entries only.
 
     `minimum_corpus_frequency` defaults to 1 rather than 0 deliberately: a tier-2
     entry has no sentence behind it and therefore cannot be the answer for any
     occurrence. Setting it to 0 would offer candidates that no evidence supports.
+
+    `filter_compositional` defaults to True: only non-compositional expressions
+    are indexed for candidate offering. Declared compositional noise is skipped.
     """
 
     if minimum_corpus_frequency < 1:
@@ -106,6 +110,13 @@ def index_multiword_senses(
         )
     grouped: dict[str, list[MultiwordEntry]] = {}
     for expression, row in (payload.get("mwes") or {}).items():
+        if filter_compositional and (
+            row.get("verdict") == "exclude"
+            or row.get("status") == "compositional"
+            or row.get("compositional") is True
+            or row.get("non_compositional") is False
+        ):
+            continue
         frequency = int(row.get("corpus_freq", 0) or 0)
         if frequency < minimum_corpus_frequency:
             continue
@@ -200,7 +211,10 @@ def multiword_analyses(
 
 
 def is_multiword_analysis(analysis: MenuAnalysis) -> bool:
-    return analysis.source_adapter == MULTIWORD_SOURCE_ADAPTER
+    return (
+        analysis.source_adapter == MULTIWORD_SOURCE_ADAPTER
+        or analysis.source_adapter.startswith("overlay")
+    )
 
 
 def multiword_evidence(
