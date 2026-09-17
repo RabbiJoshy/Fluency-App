@@ -1,16 +1,32 @@
-// "Import a Spotify playlist" — pick one of the user's playlists, match its
-// tracks against songs Fluency already has lyrics/vocabulary for (by Spotify
-// track ID, the same id each song catalog entry already carries), and land
-// on the "Choose your own" custom-source flow with just those songs selected.
+// "Import a Spotify playlist" — pick one of the user's playlists, look up
+// lyrics on LRCLIB (six at a time), persist them in this browser's IndexedDB,
+// and still build a study deck only from songs Fluency already has vocabulary
+// for (matched by Spotify track ID).
 import './state.js?v=20260825ak';
 import { combineSongCatalogs } from './song-sets-core.js?v=20260825ak';
 
 const CUSTOM_SONG_SET_KEY = 'fluency_song_set_v1:custom';
+const LYRICS_DB_NAME = 'fluency-playlist-lyrics';
+const LYRICS_DB_VERSION = 2;
+const TRACK_STORE = 'tracks';
+const IMPORT_STORE = 'imports';
+const DECK_STORE = 'decks';
+const LRCLIB_SEARCH = 'https://lrclib.net/api/search';
+const LRCLIB_CLIENT = 'Fluency playlist-import/0.1 (https://github.com/JoshuaThomasAmar/Fluency-Next)';
+const LOOKUP_CONCURRENCY = 6;
+const SPOTIFY_MODULE = './spotify.js?v=20260918a';
 
 let _matchState = null;
+let _liveState = null;
+let _importAbort = null;
+let _importMode = 'filter';
 
 function element(id) {
     return document.getElementById(id);
+}
+
+function songLabel(track) {
+    return track.artist ? `${track.title} — ${track.artist}` : track.title;
 }
 
 async function fetchSongCatalog(path) {
@@ -19,9 +35,6 @@ async function fetchSongCatalog(path) {
     return response.json();
 }
 
-// Mirrors the eligibility check resolveArtist() uses to build the "Choose
-// your own" source list, so a matched song is guaranteed to still be part
-// of that catalog once the redirect below lands on it.
 function customSourceEligible(cfg) {
     return Boolean(cfg?.songsPath && (cfg?.indexPath || cfg?.dataPath));
 }
@@ -52,6 +65,234 @@ function artistSlugsForMatches(catalog, matchedIds) {
     return Array.from(slugs).sort();
 }
 
+function openLyricsDb() {
+    return new Promise((resolve, reject) => {
+        if (!('indexedDB' in window)) {
+            reject(new Error('IndexedDB unavailable'));
+            return;
+        }
+        const request = indexedDB.open(LYRICS_DB_NAME, LYRICS_DB_VERSION);
+        request.onupgradeneeded = () => {
+            const db = request.result;
+            if (!db.objectStoreNames.contains(TRACK_STORE)) {
+                db.createObjectStore(TRACK_STORE, { keyPath: 'spotifyId' });
+            }
+            if (!db.objectStoreNames.contains(IMPORT_STORE)) {
+                db.createObjectStore(IMPORT_STORE, { keyPath: 'id' });
+            }
+            if (!db.objectStoreNames.contains(DECK_STORE)) {
+                db.createObjectStore(DECK_STORE, { keyPath: 'id' });
+            }
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+function idbRequest(request) {
+    return new Promise((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function getCachedLyrics(db, spotifyId) {
+    return idbRequest(db.transaction(TRACK_STORE, 'readonly').objectStore(TRACK_STORE).get(spotifyId));
+}
+
+async function putCachedLyrics(db, record) {
+    return idbRequest(db.transaction(TRACK_STORE, 'readwrite').objectStore(TRACK_STORE).put(record));
+}
+
+async function putImportSummary(db, record) {
+    return idbRequest(db.transaction(IMPORT_STORE, 'readwrite').objectStore(IMPORT_STORE).put(record));
+}
+
+function pickLyricsRecord(records, durationSec) {
+    if (!Array.isArray(records) || !records.length) return null;
+    const usable = records.filter(record => record && (record.instrumental
+        || (record.plainLyrics || '').trim()
+        || (record.syncedLyrics || '').trim()));
+    if (!usable.length) return null;
+    if (durationSec != null) {
+        const close = usable.find(record => Math.abs(Number(record.duration) - durationSec) <= 2);
+        if (close) return close;
+    }
+    return usable.find(record => (record.plainLyrics || '').trim() || (record.syncedLyrics || '').trim())
+        || usable[0];
+}
+
+function classifyRecord(record) {
+    if (!record) return 'miss';
+    if (record.instrumental && !(record.plainLyrics || '').trim() && !(record.syncedLyrics || '').trim()) {
+        return 'instrumental';
+    }
+    if ((record.plainLyrics || '').trim() || (record.syncedLyrics || '').trim()) return 'lyrics';
+    return 'miss';
+}
+
+async function searchLrclib(track, signal) {
+    const params = new URLSearchParams({
+        track_name: track.title,
+        artist_name: track.artist.split(',')[0].trim() || track.artist
+    });
+    const response = await fetch(`${LRCLIB_SEARCH}?${params}`, {
+        signal,
+        headers: { 'Lrclib-Client': LRCLIB_CLIENT }
+    });
+    if (!response.ok) throw new Error(`LRCLIB HTTP ${response.status}`);
+    return response.json();
+}
+
+function resetProgressUi() {
+    const progress = element('spotifyPlaylistProgress');
+    const log = element('spotifyPlaylistLog');
+    progress?.classList.add('hidden');
+    if (log) log.replaceChildren();
+    renderProgress(0, 0, []);
+}
+
+function renderProgress(done, total, activeLabels) {
+    const percent = total ? Math.round((100 * done) / total) : 0;
+    const percentEl = element('spotifyPlaylistPercent');
+    const countEl = element('spotifyPlaylistCount');
+    const bar = element('spotifyPlaylistBar');
+    const fill = element('spotifyPlaylistBarFill');
+    const nowEl = element('spotifyPlaylistNow');
+    if (percentEl) percentEl.textContent = `${percent}%`;
+    if (countEl) countEl.textContent = total ? `${done} of ${total} songs` : '0 of 0 songs';
+    if (bar) {
+        bar.setAttribute('aria-valuenow', String(percent));
+        bar.setAttribute('aria-valuemax', '100');
+    }
+    if (fill) fill.style.width = `${percent}%`;
+    if (nowEl) {
+        nowEl.textContent = activeLabels.length
+            ? `Looking up: ${activeLabels.join(' · ')}`
+            : (done && done === total ? 'Lookup complete.' : 'Waiting…');
+    }
+}
+
+function appendLogRow(track, status) {
+    const log = element('spotifyPlaylistLog');
+    if (!log) return;
+    const row = document.createElement('li');
+    row.className = `playlist-lyrics-log-row is-${status}`;
+    const name = document.createElement('span');
+    name.className = 'playlist-lyrics-log-name';
+    name.textContent = songLabel(track);
+    const mark = document.createElement('span');
+    mark.className = 'playlist-lyrics-log-status';
+    mark.textContent = ({
+        lyrics: 'lyrics',
+        instrumental: 'instrumental',
+        miss: 'no lyrics',
+        error: 'error',
+        cached: 'saved'
+    })[status] || status;
+    row.append(name, mark);
+    log.appendChild(row);
+    log.scrollTop = log.scrollHeight;
+}
+
+async function lookupTrack(db, track, playlist, signal) {
+    const cached = await getCachedLyrics(db, track.id).catch(() => null);
+    if (cached?.status && cached.status !== 'error') {
+        return { ...cached, fromCache: true };
+    }
+    const durationSec = track.durationMs ? Math.round(track.durationMs / 1000) : null;
+    const records = await searchLrclib(track, signal);
+    const picked = pickLyricsRecord(records, durationSec);
+    const status = classifyRecord(picked);
+    const record = {
+        spotifyId: track.id,
+        title: track.title,
+        artist: track.artist,
+        album: track.album,
+        durationMs: track.durationMs,
+        playlistId: playlist.id,
+        playlistName: playlist.name,
+        status,
+        plainLyrics: (picked?.plainLyrics || '').trim(),
+        syncedLyrics: (picked?.syncedLyrics || '').trim(),
+        lrclibId: picked?.id ?? null,
+        source: 'lrclib',
+        fetchedAt: new Date().toISOString()
+    };
+    await putCachedLyrics(db, record).catch(() => {});
+    return record;
+}
+
+async function mapPool(items, limit, worker, signal) {
+    const results = new Array(items.length);
+    let next = 0;
+    async function run() {
+        while (next < items.length) {
+            if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
+            const index = next++;
+            results[index] = await worker(items[index], index);
+        }
+    }
+    const workers = Array.from({ length: Math.min(limit, items.length) }, run);
+    await Promise.all(workers);
+    return results;
+}
+
+async function lookupPlaylistLyrics(playlist, tracks, signal) {
+    const progress = element('spotifyPlaylistProgress');
+    progress?.classList.remove('hidden');
+    const db = await openLyricsDb();
+    const active = new Map();
+    let done = 0;
+    const counts = { lyrics: 0, instrumental: 0, miss: 0, error: 0, cached: 0 };
+    renderProgress(0, tracks.length, []);
+
+    try {
+        const results = await mapPool(tracks, LOOKUP_CONCURRENCY, async track => {
+            active.set(track.id, songLabel(track));
+            renderProgress(done, tracks.length, [...active.values()]);
+            let record;
+            try {
+                record = await lookupTrack(db, track, playlist, signal);
+            } catch (error) {
+                if (error?.name === 'AbortError') throw error;
+                record = {
+                    spotifyId: track.id,
+                    title: track.title,
+                    artist: track.artist,
+                    status: 'error',
+                    error: error?.message || 'lookup failed',
+                    fetchedAt: new Date().toISOString()
+                };
+            }
+            active.delete(track.id);
+            done += 1;
+            if (record.fromCache) counts.cached += 1;
+            counts[record.status] = (counts[record.status] || 0) + 1;
+            appendLogRow(track, record.fromCache ? 'cached' : record.status);
+            renderProgress(done, tracks.length, [...active.values()]);
+            return record;
+        }, signal);
+
+        const lyricsCount = counts.lyrics;
+        await putImportSummary(db, {
+            id: playlist.id,
+            playlistName: playlist.name,
+            importedAt: new Date().toISOString(),
+            trackCount: tracks.length,
+            lyricsCount,
+            instrumentalCount: counts.instrumental,
+            missCount: counts.miss,
+            errorCount: counts.error,
+            cachedCount: counts.cached
+        }).catch(() => {});
+
+        return { results, counts, lyricsCount };
+    } finally {
+        db.close();
+    }
+}
+
 function renderPlaylistList(playlists, onSelect) {
     const list = element('spotifyPlaylistList');
     list.replaceChildren();
@@ -69,31 +310,50 @@ function renderPlaylistList(playlists, onSelect) {
         small.textContent = `${playlist.trackCount} track${playlist.trackCount === 1 ? '' : 's'}`;
         copy.appendChild(small);
         button.appendChild(copy);
-        button.addEventListener('click', () => onSelect(playlist));
+        button.addEventListener('click', () => onSelect(playlist, button));
         fragment.appendChild(button);
     }
     list.appendChild(fragment);
 }
 
-async function openSpotifyPlaylistImport(matchingArtists, language) {
-    const modal = element('spotifyPlaylistModal');
-    const status = element('spotifyPlaylistStatus');
-    const useBtn = element('useSpotifyMatchesBtn');
-    if (!modal || !status || !useBtn) return;
-
-    _matchState = null;
-    useBtn.hidden = true;
-    element('spotifyPlaylistList').replaceChildren();
-    modal.classList.remove('hidden');
-    status.textContent = 'Connecting to Spotify…';
-
-    // Speech-mode startup never loads the Spotify module (see main.js); this
-    // entry point can be reached before it has, so load it on demand.
+async function ensureSpotifyModule() {
     if (!window.isSpotifyConnected) {
-        await import('./spotify.js?v=20260831a').catch(error => {
+        await import(SPOTIFY_MODULE).catch(error => {
             console.warn('Spotify controls deferred:', error);
         });
     }
+}
+
+async function openSpotifyPlaylistImport(matchingArtists, language, options = {}) {
+    const modal = element('spotifyPlaylistModal');
+    const status = element('spotifyPlaylistStatus');
+    const useBtn = element('useSpotifyMatchesBtn');
+    const liveBtn = element('useSpotifyLiveBtn');
+    if (!modal || !status || !useBtn) return;
+
+    document.getElementById('lyricsSourceSheet')?.remove();
+    _importMode = options.live ? 'live' : 'filter';
+    _matchState = null;
+    _liveState = null;
+    _importAbort?.abort();
+    _importAbort = null;
+    useBtn.hidden = true;
+    if (liveBtn) liveBtn.hidden = true;
+    resetProgressUi();
+    const title = element('spotifyPlaylistTitle');
+    const intro = element('spotifyPlaylistIntro');
+    if (title) title.textContent = _importMode === 'live' ? 'Live playlist' : 'Match a Spotify playlist';
+    if (intro) {
+        intro.textContent = _importMode === 'live'
+            ? 'Choose a playlist. Fluency looks up lyrics, counts words naively, and builds a practice deck from speech meanings plus your song lines. No sense tagging.'
+            : 'Choose a playlist. Fluency keeps only the songs already in the published lyrics library.';
+    }
+    element('spotifyPlaylistList').replaceChildren();
+    element('spotifyPlaylistList').classList.remove('hidden');
+    modal.classList.remove('hidden');
+    status.textContent = 'Connecting to Spotify…';
+
+    await ensureSpotifyModule();
     if (!window.isSpotifyConnected) {
         status.textContent = 'Spotify sign-in is temporarily unavailable. Please reload the app and try again.';
         return;
@@ -115,38 +375,99 @@ async function openSpotifyPlaylistImport(matchingArtists, language) {
         status.textContent = error?.message || 'Could not load your playlists.';
         return;
     }
-    status.textContent = playlists.length ? 'Choose a playlist to match.' : 'No playlists found on this Spotify account.';
+    status.textContent = playlists.length
+        ? (_importMode === 'live' ? 'Choose a playlist to look up.' : 'Choose a playlist to match.')
+        : 'No playlists found on this Spotify account.';
 
-    renderPlaylistList(playlists, async playlist => {
-        status.textContent = `Matching "${playlist.name}" against your library…`;
+    renderPlaylistList(playlists, async (playlist, button) => {
+        _importAbort?.abort();
+        const abort = new AbortController();
+        _importAbort = abort;
+        _matchState = null;
+        _liveState = null;
         useBtn.hidden = true;
+        if (liveBtn) liveBtn.hidden = true;
+        resetProgressUi();
+        button.disabled = true;
+        element('spotifyPlaylistList').classList.add('hidden');
+        status.textContent = `Loading tracks from "${playlist.name}"…`;
         try {
-            const [catalog, trackIds] = await Promise.all([
-                buildLanguageCatalog(matchingArtists),
-                window.fetchSpotifyPlaylistTrackIds(playlist.id)
-            ]);
-            const matches = catalog.songs.filter(song => song.spotifyTrackId && trackIds.has(song.spotifyTrackId));
-            if (!matches.length) {
-                status.textContent = `None of "${playlist.name}"'s tracks are in Fluency's library yet.`;
+            if (_importMode === 'filter') {
+                const [catalog, trackIds] = await Promise.all([
+                    buildLanguageCatalog(matchingArtists),
+                    window.fetchSpotifyPlaylistTrackIds(playlist.id)
+                ]);
+                if (abort.signal.aborted) return;
+                const matches = catalog.songs.filter(song => song.spotifyTrackId && trackIds.has(song.spotifyTrackId));
+                if (!matches.length) {
+                    element('spotifyPlaylistList').classList.remove('hidden');
+                    status.textContent = `None of "${playlist.name}"'s tracks are in Fluency's library yet.`;
+                    return;
+                }
+                _matchState = {
+                    language,
+                    playlistName: playlist.name,
+                    songIds: matches.map(song => String(song.id)),
+                    artistSlugs: artistSlugsForMatches(catalog, matches.map(song => song.id))
+                };
+                status.textContent = `${matches.length} of ${trackIds.size} tracks matched your library.`;
+                useBtn.hidden = false;
                 return;
             }
-            _matchState = {
+
+            const tracks = await window.fetchSpotifyPlaylistTracks(playlist.id);
+            if (abort.signal.aborted) return;
+            if (!tracks.length) {
+                element('spotifyPlaylistList').classList.remove('hidden');
+                status.textContent = `"${playlist.name}" has no playable Spotify tracks.`;
+                return;
+            }
+            status.textContent = `Looking up lyrics for ${tracks.length} songs…`;
+            const { counts, lyricsCount, results } = await lookupPlaylistLyrics(playlist, tracks, abort.signal);
+            if (abort.signal.aborted) return;
+            status.textContent = `Matching words to the ${language} speech deck…`;
+            const deck = await window.buildPlaylistLiveDeck({
+                playlist,
                 language,
-                playlistName: playlist.name,
-                songIds: matches.map(song => String(song.id)),
-                artistSlugs: artistSlugsForMatches(catalog, matches.map(song => song.id))
-            };
-            status.textContent = `${matches.length} of ${trackIds.size} tracks matched your library.`;
-            useBtn.hidden = false;
+                records: results
+            });
+            if (abort.signal.aborted) return;
+            const missCount = counts.miss + counts.error;
+            const parts = [
+                `${lyricsCount} of ${tracks.length} had lyrics`,
+                counts.instrumental ? `${counts.instrumental} instrumental` : '',
+                missCount ? `${missCount} with no lyrics` : '',
+                `${deck.matchedCount} speech-deck words from ${deck.tokenCount} tokens`
+            ].filter(Boolean);
+            if (!deck.matchedCount) {
+                status.textContent = `${parts.join('. ')}. None of those tokens are in the speech deck.`;
+                return;
+            }
+            _liveState = { language, playlistName: playlist.name, matchedCount: deck.matchedCount };
+            status.textContent = `${parts.join('. ')}. Lyrics stay in this browser.`;
+            if (liveBtn) liveBtn.hidden = false;
         } catch (error) {
-            status.textContent = error?.message || 'Could not match that playlist.';
+            if (error?.name === 'AbortError') return;
+            element('spotifyPlaylistList').classList.remove('hidden');
+            status.textContent = error?.message || 'Could not look up that playlist.';
+        } finally {
+            button.disabled = false;
         }
     });
 }
 
 function closeSpotifyPlaylistImport() {
+    _importAbort?.abort();
+    _importAbort = null;
     element('spotifyPlaylistModal')?.classList.add('hidden');
     _matchState = null;
+    _liveState = null;
+}
+
+function confirmSpotifyLiveDeck() {
+    if (!_liveState) return;
+    window.showAppLoading?.('Opening your live deck', `${_liveState.playlistName} · ${_liveState.matchedCount} words`, true);
+    window.location.href = `${window.location.pathname}?playlistLive=1&language=${encodeURIComponent(_liveState.language)}`;
 }
 
 function confirmSpotifyMatches() {
@@ -170,6 +491,7 @@ function setupSpotifyPlaylistImport() {
     element('closeSpotifyPlaylistModal')?.addEventListener('click', closeSpotifyPlaylistImport);
     element('cancelSpotifyPlaylistBtn')?.addEventListener('click', closeSpotifyPlaylistImport);
     element('useSpotifyMatchesBtn')?.addEventListener('click', confirmSpotifyMatches);
+    element('useSpotifyLiveBtn')?.addEventListener('click', confirmSpotifyLiveDeck);
     modal.addEventListener('click', event => {
         if (event.target === modal) closeSpotifyPlaylistImport();
     });
@@ -181,3 +503,5 @@ function setupSpotifyPlaylistImport() {
 setupSpotifyPlaylistImport();
 
 window.openSpotifyPlaylistImport = openSpotifyPlaylistImport;
+window.FLUENCY_PLAYLIST_LYRICS_DB = LYRICS_DB_NAME;
+window.FLUENCY_PLAYLIST_LYRICS_CONCURRENCY = LOOKUP_CONCURRENCY;

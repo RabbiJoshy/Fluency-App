@@ -11,14 +11,15 @@ import './estimation.js?v=20260825ak';
 import './config.js?v=20260916f';
 import './progress.js?v=20260917j';
 import './knowledge.js?v=20260915a';
-import './ui.js?v=20260917b';
-import './vocab.js?v=20260916t';
+import './ui.js?v=20260918e';
+import './vocab.js?v=20260918e';
 import './cognates.js?v=20260914e';
 import './coverage.js?v=20260909a';
 import './fast-mode.js?v=20260916a';
 import './extras.js?v=20260916a';
 import './song-sets.js?v=20260823ae';
-import './spotify-playlist-import.js?v=20260913a';
+import './playlist-live.js?v=20260918e';
+import './spotify-playlist-import.js?v=20260918e';
 import './vocabulary-import.js?v=20260913a';
 import './flashcards.js?v=20260918a';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
@@ -77,7 +78,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // lazy module stubs in flashcards.js.
 const _initialParams = new URLSearchParams(window.location.search);
 const _spotifyModulePromise = (_initialParams.has('artist') || _initialParams.get('mode') === 'badbunny')
-    ? import('./spotify.js?v=20260831a').catch(error => {
+    ? import('./spotify.js?v=20260918a').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })
@@ -364,6 +365,16 @@ loadConfig().then(async () => {
         && config.languages[preferredLanguage]
         && config.languages[preferredLanguage].hasData !== false;
     selectedLanguage = preferredIsReady ? preferredLanguage : firstLang;
+    const playlistLiveLanguage = new URLSearchParams(window.location.search).get('language');
+    if (new URLSearchParams(window.location.search).get('playlistLive') === '1') {
+        if (playlistLiveLanguage && config.languages[playlistLiveLanguage]) {
+            selectedLanguage = playlistLiveLanguage;
+        }
+        await window.preparePlaylistLiveSession?.(selectedLanguage);
+        if (window.playlistLiveActive?.()) {
+            document.body.classList.add('playlist-live-mode');
+        }
+    }
     // Exact Speech resumes bypass the language/source chooser, so restore the
     // small Spanish-only helpers here for that route. Ordinary language choice
     // deliberately fetches neither: ui.js starts them only after Speech is
@@ -520,7 +531,25 @@ loadConfig().then(async () => {
     }
 
     // Render UI immediately using cached progress data
-    if (activeArtist) {
+    if (window.playlistLiveActive?.()) {
+        applyLanguageColorTheme();
+        document.getElementById('step1').style.display = 'none';
+        const deck = window.playlistLiveDeck?.();
+        const sourceName = document.getElementById('selectedSourceInline');
+        if (sourceName && deck?.playlistName) {
+            sourceName.textContent = `Live · ${deck.playlistName}`;
+        }
+        document.body.classList.add('has-learning-context');
+        window.updateLearningContextUI?.();
+        sessionStorage.setItem('fluencyPendingSpeechLanguage', selectedLanguage);
+        const liveTab = document.querySelector(`.lang-tab[data-lang="${selectedLanguage}"]`);
+        if (liveTab && !liveTab.disabled) {
+            liveTab.click();
+        } else if (!isResumeNavigation) {
+            hideAppLoading();
+        }
+        perfMark('after playlist-live init');
+    } else if (activeArtist) {
         const promptForCustomSongs = activeArtist.customSongSource && selectedSongIds.length === 0;
         try {
             selectedLanguage = activeArtist.language || 'spanish';
@@ -1158,14 +1187,21 @@ function showArtistPicker(anchorBtn, artists) {
                 onSelect: () => showAvailableMusicPicker(artists)
             },
             {
-                label: 'Import a Spotify playlist',
+                label: 'Match a Spotify playlist',
                 description: hasAvailableMusic
-                    ? 'Match a playlist you already have against the songs Fluency knows.'
+                    ? 'Keep only the songs Fluency already has in its lyrics library.'
                     : 'No music collection has been published for this language yet.',
-                fallbackText: '＋',
+                fallbackText: '∩',
                 accent: '#10B981',
                 disabled: !hasAvailableMusic,
-                onSelect: () => window.openSpotifyPlaylistImport?.(artists, language)
+                onSelect: () => window.openSpotifyPlaylistImport?.(artists, language, { live: false })
+            },
+            {
+                label: 'Live playlist',
+                description: 'Look up lyrics now and study a naive deck: speech meanings, your song lines, no sense tagging.',
+                fallbackText: '＋',
+                accent: '#F59E0B',
+                onSelect: () => window.openSpotifyPlaylistImport?.(artists, language, { live: true })
             }
         ]
     });
@@ -1174,7 +1210,9 @@ function showArtistPicker(anchorBtn, artists) {
 function openLearningSourcePicker() {
     const language = activeArtist?.language || selectedLanguage || 'spanish';
     const languageConfig = config.languages?.[language] || {};
-    const lyricsAvailable = languageConfig.capabilities?.lyrics !== false;
+    const lyricsCatalog = languageConfig.capabilities?.lyrics !== false;
+    const speechAvailable = languageConfig.capabilities?.speech !== false;
+    const lyricsAvailable = lyricsCatalog || speechAvailable;
     showChoiceSheet({
         id: 'learningSourceChoiceSheet',
         ariaLabel: 'Choose vocabulary',
@@ -1199,9 +1237,9 @@ function openLearningSourcePicker() {
             },
             {
                 label: 'Music & lyrics',
-                description: lyricsAvailable
+                description: lyricsCatalog
                     ? 'Learn frequent words from artists and songs you like, with lyric playback through Spotify.'
-                    : `Learn frequent words from music you like, with lyric playback through Spotify. No ${languageConfig.name || language} lyrics collection is available yet.`,
+                    : 'Look up lyrics from a playlist and study a live deck from speech meanings plus your song lines.',
                 fallbackText: '2',
                 selected: Boolean(activeArtist),
                 disabled: !lyricsAvailable,

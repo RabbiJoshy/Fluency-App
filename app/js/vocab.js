@@ -120,6 +120,10 @@ function getLastStudySession() {
 }
 
 function renderResumeLastSetCard() {
+    if (window.playlistLiveActive?.()) {
+        document.getElementById('resumeLastSetCard')?.remove();
+        return;
+    }
     const snapshot = getLastStudySession();
     let card = document.getElementById('resumeLastSetCard');
     if (!snapshot) {
@@ -2054,12 +2058,12 @@ async function loadVocabularyData(rangeString, opts = {}) {
         });
 
         const { vocab: _baseVocab, counts: exCounts } = buildFilteredVocab(vocabularyData);
+        let filteredData = window.applyPlaylistLiveVocabulary?.(_baseVocab) || _baseVocab;
         // This is the complete vocabulary after the active source + filter
         // configuration, before level, set, and mastery slicing. Card rank
         // metadata must use this same basis so it remains stable when the
         // active set is shuffled or previously-known cards are omitted.
-        const configurationVocabSize = _baseVocab.length;
-        let filteredData = _baseVocab;
+        const configurationVocabSize = filteredData.length;
         const excludedEnglish = exCounts.english;
         const excludedCognates = exCounts.cognates;
         const excludedSingleOcc = exCounts.singleOcc;

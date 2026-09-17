@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v456"
+EXPECTED_CACHE_NAME = "flashcards-v459"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -540,8 +540,12 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("variant: 'list'", flashcards)
         self.assertIn("id: 'lyricsSourceSheet'", main)
         self.assertIn("id: 'artistChoiceSheet'", main)
-        self.assertIn("label: 'Import a Spotify playlist'", main)
-        self.assertIn("Match a playlist you already have against the songs Fluency knows.", main)
+        self.assertIn("Keep only the songs Fluency already has in its lyrics library.", main)
+        self.assertIn("label: 'Live playlist'", main)
+        self.assertIn("label: 'Match a Spotify playlist'", main)
+        ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
+        self.assertIn("lyricsCatalog || speechAvailable", ui)
+        self.assertIn("lyricsStatus.textContent = lyricsCatalog ? '›' : 'Live'", ui)
         self.assertNotIn("id: 'artistRadialPicker'", main)
         self.assertIn(".choice-sheet-grid .choice-sheet-body", css)
         self.assertIn(".choice-sheet-list .choice-sheet-item", css)
@@ -667,8 +671,8 @@ class ProductShellTests(unittest.TestCase):
             spotify.index("_loadSpotifyPlaybackSdk();"),
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
-        self.assertIn("/js/spotify.js?v=20260914d", worker)
-        self.assertIn("/js/main.js?v=20260918b", worker)
+        self.assertIn("/js/spotify.js?v=20260918a", worker)
+        self.assertIn("/js/main.js?v=20260918e", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -731,7 +735,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("spotify-music-visualizer", spotify)
         self.assertIn("spotify-playing-amplitude", css)
         self.assertNotIn("spotify-playing-ripple", css)
-        self.assertIn("/js/spotify.js?v=20260914d", worker)
+        self.assertIn("/js/spotify.js?v=20260918a", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_audit_accounts_and_flags_use_release_provenance(self) -> None:
@@ -750,6 +754,45 @@ class ProductShellTests(unittest.TestCase):
             config["languages"]["french"]["releaseManifestPath"],
             "releases/fr/speech/fr-speech-v7-dual-metadata-v4-20260913/manifest.json",
         )
+
+    def test_spotify_playlist_import_looks_up_lyrics_with_visible_percent(self) -> None:
+        html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
+        importer = (APP_ROOT / "js" / "spotify-playlist-import.js").read_text(encoding="utf-8")
+        spotify = (APP_ROOT / "js" / "spotify.js").read_text(encoding="utf-8")
+        css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
+        worker = (APP_ROOT / "service-worker.js").read_text(encoding="utf-8")
+
+        self.assertIn('id="spotifyPlaylistProgress"', html)
+        self.assertIn('id="spotifyPlaylistPercent"', html)
+        self.assertIn('id="spotifyPlaylistLog"', html)
+        self.assertIn("fluency-playlist-lyrics", html)
+        self.assertIn("const LOOKUP_CONCURRENCY = 6", importer)
+        self.assertIn("https://lrclib.net/api/search", importer)
+        self.assertIn("indexedDB.open(LYRICS_DB_NAME", importer)
+        self.assertIn("Looking up:", importer)
+        self.assertIn("${percent}%", importer)
+        self.assertIn("function fetchSpotifyPlaylistTracks", spotify)
+        self.assertIn(".playlist-lyrics-percent", css)
+        self.assertIn(".playlist-lyrics-bar-fill", css)
+        self.assertIn("/js/spotify-playlist-import.js?v=20260918e", worker)
+        self.assertIn('css/style.css?v=20260918e', html)
+        self.assertIn('id="useSpotifyLiveBtn"', html)
+        self.assertIn("buildPlaylistLiveDeck", importer)
+        self.assertIn("playlistLive=1", importer)
+
+    def test_live_playlist_joins_naive_tokens_to_speech_vocab(self) -> None:
+        live = (APP_ROOT / "js" / "playlist-live.js").read_text(encoding="utf-8")
+        vocab = (APP_ROOT / "js" / "vocab.js").read_text(encoding="utf-8")
+        worker = (APP_ROOT / "service-worker.js").read_text(encoding="utf-8")
+        self.assertIn("function naiveLyricTokens", live)
+        self.assertIn("function applyPlaylistLiveVocabulary", live)
+        self.assertIn("unassigned: true", live)
+        self.assertIn("share >= 0.05", live)
+        self.assertIn("window.applyPlaylistLiveVocabulary?.(_baseVocab)", vocab)
+        self.assertIn("/js/playlist-live.js?v=20260918e", worker)
+        main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
+        self.assertIn("fluencyPendingSpeechLanguage", main)
+        self.assertIn("if (window.playlistLiveActive?.()) {", vocab)
 
     def test_song_sets_retain_contributing_artist_slugs(self) -> None:
         song_sets = (APP_ROOT / "js" / "song-sets.js").read_text(encoding="utf-8")
