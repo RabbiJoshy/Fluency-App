@@ -33,8 +33,7 @@
 // percentages, lyrics and timestamps all read out of the built deck rather
 // than written for the walkthrough. `tem` is curated from the live Portuguese
 // speech release because its Wiktionary senses demonstrate the compact
-// metadata and cross-card-reference treatment that the old `aunque` mock did
-// not contain.
+// metadata and cross-card-reference treatment.
 
 const ABOUT_EXAMPLE_CARDS = {
     // Chosen for the quality of its sense assignment, not at random. `fuego`
@@ -360,10 +359,10 @@ const ABOUT_EXAMPLE_DECKS = [
                     },
                     {
                         side: 'right',
-                        anchor: '.about-example-pct',
+                        anchor: '.sense-prominence-badge',
                         title: 'How common this meaning is',
-                        text: 'Common, Uncommon, or Rare. It is how often this meaning shows up '
-                            + 'in the songs — not a dictionary ranking.',
+                        text: 'The bars show how often this meaning shows up in the songs. '
+                            + 'Tap them to read Common, Uncommon, or Rare.',
                     },
                     {
                         side: 'right',
@@ -479,10 +478,10 @@ const ABOUT_EXAMPLE_DECKS = [
                     },
                     {
                         side: 'right',
-                        anchor: '.about-example-pct',
+                        anchor: '.sense-prominence-badge',
                         requires: 'usageShares',
                         title: 'How common this meaning is',
-                        text: 'Common, Uncommon, or Rare. That is how often this meaning shows up in real speech.',
+                        text: 'The bars show how often this meaning shows up in real speech. Tap them to read Common, Uncommon, or Rare.',
                     },
                     {
                         side: 'right',
@@ -688,7 +687,9 @@ function renderMeaningRows(card, selectedIdx) {
             : '';
         const prominence = walkthroughProminence(m.pct);
         const pct = prominence
-            ? `<span class="about-example-pct sense-prominence-badge prominence-${esc(prominence.key)}" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); white-space: nowrap; pointer-events: none;">${esc(prominence.label)}</span>`
+            ? (typeof window.prominenceBadgeHTML === 'function'
+                ? window.prominenceBadgeHTML(prominence, 'position: absolute; right: 8px; top: 50%; transform: translateY(-50%);')
+                : `<button type="button" class="about-example-pct sense-prominence-badge prominence-${esc(prominence.key)}" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%);">${esc(prominence.label)}</button>`)
             : '';
         const check = isSelected
             ? '<svg class="meaning-row-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgb(var(--sense-match-rgb))" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>'
@@ -696,7 +697,7 @@ function renderMeaningRows(card, selectedIdx) {
         return `
             <div class="meaning-row meaning-row-regular${isSelected ? ' selected is-current-sense' : ''}" data-meaning-index="${idx}" style="position: relative; display: grid; grid-template-columns: 1fr; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${bg}; border-radius: 8px; cursor: pointer; min-height: 39px;">
                 ${check}
-                <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: stretch; justify-content: center; min-width: 0; padding: 0 ${prominence ? '72px' : '8px'} 0 8px;">
+                <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: stretch; justify-content: center; min-width: 0; padding: 0 ${prominence ? '32px' : '8px'} 0 8px;">
                     <span class="meaning-row-translation row-adaptive-text" style="font-weight: ${isSelected ? 700 : 500}; color: ${textColor}; text-align: center; width: 100%;">${walkthroughSenseText(m, isSelected)}${ctx}</span>
                     ${walkthroughMetadata(m, isSelected)}
                 </div>
@@ -733,6 +734,21 @@ function walkthroughExampleTicks(current, total) {
     return `<div class="example-ticks" role="img" aria-label="example ${current + 1} of ${total}">${ticks}</div>`;
 }
 
+function tutorialSourceChip(sourceLabel) {
+    const raw = String(sourceLabel || '');
+    const lower = raw.toLowerCase();
+    let domain = '';
+    let label = raw.replace(/\s+example$/i, '') || raw;
+    if (lower.includes('spanishdict')) domain = 'spanishdict.com';
+    else if (lower.includes('wiktionary')) domain = 'wiktionary.org';
+    else if (lower.includes('tatoeba')) domain = 'tatoeba.org';
+    else if (lower.includes('imdb') || lower.includes('opensubtitles')) domain = 'imdb.com';
+    if (!domain) {
+        return `<span class="example-song-credit" style="margin-right:auto;">${esc(raw)}</span>`;
+    }
+    return `<span class="example-song-credit" style="margin-right:auto;"><span class="example-source-chip example-source-chip--icon dictionary-provenance-badge" title="${esc(label)}" aria-label="${esc(label)}"><img class="example-source-favicon dict-provenance-icon" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64" width="22" height="22" alt="" aria-hidden="true"></span></span>`;
+}
+
 function renderCredit(card, meaning, example, exampleIdx) {
     if (example.trackId) {
         const btn = `<button type="button" class="spotify-btn link-btn"
@@ -743,19 +759,25 @@ function renderCredit(card, meaning, example, exampleIdx) {
             ? `<span class="example-vocalist-credit"> · ${esc(example.vocalists)}</span>`
             : '';
         return `
-            <div style="display: flex; justify-content: space-between; align-items: center; color: #b9c2cd; font-size: 13px; margin-top: 8px; font-style: italic;">
-                <span class="example-song-credit">— ${esc(example.song)}${vocalists}</span>
-                <span style="display: flex; align-items: center; gap: 6px;">${btn}</span>
+            <div class="example-credit-row is-lyric">
+                <span class="example-credit-start">
+                    <span class="example-song-credit">— ${esc(example.song)}${vocalists}</span>
+                </span>
+                ${walkthroughExampleTicks(exampleIdx, meaning.examples.length)}
+                <span class="example-credit-end">${btn}</span>
             </div>`;
     }
 
-    const label = example.sourceLabel
-        ? `<span class="example-song-credit" style="margin-right:auto;">${esc(example.sourceLabel)}</span>`
+    const credit = example.sourceLabel
+        ? tutorialSourceChip(example.sourceLabel)
         : '';
-    if (!label) return '';
+    const ticks = walkthroughExampleTicks(exampleIdx, meaning.examples.length);
+    if (!credit && !ticks) return '';
     return `
-        <div style="display: flex; justify-content: flex-end; align-items: center; color: #b9c2cd; font-size: 13px; margin-top: 8px;">
-            ${label}
+        <div class="example-credit-row">
+            <span class="example-credit-start">${credit}</span>
+            ${ticks}
+            <span class="example-credit-end"></span>
         </div>`;
 }
 
@@ -778,7 +800,6 @@ function renderBack(card, selectedIdx, exampleIdx) {
                 <div class="sentence example-is-matched" style="text-align: center; ${cursor}" data-about-example-cycle="${meaning.examples.length > 1 ? '1' : '0'}">
                     <div class="breakdown-trigger" style="margin-bottom: 8px;">${highlightWord(example.target, card.word)}</div>
                     <div class="translation">${esc(example.english)}</div>
-                    ${walkthroughExampleTicks(exampleIdx % meaning.examples.length, meaning.examples.length)}
                     ${renderCredit(card, meaning, example, exampleIdx % meaning.examples.length)}
                 </div>
             </div>
@@ -1029,18 +1050,24 @@ function wireBack(stage) {
 function syncFlipButton() {
     const btn = document.getElementById('aboutExampleFlip');
     if (!btn) return;
-    btn.textContent = state.flipped ? '⟲  Show the front' : '⟲  Show the back';
+    btn.textContent = state.flipped ? 'Flip to the question side' : 'Flip to the answer side';
 }
 
 function syncContinueButton() {
     const btn = document.getElementById('aboutExampleContinue');
     if (!btn) return;
-    const ready = !isMobileWalkthrough() && !state.flipped;
+    const ready = !isMobileWalkthrough();
     btn.hidden = !ready;
     if (!ready) return;
-    btn.textContent = state.chapterIndex < tutorialDeckSequence().length - 1
-        ? 'Continue to Lyrics →'
-        : 'Finish tutorial';
+    const isLast = state.chapterIndex >= tutorialDeckSequence().length - 1;
+    if (state.flipped) {
+        // Back face: gentle nudge — the annotations are the main event here.
+        btn.textContent = 'Flip to the question side →';
+        btn.classList.add('is-secondary');
+    } else {
+        btn.textContent = isLast ? 'Finish tutorial' : 'Continue to Lyrics →';
+        btn.classList.remove('is-secondary');
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -1138,17 +1165,19 @@ function renderMobileCoach() {
 
     const progress = tutorialStepPosition(index);
     document.getElementById('aboutExampleMobileProgress').textContent =
-        `Step ${progress.current} of ${progress.total} · ${currentDeck().tab} · ${state.flipped ? 'back' : 'front'}`;
+        `Step ${progress.current} of ${progress.total} · ${currentDeck().tab} · ${state.flipped ? 'answer side' : 'question side'}`;
     document.getElementById('aboutExampleMobileTitle').innerHTML =
         `${esc(note.title)}${note.interactive ? '<span class="about-example-try">tap it</span>' : ''}`;
     document.getElementById('aboutExampleMobileText').innerHTML = tutorialText(note.text);
     const back = document.getElementById('aboutExampleMobileBack');
     const next = document.getElementById('aboutExampleMobileNext');
-    back.disabled = state.chapterIndex === 0 && state.flipped && index === 0;
+    const atStart = state.chapterIndex === 0 && state.flipped && index === 0;
+    back.hidden = atStart;
+    back.disabled = false;
     next.textContent = index < notes.length - 1
         ? 'Next'
         : (state.flipped
-            ? 'Show front'
+            ? 'Question side'
             : (state.chapterIndex < tutorialDeckSequence().length - 1 ? 'Continue' : 'Finish'));
 }
 
@@ -1240,7 +1269,7 @@ function showTutorialChapter(index, flipped = true, mobileNote = 0) {
     state.flipped = flipped;
     state.meaningIndex = currentCard().defaultMeaningIndex || 0;
     state.exampleIndex = 0;
-    state.activeNote = isMobileWalkthrough() ? mobileNote : -1;
+    state.activeNote = isMobileWalkthrough() ? mobileNote : 0;
 
     renderSequenceProgress();
     renderCard();
@@ -1318,7 +1347,9 @@ function setupAboutExample() {
 
     document.getElementById('closeAboutExampleModal')?.addEventListener('click', closeAboutExample);
     document.getElementById('aboutExampleFlip')?.addEventListener('click', () => flipCardFace(0));
-    document.getElementById('aboutExampleContinue')?.addEventListener('click', advanceChapterOrFinish);
+    document.getElementById('aboutExampleContinue')?.addEventListener('click', () => {
+        if (state.flipped) { flipCardFace(0); } else { advanceChapterOrFinish(); }
+    });
     document.getElementById('aboutExampleMobileBack')?.addEventListener('click', () => moveMobileTour(-1));
     document.getElementById('aboutExampleMobileNext')?.addEventListener('click', () => moveMobileTour(1));
 
