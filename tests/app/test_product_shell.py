@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v440"
+EXPECTED_CACHE_NAME = "flashcards-v448"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -261,10 +261,25 @@ class ProductShellTests(unittest.TestCase):
         self.assertGreaterEqual(vocab.count("source_mode: 'reference'"), 2)
         self.assertIn("be merged into corpus ticks", vocab)
         self.assertIn("function canonicalExampleHTML(meaning)", flashcards)
+        self.assertIn("function displayExamplesForSense(meaning, examples)", flashcards)
+        self.assertIn("function rankConfidentWsdExamples(examples)", flashcards)
+        self.assertIn("function chooseSingleDisplayExample(meaning, examples)", flashcards)
+        self.assertIn("function isReliableWsdExample(example)", flashcards)
+        self.assertIn("opens on a non-canonical line 85.0%", flashcards)
+        self.assertNotIn("method && method !== 'unassigned'", flashcards)
+        self.assertNotIn("backHTML += canonicalExampleHTML(currentMeaning);", flashcards)
+        self.assertIn("if (examplesAllowCycling(examples)) return examples;", flashcards)
         self.assertIn("function highlightWithDeclaredOffsets(text, offsets)", flashcards)
-        self.assertIn("'Wiktionary example'", flashcards)
-        self.assertIn("'SpanishDict example'", flashcards)
+        self.assertIn("spanishdict.com", flashcards)
+        self.assertIn("wiktionary.org", flashcards)
+        self.assertIn("function exampleSourceChipHTML", flashcards)
         self.assertIn("function exampleTicksHTML(current, total, label = 'example')", flashcards)
+        self.assertIn(
+            '<span class="example-credit-start">${creditStart}</span>\n'
+            '                    ${exampleTicks}\n'
+            '                    <span class="example-credit-end">${creditEnd}</span>',
+            flashcards,
+        )
         self.assertNotIn('compact-example-counter-label', flashcards)
 
     def test_only_the_active_meaning_group_exposes_subsenses(self) -> None:
@@ -340,19 +355,26 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("window.getCardTutorialLanguageKey?.()", main)
         self.assertIn("window.setCardTutorialLanguage?.(key)", main)
         self.assertIn("How common this meaning is", (APP_ROOT / "js" / "about-example.js").read_text(encoding="utf-8"))
-        self.assertIn("Common / Uncommon / Rare tells you how often that meaning is used", html)
+        self.assertIn("Tap them to read Common, Uncommon, or Rare", (APP_ROOT / "js" / "about-example.js").read_text(encoding="utf-8"))
 
     def test_sense_frequency_uses_readable_labels_not_mystery_dots(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
         walkthrough = (APP_ROOT / "js" / "about-example.js").read_text(encoding="utf-8")
         self.assertIn("function prominenceBadgeHTML(promInfo, extraStyle = '')", flashcards)
-        self.assertIn("${escapeCardText(promInfo.label)}", flashcards)
+        self.assertIn("function toggleProminenceBadge(event, button)", flashcards)
+        self.assertIn("sense-prominence-meter", flashcards)
+        self.assertIn("function prominenceInfoFromShare(meanings)", flashcards)
+        self.assertIn("function withinGlossLeafSeparationIsReliable(meanings)", flashcards)
+        self.assertIn("function glossClusterProminenceState(card)", flashcards)
+        self.assertIn("class=\"cbs-scrub\"", (APP_ROOT / "index.html").read_text(encoding="utf-8"))
+        self.assertIn("sense-prominence-detail", flashcards)
         self.assertNotIn("sense-prominence-dots", flashcards)
         self.assertIn("conjugationsPath)", flashcards)
         self.assertIn("conjugationData: _conjugationData", flashcards)
         self.assertIn("window.loadConjugationData()", (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8"))
         self.assertIn("function walkthroughProminence(pct)", walkthrough)
         self.assertIn("How common this meaning is", walkthrough)
+        self.assertIn("Tap them to read Common, Uncommon, or Rare", walkthrough)
 
     def test_in_app_tutorial_skips_language_choice_when_one_is_already_selected(self) -> None:
         main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
@@ -566,8 +588,8 @@ class ProductShellTests(unittest.TestCase):
             '.range-btn-new:not(.has-progress):not(:hover)',
             light_css,
         )
-        self.assertIn('css/light-theme.css?v=20260916m', html)
-        self.assertIn('/css/light-theme.css?v=20260916m', worker)
+        self.assertIn('css/light-theme.css?v=20260917i', html)
+        self.assertIn('/css/light-theme.css?v=20260917i', worker)
 
     def test_active_release_aliases_are_never_cached(self) -> None:
         worker = (APP_ROOT / "service-worker.js").read_text(encoding="utf-8")
@@ -639,7 +661,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260914d", worker)
-        self.assertIn("/js/main.js?v=20260917a", worker)
+        self.assertIn("/js/main.js?v=20260917i", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -772,7 +794,10 @@ class ProductShellTests(unittest.TestCase):
         self.assertEqual(config["sourceTitlesPath"], "data/source_titles.json")
         self.assertTrue(titles.is_file())
         self.assertIn("corpus === 'tatoeba'", flashcards)
-        self.assertIn("exampleLinkHTML(p.url, 'Tatoeba')", flashcards)
+        self.assertIn("domain: 'tatoeba.org'", flashcards)
+        self.assertIn("domain: 'imdb.com'", flashcards)
+        self.assertIn("function exampleSourceChipHTML", flashcards)
+        self.assertIn("Episode titles and years live on the IMDb page", flashcards)
         self.assertIn("loadSourceTitles", flashcards)
         self.assertNotIn("source_mode === 'speech'", flashcards)
 
@@ -1058,6 +1083,8 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("<kbd class=\"desktop-kbd\">Space</kbd> Flip", html)
         self.assertIn(".card-desktop-shortcuts {", css)
         self.assertIn(".desktop-kbd {", css)
+        self.assertIn(".cbs-thumb {", css)
+        self.assertIn(".cbs-scrub {", css)
 
     def test_sense_prominence_mode_supports_labels_and_percentages(self) -> None:
         state = (APP_ROOT / "js" / "state.js").read_text(encoding="utf-8")
@@ -1094,8 +1121,10 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("dictionary-provenance-badge", flashcards)
         self.assertIn("dict-provenance-icon", flashcards)
         self.assertIn("meaning-row-rare", flashcards)
-        self.assertIn("rare-senses-chevron", flashcards)
+        self.assertIn("rare-senses-count", flashcards)
+        self.assertIn("example-source-chip", flashcards)
         self.assertIn(".dictionary-provenance-badge", css)
+        self.assertIn(".example-source-chip", css)
         self.assertIn(".meaning-row.meaning-row-rare", css)
         self.assertIn(".dictionary-provenance-badge", light)
 
@@ -1147,8 +1176,8 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("isRareSense: true", flashcards)
         self.assertIn("prominenceLabel: 'Rare'", flashcards)
         self.assertIn("hasOnlyRareSenses: true", flashcards)
-        self.assertIn("prominence-${escapeCardText(promInfo.key)}", flashcards)
-        self.assertIn("${escapeCardText(promInfo.label)}", flashcards)
+        self.assertIn("prominence-${escapeCardText(key)}", flashcards)
+        self.assertIn("escapeCardText(label)", flashcards)
         self.assertIn("groupInfo.size === 1 && Math.round(g.pct * 100) >= 100", flashcards)
         self.assertIn("window.getSenseProminenceInfo = getSenseProminenceInfo;", flashcards)
 
@@ -1224,8 +1253,9 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
 
         # Space efficient prominence badge font and mobile rules
         self.assertIn(".sense-prominence-badge {", css)
-        self.assertIn("font-family: system-ui, -apple-system, BlinkMacSystemFont", css)
-        self.assertIn("padding-right: 42px !important;", css)
+        self.assertIn("font-family: var(--font-reading);", css)
+        self.assertIn(".sense-prominence-meter {", css)
+        self.assertIn("padding-right: 28px !important;", css)
 
     def test_pos_summary_strict_set_and_differential_metadata_folding(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
