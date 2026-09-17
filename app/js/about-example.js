@@ -359,10 +359,10 @@ const ABOUT_EXAMPLE_DECKS = [
                     },
                     {
                         side: 'right',
-                        anchor: '.about-example-pct',
+                        anchor: '.sense-prominence-badge',
                         title: 'How common this meaning is',
-                        text: 'Common, Uncommon, or Rare. It is how often this meaning shows up '
-                            + 'in the songs — not a dictionary ranking.',
+                        text: 'The bars show how often this meaning shows up in the songs. '
+                            + 'Tap them to read Common, Uncommon, or Rare.',
                     },
                     {
                         side: 'right',
@@ -478,10 +478,10 @@ const ABOUT_EXAMPLE_DECKS = [
                     },
                     {
                         side: 'right',
-                        anchor: '.about-example-pct',
+                        anchor: '.sense-prominence-badge',
                         requires: 'usageShares',
                         title: 'How common this meaning is',
-                        text: 'Common, Uncommon, or Rare. That is how often this meaning shows up in real speech.',
+                        text: 'The bars show how often this meaning shows up in real speech. Tap them to read Common, Uncommon, or Rare.',
                     },
                     {
                         side: 'right',
@@ -687,7 +687,9 @@ function renderMeaningRows(card, selectedIdx) {
             : '';
         const prominence = walkthroughProminence(m.pct);
         const pct = prominence
-            ? `<span class="about-example-pct sense-prominence-badge prominence-${esc(prominence.key)}" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); white-space: nowrap; pointer-events: none;">${esc(prominence.label)}</span>`
+            ? (typeof window.prominenceBadgeHTML === 'function'
+                ? window.prominenceBadgeHTML(prominence, 'position: absolute; right: 8px; top: 50%; transform: translateY(-50%);')
+                : `<button type="button" class="about-example-pct sense-prominence-badge prominence-${esc(prominence.key)}" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%);">${esc(prominence.label)}</button>`)
             : '';
         const check = isSelected
             ? '<svg class="meaning-row-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgb(var(--sense-match-rgb))" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>'
@@ -695,7 +697,7 @@ function renderMeaningRows(card, selectedIdx) {
         return `
             <div class="meaning-row meaning-row-regular${isSelected ? ' selected is-current-sense' : ''}" data-meaning-index="${idx}" style="position: relative; display: grid; grid-template-columns: 1fr; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${bg}; border-radius: 8px; cursor: pointer; min-height: 39px;">
                 ${check}
-                <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: stretch; justify-content: center; min-width: 0; padding: 0 ${prominence ? '72px' : '8px'} 0 8px;">
+                <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: stretch; justify-content: center; min-width: 0; padding: 0 ${prominence ? '32px' : '8px'} 0 8px;">
                     <span class="meaning-row-translation row-adaptive-text" style="font-weight: ${isSelected ? 700 : 500}; color: ${textColor}; text-align: center; width: 100%;">${walkthroughSenseText(m, isSelected)}${ctx}</span>
                     ${walkthroughMetadata(m, isSelected)}
                 </div>
@@ -744,7 +746,7 @@ function tutorialSourceChip(sourceLabel) {
     if (!domain) {
         return `<span class="example-song-credit" style="margin-right:auto;">${esc(raw)}</span>`;
     }
-    return `<span class="example-song-credit" style="margin-right:auto;"><span class="example-source-chip example-source-chip--icon dictionary-provenance-badge" title="${esc(label)}" aria-label="${esc(label)}"><img class="example-source-favicon dict-provenance-icon" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=32" width="16" height="16" alt="" aria-hidden="true"></span></span>`;
+    return `<span class="example-song-credit" style="margin-right:auto;"><span class="example-source-chip example-source-chip--icon dictionary-provenance-badge" title="${esc(label)}" aria-label="${esc(label)}"><img class="example-source-favicon dict-provenance-icon" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64" width="22" height="22" alt="" aria-hidden="true"></span></span>`;
 }
 
 function renderCredit(card, meaning, example, exampleIdx) {
