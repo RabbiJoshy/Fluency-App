@@ -2971,15 +2971,25 @@ async function renderDevFooter(freshnessEl) {
         const entries = (window._devChangelog && window._devChangelog.entries) || [];
         if (entries.length) {
             lines.push('<div class="dev-footer-label">Recent app/data changes</div>');
-            for (const e of entries.slice(0, 2)) {
+            for (const e of entries.slice(0, 4)) {
                 lines.push(`<div class="dev-footer-entry"><b>${e.date}</b> · ${e.summary}` +
                     (e.commit ? ` <span class="dev-footer-commit">(${e.commit})</span>` : '') + '</div>');
-                for (const d of (e.details || []).slice(0, 4)) {
+                for (const d of (e.detail || e.details || []).slice(0, 4)) {
                     lines.push(`<div class="dev-footer-bullet">– ${d}</div>`);
                 }
             }
         }
     } catch (e) { /* changelog missing is fine — dev-only nicety */ }
+
+    // Service-worker cache name — lets you see if the SW has picked up
+    // the latest deploy or is still serving a stale shell.
+    try {
+        const cacheNames = await caches.keys();
+        const swCache = cacheNames.find(n => n.startsWith('flashcards-v'));
+        if (swCache) {
+            lines.push(`<div class="dev-footer-row"><span>SW cache</span><span>${swCache}</span></div>`);
+        }
+    } catch (_) {}
 
     devEl.innerHTML = lines.join('');
 }
