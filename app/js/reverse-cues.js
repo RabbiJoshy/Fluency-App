@@ -359,7 +359,7 @@ function englishPastParticiple(verb) {
     return inflectEnglishPast(lower, 0);
 }
 
-function finiteEnglishCue(kind, personIdx, head, rest) {
+function finiteEnglishCue(kind, personIdx, head, rest, meaning) {
     const tail = rest || '';
     const base = String(head || '').toLocaleLowerCase('en');
     if (kind === 'imperative') {
@@ -383,7 +383,7 @@ function finiteEnglishCue(kind, personIdx, head, rest) {
     else return null;
     if (!body) return null;
     const form = `${pronoun} ${body}${tail}`;
-    return personIdx === 2 ? expandThirdSingular(form) : form;
+    return personIdx === 2 ? expandThirdSingular(form, meaning) : form;
 }
 
 function conjugationTableCue(card, meaning, translation, conjugationData) {
@@ -394,7 +394,7 @@ function conjugationTableCue(card, meaning, translation, conjugationData) {
     if (!lemma || !surface || foldCueForm(surface) === foldCueForm(lemma)) return null;
     const entry = conjugationEntry(conjugationData, lemma);
     if (!entry || typeof entry !== 'object') return null;
-    const parts = infinitiveParts(translation);
+    const parts = glossPartsForCue(translation, meaning);
     if (!parts) return null;
     const surfaceFold = foldCueForm(surface);
     if (entry.gerund && foldCueForm(entry.gerund) === surfaceFold) {
@@ -410,7 +410,7 @@ function conjugationTableCue(card, meaning, translation, conjugationData) {
         if (!kind || !Array.isArray(forms)) continue;
         forms.forEach((form, personIdx) => {
             if (!form || form === '—' || foldCueForm(form) !== surfaceFold) return;
-            const cue = finiteEnglishCue(kind, personIdx, parts.head, parts.rest);
+            const cue = finiteEnglishCue(kind, personIdx, parts.head, parts.rest, meaning);
             if (cue && !seen.has(cue)) {
                 seen.add(cue);
                 cues.push(cue);
@@ -444,12 +444,12 @@ export function grammarProductionCue(card, meaning, translation) {
     const personIdx = personIndexFromGrammar(grammar);
     if (personIdx === undefined) return null;
 
-    const parts = infinitiveParts(translation);
+    const parts = glossPartsForCue(translation, meaning);
     if (!parts) return null;
     const inflected = inflectEnglishPresent(parts.head, personIdx);
     if (!inflected) return null;
     const form = `${ENGLISH_PRONOUNS[personIdx]} ${inflected}${parts.rest}`;
-    return personIdx === 2 ? expandThirdSingular(form) : form;
+    return personIdx === 2 ? expandThirdSingular(form, meaning) : form;
 }
 
 function normalizeAnalysis(morph) {
@@ -460,9 +460,47 @@ function normalizeAnalysis(morph) {
     return { mood, tense, key: mood && tense ? `${mood}/${tense}` : '' };
 }
 
-function expandThirdSingular(form) {
-    if (/^he\s/iu.test(form)) return form.replace(/^he\s/iu, 'he/she/it ');
-    if (/^he'/iu.test(form)) return form.replace(/^he'/iu, "he/she/it'");
+function dummyItSenseBlob(meaning) {
+    if (!meaning || typeof meaning !== 'object') return '';
+    return [meaning.context, cueText(meaning)].filter(Boolean).join(' ').toLowerCase();
+}
+
+function isDummyItCopulaSense(meaning) {
+    const blob = dummyItSenseBlob(meaning);
+    if (!blob) return false;
+    if (blob.includes('used to express time')) return true;
+    if (blob.includes('point in time')) return true;
+    if (blob.includes('denote time')) return true;
+    if (blob.includes('said of time')) return true;
+    if (blob.includes('weather phenomenon')) return true;
+    if (blob.includes('of the weather')) return true;
+    return /(?:^|[\s;([])weather(?:$|[\s;)\]])/.test(blob);
+}
+
+function glossPartsForCue(translation, meaning) {
+    if (isDummyItCopulaSense(meaning) && /^to be\b/i.test(String(translation || '').trim())) {
+        return { head: 'be', rest: '' };
+    }
+    const parts = infinitiveParts(translation);
+    if (!parts || !isDummyItCopulaSense(meaning)) return parts;
+    return {
+        head: parts.head,
+        rest: parts.rest.replace(/\s*\([^)]*\)\s*$/u, '').replace(/\s*;.*$/u, ''),
+    };
+}
+
+function expandThirdSingular(form, meaning) {
+    // Clock/weather copulas take dummy it; other 3sg stays he/she. "they"
+    // would collide with 3pl (habla vs hablan).
+    if (isDummyItCopulaSense(meaning)) {
+        if (/^he\/she\s/iu.test(form)) return form.replace(/^he\/she\s/iu, 'it ');
+        if (/^he\/she'/iu.test(form)) return form.replace(/^he\/she'/iu, "it'");
+        if (/^he\s/iu.test(form)) return form.replace(/^he\s/iu, 'it ');
+        if (/^he'/iu.test(form)) return form.replace(/^he'/iu, "it'");
+        return form;
+    }
+    if (/^he\s/iu.test(form)) return form.replace(/^he\s/iu, 'he/she ');
+    if (/^he'/iu.test(form)) return form.replace(/^he'/iu, "he/she'");
     return form;
 }
 
@@ -492,7 +530,7 @@ function deriveRegularAnalysisCue(translation, analysis, personIdx) {
     return personIdx === 3 ? `let's ${verb}!` : `${verb}!`;
 }
 
-function cueForAnalysis(analysisRows, morph, translation) {
+function cueForAnalysis(analysisRows, morph, translation, meaning) {
     const analysis = normalizeAnalysis(morph);
     if (!analysis.key) return null;
 
@@ -505,7 +543,7 @@ function cueForAnalysis(analysisRows, morph, translation) {
     if (!Array.isArray(row)) {
         const derived = deriveRegularAnalysisCue(translation, analysis, personIdx);
         return derived && personIdx === 2 && analysis.mood !== 'imperativo'
-            ? expandThirdSingular(derived)
+            ? expandThirdSingular(derived, meaning || { translation })
             : derived;
     }
 
@@ -514,10 +552,10 @@ function cueForAnalysis(analysisRows, morph, translation) {
     const form = row[personIdx] || null;
     if (!form) return null;
 
-    // Spanish indicative/conditional 3sg covers he, she, it, and formal you.
-    // Imperative 3sg is instead an usted command, so its subject stays implicit.
+    // 3sg English is labelled he/she (matching él/ella). Imperative 3sg is
+    // an usted command, so its subject stays implicit.
     return personIdx === 2 && analysis.mood !== 'imperativo'
-        ? expandThirdSingular(form)
+        ? expandThirdSingular(form, meaning || { translation })
         : form;
 }
 
@@ -553,7 +591,7 @@ export function englishProductionCue(card, meaningOrTranslation, conjugatedEngli
             const rawMorph = card.mergedLemma ? card._activeExampleMorphology : card.morphology;
             const morphCandidates = (Array.isArray(rawMorph) ? rawMorph : [rawMorph]).filter(Boolean);
             const forms = morphCandidates
-                .map(morph => cueForAnalysis(analysisRows, morph, translation))
+                .map(morph => cueForAnalysis(analysisRows, morph, translation, meaning))
                 .filter((form, index, all) => form && all.indexOf(form) === index);
             if (forms.length) {
                 // Some Spanish surfaces genuinely encode more than one supported
