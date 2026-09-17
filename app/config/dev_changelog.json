@@ -3,6 +3,18 @@
   "entries": [
     {
       "date": "2026-09-17",
+      "commit": "817c6f4",
+      "summary": "Sense row audit: fixed blank subsense dashes and improved context visibility across CS, PT, and ES",
+      "detail": [
+        "Subsense cells now show metadata pills (grammar, construction, functional relation) even when the row is unselected, instead of a blank em dash.",
+        "Preserved real Wiktionary context (e.g. 'myself', 'himself', 'being a part of') that was previously blanket-wiped when the provider context matched the cleaned context.",
+        "Functional metadata (purpose, material, origin, direction) now scores high enough to serve as a sense differentiator.",
+        "Fixed grouped text sizing: density calculation evaluates worst-case single row instead of summing all rows, upgrading ~1,100 groups to larger font classes.",
+        "Blank dashes dropped from 100% to <2% in CS and PT, and to 0% in ES."
+      ]
+    },
+    {
+      "date": "2026-09-17",
       "commit": "pending",
       "summary": "Unified Rare Senses & Expressions child card and retired raw example sentence shards",
       "detail": [
