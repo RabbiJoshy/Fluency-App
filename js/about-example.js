@@ -733,6 +733,21 @@ function walkthroughExampleTicks(current, total) {
     return `<div class="example-ticks" role="img" aria-label="example ${current + 1} of ${total}">${ticks}</div>`;
 }
 
+function tutorialSourceChip(sourceLabel) {
+    const raw = String(sourceLabel || '');
+    const lower = raw.toLowerCase();
+    let domain = '';
+    let label = raw.replace(/\s+example$/i, '') || raw;
+    if (lower.includes('spanishdict')) domain = 'spanishdict.com';
+    else if (lower.includes('wiktionary')) domain = 'wiktionary.org';
+    else if (lower.includes('tatoeba')) domain = 'tatoeba.org';
+    else if (lower.includes('imdb') || lower.includes('opensubtitles')) domain = 'imdb.com';
+    if (!domain) {
+        return `<span class="example-song-credit" style="margin-right:auto;">${esc(raw)}</span>`;
+    }
+    return `<span class="example-song-credit" style="margin-right:auto;"><span class="example-source-chip example-source-chip--icon dictionary-provenance-badge" title="${esc(label)}" aria-label="${esc(label)}"><img class="example-source-favicon dict-provenance-icon" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=32" width="16" height="16" alt="" aria-hidden="true"></span></span>`;
+}
+
 function renderCredit(card, meaning, example, exampleIdx) {
     if (example.trackId) {
         const btn = `<button type="button" class="spotify-btn link-btn"
@@ -749,13 +764,13 @@ function renderCredit(card, meaning, example, exampleIdx) {
             </div>`;
     }
 
-    const label = example.sourceLabel
-        ? `<span class="example-song-credit" style="margin-right:auto;">${esc(example.sourceLabel)}</span>`
+    const credit = example.sourceLabel
+        ? tutorialSourceChip(example.sourceLabel)
         : '';
-    if (!label) return '';
+    if (!credit) return '';
     return `
         <div style="display: flex; justify-content: flex-end; align-items: center; color: #b9c2cd; font-size: 13px; margin-top: 8px;">
-            ${label}
+            ${credit}
         </div>`;
 }
 

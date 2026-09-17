@@ -1544,6 +1544,7 @@ function initializeApp() {
         e.stopPropagation();
         nextCard();
     });
+    initBackScrubberChevrons();
     // Top card buttons + their mobile-popup counterparts. The popup variant
     // lives in the single fixed #cardActionsPopup outside the card; tapping
     // it runs the same handler as the desktop sidebar button.
@@ -3447,12 +3448,11 @@ function sourceTitleRecord(provenance) {
 
 function sourceTitleLabel(provenance) {
     const metadata = sourceTitleRecord(provenance);
-    if (!metadata?.title) return '';
-    let label = metadata.series
-        ? `${metadata.series} — ${metadata.title}`
-        : metadata.title;
-    if (metadata.year) label += ` (${metadata.year})`;
-    return label;
+    if (!metadata) return '';
+    // Learner-facing credit is the work people recognise: the series or film.
+    // Episode titles and years live on the IMDb page behind the link.
+    if (metadata.series) return String(metadata.series).trim();
+    return String(metadata.title || '').trim();
 }
 
 let _sourceTitles = null;
@@ -3482,6 +3482,61 @@ function exampleLinkHTML(href, label) {
     return `<a href="${escapeCardText(href)}" target="_blank" rel="noopener noreferrer">${escapeCardText(label)}</a>`;
 }
 
+function exampleFaviconHTML(domain) {
+    return `<img class="example-source-favicon dict-provenance-icon" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=32" width="16" height="16" alt="" aria-hidden="true">`;
+}
+
+function exampleSourceChipHTML({ href, label, domain, text = '', extraClass = '' }) {
+    const icon = domain ? exampleFaviconHTML(domain) : '';
+    const named = Boolean(text);
+    const classes = [
+        'example-source-chip',
+        named ? 'example-source-chip--named' : 'example-source-chip--icon',
+        extraClass,
+    ].filter(Boolean).join(' ');
+    const title = named ? `${text}` : label;
+    const inner = `${named ? `<span class="example-source-text">${escapeCardText(text)}</span>` : ''}${icon}`;
+    const attrs = `class="${classes}" title="${escapeCardText(title)}" aria-label="${escapeCardText(named ? `${text} on ${label}` : label)}"`;
+    if (!href) return `<span ${attrs}>${inner}</span>`;
+    return `<a ${attrs} href="${escapeCardText(href)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${inner}</a>`;
+}
+
+function dictionaryProviderCredit(name, href) {
+    const raw = String(name || '').trim();
+    const lower = raw.toLowerCase();
+    if (lower.includes('spanishdict')) {
+        return exampleSourceChipHTML({
+            href,
+            label: 'SpanishDict',
+            domain: 'spanishdict.com',
+            extraClass: 'dictionary-provenance-badge',
+        });
+    }
+    if (lower.includes('wiktionary') || lower.includes('kaikki')) {
+        return exampleSourceChipHTML({
+            href,
+            label: 'Wiktionary',
+            domain: 'wiktionary.org',
+            extraClass: 'dictionary-provenance-badge',
+        });
+    }
+    return exampleSourceChipHTML({
+        href,
+        label: raw || 'Dictionary',
+        domain: 'wiktionary.org',
+        extraClass: 'dictionary-provenance-badge',
+    });
+}
+
+function dictionaryProviderForMeaning(meaning) {
+    const meta = meaning?.metadata || {};
+    if (meta?.sense_provider_metadata?.spanishdict) return 'SpanishDict';
+    const raw = String(meta.source_provider || meaning?.source || '').toLowerCase();
+    if (raw.includes('spanishdict')) return 'SpanishDict';
+    if (raw.includes('wiktionary') || raw.includes('kaikki')) return 'Wiktionary';
+    return 'Dictionary';
+}
+
 // Where a corpus example actually came from. Every displayed sentence should
 // name its source: OpenSubtitles with a film/series title when the IMDb map
 // has one, Tatoeba with a sentence link, or the dictionary that filed it.
@@ -3492,18 +3547,30 @@ function exampleProvenanceHTML(example) {
         if (p.title_id) {
             const tt = 'tt' + String(p.title_id).padStart(7, '0');
             const title = sourceTitleLabel(p);
-            return exampleLinkHTML(`https://www.imdb.com/title/${tt}/`, title || tt);
+            return exampleSourceChipHTML({
+                href: `https://www.imdb.com/title/${tt}/`,
+                label: 'IMDb',
+                domain: 'imdb.com',
+                text: title,
+            });
         }
-        return 'OpenSubtitles';
+        return exampleSourceChipHTML({
+            label: 'OpenSubtitles',
+            domain: 'opensubtitles.org',
+        });
     }
     if (corpus === 'tatoeba') {
-        return exampleLinkHTML(p.url, 'Tatoeba');
+        return exampleSourceChipHTML({
+            href: p.url,
+            label: 'Tatoeba',
+            domain: 'tatoeba.org',
+        });
     }
     if (corpus === 'wiktionary') {
-        return exampleLinkHTML(p.url, 'Wiktionary');
+        return dictionaryProviderCredit('Wiktionary', p.url);
     }
     if (corpus === 'spanishdict') {
-        return exampleLinkHTML(p.url, 'SpanishDict');
+        return dictionaryProviderCredit('SpanishDict', p.url);
     }
     if (corpus) return escapeCardText(corpus);
     return null;
@@ -4032,7 +4099,7 @@ function canonicalExampleHTML(meaning) {
         <div class="breakdown-trigger" style="margin-bottom: 8px;">${highlightWithDeclaredOffsets(text, canonical.bold_text_offsets)}</div>
         <div class="translation">${highlightWithDeclaredOffsets(translation, canonical.bold_translation_offsets)}</div>
         <div class="example-credit-row" style="display: flex; justify-content: flex-end; align-items: center; font-size: 13px; margin-top: 8px;">
-            <span class="example-song-credit" style="margin-right:auto;"><span class="dictionary-provenance-badge" title="Canonical dictionary example"><span class="dict-provenance-icon" aria-hidden="true">📖</span> Dictionary example</span></span>
+            <span class="example-song-credit" style="margin-right:auto;">${dictionaryProviderCredit(dictionaryProviderForMeaning(meaning), canonical?.url)}</span>
         </div>
     </div>`;
 }
@@ -4049,7 +4116,7 @@ function extractCanonicalDictionaryExamples(meaning) {
             englishSentence: translation,
             source: 'dictionary',
             evidence: 'dictionary',
-            dictionarySource: 'Dictionary',
+            dictionarySource: dictionaryProviderForMeaning(meaning),
             canonical: true,
         }];
     }
@@ -4108,16 +4175,23 @@ function getSenseProminenceInfo(meaning) {
     if (meaning.unassigned) {
         return { label: 'Rare', key: 'rare' };
     }
-    const p = Number(meaning.percentage) || 0;
-    if (p >= 0.20) {
-        return { label: 'Common', key: 'common' };
-    } else if (p >= 0.05) {
-        return { label: 'Uncommon', key: 'uncommon' };
-    } else {
-        return { label: 'Rare', key: 'rare' };
-    }
+    return prominenceInfoFromShare([meaning]);
+}
+
+// Learner-facing frequency is the share of a meaning cluster, not the WSD
+// mass of one dictionary shade. Near-synonym leaves (fantastic / brilliant)
+// must not fight Common vs Rare; sum the assigned members and bucket once.
+function prominenceInfoFromShare(meanings) {
+    const list = Array.isArray(meanings) ? meanings.filter(Boolean) : [];
+    const used = list.filter(m => !m.unassigned && !m.isRareSense);
+    if (!used.length) return { label: 'Rare', key: 'rare' };
+    const p = used.reduce((acc, m) => acc + (Number(m.percentage) || 0), 0);
+    if (p >= 0.20) return { label: 'Common', key: 'common' };
+    if (p >= 0.05) return { label: 'Uncommon', key: 'uncommon' };
+    return { label: 'Rare', key: 'rare' };
 }
 window.getSenseProminenceInfo = getSenseProminenceInfo;
+window.prominenceInfoFromShare = prominenceInfoFromShare;
 
 function prominenceBadgeHTML(promInfo, extraStyle = '') {
     const style = extraStyle ? ` style="${extraStyle}"` : '';
@@ -5174,7 +5248,7 @@ function updateCard({ announceHeadword = false } = {}) {
 
                 const allFoldIndices = [leaderIdx, ...followers];
                 const allFoldMeanings = allFoldIndices.map(i => card.meanings[i]);
-                const bestPromInfo = getSenseProminenceInfo(bestEntry.m);
+                const bestPromInfo = prominenceInfoFromShare(allFoldMeanings);
                 const sumPctVal = Math.min(100, Math.round(allFoldMeanings.reduce((acc, m) => acc + (Number(m.percentage) || 0), 0) * 100));
                 const hasOnlyRare = allFoldMeanings.every(m => m.unassigned || m.isRareSense || m.prominenceLabel === 'Rare');
 
@@ -5502,23 +5576,17 @@ function updateCard({ announceHeadword = false } = {}) {
                         return varyingCell;
                     }).join('');
 
+                    const groupMeanings = orderedMembers.map(memberIdx => card.meanings[memberIdx]);
                     const useProminenceLabels = (typeof senseProminenceMode !== 'undefined' ? senseProminenceMode : globalThis.state?.senseProminenceMode) !== 'percentages';
-                    // Pct stack — lives outside the highlight box, in its own
-                    // outer-grid column on the right edge of the row, so the
-                    // %s align with singleton-card %s.
-                    const pctStackHtml = orderedMembers.map((memberIdx) => {
-                        const mm = card.meanings[memberIdx];
-                        if (useProminenceLabels) {
-                            const pInfo = getSenseProminenceInfo(mm);
-                            return `<div class="sense-prominence-cell" onclick="event.stopPropagation(); selectMeaning(${memberIdx})" style="min-height: 25px; padding: 2px 6px; display: flex; align-items: center; justify-content: flex-end; cursor: pointer;">${prominenceBadgeHTML(pInfo)}</div>`;
-                        }
-                        const memberPct = Math.round((mm.percentage || 0) * 100);
-                        if (mm.unassigned || memberPct >= 100) {
-                            return '<div style="min-height: 25px; padding: 2px 6px;"></div>';
-                        }
-                        return `<div class="sense-percentage sense-percentage-cell" onclick="event.stopPropagation(); selectMeaning(${memberIdx})" style="min-height: 25px; padding: 2px 6px; display: flex; align-items: center; justify-content: flex-end; cursor: pointer;">${memberPct}%</div>`;
-                    }).join('');
-                    const pctColumnHtml = `<div class="pct-column" style="display: flex; flex-direction: column; gap: 3px; padding-left: 4px;">${pctStackHtml}</div>`;
+                    // One label for the cluster. Sibling glosses are dictionary
+                    // shades of the same usage, not competing frequencies.
+                    const groupPromInfo = prominenceInfoFromShare(groupMeanings);
+                    const groupPctVal = Math.min(100, Math.round(groupMeanings.reduce((acc, mm) => acc + (Number(mm.percentage) || 0), 0) * 100));
+                    const pctColumnHtml = useProminenceLabels
+                        ? `<div class="pct-column pct-column--group" style="display: flex; align-items: center; padding-left: 4px;">${prominenceBadgeHTML(groupPromInfo)}</div>`
+                        : (groupPctVal > 0 && groupPctVal < 100
+                            ? `<div class="pct-column pct-column--group" style="display: flex; align-items: center; padding-left: 4px;"><span class="sense-percentage sense-percentage-cell">${groupPctVal}%</span></div>`
+                            : `<div class="pct-column"></div>`);
 
                     // Shared cell — spans all body rows.
                     const sharedCol = isTransAxis ? 1 : 2;
@@ -5624,11 +5692,15 @@ function updateCard({ announceHeadword = false } = {}) {
         const qualifyingRare = getQualifyingRareSenses(card);
         if (qualifyingRare.length > 0) {
             const isExpanded = card._showRareSenses === true;
+            const rareCount = qualifyingRare.length;
+            const rareLabel = isExpanded
+                ? 'Hide rare dictionary meanings'
+                : `Show ${rareCount} rare dictionary meaning${rareCount === 1 ? '' : 's'} not used in your examples`;
             backHTML += `<div class="rare-senses-toggle-wrap">
-                <button type="button" class="rare-senses-toggle-btn${isExpanded ? ' is-expanded' : ''}" onclick="toggleRareSenses(event)">
-                    <span class="rare-senses-chevron" aria-hidden="true">${isExpanded ? '▲ ' : '▼ '}</span>${isExpanded ? 'Hide other dictionary meanings' : `Show other dictionary meanings (${qualifyingRare.length})`}
+                <button type="button" class="rare-senses-toggle-btn${isExpanded ? ' is-expanded' : ''}" onclick="toggleRareSenses(event)" aria-expanded="${isExpanded ? 'true' : 'false'}" title="${escapeCardText(rareLabel)}" aria-label="${escapeCardText(rareLabel)}">
+                    <span class="rare-senses-count">${isExpanded ? 'Hide' : `+${rareCount}`}</span>
                 </button>
-                ${isExpanded ? '<p class="rare-senses-toggle-hint">These meanings are in the dictionary but were not used in your examples.</p>' : ''}
+                ${isExpanded ? '<p class="rare-senses-toggle-hint">Rare meanings — they do not appear in your examples.</p>' : ''}
             </div>`;
         }
         // Phrases mode off restores the pinned tray; on, MWE/CLITIC entries
@@ -5706,14 +5778,13 @@ function updateCard({ announceHeadword = false } = {}) {
                 const dictName = example.dictionarySource
                     || (example.source === 'wiktionary' ? 'Wiktionary'
                         : (example.source === 'spanishdict' ? 'SpanishDict'
-                            : (example.evidence === 'dictionary' ? 'Dictionary' : null)));
-                const dictLabel = dictName === 'SpanishDict'
-                    ? 'SpanishDict example'
-                    : (dictName === 'Wiktionary' ? 'Wiktionary example' : `${dictName} example`);
+                            : (example.evidence === 'dictionary'
+                                ? dictionaryProviderForMeaning(currentMeaning)
+                                : null)));
                 exampleSourceLabel = example.personalised
                     ? `Personalised practice · ${example.reinforcement_word}`
                     : (dictName
-                        ? `<span class="dictionary-provenance-badge" title="Canonical dictionary example"><span class="dict-provenance-icon" aria-hidden="true">📖</span> ${dictLabel}</span>`
+                        ? dictionaryProviderCredit(dictName, example.source_url || example.sentence_url)
                         : exampleProvenanceHTML(example));
                 window._currentDisplayedExample = example;
                 const exTarget = example.target || example.spanish || '';
@@ -6896,6 +6967,47 @@ function _navCard(direction) {
         });
     });
     return true;
+}
+
+function initBackScrubberChevrons() {
+    const strip = document.querySelector('#cardBackScrubber .cbs-strip');
+    const scrubber = document.getElementById('cardBackScrubber');
+    if (!strip || !scrubber || strip.dataset.chevronIntent === '1') return;
+    strip.dataset.chevronIntent = '1';
+    let hideTimer = null;
+    let pointerInside = false;
+    const chevrons = () => strip.querySelectorAll('.cbs-chevron');
+    const show = () => {
+        strip.classList.add('cbs-chevrons-visible');
+        chevrons().forEach(btn => btn.removeAttribute('tabindex'));
+        clearTimeout(hideTimer);
+    };
+    const scheduleHide = () => {
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => {
+            if (pointerInside) return;
+            strip.classList.remove('cbs-chevrons-visible');
+            chevrons().forEach(btn => btn.setAttribute('tabindex', '-1'));
+        }, 2000);
+    };
+    const onEnter = () => {
+        pointerInside = true;
+        show();
+    };
+    const onLeave = () => {
+        pointerInside = false;
+        scheduleHide();
+    };
+    scrubber.addEventListener('pointerdown', onEnter);
+    scrubber.addEventListener('pointermove', onEnter);
+    scrubber.addEventListener('pointerenter', onEnter);
+    scrubber.addEventListener('pointerleave', onLeave);
+    scrubber.addEventListener('focusin', onEnter);
+    scrubber.addEventListener('focusout', (event) => {
+        if (scrubber.contains(event.relatedTarget)) return;
+        pointerInside = false;
+        scheduleHide();
+    });
 }
 
 // Arrow/button navigation off an ungraded phrase card is an exit from the

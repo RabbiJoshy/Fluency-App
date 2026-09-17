@@ -2000,6 +2000,7 @@
         }
 
         .cbs-strip {
+            position: relative;
             display: flex;
             align-items: center;
             flex: 1;
@@ -2017,10 +2018,12 @@
         }
 
         .cbs-chevron {
-            flex: 0 0 50px;
-            width: 50px;
-            /* Stretch to the strip's inner height instead of a fixed 44px —
-               the reclaimed divider/padding space becomes tap target. */
+            position: absolute;
+            z-index: 3;
+            top: 50%;
+            transform: translateY(-50%);
+            flex: none;
+            width: 44px;
             height: calc(100% - 4px);
             min-height: 44px;
             border-radius: 10px;
@@ -2030,7 +2033,13 @@
             font-size: 28px;
             line-height: 1;
             cursor: pointer;
-            transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.18s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+        }
+        .cbs-strip.cbs-chevrons-visible .cbs-chevron {
+            opacity: 1;
+            pointer-events: auto;
         }
         .cbs-chevron-prev,
         .cbs-chevron-next {
@@ -2038,6 +2047,8 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: #fff;
         }
+        .cbs-chevron-prev { left: 2px; }
+        .cbs-chevron-next { right: 2px; }
         .cbs-chevron:disabled {
             background: rgba(255, 255, 255, 0.04);
             border-color: rgba(255, 255, 255, 0.1);
@@ -2737,41 +2748,35 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: var(--font-reading);
             font-size: 9px;
-            font-weight: 600;
+            font-weight: 650;
             line-height: 1.2;
-            padding: 1.5px 5px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            border-radius: 0;
+            text-transform: none;
+            letter-spacing: 0;
             white-space: nowrap;
         }
         @media (max-width: 480px) {
             .meaning-row .meaning-row-body {
-                padding-right: 42px !important;
+                padding-right: 36px !important;
                 padding-left: 6px !important;
             }
             .sense-prominence-badge {
                 font-size: 8px;
-                padding: 1px 4px;
-                letter-spacing: 0.02em;
             }
         }
         .sense-prominence-badge.prominence-common {
-            background: rgba(16, 185, 129, 0.15);
             color: #10b981;
-            border: 1px solid rgba(16, 185, 129, 0.3);
         }
         .sense-prominence-badge.prominence-uncommon {
-            background: rgba(255, 255, 255, 0.08);
             color: var(--text-secondary);
-            border: 1px solid rgba(255, 255, 255, 0.12);
         }
         .sense-prominence-badge.prominence-rare {
-            background: rgba(245, 158, 11, 0.14);
             color: #f59e0b;
-            border: 1px solid rgba(245, 158, 11, 0.3);
         }
 
         .rare-senses-toggle-wrap {
@@ -2779,21 +2784,22 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            padding: 6px 0 8px;
+            gap: 4px;
+            padding: 2px 0 4px;
             width: 100%;
         }
         .rare-senses-toggle-btn {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 4px 12px;
+            gap: 4px;
+            min-height: 28px;
+            padding: 2px 8px;
             font-family: var(--font-reading);
-            font-size: 11.5px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px dashed rgba(255, 255, 255, 0.28);
+            font-size: 11px;
+            font-weight: 700;
+            color: #f59e0b;
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px dashed rgba(245, 158, 11, 0.42);
             border-radius: 999px;
             cursor: pointer;
             transition: all 0.18s ease;
@@ -2801,27 +2807,25 @@
         .rare-senses-toggle-hint {
             margin: 0;
             color: var(--text-secondary);
-            font: 500 12px/1.35 var(--font-reading);
+            font: 500 11px/1.35 var(--font-reading);
             text-align: center;
         }
         .rare-senses-toggle-btn:hover {
-            color: var(--text-primary);
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.3);
+            color: #fbbf24;
+            background: rgba(245, 158, 11, 0.14);
+            border-color: rgba(245, 158, 11, 0.55);
         }
         .rare-senses-toggle-btn.is-expanded {
-            background: rgba(var(--accent-primary-rgb), 0.1);
-            color: var(--accent-primary);
+            background: rgba(245, 158, 11, 0.16);
+            color: #fbbf24;
             border-style: solid;
-            border-color: rgba(var(--accent-primary-rgb), 0.3);
         }
+        .rare-senses-more-icon,
         .rare-senses-chevron {
-            display: inline-block;
-            font-size: 8px;
-            transition: transform 0.2s ease;
+            display: none;
         }
-        .rare-senses-toggle-btn.is-expanded .rare-senses-chevron {
-            transform: rotate(180deg);
+        .rare-senses-count {
+            font-variant-numeric: tabular-nums;
         }
         .meaning-row.meaning-row-rare {
             animation: rareSenseRowFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -2843,16 +2847,39 @@
             font-size: 11px;
             font-weight: 600;
             color: var(--text-secondary);
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 6px;
-            padding: 2px 7px;
-            margin-right: auto;
             letter-spacing: 0.01em;
         }
-        .dictionary-provenance-badge .dict-provenance-icon {
-            font-size: 11px;
+        .example-source-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: inherit;
+            text-decoration: none;
             line-height: 1;
+        }
+        .example-source-chip--icon {
+            padding: 2px;
+            border-radius: 6px;
+        }
+        .example-source-chip:hover,
+        .example-source-chip:focus-visible {
+            color: var(--text-primary);
+            outline: none;
+        }
+        .example-source-favicon,
+        .dictionary-provenance-badge .dict-provenance-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            display: block;
+            flex: 0 0 auto;
+        }
+        .example-source-text {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-style: italic;
         }
         body.is-spotify-playing .sentence .example-word-highlight,
         body.is-speaking-active .sentence .example-word-highlight {
@@ -15858,6 +15885,27 @@ body {
   background: var(--bg-card);
   box-shadow: 0 8px 24px rgba(0, 0, 0, .13);
 }
+@media (max-width: 767px) {
+  .container:has(#setupPanel:not(.hidden)) {
+    padding: 6px 4px;
+  }
+  #setupPanel.file-upload {
+    padding: 4px 0 8px;
+  }
+  #step2,
+  #step4 {
+    padding: 8px 0 2px;
+  }
+  #step2 > .step-header,
+  #step4 > .step-header { padding: 0; }
+  #step4 .study-set-panel {
+    padding: 10px 8px;
+  }
+  .study-set-dots {
+    grid-template-columns: repeat(auto-fit, minmax(28px, 1fr));
+    gap: 4px;
+  }
+}
 .study-set-dot.is-current {
   animation: none;
   transform: translateY(-1px);
@@ -15894,7 +15942,8 @@ body {
 }
 
 @media (max-width: 560px) {
-  .container { padding: 10px 12px; }
+  .container { padding: 8px 6px; }
+  .container:has(#setupPanel:not(.hidden)) { padding: 6px 4px; }
   #topBar { margin-bottom: 10px; }
   .learning-context-chip { border-color: transparent; background: transparent; padding-left: 4px; max-width: 140px; }
   .setup-options-bar { grid-template-columns: minmax(0, 1fr) auto; gap: 6px; }
