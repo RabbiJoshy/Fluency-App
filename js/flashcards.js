@@ -2437,10 +2437,9 @@ function handleSwipeAction(result) {
     // in case it mutates card state.
     const swipedCard = flashcards[currentIndex];
     const isChainChild = swipedCard?.isChainChild === true;
-    // Phrases and Extra examples are independent study settings, so the chain
-    // may run with either, both, or neither. buildCardChildren consults each
-    // one separately.
-    const mayChain = (phrasesModeEnabled || extraExamplesEnabled) && !isChainChild
+    // Automatic chain child: rare senses and expressions appear after a
+    // correct parent card when phrasesModeEnabled is on.
+    const mayChain = phrasesModeEnabled && !isChainChild
         && cardNavStack.length === 0 && result === 'correct';
 
     // Record the result
@@ -3248,7 +3247,7 @@ function getNotableSurfaceRelation(card) {
 // themselves are excluded — their single MWE/CLITIC meaning is the card's
 // own content, not something to chain further.
 function collectChainItems(card) {
-    if (!card?.isMultiMeaning || card.isChainChild) return [];
+    if (!card || card.isChainChild) return [];
     return (card.meanings || [])
         .map((m, idx) => ({ m, idx }))
         .filter(({ m }) => m.pos === 'MWE' || m.pos === 'CLITIC')
@@ -3256,7 +3255,7 @@ function collectChainItems(card) {
             const list = m.allMWEs || m.allClitics || [m];
             return list.map((item, sub) => ({
                 parentCard: card,
-                parentWord: card.targetWord,
+                parentWord: card.displaySurface || card.targetWord,
                 meaningIndex: idx,
                 subIndex: sub,
                 kind: m.pos, // 'MWE' | 'CLITIC'
@@ -3273,16 +3272,96 @@ function collectChainItems(card) {
         .filter(c => c.expression);
 }
 
+function collectExpressionItems(card) {
+    if (!card || card.isChainChild) return [];
+    const chainItems = collectChainItems(card);
+    if (chainItems.length > 0) return chainItems;
+    if (Array.isArray(card.mwe_memberships) && card.mwe_memberships.length > 0) {
+        return card.mwe_memberships.map((mwe, sub) => ({
+            parentCard: card,
+            parentWord: card.displaySurface || card.targetWord,
+            meaningIndex: -1,
+            subIndex: sub,
+            kind: 'MWE',
+            expression: mwe.expression || '',
+            translation: mwe.translation || '',
+            context: mwe.context || '',
+            source: mwe.source || '',
+            examples: mwe.examples || []
+        })).filter(c => c.expression);
+    }
+    return [];
+}
+
+function collectRareSenseItems(card) {
+    if (!card || card.isChainChild) return [];
+    const qualifying = typeof getQualifyingRareSenses === 'function' ? getQualifyingRareSenses(card) : [];
+    const seenSenseIds = new Set();
+    const items = [];
+
+    for (const q of qualifying) {
+        const id = q.senseId || q.sense_id || '';
+        if (id) seenSenseIds.add(id);
+        const trans = q.meaning || q.translation || '';
+        if (!trans) continue;
+        const ex = typeof extractCanonicalDictionaryExamples === 'function'
+            ? extractCanonicalDictionaryExamples(q)
+            : [];
+        items.push({
+            parentCard: card,
+            parentWord: card.displaySurface || card.targetWord,
+            kind: 'RARE_SENSE',
+            senseId: id,
+            pos: q.pos || '',
+            translation: trans,
+            context: q.context || '',
+            examples: ex.length > 0 ? ex : (q.canonicalExample ? [q.canonicalExample] : [])
+        });
+    }
+
+    if (Array.isArray(card.unusedMenuSenses)) {
+        for (const unused of card.unusedMenuSenses) {
+            const id = unused.senseId || unused.sense_id || '';
+            if (id && seenSenseIds.has(id)) continue;
+            const trans = unused.meaning || unused.translation || '';
+            if (!trans) continue;
+            if (id) seenSenseIds.add(id);
+            const ex = typeof extractCanonicalDictionaryExamples === 'function'
+                ? extractCanonicalDictionaryExamples(unused)
+                : [];
+            items.push({
+                parentCard: card,
+                parentWord: card.displaySurface || card.targetWord,
+                kind: 'RARE_SENSE',
+                senseId: id,
+                pos: unused.pos || '',
+                translation: trans,
+                context: unused.context || '',
+                examples: ex.length > 0 ? ex : (unused.canonicalExample ? [unused.canonicalExample] : [])
+            });
+        }
+    }
+    return items;
+}
+
+function collectRareAndExpressionItems(card) {
+    if (!card || card.isChainChild) return [];
+    const expressions = collectExpressionItems(card);
+    const rareSenses = collectRareSenseItems(card);
+    return [...expressions, ...rareSenses];
+}
 
 // Builds the synthetic card rendered after the parent — one card holding
-// every phrase/clitic together in a scrollable list, not a sequence of
-// separate cards to swipe through one at a time.
+// every rare sense and phrase/clitic together in a scrollable list.
 function phraseSummaryCard(items) {
+    const parent = items[0]?.parentCard;
+    const word = items[0]?.parentWord || parent?.displaySurface || parent?.targetWord || '';
     return {
-        id: `${items[0].parentCard.id}::phrases`,
+        id: `${parent?.id || 'synthetic'}::rare_and_expressions`,
         isChainChild: true,
-        chainParentWord: items[0].parentWord,
-        targetWord: items[0].parentWord,
+        chainChildKind: 'rare_and_expressions',
+        chainParentWord: word,
+        targetWord: word,
         isMultiMeaning: true,
         meanings: [],
         links: {}
@@ -3666,8 +3745,7 @@ function phraseSourcePillHTML(item) {
 }
 
 function renderPhraseSummaryBack(card) {
-    const items = cardChainQueue;
-    const n = items.length;
+    const items = cardChainQueue || [];
     const cliticGroups = new Map();
     items.forEach((item, index) => {
         if (item.kind !== 'CLITIC') return;
@@ -3684,6 +3762,26 @@ function renderPhraseSummaryBack(card) {
             if (emittedGroups.has(base)) return '';
             emittedGroups.add(base);
             return renderCliticGroup(base, cliticGroups.get(base));
+        }
+        if (item.kind === 'RARE_SENSE') {
+            const posBadge = item.pos
+                ? `<span class="phrase-source-pill" style="margin-left: 6px; font-weight: 600; opacity: 0.85;">${escapeCardText(item.pos)}</span>`
+                : '';
+            const example = (item.examples || [])[0];
+            const target = exampleTargetText(example) || example?.text || example?.targetSentence || '';
+            const english = example?.english || example?.translation || example?.englishSentence || '';
+            const englishHTML = (target && english)
+                ? `<div class="phrase-example-translation">${escapeCardText(english)}</div>` : '';
+            const exampleHTML = target ? `<div class="phrase-example">
+                    <div class="phrase-example-target">${escapeCardText(target)}</div>
+                    ${englishHTML}
+                </div>` : '';
+            return `<div class="phrase-summary-item rare-sense-item">
+                <div class="phrase-badge-row"><span class="phrase-kind-badge badge-rare">RARE</span>${posBadge}</div>
+                <div class="phrase-expression">${escapeCardText(item.translation || item.expression || '')}</div>
+                ${item.context ? `<div class="phrase-context">${escapeCardText(item.context)}</div>` : ''}
+                ${exampleHTML}
+            </div>`;
         }
         const example = (item.examples || [])[0];
         const target = exampleTargetText(example);
@@ -3702,13 +3800,32 @@ function renderPhraseSummaryBack(card) {
         </div>`;
     }).join('');
 
+    const rareCount = items.filter(it => it.kind === 'RARE_SENSE').length;
+    const phraseCount = items.length - rareCount;
+    let subtitle = '';
+    if (rareCount > 0 && phraseCount > 0) {
+        subtitle = `${rareCount} rare sense${rareCount === 1 ? '' : 's'} & ${phraseCount} expression${phraseCount === 1 ? '' : 's'} from this word`;
+    } else if (rareCount > 0) {
+        subtitle = `${rareCount} rare dictionary sense${rareCount === 1 ? '' : 's'} from this word`;
+    } else {
+        subtitle = `${phraseCount} phrase${phraseCount === 1 ? '' : 's'} from this word`;
+    }
+
+    const backButtonHTML = cardNavStack.length > 0
+        ? `<div style="margin-top: 18px; margin-bottom: 8px; text-align: center;">
+            <button type="button" class="rare-child-back-btn" onclick="event.stopPropagation(); navigateBack();">
+                &larr; Back to ${escapeCardText(card.chainParentWord || 'card')}
+            </button>
+           </div>`
+        : '';
+
     return `<div class="back-header">
             <div class="back-headword-row">
                 <span class="back-headword" style="font-size: 32px; font-weight: bold; line-height: 1.1;">${escapeCardText(card.chainParentWord || '')}</span>
             </div>
-            <div class="phrase-summary-subtitle">${n} phrase${n === 1 ? '' : 's'} from this word</div>
+            <div class="phrase-summary-subtitle">${subtitle}</div>
         </div>
-        <div class="phrase-summary-scroll">${rows}</div>`;
+        <div class="phrase-summary-scroll">${rows}${backButtonHTML}</div>`;
 }
 
 // ---------------------------------------------------------------------------
@@ -3829,22 +3946,8 @@ function backupExampleIdsFor(card) {
 }
 
 async function collectBackupExamples(card) {
-    if (!extraExamplesEnabled) return [];
-    const ids = backupExampleIdsFor(card);
-    const shard = await loadBackupExampleShardForIds(ids);
-    if (!shard) return [];
-    const seen = new Set();
-    const out = [];
-    for (const id of ids) {
-        for (const sentence of (shard[id] || [])) {
-            if (seen.has(sentence.id)) continue;
-            seen.add(sentence.id);
-            out.push(sentence);
-        }
-    }
-    // Fully-known sentences first: `burden` is the graded difficulty of
-    // everything in the sentence the learner has not reached yet.
-    return out.sort((a, b) => (a.burden || 0) - (b.burden || 0));
+    // Retired: WSD and authentic example scaling supersede un-disambiguated backup sentences.
+    return [];
 }
 
 function examplesChildCard(parentCard) {
@@ -3925,10 +4028,8 @@ function revealWildTranslation(event, index) {
 // nothing to show is simply absent from the plan.
 async function buildCardChildren(card) {
     const children = [];
-    const phrases = phrasesModeEnabled ? collectChainItems(card) : [];
-    if (phrases.length > 0) children.push({ type: 'phrases', items: phrases });
-    const sentences = await collectBackupExamples(card);
-    if (sentences.length > 0) children.push({ type: 'examples', sentences });
+    const items = phrasesModeEnabled ? collectRareAndExpressionItems(card) : [];
+    if (items.length > 0) children.push({ type: 'phrases', items });
     return children;
 }
 
@@ -4006,9 +4107,19 @@ function abandonPhraseChain() {
 // whole card) and resumes exactly where the parent would have left off had
 // it not had any phrases — the next real deck card, or end-of-deck.
 function finishPhraseChain(isCorrect) {
-    // Only the phrase child carries gradeable items; the sentence list is
-    // reading, so swiping it records nothing.
-    for (const item of cardChainQueue) recordChainChildResult(item, isCorrect);
+    // If opened on-demand via cardNavStack, return to parent card
+    if (cardNavStack.length > 0) {
+        navigateBack();
+        return;
+    }
+
+    // Only phrases/expressions carry gradeable items; rare dictionary senses
+    // are unassigned so swiping them records no meaning progress.
+    for (const item of cardChainQueue) {
+        if (item.kind !== 'RARE_SENSE') {
+            recordChainChildResult(item, isCorrect);
+        }
+    }
 
     // Hand over to the next child before unwinding, so a word with both
     // phrases and sentences shows them in sequence off one parent answer.
@@ -4036,6 +4147,44 @@ function finishPhraseChain(isCorrect) {
         showEndOfDeckOptions();
     }
 }
+
+// On-demand trigger from the card back: opens rare senses and expressions
+// as an interactive peek/child card pushed onto cardNavStack.
+function openRareAndExpressionsCard(event) {
+    event?.stopPropagation?.();
+    const parentCard = flashcards[currentIndex];
+    if (!parentCard) return;
+    const items = collectRareAndExpressionItems(parentCard);
+    if (!items.length) return;
+
+    cardChainQueue = items;
+    cardChainExamples = [];
+    cardChainReturnIndex = currentIndex;
+
+    const tempChild = phraseSummaryCard(items);
+    const tempIndex = flashcards.length;
+
+    cardNavStack.push({
+        index: currentIndex,
+        meaningIndex: currentMeaningIndex,
+        exampleIndex: currentExampleIndex,
+        mweIndex: currentMWEIndex,
+        tempCard: true,
+        tempIndex: tempIndex,
+        wasFlipped: true
+    });
+
+    flashcards.push(tempChild);
+    currentIndex = tempIndex;
+    currentMeaningIndex = 0;
+    currentExampleIndex = 0;
+    currentMWEIndex = 0;
+    currentGroupSelection = null;
+
+    document.getElementById('flashcard').classList.add('flipped');
+    updateCard({ announceHeadword: true });
+}
+window.openRareAndExpressionsCard = openRareAndExpressionsCard;
 
 function canonicalRecord(meaning) {
     if (!meaning) return null;
@@ -5688,15 +5837,21 @@ function updateCard({ announceHeadword = false } = {}) {
                     const sharedTextHTML = isTransAxis
                         ? displayMeaningHTML
                         : sharedText;
-                    const groupedTextClass = adaptiveRowTextClass(
-                        sharedText,
-                        orderedMembers.map(memberIdx => {
-                            const member = card.meanings[memberIdx];
-                            return isTransAxis
-                                ? (member.context || '')
-                                : (getProductionEnglishCue(card, member) || member.meaning || '');
-                        })
-                    );
+                    const maxMemberLength = orderedMembers.reduce((max, mi) => {
+                        const member = card.meanings[mi];
+                        const memberText = isTransAxis
+                            ? (member.context || '')
+                            : (getProductionEnglishCue(card, member) || member.meaning || member.translation || '');
+                        return Math.max(max, String(memberText || '').replace(/<[^>]*>/g, '').trim().length);
+                    }, 0);
+                    const sharedCleanLength = String(sharedText || '').replace(/<[^>]*>/g, '').trim().length;
+                    const longestFragment = Math.max(sharedCleanLength, maxMemberLength);
+                    const worstRowLength = sharedCleanLength + maxMemberLength;
+                    const groupDensity = Math.max(longestFragment, worstRowLength * 0.7);
+                    let groupedTextClass = 'row-text-sm';
+                    if (groupDensity <= 24) groupedTextClass = 'row-text-xl';
+                    else if (groupDensity <= 44) groupedTextClass = 'row-text-lg';
+                    else if (groupDensity <= 72) groupedTextClass = 'row-text-md';
                     // Group-level selection: clicking the shared field selects
                     // the whole group (examples become union of members);
                     // clicking any sub-item reverts to per-meaning selection.
@@ -5738,6 +5893,7 @@ function updateCard({ announceHeadword = false } = {}) {
                                 senseCount: card.meanings?.length || orderedMembers.length,
                                 gloss: sharedText,
                                 peerMeanings: card.meanings.filter((_, otherIdx) => otherIdx !== memberIdx),
+                                allowInactivePrimary: true,
                             };
                             let cleanedCtx = cleanSenseContext(rawCtx, sharedText);
                             if (cleanedCtx && contextCollidesWithMetadata(
@@ -5747,9 +5903,27 @@ function updateCard({ announceHeadword = false } = {}) {
                                 cleanedCtx = '';
                             }
                             const metadataHTML = senseMetadataHTML(mm, isMemberSelected, metaOptions);
-                            varyingHtml = cleanedCtx || metadataHTML
-                                ? `<span class="meaning-context-cell" style="line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${renderSenseContextHTML(cleanedCtx, { leadingDot: false })}${metadataHTML}</span>`
-                                : `<span style="opacity: 0.4; font-style: italic; font-size: 12px;">—</span>`;
+                            if (cleanedCtx || metadataHTML) {
+                                varyingHtml = `<span class="meaning-context-cell" style="line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${renderSenseContextHTML(cleanedCtx, { leadingDot: false })}${metadataHTML}</span>`;
+                            } else {
+                                const diff = resolveMeaningDifferentiator(
+                                    mm,
+                                    orderedMembers.filter(mi => mi !== memberIdx).map(mi => card.meanings[mi]),
+                                    sharedText,
+                                    (m, g) => cleanSenseContext(contextWithoutSenseMetadata(m, false), g)
+                                );
+                                if (diff && diff.score >= 60) {
+                                    if (diff.type === 'context') {
+                                        varyingHtml = `<span class="meaning-context-cell" style="line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${renderSenseContextHTML(diff.label, { leadingDot: false })}</span>`;
+                                    } else {
+                                        const family = escapeCardText(diff.type);
+                                        const shortLabel = escapeCardText(diff.label);
+                                        varyingHtml = `<span class="meaning-context-cell" style="line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;"><span class="sense-metadata-detail sense-pill sense-pill--${family}" data-family="${family}"><span class="sense-pill-label">${shortLabel}</span></span></span>`;
+                                    }
+                                } else {
+                                    varyingHtml = `<span style="opacity: 0.4; font-style: italic; font-size: 12px;">—</span>`;
+                                }
+                            }
                         } else {
                             const transRaw = displaySenseGloss(
                                 mm,
@@ -5883,11 +6057,11 @@ function updateCard({ announceHeadword = false } = {}) {
                         : (!m.unassigned && displayPctVal < 100
                             ? `<span class="sense-percentage sense-percentage-tail" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">${displayPctVal}%</span>`
                             : (m.unassigned ? prominenceBadgeHTML({ label: 'Rare', key: 'rare' }, 'position: absolute; right: 8px; top: 50%; transform: translateY(-50%);') : ''));
-                    const rowTextColor = isRowSelected ? 'var(--text-primary)' : 'var(--text-primary)';
+                    const sidePad = useProminenceLabels ? '32px' : (!m.unassigned && displayPctVal < 100 ? '42px' : '10px');
                     target.push(`
                     <div class="meaning-row meaning-row-regular ${singletonTextClass}${isRowSelected ? ' selected' : ''}${rowSelectedClasses}${rareRowClass}" style="position: relative; display: flex; align-items: center; padding: 2px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 44px;" onclick="selectMeaning(${idx})">
                         ${renderRowCheckSlot(isRowSelected)}
-                        <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; width: 100%; padding: 2px ${useProminenceLabels ? '32px' : (!m.unassigned && displayPctVal < 100 ? '42px' : '10px')} 2px 8px;">
+                        <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; width: 100%; padding: 2px ${sidePad} 2px ${sidePad};">
                             <span class="meaning-row-translation meaning-row-gloss row-adaptive-text" style="font-weight: ${isRowSelected ? 700 : 600}; color: ${rowTextColor}; text-align: center; width: 100%; line-height: 1.25;">${displayMeaningHTML}</span>
                             ${subContent ? `<span class="meaning-row-sub" style="text-align: center; width: 100%;">${subContent}</span>` : ''}
                         </div>
@@ -6316,6 +6490,25 @@ function updateCard({ announceHeadword = false } = {}) {
         // No external reference links on the phrase-summary card — every
         // phrase's own content is already shown in the scrollable list.
     } else {
+    const rareAndExprItems = collectRareAndExpressionItems(card);
+    if (rareAndExprItems.length > 0) {
+        const rCount = rareAndExprItems.filter(it => it.kind === 'RARE_SENSE').length;
+        const eCount = rareAndExprItems.length - rCount;
+        let triggerLabel = '';
+        if (rCount > 0 && eCount > 0) {
+            triggerLabel = `Explore ${rCount} rare sense${rCount === 1 ? '' : 's'} & ${eCount} expression${eCount === 1 ? '' : 's'} \u2192`;
+        } else if (rCount > 0) {
+            triggerLabel = `Explore ${rCount} rare sense${rCount === 1 ? '' : 's'} \u2192`;
+        } else {
+            triggerLabel = `Explore ${eCount} expression${eCount === 1 ? '' : 's'} \u2192`;
+        }
+        backHTML += `<div class="rare-expressions-trigger-wrap">
+            <button type="button" class="rare-expressions-trigger-btn" onclick="event.stopPropagation(); openRareAndExpressionsCard(event);">
+                <span class="rare-expressions-trigger-text">${escapeCardText(triggerLabel)}</span>
+            </button>
+        </div>`;
+    }
+
     // Labelled tiles rather than a strip of near-identical circles — a name
     // under each icon reads faster. Fixed order left to right: known,
     // synonyms, conjugate. Look up is emitted last and pinned to the right
@@ -8034,7 +8227,7 @@ document.addEventListener('click', (e) => {
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
 const ASSET_VERSION = '20260916o';
-const MODALS_ASSET_VERSION = '20260917j';
+const MODALS_ASSET_VERSION = '20260917k';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

@@ -898,7 +898,11 @@ function navigateBack() {
     currentMeaningIndex = prev.meaningIndex;
     currentExampleIndex = prev.exampleIndex;
     currentMWEIndex = prev.mweIndex || 0;
-    document.getElementById('flashcard').classList.remove('flipped');
+    if (prev.wasFlipped) {
+        document.getElementById('flashcard').classList.add('flipped');
+    } else {
+        document.getElementById('flashcard').classList.remove('flipped');
+    }
     updateCard();
 
     if (prev.reopenSearchOnBack) {

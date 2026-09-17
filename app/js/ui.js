@@ -71,7 +71,7 @@ function applyGlobalStudyDefaults() {
     speechEnabled = saved.speechEnabled !== false;
     spacedRepetitionEnabled = saved.spacedRepetitionEnabled !== false;
     phrasesModeEnabled = saved.phrasesMode !== false;
-    extraExamplesEnabled = saved.extraExamples !== false;
+    extraExamplesEnabled = false;
     try {
         const savedMode = localStorage.getItem('fluency_sense_prominence_mode_v1');
         if (savedMode) {
@@ -96,7 +96,7 @@ function syncStudyPreferenceControls() {
         speechEnabled: saved.speechEnabled !== false,
         spacedRepetitionEnabled: saved.spacedRepetitionEnabled !== false,
         phrasesMode: saved.phrasesMode !== false,
-        extraExamples: saved.extraExamples !== false
+        extraExamples: false
     };
     document.querySelectorAll('.global-study-default-btn').forEach(button => {
         const value = button.dataset.value === 'on';
@@ -320,98 +320,62 @@ function updateIncorrectButtonVisibility() {
     }
 }
 
-function updateDailyReviewBanner() {
-    const banner = document.getElementById('globalDailyDueBanner');
-    if (!banner) return;
+function updateReviewAccess() {
+    const reviewButton = document.getElementById('dailyReviewBtn');
+    const label = document.getElementById('dailyReviewLabel');
+    if (!reviewButton) return;
+
+    const hide = () => {
+        reviewButton.hidden = true;
+        reviewButton.removeAttribute('aria-label');
+        reviewButton.removeAttribute('data-limit');
+    };
+
     if (!currentUser || currentUser.isGuest) {
-        banner.style.display = 'none';
+        hide();
         return;
     }
-    const summary = window.getGlobalDueReviewSummary?.(selectedLanguage) || { total: 0, neverRight: [], critical: [], due: [] };
-    if (!summary.total || summary.total === 0) {
-        banner.style.display = 'none';
+    const summary = window.getGlobalDueReviewSummary?.(selectedLanguage) || { total: 0 };
+    const total = summary.total || 0;
+    if (!total) {
+        hide();
         return;
     }
-    const total = summary.total;
-    const neverRightCount = summary.neverRight.length;
-    const criticalCount = summary.critical.length;
-    const dueCount = summary.due.length;
-    const langDisplay = selectedLanguage ? selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1) : '';
 
-    const heroLabel = total <= 100 ? `Review All ${total} →` : 'Review Top 100 →';
-    const nrLabel = neverRightCount <= 100 ? `Study All (${neverRightCount}) ›` : 'Study 100 ›';
-    const critLabel = criticalCount <= 100 ? `Study All (${criticalCount}) ›` : 'Study 100 ›';
-    const dueLabel = dueCount <= 100 ? `Study All (${dueCount}) ›` : 'Study 100 ›';
-
-    banner.style.display = 'block';
-    banner.innerHTML = `
-        <div class="daily-review-card">
-            <div class="daily-review-header">
-                <div class="daily-review-title-group">
-                    <span class="daily-review-icon" aria-hidden="true">⚡</span>
-                    <div>
-                        <strong class="daily-review-title">Daily Review</strong>
-                        <span class="daily-review-subtitle">${total} card${total === 1 ? '' : 's'} due for review in ${langDisplay}</span>
-                    </div>
-                </div>
-                <button type="button" class="daily-review-hero-btn" onclick="startDailyReview({ limit: 100, urgencyTier: 'all' })">
-                    ${heroLabel}
-                </button>
-            </div>
-            ${(neverRightCount > 0 || criticalCount > 0) ? `
-                <div class="daily-review-tiers">
-                    ${neverRightCount > 0 ? `
-                        <button type="button" class="daily-review-tier-btn is-never-right" onclick="startDailyReview({ urgencyTier: 'never_right', limit: 100 })">
-                            <div class="daily-review-tier-badge">
-                                <span>● Never Mastered</span>
-                                <span>${neverRightCount}</span>
-                            </div>
-                            <span class="daily-review-tier-sub">Missed words with 0 successful recalls</span>
-                            <span class="daily-review-tier-action">${nrLabel}</span>
-                        </button>
-                    ` : ''}
-                    ${criticalCount > 0 ? `
-                        <button type="button" class="daily-review-tier-btn is-critical" onclick="startDailyReview({ urgencyTier: 'critical', limit: 100 })">
-                            <div class="daily-review-tier-badge">
-                                <span>▲ Critical Lapses</span>
-                                <span>${criticalCount}</span>
-                            </div>
-                            <span class="daily-review-tier-sub">Recent errors &amp; 2x overdue</span>
-                            <span class="daily-review-tier-action">${critLabel}</span>
-                        </button>
-                    ` : ''}
-                    <button type="button" class="daily-review-tier-btn is-due" onclick="startDailyReview({ urgencyTier: 'due', limit: 100 })">
-                        <div class="daily-review-tier-badge">
-                            <span>✓ Routine Due</span>
-                            <span>${dueCount}</span>
-                        </div>
-                        <span class="daily-review-tier-sub">Spaced memory upkeep</span>
-                        <span class="daily-review-tier-action">${dueLabel}</span>
-                    </button>
-                </div>
-            ` : ''}
-        </div>
-    `;
+    const batch = Math.min(total, 100);
+    reviewButton.hidden = false;
+    reviewButton.dataset.limit = String(batch);
+    reviewButton.setAttribute('aria-label', `Review ${batch} of ${total} cards waiting`);
+    if (label) {
+        label.textContent = total === 1 ? '1 card waiting' : `${total} cards waiting`;
+    }
 }
 
 async function startDailyReview(opts = {}) {
     const loadingMessage = document.getElementById('loadingMessage');
-    const tierName = opts.urgencyTier === 'never_right'
-        ? 'Never Mastered words'
-        : (opts.urgencyTier === 'critical' ? 'critical lapses' : 'cards due for review');
     if (loadingMessage) {
         loadingMessage.style.display = 'block';
-        loadingMessage.textContent = `Collecting ${tierName}…`;
+        loadingMessage.textContent = 'Collecting cards due for review…';
     }
-    window.showAppLoading?.('Loading Daily Review', `Preparing review batch of ${tierName}…`);
-    await window.loadDailyReviewDeck?.(opts);
+    window.showAppLoading?.('Loading review', 'Preparing your cards…');
+    try {
+        await window.loadDailyReviewDeck?.({
+            limit: opts.limit || 100,
+            urgencyTier: opts.urgencyTier || 'all'
+        });
+    } catch (err) {
+        console.error('Error starting daily review:', err);
+    } finally {
+        window.hideAppLoading?.();
+        if (loadingMessage) loadingMessage.style.display = 'none';
+    }
 }
 
 function setActiveSetupStep(stepId) {
     document.querySelectorAll('#step1 .step-number, #step2 .step-number, #step4 .step-number')
         .forEach(number => number.classList.toggle('--active', number.closest('.setup-step')?.id === stepId));
     if (stepId === 'step2') {
-        updateDailyReviewBanner();
+        updateReviewAccess();
     }
 }
 
@@ -442,7 +406,7 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
     document.getElementById('learningContextProgressLabel').textContent = coverageLabel;
     document.getElementById('learningContextProgressValue').textContent = `${coverage.toFixed(1)}%`;
     document.getElementById('learningContextProgressFill').style.width = `${Math.min(coverage, 100)}%`;
-
+    updateReviewAccess();
 }
 
 function mergeStandardProgressIntoLanguageStep() {
@@ -687,7 +651,7 @@ function setupLanguageTabs() {
                     ? 'Start with general-purpose vocabulary'
                     : `Speech vocabulary is not ready for ${langConfig?.name || newLanguage} yet`;
                 const detail = speechSourceButton.querySelector('small');
-                if (detail) detail.textContent = 'Build general-purpose vocabulary from the words used most often in modern movie and television dialogue.';
+                if (detail) detail.textContent = 'The words people say in films and TV. Best if you want conversation.';
             }
             if (sourceCardButton) {
                 sourceCardButton.disabled = !lyricsAvailable;
@@ -695,7 +659,7 @@ function setupLanguageTabs() {
                     ? 'Build vocabulary around music you choose'
                     : `Music & lyrics is not available for ${langConfig?.name || newLanguage} yet`;
                 const detail = sourceCardButton.querySelector('small');
-                if (detail) detail.textContent = 'Choose artists and songs in your target language, or import your own Spotify playlist (coming later). Learn the most frequent words, then play the lyric moment where each word is used.';
+                if (detail) detail.textContent = 'The words in songs you choose, with the original line as the example. Best if music is how you listen.';
                 if (lyricsStatus) lyricsStatus.textContent = lyricsAvailable ? '›' : 'Coming later';
             }
 
@@ -729,10 +693,18 @@ function setupLanguageTabs() {
                     // Spanish rank and conjugated-English assets belong to
                     // Speech setup. Do not start them merely because Spanish
                     // was chosen when the learner may be heading to Lyrics.
+                    // Conjugation tables feed both the Conjugate drawer and
+                    // inflected English glosses, so load them for any Speech
+                    // language that declares conjugationsPath.
+                    // Conjugation tables feed the Conjugate drawer. Prefetch
+                    // them without blocking Speech setup: Portuguese's file is
+                    // a megabyte, and the 75 MB index is the actual wait.
                     if (newLanguage === 'spanish') {
                         if (window.loadSpanishRanks) window.loadSpanishRanks();
                         if (window.loadConjugatedEnglishData) window.loadConjugatedEnglishData();
                     }
+                    if (window.loadConjugationData) window.loadConjugationData();
+                    if (window.loadSourceTitles) window.loadSourceTitles();
 
                     // Always load PPM data if available (needed for coverage bar even in CEFR mode).
                     const langPpmPath = config.languages[selectedLanguage] && config.languages[selectedLanguage].ppmDataPath;
@@ -787,6 +759,8 @@ function setupLanguageTabs() {
                 if (speechSourceButton.disabled) return;
                 continueToSpeech();
             };
+
+            window.maybeShowFrequencyIntro?.();
 
             const pendingSpeechLanguage = sessionStorage.getItem('fluencyPendingSpeechLanguage');
             if (pendingSpeechLanguage === newLanguage) {
@@ -2909,6 +2883,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false } = {}) {
     const tabContentIds = {
         account: 'accountTabContent',
         study: 'studyTabContent',
+        lookup: 'lookupTabContent',
         review: 'reviewTabContent',
         vocabulary: 'vocabularyTabContent',
         appearance: 'appearanceTabContent',
@@ -3045,13 +3020,17 @@ async function showTotalStatsModal() {
     if (langConfig && langConfig.examplesPath && (
         !window._cachedExamplesData
         || window._cachedExamplesDataPath !== langConfig.examplesPath
-    )) {
+    ) && !window.exampleShardsActive?.()) {
         try {
-            const r = await fetch(langConfig.examplesPath);
-            if (r.ok) {
-                const examples = await r.json();
-                window.setActiveExamplesData?.(examples, langConfig.examplesPath)
-                    || (window._cachedExamplesData = examples);
+            if (window.ensureExamplesForRange) {
+                await window.ensureExamplesForRange(langConfig, 1, 21);
+            } else {
+                const r = await fetch(langConfig.examplesPath);
+                if (r.ok) {
+                    const examples = await r.json();
+                    window.setActiveExamplesData?.(examples, langConfig.examplesPath)
+                        || (window._cachedExamplesData = examples);
+                }
             }
         } catch (e) {
             console.warn('Could not load examples for stats:', e);
@@ -3473,5 +3452,5 @@ window.hideTotalStatsModal = hideTotalStatsModal;
 window.updateTotalStatsButtonVisibility = updateTotalStatsButtonVisibility;
 window.updateStatsModal = updateStatsModal;
 window.renderSetupExtrasSection = renderSetupExtrasSection;
-window.updateDailyReviewBanner = updateDailyReviewBanner;
+window.updateReviewAccess = updateReviewAccess;
 window.startDailyReview = startDailyReview;

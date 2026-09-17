@@ -1024,6 +1024,281 @@ window.trackDataFreshness = trackDataFreshness;
 // evicted the artist index and forced another multi-megabyte parse immediately
 // afterwards.
 const joinedIndexCacheByPath = new Map();
+const loadedExampleShards = new Set();
+const exampleShardInflight = new Map();
+let exampleShardManifest = null;
+let exampleShardManifestFor = null;
+let exampleShardsActive = false;
+
+function examplesDirectory(examplesPath) {
+    if (!examplesPath) return '';
+    return examplesPath.slice(0, examplesPath.lastIndexOf('/') + 1);
+}
+
+let exampleShardManifestInflight = null;
+let exampleShardManifestInflightPath = null;
+
+async function loadExampleShardManifest(langConfig) {
+    const examplesPath = langConfig?.examplesPath;
+    if (!examplesPath) return null;
+    if (exampleShardManifestFor === examplesPath) return exampleShardManifest;
+    if (exampleShardManifestInflight && exampleShardManifestInflightPath === examplesPath) {
+        return exampleShardManifestInflight;
+    }
+    const pending = (async () => {
+        const manifestPath = `${examplesDirectory(examplesPath)}vocabulary.examples.manifest.json`;
+        try {
+            const response = await fetch(manifestPath);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const manifest = await response.json();
+            if (!manifest || !Array.isArray(manifest.shards) || !manifest.shards.length) {
+                throw new Error('empty example shard manifest');
+            }
+            loadedExampleShards.clear();
+            exampleShardManifest = manifest;
+            exampleShardManifestFor = examplesPath;
+            exampleShardsActive = true;
+            return manifest;
+        } catch (_) {
+            exampleShardManifest = null;
+            exampleShardManifestFor = examplesPath;
+            exampleShardsActive = false;
+            return null;
+        }
+    })();
+    exampleShardManifestInflight = pending;
+    exampleShardManifestInflightPath = examplesPath;
+    try {
+        return await pending;
+    } finally {
+        if (exampleShardManifestInflightPath === examplesPath) {
+            exampleShardManifestInflight = null;
+            exampleShardManifestInflightPath = null;
+        }
+    }
+}
+
+function exampleShardsForRange(manifest, rangeStart, rangeEnd) {
+    return (manifest?.shards || []).filter(shard =>
+        Number(shard.start_rank) < rangeEnd && Number(shard.end_rank) >= rangeStart
+    );
+}
+
+function mergeExamplePayload(payload, examplesPath) {
+    const existing = (
+        window._cachedExamplesDataPath === examplesPath
+            ? (window._cachedExamplesDataRaw || window._cachedExamplesData)
+            : null
+    ) || {};
+    const merged = Object.assign({}, existing, payload);
+    window.setActiveExamplesData?.(merged, examplesPath)
+        || (window._cachedExamplesData = merged, window._cachedExamplesDataPath = examplesPath);
+}
+
+function exampleShardsForRanks(manifest, ranks) {
+    const needed = ranks.filter(rank => Number.isFinite(rank));
+    if (!needed.length) return [];
+    return (manifest?.shards || []).filter(shard => {
+        const start = Number(shard.start_rank);
+        const end = Number(shard.end_rank);
+        return needed.some(rank => rank >= start && rank <= end);
+    });
+}
+
+async function fetchExampleShard(langConfig, shard) {
+    const examplesPath = langConfig.examplesPath;
+    const key = `${examplesPath}:${shard.path}`;
+    if (loadedExampleShards.has(key)) return;
+    if (exampleShardInflight.has(key)) return exampleShardInflight.get(key);
+    const pending = fetch(`${examplesDirectory(examplesPath)}${shard.path}`).then(async response => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        trackDataFreshness(response);
+        mergeExamplePayload(await response.json(), examplesPath);
+        loadedExampleShards.add(key);
+    }).finally(() => exampleShardInflight.delete(key));
+    exampleShardInflight.set(key, pending);
+    return pending;
+}
+
+async function ensureExampleShardsForRange(langConfig, rangeStart, rangeEnd, ranks) {
+    const manifest = await loadExampleShardManifest(langConfig);
+    if (!manifest) return false;
+    const shards = ranks?.length
+        ? exampleShardsForRanks(manifest, ranks)
+        : exampleShardsForRange(manifest, rangeStart, rangeEnd);
+    await Promise.all([
+        ...shards.map(shard => fetchExampleShard(langConfig, shard)),
+        window.loadSourceTitles?.() || Promise.resolve(),
+    ]);
+    return true;
+}
+
+function prefetchExampleShardsForRange(langConfig, rangeStart, rangeEnd) {
+    ensureExampleShardsForRange(langConfig, rangeStart, rangeEnd).catch(() => {});
+}
+
+function prefetchExampleShardsForRangeString(langConfig, rangeString) {
+    if (!rangeString) return;
+    const [rangeStart, rangeEnd] = String(rangeString).split('-').map(Number);
+    if (!Number.isFinite(rangeStart) || !Number.isFinite(rangeEnd)) return;
+    prefetchExampleShardsForRange(langConfig, rangeStart, rangeEnd);
+}
+
+async function loadMonolithExamples(langConfig) {
+    const examplesPath = langConfig?.examplesPath;
+    if (!examplesPath) return null;
+    if (window._cachedExamplesData && window._cachedExamplesDataPath === examplesPath && !exampleShardsActive) {
+        return window._cachedExamplesData;
+    }
+    const [response] = await Promise.all([
+        fetch(examplesPath),
+        window.loadSourceTitles?.() || Promise.resolve(),
+    ]);
+    if (!response.ok) {
+        throw new Error(`Configured examples file ${examplesPath} returned HTTP ${response.status}`);
+    }
+    trackDataFreshness(response);
+    const examples = await response.json();
+    return window.setActiveExamplesData?.(examples, examplesPath)
+        || (window._cachedExamplesData = examples);
+}
+
+async function ensureExamplesForRange(langConfig, rangeStart, rangeEnd, ranks) {
+    if (!langConfig?.examplesPath) return null;
+    if (await ensureExampleShardsForRange(langConfig, rangeStart, rangeEnd, ranks)) {
+        return window._cachedExamplesData;
+    }
+    return loadMonolithExamples(langConfig);
+}
+
+const loadedIndexRowShards = new Set();
+const indexRowShardInflight = new Map();
+let indexShardManifest = null;
+let indexShardManifestFor = null;
+let indexShardsActive = false;
+let indexShardManifestInflight = null;
+let indexShardManifestInflightPath = null;
+
+function indexDirectory(indexPath) {
+    if (!indexPath) return '';
+    return indexPath.slice(0, indexPath.lastIndexOf('/') + 1);
+}
+
+async function loadIndexShardManifest(langConfig) {
+    const indexPath = langConfig?.indexPath || langConfig?.dataPath;
+    if (!indexPath) return null;
+    if (indexShardManifestFor === indexPath) return indexShardManifest;
+    if (indexShardManifestInflight && indexShardManifestInflightPath === indexPath) {
+        return indexShardManifestInflight;
+    }
+    const pending = (async () => {
+        try {
+            const response = await fetch(`${indexDirectory(indexPath)}vocabulary.index.manifest.json`);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const manifest = await response.json();
+            if (!manifest || !Array.isArray(manifest.shards) || !manifest.shards.length || !manifest.columns) {
+                throw new Error('empty index shard manifest');
+            }
+            loadedIndexRowShards.clear();
+            indexShardManifest = manifest;
+            indexShardManifestFor = indexPath;
+            indexShardsActive = true;
+            return manifest;
+        } catch (_) {
+            indexShardManifest = null;
+            indexShardManifestFor = indexPath;
+            indexShardsActive = false;
+            return null;
+        }
+    })();
+    indexShardManifestInflight = pending;
+    indexShardManifestInflightPath = indexPath;
+    try {
+        return await pending;
+    } finally {
+        if (indexShardManifestInflightPath === indexPath) {
+            indexShardManifestInflight = null;
+            indexShardManifestInflightPath = null;
+        }
+    }
+}
+
+function hydrateIndexColumns(columns) {
+    const n = Number(columns?.n) || 0;
+    const fields = Object.keys(columns || {}).filter(key => key !== 'schema' && key !== 'n' && Array.isArray(columns[key]));
+    const cards = new Array(n);
+    for (let i = 0; i < n; i++) {
+        const card = { meanings: [] };
+        for (const field of fields) {
+            const value = columns[field][i];
+            if (value !== undefined && value !== null && value !== '') card[field] = value;
+        }
+        cards[i] = card;
+    }
+    return cards;
+}
+
+function mergeIndexRowPayload(payload) {
+    if (!payload || !window._cachedJoinedIndex) return;
+    for (const card of window._cachedJoinedIndex) {
+        const fat = payload[card.id];
+        if (!fat) continue;
+        Object.assign(card, fat);
+        card._indexRowsPending = false;
+    }
+}
+
+async function fetchIndexRowShard(langConfig, shard) {
+    const indexPath = langConfig.indexPath || langConfig.dataPath;
+    const key = `${indexPath}:${shard.path}`;
+    if (loadedIndexRowShards.has(key)) return;
+    if (indexRowShardInflight.has(key)) return indexRowShardInflight.get(key);
+    const pending = fetch(`${indexDirectory(indexPath)}${shard.path}`).then(async response => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        trackDataFreshness(response);
+        mergeIndexRowPayload(await response.json());
+        loadedIndexRowShards.add(key);
+    }).finally(() => indexRowShardInflight.delete(key));
+    indexRowShardInflight.set(key, pending);
+    return pending;
+}
+
+async function ensureIndexRowsForRange(langConfig, rangeStart, rangeEnd, ranks) {
+    const manifest = await loadIndexShardManifest(langConfig);
+    if (!manifest) return false;
+    const shards = ranks?.length
+        ? exampleShardsForRanks(manifest, ranks)
+        : exampleShardsForRange(manifest, rangeStart, rangeEnd);
+    await Promise.all(shards.map(shard => fetchIndexRowShard(langConfig, shard)));
+    return true;
+}
+
+async function loadColumnarIndex(langConfig, indexPath) {
+    const manifest = await loadIndexShardManifest(langConfig);
+    if (!manifest) return null;
+    const response = await fetch(`${indexDirectory(indexPath)}${manifest.columns}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    trackDataFreshness(response);
+    const cards = hydrateIndexColumns(await response.json());
+    if (!cards.length) throw new Error('empty index columns');
+    cards.forEach(card => { card._indexRowsPending = true; });
+    return cards;
+}
+
+function parseStudyRangeString(rangeString) {
+    if (!rangeString) return null;
+    const [rangeStart, rangeEnd] = String(rangeString).split('-').map(Number);
+    if (!Number.isFinite(rangeStart) || !Number.isFinite(rangeEnd)) return null;
+    return [rangeStart, rangeEnd];
+}
+
+function prefetchStudySetPayload(langConfig, rangeString) {
+    const range = parseStudyRangeString(rangeString);
+    if (!langConfig || !range) return;
+    const [rangeStart, rangeEnd] = range;
+    ensureIndexRowsForRange(langConfig, rangeStart, rangeEnd).catch(() => {});
+    prefetchExampleShardsForRange(langConfig, rangeStart, rangeEnd);
+}
 
 function rememberLyricsReleaseVocabulary(indexPath, data) {
     const releaseId = activeArtist?.releaseId;
@@ -1048,10 +1323,21 @@ async function fetchAndJoinIndex(langConfig) {
         return cached;
     }
 
-    const response = await fetch(indexPath);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    trackDataFreshness(response);
-    let data = await response.json();
+    let data = null;
+    if (!activeArtist) {
+        try {
+            data = await loadColumnarIndex(langConfig, indexPath);
+        } catch (error) {
+            console.warn('Columnar index unavailable, falling back to the monolith:', error);
+            data = null;
+        }
+    }
+    if (!data) {
+        const response = await fetch(indexPath);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        trackDataFreshness(response);
+        data = await response.json();
+    }
 
     // Detect new master-based format and join if needed
     if (activeArtist && langConfig.masterPath && data.length > 0 && data[0].sense_frequencies) {
@@ -1152,17 +1438,15 @@ async function fetchActiveVocabularyIndex(langConfig) {
 
 async function ensureLemmaPoolingData(langConfig) {
     await fetchActiveVocabularyData(langConfig);
-    if ((window._cachedExamplesData && window._cachedExamplesDataPath === langConfig?.examplesPath)
-        || !langConfig?.examplesPath) {
-        return window._cachedExamplesData || null;
+    if (!langConfig?.examplesPath) return window._cachedExamplesData || null;
+    if (window._cachedExamplesData && window._cachedExamplesDataPath === langConfig.examplesPath) {
+        return window._cachedExamplesData;
     }
     try {
-        const response = await fetch(langConfig.examplesPath);
-        if (!response.ok) return null;
-        trackDataFreshness(response);
-        const examples = await response.json();
-        return window.setActiveExamplesData?.(examples, langConfig.examplesPath)
-            || (window._cachedExamplesData = examples);
+        if (await loadExampleShardManifest(langConfig)) {
+            return window._cachedExamplesData || null;
+        }
+        return await loadMonolithExamples(langConfig);
     } catch (error) {
         console.warn('Failed to load examples for lemma pooling:', error);
         return null;
@@ -1507,12 +1791,18 @@ function buildFilteredVocab(vocabData) {
         const allowsRawArtistCard = activeArtist && (
             artistVocabularyScope === 'extra' || Number(item.corpus_count) <= 1
         );
-        if ((!item.meanings || item.meanings.length === 0) && !allowsRawArtistCard) continue;
+        // Skinny index columns ship with empty meanings until the study-set
+        // row shard lands. Search hydrates one card; set setup must still
+        // count these rows or every set looks empty.
+        const rowsPending = item._indexRowsPending === true;
+        if ((!item.meanings || item.meanings.length === 0) && !allowsRawArtistCard && !rowsPending) continue;
         // Strip any meaning with no translation (POS=X placeholders from
         // --no-gemini runs, plus SpanishDict rows that captured a usage label
         // but an empty gloss). Mutates the item, matching prior behavior.
-        item.meanings = (item.meanings || []).filter(m => m.translation && m.translation.trim());
-        if (item.meanings.length === 0 && !allowsRawArtistCard) continue;
+        if (!rowsPending) {
+            item.meanings = (item.meanings || []).filter(m => m.translation && m.translation.trim());
+            if (item.meanings.length === 0 && !allowsRawArtistCard) continue;
+        }
         // Artist Extra deliberately KEEPS the over-tagged words (English,
         // loanwords, proper nouns, noise) instead of dropping them, so they
         // surface grouped by their `extra_category` rather than vanishing.
@@ -1939,25 +2229,38 @@ async function loadVocabularyData(rangeString, opts = {}) {
             }).catch(() => { window._spotifyTracks = {}; });
         }
 
-        // Lazy-load examples: fetch only when user commits to a set
+        // Fat index rows belong to the twenty cards in this set, not the
+        // language-pick payload. Examples stay on the same study-set shards.
+        const ranks = filteredData.map(item => Number(item.rank));
+        await ensureIndexRowsForRange(langConfig, rangeStart, rangeEnd, ranks);
+        filteredData = filteredData.filter(item => {
+            const allowsRawArtistCard = activeArtist && (
+                artistVocabularyScope === 'extra' || Number(item.corpus_count) <= 1
+            );
+            if (item._indexRowsPending && !allowsRawArtistCard) return false;
+            if (!allowsRawArtistCard) {
+                item.meanings = (item.meanings || []).filter(m =>
+                    m.translation && String(m.translation).trim()
+                );
+                return item.meanings.length > 0;
+            }
+            return true;
+        });
+        if (filteredData.length === 0) {
+            restorePreviousDeckState();
+            document.getElementById('loadingMessage').style.display = 'none';
+            if (!opts.silentIfEmpty) await window.refreshSetupAfterProgress?.();
+            return false;
+        }
         let allCorpusExamples = [];
         if (langConfig.examplesPath) {
-            if (!window._cachedExamplesData || window._cachedExamplesDataPath !== langConfig.examplesPath) {
-                const exResponse = await fetch(langConfig.examplesPath);
-                if (!exResponse.ok) {
-                    throw new Error(`Configured examples file ${langConfig.examplesPath} returned HTTP ${exResponse.status}`);
-                }
-                trackDataFreshness(exResponse);
-                const examples = await exResponse.json();
-                window.setActiveExamplesData?.(examples, langConfig.examplesPath)
-                    || (window._cachedExamplesData = examples);
-            }
+            await ensureExamplesForRange(langConfig, rangeStart, rangeEnd, ranks);
             const examplesData = window._cachedExamplesData;
             if (examplesData) {
                 // Merge examples back into filtered entries
                 for (const item of filteredData) {
                     const ex = examplesData[item.id];
-                    if (ex && ex.m) {
+                    if (ex && ex.m && Array.isArray(item.meanings)) {
                         item.meanings.forEach((m, i) => {
                             // ex.m is indexed against the master sense order;
                             // honor the explicit source index so future sense
@@ -2347,6 +2650,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
         stats.nextRange = nextSet?.range || null;
         stats.nextSetNumber = nextSet?.setNumber || null;
         stats.nextRankBasis = nextSet?.rankBasis || rangeBasis;
+        prefetchStudySetPayload(langConfig, stats.nextRange);
         // Inclusive label for display, e.g. "475-499" for rangeString "475-500"
         // (rangeEnd is exclusive in the filter above).
         const rankLabel = `${rangeStart}-${rangeEnd - 1}`;
@@ -3110,6 +3414,10 @@ window.buildFilteredVocab = buildFilteredVocab;
 window.assignStableVocabularyRanks = assignStableVocabularyRanks;
 window.findSpuriousSelfInfinitives = findSpuriousSelfInfinitives;
 window.loadVocabularyData = loadVocabularyData;
+window.ensureExamplesForRange = ensureExamplesForRange;
+window.ensureIndexRowsForRange = ensureIndexRowsForRange;
+window.prefetchStudySetPayload = prefetchStudySetPayload;
+window.exampleShardsActive = () => exampleShardsActive;
 window.renderResumeLastSetCard = renderResumeLastSetCard;
 window.resumeLastStudySession = resumeLastStudySession;
 window.saveStudySessionSnapshot = saveStudySessionSnapshot;
