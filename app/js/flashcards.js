@@ -18,7 +18,7 @@ import {
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=20260916q';
+} from './reverse-cues.js?v=20260917a';
 import {
     compactConstructionMetadata,
     contextWithoutSenseMetadata,
