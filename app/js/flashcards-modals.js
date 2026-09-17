@@ -995,7 +995,7 @@ let _deckCompleteAutoTimer = null;
 
 // How long the completion screen holds before advancing itself. Cancelled by
 // any deliberate choice — Main menu, Redo set, or pressing continue early.
-const AUTO_CONTINUE_MS = 5000;
+const AUTO_CONTINUE_MS = 7000;
 
 function _cancelDeckCompleteAutoContinue() {
     document.getElementById('markCompleteBtn')?.classList.remove('is-auto-continuing');
@@ -1261,15 +1261,52 @@ function hideDeckCompleteModal() {
 }
 
 function restartAllCards() {
-    // Reset stats
+    // A redo round only redos cards that were NOT answered correctly in this round,
+    // plus any card that has since become due for spaced review.
+    // If every card was answered correctly, it falls back to a clean full restart.
+    const reviewCards = [];
+    if (Array.isArray(flashcards) && flashcards.length > 0) {
+        for (let i = 0; i < flashcards.length; i++) {
+            const card = flashcards[i];
+            const sessionResult = stats.cardStats?.[i];
+            const sessionCorrect = Number(sessionResult?.correct || 0) > 0;
+            const sessionIncorrect = Number(sessionResult?.incorrect || 0) > 0;
+
+            // If the card was missed or skipped in this session, it must be redone.
+            if (sessionIncorrect || !sessionCorrect) {
+                reviewCards.push(card);
+                continue;
+            }
+
+            // If it was marked correct, check if enough time has passed that it
+            // has become due again for scheduled review.
+            const needsReview = typeof window.wordNeedsKnowledgeReview === 'function'
+                ? window.wordNeedsKnowledgeReview(card.fullId, card.targetWord)
+                : false;
+            if (needsReview) {
+                reviewCards.push(card);
+            }
+        }
+    }
+
+    if (reviewCards.length > 0 && reviewCards.length < flashcards.length) {
+        flashcards = reviewCards;
+    }
+
+    // Reset stats for the redo set
     stats.correct = 0;
     stats.incorrect = 0;
     stats.total = 0;
     stats.studied = new Set();
     stats.cardStats = {};
+    stats.setSize = flashcards.length;
 
     currentIndex = 0;
     currentSentenceIndex = 0;
+    currentMeaningIndex = 0;
+    currentExampleIndex = 0;
+    currentMWEIndex = 0;
+    currentGroupSelection = null;
 
     updateCard();
     document.getElementById('flashcard').classList.remove('flipped');

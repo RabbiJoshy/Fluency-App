@@ -181,7 +181,7 @@
             max-height: calc(100vh - 100px);
             position: relative;
             transform-style: preserve-3d;
-            transition: transform 0.6s;
+            transition: transform 0.42s cubic-bezier(0.2, 0.8, 0.2, 1);
             cursor: pointer;
             touch-action: none;
             -webkit-user-drag: none;
@@ -2878,9 +2878,9 @@
         }
         .example-source-favicon,
         .dictionary-provenance-badge .dict-provenance-icon {
-            width: 22px;
-            height: 22px;
-            border-radius: 4px;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
             display: block;
             flex: 0 0 auto;
         }
