@@ -1428,7 +1428,7 @@ function initializeApp() {
         const switchOrderLabel = isFlipped
             ? `${targetLanguage} → English`
             : `English → ${targetLanguage}`;
-        const icon = body => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+        const icon = body => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
         const entries = [
             { label: 'Main menu', iconHTML: icon('<path d="M9 7H5v12h12v-4"></path><path d="m9 11-4-4 4-4"></path><path d="M5 7h9a5 5 0 0 1 5 5"></path>'), onSelect: () => goBackToSetup() },
             { label: switchOrderLabel, iconHTML: icon('<path d="M7 7h11"></path><path d="m15 4 3 3-3 3"></path><path d="M17 17H6"></path><path d="m9 14-3 3 3 3"></path>'), onSelect: () => flipDirection() },
@@ -3466,7 +3466,7 @@ function exampleLinkHTML(href, label) {
 }
 
 function exampleFaviconHTML(domain) {
-    return `<img class="example-source-favicon dict-provenance-icon" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=32" width="16" height="16" alt="" aria-hidden="true">`;
+    return `<img class="example-source-favicon dict-provenance-icon" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64" width="22" height="22" alt="" aria-hidden="true">`;
 }
 
 function exampleSourceChipHTML({ href, label, domain, text = '', extraClass = '' }) {
@@ -4124,11 +4124,14 @@ function extractCanonicalDictionaryExamples(meaning) {
     })).filter(ex => ex.target && ex.english);
 }
 
-// Display one sentence: a WSD corpus line when the assignment is specific
-// enough to trust, otherwise the dictionary canonical. Unresolved / missing
-// WSD falls back rather than stacking both. Leaf/glosskey/tuple on the
-// current Spanish 6k deck covers ~85% of senses; requiring leaf-only would
-// drop that to ~16%.
+// Default sentence (tick 1): a corpus line when WSD `supported_level` is
+// leaf, glosskey, or tuple; otherwise the dictionary canonical if it exists.
+// These examples do not publish a calibrated confidence number, so that
+// level gate is the threshold. On es-speech-v12 6000×10 (19,443 senses) it
+// opens on a non-canonical line 85.0% of the time — inside the ~80% target.
+// Leaf-only would be 16.3%; glosskey+ 27.4%. Unresolved stays on canonical.
+// Later ticks cycle other gated corpus lines. Do not stack canonical on a
+// confident WSD line.
 const WSD_EXAMPLE_LEVEL_RANK = { leaf: 3, glosskey: 2, tuple: 1 };
 
 function exampleWsdMeta(example) {
@@ -4139,17 +4142,34 @@ function exampleWsdLevel(example) {
     return exampleWsdMeta(example)?.supported_level || null;
 }
 
+function isCorpusDisplayExample(example) {
+    return Boolean(
+        example
+        && !example.canonical
+        && example.evidence !== 'dictionary'
+        && !example.reference_example
+    );
+}
+
 function isReliableWsdExample(example) {
-    if (!example || example.canonical || example.evidence === 'dictionary' || example.reference_example) {
-        return false;
-    }
+    if (!isCorpusDisplayExample(example)) return false;
     const target = String(example.target || example.spanish || '').trim();
     const english = String(example.english || '').trim();
     if (!target || !english) return false;
-    const wsd = exampleWsdMeta(example);
-    if (wsd) return Boolean(WSD_EXAMPLE_LEVEL_RANK[wsd.supported_level]);
-    const method = example.assignment_method;
-    return Boolean(method && method !== 'unassigned');
+    // assignment_method on these rows is the corpus name (tatoeba /
+    // opensubtitles), not a WSD verdict. Only supported_level is the gate.
+    return Boolean(WSD_EXAMPLE_LEVEL_RANK[exampleWsdLevel(example)]);
+}
+
+function rankConfidentWsdExamples(examples) {
+    const reliable = (examples || []).filter(isReliableWsdExample);
+    if (!reliable.length) return [];
+    const ranked = sortExamplesByRelevance([...reliable]);
+    ranked.sort((a, b) => (
+        (WSD_EXAMPLE_LEVEL_RANK[exampleWsdLevel(b)] || 0)
+        - (WSD_EXAMPLE_LEVEL_RANK[exampleWsdLevel(a)] || 0)
+    ));
+    return ranked;
 }
 
 function canonicalAsDisplayExample(meaning) {
@@ -4184,30 +4204,17 @@ function examplesAllowCycling(examples) {
     return (examples || []).some(exampleLooksLikeLyric);
 }
 
+function displayExamplesForSense(meaning, examples) {
+    const corpus = (examples || []).filter(isCorpusDisplayExample);
+    const confident = rankConfidentWsdExamples(corpus);
+    if (confident.length) return confident;
+    const canonical = canonicalAsDisplayExample(meaning);
+    if (canonical) return [canonical];
+    return corpus.length > 1 ? sortExamplesByRelevance(corpus) : corpus;
+}
+
 function chooseSingleDisplayExample(meaning, examples) {
-    const corpus = (examples || []).filter(example => (
-        example
-        && !example.canonical
-        && example.evidence !== 'dictionary'
-        && !example.reference_example
-    ));
-    const reliable = corpus.filter(isReliableWsdExample);
-    if (reliable.length) {
-        const ranked = [...reliable].sort((a, b) => (
-            (WSD_EXAMPLE_LEVEL_RANK[exampleWsdLevel(b)] || 0)
-            - (WSD_EXAMPLE_LEVEL_RANK[exampleWsdLevel(a)] || 0)
-        ));
-        const topLevel = exampleWsdLevel(ranked[0]);
-        const band = topLevel
-            ? ranked.filter(example => exampleWsdLevel(example) === topLevel)
-            : ranked;
-        return (band.length > 1 ? sortExamplesByRelevance(band) : band)[0];
-    }
-    return canonicalAsDisplayExample(meaning) || (
-        corpus.length
-            ? (corpus.length > 1 ? sortExamplesByRelevance(corpus) : corpus)[0]
-            : null
-    );
+    return displayExamplesForSense(meaning, examples)[0] || null;
 }
 
 function getQualifyingRareSenses(card) {
@@ -4344,10 +4351,38 @@ window.withinGlossLeafSeparationIsReliable = withinGlossLeafSeparationIsReliable
 window.glossClusterProminenceState = glossClusterProminenceState;
 window.getSenseProminenceInfo = getSenseProminenceInfo;
 
-function prominenceBadgeHTML(promInfo, extraStyle = '') {
-    const style = extraStyle ? ` style="${extraStyle}"` : '';
-    return `<span class="sense-prominence-badge prominence-${escapeCardText(promInfo.key)}" title="${escapeCardText(promInfo.label)} — how often this meaning is used" aria-label="${escapeCardText(promInfo.label)}"${style}>${escapeCardText(promInfo.label)}</span>`;
+const PROMINENCE_BLURBS = {
+    common: 'used often',
+    uncommon: 'used sometimes',
+    rare: 'used rarely',
+};
+
+function prominenceMeterHTML(key) {
+    const filled = key === 'common' ? 3 : key === 'uncommon' ? 2 : 1;
+    return `<span class="sense-prominence-meter" aria-hidden="true">${[1, 2, 3].map(i => `<i${i <= filled ? ' class="is-on"' : ''}></i>`).join('')}</span>`;
 }
+
+function prominenceBadgeHTML(promInfo, extraStyle = '') {
+    if (!promInfo) return '';
+    const key = promInfo.key || 'rare';
+    const label = promInfo.label || 'Rare';
+    const blurb = PROMINENCE_BLURBS[key] || PROMINENCE_BLURBS.rare;
+    const style = extraStyle ? ` style="${extraStyle}"` : '';
+    return `<button type="button" class="sense-prominence-badge prominence-${escapeCardText(key)}"${style} aria-expanded="false" aria-label="${escapeCardText(label)}. Tap to explain." onclick="toggleProminenceBadge(event, this)">${prominenceMeterHTML(key)}<span class="sense-prominence-detail">${escapeCardText(label)} · ${escapeCardText(blurb)}</span></button>`;
+}
+
+function toggleProminenceBadge(event, button) {
+    event?.stopPropagation?.();
+    event?.preventDefault?.();
+    if (!button) return;
+    const open = button.getAttribute('aria-expanded') === 'true';
+    document.querySelectorAll('.sense-prominence-badge[aria-expanded="true"]').forEach(el => {
+        if (el !== button) el.setAttribute('aria-expanded', 'false');
+    });
+    button.setAttribute('aria-expanded', open ? 'false' : 'true');
+}
+window.prominenceBadgeHTML = prominenceBadgeHTML;
+window.toggleProminenceBadge = toggleProminenceBadge;
 
 function toggleRareSenses(event) {
     event?.stopPropagation?.();
@@ -5843,15 +5878,15 @@ function updateCard({ announceHeadword = false } = {}) {
                         ? (foldInfo.hasOnlyRare ? ' meaning-row-rare' : '')
                         : ((m.unassigned || m.isRareSense || m.prominenceLabel === 'Rare') ? ' meaning-row-rare' : '');
                     const pctTail = useProminenceLabels
-                        ? prominenceBadgeHTML(promInfo, 'position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;')
+                        ? prominenceBadgeHTML(promInfo, 'position: absolute; right: 8px; top: 50%; transform: translateY(-50%);')
                         : (!m.unassigned && displayPctVal < 100
                             ? `<span class="sense-percentage sense-percentage-tail" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">${displayPctVal}%</span>`
-                            : (m.unassigned ? prominenceBadgeHTML({ label: 'Rare', key: 'rare' }, 'position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;') : ''));
+                            : (m.unassigned ? prominenceBadgeHTML({ label: 'Rare', key: 'rare' }, 'position: absolute; right: 8px; top: 50%; transform: translateY(-50%);') : ''));
                     const rowTextColor = isRowSelected ? 'var(--text-primary)' : 'var(--text-primary)';
                     target.push(`
                     <div class="meaning-row meaning-row-regular ${singletonTextClass}${isRowSelected ? ' selected' : ''}${rowSelectedClasses}${rareRowClass}" style="position: relative; display: flex; align-items: center; padding: 2px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 44px;" onclick="selectMeaning(${idx})">
                         ${renderRowCheckSlot(isRowSelected)}
-                        <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; width: 100%; padding: 2px ${useProminenceLabels ? '48px' : (!m.unassigned && displayPctVal < 100 ? '42px' : '10px')} 2px 8px;">
+                        <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; width: 100%; padding: 2px ${useProminenceLabels ? '32px' : (!m.unassigned && displayPctVal < 100 ? '42px' : '10px')} 2px 8px;">
                             <span class="meaning-row-translation meaning-row-gloss row-adaptive-text" style="font-weight: ${isRowSelected ? 700 : 600}; color: ${rowTextColor}; text-align: center; width: 100%; line-height: 1.25;">${displayMeaningHTML}</span>
                             ${subContent ? `<span class="meaning-row-sub" style="text-align: center; width: 100%;">${subContent}</span>` : ''}
                         </div>
@@ -6814,8 +6849,7 @@ function getCyclableExamples(card, currentMeaning) {
 
     if (currentMeaning.allMWEs || currentMeaning.allClitics) return examples;
     if (examplesAllowCycling(examples)) return examples;
-    const chosen = chooseSingleDisplayExample(currentMeaning, examples);
-    return chosen ? [chosen] : [];
+    return displayExamplesForSense(currentMeaning, examples);
 }
 
 function cycleExample(event) {
@@ -7999,7 +8033,7 @@ document.addEventListener('click', (e) => {
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
 const ASSET_VERSION = '20260916o';
-const MODALS_ASSET_VERSION = '20260917e';
+const MODALS_ASSET_VERSION = '20260917i';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
@@ -8047,4 +8081,5 @@ const stubFor = (name, loader) => {
 window.describeCliticForm = describeCliticForm;
 window.openSenseCrossReference = openSenseCrossReference;
 window.toggleSenseMetadataChip = toggleSenseMetadataChip;
+window.toggleProminenceBadge = toggleProminenceBadge;
 window.toggleSenseMetadataOverflow = toggleSenseMetadataOverflow;

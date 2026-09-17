@@ -6,7 +6,7 @@ import { initOfflineContent } from './offline-content.js?v=20260825ak';
 import './speech.js?v=20260914b';
 import './artist-ui.js?v=20260825ak';
 import './auth.js?v=20260912a';
-import './about-example.js?v=20260917g';
+import './about-example.js?v=20260917i';
 import './estimation.js?v=20260825ak';
 import './config.js?v=20260916f';
 import './progress.js?v=20260916h';
@@ -20,7 +20,7 @@ import './extras.js?v=20260916a';
 import './song-sets.js?v=20260823ae';
 import './spotify-playlist-import.js?v=20260913a';
 import './vocabulary-import.js?v=20260913a';
-import './flashcards.js?v=20260917g';
+import './flashcards.js?v=20260917i';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 function startCardTutorial() {
@@ -1489,7 +1489,9 @@ function renderFindResults(query) {
         if (entry.firstMeaningObj && typeof window.getSenseProminenceInfo === 'function') {
             const prom = window.getSenseProminenceInfo(entry.firstMeaningObj);
             if (prom && prom.label) {
-                promBadgeHTML = `<span class="sense-prominence-badge prominence-${prom.key}">${prom.label}</span>`;
+                promBadgeHTML = typeof window.prominenceBadgeHTML === 'function'
+                    ? window.prominenceBadgeHTML(prom)
+                    : `<button type="button" class="sense-prominence-badge prominence-${prom.key}">${prom.label}</button>`;
             }
         }
 
