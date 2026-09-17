@@ -276,8 +276,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("function exampleTicksHTML(current, total, label = 'example')", flashcards)
         self.assertIn(
             '<span class="example-credit-start">${creditStart}</span>\n'
-            '                    ${exampleTicks}\n'
-            '                    <span class="example-credit-end">${creditEnd}</span>',
+            '                    <span class="example-credit-end">${exampleTicks}${creditEnd}</span>',
             flashcards,
         )
         self.assertNotIn('compact-example-counter-label', flashcards)
@@ -1103,15 +1102,15 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
 
     def test_rare_dictionary_senses_expansion_and_canonical_examples(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
-        css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
 
         self.assertIn("function extractCanonicalDictionaryExamples(meaning)", flashcards)
         self.assertIn("function canonicalExampleHTML(meaning)", flashcards)
         self.assertIn("function getQualifyingRareSenses(card)", flashcards)
-        self.assertIn("function toggleRareSenses(event)", flashcards)
-        self.assertIn("window.toggleRareSenses = toggleRareSenses;", flashcards)
-        self.assertIn(".rare-senses-toggle-btn", css)
-        self.assertIn(".rare-senses-toggle-wrap", css)
+        self.assertIn("function openRareAndExpressionsCard(event)", flashcards)
+        self.assertIn('class="ref-tile ref-rare-uses-btn"', flashcards)
+        self.assertIn(">Rare uses</span>", flashcards)
+        self.assertNotIn("function toggleRareSenses(event)", flashcards)
+        self.assertNotIn("rare-senses-toggle-btn", flashcards)
 
     def test_rare_senses_dictionary_provenance_and_accordion(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
@@ -1121,7 +1120,7 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("dictionary-provenance-badge", flashcards)
         self.assertIn("dict-provenance-icon", flashcards)
         self.assertIn("meaning-row-rare", flashcards)
-        self.assertIn("rare-senses-count", flashcards)
+        self.assertIn("ref-rare-uses-btn", flashcards)
         self.assertIn("example-source-chip", flashcards)
         self.assertIn(".dictionary-provenance-badge", css)
         self.assertIn(".example-source-chip", css)

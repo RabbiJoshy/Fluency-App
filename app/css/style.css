@@ -2812,83 +2812,6 @@
             color: #f59e0b;
         }
 
-        .rare-senses-toggle-wrap {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            padding: 2px 0 4px;
-            width: 100%;
-        }
-        .rare-senses-toggle-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            min-height: 28px;
-            padding: 2px 8px;
-            font-family: var(--font-reading);
-            font-size: 11px;
-            font-weight: 700;
-            color: #f59e0b;
-            background: rgba(245, 158, 11, 0.08);
-            border: 1px dashed rgba(245, 158, 11, 0.42);
-            border-radius: 999px;
-            cursor: pointer;
-            transition: all 0.18s ease;
-        }
-        .rare-senses-toggle-hint {
-            margin: 0;
-            color: var(--text-secondary);
-            font: 500 11px/1.35 var(--font-reading);
-            text-align: center;
-        }
-        .rare-senses-toggle-btn:hover {
-            color: #fbbf24;
-            background: rgba(245, 158, 11, 0.14);
-            border-color: rgba(245, 158, 11, 0.55);
-        }
-        .rare-senses-toggle-btn.is-expanded {
-            background: rgba(245, 158, 11, 0.16);
-            color: #fbbf24;
-            border-style: solid;
-        }
-        .rare-senses-more-icon,
-        .rare-senses-chevron {
-            display: none;
-        }
-        .rare-senses-count {
-            font-variant-numeric: tabular-nums;
-        }
-        .rare-expressions-trigger-wrap {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            margin: 6px 0 4px;
-        }
-        .rare-expressions-trigger-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 5px 14px;
-            border-radius: 999px;
-            background: rgba(245, 158, 11, 0.12);
-            border: 1px dashed rgba(245, 158, 11, 0.45);
-            color: #fbbf24;
-            font-family: var(--font-reading);
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.18s ease;
-            text-align: center;
-        }
-        .rare-expressions-trigger-btn:hover {
-            background: rgba(245, 158, 11, 0.22);
-            border-color: rgba(245, 158, 11, 0.7);
-            color: #fde68a;
-            transform: translateY(-1px);
-        }
         .meaning-row.meaning-row-rare {
             animation: rareSenseRowFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
@@ -5136,23 +5059,23 @@
             font-style: italic;
         }
         .example-credit-start {
-            flex: 1 1 0;
+            flex: 1 1 auto;
             min-width: 0;
             display: flex;
             justify-content: flex-start;
         }
         .example-credit-end {
-            flex: 1 1 0;
+            flex: 0 1 auto;
             min-width: 0;
             display: flex;
             justify-content: flex-end;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
         .example-ticks {
             display: flex;
             flex-wrap: wrap;
-            justify-content: center;
+            justify-content: flex-end;
             align-items: center;
             gap: 5px;
             flex: 0 1 auto;

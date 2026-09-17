@@ -763,8 +763,7 @@ function renderCredit(card, meaning, example, exampleIdx) {
                 <span class="example-credit-start">
                     <span class="example-song-credit">— ${esc(example.song)}${vocalists}</span>
                 </span>
-                ${walkthroughExampleTicks(exampleIdx, meaning.examples.length)}
-                <span class="example-credit-end">${btn}</span>
+                <span class="example-credit-end">${walkthroughExampleTicks(exampleIdx, meaning.examples.length)}${btn}</span>
             </div>`;
     }
 
@@ -776,8 +775,7 @@ function renderCredit(card, meaning, example, exampleIdx) {
     return `
         <div class="example-credit-row">
             <span class="example-credit-start">${credit}</span>
-            ${ticks}
-            <span class="example-credit-end"></span>
+            <span class="example-credit-end">${ticks}</span>
         </div>`;
 }
 
