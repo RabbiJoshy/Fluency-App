@@ -1,0 +1,321 @@
+{
+  "_readme": "User-visible changes in the replacement app, newest first.",
+  "entries": [
+    {
+      "date": "2026-09-17",
+      "commit": "pending",
+      "summary": "Redo set filtering, SRS spacing penalty, smoother card flips/swipes, 7s auto-continue, and larger provenance icons",
+      "detail": [
+        "Updated Redo Set to only redo cards that were missed or skipped in the set, plus any cards that became due for spaced review if time elapsed.",
+        "Added SRS premature recall protection: correct answers within 4 hours of a prior exposure do not advance SRS past stage 1, preventing working-memory recall from inflating multi-day review intervals.",
+        "Increased deck completion auto-continue hold delay from 5s to 7s.",
+        "Modernized card 3D flip easing and swipe gesture thresholds to prevent glitchy transitions and accidental swipes.",
+        "Increased dictionary provenance and source icons to 28px for clearer readability."
+      ]
+    },
+    {
+      "date": "2026-09-15",
+      "commit": "pending",
+      "summary": "Deploy ES V12 deck (es-speech-v12-6000x10)",
+      "detail": [
+        "6,000 cards with 10 display examples using WSD v12-1 with difficulty stratification and tail gating."
+      ]
+    },
+    {
+      "date": "2026-09-15",
+      "commit": "pending",
+      "summary": "Fixed Daily Review loading screen lockup and redesigned Fast Track modal",
+      "detail": [
+        "Fixed full-screen loading screen remaining visible after deck initialization by adding guaranteed dismiss handlers to startDailyReview, next-daily-review, and loadVocabularyData.",
+        "Redesigned Fast Track modal with a space-efficient flex layout, bounded height, sticky header/search, and internal smooth scrolling so it never overflows or clips off-screen."
+      ]
+    },
+    {
+      "date": "2026-09-15",
+      "commit": "pending",
+      "summary": "Deploy CS V12 deck (cs-speech-v12-4000x10)",
+      "detail": [
+        "4,000 cards with 10 display examples using WSD v12-1 with difficulty stratification and tail gating."
+      ]
+    },
+    {
+      "date": "2026-09-15",
+      "commit": "pending",
+      "summary": "Deploy ES V12 deck (es-speech-v12-6000x10)",
+      "detail": [
+        "6,000 cards with 10 display examples using WSD v12-1 with difficulty stratification and tail gating."
+      ]
+    },
+    {
+      "date": "2026-09-15",
+      "commit": "pending",
+      "summary": "Deploy PT V12 deck (pt-speech-v12-6000x10)",
+      "detail": [
+        "6,000 cards with 10 display examples using WSD v12-1 with difficulty stratification and tail gating."
+      ]
+    },
+    {
+      "date": "2026-09-15",
+      "commit": "pending",
+      "summary": "Deploy PT V12 deck (pt-speech-v12-6000x10)",
+      "detail": [
+        "6,000 cards with 10 display examples using WSD v12-1 with difficulty stratification and tail gating."
+      ]
+    },
+    {
+      "date": "2026-09-15",
+      "commit": "pending",
+      "summary": "Deploy PT V12 deck (pt-speech-v12-6000x10)",
+      "detail": [
+        "6,000 cards with 10 display examples using WSD v12-1 with difficulty stratification and tail gating."
+      ]
+    },
+    {
+      "date": "2026-09-15",
+      "commit": "pending",
+      "summary": "Deploy PT V12 deck (pt-speech-v12-6000x10)",
+      "detail": [
+        "6,000 cards with 10 display examples using WSD v12-1 with difficulty stratification and tail gating."
+      ]
+    },
+    {
+      "date": "2026-09-15",
+      "commit": "pending",
+      "summary": "Urgency-scored review queue, 100-card daily batches, and sectioned Review Hub",
+      "detail": [
+        "Continuous needfulness score and urgency tiers (Never Mastered, Critical Lapses, Routine Due) derived directly from the SRS schedule and personal error history.",
+        "Review queue prioritizes never-mastered cards and severe lapses first, breaking ties by high-frequency word rank so core vocabulary is refreshed ahead of rare words.",
+        "Redesigned the setup Review Hub with one-tap tier slices and 100-card daily batches, with a seamless 'Review Next 100' continuation flow on completion.",
+        "Optimized review deck loading with an instant fast path, slashing launch time from ~10s to instantaneous (< 30ms) by avoiding full dictionary scans."
+      ]
+    },
+    {
+      "date": "2026-09-15",
+      "commit": "pending",
+      "summary": "Fast Track setup bar streamlined to compact single-row card and modal opening fixed",
+      "detail": [
+        "Fixed Fast Track words modal not opening when clicking 'Browse words' by removing the overriding inline style on #extrasModal.",
+        "Eliminated double nested card borders and duplicate header text from the setup screen, reducing the Fast Track bar to a sleek, compact single-row summary.",
+        "Added one-tap card clickability and a direct Fast Track settings shortcut when no words are skipped."
+      ]
+    },
+    {
+      "date": "2026-09-15",
+      "commit": "pending",
+      "summary": "Cognate form scoring upgraded with Jaro-Winkler prefix-weighted similarity",
+      "detail": [
+        "Upgraded form similarity scoring to take the best of normalized Levenshtein and Jaro-Winkler, resolving the suffix penalty that kept transparent citation forms (e.g. Spanish 'abandonar', 'comunicar') below threshold while inflections passed.",
+        "Cleaned redundant vowel diacritics from Spanish and Portuguese cognate skeleton configs, relying on Unicode NFD strip_accents.",
+        "Rebuilt and deployed Spanish-English cognates mapping (31,828 scored surfaces) to workspace and app."
+      ]
+    },
+    {
+      "date": "2026-09-13",
+      "commit": "pending",
+      "summary": "Adaptive spaced repetition, sticky sense-level exceptions, and global daily review",
+      "detail": [
+        "Intervals adapt to learner failure history with soft drops on mistake (down 2 stages instead of resetting to day 0) and graduation to 365 days.",
+        "Sense-level knowledge marking in the card modal now treats unmarked senses as known when marking an exception, makes explicit 'No' sticky against whole-card swipes, and adds a Save & Next Card action.",
+        "A level-agnostic Daily Review banner on setup provides 1-tap review for all due cards in the language, and dead CEFR fallback paths are removed."
+      ]
+    },
+    {
+      "date": "2026-08-31",
+      "commit": "497ea45",
+      "summary": "Speech and Lyrics now share saved progress, with an honest Spotify indicator",
+      "detail": [
+        "Equivalent Speech and Lyrics cards now share historical progress by language and displayed word, while preserving existing saved records.",
+        "New answers use the latest review state and continue syncing through the deployed progress service across desktop and mobile.",
+        "Spotify shows a circular music visualizer only after playback is confirmed; a button press or pending mobile handoff no longer looks like audio is already playing."
+      ]
+    },
+    {
+      "date": "2026-08-30",
+      "commit": "2220eb1",
+      "summary": "Mobile Spotify playback no longer depends on an already-playing phone app",
+      "detail": [
+        "Mobile Lyrics cards now create a Spotify Web Playback device in the browser instead of requiring Spotify Connect to find an active phone session.",
+        "The Spotify button activates browser audio directly from the learner's tap, including the user-gesture bridge required by iOS autoplay rules.",
+        "Spotify Connect remains available as a fallback when the browser player cannot become ready; Spotify Premium is still required."
+      ]
+    },
+    {
+      "date": "2026-08-28",
+      "commit": "131a3ff",
+      "summary": "Light mode keeps primary study actions readable",
+      "detail": [
+        "The Learn new cards action keeps its filled accent background instead of becoming white with white text.",
+        "The correction applies to the shared responsive control, so the action remains legible on desktop and mobile.",
+        "Unstarted set choices retain their intended pale light-mode treatment."
+      ]
+    },
+    {
+      "date": "2026-08-27",
+      "commit": "8cd5c62",
+      "summary": "Cross-device progress now loads in the deployed app",
+      "detail": [
+        "The live static configuration now includes the public Google Sheets sync endpoint instead of relying on an excluded backend file.",
+        "A phone or other new browser can load the same named learner's historical card, knowledge-item, estimate and completed-level progress.",
+        "Static deployment validation now rejects builds that omit either progress sync or Spotify's public OAuth client configuration."
+      ]
+    },
+    {
+      "date": "2026-08-26",
+      "commit": "18857d9",
+      "summary": "Spotify buttons now open sign-in reliably in deployed Lyrics decks",
+      "detail": [
+        "The public Spotify OAuth client ID now ships with static deployments while private backend configuration remains excluded.",
+        "Desktop sign-in opens before asynchronous PKCE work can trigger popup blocking, with a full-page fallback; mobile keeps its full-page return-to-card flow.",
+        "The Web Playback SDK now loads only after its readiness callback exists, removing a startup race, and missing configuration produces a visible message instead of a silent no-op."
+      ]
+    },
+    {
+      "date": "2026-08-24",
+      "commit": "73578b4",
+      "summary": "Example credits now favour readable titles over source codes",
+      "detail": [
+        "Resolved film and television names remain clickable without appending their raw IMDb identifier.",
+        "Subtitle line numbers remain in raw Card Data for auditing but no longer clutter learner-facing source credits.",
+        "An IMDb identifier is shown only when no human title can be resolved."
+      ]
+    },
+    {
+      "date": "2026-08-23",
+      "commit": "7f17dec",
+      "summary": "Speech examples once again identify their film or television source",
+      "detail": [
+        "Fresh release metadata is normalized into the app's provenance view, restoring IMDb links and subtitle line numbers.",
+        "A pinned IMDb title layer adds human movie names and resolves television episodes to their parent series.",
+        "The active 2,000-card Spanish release has IMDb links for all 5,997 examples and human titles for 5,967 of them."
+      ]
+    },
+    {
+      "date": "2026-08-23",
+      "commit": "f3ecb4c",
+      "summary": "POS pills now preserve complete grammatical labels",
+      "detail": [
+        "The fixed front-and-back grammar bay is wide enough for two full labels per row, including Adjective and other longer names.",
+        "POS text no longer wraps inside a pill."
+      ]
+    },
+    {
+      "date": "2026-08-23",
+      "commit": "79a69f3",
+      "summary": "The POS grid now occupies the same header position on both card faces",
+      "detail": [
+        "The front-face grammar bay has moved from beside the central surface prompt to the fixed top-right header area used on the back.",
+        "Its bounded one-row or two-row layout is unchanged."
+      ]
+    },
+    {
+      "date": "2026-08-23",
+      "commit": "6e7319a",
+      "summary": "Part-of-speech labels now use a stable one- or two-row card layout",
+      "detail": [
+        "One or two labels remain together on one centred row, while three or four labels use a compact two-row grid.",
+        "The same bounded grammar area is used on both card faces and remains vertically aligned with the headword.",
+        "Every label stays readable, the active part of speech remains highlighted, and changing senses does not reorder the labels."
+      ]
+    },
+    {
+      "date": "2026-08-23",
+      "commit": "59f3e2a",
+      "summary": "Assigned cards now show only learner-supported senses and honest percentages",
+      "detail": [
+        "Unused dictionary alternatives remain available as audit-only menu evidence instead of appearing as a giant unassigned learner row.",
+        "Assigned sense percentages once again total 100%; the hidden remainder bucket can no longer halve them to 50%.",
+        "The explicit unassigned fallback remains available for cards that genuinely have no assigned sense."
+      ]
+    },
+    {
+      "date": "2026-08-23",
+      "commit": "b602c56",
+      "summary": "Multi-headword card backs no longer repeat lemma labels",
+      "detail": [
+        "Each lemma remains visible in its existing part-of-speech and headword row.",
+        "Redundant horizontal lemma strips above the corresponding sense rows were removed.",
+        "Sense grouping, selection highlighting and source order are unchanged."
+      ]
+    },
+    {
+      "date": "2026-08-23",
+      "commit": "7432402",
+      "summary": "The active workspace now has two explicit demonstration decks",
+      "detail": [
+        "French Speech keeps its fresh 200-card Tatoeba release, while Spanish Lyrics keeps a self-contained Bad Bunny-only release.",
+        "Spanish Speech and French Lyrics now say they are awaiting a fresh run instead of attempting to load archived evidence.",
+        "All other migration runs, source copies, previews and candidates were moved into a dated recoverable archive outside the live workspace."
+      ]
+    },
+    {
+      "date": "2026-08-23",
+      "commit": "97de51d",
+      "summary": "Artist acceptance now covers French Lyrics, offline decks and playlist restoration",
+      "detail": [
+        "French Lyrics is available from the language-first chooser and opens its real Artist source without loading Speech first.",
+        "An explicitly downloaded immutable Lyrics release can launch offline while the active catalogue remains network-authoritative whenever a connection exists.",
+        "A fresh named login now restores its saved cross-artist playlist from SongSets, including contributing-artist provenance."
+      ]
+    },
+    {
+      "date": "2026-08-23",
+      "commit": "ed83c92",
+      "summary": "Language choice now leads directly to a lightweight Speech or Lyrics decision",
+      "detail": [
+        "Choosing Spanish no longer loads the Speech release before a learner can select Lyrics; the exact source starts loading only after it is chosen.",
+        "Merge Lemmas remains available as learner-facing form grouping, while optional Lyrics, cognate and morphology controls follow explicit language or release capabilities.",
+        "Card backs omit a redundant single inert POS label, cognate settings use clearer Include/Exclude wording, and secondary setup guidance is quieter and provenance-accurate."
+      ]
+    },
+    {
+      "date": "2026-08-23",
+      "commit": "67ee8f3",
+      "summary": "Preserved Artist assignments are now clearly identified while auditing",
+      "detail": [
+        "Card Data names the exact immutable Lyrics release supplying the active deck.",
+        "Historical prompt IDs that are not part of the new registry are labelled retained assignments instead of unregistered models.",
+        "Existing example-level method, translation, song and raw-record evidence remains available while clean WSD regeneration stays optional."
+      ]
+    },
+    {
+      "date": "2026-08-23",
+      "commit": "0a3a230",
+      "summary": "Artist data now stays bound to one immutable release",
+      "detail": [
+        "The active Lyrics catalog rewrites vocabulary, examples, songs, artwork and Spotify data to release-versioned URLs before they are loaded.",
+        "Offline caches can retain immutable release assets without accidentally serving data from an older active release.",
+        "Preview and active releases now use the same loading path; release activation remains an explicit separate action."
+      ]
+    },
+    {
+      "date": "2026-08-22",
+      "commit": "7b6da6d",
+      "summary": "Repeated audit flags now remain separate, traceable events",
+      "detail": [
+        "Every flag gesture has an immutable FlagId, so retries deduplicate safely without overwriting a later report on the same card.",
+        "Flags include the client build and exact example/source-record identifiers when available.",
+        "The shared backend adds open-to-fixed resolution fields while retaining all historical evidence."
+      ]
+    },
+    {
+      "date": "2026-08-22",
+      "commit": "d842f34",
+      "summary": "Flags now identify their exact release and JSTA is a dedicated audit account",
+      "detail": [
+        "French flags include the immutable release, run, content and layer provenance available at the time of review.",
+        "JSTA receives the same information and flagging controls as JST while keeping separate progress.",
+        "Choose your own remembers contributing artists as well as exact song IDs through the shared SongSets backend contract."
+      ]
+    },
+    {
+      "date": "2026-08-22",
+      "commit": "ddd22d0",
+      "summary": "The existing Fluency app surface now runs against the clean release architecture",
+      "detail": [
+        "The interface and active-set experience are transplanted from the existing app.",
+        "French data is mounted from one explicitly active immutable release.",
+        "No historical French sentences or WSD assignments are bundled in the code repository."
+      ]
+    }
+  ]
+}

@@ -746,7 +746,7 @@ function tutorialSourceChip(sourceLabel) {
     if (!domain) {
         return `<span class="example-song-credit" style="margin-right:auto;">${esc(raw)}</span>`;
     }
-    return `<span class="example-song-credit" style="margin-right:auto;"><span class="example-source-chip example-source-chip--icon dictionary-provenance-badge" title="${esc(label)}" aria-label="${esc(label)}"><img class="example-source-favicon dict-provenance-icon" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64" width="22" height="22" alt="" aria-hidden="true"></span></span>`;
+    return `<span class="example-song-credit" style="margin-right:auto;"><span class="example-source-chip example-source-chip--icon dictionary-provenance-badge" title="${esc(label)}" aria-label="${esc(label)}"><img class="example-source-favicon dict-provenance-icon" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64" width="28" height="28" alt="" aria-hidden="true"></span></span>`;
 }
 
 function renderCredit(card, meaning, example, exampleIdx) {

@@ -6,10 +6,10 @@ import { initOfflineContent } from './offline-content.js?v=20260825ak';
 import './speech.js?v=20260914b';
 import './artist-ui.js?v=20260825ak';
 import './auth.js?v=20260912a';
-import './about-example.js?v=20260917i';
+import './about-example.js?v=20260917j';
 import './estimation.js?v=20260825ak';
 import './config.js?v=20260916f';
-import './progress.js?v=20260916h';
+import './progress.js?v=20260917j';
 import './knowledge.js?v=20260915a';
 import './ui.js?v=20260916r';
 import './vocab.js?v=20260916t';
@@ -20,7 +20,7 @@ import './extras.js?v=20260916a';
 import './song-sets.js?v=20260823ae';
 import './spotify-playlist-import.js?v=20260913a';
 import './vocabulary-import.js?v=20260913a';
-import './flashcards.js?v=20260917i';
+import './flashcards.js?v=20260917j';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 function startCardTutorial() {

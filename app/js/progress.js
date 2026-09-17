@@ -43,12 +43,26 @@ function getSrsIntervalDays(progress) {
     return Math.max(1, Math.round(baseDays * factor));
 }
 
-function advanceSrsStage(progress, isCorrect) {
+const SRS_MIN_ADVANCE_ELAPSED_MS = 4 * 60 * 60 * 1000; // 4 hours
+
+function advanceSrsStage(progress, isCorrect, now = Date.now()) {
     const current = getSrsStage(progress);
     if (!isCorrect) {
         // Soft drop: drop 2 stages instead of a hard reset to 0. A never-learned card stays at 0.
         if (current === 0) return 0;
         return Math.max(1, current - 2);
+    }
+    // Premature recall spacing penalty: if recall happens very quickly after a prior
+    // exposure (< 4 hours, e.g. same session or immediate redo), it reflects working-memory
+    // recency rather than durable long-term retention. Cap stage advancement at 1 (1 day)
+    // so it comes back up for genuine review soon.
+    const lastExposure = Math.max(
+        parseProgressTimestamp(progress?.lastWrong),
+        parseProgressTimestamp(progress?.lastCorrect),
+        parseProgressTimestamp(progress?.lastSeen)
+    );
+    if (lastExposure > 0 && (now - lastExposure) < SRS_MIN_ADVANCE_ELAPSED_MS) {
+        return Math.min(Math.max(1, current), 1);
     }
     return Math.min(current + 1, SRS_INTERVAL_DAYS.length);
 }

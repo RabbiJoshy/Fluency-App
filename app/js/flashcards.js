@@ -2087,9 +2087,9 @@ function setupSwipeGestures() {
             return;
         }
 
-        // Tap detection - very strict threshold
-        const isTap = touchDuration < 200 && maxMovement < 7.5;
-        const isQuickTap = touchDuration < 300 && maxMovement < 15;
+        // Tap detection
+        const isTap = touchDuration < 250 && maxMovement < 10;
+        const isQuickTap = touchDuration < 350 && maxMovement < 18;
 
         // ========== FRONT SIDE LOGIC (flip priority) ==========
         if (!wasFlippedAtStart) {
@@ -2107,12 +2107,11 @@ function setupSwipeGestures() {
                 if (isTap || isQuickTap) {
                     flipCard();
                 }
-                // Any other movement is ignored (prevents accidental partial swipes)
                 return;
             }
 
-            // Edge zones: swipe takes priority
-            const edgeSwipeThreshold = 5; // Reduced 75% from 20 for even easier swiping
+            // Edge zones: intentional swipe takes priority
+            const edgeSwipeThreshold = 14;
             const isEdgeSwipe = Math.abs(diffX) > edgeSwipeThreshold && Math.abs(diffX) > Math.abs(diffY);
 
             if (isEdgeSwipe) {
@@ -2124,9 +2123,9 @@ function setupSwipeGestures() {
         }
 
         // ========== BACK SIDE LOGIC (swipe priority) ==========
-        const backSwipeThreshold = 5; // Reduced 75% from 20 for even easier swiping on back
-        const isHorizontalSwipe = Math.abs(diffX) > backSwipeThreshold && Math.abs(diffX) > Math.abs(diffY) * 1.2;
-        const isVerticalSwipe = Math.abs(diffY) > backSwipeThreshold && Math.abs(diffY) > Math.abs(diffX) * 1.2;
+        const backSwipeThreshold = 12;
+        const isHorizontalSwipe = Math.abs(diffX) > backSwipeThreshold && Math.abs(diffX) > Math.abs(diffY) * 1.15;
+        const isVerticalSwipe = Math.abs(diffY) > backSwipeThreshold && Math.abs(diffY) > Math.abs(diffX) * 1.15;
 
         if (isHorizontalSwipe) {
             // Horizontal swipe - correct/incorrect
@@ -2152,8 +2151,10 @@ function setupSwipeGestures() {
         } else if (startedOnCircle && maxMovement < 50) {
             // Only flip back if specifically tapping the flip area
             flipCard();
+        } else if (isTap) {
+            // A tap anywhere else on the back flips back to front
+            flipCard();
         }
-        // Other gestures on back side are ignored (prevents accidental flips)
     }, { passive: true });
 }
 
@@ -3466,7 +3467,7 @@ function exampleLinkHTML(href, label) {
 }
 
 function exampleFaviconHTML(domain) {
-    return `<img class="example-source-favicon dict-provenance-icon" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64" width="22" height="22" alt="" aria-hidden="true">`;
+    return `<img class="example-source-favicon dict-provenance-icon" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64" width="28" height="28" alt="" aria-hidden="true">`;
 }
 
 function exampleSourceChipHTML({ href, label, domain, text = '', extraClass = '' }) {
@@ -8033,7 +8034,7 @@ document.addEventListener('click', (e) => {
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
 const ASSET_VERSION = '20260916o';
-const MODALS_ASSET_VERSION = '20260917i';
+const MODALS_ASSET_VERSION = '20260917j';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
