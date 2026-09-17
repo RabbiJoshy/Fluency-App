@@ -6462,7 +6462,8 @@ function updateCard({ announceHeadword = false } = {}) {
     // space from the ordinary study flow.
     backHTML += renderKnowledgeOverviewButton(card);
 
-    const hasSpanishDictData = spanishDictMeaningsForCard(card).length > 0;
+    const hasSpanishDictData = canInspectSpanishDictData()
+        && spanishDictMeaningsForCard(card).length > 0;
     if (hasSpanishDictData) {
         backHTML += `<button class="ref-tile ref-dictionary-btn" onclick="event.stopPropagation(); toggleSpanishDictPanel();">
             <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -7601,6 +7602,12 @@ function modelProposalMarkerHTML(meaning) {
     return `<span class="model-proposed-marker" title="Gemini proposed this definition because it was not in the SpanishDict sense menu" aria-label="Gemini-proposed definition">AI</span>`;
 }
 
+function canInspectSpanishDictData() {
+    // Scrape inspector, not a learner dictionary. Same gate as other audit
+    // chrome: signed-in JST / JSTA only.
+    return Boolean(window.isAuditAccount?.());
+}
+
 function spanishDictMeaningsForCard(card) {
     return [...(card?.meanings || []), ...(card?.unusedMenuSenses || [])].filter(meaning => (
         String(meaning?.source || '').toLocaleLowerCase('en') === 'spanishdict'
@@ -7676,6 +7683,7 @@ function buildSpanishDictPanelHTML(card) {
 }
 
 function ensureSpanishDictPanelForCurrentCard() {
+    if (!canInspectSpanishDictData()) return null;
     let panel = document.getElementById('spanishDictPanel');
     if (panel) return panel;
     const card = flashcards[currentIndex];
@@ -7686,6 +7694,7 @@ function ensureSpanishDictPanelForCurrentCard() {
 }
 
 function toggleSpanishDictPanel(forceOpen) {
+    if (!canInspectSpanishDictData()) return;
     const panel = ensureSpanishDictPanelForCurrentCard();
     if (!panel) return;
     const shouldOpen = forceOpen == null ? panel.hidden : Boolean(forceOpen);
