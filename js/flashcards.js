@@ -4534,47 +4534,8 @@ function toggleProminenceBadge(event, button) {
 window.prominenceBadgeHTML = prominenceBadgeHTML;
 window.toggleProminenceBadge = toggleProminenceBadge;
 
-function toggleRareSenses(event) {
-    event?.stopPropagation?.();
-    const card = flashcards[currentIndex];
-    if (!card) return;
-    card._showRareSenses = !card._showRareSenses;
-    card._grouping = null;
-    if (card._showRareSenses) {
-        // When showing rare senses, ensure all sections remain open so all senses are findable and scrollable
-        card._expandedPos = null;
-        card._backSectionsManuallySet = false;
-    } else {
-        if (card._baseMeanings && currentMeaningIndex >= card._baseMeanings.length) {
-            currentMeaningIndex = 0;
-        }
-    }
-    updateCard();
-}
-window.toggleRareSenses = toggleRareSenses;
-
 function updateCard({ announceHeadword = false } = {}) {
     const card = flashcards[currentIndex];
-    if (card) {
-        const qualifyingRare = getQualifyingRareSenses(card);
-        if (card._showRareSenses && qualifyingRare.length > 0) {
-            if (!card._baseMeanings) {
-                card._baseMeanings = [...card.meanings];
-            }
-            if (card.meanings.length === card._baseMeanings.length) {
-                card.meanings = [...card._baseMeanings, ...qualifyingRare];
-                card._grouping = null;
-            }
-        } else if (!card._showRareSenses && card._baseMeanings) {
-            if (card.meanings.length !== card._baseMeanings.length) {
-                card.meanings = [...card._baseMeanings];
-                card._grouping = null;
-                if (currentMeaningIndex >= card.meanings.length) {
-                    currentMeaningIndex = 0;
-                }
-            }
-        }
-    }
     const langConfig = config.languages[selectedLanguage];
     const displaySurface = card.displaySurface || card.targetWord;
     // A surface-keyed card can hold senses from several headwords. Start with
@@ -5342,16 +5303,7 @@ function updateCard({ announceHeadword = false } = {}) {
                     ? (currentMeaning.cycle_pos || 'X') : currentMeaning.pos)
                     + '\u0000' + (currentMeaning.headword || '')
                 : null;
-            if (card._showRareSenses) {
-                // When rare senses are shown, expand all sections so every sense is accessible via the scroll bar
-                card._expandedPos = new Set(Array.from(groupInfo.keys()));
-            } else {
-                card._expandedPos = new Set(cur ? [cur] : []);
-            }
-        } else if (card._showRareSenses && !card._backSectionsManuallySet) {
-            for (const k of groupInfo.keys()) {
-                card._expandedPos.add(k);
-            }
+            card._expandedPos = new Set(cur ? [cur] : []);
         }
         const activeLemmaPosKey = lemmaPosGroupKeyForMeaning(currentMeaning);
         const activeGroupSenseRaw = String(
@@ -6076,20 +6028,6 @@ function updateCard({ announceHeadword = false } = {}) {
         if (scrollSections.size > 0) {
             backHTML += `<div class="meanings-scroll">${renderSections(scrollSections)}</div>`;
         }
-        const qualifyingRare = getQualifyingRareSenses(card);
-        if (qualifyingRare.length > 0) {
-            const isExpanded = card._showRareSenses === true;
-            const rareCount = qualifyingRare.length;
-            const rareLabel = isExpanded
-                ? 'Hide rare dictionary meanings'
-                : `Show ${rareCount} rare dictionary meaning${rareCount === 1 ? '' : 's'} not used in your examples`;
-            backHTML += `<div class="rare-senses-toggle-wrap">
-                <button type="button" class="rare-senses-toggle-btn${isExpanded ? ' is-expanded' : ''}" onclick="toggleRareSenses(event)" aria-expanded="${isExpanded ? 'true' : 'false'}" title="${escapeCardText(rareLabel)}" aria-label="${escapeCardText(rareLabel)}">
-                    <span class="rare-senses-count">${isExpanded ? 'Hide' : `+${rareCount}`}</span>
-                </button>
-                ${isExpanded ? '<p class="rare-senses-toggle-hint">Rare meanings — they do not appear in your examples.</p>' : ''}
-            </div>`;
-        }
         // Phrases mode off restores the pinned tray; on, MWE/CLITIC entries
         // leave silently as chain children (no on-card announcement).
         if (!phrasesModeEnabled && traySections.size > 0) {
@@ -6350,8 +6288,7 @@ function updateCard({ announceHeadword = false } = {}) {
             const songNameDisplay = (creditStart || creditEnd || exampleTicks) ? `
                 <div class="example-credit-row${songName ? ' is-lyric' : ''}">
                     <span class="example-credit-start">${creditStart}</span>
-                    ${exampleTicks}
-                    <span class="example-credit-end">${creditEnd}</span>
+                    <span class="example-credit-end">${exampleTicks}${creditEnd}</span>
                 </div>
             ` : '';
 
@@ -6491,33 +6428,33 @@ function updateCard({ announceHeadword = false } = {}) {
         // phrase's own content is already shown in the scrollable list.
     } else {
     const rareAndExprItems = collectRareAndExpressionItems(card);
-    if (rareAndExprItems.length > 0) {
-        const rCount = rareAndExprItems.filter(it => it.kind === 'RARE_SENSE').length;
-        const eCount = rareAndExprItems.length - rCount;
-        let triggerLabel = '';
-        if (rCount > 0 && eCount > 0) {
-            triggerLabel = `Explore ${rCount} rare sense${rCount === 1 ? '' : 's'} & ${eCount} expression${eCount === 1 ? '' : 's'} \u2192`;
-        } else if (rCount > 0) {
-            triggerLabel = `Explore ${rCount} rare sense${rCount === 1 ? '' : 's'} \u2192`;
-        } else {
-            triggerLabel = `Explore ${eCount} expression${eCount === 1 ? '' : 's'} \u2192`;
-        }
-        backHTML += `<div class="rare-expressions-trigger-wrap">
-            <button type="button" class="rare-expressions-trigger-btn" onclick="event.stopPropagation(); openRareAndExpressionsCard(event);">
-                <span class="rare-expressions-trigger-text">${escapeCardText(triggerLabel)}</span>
-            </button>
-        </div>`;
-    }
 
     // Labelled tiles rather than a strip of near-identical circles — a name
-    // under each icon reads faster. Fixed order left to right: known,
-    // synonyms, conjugate. Look up is emitted last and pinned to the right
-    // edge (see .ref-lookup-btn's auto margin), so its position never shifts
-    // with how many of the optional tiles a given card happens to have.
+    // under each icon reads faster. Fixed order left to right: rare uses,
+    // known, synonyms, conjugate. Look up is emitted last and pinned to the
+    // right edge (see .ref-lookup-btn's auto margin), so its position never
+    // shifts with how many of the optional tiles a given card happens to have.
     // The tile row is dropped entirely on small phones (see @media in
     // style.css); the handoff row / example already earn that vertical
     // space there.
     backHTML += `<div class="links-section" id="linksSection">`;
+
+    if (rareAndExprItems.length > 0) {
+        const rCount = rareAndExprItems.filter(it => it.kind === 'RARE_SENSE').length;
+        const eCount = rareAndExprItems.length - rCount;
+        const parts = [];
+        if (rCount) parts.push(`${rCount} rare sense${rCount === 1 ? '' : 's'}`);
+        if (eCount) parts.push(`${eCount} expression${eCount === 1 ? '' : 's'}`);
+        const detail = parts.join(' and ');
+        backHTML += `<button type="button" class="ref-tile ref-rare-uses-btn" aria-label="Rare uses: ${escapeCardText(detail)}" title="${escapeCardText(detail)}" onclick="event.stopPropagation(); openRareAndExpressionsCard(event);">
+            <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 3 13.2 8.1 18 9.3 13.2 10.5 12 15.6 10.8 10.5 6 9.3 10.8 8.1 12 3z"></path>
+                <path d="M19 14.2 19.6 16.4 21.8 17 19.6 17.6 19 19.8 18.4 17.6 16.2 17 18.4 16.4 19 14.2z"></path>
+                <path d="M16.4 4.2 16.8 5.6 18.2 6 16.8 6.4 16.4 7.8 16 6.4 14.6 6 16 5.6 16.4 4.2z"></path>
+            </svg>
+            <span class="ref-tile-label">Rare uses</span>
+        </button>`;
+    }
 
     // Granular sense/expression knowledge belongs in one card-wide overview,
     // not a persistent two-button strip under every meaning. The compact

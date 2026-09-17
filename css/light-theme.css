@@ -341,32 +341,10 @@
     border: 0;
 }
 
-:root[data-theme="light"] .rare-senses-toggle-btn {
-    background: rgba(245, 158, 11, 0.1);
-    border-color: rgba(217, 119, 6, 0.35);
-    color: #d97706;
-}
-:root[data-theme="light"] .rare-senses-toggle-btn:hover,
-:root[data-theme="light"] .rare-senses-toggle-btn.is-expanded {
-    background: rgba(245, 158, 11, 0.16);
-    border-color: rgba(217, 119, 6, 0.5);
-    color: #b45309;
-}
-
 :root[data-theme="light"] .phrase-kind-badge.badge-rare {
     background: rgba(245, 158, 11, 0.14);
     border-color: rgba(217, 119, 6, 0.4);
     color: #b45309;
-}
-:root[data-theme="light"] .rare-expressions-trigger-btn {
-    background: rgba(245, 158, 11, 0.1);
-    border-color: rgba(217, 119, 6, 0.35);
-    color: #b45309;
-}
-:root[data-theme="light"] .rare-expressions-trigger-btn:hover {
-    background: rgba(245, 158, 11, 0.18);
-    border-color: rgba(217, 119, 6, 0.6);
-    color: #92400e;
 }
 :root[data-theme="light"] .rare-child-back-btn {
     background: rgba(0, 0, 0, 0.05);
