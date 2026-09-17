@@ -3523,6 +3523,19 @@
             border-color: rgba(59, 130, 246, 0.45);
         }
 
+        /* Functional / Semantic relation badge (purpose, material, origin, direction...) */
+        .sense-pill--functional {
+            background: rgba(139, 92, 246, 0.09);
+            border: 1px solid rgba(139, 92, 246, 0.30);
+            color: color-mix(in srgb, #7c3aed 84%, var(--text-primary));
+            font-weight: 600;
+        }
+
+        .sense-pill--functional:hover {
+            background: rgba(139, 92, 246, 0.15);
+            border-color: rgba(139, 92, 246, 0.45);
+        }
+
         /* Adaptive density when card has 3+ or 5+ sense rows */
         .sense-metadata-list.is-dense {
             margin-top: 2px;

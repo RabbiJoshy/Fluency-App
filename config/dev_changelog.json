@@ -4,6 +4,17 @@
     {
       "date": "2026-09-17",
       "commit": "pending",
+      "summary": "Unified Rare Senses & Expressions child card and retired raw example sentence shards",
+      "detail": [
+        "Combined rare dictionary senses and attached multi-word expressions/locutions into a single unified child card with dedicated badges (PHRASE and amber RARE), POS tags, translations, contexts, and canonical examples.",
+        "Added on-demand trigger button ('Explore rare senses & expressions →') at the bottom of the card back, with preserved flip navigation on return.",
+        "Replaced the obsolete 'More sentences' toggle with 'Rare senses & expressions' in study preferences after a correct card.",
+        "Retired un-disambiguated backup sentence shards in favour of verified WSD-assigned occurrences."
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "commit": "pending",
       "summary": "Redo set filtering, SRS spacing penalty, smoother card flips/swipes, 7s auto-continue, and larger provenance icons",
       "detail": [
         "Updated Redo Set to only redo cards that were missed or skipped in the set, plus any cards that became due for spaced review if time elapsed.",

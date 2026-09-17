@@ -595,7 +595,7 @@ const SUPPORTING_REGISTER_VALUES = new Set([
 
 export function isSupportingSenseMetadata(item) {
     return (item.family === 'grammar' && !isSenseDefiningGrammar(item))
-        || item.family === 'functional'
+        || (item.family === 'functional' && item.kind !== 'semantic_relation' && item.kind !== 'discourse_function')
         || item.family === 'source'
         || (item.family === 'construction' && item.kind === 'optional_companion')
         || (item.family === 'register'
@@ -603,7 +603,7 @@ export function isSupportingSenseMetadata(item) {
 }
 
 export function senseMetadataHTML(meaning, active, options = {}) {
-    if (!active) return '';
+    if (!active && !options.allowInactivePrimary) return '';
     const items = compactLearnerSenseMetadata(senseMetadataItems(meaning), meaning, options);
     const senseCount = Number(options?.senseCount) || 1;
     const isDense = senseCount >= 3;
@@ -633,7 +633,7 @@ export function senseMetadataHTML(meaning, active, options = {}) {
     }).join('');
 
     const primary = items.filter(item => (
-        ['construction', 'companion', 'register', 'domain'].includes(item.family)
+        ['construction', 'companion', 'register', 'domain', 'functional'].includes(item.family)
         && !isSupportingSenseMetadata(item)
     ));
     // Grammar that changes which sense applies is a navigation cue. Routine
@@ -652,6 +652,18 @@ export function senseMetadataHTML(meaning, active, options = {}) {
         const overflowContext = contextItems.slice(maxContext);
         displayPrimary = syntaxItems.length ? [...syntaxItems, ...visibleContext] : primary.slice(0, 2);
         supporting = [...baseSupporting, ...overflowContext];
+    }
+
+    if (!active && options.allowInactivePrimary) {
+        if (!displayPrimary.length && !grammar.length) return '';
+        const densityClass = isVeryDense ? ' is-dense is-very-dense' : (isDense ? ' is-dense' : '');
+        const primaryHTML = displayPrimary.length
+            ? `<span class="sense-metadata-tier sense-metadata-tier--primary">${renderItems(displayPrimary, true)}</span>`
+            : '';
+        const grammarHTML = grammar.length
+            ? `<span class="sense-metadata-tier sense-metadata-tier--grammar">${renderItems(grammar, false)}</span>`
+            : '';
+        return `<span class="sense-metadata-list${densityClass}" aria-label="Sense details">${primaryHTML}${grammarHTML}</span>`;
     }
 
     if (!displayPrimary.length && !grammar.length && !supporting.length) return '';
@@ -681,9 +693,13 @@ export function contextWithoutSenseMetadata(meaning, active) {
     // parenthetical. The extractor accounts for every top-level clause as a
     // typed feature, so repeating the original prose beside those features is
     // pure duplication. It remains preserved in source metadata and details.
+    // However, if the extractor produced no qualifying features or this context
+    // provides a distinct differentiator not represented in the features,
+    // preserve the semantic text so it does not collapse into an empty dash.
     if (metadata.source_adapter === 'wiktionary-sense-menu/v1'
         && canonical.contract_version
-        && String(provider.context || '').trim() === context) return '';
+        && String(provider.context || '').trim() === context
+        && (canonical.features?.length > 0 && canonical.features.some(f => scoreSenseMetadata(f) >= 60))) return '';
     const represented = new Set();
     const metadataItems = senseMetadataItems(meaning);
     let residual = context;
@@ -751,8 +767,11 @@ export function scoreSenseMetadata(item) {
     if (family === 'context' || kind === 'qualifier' || (family === 'source' && kind === 'qualifier')) {
         return 100;
     }
-    // Tier 2 (Score 80): Syntax / Grammatical Construction Frame & Privileged Companions
+    // Tier 2 (Score 80): Syntax / Grammatical Construction Frame, Functional Relations & Privileged Companions
     if (family === 'companion') {
+        return 80;
+    }
+    if (family === 'functional') {
         return 80;
     }
     if (family === 'construction') {
@@ -763,9 +782,10 @@ export function scoreSenseMetadata(item) {
             || item.kind === 'object_role') {
             return 80;
         }
-        // Plain transitive / intransitive tags alone are less informative when the gloss is identical
+        // Plain transitive / intransitive tags alone are less informative when the gloss is identical,
+        // but still qualify as differentiators when no higher-tier cue exists.
         if (['transitive', 'intransitive', 'ditransitive'].includes(val)) {
-            return 50;
+            return 60;
         }
         return 80;
     }
@@ -779,7 +799,7 @@ export function scoreSenseMetadata(item) {
     }
     // Sense defining grammar (e.g. reflexive=true, personal-infinitive, plural-only)
     if (family === 'grammar' && isSenseDefiningGrammar(item)) {
-        return 50;
+        return 60;
     }
     // Tier 4 (Score 10): Low-level inflection, technical grammar, routine source notes
     return 10;

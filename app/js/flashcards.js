@@ -5837,15 +5837,21 @@ function updateCard({ announceHeadword = false } = {}) {
                     const sharedTextHTML = isTransAxis
                         ? displayMeaningHTML
                         : sharedText;
-                    const groupedTextClass = adaptiveRowTextClass(
-                        sharedText,
-                        orderedMembers.map(memberIdx => {
-                            const member = card.meanings[memberIdx];
-                            return isTransAxis
-                                ? (member.context || '')
-                                : (getProductionEnglishCue(card, member) || member.meaning || '');
-                        })
-                    );
+                    const maxMemberLength = orderedMembers.reduce((max, mi) => {
+                        const member = card.meanings[mi];
+                        const memberText = isTransAxis
+                            ? (member.context || '')
+                            : (getProductionEnglishCue(card, member) || member.meaning || member.translation || '');
+                        return Math.max(max, String(memberText || '').replace(/<[^>]*>/g, '').trim().length);
+                    }, 0);
+                    const sharedCleanLength = String(sharedText || '').replace(/<[^>]*>/g, '').trim().length;
+                    const longestFragment = Math.max(sharedCleanLength, maxMemberLength);
+                    const worstRowLength = sharedCleanLength + maxMemberLength;
+                    const groupDensity = Math.max(longestFragment, worstRowLength * 0.7);
+                    let groupedTextClass = 'row-text-sm';
+                    if (groupDensity <= 24) groupedTextClass = 'row-text-xl';
+                    else if (groupDensity <= 44) groupedTextClass = 'row-text-lg';
+                    else if (groupDensity <= 72) groupedTextClass = 'row-text-md';
                     // Group-level selection: clicking the shared field selects
                     // the whole group (examples become union of members);
                     // clicking any sub-item reverts to per-meaning selection.
@@ -5887,6 +5893,7 @@ function updateCard({ announceHeadword = false } = {}) {
                                 senseCount: card.meanings?.length || orderedMembers.length,
                                 gloss: sharedText,
                                 peerMeanings: card.meanings.filter((_, otherIdx) => otherIdx !== memberIdx),
+                                allowInactivePrimary: true,
                             };
                             let cleanedCtx = cleanSenseContext(rawCtx, sharedText);
                             if (cleanedCtx && contextCollidesWithMetadata(
@@ -5896,9 +5903,27 @@ function updateCard({ announceHeadword = false } = {}) {
                                 cleanedCtx = '';
                             }
                             const metadataHTML = senseMetadataHTML(mm, isMemberSelected, metaOptions);
-                            varyingHtml = cleanedCtx || metadataHTML
-                                ? `<span class="meaning-context-cell" style="line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${renderSenseContextHTML(cleanedCtx, { leadingDot: false })}${metadataHTML}</span>`
-                                : `<span style="opacity: 0.4; font-style: italic; font-size: 12px;">—</span>`;
+                            if (cleanedCtx || metadataHTML) {
+                                varyingHtml = `<span class="meaning-context-cell" style="line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${renderSenseContextHTML(cleanedCtx, { leadingDot: false })}${metadataHTML}</span>`;
+                            } else {
+                                const diff = resolveMeaningDifferentiator(
+                                    mm,
+                                    orderedMembers.filter(mi => mi !== memberIdx).map(mi => card.meanings[mi]),
+                                    sharedText,
+                                    (m, g) => cleanSenseContext(contextWithoutSenseMetadata(m, false), g)
+                                );
+                                if (diff && diff.score >= 60) {
+                                    if (diff.type === 'context') {
+                                        varyingHtml = `<span class="meaning-context-cell" style="line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${renderSenseContextHTML(diff.label, { leadingDot: false })}</span>`;
+                                    } else {
+                                        const family = escapeCardText(diff.type);
+                                        const shortLabel = escapeCardText(diff.label);
+                                        varyingHtml = `<span class="meaning-context-cell" style="line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;"><span class="sense-metadata-detail sense-pill sense-pill--${family}" data-family="${family}"><span class="sense-pill-label">${shortLabel}</span></span></span>`;
+                                    }
+                                } else {
+                                    varyingHtml = `<span style="opacity: 0.4; font-style: italic; font-size: 12px;">—</span>`;
+                                }
+                            }
                         } else {
                             const transRaw = displaySenseGloss(
                                 mm,
@@ -6032,11 +6057,11 @@ function updateCard({ announceHeadword = false } = {}) {
                         : (!m.unassigned && displayPctVal < 100
                             ? `<span class="sense-percentage sense-percentage-tail" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">${displayPctVal}%</span>`
                             : (m.unassigned ? prominenceBadgeHTML({ label: 'Rare', key: 'rare' }, 'position: absolute; right: 8px; top: 50%; transform: translateY(-50%);') : ''));
-                    const rowTextColor = isRowSelected ? 'var(--text-primary)' : 'var(--text-primary)';
+                    const sidePad = useProminenceLabels ? '32px' : (!m.unassigned && displayPctVal < 100 ? '42px' : '10px');
                     target.push(`
                     <div class="meaning-row meaning-row-regular ${singletonTextClass}${isRowSelected ? ' selected' : ''}${rowSelectedClasses}${rareRowClass}" style="position: relative; display: flex; align-items: center; padding: 2px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 44px;" onclick="selectMeaning(${idx})">
                         ${renderRowCheckSlot(isRowSelected)}
-                        <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; width: 100%; padding: 2px ${useProminenceLabels ? '32px' : (!m.unassigned && displayPctVal < 100 ? '42px' : '10px')} 2px 8px;">
+                        <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; width: 100%; padding: 2px ${sidePad} 2px ${sidePad};">
                             <span class="meaning-row-translation meaning-row-gloss row-adaptive-text" style="font-weight: ${isRowSelected ? 700 : 600}; color: ${rowTextColor}; text-align: center; width: 100%; line-height: 1.25;">${displayMeaningHTML}</span>
                             ${subContent ? `<span class="meaning-row-sub" style="text-align: center; width: 100%;">${subContent}</span>` : ''}
                         </div>
@@ -8202,7 +8227,7 @@ document.addEventListener('click', (e) => {
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
 const ASSET_VERSION = '20260916o';
-const MODALS_ASSET_VERSION = '20260917j';
+const MODALS_ASSET_VERSION = '20260917k';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
