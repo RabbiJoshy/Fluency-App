@@ -370,22 +370,36 @@ async function fetchSpotifyPlaylists() {
     return playlists;
 }
 
+// Full playlist tracks (id, title, artists, album, duration) for lyrics lookup.
+// Local files, episodes and removed items have no usable track id and are skipped.
+async function fetchSpotifyPlaylistTracks(playlistId) {
+    const tracks = [];
+    let url = `https://api.spotify.com/v1/playlists/${encodeURIComponent(playlistId)}/tracks`
+        + '?fields=items(track(id,name,duration_ms,album(name),artists(name))),next&limit=100';
+    while (url) {
+        const page = await _spotifyApiFetch(url);
+        for (const item of page.items || []) {
+            const track = item?.track;
+            if (!track?.id || !track.name) continue;
+            tracks.push({
+                id: track.id,
+                title: track.name,
+                artist: (track.artists || []).map(artist => artist.name).filter(Boolean).join(', ') || 'Unknown artist',
+                album: track.album?.name || '',
+                durationMs: Number(track.duration_ms) || 0
+            });
+        }
+        url = page.next || null;
+    }
+    return tracks;
+}
+
 // Returns the set of Spotify track IDs in a playlist, used to match against
 // each song catalog entry's own spotifyTrackId. Local files and removed
 // tracks report a null id and are skipped.
 async function fetchSpotifyPlaylistTrackIds(playlistId) {
-    const ids = new Set();
-    let url = `https://api.spotify.com/v1/playlists/${encodeURIComponent(playlistId)}/tracks`
-        + '?fields=items(track(id)),next&limit=100';
-    while (url) {
-        const page = await _spotifyApiFetch(url);
-        for (const item of page.items || []) {
-            const id = item?.track?.id;
-            if (id) ids.add(id);
-        }
-        url = page.next || null;
-    }
-    return ids;
+    const tracks = await fetchSpotifyPlaylistTracks(playlistId);
+    return new Set(tracks.map(track => track.id));
 }
 
 // --- Settings "connected" UI ---
@@ -1462,5 +1476,6 @@ window.isSpotifyConnected = isSpotifyConnected;
 window.spotifyLogout = spotifyLogout;
 window.getSpotifyProfile = getSpotifyProfile;
 window.fetchSpotifyPlaylists = fetchSpotifyPlaylists;
+window.fetchSpotifyPlaylistTracks = fetchSpotifyPlaylistTracks;
 window.fetchSpotifyPlaylistTrackIds = fetchSpotifyPlaylistTrackIds;
 window.refreshSpotifyConnectionUI = refreshSpotifyConnectionUI;

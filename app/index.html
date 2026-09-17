@@ -40,14 +40,14 @@
             document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260917n">
+    <link rel="stylesheet" href="css/style.css?v=20260918e">
     <link rel="stylesheet" href="css/light-theme.css?v=20260917k">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260918b">
+    <link rel="modulepreload" href="js/main.js?v=20260918e">
     <link rel="modulepreload" href="js/theme.js?v=20260825ak">
     <link rel="modulepreload" href="js/state.js?v=20260917a">
     <link rel="modulepreload" href="js/data-contracts.js?v=20260825ak">
@@ -63,11 +63,12 @@
     <link rel="modulepreload" href="js/progress.js?v=20260917j">
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20260915a">
-    <link rel="modulepreload" href="js/ui.js?v=20260917b">
-    <link rel="modulepreload" href="js/vocab.js?v=20260916t">
+    <link rel="modulepreload" href="js/ui.js?v=20260918e">
+    <link rel="modulepreload" href="js/vocab.js?v=20260918e">
     <link rel="modulepreload" href="js/song-sets-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/song-sets.js?v=20260823ae">
-    <link rel="modulepreload" href="js/spotify-playlist-import.js?v=20260913a">
+    <link rel="modulepreload" href="js/spotify-playlist-import.js?v=20260918e">
+    <link rel="modulepreload" href="js/playlist-live.js?v=20260918e">
     <link rel="modulepreload" href="js/vocabulary-import-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/vocabulary-import.js?v=20260913a">
     <link rel="modulepreload" href="js/spanishdict-usage.js?v=20260825ak">
@@ -1445,12 +1446,23 @@
                 </div>
                 <button type="button" class="modal-close" id="closeSpotifyPlaylistModal" aria-label="Close playlist import">✕</button>
             </div>
-            <p id="spotifyPlaylistIntro" class="settings-data-intro">Choose one of your playlists. Fluency will build a deck from whichever of its songs are already in the library.</p>
+            <p id="spotifyPlaylistIntro" class="settings-data-intro">Choose one of your playlists. Fluency looks up lyrics for each song (about six at a time) and saves them in this browser. A study deck is still built only from songs already in the library.</p>
             <div id="spotifyPlaylistList" class="song-set-list"></div>
+            <div id="spotifyPlaylistProgress" class="playlist-lyrics-progress hidden">
+                <div class="playlist-lyrics-percent" id="spotifyPlaylistPercent">0%</div>
+                <p class="playlist-lyrics-count" id="spotifyPlaylistCount">0 of 0 songs</p>
+                <div class="playlist-lyrics-bar" id="spotifyPlaylistBar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Lyrics lookup progress">
+                    <div class="playlist-lyrics-bar-fill" id="spotifyPlaylistBarFill"></div>
+                </div>
+                <p class="playlist-lyrics-now" id="spotifyPlaylistNow"></p>
+                <ol class="playlist-lyrics-log" id="spotifyPlaylistLog" aria-label="Songs processed"></ol>
+                <p class="playlist-lyrics-save-note">Saved in this browser only — IndexedDB database <code>fluency-playlist-lyrics</code>, one record per Spotify track. Nothing is uploaded to Fluency.</p>
+            </div>
             <p id="spotifyPlaylistStatus" class="vocabulary-import-status" role="status" aria-live="polite"></p>
             <div class="song-set-footer">
                 <button type="button" id="cancelSpotifyPlaylistBtn" class="secondary-btn">Cancel</button>
                 <button type="button" id="useSpotifyMatchesBtn" hidden>Build deck from matches</button>
+                <button type="button" id="useSpotifyLiveBtn" hidden>Study live deck</button>
             </div>
         </div>
     </div>
@@ -1885,6 +1897,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260918b"></script>
+    <script type="module" src="js/main.js?v=20260918e"></script>
 </body>
 </html>

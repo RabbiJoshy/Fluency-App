@@ -390,9 +390,11 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
     const languageConfig = config.languages?.[selectedLanguage];
     if (!button || !languageConfig) return;
 
-    const mode = activeArtist
-        ? `Lyrics · ${activeArtist.name || 'Songs'}`
-        : 'Speech';
+    const mode = window.playlistLiveActive?.()
+        ? `Live · ${window.playlistLiveDeck?.()?.playlistName || 'playlist'}`
+        : activeArtist
+            ? `Lyrics · ${activeArtist.name || 'Songs'}`
+            : 'Speech';
     const flag = languageConfig.flag || LEARNING_CONTEXT_FLAGS[selectedLanguage] || selectedLanguage.slice(0, 2).toUpperCase();
     const coverage = Number(snapshot?.percentage || 0);
     const coverageLabel = snapshot?.label || (activeArtist ? 'Lyrics understood' : 'Speech understood');
@@ -643,7 +645,8 @@ function setupLanguageTabs() {
 
             const languageCapabilities = langConfig?.capabilities || {};
             const speechAvailable = languageCapabilities.speech !== false;
-            const lyricsAvailable = languageCapabilities.lyrics !== false;
+            const lyricsCatalog = languageCapabilities.lyrics !== false;
+            const lyricsAvailable = lyricsCatalog || speechAvailable;
             const lyricsStatus = document.getElementById('standardLyricsStatus');
             if (speechSourceButton) {
                 speechSourceButton.disabled = !speechAvailable;
@@ -655,12 +658,12 @@ function setupLanguageTabs() {
             }
             if (sourceCardButton) {
                 sourceCardButton.disabled = !lyricsAvailable;
-                sourceCardButton.title = lyricsAvailable
+                sourceCardButton.title = lyricsCatalog
                     ? 'Build vocabulary around music you choose'
-                    : `Music & lyrics is not available for ${langConfig?.name || newLanguage} yet`;
+                    : 'Look up lyrics from a playlist and study a live deck';
                 const detail = sourceCardButton.querySelector('small');
                 if (detail) detail.textContent = 'The words in songs you choose, with the original line as the example. Best if music is how you listen.';
-                if (lyricsStatus) lyricsStatus.textContent = lyricsAvailable ? '›' : 'Coming later';
+                if (lyricsStatus) lyricsStatus.textContent = lyricsCatalog ? '›' : 'Live';
             }
 
             // Hide all subsequent steps while loading
@@ -679,7 +682,13 @@ function setupLanguageTabs() {
                 sourceCardButton?.classList.remove('is-selected');
                 window.showAppLoading?.('Preparing speech vocabulary', 'Loading levels and your progress…');
                 try {
-                    sourceLabel.textContent = 'Speech';
+                    if (window.playlistLiveActive?.()) {
+                        const liveName = window.playlistLiveDeck?.()?.playlistName;
+                        sourceLabel.textContent = liveName ? `Live · ${liveName}` : 'Live playlist';
+                        document.getElementById('step1').style.display = 'none';
+                    } else {
+                        sourceLabel.textContent = 'Speech';
+                    }
                     sourcePill.classList.remove('source-pill-inline--pending');
                     const loadingIndicator = document.getElementById('dataLoadingIndicator');
                     loadingIndicator.classList.add('visible');
@@ -2855,7 +2864,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false } = {}) {
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=20260831a')
+        import('./spotify.js?v=20260918a')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
