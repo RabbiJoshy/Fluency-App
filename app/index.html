@@ -40,14 +40,14 @@
             document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260916m">
-    <link rel="stylesheet" href="css/light-theme.css?v=20260916m">
+    <link rel="stylesheet" href="css/style.css?v=20260917g">
+    <link rel="stylesheet" href="css/light-theme.css?v=20260917g">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260917a">
+    <link rel="modulepreload" href="js/main.js?v=20260917g">
     <link rel="modulepreload" href="js/theme.js?v=20260825ak">
     <link rel="modulepreload" href="js/state.js?v=20260914c">
     <link rel="modulepreload" href="js/data-contracts.js?v=20260825ak">
@@ -57,7 +57,7 @@
     <link rel="modulepreload" href="js/speech.js?v=20260914b">
     <link rel="modulepreload" href="js/artist-ui.js?v=20260825ak">
     <link rel="modulepreload" href="js/auth.js?v=20260912a">
-    <link rel="modulepreload" href="js/about-example.js?v=20260916q">
+    <link rel="modulepreload" href="js/about-example.js?v=20260917g">
     <link rel="modulepreload" href="js/estimation.js?v=20260825ak">
     <link rel="modulepreload" href="js/config.js?v=20260916f">
     <link rel="modulepreload" href="js/progress.js?v=20260916h">
@@ -72,7 +72,7 @@
     <link rel="modulepreload" href="js/vocabulary-import.js?v=20260913a">
     <link rel="modulepreload" href="js/spanishdict-usage.js?v=20260825ak">
     <link rel="modulepreload" href="js/reverse-cues.js?v=20260917a">
-    <link rel="modulepreload" href="js/flashcards.js?v=20260917a">
+    <link rel="modulepreload" href="js/flashcards.js?v=20260917g">
     <link rel="modulepreload" href="js/example-personalisation.js?v=20260825ak">
     <script>
         // Fail open if a boot-time script error prevents main.js from taking
@@ -659,8 +659,13 @@
                          this same reserved strip above the card (not on the card face). -->
                     <div class="card-back-scrubber" id="cardBackScrubber" aria-label="Card position in active set">
                         <div class="cbs-strip">
-                            <button type="button" class="cbs-chevron cbs-chevron-prev" id="prevBtnBack" aria-label="Previous card" onpointerdown="event.stopPropagation()">‹</button>
-                            <div class="cbs-pips" id="cardBackPips" role="group" aria-label="Card position in this set"></div>
+                            <div class="cbs-scrub" id="cardBackPips" role="slider" aria-valuemin="1" aria-valuenow="1" aria-valuemax="1" aria-label="Card position in this set">
+                                <div class="cbs-track-wrap">
+                                    <div class="cbs-track" aria-hidden="true"></div>
+                                    <div class="cbs-fill" aria-hidden="true"></div>
+                                    <div class="cbs-thumb" aria-hidden="true"><span class="cbs-thumb-num">1</span></div>
+                                </div>
+                            </div>
                             <!-- Child cards (search / synonym / lyric jump) replace the pip
                                  row with this labelled return control, so the way back is in
                                  the same top bar as every other card action instead of a
@@ -672,7 +677,6 @@
                                     <span class="cbs-return-label" id="cardBackReturnLabel">the set</span>
                                 </span>
                             </button>
-                            <button type="button" class="cbs-chevron cbs-chevron-next" id="nextBtnBack" aria-label="Next card" onpointerdown="event.stopPropagation()">›</button>
                         </div>
                         <button type="button" class="cbs-gear" id="actionsGearBack" title="More actions" aria-label="More actions">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -826,8 +830,8 @@
             <p>Everyday speech and song lyrics do not use the same words, so you pick the environment you care about.</p>
             <p>You learn those words from real sentences in that environment, not from a generic textbook list.</p>
             <div class="frequency-intro-actions">
-                <button class="product-primary-action frequency-intro-skip" id="skipFrequencyIntroBtn" type="button">Skip intro</button>
-                <button class="product-back-action" id="frequencyIntroTutorialBtn" type="button">Show the tutorial</button>
+                <button class="product-primary-action" id="frequencyIntroTutorialBtn" type="button">Show the tutorial <span aria-hidden="true">→</span></button>
+                <button class="product-back-action frequency-intro-skip" id="skipFrequencyIntroBtn" type="button">Skip for now</button>
             </div>
         </div>
     </div>
@@ -841,8 +845,7 @@
             </div>
             <div id="tutorialWelcomeStep" class="tutorial-intro-step">
                 <div class="tutorial-principles">
-                    <p>Each card shows a word, what it can mean, and a real example. Common / Uncommon / Rare tells you how often that meaning is used.</p>
-                    <p><strong>Speech</strong> is everyday language. <strong>Lyrics</strong> can follow music you choose and play the original line.</p>
+                    <p>We'll walk through a real flashcard and explain what each part means — about two minutes.</p>
                 </div>
                 <button class="product-primary-action" id="startCardTutorialBtn" type="button">Start tutorial <span aria-hidden="true">→</span></button>
             </div>
@@ -891,7 +894,7 @@
                             <div class="about-example-stage" id="aboutExampleStage"></div>
                             <div class="about-example-markers" id="aboutExampleMarkers" aria-hidden="true"></div>
                         </div>
-                        <button type="button" class="about-example-flip" id="aboutExampleFlip">⟲  Show the front</button>
+                        <button type="button" class="about-example-flip" id="aboutExampleFlip">Flip to the question side</button>
                         <button type="button" class="about-example-continue" id="aboutExampleContinue" hidden></button>
                     </div>
                     <div class="about-example-notes about-example-notes-right" id="aboutExampleNotesRight"></div>
@@ -1884,7 +1887,7 @@
                     <p><strong>Swipe left</strong> if you don't know it &#10007;</p>
                     <p id="helpStudyLyricsLine"><strong>Lyric examples:</strong> tap the sentence to cycle manually, or use the small desktop play control to hear each sense label and its timestamped lyric lines in order.</p>
                     <p><strong>Words with multiple meanings:</strong> A grouped row starts on its shared meaning; pick a colored sub-sense to narrow the examples. Its color links it to the matching example.</p>
-                    <p><strong>Card scrubber:</strong> The numbered strip shows your current position in the active set. Swipe it or choose a number to move directly to that card.</p>
+                    <p><strong>Card scrubber:</strong> The number is your place in the set. Nudge the marker to move one card; keep dragging to skip farther.</p>
                     <p><strong>Study options:</strong> Use the button beside the scrubber for the main menu, card language order, automatic speech, progress, and study preferences.</p>
                     <p><strong>At the end of each set</strong>, you'll see your accuracy and can repeat mistakes from that session or continue to the next unseen set.</p>
                 </div>
@@ -1892,6 +1895,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260917a"></script>
+    <script type="module" src="js/main.js?v=20260917g"></script>
 </body>
 </html>

@@ -1367,7 +1367,10 @@ function _flagMenuCard() {
 
 function _flagMenuExample(meaning) {
     if (window._currentDisplayedExample) return window._currentDisplayedExample;
-    const examples = (meaning && meaning.allExamples) || [];
+    const card = _flagMenuCard();
+    const examples = (typeof getCyclableExamples === 'function' && meaning && card)
+        ? getCyclableExamples(card, meaning)
+        : ((meaning && meaning.allExamples) || []);
     if (!examples.length) return null;
     const index = (typeof currentExampleIndex === 'number')
         ? currentExampleIndex % examples.length : 0;

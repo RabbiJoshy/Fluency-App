@@ -612,18 +612,32 @@ async function popupFoundWord(entry, opts) {
         }
 
         const langConfig = (config && config.languages && config.languages[selectedLanguage]) || {};
+        const rank = Number(vocabEntry.rank) || 1;
+        if (window.ensureIndexRowsForRange && (!Array.isArray(vocabEntry.meanings) || vocabEntry.meanings.length === 0 || vocabEntry._indexRowsPending)) {
+            try {
+                await window.ensureIndexRowsForRange(langConfig, rank, rank + 1, [rank]);
+            } catch (e) {
+                console.warn('popupFoundWord: failed to fetch index rows', e);
+            }
+        }
 
         // Lazy-load examples file if needed and merge into the entry's meanings.
         if (langConfig.examplesPath && (
             !window._cachedExamplesData
             || window._cachedExamplesDataPath !== langConfig.examplesPath
+            || (window.exampleShardsActive?.() && !window._cachedExamplesData[vocabEntry.id])
         )) {
             try {
-                const r = await fetch(langConfig.examplesPath);
-                if (r.ok) {
-                    const examples = await r.json();
-                    window.setActiveExamplesData?.(examples, langConfig.examplesPath)
-                        || (window._cachedExamplesData = examples);
+                const rank = Number(vocabEntry.rank) || 1;
+                if (window.ensureExamplesForRange) {
+                    await window.ensureExamplesForRange(langConfig, rank, rank + 1);
+                } else {
+                    const r = await fetch(langConfig.examplesPath);
+                    if (r.ok) {
+                        const examples = await r.json();
+                        window.setActiveExamplesData?.(examples, langConfig.examplesPath)
+                            || (window._cachedExamplesData = examples);
+                    }
                 }
             } catch (e) {
                 console.warn('popupFoundWord: failed to fetch examples', e);
@@ -1049,6 +1063,12 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
     // A completed deck is no longer resumable. Starting a follow-up or redo
     // set will create a fresh snapshot on its first rendered card.
     window.clearStudySessionSnapshot?.();
+    if (stats.nextRange) {
+        window.prefetchStudySetPayload?.(
+            config?.languages?.[selectedLanguage],
+            stats.nextRange,
+        );
+    }
     const nextLevel = !stats.nextRange ? window.getNextStudyLevelMeta?.() : null;
     const isLevelCompletion = Boolean(
         stats.studyMode === 'new' && !stats.nextRange && stats.levelNumber);
@@ -1347,7 +1367,10 @@ function _flagMenuCard() {
 
 function _flagMenuExample(meaning) {
     if (window._currentDisplayedExample) return window._currentDisplayedExample;
-    const examples = (meaning && meaning.allExamples) || [];
+    const card = _flagMenuCard();
+    const examples = (typeof getCyclableExamples === 'function' && meaning && card)
+        ? getCyclableExamples(card, meaning)
+        : ((meaning && meaning.allExamples) || []);
     if (!examples.length) return null;
     const index = (typeof currentExampleIndex === 'number')
         ? currentExampleIndex % examples.length : 0;

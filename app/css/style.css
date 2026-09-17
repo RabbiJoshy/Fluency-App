@@ -1920,8 +1920,8 @@
         /* Top control row. The hairline divider and the 6px inset were both
            spending height on nothing: the strip already has its own outline,
            so it reads as a separate band without a rule under it. The height
-           they freed goes straight into the controls (see .cbs-strip /
-           .cbs-chevron / .cbs-gear stretching to fill this row). */
+               they freed goes straight into the controls (see .cbs-strip /
+               .cbs-gear stretching to fill this row). */
         .card-back-scrubber {
             display: flex;
             align-items: center;
@@ -1936,14 +1936,13 @@
             z-index: 12;
         }
         /* A child card keeps this bar — it is where the return control lives.
-           The pip row and the card chevrons are what get hidden, since neither
-           addresses a card in the active set from here. */
-        .card-container:has(.card.is-stacked) .cbs-pips,
-        .card-container:has(.card.is-stacked) .cbs-chevron {
+           The seek bar is what gets hidden, since it does not address a card
+           in the active set from here. */
+        .card-container:has(.card.is-stacked) .cbs-scrub {
             display: none;
         }
 
-        /* Return control on a child card. Fills the space the pips vacate, so
+        /* Return control on a child card. Fills the space the seek bar vacates, so
            the target is the width of the strip rather than a 44px disc. */
         .cbs-return {
             flex: 1 1 auto;
@@ -2000,6 +1999,7 @@
         }
 
         .cbs-strip {
+            position: relative;
             display: flex;
             align-items: center;
             flex: 1;
@@ -2008,85 +2008,72 @@
                a slab. */
             height: 100%;
             max-height: 62px;
-            gap: 3px;
-            padding: 0 2px;
+            gap: 4px;
+            padding: 2px 4px;
             box-sizing: border-box;
             border-radius: 12px;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.14);
         }
 
-        .cbs-chevron {
-            flex: 0 0 50px;
-            width: 50px;
-            /* Stretch to the strip's inner height instead of a fixed 44px —
-               the reclaimed divider/padding space becomes tap target. */
-            height: calc(100% - 4px);
-            min-height: 44px;
-            border-radius: 10px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            line-height: 1;
-            cursor: pointer;
-            transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-        }
-        .cbs-chevron-prev,
-        .cbs-chevron-next {
-            background: rgba(255, 255, 255, 0.09);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
-        }
-        .cbs-chevron:disabled {
-            background: rgba(255, 255, 255, 0.04);
-            border-color: rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.25);
-            cursor: default;
-        }
-
-        .cbs-pips {
+        .cbs-scrub {
+            position: relative;
             display: flex;
             align-items: center;
             flex: 1;
+            min-width: 0;
             height: calc(100% - 4px);
             min-height: 44px;
-            gap: 3px;
             touch-action: none;
-            cursor: pointer;
+            cursor: ew-resize;
         }
-
-        .cbp-pip {
-            flex: 1 1 0;
-            min-width: 0;
-            height: 26px;
+        .cbs-track-wrap {
+            position: relative;
+            flex: 1;
+            height: 100%;
+            margin: 0 16px;
+        }
+        .cbs-track,
+        .cbs-fill {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            height: 4px;
+            transform: translateY(-50%);
             border-radius: 999px;
-            background: rgba(255, 255, 255, 0.15);
-            display: inline-flex;
+            pointer-events: none;
+        }
+        .cbs-track {
+            right: 0;
+            background: rgba(255, 255, 255, 0.18);
+        }
+        .cbs-fill {
+            width: calc(var(--cbs-t, 0) * 100%);
+            background: rgba(255, 255, 255, 0.58);
+        }
+        .cbs-thumb {
+            position: absolute;
+            left: calc(var(--cbs-t, 0) * 100%);
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #ffffff;
+            color: #1a1f26;
+            font: 750 13px/1 var(--font-reading);
+            display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
-            font: 700 13px/1 var(--font-reading);
-            color: transparent;
-            transition: all 170ms cubic-bezier(0.2, 0.85, 0.25, 1.25);
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.28);
+            pointer-events: none;
         }
-        .cbp-pip.is-visited {
-            background: rgba(255, 255, 255, 0.4);
-        }
-        .cbp-pip.is-current {
-            flex: 0 0 34px;
-            width: 34px;
-            height: 34px;
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.22);
-            color: #1a1f26;
-        }
-        /* Same signal as the desktop scrubber: the pip holds its place and
-           turns violet for the duration of the phrase chain. */
-        .cbp-pip.is-current.is-phrases {
+        .cbs-thumb.is-phrases {
             background: var(--accent-phrases);
-            box-shadow: 0 0 0 3px rgba(var(--accent-phrases-rgb), 0.3);
             color: #241b3d;
+        }
+        .cbs-scrub.is-scrubbing .cbs-thumb {
+            transform: translate(-50%, -50%) scale(1.08);
         }
 
         .cbs-gear {
@@ -2737,41 +2724,35 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: var(--font-reading);
             font-size: 9px;
-            font-weight: 600;
+            font-weight: 650;
             line-height: 1.2;
-            padding: 1.5px 5px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            border-radius: 0;
+            text-transform: none;
+            letter-spacing: 0;
             white-space: nowrap;
         }
         @media (max-width: 480px) {
             .meaning-row .meaning-row-body {
-                padding-right: 42px !important;
+                padding-right: 36px !important;
                 padding-left: 6px !important;
             }
             .sense-prominence-badge {
                 font-size: 8px;
-                padding: 1px 4px;
-                letter-spacing: 0.02em;
             }
         }
         .sense-prominence-badge.prominence-common {
-            background: rgba(16, 185, 129, 0.15);
             color: #10b981;
-            border: 1px solid rgba(16, 185, 129, 0.3);
         }
         .sense-prominence-badge.prominence-uncommon {
-            background: rgba(255, 255, 255, 0.08);
             color: var(--text-secondary);
-            border: 1px solid rgba(255, 255, 255, 0.12);
         }
         .sense-prominence-badge.prominence-rare {
-            background: rgba(245, 158, 11, 0.14);
             color: #f59e0b;
-            border: 1px solid rgba(245, 158, 11, 0.3);
         }
 
         .rare-senses-toggle-wrap {
@@ -2779,21 +2760,22 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            padding: 6px 0 8px;
+            gap: 4px;
+            padding: 2px 0 4px;
             width: 100%;
         }
         .rare-senses-toggle-btn {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 4px 12px;
+            gap: 4px;
+            min-height: 28px;
+            padding: 2px 8px;
             font-family: var(--font-reading);
-            font-size: 11.5px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px dashed rgba(255, 255, 255, 0.28);
+            font-size: 11px;
+            font-weight: 700;
+            color: #f59e0b;
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px dashed rgba(245, 158, 11, 0.42);
             border-radius: 999px;
             cursor: pointer;
             transition: all 0.18s ease;
@@ -2801,27 +2783,25 @@
         .rare-senses-toggle-hint {
             margin: 0;
             color: var(--text-secondary);
-            font: 500 12px/1.35 var(--font-reading);
+            font: 500 11px/1.35 var(--font-reading);
             text-align: center;
         }
         .rare-senses-toggle-btn:hover {
-            color: var(--text-primary);
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.3);
+            color: #fbbf24;
+            background: rgba(245, 158, 11, 0.14);
+            border-color: rgba(245, 158, 11, 0.55);
         }
         .rare-senses-toggle-btn.is-expanded {
-            background: rgba(var(--accent-primary-rgb), 0.1);
-            color: var(--accent-primary);
+            background: rgba(245, 158, 11, 0.16);
+            color: #fbbf24;
             border-style: solid;
-            border-color: rgba(var(--accent-primary-rgb), 0.3);
         }
+        .rare-senses-more-icon,
         .rare-senses-chevron {
-            display: inline-block;
-            font-size: 8px;
-            transition: transform 0.2s ease;
+            display: none;
         }
-        .rare-senses-toggle-btn.is-expanded .rare-senses-chevron {
-            transform: rotate(180deg);
+        .rare-senses-count {
+            font-variant-numeric: tabular-nums;
         }
         .meaning-row.meaning-row-rare {
             animation: rareSenseRowFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -2843,16 +2823,39 @@
             font-size: 11px;
             font-weight: 600;
             color: var(--text-secondary);
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 6px;
-            padding: 2px 7px;
-            margin-right: auto;
             letter-spacing: 0.01em;
         }
-        .dictionary-provenance-badge .dict-provenance-icon {
-            font-size: 11px;
+        .example-source-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: inherit;
+            text-decoration: none;
             line-height: 1;
+        }
+        .example-source-chip--icon {
+            padding: 2px;
+            border-radius: 6px;
+        }
+        .example-source-chip:hover,
+        .example-source-chip:focus-visible {
+            color: var(--text-primary);
+            outline: none;
+        }
+        .example-source-favicon,
+        .dictionary-provenance-badge .dict-provenance-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            display: block;
+            flex: 0 0 auto;
+        }
+        .example-source-text {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-style: italic;
         }
         body.is-spotify-playing .sentence .example-word-highlight,
         body.is-speaking-active .sentence .example-word-highlight {
@@ -5023,15 +5026,39 @@
             white-space: nowrap;
         }
         .example-credit-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            font-size: 13px;
             color: var(--text-secondary);
+        }
+        .example-credit-row.is-lyric {
+            font-style: italic;
+        }
+        .example-credit-start {
+            flex: 1 1 0;
+            min-width: 0;
+            display: flex;
+            justify-content: flex-start;
+        }
+        .example-credit-end {
+            flex: 1 1 0;
+            min-width: 0;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 6px;
         }
         .example-ticks {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
+            align-items: center;
             gap: 5px;
-            margin-top: 8px;
-            max-width: 100%;
+            flex: 0 1 auto;
+            max-width: 42%;
+            margin: 0;
         }
         .example-ticks.is-dense {
             gap: 3px;
@@ -14776,6 +14803,12 @@
     color: var(--accent-primary-text);
 }
 
+.about-example-continue.is-secondary {
+    border-color: var(--border-light);
+    background: transparent;
+    color: var(--text-secondary);
+}
+
 .about-example-mobile-coach {
     display: none;
 }
@@ -15858,6 +15891,27 @@ body {
   background: var(--bg-card);
   box-shadow: 0 8px 24px rgba(0, 0, 0, .13);
 }
+@media (max-width: 767px) {
+  .container:has(#setupPanel:not(.hidden)) {
+    padding: 6px 4px;
+  }
+  #setupPanel.file-upload {
+    padding: 4px 0 8px;
+  }
+  #step2,
+  #step4 {
+    padding: 8px 0 2px;
+  }
+  #step2 > .step-header,
+  #step4 > .step-header { padding: 0; }
+  #step4 .study-set-panel {
+    padding: 10px 8px;
+  }
+  .study-set-dots {
+    grid-template-columns: repeat(auto-fit, minmax(28px, 1fr));
+    gap: 4px;
+  }
+}
 .study-set-dot.is-current {
   animation: none;
   transform: translateY(-1px);
@@ -15894,7 +15948,8 @@ body {
 }
 
 @media (max-width: 560px) {
-  .container { padding: 10px 12px; }
+  .container { padding: 8px 6px; }
+  .container:has(#setupPanel:not(.hidden)) { padding: 6px 4px; }
   #topBar { margin-bottom: 10px; }
   .learning-context-chip { border-color: transparent; background: transparent; padding-left: 4px; max-width: 140px; }
   .setup-options-bar { grid-template-columns: minmax(0, 1fr) auto; gap: 6px; }

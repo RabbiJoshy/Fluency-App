@@ -1536,14 +1536,6 @@ function initializeApp() {
         e.stopPropagation();
         nextCard();
     });
-    document.getElementById('prevBtnBack').addEventListener('click', function(e) {
-        e.stopPropagation();
-        previousCard();
-    });
-    document.getElementById('nextBtnBack').addEventListener('click', function(e) {
-        e.stopPropagation();
-        nextCard();
-    });
     // Top card buttons + their mobile-popup counterparts. The popup variant
     // lives in the single fixed #cardActionsPopup outside the card; tapping
     // it runs the same handler as the desktop sidebar button.
@@ -1657,38 +1649,41 @@ function initializeApp() {
         deckScrubber.addEventListener('lostpointercapture', finishScrub);
     }
 
-    // Mobile card-back pip row: a direct-position drag surface, not a
-    // relative-delta one — the pip under the finger becomes current, both
-    // on initial touch and while dragging. Chevrons sit outside this
-    // element and stop propagation on their own pointerdown so they never
-    // feed into this handler.
+    // Card-position seek bar: a short drag is one card; a wide plateau
+    // holds that step so skipping farther takes a longer pull.
     const cardBackPips = document.getElementById('cardBackPips');
     if (cardBackPips) {
         let pipPointerId = null;
-        const indexFromPointerEvent = event => {
-            const rect = cardBackPips.getBoundingClientRect();
-            if (!rect.width) return currentIndex;
-            const ratio = (event.clientX - rect.left) / rect.width;
-            const idx = Math.floor(ratio * flashcards.length);
-            return Math.max(0, Math.min(flashcards.length - 1, idx));
-        };
+        let scrubOriginIndex = 0;
+        let scrubOriginX = 0;
         const endPipDrag = event => {
             if (pipPointerId === null || (event && event.pointerId !== pipPointerId)) return;
             if (cardBackPips.hasPointerCapture?.(pipPointerId)) {
                 cardBackPips.releasePointerCapture(pipPointerId);
             }
             pipPointerId = null;
+            cardBackPips.classList.remove('is-scrubbing');
         };
         cardBackPips.addEventListener('pointerdown', event => {
             if (event.button !== undefined && event.button !== 0) return;
+            const card = flashcards[currentIndex];
             pipPointerId = event.pointerId;
+            scrubOriginX = event.clientX;
+            scrubOriginIndex = (card?.isChainChild && cardChainReturnIndex >= 0)
+                ? cardChainReturnIndex
+                : currentIndex;
+            cardBackPips.classList.add('is-scrubbing');
             cardBackPips.setPointerCapture?.(event.pointerId);
-            goToDeckCard(indexFromPointerEvent(event), { announceHeadword: false });
         });
         cardBackPips.addEventListener('pointermove', event => {
             if (event.pointerId !== pipPointerId) return;
             event.preventDefault();
-            goToDeckCard(indexFromPointerEvent(event), { announceHeadword: false });
+            const last = Math.max(0, flashcards.length - 1);
+            const nextIndex = Math.max(0, Math.min(
+                last,
+                scrubOriginIndex + cardOffsetFromScrubDelta(event.clientX - scrubOriginX)
+            ));
+            goToDeckCard(nextIndex, { announceHeadword: false });
         });
         cardBackPips.addEventListener('pointerup', endPipDrag);
         cardBackPips.addEventListener('pointercancel', endPipDrag);
@@ -3104,7 +3099,7 @@ function buildFrontProductionHint(card, meaning, activeAnswer) {
         const active = meaning.allClitics[currentMWEIndex % meaning.allClitics.length];
         examples = active?.examples || [];
     } else {
-        examples = meaning.allExamples || [];
+        examples = getCyclableExamples(card, meaning);
     }
     examples = dedupeExamples(examples);
     if (examples.length > 1) examples = sortExamplesByRelevance(examples);
@@ -3152,18 +3147,7 @@ const _mergedExampleCursorByCard = new Map();
 function getMergedLemmaExampleFocus(card, meaning, { advanceOnEntry = false } = {}) {
     if (!card?.mergedLemma || !meaning || meaning.allMWEs || meaning.allClitics) return null;
 
-    let examples;
-    if (currentGroupSelection?.members?.length) {
-        const combined = [];
-        for (const index of currentGroupSelection.members) {
-            const member = card.meanings?.[index];
-            if (member?.allExamples) combined.push(...member.allExamples);
-        }
-        examples = dedupeExamples(combined);
-    } else {
-        examples = dedupeExamples(meaning.allExamples || []);
-    }
-    if (examples.length > 1) examples = sortExamplesByRelevance(examples);
+    const examples = getCyclableExamples(card, meaning);
     if (examples.length === 0) return null;
 
     const cursorKey = card.fullId || card.id || card.citationForm || card.targetWord;
@@ -3447,12 +3431,11 @@ function sourceTitleRecord(provenance) {
 
 function sourceTitleLabel(provenance) {
     const metadata = sourceTitleRecord(provenance);
-    if (!metadata?.title) return '';
-    let label = metadata.series
-        ? `${metadata.series} — ${metadata.title}`
-        : metadata.title;
-    if (metadata.year) label += ` (${metadata.year})`;
-    return label;
+    if (!metadata) return '';
+    // Learner-facing credit is the work people recognise: the series or film.
+    // Episode titles and years live on the IMDb page behind the link.
+    if (metadata.series) return String(metadata.series).trim();
+    return String(metadata.title || '').trim();
 }
 
 let _sourceTitles = null;
@@ -3482,6 +3465,61 @@ function exampleLinkHTML(href, label) {
     return `<a href="${escapeCardText(href)}" target="_blank" rel="noopener noreferrer">${escapeCardText(label)}</a>`;
 }
 
+function exampleFaviconHTML(domain) {
+    return `<img class="example-source-favicon dict-provenance-icon" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=32" width="16" height="16" alt="" aria-hidden="true">`;
+}
+
+function exampleSourceChipHTML({ href, label, domain, text = '', extraClass = '' }) {
+    const icon = domain ? exampleFaviconHTML(domain) : '';
+    const named = Boolean(text);
+    const classes = [
+        'example-source-chip',
+        named ? 'example-source-chip--named' : 'example-source-chip--icon',
+        extraClass,
+    ].filter(Boolean).join(' ');
+    const title = named ? `${text}` : label;
+    const inner = `${named ? `<span class="example-source-text">${escapeCardText(text)}</span>` : ''}${icon}`;
+    const attrs = `class="${classes}" title="${escapeCardText(title)}" aria-label="${escapeCardText(named ? `${text} on ${label}` : label)}"`;
+    if (!href) return `<span ${attrs}>${inner}</span>`;
+    return `<a ${attrs} href="${escapeCardText(href)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${inner}</a>`;
+}
+
+function dictionaryProviderCredit(name, href) {
+    const raw = String(name || '').trim();
+    const lower = raw.toLowerCase();
+    if (lower.includes('spanishdict')) {
+        return exampleSourceChipHTML({
+            href,
+            label: 'SpanishDict',
+            domain: 'spanishdict.com',
+            extraClass: 'dictionary-provenance-badge',
+        });
+    }
+    if (lower.includes('wiktionary') || lower.includes('kaikki')) {
+        return exampleSourceChipHTML({
+            href,
+            label: 'Wiktionary',
+            domain: 'wiktionary.org',
+            extraClass: 'dictionary-provenance-badge',
+        });
+    }
+    return exampleSourceChipHTML({
+        href,
+        label: raw || 'Dictionary',
+        domain: 'wiktionary.org',
+        extraClass: 'dictionary-provenance-badge',
+    });
+}
+
+function dictionaryProviderForMeaning(meaning) {
+    const meta = meaning?.metadata || {};
+    if (meta?.sense_provider_metadata?.spanishdict) return 'SpanishDict';
+    const raw = String(meta.source_provider || meaning?.source || '').toLowerCase();
+    if (raw.includes('spanishdict')) return 'SpanishDict';
+    if (raw.includes('wiktionary') || raw.includes('kaikki')) return 'Wiktionary';
+    return 'Dictionary';
+}
+
 // Where a corpus example actually came from. Every displayed sentence should
 // name its source: OpenSubtitles with a film/series title when the IMDb map
 // has one, Tatoeba with a sentence link, or the dictionary that filed it.
@@ -3492,18 +3530,30 @@ function exampleProvenanceHTML(example) {
         if (p.title_id) {
             const tt = 'tt' + String(p.title_id).padStart(7, '0');
             const title = sourceTitleLabel(p);
-            return exampleLinkHTML(`https://www.imdb.com/title/${tt}/`, title || tt);
+            return exampleSourceChipHTML({
+                href: `https://www.imdb.com/title/${tt}/`,
+                label: 'IMDb',
+                domain: 'imdb.com',
+                text: title,
+            });
         }
-        return 'OpenSubtitles';
+        return exampleSourceChipHTML({
+            label: 'OpenSubtitles',
+            domain: 'opensubtitles.org',
+        });
     }
     if (corpus === 'tatoeba') {
-        return exampleLinkHTML(p.url, 'Tatoeba');
+        return exampleSourceChipHTML({
+            href: p.url,
+            label: 'Tatoeba',
+            domain: 'tatoeba.org',
+        });
     }
     if (corpus === 'wiktionary') {
-        return exampleLinkHTML(p.url, 'Wiktionary');
+        return dictionaryProviderCredit('Wiktionary', p.url);
     }
     if (corpus === 'spanishdict') {
-        return exampleLinkHTML(p.url, 'SpanishDict');
+        return dictionaryProviderCredit('SpanishDict', p.url);
     }
     if (corpus) return escapeCardText(corpus);
     return null;
@@ -4032,7 +4082,7 @@ function canonicalExampleHTML(meaning) {
         <div class="breakdown-trigger" style="margin-bottom: 8px;">${highlightWithDeclaredOffsets(text, canonical.bold_text_offsets)}</div>
         <div class="translation">${highlightWithDeclaredOffsets(translation, canonical.bold_translation_offsets)}</div>
         <div class="example-credit-row" style="display: flex; justify-content: flex-end; align-items: center; font-size: 13px; margin-top: 8px;">
-            <span class="example-song-credit" style="margin-right:auto;"><span class="dictionary-provenance-badge" title="Canonical dictionary example"><span class="dict-provenance-icon" aria-hidden="true">📖</span> Dictionary example</span></span>
+            <span class="example-song-credit" style="margin-right:auto;">${dictionaryProviderCredit(dictionaryProviderForMeaning(meaning), canonical?.url)}</span>
         </div>
     </div>`;
 }
@@ -4049,8 +4099,11 @@ function extractCanonicalDictionaryExamples(meaning) {
             englishSentence: translation,
             source: 'dictionary',
             evidence: 'dictionary',
-            dictionarySource: 'Dictionary',
+            dictionarySource: dictionaryProviderForMeaning(meaning),
             canonical: true,
+            url: canonical.url,
+            bold_text_offsets: canonical.bold_text_offsets,
+            bold_translation_offsets: canonical.bold_translation_offsets,
         }];
     }
     const meta = meaning?.metadata;
@@ -4069,6 +4122,92 @@ function extractCanonicalDictionaryExamples(meaning) {
         evidence: 'dictionary',
         dictionarySource: dictName
     })).filter(ex => ex.target && ex.english);
+}
+
+// Display one sentence: a WSD corpus line when the assignment is specific
+// enough to trust, otherwise the dictionary canonical. Unresolved / missing
+// WSD falls back rather than stacking both. Leaf/glosskey/tuple on the
+// current Spanish 6k deck covers ~85% of senses; requiring leaf-only would
+// drop that to ~16%.
+const WSD_EXAMPLE_LEVEL_RANK = { leaf: 3, glosskey: 2, tuple: 1 };
+
+function exampleWsdMeta(example) {
+    return example?.metadata?.wsd || example?.wsd || null;
+}
+
+function exampleWsdLevel(example) {
+    return exampleWsdMeta(example)?.supported_level || null;
+}
+
+function isReliableWsdExample(example) {
+    if (!example || example.canonical || example.evidence === 'dictionary' || example.reference_example) {
+        return false;
+    }
+    const target = String(example.target || example.spanish || '').trim();
+    const english = String(example.english || '').trim();
+    if (!target || !english) return false;
+    const wsd = exampleWsdMeta(example);
+    if (wsd) return Boolean(WSD_EXAMPLE_LEVEL_RANK[wsd.supported_level]);
+    const method = example.assignment_method;
+    return Boolean(method && method !== 'unassigned');
+}
+
+function canonicalAsDisplayExample(meaning) {
+    const canonical = canonicalRecord(meaning);
+    const text = String(canonical?.text || '').trim();
+    const translation = String(canonical?.translation || canonical?.english || '').trim();
+    if (!text || !translation) return null;
+    return {
+        target: text,
+        english: translation,
+        source: 'dictionary',
+        evidence: 'dictionary',
+        dictionarySource: dictionaryProviderForMeaning(meaning),
+        canonical: true,
+        url: canonical.url,
+        bold_text_offsets: canonical.bold_text_offsets,
+        bold_translation_offsets: canonical.bold_translation_offsets,
+    };
+}
+
+function exampleLooksLikeLyric(example) {
+    return Boolean(
+        example?.song_name
+        || example?.artist
+        || example?.timestamp_ms != null
+        || example?.spotify_available
+    );
+}
+
+function examplesAllowCycling(examples) {
+    if (typeof activeArtist !== 'undefined' && activeArtist) return true;
+    return (examples || []).some(exampleLooksLikeLyric);
+}
+
+function chooseSingleDisplayExample(meaning, examples) {
+    const corpus = (examples || []).filter(example => (
+        example
+        && !example.canonical
+        && example.evidence !== 'dictionary'
+        && !example.reference_example
+    ));
+    const reliable = corpus.filter(isReliableWsdExample);
+    if (reliable.length) {
+        const ranked = [...reliable].sort((a, b) => (
+            (WSD_EXAMPLE_LEVEL_RANK[exampleWsdLevel(b)] || 0)
+            - (WSD_EXAMPLE_LEVEL_RANK[exampleWsdLevel(a)] || 0)
+        ));
+        const topLevel = exampleWsdLevel(ranked[0]);
+        const band = topLevel
+            ? ranked.filter(example => exampleWsdLevel(example) === topLevel)
+            : ranked;
+        return (band.length > 1 ? sortExamplesByRelevance(band) : band)[0];
+    }
+    return canonicalAsDisplayExample(meaning) || (
+        corpus.length
+            ? (corpus.length > 1 ? sortExamplesByRelevance(corpus) : corpus)[0]
+            : null
+    );
 }
 
 function getQualifyingRareSenses(card) {
@@ -4108,15 +4247,101 @@ function getSenseProminenceInfo(meaning) {
     if (meaning.unassigned) {
         return { label: 'Rare', key: 'rare' };
     }
-    const p = Number(meaning.percentage) || 0;
-    if (p >= 0.20) {
-        return { label: 'Common', key: 'common' };
-    } else if (p >= 0.05) {
-        return { label: 'Uncommon', key: 'uncommon' };
-    } else {
-        return { label: 'Rare', key: 'rare' };
-    }
+    return prominenceInfoFromShare([meaning]);
 }
+
+// Learner-facing frequency is the share of a meaning cluster, not the WSD
+// mass of one dictionary shade. Near-synonym leaves (fantastic / brilliant)
+// must not fight Common vs Rare; sum the assigned members and bucket once.
+function prominenceInfoFromShare(meanings) {
+    const list = Array.isArray(meanings) ? meanings.filter(Boolean) : [];
+    const used = list.filter(m => !m.unassigned && !m.isRareSense);
+    if (!used.length) return { label: 'Rare', key: 'rare' };
+    const p = used.reduce((acc, m) => acc + (Number(m.percentage) || 0), 0);
+    if (p >= 0.20) return { label: 'Common', key: 'common' };
+    if (p >= 0.05) return { label: 'Uncommon', key: 'uncommon' };
+    return { label: 'Rare', key: 'rare' };
+}
+
+// A leaf is separable inside a shared gloss only when, after renormalising
+// scores onto those siblings, one shade clearly wins. Full-menu confidence
+// is the wrong number: most of that gap is a different meaning. Prefer
+// per-leaf model confidence when at least two siblings carry it; otherwise
+// committed usage share is the available proxy.
+const GLOSS_LEAF_DOMINANCE = 0.70;
+const GLOSS_LEAF_MARGIN = 0.35;
+
+function glossClusterKey(card, meaning) {
+    if (!meaning || meaning.exampleOnly) return null;
+    const pos = meaning.pos === 'SENSE_CYCLE' ? (meaning.cycle_pos || 'X') : meaning.pos;
+    if (!pos || pos === 'MWE' || pos === 'CLITIC' || pos === 'EXAMPLE_ONLY') return null;
+    const raw = String(getProductionEnglishCue(card, meaning) || meaning.meaning || meaning.translation || '').trim();
+    const gloss = senseSummaryText(projectWiktionaryGloss(meaning, raw).display)
+        .toLocaleLowerCase('en')
+        .replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+    if (!gloss) return null;
+    return `${pos}\u0000${meaning.headword || ''}\u0000${gloss}`;
+}
+
+function withinGlossLeafWeight(meaning, useConfidence) {
+    if (!meaning || meaning.unassigned || meaning.isRareSense) return 0;
+    if (useConfidence) {
+        const confidence = Number(meaning.confidence);
+        return Number.isFinite(confidence) && confidence > 0 ? confidence : 0;
+    }
+    return Number(meaning.percentage) || 0;
+}
+
+function withinGlossLeafSeparationIsReliable(meanings) {
+    const list = (Array.isArray(meanings) ? meanings : []).filter(m => m && !m.unassigned && !m.isRareSense);
+    if (list.length < 2) return false;
+    const confidenceCount = list.filter(m => Number.isFinite(Number(m.confidence)) && Number(m.confidence) > 0).length;
+    const useConfidence = confidenceCount >= 2;
+    const weights = list.map(m => withinGlossLeafWeight(m, useConfidence));
+    const total = weights.reduce((acc, weight) => acc + weight, 0);
+    if (total <= 0) return false;
+    const shares = weights.map(weight => weight / total).sort((a, b) => b - a);
+    return shares[0] >= GLOSS_LEAF_DOMINANCE && (shares[0] - (shares[1] || 0)) >= GLOSS_LEAF_MARGIN;
+}
+
+function glossClusterProminenceState(card) {
+    const groups = new Map();
+    (card?.meanings || []).forEach((meaning, index) => {
+        const key = glossClusterKey(card, meaning);
+        if (!key) return;
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(index);
+    });
+    const infoByIndex = new Map();
+    const pooledIndexes = new Set();
+    const pooledShareByIndex = new Map();
+    for (const indexes of groups.values()) {
+        const members = indexes.map(index => card.meanings[index]);
+        const pooled = indexes.length >= 2 && !withinGlossLeafSeparationIsReliable(members);
+        const pooledInfo = prominenceInfoFromShare(members);
+        const pooledShare = members.reduce((acc, meaning) => acc + (Number(meaning.percentage) || 0), 0);
+        indexes.forEach(index => {
+            const meaning = card.meanings[index];
+            if (meaning.unassigned || meaning.isRareSense || meaning.prominenceLabel === 'Rare') {
+                infoByIndex.set(index, getSenseProminenceInfo(meaning));
+                return;
+            }
+            if (pooled) {
+                pooledIndexes.add(index);
+                infoByIndex.set(index, pooledInfo);
+                pooledShareByIndex.set(index, pooledShare);
+            } else {
+                infoByIndex.set(index, getSenseProminenceInfo(meaning));
+            }
+        });
+    }
+    return { infoByIndex, pooledIndexes, pooledShareByIndex };
+}
+window.prominenceInfoFromShare = prominenceInfoFromShare;
+window.withinGlossLeafSeparationIsReliable = withinGlossLeafSeparationIsReliable;
+window.glossClusterProminenceState = glossClusterProminenceState;
 window.getSenseProminenceInfo = getSenseProminenceInfo;
 
 function prominenceBadgeHTML(promInfo, extraStyle = '') {
@@ -5126,6 +5351,7 @@ function updateCard({ announceHeadword = false } = {}) {
         // can still click any sub-row to pin that narrower sense; autoplay
         // deliberately opts out because it walks those sub-senses itself.
         selectInitialMeaningGroup(card, card._grouping);
+        const glossProminence = glossClusterProminenceState(card);
 
         // Precompute singleton fold leaders and followers for identical display senses
         // within the same POS section. If differentiators between identical glosses score
@@ -5174,7 +5400,7 @@ function updateCard({ announceHeadword = false } = {}) {
 
                 const allFoldIndices = [leaderIdx, ...followers];
                 const allFoldMeanings = allFoldIndices.map(i => card.meanings[i]);
-                const bestPromInfo = getSenseProminenceInfo(bestEntry.m);
+                const bestPromInfo = prominenceInfoFromShare(allFoldMeanings);
                 const sumPctVal = Math.min(100, Math.round(allFoldMeanings.reduce((acc, m) => acc + (Number(m.percentage) || 0), 0) * 100));
                 const hasOnlyRare = allFoldMeanings.every(m => m.unassigned || m.isRareSense || m.prominenceLabel === 'Rare');
 
@@ -5502,23 +5728,38 @@ function updateCard({ announceHeadword = false } = {}) {
                         return varyingCell;
                     }).join('');
 
+                    const groupMeanings = orderedMembers.map(memberIdx => card.meanings[memberIdx]);
                     const useProminenceLabels = (typeof senseProminenceMode !== 'undefined' ? senseProminenceMode : globalThis.state?.senseProminenceMode) !== 'percentages';
-                    // Pct stack — lives outside the highlight box, in its own
-                    // outer-grid column on the right edge of the row, so the
-                    // %s align with singleton-card %s.
-                    const pctStackHtml = orderedMembers.map((memberIdx) => {
-                        const mm = card.meanings[memberIdx];
-                        if (useProminenceLabels) {
-                            const pInfo = getSenseProminenceInfo(mm);
+                    // Same English gloss, different contexts: pool Common/Rare
+                    // unless the within-gloss leaf split is peaked.
+                    const splitLeaves = isTransAxis && withinGlossLeafSeparationIsReliable(groupMeanings);
+                    const groupPromInfo = prominenceInfoFromShare(groupMeanings);
+                    const groupPctVal = Math.min(100, Math.round(groupMeanings.reduce((acc, mm) => acc + (Number(mm.percentage) || 0), 0) * 100));
+                    let pctColumnHtml;
+                    if (useProminenceLabels && (splitLeaves || !isTransAxis)) {
+                        const pctStackHtml = orderedMembers.map((memberIdx) => {
+                            const mm = card.meanings[memberIdx];
+                            const pInfo = glossProminence.infoByIndex.get(memberIdx) || getSenseProminenceInfo(mm);
                             return `<div class="sense-prominence-cell" onclick="event.stopPropagation(); selectMeaning(${memberIdx})" style="min-height: 25px; padding: 2px 6px; display: flex; align-items: center; justify-content: flex-end; cursor: pointer;">${prominenceBadgeHTML(pInfo)}</div>`;
-                        }
-                        const memberPct = Math.round((mm.percentage || 0) * 100);
-                        if (mm.unassigned || memberPct >= 100) {
-                            return '<div style="min-height: 25px; padding: 2px 6px;"></div>';
-                        }
-                        return `<div class="sense-percentage sense-percentage-cell" onclick="event.stopPropagation(); selectMeaning(${memberIdx})" style="min-height: 25px; padding: 2px 6px; display: flex; align-items: center; justify-content: flex-end; cursor: pointer;">${memberPct}%</div>`;
-                    }).join('');
-                    const pctColumnHtml = `<div class="pct-column" style="display: flex; flex-direction: column; gap: 3px; padding-left: 4px;">${pctStackHtml}</div>`;
+                        }).join('');
+                        pctColumnHtml = `<div class="pct-column" style="display: flex; flex-direction: column; gap: 3px; padding-left: 4px;">${pctStackHtml}</div>`;
+                    } else if (useProminenceLabels) {
+                        pctColumnHtml = `<div class="pct-column pct-column--group" style="display: flex; align-items: center; padding-left: 4px;">${prominenceBadgeHTML(groupPromInfo)}</div>`;
+                    } else if (splitLeaves || !isTransAxis) {
+                        const pctStackHtml = orderedMembers.map((memberIdx) => {
+                            const mm = card.meanings[memberIdx];
+                            const memberPct = Math.round((mm.percentage || 0) * 100);
+                            if (mm.unassigned || memberPct >= 100) {
+                                return '<div style="min-height: 25px; padding: 2px 6px;"></div>';
+                            }
+                            return `<div class="sense-percentage sense-percentage-cell" onclick="event.stopPropagation(); selectMeaning(${memberIdx})" style="min-height: 25px; padding: 2px 6px; display: flex; align-items: center; justify-content: flex-end; cursor: pointer;">${memberPct}%</div>`;
+                        }).join('');
+                        pctColumnHtml = `<div class="pct-column" style="display: flex; flex-direction: column; gap: 3px; padding-left: 4px;">${pctStackHtml}</div>`;
+                    } else {
+                        pctColumnHtml = (groupPctVal > 0 && groupPctVal < 100
+                            ? `<div class="pct-column pct-column--group" style="display: flex; align-items: center; padding-left: 4px;"><span class="sense-percentage sense-percentage-cell">${groupPctVal}%</span></div>`
+                            : `<div class="pct-column"></div>`);
+                    }
 
                     // Shared cell — spans all body rows.
                     const sharedCol = isTransAxis ? 1 : 2;
@@ -5592,8 +5833,12 @@ function updateCard({ announceHeadword = false } = {}) {
 
                     const singletonTextClass = adaptiveRowTextClass(displayMeaning, cleanedContext || differentiator?.label || '');
                     const useProminenceLabels = (typeof senseProminenceMode !== 'undefined' ? senseProminenceMode : globalThis.state?.senseProminenceMode) !== 'percentages';
-                    const promInfo = isFoldedLeader ? foldInfo.bestPromInfo : getSenseProminenceInfo(m);
-                    const displayPctVal = isFoldedLeader ? foldInfo.sumPctVal : pctVal;
+                    const clusterInfo = glossProminence.infoByIndex.get(idx);
+                    const clusterPooled = glossProminence.pooledIndexes.has(idx);
+                    const promInfo = clusterInfo || (isFoldedLeader ? foldInfo.bestPromInfo : getSenseProminenceInfo(m));
+                    const displayPctVal = clusterPooled
+                        ? Math.min(100, Math.round((glossProminence.pooledShareByIndex.get(idx) || 0) * 100))
+                        : (isFoldedLeader ? foldInfo.sumPctVal : pctVal);
                     const rareRowClass = isFoldedLeader
                         ? (foldInfo.hasOnlyRare ? ' meaning-row-rare' : '')
                         : ((m.unassigned || m.isRareSense || m.prominenceLabel === 'Rare') ? ' meaning-row-rare' : '');
@@ -5624,11 +5869,15 @@ function updateCard({ announceHeadword = false } = {}) {
         const qualifyingRare = getQualifyingRareSenses(card);
         if (qualifyingRare.length > 0) {
             const isExpanded = card._showRareSenses === true;
+            const rareCount = qualifyingRare.length;
+            const rareLabel = isExpanded
+                ? 'Hide rare dictionary meanings'
+                : `Show ${rareCount} rare dictionary meaning${rareCount === 1 ? '' : 's'} not used in your examples`;
             backHTML += `<div class="rare-senses-toggle-wrap">
-                <button type="button" class="rare-senses-toggle-btn${isExpanded ? ' is-expanded' : ''}" onclick="toggleRareSenses(event)">
-                    <span class="rare-senses-chevron" aria-hidden="true">${isExpanded ? '▲ ' : '▼ '}</span>${isExpanded ? 'Hide other dictionary meanings' : `Show other dictionary meanings (${qualifyingRare.length})`}
+                <button type="button" class="rare-senses-toggle-btn${isExpanded ? ' is-expanded' : ''}" onclick="toggleRareSenses(event)" aria-expanded="${isExpanded ? 'true' : 'false'}" title="${escapeCardText(rareLabel)}" aria-label="${escapeCardText(rareLabel)}">
+                    <span class="rare-senses-count">${isExpanded ? 'Hide' : `+${rareCount}`}</span>
                 </button>
-                ${isExpanded ? '<p class="rare-senses-toggle-hint">These meanings are in the dictionary but were not used in your examples.</p>' : ''}
+                ${isExpanded ? '<p class="rare-senses-toggle-hint">Rare meanings — they do not appear in your examples.</p>' : ''}
             </div>`;
         }
         // Phrases mode off restores the pinned tray; on, MWE/CLITIC entries
@@ -5661,11 +5910,7 @@ function updateCard({ announceHeadword = false } = {}) {
             backHTML += `<div class="example-autoplay-fallback">${cardAutoplayButton}</div>`;
         }
 
-        if (currentMeaning && !currentMeaning.allMWEs && !currentMeaning.allClitics) {
-            backHTML += canonicalExampleHTML(currentMeaning);
-        }
-
-        if (currentMeaning && currentMeaning.targetSentence && cycleHasExamples) {
+        if (currentMeaning && cycleHasExamples) {
             // For MWE senses, get examples from the current MWE expression's own array
             let activeMweIdx = 0;
             if (currentMeaning.allMWEs) {
@@ -5682,7 +5927,8 @@ function updateCard({ announceHeadword = false } = {}) {
             // We still complete the variable computation here because
             // nothing in it is expensive or has side-effects — the only
             // suppression point is the `backHTML +=` at the bottom.
-            const suppressSentenceBlock = isMWEOrCliticCycle && activeExamples.length === 0;
+            const suppressSentenceBlock = (isMWEOrCliticCycle && activeExamples.length === 0)
+                || (!isMWEOrCliticCycle && activeExamples.length === 0 && !currentMeaning.targetSentence);
 
             const hasMultipleExamples = activeExamples.length > 1;
             const exampleCount = activeExamples.length;
@@ -5706,14 +5952,13 @@ function updateCard({ announceHeadword = false } = {}) {
                 const dictName = example.dictionarySource
                     || (example.source === 'wiktionary' ? 'Wiktionary'
                         : (example.source === 'spanishdict' ? 'SpanishDict'
-                            : (example.evidence === 'dictionary' ? 'Dictionary' : null)));
-                const dictLabel = dictName === 'SpanishDict'
-                    ? 'SpanishDict example'
-                    : (dictName === 'Wiktionary' ? 'Wiktionary example' : `${dictName} example`);
+                            : (example.evidence === 'dictionary'
+                                ? dictionaryProviderForMeaning(currentMeaning)
+                                : null)));
                 exampleSourceLabel = example.personalised
                     ? `Personalised practice · ${example.reinforcement_word}`
                     : (dictName
-                        ? `<span class="dictionary-provenance-badge" title="Canonical dictionary example"><span class="dict-provenance-icon" aria-hidden="true">📖</span> ${dictLabel}</span>`
+                        ? dictionaryProviderCredit(dictName, example.source_url || example.sentence_url)
                         : exampleProvenanceHTML(example));
                 window._currentDisplayedExample = example;
                 const exTarget = example.target || example.spanish || '';
@@ -5761,6 +6006,17 @@ function updateCard({ announceHeadword = false } = {}) {
                 && foldSurfaceForm(exampleProductionForm) !== foldSurfaceForm(activeProductionAnswer)
             );
 
+            const useCanonicalMarkup = Boolean(currentExample?.canonical);
+            if (useCanonicalMarkup) {
+                displayTargetSentence = highlightWithDeclaredOffsets(
+                    currentExample.target || displayTargetSentence,
+                    currentExample.bold_text_offsets
+                );
+                displayEnglishSentence = highlightWithDeclaredOffsets(
+                    currentExample.english || displayEnglishSentence,
+                    currentExample.bold_translation_offsets
+                );
+            } else {
             // Truncate sentences longer than 20 words
             displayTargetSentence = truncateText(displayTargetSentence, 20);
             displayEnglishSentence = truncateText(displayEnglishSentence, 20);
@@ -5851,6 +6107,7 @@ function updateCard({ announceHeadword = false } = {}) {
                         '<span class="example-related-highlight">$1</span>');
                 }
             }
+            }
 
             // Build example counter: shows count for current MWE's examples, not total MWEs
             // The dotted strip is the only visible position cue; the fraction
@@ -5874,17 +6131,19 @@ function updateCard({ announceHeadword = false } = {}) {
             // second icon — this fallback stays only for senses with no
             // Spotify link at all.
             const autoplayBtn = spotifyTrackId ? '' : cardAutoplayButton;
-            const songNameDisplay = songName ? `
-                <div class="example-credit-row" style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-top: 8px; font-style: italic;">
-                    <span class="example-song-credit">— ${songName}${vocalistCredit ? `<span class="example-vocalist-credit"> · ${vocalistCredit}</span>` : ''}</span>
-                    <span style="display: flex; align-items: center; gap: 6px;">${autoplayBtn}${spotifyBtn}</span>
+            const creditStart = songName
+                ? `<span class="example-song-credit">— ${songName}${vocalistCredit ? `<span class="example-vocalist-credit"> · ${vocalistCredit}</span>` : ''}</span>`
+                : (exampleSourceLabel
+                    ? `<span class="example-song-credit">${exampleSourceLabel}</span>`
+                    : '');
+            const creditEnd = `${autoplayBtn}${spotifyBtn}`;
+            const songNameDisplay = (creditStart || creditEnd || exampleTicks) ? `
+                <div class="example-credit-row${songName ? ' is-lyric' : ''}">
+                    <span class="example-credit-start">${creditStart}</span>
+                    ${exampleTicks}
+                    <span class="example-credit-end">${creditEnd}</span>
                 </div>
-            ` : ((exampleSourceLabel || autoplayBtn) ? `
-                <div class="example-credit-row" style="display: flex; justify-content: flex-end; align-items: center; font-size: 13px; margin-top: 8px;">
-                    ${exampleSourceLabel ? `<span class="example-song-credit" style="margin-right:auto;">${exampleSourceLabel}</span>` : ''}
-                    <span style="display: flex; align-items: center; gap: 6px;">${autoplayBtn}</span>
-                </div>
-            ` : '');
+            ` : '';
 
             const cycleHandler = hasMultipleExamples ? 'onclick="cycleExample(event)"' : '';
             const cursorStyle = hasMultipleExamples ? 'cursor: pointer;' : '';
@@ -5933,7 +6192,6 @@ function updateCard({ announceHeadword = false } = {}) {
                         ${showExampleProductionForm ? `<div class="reverse-example-form"><span>In this example</span><strong>${escapeCardText(exampleProductionForm)}</strong></div>` : ''}
                         <div class="breakdown-trigger" style="margin-bottom: 8px; cursor: pointer;" onclick="showLyricBreakdown(event); event.stopPropagation();" title="Word by word">${displayTargetSentence}</div>
                         <div class="translation">${displayEnglishSentence}</div>
-                        ${exampleTicks}
                         ${songNameDisplay}
                     </div>
                 `;
@@ -6244,8 +6502,6 @@ function updateCard({ announceHeadword = false } = {}) {
     const isNextDisabled = currentIndex === flashcards.length - 1;
     document.getElementById('prevBtnFront').disabled = isPrevDisabled;
     document.getElementById('nextBtnFront').disabled = isNextDisabled;
-    document.getElementById('prevBtnBack').disabled = isPrevDisabled;
-    document.getElementById('nextBtnBack').disabled = isNextDisabled;
     document.getElementById('prevBtnFrontMobile').disabled = isPrevDisabled;
     document.getElementById('nextBtnFrontMobile').disabled = isNextDisabled;
 
@@ -6310,31 +6566,24 @@ function updateCard({ announceHeadword = false } = {}) {
         }
     }
 
-    // Mobile inline card-back scrubber: one plain pip per card, no
-    // scroll/window (sets are capped at 25). The current pip alone carries
-    // its number; drag/tap handling lives in the pointerdown/move listeners
-    // set up once in initializeApp() (see #cardBackPips wiring).
+    // Seek bar above the card: current index on the thumb, ‹ › for ±1.
     const cardBackPips = document.getElementById('cardBackPips');
     if (cardBackPips) {
-        const pipCount = scrubCount;
-        if (cardBackPips.childElementCount !== pipCount) {
-            cardBackPips.replaceChildren(...Array.from({ length: pipCount }, (_, i) => {
-                const pip = document.createElement('div');
-                pip.className = 'cbp-pip';
-                pip.setAttribute('aria-hidden', 'true');
-                return pip;
-            }));
-        }
-        Array.from(cardBackPips.children).forEach((pip, i) => {
-            const isCurrent = i === scrubIndex;
-            pip.classList.toggle('is-current', isCurrent);
-            pip.classList.toggle('is-phrases', onPhraseCard && isCurrent);
-            pip.classList.toggle('is-visited', !isCurrent && stats.studied.has(i));
-            pip.textContent = isCurrent ? String(i + 1) : '';
-        });
+        const last = Math.max(0, scrubCount - 1);
+        const t = last === 0 ? 0.5 : (scrubIndex / last);
+        cardBackPips.style.setProperty('--cbs-t', String(t));
+        const thumb = cardBackPips.querySelector('.cbs-thumb');
+        const thumbNum = cardBackPips.querySelector('.cbs-thumb-num');
+        if (thumbNum) thumbNum.textContent = String(scrubIndex + 1);
+        thumb?.classList.toggle('is-phrases', onPhraseCard);
+        cardBackPips.setAttribute('aria-valuenow', String(scrubIndex + 1));
+        cardBackPips.setAttribute('aria-valuemax', String(Math.max(1, scrubCount)));
+        cardBackPips.setAttribute('aria-valuetext', onPhraseCard
+            ? `Card ${scrubIndex + 1} of ${scrubCount} · phrases`
+            : `Card ${scrubIndex + 1} of ${scrubCount}`);
         cardBackPips.setAttribute('aria-label', onPhraseCard
-            ? `Card ${scrubIndex + 1} of ${pipCount} · phrases`
-            : `Card ${scrubIndex + 1} of ${pipCount}`);
+            ? `Card ${scrubIndex + 1} of ${scrubCount} · phrases`
+            : `Card ${scrubIndex + 1} of ${scrubCount}`);
     }
 
     // Drive ghost card visibility based on how many real cards exist behind each side
@@ -6563,7 +6812,10 @@ function getCyclableExamples(card, currentMeaning) {
         }
     }
 
-    return examples;
+    if (currentMeaning.allMWEs || currentMeaning.allClitics) return examples;
+    if (examplesAllowCycling(examples)) return examples;
+    const chosen = chooseSingleDisplayExample(currentMeaning, examples);
+    return chosen ? [chosen] : [];
 }
 
 function cycleExample(event) {
@@ -6896,6 +7148,20 @@ function _navCard(direction) {
         });
     });
     return true;
+}
+
+// Relative scrub: a short pull is one card; a long plateau keeps that
+// step until the drag is clearly meant to skip farther.
+const CBS_SCRUB_COMMIT_PX = 18;
+const CBS_SCRUB_HOLD_PX = 72;
+const CBS_SCRUB_SKIP_PX = 36;
+
+function cardOffsetFromScrubDelta(dx) {
+    const sign = dx < 0 ? -1 : 1;
+    const distance = Math.abs(dx);
+    if (distance < CBS_SCRUB_COMMIT_PX) return 0;
+    if (distance < CBS_SCRUB_HOLD_PX) return sign;
+    return sign * (2 + Math.floor((distance - CBS_SCRUB_HOLD_PX) / CBS_SCRUB_SKIP_PX));
 }
 
 // Arrow/button navigation off an ungraded phrase card is an exit from the
@@ -7588,6 +7854,7 @@ window.goBackToSetup = goBackToSetup;
 window.updateCard = updateCard;
 window.flipCard = flipCard;
 window.cycleExample = cycleExample;
+window.getCyclableExamples = getCyclableExamples;
 window.cycleExampleForward = cycleExampleForward;
 window.cycleExampleBackward = cycleExampleBackward;
 window.toggleExampleAutoplay = toggleExampleAutoplay;
@@ -7732,7 +7999,7 @@ document.addEventListener('click', (e) => {
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
 const ASSET_VERSION = '20260916o';
-const MODALS_ASSET_VERSION = '20260916s';
+const MODALS_ASSET_VERSION = '20260917e';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
