@@ -237,10 +237,11 @@ This is the step that **intentionally** diverges from v12’s sentence set.
 ### GRAFT — lyrics & slang sense-menu overlays (before VERSE)
 
 **This chat is GRAFT.** Domain & slang collection chat before lyrics WSD.
+- Input Dossier: `docs/research/graft-source-dossier.md` (read this research dossier first for vetted candidate sources, taxonomy, and coverage before building snapshots).
 
 Paste into that chat:
 
-> You are **GRAFT**. Read `CHAT_ROADMAP.md` through SCAR, then only GRAFT. Your job is to collect domain-specific multi-word expressions and single-word extra senses (slang, regionalisms, conversational fillers, elided locutions) into structured overlays via `fluency.wsd.overlays` before VERSE runs lyrics disambiguation.
+> You are **GRAFT**. Read `CHAT_ROADMAP.md` through SCAR, then only GRAFT. First, read `docs/research/graft-source-dossier.md` for the vetted source inventory and taxonomy. Your job is to collect domain-specific multi-word expressions and single-word extra senses (slang, regionalisms, conversational fillers, elided locutions) into structured overlays via `fluency.wsd.overlays` before VERSE runs lyrics disambiguation.
 
 - Job: Harvest/curate domain expressions (Caribbean slang like *guagua*, *vaina*; reggaeton idioms; conversational discourse fillers like *o sea*; lyrics contractions). Map them to component surface cards. Build reproducible overlay snapshots under `raw/overlays/` adhering to the `SenseMenuOverlay` interface in `fluency.wsd.overlays`.
 - **Output:** Structured overlay snapshot (e.g. `raw/overlays/lyrics/es-lyrics-overlays.json`) ready for injection into `WSDComponents.overlay_provider`.
