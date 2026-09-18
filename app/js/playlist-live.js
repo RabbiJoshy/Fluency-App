@@ -167,6 +167,7 @@ async function loadPlaylistLiveDeckFromServer(language) {
     try {
         const response = await fetch(window.GOOGLE_SCRIPT_URL, {
             method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 action: 'loadPlaylistLiveDeck',
                 user: user.initials,
@@ -246,6 +247,7 @@ function lyricExample(line) {
         spanish: line.text,
         english: '',
         song: line.song || '',
+        song_name: line.artist ? `${line.song} — ${line.artist}` : (line.song || ''),
         artist: line.artist || '',
         unassigned: true
     };
@@ -257,17 +259,27 @@ function applyPlaylistLiveVocabulary(items) {
     for (const item of items) {
         const entry = _liveDeck.surfaces[normalizeSurface(item.word)];
         if (!entry) continue;
+        const lyricExamples = entry.lines.map(lyricExample);
         const next = { ...item, meanings: [...(item.meanings || [])], playlist_count: entry.count };
         const kept = next.meanings.filter(keepCommonOrUncommon);
-        next.meanings = kept.length ? kept : next.meanings.slice(0, 4);
-        next.meanings.unshift({
-            pos: '',
-            translation: '',
-            frequency: '0',
-            unassigned: true,
-            assignment_method: 'unassigned',
-            examples: entry.lines.map(lyricExample)
-        });
+        const meanings = kept.length ? kept : next.meanings.slice(0, 4);
+        if (meanings.length) {
+            next.meanings = meanings.map((m, idx) => ({
+                ...m,
+                examples: idx === 0
+                    ? [...lyricExamples, ...(m.examples || [])]
+                    : (m.examples || [])
+            }));
+        } else {
+            next.meanings = [{
+                pos: '',
+                translation: '',
+                frequency: '0',
+                unassigned: true,
+                assignment_method: 'unassigned',
+                examples: lyricExamples
+            }];
+        }
         ranked.push(next);
     }
     ranked.sort((a, b) => (b.playlist_count || 0) - (a.playlist_count || 0)
@@ -282,6 +294,12 @@ function applyPlaylistLiveVocabulary(items) {
     return ranked;
 }
 
+function clearPlaylistLiveSession() {
+    _liveDeck = null;
+    document.body.classList.remove('playlist-live-mode');
+    window.invalidatePreparedSetupVocabulary?.();
+}
+
 window.normalizePlaylistSurface = normalizeSurface;
 window.naiveLyricTokens = naiveLyricTokens;
 window.buildPlaylistLiveDeck = buildPlaylistLiveDeck;
@@ -290,4 +308,5 @@ window.savePlaylistLiveDeckToServer = savePlaylistLiveDeckToServer;
 window.playlistLiveDeck = playlistLiveDeck;
 window.playlistLiveActive = playlistLiveActive;
 window.applyPlaylistLiveVocabulary = applyPlaylistLiveVocabulary;
+window.clearPlaylistLiveSession = clearPlaylistLiveSession;
 window.FLUENCY_PLAYLIST_LIVE_DECK_ID = LIVE_DECK_ID;

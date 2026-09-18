@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v468"
+EXPECTED_CACHE_NAME = "flashcards-v469"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -683,6 +683,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260918l", worker)
         self.assertIn("/js/main.js?v=20260918m", worker)
+        self.assertIn("/js/ui.js?v=20260918m", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -800,7 +801,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("tracksHref", spotify)
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
-        self.assertIn("/js/spotify-playlist-import.js?v=20260918l", worker)
+        self.assertIn("/js/spotify-playlist-import.js?v=20260918m", worker)
         self.assertIn('css/style.css?v=20260918l', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
@@ -817,7 +818,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("window.savePlaylistLiveDeckToServer", live)
         self.assertIn("action: 'loadPlaylistLiveDeck'", live)
         self.assertIn("window.applyPlaylistLiveVocabulary?.(_baseVocab)", vocab)
-        self.assertIn("/js/playlist-live.js?v=20260918g", worker)
+        self.assertIn("/js/playlist-live.js?v=20260918h", worker)
         main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
         self.assertIn("fluencyPendingSpeechLanguage", main)
         self.assertIn("if (window.playlistLiveActive?.()) {", vocab)

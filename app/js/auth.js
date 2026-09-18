@@ -252,6 +252,14 @@ async function submitLogin() {
     await window.reconcileRemoteSongSet?.().catch(error => {
         console.warn('Song-set sync deferred after login:', error);
     });
+    if (window.playlistLiveActive?.()) {
+        const liveDeck = window.playlistLiveDeck?.();
+        if (liveDeck) {
+            window.savePlaylistLiveDeckToServer?.(liveDeck).catch(error => {
+                console.warn('Live playlist deck save deferred after login:', error);
+            });
+        }
+    }
 }
 
 // Logout handler. Guests skip the confirm (nothing to lose); named users get

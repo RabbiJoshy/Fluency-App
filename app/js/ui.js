@@ -738,6 +738,22 @@ function setupLanguageTabs() {
                     document.body.classList.add('has-learning-context');
                     updateLearningContextUI();
 
+                    if (sessionStorage.getItem('fluencyPendingLiveStudy') === '1' && window.playlistLiveActive?.()) {
+                        sessionStorage.removeItem('fluencyPendingLiveStudy');
+                        const firstSet = Array.from(document.querySelectorAll('#rangeSelector .study-set-dot'))
+                            .find(dot => !dot.disabled && Number(dot.dataset.pct) < 100)
+                            || Array.from(document.querySelectorAll('#rangeSelector .study-set-dot'))
+                                .find(dot => !dot.disabled);
+                        if (firstSet) {
+                            await loadVocabularyData(firstSet.dataset.range, {
+                                rankBasis: firstSet.dataset.rankBasis || 'source',
+                                setNumber: Number(firstSet.dataset.index) + 1,
+                                levelSetCount: document.querySelectorAll('#rangeSelector .study-set-dot').length,
+                                levelNumber: parseInt(firstSet.dataset.levelNumber) || 1
+                            });
+                        }
+                    }
+
                     progressRefresh.then(changed => {
                         const setupPanel = document.getElementById('setupPanel');
                         if (changed && setupPanel && !setupPanel.classList.contains('hidden')) {
@@ -958,7 +974,7 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
     // each snap point is one of the percentageLevels (70%, 80%, …, 100%).
     // The level buttons are still rendered (hidden) because renderRangeSelector
     // and other code paths read .level-btn.selected for startRank/endRank.
-    const releaseLevels = !activeArtist && Array.isArray(releaseStudyStructure?.levels)
+    const releaseLevels = !activeArtist && !window.playlistLiveActive?.() && Array.isArray(releaseStudyStructure?.levels)
         ? releaseStudyStructure.levels
         : [];
     // A Speech release ships its own levels — two hundred cards each, ten sets
@@ -980,34 +996,55 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
             rankBasis: 'source',
             description: level.label,
         }));
+    } else if (window.playlistLiveActive?.()) {
+        const deck = window.playlistLiveDeck?.();
+        const totalCards = deck?.matchedCount || 0;
+        const targetPerLevel = 200;
+        const levelCount = Math.max(1, Math.ceil(totalCards / targetPerLevel));
+        _smartLevelRangesCache = [];
+        for (let i = 0; i < levelCount; i++) {
+            const startRank = i * targetPerLevel + 1;
+            const endRank = Math.min((i + 1) * targetPerLevel + 1, totalCards + 1);
+            _smartLevelRangesCache.push({
+                level: i + 1,
+                startRank,
+                endRank,
+                cardCount: Math.max(0, endRank - startRank),
+                rankBasis: 'source',
+                description: `Level ${i + 1} (${startRank}–${endRank - 1})`
+            });
+        }
+    } else {
+        _smartLevelRangesCache = null;
     }
-    // Smart segment boundaries: pick stable baseline snap points that target
-    // ~equal cards-per-segment with frequency-cliff labels.
-    if (!usingReleaseLevels) _smartLevelRangesCache = null;
     const preparedSamples = await _loadLevelSliderSamples(selectedLanguage);
     const _raw = _levelSliderRawCache[selectedLanguage];
     if (_raw && !usingReleaseLevels) {
-        // Level boundaries are built from the stable baseline before any
-        // optional filters. Filters change the eligible card count inside
-        // a level, never the level's identity or rank span.
-        const prepared = getPreparedSetupVocabulary(selectedLanguage, _raw);
-        _smartLevelRangesCache = computeSmartLevelRanges(prepared?.stableBaseline || []);
-        const eligible = prepared?.vocab || [];
-        const lastEligibleRank = eligible.reduce((maxRank, item) =>
-            Math.max(maxRank, Number(item.stableRank) || 0), 0);
-        // Hide only empty trailing levels (most notably the reserved 1×
-        // tail while single-occurrence words are hidden). Re-enabling a
-        // filter appends those levels without changing any earlier cut.
-        _smartLevelRangesCache = _smartLevelRangesCache.filter(range =>
-            range.startRank <= lastEligibleRank);
+        if (!window.playlistLiveActive?.()) {
+            // Level boundaries are built from the stable baseline before any
+            // optional filters. Filters change the eligible card count inside
+            // a level, never the level's identity or rank span.
+            const prepared = getPreparedSetupVocabulary(selectedLanguage, _raw);
+            _smartLevelRangesCache = computeSmartLevelRanges(prepared?.stableBaseline || []);
+            const eligible = prepared?.vocab || [];
+            const lastEligibleRank = eligible.reduce((maxRank, item) =>
+                Math.max(maxRank, Number(item.stableRank) || 0), 0);
+            // Hide only empty trailing levels (most notably the reserved 1×
+            // tail while single-occurrence words are hidden). Re-enabling a
+            // filter appends those levels without changing any earlier cut.
+            _smartLevelRangesCache = _smartLevelRangesCache.filter(range =>
+                range.startRank <= lastEligibleRank);
+        }
     }
     const percentageRanges = getActiveLevelRanges();
         console.log('Using percentage levels:', percentageRanges);
         const coverageType = activeArtist
             ? 'lyrics comprehension'
-            : (usingReleaseLevels && globalThis.coverageAvailable?.()
-                ? globalThis.coverageLabel()
-                : 'speech comprehension');
+            : (window.playlistLiveActive?.()
+                ? 'playlist words'
+                : (usingReleaseLevels && globalThis.coverageAvailable?.()
+                    ? globalThis.coverageLabel()
+                    : 'speech comprehension'));
         const buttonsHTML = percentageRanges.map(level => {
             const description = level.description || `${level.level} ${coverageType}`;
             const isSelected = level.level === selectedLevel;
@@ -1050,7 +1087,7 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
         // Release levels are consecutive bands of two hundred cards, where the
         // last one is the rarest vocabulary in the deck — a learner starts at
         // the first, and the actionable-level pass refines it from there.
-        const initialIdx = savedIdx >= 0 ? savedIdx : (usingReleaseLevels ? 0 : lastIdx);
+        const initialIdx = savedIdx >= 0 ? savedIdx : (usingReleaseLevels || window.playlistLiveActive?.() ? 0 : lastIdx);
         const initial = percentageRanges[initialIdx];
         if (!initial) {
             console.warn('No level ranges available for', language);
@@ -1458,7 +1495,8 @@ function _setupVocabularySignature(language) {
         language,
         langConfig.indexPath || langConfig.dataPath || '',
         (window._selectedArtistSlugs || []).slice().sort().join(','),
-        activeArtist ? artistVocabularyScope : 'speech',
+        activeArtist ? artistVocabularyScope : (window.playlistLiveActive?.() ? 'playlist-live' : 'speech'),
+        window.playlistLiveActive?.() ? (window.playlistLiveDeck?.()?.playlistId || 'live') : 'none',
         percentageMode,
         useLemmaMode,
         excludeCognates,
@@ -1485,6 +1523,10 @@ function getPreparedSetupVocabulary(language, rawVocab) {
         return _preparedSetupVocabulary.result;
     }
     const result = buildFilteredVocab(rawVocab);
+    if (window.playlistLiveActive?.()) {
+        result.vocab = window.applyPlaylistLiveVocabulary?.(result.vocab) || result.vocab;
+        result.stableBaseline = result.vocab;
+    }
     result.samples = result.vocab.map(item => ({
         rank: item.rank,
         displayRank: item.displayRank,

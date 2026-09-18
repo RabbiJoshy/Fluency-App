@@ -11,15 +11,15 @@ import './estimation.js?v=20260825ak';
 import './config.js?v=20260916f';
 import './progress.js?v=20260917j';
 import './knowledge.js?v=20260915a';
-import './ui.js?v=20260918l';
+import './ui.js?v=20260918m';
 import './vocab.js?v=20260918f';
 import './cognates.js?v=20260914e';
 import './coverage.js?v=20260909a';
 import './fast-mode.js?v=20260916a';
 import './extras.js?v=20260916a';
 import './song-sets.js?v=20260823ae';
-import './playlist-live.js?v=20260918g';
-import './spotify-playlist-import.js?v=20260918l';
+import './playlist-live.js?v=20260918h';
+import './spotify-playlist-import.js?v=20260918m';
 import './vocabulary-import.js?v=20260913a';
 import './flashcards.js?v=20260918b';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
@@ -365,6 +365,7 @@ loadConfig().then(async () => {
         && config.languages[preferredLanguage]
         && config.languages[preferredLanguage].hasData !== false;
     selectedLanguage = preferredIsReady ? preferredLanguage : firstLang;
+    await loadSecrets();
     const playlistLiveLanguage = new URLSearchParams(window.location.search).get('language');
     if (new URLSearchParams(window.location.search).get('playlistLive') === '1') {
         if (playlistLiveLanguage && config.languages[playlistLiveLanguage]) {
@@ -542,6 +543,7 @@ loadConfig().then(async () => {
         document.body.classList.add('has-learning-context');
         window.updateLearningContextUI?.();
         sessionStorage.setItem('fluencyPendingSpeechLanguage', selectedLanguage);
+        sessionStorage.setItem('fluencyPendingLiveStudy', '1');
         const liveTab = document.querySelector(`.lang-tab[data-lang="${selectedLanguage}"]`);
         if (liveTab && !liveTab.disabled) {
             liveTab.click();
@@ -678,7 +680,7 @@ function renderArtistSourceSummary() {
         const language = activeArtist.language || 'spanish';
         const matchingArtists = Object.fromEntries(Object.entries(allArtistsConfig || {}).filter(([, cfg]) =>
             (cfg.language || 'spanish') === language));
-        showArtistPicker(picker, matchingArtists);
+        showArtistPicker(picker, matchingArtists, language);
     };
     speechBtn.onclick = () => {
         const targetLang = activeArtist?.language || selectedLanguage || 'spanish';
@@ -1167,9 +1169,9 @@ function showAvailableMusicPicker(artists) {
 }
 
 // Music setup begins with the source method, then opens the growing catalogue.
-function showArtistPicker(anchorBtn, artists) {
+function showArtistPicker(anchorBtn, artists, targetLanguage = null) {
     const hasAvailableMusic = Object.keys(artists || {}).length > 0;
-    const language = Object.values(artists || {})[0]?.language || selectedLanguage || 'spanish';
+    const language = targetLanguage || Object.values(artists || {})[0]?.language || selectedLanguage || 'spanish';
     showChoiceSheet({
         id: 'lyricsSourceSheet',
         ariaLabel: 'Choose how to add music',
@@ -1225,8 +1227,19 @@ function openLearningSourcePicker() {
                 label: 'Speech',
                 description: 'General-purpose vocabulary ranked from modern movie and television dialogue.',
                 fallbackText: '1',
-                selected: !activeArtist,
+                selected: !activeArtist && !window.playlistLiveActive?.(),
                 onSelect: () => {
+                    if (window.playlistLiveActive?.()) {
+                        window.clearPlaylistLiveSession?.();
+                        try {
+                            const url = new URL(window.location.href);
+                            url.searchParams.delete('playlistLive');
+                            history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+                        } catch (_) {}
+                        sessionStorage.setItem('fluencyPendingSpeechLanguage', language);
+                        window.location.href = `${window.location.pathname}?language=${encodeURIComponent(language)}`;
+                        return;
+                    }
                     if (activeArtist) {
                         showAppLoading('Switching to speech vocabulary', 'Preparing your language and progress…', true);
                         sessionStorage.setItem('fluencyPendingSpeechLanguage', language);
@@ -1242,16 +1255,16 @@ function openLearningSourcePicker() {
                     ? 'Learn frequent words from artists and songs you like, with lyric playback through Spotify.'
                     : 'Look up lyrics from a playlist and study a live deck from speech meanings plus your song lines.',
                 fallbackText: '2',
-                selected: Boolean(activeArtist),
+                selected: Boolean(activeArtist || window.playlistLiveActive?.()),
                 disabled: !lyricsAvailable,
                 onSelect: () => {
-                    if (!activeArtist) {
+                    if (!activeArtist && !window.playlistLiveActive?.()) {
                         document.getElementById('standardSourcePickerBtn')?.click();
                         return;
                     }
                     const matchingArtists = Object.fromEntries(Object.entries(allArtistsConfig || {}).filter(([, cfg]) =>
                         (cfg.language || 'spanish') === language));
-                    showArtistPicker(null, matchingArtists);
+                    showArtistPicker(null, matchingArtists, language);
                 }
             }
         ]
@@ -1284,7 +1297,7 @@ async function showLyricsPicker(language, anchorBtn = null) {
 
     const matchingArtists = Object.fromEntries(Object.entries(artists || {}).filter(([, cfg]) =>
         (cfg.language || 'spanish') === language));
-    showArtistPicker(anchorBtn, matchingArtists);
+    showArtistPicker(anchorBtn, matchingArtists, language);
 }
 
 window.showLyricsPicker = showLyricsPicker;
