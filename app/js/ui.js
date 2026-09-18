@@ -620,6 +620,9 @@ function setupLanguageTabs() {
                 // make French cards appear to have no examples (or vice versa).
                 window.clearActiveExamplesData?.();
                 window.resetLanguageOptionalData?.();
+                if (window.playlistLiveDeck?.()?.language !== newLanguage) {
+                    window.clearPlaylistLiveSession?.();
+                }
             }
 
             selectedLanguage = newLanguage;
@@ -740,18 +743,16 @@ function setupLanguageTabs() {
 
                     if (sessionStorage.getItem('fluencyPendingLiveStudy') === '1' && window.playlistLiveActive?.()) {
                         sessionStorage.removeItem('fluencyPendingLiveStudy');
-                        const firstSet = Array.from(document.querySelectorAll('#rangeSelector .study-set-dot'))
-                            .find(dot => !dot.disabled && Number(dot.dataset.pct) < 100)
-                            || Array.from(document.querySelectorAll('#rangeSelector .study-set-dot'))
-                                .find(dot => !dot.disabled);
-                        if (firstSet) {
-                            await loadVocabularyData(firstSet.dataset.range, {
-                                rankBasis: firstSet.dataset.rankBasis || 'source',
-                                setNumber: Number(firstSet.dataset.index) + 1,
-                                levelSetCount: document.querySelectorAll('#rangeSelector .study-set-dot').length,
-                                levelNumber: parseInt(firstSet.dataset.levelNumber) || 1
-                            });
-                        }
+                        const dots = Array.from(document.querySelectorAll('#rangeSelector .study-set-dot'));
+                        const firstSet = dots.find(dot => !dot.disabled && Number(dot.dataset.pct) < 100)
+                            || dots.find(dot => !dot.disabled);
+                        const range = firstSet?.dataset.range || '1-21';
+                        await loadVocabularyData(range, {
+                            rankBasis: firstSet?.dataset.rankBasis || 'source',
+                            setNumber: firstSet ? (Number(firstSet.dataset.index) + 1) : 1,
+                            levelSetCount: dots.length || 1,
+                            levelNumber: parseInt(firstSet?.dataset.levelNumber) || 1
+                        });
                     }
 
                     progressRefresh.then(changed => {
@@ -766,6 +767,7 @@ function setupLanguageTabs() {
                     window.hideAppLoading?.();
                 }
             };
+            window.continueToSpeechAfterLive = continueToSpeech;
 
             // Language selection is deliberately lightweight. The learner now
             // chooses the source before either vocabulary release is fetched.
@@ -2258,7 +2260,7 @@ async function renderRangeSelector() {
         minWord = parseInt(selectedBtn.dataset.startRank);
         maxWord = parseInt(selectedBtn.dataset.endRank);
         rankBasis = selectedBtn.dataset.rankBasis || 'source';
-    } else if (releaseStudyStructure?.levels) {
+    } else if (!window.playlistLiveActive?.() && releaseStudyStructure?.levels) {
         const rLevel = releaseStudyStructure.levels.find(item => item.level === selectedLevel || item.level_id === selectedLevel);
         if (rLevel) {
             minWord = rLevel.startRank;
@@ -2266,7 +2268,7 @@ async function renderRangeSelector() {
             rankBasis = rLevel.rankBasis || 'source';
         } else {
             const ranges = getActiveLevelRanges();
-            const found = ranges.find(item => item.level === selectedLevel) || ranges[0];
+            const found = ranges.find(item => String(item.level) === String(selectedLevel)) || ranges[0];
             if (!found) return;
             minWord = found.startRank;
             maxWord = found.endRank;
@@ -2274,7 +2276,7 @@ async function renderRangeSelector() {
         }
     } else {
         const ranges = getActiveLevelRanges();
-        const found = ranges.find(item => item.level === selectedLevel) || ranges[0];
+        const found = ranges.find(item => String(item.level) === String(selectedLevel)) || ranges[0];
         if (!found) return;
         minWord = found.startRank;
         maxWord = found.endRank;
