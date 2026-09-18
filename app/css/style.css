@@ -10440,6 +10440,13 @@
             text-align: left;
         }
         .spotify-playlist-option:hover { background: var(--bg-tertiary); }
+        .spotify-playlist-option:disabled,
+        .spotify-playlist-option.is-disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+        .spotify-playlist-option:disabled:hover,
+        .spotify-playlist-option.is-disabled:hover { background: none; }
         .spotify-playlist-option:last-child { border-bottom: 0; }
         .playlist-lyrics-progress {
             display: flex;

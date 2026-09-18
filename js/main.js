@@ -11,7 +11,7 @@ import './estimation.js?v=20260825ak';
 import './config.js?v=20260916f';
 import './progress.js?v=20260917j';
 import './knowledge.js?v=20260915a';
-import './ui.js?v=20260918k';
+import './ui.js?v=20260918l';
 import './vocab.js?v=20260918f';
 import './cognates.js?v=20260914e';
 import './coverage.js?v=20260909a';
@@ -19,7 +19,7 @@ import './fast-mode.js?v=20260916a';
 import './extras.js?v=20260916a';
 import './song-sets.js?v=20260823ae';
 import './playlist-live.js?v=20260918g';
-import './spotify-playlist-import.js?v=20260918k';
+import './spotify-playlist-import.js?v=20260918l';
 import './vocabulary-import.js?v=20260913a';
 import './flashcards.js?v=20260918a';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
@@ -78,7 +78,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // lazy module stubs in flashcards.js.
 const _initialParams = new URLSearchParams(window.location.search);
 const _spotifyModulePromise = (_initialParams.has('artist') || _initialParams.get('mode') === 'badbunny')
-    ? import('./spotify.js?v=20260918k').catch(error => {
+    ? import('./spotify.js?v=20260918l').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })

@@ -326,6 +326,7 @@ async function getSpotifyProfile({ forceRefresh = false } = {}) {
         if (!resp.ok) throw new Error(`Profile fetch HTTP ${resp.status}`);
         const data = await resp.json();
         const profile = {
+            id: data.id || '',
             displayName: data.display_name || data.id || 'Spotify',
             imageUrl: data.images?.[data.images.length - 1]?.url || ''
         };
@@ -372,35 +373,59 @@ async function _spotifyHttpError(resp) {
     if (resp.status === 403) {
         return new Error(detail && !/^forbidden$/i.test(detail)
             ? `Spotify: ${detail}`
-            : 'Spotify blocked this playlist. Personalized mixes often cannot be read — pick a playlist you created.');
+            : 'Spotify only shares songs from playlists you own. Pick one you created, not a mix or a followed playlist.');
     }
     return new Error(detail ? `Spotify: ${detail}` : `Spotify API HTTP ${resp.status}`);
 }
 
 async function fetchSpotifyPlaylists() {
     const playlists = [];
+    const me = await getSpotifyProfile({ forceRefresh: !cachedSpotifyProfile()?.id });
+    const myId = me?.id || '';
     let url = 'https://api.spotify.com/v1/me/playlists?limit=50';
     while (url) {
         const page = await _spotifyApiFetch(url);
         for (const item of page.items || []) {
             if (!item?.id) continue;
+            const ownerId = item.owner?.id || '';
             playlists.push({
                 id: item.id,
                 name: item.name || 'Untitled playlist',
-                trackCount: item.tracks?.total || 0,
-                tracksHref: item.tracks?.href || '',
-                imageUrl: item.images?.[item.images.length - 1]?.url || ''
+                trackCount: Number(item.items?.total ?? item.tracks?.total ?? 0) || 0,
+                tracksHref: _spotifyItemsHref(item.items?.href || item.tracks?.href || ''),
+                imageUrl: item.images?.[item.images.length - 1]?.url || '',
+                ownerId,
+                collaborative: item.collaborative === true,
+                canReadItems: !myId || item.collaborative === true || ownerId === myId
             });
         }
         url = page.next || null;
     }
+    playlists.sort((a, b) => Number(b.canReadItems) - Number(a.canReadItems) || a.name.localeCompare(b.name));
     return playlists;
 }
 
 // Full playlist tracks (id, title, artists, album, duration) for lyrics lookup.
 // Local files, episodes and removed items have no usable track id and are skipped.
+// Spotify's Feb 2026 Development Mode API renamed GET /playlists/{id}/tracks to
+// /items and only returns contents for playlists the user owns or collaborates on.
 function _spotifyPlaylistId(playlistId) {
     return String(playlistId || '').replace(/^spotify:playlist:/i, '').split('?')[0].trim();
+}
+
+function _spotifyItemsHref(href) {
+    return String(href || '').trim().replace(/\/tracks(\b|$)/i, '/items$1');
+}
+
+function _spotifyPaging(page) {
+    if (!page || typeof page !== 'object') return { items: [], next: null };
+    const nested = page.items && !Array.isArray(page.items) ? page.items
+        : page.tracks && !Array.isArray(page.tracks) ? page.tracks
+        : page;
+    const items = Array.isArray(page.items) ? page.items
+        : Array.isArray(nested?.items) ? nested.items
+        : [];
+    return { items, next: nested?.next || page.next || null };
 }
 
 function _spotifyTrackUrlVariants(playlistId, tracksHref) {
@@ -409,26 +434,26 @@ function _spotifyTrackUrlVariants(playlistId, tracksHref) {
     const add = url => {
         if (url && !variants.includes(url)) variants.push(url);
     };
+    add(_spotifyItemsHref(tracksHref));
+    add(`https://api.spotify.com/v1/playlists/${id}/items?limit=100`);
+    add(`https://api.spotify.com/v1/playlists/${id}/items?limit=100&additional_types=track`);
     add(tracksHref);
     add(`https://api.spotify.com/v1/playlists/${id}/tracks?limit=100`);
     add(`https://api.spotify.com/v1/playlists/${id}/tracks?limit=100&additional_types=track`);
     add(`https://api.spotify.com/v1/playlists/${id}/tracks?limit=100&market=from_token`);
-    if (tracksHref) {
-        try {
-            const withMarket = new URL(tracksHref, 'https://api.spotify.com');
-            withMarket.searchParams.set('market', 'from_token');
-            add(withMarket.toString());
-        } catch (_) {}
-    }
     return variants;
 }
 
-async function fetchSpotifyPlaylistTracks(playlistId, { tracksHref } = {}) {
+async function fetchSpotifyPlaylistTracks(playlistId, { tracksHref, canReadItems } = {}) {
+    if (canReadItems === false) {
+        throw new Error('Spotify only shares songs from playlists you own. Pick one you created, not a mix or a followed playlist.');
+    }
     const id = _spotifyPlaylistId(playlistId);
     let lastError = null;
     for (const startUrl of _spotifyTrackUrlVariants(id, tracksHref)) {
         try {
-            return await _readSpotifyTrackPages(startUrl);
+            const tracks = await _readSpotifyTrackPages(startUrl);
+            if (tracks.length) return tracks;
         } catch (error) {
             lastError = error;
             if (!/403|forbidden|blocked|refused|scope/i.test(error?.message || '')) throw error;
@@ -442,25 +467,27 @@ async function fetchSpotifyPlaylistTracks(playlistId, { tracksHref } = {}) {
             lastError = error;
             return null;
         });
-        if (!playlist?.tracks) continue;
-        const tracks = _tracksFromSpotifyItems(playlist.tracks.items);
-        if (playlist.tracks.next) {
+        if (!playlist) continue;
+        const paging = _spotifyPaging(playlist);
+        const tracks = _tracksFromSpotifyItems(paging.items);
+        if (paging.next) {
             try {
-                tracks.push(...await _readSpotifyTrackPages(playlist.tracks.next));
+                tracks.push(...await _readSpotifyTrackPages(paging.next));
             } catch (error) {
                 lastError = error;
             }
         }
         if (tracks.length) return tracks;
     }
-    throw lastError || new Error('Spotify blocked this playlist. Personalized mixes often cannot be read — pick a playlist you created.');
+    throw lastError || new Error('Spotify only shares songs from playlists you own. Pick one you created, not a mix or a followed playlist.');
 }
 
 function _tracksFromSpotifyItems(items) {
     const tracks = [];
-    for (const item of items || []) {
-        const track = item?.track;
+    for (const row of items || []) {
+        const track = row?.item || row?.track;
         if (!track?.id || !track.name) continue;
+        if (track.type && track.type !== 'track') continue;
         tracks.push({
             id: track.id,
             title: track.name,
@@ -477,9 +504,9 @@ async function _readSpotifyTrackPages(startUrl) {
     let url = startUrl;
     while (url) {
         const page = await _spotifyApiFetch(url, { allowReauth: false });
-        const items = page.items || page.tracks?.items || [];
-        tracks.push(..._tracksFromSpotifyItems(items));
-        url = page.next || page.tracks?.next || null;
+        const paging = _spotifyPaging(page);
+        tracks.push(..._tracksFromSpotifyItems(paging.items));
+        url = paging.next || null;
     }
     return tracks;
 }
