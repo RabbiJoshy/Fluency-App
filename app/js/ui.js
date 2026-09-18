@@ -2864,7 +2864,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false } = {}) {
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=20260918a')
+        import('./spotify.js?v=20260918i')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

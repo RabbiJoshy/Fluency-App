@@ -342,8 +342,17 @@ async function getSpotifyProfile({ forceRefresh = false } = {}) {
 async function _spotifyApiFetch(url, { allowReauth = true } = {}) {
     const token = await getSpotifyToken();
     if (!token) throw new Error('Not connected to Spotify.');
-    const resp = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
-    if ((resp.status === 401 || resp.status === 403) && allowReauth) {
+    const headers = { 'Authorization': `Bearer ${token}` };
+    let resp = await fetch(url, { headers });
+    if (resp.status === 401) {
+        localStorage.removeItem('spotify_access_token');
+        localStorage.removeItem('spotify_token_expiry');
+        const retryToken = await getSpotifyToken();
+        if (retryToken) {
+            resp = await fetch(url, { headers: { 'Authorization': `Bearer ${retryToken}` } });
+        }
+    }
+    if (resp.status === 401 && allowReauth) {
         const reconnected = await spotifyLogin();
         if (reconnected) return _spotifyApiFetch(url, { allowReauth: false });
     }
@@ -374,10 +383,9 @@ async function fetchSpotifyPlaylists() {
 // Local files, episodes and removed items have no usable track id and are skipped.
 async function fetchSpotifyPlaylistTracks(playlistId) {
     const tracks = [];
-    let url = `https://api.spotify.com/v1/playlists/${encodeURIComponent(playlistId)}/tracks`
-        + '?fields=items(track(id,name,duration_ms,album(name),artists(name))),next&limit=100';
+    let url = `https://api.spotify.com/v1/playlists/${encodeURIComponent(playlistId)}/tracks?limit=100`;
     while (url) {
-        const page = await _spotifyApiFetch(url);
+        const page = await _spotifyApiFetch(url, { allowReauth: false });
         for (const item of page.items || []) {
             const track = item?.track;
             if (!track?.id || !track.name) continue;

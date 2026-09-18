@@ -10535,6 +10535,10 @@
         #spotifyPlaylistModal.is-importing {
             pointer-events: auto;
         }
+        #spotifyPlaylistModal.is-dismiss-locked .song-set-footer,
+        #spotifyPlaylistModal.is-dismiss-locked .modal-close {
+            pointer-events: none;
+        }
         #spotifyPlaylistModal .modal-content {
             pointer-events: auto;
         }
