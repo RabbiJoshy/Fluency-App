@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v467"
+EXPECTED_CACHE_NAME = "flashcards-v468"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -75,6 +75,16 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('class="ref-tile ref-dictionary-btn"', flashcards)
         self.assertIn("if (!canInspectSpanishDictData()) return;", flashcards)
 
+    def test_synonym_jump_uses_the_language_lookup_not_spanishdict(self) -> None:
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        self.assertIn("function synonymExternalLookup(word)", flashcards)
+        self.assertIn("function confirmLeaveForSynonymLookup(word, lookup)", flashcards)
+        self.assertIn("['wordReference', 'WordReference']", flashcards)
+        self.assertNotIn(
+            "https://www.spanishdict.com/translate/${encodeURIComponent((word || '').toLowerCase())}",
+            flashcards,
+        )
+
     def test_only_languages_with_clean_releases_are_enabled(self) -> None:
         config = json.loads((APP_ROOT / "config" / "config.json").read_text(encoding="utf-8"))
         enabled = {
@@ -127,7 +137,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertEqual(
             config["languages"]["french"]["indexPath"],
-            "releases/fr/speech/fr-speech-v7-dual-metadata-v4-20260913/app/vocabulary.index.json",
+            "releases/fr/speech/fr-speech-v7-dual-metadata-v5-20260918/app/vocabulary.index.json",
         )
         self.assertEqual(
             config["languages"]["french"]["conjugationsPath"],
@@ -137,7 +147,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertNotIn("ppmDataPath", config["languages"]["french"])
         self.assertEqual(
             config["languages"]["french"]["studyStructurePath"],
-            "releases/fr/speech/fr-speech-v7-dual-metadata-v4-20260913/app/study-structure.json",
+            "releases/fr/speech/fr-speech-v7-dual-metadata-v5-20260918/app/study-structure.json",
         )
         self.assertFalse((APP_ROOT / "Data").exists())
         self.assertFalse((APP_ROOT / "Artists").exists())
@@ -672,7 +682,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260918l", worker)
-        self.assertIn("/js/main.js?v=20260918l", worker)
+        self.assertIn("/js/main.js?v=20260918m", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -752,7 +762,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("Release ID:", modals)
         self.assertEqual(
             config["languages"]["french"]["releaseManifestPath"],
-            "releases/fr/speech/fr-speech-v7-dual-metadata-v4-20260913/manifest.json",
+            "releases/fr/speech/fr-speech-v7-dual-metadata-v5-20260918/manifest.json",
         )
 
     def test_spotify_playlist_import_looks_up_lyrics_with_visible_percent(self) -> None:
