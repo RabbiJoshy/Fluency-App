@@ -20,7 +20,17 @@ function isAuditAccount(user = currentUser) {
     ));
 }
 
+function isJpAccount(user = currentUser) {
+    return Boolean(user && !user.isGuest && String(user.initials || '').trim().toUpperCase() === 'JP');
+}
+
+function canUserFlag(user = currentUser) {
+    return isAuditAccount(user) || isJpAccount(user);
+}
+
 window.isAuditAccount = isAuditAccount;
+window.isJpAccount = isJpAccount;
+window.canUserFlag = canUserFlag;
 
 function createFlagId() {
     if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();

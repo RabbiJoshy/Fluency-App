@@ -1644,6 +1644,29 @@
         .flag-simple-actions button[data-simple-flag="elision"] {
             grid-column: auto;
         }
+        .flag-jp-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .flag-jp-btn {
+            display: block;
+            width: 100%;
+            min-height: 48px;
+            padding: 13px 15px;
+            border-radius: 11px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font: 600 13px/1.4 var(--font-emphasis);
+            text-align: left;
+            cursor: pointer;
+            transition: border-color 0.15s ease, background 0.15s ease;
+        }
+        .flag-jp-btn:hover {
+            border-color: color-mix(in srgb, var(--accent-primary) 58%, var(--border-color));
+            background: color-mix(in srgb, var(--accent-primary) 10%, var(--bg-tertiary));
+        }
         .flag-simple-actions button:hover,
         .flag-senses-route:hover,
         .flag-simple-sense button:hover {

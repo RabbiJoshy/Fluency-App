@@ -1390,6 +1390,8 @@ const FLAG_QUICK_CANONICAL = {
     propernoun: { target: 'routing', category: 'proper_noun', requestedTag: 'proper_noun' },
     english: { target: 'routing', category: 'english', requestedTag: 'english' },
     cognate: { target: 'routing', category: 'cognate', requestedTag: 'cognate' },
+    'polish-cognate': { target: 'routing', category: 'cognate', requestedTag: 'cognate' },
+    wsd: { target: 'sense', category: 'translation', requestedTag: 'wsd' },
     lemma: { target: 'lemma', category: 'lemma' },
     elision: { target: 'surface', category: 'morphology' },
     'card-pos': { target: 'card', category: 'pos' },
@@ -1994,6 +1996,7 @@ function _simpleFlagReport(target, { meaningIndex = 0, note = '' } = {}) {
     const english = example?.english || example?.englishSentence || '';
     const labels = {
         note: 'Note', propernoun: 'Proper noun', english: 'English', cognate: 'Cognate',
+        'polish-cognate': 'Polish cognate', wsd: 'WSD / translation',
         lemma: 'Wrong lemma', elision: 'Wrong elision correction',
         'card-pos': 'Wrong card POS', 'sense-pos': 'Wrong sense POS',
         pairing: 'Sense–meaning pairing', card: 'Whole card'
@@ -2005,13 +2008,13 @@ function _simpleFlagReport(target, { meaningIndex = 0, note = '' } = {}) {
         `Lemma: ${lemma}`,
         `Card ID: ${card?.fullId || card?.id || '(missing)'}`
     ];
-    if (target === 'pairing' || target === 'sense-pos') {
+    if (target === 'pairing' || target === 'sense-pos' || target === 'wsd') {
         lines.push(`Sense ${meaningIndex + 1}: ${meaning?.pos || '?'} · ${gloss || '(empty)'}`);
         const senseId = meaning?.sense_id || meaning?.senseId || meaning?.id;
         if (senseId) lines.push(`Sense ID: ${senseId}`);
         if (meaning?.context) lines.push(`Context: ${meaning.context}`);
         if (meaning?.assignment_method) lines.push(`Sense assignment: ${meaning.assignment_method}`);
-        if (target === 'pairing') {
+        if (target === 'pairing' || target === 'wsd') {
             lines.push(`Example: ${spanish || '(none visible)'}`);
             if (english) lines.push(`Translation: ${english}`);
             if (example?.song_name || example?.song) lines.push(`Source: ${example.song_name || example.song}`);
@@ -2020,7 +2023,14 @@ function _simpleFlagReport(target, { meaningIndex = 0, note = '' } = {}) {
     }
     if (target === 'propernoun') lines.push('Requested classification: Proper noun', `Current is_propernoun: ${card?.is_propernoun ?? '(missing)'}`);
     if (target === 'english') lines.push('Requested classification: English', `Current is_english: ${card?.is_english ?? '(missing)'}`);
-    if (target === 'cognate') lines.push('Requested classification: Cognate', `Current cognate score: ${card?.cognate_score ?? '(missing)'}`);
+    if (target === 'cognate' || target === 'polish-cognate') {
+        lines.push('Requested classification: Cognate', `Current cognate score: ${card?.cognate_score ?? '(missing)'}`);
+        if (target === 'polish-cognate') {
+            lines.push('Known language: Polish (pl)');
+            lines.push('Learner note: This word is very similar to the Polish word and the cognate mapper should have mapped it');
+        }
+    }
+    if (target === 'wsd') lines.push('Issue: WSD / translation assignment');
     if (target === 'elision') {
         lines.push(`Displayed form: ${card?._activeExampleSurface || card?.displaySurface || word}`);
         lines.push(`Morphology: ${card?.morphology ? JSON.stringify(card.morphology).slice(0, 500) : '(none)'}`);
@@ -2042,6 +2052,7 @@ function _simpleFlagPath(target, meaningIndex = 0) {
     const spanish = example?.spanish || example?.target || example?.targetSentence || '';
     const paths = {
         propernoun: 'routing:propernoun', english: 'routing:english', cognate: 'routing:cognate',
+        'polish-cognate': 'routing:cognate:pl',
         lemma: `lemma:${_flagTextHash(card?.lemma || '')}`,
         elision: `surface:elision:${_flagTextHash(card?._activeExampleSurface || card?.displaySurface || card?.targetWord || '')}`,
         'card-pos': 'card:pos',
@@ -2050,6 +2061,7 @@ function _simpleFlagPath(target, meaningIndex = 0) {
     if (target === 'note') return `note:${Date.now()}`;
     if (target === 'pairing') return `pairing:${senseRef}:${_flagTextHash(spanish)}`;
     if (target === 'sense-pos') return `sense:${senseRef}:pos`;
+    if (target === 'wsd') return `sense:${senseRef}:wsd`;
     return paths[target] || target;
 }
 
@@ -2061,9 +2073,15 @@ function _simpleFlagFields(target, { meaningIndex = 0, note = '' } = {}) {
     const meaning = card?.meanings?.[meaningIndex] || null;
     const example = _simpleFlagExample(meaning, meaningIndex);
     const canonical = _flagCanonicalQuick(target);
-    const isSense = target === 'pairing' || target === 'sense-pos';
-    const isExample = target === 'pairing';
+    const isSense = target === 'pairing' || target === 'sense-pos' || target === 'wsd';
+    const isExample = target === 'pairing' || target === 'wsd';
     const word = card?.targetWord || card?.word || '';
+    let flagNote = note || '';
+    if (target === 'polish-cognate' && !flagNote) {
+        flagNote = 'This word is very similar to the Polish word and the cognate mapper should have mapped it';
+    } else if (target === 'wsd' && !flagNote) {
+        flagNote = 'WSD / translation issue flagged';
+    }
     return {
         ..._flagRunProvenance(card, meaning, example).fields,
         target: canonical.target,
@@ -2072,6 +2090,7 @@ function _simpleFlagFields(target, { meaningIndex = 0, note = '' } = {}) {
         wordText: word,
         lemma: card?.lemma || word,
         cardId: card?.fullId || card?.id || '',
+        sourceKnownLanguage: target === 'polish-cognate' ? 'pl' : '',
         sensePos: isSense ? (meaning?.pos || '') : '',
         senseId: isSense ? (meaning?.sense_id || meaning?.senseId || meaning?.id || '') : '',
         senseGloss: isSense ? (meaning?.meaning || meaning?.translation || '') : '',
@@ -2083,7 +2102,7 @@ function _simpleFlagFields(target, { meaningIndex = 0, note = '' } = {}) {
         song: isExample ? (example?.song_name || example?.song || '') : '',
         exampleAssignment: isExample ? (example?.assignment_method || '') : '',
         translationSource: isExample ? (example?.translation_source || '') : '',
-        note: note || ''
+        note: flagNote
     };
 }
 
@@ -2093,6 +2112,7 @@ async function _sendSimpleFlag(target, options = {}) {
     if (!card || typeof flagWord !== 'function') return false;
     const labels = {
         note: 'Note', propernoun: 'Proper noun', english: 'English', cognate: 'Cognate',
+        'polish-cognate': 'Polish cognate', wsd: 'WSD / translation',
         lemma: 'Wrong lemma', elision: 'Wrong elision correction',
         'card-pos': 'Wrong card POS', 'sense-pos': 'Wrong sense POS',
         pairing: 'Sense–meaning pairing', card: 'Whole card'
@@ -2151,16 +2171,41 @@ function showSimpleFlagMenu() {
     const card = _flagMenuCard();
     if (!pop || !card) return;
     document.getElementById('flagMenuTitle').textContent = `Flag: ${card.targetWord || card.word || 'card'}`;
-    document.getElementById('flagMenuMainView').hidden = false;
-    document.getElementById('flagMenuSensesView').hidden = true;
+
+    const isJp = Boolean(window.isJpAccount?.());
+    const mainView = document.getElementById('flagMenuMainView');
+    const sensesView = document.getElementById('flagMenuSensesView');
+    const jpView = document.getElementById('flagMenuJpView');
+    const footer = pop.querySelector('.card-meta-footer');
+    const provenance = document.getElementById('flagMenuProvenance');
+
+    if (isJp && jpView) {
+        if (mainView) mainView.hidden = true;
+        if (sensesView) sensesView.hidden = true;
+        jpView.hidden = false;
+        if (footer) footer.hidden = true;
+        if (provenance) provenance.hidden = true;
+
+        const polishEligible = Boolean(window.excludeCognates) && Boolean(globalThis.activeKnownLanguages?.().includes('pl'));
+        const polishBtn = document.getElementById('flagJpPolishCognate');
+        if (polishBtn) {
+            polishBtn.hidden = !polishEligible;
+        }
+    } else {
+        if (mainView) mainView.hidden = false;
+        if (sensesView) sensesView.hidden = true;
+        if (jpView) jpView.hidden = true;
+        if (footer) footer.hidden = false;
+        if (provenance) provenance.hidden = false;
+    }
+
     const status = document.getElementById('flagMenuStatus');
     if (status) { status.hidden = true; status.textContent = ''; status.classList.remove('is-error'); }
     const note = document.getElementById('flagMenuNote');
     if (note) note.value = '';
     const sendNote = document.getElementById('flagSimpleSendNote');
     if (sendNote) sendNote.disabled = true;
-    const provenance = document.getElementById('flagMenuProvenance');
-    if (provenance) {
+    if (provenance && !isJp) {
         const meaningIndex = (typeof currentMeaningIndex === 'number') ? currentMeaningIndex : 0;
         const meaning = card.meanings?.[meaningIndex] || null;
         const example = _simpleFlagExample(meaning, meaningIndex);
@@ -2173,7 +2218,9 @@ function showSimpleFlagMenu() {
             ? `<span>Attached automatically</span>${chips.map(value => `<code>${_escapeHtml(value)}</code>`).join('')}`
             : '<span>Attached automatically</span><code>Card identity only · release/run unavailable</code>';
     }
-    _renderSimpleSenses();
+    if (!isJp) {
+        _renderSimpleSenses();
+    }
     pop.hidden = false;
     pop.setAttribute('aria-hidden', 'false');
 }
@@ -2192,6 +2239,12 @@ function showSimpleFlagMenu() {
     });
     document.querySelectorAll('[data-simple-flag]').forEach(button => {
         button.addEventListener('click', () => _sendSimpleFlag(button.dataset.simpleFlag));
+    });
+    document.getElementById('flagJpPolishCognate')?.addEventListener('click', () => {
+        _sendSimpleFlag('polish-cognate');
+    });
+    document.getElementById('flagJpWsd')?.addEventListener('click', () => {
+        _sendSimpleFlag('wsd');
     });
     document.getElementById('flagOpenSenses')?.addEventListener('click', () => {
         document.getElementById('flagMenuMainView').hidden = true;
