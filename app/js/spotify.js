@@ -356,8 +356,22 @@ async function _spotifyApiFetch(url, { allowReauth = true } = {}) {
         const reconnected = await spotifyLogin();
         if (reconnected) return _spotifyApiFetch(url, { allowReauth: false });
     }
-    if (!resp.ok) throw new Error(`Spotify API HTTP ${resp.status}`);
+    if (!resp.ok) throw await _spotifyHttpError(resp);
     return resp.json();
+}
+
+async function _spotifyHttpError(resp) {
+    let detail = '';
+    try {
+        const body = await resp.json();
+        detail = String(body?.error?.message || '').trim();
+    } catch (_) {}
+    if (resp.status === 403) {
+        return new Error(detail && !/^forbidden$/i.test(detail)
+            ? `Spotify: ${detail}`
+            : 'Spotify blocked this playlist. Personalized mixes often cannot be read — pick a playlist you created.');
+    }
+    return new Error(detail ? `Spotify: ${detail}` : `Spotify API HTTP ${resp.status}`);
 }
 
 async function fetchSpotifyPlaylists() {
@@ -371,6 +385,7 @@ async function fetchSpotifyPlaylists() {
                 id: item.id,
                 name: item.name || 'Untitled playlist',
                 trackCount: item.tracks?.total || 0,
+                tracksHref: item.tracks?.href || '',
                 imageUrl: item.images?.[item.images.length - 1]?.url || ''
             });
         }
@@ -381,32 +396,77 @@ async function fetchSpotifyPlaylists() {
 
 // Full playlist tracks (id, title, artists, album, duration) for lyrics lookup.
 // Local files, episodes and removed items have no usable track id and are skipped.
-async function fetchSpotifyPlaylistTracks(playlistId) {
+function _withSpotifyMarket(url) {
+    const parsed = new URL(url, 'https://api.spotify.com');
+    if (!parsed.searchParams.has('market')) parsed.searchParams.set('market', 'from_token');
+    if (!parsed.searchParams.has('limit')) parsed.searchParams.set('limit', '100');
+    return parsed.toString();
+}
+
+function _tracksFromSpotifyItems(items) {
     const tracks = [];
-    let url = `https://api.spotify.com/v1/playlists/${encodeURIComponent(playlistId)}/tracks?limit=100`;
-    while (url) {
-        const page = await _spotifyApiFetch(url, { allowReauth: false });
-        for (const item of page.items || []) {
-            const track = item?.track;
-            if (!track?.id || !track.name) continue;
-            tracks.push({
-                id: track.id,
-                title: track.name,
-                artist: (track.artists || []).map(artist => artist.name).filter(Boolean).join(', ') || 'Unknown artist',
-                album: track.album?.name || '',
-                durationMs: Number(track.duration_ms) || 0
-            });
-        }
-        url = page.next || null;
+    for (const item of items || []) {
+        const track = item?.track;
+        if (!track?.id || !track.name) continue;
+        tracks.push({
+            id: track.id,
+            title: track.name,
+            artist: (track.artists || []).map(artist => artist.name).filter(Boolean).join(', ') || 'Unknown artist',
+            album: track.album?.name || '',
+            durationMs: Number(track.duration_ms) || 0
+        });
     }
     return tracks;
+}
+
+async function _readSpotifyTrackPages(startUrl) {
+    const tracks = [];
+    let url = startUrl;
+    while (url) {
+        const page = await _spotifyApiFetch(url, { allowReauth: false });
+        const items = page.items || page.tracks?.items || [];
+        tracks.push(..._tracksFromSpotifyItems(items));
+        url = page.next || page.tracks?.next || null;
+    }
+    return tracks;
+}
+
+async function fetchSpotifyPlaylistTracks(playlistId, { tracksHref } = {}) {
+    const attempts = [...new Set([
+        tracksHref && _withSpotifyMarket(tracksHref),
+        _withSpotifyMarket(`https://api.spotify.com/v1/playlists/${encodeURIComponent(playlistId)}/tracks`)
+    ].filter(Boolean))];
+    let lastError = null;
+    for (const startUrl of attempts) {
+        try {
+            return await _readSpotifyTrackPages(startUrl);
+        } catch (error) {
+            lastError = error;
+            if (!/403|forbidden|blocked|refused|scope/i.test(error?.message || '')) throw error;
+        }
+    }
+    const playlist = await _spotifyApiFetch(
+        `https://api.spotify.com/v1/playlists/${encodeURIComponent(playlistId)}?market=from_token`,
+        { allowReauth: false }
+    ).catch(error => {
+        lastError = error;
+        return null;
+    });
+    if (playlist?.tracks) {
+        const tracks = _tracksFromSpotifyItems(playlist.tracks.items);
+        if (playlist.tracks.next) {
+            tracks.push(...await _readSpotifyTrackPages(playlist.tracks.next));
+        }
+        if (tracks.length) return tracks;
+    }
+    throw lastError || new Error('Spotify blocked this playlist. Personalized mixes often cannot be read — pick a playlist you created.');
 }
 
 // Returns the set of Spotify track IDs in a playlist, used to match against
 // each song catalog entry's own spotifyTrackId. Local files and removed
 // tracks report a null id and are skipped.
-async function fetchSpotifyPlaylistTrackIds(playlistId) {
-    const tracks = await fetchSpotifyPlaylistTracks(playlistId);
+async function fetchSpotifyPlaylistTrackIds(playlistId, options = {}) {
+    const tracks = await fetchSpotifyPlaylistTracks(playlistId, options);
     return new Set(tracks.map(track => track.id));
 }
 

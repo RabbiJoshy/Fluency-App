@@ -13,7 +13,7 @@ const DECK_STORE = 'decks';
 const LRCLIB_SEARCH = 'https://lrclib.net/api/search';
 const LRCLIB_CLIENT = 'Fluency playlist-import/0.1 (https://github.com/JoshuaThomasAmar/Fluency-Next)';
 const LOOKUP_CONCURRENCY = 6;
-const SPOTIFY_MODULE = './spotify.js?v=20260918i';
+const SPOTIFY_MODULE = './spotify.js?v=20260918j';
 const DISMISS_LOCK_MS = 1500;
 
 let _matchState = null;
@@ -521,7 +521,7 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
             if (_importMode === 'filter') {
                 const [catalog, trackIds] = await Promise.all([
                     buildLanguageCatalog(matchingArtists),
-                    window.fetchSpotifyPlaylistTrackIds(playlist.id)
+                    window.fetchSpotifyPlaylistTrackIds(playlist.id, { tracksHref: playlist.tracksHref })
                 ]);
                 if (abort.signal.aborted) return;
                 element('spotifyPlaylistList').classList.add('hidden');
@@ -542,7 +542,7 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
                 return;
             }
 
-            const tracks = await window.fetchSpotifyPlaylistTracks(playlist.id);
+            const tracks = await window.fetchSpotifyPlaylistTracks(playlist.id, { tracksHref: playlist.tracksHref });
             if (abort.signal.aborted) return;
             if (!tracks.length) {
                 status.textContent = `"${playlist.name}" has no playable Spotify tracks.`;
