@@ -13,7 +13,7 @@ const DECK_STORE = 'decks';
 const LRCLIB_SEARCH = 'https://lrclib.net/api/search';
 const LRCLIB_CLIENT = 'Fluency playlist-import/0.1 (https://github.com/JoshuaThomasAmar/Fluency-Next)';
 const LOOKUP_CONCURRENCY = 6;
-const SPOTIFY_MODULE = './spotify.js?v=20260918i';
+const SPOTIFY_MODULE = './spotify.js?v=20260918k';
 const DISMISS_LOCK_MS = 1500;
 
 let _matchState = null;
@@ -463,6 +463,8 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
     _importAbort = null;
     useBtn.hidden = true;
     if (liveBtn) liveBtn.hidden = true;
+    const reconnect = element('reconnectSpotifyPlaylistBtn');
+    if (reconnect) reconnect.hidden = true;
     setImportBusy(false);
     _ignoreBackdropUntil = Date.now() + 600;
     resetProgressUi();
@@ -513,6 +515,8 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
         _liveState = null;
         useBtn.hidden = true;
         if (liveBtn) liveBtn.hidden = true;
+        const reconnect = element('reconnectSpotifyPlaylistBtn');
+        if (reconnect) reconnect.hidden = true;
         setImportBusy(true);
         setDismissLock();
         button.disabled = true;
@@ -521,7 +525,7 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
             if (_importMode === 'filter') {
                 const [catalog, trackIds] = await Promise.all([
                     buildLanguageCatalog(matchingArtists),
-                    window.fetchSpotifyPlaylistTrackIds(playlist.id)
+                    window.fetchSpotifyPlaylistTrackIds(playlist.id, { tracksHref: playlist.tracksHref })
                 ]);
                 if (abort.signal.aborted) return;
                 element('spotifyPlaylistList').classList.add('hidden');
@@ -542,7 +546,7 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
                 return;
             }
 
-            const tracks = await window.fetchSpotifyPlaylistTracks(playlist.id);
+            const tracks = await window.fetchSpotifyPlaylistTracks(playlist.id, { tracksHref: playlist.tracksHref });
             if (abort.signal.aborted) return;
             if (!tracks.length) {
                 status.textContent = `"${playlist.name}" has no playable Spotify tracks.`;
@@ -596,6 +600,12 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
             element('spotifyPlaylistList').classList.remove('hidden');
             element('spotifyPlaylistProgress')?.classList.add('hidden');
             status.textContent = error?.message || 'Could not look up that playlist.';
+            const blocked = /403|blocked|scope|forbidden/i.test(error?.message || '');
+            if (blocked) {
+                status.textContent = `${error.message} If this happens on every playlist, reconnect Spotify to grant playlist access.`;
+            }
+            const reconnect = element('reconnectSpotifyPlaylistBtn');
+            if (reconnect) reconnect.hidden = !blocked;
         } finally {
             if (!element('spotifyPlaylistModal')?.classList.contains('hidden') && !_liveState) {
                 setImportBusy(false);
@@ -661,12 +671,27 @@ function confirmSpotifyMatches() {
     window.location.href = `${window.location.pathname}?artist=custom&language=${encodeURIComponent(_matchState.language)}`;
 }
 
+async function reconnectSpotifyForPlaylist() {
+    const status = element('spotifyPlaylistStatus');
+    const reconnect = element('reconnectSpotifyPlaylistBtn');
+    if (reconnect) reconnect.hidden = true;
+    if (status) status.textContent = 'Reconnecting Spotify…';
+    const connected = await window.spotifyLogin?.(null, 0, null, { showDialog: true });
+    if (status) {
+        status.textContent = connected
+            ? 'Spotify reconnected. Tap the playlist again.'
+            : 'Spotify reconnect cancelled.';
+    }
+    if (reconnect) reconnect.hidden = Boolean(connected);
+}
+
 function setupSpotifyPlaylistImport() {
     const modal = element('spotifyPlaylistModal');
     if (!modal || modal.dataset.listenersReady === '1') return;
     modal.dataset.listenersReady = '1';
     element('closeSpotifyPlaylistModal')?.addEventListener('click', closeSpotifyPlaylistImport);
     element('cancelSpotifyPlaylistBtn')?.addEventListener('click', closeSpotifyPlaylistImport);
+    element('reconnectSpotifyPlaylistBtn')?.addEventListener('click', reconnectSpotifyForPlaylist);
     element('useSpotifyMatchesBtn')?.addEventListener('click', confirmSpotifyMatches);
     element('useSpotifyLiveBtn')?.addEventListener('click', confirmSpotifyLiveDeck);
     modal.addEventListener('click', event => {
