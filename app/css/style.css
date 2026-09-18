@@ -2802,9 +2802,10 @@
             background: currentColor;
             opacity: 0.28;
         }
-        .sense-prominence-meter i:nth-child(1) { height: 5px; }
-        .sense-prominence-meter i:nth-child(2) { height: 9px; }
-        .sense-prominence-meter i:nth-child(3) { height: 13px; }
+        .sense-prominence-meter i:nth-child(1) { height: 4px; }
+        .sense-prominence-meter i:nth-child(2) { height: 7px; }
+        .sense-prominence-meter i:nth-child(3) { height: 10px; }
+        .sense-prominence-meter i:nth-child(4) { height: 13px; }
         .sense-prominence-meter i.is-on { opacity: 1; }
         .sense-prominence-detail {
             display: none;
@@ -2824,6 +2825,9 @@
                 padding-right: 28px !important;
                 padding-left: 6px !important;
             }
+        }
+        .sense-prominence-badge.prominence-dominant {
+            color: #38bdf8;
         }
         .sense-prominence-badge.prominence-common {
             color: #10b981;

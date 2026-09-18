@@ -672,9 +672,10 @@ function walkthroughMetadata(meaning, selected) {
 
 function walkthroughProminence(pct) {
     if (!(Number(pct) < 100)) return null;
+    if (pct <= 0) return { label: 'Rare', key: 'rare' };
+    if (pct >= 60) return { label: 'Dominant', key: 'dominant' };
     if (pct >= 20) return { label: 'Common', key: 'common' };
-    if (pct >= 5) return { label: 'Uncommon', key: 'uncommon' };
-    return { label: 'Rare', key: 'rare' };
+    return { label: 'Uncommon', key: 'uncommon' };
 }
 
 function renderMeaningRows(card, selectedIdx) {
