@@ -1443,9 +1443,9 @@ function initializeApp() {
         // Card data is a product-level audit surface: it stays available when
         // optional model stamps are absent and does not require an owner login.
         entries.push({ label: 'Card data', iconHTML: icon('<circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path>'), onSelect: () => window.toggleProvenancePanel?.() });
-        // Reporting remains an owner-only diagnostic until it has a public
+        // Reporting remains an owner/reviewer diagnostic until it has a public
         // submission boundary.
-        if (isJstOwner()) {
+        if (window.canUserFlag ? window.canUserFlag() : isJstOwner()) {
             entries.push({ label: 'Report a card issue', iconHTML: icon('<path d="M5 21V4"></path><path d="M5 5h11l-2 4 2 4H5"></path>'), onSelect: () => window.showFlagMenu?.() });
         }
         window.showChoiceSheet({
@@ -2252,7 +2252,7 @@ function setupKeyboardShortcuts() {
 
         const commandModifier = e.ctrlKey || e.metaKey;
         const commandKey = String(e.key || '').toLowerCase();
-        const canFlag = Boolean(window.isAuditAccount?.());
+        const canFlag = Boolean(window.canUserFlag ? window.canUserFlag() : window.isAuditAccount?.());
         if (commandModifier && !e.altKey && commandKey === 'i' && !e.shiftKey && isJstOwner()) {
             e.preventDefault();
             toggleProvenancePanel();
@@ -4553,7 +4553,7 @@ function updateCard({ announceHeadword = false } = {}) {
     window._currentDisplayedExample = null;
     const reportShortcut = document.getElementById('cardMetaBtn');
     if (reportShortcut) {
-        const canReport = Boolean(window.isAuditAccount?.());
+        const canReport = Boolean(window.canUserFlag ? window.canUserFlag() : window.isAuditAccount?.());
         const section = reportShortcut.closest('.kb-section');
         if (section) section.style.display = canReport ? '' : 'none';
     }
@@ -8094,7 +8094,7 @@ window.dedupeExamples = dedupeExamples;
         if (!btn) return;
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (!window.isAuditAccount?.()) return;
+            if (!(window.canUserFlag ? window.canUserFlag() : window.isAuditAccount?.())) return;
             window.showFlagMenu();
         });
     }

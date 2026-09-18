@@ -284,6 +284,7 @@
                             <button type="button" data-simple-flag="propernoun">Proper noun</button>
                             <button type="button" data-simple-flag="english">English</button>
                             <button type="button" data-simple-flag="cognate">Cognate</button>
+                            <button type="button" data-simple-flag="wsd">WSD / translation</button>
                             <button type="button" data-simple-flag="lemma">Wrong lemma</button>
                             <button type="button" data-simple-flag="elision">Wrong elision correction</button>
                             <button type="button" data-simple-flag="card-pos">Wrong card POS</button>
@@ -295,6 +296,20 @@
                             <span><strong>Sense–meaning pairings</strong><small>Choose and flag a particular pairing</small></span>
                             <span aria-hidden="true">›</span>
                         </button>
+                    </section>
+                </div>
+
+                <div id="flagMenuJpView" hidden>
+                    <section class="card-meta-section">
+                        <h4>Select an issue</h4>
+                        <div class="flag-jp-actions">
+                            <button type="button" id="flagJpPolishCognate" class="flag-jp-btn">
+                                This word is very similar to the Polish word and the cognate mapper should have mapped it
+                            </button>
+                            <button type="button" id="flagJpWsd" class="flag-jp-btn">
+                                Flag WSD / translation
+                            </button>
+                        </div>
                     </section>
                 </div>
 
