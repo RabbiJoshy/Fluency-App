@@ -4241,7 +4241,7 @@ function canonicalExampleHTML(meaning) {
 
 function extractCanonicalDictionaryExamples(meaning) {
     const canonical = canonicalRecord(meaning);
-    const text = String(canonical?.text || '').trim();
+    const text = String(canonical?.text || canonical?.target || canonical?.spanish || '').trim();
     const translation = String(canonical?.translation || canonical?.english || '').trim();
     if (text && translation) {
         return [{
@@ -4259,8 +4259,12 @@ function extractCanonicalDictionaryExamples(meaning) {
         }];
     }
     const meta = meaning?.metadata;
-    const isSd = Boolean(meta?.sense_provider_metadata?.spanishdict?.examples);
+    const isSd = Boolean(
+        meta?.sense_provider_metadata?.spanishdict?.examples
+        || meta?.sense_metadata?.source_metadata?.spanishdict?.examples
+    );
     const examples = meta?.sense_provider_metadata?.spanishdict?.examples
+        || meta?.sense_metadata?.source_metadata?.spanishdict?.examples
         || meta?.source_metadata?.examples
         || [];
     if (!Array.isArray(examples)) return [];
@@ -4272,18 +4276,14 @@ function extractCanonicalDictionaryExamples(meaning) {
         englishSentence: ex.translated || ex.english || '',
         source: dictName.toLowerCase(),
         evidence: 'dictionary',
-        dictionarySource: dictName
+        dictionarySource: dictName,
+        canonical: true
     })).filter(ex => ex.target && ex.english);
 }
 
 // Default sentence (tick 1): a corpus line when WSD `supported_level` is
 // leaf, glosskey, or tuple; otherwise the dictionary canonical if it exists.
-// These examples do not publish a calibrated confidence number, so that
-// level gate is the threshold. On es-speech-v12 6000×10 (19,443 senses) it
-// opens on a non-canonical line 85.0% of the time — inside the ~80% target.
-// Leaf-only would be 16.3%; glosskey+ 27.4%. Unresolved stays on canonical.
-// Later ticks cycle other gated corpus lines. Do not stack canonical on a
-// confident WSD line.
+// Always preserve the canonical dictionary example in the cycling sequence.
 const WSD_EXAMPLE_LEVEL_RANK = { leaf: 3, glosskey: 2, tuple: 1 };
 
 function exampleWsdMeta(example) {
@@ -4325,21 +4325,35 @@ function rankConfidentWsdExamples(examples) {
 }
 
 function canonicalAsDisplayExample(meaning) {
-    const canonical = canonicalRecord(meaning);
-    const text = String(canonical?.text || '').trim();
-    const translation = String(canonical?.translation || canonical?.english || '').trim();
-    if (!text || !translation) return null;
-    return {
-        target: text,
-        english: translation,
-        source: 'dictionary',
-        evidence: 'dictionary',
-        dictionarySource: dictionaryProviderForMeaning(meaning),
-        canonical: true,
-        url: canonical.url,
-        bold_text_offsets: canonical.bold_text_offsets,
-        bold_translation_offsets: canonical.bold_translation_offsets,
-    };
+    const extracted = extractCanonicalDictionaryExamples(meaning);
+    if (extracted && extracted.length > 0) return extracted[0];
+    return null;
+}
+
+function findCanonicalForCard(card, meaning) {
+    if (meaning) {
+        const direct = canonicalAsDisplayExample(meaning);
+        if (direct) return direct;
+    }
+    if (card) {
+        if (card.canonicalExample || card.canonical_example) {
+            const cardCan = canonicalAsDisplayExample(card);
+            if (cardCan) return cardCan;
+        }
+        if (Array.isArray(card.meanings)) {
+            for (const m of card.meanings) {
+                const ex = canonicalAsDisplayExample(m);
+                if (ex) return ex;
+            }
+        }
+        if (Array.isArray(card.unusedMenuSenses)) {
+            for (const u of card.unusedMenuSenses) {
+                const ex = canonicalAsDisplayExample(u);
+                if (ex) return ex;
+            }
+        }
+    }
+    return null;
 }
 
 function exampleLooksLikeLyric(example) {
@@ -4356,17 +4370,37 @@ function examplesAllowCycling(examples) {
     return (examples || []).some(exampleLooksLikeLyric);
 }
 
-function displayExamplesForSense(meaning, examples) {
+function displayExamplesForSense(meaning, examples, card = null) {
     const corpus = (examples || []).filter(isCorpusDisplayExample);
     const confident = rankConfidentWsdExamples(corpus);
-    if (confident.length) return confident;
-    const canonical = canonicalAsDisplayExample(meaning);
-    if (canonical) return [canonical];
+    const activeCard = card || (typeof flashcards !== 'undefined' && flashcards ? flashcards[currentIndex] : null);
+    const canonical = findCanonicalForCard(activeCard, meaning);
+
+    const isSameText = (a, b) => {
+        if (!a || !b) return false;
+        const norm = s => String(s || '').trim().toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()?"'«»¡¿]/g, '');
+        return norm(a.target || a.spanish || a.targetSentence) === norm(b.target || b.spanish || b.targetSentence);
+    };
+
+    if (confident.length) {
+        const result = [...confident];
+        if (canonical && !result.some(ex => isSameText(ex, canonical))) {
+            result.push(canonical);
+        }
+        return result;
+    }
+
+    if (canonical) {
+        const others = (corpus.length > 1 ? sortExamplesByRelevance(corpus) : corpus)
+            .filter(ex => !isSameText(ex, canonical));
+        return [canonical, ...others];
+    }
+
     return corpus.length > 1 ? sortExamplesByRelevance(corpus) : corpus;
 }
 
-function chooseSingleDisplayExample(meaning, examples) {
-    return displayExamplesForSense(meaning, examples)[0] || null;
+function chooseSingleDisplayExample(meaning, examples, card = null) {
+    return displayExamplesForSense(meaning, examples, card)[0] || null;
 }
 
 function getQualifyingRareSenses(card) {
@@ -4403,7 +4437,7 @@ function getSenseProminenceInfo(meaning) {
         const label = String(meaning.prominenceLabel).trim();
         return { label, key: label.toLowerCase() };
     }
-    if (meaning.unassigned) {
+    if (meaning.unassigned || meaning.isRareSense) {
         return { label: 'Rare', key: 'rare' };
     }
     return prominenceInfoFromShare([meaning]);
@@ -4412,14 +4446,17 @@ function getSenseProminenceInfo(meaning) {
 // Learner-facing frequency is the share of a meaning cluster, not the WSD
 // mass of one dictionary shade. Near-synonym leaves (fantastic / brilliant)
 // must not fight Common vs Rare; sum the assigned members and bucket once.
+// 4-category scale: Rare (unassigned/dictionary-only), Uncommon (0-20%),
+// Common (20-60%), Dominant (>= 60%).
 function prominenceInfoFromShare(meanings) {
     const list = Array.isArray(meanings) ? meanings.filter(Boolean) : [];
     const used = list.filter(m => !m.unassigned && !m.isRareSense);
     if (!used.length) return { label: 'Rare', key: 'rare' };
     const p = used.reduce((acc, m) => acc + (Number(m.percentage) || 0), 0);
+    if (p <= 0) return { label: 'Rare', key: 'rare' };
+    if (p >= 0.60) return { label: 'Dominant', key: 'dominant' };
     if (p >= 0.20) return { label: 'Common', key: 'common' };
-    if (p >= 0.05) return { label: 'Uncommon', key: 'uncommon' };
-    return { label: 'Rare', key: 'rare' };
+    return { label: 'Uncommon', key: 'uncommon' };
 }
 
 // A leaf is separable inside a shared gloss only when, after renormalising
@@ -4504,14 +4541,15 @@ window.glossClusterProminenceState = glossClusterProminenceState;
 window.getSenseProminenceInfo = getSenseProminenceInfo;
 
 const PROMINENCE_BLURBS = {
+    dominant: 'used most often',
     common: 'used often',
     uncommon: 'used sometimes',
     rare: 'used rarely',
 };
 
 function prominenceMeterHTML(key) {
-    const filled = key === 'common' ? 3 : key === 'uncommon' ? 2 : 1;
-    return `<span class="sense-prominence-meter" aria-hidden="true">${[1, 2, 3].map(i => `<i${i <= filled ? ' class="is-on"' : ''}></i>`).join('')}</span>`;
+    const filled = key === 'dominant' ? 4 : key === 'common' ? 3 : key === 'uncommon' ? 2 : 1;
+    return `<span class="sense-prominence-meter" aria-hidden="true">${[1, 2, 3, 4].map(i => `<i${i <= filled ? ' class="is-on"' : ''}></i>`).join('')}</span>`;
 }
 
 function prominenceBadgeHTML(promInfo, extraStyle = '') {
@@ -6301,8 +6339,8 @@ function updateCard({ announceHeadword = false } = {}) {
             // Per-example assignment_method is authoritative when present;
             // fall back to per-meaning for non-keyword methods (Gemini/biencoder).
             let exampleAssigned = false;
-            if (currentExample && currentExample.assignment_method) {
-                exampleAssigned = true;  // this specific example was classified
+            if (currentExample && (currentExample.assignment_method || currentExample.canonical || currentExample.evidence === 'dictionary')) {
+                exampleAssigned = true;  // this specific example was classified or is dictionary canonical
             } else if (currentMeaning && !currentMeaning.unassigned && !currentMeaning.assignment_method) {
                 exampleAssigned = true;  // strong method (Gemini/biencoder) — all examples assigned
             }
@@ -6986,7 +7024,7 @@ function getCyclableExamples(card, currentMeaning) {
 
     if (currentMeaning.allMWEs || currentMeaning.allClitics) return examples;
     if (examplesAllowCycling(examples)) return examples;
-    return displayExamplesForSense(currentMeaning, examples);
+    return displayExamplesForSense(currentMeaning, examples, card);
 }
 
 function cycleExample(event) {

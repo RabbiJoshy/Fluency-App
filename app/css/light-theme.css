@@ -325,6 +325,11 @@
     background: rgba(var(--sense-match-rgb), 0.11) !important;
 }
 
+:root[data-theme="light"] .sense-prominence-badge.prominence-dominant {
+    background: transparent;
+    color: #0284c7;
+    border: 0;
+}
 :root[data-theme="light"] .sense-prominence-badge.prominence-common {
     background: transparent;
     color: #059669;
