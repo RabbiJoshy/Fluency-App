@@ -7468,10 +7468,10 @@ function updateStats() {
 
 
 
-// Scan the cached vocab index for a card matching the given Spanish word.
-// Matches surface or lemma, case-insensitive. Returns the entry's id or null.
+// Scan the cached vocab index for a card matching the given word.
+// Matches surface, lemma, or meaning headword, case-insensitive.
 // Used by the synonyms panel: tap-a-synonym should jump to its card if we
-// have one, otherwise fall back to SpanishDict.
+// have one, otherwise fall back to the language's dictionary lookup.
 function findCardIdForWord(word) {
     const target = (word || '').toLowerCase();
     if (!target) return null;
@@ -7485,6 +7485,30 @@ function findCardIdForWord(word) {
         if (w === target || l === target) {
             return it.id || (window.getWordId ? window.getWordId(it) : null);
         }
+        const meanings = it.meanings || [];
+        for (const meaning of meanings) {
+            if ((meaning.headword || '').toLowerCase() === target) {
+                return it.id || (window.getWordId ? window.getWordId(it) : null);
+            }
+        }
+    }
+    return null;
+}
+
+function synonymExternalLookup(word) {
+    const links = config.languages?.[selectedLanguage]?.referenceLinks || {};
+    const named = [
+        ['wordReference', 'WordReference'],
+        ['spanishDict', 'SpanishDict'],
+        ['reverso', 'Reverso'],
+    ];
+    for (const [key, label] of named) {
+        const template = links[key];
+        if (!template) continue;
+        return {
+            label,
+            url: String(template).replaceAll('{word}', encodeURIComponent((word || '').toLowerCase())),
+        };
     }
     return null;
 }
@@ -7502,10 +7526,9 @@ function jumpToSynonym(word) {
         window.popupFoundWord({ id }, { reopenSearchOnBack: false, startFlipped: true });
         return;
     }
-    // No card available — SpanishDict is the fallback, but that leaves the
-    // app entirely, so confirm first instead of silently opening a new tab.
-    const url = `https://www.spanishdict.com/translate/${encodeURIComponent((word || '').toLowerCase())}`;
-    confirmLeaveForSpanishDict(word || '', url);
+    const lookup = synonymExternalLookup(word);
+    if (!lookup) return;
+    confirmLeaveForSynonymLookup(word || '', lookup);
 }
 
 // Leave-the-app confirmation for synonyms with no card in the deck. Reuses the
@@ -7542,7 +7565,7 @@ function ensureSynLeaveConfirmModal() {
                 <button type="button" class="knowledge-overview-close" aria-label="Cancel" data-syn-leave="cancel">&times;</button>
             </div>
             <p class="syn-leave-body">This word isn't in your deck, so there's no card to open.
-                Continuing leaves the app and opens SpanishDict in a new tab.</p>
+                Continuing leaves the app and opens <span class="syn-leave-destination">the dictionary</span> in a new tab.</p>
             <div class="syn-leave-actions">
                 <button type="button" class="auth-cancel-btn" data-syn-leave="cancel">Cancel</button>
                 <button type="button" class="auth-submit-btn" data-syn-leave="continue">Continue</button>
@@ -7582,15 +7605,21 @@ function closeSynLeaveConfirm() {
     }, 180);
 }
 
-function confirmLeaveForSpanishDict(word, url) {
+function confirmLeaveForSynonymLookup(word, lookup) {
     const modal = ensureSynLeaveConfirmModal();
-    _synLeaveTargetUrl = url;
+    _synLeaveTargetUrl = lookup.url;
     modal.querySelector('.syn-leave-word').textContent = word;
+    const dest = modal.querySelector('.syn-leave-destination');
+    if (dest) dest.textContent = lookup.label;
     modal.hidden = false;
     // Capture phase: the card's global keyboard shortcuts must not act on the
     // Escape that dismisses this dialog.
     document.addEventListener('keydown', _synLeaveKeydown, true);
     modal.querySelector('[data-syn-leave="continue"]')?.focus();
+}
+
+function confirmLeaveForSpanishDict(word, url) {
+    confirmLeaveForSynonymLookup(word, { label: 'SpanishDict', url });
 }
 
 function isJstOwner() {
