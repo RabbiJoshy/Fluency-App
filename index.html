@@ -829,6 +829,20 @@
                         autocomplete="off"
                         autocapitalize="characters"
                     />
+                    <div class="auth-password-group" style="margin-top: 12px; text-align: left;">
+                        <label for="userPassword" id="userPasswordLabel" class="auth-input-label">Password <span class="auth-optional-tag" style="font-weight: normal; opacity: 0.7;">(optional)</span></label>
+                        <input
+                            type="password"
+                            id="userPassword"
+                            class="initials-input auth-password-input"
+                            placeholder="Optional password"
+                            autocomplete="current-password"
+                            style="letter-spacing: normal; font-size: 16px; text-transform: none;"
+                        />
+                        <p class="auth-password-hint" style="font-size: 11px; line-height: 1.4; opacity: 0.75; margin-top: 6px; margin-bottom: 0;">
+                            You can skip this and just use initials. You will be remembered on this device and can use it across devices, but without any protection.
+                        </p>
+                    </div>
                     <div class="login-form-actions">
                         <button class="auth-submit-btn" id="submitInitialsBtn" type="button" onclick="window.fluencyAuthFallback.submit()">Continue</button>
                         <button class="auth-cancel-btn" id="cancelLoginBtn" type="button" onclick="window.fluencyAuthFallback.cancelLogin()">← Back</button>

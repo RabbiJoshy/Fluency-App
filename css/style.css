@@ -5214,10 +5214,33 @@
         }
         /* Bare glyphs, no plate behind them: every tile icon inherits the
            tile's colour and shares one size so the row reads as a set. */
+        .ref-tile-icon-wrap {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
         .ref-tile-icon {
             width: 39px;
             height: 39px;
             flex: 0 0 auto;
+        }
+        .ref-tile-count-badge {
+            position: absolute;
+            top: -2px;
+            right: -6px;
+            min-width: 17px;
+            height: 17px;
+            padding: 0 4px;
+            border-radius: 9px;
+            background: var(--accent-primary, #6366f1);
+            color: #fff;
+            font-size: 10.5px;
+            font-weight: 700;
+            line-height: 17px;
+            text-align: center;
+            pointer-events: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
         }
         .ref-tile-label {
             font-size: 13.5px;

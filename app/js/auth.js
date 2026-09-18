@@ -205,18 +205,40 @@ function hideLoginForm() {
     document.querySelector('#authModal .auth-modal-content')?.classList.remove('is-login-form');
     document.getElementById('loginForm').classList.add('hidden');
     document.getElementById('userInitials').value = '';
+    const pwd = document.getElementById('userPassword');
+    if (pwd) pwd.value = '';
 }
 
 // Submit initials and login
 async function submitLogin() {
     const initials = document.getElementById('userInitials').value.trim().toUpperCase();
+    const passwordInput = document.getElementById('userPassword');
+    const password = (passwordInput?.value || '').trim();
 
     if (initials.length < 2 || initials.length > 4 || !/^[A-Z]+$/.test(initials)) {
         alert('Please enter 2-4 letters (A-Z only)');
         return;
     }
 
-    currentUser = { initials: initials, isGuest: false };
+    const savedPasswordKey = `auth_pwd_${initials}`;
+    const storedPassword = localStorage.getItem(savedPasswordKey);
+
+    if (storedPassword) {
+        if (!password) {
+            alert(`A password is set for initials ${initials}. Please enter your password to continue.`);
+            passwordInput?.focus();
+            return;
+        }
+        if (password !== storedPassword) {
+            alert(`Incorrect password for initials ${initials}. Please try again.`);
+            passwordInput?.focus();
+            return;
+        }
+    } else if (password) {
+        localStorage.setItem(savedPasswordKey, password);
+    }
+
+    currentUser = { initials: initials, isGuest: false, hasPassword: Boolean(password || storedPassword) };
     localStorage.setItem('flashcardUser', JSON.stringify(currentUser));
     showUserInfo();
     hideAuthModal();
@@ -1641,16 +1663,39 @@ function setupAuthEventListeners() {
     // Enter key in initials input
     document.getElementById('userInitials').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
+            const pwd = document.getElementById('userPassword');
+            if (pwd && !pwd.value.trim()) {
+                const initials = e.target.value.trim().toUpperCase();
+                if (localStorage.getItem(`auth_pwd_${initials}`)) {
+                    pwd.focus();
+                    return;
+                }
+            }
             submitLogin();
         }
     });
 
-    // Enable/disable submit button based on input
+    // Enter key in password input
+    document.getElementById('userPassword')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            submitLogin();
+        }
+    });
+
+    // Enable/disable submit button based on input, and reflect password requirement
     document.getElementById('userInitials').addEventListener('input', (e) => {
-        const initials = e.target.value.trim();
+        const initials = e.target.value.trim().toUpperCase();
         const submitBtn = document.getElementById('submitInitialsBtn');
-        const isValid = initials.length >= 2 && initials.length <= 4 && /^[A-Za-z]+$/.test(initials);
+        const isValid = initials.length >= 2 && initials.length <= 4 && /^[A-Z]+$/.test(initials);
         submitBtn.disabled = !isValid;
+
+        const pwdLabel = document.getElementById('userPasswordLabel');
+        if (pwdLabel) {
+            const hasStored = isValid && Boolean(localStorage.getItem(`auth_pwd_${initials}`));
+            pwdLabel.innerHTML = hasStored
+                ? 'Password <span class="auth-optional-tag" style="color: var(--accent-primary); font-weight: 600;">(required)</span>'
+                : 'Password <span class="auth-optional-tag" style="font-weight: normal; opacity: 0.7;">(optional)</span>';
+        }
     });
 
     // Clear level estimate button
