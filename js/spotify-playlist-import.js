@@ -658,6 +658,9 @@ function activatePlaylistLiveStudy(language) {
     } catch (_) {}
     window.showAppLoading?.('Opening your live deck', `${deck.playlistName} · ${deck.matchedCount} words`);
     sessionStorage.setItem('fluencyPendingSpeechLanguage', language);
+    sessionStorage.setItem('fluencyPendingLiveStudy', '1');
+    window.invalidatePreparedSetupVocabulary?.();
+    window.invalidateLyricsSourceCaches?.(language);
     const liveTab = document.querySelector(`.lang-tab[data-lang="${CSS.escape(language)}"]`);
     if (liveTab && !liveTab.disabled) liveTab.click();
     else window.hideAppLoading?.();
