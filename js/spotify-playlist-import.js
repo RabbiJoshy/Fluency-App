@@ -19,6 +19,8 @@ let _matchState = null;
 let _liveState = null;
 let _importAbort = null;
 let _importMode = 'filter';
+let _importBusy = false;
+let _ignoreBackdropUntil = 0;
 
 function element(id) {
     return document.getElementById(id);
@@ -143,13 +145,18 @@ async function searchLrclib(track, signal) {
     return response.json();
 }
 
-function resetProgressUi() {
+function resetProgressUi({ keepVisible = false } = {}) {
     const progress = element('spotifyPlaylistProgress');
     const log = element('spotifyPlaylistLog');
-    progress?.classList.add('hidden');
+    progress?.classList.toggle('hidden', !keepVisible);
     progress?.classList.remove('is-complete');
     if (log) log.replaceChildren();
     renderProgress(0, 0, []);
+}
+
+function setImportBusy(busy) {
+    _importBusy = Boolean(busy);
+    element('spotifyPlaylistModal')?.classList.toggle('is-importing', _importBusy);
 }
 
 function renderProgress(done, total, activeLabels) {
@@ -406,7 +413,11 @@ function renderPlaylistList(playlists, onSelect) {
         small.textContent = `${playlist.trackCount} track${playlist.trackCount === 1 ? '' : 's'}`;
         copy.appendChild(small);
         button.appendChild(copy);
-        button.addEventListener('click', () => onSelect(playlist, button));
+        button.addEventListener('click', event => {
+            event.preventDefault();
+            event.stopPropagation();
+            onSelect(playlist, button);
+        });
         fragment.appendChild(button);
     }
     list.appendChild(fragment);
@@ -435,6 +446,8 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
     _importAbort = null;
     useBtn.hidden = true;
     if (liveBtn) liveBtn.hidden = true;
+    setImportBusy(false);
+    _ignoreBackdropUntil = Date.now() + 600;
     resetProgressUi();
     const title = element('spotifyPlaylistTitle');
     const intro = element('spotifyPlaylistIntro');
@@ -483,7 +496,13 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
         _liveState = null;
         useBtn.hidden = true;
         if (liveBtn) liveBtn.hidden = true;
-        resetProgressUi();
+        setImportBusy(true);
+        _ignoreBackdropUntil = Date.now() + 800;
+        resetProgressUi({ keepVisible: _importMode === 'live' });
+        if (_importMode === 'live') {
+            const nowEl = element('spotifyPlaylistNow');
+            if (nowEl) nowEl.textContent = `Loading tracks from "${playlist.name}"…`;
+        }
         button.disabled = true;
         element('spotifyPlaylistList').classList.add('hidden');
         status.textContent = `Loading tracks from "${playlist.name}"…`;
@@ -558,9 +577,14 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
             confirmSpotifyLiveDeck();
         } catch (error) {
             if (error?.name === 'AbortError') return;
+            setImportBusy(false);
             element('spotifyPlaylistList').classList.remove('hidden');
+            element('spotifyPlaylistProgress')?.classList.add('hidden');
             status.textContent = error?.message || 'Could not look up that playlist.';
         } finally {
+            if (!element('spotifyPlaylistModal')?.classList.contains('hidden') && !_liveState) {
+                setImportBusy(false);
+            }
             button.disabled = false;
         }
     });
@@ -569,15 +593,40 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
 function closeSpotifyPlaylistImport() {
     _importAbort?.abort();
     _importAbort = null;
+    setImportBusy(false);
     element('spotifyPlaylistModal')?.classList.add('hidden');
     _matchState = null;
     _liveState = null;
 }
 
+function activatePlaylistLiveStudy(language) {
+    const deck = window.playlistLiveDeck?.();
+    if (!deck?.matchedCount || !language) return;
+    document.body.classList.add('playlist-live-mode');
+    const sourceName = document.getElementById('selectedSourceInline');
+    if (sourceName && deck.playlistName) {
+        sourceName.textContent = `Live · ${deck.playlistName}`;
+    }
+    try {
+        const url = new URL(window.location.href);
+        url.searchParams.set('playlistLive', '1');
+        url.searchParams.set('language', language);
+        history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+    } catch (_) {}
+    window.showAppLoading?.('Opening your live deck', `${deck.playlistName} · ${deck.matchedCount} words`);
+    sessionStorage.setItem('fluencyPendingSpeechLanguage', language);
+    const liveTab = document.querySelector(`.lang-tab[data-lang="${CSS.escape(language)}"]`);
+    if (liveTab && !liveTab.disabled) liveTab.click();
+    else window.hideAppLoading?.();
+}
+
 function confirmSpotifyLiveDeck() {
     if (!_liveState) return;
-    window.showAppLoading?.('Opening your live deck', `${_liveState.playlistName} · ${_liveState.matchedCount} words`, true);
-    window.location.href = `${window.location.pathname}?playlistLive=1&language=${encodeURIComponent(_liveState.language)}`;
+    const language = _liveState.language;
+    setImportBusy(false);
+    element('spotifyPlaylistModal')?.classList.add('hidden');
+    _importAbort = null;
+    activatePlaylistLiveStudy(language);
 }
 
 function confirmSpotifyMatches() {
@@ -603,7 +652,9 @@ function setupSpotifyPlaylistImport() {
     element('useSpotifyMatchesBtn')?.addEventListener('click', confirmSpotifyMatches);
     element('useSpotifyLiveBtn')?.addEventListener('click', confirmSpotifyLiveDeck);
     modal.addEventListener('click', event => {
-        if (event.target === modal) closeSpotifyPlaylistImport();
+        if (event.target !== modal) return;
+        if (_importBusy || Date.now() < _ignoreBackdropUntil) return;
+        closeSpotifyPlaylistImport();
     });
     document.addEventListener('keydown', event => {
         if (event.key === 'Escape' && !modal.classList.contains('hidden')) closeSpotifyPlaylistImport();

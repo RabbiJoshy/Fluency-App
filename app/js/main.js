@@ -19,7 +19,7 @@ import './fast-mode.js?v=20260916a';
 import './extras.js?v=20260916a';
 import './song-sets.js?v=20260823ae';
 import './playlist-live.js?v=20260918g';
-import './spotify-playlist-import.js?v=20260918g';
+import './spotify-playlist-import.js?v=20260918h';
 import './vocabulary-import.js?v=20260913a';
 import './flashcards.js?v=20260918a';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
@@ -1123,6 +1123,7 @@ function closeChoiceSheet(id) {
     if (overlay._choiceSheetKeyHandler) {
         document.removeEventListener('keydown', overlay._choiceSheetKeyHandler);
     }
+    overlay.style.pointerEvents = 'none';
     overlay.classList.remove('is-open');
     setTimeout(() => overlay.remove(), 180);
 }
