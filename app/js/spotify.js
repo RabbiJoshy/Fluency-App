@@ -126,11 +126,12 @@ async function _prepareAuth() {
     return { clientId, redirectUri, verifier, challenge };
 }
 
-function spotifyLogin(pendingTrackId, pendingPositionMs, authPopup = null) {
+function spotifyLogin(pendingTrackId, pendingPositionMs, authPopup = null, options = {}) {
     return new Promise(async (resolve) => {
         const clientId = window._spotifyClientId;
         // See _prepareAuth() above — always derive from the current origin.
         const redirectUri = new URL('callback.html', window.location.href).href;
+        const showDialog = options.showDialog === true;
 
         if (!clientId) {
             authPopup?.close();
@@ -182,6 +183,7 @@ function spotifyLogin(pendingTrackId, pendingPositionMs, authPopup = null) {
                 code_challenge: auth.challenge,
                 state: stateB64
             });
+            if (showDialog) params.set('show_dialog', 'true');
 
             _debugLog('Redirecting to Spotify auth...');
             window.location.href = `https://accounts.spotify.com/authorize?${params}`;
@@ -210,6 +212,7 @@ function spotifyLogin(pendingTrackId, pendingPositionMs, authPopup = null) {
             code_challenge: challenge,
             state: stateB64
         });
+        if (showDialog) params.set('show_dialog', 'true');
 
         const authUrl = `https://accounts.spotify.com/authorize?${params}`;
         const popup = authPopup
@@ -396,11 +399,61 @@ async function fetchSpotifyPlaylists() {
 
 // Full playlist tracks (id, title, artists, album, duration) for lyrics lookup.
 // Local files, episodes and removed items have no usable track id and are skipped.
-function _withSpotifyMarket(url) {
-    const parsed = new URL(url, 'https://api.spotify.com');
-    if (!parsed.searchParams.has('market')) parsed.searchParams.set('market', 'from_token');
-    if (!parsed.searchParams.has('limit')) parsed.searchParams.set('limit', '100');
-    return parsed.toString();
+function _spotifyPlaylistId(playlistId) {
+    return String(playlistId || '').replace(/^spotify:playlist:/i, '').split('?')[0].trim();
+}
+
+function _spotifyTrackUrlVariants(playlistId, tracksHref) {
+    const id = encodeURIComponent(_spotifyPlaylistId(playlistId));
+    const variants = [];
+    const add = url => {
+        if (url && !variants.includes(url)) variants.push(url);
+    };
+    add(tracksHref);
+    add(`https://api.spotify.com/v1/playlists/${id}/tracks?limit=100`);
+    add(`https://api.spotify.com/v1/playlists/${id}/tracks?limit=100&additional_types=track`);
+    add(`https://api.spotify.com/v1/playlists/${id}/tracks?limit=100&market=from_token`);
+    if (tracksHref) {
+        try {
+            const withMarket = new URL(tracksHref, 'https://api.spotify.com');
+            withMarket.searchParams.set('market', 'from_token');
+            add(withMarket.toString());
+        } catch (_) {}
+    }
+    return variants;
+}
+
+async function fetchSpotifyPlaylistTracks(playlistId, { tracksHref } = {}) {
+    const id = _spotifyPlaylistId(playlistId);
+    let lastError = null;
+    for (const startUrl of _spotifyTrackUrlVariants(id, tracksHref)) {
+        try {
+            return await _readSpotifyTrackPages(startUrl);
+        } catch (error) {
+            lastError = error;
+            if (!/403|forbidden|blocked|refused|scope/i.test(error?.message || '')) throw error;
+        }
+    }
+    for (const playlistUrl of [
+        `https://api.spotify.com/v1/playlists/${encodeURIComponent(id)}`,
+        `https://api.spotify.com/v1/playlists/${encodeURIComponent(id)}?market=from_token`
+    ]) {
+        const playlist = await _spotifyApiFetch(playlistUrl, { allowReauth: false }).catch(error => {
+            lastError = error;
+            return null;
+        });
+        if (!playlist?.tracks) continue;
+        const tracks = _tracksFromSpotifyItems(playlist.tracks.items);
+        if (playlist.tracks.next) {
+            try {
+                tracks.push(...await _readSpotifyTrackPages(playlist.tracks.next));
+            } catch (error) {
+                lastError = error;
+            }
+        }
+        if (tracks.length) return tracks;
+    }
+    throw lastError || new Error('Spotify blocked this playlist. Personalized mixes often cannot be read — pick a playlist you created.');
 }
 
 function _tracksFromSpotifyItems(items) {
@@ -429,37 +482,6 @@ async function _readSpotifyTrackPages(startUrl) {
         url = page.next || page.tracks?.next || null;
     }
     return tracks;
-}
-
-async function fetchSpotifyPlaylistTracks(playlistId, { tracksHref } = {}) {
-    const attempts = [...new Set([
-        tracksHref && _withSpotifyMarket(tracksHref),
-        _withSpotifyMarket(`https://api.spotify.com/v1/playlists/${encodeURIComponent(playlistId)}/tracks`)
-    ].filter(Boolean))];
-    let lastError = null;
-    for (const startUrl of attempts) {
-        try {
-            return await _readSpotifyTrackPages(startUrl);
-        } catch (error) {
-            lastError = error;
-            if (!/403|forbidden|blocked|refused|scope/i.test(error?.message || '')) throw error;
-        }
-    }
-    const playlist = await _spotifyApiFetch(
-        `https://api.spotify.com/v1/playlists/${encodeURIComponent(playlistId)}?market=from_token`,
-        { allowReauth: false }
-    ).catch(error => {
-        lastError = error;
-        return null;
-    });
-    if (playlist?.tracks) {
-        const tracks = _tracksFromSpotifyItems(playlist.tracks.items);
-        if (playlist.tracks.next) {
-            tracks.push(...await _readSpotifyTrackPages(playlist.tracks.next));
-        }
-        if (tracks.length) return tracks;
-    }
-    throw lastError || new Error('Spotify blocked this playlist. Personalized mixes often cannot be read — pick a playlist you created.');
 }
 
 // Returns the set of Spotify track IDs in a playlist, used to match against

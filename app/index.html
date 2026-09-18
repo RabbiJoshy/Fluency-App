@@ -47,7 +47,7 @@
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260918j">
+    <link rel="modulepreload" href="js/main.js?v=20260918k">
     <link rel="modulepreload" href="js/theme.js?v=20260825ak">
     <link rel="modulepreload" href="js/state.js?v=20260917a">
     <link rel="modulepreload" href="js/data-contracts.js?v=20260825ak">
@@ -63,11 +63,11 @@
     <link rel="modulepreload" href="js/progress.js?v=20260917j">
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20260915a">
-    <link rel="modulepreload" href="js/ui.js?v=20260918j">
+    <link rel="modulepreload" href="js/ui.js?v=20260918k">
     <link rel="modulepreload" href="js/vocab.js?v=20260918f">
     <link rel="modulepreload" href="js/song-sets-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/song-sets.js?v=20260823ae">
-    <link rel="modulepreload" href="js/spotify-playlist-import.js?v=20260918j">
+    <link rel="modulepreload" href="js/spotify-playlist-import.js?v=20260918k">
     <link rel="modulepreload" href="js/playlist-live.js?v=20260918g">
     <link rel="modulepreload" href="js/vocabulary-import-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/vocabulary-import.js?v=20260913a">
@@ -1464,6 +1464,7 @@
             <p id="spotifyPlaylistStatus" class="vocabulary-import-status" role="status" aria-live="polite"></p>
             <div class="song-set-footer">
                 <button type="button" id="cancelSpotifyPlaylistBtn" class="secondary-btn">Cancel</button>
+                <button type="button" id="reconnectSpotifyPlaylistBtn" class="secondary-btn" hidden>Reconnect Spotify</button>
                 <button type="button" id="useSpotifyMatchesBtn" hidden>Build deck from matches</button>
                 <button type="button" id="useSpotifyLiveBtn" hidden>Study live deck</button>
             </div>
@@ -1900,6 +1901,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260918j"></script>
+    <script type="module" src="js/main.js?v=20260918k"></script>
 </body>
 </html>
