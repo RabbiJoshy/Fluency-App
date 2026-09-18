@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v461"
+EXPECTED_CACHE_NAME = "flashcards-v462"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -672,7 +672,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260918a", worker)
-        self.assertIn("/js/main.js?v=20260918g", worker)
+        self.assertIn("/js/main.js?v=20260918h", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -779,11 +779,14 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("function fetchSpotifyPlaylistTracks", spotify)
         self.assertIn(".playlist-lyrics-percent", css)
         self.assertIn(".playlist-lyrics-bar-fill", css)
-        self.assertIn("/js/spotify-playlist-import.js?v=20260918g", worker)
-        self.assertIn('css/style.css?v=20260918g', html)
+        self.assertIn("event.stopPropagation()", importer)
+        self.assertIn("history.replaceState", importer)
+        self.assertIn("_importBusy", importer)
+        self.assertIn("/js/spotify-playlist-import.js?v=20260918h", worker)
+        self.assertIn('css/style.css?v=20260918h', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
-        self.assertIn("playlistLive=1", importer)
+        self.assertIn("searchParams.set('playlistLive'", importer)
 
     def test_live_playlist_joins_naive_tokens_to_speech_vocab(self) -> None:
         live = (APP_ROOT / "js" / "playlist-live.js").read_text(encoding="utf-8")

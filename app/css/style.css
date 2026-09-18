@@ -10532,6 +10532,12 @@
         #spotifyPlaylistModal {
             z-index: 2100;
         }
+        #spotifyPlaylistModal.is-importing {
+            pointer-events: auto;
+        }
+        #spotifyPlaylistModal .modal-content {
+            pointer-events: auto;
+        }
         .song-set-footer {
             display: flex;
             justify-content: flex-end;
