@@ -1313,22 +1313,23 @@ function rememberLyricsReleaseVocabulary(indexPath, data) {
 async function fetchAndJoinIndex(langConfig) {
     const indexPath = langConfig.indexPath || langConfig.dataPath;
 
+    const cacheKey = window.playlistLiveActive?.() ? `${indexPath}:playlist-live` : indexPath;
     // Preserve the legacy active-source pointers for search/modal consumers,
     // while retaining other sources in the path-keyed cache.
-    if (window._cachedJoinedIndex && window._cachedJoinedIndexPath === indexPath) {
+    if (window._cachedJoinedIndex && window._cachedJoinedIndexPath === cacheKey) {
         rememberLyricsReleaseVocabulary(indexPath, window._cachedJoinedIndex);
         return window._cachedJoinedIndex;
     }
-    if (joinedIndexCacheByPath.has(indexPath)) {
-        const cached = joinedIndexCacheByPath.get(indexPath);
+    if (joinedIndexCacheByPath.has(cacheKey)) {
+        const cached = joinedIndexCacheByPath.get(cacheKey);
         window._cachedJoinedIndex = cached;
-        window._cachedJoinedIndexPath = indexPath;
+        window._cachedJoinedIndexPath = cacheKey;
         rememberLyricsReleaseVocabulary(indexPath, cached);
         return cached;
     }
 
     let data = null;
-    if (!activeArtist) {
+    if (!activeArtist && !window.playlistLiveActive?.()) {
         try {
             data = await loadColumnarIndex(langConfig, indexPath);
         } catch (error) {
@@ -1364,8 +1365,8 @@ async function fetchAndJoinIndex(langConfig) {
     validateVocabularyIndex(data, { source: indexPath });
 
     window._cachedJoinedIndex = data;
-    window._cachedJoinedIndexPath = indexPath;
-    joinedIndexCacheByPath.set(indexPath, data);
+    window._cachedJoinedIndexPath = cacheKey;
+    joinedIndexCacheByPath.set(cacheKey, data);
     rememberLyricsReleaseVocabulary(indexPath, data);
     return data;
 }
@@ -2236,8 +2237,11 @@ async function loadVocabularyData(rangeString, opts = {}) {
         // Fat index rows belong to the twenty cards in this set, not the
         // language-pick payload. Examples stay on the same study-set shards.
         const ranks = filteredData.map(item => Number(item.rank));
-        await ensureIndexRowsForRange(langConfig, rangeStart, rangeEnd, ranks);
+        if (!window.playlistLiveActive?.()) {
+            await ensureIndexRowsForRange(langConfig, rangeStart, rangeEnd, ranks);
+        }
         filteredData = filteredData.filter(item => {
+            if (window.playlistLiveActive?.()) return true;
             const allowsRawArtistCard = activeArtist && (
                 artistVocabularyScope === 'extra' || Number(item.corpus_count) <= 1
             );
@@ -2257,7 +2261,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
             return false;
         }
         let allCorpusExamples = [];
-        if (langConfig.examplesPath) {
+        if (langConfig.examplesPath && !window.playlistLiveActive?.()) {
             await ensureExamplesForRange(langConfig, rangeStart, rangeEnd, ranks);
             const examplesData = window._cachedExamplesData;
             if (examplesData) {

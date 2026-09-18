@@ -11,15 +11,15 @@ import './estimation.js?v=20260825ak';
 import './config.js?v=20260916f';
 import './progress.js?v=20260917j';
 import './knowledge.js?v=20260915a';
-import './ui.js?v=20260918m';
-import './vocab.js?v=20260918f';
+import './ui.js?v=20260919a';
+import './vocab.js?v=20260919a';
 import './cognates.js?v=20260914e';
 import './coverage.js?v=20260909a';
 import './fast-mode.js?v=20260916a';
 import './extras.js?v=20260916a';
 import './song-sets.js?v=20260823ae';
-import './playlist-live.js?v=20260918h';
-import './spotify-playlist-import.js?v=20260918m';
+import './playlist-live.js?v=20260919a';
+import './spotify-playlist-import.js?v=20260919a';
 import './vocabulary-import.js?v=20260913a';
 import './flashcards.js?v=20260918b';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
@@ -219,6 +219,7 @@ function bindArtistCatalogToRelease(catalog, requestedReleaseId = '') {
     }
     return catalog;
 }
+let activeArtist = null;
 // Slugs of artists currently selected for multi-artist merge
 let selectedArtistSlugs = [];
 const CUSTOM_ARTIST_SLUG = 'custom';
@@ -339,6 +340,12 @@ perfMark('after resolveArtist');
 // Expose for use by ui.js artist selection
 window._allArtistsConfig = allArtistsConfig;
 window._selectedArtistSlugs = selectedArtistSlugs;
+window.resetActiveArtist = () => {
+    activeArtist = null;
+    window._urlArtistSlug = null;
+    selectedArtistSlugs = [];
+    window._selectedArtistSlugs = [];
+};
 
 // Add artist mode class to body and load albums dictionary
 if (activeArtist) {
@@ -1134,25 +1141,27 @@ window.showChoiceSheet = showChoiceSheet;
 window.closeChoiceSheet = closeChoiceSheet;
 
 function showAvailableMusicPicker(artists) {
-    const pickerLanguage = Object.values(artists)[0]?.language || 'spanish';
-    const entries = Object.entries(artists).map(([slug, cfg]) => ({
+    const pickerLanguage = Object.values(artists || {})[0]?.language || 'spanish';
+    const entries = Object.entries(artists || {}).map(([slug, cfg]) => ({
         label: cfg.name,
         description: 'Build a set from this artist’s available songs.',
         image: artistPickerImage(cfg),
         fallbackText: artistInitials(cfg.name),
         accent: (cfg.colorTheme && cfg.colorTheme.primary) || 'var(--accent-primary)',
         onSelect: () => {
+            window.clearPlaylistLiveSession?.();
             showAppLoading(`Loading ${cfg.name}`, 'Preparing lyrics, levels and progress…', true);
             window.location.href = `${window.location.pathname}?artist=${slug}`;
         }
     }));
-    if (Object.values(artists).some(cfg => cfg.songsPath)) {
+    if (Object.values(artists || {}).some(cfg => cfg.songsPath)) {
         entries.push({
             label: 'Choose individual songs',
             description: 'Build a mix from the songs currently available in Fluency.',
             iconHTML: customSongsIcon(),
             accent: '#10B981',
             onSelect: () => {
+                window.clearPlaylistLiveSession?.();
                 showAppLoading('Opening your songs', 'Combining the available Lyrics catalogues…', true);
                 window.location.href = `${window.location.pathname}?artist=${CUSTOM_ARTIST_SLUG}&language=${encodeURIComponent(pickerLanguage)}`;
             }
@@ -1168,10 +1177,36 @@ function showAvailableMusicPicker(artists) {
     });
 }
 
+async function ensureArtistCatalog() {
+    if (allArtistsConfig && Object.keys(allArtistsConfig).length > 0) {
+        return allArtistsConfig;
+    }
+    try {
+        const response = await fetch(artistCatalogUrl(), { cache: 'no-store' });
+        if (!response.ok) throw new Error(`Artist catalog HTTP ${response.status}`);
+        const value = await response.json();
+        allArtistsConfig = bindArtistCatalogToRelease(
+            validateArtistCatalog(value, { source: 'config/artists.json' }),
+            requestedLyricsRelease()
+        );
+        window._allArtistsConfig = allArtistsConfig;
+    } catch (error) {
+        console.warn('Could not load lyric artists:', error);
+        allArtistsConfig = {};
+    }
+    return allArtistsConfig;
+}
+
 // Music setup begins with the source method, then opens the growing catalogue.
-function showArtistPicker(anchorBtn, artists, targetLanguage = null) {
-    const hasAvailableMusic = Object.keys(artists || {}).length > 0;
+async function showArtistPicker(anchorBtn, artists, targetLanguage = null) {
+    let resolvedArtists = artists;
     const language = targetLanguage || Object.values(artists || {})[0]?.language || selectedLanguage || 'spanish';
+    if (!resolvedArtists || Object.keys(resolvedArtists).length === 0) {
+        const catalog = await ensureArtistCatalog();
+        resolvedArtists = Object.fromEntries(Object.entries(catalog || {}).filter(([, cfg]) =>
+            (cfg.language || 'spanish') === language));
+    }
+    const hasAvailableMusic = Object.keys(resolvedArtists || {}).length > 0;
     showChoiceSheet({
         id: 'lyricsSourceSheet',
         ariaLabel: 'Choose how to add music',
@@ -1187,7 +1222,10 @@ function showArtistPicker(anchorBtn, artists, targetLanguage = null) {
                 fallbackText: '♫',
                 accent: 'var(--accent-primary)',
                 disabled: !hasAvailableMusic,
-                onSelect: () => showAvailableMusicPicker(artists)
+                onSelect: () => {
+                    window.clearPlaylistLiveSession?.();
+                    showAvailableMusicPicker(resolvedArtists);
+                }
             },
             {
                 label: 'Match a Spotify playlist',
@@ -1197,14 +1235,17 @@ function showArtistPicker(anchorBtn, artists, targetLanguage = null) {
                 fallbackText: '∩',
                 accent: '#10B981',
                 disabled: !hasAvailableMusic,
-                onSelect: () => window.openSpotifyPlaylistImport?.(artists, language, { live: false })
+                onSelect: () => {
+                    window.clearPlaylistLiveSession?.();
+                    window.openSpotifyPlaylistImport?.(resolvedArtists, language, { live: false });
+                }
             },
             {
                 label: 'Live playlist',
                 description: 'Look up lyrics now and study a naive deck: speech meanings, your song lines, no sense tagging.',
                 fallbackText: '＋',
                 accent: '#F59E0B',
-                onSelect: () => window.openSpotifyPlaylistImport?.(artists, language, { live: true })
+                onSelect: () => window.openSpotifyPlaylistImport?.(resolvedArtists, language, { live: true })
             }
         ]
     });
@@ -1258,13 +1299,7 @@ function openLearningSourcePicker() {
                 selected: Boolean(activeArtist || window.playlistLiveActive?.()),
                 disabled: !lyricsAvailable,
                 onSelect: () => {
-                    if (!activeArtist && !window.playlistLiveActive?.()) {
-                        document.getElementById('standardSourcePickerBtn')?.click();
-                        return;
-                    }
-                    const matchingArtists = Object.fromEntries(Object.entries(allArtistsConfig || {}).filter(([, cfg]) =>
-                        (cfg.language || 'spanish') === language));
-                    showArtistPicker(null, matchingArtists, language);
+                    showArtistPicker(null, null, language);
                 }
             }
         ]
@@ -1277,25 +1312,8 @@ window.openLearningSourcePicker = openLearningSourcePicker;
 // the subsequent source choice. It loads only catalogue metadata until the
 // learner selects an exact artist or custom collection.
 async function showLyricsPicker(language, anchorBtn = null) {
-    let artists = allArtistsConfig;
-    try {
-        if (!artists) {
-            artists = await fetch(artistCatalogUrl(), { cache: 'no-store' }).then(response => {
-                if (!response.ok) throw new Error(`Artist catalog HTTP ${response.status}`);
-                return response.json();
-            }).then(value => bindArtistCatalogToRelease(
-                validateArtistCatalog(value, { source: 'config/artists.json' }),
-                requestedLyricsRelease()
-            ));
-            allArtistsConfig = artists;
-            window._allArtistsConfig = artists;
-        }
-    } catch (error) {
-        console.warn('Could not load lyric artists:', error);
-        artists = {};
-    }
-
-    const matchingArtists = Object.fromEntries(Object.entries(artists || {}).filter(([, cfg]) =>
+    const catalog = await ensureArtistCatalog();
+    const matchingArtists = Object.fromEntries(Object.entries(catalog || {}).filter(([, cfg]) =>
         (cfg.language || 'spanish') === language));
     showArtistPicker(anchorBtn, matchingArtists, language);
 }

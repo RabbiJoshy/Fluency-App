@@ -297,6 +297,11 @@ function applyPlaylistLiveVocabulary(items) {
 function clearPlaylistLiveSession() {
     _liveDeck = null;
     document.body.classList.remove('playlist-live-mode');
+    try {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('playlistLive');
+        history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+    } catch (_) {}
     window.invalidatePreparedSetupVocabulary?.();
 }
 

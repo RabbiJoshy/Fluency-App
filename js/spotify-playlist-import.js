@@ -654,6 +654,8 @@ function activatePlaylistLiveStudy(language) {
         const url = new URL(window.location.href);
         url.searchParams.set('playlistLive', '1');
         url.searchParams.set('language', language);
+        url.searchParams.delete('artist');
+        url.searchParams.delete('scope');
         history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
     } catch (_) {}
     window.showAppLoading?.('Opening your live deck', `${deck.playlistName} · ${deck.matchedCount} words`);
@@ -661,9 +663,15 @@ function activatePlaylistLiveStudy(language) {
     sessionStorage.setItem('fluencyPendingLiveStudy', '1');
     window.invalidatePreparedSetupVocabulary?.();
     window.invalidateLyricsSourceCaches?.(language);
+    window.resetActiveArtist?.();
     const liveTab = document.querySelector(`.lang-tab[data-lang="${CSS.escape(language)}"]`);
-    if (liveTab && !liveTab.disabled) liveTab.click();
-    else window.hideAppLoading?.();
+    if (liveTab && !liveTab.disabled) {
+        liveTab.click();
+    } else if (window.continueToSpeechAfterLive) {
+        window.continueToSpeechAfterLive();
+    } else {
+        window.hideAppLoading?.();
+    }
 }
 
 function confirmSpotifyLiveDeck() {
@@ -677,6 +685,7 @@ function confirmSpotifyLiveDeck() {
 
 function confirmSpotifyMatches() {
     if (!_matchState) return;
+    window.clearPlaylistLiveSession?.();
     const record = {
         songIds: _matchState.songIds,
         artistSlugs: _matchState.artistSlugs,
