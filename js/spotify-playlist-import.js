@@ -13,7 +13,8 @@ const DECK_STORE = 'decks';
 const LRCLIB_SEARCH = 'https://lrclib.net/api/search';
 const LRCLIB_CLIENT = 'Fluency playlist-import/0.1 (https://github.com/JoshuaThomasAmar/Fluency-Next)';
 const LOOKUP_CONCURRENCY = 6;
-const SPOTIFY_MODULE = './spotify.js?v=20260918a';
+const SPOTIFY_MODULE = './spotify.js?v=20260918i';
+const DISMISS_LOCK_MS = 1500;
 
 let _matchState = null;
 let _liveState = null;
@@ -152,6 +153,22 @@ function resetProgressUi({ keepVisible = false } = {}) {
     progress?.classList.remove('is-complete');
     if (log) log.replaceChildren();
     renderProgress(0, 0, []);
+}
+
+function setDismissLock(ms = DISMISS_LOCK_MS) {
+    _ignoreBackdropUntil = Date.now() + ms;
+    const modal = element('spotifyPlaylistModal');
+    modal?.classList.add('is-dismiss-locked');
+    const cancel = element('cancelSpotifyPlaylistBtn');
+    const close = element('closeSpotifyPlaylistModal');
+    if (cancel) cancel.disabled = true;
+    if (close) close.disabled = true;
+    window.clearTimeout(setDismissLock._timer);
+    setDismissLock._timer = window.setTimeout(() => {
+        modal?.classList.remove('is-dismiss-locked');
+        if (cancel) cancel.disabled = false;
+        if (close) close.disabled = false;
+    }, ms);
 }
 
 function setImportBusy(busy) {
@@ -497,14 +514,8 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
         useBtn.hidden = true;
         if (liveBtn) liveBtn.hidden = true;
         setImportBusy(true);
-        _ignoreBackdropUntil = Date.now() + 800;
-        resetProgressUi({ keepVisible: _importMode === 'live' });
-        if (_importMode === 'live') {
-            const nowEl = element('spotifyPlaylistNow');
-            if (nowEl) nowEl.textContent = `Loading tracks from "${playlist.name}"…`;
-        }
+        setDismissLock();
         button.disabled = true;
-        element('spotifyPlaylistList').classList.add('hidden');
         status.textContent = `Loading tracks from "${playlist.name}"…`;
         try {
             if (_importMode === 'filter') {
@@ -513,6 +524,7 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
                     window.fetchSpotifyPlaylistTrackIds(playlist.id)
                 ]);
                 if (abort.signal.aborted) return;
+                element('spotifyPlaylistList').classList.add('hidden');
                 const matches = catalog.songs.filter(song => song.spotifyTrackId && trackIds.has(song.spotifyTrackId));
                 if (!matches.length) {
                     element('spotifyPlaylistList').classList.remove('hidden');
@@ -533,10 +545,13 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
             const tracks = await window.fetchSpotifyPlaylistTracks(playlist.id);
             if (abort.signal.aborted) return;
             if (!tracks.length) {
-                element('spotifyPlaylistList').classList.remove('hidden');
                 status.textContent = `"${playlist.name}" has no playable Spotify tracks.`;
                 return;
             }
+            element('spotifyPlaylistList').classList.add('hidden');
+            resetProgressUi({ keepVisible: true });
+            const nowEl = element('spotifyPlaylistNow');
+            if (nowEl) nowEl.textContent = `Looking up lyrics for ${tracks.length} songs…`;
             status.textContent = `Looking up lyrics for ${tracks.length} songs…`;
             const { counts, lyricsCount, results } = await lookupPlaylistLyrics(playlist, tracks, abort.signal, language);
             if (abort.signal.aborted) return;
@@ -591,9 +606,12 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
 }
 
 function closeSpotifyPlaylistImport() {
+    if (Date.now() < _ignoreBackdropUntil) return;
     _importAbort?.abort();
     _importAbort = null;
     setImportBusy(false);
+    element('cancelSpotifyPlaylistBtn') && (element('cancelSpotifyPlaylistBtn').disabled = false);
+    element('closeSpotifyPlaylistModal') && (element('closeSpotifyPlaylistModal').disabled = false);
     element('spotifyPlaylistModal')?.classList.add('hidden');
     _matchState = null;
     _liveState = null;
@@ -657,7 +675,9 @@ function setupSpotifyPlaylistImport() {
         closeSpotifyPlaylistImport();
     });
     document.addEventListener('keydown', event => {
-        if (event.key === 'Escape' && !modal.classList.contains('hidden')) closeSpotifyPlaylistImport();
+        if (event.key !== 'Escape' || modal.classList.contains('hidden')) return;
+        if (_importBusy || Date.now() < _ignoreBackdropUntil) return;
+        closeSpotifyPlaylistImport();
     });
 }
 
