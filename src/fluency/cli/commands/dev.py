@@ -7,6 +7,7 @@ from fluency.cli.shared import (  # noqa: F401
     Path, argparse, json, os, re,
     _workspace_path,  # private names are not re-exported by the star import
 )
+from fluency.lyrics.playlist_live import store_playlist_live
 
 NAME = "dev"
 
@@ -19,10 +20,12 @@ class FluencyRequestHandler(SimpleHTTPRequestHandler):
         *args: object,
         directory: str,
         releases_directory: Path,
+        workspace_root: Path,
         audit_resolver: LyricsAuditResolver,
         **kwargs: object,
     ) -> None:
         self.releases_directory = releases_directory.resolve()
+        self.workspace_root = workspace_root.resolve()
         self.audit_resolver = audit_resolver
         super().__init__(*args, directory=directory, **kwargs)
 
@@ -50,6 +53,22 @@ class FluencyRequestHandler(SimpleHTTPRequestHandler):
             )
             return
         super().do_GET()
+
+    def do_POST(self) -> None:
+        request_path = unquote(urlsplit(self.path).path)
+        if request_path != "/api/playlist-live":
+            self.send_error(404)
+            return
+        try:
+            length = int(self.headers.get("Content-Length") or "0")
+            raw = self.rfile.read(length) if length else b"{}"
+            payload = json.loads(raw.decode("utf-8") or "{}")
+            saved = store_playlist_live(self.workspace_root, payload)
+            self._send_json(json.dumps({"success": True, "message": "saved", "data": saved}, separators=(",", ":")).encode())
+        except (OSError, ValueError, json.JSONDecodeError) as error:
+            self._send_json(
+                json.dumps({"success": False, "message": str(error)}, separators=(",", ":")).encode()
+            )
 
     def translate_path(self, path: str) -> str:
         request_path = unquote(urlsplit(path).path)
@@ -115,6 +134,7 @@ def serve_app(host: str, port: int, raw_workspace: str | None) -> None:
         FluencyRequestHandler,
         directory=str(app_directory),
         releases_directory=releases_directory,
+        workspace_root=workspace.root,
         audit_resolver=audit_resolver,
     )
     server = ThreadingHTTPServer((host, port), handler)

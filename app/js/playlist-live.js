@@ -146,6 +146,58 @@ async function buildPlaylistLiveDeck({ playlist, language, records }) {
     return deck;
 }
 
+async function savePlaylistLiveDeckToServer(deck) {
+    if (!deck) return { ok: false, skipped: true };
+    if (typeof window.postPlaylistLive === 'function') {
+        return window.postPlaylistLive('savePlaylistLiveDeck', {
+            language: deck.language,
+            playlistId: deck.playlistId,
+            playlistName: deck.playlistName,
+            deck
+        });
+    }
+    return { ok: false, skipped: true };
+}
+
+async function loadPlaylistLiveDeckFromServer(language) {
+    const user = window.currentUser;
+    if (!window.GOOGLE_SCRIPT_URL || !user || user.isGuest || !language) return null;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 20000);
+    try {
+        const response = await fetch(window.GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'loadPlaylistLiveDeck',
+                user: user.initials,
+                language
+            }),
+            signal: controller.signal
+        });
+        const json = await response.json().catch(() => null);
+        if (!response.ok || json?.success !== true) return null;
+        return json.data?.deck || null;
+    } catch (_) {
+        return null;
+    } finally {
+        clearTimeout(timeout);
+    }
+}
+
+async function cacheLiveDeck(deck) {
+    if (!deck) return;
+    const db = await openLiveDb();
+    try {
+        await idbRequest(db.transaction(DECK_STORE, 'readwrite').objectStore(DECK_STORE).put({
+            ...deck,
+            id: LIVE_DECK_ID
+        }));
+    } finally {
+        db.close();
+    }
+    _liveDeck = { ...deck, id: LIVE_DECK_ID };
+}
+
 async function preparePlaylistLiveSession(language) {
     const db = await openLiveDb();
     try {
@@ -156,6 +208,11 @@ async function preparePlaylistLiveSession(language) {
         }
     } finally {
         db.close();
+    }
+    const remote = await loadPlaylistLiveDeckFromServer(language);
+    if (remote && (!language || remote.language === language) && remote.matchedCount) {
+        await cacheLiveDeck(remote);
+        return _liveDeck;
     }
     _liveDeck = null;
     return null;
@@ -229,6 +286,7 @@ window.normalizePlaylistSurface = normalizeSurface;
 window.naiveLyricTokens = naiveLyricTokens;
 window.buildPlaylistLiveDeck = buildPlaylistLiveDeck;
 window.preparePlaylistLiveSession = preparePlaylistLiveSession;
+window.savePlaylistLiveDeckToServer = savePlaylistLiveDeckToServer;
 window.playlistLiveDeck = playlistLiveDeck;
 window.playlistLiveActive = playlistLiveActive;
 window.applyPlaylistLiveVocabulary = applyPlaylistLiveVocabulary;
