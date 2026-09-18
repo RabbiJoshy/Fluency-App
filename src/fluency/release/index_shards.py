@@ -17,7 +17,7 @@ COLUMNS_SCHEMA = "vocabulary-index-columns/v1"
 COLUMNS_NAME = "vocabulary.index.columns.json"
 SHARD_DIRECTORY = "vocabulary.index.rows"
 MANIFEST_NAME = "vocabulary.index.manifest.json"
-FAT_FIELDS = ("meanings", "unused_menu_senses", "wsd_distribution")
+FAT_FIELDS = ("meanings", "unused_menu_senses", "wsd_distribution", "synonyms", "antonyms")
 
 
 class IndexShardError(ValueError):

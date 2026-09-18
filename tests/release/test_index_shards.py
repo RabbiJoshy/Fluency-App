@@ -28,6 +28,7 @@ class IndexShardTests(unittest.TestCase):
                                     "metadata": {"heavy": True},
                                 }
                             ],
+                            "synonyms": [{"word": "um só"}],
                         },
                         {
                             "id": "bbbb0002",
@@ -80,7 +81,9 @@ class IndexShardTests(unittest.TestCase):
             self.assertEqual(columns["id"], ["aaaa0001", "bbbb0002"])
             self.assertEqual(columns["lemma"], ["um", "dois"])
             self.assertNotIn("meanings", columns)
+            self.assertNotIn("synonyms", columns)
             self.assertIn("meanings", first["aaaa0001"])
+            self.assertEqual(first["aaaa0001"]["synonyms"][0]["word"], "um só")
             self.assertTrue(first["aaaa0001"]["meanings"][0]["metadata"]["heavy"])
             self.assertNotIn("word", first["aaaa0001"])
             self.assertTrue((app / "vocabulary.index.json").is_file())

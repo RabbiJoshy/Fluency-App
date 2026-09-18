@@ -13,6 +13,7 @@ from typing import Any
 from fluency.core.artifacts import artifact_directory, verify_artifact
 from fluency.core.hashing import content_id
 from fluency.core.workspace import Workspace
+from fluency.enrichments.lexical_relations import apply_lexical_relations_to_index
 from fluency.release.app_compat import (
     APP_CONTRACT_VERSION,
     build_app_compatibility_assets,
@@ -52,6 +53,18 @@ def compose_release(workspace: Workspace, composition: dict[str, Any], deck: dic
     deck_bytes = json_bytes(deck)
     composition_bytes = json_bytes(composition)
     app_index, app_examples = build_app_compatibility_assets(deck)
+    lexical_selection = composition["layers"].get("lexical_relations")
+    if lexical_selection is not None:
+        metadata = verify_artifact(workspace, lexical_selection["artifact_id"])
+        if metadata.schema != "lexical-relations/v1":
+            raise ValueError("selected lexical-relations artifact has the wrong schema")
+        relations_path = artifact_directory(workspace, metadata.artifact_id) / metadata.filename
+        relations_layer = load_json_object(relations_path)
+        if relations_layer.get("language") != composition["language"]:
+            raise ValueError("selected lexical-relations artifact has the wrong language")
+        if relations_layer.get("inputs", {}).get("sense_menu_content_id") != composition["layers"]["sense_menu"]["artifact_id"]:
+            raise ValueError("selected lexical-relations artifact was built from another sense menu")
+        apply_lexical_relations_to_index(app_index, relations_layer)
     app_index_bytes = json_bytes(app_index)
     app_examples_bytes = json_bytes(app_examples)
     study_structure_bytes = json_bytes(deck["study_structure"])
