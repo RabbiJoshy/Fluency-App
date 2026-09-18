@@ -13,7 +13,7 @@ const DECK_STORE = 'decks';
 const LRCLIB_SEARCH = 'https://lrclib.net/api/search';
 const LRCLIB_CLIENT = 'Fluency playlist-import/0.1 (https://github.com/JoshuaThomasAmar/Fluency-Next)';
 const LOOKUP_CONCURRENCY = 6;
-const SPOTIFY_MODULE = './spotify.js?v=20260918k';
+const SPOTIFY_MODULE = './spotify.js?v=20260918l';
 const DISMISS_LOCK_MS = 1500;
 
 let _matchState = null;
@@ -427,7 +427,13 @@ function renderPlaylistList(playlists, onSelect) {
         title.textContent = playlist.name;
         copy.appendChild(title);
         const small = document.createElement('small');
-        small.textContent = `${playlist.trackCount} track${playlist.trackCount === 1 ? '' : 's'}`;
+        if (playlist.canReadItems === false) {
+            button.disabled = true;
+            button.classList.add('is-disabled');
+            small.textContent = 'Followed or Spotify mix — songs are hidden';
+        } else {
+            small.textContent = `${playlist.trackCount} track${playlist.trackCount === 1 ? '' : 's'}`;
+        }
         copy.appendChild(small);
         button.appendChild(copy);
         button.addEventListener('click', event => {
@@ -473,8 +479,8 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
     if (title) title.textContent = _importMode === 'live' ? 'Live playlist' : 'Match a Spotify playlist';
     if (intro) {
         intro.textContent = _importMode === 'live'
-            ? 'Choose a playlist. Fluency looks up lyrics, saves each song to your Fluency account, then builds a study deck from speech meanings plus your song lines.'
-            : 'Choose a playlist. Fluency keeps only the songs already in the published lyrics library.';
+            ? 'Choose a playlist you created. Spotify no longer lets apps read mixes or playlists you only follow. Fluency then looks up lyrics, saves each song to your Fluency account, and builds a study deck.'
+            : 'Choose a playlist you created. Fluency keeps only the songs already in the published lyrics library.';
     }
     element('spotifyPlaylistList').replaceChildren();
     element('spotifyPlaylistList').classList.remove('hidden');
@@ -504,8 +510,11 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
         return;
     }
     status.textContent = playlists.length
-        ? (_importMode === 'live' ? 'Choose a playlist to look up.' : 'Choose a playlist to match.')
+        ? (_importMode === 'live' ? 'Choose a playlist you created.' : 'Choose a playlist you created to match.')
         : 'No playlists found on this Spotify account.';
+    if (playlists.length && playlists.every(playlist => playlist.canReadItems === false)) {
+        status.textContent = 'Spotify listed playlists, but none are ones you own. Create a playlist in Spotify, then try again.';
+    }
 
     renderPlaylistList(playlists, async (playlist, button) => {
         _importAbort?.abort();
@@ -525,7 +534,10 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
             if (_importMode === 'filter') {
                 const [catalog, trackIds] = await Promise.all([
                     buildLanguageCatalog(matchingArtists),
-                    window.fetchSpotifyPlaylistTrackIds(playlist.id, { tracksHref: playlist.tracksHref })
+                    window.fetchSpotifyPlaylistTrackIds(playlist.id, {
+                        tracksHref: playlist.tracksHref,
+                        canReadItems: playlist.canReadItems
+                    })
                 ]);
                 if (abort.signal.aborted) return;
                 element('spotifyPlaylistList').classList.add('hidden');
@@ -546,7 +558,10 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
                 return;
             }
 
-            const tracks = await window.fetchSpotifyPlaylistTracks(playlist.id, { tracksHref: playlist.tracksHref });
+            const tracks = await window.fetchSpotifyPlaylistTracks(playlist.id, {
+                tracksHref: playlist.tracksHref,
+                canReadItems: playlist.canReadItems
+            });
             if (abort.signal.aborted) return;
             if (!tracks.length) {
                 status.textContent = `"${playlist.name}" has no playable Spotify tracks.`;
@@ -600,9 +615,9 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
             element('spotifyPlaylistList').classList.remove('hidden');
             element('spotifyPlaylistProgress')?.classList.add('hidden');
             status.textContent = error?.message || 'Could not look up that playlist.';
-            const blocked = /403|blocked|scope|forbidden/i.test(error?.message || '');
+            const blocked = /403|blocked|scope|forbidden|only shares songs/i.test(error?.message || '');
             if (blocked) {
-                status.textContent = `${error.message} If this happens on every playlist, reconnect Spotify to grant playlist access.`;
+                status.textContent = `${error.message} Reconnect only helps if Spotify never showed the playlist list.`;
             }
             const reconnect = element('reconnectSpotifyPlaylistBtn');
             if (reconnect) reconnect.hidden = !blocked;
