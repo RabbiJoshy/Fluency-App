@@ -1,7 +1,6 @@
-// "Import a Spotify playlist" — pick one of the user's playlists, look up
-// lyrics on LRCLIB (six at a time), persist them in this browser's IndexedDB,
-// and still build a study deck only from songs Fluency already has vocabulary
-// for (matched by Spotify track ID).
+// Live playlist: look up lyrics on LRCLIB (six at a time), land each song in
+// the progress list, save tracks to Fluency, then build a study deck from
+// speech-inventory tokens plus unassigned song-line examples.
 import './state.js?v=20260825ak';
 import { combineSongCatalogs } from './song-sets-core.js?v=20260825ak';
 
@@ -148,6 +147,7 @@ function resetProgressUi() {
     const progress = element('spotifyPlaylistProgress');
     const log = element('spotifyPlaylistLog');
     progress?.classList.add('hidden');
+    progress?.classList.remove('is-complete');
     if (log) log.replaceChildren();
     renderProgress(0, 0, []);
 }
@@ -159,6 +159,7 @@ function renderProgress(done, total, activeLabels) {
     const bar = element('spotifyPlaylistBar');
     const fill = element('spotifyPlaylistBarFill');
     const nowEl = element('spotifyPlaylistNow');
+    const progress = element('spotifyPlaylistProgress');
     if (percentEl) percentEl.textContent = `${percent}%`;
     if (countEl) countEl.textContent = total ? `${done} of ${total} songs` : '0 of 0 songs';
     if (bar) {
@@ -166,6 +167,7 @@ function renderProgress(done, total, activeLabels) {
         bar.setAttribute('aria-valuemax', '100');
     }
     if (fill) fill.style.width = `${percent}%`;
+    progress?.classList.toggle('is-complete', Boolean(total) && done === total);
     if (nowEl) {
         nowEl.textContent = activeLabels.length
             ? `Looking up: ${activeLabels.join(' · ')}`
@@ -173,26 +175,105 @@ function renderProgress(done, total, activeLabels) {
     }
 }
 
+function namedSyncUser() {
+    const user = window.currentUser;
+    return user && !user.isGuest ? user.initials : '';
+}
+
+async function postJson(url, payload, { ignoreHttpErrors = false } = {}) {
+    if (!url) return { ok: false, skipped: true };
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 20000);
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            signal: controller.signal
+        });
+        if (ignoreHttpErrors && (response.status === 404 || response.status === 405)) {
+            return { ok: false, skipped: true };
+        }
+        let json;
+        try { json = await response.json(); } catch (_) {
+            throw new Error(`Ambiguous response (HTTP ${response.status})`);
+        }
+        if (!response.ok || json?.success !== true) {
+            throw new Error(json?.message || `Server save failed (HTTP ${response.status})`);
+        }
+        return { ok: true, data: json.data };
+    } finally {
+        clearTimeout(timeout);
+    }
+}
+
+async function postPlaylistLive(action, body) {
+    const payload = {
+        action,
+        user: namedSyncUser() || 'anonymous',
+        ...body
+    };
+    let remote = { ok: false, skipped: true };
+    if (namedSyncUser() && window.GOOGLE_SCRIPT_URL) {
+        try {
+            remote = await postJson(window.GOOGLE_SCRIPT_URL, payload);
+        } catch (error) {
+            remote = { ok: false, error };
+        }
+    }
+    let local = { ok: false, skipped: true };
+    try {
+        local = await postJson('/api/playlist-live', payload, { ignoreHttpErrors: true });
+    } catch (error) {
+        console.warn('Local playlist dump failed:', error);
+    }
+    if (remote.ok || local.ok) return { ok: true, remote: remote.ok, local: local.ok };
+    if (remote.error) throw remote.error;
+    return { ok: false, skipped: true };
+}
+
+function logStatusLabel(status) {
+    return ({
+        lyrics: 'lyrics',
+        instrumental: 'instrumental',
+        miss: 'no lyrics',
+        error: 'error',
+        cached: 'cached',
+        saving: 'saving',
+        saved: 'saved'
+    })[status] || status;
+}
+
 function appendLogRow(track, status) {
     const log = element('spotifyPlaylistLog');
-    if (!log) return;
+    if (!log) return null;
+    const existing = log.querySelector(`[data-spotify-id="${CSS.escape(track.id)}"]`);
+    if (existing) {
+        setLogStatus(track, status);
+        return existing;
+    }
     const row = document.createElement('li');
     row.className = `playlist-lyrics-log-row is-${status}`;
+    row.dataset.spotifyId = track.id;
     const name = document.createElement('span');
     name.className = 'playlist-lyrics-log-name';
     name.textContent = songLabel(track);
     const mark = document.createElement('span');
     mark.className = 'playlist-lyrics-log-status';
-    mark.textContent = ({
-        lyrics: 'lyrics',
-        instrumental: 'instrumental',
-        miss: 'no lyrics',
-        error: 'error',
-        cached: 'saved'
-    })[status] || status;
+    mark.textContent = logStatusLabel(status);
     row.append(name, mark);
-    log.appendChild(row);
-    log.scrollTop = log.scrollHeight;
+    log.prepend(row);
+    return row;
+}
+
+function setLogStatus(track, status) {
+    const log = element('spotifyPlaylistLog');
+    const row = log?.querySelector(`[data-spotify-id="${CSS.escape(track.id)}"]`);
+    if (!row) return appendLogRow(track, status);
+    row.className = `playlist-lyrics-log-row is-${status}`;
+    const mark = row.querySelector('.playlist-lyrics-log-status');
+    if (mark) mark.textContent = logStatusLabel(status);
+    return row;
 }
 
 async function lookupTrack(db, track, playlist, signal) {
@@ -238,7 +319,7 @@ async function mapPool(items, limit, worker, signal) {
     return results;
 }
 
-async function lookupPlaylistLyrics(playlist, tracks, signal) {
+async function lookupPlaylistLyrics(playlist, tracks, signal, language) {
     const progress = element('spotifyPlaylistProgress');
     progress?.classList.remove('hidden');
     const db = await openLyricsDb();
@@ -270,6 +351,21 @@ async function lookupPlaylistLyrics(playlist, tracks, signal) {
             if (record.fromCache) counts.cached += 1;
             counts[record.status] = (counts[record.status] || 0) + 1;
             appendLogRow(track, record.fromCache ? 'cached' : record.status);
+            if (_importMode === 'live') {
+                setLogStatus(track, 'saving');
+                try {
+                    const saved = await postPlaylistLive('savePlaylistLiveTracks', {
+                        language,
+                        playlistId: playlist.id,
+                        playlistName: playlist.name,
+                        records: [record]
+                    });
+                    setLogStatus(track, saved.ok ? 'saved' : (record.fromCache ? 'cached' : record.status));
+                } catch (error) {
+                    console.warn('Playlist track save failed:', error);
+                    setLogStatus(track, record.fromCache ? 'cached' : record.status);
+                }
+            }
             renderProgress(done, tracks.length, [...active.values()]);
             return record;
         }, signal);
@@ -345,7 +441,7 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
     if (title) title.textContent = _importMode === 'live' ? 'Live playlist' : 'Match a Spotify playlist';
     if (intro) {
         intro.textContent = _importMode === 'live'
-            ? 'Choose a playlist. Fluency looks up lyrics, counts words naively, and builds a practice deck from speech meanings plus your song lines. No sense tagging.'
+            ? 'Choose a playlist. Fluency looks up lyrics, saves each song to your Fluency account, then builds a study deck from speech meanings plus your song lines.'
             : 'Choose a playlist. Fluency keeps only the songs already in the published lyrics library.';
     }
     element('spotifyPlaylistList').replaceChildren();
@@ -423,9 +519,9 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
                 return;
             }
             status.textContent = `Looking up lyrics for ${tracks.length} songs…`;
-            const { counts, lyricsCount, results } = await lookupPlaylistLyrics(playlist, tracks, abort.signal);
+            const { counts, lyricsCount, results } = await lookupPlaylistLyrics(playlist, tracks, abort.signal, language);
             if (abort.signal.aborted) return;
-            status.textContent = `Matching words to the ${language} speech deck…`;
+            status.textContent = `Building your deck from ${lyricsCount} songs…`;
             const deck = await window.buildPlaylistLiveDeck({
                 playlist,
                 language,
@@ -444,8 +540,22 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
                 return;
             }
             _liveState = { language, playlistName: playlist.name, matchedCount: deck.matchedCount };
-            status.textContent = `${parts.join('. ')}. Lyrics stay in this browser.`;
+            status.textContent = `${parts.join('. ')}. Saving the deck to Fluency…`;
+            try {
+                const saved = await window.savePlaylistLiveDeckToServer?.(deck);
+                if (saved?.ok) {
+                    status.textContent = `${parts.join('. ')}. Saved to Fluency. Opening study…`;
+                } else if (namedSyncUser()) {
+                    status.textContent = `${parts.join('. ')}. Deck is ready here, but Fluency did not keep a copy.`;
+                } else {
+                    status.textContent = `${parts.join('. ')}. Sign in with initials to keep this deck on Fluency.`;
+                }
+            } catch (error) {
+                console.warn('Playlist deck save failed:', error);
+                status.textContent = `${parts.join('. ')}. Deck is ready here, but Fluency did not keep a copy.`;
+            }
             if (liveBtn) liveBtn.hidden = false;
+            confirmSpotifyLiveDeck();
         } catch (error) {
             if (error?.name === 'AbortError') return;
             element('spotifyPlaylistList').classList.remove('hidden');
@@ -502,6 +612,7 @@ function setupSpotifyPlaylistImport() {
 
 setupSpotifyPlaylistImport();
 
+window.postPlaylistLive = postPlaylistLive;
 window.openSpotifyPlaylistImport = openSpotifyPlaylistImport;
 window.FLUENCY_PLAYLIST_LYRICS_DB = LYRICS_DB_NAME;
 window.FLUENCY_PLAYLIST_LYRICS_CONCURRENCY = LOOKUP_CONCURRENCY;
