@@ -3764,20 +3764,22 @@ function renderPhraseSummaryBack(card) {
             return renderCliticGroup(base, cliticGroups.get(base));
         }
         if (item.kind === 'RARE_SENSE') {
+            const posClass = item.pos ? getPosColorClass(item.pos) : '';
             const posBadge = item.pos
-                ? `<span class="phrase-source-pill" style="margin-left: 6px; font-weight: 600; opacity: 0.85;">${escapeCardText(item.pos)}</span>`
+                ? `<span class="card-pos ${posClass}" style="font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px;">${escapeCardText(posDisplayName(item.pos))}</span>`
                 : '';
+            const posAccentRgb = item.pos ? getPosAccentRgb(item.pos) : 'var(--accent-primary-rgb)';
             const example = (item.examples || [])[0];
             const target = exampleTargetText(example) || example?.text || example?.targetSentence || '';
             const english = example?.english || example?.translation || example?.englishSentence || '';
             const englishHTML = (target && english)
                 ? `<div class="phrase-example-translation">${escapeCardText(english)}</div>` : '';
-            const exampleHTML = target ? `<div class="phrase-example">
-                    <div class="phrase-example-target">${escapeCardText(target)}</div>
+            const exampleHTML = target ? `<div class="phrase-example" style="--sense-match-rgb: ${posAccentRgb}; border-left: 3px solid rgba(${posAccentRgb}, 0.85); padding-left: 10px; margin-top: 6px;">
+                    <div class="phrase-example-target" style="color: var(--text-primary); font-weight: 500;">${escapeCardText(target)}</div>
                     ${englishHTML}
                 </div>` : '';
             return `<div class="phrase-summary-item rare-sense-item">
-                <div class="phrase-badge-row"><span class="phrase-kind-badge badge-rare">RARE</span>${posBadge}</div>
+                ${posBadge ? `<div class="phrase-badge-row">${posBadge}</div>` : ''}
                 <div class="phrase-expression">${escapeCardText(item.translation || item.expression || '')}</div>
                 ${item.context ? `<div class="phrase-context">${escapeCardText(item.context)}</div>` : ''}
                 ${exampleHTML}
@@ -6447,11 +6449,14 @@ function updateCard({ announceHeadword = false } = {}) {
         if (eCount) parts.push(`${eCount} expression${eCount === 1 ? '' : 's'}`);
         const detail = parts.join(' and ');
         backHTML += `<button type="button" class="ref-tile ref-rare-uses-btn" aria-label="Rare uses: ${escapeCardText(detail)}" title="${escapeCardText(detail)}" onclick="event.stopPropagation(); openRareAndExpressionsCard(event);">
-            <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M12 3 13.2 8.1 18 9.3 13.2 10.5 12 15.6 10.8 10.5 6 9.3 10.8 8.1 12 3z"></path>
-                <path d="M19 14.2 19.6 16.4 21.8 17 19.6 17.6 19 19.8 18.4 17.6 16.2 17 18.4 16.4 19 14.2z"></path>
-                <path d="M16.4 4.2 16.8 5.6 18.2 6 16.8 6.4 16.4 7.8 16 6.4 14.6 6 16 5.6 16.4 4.2z"></path>
-            </svg>
+            <div class="ref-tile-icon-wrap">
+                <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 3 13.2 8.1 18 9.3 13.2 10.5 12 15.6 10.8 10.5 6 9.3 10.8 8.1 12 3z"></path>
+                    <path d="M19 14.2 19.6 16.4 21.8 17 19.6 17.6 19 19.8 18.4 17.6 16.2 17 18.4 16.4 19 14.2z"></path>
+                    <path d="M16.4 4.2 16.8 5.6 18.2 6 16.8 6.4 16.4 7.8 16 6.4 14.6 6 16 5.6 16.4 4.2z"></path>
+                </svg>
+                ${rareAndExprItems.length > 0 ? `<span class="ref-tile-count-badge">${rareAndExprItems.length}</span>` : ''}
+            </div>
             <span class="ref-tile-label">Rare uses</span>
         </button>`;
     }
