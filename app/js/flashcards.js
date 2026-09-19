@@ -4481,6 +4481,21 @@ function glossClusterKey(card, meaning) {
     return `${pos}\u0000${meaning.headword || ''}\u0000${gloss}`;
 }
 
+function contextClusterKey(card, meaning) {
+    if (!meaning || meaning.exampleOnly) return null;
+    const pos = meaning.pos === 'SENSE_CYCLE' ? (meaning.cycle_pos || 'X') : meaning.pos;
+    if (!pos || pos === 'MWE' || pos === 'CLITIC' || pos === 'EXAMPLE_ONLY') return null;
+    const rawCtx = String(meaning.context || '').trim();
+    if (!rawCtx) return null;
+    const ctx = senseSummaryText(rawCtx)
+        .toLocaleLowerCase('en')
+        .replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+    if (!ctx) return null;
+    return `${pos}\u0000${meaning.headword || ''}\u0000ctx:${ctx}`;
+}
+
 function withinGlossLeafWeight(meaning, useConfidence) {
     if (!meaning || meaning.unassigned || meaning.isRareSense) return 0;
     if (useConfidence) {
@@ -4494,8 +4509,14 @@ function withinGlossLeafSeparationIsReliable(meanings) {
     const list = (Array.isArray(meanings) ? meanings : []).filter(m => m && !m.unassigned && !m.isRareSense);
     if (list.length < 2) return false;
     const confidenceCount = list.filter(m => Number.isFinite(Number(m.confidence)) && Number(m.confidence) > 0).length;
-    const useConfidence = confidenceCount >= 2;
-    const weights = list.map(m => withinGlossLeafWeight(m, useConfidence));
+    if (confidenceCount < 2) {
+        // Without calibrated per-leaf model confidence, raw assignment counts
+        // between near-synonym leaves under a shared gloss or context are
+        // classifier artifacts (e.g. "error" vs "mistake"). Do not split them
+        // into Common vs Rare on usage share alone.
+        return false;
+    }
+    const weights = list.map(m => withinGlossLeafWeight(m, true));
     const total = weights.reduce((acc, weight) => acc + weight, 0);
     if (total <= 0) return false;
     const shares = weights.map(weight => weight / total).sort((a, b) => b - a);
@@ -4506,9 +4527,15 @@ function glossClusterProminenceState(card) {
     const groups = new Map();
     (card?.meanings || []).forEach((meaning, index) => {
         const key = glossClusterKey(card, meaning);
-        if (!key) return;
-        if (!groups.has(key)) groups.set(key, []);
-        groups.get(key).push(index);
+        if (key) {
+            if (!groups.has(key)) groups.set(key, []);
+            groups.get(key).push(index);
+        }
+        const ctxKey = contextClusterKey(card, meaning);
+        if (ctxKey) {
+            if (!groups.has(ctxKey)) groups.set(ctxKey, []);
+            if (!groups.get(ctxKey).includes(index)) groups.get(ctxKey).push(index);
+        }
     });
     const infoByIndex = new Map();
     const pooledIndexes = new Set();
@@ -4520,7 +4547,7 @@ function glossClusterProminenceState(card) {
         const pooledShare = members.reduce((acc, meaning) => acc + (Number(meaning.percentage) || 0), 0);
         indexes.forEach(index => {
             const meaning = card.meanings[index];
-            if (meaning.unassigned || meaning.isRareSense || meaning.prominenceLabel === 'Rare') {
+            if (meaning.isRareSense || (meaning.prominenceLabel === 'Rare' && !pooled)) {
                 infoByIndex.set(index, getSenseProminenceInfo(meaning));
                 return;
             }
@@ -4528,7 +4555,7 @@ function glossClusterProminenceState(card) {
                 pooledIndexes.add(index);
                 infoByIndex.set(index, pooledInfo);
                 pooledShareByIndex.set(index, pooledShare);
-            } else {
+            } else if (!pooledIndexes.has(index)) {
                 infoByIndex.set(index, getSenseProminenceInfo(meaning));
             }
         });
@@ -5932,13 +5959,13 @@ function updateCard({ announceHeadword = false } = {}) {
 
                     const groupMeanings = orderedMembers.map(memberIdx => card.meanings[memberIdx]);
                     const useProminenceLabels = (typeof senseProminenceMode !== 'undefined' ? senseProminenceMode : globalThis.state?.senseProminenceMode) !== 'percentages';
-                    // Same English gloss, different contexts: pool Common/Rare
-                    // unless the within-gloss leaf split is peaked.
-                    const splitLeaves = isTransAxis && withinGlossLeafSeparationIsReliable(groupMeanings);
+                    // Senses sharing the same English gloss or same context: pool Common/Rare
+                    // unless the within-family leaf split is peaked and reliable.
+                    const splitLeaves = withinGlossLeafSeparationIsReliable(groupMeanings);
                     const groupPromInfo = prominenceInfoFromShare(groupMeanings);
                     const groupPctVal = Math.min(100, Math.round(groupMeanings.reduce((acc, mm) => acc + (Number(mm.percentage) || 0), 0) * 100));
                     let pctColumnHtml;
-                    if (useProminenceLabels && (splitLeaves || !isTransAxis)) {
+                    if (useProminenceLabels && splitLeaves) {
                         const pctStackHtml = orderedMembers.map((memberIdx) => {
                             const mm = card.meanings[memberIdx];
                             const pInfo = glossProminence.infoByIndex.get(memberIdx) || getSenseProminenceInfo(mm);
@@ -5947,7 +5974,7 @@ function updateCard({ announceHeadword = false } = {}) {
                         pctColumnHtml = `<div class="pct-column" style="display: flex; flex-direction: column; gap: 3px; padding-left: 4px;">${pctStackHtml}</div>`;
                     } else if (useProminenceLabels) {
                         pctColumnHtml = `<div class="pct-column pct-column--group" style="display: flex; align-items: center; padding-left: 4px;">${prominenceBadgeHTML(groupPromInfo)}</div>`;
-                    } else if (splitLeaves || !isTransAxis) {
+                    } else if (splitLeaves) {
                         const pctStackHtml = orderedMembers.map((memberIdx) => {
                             const mm = card.meanings[memberIdx];
                             const memberPct = Math.round((mm.percentage || 0) * 100);
