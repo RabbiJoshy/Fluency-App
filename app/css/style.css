@@ -17519,30 +17519,43 @@ body.artist-mode #flashcardMode::before {
 }
 .back-headword.back-surface-pair {
   display: inline-flex;
+  flex-direction: row;
   align-items: center;
   gap: 8px;
   background: none;
   border: none;
   padding: 0;
+  vertical-align: middle;
 }
 .back-headword.back-surface-pair .back-surface-name {
+  display: block;
   color: inherit;
   font-weight: inherit;
-  line-height: 1.1;
+  line-height: 1;
   min-width: 0;
 }
 .back-lemma-chip {
   display: inline-flex;
   align-items: center;
+  align-self: center;
   flex: 0 0 auto;
   padding: 3px 8px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: var(--text-secondary);
-  font: 650 16px/1.2 var(--font-reading);
+  color: rgb(var(--card-pos-rgb, var(--accent-primary-rgb)));
+  background: color-mix(in srgb, rgb(var(--card-pos-rgb, var(--accent-primary-rgb))) 14%, transparent);
+  border: 1px solid color-mix(in srgb, rgb(var(--card-pos-rgb, var(--accent-primary-rgb))) 40%, transparent);
+  font: 650 16px/1 var(--font-reading);
   font-style: normal;
   text-shadow: none;
+}
+.back-lemma-se {
+  margin-left: 5px;
+  padding-left: 6px;
+  border-left: 1px solid color-mix(in srgb, currentColor 40%, transparent);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  opacity: 0.9;
 }
 .front-meaning-pos {
   font-size: 11px;

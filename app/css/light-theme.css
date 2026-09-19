@@ -710,8 +710,8 @@
 }
 
 :root[data-theme="light"] .back-lemma-chip {
-    background: color-mix(in srgb, var(--bg-secondary) 88%, transparent);
-    border-color: var(--border-color);
+    background: color-mix(in srgb, rgb(var(--card-pos-rgb, var(--accent-primary-rgb))) 12%, transparent);
+    border-color: color-mix(in srgb, rgb(var(--card-pos-rgb, var(--accent-primary-rgb))) 32%, transparent);
     text-shadow: none;
 }
 
