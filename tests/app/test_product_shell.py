@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v472"
+EXPECTED_CACHE_NAME = "flashcards-v473"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -688,7 +688,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260918l", worker)
-        self.assertIn("/js/main.js?v=20260919c", worker)
+        self.assertIn("/js/main.js?v=20260919d", worker)
         self.assertIn("/js/ui.js?v=20260919c", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
@@ -1141,6 +1141,13 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
         vocab = (APP_ROOT / "js" / "vocab.js").read_text(encoding="utf-8")
         cfg = (APP_ROOT / "js" / "config.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+
+        # In main.js, activeArtist must NOT be declared as a module-local let, so it updates globalThis.activeArtist from state.js
+        self.assertNotIn("let activeArtist", main)
+
+        # In flashcards.js, sense-prominence-badge must be a span, not a button, to avoid breaking parent button elements
+        self.assertIn("<span class=\"sense-prominence-badge", flashcards)
 
         # In ui.js, if (usingReleaseLevels) must be closed so smart level ranges execute for lyrics mode
         slider_block = ui[ui.index("const usingReleaseLevels = releaseLevels.length > 0;"):

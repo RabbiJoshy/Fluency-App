@@ -21,7 +21,7 @@ import './song-sets.js?v=20260823ae';
 import './playlist-live.js?v=20260919a';
 import './spotify-playlist-import.js?v=20260919a';
 import './vocabulary-import.js?v=20260913a';
-import './flashcards.js?v=20260918b';
+import './flashcards.js?v=20260919d';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 function startCardTutorial() {
@@ -219,7 +219,6 @@ function bindArtistCatalogToRelease(catalog, requestedReleaseId = '') {
     }
     return catalog;
 }
-let activeArtist = null;
 // Slugs of artists currently selected for multi-artist merge
 let selectedArtistSlugs = [];
 const CUSTOM_ARTIST_SLUG = 'custom';
@@ -318,6 +317,7 @@ async function resolveArtist() {
         }
         if (artistConfig) {
             activeArtist = artistConfig;
+            window.activeArtist = artistConfig;
             // Store the URL artist slug — this is the immutable primary artist
             window._urlArtistSlug = artistSlug;
             const requestedExtra = params.get('scope') === 'extra';
