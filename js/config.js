@@ -171,7 +171,9 @@ function getCefrLevels(language) {
 
 // Load PPM data for percentage mode
 async function loadPpmData(language) {
-    const langConfig = config.languages[language];
+    const langConfig = (activeArtist && (activeArtist.language || 'spanish') === language)
+        ? { ...(config.languages[language] || {}), ...activeArtist }
+        : config.languages[language];
 
     // First try to load from ppmDataPath (CSV file)
     if (langConfig && langConfig.ppmDataPath) {

@@ -1311,7 +1311,10 @@ function rememberLyricsReleaseVocabulary(indexPath, data) {
 }
 
 async function fetchAndJoinIndex(langConfig) {
-    const indexPath = langConfig.indexPath || langConfig.dataPath;
+    const effectiveConfig = (activeArtist && (activeArtist.language || 'spanish') === (langConfig?.language || selectedLanguage))
+        ? { ...(langConfig || {}), ...activeArtist }
+        : langConfig;
+    const indexPath = effectiveConfig.indexPath || effectiveConfig.dataPath;
 
     const cacheKey = window.playlistLiveActive?.() ? `${indexPath}:playlist-live` : indexPath;
     // Preserve the legacy active-source pointers for search/modal consumers,
@@ -1331,7 +1334,7 @@ async function fetchAndJoinIndex(langConfig) {
     let data = null;
     if (!activeArtist && !window.playlistLiveActive?.()) {
         try {
-            data = await loadColumnarIndex(langConfig, indexPath);
+            data = await loadColumnarIndex(effectiveConfig, indexPath);
         } catch (error) {
             console.warn('Columnar index unavailable, falling back to the monolith:', error);
             data = null;
@@ -1345,13 +1348,15 @@ async function fetchAndJoinIndex(langConfig) {
     }
 
     // Detect new master-based format and join if needed
-    if (activeArtist && langConfig.masterPath && data.length > 0 && data[0].sense_frequencies) {
-        if (!window._cachedMasterVocab) {
+    const masterPath = effectiveConfig.masterPath || langConfig?.masterPath;
+    if (activeArtist && masterPath && data.length > 0 && data[0].sense_frequencies) {
+        if (!window._cachedMasterVocab || window._cachedMasterVocabPath !== masterPath) {
             try {
-                const masterResp = await fetch(langConfig.masterPath);
+                const masterResp = await fetch(masterPath);
                 if (masterResp.ok) {
                     trackDataFreshness(masterResp);
                     window._cachedMasterVocab = await masterResp.json();
+                    window._cachedMasterVocabPath = masterPath;
                 }
             } catch (e) {
                 console.warn('Failed to load master vocabulary:', e);
@@ -1410,20 +1415,23 @@ async function fetchActiveVocabularyData(langConfig) {
 async function fetchActiveVocabularyIndex(langConfig) {
     const selectedSlugs = window._selectedArtistSlugs || [];
     const allConfigs = window._allArtistsConfig;
+    const effectiveConfig = (activeArtist && (activeArtist.language || 'spanish') === (langConfig?.language || selectedLanguage))
+        ? { ...(langConfig || {}), ...activeArtist }
+        : langConfig;
     if (!(activeArtist && selectedSlugs.length > 1 && allConfigs)) {
-        const indexPath = langConfig.indexPath || langConfig.dataPath;
+        const indexPath = effectiveConfig.indexPath || effectiveConfig.dataPath;
         const exactReleaseCache = window._lyricsReleaseVocabularyCache;
         const vocabulary = activeArtist?.releaseId
             && exactReleaseCache?.releaseId === activeArtist.releaseId
             && exactReleaseCache.indexPath === indexPath
             ? exactReleaseCache.data
-            : await fetchAndJoinIndex(langConfig);
+            : await fetchAndJoinIndex(effectiveConfig);
         return window.filterActiveSongVocabulary?.(vocabulary) || vocabulary;
     }
 
     if (!window._cachedMasterVocab) {
         // The primary artist fetch also loads the shared master.
-        await fetchAndJoinIndex(langConfig);
+        await fetchAndJoinIndex(effectiveConfig);
     }
     if (!window._cachedMergedIndex) {
         const artistConfigs = selectedSlugs
@@ -2022,7 +2030,8 @@ async function loadVocabularyData(rangeString, opts = {}) {
         flashcardEl.classList.remove('flipped');
     }
 
-    const langConfig = config.languages[selectedLanguage];
+    const baseConfig = config.languages[selectedLanguage] || {};
+    const langConfig = activeArtist ? { ...baseConfig, ...activeArtist } : baseConfig;
     const [rangeStart, rangeEnd] = rangeString.split('-').map(Number);
     const rangeBasis = opts.rankBasis || opts.resumeSnapshot?.rangeBasis || 'display';
 
@@ -2237,7 +2246,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
         // Fat index rows belong to the twenty cards in this set, not the
         // language-pick payload. Examples stay on the same study-set shards.
         const ranks = filteredData.map(item => Number(item.rank));
-        if (!window.playlistLiveActive?.()) {
+        if (!window.playlistLiveActive?.() && !activeArtist) {
             await ensureIndexRowsForRange(langConfig, rangeStart, rangeEnd, ranks);
         }
         filteredData = filteredData.filter(item => {

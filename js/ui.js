@@ -958,7 +958,9 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
     if (preferActionable) _setupLevelSelectionWasManual = false;
 
     if (useLemmaMode) {
-        await ensureLemmaPoolingData(config.languages[language]);
+        const baseConfig = config.languages[language] || {};
+        const langConfig = activeArtist ? { ...baseConfig, ...activeArtist } : baseConfig;
+        await ensureLemmaPoolingData(langConfig);
     }
     if (!selectedLevel) setActiveSetupStep('step2');
 
@@ -1020,7 +1022,8 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
         _smartLevelRangesCache = null;
     }
     const preparedSamples = await _loadLevelSliderSamples(selectedLanguage);
-    const _raw = _levelSliderRawCache[selectedLanguage];
+    const cacheKey = activeArtist ? `artist:${activeArtist.slug || window._urlArtistSlug || selectedLanguage}` : selectedLanguage;
+    const _raw = _levelSliderRawCache[cacheKey];
     if (_raw && !usingReleaseLevels) {
         if (!window.playlistLiveActive?.()) {
             // Level boundaries are built from the stable baseline before any
@@ -1492,9 +1495,11 @@ const _levelSliderRawCache = {};
 let _preparedSetupVocabulary = null;
 
 function _setupVocabularySignature(language) {
-    const langConfig = config.languages[language] || {};
+    const baseConfig = config.languages[language] || {};
+    const langConfig = activeArtist ? { ...baseConfig, ...activeArtist } : baseConfig;
     return [
         language,
+        activeArtist ? (activeArtist.slug || window._urlArtistSlug || '') : 'none',
         langConfig.indexPath || langConfig.dataPath || '',
         (window._selectedArtistSlugs || []).slice().sort().join(','),
         activeArtist ? artistVocabularyScope : (window.playlistLiveActive?.() ? 'playlist-live' : 'speech'),
@@ -1550,6 +1555,9 @@ function invalidatePreparedSetupVocabulary() {
 
 function invalidateLyricsSourceCaches(language = selectedLanguage) {
     delete _levelSliderRawCache[language];
+    if (activeArtist) {
+        delete _levelSliderRawCache[`artist:${activeArtist.slug || window._urlArtistSlug || language}`];
+    }
     _smartLevelRangesCache = null;
     invalidatePreparedSetupVocabulary();
 }
@@ -1567,18 +1575,21 @@ function _samplesFromRaw(rawVocab, language = selectedLanguage) {
 // so the caller can fall back to raw rank numbers until the async load
 // resolves.
 function _levelSliderSamplesSync(language) {
-    const raw = _levelSliderRawCache[language];
+    const cacheKey = activeArtist ? `artist:${activeArtist.slug || window._urlArtistSlug || language}` : language;
+    const raw = _levelSliderRawCache[cacheKey];
     return raw ? _samplesFromRaw(raw, language) : null;
 }
 
 async function _loadLevelSliderSamples(language) {
-    let raw = _levelSliderRawCache[language];
+    const cacheKey = activeArtist ? `artist:${activeArtist.slug || window._urlArtistSlug || language}` : language;
+    let raw = _levelSliderRawCache[cacheKey];
     if (!raw) {
-        const langConfig = config.languages[language];
+        const baseConfig = config.languages[language] || {};
+        const langConfig = activeArtist ? { ...baseConfig, ...activeArtist } : baseConfig;
         if (!langConfig) return null;
         try {
             raw = await fetchActiveVocabularyData(langConfig);
-            _levelSliderRawCache[language] = raw;
+            _levelSliderRawCache[cacheKey] = raw;
         } catch (err) {
             console.warn('Slider sample fetch failed:', err);
             return null;
@@ -2231,7 +2242,8 @@ async function renderRangeSelector() {
     // returning from a completed deck, without passing through the level
     // renderer. Give every visible set count one coherent, current snapshot.
     resetSetupStateMemo();
-    const langConfig = config.languages[selectedLanguage];
+    const baseConfig = config.languages[selectedLanguage] || {};
+    const langConfig = activeArtist ? { ...baseConfig, ...activeArtist } : baseConfig;
     const container = document.getElementById('rangeSelector');
     let minWord, maxWord;
     let rankBasis = 'source';
@@ -2260,7 +2272,7 @@ async function renderRangeSelector() {
         minWord = parseInt(selectedBtn.dataset.startRank);
         maxWord = parseInt(selectedBtn.dataset.endRank);
         rankBasis = selectedBtn.dataset.rankBasis || 'source';
-    } else if (!window.playlistLiveActive?.() && releaseStudyStructure?.levels) {
+    } else if (!activeArtist && !window.playlistLiveActive?.() && releaseStudyStructure?.levels) {
         const rLevel = releaseStudyStructure.levels.find(item => item.level === selectedLevel || item.level_id === selectedLevel);
         if (rLevel) {
             minWord = rLevel.startRank;
@@ -2742,7 +2754,7 @@ function getNextStudySetMeta(rangeString) {
     if (!next) return null;
     return {
         range: next.dataset.range,
-        rankBasis: next.dataset.rankBasis || (releaseStudyStructure?.levels ? 'source' : 'stable'),
+        rankBasis: next.dataset.rankBasis || (releaseStudyStructure?.levels && !activeArtist ? 'source' : 'stable'),
         setNumber: Number(next.dataset.index) + 1,
         levelSetCount: dots.length
     };
@@ -2802,7 +2814,7 @@ async function startNextStudyLevelFirstSet() {
         !dot.disabled && Number(dot.dataset.unseen || 0) > 0);
     for (const dot of sameLevelCandidates) {
         const built = await loadVocabularyData(dot.dataset.range, {
-            rankBasis: dot.dataset.rankBasis || (releaseStudyStructure?.levels ? 'source' : 'stable'),
+            rankBasis: dot.dataset.rankBasis || (releaseStudyStructure?.levels && !activeArtist ? 'source' : 'stable'),
             setNumber: Number(dot.dataset.index) + 1,
             levelSetCount: refreshedDots.length,
             studyMode: 'new',
@@ -2847,7 +2859,7 @@ async function startNextStudyLevelFirstSet() {
         // still come back empty. Keep walking to the next level rather than
         // alerting and abandoning the search mid-way.
         const built = await loadVocabularyData(firstUnseenSet.dataset.range, {
-            rankBasis: firstUnseenSet.dataset.rankBasis || (releaseStudyStructure?.levels ? 'source' : 'stable'),
+            rankBasis: firstUnseenSet.dataset.rankBasis || (releaseStudyStructure?.levels && !activeArtist ? 'source' : 'stable'),
             setNumber: Number(firstUnseenSet.dataset.index) + 1,
             levelSetCount: setDots.length,
             levelNumber: nextMeta.levelNumber,
