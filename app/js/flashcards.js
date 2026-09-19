@@ -3744,6 +3744,17 @@ function phraseSourcePillHTML(item) {
         aria-label="Source: ${escapeCardText(pill.label)}">${pill.letter}</span>`;
 }
 
+function posDisplayName(pos) {
+    const labels = {
+        NOUN: 'Noun', VERB: 'Verb', AUX: 'Auxiliary', ADJ: 'Adjective', ADV: 'Adverb',
+        PREP: 'Preposition', ADP: 'Preposition', CONJ: 'Conjunction', CCONJ: 'Conjunction',
+        SCONJ: 'Conjunction', PRON: 'Pronoun', DET: 'Determiner', INTJ: 'Interjection',
+        NUM: 'Number', PROPN: 'Proper noun'
+    };
+    return labels[String(pos || '').toUpperCase()]
+        || String(pos || '').toLowerCase().replace(/^./, char => char.toUpperCase());
+}
+
 function renderPhraseSummaryBack(card) {
     const items = cardChainQueue || [];
     const cliticGroups = new Map();
@@ -4866,16 +4877,6 @@ function updateCard({ announceHeadword = false } = {}) {
     const isVerbPos = pos => {
         const p = String(pos || '').toLowerCase();
         return p.includes('verb') || p === 'v' || p === 'vb';
-    };
-    const posDisplayName = pos => {
-        const labels = {
-            NOUN: 'Noun', VERB: 'Verb', AUX: 'Auxiliary', ADJ: 'Adjective', ADV: 'Adverb',
-            PREP: 'Preposition', ADP: 'Preposition', CONJ: 'Conjunction', CCONJ: 'Conjunction',
-            SCONJ: 'Conjunction', PRON: 'Pronoun', DET: 'Determiner', INTJ: 'Interjection',
-            NUM: 'Number', PROPN: 'Proper noun'
-        };
-        return labels[String(pos || '').toUpperCase()]
-            || String(pos || '').toLowerCase().replace(/^./, char => char.toUpperCase());
     };
     const posLabelHTML = pos => `<span class="pos-full-label">${posDisplayName(pos)}</span>`;
     // The verb POS pill retains the complete popover on every face. In the

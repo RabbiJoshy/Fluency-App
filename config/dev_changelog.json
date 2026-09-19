@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-19T17:11:21+01:00",
+      "date": "2026-09-19 17:11 BST",
+      "agent": "Codex",
+      "commit": "pending",
+      "summary": "Fix Rare Sense button opening the card",
+      "detail": [
+        "Moved the part-of-speech label formatter into shared scope so rare dictionary senses render without an error.",
+        "Updated app asset versions and the service worker cache to deliver the fix to existing installations."
+      ]
+    },
+    {
       "timestamp": "2026-09-19T16:42:08.758763+01:00",
       "date": "2026-09-19 16:42 BST",
       "agent": "MILL",
