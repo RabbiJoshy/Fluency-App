@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-19T20:32:00+01:00",
+      "date": "2026-09-19 20:32 BST",
+      "agent": "Cursor",
+      "commit": "pending",
+      "summary": "Rename the tile to Rarer uses and link matching dictionary senses",
+      "detail": [
+        "The tile and page now say Rarer uses: senses that show up less often in speech.",
+        "Dictionary senses that share an exact gloss or context are grouped, with a small pager when they are otherwise the same shade."
+      ]
+    },
+    {
       "timestamp": "2026-09-19T20:15:00+01:00",
       "date": "2026-09-19 20:15 BST",
       "agent": "Cursor",

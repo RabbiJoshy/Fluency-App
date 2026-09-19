@@ -3755,14 +3755,49 @@ function posDisplayName(pos) {
         || String(pos || '').toLowerCase().replace(/^./, char => char.toUpperCase());
 }
 
-function rareSenseGlossKey(item) {
-    const raw = String(item?.translation || item?.expression || '').trim();
-    const gloss = senseSummaryText(raw)
+function rareSenseFieldKey(value) {
+    const raw = String(value || '').trim();
+    if (!raw) return '';
+    return senseSummaryText(raw)
         .toLocaleLowerCase('en')
         .replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '')
         .replace(/\s+/g, ' ')
-        .trim();
-    return gloss || raw.toLocaleLowerCase('en');
+        .trim() || raw.toLocaleLowerCase('en');
+}
+
+function rareSenseGlossKey(item) {
+    return rareSenseFieldKey(item?.translation || item?.expression);
+}
+
+function rareSenseContextKey(item) {
+    return rareSenseFieldKey(item?.context);
+}
+
+function clusterRareSenses(items) {
+    const n = items.length;
+    const parent = items.map((_, i) => i);
+    const find = (i) => (parent[i] === i ? i : (parent[i] = find(parent[i])));
+    const union = (a, b) => {
+        a = find(a);
+        b = find(b);
+        if (a !== b) parent[b] = a;
+    };
+    for (let i = 0; i < n; i++) {
+        const glossI = rareSenseGlossKey(items[i]);
+        const ctxI = rareSenseContextKey(items[i]);
+        for (let j = i + 1; j < n; j++) {
+            const glossJ = rareSenseGlossKey(items[j]);
+            const ctxJ = rareSenseContextKey(items[j]);
+            if ((glossI && glossI === glossJ) || (ctxI && ctxI === ctxJ)) union(i, j);
+        }
+    }
+    const groups = new Map();
+    items.forEach((item, i) => {
+        const root = find(i);
+        if (!groups.has(root)) groups.set(root, []);
+        groups.get(root).push(item);
+    });
+    return [...groups.values()];
 }
 
 function compactPhraseExampleHTML(example, posAccentRgb) {
@@ -3776,6 +3811,87 @@ function compactPhraseExampleHTML(example, posAccentRgb) {
             <div class="phrase-example-target">${escapeCardText(target)}</div>
             ${englishHTML}
         </div>`;
+}
+
+function rareSenseLeafHTML(item, posAccentRgb, { hideGloss = false, hideContext = false } = {}) {
+    const gloss = item.translation || item.expression || '';
+    const example = (item.examples || [])[0];
+    const exampleHTML = compactPhraseExampleHTML(example, posAccentRgb);
+    const glossHTML = (!hideGloss && gloss)
+        ? `<div class="other-uses-gloss">${escapeCardText(gloss)}</div>` : '';
+    const ctxHTML = (!hideContext && item.context)
+        ? `<div class="phrase-context">${escapeCardText(item.context)}</div>` : '';
+    if (!glossHTML && !ctxHTML && !exampleHTML) return '';
+    return `<div class="other-uses-leaf">${glossHTML}${ctxHTML}${exampleHTML}</div>`;
+}
+
+function cycleRarerShade(event, clusterKey, count, delta) {
+    event?.stopPropagation?.();
+    const card = flashcards?.[currentIndex];
+    if (!card || !count) return;
+    const scroller = document.querySelector('#backContent .phrase-summary-scroll');
+    const top = scroller?.scrollTop || 0;
+    if (!card._rarerShade) card._rarerShade = {};
+    const cur = Number(card._rarerShade[clusterKey] || 0);
+    card._rarerShade[clusterKey] = ((cur + Number(delta || 1)) % count + count) % count;
+    updateCard();
+    requestAnimationFrame(() => {
+        const again = document.querySelector('#backContent .phrase-summary-scroll');
+        if (again) again.scrollTop = top;
+    });
+}
+window.cycleRarerShade = cycleRarerShade;
+
+function renderRareSenseCluster(group, pos, posAccentRgb, clusterId) {
+    const unique = (values) => {
+        const seen = new Set();
+        return values.filter((value) => {
+            if (!value || seen.has(value)) return false;
+            seen.add(value);
+            return true;
+        });
+    };
+    const glosses = unique(group.map((item) => String(item.translation || item.expression || '').trim()));
+    const contexts = unique(group.map((item) => String(item.context || '').trim()));
+    const sharedGloss = glosses.length === 1 ? glosses[0] : '';
+    const sharedContext = contexts.length === 1 ? contexts[0] : '';
+
+    if (group.length === 1) {
+        return `<div class="other-uses-gloss-group">${rareSenseLeafHTML(group[0], posAccentRgb)}</div>`;
+    }
+
+    // Same gloss and same context: one block, cycle the dictionary examples.
+    if (sharedGloss && (sharedContext || contexts.length === 0)) {
+        const shade = Number((flashcards?.[currentIndex]?._rarerShade || {})[clusterId] || 0) % group.length;
+        const item = group[shade];
+        const pager = group.length > 1
+            ? `<div class="rarer-uses-pager">
+                <button type="button" aria-label="Previous matching sense" onclick="event.stopPropagation(); cycleRarerShade(event, '${clusterId}', ${group.length}, -1)">‹</button>
+                <span>${shade + 1} / ${group.length}</span>
+                <button type="button" aria-label="Next matching sense" onclick="event.stopPropagation(); cycleRarerShade(event, '${clusterId}', ${group.length}, 1)">›</button>
+               </div>`
+            : '';
+        return `<div class="rarer-uses-cluster" style="--sense-match-rgb: ${posAccentRgb};">
+            <div class="rarer-uses-cluster-meta">Matching senses</div>
+            <div class="other-uses-gloss">${escapeCardText(sharedGloss)}</div>
+            ${sharedContext ? `<div class="phrase-context">${escapeCardText(sharedContext)}</div>` : ''}
+            ${compactPhraseExampleHTML((item.examples || [])[0], posAccentRgb)}
+            ${pager}
+        </div>`;
+    }
+
+    const head = sharedGloss
+        ? `<div class="other-uses-gloss">${escapeCardText(sharedGloss)}</div>`
+        : (sharedContext ? `<div class="phrase-context">${escapeCardText(sharedContext)}</div>` : '');
+    const leaves = group.map((item) => rareSenseLeafHTML(item, posAccentRgb, {
+        hideGloss: Boolean(sharedGloss),
+        hideContext: Boolean(sharedContext),
+    })).join('');
+    return `<div class="rarer-uses-cluster" style="--sense-match-rgb: ${posAccentRgb};">
+        <div class="rarer-uses-cluster-meta">${sharedGloss ? 'Same gloss' : (sharedContext ? 'Same context' : 'Linked senses')}</div>
+        ${head}
+        ${leaves}
+    </div>`;
 }
 
 function renderRareSenseGroups(rareItems) {
@@ -3792,28 +3908,11 @@ function renderRareSenseGroups(rareItems) {
         return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib) || a.localeCompare(b);
     });
     return posKeys.map(pos => {
-        const glossMap = new Map();
-        for (const item of byPos.get(pos)) {
-            const key = rareSenseGlossKey(item);
-            if (!glossMap.has(key)) glossMap.set(key, []);
-            glossMap.get(key).push(item);
-        }
+        const clusters = clusterRareSenses(byPos.get(pos));
         const posAccentRgb = getPosAccentRgb(pos);
-        const groups = [...glossMap.values()].map(group => {
-            const gloss = group[0].translation || group[0].expression || '';
-            const leaves = group.map(item => {
-                const example = (item.examples || [])[0];
-                const exampleHTML = compactPhraseExampleHTML(example, posAccentRgb);
-                if (!item.context && !exampleHTML) return '';
-                return `<div class="other-uses-leaf">
-                    ${item.context ? `<div class="phrase-context">${escapeCardText(item.context)}</div>` : ''}
-                    ${exampleHTML}
-                </div>`;
-            }).join('');
-            return `<div class="other-uses-gloss-group">
-                <div class="other-uses-gloss">${escapeCardText(gloss)}</div>
-                ${leaves}
-            </div>`;
+        const groups = clusters.map((group, index) => {
+            const clusterId = `${pos}-${index}`;
+            return renderRareSenseCluster(group, pos, posAccentRgb, clusterId);
         }).join('');
         return `<section class="other-uses-pos">
             <h4 class="other-uses-pos-heading" style="color: rgb(${posAccentRgb});">${escapeCardText(posDisplayName(pos))}</h4>
@@ -3866,7 +3965,7 @@ function renderPhraseSummaryBack(card) {
     const bits = [];
     if (rareCount) bits.push(`${rareCount} rarer sense${rareCount === 1 ? '' : 's'}`);
     if (phraseCount) bits.push(`${phraseCount} expression${phraseCount === 1 ? '' : 's'}`);
-    const subtitle = `Other uses — less common than Uncommon${bits.length ? ` · ${bits.join(' · ')}` : ''}`;
+    const subtitle = `Rarer uses — senses that show up less often in speech${bits.length ? ` · ${bits.join(' · ')}` : ''}`;
 
     return `<div class="back-header other-uses-header">
             <div class="back-headword-row">
@@ -6546,7 +6645,7 @@ function updateCard({ announceHeadword = false } = {}) {
         if (rCount) parts.push(`${rCount} rare sense${rCount === 1 ? '' : 's'}`);
         if (eCount) parts.push(`${eCount} expression${eCount === 1 ? '' : 's'}`);
         const detail = parts.join(' and ');
-        backHTML += `<button type="button" class="ref-tile ref-rare-uses-btn" aria-label="Other uses: ${escapeCardText(detail)}" title="${escapeCardText(detail)}" onclick="event.stopPropagation(); openRareAndExpressionsCard(event);">
+        backHTML += `<button type="button" class="ref-tile ref-rare-uses-btn" aria-label="Rarer uses: ${escapeCardText(detail)}" title="${escapeCardText(detail)}" onclick="event.stopPropagation(); openRareAndExpressionsCard(event);">
             <div class="ref-tile-icon-wrap">
                 <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M12 3 13.2 8.1 18 9.3 13.2 10.5 12 15.6 10.8 10.5 6 9.3 10.8 8.1 12 3z"></path>
@@ -6555,7 +6654,7 @@ function updateCard({ announceHeadword = false } = {}) {
                 </svg>
                 ${rareAndExprItems.length > 0 ? `<span class="ref-tile-count-badge">${rareAndExprItems.length}</span>` : ''}
             </div>
-            <span class="ref-tile-label">Other uses</span>
+            <span class="ref-tile-label">Rarer uses</span>
         </button>`;
     }
 
