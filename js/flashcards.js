@@ -4585,7 +4585,7 @@ function prominenceBadgeHTML(promInfo, extraStyle = '') {
     const label = promInfo.label || 'Rare';
     const blurb = PROMINENCE_BLURBS[key] || PROMINENCE_BLURBS.rare;
     const style = extraStyle ? ` style="${extraStyle}"` : '';
-    return `<button type="button" class="sense-prominence-badge prominence-${escapeCardText(key)}"${style} aria-expanded="false" aria-label="${escapeCardText(label)}. Tap to explain." onclick="toggleProminenceBadge(event, this)">${prominenceMeterHTML(key)}<span class="sense-prominence-detail">${escapeCardText(label)} · ${escapeCardText(blurb)}</span></button>`;
+    return `<span class="sense-prominence-badge prominence-${escapeCardText(key)}"${style} role="button" tabindex="0" aria-expanded="false" aria-label="${escapeCardText(label)}. Tap to explain." onclick="toggleProminenceBadge(event, this)" onkeydown="if (event.key === 'Enter' || event.key === ' ') toggleProminenceBadge(event, this)">${prominenceMeterHTML(key)}<span class="sense-prominence-detail">${escapeCardText(label)} · ${escapeCardText(blurb)}</span></span>`;
 }
 
 function toggleProminenceBadge(event, button) {
