@@ -184,20 +184,63 @@ function renderSkippedWords() {
     return cognates;
 }
 
-// The setup page shows the actual set-aside deck, in small numbered batches
-// within each reason, instead of sending the learner to another audit dialog.
+function extrasSetPills(entries, kind) {
+    if (!entries.length) return '';
+    const pills = [];
+    for (let start = 0; start < entries.length; start += 20) {
+        const count = Math.min(20, entries.length - start);
+        const setNumber = Math.floor(start / 20) + 1;
+        pills.push(`<button type="button" class="extras-set-pill" data-ft-kind="${kind}" data-ft-start="${start}" aria-label="Study skipped set ${setNumber}, ${count} words">
+            <span class="extras-set-pill-num">${setNumber}</span>
+            <small>${count}</small>
+        </button>`);
+    }
+    return `<div class="extras-set-pills" role="group" aria-label="Skipped Fast Track sets">${pills.join('')}</div>`;
+}
+
+// Setup page: skipped Fast Track words as study sets of 20, matching the
+// main deck's set size. Merged forms stay on their host cards.
 function renderFastTrackDeck({ cognates = [], lemmas = [] }) {
-    return [
-        { label: 'Obvious look-alikes', kind: 'cognate', entries: cognates },
-        { label: 'Merged word forms', kind: 'lemma', entries: lemmas },
-    ].filter(group => group.entries.length).map(group => {
-        const batches = [];
-        for (let start = 0; start < group.entries.length; start += 20) {
-            const slice = group.entries.slice(start, start + 20);
-            batches.push(`<details class="extras-deck-batch"${start === 0 ? ' open' : ''}><summary>Words ${start + 1}–${start + slice.length}</summary><ul class="extras-list">${renderRows(slice, group.kind)}</ul></details>`);
-        }
-        return `<section class="extras-deck-group"><h4>${group.label} <span class="extras-count">${group.entries.length}</span></h4>${batches.join('')}</section>`;
-    }).join('');
+    const skippedBlock = cognates.length
+        ? `<section class="extras-deck-group">
+            <h4>Skipped words <span class="extras-count">${cognates.length}</span></h4>
+            <p class="extras-deck-hint">Study the look-alikes Fast Track set aside, as decks of 20.</p>
+            ${extrasSetPills(cognates, 'cognate')}
+           </section>`
+        : '';
+    const mergedNote = lemmas.length
+        ? `<p class="extras-deck-hint extras-merged-note">${lemmas.length.toLocaleString()} merged form${lemmas.length === 1 ? '' : 's'} stay on their host cards.</p>`
+        : '';
+    return `${skippedBlock}${mergedNote}`;
+}
+
+async function startFastTrackSkippedSet(kind, start) {
+    const extras = collectExtras();
+    const entries = kind === 'lemma' ? extras.lemmas : extras.cognates;
+    const slice = entries.slice(Number(start) || 0, (Number(start) || 0) + 20).map(({ item }) => item);
+    if (!slice.length || !g().loadVocabularyData) return;
+    const setNumber = Math.floor((Number(start) || 0) / 20) + 1;
+    const levelSetCount = Math.max(1, Math.ceil(entries.length / 20));
+    const loadingMessage = document.getElementById('loadingMessage');
+    if (loadingMessage) {
+        loadingMessage.style.display = 'block';
+        loadingMessage.textContent = `Loading skipped set ${setNumber}...`;
+    }
+    window.showAppLoading?.(`Loading skipped set ${setNumber}`, 'Preparing Fast Track cards…');
+    try {
+        await g().loadVocabularyData('1-50000', {
+            rankBasis: 'source',
+            studyMode: 'all',
+            fastTrackCards: slice,
+            setNumber,
+            levelSetCount,
+            setLabel: `Skipped set ${setNumber} of ${levelSetCount}`,
+            isFastTrack: true,
+        });
+    } finally {
+        window.hideAppLoading?.();
+        if (loadingMessage) loadingMessage.style.display = 'none';
+    }
 }
 
 function renderExtras() {
@@ -505,3 +548,4 @@ globalThis.toggleSavedWord = toggleSavedWord;
 globalThis.isWordSaved = isWordSaved;
 globalThis.collectExtras = collectExtras;
 globalThis.renderFastTrackDeck = renderFastTrackDeck;
+globalThis.startFastTrackSkippedSet = startFastTrackSkippedSet;

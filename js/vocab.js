@@ -2089,7 +2089,14 @@ async function loadVocabularyData(rangeString, opts = {}) {
         const resumeSnapshot = opts.resumeSnapshot || null;
         let totalInRange;
         let allInRange;
-        if (opts.targetReviewWords) {
+        if (Array.isArray(opts.fastTrackCards) && opts.fastTrackCards.length) {
+            // Skipped Fast Track words are already excluded from the ordinary
+            // filtered deck. Study them as their own set without re-applying
+            // the cognate/lemma gates that set them aside.
+            filteredData = opts.fastTrackCards.slice();
+            totalInRange = filteredData.length;
+            allInRange = filteredData.slice();
+        } else if (opts.targetReviewWords) {
             // Instant fast path for daily review: target words are already pre-selected
             // and prioritized from user progress. Just extract them from vocabularyData.
             filteredData = filteredData.filter(item => {
@@ -2671,7 +2678,10 @@ async function loadVocabularyData(rangeString, opts = {}) {
         // Inclusive label for display, e.g. "475-499" for rangeString "475-500"
         // (rangeEnd is exclusive in the filter above).
         const rankLabel = `${rangeStart}-${rangeEnd - 1}`;
-        if (opts.isDailyReview) {
+        if (opts.setLabel) {
+            stats.setLabel = opts.setLabel;
+            stats.isFastTrack = Boolean(opts.isFastTrack);
+        } else if (opts.isDailyReview) {
             const tierNames = {
                 never_right: 'Never Mastered',
                 critical: 'Critical Review',

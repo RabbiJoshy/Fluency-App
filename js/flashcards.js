@@ -3755,6 +3755,85 @@ function posDisplayName(pos) {
         || String(pos || '').toLowerCase().replace(/^./, char => char.toUpperCase());
 }
 
+function rareSenseGlossKey(item) {
+    const raw = String(item?.translation || item?.expression || '').trim();
+    const gloss = senseSummaryText(raw)
+        .toLocaleLowerCase('en')
+        .replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+    return gloss || raw.toLocaleLowerCase('en');
+}
+
+function compactPhraseExampleHTML(example, posAccentRgb) {
+    const target = exampleTargetText(example) || example?.text || example?.targetSentence || '';
+    if (!target) return '';
+    const english = example?.english || example?.translation || example?.englishSentence || '';
+    const englishHTML = english
+        ? `<div class="phrase-example-translation">${escapeCardText(english)}</div>` : '';
+    const accent = posAccentRgb || 'var(--accent-primary-rgb)';
+    return `<div class="phrase-example phrase-example--compact" style="--sense-match-rgb: ${accent};">
+            <div class="phrase-example-target">${escapeCardText(target)}</div>
+            ${englishHTML}
+        </div>`;
+}
+
+function renderRareSenseGroups(rareItems) {
+    const byPos = new Map();
+    for (const item of rareItems) {
+        const pos = String(item.pos || 'OTHER').toUpperCase();
+        if (!byPos.has(pos)) byPos.set(pos, []);
+        byPos.get(pos).push(item);
+    }
+    const posOrder = ['NOUN', 'VERB', 'AUX', 'ADJ', 'ADV', 'PREP', 'ADP', 'PRON', 'DET', 'CONJ', 'CCONJ', 'SCONJ', 'INTJ', 'NUM', 'PROPN'];
+    const posKeys = [...byPos.keys()].sort((a, b) => {
+        const ia = posOrder.indexOf(a);
+        const ib = posOrder.indexOf(b);
+        return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib) || a.localeCompare(b);
+    });
+    return posKeys.map(pos => {
+        const glossMap = new Map();
+        for (const item of byPos.get(pos)) {
+            const key = rareSenseGlossKey(item);
+            if (!glossMap.has(key)) glossMap.set(key, []);
+            glossMap.get(key).push(item);
+        }
+        const posAccentRgb = getPosAccentRgb(pos);
+        const groups = [...glossMap.values()].map(group => {
+            const gloss = group[0].translation || group[0].expression || '';
+            const leaves = group.map(item => {
+                const example = (item.examples || [])[0];
+                const exampleHTML = compactPhraseExampleHTML(example, posAccentRgb);
+                if (!item.context && !exampleHTML) return '';
+                return `<div class="other-uses-leaf">
+                    ${item.context ? `<div class="phrase-context">${escapeCardText(item.context)}</div>` : ''}
+                    ${exampleHTML}
+                </div>`;
+            }).join('');
+            return `<div class="other-uses-gloss-group">
+                <div class="other-uses-gloss">${escapeCardText(gloss)}</div>
+                ${leaves}
+            </div>`;
+        }).join('');
+        return `<section class="other-uses-pos">
+            <h4 class="other-uses-pos-heading" style="color: rgb(${posAccentRgb});">${escapeCardText(posDisplayName(pos))}</h4>
+            ${groups}
+        </section>`;
+    }).join('');
+}
+
+function renderPhraseRow(item) {
+    const example = (item.examples || [])[0];
+    const exampleHTML = compactPhraseExampleHTML(example);
+    return `<div class="phrase-summary-item">
+        <div class="phrase-badge-row"><span class="phrase-kind-badge">PHRASE</span>${phraseSourcePillHTML(item)}</div>
+        <div class="phrase-expression">${escapeCardText(item.expression)}</div>
+        ${item.translation ? `<div class="phrase-translation">${escapeCardText(item.translation)}</div>` : ''}
+        ${item.context ? `<div class="phrase-context">${escapeCardText(item.context)}</div>` : ''}
+        ${exampleHTML}
+    </div>`;
+}
+
 function renderPhraseSummaryBack(card) {
     const items = cardChainQueue || [];
     const cliticGroups = new Map();
@@ -3765,80 +3844,37 @@ function renderPhraseSummaryBack(card) {
         cliticGroups.get(base).push({ item, index });
     });
     const emittedGroups = new Set();
-    const rows = items.map(item => {
-        if (item.kind === 'CLITIC') {
-            // The whole group renders at its first member's position; later
-            // members contribute nothing of their own.
-            const base = cliticBaseVerb(item);
-            if (emittedGroups.has(base)) return '';
-            emittedGroups.add(base);
-            return renderCliticGroup(base, cliticGroups.get(base));
-        }
-        if (item.kind === 'RARE_SENSE') {
-            const posClass = item.pos ? getPosColorClass(item.pos) : '';
-            const posBadge = item.pos
-                ? `<span class="card-pos ${posClass}" style="font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px;">${escapeCardText(posDisplayName(item.pos))}</span>`
-                : '';
-            const posAccentRgb = item.pos ? getPosAccentRgb(item.pos) : 'var(--accent-primary-rgb)';
-            const example = (item.examples || [])[0];
-            const target = exampleTargetText(example) || example?.text || example?.targetSentence || '';
-            const english = example?.english || example?.translation || example?.englishSentence || '';
-            const englishHTML = (target && english)
-                ? `<div class="phrase-example-translation">${escapeCardText(english)}</div>` : '';
-            const exampleHTML = target ? `<div class="phrase-example" style="--sense-match-rgb: ${posAccentRgb}; border-left: 3px solid rgba(${posAccentRgb}, 0.85); padding-left: 10px; margin-top: 6px;">
-                    <div class="phrase-example-target" style="color: var(--text-primary); font-weight: 500;">${escapeCardText(target)}</div>
-                    ${englishHTML}
-                </div>` : '';
-            return `<div class="phrase-summary-item rare-sense-item">
-                ${posBadge ? `<div class="phrase-badge-row">${posBadge}</div>` : ''}
-                <div class="phrase-expression">${escapeCardText(item.translation || item.expression || '')}</div>
-                ${item.context ? `<div class="phrase-context">${escapeCardText(item.context)}</div>` : ''}
-                ${exampleHTML}
-            </div>`;
-        }
-        const example = (item.examples || [])[0];
-        const target = exampleTargetText(example);
-        const englishHTML = (target && example.english)
-            ? `<div class="phrase-example-translation">${escapeCardText(example.english)}</div>` : '';
-        const exampleHTML = target ? `<div class="phrase-example">
-                <div class="phrase-example-target">${escapeCardText(target)}</div>
-                ${englishHTML}
-            </div>` : '';
-        return `<div class="phrase-summary-item">
-            <div class="phrase-badge-row"><span class="phrase-kind-badge">PHRASE</span>${phraseSourcePillHTML(item)}</div>
-            <div class="phrase-expression">${escapeCardText(item.expression)}</div>
-            ${item.translation ? `<div class="phrase-translation">${escapeCardText(item.translation)}</div>` : ''}
-            ${item.context ? `<div class="phrase-context">${escapeCardText(item.context)}</div>` : ''}
-            ${exampleHTML}
-        </div>`;
+    const cliticHTML = items.map(item => {
+        if (item.kind !== 'CLITIC') return '';
+        const base = cliticBaseVerb(item);
+        if (emittedGroups.has(base)) return '';
+        emittedGroups.add(base);
+        return renderCliticGroup(base, cliticGroups.get(base));
     }).join('');
-
-    const rareCount = items.filter(it => it.kind === 'RARE_SENSE').length;
-    const phraseCount = items.length - rareCount;
-    let subtitle = '';
-    if (rareCount > 0 && phraseCount > 0) {
-        subtitle = `${rareCount} rare sense${rareCount === 1 ? '' : 's'} & ${phraseCount} expression${phraseCount === 1 ? '' : 's'} from this word`;
-    } else if (rareCount > 0) {
-        subtitle = `${rareCount} rare dictionary sense${rareCount === 1 ? '' : 's'} from this word`;
-    } else {
-        subtitle = `${phraseCount} phrase${phraseCount === 1 ? '' : 's'} from this word`;
-    }
-
-    const backButtonHTML = cardNavStack.length > 0
-        ? `<div style="margin-top: 18px; margin-bottom: 8px; text-align: center;">
-            <button type="button" class="rare-child-back-btn" onclick="event.stopPropagation(); navigateBack();">
-                &larr; Back to ${escapeCardText(card.chainParentWord || 'card')}
-            </button>
-           </div>`
+    const phraseItems = items.filter(item => item.kind !== 'CLITIC' && item.kind !== 'RARE_SENSE');
+    const rareItems = items.filter(item => item.kind === 'RARE_SENSE');
+    const phraseHTML = phraseItems.length
+        ? `<section class="other-uses-pos">
+            <h4 class="other-uses-pos-heading">Expressions</h4>
+            ${phraseItems.map(renderPhraseRow).join('')}
+           </section>`
         : '';
+    const rareHTML = rareItems.length ? renderRareSenseGroups(rareItems) : '';
 
-    return `<div class="back-header">
+    const rareCount = rareItems.length;
+    const phraseCount = items.length - rareCount;
+    const bits = [];
+    if (rareCount) bits.push(`${rareCount} rarer sense${rareCount === 1 ? '' : 's'}`);
+    if (phraseCount) bits.push(`${phraseCount} expression${phraseCount === 1 ? '' : 's'}`);
+    const subtitle = `Other uses — less common than Uncommon${bits.length ? ` · ${bits.join(' · ')}` : ''}`;
+
+    return `<div class="back-header other-uses-header">
             <div class="back-headword-row">
-                <span class="back-headword" style="font-size: 32px; font-weight: bold; line-height: 1.1;">${escapeCardText(card.chainParentWord || '')}</span>
+                <span class="back-headword other-uses-headword">${escapeCardText(card.chainParentWord || '')}</span>
             </div>
             <div class="phrase-summary-subtitle">${subtitle}</div>
         </div>
-        <div class="phrase-summary-scroll">${rows}${backButtonHTML}</div>`;
+        <div class="phrase-summary-scroll">${rareHTML}${phraseHTML}${cliticHTML}</div>`;
 }
 
 // ---------------------------------------------------------------------------
@@ -6510,7 +6546,7 @@ function updateCard({ announceHeadword = false } = {}) {
         if (rCount) parts.push(`${rCount} rare sense${rCount === 1 ? '' : 's'}`);
         if (eCount) parts.push(`${eCount} expression${eCount === 1 ? '' : 's'}`);
         const detail = parts.join(' and ');
-        backHTML += `<button type="button" class="ref-tile ref-rare-uses-btn" aria-label="Rare uses: ${escapeCardText(detail)}" title="${escapeCardText(detail)}" onclick="event.stopPropagation(); openRareAndExpressionsCard(event);">
+        backHTML += `<button type="button" class="ref-tile ref-rare-uses-btn" aria-label="Other uses: ${escapeCardText(detail)}" title="${escapeCardText(detail)}" onclick="event.stopPropagation(); openRareAndExpressionsCard(event);">
             <div class="ref-tile-icon-wrap">
                 <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M12 3 13.2 8.1 18 9.3 13.2 10.5 12 15.6 10.8 10.5 6 9.3 10.8 8.1 12 3z"></path>
@@ -6519,7 +6555,7 @@ function updateCard({ announceHeadword = false } = {}) {
                 </svg>
                 ${rareAndExprItems.length > 0 ? `<span class="ref-tile-count-badge">${rareAndExprItems.length}</span>` : ''}
             </div>
-            <span class="ref-tile-label">Rare uses</span>
+            <span class="ref-tile-label">Other uses</span>
         </button>`;
     }
 

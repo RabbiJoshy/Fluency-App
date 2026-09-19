@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-19T20:15:00+01:00",
+      "date": "2026-09-19 20:15 BST",
+      "agent": "Cursor",
+      "commit": "pending",
+      "summary": "Tighten Other uses, the set scrubber, and skipped Fast Track decks",
+      "detail": [
+        "Rare/other uses now group matching glosses under part-of-speech headings, scroll inside the card, and use the page subtitle to explain they are less common than Uncommon.",
+        "The active-set scrubber and settings icon no longer sit in boxes; return-to text still appears on child cards.",
+        "Fast Track on the setup page is skipped-word decks of 20, started from small numbered pills."
+      ]
+    },
+    {
       "timestamp": "2026-09-19T18:11:25+01:00",
       "date": "2026-09-19 18:11 BST",
       "agent": "Codex",
@@ -11,18 +23,6 @@
         "The surviving card surface is no longer mistaken for the lemma when it is another inflection."
       ],
       "commit": "pending"
-    },
-    {
-      "timestamp": "2026-09-19T17:39:29+01:00",
-      "date": "2026-09-19 17:39 BST",
-      "agent": "Codex",
-      "commit": "pending",
-      "summary": "Improve Fast Track details and skipped vocabulary browsing",
-      "detail": [
-        "Used more screen space in Fast Track details and made the skipped-words button available when skipping is enabled.",
-        "Simplified merged-form and skipped-word lists so word pills open cards directly.",
-        "Showed set-aside vocabulary on the main page by reason in expandable groups of 20."
-      ]
     },
     {
       "timestamp": "2026-09-19T17:11:21+01:00",
