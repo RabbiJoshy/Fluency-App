@@ -457,17 +457,21 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn(".settings-modal-content .settings-tab[hidden]", css)
         self.assertGreater(html.index('id="wsdPublicationRow"'), html.index('id="appDataTabContent"'))
 
-    def test_fast_track_skipped_words_are_browsable_not_a_study_set(self) -> None:
+    def test_fast_track_skipped_words_are_browsable_in_groups(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
         extras = (APP_ROOT / "js" / "extras.js").read_text(encoding="utf-8")
+        ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
-        self.assertIn('id="extrasSearch"', html)
-        self.assertIn('See ${total} Fast Track words', extras)
+        self.assertIn('id="viewSkippedWordsBtn"', html)
+        self.assertIn('id="skippedWordsSearch"', html)
+        self.assertIn('id="mergedFormsTotal"', html)
+        self.assertIn('id="skippedWordsTotal"', html)
         self.assertIn("class=\"extras-open-card\"", extras)
+        self.assertIn("${escapeHtml(item.word)}</button>", extras)
         self.assertIn("globalThis.popupFoundWord", extras)
-        self.assertIn('data-restore-kind="cognate"', extras)
-        self.assertIn('data-restore-kind="lemma"', extras)
-        self.assertIn("function restoreSection(kind)", extras)
+        self.assertIn("start += 20", extras)
+        self.assertIn("renderFastTrackDeck?.(extrasData)", ui)
+        self.assertNotIn("openSpeechExtrasBtn", ui)
         self.assertIn("#settingsModal.product-modal { align-items: flex-start; }", css)
 
     def test_wsd_publication_view_is_user_selectable(self) -> None:

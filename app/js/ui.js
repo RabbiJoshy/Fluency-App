@@ -2680,6 +2680,8 @@ function renderSetupExtrasSection() {
 
         if (totalSkipped > 0) {
             section.style.display = 'block';
+            card.onclick = null;
+            card.style.cursor = 'default';
             card.innerHTML = `
                 <div class="extras-deck-content">
                     <div class="extras-deck-status">
@@ -2689,28 +2691,16 @@ function renderSetupExtrasSection() {
                             <p>${cognates.length} look-alikes · ${lemmas.length} merged forms</p>
                         </div>
                     </div>
-                    <div class="extras-deck-actions">
-                        <button type="button" class="extras-deck-browse-btn" id="openSpeechExtrasBtn">
-                            Browse words <span aria-hidden="true">›</span>
-                        </button>
-                    </div>
                 </div>
+                <div class="extras-deck-groups">${globalThis.renderFastTrackDeck?.(extrasData) || ''}</div>
             `;
-            const openModal = () => {
-                if (lemmas.length > 0 && cognates.length === 0) {
-                    globalThis.openMergedForms?.();
-                } else if (cognates.length > 0 && lemmas.length === 0) {
-                    globalThis.openSkippedWords?.();
-                } else {
-                    globalThis.openExtras?.();
-                }
-            };
-            document.getElementById('openSpeechExtrasBtn')?.addEventListener('click', (e) => {
-                e.stopPropagation();
-                openModal();
+            card.querySelectorAll('.extras-open-card').forEach(button => {
+                button.addEventListener('click', () => {
+                    if (button.dataset.cardId) {
+                        globalThis.popupFoundWord?.({ id: button.dataset.cardId }, { reopenSearchOnBack: false, startFlipped: true });
+                    }
+                });
             });
-            card.style.cursor = 'pointer';
-            card.onclick = openModal;
         } else {
             section.style.display = 'block';
             card.innerHTML = `

@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-19T17:39:29+01:00",
+      "date": "2026-09-19 17:39 BST",
+      "agent": "Codex",
+      "commit": "pending",
+      "summary": "Improve Fast Track details and skipped vocabulary browsing",
+      "detail": [
+        "Used more screen space in Fast Track details and made the skipped-words button available when skipping is enabled.",
+        "Simplified merged-form and skipped-word lists so word pills open cards directly.",
+        "Showed set-aside vocabulary on the main page by reason in expandable groups of 20."
+      ]
+    },
+    {
       "timestamp": "2026-09-19T17:11:21+01:00",
       "date": "2026-09-19 17:11 BST",
       "agent": "Codex",
