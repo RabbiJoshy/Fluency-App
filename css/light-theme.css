@@ -709,14 +709,10 @@
     text-shadow: none;
 }
 
-:root[data-theme="light"] .nested-lemma-pill {
+:root[data-theme="light"] .back-lemma-chip {
     background: color-mix(in srgb, var(--bg-secondary) 88%, transparent);
+    border-color: var(--border-color);
     text-shadow: none;
-}
-
-:root[data-theme="light"] .back-headword.nested-lemma-pair,
-:root[data-theme="light"] .back-headword.nested-lemma-pair .back-surface-name {
-    color: var(--text-primary);
 }
 
 :root[data-theme="light"] .back-derivation-line strong,

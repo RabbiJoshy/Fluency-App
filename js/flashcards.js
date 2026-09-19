@@ -5010,9 +5010,9 @@ function updateCard({ announceHeadword = false } = {}) {
             frontPOSEl.innerHTML = pairs.map(pair => {
                 const posUnit = renderFrontPosUnit(pair.pos, isVerbPos(pair.pos));
                 if (!pair.lemma) return posUnit;
-                // POS governs the lemma, so it is the outer pill and the
-                // lemma sits in the inner chip on the right.
-                return `<span class="nested-lemma-pair front-lemma-pair ${getPosColorClass(pair.pos)}">${posUnit}<span class="nested-lemma-pill front-lemma-name">${escapeCardText(pair.lemma)}</span></span>`;
+                // POS is the iconographic pill; the lemma is the label it
+                // governs, sitting to its right inside the same capsule.
+                return `<span class="front-lemma-pair">${posUnit}<span class="front-lemma-name">${escapeCardText(pair.lemma)}</span></span>`;
             }).join('');
             frontPOSEl.style.display = 'flex';
         }
@@ -5113,15 +5113,15 @@ function updateCard({ announceHeadword = false } = {}) {
     let backHeadwordPairClass = '';
     let backCitationHTML = '';
     let backDerivationHTML = '';
-    // Same nested object as the front POS+lemma pill: one outer capsule,
-    // inner chip on the right. Here the surface is the outer label and the
-    // dictionary lemma is the inner chip. Skip transparent plurals/elisions.
+    // Surface stays the large answer; the lemma is a compact chip on its
+    // right — the same pairing as the front, without wrapping the title in
+    // a second filled capsule. Skip transparent plurals/elisions.
     const showBackLemmaPair = Boolean(citationForm)
         && foldSurfaceForm(citationForm) !== foldSurfaceForm(backWordText)
         && !isTrivialCanonicalRelation(backWordText, citationForm);
     if (showBackLemmaPair) {
-        backHeadwordPairClass = ' nested-lemma-pair back-surface-pair';
-        wordDisplay = `<span class="back-surface-name">${escapeCardText(backWordText)}</span><span class="nested-lemma-pill back-lemma">${escapeCardText(citationForm)}</span>`;
+        backHeadwordPairClass = ' back-surface-pair';
+        wordDisplay = `<span class="back-surface-name">${escapeCardText(backWordText)}</span><span class="back-lemma-chip">${escapeCardText(citationForm)}</span>`;
         if (formNote) {
             backCitationHTML = `<span class="back-form-note">${escapeCardText(formNote)}</span>`;
         }
