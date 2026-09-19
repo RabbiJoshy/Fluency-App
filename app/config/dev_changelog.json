@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-19T18:11:25+01:00",
+      "date": "2026-09-19 18:11 BST",
+      "agent": "Codex",
+      "summary": "Show the actual lemma beside each merged word form",
+      "detail": [
+        "Merged form lists show the lemma and its matching translation on the left, with the skipped form and its translation on the right.",
+        "The surviving card surface is no longer mistaken for the lemma when it is another inflection."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-19T17:39:29+01:00",
       "date": "2026-09-19 17:39 BST",
       "agent": "Codex",

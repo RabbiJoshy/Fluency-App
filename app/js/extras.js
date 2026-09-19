@@ -55,6 +55,23 @@ function firstTranslation(item) {
     return meaning ? meaning.translation.trim() : '';
 }
 
+function lemmaDisplayOf(item, host) {
+    // The surviving card is anchored to the most frequent surface, which can
+    // itself be an inflection. Show the shared headword used for grouping,
+    // with a translation from that headword's sense.
+    const key = lemmaKeyOf(item);
+    const matches = [host, item].flatMap(entry => (entry?.meanings || []).filter(meaning =>
+        String(meaning?.headword || '').normalize('NFC').toLocaleLowerCase('es').trim() === key
+    ));
+    const translated = matches.find(meaning => String(meaning.translation || '').trim());
+    const word = matches[0]?.headword
+        || [host?.lemma, item?.lemma].find(value =>
+            String(value || '').normalize('NFC').toLocaleLowerCase('es').trim() === key
+        )
+        || key;
+    return { word: String(word).trim(), translation: translated?.translation?.trim() || firstTranslation(item) };
+}
+
 // A merged form is only meaningful next to the card that swallowed it, so map
 // each lemma to the surviving representative before rendering.
 function representativesByLemma(items) {
@@ -123,13 +140,14 @@ function renderRows(entries, kind) {
     if (entries.length === 0) return '';
     return entries.map(({ item, mergedInto }) => {
         const translation = firstTranslation(item);
-        const baseTranslation = firstTranslation(mergedInto);
-        const note = kind === 'cognate' ? cognateNote(item) : `${mergedInto?.word || ''} ${baseTranslation}`;
+        const lemma = kind === 'lemma' ? lemmaDisplayOf(item, mergedInto) : null;
+        const note = kind === 'cognate' ? cognateNote(item) : `${lemma.word} ${lemma.translation}`;
         return `<li class="extras-row extras-row--${kind}" data-search-text="${escapeHtml(`${item.word} ${translation} ${note}`.toLocaleLowerCase())}">
-            <span class="extras-word-stack"><button type="button" class="extras-open-card" data-card-id="${escapeHtml(item.id || '')}" aria-label="View ${escapeHtml(item.word)} card">${escapeHtml(item.word)}</button>${kind === 'lemma' ? `<span class="extras-translation">${escapeHtml(translation)}</span>` : ''}</span>
             ${kind === 'lemma'
-                ? `<span class="extras-base"><strong>${escapeHtml(mergedInto?.word || '')}</strong><small>${escapeHtml(baseTranslation)}</small></span>`
-                : `<span class="extras-translation">${escapeHtml(translation)}</span>`}
+                ? `<span class="extras-base"><strong>${escapeHtml(lemma.word)}</strong><small>${escapeHtml(lemma.translation)}</small></span>`
+                : ''}
+            <span class="extras-word-stack"><button type="button" class="extras-open-card" data-card-id="${escapeHtml(item.id || '')}" aria-label="View ${escapeHtml(item.word)} card">${escapeHtml(item.word)}</button>${kind === 'lemma' ? `<span class="extras-translation">${escapeHtml(translation)}</span>` : ''}</span>
+            ${kind === 'cognate' ? `<span class="extras-translation">${escapeHtml(translation)}</span>` : ''}
         </li>`;
     }).join('');
 }
