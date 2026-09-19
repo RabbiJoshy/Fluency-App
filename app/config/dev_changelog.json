@@ -2,6 +2,15 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-19T15:55:33+01:00",
+      "date": "2026-09-19 15:55 BST",
+      "agent": "Cursor",
+      "commit": "pending",
+      "summary": "Align the back lemma chip to the letterforms, not the font em-box",
+      "detail": [
+        "The lemma chip now centres on the surface's cap-height band so it no longer sits low against the word."
+      ]
+    },
       "timestamp": "2026-09-19T15:34:08+01:00",
       "date": "2026-09-19 15:34 BST",
       "agent": "Cursor",

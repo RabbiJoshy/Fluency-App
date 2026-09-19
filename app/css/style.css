@@ -17531,8 +17531,15 @@ body.artist-mode #flashcardMode::before {
   display: block;
   color: inherit;
   font-weight: inherit;
-  line-height: 1;
   min-width: 0;
+  overflow: visible;
+  /* Cap-to-baseline, not the em box: otherwise the chip centres on
+     empty descender space and reads low against the letters. */
+  line-height: 1cap;
+  height: 1cap;
+  text-box: cap alphabetic;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
 }
 .back-lemma-chip {
   display: inline-flex;
