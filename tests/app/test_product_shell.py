@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v470"
+EXPECTED_CACHE_NAME = "flashcards-v471"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -634,6 +634,12 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("await loadReleaseProvenance(selectedLanguage)", main)
         self.assertIn("const releaseConfig = activeArtist || languageConfig", config)
         self.assertIn("layers[`artist:${activeArtist.slug}`]", config)
+        catalog_path = APP_ROOT / "config" / "artists.json"
+        self.assertTrue(catalog_path.is_file())
+        catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
+        self.assertIn("bad-bunny", catalog)
+        self.assertEqual(catalog["bad-bunny"]["language"], "spanish")
+        self.assertIn("lyrics-all-artists-v7-native-20260825b", main)
 
     def test_lyrics_preview_and_resume_are_bound_to_an_exact_release(self) -> None:
         main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
@@ -682,7 +688,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260918l", worker)
-        self.assertIn("/js/main.js?v=20260919a", worker)
+        self.assertIn("/js/main.js?v=20260919b", worker)
         self.assertIn("/js/ui.js?v=20260919a", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
