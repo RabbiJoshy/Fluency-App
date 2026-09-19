@@ -2687,18 +2687,21 @@ function renderSetupExtrasSection() {
                     <div class="extras-deck-status">
                         <span class="extras-deck-badge is-info">Fast Track</span>
                         <div class="extras-deck-info">
-                            <strong>${totalSkipped} word${totalSkipped === 1 ? '' : 's'} set aside</strong>
-                            <p>${cognates.length} look-alikes · ${lemmas.length} merged forms</p>
+                            <strong>${cognates.length
+                ? `${cognates.length.toLocaleString()} skipped word${cognates.length === 1 ? '' : 's'}`
+                : `${lemmas.length.toLocaleString()} merged form${lemmas.length === 1 ? '' : 's'}`}</strong>
+                            <p>${cognates.length
+                ? 'Study them as decks of 20, the same size as a main set.'
+                : 'Merged forms stay on their host cards — they are not skipped.'}</p>
                         </div>
                     </div>
                 </div>
                 <div class="extras-deck-groups">${globalThis.renderFastTrackDeck?.(extrasData) || ''}</div>
             `;
-            card.querySelectorAll('.extras-open-card').forEach(button => {
-                button.addEventListener('click', () => {
-                    if (button.dataset.cardId) {
-                        globalThis.popupFoundWord?.({ id: button.dataset.cardId }, { reopenSearchOnBack: false, startFlipped: true });
-                    }
+            card.querySelectorAll('.extras-set-pill').forEach(button => {
+                button.addEventListener('click', event => {
+                    event.stopPropagation();
+                    globalThis.startFastTrackSkippedSet?.(button.dataset.ftKind, Number(button.dataset.ftStart));
                 });
             });
         } else {

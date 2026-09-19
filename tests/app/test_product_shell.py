@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v481"
+EXPECTED_CACHE_NAME = "flashcards-v484"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -457,7 +457,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn(".settings-modal-content .settings-tab[hidden]", css)
         self.assertGreater(html.index('id="wsdPublicationRow"'), html.index('id="appDataTabContent"'))
 
-    def test_fast_track_skipped_words_are_browsable_in_groups(self) -> None:
+    def test_fast_track_skipped_words_are_study_sets_of_twenty(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
         extras = (APP_ROOT / "js" / "extras.js").read_text(encoding="utf-8")
         ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
@@ -469,8 +469,11 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("class=\"extras-open-card\"", extras)
         self.assertIn("${escapeHtml(item.word)}</button>", extras)
         self.assertIn("globalThis.popupFoundWord", extras)
-        self.assertIn("start += 20", extras)
-        self.assertIn("renderFastTrackDeck?.(extrasData)", ui)
+        self.assertIn("class=\"extras-set-pill\"", extras)
+        self.assertIn("function startFastTrackSkippedSet", extras)
+        self.assertIn("fastTrackCards: slice", extras)
+        self.assertIn("startFastTrackSkippedSet", ui)
+        self.assertIn(".extras-set-pill", css)
         self.assertNotIn("openSpeechExtrasBtn", ui)
         self.assertIn("#settingsModal.product-modal { align-items: flex-start; }", css)
 
@@ -692,8 +695,8 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260918l", worker)
-        self.assertIn("/js/main.js?v=20260919e", worker)
-        self.assertIn("/js/ui.js?v=20260919e", worker)
+        self.assertIn("/js/main.js?v=20260919n", worker)
+        self.assertIn("/js/ui.js?v=20260919g", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -812,7 +815,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
         self.assertIn("/js/spotify-playlist-import.js?v=20260919a", worker)
-        self.assertIn('css/style.css?v=20260919e', html)
+        self.assertIn('css/style.css?v=20260919n', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
         self.assertIn("searchParams.set('playlistLive'", importer)
@@ -1222,7 +1225,7 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("function getQualifyingRareSenses(card)", flashcards)
         self.assertIn("function openRareAndExpressionsCard(event)", flashcards)
         self.assertIn('class="ref-tile ref-rare-uses-btn"', flashcards)
-        self.assertIn(">Rare uses</span>", flashcards)
+        self.assertIn(">Other uses</span>", flashcards)
         self.assertNotIn("function toggleRareSenses(event)", flashcards)
         self.assertNotIn("rare-senses-toggle-btn", flashcards)
 

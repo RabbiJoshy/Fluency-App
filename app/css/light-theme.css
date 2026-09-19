@@ -299,8 +299,8 @@
 }
 
 :root[data-theme="light"] .cbs-gear {
-    border-color: var(--border-color);
-    background: rgba(23, 33, 43, 0.055);
+    border: none;
+    background: transparent;
 }
 
 :root[data-theme="light"] .deck-progress-track .study-menu-btn:hover,
@@ -447,10 +447,9 @@
     color: var(--text-secondary);
 }
 
-:root[data-theme="light"] .phrase-summary-item,
-:root[data-theme="light"] .wild-english,
-:root[data-theme="light"] .phrase-example-translation {
-    border-color: var(--border-color);
+:root[data-theme="light"] .other-uses-gloss,
+:root[data-theme="light"] .phrase-expression {
+    color: var(--text-primary);
 }
 
 :root[data-theme="light"] .phrase-example {
@@ -869,13 +868,13 @@
 }
 
 :root[data-theme="light"] .cbs-strip {
-    border-color: var(--border-color);
-    background: #edf2f5;
+    border: none;
+    background: transparent;
 }
 
 :root[data-theme="light"] .cbs-return {
-    border-color: var(--border-color);
-    background: #f7f9fb;
+    border: none;
+    background: transparent;
     color: var(--text-primary);
 }
 
