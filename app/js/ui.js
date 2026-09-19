@@ -2992,11 +2992,21 @@ function showSettingsModalWithTab(tabName, { singleTab = false } = {}) {
     settingsModal.classList.remove('hidden');
 }
 
-// Verbose data-provenance block for the JST (dev) account only: per-file
-// Last-Modified dates, the running asset version, and the latest entries
-// from config/dev_changelog.json (which Claude appends to when deck data
-// changes). The containing App data tab is hidden from every other account.
+function escapeDevText(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
+// Verbose data-provenance block for the JST (dev) account only:
+// Top hero card shows the most recent deploy with exact date/time, authoring LLM agent,
+// human summary in normal text font, and active SW cache.
+// Below that: per-file Last-Modified dates, running asset version, and previous changelog entries.
 async function renderDevFooter(freshnessEl) {
+    const heroEl = document.getElementById('devLatestDeployHero');
     let devEl = document.getElementById('devFooterDetail');
     if (!devEl) {
         devEl = document.createElement('div');
@@ -3009,6 +3019,104 @@ async function renderDevFooter(freshnessEl) {
         { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
     const lines = [];
 
+    // Service-worker cache name — lets you see if the SW has picked up
+    // the latest deploy or is still serving a stale shell.
+    let swCache = null;
+    try {
+        const cacheNames = await caches.keys();
+        swCache = cacheNames.find(n => n.startsWith('flashcards-v')) || null;
+    } catch (_) {}
+
+    // Running asset version, from the modulepreload tags (single source of
+    // truth is service-worker.js ASSET_VERSION; the tags mirror it).
+    const pre = document.querySelector('link[rel="modulepreload"]');
+    const vMatch = pre && pre.href.match(/[?&]v=([\w.-]+)/);
+    const appVersion = vMatch ? vMatch[1] : null;
+
+    // Latest changelog entries.
+    let entries = [];
+    try {
+        if (!window._devChangelog) {
+            const resp = await fetch('config/dev_changelog.json');
+            if (resp.ok) window._devChangelog = await resp.json();
+        }
+        entries = (window._devChangelog && window._devChangelog.entries) || [];
+    } catch (e) { /* changelog missing is fine — dev-only nicety */ }
+
+    // Render prominent Hero Card at the very top of Developer tab
+    if (heroEl && entries.length) {
+        const latest = entries[0];
+        const agentName = latest.agent || 'Agent';
+
+        let exactDateTime = latest.date || '';
+        if (latest.timestamp) {
+            try {
+                const dt = new Date(latest.timestamp);
+                if (!isNaN(dt.getTime())) {
+                    exactDateTime = dt.toLocaleString(undefined, {
+                        weekday: 'short',
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        timeZoneName: 'short'
+                    });
+                }
+            } catch (_) {}
+        }
+
+        const bullets = (latest.detail || latest.details || []).map(b =>
+            `<li class="dev-deploy-bullet">${escapeDevText(b)}</li>`
+        ).join('');
+
+        const commitText = latest.commit && latest.commit !== 'pending'
+            ? `commit ${escapeDevText(latest.commit)}`
+            : '';
+
+        heroEl.innerHTML = `
+            <div class="dev-deploy-card">
+                <div class="dev-deploy-top-row">
+                    <div class="dev-deploy-meta">
+                        <span class="dev-deploy-agent-badge">${escapeDevText(agentName)}</span>
+                        <span class="dev-deploy-time">${escapeDevText(exactDateTime)}</span>
+                    </div>
+                    <div class="dev-deploy-cache-pill" title="Active Service Worker Cache">
+                        <span class="dev-status-dot"></span>
+                        <span>${escapeDevText(swCache || 'No SW Cache')}</span>
+                    </div>
+                </div>
+                <div class="dev-deploy-summary">${escapeDevText(latest.summary)}</div>
+                ${bullets ? `<ul class="dev-deploy-bullets">${bullets}</ul>` : ''}
+                <div class="dev-deploy-footer-bar">
+                    <div class="dev-deploy-footer-stats">
+                        ${appVersion ? `<span>v=${escapeDevText(appVersion)}</span>` : ''}
+                        ${commitText ? `<span>${commitText}</span>` : ''}
+                    </div>
+                    <button type="button" class="dev-deploy-refresh-btn" id="devForceRefreshBtn" title="Check for Service Worker updates and reload">
+                        Check cache &amp; reload
+                    </button>
+                </div>
+            </div>
+        `;
+
+        const refreshBtn = document.getElementById('devForceRefreshBtn');
+        if (refreshBtn) {
+            refreshBtn.onclick = async () => {
+                refreshBtn.disabled = true;
+                refreshBtn.textContent = 'Updating...';
+                try {
+                    if ('serviceWorker' in navigator) {
+                        const reg = await navigator.serviceWorker.getRegistration();
+                        if (reg) await reg.update();
+                    }
+                } catch (_) {}
+                window.location.reload();
+            };
+        }
+    }
+
     // Per-file freshness (which file is stale, not just the newest).
     const perFile = window._vocabDataFreshness || {};
     const fileNames = Object.keys(perFile).sort((a, b) => perFile[b] - perFile[a]);
@@ -3019,42 +3127,27 @@ async function renderDevFooter(freshnessEl) {
         }
     }
 
-    // Running asset version, from the modulepreload tags (single source of
-    // truth is service-worker.js ASSET_VERSION; the tags mirror it).
-    const pre = document.querySelector('link[rel="modulepreload"]');
-    const vMatch = pre && pre.href.match(/[?&]v=([\w.-]+)/);
-    if (vMatch) {
-        lines.push(`<div class="dev-footer-row"><span>app version</span><span>${vMatch[1]}</span></div>`);
+    if (appVersion) {
+        lines.push(`<div class="dev-footer-row"><span>app version</span><span>${appVersion}</span></div>`);
     }
 
-    // Latest Claude changelog entries.
-    try {
-        if (!window._devChangelog) {
-            const resp = await fetch('config/dev_changelog.json');
-            if (resp.ok) window._devChangelog = await resp.json();
-        }
-        const entries = (window._devChangelog && window._devChangelog.entries) || [];
-        if (entries.length) {
-            lines.push('<div class="dev-footer-label">Recent app/data changes</div>');
-            for (const e of entries.slice(0, 4)) {
-                lines.push(`<div class="dev-footer-entry"><b>${e.date}</b> · ${e.summary}` +
-                    (e.commit ? ` <span class="dev-footer-commit">(${e.commit})</span>` : '') + '</div>');
-                for (const d of (e.detail || e.details || []).slice(0, 4)) {
-                    lines.push(`<div class="dev-footer-bullet">– ${d}</div>`);
-                }
+    // Previous changes
+    const pastEntries = entries.slice(1, 5);
+    if (pastEntries.length) {
+        lines.push('<div class="dev-footer-label">Previous app/data changes</div>');
+        for (const e of pastEntries) {
+            const author = e.agent ? `[${escapeDevText(e.agent)}] ` : '';
+            lines.push(`<div class="dev-footer-entry"><b>${escapeDevText(e.date)}</b> · ${author}${escapeDevText(e.summary)}` +
+                (e.commit ? ` <span class="dev-footer-commit">(${escapeDevText(e.commit)})</span>` : '') + '</div>');
+            for (const d of (e.detail || e.details || []).slice(0, 3)) {
+                lines.push(`<div class="dev-footer-bullet">– ${escapeDevText(d)}</div>`);
             }
         }
-    } catch (e) { /* changelog missing is fine — dev-only nicety */ }
+    }
 
-    // Service-worker cache name — lets you see if the SW has picked up
-    // the latest deploy or is still serving a stale shell.
-    try {
-        const cacheNames = await caches.keys();
-        const swCache = cacheNames.find(n => n.startsWith('flashcards-v'));
-        if (swCache) {
-            lines.push(`<div class="dev-footer-row"><span>SW cache</span><span>${swCache}</span></div>`);
-        }
-    } catch (_) {}
+    if (swCache) {
+        lines.push(`<div class="dev-footer-row"><span>SW cache</span><span>${swCache}</span></div>`);
+    }
 
     devEl.innerHTML = lines.join('');
 }

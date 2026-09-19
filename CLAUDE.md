@@ -11,6 +11,12 @@ still the live app; treat it as reference, not a target.
 
 ## Read first
 
+**`CHAT_ROADMAP.md`** (repo root) — named chats for the live deck campaign
+(FUSE, SIEVE, QUARRY, …). Concurrent sessions: read SCAR, then **only your
+codename**. Do not invent a parallel job. Copy to
+`../Fluency-Workspace/raw/surfaces/DECK_CHAT_ROADMAP.md` after edits.
+UI/app chats: not a pipeline row unless named as a blocker; still skim it.
+
 **`REPO_MAP.md`** — dense architecture map, pipeline dataflow, and frontend `window.*` globals registry. Consult this before running exploratory searches or reading large files.
 
 **`docs/INVARIANTS.md`** — the five rules that constrain every change. Read
@@ -22,8 +28,9 @@ before altering architecture, contracts or provenance.
 4. Adapters absorb irregularity at the edges; the engine exists once.
 5. A language or mode is added by creating files, not by editing lists.
 
-Then `docs/ROADMAP.md` for the plan and `docs/decisions/` for why things are as
-they are. `docs/reference/` holds WSD measurements carried over from the older
+Then `CHAT_ROADMAP.md` for **which chat is allowed to do what**, `docs/ROADMAP.md`
+for the long migration plan, and `docs/decisions/` for why things are as they
+are. `docs/reference/` holds WSD measurements carried over from the older
 repository — read its README first, because those were taken on Spanish against
 a SpanishDict menu and not all of them transfer.
 
@@ -137,6 +144,33 @@ Languages with profiles or packages: `es`, `fr`, `pt`, `cs`, `nl`, `pl`. Modes: 
 - **Name pipeline steps by file and purpose**, never by number alone.
 - **Concurrent sessions are normal.** Check `git status` before committing;
   commit only your own paths. Others' uncommitted work is routinely present.
+  Named jobs: **`CHAT_ROADMAP.md`** — do only your codename.
+- **Deploy every UI change.** Any edit to files under `app/` must be committed
+  on `main` and deployed to `gh-pages` at the end of the response — don't wait
+  to be asked. Josh needs to see the result on the live site to judge it.
+  Deploy procedure:
+  1. **Record the change in changelog:** Before staging or committing, you MUST
+     prepend an entry to **BOTH** `app/config/dev_changelog.json` and
+     `config/dev_changelog.json`. The entry MUST include:
+     - `"timestamp"`: exact ISO 8601 timestamp with timezone (e.g. `"2026-09-19T13:30:00+01:00"`)
+     - `"date"`: formatted date/time with timezone (e.g. `"2026-09-19 13:30 BST"`)
+     - `"agent"`: the name of the LLM agent making the change (`"Antigravity"`, `"Claude"`, `"Cursor"`, `"Codex"`, etc.)
+     - `"summary"`: a concise human summary in normal text font describing the most recent change
+     - `"detail"`: array of specific change bullets
+     - `"commit"`: `"pending"` (or commit SHA)
+     *Why:* The app's Settings → Developer tab renders this latest entry at the
+     **very top of the section** so Josh can immediately verify what changed,
+     who made the change, and whether the Service Worker cache is fresh or stale.
+  2. `git add` only the files you changed (including changelog, bumped service worker
+     and asset version tags). Do not stage other sessions' uncommitted work.
+  3. Commit on `main` with a descriptive message and `git push origin main`.
+  4. Copy each changed file into the gh-pages worktree at
+     `/private/tmp/fluency-pages-deploy/`, writing to **both** the root path
+     (e.g. `js/about-example.js`) and the `app/` mirror (e.g.
+     `app/js/about-example.js`). Use `git show main:<path>` to get the
+     committed version.
+  5. Commit on `gh-pages` and `git push origin gh-pages`.
+  Keep deploys surgical: only the files you touched, nothing else.
 - **Don't rebuild what a pool already holds.** Named, described sentence pools
   live in `<workspace>/pools/<lang>/`; `fluency pools list` shows them.
 

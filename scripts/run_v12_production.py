@@ -99,21 +99,25 @@ def deploy_language_release(workspace: Path, language: str, release_id: str) -> 
     if not rel_dir.exists():
         raise RuntimeError(f"Release directory missing: {rel_dir}")
 
-    # 1. Update dev_changelog.json
-    changelog_path = REPO_ROOT / "app/config/dev_changelog.json"
-    changelog = json.loads(changelog_path.read_text(encoding="utf-8"))
+    # 1. Update dev_changelog.json (both app/config and config)
     card_count = "6,000" if language in ("pt", "es") else "4,000"
+    now = datetime.datetime.now().astimezone()
     entry = {
-        "date": time.strftime("%Y-%m-%d"),
+        "timestamp": now.isoformat(),
+        "date": now.strftime("%Y-%m-%d %H:%M %Z"),
+        "agent": "Pipeline",
         "commit": "pending",
         "summary": f"Deploy {language.upper()} V12 deck ({release_id})",
         "detail": [
             f"{card_count} cards with 10 display examples using WSD v12-1 with difficulty stratification and tail gating."
         ],
     }
-    changelog.setdefault("entries", []).insert(0, entry)
-    changelog_text = json.dumps(changelog, indent=2, ensure_ascii=False) + "\n"
-    changelog_path.write_text(changelog_text, encoding="utf-8")
+    for rel_p in ("app/config/dev_changelog.json", "config/dev_changelog.json"):
+        changelog_path = REPO_ROOT / rel_p
+        if changelog_path.exists():
+            changelog = json.loads(changelog_path.read_text(encoding="utf-8"))
+            changelog.setdefault("entries", []).insert(0, entry)
+            changelog_path.write_text(json.dumps(changelog, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
     # 2. Update config/config.json
     config_path = REPO_ROOT / "app/config/config.json"

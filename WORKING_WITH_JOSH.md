@@ -215,6 +215,11 @@ Not a passing test on its own.
   Wait for my go-ahead.
 - **Git:** `git pull --rebase` before every push, never force-push, stop and tell me on
   conflict. Suggest committing after a logical chunk — don't wait to be asked.
-- **Dev changelog:** after any change to deck data or user-visible behaviour, prepend an entry
-  to `config/dev_changelog.json`. It's how I see what changed without reading git log.
+- **Dev changelog & deploy audit:** before deploying any change to deck data or user-visible
+  behaviour, prepend an entry to **BOTH** `app/config/dev_changelog.json` and
+  `config/dev_changelog.json`. Each entry MUST specify the exact date & time with timezone,
+  the authoring LLM agent name (`Antigravity`, `Claude`, `Cursor`, `Codex`), and a human summary
+  in normal text font describing the most recent change (plus detail bullets). This entry is
+  rendered as the very top item in Settings → Developer tab so I can verify changes and inspect
+  service-worker cache status without checking git logs.
 - **No browser previews.** Service-worker caching makes them unreliable. I test in my own browser.
