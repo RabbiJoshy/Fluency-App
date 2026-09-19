@@ -269,9 +269,18 @@ async function resolveArtist() {
 
     try {
         const previewRelease = requestedLyricsRelease();
-        const response = await fetch(artistCatalogUrl(), { cache: 'no-store' });
-        if (!response.ok) throw new Error(`Artist catalog HTTP ${response.status}`);
-        allArtistsConfig = bindArtistCatalogToRelease(validateArtistCatalog(await response.json(), {
+        let catalog = null;
+        try {
+            const response = await fetch(artistCatalogUrl(), { cache: 'no-store' });
+            if (response.ok) catalog = await response.json();
+        } catch (_) {}
+        if (!catalog || Object.keys(catalog).length === 0) {
+            try {
+                const fallbackResp = await fetch(appAssetPath('releases/lyrics/lyrics-all-artists-v7-native-20260825b/app/config/artists.json'), { cache: 'no-store' });
+                if (fallbackResp.ok) catalog = await fallbackResp.json();
+            } catch (_) {}
+        }
+        allArtistsConfig = bindArtistCatalogToRelease(validateArtistCatalog(catalog || {}, {
             source: 'config/artists.json'
         }), previewRelease);
 
@@ -1182,13 +1191,24 @@ async function ensureArtistCatalog() {
         return allArtistsConfig;
     }
     try {
-        const response = await fetch(artistCatalogUrl(), { cache: 'no-store' });
-        if (!response.ok) throw new Error(`Artist catalog HTTP ${response.status}`);
-        const value = await response.json();
+        let value = null;
+        try {
+            const response = await fetch(artistCatalogUrl(), { cache: 'no-store' });
+            if (response.ok) value = await response.json();
+        } catch (_) {}
+        if (!value || Object.keys(value).length === 0) {
+            try {
+                const fallbackResp = await fetch(appAssetPath('releases/lyrics/lyrics-all-artists-v7-native-20260825b/app/config/artists.json'), { cache: 'no-store' });
+                if (fallbackResp.ok) value = await fallbackResp.json();
+            } catch (_) {}
+        }
         allArtistsConfig = bindArtistCatalogToRelease(
-            validateArtistCatalog(value, { source: 'config/artists.json' }),
+            validateArtistCatalog(value || {}, { source: 'config/artists.json' }),
             requestedLyricsRelease()
         );
+        for (const [slug, cfg] of Object.entries(allArtistsConfig)) {
+            cfg.slug = slug;
+        }
         window._allArtistsConfig = allArtistsConfig;
     } catch (error) {
         console.warn('Could not load lyric artists:', error);
