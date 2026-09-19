@@ -123,19 +123,13 @@ function renderRows(entries, kind) {
     if (entries.length === 0) return '';
     return entries.map(({ item, mergedInto }) => {
         const translation = firstTranslation(item);
-        // Cognates carry a score the learner can move with the sensitivity
-        // setting, so show it rather than repeating the section's blurb on
-        // every row. A merged form's useful fact is which card absorbed it.
-        const note = kind === 'cognate'
-            ? cognateNote(item)
-            : (mergedInto?.word
-                ? `On the <strong>${escapeHtml(mergedInto.word)}</strong> card`
-                : 'Grouped form');
-        return `<li class="extras-row" data-search-text="${escapeHtml(`${item.word} ${translation} ${note.replace(/<[^>]+>/g, '')}`.toLocaleLowerCase())}">
-            <span class="extras-word">${escapeHtml(item.word)}</span>
-            <span class="extras-translation">${escapeHtml(translation)}</span>
-            <span class="extras-note${kind === 'cognate' ? ' extras-score' : ''}">${note}</span>
-            <button type="button" class="extras-open-card" data-card-id="${escapeHtml(item.id || '')}">Open card</button>
+        const baseTranslation = firstTranslation(mergedInto);
+        const note = kind === 'cognate' ? cognateNote(item) : `${mergedInto?.word || ''} ${baseTranslation}`;
+        return `<li class="extras-row extras-row--${kind}" data-search-text="${escapeHtml(`${item.word} ${translation} ${note}`.toLocaleLowerCase())}">
+            <span class="extras-word-stack"><button type="button" class="extras-open-card" data-card-id="${escapeHtml(item.id || '')}" aria-label="View ${escapeHtml(item.word)} card">${escapeHtml(item.word)}</button>${kind === 'lemma' ? `<span class="extras-translation">${escapeHtml(translation)}</span>` : ''}</span>
+            ${kind === 'lemma'
+                ? `<span class="extras-base"><strong>${escapeHtml(mergedInto?.word || '')}</strong><small>${escapeHtml(baseTranslation)}</small></span>`
+                : `<span class="extras-translation">${escapeHtml(translation)}</span>`}
         </li>`;
     }).join('');
 }
@@ -144,20 +138,15 @@ function renderMergedForms() {
     const { lemmas } = collectExtras();
     const body = document.getElementById('mergedFormsBody');
     if (!body) return lemmas;
+    const total = document.getElementById('mergedFormsTotal');
+    if (total) total.textContent = `${lemmas.length.toLocaleString()} forms`;
 
     if (lemmas.length === 0) {
         body.innerHTML = `<p class="extras-empty">No word forms are currently merged. Every form is shown as its own card.</p>`;
         return lemmas;
     }
 
-    body.innerHTML = `<div class="extras-section">
-        <div class="extras-section-header">
-            <h4>Word forms learned together <span class="extras-count">${lemmas.length}</span></h4>
-            <button type="button" class="extras-restore" data-restore-kind="lemma">Separate cards</button>
-        </div>
-        <p class="extras-blurb">These forms appear on their shared base card instead of repeating.</p>
-        <ul class="extras-list">${renderRows(lemmas, 'lemma')}</ul>
-    </div>`;
+    body.innerHTML = `<ul class="extras-list">${renderRows(lemmas, 'lemma')}</ul>`;
     return lemmas;
 }
 
@@ -165,21 +154,32 @@ function renderSkippedWords() {
     const { cognates } = collectExtras();
     const body = document.getElementById('skippedWordsBody');
     if (!body) return cognates;
+    const total = document.getElementById('skippedWordsTotal');
+    if (total) total.textContent = `${cognates.length.toLocaleString()} words`;
 
     if (cognates.length === 0) {
         body.innerHTML = `<p class="extras-empty">No words are currently set aside. Obvious look-alikes remain in the deck.</p>`;
         return cognates;
     }
 
-    body.innerHTML = `<div class="extras-section">
-        <div class="extras-section-header">
-            <h4>Obvious look-alikes <span class="extras-count">${cognates.length}</span></h4>
-            <button type="button" class="extras-restore" data-restore-kind="cognate">Show as cards</button>
-        </div>
-        <p class="extras-blurb">Set aside because their spelling and meaning match a language you already know.</p>
-        <ul class="extras-list">${renderRows(cognates, 'cognate')}</ul>
-    </div>`;
+    body.innerHTML = `<ul class="extras-list">${renderRows(cognates, 'cognate')}</ul>`;
     return cognates;
+}
+
+// The setup page shows the actual set-aside deck, in small numbered batches
+// within each reason, instead of sending the learner to another audit dialog.
+function renderFastTrackDeck({ cognates = [], lemmas = [] }) {
+    return [
+        { label: 'Obvious look-alikes', kind: 'cognate', entries: cognates },
+        { label: 'Merged word forms', kind: 'lemma', entries: lemmas },
+    ].filter(group => group.entries.length).map(group => {
+        const batches = [];
+        for (let start = 0; start < group.entries.length; start += 20) {
+            const slice = group.entries.slice(start, start + 20);
+            batches.push(`<details class="extras-deck-batch"${start === 0 ? ' open' : ''}><summary>Words ${start + 1}–${start + slice.length}</summary><ul class="extras-list">${renderRows(slice, group.kind)}</ul></details>`);
+        }
+        return `<section class="extras-deck-group"><h4>${group.label} <span class="extras-count">${group.entries.length}</span></h4>${batches.join('')}</section>`;
+    }).join('');
 }
 
 function renderExtras() {
@@ -230,7 +230,7 @@ function refreshExtrasButtons() {
     const skippedBtn = document.getElementById('viewSkippedWordsBtn');
     const skippedCount = document.getElementById('skippedWordsCount');
     if (skippedBtn) {
-        const canShowSkipped = cognates.length > 0 && g().excludeCognates;
+        const canShowSkipped = Boolean(g().excludeCognates && g().cognateFieldAvailable);
         skippedBtn.style.display = canShowSkipped ? 'inline-flex' : 'none';
         if (skippedCount) skippedCount.textContent = `(${cognates.length})`;
     }
@@ -486,3 +486,4 @@ globalThis.openSavedWords = openSavedWords;
 globalThis.toggleSavedWord = toggleSavedWord;
 globalThis.isWordSaved = isWordSaved;
 globalThis.collectExtras = collectExtras;
+globalThis.renderFastTrackDeck = renderFastTrackDeck;

@@ -15527,9 +15527,9 @@
 /* The page. Reads as a document rather than a settings sheet, because the
    point is to explain the trade before offering the controls. */
 .fast-mode-page-body {
-  max-width: 640px;
+  max-width: 1040px;
   margin: 0 auto;
-  padding: 48px 24px 64px;
+  padding: 24px clamp(16px, 3vw, 36px) 40px;
 }
 .fast-mode-page-body h2 {
   font-family: var(--font-emphasis);
@@ -15538,19 +15538,19 @@
   color: var(--text-primary, var(--text-secondary));
 }
 .fast-mode-lede {
-  margin: 0 0 28px;
+  margin: 0 0 16px;
   font-size: 15px;
   line-height: 1.6;
   color: var(--text-muted);
 }
 .fast-mode-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 22px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
 }
 .fast-mode-controls .setup-substep {
   margin-top: 0;
-  padding-top: 18px;
+  padding: 16px;
 }
 .fast-mode-explainer {
   margin: 0 0 10px;
@@ -15567,6 +15567,11 @@
   opacity: 0.8;
 }
 .fast-mode-close { position: absolute; top: 18px; right: 20px; z-index: 1; }
+@media (max-width: 700px) {
+  .fast-mode-page-body { padding-top: 20px; }
+  .fast-mode-controls { grid-template-columns: 1fr; gap: 12px; }
+  .fast-mode-controls .setup-substep { padding: 12px; }
+}
 
 /* A page, not a dialogue. The explanation is the point, so it gets the whole
    screen rather than a card floating over the setup panel the learner is
@@ -16816,6 +16821,44 @@ body {
   color: var(--accent-primary);
 }
 
+/* Fast Track audit lists: the word itself opens its card. */
+#mergedFormsModal .extras-row,
+#skippedWordsModal .extras-row,
+#extrasDeckCard .extras-row {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+  padding: 9px 2px;
+}
+.extras-word-stack,
+.extras-base { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; gap: 3px; }
+.extras-base { align-items: flex-end; text-align: right; color: var(--text-secondary); }
+.extras-base strong { font: 650 12px/1.35 var(--font-reading); }
+.extras-base small { color: var(--text-muted); font: 11px/1.35 var(--font-reading); }
+#mergedFormsModal .extras-open-card,
+#skippedWordsModal .extras-open-card,
+#extrasDeckCard .extras-open-card {
+  max-width: 100%;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font: 650 12px/1.25 var(--font-reading);
+  overflow-wrap: anywhere;
+  white-space: normal;
+  text-align: left;
+}
+#mergedFormsModal .extras-translation,
+#skippedWordsModal .extras-translation,
+#extrasDeckCard .extras-translation {
+  grid-column: auto;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  font-size: 11px;
+}
+#skippedWordsModal .extras-translation,
+#extrasDeckCard .extras-row--cognate > .extras-translation { text-align: right; font-size: 12px; }
+#mergedFormsModal .extras-intro .extras-count,
+#skippedWordsModal .extras-intro .extras-count { margin-left: 6px; }
+
 .settings-preference-cluster { margin-top: 22px; }
 .settings-preference-cluster:first-of-type { margin-top: 4px; }
 .settings-cluster-heading { margin: 0 0 8px 2px; }
@@ -17130,6 +17173,12 @@ body {
 .extras-deck-card:hover {
   border-color: color-mix(in srgb, var(--accent-primary) 40%, var(--border-color));
 }
+.extras-deck-groups { display: grid; gap: 18px; padding-top: 12px; border-top: 1px solid var(--border-color); }
+.extras-deck-group h4 { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; color: var(--text-primary); font: 700 13px/1.3 var(--font-emphasis); }
+.extras-deck-batch { border: 1px solid var(--border-color); border-radius: 9px; margin-top: 6px; padding: 0 10px; }
+.extras-deck-batch summary { cursor: pointer; padding: 8px 0; color: var(--text-secondary); font: 600 12px/1.3 var(--font-reading); }
+.extras-deck-batch .extras-list { border-top: 1px solid var(--border-color); }
+.extras-row[hidden] { display: none !important; }
 .extras-deck-content {
   display: flex;
   align-items: center;
@@ -17607,4 +17656,3 @@ body.artist-mode #flashcardMode::before {
 .saved-words-empty {
   color: var(--text-secondary);
 }
-
