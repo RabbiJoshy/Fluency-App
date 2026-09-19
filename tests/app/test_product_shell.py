@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v471"
+EXPECTED_CACHE_NAME = "flashcards-v472"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -688,8 +688,8 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260918l", worker)
-        self.assertIn("/js/main.js?v=20260919b", worker)
-        self.assertIn("/js/ui.js?v=20260919a", worker)
+        self.assertIn("/js/main.js?v=20260919c", worker)
+        self.assertIn("/js/ui.js?v=20260919c", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -1139,6 +1139,8 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
     def test_lyrics_mode_level_and_sets_generation_is_not_blocked_by_release_levels(self) -> None:
         ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
         main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
+        vocab = (APP_ROOT / "js" / "vocab.js").read_text(encoding="utf-8")
+        cfg = (APP_ROOT / "js" / "config.js").read_text(encoding="utf-8")
 
         # In ui.js, if (usingReleaseLevels) must be closed so smart level ranges execute for lyrics mode
         slider_block = ui[ui.index("const usingReleaseLevels = releaseLevels.length > 0;"):
@@ -1146,6 +1148,16 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("if (usingReleaseLevels) {\n        _smartLevelRangesCache = releaseLevels.map", slider_block)
         self.assertIn("        }));\n    }", slider_block)
         self.assertIn("if (_raw && !usingReleaseLevels) {", slider_block)
+
+        # In ui.js, renderRangeSelector must guard releaseStudyStructure?.levels with !activeArtist
+        self.assertIn("} else if (!activeArtist && !window.playlistLiveActive?.() && releaseStudyStructure?.levels) {", ui)
+
+        # In vocab.js, fetchAndJoinIndex must join with master vocab when activeArtist has masterPath
+        self.assertIn("effectiveConfig = (activeArtist && (activeArtist.language || 'spanish') === (langConfig?.language || selectedLanguage))", vocab)
+        self.assertIn("data = joinWithMaster(data, window._cachedMasterVocab);", vocab)
+
+        # In config.js, loadPpmData must use activeArtist config when activeArtist is set
+        self.assertIn("activeArtist && (activeArtist.language || 'spanish') === language", cfg)
 
         # In main.js, switching from Lyrics to Speech must store pending language and reload to avoid hybrid state
         speech_btn_block = main[main.index("speechBtn.onclick ="):
