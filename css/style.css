@@ -14517,6 +14517,120 @@
     display: none;
 }
 
+/* JST-only hero card at the very top of Developer tab */
+.dev-latest-deploy-hero {
+    margin-bottom: 16px;
+}
+.dev-latest-deploy-hero:empty {
+    display: none;
+}
+.dev-deploy-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--bg-tertiary) 80%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent-primary) 35%, var(--border-color));
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+.dev-deploy-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.dev-deploy-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.dev-deploy-agent-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font: 700 11px/1 var(--font-emphasis);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: color-mix(in srgb, var(--accent-primary) 18%, transparent);
+    color: var(--accent-primary);
+    border: 1px solid color-mix(in srgb, var(--accent-primary) 36%, transparent);
+}
+.dev-deploy-time {
+    font: 600 12px/1.2 var(--font-emphasis);
+    color: var(--text-secondary, var(--text-muted));
+}
+.dev-deploy-cache-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font: 600 10.5px/1 var(--font-data);
+    background: color-mix(in srgb, var(--bg-primary) 65%, transparent);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+}
+.dev-deploy-cache-pill .dev-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
+}
+.dev-deploy-summary {
+    font: 600 15px/1.45 var(--font-reading);
+    color: var(--text-primary);
+    margin: 2px 0 0 0;
+}
+.dev-deploy-bullets {
+    margin: 0;
+    padding-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.dev-deploy-bullet {
+    font: 400 13px/1.45 var(--font-reading);
+    color: var(--text-secondary, var(--text-muted));
+}
+.dev-deploy-footer-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 8px;
+    border-top: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+    font: 500 11px/1.3 var(--font-data);
+    color: var(--text-muted);
+}
+.dev-deploy-footer-stats {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.dev-deploy-refresh-btn {
+    appearance: none;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--bg-secondary) 80%, transparent);
+    color: var(--text-primary);
+    padding: 3px 8px;
+    font: 600 11px/1.2 var(--font-emphasis);
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+.dev-deploy-refresh-btn:hover {
+    background: var(--bg-secondary);
+    border-color: var(--accent-primary);
+}
+
 /* JST-only dev detail under the freshness footer (renderDevFooter in ui.js). */
 .dev-footer-detail {
     margin-top: 8px;

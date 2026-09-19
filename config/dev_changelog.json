@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-19T13:30:00+01:00",
+      "date": "2026-09-19 13:30 BST",
+      "agent": "Antigravity",
+      "commit": "pending",
+      "summary": "Developer deploy audit card with agent & timestamp, Bad Bunny & Rosalía level resolution, and rare senses button fix",
+      "detail": [
+        "Added top-level deploy audit hero card to the Developer tab showing exact change timestamp, authoring LLM agent, human summary in normal text font, and live Service Worker cache status.",
+        "Fixed Bad Bunny and Rosalía zero levels bug in lyrics artist mode by removing shadowing module-level activeArtist variable.",
+        "Fixed rare senses toggle button clickability by eliminating illegal nested button in section header.",
+        "Added strict instructions to CLAUDE.md and WORKING_WITH_JOSH.md requiring all agents to record exact datetime, agent name, and human summary in dev_changelog.json before deploying."
+      ]
+    },
+    {
       "date": "2026-09-17",
       "commit": "817c6f4",
       "summary": "Sense row audit: fixed blank subsense dashes and improved context visibility across CS, PT, and ES",
