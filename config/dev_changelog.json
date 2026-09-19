@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-19T16:42:08.758763+01:00",
+      "date": "2026-09-19 16:42 BST",
+      "agent": "MILL",
+      "commit": "pending",
+      "summary": "Deploy Spanish (6k), Portuguese (6k), and Czech (4k) V14 speech decks",
+      "detail": [
+        "Updated speech decks to signed-off v14 with MWE routing.",
+        "Deterministic invariant MWE bypass (no 2-way competition) for fixed grammatical locutions.",
+        "Ambiguous MWE competition with active_selection_projection: mwe_augmented and dual-written word leaf.",
+        "Exact-text embedding caches expanded and verified for Spanish, Portuguese, and Czech."
+      ]
+    },
+    {
       "timestamp": "2026-09-19T15:55:33+01:00",
       "date": "2026-09-19 15:55 BST",
       "agent": "Cursor",
@@ -11,6 +24,7 @@
         "The lemma chip now centres on the surface's cap-height band so it no longer sits low against the word."
       ]
     },
+    {
       "timestamp": "2026-09-19T15:34:08+01:00",
       "date": "2026-09-19 15:34 BST",
       "agent": "Cursor",
@@ -21,6 +35,7 @@
         "Pronominal cards no longer drop 'verb with se' onto a second line; se sits inside the lemma chip on the same row."
       ]
     },
+    {
       "timestamp": "2026-09-19T14:14:52+01:00",
       "date": "2026-09-19 14:14 BST",
       "agent": "Cursor",
@@ -32,6 +47,7 @@
         "Lemma text is no longer italic on either face."
       ]
     },
+    {
       "timestamp": "2026-09-19T14:14:52+01:00",
       "date": "2026-09-19 14:14 BST",
       "agent": "Cursor",
@@ -43,6 +59,7 @@
         "Lemma text is no longer italic on either face."
       ]
     },
+    {
       "timestamp": "2026-09-19T13:33:56+01:00",
       "date": "2026-09-19 13:33 BST",
       "agent": "Cursor",
@@ -54,6 +71,7 @@
         "Cards whose surface already is the lemma keep a plain headword, so infinitives and identical forms are not wrapped in an empty compound chip."
       ]
     },
+    {
       "timestamp": "2026-09-19T13:30:00+01:00",
       "date": "2026-09-19 13:30 BST",
       "agent": "Antigravity",
