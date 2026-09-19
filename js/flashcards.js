@@ -652,13 +652,13 @@ function fitBackHeadword(root) {
     const row = el?.closest('.back-headword-row');
     if (!el || !row) return;
     const legend = row.querySelector('.back-pos-legend');
-    if (!legend) return;
     const minPx = 24;
     const gapPx = 12;
     const prevWS = el.style.whiteSpace;
     el.style.whiteSpace = 'nowrap';
     for (let pass = 0; pass < 2; pass++) {
-        const budget = row.clientWidth - legend.offsetWidth - gapPx;
+        const legendWidth = legend ? legend.offsetWidth + gapPx : 0;
+        const budget = row.clientWidth - legendWidth;
         // Zero/negative means the card isn't laid out yet (hidden container);
         // leave the baseline alone rather than shrinking against a bad read.
         if (budget <= 0) break;
@@ -5008,10 +5008,11 @@ function updateCard({ announceHeadword = false } = {}) {
         } else {
             frontPOSEl.classList.add('is-lemma-map', `pos-count-${Math.min(pairs.length, 4)}`);
             frontPOSEl.innerHTML = pairs.map(pair => {
-                const lemmaLabel = pair.lemma
-                    ? `<span class="front-lemma-name">${escapeCardText(pair.lemma)}</span>`
-                    : '';
-                return `<span class="front-lemma-pair">${lemmaLabel}${renderFrontPosUnit(pair.pos, isVerbPos(pair.pos))}</span>`;
+                const posUnit = renderFrontPosUnit(pair.pos, isVerbPos(pair.pos));
+                if (!pair.lemma) return posUnit;
+                // POS governs the lemma, so it is the outer pill and the
+                // lemma sits in the inner chip on the right.
+                return `<span class="nested-lemma-pair front-lemma-pair ${getPosColorClass(pair.pos)}">${posUnit}<span class="nested-lemma-pill front-lemma-name">${escapeCardText(pair.lemma)}</span></span>`;
             }).join('');
             frontPOSEl.style.display = 'flex';
         }
@@ -5109,26 +5110,20 @@ function updateCard({ announceHeadword = false } = {}) {
 
     let backWordText = backWord;
     let wordDisplay = backWordText;
+    let backHeadwordPairClass = '';
     let backCitationHTML = '';
     let backDerivationHTML = '';
-    // Multi-meaning cards identify every analysis in their (POS, headword)
-    // section header. Do not repeat that same headword as a detached lemma
-    // below the card title; retain the fallback only for data without a
-    // matching headword in its sense rows.
-    const citationShownInSenseRows = card.isMultiMeaning
-        && cardHeadwords.some(headword =>
-            foldSurfaceForm(headword) === foldSurfaceForm(citationForm));
-    if (card.isMultiMeaning
-        && citationForm
+    // Same nested object as the front POS+lemma pill: one outer capsule,
+    // inner chip on the right. Here the surface is the outer label and the
+    // dictionary lemma is the inner chip. Skip transparent plurals/elisions.
+    const showBackLemmaPair = Boolean(citationForm)
         && foldSurfaceForm(citationForm) !== foldSurfaceForm(backWordText)
-        && !isTrivialCanonicalRelation(backWordText, citationForm)) {
-        if (!isFlipped && !citationShownInSenseRows) {
-            backCitationHTML = `<span class="back-lemma">${escapeCardText(citationForm)}</span>
-                ${formNote ? `<span class="back-form-note">${escapeCardText(formNote)}</span>` : ''}`;
-        } else if (foldSurfaceForm(citationForm) !== foldSurfaceForm(backWordText)) {
-            // An unmerged surface-form card can still benefit from its
-            // dictionary citation beneath the exact production answer.
-            wordDisplay = `${backWordText} <span class="back-lemma">(${escapeCardText(citationForm)})</span>`;
+        && !isTrivialCanonicalRelation(backWordText, citationForm);
+    if (showBackLemmaPair) {
+        backHeadwordPairClass = ' nested-lemma-pair back-surface-pair';
+        wordDisplay = `<span class="back-surface-name">${escapeCardText(backWordText)}</span><span class="nested-lemma-pill back-lemma">${escapeCardText(citationForm)}</span>`;
+        if (formNote) {
+            backCitationHTML = `<span class="back-form-note">${escapeCardText(formNote)}</span>`;
         }
     }
     const derivation = card.derivationRelation;
@@ -5273,7 +5268,7 @@ function updateCard({ announceHeadword = false } = {}) {
         <div class="back-header">
             <div class="flip-back-area" id="flipBackArea">
                 <div class="back-headword-row">
-                    <span class="back-headword" style="font-size: ${backHeadwordSize}px; font-weight: bold; line-height: 1.1;">${wordDisplay}</span>
+                    <span class="back-headword${backHeadwordPairClass}" style="font-size: ${backHeadwordSize}px; font-weight: bold; line-height: 1.1;">${wordDisplay}</span>
                     ${backPosLegendHTML}
                 </div>
                 ${notableSurfaceRelation

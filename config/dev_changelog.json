@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-19T13:33:56+01:00",
+      "date": "2026-09-19 13:33 BST",
+      "agent": "Cursor",
+      "commit": "pending",
+      "summary": "POS-then-lemma nested pill on the card front, and the same compound object on the back with surface then lemma",
+      "detail": [
+        "Front grammar capsule now reads part of speech first, with the lemma in the inner chip on the right, because POS governs the lemma.",
+        "Back headword no longer appends the lemma in brackets; an inflected surface and its dictionary form share one nested pill, surface on the left and lemma on the right.",
+        "Cards whose surface already is the lemma keep a plain headword, so infinitives and identical forms are not wrapped in an empty compound chip."
+      ]
+    },
       "timestamp": "2026-09-19T13:30:00+01:00",
       "date": "2026-09-19 13:30 BST",
       "agent": "Antigravity",
