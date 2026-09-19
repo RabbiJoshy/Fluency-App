@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-19T15:34:08+01:00",
+      "date": "2026-09-19 15:34 BST",
+      "agent": "Cursor",
+      "commit": "pending",
+      "summary": "Centre the back lemma chip on the headword, colour it by POS, and fold pronominal se into the chip",
+      "detail": [
+        "Back lemma chip is vertically centred with the surface form and uses the active part-of-speech colour.",
+        "Pronominal cards no longer drop 'verb with se' onto a second line; se sits inside the lemma chip on the same row."
+      ]
+    },
       "timestamp": "2026-09-19T14:14:52+01:00",
       "date": "2026-09-19 14:14 BST",
       "agent": "Cursor",

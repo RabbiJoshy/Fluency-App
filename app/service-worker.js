@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v477';
+const CACHE_NAME = 'flashcards-v478';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -26,12 +26,12 @@ const ASSET_VERSION = '20260825ak';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/css/style.css?v=20260919h',
-  '/css/light-theme.css?v=20260919h',
+  '/css/style.css?v=20260919i',
+  '/css/light-theme.css?v=20260919i',
   '/config/config.json',
   '/config/cefr_levels.json',
   '/config/offline-content-manifest.json',
-  '/js/main.js?v=20260919g',
+  '/js/main.js?v=20260919i',
   `/js/theme.js?v=${ASSET_VERSION}`,
   '/js/state.js?v=20260917a',
   `/js/data-contracts.js?v=${ASSET_VERSION}`,
@@ -63,7 +63,7 @@ const urlsToCache = [
   `/js/spanishdict-usage.js?v=${ASSET_VERSION}`,
   '/js/reverse-cues.js?v=20260917a',
   '/js/card-metadata-pills.js?v=20260916l',
-  '/js/flashcards.js?v=20260919g',
+  '/js/flashcards.js?v=20260919i',
   `/js/example-personalisation.js?v=${ASSET_VERSION}`,
   '/js/flashcards-modals.js?v=20260917k',
   '/js/flashcards-conj.js?v=20260916o'

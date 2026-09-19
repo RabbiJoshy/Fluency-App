@@ -5121,10 +5121,11 @@ function updateCard({ announceHeadword = false } = {}) {
         && !isTrivialCanonicalRelation(backWordText, citationForm);
     if (showBackLemmaPair) {
         backHeadwordPairClass = ' back-surface-pair';
-        wordDisplay = `<span class="back-surface-name">${escapeCardText(backWordText)}</span><span class="back-lemma-chip">${escapeCardText(citationForm)}</span>`;
-        if (formNote) {
-            backCitationHTML = `<span class="back-form-note">${escapeCardText(formNote)}</span>`;
-        }
+        const lemmaAlreadySe = /se$/i.test(String(citationForm).replace(/[\s-]+/g, ''));
+        const seMark = formNote && !lemmaAlreadySe
+            ? `<span class="back-lemma-se" title="${escapeCardText(formNote)}">se</span>`
+            : '';
+        wordDisplay = `<span class="back-surface-name">${escapeCardText(backWordText)}</span><span class="back-lemma-chip">${escapeCardText(citationForm)}${seMark}</span>`;
     }
     const derivation = card.derivationRelation;
     if (derivation?.base_lemma) {
@@ -5268,7 +5269,7 @@ function updateCard({ announceHeadword = false } = {}) {
         <div class="back-header">
             <div class="flip-back-area" id="flipBackArea">
                 <div class="back-headword-row">
-                    <span class="back-headword${backHeadwordPairClass}" style="font-size: ${backHeadwordSize}px; font-weight: bold; line-height: 1.1;">${wordDisplay}</span>
+                    <span class="back-headword${backHeadwordPairClass}" style="font-size: ${backHeadwordSize}px; font-weight: bold; line-height: ${showBackLemmaPair ? 1 : 1.1};">${wordDisplay}</span>
                     ${backPosLegendHTML}
                 </div>
                 ${notableSurfaceRelation
