@@ -452,6 +452,23 @@
     color: var(--text-primary);
 }
 
+:root[data-theme="light"] .rarer-uses-cluster {
+    background: rgba(23, 33, 43, 0.04);
+}
+
+:root[data-theme="light"] .rarer-uses-cluster-meta {
+    color: var(--text-muted);
+}
+
+:root[data-theme="light"] .rarer-uses-pager {
+    color: var(--text-secondary);
+}
+
+:root[data-theme="light"] .rarer-uses-pager button {
+    background: rgba(23, 33, 43, 0.06);
+    color: var(--text-primary);
+}
+
 :root[data-theme="light"] .phrase-example {
     border-color: var(--border-color);
     border-left-color: #087b70;
