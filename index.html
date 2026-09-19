@@ -40,14 +40,14 @@
             document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260919o">
+    <link rel="stylesheet" href="css/style.css?v=20260919p">
     <link rel="stylesheet" href="css/light-theme.css?v=20260919k">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260919o">
+    <link rel="modulepreload" href="js/main.js?v=20260919p">
     <link rel="modulepreload" href="js/theme.js?v=20260825ak">
     <link rel="modulepreload" href="js/state.js?v=20260917a">
     <link rel="modulepreload" href="js/data-contracts.js?v=20260825ak">
@@ -63,7 +63,7 @@
     <link rel="modulepreload" href="js/progress.js?v=20260917j">
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20260915a">
-    <link rel="modulepreload" href="js/ui.js?v=20260919g">
+    <link rel="modulepreload" href="js/ui.js?v=20260919h">
     <link rel="modulepreload" href="js/vocab.js?v=20260919d">
     <link rel="modulepreload" href="js/song-sets-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/song-sets.js?v=20260823ae">
@@ -73,7 +73,7 @@
     <link rel="modulepreload" href="js/vocabulary-import.js?v=20260913a">
     <link rel="modulepreload" href="js/spanishdict-usage.js?v=20260825ak">
     <link rel="modulepreload" href="js/reverse-cues.js?v=20260917a">
-    <link rel="modulepreload" href="js/flashcards.js?v=20260919m">
+    <link rel="modulepreload" href="js/flashcards.js?v=20260919n">
     <link rel="modulepreload" href="js/example-personalisation.js?v=20260825ak">
     <script>
         // Fail open if a boot-time script error prevents main.js from taking
@@ -338,7 +338,7 @@
             <!-- Top bar: Tutorial, Estimate Level, gear (shared by both modes) -->
             <div id="topBar" class="setup-step">
                 <div class="step-header top-bar-header">
-                    <span id="topBarUserName" class="top-bar-user-name"></span>
+                    <button id="topBarUserName" class="top-bar-user-name" type="button" title="Open account settings"></button>
                     <button id="learningContextBtn" class="learning-context-chip" type="button" hidden aria-haspopup="dialog" aria-label="Open learning settings">
                         <span id="learningContextFlag" class="learning-context-flag" aria-hidden="true"></span>
                         <span class="learning-context-chip-copy">
@@ -503,27 +503,18 @@
                 <div id="setupOptions" class="setup-options" style="display: none;">
                     <div class="setup-options-bar">
                         <button type="button" id="fastModeToggleBtn" class="fast-mode-btn fast-mode-master" data-fast="off" aria-pressed="false">
-                            <span class="fast-mode-master-icon" aria-hidden="true">⚡</span>
+                            <svg class="fast-mode-master-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.5v13l8-6.5-8-6.5Z"></path><path d="M12 5.5v13l8-6.5-8-6.5Z"></path></svg>
                             <span class="fast-mode-master-copy">
                                 <span class="fast-mode-title-row">
                                     <strong>Fast Track</strong>
                                     <span class="streamline-rec-badge">Recommended</span>
                                 </span>
-                                <small id="fastModeSummary">Full deck · every word form is its own card</small>
                             </span>
                             <span class="fast-mode-master-switch" aria-hidden="true"><i></i></span>
                         </button>
                         <button type="button" id="fastModeDetailBtn" class="fast-mode-detail-btn" onclick="window.openFastModePage?.()">
                             Details <span aria-hidden="true">›</span>
                         </button>
-                    </div>
-                    <div class="streamline-rec-callout" id="streamlineRecCallout" style="display: none;">
-                        <div class="streamline-rec-callout-icon" aria-hidden="true">⚡</div>
-                        <div class="streamline-rec-callout-body">
-                            <strong>Why Fast Track is recommended</strong>
-                            <p id="streamlineRecCalloutText">Related word forms share one card, and obvious English look-alikes are set aside, so you study fewer cards without missing examples.</p>
-                        </div>
-                        <button type="button" class="streamline-rec-callout-dismiss" id="dismissStreamlineRecBtn" aria-label="Dismiss recommendation note">✕</button>
                     </div>
                 </div>
             </div>
@@ -551,6 +542,8 @@
                 </div>
                 <div id="rangeSelector" class="range-selector"></div>
             </div>
+
+            <section id="reviewDeckSection" class="review-deck-section" aria-labelledby="reviewDeckTitle" hidden></section>
 
             <!-- Extras Deck Section: supplementary cards (Artist extra categories or Speech skipped words) -->
             <div id="extrasDeckSection" class="extras-deck-section" style="display: none;">
@@ -1931,6 +1924,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260919o"></script>
+    <script type="module" src="js/main.js?v=20260919p"></script>
 </body>
 </html>

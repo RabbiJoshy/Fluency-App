@@ -2245,6 +2245,8 @@ async function renderRangeSelector() {
     const baseConfig = config.languages[selectedLanguage] || {};
     const langConfig = activeArtist ? { ...baseConfig, ...activeArtist } : baseConfig;
     const container = document.getElementById('rangeSelector');
+    const reviewSection = document.getElementById('reviewDeckSection');
+    if (reviewSection) reviewSection.hidden = true;
     let minWord, maxWord;
     let rankBasis = 'source';
 
@@ -2424,52 +2426,47 @@ async function renderRangeSelector() {
     const levelDueCount = ranges.reduce((sum, range) => sum + range.dueCount, 0);
     const levelUnfinishedCount = Math.max(0, levelReviewCount - levelDueCount);
     let reviewHTML = '';
-    if (currentUser && !currentUser.isGuest && levelReviewCount > 0) {
-        const reviewMeta = levelDueCount > 0 && levelUnfinishedCount > 0
-            ? `${levelDueCount} due · ${levelUnfinishedCount} unfinished`
-            : levelDueCount > 0
-                ? `${levelDueCount} due in this level`
-                : `${levelUnfinishedCount} unfinished in this level`;
-        reviewHTML = `<button class="study-set-review" type="button">
-                <span>Review cards</span>
-                <small>${reviewMeta}</small>
-            </button>`;
+    if (currentUser && !currentUser.isGuest) {
+        const reviewMeta = levelReviewCount === 0
+            ? 'Nothing to review in this level yet.'
+            : levelDueCount > 0 && levelUnfinishedCount > 0
+                ? `${levelDueCount} due · ${levelUnfinishedCount} unfinished`
+                : levelDueCount > 0
+                    ? `${levelDueCount} due in this level`
+                    : `${levelUnfinishedCount} unfinished in this level`;
+        reviewHTML = `<div class="review-deck-content">
+                <div><h3 id="reviewDeckTitle">Review cards</h3><p>${reviewMeta}</p></div>
+                ${levelReviewCount > 0 ? `<button class="study-set-review" type="button">Review ${levelReviewCount} card${levelReviewCount === 1 ? '' : 's'}</button>` : ''}
+            </div>`;
     }
-
-    const canPersistLevelRouting = Boolean(window.isAuditAccount?.());
-    const levelSuggestionSkipped = canPersistLevelRouting
-        && (window.isLevelMarkedDone?.(selectedLevel) || false);
-    const levelDoneToggleHTML = canPersistLevelRouting ? `
-        <button class="level-suggestion-toggle${levelSuggestionSkipped ? ' is-on' : ''}"
-                id="levelSuggestionToggle" type="button"
-                aria-pressed="${levelSuggestionSkipped ? 'true' : 'false'}">
-            <span class="level-suggestion-toggle-copy">
-                <strong>${levelSuggestionSkipped ? 'Skipped in suggestions' : 'Skip this level in suggestions'}</strong>
-                <small>Your card history stays unchanged. You can still open this level yourself.</small>
-            </span>
-            <span class="level-suggestion-switch" aria-hidden="true"><i></i></span>
-        </button>` : '';
 
     container.innerHTML = `
         <div class="study-set-panel">
-            <div class="study-set-overview">
-                <strong>${completedCount} of ${availableCount} sets seen</strong>
-                <span>Continue with the highlighted set, or choose another</span>
+            <div class="study-set-level-context">
+                <span class="study-set-group-label">This level</span>
+                <div class="study-set-overview">
+                    <strong>${completedCount} of ${availableCount} sets seen</strong>
+                </div>
+                <div class="study-set-legend" aria-label="Set progress colours">
+                    <span><i class="is-known"></i>Known</span>
+                    <span><i class="is-review"></i>Review</span>
+                    <span><i class="is-unseen"></i>Unseen</span>
+                </div>
             </div>
-            <div class="study-set-legend" aria-label="Set progress colours">
-                <span><i class="is-known"></i>Known</span>
-                <span><i class="is-review"></i>Review</span>
-                <span><i class="is-unseen"></i>Unseen</span>
+            <div class="study-set-choice">
+                <div class="study-set-choice-heading"><span class="study-set-group-label">Choose a set</span><small>Continue with the highlighted set, or choose another</small></div>
+                <div class="study-set-dots" role="radiogroup" aria-label="Sets in this level">${dotsHTML}</div>
+                <div class="study-set-current-copy">
+                    <strong id="studySetCurrentTitle"></strong>
+                    <span id="studySetCurrentMeta"></span>
+                </div>
+                <button class="range-btn-new study-set-start" id="studySetStartBtn" type="button"></button>
             </div>
-            <div class="study-set-dots" role="radiogroup" aria-label="Sets in this level">${dotsHTML}</div>
-            <div class="study-set-current-copy">
-                <strong id="studySetCurrentTitle"></strong>
-                <span id="studySetCurrentMeta"></span>
-            </div>
-            <button class="range-btn-new study-set-start" id="studySetStartBtn" type="button"></button>
-            ${reviewHTML}
-            ${levelDoneToggleHTML}
         </div>`;
+    if (reviewSection) {
+        reviewSection.innerHTML = reviewHTML;
+        reviewSection.hidden = !reviewHTML;
+    }
     document.getElementById('step4').style.display = 'block';
     setActiveSetupStep('step4');
 
@@ -2544,7 +2541,7 @@ async function renderRangeSelector() {
             window.hideAppLoading?.();
         }
     });
-    container.querySelector('.study-set-review')?.addEventListener('click', async () => {
+    reviewSection?.querySelector('.study-set-review')?.addEventListener('click', async () => {
         const loadingMessage = document.getElementById('loadingMessage');
         loadingMessage.style.display = 'block';
         loadingMessage.textContent = `Loading ${levelReviewCount} review card${levelReviewCount === 1 ? '' : 's'}...`;
@@ -2563,29 +2560,6 @@ async function renderRangeSelector() {
         }
     });
 
-    document.getElementById('levelSuggestionToggle')?.addEventListener('click', function() {
-        const next = this.getAttribute('aria-pressed') !== 'true';
-        this.setAttribute('aria-pressed', next ? 'true' : 'false');
-        this.classList.toggle('is-on', next);
-        const title = this.querySelector('strong');
-        if (title) title.textContent = next
-            ? 'Skipped in suggestions'
-            : 'Skip this level in suggestions';
-
-        const activeLevelButton = document.querySelector(`.level-btn[data-level="${CSS.escape(selectedLevel)}"]`);
-        activeLevelButton?.classList.toggle('is-suggestion-skipped', next);
-        const levelButtons = Array.from(document.querySelectorAll(
-            '.level-selector-buttons .level-btn, #levelSelector > .level-btn'
-        ));
-        const levelIndex = levelButtons.indexOf(activeLevelButton);
-        if (levelIndex >= 0) {
-            document.querySelector(`#lswSlider .lsw-seg[data-i="${levelIndex}"]`)
-                ?.classList.toggle('is-suggestion-skipped', next);
-        }
-        window.saveMarkedLevelDone?.(selectedLevel, next).catch(error => {
-            console.error('Could not save level suggestion preference:', error);
-        });
-    });
     renderSetupExtrasSection();
 }
 

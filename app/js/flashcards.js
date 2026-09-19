@@ -3546,7 +3546,13 @@ function exampleLinkHTML(href, label) {
 }
 
 function exampleFaviconHTML(domain) {
-    return `<img class="example-source-favicon dict-provenance-icon" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64" width="28" height="28" alt="" aria-hidden="true">`;
+    const localIcon = {
+        'tatoeba.org': 'icons/tatoeba.svg',
+        'wiktionary.org': 'icons/wikipedia-w.svg',
+    }[domain];
+    const src = localIcon || `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64`;
+    const className = domain === 'wiktionary.org' ? ' example-source-favicon--wikipedia' : '';
+    return `<img class="example-source-favicon dict-provenance-icon${className}" src="${src}" width="34" height="34" alt="" aria-hidden="true">`;
 }
 
 function exampleSourceChipHTML({ href, label, domain, text = '', extraClass = '' }) {

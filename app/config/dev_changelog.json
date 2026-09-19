@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-19T20:46:39+01:00",
+      "date": "2026-09-19 20:46 BST",
+      "agent": "Codex",
+      "summary": "Make home controls easier to use and clarify review and source icons",
+      "detail": [
+        "Enlarged the top bar, language control, main actions, and set targets; sets now show five per row.",
+        "Moved review cards into their own section above skipped Fast Track words and removed the level-suggestion skip control.",
+        "Grouped level and set information, simplified Fast Track to its toggle and Details action, and replaced fuzzy source favicons with larger vector marks."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-19T20:32:00+01:00",
       "date": "2026-09-19 20:32 BST",
       "agent": "Cursor",

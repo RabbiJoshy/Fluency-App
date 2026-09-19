@@ -17796,3 +17796,102 @@ body.artist-mode #flashcardMode::before {
 .saved-words-empty {
   color: var(--text-secondary);
 }
+
+/* Larger, clearer controls on the setup page. */
+#topBar { padding: 10px 12px; }
+#topBar .top-bar-header { min-height: 48px; gap: 10px; }
+#topBar .top-bar-user-name {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  max-width: 24ch;
+  min-height: 44px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-primary);
+  font: 700 18px/1.2 var(--font-emphasis);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#topBar .top-bar-user-name:hover,
+#topBar .top-bar-user-name:focus-visible { background: var(--bg-tertiary); outline: none; }
+#topBar .learning-context-chip { min-height: 46px; padding: 7px 12px; gap: 9px; }
+#topBar .learning-context-flag { font-size: 23px; }
+#topBar .learning-context-chip-copy strong { font-size: 15px; }
+#topBar .top-bar-icon-btn,
+#topBar .gear-btn { width: 44px; height: 44px; flex: 0 0 44px; border-radius: 11px; }
+#topBar .top-bar-icon-btn svg,
+#topBar .gear-btn svg { width: 22px; height: 22px; }
+#topBar .top-bar-gear { margin-left: auto; }
+
+#setupPanel .level-btn { min-height: 46px; padding: 11px 16px; }
+#setupPanel .standard-source-choice-btn { min-height: 60px; }
+#setupPanel .standard-source-card:has(.standard-source-choice-btn.is-selected) .standard-source-choice-btn { min-height: 48px; }
+#setupPanel .artist-source-picker { min-height: 46px; }
+#setupPanel .step-help-btn { width: 42px; height: 42px; }
+#setupPanel .extras-set-pill { min-width: 48px; min-height: 44px; }
+#setupPanel .extras-deck-toggle-btn,
+#setupPanel .extras-deck-browse-btn { min-height: 44px; padding: 8px 14px; }
+
+#step4 .study-set-panel { gap: 0; padding: 0; overflow: hidden; }
+.study-set-level-context { padding: 14px 16px; border-bottom: 1px solid var(--border-color); }
+.study-set-level-context .study-set-overview { margin: 4px 0 8px; }
+.study-set-level-context .study-set-legend { justify-content: flex-start; }
+.study-set-group-label { color: var(--text-muted); font: 700 11px/1.2 var(--font-emphasis); letter-spacing: .04em; text-transform: uppercase; }
+.study-set-choice { display: grid; gap: 12px; padding: 16px; background: color-mix(in srgb, var(--accent-primary) 5%, var(--bg-card)); }
+.study-set-choice-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 4px 12px; }
+.study-set-choice-heading small { color: var(--text-muted); font: 500 11px/1.35 var(--font-reading); }
+#step4 .study-set-dots { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+#step4 .study-set-dot { height: 40px; font-size: 13px; border-radius: 9px; }
+#step4 .range-btn-new.study-set-start { min-height: 52px; }
+
+.review-deck-section {
+  margin: 14px 0 16px;
+  padding: 15px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 13px;
+  background: var(--bg-card);
+}
+.review-deck-section[hidden] { display: none !important; }
+.review-deck-content { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.review-deck-content h3 { margin: 0; color: var(--text-primary); font: 700 15px/1.25 var(--font-emphasis); }
+.review-deck-content p { margin: 4px 0 0; color: var(--text-muted); font: 500 12px/1.35 var(--font-reading); }
+.review-deck-section .study-set-review { width: auto; flex: none; min-height: 48px; padding: 10px 17px; font-size: 13px; }
+
+/* Fast Track is one clear toggle and one details action. */
+#setupOptions.setup-options,
+#setupOptions.setup-options:has(.fast-mode-master) { padding: 0; border: 0; background: transparent; }
+#setupOptions .setup-options-bar { gap: 12px; }
+#setupOptions .fast-mode-master { min-height: 54px; padding: 5px 4px; border: 0; background: transparent; gap: 12px; }
+#setupOptions .fast-mode-master-icon { width: 23px; height: 23px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
+#setupOptions .fast-mode-master-copy strong { font-size: 16px; }
+#setupOptions .streamline-rec-badge { font-size: 10px; padding: 3px 7px; }
+#setupOptions .fast-mode-master-switch { width: 42px; height: 24px; }
+#setupOptions .fast-mode-master-switch i { width: 18px; height: 18px; }
+#setupOptions .fast-mode-master.selected .fast-mode-master-switch i { transform: translateX(18px); }
+#setupOptions .fast-mode-detail-btn { min-height: 48px; padding: 9px 15px; font-size: 13px; }
+
+.example-source-favicon,
+.dictionary-provenance-badge .dict-provenance-icon { width: 34px; height: 34px; }
+:root:not([data-theme="light"]) .example-source-favicon--wikipedia { filter: invert(1); }
+
+@media (max-width: 560px) {
+  #topBar { padding: 6px 8px; }
+  #topBar .top-bar-header { gap: 4px; }
+  #topBar .top-bar-user-name { max-width: 72px; padding: 0 3px; font-size: 14px; }
+  #topBar .learning-context-chip { max-width: 122px; min-width: 0; padding: 7px 4px; gap: 4px; }
+  #topBar .learning-context-flag { font-size: 21px; }
+  #topBar .learning-context-chip-copy strong { font-size: 13px; }
+  #step4 .study-set-choice { padding: 12px 10px; }
+  #step4 .study-set-dots { gap: 6px; }
+  .review-deck-content { align-items: stretch; flex-direction: column; }
+  .review-deck-section .study-set-review { width: 100%; justify-content: center; }
+  #setupOptions .setup-options-bar { gap: 6px; }
+  #setupOptions .fast-mode-master { gap: 7px; }
+  #setupOptions .fast-mode-master-copy strong { font-size: 14px; }
+  #setupOptions .streamline-rec-badge { font-size: 8px; padding: 2px 5px; }
+  #setupOptions .fast-mode-detail-btn { padding: 8px 9px; font-size: 12px; }
+}

@@ -11,7 +11,7 @@ import './estimation.js?v=20260825ak';
 import './config.js?v=20260919c';
 import './progress.js?v=20260917j';
 import './knowledge.js?v=20260915a';
-import './ui.js?v=20260919g';
+import './ui.js?v=20260919h';
 import './vocab.js?v=20260919d';
 import './cognates.js?v=20260914e';
 import './coverage.js?v=20260909a';
@@ -21,7 +21,7 @@ import './song-sets.js?v=20260823ae';
 import './playlist-live.js?v=20260919a';
 import './spotify-playlist-import.js?v=20260919a';
 import './vocabulary-import.js?v=20260913a';
-import './flashcards.js?v=20260919m';
+import './flashcards.js?v=20260919n';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 function startCardTutorial() {
