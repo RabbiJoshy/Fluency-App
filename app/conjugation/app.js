@@ -21,8 +21,13 @@
     scope: 50,       // percentile of the ranked verb list
     reverse: false,  // prompt with the English meaning instead of the infinitive
     patterns: {},    // stem delta -> true
-    coverage: 'all'  // 'all' every card, 'one' one card per lesson
+    coverage: 'all', // 'all' every card, 'one' one card per lesson
+    speak: true      // read the answer out loud on reveal
   };
+
+  // The study app names languages ('spanish'); the deck codes them ('es').
+  // speech.js reads window.selectedLanguage to pick a locale.
+  var SPEECH_LANGUAGE = { es: 'spanish', pt: 'portuguese', fr: 'french', cs: 'czech' };
 
   var queue = [];
   var position = 0;
@@ -31,6 +36,7 @@
   var expandedMoods = {};  // mood label -> the rarer tenses are showing
 
   var CODE_ORDER = ['0', '1', '2', '3', '4'];
+  var OPAQUE = '*';
 
   window.registerConjugationDeck = function (payload) {
     decks[payload.language] = payload;
@@ -112,6 +118,42 @@
     });
 
     return { tenseIds: tenseIds, persons: persons, verbs: chosen, byType: byType };
+  }
+
+  /* Reads a form out loud through the study app's own voice engine. If that
+   * module has not loaded, this is silently a no-op rather than an error. */
+  function speak(text) {
+    if (!state.speak || !text) return;
+    if (typeof window.speakWord !== 'function') return;
+    window.speakWord(text);
+  }
+
+  /* Split a form into the stem and the ending the lesson turns on, so the
+   * ending can be coloured. Returns null when the split would not be honest:
+   * compound tenses, off-model forms, and anything whose ending the model
+   * could not identify. */
+  function splitEnding(form, lesson) {
+    if (!lesson || !form) return null;
+    var ending = lesson.e;
+    if (!ending || ending === OPAQUE || ending.charAt(0) === '\u00b7') return null;
+    if (form.length <= ending.length) return null;
+    if (form.slice(-ending.length) !== ending) return null;
+    return { stem: form.slice(0, form.length - ending.length), ending: ending };
+  }
+
+  function paintForm(node, form, lesson, code) {
+    node.innerHTML = '';
+    var split = splitEnding(form, lesson);
+    if (!split) {
+      var plain = el('span', null, form);
+      if (code && code !== '0' && code !== '-') plain.style.color = 'var(--c' + code + ')';
+      node.appendChild(plain);
+      return;
+    }
+    node.appendChild(el('span', 'form-stem', split.stem));
+    var tail = el('span', 'form-ending', split.ending);
+    tail.style.setProperty('--ending-colour', 'var(--c' + (code === '-' ? '4' : code) + ')');
+    node.appendChild(tail);
   }
 
   function lessonAt(paradigm, index) {
@@ -297,6 +339,16 @@
       label.appendChild(el('span', 'check-count', option.note));
       host.appendChild(label);
     });
+
+    var sound = el('label', 'check');
+    var box = document.createElement('input');
+    box.type = 'checkbox';
+    box.checked = state.speak;
+    box.onchange = function () { state.speak = box.checked; refreshSummary(); };
+    sound.appendChild(box);
+    sound.appendChild(el('span', 'check-name', 'Read the answer out loud'));
+    sound.appendChild(el('span', 'check-count', 'same voice as the cards'));
+    host.appendChild(sound);
   }
 
   function patternLabel(pattern) {
@@ -405,7 +457,9 @@
       state.coverage === 'one' ? 'one per lesson' : 'every form';
 
     $('state-prompt').textContent =
-      (state.reverse ? 'meaning' : 'infinitive') + ' · ' + deck.language.toUpperCase();
+      (state.reverse ? 'meaning' : 'infinitive') +
+      (state.speak ? ' · spoken' : ' · silent') +
+      ' · ' + deck.language.toUpperCase();
   }
 
   function refreshSummary() {
@@ -503,7 +557,7 @@
       ? (revealed ? card.verb.h : '')
       : meaning;
     $('card-person').textContent = personLabel(card.person);
-    $('card-form').textContent = card.form;
+    paintForm($('card-form'), card.form, card.lesson, card.code);
 
     var chips = $('card-chips');
     chips.innerHTML = '';
@@ -543,7 +597,7 @@
     $('drill-progress').textContent =
       (position + 1) + ' of ' + queue.length + ' · shuffled, nothing recorded';
     $('drill-hint').innerHTML = revealed
-      ? '<kbd>space</kbd> next · <kbd>←</kbd> back · or swipe'
+      ? '<kbd>space</kbd> next · <kbd>←</kbd> back · <kbd>s</kbd> say it again · <kbd>t</kbd> full table'
       : '<kbd>space</kbd> or tap to reveal · swipe to skip';
   }
 
@@ -556,7 +610,13 @@
 
   function flipOrAdvance() {
     if (!queue.length) return;
-    if (!revealed) { revealed = true; renderCard(); } else { advance(1); }
+    if (!revealed) {
+      revealed = true;
+      renderCard();
+      speak(queue[position].form);
+    } else {
+      advance(1);
+    }
   }
 
   /* Tap flips, horizontal swipe moves. Vertical drags are left to the page. */
@@ -676,8 +736,8 @@
         tr.appendChild(el('th', null, personLabel(person)));
         var td = el('td');
         if (form) {
-          var strong = el('b', null, form);
-          strong.style.color = code === '0' ? 'inherit' : 'var(--c' + code + ')';
+          var strong = el('b');
+          paintForm(strong, form, lessonAt(paradigm, index), code);
           td.appendChild(strong);
         } else {
           td.appendChild(el('span', null, '—'));
@@ -741,6 +801,8 @@
 
   function loadDeck(payload) {
     deck = payload;
+    var speechName = SPEECH_LANGUAGE[deck.language];
+    if (speechName) window.selectedLanguage = speechName;
 
     state.tenses = {};
     // Start on one tense only — the simple present of the indicative, which
@@ -855,6 +917,9 @@
       var isSpace = event.code === 'Space' || event.key === ' ' || event.key === 'Spacebar';
       if (isSpace) { event.preventDefault(); flipOrAdvance(); }
       if (event.key === 't' || event.key === 'T') inspectCurrent();
+      if ((event.key === 's' || event.key === 'S') && revealed && queue.length) {
+        speak(queue[position].form);
+      }
       if (event.key === 'ArrowRight') advance(1);
       if (event.key === 'ArrowLeft') advance(-1);
     });

@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Conjugation mode</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -146,11 +149,11 @@
 
     <div class="card" id="card">
       <div class="card-tense" id="card-tense"></div>
+      <div class="card-person" id="card-person"></div>
       <div class="card-verb">
         <span id="card-headword"></span>
         <span class="card-translation" id="card-translation"></span>
       </div>
-      <div class="card-person" id="card-person"></div>
 
       <div class="card-answer" id="card-answer" hidden>
         <div class="card-form" id="card-form"></div>
@@ -177,6 +180,10 @@
 
 </main>
 
+<!-- The study app's voice engine, reused so a conjugation is read out by the
+     same voice, chosen by the same scorer, as a flashcard. It is a leaf
+     module: it imports only state.js and touches no UI. -->
+<script type="module" src="../js/speech.js"></script>
 <script src="app.js"></script>
 <script src="data/es.js"></script>
 <script>window.conjugationBoot && window.conjugationBoot();</script>
