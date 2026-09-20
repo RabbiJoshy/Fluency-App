@@ -18522,6 +18522,44 @@ body.artist-mode #flashcardMode::before {
 .knowledge-overview-focus.is-static { cursor: default; }
 .rare-knowledge-btn { width: calc(100% - 24px); margin: 0 12px 10px; }
 
+/* A card stays visible while its reference sheets are open on wide desktops.
+   Narrow desktops and phones keep the existing centred sheets. */
+@media (min-width: 1360px) {
+  body:has(#appContent:not(.hidden)) :is(#findWordModal, #lyricBreakdownModal):not(.hidden) {
+    justify-content: flex-end;
+    align-items: center;
+    padding: 24px;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  body:has(#appContent:not(.hidden)) :is(#findWordModal, #lyricBreakdownModal) > .modal-content {
+    box-sizing: border-box;
+    width: min(360px, calc((100vw - 540px) / 2 - 48px));
+    max-width: none !important;
+    max-height: calc(100dvh - 48px);
+    overflow-y: auto;
+    margin: 0;
+  }
+  body:has(#appContent:not(.hidden)) #lyricBreakdownModal .lyric-breakdown-body {
+    max-height: calc(100dvh - 150px);
+    padding-inline: 0;
+  }
+  body:has(#appContent:not(.hidden)) #knowledgeOverviewModal:not([hidden]) {
+    place-items: center end;
+    padding: 24px;
+    background: transparent;
+    backdrop-filter: none;
+  }
+  body:has(#appContent:not(.hidden)) #knowledgeOverviewModal .knowledge-overview-sheet {
+    box-sizing: border-box;
+    width: min(360px, calc((100vw - 540px) / 2 - 48px));
+    max-height: calc(100dvh - 48px);
+  }
+  body:has(#appContent:not(.hidden)) #knowledgeOverviewModal .knowledge-overview-header { padding: 16px 16px 10px; }
+  body:has(#appContent:not(.hidden)) #knowledgeOverviewModal .knowledge-overview-header h2 { font-size: 19px; }
+}
+
 /* Setup header: language is a compact two-line control; account actions
    occupy one predictable group on the opposite edge. */
 #topBar .top-bar-header { justify-content: space-between; }
