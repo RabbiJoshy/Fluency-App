@@ -22,7 +22,8 @@
     reverse: false,  // prompt with the English meaning instead of the infinitive
     patterns: {},    // stem delta -> true
     coverage: 'all', // 'all' every card, 'one' one card per lesson
-    speak: true      // read the answer out loud on reveal
+    speak: true,     // read the answer out loud on reveal
+    clue: 'none'     // 'none', 'pattern' (name the family), 'easy' (colour it)
   };
 
   // The study app names languages ('spanish'); the deck codes them ('es').
@@ -154,6 +155,71 @@
     var tail = el('span', 'form-ending', split.ending);
     tail.style.setProperty('--ending-colour', 'var(--c' + (code === '-' ? '4' : code) + ')');
     node.appendChild(tail);
+  }
+
+  /* A verb's pattern family: the alternation it is known for, across every
+   * tense. Deliberately not this card's delta — naming that would say
+   * whether the stem changes *here*, which is the question. Saying "o → ue
+   * verb" on `encontramos` leaves you to know that nosotros sits outside
+   * the stress pattern. */
+  var verbFamily = {};
+  var familyMembers = {};
+
+  function computeFamilies() {
+    verbFamily = {};
+    var opening = deck.tenses.filter(function (t) {
+      return !t.compound && t.mood_order === 1 && t.order === 1;
+    })[0];
+
+    function tally(verb, onlyTense) {
+      var counts = {};
+      Object.keys(verb.p).forEach(function (tenseId) {
+        if (onlyTense && tenseId !== onlyTense) return;
+        var paradigm = verb.p[tenseId];
+        if (!paradigm.l) return;
+        paradigm.l.forEach(function (id) {
+          if (id === null || id === undefined) return;
+          var delta = deck.lessons[id].d;
+          if (!delta) return;            // the plain pattern names nothing
+          counts[delta] = (counts[delta] || 0) + 1;
+        });
+      });
+      var best = null;
+      Object.keys(counts).forEach(function (delta) {
+        if (delta === OPAQUE) return;    // suppletion is a last resort
+        if (!best || counts[delta] > counts[best]) best = delta;
+      });
+      if (!best && counts[OPAQUE]) best = OPAQUE;
+      return best;
+    }
+
+    familyMembers = {};
+    deck.verbs.forEach(function (verb) {
+      // The present is how a learner identifies a verb. Counting every tense
+      // instead makes `tener` an "en → uv verb", because the tuv- stem spans
+      // the preterite and two subjunctives — true, but not how anyone thinks
+      // of it. Fall back to the whole paradigm only when the present is flat.
+      var best = (opening && tally(verb, opening.id)) || tally(verb, null);
+      verbFamily[verb.h] = best === undefined ? null : best;
+      if (best && best !== OPAQUE) {
+        // deck.verbs is already in rank order, so the first members added are
+        // the ones a learner is likeliest to recognise. The builder's own
+        // example list is alphabetical, which offers `advertir` for the
+        // family everyone knows as `pensar`.
+        var members = familyMembers[best] || (familyMembers[best] = []);
+        if (members.length < 8) members.push(verb.h);
+      }
+    });
+  }
+
+  /* Name a family by the verbs in it. "like pensar, querer" is what a person
+   * would say; the machine-readable delta stays on the answer side. */
+  function familyPhrase(delta, exclude) {
+    var members = (familyMembers[delta] || []).filter(function (h) {
+      return h !== exclude;
+    });
+    if (!members.length) return patternLabel({ d: delta }) + ' verb';
+    return 'like ' + members.slice(0, 2).join(', ');
   }
 
   function lessonAt(paradigm, index) {
@@ -317,6 +383,35 @@
     });
   }
 
+  /* Clues describe the card, never the verb: the same verb is clued
+   * differently in tengo and in tenemos, because they are different
+   * lessons. "Easy" tints the prompt with the card's own form type, so the
+   * colour becomes a cue attached to that cell. */
+  function renderClue() {
+    var host = $('clue');
+    host.innerHTML = '';
+    [
+      { value: 'none', name: 'No clue', note: 'you supply everything' },
+      { value: 'pattern', name: 'Name the pattern', note: 'o → ue verb' },
+      { value: 'easy', name: 'Easy — colour the prompt', note: 'green means no change' }
+    ].forEach(function (option) {
+      var label = el('label', 'check');
+      var input = document.createElement('input');
+      input.type = 'radio';
+      input.name = 'clue';
+      input.checked = state.clue === option.value;
+      input.onchange = function () {
+        state.clue = option.value;
+        refreshSummary();
+        if (queue.length) renderCard();
+      };
+      label.appendChild(input);
+      label.appendChild(el('span', 'check-name', option.name));
+      label.appendChild(el('span', 'check-count', option.note));
+      host.appendChild(label);
+    });
+  }
+
   function renderDirection() {
     var host = $('direction');
     host.innerHTML = '';
@@ -456,6 +551,11 @@
     $('state-coverage').textContent =
       state.coverage === 'one' ? 'one per lesson' : 'every form';
 
+    $('state-clue').textContent =
+      state.clue === 'none' ? 'none'
+      : state.clue === 'pattern' ? 'pattern named'
+      : 'prompt coloured';
+
     $('state-prompt').textContent =
       (state.reverse ? 'meaning' : 'infinitive') +
       (state.speak ? ' · spoken' : ' · silent') +
@@ -552,6 +652,27 @@
     var meaning = card.verb.t || '';
 
     $('card-tense').textContent = tenseLabel(card.tense);
+
+    var clue = $('card-clue');
+    var verbNode = document.querySelector('.card-verb');
+    var clueColour = card.code === '-' ? 'var(--c4)' : 'var(--c' + card.code + ')';
+    clue.hidden = true;
+    clue.textContent = '';
+    verbNode.classList.remove('is-clued');
+    verbNode.style.removeProperty('--clue-colour');
+
+    if (state.clue === 'easy') {
+      verbNode.classList.add('is-clued');
+      verbNode.style.setProperty('--clue-colour', clueColour);
+    } else if (state.clue === 'pattern') {
+      var family = verbFamily[card.verb.h];
+      clue.textContent = !family ? 'a regular verb'
+        : family === OPAQUE ? 'no shared pattern \u00b7 recall it'
+        : familyPhrase(family, card.verb.h);
+      clue.style.setProperty('--clue-colour', 'var(--ink-3)');
+      clue.hidden = false;
+    }
+
     $('card-headword').textContent = state.reverse ? meaning : card.verb.h;
     $('card-translation').textContent = state.reverse
       ? (revealed ? card.verb.h : '')
@@ -822,7 +943,9 @@
     renderDeckPicker();
     renderTenses();
     renderPersons();
+    computeFamilies();
     renderDirection();
+    renderClue();
     renderPatterns();
     renderCoverage();
     renderProvenance();
