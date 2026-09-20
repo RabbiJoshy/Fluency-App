@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-20T18:05:00+01:00",
+      "date": "2026-09-20 18:05 BST",
+      "agent": "Claude",
+      "commit": "pending",
+      "summary": "Conjugation mode: the pronoun sits above the verb, answers are read out loud, endings are coloured, and the fonts now match the cards",
+      "detail": [
+        "The pronoun moved above the infinitive. You read who it is, then which verb, then produce the form, instead of looking above and below the verb to work out what is being asked.",
+        "The answer is read out loud when it is revealed, using the study app's own voice module rather than a second copy of it, so a conjugation is spoken by the same voice, chosen by the same quality scoring, as a flashcard. Press s to hear it again. There is a Read the answer out loud switch under Prompt if you want to drill in silence.",
+        "The ending is coloured and the stem is dimmed, on the cards and in the tables. tengo and tienes carry the stem-change colour on -o and -es while tenemos and tenéis carry the regular colour on -emos and -éis, so what changes and what does not is visible at a glance.",
+        "The colouring is only applied where the split is honest. Compound tenses, off-model forms like voy, and anything whose ending the model could not identify are left whole rather than split at a guessed boundary.",
+        "The page now uses the app's three fonts — DM Sans for prose, Space Grotesk for the words being learned, JetBrains Mono for figures — instead of the system stack."
+      ]
+    },
+    {
       "timestamp": "2026-09-20T17:26:00+01:00",
       "date": "2026-09-20 17:26 BST",
       "agent": "Claude",

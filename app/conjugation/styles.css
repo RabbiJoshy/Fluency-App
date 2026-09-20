@@ -17,6 +17,13 @@
 
   --radius: 12px;
   --gutter: 16px;
+
+  /* The study app's three fonts, so a conjugation card reads like a
+     flashcard: DM Sans for prose, Space Grotesk for the words being
+     learned, JetBrains Mono wherever digits line up. */
+  --font-reading: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-emphasis: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-data: 'JetBrains Mono', monospace;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -45,7 +52,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font: 16px/1.5 var(--font-reading);
   -webkit-text-size-adjust: 100%;
 }
 
@@ -60,7 +67,7 @@ main { padding: 0 var(--gutter) 64px; max-width: 1040px; margin: 0 auto; }
   max-width: 1040px; margin: 0 auto;
 }
 .brand { display: flex; flex-direction: column; }
-.brand-mark { font-weight: 650; letter-spacing: -0.01em; }
+.brand-mark { font-family: var(--font-emphasis); font-weight: 700; letter-spacing: -0.01em; }
 .brand-note { font-size: 12px; color: var(--ink-3); }
 
 .tabs { display: flex; gap: 4px; background: var(--surface-2); padding: 3px; border-radius: 999px; }
@@ -160,7 +167,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
   box-shadow: 0 -2px 16px rgba(0,0,0,.06);
 }
 .summary-main { display: flex; align-items: baseline; gap: 6px; }
-.summary-count { font-size: 30px; font-weight: 650; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.summary-count { font-family: var(--font-data); font-size: 30px; font-weight: 650; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
 .summary-unit { color: var(--ink-3); font-size: 14px; }
 .summary-detail { font-size: 13px; color: var(--ink-2); }
 .summary-bar { grid-column: 1 / -1; display: flex; height: 6px; border-radius: 999px; overflow: hidden; background: var(--surface-2); }
@@ -200,11 +207,24 @@ button.ghost { background: none; color: var(--ink-2); }
   -webkit-user-select: none; user-select: none; touch-action: pan-y;
 }
 .card-tense { font-size: 12.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
-.card-verb { font-size: 30px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; }
+.card-verb {
+  font-family: var(--font-emphasis);
+  font-size: 30px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15;
+}
 .card-translation { display: block; font-size: 14px; font-weight: 400; color: var(--ink-3); margin-top: 4px; }
-.card-person { font-size: 17px; color: var(--ink-2); }
+.card-person {
+  font-size: 15px; font-weight: 600; color: var(--ink-2);
+  letter-spacing: .01em;
+}
 .card-answer { border-top: 1px solid var(--line); margin-top: 14px; padding-top: 18px; }
-.card-form { font-size: 34px; font-weight: 650; letter-spacing: -0.02em; }
+.card-form {
+  font-family: var(--font-emphasis);
+  font-size: 34px; font-weight: 650; letter-spacing: -0.02em;
+}
+/* The ending is the lesson. Colouring it by form type is the whole point of
+   the card, so it carries the type colour while the stem stays plain. */
+.form-ending { color: var(--ending-colour, inherit); }
+.card-form .form-stem { opacity: .62; font-weight: 600; }
 .card-chips { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
 .chip-action {
   font-family: inherit; border: 1px solid var(--line); cursor: pointer;
@@ -231,7 +251,7 @@ button.ghost { background: none; color: var(--ink-2); }
 .results button.is-active { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 
 .paradigm { margin-top: 22px; }
-.paradigm h3 { margin: 0 0 2px; font-size: 20px; }
+.paradigm h3 { margin: 0 0 2px; font-size: 20px; font-family: var(--font-emphasis); }
 .paradigm .sub { color: var(--ink-3); font-size: 14px; margin: 0 0 14px; }
 .ptable { width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 10px; }
 .ptable caption {
@@ -243,7 +263,8 @@ button.ghost { background: none; color: var(--ink-2); }
 }
 .ptable th { color: var(--ink-3); font-size: 13px; width: 40%; }
 .ptable td { font-variant-numeric: tabular-nums; }
-.ptable td b { font-weight: 600; }
+.ptable td b { font-weight: 600; font-family: var(--font-emphasis); }
+.ptable td .form-stem { opacity: .62; color: var(--ink); }
 .legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12.5px; color: var(--ink-2); margin-top: 16px; }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
 
