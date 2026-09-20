@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-20T21:05:00+01:00",
+      "date": "2026-09-20 21:05 BST",
+      "agent": "Claude",
+      "commit": "pending",
+      "summary": "Top bar reads as one line again, conjugation settings lead with what matters, and the language's colour is back as a trim",
+      "detail": [
+        "The language chip stacked the flag above the language name, which read as two unrelated controls. Flag and name now sit side by side on one row at every width.",
+        "Every icon in the main-page top bar is larger (50px target, 27px glyph; 46/25 on phones) — they were sitting at the 44px accessibility floor rather than a size chosen for legibility.",
+        "The 'Update ready' pill was clipped to 'Update rea' on every phone by a hardcoded 92px cap. It now gets its content and the language chip is the one that shortens.",
+        "Conjugation mode setup now opens on Verb type, How common, Tenses, Persons and Easy mode; Patterns, Repetition, Prompt and the data-provenance note are folded into Advanced settings, which summarises itself while closed.",
+        "The per-language colour is visible again as a trim on the language chip and a hairline under the top bar. The setup panel keeps its neutral accent, so switching to Spanish no longer threatens to turn every control flag-red. Dark flag colours (Czech, Portuguese, Italian) are lifted to a lightness floor so every language actually shows one."
+      ]
+    },
+    {
       "timestamp": "2026-09-20T21:27:48+01:00",
       "date": "2026-09-20 21:27 BST",
       "agent": "Codex",

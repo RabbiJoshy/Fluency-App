@@ -109,6 +109,13 @@ main { padding: 0 var(--gutter) 64px; max-width: 1040px; margin: 0 auto; }
 }
 .section-body { padding: 0 16px 16px; }
 
+/* Nested sections inside "Advanced settings": drop the card chrome so the
+   group reads as a list of settings, not as four cards inside a fifth. */
+.section-body-nested { display: grid; gap: 8px; padding: 0 12px 12px; }
+.section-body-nested .section { background: var(--surface-2); }
+.section-body-nested .section > summary { padding: 11px 13px; }
+.section-body-nested .section-name { font-weight: 550; }
+
 .field { margin-top: 18px; }
 .field:first-of-type { margin-top: 12px; }
 .field-label {

@@ -12440,7 +12440,11 @@
         .sync-queue-list li { display: flex; justify-content: space-between; gap: 8px; padding: 8px 0; }
         .sync-queue-list small { display: block; color: var(--text-muted); }
         @media (max-width: 600px) {
-            .sync-status { max-width: 92px; overflow: hidden; text-overflow: ellipsis; }
+            /* 92px cut "Update ready" to "Update rea" on every phone. The
+               pill only appears when it has something to say, so give it its
+               content and let the language chip beside it be the one that
+               ellipsises. */
+            .sync-status { max-width: none; flex: 0 0 auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
             .offline-panel-heading { grid-template-columns: 1fr; }
             .offline-panel-heading button { width: 100%; }
         }
@@ -16893,6 +16897,9 @@ body {
   z-index: 30;
   padding: 8px 10px;
   border-color: color-mix(in srgb, var(--border-color) 82%, transparent);
+  /* One hairline of the language's own colour under the bar. Enough to tell
+     Spanish from Czech at a glance without theming the whole page. */
+  border-bottom: 2px solid color-mix(in srgb, var(--lang-trim, var(--accent-primary)) 46%, transparent);
   border-radius: 14px;
   background: color-mix(in srgb, var(--bg-card) 88%, transparent);
   box-shadow: 0 8px 28px rgba(0, 0, 0, .16);
@@ -18499,10 +18506,21 @@ body.artist-mode #flashcardMode::before {
 #topBar .learning-context-chip { min-height: 46px; padding: 7px 12px; gap: 9px; }
 #topBar .learning-context-flag { font-size: 23px; }
 #topBar .learning-context-chip-copy strong { font-size: 15px; }
+/* Every control in this bar is a primary target on the page a learner sees
+   most; 44px was the accessibility floor, not a size chosen for legibility. */
 #topBar .top-bar-icon-btn,
-#topBar .gear-btn { width: 44px; height: 44px; flex: 0 0 44px; border-radius: 11px; }
+#topBar .gear-btn { width: 50px; height: 50px; flex: 0 0 50px; border-radius: 12px; }
 #topBar .top-bar-icon-btn svg,
-#topBar .gear-btn svg { width: 22px; height: 22px; }
+#topBar .gear-btn svg { width: 27px; height: 27px; }
+#topBar .sync-status { min-height: 38px; padding: 0 12px; font-size: 13px; }
+
+@media (max-width: 560px) {
+  #topBar .sync-status { min-height: 36px; padding: 0 9px; font-size: 12px; }
+  #topBar .top-bar-icon-btn,
+  #topBar .gear-btn { width: 46px; height: 46px; flex: 0 0 46px; }
+  #topBar .top-bar-icon-btn svg,
+  #topBar .gear-btn svg { width: 25px; height: 25px; }
+}
 #topBar .top-bar-gear { margin-left: auto; }
 
 #setupPanel .level-btn { min-height: 46px; padding: 11px 16px; }
@@ -18560,8 +18578,9 @@ body.artist-mode #flashcardMode::before {
   #topBar { padding: 6px 8px; }
   #topBar .top-bar-header { gap: 4px; }
   #topBar .top-bar-user-name { max-width: 72px; padding: 0 3px; font-size: 14px; }
-  #topBar .learning-context-chip { max-width: 122px; min-width: 0; padding: 7px 4px; gap: 4px; }
-  #topBar .learning-context-flag { font-size: 21px; }
+  /* One row needs horizontal room the stacked version did not. */
+  #topBar .learning-context-chip { max-width: 168px; min-width: 0; padding: 7px 8px; column-gap: 6px; }
+  #topBar .learning-context-flag { font-size: 22px; }
   #topBar .learning-context-chip-copy strong { font-size: 13px; }
   #step4 .study-set-choice { padding: 12px 10px; }
   #step4 .study-set-dots { gap: 6px; }
@@ -18687,23 +18706,31 @@ body.artist-mode #flashcardMode::before {
   body:has(#appContent:not(.hidden)) #knowledgeOverviewModal .knowledge-overview-header h2 { font-size: 19px; }
 }
 
-/* Setup header: language is a compact two-line control; account actions
-   occupy one predictable group on the opposite edge. */
+/* Setup header: flag and language name sit side by side on one line — the
+   two-line version stacked the flag above the word, which read as two
+   unrelated controls. Account actions stay in one group on the opposite
+   edge. */
 #topBar .top-bar-header { justify-content: space-between; }
 #topBar .learning-context-chip {
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-rows: auto auto;
-  column-gap: 8px;
-  row-gap: 1px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto;
+  column-gap: 9px;
+  row-gap: 0;
   min-width: 150px;
   min-height: 52px;
-  padding: 5px 10px;
+  padding: 5px 12px;
   border-color: color-mix(in srgb, var(--accent-primary) 42%, var(--border-color));
   background: color-mix(in srgb, var(--accent-primary) 9%, var(--bg-card));
 }
-#topBar .learning-context-flag { grid-column: 1; grid-row: 1; font-size: 21px; }
-#topBar .learning-context-chip-copy { grid-column: 1; grid-row: 2; }
-#topBar .learning-context-chevron { grid-column: 2; grid-row: 1 / 3; }
+#topBar .learning-context-flag { grid-column: 1; grid-row: 1; font-size: 24px; }
+/* The chip names the language, so it is the one control that wears its
+   colour rather than the panel's neutral accent. */
+#topBar .learning-context-chip {
+  border-color: color-mix(in srgb, var(--lang-trim, var(--accent-primary)) 50%, var(--border-color));
+  background: color-mix(in srgb, var(--lang-trim, var(--accent-primary)) 11%, var(--bg-card));
+}
+#topBar .learning-context-chip-copy { grid-column: 2; grid-row: 1; }
+#topBar .learning-context-chevron { grid-column: 3; grid-row: 1; }
 .top-bar-right-controls { display: flex; align-items: center; justify-content: flex-end; gap: 8px; min-width: 0; margin-left: auto; }
 #topBar .top-bar-gear { margin-left: 0; }
 
@@ -18778,9 +18805,9 @@ body.artist-mode #flashcardMode::before {
   .card-front .card-pos-list.is-lemma-map.pos-count-3 > :last-child { grid-column: 1 / -1; }
   .card-pos-list.is-lemma-map .front-lemma-pair { min-height: 36px; padding-right: 7px; }
   .card-pos-list.is-lemma-map .card-pos { padding: 5px 7px; font-size: 12px; }
-  #topBar .learning-context-chip { min-width: 112px; min-height: 48px; padding: 4px 7px; }
-  #topBar .learning-context-flag { font-size: 19px; }
-  #topBar .learning-context-chip-copy strong { font-size: 12px; }
+  #topBar .learning-context-chip { min-width: 0; max-width: 148px; min-height: 48px; padding: 4px 8px; column-gap: 5px; }
+  #topBar .learning-context-flag { font-size: 20px; }
+  #topBar .learning-context-chip-copy strong { font-size: 12.5px; }
   .top-bar-right-controls { gap: 3px; }
   #topBar .top-bar-user-name { max-width: 72px; }
 }
