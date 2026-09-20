@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v502"
+EXPECTED_CACHE_NAME = "flashcards-v505"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -459,61 +459,32 @@ class ProductShellTests(unittest.TestCase):
         self.assertLess(main.index("getCardTutorialLanguageKey?.()", start), language_step)
         self.assertLess(main.index("setCardTutorialLanguage?.(knownLanguage)", start), language_step)
 
-    def test_cognate_setting_uses_positive_inclusion_copy(self) -> None:
+    def test_fast_track_has_one_language_switch_and_fine_tuning(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
-        self.assertIn('<span class="settings-row-label">Familiar cognates', html)
-        self.assertIn('data-setting="excludeCognates" data-value="off" aria-pressed="true">Include</button>', html)
-        self.assertIn('data-setting="excludeCognates" data-value="on" aria-pressed="false">Exclude</button>', html)
+        self.assertIn('id="fastModeHomeSwitch"', html)
+        self.assertIn('id="fastModeFineTuneBtn"', html)
+        self.assertIn('id="settingsFastTrackBtn"', html)
+        self.assertIn('id="fastModeSkippedLink"', html)
 
     def test_settings_are_organised_around_learner_tasks(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
         ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
-        study = html.index('data-tab="study"')
-        lookup = html.index('data-tab="lookup"')
-        review = html.index('data-tab="review"')
-        appearance = html.index('data-tab="appearance"')
-        account = html.index('data-tab="account"')
-        storage = html.index('data-tab="offline"')
-        vocabulary = html.index('data-tab="vocabulary"')
-        about = html.index('data-tab="about"')
-        self.assertIn('id="settingsSearch"', html)
-        self.assertIn('<span class="settings-nav-label">Learning</span>', html)
-        self.assertIn('<span class="settings-nav-label">App</span>', html)
-        self.assertIn("function setupSettingsSearch()", ui)
-        self.assertIn("grid-template-columns: 168px minmax(0, 1fr)", css)
-        self.assertLess(study, lookup)
-        self.assertLess(lookup, review)
-        self.assertLess(review, vocabulary)
-        self.assertLess(vocabulary, appearance)
-        self.assertLess(appearance, account)
-        self.assertLess(account, about)
-        self.assertLess(about, storage)
-        self.assertIn('id="lookupTabContent"', html)
-        self.assertIn('id="settingsFindWordBtn"', html[html.index('id="lookupTabContent"'):])
-        self.assertIn('id="settingsSavedWordsBtn"', html[html.index('id="vocabularyTabContent"'):html.index('id="appearanceTabContent"')])
-        self.assertNotIn('id="settingsFindWordBtn"', html[html.index('id="studyTabContent"'):html.index('id="lookupTabContent"')])
-        self.assertIn('id="senseProminenceSelector"', html[html.index('id="appDataTabContent"'):])
-        self.assertIn('id="cognateSensitivityRow"', html[html.index('id="appDataTabContent"'):])
-        self.assertNotIn('id="senseProminenceSelector"', html[html.index('id="studyTabContent"'):html.index('id="lookupTabContent"')])
-        self.assertNotIn('id="cognateSensitivityRow"', html[html.index('id="studyTabContent"'):html.index('id="lookupTabContent"')])
+        overview = html[html.index('id="studyTabContent"'):html.index('id="lookupTabContent"')]
+        self.assertIn('id="settingsImportKnownBtn"', overview)
+        self.assertIn('id="settingsExportMistakesBtn"', overview)
+        self.assertIn('id="settingsWordsDataBtn"', overview)
+        self.assertIn('id="settingsAccountBtn"', overview)
+        self.assertIn('id="appearanceSettingsTitle">Theme', overview)
+        self.assertIn('id="progressImportKnownBtn"', html)
+        self.assertIn('id="progressExportMistakesBtn"', html)
+        self.assertIn('id="settingsBackBtn"', html)
+        self.assertIn('function setupSettingsOverview()', ui)
+        self.assertIn('> .settings-tabs { display: none !important; }', css)
         self.assertIn("Show first", html)
         self.assertIn("Speak the word", html)
-        self.assertIn("The word first: guess the English. English first: say the word.", html)
-        self.assertIn("Reads it out when a new card appears.", html)
-        self.assertIn("Turn this on if you want words you already got right to come back later", html)
-        self.assertNotIn("Interval multipliers, daily limits, and review notifications will be configurable here.", html)
-        self.assertIn('data-tab="offline" id="storageTabBtn" hidden', html)
-        self.assertIn("showSettingsModalWithTab('study')", ui)
-        self.assertIn("lookup: 'lookupTabContent'", ui)
-        self.assertIn("review: 'reviewTabContent'", ui)
-        self.assertIn("appearance: 'appearanceTabContent'", ui)
-        self.assertIn("vocabulary: 'vocabularyTabContent'", ui)
-        self.assertIn("about: 'aboutTabContent'", ui)
-        self.assertIn("storageTabBtn.hidden = !isJstAccount", ui)
-        self.assertIn("const adminOnlyTabs = new Set(['offline', 'appData'])", ui)
-        self.assertIn(".settings-modal-content .settings-tab[hidden]", css)
-        self.assertGreater(html.index('id="wsdPublicationRow"'), html.index('id="appDataTabContent"'))
+        self.assertIn('Bring back learned words', overview)
+        self.assertIn('More study options', overview)
 
     def test_fast_track_skipped_words_are_study_sets_of_twenty(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
@@ -756,8 +727,8 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260918l", worker)
-        self.assertIn("/js/main.js?v=20260920h", worker)
-        self.assertIn("/js/ui.js?v=20260920f", worker)
+        self.assertIn("/js/main.js?v=20260920j", worker)
+        self.assertIn("/js/ui.js?v=20260920g", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -780,9 +751,9 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertIn("config?.publicServices?.progressSyncUrl", auth)
         self.assertIn("secrets.googleScriptUrl || GOOGLE_SCRIPT_URL", auth)
-        self.assertIn('js/auth.js?v=20260912a', html)
-        self.assertIn("auth.js?v=20260912a", main)
-        self.assertIn("/js/auth.js?v=20260912a", worker)
+        self.assertIn('js/auth.js?v=20260920b', html)
+        self.assertIn("auth.js?v=20260920b", main)
+        self.assertIn("/js/auth.js?v=20260920b", worker)
 
     def test_progress_identity_bridges_historical_mode_ids_by_surface(self) -> None:
         progress = (APP_ROOT / "js" / "progress.js").read_text(encoding="utf-8")
@@ -876,7 +847,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
         self.assertIn("/js/spotify-playlist-import.js?v=20260919a", worker)
-        self.assertIn('css/style.css?v=20260920k', html)
+        self.assertIn('css/style.css?v=20260920m', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
         self.assertIn("searchParams.set('playlistLive'", importer)
@@ -1035,16 +1006,16 @@ class FastModeSurfaceTests(unittest.TestCase):
         self.assertIn("?.click();", self.script)
 
     def test_fast_track_reports_binary_on_or_off_without_custom_state(self) -> None:
-        self.assertIn("return parts.some(Boolean) ? 'on' : 'off';", self.script)
+        self.assertIn("return readFastTrack(selectedLanguage).enabled ? 'on' : 'off';", self.script)
         self.assertNotIn("return 'custom'", self.script)
 
     def test_fast_track_state_only_uses_parts_the_release_supports(self) -> None:
-        # Czech has no lemma mapping; the overall state must not depend on it.
-        self.assertIn("if (lemmaAvailable()) parts.push(", self.script)
-        self.assertIn("if (cognateAvailable()) parts.push(", self.script)
+        # Keep the language choice while only changing controls supported here.
+        self.assertIn("if (lemmaAvailable() && lemmaOn()", self.script)
+        self.assertIn("if (cognateAvailable() && cognatesExcluded()", self.script)
 
     def test_master_switch_is_independent_and_details_explain_missing_mappings(self) -> None:
-        self.assertIn("let requestedFastMode = null", self.script)
+        self.assertIn("saveFastTrack(selectedLanguage, { enabled: on, merge, skip })", self.script)
         self.assertNotIn("if (!lemmaAvailable() && !cognateAvailable())", self.script)
         self.assertIn("updateMappingStatus()", self.script)
         self.assertIn('class="fast-mode-number" aria-hidden="true">1</span>', self.html)
