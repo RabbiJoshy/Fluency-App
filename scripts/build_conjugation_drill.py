@@ -119,6 +119,84 @@ REFLEXIVE_SUFFIXES: dict[str, tuple[str, ...]] = {
     "cs": (),
 }
 
+# Display order and English names for tenses.
+#
+# The source names a tense in its own language and in its own order (the
+# Spanish layer is alphabetical, so it opens on the imperative). A learner
+# wants the indicative present first and the archaic tenses last, under
+# English headings. Keys are the source's own (mood, tense) strings.
+#
+# A mood or tense absent from this table keeps the source's name, sorts after
+# everything mapped, and is treated as uncommon — declared unknown rather
+# than silently ranked.
+#
+# Each entry is: (mood label, mood order, tense label, tense order, common).
+# "common" is what a learner meets in a first course; the rest stay behind a
+# "more" toggle instead of padding the list.
+TENSE_DISPLAY: dict[str, dict[tuple[str, str], tuple[str, int, str, int, bool]]] = {
+    "es": {
+        ("Indicativo", "Presente"): ("Indicative", 1, "Present", 1, True),
+        ("Indicativo", "Pretérito"): ("Indicative", 1, "Preterite", 2, True),
+        ("Indicativo", "Imperfecto"): ("Indicative", 1, "Imperfect", 3, True),
+        ("Indicativo", "Futuro"): ("Indicative", 1, "Future", 4, True),
+        ("Indicativo", "Condicional"): ("Indicative", 1, "Conditional", 5, True),
+        ("Indicativo", "Pretérito perfecto"): ("Indicative", 1, "Present perfect", 6, True),
+        ("Indicativo", "Pluscuamperfecto"): ("Indicative", 1, "Past perfect", 7, False),
+        ("Indicativo", "Futuro perfecto"): ("Indicative", 1, "Future perfect", 8, False),
+        ("Indicativo", "Condicional perfecto"): ("Indicative", 1, "Conditional perfect", 9, False),
+        ("Indicativo", "Pretérito anterior"): ("Indicative", 1, "Preterite perfect", 10, False),
+        ("Subjuntivo", "Presente"): ("Subjunctive", 2, "Present", 1, True),
+        ("Subjuntivo", "Imperfecto"): ("Subjunctive", 2, "Imperfect", 2, True),
+        ("Subjuntivo", "Pretérito perfecto"): ("Subjunctive", 2, "Present perfect", 3, False),
+        ("Subjuntivo", "Pluscuamperfecto"): ("Subjunctive", 2, "Past perfect", 4, False),
+        ("Subjuntivo", "Futuro"): ("Subjunctive", 2, "Future", 5, False),
+        ("Subjuntivo", "Futuro perfecto"): ("Subjunctive", 2, "Future perfect", 6, False),
+        # Both imperatives are one mood to a learner, so they are folded into
+        # a single heading with the polarity as the tense.
+        ("Imperativo Afirmativo", "Presente"): ("Imperative", 3, "Affirmative", 1, True),
+        ("Imperativo Negativo", "Presente"): ("Imperative", 3, "Negative", 2, True),
+    },
+    "pt": {
+        ("indicativo", "presente"): ("Indicative", 1, "Present", 1, True),
+        ("indicativo", "pretérito-perfeito"): ("Indicative", 1, "Preterite", 2, True),
+        ("indicativo", "pretérito-imperfeito"): ("Indicative", 1, "Imperfect", 3, True),
+        ("indicativo", "futuro-do-presente"): ("Indicative", 1, "Future", 4, True),
+        ("condicional", "futuro-do-pretérito"): ("Conditional", 2, "Conditional", 1, True),
+        ("subjuntivo", "presente"): ("Subjunctive", 3, "Present", 1, True),
+        ("subjuntivo", "pretérito-imperfeito"): ("Subjunctive", 3, "Imperfect", 2, True),
+        ("subjuntivo", "futuro"): ("Subjunctive", 3, "Future", 3, True),
+        ("imperativo", "afirmativo"): ("Imperative", 4, "Affirmative", 1, True),
+        ("imperativo", "negativo"): ("Imperative", 4, "Negative", 2, True),
+    },
+    "fr": {
+        ("indicatif", "présent"): ("Indicative", 1, "Present", 1, True),
+        ("indicatif", "imparfait"): ("Indicative", 1, "Imperfect", 2, True),
+        ("indicatif", "futur-simple"): ("Indicative", 1, "Future", 3, True),
+        ("indicatif", "passé-simple"): ("Indicative", 1, "Simple past", 4, False),
+        ("conditionnel", "présent"): ("Conditional", 2, "Conditional", 1, True),
+        ("subjonctif", "présent"): ("Subjunctive", 3, "Present", 1, True),
+        ("subjonctif", "imparfait"): ("Subjunctive", 3, "Imperfect", 2, False),
+        ("imperatif", "imperatif-présent"): ("Imperative", 4, "Imperative", 1, True),
+    },
+    "cs": {
+        ("indicative", "present"): ("Indicative", 1, "Present", 1, True),
+        ("imperative", "present"): ("Imperative", 2, "Imperative", 1, True),
+    },
+}
+
+UNMAPPED_ORDER = 99
+
+
+def tense_display(
+    language: str, mood: str, tense: str
+) -> tuple[str, int, str, int, bool]:
+    """English heading, order and commonness for a source (mood, tense)."""
+    mapped = TENSE_DISPLAY.get(language, {}).get((mood, tense))
+    if mapped:
+        return mapped
+    return (mood, UNMAPPED_ORDER, tense, UNMAPPED_ORDER, False)
+
+
 VOWELS = set("aeiouáéíóúàèìòùâêîôûäëïöüãõy")
 
 
@@ -313,12 +391,20 @@ def build_deck(
             compound = any(
                 " " in strip_particles(f["form"], language)[0] for f in paradigm["forms"]
             )
+            mood_label, mood_order, tense_label, tense_order, common = tense_display(
+                language, paradigm["mood"], paradigm["tense"]
+            )
             existing = tenses.setdefault(
                 tid,
                 {
                     "id": tid,
-                    "mood": paradigm["mood"],
-                    "tense": paradigm["tense"],
+                    "mood": mood_label,
+                    "tense": tense_label,
+                    "source_mood": paradigm["mood"],
+                    "source_tense": paradigm["tense"],
+                    "mood_order": mood_order,
+                    "order": tense_order,
+                    "common": common,
                     "compound": compound,
                     "persons": [],
                 },
@@ -460,7 +546,10 @@ def build_deck(
             "3": "irregular",
             "4": "unclassified",
         },
-        "tenses": [tenses[t] for t in sorted(tenses)],
+        "tenses": sorted(
+            tenses.values(),
+            key=lambda t: (t["mood_order"], t["order"], t["source_tense"]),
+        ),
         "lessons": lessons.rows,
         "patterns": sorted(patterns.values(), key=lambda p: -p["n"]),
         "ranked_verbs": sum(1 for v in verbs if v["n"] is not None),

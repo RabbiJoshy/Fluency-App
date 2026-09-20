@@ -28,6 +28,7 @@
   var position = 0;
   var revealed = false;
   var soloVerb = null;   // set by ?verb=, cleared when the selection changes
+  var expandedMoods = {};  // mood label -> the rarer tenses are showing
 
   var CODE_ORDER = ['0', '1', '2', '3', '4'];
 
@@ -186,6 +187,10 @@
     select.onchange = function () { loadDeck(decks[select.value]); };
   }
 
+  /* Moods keep the deck's order, which the builder sets to the order a
+   * learner meets them: indicative before subjunctive before imperative,
+   * present before preterite, archaic tenses last. Within a mood the rarer
+   * tenses stay behind a "more" toggle rather than padding the list. */
   function renderTenses() {
     var host = $('tenses');
     host.innerHTML = '';
@@ -197,6 +202,13 @@
 
     moods.forEach(function (mood) {
       var group = deck.tenses.filter(function (t) { return t.mood === mood; });
+      var rare = group.filter(function (t) {
+        return !t.common && !state.tenses[t.id];
+      });
+      var shown = state.expandAll || expandedMoods[mood]
+        ? group
+        : group.filter(function (t) { return rare.indexOf(t) === -1; });
+
       var block = el('div', 'mood');
       var head = el('div', 'mood-head');
       head.appendChild(el('span', null, mood));
@@ -205,6 +217,7 @@
       var toggle = el('button', null, allOn ? 'none' : 'all');
       toggle.onclick = function () {
         group.forEach(function (t) { state.tenses[t.id] = !allOn; });
+        if (!allOn) expandedMoods[mood] = true;
         renderTenses();
         refreshSummary();
       };
@@ -212,7 +225,7 @@
       block.appendChild(head);
 
       var checks = el('div', 'checks');
-      group.forEach(function (tense) {
+      shown.forEach(function (tense) {
         var label = el('label', 'check');
         var input = document.createElement('input');
         input.type = 'checkbox';
@@ -229,6 +242,17 @@
         checks.appendChild(label);
       });
       block.appendChild(checks);
+
+      if (rare.length && !expandedMoods[mood]) {
+        var more = el('button', 'linkish mood-more',
+          '+ ' + rare.length + ' rarer ' + (rare.length === 1 ? 'tense' : 'tenses'));
+        more.onclick = function () {
+          expandedMoods[mood] = true;
+          renderTenses();
+        };
+        block.appendChild(more);
+      }
+
       host.appendChild(block);
     });
   }
@@ -732,6 +756,7 @@
     state.patterns = {};
     deck.patterns.forEach(function (pattern) { state.patterns[pattern.d] = true; });
 
+    expandedMoods = {};
     renderDeckPicker();
     renderTenses();
     renderPersons();
@@ -782,7 +807,10 @@
 
     // Drill this verb alone: every tense it has, scope wide enough to
     // include it however rare it is.
-    deck.tenses.forEach(function (t) { state.tenses[t.id] = !!verb.p[t.id]; });
+    deck.tenses.forEach(function (t) {
+      state.tenses[t.id] = !!verb.p[t.id];
+      if (state.tenses[t.id]) expandedMoods[t.mood] = true;
+    });
     state.scope = 100;
     $('scope').value = 100;
     CODE_ORDER.forEach(function (code) { state.types[code] = true; });
