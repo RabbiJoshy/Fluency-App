@@ -2,6 +2,21 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-20T16:13:00+01:00",
+      "date": "2026-09-20 16:13 BST",
+      "agent": "Claude",
+      "commit": "pending",
+      "summary": "The tutorial now opens by walking through the real setup screen, and Lyrics mode gets a slide of its own instead of appearing unannounced",
+      "detail": [
+        "The intro is no longer three tick-boxes filling themselves in. It is a replica of the setup screen you actually use, and a pointer moves through it: pick a language, pick whether you want everyday speech or song lyrics, pick a level, pick a set. Each choice holds long enough to read before the next one.",
+        "It ends on a live Learn 20 new cards button and waits. You open the first card yourself.",
+        "The order is now front of the card, back of the card, then a slide explaining what Lyrics mode is, then a Lyrics card. Previously the deck changed silently and the Lyrics card had to explain itself in its own annotations.",
+        "The Lyrics slide says the three things that are actually different: the example is a real lyric, you can play it in Spotify, and the number counts that artist's lines rather than the language at large.",
+        "Removed the Speech and Lyrics labels from the header and the step counter. They named two modes before you had met either one.",
+        "Underneath, the walkthrough is now a plain list of steps rather than two decks with two faces each, so the order of the story is one list to read and to change."
+      ]
+    },
+    {
       "timestamp": "2026-09-20T14:55:00+01:00",
       "date": "2026-09-20 14:55 BST",
       "agent": "Claude",

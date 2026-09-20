@@ -14939,26 +14939,42 @@
     transform: translateY(-16px) scale(0.97);
 }
 
-.setup-anim-card {
-    width: min(92vw, 440px);
+/* -------- Break slides --------------------------------------------------- */
+
+/* A step with no card: the slide owns the stage, so the card columns and the
+   mobile coach stand down while it is up. */
+.about-example-body.is-break-step .about-example-columns,
+.about-example-body.is-break-step .about-example-mobile-coach {
+    display: none !important;
+}
+
+.about-example-break {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 24px 16px;
+    min-height: 480px;
+    animation: setup-anim-fadein 0.35s ease-out;
+}
+
+.about-example-break[hidden] {
+    display: none !important;
+}
+
+.about-example-break-card {
+    width: min(94vw, 560px);
     background: color-mix(in srgb, var(--bg-card) 95%, var(--bg-primary));
-    border: 1px solid color-mix(in srgb, var(--accent-primary) 35%, var(--border-color));
+    border: 1px solid color-mix(in srgb, var(--accent-primary) 30%, var(--border-color));
     border-radius: 20px;
-    padding: 26px 24px 20px;
+    padding: 28px 28px 22px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
     display: flex;
     flex-direction: column;
-    gap: 18px;
-    transition: opacity 0.35s ease, transform 0.35s ease;
+    gap: 14px;
 }
 
-.setup-anim-header {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.setup-anim-badge {
+.about-example-break-eyebrow {
     align-self: flex-start;
     font: 750 10px/1 var(--font-data);
     letter-spacing: 0.1em;
@@ -14970,124 +14986,272 @@
     border-radius: 6px;
 }
 
-.setup-anim-title {
-    margin: 4px 0 0;
-    font: 700 20px/1.25 var(--font-emphasis);
+.about-example-break-title {
+    margin: 2px 0 0;
+    font: 700 26px/1.2 var(--font-emphasis);
     color: var(--text-primary);
 }
 
-.setup-anim-sub {
+.about-example-break-lead {
     margin: 0;
-    font-size: 13px;
-    color: var(--text-muted);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--text-secondary);
 }
 
-.setup-anim-steps {
+.about-example-break-points {
+    list-style: none;
+    margin: 4px 0 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.setup-anim-step {
-    display: grid;
-    grid-template-columns: 28px 1fr auto;
-    align-items: center;
-    gap: 14px;
+.about-example-break-points li {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
     padding: 12px 14px;
     border-radius: 12px;
     background: var(--bg-tertiary);
     border: 1px solid var(--border-color);
-    transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-.setup-anim-step.is-active {
-    border-color: var(--accent-primary);
-    background: color-mix(in srgb, var(--accent-primary) 10%, var(--bg-tertiary));
-    box-shadow: 0 0 0 1px var(--accent-primary);
-    transform: translateX(4px);
+.about-example-break-points strong {
+    font: 650 14px/1.3 var(--font-emphasis);
+    color: var(--text-primary);
 }
 
-.setup-anim-num {
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    display: grid;
-    place-items: center;
-    font: 700 12px/1 var(--font-data);
+.about-example-break-points span {
+    font-size: 13.5px;
+    line-height: 1.5;
     color: var(--text-muted);
-    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
-.setup-anim-step.is-active .setup-anim-num,
-.setup-anim-step.is-complete .setup-anim-num {
+.about-example-break-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 8px;
+}
+
+.about-example-break-back {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 10px 16px;
+    border-radius: 999px;
+    font: 650 13px/1 var(--font-reading);
+    cursor: pointer;
+    margin-right: auto;
+}
+
+.about-example-break-back:hover {
+    border-color: var(--text-muted);
+    color: var(--text-primary);
+}
+
+.about-example-break-cta {
     background: var(--accent-primary);
     color: var(--accent-primary-text, #10141b);
-    border-color: transparent;
+    border: 0;
+    padding: 11px 20px;
+    border-radius: 999px;
+    font: 700 14px/1 var(--font-emphasis);
+    cursor: pointer;
+    transition: filter 0.15s ease, transform 0.15s ease;
 }
 
-.setup-anim-info {
+.about-example-break-cta:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+}
+
+@media (max-width: 700px) {
+    .about-example-break {
+        min-height: 0;
+        padding: 12px 12px 24px;
+    }
+
+    .about-example-break-card {
+        padding: 22px 18px 18px;
+    }
+
+    .about-example-break-title {
+        font-size: 22px;
+    }
+}
+
+.setup-anim-screen {
+    position: relative;
+    width: min(94vw, 560px);
+    background: color-mix(in srgb, var(--bg-card) 95%, var(--bg-primary));
+    border: 1px solid color-mix(in srgb, var(--accent-primary) 30%, var(--border-color));
+    border-radius: 20px;
+    padding: 22px 22px 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    min-width: 0;
+    gap: 14px;
+    transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
-.setup-anim-label {
-    font: 600 11px/1 var(--font-reading);
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+.setup-anim-screen.is-leaving {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.97);
 }
 
-.setup-anim-val {
-    font: 650 14px/1.3 var(--font-reading);
+/* The one line of narration. It changes per beat, so it is the thing a reader
+   follows rather than the controls themselves. */
+.setup-anim-caption {
+    font: 650 15px/1.45 var(--font-reading);
     color: var(--text-primary);
+    min-height: 44px;
+}
+
+.setup-anim-topbar {
+    display: flex;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.setup-anim-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: setup-anim-fadein 0.3s ease-out;
+}
+
+.setup-anim-panel[hidden] {
+    display: none !important;
+}
+
+.setup-anim-panel-title {
+    font: 700 13px/1.3 var(--font-emphasis);
+    color: var(--text-primary);
+}
+
+/* Controls in the replica are inert: the pointer does the pressing, and a
+   stray real click must not land on one. */
+.about-example-setup-anim button {
+    pointer-events: none;
+}
+
+.about-example-setup-anim .setup-anim-skip-btn,
+.about-example-setup-anim .setup-anim-learn-btn.is-ready {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.setup-anim-muted {
+    opacity: 0.45;
+}
+
+/* The real setup screen resolves this button to three columns (icon, copy,
+   chevron). Outside that screen's own context it falls back to a two-column
+   variant and the chevron drops onto a second row, so the replica states the
+   three columns itself rather than chasing the original's specificity. */
+.about-example-setup-anim .standard-source-choice-btn {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+/* Pressed and chosen states, shared by every replica control. */
+.setup-anim-target {
+    transition: transform 0.12s ease, box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.setup-anim-target.is-pressed {
+    transform: scale(0.97);
+}
+
+.setup-anim-target.is-chosen {
+    border-color: var(--accent-primary) !important;
+    box-shadow: 0 0 0 1px var(--accent-primary);
+}
+
+.setup-anim-level-readout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    font: 500 12px/1.3 var(--font-reading);
+    color: var(--text-muted);
+}
+
+.setup-anim-level-readout strong {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.setup-anim-level-segs {
+    display: flex;
+    gap: 4px;
+}
+
+.setup-anim-seg {
+    flex: 1;
+    padding: 12px 4px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-tertiary);
+    color: var(--text-muted);
+    font: 650 11px/1 var(--font-data);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.setup-anim-status {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: var(--accent-green, #4ade80);
-    color: #06121f;
-    display: grid;
-    place-items: center;
-    font-size: 13px;
-    font-weight: 800;
-    opacity: 0;
-    transform: scale(0.4);
-    transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+.setup-anim-level-eg {
+    font: 400 12px/1.3 var(--font-reading);
+    color: var(--text-muted);
+    font-style: italic;
 }
 
-.setup-anim-step.is-complete .setup-anim-status {
-    opacity: 1;
-    transform: scale(1);
+.setup-anim-set-dots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
 }
 
-.setup-anim-action-btn {
-    padding: 7px 14px;
-    border-radius: 999px;
+.setup-anim-dot {
+    flex: 1 0 40px;
+    max-width: 58px;
+    padding: 13px 0;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-tertiary);
+    color: var(--text-muted);
+    font: 650 12px/1 var(--font-data);
+}
+
+.setup-anim-set-meta {
+    font: 500 12px/1.3 var(--font-reading);
+    color: var(--text-muted);
+}
+
+.setup-anim-learn-btn {
+    align-self: stretch;
+    margin-top: 2px;
+    padding: 13px 18px;
+    border-radius: 12px;
     border: 0;
     background: var(--accent-primary);
     color: var(--accent-primary-text, #10141b);
-    font: 700 12px/1 var(--font-emphasis);
-    pointer-events: none;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    font: 700 14px/1 var(--font-emphasis);
+    transition: transform 0.12s ease, box-shadow 0.2s ease, filter 0.15s ease;
 }
 
-.setup-anim-step.is-ready .setup-anim-action-btn {
-    pointer-events: auto;
-    cursor: pointer;
+.setup-anim-learn-btn.is-ready {
     animation: setup-anim-ready-pulse 1.6s ease-in-out infinite;
 }
 
-.setup-anim-step.is-ready .setup-anim-action-btn:hover {
+.setup-anim-learn-btn.is-ready:hover {
     filter: brightness(1.08);
+}
+
+.setup-anim-learn-btn.is-pressed {
+    transform: scale(0.97);
 }
 
 @keyframes setup-anim-ready-pulse {
@@ -15095,9 +15259,193 @@
     50%      { box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent-primary) 22%, transparent); }
 }
 
-.setup-anim-step.is-pressed .setup-anim-action-btn {
-    transform: scale(0.92);
-    box-shadow: 0 0 16px var(--accent-primary);
+/* The scripted cursor. Positioned from measured boxes by moveSetupPointer(). */
+.setup-anim-pointer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 22px;
+    height: 22px;
+    margin: -11px 0 0 -11px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--accent-primary) 55%, transparent);
+    border: 2px solid var(--accent-primary);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 5;
+    transition: left 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+                top 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.25s ease,
+                transform 0.15s ease;
+}
+
+.setup-anim-pointer.is-visible {
+    opacity: 1;
+}
+
+.setup-anim-pointer.is-pressing {
+    transform: scale(0.7);
+    background: var(--accent-primary);
+}
+
+
+/* -------- Break slides --------------------------------------------------- */
+
+/* A step with no card: the slide owns the stage, so the card columns and the
+   mobile coach stand down while it is up. */
+.about-example-body.is-break-step .about-example-columns,
+.about-example-body.is-break-step .about-example-mobile-coach {
+    display: none !important;
+}
+
+.about-example-break {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 24px 16px;
+    min-height: 480px;
+    animation: setup-anim-fadein 0.35s ease-out;
+}
+
+.about-example-break[hidden] {
+    display: none !important;
+}
+
+.about-example-break-card {
+    width: min(94vw, 560px);
+    background: color-mix(in srgb, var(--bg-card) 95%, var(--bg-primary));
+    border: 1px solid color-mix(in srgb, var(--accent-primary) 30%, var(--border-color));
+    border-radius: 20px;
+    padding: 28px 28px 22px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.about-example-break-eyebrow {
+    align-self: flex-start;
+    font: 750 10px/1 var(--font-data);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-primary);
+    background: rgba(var(--accent-primary-rgb, 80, 200, 120), 0.12);
+    border: 1px solid rgba(var(--accent-primary-rgb, 80, 200, 120), 0.25);
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.about-example-break-title {
+    margin: 2px 0 0;
+    font: 700 26px/1.2 var(--font-emphasis);
+    color: var(--text-primary);
+}
+
+.about-example-break-lead {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--text-secondary);
+}
+
+.about-example-break-points {
+    list-style: none;
+    margin: 4px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.about-example-break-points li {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+}
+
+.about-example-break-points strong {
+    font: 650 14px/1.3 var(--font-emphasis);
+    color: var(--text-primary);
+}
+
+.about-example-break-points span {
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--text-muted);
+}
+
+.about-example-break-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 8px;
+}
+
+.about-example-break-back {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 10px 16px;
+    border-radius: 999px;
+    font: 650 13px/1 var(--font-reading);
+    cursor: pointer;
+    margin-right: auto;
+}
+
+.about-example-break-back:hover {
+    border-color: var(--text-muted);
+    color: var(--text-primary);
+}
+
+.about-example-break-cta {
+    background: var(--accent-primary);
+    color: var(--accent-primary-text, #10141b);
+    border: 0;
+    padding: 11px 20px;
+    border-radius: 999px;
+    font: 700 14px/1 var(--font-emphasis);
+    cursor: pointer;
+    transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.about-example-break-cta:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+}
+
+@media (max-width: 700px) {
+    .about-example-break {
+        min-height: 0;
+        padding: 12px 12px 24px;
+    }
+
+    .about-example-break-card {
+        padding: 22px 18px 18px;
+    }
+
+    .about-example-break-title {
+        font-size: 22px;
+    }
+}
+
+.setup-anim-card {
+    width: min(92vw, 440px);
+    background: color-mix(in srgb, var(--bg-card) 95%, var(--bg-primary));
+    border: 1px solid color-mix(in srgb, var(--accent-primary) 35%, var(--border-color));
+    border-radius: 20px;
+    padding: 26px 24px 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
 .setup-anim-footer {
