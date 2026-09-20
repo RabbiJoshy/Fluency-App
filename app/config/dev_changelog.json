@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-20T19:04:00+01:00",
+      "date": "2026-09-20 19:04 BST",
+      "agent": "Claude",
+      "commit": "pending",
+      "summary": "Conjugation mode: the clue settings are now a single Easy mode switch instead of three options",
+      "detail": [
+        "Easy mode is one checkbox. It tints the infinitive on the question side with what this card does — tener is orange on tengo and tú tienes, green on nosotros and vosotros — and prints a line above naming the family the verb belongs to, like venir, pensar.",
+        "The two cues do not overlap, so there is no reason to choose between them: the colour says whether the stem changes here, the line says what kind of verb it is and leaves you to know which persons the pattern reaches.",
+        "This replaces the separate No clue / Name the pattern / Easy radio. Default is off."
+      ]
+    },
+    {
       "timestamp": "2026-09-20T18:38:00+01:00",
       "date": "2026-09-20 18:38 BST",
       "agent": "Claude",
