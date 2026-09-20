@@ -282,31 +282,11 @@ async function updateExclusionBars() {
     vocabularyData.forEach((item, index) => { if (!item.rank) item.rank = index + 1; });
 
     const prepared = window.getPreparedSetupVocabulary?.(selectedLanguage, vocabularyData);
-    const { vocab: afterCognate, counts } = prepared || buildFilteredVocab(vocabularyData);
+    const { vocab: afterCognate } = prepared || buildFilteredVocab(vocabularyData);
 
-    // Update lemma info line
-    const lemmaInfo = document.getElementById('lemmaInfoLine');
-    if (lemmaInfo) {
-        const lemmaExcluded = counts.lemma || 0;
-        if (useLemmaMode && lemmaFieldAvailable && lemmaExcluded > 0) {
-            lemmaInfo.textContent = `${afterCognate.length.toLocaleString()} cards · ${lemmaExcluded.toLocaleString()} forms merged`;
-            lemmaInfo.style.display = '';
-        } else {
-            lemmaInfo.style.display = 'none';
-        }
-    }
-
-    // Update cognate info line
-    const cognateInfo = document.getElementById('cognateInfoLine');
-    if (cognateInfo) {
-        const cognateExcluded = counts.cognates || 0;
-        if (excludeCognates && cognateFieldAvailable && cognateExcluded > 0) {
-            cognateInfo.innerHTML = `${afterCognate.length.toLocaleString()} cards<br>(${cognateExcluded.toLocaleString()} cognates excluded)`;
-            cognateInfo.style.display = '';
-        } else {
-            cognateInfo.style.display = 'none';
-        }
-    }
+    // This function used to write the Fast Track info lines as well, in a
+    // different wording from ui.js and from the buttons beside them. Both are
+    // gone: extras.js states each count once, on the control it belongs to.
 
     // The Extras panel reports the words these same counts describe, and this
     // is the only place on the setup screen that holds the full vocabulary

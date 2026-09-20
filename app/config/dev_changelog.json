@@ -2,6 +2,34 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-20T14:55:00+01:00",
+      "date": "2026-09-20 14:55 BST",
+      "agent": "Claude",
+      "commit": "pending",
+      "summary": "The Fast Track details page now uses the width of the window, states each count once, and no longer reports a verified zero it never counted",
+      "detail": [
+        "The page was capped at 1040px and stacked each explanation above its own controls, so it read as a thin ribbon down the middle of a wide window while the prose wrapped into a narrow column. It now runs to 1480px, and inside each card the explanation sits beside the example and the controls rather than above them, which spends the spare width and cuts the height roughly in half. Below 1180px the card stacks again; below 420px the two cards stack.",
+        "Each count appeared twice -- once on the button as '(2707)' and again underneath as '2,707 flashcards merged' -- in two wordings written by two different functions. The info lines are gone. The button carries the figure and says what it is: 'View 2,707 merged forms'.",
+        "'View skipped words (0)' is fixed. A zero could mean the vocabulary had not loaded yet, and the button announced it as a counted result. Nothing is now claimed until the words have actually been counted; when they have been and none matched, the page says so in a sentence instead of showing an empty button.",
+        "Spanish does have a cognate map -- 4,915 of its 6,000 Speech words carry a score and 1,128 clear the shipped cutoff. The zero came from the map not being in memory yet at the moment the page counted.",
+        "Fixed the underlying race: an in-flight cognate-map fetch was not keyed by language, so switching language could make the second language join the first one's load and then record itself as loaded with no scores attached."
+      ]
+    },
+    {
+      "timestamp": "2026-09-20T14:44:00+01:00",
+      "date": "2026-09-20 14:44 BST",
+      "agent": "Claude",
+      "commit": "pending",
+      "summary": "Tutorial fixes: a slower setup intro you dismiss yourself, plainer wording, the lemma back on the front, and no more numbered badges",
+      "detail": [
+        "The setup preview now holds on each step long enough to read, and stops on the last one with a live Start set button. You open the first card yourself instead of it racing past. Skip intro still leaves at any point.",
+        "The front of a card says Frequency: 21,340/million instead of 'Frequency from the Spanish release', which told you nothing. Same wording and same figures as a real card.",
+        "The part-of-speech pill carries its lemma again, so a Portuguese card shows 'verb ter' above the form tem, the way the live card does.",
+        "Front of the card and back of the card, not question side and answer side.",
+        "Removed the numbered circles on the card and in the notes. They indexed a numbered list that the guided tour had already replaced. The element being explained is outlined in amber instead."
+      ]
+    },
+    {
       "timestamp": "2026-09-20T13:40:00+01:00",
       "date": "2026-09-20 13:40 BST",
       "agent": "Claude",

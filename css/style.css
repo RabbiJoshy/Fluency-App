@@ -14949,7 +14949,6 @@
     display: flex;
     flex-direction: column;
     gap: 18px;
-    cursor: pointer;
     transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
@@ -15081,6 +15080,21 @@
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
+.setup-anim-step.is-ready .setup-anim-action-btn {
+    pointer-events: auto;
+    cursor: pointer;
+    animation: setup-anim-ready-pulse 1.6s ease-in-out infinite;
+}
+
+.setup-anim-step.is-ready .setup-anim-action-btn:hover {
+    filter: brightness(1.08);
+}
+
+@keyframes setup-anim-ready-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 transparent; }
+    50%      { box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent-primary) 22%, transparent); }
+}
+
 .setup-anim-step.is-pressed .setup-anim-action-btn {
     transform: scale(0.92);
     box-shadow: 0 0 16px var(--accent-primary);
@@ -15156,13 +15170,6 @@
     position: relative;
 }
 
-.about-example-markers {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 20;
-}
-
 /* -------- Size overrides so a viewport-scale .card fits the stage --------- */
 
 .about-example-card-inner {
@@ -15227,41 +15234,6 @@
 }
 
 /* -------- Numbered badges and the elements they point at ----------------- */
-
-.about-example-marker {
-    position: absolute;
-    width: 22px;
-    height: 22px;
-    padding: 0;
-    border-radius: 50%;
-    border: 2px solid var(--bg-primary);
-    background: var(--accent-blue);
-    color: #06121f;
-    font-family: var(--font-data);
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1;
-    display: grid;
-    place-items: center;
-    cursor: pointer;
-    pointer-events: auto;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-    transition: transform 0.15s ease, background 0.15s ease;
-}
-
-.about-example-marker.is-active {
-    transform: scale(1.25);
-    background: var(--accent-amber);
-}
-
-/* Set by placeMarkers() from the note's `side`. The offset itself is applied
-   inline (it depends on the measured box); these exist so the badge can be
-   styled per side if it ever needs to be, and so the DOM says which column a
-   badge belongs to. */
-.about-example-marker.is-left,
-.about-example-marker.is-right {
-    z-index: 21;
-}
 
 /* Ring the annotated element itself. outline (not border) so no card element
    changes size when it lights up. */
@@ -15332,24 +15304,6 @@
 .about-example-note.is-active {
     background: var(--bg-tertiary);
     border-color: var(--accent-amber);
-}
-
-.about-example-note-num {
-    flex: 0 0 auto;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: var(--accent-blue);
-    color: #06121f;
-    font-family: var(--font-data);
-    font-size: 12px;
-    font-weight: 700;
-    display: grid;
-    place-items: center;
-}
-
-.about-example-note.is-active .about-example-note-num {
-    background: var(--accent-amber);
 }
 
 .about-example-note strong {
@@ -15509,15 +15463,6 @@
         display: none;
     }
 
-    .about-example-marker {
-        display: none;
-    }
-
-    .about-example-marker.is-active {
-        display: grid;
-        animation: about-example-mobile-target 1.4s ease-in-out infinite;
-    }
-
     .about-example-anchored.is-annotation-active {
         outline-width: 3px;
         box-shadow: 0 0 0 7px color-mix(in srgb, var(--accent-amber) 18%, transparent);
@@ -15595,11 +15540,6 @@
     }
 }
 
-@keyframes about-example-mobile-target {
-    0%, 100% { transform: scale(1.12); }
-    50% { transform: scale(1.32); }
-}
-
 @keyframes about-example-mobile-spotlight {
     from { box-shadow: 0 0 0 18px transparent; }
 }
@@ -15609,7 +15549,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .about-example-marker.is-active,
     .about-example-anchored.is-annotation-active,
     .about-example-mobile-coach:not([hidden]) {
         animation: none;
@@ -15834,7 +15773,12 @@
 /* The page. Reads as a document rather than a settings sheet, because the
    point is to explain the trade before offering the controls. */
 .fast-mode-page-body {
-  max-width: 1040px;
+  /* The page holds two short explanations and four controls. Capped at 1040px
+     it rendered as a thin ribbon down the middle of a wide window while each
+     card's prose wrapped into a narrow column -- horizontal room left empty to
+     buy vertical height the window does not have. The cap is now wide enough
+     that the two cards sit side by side with prose at a readable measure. */
+  max-width: min(1480px, 100%);
   margin: 0 auto;
   padding: 24px clamp(16px, 3vw, 36px) 40px;
 }
@@ -15852,12 +15796,39 @@
 }
 .fast-mode-controls {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
   gap: 18px;
+  align-items: start;
 }
 .fast-mode-controls .setup-substep {
   margin-top: 0;
-  padding: 16px;
+  padding: 16px 18px;
+}
+/* Inside a card the prose and the controls sit beside each other rather than
+   stacking, which is what turns spare width into saved height. */
+.fast-mode-card-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 280px);
+  gap: 18px;
+  align-items: start;
+}
+.fast-mode-card-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+}
+.fast-mode-controls .fast-mode-control-row { margin-top: 0; }
+.fast-mode-controls .fast-mode-explainer { margin: 0; }
+.fast-mode-none {
+  margin: 0;
+  font: 500 11.5px/1.45 var(--font-reading);
+  color: var(--text-muted);
+}
+.fast-mode-card-actions > .known-languages-context { align-self: stretch; }
+@media (max-width: 1180px) {
+  .fast-mode-card-body { grid-template-columns: 1fr; gap: 10px; }
 }
 .fast-mode-explainer {
   margin: 0 0 10px;

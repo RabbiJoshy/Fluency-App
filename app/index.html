@@ -40,14 +40,14 @@
             document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260920c">
+    <link rel="stylesheet" href="css/style.css?v=20260920e">
     <link rel="stylesheet" href="css/light-theme.css?v=20260919k">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260920b">
+    <link rel="modulepreload" href="js/main.js?v=20260920e">
     <link rel="modulepreload" href="js/theme.js?v=20260825ak">
     <link rel="modulepreload" href="js/state.js?v=20260917a">
     <link rel="modulepreload" href="js/data-contracts.js?v=20260825ak">
@@ -57,14 +57,14 @@
     <link rel="modulepreload" href="js/speech.js?v=20260914b">
     <link rel="modulepreload" href="js/artist-ui.js?v=20260825ak">
     <link rel="modulepreload" href="js/auth.js?v=20260912a">
-    <link rel="modulepreload" href="js/about-example.js?v=20260920a">
+    <link rel="modulepreload" href="js/about-example.js?v=20260920b">
     <link rel="modulepreload" href="js/estimation.js?v=20260825ak">
     <link rel="modulepreload" href="js/config.js?v=20260919c">
-    <link rel="modulepreload" href="js/progress.js?v=20260917j">
+    <link rel="modulepreload" href="js/progress.js?v=20260920e">
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20260915a">
-    <link rel="modulepreload" href="js/ui.js?v=20260920b">
-    <link rel="modulepreload" href="js/vocab.js?v=20260919d">
+    <link rel="modulepreload" href="js/ui.js?v=20260920e">
+    <link rel="modulepreload" href="js/vocab.js?v=20260920e">
     <link rel="modulepreload" href="js/song-sets-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/song-sets.js?v=20260823ae">
     <link rel="modulepreload" href="js/spotify-playlist-import.js?v=20260919a">
@@ -956,7 +956,6 @@
                     <div class="about-example-stage-col">
                         <div class="about-example-stage-wrap">
                             <div class="about-example-stage" id="aboutExampleStage"></div>
-                            <div class="about-example-markers" id="aboutExampleMarkers" aria-hidden="true"></div>
                         </div>
                         <button type="button" class="about-example-flip" id="aboutExampleFlip" style="display: none;" hidden>Flip to the answer side</button>
                         <button type="button" class="about-example-continue" id="aboutExampleContinue" hidden></button>
@@ -1071,18 +1070,22 @@
                             <span class="fast-mode-number" aria-hidden="true">1</span>
                             <span class="substep-title">Merge word forms</span>
                         </div>
-                        <p class="fast-mode-explainer">Forms such as <em>hablo</em>, <em>habló</em> and <em>hablar</em> belong to the same word. Put them on one card so you learn it once while keeping every example.</p>
-                        <div class="fast-mode-example" aria-label="Example of grouped word forms"><span>hablo</span><span>habló</span><span>hablar</span><b>→ hablar</b></div>
-                        <div class="fast-mode-control-row">
-                            <div id="lemmaToggleSelector" class="group-size-selector">
-                                <button class="lemma-toggle-btn selected" data-lemma="off" data-short="Off" data-full="Off">Off</button>
-                                <button class="lemma-toggle-btn" data-lemma="on" data-short="On" data-full="On">On</button>
+                        <div class="fast-mode-card-body">
+                            <p class="fast-mode-explainer">Forms such as <em>hablo</em>, <em>habló</em> and <em>hablar</em> belong to the same word. Put them on one card so you learn it once while keeping every example.</p>
+                            <div class="fast-mode-card-actions">
+                                <div class="fast-mode-example" aria-label="Example of grouped word forms"><span>hablo</span><span>habló</span><span>hablar</span><b>→ hablar</b></div>
+                                <div class="fast-mode-control-row">
+                                    <div id="lemmaToggleSelector" class="group-size-selector">
+                                        <button class="lemma-toggle-btn selected" data-lemma="off" data-short="Off" data-full="Off">Off</button>
+                                        <button class="lemma-toggle-btn" data-lemma="on" data-short="On" data-full="On">On</button>
+                                    </div>
+                                    <button type="button" id="viewMergedFormsBtn" class="fast-mode-view-items-btn" style="display: none;">
+                                        <span id="mergedFormsCount">View merged forms</span> ›
+                                    </button>
+                                </div>
+                                <p id="lemmaNoneLine" class="fast-mode-none" hidden></p>
                             </div>
-                            <button type="button" id="viewMergedFormsBtn" class="fast-mode-view-items-btn" style="display: none;">
-                                View merged forms <span class="fast-mode-btn-count" id="mergedFormsCount"></span> ›
-                            </button>
                         </div>
-                        <span id="lemmaInfoLine" class="level-info-line substep-info-below" style="display: none;"></span>
                     </div>
 
                     <div id="cognateToggleContainer" class="setup-substep" style="display: none;">
@@ -1090,24 +1093,28 @@
                             <span class="fast-mode-number" aria-hidden="true">2</span>
                             <span class="substep-title">Skip obvious words</span>
                         </div>
-                        <p class="fast-mode-explainer">Some words already give away their meaning. Set them aside so your study time goes to vocabulary that actually needs learning.</p>
-                        <div class="fast-mode-example fast-mode-example--cognate" aria-label="Example of a Spanish word that is obvious in English"><span><b>chocolate</b><small>Spanish</small></span><strong>=</strong><span><b>chocolate</b><small>English</small></span></div>
-                        <div class="fast-mode-control-row">
-                            <div id="cognateToggleSelector" class="group-size-selector">
-                                <button class="cognate-toggle-btn" data-cognate="exclude" data-short="Exclude" data-full="Exclude">Exclude</button>
-                                <button class="cognate-toggle-btn selected" data-cognate="include" data-short="Include" data-full="Include">Include</button>
+                        <div class="fast-mode-card-body">
+                            <p class="fast-mode-explainer">Some words already give away their meaning. Set them aside so your study time goes to vocabulary that actually needs learning.</p>
+                            <div class="fast-mode-card-actions">
+                                <div class="fast-mode-example fast-mode-example--cognate" aria-label="Example of a Spanish word that is obvious in English"><span><b>chocolate</b><small>Spanish</small></span><strong>=</strong><span><b>chocolate</b><small>English</small></span></div>
+                                <div class="fast-mode-control-row">
+                                    <div id="cognateToggleSelector" class="group-size-selector">
+                                        <button class="cognate-toggle-btn" data-cognate="exclude" data-short="Exclude" data-full="Exclude">Exclude</button>
+                                        <button class="cognate-toggle-btn selected" data-cognate="include" data-short="Include" data-full="Include">Include</button>
+                                    </div>
+                                    <button type="button" id="viewSkippedWordsBtn" class="fast-mode-view-items-btn" style="display: none;">
+                                        <span id="skippedWordsCount">View skipped words</span> ›
+                                    </button>
+                                </div>
+                                <p id="cognateNoneLine" class="fast-mode-none" hidden></p>
+                                <div id="knownLanguagesContainer" class="known-languages-context" style="display: none;">
+                                    <div class="known-languages-header">
+                                        <strong>Languages you already know</strong>
+                                        <small>Skip words that look similar in:</small>
+                                    </div>
+                                    <div id="knownLanguagesSelector" class="known-languages-selector"></div>
+                                </div>
                             </div>
-                            <button type="button" id="viewSkippedWordsBtn" class="fast-mode-view-items-btn" style="display: none;">
-                                View skipped words <span class="fast-mode-btn-count" id="skippedWordsCount"></span> ›
-                            </button>
-                        </div>
-                        <span id="cognateInfoLine" class="level-info-line substep-info-below" style="display: none;"></span>
-                        <div id="knownLanguagesContainer" class="known-languages-context" style="display: none;">
-                            <div class="known-languages-header">
-                                <strong>Languages you already know</strong>
-                                <small>Skip words that look similar in:</small>
-                            </div>
-                            <div id="knownLanguagesSelector" class="known-languages-selector"></div>
                         </div>
                     </div>
 
@@ -1965,6 +1972,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260920b"></script>
+    <script type="module" src="js/main.js?v=20260920e"></script>
 </body>
 </html>

@@ -85,7 +85,10 @@ function representativesByLemma(items) {
 }
 
 function collectExtras() {
-    const empty = { cognates: [], lemmas: [] };
+    // `ready` separates "we looked and found none" from "we have not looked
+    // yet". Without it a caller cannot tell the two apart, and the buttons
+    // announced a verified zero while the vocabulary was still loading.
+    const empty = { cognates: [], lemmas: [], ready: false };
     // The full loaded vocabulary, stamped by the last buildFilteredVocab pass.
     // Two routes reach it and they do not overlap: on the setup screen only
     // updateExclusionBars() holds it (it publishes the snapshot), and once a
@@ -117,7 +120,7 @@ function collectExtras() {
     const byRank = (a, b) => (a.item.rank ?? Infinity) - (b.item.rank ?? Infinity);
     cognates.sort(byRank);
     lemmas.sort(byRank);
-    return { cognates, lemmas };
+    return { cognates, lemmas, ready: true };
 }
 
 function escapeHtml(value) {
@@ -322,23 +325,64 @@ function renderExtras() {
     return { cognates, lemmas };
 }
 
-function refreshExtrasButtons() {
-    const { cognates, lemmas } = collectExtras();
-    const mergedBtn = document.getElementById('viewMergedFormsBtn');
-    const mergedCount = document.getElementById('mergedFormsCount');
-    if (mergedBtn) {
-        const canShowMerged = lemmas.length > 0 && g().useLemmaMode;
-        mergedBtn.style.display = canShowMerged ? 'inline-flex' : 'none';
-        if (mergedCount) mergedCount.textContent = `(${lemmas.length})`;
+// One number per setting, and only when it has been counted.
+//
+// The count used to appear twice -- on the button and again in an info line
+// underneath, written by two different functions in two different wordings.
+// The info lines are gone; the button carries the figure, because the button is
+// the thing that acts on it.
+//
+// A count of zero is now three different states and they are no longer
+// conflated: nothing loaded yet (say nothing), the filter is off (say nothing),
+// and the filter is on but matched no word (say exactly that). The last one is
+// what "View skipped words (0)" used to render, which read like a broken button
+// rather than a result.
+function applyCountedButton(button, label, none, { active, ready, count, noneText }) {
+    if (!button) return;
+    const show = active && ready && count > 0;
+    button.style.display = show ? 'inline-flex' : 'none';
+    if (label && show) label.textContent = `View ${count.toLocaleString()} ${count === 1 ? noneText.one : noneText.many}`;
+    if (none) {
+        const empty = active && ready && count === 0;
+        none.hidden = !empty;
+        if (empty) none.textContent = noneText.empty;
     }
+}
 
-    const skippedBtn = document.getElementById('viewSkippedWordsBtn');
-    const skippedCount = document.getElementById('skippedWordsCount');
-    if (skippedBtn) {
-        const canShowSkipped = Boolean(g().excludeCognates && g().cognateFieldAvailable);
-        skippedBtn.style.display = canShowSkipped ? 'inline-flex' : 'none';
-        if (skippedCount) skippedCount.textContent = `(${cognates.length})`;
-    }
+function refreshExtrasButtons() {
+    const { cognates, lemmas, ready } = collectExtras();
+
+    applyCountedButton(
+        document.getElementById('viewMergedFormsBtn'),
+        document.getElementById('mergedFormsCount'),
+        document.getElementById('lemmaNoneLine'),
+        {
+            active: Boolean(g().useLemmaMode && g().lemmaFieldAvailable),
+            ready,
+            count: lemmas.length,
+            noneText: {
+                one: 'merged form',
+                many: 'merged forms',
+                empty: 'No forms shared a word here, so nothing was merged.',
+            },
+        }
+    );
+
+    applyCountedButton(
+        document.getElementById('viewSkippedWordsBtn'),
+        document.getElementById('skippedWordsCount'),
+        document.getElementById('cognateNoneLine'),
+        {
+            active: Boolean(g().excludeCognates && g().cognateFieldAvailable),
+            ready,
+            count: cognates.length,
+            noneText: {
+                one: 'skipped word',
+                many: 'skipped words',
+                empty: 'No word in this deck was close enough to skip, so every word stayed in.',
+            },
+        }
+    );
 
     refreshExtrasButton();
 }
