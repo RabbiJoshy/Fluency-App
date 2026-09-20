@@ -652,10 +652,16 @@ function fitBackHeadword(root) {
     const row = el?.closest('.back-headword-row');
     if (!el || !row) return;
     const legend = row.querySelector('.back-pos-legend');
-    const minPx = 24;
+    const surface = el.querySelector('.back-surface-name');
+    const lemmaChip = el.querySelector('.back-lemma-chip');
+    const minPx = surface ? 20 : 24;
     const gapPx = 12;
     const prevWS = el.style.whiteSpace;
     el.style.whiteSpace = 'nowrap';
+    // A paired surface and lemma are separate flex children. The flex item's
+    // scrollWidth can report its shrunk width even while the surface wraps;
+    // measure both children's unwrapped content to keep the pair on one line.
+    if (surface) surface.style.whiteSpace = 'nowrap';
     for (let pass = 0; pass < 2; pass++) {
         const legendWidth = legend ? legend.offsetWidth + gapPx : 0;
         const budget = row.clientWidth - legendWidth;
@@ -665,11 +671,14 @@ function fitBackHeadword(root) {
         let size = parseFloat(el.style.fontSize)
             || parseFloat(getComputedStyle(el).fontSize);
         if (!size) break;
-        while (size > minPx && el.scrollWidth > budget) {
+        const contentWidth = () => surface && lemmaChip
+            ? surface.scrollWidth + lemmaChip.scrollWidth + gapPx
+            : el.scrollWidth;
+        while (size > minPx && contentWidth() > budget) {
             size -= 2;
             el.style.fontSize = size + 'px';
         }
-        if (el.scrollWidth <= budget) break;
+        if (contentWidth() <= budget) break;
     }
     el.style.whiteSpace = prevWS;
 }
@@ -5473,6 +5482,7 @@ function updateCard({ announceHeadword = false } = {}) {
                     pos,
                     headword: m.headword || '',
                     senses: [],
+                    mainMeanings: [],
                     pct: 0,
                     hasAssignedEvidence: false,
                     hasOnlyRareSenses: true,
@@ -5486,6 +5496,7 @@ function updateCard({ announceHeadword = false } = {}) {
             if (!m.unassigned) {
                 if (!m.isRareSense) {
                     g.pct += Number(m.percentage || 0);
+                    g.mainMeanings.push(m);
                 }
                 g.hasAssignedEvidence = true;
             } else if (m.isRareSense) {
@@ -5566,7 +5577,10 @@ function updateCard({ announceHeadword = false } = {}) {
                 // Don't label genuine rare dictionary senses as "Unassigned"
                 const assignmentState = (!g.hasAssignedEvidence && !g.hasOnlyRareSenses)
                     ? '<span class="pos-pill-unassigned">Unassigned</span>'
-                    : (g.hasOnlyRareSenses ? prominenceBadgeHTML({ label: 'Rare', key: 'rare' }) : '');
+                    : (g.hasOnlyRareSenses
+                        ? prominenceBadgeHTML({ label: 'Rare', key: 'rare' })
+                        : (useProminenceLabels && g.pct > 0
+                            ? prominenceBadgeHTML(prominenceInfoFromShare(g.mainMeanings)) : ''));
                 // No known-tick here. A check mark on this row read as "you
                 // answered this", which is what the tick means everywhere else
                 // on the card; here it meant something narrower and only added
@@ -5599,7 +5613,10 @@ function updateCard({ announceHeadword = false } = {}) {
         //   `su`   → 5 senses share possessive context → context-axis group
         //            shared = context,  varying = translations
         const activeMeaningsCount = (card.meanings || []).filter(m => m && !m.exampleOnly).length;
-        const GROUP_DUPLICATE_MEANINGS = activeMeaningsCount > 2;
+        // A pair can share one gloss or context too (for example "no" and
+        // "not" under negation). The grouping pass leaves unrelated pairs as
+        // singletons, so there is no reason to require a third sense.
+        const GROUP_DUPLICATE_MEANINGS = activeMeaningsCount >= 2;
         // Per-meaning-idx axis assignment: 'translation' | 'context' |
         // 'singleton' | 'special' (MWE/CLITIC/SENSE_CYCLE — opted out).
         // Cached on the card after first compute — meanings don't mutate

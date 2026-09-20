@@ -17936,3 +17936,15 @@ body.artist-mode #flashcardMode::before {
 .extras-level-group .extras-set-pill.is-complete { border-color: color-mix(in srgb, #31ab70 60%, var(--border-color)); background: color-mix(in srgb, #31ab70 12%, var(--bg-card)); }
 .extras-level-group .extras-set-pill.needs-review { border-color: color-mix(in srgb, #dc9a4c 65%, var(--border-color)); background: color-mix(in srgb, #dc9a4c 11%, var(--bg-card)); }
 .extras-merged-note { margin: 0; }
+
+/* Keep the inflected word and its lemma together, even at phone widths. */
+.back-headword.back-surface-pair { max-width: 100%; white-space: nowrap; }
+.back-headword.back-surface-pair .back-surface-name { flex: 0 1 auto; white-space: nowrap; }
+.back-headword.back-surface-pair .back-lemma-chip { font-size: clamp(12px, 3.5vw, 16px); white-space: nowrap; }
+
+/* Prominence is conveyed by the number of filled bars; one readable ink
+   colour avoids implying that each colour is a second frequency scale. */
+.sense-prominence-badge.prominence-dominant,
+.sense-prominence-badge.prominence-common,
+.sense-prominence-badge.prominence-uncommon,
+.sense-prominence-badge.prominence-rare { color: var(--text-primary); }
