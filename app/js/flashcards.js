@@ -5169,6 +5169,7 @@ function updateCard({ announceHeadword = false } = {}) {
             frontPOSEl.style.display = 'none';
         } else {
             frontPOSEl.classList.add('is-lemma-map', `pos-count-${Math.min(pairs.length, 4)}`);
+            if (pairs.length > 4) frontPOSEl.classList.add('pos-count-many');
             frontPOSEl.innerHTML = pairs.map(pair => {
                 const posUnit = renderFrontPosUnit(pair.pos, isVerbPos(pair.pos));
                 if (!pair.lemma) return posUnit;
@@ -5176,7 +5177,18 @@ function updateCard({ announceHeadword = false } = {}) {
                 // governs, sitting to its right inside the same capsule.
                 return `<span class="front-lemma-pair">${posUnit}<span class="front-lemma-name">${escapeCardText(pair.lemma)}</span></span>`;
             }).join('');
-            frontPOSEl.style.display = 'flex';
+            frontPOSEl.style.display = 'grid';
+            // Keep every label in a group at the same size. The grid reserves
+            // equal space per pair; only unusually long lemmas reduce the
+            // group's type size, so neighbouring cards retain a steady rhythm.
+            const names = [...frontPOSEl.querySelectorAll('.front-lemma-name')];
+            const baseSize = pairs.length === 1 ? 16 : pairs.length === 2 ? 15 : pairs.length === 3 ? 14 : 13;
+            const floorSize = pairs.length > 3 ? 10.5 : 11.5;
+            let labelSize = window.innerWidth < 768 ? baseSize - 1 : baseSize;
+            for (; labelSize > floorSize && names.some(name => name.scrollWidth > name.clientWidth + 1); labelSize -= 0.5) {
+                names.forEach(name => { name.style.fontSize = `${labelSize - 0.5}px`; });
+            }
+            names.forEach(name => { name.title = name.textContent; });
         }
     } else {
         frontPOSEl.style.display = 'none';

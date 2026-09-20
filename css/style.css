@@ -18491,3 +18491,98 @@ body.artist-mode #flashcardMode::before {
 .knowledge-rare-section p { margin: 0 0 10px; color: var(--text-muted); font: 500 12px/1.4 var(--font-reading); }
 .knowledge-overview-focus.is-static { cursor: default; }
 .rare-knowledge-btn { width: calc(100% - 24px); margin: 0 12px 10px; }
+
+/* Setup header: language is a compact two-line control; account actions
+   occupy one predictable group on the opposite edge. */
+#topBar .top-bar-header { justify-content: space-between; }
+#topBar .learning-context-chip {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  column-gap: 8px;
+  row-gap: 1px;
+  min-width: 150px;
+  min-height: 52px;
+  padding: 5px 10px;
+  border-color: color-mix(in srgb, var(--accent-primary) 42%, var(--border-color));
+  background: color-mix(in srgb, var(--accent-primary) 9%, var(--bg-card));
+}
+#topBar .learning-context-flag { grid-column: 1; grid-row: 1; font-size: 21px; }
+#topBar .learning-context-chip-copy { grid-column: 1; grid-row: 2; }
+#topBar .learning-context-chevron { grid-column: 2; grid-row: 1 / 3; }
+.top-bar-right-controls { display: flex; align-items: center; justify-content: flex-end; gap: 8px; min-width: 0; margin-left: auto; }
+#topBar .top-bar-gear { margin-left: 0; }
+
+/* The section title and its information icon form one centred target. */
+#step2 > .step-header,
+#step4 > .step-header { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; }
+#step2 > .step-header > .step-number,
+#step4 > .step-header > .step-number { grid-column: 1; justify-self: start; }
+#step2 > .step-header > .step-title-trigger,
+#step4 > .step-header > .step-title-trigger { grid-column: 2; justify-self: center; }
+#step2 > .step-header > .step-header-actions { grid-column: 3; justify-self: end; margin-left: 0; }
+.step-title-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 5px 12px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+.step-title-trigger svg { width: 19px; height: 19px; fill: none; stroke: var(--accent-primary); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.step-title-trigger:hover,
+.step-title-trigger:focus-visible { border-color: var(--border-color); background: var(--bg-tertiary); outline: none; }
+
+/* Each POS/lemma count has a reserved footprint. A long lemma can reduce
+   the shared text size without making one capsule dwarf its neighbours. */
+.card-front .card-pos-list.is-lemma-map {
+  top: 27px;
+  width: min(290px, calc(100% - 60px));
+  max-width: calc(100% - 60px);
+  grid-template-columns: minmax(0, 1fr);
+  grid-auto-rows: minmax(40px, auto);
+  gap: 7px;
+  justify-items: stretch;
+  align-items: stretch;
+}
+.card-front .card-pos-list.is-lemma-map.pos-count-2 { width: min(500px, calc(100% - 60px)); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.card-front .card-pos-list.is-lemma-map.pos-count-3 { width: min(620px, calc(100% - 60px)); grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.card-front .card-pos-list.is-lemma-map.pos-count-3 > :last-child { grid-column: auto; width: 100%; }
+.card-front .card-pos-list.is-lemma-map.pos-count-4 { width: min(500px, calc(100% - 60px)); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.card-front .card-pos-list.is-lemma-map.pos-count-many { width: min(620px, calc(100% - 60px)); grid-template-columns: repeat(3, minmax(0, 1fr)); max-height: 100px; overflow-y: auto; }
+.card-pos-list.is-lemma-map .front-lemma-pair {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  justify-content: flex-start;
+  padding: 5px 10px 5px 5px;
+  font-size: 16px;
+}
+.card-pos-list.is-lemma-map .front-lemma-name { display: block; min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.card-pos-list.is-lemma-map.pos-count-3 .front-lemma-pair { font-size: 14px; }
+.card-pos-list.is-lemma-map.pos-count-4 .front-lemma-pair,
+.card-pos-list.is-lemma-map.pos-count-many .front-lemma-pair { font-size: 13px; }
+.card-pos-list.is-lemma-map .card-pos { min-height: 30px; padding: 6px 10px; }
+
+@media (min-width: 768px) {
+  .card-face.card-front { padding: 38px; }
+  .card-face.card-back { padding-left: 16px; padding-right: 16px; }
+}
+@media (max-width: 767px) {
+  .card-front .card-pos-list.is-lemma-map { top: 76px; width: min(310px, calc(100% - 24px)); max-width: calc(100% - 24px); }
+  .card-front .card-pos-list.is-lemma-map.pos-count-2,
+  .card-front .card-pos-list.is-lemma-map.pos-count-3,
+  .card-front .card-pos-list.is-lemma-map.pos-count-4,
+  .card-front .card-pos-list.is-lemma-map.pos-count-many { width: calc(100% - 24px); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .card-pos-list.is-lemma-map .front-lemma-pair { min-height: 36px; padding-right: 7px; }
+  .card-pos-list.is-lemma-map .card-pos { padding: 5px 7px; font-size: 12px; }
+  #topBar .learning-context-chip { min-width: 112px; min-height: 48px; padding: 4px 7px; }
+  #topBar .learning-context-flag { font-size: 19px; }
+  #topBar .learning-context-chip-copy strong { font-size: 12px; }
+  .top-bar-right-controls { gap: 3px; }
+  #topBar .top-bar-user-name { max-width: 72px; }
+}
