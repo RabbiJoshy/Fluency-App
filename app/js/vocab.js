@@ -6,6 +6,35 @@ import { validateVocabularyIndex } from './data-contracts.js?v=20260825ak';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
+const speechSourceFrequencyCache = new Map();
+
+async function loadSpeechSourceFrequency(langConfig) {
+    const path = langConfig?.frequencyPath;
+    const indexPath = langConfig?.indexPath;
+    if (!path || !indexPath || activeArtist || window.playlistLiveActive?.()) return null;
+    if (!speechSourceFrequencyCache.has(path)) {
+        const pending = fetch(path).then(async response => {
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            if (data.schema !== 'speech-source-frequency/v1' || data.indexPath !== indexPath) {
+                throw new Error('Source frequency file does not match this vocabulary release');
+            }
+            return data;
+        }).catch(error => {
+            speechSourceFrequencyCache.delete(path);
+            console.warn('Source frequency unavailable:', error);
+            return null;
+        });
+        speechSourceFrequencyCache.set(path, pending);
+    }
+    return speechSourceFrequencyCache.get(path);
+}
+
+function speechSourceFrequencyOf(item, sourceData) {
+    const key = String(item?.word || '').normalize('NFC').toLocaleLowerCase();
+    const value = Number(sourceData?.values?.[key]);
+    return Number.isFinite(value) && value > 0 ? value : null;
+}
 
 function currentWsdPublicationProjection() {
     const requested = new URLSearchParams(window.location.search).get('wsdPublication');
@@ -2054,6 +2083,20 @@ async function loadVocabularyData(rangeString, opts = {}) {
         // Single/multi-artist selection shares one source so setup ranges and
         // the committed deck see identical merged entries and examples.
         const vocabularyData = await fetchActiveVocabularyData(langConfig);
+        const speechFrequency = await loadSpeechSourceFrequency(baseConfig);
+        const lemmaSourceFrequencies = new Map();
+        if (speechFrequency && useLemmaMode) {
+            for (const entry of vocabularyData) {
+                if (entry.is_english || entry.is_noise || entry.is_interjection || entry.duplicate) continue;
+                const lemmaKey = lemmaGroupKey(entry);
+                const value = speechSourceFrequencyOf(entry, speechFrequency);
+                if (!lemmaKey || value === null) continue;
+                const total = lemmaSourceFrequencies.get(lemmaKey) || { value: 0, forms: 0 };
+                total.value += value;
+                total.forms += 1;
+                lemmaSourceFrequencies.set(lemmaKey, total);
+            }
+        }
         updateResumeLoading('Matching the saved cards to this exact release…');
         // Derived from the data we already hold, so it costs nothing to keep
         // current on every deck build. It used to be recomputed only for
@@ -2583,6 +2626,9 @@ async function loadVocabularyData(rangeString, opts = {}) {
             const cardForm = buildCardFormModel(item, meanings, {
                 mergedLemma: useLemmaMode && lemmaFieldAvailable
             });
+            const sourceFrequency = useLemmaMode && lemmaFieldAvailable
+                ? lemmaSourceFrequencies.get(lemmaGroupKey(item))
+                : null;
             const card = {
                 targetWord: item.word,
                 lemma: item.lemma || '',
@@ -2592,6 +2638,10 @@ async function loadVocabularyData(rangeString, opts = {}) {
                 rank: item.rank,
                 vocabularyRank: item.displayRank,
                 vocabularySize: configurationVocabSize,
+                sourceFrequency: sourceFrequency?.value ?? speechSourceFrequencyOf(item, speechFrequency),
+                sourceFrequencyForms: sourceFrequency?.forms || 1,
+                sourceFrequencyUnit: speechFrequency?.unit || '',
+                sourceFrequencySource: speechFrequency?.source || '',
                 // Lemma mode uses the same unique pooled example-line basis
                 // as the examples attached above. Raw token totals stay on
                 // item.lemma_total_count for diagnostics only.

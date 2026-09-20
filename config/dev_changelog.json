@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-20T16:57:35+01:00",
+      "date": "2026-09-20 16:57 BST",
+      "agent": "Codex",
+      "commit": "pending",
+      "summary": "Show original Speech-list frequencies and place reference views beside desktop cards",
+      "detail": [
+        "Restored released-word frequency values from the pinned EsPal, Lexique, Portuguese FrequencyWords, and Czech FrequencyWords source lists, with source and unit recorded for every language.",
+        "Merged-lemma cards now sum those source-listed form frequencies for their front-of-card figure; harvested example sentences no longer supply a misleading per-million number.",
+        "Spanish and French use per-million rates. Portuguese and Czech show source-list occurrence counts because those published lists do not provide a per-million denominator.",
+        "On wide desktop screens, Find a word, lyric breakdown, and card knowledge open to the right of the visible card; smaller screens keep the existing sheet layout."
+      ]
+    },
+    {
       "timestamp": "2026-09-20T17:02:00+01:00",
       "date": "2026-09-20 17:02 BST",
       "agent": "Claude",

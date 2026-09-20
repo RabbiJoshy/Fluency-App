@@ -11,10 +11,28 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v497"
+EXPECTED_CACHE_NAME = "flashcards-v499"
 
 
 class ProductShellTests(unittest.TestCase):
+    def test_speech_frequency_files_match_their_releases_and_declare_units(self) -> None:
+        config = json.loads((APP_ROOT / "config" / "config.json").read_text(encoding="utf-8"))
+        worker = (APP_ROOT / "service-worker.js").read_text(encoding="utf-8")
+        vocab = (APP_ROOT / "js" / "vocab.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        for language, unit in (("spanish", "per_million"), ("french", "per_million"),
+                               ("portuguese", "occurrences"), ("czech", "occurrences")):
+            language_config = config["languages"][language]
+            path = language_config["frequencyPath"]
+            data = json.loads((APP_ROOT / path).read_text(encoding="utf-8"))
+            self.assertEqual(data["schema"], "speech-source-frequency/v1")
+            self.assertEqual(data["indexPath"], language_config["indexPath"])
+            self.assertEqual(data["unit"], unit)
+            self.assertGreaterEqual(data["covered"], data["total"] * 0.95)
+            self.assertIn(f"'/{path}'", worker)
+        self.assertIn("lemmaSourceFrequencies.get(lemmaGroupKey(item))", vocab)
+        self.assertIn("!activeArtist && Number(card.sourceFrequency) > 0", flashcards)
+
     def test_existing_fluency_entrypoint_and_core_surfaces_are_present(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
         for required_id in (
@@ -738,7 +756,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260918l", worker)
-        self.assertIn("/js/main.js?v=20260920g", worker)
+        self.assertIn("/js/main.js?v=20260920h", worker)
         self.assertIn("/js/ui.js?v=20260920f", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
@@ -858,7 +876,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
         self.assertIn("/js/spotify-playlist-import.js?v=20260919a", worker)
-        self.assertIn('css/style.css?v=20260920i', html)
+        self.assertIn('css/style.css?v=20260920k', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
         self.assertIn("searchParams.set('playlistLive'", importer)

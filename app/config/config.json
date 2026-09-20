@@ -8,6 +8,7 @@
     "spanish": {
       "name": "Spanish",
       "indexPath": "releases/es/speech/es-speech-v12-6000x10-display-v5/app/vocabulary.index.json",
+      "frequencyPath": "data/speech-frequency/es.json",
       "examplesPath": "releases/es/speech/es-speech-v12-6000x10-display-v5/app/vocabulary.examples.json",
       "studyStructurePath": "releases/es/speech/es-speech-v12-6000x10-display-v5/app/study-structure.json",
       "releaseManifestPath": "releases/es/speech/es-speech-v12-6000x10-display-v5/manifest.json",
@@ -260,6 +261,7 @@
     "french": {
       "name": "French",
       "indexPath": "releases/fr/speech/fr-speech-v7-dual-metadata-v5-20260918/app/vocabulary.index.json",
+      "frequencyPath": "data/speech-frequency/fr.json",
       "examplesPath": "releases/fr/speech/fr-speech-v7-dual-metadata-v5-20260918/app/vocabulary.examples.json",
       "studyStructurePath": "releases/fr/speech/fr-speech-v7-dual-metadata-v5-20260918/app/study-structure.json",
       "releaseManifestPath": "releases/fr/speech/fr-speech-v7-dual-metadata-v5-20260918/manifest.json",
@@ -447,6 +449,7 @@
     "portuguese": {
       "name": "Portuguese",
       "indexPath": "releases/pt/speech/pt-speech-v12-6000x10-display-v5/app/vocabulary.index.json",
+      "frequencyPath": "data/speech-frequency/pt.json",
       "examplesPath": "releases/pt/speech/pt-speech-v12-6000x10-display-v5/app/vocabulary.examples.json",
       "studyStructurePath": "releases/pt/speech/pt-speech-v12-6000x10-display-v5/app/study-structure.json",
       "releaseManifestPath": "releases/pt/speech/pt-speech-v12-6000x10-display-v5/manifest.json",
@@ -592,6 +595,7 @@
         "conjugation": "https://en.wiktionary.org/wiki/{word}#Czech"
       },
       "indexPath": "releases/cs/speech/cs-speech-v12-4000x10-display-v5/app/vocabulary.index.json",
+      "frequencyPath": "data/speech-frequency/cs.json",
       "examplesPath": "releases/cs/speech/cs-speech-v12-4000x10-display-v5/app/vocabulary.examples.json",
       "studyStructurePath": "releases/cs/speech/cs-speech-v12-4000x10-display-v5/app/study-structure.json",
       "releaseManifestPath": "releases/cs/speech/cs-speech-v12-4000x10-display-v5/manifest.json",

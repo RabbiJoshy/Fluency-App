@@ -5265,13 +5265,15 @@ function updateCard({ announceHeadword = false } = {}) {
         // The count and the rank are the figures worth reading; the wording
         // around them and the total-vocabulary denominator are context. Only
         // the former get the bold white treatment.
-        if (card.corpusCount) {
+        if (activeArtist && card.corpusCount) {
             const count = `<strong class="card-stat-value">${Number(card.corpusCount).toLocaleString()}</strong>`;
-            if (activeArtist) {
-                freqHtml = `<span class="card-freq-label">Lyric lines: ${count}</span>`;
-            } else {
-                freqHtml = `<button class="card-freq-btn" onclick="window.showFreqInfo(event, ${card.corpusCount})" aria-label="Spoken frequency info">Frequency: ${count}/million</button>`;
-            }
+            freqHtml = `<span class="card-freq-label">Lyric lines: ${count}</span>`;
+        } else if (!activeArtist && Number(card.sourceFrequency) > 0) {
+            const perMillion = card.sourceFrequencyUnit === 'per_million';
+            const count = `<strong class="card-stat-value">${Number(card.sourceFrequency).toLocaleString(undefined, { maximumFractionDigits: perMillion ? 2 : 0 })}</strong>`;
+            const source = escapeCardText(card.sourceFrequencySource || 'Published frequency list');
+            const label = perMillion ? `Frequency: ${count}/million` : `List occurrences: ${count}`;
+            freqHtml = `<button class="card-freq-btn" onclick="window.showFreqInfo(event)" data-frequency-source="${source}" data-frequency-unit="${card.sourceFrequencyUnit || ''}" data-frequency-forms="${Number(card.sourceFrequencyForms) || 1}" aria-label="Source frequency information">${label}</button>`;
         }
         const denominator = vocabularySize ? ` / ${vocabularySize.toLocaleString()}` : '';
         const rankLabel = card.artistVocabularyScope === 'extra' ? 'Extra rank' : 'Vocabulary rank';
@@ -8327,7 +8329,7 @@ window.nextCard = nextCard;
 window.advanceToNextDeckCard = advanceToNextDeckCard;
 window.shuffleCards = shuffleCards;
 
-window.showFreqInfo = function showFreqInfo(event, count) {
+window.showFreqInfo = function showFreqInfo(event) {
     event.stopPropagation();
     let tip = document.getElementById('freqTooltip');
     if (!tip) {
@@ -8336,14 +8338,20 @@ window.showFreqInfo = function showFreqInfo(event, count) {
         tip.className = 'freq-tooltip';
         document.body.appendChild(tip);
     }
-    tip.textContent = 'Per million words in spoken Spanish';
-    const rect = event.target.getBoundingClientRect();
-    const tipWidth = 220;
+    const button = event.currentTarget || event.target.closest('.card-freq-btn');
+    const source = button?.dataset.frequencySource || 'Published frequency list';
+    const unit = button?.dataset.frequencyUnit === 'per_million'
+        ? 'occurrences per million words' : 'occurrences in the source list';
+    const forms = Number(button?.dataset.frequencyForms) || 1;
+    tip.textContent = `${source} · ${unit}${forms > 1 ? ` · total across ${forms} source-listed forms` : ''}. This does not count harvested example sentences.`;
+    const rect = button.getBoundingClientRect();
+    const tipWidth = Math.min(300, window.innerWidth - 16);
     let left = rect.left + rect.width / 2 - tipWidth / 2;
     left = Math.max(8, Math.min(left, window.innerWidth - tipWidth - 8));
     tip.style.left = left + 'px';
-    tip.style.top = (rect.top - 48) + 'px';
     tip.style.width = tipWidth + 'px';
+    const above = rect.top - tip.offsetHeight - 10;
+    tip.style.top = (above >= 8 ? above : rect.bottom + 10) + 'px';
     tip.classList.remove('hiding');
     clearTimeout(tip._hideTimer);
     tip._hideTimer = setTimeout(function() {
