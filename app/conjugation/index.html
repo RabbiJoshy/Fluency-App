@@ -31,54 +31,13 @@
 
     <details class="section">
       <summary>
-        <span class="section-name">Tenses</span>
-        <span class="section-state" id="state-tenses"></span>
-      </summary>
-      <div class="section-body">
-        <p class="hint">A grey dot marks a compound tense — auxiliary plus
-          participle, so only the participle varies.</p>
-        <div id="tenses"></div>
-      </div>
-    </details>
-
-    <details class="section">
-      <summary>
         <span class="section-name">Verb type</span>
         <span class="section-state" id="state-types"></span>
       </summary>
       <div class="section-body">
-        <p class="hint">Worked out from the tenses above — a verb that is
+        <p class="hint">Worked out from the tenses you picked — a verb that is
           irregular in the preterite can still be regular in the imperfect.</p>
         <div class="checks" id="types"></div>
-      </div>
-    </details>
-
-    <details class="section">
-      <summary>
-        <span class="section-name">Patterns</span>
-        <span class="section-state" id="state-patterns"></span>
-      </summary>
-      <div class="section-body">
-        <p class="hint">Each row is one stem alternation, derived from the
-          forms themselves. <code>0&gt;g</code> is the <em>tengo</em> group,
-          <code>o&gt;ue</code> the <em>puedo</em> group.</p>
-        <div class="pattern-actions">
-          <button class="linkish" id="patterns-all">all</button>
-          <button class="linkish" id="patterns-none">none</button>
-          <button class="linkish" id="patterns-irregular">only the odd ones</button>
-        </div>
-        <div class="checks" id="patterns"></div>
-      </div>
-    </details>
-
-    <details class="section">
-      <summary>
-        <span class="section-name">Repetition</span>
-        <span class="section-state" id="state-coverage"></span>
-      </summary>
-      <div class="section-body">
-        <div class="checks" id="coverage"></div>
-        <p class="hint" id="coverage-hint"></p>
       </div>
     </details>
 
@@ -95,6 +54,18 @@
 
     <details class="section">
       <summary>
+        <span class="section-name">Tenses</span>
+        <span class="section-state" id="state-tenses"></span>
+      </summary>
+      <div class="section-body">
+        <p class="hint">A grey dot marks a compound tense — auxiliary plus
+          participle, so only the participle varies.</p>
+        <div id="tenses"></div>
+      </div>
+    </details>
+
+    <details class="section">
+      <summary>
         <span class="section-name">Persons</span>
         <span class="section-state" id="state-persons"></span>
       </summary>
@@ -105,7 +76,7 @@
 
     <details class="section">
       <summary>
-        <span class="section-name">Clues</span>
+        <span class="section-name">Easy mode</span>
         <span class="section-state" id="state-clue"></span>
       </summary>
       <div class="section-body">
@@ -118,26 +89,63 @@
       </div>
     </details>
 
-    <details class="section">
+    <!-- Everything below changes the drill for someone who already knows what
+         they want out of it. The four settings above are the ones a learner
+         opening this page for the first time has an opinion about. -->
+    <details class="section section-advanced">
       <summary>
-        <span class="section-name">Prompt</span>
-        <span class="section-state" id="state-prompt"></span>
+        <span class="section-name">Advanced settings</span>
+        <span class="section-state" id="state-advanced"></span>
       </summary>
-      <div class="section-body">
-        <div class="checks" id="direction"></div>
-        <div class="field">
-          <label class="field-label" for="deck">Language</label>
-          <select id="deck"></select>
+      <div class="section-body section-body-nested">
+      <details class="section">
+        <summary>
+          <span class="section-name">Patterns</span>
+          <span class="section-state" id="state-patterns"></span>
+        </summary>
+        <div class="section-body">
+          <p class="hint">Each row is one stem alternation, derived from the
+            forms themselves. <code>0&gt;g</code> is the <em>tengo</em> group,
+            <code>o&gt;ue</code> the <em>puedo</em> group.</p>
+          <div class="pattern-actions">
+            <button class="linkish" id="patterns-all">all</button>
+            <button class="linkish" id="patterns-none">none</button>
+            <button class="linkish" id="patterns-irregular">only the odd ones</button>
+          </div>
+          <div class="checks" id="patterns"></div>
         </div>
+      </details>
+      <details class="section">
+        <summary>
+          <span class="section-name">Repetition</span>
+          <span class="section-state" id="state-coverage"></span>
+        </summary>
+        <div class="section-body">
+          <div class="checks" id="coverage"></div>
+          <p class="hint" id="coverage-hint"></p>
+        </div>
+      </details>
+      <details class="section">
+        <summary>
+          <span class="section-name">Prompt</span>
+          <span class="section-state" id="state-prompt"></span>
+        </summary>
+        <div class="section-body">
+          <div class="checks" id="direction"></div>
+          <div class="field">
+            <label class="field-label" for="deck">Language</label>
+            <select id="deck"></select>
+          </div>
+        </div>
+      </details>
+      <details class="section">
+        <summary>
+          <span class="section-name">Where this data comes from</span>
+          <span class="section-state"></span>
+        </summary>
+        <div class="section-body" id="provenance-body"></div>
+      </details>
       </div>
-    </details>
-
-    <details class="section">
-      <summary>
-        <span class="section-name">Where this data comes from</span>
-        <span class="section-state"></span>
-      </summary>
-      <div class="section-body" id="provenance-body"></div>
     </details>
 
   </div>

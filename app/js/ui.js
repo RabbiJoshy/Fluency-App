@@ -2177,6 +2177,41 @@ function applyLanguageColorTheme() {
 
         root.style.setProperty('--accent-primary-rgb', hexToRgb(langConfig.colorTheme.primary));
         root.style.setProperty('--accent-secondary-rgb', hexToRgb(langConfig.colorTheme.secondary));
+
+        // The setup panel deliberately pins --accent-primary to a neutral
+        // indigo so a switch to Spanish does not turn every control flag-red.
+        // --lang-trim is the language's colour under a name that override does
+        // not touch, for the few places the language should be visible: the
+        // language chip and the hairline under the top bar.
+        //
+        // Flag colours are not chosen for legibility on a dark page. Czech
+        // navy (#11457E) and Portuguese green (#046A38) disappear into it
+        // entirely, so a language with a dark flag would show no trim at all.
+        // Lift anything below the floor toward white until it reads; leave
+        // everything already bright enough alone.
+        const mixToward = (hex, target, t) => {
+            const parse = (h) => h.replace('#', '').match(/.{2}/g).map(x => parseInt(x, 16));
+            const [r1, g1, b1] = parse(hex);
+            const [r2, g2, b2] = parse(target);
+            const to = (a, b) => Math.round(a + (b - a) * t).toString(16).padStart(2, '0');
+            return `#${to(r1, r2)}${to(g1, g2)}${to(b1, b2)}`;
+        };
+        // Plain HSL lightness, not WCAG luminance: luminance weights red at
+        // 0.21, so it calls Spanish #C8102E "dark" and washes a perfectly
+        // vivid red out to pink. Lightness lifts only the three that are
+        // actually dark — Czech navy, Portuguese and Italian green.
+        const lightness = (hex) => {
+            const [r, g, b] = hex.replace('#', '').match(/.{2}/g).map(x => parseInt(x, 16) / 255);
+            return (Math.max(r, g, b) + Math.min(r, g, b)) / 2;
+        };
+        const TRIM_LIGHTNESS_FLOOR = 0.38;
+        let trim = langConfig.colorTheme.primary;
+        for (let i = 0; i < 10 && lightness(trim) < TRIM_LIGHTNESS_FLOOR; i++) {
+            trim = mixToward(trim, '#ffffff', 0.12);
+        }
+        root.style.setProperty('--lang-trim', trim);
+        root.style.setProperty('--lang-trim-rgb', hexToRgb(trim));
+        root.style.setProperty('--lang-trim-secondary', langConfig.colorTheme.secondary);
     }
 }
 

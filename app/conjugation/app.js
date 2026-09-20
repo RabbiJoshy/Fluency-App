@@ -551,6 +551,14 @@
       (state.reverse ? 'meaning' : 'infinitive') +
       (state.speak ? ' · spoken' : ' · silent') +
       ' · ' + deck.language.toUpperCase();
+
+    // The advanced group is collapsed by default, so it has to say what is
+    // inside it — otherwise a narrowed pattern set looks like a missing deck.
+    $('state-advanced').textContent = [
+      on === deck.patterns.length ? null : 'patterns narrowed',
+      state.coverage === 'one' ? 'one per lesson' : null,
+      state.reverse ? 'prompted by meaning' : null
+    ].filter(Boolean).join(' · ') || 'defaults';
   }
 
   function refreshSummary() {
