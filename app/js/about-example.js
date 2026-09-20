@@ -3,8 +3,8 @@
 // The About copy already carries two small auto-playing demo cards
 // (`demo://normal` / `demo://artist`, built in auth.js). Those show the card
 // moving; they deliberately say nothing about what any part of it means.
-// This module is the other half: a stepped tour where the card sits still,
-// every element on it is numbered, and the numbers are explained beside it.
+// This module is the other half: a stepped tour where the card sits still and
+// the element being explained is ringed while its note is on screen.
 //
 // Two constraints shape the implementation:
 //
@@ -48,6 +48,7 @@ const ABOUT_EXAMPLE_CARDS = {
     cielo: {
         mode: 'lyrics',
         word: 'cielo',
+        lemma: 'cielo',
         pos: 'NOUN',
         rank: 344,
         corpusCount: 33,
@@ -106,6 +107,7 @@ const ABOUT_EXAMPLE_CARDS = {
     tem: {
         mode: 'speech',
         word: 'tem',
+        lemma: 'ter',
         pos: 'VERB',
         rank: 47,
         corpusCount: 1326,
@@ -184,8 +186,7 @@ const ABOUT_EXAMPLE_CARDS = {
         ],
     },
     queSpeech: {
-        mode: 'speech', word: 'que', pos: 'CCONJ', rank: 1, corpusCount: 60,
-        frequencyLabel: 'Frequency from the Spanish release',
+        mode: 'speech', word: 'que', pos: 'CCONJ', lemma: 'que', rank: 1, corpusCount: 21340,
         meanings: [
             {
                 pos: 'CCONJ', translation: 'that', context: 'introduces a subordinate clause', pct: 34,
@@ -204,8 +205,7 @@ const ABOUT_EXAMPLE_CARDS = {
         ],
     },
     jeSpeech: {
-        mode: 'speech', word: 'je', pos: 'VERB', rank: 3, corpusCount: 60,
-        frequencyLabel: 'Frequency from the Czech release',
+        mode: 'speech', word: 'je', pos: 'VERB', lemma: 'být', rank: 3, corpusCount: 12890,
         meanings: [
             {
                 pos: 'VERB', translation: 'he/she is (exists)', pct: 40,
@@ -220,8 +220,7 @@ const ABOUT_EXAMPLE_CARDS = {
         ],
     },
     deSpeech: {
-        mode: 'speech', word: 'de', pos: 'PREP', rank: 1, corpusCount: 3,
-        frequencyLabel: 'Frequency from the French release',
+        mode: 'speech', word: 'de', pos: 'PREP', lemma: 'de', rank: 1, corpusCount: 26810,
         meanings: [
             {
                 pos: 'PREP', translation: 'of', context: 'possession, association or relationship',
@@ -367,7 +366,7 @@ const ABOUT_EXAMPLE_DECKS = [
                 ],
             },
             front: {
-                title: 'The question side — Lyrics',
+                title: 'The front of a Lyrics card',
                 blurb: 'The front is the same as a Speech card, except the counter shows '
                      + 'how many song lines use the word instead of a speech frequency.',
                 notes: [
@@ -388,9 +387,9 @@ const ABOUT_EXAMPLE_DECKS = [
         tab: 'Speech',
         faces: {
             back: {
-                title: 'The answer side',
-                blurb: 'Flip the card and you see every meaning, how common each one is, '
-                     + 'and a real example from spoken {language}.',
+                title: 'The back of the card',
+                blurb: 'The back shows every meaning, how common each one is, and a real '
+                     + 'example from spoken {language}.',
                 notes: [
                     {
                         side: 'left',
@@ -448,7 +447,7 @@ const ABOUT_EXAMPLE_DECKS = [
                 ],
             },
             front: {
-                title: 'The question side',
+                title: 'The front of the card',
                 blurb: 'This is what you see when studying — the word and a few hints. '
                      + 'Try to remember the meaning before flipping.',
                 notes: [
@@ -542,17 +541,25 @@ function renderFront(card) {
     const rankLabel = `<span class="card-rank-label">Vocabulary rank: `
         + `<strong class="card-stat-value">${card.rank.toLocaleString()}</strong></span>`;
     const count = `<strong class="card-stat-value">${card.corpusCount.toLocaleString()}</strong>`;
-    const freqLabel = card.frequencyLabel
-        ? `<span class="card-freq-label">${esc(card.frequencyLabel)}</span>`
-        : card.mode === 'lyrics'
+    // Same two figures the live card puts here, in the same words. An earlier
+    // draft hedged with "Frequency from the Spanish release", which told a
+    // visitor nothing: the number is the point, and a count per million is
+    // what the real front says.
+    const freqLabel = card.mode === 'lyrics'
         ? `<span class="card-freq-label">Lyric lines: ${count}</span>`
         : `<span class="card-freq-label">Frequency: ${count}/million</span>`;
+
+    // updateCard() pairs each POS pill with the lemma it governs inside one
+    // capsule (.front-lemma-pair), which is how a learner sees that `tem` is
+    // a form of `ter`. The replica dropped the lemma and showed a bare pill.
+    const lemma = card.lemma || card.word;
+    const posUnit = `<span class="front-pos-unit"><span class="card-pos ${posClass(card.pos)}">${posName(card.pos)}</span></span>`;
 
     return `
         <div class="card-face card-front">
             <div class="card-word">${esc(card.word)}</div>
-            <div class="card-pos-list" style="display: flex;">
-                <span class="front-pos-unit"><span class="card-pos ${posClass(card.pos)}">${posName(card.pos)}</span></span>
+            <div class="card-pos-list is-lemma-map pos-count-1" style="display: flex;">
+                <span class="front-lemma-pair">${posUnit}<span class="front-lemma-name">${esc(lemma)}</span></span>
             </div>
             <div class="card-ranking" style="display: flex;">${rankLabel}${freqLabel}</div>
             <div class="card-tint" aria-hidden="true"></div>
@@ -765,7 +772,7 @@ const state = {
     chapterIndex: 0,
     // The front opens first: it is the side the learner sees when studying,
     // and starting there matches the real experience. After the front
-    // annotations, the tutorial flips to the answer side.
+    // annotations, the tutorial flips to the back.
     flipped: false,
     meaningIndex: 0,
     exampleIndex: 0,
@@ -851,7 +858,7 @@ function renderCard() {
     wireBack(stage);
     renderFaceCopy();
     renderNotes();
-    placeMarkers();
+    markAnchors();
     syncContinueButton();
 }
 
@@ -865,7 +872,7 @@ function refreshBack() {
     if (!stage || !back) return;
     back.outerHTML = renderBack(currentCard(), state.meaningIndex, state.exampleIndex);
     wireBack(stage);
-    placeMarkers();
+    markAnchors();
 }
 
 // Flipping is a face change, so the annotations change with it: new copy, new
@@ -879,18 +886,13 @@ function flipCardFace(mobileNote = 0) {
     state.activeNote = -1;
     cardEl.classList.toggle('flipped', state.flipped);
 
-    // Clear the outgoing badges immediately — leaving them on screen through
-    // the 0.6s flip is exactly the "labels in the wrong place" problem.
-    const layer = document.getElementById('aboutExampleMarkers');
-    if (layer) layer.innerHTML = '';
-
     renderFaceCopy();
     renderNotes();
     syncFlipButton();
     syncContinueButton();
     // Re-place once the transform has settled, so boxes are measured flat.
     setTimeout(() => {
-        placeMarkers();
+        markAnchors();
         if (isMobileWalkthrough()) {
             const finalIndex = Math.max(0, orderedNotes().length - 1);
             setActiveNote(Math.min(mobileNote, finalIndex));
@@ -934,7 +936,7 @@ function wireBack(stage) {
         control.setAttribute('aria-label', expanded
             ? `Show ${control.dataset.count} supporting details`
             : 'Hide supporting details');
-        placeMarkers();
+        markAnchors();
     });
 
     // The real card opens the referenced vocabulary card. The walkthrough is
@@ -984,7 +986,7 @@ function wireBack(stage) {
 function syncFlipButton() {
     const btn = document.getElementById('aboutExampleFlip');
     if (!btn) return;
-    btn.textContent = state.flipped ? 'Flip to the question side' : 'Flip to the answer side';
+    btn.textContent = state.flipped ? 'Flip to the front' : 'Flip to the back';
 }
 
 function syncContinueButton() {
@@ -996,7 +998,7 @@ function syncContinueButton() {
     const isLast = state.chapterIndex >= tutorialDeckSequence().length - 1;
     if (!state.flipped) {
         // Front face: gentle nudge to flip and see the answers.
-        btn.textContent = 'Flip to the answer side →';
+        btn.textContent = 'Flip the card over →';
         btn.classList.add('is-secondary');
     } else {
         btn.textContent = isLast ? 'Finish tutorial' : 'Continue to Lyrics →';
@@ -1013,59 +1015,19 @@ function syncContinueButton() {
 // lines, or the viewport narrows. A left-column note pins its badge to the
 // element's left edge and a right-column note to its right edge, so no badge
 // has to cross the card to reach the note it belongs to.
-function placeMarkers() {
+// Tag every annotated element so setActiveNote() can ring the one being
+// explained. This used to also pin a numbered badge outside the card edge for
+// each note; the numbers indexed nothing a reader needed once the tour walked
+// them through one note at a time, so the amber outline is the only link now.
+function markAnchors() {
     const stage = document.getElementById('aboutExampleStage');
-    const layer = document.getElementById('aboutExampleMarkers');
-    if (!stage || !layer) return;
-    layer.innerHTML = '';
-
-    const stageRect = stage.getBoundingClientRect();
-    const cardRect = stage.querySelector('.card')?.getBoundingClientRect() || stageRect;
-    const occupied = { left: [], right: [] };
-
+    if (!stage) return;
     orderedNotes().forEach((note, i) => {
         const target = stage.querySelector(note.anchor);
         if (!target) return;
         target.classList.add('about-example-anchored');
         target.dataset.aboutExampleNote = String(i);
-
-        // Both faces are always in the DOM (backface-visibility does the
-        // hiding) and both report real boxes. Only badge what is face-up.
-        const onBack = !!target.closest('.card-back');
-        if (onBack !== state.flipped) return;
-
-        const rect = target.getBoundingClientRect();
-        if (!rect.width && !rect.height) return;
-
-        const onRight = note.side === 'right';
-        const marker = document.createElement('button');
-        marker.type = 'button';
-        marker.className = `about-example-marker ${onRight ? 'is-right' : 'is-left'}`;
-        marker.dataset.note = String(i);
-        marker.textContent = String(i + 1);
-        marker.setAttribute('aria-label', `Annotation ${i + 1}: ${note.title}`);
-        // Badges live just outside the card rather than covering the word,
-        // percentage, Spotify button or compact counter they explain. Several
-        // targets can share one row, so nudge collisions into a short stack.
-        marker.style.left = onRight
-            ? `${cardRect.right - stageRect.left + 4}px`
-            : `${cardRect.left - stageRect.left - 26}px`;
-        const side = onRight ? 'right' : 'left';
-        let top = rect.top - stageRect.top + rect.height / 2 - 11;
-        const upperBound = cardRect.top - stageRect.top;
-        const lowerBound = cardRect.bottom - stageRect.top - 22;
-        top = Math.max(upperBound, Math.min(top, lowerBound));
-        while (occupied[side].some(value => Math.abs(value - top) < 24)) top -= 24;
-        top = Math.max(upperBound, top);
-        occupied[side].push(top);
-        marker.style.top = `${top}px`;
-        marker.addEventListener('mouseenter', () => setActiveNote(i));
-        marker.addEventListener('mouseleave', () => setActiveNote(-1));
-        marker.addEventListener('focus', () => setActiveNote(i));
-        marker.addEventListener('blur', () => setActiveNote(-1));
-        layer.appendChild(marker);
     });
-
     if (state.activeNote >= 0) setActiveNote(state.activeNote);
 }
 
@@ -1075,9 +1037,6 @@ function setActiveNote(index) {
     renderSequenceProgress();
     const root = document.getElementById('aboutExampleModal');
     if (!root) return;
-    root.querySelectorAll('.about-example-marker').forEach((m) => {
-        m.classList.toggle('is-active', Number(m.dataset.note) === index);
-    });
     root.querySelectorAll('.about-example-note').forEach((n) => {
         n.classList.toggle('is-active', Number(n.dataset.note) === index);
     });
@@ -1099,7 +1058,7 @@ function renderMobileCoach() {
 
     const progress = tutorialStepPosition(index);
     document.getElementById('aboutExampleMobileProgress').textContent =
-        `Step ${progress.current} of ${progress.total} · ${currentDeck().tab} · ${state.flipped ? 'answer side' : 'question side'}`;
+        `Step ${progress.current} of ${progress.total} · ${currentDeck().tab} · ${state.flipped ? 'back' : 'front'}`;
     document.getElementById('aboutExampleMobileTitle').innerHTML =
         `${esc(note.title)}${note.interactive ? '<span class="about-example-try">tap it</span>' : ''}`;
     document.getElementById('aboutExampleMobileText').innerHTML = tutorialText(note.text);
@@ -1111,7 +1070,7 @@ function renderMobileCoach() {
     next.textContent = index < notes.length - 1
         ? 'Next'
         : (!state.flipped
-            ? 'Answer side'
+            ? 'Flip over'
             : (state.chapterIndex < tutorialDeckSequence().length - 1 ? 'Continue' : 'Finish'));
 }
 
@@ -1157,7 +1116,6 @@ function renderFaceCopy() {
 function noteHTML(note, index) {
     return `
         <li class="about-example-note" data-note="${index}">
-            <span class="about-example-note-num">${index + 1}</span>
             <div>
                 <strong>${note.title}${note.interactive ? '<span class="about-example-try">try it</span>' : ''}</strong>
                 <span>${tutorialText(note.text)}</span>
@@ -1249,8 +1207,10 @@ function resetSetupIntro() {
         host.hidden = true;
         host.querySelector('.setup-anim-card')?.classList.remove('is-leaving');
         host.querySelectorAll('.setup-anim-step').forEach((el) => {
-            el.classList.remove('is-active', 'is-complete', 'is-pressed');
+            el.classList.remove('is-active', 'is-complete', 'is-ready', 'is-pressed');
         });
+        const statusText = document.getElementById('setupAnimStatusText');
+        if (statusText) statusText.textContent = 'Opening your first flashcard…';
     }
     document.getElementById('aboutExampleBody')?.classList.remove('is-setup-intro');
 }
@@ -1282,24 +1242,50 @@ function playSetupIntro(onDone) {
 
     const step = n => document.getElementById(`setupAnimStep${n}`);
     const at = (ms, fn) => _setupIntroTimers.push(setTimeout(fn, ms));
+    const statusText = document.getElementById('setupAnimStatusText');
     const finish = () => {
         resetSetupIntro();
         onDone();
     };
     _setupIntroFinish = finish;
 
-    at(80, () => step(1)?.classList.add('is-active'));
-    at(760, () => {
+    // Each step holds long enough to be read before the next one lands. The
+    // first pass ran the whole sequence in under three seconds and finished
+    // itself, which read as a flicker rather than as a setup flow.
+    const HOLD = 1400;
+    at(250, () => step(1)?.classList.add('is-active'));
+    at(250 + HOLD, () => {
         step(1)?.classList.replace('is-active', 'is-complete');
         step(2)?.classList.add('is-active');
     });
-    at(1500, () => {
+    at(250 + HOLD * 2, () => {
         step(2)?.classList.replace('is-active', 'is-complete');
         step(3)?.classList.add('is-active');
     });
-    at(2240, () => step(3)?.classList.add('is-pressed'));
-    at(2520, () => host.querySelector('.setup-anim-card')?.classList.add('is-leaving'));
-    at(2900, finish);
+    // The sequence stops here rather than pressing its own button and moving
+    // on. The learner opens their first card themselves, which is both the
+    // real gesture and the thing that gives the animation a moment to land.
+    at(250 + HOLD * 2 + 500, () => {
+        step(3)?.classList.add('is-ready');
+        if (statusText) statusText.textContent = 'Press Start set to open your first card';
+    });
+}
+
+// The explicit advance out of the intro: press the step-3 button, watch it
+// depress, then let the card come up behind the card that slides away.
+function startSetupIntroCard() {
+    const host = document.getElementById('aboutExampleSetupAnim');
+    const step3 = document.getElementById('setupAnimStep3');
+    if (!host || !_setupIntroFinish || !step3?.classList.contains('is-ready')) return;
+    const done = _setupIntroFinish;
+    // Stop the pending beats so nothing re-styles the card on its way out.
+    _setupIntroTimers.forEach(clearTimeout);
+    _setupIntroTimers = [];
+    step3.classList.add('is-pressed');
+    _setupIntroTimers.push(setTimeout(() => {
+        host.querySelector('.setup-anim-card')?.classList.add('is-leaving');
+    }, 220));
+    _setupIntroTimers.push(setTimeout(done, 620));
 }
 
 // ---------------------------------------------------------------------------
@@ -1321,7 +1307,7 @@ function openAboutExample() {
     if (!_resizeHandler) {
         _resizeHandler = () => {
             if (isMobileWalkthrough() && state.activeNote < 0) state.activeNote = 0;
-            placeMarkers();
+            markAnchors();
             syncContinueButton();
             renderMobileCoach();
         };
@@ -1364,9 +1350,11 @@ function setupAboutExample() {
     modal.dataset.ready = '1';
 
     document.getElementById('closeAboutExampleModal')?.addEventListener('click', closeAboutExample);
-    // Anywhere on the mock setup card jumps to the flashcard; the explicit
-    // skip link is the discoverable version of the same thing.
-    document.getElementById('aboutExampleSetupAnim')?.addEventListener('click', skipSetupIntro);
+    // Start set is the deliberate way out of the intro and only works once the
+    // three steps have filled in; Skip intro leaves at any point. A stray click
+    // on the card does nothing, or "deliberate" would mean very little.
+    document.getElementById('setupAnimActionBtn')?.addEventListener('click', startSetupIntroCard);
+    document.getElementById('setupAnimSkipBtn')?.addEventListener('click', skipSetupIntro);
     document.getElementById('aboutExampleFlip')?.addEventListener('click', () => flipCardFace(0));
     document.getElementById('aboutExampleContinue')?.addEventListener('click', () => {
         if (!state.flipped) { flipCardFace(0); } else { advanceChapterOrFinish(); }

@@ -1383,6 +1383,12 @@ async function fetchAndJoinIndex(langConfig) {
 let _cognateScoresLoadedFor = null;
 let _coverageLoadedFor = null;
 let _cognateScoresLoading = null;
+// Which path the in-flight load is for. Without it, a call for a second
+// language joined whichever load happened to be running and then recorded that
+// language's path as loaded, so the second language attached no scores while
+// believing it had -- every word "not a cognate", and a Fast Track page that
+// reported nothing to skip.
+let _cognateScoresLoadingFor = null;
 
 async function fetchActiveVocabularyData(langConfig) {
     const vocabulary = await fetchActiveVocabularyIndex(langConfig);
@@ -1392,11 +1398,17 @@ async function fetchActiveVocabularyData(langConfig) {
     // exist in both languages.
     const path = langConfig?.cognatesPath || null;
     if (_cognateScoresLoadedFor !== path && globalThis.loadCognateScores) {
-        _cognateScoresLoading = _cognateScoresLoading
-            || Promise.resolve(globalThis.loadCognateScores(langConfig)).then(() => {
-                _cognateScoresLoadedFor = path;
-                _cognateScoresLoading = null;
-            });
+        if (_cognateScoresLoadingFor !== path) {
+            _cognateScoresLoadingFor = path;
+            _cognateScoresLoading = Promise.resolve(globalThis.loadCognateScores(langConfig))
+                .then(() => { _cognateScoresLoadedFor = path; })
+                .finally(() => {
+                    if (_cognateScoresLoadingFor === path) {
+                        _cognateScoresLoadingFor = null;
+                        _cognateScoresLoading = null;
+                    }
+                });
+        }
         await _cognateScoresLoading;
     }
     // speechLang is the only language code the app config carries ("cs-CZ").

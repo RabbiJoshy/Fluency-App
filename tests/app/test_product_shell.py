@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v489"
+EXPECTED_CACHE_NAME = "flashcards-v491"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -265,7 +265,11 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="aboutExampleMobileCoach"', html)
         self.assertIn("function moveMobileTour(direction)", walkthrough)
         self.assertIn("MOBILE_WALKTHROUGH_QUERY", walkthrough)
-        self.assertIn("'Answer side'", walkthrough)
+        # Front and back of a flashcard, not "question side" / "answer side":
+        # anyone reaching for a tutorial already knows what a flashcard is.
+        self.assertIn("'Flip over'", walkthrough)
+        self.assertNotIn("answer side", walkthrough)
+        self.assertNotIn("question side", walkthrough)
         self.assertIn("'Finish'", walkthrough)
         # Front first: the learner meets the question side before the answer,
         # the same order study puts them in.
@@ -278,6 +282,15 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="aboutExampleSetupAnim"', html)
         self.assertIn("function playSetupIntro(onDone)", walkthrough)
         self.assertIn("function skipSetupIntro()", walkthrough)
+        # The intro holds on its last step and waits to be dismissed by hand
+        # rather than pressing its own button and moving on.
+        self.assertIn("function startSetupIntroCard()", walkthrough)
+        self.assertIn(".setup-anim-step.is-ready .setup-anim-action-btn", styles)
+        # The numbered badges indexed a numbered note list; both are gone, and
+        # the amber ring on the annotated element is the only link left.
+        self.assertNotIn("about-example-marker", walkthrough)
+        self.assertNotIn("about-example-note-num", walkthrough)
+        self.assertIn(".about-example-anchored.is-annotation-active", styles)
         self.assertIn(".about-example-body.is-setup-intro", styles)
         self.assertIn("@keyframes about-example-mobile-spotlight", styles)
         self.assertIn("@media (prefers-reduced-motion: reduce)", styles)
@@ -710,8 +723,8 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260918l", worker)
-        self.assertIn("/js/main.js?v=20260920b", worker)
-        self.assertIn("/js/ui.js?v=20260920b", worker)
+        self.assertIn("/js/main.js?v=20260920e", worker)
+        self.assertIn("/js/ui.js?v=20260920e", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -830,7 +843,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
         self.assertIn("/js/spotify-playlist-import.js?v=20260919a", worker)
-        self.assertIn('css/style.css?v=20260920c', html)
+        self.assertIn('css/style.css?v=20260920e', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
         self.assertIn("searchParams.set('playlistLive'", importer)

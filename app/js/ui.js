@@ -2310,18 +2310,9 @@ async function renderRangeSelector() {
     }
     const preparedVocabulary = getPreparedSetupVocabulary(selectedLanguage, vocabularyData);
     const filteredVocab = preparedVocabulary?.vocab || [];
-    const filterCounts = preparedVocabulary?.counts || { lemma: 0, cognates: 0 };
-
-    const lemmaInfo = document.getElementById('lemmaInfoLine');
-    if (lemmaInfo) {
-        lemmaInfo.textContent = `${filterCounts.lemma.toLocaleString()} flashcards merged`;
-        lemmaInfo.style.display = filterCounts.lemma > 0 ? '' : 'none';
-    }
-    const cognateInfo = document.getElementById('cognateInfoLine');
-    if (cognateInfo) {
-        cognateInfo.textContent = `${filterCounts.cognates.toLocaleString()} flashcards excluded`;
-        cognateInfo.style.display = filterCounts.cognates > 0 ? '' : 'none';
-    }
+    // The merged/excluded counts used to be restated here, in a second wording,
+    // under controls whose own buttons already carry them. extras.js owns that
+    // figure now so there is one of it.
 
     const rankOf = _levelRankAccessor(rankBasis);
     const wordsInLevel = filteredVocab.filter(item => {
