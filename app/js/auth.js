@@ -136,6 +136,9 @@ function checkAuthentication() {
     // switches) but was just cleared above if this load is a reload.
     if (sessionStorage.getItem('flashcardGuestSession') === '1') {
         currentUser = { isGuest: true };
+        // A guest session restored from sessionStorage never passes through
+        // enterGuestMode(), so it has to settle progress readiness itself.
+        window.markProgressLoaded?.();
         window.applyGlobalStudyDefaults?.();
         showUserInfo();
         hideAuthModal();
