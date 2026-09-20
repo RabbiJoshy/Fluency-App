@@ -17,7 +17,7 @@ sense-metadata legibility floor.
 | # | Group | Cost | Needs Joshua? |
 |---|---|---|---|
 | 1 | Small UI polish | ✅ done 2026-09-20 | — |
-| 2 | Example footer layout | quick | no |
+| 2 | Example footer layout | ✅ done 2026-09-20 | — |
 | 3 | Header and underline must agree | medium | no |
 | 4 | Content that is wrong or unhelpful | medium | one editorial list |
 | 5 | The "jump to my level" bug | unknown — investigation | no |
@@ -67,7 +67,7 @@ away, and the main page carries a hint of the language's colour.
 
 ---
 
-## 2. Example footer layout — quick, no open questions
+## 2. Example footer layout — ✅ DONE 2026-09-20
 
 Files: `app/js/flashcards.js` (~6510–6560), `app/css/style.css`. Self-contained.
 
@@ -77,8 +77,12 @@ Files: `app/js/flashcards.js` (~6510–6560), `app/css/style.css`. Self-containe
 - Overflow: each side squeezes to a floor, then truncates with ellipsis.
   Neither may push the other out of the row.
 
-**Done when:** a long credit and a wide pip strip can coexist on one row at
-phone width without either being pushed out.
+Shipped. Each half is capped at 50%; the tick strip squeezes through two
+density tiers measured against the width it actually got, then clips with the
+current tick scrolled into view. Ticks carry `flex: 0 0 auto` — without it the
+strip compressed thirty ticks into slivers, measured as fitting, and the tiers
+never engaged. Verified: 30 ticks go 355px → 237px → 208px and fit a desktop
+half; at 375px they still overflow and clip with the current tick visible.
 
 ---
 
