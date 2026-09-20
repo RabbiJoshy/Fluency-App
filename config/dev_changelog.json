@@ -2,6 +2,27 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-20T16:46:00+01:00",
+      "date": "2026-09-20 16:46 BST",
+      "agent": "Claude",
+      "commit": "pending",
+      "summary": "Conjugation mode: a separate drill page for verb patterns, reached from the conjugate drawer on the back of a card",
+      "detail": [
+        "The conjugate drawer now has a Drill this verb in conjugation mode button above the external paradigm link. That link is the only way in, so the new page and the study app can be worked on without treading on each other. It appears only for languages that have a deck built; Spanish has one today.",
+        "Conjugation mode is its own page at /conjugation/, sharing no HTML, CSS or JS with the study app. Choose what you want to drill, drill it, or look up a full paradigm.",
+        "Choose has eight collapsed sections, each showing its own current selection on the right, so the whole menu of options is readable on a phone without opening anything: tenses, verb type, patterns, repetition, how common, persons, prompt direction, provenance.",
+        "Verb type (regular, spelling change, stem change, irregular) is recomputed against the tenses you picked, so tener counts as irregular when the present is selected and regular when only the imperfect is.",
+        "Patterns lists every stem alternation found in the data with example verbs, so you can drill just the o-ue group or just the one-offs.",
+        "Repetition offers one card per lesson: the present indicative of the 193 commonest verbs is 1,154 forms but only 53 distinct lessons, and coverage mode shows each lesson once, taught by a verb picked at random from the verbs that share it.",
+        "The drill has no buttons. Space or tap reveals, space again advances, left arrow goes back, swipe moves, and t opens the full table on the tense you just missed. The answer names the pattern and the verbs that share it.",
+        "Prompt direction can be flipped to show the English meaning instead of the infinitive.",
+        "Tables takes a verb by search and one tense from a dropdown, rather than listing every tense at once.",
+        "Nothing is scored, stored or scheduled yet. This is the selection layer only.",
+        "How the patterns are worked out: for each form the builder takes the commonest ending for verbs of that class in that tense and person, strips it, and records the minimal edit from the infinitive's stem to the stem actually used. pens to piens is e-ie; busc to busqu is c-qu. Two forms are the same lesson when class, tense, person, ending and that edit all match. No verb is hand-tagged, and the same code runs for Portuguese, French and Czech.",
+        "Service worker cache bumped to flashcards-v496; style.css and light-theme.css version tags bumped."
+      ]
+    },
+    {
       "timestamp": "2026-09-20T16:32:17+01:00",
       "date": "2026-09-20 16:32 BST",
       "agent": "Codex",

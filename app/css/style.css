@@ -9863,6 +9863,36 @@
             opacity: 1;
         }
 
+        /* "Drill this verb" — the single entry point into conjugation mode
+           (app/conjugation/). Sits above the external paradigm link and is
+           tinted with the accent because, unlike that one, it stays in the
+           app. */
+        .conj-drill-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 18px auto 0;
+            padding: 12px 20px;
+            border: 1px solid rgba(var(--accent-primary-rgb), 0.45);
+            border-radius: 10px;
+            background: rgba(var(--accent-primary-rgb), 0.12);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            width: fit-content;
+            min-width: 240px;
+        }
+        .conj-drill-link:hover {
+            background: rgba(var(--accent-primary-rgb), 0.22);
+            border-color: rgba(var(--accent-primary-rgb), 0.7);
+        }
+        .conj-drill-link + .conj-sd-link {
+            margin-top: 10px;
+        }
+
         /* "No conjugation data" variant — when we don't have inline data
            for a verb's lemma (defective verbs like "hay"). The panel
            collapses to: header + short message + a SpanishDict button. */

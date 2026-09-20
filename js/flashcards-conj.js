@@ -119,6 +119,20 @@ function conjugationLookupUrl(lemma) {
     return `https://www.spanishdict.com/conjugate/${encodeURIComponent(word)}`;
 }
 
+// Languages that have a built conjugation-drill deck under app/conjugation/.
+// A language appears here once its deck file exists; until then the drill
+// link is simply absent rather than pointing at a 404.
+const CONJ_DRILL_DECKS = { spanish: 'es' };
+
+// Single entry point into conjugation mode. Returns null when this language
+// has no deck, so the caller omits the link instead of guessing.
+function conjugationDrillUrl(infinitive) {
+    const lang = (typeof selectedLanguage === 'string' && selectedLanguage) || 'spanish';
+    const code = CONJ_DRILL_DECKS[lang];
+    if (!code || !infinitive) return null;
+    return `conjugation/?lang=${code}&verb=${encodeURIComponent(String(infinitive).toLowerCase())}`;
+}
+
 function conjugationLookupHost(url) {
     try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return 'reference'; }
 }
@@ -317,6 +331,15 @@ function buildConjugationTableHTML(conjEntry, targetWord, lemma, opts) {
             <span>Full paradigm on ${lookupHost}</span>
         </a>`;
 
+    // Conjugation mode is a separate page under app/conjugation/. This link
+    // is its only way in, which keeps the two UIs from treading on each
+    // other while both are being worked on.
+    const drillUrl = conjugationDrillUrl(infinitive);
+    const drillLinkHTML = drillUrl ? `
+        <a href="${drillUrl}" class="conj-drill-link" title="Drill ${infinitive} in conjugation mode">
+            <span>Drill ${infinitive} in conjugation mode</span>
+        </a>` : '';
+
     // When we're rendering a related verb's paradigm (e.g. haber for a
     // hay card), add a note above the header so the user knows the
     // table isn't the card's own verb. Keeps the panel honest: the
@@ -346,6 +369,7 @@ function buildConjugationTableHTML(conjEntry, targetWord, lemma, opts) {
                 ${tenseTables}
             </div>
             ${nonFiniteHTML}
+            ${drillLinkHTML}
             ${sdLinkHTML}
         </div>
     `;

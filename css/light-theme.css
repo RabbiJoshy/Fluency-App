@@ -1265,3 +1265,14 @@
 
 
 
+
+/* Conjugation-mode entry point in the conjugate drawer. */
+:root[data-theme="light"] .conj-drill-link {
+    border-color: rgba(var(--accent-primary-rgb), 0.4);
+    background: rgba(var(--accent-primary-rgb), 0.1);
+    color: var(--text-primary);
+}
+:root[data-theme="light"] .conj-drill-link:hover {
+    background: rgba(var(--accent-primary-rgb), 0.18);
+    border-color: rgba(var(--accent-primary-rgb), 0.6);
+}
