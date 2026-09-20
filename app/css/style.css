@@ -18680,32 +18680,34 @@ body.artist-mode #flashcardMode::before {
 .step-title-trigger:hover,
 .step-title-trigger:focus-visible { border-color: var(--border-color); background: var(--bg-tertiary); outline: none; }
 
-/* Each POS/lemma count has a reserved footprint. A long lemma can reduce
-   the shared text size without making one capsule dwarf its neighbours. */
+/* Each POS/lemma count has a maximum footprint, not a fixed pill width.
+   Short labels stay compact while long lemmas can use the available room. */
 .card-front .card-pos-list.is-lemma-map {
   top: 27px;
-  width: min(290px, calc(100% - 60px));
+  width: max-content;
   max-width: calc(100% - 60px);
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: auto;
   grid-auto-rows: minmax(40px, auto);
   gap: 7px;
-  justify-items: stretch;
-  align-items: stretch;
+  justify-items: center;
+  align-items: center;
 }
-.card-front .card-pos-list.is-lemma-map.pos-count-2 { width: min(500px, calc(100% - 60px)); grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.card-front .card-pos-list.is-lemma-map.pos-count-3 { width: min(620px, calc(100% - 60px)); grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.card-front .card-pos-list.is-lemma-map.pos-count-3 > :last-child { grid-column: auto; width: 100%; }
-.card-front .card-pos-list.is-lemma-map.pos-count-4 { width: min(500px, calc(100% - 60px)); grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.card-front .card-pos-list.is-lemma-map.pos-count-many { width: min(620px, calc(100% - 60px)); grid-template-columns: repeat(3, minmax(0, 1fr)); max-height: 100px; overflow-y: auto; }
+.card-front .card-pos-list.is-lemma-map.pos-count-1 { max-width: min(290px, calc(100% - 60px)); }
+.card-front .card-pos-list.is-lemma-map.pos-count-2 { max-width: min(500px, calc(100% - 60px)); grid-template-columns: repeat(2, auto); }
+.card-front .card-pos-list.is-lemma-map.pos-count-3 { max-width: min(620px, calc(100% - 60px)); grid-template-columns: repeat(3, auto); }
+.card-front .card-pos-list.is-lemma-map.pos-count-3 > :last-child { grid-column: auto; }
+.card-front .card-pos-list.is-lemma-map.pos-count-4 { max-width: min(500px, calc(100% - 60px)); grid-template-columns: repeat(2, auto); }
+.card-front .card-pos-list.is-lemma-map.pos-count-many { max-width: min(620px, calc(100% - 60px)); grid-template-columns: repeat(3, auto); max-height: 100px; overflow-y: auto; }
 .card-pos-list.is-lemma-map .front-lemma-pair {
-  width: 100%;
+  width: max-content;
   min-width: 0;
+  max-width: 100%;
   min-height: 40px;
   justify-content: flex-start;
   padding: 5px 10px 5px 5px;
   font-size: 16px;
 }
-.card-pos-list.is-lemma-map .front-lemma-name { display: block; min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.card-pos-list.is-lemma-map .front-lemma-name { display: block; min-width: 0; flex: 0 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card-pos-list.is-lemma-map.pos-count-3 .front-lemma-pair { font-size: 14px; }
 .card-pos-list.is-lemma-map.pos-count-4 .front-lemma-pair,
 .card-pos-list.is-lemma-map.pos-count-many .front-lemma-pair { font-size: 13px; }
@@ -18716,11 +18718,12 @@ body.artist-mode #flashcardMode::before {
   .card-face.card-back { padding-left: 16px; padding-right: 16px; }
 }
 @media (max-width: 767px) {
-  .card-front .card-pos-list.is-lemma-map { top: 76px; width: min(310px, calc(100% - 24px)); max-width: calc(100% - 24px); }
+  .card-front .card-pos-list.is-lemma-map { top: 76px; max-width: calc(100% - 24px); }
   .card-front .card-pos-list.is-lemma-map.pos-count-2,
   .card-front .card-pos-list.is-lemma-map.pos-count-3,
   .card-front .card-pos-list.is-lemma-map.pos-count-4,
-  .card-front .card-pos-list.is-lemma-map.pos-count-many { width: calc(100% - 24px); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .card-front .card-pos-list.is-lemma-map.pos-count-many { max-width: calc(100% - 24px); grid-template-columns: repeat(2, auto); }
+  .card-front .card-pos-list.is-lemma-map.pos-count-3 > :last-child { grid-column: 1 / -1; }
   .card-pos-list.is-lemma-map .front-lemma-pair { min-height: 36px; padding-right: 7px; }
   .card-pos-list.is-lemma-map .card-pos { padding: 5px 7px; font-size: 12px; }
   #topBar .learning-context-chip { min-width: 112px; min-height: 48px; padding: 4px 7px; }

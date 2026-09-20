@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-20T21:23:46+01:00",
+      "date": "2026-09-20 21:23 BST",
+      "agent": "Codex",
+      "summary": "Front-card part-of-speech and lemma pills now fit their words instead of stretching across empty space",
+      "detail": [
+        "Pill groups keep the existing count-based layout and maximum widths, but each visible capsule fits its label and stays centred.",
+        "Long lemmas can still use the available width and shrink their label size when needed."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-20T19:20:00+01:00",
       "date": "2026-09-20 19:20 BST",
       "agent": "Claude",
