@@ -37,6 +37,16 @@ sense-metadata legibility floor.
    which re-fetches every asset regardless of `?v=` tag. Use that instead of
    editing `index.html` while `index.html` is contested.
 4. **Deploy at the end of the response**, per the CLAUDE.md procedure.
+5. **Keep `gh-pages` lean.** Every Pages build re-checks-out, re-packages and
+   re-uploads the *whole* site, so its size is a tax on every deploy. It held
+   7.2GB of which 6.1GB was superseded releases nothing referenced; pruning
+   to 1.8GB took a build from 5m05s to 1m35s. Publish only the releases
+   `config/config.json` and `config/artists.json` name, plus one rollback.
+   The workspace, not this branch, is the source of truth for releases.
+   To find orphans: collect every `releases/...` path referenced from
+   `config/*.json` and `js/*.js`, reduce to release directories (note
+   **two** layouts — `releases/<lang>/<mode>/<id>` and
+   `releases/lyrics/<id>`), and diff against what is on disk.
 
 ---
 
