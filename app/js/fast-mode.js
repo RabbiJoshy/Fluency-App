@@ -17,9 +17,10 @@
 // of the two parts still gets fast mode — it just moves the part it has, and the
 // page says which part is missing.
 import './state.js?v=20260825ak';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=20260920a';
 
-let requestedFastMode = null;
 let applyingMasterSwitch = false;
+let returnToSettings = false;
 
 function lemmaAvailable() {
     return document.getElementById('lemmaToggleContainer')?.dataset.available === 'true';
@@ -39,21 +40,17 @@ function cognatesExcluded() {
     return document.querySelector('.cognate-toggle-btn.selected')?.dataset.cognate === 'exclude';
 }
 
-// Fast Track is on when any supported part is on, off when none is.
+// The learner's language-wide choice remains visible even if this deck lacks
+// one of its optional features.
 function currentState() {
-    if (requestedFastMode !== null) return requestedFastMode ? 'on' : 'off';
-    const parts = [];
-    if (lemmaAvailable()) parts.push(lemmaOn());
-    if (cognateAvailable()) parts.push(cognatesExcluded());
-    if (parts.length === 0) return 'off';
-    return parts.some(Boolean) ? 'on' : 'off';
+    return readFastTrack(selectedLanguage).enabled ? 'on' : 'off';
 }
 
 function summaryText() {
-    const state = currentState();
-    if (state === 'on') {
-        return 'Fewer cards: related forms share one card, and obvious English look-alikes are set aside';
-    }
+    const preference = readFastTrack(selectedLanguage);
+    if (preference.enabled && preference.merge && preference.skip) return 'Related forms share one card; familiar look-alikes are set aside';
+    if (preference.enabled && preference.merge) return 'Related word forms share one card';
+    if (preference.enabled && preference.skip) return 'Familiar look-alikes are set aside';
     return 'Full deck · every word form is its own card';
 }
 
@@ -62,17 +59,26 @@ function summaryText() {
 // re-rendering the level bands — happens exactly once and exactly as it does
 // when the learner changes them by hand.
 function applyFastMode(on) {
-    requestedFastMode = on;
-    applyingMasterSwitch = true;
-    if (lemmaAvailable() && lemmaOn() !== on) {
-        document.querySelector(`.lemma-toggle-btn[data-lemma="${on ? 'on' : 'off'}"]`)?.click();
+    const previous = readFastTrack(selectedLanguage);
+    const hasChoices = previous.merge || previous.skip;
+    let merge = hasChoices ? previous.merge : lemmaAvailable();
+    let skip = hasChoices ? previous.skip : cognateAvailable();
+    if (on && !((merge && lemmaAvailable()) || (skip && cognateAvailable()))) {
+        if (lemmaAvailable()) merge = true;
+        else if (cognateAvailable()) skip = true;
+        else { showUnavailableMessage('all'); return; }
     }
-    if (cognateAvailable() && cognatesExcluded() !== on) {
+    applyingMasterSwitch = true;
+    if (lemmaAvailable() && lemmaOn() !== (on && merge)) {
+        document.querySelector(`.lemma-toggle-btn[data-lemma="${on && merge ? 'on' : 'off'}"]`)?.click();
+    }
+    if (cognateAvailable() && cognatesExcluded() !== (on && skip)) {
         document.querySelector(
-            `.cognate-toggle-btn[data-cognate="${on ? 'exclude' : 'include'}"]`
+            `.cognate-toggle-btn[data-cognate="${on && skip ? 'exclude' : 'include'}"]`
         )?.click();
     }
     applyingMasterSwitch = false;
+    saveFastTrack(selectedLanguage, { enabled: on, merge, skip });
     window.invalidatePreparedSetupVocabulary?.();
     // The clicks above each schedule their own refresh; this only restates what
     // the buttons now say.
@@ -91,6 +97,20 @@ function refresh() {
 
     const button = document.getElementById('fastModeToggleBtn');
     const on = state === 'on';
+    const languageName = config?.languages?.[selectedLanguage]?.name || selectedLanguage || 'Language';
+    const status = document.getElementById('fastModeLanguageStatus');
+    if (status) status.textContent = `${languageName} · ${currentUser && !currentUser.isGuest
+        ? 'Saved across devices' : 'Saved on this device'}` +
+        (availabilityResolved && !lemmaAvailable() && !cognateAvailable() ? ' · Unavailable in this deck' : '');
+    const homeSwitch = document.getElementById('fastModeHomeSwitch');
+    if (homeSwitch) homeSwitch.setAttribute('aria-pressed', String(on));
+    const switchValue = document.getElementById('fastModeHomeSwitchValue');
+    if (switchValue) switchValue.textContent = on ? 'On' : 'Off';
+    const skipped = globalThis.collectExtras?.()?.cognates?.length || 0;
+    const count = document.getElementById('fastModeSkippedCount');
+    if (count) count.textContent = skipped ? `${skipped} words` : 'No words skipped';
+    const skippedLink = document.getElementById('fastModeSkippedLink');
+    if (skippedLink) skippedLink.hidden = skipped === 0;
     if (button) {
         button.dataset.fast = on ? 'on' : 'off';
         button.classList.toggle('selected', on);
@@ -326,18 +346,32 @@ function updateKnownLanguageCopy() {
 }
 
 function openFastModePage() {
+    returnToSettings = !document.getElementById('settingsModal')?.classList.contains('hidden');
     refresh();
     updateStreamlineLanguageExamples();
     document.getElementById('fastModeModal')?.classList.remove('hidden');
 }
 
-function closeFastModePage() {
+function closeFastModePage({ reopenSettings = true } = {}) {
     document.getElementById('fastModeModal')?.classList.add('hidden');
+    if (reopenSettings && returnToSettings) window.showSettingsModalWithTab?.('study');
+    returnToSettings = false;
 }
 
 function init() {
     document.getElementById('fastModeToggleBtn')?.addEventListener('click', () => {
         applyFastMode(currentState() !== 'on');
+    });
+    document.getElementById('fastModeHomeSwitch')?.addEventListener('click', () => applyFastMode(currentState() !== 'on'));
+    document.getElementById('fastModeFineTuneBtn')?.addEventListener('click', event => {
+        const details = document.getElementById('fastModeFineTune');
+        details.hidden = !details.hidden;
+        event.currentTarget.setAttribute('aria-expanded', String(!details.hidden));
+    });
+    document.getElementById('fastModeSkippedLink')?.addEventListener('click', async () => {
+        closeFastModePage({ reopenSettings: false });
+        await window.goBackToSetup?.();
+        document.getElementById('extrasDeckSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
     document.getElementById('dismissStreamlineRecBtn')?.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -347,7 +381,7 @@ function init() {
     document.getElementById('fastModeDetailBtn')?.addEventListener('click', () => {
         openFastModePage();
     });
-    document.getElementById('closeFastModeModal')?.addEventListener('click', closeFastModePage);
+    document.getElementById('closeFastModeModal')?.addEventListener('click', () => closeFastModePage());
     document.getElementById('fastModeModal')?.addEventListener('click', event => {
         if (event.target?.id === 'fastModeModal') closeFastModePage();
     });
@@ -365,8 +399,18 @@ function init() {
     }
     document.querySelectorAll('.lemma-toggle-btn, .cognate-toggle-btn').forEach(button => {
         button.addEventListener('click', () => {
-            if (!applyingMasterSwitch) requestedFastMode = null;
-            setTimeout(refresh, 0);
+            const fromMaster = applyingMasterSwitch;
+            // ui.js owns the actual toggle and may have registered its click
+            // handler after ours. Read its result on the next task.
+            setTimeout(() => {
+                if (!fromMaster) {
+                    const previous = readFastTrack(selectedLanguage);
+                    const merge = lemmaAvailable() ? lemmaOn() : previous.merge;
+                    const skip = cognateAvailable() ? cognatesExcluded() : previous.skip;
+                    saveFastTrack(selectedLanguage, { enabled: merge || skip, merge, skip });
+                }
+                refresh();
+            }, 0);
         });
     });
 

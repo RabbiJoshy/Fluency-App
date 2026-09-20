@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-20T21:27:48+01:00",
+      "date": "2026-09-20 21:27 BST",
+      "agent": "Codex",
+      "summary": "Settings are simpler, with Fast Track saved per language and word import and export easy to find",
+      "detail": [
+        "The main Settings view now shows study choices, direct import and export actions, an account link and a single theme row instead of a long tab list.",
+        "Fast Track has one switch per language and optional fine-tuning for word forms and familiar words; turning it back on restores the learner’s choices.",
+        "Signed-in Fast Track choices sync through progress metadata across devices. Skipped-word decks remain in the main study menu.",
+        "Import and export are also available from Words & data and all-time Progress."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-20T21:23:46+01:00",
       "date": "2026-09-20 21:23 BST",
       "agent": "Codex",

@@ -40,14 +40,14 @@
             document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260920l">
+    <link rel="stylesheet" href="css/style.css?v=20260920m">
     <link rel="stylesheet" href="css/light-theme.css?v=20260920a">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260920h">
+    <link rel="modulepreload" href="js/main.js?v=20260920j">
     <link rel="modulepreload" href="js/theme.js?v=20260825ak">
     <link rel="modulepreload" href="js/state.js?v=20260917a">
     <link rel="modulepreload" href="js/data-contracts.js?v=20260825ak">
@@ -56,21 +56,22 @@
     <link rel="modulepreload" href="js/offline-content.js?v=20260825ak">
     <link rel="modulepreload" href="js/speech.js?v=20260914b">
     <link rel="modulepreload" href="js/artist-ui.js?v=20260825ak">
-    <link rel="modulepreload" href="js/auth.js?v=20260912a">
+    <link rel="modulepreload" href="js/auth.js?v=20260920b">
     <link rel="modulepreload" href="js/about-example.js?v=20260920i">
     <link rel="modulepreload" href="js/estimation.js?v=20260825ak">
     <link rel="modulepreload" href="js/config.js?v=20260919c">
     <link rel="modulepreload" href="js/progress.js?v=20260920e">
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20260920a">
-    <link rel="modulepreload" href="js/ui.js?v=20260920f">
+    <link rel="modulepreload" href="js/ui.js?v=20260920g">
+    <link rel="modulepreload" href="js/fast-track-preferences.js?v=20260920a">
     <link rel="modulepreload" href="js/vocab.js?v=20260920f">
     <link rel="modulepreload" href="js/song-sets-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/song-sets.js?v=20260823ae">
     <link rel="modulepreload" href="js/spotify-playlist-import.js?v=20260919a">
     <link rel="modulepreload" href="js/playlist-live.js?v=20260919a">
     <link rel="modulepreload" href="js/vocabulary-import-core.js?v=20260825ak">
-    <link rel="modulepreload" href="js/vocabulary-import.js?v=20260913a">
+    <link rel="modulepreload" href="js/vocabulary-import.js?v=20260920a">
     <link rel="modulepreload" href="js/spanishdict-usage.js?v=20260825ak">
     <link rel="modulepreload" href="js/reverse-cues.js?v=20260917a">
     <link rel="modulepreload" href="js/flashcards.js?v=20260920e">
@@ -1097,7 +1098,7 @@
     <!-- Fast mode page — the whole explanation plus the individual controls,
          so "what did this do to my deck?" is answerable in one place instead of
          being split between a toggle and a help tooltip. -->
-    <div id="fastModeModal" class="modal hidden">
+            <div id="fastModeModal" class="modal hidden">
         <div class="modal-content fullscreen-modal fast-mode-page">
             <button class="modal-close fast-mode-close" id="closeFastModeModal" aria-label="Close">✕</button>
             <div class="fast-mode-page-body">
@@ -1105,9 +1106,12 @@
                     <h2>Fast Track</h2>
                     <span class="streamline-rec-badge">Recommended</span>
                 </div>
-                <p class="fast-mode-lede">Cuts study time by grouping word forms and setting aside obvious English look-alikes, so you study fewer cards for the same coverage.</p>
+                <p class="fast-mode-lede">Study fewer cards by grouping related word forms or setting aside familiar look-alikes. Choose which shortcuts to use below.</p>
+                <p class="fast-mode-language-status" id="fastModeLanguageStatus"></p>
+                <button type="button" class="fast-mode-language-switch" id="fastModeHomeSwitch" aria-pressed="false"><span>Fast Track</span><strong id="fastModeHomeSwitchValue">Off</strong></button>
+                <button type="button" class="fast-mode-fine-tune" id="fastModeFineTuneBtn" aria-expanded="false" aria-controls="fastModeFineTune">Fine-tune Fast Track <span aria-hidden="true">›</span></button>
 
-                <div class="fast-mode-controls">
+                <div class="fast-mode-controls" id="fastModeFineTune" hidden>
                     <div id="lemmaToggleContainer" class="setup-substep" style="display: none;">
                         <div class="substep-header">
                             <span class="fast-mode-number" aria-hidden="true">1</span>
@@ -1162,6 +1166,7 @@
                     </div>
 
                 </div>
+                <button type="button" class="fast-mode-skipped-link" id="fastModeSkippedLink">Study skipped words <span id="fastModeSkippedCount"></span><span aria-hidden="true">›</span></button>
 
                 <!-- Admin / Diagnostic Technical Details (strictly gated to owner/admin) -->
                 <div id="fastModeAdminDetails" class="fast-mode-admin-details" style="display: none;">
@@ -1606,6 +1611,12 @@
                     <div class="stat-row"><span>Correct:</span><span id="totalWordsCorrect">0</span></div>
                     <div class="stat-row"><span>Incorrect:</span><span id="totalWordsIncorrect">0</span></div>
                 </div>
+                <div class="progress-data-actions">
+                    <button type="button" id="progressImportKnownBtn">Import known words</button>
+                    <button type="button" id="progressExportMistakesBtn">Export mistakes</button>
+                    <button type="button" id="progressWordsDataBtn">Words &amp; data ›</button>
+                </div>
+                <p id="progressDataActionStatus" role="status" aria-live="polite"></p>
             </div>
         </div>
     </div>
@@ -1615,10 +1626,10 @@
         <div class="modal-content settings-modal-content">
             <div class="settings-tabs-header">
                 <div class="settings-title-block">
+                    <button type="button" class="settings-back" id="settingsBackBtn" aria-label="Back to Settings" hidden>‹</button>
                     <h2 id="settingsTitle">Settings</h2>
                 </div>
                 <div class="settings-header-actions">
-                    <label class="settings-search"><span class="visually-hidden">Find a setting</span><input id="settingsSearch" type="search" placeholder="Find a setting" autocomplete="off"></label>
                     <button class="modal-close" id="closeSettingsModal" aria-label="Close settings">✕</button>
                 </div>
             </div>
@@ -1640,70 +1651,10 @@
             <div class="settings-tab-content" id="studyTabContent">
                 <section class="settings-defaults-card" aria-labelledby="studyDefaultsTitle">
                     <div class="settings-defaults-heading">
-                        <strong id="studyDefaultsTitle">Study preferences</strong>
-                        <span>Defaults for new sets</span>
+                        <strong id="studyDefaultsTitle">Study</strong>
                     </div>
-                    <p class="settings-defaults-warning">
-                        These choices apply to new sets. A set already in progress keeps the choices it started with.
-                    </p>
-
-                    <!-- Fast Track Group -->
-                    <div class="settings-preference-group settings-preference-group--primary">
-                        <div class="settings-group-heading">
-                            <strong>Fast Track <span class="streamline-rec-badge">Recommended</span></strong>
-                            <span>Fewer cards: related forms share one card, and obvious English look-alikes are set aside</span>
-                        </div>
-                        <div class="settings-default-row">
-                            <span class="settings-row-label-block">
-                                <span class="settings-row-label">Group word forms
-                                    <button type="button" class="settings-info-btn" aria-label="Explain grouping word forms" aria-expanded="false">?</button>
-                                </span>
-                                <small class="settings-row-explanation" hidden>Collapses inflected forms (e.g. hablo, habló) onto one card for the base dictionary word, keeping all examples together.</small>
-                            </span>
-                            <div class="group-size-selector settings-toggle" role="group" aria-label="Default Merge Lemmas setting">
-                                <button type="button" class="group-size-btn global-study-default-btn selected" data-setting="mergeLemmas" data-value="off" aria-pressed="true">Off</button>
-                                <button type="button" class="group-size-btn global-study-default-btn" data-setting="mergeLemmas" data-value="on" aria-pressed="false">On</button>
-                            </div>
-                        </div>
-                        <div class="settings-default-row">
-                            <span class="settings-row-label-block">
-                                <span class="settings-row-label">Familiar cognates
-                                    <button type="button" class="settings-info-btn" aria-label="Explain cognate inclusion" aria-expanded="false">?</button>
-                                </span>
-                                <small class="settings-row-explanation" id="cognateSettingExplanation" hidden>Sets aside words whose meaning is already obvious from English.</small>
-                            </span>
-                            <div class="group-size-selector settings-toggle" role="group" aria-label="Default cognate inclusion setting">
-                                <button type="button" class="group-size-btn global-study-default-btn selected" data-setting="excludeCognates" data-value="off" aria-pressed="true">Include</button>
-                                <button type="button" class="group-size-btn global-study-default-btn" data-setting="excludeCognates" data-value="on" aria-pressed="false">Exclude</button>
-                            </div>
-                        </div>
-                        <!-- Cognate exclusion sensitivity moved to Developer -->
-                    </div>
-
-                    <!-- After a correct card -->
+                    <p class="settings-compact-note">Choose how you study. Fast Track changes take effect when you next enter a set.</p>
                     <div class="settings-preference-group">
-                        <div class="settings-group-heading">
-                            <strong>After a correct card</strong>
-                            <span>Optional extras before the next word</span>
-                        </div>
-                        <div class="settings-default-row">
-                            <span class="settings-row-label-block">
-                                <span class="settings-row-label">Rare senses &amp; expressions</span>
-                                <small class="settings-row-explanation">Show rare dictionary senses and expressions automatically after a correct answer.</small>
-                            </span>
-                            <div class="group-size-selector settings-toggle" role="group" aria-label="Rare senses and expressions after a correct card">
-                                <button type="button" class="group-size-btn global-study-default-btn" data-setting="phrasesMode" data-value="off" aria-pressed="false">Off</button>
-                                <button type="button" class="group-size-btn global-study-default-btn selected" data-setting="phrasesMode" data-value="on" aria-pressed="true">On</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Card front & speech -->
-                    <div class="settings-preference-group">
-                        <div class="settings-group-heading">
-                            <strong>How each card starts</strong>
-                            <span>What you see and hear first</span>
-                        </div>
                         <div class="settings-default-row">
                             <span class="settings-row-label-block">
                                 <span class="settings-row-label">Show first</span>
@@ -1725,6 +1676,45 @@
                             </div>
                         </div>
                     </div>
+                    <div class="settings-default-row">
+                        <span class="settings-row-label-block"><span class="settings-row-label">Bring back learned words</span></span>
+                        <div class="group-size-selector settings-toggle" role="group" aria-label="Bring back learned words later">
+                            <button type="button" class="group-size-btn global-study-default-btn" data-setting="spacedRepetitionEnabled" data-value="off" aria-pressed="false">Off</button>
+                            <button type="button" class="group-size-btn global-study-default-btn selected" data-setting="spacedRepetitionEnabled" data-value="on" aria-pressed="true">On</button>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-link-row" id="settingsFastTrackBtn"><span><strong>Fast Track</strong><small id="settingsFastTrackStatus">For this language · Off</small></span><span aria-hidden="true">›</span></button>
+                    <details class="settings-more-options"><summary>More study options</summary>
+                        <div class="settings-default-row">
+                            <span class="settings-row-label-block"><span class="settings-row-label">Rare meanings after a correct answer</span></span>
+                            <div class="group-size-selector settings-toggle" role="group" aria-label="Rare meanings and expressions after a correct card">
+                                <button type="button" class="group-size-btn global-study-default-btn" data-setting="phrasesMode" data-value="off" aria-pressed="false">Off</button>
+                                <button type="button" class="group-size-btn global-study-default-btn selected" data-setting="phrasesMode" data-value="on" aria-pressed="true">On</button>
+                            </div>
+                        </div>
+                    </details>
+                </section>
+                <section class="settings-overview-section" aria-labelledby="settingsWordsTitle">
+                    <div class="settings-defaults-heading"><strong id="settingsWordsTitle">Your words</strong></div>
+                    <div class="settings-data-actions">
+                        <button type="button" id="settingsImportKnownBtn">Import known words</button>
+                        <button type="button" id="settingsExportMistakesBtn">Export mistakes</button>
+                    </div>
+                    <p id="settingsDataActionStatus" class="settings-compact-note" role="status" aria-live="polite"></p>
+                    <button type="button" class="settings-link-row" id="settingsWordsDataBtn"><span><strong>Words &amp; data</strong><small>Manage imports, exports and practice tools</small></span><span aria-hidden="true">›</span></button>
+                </section>
+                <section class="settings-overview-section settings-overview-footer">
+                    <button type="button" class="settings-link-row" id="settingsAccountBtn"><span><strong>Account</strong><small>Your profile and connections</small></span><span aria-hidden="true">›</span></button>
+                    <div class="appearance-settings-card" aria-labelledby="appearanceSettingsTitle">
+                        <div class="appearance-settings-copy"><strong id="appearanceSettingsTitle">Theme</strong></div>
+                        <div class="group-size-selector settings-toggle appearance-selector" role="radiogroup" aria-label="App appearance">
+                            <button type="button" class="group-size-btn theme-preference-btn selected" data-theme-preference="dark" role="radio" aria-checked="true" tabindex="0">Dark</button>
+                            <button type="button" class="group-size-btn theme-preference-btn" data-theme-preference="light" role="radio" aria-checked="false" tabindex="-1">Light</button>
+                            <button type="button" class="group-size-btn theme-preference-btn" data-theme-preference="system" role="radio" aria-checked="false" tabindex="-1">System</button>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-footer-link" id="settingsAboutBtn">About Fluency</button>
+                    <button type="button" class="settings-footer-link" id="settingsAdminBtn" hidden>Owner tools</button>
                 </section>
             </div>
             <div class="settings-tab-content" id="lookupTabContent">
@@ -1752,16 +1742,7 @@
                 </div>
             </div>
             <div class="settings-tab-content" id="vocabularyTabContent">
-                <p class="settings-section-intro">Connect your favorite music and study tools, import external vocabulary, or export your mistake history.</p>
-                <section class="settings-feature-card" aria-labelledby="spotifyConnectionTitle">
-                    <span class="settings-feature-icon" id="spotifyConnectionIcon" aria-hidden="true">♫</span>
-                    <div>
-                        <strong id="spotifyConnectionTitle">Spotify</strong>
-                        <p>Stay connected so lyric playback just works, and so you can build a deck straight from one of your playlists.</p>
-                    </div>
-                    <button type="button" class="settings-feature-action" id="spotifyConnectBtn">Connect</button>
-                    <p id="spotifyConnectionStatus" class="settings-feature-note"></p>
-                </section>
+                <p class="settings-section-intro">Bring in words you already know or take your mistakes elsewhere.</p>
                 <section class="settings-feature-card" aria-labelledby="savedWordsSettingsTitle">
                     <span class="settings-feature-icon" aria-hidden="true">★</span>
                     <div>
@@ -1774,7 +1755,7 @@
                     <span class="settings-feature-icon" aria-hidden="true">Aa</span>
                     <div>
                         <strong id="vocabularySettingsTitle">Known vocabulary</strong>
-                        <p>Already know some of these words from another app or course? Upload your list so Fluency starts you further in — paste it or choose a text, CSV or TSV file. Matches exact word forms in your target language, previews every change first, and never overwrites a newer answer already saved here.</p>
+                        <p>Paste words or upload a text, CSV or TSV file. Review changes before importing.</p>
                     </div>
                     <button type="button" class="settings-feature-action" id="openVocabularyImportBtn">Import words</button>
                     <p id="vocabularyImportAvailability" class="settings-feature-note"></p>
@@ -1783,7 +1764,7 @@
                     <span class="settings-feature-icon" aria-hidden="true">↓</span>
                     <div>
                         <strong id="mistakeExportTitle">Export mistakes</strong>
-                        <p>Download every word you've ever gotten wrong here — how many times, when you were last wrong, and where it stands with the review scheduler — as a CSV you can take into another app.</p>
+                        <p>Download your mistake history as a CSV.</p>
                     </div>
                     <button type="button" class="settings-feature-action" id="exportMistakesBtn">Download CSV</button>
                     <p id="mistakeExportStatus" class="settings-feature-note" role="status" aria-live="polite"></p>
@@ -1799,27 +1780,16 @@
                     <textarea id="chatgptPromptFallback" class="vocabulary-import-text" rows="4" readonly hidden style="grid-column: 2 / -1;"></textarea>
                 </section>
             </div>
-            <div class="settings-tab-content" id="appearanceTabContent">
-                <p class="settings-section-intro">Choose the appearance that feels most comfortable on this device.</p>
-                <section class="appearance-settings-card" aria-labelledby="appearanceSettingsTitle">
-                    <div class="appearance-settings-copy">
-                        <strong id="appearanceSettingsTitle">Colour theme</strong>
-                        <small>System changes automatically with this device.</small>
-                    </div>
-                    <div class="group-size-selector settings-toggle appearance-selector"
-                         role="radiogroup" aria-label="App appearance">
-                        <button type="button" class="group-size-btn theme-preference-btn selected"
-                                data-theme-preference="dark" role="radio" aria-checked="true" tabindex="0">Dark</button>
-                        <button type="button" class="group-size-btn theme-preference-btn"
-                                data-theme-preference="light" role="radio" aria-checked="false" tabindex="-1">Light</button>
-                        <button type="button" class="group-size-btn theme-preference-btn"
-                                data-theme-preference="system" role="radio" aria-checked="false" tabindex="-1">System</button>
-                    </div>
-                </section>
-            </div>
+            <div class="settings-tab-content" id="appearanceTabContent"></div>
             <!-- Account tab content -->
             <div class="settings-tab-content" id="accountTabContent">
                 <p class="settings-section-intro">Manage the profile used to save progress on this device.</p>
+                <section class="settings-feature-card" aria-labelledby="spotifyConnectionTitle">
+                    <span class="settings-feature-icon" id="spotifyConnectionIcon" aria-hidden="true">♫</span>
+                    <div><strong id="spotifyConnectionTitle">Spotify</strong><p>Connect for lyric playback and playlist decks.</p></div>
+                    <button type="button" class="settings-feature-action" id="spotifyConnectBtn">Connect</button>
+                    <p id="spotifyConnectionStatus" class="settings-feature-note"></p>
+                </section>
                 <div class="stat-row">
                     <span>Your profile</span>
                     <span id="accountUserBadge" style="font-weight: 700;">GUEST</span>
@@ -2015,6 +1985,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260920h"></script>
+    <script type="module" src="js/main.js?v=20260920j"></script>
 </body>
 </html>

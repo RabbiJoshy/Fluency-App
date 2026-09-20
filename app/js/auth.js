@@ -1,6 +1,7 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
 import './state.js?v=20260825ak';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=20260920a';
 import { dbGet, dbPut } from './offline-db.js?v=20260825ak';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
@@ -122,6 +123,7 @@ function checkAuthentication() {
                 localStorage.removeItem('flashcardUser');  // legacy cleanup
             } else if (parsed) {
                 currentUser = parsed;
+                window.applyGlobalStudyDefaults?.();
                 showUserInfo();
                 hideAuthModal();
                 return;
@@ -134,6 +136,7 @@ function checkAuthentication() {
     // switches) but was just cleared above if this load is a reload.
     if (sessionStorage.getItem('flashcardGuestSession') === '1') {
         currentUser = { isGuest: true };
+        window.applyGlobalStudyDefaults?.();
         showUserInfo();
         hideAuthModal();
         return;
@@ -239,6 +242,7 @@ async function submitLogin() {
     }
 
     currentUser = { initials: initials, isGuest: false, hasPassword: Boolean(password || storedPassword) };
+    window.applyGlobalStudyDefaults?.();
     localStorage.setItem('flashcardUser', JSON.stringify(currentUser));
     showUserInfo();
     hideAuthModal();
@@ -277,6 +281,7 @@ function logout() {
     // Clean the legacy sessionStorage guest marker too, in case it's lingering.
     sessionStorage.removeItem('flashcardGuestSession');
     currentUser = null;
+    window.applyGlobalStudyDefaults?.();
     progressData = {}; window.bumpProgressEpoch?.();
     itemProgressData = {}; window.bumpProgressEpoch?.();
     levelEstimates = {};
@@ -819,6 +824,7 @@ async function loadUserProgressFromSheet() {
         markedDoneLevels = progressResult?.success
             ? markedDoneFromMeta(progressResult.data?.meta)
             : markedDoneLevels;
+        applyRemoteFastTrack(progressResult.data?.meta, { full: !gotDelta });
 
         // Overlay any still-queued (un-synced) local writes on top of the
         // freshly-loaded sheet data — those answers are newer than what Sheets

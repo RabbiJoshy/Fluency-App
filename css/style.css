@@ -17801,6 +17801,58 @@ body {
   background: var(--bg-tertiary);
 }
 
+/* Compact learner settings; detail screens reuse the same modal without tabs. */
+#settingsModal .settings-modal-content > .settings-tabs { display: none; }
+#settingsModal .settings-modal-content { width: min(94vw, 590px); max-width: 590px; }
+#settingsModal .settings-title-block { display: flex; align-items: center; gap: 12px; }
+#settingsModal .settings-back {
+  border: 0; background: transparent; color: var(--text-primary);
+  font: 600 30px/1 var(--font-reading); cursor: pointer;
+}
+#settingsModal .settings-back[hidden] { display: none; }
+#settingsModal .settings-defaults-heading { margin: 0; }
+#settingsModal .settings-preference-group { margin: 0; padding: 0; border: 0; background: none; }
+#settingsModal .settings-default-row { padding: 12px 0; }
+#settingsModal .settings-compact-note { margin: 0 0 10px; color: var(--text-muted); font-size: 12px; line-height: 1.4; }
+#settingsModal .settings-link-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  width: 100%; padding: 13px 0; border: 0; border-top: 1px solid var(--border-color);
+  background: transparent; color: var(--text-primary); text-align: left; cursor: pointer;
+}
+#settingsModal .settings-link-row strong,
+#settingsModal .settings-link-row small { display: block; }
+#settingsModal .settings-link-row strong { font-size: 13px; }
+#settingsModal .settings-link-row small { margin-top: 3px; color: var(--text-muted); font-size: 11px; }
+#settingsModal .settings-link-row > span:last-child { color: var(--text-muted); font-size: 22px; }
+#settingsModal .settings-overview-section { margin-top: 20px; padding-top: 17px; border-top: 1px solid var(--border-color); }
+#settingsModal .settings-more-options { border-top: 1px solid var(--border-color); }
+#settingsModal .settings-more-options summary { padding: 13px 0; color: var(--text-secondary); cursor: pointer; font-size: 12px; font-weight: 650; }
+#settingsModal .settings-data-actions,
+.progress-data-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin: 8px 0 12px; }
+#settingsModal .settings-data-actions button,
+.progress-data-actions button { min-height: 43px; border: 1px solid var(--border-color); border-radius: 10px; background: var(--bg-tertiary); color: var(--text-primary); font: 650 12px/1.3 var(--font-reading); cursor: pointer; }
+#settingsModal .settings-data-actions button:first-child { border-color: var(--accent-primary); }
+#settingsModal .settings-data-actions button:disabled,
+.progress-data-actions button:disabled { opacity: .5; cursor: not-allowed; }
+#settingsModal .settings-overview-footer .appearance-settings-card { margin: 0; padding: 12px 0; border: 0; border-top: 1px solid var(--border-color); background: none; }
+#settingsModal .settings-overview-footer .appearance-settings-copy strong { font-size: 13px; }
+#settingsModal .settings-footer-link { display: inline-block; margin: 8px 16px 0 0; padding: 4px 0; border: 0; background: none; color: var(--text-muted); font-size: 11px; cursor: pointer; }
+#settingsModal .settings-footer-link[hidden] { display: none; }
+.progress-data-actions { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 18px; }
+.fast-mode-language-status { color: var(--text-muted); font-size: 12px; }
+.fast-mode-language-switch,
+.fast-mode-fine-tune,
+.fast-mode-skipped-link { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 46px; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 11px; background: var(--bg-tertiary); color: var(--text-primary); cursor: pointer; font: 650 13px/1.3 var(--font-reading); }
+.fast-mode-language-switch strong { color: var(--accent-primary); }
+.fast-mode-fine-tune,
+.fast-mode-skipped-link { margin-top: 10px; background: transparent; }
+#fastModeFineTune { margin-top: 16px; }
+#fastModeFineTune[hidden], #fastModeSkippedLink[hidden] { display: none !important; }
+@media (max-width: 600px) {
+  #settingsModal .settings-data-actions,
+  .progress-data-actions { grid-template-columns: 1fr; }
+}
+
 .settings-header-actions { display: flex; align-items: center; gap: 9px; }
 .settings-search { display: block; }
 .settings-search input {
@@ -18731,4 +18783,31 @@ body.artist-mode #flashcardMode::before {
   #topBar .learning-context-chip-copy strong { font-size: 12px; }
   .top-bar-right-controls { gap: 3px; }
   #topBar .top-bar-user-name { max-width: 72px; }
+}
+
+/* The settings overview and its detail pages use one column at every width. */
+#settingsModal .settings-modal-content > .settings-tabs { display: none !important; }
+@media (min-width: 701px) {
+  #settingsModal .settings-modal-content {
+    display: block;
+    width: min(94vw, 590px);
+    max-width: 590px;
+    height: auto;
+    max-height: min(90dvh, 780px);
+    padding: 0 24px 26px;
+    overflow-y: auto;
+  }
+  #settingsModal .settings-modal-content > .settings-tabs-header {
+    position: sticky;
+    top: 0;
+    margin: 0 -24px 16px;
+    padding: 18px 24px 14px;
+  }
+  #settingsModal .settings-tab-content {
+    display: none;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+  }
+  #settingsModal .settings-tab-content.active { display: block; }
 }

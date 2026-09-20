@@ -39,7 +39,7 @@ function openVocabularyImportModal() {
 function closeVocabularyImportModal({ reopenSettings = true } = {}) {
     element('vocabularyImportModal').classList.add('hidden');
     clearPreview();
-    if (reopenSettings) window.showSettingsModalWithTab?.('account');
+    if (reopenSettings) window.showSettingsModalWithTab?.('study');
 }
 
 function summaryCell(value, label) {

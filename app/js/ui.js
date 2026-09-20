@@ -1,6 +1,7 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
 import './state.js?v=20260825ak';
+import { readFastTrack } from './fast-track-preferences.js?v=20260920a';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 let _setupLevelSelectionWasManual = false;
@@ -65,8 +66,9 @@ function readGlobalStudyDefaults() {
 
 function applyGlobalStudyDefaults() {
     const saved = readGlobalStudyDefaults();
-    useLemmaMode = saved.mergeLemmas === true;
-    excludeCognates = saved.excludeCognates === true;
+    const fastTrack = readFastTrack(selectedLanguage);
+    useLemmaMode = fastTrack.enabled && fastTrack.merge;
+    excludeCognates = fastTrack.enabled && fastTrack.skip;
     isFlipped = saved.directionFlipped === true;
     speechEnabled = saved.speechEnabled !== false;
     spacedRepetitionEnabled = saved.spacedRepetitionEnabled !== false;
@@ -89,9 +91,10 @@ function syncStudyPreferenceControls() {
         button.classList.toggle('selected', (button.dataset.cognate === 'exclude') === excludeCognates));
 
     const saved = readGlobalStudyDefaults();
+    const fastTrack = readFastTrack(selectedLanguage);
     const effective = {
-        mergeLemmas: saved.mergeLemmas === true,
-        excludeCognates: saved.excludeCognates === true,
+        mergeLemmas: fastTrack.enabled && fastTrack.merge,
+        excludeCognates: fastTrack.enabled && fastTrack.skip,
         directionFlipped: saved.directionFlipped === true,
         speechEnabled: saved.speechEnabled !== false,
         spacedRepetitionEnabled: saved.spacedRepetitionEnabled !== false,
@@ -114,6 +117,11 @@ function syncStudyPreferenceControls() {
     if (targetBtn) {
         const langName = config?.languages?.[selectedLanguage]?.name;
         targetBtn.textContent = langName || 'Language';
+    }
+    const fastStatus = document.getElementById('settingsFastTrackStatus');
+    if (fastStatus) {
+        const languageName = config?.languages?.[selectedLanguage]?.name || selectedLanguage || 'Language';
+        fastStatus.textContent = `${languageName} · ${fastTrack.enabled ? 'On' : 'Off'}`;
     }
     const vocabDesc = document.querySelector('#vocabularySettingsTitle + p');
     if (vocabDesc) {
@@ -194,6 +202,7 @@ async function refreshAfterGlobalStudyDefaultChange() {
 }
 
 function setupGlobalStudyDefaults() {
+    setupSettingsOverview();
     syncStudyPreferenceControls();
     setupSettingExplanations();
     document.querySelectorAll('.global-study-default-btn').forEach(button => {
@@ -2850,6 +2859,7 @@ function showSettingsModal() {
 }
 
 function showSettingsModalWithTab(tabName, { singleTab = false } = {}) {
+    setupSettingsOverview();
     // Show/hide refresh set option based on whether a study set is loaded and user is logged in
     const refreshSetToggle = document.getElementById('refreshSetToggle');
     if (currentUser && !currentUser.isGuest && flashcards.length > 0) {
@@ -2895,6 +2905,16 @@ function showSettingsModalWithTab(tabName, { singleTab = false } = {}) {
     if (storageTabBtn) storageTabBtn.hidden = !isJstAccount;
     if (appDataTabBtn) appDataTabBtn.hidden = !isJstAccount;
     if (adminLabel) adminLabel.hidden = !isJstAccount;
+    document.getElementById('settingsAdminBtn').hidden = !isJstAccount;
+    const canImport = Boolean(currentUser && !currentUser.isGuest && selectedLanguage === 'spanish');
+    for (const id of ['settingsImportKnownBtn', 'progressImportKnownBtn']) {
+        const button = document.getElementById(id);
+        if (button) button.disabled = !canImport;
+    }
+    const importNote = document.getElementById('settingsDataActionStatus');
+    if (importNote) importNote.textContent = canImport ? ''
+        : currentUser?.isGuest ? 'Sign in to import known words.'
+        : 'Import is currently available for Spanish speech.';
 
     // Show/hide clear level estimate row
     const estimate = levelEstimates[selectedLanguage] || 0;
@@ -2922,14 +2942,19 @@ function showSettingsModalWithTab(tabName, { singleTab = false } = {}) {
     };
     const adminOnlyTabs = new Set(['offline', 'appData']);
     const requestedTab = tabContentIds[tabName] && (!adminOnlyTabs.has(tabName) || isJstAccount)
-        ? tabName
+        ? ({ lookup: 'study', review: 'study', appearance: 'study' }[tabName] || tabName)
         : 'study';
-    const showOnlyStudy = singleTab && requestedTab === 'study';
-    settingsModal.classList.toggle('settings-single-tab', showOnlyStudy);
+    settingsModal.classList.toggle('settings-single-tab', requestedTab === 'study');
     settingsModal.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
     settingsModal.querySelector(`.settings-tab[data-tab="${requestedTab}"]`)?.classList.add('active');
     settingsModal.querySelectorAll('.settings-tab-content').forEach(c => c.classList.remove('active'));
     document.getElementById(tabContentIds[requestedTab]).classList.add('active');
+    const title = { study: 'Settings', vocabulary: 'Words & data', account: 'Account',
+        offline: 'Storage', appData: 'Owner tools', about: 'About Fluency' }[requestedTab] || 'Settings';
+    document.getElementById('settingsTitle').textContent = title;
+    document.getElementById('settingsBackBtn').hidden = requestedTab === 'study';
+    settingsModal.querySelector('.settings-modal-content').scrollTop = 0;
+    syncStudyPreferenceControls();
 
     // Data-freshness footer: newest Last-Modified across the vocab files
     // (set in vocab.js trackDataFreshness). An old date = the service
@@ -2955,6 +2980,54 @@ function showSettingsModalWithTab(tabName, { singleTab = false } = {}) {
 
     settingsModal.classList.remove('hidden');
 }
+
+function setupSettingsOverview() {
+    const modal = document.getElementById('settingsModal');
+    if (!modal || modal.dataset.overviewReady === 'true') return;
+    modal.dataset.overviewReady = 'true';
+    const go = (id, tab) => document.getElementById(id)?.addEventListener('click', () => showSettingsModalWithTab(tab));
+    go('settingsBackBtn', 'study');
+    go('settingsWordsDataBtn', 'vocabulary');
+    go('settingsAccountBtn', 'account');
+    go('settingsAdminBtn', 'appData');
+    document.getElementById('settingsAboutBtn')?.addEventListener('click', () =>
+        document.getElementById('aboutProjectSettingsRow')?.click());
+    document.getElementById('settingsFastTrackBtn')?.addEventListener('click', () => {
+        window.openFastModePage?.();
+        modal.classList.add('hidden');
+    });
+    const runImport = () => {
+        if (!currentUser || currentUser.isGuest || selectedLanguage !== 'spanish') return;
+        window.openVocabularyImportModal?.();
+    };
+    const runExport = statusId => {
+        document.getElementById('exportMistakesBtn')?.click();
+        const status = document.getElementById(statusId);
+        if (status) status.textContent = document.getElementById('mistakeExportStatus')?.textContent || '';
+    };
+    document.getElementById('settingsImportKnownBtn')?.addEventListener('click', runImport);
+    document.getElementById('settingsExportMistakesBtn')?.addEventListener('click', () => runExport('settingsDataActionStatus'));
+    document.getElementById('progressImportKnownBtn')?.addEventListener('click', () => {
+        hideTotalStatsModal();
+        runImport();
+    });
+    document.getElementById('progressExportMistakesBtn')?.addEventListener('click', () => runExport('progressDataActionStatus'));
+    document.getElementById('progressWordsDataBtn')?.addEventListener('click', () => {
+        hideTotalStatsModal();
+        showSettingsModalWithTab('vocabulary');
+    });
+}
+
+window.addEventListener('fast-track-preference-change', event => {
+    if (event.detail?.language !== selectedLanguage) return;
+    syncStudyPreferenceControls();
+    if (event.detail?.source !== 'remote') return;
+    const setupPanel = document.getElementById('setupPanel');
+    if (setupPanel && !setupPanel.classList.contains('hidden')) {
+        applyGlobalStudyDefaults();
+        refreshAfterGlobalStudyDefaultChange().catch(error => console.warn('Fast Track refresh failed', error));
+    }
+});
 
 function escapeDevText(str) {
     if (!str) return '';
@@ -3128,6 +3201,11 @@ function hideSettingsModal() {
 }
 
 async function showTotalStatsModal() {
+    const importButton = document.getElementById('progressImportKnownBtn');
+    if (importButton) importButton.disabled = !currentUser || currentUser.isGuest || selectedLanguage !== 'spanish';
+    const importStatus = document.getElementById('progressDataActionStatus');
+    if (importStatus) importStatus.textContent = importButton?.disabled
+        ? 'Import is available when signed in to Spanish speech.' : '';
     // Update language name in the header
     const langConfig = config.languages[selectedLanguage];
     const langName = langConfig ? langConfig.name : selectedLanguage;
