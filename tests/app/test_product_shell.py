@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v488"
+EXPECTED_CACHE_NAME = "flashcards-v489"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -265,8 +265,20 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="aboutExampleMobileCoach"', html)
         self.assertIn("function moveMobileTour(direction)", walkthrough)
         self.assertIn("MOBILE_WALKTHROUGH_QUERY", walkthrough)
-        self.assertIn("'Show front'", walkthrough)
+        self.assertIn("'Answer side'", walkthrough)
         self.assertIn("'Finish'", walkthrough)
+        # Front first: the learner meets the question side before the answer,
+        # the same order study puts them in.
+        self.assertIn("function showTutorialChapter(index, flipped = false", walkthrough)
+        # The walkthrough owns the flip. Tapping the card and pressing space
+        # both used to turn it mid-tour, which broke the guided order.
+        self.assertNotIn("function wireCardShell", walkthrough)
+        self.assertNotIn("e.key === ' '", walkthrough)
+        # A short mime of the setup flow runs before the first card.
+        self.assertIn('id="aboutExampleSetupAnim"', html)
+        self.assertIn("function playSetupIntro(onDone)", walkthrough)
+        self.assertIn("function skipSetupIntro()", walkthrough)
+        self.assertIn(".about-example-body.is-setup-intro", styles)
         self.assertIn("@keyframes about-example-mobile-spotlight", styles)
         self.assertIn("@media (prefers-reduced-motion: reduce)", styles)
 
@@ -818,7 +830,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
         self.assertIn("/js/spotify-playlist-import.js?v=20260919a", worker)
-        self.assertIn('css/style.css?v=20260920b', html)
+        self.assertIn('css/style.css?v=20260920c', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
         self.assertIn("searchParams.set('playlistLive'", importer)
