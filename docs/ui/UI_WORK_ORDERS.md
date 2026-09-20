@@ -14,16 +14,25 @@ sense-metadata legibility floor.
 
 ## Reading the order
 
+Ordered by how much back-and-forth each one needs, not by subject. Nothing here
+is handed off — the ones at the bottom simply need a conversation before they
+need code, so they come last.
+
 | # | Group | Cost | Needs Joshua? |
 |---|---|---|---|
 | 1 | Small UI polish | ✅ done 2026-09-20 | — |
 | 2 | Example footer layout | ✅ done 2026-09-20 | — |
 | 3 | Header and underline must agree | ✅ done 2026-09-20 | — |
-| 4 | Content that is wrong or unhelpful | medium | one editorial list |
-| 5 | The "jump to my level" bug | unknown — investigation | no |
+| 4 | Portuguese cognate exclusions | ✅ done 2026-09-21 | — |
+| 5 | The "jump to my level" bug | ✅ done 2026-09-21 | — |
 | 6 | Example ordering | medium + a deck rebuild | one decision |
-| 7 | Merged-lemma policy | research, back-and-forth | yes, throughout |
-| — | Four handbacks | slowest | own chat each |
+| 7 | Merged-lemma policy | research | yes, throughout |
+| 8 | Modals using the sides | needs a modal inventory first | yes |
+| 9 | Walkthrough / tutorial / about | needs the current state established first | yes |
+| 10 | URLs and routing | blocked on one decision | yes |
+| 11 | Function words you cannot teach atomically | research, high stakes | yes |
+| 12 | Sense metadata vocabulary | a conversation per family | yes, a whole pass |
+| 13 | English inflections in translations (*solía*) | part of a separate problem | yes |
 
 ## Rules for every chat in this batch
 
@@ -151,42 +160,36 @@ lemma merging on.
 
 ---
 
-## 4. Content that is wrong or unhelpful — medium, one editorial list needed
+## 4. Portuguese cognate exclusions — ✅ DONE 2026-09-21
 
-Not code bugs; the data or the editorial choice is wrong. Grouped because each
-needs a judgement about what the learner should see, and none needs much code.
-
-- **`solía` English glosses are bad** ("he was using to"). Gloss-quality issue
-  in the sense-menu projection, not in the app.
-- **Portuguese cognate exclusions** do not show the English cognate in the
-  excluded-words list, though other languages do. Start at
-  `src/fluency/features/cognates.py` and the Fast Track exclusion-list
-  rendering — likely a missing field for pt rather than a UI bug.
-- **Sense metadata vocabulary** — *needs Joshua's list before coding.* Does
-  `2nd pl` help a learner? Which short metadata should become an icon rather
-  than a third line of tiny text? Which families are worth showing at all? The
-  legibility floor is already shipped; this is about *what* is shown.
-
-**Done when:** the two data bugs are fixed and there is an agreed list of which
-metadata families ship, which become icons, and which are dropped.
+Reported for Portuguese; it was not a Portuguese bug. The setup screen loads
+the **skinny** index (`id`, `word`, `rank`, `surface_card_id`, `lemma`), so
+`firstTranslation()` had nothing to read and every row's English column came
+out blank on es, pt **and** cs. French looked right only because it is still on
+the older single-file `vocabulary.index.json`, which ships `meanings` inline.
+Fixed by hydrating from the fat row shards as rows scroll into view —
+`mergeIndexRowPayload` assigns onto the very objects the list holds, so a shard
+fetch fills `item.meanings` in place. Not eager: the excluded list runs to
+thousands of words.
 
 ---
 
-## 5. The "jump to my level" bug — investigation, unknown depth
+## 5. The "jump to my level" bug — ✅ DONE 2026-09-21
 
-Standalone. Reported: clicking through to the level you are on sometimes lands
-somewhere odd, then glitches and refreshes, after which the boxes fill
-correctly. Suspected interaction between the next-unseen-set search and Fast
-Track settings.
+`progressData` starts as `{}` and is emptied again on every full (non-delta)
+reply, so an empty map meant either "nothing learned" or "we have not looked
+yet". `renderLevelSelector` and `renderRangeSelector` read the second as the
+first: every set counted as fully unseen, `firstUnseen` resolved to 0, and the
+learner landed on set 1 of level 1 — then the next render corrected it, which
+is the glitch-and-refresh.
 
-Start at `app/js/progress.js` and `app/js/vocab.js`
-(`ensureIndexRowsForRange()`, `prefetchStudySetPayload()`). The Fast Track
-session has been rewriting this area — reproduce against the landed code, not
-against what is on disk mid-edit. Placed here rather than earlier because the
-size is genuinely unknown until it reproduces.
+`window.progressDataLoaded` / `window.progressReady` are now that declaration,
+settled on every exit path (cache, successful reply, failed reply, thrown
+fetch, guest mode, restored guest session). Both renderers await it, capped at
+four seconds and giving up once rather than once per render.
 
-**Done when:** the jump lands on the right set first time, with no refresh and
-no boxes filling in late. Reproduce before fixing — do not fix by guess.
+The Fast Track suspicion is covered: remembered Fast Track preferences are
+reconciled from the same reply, before progress is marked loaded.
 
 ---
 
@@ -220,8 +223,7 @@ three-sentence description, as requested:
 `src/fluency/release/app_compat.py` copies `target`, `english`, `source`,
 `assignment_method`, `example_id`, `easiness`, `metadata` and no score. The app
 has `meaning.confidence` only, which is per-sense and cannot stand in. Adding
-it is a one-field projection change plus a deck rebuild — which is why this
-group sits below the ones that ship the same day.
+it is a one-field projection change plus a deck rebuild.
 
 **Done when:** the cascade is gone, every weight lives in one editable object,
 and the first sentence on a fresh card is noticeably shorter and easier than
@@ -229,12 +231,12 @@ the fifth without the order being obviously rigged.
 
 ---
 
-## 7. Merged-lemma policy — research, back-and-forth, slowest in this file
+## 7. Merged-lemma policy — research, back-and-forth
 
 Files: `app/js/flashcards.js`, `app/js/card-metadata-pills.js`. Read
 `docs/INVARIANTS.md` first. Everything here follows from one thing: **identity
-is the surface form, and the lemma merge is a view over it.** Do Group 3 first;
-this group assumes the header and underline already agree.
+is the surface form, and the lemma merge is a view over it.** Group 3 has
+landed, so the header and underline already agree.
 
 ### 7a. The merge policy (decide before writing code)
 
@@ -261,44 +263,85 @@ When a sense is marked *with infinitive*, colour the marker and mark the
 infinitive in the example the same way. Same mechanism as the existing
 SpanishDict usage-context highlight (`highlightPossibleSpanishDictUsage`
 ~2997), which already carries the honest "possible realization, not proven
-evidence" caveat — extend that function rather than adding a second path. It
-shares the highlight code Group 3 rewrites, so it must come after it.
+evidence" caveat — extend that function rather than adding a second path.
+
+**Also verify here:** Group 3's merged-lemma path was never exercised live
+(study set 1 is all uninflected function words and guest mode has lemma merging
+off). Confirm *unidos* and *buenos* by hand with Fast Track lemma merging on.
 
 **Done when:** there is a written merge rule in `docs/decisions/`, *unidos*
-behaves under it, and the frequency shown on a merged card is unambiguous
-about what it counts.
+behaves under it, and the frequency shown on a merged card is unambiguous about
+what it counts.
 
 ---
 
-## Handed back to Joshua — own chat each, slowest of all
+## 8. Modals using the left and right sides
 
-Long, need real back-and-forth, not coupled to anything above. Deliberately
-**not** work orders. Roughly in increasing order of how much conversation they
-need.
+Desktop slides some in-set modals in from the sides; Joshua wants that far more
+widely — synonyms, and pop-ups on the main page too, not just inside an active
+set. Needs an enumerated modal inventory (`app/js/flashcards-modals.js` plus
+the `.modal` ids in `app/index.html`) and an agreed split before converting
+anything.
 
-1. **Modals using the left and right sides.** Desktop slides some in-set modals
-   in from the sides; Joshua wants that far more widely — synonyms, and
-   pop-ups on the main page too. Needs an enumerated modal inventory
-   (`app/js/flashcards-modals.js` + `.modal` ids in `index.html`) and an agreed
-   split before converting anything.
-2. **Walkthrough / tutorial / about.** Three separate things, currently
-   confused. Tutorial = users, desktop and mobile both first-class. About =
-   employers, desktop-first but comfortable on mobile, *links to* the
-   walkthrough, contains no tutorial. Walkthrough = shallow "here is what a
-   card looks like" demo. The walkthrough existed and appears to have been
-   replaced by the tutorial. Any chat must first establish what
-   `about-example.js` renders today and which of the three it is.
-3. **URLs and routing.** The app has no real routing. Proposal sent
-   2026-09-20: two addressable things — a deck position (`/#/es/set/47`) and a
-   word by surface key (`/#/es/w/unidos`), plus `/#/es/artist/bad-bunny` and
-   URLs for about/tutorial/walkthrough. Blocked on one decision: should a
-   shared link address a deck position or a word? Given
-   `card_id = f(language, surface_key)`, the word is the durable link and the
-   set is a convenience — but everything else follows from that answer.
-4. **Function words you cannot teach atomically.** Spanish `lo` WSD is almost
-   always wrong; `de`/`del` (and the a/an-shaped pairs) probably want to be
-   taught together with a rule. Two parts: a warning on hard-to-translate
-   function words, and a concept of a paired card that the surface-keyed
-   identity does not currently have. Read `docs/INVARIANTS.md` before
-   proposing anything. High stakes — these are the first words a beginner
-   meets.
+---
+
+## 9. Walkthrough / tutorial / about
+
+Three separate things, currently confused.
+
+| Thing | Audience | Contains | Platform |
+|---|---|---|---|
+| **Tutorial** | people actually using the app | how to study, settings, modes | desktop + mobile, both first-class |
+| **About** | employers / people being shown the app | what this is, how it was built; **links to** the walkthrough; does **not** contain the tutorial | desktop-first, comfortable on mobile |
+| **Walkthrough** | someone being shown the app, not using it | a surface-level "here is what a card looks like" demo | either |
+
+The walkthrough existed and appears to have been replaced by the tutorial.
+First establish what `app/js/about-example.js` renders today and which of the
+three it actually is. Do not guess — guessing is how it got confused.
+
+---
+
+## 10. URLs and routing
+
+The app has no real routing. Proposal: two addressable things — a deck position
+(`/#/es/set/47`) and a word by surface key (`/#/es/w/unidos`), plus
+`/#/es/artist/bad-bunny` and URLs for about/tutorial/walkthrough (which need
+them to be shareable at all).
+
+Blocked on one decision: should a shared link address a deck position or a
+word? Given `card_id = f(language, surface_key)`, the word is the durable link
+and the set is a convenience — but everything else follows from that answer.
+
+Note `?speechRelease=<id>` already exists (`app/js/config.js` ~31) and points
+the live app at any published release; it should survive whatever routing
+replaces the current query handling.
+
+---
+
+## 11. Function words you cannot teach atomically
+
+Spanish `lo` WSD is almost always wrong; `de`/`del` (and the a/an-shaped pairs)
+probably want to be taught together with a rule. Two parts: a warning on
+hard-to-translate function words, and a concept of a paired card that the
+surface-keyed identity does not currently have. Read `docs/INVARIANTS.md`
+before proposing anything. High stakes — these are the first words a beginner
+meets, and `que` and `de` are literally study set 1.
+
+---
+
+## 12. Sense metadata vocabulary — a whole pass, one conversation per family
+
+Editorial, not code. Does `2nd pl` help a learner? Which short metadata should
+become an icon rather than a third line of tiny text? Which families are worth
+showing at all? The legibility floor is already shipped (pills no longer go
+below 10px, grammar tier lifted off `--text-muted`); this is about *what* is
+shown, not whether it can be read.
+
+---
+
+## 13. English inflections in translations (*solía*)
+
+`solía` glosses badly as "he was using to". This is one instance of a wider
+problem Joshua is tracking separately — improving the English inflections of
+translations generally — so it belongs with that work, not on its own. Gloss
+quality lives in the sense-menu projection, not the app.
