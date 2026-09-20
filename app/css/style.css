@@ -5269,6 +5269,11 @@
             height: 4px;
         }
         .example-tick {
+            /* No shrinking. Without this the strip silently compresses every
+               tick into a sliver to fit, which looks like it fits and makes
+               the current one indistinguishable — the density tiers below are
+               what should give way, in visible steps. */
+            flex: 0 0 auto;
             width: 7px;
             height: 7px;
             border-radius: 999px;
