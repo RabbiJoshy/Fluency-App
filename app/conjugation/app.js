@@ -23,7 +23,7 @@
     patterns: {},    // stem delta -> true
     coverage: 'all', // 'all' every card, 'one' one card per lesson
     speak: true,     // read the answer out loud on reveal
-    clue: 'none'     // 'none', 'pattern' (name the family), 'easy' (colour it)
+    easy: false      // tint the prompt by what this card does, and name the family
   };
 
   // The study app names languages ('spanish'); the deck codes them ('es').
@@ -383,33 +383,27 @@
     });
   }
 
-  /* Clues describe the card, never the verb: the same verb is clued
-   * differently in tengo and in tenemos, because they are different
-   * lessons. "Easy" tints the prompt with the card's own form type, so the
-   * colour becomes a cue attached to that cell. */
+  /* Easy mode gives two cues that do not overlap, so they are one switch
+   * rather than a choice: the prompt is tinted by what *this card* does
+   * (tener is orange on tengo, green on tenemos), and a line names the
+   * family the verb belongs to without saying whether it bites on this
+   * person. */
   function renderClue() {
     var host = $('clue');
     host.innerHTML = '';
-    [
-      { value: 'none', name: 'No clue', note: 'you supply everything' },
-      { value: 'pattern', name: 'Name the pattern', note: 'o → ue verb' },
-      { value: 'easy', name: 'Easy — colour the prompt', note: 'green means no change' }
-    ].forEach(function (option) {
-      var label = el('label', 'check');
-      var input = document.createElement('input');
-      input.type = 'radio';
-      input.name = 'clue';
-      input.checked = state.clue === option.value;
-      input.onchange = function () {
-        state.clue = option.value;
-        refreshSummary();
-        if (queue.length) renderCard();
-      };
-      label.appendChild(input);
-      label.appendChild(el('span', 'check-name', option.name));
-      label.appendChild(el('span', 'check-count', option.note));
-      host.appendChild(label);
-    });
+    var label = el('label', 'check');
+    var input = document.createElement('input');
+    input.type = 'checkbox';
+    input.checked = state.easy;
+    input.onchange = function () {
+      state.easy = input.checked;
+      refreshSummary();
+      if (queue.length) renderCard();
+    };
+    label.appendChild(input);
+    label.appendChild(el('span', 'check-name', 'Easy mode'));
+    label.appendChild(el('span', 'check-count', 'colour the prompt, name the family'));
+    host.appendChild(label);
   }
 
   function renderDirection() {
@@ -551,10 +545,7 @@
     $('state-coverage').textContent =
       state.coverage === 'one' ? 'one per lesson' : 'every form';
 
-    $('state-clue').textContent =
-      state.clue === 'none' ? 'none'
-      : state.clue === 'pattern' ? 'pattern named'
-      : 'prompt coloured';
+    $('state-clue').textContent = state.easy ? 'easy mode' : 'off';
 
     $('state-prompt').textContent =
       (state.reverse ? 'meaning' : 'infinitive') +
@@ -661,10 +652,10 @@
     verbNode.classList.remove('is-clued');
     verbNode.style.removeProperty('--clue-colour');
 
-    if (state.clue === 'easy') {
+    if (state.easy) {
       verbNode.classList.add('is-clued');
       verbNode.style.setProperty('--clue-colour', clueColour);
-    } else if (state.clue === 'pattern') {
+
       var family = verbFamily[card.verb.h];
       clue.textContent = !family ? 'a regular verb'
         : family === OPAQUE ? 'no shared pattern \u00b7 recall it'
