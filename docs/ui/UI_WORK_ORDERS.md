@@ -16,7 +16,7 @@ sense-metadata legibility floor.
 
 | # | Group | Cost | Needs Joshua? |
 |---|---|---|---|
-| 1 | Small UI polish | quick | no |
+| 1 | Small UI polish | ✅ done 2026-09-20 | — |
 | 2 | Example footer layout | quick | no |
 | 3 | Header and underline must agree | medium | no |
 | 4 | Content that is wrong or unhelpful | medium | one editorial list |
@@ -40,13 +40,17 @@ sense-metadata legibility floor.
 
 ---
 
-## 1. Small UI polish — quick, no open questions
+## 1. Small UI polish — ✅ DONE 2026-09-20
 
 Files: `app/index.html`, `app/js/ui.js`, `app/css/style.css`,
 `app/js/flashcards-conj.js`.
 
-Assumes the Fast Track / Settings work has landed; these changes sit on top of
-it. Three unrelated small things, each shippable on its own.
+Shipped and verified on the live site. Notes for whoever does Group 2:
+bumping `CACHE_NAME` alone is **not** enough to get new CSS or JS served —
+it clears the service worker's cache but not the browser's HTTP cache, which
+keys on the URL including `?v=`. Bump the asset's `?v=` tag in
+`app/index.html`, and if the asset is a module imported by `main.js`, bump
+`main.js`'s tag too, or the cached `main.js` keeps importing the old URL.
 
 - **Top bar:** flag and language name back to sitting next to each other; every
   icon in the main-page top bar larger.
