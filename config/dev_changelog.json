@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-20T16:32:17+01:00",
+      "date": "2026-09-20 16:32 BST",
+      "agent": "Codex",
+      "commit": "pending",
+      "summary": "Give card grammar labels a steady layout and make setup controls clearer",
+      "detail": [
+        "Reserved consistent capsule layouts for one, two, three, and larger POS and lemma groups, with shared font fitting for long labels.",
+        "Added breathing room around desktop card content while keeping the phone layout compact.",
+        "Grouped account, tutorial, and settings controls on the right of the setup bar and made language a clearer two-line button on the left.",
+        "Centred the Choose level and Your next set headings and made each heading and its information icon one help button."
+      ]
+    },
+    {
       "timestamp": "2026-09-20T16:20:00+01:00",
       "date": "2026-09-20 16:20 BST",
       "agent": "Codex",

@@ -40,14 +40,14 @@
             document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260920h">
+    <link rel="stylesheet" href="css/style.css?v=20260920i">
     <link rel="stylesheet" href="css/light-theme.css?v=20260919k">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260920f">
+    <link rel="modulepreload" href="js/main.js?v=20260920g">
     <link rel="modulepreload" href="js/theme.js?v=20260825ak">
     <link rel="modulepreload" href="js/state.js?v=20260917a">
     <link rel="modulepreload" href="js/data-contracts.js?v=20260825ak">
@@ -63,7 +63,7 @@
     <link rel="modulepreload" href="js/progress.js?v=20260920e">
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20260920a">
-    <link rel="modulepreload" href="js/ui.js?v=20260920e">
+    <link rel="modulepreload" href="js/ui.js?v=20260920f">
     <link rel="modulepreload" href="js/vocab.js?v=20260920e">
     <link rel="modulepreload" href="js/song-sets-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/song-sets.js?v=20260823ae">
@@ -73,7 +73,7 @@
     <link rel="modulepreload" href="js/vocabulary-import.js?v=20260913a">
     <link rel="modulepreload" href="js/spanishdict-usage.js?v=20260825ak">
     <link rel="modulepreload" href="js/reverse-cues.js?v=20260917a">
-    <link rel="modulepreload" href="js/flashcards.js?v=20260920c">
+    <link rel="modulepreload" href="js/flashcards.js?v=20260920d">
     <link rel="modulepreload" href="js/example-personalisation.js?v=20260825ak">
     <script>
         // Fail open if a boot-time script error prevents main.js from taking
@@ -338,7 +338,6 @@
             <!-- Top bar: Tutorial, Estimate Level, gear (shared by both modes) -->
             <div id="topBar" class="setup-step">
                 <div class="step-header top-bar-header">
-                    <button id="topBarUserName" class="top-bar-user-name" type="button" title="Open account settings"></button>
                     <button id="learningContextBtn" class="learning-context-chip" type="button" hidden aria-haspopup="dialog" aria-label="Open learning settings">
                         <span id="learningContextFlag" class="learning-context-flag" aria-hidden="true"></span>
                         <span class="learning-context-chip-copy">
@@ -346,6 +345,8 @@
                         </span>
                         <span class="learning-context-chevron" aria-hidden="true">›</span>
                     </button>
+                    <div class="top-bar-right-controls">
+                    <button id="topBarUserName" class="top-bar-user-name" type="button" title="Open account settings"></button>
                     <button id="helpBtn" class="top-bar-icon-btn" type="button" title="Tutorial" aria-label="Open tutorial">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.8 9a2.3 2.3 0 0 1 4.45.8c0 1.7-2.25 1.95-2.25 3.45"></path><path d="M12 17h.01"></path></svg>
                     </button>
@@ -357,6 +358,7 @@
                             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                         </svg>
                     </button>
+                    </div>
                 </div>
             </div>
 
@@ -469,13 +471,10 @@
             <div id="step2" class="setup-step" style="display: none;">
                 <div class="step-header step-header-with-help">
                     <span class="step-number">2</span>
-                    <span class="step-title">Choose level</span>
+                    <button type="button" class="step-title step-title-trigger" data-tooltip="step2Tooltip" aria-controls="step2Tooltip" title="About levels">Choose level <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
                     <div class="step-header-actions">
                         <span id="levelInfoLine" class="level-info-line" style="display: none;"></span>
                         <button type="button" id="levelModeToggle" class="level-mode-btn" style="display: none;" aria-hidden="true" tabindex="-1">CEFR</button>
-                        <button class="step-help-btn" data-tooltip="step2Tooltip" title="About levels" aria-label="About levels">
-                            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg>
-                        </button>
                     </div>
                     <div id="step2Tooltip" class="step-info-tooltip setup-info-modal" role="dialog" aria-modal="true" aria-labelledby="levelHelpTitle"><div class="step-info-tooltip-inner">
                         <div class="info-sheet-header">
@@ -523,10 +522,7 @@
             <div id="step4" class="setup-step" style="display: none;">
                 <div class="step-header step-header-with-help">
                     <span class="step-number" id="rangeStepNumber">3</span>
-                    <span class="step-title">Your next set</span>
-                    <button class="step-help-btn" data-tooltip="step5Tooltip" title="About study sets" aria-label="About study sets">
-                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg>
-                    </button>
+                    <button type="button" class="step-title step-title-trigger" data-tooltip="step5Tooltip" aria-controls="step5Tooltip" title="About study sets">Your next set <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
                     <div id="step5Tooltip" class="step-info-tooltip setup-info-modal" role="dialog" aria-modal="true" aria-labelledby="setHelpTitle"><div class="step-info-tooltip-inner">
                         <div class="info-sheet-header">
                             <div><span class="info-sheet-eyebrow">Study sets</span><h3 id="setHelpTitle">One finishable set at a time</h3></div>
@@ -2019,6 +2015,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260920f"></script>
+    <script type="module" src="js/main.js?v=20260920g"></script>
 </body>
 </html>

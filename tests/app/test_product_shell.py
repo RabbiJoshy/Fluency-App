@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v496"
+EXPECTED_CACHE_NAME = "flashcards-v497"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -387,7 +387,8 @@ class ProductShellTests(unittest.TestCase):
     def test_setup_shell_uses_a_quiet_single_surface_hierarchy(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
-        self.assertIn('<span class="step-title">Your next set</span>', html)
+        self.assertIn('class="step-title step-title-trigger" data-tooltip="step5Tooltip"', html)
+        self.assertIn('class="step-title step-title-trigger" data-tooltip="step2Tooltip"', html)
         self.assertIn('id="fastModeToggleBtn"', html)
         self.assertIn('id="fastModeDetailBtn"', html)
         self.assertIn(".sync-status.is-synced { display: none; }", css)
@@ -737,8 +738,8 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260918l", worker)
-        self.assertIn("/js/main.js?v=20260920f", worker)
-        self.assertIn("/js/ui.js?v=20260920e", worker)
+        self.assertIn("/js/main.js?v=20260920g", worker)
+        self.assertIn("/js/ui.js?v=20260920f", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -857,7 +858,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
         self.assertIn("/js/spotify-playlist-import.js?v=20260919a", worker)
-        self.assertIn('css/style.css?v=20260920h', html)
+        self.assertIn('css/style.css?v=20260920i', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
         self.assertIn("searchParams.set('playlistLive'", importer)

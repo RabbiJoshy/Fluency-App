@@ -245,7 +245,7 @@ applyGlobalStudyDefaults();
 
 function setupTooltipHandlers() {
     // Step help tooltip handlers — open as modal
-    document.querySelectorAll('.step-help-btn').forEach(btn => {
+    document.querySelectorAll('.step-help-btn, .step-title-trigger').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
             const tooltipId = this.dataset.tooltip;
