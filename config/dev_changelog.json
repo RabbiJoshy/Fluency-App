@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-20T11:05:37+01:00",
+      "date": "2026-09-20 11:05 BST",
+      "agent": "Codex",
+      "summary": "Clarify sense grouping and commonness on cards",
+      "detail": [
+        "Grouped matching two-sense entries, including no/not negation, when they share a context.",
+        "Showed compact commonness bars on every collapsed sense group in label mode and used one high-contrast bar colour.",
+        "Kept long surface and lemma pairs on one line by fitting their measured widths."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-20T10:50:34+01:00",
       "date": "2026-09-20 10:50 BST",
       "agent": "Codex",
