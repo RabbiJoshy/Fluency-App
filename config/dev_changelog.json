@@ -2,6 +2,21 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-20T18:38:00+01:00",
+      "date": "2026-09-20 18:38 BST",
+      "agent": "Claude",
+      "commit": "pending",
+      "summary": "Conjugation mode: a Clues setting — colour the prompt by what this card does, or name the family the verb belongs to",
+      "detail": [
+        "Easy mode tints the infinitive on the question side with this card's own form type, before you answer. Green means the stem does not change here, orange means it does. Because it is per card and not per verb, tener comes up orange for tengo and green for tenemos, which is the association worth building.",
+        "Name the pattern is the middle setting: it says which family the verb belongs to — like volver, poder — without saying whether the pattern applies to this particular person. You still have to know that nosotros sits outside the stress pattern.",
+        "The family is taken from the present indicative, not from counting every tense. Counting everything made tener an en to uv verb, because the tuv- stem spans the preterite and two subjunctives; true, but not how anyone thinks of it.",
+        "The example verbs are chosen by how common they are, not alphabetically, so the o-ue family is introduced as like volver, poder rather than like acordar, acostar.",
+        "Default is no clue. The setting lives under Clues on the Choose screen.",
+        "The conjugation page's own script and stylesheet now carry ?v= tags, so a deploy is picked up instead of being served from cache."
+      ]
+    },
+    {
       "timestamp": "2026-09-20T18:05:00+01:00",
       "date": "2026-09-20 18:05 BST",
       "agent": "Claude",

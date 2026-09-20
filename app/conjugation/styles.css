@@ -212,6 +212,15 @@ button.ghost { background: none; color: var(--ink-2); }
   font-size: 30px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15;
 }
 .card-translation { display: block; font-size: 14px; font-weight: 400; color: var(--ink-3); margin-top: 4px; }
+/* The clue line. Sits with the tense as card metadata, above the question
+   itself, so it reads as a condition on the prompt rather than part of it. */
+.card-clue {
+  font-family: var(--font-data);
+  font-size: 12px; letter-spacing: .04em;
+  color: var(--clue-colour, var(--ink-3));
+}
+.card-verb.is-clued #card-headword { color: var(--clue-colour, inherit); }
+
 .card-person {
   font-size: 15px; font-weight: 600; color: var(--ink-2);
   letter-spacing: .01em;
