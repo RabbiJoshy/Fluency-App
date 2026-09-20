@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-20T17:26:00+01:00",
+      "date": "2026-09-20 17:26 BST",
+      "agent": "Claude",
+      "commit": "pending",
+      "summary": "Conjugation mode: tenses are now in English, in the order a learner meets them, with the rare ones folded away",
+      "detail": [
+        "The tense list was in the source's own alphabetical order, which opened on Imperativo Afirmativo and buried the present indicative in the middle. It now runs Indicative, then Subjunctive, then Imperative, and within each mood: present, preterite, imperfect, future, conditional, then the perfect tenses, then the archaic ones.",
+        "Tense and mood names are shown in English — Present, Preterite, Imperfect, Present perfect — rather than Presente, Pretérito, Pretérito perfecto. This applies on the cards and in the Tables dropdown too.",
+        "The two imperative moods are folded into one Imperative heading with Affirmative and Negative under it, because that is one mood to a learner.",
+        "Each mood shows only what a first course covers and hides the rest behind a + 4 rarer tenses link: Indicative opens with six of its ten, Subjunctive with two of its six. Picking all in a mood reveals them.",
+        "A tense the name table does not cover keeps its source name, sorts last and counts as rare, rather than being silently ranked."
+      ]
+    },
+    {
       "timestamp": "2026-09-20T16:57:35+01:00",
       "date": "2026-09-20 16:57 BST",
       "agent": "Codex",
