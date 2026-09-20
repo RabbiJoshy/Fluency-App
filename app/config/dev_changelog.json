@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-20T19:20:00+01:00",
+      "date": "2026-09-20 19:20 BST",
+      "agent": "Claude",
+      "commit": "pending",
+      "summary": "Rarer-uses list now scrolls by swipe, the surface form stops jumping between senses, and sense metadata is readable again",
+      "detail": [
+        "The rarer-senses list inherited touch-action: none from the card (set there so a drag grades the card), which disabled the browser's own scrolling and left the scrollbar as the only way to move the list. Vertical drags are handed back to the browser and the scrollbar is hidden.",
+        "The lemma line under the word appeared for one sense and vanished for the next, shunting the surface form up and down the card. The slot is now held open for any card whose senses disagree about the citation form, so only the lemma changes.",
+        "Sense metadata pills had a 9px floor in a muted colour — 'indicating time' on en was effectively illegible. Minimum type is now 10px (11px undense) and the grammar tier carries real contrast."
+      ]
+    },
+    {
       "timestamp": "2026-09-20T18:05:00+01:00",
       "date": "2026-09-20 18:05 BST",
       "agent": "Antigravity (GLASS)",

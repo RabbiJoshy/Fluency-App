@@ -2367,8 +2367,17 @@
             gap: 8px;
             margin-top: 6px;
             padding: 0 8px 8px;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
+            /* `.card` sets touch-action: none so a drag grades the card.
+               Inheriting that here disabled the browser's own scrolling, which
+               left the scrollbar as the only way to move the list — clickable
+               but not swipeable. pan-y hands vertical drags back to the
+               browser; the horizontal grading swipe still reads touchmove and
+               is unaffected. The bar itself is then redundant, so it is
+               hidden: the gesture is the affordance. */
+            touch-action: pan-y;
+            overscroll-behavior: contain;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
         #backContent > .phrase-summary-scroll {
             flex: 1 1 0;
@@ -2376,11 +2385,8 @@
             overflow-y: auto;
         }
         .phrase-summary-scroll::-webkit-scrollbar {
-            width: 6px;
-        }
-        .phrase-summary-scroll::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.28);
-            border-radius: 4px;
+            width: 0;
+            height: 0;
         }
         .phrase-summary-item {
             display: flex;
@@ -3479,8 +3485,12 @@
             align-items: center;
             gap: 3.5px;
             border-radius: 999px;
-            padding: 1.5px 7.5px;
-            font-size: 10px;
+            padding: 2px 8px;
+            /* Legibility floor. Metadata below ~11px in a muted colour is
+               decoration, not information — 'indicating time' on *en* was
+               unreadable at 9px. Density may tighten padding; it may not take
+               the type below this. */
+            font-size: 11px;
             line-height: 1.35;
             font-weight: 600;
             white-space: nowrap;
@@ -3603,8 +3613,8 @@
         }
 
         .sense-metadata-list.is-dense .sense-pill {
-            padding: 1px 6px;
-            font-size: 9.5px;
+            padding: 1.5px 6.5px;
+            font-size: 10.5px;
             gap: 3px;
         }
 
@@ -3614,14 +3624,16 @@
         }
 
         .sense-metadata-list.is-very-dense .sense-pill {
-            padding: 0.5px 5px;
-            font-size: 9px;
+            padding: 1px 5.5px;
+            font-size: 10px;
         }
 
         .sense-metadata-tier--grammar {
             margin-top: 1px;
-            color: var(--text-muted);
-            font-size: 9px;
+            /* Was --text-muted at 9px: the quietest text in the app at the
+               smallest size in the app. Same hierarchy, readable contrast. */
+            color: color-mix(in srgb, var(--text-muted) 55%, var(--text-primary));
+            font-size: 10.5px;
             font-weight: 550;
         }
 
@@ -3944,6 +3956,17 @@
             margin-bottom: 10px;
             font-weight: 500;
             opacity: 1;
+        }
+
+        /* Reserved, invisible copy of the lemma line. Cards whose senses
+           disagree about the citation form used to show the line for one
+           sense and hide it for the next, which shunted the surface form up
+           and down as the learner clicked through — indistinguishable from a
+           rendering bug. The slot is held open for the whole card instead, so
+           only the lemma appears and disappears, never the word above it. */
+        .card-lemma.is-reserved {
+            visibility: hidden;
+            pointer-events: none;
         }
 
         .card-lemma.has-form-note {

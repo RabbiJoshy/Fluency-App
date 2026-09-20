@@ -4773,6 +4773,21 @@ function toggleProminenceBadge(event, button) {
 window.prominenceBadgeHTML = prominenceBadgeHTML;
 window.toggleProminenceBadge = toggleProminenceBadge;
 
+// True when at least one sense on this card would print a lemma under the
+// word. Read across every meaning rather than the selected one: the point is
+// to know whether the line can appear at all during this card's lifetime.
+function cardLemmaSlotIsLoadBearing(card, displayedTargetHeadword) {
+    if (!card) return false;
+    const shown = foldSurfaceForm(displayedTargetHeadword);
+    if (!shown) return false;
+    const forms = (card.meanings || []).map(m => m && m.headword).filter(Boolean);
+    if (!forms.length) {
+        const fallback = card.citationForm || card.lemma;
+        return Boolean(fallback) && foldSurfaceForm(fallback) !== shown;
+    }
+    return forms.some(form => foldSurfaceForm(form) !== shown);
+}
+
 function updateCard({ announceHeadword = false } = {}) {
     const card = flashcards[currentIndex];
     const langConfig = config.languages[selectedLanguage];
@@ -5206,14 +5221,27 @@ function updateCard({ announceHeadword = false } = {}) {
         frontLemmaEl.textContent = citationForm;
         frontLemmaEl.dataset.formNote = formNote;
         frontLemmaEl.classList.toggle('has-form-note', Boolean(formNote));
+        frontLemmaEl.classList.remove('is-reserved');
         frontLemmaEl.style.display = 'block';
         // Sized against the word's final size, not its own ceiling, so the
         // lemma can never come out larger than the form being asked about.
+        fitLemmaUnderWord(frontWordEl, frontLemmaEl, 18);
+    } else if (!isFlipped && !lemmaMapNamesLemma
+        && cardLemmaSlotIsLoadBearing(card, displayedTargetHeadword)) {
+        // Some other sense on this same card does name a lemma. Hold the slot
+        // open with an invisible stand-in so selecting that sense does not
+        // shove the surface form up the card and back down again.
+        frontLemmaEl.textContent = '\u00A0';
+        frontLemmaEl.dataset.formNote = '';
+        frontLemmaEl.classList.remove('has-form-note');
+        frontLemmaEl.classList.add('is-reserved');
+        frontLemmaEl.style.display = 'block';
         fitLemmaUnderWord(frontWordEl, frontLemmaEl, 18);
     } else {
         frontLemmaEl.textContent = '';
         frontLemmaEl.dataset.formNote = '';
         frontLemmaEl.classList.remove('has-form-note');
+        frontLemmaEl.classList.remove('is-reserved');
         frontLemmaEl.style.display = 'none';
     }
 
