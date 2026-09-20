@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v491"
+EXPECTED_CACHE_NAME = "flashcards-v495"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -271,9 +271,18 @@ class ProductShellTests(unittest.TestCase):
         self.assertNotIn("answer side", walkthrough)
         self.assertNotIn("question side", walkthrough)
         self.assertIn("'Finish'", walkthrough)
-        # Front first: the learner meets the question side before the answer,
-        # the same order study puts them in.
-        self.assertIn("function showTutorialChapter(index, flipped = false", walkthrough)
+        # The story is a flat list of steps: Speech front, Speech back, a slide
+        # about Lyrics mode, then a Lyrics card. Front before back throughout.
+        self.assertIn("function tutorialSteps()", walkthrough)
+        self.assertIn("{ kind: 'card', deck: 'speech', face: 'front' }", walkthrough)
+        self.assertIn("{ kind: 'break', id: 'lyrics' }", walkthrough)
+        self.assertIn("function renderBreakStep()", walkthrough)
+        self.assertIn('id="aboutExampleBreak"', html)
+        self.assertIn(".about-example-body.is-break-step", styles)
+        # No mode chrome in what the header renders: a first-time reader has
+        # not met either mode yet. (The comment above the change still names
+        # the old chip, so assert on the template, not on the file's prose.)
+        self.assertNotIn("<span>${modes}</span>", walkthrough)
         # The walkthrough owns the flip. Tapping the card and pressing space
         # both used to turn it mid-tour, which broke the guided order.
         self.assertNotIn("function wireCardShell", walkthrough)
@@ -285,7 +294,12 @@ class ProductShellTests(unittest.TestCase):
         # The intro holds on its last step and waits to be dismissed by hand
         # rather than pressing its own button and moving on.
         self.assertIn("function startSetupIntroCard()", walkthrough)
-        self.assertIn(".setup-anim-step.is-ready .setup-anim-action-btn", styles)
+        self.assertIn(".setup-anim-learn-btn.is-ready", styles)
+        # The intro is a replica of the real setup screen, so it reuses that
+        # screen's own class names rather than a lookalike.
+        self.assertIn("standard-source-choice-btn", html)
+        self.assertIn("learning-context-chip", html)
+        self.assertIn("function moveSetupPointer(target)", walkthrough)
         # The numbered badges indexed a numbered note list; both are gone, and
         # the amber ring on the annotated element is the only link left.
         self.assertNotIn("about-example-marker", walkthrough)
@@ -346,7 +360,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertGreaterEqual(auth.count("window.openFirstRunAboutExample?.()"), 2)
         self.assertIn("function openFirstRunAboutExample()", walkthrough)
         self.assertIn("const TUTORIAL_LANGUAGE_ADAPTERS", walkthrough)
-        self.assertIn("function tutorialDeckSequence()", walkthrough)
+        self.assertIn("function tutorialSteps()", walkthrough)
         self.assertIn("Step ${progress.current} of ${progress.total}", walkthrough)
         self.assertIn("function explicitTutorialLanguageKey()", walkthrough)
         self.assertIn("if (!explicitTutorialLanguageKey()) return false", walkthrough)
@@ -843,7 +857,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
         self.assertIn("/js/spotify-playlist-import.js?v=20260919a", worker)
-        self.assertIn('css/style.css?v=20260920e', html)
+        self.assertIn('css/style.css?v=20260920g', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
         self.assertIn("searchParams.set('playlistLive'", importer)

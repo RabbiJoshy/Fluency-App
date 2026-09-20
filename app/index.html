@@ -40,7 +40,7 @@
             document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260920e">
+    <link rel="stylesheet" href="css/style.css?v=20260920g">
     <link rel="stylesheet" href="css/light-theme.css?v=20260919k">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
@@ -57,7 +57,7 @@
     <link rel="modulepreload" href="js/speech.js?v=20260914b">
     <link rel="modulepreload" href="js/artist-ui.js?v=20260825ak">
     <link rel="modulepreload" href="js/auth.js?v=20260912a">
-    <link rel="modulepreload" href="js/about-example.js?v=20260920b">
+    <link rel="modulepreload" href="js/about-example.js?v=20260920e">
     <link rel="modulepreload" href="js/estimation.js?v=20260825ak">
     <link rel="modulepreload" href="js/config.js?v=20260919c">
     <link rel="modulepreload" href="js/progress.js?v=20260920e">
@@ -911,45 +911,92 @@
                     <button class="modal-close about-example-close" id="closeAboutExampleModal" aria-label="Close walkthrough" title="Close walkthrough">✕</button>
                 </div>
                 <!-- Animated session setup preview before the first card -->
+                <!-- The setup replica played before the first card. It reuses the
+                     real setup screen's class names (.learning-context-chip,
+                     .standard-source-choice-btn, .lsw-*, .study-set-*) so it
+                     inherits that screen's CSS rather than a lookalike — the same
+                     rule the card replica follows. Nothing here is wired to real
+                     config; a scripted pointer presses each control in turn. -->
                 <div id="aboutExampleSetupAnim" class="about-example-setup-anim" hidden>
-                    <div class="setup-anim-card">
-                        <div class="setup-anim-header">
-                            <span class="setup-anim-badge">Session setup</span>
-                            <h3 class="setup-anim-title">Starting your study set</h3>
-                            <p class="setup-anim-sub">Choosing where you begin in Fluency</p>
+                    <div class="setup-anim-screen">
+                        <div class="setup-anim-caption" id="setupAnimCaption">This is how you get to a card.</div>
+
+                        <div class="setup-anim-topbar">
+                            <button type="button" class="learning-context-chip setup-anim-target" id="setupAnimLangChip" tabindex="-1" aria-hidden="true">
+                                <span class="learning-context-flag" id="setupAnimLangFlag">&#127466;&#127480;</span>
+                                <span class="learning-context-chip-copy"><strong id="setupAnimLangName">Spanish</strong></span>
+                                <span class="learning-context-chevron">&rsaquo;</span>
+                            </button>
                         </div>
-                        <div class="setup-anim-steps">
-                            <div class="setup-anim-step" id="setupAnimStep1">
-                                <span class="setup-anim-num">1</span>
-                                <div class="setup-anim-info">
-                                    <span class="setup-anim-label">Language</span>
-                                    <strong class="setup-anim-val" id="setupAnimLangVal">🇪🇸 Spanish · Speech</strong>
-                                </div>
-                                <span class="setup-anim-status" id="setupAnimCheck1">✓</span>
-                            </div>
-                            <div class="setup-anim-step" id="setupAnimStep2">
-                                <span class="setup-anim-num">2</span>
-                                <div class="setup-anim-info">
-                                    <span class="setup-anim-label">Level</span>
-                                    <strong class="setup-anim-val">Level 1 · Fundamentals</strong>
-                                </div>
-                                <span class="setup-anim-status" id="setupAnimCheck2">✓</span>
-                            </div>
-                            <div class="setup-anim-step" id="setupAnimStep3">
-                                <span class="setup-anim-num">3</span>
-                                <div class="setup-anim-info">
-                                    <span class="setup-anim-label">Study set</span>
-                                    <strong class="setup-anim-val">Set 1 · Top 50 words</strong>
-                                </div>
-                                <button type="button" class="setup-anim-action-btn" id="setupAnimActionBtn" tabindex="-1">Start set</button>
+
+                        <div class="setup-anim-panel" id="setupAnimModePanel">
+                            <div class="artist-source-card standard-source-card">
+                                <span class="standard-source-choice-title">Choose the language you want to understand</span>
+                                <button type="button" class="standard-source-choice-btn setup-anim-target" id="setupAnimModeSpeech" tabindex="-1" aria-hidden="true">
+                                    <span class="standard-source-choice-icon">1</span>
+                                    <span>
+                                        <span class="standard-source-option-title"><strong>Everyday Speech</strong><em>Recommended</em></span>
+                                        <small>The words people say in films and TV. Best if you want conversation.</small>
+                                    </span>
+                                    <em class="standard-source-choice-arrow">&rsaquo;</em>
+                                </button>
+                                <button type="button" class="standard-source-choice-btn setup-anim-muted" tabindex="-1" aria-hidden="true">
+                                    <span class="standard-source-choice-icon">2</span>
+                                    <span>
+                                        <span class="standard-source-option-title"><strong>Music &amp; lyrics</strong></span>
+                                        <small>The words in songs you choose, with the original line as the example.</small>
+                                    </span>
+                                    <em class="standard-source-choice-arrow">&rsaquo;</em>
+                                </button>
                             </div>
                         </div>
+
+                        <div class="setup-anim-panel" id="setupAnimLevelPanel" hidden>
+                            <span class="setup-anim-panel-title">Choose level</span>
+                            <div class="setup-anim-level-readout">
+                                <span><strong>Level 1</strong></span>
+                                <span>Words <strong>1&ndash;200</strong> / 6,000</span>
+                                <span>~<strong>55.8%</strong> of speech</span>
+                            </div>
+                            <div class="setup-anim-level-segs" id="setupAnimLevelSegs">
+                                <button type="button" class="setup-anim-seg setup-anim-target" id="setupAnimLevel1" tabindex="-1" aria-hidden="true">Level 1</button>
+                                <button type="button" class="setup-anim-seg" tabindex="-1" aria-hidden="true">Level 2</button>
+                                <button type="button" class="setup-anim-seg" tabindex="-1" aria-hidden="true">Level 3</button>
+                                <button type="button" class="setup-anim-seg" tabindex="-1" aria-hidden="true">Level 4</button>
+                                <button type="button" class="setup-anim-seg" tabindex="-1" aria-hidden="true">Level 5</button>
+                            </div>
+                            <span class="setup-anim-level-eg">e.g. gran, necesitar, de nuevo, all&iacute;, bueno</span>
+                        </div>
+
+                        <div class="setup-anim-panel" id="setupAnimSetPanel" hidden>
+                            <span class="setup-anim-panel-title">Your next set</span>
+                            <div class="setup-anim-set-dots" id="setupAnimSetDots">
+                                <button type="button" class="setup-anim-dot setup-anim-target" id="setupAnimSet1" tabindex="-1" aria-hidden="true">1</button>
+                                <button type="button" class="setup-anim-dot" tabindex="-1" aria-hidden="true">2</button>
+                                <button type="button" class="setup-anim-dot" tabindex="-1" aria-hidden="true">3</button>
+                                <button type="button" class="setup-anim-dot" tabindex="-1" aria-hidden="true">4</button>
+                                <button type="button" class="setup-anim-dot" tabindex="-1" aria-hidden="true">5</button>
+                                <button type="button" class="setup-anim-dot" tabindex="-1" aria-hidden="true">6</button>
+                                <button type="button" class="setup-anim-dot" tabindex="-1" aria-hidden="true">7</button>
+                                <button type="button" class="setup-anim-dot" tabindex="-1" aria-hidden="true">8</button>
+                                <button type="button" class="setup-anim-dot" tabindex="-1" aria-hidden="true">9</button>
+                                <button type="button" class="setup-anim-dot" tabindex="-1" aria-hidden="true">10</button>
+                            </div>
+                            <span class="setup-anim-set-meta">Set 1 of 10 &middot; Ranks 1&ndash;20 &middot; 20 unseen</span>
+                            <button type="button" class="setup-anim-learn-btn setup-anim-target" id="setupAnimActionBtn">Learn 20 new cards</button>
+                        </div>
+
+                        <div class="setup-anim-pointer" id="setupAnimPointer" aria-hidden="true"></div>
+
                         <div class="setup-anim-footer">
-                            <span class="setup-anim-status-text" id="setupAnimStatusText">Opening your first flashcard…</span>
-                            <button type="button" class="setup-anim-skip-btn" id="setupAnimSkipBtn">Skip intro →</button>
+                            <span class="setup-anim-status-text" id="setupAnimStatusText">Choosing where you begin&hellip;</span>
+                            <button type="button" class="setup-anim-skip-btn" id="setupAnimSkipBtn">Skip intro &rarr;</button>
                         </div>
                     </div>
                 </div>
+
+                <!-- Break slides: a step with no card. Filled by renderBreakStep(). -->
+                <div id="aboutExampleBreak" class="about-example-break" hidden></div>
 
                 <div class="about-example-columns">
                     <div class="about-example-notes about-example-notes-left" id="aboutExampleNotesLeft"></div>

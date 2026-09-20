@@ -326,9 +326,9 @@ const ABOUT_EXAMPLE_DECKS = [
         tab: 'Lyrics',
         faces: {
             back: {
-                title: 'How Lyrics cards differ',
-                blurb: 'Same card structure, but the examples are real song lines you can play. '
-                     + 'Here is what changes.',
+                title: 'The back of a Lyrics card',
+                blurb: 'The meanings work exactly as they did on the Speech card. '
+                     + 'These four things are new.',
                 notes: [
                     {
                         side: 'left',
@@ -367,8 +367,8 @@ const ABOUT_EXAMPLE_DECKS = [
             },
             front: {
                 title: 'The front of a Lyrics card',
-                blurb: 'The front is the same as a Speech card, except the counter shows '
-                     + 'how many song lines use the word instead of a speech frequency.',
+                blurb: 'Identical to the Speech card you just saw, with one number '
+                     + 'measuring something different.',
                 notes: [
                     {
                         side: 'right',
@@ -768,22 +768,40 @@ function renderBack(card, selectedIdx, exampleIdx) {
 // Walkthrough controller
 // ---------------------------------------------------------------------------
 
+// What the walkthrough is showing right now. `flipped` is derived from the
+// current step rather than owned: the step list decides which face is up, and
+// renderCard()/flipCardFace() read this to drive the real card CSS.
 const state = {
-    chapterIndex: 0,
-    // The front opens first: it is the side the learner sees when studying,
-    // and starting there matches the real experience. After the front
-    // annotations, the tutorial flips to the back.
+    stepIndex: 0,
     flipped: false,
     meaningIndex: 0,
     exampleIndex: 0,
     activeNote: -1,
 };
 
-// The source order is intentional: first teach the everyday Speech card,
-// then reveal that the same study model works with Lyrics and live playback.
-// ABOUT_EXAMPLE_DECKS retains its data order; this owns the tutorial story.
-function tutorialDeckSequence() {
-    return tutorialAdapter().lyrics ? [1, 0] : [1];
+// The tutorial is a flat list of steps, not a pair of decks with two faces
+// each. Read top to bottom it is the story a first-time visitor gets: learn
+// the card itself on an everyday Speech card, front then back; then a slide
+// that says what Lyrics mode is, in its own words, before a Lyrics card
+// appears. Reordering the story, or adding a slide to it, is a change to this
+// list and to nothing else.
+function tutorialSteps() {
+    const steps = [
+        { kind: 'card', deck: 'speech', face: 'front' },
+        { kind: 'card', deck: 'speech', face: 'back' },
+    ];
+    // Only Spanish has a lyrics deck today. The others simply end after the
+    // Speech card rather than promising a mode they cannot show.
+    if (tutorialAdapter().lyrics) {
+        steps.push({ kind: 'break', id: 'lyrics' });
+        steps.push({ kind: 'card', deck: 'lyrics', face: 'front' });
+        steps.push({ kind: 'card', deck: 'lyrics', face: 'back' });
+    }
+    return steps;
+}
+
+function currentStep() {
+    return tutorialSteps()[state.stepIndex] || null;
 }
 
 const MOBILE_WALKTHROUGH_QUERY = '(max-width: 700px)';
@@ -792,53 +810,59 @@ function isMobileWalkthrough() {
     return window.matchMedia?.(MOBILE_WALKTHROUGH_QUERY).matches === true;
 }
 
-function currentDeck() {
-    const deck = ABOUT_EXAMPLE_DECKS[tutorialDeckSequence()[state.chapterIndex]];
+// The speech deck carries no card of its own: which one it shows depends on
+// the language being taught, so it is filled in here.
+function deckById(id) {
+    const deck = ABOUT_EXAMPLE_DECKS.find(d => d.id === id);
     return deck.id === 'speech' ? { ...deck, card: tutorialAdapter().speechCard } : deck;
+}
+
+function currentDeck() {
+    const step = currentStep();
+    return step && step.kind === 'card' ? deckById(step.deck) : null;
 }
 
 function currentCard() {
     return ABOUT_EXAMPLE_CARDS[currentDeck().card];
 }
 
-// The annotation set is a property of the face on show, not of the tab. This
-// is the whole reason flipping re-renders the notes.
+// The annotation set is a property of the face on show. This is the whole
+// reason flipping re-renders the notes.
 function currentFace() {
-    return currentDeck().faces[state.flipped ? 'back' : 'front'];
+    const step = currentStep();
+    return step && step.kind === 'card' ? deckById(step.deck).faces[step.face] : null;
 }
 
-// Left column first, then right, so the numbers run in reading order and each
-// badge sits on the same side as the note explaining it.
-function orderedNotes() {
-    const notes = currentFace().notes.filter(note => !note.requires || tutorialAdapter()[note.requires]);
+// Left column first, then right, so each note sits on the same side as the
+// element it explains.
+function stepNotes(step) {
+    if (!step || step.kind !== 'card') return [];
+    const notes = deckById(step.deck).faces[step.face].notes
+        .filter(note => !note.requires || tutorialAdapter()[note.requires]);
     return [
         ...notes.filter(n => n.side !== 'right'),
         ...notes.filter(n => n.side === 'right'),
     ];
 }
 
-function tutorialFaceNotes(deck, faceName) {
-    const notes = deck.faces[faceName].notes;
-    if (deck.id !== 'speech') return notes;
-    return notes.filter(note => !note.requires || tutorialAdapter()[note.requires]);
+function orderedNotes() {
+    return stepNotes(currentStep());
 }
 
+// A card step is worth one position per annotation; a break slide is worth
+// one. Counting off the step list means the running total cannot drift out of
+// step with the story the way a hand-folded count did.
 function tutorialStepPosition(noteIndex = state.activeNote) {
-    const sequence = tutorialDeckSequence();
+    const steps = tutorialSteps();
     let before = 0;
     let total = 0;
-    sequence.forEach((deckIndex, chapterIndex) => {
-        const deck = ABOUT_EXAMPLE_DECKS[deckIndex];
-        const backCount = tutorialFaceNotes(deck, 'back').length;
-        const frontCount = tutorialFaceNotes(deck, 'front').length;
-        total += backCount + frontCount;
-        if (chapterIndex < state.chapterIndex) before += backCount + frontCount;
+    steps.forEach((step, i) => {
+        const weight = step.kind === 'card' ? stepNotes(step).length : 1;
+        total += weight;
+        if (i < state.stepIndex) before += weight;
     });
-    // Front runs first within a chapter, so the back's notes are only counted
-    // as "behind you" once the card has been flipped.
-    if (state.flipped) before += tutorialFaceNotes(currentDeck(), 'front').length;
-    const withinFace = Math.max(0, Math.min(noteIndex, orderedNotes().length - 1));
-    return { current: before + withinFace + 1, total };
+    const within = Math.max(0, Math.min(noteIndex, Math.max(0, orderedNotes().length - 1)));
+    return { current: before + within + 1, total };
 }
 
 // Full rebuild — used when the deck changes.
@@ -877,12 +901,13 @@ function refreshBack() {
 
 // Flipping is a face change, so the annotations change with it: new copy, new
 // numbered set, badges re-placed on the side now showing.
+// Turn the card that is already on stage, rather than rebuilding it. Toggling
+// the class is what lets the real 0.6s flip transition play.
 function flipCardFace(mobileNote = 0) {
     const stage = document.getElementById('aboutExampleStage');
     const cardEl = stage?.querySelector('.card');
     if (!cardEl) return;
 
-    state.flipped = !state.flipped;
     state.activeNote = -1;
     cardEl.classList.toggle('flipped', state.flipped);
 
@@ -989,21 +1014,25 @@ function syncFlipButton() {
     btn.textContent = state.flipped ? 'Flip to the front' : 'Flip to the back';
 }
 
+// One button, one job: go to the next step. Its label says what that step is,
+// so the reader always knows what pressing it will do.
 function syncContinueButton() {
     const btn = document.getElementById('aboutExampleContinue');
     if (!btn) return;
-    const ready = !isMobileWalkthrough();
+    const steps = tutorialSteps();
+    const step = steps[state.stepIndex];
+    // A break slide carries its own controls; the card's button would sit in a
+    // column that is hidden behind it.
+    const ready = !isMobileWalkthrough() && step && step.kind === 'card';
     btn.hidden = !ready;
     if (!ready) return;
-    const isLast = state.chapterIndex >= tutorialDeckSequence().length - 1;
-    if (!state.flipped) {
-        // Front face: gentle nudge to flip and see the answers.
-        btn.textContent = 'Flip the card over →';
-        btn.classList.add('is-secondary');
-    } else {
-        btn.textContent = isLast ? 'Finish tutorial' : 'Continue to Lyrics →';
-        btn.classList.remove('is-secondary');
-    }
+
+    const next = steps[state.stepIndex + 1];
+    const turningSameCard = next && next.kind === 'card' && next.deck === step.deck;
+    btn.textContent = !next ? 'Finish tutorial'
+        : turningSameCard ? 'Flip the card over →'
+        : 'Next →';
+    btn.classList.toggle('is-secondary', Boolean(turningSameCard));
 }
 
 // ---------------------------------------------------------------------------
@@ -1057,21 +1086,24 @@ function renderMobileCoach() {
     if (coach.hidden) return;
 
     const progress = tutorialStepPosition(index);
+    // No deck name here. Which deck you are on is the story the walkthrough is
+    // telling — the Lyrics slide announces it — not a label to carry around.
     document.getElementById('aboutExampleMobileProgress').textContent =
-        `Step ${progress.current} of ${progress.total} · ${currentDeck().tab} · ${state.flipped ? 'back' : 'front'}`;
+        `Step ${progress.current} of ${progress.total} · ${state.flipped ? 'back of card' : 'front of card'}`;
     document.getElementById('aboutExampleMobileTitle').innerHTML =
         `${esc(note.title)}${note.interactive ? '<span class="about-example-try">tap it</span>' : ''}`;
     document.getElementById('aboutExampleMobileText').innerHTML = tutorialText(note.text);
     const back = document.getElementById('aboutExampleMobileBack');
     const next = document.getElementById('aboutExampleMobileNext');
-    const atStart = state.chapterIndex === 0 && !state.flipped && index === 0;
-    back.hidden = atStart;
+    back.hidden = state.stepIndex === 0 && index === 0;
     back.disabled = false;
-    next.textContent = index < notes.length - 1
-        ? 'Next'
-        : (!state.flipped
-            ? 'Flip over'
-            : (state.chapterIndex < tutorialDeckSequence().length - 1 ? 'Continue' : 'Finish'));
+    const steps = tutorialSteps();
+    const after = steps[state.stepIndex + 1];
+    const turningSameCard = after && after.kind === 'card' && after.deck === steps[state.stepIndex].deck;
+    next.textContent = index < notes.length - 1 ? 'Next'
+        : !after ? 'Finish'
+        : turningSameCard ? 'Flip over'
+        : 'Continue';
 }
 
 function moveMobileTour(direction) {
@@ -1083,18 +1115,11 @@ function moveMobileTour(direction) {
         setActiveNote(candidate);
         return;
     }
-    // Front-first: forward from last front note → flip to back.
-    // Forward from last back note → advance chapter or finish.
-    if (direction > 0 && !state.flipped) {
-        flipCardFace(0);
-    } else if (direction > 0) {
-        advanceChapterOrFinish();
-    } else if (state.flipped) {
-        // Back on first back note → flip back to front at its last note.
-        flipCardFace(Number.MAX_SAFE_INTEGER);
-    } else if (state.chapterIndex > 0) {
-        showTutorialChapter(state.chapterIndex - 1, true, Number.MAX_SAFE_INTEGER);
-    }
+    // Past either end of this step's notes, move to the neighbouring step.
+    // Stepping backwards lands on that step's last note, so the tour reverses
+    // exactly as it ran forwards.
+    if (direction > 0) advanceStep();
+    else goToStep(state.stepIndex - 1, Number.MAX_SAFE_INTEGER);
 }
 
 function renderFaceCopy() {
@@ -1154,33 +1179,150 @@ function renderNotes() {
 function renderSequenceProgress() {
     const host = document.getElementById('aboutExampleSequence');
     if (!host) return;
-    const modes = tutorialAdapter().lyrics ? 'Speech → Lyrics' : 'Speech';
-    host.innerHTML = `<strong>${esc(tutorialAdapter().language)} tutorial</strong><span>${modes}</span>`;
+    // Just the language. "Speech → Lyrics" named two modes before the reader
+    // had met either, which is a label for someone who already knows the app.
+    host.innerHTML = `<strong>${esc(tutorialAdapter().language)} tutorial</strong>`;
 }
 
-function showTutorialChapter(index, flipped = false, mobileNote = 0) {
-    if (index < 0 || index >= tutorialDeckSequence().length) return;
-    state.chapterIndex = index;
-    state.flipped = flipped;
-    state.meaningIndex = currentCard().defaultMeaningIndex || 0;
-    state.exampleIndex = 0;
-    state.activeNote = isMobileWalkthrough() ? mobileNote : 0;
+// Moving between the two faces of one card turns it; anything else is a new
+// thing on stage and gets built from scratch. `mobileNote` may be
+// Number.MAX_SAFE_INTEGER, meaning "land on this step's last note", which is
+// how stepping backwards reverses the tour.
+function goToStep(index, mobileNote = 0) {
+    const steps = tutorialSteps();
+    if (index < 0 || index >= steps.length) return;
+
+    const from = steps[state.stepIndex];
+    const to = steps[index];
+    const onStage = document.querySelector('#aboutExampleStage .card');
+    const turnsInPlace = index !== state.stepIndex && onStage
+        && from && from.kind === 'card' && to.kind === 'card'
+        && from.deck === to.deck && from.face !== to.face;
+
+    state.stepIndex = index;
+    state.flipped = to.kind === 'card' && to.face === 'back';
 
     renderSequenceProgress();
+    const body = document.getElementById('aboutExampleBody');
+
+    if (to.kind === 'break') {
+        renderBreakStep();
+        if (body) body.scrollTop = 0;
+        return;
+    }
+
+    showCardChrome();
+    if (turnsInPlace) {
+        flipCardFace(mobileNote);
+        return;
+    }
+
+    state.meaningIndex = currentCard().defaultMeaningIndex || 0;
+    state.exampleIndex = 0;
+    state.activeNote = isMobileWalkthrough()
+        ? Math.min(mobileNote, Math.max(0, stepNotes(to).length - 1))
+        : 0;
     renderCard();
     syncFlipButton();
     renderMobileCoach();
-
-    const body = document.getElementById('aboutExampleBody');
     if (body) body.scrollTop = 0;
 }
 
-function advanceChapterOrFinish() {
-    if (state.chapterIndex < tutorialDeckSequence().length - 1) {
-        showTutorialChapter(state.chapterIndex + 1);
-    } else {
-        closeAboutExample();
-    }
+function advanceStep() {
+    if (state.stepIndex < tutorialSteps().length - 1) goToStep(state.stepIndex + 1);
+    else closeAboutExample();
+}
+
+// ---------------------------------------------------------------------------
+// Break slides
+// ---------------------------------------------------------------------------
+
+// A step with no card. The walkthrough used to change deck silently and hope
+// the reader noticed the tab, which meant the Lyrics chapter opened by
+// explaining itself in an annotation. A mode deserves its own moment: this
+// says what Lyrics mode is before showing one.
+const TUTORIAL_BREAKS = {
+    lyrics: {
+        eyebrow: 'The other way to study',
+        title: 'Lyrics mode',
+        lead: 'Everything you have just seen works the same way with music. '
+            + 'You pick an artist, and Fluency builds a deck from the words they '
+            + 'actually sing.',
+        points: [
+            {
+                title: 'The example is a real lyric',
+                text: 'Instead of a line from film or television, each meaning is '
+                    + 'shown with a line from one of their songs, English underneath.',
+            },
+            {
+                title: 'You can hear it',
+                text: 'A play button starts that exact line in Spotify, at the right '
+                    + 'second, so you learn the word as it is actually sung.',
+            },
+            {
+                title: 'Counted against the artist',
+                text: 'The number on the front is how many of their lines use the '
+                    + 'word, rather than how common it is in the language at large.',
+            },
+        ],
+        cta: 'Show me a Lyrics card →',
+    },
+};
+
+// Break slides borrow the info-sheet treatment the setup screens use for their
+// help panels, so a visitor who later opens one recognises the shape.
+function renderBreakStep() {
+    const host = document.getElementById('aboutExampleBreak');
+    if (!host) return;
+    const slide = TUTORIAL_BREAKS[currentStep().id];
+    if (!slide) return;
+
+    const first = state.stepIndex === 0;
+    host.innerHTML = `
+        <div class="about-example-break-card">
+            <span class="about-example-break-eyebrow">${esc(slide.eyebrow)}</span>
+            <h3 class="about-example-break-title">${esc(slide.title)}</h3>
+            <p class="about-example-break-lead">${tutorialText(slide.lead)}</p>
+            <ul class="about-example-break-points">
+                ${slide.points.map(point => `
+                    <li>
+                        <strong>${esc(point.title)}</strong>
+                        <span>${tutorialText(point.text)}</span>
+                    </li>`).join('')}
+            </ul>
+            <div class="about-example-break-actions">
+                ${first ? '' : '<button type="button" class="about-example-break-back" id="aboutExampleBreakBack">Back</button>'}
+                <button type="button" class="about-example-break-cta" id="aboutExampleBreakNext">${esc(slide.cta)}</button>
+            </div>
+        </div>`;
+
+    // The slide carries its own title, so the card's one-line header would be
+    // the previous step's copy left standing over it.
+    const intro = document.getElementById('aboutExampleIntro');
+    if (intro) intro.innerHTML = '';
+
+    showBreakChrome();
+    document.getElementById('aboutExampleBreakNext')?.addEventListener('click', advanceStep);
+    document.getElementById('aboutExampleBreakBack')
+        ?.addEventListener('click', () => goToStep(state.stepIndex - 1, Number.MAX_SAFE_INTEGER));
+}
+
+// The card and its note columns, or the slide — never both. The mobile coach
+// belongs to the card, so it goes with it.
+function showBreakChrome() {
+    document.getElementById('aboutExampleBody')?.classList.add('is-break-step');
+    const host = document.getElementById('aboutExampleBreak');
+    if (host) host.hidden = false;
+    const coach = document.getElementById('aboutExampleMobileCoach');
+    if (coach) coach.hidden = true;
+    const cont = document.getElementById('aboutExampleContinue');
+    if (cont) cont.hidden = true;
+}
+
+function showCardChrome() {
+    document.getElementById('aboutExampleBody')?.classList.remove('is-break-step');
+    const host = document.getElementById('aboutExampleBreak');
+    if (host) { host.hidden = true; host.innerHTML = ''; }
 }
 
 // ---------------------------------------------------------------------------
@@ -1193,8 +1335,8 @@ function advanceChapterOrFinish() {
 // purely presentational: the markup is static, nothing here reads or writes
 // real config, and only the language line follows the chosen tutorial.
 
-// Held so a click, the skip button or a close can cut the sequence short. Null
-// whenever no intro is running.
+// Held so the skip button or a close can cut the sequence short. Null whenever
+// no intro is running.
 let _setupIntroFinish = null;
 let _setupIntroTimers = [];
 
@@ -1205,12 +1347,15 @@ function resetSetupIntro() {
     const host = document.getElementById('aboutExampleSetupAnim');
     if (host) {
         host.hidden = true;
-        host.querySelector('.setup-anim-card')?.classList.remove('is-leaving');
-        host.querySelectorAll('.setup-anim-step').forEach((el) => {
-            el.classList.remove('is-active', 'is-complete', 'is-ready', 'is-pressed');
+        host.querySelector('.setup-anim-screen')?.classList.remove('is-leaving');
+        host.querySelectorAll('.setup-anim-panel').forEach((el, i) => { el.hidden = i > 0; });
+        host.querySelectorAll('.setup-anim-target').forEach((el) => {
+            el.classList.remove('is-pressed', 'is-chosen', 'is-ready');
         });
+        const pointer = document.getElementById('setupAnimPointer');
+        if (pointer) { pointer.classList.remove('is-visible', 'is-pressing'); pointer.removeAttribute('style'); }
         const statusText = document.getElementById('setupAnimStatusText');
-        if (statusText) statusText.textContent = 'Opening your first flashcard…';
+        if (statusText) statusText.textContent = 'Choosing where you begin…';
     }
     document.getElementById('aboutExampleBody')?.classList.remove('is-setup-intro');
 }
@@ -1220,6 +1365,25 @@ function skipSetupIntro() {
     _setupIntroFinish?.();
 }
 
+// Park the pointer over an element's centre, in the coordinate space of the
+// replica screen. Measuring rather than hard-coding keeps the pointer on
+// target when the panel reflows at narrow widths.
+function moveSetupPointer(target) {
+    const pointer = document.getElementById('setupAnimPointer');
+    const screen = document.querySelector('.setup-anim-screen');
+    if (!pointer || !screen || !target) return;
+    const box = target.getBoundingClientRect();
+    const frame = screen.getBoundingClientRect();
+    if (!box.width && !box.height) return;
+    pointer.style.left = `${box.left - frame.left + box.width / 2}px`;
+    pointer.style.top = `${box.top - frame.top + box.height / 2}px`;
+    pointer.classList.add('is-visible');
+}
+
+// The intro is a scripted pass through the real setup screen: pick a language,
+// pick what kind of language, pick a level, pick a set, press the button. An
+// earlier version showed three rows ticking themselves off, which told a
+// first-time visitor what the app had decided but not where any of it happens.
 function playSetupIntro(onDone) {
     const host = document.getElementById('aboutExampleSetupAnim');
     const body = document.getElementById('aboutExampleBody');
@@ -1232,58 +1396,94 @@ function playSetupIntro(onDone) {
     resetSetupIntro();
 
     const adapter = tutorialAdapter();
-    const langVal = document.getElementById('setupAnimLangVal');
-    // Speech leads the sequence, so the setup line names the deck that is
-    // about to appear rather than a generic one.
-    if (langVal) langVal.textContent = `${adapter.flag ? adapter.flag + ' ' : ''}${adapter.language} · Speech`;
+    const flag = document.getElementById('setupAnimLangFlag');
+    const name = document.getElementById('setupAnimLangName');
+    if (flag) flag.textContent = adapter.flag || '';
+    if (name) name.textContent = adapter.language;
 
     host.hidden = false;
     body.classList.add('is-setup-intro');
 
-    const step = n => document.getElementById(`setupAnimStep${n}`);
+    const el = id => document.getElementById(id);
     const at = (ms, fn) => _setupIntroTimers.push(setTimeout(fn, ms));
-    const statusText = document.getElementById('setupAnimStatusText');
-    const finish = () => {
-        resetSetupIntro();
-        onDone();
-    };
+    const caption = el('setupAnimCaption');
+    const status = el('setupAnimStatusText');
+    const pointer = el('setupAnimPointer');
+
+    const finish = () => { resetSetupIntro(); onDone(); };
     _setupIntroFinish = finish;
 
-    // Each step holds long enough to be read before the next one lands. The
-    // first pass ran the whole sequence in under three seconds and finished
-    // itself, which read as a flicker rather than as a setup flow.
-    const HOLD = 1400;
-    at(250, () => step(1)?.classList.add('is-active'));
-    at(250 + HOLD, () => {
-        step(1)?.classList.replace('is-active', 'is-complete');
-        step(2)?.classList.add('is-active');
+    // Reach for a control, press it, and leave it looking chosen.
+    const press = (target, after) => {
+        moveSetupPointer(target);
+        _setupIntroTimers.push(setTimeout(() => {
+            pointer?.classList.add('is-pressing');
+            target?.classList.add('is-pressed');
+        }, 520));
+        _setupIntroTimers.push(setTimeout(() => {
+            pointer?.classList.remove('is-pressing');
+            target?.classList.remove('is-pressed');
+            target?.classList.add('is-chosen');
+            after?.();
+        }, 760));
+    };
+
+    // Each beat is one decision, held long enough to read the thing being
+    // pressed before the next panel appears.
+    const BEAT = 1500;
+    let t = 400;
+
+    at(t, () => {
+        if (caption) caption.textContent = `First you pick a language.`;
+        press(el('setupAnimLangChip'));
     });
-    at(250 + HOLD * 2, () => {
-        step(2)?.classList.replace('is-active', 'is-complete');
-        step(3)?.classList.add('is-active');
+
+    t += BEAT;
+    at(t, () => {
+        if (caption) caption.textContent = 'Then what kind of language you want to understand.';
+        press(el('setupAnimModeSpeech'));
     });
-    // The sequence stops here rather than pressing its own button and moving
-    // on. The learner opens their first card themselves, which is both the
-    // real gesture and the thing that gives the animation a moment to land.
-    at(250 + HOLD * 2 + 500, () => {
-        step(3)?.classList.add('is-ready');
-        if (statusText) statusText.textContent = 'Press Start set to open your first card';
+
+    t += BEAT;
+    at(t, () => {
+        if (caption) caption.textContent = 'Then how far in to start. Level 1 is the most common words.';
+        el('setupAnimLevelPanel').hidden = false;
+        el('setupAnimModePanel').hidden = true;
+        press(el('setupAnimLevel1'));
+    });
+
+    t += BEAT;
+    at(t, () => {
+        if (caption) caption.textContent = 'Levels are split into small sets, so a session is finishable.';
+        el('setupAnimSetPanel').hidden = false;
+        el('setupAnimLevelPanel').hidden = true;
+        press(el('setupAnimSet1'));
+    });
+
+    // The sequence stops here rather than pressing its own last button. The
+    // visitor opens their first card, which is both the real gesture and what
+    // gives the whole thing a moment to land.
+    t += BEAT;
+    at(t, () => {
+        if (caption) caption.textContent = 'That is the whole setup. Here is what a card looks like.';
+        if (status) status.textContent = 'Press Learn 20 new cards to see your first card';
+        el('setupAnimActionBtn')?.classList.add('is-ready');
+        moveSetupPointer(el('setupAnimActionBtn'));
     });
 }
 
-// The explicit advance out of the intro: press the step-3 button, watch it
-// depress, then let the card come up behind the card that slides away.
+// The explicit advance out of the intro: press the button the pointer has just
+// arrived at, watch it depress, then let the card come up behind it.
 function startSetupIntroCard() {
     const host = document.getElementById('aboutExampleSetupAnim');
-    const step3 = document.getElementById('setupAnimStep3');
-    if (!host || !_setupIntroFinish || !step3?.classList.contains('is-ready')) return;
+    const btn = document.getElementById('setupAnimActionBtn');
+    if (!host || !_setupIntroFinish || !btn?.classList.contains('is-ready')) return;
     const done = _setupIntroFinish;
-    // Stop the pending beats so nothing re-styles the card on its way out.
     _setupIntroTimers.forEach(clearTimeout);
     _setupIntroTimers = [];
-    step3.classList.add('is-pressed');
+    btn.classList.add('is-pressed');
     _setupIntroTimers.push(setTimeout(() => {
-        host.querySelector('.setup-anim-card')?.classList.add('is-leaving');
+        host.querySelector('.setup-anim-screen')?.classList.add('is-leaving');
     }, 220));
     _setupIntroTimers.push(setTimeout(done, 620));
 }
@@ -1299,10 +1499,15 @@ function openAboutExample() {
     if (!modal) return;
     rememberCardWalkthrough();
     modal.classList.remove('hidden');
+    // Start from the top every time. Without this a replay opens with whatever
+    // the last run finished on still on screen — a break slide, most visibly,
+    // sitting under the intro.
+    state.stepIndex = 0;
+    showCardChrome();
     // The card is rendered only once the intro is out of the way: marker
     // placement measures real boxes, and those read zero while the columns
     // are hidden behind the animation.
-    playSetupIntro(() => showTutorialChapter(0));
+    playSetupIntro(() => goToStep(0));
 
     if (!_resizeHandler) {
         _resizeHandler = () => {
@@ -1336,6 +1541,7 @@ function closeAboutExample() {
     if (!modal) return;
     modal.classList.add('hidden');
     resetSetupIntro();
+    showCardChrome();
     // Leave any Spotify playback the visitor started running — they pressed
     // play deliberately, and closing a walkthrough shouldn't stop their music.
     if (_resizeHandler) {
@@ -1357,7 +1563,7 @@ function setupAboutExample() {
     document.getElementById('setupAnimSkipBtn')?.addEventListener('click', skipSetupIntro);
     document.getElementById('aboutExampleFlip')?.addEventListener('click', () => flipCardFace(0));
     document.getElementById('aboutExampleContinue')?.addEventListener('click', () => {
-        if (!state.flipped) { flipCardFace(0); } else { advanceChapterOrFinish(); }
+        advanceStep();
     });
     document.getElementById('aboutExampleMobileBack')?.addEventListener('click', () => moveMobileTour(-1));
     document.getElementById('aboutExampleMobileNext')?.addEventListener('click', () => moveMobileTour(1));
@@ -1368,8 +1574,8 @@ function setupAboutExample() {
     document.addEventListener('keydown', (e) => {
         if (modal.classList.contains('hidden')) return;
         if (e.key === 'Escape') closeAboutExample();
-        else if (e.key === 'ArrowRight') showTutorialChapter(state.chapterIndex + 1);
-        else if (e.key === 'ArrowLeft') showTutorialChapter(state.chapterIndex - 1);
+        else if (e.key === 'ArrowRight') goToStep(state.stepIndex + 1);
+        else if (e.key === 'ArrowLeft') goToStep(state.stepIndex - 1);
     });
 }
 
