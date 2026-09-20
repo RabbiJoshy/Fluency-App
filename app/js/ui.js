@@ -962,6 +962,13 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
 }
 
 async function renderLevelSelector(language, { preferActionable = false } = {}) {
+    // `preferActionable` picks the level to land on from per-level seen/unseen
+    // counts, which are read from progressData. Same race as
+    // renderRangeSelector: answering it before progress arrives sends the
+    // learner to level 1 regardless of where they actually are.
+    if (currentUser && !currentUser.isGuest) {
+        await (window.whenProgressReady?.() ?? Promise.resolve(true));
+    }
     resetSetupStateMemo();
     const container = document.getElementById('levelSelector');
     if (preferActionable) _setupLevelSelectionWasManual = false;
@@ -2282,6 +2289,16 @@ function getSetupLearningState(item, { seenLemmas = new Set(), estimatedIds = nu
 }
 
 async function renderRangeSelector() {
+    // Every set count below is computed from `progressData`, and an empty
+    // `progressData` reads identically whether the learner has studied nothing
+    // or the progress fetch simply has not landed. Rendering on the second
+    // marks every set unseen, lands the learner on set 1 of level 1, and then
+    // corrects itself on the next render — the "it sends me to the wrong place
+    // and then the boxes fill in" behaviour. Wait for the answer, with a cap
+    // so an unreachable Sheets never leaves the screen empty.
+    if (currentUser && !currentUser.isGuest) {
+        await (window.whenProgressReady?.() ?? Promise.resolve(true));
+    }
     // This function is also called directly after progress refreshes and when
     // returning from a completed deck, without passing through the level
     // renderer. Give every visible set count one coherent, current snapshot.

@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-21T00:25:00+01:00",
+      "date": "2026-09-21 00:25 BST",
+      "agent": "Claude",
+      "commit": "pending",
+      "summary": "'Take me to my level' no longer sends you to set 1 and then quietly correct itself",
+      "detail": [
+        "Every set count on the setup screen is read from your progress, and an empty progress map read identically whether you had studied nothing or the fetch simply had not landed yet. Rendering on the second marked every set unseen and dropped you at set 1 of level 1 — then the next render, once progress arrived, filled the boxes in correctly. That is the glitch-and-refresh.",
+        "Progress now says explicitly when it has been looked up, and the level and set renderers wait for that answer before choosing where to send you. A four-second cap means an unreachable connection still draws the screen rather than leaving it empty, and it gives up once rather than once per render.",
+        "This covers the Fast Track case too: remembered Fast Track settings are reconciled in the same reply, so they are settled before the counts are computed."
+      ]
+    },
+    {
       "timestamp": "2026-09-20T23:40:00+01:00",
       "date": "2026-09-20 23:40 BST",
       "agent": "Claude",

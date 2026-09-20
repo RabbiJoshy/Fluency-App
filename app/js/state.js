@@ -214,3 +214,40 @@ globalThis.speechLangCodes  = speechLangCodes;
 // progress actually changes makes the same check O(1).
 window.__progressEpoch = 0;
 window.bumpProgressEpoch = () => { window.__progressEpoch = (window.__progressEpoch || 0) + 1; };
+
+// `progressData` starts as {} and is emptied again whenever a full (non-delta)
+// reply replaces it, so an empty map means either "nothing learned" or "we
+// have not looked yet" — and the setup screen could not tell those apart. It
+// read the second as the first, decided every set was untouched, and sent the
+// learner to set 1 of level 1. A later render, after progress landed, then
+// filled the boxes in correctly, which is what made it look like a glitchy
+// refresh rather than a wrong answer.
+//
+// Absence is declared, never inferred. This is that declaration.
+// state.js is imported under more than one `?v=` tag, which makes the browser
+// treat it as two module records and execute it twice. Every other assignment
+// here is idempotent; a second `new Promise` would not be, so guard it.
+window.progressDataLoaded = window.progressDataLoaded || false;
+if (!window.progressReady) {
+    window.progressReady = new Promise(resolve => { window.__resolveProgressReady = resolve; });
+}
+window.markProgressLoaded = () => {
+    window.progressDataLoaded = true;
+    window.__resolveProgressReady?.();
+};
+
+// Wait for progress, but never hang the setup screen on it. Offline, or with
+// Sheets unreachable, rendering stale-but-visible beats rendering nothing.
+window.whenProgressReady = (timeoutMs = 4000) => {
+    if (window.progressDataLoaded) return Promise.resolve(true);
+    return Promise.race([
+        window.progressReady.then(() => true),
+        new Promise(resolve => setTimeout(() => {
+            // Give up once, not once per render. A signed-in session that
+            // never reaches Sheets would otherwise stall every single setup
+            // render by the full timeout.
+            window.progressDataLoaded = true;
+            resolve(false);
+        }, timeoutMs)),
+    ]);
+};

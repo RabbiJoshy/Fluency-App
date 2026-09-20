@@ -182,6 +182,9 @@ function showUserInfo() {
 // Progress is still never persisted for guests.
 function enterGuestMode() {
     currentUser = { isGuest: true };
+    // A guest has no stored progress to wait for, so the setup screen must not
+    // sit behind a promise that will never resolve.
+    window.markProgressLoaded?.();
     sessionStorage.setItem('flashcardGuestSession', '1');
     showUserInfo();
     hideAuthModal();
@@ -689,6 +692,10 @@ async function loadUserProgressFromSheet() {
             levelEstimates = estimates || {};
             markedDoneLevels = doneLevels || {};
             progressBackendSchemaVersion = Number(backendSchema) >= 4 ? Number(backendSchema) : 0;
+            // The cache is the learner's real progress, not a placeholder —
+            // enough to lay out the setup screen correctly while the Sheets
+            // refresh runs behind it.
+            window.markProgressLoaded?.();
             updateIncorrectButtonVisibility();
             updateTotalStatsButtonVisibility();
             return true;
@@ -768,6 +775,9 @@ async function loadUserProgressFromSheet() {
             applyPendingProgressOverlay(progressData);
             applyPendingItemProgressOverlay(itemProgressData);
             applyPendingMetaProgressOverlay(levelEstimates, markedDoneLevels);
+            // We have looked. Even a failed fetch settles the question the
+            // setup screen is waiting on, and waiting longer will not help.
+            window.markProgressLoaded?.();
             updateIncorrectButtonVisibility();
             updateTotalStatsButtonVisibility();
             return false;
@@ -844,6 +854,7 @@ async function loadUserProgressFromSheet() {
             .reduce((a, b) => (a > b ? a : b), progressSyncVersion || '');
         if (newest) progressSyncVersion = newest;
         if (!gotDelta) progressLastFullSyncAt = Date.now();
+        window.markProgressLoaded?.();
         window.bumpProgressEpoch?.();
 
         // 3. Update cache
@@ -855,6 +866,10 @@ async function loadUserProgressFromSheet() {
         return getProgressUiFingerprint() !== previousUiState || !cached;
     } catch (error) {
         console.error('Failed to load progress from Google Sheets:', error);
+        // A thrown fetch settles the question too. Leaving the setup screen
+        // waiting on a promise that can never resolve is worse than laying it
+        // out from whatever cache we have.
+        window.markProgressLoaded?.();
         // Continue with cached data if available
         return false;
     }
