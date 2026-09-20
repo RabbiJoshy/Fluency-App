@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-20T16:20:00+01:00",
+      "date": "2026-09-20 16:20 BST",
+      "agent": "Codex",
+      "commit": "pending",
+      "summary": "Show sense commonness once and let learners mark rarer senses deliberately",
+      "detail": [
+        "Removed the repeated commonness bar from a collapsed sense heading when it contains only one visible subrow.",
+        "Added an opt-in rarer-senses section to the knowledge menu and an entry point on the Rarer uses page.",
+        "Saved explicit rare-sense Known or Review choices as stable item progress; rare Review can return in focused review without marking the whole word known."
+      ]
+    },
+    {
       "timestamp": "2026-09-20T16:13:00+01:00",
       "date": "2026-09-20 16:13 BST",
       "agent": "Claude",

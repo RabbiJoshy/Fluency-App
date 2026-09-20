@@ -9,6 +9,8 @@ const KNOWLEDGE_SCHEMA_VERSION = 1;
 let indexedItemProgressSource = null;
 let indexedItemProgressSize = -1;
 let itemProgressByParent = new Map();
+let knowledgeOverviewCard = null;
+let rareSensesExpanded = false;
 
 function normalizeKnowledgeText(value) {
     return String(value || '')
@@ -122,24 +124,31 @@ function knowledgeItemsForMeaning(card, meaning, meaningIndex) {
     const context = meaning.context || '';
     const stableSenseId = meaning.senseId || meaning.sense_id || meaning.id || '';
     const stableAliases = meaning.senseIdAliases || meaning.sense_id_aliases || [];
-    const fallbackSignature = `sense|${normalizeKnowledgeText(pos)}|${normalizeKnowledgeText(translation)}|${normalizeKnowledgeText(context)}`;
-    return [{
+    const isRare = Boolean(meaning.isRareSense);
+    const type = isRare ? 'rare_sense' : 'sense';
+    const fallbackSignature = `${isRare ? 'rare-sense' : 'sense'}|${normalizeKnowledgeText(pos)}|${normalizeKnowledgeText(translation)}|${normalizeKnowledgeText(context)}`;
+    const item = {
         ...makeKnowledgeItem(
             card,
-            'sense',
+            type,
             stableSenseId
-                ? `sense-id|${normalizeKnowledgeText(stableSenseId)}`
+                ? `${isRare ? 'rare-sense-id' : 'sense-id'}|${normalizeKnowledgeText(stableSenseId)}`
                 : fallbackSignature,
             translation || pos,
             meaningIndex,
             0,
             stableSenseId
-                ? [fallbackSignature, ...stableAliases.map(id => `sense-id|${normalizeKnowledgeText(id)}`)]
+                ? [fallbackSignature, ...stableAliases.map(id => `${isRare ? 'rare-sense-id' : 'sense-id'}|${normalizeKnowledgeText(id)}`)]
                 : []
         ),
         detail: context,
-        pos
-    }];
+        pos,
+        isRare
+    };
+    if (stableSenseId && !isRare) {
+        item.legacyItemIds.push(`${card.fullId}~k${KNOWLEDGE_SCHEMA_VERSION}:rare_sense:${hashKnowledgeSignature(`rare-sense-id|${normalizeKnowledgeText(stableSenseId)}`)}`);
+    }
+    return [item];
 }
 
 /**
@@ -200,6 +209,47 @@ function getCardKnowledgeItems(card) {
             if (!unique.has(item.itemId)) unique.set(item.itemId, item);
         });
     return Array.from(unique.values());
+}
+
+// Unused dictionary senses have durable sense IDs but are outside the main
+// card's learnable menu. They enter knowledge only after the learner asks to
+// see them; a whole-card answer never marks them by implication.
+function getRareSenseKnowledgeItems(card) {
+    if (!card?.fullId || !Array.isArray(card.unusedMenuSenses)) return [];
+    const unique = new Map();
+    const focusedIds = new Set((card.meanings || [])
+        .filter(meaning => meaning?.isRareSense)
+        .map(meaning => meaning.senseId || meaning.sense_id)
+        .filter(Boolean));
+    for (const sense of card.unusedMenuSenses) {
+        const translation = String(sense?.meaning || sense?.translation || '').trim();
+        if (!translation) continue;
+        const pos = sense.pos || 'X';
+        const context = sense.context || '';
+        const senseId = sense.senseId || sense.sense_id || '';
+        if (senseId && focusedIds.has(senseId)) continue;
+        const signature = senseId
+            ? `rare-sense-id|${normalizeKnowledgeText(senseId)}`
+            : `rare-sense|${normalizeKnowledgeText(pos)}|${normalizeKnowledgeText(translation)}|${normalizeKnowledgeText(context)}`;
+        const item = {
+            ...makeKnowledgeItem(card, 'rare_sense', signature, translation, -1),
+            detail: context,
+            pos,
+            example: sense.canonicalExample?.text || sense.canonical_example?.text || '',
+            sourceSense: sense,
+            isRare: true
+        };
+        if (senseId) {
+            item.legacyItemIds.push(`${card.fullId}~k${KNOWLEDGE_SCHEMA_VERSION}:sense:${hashKnowledgeSignature(`sense-id|${normalizeKnowledgeText(senseId)}`)}`);
+        }
+        if (!unique.has(item.itemId)) unique.set(item.itemId, item);
+    }
+    return [...unique.values()];
+}
+
+function getKnowledgeOverviewItems(card) {
+    const main = getCardKnowledgeItems(card);
+    return rareSensesExpanded ? [...main, ...getRareSenseKnowledgeItems(card)] : main;
 }
 
 function getActiveKnowledgeItems(card) {
@@ -290,6 +340,7 @@ function getKnowledgeItemState(card, item) {
     const parent = window.getMergedWordProgress?.(parentId, card?.targetWord)
         || progressData?.[parentId];
     const specific = getSpecificItemProgress(item);
+    if (item?.isRare || item?.type === 'rare_sense') return getProgressState(specific);
     return getProgressState(mergeKnowledgeProgress(parent, specific));
 }
 
@@ -326,7 +377,7 @@ function getItemProgressForParent(parentWordId) {
 function wordHasKnowledgeProgress(parentWordId, surface = '') {
     const parentIds = window.getProgressRecordIdsForCard?.(parentWordId, surface) || [parentWordId];
     return parentIds.some(id =>
-        getItemProgressForParent(id).some(item => getProgressState(item).seen));
+        getItemProgressForParent(id).some(item => item.itemType !== 'rare_sense' && getProgressState(item).seen));
 }
 
 function getWordKnowledgeReviewInfo(parentWordId, surface = '') {
@@ -348,7 +399,7 @@ function getWordKnowledgeReviewInfo(parentWordId, surface = '') {
     // the whole word known. Until every item is resolved (which promotes the
     // parent below), its never-marked siblings belong in Review, not Learn new.
     const isPartial = !parentState.seen
-        && itemRows.some(item => getProgressState(item).seen);
+        && itemRows.some(item => item.itemType !== 'rare_sense' && getProgressState(item).seen);
     const needsReview = hasIncorrect || isPartial || hasDue;
     const relevantTimes = [];
     if (hasIncorrect) {
@@ -431,10 +482,32 @@ function buildFocusedReviewCard(card) {
             focusedMeanings.push({ ...meaning });
         }
     }
+    // Rare senses remain opt-in during ordinary study. Once explicitly marked
+    // for review, they become focused review meanings on the same parent card.
+    for (const item of getRareSenseKnowledgeItems(card)) {
+        if (!getKnowledgeItemState(card, item).needsReview) continue;
+        const sense = item.sourceSense;
+        focusedMeanings.push({
+            ...sense,
+            meaning: item.label,
+            isRareSense: true,
+            unassigned: false,
+            percentage: 0,
+            prominenceLabel: 'Rare',
+            canonicalExample: sense.canonicalExample || sense.canonical_example || null,
+            allExamples: sense.allExamples || []
+        });
+    }
     if (focusedMeanings.length === 0) return null;
+    const focusedRareIds = new Set(focusedMeanings
+        .filter(meaning => meaning.isRareSense)
+        .map(meaning => meaning.senseId || meaning.sense_id)
+        .filter(Boolean));
     return {
         ...card,
         meanings: focusedMeanings,
+        unusedMenuSenses: (card.unusedMenuSenses || []).filter(sense =>
+            !focusedRareIds.has(sense.senseId || sense.sense_id)),
         translation: focusedMeanings[0]?.meaning || card.translation,
         targetSentence: focusedMeanings[0]?.targetSentence || card.targetSentence,
         englishSentence: focusedMeanings[0]?.englishSentence || card.englishSentence,
@@ -513,7 +586,8 @@ async function saveKnowledgeProgress(card, items, isCorrect) {
     // future review filtering can recognise completion without downloading
     // the card schema merely to count its sparse ItemProgress rows.
     const summary = getCardKnowledgeSummary(card);
-    if (!parentWasLearned && summary.total > 0 && summary.learned === summary.total) {
+    if (!parentWasLearned && !items.every(item => item.type === 'rare_sense')
+        && summary.total > 0 && summary.learned === summary.total) {
         await window.saveWordProgress?.(card, true);
     }
 }
@@ -537,18 +611,19 @@ function knowledgeSectionLabel(type) {
 function renderKnowledgeOverviewButton(card) {
     if (!currentUser || currentUser.isGuest) return '';
     const summary = getCardKnowledgeSummary(card);
+    const rareCount = getRareSenseKnowledgeItems(card).length;
     // A single-item card has nothing to break down: "0/1 known" restates the
     // whole-card answer the learner is about to give, and the overview it
     // opens would list one row. The tile only earns its place once the card
     // carries more than one meaning/Expression/attached form.
-    if (summary.total <= 1) return '';
-    const label = `${summary.learned} of ${summary.total} known`;
+    if (summary.total <= 1 && !rareCount) return '';
+    const label = summary.total <= 1 ? 'Meanings' : `${summary.learned} of ${summary.total} known`;
     return `<button type="button" class="ref-tile knowledge-overview-trigger" aria-label="Open meanings and expressions knowledge: ${label}" onclick="showKnowledgeOverview(event)">
         <svg class="ref-tile-icon" viewBox="10 10 26 26" aria-hidden="true">
             <path d="M12 13.5h18M12 21h18M12 28.5h11" class="knowledge-overview-icon-lines"/>
             <path d="m27 29 2.4 2.4L34 26.8" class="knowledge-overview-icon-check"/>
         </svg>
-        <span class="ref-tile-label">${summary.learned}/${summary.total} known</span>
+        <span class="ref-tile-label">${summary.total <= 1 ? 'Meanings' : `${summary.learned}/${summary.total} known`}</span>
     </button>`;
 }
 
@@ -585,9 +660,33 @@ function ensureKnowledgeOverviewModal() {
     return modal;
 }
 
+function knowledgeOverviewRowsHTML(card, rows) {
+    return rows.map(({ item, index }) => {
+        const state = getKnowledgeItemState(card, item);
+        const status = state.learned ? 'known' : (state.needsReview ? 'review' : 'unseen');
+        const statusText = status === 'known' ? 'Known' : (status === 'review' ? 'Review' : 'Unmarked');
+        const pos = item.pos && (item.type === 'sense' || item.isRare)
+            ? `<span class="knowledge-overview-pos">${escapeKnowledgeHTML(item.pos)}</span>` : '';
+        const detail = [item.detail, item.isRare ? item.example : ''].filter(Boolean).join(' · ');
+        const copy = `<span class="knowledge-overview-status" aria-label="${statusText}"></span>
+            <span class="knowledge-overview-copy">${pos}<strong>${escapeKnowledgeHTML(item.label)}</strong>${detail ? `<small>${escapeKnowledgeHTML(detail)}</small>` : ''}</span>`;
+        const lead = item.isRare
+            ? `<div class="knowledge-overview-focus is-static">${copy}</div>`
+            : `<button type="button" class="knowledge-overview-focus" onclick="focusKnowledgeOverviewItem(event, ${index})" title="Show this item on the card">${copy}</button>`;
+        return `<div class="knowledge-overview-row is-${status}">
+            ${lead}
+            <div class="knowledge-overview-actions" aria-label="Knowledge for ${escapeKnowledgeHTML(item.label)}">
+                <button type="button" class="knowledge-overview-mark mark-review${status === 'review' ? ' is-active' : ''}" onclick="markKnowledgeOverviewItem(event, ${index}, false)" aria-label="Mark for review" title="Mark for review">×</button>
+                <button type="button" class="knowledge-overview-mark mark-known${status === 'known' ? ' is-active' : ''}" onclick="markKnowledgeOverviewItem(event, ${index}, true)" aria-label="Mark known" title="Mark known">✓</button>
+            </div>
+        </div>`;
+    }).join('');
+}
+
 function renderKnowledgeOverview(card) {
     const modal = ensureKnowledgeOverviewModal();
     const items = getCardKnowledgeItems(card);
+    const rareItems = getRareSenseKnowledgeItems(card);
     const summary = getCardKnowledgeSummary(card);
     const summaryEl = modal.querySelector('#knowledgeOverviewSummary');
     const listEl = modal.querySelector('#knowledgeOverviewList');
@@ -605,41 +704,40 @@ function renderKnowledgeOverview(card) {
         sections.get(label).push({ item, index });
     });
 
-    listEl.innerHTML = Array.from(sections, ([label, rows]) => `
+    const mainHTML = Array.from(sections, ([label, rows]) => `
         <section class="knowledge-overview-section">
             <h3>${label}<span>${rows.length}</span></h3>
             <div class="knowledge-overview-rows">
-                ${rows.map(({ item, index }) => {
-                    const state = getKnowledgeItemState(card, item);
-                    const status = state.learned ? 'known' : (state.needsReview ? 'review' : 'unseen');
-                    const statusText = status === 'known' ? 'Known' : (status === 'review' ? 'Review' : 'Unmarked');
-                    const pos = item.pos && item.type === 'sense'
-                        ? `<span class="knowledge-overview-pos">${escapeKnowledgeHTML(item.pos)}</span>`
-                        : '';
-                    const detail = item.detail
-                        ? `<small>${escapeKnowledgeHTML(item.detail)}</small>`
-                        : '';
-                    return `<div class="knowledge-overview-row is-${status}">
-                        <button type="button" class="knowledge-overview-focus" onclick="focusKnowledgeOverviewItem(event, ${index})" title="Show this item on the card">
-                            <span class="knowledge-overview-status" aria-label="${statusText}"></span>
-                            <span class="knowledge-overview-copy">${pos}<strong>${escapeKnowledgeHTML(item.label)}</strong>${detail}</span>
-                        </button>
-                        <div class="knowledge-overview-actions" aria-label="Knowledge for ${escapeKnowledgeHTML(item.label)}">
-                            <button type="button" class="knowledge-overview-mark mark-review${status === 'review' ? ' is-active' : ''}" onclick="markKnowledgeOverviewItem(event, ${index}, false)" aria-label="Mark for review" title="Mark for review">×</button>
-                            <button type="button" class="knowledge-overview-mark mark-known${status === 'known' ? ' is-active' : ''}" onclick="markKnowledgeOverviewItem(event, ${index}, true)" aria-label="Mark known" title="Mark known">✓</button>
-                        </div>
-                    </div>`;
-                }).join('')}
+                ${knowledgeOverviewRowsHTML(card, rows)}
             </div>
         </section>`).join('');
+    const rareToggle = rareItems.length ? `<button type="button" class="knowledge-rare-toggle" aria-expanded="${rareSensesExpanded}" onclick="toggleRareSensesInKnowledge(event)">${rareSensesExpanded ? 'Hide' : 'Show'} ${rareItems.length} rarer sense${rareItems.length === 1 ? '' : 's'} <span aria-hidden="true">${rareSensesExpanded ? '⌃' : '⌄'}</span></button>` : '';
+    const rareHTML = rareSensesExpanded ? `<section class="knowledge-overview-section knowledge-rare-section">
+        <h3>Rarer senses<span>${rareItems.length}</span></h3>
+        <p>Choose Known or Review for a specific rare meaning. These choices do not change the ordinary meaning count.</p>
+        <div class="knowledge-overview-rows">${knowledgeOverviewRowsHTML(card, rareItems.map((item, index) => ({ item, index: items.length + index })))}</div>
+    </section>` : '';
+    listEl.innerHTML = `${mainHTML}${rareToggle}${rareHTML}`;
 }
 
-function showKnowledgeOverview(event) {
+function toggleRareSensesInKnowledge(event) {
     event?.stopPropagation();
-    const card = flashcards[currentIndex];
+    const list = document.getElementById('knowledgeOverviewList');
+    const scrollTop = list?.scrollTop || 0;
+    rareSensesExpanded = !rareSensesExpanded;
+    if (knowledgeOverviewCard) renderKnowledgeOverview(knowledgeOverviewCard);
+    if (list) list.scrollTop = scrollTop;
+}
+
+function showKnowledgeOverview(event, options = {}) {
+    event?.stopPropagation();
+    const card = options.card || flashcards[currentIndex];
     if (!card) return;
+    knowledgeOverviewCard = card;
+    rareSensesExpanded = Boolean(options.showRare);
     const modal = ensureKnowledgeOverviewModal();
     renderKnowledgeOverview(card);
+    modal.querySelector('.knowledge-overview-footer').hidden = card !== flashcards[currentIndex];
     modal.classList.remove('is-closing');
     modal.hidden = false;
     document.body.classList.add('knowledge-overview-open');
@@ -684,26 +782,26 @@ function closeKnowledgeOverview(event) {
 
 function focusKnowledgeOverviewItem(event, index) {
     event?.stopPropagation();
-    const card = flashcards[currentIndex];
-    const item = getCardKnowledgeItems(card)[index];
-    if (!card || !item) return;
+    const card = knowledgeOverviewCard;
+    const item = card && getKnowledgeOverviewItems(card)[index];
+    if (!card || !item || item.isRare) return;
     closeKnowledgeOverview();
     window.focusKnowledgeCardItem?.(item.meaningIndex, item.cycleIndex || 0);
 }
 
 async function markKnowledgeOverviewItem(event, index, isCorrect) {
     event?.stopPropagation();
-    const card = flashcards[currentIndex];
-    const items = getCardKnowledgeItems(card);
-    const item = items[index];
+    const card = knowledgeOverviewCard;
+    const items = card && getKnowledgeOverviewItems(card);
+    const item = items?.[index];
     if (!card || !item) return;
 
     // 1-tap exception flow: if the learner marks one sense as unknown (isCorrect === false),
     // automatically mark all other unmarked items on this card as known (true) so the learner
     // only has to tap the single exception they missed.
-    if (!isCorrect) {
+    if (!isCorrect && !item.isRare) {
         const unmarkedSiblings = items.filter((sibling, sibIdx) => {
-            if (sibIdx === index) return false;
+            if (sibIdx === index || sibling.isRare) return false;
             const state = getKnowledgeItemState(card, sibling);
             return !state.seen;
         });
@@ -713,7 +811,7 @@ async function markKnowledgeOverviewItem(event, index, isCorrect) {
     }
 
     await saveKnowledgeProgress(card, [item], isCorrect);
-    updateCard();
+    if (card === flashcards[currentIndex]) updateCard();
     renderKnowledgeOverview(card);
 }
 
@@ -759,6 +857,7 @@ window.renderKnowledgeControl = renderKnowledgeControl;
 window.renderKnowledgeOverviewButton = renderKnowledgeOverviewButton;
 window.markCurrentKnowledge = markCurrentKnowledge;
 window.showKnowledgeOverview = showKnowledgeOverview;
+window.toggleRareSensesInKnowledge = toggleRareSensesInKnowledge;
 window.closeKnowledgeOverview = closeKnowledgeOverview;
 window.focusKnowledgeOverviewItem = focusKnowledgeOverviewItem;
 window.markKnowledgeOverviewItem = markKnowledgeOverviewItem;

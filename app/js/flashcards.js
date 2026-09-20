@@ -3981,6 +3981,9 @@ function renderPhraseSummaryBack(card) {
     if (rareCount) bits.push(`${rareCount} rarer sense${rareCount === 1 ? '' : 's'}`);
     if (phraseCount) bits.push(`${phraseCount} expression${phraseCount === 1 ? '' : 's'}`);
     const subtitle = `Rarer uses — senses that show up less often in speech${bits.length ? ` · ${bits.join(' · ')}` : ''}`;
+    const rareKnowledgeButton = rareCount && currentUser && !currentUser.isGuest
+        ? '<button type="button" class="rare-knowledge-btn" onclick="openRareSenseKnowledge(event)">Mark rarer senses Known or Review</button>'
+        : '';
 
     return `<div class="back-header other-uses-header">
             <div class="back-headword-row">
@@ -3988,8 +3991,16 @@ function renderPhraseSummaryBack(card) {
             </div>
             <div class="phrase-summary-subtitle">${subtitle}</div>
         </div>
+        ${rareKnowledgeButton}
         <div class="phrase-summary-scroll">${rareHTML}${phraseHTML}${cliticHTML}</div>`;
 }
+
+function openRareSenseKnowledge(event) {
+    event?.stopPropagation();
+    const parent = cardChainQueue.find(item => item.kind === 'RARE_SENSE')?.parentCard;
+    if (parent) window.showKnowledgeOverview?.(event, { card: parent, showRare: true });
+}
+window.openRareSenseKnowledge = openRareSenseKnowledge;
 
 // ---------------------------------------------------------------------------
 // Backup example sentences — the second chain child.
@@ -5577,7 +5588,7 @@ function updateCard({ announceHeadword = false } = {}) {
                 // Don't label genuine rare dictionary senses as "Unassigned"
                 const assignmentState = (!g.hasAssignedEvidence && !g.hasOnlyRareSenses)
                     ? '<span class="pos-pill-unassigned">Unassigned</span>'
-                    : (g.hasOnlyRareSenses
+                    : (rows.length <= 1 ? '' : g.hasOnlyRareSenses
                         ? prominenceBadgeHTML({ label: 'Rare', key: 'rare' })
                         : (useProminenceLabels && g.pct > 0
                             ? prominenceBadgeHTML(prominenceInfoFromShare(g.mainMeanings)) : ''));
