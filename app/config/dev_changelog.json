@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-20T10:50:34+01:00",
+      "date": "2026-09-20 10:50 BST",
+      "agent": "Codex",
+      "summary": "Clarify language and music choices and group skipped-word decks by level",
+      "detail": [
+        "Made language, mode, and music-source choices a clearer sequence with consistent descriptions and Back navigation.",
+        "Grouped skipped Fast Track word decks beneath their original levels, in sets of up to 20, with existing card progress on each set.",
+        "Kept merged word forms as a note on their shared cards and clarified the empty skipped-deck state."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-19T20:46:39+01:00",
       "date": "2026-09-19 20:46 BST",
       "agent": "Codex",

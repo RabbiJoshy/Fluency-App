@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v485"
+EXPECTED_CACHE_NAME = "flashcards-v487"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -469,7 +469,9 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("class=\"extras-open-card\"", extras)
         self.assertIn("${escapeHtml(item.word)}</button>", extras)
         self.assertIn("globalThis.popupFoundWord", extras)
-        self.assertIn("class=\"extras-set-pill\"", extras)
+        self.assertIn('class="extras-set-pill${complete', extras)
+        self.assertIn('class="extras-level-group"${current', extras)
+        self.assertIn('function skippedByLevel', extras)
         self.assertIn("function startFastTrackSkippedSet", extras)
         self.assertIn("fastTrackCards: slice", extras)
         self.assertIn("startFastTrackSkippedSet", ui)
@@ -557,7 +559,8 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("variant: 'list'", flashcards)
         self.assertIn("id: 'lyricsSourceSheet'", main)
         self.assertIn("id: 'artistChoiceSheet'", main)
-        self.assertIn("Keep only the songs Fluency already has in its lyrics library.", main)
+        self.assertIn("Import a playlist and use songs already in the Fluency lyrics library.", main)
+        self.assertIn("onBack: openLearningSourcePicker", main)
         self.assertIn("label: 'Live playlist'", main)
         self.assertIn("label: 'Match a Spotify playlist'", main)
         ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
@@ -695,8 +698,8 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260918l", worker)
-        self.assertIn("/js/main.js?v=20260919o", worker)
-        self.assertIn("/js/ui.js?v=20260919g", worker)
+        self.assertIn("/js/main.js?v=20260920a", worker)
+        self.assertIn("/js/ui.js?v=20260920a", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -815,7 +818,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
         self.assertIn("/js/spotify-playlist-import.js?v=20260919a", worker)
-        self.assertIn('css/style.css?v=20260919o', html)
+        self.assertIn('css/style.css?v=20260920a', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
         self.assertIn("searchParams.set('playlistLive'", importer)
@@ -1394,4 +1397,3 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("const singletonFoldLeaders = new Map();", flashcards)
         self.assertIn("if (singletonFoldFollowers.has(idx)) return;", flashcards)
         self.assertIn("foldInfo.allIndices.includes(currentMeaningIndex)", flashcards)
-
