@@ -2650,7 +2650,7 @@ function renderSetupExtrasSection() {
         const lemmas = extrasData.lemmas || [];
         const totalSkipped = cognates.length + lemmas.length;
         if (eyebrow) eyebrow.textContent = 'Fast Track';
-        if (title) title.textContent = 'Fast Track vocabulary';
+        if (title) title.textContent = 'Skipped word decks';
 
         if (totalSkipped > 0) {
             section.style.display = 'block';
@@ -2662,20 +2662,26 @@ function renderSetupExtrasSection() {
                         <span class="extras-deck-badge is-info">Fast Track</span>
                         <div class="extras-deck-info">
                             <strong>${cognates.length
-                ? `${cognates.length.toLocaleString()} skipped word${cognates.length === 1 ? '' : 's'}`
-                : `${lemmas.length.toLocaleString()} merged form${lemmas.length === 1 ? '' : 's'}`}</strong>
+                ? `${cognates.length.toLocaleString()} words ready to study`
+                : 'No skipped word decks'}</strong>
                             <p>${cognates.length
-                ? 'Study them as decks of 20, the same size as a main set.'
-                : 'Merged forms stay on their host cards — they are not skipped.'}</p>
+                ? 'Choose a level below, then study a deck of up to 20 words.'
+                : 'Merged forms remain on their shared cards.'}</p>
                         </div>
                     </div>
                 </div>
-                <div class="extras-deck-groups">${globalThis.renderFastTrackDeck?.(extrasData) || ''}</div>
+                <div class="extras-deck-groups">${globalThis.renderFastTrackDeck?.(extrasData, {
+                    ranges: getActiveLevelRanges(), selectedLevel,
+                    progressForItem: item => getSetupLearningState(item)
+                }) || ''}</div>
             `;
             card.querySelectorAll('.extras-set-pill').forEach(button => {
                 button.addEventListener('click', event => {
                     event.stopPropagation();
-                    globalThis.startFastTrackSkippedSet?.(button.dataset.ftKind, Number(button.dataset.ftStart));
+                    globalThis.startFastTrackSkippedSet?.(
+                        button.dataset.ftKind, Number(button.dataset.ftStart),
+                        Number(button.dataset.ftLevel), getActiveLevelRanges()
+                    );
                 });
             });
         } else {
@@ -2686,7 +2692,7 @@ function renderSetupExtrasSection() {
                         <span class="extras-deck-badge is-muted">Full deck</span>
                         <div class="extras-deck-info">
                             <strong>All words included</strong>
-                            <p>Fast Track is off. Word forms and look-alikes appear as cards.</p>
+                            <p>No words are set aside with your current settings. They stay in the main sets.</p>
                         </div>
                     </div>
                     <div class="extras-deck-actions">

@@ -11,12 +11,12 @@ import './estimation.js?v=20260825ak';
 import './config.js?v=20260919c';
 import './progress.js?v=20260917j';
 import './knowledge.js?v=20260915a';
-import './ui.js?v=20260919h';
+import './ui.js?v=20260920a';
 import './vocab.js?v=20260919d';
 import './cognates.js?v=20260914e';
 import './coverage.js?v=20260909a';
 import './fast-mode.js?v=20260916a';
-import './extras.js?v=20260919c';
+import './extras.js?v=20260920a';
 import './song-sets.js?v=20260823ae';
 import './playlist-live.js?v=20260919a';
 import './spotify-playlist-import.js?v=20260919a';
@@ -1027,7 +1027,7 @@ window.closeRadialPicker = closeRadialPicker;
 
 // Stable choice surfaces for lists that can grow. Options keep a fixed place,
 // remain discoverable, and can briefly explain the consequence of a choice.
-function showChoiceSheet({ id, ariaLabel, title, intro = '', entries, variant = 'list', onBack = null }) {
+function showChoiceSheet({ id, ariaLabel, title, intro = '', stepLabel = '', entries, variant = 'list', onBack = null }) {
     const existing = document.getElementById(id);
     if (existing) { closeChoiceSheet(id); return; }
     if (!entries.length) return;
@@ -1050,13 +1050,19 @@ function showChoiceSheet({ id, ariaLabel, title, intro = '', entries, variant = 
         backBtn.setAttribute('aria-label', 'Back');
         backBtn.textContent = '‹';
         backBtn.addEventListener('click', () => {
-            closeChoiceSheet(id);
+            closeChoiceSheet(id, true);
             onBack();
         });
         header.appendChild(backBtn);
     }
     const headingGroup = document.createElement('div');
     headingGroup.className = 'choice-sheet-heading';
+    if (stepLabel) {
+        const step = document.createElement('span');
+        step.className = 'choice-sheet-step';
+        step.textContent = stepLabel;
+        headingGroup.appendChild(step);
+    }
     const heading = document.createElement('h2');
     heading.textContent = title;
     headingGroup.appendChild(heading);
@@ -1079,10 +1085,11 @@ function showChoiceSheet({ id, ariaLabel, title, intro = '', entries, variant = 
         item.type = 'button';
         item.className = 'choice-sheet-item';
         item.disabled = !!entry.disabled;
-        item.setAttribute('aria-label', entry.disabled
-            ? `${entry.label} — coming soon`
-            : entry.label);
-        if (entry.selected) item.classList.add('is-selected');
+        item.setAttribute('aria-label', [entry.label, entry.description || (entry.disabled ? 'Coming soon' : ''), entry.selected ? 'Current choice' : ''].filter(Boolean).join('. '));
+        if (entry.selected) {
+            item.classList.add('is-selected');
+            item.setAttribute('aria-current', 'true');
+        }
 
         const icon = document.createElement('span');
         icon.className = 'choice-sheet-icon';
@@ -1113,7 +1120,7 @@ function showChoiceSheet({ id, ariaLabel, title, intro = '', entries, variant = 
         item.addEventListener('click', event => {
             event.stopPropagation();
             if (entry.disabled) return;
-            closeChoiceSheet(id);
+            closeChoiceSheet(id, true);
             entry.onSelect();
         });
         body.appendChild(item);
@@ -1135,7 +1142,7 @@ function showChoiceSheet({ id, ariaLabel, title, intro = '', entries, variant = 
     requestAnimationFrame(() => body.querySelector('button:not(:disabled)')?.focus());
 }
 
-function closeChoiceSheet(id) {
+function closeChoiceSheet(id, immediate = false) {
     const overlay = document.getElementById(id);
     if (!overlay) return;
     if (overlay._choiceSheetKeyHandler) {
@@ -1143,7 +1150,8 @@ function closeChoiceSheet(id) {
     }
     overlay.style.pointerEvents = 'none';
     overlay.classList.remove('is-open');
-    setTimeout(() => overlay.remove(), 180);
+    if (immediate) overlay.remove();
+    else setTimeout(() => overlay.remove(), 180);
 }
 
 window.showChoiceSheet = showChoiceSheet;
@@ -1179,8 +1187,10 @@ function showAvailableMusicPicker(artists) {
     showChoiceSheet({
         id: 'artistChoiceSheet',
         ariaLabel: 'Choose artists or songs',
-        title: 'Choose artists or songs',
-        intro: 'Pick one artist, or combine individual songs into your own collection.',
+        title: 'Choose your music',
+        intro: 'Pick an artist, or combine individual songs into one vocabulary list.',
+        stepLabel: 'Lyrics · Choose songs',
+        onBack: () => showArtistPicker(null, artists, pickerLanguage),
         variant: 'list',
         entries
     });
@@ -1230,14 +1240,16 @@ async function showArtistPicker(anchorBtn, artists, targetLanguage = null) {
     showChoiceSheet({
         id: 'lyricsSourceSheet',
         ariaLabel: 'Choose how to add music',
-        title: 'Build from music',
-        intro: 'Choose how you want to create a vocabulary list from music you listen to.',
+        title: 'How would you like to choose music?',
+        intro: 'Your choice determines where the song words and example lines come from.',
+        stepLabel: 'Lyrics · Choose source',
+        onBack: openLearningSourcePicker,
         variant: 'list',
         entries: [
             {
                 label: 'Choose artists or songs',
                 description: hasAvailableMusic
-                    ? 'Build vocabulary from music you like in your target language.'
+                    ? 'Pick an artist or individual songs from the Fluency lyrics library.'
                     : 'No music collection has been published for this language yet.',
                 fallbackText: '♫',
                 accent: 'var(--accent-primary)',
@@ -1250,7 +1262,7 @@ async function showArtistPicker(anchorBtn, artists, targetLanguage = null) {
             {
                 label: 'Match a Spotify playlist',
                 description: hasAvailableMusic
-                    ? 'Keep only the songs Fluency already has in its lyrics library.'
+                    ? 'Import a playlist and use songs already in the Fluency lyrics library.'
                     : 'No music collection has been published for this language yet.',
                 fallbackText: '∩',
                 accent: '#10B981',
@@ -1262,7 +1274,7 @@ async function showArtistPicker(anchorBtn, artists, targetLanguage = null) {
             },
             {
                 label: 'Live playlist',
-                description: 'Look up lyrics now and study a naive deck: speech meanings, your song lines, no sense tagging.',
+                description: 'Look up your playlist now. Cards use speech meanings with your song lines; meaning matching is limited.',
                 fallbackText: '＋',
                 accent: '#F59E0B',
                 onSelect: () => window.openSpotifyPlaylistImport?.(resolvedArtists, language, { live: true })
@@ -1280,13 +1292,14 @@ function openLearningSourcePicker() {
     showChoiceSheet({
         id: 'learningSourceChoiceSheet',
         ariaLabel: 'Choose vocabulary',
-        title: 'Choose vocabulary',
-        intro: 'Choose which kind of language should shape your vocabulary list.',
+        title: 'What do you want to understand?',
+        intro: 'Choose a source for your words. You can switch later and keep your card progress.',
+        stepLabel: `${languageConfig.name || language} · Choose mode`,
         variant: 'list',
         entries: [
             {
-                label: 'Speech',
-                description: 'General-purpose vocabulary ranked from modern movie and television dialogue.',
+                label: 'Everyday Speech',
+                description: 'Common words from films and TV, ordered by how often people say them.',
                 fallbackText: '1',
                 selected: !activeArtist && !window.playlistLiveActive?.(),
                 onSelect: () => {
@@ -1313,8 +1326,8 @@ function openLearningSourcePicker() {
             {
                 label: 'Music & lyrics',
                 description: lyricsCatalog
-                    ? 'Learn frequent words from artists and songs you like, with lyric playback through Spotify.'
-                    : 'Look up lyrics from a playlist and study a live deck from speech meanings plus your song lines.',
+                    ? 'Learn words from artists and songs you choose, with their lyric lines as examples.'
+                    : 'Look up a playlist and study speech meanings with its lyric lines.',
                 fallbackText: '2',
                 selected: Boolean(activeArtist || window.playlistLiveActive?.()),
                 disabled: !lyricsAvailable,
@@ -1411,6 +1424,8 @@ function showLanguagePicker(languages) {
         id: 'languageChoiceSheet',
         ariaLabel: 'Choose a language',
         title: 'Choose a language',
+        intro: 'Pick the language you want to understand. You will choose Speech or Lyrics next.',
+        stepLabel: 'Learning setup · Language',
         variant: 'grid',
         entries
     });
