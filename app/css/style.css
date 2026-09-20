@@ -18469,3 +18469,25 @@ body.artist-mode #flashcardMode::before {
 .sense-prominence-badge.prominence-common,
 .sense-prominence-badge.prominence-uncommon,
 .sense-prominence-badge.prominence-rare { color: var(--text-primary); }
+
+.knowledge-overview-footer[hidden] { display: none !important; }
+.knowledge-rare-toggle,
+.rare-knowledge-btn {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 12px;
+  padding: 9px 13px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font: 650 13px/1.3 var(--font-reading);
+  text-align: left;
+  cursor: pointer;
+}
+.knowledge-rare-toggle:hover,
+.rare-knowledge-btn:hover { border-color: var(--accent-primary); }
+.knowledge-rare-toggle span { float: right; font-size: 17px; }
+.knowledge-rare-section p { margin: 0 0 10px; color: var(--text-muted); font: 500 12px/1.4 var(--font-reading); }
+.knowledge-overview-focus.is-static { cursor: default; }
+.rare-knowledge-btn { width: calc(100% - 24px); margin: 0 12px 10px; }

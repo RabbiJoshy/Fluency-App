@@ -10,7 +10,7 @@ import './about-example.js?v=20260920e';
 import './estimation.js?v=20260825ak';
 import './config.js?v=20260919c';
 import './progress.js?v=20260920e';
-import './knowledge.js?v=20260915a';
+import './knowledge.js?v=20260920a';
 import './ui.js?v=20260920e';
 import './vocab.js?v=20260920e';
 import './cognates.js?v=20260914e';
@@ -21,7 +21,7 @@ import './song-sets.js?v=20260823ae';
 import './playlist-live.js?v=20260919a';
 import './spotify-playlist-import.js?v=20260919a';
 import './vocabulary-import.js?v=20260913a';
-import './flashcards.js?v=20260920b';
+import './flashcards.js?v=20260920c';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 function startCardTutorial() {
