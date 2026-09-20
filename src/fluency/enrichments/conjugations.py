@@ -17,6 +17,13 @@ from fluency.core.io import json_bytes
 
 LAYER_VERSION = "conjugation-layer/v1"
 SOURCE_MANIFEST_VERSION = "retained-source-artifact/v1"
+VERB_POS = frozenset({"VERB", "AUX", "verb", "aux"})
+DEFAULT_LOCALES = {
+    "es": "es-ES",
+    "pt": "pt-PT",
+    "fr": "fr-FR",
+    "cs": "cs-CZ",
+}
 PERSON_FIELDS = (
     ("1s", "form_1s"),
     ("2s", "form_2s"),
@@ -104,7 +111,7 @@ def pin_jehle_snapshot(
     return target
 
 
-def _load_source(snapshot: Path) -> tuple[dict[str, Any], list[dict[str, str]], Path]:
+def _read_manifest(snapshot: Path) -> dict[str, Any]:
     snapshot = snapshot.expanduser().resolve()
     try:
         manifest = json.loads((snapshot / "artifact.json").read_text(encoding="utf-8"))
@@ -113,25 +120,31 @@ def _load_source(snapshot: Path) -> tuple[dict[str, Any], list[dict[str, str]], 
     if (
         manifest.get("schema_version") != SOURCE_MANIFEST_VERSION
         or manifest.get("artifact_kind") != "conjugation_source"
-        or manifest.get("language") != "es"
-        or manifest.get("provider") != "fred-jehle"
     ):
         raise ConjugationLayerError("conjugation source manifest is incompatible")
+    return manifest
+
+
+def _jehle_payload(snapshot: Path, manifest: dict[str, Any]) -> Path:
+    if manifest.get("language") != "es" or manifest.get("provider") != "fred-jehle":
+        raise ConjugationLayerError("conjugation source manifest is incompatible")
     payload = snapshot / "jehle_verb_database.csv"
-    rows = _csv_rows(payload)
     content = (manifest.get("content_files") or [{}])[0]
     if content.get("sha256") != file_content_id(payload).removeprefix("sha256:"):
         raise ConjugationLayerError("conjugation source bytes do not match the manifest")
-    return manifest, rows, payload
+    return payload
 
 
 def _requested_headwords(menu: dict[str, Any]) -> set[str]:
-    if menu.get("menu_version") != "sense-menu/v1" or menu.get("language") != "es":
-        raise ConjugationLayerError("sense menu is not a Spanish sense-menu/v1 artifact")
+    if menu.get("menu_version") != "sense-menu/v1":
+        raise ConjugationLayerError("sense menu is not a sense-menu/v1 artifact")
+    language = menu.get("language")
+    if not isinstance(language, str) or not language:
+        raise ConjugationLayerError("sense menu is missing a language")
     requested: set[str] = set()
     for card in menu.get("cards", []):
         for analysis in card.get("analyses", []):
-            if analysis.get("part_of_speech") not in {"VERB", "AUX"}:
+            if analysis.get("part_of_speech") not in VERB_POS:
                 continue
             headword = str(analysis.get("headword", "")).strip().casefold()
             if headword:
@@ -139,7 +152,7 @@ def _requested_headwords(menu: dict[str, Any]) -> set[str]:
     return requested
 
 
-def _source_records(rows: list[dict[str, str]]) -> dict[str, dict[str, Any]]:
+def _jehle_records(rows: list[dict[str, str]]) -> dict[str, dict[str, Any]]:
     records: dict[str, dict[str, Any]] = {}
     seen_paradigms: set[tuple[str, str, str]] = set()
     for row in rows:
@@ -171,38 +184,77 @@ def _source_records(rows: list[dict[str, str]]) -> dict[str, dict[str, Any]]:
     return records
 
 
+def _source_records(
+    workspace: Workspace,
+    snapshot: Path,
+    manifest: dict[str, Any],
+    requested: set[str],
+) -> tuple[dict[str, dict[str, Any]], Path]:
+    provider = manifest.get("provider")
+    if provider == "fred-jehle":
+        payload = _jehle_payload(snapshot, manifest)
+        return _jehle_records(_csv_rows(payload)), payload
+    if provider == "kaikki":
+        from fluency.enrichments.kaikki_conjugations import kaikki_records, resolve_kaikki_payload
+        payload = resolve_kaikki_payload(workspace, snapshot, manifest)
+        return kaikki_records(payload, requested), payload
+    if provider == "verbecc":
+        from fluency.enrichments.verbecc_conjugations import verbecc_records
+        files = {item.get("path"): item for item in manifest.get("content_files") or [] if isinstance(item, dict)}
+        verbs = snapshot / "verbs.xml"
+        conjugations = snapshot / "conjugations.xml"
+        for path, key in ((verbs, "verbs.xml"), (conjugations, "conjugations.xml")):
+            expected = (files.get(key) or {}).get("sha256")
+            if expected != file_content_id(path).removeprefix("sha256:"):
+                raise ConjugationLayerError("conjugation source bytes do not match the manifest")
+        language = str(manifest.get("language") or "")
+        return verbecc_records(
+            language=language,
+            requested=requested,
+            verbs_xml=verbs,
+            conjugations_xml=conjugations,
+        ), verbs
+    raise ConjugationLayerError(f"unsupported conjugation source provider: {provider}")
+
+
 def build_conjugation_layer(
     workspace: Workspace,
     *,
     sense_menu: Path,
     source_snapshot: Path,
-    locale: str = "es-ES",
+    locale: str | None = None,
 ) -> tuple[ArtifactMetadata, dict[str, Any]]:
     """Build and store one exact layer for headwords requested by a clean menu."""
 
     try:
-        menu_bytes = sense_menu.read_bytes()
-        menu = json.loads(menu_bytes)
+        menu = json.loads(sense_menu.read_bytes())
     except (OSError, json.JSONDecodeError) as error:
         raise ConjugationLayerError("sense menu is unavailable") from error
     if not isinstance(menu, dict):
         raise ConjugationLayerError("sense menu must contain an object")
+    language = str(menu.get("language") or "")
     requested = _requested_headwords(menu)
-    source_manifest, rows, source_payload = _load_source(source_snapshot)
-    available = _source_records(rows)
+    snapshot = source_snapshot.expanduser().resolve()
+    manifest = _read_manifest(snapshot)
+    if manifest.get("language") != language:
+        raise ConjugationLayerError("conjugation source language does not match the sense menu")
+    available, source_payload = _source_records(workspace, snapshot, manifest, requested)
     records = [available[headword] for headword in sorted(requested) if headword in available]
     missing = sorted(requested - available.keys())
+    resolved_locale = locale or DEFAULT_LOCALES.get(language)
+    if not resolved_locale:
+        raise ConjugationLayerError(f"no default locale for conjugation language {language}")
     layer = {
         "layer_version": LAYER_VERSION,
-        "language": "es",
-        "locale": locale,
+        "language": language,
+        "locale": resolved_locale,
         "layer_kind": "conjugations",
         "join_key": "headword",
         "source": {
-            "provider": source_manifest["provider"],
-            "snapshot_id": source_manifest["snapshot_id"],
+            "provider": manifest["provider"],
+            "snapshot_id": manifest["snapshot_id"],
             "content_id": file_content_id(source_payload),
-            "provenance_status": source_manifest["provenance_status"],
+            "provenance_status": manifest["provenance_status"],
         },
         "inputs": {
             "sense_menu_content_id": file_content_id(sense_menu),

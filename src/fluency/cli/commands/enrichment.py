@@ -27,7 +27,7 @@ def register(subparsers) -> None:
     )
     conjugations.add_argument("--sense-menu", type=Path, required=True)
     conjugations.add_argument("--source-snapshot", type=Path, required=True)
-    conjugations.add_argument("--locale", default="es-ES")
+    conjugations.add_argument("--locale", default=None)
     cognates = enrichment_actions.add_parser(
         "build-cognates",
         help="score how transparent a deck's surfaces are to languages the learner reads",
@@ -77,6 +77,46 @@ def register(subparsers) -> None:
         metavar="CODE[=EXTRACT]",
         help="known language, e.g. --known en --known pl=/path/kaikki-Polish.jsonl",
     )
+    titles = enrichment_actions.add_parser(
+        "build-source-titles",
+        help="resolve OpenSubtitles IMDb ids to human film and series names",
+    )
+    titles.add_argument("--workspace", default=os.environ.get("FLUENCY_WORKSPACE"))
+    titles.add_argument(
+        "--ids",
+        action="append",
+        type=Path,
+        default=[],
+        help="OpenSubtitles .ids file; repeat for each language corpus",
+    )
+    titles.add_argument(
+        "--release",
+        action="append",
+        default=[],
+        metavar="LANG/MODE/RELEASE_ID",
+        help="also collect title ids cited by an existing speech release",
+    )
+    titles.add_argument(
+        "--imdb-dir",
+        type=Path,
+        help="directory containing title.basics.tsv.gz and title.episode.tsv.gz",
+    )
+    titles.add_argument(
+        "--out",
+        type=Path,
+        required=True,
+        help="JSON snapshot path; must be inside workspace/raw",
+    )
+    attach = enrichment_actions.add_parser(
+        "attach-source-titles",
+        help="publish a successor release with human film names on OpenSubtitles examples",
+    )
+    attach.add_argument("--workspace", default=os.environ.get("FLUENCY_WORKSPACE"))
+    attach.add_argument("--language", required=True)
+    attach.add_argument("--mode", default="speech")
+    attach.add_argument("--source-release", required=True)
+    attach.add_argument("--target-release", required=True)
+    attach.add_argument("--source-titles", type=Path, required=True)
 
 
 def handle_enrichment(args: argparse.Namespace) -> int:
@@ -137,6 +177,70 @@ def handle_enrichment(args: argparse.Namespace) -> int:
             )
         print(f"Wrote {out}")
         print("No release was composed or activated.")
+        return 0
+    if args.enrichment_command == "build-source-titles":
+        from fluency.harvest.source_titles import (
+            build_source_titles_snapshot,
+            collect_title_ids_from_ids_file,
+            collect_title_ids_from_examples,
+            iter_deck_examples,
+        )
+
+        out_path = args.out.expanduser().resolve()
+        try:
+            out_path.relative_to((workspace.root / "raw").resolve())
+        except ValueError:
+            raise SystemExit("source titles snapshot must be inside workspace/raw")
+        wanted: set[str] = set()
+        for ids_path in args.ids:
+            wanted.update(collect_title_ids_from_ids_file(ids_path))
+        for spec in args.release:
+            language, mode, release_id = spec.split("/", 2)
+            deck = json.loads(
+                (
+                    workspace.root / "releases" / language / mode / release_id / "deck.json"
+                ).read_text(encoding="utf-8")
+            )
+            wanted.update(collect_title_ids_from_examples(iter_deck_examples(deck)))
+        if not wanted:
+            raise SystemExit("no OpenSubtitles title ids were found")
+        imdb_dir = (
+            args.imdb_dir.expanduser().resolve()
+            if args.imdb_dir
+            else workspace.root / "raw/imdb/imdb-retrieved-2026-08-22"
+        )
+        report = build_source_titles_snapshot(
+            wanted,
+            basics_path=imdb_dir / "title.basics.tsv.gz",
+            episodes_path=imdb_dir / "title.episode.tsv.gz",
+            out_path=out_path,
+        )
+        print(
+            f"Resolved {report['resolved']:,} of {report['requested']:,} "
+            f"title ids -> {out_path}"
+        )
+        if report["missing"]:
+            print(f"Unresolved: {len(report['missing']):,}")
+        print("No release was composed or activated.")
+        return 0
+    if args.enrichment_command == "attach-source-titles":
+        from fluency.release.source_titles import attach_source_titles
+
+        directory, stats = attach_source_titles(
+            workspace,
+            language=args.language,
+            mode=args.mode,
+            source_release_id=args.source_release,
+            target_release_id=args.target_release,
+            source_titles_path=args.source_titles,
+        )
+        print(f"Built inactive source-title release: {directory}")
+        print(
+            f"OpenSubtitles examples: {stats['resolved']:,} named, "
+            f"{stats['unresolved']:,} still only an IMDb id, "
+            f"{stats['opensubtitles']:,} total"
+        )
+        print("Activation unchanged. Validate, then run `fluency release activate ...`.")
         return 0
     raise AssertionError(f"Unhandled enrichment command: {args.enrichment_command}")
 

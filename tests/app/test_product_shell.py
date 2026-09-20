@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v501"
+EXPECTED_CACHE_NAME = "flashcards-v502"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -118,15 +118,15 @@ class ProductShellTests(unittest.TestCase):
         self.assertEqual(config["languages"]["portuguese_brazilian"]["speechLang"], "pt-BR")
         self.assertEqual(
             config["languages"]["spanish"]["studyStructurePath"],
-            "releases/es/speech/es-speech-v12-6000x10-display-v5/app/study-structure.json",
+            "releases/es/speech/es-speech-v15-10000x10/app/study-structure.json",
         )
         self.assertEqual(
             config["languages"]["spanish"]["releaseManifestPath"],
-            "releases/es/speech/es-speech-v12-6000x10-display-v5/manifest.json",
+            "releases/es/speech/es-speech-v15-10000x10/manifest.json",
         )
         self.assertEqual(
             config["languages"]["spanish"]["releaseCompositionPath"],
-            "releases/es/speech/es-speech-v12-6000x10-display-v5/composition.json",
+            "releases/es/speech/es-speech-v15-10000x10/composition.json",
         )
         for legacy_path in (
             "conjugatedEnglishPath",
@@ -139,7 +139,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertEqual(
             config["languages"]["portuguese"]["indexPath"],
-            "releases/pt/speech/pt-speech-v12-6000x10-display-v5/app/vocabulary.index.json",
+            "releases/pt/speech/pt-speech-v15-10000x10/app/vocabulary.index.json",
         )
         self.assertEqual(
             config["languages"]["portuguese"]["conjugationsPath"],
@@ -147,7 +147,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertEqual(
             config["languages"]["czech"]["indexPath"],
-            "releases/cs/speech/cs-speech-v12-4000x10-display-v5/app/vocabulary.index.json",
+            "releases/cs/speech/cs-speech-v15-10000x10/app/vocabulary.index.json",
         )
         self.assertEqual(
             config["languages"]["czech"]["conjugationsPath"],
@@ -167,8 +167,9 @@ class ProductShellTests(unittest.TestCase):
             config["languages"]["french"]["studyStructurePath"],
             "releases/fr/speech/fr-speech-v7-dual-metadata-v5-20260918/app/study-structure.json",
         )
-        self.assertFalse((APP_ROOT / "Data").exists())
-        self.assertFalse((APP_ROOT / "Artists").exists())
+        root_entries = {p.name for p in APP_ROOT.iterdir()}
+        self.assertNotIn("Data", root_entries)
+        self.assertNotIn("Artists", root_entries)
 
     def test_speech_release_can_be_previewed_without_activation(self) -> None:
         config_js = (APP_ROOT / "js" / "config.js").read_text(encoding="utf-8")
@@ -236,16 +237,15 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("isLevelCompletion", modals)
         self.assertIn("Review this level", modals)
         self.assertIn("this.dataset.action === 'review-level'", flashcards)
-        self.assertNotIn("% accuracy`,", modals)
         self.assertNotIn("Natural speech", html)
-        self.assertIn("modern movie and television dialogue", html)
-        self.assertIn("import your own Spotify playlist", html)
-        self.assertIn("play the lyric moment where each word is used", html)
+        self.assertIn("The words people say in films and TV", html)
+        self.assertIn("The words in songs you choose", html)
+        self.assertIn("original line as the example", html)
         self.assertNotIn('id="learningContextMode"', html)
         self.assertNotIn('id="learningContextCoverage"', html)
         self.assertIn("Recommended", html)
         self.assertIn("Music &amp; lyrics", html)
-        self.assertIn("lyrics collection is available yet", main)
+        self.assertIn("Look up a playlist and study speech meanings", main)
         self.assertNotIn('<span class="step-number">1</span>', html)
 
     def test_merge_lemmas_remains_a_declared_learner_feature(self) -> None:
@@ -336,11 +336,11 @@ class ProductShellTests(unittest.TestCase):
         self.assertGreaterEqual(vocab.count("source_mode: 'reference'"), 2)
         self.assertIn("be merged into corpus ticks", vocab)
         self.assertIn("function canonicalExampleHTML(meaning)", flashcards)
-        self.assertIn("function displayExamplesForSense(meaning, examples)", flashcards)
+        self.assertIn("function displayExamplesForSense(meaning, examples", flashcards)
         self.assertIn("function rankConfidentWsdExamples(examples)", flashcards)
-        self.assertIn("function chooseSingleDisplayExample(meaning, examples)", flashcards)
+        self.assertIn("function chooseSingleDisplayExample(meaning, examples", flashcards)
         self.assertIn("function isReliableWsdExample(example)", flashcards)
-        self.assertIn("opens on a non-canonical line 85.0%", flashcards)
+        self.assertIn("const WSD_EXAMPLE_LEVEL_RANK", flashcards)
         self.assertNotIn("method && method !== 'unassigned'", flashcards)
         self.assertNotIn("backHTML += canonicalExampleHTML(currentMeaning);", flashcards)
         self.assertIn("if (examplesAllowCycling(examples)) return examples;", flashcards)
@@ -582,7 +582,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("fitPosSectionSummaries(document.getElementById('backContent'))", flashcards)
         self.assertIn(".pos-collapsible .pos-section-summary", css)
         self.assertIn("font-size: 16px", css)
-        self.assertIn("citationShownInSenseRows", flashcards)
+        self.assertIn("showBackLemmaPair", flashcards)
         self.assertIn('class="pos-pill-pct sense-percentage"', flashcards)
         self.assertIn('class="sense-percentage sense-percentage-tail"', flashcards)
         self.assertIn(".sense-percentage", css)
@@ -639,9 +639,9 @@ class ProductShellTests(unittest.TestCase):
     def test_multi_pos_controls_use_bounded_grid_without_reordering_senses(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
-        self.assertIn("pos-count-${Math.min(allPOS.length, 4)}", flashcards)
+        self.assertIn("pos-count-${Math.min(pairs.length, 4)}", flashcards)
         self.assertIn("pos-count-${Math.min(posItems.length, 4)}", flashcards)
-        self.assertIn("pos === activeDisplayPos ? 'is-active' : 'is-inactive'", flashcards)
+        self.assertIn("pos === activeBackPos ? 'is-active' : 'is-inactive'", flashcards)
         self.assertIn("function orderMeaningEntriesForDisplay(meanings)", flashcards)
         self.assertNotIn("[entries[activeIndex]", flashcards)
         self.assertIn("const orderedMembers = members;", flashcards)
@@ -677,8 +677,8 @@ class ProductShellTests(unittest.TestCase):
             '.range-btn-new:not(.has-progress):not(:hover)',
             light_css,
         )
-        self.assertIn('css/light-theme.css?v=20260917i', html)
-        self.assertIn('/css/light-theme.css?v=20260917i', worker)
+        self.assertIn('css/light-theme.css?v=20260920a', html)
+        self.assertIn('/css/light-theme.css?v=20260920a', worker)
 
     def test_active_release_aliases_are_never_cached(self) -> None:
         worker = (APP_ROOT / "service-worker.js").read_text(encoding="utf-8")
@@ -925,7 +925,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("ensureExampleShardsForRange", vocab)
         self.assertIn("prefetchStudySetPayload", vocab)
         self.assertIn("vocabulary.examples.manifest.json", vocab)
-        self.assertIn("vocabulary.index.columns.json", vocab)
+        self.assertIn("loadColumnarIndex", vocab)
         self.assertIn("vocabulary.index.manifest.json", vocab)
 
     def test_pilot_interface_remains_a_readable_reference(self) -> None:

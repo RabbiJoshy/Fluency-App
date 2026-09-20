@@ -3,8 +3,8 @@
   "profile_id": "cs-v14-1",
   "language": "cs",
   "execution_status": "ready",
-  "source_method_id": "provider-neutral-v14-mwe-offered",
-  "method_summary": "v13 abstain-unresolved plus MWE candidate injection with non-decomposition policy and dual-write word-leaf.",
+  "source_method_id": "provider-neutral-v14-mwe-phrase-commit",
+  "method_summary": "v13 abstain-unresolved plus MWE competition. A gloss-winning PHRASE commits without dictionary-order agreement. If the word path is unresolved, publish the best competing phrase instead of abstaining. Dual-write the best word-leaf.",
   "provider_prior": {
     "enabled": true,
     "source": "wiktionary_menu_order",
@@ -35,8 +35,8 @@
   "multiword": {
     "enabled": true,
     "inventory": "mwe_merged/v1",
-    "snapshot_path": "raw/mwe/mwe-cs-2026-09-17-v14/mwe_merged.json",
-    "filter_policy": "v14_non_decomposition",
+    "snapshot_path": "raw/mwe/mwe-cs-2026-09-18-v14-sieve/mwe_merged.json",
+    "filter_policy": "v14_wiktionary_source_and_pos",
     "minimum_corpus_frequency": 1,
     "role": "stored_mwe_augmented_projection",
     "active_projection": "mwe_augmented",
@@ -53,6 +53,8 @@
     "status": "unresolved_abstains_parent_or_leaf_when_licensed",
     "unresolved_outcome": "abstain",
     "shared_translation_licenses_glosskey": true,
+    "phrase_winner_skips_provider_order": true,
+    "unresolved_falls_back_to_phrase": true,
     "raw_margins_are_confidence": false
   },
   "specialists": {

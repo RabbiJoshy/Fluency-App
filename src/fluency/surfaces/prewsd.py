@@ -28,7 +28,7 @@ from typing import Any, Iterable, Mapping, Sequence
 
 SET_VERSION = "prewsd-set/v1"
 EXAMPLES_VERSION = "prewsd-examples/v1"
-PAIRS_VERSION = "prewsd-pairs/v1"
+PAIRS_VERSION = "prewsd-pairs/v2"
 
 #: Every sentence id begins with this; storing it 364,000 times is waste.
 ID_PREFIX = "sentence_"
@@ -44,6 +44,45 @@ def _write(path: Path, payload: Mapping[str, Any]) -> dict[str, Any]:
             "sha256": hashlib.sha256(body.encode("utf-8")).hexdigest()}
 
 
+def _with_occurrence_pos(entry: Mapping[str, Any]) -> dict[str, Any]:
+    """Copy a surface row and make `occurrence_pos` parallel to `eligible`."""
+
+    out = dict(entry)
+    eligible = list(out.get("eligible") or [])
+    n = len(eligible)
+    tags = out.get("occurrence_pos")
+    if tags is None:
+        out["occurrence_pos"] = [None] * n
+        return out
+    if len(tags) != n:
+        raise ValueError(
+            f"occurrence_pos length {len(tags)} does not match eligible {n}"
+        )
+    out["occurrence_pos"] = list(tags)
+    return out
+
+
+def occurrence_pos_lookup(
+    examples: Mapping[str, Any],
+    pairs: Mapping[str, Any],
+) -> dict[tuple[str, str], str]:
+    """Frozen tags: `(surface, sentence_id) -> UD POS`. Null cells are omitted."""
+
+    cols = examples["columns"]
+    raw_ids = cols["sentence_id"]
+    ids = [i if str(i).startswith(ID_PREFIX) else ID_PREFIX + str(i) for i in raw_ids]
+    found: dict[tuple[str, str], str] = {}
+    for form, entry in (pairs.get("surfaces") or {}).items():
+        tags = entry.get("occurrence_pos")
+        if not tags:
+            continue
+        for index, tag in zip(entry.get("eligible") or (), tags):
+            if not tag:
+                continue
+            found[(form, ids[index])] = str(tag)
+    return found
+
+
 def build(
     out_dir: Path,
     *,
@@ -51,6 +90,7 @@ def build(
     run_id: str,
     sentences: Sequence[Mapping[str, Any]],
     surfaces: Mapping[str, Mapping[str, Any]],
+    occurrence_pos_model: str | None = None,
 ) -> dict[str, Any]:
     """Write the set. `sentences` fixes the order; `surfaces` references it.
 
@@ -59,6 +99,11 @@ def build(
     pairing, not of the sentence: the same sentence costs 16.41 against `que`
     and 9.06 against `lo`, because burden counts words harder than *that*
     card's rank. They cannot be folded into the examples document.
+
+    Occurrence POS is the same grain: `(sentence, word, tagger) -> UD tag`.
+    It lives on `pairs` as `occurrence_pos`, parallel to `eligible`, with
+    `occurrence_pos_model` on the document (the pin, or null when unused).
+    JSON null is undeclared — WSD may still tag that pair. A string is frozen.
     """
 
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -116,7 +161,8 @@ def build(
         "document_version": PAIRS_VERSION,
         "language": language,
         "run_id": run_id,
-        "surfaces": {k: dict(v) for k, v in surfaces.items()},
+        "occurrence_pos_model": occurrence_pos_model,
+        "surfaces": {form: _with_occurrence_pos(entry) for form, entry in surfaces.items()},
     })
 
     manifest = {

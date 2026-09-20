@@ -88,6 +88,11 @@ def register(subparsers) -> None:
         required=True,
         help="complete assignment bundle under workspace/raw/wsd",
     )
+    pipeline_wsd_import.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="allow overwriting existing stage 04 output directory for re-import",
+    )
     pipeline_run_release = pipeline_actions.add_parser(
         "build-run-release",
         help="build an inactive real-data release, attaching WSD assignments when stage 04 exists",
@@ -240,6 +245,7 @@ def handle_pipeline(args: argparse.Namespace) -> int:
             language=args.language,
             mode=args.mode,
             bundle_path=args.bundle,
+            overwrite=getattr(args, "overwrite", False),
         )
         report = json.loads((output / "report.json").read_text(encoding="utf-8"))
         counts = report["assignment_counts"]

@@ -304,6 +304,7 @@ def import_wsd_assignments(
     mode: str,
     bundle_path: Path,
     started_at: datetime | None = None,
+    overwrite: bool = False,
 ) -> Path:
     """Validate and publish a complete external assignment bundle exactly once."""
 
@@ -479,7 +480,7 @@ def import_wsd_assignments(
         )
 
     output = run / STAGE_RELATIVE / "output"
-    if output.exists():
+    if output.exists() and not overwrite:
         raise WSDAssignmentImportError(
             "WSD assignment output already exists; create a new run instead of overwriting it"
         )
@@ -561,6 +562,8 @@ def import_wsd_assignments(
         stage_manifest = stage.to_dict()
         (temporary / "manifest.json").write_bytes(json_bytes(stage_manifest))
         output.parent.mkdir(parents=True, exist_ok=True)
+        if overwrite and output.exists():
+            shutil.rmtree(output)
         os.replace(temporary, output)
     finally:
         if temporary.exists():

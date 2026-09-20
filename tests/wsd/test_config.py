@@ -123,6 +123,60 @@ class WSDProfileTests(unittest.TestCase):
                 self.assertTrue(profile["commit"]["shared_translation_licenses_glosskey"])
                 self.assertFalse(profile["multiword"]["enabled"])
                 self.assertFalse(profile["alignment"]["enabled"])
+                self.assertFalse(
+                    profile["commit"].get("phrase_winner_skips_provider_order", False)
+                )
+
+    def test_v14_profiles_commit_a_phrase_without_dictionary_order(self):
+        for language in ("es", "pt", "cs"):
+            with self.subTest(language=language):
+                path = (
+                    REPOSITORY_ROOT
+                    / "config"
+                    / "wsd"
+                    / "models"
+                    / f"{language}-v14-1.json"
+                )
+                profile = json.loads(path.read_text(encoding="utf-8"))
+                self.assertEqual(
+                    profile["source_method_id"],
+                    "provider-neutral-v14-mwe-phrase-commit",
+                )
+                self.assertEqual(profile["commit"]["unresolved_outcome"], "abstain")
+                self.assertTrue(profile["commit"]["phrase_winner_skips_provider_order"])
+                self.assertTrue(profile["commit"]["unresolved_falls_back_to_phrase"])
+                self.assertTrue(profile["multiword"]["enabled"])
+                self.assertEqual(
+                    profile["multiword"]["active_projection"], "mwe_augmented"
+                )
+
+    def test_v15_profiles_point_to_10k_sieve_and_commit_phrases(self):
+        for language in ("es", "pt", "cs"):
+            with self.subTest(language=language):
+                path = (
+                    REPOSITORY_ROOT
+                    / "config"
+                    / "wsd"
+                    / "models"
+                    / f"{language}-v15-1.json"
+                )
+                self.assertTrue(path.exists())
+                profile = json.loads(path.read_text(encoding="utf-8"))
+                self.assertEqual(
+                    profile["source_method_id"],
+                    "provider-neutral-v15-mwe-phrase-commit",
+                )
+                self.assertEqual(profile["commit"]["unresolved_outcome"], "abstain")
+                self.assertTrue(profile["commit"]["phrase_winner_skips_provider_order"])
+                self.assertTrue(profile["commit"]["unresolved_falls_back_to_phrase"])
+                self.assertTrue(profile["multiword"]["enabled"])
+                self.assertEqual(
+                    profile["multiword"]["active_projection"], "mwe_augmented"
+                )
+                self.assertEqual(
+                    profile["multiword"]["snapshot_path"],
+                    f"raw/mwe/mwe-{language}-10k-sieve/mwe_merged.json",
+                )
 
 
 if __name__ == "__main__":

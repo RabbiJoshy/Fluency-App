@@ -12,7 +12,7 @@ the occurrence that was selected as evidence, and card identity is untouched.
 
 from __future__ import annotations
 
-from collections import Counter
+from collections import Counter, defaultdict
 from datetime import UTC, datetime
 import json
 from pathlib import Path
@@ -23,7 +23,7 @@ from typing import Any
 from fluency.core.artifacts import verify_artifact
 from fluency.core.hashing import canonical_content_id, file_content_id
 from fluency.core.manifests import StageManifest, build_stage_cache_key
-from fluency.features.metadata import METADATA_CONTRACT_VERSION
+from fluency.features.metadata import METADATA_CONTRACT_VERSION, MetadataAccounting
 from fluency.core.workspace import Workspace
 from fluency.pipeline.planning import validate_pipeline_profile
 from fluency.harvest.matching import example_identity
@@ -356,6 +356,10 @@ def build_inactive_run_candidate(
         if int(entry.get("rank", 0)) <= _SELECTION_FUNCTION_WORD_RANK
     )
 
+    assignments_by_card: dict[str, dict[str, Any]] = defaultdict(dict)
+    for key, row in assignments.items():
+        assignments_by_card[key[0]][key[1]] = row
+
     selection_cards: list[dict[str, Any]] = []
     cards: list[dict[str, Any]] = []
     selected_count = 0
@@ -479,10 +483,11 @@ def build_inactive_run_candidate(
             }
         )
 
+        card_assignments = assignments_by_card.get(card_id, {})
         computed_here = {
-            key[1]: row
-            for key, row in assignments.items()
-            if key[0] == card_id and row.get("status") == "assigned"
+            sentence_id: row
+            for sentence_id, row in card_assignments.items()
+            if row.get("status") == "assigned"
         }
         assigned_here = {
             sentence_id: row
@@ -598,6 +603,10 @@ def build_inactive_run_candidate(
                             for item in (row.get("evidence") or {}).get("multiword_candidates", [])
                             if item.get("expression") == expression
                         ],
+                        "sense_metadata": MetadataAccounting().envelope(
+                            source_metadata={"expression": expression},
+                            features=(),
+                        ),
                     },
                 }
         meanings.extend(multiword_meanings.values())
@@ -669,7 +678,7 @@ def build_inactive_run_candidate(
                 }
             )
         card_payload = {**card, "meanings": meanings, "examples": examples}
-        all_here = [row for key, row in assignments.items() if key[0] == card_id]
+        all_here = list(card_assignments.values())
         forced_counts: dict[str, int] = {}
         supported_leaf_counts: dict[str, int] = {}
         level_counts = {level: 0 for level in ("leaf", "glosskey", "tuple", "unresolved")}

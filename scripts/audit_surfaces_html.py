@@ -72,8 +72,10 @@ class Intern:
         return self.index[key]
 
 
-def build_rows(view: dict, bank: dict, limit: int, pool: Intern) -> list[dict]:
+def build_rows(view: dict, bank: dict, limit: int, pool: Intern,
+               pos: dict[tuple[str, str], str] | None = None) -> list[dict]:
     rows = []
+    pos = pos or {}
     for s in view["surfaces"].values():
         supply = s.get("supply") or {}
         ids = (supply.get("eligible_sentence_ids") or [])[:limit]
@@ -100,7 +102,8 @@ def build_rows(view: dict, bank: dict, limit: int, pool: Intern) -> list[dict]:
             "src": supply.get("eligible_by_source") or {},
             "rej": supply.get("rejected") or {},
             "wh": supply.get("sentences_withheld") or "",
-            "s": [[*bank.get(i, ("", "", ""))] for i in ids],
+            "s": [[*bank.get(i, ("", "", "")), pos.get((s["surface"], i), "")]
+                  for i in ids],
         })
     rows.sort(key=lambda r: (r["r"] is None, r["r"] or 0))
     return rows
@@ -126,6 +129,64 @@ def resolve_run(ws: Path, lang: str, overrides: list[str] | None) -> Path | None
     if marker.exists():
         return ws / f"runs/{lang}/speech/{marker.read_text().strip()}"
     return None
+
+
+V12_WSD_RUNS = {
+    "es": "20260915T140557Z-3c7e70a9",
+    "pt": "20260915T130807Z-4120e951",
+}
+
+
+def load_occurrence_pos(ws: Path, lang: str, overrides: list[str] | None) -> dict[tuple[str, str], str]:
+    """UD tags for (surface, sentence_id). Pairs v2 freeze first, else v12 assignments."""
+
+    from fluency.surfaces.prewsd import occurrence_pos_lookup
+
+    found: dict[tuple[str, str], str] = {}
+    run = resolve_run(ws, lang, overrides)
+    prewsd_root = ws / "raw/surfaces" / lang / "prewsd"
+    candidates = []
+    if run is not None:
+        candidates.append(prewsd_root / f"{run.name}-v2")
+        candidates.append(prewsd_root / run.name)
+    candidates.extend(sorted(prewsd_root.glob("*-v2"), reverse=True))
+    for folder in candidates:
+        pairs_path = folder / "pairs.json"
+        examples_path = folder / "examples.json"
+        if not (pairs_path.is_file() and examples_path.is_file()):
+            continue
+        pairs = json.loads(pairs_path.read_text(encoding="utf-8"))
+        if not any((entry.get("occurrence_pos") or ())
+                   for entry in (pairs.get("surfaces") or {}).values()):
+            continue
+        examples = json.loads(examples_path.read_text(encoding="utf-8"))
+        found.update(occurrence_pos_lookup(examples, pairs))
+        break
+    assign_id = None
+    for item in overrides or ():
+        key, _, value = item.partition("=")
+        if not value:
+            key, value = lang, key
+        if key == lang:
+            assign_id = value.strip()
+    assign_id = assign_id or (run.name if run else None) or V12_WSD_RUNS.get(lang)
+    assign_path = (
+        ws / "runs" / lang / "speech" / assign_id
+        / "stages/04_wsd_assignments/output/assignments.jsonl"
+        if assign_id else None
+    )
+    if assign_path and assign_path.is_file():
+        with assign_path.open(encoding="utf-8") as fh:
+            for line in fh:
+                if not line.strip():
+                    continue
+                row = json.loads(line)
+                tag = ((row.get("evidence") or {}).get("candidate_preparation")
+                       or {}).get("observed_pos")
+                form, sid = row.get("surface_form"), row.get("sentence_id")
+                if tag and form and sid:
+                    found.setdefault((form, sid), str(tag))
+    return found
 
 
 def load_bank(ws: Path, lang: str, overrides: list[str] | None = None) -> dict:
@@ -181,6 +242,9 @@ tr.d table{margin-top:4px}
 tr.d td{padding:3px 9px 3px 0;border-top:1px solid var(--line)}
 tr.d td.s{color:var(--mut);font-size:10.5px;width:24px}
 .en{color:var(--mut)}
+.pos{display:inline-block;font-size:10.5px;font-weight:650;letter-spacing:.04em;
+color:var(--mut);border:1px solid var(--line);padding:0 5px;border-radius:4px;
+margin-right:6px;vertical-align:1px}
 .none{color:var(--mut);font-style:italic}
 .caret{color:var(--mut);display:inline-block;width:11px}
 #more{margin:16px;padding:8px 15px;font:inherit;border:1px solid var(--line);
@@ -333,7 +397,7 @@ document.getElementById("body").onclick=e=>{
   if(nxt&&nxt.classList.contains("d")){nxt.remove();tr.firstChild.innerHTML="&#9656;";return;}
   const r=view[+tr.dataset.i];
   const inner=r.s.length
-    ? `<table>`+r.s.map(s=>`<tr><td class="s" data-tip="${esc("corpus: "+(s[2]==="tat"?"Tatoeba — human-aligned":"OpenSubtitles — machine-aligned"))}">${esc(s[2])}</td><td>${esc(s[0])}<br><span class="en">${esc(s[1])}</span></td></tr>`).join("")+`</table>`
+    ? `<table>`+r.s.map(s=>`<tr><td class="s" data-tip="${esc("corpus: "+(s[2]==="tat"?"Tatoeba — human-aligned":"OpenSubtitles — machine-aligned"))}">${esc(s[2])}</td><td>${s[3]?`<span class="pos" data-tip="${esc("occurrence POS (UD) for this word in this sentence. Absent means this pair was not frozen.")}">${esc(s[3])}</span>`:""}${esc(s[0])}<br><span class="en">${esc(s[1])}</span></td></tr>`).join("")+`</table>`
     : `<div class="none">${esc(r.wh||"no eligible sentences")}</div>`;
   tr.insertAdjacentHTML("afterend",`<tr class="d"><td colspan="9">${inner}</td></tr>`);
   tr.firstChild.innerHTML="&#9662;";
@@ -367,7 +431,8 @@ def main() -> int:
     for lang in languages:
         view = json.loads(ledger_path(ws, lang).read_text())
         pool = Intern()
-        rows = build_rows(view, load_bank(ws, lang, args.run_id), args.sentences, pool)
+        rows = build_rows(view, load_bank(ws, lang, args.run_id), args.sentences, pool,
+                          load_occurrence_pos(ws, lang, args.run_id))
         counts = view.get("summary", {})
         lemma = sum(1 for r in rows if r["v"] == "keep" and r["l"])
         keep = sum(1 for r in rows if r["v"] == "keep")

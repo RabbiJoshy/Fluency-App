@@ -21,3 +21,7 @@ research/**/results/
 *.jsonl
 *.npz
 *.joblib
+*.pickle
+*.log
+.claude/
+.cursor/

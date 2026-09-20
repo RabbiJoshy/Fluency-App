@@ -1,6 +1,6 @@
 # Fluency-Next — Dense Codebase Map (AI Reference)
 
-> **Purpose:** A dense, token-efficient index for AI coding assistants (Claude Code, OpenAI Codex, Antigravity). Read this file first instead of running exploratory search tools across the codebase.
+> **Purpose:** A dense, token-efficient index for AI coding assistants (Claude Code, OpenAI Codex, Antigravity). Read this file first instead of running exploratory search tools across the codebase. Concurrent **named chats** (deck campaign): **`CHAT_ROADMAP.md`** at repo root.
 
 ---
 

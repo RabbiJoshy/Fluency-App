@@ -39,7 +39,7 @@ AUTHORITY = {
     # undoes the stress accent they force, and looks the base form up. It is
     # still SpanishDict's own answer about a verb SpanishDict files -- just
     # reached in two steps, which the provenance label says.
-    "es": ("spanishdict-surface-cache", "spanishdict-refetch",
+    "es": ("spanishdict-clitic-dephrased", "spanishdict-surface-cache", "spanishdict-refetch",
            "spanishdict-reverse-conjugation", "spanishdict-clitic-stripping"),
     "pt": ("enwiktionary-closed-class-headword", "enwiktionary-form-of",
            "enwiktionary-is-headword"),
@@ -47,6 +47,7 @@ AUTHORITY = {
            "enwiktionary-form-of", "enwiktionary-is-headword"),
 }
 PROVENANCE_LABEL = {
+    "spanishdict-clitic-dephrased": "spanishdict clitic de-phrased",
     "spanishdict-surface-cache": "spanishdict headword",
     "spanishdict-refetch": "spanishdict headword (refetched)",
     "spanishdict-reverse-conjugation": "supplied by reverse conjugation",
@@ -119,6 +120,8 @@ def main() -> int:
                          "alone. Use it for a partial run -- a probe, or a deck "
                          "smaller than the full inventory -- so a narrow run can "
                          "never thin the language's ledger.")
+    ap.add_argument("--dry-run", action="store_true",
+                    help="simulate writing examples, prewsd, supply, and ledger without modifying any files")
     ap.add_argument("--run-id", action="append", default=None,
                     help="explicit run, as <lang>=<run-id>. Prefer this over LATEST_V11, which tracks whatever ran last -- small probe runs and the full-deck run share the marker, so following it can build a 10,000-surface ledger whose supply covers 3,000.")
     ap.add_argument("--out", type=Path)
@@ -319,7 +322,8 @@ def main() -> int:
             }
 
     out = args.out or ledger_write_path(ws, lang)
-    out.parent.mkdir(parents=True, exist_ok=True)
+    if not args.dry_run:
+        out.parent.mkdir(parents=True, exist_ok=True)
     counts = collections.Counter(s["verdict"] for s in surfaces.values())
     run_id = run.name if run is not None else None
     covered = sum(1 for s in surfaces.values() if s.get("supply"))
@@ -342,7 +346,8 @@ def main() -> int:
         # depend on which card a sentence is serving. It should not have to
         # reach back into the run's sentence bank for text.
         examples_dir = out.parent / "examples"
-        examples_dir.mkdir(parents=True, exist_ok=True)
+        if not args.dry_run:
+            examples_dir.mkdir(parents=True, exist_ok=True)
         examples_file = examples_dir / f"{run_id}.jsonl"
         bank_path = run / "stages/03_sentence_harvest/output/sentence-bank.jsonl"
         wanted: dict[str, dict] = {}
@@ -353,7 +358,10 @@ def main() -> int:
         sentence_order: list[str] = []
         prewsd_rows: list[dict] = []
         digest = hashlib.sha256()
-        with examples_file.open("w", encoding="utf-8") as fh:
+        fh = None
+        try:
+            if not args.dry_run:
+                fh = examples_file.open("w", encoding="utf-8")
             if bank_path.is_file():
                 for line in bank_path.open(encoding="utf-8"):
                     if not line.strip():
@@ -369,7 +377,8 @@ def main() -> int:
                         "source": (row.get("source") or {}).get("name") or "",
                         **{k: v for k, v in meta.items() if k != "sentence_id"},
                     }, ensure_ascii=False, separators=(",", ":"))
-                    fh.write(payload + "\n")
+                    if fh is not None:
+                        fh.write(payload + "\n")
                     sentence_order.append(row["sentence_id"])
                     prewsd_rows.append({
                         "sentence_id": row["sentence_id"],
@@ -380,6 +389,9 @@ def main() -> int:
                     })
                     digest.update(payload.encode("utf-8"))
                     written += 1
+        finally:
+            if fh is not None:
+                fh.close()
         # The frozen pre-WSD set: sentences in a fixed order, surfaces
         # referencing them by index, field names written once. See prewsd.py
         # for why -- 402MB of JSON across three documents was almost entirely
@@ -399,33 +411,49 @@ def main() -> int:
                 "eligible": [order_index[i] for i in ids if i in order_index],
                 **(sup.get("_pairs") or {}),
             }
-        manifest = prewsd.build(
-            out.parent / "prewsd" / run_id,
-            language=lang, run_id=run_id,
-            sentences=prewsd_rows, surfaces=prewsd_surfaces)
-        total = sum(d["bytes"] for d in manifest["documents"])
-        print(f"  frozen pre-WSD set: {manifest['sentences']:,} sentences, "
-              f"{manifest['surfaces']:,} surfaces, {total/1e6:.1f} MB")
+        pos_pin = None
+        if lang == "es":
+            pos_pin = "es_dep_news_trf@3.8.0"
+        elif lang == "pt":
+            pos_pin = "pt_core_news_lg@3.8.0"
 
         examples_record = {"path": f"examples/{run_id}.jsonl",
                            "rows": written,
                            "sha256": digest.hexdigest()}
-        print(f"  examples: {written:,} distinct eligible sentences -> {examples_file.name}")
+
+        if not args.dry_run:
+            manifest = prewsd.build(
+                out.parent / "prewsd" / run_id,
+                language=lang, run_id=run_id,
+                sentences=prewsd_rows, surfaces=prewsd_surfaces,
+                occurrence_pos_model=pos_pin)
+            total = sum(d["bytes"] for d in manifest["documents"])
+            print(f"  frozen pre-WSD set: {manifest['sentences']:,} sentences, "
+                  f"{manifest['surfaces']:,} surfaces, {total/1e6:.1f} MB")
+            print(f"  examples: {written:,} distinct eligible sentences -> {examples_file.name}")
+        else:
+            print(f"  [dry-run] frozen pre-WSD set: would freeze {len(prewsd_rows):,} sentences, "
+                  f"{len(prewsd_surfaces):,} surfaces (pos_model={pos_pin}) -> prewsd/{run_id}")
+            print(f"  [dry-run] examples: would write {written:,} distinct eligible sentences -> {examples_file.name}")
 
         supply_dir = out.parent / "supply"
-        supply_dir.mkdir(parents=True, exist_ok=True)
-        (supply_dir / f"{run_id}.json").write_text(json.dumps({
-            "supply_version": "surface-supply/v1",
-            "language": lang,
-            "run_id": run_id,
-            "surfaces_covered": covered,
-            "supply": {k: {kk: vv for kk, vv in v["supply"].items()
-                           if not kk.startswith("_")}
-                       for k, v in surfaces.items() if v.get("supply")},
-        }, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        if not args.dry_run:
+            supply_dir.mkdir(parents=True, exist_ok=True)
+            (supply_dir / f"{run_id}.json").write_text(json.dumps({
+                "supply_version": "surface-supply/v1",
+                "language": lang,
+                "run_id": run_id,
+                "surfaces_covered": covered,
+                "supply": {k: {kk: vv for kk, vv in v["supply"].items()
+                               if not kk.startswith("_")}
+                           for k, v in surfaces.items() if v.get("supply")},
+            }, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        else:
+            print(f"  [dry-run] supply: would write supply document -> supply/{run_id}.json covering {covered:,} surfaces")
 
     if args.supply_only:
-        print(f"{lang}: supply only, run {run_id}, {covered:,} surfaces covered. "
+        prefix = "[dry-run] " if args.dry_run else ""
+        print(f"{lang}: {prefix}supply only, run {run_id}, {covered:,} surfaces covered. "
               f"Ledger left unchanged.")
         return 0
 
@@ -434,20 +462,21 @@ def main() -> int:
             entry["supply"].pop("_intrinsic", None)
             entry["supply"].pop("_pairs", None)
 
-    out.write_text(json.dumps({
-        "ledger_version": LEDGER_VERSION,
-        "language": lang,
-        # Which run the supply came from, and how much of the deck it covers.
-        # A ledger whose supply covers less than it keeps is thin -- readable at
-        # a glance instead of discovered downstream by an empty card.
-        "supply_run_id": run_id,
-        "examples_document": examples_record,
-        "supply_coverage": {"keep": keep, "with_supply": covered,
-                            "complete": covered >= keep},
-        "derived_from": {"events": len(events), "surfaces": len(surfaces)},
-        "summary": dict(counts),
-        "surfaces": surfaces,
-    }, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if not args.dry_run:
+        out.write_text(json.dumps({
+            "ledger_version": LEDGER_VERSION,
+            "language": lang,
+            # Which run the supply came from, and how much of the deck it covers.
+            # A ledger whose supply covers less than it keeps is thin -- readable at
+            # a glance instead of discovered downstream by an empty card.
+            "supply_run_id": run_id,
+            "examples_document": examples_record,
+            "supply_coverage": {"keep": keep, "with_supply": covered,
+                                "complete": covered >= keep},
+            "derived_from": {"events": len(events), "surfaces": len(surfaces)},
+            "summary": dict(counts),
+            "surfaces": surfaces,
+        }, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     if covered < keep:
         print(f"  WARNING: supply covers {covered:,} of {keep:,} keep surfaces. "
               f"{keep - covered:,} cards would reach WSD with no candidates.")
@@ -462,7 +491,10 @@ def main() -> int:
         thin = [s for s in eligible if s < 10]
         if eligible:
             print(f"  under 10 eligible: {len(thin):,}")
-    print(f"  wrote {out}")
+    if args.dry_run:
+        print(f"  [dry-run] would write {out}")
+    else:
+        print(f"  wrote {out}")
     return 0
 
 

@@ -91,6 +91,9 @@ SUPPORTED_PROFILE_CONSTRAINT_MODES = {
     "es-v14-1": "filter",
     "pt-v14-1": "filter",
     "cs-v14-1": "filter",
+    "es-v15-1": "filter",
+    "pt-v15-1": "filter",
+    "cs-v15-1": "filter",
 }
 PROFILE_LANGUAGES = {
     "es-v6-1": "es", "es-v7-1": "es", "pt-v7-1": "pt",
@@ -102,6 +105,7 @@ PROFILE_LANGUAGES = {
     "es-v12-1": "es", "pt-v12-1": "pt", "cs-v12-1": "cs",
     "es-v13-1": "es", "pt-v13-1": "pt", "cs-v13-1": "cs",
     "es-v14-1": "es", "pt-v14-1": "pt", "cs-v14-1": "cs",
+    "es-v15-1": "es", "pt-v15-1": "pt", "cs-v15-1": "cs",
 }
 ALIGNMENT_PROFILES = frozenset({"es-v8-english-1", "pt-v8-english-1"})
 RANK_AGREEMENT_PROFILES = frozenset(
@@ -111,6 +115,7 @@ RANK_AGREEMENT_PROFILES = frozenset(
         "es-v12-1", "pt-v12-1", "cs-v12-1",
         "es-v13-1", "pt-v13-1", "cs-v13-1",
         "es-v14-1", "pt-v14-1", "cs-v14-1",
+        "es-v15-1", "pt-v15-1", "cs-v15-1",
     }
 )
 EVIDENCE_GUARD_PROFILES = frozenset(
@@ -120,10 +125,21 @@ EVIDENCE_GUARD_PROFILES = frozenset(
         "es-v12-1", "pt-v12-1", "cs-v12-1",
         "es-v13-1", "pt-v13-1", "cs-v13-1",
         "es-v14-1", "pt-v14-1", "cs-v14-1",
+        "es-v15-1", "pt-v15-1", "cs-v15-1",
     }
 )
 ABSTAIN_UNRESOLVED_PROFILES = frozenset(
-    {"es-v13-1", "pt-v13-1", "cs-v13-1", "es-v14-1", "pt-v14-1", "cs-v14-1"}
+    {
+        "es-v13-1", "pt-v13-1", "cs-v13-1",
+        "es-v14-1", "pt-v14-1", "cs-v14-1",
+        "es-v15-1", "pt-v15-1", "cs-v15-1",
+    }
+)
+PHRASE_SKIP_PROVIDER_ORDER_PROFILES = frozenset(
+    {
+        "es-v14-1", "pt-v14-1", "cs-v14-1",
+        "es-v15-1", "pt-v15-1", "cs-v15-1",
+    }
 )
 
 MORPH_VALUE_MAP = {
@@ -670,7 +686,12 @@ def main() -> None:
         raise SystemExit("sense menu does not declare its source adapter")
     menu_stage_content_id = file_content_id(menu_path)
     candidates = load_json(candidates_path)
-    run_id = candidates["run_id"]
+    run_manifest = (
+        load_json(args.run_dir / "manifest.json")
+        if (args.run_dir / "manifest.json").is_file()
+        else {}
+    )
+    run_id = run_manifest.get("run_id") or candidates.get("run_id") or args.run_dir.name
     menu_by_card = {card["card_id"]: card for card in menu["cards"]}
     # Skipped entirely when a frozen set supplies the sentences. Reading it
     # anyway would keep the dependency the set exists to remove, and builds a
@@ -702,7 +723,7 @@ def main() -> None:
         multiword_candidates=multiword_index is not None,
         active_projection=(
             "mwe_augmented"
-            if multiword_index is not None and args.profile_id.endswith("-v14-1")
+            if multiword_index is not None and (args.profile_id.endswith("-v14-1") or args.profile_id.endswith("-v15-1"))
             else "provider_only"
         ),
         commit=CommitPolicy(
@@ -719,6 +740,12 @@ def main() -> None:
             ),
             shared_translation_licenses_glosskey=(
                 args.profile_id in ABSTAIN_UNRESOLVED_PROFILES
+            ),
+            phrase_winner_skips_provider_order=(
+                args.profile_id in PHRASE_SKIP_PROVIDER_ORDER_PROFILES
+            ),
+            unresolved_falls_back_to_phrase=(
+                args.profile_id in PHRASE_SKIP_PROVIDER_ORDER_PROFILES
             ),
         ),
     )
@@ -798,6 +825,7 @@ def main() -> None:
     embedding_scored_cards: set[str] = set()
     capped: list[tuple[dict[str, Any], dict[str, Any], str]] = []
     deterministic: list[tuple[dict[str, Any], dict[str, Any], str]] = []
+    deterministic_invariant: list[tuple[Any, ...]] = []
     selections = []
     cards_to_process = candidates["cards"]
     if args.target_surfaces:
@@ -843,21 +871,45 @@ def main() -> None:
             if row is None:
                 continue
             text = row["target"]["text"]
-            has_multiword_alternative = bool(
-                multiword_index is not None
-                and next(
-                    iter(
-                        multiword_analyses(
-                            card_id=card_id,
-                            surface_form=card["display_form"],
-                            sentence=text,
-                            index=multiword_index,
-                        )
-                    ),
-                    None,
+            all_mwe_matches = (
+                list(
+                    multiword_analyses(
+                        card_id=card_id,
+                        surface_form=card["display_form"],
+                        sentence=text,
+                        index=multiword_index,
+                    )
                 )
-                is not None
+                if multiword_index is not None
+                else []
             )
+            inv_matches = [
+                m for m in all_mwe_matches
+                if getattr(m[1], "wsd_routing", "") == "deterministic_bypass"
+                or getattr(m[1], "route", "") == "invariant"
+            ]
+            amb_matches = [
+                m for m in all_mwe_matches
+                if getattr(m[1], "wsd_routing", "") != "deterministic_bypass"
+                and getattr(m[1], "route", "") != "invariant"
+            ]
+
+            if inv_matches:
+                # Invariant MWE: resolve deterministically without forcing 2-way WSD competition
+                best_inv = max(inv_matches, key=lambda m: len(m[1].expression))
+                word_a = analyses[0] if analyses else None
+                word_l = (
+                    only[1]
+                    if only is not None
+                    else (analyses[0].senses[0] if analyses and analyses[0].senses else None)
+                )
+                translation = (row.get("translation") or {}).get("text") or ""
+                deterministic_invariant.append((
+                    card, menu_card, sentence_id, text, translation, best_inv, all_mwe_matches, word_a, word_l
+                ))
+                continue
+
+            has_multiword_alternative = bool(amb_matches)
             if (
                 only is not None
                 and not has_multiword_alternative
@@ -882,6 +934,7 @@ def main() -> None:
         f"{report['surface_cards_reaching_cap']:,} cards reached the cap"
     )
     print(f"  deterministic single-option (no model): {len(deterministic):,}")
+    print(f"  deterministic invariant MWE (no model): {len(deterministic_invariant):,}")
     print(f"  model-scored provider/MWE assignments:  {len(work):,}")
     if binding.pos_model_role is None:
         print(
@@ -950,9 +1003,10 @@ def main() -> None:
     uncached = sorted(needed - set(cached_vectors))
     if args.offline_only:
         if uncached:
+            preview = "\n".join(f"  {text!r}" for text in uncached[:20])
             raise SystemExit(
                 f"offline-only mode: {len(uncached):,} exact texts are absent "
-                "from the local embedding cache"
+                "from the local embedding cache:\n" + preview
             )
         vectors = cached_vectors
     else:
@@ -1106,6 +1160,131 @@ def main() -> None:
                     )
                 },
                 active_selection_projection="provider_only",
+            ).to_dict()
+        )
+        counts["assigned"] = counts.get("assigned", 0) + 1
+
+    # Invariant MWEs: assigned deterministically without contextual model scoring.
+    for card, menu_card, sentence_id, text, translation, best_inv, all_mwe_matches, word_a, word_l in deterministic_invariant:
+        analysis, entry, span = best_inv
+
+        evidence = {
+            "reason": "deterministic_invariant_mwe",
+            "decision_kind": "deterministic_invariant_mwe",
+            "selected_multiword": entry.expression,
+            "wsd_routing": getattr(entry, "wsd_routing", "deterministic_bypass"),
+            "flexibility": getattr(entry, "flexibility", "fixed"),
+            "ui_role": getattr(entry, "ui_role", "idiom" if getattr(entry, "verbal_idiom", False) else "connector"),
+            "verbal_idiom": getattr(entry, "verbal_idiom", False),
+            "transparency": getattr(entry, "transparency", "opaque"),
+            "template_gap_limit": getattr(entry, "template_gap_limit", 0),
+            "multiword_candidates": [
+                {
+                    "expression": e.expression,
+                    "expression_id": e.entry_id,
+                    "menu_analysis_id": a.menu_analysis_id,
+                    "span": list(sp),
+                    "sources": list(e.sources),
+                    "corpus_frequency": e.corpus_frequency,
+                    "translation": e.translations[0],
+                    "additional_translations": list(e.translations[1:]),
+                    "route": getattr(e, "route", "invariant"),
+                    "wsd_routing": getattr(e, "wsd_routing", "deterministic_bypass" if getattr(e, "route", "") == "invariant" else "competitive_wsd"),
+                    "flexibility": getattr(e, "flexibility", "fixed"),
+                    "ui_role": getattr(e, "ui_role", "idiom" if getattr(e, "verbal_idiom", False) else "connector"),
+                    "verbal_idiom": getattr(e, "verbal_idiom", False),
+                    "transparency": getattr(e, "transparency", "opaque"),
+                    "template_gap_limit": getattr(e, "template_gap_limit", 0),
+                    "inventory_content_id": multiword_content_id,
+                }
+                for a, e, sp in all_mwe_matches
+            ],
+            "commit": {
+                "selected_ref": {
+                    "menu_analysis_id": analysis.menu_analysis_id,
+                    "sense_id": entry.entry_id,
+                },
+                "emitted_level": "leaf",
+                "raw_axis_margins": {"leaf": 1.0, "glosskey": 1.0, "tuple": 1.0},
+                "axis_confidences": {"leaf": None, "glosskey": None, "tuple": None},
+                "calibration": {"status": "deterministic", "artifact_content_id": None},
+            },
+        }
+        if word_a is not None and word_l is not None:
+            evidence["word_leaf"] = {
+                "menu_analysis_id": word_a.menu_analysis_id,
+                "sense_id": word_l.sense_id,
+                "headword": word_a.headword,
+                "part_of_speech": word_a.part_of_speech,
+                "translation": word_l.translation,
+                "score": 1.0,
+                "emitted_level": "leaf",
+            }
+
+        projections = {
+            "mwe_augmented": SelectionProjection(
+                menu_analysis_id=analysis.menu_analysis_id,
+                selected_sense_id=entry.entry_id,
+                selected_tuple=SelectedTuple(
+                    headword=entry.expression,
+                    part_of_speech="PHRASE",
+                ),
+                source_kind="multiword",
+                selected_score=1.0,
+                runner_up_score=None,
+                raw_margin=None,
+                rank=1,
+                emitted_level="leaf",
+                raw_axis_margins={
+                    "leaf": 1.0,
+                    "glosskey": 1.0,
+                    "tuple": 1.0,
+                },
+            )
+        }
+        if word_a is not None and word_l is not None:
+            projections["provider_only"] = SelectionProjection(
+                menu_analysis_id=word_a.menu_analysis_id,
+                selected_sense_id=word_l.sense_id,
+                selected_tuple=SelectedTuple(
+                    headword=word_a.headword,
+                    part_of_speech=word_a.part_of_speech,
+                ),
+                source_kind="provider",
+                selected_score=1.0,
+                runner_up_score=None,
+                raw_margin=None,
+                rank=1,
+                emitted_level="leaf",
+                raw_axis_margins={
+                    "leaf": 1.0,
+                    "glosskey": 1.0,
+                    "tuple": 1.0,
+                },
+            )
+        else:
+            projections["provider_only"] = projections["mwe_augmented"]
+
+        assignments.append(
+            WSDAssignment(
+                card_id=card["card_id"],
+                surface_form=card["display_form"],
+                sentence_id=sentence_id,
+                status="assigned",
+                sense_menu_content_id=menu_stage_content_id,
+                menu_analysis_id=analysis.menu_analysis_id,
+                selected_sense_id=entry.entry_id,
+                selected_tuple=SelectedTuple(
+                    headword=entry.expression, part_of_speech="PHRASE"
+                ),
+                decision_path=("multiword",),
+                evidence=evidence,
+                confidence=None,
+                model_revisions=run_model_revisions,
+                emitted_level="leaf",
+                decision_kind="deterministic_default",
+                selection_projections=projections,
+                active_selection_projection="mwe_augmented",
             ).to_dict()
         )
         counts["assigned"] = counts.get("assigned", 0) + 1

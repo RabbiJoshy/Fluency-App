@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-20T18:05:00+01:00",
+      "date": "2026-09-20 18:05 BST",
+      "agent": "Antigravity (GLASS)",
+      "commit": "pending",
+      "summary": "10,000-card V15 speech releases deployed for Spanish, Portuguese, and Czech",
+      "detail": [
+        "Composed, validated, and activated full 10,000-card Speech decks (es-speech-v15-10000x10, pt-speech-v15-10000x10, cs-speech-v15-10000x10) from KILN 2's published Stage 04 assignments.",
+        "Every deck is sharded into 500 study sets with 100% valid meanings across all sets, preserving SENTENCE_FLOW ticks with canonical examples and multi-word expression routing."
+      ]
+    },
+    {
       "timestamp": "2026-09-20T17:42:00+01:00",
       "date": "2026-09-20 17:42 BST",
       "agent": "Claude",

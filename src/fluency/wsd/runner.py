@@ -707,6 +707,12 @@ class ClosedMenuWSDRunner:
                 "shared_translation_licenses_glosskey": (
                     self.profile.commit.shared_translation_licenses_glosskey
                 ),
+                "phrase_winner_skips_provider_order": (
+                    self.profile.commit.phrase_winner_skips_provider_order
+                ),
+                "unresolved_falls_back_to_phrase": (
+                    self.profile.commit.unresolved_falls_back_to_phrase
+                ),
             },
         }
         if evidence_guard_reasons:
@@ -773,14 +779,27 @@ class ClosedMenuWSDRunner:
                         selected=combined_order_choice,
                         ranked_scores=combined_order_ranked,
                     )
-                augmented_refs = tuple(
-                    (item.menu_analysis_id, item.sense_id)
-                    for item in (
-                        combined_order_choice,
-                        raw_augmented_choice,
-                        augmented_selected_score,
+                # v13 asks dictionary order to agree with gloss. A PHRASE is
+                # appended after the provider menu, so that vote is always a
+                # word leaf and a gloss-winning idiom is unresolved. v14 drops
+                # provider order only when the combined winner is the phrase.
+                if (
+                    self.profile.commit.phrase_winner_skips_provider_order
+                    and is_multiword_analysis(augmented_analysis)
+                ):
+                    augmented_refs = tuple(
+                        (item.menu_analysis_id, item.sense_id)
+                        for item in (raw_augmented_choice, augmented_selected_score)
                     )
-                )
+                else:
+                    augmented_refs = tuple(
+                        (item.menu_analysis_id, item.sense_id)
+                        for item in (
+                            combined_order_choice,
+                            raw_augmented_choice,
+                            augmented_selected_score,
+                        )
+                    )
             else:
                 augmented_refs = ()
             augmented_commit = commit_decide(
@@ -827,11 +846,67 @@ class ClosedMenuWSDRunner:
                 final_sense = augmented_analysis.sense(augmented_selected_score.sense_id)
                 final_level = augmented_commit.level
                 evidence["selected_multiword"] = augmented_analysis.headword
+                win_rec = next(
+                    (
+                        r for r in multiword_records
+                        if (r.get("expression") or "").casefold() == augmented_analysis.headword.casefold()
+                    ),
+                    None,
+                )
+                if win_rec:
+                    evidence["wsd_routing"] = win_rec.get("wsd_routing")
+                    evidence["flexibility"] = win_rec.get("flexibility")
+                    evidence["ui_role"] = win_rec.get("ui_role")
+                    evidence["verbal_idiom"] = win_rec.get("verbal_idiom")
+                    evidence["transparency"] = win_rec.get("transparency")
+                    evidence["template_gap_limit"] = win_rec.get("template_gap_limit")
+                evidence["commit"]["selected_ref"] = {
+                    "menu_analysis_id": final_analysis.menu_analysis_id,
+                    "sense_id": final_sense.sense_id,
+                }
+                evidence["commit"]["emitted_level"] = final_level
+                evidence["commit"]["uncertain_axis"] = augmented_commit.uncertain_axis
+                evidence["commit"]["escalate"] = augmented_commit.escalate
+                evidence["commit"]["raw_axis_margins"] = dict(augmented_commit.margins)
+                if self.profile.commit.strategy == "rank_agreement":
+                    if self.profile.commit.phrase_winner_skips_provider_order:
+                        evidence["commit"]["rank_agreement"] = {
+                            "raw_gloss": {
+                                "menu_analysis_id": raw_augmented_choice.menu_analysis_id,
+                                "sense_id": raw_augmented_choice.sense_id,
+                            },
+                            "forced_selection": {
+                                "menu_analysis_id": augmented_selected_score.menu_analysis_id,
+                                "sense_id": augmented_selected_score.sense_id,
+                            },
+                        }
+                    evidence["gemini_recommendation"] = {
+                        "recommended": final_level != "leaf",
+                        "reason": (
+                            "cheap_leaf_choices_disagree"
+                            if final_level != "leaf"
+                            else "cheap_leaf_choices_agree"
+                        ),
+                        "deepest_shared_level": final_level,
+                        "gemini_called": False,
+                        "independent_of_publication_projection": True,
+                    }
             else:
                 final_analysis = selected_analysis
                 final_sense = selected_sense
                 final_level = emitted_level
                 evidence["selected_multiword"] = None
+                # Mixed-menu rank-agreement compares a PHRASE to a word leaf
+                # and can mark unresolved even when the word path is licensed.
+                # The published row is the word-menu commit.
+                projections["mwe_augmented"] = _selection_projection(
+                    selected=selected_score,
+                    analysis=selected_analysis,
+                    ranked=provider_ranked,
+                    combined_ranked=combined_ranked,
+                    emitted_level=emitted_level,
+                    raw_axis_margins=commit_decision.margins,
+                )
         else:
             evidence["selected_multiword"] = None
 
@@ -839,27 +914,90 @@ class ClosedMenuWSDRunner:
             self.profile.commit.unresolved_outcome == "abstain"
             and final_level == "unresolved"
         ):
-            evidence["disposition"] = {
-                "status": "abstained",
-                "recommended_publication_status": "abstained",
-                "minimum_confidence": self.profile.disposition.minimum_confidence,
-                "weak": self.profile.disposition.weak,
-                "reason": "commit_unresolved",
-            }
-            return WSDAssignment(
-                card_id=request.card_id,
-                surface_form=request.surface_form,
-                sentence_id=request.sentence_id,
-                status="abstained",
-                sense_menu_content_id=request.sense_menu_content_id,
-                menu_analysis_id=None,
-                selected_sense_id=None,
-                selected_tuple=None,
-                decision_path=tuple(decision_path),
-                evidence=evidence,
-                confidence=None,
-                model_revisions=self._model_revisions(),
-            )
+            fallback_score = None
+            if (
+                self.profile.commit.unresolved_falls_back_to_phrase
+                and self.profile.active_projection == "mwe_augmented"
+            ):
+                fallback_score = next(
+                    (
+                        item
+                        for item in combined_ranked
+                        if is_multiword_analysis(
+                            require_analysis(combined_analyses, item.menu_analysis_id)
+                        )
+                    ),
+                    None,
+                )
+            if fallback_score is not None:
+                fallback_analysis = require_analysis(
+                    combined_analyses, fallback_score.menu_analysis_id
+                )
+                final_analysis = fallback_analysis
+                final_sense = fallback_analysis.sense(fallback_score.sense_id)
+                final_level = "leaf"
+                active_proj_name = "mwe_augmented"
+                evidence["selected_multiword"] = fallback_analysis.headword
+                win_rec = next(
+                    (
+                        r for r in multiword_records
+                        if (r.get("expression") or "").casefold() == fallback_analysis.headword.casefold()
+                    ),
+                    None,
+                )
+                if win_rec:
+                    evidence["wsd_routing"] = win_rec.get("wsd_routing")
+                    evidence["flexibility"] = win_rec.get("flexibility")
+                    evidence["ui_role"] = win_rec.get("ui_role")
+                    evidence["verbal_idiom"] = win_rec.get("verbal_idiom")
+                    evidence["transparency"] = win_rec.get("transparency")
+                    evidence["template_gap_limit"] = win_rec.get("template_gap_limit")
+                evidence["commit"]["emitted_level"] = "leaf"
+                evidence["commit"]["fallback"] = "unresolved_word_falls_back_to_phrase"
+                evidence["commit"]["selected_ref"] = {
+                    "menu_analysis_id": final_analysis.menu_analysis_id,
+                    "sense_id": final_sense.sense_id,
+                }
+                if evidence.get("word_leaf") is None:
+                    evidence["word_leaf"] = {
+                        "menu_analysis_id": selected_analysis.menu_analysis_id,
+                        "sense_id": selected_sense.sense_id,
+                        "headword": selected_analysis.headword,
+                        "part_of_speech": selected_analysis.part_of_speech,
+                        "translation": selected_sense.translation,
+                        "score": selected_score.score,
+                        "emitted_level": emitted_level,
+                    }
+                projections["mwe_augmented"] = _selection_projection(
+                    selected=fallback_score,
+                    analysis=fallback_analysis,
+                    ranked=combined_ranked,
+                    combined_ranked=combined_ranked,
+                    emitted_level="leaf",
+                    raw_axis_margins=augmented_commit.margins,
+                )
+            else:
+                evidence["disposition"] = {
+                    "status": "abstained",
+                    "recommended_publication_status": "abstained",
+                    "minimum_confidence": self.profile.disposition.minimum_confidence,
+                    "weak": self.profile.disposition.weak,
+                    "reason": "commit_unresolved",
+                }
+                return WSDAssignment(
+                    card_id=request.card_id,
+                    surface_form=request.surface_form,
+                    sentence_id=request.sentence_id,
+                    status="abstained",
+                    sense_menu_content_id=request.sense_menu_content_id,
+                    menu_analysis_id=None,
+                    selected_sense_id=None,
+                    selected_tuple=None,
+                    decision_path=tuple(decision_path),
+                    evidence=evidence,
+                    confidence=None,
+                    model_revisions=self._model_revisions(),
+                )
 
         recommended_status = self.profile.disposition.status(confidence)
         evidence["disposition"] = {

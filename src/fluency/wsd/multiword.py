@@ -53,6 +53,7 @@ multiword outcome from a provider-menu outcome.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import lru_cache
 import re
 from typing import Any, Iterable, Mapping, Sequence
 
@@ -77,6 +78,13 @@ class MultiwordEntry:
     corpus_frequency: int
     sources: tuple[str, ...]
     entry_id: str
+    route: str = "ambiguous"
+    verbal_idiom: bool = False
+    flexibility: str = "fixed"
+    wsd_routing: str = "competitive_wsd"
+    ui_role: str = "idiom"
+    transparency: str = "opaque"
+    template_gap_limit: int = 0
 
     def __post_init__(self) -> None:
         if not self.expression.strip():
@@ -85,6 +93,10 @@ class MultiwordEntry:
             raise ValueError("multiword entry requires at least one translation")
         if self.corpus_frequency < 0:
             raise ValueError("corpus frequency must not be negative")
+        if self.template_gap_limit == 0 and (
+            self.flexibility in ("head_inflecting", "discontiguous", "flexible") or self.verbal_idiom
+        ):
+            object.__setattr__(self, "template_gap_limit", 3)
 
 
 def index_multiword_senses(
@@ -125,16 +137,94 @@ def index_multiword_senses(
         )
         if not translations:
             continue
+        gap_limit_raw = row.get("template_gap_limit")
+        if gap_limit_raw is not None:
+            template_gap_limit = int(gap_limit_raw)
+        else:
+            template_gap_limit = 3 if (row.get("verbal_idiom") or row.get("flexibility") in ("head_inflecting", "discontiguous")) else 0
+
+        transparency = str(
+            row.get("transparency")
+            or (
+                "formulaic"
+                if row.get("ui_role") == "formula"
+                else (
+                    "opaque"
+                    if row.get("verbal_idiom") or row.get("route") == "invariant"
+                    else "semi_compositional"
+                )
+            )
+        )
+
         entry = MultiwordEntry(
             expression=str(expression).casefold(),
             translations=translations,
             corpus_frequency=frequency,
             sources=tuple(row.get("sources") or ()),
             entry_id=str(row.get("id") or f"mwe:{expression}"),
+            route=str(row.get("route") or "ambiguous"),
+            verbal_idiom=bool(row.get("verbal_idiom", False)),
+            flexibility=str(row.get("flexibility") or ("flexible" if row.get("verbal_idiom") else "fixed")),
+            wsd_routing=str(row.get("wsd_routing") or ("deterministic_bypass" if row.get("route") == "invariant" else "competitive_wsd")),
+            ui_role=str(row.get("ui_role") or ("idiom" if row.get("verbal_idiom") else "connector")),
+            transparency=transparency,
+            template_gap_limit=template_gap_limit,
         )
         for word in row.get("attach_words") or ():
             grouped.setdefault(str(word).casefold(), []).append(entry)
     return {word: tuple(items) for word, items in grouped.items()}
+
+
+_VERB_STEM_MAP = {
+    "poner": r"(?:pon\w*|pus\w*)",
+    "hacer": r"(?:hac\w*|hic\w*|haz\w*|hech\w*)",
+    "tomar": r"tom\w*",
+    "echar": r"ech\w*",
+    "dar": r"(?:d[aá](?:me|te|se|le|les|lo|la|los|las|nos|os)?(?:lo|la|los|las)?|d[aá]r\w*|d[aá]nd\w*|d(?:oy|as|an|i|iste|io|imos|isteis|ieron|aba\w*|é\w*|des|demos|deis|den\w*|ier\w*|ies\w*))",
+    "tener": r"(?:ten\w*|tuv\w*)",
+    "mít": r"(?:m[áa][mš\b]|máme|máte|mají|měl\w*|měj\w*|mít)",
+    "žít": r"ži\w*",
+    "pôr": r"(?:pô\w*|põ\w*|ponh\w*|pus\w*|punh\w*|por[eéáíó]\w*|poria\w*|porem|pormos|pordes)",
+    "fazer": r"(?:fa[cz]\w*|fiz\w*)",
+    "deixar": r"deix\w*",
+    "ficar": r"fic\w*",
+    "trazer": r"(?:tra[gz]\w*|troux\w*)",
+    "llevar": r"llev\w*",
+    "pasar": r"pas\w*",
+    "quedar": r"qued\w*",
+    "tocar": r"toc\w*",
+    "cortar": r"cort\w*",
+    "jugar": r"(?:jueg\w*|jug\w*)",
+    "lavar": r"lav\w*",
+}
+
+
+@lru_cache(maxsize=1024)
+def _compile_discontiguous_pattern(expression: str, template_gap_limit: int = 3) -> re.Pattern | None:
+    toks = expression.lower().split()
+    if len(toks) < 2:
+        return None
+    verb = toks[0]
+    anchor = " ".join(toks[1:])
+    stem = _VERB_STEM_MAP.get(
+        verb,
+        rf"{verb[:-2]}\w*" if len(verb) > 3 and verb.endswith(("ar", "er", "ir")) else None,
+    )
+    if stem is None:
+        return None
+    gap_limit = max(0, min(int(template_gap_limit), 5))
+    pattern_str = rf"\b({stem})\b(?:\s+[\wáéíóúüñÁÉÍÓÚÜÑáčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ'-]+){{0,{gap_limit}}}\s+({re.escape(anchor)})\b"
+    return re.compile(pattern_str, re.I)
+
+
+def _discontiguous_match_span(
+    expression: str, sentence: str, template_gap_limit: int = 3
+) -> tuple[int, int] | None:
+    pattern = _compile_discontiguous_pattern(expression, template_gap_limit)
+    if pattern is None:
+        return None
+    m = pattern.search(sentence)
+    return m.span() if m else None
 
 
 def multiword_matches(
@@ -149,11 +239,21 @@ def multiword_matches(
     lowered = sentence.casefold()
     found: list[tuple[MultiwordEntry, tuple[int, int]]] = []
     for entry in index.get((surface_form or "").casefold(), ()):
-        if f" {entry.expression} " not in flattened:
+        # 1. Fast path: exact contiguous string match
+        if f" {entry.expression} " in flattened:
+            start = lowered.find(entry.expression)
+            span = (start, start + len(entry.expression)) if start >= 0 else (0, len(sentence))
+            found.append((entry, span))
             continue
-        start = lowered.find(entry.expression)
-        span = (start, start + len(entry.expression)) if start >= 0 else (0, len(sentence))
-        found.append((entry, span))
+
+        # 2. Flexible path: inflected head or discontiguous token match
+        if entry.flexibility in ("head_inflecting", "discontiguous") or entry.verbal_idiom:
+            span = _discontiguous_match_span(
+                entry.expression, sentence, template_gap_limit=entry.template_gap_limit
+            )
+            if span is not None:
+                found.append((entry, span))
+
     return tuple(found)
 
 
@@ -190,6 +290,13 @@ def multiword_analyses(
                 "corpus_frequency": entry.corpus_frequency,
                 "sources": list(entry.sources),
                 "additional_translations": list(entry.translations[1:]),
+                "route": entry.route,
+                "verbal_idiom": entry.verbal_idiom,
+                "flexibility": entry.flexibility,
+                "wsd_routing": entry.wsd_routing,
+                "ui_role": entry.ui_role,
+                "transparency": entry.transparency,
+                "template_gap_limit": entry.template_gap_limit,
             },
         )
         built.append((
@@ -238,6 +345,13 @@ def multiword_evidence(
         "sources": list(entry.sources),
         "component_surface_form": analysis.surface_form,
         "inventory_content_id": inventory_content_id,
+        "route": entry.route,
+        "verbal_idiom": entry.verbal_idiom,
+        "flexibility": entry.flexibility,
+        "wsd_routing": entry.wsd_routing,
+        "ui_role": entry.ui_role,
+        "transparency": entry.transparency,
+        "template_gap_limit": entry.template_gap_limit,
     }
 
 

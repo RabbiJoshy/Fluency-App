@@ -1,10 +1,10 @@
 {
   "config_version": "wsd-model-profile/v1",
-  "profile_id": "es-v14-1",
+  "profile_id": "es-v15-1",
   "language": "es",
   "execution_status": "ready",
-  "source_method_id": "provider-neutral-v14-mwe-phrase-commit",
-  "method_summary": "v13 abstain-unresolved plus MWE competition. A gloss-winning PHRASE commits without dictionary-order agreement. If the word path is unresolved, publish the best competing phrase instead of abstaining. Dual-write the best word-leaf.",
+  "source_method_id": "provider-neutral-v15-mwe-phrase-commit",
+  "method_summary": "v14 baseline confirmed in SWEEP. v13 abstain-unresolved plus MWE competition. A gloss-winning PHRASE commits without dictionary-order agreement. If the word path is unresolved, publish the best competing phrase instead of abstaining. Dual-write the best word-leaf.",
   "provider_prior": {
     "enabled": true,
     "source": "wiktionary_menu_order",
@@ -35,7 +35,7 @@
   "multiword": {
     "enabled": true,
     "inventory": "mwe_merged/v1",
-    "snapshot_path": "raw/mwe/mwe-es-2026-09-18-v14-sieve/mwe_merged.json",
+    "snapshot_path": "raw/mwe/mwe-es-10k-sieve/mwe_merged.json",
     "filter_policy": "v14_wiktionary_source_and_pos",
     "minimum_corpus_frequency": 1,
     "role": "stored_mwe_augmented_projection",

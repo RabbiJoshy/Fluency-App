@@ -79,6 +79,15 @@ class CommitPolicy:
     only the deepest level shared by the dictionary-order choice and the raw
     sentence/gloss choice. It has no fitted threshold and never changes the
     forced selection.
+
+    ``phrase_winner_skips_provider_order`` is the v14 exception: a PHRASE is
+    not a dictionary-menu leaf, so provider order cannot license it. When the
+    combined winner is a multiword analysis, agreement is raw gloss versus
+    forced selection only. Word-leaf commit is unchanged.
+
+    ``unresolved_falls_back_to_phrase`` is the other v14 exception. v13 abstain
+    was built for a word menu: unresolved meant publish nothing. With phrases
+    on the menu, an unlicensed word must not discard a competing PHRASE.
     """
 
     leaf_minimum: float = 0.0
@@ -89,6 +98,8 @@ class CommitPolicy:
     evidence_guards: bool = False
     unresolved_outcome: UnresolvedOutcome = "assign"
     shared_translation_licenses_glosskey: bool = False
+    phrase_winner_skips_provider_order: bool = False
+    unresolved_falls_back_to_phrase: bool = False
 
     def __post_init__(self) -> None:
         for name, value in (

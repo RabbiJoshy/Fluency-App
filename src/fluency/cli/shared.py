@@ -29,6 +29,8 @@ from fluency.core.io import json_bytes
 from fluency.core.workspace import Workspace
 from fluency.deployment.static import build_static_deployment
 from fluency.enrichments.conjugations import build_conjugation_layer, pin_jehle_snapshot
+from fluency.enrichments.kaikki_conjugations import pin_kaikki_snapshot
+from fluency.enrichments.verbecc_conjugations import pin_verbecc_snapshot
 from fluency.enrichments.cognates import build_app_cognates, build_cognate_layer
 from fluency.harvest.runner import harvest_run_stage
 from fluency.inventory.corpus_frequency import compile_corpus_frequency_snapshot

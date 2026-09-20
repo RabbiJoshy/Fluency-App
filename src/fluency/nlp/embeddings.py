@@ -126,7 +126,8 @@ def _embed_batch_worker(
                 or (isinstance(status, int) and 500 <= status < 600)
                 or any(code in err_str for code in ("500", "502", "503", "504", "UNAVAILABLE"))
                 or isinstance(error, (ConnectionError, OSError, TimeoutError))
-                or any(phrase in err_str.lower() for phrase in ("connection reset", "readerror", "connecterror", "remotedisconnected", "broken pipe", "timeout"))
+                or "remoteprotocolerror" in error.__class__.__name__.lower()
+                or any(phrase in err_str.lower() for phrase in ("connection reset", "readerror", "connecterror", "remotedisconnected", "disconnected", "broken pipe", "timeout"))
             )
             if not is_transient:
                 raise
@@ -213,19 +214,25 @@ def ensure_embeddings(
             ): batch
             for batch in batches
         }
+        delta_chunks = [delta_matrix] if len(delta_matrix) else []
         for future in as_completed(future_to_batch):
             batch, values = future.result()
-            start = len(delta_matrix)
-            delta_matrix = np.vstack([delta_matrix, values]) if len(delta_matrix) else values
+            start = len(delta_index)
+            delta_chunks.append(values)
             for position, text in enumerate(batch, start=start):
                 delta_index[text] = position
 
             since_checkpoint += len(batch)
             done += len(batch)
             if since_checkpoint >= CHECKPOINT_EVERY or done == len(missing):
+                delta_matrix = np.vstack(delta_chunks)
+                delta_chunks = [delta_matrix]
                 checkpoint()
                 since_checkpoint = 0
             log(f"  embedded {done:,}/{len(missing):,}")
+
+        if len(delta_chunks) > 1:
+            delta_matrix = np.vstack(delta_chunks)
 
     for text, position in delta_index.items():
         vectors[text] = delta_matrix[position]

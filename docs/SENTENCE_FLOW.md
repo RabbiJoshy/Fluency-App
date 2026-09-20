@@ -49,7 +49,14 @@ Three hash-pinned documents per run, under
 |---|---|---|
 | **ledger** | surface | verdict, lemma and provenance, tags, eligible sentence indices |
 | **examples** | index | the sentences, in a fixed order, with sentence-intrinsic metadata |
-| **pairs** | (card, sentence) | burden, difficulty, surface position |
+| **pairs** | (word, sentence) | burden, difficulty, surface position, **occurrence POS** |
+
+Occurrence POS is `(sentence, word, tagger) → UD tag`. It belongs on **pairs**,
+not on examples: a sentence does not have a POS; this word in that sentence
+does. `occurrence_pos` is parallel to `eligible`. `occurrence_pos_model` on
+the pairs document is the pin (`es_dep_news_trf@3.8.0`). JSON `null` means
+undeclared (WSD may still tag). A string is frozen. New pin → new freeze.
+v1 pairs files without the column are all-undeclared.
 
 A sentence's identity is its row index in `examples`, which is why the other
 documents can reference it as an integer.
@@ -81,6 +88,21 @@ you will tend to over-sample dominant senses and under-sample rare ones, and the
 deck will look less polysemous than the language actually is. Any criterion
 added here should be checked for whether it correlates with sense frequency, not
 only for whether it improves accuracy.
+
+### Candidate Caps & Tapering (Decision 0022)
+
+- **Monosemous cards** (`senses == 1`): **25 candidates by default**. These bypass
+  expensive embedding scoring via the `sole_leaf` shortcut in `wsd_execute.py`,
+  giving learners a generous, diverse sentence pool at zero model spend.
+- **Polysemous cards** (`senses > 1`): Bounded between 10 and 40 candidates via a
+  non-linear, logarithmic taper:
+  $$\text{cap}(\text{rank}, \text{senses}) = \text{clamp}\Big(10,\, 40,\, \text{round}\big(10 + \text{rank\_boost}(\text{rank}) + \text{polysemy\_boost}(\text{senses})\big)\Big)$$
+  - **Front-end words (ranks 1–3,000)** get wide candidate pools (up to 40) where
+    subtle polysemy and idiomatic nuance matter most.
+  - **Tail words (ranks 5,000–10,000)** decay logarithmically down to 10–14 candidates,
+    keeping compute lean where words are concrete and learners are advanced.
+- **The pre-WSD set stores all eligible candidates without truncation.** Slicing by
+  the dynamic cap occurs only at execution time in WSD, keeping the freeze clean and reusable.
 
 ## Stage 5 — UI selection
 

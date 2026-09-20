@@ -9,9 +9,9 @@
       "batch_size": 100,
       "checkpoint_every": 1000,
       "max_quota_retries": 12,
-      "workers": 2,
-      "min_seconds_per_batch": 1.2,
-      "note": "Smooth paced batch embedding under Gemini API RPM ceiling."
+      "workers": 10,
+      "min_seconds_per_batch": 0.1,
+      "note": "High-throughput parallel batch embedding with automatic backoff."
     },
     "occurrence-pos": {
       "provider": "spacy",

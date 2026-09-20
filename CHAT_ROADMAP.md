@@ -4,7 +4,7 @@ Repo `Fluency-Next`. Workspace `Fluency-Workspace`. Old `Fluency/` is read-only.
 
 **UI / app chats are usually not a row in this file.** They do not harvest, WSD, or compose decks unless this roadmap **names them as a blocker** (e.g. empty study sets after a release). They **should still read SCAR and the freeze / version index** so product work matches what is shipping (display-v4, MWEs on the component card, v13 vs v14). Do not invent a speech-pipeline job from a settings tweak.
 
-Named UI exception: **SETLIST** (live Spotify playlist → lyrics → Fluency persist → naive study deck). Brief: `docs/runbooks/live-playlist.md`. Not VERSE. Not “Match a Spotify playlist”.
+Come-back list (shipped, still open): **`OPEN.md`**. Eventual direction (not shipped yet, e.g. Italian): **`LATER.md`**. Skim both. Do not start a job from either. Those are not WSD steps. **SETLIST** is on this file because that chat is running now.
 
 **Every pipeline chat opens with:**
 
@@ -26,6 +26,8 @@ Related briefs:
 - **FUSE** (MWE lists + code): `Fluency-Workspace/raw/surfaces/V14_MWE_PREP_PROMPT.md`
 - **NEEDLE** (v13 word-menu, done): `Fluency-Workspace/raw/surfaces/V12_AUDIT_PROMPT.md`
 - Ledger/sentence viewer: `Fluency-Workspace/raw/surfaces/audit.html` (expand a row for occurrence POS)
+- **Open** (shipped, still imperfect): `OPEN.md` → writeups in `docs/open/`. Skim; do not invent a job.
+- **Later** (eventual direction, not shipped): `LATER.md`. Skim; do not start Italian from it.
 
 ---
 
@@ -116,18 +118,29 @@ Say the bold name.
 | **LOOM** | v13 decks | Run v13 on the **current** freeze. Ship optional. | Lab (POS from pairs; spaCy only on `null`) | Parked (skip; wait for v14) |
 | **FUSE** | v14 MWE setup | MWE inventories, non-decomposition filter, dual-write, overlay stub. | Lab | Done (snapshots + profiles `*-v14-1`) |
 | **SIEVE** | v14 filter | Watch FUSE phrases on frozen v12 lines; sign off which pass. | Lab | **Done** (signed off in `sieve-2026-09-18`; ready for MILL) |
-| **MILL** | v14 lab decks | Run signed-off v14 on the **current** freeze. New run id; remaining embeds; compose; activate if Joshua says. | Lab sentences + declared spend | Ready to open (after SIEVE) |
-| **QUARRY** | 10k supply | Correct 10k pools → new prewsd. `--supply-only`. | Plant (harvest only if pools missing) | After MILL (or skip if 6k/4k v14 is enough) |
-| **KILN** | v14 WSD on 10k | Embed **new** strings; full-deck WSD with MWEs on. | Plant | After QUARRY freeze exists |
-| **GLASS** | v14 10k decks | Import bundle, compose, validate, activate the 10k speech decks. | Plant (no model) | After KILN |
-| **SWEEP** | v15 | Audit the **shipped v14** decks, including MWE. | Lab on **v14** freeze | After first v14 ship (MILL or GLASS) |
-| **GRAFT** | lyrics overlays | Collect slang, fillers, and lyrics MWEs/words into overlay snapshots. | Lab / curation | After SWEEP (before VERSE) |
+| **MILL** | v14 lab decks | Run signed-off v14 on the **current** freeze. New run id; remaining embeds; compose; activate if Joshua says. | Lab sentences + declared spend | **Done** (deployed to live app under `flashcards-v480`) |
+| **SWEEP** | speech **v15** | Audit the live v14 decks; tune WSD scoring & gating; sign off `*-v15-1`. | Lab on v14 freeze | **Done** (v14 stands; profiles `*-v15-1` written; ready for QUARRY) |
+| **QUARRY** | 10k supply | Correct 10k pools → clitic de-phrasing → new prewsd freeze. `--supply-only`. | Plant (harvest only if pools missing) | **Done** (pools registered, clitics de-phrased, prewsd v2 frozen; ready for CHISEL 1) |
+| **CHISEL 1** | 10k MWE baseline | Curate 3-axis overlay (wsd_routing, flexibility, ui_role) across 10k cards; sign off. | Lab on 10k freeze | **Done** (signed off in `mwe-*-10k-sieve`; ready for KILN 1) |
+| **KILN 1** | 10k WSD baseline | Embed deltas; execute 10k WSD using `*-v15-1` + CHISEL 1 overlay. | Plant | **Done** (published Stage 04 across es, pt, cs; ready for CHISEL 2) |
+| **CHISEL 2** | MWE tag refinement | Audit KILN 1 WSD outputs; discover additional axes/template bounds on real data. | Lab on KILN 1 output | **Done** (signed off in `raw/mwe/chisel-2`; ready for KILN 2) |
+| **KILN 2** | Precision 10k WSD | Re-run/finalize WSD with CHISEL 2 refined MWE overlay before release. | Plant | **Done** (precision 10k WSD published to Stage 04 across es, pt, cs; ready for GLASS) |
+| **GLASS** | v15 10k decks | Import bundle, compose, validate, activate the 10k speech decks. | Plant (no model) | **Done** (10k releases composed, validated, sharded, activated; deployed under `flashcards-v502`) |
+| **GRAFT** | lyrics overlays | Collect slang, fillers, and lyrics MWEs/words into overlay snapshots. | Lab / curation | After GLASS (before VERSE) |
 | **VERSE** | lyrics **v16** | Rebase on SWEEP (v15) + GRAFT overlays; lyrics WSD v16. Bad Bunny lyrics stack is **v7**. | Lab first, plant later | After GRAFT; may sit idle until then |
-| **SETLIST** | live playlist UI | Spotify playlist → LRCLIB → worker persist → naive speech-overlay deck. No WSD. | UI | In progress (brief `docs/runbooks/live-playlist.md`) |
+| **SETLIST** | live playlist UI | Spotify playlist → LRCLIB → worker persist → naive speech-overlay deck. No WSD. | beside WSD | In progress (brief `docs/runbooks/live-playlist.md`) |
 
-**Hold.** Redo SIEVE when Joshua signs this sequence. Then MILL. QUARRY is the later 10k expansion, not a blocker for seeing v14.
+**Hold.** Sequence: SIEVE done, MILL done, SWEEP done, QUARRY done, CHISEL 1 done, KILN 1 done, CHISEL 2 done, KILN 2 done, GLASS done. **GRAFT is next** (or VERSE / SETLIST). SETLIST does not wait on that hold.
 
-KILN waits until QUARRY’s freeze exists. Do not call the v12 freeze “v14 production 10k.”
+KILN 1 executed on QUARRY’s freeze and CHISEL 1's 10k MWE overlay. Do not call the v12 freeze “v14 production 10k.”
+
+---
+
+## Beside WSD
+
+This file’s index is the **WSD campaign**, including chats that have not started (SWEEP, QUARRY, …).
+
+Product pieces that are not that campaign live in **`OPEN.md`**. SWEEP and QUARRY do not wait on them. When a non-WSD chat is actually running, name it here so it does not collide with SWEEP. Today that is **SETLIST**. When conjugations reopen, name that chat **DRAWER** for the duration of the work.
 
 ---
 
@@ -157,17 +170,18 @@ Lab `--prewsd` should be the **`-v2`** dirs above, not the v1 folders and not th
 
 You already have a **v12 freeze**: sentences + scores + embedding cache + sparse pair POS. That is the free lab.
 
-1. **NEEDLE** already tuned the *word* menu (abstain when unlicensed). MWEs were parked on purpose.
+1. **NEEDLE** already tuned the *word* menu (abstain when unlicensed). MWEs were parked on purpose. (Done)
 2. **LOOM** (optional, parked) would run that word-menu on the same freeze and ship a v13 deck *without* idioms. Skip; wait for v14.
-3. **FUSE** built the candidate idiom lists and wiring.
-4. **SIEVE** watches those phrases on the frozen v12 sentences and signs off which ones pass (the filter). Also makes sure a winning phrase can actually publish. Not a deck.
-5. **MILL** runs that signed-off v14 on the same v12 freeze (new run id; remaining embeds) and can put it on the app at today’s card counts.
-6. **QUARRY** is the first time you care about “the 10k files.” New run id, named pools, `--supply-only`. New freeze. Different cap-30 set than v12. Expected. Optional if MILL’s 6k/4k v14 is enough for now.
-7. **KILN** pays Gemini only for sentences that QUARRY freeze has and the cache does not. WSD with v14 profiles + SIEVE’s inventory.
-8. **GLASS** puts that 10k run on the app as the v14 speech decks.
-9. **SWEEP** (v15) reads those decks the way NEEDLE read v12: sample, pattern, small change. Now the menu *includes* MWEs, so idiom mistakes are in scope.
-10. **GRAFT** collects domain-specific MWEs and single-word extra senses (Caribbean slang, reggaeton idioms, conversational fillers, elided locutions) into structured overlays via `fluency.wsd.overlays`, before lyrics WSD disambiguation.
-11. **VERSE** is the lyrics WSD chat. Rebased on speech v15 (SWEEP) + domain overlays (GRAFT), producing **lyrics WSD v16**. Do not treat speech v12 as the method to ship.
+3. **FUSE** built the candidate idiom lists and wiring. (Done)
+4. **SIEVE** watched those phrases on the frozen v12 sentences and signed off the two-sentence filter. (Done)
+5. **MILL** ran that signed-off v14 on the v12 freeze, separated Invariant vs Ambiguous MWEs, and deployed the decks to the live app (`flashcards-v480`). (Done)
+6. **SWEEP** (v15) audits those live v14 decks on the 6k/4k freeze: tunes WSD scoring, gating, provider priors, and phrase winner overrides. Outputs `config/wsd/models/{es,pt,cs}-v15-1.json`.
+7. **QUARRY** expands to the 10k supply. Named pools, single-word clitic de-phrasing (*déjalo* $\to$ *dejar*), and stamps the new 10k pre-WSD freeze (`pairs.json` v2).
+8. **CHISEL** takes the new 10k freeze, curates and retags MWEs across the newly added 4,000 cards, verifies Invariant vs Ambiguous tags, and signs off on the 10k MWE overlay.
+9. **KILN** executes full-deck WSD on the 10k freeze using the signed-off `v15` profile from SWEEP + CHISEL's 10k MWE overlay.
+10. **GLASS** composes, validates, and activates the 10,000-card speech decks on v15.
+11. **GRAFT** collects domain-specific MWEs and single-word extra senses (Caribbean slang, reggaeton idioms, conversational fillers, elided locutions) into structured overlays via `fluency.wsd.overlays`, before lyrics WSD disambiguation.
+12. **VERSE** is the lyrics WSD chat. Rebased on speech v15 (SWEEP) + domain overlays (GRAFT), producing **lyrics WSD v16**. Do not treat speech v12 as the method to ship.
 
 ---
 
@@ -227,54 +241,103 @@ Paste:
 
 > This chat is MILL. Read CHAT_ROADMAP.md through SCAR and the freeze section, then only MILL. Run signed-off v14 on the current freeze. Use SIEVE’s overlay, not FUSE’s unfiltered snapshot. New run id (v12 stage 04 already exists). Print uncached counts with `--offline-only` before any paid embed. Do not start QUARRY.
 
-- Job: new run on the v12 card set (`--supply-only` if you materialise). `wsd_execute` with `--prewsd` = the `-v2` dirs in the freeze section, `--profile-id *-v14-1`, `--multiword-inventory` = **SIEVE’s signed-off overlay**. Remaining sentence embeds after 2026-09-17: es 0, pt ~16k, cs ~15k (recount with `--offline-only`; the overlay may shrink this). Then `pipeline wsd-import`, compose, validate; activate only if Joshua says.
-- **Output:** imported stage 04 on the new run + (if activated) live v14 speech decks at current card counts. Display still SENTENCE_FLOW.
-- Free test: `--offline-only` must print the miss count and refuse before Gemini. Confirm you did not write a 6k ledger over the 10k inventory. Confirm the overlay path.
-- Do not: harvest; skip `--supply-only`; start QUARRY; audit membership (that is SIEVE); treat `es-v14-freeze.json` as importable into the v12 run id
+- Job: new run on the v12 card set (`--supply-only` if you materialise). `wsd_execute` with `--prewsd` = the `-v2` dirs in the freeze section, `--profile-id *-v14-1`, `--multiword-inventory` = **SIEVE’s signed-off overlay**.
+  - **Spanish (`es-v14-1`)**: Runs in **full MWE competition mode** (`active_projection: "mwe_augmented"`) across all 1,544 kept locutions. 0 uncached sentences on `-v2` freeze ($0.00 spend, 100% offline cache hit).
+  - **Portuguese & Czech (`pt-v14-1`, `cs-v14-1`)**: Recount uncached lines with `--offline-only`. For zero-spend offline testing, uncached lines fallback; otherwise print projected spend before any paid API embed (~$3.50 total).
+  Then `pipeline wsd-import`, compose, validate; activate only if Joshua says.
+- **Output:** imported stage 04 on the new run + live v14 speech decks deployed under `flashcards-v480`. Display SENTENCE_FLOW.
+- **Status:** **Done.** Released candidate decks `es-speech-v14-6000x10`, `pt-speech-v14-6000x10`, `cs-speech-v14-4000x10` deployed to GitHub Pages.
 
-### QUARRY — 10k supply, new freeze
+### SWEEP — v15 algorithm audit on live v14 decks (Done)
+
+**This chat is SWEEP.** Audit chat: grow the sample on the **live shipped v14** decks (deployed under `flashcards-v480` from MILL). Output is **speech v15** (`config/wsd/models/{es,pt,cs}-v15-1.json` or written “v14 stands”) when leftovers are edges.
+
+- **Status:** **Done.** Audited targeted sample across es, pt, cs live v14 decks; zero false-positive contamination on invariant MWEs, sensible ambiguous competition wins, and clean polysemous single-word fallbacks. **v14 stands**. Model profiles `config/wsd/models/{es,pt,cs}-v15-1.json` written identical to v14 baseline. QUARRY is next.
+
+### QUARRY — 10k supply, new freeze (After SWEEP)
 
 **This chat is QUARRY.**
 
-- Job: for es, pt, cs: named 10k pools (`fluency pools list`). If a pool is missing, harvest **that** source into a **new** run id — never `LATEST_V11`. `condition_pools`. `materialise_surfaces --workspace $W --language LANG --run-id LANG=<run-id> --supply-only`. Freeze **this** run’s prewsd as pairs v2 (POS column present; fill tags before KILN or accept spaCy on `null`). Print `--dry-run` first.
+Paste:
+
+> This chat is QUARRY. Read CHAT_ROADMAP.md through SCAR and the freeze section, then only QUARRY. Build named 10k pools for es, pt, cs (--supply-only). De-phrase single-word clitics before materialise_surfaces. Freeze this run's prewsd as pairs v2. Print --dry-run first. Do not call Gemini. Do not run full WSD.
+
+- Job: for es, pt, cs: named 10k pools (`fluency pools list`). If a pool is missing, harvest **that** source into a **new** run id — never `LATEST_V11`. `condition_pools`.
+  - **Single-Word Clitic De-Phrasing (es)**: Before/during `materialise_surfaces`, intercept single-token words tagged as `"PHRASE"` by SpanishDict (e.g. *déjalo*, *hazlo*, *dime*). Map them via Wiktionary `form_of` / enclitic pattern to their true verb lemma (*dejar*, *hacer*, *decir*) and POS `VERB`, ensuring single-word verbs are not misclassified as phrases and merge cleanly in lemma mode.
+  - `materialise_surfaces --workspace $W --language LANG --run-id LANG=<run-id> --supply-only`. Freeze **this** run’s prewsd as pairs v2 (POS column present; fill tags before KILN or accept spaCy on `null`). Print `--dry-run` first.
 - Free test: dry-run; `prewsd.verify()`; confirm ledger row count still 10k after materialise; confirm you did not write a 6k ledger; confirm `pairs.json` is `prewsd-pairs/v2`.
 - Do not: audit idioms here; call Gemini; run full WSD; skip `--supply-only`
+- **Status:** **Done.** Registered named 10k pools (`es-10k-speech`, `pt-10k-speech`, `cs-10k-speech`). Single-word clitics de-phrased via `observe_lemmas/spanishdict-clitic-dephrased` with POS `["VERB"]` and primary lemma routed to the base verb (e.g. *déjalo* $\to$ *dejar*, *hazlo* $\to$ *hacer*, *dime* $\to$ *decir*). Frozen 10k pre-WSD artifact sets stamped with `prewsd-pairs/v2` (es `20260914T223348Z-c35194bc`, pt `20260914T222723Z-e43a0469`, cs `20260914T223828Z-ad405a28`) covering 10,000 cards each. Verified with `prewsd.verify()` (0 mismatches).
 
 This is the step that **intentionally** diverges from v12’s sentence set.
 
-### KILN — embed deltas + v14 WSD
+### CHISEL — 10k MWE curation & retagging (After QUARRY)
 
-**This chat is KILN.**
+**This chat is CHISEL.** Dedicated MWE inventory and retagging chat on the newly expanded 10,000-card freeze before KILN.
 
-- Job: `wsd_execute` with `--prewsd` = **QUARRY’s** freeze (not the v12 `-v2` lab dirs), `--profile-id *-v14-1`, `--multiword-inventory` = **SIEVE overlays** (`mwe-*-2026-09-17-v14-sieve/`), `--execution-cap 30`. Gemini only for texts missing from the npz cache. POS from pairs when frozen. Then `pipeline wsd-import` (stage 04 reads assignments, not the bundle file sitting in `raw/wsd/`).
-- Free test before spend: count uncached strings; print projected units; `--offline-only` on a **tiny** sample must refuse or no-op paid calls.
-- Do not: harvest; materialise without `--supply-only`; reuse v12 prewsd and call it v14 production
+Paste:
 
-### GLASS — v14 decks on the app
+> This chat is CHISEL. Read CHAT_ROADMAP.md through SCAR and the freeze section, then only CHISEL. Take QUARRY's newly frozen 10k pre-WSD set and curate the 10,000-card MWE overlay. Audit MWE attachments on ranks 6,001–10,000, verify Invariant vs Ambiguous routing tags, add desired tag axes (verbal idioms, flexibility), and sign off on raw/mwe/mwe-*-10k-sieve/mwe_merged.json. Do not run full WSD. Do not start KILN.
 
-**This chat is GLASS.**
+- Job: Audit candidate MWEs against the newly unlocked 4,000 cards in QUARRY's freeze. Finalize Invariant vs Ambiguous tags across all phrases so deterministic idioms bypass KILN competition. Verify token boundaries and longest-match span masking.
+- **Output:** Signed-off 10k MWE overlays (`raw/mwe/mwe-*-10k-sieve/mwe_merged.json`) + sign-off doc.
+- Free test: Validate overlay schema; confirm zero paid calls; test against QUARRY's `pairs.json`.
+- Do not: Call Gemini embeddings; harvest new sentences; run full 10k WSD (that is KILN).
+- **Status:** **Done.** Curated 10,000-card MWE overlays (`raw/mwe/mwe-*-10k-sieve/mwe_merged.json`), enriched with `verbal_idiom` and `flexibility` axes, finalized Invariant (1,063 es, 687 pt, 126 cs) vs Ambiguous routing tags, audited attachments on ranks 6,001–10,000 (recovering 14 Spanish orphan locutions), and updated `*-v15-1.json` model profiles. Sign-off doc written to `raw/mwe/chisel-10k/SIGN_OFF.md`. Ready for KILN.
 
-- Job: compose speech releases from KILN stage 04; validate; activate. Display still SENTENCE_FLOW (WSD-labelled ticks; one canonical per meaning on that card). If MILL already shipped v14 on the 6k/4k freeze, this is the 10k replacement, not a second first-v14.
-- Free test: `fluency release validate`; load study sets locally (empty-set bug was skinny `meanings: []` — do not ship that).
-- Do not: change WSD; “quick harvest” to fill ticks
+### KILN 1 — embed deltas + v15 WSD on 10k baseline (Done)
 
-### SWEEP — v15 audit of shipped v14 (MWEs in scope)
+**This chat was KILN 1.** Plant chat. Executed full 10k WSD on QUARRY's freeze using SWEEP's signed-off `*-v15-1` profiles and CHISEL 1's 10k MWE overlay across es, pt, and cs.
 
-**This chat is SWEEP.** Audit chat: grow the sample on the **shipped v14** freeze (MWEs in scope). Output is **v15** (`*-v15-1` or written “v14 stands”) when leftovers are edges. Joshua runs full v15 after you sign off.
+- **Status:** **Done.**
+  - **Spanish (`es`)**: Run `20260914T223348Z-c35194bc` imported to `runs/es/speech/20260914T223348Z-c35194bc/stages/04_wsd_assignments/output`. (Assigned: 284,652, Abstained: 9,461, No-menu: 3,123, Cap-30 overflow: 148,995).
+  - **Portuguese (`pt`)**: Run `20260914T222723Z-e43a0469` imported to `runs/pt/speech/20260914T222723Z-e43a0469/stages/04_wsd_assignments/output`. (Assigned: 285,332, Abstained: 11,585, No-menu: 683, Cap-30 overflow: 148,909).
+  - **Czech (`cs`)**: Run `20260914T223828Z-ad405a28` imported to `runs/cs/speech/20260914T223828Z-ad405a28/stages/04_wsd_assignments/output`. (Assigned: 269,949, Abstained: 18,066, No-menu: 15,047, Cap-30 overflow: 152,199).
+  All embedding caches 100% complete and offline. Ready for CHISEL 2 audit.
 
-- Job: NEEDLE-style audit **on the shipped v14 freeze and v14 assignments** (MILL’s lab decks or GLASS’s 10k, whichever is live). Idiom mistakes count. Word-menu regressions count.
-- **Output:** `config/wsd/models/{es,pt,cs}-v15-1.json` **or** written “v14 stands”, plus leftover list. Joshua runs full v15 only after that.
-- Free test: `--prewsd` of the **GLASS/KILN run**, `--offline-only`. Not the live CDN copy.
-- Do not: harvest to “see more MWEs”; start lyrics method here; reopen display-v4 archaeology
+### CHISEL 2 — 10k MWE refinement & audit (After KILN 1)
+
+**This chat is CHISEL 2.** Audit chat on the published Stage 04 assignments from KILN 1.
+
+Paste:
+
+> This chat is CHISEL 2. Read CHAT_ROADMAP.md through SCAR and the freeze section, then only CHISEL 2. Audit KILN 1's published Stage 04 WSD assignments across es, pt, and cs. Inspect MWE competition wins, check for false positives, verify verbal idiom template gap bounds, and refine the 10k MWE overlay. Do not run full WSD. Do not start KILN 2.
+
+- Job: Audit real Stage 04 assignments across es (`20260914T223348Z-c35194bc`), pt (`20260914T222723Z-e43a0469`), and cs (`20260914T223828Z-ad405a28`). Identify overeager MWE attachments, verify enclitic/clitic behavior in verbal idioms, tune template gap tolerances and boundary constraints on real sentence scores.
+- **Output:** Refined 5-axis 10k MWE overlays (`raw/mwe/mwe-*-10k-sieve/mwe_merged.json`) + sign-off doc (`raw/mwe/chisel-2/SIGN_OFF.md`).
+- **Status:** **Done.** Audited KILN 1 Stage 04 assignments across es, pt, and cs. Enriched overlays with 5-axis schema (`wsd_routing`, `flexibility`, `ui_role`, `transparency`, `template_gap_limit`), promoted 42 Spanish, 25 Portuguese, and 5 Czech unambiguous 100%-winning expressions to `deterministic_bypass`, hardened regex precision for *dar*, *pôr*, and *mít*, calibrated template gap limits (0–3 tokens) on real sentence scores, and signed off in `raw/mwe/chisel-2/SIGN_OFF.md`. Ready for KILN 2.
+- Free test: Inspection scripts on Stage 04 JSON files; dry-run MWE matchers on disputed sentences. Zero Gemini spend.
+- Do not: Call Gemini embeddings; harvest new sentences; run full 10k WSD.
+
+### KILN 2 — Precision 10k WSD (Done)
+
+**This chat was KILN 2.** Plant chat. Re-ran precision 10k WSD on QUARRY's freeze using SWEEP's signed-off `*-v15-1` profiles and CHISEL 2's refined 5-axis MWE overlays (`raw/mwe/mwe-*-10k-sieve/mwe_merged.json`), and re-imported Stage 04 across es, pt, and cs.
+
+- **Status:** **Done.**
+  - **Spanish (`es`)**: Run `20260914T223348Z-c35194bc` re-imported into `runs/es/speech/20260914T223348Z-c35194bc/stages/04_wsd_assignments/output`. Multiword inventory `sha256:9c0bb06061202042a2b29c29625a8d55dd01c60f5ef99f2be752360070bbacb5`. (Assigned: 284,653, Abstained: 9,461, No-menu: 3,122, Cap-30 overflow: 148,995).
+  - **Portuguese (`pt`)**: Run `20260914T222723Z-e43a0469` re-imported into `runs/pt/speech/20260914T222723Z-e43a0469/stages/04_wsd_assignments/output`. Multiword inventory `sha256:cf13cc27cf567ee17401fa857e260240d6b4e23c3a4f697c2d6f3c5a6e3f6af0`. (Assigned: 285,332, Abstained: 11,585, No-menu: 683, Cap-30 overflow: 148,909).
+  - **Czech (`cs`)**: Run `20260914T223828Z-ad405a28` re-imported into `runs/cs/speech/20260914T223828Z-ad405a28/stages/04_wsd_assignments/output`. Multiword inventory `sha256:e94d39d20b82ffe83a373bc0fdf35a14d87a8372ff2c677c8030500a6c819aa5`. (Assigned: 269,949, Abstained: 18,066, No-menu: 15,047, Cap-30 overflow: 152,199).
+  All embeddings 100% offline cache hit ($0.00 spend; 0 API calls). Final Stage 04 assignments ready for GLASS release composition.
+
+### GLASS — v15 10k decks on the app (Done)
+
+**This chat was GLASS.**
+- **Status:** **Done.**
+  - **Spanish (`es`)**: Release `es-speech-v15-10000x10` composed (10,000 cards, 97,248 assigned examples, 0 unassigned), validated (`example_selection`, `inventory`, `sense_menu`, `sentences`, `wsd_assignments`), sharded (500 index row shards, 500 example shards), and activated.
+  - **Portuguese (`pt`)**: Release `pt-speech-v15-10000x10` composed (10,000 cards, 97,593 assigned examples, 0 unassigned), validated, sharded, and activated.
+  - **Czech (`cs`)**: Release `cs-speech-v15-10000x10` composed (10,000 cards, 91,668 assigned examples, 0 unassigned), validated, sharded, and activated.
+  - Verified `SENTENCE_FLOW` ticks and canonical dictionary examples intact (9,061 in es, 3,102 in pt, 2,853 in cs). Verified all 500 study sets across all 3 languages have non-empty meanings (0 empty study sets).
+  - Pinned speech frequency snapshots built and validated for all 3 releases.
+  - Service worker cache bumped to `flashcards-v502` and activated in `config.json`. Deployed to live app.
 
 ### GRAFT — lyrics & slang sense-menu overlays (before VERSE)
 
 **This chat is GRAFT.** Domain & slang collection chat before lyrics WSD.
-- Input Dossier: `docs/research/graft-source-dossier.md` (read this research dossier first for vetted candidate sources, taxonomy, and coverage before building snapshots).
+- Input Dossier: `docs/dossiers/graft-source-dossier.md` (shared working dossier; check its status and vet sources before building snapshots).
 
 Paste into that chat:
 
-> You are **GRAFT**. Read `CHAT_ROADMAP.md` through SCAR, then only GRAFT. First, read `docs/research/graft-source-dossier.md` for the vetted source inventory and taxonomy. Your job is to collect domain-specific multi-word expressions and single-word extra senses (slang, regionalisms, conversational fillers, elided locutions) into structured overlays via `fluency.wsd.overlays` before VERSE runs lyrics disambiguation.
+> You are **GRAFT**. Read `CHAT_ROADMAP.md` through SCAR, then only GRAFT. First, read `docs/dossiers/graft-source-dossier.md` and check its status, source inventory, and taxonomy. Your job is to collect domain-specific multi-word expressions and single-word extra senses (slang, regionalisms, conversational fillers, elided locutions) into structured overlays via `fluency.wsd.overlays` before VERSE runs lyrics disambiguation.
 
 - Job: Harvest/curate domain expressions (Caribbean slang like *guagua*, *vaina*; reggaeton idioms; conversational discourse fillers like *o sea*; lyrics contractions). Map them to component surface cards. Build reproducible overlay snapshots under `raw/overlays/` adhering to the `SenseMenuOverlay` interface in `fluency.wsd.overlays`.
 - **Output:** Structured overlay snapshot (e.g. `raw/overlays/lyrics/es-lyrics-overlays.json`) ready for injection into `WSDComponents.overlay_provider`.
@@ -344,4 +407,4 @@ This file is the **switchboard**, not a diary. The migration plan stays `docs/RO
 5. **Long briefs live beside the data** (`Fluency-Workspace/raw/surfaces/…_PROMPT.md`). This file only points.
 6. **When the campaign ends**, add a new incident if something went wrong, archive old codenames as Done, add the next index rows. Do not start a parallel undocumented chat for the same job.
 7. **After you edit this file**, copy it to `../Fluency-Workspace/raw/surfaces/DECK_CHAT_ROADMAP.md` so workspace-only agents see it.
-
+8. **Open** is `OPEN.md` (shipped, still imperfect). **Later** is `LATER.md` (eventual direction). Neither is a WSD step. Name a non-WSD chat in this file only while it is running (today: SETLIST).
