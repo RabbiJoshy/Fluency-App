@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-20T22:10:00+01:00",
+      "date": "2026-09-20 22:10 BST",
+      "agent": "Claude",
+      "commit": "pending",
+      "summary": "The example footer stops fighting itself: source credit and tick strip each get half the row, and the provenance icon leads its title",
+      "detail": [
+        "The IMDb/Wiktionary/Tatoeba icon now sits to the left of its title. It was to the right, which meant a long film title pushed the icon off the row entirely.",
+        "Source credit and the tick strip each own exactly half the row and can no longer take the other's space. Previously the credit was free-growing against an unbounded wrapping strip, so a long title and a thirty-example strip fought over one row.",
+        "The tick strip squeezes through two density tiers measured against the width it actually got, and only clips once the tightest tier still overflows — and when it clips, it keeps the current tick in view, so the position cue survives."
+      ]
+    },
+    {
       "timestamp": "2026-09-20T21:05:00+01:00",
       "date": "2026-09-20 21:05 BST",
       "agent": "Claude",

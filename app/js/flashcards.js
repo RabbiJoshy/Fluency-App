@@ -1411,7 +1411,37 @@ function exampleTicksHTML(current, total, label = 'example') {
     const ticks = Array.from({ length: total }, (_, i) =>
         `<span class="example-tick${i === current ? ' is-current' : ''}"></span>`
     ).join('');
+    // The class here is a first guess from the count alone. fitExampleCreditRow
+    // tightens it further against the width the strip actually got, which the
+    // count cannot know — half a phone card and half a desktop card are very
+    // different amounts of room for the same thirty ticks.
     return `<div class="example-ticks${dense ? ' is-dense' : ''}" role="img" aria-label="${escapeCardText(`${label} ${current + 1} of ${total}`)}">${ticks}</div>`;
+}
+
+// The credit row is two halves that used to compete for one row: the source
+// credit on the left, the tick strip and play controls on the right. A long
+// film title or a thirty-example strip would push the other out entirely.
+// Each half is now capped at 50% in CSS; this pass decides what happens to
+// the ticks inside their half — squeeze through the density tiers first, and
+// only once the tightest tier still overflows, clip, keeping the current tick
+// in view so the position cue survives the clipping.
+function fitExampleCreditRow(root) {
+    if (!root) return;
+    root.querySelectorAll('.example-ticks').forEach(strip => {
+        strip.classList.remove('is-dense', 'is-tight');
+        const fits = () => strip.scrollWidth <= strip.clientWidth + 1;
+        if (fits()) return;
+        strip.classList.add('is-dense');
+        if (fits()) return;
+        strip.classList.add('is-tight');
+        if (fits()) return;
+        // Still too many. Centre the current tick in the visible window.
+        const current = strip.querySelector('.example-tick.is-current');
+        if (!current) return;
+        strip.scrollLeft = current.offsetLeft
+            - (strip.clientWidth / 2)
+            + (current.offsetWidth / 2);
+    });
 }
 
 function initializeApp() {
@@ -3573,7 +3603,10 @@ function exampleSourceChipHTML({ href, label, domain, text = '', extraClass = ''
         extraClass,
     ].filter(Boolean).join(' ');
     const title = named ? `${text}` : label;
-    const inner = `${named ? `<span class="example-source-text">${escapeCardText(text)}</span>` : ''}${icon}`;
+    // Icon first. The mark says where the line came from; the title is the
+    // detail that follows it, and it is the part that gets truncated, so
+    // putting the icon after it meant a long title pushed the icon off.
+    const inner = `${icon}${named ? `<span class="example-source-text">${escapeCardText(text)}</span>` : ''}`;
     const attrs = `class="${classes}" title="${escapeCardText(title)}" aria-label="${escapeCardText(named ? `${text} on ${label}` : label)}"`;
     if (!href) return `<span ${attrs}>${inner}</span>`;
     return `<a ${attrs} href="${escapeCardText(href)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${inner}</a>`;
@@ -6876,6 +6909,7 @@ function updateCard({ announceHeadword = false } = {}) {
             // header's height, which the scroll-cap measurement below reads.
             fitBackHeadword(backEl);
             fitPosSectionSummaries(backEl);
+            fitExampleCreditRow(backEl);
 
             const scroll = backEl.querySelector('.meanings-scroll');
             if (scroll) {
