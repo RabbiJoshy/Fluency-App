@@ -2702,22 +2702,111 @@ function foldSurfaceForm(value) {
         .trim();
 }
 
+// Letters that fold together for matching purposes. `foldSurfaceForm` already
+// strips accents everywhere else in this file; the occurrence regex was the
+// one comparison that did not, so a card on *estás* found nothing in a line
+// spelling it *estas* — and subtitles and lyrics drop accents constantly. The
+// card then showed no underline, and on a merged card the wrong headword.
+const SURFACE_FOLD_CLASSES = {
+    a: 'aáàäâãå', e: 'eéèëê', i: 'iíìïî', o: 'oóòöôõ', u: 'uúùüû',
+    n: 'nñ', c: 'cç', y: 'yý',
+};
+
 function exampleOccurrenceSurfaceRegex(form, flags = 'giu') {
     const normalized = String(form || '').trim();
     if (!normalized) return null;
-    const body = normalized
-        .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-        .replace(/[’']/g, "[’']")
-        .replace(/\s+/g, '\\s+');
+    const body = Array.from(normalized).map(char => {
+        if (/\s/.test(char)) return '\\s+';
+        if (char === '’' || char === "'") return "['’]";
+        const base = char.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+        const cls = SURFACE_FOLD_CLASSES[base];
+        if (cls) return `[${cls}]`;
+        return char.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }).join('').replace(/(?:\\s\+)+/g, '\\s+');
     return _cachedRegex(`(?<![\\p{L}\\p{N}])(${body})(?![\\p{L}\\p{N}])`, flags);
 }
 
-function getExampleOccurrenceSurface(card, example, sentence) {
-    // `surface` is the immutable lyric spelling attached to this occurrence;
+// Object pronouns that attach to the end of an infinitive, gerund or
+// imperative. A card keyed on `verte` is asking about `ver`; the sentence may
+// carry the bare verb with the pronoun somewhere else entirely, or attached to
+// a different form of it, and the card surface then matches nothing at all.
+const ENCLITIC_PRONOUNS = [
+    'melo', 'mela', 'melos', 'melas', 'telo', 'tela', 'telos', 'telas',
+    'selo', 'sela', 'selos', 'selas', 'noslo', 'nosla', 'noslos', 'noslas',
+    'oslo', 'osla', 'oslos', 'oslas',
+    'me', 'te', 'se', 'nos', 'os', 'le', 'les', 'lo', 'la', 'los', 'las',
+];
+
+// Every form worth looking for, given the card surface: the surface itself,
+// then the stem left behind by peeling one enclitic and then two. Longest
+// pronouns first so `dármelo` peels `melo`, not `lo`.
+function encliticCandidates(form) {
+    const out = [];
+    const peel = (value) => {
+        const folded = foldSurfaceForm(value);
+        for (const pronoun of ENCLITIC_PRONOUNS) {
+            if (!folded.endsWith(pronoun)) continue;
+            const stem = value.slice(0, value.length - pronoun.length);
+            // Below four letters a "stem" is as likely to be coincidence as
+            // morphology — `lo` peeled off `solo` leaves `so`, not a verb.
+            if (foldSurfaceForm(stem).length >= 3) return stem;
+        }
+        return '';
+    };
+    let current = form;
+    for (let i = 0; i < 2; i++) {
+        current = peel(current);
+        if (!current) break;
+        out.push(current);
+    }
+    return out;
+}
+
+// Last resort when nothing the data declared appears in the sentence: find the
+// word in the sentence that is most plausibly another form of this surface.
+// Deliberately conservative — a wrong guess underlines the wrong word, which
+// is worse than underlining nothing.
+function inferOccurrenceFromSentence(surface, sentence) {
+    const target = foldSurfaceForm(surface);
+    // Short words are function words far more often than they are inflections,
+    // and their stems collide with everything: `que` would claim `querer`.
+    if (target.length < 4) return '';
+    const text = String(sentence || '').replace(/<[^>]*>/g, '');
+    const tokens = text.match(/[\p{L}\p{N}]+(?:['\u2019][\p{L}\p{N}]+)*/gu) || [];
+    const minPrefix = Math.max(3, target.length - 3);
+    let best = '';
+    let bestPrefix = 0;
+    for (const token of tokens) {
+        const candidate = foldSurfaceForm(token);
+        if (!candidate || candidate === target) continue;
+        if (Math.abs(candidate.length - target.length) > 3) continue;
+        let shared = 0;
+        while (shared < candidate.length && shared < target.length
+            && candidate[shared] === target[shared]) shared++;
+        if (shared < minPrefix) continue;
+        // Both remainders must be short: a shared stem with a long tail on
+        // either side is a different word that happens to start the same way.
+        if (target.length - shared > 3 || candidate.length - shared > 3) continue;
+        if (shared > bestPrefix) {
+            bestPrefix = shared;
+            best = token;
+        }
+    }
+    return best;
+}
+
+// The one place that answers "which word is this example actually about?".
+// The card header and the sentence underline both read this, because when they
+// answered it separately they could disagree: a pooled example missing
+// `pooledFrom` sent the header to the representative surface (showing *buena*)
+// while the sentence read *buenos*, and the underline — which does check the
+// sentence — matched nothing and highlighted nothing. One bug, both halves.
+function resolveExampleOccurrence(card, example, sentence) {
+    // `surface` is the immutable spelling attached to this occurrence;
     // `pooledFrom` is the canonical sibling form that contributed the example
-    // to a merged lemma. Prefer what was actually sung, then preserve legacy
+    // to a merged lemma. Prefer what was actually said, then preserve legacy
     // decks through their pooled/card fallbacks.
-    const candidates = [
+    const declared = [
         example?.surface,
         example?.matched_surface,
         example?.pooledFrom,
@@ -2725,15 +2814,44 @@ function getExampleOccurrenceSurface(card, example, sentence) {
         card?.targetWord
     ];
     const seen = new Set();
-    for (const candidate of candidates) {
+    const tried = [];
+    // Always answer with the spelling the sentence actually carries, not the
+    // candidate that matched it. The two differ whenever the corpus dropped an
+    // accent (*estas* for *estás*), and peeling an enclitic can leave a stem
+    // that is not a word at all — `dármelo` minus `melo` is `dár`, and
+    // printing that above the card would be nonsense. `dar` is in the line.
+    const text = String(sentence || '');
+    const matched = (form) => {
+        const regex = exampleOccurrenceSurfaceRegex(form, 'iu');
+        const hit = regex ? regex.exec(text) : null;
+        return hit ? hit[1] : '';
+    };
+    for (const candidate of declared) {
         const form = String(candidate || '').trim();
         const key = foldSurfaceForm(form);
         if (!form || seen.has(key)) continue;
         seen.add(key);
-        const regex = exampleOccurrenceSurfaceRegex(form, 'iu');
-        if (regex?.test(String(sentence || ''))) return form;
+        tried.push(form);
+        const hit = matched(form);
+        if (hit) return { surface: hit, kind: 'declared' };
     }
-    return '';
+    // Nothing declared is in the sentence. Peel enclitics off each candidate —
+    // a card on `verte` against a line carrying `ver`.
+    for (const form of tried) {
+        for (const stem of encliticCandidates(form)) {
+            const hit = matched(stem);
+            if (hit) return { surface: hit, kind: 'enclitic' };
+        }
+    }
+    for (const form of tried) {
+        const inferred = inferOccurrenceFromSentence(form, sentence);
+        if (inferred) return { surface: inferred, kind: 'inferred' };
+    }
+    return { surface: '', kind: 'none' };
+}
+
+function getExampleOccurrenceSurface(card, example, sentence) {
+    return resolveExampleOccurrence(card, example, sentence).surface;
 }
 
 // 18px-wide slot on the left of every sense row. Selected rows get a teal
@@ -3198,8 +3316,20 @@ function getMergedLemmaExampleFocus(card, meaning, { advanceOnEntry = false } = 
     const example = examples[exampleIndex];
     _mergedExampleCursorByCard.set(cursorKey, exampleIndex);
 
+    // Resolve against the sentence rather than trusting `pooledFrom` alone.
+    // When it is missing this used to fall through to the representative
+    // surface and print a form the example does not contain — the header said
+    // *buena* over a line reading *buenos*. The underline already checked the
+    // sentence, so the two disagreed; now they are the same answer.
+    const sentence = stripAdlibParentheticals(
+        example?.target || example?.spanish || ''
+    );
+    const resolved = sentence
+        ? resolveExampleOccurrence(card, example, sentence)
+        : { surface: '', kind: 'none' };
     const surface = String(
-        example?.pooledFrom
+        resolved.surface
+        || example?.pooledFrom
         || card.representativeSurface
         || card.targetWord
         || card.displaySurface
@@ -6507,16 +6637,27 @@ function updateCard({ announceHeadword = false } = {}) {
                 // evidence layer. POS and sense work used its restored
                 // canonical form, but the sentence still contains what was
                 // sung (cometamo’, pa’, vo’a, etc.).
-                const occurrenceSurface = getExampleOccurrenceSurface(
+                const occurrence = resolveExampleOccurrence(
                     card, currentExample, displayTargetSentence);
-                const regex = exampleOccurrenceSurfaceRegex(occurrenceSurface);
+                const regex = exampleOccurrenceSurfaceRegex(occurrence.surface);
                 if (regex) {
-                    const nonCanonical = foldSurfaceForm(occurrenceSurface)
+                    const nonCanonical = foldSurfaceForm(occurrence.surface)
                         !== foldSurfaceForm(card.targetWord);
+                    // How the form was found is part of what the learner is
+                    // being shown. A declared occurrence is evidence; a stem
+                    // left by peeling an enclitic, or a form matched by
+                    // resemblance, is this app's inference and says so.
+                    const title = occurrence.kind === 'enclitic'
+                        ? 'The verb this form attaches a pronoun to'
+                        : occurrence.kind === 'inferred'
+                            ? 'Closest form to this word in this example'
+                            : 'Recorded form in this example';
+                    const inferredClass = occurrence.kind === 'declared'
+                        ? '' : ' example-inferred-form';
                     displayTargetSentence = displayTargetSentence.replace(
                         regex,
                         nonCanonical
-                            ? '<span class="example-word-highlight example-pooled-form" title="Recorded form in this example">$1</span>'
+                            ? `<span class="example-word-highlight example-pooled-form${inferredClass}" title="${title}">$1</span>`
                             : '<span class="example-word-highlight">$1</span>'
                     );
                 }

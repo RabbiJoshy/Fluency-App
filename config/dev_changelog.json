@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-20T22:55:00+01:00",
+      "date": "2026-09-20 22:55 BST",
+      "agent": "Claude",
+      "commit": "pending",
+      "summary": "The word above the card and the word underlined in the example are now the same answer, and accents no longer break the match",
+      "detail": [
+        "The header and the underline each decided independently which form an example was about, and could disagree: when a pooled example had no recorded sibling form, the header fell back to the card's representative surface and showed 'buena' over a line reading 'buenos' — while the underline, which does check the sentence, matched nothing and highlighted nothing. Both halves of that were one cause. They now read a single resolver.",
+        "Occurrence matching was the one comparison in the card that was accent-sensitive, so a card on 'estás' found nothing in a line spelling it 'estas'. Subtitles and lyrics drop accents constantly. Matching now folds accents the way the rest of the card already did.",
+        "Enclitic pronouns are peeled: a card on 'verte' now finds 'ver' in the line, and 'dármelo' finds 'dar'. Up to two pronouns come off, longest first.",
+        "When nothing recorded appears in the sentence, the closest form of the word in that sentence is found by shared stem — conservatively, since a wrong underline is worse than none: never for words under four letters, and never across a long tail. Anything reached this way is marked with a dashed underline and says it is the closest form, not a recorded one.",
+        "The form shown is always the spelling the sentence actually carries, so the header cannot print a stem that is not a word."
+      ]
+    },
+    {
       "timestamp": "2026-09-20T22:10:00+01:00",
       "date": "2026-09-20 22:10 BST",
       "agent": "Claude",

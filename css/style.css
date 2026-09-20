@@ -5045,6 +5045,16 @@
                 0 0 0 1px rgba(var(--sense-match-rgb), 0.16);
         }
 
+        /* A form this app worked out rather than one the data recorded: the
+           stem left by peeling an enclitic pronoun, or the sentence word that
+           most resembles the card's surface. Dashed, because a solid rule
+           here would claim evidence the pipeline never produced. */
+        .example-word-highlight.example-inferred-form {
+            background: rgba(var(--sense-match-rgb), 0.12);
+            box-shadow: none;
+            border-bottom: 2px dashed rgba(var(--sense-match-rgb), 0.85);
+        }
+
         .example-usage-highlight {
             border-radius: 3px;
             padding: 0 0.12em;
