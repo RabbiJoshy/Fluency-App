@@ -241,10 +241,10 @@ const ABOUT_EXAMPLE_CARDS = {
 // The controller below remains shared, so another language needs only a card
 // and one adapter entry instead of a forked tutorial.
 const TUTORIAL_LANGUAGE_ADAPTERS = {
-    spanish: { language: 'Spanish', speechCard: 'queSpeech', provider: 'SpanishDict', lyrics: true, usageShares: true },
-    portuguese: { language: 'Portuguese', speechCard: 'tem', provider: 'Wiktionary', lyrics: false, usageShares: true, crossReferences: true },
-    czech: { language: 'Czech', speechCard: 'jeSpeech', provider: 'Wiktionary', lyrics: false, usageShares: true },
-    french: { language: 'French', speechCard: 'deSpeech', provider: 'Wiktionary', lyrics: false },
+    spanish: { language: 'Spanish', flag: '🇪🇸', speechCard: 'queSpeech', provider: 'SpanishDict', lyrics: true, usageShares: true },
+    portuguese: { language: 'Portuguese', flag: '🇵🇹', speechCard: 'tem', provider: 'Wiktionary', lyrics: false, usageShares: true, crossReferences: true },
+    czech: { language: 'Czech', flag: '🇨🇿', speechCard: 'jeSpeech', provider: 'Wiktionary', lyrics: false, usageShares: true },
+    french: { language: 'French', flag: '🇫🇷', speechCard: 'deSpeech', provider: 'Wiktionary', lyrics: false },
 };
 
 let tutorialLanguageOverride = null;
@@ -327,48 +327,16 @@ const ABOUT_EXAMPLE_DECKS = [
         tab: 'Lyrics',
         faces: {
             back: {
-                title: 'The answer side',
-                blurb: 'Flip the card and you see every meaning of the word, how common each '
-                     + 'one is, and a real line from a song.',
+                title: 'How Lyrics cards differ',
+                blurb: 'Same card structure, but the examples are real song lines you can play. '
+                     + 'Here is what changes.',
                 notes: [
                     {
                         side: 'left',
-                        anchor: '.back-headword',
-                        title: 'The word',
-                        text: 'Shown again at the top so you can keep your place.',
-                    },
-                    {
-                        side: 'right',
-                        anchor: '.pos-section-head',
-                        title: 'Kind of word',
-                        text: 'Noun, verb, and so on. Meanings of the same kind sit together.',
-                    },
-                    {
-                        side: 'left',
-                        anchor: '.meanings-scroll .meaning-row:nth-child(1)',
-                        title: 'The usual meaning',
-                        text: 'This is the sense you will hear most. The highlighted row is the '
-                            + 'one the example below is using.',
-                    },
-                    {
-                        side: 'left',
                         anchor: '.meanings-scroll .meaning-row:nth-child(2)',
-                        title: 'Other meanings',
-                        text: 'Tap a row to switch. The lyric changes to a line that uses that meaning.',
+                        title: 'Tap a meaning to change the lyric',
+                        text: 'On a Speech card the example changes too — but here it switches to a completely different song line.',
                         interactive: true,
-                    },
-                    {
-                        side: 'right',
-                        anchor: '.sense-prominence-badge',
-                        title: 'How common this meaning is',
-                        text: 'The bars show how often this meaning shows up in the songs. '
-                            + 'Tap them to read Common, Uncommon, or Rare.',
-                    },
-                    {
-                        side: 'right',
-                        anchor: '.example-word-highlight',
-                        title: 'The word in a real line',
-                        text: 'Highlighted in the lyric, even if the form is slightly different.',
                     },
                     {
                         side: 'left',
@@ -393,39 +361,21 @@ const ABOUT_EXAMPLE_DECKS = [
                         side: 'right',
                         anchor: '.example-ticks',
                         title: 'More examples',
-                        text: 'If this meaning has more than one example, tap the lyric to see the next one. The dots show where you are.',
+                        text: 'If this meaning has more than one example, tap the lyric to see the next one.',
                         interactive: true,
                     },
                 ],
             },
             front: {
-                title: 'The question side',
-                blurb: 'You see the word and try to remember it before flipping. The numbers '
-                     + 'underneath say how often it comes up in the songs.',
+                title: 'The question side — Lyrics',
+                blurb: 'The front is the same as a Speech card, except the counter shows '
+                     + 'how many song lines use the word instead of a speech frequency.',
                 notes: [
-                    {
-                        side: 'left',
-                        anchor: '.card-word',
-                        title: 'The word',
-                        text: 'Try to recall what it means before you flip. That pause is what helps it stick.',
-                    },
-                    {
-                        side: 'left',
-                        anchor: '.card-rank-label',
-                        title: 'How common the word is',
-                        text: 'Words you will hear most are taught first.',
-                    },
-                    {
-                        side: 'right',
-                        anchor: '.card-pos-list',
-                        title: 'Kind of word',
-                        text: 'A small hint. On the back it becomes the heading for the meanings.',
-                    },
                     {
                         side: 'right',
                         anchor: '.card-freq-label',
-                        title: 'How many lines use it',
-                        text: 'How often this word appears in the songs.',
+                        title: 'Song line count',
+                        text: 'On a Speech card this says how often the word is spoken. Here it counts lyric lines instead.',
                     },
                 ],
             },
@@ -439,8 +389,8 @@ const ABOUT_EXAMPLE_DECKS = [
         faces: {
             back: {
                 title: 'The answer side',
-                blurb: 'This {language} card shows the meanings you will actually meet, how '
-                     + 'common each one is, and a real spoken example.',
+                blurb: 'Flip the card and you see every meaning, how common each one is, '
+                     + 'and a real example from spoken {language}.',
                 notes: [
                     {
                         side: 'left',
@@ -499,7 +449,8 @@ const ABOUT_EXAMPLE_DECKS = [
             },
             front: {
                 title: 'The question side',
-                blurb: 'Same idea as a song card: see the word, try to remember it, then flip.',
+                blurb: 'This is what you see when studying — the word and a few hints. '
+                     + 'Try to remember the meaning before flipping.',
                 notes: [
                     {
                         side: 'left',
@@ -604,7 +555,6 @@ function renderFront(card) {
                 <span class="front-pos-unit"><span class="card-pos ${posClass(card.pos)}">${posName(card.pos)}</span></span>
             </div>
             <div class="card-ranking" style="display: flex;">${rankLabel}${freqLabel}</div>
-            <div class="about-example-flip-hint" aria-hidden="true">Tap to flip</div>
             <div class="card-tint" aria-hidden="true"></div>
         </div>`;
 }
@@ -813,9 +763,10 @@ function renderBack(card, selectedIdx, exampleIdx) {
 
 const state = {
     chapterIndex: 0,
-    // The back opens first, deliberately: it holds the senses, the shares and
-    // the evidence. The front is a prompt with a rank on it.
-    flipped: true,
+    // The front opens first: it is the side the learner sees when studying,
+    // and starting there matches the real experience. After the front
+    // annotations, the tutorial flips to the answer side.
+    flipped: false,
     meaningIndex: 0,
     exampleIndex: 0,
     activeNote: -1,
@@ -876,7 +827,9 @@ function tutorialStepPosition(noteIndex = state.activeNote) {
         total += backCount + frontCount;
         if (chapterIndex < state.chapterIndex) before += backCount + frontCount;
     });
-    if (!state.flipped) before += tutorialFaceNotes(currentDeck(), 'back').length;
+    // Front runs first within a chapter, so the back's notes are only counted
+    // as "behind you" once the card has been flipped.
+    if (state.flipped) before += tutorialFaceNotes(currentDeck(), 'front').length;
     const withinFace = Math.max(0, Math.min(noteIndex, orderedNotes().length - 1));
     return { current: before + withinFace + 1, total };
 }
@@ -895,7 +848,6 @@ function renderCard() {
             </div>
         </div>`;
 
-    wireCardShell(stage);
     wireBack(stage);
     renderFaceCopy();
     renderNotes();
@@ -944,23 +896,6 @@ function flipCardFace(mobileNote = 0) {
             setActiveNote(Math.min(mobileNote, finalIndex));
         }
     }, 640);
-}
-
-function wireCardShell(stage) {
-    const cardEl = stage.querySelector('.card');
-    if (!cardEl) return;
-
-    // Flip on card tap, minus the controls that carry their own meaning.
-    // Toggling the class (rather than re-rendering) is what lets the real
-    // 0.6s flip transition actually play.
-    cardEl.addEventListener('click', (e) => {
-        if (e.target.closest('.spotify-btn')) return;
-        if (e.target.closest('.sense-metadata-more')) return;
-        if (e.target.closest('.sense-cross-reference')) return;
-        if (e.target.closest('.meaning-row')) return;
-        if (e.target.closest('.sentence[data-about-example-cycle="1"]')) return;
-        flipCardFace();
-    });
 }
 
 // Handlers for everything inside the back face. Called again after every
@@ -1059,9 +994,9 @@ function syncContinueButton() {
     btn.hidden = !ready;
     if (!ready) return;
     const isLast = state.chapterIndex >= tutorialDeckSequence().length - 1;
-    if (state.flipped) {
-        // Back face: gentle nudge — the annotations are the main event here.
-        btn.textContent = 'Flip to the question side →';
+    if (!state.flipped) {
+        // Front face: gentle nudge to flip and see the answers.
+        btn.textContent = 'Flip to the answer side →';
         btn.classList.add('is-secondary');
     } else {
         btn.textContent = isLast ? 'Finish tutorial' : 'Continue to Lyrics →';
@@ -1170,13 +1105,13 @@ function renderMobileCoach() {
     document.getElementById('aboutExampleMobileText').innerHTML = tutorialText(note.text);
     const back = document.getElementById('aboutExampleMobileBack');
     const next = document.getElementById('aboutExampleMobileNext');
-    const atStart = state.chapterIndex === 0 && state.flipped && index === 0;
+    const atStart = state.chapterIndex === 0 && !state.flipped && index === 0;
     back.hidden = atStart;
     back.disabled = false;
     next.textContent = index < notes.length - 1
         ? 'Next'
-        : (state.flipped
-            ? 'Question side'
+        : (!state.flipped
+            ? 'Answer side'
             : (state.chapterIndex < tutorialDeckSequence().length - 1 ? 'Continue' : 'Finish'));
 }
 
@@ -1189,14 +1124,17 @@ function moveMobileTour(direction) {
         setActiveNote(candidate);
         return;
     }
-    if (direction > 0 && state.flipped) {
+    // Front-first: forward from last front note → flip to back.
+    // Forward from last back note → advance chapter or finish.
+    if (direction > 0 && !state.flipped) {
         flipCardFace(0);
     } else if (direction > 0) {
         advanceChapterOrFinish();
-    } else if (!state.flipped) {
+    } else if (state.flipped) {
+        // Back on first back note → flip back to front at its last note.
         flipCardFace(Number.MAX_SAFE_INTEGER);
     } else if (state.chapterIndex > 0) {
-        showTutorialChapter(state.chapterIndex - 1, false, Number.MAX_SAFE_INTEGER);
+        showTutorialChapter(state.chapterIndex - 1, true, Number.MAX_SAFE_INTEGER);
     }
 }
 
@@ -1262,7 +1200,7 @@ function renderSequenceProgress() {
     host.innerHTML = `<strong>${esc(tutorialAdapter().language)} tutorial</strong><span>${modes}</span>`;
 }
 
-function showTutorialChapter(index, flipped = true, mobileNote = 0) {
+function showTutorialChapter(index, flipped = false, mobileNote = 0) {
     if (index < 0 || index >= tutorialDeckSequence().length) return;
     state.chapterIndex = index;
     state.flipped = flipped;
@@ -1288,6 +1226,83 @@ function advanceChapterOrFinish() {
 }
 
 // ---------------------------------------------------------------------------
+// Setup-flow intro
+// ---------------------------------------------------------------------------
+
+// Three beats miming the real setup flow — language, level, study set — played
+// once before the first card, so the walkthrough starts where a learner would
+// actually start rather than dropping them straight onto a flashcard. It is
+// purely presentational: the markup is static, nothing here reads or writes
+// real config, and only the language line follows the chosen tutorial.
+
+// Held so a click, the skip button or a close can cut the sequence short. Null
+// whenever no intro is running.
+let _setupIntroFinish = null;
+let _setupIntroTimers = [];
+
+function resetSetupIntro() {
+    _setupIntroTimers.forEach(clearTimeout);
+    _setupIntroTimers = [];
+    _setupIntroFinish = null;
+    const host = document.getElementById('aboutExampleSetupAnim');
+    if (host) {
+        host.hidden = true;
+        host.querySelector('.setup-anim-card')?.classList.remove('is-leaving');
+        host.querySelectorAll('.setup-anim-step').forEach((el) => {
+            el.classList.remove('is-active', 'is-complete', 'is-pressed');
+        });
+    }
+    document.getElementById('aboutExampleBody')?.classList.remove('is-setup-intro');
+}
+
+// Cutting in early lands on the card, not on a half-played animation.
+function skipSetupIntro() {
+    _setupIntroFinish?.();
+}
+
+function playSetupIntro(onDone) {
+    const host = document.getElementById('aboutExampleSetupAnim');
+    const body = document.getElementById('aboutExampleBody');
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (!host || !body || reduced) {
+        onDone();
+        return;
+    }
+
+    resetSetupIntro();
+
+    const adapter = tutorialAdapter();
+    const langVal = document.getElementById('setupAnimLangVal');
+    // Speech leads the sequence, so the setup line names the deck that is
+    // about to appear rather than a generic one.
+    if (langVal) langVal.textContent = `${adapter.flag ? adapter.flag + ' ' : ''}${adapter.language} · Speech`;
+
+    host.hidden = false;
+    body.classList.add('is-setup-intro');
+
+    const step = n => document.getElementById(`setupAnimStep${n}`);
+    const at = (ms, fn) => _setupIntroTimers.push(setTimeout(fn, ms));
+    const finish = () => {
+        resetSetupIntro();
+        onDone();
+    };
+    _setupIntroFinish = finish;
+
+    at(80, () => step(1)?.classList.add('is-active'));
+    at(760, () => {
+        step(1)?.classList.replace('is-active', 'is-complete');
+        step(2)?.classList.add('is-active');
+    });
+    at(1500, () => {
+        step(2)?.classList.replace('is-active', 'is-complete');
+        step(3)?.classList.add('is-active');
+    });
+    at(2240, () => step(3)?.classList.add('is-pressed'));
+    at(2520, () => host.querySelector('.setup-anim-card')?.classList.add('is-leaving'));
+    at(2900, finish);
+}
+
+// ---------------------------------------------------------------------------
 // Open / close
 // ---------------------------------------------------------------------------
 
@@ -1298,7 +1313,10 @@ function openAboutExample() {
     if (!modal) return;
     rememberCardWalkthrough();
     modal.classList.remove('hidden');
-    showTutorialChapter(0);
+    // The card is rendered only once the intro is out of the way: marker
+    // placement measures real boxes, and those read zero while the columns
+    // are hidden behind the animation.
+    playSetupIntro(() => showTutorialChapter(0));
 
     if (!_resizeHandler) {
         _resizeHandler = () => {
@@ -1331,6 +1349,7 @@ function closeAboutExample() {
     const modal = document.getElementById('aboutExampleModal');
     if (!modal) return;
     modal.classList.add('hidden');
+    resetSetupIntro();
     // Leave any Spotify playback the visitor started running — they pressed
     // play deliberately, and closing a walkthrough shouldn't stop their music.
     if (_resizeHandler) {
@@ -1345,23 +1364,24 @@ function setupAboutExample() {
     modal.dataset.ready = '1';
 
     document.getElementById('closeAboutExampleModal')?.addEventListener('click', closeAboutExample);
+    // Anywhere on the mock setup card jumps to the flashcard; the explicit
+    // skip link is the discoverable version of the same thing.
+    document.getElementById('aboutExampleSetupAnim')?.addEventListener('click', skipSetupIntro);
     document.getElementById('aboutExampleFlip')?.addEventListener('click', () => flipCardFace(0));
     document.getElementById('aboutExampleContinue')?.addEventListener('click', () => {
-        if (state.flipped) { flipCardFace(0); } else { advanceChapterOrFinish(); }
+        if (!state.flipped) { flipCardFace(0); } else { advanceChapterOrFinish(); }
     });
     document.getElementById('aboutExampleMobileBack')?.addEventListener('click', () => moveMobileTour(-1));
     document.getElementById('aboutExampleMobileNext')?.addEventListener('click', () => moveMobileTour(1));
 
-    // Escape closes; left/right move through the story; space flips, as in study.
+    // Escape closes; left/right jump chapters, kept as an escape hatch for
+    // anyone who wants to skip ahead. Space deliberately does nothing: the
+    // walkthrough owns the flip, so the card only turns when the tour says so.
     document.addEventListener('keydown', (e) => {
         if (modal.classList.contains('hidden')) return;
         if (e.key === 'Escape') closeAboutExample();
         else if (e.key === 'ArrowRight') showTutorialChapter(state.chapterIndex + 1);
         else if (e.key === 'ArrowLeft') showTutorialChapter(state.chapterIndex - 1);
-        else if (e.key === ' ' && !e.target.closest('button')) {
-            e.preventDefault();
-            flipCardFace();
-        }
     });
 }
 

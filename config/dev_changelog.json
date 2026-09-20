@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-20T13:40:00+01:00",
+      "date": "2026-09-20 13:40 BST",
+      "agent": "Claude",
+      "commit": "pending",
+      "summary": "The card tutorial now opens on the question side, plays a short setup intro, and stops repeating itself on Lyrics",
+      "detail": [
+        "A three-step setup preview (language, level, study set) plays for about three seconds before the first card, so the walkthrough starts where you would really start. Tap it or press Skip intro to go straight to the card.",
+        "Every chapter now shows the question side first and flips to the answer side, matching the order you meet cards when studying.",
+        "The card no longer flips when you tap it or press space. Only Continue and the mobile Next/Back buttons turn it, so the tour cannot get out of step. Left and right arrows still jump chapters.",
+        "The Lyrics chapter only annotates what is actually different: the translation, the song credit, Spotify playback, the example dots, and the lyric line count. The tutorial is 17 steps instead of 26.",
+        "Fixed the step counter, which was counting the wrong face and showing the wrong number on every question side."
+      ]
+    },
+    {
       "timestamp": "2026-09-20T11:05:37+01:00",
       "date": "2026-09-20 11:05 BST",
       "agent": "Codex",

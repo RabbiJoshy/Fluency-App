@@ -40,7 +40,7 @@
             document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260920b">
+    <link rel="stylesheet" href="css/style.css?v=20260920c">
     <link rel="stylesheet" href="css/light-theme.css?v=20260919k">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
@@ -57,7 +57,7 @@
     <link rel="modulepreload" href="js/speech.js?v=20260914b">
     <link rel="modulepreload" href="js/artist-ui.js?v=20260825ak">
     <link rel="modulepreload" href="js/auth.js?v=20260912a">
-    <link rel="modulepreload" href="js/about-example.js?v=20260917k">
+    <link rel="modulepreload" href="js/about-example.js?v=20260920a">
     <link rel="modulepreload" href="js/estimation.js?v=20260825ak">
     <link rel="modulepreload" href="js/config.js?v=20260919c">
     <link rel="modulepreload" href="js/progress.js?v=20260917j">
@@ -910,6 +910,47 @@
                     <div class="about-example-intro" id="aboutExampleIntro"></div>
                     <button class="modal-close about-example-close" id="closeAboutExampleModal" aria-label="Close walkthrough" title="Close walkthrough">✕</button>
                 </div>
+                <!-- Animated session setup preview before the first card -->
+                <div id="aboutExampleSetupAnim" class="about-example-setup-anim" hidden>
+                    <div class="setup-anim-card">
+                        <div class="setup-anim-header">
+                            <span class="setup-anim-badge">Session setup</span>
+                            <h3 class="setup-anim-title">Starting your study set</h3>
+                            <p class="setup-anim-sub">Choosing where you begin in Fluency</p>
+                        </div>
+                        <div class="setup-anim-steps">
+                            <div class="setup-anim-step" id="setupAnimStep1">
+                                <span class="setup-anim-num">1</span>
+                                <div class="setup-anim-info">
+                                    <span class="setup-anim-label">Language</span>
+                                    <strong class="setup-anim-val" id="setupAnimLangVal">🇪🇸 Spanish · Speech</strong>
+                                </div>
+                                <span class="setup-anim-status" id="setupAnimCheck1">✓</span>
+                            </div>
+                            <div class="setup-anim-step" id="setupAnimStep2">
+                                <span class="setup-anim-num">2</span>
+                                <div class="setup-anim-info">
+                                    <span class="setup-anim-label">Level</span>
+                                    <strong class="setup-anim-val">Level 1 · Fundamentals</strong>
+                                </div>
+                                <span class="setup-anim-status" id="setupAnimCheck2">✓</span>
+                            </div>
+                            <div class="setup-anim-step" id="setupAnimStep3">
+                                <span class="setup-anim-num">3</span>
+                                <div class="setup-anim-info">
+                                    <span class="setup-anim-label">Study set</span>
+                                    <strong class="setup-anim-val">Set 1 · Top 50 words</strong>
+                                </div>
+                                <button type="button" class="setup-anim-action-btn" id="setupAnimActionBtn" tabindex="-1">Start set</button>
+                            </div>
+                        </div>
+                        <div class="setup-anim-footer">
+                            <span class="setup-anim-status-text" id="setupAnimStatusText">Opening your first flashcard…</span>
+                            <button type="button" class="setup-anim-skip-btn" id="setupAnimSkipBtn">Skip intro →</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="about-example-columns">
                     <div class="about-example-notes about-example-notes-left" id="aboutExampleNotesLeft"></div>
                     <div class="about-example-stage-col">
@@ -917,7 +958,7 @@
                             <div class="about-example-stage" id="aboutExampleStage"></div>
                             <div class="about-example-markers" id="aboutExampleMarkers" aria-hidden="true"></div>
                         </div>
-                        <button type="button" class="about-example-flip" id="aboutExampleFlip">Flip to the answer side</button>
+                        <button type="button" class="about-example-flip" id="aboutExampleFlip" style="display: none;" hidden>Flip to the answer side</button>
                         <button type="button" class="about-example-continue" id="aboutExampleContinue" hidden></button>
                     </div>
                     <div class="about-example-notes about-example-notes-right" id="aboutExampleNotesRight"></div>
