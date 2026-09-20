@@ -18,7 +18,7 @@ sense-metadata legibility floor.
 |---|---|---|---|
 | 1 | Small UI polish | ✅ done 2026-09-20 | — |
 | 2 | Example footer layout | ✅ done 2026-09-20 | — |
-| 3 | Header and underline must agree | medium | no |
+| 3 | Header and underline must agree | ✅ done 2026-09-20 | — |
 | 4 | Content that is wrong or unhelpful | medium | one editorial list |
 | 5 | The "jump to my level" bug | unknown — investigation | no |
 | 6 | Example ordering | medium + a deck rebuild | one decision |
@@ -96,7 +96,7 @@ half; at 375px they still overflow and clip with the current tick visible.
 
 ---
 
-## 3. The header and the underline must agree — medium, no open questions
+## 3. The header and the underline must agree — ✅ DONE 2026-09-20
 
 Files: `app/js/flashcards.js` (~2667–2731, ~3155–3195, ~6400–6470).
 
@@ -128,9 +128,26 @@ underline stem + clitic as one span when adjacent.
 `exampleOccurrenceSurfaceRegex` already handles apostrophes and whitespace and
 is the right place to extend.
 
-**Done when:** cycling examples on a merged card always shows the form the
-sentence actually contains, and that form is always underlined — check
-*buena/buenos* and *verte* specifically.
+Shipped. Both halves now read `resolveExampleOccurrence`, which answers with
+the spelling the sentence actually carries. Enclitics peel (up to two, longest
+first). When nothing declared occurs, the closest form by shared stem is taken
+from the sentence — never under four letters, never across a tail longer than
+three — and marked with a dashed underline saying it is the closest form, not
+a recorded one.
+
+**A second cause was found underneath the first:** the occurrence regex was
+the only comparison in `flashcards.js` that did not fold accents, though
+`foldSurfaceForm` exists for exactly that. A card on *estás* matched nothing in
+a line spelling it *estas*, which subtitles and lyrics do constantly — the same
+visible symptom with no merged lemma involved. Now folded.
+
+**Verification gap worth knowing:** 11 resolver cases pass, including
+*buena/buenos* and *verte/ver*, and 22 consecutive live cards show header and
+underline agreeing. But the merged-lemma path was **not** exercised on the live
+site — study set 1 is all uninflected function words and guest mode has lemma
+merging off, so no card in it carries `mergedLemma` or a pooled example. Anyone
+touching Group 7 should confirm *unidos* and *buenos* by hand with Fast Track
+lemma merging on.
 
 ---
 
