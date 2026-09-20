@@ -10,7 +10,8 @@
       "detail": [
         "The IMDb/Wiktionary/Tatoeba icon now sits to the left of its title. It was to the right, which meant a long film title pushed the icon off the row entirely.",
         "Source credit and the tick strip each own exactly half the row and can no longer take the other's space. Previously the credit was free-growing against an unbounded wrapping strip, so a long title and a thirty-example strip fought over one row.",
-        "The tick strip squeezes through two density tiers measured against the width it actually got, and only clips once the tightest tier still overflows — and when it clips, it keeps the current tick in view, so the position cue survives."
+        "The tick strip squeezes through two density tiers measured against the width it actually got, and only clips once the tightest tier still overflows — and when it clips, it keeps the current tick in view, so the position cue survives.",
+        "Ticks no longer shrink to fit: without an explicit no-shrink they compressed into slivers, which looked like fitting while making the current position indistinguishable. The density tiers give way in visible steps instead."
       ]
     },
     {
