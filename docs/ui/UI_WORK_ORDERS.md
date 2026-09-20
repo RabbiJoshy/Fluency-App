@@ -46,7 +46,16 @@ need code, so they come last.
    which re-fetches every asset regardless of `?v=` tag. Use that instead of
    editing `index.html` while `index.html` is contested.
 4. **Deploy at the end of the response**, per the CLAUDE.md procedure.
-5. **Keep `gh-pages` lean.** Every Pages build re-checks-out, re-packages and
+   GitHub Pages took ~5 minutes per build before the prune below and ~40–100s
+   after it. Poll for the new `?v=` tag rather than assuming it is live.
+5. **`state.js` is imported under two different `?v=` tags** (`20260920a` from
+   `main.js`/`index.html`, `20260825ak` from ~19 other modules), so the browser
+   executes it **twice** — confirmed live. Everything it assigns is currently
+   idempotent and the one piece that was not (`new Promise` for
+   `progressReady`) is guarded. Unifying the tags means bumping every importing
+   module's own tag in a cascade, because a cached module keeps importing the
+   old URL. Worth doing deliberately one day; do not half-do it.
+6. **Keep `gh-pages` lean.** Every Pages build re-checks-out, re-packages and
    re-uploads the *whole* site, so its size is a tax on every deploy. It held
    7.2GB of which 6.1GB was superseded releases nothing referenced; pruning
    to 1.8GB took a build from 5m05s to 1m35s. Publish only the releases
