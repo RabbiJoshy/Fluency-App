@@ -5213,32 +5213,60 @@
         .example-credit-row.is-lyric {
             font-style: italic;
         }
+        /* Each half owns its half and cannot take the other's. Before this,
+           the credit was `flex: 1 1 auto` against an unbounded wrapping tick
+           strip, so a long film title and a thirty-example strip fought over
+           the same row and one of them lost outright. */
         .example-credit-start {
-            flex: 1 1 auto;
+            flex: 1 1 50%;
+            max-width: 50%;
             min-width: 0;
             display: flex;
             justify-content: flex-start;
+            overflow: hidden;
         }
         .example-credit-end {
-            flex: 0 1 auto;
+            flex: 1 1 50%;
+            max-width: 50%;
             min-width: 0;
             display: flex;
             justify-content: flex-end;
             align-items: center;
             gap: 8px;
+            overflow: hidden;
         }
+        /* Play controls keep their size; the ticks are what gives way. */
+        .example-credit-end > .spotify-btn,
+        .example-credit-end > .example-autoplay-btn,
+        .example-credit-end > a.spotify-btn { flex: 0 0 auto; }
         .example-ticks {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-end;
+            flex-wrap: nowrap;
+            /* flex-start, not flex-end: an overflowing flex-end container
+               spills off its own start edge, which scrollLeft cannot reach.
+               The strip is right-aligned by its parent instead. */
+            justify-content: flex-start;
             align-items: center;
             gap: 5px;
-            flex: 0 0 auto;
-            max-width: none;
+            flex: 0 1 auto;
+            min-width: 0;
+            max-width: 100%;
             margin: 0;
+            overflow: hidden;
+            scrollbar-width: none;
         }
+        .example-ticks::-webkit-scrollbar { width: 0; height: 0; }
         .example-ticks.is-dense {
             gap: 3px;
+        }
+        /* Last squeeze before clipping. fitExampleCreditRow applies it only
+           when the dense tier still does not fit the half it was given. */
+        .example-ticks.is-tight {
+            gap: 2px;
+        }
+        .example-ticks.is-tight .example-tick {
+            width: 4px;
+            height: 4px;
         }
         .example-tick {
             width: 7px;
