@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-20T23:40:00+01:00",
+      "date": "2026-09-20 23:40 BST",
+      "agent": "Claude",
+      "commit": "pending",
+      "summary": "The skipped-words and merged-forms lists show the English word again on Spanish, Portuguese and Czech",
+      "detail": [
+        "The setup screen loads the skinny index — id, word, rank, lemma and nothing else — so there was no translation to print and every row's English column came out blank. French looked fine only because it is still on the older single-file index that ships meanings inline; Spanish, Portuguese and Czech are all on the sharded v15 format and were all equally blank. It reads as a Portuguese problem because Portuguese is where you happened to look.",
+        "The English word is now fetched as rows scroll into view, a study set at a time. The excluded list runs to thousands of words, so pulling every shard up front would download most of the deck just to label a list.",
+        "A row hydrated this way also becomes findable by its English word in the filter box."
+      ]
+    },
+    {
       "timestamp": "2026-09-20T22:55:00+01:00",
       "date": "2026-09-20 22:55 BST",
       "agent": "Claude",

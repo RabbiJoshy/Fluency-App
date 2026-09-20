@@ -145,14 +145,92 @@ function renderRows(entries, kind) {
         const translation = firstTranslation(item);
         const lemma = kind === 'lemma' ? lemmaDisplayOf(item, mergedInto) : null;
         const note = kind === 'cognate' ? cognateNote(item) : `${lemma.word} ${lemma.translation}`;
-        return `<li class="extras-row extras-row--${kind}" data-search-text="${escapeHtml(`${item.word} ${translation} ${note}`.toLocaleLowerCase())}">
+        // `data-extras-id` lets hydrateExtrasTranslations find this row again
+        // once the meanings arrive; see the comment on that function.
+        return `<li class="extras-row extras-row--${kind}" data-extras-id="${escapeHtml(item.id || '')}" data-search-text="${escapeHtml(`${item.word} ${translation} ${note}`.toLocaleLowerCase())}">
             ${kind === 'lemma'
-                ? `<span class="extras-base"><strong>${escapeHtml(lemma.word)}</strong><small>${escapeHtml(lemma.translation)}</small></span>`
+                ? `<span class="extras-base"><strong>${escapeHtml(lemma.word)}</strong><small class="extras-translation-slot">${escapeHtml(lemma.translation)}</small></span>`
                 : ''}
             <span class="extras-word-stack"><button type="button" class="extras-open-card" data-card-id="${escapeHtml(item.id || '')}" aria-label="View ${escapeHtml(item.word)} card">${escapeHtml(item.word)}</button>${kind === 'lemma' ? `<span class="extras-translation">${escapeHtml(translation)}</span>` : ''}</span>
-            ${kind === 'cognate' ? `<span class="extras-translation">${escapeHtml(translation)}</span>` : ''}
+            ${kind === 'cognate' ? `<span class="extras-translation extras-translation-slot">${escapeHtml(translation)}</span>` : ''}
         </li>`;
     }).join('');
+}
+
+// The setup screen loads the *skinny* index — id, word, rank, surface_card_id,
+// lemma and nothing else — so `firstTranslation` has nothing to read and every
+// row in this list came out with a blank English column. French looked fine
+// only because it is still on the older single-file index, which ships
+// `meanings` inline; es, pt and cs are on the sharded v15 format and were all
+// equally blank. It reads as a Portuguese bug because Portuguese is where you
+// happen to look.
+//
+// The fat rows are already fetchable per study set, and mergeIndexRowPayload
+// assigns them onto the very objects this list is holding — so fetching a
+// shard fills `item.meanings` in place. Fetch them as rows scroll into view
+// rather than up front: the excluded list runs to thousands of words and
+// eagerly pulling every shard would download most of the deck to label a list.
+function hydrateExtrasTranslations(listEl, entries) {
+    if (!listEl) return;
+    const pending = new Map();
+    for (const { item } of entries) {
+        if (!item?.id || firstTranslation(item)) continue;
+        pending.set(String(item.id), item);
+    }
+    if (!pending.size) return;
+
+    const langConfig = g().config?.languages?.[g().selectedLanguage];
+    const fetchRows = g().ensureIndexRowsForRange;
+    if (!langConfig || typeof fetchRows !== 'function') return;
+
+    const fill = (row, item) => {
+        const translation = firstTranslation(item);
+        if (!translation) return false;
+        row.querySelectorAll('.extras-translation-slot').forEach(slot => {
+            slot.textContent = translation;
+        });
+        // The filter box reads data-search-text, so a hydrated row has to be
+        // findable by the English word it now shows.
+        const search = row.getAttribute('data-search-text') || '';
+        row.setAttribute('data-search-text',
+            `${search} ${translation}`.toLocaleLowerCase());
+        return true;
+    };
+
+    const request = async (rows) => {
+        const pairs = [];
+        const ranks = [];
+        for (const row of rows) {
+            const item = pending.get(row.getAttribute('data-extras-id') || '');
+            if (!item) continue;
+            pairs.push([row, item]);
+            const rank = Number(item.rank);
+            if (Number.isFinite(rank)) ranks.push(rank);
+        }
+        if (!ranks.length) return;
+        try {
+            await fetchRows(langConfig, 0, 0, ranks);
+        } catch {
+            return;
+        }
+        for (const [row, item] of pairs) {
+            if (fill(row, item)) pending.delete(String(item.id));
+        }
+    };
+
+    const rows = [...listEl.querySelectorAll('[data-extras-id]')];
+    if (typeof IntersectionObserver !== 'function') {
+        request(rows.slice(0, 120));
+        return;
+    }
+    const observer = new IntersectionObserver(records => {
+        const visible = records.filter(record => record.isIntersecting)
+            .map(record => record.target);
+        if (!visible.length) return;
+        visible.forEach(row => observer.unobserve(row));
+        request(visible);
+    }, { rootMargin: '250px' });
+    rows.forEach(row => observer.observe(row));
 }
 
 function renderMergedForms() {
@@ -168,6 +246,7 @@ function renderMergedForms() {
     }
 
     body.innerHTML = `<ul class="extras-list">${renderRows(lemmas, 'lemma')}</ul>`;
+    hydrateExtrasTranslations(body.querySelector('.extras-list'), lemmas);
     return lemmas;
 }
 
@@ -184,6 +263,7 @@ function renderSkippedWords() {
     }
 
     body.innerHTML = `<ul class="extras-list">${renderRows(cognates, 'cognate')}</ul>`;
+    hydrateExtrasTranslations(body.querySelector('.extras-list'), cognates);
     return cognates;
 }
 
@@ -322,6 +402,9 @@ function renderExtras() {
     body.innerHTML = sections.length > 0
         ? sections.join('')
         : `<p class="extras-empty">Nothing is being skipped. Fast Track is currently showing every word as its own card.</p>`;
+    body.querySelectorAll('.extras-list').forEach((list, index) => {
+        hydrateExtrasTranslations(list, index === 0 && cognates.length ? cognates : lemmas);
+    });
     return { cognates, lemmas };
 }
 
