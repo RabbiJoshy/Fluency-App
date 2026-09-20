@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-20T17:42:00+01:00",
+      "date": "2026-09-20 17:42 BST",
+      "agent": "Claude",
+      "commit": "pending",
+      "summary": "The tutorial card gets its colour back, stops cutting off senses, and sizes itself to what it is showing",
+      "detail": [
+        "The card was grey because the replica used the live card's colour rules but never set the variable that feeds them. Part-of-speech colour is back: the sense group is tinted and edged in its colour, the selected sense is outlined and ticked in it, the prominence bars carry it, and the word you are studying is picked out and underlined in it inside the example, the way it is on a real card.",
+        "Sense rows were being cut off. The Portuguese card lost a whole sense and the grammar pills under the selected one. The card now measures what it is showing and takes the height it needs, instead of a fixed height that was too short for the dense cards and too tall for the sparse ones.",
+        "On a phone the densest cards want more height than the screen has, so the guided tour scrolls whatever it is explaining into view rather than leaving it hidden.",
+        "The rank and the frequency now sit at opposite ends of the foot of the card, as they do when you are studying, and read Vocabulary rank: 1 / 6,000 and Frequency: 33,170/million, the real figures from the Spanish deck.",
+        "More space between the header, the senses and the example, and a little more inset from the card edge, so borders are not running into each other."
+      ]
+    },
+    {
       "timestamp": "2026-09-20T19:04:00+01:00",
       "date": "2026-09-20 19:04 BST",
       "agent": "Claude",

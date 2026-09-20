@@ -51,6 +51,7 @@ const ABOUT_EXAMPLE_CARDS = {
         lemma: 'cielo',
         pos: 'NOUN',
         rank: 344,
+        vocabSize: 2000,
         corpusCount: 33,
         meanings: [
             {
@@ -110,6 +111,7 @@ const ABOUT_EXAMPLE_CARDS = {
         lemma: 'ter',
         pos: 'VERB',
         rank: 47,
+        vocabSize: 6000,
         corpusCount: 1326,
         defaultMeaningIndex: 2,
         meanings: [
@@ -186,7 +188,7 @@ const ABOUT_EXAMPLE_CARDS = {
         ],
     },
     queSpeech: {
-        mode: 'speech', word: 'que', pos: 'CCONJ', lemma: 'que', rank: 1, corpusCount: 21340,
+        mode: 'speech', word: 'que', pos: 'CCONJ', lemma: 'que', rank: 1, vocabSize: 6000, corpusCount: 33170,
         meanings: [
             {
                 pos: 'CCONJ', translation: 'that', context: 'introduces a subordinate clause', pct: 34,
@@ -205,7 +207,7 @@ const ABOUT_EXAMPLE_CARDS = {
         ],
     },
     jeSpeech: {
-        mode: 'speech', word: 'je', pos: 'VERB', lemma: 'být', rank: 3, corpusCount: 12890,
+        mode: 'speech', word: 'je', pos: 'VERB', lemma: 'být', rank: 3, vocabSize: 4000, corpusCount: 12890,
         meanings: [
             {
                 pos: 'VERB', translation: 'he/she is (exists)', pct: 40,
@@ -220,7 +222,7 @@ const ABOUT_EXAMPLE_CARDS = {
         ],
     },
     deSpeech: {
-        mode: 'speech', word: 'de', pos: 'PREP', lemma: 'de', rank: 1, corpusCount: 26810,
+        mode: 'speech', word: 'de', pos: 'PREP', lemma: 'de', rank: 1, vocabSize: 6000, corpusCount: 26810,
         meanings: [
             {
                 pos: 'PREP', translation: 'of', context: 'possession, association or relationship',
@@ -487,10 +489,36 @@ const ABOUT_EXAMPLE_DECKS = [
 
 const POS_CLASS = {
     VERB: 'pos-verb', NOUN: 'pos-noun', ADJ: 'pos-adj', ADV: 'pos-adv',
-    PREP: 'pos-prep', ADP: 'pos-prep', CONJ: 'pos-conj', CCONJ: 'pos-conj',
-    SCONJ: 'pos-conj', PRON: 'pos-pron', DET: 'pos-det', INT: 'pos-int',
+    PREP: 'pos-prep', ADP: 'pos-prep', CONJ: 'pos-conj', CCONJ: 'pos-cconj',
+    SCONJ: 'pos-sconj', PRON: 'pos-pron', DET: 'pos-det', INT: 'pos-int',
     INTJ: 'pos-int', NUM: 'pos-num', MWE: 'pos-mwe',
 };
+
+// Every colour on the back of a card comes from one custom property. The live
+// card sets it per part of speech (getPosAccentRgb in flashcards.js) and the
+// stylesheet reads it for the sense-group tint, the selected row, the check,
+// the prominence bars and the underline under the word in the example. The
+// replica used those same rules but never defined the variable, so all of it
+// resolved to nothing and the card came out grey. These are the live values.
+const POS_ACCENT_RGB = {
+    'pos-noun': '74, 158, 255',
+    'pos-propn': '14, 165, 233',
+    'pos-verb': '0, 212, 170',
+    'pos-aux': '45, 212, 191',
+    'pos-adj': '245, 166, 35',
+    'pos-adv': '168, 85, 247',
+    'pos-prep': '236, 72, 153',
+    'pos-conj': '20, 184, 166',
+    'pos-cconj': '34, 197, 94',
+    'pos-sconj': '132, 204, 22',
+    'pos-pron': '99, 102, 241',
+    'pos-det': '244, 63, 94',
+    'pos-int': '234, 179, 8',
+    'pos-num': '6, 182, 212',
+    'pos-mwe': '251, 191, 36',
+};
+
+const posAccentRgb = pos => POS_ACCENT_RGB[posClass(pos)] || '148, 163, 184';
 
 const POS_NAME = {
     VERB: 'verb', NOUN: 'noun', ADJ: 'adjective', ADV: 'adverb',
@@ -538,8 +566,11 @@ const SPOTIFY_SVG = '<svg width="44" height="44" viewBox="0 0 24 24" fill="#1DB9
     + '</svg>';
 
 function renderFront(card) {
+    // The live card prints the rank against the size of the deck it came from,
+    // which is what makes "rank 1" mean something.
+    const denominator = card.vocabSize ? ` / ${card.vocabSize.toLocaleString()}` : '';
     const rankLabel = `<span class="card-rank-label">Vocabulary rank: `
-        + `<strong class="card-stat-value">${card.rank.toLocaleString()}</strong></span>`;
+        + `<strong class="card-stat-value">${card.rank.toLocaleString()}</strong>${denominator}</span>`;
     const count = `<strong class="card-stat-value">${card.corpusCount.toLocaleString()}</strong>`;
     // Same two figures the live card puts here, in the same words. An earlier
     // draft hedged with "Frequency from the Spanish release", which told a
@@ -561,7 +592,7 @@ function renderFront(card) {
             <div class="card-pos-list is-lemma-map pos-count-1" style="display: flex;">
                 <span class="front-lemma-pair">${posUnit}<span class="front-lemma-name">${esc(lemma)}</span></span>
             </div>
-            <div class="card-ranking" style="display: flex;">${rankLabel}${freqLabel}</div>
+            <div class="card-ranking" style="display: flex; justify-content: space-between; align-items: baseline; width: 100%; gap: 12px;">${rankLabel}${freqLabel}</div>
             <div class="card-tint" aria-hidden="true"></div>
         </div>`;
 }
@@ -671,9 +702,11 @@ function renderMeaningRows(card, selectedIdx) {
         ? `<span class="pos-pill-more" aria-label="${hiddenCount} more senses">+${hiddenCount}</span>`
         : '';
     return `
-        <section class="meaning-pos-section pos-collapsible is-open" data-pos="${esc(card.pos)}">
+        <section class="meaning-pos-section pos-collapsible is-open" data-pos="${esc(card.pos)}"
+                 style="--sense-match-rgb: ${posAccentRgb(card.pos)};">
             <button type="button" class="pos-section-head" aria-label="${esc(`${posName(card.pos)}: ${card.meanings.map(m => walkthroughSenseSummary(m.translation)).join('; ')}`)}">
                 <span class="pos-section-label">${esc(posName(card.pos))}</span>
+                <span class="pos-pill-lemma">${esc(card.lemma || card.word)}</span>
                 <span class="pos-section-summary">${summaries}${more}</span>
                 <span class="pos-section-chevron">▾</span>
             </button>
@@ -753,7 +786,7 @@ function renderBack(card, selectedIdx, exampleIdx) {
                     </div>
                 </div>
                 <div class="meanings-scroll">${renderMeaningRows(card, selectedIdx)}</div>
-                <div class="sentence example-is-matched" style="text-align: center; ${cursor}" data-about-example-cycle="${meaning.examples.length > 1 ? '1' : '0'}">
+                <div class="sentence example-is-matched" style="text-align: center; ${cursor} --sense-match-rgb: ${posAccentRgb(card.pos)}; border-color: transparent;" data-about-example-cycle="${meaning.examples.length > 1 ? '1' : '0'}">
                     <div class="breakdown-trigger" style="margin-bottom: 8px;">${highlightWord(example.target, card.word)}</div>
                     <div class="translation">${esc(example.english)}</div>
                     ${renderCredit(card, meaning, example, exampleIdx % meaning.examples.length)}
@@ -880,6 +913,7 @@ function renderCard() {
         </div>`;
 
     wireBack(stage);
+    fitCardToContent();
     renderFaceCopy();
     renderNotes();
     markAnchors();
@@ -896,6 +930,7 @@ function refreshBack() {
     if (!stage || !back) return;
     back.outerHTML = renderBack(currentCard(), state.meaningIndex, state.exampleIndex);
     wireBack(stage);
+    fitCardToContent();
     markAnchors();
 }
 
@@ -1048,6 +1083,37 @@ function syncContinueButton() {
 // explained. This used to also pin a numbered badge outside the card edge for
 // each note; the numbers indexed nothing a reader needed once the tour walked
 // them through one note at a time, so the amber outline is the only link now.
+// Both faces live in the same fixed-height box, so the box has to be tall
+// enough for whichever is taller — in practice always the back. Measuring the
+// back's own content beats guessing a height that suits one card: `que` has
+// three senses and `tem` has four with grammar pills under the selected one.
+function fitCardToContent() {
+    const inner = document.querySelector('.about-example-card-inner');
+    const details = inner?.querySelector('.card-back .card-details');
+    if (!inner || !details) return;
+    const face = inner.querySelector('.card-back');
+    const pad = face
+        ? parseFloat(getComputedStyle(face).paddingTop) + parseFloat(getComputedStyle(face).paddingBottom)
+        : 40;
+    // Sum the three blocks rather than reading the container. .meanings-scroll
+    // is the flex child that gives, so inside a fixed-height card it has
+    // already been squeezed and the container's own scrollHeight reports the
+    // squeezed figure — the overflow it is hiding never shows up.
+    const rowGap = parseFloat(getComputedStyle(details).rowGap || getComputedStyle(details).gap) || 14;
+    const heightOf = sel => {
+        const el = face?.querySelector(sel);
+        return el ? Math.max(el.getBoundingClientRect().height, el.scrollHeight) : 0;
+    };
+    // A floor so a one-sense card still reads as a card rather than a strip,
+    // and a ceiling so a dense one cannot outgrow a short window.
+    const wanted = Math.ceil(
+        pad + rowGap * 2
+        + heightOf('.back-header') + heightOf('.meanings-scroll') + heightOf('.sentence'),
+    );
+    const height = Math.max(430, Math.min(wanted, Math.round(window.innerHeight * 0.78)));
+    inner.style.setProperty('--about-card-h', `${height}px`);
+}
+
 function markAnchors() {
     const stage = document.getElementById('aboutExampleStage');
     if (!stage) return;
@@ -1069,9 +1135,17 @@ function setActiveNote(index) {
     root.querySelectorAll('.about-example-note').forEach((n) => {
         n.classList.toggle('is-active', Number(n.dataset.note) === index);
     });
+    let active = null;
     root.querySelectorAll('.about-example-anchored').forEach((el) => {
-        el.classList.toggle('is-annotation-active', Number(el.dataset.aboutExampleNote) === index);
+        const on = Number(el.dataset.aboutExampleNote) === index;
+        el.classList.toggle('is-annotation-active', on);
+        if (on) active = el;
     });
+    // A phone cannot show a dense card whole — `tem` wants more height than the
+    // screen has once its rows wrap. Rather than clip it, bring whatever is
+    // being explained into view inside its own scroll region. `nearest` keeps
+    // this to the smallest scroll that works and never moves the page.
+    if (active) active.scrollIntoView({ block: 'nearest', inline: 'nearest' });
     renderMobileCoach();
 }
 
@@ -1512,6 +1586,7 @@ function openAboutExample() {
     if (!_resizeHandler) {
         _resizeHandler = () => {
             if (isMobileWalkthrough() && state.activeNote < 0) state.activeNote = 0;
+            fitCardToContent();
             markAnchors();
             syncContinueButton();
             renderMobileCoach();

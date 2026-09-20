@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v499';
+const CACHE_NAME = 'flashcards-v501';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -45,7 +45,7 @@ const urlsToCache = [
   '/js/speech.js?v=20260914b',
   `/js/artist-ui.js?v=${ASSET_VERSION}`,
   '/js/auth.js?v=20260912a',
-  '/js/about-example.js?v=20260920e',
+  '/js/about-example.js?v=20260920i',
   '/js/spotify.js?v=20260918l',
   `/js/estimation.js?v=${ASSET_VERSION}`,
   '/js/config.js?v=20260919c',
