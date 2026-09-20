@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-20T17:02:00+01:00",
+      "date": "2026-09-20 17:02 BST",
+      "agent": "Claude",
+      "commit": "pending",
+      "summary": "Conjugation mode: the off-model pattern no longer calls itself one-offs while listing the verbs that share it",
+      "detail": [
+        "Forms whose ending does not match the model at all were labelled no shared pattern, one-offs, and then immediately listed three other verbs that behave the same way. They are off the model, not one-offs, and the chip now says so."
+      ]
+    },
+    {
       "timestamp": "2026-09-20T16:46:00+01:00",
       "date": "2026-09-20 16:46 BST",
       "agent": "Claude",

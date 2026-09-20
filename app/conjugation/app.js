@@ -277,7 +277,9 @@
 
   function patternLabel(pattern) {
     if (pattern.d === '') return 'no change · the plain pattern';
-    if (pattern.d === '*') return 'no shared pattern · one-offs';
+    // '*' means the ending did not match the model at all. Those forms do
+    // share something — being off-model — so they are not one-offs.
+    if (pattern.d === '*') return 'off the model';
     return pattern.d.replace('>', ' \u2192 ').replace(/0/g, '\u2205');
   }
 
