@@ -15551,9 +15551,12 @@
 /* -------- Size overrides so a viewport-scale .card fits the stage --------- */
 
 .about-example-card-inner {
-    width: 420px;
+    width: 440px;
     max-width: 100%;
-    height: 510px;
+    /* Set per card by fitCardToContent(). A fixed height either clipped the
+       denser cards — `tem` overflowed its senses box by 72px, losing a whole
+       sense and its grammar pills — or left the sparse ones bottom-heavy. */
+    height: var(--about-card-h, 480px);
     perspective: 1200px;
     position: relative;
 }
@@ -15609,6 +15612,52 @@
 
 .about-example-flip-hint {
     display: none !important;
+}
+
+/* -------- Room to breathe inside the replica ----------------------------- */
+
+/* The three blocks on the back sat 10px apart against a 16px side inset, which
+   is what made the card feel packed: every border ran close to another border
+   or to the card's own edge. The slack recovered from the shorter card goes
+   here, into the gaps and the side inset, rather than into empty space. */
+.about-example-card-inner .card-back {
+    padding: 22px 20px 18px;
+}
+
+/* Nothing on a walkthrough card may be scrolled out of sight: the annotations
+   point at these rows, so the card grows to hold them instead. */
+.about-example-card-inner .meanings-scroll {
+    max-height: none !important;
+    overflow: visible;
+}
+
+.about-example-card-inner .card-details {
+    gap: 14px;
+}
+
+.about-example-card-inner .meaning-pos-section {
+    padding: 4px;
+    border-radius: 12px;
+}
+
+/* The prominence meter is absolutely positioned against the row's right edge.
+   At 8px it sat on the border it was meant to sit inside. */
+.about-example-card-inner .meaning-row .sense-prominence-badge {
+    right: 11px;
+}
+
+.about-example-card-inner .meaning-row {
+    margin-bottom: 5px !important;
+}
+
+.about-example-card-inner .meaning-pos-rows .meaning-row:last-child {
+    margin-bottom: 0 !important;
+}
+
+/* The example is the evidence for the selected sense, so it gets a little more
+   separation from the senses above it than the senses get from each other. */
+.about-example-card-inner .sentence {
+    padding: 12px 14px;
 }
 
 /* -------- Numbered badges and the elements they point at ----------------- */
@@ -15822,9 +15871,12 @@
     .about-example-topbar .about-example-close { grid-area: 1 / 2; }
     .about-example-topbar .about-example-intro { grid-area: 2 / 1 / 3 / 3; }
 
+    /* Narrow enough for a phone, but the height still comes from the content:
+       rows wrap at this width, so a fixed height clipped the denser cards
+       harder here than anywhere else. */
     .about-example-card-inner {
         width: 340px;
-        height: 512px;
+        height: var(--about-card-h, 512px);
     }
 
     .about-example-blurb {
