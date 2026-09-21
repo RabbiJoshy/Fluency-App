@@ -2,99 +2,173 @@
 // and the reasons. In one sentence: anything that does not move you within
 // your set opens at the side when there is room.
 //
-//   right gutter  about THIS card: dictionary, synonyms, conjugation, card
-//                 data, lyric breakdown, rare-sense knowledge, word search.
-//                 One at a time. Closed when the card changes or turns to its
-//                 front, because what they show gives the answer away.
-//   left gutter   about the SESSION: saved words, progress, shortcuts, help.
-//                 One at a time. They stay open while you study, so their
-//                 transparent backdrop lets clicks through to the card.
+//   left   you and the app. Settings lives here, and anything opened while
+//          settings is open stacks on top of it, so closing the top one
+//          returns you to settings. Otherwise: progress, saved words,
+//          shortcuts, help.
+//   right  this card. Dictionary, synonyms, conjugation, card data, lyric
+//          breakdown, rarer-sense knowledge, word search. When the right is
+//          taken and the left is free, the next one opens on the left, so two
+//          can be read side by side.
 //
-// Card panels are rendered inside the card's back face, where .card-face
-// clips them and the flip transform makes even position:fixed resolve
-// against the card. So they are hosted on <body> while docked and stowed back
-// into the back face on close — the pattern the conjugation panel started.
+// Anything about the card closes when the card changes or turns to its front,
+// because what it shows gives the answer away. Everything else stays open
+// while you study; its transparent backdrop lets clicks through to the card.
+//
+// This module decides the side and marks it with data-dock="left|right" (and
+// data-dock-stack on a sheet over settings); CSS only draws the two
+// positions. Card panels are rendered inside the card's back face, where
+// .card-face clips them and the flip transform makes even position:fixed
+// resolve against the card, so they are hosted on <body> while docked.
 //
 // Loaded once from flashcards.js and reached through window.sideDock, so that
-// flashcards-conj.js can use it without importing it under a second ?v= tag
-// (a module imported under two URLs executes twice).
+// other modules can use it without importing it under a second ?v= tag (a
+// module imported under two URLs executes twice).
 
-const DOCK_QUERY = '(min-width: 1360px)';
+const SESSION_QUERY = '(min-width: 1360px)';   // gutters beside the 540px card
+const SETUP_QUERY = '(min-width: 1024px)';     // sheets over the setup page
+
+const matches = query => Boolean(window.matchMedia?.(query).matches);
 
 function studyViewOpen() {
     const app = document.getElementById('appContent');
     return Boolean(app && !app.classList.contains('hidden'));
 }
 
-function canDock() {
-    return Boolean(window.matchMedia?.(DOCK_QUERY).matches) && studyViewOpen();
+// Card panels need the session gutters; sheets can also dock over the setup
+// page, which has no card to keep in view.
+function canDockCard() {
+    return studyViewOpen() && matches(SESSION_QUERY);
+}
+function canDockSheet() {
+    return studyViewOpen() ? matches(SESSION_QUERY) : matches(SETUP_QUERY);
 }
 
 const isShown = el => !el.classList.contains('hidden') && !el.hidden;
 
-// Each occupant is closed through its owner's own code path so its cleanup
-// runs. `cardPanel` ones live in the back face; `cardBound` ones are modals
-// that still describe the card on screen.
-const RIGHT = [
-    { id: 'synonymsPanel', cardPanel: true,
-      open: el => el.classList.contains('visible'),
-      close: () => window.toggleSynonymsPanel?.() },
-    { id: 'conjugationTable', cardPanel: true,
-      open: el => el.classList.contains('visible'),
-      close: () => window.toggleConjugationTable?.() },
-    { id: 'spanishDictPanel', cardPanel: true,
-      open: el => !el.hidden,
-      close: () => window.toggleSpanishDictPanel?.(false) },
-    { id: 'provenancePanel', cardPanel: true,
-      open: el => el.style.display === 'block',
-      close: () => window.toggleProvenancePanel?.(false) },
-    { id: 'lyricBreakdownModal', cardBound: true,
-      open: isShown,
-      close: () => window.hideLyricBreakdown?.() },
-    { id: 'knowledgeOverviewModal', cardBound: true,
-      open: el => !el.hidden && !el.classList.contains('is-closing'),
-      close: () => window.closeKnowledgeOverview?.() },
-    { id: 'findWordModal',
-      open: isShown,
-      close: () => document.getElementById('closeFindWordModal')?.click() },
-];
-
-const LEFT = ['savedWordsModal', 'statsModal', 'keyboardShortcutsModal', 'helpModal'].map(id => ({
-    id,
-    open: isShown,
-    // Every one of these has a #close<Id> button wired to its own cleanup.
-    close: () => {
+function closeButtonFor(id) {
+    return () => {
         const button = document.getElementById(`close${id[0].toUpperCase()}${id.slice(1)}`);
         if (button) button.click();
         else document.getElementById(id)?.classList.add('hidden');
-    },
-}));
+    };
+}
 
+// home: the side it prefers. card: closes with the card. stacks: may open
+// over settings. onlyOverSettings: centred unless settings is open.
+const OCCUPANTS = [
+    // Card panels, hosted on <body> while docked.
+    { id: 'synonymsPanel', home: 'right', card: true, panel: true,
+      open: el => el.classList.contains('visible'),
+      close: () => window.toggleSynonymsPanel?.() },
+    { id: 'conjugationTable', home: 'right', card: true, panel: true,
+      open: el => el.classList.contains('visible'),
+      close: () => window.toggleConjugationTable?.() },
+    { id: 'spanishDictPanel', home: 'right', card: true, panel: true,
+      open: el => !el.hidden,
+      close: () => window.toggleSpanishDictPanel?.(false) },
+    { id: 'provenancePanel', home: 'right', card: true, panel: true,
+      open: el => el.style.display === 'block',
+      close: () => window.toggleProvenancePanel?.(false) },
+    // Modals about the card.
+    { id: 'lyricBreakdownModal', home: 'right', card: true,
+      open: isShown, close: () => window.hideLyricBreakdown?.() },
+    { id: 'knowledgeOverviewModal', home: 'right', card: true,
+      open: el => !el.hidden && !el.classList.contains('is-closing'),
+      close: () => window.closeKnowledgeOverview?.() },
+    { id: 'findWordModal', home: 'right', stacks: true,
+      open: isShown, close: closeButtonFor('findWordModal') },
+    // Settings, and the sheets about you and the session.
+    { id: 'settingsModal', home: 'left', settings: true,
+      open: isShown, close: closeButtonFor('settingsModal') },
+    ...['savedWordsModal', 'statsModal', 'totalStatsModal', 'keyboardShortcutsModal', 'helpModal'].map(id => ({
+        id, home: 'left', stacks: true, open: isShown, close: closeButtonFor(id) })),
+    // Setup-page reference sheets: word lists and rules.
+    ...['mergedFormsModal', 'skippedWordsModal', 'extrasModal', 'cognateRulesModal'].map(id => ({
+        id, home: 'right', stacks: true, open: isShown, close: closeButtonFor(id) })),
+    // Pages reached from settings: they stack over it, and stay centred
+    // when opened any other way.
+    ...['fastModeModal', 'vocabularyImportModal'].map(id => ({
+        id, home: 'left', stacks: true, onlyOverSettings: true, open: isShown, close: closeButtonFor(id) })),
+];
+const byId = Object.fromEntries(OCCUPANTS.map(o => [o.id, o]));
+
+function elementOf(occupant) {
+    return document.getElementById(occupant.id);
+}
 function isOpen(occupant) {
-    const el = document.getElementById(occupant.id);
+    const el = elementOf(occupant);
     return Boolean(el && occupant.open(el));
 }
-
-function closeWhere(list, predicate) {
-    let closed = false;
-    for (const occupant of list) {
-        if (predicate(occupant) && isOpen(occupant)) {
-            occupant.close();
-            closed = true;
-        }
-    }
-    return closed;
+function sideOf(occupant) {
+    return elementOf(occupant)?.dataset.dock || null;
+}
+function openOn(side, exceptId) {
+    return OCCUPANTS.filter(o => o.id !== exceptId && isOpen(o) && sideOf(o) === side);
+}
+function settingsOpen() {
+    return isOpen(byId.settingsModal) && sideOf(byId.settingsModal) === 'left';
 }
 
-// An occupant calls this as it opens, so two never overlap in one gutter.
-function claim(ownerId) {
-    if (!canDock()) return;
-    const side = LEFT.some(o => o.id === ownerId) ? LEFT : RIGHT;
-    closeWhere(side, o => o.id !== ownerId);
+function mark(el, side, stacked = false) {
+    if (side) el.dataset.dock = side;
+    else delete el.dataset.dock;
+    if (stacked) el.dataset.dockStack = '';
+    else delete el.dataset.dockStack;
+}
+
+function closeAll(list) {
+    for (const occupant of list) occupant.close();
+}
+
+// Decide where an occupant goes as it opens, clearing whatever it displaces.
+// Returns the side, or null when it should not dock here.
+function place(occupant) {
+    const el = elementOf(occupant);
+    if (!el) return null;
+    const dockable = occupant.panel ? canDockCard() : canDockSheet();
+    if (!dockable || (occupant.onlyOverSettings && !settingsOpen())) {
+        mark(el, null);
+        return null;
+    }
+
+    if (occupant.settings) {
+        // Settings is the base of the left: it clears what was there.
+        closeAll(openOn('left', occupant.id));
+        mark(el, 'left');
+        return 'left';
+    }
+
+    if (occupant.stacks && settingsOpen()) {
+        // Over settings; one sheet at a time on top of it.
+        closeAll(openOn('left', occupant.id).filter(o => !o.settings));
+        mark(el, 'left', true);
+        return 'left';
+    }
+
+    if (occupant.home === 'left') {
+        closeAll(openOn('left', occupant.id));
+        mark(el, 'left');
+        return 'left';
+    }
+
+    // Right-hand occupants: the right if free, else the left if free, else
+    // replace what is on the right.
+    const right = openOn('right', occupant.id);
+    if (!right.length) {
+        mark(el, 'right');
+        return 'right';
+    }
+    if (!openOn('left', occupant.id).length) {
+        mark(el, 'left');
+        return 'left';
+    }
+    closeAll(right);
+    mark(el, 'right');
+    return 'right';
 }
 
 function hostCardPanel(panel) {
-    if (!panel) return;
     if (panel.parentElement !== document.body) document.body.appendChild(panel);
     panel.classList.add('is-docked');
 }
@@ -102,26 +176,32 @@ function hostCardPanel(panel) {
 function stowCardPanel(panel) {
     if (!panel) return;
     panel.classList.remove('is-docked');
+    mark(panel, null);
     const host = document.getElementById('backContent');
     if (host && panel.parentElement !== host) host.appendChild(panel);
 }
 
-// Open a card panel: docked beside the card when there is room, otherwise
-// left where it was rendered, over the card as before. Returns whether it
-// docked so the caller can skip its own in-card handling.
+// Open a card panel beside the card when there is room; otherwise leave it
+// where it was rendered, over the card as before. Returns whether it docked.
 function openCardPanel(panel) {
-    if (!panel || !canDock()) return false;
-    claim(panel.id);
+    const occupant = panel && byId[panel.id];
+    if (!occupant || !place(occupant)) return false;
     hostCardPanel(panel);
     return true;
 }
 
-// The card turned to its front: what the right gutter shows would give the
-// answer away. Narrow layouts keep their panels inside the card, which turn
-// away with the back face on their own, so they are left alone.
+// Settings-launched pages used to close settings first. When they will
+// stack over it instead, settings stays open underneath.
+function keepsSettingsOpen() {
+    return canDockSheet() && settingsOpen();
+}
+
+// The card turned to its front: anything about it would give the answer
+// away. Narrow layouts keep their panels inside the card, which turn away
+// with the back face on their own, so they are left alone.
 function closeForFront() {
-    if (!canDock()) return;
-    closeWhere(RIGHT, o => o.cardPanel || o.cardBound);
+    if (!canDockCard()) return;
+    closeAll(OCCUPANTS.filter(o => o.card && isOpen(o)));
 }
 
 // The back face is about to be re-rendered. Panels hosted on <body> belong to
@@ -130,47 +210,51 @@ function closeForFront() {
 // that described the old one.
 let lastCard = null;
 function beforeBackRender(card) {
-    for (const occupant of RIGHT) {
-        if (!occupant.cardPanel) continue;
-        const el = document.getElementById(occupant.id);
+    for (const occupant of OCCUPANTS) {
+        if (!occupant.panel) continue;
+        const el = elementOf(occupant);
         if (el?.parentElement === document.body) el.remove();
     }
     if (card !== lastCard) {
-        if (lastCard && canDock()) closeWhere(RIGHT, o => o.cardBound);
+        if (lastCard && canDockCard()) {
+            closeAll(OCCUPANTS.filter(o => o.card && !o.panel && isOpen(o)));
+        }
         lastCard = card;
     }
 }
 
-// Escape closes the nearest open panel instead of leaving the set.
+// Escape closes the nearest open panel instead of leaving the set: the right
+// first, then whatever is stacked over settings, then settings itself.
 function closeTopmost() {
-    for (const list of [RIGHT, LEFT]) {
-        for (const occupant of list) {
-            if (isOpen(occupant)) {
-                occupant.close();
-                return true;
-            }
-        }
-    }
-    return false;
+    const open = OCCUPANTS.filter(isOpen);
+    const next = open.find(o => sideOf(o) === 'right')
+        || open.find(o => elementOf(o).dataset.dockStack !== undefined)
+        || open.find(o => sideOf(o) === 'left' && !o.settings)
+        || open.find(o => o.settings)
+        || open[0];
+    if (!next) return false;
+    next.close();
+    return true;
 }
 
-// Modals open through their own modules, so watch them rather than edit every
-// opener: when one appears in a gutter, it claims that gutter.
-function watchModal(el, occupant) {
+// Modals open through their own modules, so watch them rather than edit
+// every opener: each is placed the moment it appears. MutationObserver
+// callbacks run before the next paint, so a sheet never flashes centred.
+function watch(occupant) {
+    const el = elementOf(occupant);
     if (!el || el._sideDockWatched) return;
     el._sideDockWatched = true;
     let wasOpen = occupant.open(el);
     new MutationObserver(() => {
         const nowOpen = occupant.open(el);
-        if (nowOpen && !wasOpen) claim(occupant.id);
+        if (nowOpen && !wasOpen) place(occupant);
         wasOpen = nowOpen;
     }).observe(el, { attributes: true, attributeFilter: ['class', 'hidden'] });
 }
 
 function watchModals() {
-    for (const occupant of [...RIGHT, ...LEFT]) {
-        if (occupant.cardPanel) continue;
-        watchModal(document.getElementById(occupant.id), occupant);
+    for (const occupant of OCCUPANTS) {
+        if (!occupant.panel) watch(occupant);
     }
 }
 
@@ -178,23 +262,24 @@ function init() {
     watchModals();
     // knowledgeOverviewModal is created on first use; catch it when it lands.
     new MutationObserver(watchModals).observe(document.body, { childList: true });
-    // Leaving the study view closes everything docked in it, so a session
-    // sheet does not follow you back to the setup page.
+    // Leaving the study view closes what described its cards and its session.
+    // Settings, and whatever is stacked over it, belongs to the app, not the
+    // set, so it stays.
     const app = document.getElementById('appContent');
     if (app) {
         new MutationObserver(() => {
-            if (app.classList.contains('hidden')) {
-                closeWhere(RIGHT, () => true);
-                closeWhere(LEFT, () => true);
-            }
+            if (!app.classList.contains('hidden')) return;
+            closeAll(OCCUPANTS.filter(o => isOpen(o) && !o.settings
+                && elementOf(o).dataset.dockStack === undefined
+                && (o.card || sideOf(o) === 'left' || sideOf(o) === 'right')));
         }).observe(app, { attributes: true, attributeFilter: ['class'] });
     }
 }
 
 if (!window.sideDock) {
     window.sideDock = {
-        canDock, claim, openCardPanel, stowCardPanel,
-        closeForFront, beforeBackRender, closeTopmost,
+        canDockCard, canDockSheet, openCardPanel, stowCardPanel,
+        keepsSettingsOpen, closeForFront, beforeBackRender, closeTopmost,
     };
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init, { once: true });
