@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-21T20:16:00+01:00",
+      "date": "2026-09-21 20:16 BST",
+      "agent": "Codex",
+      "summary": "Readable meaning distinctions across Portuguese, Czech and Spanish, with the release-card audit completed.",
+      "detail": [
+        "Essential context remains visible before selecting a subsense; long explanations wrap and phone groups stack when needed. Meaning text is at least 13px and supporting badges at least 12px.",
+        "Portuguese keeps a bit of and article-use explanations; Spanish preserves place/time/manner; Czech keeps reflexive distinctions and separates case requirements from companion words.",
+        "Checked all six metadata families across 30,000 cards, compared shared-gloss cues in the first 1,000 per language, and reviewed 20 real-card fixtures across 82 expanded group/width combinations. Source defects are recorded in docs/ui/SENSE_METADATA_AUDIT.md."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-21T20:30:00+01:00",
       "date": "2026-09-21 20:30 BST",
       "agent": "Claude",

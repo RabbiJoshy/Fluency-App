@@ -411,7 +411,7 @@ function metadataItemKey(item) {
 }
 
 export const LEARNER_METADATA_MIN_SCORE = 60;
-export const LEARNER_METADATA_MAX_CHIPS = 2;
+
 
 // Metadata is compared only with other readings of this same visible gloss.
 // A feature occurring on a different translation is not a reason to hide it.
@@ -678,7 +678,7 @@ export function senseMetadataHTML(meaning, active, options = {}) {
     }).join('');
 
     const primary = items.filter(item => (
-        ['construction', 'companion', 'register', 'domain', 'functional'].includes(item.family)
+        ['construction', 'companion', 'register', 'domain', 'functional', 'source'].includes(item.family)
     ));
     // Grammar that changes which sense applies is a navigation cue. Routine
     // inflectional detail is still available, but does not compete with the

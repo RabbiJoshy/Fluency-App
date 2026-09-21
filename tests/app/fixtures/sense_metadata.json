@@ -1,0 +1,3682 @@
+{
+  "pt": [
+    {
+      "word": "a",
+      "id": "9b2cb32f",
+      "rank": 2,
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                14,
+                15
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                15,
+                19
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Livro escrito a lápis.",
+            "translation": "A book written with a pencil."
+          },
+          "frequency": "0.012500",
+          "headword": "a",
+          "pos": "prep",
+          "sense_id": "sense_6bc1af2303c9e00948186239b6317518",
+          "translation": "with; by means of, using as an instrument or means",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                1,
+                2
+              ],
+              [
+                6,
+                7
+              ],
+              [
+                9,
+                10
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                9,
+                11
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Vamos a Paris!",
+            "translation": "Let’s go to Paris!"
+          },
+          "frequency": "0.012500",
+          "headword": "a",
+          "pos": "prep",
+          "sense_id": "sense_3f1fa99f0567fda5992ceeaa865c24f1",
+          "translation": "to; towards, indicates destination",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        },
+        {
+          "context": "auxiliary, with de + infinitive",
+          "frequency": "0.012500",
+          "headword": "haver",
+          "pos": "verb",
+          "sense_id": "sense_57b53c49ce7203392f21ebb16364c669",
+          "translation": "See haver de.",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "auxiliary",
+                  "family": "construction",
+                  "kind": "auxiliary_frame",
+                  "value": "auxiliary"
+                },
+                {
+                  "embedding_text": "with de + infinitive",
+                  "family": "construction",
+                  "kind": "gloss_phrase",
+                  "value": "with de + infinitive"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                3,
+                4
+              ],
+              [
+                10,
+                11
+              ],
+              [
+                12,
+                13
+              ],
+              [
+                18,
+                19
+              ],
+              [
+                35,
+                36
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                12,
+                15
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Estou lendo o livro que Maria avaliou.",
+            "translation": "I’m reading the book Mary reviewed."
+          },
+          "context": "...because it has already been mentioned; is to be completely specified in the same sentence; or very shortly thereafter; ...because it has already been mentioned; is to be completely specified in the same sentence; or very shortly thereafter",
+          "frequency": "0.137500",
+          "headword": "o",
+          "pos": "article",
+          "sense_id": "sense_7ca61ea2f2866143788f1a471cdc5482",
+          "translation": "the (the definite grammatical article that shows that the noun phrase that immediately follows it is definitely identifiable...)",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "gender=masculine",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "gender=masculine"
+                },
+                {
+                  "embedding_text": "feminine",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "gender=feminine"
+                },
+                {
+                  "embedding_text": "singular",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "number=singular"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                8,
+                9
+              ],
+              [
+                12,
+                13
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                6,
+                9
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Como tá a Bia hoje?",
+            "translation": "How's the Beats today?"
+          },
+          "context": "(precedes a familiar nickname or other term of address)",
+          "frequency": "0.025000",
+          "headword": "o",
+          "pos": "article",
+          "sense_id": "sense_1da4ea03e98ac53a4bfc25c2ed36eb27",
+          "translation": "the (the definite grammatical article that shows that the noun phrase that immediately follows it is definitely identifiable...)",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "colloquial",
+                  "family": "register",
+                  "kind": "usage_tag",
+                  "value": "colloquial"
+                },
+                {
+                  "embedding_text": "gender=masculine",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "gender=masculine"
+                },
+                {
+                  "embedding_text": "feminine",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "gender=feminine"
+                },
+                {
+                  "embedding_text": "singular",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "number=singular"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                22,
+                23
+              ],
+              [
+                25,
+                26
+              ],
+              [
+                28,
+                29
+              ],
+              [
+                35,
+                36
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                30,
+                33
+              ]
+            ],
+            "literal_meaning": "Unfortunately, a robber stole [from] her the phone.",
+            "tags": [],
+            "text": "Infelizmente, um ladrão roubou-lhe o celular.",
+            "translation": "Unfortunately, a robber stole her phone."
+          },
+          "context": "sometimes after lhe, especially when referring to a body part, a family member, or a pet.",
+          "frequency": "0.025000",
+          "headword": "o",
+          "pos": "article",
+          "sense_id": "sense_cd051b12f813e2e82291d54497084776",
+          "translation": "the (the definite grammatical article that shows that the noun phrase that immediately follows it is definitely identifiable...)",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "gender=masculine",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "gender=masculine"
+                },
+                {
+                  "embedding_text": "used as an alternative to a possessive pronoun",
+                  "family": "construction",
+                  "kind": "gloss_phrase",
+                  "value": "used as an alternative to a possessive pronoun"
+                },
+                {
+                  "embedding_text": "feminine",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "gender=feminine"
+                },
+                {
+                  "embedding_text": "singular",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "number=singular"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "frequency": "0.012500",
+          "headword": "a salvo",
+          "pos": "PHRASE",
+          "sense_id": "sense_1241ef1879abcdce8ed5be45dbb12cbf",
+          "translation": "safe",
+          "metadata": {
+            "source_adapter": "mwe-merged/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        },
+        {
+          "frequency": "0.012500",
+          "headword": "a não ser que",
+          "pos": "PHRASE",
+          "sense_id": "sense_4674e6f66376841e4da18d892559649a",
+          "translation": "unless",
+          "metadata": {
+            "source_adapter": "mwe-merged/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "word": "o",
+      "id": "36c7b2b3",
+      "rank": 3,
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                3,
+                4
+              ],
+              [
+                10,
+                11
+              ],
+              [
+                12,
+                13
+              ],
+              [
+                18,
+                19
+              ],
+              [
+                35,
+                36
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                12,
+                15
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Estou lendo o livro que Maria avaliou.",
+            "translation": "I’m reading the book Mary reviewed."
+          },
+          "context": "...because it has already been mentioned; is to be completely specified in the same sentence; or very shortly thereafter; ...because it has already been mentioned; is to be completely specified in the same sentence; or very shortly thereafter",
+          "frequency": "0.162500",
+          "headword": "o",
+          "pos": "article",
+          "sense_id": "sense_ed276308029c0bb1c4d9385b007e9c80",
+          "translation": "the (the definite grammatical article that shows that the noun phrase that immediately follows it is definitely identifiable...)",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "gender=masculine",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "gender=masculine"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                7,
+                8
+              ],
+              [
+                10,
+                11
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                8,
+                11
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Esse é o hospital ideal para se realizar uma cirurgia cardíaca.",
+            "translation": "That is the hospital to go to for heart surgery."
+          },
+          "context": "...because it is presumed to be definitely known in context or from shared knowledge; when stressed; indicates that it describes something which is considered to be best or exclusively worthy of attention; when stressed; indicates that it describes something which is considered to be best or exclusively worthy of attention",
+          "frequency": "0.012500",
+          "headword": "o",
+          "pos": "article",
+          "sense_id": "sense_3f9000247a9131393aceaea57ee6ee65",
+          "translation": "the (the definite grammatical article that shows that the noun phrase that immediately follows it is definitely identifiable...)",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "gender=masculine",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "gender=masculine"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                8,
+                9
+              ],
+              [
+                12,
+                13
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                6,
+                9
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Como tá a Bia hoje?",
+            "translation": "How's the Beats today?"
+          },
+          "context": "(precedes a familiar nickname or other term of address)",
+          "frequency": "0.012500",
+          "headword": "o",
+          "pos": "article",
+          "sense_id": "sense_4153397eef36310373caa58246afc3d0",
+          "translation": "the (the definite grammatical article that shows that the noun phrase that immediately follows it is definitely identifiable...)",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "colloquial",
+                  "family": "register",
+                  "kind": "usage_tag",
+                  "value": "colloquial"
+                },
+                {
+                  "embedding_text": "gender=masculine",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "gender=masculine"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                22,
+                23
+              ],
+              [
+                25,
+                26
+              ],
+              [
+                28,
+                29
+              ],
+              [
+                35,
+                36
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                30,
+                33
+              ]
+            ],
+            "literal_meaning": "Unfortunately, a robber stole [from] her the phone.",
+            "tags": [],
+            "text": "Infelizmente, um ladrão roubou-lhe o celular.",
+            "translation": "Unfortunately, a robber stole her phone."
+          },
+          "context": "sometimes after lhe, especially when referring to a body part, a family member, or a pet.",
+          "frequency": "0.075000",
+          "headword": "o",
+          "pos": "article",
+          "sense_id": "sense_c499fd8a2758f9785655df1257e7f7dd",
+          "translation": "the (the definite grammatical article that shows that the noun phrase that immediately follows it is definitely identifiable...)",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "gender=masculine",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "gender=masculine"
+                },
+                {
+                  "embedding_text": "used as an alternative to a possessive pronoun",
+                  "family": "construction",
+                  "kind": "gloss_phrase",
+                  "value": "used as an alternative to a possessive pronoun"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "word": "não",
+      "id": "df79bfb1",
+      "rank": 5,
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                12,
+                15
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                14,
+                18
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "O sistema é não-escalável.",
+            "translation": "The system is non-scalable."
+          },
+          "context": "preceding adjectives, usually hyphenated",
+          "frequency": "0.025000",
+          "headword": "não",
+          "pos": "adv",
+          "sense_id": "sense_9d1451026f9bb7e4f45b471ca7f42b6b",
+          "translation": "non- (forms antonyms of adjectives)",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "degree=not-comparable",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "degree=not-comparable"
+                },
+                {
+                  "embedding_text": "before adjective",
+                  "family": "construction",
+                  "kind": "position",
+                  "value": "before adjective"
+                },
+                {
+                  "embedding_text": "usually hyphenated",
+                  "family": "construction",
+                  "kind": "gloss_phrase",
+                  "value": "usually hyphenated"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                3,
+                6
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                2,
+                9
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Eu não li esse livro.",
+            "translation": "I haven’t read that book."
+          },
+          "context": "preceding verbs or adverbs",
+          "frequency": "0.075000",
+          "headword": "não",
+          "pos": "adv",
+          "sense_id": "sense_0a722305ab24088e3c4ee7dc0bf3caac",
+          "translation": "not; don't; haven't (negates the meaning of the verb or adverb)",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "degree=not-comparable",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "degree=not-comparable"
+                },
+                {
+                  "embedding_text": "preceding verbs or adverbs",
+                  "family": "construction",
+                  "kind": "gloss_phrase",
+                  "value": "preceding verbs or adverbs"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                22,
+                25
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                10,
+                16
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Ninguém vai ser preso não.",
+            "translation": "Nobody is really going to be arrested."
+          },
+          "context": "used to emphasise or reinforce (in the case that there is a previous unstressed adverb não, see above) sentences containing a negative pronoun as the subject or already containing não",
+          "frequency": "0.150000",
+          "headword": "não",
+          "pos": "adv",
+          "sense_id": "sense_4effd68be641fc9eb43543020277459a",
+          "translation": "not; don't; haven't (negates the meaning of the verb or adverb)",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "Brazil",
+                  "family": "register",
+                  "kind": "region",
+                  "value": "Brazil"
+                },
+                {
+                  "embedding_text": "colloquial",
+                  "family": "register",
+                  "kind": "usage_tag",
+                  "value": "colloquial"
+                },
+                {
+                  "embedding_text": "degree=not-comparable",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "degree=not-comparable"
+                },
+                {
+                  "embedding_text": "preceding verbs or adverbs",
+                  "family": "construction",
+                  "kind": "gloss_phrase",
+                  "value": "preceding verbs or adverbs"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                0,
+                3
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                0,
+                5
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Não está mau o chá?",
+            "translation": "Isn’t the tea bad?"
+          },
+          "context": "isn't (used to ask whether a person agrees with the proposition, rather than to ask for an unknown fact)",
+          "frequency": "0.025000",
+          "headword": "não",
+          "pos": "adv",
+          "sense_id": "sense_3f2029fed850fe8a6434586ab1c7671a",
+          "translation": "not; don't; haven't (negates the meaning of the verb or adverb)",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "degree=not-comparable",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "degree=not-comparable"
+                },
+                {
+                  "embedding_text": "preceding verbs or adverbs",
+                  "family": "construction",
+                  "kind": "gloss_phrase",
+                  "value": "preceding verbs or adverbs"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "frequency": "0.050000",
+          "headword": "não é",
+          "pos": "PHRASE",
+          "sense_id": "sense_48224984be14cd304b29aec83fd3c060",
+          "translation": "isn't it; innit; right",
+          "metadata": {
+            "source_adapter": "mwe-merged/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        },
+        {
+          "frequency": "0.037500",
+          "headword": "não sei",
+          "pos": "PHRASE",
+          "sense_id": "sense_5e8993554759f055b59e54eb69a925c8",
+          "translation": "I don't know",
+          "metadata": {
+            "source_adapter": "mwe-merged/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        },
+        {
+          "frequency": "0.012500",
+          "headword": "não se preocupe",
+          "pos": "PHRASE",
+          "sense_id": "sense_4f5255bcca1108edd96360dbac8d6875",
+          "translation": "don't worry",
+          "metadata": {
+            "source_adapter": "mwe-merged/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "word": "um",
+      "id": "5472c6be",
+      "rank": 8,
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                0,
+                2
+              ],
+              [
+                10,
+                13
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                0,
+                1
+              ],
+              [
+                3,
+                4
+              ],
+              [
+                7,
+                8
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Um carro, uma casa.",
+            "translation": "A car, a house."
+          },
+          "context": "indefinite",
+          "frequency": "0.237500",
+          "headword": "um",
+          "pos": "article",
+          "sense_id": "sense_3ec70bd6c77ab0b3153bc8590ebbc309",
+          "translation": "a, an",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "definiteness=indefinite",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "definiteness=indefinite"
+                },
+                {
+                  "embedding_text": "masculine",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "gender=masculine"
+                },
+                {
+                  "embedding_text": "uncountable",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "countability=uncountable"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "context": "a bit of",
+          "frequency": "0.025000",
+          "headword": "um",
+          "pos": "article",
+          "sense_id": "sense_41f73fd37d3e2b8c8a49f43cc768d89f",
+          "translation": "a, an",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "definiteness=indefinite",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "definiteness=indefinite"
+                },
+                {
+                  "embedding_text": "masculine",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "gender=masculine"
+                },
+                {
+                  "embedding_text": "uncountable",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "countability=uncountable"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                20,
+                23
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                7,
+                14
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Ontem de noite caiu uma chuva.",
+            "translation": "We had quite a rain last night."
+          },
+          "context": "indicates that what follows is exceptional; quite a; quite the",
+          "frequency": "0.025000",
+          "headword": "um",
+          "pos": "article",
+          "sense_id": "sense_7a40c85b6d931d1783c04aa745539e42",
+          "translation": "a, an",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "emphasis=emphatic",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "emphasis=emphatic"
+                },
+                {
+                  "embedding_text": "gender=feminine",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "gender=feminine"
+                },
+                {
+                  "embedding_text": "definiteness=indefinite",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "definiteness=indefinite"
+                },
+                {
+                  "embedding_text": "usually",
+                  "family": "register",
+                  "kind": "usage_tag",
+                  "value": "usually"
+                },
+                {
+                  "embedding_text": "masculine",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "gender=masculine"
+                },
+                {
+                  "embedding_text": "uncountable",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "countability=uncountable"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                0,
+                3
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                0,
+                3
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Uma xícara de café",
+            "translation": "One cup of coffee"
+          },
+          "frequency": "0.012500",
+          "headword": "um",
+          "pos": "num",
+          "sense_id": "sense_a7db5c36ccbf50472a0efa6f174708c0",
+          "translation": "one",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "gender=masculine",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "gender=masculine"
+                },
+                {
+                  "embedding_text": "masculine",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "gender=masculine"
+                },
+                {
+                  "embedding_text": "uncountable",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "countability=uncountable"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "frequency": "0.050000",
+          "headword": "um pouco",
+          "pos": "PHRASE",
+          "sense_id": "sense_f9caff068e88b7c20a75fa138cecedd2",
+          "translation": "slightly; a little; a bit",
+          "metadata": {
+            "source_adapter": "mwe-merged/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        },
+        {
+          "frequency": "0.012500",
+          "headword": "um dia",
+          "pos": "PHRASE",
+          "sense_id": "sense_b81c2ff4ecb88f922212bb62981ec266",
+          "translation": "someday / once",
+          "metadata": {
+            "source_adapter": "mwe-merged/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "word": "para",
+      "id": "70b630c3",
+      "rank": 9,
+      "meanings": [
+        {
+          "frequency": "0.012500",
+          "headword": "para",
+          "pos": "prep",
+          "sense_id": "sense_c31543867a04aab99489a8a6477646fe",
+          "translation": "indicates application of an adjective; to",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                12,
+                16
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                13,
+                16
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "O que é bom para gripe?",
+            "translation": "What is good for the flu?"
+          },
+          "frequency": "0.075000",
+          "headword": "para",
+          "pos": "prep",
+          "sense_id": "sense_947ee1c4a84fcd31bbbf0a97aa7e6a9f",
+          "translation": "for (directed at, intended to belong to or to be appropriate for)",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                17,
+                21
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                16,
+                18
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Comprei um baixo para tocar numa banda.",
+            "translation": "I bought a bass to play in a band."
+          },
+          "frequency": "0.050000",
+          "headword": "para",
+          "pos": "prep",
+          "sense_id": "sense_9f9310a6fff595b4e1f9b637a98c1f6c",
+          "translation": "to; so; in order to",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "indicates purpose",
+                  "family": "functional",
+                  "kind": "usage_note",
+                  "value": "indicates purpose"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                0,
+                4
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                0,
+                2
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Para mim, este livro é um dos melhores da história.",
+            "translation": "To me, this book is one of the best ones of all time."
+          },
+          "frequency": "0.075000",
+          "headword": "para",
+          "pos": "prep",
+          "sense_id": "sense_c0e5917d175663402cd04d4d46841263",
+          "translation": "in the opinion of; to (someone)",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                6,
+                10
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                9,
+                11
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Vamos para a minha casa.",
+            "translation": "Let’s go to my house."
+          },
+          "frequency": "0.075000",
+          "headword": "para",
+          "pos": "prep",
+          "sense_id": "sense_02291371d3daceac5046eed559268b30",
+          "translation": "towards; to; in the direction of",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "indicates destination",
+                  "family": "functional",
+                  "kind": "usage_note",
+                  "value": "indicates destination"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "frequency": "0.012500",
+          "headword": "para casa",
+          "pos": "PHRASE",
+          "sense_id": "sense_6980afee537013f33e26a09daae1c8eb",
+          "translation": "home; homewards",
+          "metadata": {
+            "source_adapter": "mwe-merged/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "word": "uma",
+      "id": "6b8ca73a",
+      "rank": 14,
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                0,
+                2
+              ],
+              [
+                10,
+                13
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                0,
+                1
+              ],
+              [
+                3,
+                4
+              ],
+              [
+                7,
+                8
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Um carro, uma casa.",
+            "translation": "A car, a house."
+          },
+          "context": "indefinite",
+          "frequency": "0.275000",
+          "headword": "um",
+          "pos": "article",
+          "sense_id": "sense_8b7dff88fab5287e9a5d8c4f4895ca1d",
+          "translation": "a, an",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "definiteness=indefinite",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "definiteness=indefinite"
+                },
+                {
+                  "embedding_text": "feminine",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "gender=feminine"
+                },
+                {
+                  "embedding_text": "singular",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "number=singular"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "context": "a bit of",
+          "frequency": "0.025000",
+          "headword": "um",
+          "pos": "article",
+          "sense_id": "sense_d0c0d11ade18c087579559fc327ea502",
+          "translation": "a, an",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "definiteness=indefinite",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "definiteness=indefinite"
+                },
+                {
+                  "embedding_text": "feminine",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "gender=feminine"
+                },
+                {
+                  "embedding_text": "singular",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "number=singular"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                20,
+                23
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                7,
+                14
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Ontem de noite caiu uma chuva.",
+            "translation": "We had quite a rain last night."
+          },
+          "context": "indicates that what follows is exceptional; quite a; quite the",
+          "frequency": "0.025000",
+          "headword": "um",
+          "pos": "article",
+          "sense_id": "sense_d1ffa70d2cf8e4cbe743d79947290c5c",
+          "translation": "a, an",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "emphasis=emphatic",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "emphasis=emphatic"
+                },
+                {
+                  "embedding_text": "gender=feminine",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "gender=feminine"
+                },
+                {
+                  "embedding_text": "definiteness=indefinite",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "definiteness=indefinite"
+                },
+                {
+                  "embedding_text": "usually",
+                  "family": "register",
+                  "kind": "usage_tag",
+                  "value": "usually"
+                },
+                {
+                  "embedding_text": "feminine",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "gender=feminine"
+                },
+                {
+                  "embedding_text": "singular",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "number=singular"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                0,
+                3
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                0,
+                3
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Uma xícara de café",
+            "translation": "One cup of coffee"
+          },
+          "frequency": "0.012500",
+          "headword": "um",
+          "pos": "num",
+          "sense_id": "sense_c652a5e7fb438449cd6f192b512676f7",
+          "translation": "one",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "gender=masculine",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "gender=masculine"
+                },
+                {
+                  "embedding_text": "feminine",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "gender=feminine"
+                },
+                {
+                  "embedding_text": "singular",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "number=singular"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "frequency": "0.012500",
+          "headword": "de uma vez",
+          "pos": "PHRASE",
+          "sense_id": "sense_713e0bdbe3f7dff2bac8df96726a0600",
+          "translation": "already",
+          "metadata": {
+            "source_adapter": "mwe-merged/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        },
+        {
+          "frequency": "0.012500",
+          "headword": "uma vez",
+          "pos": "PHRASE",
+          "sense_id": "sense_9fa5113a00be23a290e099c3daf5dce7",
+          "translation": "once",
+          "metadata": {
+            "source_adapter": "mwe-merged/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        },
+        {
+          "frequency": "0.012500",
+          "headword": "eu tenho uma pergunta",
+          "pos": "PHRASE",
+          "sense_id": "sense_200c2f0396740ad5f1005892ab8a366f",
+          "translation": "I have a question",
+          "metadata": {
+            "source_adapter": "mwe-merged/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "word": "lhe",
+      "id": "2345cfb8",
+      "rank": 77,
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                5,
+                8
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                0,
+                3
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [
+              "Portugal"
+            ],
+            "text": "Doía-lhe o braço.",
+            "translation": "His arm was hurting."
+          },
+          "context": "Portugal",
+          "frequency": "0.012500",
+          "headword": "lhe",
+          "pos": "pron",
+          "sense_id": "sense_934296e2b8cf926b42be390f0e2f22d2",
+          "translation": "equivalent to a third- or second-person possessive pronoun",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "Portugal",
+                  "family": "register",
+                  "kind": "region",
+                  "value": "Portugal"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "frequency": "0.237500",
+          "headword": "você",
+          "pos": "pron",
+          "sense_id": "sense_47ab8450769e5c072cfd96c6640fec8d",
+          "translation": "second-person singular personal pronoun, formal or informal in Brazil, formal or semi-formal in Portugal; you",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "gender=variable-by-person",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "gender=variable-by-person"
+                },
+                {
+                  "embedding_text": "gender=feminine",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "gender=feminine"
+                },
+                {
+                  "embedding_text": "gender=masculine",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "gender=masculine"
+                },
+                {
+                  "embedding_text": "accusative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "case=accusative"
+                },
+                {
+                  "embedding_text": "dative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "case=dative"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "word": "gosto",
+      "id": "95e4a038",
+      "rank": 293,
+      "meanings": [
+        {
+          "context": "intransitive",
+          "frequency": "0.375000",
+          "headword": "gostar",
+          "pos": "verb",
+          "sense_id": "sense_bab369dff26f8bf882995a898d409d47",
+          "translation": "to like",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "intransitive",
+                  "family": "construction",
+                  "kind": "grammar_tag",
+                  "value": "intransitive"
+                },
+                {
+                  "embedding_text": "de",
+                  "family": "companion",
+                  "kind": "required_word",
+                  "value": "de"
+                },
+                {
+                  "embedding_text": "first-person",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "person=1"
+                },
+                {
+                  "embedding_text": "indicative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "mood=indicative"
+                },
+                {
+                  "embedding_text": "present",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "tense=present"
+                },
+                {
+                  "embedding_text": "singular",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "number=singular"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "cs": [
+    {
+      "word": "se",
+      "id": "786c2ec7",
+      "rank": 2,
+      "meanings": [
+        {
+          "frequency": "0.037500",
+          "headword": "s",
+          "pos": "prep",
+          "sense_id": "sense_e88a433daef424ea5ea70b0b722aef06",
+          "translation": "with",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "instrumental",
+                  "family": "companion",
+                  "kind": "required_word",
+                  "value": "instrumental"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "context": "themselves",
+          "frequency": "0.200000",
+          "headword": "sebe",
+          "pos": "pron",
+          "sense_id": "sense_867476249954ee6d52aff8f71a06a315",
+          "translation": "oneself",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "case=accusative",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "case=accusative"
+                },
+                {
+                  "embedding_text": "case=genitive",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "case=genitive"
+                },
+                {
+                  "embedding_text": "reflexive=true",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "reflexive=true"
+                },
+                {
+                  "embedding_text": "accusative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "case=accusative"
+                },
+                {
+                  "embedding_text": "reflexive",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "reflexive=true"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "context": "myself",
+          "frequency": "0.125000",
+          "headword": "sebe",
+          "pos": "pron",
+          "sense_id": "sense_d3297bc8d81b3eeca491463c8dafd89e",
+          "translation": "oneself",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "case=accusative",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "case=accusative"
+                },
+                {
+                  "embedding_text": "case=genitive",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "case=genitive"
+                },
+                {
+                  "embedding_text": "reflexive=true",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "reflexive=true"
+                },
+                {
+                  "embedding_text": "accusative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "case=accusative"
+                },
+                {
+                  "embedding_text": "reflexive",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "reflexive=true"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "context": "herself",
+          "frequency": "0.012500",
+          "headword": "sebe",
+          "pos": "pron",
+          "sense_id": "sense_702789463323bfc8b147270df48b7834",
+          "translation": "oneself",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "case=accusative",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "case=accusative"
+                },
+                {
+                  "embedding_text": "case=genitive",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "case=genitive"
+                },
+                {
+                  "embedding_text": "reflexive=true",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "reflexive=true"
+                },
+                {
+                  "embedding_text": "accusative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "case=accusative"
+                },
+                {
+                  "embedding_text": "reflexive",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "reflexive=true"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "word": "na",
+      "id": "54c8f898",
+      "rank": 7,
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                11,
+                13
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                13,
+                15
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Česko leží na západ od Slovenska.",
+            "translation": "Czechia lies to the west of Slovakia."
+          },
+          "frequency": "0.137500",
+          "headword": "na",
+          "pos": "prep",
+          "sense_id": "sense_bcec61e43bcdef87800cf1f606086692",
+          "translation": "to (direction; used only with certain places; do + genitive is more common)",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "accusative",
+                  "family": "companion",
+                  "kind": "required_word",
+                  "value": "accusative"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                6,
+                8
+              ],
+              [
+                17,
+                19
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                8,
+                13
+              ],
+              [
+                23,
+                28
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "To je na něm, ne na mně.",
+            "translation": "That is up to him, not up to me."
+          },
+          "frequency": "0.025000",
+          "headword": "na",
+          "pos": "prep",
+          "sense_id": "sense_6729f4cb46e6feece52e78c296a8bea2",
+          "translation": "up to, down to (at the discretion of)",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "locative",
+                  "family": "companion",
+                  "kind": "required_word",
+                  "value": "locative"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                5,
+                7
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                6,
+                8
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Jsme na poště.",
+            "translation": "We're at the post office."
+          },
+          "frequency": "0.025000",
+          "headword": "na",
+          "pos": "prep",
+          "sense_id": "sense_2027e6a6570fa4a4b729379f5547752f",
+          "translation": "at, in (location; used only with certain places; v is more common)",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "locative",
+                  "family": "companion",
+                  "kind": "required_word",
+                  "value": "locative"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                13,
+                15
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                13,
+                15
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Sklenička je na stole.",
+            "translation": "The glass is on the table."
+          },
+          "frequency": "0.025000",
+          "headword": "na",
+          "pos": "prep",
+          "sense_id": "sense_c9a67b586f01ac946db163d83cf6790e",
+          "translation": "on (location)",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "accusative",
+                  "family": "companion",
+                  "kind": "required_word",
+                  "value": "accusative"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                7,
+                9
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                11,
+                13
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Nekřič na mě!",
+            "translation": "Don't yell at me!"
+          },
+          "frequency": "0.050000",
+          "headword": "na",
+          "pos": "prep",
+          "sense_id": "sense_cd3796f0539db51d2d215231eb3fffde",
+          "translation": "at (in the direction of)",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "accusative",
+                  "family": "companion",
+                  "kind": "required_word",
+                  "value": "accusative"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                9,
+                11
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                20,
+                23
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Čtu text na náš kurz.",
+            "translation": "I am reading a text for our course."
+          },
+          "frequency": "0.112500",
+          "headword": "na",
+          "pos": "prep",
+          "sense_id": "sense_5cc97df8a0a955ad4112a5032843570a",
+          "translation": "for (purpose)",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "accusative",
+                  "family": "companion",
+                  "kind": "required_word",
+                  "value": "accusative"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "word": "v",
+      "id": "642dddfe",
+      "rank": 9,
+      "meanings": [
+        {
+          "frequency": "0.075000",
+          "headword": "v",
+          "pos": "prep",
+          "sense_id": "sense_addc31b234277f4468d4ce14b1758a22",
+          "translation": "in (used after certain verbs)",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "accusative",
+                  "family": "companion",
+                  "kind": "required_word",
+                  "value": "accusative"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                6,
+                7
+              ],
+              [
+                10,
+                11
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                6,
+                8
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "On je v divadle.",
+            "translation": "He is in the theater."
+          },
+          "frequency": "0.025000",
+          "headword": "v",
+          "pos": "prep",
+          "sense_id": "sense_aec8be8e8dbbc65cd980da175dae43ec",
+          "translation": "in (inside, for an enclosed space)",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "locative",
+                  "family": "companion",
+                  "kind": "required_word",
+                  "value": "locative"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "frequency": "0.025000",
+          "headword": "v",
+          "pos": "prep",
+          "sense_id": "sense_66ac258cd60f4877c576d39a27e42c1d",
+          "translation": "on",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "accusative",
+                  "family": "companion",
+                  "kind": "required_word",
+                  "value": "accusative"
+                },
+                {
+                  "embedding_text": "indicating a day",
+                  "family": "functional",
+                  "kind": "usage_note",
+                  "value": "indicating a day"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "frequency": "0.050000",
+          "headword": "v",
+          "pos": "prep",
+          "sense_id": "sense_7d9c23b43bae8a8546d9d15347bfb993",
+          "translation": "at",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "accusative",
+                  "family": "companion",
+                  "kind": "required_word",
+                  "value": "accusative"
+                },
+                {
+                  "embedding_text": "indicating time",
+                  "family": "functional",
+                  "kind": "temporal_relation",
+                  "value": "time"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "frequency": "0.175000",
+          "headword": "v",
+          "pos": "prep",
+          "sense_id": "sense_512bc9bc15f3e6a72d0872ae06e782eb",
+          "translation": "in",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "locative",
+                  "family": "companion",
+                  "kind": "required_word",
+                  "value": "locative"
+                },
+                {
+                  "embedding_text": "indicating a month",
+                  "family": "functional",
+                  "kind": "usage_note",
+                  "value": "indicating a month"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "frequency": "0.025000",
+          "headword": "v pohodě",
+          "pos": "PHRASE",
+          "sense_id": "sense_1888732e9ec47ec73f59bc1f965c54c3",
+          "translation": "no worries, no problem",
+          "metadata": {
+            "source_adapter": "mwe-merged/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "word": "si",
+      "id": "bab54f5a",
+      "rank": 10,
+      "meanings": [
+        {
+          "context": "themselves",
+          "frequency": "0.212500",
+          "headword": "sebe",
+          "pos": "pron",
+          "sense_id": "sense_d223bf144f10a68ad5827000c06edfe4",
+          "translation": "oneself",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "case=accusative",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "case=accusative"
+                },
+                {
+                  "embedding_text": "case=genitive",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "case=genitive"
+                },
+                {
+                  "embedding_text": "reflexive=true",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "reflexive=true"
+                },
+                {
+                  "embedding_text": "dative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "case=dative"
+                },
+                {
+                  "embedding_text": "reflexive",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "reflexive=true"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "context": "myself",
+          "frequency": "0.075000",
+          "headword": "sebe",
+          "pos": "pron",
+          "sense_id": "sense_a48f0e961e115acd8e2bdac276ba05fc",
+          "translation": "oneself",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "case=accusative",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "case=accusative"
+                },
+                {
+                  "embedding_text": "case=genitive",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "case=genitive"
+                },
+                {
+                  "embedding_text": "reflexive=true",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "reflexive=true"
+                },
+                {
+                  "embedding_text": "dative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "case=dative"
+                },
+                {
+                  "embedding_text": "reflexive",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "reflexive=true"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "context": "herself",
+          "frequency": "0.050000",
+          "headword": "sebe",
+          "pos": "pron",
+          "sense_id": "sense_9369450acac24593ff1fa2ea9ad2e142",
+          "translation": "oneself",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "case=accusative",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "case=accusative"
+                },
+                {
+                  "embedding_text": "case=genitive",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "case=genitive"
+                },
+                {
+                  "embedding_text": "reflexive=true",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "reflexive=true"
+                },
+                {
+                  "embedding_text": "dative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "case=dative"
+                },
+                {
+                  "embedding_text": "reflexive",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "reflexive=true"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "context": "himself",
+          "frequency": "0.025000",
+          "headword": "sebe",
+          "pos": "pron",
+          "sense_id": "sense_297a30b2f9782f6692c22b4c0ff64a8e",
+          "translation": "oneself",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "case=accusative",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "case=accusative"
+                },
+                {
+                  "embedding_text": "case=genitive",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "case=genitive"
+                },
+                {
+                  "embedding_text": "reflexive=true",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "reflexive=true"
+                },
+                {
+                  "embedding_text": "dative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "case=dative"
+                },
+                {
+                  "embedding_text": "reflexive",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "reflexive=true"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "context": "ourselves",
+          "frequency": "0.012500",
+          "headword": "sebe",
+          "pos": "pron",
+          "sense_id": "sense_0f1c2144e3630a2829be176a93b082aa",
+          "translation": "oneself",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "case=accusative",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "case=accusative"
+                },
+                {
+                  "embedding_text": "case=genitive",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "case=genitive"
+                },
+                {
+                  "embedding_text": "reflexive=true",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "reflexive=true"
+                },
+                {
+                  "embedding_text": "dative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "case=dative"
+                },
+                {
+                  "embedding_text": "reflexive",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "reflexive=true"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "word": "s",
+      "id": "dfdd04ad",
+      "rank": 14,
+      "meanings": [
+        {
+          "frequency": "0.375000",
+          "headword": "s",
+          "pos": "prep",
+          "sense_id": "sense_991441f86789c8fdaf24221385fc30bd",
+          "translation": "with",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "instrumental",
+                  "family": "companion",
+                  "kind": "required_word",
+                  "value": "instrumental"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "word": "čekat",
+      "id": "d799fca9",
+      "rank": 835,
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                8,
+                13
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                5,
+                8
+              ],
+              [
+                13,
+                19
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Co jste čekal?",
+            "translation": "What did you expect?"
+          },
+          "context": "transitive",
+          "frequency": "0.012500",
+          "headword": "čekat",
+          "pos": "verb",
+          "sense_id": "sense_7bec4f271a8c88aa861e49fae03e99a0",
+          "translation": "to expect",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "aspect=imperfective",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "aspect=imperfective"
+                },
+                {
+                  "embedding_text": "transitive",
+                  "family": "construction",
+                  "kind": "grammar_tag",
+                  "value": "transitive"
+                },
+                {
+                  "embedding_text": "accusative",
+                  "family": "companion",
+                  "kind": "required_word",
+                  "value": "accusative"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                8,
+                14
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                4,
+                7
+              ],
+              [
+                12,
+                19
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Na koho čekáte?",
+            "translation": "Who are you waiting for?"
+          },
+          "context": "intransitive",
+          "frequency": "0.362500",
+          "headword": "čekat",
+          "pos": "verb",
+          "sense_id": "sense_987d6e0a00e2294bdd95fa815adabd16",
+          "translation": "to wait",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "aspect=imperfective",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "aspect=imperfective"
+                },
+                {
+                  "embedding_text": "intransitive",
+                  "family": "construction",
+                  "kind": "grammar_tag",
+                  "value": "intransitive"
+                },
+                {
+                  "embedding_text": "na",
+                  "family": "companion",
+                  "kind": "required_word",
+                  "value": "na"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "es": [
+    {
+      "word": "de",
+      "id": "2ab466ba",
+      "rank": 2,
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Mis padres vienen de Nicaragua.",
+            "translation": "My parents are from Nicaragua."
+          },
+          "context": "used to indicate origin",
+          "frequency": "0.162500",
+          "headword": "de",
+          "pos": "ADP",
+          "sense_id": "sense_72c2130fecc0eda476d845838c624fae",
+          "translation": "from",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to indicate origin",
+                  "family": "functional",
+                  "kind": "semantic_relation",
+                  "value": "origin"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Esta mesa está hecha de plástico.",
+            "translation": "This table is made of plastic."
+          },
+          "context": "used to indicate material",
+          "frequency": "0.100000",
+          "headword": "de",
+          "pos": "ADP",
+          "sense_id": "sense_4c37809e077335e2456aec32c1c1fda2",
+          "translation": "of",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to indicate material",
+                  "family": "functional",
+                  "kind": "semantic_relation",
+                  "value": "material"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "La comida era de gran calidad.",
+            "translation": "The food was of great quality."
+          },
+          "context": "used to indicate characteristics",
+          "frequency": "0.050000",
+          "headword": "de",
+          "pos": "ADP",
+          "sense_id": "sense_ecaab81d1056404e734f976f24f18b19",
+          "translation": "of",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to indicate characteristics",
+                  "family": "functional",
+                  "kind": "semantic_relation",
+                  "value": "characteristic"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Andrés siempre llevaba una bolsa de canicas.",
+            "translation": "Andres always carried around a bag of marbles."
+          },
+          "context": "used to indicate content",
+          "frequency": "0.025000",
+          "headword": "de",
+          "pos": "ADP",
+          "sense_id": "sense_c6cb9d4fb07ebad80dd617d5a7ab5a21",
+          "translation": "of",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to indicate content",
+                  "family": "functional",
+                  "kind": "semantic_relation",
+                  "value": "content"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Es mejor trabajar de mañana.",
+            "translation": "It is better to work in the morning."
+          },
+          "context": "used to indicate time",
+          "frequency": "0.025000",
+          "headword": "de",
+          "pos": "ADP",
+          "sense_id": "sense_f78fc0d8a5276e3c5e0d052e22972c83",
+          "translation": "in",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to indicate time",
+                  "family": "functional",
+                  "kind": "temporal_relation",
+                  "value": "time"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Me sorprendí llorando de pena al pensar en él.",
+            "translation": "I caught myself crying with sorrow when I thought of him."
+          },
+          "context": "used to express cause",
+          "frequency": "0.012500",
+          "headword": "de",
+          "pos": "ADP",
+          "sense_id": "sense_2280041c5f5be2b0d1d96c15a37c5328",
+          "translation": "with",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to express cause",
+                  "family": "functional",
+                  "kind": "semantic_relation",
+                  "value": "cause"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "word": "en",
+      "id": "436ffeb5",
+      "rank": 9,
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Hay comida ya preparada en el supermercado.",
+            "translation": "There's ready-made food in the supermarket."
+          },
+          "context": "indicating place",
+          "frequency": "0.225000",
+          "headword": "en",
+          "pos": "ADP",
+          "sense_id": "sense_e8ce20a4c9632ac031b373340af5bcbc",
+          "translation": "in",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "indicating place",
+                  "family": "functional",
+                  "kind": "semantic_relation",
+                  "value": "location"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Puedes poner los cubiertos en la mesa.",
+            "translation": "You can put the silverware on the table."
+          },
+          "context": "indicating place",
+          "frequency": "0.025000",
+          "headword": "en",
+          "pos": "ADP",
+          "sense_id": "sense_3f6f546b842d6b81fa81bd5a148675d8",
+          "translation": "on",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "indicating place",
+                  "family": "functional",
+                  "kind": "semantic_relation",
+                  "value": "location"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Los niños están en la escuela.",
+            "translation": "The kids are at school."
+          },
+          "context": "indicating place",
+          "frequency": "0.075000",
+          "headword": "en",
+          "pos": "ADP",
+          "sense_id": "sense_d7ef341b086cea30af21ab7709cabf16",
+          "translation": "at",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "indicating place",
+                  "family": "functional",
+                  "kind": "semantic_relation",
+                  "value": "location"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "En 1969 aterrizamos en la luna.",
+            "translation": "In 1969, we landed on the moon."
+          },
+          "context": "indicating time",
+          "frequency": "0.037500",
+          "headword": "en",
+          "pos": "ADP",
+          "sense_id": "sense_b71cbe08b99f9e1c5c7377975538ccf8",
+          "translation": "in",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "indicating time",
+                  "family": "functional",
+                  "kind": "temporal_relation",
+                  "value": "time"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Si un oso te persigue, corre en zigzag.",
+            "translation": "If a bear is chasing you, run in a zig-zag formation."
+          },
+          "context": "indicating mode",
+          "frequency": "0.012500",
+          "headword": "en",
+          "pos": "ADP",
+          "sense_id": "sense_0ae9948c2732a5049066a6dd8fc50196",
+          "translation": "in",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "indicating mode",
+                  "family": "functional",
+                  "kind": "semantic_relation",
+                  "value": "manner"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "word": "su",
+      "id": "e395c90e",
+      "rank": 30,
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "¿Hiciste su tarea por él?",
+            "translation": "Did you do his homework for him?"
+          },
+          "context": "possessive; third person",
+          "frequency": "0.250000",
+          "headword": "su",
+          "pos": "ADJ",
+          "sense_id": "sense_36d0815b7c42c52216bb091ae4abfdbc",
+          "translation": "his",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "possessive",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "possessive=true"
+                },
+                {
+                  "embedding_text": "third person",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "person=3"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "¿Sabes dónde está el cargador de su teléfono?",
+            "translation": "Do you know where the charger is for her phone?"
+          },
+          "context": "possessive; third person",
+          "frequency": "0.062500",
+          "headword": "su",
+          "pos": "ADJ",
+          "sense_id": "sense_4b3c351e1efb13374bc037a7c7ff78e5",
+          "translation": "her",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "possessive",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "possessive=true"
+                },
+                {
+                  "embedding_text": "third person",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "person=3"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Esta es su perrera.",
+            "translation": "This is its doghouse."
+          },
+          "context": "possessive; third person",
+          "frequency": "0.025000",
+          "headword": "su",
+          "pos": "ADJ",
+          "sense_id": "sense_9a63a1c45a7bda6d2d82dcc548e8d914",
+          "translation": "its",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "possessive",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "possessive=true"
+                },
+                {
+                  "embedding_text": "third person",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "person=3"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Esa es su cena. No la comas.",
+            "translation": "That is their dinner. Don't eat it."
+          },
+          "context": "possessive; third person",
+          "frequency": "0.025000",
+          "headword": "su",
+          "pos": "ADJ",
+          "sense_id": "sense_1095bfefad3418202d68675a46b6b1e0",
+          "translation": "their",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "possessive",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "possessive=true"
+                },
+                {
+                  "embedding_text": "third person",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "person=3"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "¿A qué hora vendrá a recogerlos su mamá?",
+            "translation": "What time is your mom picking you up?"
+          },
+          "context": "possessive; second person plural",
+          "frequency": "0.012500",
+          "headword": "su",
+          "pos": "ADJ",
+          "sense_id": "sense_f1f5beade1c6d71a06b59bd5fc2a3b85",
+          "translation": "your",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "possessive",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "possessive=true"
+                },
+                {
+                  "embedding_text": "second person plural",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "person=2"
+                },
+                {
+                  "embedding_text": "second person plural",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "number=plural"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "word": "estoy",
+      "id": "6d3b7102",
+      "rank": 46,
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Este pastel de chocolate está delicioso.",
+            "translation": "This chocolate cake is delicious."
+          },
+          "context": "used to express a quality",
+          "frequency": "0.162500",
+          "headword": "estar",
+          "pos": "VERB",
+          "sense_id": "sense_293ab59265d32712e67be36daae9f0c0",
+          "translation": "to be",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to express a quality",
+                  "family": "functional",
+                  "kind": "semantic_relation",
+                  "value": "quality"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Estoy enojada porque me acaban de dar una multa de estacionamiento.",
+            "translation": "I am angry because I just got a parking ticket."
+          },
+          "context": "used to express an emotion or state",
+          "frequency": "0.075000",
+          "headword": "estar",
+          "pos": "VERB",
+          "sense_id": "sense_d809c89cbe045f93f9b8441b0e045aab",
+          "translation": "to be",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to express an emotion or state",
+                  "family": "functional",
+                  "kind": "semantic_scope",
+                  "value": "emotion or state"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "La casa está delante de la iglesia.",
+            "translation": "The house is in front of the church."
+          },
+          "context": "to be located",
+          "frequency": "0.012500",
+          "headword": "estar",
+          "pos": "VERB",
+          "sense_id": "sense_a355401d7b162b1d8d985f3c76ceafa1",
+          "translation": "to be",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "No está en casa.",
+            "translation": "He's not home."
+          },
+          "context": "to be present",
+          "frequency": "0.025000",
+          "headword": "estar",
+          "pos": "VERB",
+          "sense_id": "sense_ff637756d9a23a5426f2b5f4a0b74b3d",
+          "translation": "to be",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "¡Estás genial con las gafas nuevas!",
+            "translation": "You look great with your new glasses!"
+          },
+          "context": "to appear",
+          "frequency": "0.012500",
+          "headword": "estar",
+          "pos": "VERB",
+          "sense_id": "sense_513acfaf039f371410fd9acaf3b2cda1",
+          "translation": "to look",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "La comida ya está. ¡Comamos!",
+            "translation": "The food is ready. Let's eat!"
+          },
+          "context": "to be done",
+          "frequency": "0.037500",
+          "headword": "estar",
+          "pos": "VERB",
+          "sense_id": "sense_45ffd655a8bdab07043817caf3a145b9",
+          "translation": "to be ready",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Los estudiantes están por un aumento en ayuda financiera de parte de la universidad.",
+            "translation": "The students are in favor of the university providing more financial aid."
+          },
+          "context": "to support; used with \"por\"",
+          "frequency": "0.012500",
+          "headword": "estar",
+          "pos": "VERB",
+          "sense_id": "sense_2353004feb5608f8d1dbce148d8a4fbb",
+          "translation": "to be in favor of",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used with \"por\"",
+                  "family": "companion",
+                  "kind": "required_word",
+                  "value": "por"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Estoy con Ana Sofía; no quiero escuchar más peleas entre ustedes.",
+            "translation": "I agree with Ana Sofía. I don't want to hear anymore fighting between the two of you."
+          },
+          "context": "to be in agreement; used with \"con\"",
+          "frequency": "0.012500",
+          "headword": "estar",
+          "pos": "VERB",
+          "sense_id": "sense_7ba04714035283f751ae635ba91c657f",
+          "translation": "to agree with",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used with \"con\"",
+                  "family": "companion",
+                  "kind": "required_word",
+                  "value": "con"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Está limpiando la casa.",
+            "translation": "He's cleaning the house."
+          },
+          "context": "used with a gerund",
+          "frequency": "0.025000",
+          "headword": "estar",
+          "pos": "VERB",
+          "sense_id": "sense_349a0d14b89d3376c2b66c6d99a7da9d",
+          "translation": "to be",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used with a gerund",
+                  "family": "construction",
+                  "kind": "complement_form",
+                  "value": "gerund"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "word": "padre",
+      "id": "b4407146",
+      "rank": 149,
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Mi padre y mi madre nacieron ambos en 1960.",
+            "translation": "My father and my mother were both born in 1960."
+          },
+          "context": "relative",
+          "frequency": "0.362500",
+          "headword": "padre",
+          "pos": "NOUN",
+          "sense_id": "sense_8c2cc77d7218892971fdb6f1f251c297",
+          "translation": "father",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Busco al padre Guillermo para confesarme.",
+            "translation": "I'm looking for father William so that I can confess."
+          },
+          "context": "religious",
+          "frequency": "0.012500",
+          "headword": "padre",
+          "pos": "NOUN",
+          "sense_id": "sense_334c3d4b717cb34f9af37c5082175b01",
+          "translation": "father",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "religious",
+                  "family": "domain",
+                  "kind": "domain_label",
+                  "value": "religion"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "word": "ven",
+      "id": "7c4a0ff2",
+      "rank": 221,
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Ven aquí, que te quiero enseñar una cosa.",
+            "translation": "Come here. I want to show you something."
+          },
+          "context": "imperative; second person singular",
+          "frequency": "0.112500",
+          "headword": "ven",
+          "pos": "PHRASE",
+          "sense_id": "sense_d7a3042910b479a663ac1da102265fd2",
+          "translation": "come",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "imperative",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "mood=imperative"
+                },
+                {
+                  "embedding_text": "second person singular",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "person=2"
+                },
+                {
+                  "embedding_text": "second person singular",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "number=singular"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "¿Quieres ver mi carro nuevo?",
+            "translation": "Do you want to see my new car?"
+          },
+          "context": "to perceive with the eyes",
+          "frequency": "0.062500",
+          "headword": "ver",
+          "pos": "VERB",
+          "sense_id": "sense_255871f40ce07eb0a351ffc1be8fb9da",
+          "translation": "to see",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "¿Tú ves la diferencia entre esta camisa y la azul?",
+            "translation": "Do you see the difference between this shirt and the blue one?"
+          },
+          "context": "to notice",
+          "frequency": "0.012500",
+          "headword": "ver",
+          "pos": "VERB",
+          "sense_id": "sense_a8510cd16ef9be2074c2640aec20998e",
+          "translation": "to see",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Voy a ver al doctor esta tarde.",
+            "translation": "I'm going to see the doctor this afternoon."
+          },
+          "context": "to meet",
+          "frequency": "0.012500",
+          "headword": "ver",
+          "pos": "VERB",
+          "sense_id": "sense_a6ec8f4b51e4b9cf25866a8a4ff7858d",
+          "translation": "to see",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Me quiero ver en el espejo a ver cómo me queda el corte de pelo.",
+            "translation": "I want to see myself in the mirror to see how my haircut looks."
+          },
+          "context": "to view oneself",
+          "frequency": "0.012500",
+          "headword": "verse",
+          "pos": "VERB",
+          "sense_id": "sense_82f9b99acfa671bf73bc7f3a00f28d0a",
+          "translation": "to see oneself",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "¿Te hiciste algo? ¡Te ves fantástica!",
+            "translation": "Is there something different about you? You look fantastic!"
+          },
+          "context": "to seem",
+          "frequency": "0.012500",
+          "headword": "verse",
+          "pos": "VERB",
+          "sense_id": "sense_49dc980e80b229a4021e344edd784a5e",
+          "translation": "to look",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "El tren viene de Andalucía.",
+            "translation": "The train comes from Andalusia."
+          },
+          "context": "to move from one place to another",
+          "frequency": "0.012500",
+          "headword": "venir",
+          "pos": "VERB",
+          "sense_id": "sense_f48c15331b03c7c5901c66b9d7ccad4c",
+          "translation": "to come",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Esta comida viene ya hecha.",
+            "translation": "This food comes pre-made."
+          },
+          "context": "to be available",
+          "frequency": "0.062500",
+          "headword": "venir",
+          "pos": "VERB",
+          "sense_id": "sense_e358100bbabb1c82b2aec473d11da793",
+          "translation": "to come",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
