@@ -27,7 +27,7 @@ need code, so they come last.
 | 5 | The "jump to my level" bug | ✅ done 2026-09-21 | — |
 | 6 | Example ordering | ✅ done | — |
 | 7 | Merged-lemma policy | research | yes, throughout |
-| 8 | Modals using the sides | needs a modal inventory first | yes |
+| 8 | Modals using the sides | ✅ done | — |
 | 9 | Walkthrough / tutorial / about | ✅ done 2026-09-21 | — |
 | 10 | URLs and routing | blocked on one decision | yes |
 | 11 | Function words you cannot teach atomically | research, high stakes | yes |
@@ -326,15 +326,62 @@ what it counts.
 
 ---
 
-## 8. Modals using the left and right sides
+## 8. Modals using the left and right sides — ✅ done (2026-09-21)
 
-Desktop slides some in-set modals in from the sides; Joshua wants that far more
-widely — synonyms, and pop-ups on the main page too, not just inside an active
-set. Needs an enumerated modal inventory (`app/js/flashcards-modals.js` plus
-the `.modal` ids in `app/index.html`) and an agreed split before converting
-anything.
+**The rule.** A sheet you read while still looking at what is behind it docks
+to a side; a task that takes your attention stays centred. Everything below
+follows from that one sentence — apply it to any new modal rather than
+re-deciding.
 
----
+**Study session, ≥1360px.** The card is 540px, centred, leaving a 450px
+gutter either side. Sheets are `min(360px, (100vw − 540px)/2 − 48px)` wide,
+24px from the edge, 66px clear of the card at 1440. Each side has a meaning:
+
+| side | about | sheets |
+|---|---|---|
+| right | this card | `findWord`, `lyricBreakdown`, `knowledgeOverview` (already docked), **synonyms** (new) |
+| left | the session | `savedWords`, `stats`, `keyboardShortcuts`, `help` |
+
+**Setup page, ≥1024px.** No card to keep in view, and the 1140px container
+leaves only ~110px gutters at 1360, so reference sheets open as one
+right-hand sheet (`min(440px, 40vw)`) over the progress sidebar, behind a light
+dim: `mergedForms`, `skippedWords`, `extras`, `savedWords`, `cognateRules`,
+`stats`, `totalStats`, `help`, `keyboardShortcuts`.
+
+**Stay centred, deliberately:** `auth`, `learningContext`, `settings`,
+`deckComplete`, `songSet`, `spotifyPlaylist`, `vocabularyImport`,
+`extraScope`, `estimation`, `frequencyIntro`, `fastMode` (a settings page,
+and Fast Track belongs to another chat), and the walkthrough trio
+`aboutProject` / `aboutExample` / `tutorialIntro` (item 9 owns those).
+
+**Synonyms needed JavaScript, not just CSS.** Inside the card it is clipped by
+`.card-face` and the flip transform makes even `position: fixed` resolve
+against the card. `toggleSynonymsPanel` now hosts it on `<body>` at ≥1360px,
+exactly as `hostConjPanelFullScreen` does for conjugation. Two consequences:
+
+- **It closes when the card flips to the front** (`flipCard`). Inside the card
+  it turned away with the back face; on `<body>` it would stay, and its
+  headword gives the answer away in English→target mode.
+- **A card change removes it**, next to the existing conjugation cleanup in
+  the `backContent` swap, so the old card's panel never survives.
+
+The slide-in commits its start state with `void panel.offsetWidth`, not
+`requestAnimationFrame`: a backgrounded tab defers frames indefinitely, which
+left the panel hosted on `<body>` but never shown. Found by testing, not
+reasoning.
+
+**Synonyms exist only in the lyrics decks.** v15 speech rows carry none (0 of
+800 sampled), so on Spanish speech the synonyms button never appears. Testing
+used a real entry from `Artists/es/young-miko/index.json`.
+
+**Testing note for the next chat.** The browser pane is narrower than a
+1360px viewport and cannot crop-zoom. `document.documentElement.style.zoom`
+distorts fixed-position geometry — do not trust measurements taken under it.
+Shifting with `transform: translateX(-Npx)` on `<html>` renders the right side
+truthfully. When the pane is backgrounded (`document.hidden === true`) CSS
+animations and `requestAnimationFrame` freeze, so a slide-in reads as −28px
+off its resting place and desktop card navigation (which waits on
+`animationend`) never advances.
 
 ## 9. Walkthrough / tutorial / about — ✅ DONE 2026-09-21
 
