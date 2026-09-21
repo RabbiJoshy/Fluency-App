@@ -14223,6 +14223,108 @@
             margin: 0 0 12px;
         }
 
+        /* Split layout (layoutAboutTwoModes): both cards side by side, one
+           caption under them, both texts below. On a phone, one column in
+           reading order: card, caption, text, card, text. */
+        .about-modes-row.is-split {
+            row-gap: 18px;
+        }
+
+        .about-modes-row.is-split .about-modes-body {
+            margin-top: 6px;
+        }
+
+        .about-demo-caption {
+            margin: 0;
+            text-align: center;
+        }
+
+        @media (min-width: 900px) {
+            .about-modes-row.is-split .about-demo-caption {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media (max-width: 899px) {
+            .about-modes-row.is-split .about-modes-head.about-modes-speech { order: 1; }
+            .about-modes-row.is-split .about-demo-caption { order: 2; }
+            .about-modes-row.is-split .about-modes-body.about-modes-speech { order: 3; }
+            .about-modes-row.is-split .about-modes-head.about-modes-lyrics { order: 4; }
+            .about-modes-row.is-split .about-modes-body.about-modes-lyrics { order: 5; }
+        }
+
+        .about-demo-caption-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 18px 10px 10px;
+            background: linear-gradient(135deg,
+                color-mix(in srgb, var(--accent-primary) 16%, var(--bg-card)),
+                var(--bg-card));
+            border: 1px solid color-mix(in srgb, var(--accent-primary) 40%, var(--border-color));
+            border-radius: 999px;
+            color: var(--text-primary);
+            font: 700 15px/1.2 var(--font-emphasis);
+            cursor: pointer;
+            transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .about-demo-caption-btn:hover,
+        .about-demo-caption-btn:focus-visible {
+            transform: translateY(-1px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+        }
+
+        /* The demo cards are the way into the walkthrough: they lift on hover
+           and show where a click goes. */
+        .about-demo-card.is-walkthrough-link {
+            position: relative;
+            cursor: pointer;
+            border-radius: 18px;
+            transition: transform 0.2s ease;
+        }
+
+        .about-demo-card.is-walkthrough-link:hover,
+        .about-demo-card.is-walkthrough-link:focus-visible {
+            transform: translateY(-3px);
+        }
+
+        .about-demo-card.is-walkthrough-link:focus-visible {
+            outline: 2px solid var(--accent-primary);
+            outline-offset: 4px;
+        }
+
+        .about-demo-explain-chip {
+            position: absolute;
+            left: 50%;
+            bottom: 14px;
+            transform: translate(-50%, 6px);
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: var(--accent-primary);
+            color: var(--accent-primary-text, #10141b);
+            font: 700 12.5px/1 var(--font-emphasis);
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 5;
+        }
+
+        .about-demo-card.is-walkthrough-link:hover .about-demo-explain-chip,
+        .about-demo-card.is-walkthrough-link:focus-visible .about-demo-explain-chip {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .about-demo-card.is-walkthrough-link,
+            .about-demo-explain-chip {
+                transition: none;
+            }
+        }
+
         /* User Display */
         .user-info {
             position: fixed;

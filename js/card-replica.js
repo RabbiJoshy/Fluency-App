@@ -181,6 +181,30 @@ export const REPLICA_CARDS = {
             },
         ],
     },
+    // The visitor-facing Speech card (About and the walkthrough). Chosen so a
+    // glance shows what disambiguation is for: two meanings nobody could
+    // confuse, and every example visibly right. Read out of the live v15 deck
+    // (es-speech-v15-10000x10): rank 1,057, 84 per million, 26 of 30 assigned
+    // sentences are the bank and 4 the bench. `que` stays for the tutorial,
+    // but its WSD is too tangled to show off at a glance.
+    bancoSpeech: {
+        mode: 'speech', word: 'banco', pos: 'NOUN', lemma: 'banco', rank: 1057, vocabSize: 10000, corpusCount: 84,
+        defaultMeaningIndex: 1,
+        meanings: [
+            {
+                pos: 'NOUN', translation: 'bench', context: 'seat', pct: 13,
+                examples: [{ target: 'Él y su amigo se sentaron en el banco.', english: 'He and his friend sat on the bench.', sourceLabel: 'Tatoeba example' }],
+            },
+            {
+                pos: 'NOUN', translation: 'bank', context: 'finance', pct: 87,
+                examples: [
+                    { target: '¿En serio quieres poner tu dinero en ese banco?', english: 'Do you really want to put your money in that bank?', sourceLabel: 'Tatoeba example' },
+                    { target: 'Es decir, un banco como este debería ser más seguro.', english: 'That is, a bank like this should be safer.', sourceLabel: 'Speech example' },
+                    { target: 'Mi hermana trabaja en un banco como secretaria.', english: 'My sister works in a bank as a secretary.', sourceLabel: 'Tatoeba example' },
+                ],
+            },
+        ],
+    },
     queSpeech: {
         mode: 'speech', word: 'que', pos: 'CCONJ', lemma: 'que', rank: 1, vocabSize: 6000, corpusCount: 33170,
         meanings: [

@@ -23,7 +23,7 @@
 import {
     REPLICA_CARDS, esc, renderBack, replicaCardHTML, wireReplicaBack,
     measureReplicaCard, fitReplicaCard,
-} from './card-replica.js?v=20260921ab';
+} from './card-replica.js?v=20260921ac';
 
 // ---------------------------------------------------------------------------
 // Content
@@ -47,7 +47,7 @@ const FRONT_LABELS = [
 
 const BACK_LABELS = [
     { face: 'back', anchor: '.pos-section-head', title: 'Every meaning, separated',
-      text: 'One word, three jobs: that, than and which.' },
+      text: 'One word, two unrelated meanings: a bank and a bench.' },
     { face: 'back', anchor: '.meaning-row.is-current-sense .sense-prominence-badge', title: 'How often each is used',
       text: 'Estimated from the real sentences behind the deck.' },
     { face: 'back', anchor: '.example-word-highlight', title: 'A real sentence for it',
@@ -83,8 +83,8 @@ function buildScreens(pair) {
             lead: 'The front asks you to recall a word. The back shows everything it can mean, '
                 + 'how often each meaning comes up, and a real sentence for it.',
             cards: [
-                { key: 'queSpeech', face: 'front', labels: FRONT_LABELS.map(l => ({ ...l, side: 'left' })) },
-                { key: 'queSpeech', face: 'back', labels: BACK_LABELS.map(l => ({ ...l, side: 'right' })) },
+                { key: 'bancoSpeech', face: 'front', labels: FRONT_LABELS.map(l => ({ ...l, side: 'left' })) },
+                { key: 'bancoSpeech', face: 'back', labels: BACK_LABELS.map(l => ({ ...l, side: 'right' })) },
             ],
         }, lyrics];
     }
@@ -92,12 +92,12 @@ function buildScreens(pair) {
         id: 'front',
         title: 'The front of a card',
         lead: 'A word to recall, ranked by how often it is actually said.',
-        cards: [{ key: 'queSpeech', face: 'front', labels: FRONT_LABELS }],
+        cards: [{ key: 'bancoSpeech', face: 'front', labels: FRONT_LABELS }],
     }, {
         id: 'back',
         title: 'The back of a card',
         lead: 'Every meaning, how often each is used, and a real sentence for the one you pick.',
-        cards: [{ key: 'queSpeech', face: 'back', labels: BACK_LABELS }],
+        cards: [{ key: 'bancoSpeech', face: 'back', labels: BACK_LABELS }],
     }, lyrics];
 }
 
@@ -486,13 +486,15 @@ function relayout() {
 // Open / close
 // ---------------------------------------------------------------------------
 
-function openWalkthrough() {
+// `start` names a screen ('lyrics'), so a tap on About's Lyrics demo card
+// lands on the Lyrics card rather than making the reader step past Speech.
+function openWalkthrough({ start = null } = {}) {
     const modal = document.getElementById('walkthroughModal');
     if (!modal) return;
     modal.classList.remove('hidden');
     state.pair = fitsPair();
     state.screens = buildScreens(state.pair);
-    state.index = 0;
+    state.index = Math.max(0, state.screens.findIndex(screen => screen.id === start));
     renderScreen();
     document.getElementById('walkthroughNext')?.focus({ preventScroll: true });
     if (!_resizeHandler) {

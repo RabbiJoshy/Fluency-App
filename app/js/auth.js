@@ -1,7 +1,7 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
 import './state.js?v=20260825ak';
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=20260921ab';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=20260921ac';
 import { applyRemoteFastTrack } from './fast-track-preferences.js?v=20260920a';
 import { dbGet, dbPut } from './offline-db.js?v=20260825ak';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
@@ -1324,8 +1324,8 @@ function hideAboutProjectModal() {
 // async loop that exits when its container leaves the DOM (modal closes).
 
 // The demo cards are the walkthrough's own cards (card-replica.js), so the
-// loop above a paragraph and the annotated walkthrough behind the button show
-// the same `que` and the same `cielo`. They used to carry their own data,
+// loop a reader glances at and the annotated walkthrough behind it show the
+// same `banco` and the same `cielo`. They used to carry their own data,
 // which had drifted: `fuego` with a "light" line that does not show that
 // meaning, and hand-written "≈50%" shares the live card no longer prints.
 // Only the first example per meaning is used; the loop is a glance.
@@ -1350,7 +1350,7 @@ function _aboutDemoEntry(key) {
 }
 
 const _ABOUT_DEMO_DECKS = {
-    normal: ['queSpeech'],
+    normal: ['bancoSpeech'],
     artist: ['cielo'],
 };
 
@@ -1596,6 +1596,29 @@ function mountAboutDemos(root) {
         const inner = _buildAboutDemoCard(mode);
         el.appendChild(inner);
 
+        // The loop is the trailer; the walkthrough is the film. A tap on
+        // either card opens the walkthrough on that same card, annotated —
+        // one thing to click rather than a card and a separate button.
+        const start = mode === 'artist' ? 'lyrics' : null;
+        const openExplained = () => window.openWalkthrough?.({ start });
+        el.classList.add('is-walkthrough-link');
+        el.setAttribute('role', 'button');
+        el.setAttribute('tabindex', '0');
+        el.setAttribute('aria-label', mode === 'artist'
+            ? 'See this Lyrics card with every part explained'
+            : 'See this card with every part explained');
+        el.insertAdjacentHTML('beforeend',
+            '<span class="about-demo-explain-chip" aria-hidden="true">See it explained →</span>');
+        el.addEventListener('click', event => {
+            if (event.target.closest('.about-demo-footnote-ref')) return;
+            openExplained();
+        });
+        el.addEventListener('keydown', event => {
+            if (event.target !== el || (event.key !== 'Enter' && event.key !== ' ')) return;
+            event.preventDefault();
+            openExplained();
+        });
+
         // Wire the ¹ superscript next to the Spotify logo so clicking (or
         // pressing Enter on) it scrolls to the matching footnote. The modal
         // body owns its own scroll, so href="#..." anchors don't work — do
@@ -1648,15 +1671,37 @@ function layoutAboutTwoModes(root) {
     };
     const sections = [collectSection(normal), collectSection(lyrics)];
 
+    // Each mode splits into its card (heading + demo) and its text, so the
+    // grid can put both cards side by side with one caption directly under
+    // them, and the two texts below. On a phone the CSS interleaves them
+    // again: card, caption, text, card, text.
+    const holdsDemo = el => el.matches('.about-demo-card') || el.querySelector('.about-demo-card');
     const row = document.createElement('div');
-    row.className = 'about-modes-row';
-    for (const section of sections) {
-        const col = document.createElement('div');
-        col.className = 'about-modes-column';
-        for (const child of section) col.appendChild(child);
-        row.appendChild(col);
-    }
+    row.className = 'about-modes-row is-split';
+    const heads = [];
+    const bodies = [];
+    sections.forEach((section, i) => {
+        const head = document.createElement('div');
+        head.className = `about-modes-column about-modes-head about-modes-${i ? 'lyrics' : 'speech'}`;
+        const body = document.createElement('div');
+        body.className = `about-modes-column about-modes-body about-modes-${i ? 'lyrics' : 'speech'}`;
+        section.forEach(child => {
+            (child.tagName === 'H3' || holdsDemo(child) ? head : body).appendChild(child);
+        });
+        heads.push(head);
+        bodies.push(body);
+    });
 
+    // Say what a tap does. Touch has no hover, so the cards' own "See it
+    // explained" chip cannot be the only hint.
+    const caption = document.createElement('p');
+    caption.className = 'about-demo-caption';
+    caption.innerHTML = '<button type="button" class="about-demo-caption-btn">'
+        + '<span class="about-see-example-icon" aria-hidden="true">▶</span>'
+        + '<span>Tap a card to see every part of it explained</span></button>';
+    caption.querySelector('button').addEventListener('click', () => window.openWalkthrough?.());
+
+    row.append(...heads, caption, ...bodies);
     anchor.parentNode.replaceChild(row, anchor);
 }
 
