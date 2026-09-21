@@ -1,3 +1,6 @@
+// First: rewrites old ?artist=/?about= links to their #/ route before
+// anything below reads the address.
+import { goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=20260921a';
 import './theme.js?v=20260825ak';
 import './state.js?v=20260920a';
 import './offline-db.js?v=20260825ak';
@@ -5,7 +8,7 @@ import './sync-queue.js?v=20260825ak';
 import { initOfflineContent } from './offline-content.js?v=20260825ak';
 import './speech.js?v=20260914b';
 import './artist-ui.js?v=20260825ak';
-import './auth.js?v=20260921ac';
+import './auth.js?v=20260921rt';
 import './tutorial.js?v=20260921ac';
 import './walkthrough.js?v=20260921ac';
 import './estimation.js?v=20260825ak';
@@ -13,14 +16,14 @@ import './config.js?v=20260919c';
 import './progress.js?v=20260920e';
 import './knowledge.js?v=20260920a';
 import './ui.js?v=20260921sd';
-import './vocab.js?v=20260920f';
+import './vocab.js?v=20260921rt';
 import './cognates.js?v=20260914e';
 import './coverage.js?v=20260909a';
 import './fast-mode.js?v=20260920a';
 import './extras.js?v=20260921sd';
 import './song-sets.js?v=20260823ae';
-import './playlist-live.js?v=20260919a';
-import './spotify-playlist-import.js?v=20260919a';
+import './playlist-live.js?v=20260921rt';
+import './spotify-playlist-import.js?v=20260921rt';
 import './vocabulary-import.js?v=20260920a';
 import './flashcards.js?v=20260921sd';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
@@ -77,8 +80,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // immediately for an artist URL so it races setup/data loading, but keep it
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
-const _initialParams = new URLSearchParams(window.location.search);
-const _spotifyModulePromise = (_initialParams.has('artist') || _initialParams.get('mode') === 'badbunny')
+const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
     ? import('./spotify.js?v=20260918l').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
@@ -255,15 +257,27 @@ function updateArtistExtraUnlock(coveragePct) {
 window.isArtistExtraUnlocked = isArtistExtraUnlocked;
 window.updateArtistExtraUnlock = updateArtistExtraUnlock;
 
-// Resolve artist from URL params: ?artist=bad-bunny or ?mode=badbunny (legacy alias)
-async function resolveArtist() {
-    const params = new URLSearchParams(window.location.search);
-    let artistSlug = params.get('artist');
+// A route names a language by routeCode (`es`) or config key (`spanish`).
+// Artist resolution runs before loadConfig(), so read the language table on
+// its own here; only #/es/songs needs it.
+let _routeLanguagesPromise = null;
+async function routeLanguageKey(token) {
+    if (!token) return null;
+    _routeLanguagesPromise ||= fetch('config/config.json?v=20260827a', { cache: 'no-store' })
+        .then(response => response.ok ? response.json() : {})
+        .then(json => json.languages || {})
+        .catch(() => ({}));
+    return languageKeyFor(token, await _routeLanguagesPromise);
+}
 
-    // Legacy alias: ?mode=badbunny → ?artist=bad-bunny (keep for PWA home screen installs)
-    if (!artistSlug && params.get('mode') === 'badbunny') {
-        artistSlug = 'bad-bunny';
-    }
+// Resolve artist from the route: #/artist/bad-bunny, or #/es/songs for the
+// learner's own songs. Old ?artist= and ?mode=badbunny links (home-screen
+// installs) were rewritten to these by routes.js.
+async function resolveArtist() {
+    const route = window.fluencyRoute || { kind: 'home' };
+    const artistSlug = route.kind === 'artist' ? route.artist
+        : route.kind === 'songs' ? CUSTOM_ARTIST_SLUG
+        : null;
 
     if (!artistSlug) return; // normal mode
 
@@ -291,7 +305,7 @@ async function resolveArtist() {
 
         let artistConfig = allArtistsConfig[artistSlug];
         if (artistSlug === CUSTOM_ARTIST_SLUG) {
-            const customLanguage = params.get('language') || 'spanish';
+            const customLanguage = await routeLanguageKey(route.language) || 'spanish';
             const customSources = Object.entries(allArtistsConfig)
                 .filter(([, cfg]) => (cfg.language || 'spanish') === customLanguage
                     && cfg.songsPath && (cfg.indexPath || cfg.dataPath))
@@ -321,14 +335,12 @@ async function resolveArtist() {
             window.activeArtist = artistConfig;
             // Store the URL artist slug — this is the immutable primary artist
             window._urlArtistSlug = artistSlug;
-            const requestedExtra = params.get('scope') === 'extra';
+            const requestedExtra = route.scope === 'extra';
             artistVocabularyScope = requestedExtra && isArtistExtraUnlocked(artistSlug)
                 ? 'extra'
                 : 'main';
             if (requestedExtra && artistVocabularyScope === 'main') {
-                const url = new URL(window.location.href);
-                url.searchParams.delete('scope');
-                history.replaceState(null, '', url);
+                replaceRoute({ ...route, scope: 'main' });
             }
 
             // Custom Lyrics loads every real source, then the song selector
@@ -378,19 +390,36 @@ loadConfig().then(async () => {
     const firstLang = Object.keys(config.languages).find(lang => config.languages[lang].hasData !== false) || Object.keys(config.languages)[0];
     let preferredLanguage = null;
     try { preferredLanguage = localStorage.getItem('fluencyPreferredLanguageV1'); } catch (_) {}
+    // A language or word link names the language outright and becomes the
+    // saved preference, as choosing it on the picker would.
+    const bootRoute = window.fluencyRoute || { kind: 'home' };
+    const routeLanguage = ['language', 'word', 'live'].includes(bootRoute.kind)
+        ? languageKeyFor(bootRoute.language, config.languages)
+        : null;
+    if (routeLanguage && config.languages[routeLanguage].hasData !== false) {
+        preferredLanguage = routeLanguage;
+        try { localStorage.setItem('fluencyPreferredLanguageV1', routeLanguage); } catch (_) {}
+    }
+    // Canonical spelling in the address bar: #/spanish/songs becomes #/es/songs.
+    const namedLanguage = bootRoute.language && languageKeyFor(bootRoute.language, config.languages);
+    if (namedLanguage) {
+        replaceRoute({ ...bootRoute, language: routeCodeFor(namedLanguage, config.languages) });
+    }
+    const wordRoute = bootRoute.kind === 'word' && routeLanguage ? bootRoute : null;
     const preferredIsReady = preferredLanguage
         && config.languages[preferredLanguage]
         && config.languages[preferredLanguage].hasData !== false;
     selectedLanguage = preferredIsReady ? preferredLanguage : firstLang;
     await loadSecrets();
-    const playlistLiveLanguage = new URLSearchParams(window.location.search).get('language');
-    if (new URLSearchParams(window.location.search).get('playlistLive') === '1') {
-        if (playlistLiveLanguage && config.languages[playlistLiveLanguage]) {
-            selectedLanguage = playlistLiveLanguage;
-        }
+    // #/es/live reopens this learner's live playlist deck. Someone with no deck
+    // yet lands on the language with the music-source sheet open instead.
+    let liveRouteNeedsImport = false;
+    if (bootRoute.kind === 'live' && routeLanguage) {
         await window.preparePlaylistLiveSession?.(selectedLanguage);
         if (window.playlistLiveActive?.()) {
             document.body.classList.add('playlist-live-mode');
+        } else {
+            liveRouteNeedsImport = true;
         }
     }
     // Exact Speech resumes bypass the language/source chooser, so restore the
@@ -399,7 +428,7 @@ loadConfig().then(async () => {
     // selected, allowing Lyrics learners to avoid the Speech loading phase.
     // Conjugation tables are needed for inflected English glosses on first
     // paint, so prefetch them for any resumed Speech language that has a path.
-    if (isResumeNavigation && !activeArtist) {
+    if ((isResumeNavigation || wordRoute) && !activeArtist) {
         if (selectedLanguage === 'spanish') {
             if (window.loadSpanishRanks) window.loadSpanishRanks();
             if (window.loadConjugatedEnglishData) window.loadConjugatedEnglishData();
@@ -510,11 +539,11 @@ loadConfig().then(async () => {
     const userName = currentUser ? (currentUser.isGuest ? 'GUEST' : currentUser.initials) : '';
     document.getElementById('topBarUserName').textContent = userName;
 
-    // Shareable landing URL: ?about=1 opens the About modal on top of whatever
-    // state the app lands in.
-    if (_initialParams.has('about')) {
-        window.openAboutProjectModal && window.openAboutProjectModal();
-    }
+    // Shareable page links open on top of whatever state the app lands in.
+    const pageRoute = window.fluencyRoute?.kind;
+    if (pageRoute === 'about') window.openAboutProjectModal?.();
+    else if (pageRoute === 'tutorial') openTutorialIntroduction();
+    else if (pageRoute === 'walkthrough') window.openWalkthrough?.();
 
 
     perfMark('after sync setup phase');
@@ -601,7 +630,11 @@ loadConfig().then(async () => {
         const pendingTab = pendingSpeechLanguage
             ? document.querySelector(`.lang-tab[data-lang="${pendingSpeechLanguage}"]`)
             : null;
-        if (pendingTab && !pendingTab.disabled) pendingTab.click();
+        if (wordRoute) {
+            // The linked card opens by itself; the language is chosen for real
+            // when the learner leaves it (see openRouteWord).
+            hideAppLoading();
+        } else if (pendingTab && !pendingTab.disabled) pendingTab.click();
         else {
             if (preferredIsReady && !isResumeNavigation) {
                 document.querySelector(`.lang-tab[data-lang="${preferredLanguage}"]`)?.click();
@@ -616,6 +649,14 @@ loadConfig().then(async () => {
     window.renderResumeLastSetCard?.();
     if (isResumeNavigation) {
         await window.resumeLastStudySession?.();
+    }
+    if (wordRoute) openRouteWord(wordRoute, routeLanguage);
+    if (liveRouteNeedsImport) {
+        // The music-source sheet, not the import itself: the import goes
+        // straight to Spotify sign-in, which a visitor should choose to do.
+        await window.authReady;
+        await frequencyIntroClosed();
+        await showLyricsPicker(selectedLanguage);
     }
 
     // Reconcile the setup badges once the background Sheets refresh finishes.
@@ -740,10 +781,9 @@ async function setArtistVocabularyScope(scope, { autoStart = false } = {}) {
     if (scope === 'extra' && !isArtistExtraUnlocked()) return;
     const changed = artistVocabularyScope !== scope;
     artistVocabularyScope = scope;
-    const url = new URL(window.location.href);
-    if (scope === 'extra') url.searchParams.set('scope', 'extra');
-    else url.searchParams.delete('scope');
-    history.replaceState(null, '', url);
+    if (window._urlArtistSlug && window._urlArtistSlug !== CUSTOM_ARTIST_SLUG) {
+        replaceRoute({ kind: 'artist', artist: window._urlArtistSlug, scope });
+    }
     renderArtistSourceSummary();
     if (!changed && !autoStart) return;
 
@@ -1170,7 +1210,7 @@ function showAvailableMusicPicker(artists) {
         onSelect: () => {
             window.clearPlaylistLiveSession?.();
             showAppLoading(`Loading ${cfg.name}`, 'Preparing lyrics, levels and progress…', true);
-            window.location.href = `${window.location.pathname}?artist=${slug}`;
+            goToRoute({ kind: 'artist', artist: slug });
         }
     }));
     if (Object.values(artists || {}).some(cfg => cfg.songsPath)) {
@@ -1182,7 +1222,7 @@ function showAvailableMusicPicker(artists) {
             onSelect: () => {
                 window.clearPlaylistLiveSession?.();
                 showAppLoading('Opening your songs', 'Combining the available Lyrics catalogues…', true);
-                window.location.href = `${window.location.pathname}?artist=${CUSTOM_ARTIST_SLUG}&language=${encodeURIComponent(pickerLanguage)}`;
+                goToRoute({ kind: 'songs', language: routeCodeFor(pickerLanguage, config?.languages) });
             }
         });
     }
@@ -1307,13 +1347,8 @@ function openLearningSourcePicker() {
                 onSelect: () => {
                     if (window.playlistLiveActive?.()) {
                         window.clearPlaylistLiveSession?.();
-                        try {
-                            const url = new URL(window.location.href);
-                            url.searchParams.delete('playlistLive');
-                            history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
-                        } catch (_) {}
                         sessionStorage.setItem('fluencyPendingSpeechLanguage', language);
-                        window.location.href = `${window.location.pathname}?language=${encodeURIComponent(language)}`;
+                        goToRoute({ kind: 'language', language: routeCodeFor(language, config?.languages) });
                         return;
                     }
                     if (activeArtist) {
@@ -1644,6 +1679,61 @@ async function jumpToFoundWord(entry) {
     }
 }
 
+// #/es/w/unidos: the word as a single card, like a search result, so it
+// counts toward progress when marked. Waits for sign-in (the landing sits on
+// top for a first visit) and for progress, so known/unknown reads correctly.
+// Leaving the card clears the route and lands on that language's menu.
+async function openRouteWord(route, languageKey) {
+    await window.authReady;
+    await window.whenProgressReady?.();
+    const surface = normalizeForSearch(route.surface).trim();
+    let entry = null;
+    try {
+        const index = await buildFindWordIndex();
+        const matches = index.filter(item => normalizeForSearch(item.targetWord) === surface);
+        entry = matches.find(item => item.targetWord === route.surface)
+            || matches.find(item => item.targetWord.toLocaleLowerCase() === route.surface.toLocaleLowerCase())
+            || matches[0]
+            || null;
+    } catch (error) {
+        console.warn('Linked word: vocabulary unavailable', error);
+    }
+    const chooseLanguage = () => {
+        const tab = document.querySelector(`.lang-tab[data-lang="${languageKey}"]`);
+        if (tab && !tab.disabled) tab.click();
+    };
+    if (!entry) {
+        // Not in this deck: say so where the learner can act on it — search,
+        // with the word already typed and its near matches listed.
+        chooseLanguage();
+        await openFindWordFor(route.surface);
+        return;
+    }
+    try {
+        // The index flags "examples only" from rows that may not be loaded
+        // yet; popupFoundWord loads them and judges from the real meanings.
+        await window.popupFoundWord({ ...entry, examplesOnly: false }, {
+            reopenSearchOnBack: false,
+            onClose: () => {
+                window.fluencyRoutes?.clearRoute();
+                chooseLanguage();
+            }
+        });
+    } catch (error) {
+        console.error('Linked word: could not open card', error);
+        chooseLanguage();
+        await openFindWordFor(route.surface);
+    }
+}
+
+async function openFindWordFor(word) {
+    await window.openFindWord?.();
+    const input = document.getElementById('findWordInput');
+    if (!input) return;
+    input.value = word;
+    renderFindResults(word);
+}
+
 function setupFindWord() {
     const modal = document.getElementById('findWordModal');
     const closeBtn = document.getElementById('closeFindWordModal');
@@ -1721,6 +1811,21 @@ function closeFrequencyIntro() {
 
 function markFrequencyIntroSeen() {
     try { localStorage.setItem(FREQUENCY_INTRO_KEY, '1'); } catch (_) {}
+}
+
+// A first visit shows the frequency explainer on choosing a language; a sheet
+// opened by a link waits for it rather than stacking on top.
+function frequencyIntroClosed() {
+    const modal = document.getElementById('frequencyIntroModal');
+    if (!modal || modal.classList.contains('hidden')) return Promise.resolve();
+    return new Promise(resolve => {
+        const observer = new MutationObserver(() => {
+            if (!modal.classList.contains('hidden')) return;
+            observer.disconnect();
+            resolve();
+        });
+        observer.observe(modal, { attributes: true, attributeFilter: ['class'] });
+    });
 }
 
 function maybeShowFrequencyIntro() {

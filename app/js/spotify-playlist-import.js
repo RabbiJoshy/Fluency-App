@@ -3,6 +3,7 @@
 // speech-inventory tokens plus unassigned song-line examples.
 import './state.js?v=20260825ak';
 import { combineSongCatalogs } from './song-sets-core.js?v=20260825ak';
+import { goToRoute, replaceRoute, routeCodeFor } from './routes.js?v=20260921a';
 
 const CUSTOM_SONG_SET_KEY = 'fluency_song_set_v1:custom';
 const LYRICS_DB_NAME = 'fluency-playlist-lyrics';
@@ -650,14 +651,10 @@ function activatePlaylistLiveStudy(language) {
     if (sourceName && deck.playlistName) {
         sourceName.textContent = `Live · ${deck.playlistName}`;
     }
-    try {
-        const url = new URL(window.location.href);
-        url.searchParams.set('playlistLive', '1');
-        url.searchParams.set('language', language);
-        url.searchParams.delete('artist');
-        url.searchParams.delete('scope');
-        history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
-    } catch (_) {}
+    replaceRoute({
+        kind: 'live',
+        language: routeCodeFor(language, typeof config !== 'undefined' ? config?.languages : null)
+    });
     window.showAppLoading?.('Opening your live deck', `${deck.playlistName} · ${deck.matchedCount} words`);
     sessionStorage.setItem('fluencyPendingSpeechLanguage', language);
     sessionStorage.setItem('fluencyPendingLiveStudy', '1');
@@ -695,7 +692,10 @@ function confirmSpotifyMatches() {
         localStorage.setItem(CUSTOM_SONG_SET_KEY, JSON.stringify(record));
     } catch (_) {}
     window.showAppLoading?.('Building your deck', `Matching ${_matchState.playlistName}…`, true);
-    window.location.href = `${window.location.pathname}?artist=custom&language=${encodeURIComponent(_matchState.language)}`;
+    goToRoute({
+        kind: 'songs',
+        language: routeCodeFor(_matchState.language, typeof config !== 'undefined' ? config?.languages : null)
+    });
 }
 
 async function reconnectSpotifyForPlaylist() {

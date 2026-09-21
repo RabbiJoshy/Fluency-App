@@ -78,6 +78,7 @@
       },
       "hasData": true,
       "flag": "🇪🇸",
+      "routeCode": "es",
       "shortCode": "ES",
       "speechLang": "es-ES",
       "cognatesPath": "cognates/es/cognates.json",
@@ -138,6 +139,7 @@
       },
       "hasData": false,
       "flag": "🇸🇪",
+      "routeCode": "sv",
       "shortCode": "SE",
       "speechLang": "sv-SE"
     },
@@ -196,6 +198,7 @@
       },
       "hasData": false,
       "flag": "🇮🇹",
+      "routeCode": "it",
       "shortCode": "IT",
       "speechLang": "it-IT"
     },
@@ -255,6 +258,7 @@
       },
       "hasData": false,
       "flag": "🇳🇱",
+      "routeCode": "nl",
       "shortCode": "NL",
       "speechLang": "nl-NL"
     },
@@ -325,6 +329,7 @@
         "conjugation": "https://conjugator.reverso.net/conjugation-french-verb-{word}.html"
       },
       "flag": "🇫🇷",
+      "routeCode": "fr",
       "shortCode": "FR",
       "speechLang": "fr-FR",
       "cognatesPath": "cognates/fr/cognates.json",
@@ -385,6 +390,7 @@
         "conjugation": "https://cooljugator.com/ru/{word}"
       },
       "flag": "🇷🇺",
+      "routeCode": "ru",
       "shortCode": "RU",
       "speechLang": "ru-RU"
     },
@@ -443,6 +449,7 @@
       },
       "hasData": false,
       "flag": "🇵🇱",
+      "routeCode": "pl",
       "shortCode": "PL",
       "speechLang": "pl-PL"
     },
@@ -513,6 +520,7 @@
         "conjugation": "https://conjugator.reverso.net/conjugation-portuguese-verb-{word}.html"
       },
       "flag": "🇵🇹",
+      "routeCode": "pt",
       "shortCode": "PT",
       "speechLang": "pt-PT",
       "cognatesPath": "cognates/pt/cognates.json",
@@ -520,6 +528,7 @@
     },
     "portuguese_brazilian": {
       "name": "Brazilian Portuguese",
+      "routeCode": "pt-br",
       "shortCode": "BR",
       "flag": "🇧🇷",
       "speechLang": "pt-BR",
@@ -532,6 +541,7 @@
     },
     "czech": {
       "name": "Czech",
+      "routeCode": "cs",
       "shortCode": "CZ",
       "flag": "🇨🇿",
       "speechLang": "cs-CZ",

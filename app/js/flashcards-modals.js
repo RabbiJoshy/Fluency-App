@@ -587,6 +587,9 @@ function navigateToVocabCard(tokenIndex) {
 // hitting back reopens the find-word search modal. The synonyms panel
 // passes false so back returns straight to the originating card.
 //
+// opts.onClose — runs once the card is left, after the menu or deck is back.
+// A linked word (#/es/w/…) uses it to clear the route and choose the language.
+//
 // In-flight guard: a fast double-click on a search result before the
 // first invocation completes would push two entries onto cardNavStack
 // and append two temp cards. The guard makes the second call a no-op.
@@ -799,7 +802,8 @@ async function popupFoundWord(entry, opts) {
             cardNavStack.push({
                 popupOnly: true,
                 wasOnSetup: wasOnSetup,
-                reopenSearchOnBack: reopenSearchOnBack
+                reopenSearchOnBack: reopenSearchOnBack,
+                onClose: opts.onClose || null
             });
             flashcards.length = 0;
             flashcards.push(tempCard);
@@ -823,7 +827,8 @@ async function popupFoundWord(entry, opts) {
                 mweIndex: currentMWEIndex,
                 tempCard: true,
                 tempIndex: tempIndex,
-                reopenSearchOnBack: reopenSearchOnBack
+                reopenSearchOnBack: reopenSearchOnBack,
+                onClose: opts.onClose || null
             };
             flashcards.push(tempCard);
             cardNavStack.push(restore);
@@ -886,6 +891,7 @@ function navigateBack() {
                 if (input) input.focus();
             }, 50);
         }
+        prev.onClose?.();
         return;
     }
 
@@ -913,6 +919,7 @@ function navigateBack() {
             if (input) input.focus();
         }, 50);
     }
+    prev.onClose?.();
 }
 
 // ---------------------------------------------------------------------------

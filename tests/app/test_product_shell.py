@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v521"
+EXPECTED_CACHE_NAME = "flashcards-v522"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -196,7 +196,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("speechSourceButton.onclick", ui)
         self.assertIn("sourceCardButton.onclick = openLyrics", ui)
         self.assertNotIn("sessionStorage.removeItem('fluencyPendingSpeechLanguage');\n            await continueToSpeech();", ui)
-        self.assertIn("if (isResumeNavigation && !activeArtist) {", main)
+        self.assertIn("if ((isResumeNavigation || wordRoute) && !activeArtist) {", main)
         self.assertIn("if (window.loadConjugationData) await window.loadConjugationData();", main)
         self.assertIn("if (window.loadConjugationData) window.loadConjugationData();", ui)
         self.assertNotIn("if (window.loadConjugationData) await window.loadConjugationData();", ui)
@@ -376,7 +376,9 @@ class ProductShellTests(unittest.TestCase):
         tutorial = (APP_ROOT / "js" / "tutorial.js").read_text(encoding="utf-8")
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
         main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
-        self.assertGreaterEqual(auth.count("window.openFirstRunCardTutorial?.()"), 2)
+        self.assertIn("window.openFirstRunCardTutorial?.()", auth)
+        # Guest and sign-in both offer it; a linked word defers it to a later visit.
+        self.assertEqual(auth.count("setTimeout(_openFirstRunTutorialUnlessLinked, 250)"), 2)
         self.assertIn("function openFirstRunCardTutorial()", tutorial)
         self.assertIn("const TUTORIAL_LANGUAGE_ADAPTERS", tutorial)
         self.assertIn("function tutorialSteps()", tutorial)
@@ -776,7 +778,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260918l", worker)
-        self.assertIn("/js/main.js?v=20260921sd", worker)
+        self.assertIn("/js/main.js?v=20260921rt", worker)
         self.assertIn("/js/ui.js?v=20260921sd", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
@@ -800,9 +802,9 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertIn("config?.publicServices?.progressSyncUrl", auth)
         self.assertIn("secrets.googleScriptUrl || GOOGLE_SCRIPT_URL", auth)
-        self.assertIn('js/auth.js?v=20260921ac', html)
-        self.assertIn("auth.js?v=20260921ac", main)
-        self.assertIn("/js/auth.js?v=20260921ac", worker)
+        self.assertIn('js/auth.js?v=20260921rt', html)
+        self.assertIn("auth.js?v=20260921rt", main)
+        self.assertIn("/js/auth.js?v=20260921rt", worker)
 
     def test_progress_identity_bridges_historical_mode_ids_by_surface(self) -> None:
         progress = (APP_ROOT / "js" / "progress.js").read_text(encoding="utf-8")
@@ -885,7 +887,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn(".playlist-lyrics-percent", css)
         self.assertIn(".playlist-lyrics-bar-fill", css)
         self.assertIn("event.stopPropagation()", importer)
-        self.assertIn("history.replaceState", importer)
+        self.assertIn("replaceRoute(", importer)
         self.assertIn("_importBusy", importer)
         self.assertIn("setDismissLock", importer)
         self.assertIn("allowReauth: false", spotify)
@@ -895,11 +897,11 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("tracksHref", spotify)
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
-        self.assertIn("/js/spotify-playlist-import.js?v=20260919a", worker)
+        self.assertIn("/js/spotify-playlist-import.js?v=20260921rt", worker)
         self.assertIn('css/style.css?v=20260921sd', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
-        self.assertIn("searchParams.set('playlistLive'", importer)
+        self.assertIn("replaceRoute({\n        kind: 'live'", importer)
 
     def test_live_playlist_joins_naive_tokens_to_speech_vocab(self) -> None:
         live = (APP_ROOT / "js" / "playlist-live.js").read_text(encoding="utf-8")
