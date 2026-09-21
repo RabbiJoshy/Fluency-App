@@ -2,6 +2,23 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-21T15:10:00+01:00",
+      "date": "2026-09-21 15:10 BST",
+      "agent": "Claude",
+      "summary": "Everything that doesn't move you within your set now opens at the side on a wide desktop: dictionary, synonyms, conjugation and card data dock beside the card, and session sheets stay open while you study.",
+      "detail": [
+        "Right side, about this card: dictionary, synonyms, conjugation, card data, lyric breakdown, rarer-sense knowledge and word search. One at a time; opening one closes the other.",
+        "Right-side panels close when the card changes or flips to its front, because what they show gives the answer away.",
+        "Left side, about the session: saved words, progress, shortcuts and help. One at a time, and they stay open while you flip, grade and move between cards; the card is no longer blocked behind them.",
+        "Conjugation docks beside the card instead of taking over the screen; narrower windows and phones keep the full-screen table.",
+        "Escape now closes the nearest open panel instead of leaving the set.",
+        "Leaving the study view closes anything docked in it.",
+        "Rarer uses is unchanged: it moves you onto a temporary card, so it is not a side panel.",
+        "New module js/side-dock.js holds the rule, so the individual panels only call into it."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-21T13:50:00+01:00",
       "date": "2026-09-21 13:50 BST",
       "agent": "Claude",

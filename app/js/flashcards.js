@@ -3,6 +3,7 @@
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
 import './state.js?v=20260825ak';
 import './speech.js?v=20260825ak';
+import './side-dock.js?v=20260921a';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
@@ -2424,6 +2425,9 @@ function setupKeyboardShortcuts() {
         // Escape = close modal or smart-back (pop nav stack, else return to setup)
         else if (e.key === 'Escape') {
             e.preventDefault();
+            // A side panel stays open while you study, so Escape must close
+            // it rather than fall through to navigateBack and leave the set.
+            if (window.sideDock?.closeTopmost()) return;
             const scModal = document.getElementById('keyboardShortcutsModal');
             const deckModal = document.getElementById('deckCompleteModal');
             const statsModal = document.getElementById('statsModal');
@@ -7052,10 +7056,9 @@ function updateCard({ announceHeadword = false } = {}) {
         if (document.getElementById('conjugationTable')?.parentElement === document.body) {
             document.getElementById('conjugationTable').remove();
         }
-        // Same for a docked synonyms panel: it belongs to the previous card.
-        if (document.getElementById('synonymsPanel')?.parentElement === document.body) {
-            document.getElementById('synonymsPanel').remove();
-        }
+        // Same for every docked card panel, and when the card itself changed,
+        // the side sheets that described the old one (side-dock.js).
+        window.sideDock?.beforeBackRender(card);
         renderedBack.innerHTML = backHTML;
         renderedBack._fluencyRenderedHTML = backHTML;
     }
@@ -7392,16 +7395,10 @@ function flipCard() {
     const wasFlipped = flashcardEl.classList.contains('flipped');
     flashcardEl.classList.toggle('flipped');
     const isNowFlipped = flashcardEl.classList.contains('flipped');
-    // A docked synonyms panel lives on <body>, outside the card, so it does
-    // not turn away with the back face. Close it on the way to the front:
-    // its headword would give the answer away in English→target mode.
-    if (!isNowFlipped) {
-        const synonymsPanel = document.getElementById('synonymsPanel');
-        if (synonymsPanel?.parentElement === document.body
-            && synonymsPanel.classList.contains('visible')) {
-            toggleSynonymsPanel();
-        }
-    }
+    // Docked panels live on <body>, outside the card, so they do not turn away
+    // with the back face. Close them on the way to the front: a headword, a
+    // dictionary entry or a paradigm would give the answer away.
+    if (!isNowFlipped) window.sideDock?.closeForFront();
 
     const card = flashcards[currentIndex];
     if (!card) return;
@@ -8230,10 +8227,12 @@ function toggleSpanishDictPanel(forceOpen) {
     if (!panel) return;
     const shouldOpen = forceOpen == null ? panel.hidden : Boolean(forceOpen);
     panel.hidden = !shouldOpen;
+    if (!shouldOpen) window.sideDock?.stowCardPanel(panel);
     if (shouldOpen) {
         const provenancePanel = document.getElementById('provenancePanel');
         if (provenancePanel) provenancePanel.style.display = 'none';
         document.getElementById('flashcard')?.classList.add('flipped');
+        window.sideDock?.openCardPanel(panel);
         panel.querySelector('.prov-close')?.focus();
     }
 }
@@ -8438,10 +8437,12 @@ function toggleProvenancePanel(forceOpen) {
         ? (panel.style.display === 'none' || !panel.style.display)
         : Boolean(forceOpen);
     panel.style.display = shouldOpen ? 'block' : 'none';
+    if (!shouldOpen) window.sideDock?.stowCardPanel(panel);
     if (shouldOpen) {
         const dictionaryPanel = document.getElementById('spanishDictPanel');
         if (dictionaryPanel) dictionaryPanel.hidden = true;
         document.getElementById('flashcard')?.classList.add('flipped');
+        window.sideDock?.openCardPanel(panel);
     }
 }
 window.toggleProvenancePanel = toggleProvenancePanel;
@@ -8505,19 +8506,8 @@ function selectSynonymsTab(event, tabId) {
         section.classList.toggle('selected', section.dataset.synPanel === tabId));
 }
 
-// On a wide desktop the panel docks in the right-hand gutter so the card stays
-// in view. Inside the card it cannot: .card-face clips it and the flip
-// transform makes even position:fixed resolve against the card. So, as with
-// the conjugation panel, it is hosted on <body> while open and stowed back
-// into the back face when closed. Below the breakpoint it keeps sliding over
-// the card as before.
-const SYNONYMS_DOCK_QUERY = '(min-width: 1360px)';
-
-function stowSynonymsPanel(panel) {
-    const host = document.getElementById('backContent');
-    if (host && panel.parentElement !== host) host.appendChild(panel);
-}
-
+// On a wide desktop the panel docks in the right-hand gutter so the card
+// stays in view (side-dock.js). Below that it keeps sliding over the card.
 function toggleSynonymsPanel() {
     const panel = document.getElementById('synonymsPanel');
     if (!panel) return;
@@ -8527,7 +8517,7 @@ function toggleSynonymsPanel() {
         if (panel.parentElement === document.body) {
             // Wait out the slide before re-parenting, or the panel jumps.
             setTimeout(() => {
-                if (!panel.classList.contains('visible')) stowSynonymsPanel(panel);
+                if (!panel.classList.contains('visible')) window.sideDock?.stowCardPanel(panel);
             }, 260);
         }
         return;
@@ -8536,8 +8526,7 @@ function toggleSynonymsPanel() {
         const hasSynonyms = panel.querySelector('[data-syn-panel="synonyms"] .syn-item');
         selectSynonymsTab(null, hasSynonyms ? 'synonyms' : 'antonyms');
     }
-    if (window.matchMedia?.(SYNONYMS_DOCK_QUERY).matches && panel.parentElement !== document.body) {
-        document.body.appendChild(panel);
+    if (window.sideDock?.openCardPanel(panel)) {
         // A freshly moved node has no committed "from" state, so the slide
         // would be skipped. Reading a layout property commits it; unlike a
         // requestAnimationFrame this cannot be deferred indefinitely by a
@@ -8742,7 +8731,7 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '20260916o';
+const ASSET_VERSION = '20260921x';
 const MODALS_ASSET_VERSION = '20260917k';
 
 let _modalsModulePromise = null;
