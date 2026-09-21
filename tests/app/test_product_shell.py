@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v505"
+EXPECTED_CACHE_NAME = "flashcards-v517"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -262,69 +262,70 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("!onlyPosHasAction", flashcards)
         self.assertIn("!suppressBackPosLegend && !hideRedundantSingleBackPos", flashcards)
 
-    def test_card_walkthrough_uses_the_current_compact_back(self) -> None:
-        walkthrough = (APP_ROOT / "js" / "about-example.js").read_text(encoding="utf-8")
-        self.assertNotIn('<div class="back-pos-legend"', walkthrough)
-        self.assertIn('class="pos-section-head"', walkthrough)
-        self.assertIn('class="meaning-row-check"', walkthrough)
-        self.assertIn('class="example-ticks"', walkthrough)
-        self.assertNotIn('class="compact-example-counter-label"', walkthrough)
-        self.assertIn("speechCard: 'tem'", walkthrough)
-        self.assertIn('class="sense-metadata-tier sense-metadata-tier--primary"', walkthrough)
-        self.assertIn('class="sense-metadata-more"', walkthrough)
-        self.assertIn('class="sense-cross-reference"', walkthrough)
-        self.assertIn('walkthroughSenseSummary(meaning.translation)', walkthrough)
-        self.assertNotIn("font-family: var(--font-data); font-size: 14px", walkthrough)
+    def test_replica_card_uses_the_current_compact_back(self) -> None:
+        replica = (APP_ROOT / "js" / "card-replica.js").read_text(encoding="utf-8")
+        tutorial = (APP_ROOT / "js" / "tutorial.js").read_text(encoding="utf-8")
+        self.assertNotIn('<div class="back-pos-legend"', replica)
+        self.assertIn('class="pos-section-head"', replica)
+        self.assertIn('class="meaning-row-check"', replica)
+        self.assertIn('class="example-ticks"', replica)
+        self.assertNotIn('class="compact-example-counter-label"', replica)
+        self.assertIn("speechCard: 'tem'", tutorial)
+        self.assertIn('class="sense-metadata-tier sense-metadata-tier--primary"', replica)
+        self.assertIn('class="sense-metadata-more"', replica)
+        self.assertIn('class="sense-cross-reference"', replica)
+        self.assertIn('replicaSenseSummary(meaning.translation)', replica)
+        self.assertNotIn("font-family: var(--font-data); font-size: 14px", replica)
 
-    def test_mobile_walkthrough_is_a_guided_animated_sequence(self) -> None:
+    def test_mobile_tutorial_is_a_guided_animated_sequence(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
-        walkthrough = (APP_ROOT / "js" / "about-example.js").read_text(encoding="utf-8")
+        tutorial = (APP_ROOT / "js" / "tutorial.js").read_text(encoding="utf-8")
         styles = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
-        self.assertIn('id="aboutExampleMobileCoach"', html)
-        self.assertIn("function moveMobileTour(direction)", walkthrough)
-        self.assertIn("MOBILE_WALKTHROUGH_QUERY", walkthrough)
+        self.assertIn('id="cardTutorialMobileCoach"', html)
+        self.assertIn("function moveMobileTour(direction)", tutorial)
+        self.assertIn("MOBILE_TUTORIAL_QUERY", tutorial)
         # Front and back of a flashcard, not "question side" / "answer side":
         # anyone reaching for a tutorial already knows what a flashcard is.
-        self.assertIn("'Flip over'", walkthrough)
-        self.assertNotIn("answer side", walkthrough)
-        self.assertNotIn("question side", walkthrough)
-        self.assertIn("'Finish'", walkthrough)
+        self.assertIn("'Flip over'", tutorial)
+        self.assertNotIn("answer side", tutorial)
+        self.assertNotIn("question side", tutorial)
+        self.assertIn("'Finish'", tutorial)
         # The story is a flat list of steps: Speech front, Speech back, a slide
         # about Lyrics mode, then a Lyrics card. Front before back throughout.
-        self.assertIn("function tutorialSteps()", walkthrough)
-        self.assertIn("{ kind: 'card', deck: 'speech', face: 'front' }", walkthrough)
-        self.assertIn("{ kind: 'break', id: 'lyrics' }", walkthrough)
-        self.assertIn("function renderBreakStep()", walkthrough)
-        self.assertIn('id="aboutExampleBreak"', html)
-        self.assertIn(".about-example-body.is-break-step", styles)
+        self.assertIn("function tutorialSteps()", tutorial)
+        self.assertIn("{ kind: 'card', deck: 'speech', face: 'front' }", tutorial)
+        self.assertIn("{ kind: 'break', id: 'lyrics' }", tutorial)
+        self.assertIn("function renderBreakStep()", tutorial)
+        self.assertIn('id="cardTutorialBreak"', html)
+        self.assertIn(".card-tutorial-body.is-break-step", styles)
         # No mode chrome in what the header renders: a first-time reader has
         # not met either mode yet. (The comment above the change still names
         # the old chip, so assert on the template, not on the file's prose.)
-        self.assertNotIn("<span>${modes}</span>", walkthrough)
-        # The walkthrough owns the flip. Tapping the card and pressing space
+        self.assertNotIn("<span>${modes}</span>", tutorial)
+        # The tutorial owns the flip. Tapping the card and pressing space
         # both used to turn it mid-tour, which broke the guided order.
-        self.assertNotIn("function wireCardShell", walkthrough)
-        self.assertNotIn("e.key === ' '", walkthrough)
+        self.assertNotIn("function wireCardShell", tutorial)
+        self.assertNotIn("e.key === ' '", tutorial)
         # A short mime of the setup flow runs before the first card.
-        self.assertIn('id="aboutExampleSetupAnim"', html)
-        self.assertIn("function playSetupIntro(onDone)", walkthrough)
-        self.assertIn("function skipSetupIntro()", walkthrough)
+        self.assertIn('id="cardTutorialSetupAnim"', html)
+        self.assertIn("function playSetupIntro(onDone)", tutorial)
+        self.assertIn("function skipSetupIntro()", tutorial)
         # The intro holds on its last step and waits to be dismissed by hand
         # rather than pressing its own button and moving on.
-        self.assertIn("function startSetupIntroCard()", walkthrough)
+        self.assertIn("function startSetupIntroCard()", tutorial)
         self.assertIn(".setup-anim-learn-btn.is-ready", styles)
         # The intro is a replica of the real setup screen, so it reuses that
         # screen's own class names rather than a lookalike.
         self.assertIn("standard-source-choice-btn", html)
         self.assertIn("learning-context-chip", html)
-        self.assertIn("function moveSetupPointer(target)", walkthrough)
+        self.assertIn("function moveSetupPointer(target)", tutorial)
         # The numbered badges indexed a numbered note list; both are gone, and
         # the amber ring on the annotated element is the only link left.
-        self.assertNotIn("about-example-marker", walkthrough)
-        self.assertNotIn("about-example-note-num", walkthrough)
-        self.assertIn(".about-example-anchored.is-annotation-active", styles)
-        self.assertIn(".about-example-body.is-setup-intro", styles)
-        self.assertIn("@keyframes about-example-mobile-spotlight", styles)
+        self.assertNotIn("card-tutorial-marker", tutorial)
+        self.assertNotIn("card-tutorial-note-num", tutorial)
+        self.assertIn(".card-tutorial-anchored.is-annotation-active", styles)
+        self.assertIn(".card-tutorial-body.is-setup-intro", styles)
+        self.assertIn("@keyframes card-tutorial-mobile-spotlight", styles)
         self.assertIn("@media (prefers-reduced-motion: reduce)", styles)
 
     def test_speech_cards_keep_dictionary_examples_separate_from_usage_share(self) -> None:
@@ -370,37 +371,80 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn(".replace(/\\bsingular\\b/gi, 'sg.')", metadata_pills)
         self.assertIn(".replace(/\\bplural\\b/gi, 'pl.')", metadata_pills)
 
-    def test_first_run_walkthrough_is_once_only_and_replayable(self) -> None:
+    def test_first_run_tutorial_is_once_only_and_replayable(self) -> None:
         auth = (APP_ROOT / "js" / "auth.js").read_text(encoding="utf-8")
-        walkthrough = (APP_ROOT / "js" / "about-example.js").read_text(encoding="utf-8")
+        tutorial = (APP_ROOT / "js" / "tutorial.js").read_text(encoding="utf-8")
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
         main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
-        self.assertGreaterEqual(auth.count("window.openFirstRunAboutExample?.()"), 2)
-        self.assertIn("function openFirstRunAboutExample()", walkthrough)
-        self.assertIn("const TUTORIAL_LANGUAGE_ADAPTERS", walkthrough)
-        self.assertIn("function tutorialSteps()", walkthrough)
-        self.assertIn("Step ${progress.current} of ${progress.total}", walkthrough)
-        self.assertIn("function explicitTutorialLanguageKey()", walkthrough)
-        self.assertIn("if (!explicitTutorialLanguageKey()) return false", walkthrough)
-        self.assertNotIn("TUTORIAL_DECK_SEQUENCE", walkthrough)
-        self.assertIn("spanish: { language: 'Spanish'", walkthrough)
-        self.assertIn("portuguese: { language: 'Portuguese'", walkthrough)
-        self.assertIn("czech: { language: 'Czech'", walkthrough)
-        self.assertIn("french: { language: 'French'", walkthrough)
-        self.assertNotIn("function renderTabs()", walkthrough)
-        self.assertIn("fluencyCardWalkthroughSeenV1", walkthrough)
+        self.assertGreaterEqual(auth.count("window.openFirstRunCardTutorial?.()"), 2)
+        self.assertIn("function openFirstRunCardTutorial()", tutorial)
+        self.assertIn("const TUTORIAL_LANGUAGE_ADAPTERS", tutorial)
+        self.assertIn("function tutorialSteps()", tutorial)
+        self.assertIn("Step ${progress.current} of ${progress.total}", tutorial)
+        self.assertIn("function explicitTutorialLanguageKey()", tutorial)
+        self.assertIn("if (!explicitTutorialLanguageKey()) return false", tutorial)
+        self.assertNotIn("TUTORIAL_DECK_SEQUENCE", tutorial)
+        self.assertIn("spanish: { language: 'Spanish'", tutorial)
+        self.assertIn("portuguese: { language: 'Portuguese'", tutorial)
+        self.assertIn("czech: { language: 'Czech'", tutorial)
+        self.assertIn("french: { language: 'French'", tutorial)
+        self.assertNotIn("function renderTabs()", tutorial)
+        self.assertIn("fluencyCardWalkthroughSeenV1", tutorial)
         self.assertIn("fluencyCardWalkthroughSeenV1", flashcards)
         self.assertIn("helpBtn').addEventListener('click', openTutorialIntroduction", main)
 
-    def test_portfolio_about_can_launch_the_speech_to_lyrics_tutorial(self) -> None:
+    def test_about_links_the_walkthrough_and_never_the_tutorial(self) -> None:
+        # Three things for three audiences (docs/NOMENCLATURE.md): the tutorial
+        # is for learners, the walkthrough and About are for visitors. About
+        # links the walkthrough; it must not open or contain the tutorial.
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
         about = (APP_ROOT / "content" / "about.md").read_text(encoding="utf-8")
         auth = (APP_ROOT / "js" / "auth.js").read_text(encoding="utf-8")
         self.assertIn('id="helpBtn" class="top-bar-icon-btn"', html)
         self.assertIn('aria-label="Open tutorial"', html)
-        self.assertIn("[Start tutorial](example://walkthrough)", about)
-        self.assertIn("window.startAboutTutorial = startAboutTutorial", auth)
-        self.assertIn("window.openTutorialIntroduction?.()", auth)
+        self.assertIn("(example://walkthrough)", about)
+        self.assertNotIn("tutorial", about.lower())
+        self.assertIn("window.openWalkthrough && window.openWalkthrough()", auth)
+        self.assertNotIn("startAboutTutorial", auth)
+        self.assertNotIn("openTutorialIntroduction", auth)
+        self.assertNotIn("openCardTutorial?.()", auth.replace("openFirstRunCardTutorial?.()", ""))
+        # Visitors arrive logged out, onto the landing card. About and the
+        # walkthrough on top of it must stack above it or nobody sees them.
+        styles = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
+        self.assertIn("#aboutProjectModal {\n    z-index: 30002;", styles)
+        self.assertIn("#walkthroughModal {\n    z-index: 30003;", styles)
+        self.assertIn("#authModal {\n            z-index: 30001;", styles)
+        # The walkthrough is layered after About in the DOM, over it.
+        self.assertLess(html.index('id="aboutProjectModal"'), html.index('id="walkthroughModal"'))
+
+    def test_walkthrough_is_a_short_whole_face_demo_for_visitors(self) -> None:
+        walkthrough = (APP_ROOT / "js" / "walkthrough.js").read_text(encoding="utf-8")
+        main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
+        # Shares the replica card with the tutorial rather than a copy of it.
+        self.assertIn("from './card-replica.js?v=", walkthrough)
+        self.assertIn("import './walkthrough.js?v=", main)
+        # Two screens where two cards fit side by side, three on a phone.
+        self.assertIn("function buildScreens(pair)", walkthrough)
+        self.assertIn("id: 'card'", walkthrough)
+        self.assertIn("id: 'lyrics'", walkthrough)
+        # Every label on a face at once, not one ringed element per step.
+        self.assertIn("function placeLabels()", walkthrough)
+        self.assertIn("walkthrough-callout", walkthrough)
+        self.assertIn("walkthrough-pin", walkthrough)
+        # No learner machinery: no setup intro, no language choice.
+        self.assertNotIn("playSetupIntro", walkthrough)
+        self.assertNotIn("setCardTutorialLanguage", walkthrough)
+        self.assertIn("'Back to About'", walkthrough)
+
+    def test_tutorial_and_replica_are_separate_modules(self) -> None:
+        self.assertFalse((APP_ROOT / "js" / "about-example.js").exists())
+        tutorial = (APP_ROOT / "js" / "tutorial.js").read_text(encoding="utf-8")
+        replica = (APP_ROOT / "js" / "card-replica.js").read_text(encoding="utf-8")
+        self.assertIn("from './card-replica.js?v=", tutorial)
+        self.assertIn("export const REPLICA_CARDS", replica)
+        # The replica knows nothing about steps, notes or audiences.
+        for word in ("tutorialSteps", "stepNotes", "openWalkthrough", "openCardTutorial"):
+            self.assertNotIn(word, replica)
 
     def test_setup_shell_uses_a_quiet_single_surface_hierarchy(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
@@ -423,18 +467,18 @@ class ProductShellTests(unittest.TestCase):
         self.assertLess(start, choices)
         self.assertNotIn('id="tutorialLanguageSelect"', html)
 
-        self.assertIn("window.openAboutExample?.()", main)
+        self.assertIn("window.openCardTutorial?.()", main)
         self.assertIn("function startCardTutorial()", main)
         self.assertIn("function renderTutorialLanguageChoices()", main)
         self.assertIn("tutorialLanguageStep')?.classList.remove('hidden')", main)
         self.assertIn("window.getCardTutorialLanguageKey?.()", main)
         self.assertIn("window.setCardTutorialLanguage?.(key)", main)
-        self.assertIn("How common this meaning is", (APP_ROOT / "js" / "about-example.js").read_text(encoding="utf-8"))
-        self.assertIn("Tap them to read Common, Uncommon, or Rare", (APP_ROOT / "js" / "about-example.js").read_text(encoding="utf-8"))
+        self.assertIn("How common this meaning is", (APP_ROOT / "js" / "tutorial.js").read_text(encoding="utf-8"))
+        self.assertIn("Tap them to read Common, Uncommon, or Rare", (APP_ROOT / "js" / "tutorial.js").read_text(encoding="utf-8"))
 
     def test_sense_frequency_uses_readable_labels_not_mystery_dots(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
-        walkthrough = (APP_ROOT / "js" / "about-example.js").read_text(encoding="utf-8")
+        tutorial = (APP_ROOT / "js" / "tutorial.js").read_text(encoding="utf-8")
         self.assertIn("function prominenceBadgeHTML(promInfo, extraStyle = '')", flashcards)
         self.assertIn("function toggleProminenceBadge(event, button)", flashcards)
         self.assertIn("sense-prominence-meter", flashcards)
@@ -447,9 +491,9 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("conjugationsPath)", flashcards)
         self.assertIn("conjugationData: _conjugationData", flashcards)
         self.assertIn("window.loadConjugationData()", (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8"))
-        self.assertIn("function walkthroughProminence(pct)", walkthrough)
-        self.assertIn("How common this meaning is", walkthrough)
-        self.assertIn("Tap them to read Common, Uncommon, or Rare", walkthrough)
+        self.assertIn("function replicaProminence(pct)", (APP_ROOT / "js" / "card-replica.js").read_text(encoding="utf-8"))
+        self.assertIn("How common this meaning is", tutorial)
+        self.assertIn("Tap them to read Common, Uncommon, or Rare", tutorial)
 
     def test_in_app_tutorial_skips_language_choice_when_one_is_already_selected(self) -> None:
         main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
@@ -648,8 +692,8 @@ class ProductShellTests(unittest.TestCase):
             '.range-btn-new:not(.has-progress):not(:hover)',
             light_css,
         )
-        self.assertIn('css/light-theme.css?v=20260920a', html)
-        self.assertIn('/css/light-theme.css?v=20260920a', worker)
+        self.assertIn('css/light-theme.css?v=20260921w', html)
+        self.assertIn('/css/light-theme.css?v=20260921w', worker)
 
     def test_active_release_aliases_are_never_cached(self) -> None:
         worker = (APP_ROOT / "service-worker.js").read_text(encoding="utf-8")
@@ -727,7 +771,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260918l", worker)
-        self.assertIn("/js/main.js?v=20260920j", worker)
+        self.assertIn("/js/main.js?v=20260921w", worker)
         self.assertIn("/js/ui.js?v=20260920g", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
@@ -751,9 +795,9 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertIn("config?.publicServices?.progressSyncUrl", auth)
         self.assertIn("secrets.googleScriptUrl || GOOGLE_SCRIPT_URL", auth)
-        self.assertIn('js/auth.js?v=20260920b', html)
-        self.assertIn("auth.js?v=20260920b", main)
-        self.assertIn("/js/auth.js?v=20260920b", worker)
+        self.assertIn('js/auth.js?v=20260921w', html)
+        self.assertIn("auth.js?v=20260921w", main)
+        self.assertIn("/js/auth.js?v=20260921w", worker)
 
     def test_progress_identity_bridges_historical_mode_ids_by_surface(self) -> None:
         progress = (APP_ROOT / "js" / "progress.js").read_text(encoding="utf-8")
@@ -847,7 +891,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
         self.assertIn("/js/spotify-playlist-import.js?v=20260919a", worker)
-        self.assertIn('css/style.css?v=20260920m', html)
+        self.assertIn('css/style.css?v=20260921w', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
         self.assertIn("searchParams.set('playlistLive'", importer)

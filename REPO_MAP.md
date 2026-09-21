@@ -87,7 +87,9 @@ The frontend is a vanilla ES-module application (`app/index.html` $\rightarrow$ 
 | [app/js/auth.js](file:///Users/joshuathomasamar/PycharmProjects/Fluency-Next/app/js/auth.js) | Guest mode, session persistence, sync queue, word flags. | `checkAuthentication()`, `enterGuestMode()`, `flagWord()`, `cacheProgressLocally()`, `flushProgressCache()` |
 | [app/js/spotify.js](file:///Users/joshuathomasamar/PycharmProjects/Fluency-Next/app/js/spotify.js) | Spotify Web Playback SDK integration & playlist snippets. | `isSpotifyConnected()`, `playSpotifyTrackSnippet()`, `fetchSpotifyPlaylists()`, `cancelSpotifySnippet()` |
 | [app/js/vocabulary-import.js](file:///Users/joshuathomasamar/PycharmProjects/Fluency-Next/app/js/vocabulary-import.js) | Vocabulary import & ChatGPT practice prompt hand-off. | `openVocabularyImportModal()`, `openChatGptPracticePrompt()` |
-| [app/js/about-example.js](file:///Users/joshuathomasamar/PycharmProjects/Fluency-Next/app/js/about-example.js) | Tutorial walkthrough and onboarding cards. | `openAboutExample()`, `closeAboutExample()`, `setCardTutorialLanguage()` |
+| [app/js/tutorial.js](file:///Users/joshuathomasamar/PycharmProjects/Fluency-Next/app/js/tutorial.js) | Learner **tutorial**: guided card tour from "?", first run and How to Study. Never opened from About. | `openCardTutorial()`, `openFirstRunCardTutorial()`, `closeCardTutorial()`, `setCardTutorialLanguage()` |
+| [app/js/walkthrough.js](file:///Users/joshuathomasamar/PycharmProjects/Fluency-Next/app/js/walkthrough.js) | Visitor **walkthrough**: two-screen labelled card demo, opened only from About. | `openWalkthrough()`, `closeWalkthrough()` |
+| [app/js/card-replica.js](file:///Users/joshuathomasamar/PycharmProjects/Fluency-Next/app/js/card-replica.js) | Replica card shared by tutorial and walkthrough: demo entries + live-card markup. No audience logic. | `REPLICA_CARDS`, `replicaCardHTML()`, `wireReplicaBack()`, `fitReplicaCard()` |
 | [app/js/config.js](file:///Users/joshuathomasamar/PycharmProjects/Fluency-Next/app/js/config.js) | Active release capability flags & CEFR level config. | `loadConfig()`, `getCefrLevels()`, `getPercentageLevelRanges()` |
 
 ---

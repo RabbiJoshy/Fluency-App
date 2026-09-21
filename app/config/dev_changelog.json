@@ -2,6 +2,22 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-21T13:50:00+01:00",
+      "date": "2026-09-21 13:50 BST",
+      "agent": "Claude",
+      "summary": "Tutorial, walkthrough and About are now three separate things: About links a short two-screen walkthrough for visitors, the \"?\" tutorial stays for learners, and About is visible again to logged-out visitors.",
+      "detail": [
+        "New walkthrough (js/walkthrough.js), opened only from About's \"See a card, annotated\" button and closing back into About. Screen 1 shows the front and back of a card side by side with every part labelled at once; screen 2 is a Lyrics card. On a phone the card turns over in place, so it is three screens.",
+        "Labels are callouts with leader lines where there is room beside the card, and short tags pinned onto it where there is not. The card stays live: tap a meaning and the example changes; Spotify plays the real line.",
+        "About no longer closes itself and opens the learner tutorial. \"Start tutorial\" in About is gone.",
+        "The learner tutorial is unchanged in behaviour and renamed for what it is: js/tutorial.js, #cardTutorialModal, .card-tutorial-*. The in-study prompt now says \"tutorial\", not \"walkthrough\".",
+        "The card both show is js/card-replica.js, shared rather than copied.",
+        "Fix: About was invisible to logged-out visitors. It opened underneath the landing card (z-index 1000 vs 30001), so ?about=1 showed only the login card. It now stacks above it.",
+        "Fix: reopening the tutorial no longer shows the previous run's \"The back of the card\" heading over the setup intro."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-21T13:40:00+01:00",
       "date": "2026-09-21 13:40 BST",
       "agent": "Claude",

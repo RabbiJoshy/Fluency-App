@@ -141,7 +141,7 @@ class MetadataContractUITests(unittest.TestCase):
         metadata_pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
         styles = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
-        about_example = (APP_ROOT / "js" / "about-example.js").read_text(encoding="utf-8")
+        about_example = (APP_ROOT / "js" / "card-replica.js").read_text(encoding="utf-8")
 
         # Privileged companion as readable "used with" copy, not a link icon
         self.assertIn("companion: 0,", metadata_pills)

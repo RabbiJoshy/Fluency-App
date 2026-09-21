@@ -369,8 +369,26 @@ something else in the data layer.
 ## modals
 
 Each has an id ending `Modal`: settings, stats, help, find-word, estimation,
-cognate-rules, song-set, vocabulary-import, about-example, about-project, auth.
-Name the modal, not "the popup".
+cognate-rules, song-set, vocabulary-import, card-tutorial, walkthrough,
+about-project, auth. Name the modal, not "the popup".
+
+## tutorial, walkthrough, About — three things, three audiences
+
+These were one module (`about-example.js`) for a while and the words drifted
+into each other. They are not interchangeable.
+
+| word | for | what it is | opened from | code |
+|---|---|---|---|---|
+| **tutorial** | learners using the app | guided, one element at a time; starts from the setup screen; owns the flip; explains Lyrics mode on its own slide. Desktop and phone both first-class. | "?" button, first run, Settings → How to Study, the in-study prompt | `tutorial.js`, `#cardTutorialModal`, `.card-tutorial-*` |
+| **walkthrough** | visitors — employers, anyone being shown the app | two screens (three on a phone), whole faces labelled at once, so a five-second look still lands. No setup, no instructions. | **only** About | `walkthrough.js`, `#walkthroughModal`, `.walkthrough-*` |
+| **About** | visitors | what the app is and how it was built. Desktop-first, comfortable on a phone. **Links** the walkthrough; never contains or opens the tutorial. | landing page, `?about=1`, Settings | `about.md`, `#aboutProjectModal` |
+
+Both the tutorial and the walkthrough draw the same **replica card**
+(`card-replica.js`, `.card-replica`): real demo entries in the live card's own
+markup. The replica belongs to neither.
+
+A learner-facing string that says "walkthrough", or an About link that opens
+the tutorial, is a bug.
 
 Note **card actions popup** (`.card-actions-popup`) is a popup, not a modal --
 it is anchored to the card rather than covering the screen.

@@ -366,11 +366,11 @@
 }
 
 :root[data-theme="light"] #backContent > .meanings-scroll,
-:root[data-theme="light"] .about-example-card-inner .card-details > .meanings-scroll {
+:root[data-theme="light"] .card-replica .card-details > .meanings-scroll {
     scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
 }
 :root[data-theme="light"] #backContent > .meanings-scroll::-webkit-scrollbar-thumb,
-:root[data-theme="light"] .about-example-card-inner .card-details > .meanings-scroll::-webkit-scrollbar-thumb {
+:root[data-theme="light"] .card-replica .card-details > .meanings-scroll::-webkit-scrollbar-thumb {
     background: rgba(0, 0, 0, 0.25);
 }
 :root[data-theme="light"] .meaning-row-sub {

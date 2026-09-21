@@ -5,8 +5,9 @@ import './sync-queue.js?v=20260825ak';
 import { initOfflineContent } from './offline-content.js?v=20260825ak';
 import './speech.js?v=20260914b';
 import './artist-ui.js?v=20260825ak';
-import './auth.js?v=20260920d';
-import './about-example.js?v=20260920i';
+import './auth.js?v=20260921w';
+import './tutorial.js?v=20260921w';
+import './walkthrough.js?v=20260921w';
 import './estimation.js?v=20260825ak';
 import './config.js?v=20260919c';
 import './progress.js?v=20260920e';
@@ -21,7 +22,7 @@ import './song-sets.js?v=20260823ae';
 import './playlist-live.js?v=20260919a';
 import './spotify-playlist-import.js?v=20260919a';
 import './vocabulary-import.js?v=20260920a';
-import './flashcards.js?v=20260921e';
+import './flashcards.js?v=20260921w';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 function startCardTutorial() {
@@ -29,7 +30,7 @@ function startCardTutorial() {
     if (knownLanguage) {
         window.setCardTutorialLanguage?.(knownLanguage);
         closeTutorialIntroduction();
-        window.openAboutExample?.();
+        window.openCardTutorial?.();
         return;
     }
     document.getElementById('tutorialWelcomeStep')?.classList.add('hidden');
@@ -60,7 +61,7 @@ function renderTutorialLanguageChoices() {
         button.addEventListener('click', () => {
             window.setCardTutorialLanguage?.(key);
             closeTutorialIntroduction();
-            window.openAboutExample?.();
+            window.openCardTutorial?.();
         });
         container.appendChild(button);
     });
@@ -449,7 +450,8 @@ loadConfig().then(async () => {
         window.startDailyReview?.({ limit, urgencyTier: 'all' });
     });
 
-    // Keep the short learner tutorial separate from the portfolio /about page.
+    // "?" is the learner tutorial. The portfolio About page links the
+    // walkthrough instead and never opens this.
     document.getElementById('helpBtn').addEventListener('click', openTutorialIntroduction);
     document.getElementById('closeTutorialIntroModal')?.addEventListener('click', closeTutorialIntroduction);
     document.getElementById('startCardTutorialBtn')?.addEventListener('click', startCardTutorial);
@@ -491,12 +493,12 @@ loadConfig().then(async () => {
         });
     }
     const helpStudyContent = document.querySelector('#helpStudyTabContent .help-content');
-    if (helpStudyContent && !document.getElementById('helpCardWalkthroughBtn')) {
-        const walkthroughAction = document.createElement('p');
-        walkthroughAction.className = 'help-card-walkthrough-action';
-        walkthroughAction.innerHTML = '<button class="help-more-info-btn" id="helpCardWalkthroughBtn" type="button">Open tutorial introduction →</button>';
-        helpStudyContent.appendChild(walkthroughAction);
-        walkthroughAction.querySelector('button').addEventListener('click', () => {
+    if (helpStudyContent && !document.getElementById('helpCardTutorialBtn')) {
+        const tutorialAction = document.createElement('p');
+        tutorialAction.className = 'help-card-tutorial-action';
+        tutorialAction.innerHTML = '<button class="help-more-info-btn" id="helpCardTutorialBtn" type="button">Open tutorial introduction →</button>';
+        helpStudyContent.appendChild(tutorialAction);
+        tutorialAction.querySelector('button').addEventListener('click', () => {
             document.getElementById('helpModal').classList.add('hidden');
             openTutorialIntroduction();
         });

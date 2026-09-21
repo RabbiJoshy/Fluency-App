@@ -28,7 +28,7 @@ need code, so they come last.
 | 6 | Example ordering | ✅ done | — |
 | 7 | Merged-lemma policy | research | yes, throughout |
 | 8 | Modals using the sides | needs a modal inventory first | yes |
-| 9 | Walkthrough / tutorial / about | needs the current state established first | yes |
+| 9 | Walkthrough / tutorial / about | ✅ done 2026-09-21 | — |
 | 10 | URLs and routing | blocked on one decision | yes |
 | 11 | Function words you cannot teach atomically | research, high stakes | yes |
 | 12 | Sense metadata vocabulary | a conversation per family | yes, a whole pass |
@@ -336,7 +336,10 @@ anything.
 
 ---
 
-## 9. Walkthrough / tutorial / about
+## 9. Walkthrough / tutorial / about — ✅ DONE 2026-09-21
+
+Done: `docs/decisions/0023-tutorial-walkthrough-about.md`. The three words are
+pinned in `docs/NOMENCLATURE.md`. Original brief below.
 
 Three separate things, currently confused.
 
