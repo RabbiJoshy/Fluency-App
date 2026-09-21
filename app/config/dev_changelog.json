@@ -2,6 +2,23 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-21T18:45:00+01:00",
+      "date": "2026-09-21 18:45 BST",
+      "agent": "Claude",
+      "summary": "Links you can share: a word, a language, an artist, your songs, your live playlist, and the about, tutorial and walkthrough pages each have their own address. Old links still work and are rewritten to the new ones.",
+      "detail": [
+        "#/es/w/unidos opens that word as a single card, like a search result; marking it counts toward progress, and leaving it lands on that language's menu. A word not in the deck opens search with it typed in.",
+        "#/es (or #/fr, #/pt, #/cs) opens a language with the picker skipped.",
+        "#/artist/bad-bunny opens an artist; #/artist/bad-bunny/extra the extra deck when it is unlocked.",
+        "#/es/songs opens your own songs (chosen ones, or a playlist matched to the library); #/es/live opens your live playlist deck, or the music-source sheet for someone who has none yet.",
+        "#/about, #/tutorial and #/walkthrough open those pages.",
+        "Old ?artist=, ?mode=badbunny, ?scope=extra, ?about=1, ?playlistLive=1 and ?language= links are rewritten to these on arrival.",
+        "A first-time visitor signs in or picks guest first, then lands straight on what the link named. Switching links keeps a guest session.",
+        "Developer switches (?speechRelease=, ?lyricsRelease=, ?wsdPublication=, ?perf=, ?resume=) are unchanged."
+      ],
+      "commit": "d8279f1"
+    },
+    {
       "timestamp": "2026-09-21T17:30:00+01:00",
       "date": "2026-09-21 17:30 BST",
       "agent": "Claude",
