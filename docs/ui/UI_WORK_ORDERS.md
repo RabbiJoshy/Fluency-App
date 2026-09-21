@@ -328,60 +328,69 @@ what it counts.
 
 ## 8. Modals using the left and right sides — ✅ done (2026-09-21)
 
-**The rule.** A sheet you read while still looking at what is behind it docks
-to a side; a task that takes your attention stays centred. Everything below
-follows from that one sentence — apply it to any new modal rather than
-re-deciding.
+**The rule (Joshua's wording, widened after the first pass):** anything that
+does not move you within your set opens at the side when there is room. A
+task that takes your attention (sign-in, settings, imports, language picker,
+Fast Track, end of deck) stays centred. **Rarer uses is the one exception on
+the card:** it steps you onto a temporary card, so it is navigation, not a
+panel — and it shares the card-chain code the MWE child-cards chat is
+rebuilding. Revisit it once that lands.
 
-**Study session, ≥1360px.** The card is 540px, centred, leaving a 450px
-gutter either side. Sheets are `min(360px, (100vw − 540px)/2 − 48px)` wide,
-24px from the edge, 66px clear of the card at 1440. Each side has a meaning:
+The whole rule lives in **`app/js/side-dock.js`**, reached as
+`window.sideDock`. Add a new panel there, not in its own module.
 
-| side | about | sheets |
-|---|---|---|
-| right | this card | `findWord`, `lyricBreakdown`, `knowledgeOverview` (already docked), **synonyms** (new) |
-| left | the session | `savedWords`, `stats`, `keyboardShortcuts`, `help` |
+**Study session, ≥1360px.** Card 540px centred; 450px gutter each side.
 
-**Setup page, ≥1024px.** No card to keep in view, and the 1140px container
-leaves only ~110px gutters at 1360, so reference sheets open as one
-right-hand sheet (`min(440px, 40vw)`) over the progress sidebar, behind a light
-dim: `mergedForms`, `skippedWords`, `extras`, `savedWords`, `cognateRules`,
-`stats`, `totalStats`, `help`, `keyboardShortcuts`.
+| side | about | occupants | one at a time? | card change / flip to front |
+|---|---|---|---|---|
+| right | this card | dictionary, synonyms, conjugation, card data (hosted panels); lyric breakdown, rarer-sense knowledge, word search (modals) | yes | **close** — they give the answer away |
+| left | the session | saved words, progress, shortcuts, help | yes | **stay open** |
 
-**Stay centred, deliberately:** `auth`, `learningContext`, `settings`,
-`deckComplete`, `songSet`, `spotifyPlaylist`, `vocabularyImport`,
-`extraScope`, `estimation`, `frequencyIntro`, `fastMode` (a settings page,
-and Fast Track belongs to another chat), and the walkthrough trio
-`aboutProject` / `aboutExample` / `tutorialIntro` (item 9 owns those).
+- Left sheets let clicks through their transparent backdrop, so you flip,
+  grade and move on with one open. Close with × or Escape.
+- **Escape closes the nearest open panel.** Before, it fell through to
+  `navigateBack` for every panel except shortcuts/stats/card data, so
+  dismissing a panel could take you out of the set.
+- Leaving the study view closes anything docked in it.
+- Conjugation docks at the card's own table sizes; its existing **"Drill
+  <verb> in conjugation mode"** button is the way into the conjugation app
+  (Joshua plans to gut this panel in favour of that app).
 
-**Synonyms needed JavaScript, not just CSS.** Inside the card it is clipped by
-`.card-face` and the flip transform makes even `position: fixed` resolve
-against the card. `toggleSynonymsPanel` now hosts it on `<body>` at ≥1360px,
-exactly as `hostConjPanelFullScreen` does for conjugation. Two consequences:
+**Setup page, ≥1024px.** No card to keep in view and ~110px gutters at 1360,
+so reference sheets open as one right-hand sheet over the progress sidebar:
+merged forms, skipped words, extras, saved words, cognate rules, progress,
+total progress, help, shortcuts.
 
-- **It closes when the card flips to the front** (`flipCard`). Inside the card
-  it turned away with the back face; on `<body>` it would stay, and its
-  headword gives the answer away in English→target mode.
-- **A card change removes it**, next to the existing conjugation cleanup in
-  the `backContent` swap, so the old card's panel never survives.
+**Narrower windows and phones are unchanged:** conjugation full-screen,
+panels inside the card, sheets centred and modal.
 
-The slide-in commits its start state with `void panel.offsetWidth`, not
-`requestAnimationFrame`: a backgrounded tab defers frames indefinitely, which
-left the panel hosted on `<body>` but never shown. Found by testing, not
-reasoning.
+**How it works.** Card panels render inside the back face, where `.card-face`
+clips them and the flip transform makes even `position: fixed` resolve
+against the card. `sideDock.openCardPanel()` hosts them on `<body>` with
+`.is-docked`; `stowCardPanel()` puts them back. Modals open through other
+modules, so a `MutationObserver` per modal makes each claim its gutter as it
+appears instead of editing every opener. `beforeBackRender(card)` runs in the
+`backContent` swap: it drops hosted panels (they belong to the markup being
+replaced) and, on a real card change, closes the card-bound modals.
+`flipCard` calls `closeForFront()`.
 
-**Synonyms exist only in the lyrics decks.** v15 speech rows carry none (0 of
-800 sampled), so on Spanish speech the synonyms button never appears. Testing
-used a real entry from `Artists/es/young-miko/index.json`.
+**Dictionary and card data are audit-only** (`isAuditAccount`), so a guest
+never sees them. **Synonyms data exists only in the lyrics decks**; v15
+speech rows carry none.
 
-**Testing note for the next chat.** The browser pane is narrower than a
-1360px viewport and cannot crop-zoom. `document.documentElement.style.zoom`
-distorts fixed-position geometry — do not trust measurements taken under it.
-Shifting with `transform: translateX(-Npx)` on `<html>` renders the right side
-truthfully. When the pane is backgrounded (`document.hidden === true`) CSS
-animations and `requestAnimationFrame` freeze, so a slide-in reads as −28px
-off its resting place and desktop card navigation (which waits on
-`animationend`) never advances.
+**Testing notes for the next chat.**
+- The browser pane is narrower than 1360px and cannot crop-zoom.
+  `document.documentElement.style.zoom` distorts fixed-position geometry;
+  shift with `transform: translateX(-Npx)` on `<html>` instead.
+- A backgrounded pane (`document.hidden`) freezes CSS animations and
+  `requestAnimationFrame`, so slide-ins read as off their resting place,
+  desktop card navigation (which waits on `animationend`) never advances,
+  and screenshots can be stale frames. Both slide-ins now commit their start
+  state with `void panel.offsetWidth` rather than a frame for this reason.
+- Test against a clean `HEAD` worktree with only your files overlaid; link
+  `releases/` and `coverage/` from the gh-pages worktree to get deck data.
+  `tests/app/test_product_shell.py` pins `main.js`, `style.css` and
+  `CACHE_NAME` — bump it with every deploy.
 
 ## 9. Walkthrough / tutorial / about — ✅ DONE 2026-09-21
 
