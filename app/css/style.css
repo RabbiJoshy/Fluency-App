@@ -19572,3 +19572,43 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
 }
 
 .meaning-row .group-card-shared { word-break: normal !important; overflow-wrap: normal; }
+
+/* Read details in the same flow as the gloss; wrap only when space requires it. */
+.meaning-row-regular .meaning-row-body {
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    gap: 2px 8px;
+}
+.meaning-row-regular .meaning-row-gloss { width: auto !important; max-width: 100%; }
+.meaning-row-regular .meaning-row-sub { display: contents; }
+.meaning-row .sense-metadata-list { display: contents; }
+.meaning-row .sense-metadata-tier {
+    display: inline-flex;
+    width: auto;
+    max-width: 100%;
+    margin-top: 0;
+}
+.meaning-row .sense-metadata-tier[hidden] { display: none; }
+.meaning-row .sense-metadata-more {
+    display: inline-flex;
+    margin: 0;
+    padding: 3px 8px;
+    border-radius: 6px;
+    flex: 0 0 auto;
+}
+.meaning-row .sense-definition-detail { flex-basis: 100%; }
+
+@container sense-row (max-width: 420px) {
+    .group-card-body.has-long-context { grid-template-columns: minmax(0, 1fr) !important; }
+    .group-card-body.has-long-context > .group-card-shared { grid-column: 1 !important; grid-row: 1 !important; padding-bottom: 5px; }
+    .group-card-body.has-long-context > .group-card-varying-cell { grid-column: 1 !important; grid-row: auto !important; }
+}
+/* Let the disclosure and its contents wrap independently of one another. */
+.meaning-row .group-card-varying-cell > .meaning-context-cell,
+.meaning-row .group-card-varying-cell > .row-adaptive-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2px 8px;
+}
