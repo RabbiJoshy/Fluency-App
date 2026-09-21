@@ -2535,11 +2535,12 @@ function handleSwipeAction(result) {
     // stack popup/peek) with pending MWE/CLITIC entries starts the phrase
     // chain instead of advancing normally. Captured before recordCardResult
     // in case it mutates card state.
+    // A correct grade on an ordinary deck card (not already inside a nav-
+    // stack popup/peek) can start a child chain: non-decompositional
+    // expressions always, rare senses when that preference is on.
     const swipedCard = flashcards[currentIndex];
     const isChainChild = swipedCard?.isChainChild === true;
-    // Automatic chain child: rare senses and expressions appear after a
-    // correct parent card when their own study preference is on.
-    const mayChain = (expressionsModeEnabled || rareSensesModeEnabled) && !isChainChild
+    const mayChain = !isChainChild
         && cardNavStack.length === 0 && result === 'correct';
 
     // Record the result
@@ -3445,16 +3446,29 @@ function getNotableSurfaceRelation(card) {
 }
 
 // ---------------------------------------------------------------------------
-// Phrase / clitic chaining — MWE/CLITIC entries leave the card's pinned tray
-// and are studied as standalone child cards immediately after the parent is
+// Expression child cards — non-decompositional MWEs (mwe-merged PHRASE
+// senses, membership pos=MWE) and CLITIC forms leave the parent card and
+// are studied as a follow-up card after a correct answer. This is not a
+// setting: those expressions are the point of attaching them to the
+// component card. Dictionary PHRASE on the card's own word stays put.
+// A bound-root card whose only meanings are those expressions keeps them
+// on the parent so the card is never blank.
 // ---------------------------------------------------------------------------
-// Phrase / clitic chaining — Invariant MWEs (deterministic bypass) and CLITIC
-// entries leave the card's pinned tray / scroll view and are studied as
-// standalone child cards immediately after the parent is marked correct.
-// Ambiguous MWEs (competitive WSD) stay on the primary card back.
-// Bound root cards (e.g. "repente", "obstante") whose ONLY meanings are
-// invariant MWEs keep the phrase on the card back so the card is never blank.
-// ---------------------------------------------------------------------------
+
+function meaningSourceAdapter(meaning) {
+    return String(meaning?.metadata?.source_adapter || meaning?.source || '');
+}
+
+function isMergedMweAdapter(meaning) {
+    return /mwe-merged/i.test(meaningSourceAdapter(meaning));
+}
+
+function isMultiwordHeadword(meaning, card) {
+    const head = String(meaning?.headword || meaning?.expression || '').trim();
+    if (!head || !/\s/u.test(head)) return false;
+    const surface = String(card?.displaySurface || card?.targetWord || card?.word || '').trim();
+    return head.toLocaleLowerCase() !== surface.toLocaleLowerCase();
+}
 
 function isInvariantMweMeaning(meaning) {
     if (!meaning) return false;
@@ -3481,21 +3495,42 @@ function isAmbiguousMweMeaning(meaning) {
     return false;
 }
 
-function cardHasOnlyInvariantMwes(card) {
+function isExpressionChildMeaning(meaning, card) {
+    if (!meaning) return false;
+    if (meaning.pos === 'MWE' || meaning.pos === 'CLITIC') return true;
+    if (isMergedMweAdapter(meaning)) return true;
+    if (String(meaning.context || '').toLowerCase() === 'multiword expression') return true;
+    if (isInvariantMweMeaning(meaning) || isAmbiguousMweMeaning(meaning)) return true;
+    if ((meaning.pos === 'PHRASE' || meaning.part_of_speech === 'PHRASE')
+        && isMultiwordHeadword(meaning, card)) return true;
+    return false;
+}
+
+function cardHasOnlyExpressionMeanings(card) {
     if (!card || !Array.isArray(card.meanings) || !card.meanings.length) return false;
-    return card.meanings.every(m => isInvariantMweMeaning(m));
+    return card.meanings.every(m => isExpressionChildMeaning(m, card));
+}
+
+function cardHasOnlyInvariantMwes(card) {
+    return cardHasOnlyExpressionMeanings(card);
+}
+
+function isHiddenExpressionOnParent(card, meaning) {
+    return Boolean(card && meaning
+        && isExpressionChildMeaning(meaning, card)
+        && !cardHasOnlyExpressionMeanings(card));
 }
 
 // Ordered list of chainable children for a real deck card. Source of truth
-// is card.meanings entries for invariant MWEs/CLITICs. Chain-child cards
-// themselves are excluded — their single MWE/CLITIC meaning is the card's
+// is card.meanings entries for expressions/CLITICs. Chain-child cards
+// themselves are excluded — their single expression meaning is the card's
 // own content, not something to chain further.
 function collectChainItems(card) {
     if (!card || card.isChainChild) return [];
-    if (cardHasOnlyInvariantMwes(card)) return [];
+    if (cardHasOnlyExpressionMeanings(card)) return [];
     return (card.meanings || [])
         .map((m, idx) => ({ m, idx }))
-        .filter(({ m }) => m.pos === 'MWE' || m.pos === 'CLITIC' || isInvariantMweMeaning(m))
+        .filter(({ m }) => isExpressionChildMeaning(m, card))
         .flatMap(({ m, idx }) => {
             const list = m.allMWEs || m.allClitics || [m];
             return list.map((item, sub) => {
@@ -3503,7 +3538,7 @@ function collectChainItems(card) {
                 const expr = item.expression || item.form || item.headword || ev?.expression || '';
                 const trans = item.translation || item.meaning || m.meaning || m.translation || ev?.translation || '';
                 const ctx = item.context || item.context_heuristic || '';
-                const src = item.source || ev?.sources?.[0] || 'mwe-merged';
+                const src = item.source || meaningSourceAdapter(item) || meaningSourceAdapter(m) || ev?.sources?.[0] || 'mwe-merged';
                 const exs = item.examples || item.allExamples || m.allExamples || m.examples || [];
                 return {
                     parentCard: card,
@@ -3525,7 +3560,28 @@ function collectChainItems(card) {
 function collectExpressionItems(card) {
     if (!card || card.isChainChild) return [];
     const chainItems = collectChainItems(card);
-    if (chainItems.length > 0) return chainItems;
+    const seen = new Set(chainItems.map(item => String(item.expression || '').toLocaleLowerCase()));
+    const extras = [];
+    for (const unused of card.unusedMenuSenses || []) {
+        if (!isExpressionChildMeaning(unused, card)) continue;
+        const expr = unused.headword || unused.expression || '';
+        const key = String(expr).toLocaleLowerCase();
+        if (!expr || seen.has(key)) continue;
+        seen.add(key);
+        extras.push({
+            parentCard: card,
+            parentWord: card.displaySurface || card.targetWord,
+            meaningIndex: -1,
+            subIndex: extras.length,
+            kind: unused.pos === 'CLITIC' ? 'CLITIC' : 'MWE',
+            expression: expr,
+            translation: unused.meaning || unused.translation || '',
+            context: unused.context || '',
+            source: meaningSourceAdapter(unused) || unused.source || 'mwe-merged',
+            examples: unused.allExamples || unused.examples || []
+        });
+    }
+    if (chainItems.length || extras.length) return [...chainItems, ...extras];
     if (Array.isArray(card.mwe_memberships) && card.mwe_memberships.length > 0) {
         return card.mwe_memberships.map((mwe, sub) => ({
             parentCard: card,
@@ -3550,6 +3606,7 @@ function collectRareSenseItems(card) {
     const items = [];
 
     for (const q of qualifying) {
+        if (isExpressionChildMeaning(q, card)) continue;
         const id = q.senseId || q.sense_id || '';
         if (id) seenSenseIds.add(id);
         const trans = q.meaning || q.translation || '';
@@ -3573,6 +3630,7 @@ function collectRareSenseItems(card) {
         for (const unused of card.unusedMenuSenses) {
             const id = unused.senseId || unused.sense_id || '';
             if (id && seenSenseIds.has(id)) continue;
+            if (isExpressionChildMeaning(unused, card)) continue;
             const trans = unused.meaning || unused.translation || '';
             if (!trans) continue;
             if (id) seenSenseIds.add(id);
@@ -4511,10 +4569,8 @@ function revealWildTranslation(event, index) {
 // nothing to show is simply absent from the plan.
 async function buildCardChildren(card) {
     const children = [];
-    if (expressionsModeEnabled) {
-        const expressions = collectExpressionItems(card);
-        if (expressions.length > 0) children.push({ type: 'phrases', items: expressions });
-    }
+    const expressions = collectExpressionItems(card);
+    if (expressions.length > 0) children.push({ type: 'phrases', items: expressions });
     if (rareSensesModeEnabled) {
         const rareSenses = collectRareSenseItems(card);
         if (rareSenses.length > 0) children.push({ type: 'phrases', items: rareSenses });
@@ -4898,6 +4954,7 @@ function getQualifyingRareSenses(card) {
     if (!card || !Array.isArray(card.unusedMenuSenses)) return [];
     if (!card._cachedQualifyingRareSenses) {
         card._cachedQualifyingRareSenses = card.unusedMenuSenses.filter(unused => {
+            if (isExpressionChildMeaning(unused, card)) return false;
             const examples = extractCanonicalDictionaryExamples(unused);
             return examples.length > 0 && (unused.meaning || unused.translation);
         }).map(unused => {
@@ -5183,8 +5240,8 @@ function updateCard({ announceHeadword = false } = {}) {
 
     // Reset meaning index if out of bounds or pointing to a detached invariant MWE
     if (card.isMultiMeaning && (currentMeaningIndex >= card.meanings.length
-        || (!cardHasOnlyInvariantMwes(card) && isInvariantMweMeaning(card.meanings[currentMeaningIndex])))) {
-        const firstVisible = card.meanings.findIndex(m => !isInvariantMweMeaning(m));
+        || (isHiddenExpressionOnParent(card, card.meanings[currentMeaningIndex])))) {
+        const firstVisible = card.meanings.findIndex(m => !isHiddenExpressionOnParent(card, m));
         currentMeaningIndex = firstVisible >= 0 ? firstVisible : 0;
         currentGroupSelection = null;
     }
@@ -5196,7 +5253,7 @@ function updateCard({ announceHeadword = false } = {}) {
         card.meanings.forEach((meaning, index) => {
             const pos = meaning.pos === 'SENSE_CYCLE' ? (meaning.cycle_pos || 'X') : meaning.pos;
             if (!pos || ['MWE', 'CLITIC', 'EXAMPLE_ONLY'].includes(pos)) return;
-            if (!cardHasOnlyInvariantMwes(card) && isInvariantMweMeaning(meaning)) return;
+            if (isHiddenExpressionOnParent(card, meaning)) return;
             const weight = Number(meaning.percentage ?? meaning.frequency ?? meaning.count) || 0;
             const entry = posWeights.get(pos) || { pos, weight: 0, firstIndex: index };
             entry.weight += weight;
@@ -5296,7 +5353,8 @@ function updateCard({ announceHeadword = false } = {}) {
                 }];
             } else {
                 normalMeanings = card.meanings.filter(m =>
-                    m.pos !== 'MWE' && m.pos !== 'CLITIC' && m.pos !== 'SENSE_CYCLE');
+                    m.pos !== 'MWE' && m.pos !== 'CLITIC' && m.pos !== 'SENSE_CYCLE'
+                    && !isHiddenExpressionOnParent(card, m));
             }
 
             // English-first cards use several senses as a semantic fingerprint
@@ -5489,6 +5547,7 @@ function updateCard({ announceHeadword = false } = {}) {
         for (const m of fMeanings) {
             const productionGloss = getProductionEnglishCue(card, m) || m.meaning;
             const posChip = m.pos && !['MWE', 'CLITIC', 'SENSE_CYCLE', 'EXAMPLE_ONLY'].includes(m.pos)
+                && !isHiddenExpressionOnParent(card, m)
                 ? renderFrontPosUnit(m.pos, isVerbPos(m.pos), 'card-pos front-meaning-pos')
                 : '';
             html += `<div class="front-meaning-row">
@@ -5528,6 +5587,7 @@ function updateCard({ announceHeadword = false } = {}) {
         const seenPairs = new Set();
         (posSource.length ? posSource : [{ pos: card.partOfSpeech, headword: citationForm }]).forEach(meaning => {
             if (['MWE', 'CLITIC', 'SENSE_CYCLE', 'EXAMPLE_ONLY'].includes(meaning.pos)) return;
+            if (isHiddenExpressionOnParent(card, meaning)) return;
             const lemma = String(meaning.headword || citationForm || displayedTargetHeadword || '').trim();
             const key = `${lemma}\0${meaning.pos}`;
             if (!meaning.pos || seenPairs.has(key)) return;
@@ -5744,7 +5804,7 @@ function updateCard({ announceHeadword = false } = {}) {
                 ? (meaning.cycle_pos || 'X')
                 : meaning.pos;
             if (pos === 'MWE' || pos === 'CLITIC' || pos === 'EXAMPLE_ONLY') return;
-            if (!cardHasOnlyInvariantMwes(card) && isInvariantMweMeaning(meaning)) return;
+            if (isHiddenExpressionOnParent(card, meaning)) return;
             if (!pos) return;
             const weight = Number(meaning.percentage ?? meaning.frequency ?? meaning.count) || 0;
             const entry = posWeights.get(pos) || { pos, meaningIndex, weight: 0 };
@@ -6059,7 +6119,7 @@ function updateCard({ announceHeadword = false } = {}) {
                 const transRawSize = new Map();
                 const ctxRawSize = new Map();
                 card.meanings.forEach((m, idx) => {
-                    if (m.pos === 'MWE' || m.pos === 'CLITIC' || m.pos === 'SENSE_CYCLE' || (!cardHasOnlyInvariantMwes(card) && isInvariantMweMeaning(m))) {
+                    if (m.pos === 'MWE' || m.pos === 'CLITIC' || m.pos === 'SENSE_CYCLE' || isHiddenExpressionOnParent(card, m)) {
                         axisOf.set(idx, 'special');
                         return;
                     }
@@ -6148,7 +6208,7 @@ function updateCard({ announceHeadword = false } = {}) {
             const ax = GROUP_DUPLICATE_MEANINGS ? (axisOf.get(idx) || 'singleton') : 'singleton';
             if (ax !== 'singleton') return;
             const pos = m.pos === 'SENSE_CYCLE' ? (m.cycle_pos || 'X') : m.pos;
-            if (pos === 'MWE' || pos === 'CLITIC' || (!cardHasOnlyInvariantMwes(card) && isInvariantMweMeaning(m))) return;
+            if (pos === 'MWE' || pos === 'CLITIC' || isHiddenExpressionOnParent(card, m)) return;
             const rawGloss = String(getProductionEnglishCue(card, m) || m.meaning || m.translation || '').trim();
             const proj = projectWiktionaryGloss(m, rawGloss);
             const normKey = `${pos}\u0000${m.headword || ''}\u0000${proj.display.toLowerCase().replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '').replace(/\s+/g, ' ').trim()}`;
@@ -6210,7 +6270,7 @@ function updateCard({ announceHeadword = false } = {}) {
             const bgColor = 'rgba(var(--sense-match-rgb), 0.10)';
             const textColor = isSelected ? 'var(--text-primary)' : 'var(--text-primary)';
             const borderStyle = '';
-            const isInvariantMWE = !cardHasOnlyInvariantMwes(card) && isInvariantMweMeaning(m);
+            const isInvariantMWE = isHiddenExpressionOnParent(card, m);
             const isMWE = m.pos === 'MWE' || isInvariantMWE;
             const isClitic = m.pos === 'CLITIC';
             const isSenseCycle = m.pos === 'SENSE_CYCLE';
@@ -6682,7 +6742,9 @@ function updateCard({ announceHeadword = false } = {}) {
         }
         // Expressions mode off keeps the pinned tray; on, MWE/CLITIC entries
         // leave silently as chain children (no on-card announcement).
-        if (!expressionsModeEnabled && traySections.size > 0) {
+        // Expressions always leave as chain children. Bound-root cards keep
+        // their only meanings in the scroll region, not this tray.
+        if (traySections.size > 0 && !expressionsModeEnabled) {
             backHTML += `<div class="meanings-tray">${renderSections(traySections)}</div>`;
         }
         // Show current sentence

@@ -72,13 +72,13 @@ function applyGlobalStudyDefaults() {
     isFlipped = saved.directionFlipped === true;
     speechEnabled = saved.speechEnabled !== false;
     spacedRepetitionEnabled = saved.spacedRepetitionEnabled !== false;
-    expressionsModeEnabled = saved.expressionsMode !== undefined
-        ? saved.expressionsMode === true
-        : saved.phrasesMode !== false;
+    // Non-decompositional expressions are study content, not a preference.
+    // They always follow a correct parent card and cannot be turned off.
+    expressionsModeEnabled = true;
     rareSensesModeEnabled = saved.rareSensesMode !== undefined
         ? saved.rareSensesMode === true
         : saved.phrasesMode !== false;
-    phrasesModeEnabled = expressionsModeEnabled || rareSensesModeEnabled;
+    phrasesModeEnabled = true;
     extraExamplesEnabled = false;
     try {
         const savedMode = localStorage.getItem('fluency_sense_prominence_mode_v1');
@@ -104,7 +104,6 @@ function syncStudyPreferenceControls() {
         directionFlipped: saved.directionFlipped === true,
         speechEnabled: saved.speechEnabled !== false,
         spacedRepetitionEnabled: saved.spacedRepetitionEnabled !== false,
-        expressionsMode: expressionsModeEnabled,
         rareSensesMode: rareSensesModeEnabled,
         extraExamples: false
     };
@@ -177,6 +176,7 @@ function setupSettingExplanations() {
 }
 
 function saveGlobalStudyPreference(setting, value) {
+    if (setting === 'expressionsMode') return true;
     const saved = readGlobalStudyDefaults();
     saved[setting] = !!value;
     try {
