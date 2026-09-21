@@ -4833,6 +4833,31 @@
             opacity: 0;
         }
 
+        /* The per-surface breakdown behind a merged card's total. The base
+           rule caps width at 220px, which wraps a form list into unreadable
+           ribbons, so the wide variant opts out of that cap only when there
+           is a list to show. */
+        .freq-tooltip-wide {
+            max-width: 340px;
+        }
+        .freq-tooltip-forms {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 4px 10px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+            font-variant-numeric: tabular-nums;
+        }
+        .freq-tooltip-form {
+            white-space: nowrap;
+        }
+        .freq-tooltip-surface {
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 600;
+        }
+
         .card-control-btn {
             padding: 8px 14px;
             background: #1a1a1a;

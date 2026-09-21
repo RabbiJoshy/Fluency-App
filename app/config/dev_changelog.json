@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-22T00:35:00+01:00",
+      "date": "2026-09-22 00:35 BST",
+      "agent": "Claude",
+      "summary": "The frequency on a card now shows which forms it counts, and says it counts the spelling rather than the sense.",
+      "detail": [
+        "Long-press the frequency on the front of a card to pin a breakdown listing each source-listed form and its own published figure, commonest first.",
+        "A tap still gives the short note; the pinned list stays until you tap again, since a total across eight forms cannot be read inside a tap.",
+        "Wording corrected: the published list is keyed on spelling and blind to part of speech, which is also why an interjection carries a figure at all.",
+        "Every number shown is one the source publishes. Nothing is split or apportioned across merged forms (decision 0024)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-21T23:50:00+01:00",
       "date": "2026-09-21 23:50 BST",
       "agent": "Cursor",

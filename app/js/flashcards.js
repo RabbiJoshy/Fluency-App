@@ -5718,8 +5718,18 @@ function updateCard({ announceHeadword = false } = {}) {
             const perMillion = card.sourceFrequencyUnit === 'per_million';
             const count = `<strong class="card-stat-value">${Number(card.sourceFrequency).toLocaleString(undefined, { maximumFractionDigits: perMillion ? 2 : 0 })}</strong>`;
             const source = escapeCardText(card.sourceFrequencySource || 'Published frequency list');
-            const label = perMillion ? `Frequency: ${count}/million` : `List occurrences: ${count}`;
-            freqHtml = `<button class="card-freq-btn" onclick="window.showFreqInfo(event)" data-frequency-source="${source}" data-frequency-unit="${card.sourceFrequencyUnit || ''}" data-frequency-forms="${Number(card.sourceFrequencyForms) || 1}" aria-label="Source frequency information">${label}</button>`;
+            // A card whose printed form the source never measured shows its
+            // family's total instead, and must say so — the number is real,
+            // but it is not this form's. Never let the two read alike.
+            const label = card.sourceFrequencyIsGroupTotal
+                ? (perMillion ? `All forms: ${count}/million` : `All forms: ${count}`)
+                : (perMillion ? `Frequency: ${count}/million` : `List occurrences: ${count}`);
+            // The breakdown travels as an attribute so the tooltip needs no
+            // access to the card model; it is already HTML-escaped for the
+            // attribute context by escapeCardText.
+            const breakdown = escapeCardText(JSON.stringify(
+                (card.sourceFrequencyBreakdown || []).map(row => [row.surface, row.value])));
+            freqHtml = `<button class="card-freq-btn" onclick="window.showFreqInfo(event)" data-frequency-source="${source}" data-frequency-unit="${card.sourceFrequencyUnit || ''}" data-frequency-forms="${Number(card.sourceFrequencyForms) || 1}" data-frequency-is-total="${card.sourceFrequencyIsGroupTotal ? '1' : ''}" data-frequency-breakdown="${breakdown}" aria-label="Source frequency information">${label}</button>`;
         }
         const denominator = vocabularySize ? ` / ${vocabularySize.toLocaleString()}` : '';
         const rankLabel = card.artistVocabularyScope === 'extra' ? 'Extra rank' : 'Vocabulary rank';
@@ -8844,8 +8854,26 @@ window.nextCard = nextCard;
 window.advanceToNextDeckCard = advanceToNextDeckCard;
 window.shuffleCards = shuffleCards;
 
-window.showFreqInfo = function showFreqInfo(event) {
+// The frequency on a merged card is a sum, and a sum is the one figure on the
+// card a learner cannot verify from what is in front of them. Naming the
+// surfaces it adds up makes the claim checkable: every number shown here is a
+// figure the source itself publishes, never an apportioned or derived one
+// (decision 0024 rule 4). Tap gives the short form; a long press pins the full
+// breakdown so it can be read rather than raced.
+function _freqBreakdownOf(button) {
+    try {
+        const raw = JSON.parse(button?.dataset.frequencyBreakdown || '[]');
+        return Array.isArray(raw)
+            ? raw.filter(row => Array.isArray(row) && row.length === 2 && Number(row[1]) > 0)
+            : [];
+    } catch {
+        return [];
+    }
+}
+
+window.showFreqInfo = function showFreqInfo(event, options = {}) {
     event.stopPropagation();
+    const pinned = options.pinned === true;
     let tip = document.getElementById('freqTooltip');
     if (!tip) {
         tip = document.createElement('div');
@@ -8855,12 +8883,38 @@ window.showFreqInfo = function showFreqInfo(event) {
     }
     const button = event.currentTarget || event.target.closest('.card-freq-btn');
     const source = button?.dataset.frequencySource || 'Published frequency list';
-    const unit = button?.dataset.frequencyUnit === 'per_million'
+    const perMillion = button?.dataset.frequencyUnit === 'per_million';
+    const unit = perMillion
         ? 'occurrences per million words' : 'occurrences in the source list';
     const forms = Number(button?.dataset.frequencyForms) || 1;
-    tip.textContent = `${source} · ${unit}${forms > 1 ? ` · total across ${forms} source-listed forms` : ''}. This does not count harvested example sentences.`;
+    const breakdown = _freqBreakdownOf(button);
+    const fmt = value => Number(value).toLocaleString(undefined,
+        { maximumFractionDigits: perMillion ? 2 : 0 });
+
+    // The list is worth the room only when it says something the headline
+    // does not: a single form is already the number on the card.
+    const showList = breakdown.length > 1;
+    const head = `${escapeCardText(source)} · ${unit}`
+        + (forms > 1 ? ` · total across ${forms} source-listed forms` : '');
+    const rows = showList
+        ? `<span class="freq-tooltip-forms">${breakdown.map(([surface, value]) =>
+            `<span class="freq-tooltip-form"><span class="freq-tooltip-surface">${escapeCardText(surface)}</span> ${fmt(value)}</span>`
+        ).join('')}</span>`
+        : '';
+    // Counts the spelling, not the sense: the source list is surface-keyed and
+    // POS-blind, which is also why an interjection carries a figure at all.
+    // Where the printed form itself was never measured, say that outright
+    // rather than letting a family total pass as the word's own figure.
+    const isTotal = button?.dataset.frequencyIsTotal === '1';
+    const basis = isTotal
+        ? `The source does not list this exact form, so this is every listed form added together. `
+        : '';
+    tip.innerHTML = `${head}. ${basis}Counts how often the spelling appears in the source, `
+        + `not this sense. Harvested example sentences are not counted.${rows}`;
+    tip.classList.toggle('freq-tooltip-wide', showList);
+
     const rect = button.getBoundingClientRect();
-    const tipWidth = Math.min(300, window.innerWidth - 16);
+    const tipWidth = Math.min(showList ? 340 : 300, window.innerWidth - 16);
     let left = rect.left + rect.width / 2 - tipWidth / 2;
     left = Math.max(8, Math.min(left, window.innerWidth - tipWidth - 8));
     tip.style.left = left + 'px';
@@ -8869,13 +8923,60 @@ window.showFreqInfo = function showFreqInfo(event) {
     tip.style.top = (above >= 8 ? above : rect.bottom + 10) + 'px';
     tip.classList.remove('hiding');
     clearTimeout(tip._hideTimer);
+    if (pinned) {
+        // Dismissed by the next tap anywhere rather than by a timer — a list
+        // of eight forms cannot be read inside the tap timeout.
+        tip.dataset.pinned = '1';
+        setTimeout(() => document.addEventListener('pointerdown', function dismiss() {
+            document.removeEventListener('pointerdown', dismiss);
+            tip.classList.add('hiding');
+            setTimeout(() => tip.remove(), 320);
+        }, { once: true }), 0);
+        return;
+    }
+    delete tip.dataset.pinned;
     tip._hideTimer = setTimeout(function() {
         tip.classList.add('hiding');
         tip._hideTimer = setTimeout(function() {
             tip.remove();
         }, 320);
-    }, 2200);
+    }, showList ? 4200 : 2200);
 };
+
+// Long press pins the breakdown. Delegated from the document so it covers every
+// frequency button the card renderer produces, now and after a re-render.
+(function _initFreqLongPress() {
+    let timer = null;
+    let suppressClickUntil = 0;
+    document.addEventListener('pointerdown', event => {
+        const button = event.target.closest?.('.card-freq-btn');
+        if (!button) return;
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            timer = null;
+            suppressClickUntil = Date.now() + 700;
+            window.showFreqInfo({
+                stopPropagation() {},
+                currentTarget: button
+            }, { pinned: true });
+        }, 450);
+    }, true);
+    const cancel = () => { clearTimeout(timer); timer = null; };
+    document.addEventListener('pointerup', cancel, true);
+    document.addEventListener('pointercancel', cancel, true);
+    document.addEventListener('pointermove', event => {
+        // A drag is a card swipe, not a press.
+        if (timer && (Math.abs(event.movementX) > 4 || Math.abs(event.movementY) > 4)) cancel();
+    }, true);
+    // The press already showed the tooltip; the click that follows it must not
+    // replace the pinned one with the timed one.
+    document.addEventListener('click', event => {
+        if (Date.now() < suppressClickUntil && event.target.closest?.('.card-freq-btn')) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    }, true);
+})();
 window.flipDirection = flipDirection;
 window.toggleAutoSpeak = toggleAutoSpeak;
 window.updateSpeakIcons = updateSpeakIcons;
