@@ -1,6 +1,7 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
 import './state.js?v=20260825ak';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=20260921ab';
 import { applyRemoteFastTrack } from './fast-track-preferences.js?v=20260920a';
 import { dbGet, dbPut } from './offline-db.js?v=20260825ak';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
@@ -1128,12 +1129,20 @@ function renderMarkdown(md) {
     const lines = md.split('\n');
     const html = [];
     let list = [];
+    let listTag = 'ul';
     let para = [];
     const flushList = () => {
         if (list.length) {
-            html.push('<ul>' + list.map(l => '<li>' + inline(l) + '</li>').join('') + '</ul>');
+            html.push(`<${listTag}>` + list.map(l => '<li>' + inline(l) + '</li>').join('') + `</${listTag}>`);
             list = [];
         }
+    };
+    // A switch between "- " and "1. " items starts a new list.
+    const pushItem = (tag, text) => {
+        flushPara();
+        if (list.length && listTag !== tag) flushList();
+        listTag = tag;
+        list.push(text);
     };
     const flushPara = () => {
         if (para.length) {
@@ -1162,7 +1171,8 @@ function renderMarkdown(md) {
         if (line.startsWith('### ')) { flushAll(); html.push('<h3>' + inline(line.slice(4)) + '</h3>'); }
         else if (line.startsWith('## ')) { flushAll(); html.push('<h2>' + inline(line.slice(3)) + '</h2>'); }
         else if (line.startsWith('# ')) { flushAll(); html.push('<h1>' + inline(line.slice(2)) + '</h1>'); }
-        else if (line.startsWith('- ') || line.startsWith('* ')) { flushPara(); list.push(line.slice(2)); }
+        else if (line.startsWith('- ') || line.startsWith('* ')) { pushItem('ul', line.slice(2)); }
+        else if (/^\d+\.\s/.test(line)) { pushItem('ol', line.replace(/^\d+\.\s+/, '')); }
         else { flushList(); para.push(line); }
     }
     flushAll();
@@ -1313,51 +1323,35 @@ function hideAboutProjectModal() {
 // a tiny sequential animation instead of user input. Each demo runs in its own
 // async loop that exits when its container leaves the DOM (modal closes).
 
-// Demo data is deliberately small but uses real Speech examples and genuine
-// lyrics from the artist catalogue. `share` is an indicative meaning split,
-// matching the percentages shown by live multi-meaning cards.
+// The demo cards are the walkthrough's own cards (card-replica.js), so the
+// loop above a paragraph and the annotated walkthrough behind the button show
+// the same `que` and the same `cielo`. They used to carry their own data,
+// which had drifted: `fuego` with a "light" line that does not show that
+// meaning, and hand-written "≈50%" shares the live card no longer prints.
+// Only the first example per meaning is used; the loop is a glance.
+function _aboutDemoEntry(key) {
+    const card = REPLICA_CARDS[key];
+    return {
+        word: card.word,
+        pos: card.pos,
+        rank: card.rank,
+        corpusCount: card.corpusCount,
+        meanings: card.meanings.map(m => {
+            const ex = m.examples[0];
+            return {
+                translation: m.translation,
+                pct: m.pct,
+                target: ex.target,
+                english: ex.english,
+                song: ex.song ? `${ex.song}${ex.vocalists ? ` · ${ex.vocalists}` : ''}` : null,
+            };
+        }),
+    };
+}
+
 const _ABOUT_DEMO_DECKS = {
-    normal: [
-        {
-            word: 'aunque',
-            pos: 'CCONJ',
-            rank: 429,
-            corpusCount: 229,
-            meanings: [
-                { pos: 'CCONJ', translation: 'even though', share: '≈50%',
-                  target: 'Ella le escucha, aunque nadie más lo haga.',
-                  english: 'She listens to him even though no one else does.' },
-                { pos: 'CCONJ', translation: 'although', share: '≈30%',
-                  target: 'Estaré allí, aunque puede que llegue tarde.',
-                  english: "I'll be there, although I may be late." },
-                { pos: 'CCONJ', translation: 'even if', share: '≈20%',
-                  target: 'Aunque no lo hagas, yo lo haré.',
-                  english: "Even if you don't do that, I will." },
-            ],
-        },
-    ],
-    artist: [
-        {
-            word: 'fuego',
-            pos: 'NOUN',
-            rank: 363,
-            corpusCount: 32,
-            meanings: [
-                { pos: 'NOUN', translation: 'fire', share: '≈70%',
-                  target: 'Donde hubo fuego, cenizas quedan',
-                  english: 'Where there was fire, ashes remain',
-                  song: 'X ÚLTIMA VEZ · Bad Bunny' },
-                { pos: 'NOUN', translation: 'light', share: '≈20%',
-                  target: "Pasa el fuego que voy a prende'lo",
-                  english: "Pass the lighter — I'm going to light it",
-                  song: 'TREPATE · Bad Bunny' },
-                { pos: 'NOUN', translation: 'passion', share: '≈10%',
-                  target: "Vamo' a quemarnos en el fuego de la pasión",
-                  english: "Let's burn in the fire of passion",
-                  song: 'DIABLA (REMIX) · Bad Bunny' },
-            ],
-        },
-    ],
+    normal: ['queSpeech'],
+    artist: ['cielo'],
 };
 
 function _buildAboutDemoCard(mode) {
@@ -1418,21 +1412,35 @@ function _buildAboutDemoCard(mode) {
     return wrap;
 }
 
-// Build one compact row per meaning. Part of speech is shown once beneath the
-// headword, as it is on current live cards; artist rows may also carry an
-// indicative usage share.
+// One compact row per meaning, drawn the way the live card draws it: the
+// chosen meaning ticked and outlined in its part-of-speech colour, and how
+// common each meaning is as the live card's four-bar meter rather than a
+// percentage. Minimal on purpose — no grammar pills or section heading; the
+// walkthrough is where every part gets explained.
+const _DEMO_TICK = '<svg class="meaning-row-check" width="16" height="16" viewBox="0 0 24 24" fill="none" '
+    + 'stroke="rgb(var(--sense-match-rgb))" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" '
+    + 'aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+
 function _renderDemoMeaningRows(meanings, selectedIdx) {
     return meanings.map((m, idx) => {
-        const selected = idx === selectedIdx ? ' is-selected' : '';
-        const hasShare = m.share ? ' has-share' : '';
+        const isSelected = idx === selectedIdx;
+        const prominence = replicaProminence(m.pct);
+        const meter = prominence && typeof window.prominenceBadgeHTML === 'function'
+            ? window.prominenceBadgeHTML(prominence)
+            : '';
         return `
-            <div class="meaning-row meaning-row-regular${selected}${hasShare}">
+            <div class="meaning-row meaning-row-regular${isSelected ? ' is-selected' : ''}">
+                <span class="about-demo-row-tick">${isSelected ? _DEMO_TICK : ''}</span>
                 <div class="meaning-row-body">
-                    <span class="meaning-row-translation">${m.translation}</span>
+                    <span class="meaning-row-translation">${_escapeDemoText(m.translation)}</span>
                 </div>
-                ${m.share ? `<span class="about-demo-meaning-share" aria-label="Approximately ${m.share.replace('≈', '')} of matched examples">${m.share}</span>` : ''}
+                <span class="about-demo-row-meter">${meter}</span>
             </div>`;
     }).join('');
+}
+
+function _escapeDemoText(value) {
+    return String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 const _POS_CLASS_MAP = {
@@ -1514,19 +1522,21 @@ async function _runAboutDemo(container, mode) {
     };
 
     while (stillMounted()) {
-        for (const entry of deck) {
+        for (const entry of deck.map(_aboutDemoEntry)) {
             if (!stillMounted()) return;
 
             // -------- Front face --------
             card.classList.remove('flipped');
             wordEl.textContent = entry.word;
+            // Every colour on the back reads this one property, as on a live card.
+            container.style.setProperty('--sense-match-rgb', posAccentRgb(entry.pos));
             setFrontPos(entry.pos);
             setBackPos(entry.pos);
             // Mirror the live labels while keeping this small demo on one line.
             if (entry.rank && entry.corpusCount) {
                 rankEl.textContent = mode === 'artist'
-                    ? `Vocabulary rank: ${entry.rank} · Lyric lines: ${entry.corpusCount}`
-                    : `Vocabulary rank: ${entry.rank} · Frequency: ${entry.corpusCount}/million`;
+                    ? `Vocabulary rank: ${entry.rank.toLocaleString()} · Lyric lines: ${entry.corpusCount.toLocaleString()}`
+                    : `Vocabulary rank: ${entry.rank.toLocaleString()} · Frequency: ${entry.corpusCount.toLocaleString()}/million`;
             } else if (entry.rank) {
                 rankEl.textContent = `Vocabulary rank: ${entry.rank}`;
             } else {
@@ -1535,8 +1545,9 @@ async function _runAboutDemo(container, mode) {
             backWordEl.textContent = entry.word;
             // Spotify row on the back — only artist-mode entries carry a
             // `song` field; for normal-mode cards hide the row entirely.
-            if (entry.song && songBackEl && spotifyRowEl) {
-                songBackEl.textContent = entry.song;
+            const firstSong = entry.meanings.find(m => m.song)?.song;
+            if (firstSong && songBackEl && spotifyRowEl) {
+                songBackEl.textContent = firstSong;
                 spotifyRowEl.style.display = '';
             } else if (spotifyRowEl) {
                 spotifyRowEl.style.display = 'none';
@@ -1553,8 +1564,8 @@ async function _runAboutDemo(container, mode) {
                 if (!stillMounted()) return;
                 const m = entry.meanings[i];
                 meaningsEl.innerHTML = _renderDemoMeaningRows(entry.meanings, i);
-                if (songBackEl && spotifyRowEl && (m.song || entry.song)) {
-                    songBackEl.textContent = m.song || entry.song;
+                if (songBackEl && spotifyRowEl && m.song) {
+                    songBackEl.textContent = m.song;
                     spotifyRowEl.style.display = '';
                 }
                 // Target sentence is HTML (with the target word wrapped in a

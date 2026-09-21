@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-21T14:20:00+01:00",
+      "date": "2026-09-21 14:20 BST",
+      "agent": "Claude",
+      "summary": "About refreshed: the pipeline is described step by step, and the two animated cards now look like today's cards and show the same que and cielo as the walkthrough.",
+      "detail": [
+        "\"What's under the hood\" walks through the six pipeline steps: choosing words by how often they are said, collecting translated subtitle lines, dictionary sense menus, the append-only ledger of judgements, picking the meaning in each sentence (embeddings plus grammar, companion-word and alignment checks, abstaining when unsure), and building the deck.",
+        "Corrected: About said meanings were chosen by asking Gemini. They are chosen from Gemini embeddings plus local checks; no model writes the answer.",
+        "The animated About cards use the walkthrough's own real cards (que, cielo) instead of hand-written ones. fuego is gone; its \"light\" example did not show that meaning.",
+        "They now draw meanings the way a live card does: part-of-speech colour, a tick on the chosen meaning, the four-bar meter instead of \"≈50%\", and the studied word underlined in the example.",
+        "Prose no longer quotes percentages the cards no longer show."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-21T15:10:00+01:00",
       "date": "2026-09-21 15:10 BST",
       "agent": "Claude",
