@@ -32,10 +32,14 @@ async function loadSpeechSourceFrequency(langConfig) {
     return speechSourceFrequencyCache.get(path);
 }
 
-function speechSourceFrequencyOf(item, sourceData) {
-    const key = String(item?.word || '').normalize('NFC').toLocaleLowerCase();
+function speechSourceFrequencyForSurface(surface, sourceData) {
+    const key = String(surface || '').normalize('NFC').toLocaleLowerCase();
     const value = Number(sourceData?.values?.[key]);
     return Number.isFinite(value) && value > 0 ? value : null;
+}
+
+function speechSourceFrequencyOf(item, sourceData) {
+    return speechSourceFrequencyForSurface(item?.word, sourceData);
 }
 
 function currentWsdPublicationProjection() {
@@ -2651,6 +2655,24 @@ async function loadVocabularyData(rangeString, opts = {}) {
             const sourceFrequency = useLemmaMode && lemmaFieldAvailable
                 ? lemmaSourceFrequencies.get(lemmaGroupKey(item))
                 : null;
+            // The figure must describe the word printed on the card. A merged
+            // card prints the citation form, so the group's sum put ~141 per
+            // million under "unir" when the verb's own figure is 8.0 and most
+            // of that sum is the adjective *unidos*. Decision 0024 rule 4:
+            // only a published per-surface figure may be presented as this
+            // word's frequency. Never fall back to the representative
+            // surface's own value — that relabels one form's measurement with
+            // another form's name, which is the defect being removed.
+            //
+            // 22% of merged citation forms (605 of 2,716 on es-v15) are absent
+            // from the list — *estarse*, *tenerse*, rare infinitives. Their
+            // group total is still worth showing, but it is labelled as the
+            // family's rather than attributed to a form the source never
+            // measured. Absence is declared, not filled.
+            const displayedOwnFrequency =
+                speechSourceFrequencyForSurface(cardForm.displaySurface, speechFrequency);
+            const groupFrequencyTotal = sourceFrequency?.value ?? null;
+            const showsGroupTotal = displayedOwnFrequency === null && groupFrequencyTotal !== null;
             const card = {
                 targetWord: item.word,
                 lemma: item.lemma || '',
@@ -2660,7 +2682,9 @@ async function loadVocabularyData(rangeString, opts = {}) {
                 rank: item.rank,
                 vocabularyRank: item.displayRank,
                 vocabularySize: configurationVocabSize,
-                sourceFrequency: sourceFrequency?.value ?? speechSourceFrequencyOf(item, speechFrequency),
+                sourceFrequency: displayedOwnFrequency ?? groupFrequencyTotal,
+                sourceFrequencyGroupTotal: groupFrequencyTotal,
+                sourceFrequencyIsGroupTotal: showsGroupTotal,
                 sourceFrequencyForms: sourceFrequency?.forms || 1,
                 // Commonest surface first: the breakdown is read to check a
                 // total, and the form carrying most of it is the one worth

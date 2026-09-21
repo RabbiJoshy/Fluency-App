@@ -34,11 +34,17 @@ releases.
    `knowledge.js`'s sense signature is **card-scoped by design** and must not
    be reused for merging.
 
-4. **A displayed frequency is never split across lemmas.**
-   The card shows the surface's own published figure. Long-press or tap
-   itemises the real per-surface values (`unidos 69.3 · unido 12.5 · unir 8.0`)
-   so the reader can audit what is counted. No derived or apportioned number
-   reaches the screen.
+4. **A displayed frequency describes the form printed on the card, and is
+   never split across lemmas.**
+   The figure shown is the published value for `displaySurface` — the citation
+   form on a merged card, the surface itself otherwise. It is never the
+   representative surface's value under the citation form's name, and never an
+   apportioned share. Where the printed form is absent from the source (22% of
+   merged citation forms on `es-v15`: *estarse*, *tenerse*, rare infinitives)
+   the group total may be shown **only** under a label that says so — "All
+   forms" rather than "Frequency" — so a measured figure and a sum never read
+   alike. Long-press itemises the real per-surface values
+   (`unidos 69.3 · unido 12.5 · unir 8.0`) so the reader can audit either.
 
 5. **Deck ordering may use an apportioned total; display may not.**
    `pooled_frequency` sorts the merged deck (`app/js/vocab.js`). Where a surface
