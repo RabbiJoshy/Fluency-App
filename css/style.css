@@ -18881,3 +18881,100 @@ body.artist-mode #flashcardMode::before {
   }
   #settingsModal .settings-tab-content.active { display: block; }
 }
+
+/* ---- Side-docked sheets ----------------------------------------------------
+   One rule decides where a sheet opens: if you read it while still looking at
+   what is behind it, it docks to a side; if it is a task that takes your
+   attention (sign-in, settings, imports, the language picker, Fast Track,
+   end of deck), it stays centred.
+
+   In a study session (>=1360px) the card sits centred with a gutter either
+   side, and each side has a meaning:
+     right = about THIS card    find word, lyric breakdown, rare senses
+                                (docked above), synonyms (hosted on <body> by
+                                toggleSynonymsPanel, styled below)
+     left  = about the SESSION  saved words, progress, shortcuts, help
+   On the setup page (>=1024px) there is no card to keep in view, so reference
+   sheets open on the right over the progress sidebar and the steps stay
+   readable on the left. Phones and narrow windows keep centred sheets. */
+@media (min-width: 1360px) {
+  body:has(#appContent:not(.hidden)) :is(#savedWordsModal, #statsModal, #keyboardShortcutsModal, #helpModal):not(.hidden) {
+    justify-content: flex-start;
+    align-items: center;
+    padding: 24px;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  body:has(#appContent:not(.hidden)) :is(#savedWordsModal, #statsModal, #keyboardShortcutsModal, #helpModal) > .modal-content {
+    box-sizing: border-box;
+    width: min(360px, calc((100vw - 540px) / 2 - 48px));
+    max-width: none !important;
+    max-height: calc(100dvh - 48px);
+    overflow-y: auto;
+    margin: 0;
+    animation: dock-sheet-in-left 0.22s ease-out;
+  }
+}
+
+@media (min-width: 1024px) {
+  body:has(#appContent.hidden) :is(#mergedFormsModal, #skippedWordsModal, #extrasModal, #savedWordsModal, #cognateRulesModal, #statsModal, #totalStatsModal, #helpModal, #keyboardShortcutsModal):not(.hidden) {
+    justify-content: flex-end;
+    align-items: center;
+    padding: 24px;
+    background: rgba(3, 7, 12, 0.32);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  body:has(#appContent.hidden) :is(#mergedFormsModal, #skippedWordsModal, #extrasModal, #savedWordsModal, #cognateRulesModal, #statsModal, #totalStatsModal, #helpModal, #keyboardShortcutsModal) > .modal-content {
+    box-sizing: border-box;
+    width: min(440px, 40vw);
+    max-width: none !important;
+    max-height: calc(100dvh - 48px);
+    margin: 0;
+    animation: dock-sheet-in-right 0.22s ease-out;
+  }
+  /* These three scroll an inner list rather than the sheet; give the list
+     the full height instead of the centred sheet's 620px cap. */
+  body:has(#appContent.hidden) :is(#mergedFormsModal, #skippedWordsModal, #extrasModal) > .modal-content {
+    height: calc(100dvh - 48px);
+  }
+  body:has(#appContent.hidden) :is(#cognateRulesModal, #savedWordsModal, #statsModal, #totalStatsModal, #helpModal, #keyboardShortcutsModal) > .modal-content {
+    overflow-y: auto;
+  }
+}
+
+/* Synonyms, docked in the right gutter while the card stays in view. The panel
+   cannot do this from inside the card (the flip transform clips it), so
+   toggleSynonymsPanel hosts it on <body> at this width. The rule is not
+   media-gated: a panel already hosted when the window narrows must still be
+   a sensible sheet, not a stretched copy of the in-card layout. */
+body > .synonyms-panel {
+  position: fixed;
+  top: 50%;
+  bottom: auto;
+  left: auto;
+  right: 24px;
+  width: min(360px, calc((100vw - 540px) / 2 - 48px), calc(100vw - 48px));
+  max-height: calc(100dvh - 48px);
+  height: min(560px, calc(100dvh - 48px));
+  z-index: 1000;
+  border: 1px solid var(--border-color);
+  border-radius: 22px;
+  transform: translate(calc(100% + 48px), -50%);
+}
+body > .synonyms-panel.visible {
+  transform: translate(0, -50%);
+}
+
+@keyframes dock-sheet-in-right {
+  from { transform: translateX(28px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+@keyframes dock-sheet-in-left {
+  from { transform: translateX(-28px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .modal > .modal-content { animation: none; }
+}

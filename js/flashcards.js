@@ -7052,6 +7052,10 @@ function updateCard({ announceHeadword = false } = {}) {
         if (document.getElementById('conjugationTable')?.parentElement === document.body) {
             document.getElementById('conjugationTable').remove();
         }
+        // Same for a docked synonyms panel: it belongs to the previous card.
+        if (document.getElementById('synonymsPanel')?.parentElement === document.body) {
+            document.getElementById('synonymsPanel').remove();
+        }
         renderedBack.innerHTML = backHTML;
         renderedBack._fluencyRenderedHTML = backHTML;
     }
@@ -7386,6 +7390,16 @@ function flipCard() {
     const wasFlipped = flashcardEl.classList.contains('flipped');
     flashcardEl.classList.toggle('flipped');
     const isNowFlipped = flashcardEl.classList.contains('flipped');
+    // A docked synonyms panel lives on <body>, outside the card, so it does
+    // not turn away with the back face. Close it on the way to the front:
+    // its headword would give the answer away in English→target mode.
+    if (!isNowFlipped) {
+        const synonymsPanel = document.getElementById('synonymsPanel');
+        if (synonymsPanel?.parentElement === document.body
+            && synonymsPanel.classList.contains('visible')) {
+            toggleSynonymsPanel();
+        }
+    }
 
     const card = flashcards[currentIndex];
     if (!card) return;
@@ -8489,15 +8503,48 @@ function selectSynonymsTab(event, tabId) {
         section.classList.toggle('selected', section.dataset.synPanel === tabId));
 }
 
+// On a wide desktop the panel docks in the right-hand gutter so the card stays
+// in view. Inside the card it cannot: .card-face clips it and the flip
+// transform makes even position:fixed resolve against the card. So, as with
+// the conjugation panel, it is hosted on <body> while open and stowed back
+// into the back face when closed. Below the breakpoint it keeps sliding over
+// the card as before.
+const SYNONYMS_DOCK_QUERY = '(min-width: 1360px)';
+
+function stowSynonymsPanel(panel) {
+    const host = document.getElementById('backContent');
+    if (host && panel.parentElement !== host) host.appendChild(panel);
+}
+
 function toggleSynonymsPanel() {
     const panel = document.getElementById('synonymsPanel');
     if (!panel) return;
     const opening = !panel.classList.contains('visible');
-    panel.classList.toggle('visible');
-    if (opening && !panel.querySelector('[data-syn-tab].selected')) {
+    if (!opening) {
+        panel.classList.remove('visible');
+        if (panel.parentElement === document.body) {
+            // Wait out the slide before re-parenting, or the panel jumps.
+            setTimeout(() => {
+                if (!panel.classList.contains('visible')) stowSynonymsPanel(panel);
+            }, 260);
+        }
+        return;
+    }
+    if (!panel.querySelector('[data-syn-tab].selected')) {
         const hasSynonyms = panel.querySelector('[data-syn-panel="synonyms"] .syn-item');
         selectSynonymsTab(null, hasSynonyms ? 'synonyms' : 'antonyms');
     }
+    if (window.matchMedia?.(SYNONYMS_DOCK_QUERY).matches && panel.parentElement !== document.body) {
+        document.body.appendChild(panel);
+        // A freshly moved node has no committed "from" state, so the slide
+        // would be skipped. Reading a layout property commits it; unlike a
+        // requestAnimationFrame this cannot be deferred indefinitely by a
+        // backgrounded tab, leaving the panel hosted but never shown.
+        void panel.offsetWidth;
+        panel.classList.add('visible');
+        return;
+    }
+    panel.classList.add('visible');
 }
 
 // Small sheet listing every external reference link (SpanishDict, Reverso,
