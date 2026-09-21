@@ -1219,6 +1219,14 @@
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
+:root[data-theme="light"] .find-word-spotlight {
+    background: color-mix(in srgb, #ffffff 92%, #e2e8f0);
+    box-shadow: 0 28px 80px rgba(15, 23, 42, 0.18), 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+}
+:root[data-theme="light"] #findWordModal.find-word-overlay {
+    background: rgba(248, 250, 252, 0.48);
+}
+
 :root[data-theme="light"] .find-word-filter-btn {
     background: #f1f5f9;
     color: var(--text-muted);

@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v529';
+const CACHE_NAME = 'flashcards-v530';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -26,8 +26,8 @@ const ASSET_VERSION = '20260825ak';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/css/style.css?v=20260921gc',
-  '/css/light-theme.css?v=20260921narrow',
+  '/css/style.css?v=20260921spot',
+  '/css/light-theme.css?v=20260921spot',
   '/config/config.json',
   '/data/speech-frequency/es.json',
   '/data/speech-frequency/fr.json',
@@ -36,7 +36,7 @@ const urlsToCache = [
   '/config/cefr_levels.json',
   '/config/offline-content-manifest.json',
   '/js/routes.js?v=20260921a',
-  '/js/main.js?v=20260921gc',
+  '/js/main.js?v=20260921spot',
   `/js/theme.js?v=${ASSET_VERSION}`,
   '/js/state.js?v=20260921x',
   `/js/data-contracts.js?v=${ASSET_VERSION}`,
@@ -73,13 +73,13 @@ const urlsToCache = [
   `/js/spanishdict-usage.js?v=${ASSET_VERSION}`,
   '/js/reverse-cues.js?v=20260917a',
   '/js/card-metadata-pills.js?v=20260921details',
-  '/js/flashcards.js?v=20260921gc',
+  '/js/flashcards.js?v=20260921spot',
   '/icons/tatoeba.svg',
   '/icons/wikipedia-w.svg',
   `/js/example-personalisation.js?v=${ASSET_VERSION}`,
   '/js/flashcards-modals.js?v=20260921rt',
   '/js/flashcards-conj.js?v=20260921x',
-  '/js/side-dock.js?v=20260921narrow'
+  '/js/side-dock.js?v=20260921spot'
 ];
 
 self.addEventListener('install', event => {

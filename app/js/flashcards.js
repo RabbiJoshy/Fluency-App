@@ -4,7 +4,7 @@
 import './state.js?v=20260825ak';
 import './speech.js?v=20260825ak';
 import { goToRoute, routeCodeFor } from './routes.js?v=20260921a';
-import './side-dock.js?v=20260921narrow';
+import './side-dock.js?v=20260921spot';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
@@ -1540,7 +1540,6 @@ function initializeApp() {
                 : icon('<path d="M11 5 6 9H3v6h3l5 4z"></path><path d="m16 10 5 5"></path><path d="m21 10-5 5"></path>'), onSelect: () => toggleAutoSpeak() },
             { label: 'Set progress', iconHTML: icon('<path d="M4 19V9"></path><path d="M10 19V5"></path><path d="M16 19v-7"></path><path d="M22 19H2"></path>'), onSelect: () => showStatsModal() },
             { label: 'Study preferences', iconHTML: icon('<path d="M4 6h10"></path><path d="M18 6h2"></path><circle cx="16" cy="6" r="2"></circle><path d="M4 12h2"></path><path d="M10 12h10"></path><circle cx="8" cy="12" r="2"></circle><path d="M4 18h8"></path><path d="M16 18h4"></path><circle cx="14" cy="18" r="2"></circle>'), onSelect: () => showSettingsModalWithTab('study', { singleTab: true }) },
-            { label: 'Find a word', iconHTML: icon('<circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>'), onSelect: () => window.openFindWord?.() },
             { label: 'Saved words', iconHTML: icon('<path d="M6 4h12v16l-6-3-6 3z"></path>'), onSelect: () => window.openSavedWords?.() }
         ];
         // Card data is a product-level audit surface: it stays available when
@@ -2371,10 +2370,9 @@ function setupKeyboardShortcuts() {
             showSettingsModalWithTab('study', { singleTab: true });
             return;
         }
-        if (commandModifier && !e.altKey && commandKey === 'f' && canFlag) {
+        if (commandModifier && !e.altKey && commandKey === 'f' && e.shiftKey && canFlag) {
             e.preventDefault();
-            if (e.shiftKey) window.showFlagMenu?.();
-            else window.sendWholeCardFlag?.();
+            window.showFlagMenu?.();
             return;
         }
 
@@ -2441,13 +2439,9 @@ function setupKeyboardShortcuts() {
                 window.speakWord(getDisplayedTargetHeadword(card));
             }
         }
-        // F = open find a word modal (for non-audit users)
-        else if ((e.key === 'f' || e.key === 'F') && !canFlag) {
-            e.preventDefault();
-            window.openFindWord?.();
-        }
-        // Legacy single-key shortcut retained for the owner audit workflow.
-        else if ((e.key === 'f' || e.key === 'F') && canFlag) {
+        // F = flag for the owner audit workflow. Word search is ⌘F / Ctrl+F
+        // (wired in setupFindWord) so it matches the desktop find shortcut.
+        else if ((e.key === 'f' || e.key === 'F') && canFlag && !e.metaKey && !e.ctrlKey) {
             e.preventDefault();
             handleFlagAction();
         }

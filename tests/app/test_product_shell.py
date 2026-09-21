@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v529"
+EXPECTED_CACHE_NAME = "flashcards-v530"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -530,6 +530,8 @@ class ProductShellTests(unittest.TestCase):
         overview = html[html.index('id="studyTabContent"'):html.index('id="lookupTabContent"')]
         self.assertIn('id="settingsImportKnownBtn"', overview)
         self.assertIn('id="settingsExportMistakesBtn"', overview)
+        self.assertIn('id="settingsFindWordBtn"', overview)
+        self.assertIn('data-open-find-word', overview)
         self.assertIn('id="settingsWordsDataBtn"', overview)
         self.assertIn('id="settingsAccountBtn"', overview)
         self.assertIn('id="appearanceSettingsTitle">Theme', overview)
@@ -710,8 +712,8 @@ class ProductShellTests(unittest.TestCase):
             '.range-btn-new:not(.has-progress):not(:hover)',
             light_css,
         )
-        self.assertIn('css/light-theme.css?v=20260921narrow', html)
-        self.assertIn('/css/light-theme.css?v=20260921narrow', worker)
+        self.assertIn('css/light-theme.css?v=20260921spot', html)
+        self.assertIn('/css/light-theme.css?v=20260921spot', worker)
 
     def test_active_release_aliases_are_never_cached(self) -> None:
         worker = (APP_ROOT / "service-worker.js").read_text(encoding="utf-8")
@@ -789,7 +791,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260918l", worker)
-        self.assertIn("/js/main.js?v=20260921gc", worker)
+        self.assertIn("/js/main.js?v=20260921spot", worker)
         self.assertIn("/js/ui.js?v=20260921x", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
@@ -911,7 +913,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
         self.assertIn("/js/spotify-playlist-import.js?v=20260921rh", worker)
-        self.assertIn('css/style.css?v=20260921gc', html)
+        self.assertIn('css/style.css?v=20260921spot', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
         self.assertIn("replaceRoute({\n        kind: 'live'", importer)
@@ -1427,19 +1429,29 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("e.key === '?'", flashcards)
         self.assertIn(".keyboard-shortcuts-content", css)
         self.assertIn(".shortcut-kbd", css)
+        self.assertIn("⌘F", html)
+        self.assertIn("Ctrl+F", html)
 
     def test_find_word_filter_chips_and_prominence_badges(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
         main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
+        flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        dock = (APP_ROOT / "js" / "side-dock.js").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
         self.assertIn('id="findWordFilters"', html)
+        self.assertIn('class="modal hidden find-word-overlay"', html)
+        self.assertIn('class="find-word-spotlight"', html)
         self.assertIn('data-filter="learned"', html)
         self.assertIn('data-filter="review"', html)
         self.assertIn('data-filter="unseen"', html)
         self.assertIn("_findWordFilter", main)
         self.assertIn("fw-meaning-group", main)
+        self.assertIn("const findShortcut = (e.metaKey || e.ctrlKey)", main)
         self.assertIn(".find-word-filters", css)
         self.assertIn(".find-word-filter-btn.is-active", css)
+        self.assertIn("#findWordModal.find-word-overlay", css)
+        self.assertNotIn("{ id: 'findWordModal'", dock)
+        self.assertNotIn("label: 'Find a word'", flashcards)
 
     def test_back_of_card_sense_deduplication_and_2line_presentation(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")

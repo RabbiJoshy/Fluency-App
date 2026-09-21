@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-21T23:22:00+01:00",
+      "date": "2026-09-21 23:22 BST",
+      "agent": "Cursor",
+      "summary": "Find a word now lives in Settings, and on a computer ⌘F or Ctrl+F opens a Spotlight-style search bar.",
+      "detail": [
+        "Removed Find a word from the study options sheet; Settings → Your words is the button.",
+        "⌘F / Ctrl+F intercepts the browser find shortcut and opens a centred search overlay.",
+        "Arrow keys move through matches; Escape and the backdrop dismiss it."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-21T23:10:00+01:00",
       "date": "2026-09-21 23:10 BST",
       "agent": "Cursor",
