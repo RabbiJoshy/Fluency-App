@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-22T01:20:00+01:00",
+      "date": "2026-09-22 01:20 BST",
+      "agent": "Claude",
+      "summary": "Fix: the frequency had disappeared from the bottom of the card in Merge Lemmas mode.",
+      "detail": [
+        "A card shows a figure again in merged mode. The previous change showed only the printed form's own figure, and blanked the card when the source does not list that form.",
+        "The card now says whose figure it is: its own, 'All forms' for a family total, or the named form the source did measure.",
+        "Long-press still pins the per-form breakdown."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-22T00:35:00+01:00",
       "date": "2026-09-22 00:35 BST",
       "agent": "Claude",

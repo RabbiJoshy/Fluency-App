@@ -5718,18 +5718,22 @@ function updateCard({ announceHeadword = false } = {}) {
             const perMillion = card.sourceFrequencyUnit === 'per_million';
             const count = `<strong class="card-stat-value">${Number(card.sourceFrequency).toLocaleString(undefined, { maximumFractionDigits: perMillion ? 2 : 0 })}</strong>`;
             const source = escapeCardText(card.sourceFrequencySource || 'Published frequency list');
-            // A card whose printed form the source never measured shows its
-            // family's total instead, and must say so — the number is real,
-            // but it is not this form's. Never let the two read alike.
-            const label = card.sourceFrequencyIsGroupTotal
-                ? (perMillion ? `All forms: ${count}/million` : `All forms: ${count}`)
-                : (perMillion ? `Frequency: ${count}/million` : `List occurrences: ${count}`);
+            // A card whose printed form the source never measured still shows a
+            // figure, but must say whose it is — the number is real, it is just
+            // not this form's. Never let the three read alike.
+            const unitSuffix = perMillion ? '/million' : '';
+            const basis = card.sourceFrequencyBasis || 'own';
+            const label = basis === 'total'
+                ? `All forms: ${count}${unitSuffix}`
+                : basis === 'other-surface'
+                    ? `${escapeCardText(card.sourceFrequencyBasisSurface || 'Listed form')}: ${count}${unitSuffix}`
+                    : (perMillion ? `Frequency: ${count}/million` : `List occurrences: ${count}`);
             // The breakdown travels as an attribute so the tooltip needs no
             // access to the card model; it is already HTML-escaped for the
             // attribute context by escapeCardText.
             const breakdown = escapeCardText(JSON.stringify(
                 (card.sourceFrequencyBreakdown || []).map(row => [row.surface, row.value])));
-            freqHtml = `<button class="card-freq-btn" onclick="window.showFreqInfo(event)" data-frequency-source="${source}" data-frequency-unit="${card.sourceFrequencyUnit || ''}" data-frequency-forms="${Number(card.sourceFrequencyForms) || 1}" data-frequency-is-total="${card.sourceFrequencyIsGroupTotal ? '1' : ''}" data-frequency-breakdown="${breakdown}" aria-label="Source frequency information">${label}</button>`;
+            freqHtml = `<button class="card-freq-btn" onclick="window.showFreqInfo(event)" data-frequency-source="${source}" data-frequency-unit="${card.sourceFrequencyUnit || ''}" data-frequency-forms="${Number(card.sourceFrequencyForms) || 1}" data-frequency-is-total="${card.sourceFrequencyIsGroupTotal ? '1' : ''}" data-frequency-basis-surface="${escapeCardText(card.sourceFrequencyBasisSurface || '')}" data-frequency-breakdown="${breakdown}" aria-label="Source frequency information">${label}</button>`;
         }
         const denominator = vocabularySize ? ` / ${vocabularySize.toLocaleString()}` : '';
         const rankLabel = card.artistVocabularyScope === 'extra' ? 'Extra rank' : 'Vocabulary rank';
@@ -8906,9 +8910,12 @@ window.showFreqInfo = function showFreqInfo(event, options = {}) {
     // Where the printed form itself was never measured, say that outright
     // rather than letting a family total pass as the word's own figure.
     const isTotal = button?.dataset.frequencyIsTotal === '1';
+    const otherSurface = button?.dataset.frequencyBasisSurface || '';
     const basis = isTotal
         ? `The source does not list this exact form, so this is every listed form added together. `
-        : '';
+        : otherSurface
+            ? `The source does not list this exact form; this is the figure for ${escapeCardText(otherSurface)}. `
+            : '';
     tip.innerHTML = `${head}. ${basis}Counts how often the spelling appears in the source, `
         + `not this sense. Harvested example sentences are not counted.${rows}`;
     tip.classList.toggle('freq-tooltip-wide', showList);
