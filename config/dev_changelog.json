@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-21T14:35:00+01:00",
+      "date": "2026-09-21 14:35 BST",
+      "agent": "Claude",
+      "summary": "About: the two animated cards are now the way into the walkthrough, the Speech card is banco (bank / bench), and \"What's under the hood\" is short, plain bullets.",
+      "detail": [
+        "Tapping either animated card opens the walkthrough on that card; the Lyrics card opens straight on the Lyrics screen. A caption under the pair says so, and the separate button is gone.",
+        "The cards sit directly after the opening two paragraphs, side by side on desktop with their text underneath; on a phone each card is followed by its own text.",
+        "The Speech example is banco (bank / bench) instead of que. Two meanings nobody could confuse, and every example in the live deck is right, so a quick look shows what matching meanings to sentences is for. The walkthrough uses it too.",
+        "\"What's under the hood\" is eight short bullets about what each step does for a learner, not how it is implemented."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-21T14:20:00+01:00",
       "date": "2026-09-21 14:20 BST",
       "agent": "Claude",

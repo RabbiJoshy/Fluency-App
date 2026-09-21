@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v519"
+EXPECTED_CACHE_NAME = "flashcards-v520"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -402,7 +402,12 @@ class ProductShellTests(unittest.TestCase):
         auth = (APP_ROOT / "js" / "auth.js").read_text(encoding="utf-8")
         self.assertIn('id="helpBtn" class="top-bar-icon-btn"', html)
         self.assertIn('aria-label="Open tutorial"', html)
-        self.assertIn("(example://walkthrough)", about)
+        # The demo cards are the way in: tapping one opens the walkthrough on
+        # that card, with a caption under the pair saying so.
+        self.assertIn("window.openWalkthrough?.({ start })", auth)
+        self.assertIn("Tap a card to see every part of it explained", auth)
+        self.assertIn("demo://normal", about)
+        self.assertIn("demo://artist", about)
         self.assertNotIn("tutorial", about.lower())
         self.assertIn("window.openWalkthrough && window.openWalkthrough()", auth)
         self.assertNotIn("startAboutTutorial", auth)
@@ -771,7 +776,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260918l", worker)
-        self.assertIn("/js/main.js?v=20260921ab", worker)
+        self.assertIn("/js/main.js?v=20260921ac", worker)
         self.assertIn("/js/ui.js?v=20260920g", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
@@ -795,9 +800,9 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertIn("config?.publicServices?.progressSyncUrl", auth)
         self.assertIn("secrets.googleScriptUrl || GOOGLE_SCRIPT_URL", auth)
-        self.assertIn('js/auth.js?v=20260921ab', html)
-        self.assertIn("auth.js?v=20260921ab", main)
-        self.assertIn("/js/auth.js?v=20260921ab", worker)
+        self.assertIn('js/auth.js?v=20260921ac', html)
+        self.assertIn("auth.js?v=20260921ac", main)
+        self.assertIn("/js/auth.js?v=20260921ac", worker)
 
     def test_progress_identity_bridges_historical_mode_ids_by_surface(self) -> None:
         progress = (APP_ROOT / "js" / "progress.js").read_text(encoding="utf-8")
@@ -891,7 +896,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
         self.assertIn("/js/spotify-playlist-import.js?v=20260919a", worker)
-        self.assertIn('css/style.css?v=20260921ab', html)
+        self.assertIn('css/style.css?v=20260921ac', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
         self.assertIn("searchParams.set('playlistLive'", importer)
