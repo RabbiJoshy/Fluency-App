@@ -1320,71 +1320,100 @@ function toggleExampleAutoplay(event) {
     playExampleAutoplayStep(runId);
 }
 
+// Example ordering. Four keys, compared in order, with no arithmetic score:
+//   1. has an English translation  — an untranslated first line teaches nothing
+//   2. is a single sentence        — 0.5% of corpus lines run to two
+//   3. WSD confidence tier         — cheap-agree > leaf > glosskey > tuple
+//   4. reinforces a recent mistake — local progress state, no pipeline data
+// Ties keep deck order, so the result is stable.
+//
+// Confidence RANKS, it does not gate. Measured on the live v15 deck:
+// `cheap_leaf_choices_agree` covers only ~25% of examples, so gating on it
+// would hand 79.8% of cards a dictionary example as their first line — and a
+// canonical example contains the card's own surface form only 44.6% of the
+// time, so most cards would open on a sentence with nothing to underline.
+// Ranking instead leaves just 1.1% of senses with no usable corpus line.
+//
+// Deliberately dropped: `easiness` (identical to selection_metrics.score, an
+// opaque composite of frequency burden, length penalty and harder-token count
+// that cannot be explained on screen — and `ex.easiness || 999999` inverted
+// the 15.9% of examples scoring exactly 0, sorting the easiest lines last),
+// the 6–14 token length window (the pipeline already caps length at 4–15 and
+// charges length_penalty into the score) and deck-word overlap (at ~3.5k
+// visible cards nearly every token is a deck word, making it sentence length
+// in disguise).
+const EXAMPLE_SENTENCE_BREAK_RE = /[.!?\u2026](?:["\u00bb\u201d')\]]+)?\s+[\u00bf\u00a1"\u00ab\u201c(\[]?\p{Lu}/u;
+
+// An abbreviation's full stop is not a sentence break. Without this, lines
+// like "Vino el Sr. Perez ayer." are demoted; they are 10.9% of everything
+// the break pattern catches.
+const EXAMPLE_ABBREVIATION_RE = /\b(?:sr|sra|srta|dr|dra|lic|ing|ud|uds|vd|vds|ee|uu|av|pág|núm|etc|mr|mrs|ms|st)\./gi;
+
+function exampleIsSingleSentence(example) {
+    const text = String(example?.target || example?.spanish || '').trim();
+    if (!text) return false;
+    return !EXAMPLE_SENTENCE_BREAK_RE.test(text.replace(EXAMPLE_ABBREVIATION_RE, 'x'));
+}
+
+// Lower is better. 0 is the strongest signal the release ships: two cheap
+// methods independently picked the same leaf for THIS sentence. Below that,
+// fall back to how deeply the assignment resolved.
+const WSD_CONFIDENCE_TIER = { leaf: 1, glosskey: 2, tuple: 3 };
+const WSD_CONFIDENCE_UNKNOWN = 4;
+
+function exampleConfidenceTier(example) {
+    const wsd = exampleWsdMeta(example);
+    if (!wsd) return WSD_CONFIDENCE_UNKNOWN;
+    if (wsd.gemini_recommendation?.reason === 'cheap_leaf_choices_agree') return 0;
+    return WSD_CONFIDENCE_TIER[wsd.supported_level] || WSD_CONFIDENCE_UNKNOWN;
+}
+
+// 2 = a purpose-built personalised line; 1 = the sentence merely contains a
+// word missed in the last week. Half of all senses still have two or more
+// examples tied after the first three keys, so this decides the first line
+// about as often as confidence does.
+function exampleReinforcementScore(example, wrongWords) {
+    if (!wrongWords?.size) return 0;
+    if (exampleReinforcesRecentMistake(example, wrongWords)) return 2;
+    const text = String(example?.target || example?.spanish || '');
+    if (!text) return 0;
+    const tokens = text.toLowerCase()
+        .match(/[\p{L}\p{N}]+(?:['\u2019][\p{L}\p{N}]+)*/gu) || [];
+    for (const token of tokens) {
+        if (wrongWords.has(token)) return 1;
+    }
+    return 0;
+}
+
 function sortExamplesByRelevance(examples) {
-    const deckWords = getDeckWords();
     const wrongWords = getRecentWrongWords();
-    // Score each example — use personal easiness (excludes known words) when available
-    const usePersonal = !!_spanishRanks;
-    // A good "first line" is long enough to be a real phrase but short enough
-    // to read at a glance; lines outside the window get a graded penalty.
-    const LEN_MIN = 6, LEN_MAX = 14;
-    const scored = filterPersonalisedExamples(examples, wrongWords).map(ex => {
-        const spanishText = ex.spanish || ex.target || '';
-        const tokens = spanishText.toLowerCase()
-            .match(/[\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)*/gu) || [];
-        let deckHits = 0, wrongHits = 0;
-        for (const t of tokens) {
-            if (wrongWords.has(t)) wrongHits++;
-            if (deckWords.has(t)) deckHits++;
-        }
-        if (exampleReinforcesRecentMistake(ex, wrongWords)) wrongHits += 2;
-        // Cap the overlap counts: with ~3.5k visible cards nearly every token
-        // is a deck word, so an uncapped deckHits is just sentence length in
-        // disguise — that made the sort pick the single longest line ~80% of
-        // the time. Capping keeps the pedagogic "shows words you know / missed"
-        // intent without rewarding length.
-        const deckScore = Math.min(deckHits, 3);
-        const wrongScore = Math.min(wrongHits, 2);
-        const len = contentTokenCount(spanishText);
-        const lenPenalty = len < LEN_MIN ? (LEN_MIN - len)
-                         : len > LEN_MAX ? (len - LEN_MAX)
-                         : 0;
-        // A first line with no English translation is close to useless as a
-        // teaching card — demote it below any translated alternative.
-        const hasEnglish = !!(ex.english && ex.english.trim());
-        const easiness = usePersonal
-            ? computePersonalEasiness(spanishText)
-            : (ex.easiness || 999999);
-        return {
-            ex,
-            wrongScore,
-            deckScore,
-            lenPenalty,
-            hasEnglish,
-            easiness,
-            activeArtistSinger: exampleSungByActiveArtist(ex),
-            spotifyAvailable: ex.spotify_available === true,
-            standardVersion: ex.is_variant !== true,
-        };
-    });
-    // Speech examples were generated with a nearby-rank co-study score. The
-    // stable 20-position set now gives that score an exact UI counterpart:
-    // after translation and recent mistakes, prefer sentences containing
-    // another card from this set. Lyrics retain the prior length-first order.
+    const scored = filterPersonalisedExamples(examples, wrongWords).map((ex, index) => ({
+        ex,
+        index,
+        hasEnglish: !!(ex.english && ex.english.trim()),
+        singleSentence: exampleIsSingleSentence(ex),
+        confidence: exampleConfidenceTier(ex),
+        reinforcement: exampleReinforcementScore(ex, wrongWords),
+        activeArtistSinger: exampleSungByActiveArtist(ex),
+        spotifyAvailable: ex.spotify_available === true,
+        standardVersion: ex.is_variant !== true,
+    }));
+    // Lyrics keep their own precedence: who sang it and whether it can play
+    // outrank everything else, and lyric rows carry no WSD metadata at all,
+    // so the confidence tier is constant there and falls through harmlessly.
     scored.sort((a, b) => activeArtist
         ? ((Number(b.activeArtistSinger) - Number(a.activeArtistSinger))
             || (Number(b.spotifyAvailable) - Number(a.spotifyAvailable))
             || (Number(b.standardVersion) - Number(a.standardVersion))
             || (Number(b.hasEnglish) - Number(a.hasEnglish))
-            || (b.wrongScore - a.wrongScore)
-            || (a.lenPenalty - b.lenPenalty)
-            || (b.deckScore - a.deckScore)
-            || (a.easiness - b.easiness))
+            || (Number(b.singleSentence) - Number(a.singleSentence))
+            || (b.reinforcement - a.reinforcement)
+            || (a.index - b.index))
         : ((Number(b.hasEnglish) - Number(a.hasEnglish))
-            || (b.wrongScore - a.wrongScore)
-            || (b.deckScore - a.deckScore)
-            || (a.lenPenalty - b.lenPenalty)
-            || (a.easiness - b.easiness))
+            || (Number(b.singleSentence) - Number(a.singleSentence))
+            || (a.confidence - b.confidence)
+            || (b.reinforcement - a.reinforcement)
+            || (a.index - b.index))
     );
     return scored.map(s => s.ex);
 }
@@ -4648,15 +4677,13 @@ function isReliableWsdExample(example) {
     return Boolean(WSD_EXAMPLE_LEVEL_RANK[exampleWsdLevel(example)]);
 }
 
+// One ordering, not two. This used to sort by relevance and then re-sort by
+// supported_level, silently discarding the first result; confidence is now a
+// key inside sortExamplesByRelevance instead.
 function rankConfidentWsdExamples(examples) {
     const reliable = (examples || []).filter(isReliableWsdExample);
     if (!reliable.length) return [];
-    const ranked = sortExamplesByRelevance([...reliable]);
-    ranked.sort((a, b) => (
-        (WSD_EXAMPLE_LEVEL_RANK[exampleWsdLevel(b)] || 0)
-        - (WSD_EXAMPLE_LEVEL_RANK[exampleWsdLevel(a)] || 0)
-    ));
-    return ranked;
+    return sortExamplesByRelevance([...reliable]);
 }
 
 function canonicalAsDisplayExample(meaning) {
@@ -4717,10 +4744,16 @@ function displayExamplesForSense(meaning, examples, card = null) {
         return norm(a.target || a.spanish || a.targetSentence) === norm(b.target || b.spanish || b.targetSentence);
     };
 
+    // The canonical dictionary line is the SECOND example, not the last. It is
+    // the dictionary's own illustration of this exact sense, so it is the right
+    // thing to reach for once the best real sentence has been shown — but it is
+    // not a neutral fallback: 9.3% of canonical lines run to two sentences and
+    // only 44.6% contain the card's own surface form, so it never leads while a
+    // usable corpus line exists.
     if (confident.length) {
         const result = [...confident];
         if (canonical && !result.some(ex => isSameText(ex, canonical))) {
-            result.push(canonical);
+            result.splice(1, 0, canonical);
         }
         return result;
     }
