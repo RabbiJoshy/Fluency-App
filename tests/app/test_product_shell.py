@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v522"
+EXPECTED_CACHE_NAME = "flashcards-v523"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -514,7 +514,12 @@ class ProductShellTests(unittest.TestCase):
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
         self.assertIn('id="fastModeHomeSwitch"', html)
         self.assertIn('id="fastModeFineTuneBtn"', html)
-        self.assertIn('id="settingsFastTrackBtn"', html)
+        self.assertIn('class="level-choosing"', html)
+        choosing = html[html.index('class="level-choosing"'):html.index('id="step4"')]
+        self.assertIn('id="levelSelector"', choosing)
+        self.assertIn('id="setupOptions"', choosing)
+        self.assertIn('id="fastModeToggleBtn"', choosing)
+        self.assertNotIn('id="settingsFastTrackBtn"', html)
         self.assertIn('id="fastModeSkippedLink"', html)
 
     def test_settings_are_organised_around_learner_tasks(self) -> None:
@@ -536,6 +541,11 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("Speak the word", html)
         self.assertIn('Bring back learned words', overview)
         self.assertIn('More study options', overview)
+        self.assertIn('Rare senses after a correct answer', overview)
+        self.assertIn('Expressions after a correct answer', overview)
+        self.assertIn('data-setting="rareSensesMode"', overview)
+        self.assertIn('data-setting="expressionsMode"', overview)
+        self.assertNotIn('data-setting="phrasesMode"', overview)
 
     def test_fast_track_skipped_words_are_study_sets_of_twenty(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
@@ -699,8 +709,8 @@ class ProductShellTests(unittest.TestCase):
             '.range-btn-new:not(.has-progress):not(:hover)',
             light_css,
         )
-        self.assertIn('css/light-theme.css?v=20260921w', html)
-        self.assertIn('/css/light-theme.css?v=20260921w', worker)
+        self.assertIn('css/light-theme.css?v=20260921x', html)
+        self.assertIn('/css/light-theme.css?v=20260921x', worker)
 
     def test_active_release_aliases_are_never_cached(self) -> None:
         worker = (APP_ROOT / "service-worker.js").read_text(encoding="utf-8")
@@ -778,8 +788,8 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260918l", worker)
-        self.assertIn("/js/main.js?v=20260921rt", worker)
-        self.assertIn("/js/ui.js?v=20260921sd", worker)
+        self.assertIn("/js/main.js?v=20260921ru", worker)
+        self.assertIn("/js/ui.js?v=20260921x", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -898,7 +908,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
         self.assertIn("/js/spotify-playlist-import.js?v=20260921rt", worker)
-        self.assertIn('css/style.css?v=20260921sd', html)
+        self.assertIn('css/style.css?v=20260921ad', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
         self.assertIn("replaceRoute({\n        kind: 'live'", importer)
@@ -1323,8 +1333,12 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("meaning-row-rare", flashcards)
         self.assertIn("ref-rare-uses-btn", flashcards)
         self.assertIn("example-source-chip", flashcards)
+        self.assertIn("function armOutboundLink(event)", flashcards)
+        self.assertIn("function confirmOutboundLink(event)", flashcards)
+        self.assertIn("outbound-leave-btn", flashcards)
         self.assertIn(".dictionary-provenance-badge", css)
         self.assertIn(".example-source-chip", css)
+        self.assertIn(".outbound-leave-btn", css)
         self.assertIn(".meaning-row.meaning-row-rare", css)
         self.assertIn(".dictionary-provenance-badge", light)
 

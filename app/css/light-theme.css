@@ -581,6 +581,7 @@
 }
 
 :root[data-theme="light"] .lookup-sheet-icon,
+:root[data-theme="light"] .lookup-sheet-icon .outbound-leave-btn,
 :root[data-theme="light"] .card-control-btn,
 :root[data-theme="light"] #reverseLangBtn .reverse-swap-glyph {
     border-color: var(--border-color);

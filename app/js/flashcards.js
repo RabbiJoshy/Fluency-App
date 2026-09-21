@@ -34,6 +34,8 @@ import {
     metadataTextIsRedundant,
     resolveMeaningDifferentiator,
     scoreSenseMetadata,
+    readableSenseNote,
+    senseMetadataPeers,
     senseMetadataDisplay,
     senseMetadataHTML,
     senseMetadataItems,
@@ -497,6 +499,7 @@ const REGISTER_TAG_LABELS = {
 function registerTagHTML(meaning) {
     const label = REGISTER_TAG_LABELS[meaning?.type];
     if (!label) return '';
+    if (senseMetadataItems(meaning).some(item => item.family === 'register' && item.value.toLowerCase() === label)) return '';
     return ` <span class="meaning-register" data-register="${meaning.type}">${label}</span>`;
 }
 
@@ -734,10 +737,23 @@ function fitPosSectionSummaries(root) {
     });
 }
 
+// A short shared gloss must not split a word merely to preserve two columns.
+// Measure the rendered cell; longer labels already request a stacked layout.
+function fitSenseRowLayouts(root) {
+    root?.querySelectorAll('.group-card-body').forEach(body => {
+        body.classList.remove('is-stacked');
+        const shared = body.querySelector('.group-card-shared');
+        if (shared && shared.clientWidth > 0 && shared.scrollWidth > shared.clientWidth + 1) {
+            body.classList.add('is-stacked');
+        }
+    });
+}
+
 let posSummaryResizeFrame = 0;
 window.addEventListener('resize', () => {
     cancelAnimationFrame(posSummaryResizeFrame);
     posSummaryResizeFrame = requestAnimationFrame(() => {
+        fitSenseRowLayouts(document.getElementById('backContent'));
         fitPosSectionSummaries(document.getElementById('backContent'));
     });
 });
@@ -2510,8 +2526,8 @@ function handleSwipeAction(result) {
     const swipedCard = flashcards[currentIndex];
     const isChainChild = swipedCard?.isChainChild === true;
     // Automatic chain child: rare senses and expressions appear after a
-    // correct parent card when phrasesModeEnabled is on.
-    const mayChain = phrasesModeEnabled && !isChainChild
+    // correct parent card when their own study preference is on.
+    const mayChain = (expressionsModeEnabled || rareSensesModeEnabled) && !isChainChild
         && cardNavStack.length === 0 && result === 'correct';
 
     // Record the result
@@ -2905,11 +2921,17 @@ function renderRowCheckSlot(isSelected) {
 // reproduce Wiktionary's full editorial aside. Keep that detail verbatim on
 // the active subsense, where the matching example gives it context.
 function displaySenseGloss(meaning, value, active = true) {
-    const projected = projectWiktionaryGloss(meaning, value).display;
-    if (active || meaning?.metadata?.source_adapter !== 'wiktionary-sense-menu/v1') {
-        return projected;
-    }
-    return senseSummaryText(projected) || projected;
+    // A parenthetical may be the only semantic distinction (e.g. location
+    // versus direction). Selection must not decide whether it is readable.
+    return projectWiktionaryGloss(meaning, value).display;
+}
+
+function senseGlossDetailHTML(meaning, active) {
+    if (!active) return '';
+    const original = String(meaning?.meaning || meaning?.translation || '');
+    const match = /\((the definite grammatical article[^]*)\)$/i.exec(original);
+    if (!match) return '';
+    return `<details class="sense-definition-detail" onclick="event.stopPropagation()"><summary>Full definition</summary>${escapeCardText(match[1])}</details>`;
 }
 
 function senseCrossReferences(meaning) {
@@ -3060,7 +3082,7 @@ function condenseSenseContext(raw) {
     for (const [pattern, replacement] of SENSE_CONTEXT_RULES) {
         if (pattern.test(text)) return text.replace(pattern, replacement).trim();
     }
-    return text;
+    return readableSenseNote(text);
 }
 
 function cleanSenseContext(rawContext, mainGloss) {
@@ -3129,11 +3151,6 @@ function cleanSenseContext(rawContext, mainGloss) {
         }
     }
 
-    // 8. Truncate runaway encyclopedic sentences (>80 chars) on mobile/card view
-    if (raw.length > 80) {
-        raw = raw.slice(0, 77).replace(/[,;:\s]+$/, '') + '…';
-    }
-
     // 9. If the remaining text is trivial (1 char or punctuation), discard it
     if (raw.replace(/[^\w]/g, '').length <= 1) return '';
 
@@ -3165,7 +3182,7 @@ function renderSenseContextHTML(context, { leadingDot = true, gloss = null } = {
         : '';
     const title = escapeCardText(`SpanishDict usage note: ${usage.raw}`);
     const label = escapeCardText(usage.label);
-    return `${detail}<span class="meaning-usage-pill" data-source="spanishdict" title="${title}" aria-label="${title}"><span class="meaning-usage-source">SpanishDict</span><span class="meaning-usage-label">${label}</span></span>`;
+    return `${detail}<span class="meaning-usage-pill" data-source="spanishdict" title="${title}" aria-label="${title}"><span class="meaning-usage-label">${label}</span></span>`;
 }
 
 // Note: SENSE_CONSTRUCTION_TAGS, SENSE_REGISTER_TAGS, SENSE_CONSTRUCTION_SHORT,
@@ -3440,36 +3457,77 @@ function getNotableSurfaceRelation(card) {
 // ---------------------------------------------------------------------------
 // Phrase / clitic chaining — MWE/CLITIC entries leave the card's pinned tray
 // and are studied as standalone child cards immediately after the parent is
-// marked correct. See docs handoff "Card back — mobile legibility + phrase
-// chaining" for the full design rationale.
+// ---------------------------------------------------------------------------
+// Phrase / clitic chaining — Invariant MWEs (deterministic bypass) and CLITIC
+// entries leave the card's pinned tray / scroll view and are studied as
+// standalone child cards immediately after the parent is marked correct.
+// Ambiguous MWEs (competitive WSD) stay on the primary card back.
+// Bound root cards (e.g. "repente", "obstante") whose ONLY meanings are
+// invariant MWEs keep the phrase on the card back so the card is never blank.
 // ---------------------------------------------------------------------------
 
+function isInvariantMweMeaning(meaning) {
+    if (!meaning) return false;
+    if (meaning.pos === 'MWE') return true;
+    if (meaning.pos === 'PHRASE' || meaning.part_of_speech === 'PHRASE') {
+        const ev = meaning.metadata?.multiword_evidence?.[0];
+        if (ev) {
+            return ev.wsd_routing === 'deterministic_bypass' || ev.route === 'invariant';
+        }
+        if (meaning.wsd_routing === 'deterministic_bypass' || meaning.route === 'invariant') return true;
+    }
+    return false;
+}
+
+function isAmbiguousMweMeaning(meaning) {
+    if (!meaning) return false;
+    if (meaning.pos === 'PHRASE' || meaning.part_of_speech === 'PHRASE') {
+        const ev = meaning.metadata?.multiword_evidence?.[0];
+        if (ev) {
+            return ev.wsd_routing === 'competitive_wsd' || ev.route === 'ambiguous';
+        }
+        if (meaning.wsd_routing === 'competitive_wsd' || meaning.route === 'ambiguous') return true;
+    }
+    return false;
+}
+
+function cardHasOnlyInvariantMwes(card) {
+    if (!card || !Array.isArray(card.meanings) || !card.meanings.length) return false;
+    return card.meanings.every(m => isInvariantMweMeaning(m));
+}
+
 // Ordered list of chainable children for a real deck card. Source of truth
-// is the same card.meanings entries the tray used to pin. Chain-child cards
+// is card.meanings entries for invariant MWEs/CLITICs. Chain-child cards
 // themselves are excluded — their single MWE/CLITIC meaning is the card's
 // own content, not something to chain further.
 function collectChainItems(card) {
     if (!card || card.isChainChild) return [];
+    if (cardHasOnlyInvariantMwes(card)) return [];
     return (card.meanings || [])
         .map((m, idx) => ({ m, idx }))
-        .filter(({ m }) => m.pos === 'MWE' || m.pos === 'CLITIC')
+        .filter(({ m }) => m.pos === 'MWE' || m.pos === 'CLITIC' || isInvariantMweMeaning(m))
         .flatMap(({ m, idx }) => {
             const list = m.allMWEs || m.allClitics || [m];
-            return list.map((item, sub) => ({
-                parentCard: card,
-                parentWord: card.displaySurface || card.targetWord,
-                meaningIndex: idx,
-                subIndex: sub,
-                kind: m.pos, // 'MWE' | 'CLITIC'
-                expression: item.expression || item.form || '',
-                translation: item.translation || m.meaning || '',
-                context: item.context || item.context_heuristic || '',
-                // Build-time provenance, MWE rows only. Clitic forms are
-                // generated by routing rather than by a phrase source, so they
-                // legitimately have none.
-                source: item.source || '',
-                examples: item.examples || []
-            }));
+            return list.map((item, sub) => {
+                const ev = item.metadata?.multiword_evidence?.[0];
+                const expr = item.expression || item.form || item.headword || ev?.expression || '';
+                const trans = item.translation || item.meaning || m.meaning || m.translation || ev?.translation || '';
+                const ctx = item.context || item.context_heuristic || '';
+                const src = item.source || ev?.sources?.[0] || 'mwe-merged';
+                const exs = item.examples || item.allExamples || m.allExamples || m.examples || [];
+                return {
+                    parentCard: card,
+                    parentWord: card.displaySurface || card.targetWord || card.word || '',
+                    meaningIndex: idx,
+                    subIndex: sub,
+                    kind: m.pos === 'CLITIC' ? 'CLITIC' : 'MWE',
+                    expression: expr,
+                    translation: trans,
+                    context: ctx,
+                    source: src,
+                    examples: exs
+                };
+            });
         })
         .filter(c => c.expression);
 }
@@ -3558,10 +3616,15 @@ function collectRareAndExpressionItems(card) {
 function phraseSummaryCard(items) {
     const parent = items[0]?.parentCard;
     const word = items[0]?.parentWord || parent?.displaySurface || parent?.targetWord || '';
+    const hasRare = items.some(item => item.kind === 'RARE_SENSE');
+    const hasExpr = items.some(item => item.kind && item.kind !== 'RARE_SENSE');
+    const kind = hasRare && hasExpr ? 'rare_and_expressions'
+        : hasRare ? 'rare_senses'
+        : 'expressions';
     return {
-        id: `${parent?.id || 'synthetic'}::rare_and_expressions`,
+        id: `${parent?.id || 'synthetic'}::${kind}`,
         isChainChild: true,
-        chainChildKind: 'rare_and_expressions',
+        chainChildKind: kind,
         chainParentWord: word,
         targetWord: word,
         isMultiMeaning: true,
@@ -3744,7 +3807,59 @@ async function loadSourceTitles() {
 
 function exampleLinkHTML(href, label) {
     if (!href) return escapeCardText(label);
-    return `<a href="${escapeCardText(href)}" target="_blank" rel="noopener noreferrer">${escapeCardText(label)}</a>`;
+    return outboundChipHTML(href, escapeCardText(label), label);
+}
+
+const OUTBOUND_LEAVE_ICON = `<svg class="outbound-leave-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>`;
+
+function outboundLeaveButton(href, label) {
+    return `<button type="button" class="outbound-leave-btn" hidden data-href="${escapeCardText(href)}" aria-label="Open ${escapeCardText(label)} in a new tab" onclick="event.stopPropagation(); confirmOutboundLink(event);">${OUTBOUND_LEAVE_ICON}</button>`;
+}
+
+function outboundChipHTML(href, inner, label, attrs = '') {
+    return `<button type="button" ${attrs} data-href="${escapeCardText(href)}" aria-expanded="false" onclick="event.stopPropagation(); armOutboundLink(event)">${inner}${outboundLeaveButton(href, label)}</button>`;
+}
+
+function disarmOutboundLinks(exceptHost = null) {
+    document.querySelectorAll('.is-armed-outbound').forEach(host => {
+        if (host === exceptHost) return;
+        host.classList.remove('is-armed-outbound');
+        host.setAttribute('aria-expanded', 'false');
+        host.querySelectorAll('.outbound-leave-btn').forEach(btn => { btn.hidden = true; });
+    });
+}
+
+function armOutboundLink(event) {
+    const host = event.currentTarget;
+    if (event.target.closest('.outbound-leave-btn')) return;
+    const leave = host.querySelector('.outbound-leave-btn');
+    if (!leave) return;
+    const opening = leave.hidden;
+    disarmOutboundLinks(opening ? host : null);
+    leave.hidden = !opening;
+    host.classList.toggle('is-armed-outbound', opening);
+    host.setAttribute('aria-expanded', String(opening));
+    if (opening) {
+        setTimeout(() => {
+            document.addEventListener('click', function dismiss(e) {
+                if (!host.contains(e.target)) disarmOutboundLinks();
+                document.removeEventListener('click', dismiss);
+            });
+        }, 0);
+    }
+}
+
+function confirmOutboundLink(event) {
+    event.stopPropagation();
+    const href = event.currentTarget?.dataset?.href
+        || event.currentTarget?.closest('[data-href]')?.dataset?.href;
+    if (href) window.open(href, '_blank', 'noopener,noreferrer');
+    disarmOutboundLinks();
+}
+
+if (typeof window !== 'undefined') {
+    window.armOutboundLink = armOutboundLink;
+    window.confirmOutboundLink = confirmOutboundLink;
 }
 
 function exampleFaviconHTML(domain) {
@@ -3772,7 +3887,7 @@ function exampleSourceChipHTML({ href, label, domain, text = '', extraClass = ''
     const inner = `${icon}${named ? `<span class="example-source-text">${escapeCardText(text)}</span>` : ''}`;
     const attrs = `class="${classes}" title="${escapeCardText(title)}" aria-label="${escapeCardText(named ? `${text} on ${label}` : label)}"`;
     if (!href) return `<span ${attrs}>${inner}</span>`;
-    return `<a ${attrs} href="${escapeCardText(href)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${inner}</a>`;
+    return outboundChipHTML(href, inner, named ? `${text} on ${label}` : label, attrs);
 }
 
 function dictionaryProviderCredit(name, href) {
@@ -3969,7 +4084,8 @@ function posDisplayName(pos) {
 function rareSenseFieldKey(value) {
     const raw = String(value || '').trim();
     if (!raw) return '';
-    return senseSummaryText(raw)
+    const text = typeof senseSummaryText === 'function' ? senseSummaryText(raw) : raw;
+    return text
         .toLocaleLowerCase('en')
         .replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '')
         .replace(/\s+/g, ' ')
@@ -4051,7 +4167,7 @@ function cycleRarerShade(event, clusterKey, count, delta) {
         if (again) again.scrollTop = top;
     });
 }
-window.cycleRarerShade = cycleRarerShade;
+if (typeof window !== 'undefined') window.cycleRarerShade = cycleRarerShade;
 
 function renderRareSenseCluster(group, pos, posAccentRgb, clusterId) {
     const unique = (values) => {
@@ -4176,8 +4292,15 @@ function renderPhraseSummaryBack(card) {
     const bits = [];
     if (rareCount) bits.push(`${rareCount} rarer sense${rareCount === 1 ? '' : 's'}`);
     if (phraseCount) bits.push(`${phraseCount} expression${phraseCount === 1 ? '' : 's'}`);
-    const subtitle = `Rarer uses — senses that show up less often in speech${bits.length ? ` · ${bits.join(' · ')}` : ''}`;
-    const rareKnowledgeButton = rareCount && currentUser && !currentUser.isGuest
+    let subtitle;
+    if (rareCount && !phraseCount) {
+        subtitle = `Rarer senses — meanings that show up less often in speech${bits.length ? ` · ${bits.join(' · ')}` : ''}`;
+    } else if (phraseCount && !rareCount) {
+        subtitle = `Expressions that use this word${bits.length ? ` · ${bits.join(' · ')}` : ''}`;
+    } else {
+        subtitle = `Rarer uses — senses that show up less often in speech${bits.length ? ` · ${bits.join(' · ')}` : ''}`;
+    }
+    const rareKnowledgeButton = rareCount && typeof currentUser !== 'undefined' && currentUser && !currentUser.isGuest
         ? '<button type="button" class="rare-knowledge-btn" onclick="openRareSenseKnowledge(event)">Mark rarer senses Known or Review</button>'
         : '';
 
@@ -4196,7 +4319,7 @@ function openRareSenseKnowledge(event) {
     const parent = cardChainQueue.find(item => item.kind === 'RARE_SENSE')?.parentCard;
     if (parent) window.showKnowledgeOverview?.(event, { card: parent, showRare: true });
 }
-window.openRareSenseKnowledge = openRareSenseKnowledge;
+if (typeof window !== 'undefined') window.openRareSenseKnowledge = openRareSenseKnowledge;
 
 // ---------------------------------------------------------------------------
 // Backup example sentences — the second chain child.
@@ -4398,8 +4521,14 @@ function revealWildTranslation(event, index) {
 // nothing to show is simply absent from the plan.
 async function buildCardChildren(card) {
     const children = [];
-    const items = phrasesModeEnabled ? collectRareAndExpressionItems(card) : [];
-    if (items.length > 0) children.push({ type: 'phrases', items });
+    if (expressionsModeEnabled) {
+        const expressions = collectExpressionItems(card);
+        if (expressions.length > 0) children.push({ type: 'phrases', items: expressions });
+    }
+    if (rareSensesModeEnabled) {
+        const rareSenses = collectRareSenseItems(card);
+        if (rareSenses.length > 0) children.push({ type: 'phrases', items: rareSenses });
+    }
     return children;
 }
 
@@ -5030,9 +5159,11 @@ function updateCard({ announceHeadword = false } = {}) {
     // Update reverse button text
     updateReverseButton();
 
-    // Reset meaning index if out of bounds
-    if (card.isMultiMeaning && currentMeaningIndex >= card.meanings.length) {
-        currentMeaningIndex = 0;
+    // Reset meaning index if out of bounds or pointing to a detached invariant MWE
+    if (card.isMultiMeaning && (currentMeaningIndex >= card.meanings.length
+        || (!cardHasOnlyInvariantMwes(card) && isInvariantMweMeaning(card.meanings[currentMeaningIndex])))) {
+        const firstVisible = card.meanings.findIndex(m => !isInvariantMweMeaning(m));
+        currentMeaningIndex = firstVisible >= 0 ? firstVisible : 0;
         currentGroupSelection = null;
     }
 
@@ -5043,6 +5174,7 @@ function updateCard({ announceHeadword = false } = {}) {
         card.meanings.forEach((meaning, index) => {
             const pos = meaning.pos === 'SENSE_CYCLE' ? (meaning.cycle_pos || 'X') : meaning.pos;
             if (!pos || ['MWE', 'CLITIC', 'EXAMPLE_ONLY'].includes(pos)) return;
+            if (!cardHasOnlyInvariantMwes(card) && isInvariantMweMeaning(meaning)) return;
             const weight = Number(meaning.percentage ?? meaning.frequency ?? meaning.count) || 0;
             const entry = posWeights.get(pos) || { pos, weight: 0, firstIndex: index };
             entry.weight += weight;
@@ -5586,6 +5718,7 @@ function updateCard({ announceHeadword = false } = {}) {
                 ? (meaning.cycle_pos || 'X')
                 : meaning.pos;
             if (pos === 'MWE' || pos === 'CLITIC' || pos === 'EXAMPLE_ONLY') return;
+            if (!cardHasOnlyInvariantMwes(card) && isInvariantMweMeaning(meaning)) return;
             if (!pos) return;
             const weight = Number(meaning.percentage ?? meaning.frequency ?? meaning.count) || 0;
             const entry = posWeights.get(pos) || { pos, meaningIndex, weight: 0 };
@@ -5890,7 +6023,7 @@ function updateCard({ announceHeadword = false } = {}) {
                 const transRawSize = new Map();
                 const ctxRawSize = new Map();
                 card.meanings.forEach((m, idx) => {
-                    if (m.pos === 'MWE' || m.pos === 'CLITIC' || m.pos === 'SENSE_CYCLE') {
+                    if (m.pos === 'MWE' || m.pos === 'CLITIC' || m.pos === 'SENSE_CYCLE' || (!cardHasOnlyInvariantMwes(card) && isInvariantMweMeaning(m))) {
                         axisOf.set(idx, 'special');
                         return;
                     }
@@ -5979,10 +6112,10 @@ function updateCard({ announceHeadword = false } = {}) {
             const ax = GROUP_DUPLICATE_MEANINGS ? (axisOf.get(idx) || 'singleton') : 'singleton';
             if (ax !== 'singleton') return;
             const pos = m.pos === 'SENSE_CYCLE' ? (m.cycle_pos || 'X') : m.pos;
-            if (pos === 'MWE' || pos === 'CLITIC') return;
+            if (pos === 'MWE' || pos === 'CLITIC' || (!cardHasOnlyInvariantMwes(card) && isInvariantMweMeaning(m))) return;
             const rawGloss = String(getProductionEnglishCue(card, m) || m.meaning || m.translation || '').trim();
             const proj = projectWiktionaryGloss(m, rawGloss);
-            const normKey = `${pos}\u0000${m.headword || ''}\u0000${senseSummaryText(proj.display).toLowerCase().replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '').replace(/\s+/g, ' ').trim()}`;
+            const normKey = `${pos}\u0000${m.headword || ''}\u0000${proj.display.toLowerCase().replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '').replace(/\s+/g, ' ').trim()}`;
             if (!singletonsBySectionGloss.has(normKey)) singletonsBySectionGloss.set(normKey, []);
             singletonsBySectionGloss.get(normKey).push({ m, idx });
         });
@@ -6041,10 +6174,11 @@ function updateCard({ announceHeadword = false } = {}) {
             const bgColor = 'rgba(var(--sense-match-rgb), 0.10)';
             const textColor = isSelected ? 'var(--text-primary)' : 'var(--text-primary)';
             const borderStyle = '';
-            const isMWE = m.pos === 'MWE';
+            const isInvariantMWE = !cardHasOnlyInvariantMwes(card) && isInvariantMweMeaning(m);
+            const isMWE = m.pos === 'MWE' || isInvariantMWE;
             const isClitic = m.pos === 'CLITIC';
             const isSenseCycle = m.pos === 'SENSE_CYCLE';
-            const sectionPos = isSenseCycle ? (m.cycle_pos || 'X') : m.pos;
+            const sectionPos = isSenseCycle ? (m.cycle_pos || 'X') : (isInvariantMWE ? 'MWE' : m.pos);
             // Route this row to the pinned tray (MWE/CLITIC) or the scroll
             // region (regular + SENSE_CYCLE). Chain-child cards carry their
             // own single MWE/CLITIC meaning as the card's main content, not
@@ -6058,8 +6192,8 @@ function updateCard({ announceHeadword = false } = {}) {
 
             // For MWE pill, show the current expression/translation based on MWE index
             const mweIdx = (isMWE && isSelected) ? currentMWEIndex % (m.allMWEs ? m.allMWEs.length : 1) : 0;
-            const mweExpr = isMWE && m.allMWEs ? m.allMWEs[mweIdx].expression : m.expression;
-            const mweMeaning = isMWE && m.allMWEs ? m.allMWEs[mweIdx].translation : m.meaning;
+            const mweExpr = isMWE && m.allMWEs ? m.allMWEs[mweIdx].expression : (m.expression || m.headword || m.metadata?.multiword_expression || '');
+            const mweMeaning = isMWE && m.allMWEs ? m.allMWEs[mweIdx].translation : (m.translation || m.meaning || '');
             const mweCount = isMWE && m.allMWEs ? m.allMWEs.length : 0;
             const mweCounter = (isMWE && mweCount > 1) ? ` <span class="example-counter-group"><button class="mwe-cycle-btn" onclick="cycleMWEBackward(event)" title="Previous expression">‹</button>${compactCounterHTML(mweIdx, mweCount, 'expression')}<button class="mwe-cycle-btn" onclick="cycleMWEForward(event)" title="Next expression">›</button></span>` : '';
             // For Clitic pill, reuse MWE cycling with allClitics
@@ -6315,13 +6449,13 @@ function updateCard({ announceHeadword = false } = {}) {
                         // Varying cell.
                         let varyingHtml;
                         if (isTransAxis) {
-                            const rawCtx = contextWithoutSenseMetadata(mm, isMemberSelected);
                             const metaOptions = {
                                 senseCount: card.meanings?.length || orderedMembers.length,
                                 gloss: sharedText,
-                                peerMeanings: card.meanings.filter((_, otherIdx) => otherIdx !== memberIdx),
+                                peerMeanings: orderedMembers.filter(mi => mi !== memberIdx).map(mi => card.meanings[mi]),
                                 allowInactivePrimary: true,
                             };
+                            const rawCtx = contextWithoutSenseMetadata(mm, isMemberSelected, metaOptions);
                             let cleanedCtx = cleanSenseContext(rawCtx, sharedText);
                             if (cleanedCtx && contextCollidesWithMetadata(
                                 cleanedCtx,
@@ -6348,7 +6482,9 @@ function updateCard({ announceHeadword = false } = {}) {
                                         varyingHtml = `<span class="meaning-context-cell" style="line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;"><span class="sense-metadata-detail sense-pill sense-pill--${family}" data-family="${family}"><span class="sense-pill-label">${shortLabel}</span></span></span>`;
                                     }
                                 } else {
-                                    varyingHtml = `<span style="opacity: 0.4; font-style: italic; font-size: 12px;">—</span>`;
+                                    // The unqualified source gloss is the honest fallback for
+                                    // a reading without its own qualifier; never an empty dash.
+                                    varyingHtml = `<span class="meaning-context-cell">${escapeCardText(displaySenseGloss(mm, mm.meaning || mm.translation || sharedText))}</span>`;
                                 }
                             }
                         } else {
@@ -6358,7 +6494,7 @@ function updateCard({ announceHeadword = false } = {}) {
                                 isMemberSelected
                             );
                             const transSafe = String(transRaw).replace(/"/g, '&quot;');
-                            varyingHtml = `<span class="row-adaptive-text" style="font-weight: 600; color: var(--text-primary); line-height: 1.25; min-width: 0; overflow: hidden; text-overflow: ellipsis;">${senseCrossReferenceHTML(mm, transSafe, isMemberSelected)}${senseMetadataHTML(mm, isMemberSelected, { senseCount: card.meanings?.length || orderedMembers.length, gloss: transRaw, peerMeanings: card.meanings.filter((_, otherIdx) => otherIdx !== memberIdx) })}${modelProposalMarkerHTML(mm)}</span>`;
+                            varyingHtml = `<span class="row-adaptive-text" style="font-weight: 600; color: var(--text-primary); line-height: 1.25; min-width: 0; overflow: hidden; text-overflow: ellipsis;">${senseCrossReferenceHTML(mm, transSafe, isMemberSelected)}${senseMetadataHTML(mm, isMemberSelected, { senseCount: card.meanings?.length || orderedMembers.length, gloss: transRaw, peerMeanings: senseMetadataPeers(mm, card.meanings, transRaw), sharedContext: m.context, allowInactivePrimary: true })}${modelProposalMarkerHTML(mm)}</span>`;
                         }
                         const varyingCol = isTransAxis ? 2 : 1;
                         const varyingCell = `<div class="group-card-varying-cell${isMemberSelected ? ' is-active-subsense' : ''}" onclick="event.stopPropagation(); selectMeaning(${memberIdx})" style="${baseCell} grid-column: ${varyingCol}; min-width: 0; overflow: hidden;">${varyingHtml}</div>`;
@@ -6402,12 +6538,12 @@ function updateCard({ announceHeadword = false } = {}) {
                     const sharedCol = isTransAxis ? 1 : 2;
                     const sharedSpan = `grid-column: ${sharedCol}; grid-row: 1 / span ${orderedMembers.length}; align-self: center;`;
                     const sharedCellHtml = isTransAxis
-                        ? `<div class="group-card-shared row-adaptive-text" style="${sharedSpan} font-weight: 600; color: var(--text-primary); text-align: center; line-height: 1.25; min-width: 0; word-break: break-word;">${sharedTextHTML}${modelProposalMarkerHTML(orderedMembers.some(memberIdx => card.meanings[memberIdx].modelProposed) ? { modelProposed: true } : null)}</div>`
+                        ? `<div class="group-card-shared row-adaptive-text" style="${sharedSpan} font-weight: 600; color: var(--text-primary); text-align: center; line-height: 1.25; min-width: 0; word-break: break-word;">${sharedTextHTML}${senseGlossDetailHTML(m, groupIsCurrent)}${modelProposalMarkerHTML(orderedMembers.some(memberIdx => card.meanings[memberIdx].modelProposed) ? { modelProposed: true } : null)}</div>`
                         : `<div class="group-card-shared" style="${sharedSpan} text-align: center; line-height: 1.25; min-width: 0; word-break: break-word;">${renderSenseContextHTML(m.context, { leadingDot: false })}</div>`;
 
                     // Body grid: shared + varying. The pct column lives in the
                     // outer grid; POS lives in the header legend.
-                    const gridCols = 'minmax(0, max-content) minmax(0, max-content)';
+                    const gridCols = isTransAxis ? 'fit-content(30%) minmax(0, 1fr)' : 'minmax(0, 1fr) fit-content(30%)';
 
                     // Outer row is body | pct stack. POS is represented once
                     // by the header legend and repeated through row colour.
@@ -6416,7 +6552,7 @@ function updateCard({ announceHeadword = false } = {}) {
                     target.push(`
                     <div class="meaning-row meaning-row-group ${groupedTextClass}${groupIsCurrent ? ' selected' : ''}${groupStateClasses}" data-axis="${axis}" onclick="selectGroup('${axis}', ${idx})" style="position: relative; display: grid; grid-template-columns: ${outerGridCols}; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${cardBg}; border-radius: 8px; cursor: pointer;">
                         ${renderRowCheckSlot(groupIsCurrent)}
-                        <div class="meaning-row-body group-card-body" style="display: grid; grid-template-columns: ${gridCols}; align-items: center; gap: 3px 6px; min-width: 0; max-width: 100%; overflow: hidden; padding: 4px 8px; background: ${sharedBg}; ${sharedBorder} border-radius: 6px; justify-self: center;">
+                        <div class="meaning-row-body group-card-body${sharedCleanLength > 48 ? ' has-long-shared' : ''}" style="display: grid; grid-template-columns: ${gridCols}; align-items: center; gap: 3px 6px; min-width: 0; width: 100%; max-width: 100%; box-sizing: border-box; padding: 4px 8px; background: ${sharedBg}; ${sharedBorder} border-radius: 6px; justify-self: center;">
                             ${memberCells}
                             ${sharedCellHtml}
                         </div>
@@ -6433,12 +6569,13 @@ function updateCard({ announceHeadword = false } = {}) {
 
                     // Individual sense row: 2-line presentation when space permits
                     // Primary gloss on top, cleaned context underneath (no redundant repetition of the gloss).
-                    const rawContext = contextWithoutSenseMetadata(m, isRowSelected);
                     const metadataOptions = {
                         senseCount: card.meanings?.length || 1,
                         gloss: displayMeaning,
-                        peerMeanings: card.meanings.filter((_, otherIdx) => otherIdx !== idx),
+                        peerMeanings: senseMetadataPeers(m, card.meanings, displayMeaning),
+                        allowInactivePrimary: true,
                     };
+                    const rawContext = contextWithoutSenseMetadata(m, isRowSelected, metadataOptions);
                     let cleanedContext = cleanSenseContext(rawContext, displayMeaning);
                     if (cleanedContext && contextCollidesWithMetadata(
                         cleanedContext,
@@ -6452,6 +6589,7 @@ function updateCard({ announceHeadword = false } = {}) {
                     }
                     const metadataHtml = senseMetadataHTML(m, isRowSelected, metadataOptions);
                     if (metadataHtml) subContent += (subContent ? ' ' : '') + metadataHtml;
+                    subContent += senseGlossDetailHTML(m, isRowSelected);
                     const regTag = registerTagHTML(m);
                     if (regTag) subContent += (subContent ? ' ' : '') + regTag;
                     const aiTag = modelProposalMarkerHTML(m);
@@ -6503,9 +6641,9 @@ function updateCard({ announceHeadword = false } = {}) {
         if (scrollSections.size > 0) {
             backHTML += `<div class="meanings-scroll">${renderSections(scrollSections)}</div>`;
         }
-        // Phrases mode off restores the pinned tray; on, MWE/CLITIC entries
+        // Expressions mode off keeps the pinned tray; on, MWE/CLITIC entries
         // leave silently as chain children (no on-card announcement).
-        if (!phrasesModeEnabled && traySections.size > 0) {
+        if (!expressionsModeEnabled && traySections.size > 0) {
             backHTML += `<div class="meanings-tray">${renderSections(traySections)}</div>`;
         }
         // Show current sentence
@@ -7002,7 +7140,12 @@ function updateCard({ announceHeadword = false } = {}) {
             <span class="ref-tile-label">Look up</span>
         </button>
         <div class="lookup-sheet" id="lookupSheet" hidden>
-            ${lookupLinks.map(([key, url]) => `<a href="${url}" target="_blank" rel="noopener" class="lookup-sheet-icon" title="${linkTitles[key] || key}" aria-label="${linkTitles[key] || key}">${linkIcons[key] || `<span class="lookup-sheet-initial">${(linkTitles[key] || key).charAt(0)}</span>`}</a>`).join('')}
+            ${lookupLinks.map(([key, url]) => outboundChipHTML(
+                url,
+                `${linkIcons[key] || `<span class="lookup-sheet-initial">${(linkTitles[key] || key).charAt(0)}</span>`}`,
+                linkTitles[key] || key,
+                `class="lookup-sheet-icon" title="${linkTitles[key] || key}" aria-label="${linkTitles[key] || key}"`
+            )).join('')}
         </div>`;
     }
 
@@ -7089,6 +7232,7 @@ function updateCard({ announceHeadword = false } = {}) {
             // Cap the headword against the POS pill first: it can change the
             // header's height, which the scroll-cap measurement below reads.
             fitBackHeadword(backEl);
+            fitSenseRowLayouts(backEl);
             fitPosSectionSummaries(backEl);
             fitExampleCreditRow(backEl);
 
@@ -8197,7 +8341,12 @@ function buildSpanishDictPanelHTML(card) {
     }).join('');
 
     const sourceLink = card?.links?.spanishDict
-        ? `<a class="sd-meta-source-link" href="${escapeCardText(card.links.spanishDict)}" target="_blank" rel="noopener noreferrer">Open this entry on SpanishDict <span aria-hidden="true">↗</span></a>`
+        ? outboundChipHTML(
+            card.links.spanishDict,
+            'Open this entry on SpanishDict',
+            'SpanishDict',
+            'class="sd-meta-source-link"'
+        )
         : '';
     return `<div id="spanishDictPanel" class="provenance-panel spanish-dict-panel" hidden
             role="region" aria-labelledby="spanishDictPanelTitle"
