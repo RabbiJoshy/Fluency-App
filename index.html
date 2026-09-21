@@ -40,14 +40,14 @@
             document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260921e">
-    <link rel="stylesheet" href="css/light-theme.css?v=20260920a">
+    <link rel="stylesheet" href="css/style.css?v=20260921w">
+    <link rel="stylesheet" href="css/light-theme.css?v=20260921w">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260921e">
+    <link rel="modulepreload" href="js/main.js?v=20260921w">
     <link rel="modulepreload" href="js/theme.js?v=20260825ak">
     <link rel="modulepreload" href="js/state.js?v=20260920a">
     <link rel="modulepreload" href="js/data-contracts.js?v=20260825ak">
@@ -56,8 +56,10 @@
     <link rel="modulepreload" href="js/offline-content.js?v=20260825ak">
     <link rel="modulepreload" href="js/speech.js?v=20260914b">
     <link rel="modulepreload" href="js/artist-ui.js?v=20260825ak">
-    <link rel="modulepreload" href="js/auth.js?v=20260920d">
-    <link rel="modulepreload" href="js/about-example.js?v=20260920i">
+    <link rel="modulepreload" href="js/auth.js?v=20260921w">
+    <link rel="modulepreload" href="js/card-replica.js?v=20260921w">
+    <link rel="modulepreload" href="js/tutorial.js?v=20260921w">
+    <link rel="modulepreload" href="js/walkthrough.js?v=20260921w">
     <link rel="modulepreload" href="js/estimation.js?v=20260825ak">
     <link rel="modulepreload" href="js/config.js?v=20260919c">
     <link rel="modulepreload" href="js/progress.js?v=20260920e">
@@ -74,7 +76,7 @@
     <link rel="modulepreload" href="js/vocabulary-import.js?v=20260920a">
     <link rel="modulepreload" href="js/spanishdict-usage.js?v=20260825ak">
     <link rel="modulepreload" href="js/reverse-cues.js?v=20260917a">
-    <link rel="modulepreload" href="js/flashcards.js?v=20260921e">
+    <link rel="modulepreload" href="js/flashcards.js?v=20260921w">
     <link rel="modulepreload" href="js/example-personalisation.js?v=20260825ak">
     <script>
         // Fail open if a boot-time script error prevents main.js from taking
@@ -888,12 +890,38 @@
         </div>
     </div>
 
-    <!-- See Example: annotated walkthrough of real cards. Content is rendered
-         by js/about-example.js; the card inside #aboutExampleStage reuses the
-         app's own .card CSS so it is a true replica rather than a mock-up. -->
-    <div id="aboutExampleModal" class="modal hidden">
-        <div class="modal-content fullscreen-modal about-example-modal">
-            <div class="about-example-body" id="aboutExampleBody">
+    <!-- The walkthrough: a two-screen look at a card for VISITORS (employers,
+         anyone being shown the app). Opened only from About, layered over it,
+         and closes back into it. Rendered by js/walkthrough.js; the cards are
+         drawn by js/card-replica.js, shared with the learner tutorial below. -->
+    <div id="walkthroughModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="walkthroughTitle">
+        <div class="modal-content fullscreen-modal walkthrough-modal">
+            <header class="walkthrough-head">
+                <div class="walkthrough-dots" id="walkthroughDots" aria-hidden="true"></div>
+                <div class="walkthrough-copy">
+                    <h2 class="walkthrough-title" id="walkthroughTitle"></h2>
+                    <p class="walkthrough-lead" id="walkthroughLead"></p>
+                </div>
+                <button class="modal-close walkthrough-close" id="closeWalkthroughModal" aria-label="Back to About" title="Back to About">&#10005;</button>
+            </header>
+            <div class="walkthrough-body" id="walkthroughBody">
+                <div class="walkthrough-stage" id="walkthroughStage"></div>
+            </div>
+            <footer class="walkthrough-foot">
+                <button type="button" class="walkthrough-back" id="walkthroughBack" hidden>&larr; Back</button>
+                <span class="walkthrough-count" id="walkthroughCount" aria-live="polite"></span>
+                <button type="button" class="walkthrough-next" id="walkthroughNext">Next &rarr;</button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- The card tutorial, for LEARNERS: opened by "?", first run and How to
+         Study, never from About. Rendered by js/tutorial.js; the card inside
+         #cardTutorialStage is drawn by js/card-replica.js from the app's own
+         .card CSS, so it is a true replica rather than a mock-up. -->
+    <div id="cardTutorialModal" class="modal hidden">
+        <div class="modal-content fullscreen-modal card-tutorial-modal">
+            <div class="card-tutorial-body" id="cardTutorialBody">
                 <!-- One row, not a banner above a summary: chapter progress left,
                      the summary itself in the middle, exit right. Vertical
                      space is the scarce thing here — the card and its
@@ -902,10 +930,10 @@
                      Speech leads naturally into Lyrics; which face you are
                      reading is decided by flipping the card, and the
                      annotations follow the face. -->
-                <div class="about-example-topbar">
-                    <div class="about-example-sequence" id="aboutExampleSequence" aria-live="polite"></div>
-                    <div class="about-example-intro" id="aboutExampleIntro"></div>
-                    <button class="modal-close about-example-close" id="closeAboutExampleModal" aria-label="Close walkthrough" title="Close walkthrough">✕</button>
+                <div class="card-tutorial-topbar">
+                    <div class="card-tutorial-sequence" id="cardTutorialSequence" aria-live="polite"></div>
+                    <div class="card-tutorial-intro" id="cardTutorialIntro"></div>
+                    <button class="modal-close card-tutorial-close" id="closeCardTutorialModal" aria-label="Close tutorial" title="Close tutorial">✕</button>
                 </div>
                 <!-- Animated session setup preview before the first card -->
                 <!-- The setup replica played before the first card. It reuses the
@@ -914,7 +942,7 @@
                      inherits that screen's CSS rather than a lookalike — the same
                      rule the card replica follows. Nothing here is wired to real
                      config; a scripted pointer presses each control in turn. -->
-                <div id="aboutExampleSetupAnim" class="about-example-setup-anim" hidden>
+                <div id="cardTutorialSetupAnim" class="card-tutorial-setup-anim" hidden>
                     <div class="setup-anim-screen">
                         <div class="setup-anim-caption" id="setupAnimCaption">This is how you get to a card.</div>
 
@@ -993,26 +1021,26 @@
                 </div>
 
                 <!-- Break slides: a step with no card. Filled by renderBreakStep(). -->
-                <div id="aboutExampleBreak" class="about-example-break" hidden></div>
+                <div id="cardTutorialBreak" class="card-tutorial-break" hidden></div>
 
-                <div class="about-example-columns">
-                    <div class="about-example-notes about-example-notes-left" id="aboutExampleNotesLeft"></div>
-                    <div class="about-example-stage-col">
-                        <div class="about-example-stage-wrap">
-                            <div class="about-example-stage" id="aboutExampleStage"></div>
+                <div class="card-tutorial-columns">
+                    <div class="card-tutorial-notes card-tutorial-notes-left" id="cardTutorialNotesLeft"></div>
+                    <div class="card-tutorial-stage-col">
+                        <div class="card-tutorial-stage-wrap">
+                            <div class="card-tutorial-stage" id="cardTutorialStage"></div>
                         </div>
-                        <button type="button" class="about-example-flip" id="aboutExampleFlip" style="display: none;" hidden>Flip to the answer side</button>
-                        <button type="button" class="about-example-continue" id="aboutExampleContinue" hidden></button>
+                        <button type="button" class="card-tutorial-flip" id="cardTutorialFlip" style="display: none;" hidden>Flip to the answer side</button>
+                        <button type="button" class="card-tutorial-continue" id="cardTutorialContinue" hidden></button>
                     </div>
-                    <div class="about-example-notes about-example-notes-right" id="aboutExampleNotesRight"></div>
+                    <div class="card-tutorial-notes card-tutorial-notes-right" id="cardTutorialNotesRight"></div>
                 </div>
-                <section class="about-example-mobile-coach" id="aboutExampleMobileCoach" aria-live="polite" hidden>
-                    <div class="about-example-mobile-progress" id="aboutExampleMobileProgress"></div>
-                    <strong id="aboutExampleMobileTitle"></strong>
-                    <p id="aboutExampleMobileText"></p>
-                    <div class="about-example-mobile-actions">
-                        <button type="button" id="aboutExampleMobileBack">Back</button>
-                        <button type="button" id="aboutExampleMobileNext">Next</button>
+                <section class="card-tutorial-mobile-coach" id="cardTutorialMobileCoach" aria-live="polite" hidden>
+                    <div class="card-tutorial-mobile-progress" id="cardTutorialMobileProgress"></div>
+                    <strong id="cardTutorialMobileTitle"></strong>
+                    <p id="cardTutorialMobileText"></p>
+                    <div class="card-tutorial-mobile-actions">
+                        <button type="button" id="cardTutorialMobileBack">Back</button>
+                        <button type="button" id="cardTutorialMobileNext">Next</button>
                     </div>
                 </section>
             </div>
@@ -1985,6 +2013,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260921e"></script>
+    <script type="module" src="js/main.js?v=20260921w"></script>
 </body>
 </html>

@@ -192,7 +192,7 @@ function enterGuestMode() {
     showUserInfo();
     hideAuthModal();
     updateIncorrectButtonVisibility();
-    setTimeout(() => window.openFirstRunAboutExample?.(), 250);
+    setTimeout(() => window.openFirstRunCardTutorial?.(), 250);
 }
 
 // Show login form
@@ -252,7 +252,7 @@ async function submitLogin() {
     localStorage.setItem('flashcardUser', JSON.stringify(currentUser));
     showUserInfo();
     hideAuthModal();
-    setTimeout(() => window.openFirstRunAboutExample?.(), 250);
+    setTimeout(() => window.openFirstRunCardTutorial?.(), 250);
 
     // Load user progress from Google Sheets
     await loadUserProgressFromSheet();
@@ -1104,17 +1104,18 @@ function renderMarkdown(md) {
                 + '<figcaption>' + alt + '</figcaption>'
                 + '</figure>';
         });
-        // example://walkthrough — leaves the philosophy page and begins the
-        // single Speech → Lyrics tutorial sequence.
-        // (js/about-example.js). Written as an ordinary Markdown link in
-        // about.md so its position and wording stay editable there, but
-        // rendered as a button because it triggers a modal rather than
-        // navigating anywhere.
+        // example://walkthrough — opens the walkthrough (js/walkthrough.js):
+        // a two-screen look at a card for a visitor, layered over About so
+        // closing it lands back here. Never the learner tutorial — that is
+        // for people using the app and About is for people being shown it.
+        // Written as an ordinary Markdown link in about.md so its position
+        // and wording stay editable there, but rendered as a button because
+        // it opens a modal rather than navigating anywhere.
         out = out.replace(/\[([^\]]+)\]\(example:\/\/[^)]*\)/g,
-            '<button type="button" class="about-see-example-btn" onclick="window.startAboutTutorial && window.startAboutTutorial()">'
+            '<button type="button" class="about-see-example-btn" onclick="window.openWalkthrough && window.openWalkthrough()">'
             + '<span class="about-see-example-icon" aria-hidden="true">▶</span>'
             + '<span class="about-see-example-label">$1</span>'
-            + '<span class="about-see-example-hint">Speech first · Lyrics follows automatically</span>'
+            + '<span class="about-see-example-hint">Two screens · about 30 seconds</span>'
             + '</button>');
         out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g,
             '<a href="$2" target="_blank" rel="noopener">$1</a>');
@@ -1302,11 +1303,6 @@ function hideAboutProjectModal() {
     modal.classList.add('hidden');
     modal.querySelectorAll('video').forEach(v => { try { v.pause(); } catch (_) {} });
     _setAboutURLParam(false);
-}
-
-function startAboutTutorial() {
-    hideAboutProjectModal();
-    window.openTutorialIntroduction?.();
 }
 
 // ----- About-modal card demos --------------------------------------------------
@@ -1800,7 +1796,6 @@ window.enterGuestMode = enterGuestMode;
 window.showLoginForm = showLoginForm;
 window.openAboutProjectModal = openAboutProjectModal;
 window.hideAboutProjectModal = hideAboutProjectModal;
-window.startAboutTutorial = startAboutTutorial;
 window.hideLoginForm = hideLoginForm;
 window.submitLogin = submitLogin;
 window.logout = logout;

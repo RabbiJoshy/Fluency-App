@@ -1267,7 +1267,7 @@ window.addEventListener('pagehide', () => cancelSpotifySnippet(true));
 
 // --- Spotify button UI: loading ring + long-press autoplay popover ---
 //
-// The button markup itself is rendered by flashcards.js / about-example.js.
+// The button markup itself is rendered by flashcards.js / card-replica.js.
 // Everything interactive about it lives here so the behaviour is identical
 // wherever a `.spotify-btn` appears, and so the loading state can be driven by
 // the real playback signals this module already owns.
@@ -1520,9 +1520,9 @@ function _pressStart(event) {
     if (!btn) return;
     clearTimeout(_pressTimer);
     _pressFired = false;
-    // The About tour's replica card has no live deck behind it, so a
+    // A replica card (tutorial or walkthrough) has no live deck behind it, so a
     // long-press there would have nothing to toggle.
-    if (btn.closest('.about-example-card-inner')) return;
+    if (btn.closest('.card-replica')) return;
     _pressTimer = setTimeout(() => {
         _pressFired = true;
         _openAutoplayPopover(btn);

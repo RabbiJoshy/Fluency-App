@@ -2239,7 +2239,7 @@
            container — updateCard() writes all rows directly into it, so the
            flex-child rules target its direct children. */
         #backContent,
-        .about-example-card-inner .card-details {
+        .card-replica .card-details {
             display: flex;
             flex-direction: column;
             flex: 1 1 auto;
@@ -2249,7 +2249,7 @@
         }
 
         #backContent > .back-header,
-        .about-example-card-inner .card-details > .back-header {
+        .card-replica .card-details > .back-header {
             flex: 0 0 auto;
             width: 100%;
             margin-bottom: 0 !important;
@@ -2283,7 +2283,7 @@
            margins collapse and the existing scroll-cap / overflow-y
            behaviour takes over unchanged. */
         #backContent > .meanings-scroll,
-        .about-example-card-inner .card-details > .meanings-scroll {
+        .card-replica .card-details > .meanings-scroll {
             flex: 0 1 auto;
             min-height: 0;           /* required for overflow in a flex child */
             width: 100%;
@@ -2304,15 +2304,15 @@
             padding-bottom: 0;
         }
         #backContent > .meanings-scroll::-webkit-scrollbar,
-        .about-example-card-inner .card-details > .meanings-scroll::-webkit-scrollbar {
+        .card-replica .card-details > .meanings-scroll::-webkit-scrollbar {
             width: 6px;
         }
         #backContent > .meanings-scroll::-webkit-scrollbar-track,
-        .about-example-card-inner .card-details > .meanings-scroll::-webkit-scrollbar-track {
+        .card-replica .card-details > .meanings-scroll::-webkit-scrollbar-track {
             background: transparent;
         }
         #backContent > .meanings-scroll::-webkit-scrollbar-thumb,
-        .about-example-card-inner .card-details > .meanings-scroll::-webkit-scrollbar-thumb {
+        .card-replica .card-details > .meanings-scroll::-webkit-scrollbar-thumb {
             background: rgba(255, 255, 255, 0.28);
             border-radius: 4px;
         }
@@ -2321,7 +2321,7 @@
            mode" is off (js/ui.js); when on, those entries leave silently as
            chained child cards instead (collectChainItems in flashcards.js). */
         #backContent > .meanings-tray,
-        .about-example-card-inner .card-details > .meanings-tray {
+        .card-replica .card-details > .meanings-tray {
             flex: 0 0 auto;
             width: 100%;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -3191,7 +3191,7 @@
            margin-bottom (6px) — matching sense-to-sense spacing, as
            requested. */
         #backContent > .sentence,
-        .about-example-card-inner .card-details > .sentence {
+        .card-replica .card-details > .sentence {
             flex: 0 0 auto;
             width: 100%;
             margin-top: 0;
@@ -3207,7 +3207,7 @@
            margin absorbs whatever slack is left above it, instead of the
            row's position drifting with how tall the example sentence is. */
         #backContent > .links-section,
-        .about-example-card-inner .card-details > .links-section {
+        .card-replica .card-details > .links-section {
             flex: 0 0 auto;
             margin-top: auto;
             margin-bottom: 0;
@@ -14891,16 +14891,20 @@
 }
 
 /* ===========================================================================
-   About → "See Example": annotated card walkthrough
+   Replica card, learner tutorial, and the About entry to the walkthrough
    ===========================================================================
-   The card inside .about-example-stage is built by js/about-example.js from
-   the app's own class names, so almost everything it looks like is inherited
-   from the real flashcard rules further up this file. The rules below cover
-   only three things: the entry button in the About copy, the modal chrome
-   around the card, and the SIZE overrides that make a viewport-scale .card
-   sit inside a fixed stage. Nothing here restyles the card itself — if it
-   did, the walkthrough would stop being a replica the moment the real card
-   changed. */
+   The card inside .card-replica is built by js/card-replica.js from the app's
+   own class names, so almost everything it looks like is inherited from the
+   real flashcard rules further up this file. Two features show it:
+
+     .card-tutorial-*  js/tutorial.js     learners; opened by "?" / first run
+     .walkthrough-*    js/walkthrough.js  visitors; opened from About
+
+   The rules below cover the entry button in the About copy (which opens the
+   walkthrough), the tutorial's chrome, and the SIZE overrides that make a
+   viewport-scale .card sit inside a fixed stage. Nothing here restyles the
+   card itself — if it did, it would stop being a replica the moment the real
+   card changed. */
 
 /* -------- Entry button in the About copy --------------------------------- */
 
@@ -14966,9 +14970,9 @@
 
 /* Full-bleed, like .about-project-modal — this opens on top of the About
    modal, so it has to cover it rather than sit in a card on top of it.
-   Scrolling belongs to .about-example-body: the header and step footer stay
+   Scrolling belongs to .card-tutorial-body: the header and step footer stay
    pinned while the card and its notes scroll between them. */
-.about-example-modal {
+.card-tutorial-modal {
     display: flex;
     flex-direction: column;
     max-width: none;
@@ -14984,7 +14988,7 @@
 
 /* Chapter progress | summary | exit, on one line. The compact header leaves
    the card and its annotations as much vertical room as possible. */
-.about-example-topbar {
+.card-tutorial-topbar {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
@@ -14992,13 +14996,13 @@
     margin-bottom: 14px;
 }
 
-.about-example-close {
+.card-tutorial-close {
     position: static;
     flex: 0 0 auto;
     justify-self: end;
 }
 
-.about-example-body {
+.card-tutorial-body {
     flex: 1 1 auto;
     padding: 16px 24px 26px;
     overflow-y: auto;
@@ -15007,13 +15011,13 @@
 
 /* Face copy sits above the card, centred, because it describes the whole
    face rather than either column of notes. */
-.about-example-intro {
+.card-tutorial-intro {
     min-width: 0;
     text-align: center;
 }
 
 /* -------- Animated setup flow intro -------------------------------------- */
-.about-example-setup-anim {
+.card-tutorial-setup-anim {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -15023,14 +15027,14 @@
     animation: setup-anim-fadein 0.3s ease-out;
 }
 
-.about-example-setup-anim[hidden] {
+.card-tutorial-setup-anim[hidden] {
     display: none !important;
 }
 
 /* While the intro plays it owns the modal body: the card, its note columns and
    the mobile coach only appear once the animation has stepped aside. */
-.about-example-body.is-setup-intro .about-example-columns,
-.about-example-body.is-setup-intro .about-example-mobile-coach {
+.card-tutorial-body.is-setup-intro .card-tutorial-columns,
+.card-tutorial-body.is-setup-intro .card-tutorial-mobile-coach {
     display: none !important;
 }
 
@@ -15043,12 +15047,12 @@
 
 /* A step with no card: the slide owns the stage, so the card columns and the
    mobile coach stand down while it is up. */
-.about-example-body.is-break-step .about-example-columns,
-.about-example-body.is-break-step .about-example-mobile-coach {
+.card-tutorial-body.is-break-step .card-tutorial-columns,
+.card-tutorial-body.is-break-step .card-tutorial-mobile-coach {
     display: none !important;
 }
 
-.about-example-break {
+.card-tutorial-break {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -15058,11 +15062,11 @@
     animation: setup-anim-fadein 0.35s ease-out;
 }
 
-.about-example-break[hidden] {
+.card-tutorial-break[hidden] {
     display: none !important;
 }
 
-.about-example-break-card {
+.card-tutorial-break-card {
     width: min(94vw, 560px);
     background: color-mix(in srgb, var(--bg-card) 95%, var(--bg-primary));
     border: 1px solid color-mix(in srgb, var(--accent-primary) 30%, var(--border-color));
@@ -15074,7 +15078,7 @@
     gap: 14px;
 }
 
-.about-example-break-eyebrow {
+.card-tutorial-break-eyebrow {
     align-self: flex-start;
     font: 750 10px/1 var(--font-data);
     letter-spacing: 0.1em;
@@ -15086,20 +15090,20 @@
     border-radius: 6px;
 }
 
-.about-example-break-title {
+.card-tutorial-break-title {
     margin: 2px 0 0;
     font: 700 26px/1.2 var(--font-emphasis);
     color: var(--text-primary);
 }
 
-.about-example-break-lead {
+.card-tutorial-break-lead {
     margin: 0;
     font-size: 15px;
     line-height: 1.55;
     color: var(--text-secondary);
 }
 
-.about-example-break-points {
+.card-tutorial-break-points {
     list-style: none;
     margin: 4px 0 0;
     padding: 0;
@@ -15108,7 +15112,7 @@
     gap: 10px;
 }
 
-.about-example-break-points li {
+.card-tutorial-break-points li {
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -15118,18 +15122,18 @@
     border: 1px solid var(--border-color);
 }
 
-.about-example-break-points strong {
+.card-tutorial-break-points strong {
     font: 650 14px/1.3 var(--font-emphasis);
     color: var(--text-primary);
 }
 
-.about-example-break-points span {
+.card-tutorial-break-points span {
     font-size: 13.5px;
     line-height: 1.5;
     color: var(--text-muted);
 }
 
-.about-example-break-actions {
+.card-tutorial-break-actions {
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -15137,7 +15141,7 @@
     padding-top: 8px;
 }
 
-.about-example-break-back {
+.card-tutorial-break-back {
     background: transparent;
     border: 1px solid var(--border-color);
     color: var(--text-secondary);
@@ -15148,12 +15152,12 @@
     margin-right: auto;
 }
 
-.about-example-break-back:hover {
+.card-tutorial-break-back:hover {
     border-color: var(--text-muted);
     color: var(--text-primary);
 }
 
-.about-example-break-cta {
+.card-tutorial-break-cta {
     background: var(--accent-primary);
     color: var(--accent-primary-text, #10141b);
     border: 0;
@@ -15164,22 +15168,22 @@
     transition: filter 0.15s ease, transform 0.15s ease;
 }
 
-.about-example-break-cta:hover {
+.card-tutorial-break-cta:hover {
     filter: brightness(1.08);
     transform: translateY(-1px);
 }
 
 @media (max-width: 700px) {
-    .about-example-break {
+    .card-tutorial-break {
         min-height: 0;
         padding: 12px 12px 24px;
     }
 
-    .about-example-break-card {
+    .card-tutorial-break-card {
         padding: 22px 18px 18px;
     }
 
-    .about-example-break-title {
+    .card-tutorial-break-title {
         font-size: 22px;
     }
 }
@@ -15235,12 +15239,12 @@
 
 /* Controls in the replica are inert: the pointer does the pressing, and a
    stray real click must not land on one. */
-.about-example-setup-anim button {
+.card-tutorial-setup-anim button {
     pointer-events: none;
 }
 
-.about-example-setup-anim .setup-anim-skip-btn,
-.about-example-setup-anim .setup-anim-learn-btn.is-ready {
+.card-tutorial-setup-anim .setup-anim-skip-btn,
+.card-tutorial-setup-anim .setup-anim-learn-btn.is-ready {
     pointer-events: auto;
     cursor: pointer;
 }
@@ -15253,7 +15257,7 @@
    chevron). Outside that screen's own context it falls back to a two-column
    variant and the chevron drops onto a second row, so the replica states the
    three columns itself rather than chasing the original's specificity. */
-.about-example-setup-anim .standard-source-choice-btn {
+.card-tutorial-setup-anim .standard-source-choice-btn {
     grid-template-columns: auto minmax(0, 1fr) auto;
 }
 
@@ -15394,12 +15398,12 @@
 
 /* A step with no card: the slide owns the stage, so the card columns and the
    mobile coach stand down while it is up. */
-.about-example-body.is-break-step .about-example-columns,
-.about-example-body.is-break-step .about-example-mobile-coach {
+.card-tutorial-body.is-break-step .card-tutorial-columns,
+.card-tutorial-body.is-break-step .card-tutorial-mobile-coach {
     display: none !important;
 }
 
-.about-example-break {
+.card-tutorial-break {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -15409,11 +15413,11 @@
     animation: setup-anim-fadein 0.35s ease-out;
 }
 
-.about-example-break[hidden] {
+.card-tutorial-break[hidden] {
     display: none !important;
 }
 
-.about-example-break-card {
+.card-tutorial-break-card {
     width: min(94vw, 560px);
     background: color-mix(in srgb, var(--bg-card) 95%, var(--bg-primary));
     border: 1px solid color-mix(in srgb, var(--accent-primary) 30%, var(--border-color));
@@ -15425,7 +15429,7 @@
     gap: 14px;
 }
 
-.about-example-break-eyebrow {
+.card-tutorial-break-eyebrow {
     align-self: flex-start;
     font: 750 10px/1 var(--font-data);
     letter-spacing: 0.1em;
@@ -15437,20 +15441,20 @@
     border-radius: 6px;
 }
 
-.about-example-break-title {
+.card-tutorial-break-title {
     margin: 2px 0 0;
     font: 700 26px/1.2 var(--font-emphasis);
     color: var(--text-primary);
 }
 
-.about-example-break-lead {
+.card-tutorial-break-lead {
     margin: 0;
     font-size: 15px;
     line-height: 1.55;
     color: var(--text-secondary);
 }
 
-.about-example-break-points {
+.card-tutorial-break-points {
     list-style: none;
     margin: 4px 0 0;
     padding: 0;
@@ -15459,7 +15463,7 @@
     gap: 10px;
 }
 
-.about-example-break-points li {
+.card-tutorial-break-points li {
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -15469,18 +15473,18 @@
     border: 1px solid var(--border-color);
 }
 
-.about-example-break-points strong {
+.card-tutorial-break-points strong {
     font: 650 14px/1.3 var(--font-emphasis);
     color: var(--text-primary);
 }
 
-.about-example-break-points span {
+.card-tutorial-break-points span {
     font-size: 13.5px;
     line-height: 1.5;
     color: var(--text-muted);
 }
 
-.about-example-break-actions {
+.card-tutorial-break-actions {
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -15488,7 +15492,7 @@
     padding-top: 8px;
 }
 
-.about-example-break-back {
+.card-tutorial-break-back {
     background: transparent;
     border: 1px solid var(--border-color);
     color: var(--text-secondary);
@@ -15499,12 +15503,12 @@
     margin-right: auto;
 }
 
-.about-example-break-back:hover {
+.card-tutorial-break-back:hover {
     border-color: var(--text-muted);
     color: var(--text-primary);
 }
 
-.about-example-break-cta {
+.card-tutorial-break-cta {
     background: var(--accent-primary);
     color: var(--accent-primary-text, #10141b);
     border: 0;
@@ -15515,22 +15519,22 @@
     transition: filter 0.15s ease, transform 0.15s ease;
 }
 
-.about-example-break-cta:hover {
+.card-tutorial-break-cta:hover {
     filter: brightness(1.08);
     transform: translateY(-1px);
 }
 
 @media (max-width: 700px) {
-    .about-example-break {
+    .card-tutorial-break {
         min-height: 0;
         padding: 12px 12px 24px;
     }
 
-    .about-example-break-card {
+    .card-tutorial-break-card {
         padding: 22px 18px 18px;
     }
 
-    .about-example-break-title {
+    .card-tutorial-break-title {
         font-size: 22px;
     }
 }
@@ -15590,7 +15594,7 @@
 /* Card centred with a column of notes either side. The side columns are
    equal-width so the card lands on the real centre line of the modal, not
    wherever the longer column pushes it. */
-.about-example-columns {
+.card-tutorial-columns {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     gap: 30px;
@@ -15600,7 +15604,7 @@
     margin: 0 auto;
 }
 
-.about-example-stage-col {
+.card-tutorial-stage-col {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -15609,29 +15613,29 @@
 
 /* The stage is the positioning context for the numbered badges, which are
    placed from measured element boxes rather than fixed offsets. */
-.about-example-stage-wrap {
+.card-tutorial-stage-wrap {
     position: relative;
     justify-self: center;
 }
 
-.about-example-stage {
+.card-tutorial-stage {
     position: relative;
 }
 
 /* -------- Size overrides so a viewport-scale .card fits the stage --------- */
 
-.about-example-card-inner {
+.card-replica {
     width: 440px;
     max-width: 100%;
     /* Set per card by fitCardToContent(). A fixed height either clipped the
        denser cards — `tem` overflowed its senses box by 72px, losing a whole
        sense and its grammar pills — or left the sparse ones bottom-heavy. */
-    height: var(--about-card-h, 480px);
+    height: var(--replica-card-h, 480px);
     perspective: 1200px;
     position: relative;
 }
 
-.about-example-card-inner .card {
+.card-replica .card {
     width: 100%;
     height: 100%;
     min-height: 0;
@@ -15644,26 +15648,26 @@
     touch-action: auto;
 }
 
-.about-example-flip {
+.card-tutorial-flip {
     display: none !important;
 }
 
-.about-example-card-inner .card-front {
+.card-replica .card-front {
     justify-content: center;
     padding: 30px 22px;
 }
 
-.about-example-card-inner .card-back {
+.card-replica .card-back {
     justify-content: flex-start;
     padding: 24px 18px 20px;
 }
 
-.about-example-card-inner .card-word {
+.card-replica .card-word {
     font-size: 50px;
 }
 
 /* The back's flex column, its scroll region and its sentence row are shared
-   with the live card via the widened `#backContent, .about-example-card-inner
+   with the live card via the widened `#backContent, .card-replica
    .card-details` selectors above — nothing about that layout is restated here.
 
    The replica has no `.links-section`, the row that normally carries
@@ -15676,11 +15680,11 @@
 
 /* Live cards leave the ranking pinned to the card's lower edge; keep that,
    but stop it colliding with the flip hint below it. */
-.about-example-card-inner .card-ranking {
+.card-replica .card-ranking {
     bottom: 46px;
 }
 
-.about-example-flip-hint {
+.card-tutorial-flip-hint {
     display: none !important;
 }
 
@@ -15690,43 +15694,43 @@
    is what made the card feel packed: every border ran close to another border
    or to the card's own edge. The slack recovered from the shorter card goes
    here, into the gaps and the side inset, rather than into empty space. */
-.about-example-card-inner .card-back {
+.card-replica .card-back {
     padding: 22px 20px 18px;
 }
 
 /* Nothing on a walkthrough card may be scrolled out of sight: the annotations
    point at these rows, so the card grows to hold them instead. */
-.about-example-card-inner .meanings-scroll {
+.card-replica .meanings-scroll {
     max-height: none !important;
     overflow: visible;
 }
 
-.about-example-card-inner .card-details {
+.card-replica .card-details {
     gap: 14px;
 }
 
-.about-example-card-inner .meaning-pos-section {
+.card-replica .meaning-pos-section {
     padding: 4px;
     border-radius: 12px;
 }
 
 /* The prominence meter is absolutely positioned against the row's right edge.
    At 8px it sat on the border it was meant to sit inside. */
-.about-example-card-inner .meaning-row .sense-prominence-badge {
+.card-replica .meaning-row .sense-prominence-badge {
     right: 11px;
 }
 
-.about-example-card-inner .meaning-row {
+.card-replica .meaning-row {
     margin-bottom: 5px !important;
 }
 
-.about-example-card-inner .meaning-pos-rows .meaning-row:last-child {
+.card-replica .meaning-pos-rows .meaning-row:last-child {
     margin-bottom: 0 !important;
 }
 
 /* The example is the evidence for the selected sense, so it gets a little more
    separation from the senses above it than the senses get from each other. */
-.about-example-card-inner .sentence {
+.card-replica .sentence {
     padding: 12px 14px;
 }
 
@@ -15734,7 +15738,7 @@
 
 /* Ring the annotated element itself. outline (not border) so no card element
    changes size when it lights up. */
-.about-example-anchored.is-annotation-active {
+.card-tutorial-anchored.is-annotation-active {
     outline: 2px solid var(--accent-amber);
     outline-offset: 3px;
     border-radius: 6px;
@@ -15742,7 +15746,7 @@
 
 /* -------- Notes column ---------------------------------------------------- */
 
-.about-example-notes {
+.card-tutorial-notes {
     min-width: 0;
     max-width: 420px;
     color: var(--text-secondary);
@@ -15750,15 +15754,15 @@
 
 /* Hug the card: the left column's notes sit against their badges on the
    card's left edge, the right column's against its right edge. */
-.about-example-notes-left {
+.card-tutorial-notes-left {
     justify-self: end;
 }
 
-.about-example-notes-right {
+.card-tutorial-notes-right {
     justify-self: start;
 }
 
-.about-example-lede {
+.card-tutorial-lede {
     font-family: var(--font-emphasis);
     color: var(--text-primary);
     font-weight: 700;
@@ -15766,20 +15770,20 @@
 
 /* The em dash is punctuation between lede and summary, so it belongs to the
    stylesheet rather than to the copy — the strings stay clean sentences. */
-.about-example-lede::after {
+.card-tutorial-lede::after {
     content: " —";
     color: var(--text-muted);
     font-weight: 400;
 }
 
-.about-example-blurb {
+.card-tutorial-blurb {
     font-size: 14.5px;
     line-height: 1.55;
     color: var(--text-muted);
     margin: 0;
 }
 
-.about-example-note-list {
+.card-tutorial-note-list {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -15788,7 +15792,7 @@
     gap: 10px;
 }
 
-.about-example-note {
+.card-tutorial-note {
     display: flex;
     gap: 12px;
     padding: 11px 13px;
@@ -15798,26 +15802,26 @@
     transition: background 0.15s ease, border-color 0.15s ease;
 }
 
-.about-example-note.is-active {
+.card-tutorial-note.is-active {
     background: var(--bg-tertiary);
     border-color: var(--accent-amber);
 }
 
-.about-example-note strong {
+.card-tutorial-note strong {
     display: block;
     color: var(--text-primary);
     font-size: 15px;
     margin-bottom: 3px;
 }
 
-.about-example-note span:not(.about-example-note-num):not(.about-example-try) {
+.card-tutorial-note span:not(.card-tutorial-note-num):not(.card-tutorial-try) {
     display: block;
     font-size: 13.5px;
     line-height: 1.55;
     color: var(--text-muted);
 }
 
-.about-example-try {
+.card-tutorial-try {
     display: inline-block;
     margin-left: 8px;
     padding: 2px 7px;
@@ -15834,27 +15838,27 @@
 }
 
 /* -------- Tutorial progress and controls -------------------------------- */
-.about-example-sequence {
+.card-tutorial-sequence {
     display: grid;
     gap: 1px;
     min-width: 74px;
     font-family: var(--font-emphasis);
 }
 
-.about-example-sequence strong {
+.card-tutorial-sequence strong {
     color: var(--text-primary);
     font-size: 14px;
 }
 
-.about-example-sequence span {
+.card-tutorial-sequence span {
     color: var(--text-muted);
     font: 700 9px/1.2 var(--font-data);
     letter-spacing: 0.08em;
     text-transform: uppercase;
 }
 
-.about-example-flip,
-.about-example-continue {
+.card-tutorial-flip,
+.card-tutorial-continue {
     padding: 9px 20px;
     border-radius: 999px;
     border: 1px solid var(--border-light);
@@ -15867,26 +15871,26 @@
     transition: background 0.15s ease, border-color 0.15s ease;
 }
 
-.about-example-flip:hover,
-.about-example-continue:hover {
+.card-tutorial-flip:hover,
+.card-tutorial-continue:hover {
     background: var(--bg-tertiary);
     border-color: var(--text-muted);
 }
 
-.about-example-continue {
+.card-tutorial-continue {
     margin-top: 8px;
     border-color: transparent;
     background: var(--accent-primary);
     color: var(--accent-primary-text);
 }
 
-.about-example-continue.is-secondary {
+.card-tutorial-continue.is-secondary {
     border-color: var(--border-light);
     background: transparent;
     color: var(--text-secondary);
 }
 
-.about-example-mobile-coach {
+.card-tutorial-mobile-coach {
     display: none;
 }
 
@@ -15898,19 +15902,19 @@
     /* Card first, then both note columns stacked beneath it. Badges stay
        anchored because they are positioned from measured boxes and re-placed
        on resize. */
-    .about-example-columns {
+    .card-tutorial-columns {
         grid-template-columns: minmax(0, 1fr);
         gap: 20px;
         justify-items: center;
     }
 
-    .about-example-stage-col {
+    .card-tutorial-stage-col {
         order: -1;
     }
 
-    .about-example-notes,
-    .about-example-notes-left,
-    .about-example-notes-right {
+    .card-tutorial-notes,
+    .card-tutorial-notes-left,
+    .card-tutorial-notes-right {
         justify-self: center;
         max-width: 560px;
         width: 100%;
@@ -15918,58 +15922,58 @@
 
     /* Two stacked <ol>s would restart the visual rhythm; keeping them
        adjacent with no gap reads as one continuous list. */
-    .about-example-notes-left .about-example-note-list {
+    .card-tutorial-notes-left .card-tutorial-note-list {
         padding-bottom: 0;
     }
 }
 
 @media (max-width: 560px) {
-    .about-example-body {
+    .card-tutorial-body {
         padding: 16px 12px 24px;
     }
 
     /* Three cells will not fit across a phone. Controls keep the top line,
        the summary drops beneath them and spans the full width — still one
        block of chrome, just folded. */
-    .about-example-topbar {
+    .card-tutorial-topbar {
         grid-template-columns: auto auto;
         justify-content: space-between;
         gap: 10px 12px;
     }
 
-    .about-example-topbar .about-example-sequence { grid-area: 1 / 1; }
-    .about-example-topbar .about-example-close { grid-area: 1 / 2; }
-    .about-example-topbar .about-example-intro { grid-area: 2 / 1 / 3 / 3; }
+    .card-tutorial-topbar .card-tutorial-sequence { grid-area: 1 / 1; }
+    .card-tutorial-topbar .card-tutorial-close { grid-area: 1 / 2; }
+    .card-tutorial-topbar .card-tutorial-intro { grid-area: 2 / 1 / 3 / 3; }
 
     /* Narrow enough for a phone, but the height still comes from the content:
        rows wrap at this width, so a fixed height clipped the denser cards
        harder here than anywhere else. */
-    .about-example-card-inner {
+    .card-replica {
         width: 340px;
-        height: var(--about-card-h, 512px);
+        height: var(--replica-card-h, 512px);
     }
 
-    .about-example-blurb {
+    .card-tutorial-blurb {
         font-size: 13.5px;
     }
 }
 
 @media (max-width: 700px) {
-    .about-example-body {
+    .card-tutorial-body {
         padding-bottom: 210px;
     }
 
-    .about-example-notes {
+    .card-tutorial-notes {
         display: none;
     }
 
-    .about-example-anchored.is-annotation-active {
+    .card-tutorial-anchored.is-annotation-active {
         outline-width: 3px;
         box-shadow: 0 0 0 7px color-mix(in srgb, var(--accent-amber) 18%, transparent);
-        animation: about-example-mobile-spotlight 280ms ease-out;
+        animation: card-tutorial-mobile-spotlight 280ms ease-out;
     }
 
-    .about-example-mobile-coach:not([hidden]) {
+    .card-tutorial-mobile-coach:not([hidden]) {
         position: fixed;
         z-index: 40;
         left: 10px;
@@ -15984,10 +15988,10 @@
         background: color-mix(in srgb, var(--bg-card) 96%, transparent);
         box-shadow: 0 18px 55px rgba(0, 0, 0, 0.48);
         backdrop-filter: blur(18px);
-        animation: about-example-mobile-coach-in 260ms ease-out;
+        animation: card-tutorial-mobile-coach-in 260ms ease-out;
     }
 
-    .about-example-mobile-progress {
+    .card-tutorial-mobile-progress {
         grid-column: 1 / -1;
         color: var(--accent-amber);
         font-family: var(--font-data);
@@ -15997,14 +16001,14 @@
         text-transform: uppercase;
     }
 
-    .about-example-mobile-coach > strong {
+    .card-tutorial-mobile-coach > strong {
         align-self: center;
         color: var(--text-primary);
         font-family: var(--font-emphasis);
         font-size: 16px;
     }
 
-    .about-example-mobile-coach > p {
+    .card-tutorial-mobile-coach > p {
         grid-column: 1 / -1;
         margin: 0;
         color: var(--text-secondary);
@@ -16012,14 +16016,14 @@
         line-height: 1.42;
     }
 
-    .about-example-mobile-actions {
+    .card-tutorial-mobile-actions {
         grid-column: 2;
         grid-row: 2;
         display: flex;
         gap: 7px;
     }
 
-    .about-example-mobile-actions button {
+    .card-tutorial-mobile-actions button {
         min-width: 64px;
         padding: 8px 11px;
         border: 1px solid var(--border-light);
@@ -16029,28 +16033,28 @@
         font: 650 12px/1 var(--font-emphasis);
     }
 
-    .about-example-mobile-actions button:last-child {
+    .card-tutorial-mobile-actions button:last-child {
         border-color: transparent;
         background: var(--accent-primary);
         color: var(--accent-primary-text);
     }
 
-    .about-example-mobile-actions button:disabled {
+    .card-tutorial-mobile-actions button:disabled {
         opacity: 0.35;
     }
 }
 
-@keyframes about-example-mobile-spotlight {
+@keyframes card-tutorial-mobile-spotlight {
     from { box-shadow: 0 0 0 18px transparent; }
 }
 
-@keyframes about-example-mobile-coach-in {
+@keyframes card-tutorial-mobile-coach-in {
     from { opacity: 0; transform: translateY(18px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .about-example-anchored.is-annotation-active,
-    .about-example-mobile-coach:not([hidden]) {
+    .card-tutorial-anchored.is-annotation-active,
+    .card-tutorial-mobile-coach:not([hidden]) {
         animation: none;
     }
 }
@@ -18977,4 +18981,292 @@ body > .synonyms-panel.visible {
 }
 @media (prefers-reduced-motion: reduce) {
   .modal > .modal-content { animation: none; }
+}
+
+/* ===========================================================================
+   Walkthrough — a two-screen look at a card for visitors (js/walkthrough.js)
+   ===========================================================================
+   Opened only from About. Unlike the tutorial it labels a whole face at once:
+   callouts in the gutter beside the card with a leader line to the element,
+   or, where there is no gutter, short tags pinned onto the card. The card is
+   the shared .card-replica; only its width is set here. */
+
+/* About and the walkthrough are for visitors, who usually arrive logged out —
+   onto the landing card, #authModal at z-index 30001. At the generic modal
+   z-index About opened *underneath* it, so ?about=1 sent to a recruiter showed
+   only the login card. The walkthrough stacks on About, so it goes one higher. */
+#aboutProjectModal {
+    z-index: 30002;
+}
+
+#walkthroughModal {
+    z-index: 30003;
+}
+
+.walkthrough-modal {
+    display: flex;
+    flex-direction: column;
+    max-width: none;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+    border: none;
+    border-radius: 0;
+    background: var(--bg-primary);
+    padding: 0;
+    overflow: hidden;
+}
+
+.walkthrough-head {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 24px 8px;
+}
+
+.walkthrough-dots {
+    display: flex;
+    gap: 7px;
+    justify-self: start;
+}
+
+.walkthrough-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border-color);
+    transition: background 0.2s ease, width 0.2s ease;
+}
+
+.walkthrough-dot.is-done {
+    background: color-mix(in srgb, var(--accent-primary) 45%, var(--border-color));
+}
+
+.walkthrough-dot.is-current {
+    width: 22px;
+    border-radius: 999px;
+    background: var(--accent-primary);
+}
+
+.walkthrough-copy {
+    max-width: 640px;
+    text-align: center;
+}
+
+.walkthrough-title {
+    margin: 0 0 4px;
+    font: 700 24px/1.2 var(--font-emphasis);
+    color: var(--text-primary);
+}
+
+.walkthrough-lead {
+    margin: 0;
+    font: 15px/1.45 var(--font-reading);
+    color: var(--text-secondary);
+}
+
+.walkthrough-close {
+    position: static;
+    justify-self: end;
+}
+
+.walkthrough-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 18px 24px 12px;
+}
+
+/* The positioning context for the labels and the leader-line layer, both of
+   which are placed from measured boxes. */
+.walkthrough-stage {
+    position: relative;
+    width: 100%;
+    animation: setup-anim-fadein 0.3s ease-out;
+}
+
+.walkthrough-cards {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 32px;
+}
+
+.walkthrough-stage .card-replica {
+    width: var(--walkthrough-card-w, 400px);
+}
+
+.walkthrough-leaders {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+    z-index: 4;
+}
+
+.walkthrough-leader {
+    fill: none;
+    stroke: var(--accent-amber);
+    stroke-width: 1.5;
+    stroke-opacity: 0.75;
+}
+
+.walkthrough-leader-dot {
+    fill: var(--accent-amber);
+}
+
+.walkthrough-labels {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.walkthrough-callout {
+    position: absolute;
+    width: 200px;
+    font: 13px/1.4 var(--font-reading);
+    color: var(--text-secondary);
+    animation: setup-anim-fadein 0.35s ease-out both;
+}
+
+.walkthrough-callout strong {
+    display: block;
+    margin-bottom: 2px;
+    font: 700 14.5px/1.3 var(--font-emphasis);
+    color: var(--text-primary);
+}
+
+.walkthrough-callout.is-left {
+    text-align: right;
+}
+
+.walkthrough-pin {
+    position: absolute;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--accent-amber);
+    color: #1d1606;
+    font: 700 11.5px/1.25 var(--font-emphasis);
+    white-space: nowrap;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    animation: setup-anim-fadein 0.35s ease-out both;
+}
+
+/* The element a label names. outline, not border, so nothing on the card
+   changes size when it is marked. */
+.walkthrough-anchored {
+    outline: 1.5px solid color-mix(in srgb, var(--accent-amber) 70%, transparent);
+    outline-offset: 3px;
+    border-radius: 6px;
+}
+
+/* The ranking row spans the card edge to edge, so an outside outline would
+   bleed past the card. */
+.walkthrough-anchored.card-ranking {
+    outline-offset: -2px;
+}
+
+.walkthrough-foot {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 24px calc(16px + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--border-light);
+}
+
+/* Explicit columns: Back is hidden on the first screen, and auto-placement
+   would otherwise slide the count and Next one column left. */
+.walkthrough-back {
+    grid-column: 1;
+    justify-self: start;
+    background: transparent;
+    border: 1px solid var(--border-light);
+    color: var(--text-secondary);
+    padding: 10px 18px;
+    border-radius: 999px;
+    font: 600 14px/1 var(--font-emphasis);
+    cursor: pointer;
+}
+
+.walkthrough-back:hover {
+    border-color: var(--text-muted);
+    color: var(--text-primary);
+}
+
+.walkthrough-count {
+    grid-column: 2;
+    font: 600 12.5px/1 var(--font-reading);
+    color: var(--text-muted);
+}
+
+.walkthrough-next {
+    grid-column: 3;
+    justify-self: end;
+    white-space: nowrap;
+    background: var(--accent-primary);
+    color: var(--accent-primary-text, #10141b);
+    border: 0;
+    padding: 12px 22px;
+    border-radius: 999px;
+    font: 700 14.5px/1 var(--font-emphasis);
+    cursor: pointer;
+    transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.walkthrough-next:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+}
+
+@media (max-width: 700px) {
+    .walkthrough-head {
+        grid-template-columns: 1fr auto;
+        padding: 14px 16px 4px;
+        row-gap: 8px;
+    }
+
+    .walkthrough-copy {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        text-align: left;
+    }
+
+    .walkthrough-title {
+        font-size: 20px;
+    }
+
+    .walkthrough-lead {
+        font-size: 14px;
+    }
+
+    .walkthrough-body {
+        padding: 22px 16px 12px;
+    }
+
+    .walkthrough-foot {
+        padding: 10px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .walkthrough-next {
+        padding: 12px 18px;
+    }
+
+    .walkthrough-back {
+        padding: 10px 14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .walkthrough-stage,
+    .walkthrough-callout,
+    .walkthrough-pin {
+        animation: none;
+    }
 }

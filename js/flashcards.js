@@ -7292,33 +7292,35 @@ function updateCard({ announceHeadword = false } = {}) {
     window.saveStudySessionSnapshot?.();
 }
 
-const CARD_WALKTHROUGH_PROMPT_KEY = 'fluencyCardWalkthroughPromptV1';
-const CARD_WALKTHROUGH_SEEN_KEY = 'fluencyCardWalkthroughSeenV1';
-let _cardWalkthroughPromptHandled = false;
+// A learner prompt into the tutorial (tutorial.js), not the visitor walkthrough.
+// The stored key names predate that split; renaming them would re-prompt.
+const CARD_TUTORIAL_PROMPT_KEY = 'fluencyCardTutorialPromptV1';
+const CARD_TUTORIAL_SEEN_KEY = 'fluencyCardWalkthroughSeenV1';
+let _cardTutorialPromptHandled = false;
 
-function rememberCardWalkthroughPrompt() {
-    _cardWalkthroughPromptHandled = true;
-    try { localStorage.setItem(CARD_WALKTHROUGH_PROMPT_KEY, '1'); } catch (_) {}
+function rememberCardTutorialPrompt() {
+    _cardTutorialPromptHandled = true;
+    try { localStorage.setItem(CARD_TUTORIAL_PROMPT_KEY, '1'); } catch (_) {}
 }
 
-function hasHandledCardWalkthroughPrompt() {
-    if (_cardWalkthroughPromptHandled) return true;
+function hasHandledCardTutorialPrompt() {
+    if (_cardTutorialPromptHandled) return true;
     try {
-        return localStorage.getItem(CARD_WALKTHROUGH_PROMPT_KEY) === '1'
-            || localStorage.getItem(CARD_WALKTHROUGH_SEEN_KEY) === '1';
+        return localStorage.getItem(CARD_TUTORIAL_PROMPT_KEY) === '1'
+            || localStorage.getItem(CARD_TUTORIAL_SEEN_KEY) === '1';
     } catch (_) { return false; }
 }
 
-function _cardWalkthroughPromptKeydown(event) {
+function _cardTutorialPromptKeydown(event) {
     if (event.key !== 'Escape') return;
     event.stopPropagation();
-    closeCardWalkthroughPrompt();
+    closeCardTutorialPrompt();
 }
 
-function closeCardWalkthroughPrompt({ immediate = false } = {}) {
-    const modal = document.getElementById('cardWalkthroughPrompt');
+function closeCardTutorialPrompt({ immediate = false } = {}) {
+    const modal = document.getElementById('cardTutorialPrompt');
     if (!modal) return;
-    document.removeEventListener('keydown', _cardWalkthroughPromptKeydown, true);
+    document.removeEventListener('keydown', _cardTutorialPromptKeydown, true);
     if (immediate || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
         modal.hidden = true;
         modal.classList.remove('is-closing');
@@ -7331,53 +7333,53 @@ function closeCardWalkthroughPrompt({ immediate = false } = {}) {
     }, 180);
 }
 
-function ensureCardWalkthroughPrompt() {
-    let modal = document.getElementById('cardWalkthroughPrompt');
+function ensureCardTutorialPrompt() {
+    let modal = document.getElementById('cardTutorialPrompt');
     if (modal) return modal;
     modal = document.createElement('div');
-    modal.id = 'cardWalkthroughPrompt';
+    modal.id = 'cardTutorialPrompt';
     modal.className = 'knowledge-overview-modal syn-leave-modal';
     modal.hidden = true;
     modal.setAttribute('role', 'dialog');
     modal.setAttribute('aria-modal', 'true');
-    modal.setAttribute('aria-labelledby', 'cardWalkthroughPromptTitle');
+    modal.setAttribute('aria-labelledby', 'cardTutorialPromptTitle');
     modal.innerHTML = `
         <div class="knowledge-overview-sheet syn-leave-sheet">
             <div class="knowledge-overview-header">
                 <div>
                     <span class="knowledge-overview-kicker">Quick card tour</span>
-                    <h2 id="cardWalkthroughPromptTitle">Want to see how the back works?</h2>
+                    <h2 id="cardTutorialPromptTitle">Want to see how the back works?</h2>
                 </div>
             </div>
-            <p class="syn-leave-body">The walkthrough explains sense rows, example sentences, percentages, and the controls you can tap.</p>
+            <p class="syn-leave-body">The tutorial explains sense rows, example sentences, percentages, and the controls you can tap.</p>
             <div class="syn-leave-actions">
-                <button type="button" class="auth-cancel-btn" data-card-walkthrough="dismiss">Not now</button>
-                <button type="button" class="auth-submit-btn" data-card-walkthrough="show">Show me</button>
+                <button type="button" class="auth-cancel-btn" data-card-tutorial="dismiss">Not now</button>
+                <button type="button" class="auth-submit-btn" data-card-tutorial="show">Show me</button>
             </div>
         </div>`;
     modal.addEventListener('click', event => {
         event.stopPropagation();
-        const action = event.target.closest('[data-card-walkthrough]')?.dataset.cardWalkthrough;
+        const action = event.target.closest('[data-card-tutorial]')?.dataset.cardTutorial;
         if (action === 'show') {
-            closeCardWalkthroughPrompt({ immediate: true });
-            window.openAboutExample?.(activeArtist ? 0 : 1);
+            closeCardTutorialPrompt({ immediate: true });
+            window.openCardTutorial?.();
         } else if (action === 'dismiss') {
-            closeCardWalkthroughPrompt();
+            closeCardTutorialPrompt();
         }
     });
     document.body.appendChild(modal);
     return modal;
 }
 
-function maybeShowCardWalkthroughPrompt() {
-    if (hasHandledCardWalkthroughPrompt()) return;
+function maybeShowCardTutorialPrompt() {
+    if (hasHandledCardTutorialPrompt()) return;
     // Do not stack onboarding over a dialog the learner opened during the flip.
     if (document.querySelector('.modal:not(.hidden), .knowledge-overview-modal:not([hidden])')) return;
-    const modal = ensureCardWalkthroughPrompt();
-    rememberCardWalkthroughPrompt();
+    const modal = ensureCardTutorialPrompt();
+    rememberCardTutorialPrompt();
     modal.hidden = false;
-    document.addEventListener('keydown', _cardWalkthroughPromptKeydown, true);
-    modal.querySelector('[data-card-walkthrough="show"]')?.focus();
+    document.addEventListener('keydown', _cardTutorialPromptKeydown, true);
+    modal.querySelector('[data-card-tutorial="show"]')?.focus();
 }
 
 function flipCard() {
@@ -7426,7 +7428,7 @@ function flipCard() {
             speakWord(getDisplayedTargetHeadword(card), false);
         }
     }
-    if (!wasFlipped && isNowFlipped) setTimeout(maybeShowCardWalkthroughPrompt, 650);
+    if (!wasFlipped && isNowFlipped) setTimeout(maybeShowCardTutorialPrompt, 650);
     window.saveStudySessionSnapshot?.();
 }
 
