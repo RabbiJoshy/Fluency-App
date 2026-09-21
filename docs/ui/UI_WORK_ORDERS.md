@@ -339,22 +339,33 @@ rebuilding. Revisit it once that lands.
 The whole rule lives in **`app/js/side-dock.js`**, reached as
 `window.sideDock`. Add a new panel there, not in its own module.
 
-**Study session, ≥1360px.** Card 540px centred; 450px gutter each side.
+**The two sides (revised the same day, Joshua's model).**
 
-| side | about | occupants | one at a time? | card change / flip to front |
-|---|---|---|---|---|
-| right | this card | dictionary, synonyms, conjugation, card data (hosted panels); lyric breakdown, rarer-sense knowledge, word search (modals) | yes | **close** — they give the answer away |
-| left | the session | saved words, progress, shortcuts, help | yes | **stay open** |
+| side | means | occupants |
+|---|---|---|
+| left | you and the app | **settings**, with anything opened from it stacked on top (saved words, Fast Track, progress, find word); otherwise progress, total progress, saved words, shortcuts, help |
+| right | this card | dictionary, synonyms, conjugation, card data, lyric breakdown, rarer-sense knowledge, word search; on the setup page the word lists and cognate rules |
 
-- Left sheets let clicks through their transparent backdrop, so you flip,
-  grade and move on with one open. Close with × or Escape.
-- **Escape closes the nearest open panel.** Before, it fell through to
-  `navigateBack` for every panel except shortcuts/stats/card data, so
-  dismissing a panel could take you out of the set.
-- Leaving the study view closes anything docked in it.
-- Conjugation docks at the card's own table sizes; its existing **"Drill
-  <verb> in conjugation mode"** button is the way into the conjugation app
-  (Joshua plans to gut this panel in favour of that app).
+- **Spill:** when the right is taken and the left is free, the next right-hand
+  panel opens on the left, so dictionary and conjugation read side by side.
+  Both taken: it replaces the one on the right.
+- **Settings owns the left:** opening it closes a card panel spilled there.
+  It stays open across card changes and when you leave the set.
+- **Stacking:** a sheet opened while settings is open sits on top of it
+  (`data-dock-stack`, z-index 1010); closing it returns to settings. Saved
+  words and Fast Track used to close settings first; they now leave it open
+  when `sideDock.keepsSettingsOpen()`.
+- **Card things** on either side close on a card change or flip to front.
+- **Escape order:** right-hand panel, then the sheet stacked over settings,
+  then other left sheets, then settings. Never leaves the set while one is
+  open.
+- **Mechanism:** `side-dock.js` decides and marks `data-dock="left|right"`;
+  the CSS draws only the two positions. Per-id docking rules are gone —
+  including the original 1360px block — because id selectors outrank an
+  attribute-keyed side. The CSS lists the dockable ids inside `:is()` so it
+  in turn outranks each modal's own id-level sizing.
+- The language/mode picker ("Your learning settings") stays centred:
+  changing it takes you out of your set.
 
 **Setup page, ≥1024px.** No card to keep in view and ~110px gutters at 1360,
 so reference sheets open as one right-hand sheet over the progress sidebar:
