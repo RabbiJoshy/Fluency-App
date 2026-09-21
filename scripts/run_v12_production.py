@@ -18,6 +18,10 @@ import time
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+# Release files are published by their own GitHub Pages site (repo
+# Fluency-Releases), not the app's gh-pages; see app/js/release-host.js.
+RELEASES_REPO = Path(os.environ.get("FLUENCY_RELEASES_REPO", "/private/tmp/fluency-releases"))
+RELEASES_REMOTE = "https://github.com/RabbiJoshy/Fluency-Releases.git"
 PYTHON_BIN = REPO_ROOT / ".venv/bin/python"
 
 CONFIG = {
@@ -154,20 +158,25 @@ def deploy_language_release(workspace: Path, language: str, release_id: str) -> 
     run_cmd(["git", "commit", "-m", f"Update config and changelog for {language.upper()} V12 release ({release_id})"], cwd=REPO_ROOT)
     run_cmd(["git", "push", "origin", "main"], cwd=REPO_ROOT)
 
-    # 5. Sync files to gh-pages branch
-    # Create / update release files on gh-pages without deck.json (>100MB)
-    run_cmd(["git", "checkout", "gh-pages"], cwd=REPO_ROOT)
-    run_cmd(["git", "pull", "--rebase", "origin", "gh-pages"], cwd=REPO_ROOT)
-
-    # Target release folder in gh-pages
-    target_rel = REPO_ROOT / "releases" / language / "speech" / release_id
+    # 5. Publish the release files to the Fluency-Releases site, without
+    # deck.json (>100MB). Its layout is the app's releases/ path minus the
+    # leading releases/.
+    if not (RELEASES_REPO / ".git").exists():
+        run_cmd(["git", "clone", RELEASES_REMOTE, str(RELEASES_REPO)], cwd=REPO_ROOT)
+    run_cmd(["git", "pull", "--rebase", "origin", "main"], cwd=RELEASES_REPO)
+    target_rel = RELEASES_REPO / language / "speech" / release_id
     target_rel.mkdir(parents=True, exist_ok=True)
-
-    # Rsync excluding deck.json
     run_cmd([
         "rsync", "-av", "--exclude=deck.json",
         f"{rel_dir}/", f"{target_rel}/"
-    ], cwd=REPO_ROOT)
+    ], cwd=RELEASES_REPO)
+    run_cmd(["git", "add", str(target_rel.relative_to(RELEASES_REPO))], cwd=RELEASES_REPO)
+    run_cmd(["git", "commit", "-m", f"Publish {language.upper()} release {release_id}"], cwd=RELEASES_REPO)
+    run_cmd(["git", "push", "origin", "main"], cwd=RELEASES_REPO)
+
+    # 6. Sync the app to gh-pages
+    run_cmd(["git", "checkout", "gh-pages"], cwd=REPO_ROOT)
+    run_cmd(["git", "pull", "--rebase", "origin", "gh-pages"], cwd=REPO_ROOT)
 
     # Sync config, sw, and app assets to gh-pages root
     (REPO_ROOT / "config/dev_changelog.json").write_text(changelog_text, encoding="utf-8")
@@ -180,7 +189,7 @@ def deploy_language_release(workspace: Path, language: str, release_id: str) -> 
     if (REPO_ROOT / "app").exists():
         shutil.rmtree(REPO_ROOT / "app")
 
-    run_cmd(["git", "add", "releases", "config", "service-worker.js", "js", "css", "index.html"], cwd=REPO_ROOT)
+    run_cmd(["git", "add", "config", "service-worker.js", "js", "css", "index.html"], cwd=REPO_ROOT)
     run_cmd(["git", "commit", "-m", f"Deploy: {language.upper()} V12 deck ({release_id})"], cwd=REPO_ROOT)
     run_cmd(["git", "push", "origin", "gh-pages"], cwd=REPO_ROOT)
 

@@ -171,6 +171,14 @@ Languages with profiles or packages: `es`, `fr`, `pt`, `cs`, `nl`, `pl`. Modes: 
      committed version.
   5. Commit on `gh-pages` and `git push origin gh-pages`.
   Keep deploys surgical: only the files you touched, nothing else.
+- **Releases are not on `gh-pages`.** The app is repo `RabbiJoshy/Fluency-App`
+  (served at `rabbijoshy.github.io/Fluency-App/`; it was `Fluency-Next`, and a
+  tiny `Fluency-Next` repo now only forwards old links). Release files live in
+  repo `RabbiJoshy/Fluency-Releases` (clone at `/private/tmp/fluency-releases`),
+  served at `rabbijoshy.github.io/Fluency-Releases/<lang>/speech/<id>/…`.
+  Config keeps naming them `releases/…`; `app/js/release-host.js` maps that
+  onto the release site. Publish a release by committing it there, never by
+  adding `releases/` to `gh-pages` — that republishes ~1 GB on every deploy.
 - **Don't rebuild what a pool already holds.** Named, described sentence pools
   live in `<workspace>/pools/<lang>/`; `fluency pools list` shows them.
 

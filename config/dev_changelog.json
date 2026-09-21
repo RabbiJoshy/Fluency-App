@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-21T20:30:00+01:00",
+      "date": "2026-09-21 20:30 BST",
+      "agent": "Claude",
+      "summary": "The app's word and song files now load from a separate release site, so app updates go live in about a minute instead of several.",
+      "detail": [
+        "Release files (about 1 GB) moved to their own GitHub Pages site, rabbijoshy.github.io/Fluency-Releases/. The app site now republishes only the app on each deploy.",
+        "Config still names releases as releases/…; the new js/release-host.js maps that to the release site. A local dev server serving the app at its root keeps reading its own /releases/, so unpublished releases stay testable.",
+        "The old unused v12 display-v4 decks (842 MB) were removed from the app site.",
+        "The app repo is being renamed from Fluency-Next to Fluency-App; old links are forwarded."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-21T19:20:00+01:00",
       "date": "2026-09-21 19:20 BST",
       "agent": "Claude",

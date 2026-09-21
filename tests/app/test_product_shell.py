@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v524"
+EXPECTED_CACHE_NAME = "flashcards-v525"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -788,7 +788,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260918l", worker)
-        self.assertIn("/js/main.js?v=20260921fx", worker)
+        self.assertIn("/js/main.js?v=20260921rh", worker)
         self.assertIn("/js/ui.js?v=20260921x", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
@@ -833,8 +833,10 @@ class ProductShellTests(unittest.TestCase):
         main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
         worker = (APP_ROOT / "service-worker.js").read_text(encoding="utf-8")
 
-        self.assertIn("const APP_BASE_PATH = new URL('.', window.location.href)", main)
-        self.assertIn("appAssetPath(`releases/lyrics/", main)
+        release_host = (APP_ROOT / "js" / "release-host.js").read_text(encoding="utf-8")
+        # Releases are served by their own Pages site, not the app's path.
+        self.assertIn("releaseUrl(`releases/lyrics/", main)
+        self.assertIn("export const RELEASE_BASE_URL = 'https://rabbijoshy.github.io/Fluency-Releases/'", release_host)
         self.assertIn("const SCOPE_PATH = new URL(self.registration.scope)", worker)
         self.assertIn("new Request(scopedPath(url)", worker)
         self.assertIn("new URL(file.path, self.registration.scope)", worker)
@@ -907,7 +909,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("tracksHref", spotify)
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
-        self.assertIn("/js/spotify-playlist-import.js?v=20260921rt", worker)
+        self.assertIn("/js/spotify-playlist-import.js?v=20260921rh", worker)
         self.assertIn('css/style.css?v=20260921ad', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
