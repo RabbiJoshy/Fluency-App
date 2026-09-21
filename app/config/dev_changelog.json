@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-21T19:20:00+01:00",
+      "date": "2026-09-21 19:20 BST",
+      "agent": "Claude",
+      "summary": "Fixed the app not starting: the last deploy shipped a card file that needed a newer sense-metadata module than the one on the site.",
+      "detail": [
+        "The previous deploy's flashcards.js imports readableSenseNote and senseMetadataPeers from card-metadata-pills.js, but the site still served the older card-metadata-pills.js, so the app stopped on load for everyone.",
+        "Shipped the matching card-metadata-pills.js under a new version tag, with new tags for flashcards.js and main.js and a new service-worker cache, so browsers fetch the matched pair."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-21T18:40:00+01:00",
       "date": "2026-09-21 18:40 BST",
       "agent": "Cursor",

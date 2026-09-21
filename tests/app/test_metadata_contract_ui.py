@@ -32,7 +32,7 @@ class MetadataContractUITests(unittest.TestCase):
         metadata_pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")
         styles = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
         self.assertIn("function displaySenseGloss(meaning, value, active = true)", flashcards)
-        self.assertIn("return senseSummaryText(projected) || projected;", flashcards)
+        self.assertIn("return projectWiktionaryGloss(meaning, value).display;", flashcards)
         self.assertIn('class="sense-metadata-tier sense-metadata-tier--primary"', metadata_pills)
         self.assertIn(".sense-metadata-detail + .sense-metadata-detail::before", styles)
         self.assertIn("group-card-varying-cell${isMemberSelected ? ' is-active-subsense' : ''}", flashcards)
@@ -56,11 +56,11 @@ class MetadataContractUITests(unittest.TestCase):
         self.assertIn("item.family === 'grammar' && !isSenseDefiningGrammar(item)", metadata_pills)
         self.assertIn("function isSupportingSenseMetadata(item)", metadata_pills)
         self.assertIn("feature.embedding_text", metadata_pills)
-        self.assertIn("String(b.sourceText || '').length", metadata_pills)
+        self.assertIn("const represented = items.flatMap", metadata_pills)
         self.assertIn("item.kind === 'optional_companion'", metadata_pills)
         self.assertIn("function|mood|noun-class|number|person", metadata_pills)
         self.assertIn("supporting.length === 1 ? ' is-single'", metadata_pills)
-        self.assertIn("supporting.length > 1", metadata_pills)
+        self.assertIn("supporting.length > 0", metadata_pills)
         self.assertIn("sense-metadata-more-label", metadata_pills)
         self.assertIn("${primaryHTML}${grammarHTML}${more}${supportingHTML}", metadata_pills)
         self.assertIn("combine('Early', 'Modern', 'Early Modern')", metadata_pills)
@@ -88,12 +88,12 @@ class MetadataContractUITests(unittest.TestCase):
             metadata_pills.index("function toggleSenseMetadataChip")
         ]
         self.assertNotIn("if (!active || !context) return context;", context_renderer)
-        self.assertIn("Do this for inactive rows as well", context_renderer)
+        self.assertIn("Exact source spans only", context_renderer)
 
     def test_canonical_wiktionary_context_is_not_repeated_beside_features(self) -> None:
         metadata_pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")
-        self.assertIn("String(provider.context || '').trim() === context", metadata_pills)
-        self.assertIn("pure duplication", metadata_pills)
+        self.assertIn("foldMetadataComparable(value) === foldMetadataComparable(clause)", metadata_pills)
+        self.assertIn("const residual = clauses.filter", metadata_pills)
 
     def test_one_shared_metadata_renderer_serves_every_active_dictionary_language(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
@@ -159,7 +159,7 @@ class MetadataContractUITests(unittest.TestCase):
 
         # Adaptive density based on sense count
         self.assertIn("senseCount >= 3", metadata_pills)
-        self.assertIn("overflowContext", metadata_pills)
+        self.assertNotIn("primary.slice(0, 2)", metadata_pills)
         self.assertIn("is-dense", metadata_pills)
         self.assertIn("senseCount: card.meanings?.length", flashcards)
 
