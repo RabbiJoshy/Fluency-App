@@ -26,7 +26,7 @@ import './song-sets.js?v=20260823ae';
 import './playlist-live.js?v=20260921rt';
 import './spotify-playlist-import.js?v=20260921rh';
 import './vocabulary-import.js?v=20260920a';
-import './flashcards.js?v=20260921gc';
+import './flashcards.js?v=20260921spot';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 function startCardTutorial() {
@@ -1648,6 +1648,8 @@ function renderFindResults(query) {
         btn.addEventListener('click', () => jumpToFoundWord(entry));
         resultsEl.appendChild(btn);
     }
+    const first = resultsEl.querySelector('.find-word-result');
+    if (first) first.classList.add('is-active');
 }
 
 async function jumpToFoundWord(entry) {
@@ -1728,12 +1730,39 @@ async function openFindWordFor(word) {
     renderFindResults(word);
 }
 
+function isFindWordOpen() {
+    const modal = document.getElementById('findWordModal');
+    return Boolean(modal && !modal.classList.contains('hidden'));
+}
+
+function closeFindWord() {
+    document.getElementById('findWordModal')?.classList.add('hidden');
+}
+
+function moveFindWordHighlight(delta) {
+    const items = [...document.querySelectorAll('#findWordResults .find-word-result')];
+    if (!items.length) return;
+    const current = items.findIndex(el => el.classList.contains('is-active'));
+    const next = current < 0
+        ? (delta > 0 ? 0 : items.length - 1)
+        : Math.max(0, Math.min(items.length - 1, current + delta));
+    items.forEach((el, i) => el.classList.toggle('is-active', i === next));
+    items[next].scrollIntoView({ block: 'nearest' });
+}
+
 function setupFindWord() {
     const modal = document.getElementById('findWordModal');
     const closeBtn = document.getElementById('closeFindWordModal');
     const input = document.getElementById('findWordInput');
     const filterContainer = document.getElementById('findWordFilters');
+    const hotkey = document.getElementById('findWordHotkey');
     if (!modal || !input) return;
+
+    if (hotkey) {
+        const isMac = /Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent || '');
+        hotkey.textContent = isMac ? '⌘F' : 'Ctrl+F';
+        hotkey.hidden = false;
+    }
 
     if (filterContainer && !filterContainer._filterWired) {
         filterContainer._filterWired = true;
@@ -1758,7 +1787,9 @@ function setupFindWord() {
             });
         }
         document.getElementById('findWordResults').innerHTML = '';
-        document.getElementById('findWordStatus').textContent = 'Loading vocabulary…';
+        document.getElementById('findWordStatus').textContent = selectedLanguage
+            ? 'Loading vocabulary…'
+            : 'Choose a language first.';
         setTimeout(() => input.focus(), 50);
         try {
             await buildFindWordIndex();
@@ -1769,20 +1800,39 @@ function setupFindWord() {
         }
     }
     window.openFindWord = openFindWord;
+    window.closeFindWord = closeFindWord;
 
-    document.getElementById('settingsFindWordBtn')?.addEventListener('click', () => {
-        openFindWord();
+    document.querySelectorAll('[data-open-find-word]').forEach(btn => {
+        if (btn.dataset.findWordWired) return;
+        btn.dataset.findWordWired = 'true';
+        btn.addEventListener('click', () => openFindWord());
     });
 
-    closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
+    closeBtn?.addEventListener('click', closeFindWord);
     modal.addEventListener('click', (e) => {
-        if (e.target === modal) modal.classList.add('hidden');
+        if (e.target === modal) closeFindWord();
     });
+
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-            modal.classList.add('hidden');
+        const key = String(e.key || '').toLowerCase();
+        const findShortcut = (e.metaKey || e.ctrlKey) && !e.altKey && !e.shiftKey && key === 'f';
+        if (findShortcut) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            if (isFindWordOpen()) {
+                input.focus();
+                input.select();
+                return;
+            }
+            openFindWord();
+            return;
         }
-    });
+        if (e.key === 'Escape' && isFindWordOpen()) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            closeFindWord();
+        }
+    }, true);
 
     let debounce = null;
     input.addEventListener('input', () => {
@@ -1790,9 +1840,16 @@ function setupFindWord() {
         debounce = setTimeout(() => renderFindResults(input.value), 80);
     });
     input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            const first = document.querySelector('#findWordResults .find-word-result');
-            if (first) first.click();
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            moveFindWordHighlight(1);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            moveFindWordHighlight(-1);
+        } else if (e.key === 'Enter') {
+            const active = document.querySelector('#findWordResults .find-word-result.is-active')
+                || document.querySelector('#findWordResults .find-word-result');
+            if (active) active.click();
         }
     });
 }

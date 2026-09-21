@@ -7,7 +7,7 @@
 //          returns you to settings. Otherwise: progress, saved words,
 //          shortcuts, help.
 //   right  this card. Dictionary, synonyms, conjugation, card data, lyric
-//          breakdown, rarer-sense knowledge, word search. When the right is
+//          breakdown, rarer-sense knowledge. When the right is
 //          taken and the left is free, the next one opens on the left, so two
 //          can be read side by side.
 //
@@ -107,8 +107,6 @@ const OCCUPANTS = [
     { id: 'knowledgeOverviewModal', home: 'right', card: true,
       open: el => !el.hidden && !el.classList.contains('is-closing'),
       close: () => window.closeKnowledgeOverview?.() },
-    { id: 'findWordModal', home: 'right', stacks: true,
-      open: isShown, close: closeButtonFor('findWordModal') },
     // Settings, and the sheets about you and the session.
     { id: 'settingsModal', home: 'left', settings: true,
       open: isShown, close: closeButtonFor('settingsModal') },
