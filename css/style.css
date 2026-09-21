@@ -2976,18 +2976,31 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            background: transparent;
             color: inherit;
+            font: inherit;
             text-decoration: none;
             line-height: 1;
+            cursor: default;
+        }
+        .example-source-chip[data-href] {
+            cursor: pointer;
         }
         .example-source-chip--icon {
             padding: 2px;
             border-radius: 6px;
         }
         .example-source-chip:hover,
-        .example-source-chip:focus-visible {
+        .example-source-chip:focus-visible,
+        .example-source-chip.is-armed-outbound {
             color: var(--text-primary);
             outline: none;
+        }
+        .example-source-chip.is-armed-outbound {
+            box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-primary) 55%, transparent);
         }
         .example-source-favicon,
         .dictionary-provenance-badge .dict-provenance-icon {
@@ -5446,24 +5459,66 @@
             box-shadow: none;
         }
         .lookup-sheet-icon {
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             width: 44px;
             height: 44px;
+            padding: 0;
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.22);
             border-radius: 50%;
             background: #1b232e;
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
             color: #e6eaf0;
+            font: inherit;
             text-decoration: none;
+            cursor: pointer;
             animation: lookup-icon-rise 180ms cubic-bezier(0.2, 0.85, 0.25, 1.25) both;
         }
         .lookup-sheet-icon img {
             width: 28px;
             height: 28px;
             border-radius: 50%;
+        }
+        .outbound-leave-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            border: 1px solid color-mix(in srgb, var(--accent-primary) 45%, var(--border-color));
+            border-radius: 8px;
+            background: color-mix(in srgb, var(--accent-primary) 18%, var(--bg-card));
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+        .outbound-leave-btn[hidden] {
+            display: none !important;
+        }
+        .outbound-leave-icon {
+            width: 15px;
+            height: 15px;
+        }
+        .lookup-sheet-icon .outbound-leave-btn {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            border-radius: 50%;
+            background: #1b232e;
+            color: #e6eaf0;
+        }
+        .lookup-sheet-icon .outbound-leave-icon {
+            width: 20px;
+            height: 20px;
+        }
+        .lookup-sheet-icon.is-armed-outbound {
+            box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-primary) 70%, transparent), 0 6px 18px rgba(0, 0, 0, 0.45);
         }
         .lookup-sheet-initial {
             font: 700 17px/1 var(--font-reading);
@@ -9442,9 +9497,14 @@
             gap: 5px;
             align-items: center;
             margin-top: 5px;
+            padding: 0;
+            border: 0;
+            background: transparent;
             color: var(--accent-secondary);
+            font: inherit;
             font-size: 12px;
             text-decoration: none;
+            cursor: pointer;
         }
         .spanish-dict-panel .sd-meta-source-link:hover,
         .spanish-dict-panel .sd-meta-source-link:focus-visible {
@@ -17109,10 +17169,17 @@ body {
 }
 #step2 > .step-header,
 #step4 > .step-header { padding: 0 4px; }
-#step2 .level-selector {
+#step2 .level-choosing {
   border: 1px solid var(--border-color);
+  border-radius: 12px;
   background: color-mix(in srgb, var(--bg-tertiary) 78%, transparent);
   box-shadow: 0 5px 18px rgba(0, 0, 0, .10);
+  overflow: hidden;
+}
+#step2 .level-selector {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
 }
 #step4 .study-set-panel {
   border-color: var(--border-color);
@@ -18725,7 +18792,14 @@ body.artist-mode #flashcardMode::before {
 
 /* Fast Track is one clear toggle and one details action. */
 #setupOptions.setup-options,
-#setupOptions.setup-options:has(.fast-mode-master) { padding: 0; border: 0; background: transparent; }
+#setupOptions.setup-options:has(.fast-mode-master) {
+  margin: 0;
+  padding: 6px 10px 10px;
+  border: 0;
+  border-top: 1px solid var(--border-color);
+  border-radius: 0;
+  background: transparent;
+}
 #setupOptions .setup-options-bar { gap: 12px; }
 #setupOptions .fast-mode-master { min-height: 54px; padding: 5px 4px; border: 0; background: transparent; gap: 12px; }
 #setupOptions .fast-mode-master-icon { width: 23px; height: 23px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
@@ -19420,3 +19494,81 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
         animation: none;
     }
 }
+
+/* Sense information: preserve readable distinctions at every card density.
+   --card-fs is also the hook for a larger accessibility text size. */
+.meaning-row {
+    --sense-reading-size: max(13px, calc(var(--card-fs, 18px) * 0.74));
+    --sense-badge-size: max(12px, calc(var(--card-fs, 18px) * 0.68));
+}
+.meaning-row-group { container-type: inline-size; container-name: sense-row; }
+.meaning-row .meaning-context,
+.meaning-row .meaning-context-cell,
+.meaning-row .sense-metadata-list,
+.meaning-row .sense-metadata-tier--grammar,
+.meaning-row .sense-metadata-tier--details,
+.meaning-row .sense-metadata-detail:not(.sense-pill) {
+    font-size: var(--sense-reading-size);
+    line-height: 1.45;
+    color: var(--text-secondary);
+    overflow-wrap: anywhere;
+}
+.meaning-row .sense-metadata-list .sense-pill,
+.meaning-row .meaning-register,
+.meaning-row .meaning-usage-pill {
+    font-size: var(--sense-badge-size);
+    line-height: 1.4;
+    white-space: normal;
+}
+.meaning-row .sense-pill-label {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+.meaning-row .sense-metadata-tier--primary { gap: 4px 8px; }
+.meaning-row .sense-metadata-detail:not(.sense-pill) { font-weight: 500; }
+.meaning-row .sense-metadata-detail + .sense-metadata-detail::before { content: none; }
+.meaning-row .sense-metadata-tier--grammar,
+.meaning-row .sense-metadata-tier--details { gap: 4px 8px; }
+.meaning-row .sense-metadata-more {
+    font-size: var(--sense-badge-size);
+    min-height: 36px;
+    width: auto;
+}
+.meaning-row .sense-metadata-more-count { font-size: inherit; }
+.meaning-row .group-card-varying-cell > .meaning-context-cell,
+.meaning-row .group-card-varying-cell > .row-adaptive-text,
+.meaning-row-regular:not(.is-current-sense) .meaning-row-translation {
+    display: block;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+    overflow: visible;
+}
+.meaning-row .group-card-varying-cell { min-height: 36px !important; }
+.meaning-row .group-card-body { justify-self: stretch !important; }
+.meaning-row .group-card-body:is(.has-long-shared, .is-stacked) { grid-template-columns: minmax(0, 1fr) !important; }
+.meaning-row .group-card-body:is(.has-long-shared, .is-stacked) > .group-card-shared {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    padding-bottom: 5px;
+}
+.meaning-row .group-card-body:is(.has-long-shared, .is-stacked) > .group-card-varying-cell {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+}
+.sense-definition-detail {
+    font-size: var(--sense-reading-size, 13px);
+    font-weight: 400;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    margin-top: 4px;
+}
+.sense-definition-detail summary { cursor: pointer; padding: 8px; }
+@container sense-row (max-width: 300px) {
+    .group-card-body { grid-template-columns: minmax(0, 1fr) !important; }
+    .group-card-body > .group-card-shared { grid-column: 1 !important; grid-row: 1 !important; padding-bottom: 5px; }
+    .group-card-body > .group-card-varying-cell { grid-column: 1 !important; grid-row: auto !important; }
+}
+
+.meaning-row .group-card-shared { word-break: normal !important; overflow-wrap: normal; }

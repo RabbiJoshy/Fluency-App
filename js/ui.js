@@ -72,7 +72,13 @@ function applyGlobalStudyDefaults() {
     isFlipped = saved.directionFlipped === true;
     speechEnabled = saved.speechEnabled !== false;
     spacedRepetitionEnabled = saved.spacedRepetitionEnabled !== false;
-    phrasesModeEnabled = saved.phrasesMode !== false;
+    expressionsModeEnabled = saved.expressionsMode !== undefined
+        ? saved.expressionsMode === true
+        : saved.phrasesMode !== false;
+    rareSensesModeEnabled = saved.rareSensesMode !== undefined
+        ? saved.rareSensesMode === true
+        : saved.phrasesMode !== false;
+    phrasesModeEnabled = expressionsModeEnabled || rareSensesModeEnabled;
     extraExamplesEnabled = false;
     try {
         const savedMode = localStorage.getItem('fluency_sense_prominence_mode_v1');
@@ -98,7 +104,8 @@ function syncStudyPreferenceControls() {
         directionFlipped: saved.directionFlipped === true,
         speechEnabled: saved.speechEnabled !== false,
         spacedRepetitionEnabled: saved.spacedRepetitionEnabled !== false,
-        phrasesMode: saved.phrasesMode !== false,
+        expressionsMode: expressionsModeEnabled,
+        rareSensesMode: rareSensesModeEnabled,
         extraExamples: false
     };
     document.querySelectorAll('.global-study-default-btn').forEach(button => {
@@ -117,11 +124,6 @@ function syncStudyPreferenceControls() {
     if (targetBtn) {
         const langName = config?.languages?.[selectedLanguage]?.name;
         targetBtn.textContent = langName || 'Language';
-    }
-    const fastStatus = document.getElementById('settingsFastTrackStatus');
-    if (fastStatus) {
-        const languageName = config?.languages?.[selectedLanguage]?.name || selectedLanguage || 'Language';
-        fastStatus.textContent = `${languageName} · ${fastTrack.enabled ? 'On' : 'Off'}`;
     }
     const vocabDesc = document.querySelector('#vocabularySettingsTitle + p');
     if (vocabDesc) {
@@ -3044,13 +3046,6 @@ function setupSettingsOverview() {
     go('settingsAdminBtn', 'appData');
     document.getElementById('settingsAboutBtn')?.addEventListener('click', () =>
         document.getElementById('aboutProjectSettingsRow')?.click());
-    document.getElementById('settingsFastTrackBtn')?.addEventListener('click', () => {
-        // Decide before opening: once Fast Track is up it has claimed the
-        // stack over settings, and settings must stay beneath it.
-        const keepSettings = window.sideDock?.keepsSettingsOpen();
-        window.openFastModePage?.();
-        if (!keepSettings) modal.classList.add('hidden');
-    });
     const runImport = () => {
         if (!currentUser || currentUser.isGuest || selectedLanguage !== 'spanish') return;
         window.openVocabularyImportModal?.();

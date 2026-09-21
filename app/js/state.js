@@ -130,8 +130,8 @@ export const state = {
 
     // Phrase/clitic chaining — MWE/CLITIC entries a parent card hands off to
     // a single scrollable summary card shown after the parent is marked
-    // correct. Gated by the "Phrases mode" study preference (js/ui.js); off
-    // restores the pinned meanings-tray behavior.
+    // correct. Gated by the expressions and rare-senses study preferences
+    // (js/ui.js); off restores the pinned meanings-tray behavior for expressions.
     cardChainQueue: [],
     cardChainReturnIndex: -1,
     // A parent card can hand off to a child in sequence (rare senses & expressions).
@@ -140,6 +140,8 @@ export const state = {
     cardChainChildren: [],
     cardChainIndex: 0,
     cardChainExamples: [],
+    expressionsModeEnabled: true,
+    rareSensesModeEnabled: true,
     phrasesModeEnabled: true,
     extraExamplesEnabled: false,
 

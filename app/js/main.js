@@ -2,7 +2,7 @@
 // anything below reads the address.
 import { goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=20260921a';
 import './theme.js?v=20260825ak';
-import './state.js?v=20260920a';
+import './state.js?v=20260921x';
 import './offline-db.js?v=20260825ak';
 import './sync-queue.js?v=20260825ak';
 import { initOfflineContent } from './offline-content.js?v=20260825ak';
@@ -15,7 +15,7 @@ import './estimation.js?v=20260825ak';
 import './config.js?v=20260919c';
 import './progress.js?v=20260920e';
 import './knowledge.js?v=20260920a';
-import './ui.js?v=20260921sd';
+import './ui.js?v=20260921x';
 import './vocab.js?v=20260921rt';
 import './cognates.js?v=20260914e';
 import './coverage.js?v=20260909a';
@@ -25,7 +25,7 @@ import './song-sets.js?v=20260823ae';
 import './playlist-live.js?v=20260921rt';
 import './spotify-playlist-import.js?v=20260921rt';
 import './vocabulary-import.js?v=20260920a';
-import './flashcards.js?v=20260921sd';
+import './flashcards.js?v=20260921x';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 function startCardTutorial() {
