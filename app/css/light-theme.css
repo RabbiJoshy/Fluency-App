@@ -170,19 +170,6 @@
     color: var(--text-muted);
 }
 
-:root[data-theme="light"] .deck-ghost-prev,
-:root[data-theme="light"] .deck-ghost-next {
-    border-color: var(--border-color);
-    filter: none;
-    box-shadow: 0 8px 24px rgba(27, 39, 51, 0.09);
-}
-
-:root[data-theme="light"] .deck-ghost-prev-2,
-:root[data-theme="light"] .deck-ghost-next-2 {
-    background: var(--bg-secondary);
-    opacity: 0.72;
-}
-
 /* The keyboard guide is a quiet paper-and-keycap panel instead of a dark
    glass island. */
 :root[data-theme="light"] .kb-content {

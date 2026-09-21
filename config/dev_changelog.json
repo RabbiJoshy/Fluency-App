@@ -2,6 +2,21 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-21T21:10:00+01:00",
+      "date": "2026-09-21 21:10 BST",
+      "agent": "Claude",
+      "summary": "The desktop card is 5% narrower, the stacked-deck cards behind it are gone, and side panels now shrink to fit a narrower window, so they dock from about 1180px wide instead of 1360px.",
+      "detail": [
+        "Desktop card width 540px to 513px. Phones are unaffected: every use of the width sits under the 768px desktop breakpoint.",
+        "Removed the ghost cards that peeked out either side of the card to suggest a deck, with their light-theme rules and the class toggles that drove them.",
+        "Side panels take the space beside the card, 16px from the screen edge and 16px clear of the card, up to 400px and shrinking to 300px. Below 300px nothing docks. In a set that means docking from about 1180px wide; it was 1360px.",
+        "The panel width is measured from the real card, so changing the card's size no longer needs the docking rules touched.",
+        "On the setup page sheets now dock from 900px wide; it was 1024px.",
+        "Repaired the service worker's pre-cache list, which an earlier commit had rolled back: side-dock.js was missing and two entries pointed at old files."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-21T21:13:37+01:00",
       "date": "2026-09-21 21:13 BST",
       "agent": "Codex",

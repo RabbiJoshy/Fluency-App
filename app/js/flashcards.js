@@ -3,7 +3,7 @@
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
 import './state.js?v=20260825ak';
 import './speech.js?v=20260825ak';
-import './side-dock.js?v=20260921sd';
+import './side-dock.js?v=20260921narrow';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
@@ -7396,15 +7396,6 @@ function updateCard({ announceHeadword = false } = {}) {
         cardBackPips.setAttribute('aria-label', onPhraseCard
             ? `Card ${scrubIndex + 1} of ${scrubCount} · phrases`
             : `Card ${scrubIndex + 1} of ${scrubCount}`);
-    }
-
-    // Drive ghost card visibility based on how many real cards exist behind each side
-    const cardContainer = document.querySelector('.card-container');
-    if (cardContainer) {
-        cardContainer.classList.toggle('at-deck-start',   scrubIndex === 0);
-        cardContainer.classList.toggle('at-deck-start-2', scrubIndex === 1);
-        cardContainer.classList.toggle('at-deck-end',     scrubIndex === scrubCount - 1);
-        cardContainer.classList.toggle('at-deck-end-2',   scrubIndex === scrubCount - 2);
     }
 
     // Setup outside nav buttons (desktop)

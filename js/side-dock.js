@@ -25,23 +25,54 @@
 // other modules can use it without importing it under a second ?v= tag (a
 // module imported under two URLs executes twice).
 
-const SESSION_QUERY = '(min-width: 1360px)';   // gutters beside the 540px card
-const SETUP_QUERY = '(min-width: 1024px)';     // sheets over the setup page
-
-const matches = query => Boolean(window.matchMedia?.(query).matches);
+// Panel width. In a study session a panel takes the margin beside the card,
+// 16px from the screen edge and 16px clear of the card, up to 400px. A
+// narrower window shrinks the panels, down to 300px; below that they are too
+// cramped to read, so nothing docks and sheets stay centred. The card's width
+// is measured, not assumed, so resizing the card never breaks this.
+const PANEL_MAX = 400;
+const PANEL_MIN = 300;
+const EDGE = 16;
+const GAP = 16;
+// The setup page has no card to keep in view: sheets sit over the page.
+const SETUP_MIN_WINDOW = 900;
+const SETUP_PANEL_MAX = 440;
 
 function studyViewOpen() {
     const app = document.getElementById('appContent');
     return Boolean(app && !app.classList.contains('hidden'));
 }
 
-// Card panels need the session gutters; sheets can also dock over the setup
-// page, which has no card to keep in view.
+function cardWidth() {
+    // offsetWidth ignores transforms, so a flip or a nav animation in
+    // progress does not read as a narrower card.
+    const measured = document.getElementById('flashcard')?.offsetWidth;
+    if (measured) return measured;
+    const container = document.querySelector('.card-container');
+    const declared = container && parseFloat(getComputedStyle(container).getPropertyValue('--study-card-max-width'));
+    return declared || 513;
+}
+
+function panelWidth() {
+    if (!studyViewOpen()) return Math.min(SETUP_PANEL_MAX, Math.floor(window.innerWidth * 0.4));
+    const margin = (window.innerWidth - cardWidth()) / 2;
+    return Math.min(PANEL_MAX, Math.floor(margin - EDGE - GAP));
+}
+
+// Publish the width for the CSS. Never below the minimum: a panel already
+// docked when the window narrows keeps a readable width rather than
+// collapsing.
+function applyPanelWidth() {
+    document.body.style.setProperty('--dock-w', `${Math.max(PANEL_MIN, panelWidth())}px`);
+}
+
+// Card panels need room beside the card; sheets can also dock over the
+// setup page.
 function canDockCard() {
-    return studyViewOpen() && matches(SESSION_QUERY);
+    return studyViewOpen() && panelWidth() >= PANEL_MIN;
 }
 function canDockSheet() {
-    return studyViewOpen() ? matches(SESSION_QUERY) : matches(SETUP_QUERY);
+    return studyViewOpen() ? panelWidth() >= PANEL_MIN : window.innerWidth >= SETUP_MIN_WINDOW;
 }
 
 const isShown = el => !el.classList.contains('hidden') && !el.hidden;
@@ -131,6 +162,7 @@ function place(occupant) {
         mark(el, null);
         return null;
     }
+    applyPanelWidth();
 
     if (occupant.settings) {
         // Settings is the base of the left: it clears what was there.
@@ -260,6 +292,11 @@ function watchModals() {
 
 function init() {
     watchModals();
+    let resizeFrame = 0;
+    window.addEventListener('resize', () => {
+        cancelAnimationFrame(resizeFrame);
+        resizeFrame = requestAnimationFrame(applyPanelWidth);
+    });
     // knowledgeOverviewModal is created on first use; catch it when it lands.
     new MutationObserver(watchModals).observe(document.body, { childList: true });
     // Leaving the study view closes what described its cards and its session.

@@ -152,7 +152,11 @@
         }
 
         .card-container {
-            --study-card-max-width: 540px;
+            /* Desktop card width; every use sits under (min-width: 768px), so
+               phones keep a full-width card. 513px is 540px less 5%, taken
+               back to give the side panels room (side-dock.js reads the real
+               width rather than assuming this number). */
+            --study-card-max-width: 513px;
             perspective: 1000px;
             display: flex;
             align-items: center;
@@ -472,67 +476,6 @@
 
             /* (hide rules moved to after .desktop-nav-row display:flex rule) */
 
-            /* Adjacent-card ghost peeking in from each gutter.
-               Ghost 1 is closer to the main card (narrower peek, taller, on top).
-               Ghost 2 extends further out horizontally (wider peek, shorter, behind).
-               This creates a staircase: ghost2-edge | ghost1-edge | main card. */
-            .deck-ghost-prev,
-            .deck-ghost-next {
-                position: absolute;
-                width: min(var(--study-card-max-width), calc(100% - 40px));
-                top: 50%;
-                border-radius: 16px;
-                background: var(--bg-card);
-                pointer-events: none;
-                z-index: 0;
-                transition: opacity 0.2s;
-            }
-            /* Ghost 1: closest to main card — 30px peek, slightly shorter */
-            .deck-ghost-prev-1 {
-                right: calc(50% - 210px);
-                height: calc(100vh - 160px);
-                min-height: 420px;
-                transform: translateY(-50%);
-                border: 1px solid rgba(255, 255, 255, 0.07);
-                filter: brightness(0.55);
-            }
-            /* Ghost 2: behind ghost 1 — 45px peek (extends further), shortest */
-            .deck-ghost-prev-2 {
-                right: calc(50% - 195px);
-                height: calc(100vh - 200px);
-                min-height: 380px;
-                transform: translateY(-50%);
-                border: 1px solid rgba(255, 255, 255, 0.04);
-                filter: brightness(0.3);
-            }
-            .deck-ghost-next-1 {
-                left: calc(50% - 210px);
-                height: calc(100vh - 160px);
-                min-height: 420px;
-                transform: translateY(-50%);
-                border: 1px solid rgba(255, 255, 255, 0.07);
-                filter: brightness(0.55);
-            }
-            .deck-ghost-next-2 {
-                left: calc(50% - 195px);
-                height: calc(100vh - 200px);
-                min-height: 380px;
-                transform: translateY(-50%);
-                border: 1px solid rgba(255, 255, 255, 0.04);
-                filter: brightness(0.3);
-            }
-            /* Hide all prev/next ghosts at the hard edges */
-            .card-container.at-deck-start .deck-ghost-prev,
-            .card-container.at-deck-end .deck-ghost-next,
-            .card-container:has(.card.is-stacked) .deck-ghost-prev,
-            .card-container:has(.card.is-stacked) .deck-ghost-next {
-                opacity: 0;
-            }
-            /* One step from edge: only 1 real card behind — hide the outer ghost */
-            .card-container.at-deck-start-2 .deck-ghost-prev-2,
-            .card-container.at-deck-end-2 .deck-ghost-next-2 {
-                opacity: 0;
-            }
 
             /* #deckProgressTrack is retired everywhere (see base rules);
                .card-back-scrubber sits above the card in its place — same
@@ -641,9 +584,7 @@
             .desktop-side-controls {
                 display: none;
             }
-            .side-nav-zone,
-            .deck-ghost-prev,
-            .deck-ghost-next {
+            .side-nav-zone {
                 display: none;
             }
         }
@@ -19053,16 +18994,16 @@ body.artist-mode #flashcardMode::before {
             breakdown, rarer-sense knowledge, word search; also the setup
             page's word lists. When the right is taken and the left is free,
             the next one opens on the left.
-   Width: in a study session the card is 540px and centred, so a sheet takes
-   the gutter beside it; on the setup page it is a sheet over the page. The
-   selectors list the ids inside :is() so they outrank each modal's own
+   Width: side-dock.js sets --dock-w on <body>. In a study session a panel
+   takes the margin beside the card, 16px from the screen edge and 16px clear
+   of the card, up to 400px and shrinking to 300px in a narrower window;
+   below that nothing docks. On the setup page it is a sheet over the page.
+   The selectors list the ids inside :is() so they outrank each modal's own
    id-level sizing. Phones and narrow windows never get data-dock. */
-:root { --dock-w: min(440px, 40vw); }
-body:has(#appContent:not(.hidden)) { --dock-w: min(400px, calc((100vw - 540px) / 2 - 48px)); }
 
 .modal[data-dock]:is(#findWordModal, #lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) {
   align-items: center;
-  padding: 24px;
+  padding: 16px;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
@@ -19070,9 +19011,9 @@ body:has(#appContent:not(.hidden)) { --dock-w: min(400px, calc((100vw - 540px) /
 .modal[data-dock="right"]:is(#findWordModal, #lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { justify-content: flex-end; }
 .modal[data-dock]:is(#findWordModal, #lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) > .modal-content {
   box-sizing: border-box;
-  width: var(--dock-w);
+  width: var(--dock-w, 400px);
   max-width: none;
-  max-height: calc(100dvh - 48px);
+  max-height: calc(100dvh - 32px);
   margin: 0;
   overflow-y: auto;
 }
@@ -19081,7 +19022,7 @@ body:has(#appContent:not(.hidden)) { --dock-w: min(400px, calc((100vw - 540px) /
 /* These three scroll an inner list rather than the sheet; give the list the
    full height instead of the centred sheet's 620px cap. */
 .modal[data-dock]:is(#mergedFormsModal, #skippedWordsModal, #extrasModal) > .modal-content {
-  height: calc(100dvh - 48px);
+  height: calc(100dvh - 32px);
   overflow: hidden;
 }
 #lyricBreakdownModal[data-dock] .lyric-breakdown-body {
@@ -19116,7 +19057,7 @@ body:has(#appContent.hidden) .modal[data-dock-stack]:is(#findWordModal, #lyricBr
 /* The rarer-sense knowledge sheet has its own structure. */
 #knowledgeOverviewModal[data-dock]:not([hidden]) {
   place-items: center end;
-  padding: 24px;
+  padding: 16px;
   background: transparent;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
@@ -19125,25 +19066,25 @@ body:has(#appContent.hidden) .modal[data-dock-stack]:is(#findWordModal, #lyricBr
 #knowledgeOverviewModal[data-dock="left"]:not([hidden]) { place-items: center start; }
 #knowledgeOverviewModal[data-dock] .knowledge-overview-sheet {
   box-sizing: border-box;
-  width: var(--dock-w);
-  max-height: calc(100dvh - 48px);
+  width: var(--dock-w, 400px);
+  max-height: calc(100dvh - 32px);
   pointer-events: auto;
 }
 #knowledgeOverviewModal[data-dock] .knowledge-overview-header { padding: 16px 16px 10px; }
 #knowledgeOverviewModal[data-dock] .knowledge-overview-header h2 { font-size: 19px; }
 
 /* Card panels (dictionary, synonyms, conjugation, card data), hosted on
-   <body> with .is-docked while docked: vertically centred, 24px from the
+   <body> with .is-docked while docked: vertically centred, 16px from the
    edge. The class, not a media query, is the switch, so a panel already
    docked when the window narrows stays a sensible sheet. */
 body > .is-docked:is(.synonyms-panel, .provenance-panel, .conjugation-panel) {
   position: fixed;
   inset: auto;
   top: 50%;
-  right: 24px;
-  width: var(--dock-w, min(400px, calc(100vw - 48px)));
+  right: 16px;
+  width: var(--dock-w, min(400px, calc(100vw - 32px)));
   max-width: none;
-  max-height: calc(100dvh - 48px);
+  max-height: calc(100dvh - 32px);
   z-index: 1000;
   border: 1px solid var(--border-color);
   border-radius: 22px;
@@ -19151,19 +19092,19 @@ body > .is-docked:is(.synonyms-panel, .provenance-panel, .conjugation-panel) {
 }
 body > .is-docked[data-dock="left"]:is(.synonyms-panel, .provenance-panel, .conjugation-panel) {
   right: auto;
-  left: 24px;
+  left: 16px;
 }
 /* Synonyms and conjugation toggle .visible and slide in from their edge. */
 body > .is-docked:is(.synonyms-panel, .conjugation-panel) {
-  transform: translate(calc(100% + 48px), -50%);
+  transform: translate(calc(100% + 32px), -50%);
 }
 body > .is-docked[data-dock="left"]:is(.synonyms-panel, .conjugation-panel) {
-  transform: translate(calc(-100% - 48px), -50%);
+  transform: translate(calc(-100% - 32px), -50%);
 }
 body > .is-docked:is(.synonyms-panel, .conjugation-panel).visible {
   transform: translate(0, -50%);
 }
-body > .synonyms-panel.is-docked { height: min(560px, calc(100dvh - 48px)); }
+body > .synonyms-panel.is-docked { height: min(560px, calc(100dvh - 32px)); }
 /* Full screen, the paradigm grows its rows to fill the viewport; docked, it
    returns to the sizes it has on the card. */
 body > .conjugation-panel.is-docked {
