@@ -2100,9 +2100,17 @@ async function loadVocabularyData(rangeString, opts = {}) {
                 const lemmaKey = lemmaGroupKey(entry);
                 const value = speechSourceFrequencyOf(entry, speechFrequency);
                 if (!lemmaKey || value === null) continue;
-                const total = lemmaSourceFrequencies.get(lemmaKey) || { value: 0, forms: 0 };
+                // Keep the individual surfaces, not just how many there were.
+                // "total across 5 source-listed forms" states a sum without
+                // saying what went into it, and the sum is the one number on
+                // this card a learner cannot check. Decision 0024 rule 4: the
+                // published per-surface figures are what the card shows when
+                // asked, because those are the only frequencies the source
+                // actually publishes.
+                const total = lemmaSourceFrequencies.get(lemmaKey) || { value: 0, forms: 0, breakdown: [] };
                 total.value += value;
                 total.forms += 1;
+                total.breakdown.push({ surface: entry.word, value });
                 lemmaSourceFrequencies.set(lemmaKey, total);
             }
         }
@@ -2654,6 +2662,16 @@ async function loadVocabularyData(rangeString, opts = {}) {
                 vocabularySize: configurationVocabSize,
                 sourceFrequency: sourceFrequency?.value ?? speechSourceFrequencyOf(item, speechFrequency),
                 sourceFrequencyForms: sourceFrequency?.forms || 1,
+                // Commonest surface first: the breakdown is read to check a
+                // total, and the form carrying most of it is the one worth
+                // seeing. Unmerged cards carry their own single figure so the
+                // tooltip has one code path.
+                sourceFrequencyBreakdown: (sourceFrequency?.breakdown
+                    ? [...sourceFrequency.breakdown].sort((a, b) => b.value - a.value)
+                    : (() => {
+                        const own = speechSourceFrequencyOf(item, speechFrequency);
+                        return own === null ? [] : [{ surface: item.word, value: own }];
+                    })()),
                 sourceFrequencyUnit: speechFrequency?.unit || '',
                 sourceFrequencySource: speechFrequency?.source || '',
                 // Lemma mode uses the same unique pooled example-line basis

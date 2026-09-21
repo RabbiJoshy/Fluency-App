@@ -610,6 +610,14 @@
     box-shadow: 0 8px 24px rgba(27, 39, 51, 0.14);
 }
 
+:root[data-theme="light"] .freq-tooltip-forms {
+    border-top-color: var(--border-color);
+}
+
+:root[data-theme="light"] .freq-tooltip-surface {
+    color: var(--text-primary);
+}
+
 /* Light POS colours use the same semantic hue families with darker ink and a
    lower-opacity wash. This keeps each part of speech distinct without the
    neon-on-charcoal treatment of the dark cards. */
