@@ -100,6 +100,11 @@ config/           policies per language, mode, provider and model
 app/              vanilla-JS client; see REPO_MAP.md for module & window.* registry
   js/card-metadata-pills.js  sense metadata, grammar chips & qualifiers
   js/flashcards.js           card rendering & flip (read targeted ranges, never in full)
+  js/routes.js               shareable hash routes (#/es, #/es/w/<word>, #/artist/<slug>,
+                             #/es/songs, #/es/live, #/about, #/tutorial, #/walkthrough).
+                             Link with goToRoute/replaceRoute — never write ?artist=,
+                             ?about= or ?playlistLive=; those are legacy and rewritten
+                             on arrival.
 ```
 
 The three marked *NOT under wsd/* are placed deliberately: a menu or a release

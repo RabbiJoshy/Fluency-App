@@ -67,6 +67,26 @@ class CardFrequencyBreakdownTests(unittest.TestCase):
         self.assertIn("All forms: ${count}", self.flashcards)
         self.assertIn("The source does not list this exact form", self.flashcards)
 
+    def test_a_card_never_loses_its_frequency(self) -> None:
+        # Regression: showing only the displayed form's own figure blanked the
+        # frequency on merged cards whose citation form is unlisted. The totals
+        # are keyed by `lemma` (skinny columns carry no meanings yet) but looked
+        # up by headword after hydration, so the group total missed too, and
+        # there was nothing left to fall back to.
+        self.assertIn("const representativeFrequency = speechSourceFrequencyOf(item, speechFrequency)", self.vocab)
+        self.assertIn(
+            "sourceFrequency: displayedOwnFrequency ?? groupFrequencyTotal ?? representativeFrequency",
+            self.vocab,
+        )
+
+    def test_group_total_lookup_tries_both_keys(self) -> None:
+        self.assertIn("lemmaFallbackKey", self.vocab)
+
+    def test_a_figure_from_another_form_names_that_form(self) -> None:
+        self.assertIn("sourceFrequencyBasisSurface", self.vocab)
+        self.assertIn("data-frequency-basis-surface=", self.flashcards)
+        self.assertIn("this is the figure for ${escapeCardText(otherSurface)}", self.flashcards)
+
     def test_no_apportioned_frequency_is_rendered(self) -> None:
         # Ordering may use a weighted split; the screen may not. If a weighting
         # helper ever reaches the render path, this should fail.

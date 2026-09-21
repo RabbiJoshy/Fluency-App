@@ -2652,8 +2652,17 @@ async function loadVocabularyData(rangeString, opts = {}) {
             const cardForm = buildCardFormModel(item, meanings, {
                 mergedLemma: useLemmaMode && lemmaFieldAvailable
             });
+            // The totals are accumulated from the skinny index columns, whose
+            // meanings are still empty (see the note at the `_indexRowsPending`
+            // filter), so lemmaGroupKey keyed them by `lemma`. By the time a
+            // card is built its row shard has landed and the same call returns
+            // the assigned *headword*, which need not match — `mate` is
+            // lemmatised `matar`. Try both rather than silently missing.
+            const lemmaFallbackKey = String(item?.lemma || '')
+                .normalize('NFC').toLocaleLowerCase('es').trim();
             const sourceFrequency = useLemmaMode && lemmaFieldAvailable
-                ? lemmaSourceFrequencies.get(lemmaGroupKey(item))
+                ? (lemmaSourceFrequencies.get(lemmaGroupKey(item))
+                    ?? (lemmaFallbackKey ? lemmaSourceFrequencies.get(lemmaFallbackKey) : undefined))
                 : null;
             // The figure must describe the word printed on the card. A merged
             // card prints the citation form, so the group's sum put ~141 per
@@ -2669,10 +2678,19 @@ async function loadVocabularyData(rangeString, opts = {}) {
             // group total is still worth showing, but it is labelled as the
             // family's rather than attributed to a form the source never
             // measured. Absence is declared, not filled.
+            // Three bases, in order, and the card names which one it is
+            // showing. There is no fourth: a card must never go blank because
+            // its citation form happens to be unlisted — that regressed the
+            // frequency off merged cards once already.
             const displayedOwnFrequency =
                 speechSourceFrequencyForSurface(cardForm.displaySurface, speechFrequency);
             const groupFrequencyTotal = sourceFrequency?.value ?? null;
-            const showsGroupTotal = displayedOwnFrequency === null && groupFrequencyTotal !== null;
+            const representativeFrequency = speechSourceFrequencyOf(item, speechFrequency);
+            const frequencyBasis = displayedOwnFrequency !== null ? 'own'
+                : groupFrequencyTotal !== null ? 'total'
+                : representativeFrequency !== null ? 'other-surface'
+                : 'none';
+            const showsGroupTotal = frequencyBasis === 'total';
             const card = {
                 targetWord: item.word,
                 lemma: item.lemma || '',
@@ -2682,9 +2700,14 @@ async function loadVocabularyData(rangeString, opts = {}) {
                 rank: item.rank,
                 vocabularyRank: item.displayRank,
                 vocabularySize: configurationVocabSize,
-                sourceFrequency: displayedOwnFrequency ?? groupFrequencyTotal,
+                sourceFrequency: displayedOwnFrequency ?? groupFrequencyTotal ?? representativeFrequency,
                 sourceFrequencyGroupTotal: groupFrequencyTotal,
                 sourceFrequencyIsGroupTotal: showsGroupTotal,
+                sourceFrequencyBasis: frequencyBasis,
+                // Named on the card when the figure belongs to a form other
+                // than the one printed, so the number is never read as this
+                // word's own measurement.
+                sourceFrequencyBasisSurface: frequencyBasis === 'other-surface' ? item.word : '',
                 sourceFrequencyForms: sourceFrequency?.forms || 1,
                 // Commonest surface first: the breakdown is read to check a
                 // total, and the form carrying most of it is the one worth

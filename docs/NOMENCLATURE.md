@@ -381,7 +381,7 @@ into each other. They are not interchangeable.
 |---|---|---|---|---|
 | **tutorial** | learners using the app | guided, one element at a time; starts from the setup screen; owns the flip; explains Lyrics mode on its own slide. Desktop and phone both first-class. | "?" button, first run, Settings → How to Study, the in-study prompt | `tutorial.js`, `#cardTutorialModal`, `.card-tutorial-*` |
 | **walkthrough** | visitors — employers, anyone being shown the app | two screens (three on a phone), whole faces labelled at once, so a five-second look still lands. No setup, no instructions. | **only** About | `walkthrough.js`, `#walkthroughModal`, `.walkthrough-*` |
-| **About** | visitors | what the app is and how it was built. Desktop-first, comfortable on a phone. **Links** the walkthrough; never contains or opens the tutorial. | landing page, `?about=1`, Settings | `about.md`, `#aboutProjectModal` |
+| **About** | visitors | what the app is and how it was built. Desktop-first, comfortable on a phone. **Links** the walkthrough; never contains or opens the tutorial. | landing page, `#/about` (legacy `?about=1` is rewritten on arrival), Settings | `about.md`, `#aboutProjectModal` |
 
 Both the tutorial and the walkthrough draw the same **replica card**
 (`card-replica.js`, `.card-replica`): real demo entries in the live card's own

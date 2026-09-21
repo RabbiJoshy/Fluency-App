@@ -8,8 +8,9 @@
 
 * **Load-Bearing Invariant:** A flashcard's identity is strictly the observed surface form: `card_id = f(language, surface_key)`. Never index or key cards by lemma, rank, or sense.
 * **Absence is Declared, Never Inferred:** Missing data (menus, senses, examples) must be explicitly marked with status codes (`ineligible`, `no_menu`, `abstain`), not omitted.
+* **Naming:** the GitHub repo is **`RabbiJoshy/Fluency-App`** (served at `rabbijoshy.github.io/Fluency-App/`); the local checkout is still the folder `Fluency-Next/`, which is why the `file://` links below are correct as written. Do not "fix" them. Release files live in a separate repo — see CLAUDE.md.
 * **Two-Root Rule:**
-  - `Fluency-Next/` (This repo): Code, tests, configs, schemas, and compact release metadata.
+  - `Fluency-Next/` (This local folder): Code, tests, configs, schemas, and compact release metadata.
   - `../Fluency-Workspace/`: Large datasets, corpora dumps, runs, pools, and generated releases. **Never put runs or large corpora in git.**
 * **Search Boundary:** Ripgrep ignores `app/lyrics-audit/data/` and `research/**/results/`. Never run grep against raw JSON/JSONL datasets.
 
@@ -91,6 +92,7 @@ The frontend is a vanilla ES-module application (`app/index.html` $\rightarrow$ 
 | [app/js/walkthrough.js](file:///Users/joshuathomasamar/PycharmProjects/Fluency-Next/app/js/walkthrough.js) | Visitor **walkthrough**: two-screen labelled card demo, opened only from About. | `openWalkthrough()`, `closeWalkthrough()` |
 | [app/js/card-replica.js](file:///Users/joshuathomasamar/PycharmProjects/Fluency-Next/app/js/card-replica.js) | Replica card shared by tutorial and walkthrough: demo entries + live-card markup. No audience logic. | `REPLICA_CARDS`, `replicaCardHTML()`, `wireReplicaBack()`, `fitReplicaCard()` |
 | [app/js/config.js](file:///Users/joshuathomasamar/PycharmProjects/Fluency-Next/app/js/config.js) | Active release capability flags & CEFR level config. | `loadConfig()`, `getCefrLevels()`, `getPercentageLevelRanges()` |
+| [app/js/routes.js](file:///Users/joshuathomasamar/PycharmProjects/Fluency-Next/app/js/routes.js) | Shareable hash routing. **Never write `?artist=`, `?about=` or `?playlistLive=` in new code** — those are legacy and are rewritten on arrival. Use the helpers. | `goToRoute()`, `replaceRoute()` |
 
 ---
 
