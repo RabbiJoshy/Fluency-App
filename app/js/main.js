@@ -12,17 +12,17 @@ import './estimation.js?v=20260825ak';
 import './config.js?v=20260919c';
 import './progress.js?v=20260920e';
 import './knowledge.js?v=20260920a';
-import './ui.js?v=20260920i';
+import './ui.js?v=20260921sd';
 import './vocab.js?v=20260920f';
 import './cognates.js?v=20260914e';
 import './coverage.js?v=20260909a';
 import './fast-mode.js?v=20260920a';
-import './extras.js?v=20260920f';
+import './extras.js?v=20260921sd';
 import './song-sets.js?v=20260823ae';
 import './playlist-live.js?v=20260919a';
 import './spotify-playlist-import.js?v=20260919a';
 import './vocabulary-import.js?v=20260920a';
-import './flashcards.js?v=20260921x';
+import './flashcards.js?v=20260921sd';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 function startCardTutorial() {

@@ -2,6 +2,23 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-21T17:30:00+01:00",
+      "date": "2026-09-21 17:30 BST",
+      "agent": "Claude",
+      "summary": "Settings now opens on the left on a wide screen, and anything you open from it stacks on top of it; a second card panel opens on the left when the left is free, so two can be read side by side.",
+      "detail": [
+        "Left is you and the app: settings, with whatever is opened from it (saved words, Fast Track, progress, find word) stacked on top, so closing the top one returns you to settings. Otherwise progress, saved words, shortcuts and help.",
+        "Right is this card: dictionary, synonyms, conjugation, card data, lyric breakdown, rarer-sense knowledge and word search. When the right is taken and the left is free, the next one opens on the left; when both are taken it replaces the one on the right.",
+        "Settings takes the left: opening it closes a card panel that had spilled there.",
+        "Card panels on either side close when the card changes or flips to its front; settings and its stack stay open while you study, and stay open if you leave the set.",
+        "Escape closes the right-hand panel first, then whatever is stacked over settings, then settings, and never leaves the set while one is open.",
+        "On the setup page (1024px and wider) settings also opens on the left, with the word lists on the right.",
+        "Fast Track, built as a full page, becomes a sheet when stacked over settings: its close button now sits on the sheet rather than in the screen corner.",
+        "Narrower windows and phones are unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-21T14:35:00+01:00",
       "date": "2026-09-21 14:35 BST",
       "agent": "Claude",

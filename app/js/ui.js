@@ -3045,8 +3045,11 @@ function setupSettingsOverview() {
     document.getElementById('settingsAboutBtn')?.addEventListener('click', () =>
         document.getElementById('aboutProjectSettingsRow')?.click());
     document.getElementById('settingsFastTrackBtn')?.addEventListener('click', () => {
+        // Decide before opening: once Fast Track is up it has claimed the
+        // stack over settings, and settings must stay beneath it.
+        const keepSettings = window.sideDock?.keepsSettingsOpen();
         window.openFastModePage?.();
-        modal.classList.add('hidden');
+        if (!keepSettings) modal.classList.add('hidden');
     });
     const runImport = () => {
         if (!currentUser || currentUser.isGuest || selectedLanguage !== 'spanish') return;
