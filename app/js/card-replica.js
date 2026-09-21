@@ -407,7 +407,9 @@ function replicaMetadata(meaning, selected) {
     return `<span class="sense-metadata-list" aria-label="Sense details">${primaryHTML}${grammarHTML}${more}${supportingHTML}</span>`;
 }
 
-function replicaProminence(pct) {
+// Share → the live card's four-bar meter. Exported so About's animated demo
+// cards use the same thresholds as the walkthrough rather than a third copy.
+export function replicaProminence(pct) {
     if (!(Number(pct) < 100)) return null;
     if (pct <= 0) return { label: 'Rare', key: 'rare' };
     if (pct >= 60) return { label: 'Dominant', key: 'dominant' };

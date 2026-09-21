@@ -13642,9 +13642,16 @@
             margin: 0 0 14px;
         }
 
-        .about-project-body ul {
+        .about-project-body ul,
+        .about-project-body ol {
             margin: 0 0 14px;
             padding-left: 22px;
+        }
+
+        /* The pipeline is a sequence, so its steps are numbered. */
+        .about-project-body ol li::marker {
+            color: var(--accent-primary);
+            font-weight: 700;
         }
 
         .about-project-body li {
@@ -13984,48 +13991,61 @@
             margin-bottom: 14px;
         }
 
+        /* Rows as the live card draws them, minus everything but the meaning:
+           tinted in the part-of-speech colour, the chosen one ticked and
+           outlined, the live four-bar meter at the right. The colour comes
+           from --sense-match-rgb, set per card by _runAboutDemo(). */
         .about-demo-card-inner .meaning-row-regular {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: 22px minmax(0, 1fr) 30px;
             align-items: center;
-            padding: 9px 14px;
-            background: rgba(15, 20, 28, 0.75);
+            gap: 4px;
+            padding: 8px 10px;
+            background: rgba(var(--sense-match-rgb, 148, 163, 184), 0.10);
             border-radius: 8px;
             min-height: 40px;
             border: 1px solid transparent;
             transition: background 0.25s, border-color 0.25s;
         }
 
-        .about-demo-card-inner .meaning-row-regular.has-share {
-            grid-template-columns: 52px 1fr 52px;
-        }
-
-        .about-demo-card-inner .meaning-row-regular.has-share .meaning-row-body {
-            grid-column: 2;
-        }
-
         .about-demo-card-inner .meaning-row-regular.is-selected {
-            background: rgba(var(--accent-primary-rgb), 0.5);
-            border: 2px solid var(--accent-primary);
-            padding: 8px 13px;  /* compensate for the thicker border */
+            background: rgba(var(--sense-match-rgb, 148, 163, 184), 0.16);
+            border: 2px solid rgb(var(--sense-match-rgb, 148, 163, 184));
+            padding: 7px 9px;  /* compensate for the thicker border */
+        }
+
+        .about-demo-row-tick {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* The live check is absolutely placed against the live row; here it
+           sits in its own column, so undo that. */
+        .about-demo-row-tick .meaning-row-check {
+            position: static;
+            transform: none;
+            margin: 0;
+        }
+
+        .about-demo-row-meter {
+            display: flex;
+            justify-content: flex-end;
+            color: var(--text-secondary);
+        }
+
+        /* A picture of the meter, not the control: nothing to open here. */
+        .about-demo-row-meter .sense-prominence-badge {
+            pointer-events: none;
         }
 
         .about-demo-card-inner .meaning-row-body {
+            grid-column: 2;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-width: 0;
-        }
-
-        .about-demo-meaning-share {
-            grid-column: 3;
-            justify-self: end;
-            font-family: var(--font-data);
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-secondary);
-            white-space: nowrap;
         }
 
         .about-demo-card-inner .meaning-row-translation {
@@ -14047,8 +14067,8 @@
         .about-demo-card-inner .about-demo-example {
             margin-top: 10px;
             padding: 12px 14px;
-            background: rgba(var(--accent-primary-rgb), 0.1);
-            border: 1px solid var(--accent-primary);
+            background: rgba(8, 11, 17, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 8px;
             display: flex;
             flex-direction: column;
@@ -14058,7 +14078,6 @@
 
         .about-demo-card-inner .about-demo-example-target {
             font-family: var(--font-reading);
-            font-style: italic;
             font-size: 15px;
             color: #fff;
             line-height: 1.4;
@@ -14072,14 +14091,12 @@
             line-height: 1.4;
         }
 
-        /* Pill highlight for the target word inside the example sentence.
-           Matches the real app's pill style (flashcards.js:1562). */
+        /* The studied word in the example: the live card's underline in the
+           part-of-speech colour (see .example-word-highlight). */
         .about-demo-highlight {
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            font-weight: 700;
-            padding: 1px 5px;
-            border-radius: 4px;
+            font-weight: 800;
+            color: color-mix(in srgb, rgb(var(--sense-match-rgb, 148, 163, 184)) 55%, white);
+            box-shadow: inset 0 -3px 0 rgb(var(--sense-match-rgb, 148, 163, 184));
         }
 
         /* Spotify row at the bottom of the artist-mode back face.
