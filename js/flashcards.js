@@ -3,6 +3,7 @@
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
 import './state.js?v=20260825ak';
 import './speech.js?v=20260825ak';
+import { goToRoute, routeCodeFor } from './routes.js?v=20260921a';
 import './side-dock.js?v=20260921narrow';
 import {
     collectRecentWrongWords,
@@ -5112,6 +5113,38 @@ function cardLemmaSlotIsLoadBearing(card, displayedTargetHeadword) {
     return forms.some(form => foldSurfaceForm(form) !== shown);
 }
 
+function renderGrammarCardNote(card, { hidden = false } = {}) {
+    const el = document.getElementById('grammarCardNote');
+    if (!el) return;
+    const note = String(card?.grammarNote || '').trim();
+    const pairs = Array.isArray(card?.grammarPairs) ? card.grammarPairs : [];
+    if (hidden || (!note && !pairs.length)) {
+        el.hidden = true;
+        el.innerHTML = '';
+        return;
+    }
+    const chips = pairs.map(pair => {
+        const surface = String(pair.surface || '').trim();
+        const label = String(pair.label || surface).trim();
+        if (!surface) return '';
+        return `<button type="button" class="grammar-pair-chip" data-grammar-surface="${escapeCardText(surface)}">${escapeCardText(label)}</button>`;
+    }).filter(Boolean);
+    const pairHtml = chips.length
+        ? `<span class="grammar-pair-chips">${chips.join('<span class="grammar-pair-plus" aria-hidden="true">+</span>')}</span>`
+        : '';
+    const noteHtml = note ? `<span class="grammar-card-note-text">${escapeCardText(note)}</span>` : '';
+    el.innerHTML = `${noteHtml}${pairHtml}`;
+    el.hidden = false;
+    const language = routeCodeFor(selectedLanguage, config?.languages);
+    el.querySelectorAll('[data-grammar-surface]').forEach(button => {
+        button.addEventListener('click', event => {
+            event.preventDefault();
+            event.stopPropagation();
+            goToRoute({ kind: 'word', language, surface: button.getAttribute('data-grammar-surface') });
+        });
+    });
+}
+
 function updateCard({ announceHeadword = false } = {}) {
     const card = flashcards[currentIndex];
     const langConfig = config.languages[selectedLanguage];
@@ -5571,6 +5604,10 @@ function updateCard({ announceHeadword = false } = {}) {
         frontLemmaEl.classList.remove('is-reserved');
         frontLemmaEl.style.display = 'none';
     }
+
+    renderGrammarCardNote(card, {
+        hidden: Boolean(isFlipped || flippedFrontMeanings),
+    });
 
     // English-first production needs the form constraint in sight. Keep each
     // possible analysis coupled (subject + tense/mood) and let it wrap as one

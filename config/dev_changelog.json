@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-21T23:10:00+01:00",
+      "date": "2026-09-21 23:10 BST",
+      "agent": "Cursor",
+      "summary": "Spanish set-1 function words now group lookalike English senses (it/him/you, a/an, of/from) on the same card, without rerunning WSD.",
+      "detail": [
+        "A keep-list overlay merges sibling senses on que, de, a, lo, un, una, al, le, del, and se after the deck loads.",
+        "Existing example assignments stay on the merged leaf; the heading is a slash-join of the original English glosses.",
+        "Those cards show a short grammar line; del and al also link to de+el and a+el."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-21T21:10:00+01:00",
       "date": "2026-09-21 21:10 BST",
       "agent": "Claude",
