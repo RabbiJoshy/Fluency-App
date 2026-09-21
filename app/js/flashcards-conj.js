@@ -416,16 +416,21 @@ function switchConjMood(moodName) {
 // (without a card change) are pure CSS toggle. Card changes blow away the
 // DOM, so the next open hits the cache and rebuilds-from-cache instead of
 // re-running the templating.
-// The panel covers the whole viewport, not just the card. It cannot do that
-// from inside the card: .card-face clips its children and the card carries a
-// 3D flip transform, which makes even position:fixed resolve against the card
-// rather than the viewport. So it is hosted on <body> while open and stowed
-// back into the card's back face when closed, where updateCard() owns it.
-function hostConjPanelFullScreen(panel) {
+// On a wide desktop in a study session the panel docks in the right-hand
+// gutter beside the card (side-dock.js); anywhere narrower it covers the whole
+// viewport. Either way it cannot stay inside the card: .card-face clips its
+// children and the card carries a 3D flip transform, which makes even
+// position:fixed resolve against the card rather than the viewport. So it is
+// hosted on <body> while open and stowed back into the card's back face when
+// closed, where updateCard() owns it.
+function hostConjPanel(panel) {
+    if (window.sideDock?.openCardPanel(panel)) return;
+    panel.classList.remove('is-docked');
     if (panel.parentElement !== document.body) document.body.appendChild(panel);
 }
 
 function stowConjPanel(panel) {
+    panel.classList.remove('is-docked');
     const host = document.getElementById('backContent');
     if (host && panel.parentElement !== host) host.appendChild(panel);
 }
@@ -477,11 +482,12 @@ async function toggleConjugationTable() {
         }
         panel.innerHTML = inner;
     }
-    // requestAnimationFrame guards against browsers optimising away the
-    // slide-in transition on a freshly-injected node (no committed layout
-    // means the transition's "from" state isn't observed).
-    hostConjPanelFullScreen(panel);
-    requestAnimationFrame(() => panel.classList.add('visible'));
+    // A freshly moved node has no committed layout, so the slide-in would be
+    // skipped. Reading a layout property commits the "from" state; unlike a
+    // requestAnimationFrame it cannot be deferred by a backgrounded tab.
+    hostConjPanel(panel);
+    void panel.offsetWidth;
+    panel.classList.add('visible');
 }
 
 window.toggleConjugationTable = toggleConjugationTable;
