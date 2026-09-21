@@ -45,7 +45,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=20260921meta';
+} from './card-metadata-pills.js?v=20260921details';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -755,6 +755,7 @@ window.addEventListener('resize', () => {
     posSummaryResizeFrame = requestAnimationFrame(() => {
         fitSenseRowLayouts(document.getElementById('backContent'));
         fitPosSectionSummaries(document.getElementById('backContent'));
+        refitMeaningScroll();
     });
 });
 
@@ -769,10 +770,11 @@ function availableHeightForMeaningScroll(backEl, scroll) {
     for (const child of backEl.children) {
         if (child === scroll || child.classList.contains('conjugation-panel')) continue;
         const cs = getComputedStyle(child);
-        if (cs.position === 'absolute' || cs.position === 'fixed') continue;
+        if (cs.display === 'none' || cs.position === 'absolute' || cs.position === 'fixed') continue;
         otherFlowChildren++;
         overhead += child.offsetHeight
-            + (parseFloat(cs.marginTop) || 0)
+            // The links' auto margin is spare space, not occupied content.
+            + (child.classList.contains('links-section') ? 0 : (parseFloat(cs.marginTop) || 0))
             + (parseFloat(cs.marginBottom) || 0);
     }
     // With the scroller included, N other children create N gaps in the flex
@@ -780,8 +782,23 @@ function availableHeightForMeaningScroll(backEl, scroll) {
     const backStyle = getComputedStyle(backEl);
     overhead += otherFlowChildren
         * (parseFloat(backStyle.rowGap || backStyle.gap) || 0);
-    return backEl.clientHeight - overhead;
+    return backEl.clientHeight - overhead
+        - (parseFloat(backStyle.paddingTop) || 0) - (parseFloat(backStyle.paddingBottom) || 0);
 }
+
+// Disclosures change row height without rendering the card again. Release the
+// previous cap before measuring so spare space can move the example down.
+function refitMeaningScroll(backEl = document.getElementById('backContent')) {
+    const scroll = backEl?.querySelector('.meanings-scroll');
+    if (!scroll) return;
+    scroll.style.maxHeight = '';
+    const available = availableHeightForMeaningScroll(backEl, scroll);
+    if (scroll.scrollHeight > available) scroll.style.maxHeight = Math.max(100, available) + 'px';
+}
+document.addEventListener('sense-details-change', () => refitMeaningScroll());
+document.addEventListener('toggle', event => {
+    if (event.target.matches?.('.sense-definition-detail')) refitMeaningScroll();
+}, true);
 
 // Cache of known words built from progressData — rebuilt when progress changes
 let _knownWordsCache = null;
@@ -3045,25 +3062,6 @@ async function openSenseCrossReference(event, target) {
  * origin". Rewriting to the plain verb keeps the relation that "origin" alone
  * would lose. Together these cut context text by ~17%.
  */
-const SENSE_CONTEXT_RULES = [
-    [/^used to indicate\s+/i, 'indicates '],
-    [/^used to express\s+/i, 'expresses '],
-    [/^used to talk about\s+/i, 'about '],
-    [/^used to ask for\s+/i, 'asks for '],
-    [/^used to ask\s+/i, 'asks '],
-    [/^used to introduce\s+/i, 'introduces '],
-    [/^used to describe\s+/i, 'describes '],
-    [/^used to refer to\s+/i, 'refers to '],
-    [/^used to define\s+/i, 'defines '],
-    [/^used to elicit\s+/i, 'elicits '],
-    [/^used to give\s+/i, 'gives '],
-    [/^used to make\s+/i, 'makes '],
-    [/^used to call\s+/i, 'calls '],
-    [/^used in\s+/i, 'in '],
-    [/^used with\s+/i, 'with '],
-    [/^used\s+/i, '']
-];
-
 function condenseSenseContext(raw) {
     const text = String(raw || '').trim();
     if (!text) return '';
@@ -3079,9 +3077,6 @@ function condenseSenseContext(raw) {
     // and this branch can go; deferred so it lands with a deck rebuild rather
     // than mid-session.
     if (text.toLowerCase() === 'multiword expression') return '';
-    for (const [pattern, replacement] of SENSE_CONTEXT_RULES) {
-        if (pattern.test(text)) return text.replace(pattern, replacement).trim();
-    }
     return readableSenseNote(text);
 }
 
@@ -5916,6 +5911,15 @@ function updateCard({ announceHeadword = false } = {}) {
             activeGroupSenseRaw
         ).display);
 
+        // Build headers from rows that were actually emitted, including filtering
+        // for compact knowledge views. Hidden inventory must not inflate +N.
+        const recordSectionMeanings = (rows, meanings) => {
+            rows.summarySenses ||= [];
+            for (const meaning of meanings) {
+                const raw = getProductionEnglishCue(card, meaning) || meaning.meaning || meaning.translation || '';
+                rows.summarySenses.push(senseSummaryText(projectWiktionaryGloss(meaning, raw).display));
+            }
+        };
         const renderSections = (sections) => Array.from(sections)
             .map(([key, rows]) => {
                 const g = groupInfo.get(key);
@@ -5933,15 +5937,16 @@ function updateCard({ announceHeadword = false } = {}) {
                 // information (for example, an inflected surface).
                 const hw = g.headword
                     ? `<span class="pos-pill-lemma">${escapeCardText(g.headword)}</span>` : '';
-                const summarySense = key === activeLemmaPosKey && activeGroupSense
+                const visibleSenses = rows.summarySenses || [];
+                const summarySense = key === activeLemmaPosKey && visibleSenses.includes(activeGroupSense)
                     ? activeGroupSense
-                    : (g.senses[0] || '');
+                    : (visibleSenses[0] || '');
                 // Keep the active sense first, then offer the rest in source
                 // order. A post-render measurement decides how many fit; +N
                 // is a genuine overflow indicator rather than a hard-coded
                 // substitute for every sense after the first.
                 // Strict normalized Set deduplication ensures no duplicate sense ever renders.
-                const candidateSenses = [summarySense, ...g.senses];
+                const candidateSenses = [summarySense, ...visibleSenses];
                 const summarySenses = [];
                 const seenSummaryKeys = new Set();
                 for (const sense of candidateSenses) {
@@ -6350,6 +6355,7 @@ function updateCard({ announceHeadword = false } = {}) {
                     ? ` <span class="sense-cycle-expand" style="cursor: pointer; opacity: 0.7; font-size: 12px;" onclick="event.stopPropagation(); this.parentElement.querySelector('.sense-cycle-short').style.display='none'; this.parentElement.querySelector('.sense-cycle-full').style.display='inline'; this.style.display='none';" title="Show all senses">…</span>`
                     : '';
                 const cycleTextClass = adaptiveRowTextClass(joinedFull);
+                recordSectionMeanings(target, m.allSenses || [m]);
                 target.push(`
                 <div class="meaning-row meaning-row-cycle ${cycleTextClass}${isSelected ? ' selected' : ''}${rowStateClasses}" style="position: relative; display: flex; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 39px; opacity: 0.75;" onclick="selectMeaning(${idx})">
                     ${renderRowCheckSlot(isSelected)}
@@ -6428,6 +6434,7 @@ function updateCard({ announceHeadword = false } = {}) {
                     const anyMemberSelected = orderedMembers.some(mi => mi === currentMeaningIndex);
                     const groupIsCurrent = groupSelected || anyMemberSelected;
                     if (compactKnowledgeView && !groupIsCurrent) return;
+                    recordSectionMeanings(target, orderedMembers.map(i => card.meanings[i]));
                     const groupStateClasses = groupIsCurrent ? ' is-current-sense' : '';
                     const cardBg = 'rgba(var(--sense-match-rgb), 0.08)';
                     // The outer row is the complete-family selection marker.
@@ -6552,7 +6559,7 @@ function updateCard({ announceHeadword = false } = {}) {
                     target.push(`
                     <div class="meaning-row meaning-row-group ${groupedTextClass}${groupIsCurrent ? ' selected' : ''}${groupStateClasses}" data-axis="${axis}" onclick="selectGroup('${axis}', ${idx})" style="position: relative; display: grid; grid-template-columns: ${outerGridCols}; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${cardBg}; border-radius: 8px; cursor: pointer;">
                         ${renderRowCheckSlot(groupIsCurrent)}
-                        <div class="meaning-row-body group-card-body${sharedCleanLength > 48 ? ' has-long-shared' : ''}" style="display: grid; grid-template-columns: ${gridCols}; align-items: center; gap: 3px 6px; min-width: 0; width: 100%; max-width: 100%; box-sizing: border-box; padding: 4px 8px; background: ${sharedBg}; ${sharedBorder} border-radius: 6px; justify-self: center;">
+                        <div class="meaning-row-body group-card-body${sharedCleanLength > 48 ? ' has-long-shared' : ''}${maxMemberLength > 80 ? ' has-long-context' : ''}" style="display: grid; grid-template-columns: ${gridCols}; align-items: center; gap: 3px 6px; min-width: 0; width: 100%; max-width: 100%; box-sizing: border-box; padding: 4px 8px; background: ${sharedBg}; ${sharedBorder} border-radius: 6px; justify-self: center;">
                             ${memberCells}
                             ${sharedCellHtml}
                         </div>
@@ -6561,6 +6568,7 @@ function updateCard({ announceHeadword = false } = {}) {
                     `);
                 } else {
                     if (compactKnowledgeView && !isSelected) return;
+                    recordSectionMeanings(target, [m]);
                     const foldInfo = singletonFoldLeaders.get(idx);
                     const isFoldedLeader = !!foldInfo;
                     const isFoldActive = isFoldedLeader && foldInfo.allIndices.includes(currentMeaningIndex);

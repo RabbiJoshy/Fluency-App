@@ -71,6 +71,38 @@ assert(ui.escapeCardText(long.context).includes('&lt;script&gt;'));
 // Low-level aspect stays accessible on selection, not in every navigation row.
 const asp=ui.senseMetadataHTML(wait,true,{...project(cekat,wait).options,peerMeanings:[]});
 assert(asp.includes('imperfective'));assert(asp.includes(' hidden'));
-console.log('20 shipped cards: meaning preservation, restrictions, grammar, cases and provider parity passed');
+// One shared prose rule for dictionary notes, retaining constraints.
+assert.equal(ui.readableSenseNote('used to talk about characteristics'),'about characteristics');
+assert.equal(ui.readableSenseNote('used in forming the perfect aspect'),'forms the perfect aspect');
+assert.equal(ui.readableSenseNote('ending a question; a standalone sentence; ending a question; a standalone sentence'),'ending a question; a standalone sentence');
+assert.equal(ui.readableSenseNote('[transitive with a or para or indirect object pronoun] | to provide a service'),'to provide a service (transitive with a or para or indirect object pronoun)');
+assert.equal(ui.readableSenseNote('not used with de'),'not used with de');
+assert.equal(ui.readableSenseNote('sometimes used with de'),'sometimes used with de');
+const dar=card('pt','dar');
+for(const m of dar.meanings){
+ const p=project(dar,m);
+ assert(!p.labels.includes('ditransitive'));
+ assert(ui.senseMetadataHTML(m,true,p.options).includes('ditransitive'));
+}
+// A disclosure exposes content, changes its accessible state and asks for layout.
+const detail={hidden:true},label={textContent:'Details'},attrs={'aria-expanded':'false'};
+let layoutEvent='';
+const list={querySelector:()=>detail,dispatchEvent:e=>layoutEvent=e.type};
+const control={dataset:{count:'2'},closest:()=>list,getAttribute:k=>attrs[k],setAttribute:(k,v)=>attrs[k]=v,querySelector:()=>label};
+ui.toggleSenseMetadataOverflow(null,control);
+assert.equal(detail.hidden,false);assert.equal(label.textContent,'Hide');assert.equal(attrs['aria-expanded'],'true');assert.equal(layoutEvent,'sense-details-change');
+ui.toggleSenseMetadataOverflow(null,control);
+assert.equal(detail.hidden,true);assert.equal(label.textContent,'Details');
+// Empty space above the bottom toolbar is available for expanded meanings.
+const source=fs.readFileSync('app/js/flashcards.js','utf8');
+const start=source.indexOf('function availableHeightForMeaningScroll');
+const end=source.indexOf('// Disclosures change row height',start);
+const available=new Function('getComputedStyle',source.slice(start,end)+'; return availableHeightForMeaningScroll;')(el=>el.css);
+const scroll={};
+const child=(height,margin,links=false,display='block')=>({offsetHeight:height,classList:{contains:k=>links&&k==='links-section'},css:{position:'static',display,marginTop:String(margin),marginBottom:'0'}});
+const back={clientHeight:600,children:[scroll,child(100,0),child(120,0),child(40,200,true),child(99,0,false,'none')],css:{rowGap:'10',paddingTop:'0',paddingBottom:'0'}};
+assert.equal(available(back,scroll),310);
+assert(asp.includes('>Details</span>'));assert(!asp.includes('sense-metadata-more-count'));
+console.log('40 shipped cards: meaning preservation, restrictions, grammar, cases and provider parity passed');
 ''', capture_output=True)
         self.assertEqual(result.returncode, 0, result.stderr)

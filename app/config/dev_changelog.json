@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-21T21:13:37+01:00",
+      "date": "2026-09-21 21:13 BST",
+      "agent": "Codex",
+      "summary": "Cleaner inline Details, sensible card expansion and summaries of visible meanings.",
+      "detail": [
+        "Details / Hide replaces More details and its counter. The gloss, control and supporting information share a line where space permits.",
+        "Opening details recalculates available height; empty space above the bottom buttons can move the example down before meanings need to scroll.",
+        "Meaning summaries and +N use emitted rows rather than the complete inventory, so hidden meanings do not appear in the preview.",
+        "Expanded Portuguese and Spanish review: shared rules remove repeated clauses, shorten usage boilerplate and place semantic explanations before bracketed constructions. Long contexts use full-width rows on phones.",
+        "Verified 127 app tests, 134 expanded group/width checks across 40 release-card fixtures, and 12 normal/enlarged text checks."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-21T20:16:00+01:00",
       "date": "2026-09-21 20:16 BST",
       "agent": "Codex",
