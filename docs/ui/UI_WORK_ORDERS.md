@@ -284,6 +284,12 @@ because every example they have is one.
 
 ## 7. Merged-lemma policy — research, back-and-forth
 
+**Policy settled 2026-09-21 in
+`docs/decisions/0024-merged-lemma-policy-and-card-frequency.md`** — merge on the
+sense, not the surface; phrases never form a lemma key; dedup on
+`source_reference`; frequency displayed per surface and never split. Measured
+on the shipped `es-v15-10000x10` and `fr-v7` releases. Not yet implemented.
+
 Files: `app/js/flashcards.js`, `app/js/card-metadata-pills.js`. Read
 `docs/INVARIANTS.md` first. Everything here follows from one thing: **identity
 is the surface form, and the lemma merge is a view over it.** Group 3 has
