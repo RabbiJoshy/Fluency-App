@@ -2,6 +2,22 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-21T11:20:00+01:00",
+      "date": "2026-09-21 11:20 BST",
+      "agent": "Claude",
+      "summary": "Example sentences are now ordered by four plain rules instead of a scoring cascade: a translated, single-sentence, confidently-disambiguated line leads, and the dictionary's own example sits second.",
+      "detail": [
+        "First line picked by four keys in order: has an English translation, is a single sentence, WSD confidence tier (cheap-agree > leaf > glosskey > tuple), reinforces a word missed in the last week. Ties keep deck order.",
+        "Confidence ranks rather than gates. Gating on it would have pushed 79.8% of cards onto a dictionary first line; ranking leaves only 1.1% of senses without a usable corpus sentence.",
+        "The canonical dictionary example moved from last to second. It never leads while a real corpus line exists: 9.3% of canonical lines run to two sentences and only 44.6% contain the card's own surface form, so it often has nothing to underline.",
+        "Dropped the easiness score (an opaque composite, and `easiness || 999999` was inverting the 15.9% of examples that score exactly 0, sorting the easiest lines last), the 6-14 token length window (the pipeline already caps length) and deck-word overlap (sentence length in disguise at 3.5k cards).",
+        "Multi-sentence detection ignores abbreviations, which were 10.9% of everything the pattern caught.",
+        "rankConfidentWsdExamples no longer sorts twice and throws the first result away.",
+        "Measured over all 28,661 senses in the live v15 deck: the first line changes for 3.9% of them."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-21T00:25:00+01:00",
       "date": "2026-09-21 00:25 BST",
       "agent": "Claude",
