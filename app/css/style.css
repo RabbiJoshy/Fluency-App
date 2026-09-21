@@ -152,7 +152,11 @@
         }
 
         .card-container {
-            --study-card-max-width: 540px;
+            /* Desktop card width; every use sits under (min-width: 768px), so
+               phones keep a full-width card. 513px is 540px less 5%, taken
+               back to give the side panels room (side-dock.js reads the real
+               width rather than assuming this number). */
+            --study-card-max-width: 513px;
             perspective: 1000px;
             display: flex;
             align-items: center;
@@ -472,67 +476,6 @@
 
             /* (hide rules moved to after .desktop-nav-row display:flex rule) */
 
-            /* Adjacent-card ghost peeking in from each gutter.
-               Ghost 1 is closer to the main card (narrower peek, taller, on top).
-               Ghost 2 extends further out horizontally (wider peek, shorter, behind).
-               This creates a staircase: ghost2-edge | ghost1-edge | main card. */
-            .deck-ghost-prev,
-            .deck-ghost-next {
-                position: absolute;
-                width: min(var(--study-card-max-width), calc(100% - 40px));
-                top: 50%;
-                border-radius: 16px;
-                background: var(--bg-card);
-                pointer-events: none;
-                z-index: 0;
-                transition: opacity 0.2s;
-            }
-            /* Ghost 1: closest to main card — 30px peek, slightly shorter */
-            .deck-ghost-prev-1 {
-                right: calc(50% - 210px);
-                height: calc(100vh - 160px);
-                min-height: 420px;
-                transform: translateY(-50%);
-                border: 1px solid rgba(255, 255, 255, 0.07);
-                filter: brightness(0.55);
-            }
-            /* Ghost 2: behind ghost 1 — 45px peek (extends further), shortest */
-            .deck-ghost-prev-2 {
-                right: calc(50% - 195px);
-                height: calc(100vh - 200px);
-                min-height: 380px;
-                transform: translateY(-50%);
-                border: 1px solid rgba(255, 255, 255, 0.04);
-                filter: brightness(0.3);
-            }
-            .deck-ghost-next-1 {
-                left: calc(50% - 210px);
-                height: calc(100vh - 160px);
-                min-height: 420px;
-                transform: translateY(-50%);
-                border: 1px solid rgba(255, 255, 255, 0.07);
-                filter: brightness(0.55);
-            }
-            .deck-ghost-next-2 {
-                left: calc(50% - 195px);
-                height: calc(100vh - 200px);
-                min-height: 380px;
-                transform: translateY(-50%);
-                border: 1px solid rgba(255, 255, 255, 0.04);
-                filter: brightness(0.3);
-            }
-            /* Hide all prev/next ghosts at the hard edges */
-            .card-container.at-deck-start .deck-ghost-prev,
-            .card-container.at-deck-end .deck-ghost-next,
-            .card-container:has(.card.is-stacked) .deck-ghost-prev,
-            .card-container:has(.card.is-stacked) .deck-ghost-next {
-                opacity: 0;
-            }
-            /* One step from edge: only 1 real card behind — hide the outer ghost */
-            .card-container.at-deck-start-2 .deck-ghost-prev-2,
-            .card-container.at-deck-end-2 .deck-ghost-next-2 {
-                opacity: 0;
-            }
 
             /* #deckProgressTrack is retired everywhere (see base rules);
                .card-back-scrubber sits above the card in its place — same
@@ -641,9 +584,7 @@
             .desktop-side-controls {
                 display: none;
             }
-            .side-nav-zone,
-            .deck-ghost-prev,
-            .deck-ghost-next {
+            .side-nav-zone {
                 display: none;
             }
         }
@@ -4048,6 +3989,47 @@
 
         .front-surface-relation {
             margin: -2px auto 10px;
+        }
+
+        .grammar-card-note {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            max-width: 100%;
+            margin: 2px auto 8px;
+            color: color-mix(in srgb, rgb(var(--card-pos-rgb)) 48%, white);
+            font-family: var(--font-reading);
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.3;
+            text-align: center;
+        }
+
+        .grammar-card-note[hidden] {
+            display: none;
+        }
+
+        .grammar-pair-chips {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .grammar-pair-chip {
+            pointer-events: auto;
+            padding: 2px 9px;
+            border: 1px solid rgba(var(--card-pos-rgb), 0.28);
+            border-radius: 999px;
+            background: rgba(var(--card-pos-rgb), 0.1);
+            color: inherit;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .grammar-pair-plus {
+            opacity: 0.65;
         }
 
         .back-surface-relation {
@@ -14752,30 +14734,97 @@
             z-index: 5;
         }
 
-        /* Find-word modal */
+        /* Find-word overlay (Spotlight-style) */
+        #findWordModal.find-word-overlay {
+            align-items: flex-start;
+            justify-content: center;
+            padding: min(18vh, 140px) 16px 24px;
+            overflow: hidden;
+            z-index: 1100;
+            background: rgba(4, 8, 16, 0.48);
+            backdrop-filter: blur(22px) saturate(1.2);
+            -webkit-backdrop-filter: blur(22px) saturate(1.2);
+        }
+        .find-word-spotlight {
+            width: min(640px, 100%);
+            border-radius: 18px;
+            background: color-mix(in srgb, var(--bg-card) 86%, #0b1220);
+            border: 1px solid color-mix(in srgb, var(--border-light) 78%, transparent);
+            box-shadow: 0 28px 80px rgba(0, 0, 0, 0.52), 0 1px 0 rgba(255, 255, 255, 0.06) inset;
+            overflow: hidden;
+            animation: find-word-in 0.16s ease-out;
+        }
+        @keyframes find-word-in {
+            from { opacity: 0; transform: translateY(-10px) scale(0.98); }
+            to { opacity: 1; transform: none; }
+        }
+        .find-word-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px 12px;
+        }
+        .find-word-bar-icon {
+            width: 22px;
+            height: 22px;
+            flex-shrink: 0;
+            color: var(--text-muted);
+        }
+        .find-word-hotkey {
+            flex-shrink: 0;
+            padding: 3px 7px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-muted);
+            font-family: var(--font-emphasis);
+            font-size: 11px;
+            font-weight: 600;
+            background: color-mix(in srgb, var(--bg-tertiary) 70%, transparent);
+        }
+        .find-word-dismiss {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            border: 0;
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .find-word-dismiss:hover {
+            background: color-mix(in srgb, var(--bg-tertiary) 80%, transparent);
+            color: var(--text-primary);
+        }
         .find-word-body {
-            padding: 16px 20px 20px;
+            padding: 0 16px 16px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .find-word-input {
             width: 100%;
             box-sizing: border-box;
-            padding: 10px 14px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
+            padding: 4px 0;
+            background: transparent;
+            border: 0;
             color: var(--text-primary);
-            font-size: 16px;
+            font-size: 22px;
             font-family: var(--font-emphasis);
             outline: none;
-            transition: border-color 0.15s ease;
         }
 
         .find-word-input:focus {
-            border-color: var(--accent-primary);
+            border-color: transparent;
+            box-shadow: none;
+        }
+        .find-word-input::-webkit-search-decoration,
+        .find-word-input::-webkit-search-cancel-button {
+            -webkit-appearance: none;
+        }
+        @media (pointer: coarse) {
+            .find-word-hotkey { display: none; }
         }
 
         .find-word-status {
@@ -14787,8 +14836,8 @@
         .find-word-results {
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            max-height: 50vh;
+            gap: 4px;
+            max-height: min(52vh, 420px);
             overflow-y: auto;
         }
 
@@ -14807,7 +14856,8 @@
             transition: background 0.12s ease, border-color 0.12s ease;
         }
 
-        .find-word-result:hover {
+        .find-word-result:hover,
+        .find-word-result.is-active {
             background: var(--bg-card-hover);
             border-color: var(--accent-primary);
         }
@@ -19050,38 +19100,38 @@ body.artist-mode #flashcardMode::before {
      left   you and the app: settings, with whatever is opened from it stacked
             on top; progress, saved words, shortcuts, help.
      right  this card: dictionary, synonyms, conjugation, card data, lyric
-            breakdown, rarer-sense knowledge, word search; also the setup
+            breakdown, rarer-sense knowledge; also the setup
             page's word lists. When the right is taken and the left is free,
             the next one opens on the left.
-   Width: in a study session the card is 540px and centred, so a sheet takes
-   the gutter beside it; on the setup page it is a sheet over the page. The
-   selectors list the ids inside :is() so they outrank each modal's own
+   Width: side-dock.js sets --dock-w on <body>. In a study session a panel
+   takes the margin beside the card, 16px from the screen edge and 16px clear
+   of the card, up to 400px and shrinking to 300px in a narrower window;
+   below that nothing docks. On the setup page it is a sheet over the page.
+   The selectors list the ids inside :is() so they outrank each modal's own
    id-level sizing. Phones and narrow windows never get data-dock. */
-:root { --dock-w: min(440px, 40vw); }
-body:has(#appContent:not(.hidden)) { --dock-w: min(400px, calc((100vw - 540px) / 2 - 48px)); }
 
-.modal[data-dock]:is(#findWordModal, #lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) {
+.modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) {
   align-items: center;
-  padding: 24px;
+  padding: 16px;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
-.modal[data-dock="left"]:is(#findWordModal, #lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { justify-content: flex-start; }
-.modal[data-dock="right"]:is(#findWordModal, #lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { justify-content: flex-end; }
-.modal[data-dock]:is(#findWordModal, #lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) > .modal-content {
+.modal[data-dock="left"]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { justify-content: flex-start; }
+.modal[data-dock="right"]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { justify-content: flex-end; }
+.modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) > .modal-content {
   box-sizing: border-box;
-  width: var(--dock-w);
+  width: var(--dock-w, 400px);
   max-width: none;
-  max-height: calc(100dvh - 48px);
+  max-height: calc(100dvh - 32px);
   margin: 0;
   overflow-y: auto;
 }
-.modal[data-dock="left"]:is(#findWordModal, #lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) > .modal-content { animation: dock-sheet-in-left 0.22s ease-out; }
-.modal[data-dock="right"]:is(#findWordModal, #lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) > .modal-content { animation: dock-sheet-in-right 0.22s ease-out; }
+.modal[data-dock="left"]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) > .modal-content { animation: dock-sheet-in-left 0.22s ease-out; }
+.modal[data-dock="right"]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) > .modal-content { animation: dock-sheet-in-right 0.22s ease-out; }
 /* These three scroll an inner list rather than the sheet; give the list the
    full height instead of the centred sheet's 620px cap. */
 .modal[data-dock]:is(#mergedFormsModal, #skippedWordsModal, #extrasModal) > .modal-content {
-  height: calc(100dvh - 48px);
+  height: calc(100dvh - 32px);
   overflow: hidden;
 }
 #lyricBreakdownModal[data-dock] .lyric-breakdown-body {
@@ -19098,25 +19148,25 @@ body:has(#appContent:not(.hidden)) { --dock-w: min(400px, calc((100vw - 540px) /
   border-radius: 22px;
 }
 /* A sheet opened over settings sits on top of it; closing it shows settings. */
-.modal[data-dock-stack]:is(#findWordModal, #lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) { z-index: 1010; }
+.modal[data-dock-stack]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) { z-index: 1010; }
 
 /* Study session: the card stays usable beside a docked sheet, so the
    full-viewport backdrop is transparent and lets clicks through. Close with
    the sheet's own close button or Escape. */
-body:has(#appContent:not(.hidden)) .modal[data-dock]:is(#findWordModal, #lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) {
+body:has(#appContent:not(.hidden)) .modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) {
   background: transparent;
   pointer-events: none;
 }
-body:has(#appContent:not(.hidden)) .modal[data-dock]:is(#findWordModal, #lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) > .modal-content { pointer-events: auto; }
+body:has(#appContent:not(.hidden)) .modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) > .modal-content { pointer-events: auto; }
 /* Setup page: a light dim, and a click outside still closes. A sheet stacked
    over settings does not dim settings a second time. */
-body:has(#appContent.hidden) .modal[data-dock]:is(#findWordModal, #lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { background: rgba(3, 7, 12, 0.32); }
-body:has(#appContent.hidden) .modal[data-dock-stack]:is(#findWordModal, #lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { background: transparent; }
+body:has(#appContent.hidden) .modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { background: rgba(3, 7, 12, 0.32); }
+body:has(#appContent.hidden) .modal[data-dock-stack]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { background: transparent; }
 
 /* The rarer-sense knowledge sheet has its own structure. */
 #knowledgeOverviewModal[data-dock]:not([hidden]) {
   place-items: center end;
-  padding: 24px;
+  padding: 16px;
   background: transparent;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
@@ -19125,25 +19175,25 @@ body:has(#appContent.hidden) .modal[data-dock-stack]:is(#findWordModal, #lyricBr
 #knowledgeOverviewModal[data-dock="left"]:not([hidden]) { place-items: center start; }
 #knowledgeOverviewModal[data-dock] .knowledge-overview-sheet {
   box-sizing: border-box;
-  width: var(--dock-w);
-  max-height: calc(100dvh - 48px);
+  width: var(--dock-w, 400px);
+  max-height: calc(100dvh - 32px);
   pointer-events: auto;
 }
 #knowledgeOverviewModal[data-dock] .knowledge-overview-header { padding: 16px 16px 10px; }
 #knowledgeOverviewModal[data-dock] .knowledge-overview-header h2 { font-size: 19px; }
 
 /* Card panels (dictionary, synonyms, conjugation, card data), hosted on
-   <body> with .is-docked while docked: vertically centred, 24px from the
+   <body> with .is-docked while docked: vertically centred, 16px from the
    edge. The class, not a media query, is the switch, so a panel already
    docked when the window narrows stays a sensible sheet. */
 body > .is-docked:is(.synonyms-panel, .provenance-panel, .conjugation-panel) {
   position: fixed;
   inset: auto;
   top: 50%;
-  right: 24px;
-  width: var(--dock-w, min(400px, calc(100vw - 48px)));
+  right: 16px;
+  width: var(--dock-w, min(400px, calc(100vw - 32px)));
   max-width: none;
-  max-height: calc(100dvh - 48px);
+  max-height: calc(100dvh - 32px);
   z-index: 1000;
   border: 1px solid var(--border-color);
   border-radius: 22px;
@@ -19151,19 +19201,19 @@ body > .is-docked:is(.synonyms-panel, .provenance-panel, .conjugation-panel) {
 }
 body > .is-docked[data-dock="left"]:is(.synonyms-panel, .provenance-panel, .conjugation-panel) {
   right: auto;
-  left: 24px;
+  left: 16px;
 }
 /* Synonyms and conjugation toggle .visible and slide in from their edge. */
 body > .is-docked:is(.synonyms-panel, .conjugation-panel) {
-  transform: translate(calc(100% + 48px), -50%);
+  transform: translate(calc(100% + 32px), -50%);
 }
 body > .is-docked[data-dock="left"]:is(.synonyms-panel, .conjugation-panel) {
-  transform: translate(calc(-100% - 48px), -50%);
+  transform: translate(calc(-100% - 32px), -50%);
 }
 body > .is-docked:is(.synonyms-panel, .conjugation-panel).visible {
   transform: translate(0, -50%);
 }
-body > .synonyms-panel.is-docked { height: min(560px, calc(100dvh - 48px)); }
+body > .synonyms-panel.is-docked { height: min(560px, calc(100dvh - 32px)); }
 /* Full screen, the paradigm grows its rows to fill the viewport; docked, it
    returns to the sizes it has on the card. */
 body > .conjugation-panel.is-docked {
@@ -19572,3 +19622,43 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
 }
 
 .meaning-row .group-card-shared { word-break: normal !important; overflow-wrap: normal; }
+
+/* Read details in the same flow as the gloss; wrap only when space requires it. */
+.meaning-row-regular .meaning-row-body {
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    gap: 2px 8px;
+}
+.meaning-row-regular .meaning-row-gloss { width: auto !important; max-width: 100%; }
+.meaning-row-regular .meaning-row-sub { display: contents; }
+.meaning-row .sense-metadata-list { display: contents; }
+.meaning-row .sense-metadata-tier {
+    display: inline-flex;
+    width: auto;
+    max-width: 100%;
+    margin-top: 0;
+}
+.meaning-row .sense-metadata-tier[hidden] { display: none; }
+.meaning-row .sense-metadata-more {
+    display: inline-flex;
+    margin: 0;
+    padding: 3px 8px;
+    border-radius: 6px;
+    flex: 0 0 auto;
+}
+.meaning-row .sense-definition-detail { flex-basis: 100%; }
+
+@container sense-row (max-width: 420px) {
+    .group-card-body.has-long-context { grid-template-columns: minmax(0, 1fr) !important; }
+    .group-card-body.has-long-context > .group-card-shared { grid-column: 1 !important; grid-row: 1 !important; padding-bottom: 5px; }
+    .group-card-body.has-long-context > .group-card-varying-cell { grid-column: 1 !important; grid-row: auto !important; }
+}
+/* Let the disclosure and its contents wrap independently of one another. */
+.meaning-row .group-card-varying-cell > .meaning-context-cell,
+.meaning-row .group-card-varying-cell > .row-adaptive-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2px 8px;
+}

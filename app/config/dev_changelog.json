@@ -2,6 +2,71 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-21T23:50:00+01:00",
+      "date": "2026-09-21 23:50 BST",
+      "agent": "Cursor",
+      "summary": "Non-decompositional phrases now leave the parent card and show as their own follow-up after a correct answer.",
+      "detail": [
+        "PHRASE senses from the MWE inventory are no longer extra senses on the word card.",
+        "Marking the word correct always opens a separate expressions child card, independent of rare senses.",
+        "That follow-up cannot be turned off in Settings, because those expressions are meant to be learned."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-09-21T23:22:00+01:00",
+      "date": "2026-09-21 23:22 BST",
+      "agent": "Cursor",
+      "summary": "Find a word now lives in Settings, and on a computer ⌘F or Ctrl+F opens a Spotlight-style search bar.",
+      "detail": [
+        "Removed Find a word from the study options sheet; Settings → Your words is the button.",
+        "⌘F / Ctrl+F intercepts the browser find shortcut and opens a centred search overlay.",
+        "Arrow keys move through matches; Escape and the backdrop dismiss it."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-09-21T23:10:00+01:00",
+      "date": "2026-09-21 23:10 BST",
+      "agent": "Cursor",
+      "summary": "Spanish set-1 function words now group lookalike English senses (it/him/you, a/an, of/from) on the same card, without rerunning WSD.",
+      "detail": [
+        "A keep-list overlay merges sibling senses on que, de, a, lo, un, una, al, le, del, and se after the deck loads.",
+        "Existing example assignments stay on the merged leaf; the heading is a slash-join of the original English glosses.",
+        "Those cards show a short grammar line; del and al also link to de+el and a+el."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-09-21T21:10:00+01:00",
+      "date": "2026-09-21 21:10 BST",
+      "agent": "Claude",
+      "summary": "The desktop card is 5% narrower, the stacked-deck cards behind it are gone, and side panels now shrink to fit a narrower window, so they dock from about 1180px wide instead of 1360px.",
+      "detail": [
+        "Desktop card width 540px to 513px. Phones are unaffected: every use of the width sits under the 768px desktop breakpoint.",
+        "Removed the ghost cards that peeked out either side of the card to suggest a deck, with their light-theme rules and the class toggles that drove them.",
+        "Side panels take the space beside the card, 16px from the screen edge and 16px clear of the card, up to 400px and shrinking to 300px. Below 300px nothing docks. In a set that means docking from about 1180px wide; it was 1360px.",
+        "The panel width is measured from the real card, so changing the card's size no longer needs the docking rules touched.",
+        "On the setup page sheets now dock from 900px wide; it was 1024px.",
+        "Repaired the service worker's pre-cache list, which an earlier commit had rolled back: side-dock.js was missing and two entries pointed at old files."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-09-21T21:13:37+01:00",
+      "date": "2026-09-21 21:13 BST",
+      "agent": "Codex",
+      "summary": "Cleaner inline Details, sensible card expansion and summaries of visible meanings.",
+      "detail": [
+        "Details / Hide replaces More details and its counter. The gloss, control and supporting information share a line where space permits.",
+        "Opening details recalculates available height; empty space above the bottom buttons can move the example down before meanings need to scroll.",
+        "Meaning summaries and +N use emitted rows rather than the complete inventory, so hidden meanings do not appear in the preview.",
+        "Expanded Portuguese and Spanish review: shared rules remove repeated clauses, shorten usage boilerplate and place semantic explanations before bracketed constructions. Long contexts use full-width rows on phones.",
+        "Verified 127 app tests, 134 expanded group/width checks across 40 release-card fixtures, and 12 normal/enlarged text checks."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-21T20:16:00+01:00",
       "date": "2026-09-21 20:16 BST",
       "agent": "Codex",

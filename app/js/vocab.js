@@ -4,6 +4,7 @@
 import './state.js?v=20260825ak';
 import { validateVocabularyIndex } from './data-contracts.js?v=20260825ak';
 import { formatRoute } from './routes.js?v=20260921a';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=20260921gc';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -620,6 +621,7 @@ function joinWithMaster(indexData, master) {
             if (sense.source) meaning.source = sense.source;
             if (sense.headword) meaning.headword = sense.headword;
             if (sense.context) meaning.context = sense.context;
+            if (sense.metadata) meaning.metadata = sense.metadata;
             if (Array.isArray(sense.regions) && sense.regions.length) {
                 meaning.regions = [...sense.regions];
             }
@@ -2428,6 +2430,11 @@ async function loadVocabularyData(rangeString, opts = {}) {
         }
 
         for (const item of filteredData) {
+            applyGrammarCardOverlay(item, selectedLanguage);
+            item.meanings = item.meanings || [];
+        }
+
+        for (const item of filteredData) {
             const meanings = item.meanings.map(m => {
                 const { targetSentence, englishSentence, allExamples } = getExampleFromMeaning(m, exampleTargetField, exampleEnglishField);
                 const meaning = {
@@ -2658,6 +2665,8 @@ async function loadVocabularyData(rangeString, opts = {}) {
                         ? (item.pooled_frequency ?? item.lemma_example_count ?? null)
                         : (item.corpus_count || null)),
                 meanings: meanings,
+                grammarNote: item._grammarCard?.note || '',
+                grammarPairs: item._grammarCard?.pairs || [],
                 unusedMenuSenses: (item.unused_menu_senses || []).map(m => ({
                     pos: m.pos,
                     meaning: m.translation || '',

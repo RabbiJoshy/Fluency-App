@@ -1652,6 +1652,2148 @@
           }
         }
       ]
+    },
+    {
+      "meanings": [
+        {
+          "context": "Brazil, nonstandard, proscribed",
+          "frequency": "0.025000",
+          "headword": "eu",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "Brazil",
+                  "family": "register",
+                  "kind": "region",
+                  "value": "Brazil"
+                },
+                {
+                  "embedding_text": "nonstandard",
+                  "family": "register",
+                  "kind": "usage_tag",
+                  "value": "nonstandard"
+                },
+                {
+                  "embedding_text": "proscribed",
+                  "family": "register",
+                  "kind": "usage_tag",
+                  "value": "proscribed"
+                }
+              ]
+            }
+          },
+          "pos": "pron",
+          "sense_id": "sense_b3bb554f9421d6b878b756e24702b32e",
+          "source": "wiktionary",
+          "translation": "first-person singular prepositional pronoun; me"
+        },
+        {
+          "frequency": "0.337500",
+          "headword": "eu",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "first-person singular personal pronoun",
+                  "family": "grammar",
+                  "kind": "gloss_note",
+                  "value": "first-person singular personal pronoun"
+                }
+              ]
+            }
+          },
+          "pos": "pron",
+          "sense_id": "sense_ec3a5694d576f1eee63a83690b101518",
+          "source": "wiktionary",
+          "translation": "I"
+        },
+        {
+          "frequency": "0.012500",
+          "headword": "eu te amo",
+          "metadata": {
+            "source_adapter": "mwe-merged/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "PHRASE",
+          "sense_id": "sense_8c02278f700dc32eec28d29205c634c0",
+          "source": "mwe-merged",
+          "translation": "I love you"
+        }
+      ],
+      "word": "eu"
+    },
+    {
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                0,
+                3
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                0,
+                2
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Ele andou até mim.",
+            "translation": "He walked towards me."
+          },
+          "frequency": "0.362500",
+          "headword": "ele",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "gender=masculine",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "gender=masculine"
+                }
+              ]
+            }
+          },
+          "pos": "pron",
+          "sense_id": "sense_dda3e77df7de6f5b5b4dc3ef77353979",
+          "source": "wiktionary",
+          "translation": "third-person masculine singular nominative personal pronoun; he; it"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                26,
+                29
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                19,
+                22
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Eu gosto de conversar com ele.",
+            "translation": "I enjoy talking to him."
+          },
+          "frequency": "0.012500",
+          "headword": "ele",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "gender=masculine",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "gender=masculine"
+                }
+              ]
+            }
+          },
+          "pos": "pron",
+          "sense_id": "sense_03e376a539e50b82ab3a19eaeac71a61",
+          "source": "wiktionary",
+          "translation": "third-person masculine singular prepositional pronoun; him; it"
+        }
+      ],
+      "word": "ele"
+    },
+    {
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                0,
+                3
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                0,
+                3
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Ela está aqui perto.",
+            "translation": "She is nearby."
+          },
+          "frequency": "0.262500",
+          "headword": "ela",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "gender=feminine",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "gender=feminine"
+                }
+              ]
+            }
+          },
+          "pos": "pron",
+          "sense_id": "sense_be2ea6238d683c1056a4b44bda6829c2",
+          "source": "wiktionary",
+          "translation": "third-person feminine singular nominative pronoun she; it"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                18,
+                21
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                15,
+                18
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "A gente encontrou ela.",
+            "translation": "We came across her."
+          },
+          "context": "Brazil",
+          "frequency": "0.100000",
+          "headword": "ela",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "Brazil",
+                  "family": "register",
+                  "kind": "region",
+                  "value": "Brazil"
+                },
+                {
+                  "embedding_text": "gender=feminine",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "gender=feminine"
+                }
+              ]
+            }
+          },
+          "pos": "pron",
+          "sense_id": "sense_84a5d02ff832c054704d55b33125417e",
+          "source": "wiktionary",
+          "translation": "third-person feminine singular pronoun used in all positions she; it; her"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                13,
+                16
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                7,
+                10
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Dei flores a ela.",
+            "translation": "I gave her flowers."
+          },
+          "frequency": "0.012500",
+          "headword": "ela",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "gender=feminine",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "gender=feminine"
+                }
+              ]
+            }
+          },
+          "pos": "pron",
+          "sense_id": "sense_76e8c7923bc861790b0a1cf91d2b44f9",
+          "source": "wiktionary",
+          "translation": "third-person feminine singular prepositional pronoun her"
+        }
+      ],
+      "word": "ela"
+    },
+    {
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                11,
+                14
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                10,
+                13
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Este livro tem dono.",
+            "translation": "This book has an owner."
+          },
+          "context": "to have (to be related in some way to, with the object identifying the relationship)",
+          "frequency": "0.237500",
+          "headword": "ter",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "transitive",
+                  "family": "construction",
+                  "kind": "grammar_tag",
+                  "value": "transitive"
+                },
+                {
+                  "embedding_text": "imperative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "mood=imperative"
+                },
+                {
+                  "embedding_text": "indicative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "mood=indicative"
+                },
+                {
+                  "embedding_text": "present",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "tense=present"
+                },
+                {
+                  "embedding_text": "second-person",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "person=2"
+                },
+                {
+                  "embedding_text": "singular",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "number=singular"
+                },
+                {
+                  "embedding_text": "third-person",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "person=3"
+                }
+              ]
+            }
+          },
+          "pos": "verb",
+          "sense_id": "sense_2ec9935f866f190f97a710bb077c362d",
+          "source": "wiktionary",
+          "translation": "to have"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                9,
+                12
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                7,
+                11
+              ],
+              [
+                24,
+                30
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "O senhor tem a sua carteira?",
+            "translation": "Do you have your wallet on you?"
+          },
+          "context": "to be in possession of; to have as part of one’s personal effects; to have in hand",
+          "frequency": "0.075000",
+          "headword": "ter",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "transitive",
+                  "family": "construction",
+                  "kind": "grammar_tag",
+                  "value": "transitive"
+                },
+                {
+                  "embedding_text": "imperative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "mood=imperative"
+                },
+                {
+                  "embedding_text": "indicative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "mood=indicative"
+                },
+                {
+                  "embedding_text": "present",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "tense=present"
+                },
+                {
+                  "embedding_text": "second-person",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "person=2"
+                },
+                {
+                  "embedding_text": "singular",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "number=singular"
+                },
+                {
+                  "embedding_text": "third-person",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "person=3"
+                }
+              ]
+            }
+          },
+          "pos": "verb",
+          "sense_id": "sense_81231c58fdeb387abf5f1817ac057669",
+          "source": "wiktionary",
+          "translation": "to have"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                0,
+                5
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                2,
+                6
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Tenho uma bela casa.",
+            "translation": "I have a beautiful house."
+          },
+          "context": "to own; to possess; to have; to have got",
+          "frequency": "0.050000",
+          "headword": "ter",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "transitive",
+                  "family": "construction",
+                  "kind": "grammar_tag",
+                  "value": "transitive"
+                },
+                {
+                  "embedding_text": "imperative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "mood=imperative"
+                },
+                {
+                  "embedding_text": "indicative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "mood=indicative"
+                },
+                {
+                  "embedding_text": "present",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "tense=present"
+                },
+                {
+                  "embedding_text": "second-person",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "person=2"
+                },
+                {
+                  "embedding_text": "singular",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "number=singular"
+                },
+                {
+                  "embedding_text": "third-person",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "person=3"
+                }
+              ]
+            }
+          },
+          "pos": "verb",
+          "sense_id": "sense_e44f052c791a21f744ba75d704ca009e",
+          "source": "wiktionary",
+          "translation": "to have"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                0,
+                3
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                0,
+                9
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Tem países em guerra naquela região.",
+            "translation": "There are countries at war in that region."
+          },
+          "context": "Brazil, informal, impersonal, transitive",
+          "frequency": "0.012500",
+          "headword": "ter",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "Brazil",
+                  "family": "register",
+                  "kind": "region",
+                  "value": "Brazil"
+                },
+                {
+                  "embedding_text": "impersonal",
+                  "family": "construction",
+                  "kind": "grammar_tag",
+                  "value": "impersonal"
+                },
+                {
+                  "embedding_text": "informal",
+                  "family": "register",
+                  "kind": "usage_tag",
+                  "value": "informal"
+                },
+                {
+                  "embedding_text": "transitive",
+                  "family": "construction",
+                  "kind": "grammar_tag",
+                  "value": "transitive"
+                },
+                {
+                  "embedding_text": "imperative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "mood=imperative"
+                },
+                {
+                  "embedding_text": "indicative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "mood=indicative"
+                },
+                {
+                  "embedding_text": "present",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "tense=present"
+                },
+                {
+                  "embedding_text": "second-person",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "person=2"
+                },
+                {
+                  "embedding_text": "singular",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "number=singular"
+                },
+                {
+                  "embedding_text": "third-person",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "person=3"
+                }
+              ]
+            }
+          },
+          "pos": "verb",
+          "sense_id": "sense_f7368313e461f6cea14d53990fde3be0",
+          "source": "wiktionary",
+          "translation": "there be (to exist, physically or abstractly)"
+        }
+      ],
+      "word": "tem"
+    },
+    {
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                11,
+                14
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                10,
+                13
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Este livro tem dono.",
+            "translation": "This book has an owner."
+          },
+          "context": "to have (to be related in some way to, with the object identifying the relationship)",
+          "frequency": "0.112500",
+          "headword": "ter",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "transitive",
+                  "family": "construction",
+                  "kind": "grammar_tag",
+                  "value": "transitive"
+                }
+              ]
+            }
+          },
+          "pos": "verb",
+          "sense_id": "sense_f0870885f5e696a4111cf4b03877ee28",
+          "source": "wiktionary",
+          "translation": "to have"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                9,
+                12
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                7,
+                11
+              ],
+              [
+                24,
+                30
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "O senhor tem a sua carteira?",
+            "translation": "Do you have your wallet on you?"
+          },
+          "context": "to be in possession of; to have as part of one’s personal effects; to have in hand",
+          "frequency": "0.012500",
+          "headword": "ter",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "transitive",
+                  "family": "construction",
+                  "kind": "grammar_tag",
+                  "value": "transitive"
+                }
+              ]
+            }
+          },
+          "pos": "verb",
+          "sense_id": "sense_7230bf5d8c0aef0c0ca68265e1b7ec17",
+          "source": "wiktionary",
+          "translation": "to have"
+        },
+        {
+          "context": "auxiliary, with de or que + infinitive",
+          "frequency": "0.025000",
+          "headword": "ter",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "auxiliary",
+                  "family": "construction",
+                  "kind": "auxiliary_frame",
+                  "value": "auxiliary"
+                },
+                {
+                  "embedding_text": "with de or que + infinitive",
+                  "family": "construction",
+                  "kind": "gloss_phrase",
+                  "value": "with de or que + infinitive"
+                }
+              ]
+            }
+          },
+          "pos": "verb",
+          "sense_id": "sense_075183174a3c257e37749d828c9089d8",
+          "source": "wiktionary",
+          "translation": "See ter de, ter que."
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                0,
+                5
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                2,
+                6
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Tenho uma bela casa.",
+            "translation": "I have a beautiful house."
+          },
+          "context": "to own; to possess; to have; to have got",
+          "frequency": "0.025000",
+          "headword": "ter",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "transitive",
+                  "family": "construction",
+                  "kind": "grammar_tag",
+                  "value": "transitive"
+                }
+              ]
+            }
+          },
+          "pos": "verb",
+          "sense_id": "sense_24ca9fb6c37ec6b62c3e4d0a531dc146",
+          "source": "wiktionary",
+          "translation": "to have"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                0,
+                5
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                3,
+                7
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Temos uma partida de xadrez daqui a uma semana.",
+            "translation": "We have a chess match in a week."
+          },
+          "context": "indicates that the subject has an event (the object) scheduled",
+          "frequency": "0.012500",
+          "headword": "ter",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "transitive",
+                  "family": "construction",
+                  "kind": "grammar_tag",
+                  "value": "transitive"
+                }
+              ]
+            }
+          },
+          "pos": "verb",
+          "sense_id": "sense_fb0b9cef1f40fd126ac7e03679b02248",
+          "source": "wiktionary",
+          "translation": "to have"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                5,
+                10
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                2,
+                12
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Eu o teria comprado, se tivesse dinheiro.",
+            "translation": "I would have bought it, if I had money."
+          },
+          "context": "used in forming the perfect aspect",
+          "frequency": "0.175000",
+          "headword": "ter",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "auxiliary",
+                  "family": "construction",
+                  "kind": "auxiliary_frame",
+                  "value": "auxiliary"
+                },
+                {
+                  "embedding_text": "taking a masculine singular past participle",
+                  "family": "construction",
+                  "kind": "gloss_phrase",
+                  "value": "taking a masculine singular past participle"
+                }
+              ]
+            }
+          },
+          "pos": "verb",
+          "sense_id": "sense_45b09aaa65d7b338367d99d4cd7b38ac",
+          "source": "wiktionary",
+          "translation": "to have"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                0,
+                4
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                4,
+                8
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Tens um resfriado.",
+            "translation": "You have a cold."
+          },
+          "context": "to be afflicted with a certain disease or other medical condition",
+          "frequency": "0.012500",
+          "headword": "ter",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "transitive",
+                  "family": "construction",
+                  "kind": "grammar_tag",
+                  "value": "transitive"
+                }
+              ]
+            }
+          },
+          "pos": "verb",
+          "sense_id": "sense_d05741138485172ca6a06d388f781f3a",
+          "source": "wiktionary",
+          "translation": "to have"
+        }
+      ],
+      "word": "ter"
+    },
+    {
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                13,
+                16
+              ]
+            ],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "A chuva está por parar.",
+            "translation": "The rain is about to stop."
+          },
+          "context": "with an infinitive",
+          "frequency": "0.012500",
+          "headword": "por",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "infinitive",
+                  "family": "construction",
+                  "kind": "complement_form",
+                  "value": "infinitive"
+                }
+              ]
+            }
+          },
+          "pos": "prep",
+          "sense_id": "sense_2d80f5643d1c68ab874f0f77b7bbf3ee",
+          "source": "wiktionary",
+          "translation": "about to"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                19,
+                22
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                17,
+                19
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Eu falei aquilo só por falar.",
+            "translation": "I said that just to say something."
+          },
+          "context": "where X is a clause and Y the infinitive of the verb in the clause; or of a synonym; where X is a clause and Y the infinitive of the verb in the clause; or of a synonym",
+          "frequency": "0.012500",
+          "headword": "por",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "in the formula “X por Y”",
+                  "family": "construction",
+                  "kind": "gloss_phrase",
+                  "value": "in the formula “X por Y”"
+                },
+                {
+                  "embedding_text": "where X is a clause and Y the infinitive of the verb in the clause",
+                  "family": "construction",
+                  "kind": "gloss_phrase",
+                  "value": "where X is a clause and Y the infinitive of the verb in the clause"
+                },
+                {
+                  "embedding_text": "or of a synonym",
+                  "family": "construction",
+                  "kind": "gloss_phrase",
+                  "value": "or of a synonym"
+                }
+              ]
+            }
+          },
+          "pos": "prep",
+          "sense_id": "sense_38c4fa43c994d7156e7d97309c38bf30",
+          "source": "wiktionary",
+          "translation": "for its own sake; without a motive"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                22,
+                26
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                21,
+                24
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Ela deu sua bicicleta pela minha.",
+            "translation": "She gave her bicycle for mine."
+          },
+          "frequency": "0.037500",
+          "headword": "por",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "indicates something given in an exchange",
+                  "family": "functional",
+                  "kind": "usage_note",
+                  "value": "indicates something given in an exchange"
+                }
+              ]
+            }
+          },
+          "pos": "prep",
+          "sense_id": "sense_bb81c2c49434eaf393703155010c807c",
+          "source": "wiktionary",
+          "translation": "for"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                10,
+                13
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                6,
+                8
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Os livros por Tolkien são ótimos.",
+            "translation": "Books by Tolkien are great."
+          },
+          "frequency": "0.012500",
+          "headword": "por",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "indicates the creator of a work",
+                  "family": "functional",
+                  "kind": "usage_note",
+                  "value": "indicates the creator of a work"
+                }
+              ]
+            }
+          },
+          "pos": "prep",
+          "sense_id": "sense_34ce238208f8e7caac69424acb22d6af",
+          "source": "wiktionary",
+          "translation": "by"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                25,
+                28
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                23,
+                29
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "O tesouro foi encontrado por Dudinka.",
+            "translation": "The treasure was found around Dudinka."
+          },
+          "frequency": "0.012500",
+          "headword": "por",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "prep",
+          "sense_id": "sense_4b46006615d040ba8935d63a2285d0d6",
+          "source": "wiktionary",
+          "translation": "around; about; near (in the vicinity of)"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                10,
+                13
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                8,
+                11
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Faça isso por mim.",
+            "translation": "Do that for me."
+          },
+          "frequency": "0.025000",
+          "headword": "por",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "prep",
+          "sense_id": "sense_7e3a4340a4d9f6dbef843b3684a26462",
+          "source": "wiktionary",
+          "translation": "for (on behalf of)"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                32,
+                36
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                27,
+                37
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Esse tipo de ruína é encontrado pela Escócia.",
+            "translation": "This type of ruin is found throughout Scotland."
+          },
+          "frequency": "0.012500",
+          "headword": "por",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "prep",
+          "sense_id": "sense_ea85b5a74b2240fb9a8afdedd837a6ab",
+          "source": "wiktionary",
+          "translation": "throughout (in various parts of)"
+        },
+        {
+          "frequency": "0.125000",
+          "headword": "pelo menos",
+          "metadata": {
+            "source_adapter": "mwe-merged/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "PHRASE",
+          "sense_id": "sense_c8679a6e3f35e5df3eb66af30cc75205",
+          "source": "mwe-merged",
+          "translation": "at a lower limit, at least"
+        }
+      ],
+      "word": "pelo"
+    },
+    {
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                4,
+                7
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                4,
+                8
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Ela deu-me um beijo.",
+            "translation": "She gave me a kiss."
+          },
+          "context": "[transitive with em or indirect object pronoun] | to carry out a physical interaction with something",
+          "frequency": "0.337500",
+          "headword": "dar",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "ditransitive",
+                  "family": "construction",
+                  "kind": "grammar_tag",
+                  "value": "ditransitive"
+                }
+              ]
+            }
+          },
+          "pos": "verb",
+          "sense_id": "sense_d1a82bb96faef65d510ec461028ff4d5",
+          "source": "wiktionary",
+          "translation": "to give"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                0,
+                3
+              ],
+              [
+                7,
+                9
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                2,
+                11
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Dar-te-ei um livro.",
+            "translation": "I will give you a book."
+          },
+          "context": "[transitive with a or para or indirect object pronoun] | to transfer one’s possession of something to someone without anything in return",
+          "frequency": "0.012500",
+          "headword": "dar",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "ditransitive",
+                  "family": "construction",
+                  "kind": "grammar_tag",
+                  "value": "ditransitive"
+                }
+              ]
+            }
+          },
+          "pos": "verb",
+          "sense_id": "sense_7271abd9bcd89c54678bf4b6f9226aea",
+          "source": "wiktionary",
+          "translation": "to give"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                9,
+                11
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                11,
+                16
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "A Igreja dá conforto aos pobres.",
+            "translation": "The Church gives the poor comfort."
+          },
+          "context": "[transitive with a or para or indirect object pronoun] | to provide a service",
+          "frequency": "0.025000",
+          "headword": "dar",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "ditransitive",
+                  "family": "construction",
+                  "kind": "grammar_tag",
+                  "value": "ditransitive"
+                }
+              ]
+            }
+          },
+          "pos": "verb",
+          "sense_id": "sense_245907de630c9f386ad84d9516e17a1e",
+          "source": "wiktionary",
+          "translation": "to give"
+        }
+      ],
+      "word": "dar"
+    },
+    {
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                3,
+                4
+              ]
+            ],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Eu é que vim.",
+            "translation": "I’m the one who came here."
+          },
+          "context": "impersonal, transitive",
+          "frequency": "0.012500",
+          "headword": "ser",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "impersonal",
+                  "family": "construction",
+                  "kind": "grammar_tag",
+                  "value": "impersonal"
+                },
+                {
+                  "embedding_text": "transitive",
+                  "family": "construction",
+                  "kind": "grammar_tag",
+                  "value": "transitive"
+                },
+                {
+                  "embedding_text": "first-person",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "person=1"
+                },
+                {
+                  "embedding_text": "imperative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "mood=imperative"
+                },
+                {
+                  "embedding_text": "present",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "tense=present"
+                },
+                {
+                  "embedding_text": "singular",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "number=singular"
+                },
+                {
+                  "embedding_text": "subjunctive",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "mood=subjunctive"
+                },
+                {
+                  "embedding_text": "third-person",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "person=3"
+                }
+              ]
+            }
+          },
+          "pos": "verb",
+          "sense_id": "sense_05de412f55757b5c3372f14dc483ad18",
+          "source": "wiktionary",
+          "translation": "used for emphasis"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                10,
+                13
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                10,
+                15
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Que horas são?",
+            "translation": "What time is it?"
+          },
+          "context": "intransitive",
+          "frequency": "0.087500",
+          "headword": "ser",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "intransitive",
+                  "family": "construction",
+                  "kind": "grammar_tag",
+                  "value": "intransitive"
+                },
+                {
+                  "embedding_text": "first-person",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "person=1"
+                },
+                {
+                  "embedding_text": "imperative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "mood=imperative"
+                },
+                {
+                  "embedding_text": "present",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "tense=present"
+                },
+                {
+                  "embedding_text": "singular",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "number=singular"
+                },
+                {
+                  "embedding_text": "subjunctive",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "mood=subjunctive"
+                },
+                {
+                  "embedding_text": "third-person",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "person=3"
+                }
+              ]
+            }
+          },
+          "pos": "verb",
+          "sense_id": "sense_4734e237f5503ae4010481a6cd115dff",
+          "source": "wiktionary",
+          "translation": "to be; indicates a point in time"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                20,
+                21
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                23,
+                25
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "A soma de um e dois é três.",
+            "translation": "The sum of one and two is three."
+          },
+          "context": "transitive",
+          "frequency": "0.087500",
+          "headword": "ser",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "transitive",
+                  "family": "construction",
+                  "kind": "grammar_tag",
+                  "value": "transitive"
+                },
+                {
+                  "embedding_text": "first-person",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "person=1"
+                },
+                {
+                  "embedding_text": "imperative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "mood=imperative"
+                },
+                {
+                  "embedding_text": "present",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "tense=present"
+                },
+                {
+                  "embedding_text": "singular",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "number=singular"
+                },
+                {
+                  "embedding_text": "subjunctive",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "mood=subjunctive"
+                },
+                {
+                  "embedding_text": "third-person",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "person=3"
+                }
+              ]
+            }
+          },
+          "pos": "verb",
+          "sense_id": "sense_d3a116230d11268d75c323023ad591a3",
+          "source": "wiktionary",
+          "translation": "to be (to be an example or type of, or the same as)"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                25,
+                28
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                26,
+                28
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Não mexa em nada que não for seu.",
+            "translation": "Don’t touch anything that is not yours."
+          },
+          "context": "intransitive",
+          "frequency": "0.012500",
+          "headword": "ser",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "intransitive",
+                  "family": "construction",
+                  "kind": "grammar_tag",
+                  "value": "intransitive"
+                },
+                {
+                  "embedding_text": "de",
+                  "family": "companion",
+                  "kind": "required_word",
+                  "value": "de"
+                },
+                {
+                  "embedding_text": "first-person",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "person=1"
+                },
+                {
+                  "embedding_text": "imperative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "mood=imperative"
+                },
+                {
+                  "embedding_text": "present",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "tense=present"
+                },
+                {
+                  "embedding_text": "singular",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "number=singular"
+                },
+                {
+                  "embedding_text": "subjunctive",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "mood=subjunctive"
+                },
+                {
+                  "embedding_text": "third-person",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "person=3"
+                }
+              ]
+            }
+          },
+          "pos": "verb",
+          "sense_id": "sense_c735a0ed775182f29c9c043f307a0461",
+          "source": "wiktionary",
+          "translation": "to be (someone’s); to belong to"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                11,
+                14
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                11,
+                14
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Duas maçãs são dez centavos.",
+            "translation": "Two apples are ten cents."
+          },
+          "context": "transitive",
+          "frequency": "0.012500",
+          "headword": "ser",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "transitive",
+                  "family": "construction",
+                  "kind": "grammar_tag",
+                  "value": "transitive"
+                },
+                {
+                  "embedding_text": "first-person",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "person=1"
+                },
+                {
+                  "embedding_text": "imperative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "mood=imperative"
+                },
+                {
+                  "embedding_text": "present",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "tense=present"
+                },
+                {
+                  "embedding_text": "singular",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "number=singular"
+                },
+                {
+                  "embedding_text": "subjunctive",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "mood=subjunctive"
+                },
+                {
+                  "embedding_text": "third-person",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "person=3"
+                }
+              ]
+            }
+          },
+          "pos": "verb",
+          "sense_id": "sense_26d6b24c8a80ea6f2473bc77284676fb",
+          "source": "wiktionary",
+          "translation": "to be; to cost (to be worth a given amount of money)"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                10,
+                11
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                14,
+                19
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "O mal não é.",
+            "translation": "Evil does not exist."
+          },
+          "context": "poetic, intransitive",
+          "frequency": "0.025000",
+          "headword": "ser",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "intransitive",
+                  "family": "construction",
+                  "kind": "grammar_tag",
+                  "value": "intransitive"
+                },
+                {
+                  "embedding_text": "poetic",
+                  "family": "register",
+                  "kind": "usage_tag",
+                  "value": "poetic"
+                },
+                {
+                  "embedding_text": "first-person",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "person=1"
+                },
+                {
+                  "embedding_text": "imperative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "mood=imperative"
+                },
+                {
+                  "embedding_text": "present",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "tense=present"
+                },
+                {
+                  "embedding_text": "singular",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "number=singular"
+                },
+                {
+                  "embedding_text": "subjunctive",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "mood=subjunctive"
+                },
+                {
+                  "embedding_text": "third-person",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "person=3"
+                }
+              ]
+            }
+          },
+          "pos": "verb",
+          "sense_id": "sense_eaf3a8c088e5ac72f6936ebacb58aa4d",
+          "source": "wiktionary",
+          "translation": "to exist; to be"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                25,
+                26
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                4,
+                6
+              ],
+              [
+                34,
+                36
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Ela está bonita, mas não é bonita.",
+            "translation": "She is looking beautiful, but she is not beautiful."
+          },
+          "context": "copulative",
+          "frequency": "0.025000",
+          "headword": "ser",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "copulative",
+                  "family": "construction",
+                  "kind": "grammar_tag",
+                  "value": "copulative"
+                },
+                {
+                  "embedding_text": "first-person",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "person=1"
+                },
+                {
+                  "embedding_text": "imperative",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "mood=imperative"
+                },
+                {
+                  "embedding_text": "present",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "tense=present"
+                },
+                {
+                  "embedding_text": "singular",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "number=singular"
+                },
+                {
+                  "embedding_text": "subjunctive",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "mood=subjunctive"
+                },
+                {
+                  "embedding_text": "third-person",
+                  "family": "grammar",
+                  "kind": "surface_mark",
+                  "value": "person=3"
+                }
+              ]
+            }
+          },
+          "pos": "verb",
+          "sense_id": "sense_83b4a09dde2ea22728baaae71a3bda8e",
+          "source": "wiktionary",
+          "translation": "to be (to have the given quality), especially a quality that is intrinsic or not expected to change, contrasting with estar which denotes a temporary quality"
+        },
+        {
+          "frequency": "0.062500",
+          "headword": "que seja",
+          "metadata": {
+            "source_adapter": "mwe-merged/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "PHRASE",
+          "sense_id": "sense_94cb2ad3c93c730c940a4cc6f30bddb5",
+          "source": "mwe-merged",
+          "translation": "modifies a quantity in negative or potential contexts  to express that the quantity is small but would be sufficient: even; only"
+        }
+      ],
+      "word": "seja"
+    },
+    {
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                0,
+                6
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                0,
+                3
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Porquê complicar uma coisa tão simples?",
+            "translation": "Why complicate something so simple?"
+          },
+          "context": "ending a question; a standalone sentence; or with an infinitive; ending a question; a standalone sentence; or with an infinitive",
+          "frequency": "0.129870",
+          "headword": "porquê",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "ending a question",
+                  "family": "construction",
+                  "kind": "gloss_phrase",
+                  "value": "ending a question"
+                },
+                {
+                  "embedding_text": "a standalone sentence",
+                  "family": "construction",
+                  "kind": "gloss_phrase",
+                  "value": "a standalone sentence"
+                },
+                {
+                  "embedding_text": "or with an infinitive",
+                  "family": "construction",
+                  "kind": "gloss_phrase",
+                  "value": "or with an infinitive"
+                }
+              ]
+            }
+          },
+          "pos": "adv",
+          "sense_id": "sense_ac6afc36d60ea8143d1ed70c9575f09b",
+          "source": "wiktionary",
+          "translation": "why"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [
+              [
+                28,
+                34
+              ]
+            ],
+            "bold_translation_offsets": [
+              [
+                24,
+                30
+              ]
+            ],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Precisamos (de) descobrir o porquê disto ter acontecido.",
+            "translation": "We need to find out the reason that caused this to happen."
+          },
+          "frequency": "0.259740",
+          "headword": "porquê",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "gender=masculine",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "gender=masculine"
+                }
+              ]
+            }
+          },
+          "pos": "noun",
+          "sense_id": "sense_fa3159db86cf3ef946da7e0c1c202fb4",
+          "source": "wiktionary",
+          "translation": "reason, cause, explanation"
+        }
+      ],
+      "word": "porquê"
+    },
+    {
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "o sexo feminino",
+            "translation": "females (literally, “the feminine sex”)"
+          },
+          "context": "category into which sexually-reproducing organisms are divided on the basis of their reproductive roles in their species",
+          "frequency": "0.012987",
+          "headword": "sexo",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "countability=countable",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "countability=countable"
+                },
+                {
+                  "embedding_text": "gender=masculine",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "gender=masculine"
+                }
+              ]
+            }
+          },
+          "pos": "noun",
+          "sense_id": "sense_63c3f258852af2c5b29a14fbef432e5e",
+          "source": "wiktionary",
+          "translation": "sex"
+        },
+        {
+          "context": "sex organ, genitalia",
+          "frequency": "0.129870",
+          "headword": "sexo",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "countability=countable",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "countability=countable"
+                },
+                {
+                  "embedding_text": "gender=masculine",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "gender=masculine"
+                }
+              ]
+            }
+          },
+          "pos": "noun",
+          "sense_id": "sense_052bc5c211ffbd1d1a8a6d6923fa9dd7",
+          "source": "wiktionary",
+          "translation": "sex"
+        },
+        {
+          "context": "another category, especially for humans and often separable, based on non-physical traits or roles; gender",
+          "frequency": "0.012987",
+          "headword": "sexo",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "countability=countable",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "countability=countable"
+                },
+                {
+                  "embedding_text": "gender=masculine",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "gender=masculine"
+                }
+              ]
+            }
+          },
+          "pos": "noun",
+          "sense_id": "sense_4867d9011156df65a6897c4b9eceded4",
+          "source": "wiktionary",
+          "translation": "sex"
+        },
+        {
+          "context": "sexual intercourse",
+          "frequency": "0.233766",
+          "headword": "sexo",
+          "metadata": {
+            "source_adapter": "wiktionary-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "gender=masculine",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "gender=masculine"
+                },
+                {
+                  "embedding_text": "countability=uncountable",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "countability=uncountable"
+                }
+              ]
+            }
+          },
+          "pos": "noun",
+          "sense_id": "sense_44e8ae61a49727cd943fa51592f594af",
+          "source": "wiktionary",
+          "translation": "sex"
+        }
+      ],
+      "word": "sexo"
     }
   ],
   "cs": [
@@ -3677,6 +5819,1300 @@
           }
         }
       ]
+    },
+    {
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Yo soy su hermana.",
+            "translation": "I am her sister."
+          },
+          "context": "subject",
+          "frequency": "0.337500",
+          "headword": "yo",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "subject",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "function=subject"
+                }
+              ]
+            }
+          },
+          "pos": "PRON",
+          "sense_id": "sense_406f0d4f42fce505fab83a11a441f3aa",
+          "source": "spanishdict",
+          "translation": "I"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Ella es más joven que yo.",
+            "translation": "She is younger than me."
+          },
+          "context": "in comparisons",
+          "frequency": "0.037500",
+          "headword": "yo",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "PRON",
+          "sense_id": "sense_a52bbcb9348f5f7acdcece1ee3dd07bb",
+          "source": "spanishdict",
+          "translation": "me"
+        }
+      ],
+      "word": "yo"
+    },
+    {
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Él ha sido mi mejor amigo por 15 años.",
+            "translation": "He has been my best friend for 15 years."
+          },
+          "context": "personal",
+          "frequency": "0.362500",
+          "headword": "él",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "personal",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "pronoun-class=personal"
+                }
+              ]
+            }
+          },
+          "pos": "PRON",
+          "sense_id": "sense_c0feb5e9cd191ee3e26803b8b474bec4",
+          "source": "spanishdict",
+          "translation": "he"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Dale el libro a él.",
+            "translation": "Give the book to him."
+          },
+          "context": "personal",
+          "frequency": "0.012500",
+          "headword": "él",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "personal",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "pronoun-class=personal"
+                }
+              ]
+            }
+          },
+          "pos": "PRON",
+          "sense_id": "sense_6a3bea2d2c226bfdd47f07671de2fd0b",
+          "source": "spanishdict",
+          "translation": "him"
+        }
+      ],
+      "word": "él"
+    },
+    {
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Es alto y rubio.",
+            "translation": "He's tall and blond."
+          },
+          "context": "used to talk about characteristics",
+          "frequency": "0.150000",
+          "headword": "ser",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to talk about characteristics",
+                  "family": "functional",
+                  "kind": "semantic_relation",
+                  "value": "characteristic"
+                }
+              ]
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_ef00f87f2939409f031a5dcda6a02c9e",
+          "source": "spanishdict",
+          "translation": "to be"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "El lápiz es para escribir, no para lanzar.",
+            "translation": "Pencils are for writing, not for throwing."
+          },
+          "context": "to serve as",
+          "frequency": "0.075000",
+          "headword": "ser",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_b23e12b1f894e67a4b016575496f0c43",
+          "source": "spanishdict",
+          "translation": "to be"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Este reloj es de mi madre.",
+            "translation": "This watch is my mother's."
+          },
+          "context": "used to indicate possession",
+          "frequency": "0.050000",
+          "headword": "ser",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to indicate possession",
+                  "family": "functional",
+                  "kind": "semantic_relation",
+                  "value": "possession"
+                }
+              ]
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_a9f98bd7ad98834794ce91f740a86e8f",
+          "source": "spanishdict",
+          "translation": "to be"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "La fiesta será en mi casa.",
+            "translation": "The party will be at my place."
+          },
+          "context": "to take place",
+          "frequency": "0.025000",
+          "headword": "ser",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_abfe4ef2879fb48bfb512d85ce0c34ea",
+          "source": "spanishdict",
+          "translation": "to be"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Son las siete de la mañana.",
+            "translation": "It is seven in the morning."
+          },
+          "context": "used to express time",
+          "frequency": "0.025000",
+          "headword": "ser",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to express time",
+                  "family": "functional",
+                  "kind": "temporal_relation",
+                  "value": "time"
+                }
+              ]
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_850b43a417941bee4cc172dd315a0c27",
+          "source": "spanishdict",
+          "translation": "to be"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "El edificio fue diseñado por un equipo de arquitectos.",
+            "translation": "The building was built by a team of architects."
+          },
+          "context": "with the passive voice",
+          "frequency": "0.037500",
+          "headword": "ser",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "with the passive voice",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "voice=passive"
+                }
+              ]
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_98f1b723ee54cd4cb6b1012f6fff3e4f",
+          "source": "spanishdict",
+          "translation": "to be"
+        },
+        {
+          "frequency": "0.012500",
+          "headword": "no puede ser",
+          "metadata": {
+            "source_adapter": "mwe-merged/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "PHRASE",
+          "sense_id": "sense_aed976b0a7ef901169828c90ecb4090c",
+          "source": "mwe-merged",
+          "translation": "he can't be, you can't be"
+        }
+      ],
+      "word": "ser"
+    },
+    {
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Es alto y rubio.",
+            "translation": "He's tall and blond."
+          },
+          "context": "used to talk about characteristics",
+          "frequency": "0.275000",
+          "headword": "ser",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to talk about characteristics",
+                  "family": "functional",
+                  "kind": "semantic_relation",
+                  "value": "characteristic"
+                }
+              ]
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_1ebc8ab74f448f364e51ef97d0048c34",
+          "source": "spanishdict",
+          "translation": "to be"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Soy de Nueva York.",
+            "translation": "I'm from New York."
+          },
+          "context": "used to indicate origin",
+          "frequency": "0.012500",
+          "headword": "ser",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to indicate origin",
+                  "family": "functional",
+                  "kind": "semantic_relation",
+                  "value": "origin"
+                }
+              ]
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_f06a88597444c005ec87f90978ae1c26",
+          "source": "spanishdict",
+          "translation": "to be"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Este reloj es de mi madre.",
+            "translation": "This watch is my mother's."
+          },
+          "context": "used to indicate possession",
+          "frequency": "0.062500",
+          "headword": "ser",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to indicate possession",
+                  "family": "functional",
+                  "kind": "semantic_relation",
+                  "value": "possession"
+                }
+              ]
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_8044cbad916861fe1a3df1bd16d06cf4",
+          "source": "spanishdict",
+          "translation": "to be"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Son las siete de la mañana.",
+            "translation": "It is seven in the morning."
+          },
+          "context": "used to express time",
+          "frequency": "0.012500",
+          "headword": "ser",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to express time",
+                  "family": "functional",
+                  "kind": "temporal_relation",
+                  "value": "time"
+                }
+              ]
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_8914feee1507e3e4d301af5a1f77cb29",
+          "source": "spanishdict",
+          "translation": "to be"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "El edificio fue diseñado por un equipo de arquitectos.",
+            "translation": "The building was built by a team of architects."
+          },
+          "context": "with the passive voice",
+          "frequency": "0.012500",
+          "headword": "ser",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "with the passive voice",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "voice=passive"
+                }
+              ]
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_bfdcf2264d90c843b179ae652a7226e0",
+          "source": "spanishdict",
+          "translation": "to be"
+        }
+      ],
+      "word": "era"
+    },
+    {
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Este pastel de chocolate está delicioso.",
+            "translation": "This chocolate cake is delicious."
+          },
+          "context": "used to express a quality",
+          "frequency": "0.125000",
+          "headword": "estar",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to express a quality",
+                  "family": "functional",
+                  "kind": "semantic_relation",
+                  "value": "quality"
+                }
+              ]
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_fbec262698dd44b3977f4ab5988cc024",
+          "source": "spanishdict",
+          "translation": "to be"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Estoy enojada porque me acaban de dar una multa de estacionamiento.",
+            "translation": "I am angry because I just got a parking ticket."
+          },
+          "context": "used to express an emotion or state",
+          "frequency": "0.075000",
+          "headword": "estar",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to express an emotion or state",
+                  "family": "functional",
+                  "kind": "semantic_scope",
+                  "value": "emotion or state"
+                }
+              ]
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_3c88617464c1b09f9c849f506ea56430",
+          "source": "spanishdict",
+          "translation": "to be"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "La casa está delante de la iglesia.",
+            "translation": "The house is in front of the church."
+          },
+          "context": "to be located",
+          "frequency": "0.050000",
+          "headword": "estar",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_b464ddd5b9e6ae547699208c6e12456c",
+          "source": "spanishdict",
+          "translation": "to be"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "No está en casa.",
+            "translation": "He's not home."
+          },
+          "context": "to be present",
+          "frequency": "0.087500",
+          "headword": "estar",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_06042a4f9efaca041a97a6e2160b34b9",
+          "source": "spanishdict",
+          "translation": "to be"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Está triste ahora que no tiene novia.",
+            "translation": "He is sad now that he doesn't have a girlfriend."
+          },
+          "context": "to feel",
+          "frequency": "0.025000",
+          "headword": "estar",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_0fcc2fa567d4efd9b27df02bcf685c5e",
+          "source": "spanishdict",
+          "translation": "to be"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "La comida ya está. ¡Comamos!",
+            "translation": "The food is ready. Let's eat!"
+          },
+          "context": "to be done",
+          "frequency": "0.012500",
+          "headword": "estar",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_7bf01400bbf4d0565bcaec8c6261b3c4",
+          "source": "spanishdict",
+          "translation": "to be ready"
+        }
+      ],
+      "word": "estar"
+    },
+    {
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Trato de pasar tiempo fuera todos los días.",
+            "translation": "I try to spend time outside every day."
+          },
+          "context": "position",
+          "frequency": "0.037500",
+          "headword": "fuera",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "ADV",
+          "sense_id": "sense_8b8e456491bfb4a83bccd280ee334c67",
+          "source": "spanishdict",
+          "translation": "outside"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "¡Salgan fuera! Están manchando de barro el piso.",
+            "translation": "Get out! You are getting mud all over the floor."
+          },
+          "context": "direction",
+          "frequency": "0.012500",
+          "headword": "fuera",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "ADV",
+          "sense_id": "sense_df572d45b250b22330447b2419a78ea4",
+          "source": "spanishdict",
+          "translation": "out"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Es alto y rubio.",
+            "translation": "He's tall and blond."
+          },
+          "context": "used to talk about characteristics",
+          "frequency": "0.087500",
+          "headword": "ser",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to talk about characteristics",
+                  "family": "functional",
+                  "kind": "semantic_relation",
+                  "value": "characteristic"
+                }
+              ]
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_17e7725647568d1608c13da16f4844d9",
+          "source": "spanishdict",
+          "translation": "to be"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Soy de Nueva York.",
+            "translation": "I'm from New York."
+          },
+          "context": "used to indicate origin",
+          "frequency": "0.012500",
+          "headword": "ser",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to indicate origin",
+                  "family": "functional",
+                  "kind": "semantic_relation",
+                  "value": "origin"
+                }
+              ]
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_c71aa96d6d366d41f4dd023113c7a5fa",
+          "source": "spanishdict",
+          "translation": "to be"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "El lápiz es para escribir, no para lanzar.",
+            "translation": "Pencils are for writing, not for throwing."
+          },
+          "context": "to serve as",
+          "frequency": "0.012500",
+          "headword": "ser",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_81e85fe6e859b2c4f9c3557a3227ed08",
+          "source": "spanishdict",
+          "translation": "to be"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "El edificio fue diseñado por un equipo de arquitectos.",
+            "translation": "The building was built by a team of architects."
+          },
+          "context": "with the passive voice",
+          "frequency": "0.062500",
+          "headword": "ser",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "with the passive voice",
+                  "family": "grammar",
+                  "kind": "sense_mark",
+                  "value": "voice=passive"
+                }
+              ]
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_f695a0358be1f5fbe47bf0a1edf5d8cb",
+          "source": "spanishdict",
+          "translation": "to be"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "¿Has ido alguna vez a Chile?",
+            "translation": "Have you ever been to Chile?"
+          },
+          "context": "used to talk about a visit or stay",
+          "frequency": "0.012500",
+          "headword": "ir",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to talk about a visit or stay",
+                  "family": "functional",
+                  "kind": "semantic_scope",
+                  "value": "visit or stay"
+                }
+              ]
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_beecf2a274439ea3cc7db490b59f76d8",
+          "source": "spanishdict",
+          "translation": "to be"
+        },
+        {
+          "frequency": "0.112500",
+          "headword": "fuera de",
+          "metadata": {
+            "source_adapter": "mwe-merged/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "PHRASE",
+          "sense_id": "sense_28e93def1ac80f0ea2c3cc289c88cc40",
+          "source": "mwe-merged",
+          "translation": "outside, out of"
+        }
+      ],
+      "word": "fuera"
+    },
+    {
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Tengo tres coches.",
+            "translation": "I have three cars."
+          },
+          "context": "to possess",
+          "frequency": "0.187500",
+          "headword": "tener",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_c29ed7fa8aa74dfbb6b7aa9934ccffa6",
+          "source": "spanishdict",
+          "translation": "to have"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Tiene los ojos verdes.",
+            "translation": "She has green eyes."
+          },
+          "context": "used to express characteristics",
+          "frequency": "0.012500",
+          "headword": "tener",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to express characteristics",
+                  "family": "functional",
+                  "kind": "semantic_relation",
+                  "value": "characteristic"
+                }
+              ]
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_6ecabee34e89a02e0692a7e773bb583a",
+          "source": "spanishdict",
+          "translation": "to have"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Mi hermana tiene 33 años.",
+            "translation": "My sister is 33 years old."
+          },
+          "context": "used to express age",
+          "frequency": "0.012500",
+          "headword": "tener",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to express age",
+                  "family": "functional",
+                  "kind": "temporal_relation",
+                  "value": "age"
+                }
+              ]
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_c1892cc98669e3682fcd22aa94d46651",
+          "source": "spanishdict",
+          "translation": "to be"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "El lunes tengo una cita con el dentista.",
+            "translation": "I have a dentist appointment on Monday."
+          },
+          "context": "to have planned",
+          "frequency": "0.025000",
+          "headword": "tener",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_baecd4cdf2860fc2cd0e5c8a829f3208",
+          "source": "spanishdict",
+          "translation": "to have"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Si tienes frío, ponte un abrigo.",
+            "translation": "If you are cold, put on a coat."
+          },
+          "context": "to feel",
+          "frequency": "0.012500",
+          "headword": "tener",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_75f2b1de662555d2b1c48ca0e7b85edb",
+          "source": "spanishdict",
+          "translation": "to be"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Mi hijo tiene sarampión.",
+            "translation": "My child has measles."
+          },
+          "context": "to be ill with",
+          "frequency": "0.012500",
+          "headword": "tener",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_2e3fccae3309e3f8f69d193ff7bd752f",
+          "source": "spanishdict",
+          "translation": "to have"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Esta maleta tiene 20 centímetros de ancho.",
+            "translation": "This suitcase is 20 centimeters wide."
+          },
+          "context": "to measure",
+          "frequency": "0.012500",
+          "headword": "tener",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_196ec6182de09dbf8c86364dcc6afda6",
+          "source": "spanishdict",
+          "translation": "to be"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Todavía no tuve el correo electrónico de confirmación de la empresa.",
+            "translation": "I haven't had a confirmation email from the company yet."
+          },
+          "context": "to receive",
+          "frequency": "0.012500",
+          "headword": "tener",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_00258a4e105827f6983dd8e4932bf6be",
+          "source": "spanishdict",
+          "translation": "to have"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Realmente no tiene solución este problema.",
+            "translation": "This problem really has no solution."
+          },
+          "context": "used to describe a possibility",
+          "frequency": "0.050000",
+          "headword": "tener",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to describe a possibility",
+                  "family": "functional",
+                  "kind": "modality",
+                  "value": "possibility"
+                }
+              ]
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_adeaed77867d6b122dd4eb3df4822981",
+          "source": "spanishdict",
+          "translation": "to have"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Tengo que terminar mis deberes antes de salir a la fiesta.",
+            "translation": "I have to finish my homework before going to the party."
+          },
+          "context": "used to indicate an obligation; used with \"que\"",
+          "frequency": "0.025000",
+          "headword": "tener",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to indicate an obligation",
+                  "family": "functional",
+                  "kind": "modality",
+                  "value": "obligation"
+                },
+                {
+                  "embedding_text": "used with \"que\"",
+                  "family": "companion",
+                  "kind": "required_word",
+                  "value": "que"
+                }
+              ]
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_684384d38fd038dccb753288225201fd",
+          "source": "spanishdict",
+          "translation": "to have to"
+        },
+        {
+          "frequency": "0.012500",
+          "headword": "tener cuidado",
+          "metadata": {
+            "source_adapter": "mwe-merged/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "PHRASE",
+          "sense_id": "sense_de9cb030140d17b62d8fc95a79fea878",
+          "source": "mwe-merged",
+          "translation": "to be careful"
+        }
+      ],
+      "word": "tener"
+    },
+    {
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Los culpables de delitos viales deben ser sancionados.",
+            "translation": "Traffic offenders should be punished."
+          },
+          "context": "used to express obligation",
+          "frequency": "0.187500",
+          "headword": "deber",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to express obligation",
+                  "family": "functional",
+                  "kind": "modality",
+                  "value": "obligation"
+                }
+              ]
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_83eaa608f9c1ca2e4b7f2be79bc0447d",
+          "source": "spanishdict",
+          "translation": "should"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "No deberías fumar tanto. Vas a acabar con una tos crónica.",
+            "translation": "You shouldn't smoke so much. You'll end up having a chronic cough."
+          },
+          "context": "used to make a suggestion",
+          "frequency": "0.187500",
+          "headword": "deber",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used to make a suggestion",
+                  "family": "functional",
+                  "kind": "speech_act",
+                  "value": "suggestion"
+                }
+              ]
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_caba46f5b27fbb690c861ed7a4c4a1cd",
+          "source": "spanishdict",
+          "translation": "should"
+        }
+      ],
+      "word": "debería"
+    },
+    {
+      "meanings": [
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "Nunca habían ido a Costa Rica antes del verano pasado.",
+            "translation": "They had never been to Costa Rica before last summer."
+          },
+          "context": "used in compound tenses",
+          "frequency": "0.350000",
+          "headword": "haber",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": [
+                {
+                  "embedding_text": "used in compound tenses",
+                  "family": "construction",
+                  "kind": "auxiliary_frame",
+                  "value": "compound tense"
+                }
+              ]
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_d3473e9bea2029e4f45d2f346a132e95",
+          "source": "spanishdict",
+          "translation": "to have"
+        },
+        {
+          "canonical_example": {
+            "bold_text_offsets": [],
+            "bold_translation_offsets": [],
+            "literal_meaning": "",
+            "tags": [],
+            "text": "No hubo tiempo para saludar a todos en la fiesta.",
+            "translation": "There wasn't enough time to say hi to everyone at the party."
+          },
+          "context": "to exist",
+          "frequency": "0.025000",
+          "headword": "haber",
+          "metadata": {
+            "source_adapter": "spanishdict-sense-menu/v1",
+            "sense_metadata": {
+              "contract_version": "sense-metadata/v1",
+              "features": []
+            }
+          },
+          "pos": "VERB",
+          "sense_id": "sense_8c3ed5451f74fe5b476da1da10b8fecd",
+          "source": "spanishdict",
+          "translation": "to be"
+        }
+      ],
+      "word": "hubiera"
+    },
+    {
+      "meanings": [
+        {
+          "frequency": "1.000000",
+          "pos": "SENSE_CYCLE",
+          "source": "release",
+          "translation": "whose",
+          "metadata": {
+            "source_adapter": null,
+            "sense_metadata": {}
+          }
+        }
+      ],
+      "word": "cuyo"
     }
   ]
 }

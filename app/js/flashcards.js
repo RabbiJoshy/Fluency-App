@@ -3,7 +3,8 @@
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
 import './state.js?v=20260825ak';
 import './speech.js?v=20260825ak';
-import './side-dock.js?v=20260921sd';
+import { goToRoute, routeCodeFor } from './routes.js?v=20260921a';
+import './side-dock.js?v=20260921spot';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
@@ -45,7 +46,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=20260921meta';
+} from './card-metadata-pills.js?v=20260921details';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -755,6 +756,7 @@ window.addEventListener('resize', () => {
     posSummaryResizeFrame = requestAnimationFrame(() => {
         fitSenseRowLayouts(document.getElementById('backContent'));
         fitPosSectionSummaries(document.getElementById('backContent'));
+        refitMeaningScroll();
     });
 });
 
@@ -769,10 +771,11 @@ function availableHeightForMeaningScroll(backEl, scroll) {
     for (const child of backEl.children) {
         if (child === scroll || child.classList.contains('conjugation-panel')) continue;
         const cs = getComputedStyle(child);
-        if (cs.position === 'absolute' || cs.position === 'fixed') continue;
+        if (cs.display === 'none' || cs.position === 'absolute' || cs.position === 'fixed') continue;
         otherFlowChildren++;
         overhead += child.offsetHeight
-            + (parseFloat(cs.marginTop) || 0)
+            // The links' auto margin is spare space, not occupied content.
+            + (child.classList.contains('links-section') ? 0 : (parseFloat(cs.marginTop) || 0))
             + (parseFloat(cs.marginBottom) || 0);
     }
     // With the scroller included, N other children create N gaps in the flex
@@ -780,8 +783,23 @@ function availableHeightForMeaningScroll(backEl, scroll) {
     const backStyle = getComputedStyle(backEl);
     overhead += otherFlowChildren
         * (parseFloat(backStyle.rowGap || backStyle.gap) || 0);
-    return backEl.clientHeight - overhead;
+    return backEl.clientHeight - overhead
+        - (parseFloat(backStyle.paddingTop) || 0) - (parseFloat(backStyle.paddingBottom) || 0);
 }
+
+// Disclosures change row height without rendering the card again. Release the
+// previous cap before measuring so spare space can move the example down.
+function refitMeaningScroll(backEl = document.getElementById('backContent')) {
+    const scroll = backEl?.querySelector('.meanings-scroll');
+    if (!scroll) return;
+    scroll.style.maxHeight = '';
+    const available = availableHeightForMeaningScroll(backEl, scroll);
+    if (scroll.scrollHeight > available) scroll.style.maxHeight = Math.max(100, available) + 'px';
+}
+document.addEventListener('sense-details-change', () => refitMeaningScroll());
+document.addEventListener('toggle', event => {
+    if (event.target.matches?.('.sense-definition-detail')) refitMeaningScroll();
+}, true);
 
 // Cache of known words built from progressData — rebuilt when progress changes
 let _knownWordsCache = null;
@@ -1522,7 +1540,6 @@ function initializeApp() {
                 : icon('<path d="M11 5 6 9H3v6h3l5 4z"></path><path d="m16 10 5 5"></path><path d="m21 10-5 5"></path>'), onSelect: () => toggleAutoSpeak() },
             { label: 'Set progress', iconHTML: icon('<path d="M4 19V9"></path><path d="M10 19V5"></path><path d="M16 19v-7"></path><path d="M22 19H2"></path>'), onSelect: () => showStatsModal() },
             { label: 'Study preferences', iconHTML: icon('<path d="M4 6h10"></path><path d="M18 6h2"></path><circle cx="16" cy="6" r="2"></circle><path d="M4 12h2"></path><path d="M10 12h10"></path><circle cx="8" cy="12" r="2"></circle><path d="M4 18h8"></path><path d="M16 18h4"></path><circle cx="14" cy="18" r="2"></circle>'), onSelect: () => showSettingsModalWithTab('study', { singleTab: true }) },
-            { label: 'Find a word', iconHTML: icon('<circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>'), onSelect: () => window.openFindWord?.() },
             { label: 'Saved words', iconHTML: icon('<path d="M6 4h12v16l-6-3-6 3z"></path>'), onSelect: () => window.openSavedWords?.() }
         ];
         // Card data is a product-level audit surface: it stays available when
@@ -2353,10 +2370,9 @@ function setupKeyboardShortcuts() {
             showSettingsModalWithTab('study', { singleTab: true });
             return;
         }
-        if (commandModifier && !e.altKey && commandKey === 'f' && canFlag) {
+        if (commandModifier && !e.altKey && commandKey === 'f' && e.shiftKey && canFlag) {
             e.preventDefault();
-            if (e.shiftKey) window.showFlagMenu?.();
-            else window.sendWholeCardFlag?.();
+            window.showFlagMenu?.();
             return;
         }
 
@@ -2423,13 +2439,9 @@ function setupKeyboardShortcuts() {
                 window.speakWord(getDisplayedTargetHeadword(card));
             }
         }
-        // F = open find a word modal (for non-audit users)
-        else if ((e.key === 'f' || e.key === 'F') && !canFlag) {
-            e.preventDefault();
-            window.openFindWord?.();
-        }
-        // Legacy single-key shortcut retained for the owner audit workflow.
-        else if ((e.key === 'f' || e.key === 'F') && canFlag) {
+        // F = flag for the owner audit workflow. Word search is ⌘F / Ctrl+F
+        // (wired in setupFindWord) so it matches the desktop find shortcut.
+        else if ((e.key === 'f' || e.key === 'F') && canFlag && !e.metaKey && !e.ctrlKey) {
             e.preventDefault();
             handleFlagAction();
         }
@@ -2523,11 +2535,12 @@ function handleSwipeAction(result) {
     // stack popup/peek) with pending MWE/CLITIC entries starts the phrase
     // chain instead of advancing normally. Captured before recordCardResult
     // in case it mutates card state.
+    // A correct grade on an ordinary deck card (not already inside a nav-
+    // stack popup/peek) can start a child chain: non-decompositional
+    // expressions always, rare senses when that preference is on.
     const swipedCard = flashcards[currentIndex];
     const isChainChild = swipedCard?.isChainChild === true;
-    // Automatic chain child: rare senses and expressions appear after a
-    // correct parent card when their own study preference is on.
-    const mayChain = (expressionsModeEnabled || rareSensesModeEnabled) && !isChainChild
+    const mayChain = !isChainChild
         && cardNavStack.length === 0 && result === 'correct';
 
     // Record the result
@@ -3045,25 +3058,6 @@ async function openSenseCrossReference(event, target) {
  * origin". Rewriting to the plain verb keeps the relation that "origin" alone
  * would lose. Together these cut context text by ~17%.
  */
-const SENSE_CONTEXT_RULES = [
-    [/^used to indicate\s+/i, 'indicates '],
-    [/^used to express\s+/i, 'expresses '],
-    [/^used to talk about\s+/i, 'about '],
-    [/^used to ask for\s+/i, 'asks for '],
-    [/^used to ask\s+/i, 'asks '],
-    [/^used to introduce\s+/i, 'introduces '],
-    [/^used to describe\s+/i, 'describes '],
-    [/^used to refer to\s+/i, 'refers to '],
-    [/^used to define\s+/i, 'defines '],
-    [/^used to elicit\s+/i, 'elicits '],
-    [/^used to give\s+/i, 'gives '],
-    [/^used to make\s+/i, 'makes '],
-    [/^used to call\s+/i, 'calls '],
-    [/^used in\s+/i, 'in '],
-    [/^used with\s+/i, 'with '],
-    [/^used\s+/i, '']
-];
-
 function condenseSenseContext(raw) {
     const text = String(raw || '').trim();
     if (!text) return '';
@@ -3079,9 +3073,6 @@ function condenseSenseContext(raw) {
     // and this branch can go; deferred so it lands with a deck rebuild rather
     // than mid-session.
     if (text.toLowerCase() === 'multiword expression') return '';
-    for (const [pattern, replacement] of SENSE_CONTEXT_RULES) {
-        if (pattern.test(text)) return text.replace(pattern, replacement).trim();
-    }
     return readableSenseNote(text);
 }
 
@@ -3455,16 +3446,29 @@ function getNotableSurfaceRelation(card) {
 }
 
 // ---------------------------------------------------------------------------
-// Phrase / clitic chaining — MWE/CLITIC entries leave the card's pinned tray
-// and are studied as standalone child cards immediately after the parent is
+// Expression child cards — non-decompositional MWEs (mwe-merged PHRASE
+// senses, membership pos=MWE) and CLITIC forms leave the parent card and
+// are studied as a follow-up card after a correct answer. This is not a
+// setting: those expressions are the point of attaching them to the
+// component card. Dictionary PHRASE on the card's own word stays put.
+// A bound-root card whose only meanings are those expressions keeps them
+// on the parent so the card is never blank.
 // ---------------------------------------------------------------------------
-// Phrase / clitic chaining — Invariant MWEs (deterministic bypass) and CLITIC
-// entries leave the card's pinned tray / scroll view and are studied as
-// standalone child cards immediately after the parent is marked correct.
-// Ambiguous MWEs (competitive WSD) stay on the primary card back.
-// Bound root cards (e.g. "repente", "obstante") whose ONLY meanings are
-// invariant MWEs keep the phrase on the card back so the card is never blank.
-// ---------------------------------------------------------------------------
+
+function meaningSourceAdapter(meaning) {
+    return String(meaning?.metadata?.source_adapter || meaning?.source || '');
+}
+
+function isMergedMweAdapter(meaning) {
+    return /mwe-merged/i.test(meaningSourceAdapter(meaning));
+}
+
+function isMultiwordHeadword(meaning, card) {
+    const head = String(meaning?.headword || meaning?.expression || '').trim();
+    if (!head || !/\s/u.test(head)) return false;
+    const surface = String(card?.displaySurface || card?.targetWord || card?.word || '').trim();
+    return head.toLocaleLowerCase() !== surface.toLocaleLowerCase();
+}
 
 function isInvariantMweMeaning(meaning) {
     if (!meaning) return false;
@@ -3491,21 +3495,42 @@ function isAmbiguousMweMeaning(meaning) {
     return false;
 }
 
-function cardHasOnlyInvariantMwes(card) {
+function isExpressionChildMeaning(meaning, card) {
+    if (!meaning) return false;
+    if (meaning.pos === 'MWE' || meaning.pos === 'CLITIC') return true;
+    if (isMergedMweAdapter(meaning)) return true;
+    if (String(meaning.context || '').toLowerCase() === 'multiword expression') return true;
+    if (isInvariantMweMeaning(meaning) || isAmbiguousMweMeaning(meaning)) return true;
+    if ((meaning.pos === 'PHRASE' || meaning.part_of_speech === 'PHRASE')
+        && isMultiwordHeadword(meaning, card)) return true;
+    return false;
+}
+
+function cardHasOnlyExpressionMeanings(card) {
     if (!card || !Array.isArray(card.meanings) || !card.meanings.length) return false;
-    return card.meanings.every(m => isInvariantMweMeaning(m));
+    return card.meanings.every(m => isExpressionChildMeaning(m, card));
+}
+
+function cardHasOnlyInvariantMwes(card) {
+    return cardHasOnlyExpressionMeanings(card);
+}
+
+function isHiddenExpressionOnParent(card, meaning) {
+    return Boolean(card && meaning
+        && isExpressionChildMeaning(meaning, card)
+        && !cardHasOnlyExpressionMeanings(card));
 }
 
 // Ordered list of chainable children for a real deck card. Source of truth
-// is card.meanings entries for invariant MWEs/CLITICs. Chain-child cards
-// themselves are excluded — their single MWE/CLITIC meaning is the card's
+// is card.meanings entries for expressions/CLITICs. Chain-child cards
+// themselves are excluded — their single expression meaning is the card's
 // own content, not something to chain further.
 function collectChainItems(card) {
     if (!card || card.isChainChild) return [];
-    if (cardHasOnlyInvariantMwes(card)) return [];
+    if (cardHasOnlyExpressionMeanings(card)) return [];
     return (card.meanings || [])
         .map((m, idx) => ({ m, idx }))
-        .filter(({ m }) => m.pos === 'MWE' || m.pos === 'CLITIC' || isInvariantMweMeaning(m))
+        .filter(({ m }) => isExpressionChildMeaning(m, card))
         .flatMap(({ m, idx }) => {
             const list = m.allMWEs || m.allClitics || [m];
             return list.map((item, sub) => {
@@ -3513,7 +3538,7 @@ function collectChainItems(card) {
                 const expr = item.expression || item.form || item.headword || ev?.expression || '';
                 const trans = item.translation || item.meaning || m.meaning || m.translation || ev?.translation || '';
                 const ctx = item.context || item.context_heuristic || '';
-                const src = item.source || ev?.sources?.[0] || 'mwe-merged';
+                const src = item.source || meaningSourceAdapter(item) || meaningSourceAdapter(m) || ev?.sources?.[0] || 'mwe-merged';
                 const exs = item.examples || item.allExamples || m.allExamples || m.examples || [];
                 return {
                     parentCard: card,
@@ -3535,7 +3560,28 @@ function collectChainItems(card) {
 function collectExpressionItems(card) {
     if (!card || card.isChainChild) return [];
     const chainItems = collectChainItems(card);
-    if (chainItems.length > 0) return chainItems;
+    const seen = new Set(chainItems.map(item => String(item.expression || '').toLocaleLowerCase()));
+    const extras = [];
+    for (const unused of card.unusedMenuSenses || []) {
+        if (!isExpressionChildMeaning(unused, card)) continue;
+        const expr = unused.headword || unused.expression || '';
+        const key = String(expr).toLocaleLowerCase();
+        if (!expr || seen.has(key)) continue;
+        seen.add(key);
+        extras.push({
+            parentCard: card,
+            parentWord: card.displaySurface || card.targetWord,
+            meaningIndex: -1,
+            subIndex: extras.length,
+            kind: unused.pos === 'CLITIC' ? 'CLITIC' : 'MWE',
+            expression: expr,
+            translation: unused.meaning || unused.translation || '',
+            context: unused.context || '',
+            source: meaningSourceAdapter(unused) || unused.source || 'mwe-merged',
+            examples: unused.allExamples || unused.examples || []
+        });
+    }
+    if (chainItems.length || extras.length) return [...chainItems, ...extras];
     if (Array.isArray(card.mwe_memberships) && card.mwe_memberships.length > 0) {
         return card.mwe_memberships.map((mwe, sub) => ({
             parentCard: card,
@@ -3560,6 +3606,7 @@ function collectRareSenseItems(card) {
     const items = [];
 
     for (const q of qualifying) {
+        if (isExpressionChildMeaning(q, card)) continue;
         const id = q.senseId || q.sense_id || '';
         if (id) seenSenseIds.add(id);
         const trans = q.meaning || q.translation || '';
@@ -3583,6 +3630,7 @@ function collectRareSenseItems(card) {
         for (const unused of card.unusedMenuSenses) {
             const id = unused.senseId || unused.sense_id || '';
             if (id && seenSenseIds.has(id)) continue;
+            if (isExpressionChildMeaning(unused, card)) continue;
             const trans = unused.meaning || unused.translation || '';
             if (!trans) continue;
             if (id) seenSenseIds.add(id);
@@ -4521,10 +4569,8 @@ function revealWildTranslation(event, index) {
 // nothing to show is simply absent from the plan.
 async function buildCardChildren(card) {
     const children = [];
-    if (expressionsModeEnabled) {
-        const expressions = collectExpressionItems(card);
-        if (expressions.length > 0) children.push({ type: 'phrases', items: expressions });
-    }
+    const expressions = collectExpressionItems(card);
+    if (expressions.length > 0) children.push({ type: 'phrases', items: expressions });
     if (rareSensesModeEnabled) {
         const rareSenses = collectRareSenseItems(card);
         if (rareSenses.length > 0) children.push({ type: 'phrases', items: rareSenses });
@@ -4908,6 +4954,7 @@ function getQualifyingRareSenses(card) {
     if (!card || !Array.isArray(card.unusedMenuSenses)) return [];
     if (!card._cachedQualifyingRareSenses) {
         card._cachedQualifyingRareSenses = card.unusedMenuSenses.filter(unused => {
+            if (isExpressionChildMeaning(unused, card)) return false;
             const examples = extractCanonicalDictionaryExamples(unused);
             return examples.length > 0 && (unused.meaning || unused.translation);
         }).map(unused => {
@@ -5117,6 +5164,38 @@ function cardLemmaSlotIsLoadBearing(card, displayedTargetHeadword) {
     return forms.some(form => foldSurfaceForm(form) !== shown);
 }
 
+function renderGrammarCardNote(card, { hidden = false } = {}) {
+    const el = document.getElementById('grammarCardNote');
+    if (!el) return;
+    const note = String(card?.grammarNote || '').trim();
+    const pairs = Array.isArray(card?.grammarPairs) ? card.grammarPairs : [];
+    if (hidden || (!note && !pairs.length)) {
+        el.hidden = true;
+        el.innerHTML = '';
+        return;
+    }
+    const chips = pairs.map(pair => {
+        const surface = String(pair.surface || '').trim();
+        const label = String(pair.label || surface).trim();
+        if (!surface) return '';
+        return `<button type="button" class="grammar-pair-chip" data-grammar-surface="${escapeCardText(surface)}">${escapeCardText(label)}</button>`;
+    }).filter(Boolean);
+    const pairHtml = chips.length
+        ? `<span class="grammar-pair-chips">${chips.join('<span class="grammar-pair-plus" aria-hidden="true">+</span>')}</span>`
+        : '';
+    const noteHtml = note ? `<span class="grammar-card-note-text">${escapeCardText(note)}</span>` : '';
+    el.innerHTML = `${noteHtml}${pairHtml}`;
+    el.hidden = false;
+    const language = routeCodeFor(selectedLanguage, config?.languages);
+    el.querySelectorAll('[data-grammar-surface]').forEach(button => {
+        button.addEventListener('click', event => {
+            event.preventDefault();
+            event.stopPropagation();
+            goToRoute({ kind: 'word', language, surface: button.getAttribute('data-grammar-surface') });
+        });
+    });
+}
+
 function updateCard({ announceHeadword = false } = {}) {
     const card = flashcards[currentIndex];
     const langConfig = config.languages[selectedLanguage];
@@ -5161,8 +5240,8 @@ function updateCard({ announceHeadword = false } = {}) {
 
     // Reset meaning index if out of bounds or pointing to a detached invariant MWE
     if (card.isMultiMeaning && (currentMeaningIndex >= card.meanings.length
-        || (!cardHasOnlyInvariantMwes(card) && isInvariantMweMeaning(card.meanings[currentMeaningIndex])))) {
-        const firstVisible = card.meanings.findIndex(m => !isInvariantMweMeaning(m));
+        || (isHiddenExpressionOnParent(card, card.meanings[currentMeaningIndex])))) {
+        const firstVisible = card.meanings.findIndex(m => !isHiddenExpressionOnParent(card, m));
         currentMeaningIndex = firstVisible >= 0 ? firstVisible : 0;
         currentGroupSelection = null;
     }
@@ -5174,7 +5253,7 @@ function updateCard({ announceHeadword = false } = {}) {
         card.meanings.forEach((meaning, index) => {
             const pos = meaning.pos === 'SENSE_CYCLE' ? (meaning.cycle_pos || 'X') : meaning.pos;
             if (!pos || ['MWE', 'CLITIC', 'EXAMPLE_ONLY'].includes(pos)) return;
-            if (!cardHasOnlyInvariantMwes(card) && isInvariantMweMeaning(meaning)) return;
+            if (isHiddenExpressionOnParent(card, meaning)) return;
             const weight = Number(meaning.percentage ?? meaning.frequency ?? meaning.count) || 0;
             const entry = posWeights.get(pos) || { pos, weight: 0, firstIndex: index };
             entry.weight += weight;
@@ -5274,7 +5353,8 @@ function updateCard({ announceHeadword = false } = {}) {
                 }];
             } else {
                 normalMeanings = card.meanings.filter(m =>
-                    m.pos !== 'MWE' && m.pos !== 'CLITIC' && m.pos !== 'SENSE_CYCLE');
+                    m.pos !== 'MWE' && m.pos !== 'CLITIC' && m.pos !== 'SENSE_CYCLE'
+                    && !isHiddenExpressionOnParent(card, m));
             }
 
             // English-first cards use several senses as a semantic fingerprint
@@ -5467,6 +5547,7 @@ function updateCard({ announceHeadword = false } = {}) {
         for (const m of fMeanings) {
             const productionGloss = getProductionEnglishCue(card, m) || m.meaning;
             const posChip = m.pos && !['MWE', 'CLITIC', 'SENSE_CYCLE', 'EXAMPLE_ONLY'].includes(m.pos)
+                && !isHiddenExpressionOnParent(card, m)
                 ? renderFrontPosUnit(m.pos, isVerbPos(m.pos), 'card-pos front-meaning-pos')
                 : '';
             html += `<div class="front-meaning-row">
@@ -5506,6 +5587,7 @@ function updateCard({ announceHeadword = false } = {}) {
         const seenPairs = new Set();
         (posSource.length ? posSource : [{ pos: card.partOfSpeech, headword: citationForm }]).forEach(meaning => {
             if (['MWE', 'CLITIC', 'SENSE_CYCLE', 'EXAMPLE_ONLY'].includes(meaning.pos)) return;
+            if (isHiddenExpressionOnParent(card, meaning)) return;
             const lemma = String(meaning.headword || citationForm || displayedTargetHeadword || '').trim();
             const key = `${lemma}\0${meaning.pos}`;
             if (!meaning.pos || seenPairs.has(key)) return;
@@ -5576,6 +5658,10 @@ function updateCard({ announceHeadword = false } = {}) {
         frontLemmaEl.classList.remove('is-reserved');
         frontLemmaEl.style.display = 'none';
     }
+
+    renderGrammarCardNote(card, {
+        hidden: Boolean(isFlipped || flippedFrontMeanings),
+    });
 
     // English-first production needs the form constraint in sight. Keep each
     // possible analysis coupled (subject + tense/mood) and let it wrap as one
@@ -5718,7 +5804,7 @@ function updateCard({ announceHeadword = false } = {}) {
                 ? (meaning.cycle_pos || 'X')
                 : meaning.pos;
             if (pos === 'MWE' || pos === 'CLITIC' || pos === 'EXAMPLE_ONLY') return;
-            if (!cardHasOnlyInvariantMwes(card) && isInvariantMweMeaning(meaning)) return;
+            if (isHiddenExpressionOnParent(card, meaning)) return;
             if (!pos) return;
             const weight = Number(meaning.percentage ?? meaning.frequency ?? meaning.count) || 0;
             const entry = posWeights.get(pos) || { pos, meaningIndex, weight: 0 };
@@ -5916,6 +6002,15 @@ function updateCard({ announceHeadword = false } = {}) {
             activeGroupSenseRaw
         ).display);
 
+        // Build headers from rows that were actually emitted, including filtering
+        // for compact knowledge views. Hidden inventory must not inflate +N.
+        const recordSectionMeanings = (rows, meanings) => {
+            rows.summarySenses ||= [];
+            for (const meaning of meanings) {
+                const raw = getProductionEnglishCue(card, meaning) || meaning.meaning || meaning.translation || '';
+                rows.summarySenses.push(senseSummaryText(projectWiktionaryGloss(meaning, raw).display));
+            }
+        };
         const renderSections = (sections) => Array.from(sections)
             .map(([key, rows]) => {
                 const g = groupInfo.get(key);
@@ -5933,15 +6028,16 @@ function updateCard({ announceHeadword = false } = {}) {
                 // information (for example, an inflected surface).
                 const hw = g.headword
                     ? `<span class="pos-pill-lemma">${escapeCardText(g.headword)}</span>` : '';
-                const summarySense = key === activeLemmaPosKey && activeGroupSense
+                const visibleSenses = rows.summarySenses || [];
+                const summarySense = key === activeLemmaPosKey && visibleSenses.includes(activeGroupSense)
                     ? activeGroupSense
-                    : (g.senses[0] || '');
+                    : (visibleSenses[0] || '');
                 // Keep the active sense first, then offer the rest in source
                 // order. A post-render measurement decides how many fit; +N
                 // is a genuine overflow indicator rather than a hard-coded
                 // substitute for every sense after the first.
                 // Strict normalized Set deduplication ensures no duplicate sense ever renders.
-                const candidateSenses = [summarySense, ...g.senses];
+                const candidateSenses = [summarySense, ...visibleSenses];
                 const summarySenses = [];
                 const seenSummaryKeys = new Set();
                 for (const sense of candidateSenses) {
@@ -6023,7 +6119,7 @@ function updateCard({ announceHeadword = false } = {}) {
                 const transRawSize = new Map();
                 const ctxRawSize = new Map();
                 card.meanings.forEach((m, idx) => {
-                    if (m.pos === 'MWE' || m.pos === 'CLITIC' || m.pos === 'SENSE_CYCLE' || (!cardHasOnlyInvariantMwes(card) && isInvariantMweMeaning(m))) {
+                    if (m.pos === 'MWE' || m.pos === 'CLITIC' || m.pos === 'SENSE_CYCLE' || isHiddenExpressionOnParent(card, m)) {
                         axisOf.set(idx, 'special');
                         return;
                     }
@@ -6112,7 +6208,7 @@ function updateCard({ announceHeadword = false } = {}) {
             const ax = GROUP_DUPLICATE_MEANINGS ? (axisOf.get(idx) || 'singleton') : 'singleton';
             if (ax !== 'singleton') return;
             const pos = m.pos === 'SENSE_CYCLE' ? (m.cycle_pos || 'X') : m.pos;
-            if (pos === 'MWE' || pos === 'CLITIC' || (!cardHasOnlyInvariantMwes(card) && isInvariantMweMeaning(m))) return;
+            if (pos === 'MWE' || pos === 'CLITIC' || isHiddenExpressionOnParent(card, m)) return;
             const rawGloss = String(getProductionEnglishCue(card, m) || m.meaning || m.translation || '').trim();
             const proj = projectWiktionaryGloss(m, rawGloss);
             const normKey = `${pos}\u0000${m.headword || ''}\u0000${proj.display.toLowerCase().replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '').replace(/\s+/g, ' ').trim()}`;
@@ -6174,7 +6270,7 @@ function updateCard({ announceHeadword = false } = {}) {
             const bgColor = 'rgba(var(--sense-match-rgb), 0.10)';
             const textColor = isSelected ? 'var(--text-primary)' : 'var(--text-primary)';
             const borderStyle = '';
-            const isInvariantMWE = !cardHasOnlyInvariantMwes(card) && isInvariantMweMeaning(m);
+            const isInvariantMWE = isHiddenExpressionOnParent(card, m);
             const isMWE = m.pos === 'MWE' || isInvariantMWE;
             const isClitic = m.pos === 'CLITIC';
             const isSenseCycle = m.pos === 'SENSE_CYCLE';
@@ -6350,6 +6446,7 @@ function updateCard({ announceHeadword = false } = {}) {
                     ? ` <span class="sense-cycle-expand" style="cursor: pointer; opacity: 0.7; font-size: 12px;" onclick="event.stopPropagation(); this.parentElement.querySelector('.sense-cycle-short').style.display='none'; this.parentElement.querySelector('.sense-cycle-full').style.display='inline'; this.style.display='none';" title="Show all senses">…</span>`
                     : '';
                 const cycleTextClass = adaptiveRowTextClass(joinedFull);
+                recordSectionMeanings(target, m.allSenses || [m]);
                 target.push(`
                 <div class="meaning-row meaning-row-cycle ${cycleTextClass}${isSelected ? ' selected' : ''}${rowStateClasses}" style="position: relative; display: flex; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 39px; opacity: 0.75;" onclick="selectMeaning(${idx})">
                     ${renderRowCheckSlot(isSelected)}
@@ -6428,6 +6525,7 @@ function updateCard({ announceHeadword = false } = {}) {
                     const anyMemberSelected = orderedMembers.some(mi => mi === currentMeaningIndex);
                     const groupIsCurrent = groupSelected || anyMemberSelected;
                     if (compactKnowledgeView && !groupIsCurrent) return;
+                    recordSectionMeanings(target, orderedMembers.map(i => card.meanings[i]));
                     const groupStateClasses = groupIsCurrent ? ' is-current-sense' : '';
                     const cardBg = 'rgba(var(--sense-match-rgb), 0.08)';
                     // The outer row is the complete-family selection marker.
@@ -6552,7 +6650,7 @@ function updateCard({ announceHeadword = false } = {}) {
                     target.push(`
                     <div class="meaning-row meaning-row-group ${groupedTextClass}${groupIsCurrent ? ' selected' : ''}${groupStateClasses}" data-axis="${axis}" onclick="selectGroup('${axis}', ${idx})" style="position: relative; display: grid; grid-template-columns: ${outerGridCols}; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${cardBg}; border-radius: 8px; cursor: pointer;">
                         ${renderRowCheckSlot(groupIsCurrent)}
-                        <div class="meaning-row-body group-card-body${sharedCleanLength > 48 ? ' has-long-shared' : ''}" style="display: grid; grid-template-columns: ${gridCols}; align-items: center; gap: 3px 6px; min-width: 0; width: 100%; max-width: 100%; box-sizing: border-box; padding: 4px 8px; background: ${sharedBg}; ${sharedBorder} border-radius: 6px; justify-self: center;">
+                        <div class="meaning-row-body group-card-body${sharedCleanLength > 48 ? ' has-long-shared' : ''}${maxMemberLength > 80 ? ' has-long-context' : ''}" style="display: grid; grid-template-columns: ${gridCols}; align-items: center; gap: 3px 6px; min-width: 0; width: 100%; max-width: 100%; box-sizing: border-box; padding: 4px 8px; background: ${sharedBg}; ${sharedBorder} border-radius: 6px; justify-self: center;">
                             ${memberCells}
                             ${sharedCellHtml}
                         </div>
@@ -6561,6 +6659,7 @@ function updateCard({ announceHeadword = false } = {}) {
                     `);
                 } else {
                     if (compactKnowledgeView && !isSelected) return;
+                    recordSectionMeanings(target, [m]);
                     const foldInfo = singletonFoldLeaders.get(idx);
                     const isFoldedLeader = !!foldInfo;
                     const isFoldActive = isFoldedLeader && foldInfo.allIndices.includes(currentMeaningIndex);
@@ -6643,7 +6742,9 @@ function updateCard({ announceHeadword = false } = {}) {
         }
         // Expressions mode off keeps the pinned tray; on, MWE/CLITIC entries
         // leave silently as chain children (no on-card announcement).
-        if (!expressionsModeEnabled && traySections.size > 0) {
+        // Expressions always leave as chain children. Bound-root cards keep
+        // their only meanings in the scroll region, not this tray.
+        if (traySections.size > 0 && !expressionsModeEnabled) {
             backHTML += `<div class="meanings-tray">${renderSections(traySections)}</div>`;
         }
         // Show current sentence
@@ -7388,15 +7489,6 @@ function updateCard({ announceHeadword = false } = {}) {
         cardBackPips.setAttribute('aria-label', onPhraseCard
             ? `Card ${scrubIndex + 1} of ${scrubCount} · phrases`
             : `Card ${scrubIndex + 1} of ${scrubCount}`);
-    }
-
-    // Drive ghost card visibility based on how many real cards exist behind each side
-    const cardContainer = document.querySelector('.card-container');
-    if (cardContainer) {
-        cardContainer.classList.toggle('at-deck-start',   scrubIndex === 0);
-        cardContainer.classList.toggle('at-deck-start-2', scrubIndex === 1);
-        cardContainer.classList.toggle('at-deck-end',     scrubIndex === scrubCount - 1);
-        cardContainer.classList.toggle('at-deck-end-2',   scrubIndex === scrubCount - 2);
     }
 
     // Setup outside nav buttons (desktop)

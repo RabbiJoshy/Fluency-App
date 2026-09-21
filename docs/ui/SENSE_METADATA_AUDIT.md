@@ -27,3 +27,13 @@ These are shared concept rules, not separate dictionary-specific layouts. Contex
 3. The three generic Portuguese readings above deserve source review if stronger distinctions are wanted. Their absence of a context is explicit; UI wording must not fabricate one.
 
 The census checks display preservation and distinction, not dictionary correctness or every corpus assignment.
+
+## Second pass — cleaner disclosure and broader examples
+
+- Details / Hide is inline, without a numeric count bubble; content wraps independently of the control. Expansion remeasures the scroll budget and excludes the bottom toolbar's auto margin, which is free space. Resize and full-definition disclosures also remeasure.
+- Section previews are collected from actual emitted rows after display filtering. Their +N counts cannot include omitted inventory.
+- Added 20 Portuguese/Spanish release fixtures: eu, ele, ela, tem, ter, pelo, dar, seja, porquê, sexo; yo, él, ser, era, estar, fuera, tener, debería, hubiera, cuyo.
+- Shared deterministic rules deduplicate identical semicolon clauses, shorten known grammatical boilerplate without stripping qualifications, and put the semantic explanation before a bracketed construction. Shared transitivity is available in Details rather than repeated beside every sibling context. No per-word overrides or dictionary edits.
+- Compared note formatting over the first 1,000 pt/es cards. The shared note formatter changes 38 Portuguese and 58 Spanish contexts; some Spanish boilerplate was already shortened by the separate context renderer, now consolidated into the shared rule.
+- Verified 127 app tests; 134 expanded group/width combinations across the 40 fixtures at 375px and 1280px; 12 targeted normal/large-text checks. Sparse pronoun cards expose details without a scrollbar; genuinely dense ter/dar examples retain bounded scrolling. The larger text check uses the existing card text scale hook in an isolated renderer harness.
+- Pronoun compression is agreed but remains a separate pending change; this pass does not merge identities or selectable senses.
