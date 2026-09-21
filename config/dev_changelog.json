@@ -2,6 +2,21 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-21T13:40:00+01:00",
+      "date": "2026-09-21 13:40 BST",
+      "agent": "Claude",
+      "summary": "On a wide desktop, reference sheets now open at the side instead of over the middle: synonyms docks beside the card, session sheets dock left, and the setup page's word lists open as a right-hand sheet.",
+      "detail": [
+        "One rule decides placement: a sheet you read while still looking at what is behind it docks to a side; a task that takes your attention (sign-in, settings, imports, language picker, Fast Track, end of deck) stays centred.",
+        "Study session, 1360px and wider: the right gutter is about this card (find word, lyric breakdown, rare senses, and now synonyms); the left gutter is about the session (saved words, study progress, keyboard shortcuts, help). The card stays fully visible.",
+        "Synonyms is hosted on the page while open, as the conjugation panel already was, because the card's flip transform clips anything inside it. It closes when the card flips to the front, since its headword would give the answer away in English-to-target mode, and a card change removes it.",
+        "Setup page, 1024px and wider: merged forms, skipped words, extras, saved words, cognate rules, progress, help and shortcuts open as a right-hand sheet over the progress sidebar, with the steps still readable behind a light dim.",
+        "Narrower windows and phones are unchanged.",
+        "Synonyms data currently exists only in the lyrics decks; the v15 speech decks carry none."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-21T11:20:00+01:00",
       "date": "2026-09-21 11:20 BST",
       "agent": "Claude",
