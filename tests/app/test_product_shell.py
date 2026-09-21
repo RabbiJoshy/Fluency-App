@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v530"
+EXPECTED_CACHE_NAME = "flashcards-v531"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -545,10 +545,11 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('Bring back learned words', overview)
         self.assertIn('More study options', overview)
         self.assertIn('Rare senses after a correct answer', overview)
-        self.assertIn('Expressions after a correct answer', overview)
+        self.assertNotIn('Expressions after a correct answer', overview)
         self.assertIn('data-setting="rareSensesMode"', overview)
-        self.assertIn('data-setting="expressionsMode"', overview)
+        self.assertNotIn('data-setting="expressionsMode"', overview)
         self.assertNotIn('data-setting="phrasesMode"', overview)
+        self.assertIn('expressionsModeEnabled = true;', ui)
 
     def test_fast_track_skipped_words_are_study_sets_of_twenty(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
@@ -791,8 +792,8 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
         self.assertIn("/js/spotify.js?v=20260918l", worker)
-        self.assertIn("/js/main.js?v=20260921spot", worker)
-        self.assertIn("/js/ui.js?v=20260921x", worker)
+        self.assertIn("/js/main.js?v=20260921mwe", worker)
+        self.assertIn("/js/ui.js?v=20260921mwe", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:

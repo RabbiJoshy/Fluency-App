@@ -621,6 +621,7 @@ function joinWithMaster(indexData, master) {
             if (sense.source) meaning.source = sense.source;
             if (sense.headword) meaning.headword = sense.headword;
             if (sense.context) meaning.context = sense.context;
+            if (sense.metadata) meaning.metadata = sense.metadata;
             if (Array.isArray(sense.regions) && sense.regions.length) {
                 meaning.regions = [...sense.regions];
             }

@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-21T23:50:00+01:00",
+      "date": "2026-09-21 23:50 BST",
+      "agent": "Cursor",
+      "summary": "Non-decompositional phrases now leave the parent card and show as their own follow-up after a correct answer.",
+      "detail": [
+        "PHRASE senses from the MWE inventory are no longer extra senses on the word card.",
+        "Marking the word correct always opens a separate expressions child card, independent of rare senses.",
+        "That follow-up cannot be turned off in Settings, because those expressions are meant to be learned."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-21T23:22:00+01:00",
       "date": "2026-09-21 23:22 BST",
       "agent": "Cursor",
