@@ -3,6 +3,7 @@
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
 import './state.js?v=20260825ak';
 import { validateVocabularyIndex } from './data-contracts.js?v=20260825ak';
+import { formatRoute } from './routes.js?v=20260921a';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -333,10 +334,14 @@ async function resumeLastStudySession() {
     if (snapshot.mode !== currentMode || (snapshot.mode === 'lyrics' && snapshot.artistSlug !== currentArtist)) {
         const url = new URL(window.location.href);
         url.search = '';
+        url.hash = '';
         if (snapshot.mode === 'lyrics' && snapshot.artistSlug) {
-            url.searchParams.set('artist', snapshot.artistSlug);
+            url.hash = formatRoute({
+                kind: 'artist',
+                artist: snapshot.artistSlug,
+                scope: snapshot.artistVocabularyScope === 'extra' ? 'extra' : 'main'
+            });
             if (snapshot.releaseId) url.searchParams.set('lyricsRelease', snapshot.releaseId);
-            if (snapshot.artistVocabularyScope === 'extra') url.searchParams.set('scope', 'extra');
         }
         url.searchParams.set('resume', '1');
         window.location.href = url.toString();
@@ -402,10 +407,12 @@ async function resumeLastStudySession() {
         button.classList.toggle('selected', (button.dataset.cognate === 'exclude') === excludeCognates));
     const url = new URL(window.location.href);
     url.searchParams.delete('resume');
-    if (snapshot.mode === 'lyrics' && artistVocabularyScope === 'extra') {
-        url.searchParams.set('scope', 'extra');
-    } else {
-        url.searchParams.delete('scope');
+    if (snapshot.mode === 'lyrics' && snapshot.artistSlug && snapshot.artistSlug !== 'custom') {
+        url.hash = formatRoute({
+            kind: 'artist',
+            artist: snapshot.artistSlug,
+            scope: artistVocabularyScope === 'extra' ? 'extra' : 'main'
+        });
     }
     history.replaceState(null, '', url);
     try {

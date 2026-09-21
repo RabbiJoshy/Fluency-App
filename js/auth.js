@@ -4,6 +4,7 @@ import './state.js?v=20260825ak';
 import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=20260921ac';
 import { applyRemoteFastTrack } from './fast-track-preferences.js?v=20260920a';
 import { dbGet, dbPut } from './offline-db.js?v=20260825ak';
+import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=20260921a';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -81,7 +82,7 @@ async function loadSecrets() {
 }
 
 // Detect whether this page load is a reload (F5 / Cmd-R) versus a fresh
-// navigation (link click, mode switch to ?artist=..., new tab). Uses the
+// navigation (link click, mode switch to #/artist/..., new tab). Uses the
 // modern Navigation Timing API with a fallback to the deprecated
 // performance.navigation interface for older browsers.
 function _isPageReload() {
@@ -93,6 +94,20 @@ function _isPageReload() {
         return performance.navigation.type === 1;  // TYPE_RELOAD
     }
     return false;
+}
+
+// Resolves once someone is signed in or has chosen guest, whichever path got
+// them there. A linked word waits on it so the card never opens under the
+// landing.
+let _resolveAuthReady = null;
+window.authReady = window.authReady || new Promise(resolve => { _resolveAuthReady = resolve; });
+function _markAuthReady() { _resolveAuthReady?.(); }
+
+// The first-run tour covers the study card; a visitor who arrived on a
+// linked word sees that card first and the tour on a later visit.
+function _openFirstRunTutorialUnlessLinked() {
+    if (window.fluencyRoute?.kind === 'word') return;
+    window.openFirstRunCardTutorial?.();
 }
 
 // Check authentication on page load.
@@ -108,11 +123,13 @@ function _isPageReload() {
 //   - refresh (F5/Cmd-R)   → clear guest session → landing
 //   - mode/artist switch   → keep guest session → app, no landing
 //   - new tab at app URL   → no session → landing
-//   - new tab at ?about=1  → no session → landing + About on top
+//   - new tab at #/about   → no session → landing + About on top
 //   - named user, any case → logged in (localStorage)
 function checkAuthentication() {
     // User-initiated refresh should drop guest mode so the landing reappears.
-    if (_isPageReload()) {
+    // A route change also reloads (mode is decided at boot) but is a same-tab
+    // navigation, so it keeps the guest session like any other.
+    if (_isPageReload() && !consumeRouteNavigation()) {
         sessionStorage.removeItem('flashcardGuestSession');
     }
 
@@ -127,6 +144,7 @@ function checkAuthentication() {
                 window.applyGlobalStudyDefaults?.();
                 showUserInfo();
                 hideAuthModal();
+                _markAuthReady();
                 return;
             }
         } catch (e) {
@@ -143,6 +161,7 @@ function checkAuthentication() {
         window.applyGlobalStudyDefaults?.();
         showUserInfo();
         hideAuthModal();
+        _markAuthReady();
         return;
     }
     showAuthModal();
@@ -177,7 +196,7 @@ function showUserInfo() {
 // Guest mode handler.
 //
 // Writes a sessionStorage marker so guest state survives same-tab
-// navigations (mode switch → ?artist=..., artist swap, etc.) but NOT a
+// navigations (mode switch → #/artist/..., artist swap, etc.) but NOT a
 // user-initiated refresh. The refresh distinction is enforced in
 // checkAuthentication() via the Navigation Timing API — so refreshing
 // always surfaces the landing, while clicking "Normal mode" from the top
@@ -192,8 +211,9 @@ function enterGuestMode() {
     sessionStorage.setItem('flashcardGuestSession', '1');
     showUserInfo();
     hideAuthModal();
+    _markAuthReady();
     updateIncorrectButtonVisibility();
-    setTimeout(() => window.openFirstRunCardTutorial?.(), 250);
+    setTimeout(_openFirstRunTutorialUnlessLinked, 250);
 }
 
 // Show login form
@@ -253,10 +273,11 @@ async function submitLogin() {
     localStorage.setItem('flashcardUser', JSON.stringify(currentUser));
     showUserInfo();
     hideAuthModal();
-    setTimeout(() => window.openFirstRunCardTutorial?.(), 250);
+    setTimeout(_openFirstRunTutorialUnlessLinked, 250);
 
     // Load user progress from Google Sheets
     await loadUserProgressFromSheet();
+    _markAuthReady();
     // Artist/song metadata may have initialized while the login modal was
     // still open, when there was no named user to reconcile. Complete the
     // per-user playlist restore now that identity is known.
@@ -1179,21 +1200,18 @@ function renderMarkdown(md) {
     return html.join('\n');
 }
 
-// Keep the `?about=1` URL param in sync with the About modal's open state so
-// the landing page is shareable (send `?about=1` to a recruiter; they see the
-// landing cold) AND refreshing while viewing it stays on the landing.
+// Keep `#/about` in sync with the About modal's open state so the landing is
+// shareable (send `#/about` to a recruiter; they see the landing cold) AND
+// refreshing while viewing it stays on the landing. It only takes over an
+// empty route: opening About over an artist deck must not overwrite the
+// address of that deck.
 function _setAboutURLParam(open) {
     try {
-        const url = new URL(window.location);
-        const has = url.searchParams.has('about');
-        if (open && !has) {
-            url.searchParams.set('about', '1');
-            history.replaceState(null, '', url.toString());
-        } else if (!open && has) {
-            url.searchParams.delete('about');
-            const qs = url.searchParams.toString();
-            const clean = url.pathname + (qs ? '?' + qs : '') + url.hash;
-            history.replaceState(null, '', clean);
+        const current = parseRoute(window.location.hash).kind;
+        if (open && current === 'home') {
+            history.replaceState(null, '', `${window.location.pathname}${window.location.search}${formatRoute({ kind: 'about' })}`);
+        } else if (!open && current === 'about') {
+            history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
         }
     } catch (_) { /* older browsers: no-op */ }
 }
@@ -1727,7 +1745,7 @@ function setupAuthEventListeners() {
     }
 
     // About this project button. Fullscreen modal; only close paths are the ×
-    // button and Escape. hideAboutProjectModal also strips ?about=1 from the
+    // button and Escape. hideAboutProjectModal also strips #/about from the
     // URL so refreshing after dismissing lands you in the app, not the modal.
     const aboutModal = document.getElementById('aboutProjectModal');
     document.getElementById('aboutProjectBtn').addEventListener('click', openAboutProjectModal);

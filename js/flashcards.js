@@ -8732,7 +8732,7 @@ document.addEventListener('click', (e) => {
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
 const ASSET_VERSION = '20260921x';
-const MODALS_ASSET_VERSION = '20260917k';
+const MODALS_ASSET_VERSION = '20260921rt';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
