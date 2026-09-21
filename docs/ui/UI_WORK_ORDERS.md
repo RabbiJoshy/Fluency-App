@@ -32,7 +32,7 @@ need code, so they come last.
 | 10 | URLs and routing | blocked on one decision | yes |
 | 11 | Function words you cannot teach atomically | research, high stakes | yes |
 | 12 | Sense metadata vocabulary | a conversation per family | yes, a whole pass |
-| 13 | English inflections in translations (*solía*) | part of a separate problem | yes |
+| 13 | English inflections in translations (*solía*) | moved to `docs/open/conjugations.md` | — |
 
 ## Rules for every chat in this batch
 
@@ -392,7 +392,10 @@ shown, not whether it can be read.
 
 ## 13. English inflections in translations (*solía*)
 
-`solía` glosses badly as "he was using to". This is one instance of a wider
-problem Joshua is tracking separately — improving the English inflections of
-translations generally — so it belongs with that work, not on its own. Gloss
-quality lives in the sense-menu projection, not the app.
+Moved to `docs/open/conjugations.md` → *Come back to*, which is where the
+English-inflection work lives (the DRAWER chat).
+
+Correction to what this section said before: the defect is in the **app**, not
+the sense-menu projection. The menu gloss is `to use to`; the app's inflector
+(`finiteEnglishCue` in `app/js/reverse-cues.js`) turns every imperfect into
+`was/were + -ing`, producing “he/she was using to”.

@@ -30,6 +30,7 @@ This is not WSD. Card identity stays the observed surface. Join key is the sense
 - Imperfect of English *be* still renders *was being* (clock wants *it was*).
 - French `SENSE_CYCLE` inflection / headword is still weak.
 - SpanishDict *hacer* time gloss is already finite (“it has been”); the inflector skips it.
+- *soler* renders as “he/she was using to”. The menu gloss on every *soler* form in v15 is `to use to` (SpanishDict, context `with infinitive`: *solía* r1326, *suele* r3900, *solíamos* r6445, *solían* r7733), and `finiteEnglishCue` in `reverse-cues.js` renders **every** imperfect as `was/were + -ing`, so *use* → *was using*. Same root as *was being* above: the imperfect is always progressive, which is wrong for habitual and stative verbs. *soler* is itself the habitual marker and English *used to* is defective (no present, no progressive), so it wants a lexical exception — past → *used to*, present *suele* → *usually* / *tends to* — not a tense rule. Also raised as UI work order #13; the “with infinitive” marker is UI work order #7.
 
 ## Reopen
 
