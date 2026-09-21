@@ -25,7 +25,7 @@ need code, so they come last.
 | 3 | Header and underline must agree | ✅ done 2026-09-20 | — |
 | 4 | Portuguese cognate exclusions | ✅ done 2026-09-21 | — |
 | 5 | The "jump to my level" bug | ✅ done 2026-09-21 | — |
-| 6 | Example ordering | medium + a deck rebuild | one decision |
+| 6 | Example ordering | ✅ done | — |
 | 7 | Merged-lemma policy | research | yes, throughout |
 | 8 | Modals using the sides | needs a modal inventory first | yes |
 | 9 | Walkthrough / tutorial / about | needs the current state established first | yes |
@@ -41,10 +41,23 @@ need code, so they come last.
    files are the contention points. Groups 2, 3, 6 and 7 all live in
    `flashcards.js` — write in parallel if you like, but do not deploy
    simultaneously.
-3. **Cache busting.** If you only changed `.js`/`.css`, bump `CACHE_NAME` in
-   `app/service-worker.js` — the activate handler deletes the old shell cache,
-   which re-fetches every asset regardless of `?v=` tag. Use that instead of
-   editing `index.html` while `index.html` is contested.
+3. **Cache busting needs three edits, not one.** Bumping `CACHE_NAME` alone
+   is **not enough** — it clears the service worker's cache but not the
+   browser's HTTP cache, which keys on the `?v=` tag. Changing an asset means:
+   bump that asset's `?v=` (in `index.html`, `main.js` and the service-worker
+   pre-cache list), bump **`main.js`'s own** `?v=` too (a cached `main.js`
+   keeps importing the old URL), and bump `CACHE_NAME`. This cost three
+   deploys to learn; the detail is under section 1.
+   **Never reuse a tag another session has already chosen.** On 2026-09-21 a
+   concurrent session had bumped `flashcards.js` to `20260921a` in its
+   uncommitted working tree while also editing `flashcards.js`. Deploying under
+   that same tag would have cached one session's file at a URL the other then
+   ships different content under — and browsers would never re-fetch it. Pick
+   the next letter. Whoever deploys second must bump again.
+   **When a shared file holds someone else's uncommitted hunks**, do not
+   `git add` it. Rebuild the file from `HEAD` with only your own edits
+   applied, then stage that blob with `git hash-object -w` +
+   `git update-index --cacheinfo`. Their work stays untouched in the tree.
 4. **Deploy at the end of the response**, per the CLAUDE.md procedure.
    GitHub Pages took ~5 minutes per build before the prune below and ~40–100s
    after it. Poll for the new `?v=` tag rather than assuming it is live.
@@ -202,43 +215,72 @@ reconciled from the same reply, before progress is marked loaded.
 
 ---
 
-## 6. Example ordering: nudges, not rules — one decision, maybe a deck rebuild
+## 6. Example ordering — ✅ done (2026-09-21)
 
-File: `app/js/flashcards.js` `sortExamplesByRelevance()` (~1323–1390).
+File: `app/js/flashcards.js`, `sortExamplesByRelevance()` and
+`displayExamplesForSense()`.
 
-What exists now is a **lexicographic cascade** — `hasEnglish`, then
-`wrongScore`, then `deckScore`, then `lenPenalty`, then `easiness`. Every
-comparison is a hard gate: one point of `wrongScore` outranks any amount of
-everything below it. Exactly the deterministic rule set Joshua does not want.
+Four keys compared in order, no weighted sum and no scoring cascade:
 
-Replace with a single weighted sum over the same inputs, weights in one object
-at the top of the function so they can be tuned without touching logic. The
-three-sentence description, as requested:
+1. has an English translation
+2. is a single sentence
+3. WSD confidence tier — `cheap_leaf_choices_agree` > leaf > glosskey > tuple
+4. reinforces a word missed in the last week
 
-> It scores every candidate on five numbers it already has — has an English
-> translation, how many words the learner has met, how many they recently got
-> wrong, length against a comfortable window, and easiness rank — and sorts by
-> the weighted sum, so no single factor dominates.
-> The easiness and length weights are multiplied by a decay that falls as the
-> learner advances through the card's examples, so the first sentence is pulled
-> hard toward short-and-easy and the tenth barely at all.
-> Easiness is already personalised (known words discounted), so "too hard"
-> quietly stops applying as the learner gets stronger, without any rule saying
-> so.
+Ties keep deck order. The canonical dictionary example is the **second**
+example; it leads only when no usable corpus line exists (1.1% of senses).
 
-**Open question — per-example WSD confidence.** It exists in the data
-(`schemas/wsd-assignment.schema.json`: `confidence`, `raw_margin`,
-`selected_score`, `runner_up_score`) but is **not** projected onto examples:
-`src/fluency/release/app_compat.py` copies `target`, `english`, `source`,
-`assignment_method`, `example_id`, `easiness`, `metadata` and no score. The app
-has `meaning.confidence` only, which is per-sense and cannot stand in. Adding
-it is a one-field projection change plus a deck rebuild.
+**The confidence question was answered from the data, not by a rebuild.** No
+projection change was needed: `metadata.wsd.gemini_recommendation.reason` and
+`metadata.wsd.supported_level` already ship on every example, and the app
+already reads that object via `exampleWsdMeta()`. `schemas/wsd-assignment.schema.json`
+has richer numbers (`confidence`, `raw_margin`) that are still unprojected, but
+they buy little: `supported_level` alone moves the top pick in only 7.4% of
+multi-example senses.
 
-**Done when:** the cascade is gone, every weight lives in one editable object,
-and the first sentence on a fresh card is noticeably shorter and easier than
-the fifth without the order being obviously rigged.
+**Confidence must RANK, never GATE.** `cheap_leaf_choices_agree` covers about a
+quarter of examples. Gating slot 1 on it pushes **79.8%** of cards onto a
+dictionary first line; ranking by it leaves **1.1%** without a corpus line.
+This is the single measurement that decided the design — do not undo it.
 
----
+**The canonical example is not a neutral fallback.** Measured on v15: 90.7% of
+meanings have one, but **9.3% run to two sentences** and only **44.6% contain
+the card's own surface form** — so a canonical first line frequently shows
+*bueno* for a *buenos* card with nothing to underline. That is why it sits
+second.
+
+**What was removed, and why it should not come back.**
+
+- `easiness` — byte-identical to `metadata.selection_metrics.score` on all
+  7,919 sampled examples. An opaque composite of frequency burden, length
+  penalty and harder-token count. Worse, `ex.easiness || 999999` treated the
+  **15.9%** scoring exactly `0.0` as missing and sorted the *easiest* lines
+  last.
+- the 6–14 token length window — the pipeline already caps length at 4–15 and
+  already charges `length_penalty` into the score.
+- deck-word overlap — at ~3.5k visible cards nearly every token is a deck word,
+  so it was sentence length in disguise.
+- `rankConfidentWsdExamples` sorted by relevance and then **re-sorted** by
+  `supported_level`, discarding the first result. Two orderings were fighting.
+
+**Still dead in the file:** `computePersonalEasiness()` (~784) and
+`contentTokenCount()` (~908) now have no callers. Left in place deliberately —
+`computePersonalEasiness` is the only thing that would answer whether a
+sentence whose every other word is known should rank first or last (today it
+returns `999999`, i.e. **last**, which is probably backwards for an example
+illustrating the card you are studying). Note that `Data/Spanish/spanish_ranks.json`
+**404s on the live site**, so `_spanishRanks` is null and that function was
+already inert before this change.
+
+**Verified live** on `https://rabbijoshy.github.io/Fluency-Next/`, Spanish
+level 6, guest: first line single-sentence with the surface underlined, the
+dictionary line second with its provenance icon and no source name, no new
+console errors (the four 404s — `backend/secrets.json` ×2, `spanish_ranks.json`,
+`Artists/spotify_tracks.json` — are all pre-existing).
+
+**Measured effect:** across all 28,661 senses of the live v15 deck the first
+line changes for 3.9%; 306 (1.07%) still lead with a multi-sentence line
+because every example they have is one.
 
 ## 7. Merged-lemma policy — research, back-and-forth
 
