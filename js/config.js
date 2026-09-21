@@ -1,4 +1,5 @@
 import './state.js?v=20260825ak';
+import { releaseUrl } from './release-host.js?v=20260921rh';
 
 async function loadConfig() {
     try {
@@ -8,23 +9,6 @@ async function loadConfig() {
         ]);
         config = await configResponse.json();
         cefrLevelsConfig = await cefrResponse.json();
-
-        // Main does not carry generated release payloads. The repository
-        // preview opens the shell at /app/, so use the public Pages release
-        // payloads there. Production already serves the same paths locally.
-        const shellPath = new URL('.', window.location.href).pathname;
-        const isLocalRepoPreview = /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname)
-            && shellPath.endsWith('/app/');
-        if (isLocalRepoPreview) {
-            const publicReleaseBase = 'https://rabbijoshy.github.io/Fluency-Next/';
-            for (const languageConfig of Object.values(config.languages || {})) {
-                for (const [key, value] of Object.entries(languageConfig)) {
-                    if (key.endsWith('Path') && typeof value === 'string' && value.startsWith('releases/')) {
-                        languageConfig[key] = new URL(value, publicReleaseBase).href;
-                    }
-                }
-            }
-        }
 
         const params = new URLSearchParams(window.location?.search || '');
         const speechRelease = params.get('speechRelease');
@@ -36,6 +20,16 @@ async function loadConfig() {
                 languageConfig.releaseCompositionPath = `${base}/composition.json`;
                 languageConfig.studyStructurePath = `${base}/study-structure.json`;
                 languageConfig.dataPath = `${base}/vocabulary.json`;
+            }
+        }
+
+        // Release payloads are served by the release site (release-host.js),
+        // not by the app's own origin path.
+        for (const languageConfig of Object.values(config.languages || {})) {
+            for (const [key, value] of Object.entries(languageConfig)) {
+                if (key.endsWith('Path') && typeof value === 'string') {
+                    languageConfig[key] = releaseUrl(value);
+                }
             }
         }
 
