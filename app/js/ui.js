@@ -2155,74 +2155,86 @@ async function updateCognateToggleVisibility() {
     }
 }
 
+function hexToRgbChannels(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0, 0, 0';
+}
+
+function relativeLuminance(hex) {
+    const [r, g, b] = hex.replace('#', '').match(/.{2}/g).map(x => {
+        const c = parseInt(x, 16) / 255;
+        return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+function contrastRatio(hexA, hexB) {
+    const l1 = relativeLuminance(hexA);
+    const l2 = relativeLuminance(hexB);
+    const [hi, lo] = l1 > l2 ? [l1, l2] : [l2, l1];
+    return (hi + 0.05) / (lo + 0.05);
+}
+
+function mixToward(hex, target, t) {
+    const parse = (h) => h.replace('#', '').match(/.{2}/g).map(x => parseInt(x, 16));
+    const [r1, g1, b1] = parse(hex);
+    const [r2, g2, b2] = parse(target);
+    const to = (a, b) => Math.round(a + (b - a) * t).toString(16).padStart(2, '0');
+    return `#${to(r1, r2)}${to(g1, g2)}${to(b1, b2)}`;
+}
+
+// Flag colours are chosen for cloth, not for a button on this page. Dark
+// appearance gets a lighter tint of the same hue (Portuguese green becomes a
+// light green); light appearance gets a darker shade. Ink is chosen with the
+// page so the fill and the label both stay strong.
+function readableFlagColor(hex, theme) {
+    const page = theme === 'light' ? '#eef2f5' : '#0b0f14';
+    const ink = theme === 'light' ? '#ffffff' : '#10141b';
+    const toward = theme === 'light' ? '#000000' : '#ffffff';
+    let color = hex;
+    for (let i = 0; i < 12; i++) {
+        if (contrastRatio(color, page) >= 5.5 && contrastRatio(color, ink) >= 5.5) break;
+        color = mixToward(color, toward, 0.07);
+    }
+    return { color, ink };
+}
+
+function paintAccent(el, primary, secondary) {
+    if (!el) return;
+    el.style.setProperty('--accent-primary', primary.color);
+    el.style.setProperty('--accent-primary-text', primary.ink);
+    el.style.setProperty('--accent-primary-rgb', hexToRgbChannels(primary.color));
+    el.style.setProperty('--accent-secondary', secondary.color);
+    el.style.setProperty('--accent-secondary-text', secondary.ink);
+    el.style.setProperty('--accent-secondary-rgb', hexToRgbChannels(secondary.color));
+}
+
 function applyLanguageColorTheme() {
     const langConfig = config.languages[selectedLanguage];
-    if (langConfig && langConfig.colorTheme) {
-        const root = document.documentElement;
-        root.style.setProperty('--accent-primary', langConfig.colorTheme.primary);
-        root.style.setProperty('--accent-secondary', langConfig.colorTheme.secondary);
-
-        // Convert hex to RGB for opacity usage
-        const hexToRgb = (hex) => {
-            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-            return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0, 0, 0';
-        };
-
-        // WCAG relative luminance — returns 0 (black) to 1 (white)
-        const luminance = (hex) => {
-            const [r, g, b] = hex.replace('#', '').match(/.{2}/g).map(x => {
-                const c = parseInt(x, 16) / 255;
-                return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-            });
-            return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-        };
-
-        // On light accents, use a stable dark ink rather than the current page
-        // background. The latter becomes near-white in light appearance and
-        // would make yellow language/artist controls unreadable after a switch.
-        const onLightAccent = '#17212b';
-        root.style.setProperty('--accent-primary-text', luminance(langConfig.colorTheme.primary) < 0.4 ? '#ffffff' : onLightAccent);
-        root.style.setProperty('--accent-secondary-text', luminance(langConfig.colorTheme.secondary) < 0.4 ? '#ffffff' : onLightAccent);
-
-        root.style.setProperty('--accent-primary-rgb', hexToRgb(langConfig.colorTheme.primary));
-        root.style.setProperty('--accent-secondary-rgb', hexToRgb(langConfig.colorTheme.secondary));
-
-        // The setup panel deliberately pins --accent-primary to a neutral
-        // indigo so a switch to Spanish does not turn every control flag-red.
-        // --lang-trim is the language's colour under a name that override does
-        // not touch, for the few places the language should be visible: the
-        // language chip and the hairline under the top bar.
-        //
-        // Flag colours are not chosen for legibility on a dark page. Czech
-        // navy (#11457E) and Portuguese green (#046A38) disappear into it
-        // entirely, so a language with a dark flag would show no trim at all.
-        // Lift anything below the floor toward white until it reads; leave
-        // everything already bright enough alone.
-        const mixToward = (hex, target, t) => {
-            const parse = (h) => h.replace('#', '').match(/.{2}/g).map(x => parseInt(x, 16));
-            const [r1, g1, b1] = parse(hex);
-            const [r2, g2, b2] = parse(target);
-            const to = (a, b) => Math.round(a + (b - a) * t).toString(16).padStart(2, '0');
-            return `#${to(r1, r2)}${to(g1, g2)}${to(b1, b2)}`;
-        };
-        // Plain HSL lightness, not WCAG luminance: luminance weights red at
-        // 0.21, so it calls Spanish #C8102E "dark" and washes a perfectly
-        // vivid red out to pink. Lightness lifts only the three that are
-        // actually dark — Czech navy, Portuguese and Italian green.
-        const lightness = (hex) => {
-            const [r, g, b] = hex.replace('#', '').match(/.{2}/g).map(x => parseInt(x, 16) / 255);
-            return (Math.max(r, g, b) + Math.min(r, g, b)) / 2;
-        };
-        const TRIM_LIGHTNESS_FLOOR = 0.38;
-        let trim = langConfig.colorTheme.primary;
-        for (let i = 0; i < 10 && lightness(trim) < TRIM_LIGHTNESS_FLOOR; i++) {
-            trim = mixToward(trim, '#ffffff', 0.12);
-        }
-        root.style.setProperty('--lang-trim', trim);
-        root.style.setProperty('--lang-trim-rgb', hexToRgb(trim));
-        root.style.setProperty('--lang-trim-secondary', langConfig.colorTheme.secondary);
-    }
+    if (!langConfig || !langConfig.colorTheme) return;
+    const theme = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+    const primary = readableFlagColor(langConfig.colorTheme.primary, theme);
+    // The second flag colour stays recognisable. It is a thin stripe, not a
+    // second fill, so it does not need the same lift as the buttons.
+    const secondaryHex = langConfig.colorTheme.secondary;
+    const secondary = {
+        color: secondaryHex,
+        ink: relativeLuminance(secondaryHex) < 0.4 ? '#ffffff' : '#10141b',
+    };
+    const root = document.documentElement;
+    paintAccent(root, primary, secondary);
+    // The stylesheet pins the setup panel to a neutral indigo. An inline
+    // value wins, so the main-page buttons follow this language instead.
+    paintAccent(document.getElementById('setupPanel'), primary, secondary);
+    root.style.setProperty('--lang-trim', primary.color);
+    root.style.setProperty('--lang-trim-rgb', hexToRgbChannels(primary.color));
+    root.style.setProperty('--lang-secondary-ui', secondary.color);
+    root.style.setProperty('--lang-trim-secondary', secondary.color);
 }
+
+window.addEventListener('fluency-theme-change', () => {
+    applyLanguageColorTheme();
+});
 
 // Shared vocabulary filter pipeline used by renderRangeSelector and loadVocabularyData.
 // Applies all active exclusions in the correct order and assigns corpus-wide display ranks.

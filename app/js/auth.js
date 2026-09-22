@@ -213,7 +213,9 @@ function enterGuestMode() {
     hideAuthModal();
     _markAuthReady();
     updateIncorrectButtonVisibility();
-    setTimeout(_openFirstRunTutorialUnlessLinked, 250);
+    setTimeout(() => {
+        if (!window.maybeShowFrequencyIntro?.()) _openFirstRunTutorialUnlessLinked();
+    }, 250);
 }
 
 // Show login form
@@ -273,7 +275,9 @@ async function submitLogin() {
     localStorage.setItem('flashcardUser', JSON.stringify(currentUser));
     showUserInfo();
     hideAuthModal();
-    setTimeout(_openFirstRunTutorialUnlessLinked, 250);
+    setTimeout(() => {
+        if (!window.maybeShowFrequencyIntro?.()) _openFirstRunTutorialUnlessLinked();
+    }, 250);
 
     // Load user progress from Google Sheets
     await loadUserProgressFromSheet();

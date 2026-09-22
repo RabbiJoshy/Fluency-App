@@ -4,7 +4,7 @@
 import './state.js?v=20260825ak';
 import './speech.js?v=20260825ak';
 import { goToRoute, routeCodeFor } from './routes.js?v=20260921a';
-import './side-dock.js?v=20260921spot';
+import './side-dock.js?v=20260922ui';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
@@ -3860,12 +3860,17 @@ function exampleLinkHTML(href, label) {
 
 const OUTBOUND_LEAVE_ICON = `<svg class="outbound-leave-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>`;
 
-function outboundLeaveButton(href, label) {
-    return `<button type="button" class="outbound-leave-btn" hidden data-href="${escapeCardText(href)}" aria-label="Open ${escapeCardText(label)} in a new tab" onclick="event.stopPropagation(); confirmOutboundLink(event);">${OUTBOUND_LEAVE_ICON}</button>`;
+function outboundLeaveButton(href, label, labeled = false) {
+    const visit = `Visit ${label}`;
+    const cls = labeled ? 'outbound-leave-btn outbound-leave-btn--label' : 'outbound-leave-btn';
+    const body = labeled
+        ? `<span class="outbound-visit-label">${escapeCardText(visit)}</span>`
+        : OUTBOUND_LEAVE_ICON;
+    return `<button type="button" class="${cls}" hidden data-href="${escapeCardText(href)}" aria-label="${escapeCardText(visit)}" onclick="event.stopPropagation(); confirmOutboundLink(event);">${body}</button>`;
 }
 
-function outboundChipHTML(href, inner, label, attrs = '') {
-    return `<button type="button" ${attrs} data-href="${escapeCardText(href)}" aria-expanded="false" onclick="event.stopPropagation(); armOutboundLink(event)">${inner}${outboundLeaveButton(href, label)}</button>`;
+function outboundChipHTML(href, inner, label, attrs = '', labeled = false) {
+    return `<button type="button" ${attrs} data-href="${escapeCardText(href)}" aria-expanded="false" onclick="event.stopPropagation(); armOutboundLink(event)">${inner}${outboundLeaveButton(href, label, labeled)}</button>`;
 }
 
 function disarmOutboundLinks(exceptHost = null) {
@@ -3935,7 +3940,7 @@ function exampleSourceChipHTML({ href, label, domain, text = '', extraClass = ''
     const inner = `${icon}${named ? `<span class="example-source-text">${escapeCardText(text)}</span>` : ''}`;
     const attrs = `class="${classes}" title="${escapeCardText(title)}" aria-label="${escapeCardText(named ? `${text} on ${label}` : label)}"`;
     if (!href) return `<span ${attrs}>${inner}</span>`;
-    return outboundChipHTML(href, inner, named ? `${text} on ${label}` : label, attrs);
+    return outboundChipHTML(href, inner, label, attrs, true);
 }
 
 function dictionaryProviderCredit(name, href) {
@@ -7259,7 +7264,8 @@ function updateCard({ announceHeadword = false } = {}) {
                 url,
                 `${linkIcons[key] || `<span class="lookup-sheet-initial">${(linkTitles[key] || key).charAt(0)}</span>`}`,
                 linkTitles[key] || key,
-                `class="lookup-sheet-icon" title="${linkTitles[key] || key}" aria-label="${linkTitles[key] || key}"`
+                `class="lookup-sheet-icon" title="${linkTitles[key] || key}" aria-label="${linkTitles[key] || key}"`,
+                true
             )).join('')}
         </div>`;
     }

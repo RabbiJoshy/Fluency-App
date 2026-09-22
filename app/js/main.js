@@ -2,21 +2,21 @@
 // anything below reads the address.
 import { goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=20260921a';
 import { releaseUrl } from './release-host.js?v=20260921rh';
-import './theme.js?v=20260825ak';
+import './theme.js?v=20260922ui';
 import './state.js?v=20260921x';
 import './offline-db.js?v=20260825ak';
 import './sync-queue.js?v=20260825ak';
 import { initOfflineContent } from './offline-content.js?v=20260825ak';
 import './speech.js?v=20260914b';
 import './artist-ui.js?v=20260825ak';
-import './auth.js?v=20260921rt';
+import './auth.js?v=20260922ui';
 import './tutorial.js?v=20260921ac';
 import './walkthrough.js?v=20260921ac';
 import './estimation.js?v=20260825ak';
 import './config.js?v=20260921rh';
 import './progress.js?v=20260920e';
 import './knowledge.js?v=20260920a';
-import './ui.js?v=20260921mwe';
+import './ui.js?v=20260922ui';
 import './vocab.js?v=20260921freqb';
 import './cognates.js?v=20260914e';
 import './coverage.js?v=20260909a';
@@ -26,7 +26,7 @@ import './song-sets.js?v=20260823ae';
 import './playlist-live.js?v=20260921rt';
 import './spotify-playlist-import.js?v=20260921rh';
 import './vocabulary-import.js?v=20260920a';
-import './flashcards.js?v=20260921freqb';
+import './flashcards.js?v=20260922ui';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 function startCardTutorial() {
@@ -497,6 +497,9 @@ loadConfig().then(async () => {
     });
     setupFindWord();
     setupFrequencyIntro();
+    if (currentUser && document.getElementById('authModal')?.classList.contains('hidden')) {
+        window.maybeShowFrequencyIntro?.();
+    }
     document.getElementById('topBarUserName').addEventListener('click', () => {
         if (currentUser && !currentUser.isGuest) showSettingsModalWithTab('account');
     });
@@ -1854,7 +1857,7 @@ function setupFindWord() {
     });
 }
 
-const FREQUENCY_INTRO_KEY = 'fluencySeenFrequencyIntroV1';
+const FREQUENCY_INTRO_KEY = 'fluencySeenFrequencyIntroV2';
 
 function closeFrequencyIntro() {
     document.getElementById('frequencyIntroModal')?.classList.add('hidden');
@@ -1881,10 +1884,20 @@ function frequencyIntroClosed() {
 
 function maybeShowFrequencyIntro() {
     try {
-        if (localStorage.getItem(FREQUENCY_INTRO_KEY) === '1') return;
-    } catch (_) {}
+        if (localStorage.getItem(FREQUENCY_INTRO_KEY) === '1') return false;
+    } catch (_) {
+        return false;
+    }
+    const route = window.fluencyRoute?.kind;
+    if (route === 'about' || route === 'tutorial' || route === 'walkthrough' || route === 'word') return false;
+    const auth = document.getElementById('authModal');
+    if (auth && !auth.classList.contains('hidden')) return false;
+    const modal = document.getElementById('frequencyIntroModal');
+    if (!modal || !modal.classList.contains('hidden')) return false;
+    if (document.querySelector('.modal:not(.hidden)')) return false;
     window.closeChoiceSheet?.('languageChoiceSheet');
-    document.getElementById('frequencyIntroModal')?.classList.remove('hidden');
+    modal.classList.remove('hidden');
+    return true;
 }
 
 function setupFrequencyIntro() {

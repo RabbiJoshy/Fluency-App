@@ -4,6 +4,8 @@
 
 export const THEME_STORAGE_KEY = 'fluency_theme_preference_v1';
 export const THEME_PREFERENCES = Object.freeze(['dark', 'light', 'system']);
+export const TEXT_SIZE_STORAGE_KEY = 'fluency_text_size_v1';
+export const TEXT_SIZES = Object.freeze(['normal', 'large']);
 
 export function normalizeThemePreference(value) {
     return THEME_PREFERENCES.includes(value) ? value : 'dark';
@@ -34,6 +36,40 @@ function updateThemeControls(preference) {
         button.setAttribute('aria-checked', selected ? 'true' : 'false');
         button.tabIndex = selected ? 0 : -1;
     });
+}
+
+function normalizeTextSize(value) {
+    return TEXT_SIZES.includes(value) ? value : 'normal';
+}
+
+function readTextSize() {
+    try {
+        return normalizeTextSize(browserWindow?.localStorage.getItem(TEXT_SIZE_STORAGE_KEY));
+    } catch (_) {
+        return 'normal';
+    }
+}
+
+function updateTextSizeControls(size) {
+    if (!browserDocument) return;
+    browserDocument.querySelectorAll('.text-size-btn').forEach(button => {
+        const selected = button.dataset.textSize === size;
+        button.classList.toggle('selected', selected);
+        button.setAttribute('aria-checked', selected ? 'true' : 'false');
+        button.tabIndex = selected ? 0 : -1;
+    });
+}
+
+export function applyTextSize(size, { persist = false } = {}) {
+    const normalized = normalizeTextSize(size);
+    if (persist) {
+        try { browserWindow?.localStorage.setItem(TEXT_SIZE_STORAGE_KEY, normalized); } catch (_) {}
+    }
+    if (browserDocument) {
+        browserDocument.documentElement.dataset.textSize = normalized;
+        updateTextSizeControls(normalized);
+    }
+    return normalized;
 }
 
 export function applyThemePreference(preference, { persist = false, announce = true } = {}) {
@@ -75,6 +111,11 @@ function moveThemeControlFocus(currentButton, direction) {
 
 function setupThemeControls() {
     if (!browserDocument) return;
+    browserDocument.querySelectorAll('.text-size-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            applyTextSize(button.dataset.textSize, { persist: true });
+        });
+    });
     browserDocument.querySelectorAll('.theme-preference-btn').forEach(button => {
         button.addEventListener('click', () => {
             applyThemePreference(button.dataset.themePreference, { persist: true });
@@ -109,6 +150,7 @@ function initializeTheme() {
     if (!browserWindow || !browserDocument) return;
     setupThemeControls();
     applyThemePreference(readThemePreference(), { announce: false });
+    applyTextSize(readTextSize());
     if (systemLightQuery?.addEventListener) systemLightQuery.addEventListener('change', handleSystemThemeChange);
     else systemLightQuery?.addListener?.(handleSystemThemeChange);
     browserWindow.addEventListener('storage', handleStoredThemeChange);
@@ -118,4 +160,5 @@ initializeTheme();
 
 if (browserWindow) {
     browserWindow.applyThemePreference = applyThemePreference;
+    browserWindow.applyTextSize = applyTextSize;
 }
