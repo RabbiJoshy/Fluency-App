@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v540"
+EXPECTED_CACHE_NAME = "flashcards-v541"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -673,6 +673,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("variant: 'grid'", main)
         self.assertIn("id: 'studyChoiceSheet'", flashcards)
         self.assertIn("variant: 'list'", flashcards)
+        self.assertIn("dock: true", flashcards)
         self.assertIn("id: 'lyricsSourceSheet'", main)
         self.assertIn("id: 'artistChoiceSheet'", main)
         self.assertIn("Import a playlist and use songs already in the Fluency lyrics library.", main)
@@ -685,6 +686,26 @@ class ProductShellTests(unittest.TestCase):
         self.assertNotIn("id: 'artistRadialPicker'", main)
         self.assertIn(".choice-sheet-grid .choice-sheet-body", css)
         self.assertIn(".choice-sheet-list .choice-sheet-item", css)
+
+    def test_study_and_knowledge_dock_with_priority_and_keyboard_stays_off_the_card(self) -> None:
+        dock = (APP_ROOT / "js" / "side-dock.js").read_text(encoding="utf-8")
+        conj = (APP_ROOT / "js" / "flashcards-conj.js").read_text(encoding="utf-8")
+        css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
+        main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
+        self.assertIn("PRIORITY_STUDY", dock)
+        self.assertIn("PRIORITY_KNOWLEDGE", dock)
+        self.assertIn("id: 'studyChoiceSheet'", dock)
+        self.assertIn("keyboardHoldsLeft", dock)
+        self.assertIn("can-dock-card", dock)
+        self.assertIn("dock = false", main)
+        self.assertIn("placeById?.(id)", main)
+        self.assertIn("matchingTenses", conj)
+        self.assertIn("All tenses in conjugation mode", conj)
+        self.assertNotIn("switchConjMood", conj)
+        self.assertIn("body:has(#appContent:not(.hidden)):not(.can-dock-card) .desktop-keyboard-guide", css)
+        self.assertIn("body:has([data-dock=\"left\"]) .desktop-keyboard-guide", css)
+        self.assertIn(".choice-sheet-overlay[data-dock]", css)
+        self.assertIn(".conj-match-tense", css)
 
     def test_mobile_modals_share_a_top_edge(self) -> None:
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")

@@ -741,6 +741,7 @@ function showKnowledgeOverview(event, options = {}) {
     modal.classList.remove('is-closing');
     modal.hidden = false;
     document.body.classList.add('knowledge-overview-open');
+    window.sideDock?.placeById?.('knowledgeOverviewModal');
     modal.querySelector('.knowledge-overview-close')?.focus();
 }
 
