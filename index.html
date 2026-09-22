@@ -46,14 +46,14 @@
             root.dataset.textSize = textSize;
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260922u2">
+    <link rel="stylesheet" href="css/style.css?v=20260922rh2">
     <link rel="stylesheet" href="css/light-theme.css?v=20260921freq">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260922sat2">
+    <link rel="modulepreload" href="js/main.js?v=20260922rh2">
     <link rel="modulepreload" href="js/routes.js?v=20260921a">
     <link rel="modulepreload" href="js/theme.js?v=20260922ui">
     <link rel="modulepreload" href="js/state.js?v=20260921x">
@@ -73,7 +73,8 @@
     <link rel="modulepreload" href="js/progress.js?v=20260920e">
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20260920a">
-    <link rel="modulepreload" href="js/ui.js?v=20260922sat2">
+    <link rel="modulepreload" href="js/ui.js?v=20260922rh2">
+    <link rel="modulepreload" href="js/review-home.js?v=20260922rh2">
     <link rel="modulepreload" href="js/fast-track-preferences.js?v=20260920a">
     <link rel="modulepreload" href="js/vocab.js?v=20260921freqb">
     <link rel="modulepreload" href="js/grammar-cards.js?v=20260921gc">
@@ -144,9 +145,29 @@
     <div id="appLoadingScreen" class="app-loading-screen" role="status" aria-live="polite" aria-busy="true">
         <div class="app-loading-card">
             <div class="app-loading-mark" aria-hidden="true">F</div>
-            <div class="app-loading-spinner" aria-hidden="true"></div>
+            <!-- One visual in two modes. "spinner" is the boot/unknown-progress
+                 state and is exactly what shipped before. "progress" expands the
+                 same slot into a legible ring drawn from numbers the setup screen
+                 already computed, so it paints before any release fetch. -->
+            <div class="app-loading-visual" id="appLoadingVisual" data-mode="spinner">
+                <div class="app-loading-spinner" aria-hidden="true"></div>
+                <svg class="app-loading-ring" viewBox="0 0 120 120" aria-hidden="true">
+                    <circle class="app-loading-ring-track" cx="60" cy="60" r="54"></circle>
+                    <circle class="app-loading-ring-arc is-review" id="appLoadingRingSeen" cx="60" cy="60" r="54"></circle>
+                    <circle class="app-loading-ring-arc is-known" id="appLoadingRingKnown" cx="60" cy="60" r="54"></circle>
+                </svg>
+                <div class="app-loading-ring-centre" aria-hidden="true">
+                    <strong id="appLoadingRingValue"></strong>
+                    <span id="appLoadingRingUnit">known</span>
+                </div>
+            </div>
             <strong id="appLoadingTitle">Getting things ready</strong>
             <span id="appLoadingDetail">Loading your language and progress…</span>
+            <div class="app-loading-ring-legend" id="appLoadingRingLegend" hidden>
+                <span><i class="is-known"></i>Known <b id="appLoadingLegendKnown"></b></span>
+                <span><i class="is-review"></i>Review <b id="appLoadingLegendReview"></b></span>
+                <span><i class="is-unseen"></i>New <b id="appLoadingLegendUnseen"></b></span>
+            </div>
         </div>
     </div>
 
@@ -510,22 +531,24 @@
                 </div>
                 <div class="level-choosing">
                     <div id="levelSelector" class="level-selector"></div>
+                    <!-- One button, one destination. The master switch and the
+                         skipped-word decks both live inside the Fast Track sheet
+                         now, so this slot stays a single row - the same shape the
+                         lyrics "extras" entry point will take when the two UIs
+                         are unified. -->
                     <div id="setupOptions" class="setup-options" style="display: none;">
-                        <div class="setup-options-bar">
-                            <button type="button" id="fastModeToggleBtn" class="fast-mode-btn fast-mode-master" data-fast="off" aria-pressed="false">
-                                <svg class="fast-mode-master-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.5v13l8-6.5-8-6.5Z"></path><path d="M12 5.5v13l8-6.5-8-6.5Z"></path></svg>
-                                <span class="fast-mode-master-copy">
-                                    <span class="fast-mode-title-row">
-                                        <strong>Fast Track</strong>
-                                        <span class="streamline-rec-badge">Recommended</span>
-                                    </span>
+                        <button type="button" id="fastTrackHubBtn" class="fast-track-hub-btn">
+                            <svg class="fast-mode-master-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.5v13l8-6.5-8-6.5Z"></path><path d="M12 5.5v13l8-6.5-8-6.5Z"></path></svg>
+                            <span class="fast-track-hub-copy">
+                                <span class="fast-mode-title-row">
+                                    <strong>Fast Track</strong>
+                                    <span class="streamline-rec-badge">Recommended</span>
+                                    <span class="fast-track-hub-state" id="fastTrackHubState">Off</span>
                                 </span>
-                                <span class="fast-mode-master-switch" aria-hidden="true"><i></i></span>
-                            </button>
-                            <button type="button" id="fastModeDetailBtn" class="fast-mode-detail-btn" onclick="window.openFastModePage?.()">
-                                Details <span aria-hidden="true">›</span>
-                            </button>
-                        </div>
+                                <small id="fastTrackHubSummary"></small>
+                            </span>
+                            <span class="fast-track-hub-chevron" aria-hidden="true">›</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -553,7 +576,8 @@
 
             <section id="reviewDeckSection" class="review-deck-section" aria-labelledby="reviewDeckTitle" hidden></section>
 
-            <!-- Extras Deck Section: supplementary cards (Artist extra categories or Speech skipped words) -->
+            <!-- Extras Deck Section: Artist extra categories only. Speech's skipped
+                 word decks moved into the Fast Track sheet (#fastTrackDeckCard). -->
             <div id="extrasDeckSection" class="extras-deck-section" style="display: none;">
                 <div class="extras-deck-card" id="extrasDeckCard"></div>
             </div>
@@ -1141,6 +1165,28 @@
                 <p class="fast-mode-lede">Study fewer cards by grouping related word forms or setting aside familiar look-alikes. Choose which shortcuts to use below.</p>
                 <p class="fast-mode-language-status" id="fastModeLanguageStatus"></p>
                 <button type="button" class="fast-mode-language-switch" id="fastModeHomeSwitch" aria-pressed="false"><span>Fast Track</span><strong id="fastModeHomeSwitchValue">Off</strong></button>
+
+                <!-- Fast Track review home: the skipped-word decks that used to be a
+                     second card on the setup screen. ui.js renders into the card
+                     below; the pills keep their existing handler contract. -->
+                <section class="fast-mode-section" data-section="decks">
+                    <h4>Fast Track review home <span id="fastModeSkippedCount"></span></h4>
+                    <div class="extras-deck-card" id="fastTrackDeckCard"></div>
+                </section>
+
+                <!-- Skipped words home: the reference lists, one row each. -->
+                <section class="fast-mode-section" data-section="skipped">
+                    <h4>Skipped words home</h4>
+                    <button type="button" class="fast-mode-hub-row" id="fastModeSkippedWordsRow">
+                        <span class="fast-mode-hub-copy"><strong>Skipped words</strong><small>Look-alikes set aside from the main sets.</small></span>
+                        <span class="fast-mode-hub-count" id="fastModeSkippedWordsRowCount">0</span>
+                    </button>
+                    <button type="button" class="fast-mode-hub-row" id="fastModeMergedFormsRow">
+                        <span class="fast-mode-hub-copy"><strong>Merged word forms</strong><small>Forms sharing one card with their base word.</small></span>
+                        <span class="fast-mode-hub-count" id="fastModeMergedFormsRowCount">0</span>
+                    </button>
+                </section>
+
                 <button type="button" class="fast-mode-fine-tune" id="fastModeFineTuneBtn" aria-expanded="false" aria-controls="fastModeFineTune">Fine-tune Fast Track <span aria-hidden="true">›</span></button>
 
                 <div class="fast-mode-controls" id="fastModeFineTune" hidden>
@@ -1198,7 +1244,6 @@
                     </div>
 
                 </div>
-                <button type="button" class="fast-mode-skipped-link" id="fastModeSkippedLink">Study skipped words <span id="fastModeSkippedCount"></span><span aria-hidden="true">›</span></button>
 
                 <!-- Admin / Diagnostic Technical Details (strictly gated to owner/admin) -->
                 <div id="fastModeAdminDetails" class="fast-mode-admin-details" style="display: none;">
@@ -1633,6 +1678,23 @@
         </div>
     </div>
 
+    <!-- Review home: the review queue organised by category, plus a way into
+         progress. One sheet so the setup screen can stay two buttons. Body is
+         rendered by js/review-home.js from the same functions the home screen
+         and the stats sheet already use. -->
+    <div id="reviewHomeModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="reviewHomeTitle">
+        <div class="modal-content review-home-content">
+            <div class="modal-header">
+                <div>
+                    <span class="progress-modal-eyebrow">Review &amp; Progress</span>
+                    <h3 id="reviewHomeTitle">Review home</h3>
+                </div>
+                <button class="modal-close" id="closeReviewHomeModal" aria-label="Close review home">✕</button>
+            </div>
+            <div class="review-home-body" id="reviewHomeBody"></div>
+        </div>
+    </div>
+
     <!-- Total Stats Modal (All-time stats for the current language) -->
     <div id="totalStatsModal" class="modal hidden">
         <div class="modal-content progress-modal-content total-progress-modal-content">
@@ -2039,6 +2101,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260922sat2"></script>
+    <script type="module" src="js/main.js?v=20260922rh2"></script>
 </body>
 </html>
