@@ -206,79 +206,32 @@ function buildConjugationTableHTML(conjEntry, targetWord, lemma, opts) {
         `;
     }
     const tenses = conjEntry.tenses;
-    const tenseNames = Object.keys(tenses);
     const targetLower = foldConjForm(targetWord);
-    // Prefer an explicit infinitive on the conj entry; fall back to
-    // the lemma (or relatedLemma when we're rendering a related
-    // verb's paradigm), then targetWord as a last resort.
     const conjOwnerLemma = isRelatedParadigm ? (relatedLemma || lemma || targetWord || '') : (lemma || targetWord || '');
     const infinitive = (conjEntry.infinitive || conjOwnerLemma).toLowerCase();
 
-    // Pick the tense containing targetWord as the default; Presente otherwise.
-    let defaultTense = tenses[ui.defaultTense] ? ui.defaultTense : tenseNames[0];
-    if (targetLower) {
-        for (const [tenseName, forms] of Object.entries(tenses)) {
-            if (Array.isArray(forms) && forms.some(f => f !== '—' && foldConjForm(f) === targetLower)) {
-                defaultTense = tenseName;
-                break;
-            }
-        }
-    }
+    // The drawer only shows tenses that contain this card's surface. The
+    // full paradigm lives in conjugation mode.
+    const matchingTenses = Object.keys(tenses).filter(name => {
+        const forms = tenses[name];
+        return Array.isArray(forms) && forms.some(f => f && f !== '—' && foldConjForm(f) === targetLower);
+    });
+    const shownTenses = matchingTenses.length
+        ? matchingTenses
+        : [tenses[ui.defaultTense] ? ui.defaultTense : Object.keys(tenses)[0]].filter(Boolean);
+    const defaultTense = shownTenses[0];
 
-    // Group tenses by mood (Indicativo / Subjuntivo / Imperativo / Otras).
-    // Tenses not covered by the known groups slot under "Otras" so the UI
-    // never drops data on the floor.
-    const grouped = [];
-    const seen = new Set();
-    for (const moodName of ui.moodOrder) {
-        const cfg = ui.moodGroups[moodName];
-        const present = cfg.tenses.filter(t => tenses[t]);
-        if (!present.length) continue;
-        grouped.push({ mood: moodName, accent: cfg.accent, tenses: present });
-        present.forEach(t => seen.add(t));
-    }
-    const orphanTenses = tenseNames.filter(t => !seen.has(t));
-    if (orphanTenses.length) {
-        grouped.push({ mood: 'Other', accent: 'rgba(148, 163, 184, 0.55)', tenses: orphanTenses });
-    }
-
-    // The mood that owns the default tense is the one we open on.
-    const defaultMood = (grouped.find(g => g.tenses.includes(defaultTense)) || grouped[0] || {}).mood;
-
-    // Mood toggle — segmented control, rendered only when more than one
-    // mood is present. When there's just one (e.g. only Indicativo tenses
-    // shipped), the toggle is redundant and hidden.
-    const moodToggleHTML = grouped.length > 1 ? `
-        <div class="conj-mood-toggle">
-            ${grouped.map(g => {
-                const active = g.mood === defaultMood ? ' conj-mood-toggle-active' : '';
-                return `<button class="conj-mood-toggle-btn${active}" data-mood="${g.mood}" style="--mood-accent: ${g.accent};" onclick="switchConjMood('${g.mood}')">${g.mood}</button>`;
+    const tenseToggleHTML = shownTenses.length > 1 ? `
+        <div class="conj-tense-toggle">
+            ${shownTenses.map(t => {
+                const active = t === defaultTense ? ' conj-tense-active' : '';
+                return `<button class="conj-tense-btn${active}" data-tense="${t}" onclick="switchConjTense('${t}')">${t}</button>`;
             }).join('')}
-        </div>` : '';
+        </div>` : `<div class="conj-match-tense">${shownTenses[0] || ''}</div>`;
 
-    // One tense-toggle row per mood; only the active mood's row is
-    // visible (display toggled by switchConjMood). This keeps the tense
-    // list to a single horizontal row instead of stacking a label +
-    // buttons for every mood.
-    //
-    // The hide-inactive-rows logic merges into one style attribute:
-    // putting `display:none` in a second `style` silently drops it
-    // (browsers take the first `style` attribute only), which is why
-    // subjunctive tenses were showing at initial render.
-    const tenseToggleHTML = grouped.map(g => {
-        const isActiveMood = g.mood === defaultMood;
-        const styleStr = `--mood-accent: ${g.accent};${isActiveMood ? '' : ' display: none;'}`;
-        const btns = g.tenses.map(t => {
-            const active = t === defaultTense ? ' conj-tense-active' : '';
-            const display = ui.tenseDisplay[t] || t;
-            return `<button class="conj-tense-btn${active}" data-tense="${t}" onclick="switchConjTense('${t}')">${display}</button>`;
-        }).join('');
-        return `<div class="conj-tense-toggle" data-mood="${g.mood}" style="${styleStr}">${btns}</div>`;
-    }).join('');
-
-    // Per-tense table. Each form is split stem/ending so the pattern pops.
     let tenseTables = '';
-    for (const [tenseName, forms] of Object.entries(tenses)) {
+    for (const tenseName of shownTenses) {
+        const forms = tenses[tenseName] || [];
         const hidden = tenseName !== defaultTense ? ' style="display:none"' : '';
         let rows = '';
         for (let i = 0; i < forms.length; i++) {
@@ -286,8 +239,6 @@ function buildConjugationTableHTML(conjEntry, targetWord, lemma, opts) {
             const isActive = !!(targetLower && form && form !== '—' && foldConjForm(form) === targetLower);
             const cls = isActive ? ' conj-active' : '';
             const { stem, ending } = splitStemEnding(form, infinitive, ui.infinitiveEndings);
-            // Stem is muted; ending is accent-colored — makes regular
-            // patterns rhyme and irregular stems stand out.
             const formHTML = stem
                 ? `<span class="conj-stem">${stem}</span><span class="conj-ending">${ending}</span>`
                 : `<span class="conj-ending conj-ending-full">${ending}</span>`;
@@ -296,58 +247,15 @@ function buildConjugationTableHTML(conjEntry, targetWord, lemma, opts) {
         tenseTables += `<table class="conj-table" data-tense="${tenseName}"${hidden}>${rows}</table>`;
     }
 
-    // --- Header block ---
-    // Infinitive + translation on top; -ar/-er/-ir type badge on the right.
-    // The gerund and past participle are reference detail rather than a
-    // paradigm the learner is drilling, so they sit in a quiet strip below
-    // the table instead of competing with the headword.
-    const matchedEnding = (ui.infinitiveEndings || []).find(end => infinitive.endsWith(end));
-    const typeBadge = matchedEnding
-        ? `<span class="conj-type-badge">-${matchedEnding.toUpperCase()}</span>`
-        : '';
-    const translation = conjEntry.translation || '';
-    const gerActive = conjEntry.gerund && targetLower && foldConjForm(conjEntry.gerund) === targetLower ? ' is-active' : '';
-    const ppActive = conjEntry.past_participle && targetLower && foldConjForm(conjEntry.past_participle) === targetLower ? ' is-active' : '';
-    const nonFiniteHTML = (conjEntry.gerund || conjEntry.past_participle) ? `
-        <div class="conj-nonfinite">
-            ${conjEntry.gerund ? `<div class="conj-nf-item${gerActive}">
-                <span class="conj-nf-label">gerund</span>
-                <span class="conj-nf-form">${conjEntry.gerund}</span>
-            </div>` : ''}
-            ${conjEntry.past_participle ? `<div class="conj-nf-item${ppActive}">
-                <span class="conj-nf-label">past participle</span>
-                <span class="conj-nf-form">${conjEntry.past_participle}</span>
-            </div>` : ''}
-        </div>` : '';
-
-    // Link to the language's full paradigm page — the in-app panel covers
-    // the high-frequency tenses; this covers "I want to see every tense
-    // incl. compound + imperative forms we don't ship locally".
-    const lookupUrl = conjugationLookupUrl(infinitive);
-    const lookupHost = conjugationLookupHost(lookupUrl);
-    const sdLinkHTML = `
-        <a href="${lookupUrl}" target="_blank" class="conj-sd-link" title="Full paradigm on ${lookupHost}">
-            <img src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(lookupHost)}&sz=64" width="16" height="16" alt="" style="border-radius:3px">
-            <span>Full paradigm on ${lookupHost}</span>
-        </a>`;
-
-    // Conjugation mode is a separate page under app/conjugation/. This link
-    // is its only way in, which keeps the two UIs from treading on each
-    // other while both are being worked on.
     const drillUrl = conjugationDrillUrl(infinitive);
     const drillLinkHTML = drillUrl ? `
         <a href="${drillUrl}" class="conj-drill-link" title="Drill ${infinitive} in conjugation mode">
-            <span>Drill ${infinitive} in conjugation mode</span>
+            <span>All tenses in conjugation mode</span>
         </a>` : '';
 
-    // When we're rendering a related verb's paradigm (e.g. haber for a
-    // hay card), add a note above the header so the user knows the
-    // table isn't the card's own verb. Keeps the panel honest: the
-    // paradigm belongs to the related verb, not the lexicalised word
-    // on the card.
     const relatedNoteHTML = isRelatedParadigm && lemma && relatedLemma ? `
         <div class="conj-related-note">
-            <strong>${lemma.toLowerCase()}</strong> is a lexicalised form related to <strong>${relatedLemma.toLowerCase()}</strong>. Showing <strong>${relatedLemma.toLowerCase()}</strong>'s full paradigm below.
+            Showing <strong>${relatedLemma.toLowerCase()}</strong> for <strong>${lemma.toLowerCase()}</strong>.
         </div>` : '';
 
     return `
@@ -357,20 +265,13 @@ function buildConjugationTableHTML(conjEntry, targetWord, lemma, opts) {
             <div class="conj-header">
                 <div class="conj-title">
                     <span class="conj-infinitive">${infinitive}</span>
-                    ${typeBadge}
                 </div>
-                ${translation ? `<div class="conj-translation">${translation}</div>` : ''}
             </div>
-            ${moodToggleHTML}
-            <div class="conj-tense-toggles">
-                ${tenseToggleHTML}
-            </div>
+            ${tenseToggleHTML}
             <div class="conj-tables-wrap">
                 ${tenseTables}
             </div>
-            ${nonFiniteHTML}
             ${drillLinkHTML}
-            ${sdLinkHTML}
         </div>
     `;
 }
@@ -387,25 +288,6 @@ function switchConjTense(tenseName) {
     panel.querySelectorAll('.conj-tense-btn').forEach(b => {
         b.classList.toggle('conj-tense-active', b.dataset.tense === tenseName);
     });
-}
-
-function switchConjMood(moodName) {
-    const panel = document.getElementById('conjugationTable');
-    if (!panel) return;
-    // Swap mood-toggle active state.
-    panel.querySelectorAll('.conj-mood-toggle-btn').forEach(b => {
-        b.classList.toggle('conj-mood-toggle-active', b.dataset.mood === moodName);
-    });
-    // Show only the active mood's tense-toggle row.
-    panel.querySelectorAll('.conj-tense-toggle').forEach(t => {
-        t.style.display = t.dataset.mood === moodName ? '' : 'none';
-    });
-    // Switch the visible tense to the mood's first (or already-active) one.
-    const activeRow = panel.querySelector(`.conj-tense-toggle[data-mood="${moodName}"]`);
-    if (activeRow) {
-        const active = activeRow.querySelector('.conj-tense-active') || activeRow.querySelector('.conj-tense-btn');
-        if (active) switchConjTense(active.dataset.tense);
-    }
 }
 
 // Render-on-toggle. The placeholder (rendered by core's updateCard) is an
@@ -492,5 +374,4 @@ async function toggleConjugationTable() {
 
 window.toggleConjugationTable = toggleConjugationTable;
 window.stowConjPanel = stowConjPanel;
-window.switchConjMood = switchConjMood;
 window.switchConjTense = switchConjTense;

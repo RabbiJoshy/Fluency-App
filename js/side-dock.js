@@ -65,13 +65,14 @@ function panelWidth() {
 function applyPanelWidth() {
     const width = Math.max(PANEL_MIN, panelWidth());
     document.body.style.setProperty('--dock-w', `${width}px`);
-    // Centre the sheet in the gutter. A tight window keeps the old 16px edge.
     let inset = EDGE;
     if (studyViewOpen()) {
         const margin = (window.innerWidth - cardWidth()) / 2;
         inset = Math.max(EDGE, Math.round((margin - width) / 2));
     }
     document.body.style.setProperty('--dock-inset', `${inset}px`);
+    document.body.classList.toggle('can-dock-card', canDockCard());
+    document.body.classList.toggle('can-dock-sheet', canDockSheet());
 }
 
 // Card panels need room beside the card; sheets can also dock over the
@@ -93,8 +94,13 @@ function closeButtonFor(id) {
     };
 }
 
+const PRIORITY_DEFAULT = 10;
+const PRIORITY_KNOWLEDGE = 20;
+const PRIORITY_STUDY = 30;
+
 // home: the side it prefers. card: closes with the card. stacks: may open
 // over settings. onlyOverSettings: centred unless settings is open.
+// priority: when only one gutter is free, a higher number replaces a lower.
 const OCCUPANTS = [
     // Card panels, hosted on <body> while docked.
     { id: 'synonymsPanel', home: 'right', card: true, panel: true,
@@ -112,9 +118,12 @@ const OCCUPANTS = [
     // Modals about the card.
     { id: 'lyricBreakdownModal', home: 'right', card: true,
       open: isShown, close: () => window.hideLyricBreakdown?.() },
-    { id: 'knowledgeOverviewModal', home: 'right', card: true,
+    { id: 'knowledgeOverviewModal', home: 'right', card: true, priority: PRIORITY_KNOWLEDGE,
       open: el => !el.hidden && !el.classList.contains('is-closing'),
       close: () => window.closeKnowledgeOverview?.() },
+    { id: 'studyChoiceSheet', home: 'left', priority: PRIORITY_STUDY,
+      open: el => el.isConnected && !el.classList.contains('is-closing'),
+      close: () => window.closeChoiceSheet?.('studyChoiceSheet', true) },
     // Settings, and the sheets about you and the session.
     { id: 'settingsModal', home: 'left', settings: true,
       open: isShown, close: closeButtonFor('settingsModal') },
@@ -145,6 +154,26 @@ function openOn(side, exceptId) {
 }
 function settingsOpen() {
     return isOpen(byId.settingsModal) && sideOf(byId.settingsModal) === 'left';
+}
+
+function occupantPriority(occupant) {
+    return occupant.priority || PRIORITY_DEFAULT;
+}
+
+function keyboardHoldsLeft() {
+    if (!canDockCard()) return false;
+    if (openOn('left').length) return false;
+    const guide = document.getElementById('desktopKeyboardGuide');
+    return Boolean(guide && !guide.classList.contains('collapsed') && studyViewOpen());
+}
+
+function usableSides(occupant) {
+    const prio = occupantPriority(occupant);
+    const order = occupant.home === 'left' ? ['left', 'right'] : ['right', 'left'];
+    return order.filter(side => {
+        if (side === 'left' && keyboardHoldsLeft() && prio < PRIORITY_STUDY) return false;
+        return true;
+    });
 }
 
 function mark(el, side, stacked = false) {
@@ -184,26 +213,39 @@ function place(occupant) {
         return 'left';
     }
 
-    if (occupant.home === 'left') {
-        closeAll(openOn('left', occupant.id));
-        mark(el, 'left');
-        return 'left';
+    // Usable gutters first: empty preferred side, then the other empty side.
+    // The keyboard hint occupies the left gutter, so card sheets only get
+    // one slot until Study options (higher priority) takes the left.
+    const sides = usableSides(occupant);
+    const prio = occupantPriority(occupant);
+    for (const side of sides) {
+        if (!openOn(side, occupant.id).length) {
+            mark(el, side);
+            return side;
+        }
     }
 
-    // Right-hand occupants: the right if free, else the left if free, else
-    // replace what is on the right.
-    const right = openOn('right', occupant.id);
-    if (!right.length) {
-        mark(el, 'right');
-        return 'right';
+    // No empty usable gutter. Privileged sheets replace a weaker occupant;
+    // ordinary card panels still replace whoever is on their home side.
+    for (const side of sides) {
+        const there = openOn(side, occupant.id);
+        const weaker = there.filter(o => occupantPriority(o) < prio);
+        const peers = there.filter(o => occupantPriority(o) <= prio);
+        if (weaker.length) {
+            closeAll(weaker);
+            if (!openOn(side, occupant.id).length) {
+                mark(el, side);
+                return side;
+            }
+        }
+        if (prio <= PRIORITY_DEFAULT || peers.length === there.length) {
+            closeAll(there);
+            mark(el, side);
+            return side;
+        }
     }
-    if (!openOn('left', occupant.id).length) {
-        mark(el, 'left');
-        return 'left';
-    }
-    closeAll(right);
-    mark(el, 'right');
-    return 'right';
+    mark(el, null);
+    return null;
 }
 
 function hostCardPanel(panel) {
@@ -221,6 +263,11 @@ function stowCardPanel(panel) {
 
 // Open a card panel beside the card when there is room; otherwise leave it
 // where it was rendered, over the card as before. Returns whether it docked.
+function placeById(id) {
+    const occupant = byId[id];
+    return occupant ? place(occupant) : null;
+}
+
 function openCardPanel(panel) {
     const occupant = panel && byId[panel.id];
     if (!occupant || !place(occupant)) return false;
@@ -311,17 +358,21 @@ function init() {
     const app = document.getElementById('appContent');
     if (app) {
         new MutationObserver(() => {
-            if (!app.classList.contains('hidden')) return;
+            if (!app.classList.contains('hidden')) {
+                applyPanelWidth();
+                return;
+            }
             closeAll(OCCUPANTS.filter(o => isOpen(o) && !o.settings
                 && elementOf(o).dataset.dockStack === undefined
                 && (o.card || sideOf(o) === 'left' || sideOf(o) === 'right')));
         }).observe(app, { attributes: true, attributeFilter: ['class'] });
     }
+    applyPanelWidth();
 }
 
 if (!window.sideDock) {
     window.sideDock = {
-        canDockCard, canDockSheet, openCardPanel, stowCardPanel,
+        canDockCard, canDockSheet, openCardPanel, stowCardPanel, placeById,
         keepsSettingsOpen, closeForFront, beforeBackRender, closeTopmost,
     };
     if (document.readyState === 'loading') {

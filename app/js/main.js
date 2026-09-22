@@ -15,7 +15,7 @@ import './walkthrough.js?v=20260921ac';
 import './estimation.js?v=20260825ak';
 import './config.js?v=20260921rh';
 import './progress.js?v=20260920e';
-import './knowledge.js?v=20260920a';
+import './knowledge.js?v=20260922mod';
 import './ui.js?v=20260922rw';
 import './vocab.js?v=20260921freqb';
 import './cognates.js?v=20260922ft2';
@@ -27,7 +27,7 @@ import './song-sets.js?v=20260823ae';
 import './playlist-live.js?v=20260921rt';
 import './spotify-playlist-import.js?v=20260921rh';
 import './vocabulary-import.js?v=20260920a';
-import './flashcards.js?v=20260922conj';
+import './flashcards.js?v=20260922mod';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 function startCardTutorial() {
@@ -1188,7 +1188,7 @@ window.closeRadialPicker = closeRadialPicker;
 
 // Stable choice surfaces for lists that can grow. Options keep a fixed place,
 // remain discoverable, and can briefly explain the consequence of a choice.
-function showChoiceSheet({ id, ariaLabel, title, intro = '', stepLabel = '', entries, variant = 'list', onBack = null }) {
+function showChoiceSheet({ id, ariaLabel, title, intro = '', stepLabel = '', entries, variant = 'list', onBack = null, dock = false }) {
     const existing = document.getElementById(id);
     if (existing) { closeChoiceSheet(id); return; }
     if (!entries.length) return;
@@ -1290,6 +1290,7 @@ function showChoiceSheet({ id, ariaLabel, title, intro = '', stepLabel = '', ent
     panel.append(header, body);
     overlay.appendChild(panel);
     document.body.appendChild(overlay);
+    if (dock) window.sideDock?.placeById?.(id);
     requestAnimationFrame(() => overlay.classList.add('is-open'));
 
     close.addEventListener('click', () => closeChoiceSheet(id));

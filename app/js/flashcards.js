@@ -4,7 +4,7 @@
 import './state.js?v=20260825ak';
 import './speech.js?v=20260825ak';
 import { goToRoute, routeCodeFor } from './routes.js?v=20260921a';
-import './side-dock.js?v=20260922rw';
+import './side-dock.js?v=20260922mod';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
@@ -1555,6 +1555,7 @@ function initializeApp() {
             ariaLabel: 'Study options',
             title: 'Study options',
             variant: 'list',
+            dock: true,
             entries
         });
     };
@@ -9086,7 +9087,7 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '20260922conj';
+const ASSET_VERSION = '20260922mod';
 const MODALS_ASSET_VERSION = '20260921rt';
 
 let _modalsModulePromise = null;
@@ -9129,7 +9130,7 @@ const stubFor = (name, loader) => {
  'restartAllCards']
     .forEach(name => stubFor(name, lazyModals));
 
-['toggleConjugationTable', 'switchConjMood', 'switchConjTense']
+['toggleConjugationTable', 'switchConjTense']
     .forEach(name => stubFor(name, lazyConj));
 
 window.describeCliticForm = describeCliticForm;
