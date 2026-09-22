@@ -38,7 +38,7 @@
         "Study options opens as a side sheet and takes a gutter before anything else. Meanings and expressions replace a weaker sheet when only one gutter is free.",
         "Keyboard shortcuts sit in the left gutter on a wide screen and hide when they would cover the card."
       ],
-      "commit": "90d9d3b5"
+      "commit": "408ec9da"
     },
     {
       "timestamp": "2026-09-22T13:40:00+01:00",
