@@ -12,7 +12,7 @@
         "Review home now opens with whether spaced repetition is on, above the counts it governs, with a ? beside it.",
         "That ? opens a short plain-English explanation of how review timing works: get a word right and it waits longer, get it wrong and it comes back soon. No intervals, no algorithm. It stacks over Review home rather than replacing it, and links on to the setting."
       ],
-      "commit": "pending"
+      "commit": "37bba5f"
     },
     {
       "timestamp": "2026-09-22T14:20:00+01:00",
