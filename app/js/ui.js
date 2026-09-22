@@ -2179,28 +2179,88 @@ function contrastRatio(hexA, hexB) {
     return (hi + 0.05) / (lo + 0.05);
 }
 
-function mixToward(hex, target, t) {
-    const parse = (h) => h.replace('#', '').match(/.{2}/g).map(x => parseInt(x, 16));
-    const [r1, g1, b1] = parse(hex);
-    const [r2, g2, b2] = parse(target);
-    const to = (a, b) => Math.round(a + (b - a) * t).toString(16).padStart(2, '0');
-    return `#${to(r1, r2)}${to(g1, g2)}${to(b1, b2)}`;
+function hexToHsl(hex) {
+    const [r, g, b] = hex.replace('#', '').match(/.{2}/g).map(x => parseInt(x, 16) / 255);
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const l = (max + min) / 2;
+    if (max === min) return { h: 0, s: 0, l };
+    const d = max - min;
+    const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    let h;
+    switch (max) {
+        case r: h = ((g - b) / d) + (g < b ? 6 : 0); break;
+        case g: h = ((b - r) / d) + 2; break;
+        default: h = ((r - g) / d) + 4; break;
+    }
+    return { h: h / 6, s, l };
 }
 
-// Flag colours are chosen for cloth, not for a button on this page. Dark
-// appearance gets a lighter tint of the same hue (Portuguese green becomes a
-// light green); light appearance gets a darker shade. Ink is chosen with the
-// page so the fill and the label both stay strong.
+function hslToHex(h, s, l) {
+    const hue = (p, q, t) => {
+        let tt = t;
+        if (tt < 0) tt += 1;
+        if (tt > 1) tt -= 1;
+        if (tt < 1 / 6) return p + (q - p) * 6 * tt;
+        if (tt < 1 / 2) return q;
+        if (tt < 2 / 3) return p + (q - p) * (2 / 3 - tt) * 6;
+        return p;
+    };
+    let r;
+    let g;
+    let b;
+    if (s === 0) {
+        r = g = b = l;
+    } else {
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+        r = hue(p, q, h + 1 / 3);
+        g = hue(p, q, h);
+        b = hue(p, q, h - 1 / 3);
+    }
+    const channel = (c) => Math.round(Math.min(1, Math.max(0, c)) * 255).toString(16).padStart(2, '0');
+    return `#${channel(r)}${channel(g)}${channel(b)}`;
+}
+
+function inkForFill(hex) {
+    const dark = '#10141b';
+    const light = '#ffffff';
+    return contrastRatio(hex, light) >= contrastRatio(hex, dark) ? light : dark;
+}
+
+// Flag colours stay at their own hue and saturation. Dark mode lifts
+// lightness only until the colour separates from the page, then stops, so a
+// red stays red instead of turning pink. Light mode darkens until the colour
+// clears a pale page. Ink is whichever of white or near-black still reads.
 function readableFlagColor(hex, theme) {
     const page = theme === 'light' ? '#eef2f5' : '#0b0f14';
-    const ink = theme === 'light' ? '#ffffff' : '#10141b';
-    const toward = theme === 'light' ? '#000000' : '#ffffff';
-    let color = hex;
-    for (let i = 0; i < 12; i++) {
-        if (contrastRatio(color, page) >= 5.5 && contrastRatio(color, ink) >= 5.5) break;
-        color = mixToward(color, toward, 0.07);
+    const { h, s, l } = hexToHsl(hex);
+    const sat = Math.min(1, Math.max(s, 0.82));
+    const darker = theme === 'light';
+    const pageTarget = darker ? 5 : 4;
+    const limit = darker ? 0.16 : Math.max(l, 0.5);
+    let lightness = l;
+    let color = hslToHex(h, sat, lightness);
+    const readable = (candidate) => (
+        contrastRatio(candidate, page) >= 3.4
+        && contrastRatio(candidate, inkForFill(candidate)) >= 4.5
+    );
+    for (let i = 0; i < 20; i += 1) {
+        const next = darker
+            ? Math.max(limit, lightness - 0.02)
+            : Math.min(limit, lightness + 0.02);
+        if (next === lightness) break;
+        const nextColor = hslToHex(h, sat, next);
+        if (readable(nextColor) && contrastRatio(nextColor, page) >= pageTarget) {
+            lightness = next;
+            color = nextColor;
+            break;
+        }
+        if (!readable(nextColor) && readable(color)) break;
+        lightness = next;
+        color = nextColor;
     }
-    return { color, ink };
+    return { color, ink: inkForFill(color) };
 }
 
 function paintAccent(el, primary, secondary) {

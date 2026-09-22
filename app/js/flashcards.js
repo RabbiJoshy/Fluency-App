@@ -4,7 +4,7 @@
 import './state.js?v=20260825ak';
 import './speech.js?v=20260825ak';
 import { goToRoute, routeCodeFor } from './routes.js?v=20260921a';
-import './side-dock.js?v=20260922rh';
+import './side-dock.js?v=20260922rh2';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,

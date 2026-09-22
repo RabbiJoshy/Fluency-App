@@ -16,6 +16,17 @@
       "commit": "2eb2e7f"
     },
     {
+      "timestamp": "2026-09-22T09:15:00+01:00",
+      "date": "2026-09-22 09:15 BST",
+      "agent": "Cursor",
+      "summary": "Language colours stay saturated. Dark mode lightens them and light mode darkens them, without washing them toward white or black.",
+      "detail": [
+        "Portuguese, Spanish, Czech and the other languages keep their flag hue. The button colour is a lighter saturated shade in dark mode and a darker saturated shade in light mode.",
+        "Label colour is chosen so the text still clears the button."
+      ],
+      "commit": "589e12e"
+    },
+    {
       "timestamp": "2026-09-22T01:20:00+01:00",
       "date": "2026-09-22 01:20 BST",
       "agent": "Claude",
