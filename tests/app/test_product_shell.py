@@ -459,10 +459,10 @@ class ProductShellTests(unittest.TestCase):
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
         self.assertIn('class="step-title step-title-trigger" data-tooltip="step5Tooltip"', html)
         self.assertIn('class="step-title step-title-trigger" data-tooltip="step2Tooltip"', html)
-        self.assertIn('id="fastModeToggleBtn"', html)
-        self.assertIn('id="fastModeDetailBtn"', html)
+        self.assertIn('id="fastTrackHubBtn"', html)
         self.assertIn(".sync-status.is-synced { display: none; }", css)
         self.assertIn(".fast-mode-master-switch", css)
+        self.assertIn(".fast-track-hub-btn {", css)
         self.assertIn("#step2,\n#step4 {", css)
         self.assertIn("--accent-primary: #8795ff;", css)
 
@@ -519,9 +519,18 @@ class ProductShellTests(unittest.TestCase):
         choosing = html[html.index('class="level-choosing"'):html.index('id="step4"')]
         self.assertIn('id="levelSelector"', choosing)
         self.assertIn('id="setupOptions"', choosing)
-        self.assertIn('id="fastModeToggleBtn"', choosing)
+        # One row, not a toggle plus a details action: the master switch lives
+        # inside the sheet, so the setup screen keeps to one button per section.
+        self.assertIn('id="fastTrackHubBtn"', choosing)
+        self.assertNotIn('id="fastModeToggleBtn"', html)
+        self.assertNotIn('id="fastModeDetailBtn"', html)
         self.assertNotIn('id="settingsFastTrackBtn"', html)
-        self.assertIn('id="fastModeSkippedLink"', html)
+        # The skipped-word decks and the reference lists are sections of the
+        # sheet now, not a second card on the setup screen.
+        self.assertIn('id="fastTrackDeckCard"', html)
+        self.assertIn('id="fastModeSkippedWordsRow"', html)
+        self.assertIn('id="fastModeMergedFormsRow"', html)
+        self.assertNotIn('id="fastModeSkippedLink"', html)
 
     def test_settings_are_organised_around_learner_tasks(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
@@ -1009,8 +1018,8 @@ class KnownLanguageCognateSurfaceTests(unittest.TestCase):
     def test_the_setup_panel_carries_the_known_language_picker(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
         for required_id in (
-            "setupOptions",          # the Fast mode row under the level picker
-            "fastModeToggleBtn",
+            "setupOptions",          # the Fast Track row under the level picker
+            "fastTrackHubBtn",
             "fastModeModal",         # the full page behind it
             "knownLanguagesContainer",
             "knownLanguagesSelector",

@@ -4,6 +4,10 @@ import './state.js?v=20260825ak';
 import { readFastTrack } from './fast-track-preferences.js?v=20260920a';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
+// One tap, one finishable sitting. The pool is already ordered by needfulness
+// (never-right, then recent mistakes, then overdue), so this is a slice, not a
+// second selection policy.
+const QUICK_REVIEW_LIMIT = 20;
 let _setupLevelSelectionWasManual = false;
 
 // Timing instrument for the return-to-menu path. Returning to setup rebuilds
@@ -2551,18 +2555,51 @@ async function renderRangeSelector() {
     const levelReviewCount = ranges.reduce((sum, range) => sum + range.reviewCount, 0);
     const levelDueCount = ranges.reduce((sum, range) => sum + range.dueCount, 0);
     const levelUnfinishedCount = Math.max(0, levelReviewCount - levelDueCount);
+    const levelKnownCount = ranges.reduce((sum, range) => sum + range.knownCount, 0);
+    const levelSeenCount = ranges.reduce((sum, range) => sum + range.seenCount, 0);
+    const levelCardCount = ranges.reduce((sum, range) => sum + range.cardCount, 0);
+    const levelButtonsForNumber = Array.from(document.querySelectorAll(
+        '.level-selector-buttons .level-btn, #levelSelector > .level-btn'
+    ));
+    const levelNumber = levelButtonsForNumber.findIndex(button => button.dataset.level === selectedLevel) + 1;
+
+    // Everything the Review home sheet needs about the level the user is looking
+    // at. Published rather than recomputed there, so the level figures on the home
+    // screen and inside the sheet can never disagree.
+    window.__reviewHomeContext = {
+        language: selectedLanguage,
+        range: `${minWord}-${maxWord}`,
+        rankBasis,
+        levelNumber,
+        levelLabel: levelNumber > 0 ? `Level ${levelNumber}` : 'This level',
+        levelReviewCount,
+        levelDueCount,
+        levelUnfinishedCount,
+        levelKnownCount,
+        levelSeenCount,
+        levelCardCount
+    };
+
     let reviewHTML = '';
     if (currentUser && !currentUser.isGuest) {
-        const reviewMeta = levelReviewCount === 0
-            ? 'Nothing to review in this level yet.'
-            : levelDueCount > 0 && levelUnfinishedCount > 0
-                ? `${levelDueCount} due · ${levelUnfinishedCount} unfinished`
-                : levelDueCount > 0
-                    ? `${levelDueCount} due in this level`
-                    : `${levelUnfinishedCount} unfinished in this level`;
+        // The headline figure is now the global queue, not the level's: the level
+        // count moved into the sheet as one category among several. Absence is
+        // declared - a zero queue says so rather than hiding the section.
+        const summary = window.getGlobalDueReviewSummary?.(selectedLanguage) || null;
+        const globalTotal = Number(summary?.total) || 0;
+        const neverRight = Number(summary?.neverRight) || 0;
+        const reviewMeta = globalTotal === 0
+            ? 'Nothing waiting for review right now.'
+            : neverRight > 0
+                ? `${globalTotal} waiting · ${neverRight} you've never got right`
+                : `${globalTotal} card${globalTotal === 1 ? '' : 's'} waiting`;
+        const quickCount = Math.min(globalTotal, QUICK_REVIEW_LIMIT);
         reviewHTML = `<div class="review-deck-content">
-                <div><h3 id="reviewDeckTitle">Review cards</h3><p>${reviewMeta}</p></div>
-                ${levelReviewCount > 0 ? `<button class="study-set-review" type="button">Review ${levelReviewCount} card${levelReviewCount === 1 ? '' : 's'}</button>` : ''}
+                <div><h3 id="reviewDeckTitle">Review &amp; Progress</h3><p>${reviewMeta}</p></div>
+                <div class="review-deck-actions">
+                    <button class="review-deck-home" type="button" id="openReviewHomeBtn">Review home <span aria-hidden="true">›</span></button>
+                    <button class="study-set-review" type="button" id="quickReviewBtn" ${quickCount > 0 ? '' : 'disabled'}>Quick review${quickCount > 0 ? ` · ${quickCount}` : ''}</button>
+                </div>
             </div>`;
     }
 
@@ -2596,9 +2633,13 @@ async function renderRangeSelector() {
     document.getElementById('step4').style.display = 'block';
     setActiveSetupStep('step4');
 
+    // Kept as the object rather than stringified onto the button's dataset, so the
+    // deck-load progress ring reads numbers instead of re-parsing strings.
+    let selectedRangeStats = null;
     const selectSet = index => {
         const range = ranges[index];
         if (!range?.available) return;
+        selectedRangeStats = range;
         container.querySelectorAll('.study-set-dot').forEach(dot => {
             const selected = Number(dot.dataset.index) === index;
             dot.classList.toggle('is-current', selected);
@@ -2655,7 +2696,15 @@ async function renderRangeSelector() {
         const loadingMessage = document.getElementById('loadingMessage');
         loadingMessage.style.display = 'block';
         loadingMessage.textContent = `Loading Set ${this.dataset.setNumber}...`;
-        window.showAppLoading?.(`Loading Set ${this.dataset.setNumber}`, 'Preparing your next cards…');
+        // The overlay already covers the atomic swap into #appContent, so the
+        // ring's minimum beat is awaited after the load rather than before it.
+        // showDeckLoading falls back to the plain spinner at 0% progress.
+        const beat = window.showDeckLoading?.(selectedRangeStats, {
+            title: `Loading Set ${this.dataset.setNumber}`,
+            detail: selectedRangeStats?.seenCount > 0
+                ? 'Picking up where you left off…'
+                : 'Preparing your next cards…'
+        });
         try {
             await loadVocabularyData(selectedRange, {
                 rankBasis: this.dataset.rankBasis,
@@ -2663,27 +2712,22 @@ async function renderRangeSelector() {
                 levelSetCount: Number(this.dataset.levelSetCount),
                 studyMode: this.dataset.studyMode
             });
+            await beat;
         } finally {
             window.hideAppLoading?.();
         }
     });
-    reviewSection?.querySelector('.study-set-review')?.addEventListener('click', async () => {
+    reviewSection?.querySelector('#openReviewHomeBtn')?.addEventListener('click', () => {
+        window.openReviewHome?.();
+    });
+    reviewSection?.querySelector('#quickReviewBtn')?.addEventListener('click', async () => {
+        const summary = window.getGlobalDueReviewSummary?.(selectedLanguage) || null;
+        const limit = Math.min(Number(summary?.total) || 0, QUICK_REVIEW_LIMIT);
+        if (limit <= 0) return;
         const loadingMessage = document.getElementById('loadingMessage');
         loadingMessage.style.display = 'block';
-        loadingMessage.textContent = `Loading ${levelReviewCount} review card${levelReviewCount === 1 ? '' : 's'}...`;
-        const levelButtons = Array.from(document.querySelectorAll(
-            '.level-selector-buttons .level-btn, #levelSelector > .level-btn'
-        ));
-        const levelNumber = levelButtons.findIndex(button => button.dataset.level === selectedLevel) + 1;
-        window.showAppLoading?.('Loading Review', 'Collecting the cards that need another look…');
-        try {
-            await loadLevelReviewSet(`${minWord}-${maxWord}`, {
-                rankBasis,
-                levelNumber
-            });
-        } finally {
-            window.hideAppLoading?.();
-        }
+        loadingMessage.textContent = `Loading ${limit} review card${limit === 1 ? '' : 's'}...`;
+        await startDailyReview({ limit, urgencyTier: 'all' });
     });
 
     renderSetupExtrasSection();
@@ -2698,8 +2742,6 @@ function _escapeHtml(value) {
 function renderSetupExtrasSection() {
     const section = document.getElementById('extrasDeckSection');
     const card = document.getElementById('extrasDeckCard');
-    const title = document.getElementById('extrasDeckTitle');
-    const eyebrow = document.getElementById('extrasDeckEyebrow');
     if (!section || !card) return;
 
     // Never show the extras/supplementary section while choosing between
@@ -2720,11 +2762,9 @@ function renderSetupExtrasSection() {
     if (activeArtist) {
         card.onclick = null;
         card.style.cursor = 'default';
-        if (eyebrow) eyebrow.textContent = 'Supplementary';
         const artistName = activeArtist.name || 'Artist';
         const extraUnlocked = window.isArtistExtraUnlocked?.();
         const coveragePct = Number(window._artistMainCoveragePct || 0);
-        if (title) title.textContent = 'Extra lyrics deck';
         section.style.display = 'block';
 
         if (extraUnlocked) {
@@ -2770,72 +2810,82 @@ function renderSetupExtrasSection() {
             `;
         }
     } else {
-        // Speech mode: Fast track skipped words
-        const extrasData = globalThis.collectExtras ? globalThis.collectExtras() : { cognates: [], lemmas: [] };
-        const cognates = extrasData.cognates || [];
-        const lemmas = extrasData.lemmas || [];
-        const totalSkipped = cognates.length + lemmas.length;
-        if (eyebrow) eyebrow.textContent = 'Fast Track';
-        if (title) title.textContent = 'Skipped word decks';
+        // Speech's skipped-word decks are no longer a second card on the setup
+        // screen; they render inside the Fast Track sheet. This slot stays for
+        // the artist branch alone.
+        section.style.display = 'none';
+        renderFastTrackSkippedDecks();
+    }
+}
 
-        if (totalSkipped > 0) {
-            section.style.display = 'block';
-            card.onclick = null;
-            card.style.cursor = 'default';
-            card.innerHTML = `
-                <div class="extras-deck-content">
-                    <div class="extras-deck-status">
-                        <span class="extras-deck-badge is-info">Fast Track</span>
-                        <div class="extras-deck-info">
-                            <strong>${cognates.length
-                ? `${cognates.length.toLocaleString()} words ready to study`
-                : 'No skipped word decks'}</strong>
-                            <p>${cognates.length
-                ? 'Choose a level below, then study a deck of up to 20 words.'
-                : 'Merged forms remain on their shared cards.'}</p>
-                        </div>
+// The Fast Track sheet's "review home" section. Same content as the card that
+// used to sit under the set picker, rendered into #fastTrackDeckCard instead, so
+// the setup screen keeps to one button per section.
+function renderFastTrackSkippedDecks() {
+    const card = document.getElementById('fastTrackDeckCard');
+    if (!card) return;
+    const extrasData = globalThis.collectExtras ? globalThis.collectExtras() : { cognates: [], lemmas: [] };
+    const cognates = extrasData.cognates || [];
+    const lemmas = extrasData.lemmas || [];
+    const totalSkipped = cognates.length + lemmas.length;
+
+    if (totalSkipped > 0) {
+        card.onclick = null;
+        card.style.cursor = 'default';
+        card.innerHTML = `
+            <div class="extras-deck-content">
+                <div class="extras-deck-status">
+                    <span class="extras-deck-badge is-info">Fast Track</span>
+                    <div class="extras-deck-info">
+                        <strong>${cognates.length
+            ? `${cognates.length.toLocaleString()} words ready to study`
+            : 'No skipped word decks'}</strong>
+                        <p>${cognates.length
+            ? 'Choose a level below, then study a deck of up to 20 words.'
+            : 'Merged forms remain on their shared cards.'}</p>
                     </div>
                 </div>
-                <div class="extras-deck-groups">${globalThis.renderFastTrackDeck?.(extrasData, {
-                    ranges: getActiveLevelRanges(), selectedLevel,
-                    progressForItem: item => getSetupLearningState(item)
-                }) || ''}</div>
-            `;
-            card.querySelectorAll('.extras-set-pill').forEach(button => {
-                button.addEventListener('click', event => {
-                    event.stopPropagation();
-                    globalThis.startFastTrackSkippedSet?.(
-                        button.dataset.ftKind, Number(button.dataset.ftStart),
-                        Number(button.dataset.ftLevel), getActiveLevelRanges()
-                    );
-                });
+            </div>
+            <div class="extras-deck-groups">${globalThis.renderFastTrackDeck?.(extrasData, {
+                ranges: getActiveLevelRanges(), selectedLevel,
+                progressForItem: item => getSetupLearningState(item)
+            }) || ''}</div>
+        `;
+        card.querySelectorAll('.extras-set-pill').forEach(button => {
+            button.addEventListener('click', event => {
+                event.stopPropagation();
+                globalThis.startFastTrackSkippedSet?.(
+                    button.dataset.ftKind, Number(button.dataset.ftStart),
+                    Number(button.dataset.ftLevel), getActiveLevelRanges()
+                );
             });
-        } else {
-            section.style.display = 'block';
-            card.innerHTML = `
-                <div class="extras-deck-content is-empty">
-                    <div class="extras-deck-status">
-                        <span class="extras-deck-badge is-muted">Full deck</span>
-                        <div class="extras-deck-info">
-                            <strong>All words included</strong>
-                            <p>No words are set aside with your current settings. They stay in the main sets.</p>
-                        </div>
-                    </div>
-                    <div class="extras-deck-actions">
-                        <button type="button" class="extras-deck-browse-btn" id="openFastModeSettingsBtn">
-                            Fast Track settings <span aria-hidden="true">›</span>
-                        </button>
+        });
+    } else {
+        card.innerHTML = `
+            <div class="extras-deck-content is-empty">
+                <div class="extras-deck-status">
+                    <span class="extras-deck-badge is-muted">Full deck</span>
+                    <div class="extras-deck-info">
+                        <strong>All words included</strong>
+                        <p>No words are set aside with your current settings. They stay in the main sets.</p>
                     </div>
                 </div>
-            `;
-            const openSettings = () => window.openFastModePage?.();
-            document.getElementById('openFastModeSettingsBtn')?.addEventListener('click', (e) => {
-                e.stopPropagation();
-                openSettings();
-            });
-            card.style.cursor = 'pointer';
-            card.onclick = openSettings;
-        }
+                <div class="extras-deck-actions">
+                    <button type="button" class="extras-deck-browse-btn" id="openFastModeSettingsBtn">
+                        Fine-tune Fast Track <span aria-hidden="true">›</span>
+                    </button>
+                </div>
+            </div>
+        `;
+        // Already inside the sheet, so this opens the fine-tune controls
+        // rather than re-opening the page it is on.
+        const openFineTune = () => document.getElementById('fastModeFineTuneBtn')?.click();
+        document.getElementById('openFastModeSettingsBtn')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openFineTune();
+        });
+        card.style.cursor = 'default';
+        card.onclick = null;
     }
 }
 
@@ -3786,3 +3836,4 @@ window.updateStatsModal = updateStatsModal;
 window.renderSetupExtrasSection = renderSetupExtrasSection;
 window.updateReviewAccess = updateReviewAccess;
 window.startDailyReview = startDailyReview;
+window.renderFastTrackSkippedDecks = renderFastTrackSkippedDecks;
