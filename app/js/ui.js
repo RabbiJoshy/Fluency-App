@@ -2872,17 +2872,17 @@ function renderFastTrackSkippedDecks() {
                 </div>
                 <div class="extras-deck-actions">
                     <button type="button" class="extras-deck-browse-btn" id="openFastModeSettingsBtn">
-                        Fine-tune Fast Track <span aria-hidden="true">›</span>
+                        Change what gets skipped <span aria-hidden="true">↑</span>
                     </button>
                 </div>
             </div>
         `;
-        // Already inside the sheet, so this opens the fine-tune controls
-        // rather than re-opening the page it is on.
-        const openFineTune = () => document.getElementById('fastModeFineTuneBtn')?.click();
+        // Already inside the sheet, and the controls sit open above this card,
+        // so the only useful action is to go back up to them.
         document.getElementById('openFastModeSettingsBtn')?.addEventListener('click', (e) => {
             e.stopPropagation();
-            openFineTune();
+            document.getElementById('fastModeFineTune')
+                ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
         card.style.cursor = 'default';
         card.onclick = null;

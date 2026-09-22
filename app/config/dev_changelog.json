@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-22T14:20:00+01:00",
+      "date": "2026-09-22 14:20 BST",
+      "agent": "Claude",
+      "summary": "Fast Track has its switch back on the main page, the sheet leads with what it means, and skipped words now name the word they actually matched.",
+      "detail": [
+        "The Fast Track row on the main page has a switch again — one tap turns it on without opening anything. Tapping the rest of the row opens the Fast Track page, and until you have opened it once the row invites you to.",
+        "That page now starts with the explanation, and both controls are open on it instead of hidden behind a Fine-tune button. The 'Saved on this device' line and the second on/off switch are gone.",
+        "The skipped and merged word lists live inside the step that creates them, as they did before. The skipped-word decks moved below the controls.",
+        "Skipped and merged word rows are shorter: a gloss's bracketed qualifier and its extra senses are trimmed, so 'to abandon (leave behind)' reads 'to abandon'. Searching still finds the words that were trimmed away.",
+        "A skipped word can now show the word it actually matched, with an arrow. Until now it showed the card's first meaning, which was picked for the card and had nothing to do with why the word was skipped. Decks need rebuilding before the arrows appear."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-22T13:40:00+01:00",
       "date": "2026-09-22 13:40 BST",
       "agent": "Cursor",

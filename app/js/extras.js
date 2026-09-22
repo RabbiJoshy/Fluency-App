@@ -55,6 +55,20 @@ function firstTranslation(item) {
     return meaning ? meaning.translation.trim() : '';
 }
 
+// These rows are a scan-and-recognise list, not a dictionary entry. A gloss
+// carries qualifiers for the card it belongs to -- "to abandon (leave behind)",
+// "(interrogative) what" -- and often several senses. Both are noise at a
+// glance, so the row shows the bare first sense. The full text still reaches
+// data-search-text, so searching a word that was trimmed away still finds it.
+function shortGloss(text) {
+    return String(text || '')
+        .replace(/\([^)]*\)/g, ' ')
+        .split(/[;\u2022]|\s+\/\s+/)[0]
+        .replace(/\s{2,}/g, ' ')
+        .replace(/^[\s,;:\u2013\u2014-]+|[\s,;:\u2013\u2014-]+$/g, '')
+        .trim();
+}
+
 function lemmaDisplayOf(item, host) {
     // The surviving card is anchored to the most frequent surface, which can
     // itself be an inflection. Show the shared headword used for grouping,
@@ -136,23 +150,34 @@ function cognateNote(item) {
     const fallbackCode = g().activeKnownLanguages?.()[0] || 'en';
     const code = strongest?.code || fallbackCode;
     const label = g().knownLanguageLabel ? g().knownLanguageLabel(code) : code;
-    return `Looks like ${escapeHtml(label)}`;
+    const matched = g().matchedKnownWord?.(item);
+    return `Looks like ${label}${matched?.word ? ` ${matched.word}` : ''}`;
 }
 
 function renderRows(entries, kind) {
     if (entries.length === 0) return '';
     return entries.map(({ item, mergedInto }) => {
         const translation = firstTranslation(item);
+        const shortTranslation = shortGloss(translation);
         const lemma = kind === 'lemma' ? lemmaDisplayOf(item, mergedInto) : null;
         const note = kind === 'cognate' ? cognateNote(item) : `${lemma.word} ${lemma.translation}`;
+        // The word the score was actually computed against. Only decks built
+        // from a v1.1 cognate file carry it; without it the row shows the card's
+        // meaning and no arrow, because an arrow would claim a match this gloss
+        // cannot make. Absence is declared, never inferred.
+        const matched = kind === 'cognate' ? g().matchedKnownWord?.(item) : null;
         // `data-extras-id` lets hydrateExtrasTranslations find this row again
         // once the meanings arrive; see the comment on that function.
         return `<li class="extras-row extras-row--${kind}" data-extras-id="${escapeHtml(item.id || '')}" data-search-text="${escapeHtml(`${item.word} ${translation} ${note}`.toLocaleLowerCase())}">
             ${kind === 'lemma'
-                ? `<span class="extras-base"><strong>${escapeHtml(lemma.word)}</strong><small class="extras-translation-slot">${escapeHtml(lemma.translation)}</small></span>`
+                ? `<span class="extras-base"><strong>${escapeHtml(lemma.word)}</strong><small class="extras-translation-slot">${escapeHtml(shortGloss(lemma.translation))}</small></span>`
                 : ''}
-            <span class="extras-word-stack"><button type="button" class="extras-open-card" data-card-id="${escapeHtml(item.id || '')}" aria-label="View ${escapeHtml(item.word)} card">${escapeHtml(item.word)}</button>${kind === 'lemma' ? `<span class="extras-translation">${escapeHtml(translation)}</span>` : ''}</span>
-            ${kind === 'cognate' ? `<span class="extras-translation extras-translation-slot">${escapeHtml(translation)}</span>` : ''}
+            <span class="extras-word-stack"><button type="button" class="extras-open-card" data-card-id="${escapeHtml(item.id || '')}" aria-label="View ${escapeHtml(item.word)} card">${escapeHtml(item.word)}</button>${kind === 'lemma' ? `<span class="extras-translation">${escapeHtml(shortTranslation)}</span>` : ''}</span>
+            ${kind === 'cognate'
+                ? (matched?.word
+                    ? `<span class="extras-match"><span aria-hidden="true">→</span><strong>${escapeHtml(matched.word)}</strong></span>`
+                    : `<span class="extras-translation extras-translation-slot">${escapeHtml(shortTranslation)}</span>`)
+                : ''}
         </li>`;
     }).join('');
 }
@@ -186,8 +211,9 @@ function hydrateExtrasTranslations(listEl, entries) {
     const fill = (row, item) => {
         const translation = firstTranslation(item);
         if (!translation) return false;
+        const shown = shortGloss(translation);
         row.querySelectorAll('.extras-translation-slot').forEach(slot => {
-            slot.textContent = translation;
+            slot.textContent = shown;
         });
         // The filter box reads data-search-text, so a hydrated row has to be
         // findable by the English word it now shows.

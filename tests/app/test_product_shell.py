@@ -463,6 +463,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn(".sync-status.is-synced { display: none; }", css)
         self.assertIn(".fast-mode-master-switch", css)
         self.assertIn(".fast-track-hub-btn {", css)
+        self.assertIn(".fast-track-hub-row {", css)
         self.assertIn("#step2,\n#step4 {", css)
         self.assertIn("--accent-primary: #8795ff;", css)
 
@@ -513,24 +514,36 @@ class ProductShellTests(unittest.TestCase):
 
     def test_fast_track_has_one_language_switch_and_fine_tuning(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
-        self.assertIn('id="fastModeHomeSwitch"', html)
-        self.assertIn('id="fastModeFineTuneBtn"', html)
         self.assertIn('class="level-choosing"', html)
         choosing = html[html.index('class="level-choosing"'):html.index('id="step4"')]
         self.assertIn('id="levelSelector"', choosing)
         self.assertIn('id="setupOptions"', choosing)
-        # One row, not a toggle plus a details action: the master switch lives
-        # inside the sheet, so the setup screen keeps to one button per section.
+        # One row carrying both: the switch turns Fast Track on where the
+        # learner already is, and the rest of the row opens the page that says
+        # what that means. A first-time user needs the second half.
         self.assertIn('id="fastTrackHubBtn"', choosing)
+        self.assertIn('id="fastTrackHubSwitch"', choosing)
+        self.assertIn('id="fastTrackHubSummary"', choosing)
         self.assertNotIn('id="fastModeToggleBtn"', html)
         self.assertNotIn('id="fastModeDetailBtn"', html)
         self.assertNotIn('id="settingsFastTrackBtn"', html)
-        # The skipped-word decks and the reference lists are sections of the
-        # sheet now, not a second card on the setup screen.
-        self.assertIn('id="fastTrackDeckCard"', html)
-        self.assertIn('id="fastModeSkippedWordsRow"', html)
-        self.assertIn('id="fastModeMergedFormsRow"', html)
+        # The sheet leads with the explanation, and its controls are the page
+        # rather than a drawer inside it, so neither a second master switch nor
+        # a reveal button survives.
+        self.assertNotIn('id="fastModeHomeSwitch"', html)
+        self.assertNotIn('id="fastModeFineTuneBtn"', html)
+        self.assertNotIn('id="fastModeLanguageStatus"', html)
+        self.assertIn('id="fastModeFineTune"', html)
+        # The skipped and merged word lists belong to the steps that create
+        # them, not to a duplicate set of rows above them.
+        self.assertIn('id="viewSkippedWordsBtn"', html)
+        self.assertIn('id="viewMergedFormsBtn"', html)
+        self.assertNotIn('id="fastModeSkippedWordsRow"', html)
+        self.assertNotIn('id="fastModeMergedFormsRow"', html)
         self.assertNotIn('id="fastModeSkippedLink"', html)
+        # The skipped-word decks sit below the controls that produce them.
+        self.assertIn('id="fastTrackDeckCard"', html)
+        self.assertLess(html.index('id="fastModeFineTune"'), html.index('id="fastTrackDeckCard"'))
 
     def test_settings_are_organised_around_learner_tasks(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")

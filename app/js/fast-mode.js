@@ -96,34 +96,28 @@ function refresh() {
     wrapper.style.display = availabilityResolved ? 'block' : 'none';
 
     const on = state === 'on';
-    const languageName = config?.languages?.[selectedLanguage]?.name || selectedLanguage || 'Language';
-    const status = document.getElementById('fastModeLanguageStatus');
-    if (status) status.textContent = `${languageName} · ${currentUser && !currentUser.isGuest
-        ? 'Saved across devices' : 'Saved on this device'}` +
-        (availabilityResolved && !lemmaAvailable() && !cognateAvailable() ? ' · Unavailable in this deck' : '');
-    const homeSwitch = document.getElementById('fastModeHomeSwitch');
-    if (homeSwitch) homeSwitch.setAttribute('aria-pressed', String(on));
-    const switchValue = document.getElementById('fastModeHomeSwitchValue');
-    if (switchValue) switchValue.textContent = on ? 'On' : 'Off';
     const extras = globalThis.collectExtras?.() || {};
     const skipped = extras.cognates?.length || 0;
-    const merged = extras.lemmas?.length || 0;
     const count = document.getElementById('fastModeSkippedCount');
     if (count) count.textContent = skipped ? `· ${skipped.toLocaleString()} words` : '';
-    const skippedRowCount = document.getElementById('fastModeSkippedWordsRowCount');
-    if (skippedRowCount) skippedRowCount.textContent = skipped.toLocaleString();
-    const mergedRowCount = document.getElementById('fastModeMergedFormsRowCount');
-    if (mergedRowCount) mergedRowCount.textContent = merged.toLocaleString();
 
-    // The setup screen's single Fast Track row. It is navigation only - the
-    // master switch lives inside the sheet - so it states rather than toggles.
-    const hubState = document.getElementById('fastTrackHubState');
-    if (hubState) {
-        hubState.textContent = on ? 'On' : 'Off';
-        hubState.dataset.fast = on ? 'on' : 'off';
+    // The setup screen's Fast Track row: the switch is the real master control,
+    // and the line beneath it is an invitation on a first visit and the current
+    // setting after that. A learner who has never opened the sheet has no idea
+    // what "related forms share one card" means, so they are not told it yet.
+    const hubSwitch = document.getElementById('fastTrackHubSwitch');
+    if (hubSwitch) {
+        hubSwitch.classList.toggle('selected', on);
+        hubSwitch.setAttribute('aria-pressed', String(on));
+        hubSwitch.setAttribute('aria-label', on ? 'Turn Fast Track off' : 'Turn Fast Track on');
     }
+    const hubRow = document.getElementById('setupOptions')?.querySelector('.fast-track-hub-row');
+    const unseen = !hasSeenFastTrackPage();
+    if (hubRow) hubRow.classList.toggle('is-unseen', unseen);
     const hubSummary = document.getElementById('fastTrackHubSummary');
-    if (hubSummary) hubSummary.textContent = summaryText();
+    if (hubSummary) hubSummary.textContent = unseen
+        ? 'Learn fewer cards — see how'
+        : summaryText();
 
     const summary = document.getElementById('fastModeSummary');
     if (summary) summary.textContent = summaryText();
@@ -135,6 +129,19 @@ function refresh() {
 }
 
 const STREAMLINE_REC_DISMISSED_KEY = 'fluency_streamline_rec_dismissed_v1';
+// One visit retires the hint. Same best-effort storage shape as the callout
+// above: a blocked localStorage means the hint simply keeps showing, which is
+// the harmless direction to fail in.
+const FAST_TRACK_PAGE_SEEN_KEY = 'fluency_fast_track_page_seen_v1';
+
+function hasSeenFastTrackPage() {
+    try { return localStorage.getItem(FAST_TRACK_PAGE_SEEN_KEY) === '1'; }
+    catch (_) { return false; }
+}
+
+function markFastTrackPageSeen() {
+    try { localStorage.setItem(FAST_TRACK_PAGE_SEEN_KEY, '1'); } catch (_) {}
+}
 
 function updateStreamlineRecCallout() {
     const callout = document.getElementById('streamlineRecCallout');
@@ -358,6 +365,7 @@ function updateKnownLanguageCopy() {
 // this sheet without each knowing how it is laid out.
 function openFastModePage({ section } = {}) {
     returnToSettings = !document.getElementById('settingsModal')?.classList.contains('hidden');
+    markFastTrackPageSeen();
     refresh();
     updateStreamlineLanguageExamples();
     globalThis.renderFastTrackSkippedDecks?.();
@@ -376,18 +384,7 @@ function closeFastModePage({ reopenSettings = true } = {}) {
 
 function init() {
     document.getElementById('fastTrackHubBtn')?.addEventListener('click', () => openFastModePage());
-    document.getElementById('fastModeHomeSwitch')?.addEventListener('click', () => applyFastMode(currentState() !== 'on'));
-    document.getElementById('fastModeFineTuneBtn')?.addEventListener('click', event => {
-        const details = document.getElementById('fastModeFineTune');
-        details.hidden = !details.hidden;
-        event.currentTarget.setAttribute('aria-expanded', String(!details.hidden));
-    });
-    document.getElementById('fastModeSkippedWordsRow')?.addEventListener('click', () => {
-        globalThis.openSkippedWords?.();
-    });
-    document.getElementById('fastModeMergedFormsRow')?.addEventListener('click', () => {
-        globalThis.openMergedForms?.();
-    });
+    document.getElementById('fastTrackHubSwitch')?.addEventListener('click', () => applyFastMode(currentState() !== 'on'));
     document.getElementById('dismissStreamlineRecBtn')?.addEventListener('click', (e) => {
         e.stopPropagation();
         try { localStorage.setItem(STREAMLINE_REC_DISMISSED_KEY, '1'); } catch (_) {}

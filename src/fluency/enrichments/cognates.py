@@ -252,7 +252,10 @@ def build_cognate_layer(
     }
 
 
-COGNET_APP_SCHEMA = "cognate-score/v2"
+# The app payload's own version, separate from the layer's score_schema: adding
+# `matches` changes what ships, not how a score is computed.
+COGNATE_APP_SCHEMA = "cognate-score/v1.1"
+COGNET_APP_SCHEMA = "cognate-score/v2.1"
 
 
 def build_app_cognet(
@@ -277,11 +280,16 @@ def build_app_cognet(
     """
 
     scores: dict[str, dict[str, dict[str, float]]] = {}
+    matches: dict[str, dict[str, dict[str, str]]] = {}
     for known_language, surfaces in rows.items():
         for surface, lemmas in surfaces.items():
             for lemma, match in lemmas.items():
                 entry = scores.setdefault(surface, {}).setdefault(lemma, {})
                 entry[known_language] = round(float(match["score"]), 3)
+                # Same match, so the word and the number can never disagree.
+                word = str(match.get("known_word") or "").strip()
+                if word:
+                    matches.setdefault(surface, {}).setdefault(lemma, {})[known_language] = word
     return {
         "schema": COGNET_APP_SCHEMA,
         "language": language,
@@ -292,6 +300,11 @@ def build_app_cognet(
         "scores": {
             surface: {lemma: dict(sorted(langs.items())) for lemma, langs in sorted(lemmas.items())}
             for surface, lemmas in sorted(scores.items())
+        },
+        # surface -> lemma -> known language -> the word that produced that score
+        "matches": {
+            surface: {lemma: dict(sorted(langs.items())) for lemma, langs in sorted(lemmas.items())}
+            for surface, lemmas in sorted(matches.items())
         },
     }
 
@@ -349,12 +362,19 @@ def merge_cognet_scores(
 
 
 def build_app_cognates(layer: Mapping[str, Any]) -> dict[str, Any]:
-    """The app-facing view: surface -> {known language: score}.
+    """The app-facing view: surface -> {known language: score}, plus the word.
 
-    The app only needs the number it thresholds. Which known word produced it,
-    and how form and meaning contributed, stay in the layer for auditing — the
-    same split the release makes everywhere else between what ships and what is
-    kept to explain it.
+    The number decides; the word explains. They ship as sibling maps rather than
+    as one object per leaf, so ``scores`` keeps the shape every existing reader
+    expects and a file built before this change is still read correctly — it
+    simply has no ``matches``.
+
+    Shipping the word is not decoration. The app has no other way to name what a
+    surface matched, and the gloss it fell back to is chosen by the sense menu,
+    so it agreed with the score only by coincidence. ``matches[surface][known]``
+    is taken from the same ``CognateMatch`` as ``scores[surface][known]``, which
+    is what makes the pair true by construction. How form and meaning
+    contributed stays in the layer, for auditing.
     """
 
     scores = {
@@ -364,6 +384,17 @@ def build_app_cognates(layer: Mapping[str, Any]) -> dict[str, Any]:
         }
         for surface, per_language in sorted(layer.get("scores", {}).items())
     }
+    matches = {
+        surface: words
+        for surface, per_language in sorted(layer.get("scores", {}).items())
+        if (
+            words := {
+                known: str(match["known_word"])
+                for known, match in sorted(per_language.items())
+                if str(match.get("known_word") or "").strip()
+            }
+        )
+    }
     # Each known language carries its own cutoff. The app never compares one
     # language's score with another's — it asks each in turn whether this word
     # is already free — so the numbers do not need a common scale.
@@ -372,10 +403,12 @@ def build_app_cognates(layer: Mapping[str, Any]) -> dict[str, Any]:
         for known, policy in sorted(layer.get("policies", {}).items())
     }
     return {
-        "schema": COGNATE_SCORE_SCHEMA,
+        "schema": COGNATE_APP_SCHEMA,
         "language": layer["language"],
         "known_languages": list(layer["known_languages"]),
         "built_from_release_id": layer.get("built_from", {}).get("release_id"),
         "thresholds": thresholds,
         "scores": scores,
+        # surface -> known language -> the word that produced that score
+        "matches": matches,
     }
