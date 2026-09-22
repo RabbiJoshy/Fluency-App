@@ -27,7 +27,7 @@ import './song-sets.js?v=20260823ae';
 import './playlist-live.js?v=20260921rt';
 import './spotify-playlist-import.js?v=20260921rh';
 import './vocabulary-import.js?v=20260920a';
-import './flashcards.js?v=20260922ui';
+import './flashcards.js?v=20260922conj';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 function startCardTutorial() {

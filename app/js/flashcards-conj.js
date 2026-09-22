@@ -122,7 +122,7 @@ function conjugationLookupUrl(lemma) {
 // Languages that have a built conjugation-drill deck under app/conjugation/.
 // A language appears here once its deck file exists; until then the drill
 // link is simply absent rather than pointing at a 404.
-const CONJ_DRILL_DECKS = { spanish: 'es' };
+const CONJ_DRILL_DECKS = { spanish: 'es', portuguese: 'pt', czech: 'cs' };
 
 // Single entry point into conjugation mode. Returns null when this language
 // has no deck, so the caller omits the link instead of guessing.
