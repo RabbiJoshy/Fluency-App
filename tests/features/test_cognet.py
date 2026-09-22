@@ -549,7 +549,25 @@ class AppPayloadTests(unittest.TestCase):
     def test_known_languages_are_declared_not_inferred(self):
         payload = self.payload()
         self.assertEqual(payload["known_languages"], ["en", "pl"])
-        self.assertEqual(payload["schema"], "cognate-score/v2")
+        # v2.1 is v2 plus the matched word; the route is unchanged, so readers
+        # test the prefix rather than the exact string.
+        self.assertEqual(payload["schema"], "cognate-score/v2.1")
+        self.assertTrue(payload["schema"].startswith("cognate-score/v2"))
+
+    def test_the_matched_word_travels_with_the_lemma_that_scored_it(self):
+        from fluency.enrichments.cognates import build_app_cognet
+
+        payload = build_app_cognet(
+            language="cs",
+            rows={
+                "en": {"doktor": {"doktor": {"score": 0.917, "known_word": "doctor"}}},
+                # No known_word here: the file must not invent one.
+                "pl": {"doktor": {"doktor": {"score": 0.95}}},
+            },
+            thresholds={"en": 0.75, "pl": 0.8},
+        )
+        self.assertEqual(payload["matches"]["doktor"]["doktor"], {"en": "doctor"})
+        self.assertEqual(payload["scores"]["doktor"]["doktor"], {"en": 0.917, "pl": 0.95})
 
     def test_a_language_that_scored_nothing_for_a_surface_is_simply_absent(self):
         self.assertEqual(self.payload()["scores"]["ale"]["ale"], {"pl": 0.917})

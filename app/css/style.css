@@ -18050,6 +18050,23 @@ body {
 .extras-row--lemma .extras-translation { text-align: right; }
 .extras-base strong { font: 650 12px/1.35 var(--font-reading); }
 .extras-base small { color: var(--text-muted); font: 11px/1.35 var(--font-reading); }
+/* The word the cognate score was actually computed against. The arrow is what
+   makes the row a claim about a match rather than a translation, so it only
+   appears when the deck ships the word. */
+.extras-match {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  min-width: 0;
+  color: var(--text-muted);
+  font: 500 11px/1.35 var(--font-reading);
+}
+.extras-match strong {
+  color: var(--text-primary);
+  font: 650 12px/1.35 var(--font-reading);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 #mergedFormsModal .extras-open-card,
 #skippedWordsModal .extras-open-card,
 #extrasDeckCard .extras-open-card {
@@ -19167,8 +19184,10 @@ html[data-text-size="large"] body {
   border-radius: 0;
   background: transparent;
 }
+.fast-track-hub-row { display: flex; align-items: center; gap: 10px; }
 .fast-track-hub-btn {
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -19182,6 +19201,10 @@ html[data-text-size="large"] body {
   transition: transform 0.16s ease, opacity 0.16s ease;
 }
 .fast-track-hub-btn:hover { transform: translateX(1px); opacity: 0.88; }
+.fast-track-hub-row .fast-mode-master-switch { flex: none; width: 42px; height: 24px; cursor: pointer; }
+.fast-track-hub-row .fast-mode-master-switch i { width: 18px; height: 18px; }
+.fast-track-hub-row .fast-mode-master-switch.selected { background: var(--accent-primary); }
+.fast-track-hub-row .fast-mode-master-switch.selected i { transform: translateX(18px); background: #10141b; }
 .fast-track-hub-btn .fast-mode-master-icon {
   flex: none;
   width: 23px;
@@ -19201,18 +19224,23 @@ html[data-text-size="large"] body {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.fast-track-hub-state {
-  padding: 2px 7px;
-  border-radius: 99px;
-  background: color-mix(in srgb, var(--border-color) 80%, transparent);
-  color: var(--text-muted);
-  font: 700 9px/1.4 var(--font-emphasis);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+/* Until the sheet has been opened once, the second line is an invitation
+   rather than a status, and the chevron carries a dot so the eye lands on it.
+   Both retire permanently after that first visit. */
+.fast-track-hub-row.is-unseen .fast-track-hub-copy small {
+  color: var(--accent-primary);
+  font-weight: 650;
 }
-.fast-track-hub-state[data-fast="on"] {
-  background: color-mix(in srgb, var(--success) 22%, transparent);
-  color: var(--success);
+.fast-track-hub-row.is-unseen .fast-track-hub-chevron { position: relative; color: var(--accent-primary); }
+.fast-track-hub-row.is-unseen .fast-track-hub-chevron::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -5px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-primary);
 }
 #setupOptions .streamline-rec-badge { font-size: 10px; padding: 3px 7px; }
 .fast-track-hub-chevron { flex: none; color: var(--text-muted); font-size: 20px; line-height: 1; }
@@ -19228,30 +19256,6 @@ html[data-text-size="large"] body {
   text-transform: uppercase;
 }
 .fast-mode-section h4 span { font-weight: 600; letter-spacing: 0.04em; }
-.fast-mode-hub-row {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  margin-bottom: 7px;
-  padding: 12px 14px;
-  border: 1px solid var(--border-color);
-  border-radius: 11px;
-  background: var(--bg-card);
-  color: var(--text-primary);
-  text-align: left;
-  cursor: pointer;
-  transition: border-color 0.16s ease, transform 0.16s ease;
-}
-.fast-mode-hub-row:hover {
-  border-color: color-mix(in srgb, var(--accent-primary) 48%, var(--border-color));
-  transform: translateY(-1px);
-}
-.fast-mode-hub-copy { display: grid; gap: 3px; }
-.fast-mode-hub-copy strong { font: 700 14px/1.2 var(--font-emphasis); }
-.fast-mode-hub-copy small { color: var(--text-muted); font: 500 11px/1.35 var(--font-reading); }
-.fast-mode-hub-count { flex: none; font: 800 19px/1 var(--font-emphasis); }
 
 .example-source-favicon,
 .dictionary-provenance-badge .dict-provenance-icon { width: 34px; height: 34px; }

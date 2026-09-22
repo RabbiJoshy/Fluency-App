@@ -42,6 +42,10 @@ const KNOWN_LANGUAGE_NAMES = {
 
 // surface (lowercased) -> { known language: score }
 let cognateScores = null;
+// The same keying as cognateScores, but the word that produced each score. It
+// ships as a sibling map from v1.1 on; a file built before that has none, and
+// the app says so rather than naming a word it cannot stand behind.
+let cognateMatches = null;
 let cognateLanguages = [];
 // The auto cutoff per known language, shipped with the scores because it is a
 // property of the pair that produced them, not a user setting. An advanced
@@ -52,6 +56,10 @@ let cognateThresholds = {};
 // lemma level between them. Read from the payload rather than sniffed, so a
 // malformed file fails loudly instead of being guessed at.
 let cognateSchema = 'cognate-score/v1';
+// v1 and v1.1 are the flat route; v2 and v2.1 add the lemma level. The .1
+// revisions differ only by carrying `matches`, so the shape tests read the
+// route, never the exact string.
+const isLemmaRouted = schema => String(schema).startsWith('cognate-score/v2');
 // The language the loaded map was built for. Scores are keyed by bare surface,
 // which several languages share, so the map must never outlive its language.
 let cognateLanguage = null;
@@ -137,6 +145,17 @@ function strongestKnownLanguage(item) {
     return bestCode === null ? null : { code: bestCode, score: best };
 }
 
+// The known word that actually produced the score which freed this card, for
+// the language that cleared its own cutoff. Display only, like
+// strongestKnownLanguage above -- and null whenever the deck's cognate file
+// predates v1.1, because there is then no such word to name.
+function matchedKnownWord(item) {
+    const strongest = strongestKnownLanguage(item);
+    if (!strongest) return null;
+    const word = item?.cognate_match_words?.[strongest.code];
+    return word ? { code: strongest.code, word: String(word) } : null;
+}
+
 // Attach shipped scores to the loaded vocabulary. Called once per deck load,
 // before any filtering, so buildFilteredVocab sees a complete item.
 function applyCognateScores(vocabularyData, languageCode) {
@@ -145,31 +164,52 @@ function applyCognateScores(vocabularyData, languageCode) {
     // across the two.
     if (languageCode && cognateLanguage && languageCode !== cognateLanguage) return;
     for (const item of vocabularyData) {
-        const entry = cognateScores[String(item.word || '').toLowerCase()];
+        const surface = String(item.word || '').toLowerCase();
+        const entry = cognateScores[surface];
         if (!entry) continue;
-        if (cognateSchema === 'cognate-score/v2') {
+        const matched = cognateMatches?.[surface];
+        if (isLemmaRouted(cognateSchema)) {
             // v2 keys surface -> lemma -> language, because form is settled at
             // the surface and cognateness at the lemma. A card is a surface, so
             // the card's score is the best any of its lemmas can claim: if one
             // of its meanings is already free, the word is already free.
             item.cognate_lemma_scores = entry;
-            item.cognate_scores = bestPerLanguage(entry);
+            const best = bestPerLanguage(entry);
+            item.cognate_scores = best.scores;
+            // The word has to come from the lemma that won, or it would name a
+            // match other than the one the number reports.
+            if (matched) {
+                const words = {};
+                for (const [code, lemma] of Object.entries(best.lemmas)) {
+                    const word = matched[lemma]?.[code];
+                    if (word) words[code] = word;
+                }
+                if (Object.keys(words).length) item.cognate_match_words = words;
+            }
         } else {
             item.cognate_scores = entry;
+            if (matched) item.cognate_match_words = matched;
         }
     }
 }
 
-// surface -> {language: best score across its lemmas}
+// surface -> {scores: {language: best score across its lemmas},
+//             lemmas: {language: the lemma that scored it}}
+// The winning lemma is carried out rather than found again later, so the word
+// shown and the number thresholded always come from the same match.
 function bestPerLanguage(byLemma) {
-    const best = {};
-    for (const langs of Object.values(byLemma || {})) {
+    const scores = {};
+    const lemmas = {};
+    for (const [lemma, langs] of Object.entries(byLemma || {})) {
         for (const [code, value] of Object.entries(langs || {})) {
             const score = Number(value) || 0;
-            if (!(code in best) || score > best[code]) best[code] = score;
+            if (!(code in scores) || score > scores[code]) {
+                scores[code] = score;
+                lemmas[code] = lemma;
+            }
         }
     }
-    return best;
+    return { scores, lemmas };
 }
 
 // Which of a card's lemmas a known language already gives the learner. Nothing
@@ -191,6 +231,7 @@ function knownLemmas(item) {
 
 async function loadCognateScores(langConfig) {
     cognateScores = null;
+    cognateMatches = null;
     cognateLanguages = [];
     cognateThresholds = {};
     cognateLanguage = null;
@@ -205,11 +246,14 @@ async function loadCognateScores(langConfig) {
         if (!scores || typeof scores !== 'object') throw new Error('no scores in cognate file');
         cognateScores = scores;
         cognateSchema = String(payload.schema || 'cognate-score/v1');
+        cognateMatches = (payload.matches && typeof payload.matches === 'object')
+            ? payload.matches
+            : null;
         cognateLanguage = payload.language || null;
         cognateLanguages = Array.isArray(payload.known_languages)
             ? payload.known_languages.slice()
             : Object.keys(Object.values(scores)[0] || {});
-        if (cognateSchema === 'cognate-score/v2' && !Array.isArray(payload.known_languages)) {
+        if (isLemmaRouted(cognateSchema) && !Array.isArray(payload.known_languages)) {
             // v2's first value is a lemma map, so its keys are lemmas, not
             // languages. Only a declared list is trustworthy here.
             cognateLanguages = [];
@@ -223,6 +267,7 @@ async function loadCognateScores(langConfig) {
         // against whatever happened to be left in memory.
         console.warn('Cognate scores unavailable:', error);
         cognateScores = null;
+        cognateMatches = null;
         cognateLanguages = [];
         cognateThresholds = {};
         cognateLanguage = null;
@@ -287,6 +332,7 @@ function cognateThresholdFor(code) {
 globalThis.cognateThresholdFor = cognateThresholdFor;
 globalThis.isCognateKnown = isCognateKnown;
 globalThis.strongestKnownLanguage = strongestKnownLanguage;
+globalThis.matchedKnownWord = matchedKnownWord;
 globalThis.applyCognateScores = applyCognateScores;
 globalThis.loadCognateScores = loadCognateScores;
 globalThis.availableKnownLanguages = availableKnownLanguages;

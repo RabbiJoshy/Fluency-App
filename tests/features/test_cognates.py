@@ -473,6 +473,52 @@ class AppLayerTests(unittest.TestCase):
         self.assertEqual(published["thresholds"]["pl"], 0.80)
         self.assertEqual(published["scores"]["telefon"]["pl"], 0.9)
 
+    def test_the_shipped_word_is_the_one_that_produced_the_score(self) -> None:
+        # The app used to have no word to show and fell back to the card's first
+        # gloss, which the sense menu orders and which therefore agreed with the
+        # score only by accident. Shipping the word from the same match is what
+        # makes the pair true rather than plausible.
+        layer = {
+            "language": "cs",
+            "known_languages": ["en", "pl"],
+            "built_from": {"release_id": "r1"},
+            "policies": {
+                "en": load_policy(CONFIG_ROOT, "cs", "en").to_dict(),
+                "pl": load_policy(CONFIG_ROOT, "cs", "pl").to_dict(),
+            },
+            "scores": {
+                "telefon": {
+                    "pl": {"score": 0.9, "known_word": "telefon", "form": 1.0, "meaning": 0.6},
+                    "en": {"score": 0.82, "known_word": "telephone", "form": 0.9, "meaning": 0.7},
+                },
+                # A match the scorer left unnamed must not invent one.
+                "nula": {"en": {"score": 0.78, "known_word": "", "form": 0.9, "meaning": 0.5}},
+            },
+        }
+        published = build_app_cognates(layer)
+        for surface, scores in published["scores"].items():
+            for known, score in scores.items():
+                word = published["matches"].get(surface, {}).get(known)
+                if word is None:
+                    continue
+                self.assertEqual(word, layer["scores"][surface][known]["known_word"])
+                self.assertEqual(score, round(layer["scores"][surface][known]["score"], 3))
+        self.assertEqual(published["matches"]["telefon"], {"en": "telephone", "pl": "telefon"})
+        # Absence is declared, not filled in: an unnamed match ships no word.
+        self.assertNotIn("nula", published["matches"])
+
+    def test_the_app_schema_says_the_file_carries_words(self) -> None:
+        # A reader has to be able to tell a file with matches from one built
+        # before them without probing for the key.
+        layer = {
+            "language": "cs",
+            "known_languages": ["pl"],
+            "built_from": {"release_id": "r1"},
+            "policies": {"pl": load_policy(CONFIG_ROOT, "cs", "pl").to_dict()},
+            "scores": {"telefon": {"pl": {"score": 0.9, "known_word": "telefon"}}},
+        }
+        self.assertEqual(build_app_cognates(layer)["schema"], "cognate-score/v1.1")
+
 
 class SynthesisedEnglishTests(unittest.TestCase):
     """The English side is built from the deck's own glosses, and a gloss is not

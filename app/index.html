@@ -46,14 +46,14 @@
             root.dataset.textSize = textSize;
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260922rh2">
+    <link rel="stylesheet" href="css/style.css?v=20260922ft2">
     <link rel="stylesheet" href="css/light-theme.css?v=20260921freq">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260922conj">
+    <link rel="modulepreload" href="js/main.js?v=20260922ft2">
     <link rel="modulepreload" href="js/routes.js?v=20260921a">
     <link rel="modulepreload" href="js/theme.js?v=20260922ui">
     <link rel="modulepreload" href="js/state.js?v=20260921x">
@@ -73,7 +73,7 @@
     <link rel="modulepreload" href="js/progress.js?v=20260920e">
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20260920a">
-    <link rel="modulepreload" href="js/ui.js?v=20260922rh2">
+    <link rel="modulepreload" href="js/ui.js?v=20260922ft2">
     <link rel="modulepreload" href="js/review-home.js?v=20260922rh2">
     <link rel="modulepreload" href="js/fast-track-preferences.js?v=20260920a">
     <link rel="modulepreload" href="js/vocab.js?v=20260921freqb">
@@ -531,24 +531,27 @@
                 </div>
                 <div class="level-choosing">
                     <div id="levelSelector" class="level-selector"></div>
-                    <!-- One button, one destination. The master switch and the
-                         skipped-word decks both live inside the Fast Track sheet
-                         now, so this slot stays a single row - the same shape the
-                         lyrics "extras" entry point will take when the two UIs
-                         are unified. -->
+                    <!-- One row, two controls: the switch turns Fast Track on
+                         without leaving the page, and everything left of it opens
+                         the sheet that explains what that means. A button cannot
+                         nest inside a button, hence the container. The second line
+                         is the hint - an invitation on a first visit, the current
+                         setting thereafter. -->
                     <div id="setupOptions" class="setup-options" style="display: none;">
-                        <button type="button" id="fastTrackHubBtn" class="fast-track-hub-btn">
-                            <svg class="fast-mode-master-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.5v13l8-6.5-8-6.5Z"></path><path d="M12 5.5v13l8-6.5-8-6.5Z"></path></svg>
-                            <span class="fast-track-hub-copy">
-                                <span class="fast-mode-title-row">
-                                    <strong>Fast Track</strong>
-                                    <span class="streamline-rec-badge">Recommended</span>
-                                    <span class="fast-track-hub-state" id="fastTrackHubState">Off</span>
+                        <div class="fast-track-hub-row">
+                            <button type="button" id="fastTrackHubBtn" class="fast-track-hub-btn" aria-describedby="fastTrackHubSummary">
+                                <svg class="fast-mode-master-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.5v13l8-6.5-8-6.5Z"></path><path d="M12 5.5v13l8-6.5-8-6.5Z"></path></svg>
+                                <span class="fast-track-hub-copy">
+                                    <span class="fast-mode-title-row">
+                                        <strong>Fast Track</strong>
+                                        <span class="streamline-rec-badge">Recommended</span>
+                                    </span>
+                                    <small id="fastTrackHubSummary"></small>
                                 </span>
-                                <small id="fastTrackHubSummary"></small>
-                            </span>
-                            <span class="fast-track-hub-chevron" aria-hidden="true">›</span>
-                        </button>
+                                <span class="fast-track-hub-chevron" aria-hidden="true">›</span>
+                            </button>
+                            <button type="button" id="fastTrackHubSwitch" class="fast-mode-master-switch" aria-pressed="false" aria-label="Turn Fast Track on"><i></i></button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1163,33 +1166,12 @@
                     <span class="streamline-rec-badge">Recommended</span>
                 </div>
                 <p class="fast-mode-lede">Study fewer cards by grouping related word forms or setting aside familiar look-alikes. Choose which shortcuts to use below.</p>
-                <p class="fast-mode-language-status" id="fastModeLanguageStatus"></p>
-                <button type="button" class="fast-mode-language-switch" id="fastModeHomeSwitch" aria-pressed="false"><span>Fast Track</span><strong id="fastModeHomeSwitchValue">Off</strong></button>
 
-                <!-- Fast Track review home: the skipped-word decks that used to be a
-                     second card on the setup screen. ui.js renders into the card
-                     below; the pills keep their existing handler contract. -->
-                <section class="fast-mode-section" data-section="decks">
-                    <h4>Fast Track review home <span id="fastModeSkippedCount"></span></h4>
-                    <div class="extras-deck-card" id="fastTrackDeckCard"></div>
-                </section>
-
-                <!-- Skipped words home: the reference lists, one row each. -->
-                <section class="fast-mode-section" data-section="skipped">
-                    <h4>Skipped words home</h4>
-                    <button type="button" class="fast-mode-hub-row" id="fastModeSkippedWordsRow">
-                        <span class="fast-mode-hub-copy"><strong>Skipped words</strong><small>Look-alikes set aside from the main sets.</small></span>
-                        <span class="fast-mode-hub-count" id="fastModeSkippedWordsRowCount">0</span>
-                    </button>
-                    <button type="button" class="fast-mode-hub-row" id="fastModeMergedFormsRow">
-                        <span class="fast-mode-hub-copy"><strong>Merged word forms</strong><small>Forms sharing one card with their base word.</small></span>
-                        <span class="fast-mode-hub-count" id="fastModeMergedFormsRowCount">0</span>
-                    </button>
-                </section>
-
-                <button type="button" class="fast-mode-fine-tune" id="fastModeFineTuneBtn" aria-expanded="false" aria-controls="fastModeFineTune">Fine-tune Fast Track <span aria-hidden="true">›</span></button>
-
-                <div class="fast-mode-controls" id="fastModeFineTune" hidden>
+                <!-- The controls are the page, not a drawer inside it: a learner
+                     who opened this wants to see what the two shortcuts do. The
+                     skipped and merged word lists live inside their own step, as
+                     they did before, rather than as a second set of rows. -->
+                <div class="fast-mode-controls" id="fastModeFineTune">
                     <div id="lemmaToggleContainer" class="setup-substep" style="display: none;">
                         <div class="substep-header">
                             <span class="fast-mode-number" aria-hidden="true">1</span>
@@ -1244,6 +1226,14 @@
                     </div>
 
                 </div>
+
+                <!-- Fast Track review home: the skipped-word decks that used to be
+                     a second card on the setup screen. ui.js renders into the card;
+                     the pills keep their existing handler contract. -->
+                <section class="fast-mode-section" data-section="decks">
+                    <h4>Fast Track review home <span id="fastModeSkippedCount"></span></h4>
+                    <div class="extras-deck-card" id="fastTrackDeckCard"></div>
+                </section>
 
                 <!-- Admin / Diagnostic Technical Details (strictly gated to owner/admin) -->
                 <div id="fastModeAdminDetails" class="fast-mode-admin-details" style="display: none;">
@@ -2101,6 +2091,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260922conj"></script>
+    <script type="module" src="js/main.js?v=20260922ft2"></script>
 </body>
 </html>
