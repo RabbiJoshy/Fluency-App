@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-22T12:05:00+01:00",
+      "date": "2026-09-22 12:05 BST",
+      "agent": "Claude",
+      "summary": "Opening a deck now animates your progress on that set, and the home screen folds Fast Track and Review into one button each.",
+      "detail": [
+        "Tapping a set you have already started replaces the spinner with a large ring that animates your known / review / unseen split for that set. It paints from figures the home screen already holds, so it appears before any deck data is fetched.",
+        "The ring holds for about nine tenths of a second, then the cards appear — tap the screen to skip the wait. A set you have never studied keeps the plain spinner, with no added delay.",
+        "Fast Track is one row on the home screen. The on/off switch, the skipped-word decks and the skipped / merged word lists all moved into the Fast Track sheet behind it.",
+        "The review section is now Review & Progress, with two buttons: Review home, a sheet listing what is waiting by urgency, by level and against your overall progress; and Quick review, which starts 20 cards straight away.",
+        "Quick review takes the 20 most needed cards — never-got-right first, then recent mistakes, then overdue."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-22T01:20:00+01:00",
       "date": "2026-09-22 01:20 BST",
       "agent": "Claude",

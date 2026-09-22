@@ -95,7 +95,6 @@ function refresh() {
         || card?.dataset.available === 'false');
     wrapper.style.display = availabilityResolved ? 'block' : 'none';
 
-    const button = document.getElementById('fastModeToggleBtn');
     const on = state === 'on';
     const languageName = config?.languages?.[selectedLanguage]?.name || selectedLanguage || 'Language';
     const status = document.getElementById('fastModeLanguageStatus');
@@ -106,17 +105,26 @@ function refresh() {
     if (homeSwitch) homeSwitch.setAttribute('aria-pressed', String(on));
     const switchValue = document.getElementById('fastModeHomeSwitchValue');
     if (switchValue) switchValue.textContent = on ? 'On' : 'Off';
-    const skipped = globalThis.collectExtras?.()?.cognates?.length || 0;
+    const extras = globalThis.collectExtras?.() || {};
+    const skipped = extras.cognates?.length || 0;
+    const merged = extras.lemmas?.length || 0;
     const count = document.getElementById('fastModeSkippedCount');
-    if (count) count.textContent = skipped ? `${skipped} words` : 'No words skipped';
-    const skippedLink = document.getElementById('fastModeSkippedLink');
-    if (skippedLink) skippedLink.hidden = skipped === 0;
-    if (button) {
-        button.dataset.fast = on ? 'on' : 'off';
-        button.classList.toggle('selected', on);
-        button.classList.remove('is-custom');
-        button.setAttribute('aria-pressed', String(on));
+    if (count) count.textContent = skipped ? `· ${skipped.toLocaleString()} words` : '';
+    const skippedRowCount = document.getElementById('fastModeSkippedWordsRowCount');
+    if (skippedRowCount) skippedRowCount.textContent = skipped.toLocaleString();
+    const mergedRowCount = document.getElementById('fastModeMergedFormsRowCount');
+    if (mergedRowCount) mergedRowCount.textContent = merged.toLocaleString();
+
+    // The setup screen's single Fast Track row. It is navigation only - the
+    // master switch lives inside the sheet - so it states rather than toggles.
+    const hubState = document.getElementById('fastTrackHubState');
+    if (hubState) {
+        hubState.textContent = on ? 'On' : 'Off';
+        hubState.dataset.fast = on ? 'on' : 'off';
     }
+    const hubSummary = document.getElementById('fastTrackHubSummary');
+    if (hubSummary) hubSummary.textContent = summaryText();
+
     const summary = document.getElementById('fastModeSummary');
     if (summary) summary.textContent = summaryText();
     updateMappingStatus();
@@ -345,11 +353,19 @@ function updateKnownLanguageCopy() {
     }
 }
 
-function openFastModePage() {
+// `section` is the seam for the unified UI: the setup button, a skipped-count
+// link and a future lyrics "extras" entry can all deep-link into one part of
+// this sheet without each knowing how it is laid out.
+function openFastModePage({ section } = {}) {
     returnToSettings = !document.getElementById('settingsModal')?.classList.contains('hidden');
     refresh();
     updateStreamlineLanguageExamples();
+    globalThis.renderFastTrackSkippedDecks?.();
     document.getElementById('fastModeModal')?.classList.remove('hidden');
+    if (section) {
+        document.querySelector(`.fast-mode-section[data-section="${section}"]`)
+            ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 }
 
 function closeFastModePage({ reopenSettings = true } = {}) {
@@ -359,27 +375,23 @@ function closeFastModePage({ reopenSettings = true } = {}) {
 }
 
 function init() {
-    document.getElementById('fastModeToggleBtn')?.addEventListener('click', () => {
-        applyFastMode(currentState() !== 'on');
-    });
+    document.getElementById('fastTrackHubBtn')?.addEventListener('click', () => openFastModePage());
     document.getElementById('fastModeHomeSwitch')?.addEventListener('click', () => applyFastMode(currentState() !== 'on'));
     document.getElementById('fastModeFineTuneBtn')?.addEventListener('click', event => {
         const details = document.getElementById('fastModeFineTune');
         details.hidden = !details.hidden;
         event.currentTarget.setAttribute('aria-expanded', String(!details.hidden));
     });
-    document.getElementById('fastModeSkippedLink')?.addEventListener('click', async () => {
-        closeFastModePage({ reopenSettings: false });
-        await window.goBackToSetup?.();
-        document.getElementById('extrasDeckSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('fastModeSkippedWordsRow')?.addEventListener('click', () => {
+        globalThis.openSkippedWords?.();
+    });
+    document.getElementById('fastModeMergedFormsRow')?.addEventListener('click', () => {
+        globalThis.openMergedForms?.();
     });
     document.getElementById('dismissStreamlineRecBtn')?.addEventListener('click', (e) => {
         e.stopPropagation();
         try { localStorage.setItem(STREAMLINE_REC_DISMISSED_KEY, '1'); } catch (_) {}
         updateStreamlineRecCallout();
-    });
-    document.getElementById('fastModeDetailBtn')?.addEventListener('click', () => {
-        openFastModePage();
     });
     document.getElementById('closeFastModeModal')?.addEventListener('click', () => closeFastModePage());
     document.getElementById('fastModeModal')?.addEventListener('click', event => {

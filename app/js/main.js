@@ -16,12 +16,13 @@ import './estimation.js?v=20260825ak';
 import './config.js?v=20260921rh';
 import './progress.js?v=20260920e';
 import './knowledge.js?v=20260920a';
-import './ui.js?v=20260922ui';
+import './ui.js?v=20260922rh';
 import './vocab.js?v=20260921freqb';
 import './cognates.js?v=20260914e';
 import './coverage.js?v=20260909a';
-import './fast-mode.js?v=20260920a';
+import './fast-mode.js?v=20260922rh';
 import './extras.js?v=20260921sd';
+import './review-home.js?v=20260922rh';
 import './song-sets.js?v=20260823ae';
 import './playlist-live.js?v=20260921rt';
 import './spotify-playlist-import.js?v=20260921rh';
@@ -113,17 +114,131 @@ perfMark('main.js top — module imports done');
 
 const APP_LOADING_MESSAGE_KEY = 'fluency_loading_message_v1';
 
+// Minimum time the deck-progress ring stays on screen, so the animation is
+// actually seen rather than flashing past on a warm cache. The deck appears when
+// both this beat and the payload are done; a tap on the overlay skips it.
+const MIN_DECK_LOADING_BEAT_MS = 900;
+const DECK_RING_CIRCUMFERENCE = 339.292;   // 2 * PI * r, r = 54 in the SVG
+let deckLoadingBeat = null;
+let resolveDeckLoadingBeat = null;
+let deckLoadingBeatTimer = null;
+
+function prefersReducedMotion() {
+    try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+    catch (_) { return false; }
+}
+
+// Returns the overlay to its plain-spinner state. Called by showAppLoading so the
+// boot path and the sessionStorage replay can never resurrect a ring they have no
+// numbers for.
+function resetDeckLoadingVisual() {
+    const visual = document.getElementById('appLoadingVisual');
+    if (visual) visual.dataset.mode = 'spinner';
+    const legend = document.getElementById('appLoadingRingLegend');
+    if (legend) legend.hidden = true;
+    for (const id of ['appLoadingRingSeen', 'appLoadingRingKnown']) {
+        const arc = document.getElementById(id);
+        if (!arc) continue;
+        arc.style.transition = 'none';
+        arc.style.strokeDashoffset = String(DECK_RING_CIRCUMFERENCE);
+    }
+    if (deckLoadingBeatTimer) {
+        clearTimeout(deckLoadingBeatTimer);
+        deckLoadingBeatTimer = null;
+    }
+    resolveDeckLoadingBeat?.();
+    resolveDeckLoadingBeat = null;
+    deckLoadingBeat = null;
+}
+
 function showAppLoading(title = 'Getting things ready', detail = 'Loading your language and progress…', persist = false) {
     const screen = document.getElementById('appLoadingScreen');
     if (!screen) return;
     document.getElementById('appLoadingTitle').textContent = title;
     document.getElementById('appLoadingDetail').textContent = detail;
+    resetDeckLoadingVisual();
     screen.classList.remove('is-hidden');
     screen.setAttribute('aria-busy', 'true');
     if (persist) {
         try { sessionStorage.setItem(APP_LOADING_MESSAGE_KEY, JSON.stringify({ title, detail })); } catch (_) {}
     }
 }
+
+// Paints the deck's own progress onto the loading overlay, using numbers the setup
+// screen already holds (ui.js builds them from the local progress cache, so this
+// runs before any release fetch is issued). Returns the minimum-beat promise, and
+// resolves immediately whenever there is nothing worth showing - so a caller that
+// has no stats needs no special case and keeps today's plain spinner.
+function showDeckLoading(stats, { title, detail } = {}) {
+    showAppLoading(
+        title || 'Getting things ready',
+        detail || 'Preparing your next cards…'
+    );
+    const cardCount = Number(stats?.cardCount) || 0;
+    const seenCount = Math.max(0, Math.min(cardCount, Number(stats?.seenCount) || 0));
+    const visual = document.getElementById('appLoadingVisual');
+    // "Not when you're at 0%": an untouched deck has nothing to demonstrate.
+    if (!visual || cardCount <= 0 || seenCount <= 0) return Promise.resolve();
+
+    const reviewCount = Math.max(0, Math.min(seenCount, Number(stats?.reviewCount) || 0));
+    const knownCount = Math.max(0, seenCount - reviewCount);
+    const unseenCount = Math.max(0, cardCount - seenCount);
+    const pctOf = count => 100 * count / cardCount;
+    const offsetFor = pct => DECK_RING_CIRCUMFERENCE * (1 - Math.min(100, Math.max(0, pct)) / 100);
+
+    const value = document.getElementById('appLoadingRingValue');
+    if (value) value.textContent = `${knownCount}/${cardCount}`;
+    const legend = document.getElementById('appLoadingRingLegend');
+    if (legend) {
+        document.getElementById('appLoadingLegendKnown').textContent = String(knownCount);
+        document.getElementById('appLoadingLegendReview').textContent = String(reviewCount);
+        document.getElementById('appLoadingLegendUnseen').textContent = String(unseenCount);
+        legend.hidden = false;
+    }
+
+    const seenArc = document.getElementById('appLoadingRingSeen');
+    const knownArc = document.getElementById('appLoadingRingKnown');
+    const paint = () => {
+        if (seenArc) seenArc.style.strokeDashoffset = String(offsetFor(pctOf(seenCount)));
+        if (knownArc) knownArc.style.strokeDashoffset = String(offsetFor(pctOf(knownCount)));
+    };
+
+    visual.dataset.mode = 'progress';
+    if (prefersReducedMotion()) {
+        paint();
+        return Promise.resolve();
+    }
+
+    // Double rAF before restoring the transition, the same idiom the coverage bar
+    // (progress.js) and the deck score ring (flashcards-modals.js) use: the browser
+    // must commit the empty arc before the filled one becomes a transition.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        for (const arc of [seenArc, knownArc]) {
+            if (arc) arc.style.transition = '';
+        }
+        paint();
+    }));
+
+    deckLoadingBeat = new Promise(resolve => {
+        resolveDeckLoadingBeat = resolve;
+        deckLoadingBeatTimer = setTimeout(resolve, MIN_DECK_LOADING_BEAT_MS);
+    });
+    return deckLoadingBeat;
+}
+
+function awaitDeckLoadingBeat() {
+    return deckLoadingBeat || Promise.resolve();
+}
+
+// Tap anywhere on the overlay to skip the beat. The payload may still be in
+// flight; this only gives up the guaranteed animation time.
+document.getElementById('appLoadingScreen')?.addEventListener('click', () => {
+    if (deckLoadingBeatTimer) {
+        clearTimeout(deckLoadingBeatTimer);
+        deckLoadingBeatTimer = null;
+    }
+    resolveDeckLoadingBeat?.();
+});
 
 function hideAppLoading() {
     const screen = document.getElementById('appLoadingScreen');
@@ -142,6 +257,8 @@ try {
 
 window.showAppLoading = showAppLoading;
 window.hideAppLoading = hideAppLoading;
+window.showDeckLoading = showDeckLoading;
+window.awaitDeckLoadingBeat = awaitDeckLoadingBeat;
 
 // Wire the static authentication surface before any configuration fetch or
 // artist resolution. The HTML intentionally contains this modal as a boot
