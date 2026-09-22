@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-22T17:10:00+01:00",
+      "date": "2026-09-22 17:10 BST",
+      "agent": "Claude",
+      "summary": "The deck wheel now appears earlier and waits for you — tap to continue, or it moves on after five seconds.",
+      "detail": [
+        "The wheel used to hold for under a second, and the numbers only finished animating at about three quarters of that — so there was barely a moment to read them. It now stays until you tap it, and gives up after five seconds if you don't.",
+        "It also appears earlier in the load. The figure only needs the word list, not the level buttons, so the rest of the screen is now built behind the wheel instead of before it — less of the wait is time added for its own sake.",
+        "'Tap to continue' appears once the wheel has finished filling, never before.",
+        "Reduced-motion still gets the pause to read, just without the animation.",
+        "The setup path now prints its own timings to the console, so how long each step takes can be measured rather than guessed."
+      ],
+      "commit": "ffe0037"
+    },
+    {
       "timestamp": "2026-09-22T15:40:00+01:00",
       "date": "2026-09-22 15:40 BST",
       "agent": "Claude",

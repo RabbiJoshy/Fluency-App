@@ -16,7 +16,7 @@ import './estimation.js?v=20260825ak';
 import './config.js?v=20260921rh';
 import './progress.js?v=20260920e';
 import './knowledge.js?v=20260922mod';
-import './ui.js?v=20260922rw';
+import './ui.js?v=20260922hold';
 import './vocab.js?v=20260921freqb';
 import './cognates.js?v=20260922ft2';
 import './coverage.js?v=20260909a';
@@ -114,14 +114,20 @@ perfMark('main.js top — module imports done');
 
 const APP_LOADING_MESSAGE_KEY = 'fluency_loading_message_v1';
 
-// Minimum time the deck-progress ring stays on screen, so the animation is
-// actually seen rather than flashing past on a warm cache. The deck appears when
-// both this beat and the payload are done; a tap on the overlay skips it.
+// How long the deck-progress ring stays up before the screen behind it is
+// revealed. A tap always ends it early; the number is the ceiling, not the
+// target. The ring finishes animating at roughly 750ms (450ms to expand, 700ms
+// of arc fill after a double rAF), so anything at or below that is over before
+// the figures have settled enough to read.
 const MIN_DECK_LOADING_BEAT_MS = 900;
 const DECK_RING_CIRCUMFERENCE = 339.292;   // 2 * PI * r, r = 54 in the SVG
+// Once the arcs have settled, invite the tap. Earlier than this and the hint
+// would offer a way out of a screen that has not finished saying anything.
+const DECK_LOADING_HINT_DELAY_MS = 750;
 let deckLoadingBeat = null;
 let resolveDeckLoadingBeat = null;
 let deckLoadingBeatTimer = null;
+let deckLoadingHintTimer = null;
 
 function prefersReducedMotion() {
     try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
@@ -141,6 +147,12 @@ function resetDeckLoadingVisual() {
         if (!arc) continue;
         arc.style.transition = 'none';
         arc.style.strokeDashoffset = String(DECK_RING_CIRCUMFERENCE);
+    }
+    const hint = document.getElementById('appLoadingTapHint');
+    if (hint) hint.hidden = true;
+    if (deckLoadingHintTimer) {
+        clearTimeout(deckLoadingHintTimer);
+        deckLoadingHintTimer = null;
     }
     if (deckLoadingBeatTimer) {
         clearTimeout(deckLoadingBeatTimer);
@@ -169,7 +181,7 @@ function showAppLoading(title = 'Getting things ready', detail = 'Loading your l
 // runs before any release fetch is issued). Returns the minimum-beat promise, and
 // resolves immediately whenever there is nothing worth showing - so a caller that
 // has no stats needs no special case and keeps today's plain spinner.
-function showDeckLoading(stats, { title, detail } = {}) {
+function showDeckLoading(stats, { title, detail, holdMs = MIN_DECK_LOADING_BEAT_MS } = {}) {
     showAppLoading(
         title || 'Getting things ready',
         detail || 'Preparing your next cards…'
@@ -204,24 +216,33 @@ function showDeckLoading(stats, { title, detail } = {}) {
     };
 
     visual.dataset.mode = 'progress';
-    if (prefersReducedMotion()) {
+    const hint = document.getElementById('appLoadingTapHint');
+    const reduced = prefersReducedMotion();
+    if (reduced) {
+        // The hold stays: waiting to read is not motion. Only the animation goes.
         paint();
-        return Promise.resolve();
-    }
-
-    // Double rAF before restoring the transition, the same idiom the coverage bar
-    // (progress.js) and the deck score ring (flashcards-modals.js) use: the browser
-    // must commit the empty arc before the filled one becomes a transition.
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-        for (const arc of [seenArc, knownArc]) {
-            if (arc) arc.style.transition = '';
+        if (hint) hint.hidden = false;
+    } else {
+        // Double rAF before restoring the transition, the same idiom the coverage bar
+        // (progress.js) and the deck score ring (flashcards-modals.js) use: the browser
+        // must commit the empty arc before the filled one becomes a transition.
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            for (const arc of [seenArc, knownArc]) {
+                if (arc) arc.style.transition = '';
+            }
+            paint();
+        }));
+        if (hint) {
+            deckLoadingHintTimer = setTimeout(() => {
+                hint.hidden = false;
+                deckLoadingHintTimer = null;
+            }, DECK_LOADING_HINT_DELAY_MS);
         }
-        paint();
-    }));
+    }
 
     deckLoadingBeat = new Promise(resolve => {
         resolveDeckLoadingBeat = resolve;
-        deckLoadingBeatTimer = setTimeout(resolve, MIN_DECK_LOADING_BEAT_MS);
+        deckLoadingBeatTimer = setTimeout(resolve, holdMs);
     });
     return deckLoadingBeat;
 }
@@ -230,8 +251,8 @@ function awaitDeckLoadingBeat() {
     return deckLoadingBeat || Promise.resolve();
 }
 
-// Tap anywhere on the overlay to skip the beat. The payload may still be in
-// flight; this only gives up the guaranteed animation time.
+// Tap anywhere on the overlay to end the hold. The work behind it may still be
+// in flight; this only gives up the reading time, never the load.
 document.getElementById('appLoadingScreen')?.addEventListener('click', () => {
     if (deckLoadingBeatTimer) {
         clearTimeout(deckLoadingBeatTimer);
@@ -714,6 +735,7 @@ loadConfig().then(async () => {
         perfMark('after playlist-live init');
     } else if (activeArtist) {
         const promptForCustomSongs = activeArtist.customSongSource && selectedSongIds.length === 0;
+        let deckOverviewHold = null;
         try {
             selectedLanguage = activeArtist.language || 'spanish';
             await loadReleaseProvenance(selectedLanguage);
@@ -730,15 +752,18 @@ loadConfig().then(async () => {
             updateStep5Tooltip();
             await updateLemmaToggleVisibility();
             await updateCognateToggleVisibility();
-            await renderLevelSelector(activeArtist.language || 'spanish');
+            // The coverage figure needs the index, which the toggle-visibility
+            // calls above have already pulled -- but nothing the level selector
+            // builds. So publish it first, raise the wheel, and let the selector
+            // render underneath it rather than ahead of it.
             await updateExclusionBars();
+            if (!isResumeNavigation) deckOverviewHold = window.showDeckOverviewLoading?.();
+            await renderLevelSelector(activeArtist.language || 'spanish');
             document.body.classList.add('has-learning-context');
             window.updateLearningContextUI?.();
         } finally {
-            // Same big wheel the speech route shows: the deck is loaded, so the
-            // figure now exists and the last beat of the wait can carry it.
             if (!isResumeNavigation) {
-                await window.showDeckOverviewLoading?.();
+                await deckOverviewHold;
                 hideAppLoading();
             }
         }

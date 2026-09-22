@@ -15,11 +15,15 @@ const QUICK_REVIEW_LIMIT = 20;
 const SHOW_SET_PROGRESS_RING = false;
 let _setupLevelSelectionWasManual = false;
 
-// Timing instrument for the return-to-menu path. Returning to setup rebuilds
-// the level selector and has been reported as taking seconds; the obvious
-// suspects (vocabulary fetch, progress lookups, knowledge lookups) all turned
-// out to be cached or indexed already, so this measures instead of guessing
-// again. Phases print as a table on every setup render.
+// Timing instrument for the setup path. Returning to setup rebuilds the level
+// selector and has been reported as taking seconds; the obvious suspects
+// (vocabulary fetch, progress lookups, knowledge lookups) all turned out to be
+// cached or indexed already, so this measures instead of guessing again.
+//
+// It wraps two paths: the artist-Extra selector, and the speech source pick,
+// where it also says how much of the deck wheel's hold is covering real work
+// rather than idling. A table prints on each. Everywhere else it stays empty,
+// so adding a phase means adding a timePhase() call, not just reading one.
 const _setupTimings = [];
 
 async function timePhase(label, fn) {
@@ -371,11 +375,19 @@ function updateReviewAccess() {
     }
 }
 
-// The big wheel: progress across the whole deck the learner just opened, shown
-// once its data has arrived and before the setup screen is revealed. Unlike the
-// set ring this cannot paint early -- the denominators (which words are even in
-// this deck, and their frequencies) are exactly what the load was fetching -- so
-// it fills the tail of the wait rather than the front of it.
+// How long the deck wheel holds before the setup screen behind it is revealed.
+// A tap ends it at once; this is the ceiling for someone who does not tap.
+const DECK_OVERVIEW_HOLD_MS = 5000;
+
+// The big wheel: progress across the whole deck the learner just opened.
+//
+// It cannot paint before the vocabulary index lands -- the denominators are in
+// it -- but it does not have to wait for the screen to be built. Nothing the
+// coverage snapshot reads (corpus counts, word ids, progressData) comes from
+// renderLevelSelector or the toggle-visibility calls, so callers publish the
+// snapshot as soon as the index resolves, raise the wheel, and let the rest of
+// the setup screen render underneath it. An earlier version of this comment
+// claimed the opposite; it was wrong about the ordering, if not the fetch.
 //
 // Every figure is read, not recomputed: the coverage snapshot updateExclusionBars
 // has just published, and the same due summary the Review section uses.
@@ -399,7 +411,11 @@ function showDeckOverviewLoading() {
     const label = snapshot?.label || 'understood';
     return window.showDeckLoading?.(
         { cardCount, seenCount: knownCount + reviewCount, reviewCount },
-        { title, detail: `${percent.toFixed(1)}% ${String(label).toLowerCase()}` }
+        {
+            title,
+            detail: `${percent.toFixed(1)}% ${String(label).toLowerCase()}`,
+            holdMs: DECK_OVERVIEW_HOLD_MS
+        }
     );
 }
 
@@ -736,6 +752,8 @@ function setupLanguageTabs() {
                 speechSourceButton?.classList.add('is-selected');
                 sourceCardButton?.classList.remove('is-selected');
                 window.showAppLoading?.('Preparing speech vocabulary', 'Loading levels and your progress…');
+                const speechSetupStarted = performance.now();
+                let deckOverviewHold = null;
                 try {
                     if (window.playlistLiveActive?.()) {
                         const liveName = window.playlistLiveDeck?.()?.playlistName;
@@ -773,9 +791,10 @@ function setupLanguageTabs() {
                     // Always load PPM data if available (needed for coverage bar even in CEFR mode).
                     const langPpmPath = config.languages[selectedLanguage] && config.languages[selectedLanguage].ppmDataPath;
                     if (!ppmData && langPpmPath) {
-                        await loadPpmData(selectedLanguage);
+                        await timePhase('loadPpmData', () => loadPpmData(selectedLanguage));
                     }
-                    await loadReleaseStudyStructure(selectedLanguage);
+                    await timePhase('loadReleaseStudyStructure',
+                        () => loadReleaseStudyStructure(selectedLanguage));
 
                     loadingIndicator.classList.remove('visible');
                     document.getElementById('step2').style.display = 'block';
@@ -784,10 +803,28 @@ function setupLanguageTabs() {
                     updateStep2Tooltip();
                     updateStep5Tooltip();
 
-                    await renderLevelSelector(selectedLanguage);
-                    await updateLemmaToggleVisibility();
-                    await updateCognateToggleVisibility();
-                    await updateExclusionBars();
+                    // Order matters here. The two toggle-visibility calls run
+                    // first because each can switch its filter off for a release
+                    // that lacks the capability, and both filters feed the
+                    // prepared-vocabulary signature the coverage figure is
+                    // computed against -- reading it before them could show a
+                    // number that then changes. Whichever of them touches the
+                    // index first pays for it; renderLevelSelector then hits the
+                    // memo. updateExclusionBars publishes the coverage snapshot,
+                    // so by the time the wheel goes up its figures are final and
+                    // the level selector can build behind it instead of ahead.
+                    await timePhase('updateLemmaToggleVisibility',
+                        () => updateLemmaToggleVisibility());
+                    await timePhase('updateCognateToggleVisibility',
+                        () => updateCognateToggleVisibility());
+                    await timePhase('updateExclusionBars', () => updateExclusionBars());
+                    deckOverviewHold = showDeckOverviewLoading();
+                    // Everything below this marker runs while the wheel is up, so
+                    // the table says how much of the hold covered real work.
+                    _setupTimings.push({ phase: '-- deck wheel raised --', ms: 0 });
+                    await timePhase('renderLevelSelector',
+                        () => renderLevelSelector(selectedLanguage));
+                    reportSetupTimings(performance.now() - speechSetupStarted);
                     updateIncorrectButtonVisibility();
                     document.getElementById('step1')?.classList.add('context-ready');
                     document.body.classList.add('has-learning-context');
@@ -816,7 +853,7 @@ function setupLanguageTabs() {
                     updateTotalStatsButtonVisibility();
                 } finally {
                     document.getElementById('dataLoadingIndicator')?.classList.remove('visible');
-                    await showDeckOverviewLoading();
+                    await deckOverviewHold;
                     window.hideAppLoading?.();
                 }
             };
