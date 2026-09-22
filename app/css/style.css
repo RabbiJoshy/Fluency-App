@@ -6093,6 +6093,22 @@
         .app-loading-ring-legend i.is-known { background: var(--ring-known); }
         .app-loading-ring-legend i.is-review { background: var(--ring-review); }
 
+        .app-loading-tap-hint {
+            margin: 16px 0 0;
+            color: var(--text-muted);
+            font: 600 10px/1 var(--font-emphasis);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            opacity: 0.85;
+            animation: app-loading-tap-hint-in 0.3s ease both;
+        }
+        .app-loading-tap-hint[hidden] { display: none; }
+
+        @keyframes app-loading-tap-hint-in {
+            from { opacity: 0; transform: translateY(3px); }
+            to { opacity: 0.85; transform: none; }
+        }
+
         .app-loading-card strong {
             font-family: var(--font-emphasis);
             font-size: 17px;
@@ -6114,6 +6130,7 @@
             .app-loading-ring,
             .app-loading-ring-centre,
             .app-loading-ring-arc { transition: none; }
+            .app-loading-tap-hint { animation: none; }
         }
 
         #appContent {
