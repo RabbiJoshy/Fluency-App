@@ -13,7 +13,7 @@
         "The review section is now Review & Progress, with two buttons: Review home, a sheet listing what is waiting by urgency, by level and against your overall progress; and Quick review, which starts 20 cards straight away.",
         "Quick review takes the 20 most needed cards — never-got-right first, then recent mistakes, then overdue."
       ],
-      "commit": "pending"
+      "commit": "2eb2e7f"
     },
     {
       "timestamp": "2026-09-22T01:20:00+01:00",
