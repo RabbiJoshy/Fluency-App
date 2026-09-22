@@ -13,7 +13,7 @@
         "Skipped and merged word rows are shorter: a gloss's bracketed qualifier and its extra senses are trimmed, so 'to abandon (leave behind)' reads 'to abandon'. Searching still finds the words that were trimmed away.",
         "A skipped word can now show the word it actually matched, with an arrow. Until now it showed the card's first meaning, which was picked for the card and had nothing to do with why the word was skipped. Decks need rebuilding before the arrows appear."
       ],
-      "commit": "pending"
+      "commit": "18b8d3c"
     },
     {
       "timestamp": "2026-09-22T13:40:00+01:00",
