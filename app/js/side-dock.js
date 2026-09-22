@@ -25,11 +25,11 @@
 // other modules can use it without importing it under a second ?v= tag (a
 // module imported under two URLs executes twice).
 
-// Panel width. In a study session a panel takes the margin beside the card,
-// 16px from the screen edge and 16px clear of the card, up to 400px. A
-// narrower window shrinks the panels, down to 300px; below that they are too
-// cramped to read, so nothing docks and sheets stay centred. The card's width
-// is measured, not assumed, so resizing the card never breaks this.
+// Panel width. In a study session a panel sits in the gutter beside the card,
+// centred between the screen edge and the card, up to 400px. A narrower
+// window shrinks the panels, down to 300px; below that they are too cramped
+// to read, so nothing docks and sheets stay centred. The card's width is
+// measured, not assumed, so resizing the card never breaks this.
 const PANEL_MAX = 400;
 const PANEL_MIN = 300;
 const EDGE = 16;
@@ -63,7 +63,15 @@ function panelWidth() {
 // docked when the window narrows keeps a readable width rather than
 // collapsing.
 function applyPanelWidth() {
-    document.body.style.setProperty('--dock-w', `${Math.max(PANEL_MIN, panelWidth())}px`);
+    const width = Math.max(PANEL_MIN, panelWidth());
+    document.body.style.setProperty('--dock-w', `${width}px`);
+    // Centre the sheet in the gutter. A tight window keeps the old 16px edge.
+    let inset = EDGE;
+    if (studyViewOpen()) {
+        const margin = (window.innerWidth - cardWidth()) / 2;
+        inset = Math.max(EDGE, Math.round((margin - width) / 2));
+    }
+    document.body.style.setProperty('--dock-inset', `${inset}px`);
 }
 
 // Card panels need room beside the card; sheets can also dock over the

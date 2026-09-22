@@ -14,6 +14,18 @@
       "commit": "pending"
     },
     {
+      "timestamp": "2026-09-22T00:50:00+01:00",
+      "date": "2026-09-22 00:50 BST",
+      "agent": "Cursor",
+      "summary": "First login explains why words are ordered by frequency, and the main page follows each language's colours.",
+      "detail": [
+        "A three-sentence intro appears the first time you sign in, with a clear Skip intro button.",
+        "Setup buttons use a light tint of the language colour in dark mode and a dark shade in light mode, with the flag's second colour as a thin edge.",
+        "Settings has a Normal / Bigger text size. Example sources open a Visit Tatoeba or Visit IMDb box. Side panels sit in the middle of the gap beside the card."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-22T00:35:00+01:00",
       "date": "2026-09-22 00:35 BST",
       "agent": "Claude",

@@ -38,18 +38,24 @@
             root.dataset.theme = theme;
             root.style.colorScheme = theme;
             document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#eef2f5' : '#0a0e14';
+            var textSize = 'normal';
+            try {
+                var savedSize = localStorage.getItem('fluency_text_size_v1');
+                if (savedSize === 'large' || savedSize === 'normal') textSize = savedSize;
+            } catch (_) {}
+            root.dataset.textSize = textSize;
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260921freq">
+    <link rel="stylesheet" href="css/style.css?v=20260922u2">
     <link rel="stylesheet" href="css/light-theme.css?v=20260921freq">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260921freqb">
+    <link rel="modulepreload" href="js/main.js?v=20260922ui">
     <link rel="modulepreload" href="js/routes.js?v=20260921a">
-    <link rel="modulepreload" href="js/theme.js?v=20260825ak">
+    <link rel="modulepreload" href="js/theme.js?v=20260922ui">
     <link rel="modulepreload" href="js/state.js?v=20260921x">
     <link rel="modulepreload" href="js/data-contracts.js?v=20260825ak">
     <link rel="modulepreload" href="js/offline-db.js?v=20260825ak">
@@ -57,7 +63,7 @@
     <link rel="modulepreload" href="js/offline-content.js?v=20260825ak">
     <link rel="modulepreload" href="js/speech.js?v=20260914b">
     <link rel="modulepreload" href="js/artist-ui.js?v=20260825ak">
-    <link rel="modulepreload" href="js/auth.js?v=20260921rt">
+    <link rel="modulepreload" href="js/auth.js?v=20260922ui">
     <link rel="modulepreload" href="js/card-replica.js?v=20260921ac">
     <link rel="modulepreload" href="js/tutorial.js?v=20260921ac">
     <link rel="modulepreload" href="js/walkthrough.js?v=20260921ac">
@@ -67,7 +73,7 @@
     <link rel="modulepreload" href="js/progress.js?v=20260920e">
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20260920a">
-    <link rel="modulepreload" href="js/ui.js?v=20260921mwe">
+    <link rel="modulepreload" href="js/ui.js?v=20260922ui">
     <link rel="modulepreload" href="js/fast-track-preferences.js?v=20260920a">
     <link rel="modulepreload" href="js/vocab.js?v=20260921freqb">
     <link rel="modulepreload" href="js/grammar-cards.js?v=20260921gc">
@@ -79,7 +85,7 @@
     <link rel="modulepreload" href="js/vocabulary-import.js?v=20260920a">
     <link rel="modulepreload" href="js/spanishdict-usage.js?v=20260825ak">
     <link rel="modulepreload" href="js/reverse-cues.js?v=20260917a">
-    <link rel="modulepreload" href="js/flashcards.js?v=20260921freqb">
+    <link rel="modulepreload" href="js/flashcards.js?v=20260922ui">
     <link rel="modulepreload" href="js/example-personalisation.js?v=20260825ak">
     <script>
         // Fail open if a boot-time script error prevents main.js from taking
@@ -845,13 +851,13 @@
     <!-- One-shot frequency intro after the learner first chooses a language. -->
     <div id="frequencyIntroModal" class="modal hidden product-modal" role="dialog" aria-modal="true" aria-labelledby="frequencyIntroTitle">
         <div class="modal-content tutorial-intro-sheet frequency-intro-sheet">
-            <h2 id="frequencyIntroTitle">How Fluency chooses words</h2>
-            <p>Fluency starts with the words you will hear most in the kind of language you chose.</p>
-            <p>Everyday speech and song lyrics do not use the same words, so you pick the environment you care about.</p>
-            <p>You learn those words from real sentences in that environment, not from a generic textbook list.</p>
+            <h2 id="frequencyIntroTitle">Why these words come first</h2>
+            <p>A few words do most of the talking in any language.</p>
+            <p>Fluency teaches those common words first, so you understand more, sooner.</p>
+            <p>You learn them from real speech and lyrics, not from a textbook list.</p>
             <div class="frequency-intro-actions">
-                <button class="product-primary-action" id="frequencyIntroTutorialBtn" type="button">Show the tutorial <span aria-hidden="true">→</span></button>
-                <button class="product-back-action frequency-intro-skip" id="skipFrequencyIntroBtn" type="button">Skip for now</button>
+                <button class="product-primary-action frequency-intro-skip" id="skipFrequencyIntroBtn" type="button">Skip intro</button>
+                <button class="frequency-intro-tutorial" id="frequencyIntroTutorialBtn" type="button">Show the tutorial</button>
             </div>
         </div>
     </div>
@@ -1754,6 +1760,13 @@
                             <button type="button" class="group-size-btn theme-preference-btn" data-theme-preference="system" role="radio" aria-checked="false" tabindex="-1">System</button>
                         </div>
                     </div>
+                    <div class="appearance-settings-card" aria-labelledby="textSizeSettingsTitle">
+                        <div class="appearance-settings-copy"><strong id="textSizeSettingsTitle">Text size</strong></div>
+                        <div class="group-size-selector settings-toggle appearance-selector" role="radiogroup" aria-label="Text size">
+                            <button type="button" class="group-size-btn text-size-btn selected" data-text-size="normal" role="radio" aria-checked="true" tabindex="0">Normal</button>
+                            <button type="button" class="group-size-btn text-size-btn" data-text-size="large" role="radio" aria-checked="false" tabindex="-1">Bigger</button>
+                        </div>
+                    </div>
                     <button type="button" class="settings-footer-link" id="settingsAboutBtn">About Fluency</button>
                     <button type="button" class="settings-footer-link" id="settingsAdminBtn" hidden>Owner tools</button>
                 </section>
@@ -2026,6 +2039,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260921freqb"></script>
+    <script type="module" src="js/main.js?v=20260922ui"></script>
 </body>
 </html>

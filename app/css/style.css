@@ -2914,6 +2914,7 @@
             letter-spacing: 0.01em;
         }
         .example-source-chip {
+            position: relative;
             display: inline-flex;
             align-items: center;
             gap: 6px;
@@ -5519,6 +5520,40 @@
             border-radius: 50%;
             background: #1b232e;
             color: #e6eaf0;
+        }
+        .lookup-sheet-icon.is-armed-outbound {
+            overflow: visible;
+        }
+        .outbound-leave-btn--label,
+        .lookup-sheet-icon .outbound-leave-btn--label,
+        .example-source-chip .outbound-leave-btn--label {
+            position: absolute;
+            inset: auto;
+            bottom: calc(100% + 8px);
+            left: 0;
+            width: max-content;
+            height: auto;
+            padding: 7px 10px;
+            border: 1px solid color-mix(in srgb, var(--accent-primary) 55%, var(--border-color));
+            border-radius: 10px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+            font: 650 13px/1.2 var(--font-reading);
+            white-space: nowrap;
+            z-index: 6;
+        }
+        .lookup-sheet-icon .outbound-leave-btn--label {
+            bottom: auto;
+            left: auto;
+            right: calc(100% + 8px);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .example-credit-row:has(.is-armed-outbound),
+        .example-credit-start:has(.is-armed-outbound),
+        .example-song-credit:has(.is-armed-outbound) {
+            overflow: visible;
         }
         .lookup-sheet-icon .outbound-leave-icon {
             width: 20px;
@@ -17191,6 +17226,13 @@ body {
   --accent-primary-text: #10141b;
   --accent-secondary-text: #10141b;
 }
+/* applyLanguageColorTheme() writes the language colour inline on #setupPanel,
+   which wins over the indigo above. The second flag colour is a thin edge. */
+#setupPanel .level-btn.selected,
+#setupPanel .group-size-btn.selected,
+#setupPanel .standard-source-choice-btn.is-selected {
+  box-shadow: inset 0 -3px 0 color-mix(in srgb, var(--accent-secondary) 82%, transparent);
+}
 
 #topBar {
   position: sticky;
@@ -17200,10 +17242,12 @@ body {
   border-color: color-mix(in srgb, var(--border-color) 82%, transparent);
   /* One hairline of the language's own colour under the bar. Enough to tell
      Spanish from Czech at a glance without theming the whole page. */
-  border-bottom: 2px solid color-mix(in srgb, var(--lang-trim, var(--accent-primary)) 46%, transparent);
+  border-bottom: 2px solid var(--lang-trim, var(--accent-primary));
   border-radius: 14px;
   background: color-mix(in srgb, var(--bg-card) 88%, transparent);
-  box-shadow: 0 8px 28px rgba(0, 0, 0, .16);
+  box-shadow:
+    inset 0 -1px 0 color-mix(in srgb, var(--lang-secondary-ui, transparent) 55%, transparent),
+    0 8px 28px rgba(0, 0, 0, .16);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
 }
@@ -18749,8 +18793,15 @@ body.artist-mode #flashcardMode::before {
 .front-meaning-pos {
   font-size: 11px;
 }
+#frequencyIntroModal {
+  z-index: 1200;
+}
 .frequency-intro-sheet {
   max-width: 420px;
+}
+#frequencyIntroModal .frequency-intro-skip {
+  background: var(--lang-trim, #8795ff);
+  color: var(--accent-primary-text, #10141b);
 }
 .frequency-intro-sheet p {
   margin: 0 0 12px;
@@ -18765,6 +18816,28 @@ body.artist-mode #flashcardMode::before {
 }
 .frequency-intro-skip {
   width: 100%;
+}
+.frequency-intro-tutorial {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text-primary);
+  font: 650 14px/1.2 var(--font-reading);
+  cursor: pointer;
+}
+.frequency-intro-tutorial:hover,
+.frequency-intro-tutorial:focus-visible {
+  border-color: var(--text-secondary);
+  outline: none;
+}
+html[data-text-size="large"] {
+  --card-fs: clamp(18px, 2.6vh, 26px);
+}
+html[data-text-size="large"] body {
+  zoom: 1.15;
 }
 .breakdown-word-row .word-save {
   margin-left: 8px;
@@ -19137,7 +19210,7 @@ body.artist-mode #flashcardMode::before {
 
 .modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) {
   align-items: center;
-  padding: 16px;
+  padding: 16px var(--dock-inset, 16px);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
@@ -19191,7 +19264,7 @@ body:has(#appContent.hidden) .modal[data-dock-stack]:is(#lyricBreakdownModal, #s
 /* The rarer-sense knowledge sheet has its own structure. */
 #knowledgeOverviewModal[data-dock]:not([hidden]) {
   place-items: center end;
-  padding: 16px;
+  padding: 16px var(--dock-inset, 16px);
   background: transparent;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
@@ -19215,7 +19288,7 @@ body > .is-docked:is(.synonyms-panel, .provenance-panel, .conjugation-panel) {
   position: fixed;
   inset: auto;
   top: 50%;
-  right: 16px;
+  right: var(--dock-inset, 16px);
   width: var(--dock-w, min(400px, calc(100vw - 32px)));
   max-width: none;
   max-height: calc(100dvh - 32px);
@@ -19226,14 +19299,14 @@ body > .is-docked:is(.synonyms-panel, .provenance-panel, .conjugation-panel) {
 }
 body > .is-docked[data-dock="left"]:is(.synonyms-panel, .provenance-panel, .conjugation-panel) {
   right: auto;
-  left: 16px;
+  left: var(--dock-inset, 16px);
 }
 /* Synonyms and conjugation toggle .visible and slide in from their edge. */
 body > .is-docked:is(.synonyms-panel, .conjugation-panel) {
-  transform: translate(calc(100% + 32px), -50%);
+  transform: translate(calc(100% + var(--dock-inset, 16px) + 16px), -50%);
 }
 body > .is-docked[data-dock="left"]:is(.synonyms-panel, .conjugation-panel) {
-  transform: translate(calc(-100% - 32px), -50%);
+  transform: translate(calc(-100% - var(--dock-inset, 16px) - 16px), -50%);
 }
 body > .is-docked:is(.synonyms-panel, .conjugation-panel).visible {
   transform: translate(0, -50%);
