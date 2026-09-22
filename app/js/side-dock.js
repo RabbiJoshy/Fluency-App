@@ -118,7 +118,7 @@ const OCCUPANTS = [
     // Settings, and the sheets about you and the session.
     { id: 'settingsModal', home: 'left', settings: true,
       open: isShown, close: closeButtonFor('settingsModal') },
-    ...['savedWordsModal', 'statsModal', 'totalStatsModal', 'reviewHomeModal', 'keyboardShortcutsModal', 'helpModal'].map(id => ({
+    ...['savedWordsModal', 'statsModal', 'totalStatsModal', 'reviewHomeModal', 'spacedRepetitionInfoModal', 'keyboardShortcutsModal', 'helpModal'].map(id => ({
         id, home: 'left', stacks: true, open: isShown, close: closeButtonFor(id) })),
     // Setup-page reference sheets: word lists and rules.
     ...['mergedFormsModal', 'skippedWordsModal', 'extrasModal', 'cognateRulesModal'].map(id => ({

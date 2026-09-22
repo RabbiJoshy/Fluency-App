@@ -8,6 +8,11 @@ const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // (never-right, then recent mistakes, then overdue), so this is a slice, not a
 // second selection policy.
 const QUICK_REVIEW_LIMIT = 20;
+// The progress ring belongs to opening a deck -- a language or a mode -- where
+// the wait is long enough to fill and the figure is the one worth seeing. On a
+// twenty-card set it was neither, so the set load is back to a plain spinner.
+// The wiring stays: flipping this back to true restores it.
+const SHOW_SET_PROGRESS_RING = false;
 let _setupLevelSelectionWasManual = false;
 
 // Timing instrument for the return-to-menu path. Returning to setup rebuilds
@@ -364,6 +369,38 @@ function updateReviewAccess() {
     if (label) {
         label.textContent = total === 1 ? '1 card waiting' : `${total} cards waiting`;
     }
+}
+
+// The big wheel: progress across the whole deck the learner just opened, shown
+// once its data has arrived and before the setup screen is revealed. Unlike the
+// set ring this cannot paint early -- the denominators (which words are even in
+// this deck, and their frequencies) are exactly what the load was fetching -- so
+// it fills the tail of the wait rather than the front of it.
+//
+// Every figure is read, not recomputed: the coverage snapshot updateExclusionBars
+// has just published, and the same due summary the Review section uses.
+function showDeckOverviewLoading() {
+    const snapshot = window.currentCoverageSnapshot;
+    const cardCount = Number(snapshot?.totalCount) || 0;
+    const knownCount = Math.min(cardCount, Number(snapshot?.coveredCount) || 0);
+    if (!cardCount || !knownCount) return null;
+
+    // A word waiting for review has been seen but is not known -- the coverage
+    // snapshot counts it as uncovered -- so it is the middle band, and the two
+    // together can never exceed the deck.
+    const due = Number(window.getGlobalDueReviewSummary?.(selectedLanguage)?.total) || 0;
+    const reviewCount = Math.max(0, Math.min(due, cardCount - knownCount));
+
+    const languageName = config?.languages?.[selectedLanguage]?.name || selectedLanguage || '';
+    const title = activeArtist
+        ? (activeArtist.name || 'Lyrics')
+        : [languageName, 'speech'].filter(Boolean).join(' ');
+    const percent = Number(snapshot?.percentage) || 0;
+    const label = snapshot?.label || 'understood';
+    return window.showDeckLoading?.(
+        { cardCount, seenCount: knownCount + reviewCount, reviewCount },
+        { title, detail: `${percent.toFixed(1)}% ${String(label).toLowerCase()}` }
+    );
 }
 
 async function startDailyReview(opts = {}) {
@@ -779,6 +816,7 @@ function setupLanguageTabs() {
                     updateTotalStatsButtonVisibility();
                 } finally {
                     document.getElementById('dataLoadingIndicator')?.classList.remove('visible');
+                    await showDeckOverviewLoading();
                     window.hideAppLoading?.();
                 }
             };
@@ -2699,12 +2737,14 @@ async function renderRangeSelector() {
         // The overlay already covers the atomic swap into #appContent, so the
         // ring's minimum beat is awaited after the load rather than before it.
         // showDeckLoading falls back to the plain spinner at 0% progress.
-        const beat = window.showDeckLoading?.(selectedRangeStats, {
-            title: `Loading Set ${this.dataset.setNumber}`,
-            detail: selectedRangeStats?.seenCount > 0
-                ? 'Picking up where you left off…'
-                : 'Preparing your next cards…'
-        });
+        const beat = window.showDeckLoading?.(
+            SHOW_SET_PROGRESS_RING ? selectedRangeStats : null,
+            {
+                title: `Loading Set ${this.dataset.setNumber}`,
+                detail: selectedRangeStats?.seenCount > 0
+                    ? 'Picking up where you left off…'
+                    : 'Preparing your next cards…'
+            });
         try {
             await loadVocabularyData(selectedRange, {
                 rankBasis: this.dataset.rankBasis,
@@ -3837,3 +3877,4 @@ window.renderSetupExtrasSection = renderSetupExtrasSection;
 window.updateReviewAccess = updateReviewAccess;
 window.startDailyReview = startDailyReview;
 window.renderFastTrackSkippedDecks = renderFastTrackSkippedDecks;
+window.showDeckOverviewLoading = showDeckOverviewLoading;

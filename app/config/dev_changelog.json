@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-22T15:40:00+01:00",
+      "date": "2026-09-22 15:40 BST",
+      "agent": "Claude",
+      "summary": "The progress wheel now belongs to opening a language or mode, not a 20-card set, and Review home leads with how reviews are timed.",
+      "detail": [
+        "Opening a language or a lyrics deck spins as before, then — once the deck's data has arrived — shows a big wheel of your progress across that whole deck, with the comprehension figure under it.",
+        "Small set loads are back to a plain spinner. The wheel is still wired up there and can be switched back on.",
+        "Review home now opens with whether spaced repetition is on, above the counts it governs, with a ? beside it.",
+        "That ? opens a short plain-English explanation of how review timing works: get a word right and it waits longer, get it wrong and it comes back soon. No intervals, no algorithm. It stacks over Review home rather than replacing it, and links on to the setting."
+      ],
+      "commit": "37bba5f"
+    },
+    {
       "timestamp": "2026-09-22T14:20:00+01:00",
       "date": "2026-09-22 14:20 BST",
       "agent": "Claude",
