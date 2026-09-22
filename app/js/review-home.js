@@ -94,18 +94,26 @@ function renderReviewHome() {
             <button type="button" class="review-home-link" data-action="total-stats">All-time progress ›</button>
         </div>`;
 
+    // How reviews are timed decides every count below it, so it states itself
+    // first rather than as a footnote under the numbers it explains.
     const srsOn = globalThis.spacedRepetitionEnabled !== false;
-    const settingsHTML = `<div class="review-home-note">
-            <p>Spaced repetition is <strong>${srsOn ? 'on' : 'off'}</strong>.${srsOn
-                ? ''
-                : ' Only cards you got wrong are queued; nothing comes back on a schedule.'}</p>
-            <button type="button" class="review-home-link" data-action="review-settings">Review settings ›</button>
+    const srsHTML = `<div class="review-home-srs">
+            <span class="review-home-srs-copy">
+                <strong>Spaced repetition is ${srsOn ? 'on' : 'off'}</strong>
+                <small>${srsOn
+                    ? 'Words come back just before you would forget them.'
+                    : 'Nothing returns on a schedule — only words you got wrong.'}</small>
+            </span>
+            <button type="button" class="review-home-srs-info" data-action="srs-info" aria-label="How reviews are timed">
+                <span aria-hidden="true">?</span>
+            </button>
         </div>`;
 
     body.innerHTML = `
         <p class="review-home-lead">${total > 0
             ? `${total} card${total === 1 ? '' : 's'} waiting across this language.`
             : 'Nothing is waiting for review right now.'}</p>
+        ${srsHTML}
         <section class="review-home-section" data-section="queue">
             <h4>By urgency</h4>
             ${tiersHTML}
@@ -117,7 +125,6 @@ function renderReviewHome() {
         <section class="review-home-section" data-section="progress">
             <h4>Progress</h4>
             ${progressHTML}
-            ${settingsHTML}
         </section>`;
 
     // Same double-rAF fill the setup screen's coverage bar uses, so the two bars
@@ -131,6 +138,14 @@ function renderReviewHome() {
             fill.style.width = `${Math.min(100, Math.max(0, coveragePct))}%`;
         }));
     }
+}
+
+function openSpacedRepetitionInfo() {
+    document.getElementById('spacedRepetitionInfoModal')?.classList.remove('hidden');
+}
+
+function closeSpacedRepetitionInfo() {
+    document.getElementById('spacedRepetitionInfoModal')?.classList.add('hidden');
 }
 
 function openReviewHome({ section } = {}) {
@@ -188,13 +203,30 @@ function initReviewHome() {
         if (link.dataset.action === 'total-stats') {
             closeReviewHome();
             globalThis.showTotalStatsModal?.();
-        } else if (link.dataset.action === 'review-settings') {
-            closeReviewHome();
-            globalThis.showSettingsModalWithTab?.('review', { singleTab: true });
         }
     });
+    document.getElementById('reviewHomeBody')?.addEventListener('click', event => {
+        // The explainer stacks over this sheet rather than replacing it: it
+        // answers a question about what is on screen, so the screen stays.
+        if (event.target.closest('[data-action="srs-info"]')) openSpacedRepetitionInfo();
+    });
+    document.getElementById('spacedRepetitionSettingsBtn')?.addEventListener('click', () => {
+        closeSpacedRepetitionInfo();
+        closeReviewHome();
+        globalThis.showSettingsModalWithTab?.('review', { singleTab: true });
+    });
+    document.getElementById('closeSpacedRepetitionInfoModal')
+        ?.addEventListener('click', closeSpacedRepetitionInfo);
+    document.getElementById('spacedRepetitionInfoModal')?.addEventListener('click', event => {
+        if (event.target?.id === 'spacedRepetitionInfoModal') closeSpacedRepetitionInfo();
+    });
     document.addEventListener('keydown', event => {
-        if (event.key === 'Escape') closeReviewHome();
+        if (event.key === 'Escape') {
+            // Topmost first, so one press does not close both sheets.
+            const info = document.getElementById('spacedRepetitionInfoModal');
+            if (info && !info.classList.contains('hidden')) closeSpacedRepetitionInfo();
+            else closeReviewHome();
+        }
     });
 }
 
@@ -207,6 +239,7 @@ if (document.readyState === 'loading') {
 }
 
 globalThis.openReviewHome = openReviewHome;
+globalThis.openSpacedRepetitionInfo = openSpacedRepetitionInfo;
 globalThis.closeReviewHome = closeReviewHome;
 globalThis.initReviewHome = initReviewHome;
 

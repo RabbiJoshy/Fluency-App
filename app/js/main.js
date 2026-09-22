@@ -16,13 +16,13 @@ import './estimation.js?v=20260825ak';
 import './config.js?v=20260921rh';
 import './progress.js?v=20260920e';
 import './knowledge.js?v=20260920a';
-import './ui.js?v=20260922ft2';
+import './ui.js?v=20260922rw';
 import './vocab.js?v=20260921freqb';
 import './cognates.js?v=20260922ft2';
 import './coverage.js?v=20260909a';
 import './fast-mode.js?v=20260922ft2';
 import './extras.js?v=20260922ft2';
-import './review-home.js?v=20260922rh2';
+import './review-home.js?v=20260922rw';
 import './song-sets.js?v=20260823ae';
 import './playlist-live.js?v=20260921rt';
 import './spotify-playlist-import.js?v=20260921rh';
@@ -735,7 +735,12 @@ loadConfig().then(async () => {
             document.body.classList.add('has-learning-context');
             window.updateLearningContextUI?.();
         } finally {
-            if (!isResumeNavigation) hideAppLoading();
+            // Same big wheel the speech route shows: the deck is loaded, so the
+            // figure now exists and the last beat of the wait can carry it.
+            if (!isResumeNavigation) {
+                await window.showDeckOverviewLoading?.();
+                hideAppLoading();
+            }
         }
         if (promptForCustomSongs) window.showSongSetPicker?.();
         perfMark('after artist init');
