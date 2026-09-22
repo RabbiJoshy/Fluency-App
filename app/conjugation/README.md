@@ -74,9 +74,13 @@ python scripts/build_conjugation_drill.py \
 
 `data/es.js` was built from the `fred-jehle` layer (`sha256:c1c66373…`,
 434 verbs, 18 paradigms) with ranks from run `20260919T122017Z-c088090a`.
-`pt`, `fr` and `cs` layers exist in the workspace and build with the same
-command; add a language to `CONJ_DRILL_DECKS` in `app/js/flashcards-conj.js`
-once its deck file exists, so the drawer link never points at a 404.
+`data/pt.js` is the verbecc layer (`sha256:4f2abe83…`, 955 verbs, 10 tenses,
+485 lessons) with ranks from `20260919T122019Z-a3c6945d`.
+`data/cs.js` is the kaikki layer (`sha256:b683bd1d…`, 404 verbs, present +
+imperative only, 162 lessons) with ranks from `20260919T122021Z-0606a927`.
+Czech tables stay present + imperative; that is the layer, not a drill
+omission. French still has no deck file, so it stays off
+`CONJ_DRILL_DECKS` in `app/js/flashcards-conj.js`.
 
 ## Two things that are derived, not supplied
 

@@ -962,8 +962,30 @@
     refreshSummary();
   }
 
-  /* One entry point from the app: conjugation/?verb=tener drills that verb
-   * across every tense it has. ?view=table opens the paradigm instead. */
+  function requestedLanguage() {
+    var params = new URLSearchParams(window.location.search);
+    var lang = (params.get('lang') || '').trim().toLowerCase();
+    if (lang && decks[lang]) return lang;
+    var codes = Object.keys(decks);
+    return codes.length ? codes[0] : null;
+  }
+
+  function leaveConjugationMode(event) {
+    if (event) event.preventDefault();
+    try {
+      if (document.referrer && window.history.length > 1) {
+        var origin = new URL(document.referrer);
+        if (origin.origin === window.location.origin && origin.pathname.indexOf('/conjugation') === -1) {
+          history.back();
+          return;
+        }
+      }
+    } catch (error) { /* fall through to the study home */ }
+    window.location.href = '../';
+  }
+
+  /* One entry point from the app: conjugation/?lang=pt&verb=ter drills that
+   * verb across every tense it has. ?view=table opens the paradigm instead. */
   function applyDeepLink() {
     var params = new URLSearchParams(window.location.search);
     var wanted = (params.get('verb') || '').trim().toLowerCase();
@@ -1014,8 +1036,9 @@
       return;
     }
 
-    loadDeck(decks[codes[0]]);
+    loadDeck(decks[requestedLanguage()]);
 
+    $('back-to-study').onclick = leaveConjugationMode;
     $('scope').oninput = function () {
       state.scope = parseInt(this.value, 10);
       refreshSummary();

@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-22T13:40:00+01:00",
+      "date": "2026-09-22 13:40 BST",
+      "agent": "Cursor",
+      "summary": "Portuguese and Czech can now open conjugation mode. On a large screen the drill is bigger, and Back to study leaves the page.",
+      "detail": [
+        "The conjugate drawer now links Portuguese and Czech into conjugation mode, using the existing verbecc and Kaikki tables.",
+        "Czech still only has present and imperative — that is the source table, not a missing drill.",
+        "A Back to study control returns to the card. Desktop drill cards and tables are larger."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-22T12:05:00+01:00",
       "date": "2026-09-22 12:05 BST",
       "agent": "Claude",
