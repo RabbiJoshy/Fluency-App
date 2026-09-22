@@ -13,7 +13,7 @@
         "Reduced-motion still gets the pause to read, just without the animation.",
         "The setup path now prints its own timings to the console, so how long each step takes can be measured rather than guessed."
       ],
-      "commit": "pending"
+      "commit": "ffe0037"
     },
     {
       "timestamp": "2026-09-22T15:40:00+01:00",
