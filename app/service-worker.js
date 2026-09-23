@@ -26,7 +26,7 @@ const ASSET_VERSION = '20260825ak';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/css/style.css?v=20260922hold',
+  '/css/style.css?v=20260923cj',
   '/css/light-theme.css?v=20260921freq',
   '/config/config.json',
   '/data/speech-frequency/es.json',

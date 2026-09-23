@@ -46,7 +46,7 @@
             root.dataset.textSize = textSize;
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260922hold">
+    <link rel="stylesheet" href="css/style.css?v=20260923cj">
     <link rel="stylesheet" href="css/light-theme.css?v=20260921freq">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
@@ -223,6 +223,16 @@
 
     <!-- Desktop: keyboard shortcut guide (left side, viewport-fixed).
          Toggled from the right-edge sidebar (#kbToggleSidebar). -->
+    <button type="button" class="kb-guide-toggle" id="kbGuideToggle" title="Keyboard shortcuts" aria-label="Keyboard shortcuts" aria-expanded="false" aria-controls="desktopKeyboardGuide">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2" y="6" width="20" height="12" rx="2" ry="2"></rect>
+            <line x1="6" y1="10" x2="6" y2="10"></line>
+            <line x1="10" y1="10" x2="10" y2="10"></line>
+            <line x1="14" y1="10" x2="14" y2="10"></line>
+            <line x1="18" y1="10" x2="18" y2="10"></line>
+            <line x1="7" y1="14" x2="17" y2="14"></line>
+        </svg>
+    </button>
     <div class="desktop-keyboard-guide" id="desktopKeyboardGuide">
         <div class="kb-content">
             <div class="kb-section">
@@ -420,31 +430,39 @@
                     </button>
                     <div class="standard-source-choice" aria-labelledby="standardSourceChoiceTitle">
                         <div class="standard-source-choice-intro">
-                            <span class="standard-source-choice-title" id="standardSourceChoiceTitle">Choose the language you want to understand</span>
-                            <p>You will study the words that show up most in that kind of language.</p>
+                            <span class="standard-source-choice-title" id="standardSourceChoiceTitle">Learn vocabulary <span class="standard-source-choice-pick">· pick one</span></span>
+                            <p>You study the words that come up most in what you want to understand.</p>
                         </div>
-                        <div class="standard-source-choice-buttons">
+                        <div class="standard-source-choice-buttons" role="group" aria-labelledby="standardSourceChoiceTitle">
                             <button type="button" id="standardSourceSpeechBtn" class="standard-source-choice-btn" data-source="speech">
                                 <span class="standard-source-choice-icon" aria-hidden="true">1</span>
                                 <span>
                                     <span class="standard-source-option-title"><strong>Everyday Speech</strong><em>Recommended</em></span>
-                                    <small>The words people say in films and TV. Best if you want conversation.</small>
+                                    <span class="standard-source-bullets">
+                                        <span>Best for understanding everyday <span data-language-name>Spanish</span> speech</span>
+                                        <span>Words ranked by how often they're said in films and TV</span>
+                                    </span>
                                 </span>
                                 <em class="standard-source-choice-arrow" aria-hidden="true">›</em>
                             </button>
                             <button type="button" id="standardSourcePickerBtn" class="standard-source-choice-btn" data-source="lyrics">
                                 <span class="standard-source-choice-icon" aria-hidden="true">2</span>
                                 <span>
-                                    <span class="standard-source-option-title"><strong>Music &amp; lyrics</strong></span>
-                                    <small id="standardLyricsAvailability">The words in songs you choose, with the original line as the example. Best if music is how you listen.</small>
+                                    <span class="standard-source-option-title"><strong>Songs &amp; artists</strong></span>
+                                    <span class="standard-source-bullets" id="standardLyricsAvailability">
+                                        <span>Best for understanding the lyrics of the artists you listen to</span>
+                                        <span>Pick artists or songs; each word comes with the line it's sung in</span>
+                                    </span>
                                 </span>
                                 <em id="standardLyricsStatus" class="standard-source-choice-status" aria-hidden="true">›</em>
                             </button>
-                            <button type="button" id="standardSourceConjugationBtn" class="standard-source-choice-btn" data-source="conjugation" style="display: none;">
-                                <span class="standard-source-choice-icon" aria-hidden="true">3</span>
+                        </div>
+                        <div id="standardSourceAddons" class="standard-source-addons" style="display: none;">
+                            <span class="standard-source-addons-title" id="standardSourceAddonsTitle">Optional add-on</span>
+                            <button type="button" id="standardSourceConjugationBtn" class="standard-source-addon-btn" aria-describedby="standardSourceAddonsTitle">
                                 <span>
-                                    <span class="standard-source-option-title"><strong>Verb conjugation</strong></span>
-                                    <small>Drill verb endings tense by tense, from regular verbs to the irregular ones. A separate practice mode.</small>
+                                    <strong>Verb conjugation</strong>
+                                    <small>Drill verb endings tense by tense. Separate from your vocabulary.</small>
                                 </span>
                                 <em class="standard-source-choice-arrow" aria-hidden="true">›</em>
                             </button>

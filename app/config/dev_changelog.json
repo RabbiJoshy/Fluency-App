@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-23T14:44:00+01:00",
+      "date": "2026-09-23 14:44 BST",
+      "agent": "Claude",
+      "summary": "Cards are no longer cut off on desktop with Bigger text, keyboard hints moved off the card to beside it, and the main page groups the two vocabulary modes apart from the conjugation add-on.",
+      "detail": [
+        "Bigger text zooms the page by 1.15, and the zoom also stretched every window-height measurement, so the card came out taller than the window and lost its bottom row: the rank and frequency on the front, the icons on the back. Window-height sizes now divide the zoom back out, so cards and panels fit at any browser zoom.",
+        "Keyboard hints no longer sit on the card (they covered the rank and frequency line). With room beside the card the full guide shows there by default; with less room a small keyboard button opens it; on narrow windows and touch screens there are none.",
+        "The side guide had been unreachable since the study menu took over the floating buttons, and it started collapsed for everyone. It now starts open, under a new setting key.",
+        "Main page: 'Learn vocabulary · pick one' heads Everyday Speech and Songs & artists, each described by 'Best for…' bullets, with the language name filled in. Verb conjugation sits below a divider as an optional add-on, drawn lighter."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-23T14:26:00+01:00",
       "date": "2026-09-23 14:26 BST",
       "agent": "Claude",

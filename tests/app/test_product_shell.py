@@ -702,8 +702,13 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("matchingTenses", conj)
         self.assertIn("All tenses in conjugation mode", conj)
         self.assertNotIn("switchConjMood", conj)
-        self.assertIn("body:has(#appContent:not(.hidden)):not(.can-dock-card) .desktop-keyboard-guide", css)
+        # Hints sit beside the card: the full guide where there is room, a
+        # keyboard button that opens it where there is less, never on the card.
         self.assertIn("body:has([data-dock=\"left\"]) .desktop-keyboard-guide", css)
+        self.assertIn("body:has(#appContent:not(.hidden)) .kb-guide-toggle { display: grid; }", css)
+        self.assertIn(".card-desktop-shortcuts {\n            display: none !important;", css)
+        html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
+        self.assertIn('id="kbGuideToggle"', html)
         self.assertIn(".choice-sheet-overlay[data-dock]", css)
         self.assertIn(".conj-match-tense", css)
 

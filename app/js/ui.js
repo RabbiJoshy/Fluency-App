@@ -630,6 +630,17 @@ function renderLanguageTabs() {
     setupLanguageTabs();
 }
 
+// Each vocabulary mode is described by its "best for" lines, one per row.
+function setSourceBullets(button, lines) {
+    const host = button?.querySelector('.standard-source-bullets');
+    if (!host) return;
+    host.replaceChildren(...lines.map(line => {
+        const row = document.createElement('span');
+        row.textContent = line;
+        return row;
+    }));
+}
+
 function setupLanguageTabs() {
     const inlinePill = document.getElementById('selectedLanguageInline');
     const sourcePill = document.getElementById('selectedSourceInline');
@@ -724,24 +735,35 @@ function setupLanguageTabs() {
                 speechSourceButton.title = speechAvailable
                     ? 'Start with general-purpose vocabulary'
                     : `Speech vocabulary is not ready for ${langConfig?.name || newLanguage} yet`;
-                const detail = speechSourceButton.querySelector('small');
-                if (detail) detail.textContent = 'The words people say in films and TV. Best if you want conversation.';
+                setSourceBullets(speechSourceButton, [
+                    `Best for understanding everyday ${langConfig?.name || 'spoken'} speech`,
+                    'Words ranked by how often they\'re said in films and TV',
+                ]);
             }
             if (sourceCardButton) {
                 sourceCardButton.disabled = !lyricsAvailable;
                 sourceCardButton.title = lyricsCatalog
                     ? 'Build vocabulary around music you choose'
                     : 'Look up lyrics from a playlist and study a live deck';
-                const detail = sourceCardButton.querySelector('small');
-                if (detail) detail.textContent = 'The words in songs you choose, with the original line as the example. Best if music is how you listen.';
+                setSourceBullets(sourceCardButton, lyricsCatalog
+                    ? [
+                        'Best for understanding the lyrics of the artists you listen to',
+                        'Pick artists or songs; each word comes with the line it\'s sung in',
+                    ]
+                    : [
+                        'Best for understanding the songs in your own playlists',
+                        'Lyrics are looked up live from a playlist you choose',
+                    ]);
                 if (lyricsStatus) lyricsStatus.textContent = lyricsCatalog ? '›' : 'Live';
             }
-            // Conjugation is a separate drill page, offered only where the
-            // language names a drill deck in config.
+            // Conjugation is an add-on beside the two vocabulary modes: a
+            // separate drill page, offered only where the language names a
+            // drill deck in config.
+            const addons = document.getElementById('standardSourceAddons');
             const conjugationButton = document.getElementById('standardSourceConjugationBtn');
-            if (conjugationButton) {
+            if (addons && conjugationButton) {
                 const drillHref = window.fluencyRoutes?.conjugationDrillHref?.(newLanguage, null, config.languages);
-                conjugationButton.style.display = drillHref ? '' : 'none';
+                addons.style.display = drillHref ? '' : 'none';
                 conjugationButton.onclick = drillHref ? () => { window.location.href = drillHref; } : null;
             }
 

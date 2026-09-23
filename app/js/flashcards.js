@@ -9033,10 +9033,12 @@ document.addEventListener('click', (e) => {
 }, true);
 
 // Keyboard-shortcut guide: collapse/expand with localStorage persistence.
-// Toggled from the right-edge sidebar button (#kbToggleSidebar).
-// Defaults to collapsed (off) for new users; existing localStorage value wins.
+// Toggled from the right-edge sidebar button (#kbToggleSidebar), which the
+// study menu now hides, so the guide is shown by default wherever the CSS
+// finds room for it. The old key defaulted every visitor to collapsed with
+// no way back, so it is not read.
 (function _initKbGuideCollapse() {
-    const LS_KEY = 'fluency.kbGuideCollapsed';
+    const LS_KEY = 'fluency.kbGuideCollapsedV2';
     function attach() {
         const guide = document.getElementById('desktopKeyboardGuide');
         const btn = document.getElementById('kbToggleSidebar');
@@ -9047,7 +9049,7 @@ document.addEventListener('click', (e) => {
             btn.setAttribute('aria-label', btn.title);
             try { localStorage.setItem(LS_KEY, collapsed ? '1' : '0'); } catch (e) {}
         };
-        let initial = true;
+        let initial = false;
         try {
             const stored = localStorage.getItem(LS_KEY);
             if (stored !== null) initial = stored === '1';
@@ -9056,6 +9058,32 @@ document.addEventListener('click', (e) => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
             setCollapsed(!guide.classList.contains('collapsed'));
+        });
+        _initKbGuidePopover(guide);
+    }
+    // Where the gutter is too small for the whole guide, CSS shows a keyboard
+    // button instead; it opens the guide as a popover. Anything that makes the
+    // button go away (more room, leaving the card) also closes the popover.
+    function _initKbGuidePopover(guide) {
+        const toggle = document.getElementById('kbGuideToggle');
+        if (!toggle) return;
+        const setOpen = open => {
+            guide.classList.toggle('kb-guide-popover-open', open);
+            document.body.classList.toggle('kb-guide-open', open);
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        };
+        const toggleShown = () => getComputedStyle(toggle).display !== 'none';
+        toggle.addEventListener('click', event => {
+            event.stopPropagation();
+            setOpen(!guide.classList.contains('kb-guide-popover-open'));
+        });
+        document.addEventListener('click', event => {
+            if (!guide.classList.contains('kb-guide-popover-open')) return;
+            if (guide.contains(event.target) || toggle.contains(event.target)) return;
+            setOpen(false);
+        });
+        window.addEventListener('resize', () => {
+            if (!toggleShown()) setOpen(false);
         });
     }
     if (document.readyState === 'loading') {
