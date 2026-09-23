@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v550"
+EXPECTED_CACHE_NAME = "flashcards-v551"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -575,7 +575,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertNotIn('data-setting="phrasesMode"', overview)
         self.assertIn('expressionsModeEnabled = true;', ui)
 
-    def test_fast_track_skipped_words_are_study_sets_of_twenty(self) -> None:
+    def test_fast_track_skipped_words_are_one_deck_per_level(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
         extras = (APP_ROOT / "js" / "extras.js").read_text(encoding="utf-8")
         ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
@@ -587,13 +587,15 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("class=\"extras-open-card\"", extras)
         self.assertIn("${escapeHtml(item.word)}</button>", extras)
         self.assertIn("globalThis.popupFoundWord", extras)
-        self.assertIn('class="extras-set-pill${complete', extras)
-        self.assertIn('class="extras-level-group"${current', extras)
+        self.assertIn('class="fast-track-level-deck', extras)
+        self.assertIn('entries.map(({ item }) => item)', extras)
+        self.assertNotIn('start += 20', extras)
         self.assertIn('function skippedByLevel', extras)
         self.assertIn("function startFastTrackSkippedSet", extras)
         self.assertIn("fastTrackCards: slice", extras)
+        self.assertIn(".fast-track-level-deck", ui)
         self.assertIn("startFastTrackSkippedSet", ui)
-        self.assertIn(".extras-set-pill", css)
+        self.assertIn(".fast-track-level-deck", css)
         self.assertNotIn("openSpeechExtrasBtn", ui)
         self.assertIn("#settingsModal.product-modal { align-items: flex-start; }", css)
 
@@ -857,8 +859,8 @@ class ProductShellTests(unittest.TestCase):
         self.assertNotIn("spotify-action://", login)
         self.assertIn("https://accounts.spotify.com/authorize?", login)
         self.assertIn("/js/spotify.js?v=20260923sq", worker)
-        self.assertIn("/js/main.js?v=20260923ft2", worker)
-        self.assertIn("/js/ui.js?v=20260923ft", worker)
+        self.assertIn("/js/main.js?v=20260923ft3", worker)
+        self.assertIn("/js/ui.js?v=20260923ft3", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -979,7 +981,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
         self.assertIn("/js/spotify-playlist-import.js?v=20260923sq", worker)
-        self.assertIn('css/style.css?v=20260923ft2', html)
+        self.assertIn('css/style.css?v=20260923ft4', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
         self.assertIn("replaceRoute({\n        kind: 'live'", importer)
