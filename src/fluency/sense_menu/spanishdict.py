@@ -496,6 +496,13 @@ class SpanishDictSenseMenuAdapter:
             if not own:
                 entry = self.headword_cache.get(item.headword)
                 own = _normalize_analyses(entry.get("dictionary_analyses")) if isinstance(entry, dict) else []
+                if not own:
+                    # The headword's own page, when it is a word we fetched
+                    # (bares -> bar): SpanishDict's entry, just filed by surface.
+                    page_of_headword = self.surface_cache.get(item.headword)
+                    own = [a for a in _normalize_analyses((page_of_headword or {}).get("dictionary_analyses"))
+                           if str(a.get("headword") or "").strip() == item.headword] \
+                        if isinstance(page_of_headword, dict) else []
                 for analysis in own:
                     analysis["headword"] = analysis.get("headword") or item.headword
                     analysis["surface_relation"] = item.provenance
