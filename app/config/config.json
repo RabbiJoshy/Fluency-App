@@ -1,6 +1,9 @@
 {
   "publicServices": {
     "spotifyClientId": "f2341f303cff471ea80d3fcdefbb6d7d",
+    "spotifyRedirectUris": {
+      "https://rabbijoshy.github.io": "https://rabbijoshy.github.io/Fluency-App/callback.html"
+    },
     "progressSyncUrl": "https://fluency-api.rabbijoshy.workers.dev"
   },
   "sourceTitlesPath": "data/source_titles.json",

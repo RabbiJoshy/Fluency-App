@@ -9,14 +9,14 @@ import './sync-queue.js?v=20260825ak';
 import { initOfflineContent } from './offline-content.js?v=20260825ak';
 import './speech.js?v=20260914b';
 import './artist-ui.js?v=20260825ak';
-import './auth.js?v=20260922ui';
+import './auth.js?v=20260923sp';
 import './tutorial.js?v=20260921ac';
 import './walkthrough.js?v=20260921ac';
 import './estimation.js?v=20260825ak';
 import './config.js?v=20260921rh';
 import './progress.js?v=20260920e';
 import './knowledge.js?v=20260922mod';
-import './ui.js?v=20260922hold';
+import './ui.js?v=20260923sp';
 import './vocab.js?v=20260921freqb';
 import './cognates.js?v=20260922ft2';
 import './coverage.js?v=20260909a';
@@ -25,7 +25,7 @@ import './extras.js?v=20260922ft2';
 import './review-home.js?v=20260922rw';
 import './song-sets.js?v=20260823ae';
 import './playlist-live.js?v=20260921rt';
-import './spotify-playlist-import.js?v=20260921rh';
+import './spotify-playlist-import.js?v=20260923sp';
 import './vocabulary-import.js?v=20260920a';
 import './flashcards.js?v=20260922mod';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
@@ -83,7 +83,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
 const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
-    ? import('./spotify.js?v=20260918l').catch(error => {
+    ? import('./spotify.js?v=20260923sp').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })

@@ -39,7 +39,7 @@
 
     if (!codeVerifier || !clientId) {
         document.body.textContent = 'Missing auth state. Please try again.';
-        setTimeout(() => { window.location.href = '/'; }, 2000);
+        setTimeout(() => { window.location.href = './'; }, 2000);
         return;
     }
 
@@ -77,13 +77,15 @@
 
         if (window.opener) {
             // Desktop popup flow: send tokens to opener and close
-            window.opener.postMessage({ type: 'spotify-auth', tokens }, '*');
+            // Tokens go only to a page on this origin; the app never opens this
+            // callback from anywhere else.
+            window.opener.postMessage({ type: 'spotify-auth', tokens }, window.location.origin);
             document.body.textContent = 'Spotify connected! This window will close.';
             window.close();
         } else {
             // Mobile redirect flow: navigate back to the app
             // returnUrl was encoded in the state param by spotifyLogin()
-            const returnUrl = (stateObj && stateObj.returnUrl) || '/';
+            const returnUrl = (stateObj && stateObj.returnUrl) || './';
             document.body.textContent = 'Spotify connected! Returning to app...';
             window.location.href = returnUrl;
         }
@@ -93,7 +95,7 @@
         if (window.opener) {
             window.opener.postMessage({ type: 'spotify-auth-error', error: 'Token exchange failed: ' + err.message }, '*');
         } else {
-            setTimeout(() => { window.location.href = '/'; }, 3000);
+            setTimeout(() => { window.location.href = './'; }, 3000);
         }
     }
 })();

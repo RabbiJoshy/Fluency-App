@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-23T14:12:00+01:00",
+      "date": "2026-09-23 14:12 BST",
+      "agent": "Claude",
+      "summary": "Spotify sign-in now sends one fixed callback address for the live site, so it works again after the move to Fluency-App and no longer depends on which address the app was opened from.",
+      "detail": [
+        "Spotify only accepts callback addresses registered in its dashboard. The app used to build one from whatever page it was on, so the rename from Fluency-Next to Fluency-App (and the app/ mirror) each needed their own entry. rabbijoshy.github.io now always uses https://rabbijoshy.github.io/Fluency-App/callback.html, set in config under publicServices.spotifyRedirectUris. Local dev servers still build their own.",
+        "The callback page's fallbacks went to the bare site root, which is a 404 on GitHub Pages. They now go back to the app.",
+        "Sign-in tokens are only passed between pages on the same site, and the app ignores token messages from anywhere else.",
+        "The web app manifest now names its scope and id explicitly."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-22T17:10:00+01:00",
       "date": "2026-09-22 17:10 BST",
       "agent": "Claude",

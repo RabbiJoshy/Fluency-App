@@ -58,6 +58,10 @@ async function loadSecrets() {
     window._spotifyClientId = typeof publicSpotifyClientId === 'string'
         ? publicSpotifyClientId.trim()
         : '';
+    const publicSpotifyRedirectUris = config?.publicServices?.spotifyRedirectUris;
+    window._spotifyRedirectUris = publicSpotifyRedirectUris && typeof publicSpotifyRedirectUris === 'object'
+        ? publicSpotifyRedirectUris
+        : {};
     const publicProgressSyncUrl = config?.publicServices?.progressSyncUrl;
     GOOGLE_SCRIPT_URL = typeof publicProgressSyncUrl === 'string'
         ? publicProgressSyncUrl.trim()

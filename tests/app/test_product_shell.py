@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v542"
+EXPECTED_CACHE_NAME = "flashcards-v543"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -812,6 +812,15 @@ class ProductShellTests(unittest.TestCase):
         self.assertRegex(client_id, r"^[A-Za-z0-9]{16,128}$")
         self.assertIn("config?.publicServices?.spotifyClientId", auth)
         self.assertIn("secrets.spotifyClientId || window._spotifyClientId", auth)
+        # One registered callback per origin, whatever path the app was opened at.
+        pinned = config["publicServices"]["spotifyRedirectUris"]
+        self.assertEqual(
+            pinned["https://rabbijoshy.github.io"],
+            "https://rabbijoshy.github.io/Fluency-App/callback.html",
+        )
+        self.assertIn("config?.publicServices?.spotifyRedirectUris", auth)
+        self.assertIn("window._spotifyRedirectUris?.[window.location.origin]", spotify)
+        self.assertEqual(spotify.count("const redirectUri = spotifyRedirectUri();"), 2)
         self.assertIn("Spotify sign-in is temporarily unavailable", spotify)
         self.assertIn("window.open('about:blank', 'spotify-auth'", spotify)
         self.assertIn("spotifyLogin(trackId, positionMs, options.authPopup)", spotify)
@@ -834,7 +843,7 @@ class ProductShellTests(unittest.TestCase):
             spotify.index("_loadSpotifyPlaybackSdk();"),
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
-        self.assertIn("/js/spotify.js?v=20260918l", worker)
+        self.assertIn("/js/spotify.js?v=20260923sp", worker)
         self.assertIn("/js/main.js?v=20260921freqb", worker)
         self.assertIn("/js/ui.js?v=20260921mwe", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
@@ -901,7 +910,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("spotify-music-visualizer", spotify)
         self.assertIn("spotify-playing-amplitude", css)
         self.assertNotIn("spotify-playing-ripple", css)
-        self.assertIn("/js/spotify.js?v=20260918l", worker)
+        self.assertIn("/js/spotify.js?v=20260923sp", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_audit_accounts_and_flags_use_release_provenance(self) -> None:
@@ -956,7 +965,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("tracksHref", spotify)
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
-        self.assertIn("/js/spotify-playlist-import.js?v=20260921rh", worker)
+        self.assertIn("/js/spotify-playlist-import.js?v=20260923sp", worker)
         self.assertIn('css/style.css?v=20260921freq', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
