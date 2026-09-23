@@ -773,15 +773,28 @@ def _carry_harvest(source: Path, run: Path) -> None:
 
 
 def _kaikki_snapshot(ws: Path, lang: str, content_id: str, override: Path | None) -> Path:
+    """The dump the source run read, found by content hash (never by name)."""
     from fluency.core.hashing import file_content_id as _fid
     if override:
         return override
-    for path in sorted((ws / "raw").rglob("*.jsonl*")):
-        if lang not in path.as_posix() or "kaikki" not in path.as_posix().lower():
+    roots = [ws / "raw/dictionaries" / lang, ws / "raw/dictionaries", ws / "raw"]
+    seen: set[Path] = set()
+    tried: list[str] = []
+    for root in roots:
+        if not root.is_dir():
             continue
-        if _fid(path) == content_id:
-            return path
-    raise SystemExit(f"{lang}: no Kaikki snapshot under raw/ matches {content_id}; pass --kaikki-snapshot")
+        for path in sorted(root.rglob("*")):
+            if path in seen or not path.is_file() or path.stat().st_size < 1_000_000:
+                continue
+            posix = path.as_posix().lower()
+            if root != roots[0] and not any(k in posix for k in ("kaikki", "wiktionary", "wiktextract")):
+                continue
+            seen.add(path)
+            tried.append(str(path.relative_to(ws)))
+            if _fid(path) == content_id:
+                return path
+    raise SystemExit(f"{lang}: no file matches {content_id}; tried:\n  " + "\n  ".join(tried[:40])
+                     + "\npass --kaikki-snapshot <path>")
 
 
 def _preflight_spanishdict(snapshot: Path, surfaces: list[str]) -> tuple[dict, list[str]]:
