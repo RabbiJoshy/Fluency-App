@@ -5270,30 +5270,22 @@ function cardLemmaSlotIsLoadBearing(card, displayedTargetHeadword) {
     return forms.some(form => foldSurfaceForm(form) !== shown);
 }
 
-function renderGrammarCardNote(card, { hidden = false } = {}) {
-    const el = document.getElementById('grammarCardNote');
-    if (!el) return;
-    const note = String(card?.grammarNote || '').trim();
+function grammarPairCueHTML(card) {
     const pairs = Array.isArray(card?.grammarPairs) ? card.grammarPairs : [];
-    if (hidden || (!note && !pairs.length)) {
-        el.hidden = true;
-        el.innerHTML = '';
-        return;
-    }
     const chips = pairs.map(pair => {
         const surface = String(pair.surface || '').trim();
         const label = String(pair.label || surface).trim();
         if (!surface) return '';
         return `<button type="button" class="grammar-pair-chip" data-grammar-surface="${escapeCardText(surface)}">${escapeCardText(label)}</button>`;
     }).filter(Boolean);
-    const pairHtml = chips.length
-        ? `<span class="grammar-pair-chips">${chips.join('<span class="grammar-pair-plus" aria-hidden="true">+</span>')}</span>`
-        : '';
-    const noteHtml = note ? `<span class="grammar-card-note-text">${escapeCardText(note)}</span>` : '';
-    el.innerHTML = `${noteHtml}${pairHtml}`;
-    el.hidden = false;
+    if (!chips.length) return '';
+    return `<div class="surface-relation-cue back-surface-relation grammar-pair-chips">${chips.join('<span class="grammar-pair-plus" aria-hidden="true">+</span>')}</div>`;
+}
+
+function bindGrammarPairChips(root) {
+    if (!root) return;
     const language = routeCodeFor(selectedLanguage, config?.languages);
-    el.querySelectorAll('[data-grammar-surface]').forEach(button => {
+    root.querySelectorAll('[data-grammar-surface]').forEach(button => {
         button.addEventListener('click', event => {
             event.preventDefault();
             event.stopPropagation();
@@ -5765,10 +5757,6 @@ function updateCard({ announceHeadword = false } = {}) {
         frontLemmaEl.style.display = 'none';
     }
 
-    renderGrammarCardNote(card, {
-        hidden: Boolean(isFlipped || flippedFrontMeanings),
-    });
-
     // English-first production needs the form constraint in sight. Keep each
     // possible analysis coupled (subject + tense/mood) and let it wrap as one
     // compact row; the verb pill still opens the fuller labelled popover.
@@ -6021,6 +6009,7 @@ function updateCard({ announceHeadword = false } = {}) {
                 ${notableSurfaceRelation
                     ? `<div class="surface-relation-cue back-surface-relation">${escapeCardText(notableSurfaceRelation.surface)} <span aria-hidden="true">→</span> ${escapeCardText(notableSurfaceRelation.canonical)}</div>`
                     : ''}
+                ${grammarPairCueHTML(card)}
                 ${backGrammarHTML}
             </div>
             ${backDerivationHTML}
@@ -7429,6 +7418,7 @@ function updateCard({ announceHeadword = false } = {}) {
         window.sideDock?.beforeBackRender(card);
         renderedBack.innerHTML = backHTML;
         renderedBack._fluencyRenderedHTML = backHTML;
+        bindGrammarPairChips(renderedBack);
     }
 
     // Post-render layout pass:
