@@ -491,25 +491,6 @@ function renderSkippedWords() {
     return cognates;
 }
 
-function extrasSetPills(entries, kind, levelIndex, progressForItem) {
-    if (!entries.length) return '';
-    const pills = [];
-    for (let start = 0; start < entries.length; start += 20) {
-        const cards = entries.slice(start, start + 20);
-        const count = cards.length;
-        const setNumber = Math.floor(start / 20) + 1;
-        const states = cards.map(({ item }) => progressForItem?.(item) || null);
-        const seen = states.filter(state => state?.seen).length;
-        const review = states.filter(state => state?.needsReview).length;
-        const complete = seen === count && review === 0;
-        pills.push(`<button type="button" class="extras-set-pill${complete ? ' is-complete' : review ? ' needs-review' : ''}" data-ft-kind="${kind}" data-ft-level="${levelIndex}" data-ft-start="${start}" aria-label="Study skipped set ${setNumber}, ${count} words, ${seen} seen${review ? `, ${review} to review` : ''}">
-            <span class="extras-set-pill-num">${setNumber}</span>
-            <small>${seen}/${count}</small>
-        </button>`);
-    }
-    return `<div class="extras-set-pills" role="group" aria-label="Skipped word sets">${pills.join('')}</div>`;
-}
-
 function skippedByLevel(cognates, ranges) {
     const levels = (ranges || []).map((range, index) => ({ range, index, entries: [] }));
     if (!levels.length) levels.push({ range: null, index: 0, entries: [] });
@@ -535,20 +516,23 @@ function skippedByLevel(cognates, ranges) {
     return levels.filter(level => level.entries.length);
 }
 
-// A level is the stable context; within it the skipped cards form decks of 20.
-// Progress stays on each original card ID, regardless of current filters.
+// One deck per level. Progress stays on each original card ID.
 function renderFastTrackDeck({ cognates = [], lemmas = [] }, { ranges = [], selectedLevel = null, progressForItem = null } = {}) {
     const groups = skippedByLevel(cognates, ranges);
     const currentIndex = groups.find(group => String(group.range?.level) === String(selectedLevel))?.index ?? groups[0]?.index;
     const skippedBlock = cognates.length
-        ? `<div class="extras-level-list">${groups.map(({ range, index, entries }) => {
-                const current = index === currentIndex;
+        ? `<div class="fast-track-level-list">${groups.map(({ range, index, entries }) => {
                 const label = range ? `Level ${index + 1}` : 'Skipped words';
-                const deckCount = Math.ceil(entries.length / 20);
-                return `<details class="extras-level-group"${current ? ' open' : ''}>
-                    <summary><strong>${label}</strong><span>${entries.length} words · ${deckCount} deck${deckCount === 1 ? '' : 's'}</span></summary>
-                    ${extrasSetPills(entries, 'cognate', index, progressForItem)}
-                </details>`;
+                const states = entries.map(({ item }) => progressForItem?.(item) || null);
+                const seen = states.filter(state => state?.seen).length;
+                const review = states.filter(state => state?.needsReview).length;
+                const complete = seen === entries.length && review === 0;
+                const mark = complete ? ' is-complete' : review ? ' needs-review' : '';
+                const current = index === currentIndex ? ' is-current' : '';
+                return `<button type="button" class="fast-track-level-deck${mark}${current}" data-ft-kind="cognate" data-ft-level="${index}" data-ft-start="0" aria-label="Study ${label}, ${entries.length} skipped words, ${seen} seen">
+                    <strong>${label}</strong>
+                    <span>${seen}/${entries.length}</span>
+                </button>`;
             }).join('')}</div>`
         : '';
     const mergedNote = lemmas.length
@@ -562,17 +546,15 @@ async function startFastTrackSkippedSet(kind, start, levelIndex = 0, ranges = []
     const allEntries = kind === 'lemma' ? extras.lemmas : extras.cognates;
     const level = skippedByLevel(allEntries, ranges).find(group => group.index === Number(levelIndex));
     const entries = level?.entries || [];
-    const slice = entries.slice(Number(start) || 0, (Number(start) || 0) + 20).map(({ item }) => item);
+    const slice = entries.map(({ item }) => item);
     if (!slice.length || !g().loadVocabularyData) return;
-    const setNumber = Math.floor((Number(start) || 0) / 20) + 1;
-    const levelSetCount = Math.max(1, Math.ceil(entries.length / 20));
     const levelLabel = level?.range ? `Level ${Number(levelIndex) + 1}` : 'Skipped words';
     const loadingMessage = document.getElementById('loadingMessage');
     if (loadingMessage) {
         loadingMessage.style.display = 'block';
-        loadingMessage.textContent = `Loading ${levelLabel} skipped deck ${setNumber}...`;
+        loadingMessage.textContent = `Loading ${levelLabel} skipped words...`;
     }
-    window.showAppLoading?.(`Loading ${levelLabel} skipped deck ${setNumber}`, 'Preparing Fast Track cards…');
+    window.showAppLoading?.(`Loading ${levelLabel} skipped words`, 'Preparing Fast Track cards…');
     document.getElementById('fastTrackStudyModal')?.classList.add('hidden');
     document.getElementById('fastModeModal')?.classList.add('hidden');
     try {
@@ -580,10 +562,10 @@ async function startFastTrackSkippedSet(kind, start, levelIndex = 0, ranges = []
             rankBasis: 'source',
             studyMode: 'all',
             fastTrackCards: slice,
-            setNumber,
-            levelSetCount,
+            setNumber: 1,
+            levelSetCount: 1,
             levelNumber: level?.range ? Number(levelIndex) + 1 : null,
-            setLabel: `${levelLabel} · skipped deck ${setNumber} of ${levelSetCount}`,
+            setLabel: `${levelLabel} · ${slice.length} skipped words`,
             isFastTrack: true,
         });
     } finally {
