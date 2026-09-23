@@ -113,33 +113,85 @@ treats them the same.
   on local data (conjugation tables, saved lemma menus, declared lists, an
   entity snapshot). No network call sits in the resolution path. Fetching is
   always a background upgrade. A user loading a new playlist never waits on
-  SpanishDict. Pre-fetching the top ~50k later just shrinks the fallback's
+  SpanishDict. (In the live tier, §4, a fetch result arrives as ordinary
+  provider data and replaces heuristic guesses for that word on next load.) Pre-fetching the top ~50k later just shrinks the fallback's
   share.
 
 ---
 
-## 4. Scope and layering: how an artist borrows
+## 4. One ledger, two labels: scope and trust
 
-Declared data (expansions, glosses, entities, overrides) is scoped exactly as
-`src/fluency/lyrics/overrides.py` already scopes routing decisions:
-**language → mode → artist → song**. An empty scope means "all", and two
-matching entries at the same scope are an error, never a silent precedence.
+There are three kinds of work, and they need different amounts of certainty:
+- **Speech releases** are curated and slow to change.
+- **Artists Joshua runs by hand** are curated per artist and inherit speech.
+- **Playlists a user uploads live** must answer in seconds, grow quickly, and
+  may be wrong.
+
+These are **not three ledgers.** They are one event store and one resolver.
+Every fact and every declared entry (expansion, gloss, entity, override)
+carries two labels.
+
+**Scope: where it applies.** This works exactly as
+`src/fluency/lyrics/overrides.py` already scopes routing decisions. An empty
+scope means "all", and two matching entries at the same scope are an error,
+never a silent precedence.
 
 ```
-es (all modes)          ud → usted · uy → "oops, ouch" · Gucci → entity
- └ es / lyrics          pa' → para · to' → todo · yeh → ad-lib
-    └ es / lyrics / bad-bunny     Benito → entity (the artist) · a local nickname
-       └ … / one song             a one-off reading
+es                                  ud → usted · uy → "oops, ouch" · Gucci → entity
+ └ es / lyrics                      pa' → para · to' → todo · yeh → ad-lib
+    └ es / lyrics / artist:bad-bunny   Benito → entity (the artist)
+       └ … / song                   a one-off reading
+ └ es / live / playlist:<id>        whatever a live playlist met first
 ```
 
-- **A new artist inherits everything above it.** Most of an artist's exceptions
-  are already answered at the language or lyrics level. The per-artist layer
-  holds only what is genuinely that artist's.
-- **This is the "artist surface ledger".** It does not need to be a full copy
-  of the language ledger. It is a thin scoped layer of facts and declarations
-  over it: same event format, same strategies, with an `artist` scope field.
-  MEND builds the scope field and its precedence. It does not build any
-  artist's layer.
+**Trust: how it was established.**
+
+| Trust | Established by | Examples | Where it can appear |
+|---|---|---|---|
+| `curated` | a person reviewed it (`human_review`, `adjudicated_*`, hand-written entries) | ud → usted; Gucci → brand | everywhere |
+| `derived` | a deterministic rule that verified its own answer and abstains on ambiguity | clitic resolver (decírtelo → decir); a gated Wikidata entity fill | everywhere; stamped with the rule and its evidence |
+| `heuristic` | a cheap live guess with no verification beyond the rule itself | a capitalised unknown word guessed as a name; an unverified elision expansion; an ungated entity match | live playlists only, shown as provisional in the app |
+
+**Each consumer declares a minimum trust:**
+
+| Consumer | Accepts | Scopes read |
+|---|---|---|
+| Speech release | curated, derived | language, speech |
+| Hand-run artist release | curated, derived | language, lyrics, that artist, its songs |
+| Live playlist | curated, derived, **heuristic** | everything above, plus that playlist |
+
+This is how an artist, or a user, inherits from the layers before it. Most
+of what a new artist or playlist meets is already answered at a broader scope
+and a higher trust. The narrow scopes hold only what is genuinely new.
+
+**Heuristic facts are shared across users, not kept per playlist.** They are
+facts about words, not about people, so they hold no user data. If many users'
+playlists produce the same heuristic guess (the same unknown entity, the same
+unexpanded elision), that count is the signal of which gaps matter.
+**Promotion** is the only way a fact moves up a trust level:
+
+```
+heuristic ──(recurs across playlists; reaches the curation queue)──► person reviews ──► curated
+heuristic ──(a deterministic rule later verifies it)──────────────► derived
+```
+
+Promotion appends a new event at the higher trust level. It never edits the
+heuristic one, so the history of what was guessed and what was confirmed
+survives (Invariant 3: nothing is recorded as verified until it is). A
+promotion can also widen the scope: an entity guessed in one playlist and
+confirmed becomes language-scoped, and every later artist and playlist gets it
+for free.
+
+**What this means for the eventual artist restructure.** The "artist surface
+ledger" is not a separate structure. It is the artist scope of the same store:
+events and declared entries at `es / lyrics / artist:<slug>`, at curated or
+derived trust. The live playlist ledger is the same again at playlist scope,
+where heuristic trust is allowed.
+
+**MEND builds the two labels and the trust gate in the resolver, and nothing
+else of the live tier.** Every fact MEND writes is curated or derived. The
+live tier's heuristics, storage (SETLIST's worker is the likely home), sharing
+and curation queue are later work that plugs into the same fields.
 
 ---
 
@@ -173,7 +225,9 @@ it as a reference card; that is a later UI job.
      PR place or the reggaeton artist).
 
    Anything that fails a gate goes to review. The Wikidata id is stored with
-   the entry, so the fill is reproducible and auditable.
+   the entry, so the fill is reproducible and auditable. A gated fill is
+   `derived` trust (§4). In the live tier, a looser match with fewer gates may
+   be shown as `heuristic`, marked provisional, and enter the curation queue.
 3. Otherwise, exclude, or `review` in artist scope.
 
 **Ambiguity is the real risk.** *Mercedes* (name, car), *Paris* (city, person),
@@ -284,7 +338,7 @@ examples and menus into the simpler surface.
 |---|---|
 | 1. Migrate the shape, preserve the substance, label both | No card identity changes in MEND. The later clitic split needs an explicit progress migration. |
 | 2. Absence is declared | `absent` vs `unfetched`; declared `no_menu` for leftovers; every filled sense stamped with its strategy. |
-| 3. A run must not record what it did not verify | Resolver and entity fill abstain on ambiguity. Wikidata ids and strategy stamps make fills auditable. |
+| 3. A run must not record what it did not verify | Every fact carries a trust level. Releases accept only curated and derived facts. Heuristic guesses stay labelled heuristic until promotion appends a verified event. The resolver and entity fill abstain on ambiguity. |
 | 4. Adapters absorb irregularity; the engine exists once | One resolver for both providers. Lyrics buckets map onto the same classes, not a second engine. |
 | 5. Added by creating files | A new class is a fact plus a table row plus declared data files, never code lists. |
 
@@ -304,7 +358,12 @@ examples and menus into the simpler surface.
    MEND writes the mapping table (§7); VERSE adopts it.
 6. **The clitic split.** Confirm it is a next-rebuild decision (proposed) and
    that VERSE's existing `clitic_merge` is the model.
-7. **Hand-written entries: format and home.** A declared-data file per scope
+7. **Live tier storage and sharing (later, not MEND).** Heuristic facts in
+   SETLIST's worker store, shared across users as word-level facts only.
+   What recurrence count puts a word on the curation queue?
+8. **How provisional meanings look in the app.** A subtle marker on the card
+   (proposed), or hidden until promoted?
+9. **Hand-written entries: format and home.** A declared-data file per scope
    under `config/` (reviewed, in git) or `raw/` in the workspace (large, not in
    git)? Proposed: small hand lists in `config/`, large generated snapshots
    (Wikidata subset) in the workspace.
@@ -313,7 +372,8 @@ examples and menus into the simpler surface.
 
 ## 11. MEND at a glance (for the eventual prompt)
 
-- **Deliverable:** the fallback layer (§2–§4), the entity strategy shape (§5),
+- **Deliverable:** the fallback layer (§2–§3), the scope and trust labels
+  with a minimum-trust gate in the resolver (§4), the entity strategy shape (§5),
   the declared-entry format shared with GRAFT (§6), proved on the 105.
 - **Code:** a shared resolver; `external_lemmas` for SpanishDict (parity); the
   reflexive headword rule; the abbreviation filter fix; coverage states per
@@ -326,4 +386,5 @@ examples and menus into the simpler surface.
   cards. No activation without Joshua.
 - **Not in MEND:** the clitic tokenization split (drafted as a decision
   proposal only); attaching clitic forms to verb cards (`clitic_memberships`);
-  any artist's actual layer; GRAFT's content.
+  any artist's actual layer; the live tier's heuristics, storage, sharing and
+  curation queue; GRAFT's content.
