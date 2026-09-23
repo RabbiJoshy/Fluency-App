@@ -5,6 +5,10 @@ import './state.js?v=20260825ak';
 const SPOTIFY_SCOPES = 'streaming user-modify-playback-state user-read-playback-state user-read-email user-read-private playlist-read-private playlist-read-collaborative';
 const _isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 const _isIphone = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+// Home-screen icon only. Safari leaves this false. A login started there
+// must stay in that window; opening the Spotify app returns in Safari.
+const _isHomeScreenApp = window.navigator.standalone === true
+    || window.matchMedia('(display-mode: standalone)').matches;
 const SPOTIFY_APP_AUTH_STARTED = 'spotify_app_auth_started';
 const SPOTIFY_APP_AUTH_BROKEN = 'spotify_app_login_broken';
 const SPOTIFY_APP_AUTH_FINISHING = 'spotify_app_auth_finishing';
@@ -198,7 +202,7 @@ function spotifyLogin(pendingTrackId, pendingPositionMs, authPopup = null, optio
             if (showDialog) params.set('show_dialog', 'true');
 
             const webUrl = `https://accounts.spotify.com/authorize?${params}`;
-            const tryApp = _isIphone && options.webOnly !== true
+            const tryApp = _isIphone && !_isHomeScreenApp && options.webOnly !== true
                 && (options.forceApp === true || !_spotifyAppLoginBroken());
             if (!tryApp) {
                 _debugLog('Redirecting to Spotify auth...');
@@ -728,8 +732,12 @@ function _consumeSpotifyWebLoginRequest() {
 
 function spotifyTryIphoneAppLogin() {
     const status = document.getElementById('spotifyAppLoginTestStatus');
-    if (!_isIphone) {
-        if (status) status.textContent = 'On this computer, Connect uses Spotify\'s website.';
+    if (!_isIphone || _isHomeScreenApp) {
+        if (status) {
+            status.textContent = _isHomeScreenApp
+                ? 'From the home screen icon, Connect uses Spotify\'s website so you stay in Fluency.'
+                : 'On this computer, Connect uses Spotify\'s website.';
+        }
         return;
     }
     _clearSpotifyAppLoginBroken();
