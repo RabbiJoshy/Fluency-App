@@ -1,0 +1,20 @@
+{
+  "schema": "surface-strategy-policy/v1",
+  "note": "Proposal 0003 §2-§5, settled 2026-09-23. Per consumer mode: the weakest trust it accepts, and whether a name with no menu becomes an entity card. The precedence of strategies is fixed in fluency.surfaces.resolver, not here.",
+  "modes": {
+    "speech": {
+      "minimum_trust": "derived",
+      "entity": false,
+      "note": "Proposal §10.1: entity cards are off in speech; a name with no menu is declared no_menu and left for review."
+    },
+    "lyrics": {
+      "minimum_trust": "derived",
+      "entity": true
+    },
+    "live": {
+      "minimum_trust": "heuristic",
+      "entity": true,
+      "note": "Live playlists accept heuristic facts, shown as provisional (proposal §4). Nothing writes them yet."
+    }
+  }
+}

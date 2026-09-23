@@ -429,7 +429,7 @@ def render_measure(doc: dict[str, Any]) -> str:
 
 # ------------------------------------------------------------------ step: lemmas
 
-LEMMA_OVERRIDES = REPO / "config/lemmas/es.json"
+DECLARED_ROOT = REPO / "config/declared"
 # One refetch file and one surface list per scope. "affected" is the 105;
 # "deck" is every kept ledger surface whose page SpanishDict has not answered in
 # a form that kept its relation. Each merge writes the next free snapshot id.
@@ -477,16 +477,34 @@ def _latest_flags(sd_root: Path) -> dict[str, list[str]]:
     return flags
 
 
+class _Rule:
+    """The declared-lemma rule with the speech-scoped hand-written headwords applied."""
+
+    def __init__(self, rule, overrides):
+        self.rule, self.overrides = rule, overrides
+        self.table_has_moods = rule.table_has_moods
+
+    def resolve(self, surface, page, flags):
+        return self.rule.resolve(surface, page, flags, override=self.overrides.get(surface))
+
+
 def _lemma_rule(ws: Path, snapshot_id: str):
-    from fluency.sense_menu.spanishdict_lemmas import SpanishDictLemmaRule, load_overrides
+    from fluency.sense_menu.spanishdict_lemmas import SpanishDictLemmaRule
+    from fluency.surfaces.declared import Context, DeclaredRegistry
 
     snap = ws / SD_ROOT / snapshot_id
     cache = _json(snap / "surface_cache.json")
     headwords = _json(snap / "headword_cache.json")
     reverse = _json(snap / "conjugation_reverse.json")
-    overrides = load_overrides(_json(LEMMA_OVERRIDES) if LEMMA_OVERRIDES.exists() else None)
-    rule = SpanishDictLemmaRule(reverse, overrides=overrides, known_headwords=frozenset(headwords))
-    return rule, cache, reverse
+    registry = DeclaredRegistry.load(DECLARED_ROOT, "es")
+    speech = Context(language="es", mode="speech")
+    overrides = {}
+    for surface in registry.surfaces("headwords"):
+        found = registry.select(surface, "headwords", speech, "derived")
+        if found:
+            overrides[found.surface] = found.headwords
+    rule = SpanishDictLemmaRule(reverse, known_headwords=frozenset(headwords))
+    return _Rule(rule, overrides), cache, reverse
 
 
 def _row_as_page(row: dict[str, Any]) -> dict[str, Any]:

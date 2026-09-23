@@ -20,8 +20,8 @@ from fluency.sense_menu.spanishdict_lemmas import (
     STATUS_NO_LEMMA,
     STATUS_OVERRIDE,
     SpanishDictLemmaRule,
-    load_overrides,
 )
+from fluency.surfaces import trust
 
 TABLE = {
     "coge": [{"lemma": "coger", "mood": "imperativo", "person": "2s"},
@@ -154,23 +154,18 @@ class EncliticTests(unittest.TestCase):
         self.assertEqual(rule().resolve("cógelo").lemma_names, ["coger"])
 
 
-class OverrideTests(unittest.TestCase):
+class OverrideAndTrustTests(unittest.TestCase):
     def test_override_replaces_everything_for_its_surface(self) -> None:
-        overrides = load_overrides({"schema": "lemma-overrides/v1", "language": "es", "entries": [
-            {"surface": "atrevo", "lemmas": ["atreverse"], "reason": "SpanishDict answered atrezo",
-             "author": "joshua", "created_at": "2026-09-23"}]})
-        found = rule(overrides=overrides).resolve("atrevo", page("atrezo"))
+        found = rule().resolve("atrevo", page("atrezo"), override=["atreverse"])
         self.assertEqual(found.status, STATUS_OVERRIDE)
-        self.assertEqual([(l.lemma, l.provenance) for l in found.lemmas], [("atreverse", OVERRIDE)])
+        self.assertEqual([(l.lemma, l.provenance, l.trust) for l in found.lemmas],
+                         [("atreverse", OVERRIDE, trust.CURATED)])
         self.assertEqual(found.rejected_headwords, ("atrezo",))
 
-    def test_an_override_without_provenance_or_twice_is_refused(self) -> None:
-        base = {"schema": "lemma-overrides/v1", "language": "es"}
-        with self.assertRaises(ValueError):
-            load_overrides({**base, "entries": [{"surface": "x", "lemmas": ["y"]}]})
-        entry = {"surface": "x", "lemmas": ["y"], "reason": "r", "author": "a", "created_at": "d"}
-        with self.assertRaises(ValueError):
-            load_overrides({**base, "entries": [entry, entry]})
+    def test_provider_statements_and_our_rule_carry_different_trust(self) -> None:
+        self.assertEqual({l.trust for l in rule().resolve("uy", page("¡Uy!")).lemmas}, {trust.PROVIDER})
+        self.assertEqual({l.trust for l in rule().resolve("conduces").lemmas}, {trust.PROVIDER})
+        self.assertEqual({l.trust for l in rule().resolve("quédatelo").lemmas}, {trust.DERIVED})
 
 
 if __name__ == "__main__":

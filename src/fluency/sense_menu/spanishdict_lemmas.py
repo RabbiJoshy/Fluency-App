@@ -1,7 +1,7 @@
 """Which lemmas SpanishDict declares for a surface -- and nothing it merely suggests.
 
 For Spanish, SpanishDict is the source of truth for lemmas, corrected only by a
-hand-written override file. A surface may have several lemmas (*condones* is
+hand-written ``headwords`` entry. A surface may have several lemmas (*condones* is
 *condón* and a form of *condonar*); every one SpanishDict declares is kept, and
 WSD chooses per sentence among the menus they bring.
 
@@ -25,15 +25,25 @@ What SpanishDict *declares* about a surface is narrow, and that is the point:
    reflexive for that host, the pronominal headword (*quedarse*) is declared
    too, if SpanishDict files it.
 
-A manual override replaces all of the above for its surface. Anything left
-unresolved is declared ``no_lemma`` and queued for an override, never guessed.
+A hand-written ``headwords`` entry (``fluency.surfaces.declared``) replaces
+all of the above for its surface. Anything left unresolved is declared
+``no_lemma`` and queued for one, never guessed.
+
+Each lemma carries its trust (``fluency.surfaces.trust``): what SpanishDict
+states is ``provider``; the enclitic rule's answer is ``derived``; an override
+is ``curated``.
 """
 
 from __future__ import annotations
 
 import unicodedata
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Iterable, Mapping, Sequence
+
+from fluency.surfaces import trust as _trust
+from fluency.surfaces.resolver import (
+    ABSENT, FETCHED_CACHE, MENU, UNFETCHED, Headword, ProviderDeclaration,
+)
 
 RULE_VERSION = "spanishdict-declared-lemma/v1"
 
@@ -73,11 +83,25 @@ def deaccent(word: str) -> str:
     return unicodedata.normalize("NFC", "".join(out))
 
 
+TRUST = {
+    OVERRIDE: _trust.CURATED,
+    PAGE_SELF: _trust.PROVIDER,
+    PAGE_RELATION: _trust.PROVIDER,
+    CONJUGATION_TABLE: _trust.PROVIDER,
+    ENCLITIC_HOST: _trust.DERIVED,
+    REFLEXIVE_HEADWORD: _trust.DERIVED,
+}
+
+
 @dataclass(frozen=True)
 class DeclaredLemma:
     lemma: str
     provenance: str
     detail: str = ""
+
+    @property
+    def trust(self) -> str:
+        return TRUST[self.provenance]
 
 
 @dataclass(frozen=True)
@@ -118,7 +142,8 @@ class LemmaResolution:
             "surface": self.surface,
             "status": self.status,
             "lemmas": [
-                {"lemma": item.lemma, "provenance": item.provenance, "detail": item.detail}
+                {"lemma": item.lemma, "provenance": item.provenance, "trust": item.trust,
+                 "detail": item.detail}
                 for item in self.lemmas
             ],
             "rejected_headwords": list(self.rejected_headwords),
@@ -130,31 +155,11 @@ class LemmaResolution:
         }
 
 
-def load_overrides(payload: Mapping[str, Any] | None, language: str = "es") -> dict[str, list[str]]:
-    """Read ``lemma-overrides/v1``. Two entries for one surface are an error."""
-    if not payload:
-        return {}
-    if payload.get("schema") != "lemma-overrides/v1" or payload.get("language") != language:
-        raise ValueError("lemma overrides must be lemma-overrides/v1 for " + language)
-    out: dict[str, list[str]] = {}
-    for entry in payload.get("entries") or []:
-        surface = str(entry.get("surface") or "").strip()
-        lemmas = [str(item).strip() for item in entry.get("lemmas") or [] if str(item).strip()]
-        missing = [key for key in ("reason", "author", "created_at") if not entry.get(key)]
-        if not surface or not lemmas or missing:
-            raise ValueError(f"lemma override for {surface!r} is incomplete: {missing or 'lemmas'}")
-        if surface in out:
-            raise ValueError(f"two lemma overrides for {surface!r}")
-        out[surface] = lemmas
-    return out
-
-
 @dataclass
 class SpanishDictLemmaRule:
     """Apply the declared-lemma rule to one surface at a time, offline."""
 
     conjugation_reverse: Mapping[str, Any]
-    overrides: Mapping[str, Sequence[str]] = field(default_factory=dict)
     known_headwords: frozenset[str] | set[str] = frozenset()
 
     def __post_init__(self) -> None:
@@ -303,8 +308,8 @@ class SpanishDictLemmaRule:
         surface: str,
         page: Mapping[str, Any] | None = None,
         flags: Iterable[str] = (),
+        override: Sequence[str] | None = None,
     ) -> LemmaResolution:
-        override = self.overrides.get(surface)
         page_state, declared, rejected, unknown = self._page(surface, page, flags)
         if override:
             return LemmaResolution(
@@ -325,3 +330,64 @@ class SpanishDictLemmaRule:
         status, lemmas, candidates = self._enclitic(surface)
         return LemmaResolution(surface, status, tuple(lemmas), tuple(rejected),
                                tuple(unknown), page_state, tuple(candidates))
+
+
+class SpanishDictHeadwordSource:
+    """SpanishDict as a ``fluency.surfaces.resolver.HeadwordSource``.
+
+    Reads a pinned snapshot only. SpanishDict is a fetched cache, so a surface
+    it was never asked about is ``unfetched``, not ``absent``.
+    """
+
+    provider = "spanishdict"
+
+    def __init__(
+        self,
+        rule: SpanishDictLemmaRule,
+        surface_cache: Mapping[str, Any],
+        headword_cache: Mapping[str, Any],
+        flags: Mapping[str, Sequence[str]] | None = None,
+    ) -> None:
+        self.coverage_kind = FETCHED_CACHE
+        self.rule = rule
+        self.surface_cache = surface_cache
+        self.headword_cache = headword_cache
+        self.flags = flags or {}
+
+    def page(self, surface: str) -> Mapping[str, Any] | None:
+        page = self.surface_cache.get(surface)
+        return page if isinstance(page, dict) else None
+
+    def lemmas(self, surface: str) -> LemmaResolution:
+        return self.rule.resolve(surface, self.page(surface), self.flags.get(surface, ()))
+
+    def declare(self, surface: str) -> ProviderDeclaration:
+        found = self.lemmas(surface)
+        heads = tuple(Headword(item.lemma, item.provenance, item.trust, item.detail)
+                      for item in found.lemmas)
+        if heads:
+            coverage = MENU
+        elif found.page_state == "unfetched":
+            coverage = UNFETCHED
+        else:
+            coverage = ABSENT
+        return ProviderDeclaration(surface, heads, coverage, {
+            "rule_version": found.rule_version,
+            "status": found.status,
+            "page_state": found.page_state,
+            "rejected_headwords": list(found.rejected_headwords),
+            "relation_unknown": list(found.relation_unknown),
+            "enclitic_candidates": list(found.candidates),
+            "needs_refetch": found.needs_refetch,
+        })
+
+    def page_analyses(self, surface: str, headword: str) -> list[dict[str, Any]]:
+        """The surface page's own analyses under ``headword`` (self or declared relation)."""
+        page = self.page(surface) or {}
+        return [a for a in page.get("dictionary_analyses") or []
+                if isinstance(a, dict) and str(a.get("headword") or "").strip() == headword]
+
+    def has_entry(self, headword: str, surface: str | None = None) -> bool:
+        if isinstance(self.headword_cache.get(headword), dict):
+            return True
+        return bool(surface and self.page_analyses(surface, headword))

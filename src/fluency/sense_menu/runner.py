@@ -23,6 +23,16 @@ from fluency.sense_menu.spanishdict import (
     ADAPTER_ID as SPANISHDICT_ADAPTER_ID,
     SpanishDictSenseMenuAdapter,
 )
+from fluency.sense_menu.spanishdict_lemmas import (
+    RULE_VERSION as SPANISHDICT_LEMMA_RULE,
+    SpanishDictHeadwordSource,
+    SpanishDictLemmaRule,
+)
+from fluency.surfaces.declared import Context, DeclaredRegistry
+from fluency.surfaces.resolver import RESOLVER_VERSION, ModePolicy, Resolver
+
+DECLARED_ROOT = Path("config/declared")
+STRATEGY_POLICY = Path("config/surfaces/strategy.json")
 
 
 STAGE_VERSION = "sense-menu-stage/v1"
@@ -92,6 +102,36 @@ def _store_lemmas(workspace, language: str) -> dict[str, list[str]]:
         if lemmas:
             out[surface] = lemmas
     return out
+
+
+def _resolver_settings(
+    repository_root: Path, profile: dict[str, Any], language: str, mode: str
+) -> tuple[frozenset[str], DeclaredRegistry, ModePolicy, dict[str, Any]] | None:
+    """The profile's ``sense_menu.resolver`` block, loaded and pinned.
+
+    It names the cards whose headword set comes from the resolver; every
+    other card is built exactly as before. The declared lists and the strategy
+    policy are pinned by content, so the stage manifest records which
+    hand-written facts a menu was built from.
+    """
+    declared = profile["sense_menu"].get("resolver")
+    if not declared:
+        return None
+    surfaces = declared.get("surfaces")
+    if not isinstance(surfaces, list) or not surfaces or not all(isinstance(s, str) and s for s in surfaces):
+        raise SenseMenuRunError("sense_menu.resolver.surfaces must list the resolved surfaces explicitly")
+    registry = DeclaredRegistry.load(repository_root / DECLARED_ROOT, language)
+    policy = ModePolicy.load(repository_root / STRATEGY_POLICY, mode)
+    pinned = {
+        "resolver_version": RESOLVER_VERSION,
+        "surfaces": sorted(set(surfaces)),
+        "declared_entries": canonical_content_id(
+            sorted((entry.to_dict() for entry in registry.entries), key=lambda e: e["entry_id"])),
+        "strategy_policy": file_content_id(repository_root / STRATEGY_POLICY),
+        "mode": mode,
+        "minimum_trust": policy.minimum_trust,
+    }
+    return frozenset(surfaces), registry, policy, pinned
 
 
 def build_sense_menu_stage(
@@ -164,6 +204,20 @@ def build_sense_menu_stage(
         )
     else:
         raise SenseMenuRunError("no installed sense-menu adapter matches the run profile")
+    resolver_settings = _resolver_settings(repository_root, profile, language, mode)
+    if resolver_settings is not None:
+        if not isinstance(adapter, SpanishDictSenseMenuAdapter):
+            raise SenseMenuRunError(
+                "the surface resolver is wired for SpanishDict only; Kaikki parity is recorded "
+                "as open in docs/proposals/0003 and must not be implied by a profile")
+        surfaces, registry, policy, pinned = resolver_settings
+        reverse = json.loads((resolved_snapshot / "conjugation_reverse.json").read_text(encoding="utf-8"))
+        source = SpanishDictHeadwordSource(
+            SpanishDictLemmaRule(reverse, known_headwords=frozenset(adapter.headword_cache)),
+            adapter.surface_cache, adapter.headword_cache)
+        adapter.resolver = Resolver(source, registry, Context(language=language, mode=mode), policy)
+        adapter.resolver_surfaces = surfaces
+        pinned["lemma_rule"] = SPANISHDICT_LEMMA_RULE
     menu, report = adapter.build(cards, snapshot_id=snapshot_id)
     inventory_cards = int(report.get("inventory_cards", 0))
     cards_ready = int(report.get("cards_ready", 0))
@@ -185,6 +239,11 @@ def build_sense_menu_stage(
         "card_identity": "surface-card/v1",
         "fallback_policy": "none",
     }
+    if resolver_settings is not None:
+        # The resolver is not a fallback in the old sense: it decides the
+        # headword set first, for the named cards only, and says so.
+        config["fallback_policy"] = RESOLVER_VERSION
+        config["resolver"] = resolver_settings[3]
     if isinstance(adapter, KaikkiSenseMenuAdapter):
         config["max_redirect_hops"] = adapter.max_redirect_hops
     inputs = {

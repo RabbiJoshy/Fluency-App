@@ -20,6 +20,8 @@ from fluency.features.spanishdict_metadata import (
 )
 from fluency.features.spanishdict import extract as extract_spanishdict_features
 from fluency.menus import MenuAnalysis, SenseLeaf, build_analysis_id
+from fluency.sense_menu.declared_menu import declared_gloss_analyses
+from fluency.surfaces.resolver import DECLARED_GLOSS, EXPANSION, HEADWORDS
 
 
 ADAPTER_ID = "spanishdict-sense-menu/v1"
@@ -193,6 +195,11 @@ class SpanishDictSenseMenuAdapter:
     gloss_language: str = "en"
     source_edition: str = "spanishdict-pinned-snapshot"
     language_policy: dict[str, Any] | None = None
+    # Cards whose headword set comes from fluency.surfaces.resolver. Every other
+    # card is built exactly as before, so a run can switch the resolver on for
+    # a named set of cards without moving any other card's menu.
+    resolver: Any = None
+    resolver_surfaces: frozenset[str] = frozenset()
     snapshot_content_id: str = field(init=False)
     snapshot_id: str = field(init=False)
     surface_cache: dict[str, Any] = field(init=False)
@@ -469,6 +476,129 @@ class SpanishDictSenseMenuAdapter:
                 )
         return kept
 
+    def _resolved_analyses(self, surface: str, resolution: Any) -> list[dict[str, Any]]:
+        """Raw analyses for a resolved headword set, each tagged with its headword's record.
+
+        A headword SpanishDict declared on the surface's own page is read from
+        that page; any other is read from its own entry in the headword cache.
+        An expansion reads the target surface's page, whose headwords it borrowed.
+        """
+        if resolution.strategy not in (HEADWORDS, EXPANSION):
+            return []
+        page_surface = resolution.expanded_to or surface
+        page = self.surface_cache.get(page_surface)
+        page_analyses = _normalize_analyses((page or {}).get("dictionary_analyses")) if isinstance(page, dict) else []
+        out: list[dict[str, Any]] = []
+        for item in resolution.headwords:
+            record = {"headword_provenance": item.provenance, "headword_trust": item.trust,
+                      "headword_detail": item.detail or None}
+            own = [a for a in page_analyses if str(a.get("headword") or "").strip() == item.headword]
+            if not own:
+                entry = self.headword_cache.get(item.headword)
+                own = _normalize_analyses(entry.get("dictionary_analyses")) if isinstance(entry, dict) else []
+                for analysis in own:
+                    analysis["headword"] = analysis.get("headword") or item.headword
+                    analysis["surface_relation"] = item.provenance
+                    analysis["surface_from"] = surface
+            for analysis in own:
+                analysis["_resolver_headword"] = record
+                out.append(analysis)
+        return out
+
+    def _normalize_card(
+        self,
+        card: dict[str, Any],
+        surface: str,
+        raw_analyses: list[dict[str, Any]],
+        stamp: dict[str, Any] | None = None,
+    ) -> list[MenuAnalysis]:
+        """Turn raw provider analyses into menu analyses for one card.
+
+        ``stamp`` is the resolver's record for a card whose headword set was
+        resolved (``fluency.surfaces.resolver``); cards built the legacy way
+        carry none, so their output is byte-identical to before.
+        """
+        normalized: list[MenuAnalysis] = []
+        used_sense_ids: set[str] = set()
+        for raw_index, raw in enumerate(raw_analyses):
+            headword = str(raw.get("headword") or surface).strip()
+            legacy = _legacy_sense_ids(
+                headword,
+                raw.get("senses", []),
+                used_sense_ids,
+            )
+            grouped: dict[str, list[tuple[str, dict[str, Any]]]] = defaultdict(list)
+            for sense_id, sense in legacy.items():
+                part_of_speech = str(sense.get("pos", "X")).strip() or "X"
+                translation = str(sense.get("translation", "")).strip()
+                grouped[part_of_speech].append((sense_id, sense))
+            for part_of_speech, senses in grouped.items():
+                source_key = f"es:{headword}:{part_of_speech}:{raw_index}"
+                leaves = tuple(
+                    SenseLeaf(
+                        sense_id=sense_id,
+                        translation=str(sense["translation"]).strip(),
+                        definition=str(sense.get("context", "")).strip(),
+                        source_reference=f"spanishdict-menu:{headword}:{sense_id}",
+                        provider_metadata={
+                            "spanishdict": {
+                                key: deepcopy(value)
+                                for key, value in sense.items()
+                                if key not in {
+                                    "translation", "context", "pos", "headword", "source",
+                                    "_legacy_sense_id",
+                                }
+                            },
+                            "legacy_menu_sense_id": sense_id,
+                            "context": str(sense.get("context", "")),
+                            "translation_status": (
+                                "present"
+                                if str(sense.get("translation", "")).strip()
+                                else "explicit_missing"
+                            ),
+                        },
+                        specialist_features=_specialist_features(sense),
+                        metadata_accounting=account_spanishdict_metadata(sense),
+                    )
+                    for sense_id, sense in senses
+                )
+                normalized.append(
+                    MenuAnalysis(
+                        menu_analysis_id=build_analysis_id(
+                            card_id=card["card_id"],
+                            source_adapter=ADAPTER_ID,
+                            source_analysis_key=source_key,
+                        ),
+                        card_id=card["card_id"],
+                        surface_form=surface,
+                        headword=headword,
+                        part_of_speech=part_of_speech,
+                        source_adapter=ADAPTER_ID,
+                        source_analysis_key=source_key,
+                        senses=leaves,
+                        provider_metadata={
+                            "spanishdict": {
+                                "query": surface,
+                                "response_headword": headword,
+                                "entry_language": (self.surface_cache.get(surface) or {}).get("entry_lang"),
+                                "resolution": (
+                                    "retained_normalized_menu"
+                                    if surface in self.normalized_menu
+                                    else "direct" if not raw.get("surface_from")
+                                    else raw.get("surface_relation", "redirect")
+                                ),
+                            },
+                            "menu_order_prior": len(normalized),
+                            **(
+                                {"resolver": {**stamp, **(raw.get("_resolver_headword") or {})}}
+                                if stamp else {}
+                            ),
+                        },
+                    )
+                )
+        return normalized
+
+
     def build(
         self,
         cards: Iterable[dict[str, Any]],
@@ -487,100 +617,38 @@ class SpanishDictSenseMenuAdapter:
             surface = card.get("surface_key")
             if not isinstance(surface, str) or not surface:
                 raise SpanishDictMenuError("inventory card has no canonical surface")
-            raw_analyses = self._analyses(surface, quarantine)
-            normalized: list[MenuAnalysis] = []
-            used_sense_ids: set[str] = set()
-            for raw_index, raw in enumerate(raw_analyses):
-                headword = str(raw.get("headword") or surface).strip()
-                legacy = _legacy_sense_ids(
-                    headword,
-                    raw.get("senses", []),
-                    used_sense_ids,
-                )
-                grouped: dict[str, list[tuple[str, dict[str, Any]]]] = defaultdict(list)
-                for sense_id, sense in legacy.items():
-                    part_of_speech = str(sense.get("pos", "X")).strip() or "X"
-                    translation = str(sense.get("translation", "")).strip()
-                    grouped[part_of_speech].append((sense_id, sense))
-                for part_of_speech, senses in grouped.items():
-                    source_key = f"es:{headword}:{part_of_speech}:{raw_index}"
-                    leaves = tuple(
-                        SenseLeaf(
-                            sense_id=sense_id,
-                            translation=str(sense["translation"]).strip(),
-                            definition=str(sense.get("context", "")).strip(),
-                            source_reference=f"spanishdict-menu:{headword}:{sense_id}",
-                            provider_metadata={
-                                "spanishdict": {
-                                    key: deepcopy(value)
-                                    for key, value in sense.items()
-                                    if key not in {
-                                        "translation", "context", "pos", "headword", "source",
-                                        "_legacy_sense_id",
-                                    }
-                                },
-                                "legacy_menu_sense_id": sense_id,
-                                "context": str(sense.get("context", "")),
-                                "translation_status": (
-                                    "present"
-                                    if str(sense.get("translation", "")).strip()
-                                    else "explicit_missing"
-                                ),
-                            },
-                            specialist_features=_specialist_features(sense),
-                            metadata_accounting=account_spanishdict_metadata(sense),
-                        )
-                        for sense_id, sense in senses
-                    )
-                    normalized.append(
-                        MenuAnalysis(
-                            menu_analysis_id=build_analysis_id(
-                                card_id=card["card_id"],
-                                source_adapter=ADAPTER_ID,
-                                source_analysis_key=source_key,
-                            ),
-                            card_id=card["card_id"],
-                            surface_form=surface,
-                            headword=headword,
-                            part_of_speech=part_of_speech,
-                            source_adapter=ADAPTER_ID,
-                            source_analysis_key=source_key,
-                            senses=leaves,
-                            provider_metadata={
-                                "spanishdict": {
-                                    "query": surface,
-                                    "response_headword": headword,
-                                    "entry_language": (self.surface_cache.get(surface) or {}).get("entry_lang"),
-                                    "resolution": (
-                                        "retained_normalized_menu"
-                                        if surface in self.normalized_menu
-                                        else "direct" if not raw.get("surface_from")
-                                        else raw.get("surface_relation", "redirect")
-                                    ),
-                                },
-                                "menu_order_prior": len(normalized),
-                            },
-                        )
-                    )
+            resolution = None
+            if self.resolver is not None and surface in self.resolver_surfaces:
+                resolution = self.resolver.resolve(surface)
+                raw_analyses = self._resolved_analyses(surface, resolution)
+            else:
+                raw_analyses = self._analyses(surface, quarantine)
+            normalized = self._normalize_card(
+                card, surface, raw_analyses, resolution.stamp() if resolution else None
+            )
+            if resolution is not None and resolution.strategy == DECLARED_GLOSS:
+                normalized = declared_gloss_analyses(card["card_id"], surface, resolution)
             sense_count = sum(len(item.senses) for item in normalized)
             total_analyses += len(normalized)
             total_senses += sense_count
-            menu_cards.append(
-                {
-                    "card_id": card["card_id"],
-                    "surface_form": surface,
-                    "analyses": [item.to_dict() for item in normalized],
-                }
-            )
-            per_surface.append(
-                {
-                    "card_id": card["card_id"],
-                    "surface_form": surface,
-                    "analysis_count": len(normalized),
-                    "sense_count": sense_count,
-                    "status": "ready" if normalized else "no_menu",
-                }
-            )
+            menu_card = {
+                "card_id": card["card_id"],
+                "surface_form": surface,
+                "analyses": [item.to_dict() for item in normalized],
+            }
+            surface_report = {
+                "card_id": card["card_id"],
+                "surface_form": surface,
+                "analysis_count": len(normalized),
+                "sense_count": sense_count,
+                "status": "ready" if normalized else "no_menu",
+            }
+            if resolution is not None:
+                menu_card["resolution"] = resolution.to_dict()
+                surface_report.update(strategy=resolution.strategy, coverage=resolution.coverage,
+                                      reason=resolution.reason or None)
+            menu_cards.append(menu_card)
+            per_surface.append(surface_report)
 
         payload = {
             "menu_version": MENU_VERSION,

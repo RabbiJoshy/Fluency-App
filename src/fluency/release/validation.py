@@ -94,6 +94,17 @@ def validate_deck(deck: dict[str, Any]) -> None:
 
         meanings = card.get("meanings")
         _require(isinstance(meanings, list), f"card {surface_key} meanings must be a list")
+        # Per card, not per set: a set of nineteen good cards and one empty one
+        # is not an empty set, and that is how 105 empty cards shipped in
+        # es-speech-v15-10000x10. A card may have no meanings only when the
+        # resolver declared why.
+        if not meanings:
+            absence = card.get("menu_absence")
+            _require(
+                isinstance(absence, dict) and absence.get("strategy") == "no_menu"
+                and isinstance(absence.get("reason"), str) and bool(absence["reason"]),
+                f"card {surface_key} has no meanings and no declared menu_absence",
+            )
         local_sense_ids: set[str] = set()
         local_sense_statuses: dict[str, str] = {}
         local_canonical: set[tuple[str, str]] = set()

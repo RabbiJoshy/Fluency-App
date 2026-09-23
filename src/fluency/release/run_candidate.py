@@ -678,6 +678,19 @@ def build_inactive_run_candidate(
                 }
             )
         card_payload = {**card, "meanings": meanings, "examples": examples}
+        if not meanings:
+            # Absence is declared, never inferred (Invariant 2). The resolver
+            # says why a card has no menu; a card built without one has no
+            # declaration, and validation refuses it rather than ship it empty.
+            resolution = menu_card.get("resolution") or {}
+            if resolution.get("strategy") == "no_menu":
+                card_payload["menu_absence"] = {
+                    "strategy": "no_menu",
+                    "reason": resolution.get("reason") or "unspecified",
+                    "coverage": resolution.get("coverage"),
+                    "provider": resolution.get("provider"),
+                    "resolver_version": resolution.get("resolver_version"),
+                }
         all_here = list(card_assignments.values())
         forced_counts: dict[str, int] = {}
         supported_leaf_counts: dict[str, int] = {}

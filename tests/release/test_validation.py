@@ -55,6 +55,19 @@ class ReleaseValidationTests(unittest.TestCase):
         ):
             validate_deck(deck)
 
+    def test_an_empty_card_needs_a_declared_absence(self) -> None:
+        """es-speech-v15-10000x10 shipped 105 such cards past a per-set check."""
+        deck = deepcopy(self.deck)
+        card = deck["cards"][0]
+        card["meanings"] = []
+        for example in card["examples"]:
+            example["assignment_status"] = "unassigned"
+            example["sense_id"] = None
+        with self.assertRaisesRegex(ReleaseValidationError, "no declared menu_absence"):
+            validate_deck(deck)
+        card["menu_absence"] = {"strategy": "no_menu", "reason": "absent"}
+        validate_deck(deck)
+
     def test_duplicate_canonical_examples_are_rejected_on_the_same_card(self) -> None:
         deck = deepcopy(self.deck)
         chosen = {
