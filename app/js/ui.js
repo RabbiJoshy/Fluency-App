@@ -630,6 +630,17 @@ function renderLanguageTabs() {
     setupLanguageTabs();
 }
 
+// Each vocabulary mode is described by its "best for" lines, one per row.
+function setSourceBullets(button, lines) {
+    const host = button?.querySelector('.standard-source-bullets');
+    if (!host) return;
+    host.replaceChildren(...lines.map(line => {
+        const row = document.createElement('span');
+        row.textContent = line;
+        return row;
+    }));
+}
+
 function setupLanguageTabs() {
     const inlinePill = document.getElementById('selectedLanguageInline');
     const sourcePill = document.getElementById('selectedSourceInline');
@@ -724,17 +735,36 @@ function setupLanguageTabs() {
                 speechSourceButton.title = speechAvailable
                     ? 'Start with general-purpose vocabulary'
                     : `Speech vocabulary is not ready for ${langConfig?.name || newLanguage} yet`;
-                const detail = speechSourceButton.querySelector('small');
-                if (detail) detail.textContent = 'The words people say in films and TV. Best if you want conversation.';
+                setSourceBullets(speechSourceButton, [
+                    `Best for understanding everyday ${langConfig?.name || 'spoken'} speech`,
+                    'Words ranked by how often they\'re said in films and TV',
+                ]);
             }
             if (sourceCardButton) {
                 sourceCardButton.disabled = !lyricsAvailable;
                 sourceCardButton.title = lyricsCatalog
                     ? 'Build vocabulary around music you choose'
                     : 'Look up lyrics from a playlist and study a live deck';
-                const detail = sourceCardButton.querySelector('small');
-                if (detail) detail.textContent = 'The words in songs you choose, with the original line as the example. Best if music is how you listen.';
+                setSourceBullets(sourceCardButton, lyricsCatalog
+                    ? [
+                        'Best for understanding the lyrics of the artists you listen to',
+                        'Pick artists or songs; each word comes with the line it\'s sung in',
+                    ]
+                    : [
+                        'Best for understanding the songs in your own playlists',
+                        'Lyrics are looked up live from a playlist you choose',
+                    ]);
                 if (lyricsStatus) lyricsStatus.textContent = lyricsCatalog ? '›' : 'Live';
+            }
+            // Conjugation is an add-on beside the two vocabulary modes: a
+            // separate drill page, offered only where the language names a
+            // drill deck in config.
+            const addons = document.getElementById('standardSourceAddons');
+            const conjugationButton = document.getElementById('standardSourceConjugationBtn');
+            if (addons && conjugationButton) {
+                const drillHref = window.fluencyRoutes?.conjugationDrillHref?.(newLanguage, null, config.languages);
+                addons.style.display = drillHref ? '' : 'none';
+                conjugationButton.onclick = drillHref ? () => { window.location.href = drillHref; } : null;
             }
 
             // Hide all subsequent steps while loading
@@ -3147,7 +3177,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false } = {}) {
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=20260918l')
+        import('./spotify.js?v=20260923sp')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
@@ -3198,12 +3228,16 @@ function showSettingsModalWithTab(tabName, { singleTab = false } = {}) {
         ? ({ lookup: 'study', review: 'study', appearance: 'study' }[tabName] || tabName)
         : 'study';
     settingsModal.classList.toggle('settings-single-tab', requestedTab === 'study');
+    // Opened from a study session: only the study controls, not the whole
+    // settings page with account, theme and word tools.
+    const studyOnly = singleTab && requestedTab === 'study';
+    settingsModal.classList.toggle('settings-study-only', studyOnly);
     settingsModal.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
     settingsModal.querySelector(`.settings-tab[data-tab="${requestedTab}"]`)?.classList.add('active');
     settingsModal.querySelectorAll('.settings-tab-content').forEach(c => c.classList.remove('active'));
     document.getElementById(tabContentIds[requestedTab]).classList.add('active');
-    const title = { study: 'Settings', vocabulary: 'Words & data', account: 'Account',
-        offline: 'Storage', appData: 'Owner tools', about: 'About Fluency' }[requestedTab] || 'Settings';
+    const title = studyOnly ? 'Study settings' : ({ study: 'Settings', vocabulary: 'Words & data', account: 'Account',
+        offline: 'Storage', appData: 'Owner tools', about: 'About Fluency' }[requestedTab] || 'Settings');
     document.getElementById('settingsTitle').textContent = title;
     document.getElementById('settingsBackBtn').hidden = requestedTab === 'study';
     settingsModal.querySelector('.settings-modal-content').scrollTop = 0;

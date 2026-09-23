@@ -292,7 +292,7 @@
     });
     select.value = deck.language;
     select.disabled = Object.keys(decks).length < 2;
-    select.onchange = function () { loadDeck(decks[select.value]); };
+    select.onchange = function () { loadDeck(decks[select.value]); syncAddress(); };
   }
 
   /* Moods keep the deck's order, which the builder sets to the order a
@@ -796,7 +796,7 @@
       select.appendChild(option);
     });
     select.value = tableTense;
-    select.onchange = function () { tableTense = select.value; renderTable(); };
+    select.onchange = function () { tableTense = select.value; renderTable(); syncAddress(); };
   }
 
   /* No suggestions until something is typed: the old list ran to eighteen
@@ -822,6 +822,7 @@
         tableVerb = verb;
         renderTableResults(term);
         renderTable();
+        syncAddress();
       };
       host.appendChild(button);
     });
@@ -904,6 +905,28 @@
     if (name === 'tables') {
       renderTableResults($('table-search').value);
       renderTable();
+    }
+    syncAddress();
+  }
+
+  /* The address bar is the share link. It names the verb on screen — the
+   * table being read, or the one verb being drilled — in the same form the
+   * deep link below reads, so copying it reopens exactly this. */
+  function syncAddress() {
+    if (!deck || !window.history || !history.replaceState) return;
+    var params = new URLSearchParams();
+    params.set('lang', deck.language);
+    var tables = $('screen-tables').classList.contains('is-active');
+    if (tables && tableVerb) {
+      params.set('verb', tableVerb.h);
+      params.set('view', 'table');
+      if (tableTense !== 'all') params.set('tense', tableTense);
+    } else if (!tables && soloVerb) {
+      params.set('verb', soloVerb.h);
+    }
+    var next = window.location.pathname + '?' + params.toString();
+    if (next !== window.location.pathname + window.location.search) {
+      history.replaceState(null, '', next);
     }
   }
 

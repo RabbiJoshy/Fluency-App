@@ -3,7 +3,7 @@
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
 import './state.js?v=20260825ak';
 import './speech.js?v=20260825ak';
-import { goToRoute, routeCodeFor } from './routes.js?v=20260921a';
+import { goToRoute, routeCodeFor } from './routes.js?v=20260923cj';
 import './side-dock.js?v=20260922mod';
 import {
     collectRecentWrongWords,
@@ -1526,21 +1526,27 @@ function initializeApp() {
         if (!window.showChoiceSheet) return;
         const targetLanguage = (config.languages[selectedLanguage]?.name || selectedLanguage || 'Target language')
             .replace(/\s*\(.*\)$/, '');
-        // Label the direction this action will switch TO, rather than the
-        // ambiguous language that will merely appear "first".
-        const switchOrderLabel = isFlipped
-            ? `${targetLanguage} → English`
-            : `English → ${targetLanguage}`;
         const icon = body => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+        // The two toggles stay open and name their current state: the
+        // direction says what is on the front now, and the speaker icon
+        // itself shows whether auto-speak is on.
+        const directionRow = () => ({
+            label: `Front of Card: ${isFlipped ? 'English' : targetLanguage}`,
+            iconHTML: icon('<path d="M7 7h11"></path><path d="m15 4 3 3-3 3"></path><path d="M17 17H6"></path><path d="m9 14-3 3 3 3"></path>')
+        });
+        const speechRow = () => ({
+            label: 'Auto Speak Flashcards',
+            iconHTML: speechEnabled
+                ? icon('<path d="M11 5 6 9H3v6h3l5 4z"></path><path d="M15 9a4 4 0 0 1 0 6"></path><path d="M18 6a8 8 0 0 1 0 12"></path>')
+                : icon('<path d="M11 5 6 9H3v6h3l5 4z"></path><path d="m16 10 5 5"></path><path d="m21 10-5 5"></path>')
+        });
+        // Set progress and Saved words are not offered mid-set: progress adds
+        // little here, and saved words lives in Settings → Words & data.
         const entries = [
             { label: 'Main menu', iconHTML: icon('<path d="M9 7H5v12h12v-4"></path><path d="m9 11-4-4 4-4"></path><path d="M5 7h9a5 5 0 0 1 5 5"></path>'), onSelect: () => goBackToSetup() },
-            { label: switchOrderLabel, iconHTML: icon('<path d="M7 7h11"></path><path d="m15 4 3 3-3 3"></path><path d="M17 17H6"></path><path d="m9 14-3 3 3 3"></path>'), onSelect: () => flipDirection() },
-            { label: speechEnabled ? 'Mute automatic speech' : 'Enable automatic speech', iconHTML: speechEnabled
-                ? icon('<path d="M11 5 6 9H3v6h3l5 4z"></path><path d="M15 9a4 4 0 0 1 0 6"></path><path d="M18 6a8 8 0 0 1 0 12"></path>')
-                : icon('<path d="M11 5 6 9H3v6h3l5 4z"></path><path d="m16 10 5 5"></path><path d="m21 10-5 5"></path>'), onSelect: () => toggleAutoSpeak() },
-            { label: 'Set progress', iconHTML: icon('<path d="M4 19V9"></path><path d="M10 19V5"></path><path d="M16 19v-7"></path><path d="M22 19H2"></path>'), onSelect: () => showStatsModal() },
-            { label: 'Study preferences', iconHTML: icon('<path d="M4 6h10"></path><path d="M18 6h2"></path><circle cx="16" cy="6" r="2"></circle><path d="M4 12h2"></path><path d="M10 12h10"></path><circle cx="8" cy="12" r="2"></circle><path d="M4 18h8"></path><path d="M16 18h4"></path><circle cx="14" cy="18" r="2"></circle>'), onSelect: () => showSettingsModalWithTab('study', { singleTab: true }) },
-            { label: 'Saved words', iconHTML: icon('<path d="M6 4h12v16l-6-3-6 3z"></path>'), onSelect: () => window.openSavedWords?.() }
+            { ...directionRow(), keepOpen: true, tail: '', refresh: directionRow, onSelect: () => flipDirection() },
+            { ...speechRow(), keepOpen: true, tail: '', refresh: speechRow, onSelect: () => toggleAutoSpeak() },
+            { label: 'Study settings', iconHTML: icon('<path d="M4 6h10"></path><path d="M18 6h2"></path><circle cx="16" cy="6" r="2"></circle><path d="M4 12h2"></path><path d="M10 12h10"></path><circle cx="8" cy="12" r="2"></circle><path d="M4 18h8"></path><path d="M16 18h4"></path><circle cx="14" cy="18" r="2"></circle>'), onSelect: () => showSettingsModalWithTab('study', { singleTab: true }) }
         ];
         // Card data is a product-level audit surface: it stays available when
         // optional model stamps are absent and does not require an owner login.
@@ -9033,10 +9039,12 @@ document.addEventListener('click', (e) => {
 }, true);
 
 // Keyboard-shortcut guide: collapse/expand with localStorage persistence.
-// Toggled from the right-edge sidebar button (#kbToggleSidebar).
-// Defaults to collapsed (off) for new users; existing localStorage value wins.
+// Toggled from the right-edge sidebar button (#kbToggleSidebar), which the
+// study menu now hides, so the guide is shown by default wherever the CSS
+// finds room for it. The old key defaulted every visitor to collapsed with
+// no way back, so it is not read.
 (function _initKbGuideCollapse() {
-    const LS_KEY = 'fluency.kbGuideCollapsed';
+    const LS_KEY = 'fluency.kbGuideCollapsedV2';
     function attach() {
         const guide = document.getElementById('desktopKeyboardGuide');
         const btn = document.getElementById('kbToggleSidebar');
@@ -9047,7 +9055,7 @@ document.addEventListener('click', (e) => {
             btn.setAttribute('aria-label', btn.title);
             try { localStorage.setItem(LS_KEY, collapsed ? '1' : '0'); } catch (e) {}
         };
-        let initial = true;
+        let initial = false;
         try {
             const stored = localStorage.getItem(LS_KEY);
             if (stored !== null) initial = stored === '1';
@@ -9056,6 +9064,32 @@ document.addEventListener('click', (e) => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
             setCollapsed(!guide.classList.contains('collapsed'));
+        });
+        _initKbGuidePopover(guide);
+    }
+    // Where the gutter is too small for the whole guide, CSS shows a keyboard
+    // button instead; it opens the guide as a popover. Anything that makes the
+    // button go away (more room, leaving the card) also closes the popover.
+    function _initKbGuidePopover(guide) {
+        const toggle = document.getElementById('kbGuideToggle');
+        if (!toggle) return;
+        const setOpen = open => {
+            guide.classList.toggle('kb-guide-popover-open', open);
+            document.body.classList.toggle('kb-guide-open', open);
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        };
+        const toggleShown = () => getComputedStyle(toggle).display !== 'none';
+        toggle.addEventListener('click', event => {
+            event.stopPropagation();
+            setOpen(!guide.classList.contains('kb-guide-popover-open'));
+        });
+        document.addEventListener('click', event => {
+            if (!guide.classList.contains('kb-guide-popover-open')) return;
+            if (guide.contains(event.target) || toggle.contains(event.target)) return;
+            setOpen(false);
+        });
+        window.addEventListener('resize', () => {
+            if (!toggleShown()) setOpen(false);
         });
     }
     if (document.readyState === 'loading') {

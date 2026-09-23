@@ -6,6 +6,8 @@
 //   #/es/songs               your songs: chosen ones, or a playlist matched
 //                            against the lyrics library
 //   #/es/live                your live playlist deck, looked up from lyrics
+//   #/es/conjugate           the conjugation drill for that language
+//   #/es/conjugate/tener     drill one verb (the drill page is conjugation/)
 //   #/about  #/tutorial  #/walkthrough
 //
 // The two playlist routes open a mode, not a deck: the songs behind them are
@@ -39,6 +41,9 @@ export function parseRoute(hash) {
     if (parts.length === 1) return { kind: 'language', language: first };
     if (parts.length === 2 && (second === 'songs' || second === 'live')) return { kind: second, language: first };
     if (parts.length === 3 && second === 'w' && third) return { kind: 'word', language: first, surface: third };
+    if (second === 'conjugate' && parts.length <= 3) {
+        return third ? { kind: 'conjugate', language: first, verb: third } : { kind: 'conjugate', language: first };
+    }
     return { kind: 'unknown' };
 }
 
@@ -56,6 +61,8 @@ export function formatRoute(route) {
         case 'songs':
         case 'live':
             return `#/${enc(route.language)}/${route.kind}`;
+        case 'conjugate':
+            return `#/${enc(route.language)}/conjugate${route.verb ? `/${enc(route.verb)}` : ''}`;
         case 'artist':
             return `#/artist/${enc(route.artist)}${route.scope === 'extra' ? '/extra' : ''}`;
         default:
@@ -116,6 +123,17 @@ export function routeCodeFor(key, languages) {
     return (languages && languages[key] && languages[key].routeCode) || key;
 }
 
+// The conjugation drill is its own page. A language offers it by naming its
+// deck (`conjugationDrill`, a file under conjugation/data/) in config; one
+// that names none has no drill, and the link falls back to the language.
+export function conjugationDrillHref(key, verb, languages) {
+    const deck = languages && languages[key] && languages[key].conjugationDrill;
+    if (!deck) return null;
+    const params = new URLSearchParams({ lang: deck });
+    if (verb) params.set('verb', String(verb).toLowerCase());
+    return `conjugation/?${params}`;
+}
+
 // Rewrite the address bar from an old query link to its route, once, before
 // anything else reads the URL. Returns the route now in force.
 export function adoptLegacyUrl(loc = window.location) {
@@ -167,7 +185,7 @@ function installBrowserHooks() {
     const route = adoptLegacyUrl();
     window.fluencyRoute = route;
     window.fluencyRoutes = {
-        parseRoute, formatRoute, legacyRoute, languageKeyFor, routeCodeFor,
+        parseRoute, formatRoute, legacyRoute, languageKeyFor, routeCodeFor, conjugationDrillHref,
         routeHref, goToRoute, replaceRoute, clearRoute, consumeRouteNavigation
     };
     // Someone edited the fragment of an open tab, or pasted a link into it.

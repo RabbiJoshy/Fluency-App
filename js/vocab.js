@@ -3,7 +3,7 @@
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
 import './state.js?v=20260825ak';
 import { validateVocabularyIndex } from './data-contracts.js?v=20260825ak';
-import { formatRoute } from './routes.js?v=20260921a';
+import { formatRoute } from './routes.js?v=20260923cj';
 import { applyGrammarCardOverlay } from './grammar-cards.js?v=20260921gc';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';

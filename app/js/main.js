@@ -1,6 +1,6 @@
 // First: rewrites old ?artist=/?about= links to their #/ route before
 // anything below reads the address.
-import { goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=20260921a';
+import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=20260923cj';
 import { releaseUrl } from './release-host.js?v=20260921rh';
 import './theme.js?v=20260922ui';
 import './state.js?v=20260921x';
@@ -9,25 +9,25 @@ import './sync-queue.js?v=20260825ak';
 import { initOfflineContent } from './offline-content.js?v=20260825ak';
 import './speech.js?v=20260914b';
 import './artist-ui.js?v=20260825ak';
-import './auth.js?v=20260922ui';
+import './auth.js?v=20260923cj';
 import './tutorial.js?v=20260921ac';
 import './walkthrough.js?v=20260921ac';
 import './estimation.js?v=20260825ak';
 import './config.js?v=20260921rh';
 import './progress.js?v=20260920e';
 import './knowledge.js?v=20260922mod';
-import './ui.js?v=20260922hold';
-import './vocab.js?v=20260921freqb';
+import './ui.js?v=20260923cj';
+import './vocab.js?v=20260923cj';
 import './cognates.js?v=20260922ft2';
 import './coverage.js?v=20260909a';
 import './fast-mode.js?v=20260922ft2';
 import './extras.js?v=20260922ft2';
 import './review-home.js?v=20260922rw';
 import './song-sets.js?v=20260823ae';
-import './playlist-live.js?v=20260921rt';
-import './spotify-playlist-import.js?v=20260921rh';
+import './playlist-live.js?v=20260923cj';
+import './spotify-playlist-import.js?v=20260923cj';
 import './vocabulary-import.js?v=20260920a';
-import './flashcards.js?v=20260922mod';
+import './flashcards.js?v=20260923cj';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 function startCardTutorial() {
@@ -83,7 +83,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
 const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
-    ? import('./spotify.js?v=20260918l').catch(error => {
+    ? import('./spotify.js?v=20260923sp').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })
@@ -516,6 +516,19 @@ if (activeArtist) {
 loadConfig().then(async () => {
     const isResumeNavigation = new URLSearchParams(window.location.search).get('resume') === '1';
     perfMark('after loadConfig');
+    // #/es/conjugate[/verb] names the drill page, which is its own document.
+    // A language with no drill deck opens that language instead.
+    if (window.fluencyRoute?.kind === 'conjugate') {
+        const route = window.fluencyRoute;
+        const key = languageKeyFor(route.language, config.languages);
+        const drillHref = conjugationDrillHref(key, route.verb, config.languages);
+        if (drillHref) {
+            window.location.replace(drillHref);
+            return;
+        }
+        window.fluencyRoute = { kind: 'language', language: route.language };
+        replaceRoute(window.fluencyRoute);
+    }
     renderLanguageTabs();
     // A language is a durable learning context, not a choice learners should
     // have to repeat on every visit. First-time visitors still see the picker.
@@ -1301,11 +1314,23 @@ function showChoiceSheet({ id, ariaLabel, title, intro = '', stepLabel = '', ent
         const tail = document.createElement('span');
         tail.className = 'choice-sheet-tail';
         tail.setAttribute('aria-hidden', 'true');
-        tail.textContent = entry.selected ? '✓' : (entry.disabled ? '' : '›');
+        tail.textContent = entry.tail ?? (entry.selected ? '✓' : (entry.disabled ? '' : '›'));
         item.append(icon, copy, tail);
         item.addEventListener('click', event => {
             event.stopPropagation();
             if (entry.disabled) return;
+            // A toggle stays open and redraws itself from refresh(), so the
+            // row always states the current setting.
+            if (entry.keepOpen) {
+                entry.onSelect();
+                const next = entry.refresh?.() || {};
+                if (next.label) {
+                    label.textContent = next.label;
+                    item.setAttribute('aria-label', next.label);
+                }
+                if (next.iconHTML) icon.innerHTML = next.iconHTML;
+                return;
+            }
             closeChoiceSheet(id, true);
             entry.onSelect();
         });

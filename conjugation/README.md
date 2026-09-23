@@ -2,10 +2,12 @@
 
 A Conjugato-shaped drill built on the existing `conjugation-layer/v1`
 enrichment. It is a **separate page** under `app/conjugation/`, sharing no
-HTML, CSS or JS with the study app. Its only entry point is the
-*Drill this verb in conjugation mode* link in the conjugate drawer on the back
-of a card (`app/js/flashcards-conj.js`), which keeps the two UIs from treading
-on each other while both are being worked on.
+HTML, CSS or JS with the study app. It is entered three ways: the *Verb
+conjugation* option on the main page (shown for languages whose config entry
+names a `conjugationDrill` deck), the *Drill this verb in conjugation mode*
+link in the conjugate drawer on the back of a card (`app/js/flashcards-conj.js`),
+and the shareable routes `#/es/conjugate` and `#/es/conjugate/<verb>`, which
+the app redirects here.
 
 ## The primitive: a lesson signature
 
@@ -61,7 +63,8 @@ Nothing is scored, stored or scheduled. A progress model is a later decision.
     conjugation/?lang=es&verb=tener&view=table   open its paradigm instead
 
 An unknown verb lands on Tables with the search box pre-filled rather than
-failing.
+failing. The page keeps its own address in this form as you move around, so
+the address bar is always a link to the verb on screen.
 
 ## Rebuilding a deck
 

@@ -104,6 +104,20 @@ async function generateCodeChallenge(verifier) {
 // the actual navigation happens synchronously from the user gesture.
 let _pendingAuth = null;
 
+// Spotify accepts only redirect URIs registered in its dashboard, matched
+// exactly. The app is reachable at several paths on one origin (the site root,
+// the app/ mirror, the old Fluency-Next address), and every one of them would
+// otherwise send its own callback.html. One origin shares one localStorage,
+// so a single callback serves all of them: config pins it per origin under
+// publicServices.spotifyRedirectUris, and state.returnUrl brings the learner
+// back to the page they left. An origin config doesn't name (a local dev
+// server) keeps deriving its callback from the current page.
+function spotifyRedirectUri() {
+    const pinned = window._spotifyRedirectUris?.[window.location.origin];
+    if (typeof pinned === 'string' && pinned) return pinned;
+    return new URL('callback.html', window.location.href).href;
+}
+
 // Pre-compute PKCE challenge so mobile login can navigate synchronously
 async function _prepareAuth() {
     const clientId = window._spotifyClientId;
@@ -112,14 +126,7 @@ async function _prepareAuth() {
         return null;
     }
 
-    // Always derive from the current origin rather than a fixed configured
-    // value — this app runs from multiple origins (local dev server(s),
-    // GitHub Pages, any custom domain), and a hardcoded redirect URI can
-    // only ever be correct for one of them. Each real origin's own
-    // callback.html still needs registering in the Spotify dashboard, but
-    // which one gets sent now always matches wherever the app is actually
-    // running.
-    const redirectUri = new URL('callback.html', window.location.href).href;
+    const redirectUri = spotifyRedirectUri();
 
     const verifier = generateCodeVerifier();
     const challenge = await generateCodeChallenge(verifier);
@@ -129,8 +136,7 @@ async function _prepareAuth() {
 function spotifyLogin(pendingTrackId, pendingPositionMs, authPopup = null, options = {}) {
     return new Promise(async (resolve) => {
         const clientId = window._spotifyClientId;
-        // See _prepareAuth() above — always derive from the current origin.
-        const redirectUri = new URL('callback.html', window.location.href).href;
+        const redirectUri = spotifyRedirectUri();
         const showDialog = options.showDialog === true;
 
         if (!clientId) {
@@ -664,6 +670,7 @@ async function initSpotifyPlayer() {
 
 // Listen for tokens from the auth popup (handles cross-origin: localhost vs 127.0.0.1)
 window.addEventListener('message', (event) => {
+    if (event.origin !== window.location.origin) return;
     if (event.data && event.data.type === 'spotify-auth' && event.data.tokens) {
         const { access_token, refresh_token, token_expiry } = event.data.tokens;
         localStorage.setItem('spotify_access_token', access_token);
