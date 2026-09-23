@@ -4,7 +4,7 @@
 import './state.js?v=20260825ak';
 import { validateVocabularyIndex } from './data-contracts.js?v=20260825ak';
 import { formatRoute } from './routes.js?v=20260923cj';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=20260921gc';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=20260923gn';
 import { releaseUrl } from './release-host.js?v=20260921rh';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
@@ -2735,7 +2735,6 @@ async function loadVocabularyData(rangeString, opts = {}) {
                         ? (item.pooled_frequency ?? item.lemma_example_count ?? null)
                         : (item.corpus_count || null)),
                 meanings: meanings,
-                grammarNote: item._grammarCard?.note || '',
                 grammarPairs: item._grammarCard?.pairs || [],
                 unusedMenuSenses: (item.unused_menu_senses || []).map(m => ({
                     pos: m.pos,

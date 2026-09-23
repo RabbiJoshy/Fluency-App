@@ -15,19 +15,16 @@ const LANGUAGE_ALIASES = {
 export const GRAMMAR_CARDS = {
     es: {
         que: {
-            note: 'than / to are the comparison use',
             groups: [
                 { pos: 'CCONJ', translations: ['than', 'to'], contextIncludes: 'comparison' },
             ],
         },
         de: {
-            note: 'of / from / in / with sit on one preposition',
             groups: [
                 { pos: 'ADP' },
             ],
         },
         a: {
-            note: 'to / at sit on one preposition',
             groups: [
                 {
                     pos: 'ADP',
@@ -37,25 +34,21 @@ export const GRAMMAR_CARDS = {
             ],
         },
         lo: {
-            note: 'it / him / you are one Spanish form here',
             groups: [
                 { pos: 'PRON', translations: ['it', 'him', 'you'], contextIncludes: 'direct object' },
             ],
         },
         un: {
-            note: 'a and an are one Spanish article',
             groups: [
                 { pos: 'DET', translations: ['a', 'an'] },
             ],
         },
         una: {
-            note: 'a and an are one Spanish article',
             groups: [
                 { pos: 'DET', translations: ['a', 'an'] },
             ],
         },
         al: {
-            note: 'a + el',
             pairs: [
                 { surface: 'a', label: 'a' },
                 { surface: 'el', label: 'el' },
@@ -66,13 +59,11 @@ export const GRAMMAR_CARDS = {
             ],
         },
         le: {
-            note: 'him / her / you are one dative form',
             groups: [
                 { pos: 'PRON', translations: ['him', 'her', 'you'], contextIncludes: 'indirect object' },
             ],
         },
         del: {
-            note: 'de + el',
             pairs: [
                 { surface: 'de', label: 'de' },
                 { surface: 'el', label: 'el' },
@@ -82,7 +73,6 @@ export const GRAMMAR_CARDS = {
             ],
         },
         se: {
-            note: 'himself / herself / itself / themselves are one form',
             groups: [
                 { pos: 'PRON', contextIncludes: 'reflexive' },
             ],
@@ -218,7 +208,6 @@ export function applyGrammarCardOverlay(item, language) {
     item._grammarSourceMeanings = source.map(cloneMeaning);
     item.meanings = mergeGrammarMeanings(source, spec.groups || []);
     item._grammarCard = {
-        note: spec.note || '',
         pairs: spec.pairs || [],
     };
     return spec;
@@ -226,7 +215,7 @@ export function applyGrammarCardOverlay(item, language) {
 
 export function grammarCardChrome(itemOrCard) {
     return itemOrCard?._grammarCard
-        || (itemOrCard?.grammarNote || itemOrCard?.grammarPairs
-            ? { note: itemOrCard.grammarNote || '', pairs: itemOrCard.grammarPairs || [] }
+        || (itemOrCard?.grammarPairs
+            ? { pairs: itemOrCard.grammarPairs || [] }
             : null);
 }

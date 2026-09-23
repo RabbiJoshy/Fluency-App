@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-23T20:10:00+01:00",
+      "date": "2026-09-23 20:10 BST",
+      "agent": "Cursor",
+      "summary": "Function-word cards no longer print an English hint on the front. The merged senses stay on the back; del and al still show de+el / a+el after you flip.",
+      "detail": [
+        "Removed the front-of-card sentences such as \"it / him / you are one Spanish form here\".",
+        "Slash-joined senses are unchanged on the back. Contraction pairing chips for del and al now sit with the other back-of-card form cues."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-23T19:52:00+01:00",
       "date": "2026-09-23 19:52 BST",
       "agent": "Cursor",

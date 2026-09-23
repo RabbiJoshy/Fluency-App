@@ -26,6 +26,7 @@ class GrammarCardOverlayTests(unittest.TestCase):
                 ],
             }};
             applyGrammarCardOverlay(lo, 'spanish');
+            if (lo._grammarCard?.note) throw new Error('lo should not carry a learner note');
             const loGlosses = lo.meanings.map(m => m.translation);
             if (loGlosses.length !== 3) throw new Error('lo should show 3 leaves, got ' + JSON.stringify(loGlosses));
             if (loGlosses[0] !== 'it / him / you') throw new Error('lo object clitic join failed: ' + loGlosses[0]);
@@ -52,6 +53,18 @@ class GrammarCardOverlayTests(unittest.TestCase):
             if (de.meanings.length !== 1) throw new Error('de should collapse to 1 ADP leaf, got ' + de.meanings.length);
             if (de.meanings[0].translation !== 'from / of / in / with') throw new Error('de join failed: ' + de.meanings[0].translation);
             if ((de.meanings[0].examples || []).length !== 6) throw new Error('de examples were not unioned');
+
+            const del = {{
+                word: 'del',
+                meanings: [
+                    {{ pos: 'CONTRACTION', translation: 'of the' }},
+                    {{ pos: 'CONTRACTION', translation: 'from the' }},
+                    {{ pos: 'PHRASE', translation: 'of the world' }},
+                ],
+            }};
+            applyGrammarCardOverlay(del, 'spanish');
+            if (!del._grammarCard?.pairs?.length) throw new Error('del should keep contraction pairing chips');
+            if (del._grammarCard?.note) throw new Error('del should not carry a learner note');
 
             const personalA = mergeGrammarMeanings([
                 {{ pos: 'ADP', translation: 'to', context: 'used to indicate direction' }},
