@@ -126,11 +126,12 @@ Say the bold name.
 | **CHISEL 2** | MWE tag refinement | Audit KILN 1 WSD outputs; discover additional axes/template bounds on real data. | Lab on KILN 1 output | **Done** (signed off in `raw/mwe/chisel-2`; ready for KILN 2) |
 | **KILN 2** | Precision 10k WSD | Re-run/finalize WSD with CHISEL 2 refined MWE overlay before release. | Plant | **Done** (precision 10k WSD published to Stage 04 across es, pt, cs; ready for GLASS) |
 | **GLASS** | v15 10k decks | Import bundle, compose, validate, activate the 10k speech decks. | Plant (no model) | **Done** (10k releases composed, validated, sharded, activated; deployed under `flashcards-v502`) |
-| **GRAFT** | lyrics overlays | Collect slang, fillers, and lyrics MWEs/words into overlay snapshots. | Lab / curation | After GLASS (before VERSE) |
+| **MEND** | menu fallback | Cards shipped with empty meanings (105 in es v15) get meanings deterministically: facts → class → strategy (lemma hop, expand, declared gloss, entity), shared by every provider and scoped language → mode → artist → song. Defines the declared-entry format GRAFT fills. | Lab + small plant (sense-menu rerun, WSD for affected cards only) | **Design in discussion**: `docs/proposals/0003-surface-exceptions-and-menu-fallback.md`. Prompt not written yet. Before GRAFT. |
+| **GRAFT** | lyrics overlays | Collect slang, fillers, and lyrics MWEs/words into overlay snapshots, **in MEND's declared-entry format and scopes**. | Lab / curation | After MEND (before VERSE) |
 | **VERSE** | lyrics **v16** | Rebase on SWEEP (v15) + GRAFT overlays; lyrics WSD v16. Bad Bunny lyrics stack is **v7**. | Lab first, plant later | After GRAFT; may sit idle until then |
 | **SETLIST** | live playlist UI | Spotify playlist → LRCLIB → worker persist → naive speech-overlay deck. No WSD. | beside WSD | In progress (brief `docs/runbooks/live-playlist.md`) |
 
-**Hold.** Sequence: SIEVE done, MILL done, SWEEP done, QUARRY done, CHISEL 1 done, KILN 1 done, CHISEL 2 done, KILN 2 done, GLASS done. **GRAFT is next** (or VERSE / SETLIST). SETLIST does not wait on that hold.
+**Hold.** Sequence: SIEVE done, MILL done, SWEEP done, QUARRY done, CHISEL 1 done, KILN 1 done, CHISEL 2 done, KILN 2 done, GLASS done. **MEND is next** (design still being settled in proposal 0003), then **GRAFT**, then **VERSE**. SETLIST does not wait on that hold.
 
 KILN 1 executed on QUARRY’s freeze and CHISEL 1's 10k MWE overlay. Do not call the v12 freeze “v14 production 10k.”
 
@@ -180,8 +181,9 @@ You already have a **v12 freeze**: sentences + scores + embedding cache + sparse
 8. **CHISEL** takes the new 10k freeze, curates and retags MWEs across the newly added 4,000 cards, verifies Invariant vs Ambiguous tags, and signs off on the 10k MWE overlay.
 9. **KILN** executes full-deck WSD on the 10k freeze using the signed-off `v15` profile from SWEEP + CHISEL's 10k MWE overlay.
 10. **GLASS** composes, validates, and activates the 10,000-card speech decks on v15.
-11. **GRAFT** collects domain-specific MWEs and single-word extra senses (Caribbean slang, reggaeton idioms, conversational fillers, elided locutions) into structured overlays via `fluency.wsd.overlays`, before lyrics WSD disambiguation.
-12. **VERSE** is the lyrics WSD chat. Rebased on speech v15 (SWEEP) + domain overlays (GRAFT), producing **lyrics WSD v16**. Do not treat speech v12 as the method to ship.
+11. **MEND** fixes cards that shipped with no meanings, and builds the mechanism for it: each surface's ledger facts pick a strategy (borrow the lemma's menu, expand an abbreviation, a declared gloss, an entity card) instead of shipping empty. It runs offline, is shared by SpanishDict and Wiktionary, and is scoped so an artist borrows what the language already declared. Design: `docs/proposals/0003-surface-exceptions-and-menu-fallback.md`.
+12. **GRAFT** collects domain-specific MWEs and single-word extra senses (Caribbean slang, reggaeton idioms, conversational fillers, elided locutions) into structured overlays via `fluency.wsd.overlays`, before lyrics WSD disambiguation.
+13. **VERSE** is the lyrics WSD chat. Rebased on speech v15 (SWEEP) + MEND's resolver + domain overlays (GRAFT), producing **lyrics WSD v16**. Do not treat speech v12 as the method to ship.
 
 ---
 
@@ -330,10 +332,20 @@ Paste:
   - Pinned speech frequency snapshots built and validated for all 3 releases.
   - Service worker cache bumped to `flashcards-v502` and activated in `config.json`. Deployed to live app.
 
+### MEND — menu fallback for empty cards (before GRAFT)
+
+**This chat is MEND.** Not started. The design is being settled in `docs/proposals/0003-surface-exceptions-and-menu-fallback.md`; a prompt will be written against it and added here.
+- Why: `es-speech-v15-10000x10` shipped 105 cards with empty `meanings` (WSD `no_menu` on every example). GLASS's "0 empty study sets" check was per set, not per card, so it missed them. They made Learn New bounce between sets (patched in the app).
+- Shape: fallback **fills** an empty menu at stage 02. GRAFT's overlays **add** competing senses at WSD time. Same entry format, same scopes (proposal §6).
+- Feeds GRAFT: MEND defines the strategy table, the scope field, the declared-entry format (glosses, expansions, entities) and the entity registry shape, seeded only with what the 105 need. GRAFT fills them.
+- Feeds VERSE: the resolver, lemma hop and scopes; lyrics routing buckets map onto the same classes (proposal §7).
+- Do not: change card identity (the clitic tokenization split is a next-rebuild decision, proposal §8); harvest; activate without Joshua.
+
 ### GRAFT — lyrics & slang sense-menu overlays (before VERSE)
 
 **This chat is GRAFT.** Domain & slang collection chat before lyrics WSD.
 - Input Dossier: `docs/dossiers/graft-source-dossier.md` (shared working dossier; check its status and vet sources before building snapshots).
+- **After MEND:** write entries in MEND's declared-entry format and scopes (`docs/proposals/0003-surface-exceptions-and-menu-fallback.md` §4–§6). Overlay senses that compete in WSD and fallback senses that fill empty menus share one format; do not create a second one. Lyrics entities go in MEND's entity registry at the widest scope that is true, so later artists borrow them.
 
 Paste into that chat:
 
