@@ -1,0 +1,12695 @@
+{
+ "splits": [
+  {
+   "surface": "hacerlo",
+   "host": "hacer",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "déjame",
+   "host": "deja",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "dame",
+   "host": "da",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "dime",
+   "host": "di",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "verte",
+   "host": "ver",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "ver"
+  },
+  {
+   "surface": "irme",
+   "host": "ir",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "ir"
+  },
+  {
+   "surface": "cállate",
+   "host": "calla",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "callar"
+  },
+  {
+   "surface": "dile",
+   "host": "di",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "decirte",
+   "host": "decir",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "verlo",
+   "host": "ver",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "ver"
+  },
+  {
+   "surface": "decirle",
+   "host": "decir",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "quédate",
+   "host": "queda",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "quedar"
+  },
+  {
+   "surface": "darle",
+   "host": "dar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "hazlo",
+   "host": "haz",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "decirme",
+   "host": "decir",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "dale",
+   "host": "da",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "saberlo",
+   "host": "saber",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "saber"
+  },
+  {
+   "surface": "irnos",
+   "host": "ir",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "ir"
+  },
+  {
+   "surface": "escúchame",
+   "host": "escucha",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "escuchar"
+  },
+  {
+   "surface": "ayudarte",
+   "host": "ayudar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "ayudar"
+  },
+  {
+   "surface": "irse",
+   "host": "ir",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "ir"
+  },
+  {
+   "surface": "verla",
+   "host": "ver",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "ver"
+  },
+  {
+   "surface": "darte",
+   "host": "dar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "hacerte",
+   "host": "hacer",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "darme",
+   "host": "dar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "irte",
+   "host": "ir",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "ir"
+  },
+  {
+   "surface": "quedarme",
+   "host": "quedar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "quedar"
+  },
+  {
+   "surface": "decirlo",
+   "host": "decir",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "déjalo",
+   "host": "deja",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "ayúdame",
+   "host": "ayuda",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "ayudar"
+  },
+  {
+   "surface": "ayudarme",
+   "host": "ayudar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "ayudar"
+  },
+  {
+   "surface": "hacerle",
+   "host": "hacer",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "cálmate",
+   "host": "calma",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "calmar"
+  },
+  {
+   "surface": "haberlo",
+   "host": "haber",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "haber"
+  },
+  {
+   "surface": "déjeme",
+   "host": "deje",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "hacerme",
+   "host": "hacer",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "mírame",
+   "host": "mira",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "mirar"
+  },
+  {
+   "surface": "olvídalo",
+   "host": "olvida",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "olvidar"
+  },
+  {
+   "surface": "quedarse",
+   "host": "quedar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "quedar"
+  },
+  {
+   "surface": "haberte",
+   "host": "haber",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "haber"
+  },
+  {
+   "surface": "quedarte",
+   "host": "quedar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "quedar"
+  },
+  {
+   "surface": "ponte",
+   "host": "pon",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "poner"
+  },
+  {
+   "surface": "dígame",
+   "host": "diga",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "levántate",
+   "host": "levanta",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "levantar"
+  },
+  {
+   "surface": "matarme",
+   "host": "matar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "matar"
+  },
+  {
+   "surface": "creerlo",
+   "host": "creer",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "creer"
+  },
+  {
+   "surface": "decírselo",
+   "host": "decir",
+   "pronouns": [
+    "se",
+    "lo"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "dímelo",
+   "host": "di",
+   "pronouns": [
+    "me",
+    "lo"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "dejarlo",
+   "host": "dejar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "conocerte",
+   "host": "conocer",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "conocer"
+  },
+  {
+   "surface": "llámame",
+   "host": "llama",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "llamar"
+  },
+  {
+   "surface": "muévanse",
+   "host": "muevan",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "mover"
+  },
+  {
+   "surface": "muévete",
+   "host": "mueve",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "mover"
+  },
+  {
+   "surface": "haberme",
+   "host": "haber",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "haber"
+  },
+  {
+   "surface": "intentarlo",
+   "host": "intentar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "intentar"
+  },
+  {
+   "surface": "decírtelo",
+   "host": "decir",
+   "pronouns": [
+    "te",
+    "lo"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "perdóname",
+   "host": "perdona",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "perdonar"
+  },
+  {
+   "surface": "relájate",
+   "host": "relaja",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "relajar"
+  },
+  {
+   "surface": "verle",
+   "host": "ver",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "ver"
+  },
+  {
+   "surface": "matarte",
+   "host": "matar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "matar"
+  },
+  {
+   "surface": "matarlo",
+   "host": "matar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "matar"
+  },
+  {
+   "surface": "decirles",
+   "host": "decir",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "casarse",
+   "host": "casar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "casar"
+  },
+  {
+   "surface": "unidos",
+   "host": "unid",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "unir"
+  },
+  {
+   "surface": "lárgate",
+   "host": "larga",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "largar"
+  },
+  {
+   "surface": "ayudarle",
+   "host": "ayudar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "ayudar"
+  },
+  {
+   "surface": "aléjate",
+   "host": "aleja",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "alejar"
+  },
+  {
+   "surface": "dejarme",
+   "host": "dejar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "soldados",
+   "host": "soldad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "soldar"
+  },
+  {
+   "surface": "animales",
+   "host": "anima",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "animar"
+  },
+  {
+   "surface": "quítate",
+   "host": "quita",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "quitar"
+  },
+  {
+   "surface": "preguntarte",
+   "host": "preguntar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "preguntar"
+  },
+  {
+   "surface": "déjenme",
+   "host": "dejen",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "dígale",
+   "host": "diga",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "diles",
+   "host": "di",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "estados",
+   "host": "estad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "estar"
+  },
+  {
+   "surface": "llevarte",
+   "host": "llevar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "encontrarlo",
+   "host": "encontrar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "encontrar"
+  },
+  {
+   "surface": "apúrate",
+   "host": "apura",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "apurar"
+  },
+  {
+   "surface": "hazme",
+   "host": "haz",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "preguntarle",
+   "host": "preguntar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "preguntar"
+  },
+  {
+   "surface": "hacerse",
+   "host": "hacer",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "dejarte",
+   "host": "dejar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "serlo",
+   "host": "ser",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "ser"
+  },
+  {
+   "surface": "díselo",
+   "host": "di",
+   "pronouns": [
+    "se",
+    "lo"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "casarme",
+   "host": "casar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "casar"
+  },
+  {
+   "surface": "vernos",
+   "host": "ver",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "ver"
+  },
+  {
+   "surface": "pedirle",
+   "host": "pedir",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "pedir"
+  },
+  {
+   "surface": "llamarme",
+   "host": "llamar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "llamar"
+  },
+  {
+   "surface": "discúlpeme",
+   "host": "disculpe",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "disculpar"
+  },
+  {
+   "surface": "verlos",
+   "host": "ver",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "ver"
+  },
+  {
+   "surface": "ayudarnos",
+   "host": "ayudar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "ayudar"
+  },
+  {
+   "surface": "suéltame",
+   "host": "suelta",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "soltar"
+  },
+  {
+   "surface": "ayudarlo",
+   "host": "ayudar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "ayudar"
+  },
+  {
+   "surface": "váyanse",
+   "host": "vayan",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "ir"
+  },
+  {
+   "surface": "ponerme",
+   "host": "poner",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "poner"
+  },
+  {
+   "surface": "cuídate",
+   "host": "cuida",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "cuidar"
+  },
+  {
+   "surface": "dámelo",
+   "host": "da",
+   "pronouns": [
+    "me",
+    "lo"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "llevarme",
+   "host": "llevar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "hablarle",
+   "host": "hablar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "hablar"
+  },
+  {
+   "surface": "darles",
+   "host": "dar",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "mírate",
+   "host": "mira",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "mirar"
+  },
+  {
+   "surface": "hablarte",
+   "host": "hablar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "hablar"
+  },
+  {
+   "surface": "dilo",
+   "host": "di",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "hagámoslo",
+   "host": "hagamos",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "preocuparse",
+   "host": "preocupar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "preocupar"
+  },
+  {
+   "surface": "asegúrate",
+   "host": "asegura",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "asegurar"
+  },
+  {
+   "surface": "ponerte",
+   "host": "poner",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "poner"
+  },
+  {
+   "surface": "llevarlo",
+   "host": "llevar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "váyase",
+   "host": "vaya",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "ir"
+  },
+  {
+   "surface": "ponerse",
+   "host": "poner",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "poner"
+  },
+  {
+   "surface": "déjala",
+   "host": "deja",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "cuéntame",
+   "host": "cuenta",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "contar"
+  },
+  {
+   "surface": "ayudarla",
+   "host": "ayudar",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "ayudar"
+  },
+  {
+   "surface": "decírmelo",
+   "host": "decir",
+   "pronouns": [
+    "me",
+    "lo"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "darnos",
+   "host": "dar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "conocerlo",
+   "host": "conocer",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "conocer"
+  },
+  {
+   "surface": "decirnos",
+   "host": "decir",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "haberle",
+   "host": "haber",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "haber"
+  },
+  {
+   "surface": "quédese",
+   "host": "quede",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "quedar"
+  },
+  {
+   "surface": "preocuparte",
+   "host": "preocupar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "preocupar"
+  },
+  {
+   "surface": "casarte",
+   "host": "casar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "casar"
+  },
+  {
+   "surface": "tenerlo",
+   "host": "tener",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "tener"
+  },
+  {
+   "surface": "discúlpame",
+   "host": "disculpa",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "disculpar"
+  },
+  {
+   "surface": "quedarnos",
+   "host": "quedar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "quedar"
+  },
+  {
+   "surface": "asegurarme",
+   "host": "asegurar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "asegurar"
+  },
+  {
+   "surface": "oficiales",
+   "host": "oficia",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "oficiar"
+  },
+  {
+   "surface": "haberse",
+   "host": "haber",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "haber"
+  },
+  {
+   "surface": "papeles",
+   "host": "pape",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "papar"
+  },
+  {
+   "surface": "pensarlo",
+   "host": "pensar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "pensar"
+  },
+  {
+   "surface": "llévame",
+   "host": "lleva",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "fíjate",
+   "host": "fija",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "fijar"
+  },
+  {
+   "surface": "sentarse",
+   "host": "sentar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "sentar"
+  },
+  {
+   "surface": "llamarte",
+   "host": "llamar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "llamar"
+  },
+  {
+   "surface": "tómalo",
+   "host": "toma",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "tomar"
+  },
+  {
+   "surface": "ayúdenme",
+   "host": "ayuden",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "ayudar"
+  },
+  {
+   "surface": "pregúntale",
+   "host": "pregunta",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "preguntar"
+  },
+  {
+   "surface": "buscarlo",
+   "host": "buscar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "buscar"
+  },
+  {
+   "surface": "permítame",
+   "host": "permita",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "permitir"
+  },
+  {
+   "surface": "encontrarla",
+   "host": "encontrar",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "encontrar"
+  },
+  {
+   "surface": "háblame",
+   "host": "habla",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "hablar"
+  },
+  {
+   "surface": "dejarla",
+   "host": "dejar",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "pedirte",
+   "host": "pedir",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "pedir"
+  },
+  {
+   "surface": "tráeme",
+   "host": "trae",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "traer"
+  },
+  {
+   "surface": "llevarla",
+   "host": "llevar",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "piénsalo",
+   "host": "piensa",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "pensar"
+  },
+  {
+   "surface": "arreglarlo",
+   "host": "arreglar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "arreglar"
+  },
+  {
+   "surface": "quédense",
+   "host": "queden",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "quedar"
+  },
+  {
+   "surface": "evitarlo",
+   "host": "evitar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "evitar"
+  },
+  {
+   "surface": "detenerlo",
+   "host": "detener",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "detener"
+  },
+  {
+   "surface": "míralo",
+   "host": "mira",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "mirar"
+  },
+  {
+   "surface": "resultados",
+   "host": "resultad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "resultar"
+  },
+  {
+   "surface": "sentarme",
+   "host": "sentar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "sentar"
+  },
+  {
+   "surface": "ponerle",
+   "host": "poner",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "poner"
+  },
+  {
+   "surface": "sentirse",
+   "host": "sentir",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "sentir"
+  },
+  {
+   "surface": "moverse",
+   "host": "mover",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "mover"
+  },
+  {
+   "surface": "haberla",
+   "host": "haber",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "haber"
+  },
+  {
+   "surface": "convertirse",
+   "host": "convertir",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "convertir"
+  },
+  {
+   "surface": "llamarlo",
+   "host": "llamar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "llamar"
+  },
+  {
+   "surface": "mantente",
+   "host": "manten",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "mantener"
+  },
+  {
+   "surface": "olvídate",
+   "host": "olvida",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "olvidar"
+  },
+  {
+   "surface": "conocerla",
+   "host": "conocer",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "conocer"
+  },
+  {
+   "surface": "disculparme",
+   "host": "disculpar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "disculpar"
+  },
+  {
+   "surface": "perdóneme",
+   "host": "perdone",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "perdonar"
+  },
+  {
+   "surface": "prepárense",
+   "host": "preparen",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "preparar"
+  },
+  {
+   "surface": "sacarlo",
+   "host": "sacar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "sacar"
+  },
+  {
+   "surface": "encontrarme",
+   "host": "encontrar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "encontrar"
+  },
+  {
+   "surface": "mostrarte",
+   "host": "mostrar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "mostrar"
+  },
+  {
+   "surface": "tenerte",
+   "host": "tener",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "tener"
+  },
+  {
+   "surface": "invitados",
+   "host": "invitad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "invitar"
+  },
+  {
+   "surface": "tómate",
+   "host": "toma",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "tomar"
+  },
+  {
+   "surface": "sacarte",
+   "host": "sacar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "sacar"
+  },
+  {
+   "surface": "entenderlo",
+   "host": "entender",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "entender"
+  },
+  {
+   "surface": "hablarme",
+   "host": "hablar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "hablar"
+  },
+  {
+   "surface": "ponlo",
+   "host": "pon",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "poner"
+  },
+  {
+   "surface": "sentarte",
+   "host": "sentar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "sentar"
+  },
+  {
+   "surface": "hacerla",
+   "host": "hacer",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "usarlo",
+   "host": "usar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "usar"
+  },
+  {
+   "surface": "probarlo",
+   "host": "probar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "probar"
+  },
+  {
+   "surface": "preparados",
+   "host": "preparad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "preparar"
+  },
+  {
+   "surface": "espérame",
+   "host": "espera",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "esperar"
+  },
+  {
+   "surface": "ponerlo",
+   "host": "poner",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "poner"
+  },
+  {
+   "surface": "déme",
+   "host": "dé",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "siéntense",
+   "host": "sienten",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "sentar"
+  },
+  {
+   "surface": "buscarte",
+   "host": "buscar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "buscar"
+  },
+  {
+   "surface": "averiguarlo",
+   "host": "averiguar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "averiguar"
+  },
+  {
+   "surface": "oírlo",
+   "host": "oír",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "oír"
+  },
+  {
+   "surface": "muéstrame",
+   "host": "muestra",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "mostrar"
+  },
+  {
+   "surface": "oírme",
+   "host": "oír",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "oír"
+  },
+  {
+   "surface": "enseñarte",
+   "host": "enseñar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "enseñar"
+  },
+  {
+   "surface": "contarle",
+   "host": "contar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "contar"
+  },
+  {
+   "surface": "encontrarte",
+   "host": "encontrar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "encontrar"
+  },
+  {
+   "surface": "matarla",
+   "host": "matar",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "matar"
+  },
+  {
+   "surface": "especiales",
+   "host": "especia",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "especiar"
+  },
+  {
+   "surface": "prepárate",
+   "host": "prepara",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "preparar"
+  },
+  {
+   "surface": "sentirme",
+   "host": "sentir",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "sentir"
+  },
+  {
+   "surface": "llévate",
+   "host": "lleva",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "hacernos",
+   "host": "hacer",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "contarte",
+   "host": "contar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "contar"
+  },
+  {
+   "surface": "inténtalo",
+   "host": "intenta",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "intentar"
+  },
+  {
+   "surface": "acércate",
+   "host": "acerca",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "acercar"
+  },
+  {
+   "surface": "métete",
+   "host": "mete",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "meter"
+  },
+  {
+   "surface": "hágalo",
+   "host": "haga",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "sígueme",
+   "host": "sigue",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "seguir"
+  },
+  {
+   "surface": "escucharme",
+   "host": "escuchar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "escuchar"
+  },
+  {
+   "surface": "regalos",
+   "host": "regá",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "regar"
+  },
+  {
+   "surface": "abogados",
+   "host": "abogad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "abogar"
+  },
+  {
+   "surface": "meterte",
+   "host": "meter",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "meter"
+  },
+  {
+   "surface": "dámela",
+   "host": "da",
+   "pronouns": [
+    "me",
+    "la"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "ayúdeme",
+   "host": "ayude",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "ayudar"
+  },
+  {
+   "surface": "matarnos",
+   "host": "matar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "matar"
+  },
+  {
+   "surface": "deme",
+   "host": "dé",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "escúcheme",
+   "host": "escuche",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "escuchar"
+  },
+  {
+   "surface": "explicarlo",
+   "host": "explicar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "explicar"
+  },
+  {
+   "surface": "apártate",
+   "host": "aparta",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "apartar"
+  },
+  {
+   "surface": "meterme",
+   "host": "meter",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "meter"
+  },
+  {
+   "surface": "danos",
+   "host": "da",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "casados",
+   "host": "casad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "casar"
+  },
+  {
+   "surface": "jódete",
+   "host": "jode",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "joder"
+  },
+  {
+   "surface": "conseguirlo",
+   "host": "conseguir",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "conseguir"
+  },
+  {
+   "surface": "estarlo",
+   "host": "estar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "estar"
+  },
+  {
+   "surface": "deseos",
+   "host": "dé",
+   "pronouns": [
+    "se",
+    "os"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "llevarse",
+   "host": "llevar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "haciéndolo",
+   "host": "haciendo",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "síganme",
+   "host": "sigan",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "seguir"
+  },
+  {
+   "surface": "enseñarle",
+   "host": "enseñar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "enseñar"
+  },
+  {
+   "surface": "traerme",
+   "host": "traer",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "traer"
+  },
+  {
+   "surface": "contarme",
+   "host": "contar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "contar"
+  },
+  {
+   "surface": "meterse",
+   "host": "meter",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "meter"
+  },
+  {
+   "surface": "darse",
+   "host": "dar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "súbete",
+   "host": "sube",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "subir"
+  },
+  {
+   "surface": "cállese",
+   "host": "calle",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "callar"
+  },
+  {
+   "surface": "casarnos",
+   "host": "casar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "casar"
+  },
+  {
+   "surface": "mantenerlo",
+   "host": "mantener",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "mantener"
+  },
+  {
+   "surface": "mostrarle",
+   "host": "mostrar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "mostrar"
+  },
+  {
+   "surface": "preguntarme",
+   "host": "preguntar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "preguntar"
+  },
+  {
+   "surface": "buscarme",
+   "host": "buscar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "buscar"
+  },
+  {
+   "surface": "dejarle",
+   "host": "dejar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "prométeme",
+   "host": "promete",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "prometer"
+  },
+  {
+   "surface": "concéntrate",
+   "host": "concentra",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "concentrar"
+  },
+  {
+   "surface": "dispararle",
+   "host": "disparar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "disparar"
+  },
+  {
+   "surface": "protegerte",
+   "host": "proteger",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "proteger"
+  },
+  {
+   "surface": "creerme",
+   "host": "creer",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "creer"
+  },
+  {
+   "surface": "mátalo",
+   "host": "mata",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "matar"
+  },
+  {
+   "surface": "ayudarlos",
+   "host": "ayudar",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "ayudar"
+  },
+  {
+   "surface": "echarle",
+   "host": "echar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "echar"
+  },
+  {
+   "surface": "apúrense",
+   "host": "apuren",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "apurar"
+  },
+  {
+   "surface": "despedirme",
+   "host": "despedir",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "despedir"
+  },
+  {
+   "surface": "soportarlo",
+   "host": "soportar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "soportar"
+  },
+  {
+   "surface": "matarlos",
+   "host": "matar",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "matar"
+  },
+  {
+   "surface": "permíteme",
+   "host": "permite",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "permitir"
+  },
+  {
+   "surface": "déjanos",
+   "host": "deja",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "aceptarlo",
+   "host": "aceptar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "aceptar"
+  },
+  {
+   "surface": "cálmese",
+   "host": "calme",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "calmar"
+  },
+  {
+   "surface": "tenerla",
+   "host": "tener",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "tener"
+  },
+  {
+   "surface": "verlas",
+   "host": "ver",
+   "pronouns": [
+    "las"
+   ],
+   "lemma": "ver"
+  },
+  {
+   "surface": "llevarnos",
+   "host": "llevar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "unirse",
+   "host": "unir",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "unir"
+  },
+  {
+   "surface": "salvarte",
+   "host": "salvar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "salvar"
+  },
+  {
+   "surface": "olvidarlo",
+   "host": "olvidar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "olvidar"
+  },
+  {
+   "surface": "preocuparme",
+   "host": "preocupar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "preocupar"
+  },
+  {
+   "surface": "llamarla",
+   "host": "llamar",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "llamar"
+  },
+  {
+   "surface": "sacarme",
+   "host": "sacar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "sacar"
+  },
+  {
+   "surface": "dejadme",
+   "host": "dejad",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "marcharse",
+   "host": "marchar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "marchar"
+  },
+  {
+   "surface": "sentirlo",
+   "host": "sentir",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "sentir"
+  },
+  {
+   "surface": "sentirte",
+   "host": "sentir",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "sentir"
+  },
+  {
+   "surface": "detenerme",
+   "host": "detener",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "detener"
+  },
+  {
+   "surface": "suéltalo",
+   "host": "suelta",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "soltar"
+  },
+  {
+   "surface": "deténgase",
+   "host": "detenga",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "detener"
+  },
+  {
+   "surface": "verse",
+   "host": "ver",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "ver"
+  },
+  {
+   "surface": "retirarse",
+   "host": "retirar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "retirar"
+  },
+  {
+   "surface": "lograrlo",
+   "host": "lograr",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "lograr"
+  },
+  {
+   "surface": "póngase",
+   "host": "ponga",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "poner"
+  },
+  {
+   "surface": "déjelo",
+   "host": "deje",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "divertirse",
+   "host": "divertir",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "divertir"
+  },
+  {
+   "surface": "quitarme",
+   "host": "quitar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "quitar"
+  },
+  {
+   "surface": "dinos",
+   "host": "di",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "presentarte",
+   "host": "presentar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "presentar"
+  },
+  {
+   "surface": "quitarle",
+   "host": "quitar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "quitar"
+  },
+  {
+   "surface": "déjate",
+   "host": "deja",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "denme",
+   "host": "den",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "hazte",
+   "host": "haz",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "oírte",
+   "host": "oír",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "oír"
+  },
+  {
+   "surface": "usarla",
+   "host": "usar",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "usar"
+  },
+  {
+   "surface": "conocerle",
+   "host": "conocer",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "conocer"
+  },
+  {
+   "surface": "hacerles",
+   "host": "hacer",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "levantarse",
+   "host": "levantar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "levantar"
+  },
+  {
+   "surface": "encontrarnos",
+   "host": "encontrar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "encontrar"
+  },
+  {
+   "surface": "acercarse",
+   "host": "acercar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "acercar"
+  },
+  {
+   "surface": "cállense",
+   "host": "callen",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "callar"
+  },
+  {
+   "surface": "bésame",
+   "host": "besa",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "besar"
+  },
+  {
+   "surface": "pagarle",
+   "host": "pagar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "pagar"
+  },
+  {
+   "surface": "sacarle",
+   "host": "sacar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "sacar"
+  },
+  {
+   "surface": "asegurarse",
+   "host": "asegurar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "asegurar"
+  },
+  {
+   "surface": "mantenerte",
+   "host": "mantener",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "mantener"
+  },
+  {
+   "surface": "oídos",
+   "host": "oíd",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "oír"
+  },
+  {
+   "surface": "heridos",
+   "host": "herid",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "herir"
+  },
+  {
+   "surface": "contárselo",
+   "host": "contar",
+   "pronouns": [
+    "se",
+    "lo"
+   ],
+   "lemma": "contar"
+  },
+  {
+   "surface": "agárrate",
+   "host": "agarra",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "agarrar"
+  },
+  {
+   "surface": "agáchate",
+   "host": "agacha",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "agachar"
+  },
+  {
+   "surface": "deshacerse",
+   "host": "deshacer",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "deshacer"
+  },
+  {
+   "surface": "manejarlo",
+   "host": "manejar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "manejar"
+  },
+  {
+   "surface": "llámeme",
+   "host": "llame",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "llamar"
+  },
+  {
+   "surface": "imagínate",
+   "host": "imagina",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "imaginar"
+  },
+  {
+   "surface": "escucharlo",
+   "host": "escuchar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "escuchar"
+  },
+  {
+   "surface": "acostarme",
+   "host": "acostar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "acostar"
+  },
+  {
+   "surface": "dejarlos",
+   "host": "dejar",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "traerlo",
+   "host": "traer",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "traer"
+  },
+  {
+   "surface": "discúlpenme",
+   "host": "disculpen",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "disculpar"
+  },
+  {
+   "surface": "explicarte",
+   "host": "explicar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "explicar"
+  },
+  {
+   "surface": "dejarnos",
+   "host": "dejar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "leerlo",
+   "host": "leer",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "leer"
+  },
+  {
+   "surface": "mátame",
+   "host": "mata",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "matar"
+  },
+  {
+   "surface": "salvarme",
+   "host": "salvar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "salvar"
+  },
+  {
+   "surface": "diviértete",
+   "host": "divierte",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "divertir"
+  },
+  {
+   "surface": "mirarme",
+   "host": "mirar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "mirar"
+  },
+  {
+   "surface": "tomarlo",
+   "host": "tomar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "tomar"
+  },
+  {
+   "surface": "llévatelo",
+   "host": "lleva",
+   "pronouns": [
+    "te",
+    "lo"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "asegurarnos",
+   "host": "asegurar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "asegurar"
+  },
+  {
+   "surface": "acostarse",
+   "host": "acostar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "acostar"
+  },
+  {
+   "surface": "deténganse",
+   "host": "detengan",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "detener"
+  },
+  {
+   "surface": "ofrecerle",
+   "host": "ofrecer",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "ofrecer"
+  },
+  {
+   "surface": "sácame",
+   "host": "saca",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "sacar"
+  },
+  {
+   "surface": "bájate",
+   "host": "baja",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "bajar"
+  },
+  {
+   "surface": "quitarte",
+   "host": "quitar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "quitar"
+  },
+  {
+   "surface": "divertirnos",
+   "host": "divertir",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "divertir"
+  },
+  {
+   "surface": "perderte",
+   "host": "perder",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "perder"
+  },
+  {
+   "surface": "denle",
+   "host": "den",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "buscarla",
+   "host": "buscar",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "buscar"
+  },
+  {
+   "surface": "levantarme",
+   "host": "levantar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "levantar"
+  },
+  {
+   "surface": "molestarte",
+   "host": "molestar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "molestar"
+  },
+  {
+   "surface": "marcharme",
+   "host": "marchar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "marchar"
+  },
+  {
+   "surface": "pecados",
+   "host": "pecad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "pecar"
+  },
+  {
+   "surface": "enseñarme",
+   "host": "enseñar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "enseñar"
+  },
+  {
+   "surface": "esconderse",
+   "host": "esconder",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "esconder"
+  },
+  {
+   "surface": "convertirme",
+   "host": "convertir",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "convertir"
+  },
+  {
+   "surface": "ayudarles",
+   "host": "ayudar",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "ayudar"
+  },
+  {
+   "surface": "mírala",
+   "host": "mira",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "mirar"
+  },
+  {
+   "surface": "ponme",
+   "host": "pon",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "poner"
+  },
+  {
+   "surface": "sácalo",
+   "host": "saca",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "sacar"
+  },
+  {
+   "surface": "enséñame",
+   "host": "enseña",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "enseñar"
+  },
+  {
+   "surface": "ocuparme",
+   "host": "ocupar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "ocupar"
+  },
+  {
+   "surface": "acostarte",
+   "host": "acostar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "acostar"
+  },
+  {
+   "surface": "estate",
+   "host": "está",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "estar"
+  },
+  {
+   "surface": "pónganse",
+   "host": "pongan",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "poner"
+  },
+  {
+   "surface": "déjenlo",
+   "host": "dejen",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "agradecerte",
+   "host": "agradecer",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "agradecer"
+  },
+  {
+   "surface": "dárselo",
+   "host": "dar",
+   "pronouns": [
+    "se",
+    "lo"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "agradecerle",
+   "host": "agradecer",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "agradecer"
+  },
+  {
+   "surface": "normales",
+   "host": "norma",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "normar"
+  },
+  {
+   "surface": "sacarla",
+   "host": "sacar",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "sacar"
+  },
+  {
+   "surface": "llévenselo",
+   "host": "lleven",
+   "pronouns": [
+    "se",
+    "lo"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "tomarme",
+   "host": "tomar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "tomar"
+  },
+  {
+   "surface": "déjale",
+   "host": "deja",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "protegerme",
+   "host": "proteger",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "proteger"
+  },
+  {
+   "surface": "encontrarse",
+   "host": "encontrar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "encontrar"
+  },
+  {
+   "surface": "llevarle",
+   "host": "llevar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "mantenerse",
+   "host": "mantener",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "mantener"
+  },
+  {
+   "surface": "mantenerme",
+   "host": "mantener",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "mantener"
+  },
+  {
+   "surface": "avísame",
+   "host": "avisa",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "avisar"
+  },
+  {
+   "surface": "tomarte",
+   "host": "tomar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "tomar"
+  },
+  {
+   "surface": "vestidos",
+   "host": "vestid",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "vestir"
+  },
+  {
+   "surface": "detenerlos",
+   "host": "detener",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "detener"
+  },
+  {
+   "surface": "dales",
+   "host": "da",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "aléjense",
+   "host": "alejen",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "alejar"
+  },
+  {
+   "surface": "habernos",
+   "host": "haber",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "haber"
+  },
+  {
+   "surface": "acompañarme",
+   "host": "acompañar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "acompañar"
+  },
+  {
+   "surface": "suéltala",
+   "host": "suelta",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "soltar"
+  },
+  {
+   "surface": "admitirlo",
+   "host": "admitir",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "admitir"
+  },
+  {
+   "surface": "convertirte",
+   "host": "convertir",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "convertir"
+  },
+  {
+   "surface": "ponle",
+   "host": "pon",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "poner"
+  },
+  {
+   "surface": "traerte",
+   "host": "traer",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "traer"
+  },
+  {
+   "surface": "salvarla",
+   "host": "salvar",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "salvar"
+  },
+  {
+   "surface": "sentados",
+   "host": "sentad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "sentar"
+  },
+  {
+   "surface": "cógelo",
+   "host": "coge",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "coger"
+  },
+  {
+   "surface": "salvarlo",
+   "host": "salvar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "salvar"
+  },
+  {
+   "surface": "dándole",
+   "host": "dando",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "presentarles",
+   "host": "presentar",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "presentar"
+  },
+  {
+   "surface": "volverse",
+   "host": "volver",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "volver"
+  },
+  {
+   "surface": "sentarnos",
+   "host": "sentar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "sentar"
+  },
+  {
+   "surface": "ponernos",
+   "host": "poner",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "poner"
+  },
+  {
+   "surface": "recordarlo",
+   "host": "recordar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "recordar"
+  },
+  {
+   "surface": "reunirse",
+   "host": "reunir",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "reunir"
+  },
+  {
+   "surface": "cambiarme",
+   "host": "cambiar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "cambiar"
+  },
+  {
+   "surface": "llévalo",
+   "host": "lleva",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "matarle",
+   "host": "matar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "matar"
+  },
+  {
+   "surface": "ocúpate",
+   "host": "ocupa",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "ocupar"
+  },
+  {
+   "surface": "explicarle",
+   "host": "explicar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "explicar"
+  },
+  {
+   "surface": "moverte",
+   "host": "mover",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "mover"
+  },
+  {
+   "surface": "dígamelo",
+   "host": "diga",
+   "pronouns": [
+    "me",
+    "lo"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "suélteme",
+   "host": "suelte",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "soltar"
+  },
+  {
+   "surface": "esperándote",
+   "host": "esperando",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "esperar"
+  },
+  {
+   "surface": "encontrarle",
+   "host": "encontrar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "encontrar"
+  },
+  {
+   "surface": "comprarme",
+   "host": "comprar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "comprar"
+  },
+  {
+   "surface": "tráelo",
+   "host": "trae",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "traer"
+  },
+  {
+   "surface": "llevarlos",
+   "host": "llevar",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "pedirme",
+   "host": "pedir",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "pedir"
+  },
+  {
+   "surface": "movernos",
+   "host": "mover",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "mover"
+  },
+  {
+   "surface": "finales",
+   "host": "fina",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "finar"
+  },
+  {
+   "surface": "cambiarlo",
+   "host": "cambiar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "cambiar"
+  },
+  {
+   "surface": "suicidarse",
+   "host": "suicidar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "suicidar"
+  },
+  {
+   "surface": "hacerlos",
+   "host": "hacer",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "echarme",
+   "host": "echar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "echar"
+  },
+  {
+   "surface": "dispárale",
+   "host": "dispara",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "disparar"
+  },
+  {
+   "surface": "pegarle",
+   "host": "pegar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "pegar"
+  },
+  {
+   "surface": "escucharte",
+   "host": "escuchar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "escuchar"
+  },
+  {
+   "surface": "cálmense",
+   "host": "calmen",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "calmar"
+  },
+  {
+   "surface": "vístete",
+   "host": "viste",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "vestir"
+  },
+  {
+   "surface": "lastimarte",
+   "host": "lastimar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "lastimar"
+  },
+  {
+   "surface": "conseguirte",
+   "host": "conseguir",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "conseguir"
+  },
+  {
+   "surface": "presentarme",
+   "host": "presentar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "presentar"
+  },
+  {
+   "surface": "hazle",
+   "host": "haz",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "atraparlo",
+   "host": "atrapar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "atrapar"
+  },
+  {
+   "surface": "ocupados",
+   "host": "ocupad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "ocupar"
+  },
+  {
+   "surface": "conocernos",
+   "host": "conocer",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "conocer"
+  },
+  {
+   "surface": "quítense",
+   "host": "quiten",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "quitar"
+  },
+  {
+   "surface": "háganlo",
+   "host": "hagan",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "moveos",
+   "host": "mové",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "mover"
+  },
+  {
+   "surface": "atrapados",
+   "host": "atrapad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "atrapar"
+  },
+  {
+   "surface": "dígales",
+   "host": "diga",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "perderlo",
+   "host": "perder",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "perder"
+  },
+  {
+   "surface": "mirarte",
+   "host": "mirar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "mirar"
+  },
+  {
+   "surface": "escúchenme",
+   "host": "escuchen",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "escuchar"
+  },
+  {
+   "surface": "ponerla",
+   "host": "poner",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "poner"
+  },
+  {
+   "surface": "llámalo",
+   "host": "llama",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "llamar"
+  },
+  {
+   "surface": "deshazte",
+   "host": "deshaz",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "deshacer"
+  },
+  {
+   "surface": "enfrentarse",
+   "host": "enfrentar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "enfrentar"
+  },
+  {
+   "surface": "explicarme",
+   "host": "explicar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "explicar"
+  },
+  {
+   "surface": "quítame",
+   "host": "quita",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "quitar"
+  },
+  {
+   "surface": "devuélveme",
+   "host": "devuelve",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "devolver"
+  },
+  {
+   "surface": "comprarte",
+   "host": "comprar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "comprar"
+  },
+  {
+   "surface": "encárgate",
+   "host": "encarga",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "encargar"
+  },
+  {
+   "surface": "sígame",
+   "host": "siga",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "seguir"
+  },
+  {
+   "surface": "tocarme",
+   "host": "tocar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "tocar"
+  },
+  {
+   "surface": "tomarse",
+   "host": "tomar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "tomar"
+  },
+  {
+   "surface": "encontrarlos",
+   "host": "encontrar",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "encontrar"
+  },
+  {
+   "surface": "armados",
+   "host": "armad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "armar"
+  },
+  {
+   "surface": "suéltenme",
+   "host": "suelten",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "soltar"
+  },
+  {
+   "surface": "apártense",
+   "host": "aparten",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "apartar"
+  },
+  {
+   "surface": "ofrecerte",
+   "host": "ofrecer",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "ofrecer"
+  },
+  {
+   "surface": "acercarme",
+   "host": "acercar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "acercar"
+  },
+  {
+   "surface": "moviéndose",
+   "host": "moviendo",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "mover"
+  },
+  {
+   "surface": "separarnos",
+   "host": "separar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "separar"
+  },
+  {
+   "surface": "mantenlo",
+   "host": "manten",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "mantener"
+  },
+  {
+   "surface": "relajarte",
+   "host": "relajar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "relajar"
+  },
+  {
+   "surface": "perdonarme",
+   "host": "perdonar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "perdonar"
+  },
+  {
+   "surface": "llamarle",
+   "host": "llamar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "llamar"
+  },
+  {
+   "surface": "pagarme",
+   "host": "pagar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "pagar"
+  },
+  {
+   "surface": "encargarme",
+   "host": "encargar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "encargar"
+  },
+  {
+   "surface": "ponla",
+   "host": "pon",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "poner"
+  },
+  {
+   "surface": "olvídelo",
+   "host": "olvide",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "olvidar"
+  },
+  {
+   "surface": "levantarte",
+   "host": "levantar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "levantar"
+  },
+  {
+   "surface": "moverme",
+   "host": "mover",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "mover"
+  },
+  {
+   "surface": "comunicarse",
+   "host": "comunicar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "comunicar"
+  },
+  {
+   "surface": "conocerlos",
+   "host": "conocer",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "conocer"
+  },
+  {
+   "surface": "separados",
+   "host": "separad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "separar"
+  },
+  {
+   "surface": "tómala",
+   "host": "toma",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "tomar"
+  },
+  {
+   "surface": "comprarle",
+   "host": "comprar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "comprar"
+  },
+  {
+   "surface": "detenerte",
+   "host": "detener",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "detener"
+  },
+  {
+   "surface": "púdrete",
+   "host": "pudre",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "pudrir"
+  },
+  {
+   "surface": "comprobarlo",
+   "host": "comprobar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "comprobar"
+  },
+  {
+   "surface": "déjalos",
+   "host": "deja",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "díganme",
+   "host": "digan",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "seguirme",
+   "host": "seguir",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "seguir"
+  },
+  {
+   "surface": "traerla",
+   "host": "traer",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "traer"
+  },
+  {
+   "surface": "unirte",
+   "host": "unir",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "unir"
+  },
+  {
+   "surface": "presentarle",
+   "host": "presentar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "presentar"
+  },
+  {
+   "surface": "mudarse",
+   "host": "mudar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "mudar"
+  },
+  {
+   "surface": "ganarse",
+   "host": "ganar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "ganar"
+  },
+  {
+   "surface": "besarte",
+   "host": "besar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "besar"
+  },
+  {
+   "surface": "aléjese",
+   "host": "aleje",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "alejar"
+  },
+  {
+   "surface": "hablarlo",
+   "host": "hablar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "hablar"
+  },
+  {
+   "surface": "contéstame",
+   "host": "contesta",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "contestar"
+  },
+  {
+   "surface": "deshacerme",
+   "host": "deshacer",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "deshacer"
+  },
+  {
+   "surface": "servirle",
+   "host": "servir",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "servir"
+  },
+  {
+   "surface": "haberlos",
+   "host": "haber",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "haber"
+  },
+  {
+   "surface": "dáselo",
+   "host": "da",
+   "pronouns": [
+    "se",
+    "lo"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "enseñarles",
+   "host": "enseñar",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "enseñar"
+  },
+  {
+   "surface": "divertirme",
+   "host": "divertir",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "divertir"
+  },
+  {
+   "surface": "defenderse",
+   "host": "defender",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "defender"
+  },
+  {
+   "surface": "larguémonos",
+   "host": "larguemos",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "largar"
+  },
+  {
+   "surface": "invitarte",
+   "host": "invitar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "invitar"
+  },
+  {
+   "surface": "mostrarles",
+   "host": "mostrar",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "mostrar"
+  },
+  {
+   "surface": "pagarlo",
+   "host": "pagar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "pagar"
+  },
+  {
+   "surface": "permítanme",
+   "host": "permitan",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "permitir"
+  },
+  {
+   "surface": "mostrarme",
+   "host": "mostrar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "mostrar"
+  },
+  {
+   "surface": "divertirte",
+   "host": "divertir",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "divertir"
+  },
+  {
+   "surface": "discutirlo",
+   "host": "discutir",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "discutir"
+  },
+  {
+   "surface": "mirarlo",
+   "host": "mirar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "mirar"
+  },
+  {
+   "surface": "ocuparse",
+   "host": "ocupar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "ocupar"
+  },
+  {
+   "surface": "diciéndome",
+   "host": "diciendo",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "protegerla",
+   "host": "proteger",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "proteger"
+  },
+  {
+   "surface": "llévala",
+   "host": "lleva",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "mantenerla",
+   "host": "mantener",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "mantener"
+  },
+  {
+   "surface": "engañarme",
+   "host": "engañar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "engañar"
+  },
+  {
+   "surface": "muérete",
+   "host": "muere",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "morir"
+  },
+  {
+   "surface": "preocupados",
+   "host": "preocupad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "preocupar"
+  },
+  {
+   "surface": "controlarlo",
+   "host": "controlar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "controlar"
+  },
+  {
+   "surface": "mantenernos",
+   "host": "mantener",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "mantener"
+  },
+  {
+   "surface": "tenerlos",
+   "host": "tener",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "tener"
+  },
+  {
+   "surface": "sáquenlo",
+   "host": "saquen",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "sacar"
+  },
+  {
+   "surface": "besarme",
+   "host": "besar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "besar"
+  },
+  {
+   "surface": "dígaselo",
+   "host": "diga",
+   "pronouns": [
+    "se",
+    "lo"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "acercándose",
+   "host": "acercando",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "acercar"
+  },
+  {
+   "surface": "celebrarlo",
+   "host": "celebrar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "celebrar"
+  },
+  {
+   "surface": "cásate",
+   "host": "casa",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "casar"
+  },
+  {
+   "surface": "cuidarte",
+   "host": "cuidar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "cuidar"
+  },
+  {
+   "surface": "quítese",
+   "host": "quite",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "quitar"
+  },
+  {
+   "surface": "tocarlo",
+   "host": "tocar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "tocar"
+  },
+  {
+   "surface": "pórtate",
+   "host": "porta",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "portar"
+  },
+  {
+   "surface": "concentrarme",
+   "host": "concentrar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "concentrar"
+  },
+  {
+   "surface": "vengarse",
+   "host": "vengar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "vengar"
+  },
+  {
+   "surface": "protegerlo",
+   "host": "proteger",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "proteger"
+  },
+  {
+   "surface": "veros",
+   "host": "ver",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "ver"
+  },
+  {
+   "surface": "duérmete",
+   "host": "duerme",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "dormir"
+  },
+  {
+   "surface": "apágalo",
+   "host": "apaga",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "apagar"
+  },
+  {
+   "surface": "iros",
+   "host": "ir",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "ir"
+  },
+  {
+   "surface": "marcharte",
+   "host": "marchar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "marchar"
+  },
+  {
+   "surface": "preocuparnos",
+   "host": "preocupar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "preocupar"
+  },
+  {
+   "surface": "callarte",
+   "host": "callar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "callar"
+  },
+  {
+   "surface": "decirse",
+   "host": "decir",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "levántese",
+   "host": "levante",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "levantar"
+  },
+  {
+   "surface": "molestarme",
+   "host": "molestar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "molestar"
+  },
+  {
+   "surface": "amarte",
+   "host": "amar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "amar"
+  },
+  {
+   "surface": "déjenos",
+   "host": "deje",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "márchate",
+   "host": "marcha",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "marchar"
+  },
+  {
+   "surface": "póngame",
+   "host": "ponga",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "poner"
+  },
+  {
+   "surface": "acuéstate",
+   "host": "acuesta",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "acostar"
+  },
+  {
+   "surface": "rendirse",
+   "host": "rendir",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "rendir"
+  },
+  {
+   "surface": "destruirlo",
+   "host": "destruir",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "destruir"
+  },
+  {
+   "surface": "cuéntamelo",
+   "host": "cuenta",
+   "pronouns": [
+    "me",
+    "lo"
+   ],
+   "lemma": "contar"
+  },
+  {
+   "surface": "retírense",
+   "host": "retiren",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "retirar"
+  },
+  {
+   "surface": "resolverlo",
+   "host": "resolver",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "resolver"
+  },
+  {
+   "surface": "ganarme",
+   "host": "ganar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "ganar"
+  },
+  {
+   "surface": "cuéntanos",
+   "host": "cuenta",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "contar"
+  },
+  {
+   "surface": "esconderte",
+   "host": "esconder",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "esconder"
+  },
+  {
+   "surface": "sacarlos",
+   "host": "sacar",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "sacar"
+  },
+  {
+   "surface": "manténganse",
+   "host": "mantengan",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "mantener"
+  },
+  {
+   "surface": "venderlo",
+   "host": "vender",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "vender"
+  },
+  {
+   "surface": "unirme",
+   "host": "unir",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "unir"
+  },
+  {
+   "surface": "enterarse",
+   "host": "enterar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "enterar"
+  },
+  {
+   "surface": "pregúntele",
+   "host": "pregunte",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "preguntar"
+  },
+  {
+   "surface": "enamorados",
+   "host": "enamorad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "enamorar"
+  },
+  {
+   "surface": "olvidarte",
+   "host": "olvidar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "olvidar"
+  },
+  {
+   "surface": "disculparte",
+   "host": "disculpar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "disculpar"
+  },
+  {
+   "surface": "despedirte",
+   "host": "despedir",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "despedir"
+  },
+  {
+   "surface": "alejarme",
+   "host": "alejar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "alejar"
+  },
+  {
+   "surface": "habérmelo",
+   "host": "haber",
+   "pronouns": [
+    "me",
+    "lo"
+   ],
+   "lemma": "haber"
+  },
+  {
+   "surface": "invitarme",
+   "host": "invitar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "invitar"
+  },
+  {
+   "surface": "cuidarme",
+   "host": "cuidar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "cuidar"
+  },
+  {
+   "surface": "volverme",
+   "host": "volver",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "volver"
+  },
+  {
+   "surface": "déjamelo",
+   "host": "deja",
+   "pronouns": [
+    "me",
+    "lo"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "explicártelo",
+   "host": "explicar",
+   "pronouns": [
+    "te",
+    "lo"
+   ],
+   "lemma": "explicar"
+  },
+  {
+   "surface": "convencerme",
+   "host": "convencer",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "convencer"
+  },
+  {
+   "surface": "relájese",
+   "host": "relaje",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "relajar"
+  },
+  {
+   "surface": "robarle",
+   "host": "robar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "robar"
+  },
+  {
+   "surface": "imaginarme",
+   "host": "imaginar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "imaginar"
+  },
+  {
+   "surface": "pagarte",
+   "host": "pagar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "pagar"
+  },
+  {
+   "surface": "pégale",
+   "host": "pega",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "pegar"
+  },
+  {
+   "surface": "creerte",
+   "host": "creer",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "creer"
+  },
+  {
+   "surface": "dispararme",
+   "host": "disparar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "disparar"
+  },
+  {
+   "surface": "démosle",
+   "host": "demos",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "pruébalo",
+   "host": "prueba",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "probar"
+  },
+  {
+   "surface": "mudarme",
+   "host": "mudar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "mudar"
+  },
+  {
+   "surface": "mirándome",
+   "host": "mirando",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "mirar"
+  },
+  {
+   "surface": "habértelo",
+   "host": "haber",
+   "pronouns": [
+    "te",
+    "lo"
+   ],
+   "lemma": "haber"
+  },
+  {
+   "surface": "díganos",
+   "host": "diga",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "superarlo",
+   "host": "superar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "superar"
+  },
+  {
+   "surface": "conocerme",
+   "host": "conocer",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "conocer"
+  },
+  {
+   "surface": "cerrados",
+   "host": "cerrad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "cerrar"
+  },
+  {
+   "surface": "escaparse",
+   "host": "escapar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "escapar"
+  },
+  {
+   "surface": "quitarse",
+   "host": "quitar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "quitar"
+  },
+  {
+   "surface": "traerle",
+   "host": "traer",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "traer"
+  },
+  {
+   "surface": "echarte",
+   "host": "echar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "echar"
+  },
+  {
+   "surface": "visitarme",
+   "host": "visitar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "visitar"
+  },
+  {
+   "surface": "repetirlo",
+   "host": "repetir",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "repetir"
+  },
+  {
+   "surface": "pídele",
+   "host": "pide",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "pedir"
+  },
+  {
+   "surface": "abrirla",
+   "host": "abrir",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "abrir"
+  },
+  {
+   "surface": "míreme",
+   "host": "mire",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "mirar"
+  },
+  {
+   "surface": "comprarlo",
+   "host": "comprar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "comprar"
+  },
+  {
+   "surface": "vestirme",
+   "host": "vestir",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "vestir"
+  },
+  {
+   "surface": "buscarle",
+   "host": "buscar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "buscar"
+  },
+  {
+   "surface": "reunirnos",
+   "host": "reunir",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "reunir"
+  },
+  {
+   "surface": "arriesgarme",
+   "host": "arriesgar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "arriesgar"
+  },
+  {
+   "surface": "contarles",
+   "host": "contar",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "contar"
+  },
+  {
+   "surface": "perderme",
+   "host": "perder",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "perder"
+  },
+  {
+   "surface": "sujétate",
+   "host": "sujeta",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "sujetar"
+  },
+  {
+   "surface": "asesinados",
+   "host": "asesinad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "asesinar"
+  },
+  {
+   "surface": "detenernos",
+   "host": "detener",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "detener"
+  },
+  {
+   "surface": "pégame",
+   "host": "pega",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "pegar"
+  },
+  {
+   "surface": "asegúrese",
+   "host": "asegure",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "asegurar"
+  },
+  {
+   "surface": "piérdete",
+   "host": "pierde",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "perder"
+  },
+  {
+   "surface": "acérquense",
+   "host": "acerquen",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "acercar"
+  },
+  {
+   "surface": "abrirlo",
+   "host": "abrir",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "abrir"
+  },
+  {
+   "surface": "deshacerte",
+   "host": "deshacer",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "deshacer"
+  },
+  {
+   "surface": "calmarte",
+   "host": "calmar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "calmar"
+  },
+  {
+   "surface": "contármelo",
+   "host": "contar",
+   "pronouns": [
+    "me",
+    "lo"
+   ],
+   "lemma": "contar"
+  },
+  {
+   "surface": "enterarme",
+   "host": "enterar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "enterar"
+  },
+  {
+   "surface": "dejémoslo",
+   "host": "dejemos",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "morirse",
+   "host": "morir",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "morir"
+  },
+  {
+   "surface": "quejarte",
+   "host": "quejar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "quejar"
+  },
+  {
+   "surface": "cogerlo",
+   "host": "coger",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "coger"
+  },
+  {
+   "surface": "anímate",
+   "host": "anima",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "animar"
+  },
+  {
+   "surface": "abrázame",
+   "host": "abraza",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "abrazar"
+  },
+  {
+   "surface": "pensándolo",
+   "host": "pensando",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "pensar"
+  },
+  {
+   "surface": "volverte",
+   "host": "volver",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "volver"
+  },
+  {
+   "surface": "asustarme",
+   "host": "asustar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "asustar"
+  },
+  {
+   "surface": "ayúdanos",
+   "host": "ayuda",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "ayudar"
+  },
+  {
+   "surface": "descubrirlo",
+   "host": "descubrir",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "descubrir"
+  },
+  {
+   "surface": "sentidos",
+   "host": "sentid",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "sentir"
+  },
+  {
+   "surface": "preguntárselo",
+   "host": "preguntar",
+   "pronouns": [
+    "se",
+    "lo"
+   ],
+   "lemma": "preguntar"
+  },
+  {
+   "surface": "buscándote",
+   "host": "buscando",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "buscar"
+  },
+  {
+   "surface": "tocarla",
+   "host": "tocar",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "tocar"
+  },
+  {
+   "surface": "aliados",
+   "host": "aliad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "aliar"
+  },
+  {
+   "surface": "presentarse",
+   "host": "presentar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "presentar"
+  },
+  {
+   "surface": "llévenlo",
+   "host": "lleven",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "acercarte",
+   "host": "acercar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "acercar"
+  },
+  {
+   "surface": "quédatelo",
+   "host": "queda",
+   "pronouns": [
+    "te",
+    "lo"
+   ],
+   "lemma": "quedar"
+  },
+  {
+   "surface": "informarle",
+   "host": "informar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "informar"
+  },
+  {
+   "surface": "dense",
+   "host": "den",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "escóndete",
+   "host": "esconde",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "esconder"
+  },
+  {
+   "surface": "lárguense",
+   "host": "larguen",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "largar"
+  },
+  {
+   "surface": "detenerse",
+   "host": "detener",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "detener"
+  },
+  {
+   "surface": "póntelo",
+   "host": "pon",
+   "pronouns": [
+    "te",
+    "lo"
+   ],
+   "lemma": "poner"
+  },
+  {
+   "surface": "intentándolo",
+   "host": "intentando",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "intentar"
+  },
+  {
+   "surface": "créanme",
+   "host": "crean",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "creer"
+  },
+  {
+   "surface": "pelos",
+   "host": "pe",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "par"
+  },
+  {
+   "surface": "pasteles",
+   "host": "paste",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "pastar"
+  },
+  {
+   "surface": "detenerla",
+   "host": "detener",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "detener"
+  },
+  {
+   "surface": "contarlo",
+   "host": "contar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "contar"
+  },
+  {
+   "surface": "deshacernos",
+   "host": "deshacer",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "deshacer"
+  },
+  {
+   "surface": "recuperarlo",
+   "host": "recuperar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "recuperar"
+  },
+  {
+   "surface": "asustarte",
+   "host": "asustar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "asustar"
+  },
+  {
+   "surface": "llevárselo",
+   "host": "llevar",
+   "pronouns": [
+    "se",
+    "lo"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "prepararme",
+   "host": "preparar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "preparar"
+  },
+  {
+   "surface": "asegurarte",
+   "host": "asegurar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "asegurar"
+  },
+  {
+   "surface": "permitirme",
+   "host": "permitir",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "permitir"
+  },
+  {
+   "surface": "acuérdate",
+   "host": "acuerda",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "acordar"
+  },
+  {
+   "surface": "recordarte",
+   "host": "recordar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "recordar"
+  },
+  {
+   "surface": "muévase",
+   "host": "mueva",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "mover"
+  },
+  {
+   "surface": "admítelo",
+   "host": "admite",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "admitir"
+  },
+  {
+   "surface": "devolverle",
+   "host": "devolver",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "devolver"
+  },
+  {
+   "surface": "salvarnos",
+   "host": "salvar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "salvar"
+  },
+  {
+   "surface": "pegarme",
+   "host": "pegar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "pegar"
+  },
+  {
+   "surface": "fíjese",
+   "host": "fije",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "fijar"
+  },
+  {
+   "surface": "demostrarlo",
+   "host": "demostrar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "demostrar"
+  },
+  {
+   "surface": "relajarse",
+   "host": "relajar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "relajar"
+  },
+  {
+   "surface": "buscarlos",
+   "host": "buscar",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "buscar"
+  },
+  {
+   "surface": "quejarse",
+   "host": "quejar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "quejar"
+  },
+  {
+   "surface": "prestarme",
+   "host": "prestar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "prestar"
+  },
+  {
+   "surface": "respóndeme",
+   "host": "responde",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "responder"
+  },
+  {
+   "surface": "tomarnos",
+   "host": "tomar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "tomar"
+  },
+  {
+   "surface": "pedirles",
+   "host": "pedir",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "pedir"
+  },
+  {
+   "surface": "hablarles",
+   "host": "hablar",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "hablar"
+  },
+  {
+   "surface": "cuénteme",
+   "host": "cuente",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "contar"
+  },
+  {
+   "surface": "salvarle",
+   "host": "salvar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "salvar"
+  },
+  {
+   "surface": "explicárselo",
+   "host": "explicar",
+   "pronouns": [
+    "se",
+    "lo"
+   ],
+   "lemma": "explicar"
+  },
+  {
+   "surface": "conseguirme",
+   "host": "conseguir",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "conseguir"
+  },
+  {
+   "surface": "pararlo",
+   "host": "parar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "parar"
+  },
+  {
+   "surface": "recordarle",
+   "host": "recordar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "recordar"
+  },
+  {
+   "surface": "agárralo",
+   "host": "agarra",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "agarrar"
+  },
+  {
+   "surface": "sacarnos",
+   "host": "sacar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "sacar"
+  },
+  {
+   "surface": "cambiarte",
+   "host": "cambiar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "cambiar"
+  },
+  {
+   "surface": "terminarlo",
+   "host": "terminar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "terminar"
+  },
+  {
+   "surface": "hágame",
+   "host": "haga",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "sentaos",
+   "host": "sentá",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "sentar"
+  },
+  {
+   "surface": "tomarla",
+   "host": "tomar",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "tomar"
+  },
+  {
+   "surface": "alejarte",
+   "host": "alejar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "alejar"
+  },
+  {
+   "surface": "prométemelo",
+   "host": "promete",
+   "pronouns": [
+    "me",
+    "lo"
+   ],
+   "lemma": "prometer"
+  },
+  {
+   "surface": "protegernos",
+   "host": "proteger",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "proteger"
+  },
+  {
+   "surface": "reunirme",
+   "host": "reunir",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "reunir"
+  },
+  {
+   "surface": "alejarse",
+   "host": "alejar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "alejar"
+  },
+  {
+   "surface": "devolverlo",
+   "host": "devolver",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "devolver"
+  },
+  {
+   "surface": "ábrelo",
+   "host": "abre",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "abrir"
+  },
+  {
+   "surface": "llévatela",
+   "host": "lleva",
+   "pronouns": [
+    "te",
+    "la"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "devuélvemelo",
+   "host": "devuelve",
+   "pronouns": [
+    "me",
+    "lo"
+   ],
+   "lemma": "devolver"
+  },
+  {
+   "surface": "comportarse",
+   "host": "comportar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "comportar"
+  },
+  {
+   "surface": "despedirse",
+   "host": "despedir",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "despedir"
+  },
+  {
+   "surface": "esconderme",
+   "host": "esconder",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "esconder"
+  },
+  {
+   "surface": "retirarme",
+   "host": "retirar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "retirar"
+  },
+  {
+   "surface": "diviértanse",
+   "host": "diviertan",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "divertir"
+  },
+  {
+   "surface": "ganarle",
+   "host": "ganar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "ganar"
+  },
+  {
+   "surface": "apártese",
+   "host": "aparte",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "apartar"
+  },
+  {
+   "surface": "díganle",
+   "host": "digan",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "dársela",
+   "host": "dar",
+   "pronouns": [
+    "se",
+    "la"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "mirarla",
+   "host": "mirar",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "mirar"
+  },
+  {
+   "surface": "tocarte",
+   "host": "tocar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "tocar"
+  },
+  {
+   "surface": "vayámonos",
+   "host": "vayamos",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "ir"
+  },
+  {
+   "surface": "marchaos",
+   "host": "marcha",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "marchar"
+  },
+  {
+   "surface": "correos",
+   "host": "corre",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "correr"
+  },
+  {
+   "surface": "equivocados",
+   "host": "equivocad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "equivocar"
+  },
+  {
+   "surface": "disculparse",
+   "host": "disculpar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "disculpar"
+  },
+  {
+   "surface": "tenerme",
+   "host": "tener",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "tener"
+  },
+  {
+   "surface": "quítale",
+   "host": "quita",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "quitar"
+  },
+  {
+   "surface": "matarse",
+   "host": "matar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "matar"
+  },
+  {
+   "surface": "acompañarnos",
+   "host": "acompañar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "acompañar"
+  },
+  {
+   "surface": "diciéndole",
+   "host": "diciendo",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "léelo",
+   "host": "lee",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "leer"
+  },
+  {
+   "surface": "golpearme",
+   "host": "golpear",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "golpear"
+  },
+  {
+   "surface": "contártelo",
+   "host": "contar",
+   "pronouns": [
+    "te",
+    "lo"
+   ],
+   "lemma": "contar"
+  },
+  {
+   "surface": "míralos",
+   "host": "mira",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "mirar"
+  },
+  {
+   "surface": "molestarlo",
+   "host": "molestar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "molestar"
+  },
+  {
+   "surface": "despertarte",
+   "host": "despertar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "despertar"
+  },
+  {
+   "surface": "comerme",
+   "host": "comer",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "comer"
+  },
+  {
+   "surface": "tráela",
+   "host": "trae",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "traer"
+  },
+  {
+   "surface": "contarnos",
+   "host": "contar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "contar"
+  },
+  {
+   "surface": "hacerlas",
+   "host": "hacer",
+   "pronouns": [
+    "las"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "quítatelo",
+   "host": "quita",
+   "pronouns": [
+    "te",
+    "lo"
+   ],
+   "lemma": "quitar"
+  },
+  {
+   "surface": "enfrentarme",
+   "host": "enfrentar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "enfrentar"
+  },
+  {
+   "surface": "sácala",
+   "host": "saca",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "sacar"
+  },
+  {
+   "surface": "muéstrale",
+   "host": "muestra",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "mostrar"
+  },
+  {
+   "surface": "tómatelo",
+   "host": "toma",
+   "pronouns": [
+    "te",
+    "lo"
+   ],
+   "lemma": "tomar"
+  },
+  {
+   "surface": "sepárense",
+   "host": "separen",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "separar"
+  },
+  {
+   "surface": "tómese",
+   "host": "tome",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "tomar"
+  },
+  {
+   "surface": "librarse",
+   "host": "librar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "librar"
+  },
+  {
+   "surface": "ganarte",
+   "host": "ganar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "ganar"
+  },
+  {
+   "surface": "esperándome",
+   "host": "esperando",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "esperar"
+  },
+  {
+   "surface": "enviarme",
+   "host": "enviar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "enviar"
+  },
+  {
+   "surface": "consígueme",
+   "host": "consigue",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "conseguir"
+  },
+  {
+   "surface": "arriesgarse",
+   "host": "arriesgar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "arriesgar"
+  },
+  {
+   "surface": "comunicarme",
+   "host": "comunicar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "comunicar"
+  },
+  {
+   "surface": "robarme",
+   "host": "robar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "robar"
+  },
+  {
+   "surface": "convencerlo",
+   "host": "convencer",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "convencer"
+  },
+  {
+   "surface": "oírla",
+   "host": "oír",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "oír"
+  },
+  {
+   "surface": "generales",
+   "host": "genera",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "generar"
+  },
+  {
+   "surface": "compórtate",
+   "host": "comporta",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "comportar"
+  },
+  {
+   "surface": "poderosos",
+   "host": "poder",
+   "pronouns": [
+    "os",
+    "os"
+   ],
+   "lemma": "poder"
+  },
+  {
+   "surface": "compartirlo",
+   "host": "compartir",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "compartir"
+  },
+  {
+   "surface": "prepararte",
+   "host": "preparar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "preparar"
+  },
+  {
+   "surface": "meternos",
+   "host": "meter",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "meter"
+  },
+  {
+   "surface": "senos",
+   "host": "sé",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "ser"
+  },
+  {
+   "surface": "hábleme",
+   "host": "hable",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "hablar"
+  },
+  {
+   "surface": "levántense",
+   "host": "levanten",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "levantar"
+  },
+  {
+   "surface": "deciros",
+   "host": "decir",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "deténganlo",
+   "host": "detengan",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "detener"
+  },
+  {
+   "surface": "comerciales",
+   "host": "comercia",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "comerciar"
+  },
+  {
+   "surface": "salirse",
+   "host": "salir",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "salir"
+  },
+  {
+   "surface": "olvidarme",
+   "host": "olvidar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "olvidar"
+  },
+  {
+   "surface": "vestirse",
+   "host": "vestir",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "vestir"
+  },
+  {
+   "surface": "venderla",
+   "host": "vender",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "vender"
+  },
+  {
+   "surface": "cuéntale",
+   "host": "cuenta",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "contar"
+  },
+  {
+   "surface": "encargarse",
+   "host": "encargar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "encargar"
+  },
+  {
+   "surface": "morirme",
+   "host": "morir",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "morir"
+  },
+  {
+   "surface": "desgraciados",
+   "host": "desgraciad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "desgraciar"
+  },
+  {
+   "surface": "avisarle",
+   "host": "avisar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "avisar"
+  },
+  {
+   "surface": "perderse",
+   "host": "perder",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "perder"
+  },
+  {
+   "surface": "recogerlo",
+   "host": "recoger",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "recoger"
+  },
+  {
+   "surface": "mantenerlos",
+   "host": "mantener",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "mantener"
+  },
+  {
+   "surface": "enviarle",
+   "host": "enviar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "enviar"
+  },
+  {
+   "surface": "cuídese",
+   "host": "cuide",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "cuidar"
+  },
+  {
+   "surface": "mudarnos",
+   "host": "mudar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "mudar"
+  },
+  {
+   "surface": "búscate",
+   "host": "busca",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "buscar"
+  },
+  {
+   "surface": "prepararse",
+   "host": "preparar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "preparar"
+  },
+  {
+   "surface": "imaginarte",
+   "host": "imaginar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "imaginar"
+  },
+  {
+   "surface": "lárguese",
+   "host": "largue",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "largar"
+  },
+  {
+   "surface": "escucharla",
+   "host": "escuchar",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "escuchar"
+  },
+  {
+   "surface": "ríndete",
+   "host": "rinde",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "rendir"
+  },
+  {
+   "surface": "comerse",
+   "host": "comer",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "comer"
+  },
+  {
+   "surface": "cansados",
+   "host": "cansad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "cansar"
+  },
+  {
+   "surface": "relajarme",
+   "host": "relajar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "relajar"
+  },
+  {
+   "surface": "perderla",
+   "host": "perder",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "perder"
+  },
+  {
+   "surface": "pregúntaselo",
+   "host": "pregunta",
+   "pronouns": [
+    "se",
+    "lo"
+   ],
+   "lemma": "preguntar"
+  },
+  {
+   "surface": "cuidarse",
+   "host": "cuidar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "cuidar"
+  },
+  {
+   "surface": "reconocerlo",
+   "host": "reconocer",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "reconocer"
+  },
+  {
+   "surface": "manténgase",
+   "host": "mantenga",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "mantener"
+  },
+  {
+   "surface": "escuchadme",
+   "host": "escuchad",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "escuchar"
+  },
+  {
+   "surface": "déjela",
+   "host": "deje",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "comerte",
+   "host": "comer",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "comer"
+  },
+  {
+   "surface": "imaginarlo",
+   "host": "imaginar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "imaginar"
+  },
+  {
+   "surface": "enviarte",
+   "host": "enviar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "enviar"
+  },
+  {
+   "surface": "daos",
+   "host": "da",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "llamados",
+   "host": "llamad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "llamar"
+  },
+  {
+   "surface": "bájame",
+   "host": "baja",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "bajar"
+  },
+  {
+   "surface": "recuérdame",
+   "host": "recuerda",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "recordar"
+  },
+  {
+   "surface": "cortarle",
+   "host": "cortar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "cortar"
+  },
+  {
+   "surface": "gustarle",
+   "host": "gustar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "gustar"
+  },
+  {
+   "surface": "meterlo",
+   "host": "meter",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "meter"
+  },
+  {
+   "surface": "solucionarlo",
+   "host": "solucionar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "solucionar"
+  },
+  {
+   "surface": "recuérdalo",
+   "host": "recuerda",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "recordar"
+  },
+  {
+   "surface": "permitirnos",
+   "host": "permitir",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "permitir"
+  },
+  {
+   "surface": "defenderme",
+   "host": "defender",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "defender"
+  },
+  {
+   "surface": "negarlo",
+   "host": "negar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "negar"
+  },
+  {
+   "surface": "lléveme",
+   "host": "lleve",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "pregúntame",
+   "host": "pregunta",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "preguntar"
+  },
+  {
+   "surface": "seguirlo",
+   "host": "seguir",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "seguir"
+  },
+  {
+   "surface": "molestarle",
+   "host": "molestar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "molestar"
+  },
+  {
+   "surface": "partidos",
+   "host": "partid",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "partir"
+  },
+  {
+   "surface": "quedaos",
+   "host": "queda",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "quedar"
+  },
+  {
+   "surface": "ponerlos",
+   "host": "poner",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "poner"
+  },
+  {
+   "surface": "despertarme",
+   "host": "despertar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "despertar"
+  },
+  {
+   "surface": "visitarte",
+   "host": "visitar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "visitar"
+  },
+  {
+   "surface": "detenlo",
+   "host": "deten",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "detener"
+  },
+  {
+   "surface": "arriesgarnos",
+   "host": "arriesgar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "arriesgar"
+  },
+  {
+   "surface": "asegúrense",
+   "host": "aseguren",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "asegurar"
+  },
+  {
+   "surface": "enséñale",
+   "host": "enseña",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "enseñar"
+  },
+  {
+   "surface": "bájala",
+   "host": "baja",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "bajar"
+  },
+  {
+   "surface": "entregarme",
+   "host": "entregar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "entregar"
+  },
+  {
+   "surface": "gustarme",
+   "host": "gustar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "gustar"
+  },
+  {
+   "surface": "abrirse",
+   "host": "abrir",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "abrir"
+  },
+  {
+   "surface": "arrestarlo",
+   "host": "arrestar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "arrestar"
+  },
+  {
+   "surface": "enviarlo",
+   "host": "enviar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "enviar"
+  },
+  {
+   "surface": "habérselo",
+   "host": "haber",
+   "pronouns": [
+    "se",
+    "lo"
+   ],
+   "lemma": "haber"
+  },
+  {
+   "surface": "dadme",
+   "host": "dad",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "llámala",
+   "host": "llama",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "llamar"
+  },
+  {
+   "surface": "vestirte",
+   "host": "vestir",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "vestir"
+  },
+  {
+   "surface": "acérquese",
+   "host": "acerque",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "acercar"
+  },
+  {
+   "surface": "mudarte",
+   "host": "mudar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "mudar"
+  },
+  {
+   "surface": "llamarlos",
+   "host": "llamar",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "llamar"
+  },
+  {
+   "surface": "enamorarse",
+   "host": "enamorar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "enamorar"
+  },
+  {
+   "surface": "recuperarla",
+   "host": "recuperar",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "recuperar"
+  },
+  {
+   "surface": "caerse",
+   "host": "caer",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "caer"
+  },
+  {
+   "surface": "házmelo",
+   "host": "haz",
+   "pronouns": [
+    "me",
+    "lo"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "sírvete",
+   "host": "sirve",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "servir"
+  },
+  {
+   "surface": "preguntándome",
+   "host": "preguntando",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "preguntar"
+  },
+  {
+   "surface": "acompañarte",
+   "host": "acompañar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "acompañar"
+  },
+  {
+   "surface": "salvarse",
+   "host": "salvar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "salvar"
+  },
+  {
+   "surface": "escondernos",
+   "host": "esconder",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "esconder"
+  },
+  {
+   "surface": "mátenlo",
+   "host": "maten",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "matar"
+  },
+  {
+   "surface": "joderme",
+   "host": "joder",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "joder"
+  },
+  {
+   "surface": "avergonzarse",
+   "host": "avergonzar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "avergonzar"
+  },
+  {
+   "surface": "acercarnos",
+   "host": "acercar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "acercar"
+  },
+  {
+   "surface": "cúbranse",
+   "host": "cubran",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "cubrir"
+  },
+  {
+   "surface": "pedírselo",
+   "host": "pedir",
+   "pronouns": [
+    "se",
+    "lo"
+   ],
+   "lemma": "pedir"
+  },
+  {
+   "surface": "hágase",
+   "host": "haga",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "conseguirle",
+   "host": "conseguir",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "conseguir"
+  },
+  {
+   "surface": "advertirle",
+   "host": "advertir",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "advertir"
+  },
+  {
+   "surface": "atrápenlo",
+   "host": "atrapen",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "atrapar"
+  },
+  {
+   "surface": "amarme",
+   "host": "amar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "amar"
+  },
+  {
+   "surface": "contrólate",
+   "host": "controla",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "controlar"
+  },
+  {
+   "surface": "visitarnos",
+   "host": "visitar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "visitar"
+  },
+  {
+   "surface": "démelo",
+   "host": "dé",
+   "pronouns": [
+    "me",
+    "lo"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "enfrentarte",
+   "host": "enfrentar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "enfrentar"
+  },
+  {
+   "surface": "recuperarse",
+   "host": "recuperar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "recuperar"
+  },
+  {
+   "surface": "interesados",
+   "host": "interesad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "interesar"
+  },
+  {
+   "surface": "salvarlos",
+   "host": "salvar",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "salvar"
+  },
+  {
+   "surface": "usarlos",
+   "host": "usar",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "usar"
+  },
+  {
+   "surface": "concentrarte",
+   "host": "concentrar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "concentrar"
+  },
+  {
+   "surface": "lavarme",
+   "host": "lavar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "lavar"
+  },
+  {
+   "surface": "refugiados",
+   "host": "refugiad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "refugiar"
+  },
+  {
+   "surface": "ocuparte",
+   "host": "ocupar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "ocupar"
+  },
+  {
+   "surface": "serle",
+   "host": "ser",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "ser"
+  },
+  {
+   "surface": "sálvame",
+   "host": "salva",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "salvar"
+  },
+  {
+   "surface": "moverlo",
+   "host": "mover",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "mover"
+  },
+  {
+   "surface": "agradecérselo",
+   "host": "agradecer",
+   "pronouns": [
+    "se",
+    "lo"
+   ],
+   "lemma": "agradecer"
+  },
+  {
+   "surface": "encargarte",
+   "host": "encargar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "encargar"
+  },
+  {
+   "surface": "haciéndome",
+   "host": "haciendo",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "traerlos",
+   "host": "traer",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "traer"
+  },
+  {
+   "surface": "ábrela",
+   "host": "abre",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "abrir"
+  },
+  {
+   "surface": "agáchense",
+   "host": "agachen",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "agachar"
+  },
+  {
+   "surface": "prepárese",
+   "host": "prepare",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "preparar"
+  },
+  {
+   "surface": "acéptalo",
+   "host": "acepta",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "aceptar"
+  },
+  {
+   "surface": "buscándolo",
+   "host": "buscando",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "buscar"
+  },
+  {
+   "surface": "échale",
+   "host": "echa",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "echar"
+  },
+  {
+   "surface": "dele",
+   "host": "dé",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "devolverme",
+   "host": "devolver",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "devolver"
+  },
+  {
+   "surface": "enamorarme",
+   "host": "enamorar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "enamorar"
+  },
+  {
+   "surface": "advertirte",
+   "host": "advertir",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "advertir"
+  },
+  {
+   "surface": "tirarme",
+   "host": "tirar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "tirar"
+  },
+  {
+   "surface": "leerla",
+   "host": "leer",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "leer"
+  },
+  {
+   "surface": "arrodíllate",
+   "host": "arrodilla",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "arrodillar"
+  },
+  {
+   "surface": "dígalo",
+   "host": "diga",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "válgame",
+   "host": "valga",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "valer"
+  },
+  {
+   "surface": "molestarla",
+   "host": "molestar",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "molestar"
+  },
+  {
+   "surface": "suicidarme",
+   "host": "suicidar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "suicidar"
+  },
+  {
+   "surface": "cortarte",
+   "host": "cortar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "cortar"
+  },
+  {
+   "surface": "prepararnos",
+   "host": "preparar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "preparar"
+  },
+  {
+   "surface": "librarme",
+   "host": "librar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "librar"
+  },
+  {
+   "surface": "devolverte",
+   "host": "devolver",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "devolver"
+  },
+  {
+   "surface": "haciéndose",
+   "host": "haciendo",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "háblale",
+   "host": "habla",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "hablar"
+  },
+  {
+   "surface": "sáquenme",
+   "host": "saquen",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "sacar"
+  },
+  {
+   "surface": "seguidme",
+   "host": "seguid",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "seguir"
+  },
+  {
+   "surface": "haberles",
+   "host": "haber",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "haber"
+  },
+  {
+   "surface": "comprenderlo",
+   "host": "comprender",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "comprender"
+  },
+  {
+   "surface": "llévanos",
+   "host": "lleva",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "cógela",
+   "host": "coge",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "coger"
+  },
+  {
+   "surface": "creerle",
+   "host": "creer",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "creer"
+  },
+  {
+   "surface": "limpiarlo",
+   "host": "limpiar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "limpiar"
+  },
+  {
+   "surface": "acostumbrarme",
+   "host": "acostumbrar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "acostumbrar"
+  },
+  {
+   "surface": "unirnos",
+   "host": "unir",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "unir"
+  },
+  {
+   "surface": "traernos",
+   "host": "traer",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "traer"
+  },
+  {
+   "surface": "protegerse",
+   "host": "proteger",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "proteger"
+  },
+  {
+   "surface": "mentirle",
+   "host": "mentir",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "mentir"
+  },
+  {
+   "surface": "parados",
+   "host": "parad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "parar"
+  },
+  {
+   "surface": "marcharnos",
+   "host": "marchar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "marchar"
+  },
+  {
+   "surface": "despídete",
+   "host": "despide",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "despedir"
+  },
+  {
+   "surface": "llévese",
+   "host": "lleve",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "quejarme",
+   "host": "quejar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "quejar"
+  },
+  {
+   "surface": "agárrense",
+   "host": "agarren",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "agarrar"
+  },
+  {
+   "surface": "conectados",
+   "host": "conectad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "conectar"
+  },
+  {
+   "surface": "serte",
+   "host": "ser",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "ser"
+  },
+  {
+   "surface": "mírale",
+   "host": "mira",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "mirar"
+  },
+  {
+   "surface": "avergonzarte",
+   "host": "avergonzar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "avergonzar"
+  },
+  {
+   "surface": "tenerle",
+   "host": "tener",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "tener"
+  },
+  {
+   "surface": "llamarse",
+   "host": "llamar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "llamar"
+  },
+  {
+   "surface": "asustados",
+   "host": "asustad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "asustar"
+  },
+  {
+   "surface": "únete",
+   "host": "une",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "unir"
+  },
+  {
+   "surface": "disfrútalo",
+   "host": "disfruta",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "disfrutar"
+  },
+  {
+   "surface": "sentémonos",
+   "host": "sentemos",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "sentar"
+  },
+  {
+   "surface": "bájalo",
+   "host": "baja",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "bajar"
+  },
+  {
+   "surface": "digitales",
+   "host": "digita",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "digitar"
+  },
+  {
+   "surface": "verles",
+   "host": "ver",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "ver"
+  },
+  {
+   "surface": "mírenlo",
+   "host": "miren",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "mirar"
+  },
+  {
+   "surface": "daros",
+   "host": "dar",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "impedirlo",
+   "host": "impedir",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "impedir"
+  },
+  {
+   "surface": "cambiarse",
+   "host": "cambiar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "cambiar"
+  },
+  {
+   "surface": "echarlo",
+   "host": "echar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "echar"
+  },
+  {
+   "surface": "tírala",
+   "host": "tira",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "tirar"
+  },
+  {
+   "surface": "lavarte",
+   "host": "lavar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "lavar"
+  },
+  {
+   "surface": "cómprate",
+   "host": "compra",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "comprar"
+  },
+  {
+   "surface": "tirarlo",
+   "host": "tirar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "tirar"
+  },
+  {
+   "surface": "escribirlo",
+   "host": "escribir",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "escribir"
+  },
+  {
+   "surface": "mátalos",
+   "host": "mata",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "matar"
+  },
+  {
+   "surface": "comprarla",
+   "host": "comprar",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "comprar"
+  },
+  {
+   "surface": "pieles",
+   "host": "píe",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "piar"
+  },
+  {
+   "surface": "entregarle",
+   "host": "entregar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "entregar"
+  },
+  {
+   "surface": "explícame",
+   "host": "explica",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "explicar"
+  },
+  {
+   "surface": "lávate",
+   "host": "lava",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "lavar"
+  },
+  {
+   "surface": "permitirlo",
+   "host": "permitir",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "permitir"
+  },
+  {
+   "surface": "dispárame",
+   "host": "dispara",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "disparar"
+  },
+  {
+   "surface": "encuéntrame",
+   "host": "encuentra",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "encontrar"
+  },
+  {
+   "surface": "dirigirse",
+   "host": "dirigir",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "dirigir"
+  },
+  {
+   "surface": "dártelo",
+   "host": "dar",
+   "pronouns": [
+    "te",
+    "lo"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "pararme",
+   "host": "parar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "parar"
+  },
+  {
+   "surface": "convencerte",
+   "host": "convencer",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "convencer"
+  },
+  {
+   "surface": "cortarme",
+   "host": "cortar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "cortar"
+  },
+  {
+   "surface": "ayudadme",
+   "host": "ayudad",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "ayudar"
+  },
+  {
+   "surface": "mátala",
+   "host": "mata",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "matar"
+  },
+  {
+   "surface": "olvídese",
+   "host": "olvide",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "olvidar"
+  },
+  {
+   "surface": "póngalo",
+   "host": "ponga",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "poner"
+  },
+  {
+   "surface": "romperse",
+   "host": "romper",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "romper"
+  },
+  {
+   "surface": "concentrarse",
+   "host": "concentrar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "concentrar"
+  },
+  {
+   "surface": "meterle",
+   "host": "meter",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "meter"
+  },
+  {
+   "surface": "helados",
+   "host": "helad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "helar"
+  },
+  {
+   "surface": "acompáñame",
+   "host": "acompaña",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "acompañar"
+  },
+  {
+   "surface": "cercanos",
+   "host": "cerca",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "cercar"
+  },
+  {
+   "surface": "imaginarse",
+   "host": "imaginar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "imaginar"
+  },
+  {
+   "surface": "dejarse",
+   "host": "dejar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "escaparme",
+   "host": "escapar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "escapar"
+  },
+  {
+   "surface": "entregarte",
+   "host": "entregar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "entregar"
+  },
+  {
+   "surface": "cúbreme",
+   "host": "cubre",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "cubrir"
+  },
+  {
+   "surface": "mentirme",
+   "host": "mentir",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "mentir"
+  },
+  {
+   "surface": "mencionarlo",
+   "host": "mencionar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "mencionar"
+  },
+  {
+   "surface": "seguirte",
+   "host": "seguir",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "seguir"
+  },
+  {
+   "surface": "olvidarse",
+   "host": "olvidar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "olvidar"
+  },
+  {
+   "surface": "vengarme",
+   "host": "vengar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "vengar"
+  },
+  {
+   "surface": "acordarme",
+   "host": "acordar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "acordar"
+  },
+  {
+   "surface": "herirte",
+   "host": "herir",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "herir"
+  },
+  {
+   "surface": "agradecerles",
+   "host": "agradecer",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "agradecer"
+  },
+  {
+   "surface": "resistirse",
+   "host": "resistir",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "resistir"
+  },
+  {
+   "surface": "apúrese",
+   "host": "apure",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "apurar"
+  },
+  {
+   "surface": "cuidarlo",
+   "host": "cuidar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "cuidar"
+  },
+  {
+   "surface": "mentales",
+   "host": "mentá",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "mentar"
+  },
+  {
+   "surface": "ofrecerles",
+   "host": "ofrecer",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "ofrecer"
+  },
+  {
+   "surface": "avisarme",
+   "host": "avisar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "avisar"
+  },
+  {
+   "surface": "arrestarme",
+   "host": "arrestar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "arrestar"
+  },
+  {
+   "surface": "fíjense",
+   "host": "fijen",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "fijar"
+  },
+  {
+   "surface": "dándome",
+   "host": "dando",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "apagarlo",
+   "host": "apagar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "apagar"
+  },
+  {
+   "surface": "tíralo",
+   "host": "tira",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "tirar"
+  },
+  {
+   "surface": "acompáñeme",
+   "host": "acompañe",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "acompañar"
+  },
+  {
+   "surface": "guárdalo",
+   "host": "guarda",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "guardar"
+  },
+  {
+   "surface": "mírenme",
+   "host": "miren",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "mirar"
+  },
+  {
+   "surface": "escribirle",
+   "host": "escribir",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "escribir"
+  },
+  {
+   "surface": "comportarte",
+   "host": "comportar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "comportar"
+  },
+  {
+   "surface": "cuidarla",
+   "host": "cuidar",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "cuidar"
+  },
+  {
+   "surface": "convertirlo",
+   "host": "convertir",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "convertir"
+  },
+  {
+   "surface": "haciéndole",
+   "host": "haciendo",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "lléveselo",
+   "host": "lleve",
+   "pronouns": [
+    "se",
+    "lo"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "considerarlo",
+   "host": "considerar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "considerar"
+  },
+  {
+   "surface": "pesados",
+   "host": "pesad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "pesar"
+  },
+  {
+   "surface": "dejarles",
+   "host": "dejar",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "déjennos",
+   "host": "dejen",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "hazla",
+   "host": "haz",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "pararse",
+   "host": "parar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "parar"
+  },
+  {
+   "surface": "privados",
+   "host": "privad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "privar"
+  },
+  {
+   "surface": "protegerlos",
+   "host": "proteger",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "proteger"
+  },
+  {
+   "surface": "llévense",
+   "host": "lleven",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "sácanos",
+   "host": "saca",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "sacar"
+  },
+  {
+   "surface": "cuídense",
+   "host": "cuiden",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "cuidar"
+  },
+  {
+   "surface": "ocultarlo",
+   "host": "ocultar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "ocultar"
+  },
+  {
+   "surface": "agárrenlo",
+   "host": "agarren",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "agarrar"
+  },
+  {
+   "surface": "dispararte",
+   "host": "disparar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "disparar"
+  },
+  {
+   "surface": "visitarla",
+   "host": "visitar",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "visitar"
+  },
+  {
+   "surface": "decidme",
+   "host": "decid",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "decir"
+  },
+  {
+   "surface": "obligarme",
+   "host": "obligar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "obligar"
+  },
+  {
+   "surface": "imagínese",
+   "host": "imagine",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "imaginar"
+  },
+  {
+   "surface": "considéralo",
+   "host": "considera",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "considerar"
+  },
+  {
+   "surface": "hablarnos",
+   "host": "hablar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "hablar"
+  },
+  {
+   "surface": "demostrarle",
+   "host": "demostrar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "demostrar"
+  },
+  {
+   "surface": "vente",
+   "host": "ven",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "venir"
+  },
+  {
+   "surface": "recogerme",
+   "host": "recoger",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "recoger"
+  },
+  {
+   "surface": "cogerme",
+   "host": "coger",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "coger"
+  },
+  {
+   "surface": "míranos",
+   "host": "mira",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "mirar"
+  },
+  {
+   "surface": "apartaos",
+   "host": "aparta",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "apartar"
+  },
+  {
+   "surface": "acostumbrarse",
+   "host": "acostumbrar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "acostumbrar"
+  },
+  {
+   "surface": "atrápalo",
+   "host": "atrapa",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "atrapar"
+  },
+  {
+   "surface": "tómelo",
+   "host": "tome",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "tomar"
+  },
+  {
+   "surface": "envíame",
+   "host": "envía",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "enviar"
+  },
+  {
+   "surface": "prometerme",
+   "host": "prometer",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "prometer"
+  },
+  {
+   "surface": "apurarnos",
+   "host": "apurar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "apurar"
+  },
+  {
+   "surface": "permitirse",
+   "host": "permitir",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "permitir"
+  },
+  {
+   "surface": "gustarte",
+   "host": "gustar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "gustar"
+  },
+  {
+   "surface": "tómame",
+   "host": "toma",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "tomar"
+  },
+  {
+   "surface": "perdonadme",
+   "host": "perdonad",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "perdonar"
+  },
+  {
+   "surface": "encerrados",
+   "host": "encerrad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "encerrar"
+  },
+  {
+   "surface": "preguntarles",
+   "host": "preguntar",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "preguntar"
+  },
+  {
+   "surface": "pesos",
+   "host": "pes",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "par"
+  },
+  {
+   "surface": "calmarse",
+   "host": "calmar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "calmar"
+  },
+  {
+   "surface": "retirarte",
+   "host": "retirar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "retirar"
+  },
+  {
+   "surface": "entregarlo",
+   "host": "entregar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "entregar"
+  },
+  {
+   "surface": "servirte",
+   "host": "servir",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "servir"
+  },
+  {
+   "surface": "visitarlo",
+   "host": "visitar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "visitar"
+  },
+  {
+   "surface": "levántalo",
+   "host": "levanta",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "levantar"
+  },
+  {
+   "surface": "recordarme",
+   "host": "recordar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "recordar"
+  },
+  {
+   "surface": "rodeados",
+   "host": "rodead",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "rodear"
+  },
+  {
+   "surface": "convencerla",
+   "host": "convencer",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "convencer"
+  },
+  {
+   "surface": "tirarte",
+   "host": "tirar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "tirar"
+  },
+  {
+   "surface": "pegarte",
+   "host": "pegar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "pegar"
+  },
+  {
+   "surface": "pongámonos",
+   "host": "pongamos",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "poner"
+  },
+  {
+   "surface": "llámenme",
+   "host": "llamen",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "llamar"
+  },
+  {
+   "surface": "usarlas",
+   "host": "usar",
+   "pronouns": [
+    "las"
+   ],
+   "lemma": "usar"
+  },
+  {
+   "surface": "recogerte",
+   "host": "recoger",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "recoger"
+  },
+  {
+   "surface": "muéstreme",
+   "host": "muestre",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "mostrar"
+  },
+  {
+   "surface": "buscarnos",
+   "host": "buscar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "buscar"
+  },
+  {
+   "surface": "encuéntralo",
+   "host": "encuentra",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "encontrar"
+  },
+  {
+   "surface": "burlarse",
+   "host": "burlar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "burlar"
+  },
+  {
+   "surface": "concentrarnos",
+   "host": "concentrar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "concentrar"
+  },
+  {
+   "surface": "mételo",
+   "host": "mete",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "meter"
+  },
+  {
+   "surface": "mátenlos",
+   "host": "maten",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "matar"
+  },
+  {
+   "surface": "dese",
+   "host": "dé",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "conseguirla",
+   "host": "conseguir",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "conseguir"
+  },
+  {
+   "surface": "golpearte",
+   "host": "golpear",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "golpear"
+  },
+  {
+   "surface": "tratarme",
+   "host": "tratar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "tratar"
+  },
+  {
+   "surface": "mentirte",
+   "host": "mentir",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "mentir"
+  },
+  {
+   "surface": "inténtelo",
+   "host": "intente",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "intentar"
+  },
+  {
+   "surface": "pedirlo",
+   "host": "pedir",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "pedir"
+  },
+  {
+   "surface": "reunidos",
+   "host": "reunid",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "reunir"
+  },
+  {
+   "surface": "arreglarme",
+   "host": "arreglar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "arreglar"
+  },
+  {
+   "surface": "alimentarse",
+   "host": "alimentar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "alimentar"
+  },
+  {
+   "surface": "dejadlo",
+   "host": "dejad",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "guardarlo",
+   "host": "guardar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "guardar"
+  },
+  {
+   "surface": "recogerla",
+   "host": "recoger",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "recoger"
+  },
+  {
+   "surface": "invitarla",
+   "host": "invitar",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "invitar"
+  },
+  {
+   "surface": "callarse",
+   "host": "callar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "callar"
+  },
+  {
+   "surface": "defendernos",
+   "host": "defender",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "defender"
+  },
+  {
+   "surface": "enterrarlo",
+   "host": "enterrar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "enterrar"
+  },
+  {
+   "surface": "dásela",
+   "host": "da",
+   "pronouns": [
+    "se",
+    "la"
+   ],
+   "lemma": "dar"
+  },
+  {
+   "surface": "librarte",
+   "host": "librar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "librar"
+  },
+  {
+   "surface": "golpearlo",
+   "host": "golpear",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "golpear"
+  },
+  {
+   "surface": "perdonarte",
+   "host": "perdonar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "perdonar"
+  },
+  {
+   "surface": "avíseme",
+   "host": "avise",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "avisar"
+  },
+  {
+   "surface": "olvídenlo",
+   "host": "olviden",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "olvidar"
+  },
+  {
+   "surface": "discúlpate",
+   "host": "disculpa",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "disculpar"
+  },
+  {
+   "surface": "olerlo",
+   "host": "oler",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "oler"
+  },
+  {
+   "surface": "rendirte",
+   "host": "rendir",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "rendir"
+  },
+  {
+   "surface": "déjenla",
+   "host": "dejen",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "esconderlo",
+   "host": "esconder",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "esconder"
+  },
+  {
+   "surface": "culparte",
+   "host": "culpar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "culpar"
+  },
+  {
+   "surface": "tratarse",
+   "host": "tratar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "tratar"
+  },
+  {
+   "surface": "abrazarte",
+   "host": "abrazar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "abrazar"
+  },
+  {
+   "surface": "llévale",
+   "host": "lleva",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "atraparme",
+   "host": "atrapar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "atrapar"
+  },
+  {
+   "surface": "quererte",
+   "host": "querer",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "querer"
+  },
+  {
+   "surface": "arruinarlo",
+   "host": "arruinar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "arruinar"
+  },
+  {
+   "surface": "quitármelo",
+   "host": "quitar",
+   "pronouns": [
+    "me",
+    "lo"
+   ],
+   "lemma": "quitar"
+  },
+  {
+   "surface": "seguirle",
+   "host": "seguir",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "seguir"
+  },
+  {
+   "surface": "subirme",
+   "host": "subir",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "subir"
+  },
+  {
+   "surface": "destruirla",
+   "host": "destruir",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "destruir"
+  },
+  {
+   "surface": "mandarme",
+   "host": "mandar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "mandar"
+  },
+  {
+   "surface": "llevársela",
+   "host": "llevar",
+   "pronouns": [
+    "se",
+    "la"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "pónganlo",
+   "host": "pongan",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "poner"
+  },
+  {
+   "surface": "confirmarlo",
+   "host": "confirmar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "confirmar"
+  },
+  {
+   "surface": "cámbiate",
+   "host": "cambia",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "cambiar"
+  },
+  {
+   "surface": "retírese",
+   "host": "retire",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "retirar"
+  },
+  {
+   "surface": "preparaos",
+   "host": "prepara",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "preparar"
+  },
+  {
+   "surface": "largarme",
+   "host": "largar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "largar"
+  },
+  {
+   "surface": "comunicarnos",
+   "host": "comunicar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "comunicar"
+  },
+  {
+   "surface": "culparme",
+   "host": "culpar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "culpar"
+  },
+  {
+   "surface": "escaparte",
+   "host": "escapar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "escapar"
+  },
+  {
+   "surface": "golpéame",
+   "host": "golpea",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "golpear"
+  },
+  {
+   "surface": "separarse",
+   "host": "separar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "separar"
+  },
+  {
+   "surface": "involucrados",
+   "host": "involucrad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "involucrar"
+  },
+  {
+   "surface": "involucrarme",
+   "host": "involucrar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "involucrar"
+  },
+  {
+   "surface": "disfrutarlo",
+   "host": "disfrutar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "disfrutar"
+  },
+  {
+   "surface": "alégrate",
+   "host": "alegra",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "alegrar"
+  },
+  {
+   "surface": "llamarnos",
+   "host": "llamar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "llamar"
+  },
+  {
+   "surface": "espaciales",
+   "host": "espacia",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "espaciar"
+  },
+  {
+   "surface": "pasados",
+   "host": "pasad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "pasar"
+  },
+  {
+   "surface": "espérenme",
+   "host": "esperen",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "esperar"
+  },
+  {
+   "surface": "retírate",
+   "host": "retira",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "retirar"
+  },
+  {
+   "surface": "cogerte",
+   "host": "coger",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "coger"
+  },
+  {
+   "surface": "pararte",
+   "host": "parar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "parar"
+  },
+  {
+   "surface": "pásamelo",
+   "host": "pasa",
+   "pronouns": [
+    "me",
+    "lo"
+   ],
+   "lemma": "pasar"
+  },
+  {
+   "surface": "ayúdenos",
+   "host": "ayude",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "ayudar"
+  },
+  {
+   "surface": "describirlo",
+   "host": "describir",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "describir"
+  },
+  {
+   "surface": "despedirnos",
+   "host": "despedir",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "despedir"
+  },
+  {
+   "surface": "detenerle",
+   "host": "detener",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "detener"
+  },
+  {
+   "surface": "poneos",
+   "host": "poné",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "poner"
+  },
+  {
+   "surface": "perdónenme",
+   "host": "perdonen",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "perdonar"
+  },
+  {
+   "surface": "ofrecerme",
+   "host": "ofrecer",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "ofrecer"
+  },
+  {
+   "surface": "quítatela",
+   "host": "quita",
+   "pronouns": [
+    "te",
+    "la"
+   ],
+   "lemma": "quitar"
+  },
+  {
+   "surface": "apágala",
+   "host": "apaga",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "apagar"
+  },
+  {
+   "surface": "venderle",
+   "host": "vender",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "vender"
+  },
+  {
+   "surface": "revisarlo",
+   "host": "revisar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "revisar"
+  },
+  {
+   "surface": "besarla",
+   "host": "besar",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "besar"
+  },
+  {
+   "surface": "esperarme",
+   "host": "esperar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "esperar"
+  },
+  {
+   "surface": "préstame",
+   "host": "presta",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "prestar"
+  },
+  {
+   "surface": "molestarse",
+   "host": "molestar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "molestar"
+  },
+  {
+   "surface": "decidirlo",
+   "host": "decidir",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "decidir"
+  },
+  {
+   "surface": "repítelo",
+   "host": "repite",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "repetir"
+  },
+  {
+   "surface": "largarnos",
+   "host": "largar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "largar"
+  },
+  {
+   "surface": "ayudaros",
+   "host": "ayudar",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "ayudar"
+  },
+  {
+   "surface": "sujétalo",
+   "host": "sujeta",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "sujetar"
+  },
+  {
+   "surface": "tirarse",
+   "host": "tirar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "tirar"
+  },
+  {
+   "surface": "engañarte",
+   "host": "engañar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "engañar"
+  },
+  {
+   "surface": "haciéndote",
+   "host": "haciendo",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "identificarlo",
+   "host": "identificar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "identificar"
+  },
+  {
+   "surface": "agárrala",
+   "host": "agarra",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "agarrar"
+  },
+  {
+   "surface": "robados",
+   "host": "robad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "robar"
+  },
+  {
+   "surface": "volverlo",
+   "host": "volver",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "volver"
+  },
+  {
+   "surface": "relájense",
+   "host": "relajen",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "relajar"
+  },
+  {
+   "surface": "odiarme",
+   "host": "odiar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "odiar"
+  },
+  {
+   "surface": "acusados",
+   "host": "acusad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "acusar"
+  },
+  {
+   "surface": "asegurarle",
+   "host": "asegurar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "asegurar"
+  },
+  {
+   "surface": "desesperados",
+   "host": "desesperad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "desesperar"
+  },
+  {
+   "surface": "despertarse",
+   "host": "despertar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "despertar"
+  },
+  {
+   "surface": "intentémoslo",
+   "host": "intentemos",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "intentar"
+  },
+  {
+   "surface": "sácate",
+   "host": "saca",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "sacar"
+  },
+  {
+   "surface": "mostrarnos",
+   "host": "mostrar",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "mostrar"
+  },
+  {
+   "surface": "tratarlo",
+   "host": "tratar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "tratar"
+  },
+  {
+   "surface": "arréglalo",
+   "host": "arregla",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "arreglar"
+  },
+  {
+   "surface": "vengarte",
+   "host": "vengar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "vengar"
+  },
+  {
+   "surface": "échate",
+   "host": "echa",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "echar"
+  },
+  {
+   "surface": "tomarle",
+   "host": "tomar",
+   "pronouns": [
+    "le"
+   ],
+   "lemma": "tomar"
+  },
+  {
+   "surface": "quedármelo",
+   "host": "quedar",
+   "pronouns": [
+    "me",
+    "lo"
+   ],
+   "lemma": "quedar"
+  },
+  {
+   "surface": "seguidos",
+   "host": "seguid",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "seguir"
+  },
+  {
+   "surface": "bañarse",
+   "host": "bañar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "bañar"
+  },
+  {
+   "surface": "salirte",
+   "host": "salir",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "salir"
+  },
+  {
+   "surface": "calmarme",
+   "host": "calmar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "calmar"
+  },
+  {
+   "surface": "dejarlas",
+   "host": "dejar",
+   "pronouns": [
+    "las"
+   ],
+   "lemma": "dejar"
+  },
+  {
+   "surface": "repararlo",
+   "host": "reparar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "reparar"
+  },
+  {
+   "surface": "mírelo",
+   "host": "mire",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "mirar"
+  },
+  {
+   "surface": "sorprenderte",
+   "host": "sorprender",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "sorprender"
+  },
+  {
+   "surface": "arreglármelas",
+   "host": "arreglar",
+   "pronouns": [
+    "me",
+    "las"
+   ],
+   "lemma": "arreglar"
+  },
+  {
+   "surface": "despiértate",
+   "host": "despierta",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "despertar"
+  },
+  {
+   "surface": "arreglarse",
+   "host": "arreglar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "arreglar"
+  },
+  {
+   "surface": "leales",
+   "host": "lea",
+   "pronouns": [
+    "les"
+   ],
+   "lemma": "leer"
+  },
+  {
+   "surface": "negarse",
+   "host": "negar",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "negar"
+  },
+  {
+   "surface": "controlarme",
+   "host": "controlar",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "controlar"
+  },
+  {
+   "surface": "llévalos",
+   "host": "lleva",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "llevar"
+  },
+  {
+   "surface": "vuélvete",
+   "host": "vuelve",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "volver"
+  },
+  {
+   "surface": "agarrarlo",
+   "host": "agarrar",
+   "pronouns": [
+    "lo"
+   ],
+   "lemma": "agarrar"
+  },
+  {
+   "surface": "preocúpate",
+   "host": "preocupa",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "preocupar"
+  },
+  {
+   "surface": "convencerlos",
+   "host": "convencer",
+   "pronouns": [
+    "los"
+   ],
+   "lemma": "convencer"
+  },
+  {
+   "surface": "márchese",
+   "host": "marche",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "marchar"
+  },
+  {
+   "surface": "suicidarte",
+   "host": "suicidar",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "suicidar"
+  },
+  {
+   "surface": "ofenderte",
+   "host": "ofender",
+   "pronouns": [
+    "te"
+   ],
+   "lemma": "ofender"
+  },
+  {
+   "surface": "mantenla",
+   "host": "manten",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "mantener"
+  },
+  {
+   "surface": "comunícame",
+   "host": "comunica",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "comunicar"
+  },
+  {
+   "surface": "enviados",
+   "host": "enviad",
+   "pronouns": [
+    "os"
+   ],
+   "lemma": "enviar"
+  },
+  {
+   "surface": "muriéndose",
+   "host": "muriendo",
+   "pronouns": [
+    "se"
+   ],
+   "lemma": "morir"
+  },
+  {
+   "surface": "hacérselo",
+   "host": "hacer",
+   "pronouns": [
+    "se",
+    "lo"
+   ],
+   "lemma": "hacer"
+  },
+  {
+   "surface": "muéstranos",
+   "host": "muestra",
+   "pronouns": [
+    "nos"
+   ],
+   "lemma": "mostrar"
+  },
+  {
+   "surface": "venderme",
+   "host": "vender",
+   "pronouns": [
+    "me"
+   ],
+   "lemma": "vender"
+  },
+  {
+   "surface": "probarla",
+   "host": "probar",
+   "pronouns": [
+    "la"
+   ],
+   "lemma": "probar"
+  }
+ ],
+ "guarded": {
+  "dios": "SpanishDict files it as noun",
+  "parte": "conjugation-table form",
+  "pase": "conjugation-table form",
+  "pelo": "conjugation-table form",
+  "verme": "SpanishDict files it as noun",
+  "regalo": "conjugation-table form",
+  "detente": "conjugation-table form",
+  "date": "conjugation-table form",
+  "piense": "conjugation-table form",
+  "medios": "SpanishDict files it as plural noun",
+  "valle": "conjugation-table form",
+  "pásame": "conjugation-table form",
+  "empleados": "SpanishDict files it as plural noun",
+  "palo": "SpanishDict files it as noun",
+  "miente": "conjugation-table form",
+  "escándalo": "SpanishDict files it as noun",
+  "tomate": "SpanishDict files it as noun",
+  "debate": "conjugation-table form",
+  "dados": "SpanishDict files it as plural noun",
+  "peste": "SpanishDict files it as noun",
+  "asilo": "conjugation-table form",
+  "palos": "SpanishDict files it as noun",
+  "banquete": "SpanishDict files it as noun",
+  "condenados": "SpanishDict files it as plural noun",
+  "filete": "SpanishDict files it as noun",
+  "valla": "conjugation-table form",
+  "cuidados": "SpanishDict files it as plural noun",
+  "pásalo": "conjugation-table form",
+  "pala": "SpanishDict files it as noun",
+  "comete": "conjugation-table form",
+  "iniciales": "conjugation-table form",
+  "ideales": "SpanishDict files it as plural noun",
+  "fieles": "SpanishDict files it as plural noun",
+  "salte": "conjugation-table form",
+  "revela": "conjugation-table form"
+ },
+ "into": {
+  "hacer": [
+   "hacerlo",
+   "hacerte",
+   "hacerle",
+   "hacerme",
+   "hacerse",
+   "hacerla",
+   "hacernos",
+   "hacerles",
+   "hacerlos",
+   "hacerlas",
+   "hacérselo"
+  ],
+  "deja": [
+   "déjame",
+   "déjalo",
+   "déjala",
+   "déjanos",
+   "déjate",
+   "déjale",
+   "déjalos",
+   "déjamelo"
+  ],
+  "da": [
+   "dame",
+   "dale",
+   "dámelo",
+   "dámela",
+   "danos",
+   "dales",
+   "dáselo",
+   "daos",
+   "dásela"
+  ],
+  "di": [
+   "dime",
+   "dile",
+   "dímelo",
+   "diles",
+   "díselo",
+   "dilo",
+   "dinos"
+  ],
+  "ver": [
+   "verte",
+   "verlo",
+   "verla",
+   "verle",
+   "vernos",
+   "verlos",
+   "verlas",
+   "verse",
+   "veros",
+   "verles"
+  ],
+  "ir": [
+   "irme",
+   "irnos",
+   "irse",
+   "irte",
+   "iros"
+  ],
+  "calla": [
+   "cállate"
+  ],
+  "decir": [
+   "decirte",
+   "decirle",
+   "decirme",
+   "decirlo",
+   "decírselo",
+   "decírtelo",
+   "decirles",
+   "decírmelo",
+   "decirnos",
+   "decirse",
+   "deciros"
+  ],
+  "queda": [
+   "quédate",
+   "quédatelo",
+   "quedaos"
+  ],
+  "dar": [
+   "darle",
+   "darte",
+   "darme",
+   "darles",
+   "darnos",
+   "darse",
+   "dárselo",
+   "dársela",
+   "daros",
+   "dártelo"
+  ],
+  "haz": [
+   "hazlo",
+   "hazme",
+   "hazte",
+   "hazle",
+   "házmelo",
+   "hazla"
+  ],
+  "saber": [
+   "saberlo"
+  ],
+  "escucha": [
+   "escúchame"
+  ],
+  "ayudar": [
+   "ayudarte",
+   "ayudarme",
+   "ayudarle",
+   "ayudarnos",
+   "ayudarlo",
+   "ayudarla",
+   "ayudarlos",
+   "ayudarles",
+   "ayudaros"
+  ],
+  "quedar": [
+   "quedarme",
+   "quedarse",
+   "quedarte",
+   "quedarnos",
+   "quedármelo"
+  ],
+  "ayuda": [
+   "ayúdame",
+   "ayúdanos"
+  ],
+  "calma": [
+   "cálmate"
+  ],
+  "haber": [
+   "haberlo",
+   "haberte",
+   "haberme",
+   "haberle",
+   "haberse",
+   "haberla",
+   "habernos",
+   "haberlos",
+   "habérmelo",
+   "habértelo",
+   "habérselo",
+   "haberles"
+  ],
+  "deje": [
+   "déjeme",
+   "déjelo",
+   "déjenos",
+   "déjela"
+  ],
+  "mira": [
+   "mírame",
+   "mírate",
+   "míralo",
+   "mírala",
+   "míralos",
+   "mírale",
+   "míranos"
+  ],
+  "olvida": [
+   "olvídalo",
+   "olvídate"
+  ],
+  "pon": [
+   "ponte",
+   "ponlo",
+   "ponme",
+   "ponle",
+   "ponla",
+   "póntelo"
+  ],
+  "diga": [
+   "dígame",
+   "dígale",
+   "dígamelo",
+   "dígales",
+   "dígaselo",
+   "díganos",
+   "dígalo"
+  ],
+  "levanta": [
+   "levántate",
+   "levántalo"
+  ],
+  "matar": [
+   "matarme",
+   "matarte",
+   "matarlo",
+   "matarla",
+   "matarnos",
+   "matarlos",
+   "matarle",
+   "matarse"
+  ],
+  "creer": [
+   "creerlo",
+   "creerme",
+   "creerte",
+   "creerle"
+  ],
+  "dejar": [
+   "dejarlo",
+   "dejarme",
+   "dejarte",
+   "dejarla",
+   "dejarle",
+   "dejarlos",
+   "dejarnos",
+   "dejarse",
+   "dejarles",
+   "dejarlas"
+  ],
+  "conocer": [
+   "conocerte",
+   "conocerlo",
+   "conocerla",
+   "conocerle",
+   "conocernos",
+   "conocerlos",
+   "conocerme"
+  ],
+  "llama": [
+   "llámame",
+   "llámalo",
+   "llámala"
+  ],
+  "muevan": [
+   "muévanse"
+  ],
+  "mueve": [
+   "muévete"
+  ],
+  "intentar": [
+   "intentarlo"
+  ],
+  "perdona": [
+   "perdóname"
+  ],
+  "relaja": [
+   "relájate"
+  ],
+  "casar": [
+   "casarse",
+   "casarme",
+   "casarte",
+   "casarnos"
+  ],
+  "unid": [
+   "unidos"
+  ],
+  "larga": [
+   "lárgate"
+  ],
+  "aleja": [
+   "aléjate"
+  ],
+  "soldad": [
+   "soldados"
+  ],
+  "anima": [
+   "animales",
+   "anímate"
+  ],
+  "quita": [
+   "quítate",
+   "quítame",
+   "quítale",
+   "quítatelo",
+   "quítatela"
+  ],
+  "preguntar": [
+   "preguntarte",
+   "preguntarle",
+   "preguntarme",
+   "preguntárselo",
+   "preguntarles"
+  ],
+  "dejen": [
+   "déjenme",
+   "déjenlo",
+   "déjennos",
+   "déjenla"
+  ],
+  "estad": [
+   "estados"
+  ],
+  "llevar": [
+   "llevarte",
+   "llevarme",
+   "llevarlo",
+   "llevarla",
+   "llevarse",
+   "llevarnos",
+   "llevarle",
+   "llevarlos",
+   "llevárselo",
+   "llevársela"
+  ],
+  "encontrar": [
+   "encontrarlo",
+   "encontrarla",
+   "encontrarme",
+   "encontrarte",
+   "encontrarnos",
+   "encontrarse",
+   "encontrarle",
+   "encontrarlos"
+  ],
+  "apura": [
+   "apúrate"
+  ],
+  "ser": [
+   "serlo",
+   "serle",
+   "serte"
+  ],
+  "pedir": [
+   "pedirle",
+   "pedirte",
+   "pedirme",
+   "pedirles",
+   "pedírselo",
+   "pedirlo"
+  ],
+  "llamar": [
+   "llamarme",
+   "llamarte",
+   "llamarlo",
+   "llamarla",
+   "llamarle",
+   "llamarlos",
+   "llamarse",
+   "llamarnos"
+  ],
+  "disculpe": [
+   "discúlpeme"
+  ],
+  "suelta": [
+   "suéltame",
+   "suéltalo",
+   "suéltala"
+  ],
+  "vayan": [
+   "váyanse"
+  ],
+  "poner": [
+   "ponerme",
+   "ponerte",
+   "ponerse",
+   "ponerle",
+   "ponerlo",
+   "ponernos",
+   "ponerla",
+   "ponerlos"
+  ],
+  "cuida": [
+   "cuídate"
+  ],
+  "hablar": [
+   "hablarle",
+   "hablarte",
+   "hablarme",
+   "hablarlo",
+   "hablarles",
+   "hablarnos"
+  ],
+  "hagamos": [
+   "hagámoslo"
+  ],
+  "preocupar": [
+   "preocuparse",
+   "preocuparte",
+   "preocuparme",
+   "preocuparnos"
+  ],
+  "asegura": [
+   "asegúrate"
+  ],
+  "vaya": [
+   "váyase"
+  ],
+  "cuenta": [
+   "cuéntame",
+   "cuéntamelo",
+   "cuéntanos",
+   "cuéntale"
+  ],
+  "quede": [
+   "quédese"
+  ],
+  "tener": [
+   "tenerlo",
+   "tenerte",
+   "tenerla",
+   "tenerlos",
+   "tenerme",
+   "tenerle"
+  ],
+  "disculpa": [
+   "discúlpame",
+   "discúlpate"
+  ],
+  "asegurar": [
+   "asegurarme",
+   "asegurarse",
+   "asegurarnos",
+   "asegurarte",
+   "asegurarle"
+  ],
+  "oficia": [
+   "oficiales"
+  ],
+  "pape": [
+   "papeles"
+  ],
+  "pensar": [
+   "pensarlo"
+  ],
+  "lleva": [
+   "llévame",
+   "llévate",
+   "llévatelo",
+   "llévalo",
+   "llévala",
+   "llévatela",
+   "llévanos",
+   "llévale",
+   "llévalos"
+  ],
+  "fija": [
+   "fíjate"
+  ],
+  "sentar": [
+   "sentarse",
+   "sentarme",
+   "sentarte",
+   "sentarnos"
+  ],
+  "toma": [
+   "tómalo",
+   "tómate",
+   "tómala",
+   "tómatelo",
+   "tómame"
+  ],
+  "ayuden": [
+   "ayúdenme"
+  ],
+  "pregunta": [
+   "pregúntale",
+   "pregúntaselo",
+   "pregúntame"
+  ],
+  "buscar": [
+   "buscarlo",
+   "buscarte",
+   "buscarme",
+   "buscarla",
+   "buscarle",
+   "buscarlos",
+   "buscarnos"
+  ],
+  "permita": [
+   "permítame"
+  ],
+  "habla": [
+   "háblame",
+   "háblale"
+  ],
+  "trae": [
+   "tráeme",
+   "tráelo",
+   "tráela"
+  ],
+  "piensa": [
+   "piénsalo"
+  ],
+  "arreglar": [
+   "arreglarlo",
+   "arreglarme",
+   "arreglármelas",
+   "arreglarse"
+  ],
+  "queden": [
+   "quédense"
+  ],
+  "evitar": [
+   "evitarlo"
+  ],
+  "detener": [
+   "detenerlo",
+   "detenerme",
+   "detenerlos",
+   "detenerte",
+   "detenernos",
+   "detenerse",
+   "detenerla",
+   "detenerle"
+  ],
+  "resultad": [
+   "resultados"
+  ],
+  "sentir": [
+   "sentirse",
+   "sentirme",
+   "sentirlo",
+   "sentirte"
+  ],
+  "mover": [
+   "moverse",
+   "moverte",
+   "movernos",
+   "moverme",
+   "moverlo"
+  ],
+  "convertir": [
+   "convertirse",
+   "convertirme",
+   "convertirte",
+   "convertirlo"
+  ],
+  "manten": [
+   "mantente",
+   "mantenlo",
+   "mantenla"
+  ],
+  "disculpar": [
+   "disculparme",
+   "disculparte",
+   "disculparse"
+  ],
+  "perdone": [
+   "perdóneme"
+  ],
+  "preparen": [
+   "prepárense"
+  ],
+  "sacar": [
+   "sacarlo",
+   "sacarte",
+   "sacarme",
+   "sacarle",
+   "sacarla",
+   "sacarlos",
+   "sacarnos"
+  ],
+  "mostrar": [
+   "mostrarte",
+   "mostrarle",
+   "mostrarles",
+   "mostrarme",
+   "mostrarnos"
+  ],
+  "invitad": [
+   "invitados"
+  ],
+  "entender": [
+   "entenderlo"
+  ],
+  "usar": [
+   "usarlo",
+   "usarla",
+   "usarlos",
+   "usarlas"
+  ],
+  "probar": [
+   "probarlo",
+   "probarla"
+  ],
+  "preparad": [
+   "preparados"
+  ],
+  "espera": [
+   "espérame"
+  ],
+  "dé": [
+   "déme",
+   "deme",
+   "deseos",
+   "démelo",
+   "dele",
+   "dese"
+  ],
+  "sienten": [
+   "siéntense"
+  ],
+  "averiguar": [
+   "averiguarlo"
+  ],
+  "oír": [
+   "oírlo",
+   "oírme",
+   "oírte",
+   "oírla"
+  ],
+  "muestra": [
+   "muéstrame",
+   "muéstrale",
+   "muéstranos"
+  ],
+  "enseñar": [
+   "enseñarte",
+   "enseñarle",
+   "enseñarme",
+   "enseñarles"
+  ],
+  "contar": [
+   "contarle",
+   "contarte",
+   "contarme",
+   "contárselo",
+   "contarles",
+   "contármelo",
+   "contarlo",
+   "contártelo",
+   "contarnos"
+  ],
+  "especia": [
+   "especiales"
+  ],
+  "prepara": [
+   "prepárate",
+   "preparaos"
+  ],
+  "intenta": [
+   "inténtalo"
+  ],
+  "acerca": [
+   "acércate"
+  ],
+  "mete": [
+   "métete",
+   "mételo"
+  ],
+  "haga": [
+   "hágalo",
+   "hágame",
+   "hágase"
+  ],
+  "sigue": [
+   "sígueme"
+  ],
+  "escuchar": [
+   "escucharme",
+   "escucharlo",
+   "escucharte",
+   "escucharla"
+  ],
+  "regá": [
+   "regalos"
+  ],
+  "abogad": [
+   "abogados"
+  ],
+  "meter": [
+   "meterte",
+   "meterme",
+   "meterse",
+   "meternos",
+   "meterlo",
+   "meterle"
+  ],
+  "ayude": [
+   "ayúdeme",
+   "ayúdenos"
+  ],
+  "escuche": [
+   "escúcheme"
+  ],
+  "explicar": [
+   "explicarlo",
+   "explicarte",
+   "explicarle",
+   "explicarme",
+   "explicártelo",
+   "explicárselo"
+  ],
+  "aparta": [
+   "apártate",
+   "apartaos"
+  ],
+  "casad": [
+   "casados"
+  ],
+  "jode": [
+   "jódete"
+  ],
+  "conseguir": [
+   "conseguirlo",
+   "conseguirte",
+   "conseguirme",
+   "conseguirle",
+   "conseguirla"
+  ],
+  "estar": [
+   "estarlo"
+  ],
+  "haciendo": [
+   "haciéndolo",
+   "haciéndome",
+   "haciéndose",
+   "haciéndole",
+   "haciéndote"
+  ],
+  "sigan": [
+   "síganme"
+  ],
+  "traer": [
+   "traerme",
+   "traerlo",
+   "traerte",
+   "traerla",
+   "traerle",
+   "traerlos",
+   "traernos"
+  ],
+  "sube": [
+   "súbete"
+  ],
+  "calle": [
+   "cállese"
+  ],
+  "mantener": [
+   "mantenerlo",
+   "mantenerte",
+   "mantenerse",
+   "mantenerme",
+   "mantenerla",
+   "mantenernos",
+   "mantenerlos"
+  ],
+  "promete": [
+   "prométeme",
+   "prométemelo"
+  ],
+  "concentra": [
+   "concéntrate"
+  ],
+  "disparar": [
+   "dispararle",
+   "dispararme",
+   "dispararte"
+  ],
+  "proteger": [
+   "protegerte",
+   "protegerme",
+   "protegerla",
+   "protegerlo",
+   "protegernos",
+   "protegerse",
+   "protegerlos"
+  ],
+  "mata": [
+   "mátalo",
+   "mátame",
+   "mátalos",
+   "mátala"
+  ],
+  "echar": [
+   "echarle",
+   "echarme",
+   "echarte",
+   "echarlo"
+  ],
+  "apuren": [
+   "apúrense"
+  ],
+  "despedir": [
+   "despedirme",
+   "despedirte",
+   "despedirse",
+   "despedirnos"
+  ],
+  "soportar": [
+   "soportarlo"
+  ],
+  "permite": [
+   "permíteme"
+  ],
+  "aceptar": [
+   "aceptarlo"
+  ],
+  "calme": [
+   "cálmese"
+  ],
+  "unir": [
+   "unirse",
+   "unirte",
+   "unirme",
+   "unirnos"
+  ],
+  "salvar": [
+   "salvarte",
+   "salvarme",
+   "salvarla",
+   "salvarlo",
+   "salvarnos",
+   "salvarle",
+   "salvarse",
+   "salvarlos"
+  ],
+  "olvidar": [
+   "olvidarlo",
+   "olvidarte",
+   "olvidarme",
+   "olvidarse"
+  ],
+  "dejad": [
+   "dejadme",
+   "dejadlo"
+  ],
+  "marchar": [
+   "marcharse",
+   "marcharme",
+   "marcharte",
+   "marcharnos"
+  ],
+  "detenga": [
+   "deténgase"
+  ],
+  "retirar": [
+   "retirarse",
+   "retirarme",
+   "retirarte"
+  ],
+  "lograr": [
+   "lograrlo"
+  ],
+  "ponga": [
+   "póngase",
+   "póngame",
+   "póngalo"
+  ],
+  "divertir": [
+   "divertirse",
+   "divertirnos",
+   "divertirme",
+   "divertirte"
+  ],
+  "quitar": [
+   "quitarme",
+   "quitarle",
+   "quitarte",
+   "quitarse",
+   "quitármelo"
+  ],
+  "presentar": [
+   "presentarte",
+   "presentarles",
+   "presentarme",
+   "presentarle",
+   "presentarse"
+  ],
+  "den": [
+   "denme",
+   "denle",
+   "dense"
+  ],
+  "levantar": [
+   "levantarse",
+   "levantarme",
+   "levantarte"
+  ],
+  "acercar": [
+   "acercarse",
+   "acercarme",
+   "acercarte",
+   "acercarnos"
+  ],
+  "callen": [
+   "cállense"
+  ],
+  "besa": [
+   "bésame"
+  ],
+  "pagar": [
+   "pagarle",
+   "pagarme",
+   "pagarlo",
+   "pagarte"
+  ],
+  "oíd": [
+   "oídos"
+  ],
+  "herid": [
+   "heridos"
+  ],
+  "agarra": [
+   "agárrate",
+   "agárralo",
+   "agárrala"
+  ],
+  "agacha": [
+   "agáchate"
+  ],
+  "deshacer": [
+   "deshacerse",
+   "deshacerme",
+   "deshacerte",
+   "deshacernos"
+  ],
+  "manejar": [
+   "manejarlo"
+  ],
+  "llame": [
+   "llámeme"
+  ],
+  "imagina": [
+   "imagínate"
+  ],
+  "acostar": [
+   "acostarme",
+   "acostarse",
+   "acostarte"
+  ],
+  "disculpen": [
+   "discúlpenme"
+  ],
+  "leer": [
+   "leerlo",
+   "leerla"
+  ],
+  "divierte": [
+   "diviértete"
+  ],
+  "mirar": [
+   "mirarme",
+   "mirarte",
+   "mirarlo",
+   "mirarla"
+  ],
+  "tomar": [
+   "tomarlo",
+   "tomarme",
+   "tomarte",
+   "tomarse",
+   "tomarnos",
+   "tomarla",
+   "tomarle"
+  ],
+  "detengan": [
+   "deténganse",
+   "deténganlo"
+  ],
+  "ofrecer": [
+   "ofrecerle",
+   "ofrecerte",
+   "ofrecerles",
+   "ofrecerme"
+  ],
+  "saca": [
+   "sácame",
+   "sácalo",
+   "sácala",
+   "sácanos",
+   "sácate"
+  ],
+  "baja": [
+   "bájate",
+   "bájame",
+   "bájala",
+   "bájalo"
+  ],
+  "perder": [
+   "perderte",
+   "perderlo",
+   "perderme",
+   "perderse",
+   "perderla"
+  ],
+  "molestar": [
+   "molestarte",
+   "molestarme",
+   "molestarlo",
+   "molestarle",
+   "molestarla",
+   "molestarse"
+  ],
+  "pecad": [
+   "pecados"
+  ],
+  "esconder": [
+   "esconderse",
+   "esconderte",
+   "esconderme",
+   "escondernos",
+   "esconderlo"
+  ],
+  "enseña": [
+   "enséñame",
+   "enséñale"
+  ],
+  "ocupar": [
+   "ocuparme",
+   "ocuparse",
+   "ocuparte"
+  ],
+  "está": [
+   "estate"
+  ],
+  "pongan": [
+   "pónganse",
+   "pónganlo"
+  ],
+  "agradecer": [
+   "agradecerte",
+   "agradecerle",
+   "agradecérselo",
+   "agradecerles"
+  ],
+  "norma": [
+   "normales"
+  ],
+  "lleven": [
+   "llévenselo",
+   "llévenlo",
+   "llévense"
+  ],
+  "avisa": [
+   "avísame"
+  ],
+  "vestid": [
+   "vestidos"
+  ],
+  "alejen": [
+   "aléjense"
+  ],
+  "acompañar": [
+   "acompañarme",
+   "acompañarnos",
+   "acompañarte"
+  ],
+  "admitir": [
+   "admitirlo"
+  ],
+  "sentad": [
+   "sentados"
+  ],
+  "coge": [
+   "cógelo",
+   "cógela"
+  ],
+  "dando": [
+   "dándole",
+   "dándome"
+  ],
+  "volver": [
+   "volverse",
+   "volverme",
+   "volverte",
+   "volverlo"
+  ],
+  "recordar": [
+   "recordarlo",
+   "recordarte",
+   "recordarle",
+   "recordarme"
+  ],
+  "reunir": [
+   "reunirse",
+   "reunirnos",
+   "reunirme"
+  ],
+  "cambiar": [
+   "cambiarme",
+   "cambiarlo",
+   "cambiarte",
+   "cambiarse"
+  ],
+  "ocupa": [
+   "ocúpate"
+  ],
+  "suelte": [
+   "suélteme"
+  ],
+  "esperando": [
+   "esperándote",
+   "esperándome"
+  ],
+  "comprar": [
+   "comprarme",
+   "comprarte",
+   "comprarle",
+   "comprarlo",
+   "comprarla"
+  ],
+  "fina": [
+   "finales"
+  ],
+  "suicidar": [
+   "suicidarse",
+   "suicidarme",
+   "suicidarte"
+  ],
+  "dispara": [
+   "dispárale",
+   "dispárame"
+  ],
+  "pegar": [
+   "pegarle",
+   "pegarme",
+   "pegarte"
+  ],
+  "calmen": [
+   "cálmense"
+  ],
+  "viste": [
+   "vístete"
+  ],
+  "lastimar": [
+   "lastimarte"
+  ],
+  "atrapar": [
+   "atraparlo",
+   "atraparme"
+  ],
+  "ocupad": [
+   "ocupados"
+  ],
+  "quiten": [
+   "quítense"
+  ],
+  "hagan": [
+   "háganlo"
+  ],
+  "mové": [
+   "moveos"
+  ],
+  "atrapad": [
+   "atrapados"
+  ],
+  "escuchen": [
+   "escúchenme"
+  ],
+  "deshaz": [
+   "deshazte"
+  ],
+  "enfrentar": [
+   "enfrentarse",
+   "enfrentarme",
+   "enfrentarte"
+  ],
+  "devuelve": [
+   "devuélveme",
+   "devuélvemelo"
+  ],
+  "encarga": [
+   "encárgate"
+  ],
+  "siga": [
+   "sígame"
+  ],
+  "tocar": [
+   "tocarme",
+   "tocarlo",
+   "tocarla",
+   "tocarte"
+  ],
+  "armad": [
+   "armados"
+  ],
+  "suelten": [
+   "suéltenme"
+  ],
+  "aparten": [
+   "apártense"
+  ],
+  "moviendo": [
+   "moviéndose"
+  ],
+  "separar": [
+   "separarnos",
+   "separarse"
+  ],
+  "relajar": [
+   "relajarte",
+   "relajarse",
+   "relajarme"
+  ],
+  "perdonar": [
+   "perdonarme",
+   "perdonarte"
+  ],
+  "encargar": [
+   "encargarme",
+   "encargarse",
+   "encargarte"
+  ],
+  "olvide": [
+   "olvídelo",
+   "olvídese"
+  ],
+  "comunicar": [
+   "comunicarse",
+   "comunicarme",
+   "comunicarnos"
+  ],
+  "separad": [
+   "separados"
+  ],
+  "pudre": [
+   "púdrete"
+  ],
+  "comprobar": [
+   "comprobarlo"
+  ],
+  "digan": [
+   "díganme",
+   "díganle"
+  ],
+  "seguir": [
+   "seguirme",
+   "seguirlo",
+   "seguirte",
+   "seguirle"
+  ],
+  "mudar": [
+   "mudarse",
+   "mudarme",
+   "mudarnos",
+   "mudarte"
+  ],
+  "ganar": [
+   "ganarse",
+   "ganarme",
+   "ganarle",
+   "ganarte"
+  ],
+  "besar": [
+   "besarte",
+   "besarme",
+   "besarla"
+  ],
+  "aleje": [
+   "aléjese"
+  ],
+  "contesta": [
+   "contéstame"
+  ],
+  "servir": [
+   "servirle",
+   "servirte"
+  ],
+  "defender": [
+   "defenderse",
+   "defenderme",
+   "defendernos"
+  ],
+  "larguemos": [
+   "larguémonos"
+  ],
+  "invitar": [
+   "invitarte",
+   "invitarme",
+   "invitarla"
+  ],
+  "permitan": [
+   "permítanme"
+  ],
+  "discutir": [
+   "discutirlo"
+  ],
+  "diciendo": [
+   "diciéndome",
+   "diciéndole"
+  ],
+  "engañar": [
+   "engañarme",
+   "engañarte"
+  ],
+  "muere": [
+   "muérete"
+  ],
+  "preocupad": [
+   "preocupados"
+  ],
+  "controlar": [
+   "controlarlo",
+   "controlarme"
+  ],
+  "saquen": [
+   "sáquenlo",
+   "sáquenme"
+  ],
+  "acercando": [
+   "acercándose"
+  ],
+  "celebrar": [
+   "celebrarlo"
+  ],
+  "casa": [
+   "cásate"
+  ],
+  "cuidar": [
+   "cuidarte",
+   "cuidarme",
+   "cuidarse",
+   "cuidarlo",
+   "cuidarla"
+  ],
+  "quite": [
+   "quítese"
+  ],
+  "porta": [
+   "pórtate"
+  ],
+  "concentrar": [
+   "concentrarme",
+   "concentrarte",
+   "concentrarse",
+   "concentrarnos"
+  ],
+  "vengar": [
+   "vengarse",
+   "vengarme",
+   "vengarte"
+  ],
+  "duerme": [
+   "duérmete"
+  ],
+  "apaga": [
+   "apágalo",
+   "apágala"
+  ],
+  "callar": [
+   "callarte",
+   "callarse"
+  ],
+  "levante": [
+   "levántese"
+  ],
+  "amar": [
+   "amarte",
+   "amarme"
+  ],
+  "marcha": [
+   "márchate",
+   "marchaos"
+  ],
+  "acuesta": [
+   "acuéstate"
+  ],
+  "rendir": [
+   "rendirse",
+   "rendirte"
+  ],
+  "destruir": [
+   "destruirlo",
+   "destruirla"
+  ],
+  "retiren": [
+   "retírense"
+  ],
+  "resolver": [
+   "resolverlo"
+  ],
+  "mantengan": [
+   "manténganse"
+  ],
+  "vender": [
+   "venderlo",
+   "venderla",
+   "venderle",
+   "venderme"
+  ],
+  "enterar": [
+   "enterarse",
+   "enterarme"
+  ],
+  "pregunte": [
+   "pregúntele"
+  ],
+  "enamorad": [
+   "enamorados"
+  ],
+  "alejar": [
+   "alejarme",
+   "alejarte",
+   "alejarse"
+  ],
+  "convencer": [
+   "convencerme",
+   "convencerlo",
+   "convencerte",
+   "convencerla",
+   "convencerlos"
+  ],
+  "relaje": [
+   "relájese"
+  ],
+  "robar": [
+   "robarle",
+   "robarme"
+  ],
+  "imaginar": [
+   "imaginarme",
+   "imaginarte",
+   "imaginarlo",
+   "imaginarse"
+  ],
+  "pega": [
+   "pégale",
+   "pégame"
+  ],
+  "demos": [
+   "démosle"
+  ],
+  "prueba": [
+   "pruébalo"
+  ],
+  "mirando": [
+   "mirándome"
+  ],
+  "superar": [
+   "superarlo"
+  ],
+  "cerrad": [
+   "cerrados"
+  ],
+  "escapar": [
+   "escaparse",
+   "escaparme",
+   "escaparte"
+  ],
+  "visitar": [
+   "visitarme",
+   "visitarte",
+   "visitarnos",
+   "visitarla",
+   "visitarlo"
+  ],
+  "repetir": [
+   "repetirlo"
+  ],
+  "pide": [
+   "pídele"
+  ],
+  "abrir": [
+   "abrirla",
+   "abrirlo",
+   "abrirse"
+  ],
+  "mire": [
+   "míreme",
+   "mírelo"
+  ],
+  "vestir": [
+   "vestirme",
+   "vestirse",
+   "vestirte"
+  ],
+  "arriesgar": [
+   "arriesgarme",
+   "arriesgarse",
+   "arriesgarnos"
+  ],
+  "sujeta": [
+   "sujétate",
+   "sujétalo"
+  ],
+  "asesinad": [
+   "asesinados"
+  ],
+  "asegure": [
+   "asegúrese"
+  ],
+  "pierde": [
+   "piérdete"
+  ],
+  "acerquen": [
+   "acérquense"
+  ],
+  "calmar": [
+   "calmarte",
+   "calmarse",
+   "calmarme"
+  ],
+  "dejemos": [
+   "dejémoslo"
+  ],
+  "morir": [
+   "morirse",
+   "morirme"
+  ],
+  "quejar": [
+   "quejarte",
+   "quejarse",
+   "quejarme"
+  ],
+  "coger": [
+   "cogerlo",
+   "cogerme",
+   "cogerte"
+  ],
+  "abraza": [
+   "abrázame"
+  ],
+  "pensando": [
+   "pensándolo"
+  ],
+  "asustar": [
+   "asustarme",
+   "asustarte"
+  ],
+  "descubrir": [
+   "descubrirlo"
+  ],
+  "sentid": [
+   "sentidos"
+  ],
+  "buscando": [
+   "buscándote",
+   "buscándolo"
+  ],
+  "aliad": [
+   "aliados"
+  ],
+  "informar": [
+   "informarle"
+  ],
+  "esconde": [
+   "escóndete"
+  ],
+  "larguen": [
+   "lárguense"
+  ],
+  "intentando": [
+   "intentándolo"
+  ],
+  "crean": [
+   "créanme"
+  ],
+  "pe": [
+   "pelos"
+  ],
+  "paste": [
+   "pasteles"
+  ],
+  "recuperar": [
+   "recuperarlo",
+   "recuperarla",
+   "recuperarse"
+  ],
+  "preparar": [
+   "prepararme",
+   "prepararte",
+   "prepararse",
+   "prepararnos"
+  ],
+  "permitir": [
+   "permitirme",
+   "permitirnos",
+   "permitirlo",
+   "permitirse"
+  ],
+  "acuerda": [
+   "acuérdate"
+  ],
+  "mueva": [
+   "muévase"
+  ],
+  "admite": [
+   "admítelo"
+  ],
+  "devolver": [
+   "devolverle",
+   "devolverlo",
+   "devolverme",
+   "devolverte"
+  ],
+  "fije": [
+   "fíjese"
+  ],
+  "demostrar": [
+   "demostrarlo",
+   "demostrarle"
+  ],
+  "prestar": [
+   "prestarme"
+  ],
+  "responde": [
+   "respóndeme"
+  ],
+  "cuente": [
+   "cuénteme"
+  ],
+  "parar": [
+   "pararlo",
+   "pararme",
+   "pararse",
+   "pararte"
+  ],
+  "terminar": [
+   "terminarlo"
+  ],
+  "sentá": [
+   "sentaos"
+  ],
+  "abre": [
+   "ábrelo",
+   "ábrela"
+  ],
+  "comportar": [
+   "comportarse",
+   "comportarte"
+  ],
+  "diviertan": [
+   "diviértanse"
+  ],
+  "aparte": [
+   "apártese"
+  ],
+  "vayamos": [
+   "vayámonos"
+  ],
+  "corre": [
+   "correos"
+  ],
+  "equivocad": [
+   "equivocados"
+  ],
+  "lee": [
+   "léelo"
+  ],
+  "golpear": [
+   "golpearme",
+   "golpearte",
+   "golpearlo"
+  ],
+  "despertar": [
+   "despertarte",
+   "despertarme",
+   "despertarse"
+  ],
+  "comer": [
+   "comerme",
+   "comerse",
+   "comerte"
+  ],
+  "separen": [
+   "sepárense"
+  ],
+  "tome": [
+   "tómese",
+   "tómelo"
+  ],
+  "librar": [
+   "librarse",
+   "librarme",
+   "librarte"
+  ],
+  "enviar": [
+   "enviarme",
+   "enviarle",
+   "enviarte",
+   "enviarlo"
+  ],
+  "consigue": [
+   "consígueme"
+  ],
+  "genera": [
+   "generales"
+  ],
+  "comporta": [
+   "compórtate"
+  ],
+  "poder": [
+   "poderosos"
+  ],
+  "compartir": [
+   "compartirlo"
+  ],
+  "sé": [
+   "senos"
+  ],
+  "hable": [
+   "hábleme"
+  ],
+  "levanten": [
+   "levántense"
+  ],
+  "comercia": [
+   "comerciales"
+  ],
+  "salir": [
+   "salirse",
+   "salirte"
+  ],
+  "desgraciad": [
+   "desgraciados"
+  ],
+  "avisar": [
+   "avisarle",
+   "avisarme"
+  ],
+  "recoger": [
+   "recogerlo",
+   "recogerme",
+   "recogerte",
+   "recogerla"
+  ],
+  "cuide": [
+   "cuídese"
+  ],
+  "busca": [
+   "búscate"
+  ],
+  "largue": [
+   "lárguese"
+  ],
+  "rinde": [
+   "ríndete"
+  ],
+  "cansad": [
+   "cansados"
+  ],
+  "reconocer": [
+   "reconocerlo"
+  ],
+  "mantenga": [
+   "manténgase"
+  ],
+  "escuchad": [
+   "escuchadme"
+  ],
+  "llamad": [
+   "llamados"
+  ],
+  "recuerda": [
+   "recuérdame",
+   "recuérdalo"
+  ],
+  "cortar": [
+   "cortarle",
+   "cortarte",
+   "cortarme"
+  ],
+  "gustar": [
+   "gustarle",
+   "gustarme",
+   "gustarte"
+  ],
+  "solucionar": [
+   "solucionarlo"
+  ],
+  "negar": [
+   "negarlo",
+   "negarse"
+  ],
+  "lleve": [
+   "lléveme",
+   "llévese",
+   "lléveselo"
+  ],
+  "partid": [
+   "partidos"
+  ],
+  "deten": [
+   "detenlo"
+  ],
+  "aseguren": [
+   "asegúrense"
+  ],
+  "entregar": [
+   "entregarme",
+   "entregarle",
+   "entregarte",
+   "entregarlo"
+  ],
+  "arrestar": [
+   "arrestarlo",
+   "arrestarme"
+  ],
+  "dad": [
+   "dadme"
+  ],
+  "acerque": [
+   "acérquese"
+  ],
+  "enamorar": [
+   "enamorarse",
+   "enamorarme"
+  ],
+  "caer": [
+   "caerse"
+  ],
+  "sirve": [
+   "sírvete"
+  ],
+  "preguntando": [
+   "preguntándome"
+  ],
+  "maten": [
+   "mátenlo",
+   "mátenlos"
+  ],
+  "joder": [
+   "joderme"
+  ],
+  "avergonzar": [
+   "avergonzarse",
+   "avergonzarte"
+  ],
+  "cubran": [
+   "cúbranse"
+  ],
+  "advertir": [
+   "advertirle",
+   "advertirte"
+  ],
+  "atrapen": [
+   "atrápenlo"
+  ],
+  "controla": [
+   "contrólate"
+  ],
+  "interesad": [
+   "interesados"
+  ],
+  "lavar": [
+   "lavarme",
+   "lavarte"
+  ],
+  "refugiad": [
+   "refugiados"
+  ],
+  "salva": [
+   "sálvame"
+  ],
+  "agachen": [
+   "agáchense"
+  ],
+  "prepare": [
+   "prepárese"
+  ],
+  "acepta": [
+   "acéptalo"
+  ],
+  "echa": [
+   "échale",
+   "échate"
+  ],
+  "tirar": [
+   "tirarme",
+   "tirarlo",
+   "tirarte",
+   "tirarse"
+  ],
+  "arrodilla": [
+   "arrodíllate"
+  ],
+  "valga": [
+   "válgame"
+  ],
+  "seguid": [
+   "seguidme",
+   "seguidos"
+  ],
+  "comprender": [
+   "comprenderlo"
+  ],
+  "limpiar": [
+   "limpiarlo"
+  ],
+  "acostumbrar": [
+   "acostumbrarme",
+   "acostumbrarse"
+  ],
+  "mentir": [
+   "mentirle",
+   "mentirme",
+   "mentirte"
+  ],
+  "parad": [
+   "parados"
+  ],
+  "despide": [
+   "despídete"
+  ],
+  "agarren": [
+   "agárrense",
+   "agárrenlo"
+  ],
+  "conectad": [
+   "conectados"
+  ],
+  "asustad": [
+   "asustados"
+  ],
+  "une": [
+   "únete"
+  ],
+  "disfruta": [
+   "disfrútalo"
+  ],
+  "sentemos": [
+   "sentémonos"
+  ],
+  "digita": [
+   "digitales"
+  ],
+  "miren": [
+   "mírenlo",
+   "mírenme"
+  ],
+  "impedir": [
+   "impedirlo"
+  ],
+  "tira": [
+   "tírala",
+   "tíralo"
+  ],
+  "compra": [
+   "cómprate"
+  ],
+  "escribir": [
+   "escribirlo",
+   "escribirle"
+  ],
+  "píe": [
+   "pieles"
+  ],
+  "explica": [
+   "explícame"
+  ],
+  "lava": [
+   "lávate"
+  ],
+  "encuentra": [
+   "encuéntrame",
+   "encuéntralo"
+  ],
+  "dirigir": [
+   "dirigirse"
+  ],
+  "ayudad": [
+   "ayudadme"
+  ],
+  "romper": [
+   "romperse"
+  ],
+  "helad": [
+   "helados"
+  ],
+  "acompaña": [
+   "acompáñame"
+  ],
+  "cerca": [
+   "cercanos"
+  ],
+  "cubre": [
+   "cúbreme"
+  ],
+  "mencionar": [
+   "mencionarlo"
+  ],
+  "acordar": [
+   "acordarme"
+  ],
+  "herir": [
+   "herirte"
+  ],
+  "resistir": [
+   "resistirse"
+  ],
+  "apure": [
+   "apúrese"
+  ],
+  "mentá": [
+   "mentales"
+  ],
+  "fijen": [
+   "fíjense"
+  ],
+  "apagar": [
+   "apagarlo"
+  ],
+  "acompañe": [
+   "acompáñeme"
+  ],
+  "guarda": [
+   "guárdalo"
+  ],
+  "considerar": [
+   "considerarlo"
+  ],
+  "pesad": [
+   "pesados"
+  ],
+  "privad": [
+   "privados"
+  ],
+  "cuiden": [
+   "cuídense"
+  ],
+  "ocultar": [
+   "ocultarlo"
+  ],
+  "decid": [
+   "decidme"
+  ],
+  "obligar": [
+   "obligarme"
+  ],
+  "imagine": [
+   "imagínese"
+  ],
+  "considera": [
+   "considéralo"
+  ],
+  "ven": [
+   "vente"
+  ],
+  "atrapa": [
+   "atrápalo"
+  ],
+  "envía": [
+   "envíame"
+  ],
+  "prometer": [
+   "prometerme"
+  ],
+  "apurar": [
+   "apurarnos"
+  ],
+  "perdonad": [
+   "perdonadme"
+  ],
+  "encerrad": [
+   "encerrados"
+  ],
+  "pes": [
+   "pesos"
+  ],
+  "rodead": [
+   "rodeados"
+  ],
+  "pongamos": [
+   "pongámonos"
+  ],
+  "llamen": [
+   "llámenme"
+  ],
+  "muestre": [
+   "muéstreme"
+  ],
+  "burlar": [
+   "burlarse"
+  ],
+  "tratar": [
+   "tratarme",
+   "tratarse",
+   "tratarlo"
+  ],
+  "intente": [
+   "inténtelo"
+  ],
+  "reunid": [
+   "reunidos"
+  ],
+  "alimentar": [
+   "alimentarse"
+  ],
+  "guardar": [
+   "guardarlo"
+  ],
+  "enterrar": [
+   "enterrarlo"
+  ],
+  "avise": [
+   "avíseme"
+  ],
+  "olviden": [
+   "olvídenlo"
+  ],
+  "oler": [
+   "olerlo"
+  ],
+  "culpar": [
+   "culparte",
+   "culparme"
+  ],
+  "abrazar": [
+   "abrazarte"
+  ],
+  "querer": [
+   "quererte"
+  ],
+  "arruinar": [
+   "arruinarlo"
+  ],
+  "subir": [
+   "subirme"
+  ],
+  "mandar": [
+   "mandarme"
+  ],
+  "confirmar": [
+   "confirmarlo"
+  ],
+  "cambia": [
+   "cámbiate"
+  ],
+  "retire": [
+   "retírese"
+  ],
+  "largar": [
+   "largarme",
+   "largarnos"
+  ],
+  "golpea": [
+   "golpéame"
+  ],
+  "involucrad": [
+   "involucrados"
+  ],
+  "involucrar": [
+   "involucrarme"
+  ],
+  "disfrutar": [
+   "disfrutarlo"
+  ],
+  "alegra": [
+   "alégrate"
+  ],
+  "espacia": [
+   "espaciales"
+  ],
+  "pasad": [
+   "pasados"
+  ],
+  "esperen": [
+   "espérenme"
+  ],
+  "retira": [
+   "retírate"
+  ],
+  "pasa": [
+   "pásamelo"
+  ],
+  "describir": [
+   "describirlo"
+  ],
+  "poné": [
+   "poneos"
+  ],
+  "perdonen": [
+   "perdónenme"
+  ],
+  "revisar": [
+   "revisarlo"
+  ],
+  "esperar": [
+   "esperarme"
+  ],
+  "presta": [
+   "préstame"
+  ],
+  "decidir": [
+   "decidirlo"
+  ],
+  "repite": [
+   "repítelo"
+  ],
+  "identificar": [
+   "identificarlo"
+  ],
+  "robad": [
+   "robados"
+  ],
+  "relajen": [
+   "relájense"
+  ],
+  "odiar": [
+   "odiarme"
+  ],
+  "acusad": [
+   "acusados"
+  ],
+  "desesperad": [
+   "desesperados"
+  ],
+  "intentemos": [
+   "intentémoslo"
+  ],
+  "arregla": [
+   "arréglalo"
+  ],
+  "bañar": [
+   "bañarse"
+  ],
+  "reparar": [
+   "repararlo"
+  ],
+  "sorprender": [
+   "sorprenderte"
+  ],
+  "despierta": [
+   "despiértate"
+  ],
+  "lea": [
+   "leales"
+  ],
+  "vuelve": [
+   "vuélvete"
+  ],
+  "agarrar": [
+   "agarrarlo"
+  ],
+  "preocupa": [
+   "preocúpate"
+  ],
+  "marche": [
+   "márchese"
+  ],
+  "ofender": [
+   "ofenderte"
+  ],
+  "comunica": [
+   "comunícame"
+  ],
+  "enviad": [
+   "enviados"
+  ],
+  "muriendo": [
+   "muriéndose"
+  ]
+ },
+ "freed": 1032,
+ "entering": [
+  "continuemos",
+  "pelirroja",
+  "erección",
+  "luchas",
+  "odie",
+  "racha",
+  "uvas",
+  "leyendas",
+  "mara",
+  "marchas",
+  "construimos",
+  "predicador",
+  "soltadme",
+  "equivocadas",
+  "funcionario",
+  "robamos",
+  "arrojó",
+  "cantas",
+  "jinetes",
+  "preguntarse",
+  "aguantarlo",
+  "comerlo",
+  "consumo",
+  "librería",
+  "simpatía",
+  "veterano",
+  "desaparecerá",
+  "explosiones",
+  "lleváoslo",
+  "ocuparnos",
+  "planeo",
+  "resurrección",
+  "donación",
+  "retiró",
+  "volador",
+  "leeré",
+  "cucarachas",
+  "pásala",
+  "búscalo",
+  "recogió",
+  "satisfecha",
+  "mecánica",
+  "risas",
+  "usual",
+  "contaminación",
+  "creímos",
+  "genético",
+  "satán",
+  "sede",
+  "íntimo",
+  "cumpliendo",
+  "dirigió",
+  "enviará",
+  "columbia",
+  "vargas",
+  "acompañaré",
+  "cuidará",
+  "deliberadamente",
+  "enteraste",
+  "tendencia",
+  "armadas",
+  "baratos",
+  "orientación",
+  "agrado",
+  "chester",
+  "pego",
+  "adicional",
+  "portado",
+  "pálida",
+  "tablas",
+  "comieron",
+  "idiomas",
+  "invencible",
+  "empeorar",
+  "sujétense",
+  "cejas",
+  "cobertizo",
+  "ele",
+  "entenderías",
+  "crueles",
+  "ibamos",
+  "permanezca",
+  "siguiera",
+  "dadle",
+  "investiga",
+  "preparó",
+  "quítamelo",
+  "deriva",
+  "apartado",
+  "burbuja",
+  "continúan",
+  "crié",
+  "cóctel",
+  "económica",
+  "burdel",
+  "enseñas",
+  "entregarse",
+  "esperarte",
+  "seguidas",
+  "agotada",
+  "manguera",
+  "antigüedad",
+  "enfermero",
+  "invertido",
+  "prototipo",
+  "sirviendo",
+  "tenedor",
+  "culpes",
+  "largaos",
+  "mexicanos",
+  "pesas",
+  "recoja",
+  "noventa",
+  "fragmento",
+  "síntoma",
+  "quisieron",
+  "romperé",
+  "traicionar",
+  "comerciante",
+  "lavarse",
+  "percepción",
+  "preguntamos",
+  "vendedores",
+  "alcaide",
+  "retrete",
+  "cereales",
+  "cocodrilo",
+  "mantendremos",
+  "pensemos",
+  "rendirme",
+  "neutral",
+  "ofendas",
+  "panamá",
+  "taxis",
+  "empuje",
+  "honrar",
+  "mirándote",
+  "silenciosa",
+  "alcohólico",
+  "defendiendo",
+  "casará",
+  "cayo",
+  "dámelas",
+  "inauguración",
+  "lastimarme",
+  "presiones",
+  "amablemente",
+  "crearon",
+  "limpiado",
+  "recogido",
+  "sacará",
+  "suposición",
+  "brindo",
+  "ceder",
+  "negociación",
+  "permito",
+  "comprensible",
+  "mandas",
+  "tacto",
+  "movemos",
+  "sudando",
+  "vivan",
+  "cesta",
+  "destruyeron",
+  "gasto",
+  "representan",
+  "conste",
+  "funcionaría",
+  "bárbaro",
+  "descenso",
+  "amaré",
+  "limpiarte",
+  "matrimonios",
+  "colaboración",
+  "formado",
+  "aguante",
+  "obstáculos",
+  "preocuparía",
+  "renunció",
+  "romperle",
+  "labial",
+  "merced",
+  "tacos",
+  "advirtió",
+  "esquinas",
+  "ansiosa",
+  "osito",
+  "reducido",
+  "transportar",
+  "vinos",
+  "brillar",
+  "cabras",
+  "gobiernos",
+  "hagáis",
+  "jaque",
+  "tócame",
+  "cumplí",
+  "arrogancia",
+  "atravesando",
+  "escogí",
+  "forastero",
+  "reventar",
+  "ayudaron",
+  "obtenido",
+  "compensar",
+  "dieran",
+  "enterrada",
+  "patética",
+  "acabaremos",
+  "holandés",
+  "picado",
+  "recordará",
+  "rutas",
+  "clavos",
+  "conquista",
+  "juegue",
+  "atómica",
+  "pasatiempo",
+  "probé",
+  "escombros",
+  "ganso",
+  "presten",
+  "severo",
+  "parecida",
+  "camisetas",
+  "inmenso",
+  "creyera",
+  "destruidos",
+  "dormidos",
+  "iglesias",
+  "artístico",
+  "ayudaba",
+  "dejare",
+  "encargaremos",
+  "forzar",
+  "motín",
+  "fallecido",
+  "antibióticos",
+  "chófer",
+  "planeamos",
+  "pureza",
+  "vendía",
+  "acabarás",
+  "mola",
+  "avisarte",
+  "pasajes",
+  "audio",
+  "averiguado",
+  "bebamos",
+  "electrónica",
+  "meterla",
+  "ocultarse",
+  "topo",
+  "oírlos",
+  "publicado",
+  "recordarles",
+  "trama",
+  "críticas",
+  "dirigiendo",
+  "ocurriría",
+  "acusar",
+  "buscabas",
+  "temporalmente",
+  "activos",
+  "agradas",
+  "arranque",
+  "agradecerme",
+  "búscame",
+  "cerraron",
+  "críos",
+  "ingenio",
+  "intensa",
+  "tensa",
+  "tornado",
+  "cagado",
+  "chismes",
+  "juré",
+  "psicólogo",
+  "separadas",
+  "alarmas",
+  "bajes",
+  "enfermó",
+  "voluntariamente",
+  "actuado",
+  "amarlo",
+  "entraba",
+  "microondas",
+  "pandillas",
+  "vistes",
+  "corrección",
+  "descubren",
+  "po",
+  "atleta",
+  "circulación",
+  "conociendo",
+  "ganaba",
+  "lanzas",
+  "española",
+  "estima",
+  "mandarlo",
+  "pizca",
+  "agarro",
+  "felizmente",
+  "publico",
+  "quemada",
+  "marchen",
+  "mejillas",
+  "monumento",
+  "quedaban",
+  "abordar",
+  "abordo",
+  "baba",
+  "carpa",
+  "cazas",
+  "grial",
+  "fibra",
+  "ladrona",
+  "trajera",
+  "diplomático",
+  "paranoia",
+  "acuesta",
+  "acusada",
+  "contabilidad",
+  "enfrentarlo",
+  "futuros",
+  "enamoró",
+  "fiar",
+  "lima",
+  "anestesia",
+  "acaben",
+  "anomalía",
+  "ayudaremos",
+  "bebió",
+  "coña",
+  "funeraria",
+  "ji",
+  "pecadores",
+  "permitirle",
+  "saltado",
+  "buscaban",
+  "escritora",
+  "guardan",
+  "habremos",
+  "rol",
+  "sexta",
+  "aprovecharse",
+  "biología",
+  "coinciden",
+  "manager",
+  "catedral",
+  "molestan",
+  "cafés",
+  "esperaría",
+  "quebrado",
+  "agonía",
+  "cuyos",
+  "póliza",
+  "rastreando",
+  "tesis",
+  "vitaminas",
+  "ano",
+  "vieran",
+  "solteros",
+  "vanidad",
+  "atada",
+  "gire",
+  "miraré",
+  "obligados",
+  "conciertos",
+  "metáfora",
+  "contexto",
+  "maricones",
+  "ruega",
+  "strike",
+  "barbie",
+  "interrupción",
+  "tirada",
+  "avergüenza",
+  "guapas",
+  "monjas",
+  "despiertas",
+  "dormimos",
+  "camine",
+  "comporta",
+  "insolente",
+  "levantas",
+  "mantas",
+  "presionando",
+  "relacionados",
+  "jarra",
+  "negarme",
+  "recibirme",
+  "carreta",
+  "dieciocho",
+  "forenses",
+  "importo",
+  "troya",
+  "directiva",
+  "enfrentarnos",
+  "cumplo",
+  "bebí",
+  "ducharme",
+  "látigo",
+  "plegarias",
+  "suben",
+  "banana",
+  "bañarme",
+  "convencida",
+  "legión",
+  "llevármelo",
+  "ninja",
+  "orcos",
+  "laboral",
+  "quedártelo",
+  "calentar",
+  "penal",
+  "resuelve",
+  "deprimida",
+  "explicarles",
+  "investigado",
+  "peleen",
+  "convertiste",
+  "títulos",
+  "besé",
+  "conductores",
+  "esperó",
+  "senté",
+  "pertenencias",
+  "recupera",
+  "liberarte",
+  "libreta",
+  "discúlpenos",
+  "imprudente",
+  "beben",
+  "detenidos",
+  "gatita",
+  "impresionada",
+  "recibirás",
+  "olvidarnos",
+  "trío",
+  "barrios",
+  "disfrazado",
+  "largarse",
+  "morada",
+  "alejada",
+  "interesaba",
+  "manifestación",
+  "arroja",
+  "preparándose",
+  "suegra",
+  "demandar",
+  "detectado",
+  "trompeta",
+  "íntimos",
+  "acuestas",
+  "cálculo",
+  "funcionarios",
+  "amistoso",
+  "hirieron",
+  "legítima",
+  "espéreme",
+  "jurar",
+  "union",
+  "carguen",
+  "determinación",
+  "bajarme",
+  "dinosaurios",
+  "logras",
+  "mentirosos",
+  "necesitado",
+  "volverías",
+  "dato",
+  "grabaciones",
+  "plantar",
+  "caminas",
+  "démela",
+  "justos",
+  "viola",
+  "ametralladora",
+  "armando",
+  "vales",
+  "yerno",
+  "codicia",
+  "conmovedor",
+  "continuo",
+  "faltar",
+  "pilas",
+  "sastre",
+  "suspensión",
+  "casara",
+  "cortarlo",
+  "homenaje",
+  "animado",
+  "arsenal",
+  "pagaremos",
+  "importarle",
+  "ordenadores",
+  "faz",
+  "póker",
+  "temblar",
+  "fernando",
+  "prado",
+  "taquilla",
+  "arreglarla",
+  "fascista",
+  "oral",
+  "rastreador",
+  "barriles",
+  "magistrado",
+  "agradecértelo",
+  "discutido",
+  "alegres",
+  "representantes",
+  "ahogado",
+  "sanos",
+  "acusarme",
+  "ayudamos",
+  "controlarte",
+  "beta",
+  "mutantes",
+  "mandaste",
+  "mentalmente",
+  "pegué",
+  "porción",
+  "acompañado",
+  "comarca",
+  "compromisos",
+  "repuesto",
+  "secuestradores",
+  "duran",
+  "tenerlas",
+  "aumentando",
+  "detectar",
+  "tires",
+  "secuestraron",
+  "tercio",
+  "bancarrota",
+  "bledo",
+  "cruzada",
+  "créditos",
+  "reflejos",
+  "aliviar",
+  "ca",
+  "caviar",
+  "holanda",
+  "absurda",
+  "despertarlo",
+  "altitud",
+  "convicto",
+  "dinosaurio",
+  "esperándolo",
+  "luchan",
+  "entrara",
+  "intacto",
+  "lastimes",
+  "confunde",
+  "diseñador",
+  "préstamos",
+  "tradiciones",
+  "cúbrete",
+  "dividir",
+  "secuestrar",
+  "cogerla",
+  "mermelada",
+  "psicológico",
+  "recuéstate",
+  "sobrevive",
+  "afectó",
+  "inventando",
+  "relajado",
+  "arre",
+  "cambiarla",
+  "cobro",
+  "consulado",
+  "desacuerdo",
+  "semental",
+  "medir",
+  "rompes",
+  "usaban",
+  "gala",
+  "preguntártelo",
+  "reunirte",
+  "plantado",
+  "preferirías",
+  "casarás",
+  "huérfano",
+  "mariposas",
+  "populares",
+  "saludarte",
+  "contestes",
+  "encerrar",
+  "molesten",
+  "coser",
+  "económico",
+  "golpee",
+  "odiaría",
+  "cucaracha",
+  "quitan",
+  "arrestados",
+  "gata",
+  "mesías",
+  "musicales",
+  "reglamento",
+  "subirse",
+  "árbitro",
+  "busques",
+  "comparten",
+  "divorciado",
+  "tostadas",
+  "venías",
+  "noción",
+  "ocupará",
+  "perseguido",
+  "quitaste",
+  "reporteros",
+  "vegetales",
+  "terminaremos",
+  "ayudarán",
+  "carpintero",
+  "veinticinco",
+  "camara",
+  "contestado",
+  "darlo",
+  "delfines",
+  "sapo",
+  "alterada",
+  "alucinante",
+  "radiante",
+  "soporta",
+  "arzobispo",
+  "engañas",
+  "imitación",
+  "cenicienta",
+  "extraer",
+  "quererme",
+  "rastrearlo",
+  "compraron",
+  "definitivo",
+  "destructor",
+  "invitaste",
+  "anota",
+  "características",
+  "concha",
+  "encendedor",
+  "bocadillo",
+  "echarnos",
+  "baronesa",
+  "cora",
+  "novatos",
+  "royal",
+  "subconsciente",
+  "finca",
+  "olvidan",
+  "pino",
+  "aficionados",
+  "facial",
+  "sostenlo",
+  "utilidad",
+  "continuamos",
+  "enseñarnos",
+  "despierten",
+  "moción",
+  "tocamos",
+  "visible",
+  "pasaban",
+  "viajo",
+  "apasionado",
+  "lucía",
+  "micrófonos",
+  "mordida",
+  "mutuo",
+  "pegue",
+  "secuestrador",
+  "banderas",
+  "condujo",
+  "ponlos",
+  "seguían",
+  "traería",
+  "bocado",
+  "domina",
+  "karate",
+  "tómense",
+  "ada",
+  "biológico",
+  "bromear",
+  "cierras",
+  "incidentes",
+  "trabajaste",
+  "trapo",
+  "cayera",
+  "momia",
+  "muéstramelo",
+  "rompen",
+  "arreglárselas",
+  "comienzas",
+  "permitirte",
+  "obedece",
+  "sírvase",
+  "destruirlos",
+  "diciéndote",
+  "esponja",
+  "tocaste",
+  "vengar",
+  "decírnoslo",
+  "diecisiete",
+  "exagerado",
+  "leía",
+  "llamarás",
+  "mismísimo",
+  "traeremos",
+  "veías",
+  "búfalo",
+  "histérica",
+  "llanto",
+  "molestas",
+  "viéndote",
+  "devolvérselo",
+  "enviarán",
+  "frontal",
+  "acontecimiento",
+  "echaste",
+  "psíquico",
+  "antigüedades",
+  "divorciarse",
+  "jornada",
+  "maquinaria",
+  "rayas",
+  "robarte",
+  "casaría",
+  "indias",
+  "subirte",
+  "sufren",
+  "entregaré",
+  "terminara",
+  "acabada",
+  "cancela",
+  "chocó",
+  "defenderte",
+  "funcionara",
+  "guárdate",
+  "habra",
+  "obtuviste",
+  "tiran",
+  "apoderarse",
+  "incumbe",
+  "puntual",
+  "ahorrado",
+  "contestas",
+  "darían",
+  "enviarla",
+  "transportador",
+  "índice",
+  "defiende",
+  "descargar",
+  "hirió",
+  "repartir",
+  "alquilado",
+  "lateral",
+  "ecuación",
+  "labio",
+  "movida",
+  "acostó",
+  "balsa",
+  "empeorando",
+  "fabrica",
+  "notó",
+  "whiskey",
+  "bajan",
+  "cordón",
+  "dolorosa",
+  "entusiasmado",
+  "hambrienta",
+  "aprieto",
+  "bloquear",
+  "equivocaste",
+  "lloraba",
+  "metrópolis",
+  "sorda",
+  "transición",
+  "astronautas",
+  "observado",
+  "protocolos",
+  "conserva",
+  "grieta",
+  "respondo",
+  "reparaciones",
+  "ande",
+  "defensiva",
+  "espacios",
+  "marcial",
+  "sofisticado",
+  "amarillos",
+  "propuso",
+  "agresiva",
+  "visitando",
+  "alterar",
+  "difícilmente",
+  "españoles",
+  "crudo",
+  "elfos",
+  "proveedor",
+  "bebía",
+  "exitosa",
+  "himno",
+  "mantenme",
+  "telefónicas",
+  "telefónico",
+  "curarse",
+  "logre",
+  "apelación",
+  "decepcionarte",
+  "llevarlas",
+  "abrigos",
+  "asuste",
+  "cenas",
+  "cuota",
+  "estudió",
+  "financieros",
+  "iras",
+  "ostras",
+  "universidades",
+  "matarían",
+  "ocúpese",
+  "tic",
+  "ventanilla",
+  "batido",
+  "cisne",
+  "cálida",
+  "faltó",
+  "pidiera",
+  "residuos",
+  "seguirla",
+  "anónimo",
+  "cartuchos",
+  "detenemos",
+  "perdonaré",
+  "empujó",
+  "solicita",
+  "vainilla",
+  "inició",
+  "vendrían",
+  "ajustar",
+  "anotar",
+  "filtro",
+  "frescos",
+  "invitas",
+  "viajan",
+  "escalones",
+  "escapaste",
+  "lloré",
+  "sobras",
+  "elle",
+  "aprobar",
+  "contribución",
+  "invitaron",
+  "cruces",
+  "detuve",
+  "devolvió",
+  "laboratorios",
+  "prioridades",
+  "profundidades",
+  "ricas",
+  "cabellos",
+  "culturas",
+  "gótica",
+  "mutante",
+  "pub",
+  "diccionario",
+  "guardaré",
+  "bistec",
+  "consigamos",
+  "estrecho",
+  "haberlas",
+  "aviación",
+  "miraste",
+  "acordar",
+  "advertido",
+  "dirían",
+  "preste",
+  "tazas",
+  "coged",
+  "curas",
+  "enmienda",
+  "relato",
+  "rodean",
+  "tazón",
+  "viéndolo",
+  "alcanzarlo",
+  "enemiga",
+  "fijaos",
+  "verdaderas",
+  "acelerar",
+  "columnas",
+  "obrero",
+  "sanguínea",
+  "consultar",
+  "discusiones",
+  "distraído",
+  "gen",
+  "titular",
+  "gitanos",
+  "gritas",
+  "obligada",
+  "sácalos",
+  "emborracharme",
+  "insistes",
+  "ingles",
+  "maniobras",
+  "antorcha",
+  "atraviesa",
+  "largarte",
+  "montando",
+  "sucesos",
+  "triángulo",
+  "violada",
+  "castro",
+  "visa",
+  "diríjanse",
+  "esconden",
+  "haznos",
+  "importarme",
+  "rendir",
+  "acabes",
+  "conflictos",
+  "adivino",
+  "avisó",
+  "divertimos",
+  "hundió",
+  "mezclado",
+  "co",
+  "llevabas",
+  "posterior",
+  "pulsera",
+  "supervisión",
+  "amnesia",
+  "cuadrado",
+  "culpas",
+  "producido",
+  "vagabundos",
+  "arrepentirás",
+  "enseñará",
+  "felicitarte",
+  "olvidaron",
+  "vivíamos",
+  "alérgica",
+  "desarmado",
+  "lujuria",
+  "bono",
+  "matemática",
+  "eje",
+  "intercambiar",
+  "jugué",
+  "rechaza",
+  "reportar",
+  "asma",
+  "bofetada",
+  "enterrados",
+  "abandonaste",
+  "buscándola",
+  "erupción",
+  "hércules",
+  "morí",
+  "oigas",
+  "secuestró",
+  "actúan",
+  "dilema",
+  "joyería",
+  "llevártelo",
+  "olvidará",
+  "proponer",
+  "corrido",
+  "llévenme",
+  "manipular",
+  "nochebuena",
+  "observen",
+  "notaste",
+  "sacos",
+  "confían",
+  "corral",
+  "impostor",
+  "paran",
+  "extrañaré",
+  "pizarra",
+  "póntela",
+  "aéreas",
+  "darla",
+  "preocupar",
+  "tened",
+  "trabajaban",
+  "muestro",
+  "motos",
+  "quedaros",
+  "mercurio",
+  "patata",
+  "revolucionario",
+  "transformación",
+  "cerré",
+  "colmena",
+  "costas",
+  "curarme",
+  "cuéntales",
+  "cómete",
+  "entendimiento",
+  "hipótesis",
+  "rivales",
+  "tomarás",
+  "arriesgando",
+  "duela",
+  "extinción",
+  "usados",
+  "acampar",
+  "bridge",
+  "casan",
+  "cortan",
+  "explicó",
+  "indicada",
+  "robe",
+  "justificar",
+  "nalgas",
+  "paco",
+  "pasillos",
+  "sentaba",
+  "siniestro",
+  "aburridos",
+  "compadre",
+  "elegantes",
+  "hum",
+  "parásito",
+  "ternera",
+  "traeme",
+  "charlas",
+  "compruébalo"
+ ]
+}
