@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-23T21:25:00+01:00",
+      "date": "2026-09-23 21:25 BST",
+      "agent": "Cursor",
+      "summary": "Fast Track fills the phone screen in the language colour. Skip obvious words comes first, merged forms show each word beside its surfaces, and studying skipped words is its own level and set screen.",
+      "detail": [
+        "On a phone the Fast Track page, the skipped-word list, the merged-forms list and the study screen use the full width and height.",
+        "Toggles use the language colour. The on/off control sits beside View skipped words or View merged forms.",
+        "Skip obvious words is the first setting. Study words skipped by Fast Track opens a screen where you pick a level and a set.",
+        "Merged forms are one row per word: frequency rank, the lemma and its translation, then the surface forms, with + x when they do not fit.",
+        "Skipped words sit in two centred columns. The English side is the shipped cognate when the file has one, otherwise the gloss on the card that most resembles the word."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-23T20:39:00+01:00",
       "date": "2026-09-23 20:39 BST",
       "agent": "Cursor",

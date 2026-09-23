@@ -2977,71 +2977,63 @@ function renderSetupExtrasSection() {
 // The Fast Track sheet's "review home" section. Same content as the card that
 // used to sit under the set picker, rendered into #fastTrackDeckCard instead, so
 // the setup screen keeps to one button per section.
+function closeFastTrackStudy() {
+    document.getElementById('fastTrackStudyModal')?.classList.add('hidden');
+}
+
+function openFastTrackStudy() {
+    const extrasData = globalThis.collectExtras ? globalThis.collectExtras() : { cognates: [], lemmas: [] };
+    const body = document.getElementById('fastTrackStudyBody');
+    if (!body) return;
+    body.innerHTML = globalThis.renderFastTrackDeck?.(extrasData, {
+        ranges: getActiveLevelRanges(), selectedLevel,
+        progressForItem: item => getSetupLearningState(item)
+    }) || '';
+    body.querySelectorAll('.extras-set-pill').forEach(button => {
+        button.addEventListener('click', event => {
+            event.stopPropagation();
+            globalThis.startFastTrackSkippedSet?.(
+                button.dataset.ftKind, Number(button.dataset.ftStart),
+                Number(button.dataset.ftLevel), getActiveLevelRanges()
+            );
+        });
+    });
+    const modal = document.getElementById('fastTrackStudyModal');
+    const close = document.getElementById('closeFastTrackStudyModal');
+    if (close && !close.dataset.bound) {
+        close.dataset.bound = '1';
+        close.addEventListener('click', closeFastTrackStudy);
+    }
+    if (modal && !modal.dataset.bound) {
+        modal.dataset.bound = '1';
+        modal.addEventListener('click', event => {
+            if (event.target?.id === 'fastTrackStudyModal') closeFastTrackStudy();
+        });
+    }
+    modal?.classList.remove('hidden');
+}
+
 function renderFastTrackSkippedDecks() {
     const card = document.getElementById('fastTrackDeckCard');
     if (!card) return;
     const extrasData = globalThis.collectExtras ? globalThis.collectExtras() : { cognates: [], lemmas: [] };
     const cognates = extrasData.cognates || [];
-    const lemmas = extrasData.lemmas || [];
-    const totalSkipped = cognates.length + lemmas.length;
 
-    if (totalSkipped > 0) {
-        card.onclick = null;
-        card.style.cursor = 'default';
+    card.onclick = null;
+    card.style.cursor = 'default';
+    if (cognates.length > 0) {
         card.innerHTML = `
-            <div class="extras-deck-content">
-                <div class="extras-deck-status">
-                    <span class="extras-deck-badge is-info">Fast Track</span>
-                    <div class="extras-deck-info">
-                        <strong>${cognates.length
-            ? `${cognates.length.toLocaleString()} words ready to study`
-            : 'No skipped word decks'}</strong>
-                        <p>${cognates.length
-            ? 'Choose a level below, then study a deck of up to 20 words.'
-            : 'Merged forms remain on their shared cards.'}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="extras-deck-groups">${globalThis.renderFastTrackDeck?.(extrasData, {
-                ranges: getActiveLevelRanges(), selectedLevel,
-                progressForItem: item => getSetupLearningState(item)
-            }) || ''}</div>
+            <button type="button" class="fast-track-study-launch" id="studySkippedWordsBtn">
+                <strong>Study words skipped by Fast Track</strong>
+                <span>${cognates.length.toLocaleString()} words</span>
+            </button>
         `;
-        card.querySelectorAll('.extras-set-pill').forEach(button => {
-            button.addEventListener('click', event => {
-                event.stopPropagation();
-                globalThis.startFastTrackSkippedSet?.(
-                    button.dataset.ftKind, Number(button.dataset.ftStart),
-                    Number(button.dataset.ftLevel), getActiveLevelRanges()
-                );
-            });
+        document.getElementById('studySkippedWordsBtn')?.addEventListener('click', event => {
+            event.stopPropagation();
+            openFastTrackStudy();
         });
     } else {
-        card.innerHTML = `
-            <div class="extras-deck-content is-empty">
-                <div class="extras-deck-status">
-                    <span class="extras-deck-badge is-muted">Full deck</span>
-                    <div class="extras-deck-info">
-                        <strong>All words included</strong>
-                        <p>No words are set aside with your current settings. They stay in the main sets.</p>
-                    </div>
-                </div>
-                <div class="extras-deck-actions">
-                    <button type="button" class="extras-deck-browse-btn" id="openFastModeSettingsBtn">
-                        Change what gets skipped <span aria-hidden="true">↑</span>
-                    </button>
-                </div>
-            </div>
-        `;
-        // Already inside the sheet, and the controls sit open above this card,
-        // so the only useful action is to go back up to them.
-        document.getElementById('openFastModeSettingsBtn')?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            document.getElementById('fastModeFineTune')
-                ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-        card.style.cursor = 'default';
-        card.onclick = null;
+        card.innerHTML = `<p class="fast-track-study-empty">No words are set aside with these settings. They stay in the main sets.</p>`;
     }
 }
 
