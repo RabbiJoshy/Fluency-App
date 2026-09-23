@@ -1158,8 +1158,13 @@ def step_clitics(args: argparse.Namespace) -> int:
         """
         if surface.lower() in rule._exact:
             return "conjugation-table form"
+        from fluency.sense_menu.spanishdict_lemmas import headword_key
         page = cache.get(surface) or {}
         for analysis in page.get("dictionary_analyses") or []:
+            # Only the surface's own entry says what the surface is: verte's
+            # page also shows ver (el ver, a noun), which says nothing about verte.
+            if headword_key((analysis or {}).get("headword") or "") != headword_key(surface):
+                continue
             for sense in (analysis or {}).get("senses") or []:
                 pos = str((sense or {}).get("pos") or "").lower()
                 if any(word in pos for word in NON_VERB):
