@@ -570,6 +570,63 @@ function setupSpotifyConnectionUI() {
 
 setupSpotifyConnectionUI();
 
+// Developer-tab trial only. Does not replace Connect or the mobile branch of
+// spotifyLogin(), which still sends the phone to Spotify's website.
+let _iphoneAppAuth = null;
+let _iphoneAppAuthPromise = null;
+
+function _rememberIphoneAppAuth() {
+    if (_iphoneAppAuth || _iphoneAppAuthPromise) return;
+    _iphoneAppAuthPromise = _prepareAuth().then(auth => {
+        _iphoneAppAuthPromise = null;
+        _iphoneAppAuth = auth;
+        if (!auth) {
+            const status = document.getElementById('spotifyAppLoginTestStatus');
+            if (status) status.textContent = 'Spotify sign-in is temporarily unavailable. Reload and try again.';
+        }
+    });
+}
+
+function spotifyTryIphoneAppLogin() {
+    const status = document.getElementById('spotifyAppLoginTestStatus');
+    const auth = _iphoneAppAuth;
+    if (!auth) {
+        _rememberIphoneAppAuth();
+        if (status) status.textContent = 'Preparing the test. Tap the button again.';
+        return;
+    }
+    _iphoneAppAuth = null;
+    _rememberIphoneAppAuth();
+
+    const stateB64 = btoa(JSON.stringify({
+        verifier: auth.verifier,
+        clientId: auth.clientId,
+        redirectUri: auth.redirectUri,
+        returnUrl: window.location.href
+    }));
+    const params = new URLSearchParams({
+        response_type: 'code',
+        client_id: auth.clientId,
+        scope: SPOTIFY_SCOPES,
+        redirect_uri: auth.redirectUri,
+        code_challenge_method: 'S256',
+        code_challenge: auth.challenge,
+        state: stateB64
+    });
+    window.location.href = `spotify-action://authorize?${params}`;
+}
+
+function setupSpotifyAppLoginTest() {
+    const button = document.getElementById('trySpotifyAppLoginBtn');
+    if (!button || button.dataset.listenerReady === '1') return;
+    button.dataset.listenerReady = '1';
+    _rememberIphoneAppAuth();
+    button.addEventListener('pointerdown', _rememberIphoneAppAuth);
+    button.addEventListener('click', spotifyTryIphoneAppLogin);
+}
+
+setupSpotifyAppLoginTest();
+
 function spotifyLogout() {
     cancelSpotifySnippet(false);
     localStorage.removeItem('spotify_access_token');
@@ -1592,6 +1649,7 @@ window.spotifyAutoplayPreference = _getAutoplayPref;
 
 // Expose on window for inline onclick handlers
 window.spotifyLogin = spotifyLogin;
+window.spotifyTryIphoneAppLogin = spotifyTryIphoneAppLogin;
 window.spotifyPlayTrack = _playTrackWithLoadingState;
 window.spotifyPlaySnippet = spotifyPlaySnippet;
 window.cancelSpotifySnippet = cancelSpotifySnippet;

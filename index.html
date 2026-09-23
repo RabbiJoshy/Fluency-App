@@ -53,7 +53,7 @@
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260923sb">
+    <link rel="modulepreload" href="js/main.js?v=20260923sq">
     <link rel="modulepreload" href="js/routes.js?v=20260923cj">
     <link rel="modulepreload" href="js/theme.js?v=20260922ui">
     <link rel="modulepreload" href="js/state.js?v=20260921x">
@@ -73,14 +73,14 @@
     <link rel="modulepreload" href="js/progress.js?v=20260920e">
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20260923rk">
-    <link rel="modulepreload" href="js/ui.js?v=20260923bk">
+    <link rel="modulepreload" href="js/ui.js?v=20260923sq">
     <link rel="modulepreload" href="js/review-home.js?v=20260922rw">
     <link rel="modulepreload" href="js/fast-track-preferences.js?v=20260920a">
     <link rel="modulepreload" href="js/vocab.js?v=20260923rk">
     <link rel="modulepreload" href="js/grammar-cards.js?v=20260921gc">
     <link rel="modulepreload" href="js/song-sets-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/song-sets.js?v=20260823ae">
-    <link rel="modulepreload" href="js/spotify-playlist-import.js?v=20260923cj">
+    <link rel="modulepreload" href="js/spotify-playlist-import.js?v=20260923sq">
     <link rel="modulepreload" href="js/playlist-live.js?v=20260923cj">
     <link rel="modulepreload" href="js/vocabulary-import-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/vocabulary-import.js?v=20260923bk">
@@ -1999,6 +1999,14 @@
             <div class="settings-tab-content" id="appDataTabContent">
                 <div id="devLatestDeployHero" class="dev-latest-deploy-hero"></div>
                 <p class="settings-data-intro">Developer audit for the app build and vocabulary files loaded on this device.</p>
+                <div class="settings-default-row" id="spotifyAppLoginTestRow">
+                    <span class="settings-row-label-block">
+                        <span class="settings-row-label">Spotify app login test</span>
+                        <small class="settings-row-explanation">Opens the Spotify app to approve login. Connect on the Account tab still uses Spotify's website.</small>
+                    </span>
+                    <button type="button" class="settings-feature-action" id="trySpotifyAppLoginBtn">Try Spotify app login</button>
+                </div>
+                <p id="spotifyAppLoginTestStatus" class="settings-data-intro" role="status"></p>
                 <div class="settings-default-row" id="senseProminenceRow">
                     <span class="settings-row-label-block">
                         <span class="settings-row-label">Sense frequency format</span>
@@ -2134,6 +2142,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260923sb"></script>
+    <script type="module" src="js/main.js?v=20260923sq"></script>
 </body>
 </html>

@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-23T19:52:00+01:00",
+      "date": "2026-09-23 19:52 BST",
+      "agent": "Cursor",
+      "summary": "A Developer-tab button tries opening the Spotify app to approve login. Connect still uses Spotify's website.",
+      "detail": [
+        "Settings, Developer, Try Spotify app login opens the Spotify app link. It is only there when you are signed in as JST.",
+        "The Connect button is unchanged, on iPhone and on the Mac."
+      ],
+      "commit": "213c7594"
+    },
+    {
       "timestamp": "2026-09-23T19:45:00+01:00",
       "date": "2026-09-23 19:45 BST",
       "agent": "Claude",

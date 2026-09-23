@@ -3232,7 +3232,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=20260923sp')
+        import('./spotify.js?v=20260923sq')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
