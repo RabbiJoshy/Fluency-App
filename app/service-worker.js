@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v543';
+const CACHE_NAME = 'flashcards-v544';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -35,8 +35,8 @@ const urlsToCache = [
   '/data/speech-frequency/cs.json',
   '/config/cefr_levels.json',
   '/config/offline-content-manifest.json',
-  '/js/routes.js?v=20260921a',
-  '/js/main.js?v=20260923sp',
+  '/js/routes.js?v=20260923cj',
+  '/js/main.js?v=20260923cj',
   '/js/theme.js?v=20260922ui',
   '/js/state.js?v=20260921x',
   `/js/data-contracts.js?v=${ASSET_VERSION}`,
@@ -45,7 +45,7 @@ const urlsToCache = [
   `/js/offline-content.js?v=${ASSET_VERSION}`,
   '/js/speech.js?v=20260914b',
   `/js/artist-ui.js?v=${ASSET_VERSION}`,
-  '/js/auth.js?v=20260923sp',
+  '/js/auth.js?v=20260923cj',
   '/js/card-replica.js?v=20260921ac',
   '/js/tutorial.js?v=20260921ac',
   '/js/walkthrough.js?v=20260921ac',
@@ -56,9 +56,9 @@ const urlsToCache = [
   '/js/progress.js?v=20260920e',
   '/js/progress-identity.js?v=20260831a',
   '/js/knowledge.js?v=20260922mod',
-  '/js/ui.js?v=20260923sp',
+  '/js/ui.js?v=20260923cj',
   '/js/fast-track-preferences.js?v=20260920a',
-  '/js/vocab.js?v=20260921freqb',
+  '/js/vocab.js?v=20260923cj',
   '/js/grammar-cards.js?v=20260921gc',
   '/js/cognates.js?v=20260922ft2',
   '/js/coverage.js?v=20260909a',
@@ -66,14 +66,14 @@ const urlsToCache = [
   '/js/extras.js?v=20260922ft2',
   `/js/song-sets-core.js?v=${ASSET_VERSION}`,
   '/js/song-sets.js?v=20260823ae',
-  '/js/spotify-playlist-import.js?v=20260923sp',
-  '/js/playlist-live.js?v=20260921rt',
+  '/js/spotify-playlist-import.js?v=20260923cj',
+  '/js/playlist-live.js?v=20260923cj',
   `/js/vocabulary-import-core.js?v=${ASSET_VERSION}`,
   '/js/vocabulary-import.js?v=20260920a',
   `/js/spanishdict-usage.js?v=${ASSET_VERSION}`,
   '/js/reverse-cues.js?v=20260917a',
   '/js/card-metadata-pills.js?v=20260921details',
-  '/js/flashcards.js?v=20260922mod',
+  '/js/flashcards.js?v=20260923cj',
   '/icons/tatoeba.svg',
   '/icons/wikipedia-w.svg',
   `/js/example-personalisation.js?v=${ASSET_VERSION}`,

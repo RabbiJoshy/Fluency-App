@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-23T14:26:00+01:00",
+      "date": "2026-09-23 14:26 BST",
+      "agent": "Claude",
+      "summary": "Verb conjugation is now the third option on the main page, and has its own links, including one for a single verb.",
+      "detail": [
+        "The main page's choice of Everyday Speech or Music & lyrics now has a third option, Verb conjugation, for Spanish, Portuguese and Czech. Each language says whether it has a drill in config (conjugationDrill); French and the rest show no option until their deck exists.",
+        "New links: #/es/conjugate opens the drill for a language, #/es/conjugate/tener drills one verb. A language with no drill opens that language instead.",
+        "The drill page now keeps its address up to date: the verb you're drilling, or the verb and tense whose table you're reading. Copy the address bar and it reopens exactly that."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-23T14:12:00+01:00",
       "date": "2026-09-23 14:12 BST",
       "agent": "Claude",

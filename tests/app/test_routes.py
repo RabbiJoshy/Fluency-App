@@ -18,14 +18,14 @@ RUNNER = r"""
     const vm = require('node:vm');
     const source = fs.readFileSync(process.argv[2], 'utf8').replace(/^export /gm, '');
     const context = { URLSearchParams };
-    vm.runInNewContext(source + '\n;globalThis.api = { parseRoute, formatRoute, legacyRoute, languageKeyFor, routeCodeFor };', context);
+    vm.runInNewContext(source + '\n;globalThis.api = { parseRoute, formatRoute, legacyRoute, languageKeyFor, routeCodeFor, conjugationDrillHref };', context);
     const cases = JSON.parse(process.argv[3]);
     const out = cases.map(([fn, ...args]) => context.api[fn](...args));
     console.log(JSON.stringify(out));
 """
 
 LANGUAGES = {
-    "spanish": {"routeCode": "es"},
+    "spanish": {"routeCode": "es", "conjugationDrill": "es"},
     "portuguese": {"routeCode": "pt"},
     "portuguese_brazilian": {"routeCode": "pt-br"},
 }
@@ -69,10 +69,37 @@ class RouteTests(unittest.TestCase):
         self.assertEqual(got[11], {"kind": "unknown"})
         self.assertEqual(got[12], {"kind": "live", "language": "fr"})
 
+    def test_conjugation_links(self) -> None:
+        got = self.run_js(
+            ["parseRoute", "#/es/conjugate"],
+            ["parseRoute", "#/es/conjugate/tener"],
+            ["parseRoute", "#/es/conjugate/tener/extra"],
+            ["conjugationDrillHref", "spanish", None, LANGUAGES],
+            ["conjugationDrillHref", "spanish", "Tener", LANGUAGES],
+            ["conjugationDrillHref", "portuguese", "ter", LANGUAGES],
+            ["conjugationDrillHref", None, "ter", LANGUAGES],
+        )
+        self.assertEqual(got[0], {"kind": "conjugate", "language": "es"})
+        self.assertEqual(got[1], {"kind": "conjugate", "language": "es", "verb": "tener"})
+        self.assertEqual(got[2], {"kind": "unknown"})
+        self.assertEqual(got[3], "conjugation/?lang=es")
+        self.assertEqual(got[4], "conjugation/?lang=es&verb=tener")
+        # A language that names no drill deck has no drill link.
+        self.assertIsNone(got[5])
+        self.assertIsNone(got[6])
+
+    def test_every_conjugation_drill_deck_exists(self) -> None:
+        config = json.loads((APP / "config/config.json").read_text(encoding="utf-8"))
+        decks = {key: lang["conjugationDrill"] for key, lang in config["languages"].items()
+                 if lang.get("conjugationDrill")}
+        self.assertTrue(decks)
+        for key, deck in decks.items():
+            self.assertTrue((APP / "conjugation/data" / f"{deck}.js").exists(), key)
+
     def test_format_round_trips(self) -> None:
         hashes = ["#/es", "#/es/w/unidos", "#/pt-br/w/%C3%A9l", "#/artist/bad-bunny",
                   "#/artist/bad-bunny/extra", "#/es/songs", "#/fr/live", "#/about",
-                  "#/tutorial", "#/walkthrough"]
+                  "#/tutorial", "#/walkthrough", "#/es/conjugate", "#/es/conjugate/tener"]
         parsed = self.run_js(*[["parseRoute", h] for h in hashes])
         formatted = self.run_js(*[["formatRoute", p] for p in parsed])
         self.assertEqual(formatted, hashes)

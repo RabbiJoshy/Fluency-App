@@ -3,7 +3,7 @@
 // speech-inventory tokens plus unassigned song-line examples.
 import './state.js?v=20260825ak';
 import { combineSongCatalogs } from './song-sets-core.js?v=20260825ak';
-import { goToRoute, replaceRoute, routeCodeFor } from './routes.js?v=20260921a';
+import { goToRoute, replaceRoute, routeCodeFor } from './routes.js?v=20260923cj';
 
 const CUSTOM_SONG_SET_KEY = 'fluency_song_set_v1:custom';
 const LYRICS_DB_NAME = 'fluency-playlist-lyrics';

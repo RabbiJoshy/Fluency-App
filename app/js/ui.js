@@ -736,6 +736,14 @@ function setupLanguageTabs() {
                 if (detail) detail.textContent = 'The words in songs you choose, with the original line as the example. Best if music is how you listen.';
                 if (lyricsStatus) lyricsStatus.textContent = lyricsCatalog ? '›' : 'Live';
             }
+            // Conjugation is a separate drill page, offered only where the
+            // language names a drill deck in config.
+            const conjugationButton = document.getElementById('standardSourceConjugationBtn');
+            if (conjugationButton) {
+                const drillHref = window.fluencyRoutes?.conjugationDrillHref?.(newLanguage, null, config.languages);
+                conjugationButton.style.display = drillHref ? '' : 'none';
+                conjugationButton.onclick = drillHref ? () => { window.location.href = drillHref; } : null;
+            }
 
             // Hide all subsequent steps while loading
             document.getElementById('step2').style.display = 'none';

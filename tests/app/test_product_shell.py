@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v543"
+EXPECTED_CACHE_NAME = "flashcards-v544"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -965,7 +965,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("tracksHref", spotify)
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
-        self.assertIn("/js/spotify-playlist-import.js?v=20260923sp", worker)
+        self.assertIn("/js/spotify-playlist-import.js?v=20260923cj", worker)
         self.assertIn('css/style.css?v=20260921freq', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)

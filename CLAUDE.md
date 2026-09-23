@@ -101,7 +101,8 @@ app/              vanilla-JS client; see REPO_MAP.md for module & window.* regis
   js/card-metadata-pills.js  sense metadata, grammar chips & qualifiers
   js/flashcards.js           card rendering & flip (read targeted ranges, never in full)
   js/routes.js               shareable hash routes (#/es, #/es/w/<word>, #/artist/<slug>,
-                             #/es/songs, #/es/live, #/about, #/tutorial, #/walkthrough).
+                             #/es/songs, #/es/live, #/es/conjugate[/<verb>], #/about,
+                             #/tutorial, #/walkthrough).
                              Link with goToRoute/replaceRoute — never write ?artist=,
                              ?about= or ?playlistLive=; those are legacy and rewritten
                              on arrival.

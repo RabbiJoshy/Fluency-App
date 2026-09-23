@@ -4,7 +4,7 @@ import './state.js?v=20260825ak';
 import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=20260921ac';
 import { applyRemoteFastTrack } from './fast-track-preferences.js?v=20260920a';
 import { dbGet, dbPut } from './offline-db.js?v=20260825ak';
-import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=20260921a';
+import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=20260923cj';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.

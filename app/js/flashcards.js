@@ -3,7 +3,7 @@
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
 import './state.js?v=20260825ak';
 import './speech.js?v=20260825ak';
-import { goToRoute, routeCodeFor } from './routes.js?v=20260921a';
+import { goToRoute, routeCodeFor } from './routes.js?v=20260923cj';
 import './side-dock.js?v=20260922mod';
 import {
     collectRecentWrongWords,

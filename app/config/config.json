@@ -82,6 +82,7 @@
       "hasData": true,
       "flag": "🇪🇸",
       "routeCode": "es",
+      "conjugationDrill": "es",
       "shortCode": "ES",
       "speechLang": "es-ES",
       "cognatesPath": "cognates/es/cognates.json",
@@ -524,6 +525,7 @@
       },
       "flag": "🇵🇹",
       "routeCode": "pt",
+      "conjugationDrill": "pt",
       "shortCode": "PT",
       "speechLang": "pt-PT",
       "cognatesPath": "cognates/pt/cognates.json",
@@ -545,6 +547,7 @@
     "czech": {
       "name": "Czech",
       "routeCode": "cs",
+      "conjugationDrill": "cs",
       "shortCode": "CZ",
       "flag": "🇨🇿",
       "speechLang": "cs-CZ",
