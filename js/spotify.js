@@ -4,6 +4,12 @@ import './state.js?v=20260825ak';
 
 const SPOTIFY_SCOPES = 'streaming user-modify-playback-state user-read-playback-state user-read-email user-read-private playlist-read-private playlist-read-collaborative';
 const _isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+const _isIphone = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+const SPOTIFY_APP_AUTH_STARTED = 'spotify_app_auth_started';
+const SPOTIFY_APP_AUTH_BROKEN = 'spotify_app_login_broken';
+const SPOTIFY_APP_AUTH_FINISHING = 'spotify_app_auth_finishing';
+const SPOTIFY_APP_AUTH_HANDOFF = 'spotify_app_auth_handoff';
+const SPOTIFY_APP_AUTH_MAX_AGE_MS = 2 * 60 * 1000;
 let _player = null;
 let _deviceId = null;
 let _playerReady = false;
@@ -191,8 +197,18 @@ function spotifyLogin(pendingTrackId, pendingPositionMs, authPopup = null, optio
             });
             if (showDialog) params.set('show_dialog', 'true');
 
-            _debugLog('Redirecting to Spotify auth...');
-            window.location.href = `https://accounts.spotify.com/authorize?${params}`;
+            const webUrl = `https://accounts.spotify.com/authorize?${params}`;
+            const tryApp = _isIphone && options.webOnly !== true
+                && (options.forceApp === true || !_spotifyAppLoginBroken());
+            if (!tryApp) {
+                _debugLog('Redirecting to Spotify auth...');
+                window.location.href = webUrl;
+                return;
+            }
+            if (options.forceApp === true) _clearSpotifyAppLoginBroken();
+            _debugLog('Opening Spotify app for auth...');
+            _armIphoneAppLoginFallback(webUrl);
+            window.location.href = `spotify-action://authorize?${params}`;
             return;
         }
 
@@ -570,62 +586,171 @@ function setupSpotifyConnectionUI() {
 
 setupSpotifyConnectionUI();
 
-// Developer-tab trial only. Does not replace Connect or the mobile branch of
-// spotifyLogin(), which still sends the phone to Spotify's website.
-let _iphoneAppAuth = null;
-let _iphoneAppAuthPromise = null;
+// iPhone Connect opens the Spotify app. If that attempt does not finish, the
+// same tap continues on Spotify's website. A cancel is not a broken link.
+// Desktop login never uses the app URL.
+function _spotifyStorageGet(key) {
+    try { return localStorage.getItem(key); } catch (e) { return null; }
+}
 
-function _rememberIphoneAppAuth() {
-    if (_iphoneAppAuth || _iphoneAppAuthPromise) return;
-    _iphoneAppAuthPromise = _prepareAuth().then(auth => {
-        _iphoneAppAuthPromise = null;
-        _iphoneAppAuth = auth;
-        if (!auth) {
-            const status = document.getElementById('spotifyAppLoginTestStatus');
-            if (status) status.textContent = 'Spotify sign-in is temporarily unavailable. Reload and try again.';
-        }
+function _spotifyStorageSet(key, value) {
+    try { localStorage.setItem(key, value); } catch (e) {}
+}
+
+function _spotifyStorageRemove(key) {
+    try { localStorage.removeItem(key); } catch (e) {}
+}
+
+function _spotifyAppLoginBroken() {
+    return _spotifyStorageGet(SPOTIFY_APP_AUTH_BROKEN) === '1';
+}
+
+function _clearSpotifyAppLoginBroken() {
+    _spotifyStorageRemove(SPOTIFY_APP_AUTH_BROKEN);
+}
+
+function _markSpotifyAppLoginBroken() {
+    _spotifyStorageSet(SPOTIFY_APP_AUTH_BROKEN, '1');
+}
+
+function _clearSpotifyAppAttempt() {
+    _spotifyStorageRemove(SPOTIFY_APP_AUTH_STARTED);
+    _spotifyStorageRemove(SPOTIFY_APP_AUTH_HANDOFF);
+    _spotifyStorageRemove(SPOTIFY_APP_AUTH_FINISHING);
+}
+
+function _spotifyAppAuthPending() {
+    const startedAt = Number(_spotifyStorageGet(SPOTIFY_APP_AUTH_STARTED));
+    if (!startedAt) return false;
+    if (Date.now() - startedAt > SPOTIFY_APP_AUTH_MAX_AGE_MS) {
+        _clearSpotifyAppAttempt();
+        return false;
+    }
+    return true;
+}
+
+function _primeIphoneAuth() {
+    if (!_isIphone || _pendingAuth) return;
+    _prepareAuth().then(auth => {
+        if (auth && !_pendingAuth) _pendingAuth = auth;
     });
+}
+
+let _iphoneAppFallbackArmed = false;
+
+function _goToSpotifyWebsite(webUrl, rememberBroken) {
+    if (rememberBroken) _markSpotifyAppLoginBroken();
+    _clearSpotifyAppAttempt();
+    window.location.href = webUrl;
+}
+
+function _armIphoneAppLoginFallback(webUrl) {
+    if (_iphoneAppFallbackArmed) return;
+    _iphoneAppFallbackArmed = true;
+    let handedOff = false;
+    let blurred = false;
+    let settled = false;
+    const settle = (action) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        document.removeEventListener('visibilitychange', onVisibility);
+        window.removeEventListener('pagehide', onHide);
+        window.removeEventListener('blur', onBlur);
+        window.removeEventListener('focus', onFocus);
+        if (action === 'website') _goToSpotifyWebsite(webUrl, false);
+        else if (action === 'website-broken') _goToSpotifyWebsite(webUrl, true);
+    };
+    const onHide = () => {
+        handedOff = true;
+        _spotifyStorageSet(SPOTIFY_APP_AUTH_HANDOFF, '1');
+    };
+    const onReturn = () => {
+        if (_spotifyStorageGet(SPOTIFY_APP_AUTH_FINISHING) === '1') return;
+        if (isSpotifyConnected()) {
+            _clearSpotifyAppLoginBroken();
+            _clearSpotifyAppAttempt();
+            settle('stay');
+            return;
+        }
+        if (!_spotifyAppAuthPending()) {
+            settle('stay');
+            return;
+        }
+        settle(handedOff ? 'website-broken' : 'website');
+    };
+    const onVisibility = () => {
+        if (document.visibilityState === 'hidden') onHide();
+        else if (handedOff) onReturn();
+    };
+    const onBlur = () => { blurred = true; };
+    const onFocus = () => {
+        if (handedOff || document.visibilityState === 'hidden' || !blurred) return;
+        onReturn();
+    };
+    const timer = setTimeout(() => {
+        if (handedOff || document.visibilityState === 'hidden' || blurred) return;
+        settle('website-broken');
+    }, 1500);
+    document.addEventListener('visibilitychange', onVisibility);
+    window.addEventListener('pagehide', onHide);
+    window.addEventListener('blur', onBlur);
+    window.addEventListener('focus', onFocus);
+    _spotifyStorageSet(SPOTIFY_APP_AUTH_STARTED, String(Date.now()));
+    _spotifyStorageRemove(SPOTIFY_APP_AUTH_HANDOFF);
+    _spotifyStorageRemove(SPOTIFY_APP_AUTH_FINISHING);
+}
+
+function _resumeFailedIphoneAppLogin() {
+    if (!_isIphone || !_spotifyAppAuthPending()) return;
+    if (_spotifyStorageGet(SPOTIFY_APP_AUTH_FINISHING) === '1') return;
+    if (isSpotifyConnected()) {
+        _clearSpotifyAppLoginBroken();
+        _clearSpotifyAppAttempt();
+        return;
+    }
+    if (_spotifyStorageGet(SPOTIFY_APP_AUTH_HANDOFF) !== '1') return;
+    _markSpotifyAppLoginBroken();
+    _clearSpotifyAppAttempt();
+    if (new URLSearchParams(window.location.search).get('spotifyWebLogin') === '1') return;
+    spotifyLogin(null, 0, null, { webOnly: true });
+}
+
+function _consumeSpotifyWebLoginRequest() {
+    const url = new URL(window.location.href);
+    if (url.searchParams.get('spotifyWebLogin') !== '1') return;
+    url.searchParams.delete('spotifyWebLogin');
+    history.replaceState(null, '', url.pathname + url.search + url.hash);
+    _markSpotifyAppLoginBroken();
+    _clearSpotifyAppAttempt();
+    spotifyLogin(null, 0, null, { webOnly: true });
 }
 
 function spotifyTryIphoneAppLogin() {
     const status = document.getElementById('spotifyAppLoginTestStatus');
-    const auth = _iphoneAppAuth;
-    if (!auth) {
-        _rememberIphoneAppAuth();
-        if (status) status.textContent = 'Preparing the test. Tap the button again.';
+    if (!_isIphone) {
+        if (status) status.textContent = 'On this computer, Connect uses Spotify\'s website.';
         return;
     }
-    _iphoneAppAuth = null;
-    _rememberIphoneAppAuth();
-
-    const stateB64 = btoa(JSON.stringify({
-        verifier: auth.verifier,
-        clientId: auth.clientId,
-        redirectUri: auth.redirectUri,
-        returnUrl: window.location.href
-    }));
-    const params = new URLSearchParams({
-        response_type: 'code',
-        client_id: auth.clientId,
-        scope: SPOTIFY_SCOPES,
-        redirect_uri: auth.redirectUri,
-        code_challenge_method: 'S256',
-        code_challenge: auth.challenge,
-        state: stateB64
-    });
-    window.location.href = `spotify-action://authorize?${params}`;
+    _clearSpotifyAppLoginBroken();
+    spotifyLogin(null, 0, null, { forceApp: true });
 }
 
 function setupSpotifyAppLoginTest() {
     const button = document.getElementById('trySpotifyAppLoginBtn');
+    const connect = document.getElementById('spotifyConnectBtn');
+    connect?.addEventListener('pointerdown', _primeIphoneAuth);
     if (!button || button.dataset.listenerReady === '1') return;
     button.dataset.listenerReady = '1';
-    _rememberIphoneAppAuth();
-    button.addEventListener('pointerdown', _rememberIphoneAppAuth);
+    button.addEventListener('pointerdown', _primeIphoneAuth);
     button.addEventListener('click', spotifyTryIphoneAppLogin);
 }
 
 setupSpotifyAppLoginTest();
+window.addEventListener('pageshow', () => {
+    _consumeSpotifyWebLoginRequest();
+    _resumeFailedIphoneAppLogin();
+});
 
 function spotifyLogout() {
     cancelSpotifySnippet(false);
