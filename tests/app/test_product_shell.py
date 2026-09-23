@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v544"
+EXPECTED_CACHE_NAME = "flashcards-v545"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -1244,10 +1244,30 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
         self.assertIn("let _setupStateMemoEpoch = -1;", ui)
         self.assertIn("_setupStateMemoEpoch !== epoch", ui)
-        range_start = ui.index("async function renderRangeSelector()")
+        range_start = ui.index("async function renderRangeSelector(")
         reset = ui.index("resetSetupStateMemo();", range_start)
         first_fetch = ui.index("fetchActiveVocabularyData(langConfig)", range_start)
         self.assertLess(reset, first_fetch)
+
+    def test_learn_new_never_bounces_to_another_set(self) -> None:
+        ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
+        auth = (APP_ROOT / "js" / "auth.js").read_text(encoding="utf-8")
+        # Only the progress-derived answer is memoised; lemma inheritance and
+        # the estimate depend on per-call options and Fast Track.
+        recorded = ui[ui.index("function getRecordedSetupState(item)"):]
+        recorded = recorded[:recorded.index("\n}\n")]
+        self.assertNotIn("seenLemmas", recorded)
+        self.assertNotIn("<= estimate", recorded)
+        # The landing set's rows load before it is offered, so cards the
+        # builder would drop (no translated meaning) are not advertised.
+        self.assertIn("landingWords.some(item => item._indexRowsPending)", ui)
+        self.assertIn("return renderRangeSelector({ landingRowsChecked: landingRowsChecked + 1 });", ui)
+        # Start waits for an in-flight progress refresh, and an empty set goes
+        # straight on to the recount's next set instead of back to setup.
+        self.assertIn("window.progressRefreshSettled = progressRefreshSettled;", auth)
+        self.assertIn("await window.progressRefreshSettled?.(5000);", ui)
+        self.assertIn("is already done. Starting Set", ui)
+        self.assertIn("silentIfEmpty: true", ui)
 
     def test_empty_replacement_preserves_the_active_deck_without_an_unseen_popup(self) -> None:
         vocab = (APP_ROOT / "js" / "vocab.js").read_text(encoding="utf-8")

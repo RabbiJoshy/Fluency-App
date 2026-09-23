@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-23T15:06:00+01:00",
+      "date": "2026-09-23 15:06 BST",
+      "agent": "Claude",
+      "summary": "Learn New no longer bounces you to a different set: the set it lands on really has cards to learn, and if one turns out to be done it goes straight on to the next.",
+      "detail": [
+        "Main cause: 110 Spanish cards have no translated meaning. Setup counts cards before their meanings load, but the deck builder drops those cards. Once everything else in a set was done, the set still said 'Learn 1 new card', built nothing, and the recount moved you elsewhere, on every fresh load. Setup now loads the landing set's meanings first (the same file Start fetches anyway) and counts again.",
+        "Starting a set waits (up to 5 seconds, behind the loading screen) for a progress sync that is still running, so the set is built from your current progress rather than the copy cached on this device.",
+        "If a set still turns out to have nothing new, it no longer drops you back on the menu with a different set highlighted. It says 'Set 7 is already done. Starting Set 8…' and opens it.",
+        "Fixed a stale cache in the set counts: whether a sibling form was seen, and the level estimate, were cached per card and could outlast a Fast Track change."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-23T14:49:00+01:00",
       "date": "2026-09-23 14:49 BST",
       "agent": "Claude",
