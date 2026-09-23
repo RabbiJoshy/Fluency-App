@@ -43,12 +43,11 @@ function reportSetupTimings(total) {
     _setupTimings.length = 0;
 }
 
-// Per-render memo for getSetupLearningState. Building the setup screen walks
+// Per-epoch memo for getRecordedSetupState. Building the setup screen walks
 // every card twice — findFirstIncompleteLevelBtn scans all levels to pick an
 // actionable one, then renderRangeSelector scans the chosen level again per
-// set — and each call reaches through progress, granular knowledge, lemma
-// inheritance and the estimate. The inputs cannot change while one render is
-// in flight, so the second walk is pure repetition.
+// set — and each call reaches through progress and granular knowledge. Lemma
+// inheritance and the estimate are applied outside the memo, per call.
 //
 // Scoped to a single render on purpose: progressData is mutated in place when
 // a card is answered, so a longer-lived cache keyed on object identity would
@@ -2415,6 +2414,36 @@ const STABLE_SET_SLOT_COUNT = 20;
 function getSetupLearningState(item, { seenLemmas = new Set(), estimatedIds = null, estimate = 0 } = {}) {
     if (!currentUser || currentUser.isGuest || !progressData) return false;
 
+    // Only the answer recorded against this card is memoised. Lemma
+    // inheritance and the level estimate depend on the caller's options and on
+    // Fast Track, neither of which moves the progress epoch: memoising them
+    // let one caller's answer (no lemma set, or merge off) stand for the next,
+    // so setup advertised new cards the deck loader then removed. When that
+    // was every remaining card, Learn New bounced to a different set.
+    const recordedState = getRecordedSetupState(item);
+    if (recordedState.seen) return recordedState;
+
+    // Merge Lemmas treats progress on any surface form as progress on the
+    // shared lemma. This is the same set used by Learn New during deck build,
+    // so the button count cannot advertise cards that will then be removed.
+    const lemmaKey = globalThis.lemmaGroupKey?.(item) || item.lemma;
+    if (lemmaKey && seenLemmas.has(lemmaKey)) {
+        return { ...recordedState, seen: true, needsReview: false, learned: true, inheritedLemma: true };
+    }
+
+    if (activeArtist) {
+        if (item.id && estimatedIds?.has(item.id)) {
+            return { seen: true, needsReview: false, learned: true, estimated: true };
+        }
+    } else if (item.rank <= estimate) {
+        return { seen: true, needsReview: false, learned: true, estimated: true };
+    }
+    return recordedState;
+}
+
+// What this card's own progress says, across its related and cross-mode
+// records. Depends only on progress, so it is memoised per progress epoch.
+function getRecordedSetupState(item) {
     // Progress changes in place after every answer and after a background
     // Sheets refresh. A set render can therefore outlive the memo created by
     // renderLevelSelector. Never let yesterday's "unseen" result disagree
@@ -2452,26 +2481,10 @@ function getSetupLearningState(item, { seenLemmas = new Set(), estimatedIds = nu
     if (relatedIds.some(id => getWordProgressState(id).seen || wordHasKnowledgeProgress(id))) {
         return memoise({ ...recorded, seen: true });
     }
-
-    // Merge Lemmas treats progress on any surface form as progress on the
-    // shared lemma. This is the same set used by Learn New during deck build,
-    // so the button count cannot advertise cards that will then be removed.
-    const lemmaKey = globalThis.lemmaGroupKey?.(item) || item.lemma;
-    if (lemmaKey && seenLemmas.has(lemmaKey)) {
-        return memoise({ ...recorded, seen: true, needsReview: false, learned: true, inheritedLemma: true });
-    }
-
-    if (activeArtist) {
-        if (item.id && estimatedIds?.has(item.id)) {
-            return memoise({ seen: true, needsReview: false, learned: true, estimated: true });
-        }
-    } else if (item.rank <= estimate) {
-        return memoise({ seen: true, needsReview: false, learned: true, estimated: true });
-    }
-    return memoise(recorded);
+    return memoise(recorded || { seen: false });
 }
 
-async function renderRangeSelector() {
+async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     // Every set count below is computed from `progressData`, and an empty
     // `progressData` reads identically whether the learner has studied nothing
     // or the progress fetch simply has not landed. Rendering on the second
@@ -2635,6 +2648,25 @@ async function renderRangeSelector() {
         : ranges.findIndex(range => range.available && range.reviewCount > 0);
     const lastAvailable = ranges.reduce((last, range, index) => range.available ? index : last, -1);
     const initialIndex = firstIncomplete >= 0 ? firstIncomplete : Math.max(0, lastAvailable);
+
+    // Until a set's row file loads, its cards are counted without their
+    // meanings, and the deck builder later drops any card whose meanings have
+    // no translation. A set whose only unseen cards were such rows advertised
+    // "Learn 1 new card", built nothing, and bounced the learner to another
+    // set on every fresh load. Load the landing set's rows (the file Start
+    // would fetch anyway) and count again before offering it. Capped so a run
+    // of such sets cannot hold the screen.
+    const landingWords = slots[initialIndex] || [];
+    if (landingRowsChecked < 3 && ranges[initialIndex]?.unseenCount > 0
+        && landingWords.some(item => item._indexRowsPending)) {
+        const loaded = await window.ensureIndexRowsForRange?.(
+            langConfig, 0, 0, landingWords.map(item => item.rank)
+        ).catch(() => false);
+        if (loaded) {
+            invalidatePreparedSetupVocabulary();
+            return renderRangeSelector({ landingRowsChecked: landingRowsChecked + 1 });
+        }
+    }
     const completedCount = ranges.filter(range => range.available && range.pct === 100).length;
     const availableCount = ranges.filter(range => range.available).length;
 
@@ -2813,12 +2845,33 @@ async function renderRangeSelector() {
                     : 'Preparing your next cards…'
             });
         try {
-            await loadVocabularyData(selectedRange, {
-                rankBasis: this.dataset.rankBasis,
-                setNumber: Number(this.dataset.setNumber),
-                levelSetCount: Number(this.dataset.levelSetCount),
-                studyMode: this.dataset.studyMode
+            // Build the set from current progress, not the cached copy the
+            // screen was drawn from while a refresh was still running.
+            await window.progressRefreshSettled?.(5000);
+            const fromButton = button => ({
+                rankBasis: button.dataset.rankBasis,
+                setNumber: Number(button.dataset.setNumber),
+                levelSetCount: Number(button.dataset.levelSetCount),
+                studyMode: button.dataset.studyMode,
+                silentIfEmpty: true
             });
+            const started = await loadVocabularyData(selectedRange, fromButton(this));
+            if (started === false) {
+                // Nothing left to learn in this set by the time it was built.
+                // Recount, and go straight on to the set the recount offers
+                // rather than dropping the learner back on a moved selection.
+                await window.refreshSetupAfterProgress?.();
+                const next = document.getElementById('studySetStartBtn');
+                if (next && next.dataset.studyMode === 'new' && next.dataset.range !== selectedRange) {
+                    const note = `Set ${this.dataset.setNumber} is already done. Starting Set ${next.dataset.setNumber}…`;
+                    loadingMessage.textContent = note;
+                    const overlayTitle = document.getElementById('appLoadingTitle');
+                    const overlayDetail = document.getElementById('appLoadingDetail');
+                    if (overlayTitle) overlayTitle.textContent = `Loading Set ${next.dataset.setNumber}`;
+                    if (overlayDetail) overlayDetail.textContent = note;
+                    await loadVocabularyData(next.dataset.range, fromButton(next));
+                }
+            }
             await beat;
         } finally {
             window.hideAppLoading?.();

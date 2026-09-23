@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v544';
+const CACHE_NAME = 'flashcards-v545';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -36,7 +36,7 @@ const urlsToCache = [
   '/config/cefr_levels.json',
   '/config/offline-content-manifest.json',
   '/js/routes.js?v=20260923cj',
-  '/js/main.js?v=20260923cj',
+  '/js/main.js?v=20260923sb',
   '/js/theme.js?v=20260922ui',
   '/js/state.js?v=20260921x',
   `/js/data-contracts.js?v=${ASSET_VERSION}`,
@@ -45,7 +45,7 @@ const urlsToCache = [
   `/js/offline-content.js?v=${ASSET_VERSION}`,
   '/js/speech.js?v=20260914b',
   `/js/artist-ui.js?v=${ASSET_VERSION}`,
-  '/js/auth.js?v=20260923cj',
+  '/js/auth.js?v=20260923sb',
   '/js/card-replica.js?v=20260921ac',
   '/js/tutorial.js?v=20260921ac',
   '/js/walkthrough.js?v=20260921ac',
@@ -56,7 +56,7 @@ const urlsToCache = [
   '/js/progress.js?v=20260920e',
   '/js/progress-identity.js?v=20260831a',
   '/js/knowledge.js?v=20260922mod',
-  '/js/ui.js?v=20260923cj',
+  '/js/ui.js?v=20260923sb',
   '/js/fast-track-preferences.js?v=20260920a',
   '/js/vocab.js?v=20260923cj',
   '/js/grammar-cards.js?v=20260921gc',

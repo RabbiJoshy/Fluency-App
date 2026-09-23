@@ -709,7 +709,33 @@ async function saveMarkedLevelDone(levelId, done) {
 // Load unified Google Sheets progress while retaining cross-mode sharing.
 // Loads from localStorage cache first (instant), then refreshes from Sheets.
 // Returns true if the Sheets fetch brought different data than the cache.
-async function loadUserProgressFromSheet() {
+// The refresh in flight, if any. Setup is drawn from the cached progress while
+// this runs, so a set can look unfinished on screen and be finished in the
+// progress that arrives a few seconds later (answers made on another device).
+// Starting a set waits for it — see progressRefreshSettled().
+let progressRefreshInFlight = null;
+
+function loadUserProgressFromSheet() {
+    const run = loadUserProgressFromSheetNow();
+    progressRefreshInFlight = run;
+    run.finally(() => {
+        if (progressRefreshInFlight === run) progressRefreshInFlight = null;
+    }).catch(() => {});
+    return run;
+}
+
+// Resolves once no progress refresh is running, or after capMs, whichever is
+// first. Never rejects: a failed refresh leaves the cached progress in force.
+function progressRefreshSettled(capMs = 5000) {
+    if (!progressRefreshInFlight) return Promise.resolve();
+    return Promise.race([
+        progressRefreshInFlight.catch(() => {}),
+        new Promise(resolve => setTimeout(resolve, capMs))
+    ]);
+}
+window.progressRefreshSettled = progressRefreshSettled;
+
+async function loadUserProgressFromSheetNow() {
     if (!currentUser || currentUser.isGuest) return false;
 
     const applyCachedProgress = raw => {
