@@ -46,14 +46,14 @@
             root.dataset.textSize = textSize;
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260923ft4">
+    <link rel="stylesheet" href="css/style.css?v=20260924lm">
     <link rel="stylesheet" href="css/light-theme.css?v=20260921freq">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260923ft3">
+    <link rel="modulepreload" href="js/main.js?v=20260924lm">
     <link rel="modulepreload" href="js/routes.js?v=20260923cj">
     <link rel="modulepreload" href="js/theme.js?v=20260922ui">
     <link rel="modulepreload" href="js/state.js?v=20260921x">
@@ -73,10 +73,10 @@
     <link rel="modulepreload" href="js/progress.js?v=20260920e">
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20260923rk">
-    <link rel="modulepreload" href="js/ui.js?v=20260923ft3">
+    <link rel="modulepreload" href="js/ui.js?v=20260924lm">
     <link rel="modulepreload" href="js/review-home.js?v=20260922rw">
     <link rel="modulepreload" href="js/fast-track-preferences.js?v=20260920a">
-    <link rel="modulepreload" href="js/vocab.js?v=20260923gn">
+    <link rel="modulepreload" href="js/vocab.js?v=20260924lm">
     <link rel="modulepreload" href="js/grammar-cards.js?v=20260923gn">
     <link rel="modulepreload" href="js/song-sets-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/song-sets.js?v=20260823ae">
@@ -387,6 +387,7 @@
                 <div class="step-header top-bar-header">
                     <button id="learningContextBtn" class="learning-context-chip" type="button" hidden aria-haspopup="dialog" aria-label="Open learning settings">
                         <span id="learningContextFlag" class="learning-context-flag" aria-hidden="true"></span>
+                        <span id="learningContextPhoto" class="learning-context-photo" hidden aria-hidden="true"></span>
                         <span class="learning-context-chip-copy">
                             <strong id="learningContextLanguage"></strong>
                         </span>
@@ -801,6 +802,16 @@
                 <button id="learningContextSourceBtn" class="learning-context-choice" type="button">
                     <span class="learning-context-mode-icon" aria-hidden="true">◉</span>
                     <span><small>Vocabulary</small><strong id="learningContextSheetMode"></strong></span>
+                    <span aria-hidden="true">›</span>
+                </button>
+                <button id="learningContextArtistBtn" class="learning-context-choice" type="button" hidden>
+                    <span id="learningContextSheetPhoto" class="learning-context-photo learning-context-sheet-photo" aria-hidden="true"></span>
+                    <span><small>Artist</small><strong id="learningContextSheetArtist"></strong></span>
+                    <span aria-hidden="true">›</span>
+                </button>
+                <button id="learningContextSongsBtn" class="learning-context-choice" type="button" hidden>
+                    <span class="learning-context-mode-icon" aria-hidden="true">♫</span>
+                    <span><small>Songs</small><strong id="learningContextSheetSongs"></strong></span>
                     <span aria-hidden="true">›</span>
                 </button>
             </div>
@@ -2151,6 +2162,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260923ft3"></script>
+    <script type="module" src="js/main.js?v=20260924lm"></script>
 </body>
 </html>

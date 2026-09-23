@@ -17239,7 +17239,8 @@
 
 /* A chosen language/source becomes persistent context in the top bar. The
    setup panel can then lead with the next real decision: level and set. */
-#step1.context-ready { display: none !important; }
+#step1.context-ready,
+#artistSourceStep.context-ready { display: none !important; }
 .has-learning-context #step2 .step-number,
 .has-learning-context #step4 .step-number { display: none; }
 
@@ -17259,6 +17260,20 @@
 }
 .learning-context-chip[hidden] { display: none; }
 .learning-context-flag { font-size: 18px; line-height: 1; }
+.learning-context-photo {
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 50%;
+  background-position: center;
+  background-size: cover;
+  color: #fff;
+  font: 800 9px var(--font-emphasis);
+}
+.learning-context-photo[hidden] { display: none; }
+.learning-context-sheet-photo { width: 30px; height: 30px; font-size: 11px; }
 .learning-context-chip-copy { min-width: 0; text-align: left; line-height: 1.1; }
 .learning-context-chip-copy strong { overflow: hidden; font: 700 13px var(--font-emphasis); text-overflow: ellipsis; white-space: nowrap; }
 .learning-context-chevron { color: var(--text-muted); font-size: 17px; }
@@ -17277,6 +17292,7 @@
 }
 .learning-context-close-row .modal-close { position: static; }
 .learning-context-switches { display: grid; gap: 8px; }
+.learning-context-choice[hidden] { display: none; }
 .learning-context-choice {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;

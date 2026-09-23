@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-24T00:20:00+01:00",
+      "date": "2026-09-24 00:20 BST",
+      "agent": "Cursor",
+      "summary": "Merged lemmas skip spellings that belong to more than one headword, and the artist page opens from the photo and name.",
+      "detail": [
+        "A spelling joins a merged lemma only when every sense names that one headword. Casó joins casar. Casado stays its own card, so marking it does not clear casó.",
+        "Noun and adjective readings of the same headword stay one card. Duplicate sense rows on a merged card collapse to the headword's sense.",
+        "On an artist page the big lyrics card hides once the deck is open. The top-left chip is the photo and the name. Its sheet adds change artist and the song subset."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-23T23:25:00+01:00",
       "date": "2026-09-23 23:25 BST",
       "agent": "Cursor",

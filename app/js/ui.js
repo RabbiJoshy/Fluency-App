@@ -448,6 +448,23 @@ const LEARNING_CONTEXT_FLAGS = {
     swedish: '🇸🇪', dutch: '🇳🇱', polish: '🇵🇱', russian: '🇷🇺', czech: '🇨🇿'
 };
 
+function learningContextInitials(name) {
+    const words = String(name || '').trim().split(/\s+/).filter(Boolean);
+    if (words.length === 0) return '?';
+    if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+    return (words[0][0] + words[1][0]).toUpperCase();
+}
+
+function paintLearningContextPhoto(el, artist) {
+    if (!el || !artist) return;
+    const art = artist.pickerImage || artist.image || artist.defaultAlbumArt || '';
+    const isCustom = artist.customSongSource === true;
+    el.textContent = art ? '' : (isCustom ? '♫' : learningContextInitials(artist.name));
+    el.classList.toggle('learning-context-photo--fallback', !art);
+    el.style.backgroundImage = art ? `url("${String(art).replace(/"/g, '%22')}")` : '';
+    el.style.backgroundColor = art ? '' : (artist.colorTheme?.primary || 'var(--accent-primary)');
+}
+
 function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
     const button = document.getElementById('learningContextBtn');
     const languageConfig = config.languages?.[selectedLanguage];
@@ -463,11 +480,35 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
     const coverageLabel = snapshot?.label || (activeArtist ? 'Lyrics understood' : 'Speech understood');
 
     button.hidden = false;
-    document.getElementById('learningContextFlag').textContent = flag;
-    document.getElementById('learningContextLanguage').textContent = languageConfig.name || selectedLanguage;
+    const flagEl = document.getElementById('learningContextFlag');
+    const photoEl = document.getElementById('learningContextPhoto');
+    const nameEl = document.getElementById('learningContextLanguage');
+    const artistRow = document.getElementById('learningContextArtistBtn');
+    const songsRow = document.getElementById('learningContextSongsBtn');
+    flagEl.textContent = flag;
     document.getElementById('learningContextSheetFlag').textContent = flag;
     document.getElementById('learningContextSheetLanguage').textContent = languageConfig.name || selectedLanguage;
     document.getElementById('learningContextSheetMode').textContent = mode;
+    if (activeArtist) {
+        const artistName = activeArtist.name || 'Artist';
+        nameEl.textContent = artistName;
+        button.setAttribute('aria-label', `Open learning settings for ${artistName}`);
+        flagEl.hidden = true;
+        photoEl.hidden = false;
+        paintLearningContextPhoto(photoEl, activeArtist);
+        paintLearningContextPhoto(document.getElementById('learningContextSheetPhoto'), activeArtist);
+        artistRow.hidden = false;
+        songsRow.hidden = false;
+        document.getElementById('learningContextSheetArtist').textContent = artistName;
+        document.getElementById('learningContextSheetSongs').textContent = window.songSelectionSummary?.() || 'Choose songs';
+    } else {
+        nameEl.textContent = languageConfig.name || selectedLanguage;
+        button.setAttribute('aria-label', 'Open learning settings');
+        flagEl.hidden = false;
+        photoEl.hidden = true;
+        artistRow.hidden = true;
+        songsRow.hidden = true;
+    }
     document.getElementById('learningContextProgressLabel').textContent = coverageLabel;
     document.getElementById('learningContextProgressValue').textContent = `${coverage.toFixed(1)}%`;
     document.getElementById('learningContextProgressFill').style.width = `${Math.min(coverage, 100)}%`;
@@ -2422,7 +2463,9 @@ function getSetupLearningState(item, { seenLemmas = new Set(), estimatedIds = nu
     // Merge Lemmas treats progress on any surface form as progress on the
     // shared lemma. This is the same set used by Learn New during deck build,
     // so the button count cannot advertise cards that will then be removed.
-    const lemmaKey = globalThis.lemmaGroupKey?.(item) || item.lemma;
+    const lemmaKey = typeof globalThis.lemmaSeenKey === 'function'
+        ? globalThis.lemmaSeenKey(item)
+        : (globalThis.lemmaGroupKey?.(item) || item.lemma);
     if (lemmaKey && seenLemmas.has(lemmaKey)) {
         return { ...recordedState, seen: true, needsReview: false, learned: true, inheritedLemma: true };
     }

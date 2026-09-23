@@ -629,6 +629,7 @@ function joinWithMaster(indexData, master) {
             }
             if (sense.source) meaning.source = sense.source;
             if (sense.headword) meaning.headword = sense.headword;
+            if (sense.source_reference) meaning.source_reference = sense.source_reference;
             if (sense.context) meaning.context = sense.context;
             if (sense.metadata) meaning.metadata = sense.metadata;
             if (Array.isArray(sense.regions) && sense.regions.length) {
@@ -829,23 +830,85 @@ function mergeArtistExtraSupport(item, splitExamples) {
     }
 }
 
-// One normalized identity for the runtime's lemma-level operations. Preserve
-// accents (papa and papá are different lemmas), but remove accidental casing,
-// whitespace, and Unicode-composition differences that must not mint two
-// Merge Lemmas cards.
-function lemmaGroupKey(item) {
-    // Derived, not shipped. `meanings[].headword` is in every deck the current
-    // pipeline builds, so Merge Lemmas needs no new release field and decision
-    // 0011's surface-only rule stands: identity is still the surface card, and
-    // this is only a grouping attribute computed at runtime.
-    //
-    // The shipped `lemma` remains the fallback for legacy and lyrics data that
-    // carries one. Where both exist the headword wins, for the reason
-    // buildCardFormModel gives: it is the lemmatisation with evidence behind it.
-    const derived = assignedHeadwordOf(item?.meanings);
-    const key = derived || String(item?.lemma || '');
-    return key.normalize('NFC').toLocaleLowerCase('es').trim();
+// lemma-merge-pure
+// A lemma is the headword. Part of speech is not part of it. A spelling joins
+// that lemma only when every non-expression sense names that one headword.
+// Casó joins casar. Casado does not: it also names casado, so it stays its own
+// card, and a yes there does not clear casó.
+function normalizeLemmaToken(value) {
+    return String(value || '').normalize('NFC').toLocaleLowerCase('es').trim();
 }
+
+function isExpressionSenseForLemma(meaning, item) {
+    if (!meaning) return false;
+    const pos = meaning.pos || meaning.part_of_speech;
+    if (pos === 'MWE' || pos === 'CLITIC') return true;
+    const adapter = String(meaning?.metadata?.source_adapter || meaning?.source || '');
+    if (/mwe-merged/i.test(adapter)) return true;
+    if (String(meaning.context || '').toLocaleLowerCase('en') === 'multiword expression') return true;
+    const evidence = meaning.metadata?.multiword_evidence?.[0];
+    const route = evidence?.wsd_routing || evidence?.route || meaning.wsd_routing || meaning.route;
+    if (route === 'deterministic_bypass' || route === 'invariant'
+        || route === 'competitive_wsd' || route === 'ambiguous') return true;
+    if (pos === 'PHRASE') {
+        const head = String(meaning.headword || meaning.expression || '').trim();
+        const surface = String(item?.word || item?.targetWord || '').trim();
+        if (/\s/u.test(head) && normalizeLemmaToken(head) !== normalizeLemmaToken(surface)) return true;
+    }
+    return false;
+}
+
+function lemmaHeadwordsOf(item) {
+    const seen = new Set();
+    const headwords = [];
+    for (const meaning of item?.meanings || []) {
+        if (!meaning?.headword || isExpressionSenseForLemma(meaning, item)) continue;
+        const key = normalizeLemmaToken(meaning.headword);
+        if (!key || seen.has(key)) continue;
+        seen.add(key);
+        headwords.push(key);
+    }
+    return headwords;
+}
+
+function lemmaGroupKey(item) {
+    // Derived, not shipped. Identity stays the surface card. This key only
+    // decides which unambiguous spellings share a merged card.
+    //
+    // No headword at all: the shipped lemma is the legacy fallback. Two or
+    // more headwords: this spelling is the clash, and it must not inherit the
+    // shipped lemma or a yes on casado would clear casó.
+    const headwords = lemmaHeadwordsOf(item);
+    if (headwords.length > 1) return '';
+    return headwords[0] || normalizeLemmaToken(item?.lemma);
+}
+
+function lemmaSeenKey(item) {
+    if (lemmaHeadwordsOf(item).length > 1) return '';
+    return lemmaGroupKey(item);
+}
+
+function lemmaSenseDedupeKey(meaning) {
+    const ref = String(meaning?.source_reference || '').trim();
+    if (ref && ref !== 'mwe-merged/v1') return `ref:${ref}`;
+    const pos = String(meaning?.pos || '').trim().toLocaleLowerCase('en');
+    const translation = String(meaning?.translation || meaning?.meaning || '').trim().toLocaleLowerCase('en');
+    const context = String(meaning?.context || '').trim().toLocaleLowerCase('en');
+    return `sig:${pos}|${translation}|${context}`;
+}
+
+function dedupeLemmaMenu(meanings) {
+    const seen = new Set();
+    const kept = [];
+    for (const meaning of meanings || []) {
+        const key = lemmaSenseDedupeKey(meaning);
+        if (seen.has(key)) continue;
+        seen.add(key);
+        kept.push(meaning);
+    }
+    return kept;
+}
+// /lemma-merge-pure
 
 function computeLemmaExampleCounts(vocabData, examplesData) {
     const linesByLemma = new Map();
@@ -880,6 +943,8 @@ function poolLemmaSiblingExamples(filteredData, allVocabData, examplesData) {
 
     const normalize = t => (t || '').trim().toLowerCase();
     for (const sib of allVocabData) {
+        // An ambiguous spelling never donates its examples or its sense rows.
+        if (lemmaHeadwordsOf(sib).length !== 1) continue;
         const host = hosts.get(lemmaGroupKey(sib));
         if (!host || sib === host || (sib.id && sib.id === host.id)) continue;
         if (sib.is_english || sib.is_noise || sib.is_interjection || sib.duplicate) continue;
@@ -1007,7 +1072,10 @@ function buildCardFormModel(item, meanings = [], options = {}) {
     // rank/progress host, but the learner is studying the lexeme, not that
     // accidental representative inflection. Present the citation form while
     // retaining targetWord/representativeSurface for IDs and exact examples.
-    const mergedLemma = options.mergedLemma === true && Boolean(citationForm);
+    // Only an unambiguous spelling is a merged lemma. Casado names casar and
+    // casado, so it stays the surface card and does not wear the verb's title.
+    const unambiguousLemma = lemmaHeadwordsOf(item).length === 1;
+    const mergedLemma = options.mergedLemma === true && unambiguousLemma && Boolean(citationForm);
     const displaySurface = mergedLemma ? citationForm : representativeSurface;
     const hasVerbSense = meanings.some(meaning => {
         const pos = String(meaning?.pos || '').toLocaleLowerCase('en');
@@ -2254,7 +2322,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
                         : item.rank <= estimate);
                     return !coveredByEstimate
                         && !hasRelatedProgress
-                        && !seenLemmas.has(lemmaGroupKey(item) || item.lemma);
+                        && !seenLemmas.has(lemmaSeenKey(item));
                 });
                 excludedMastered = beforeFiltered - filteredData.length;
                 if (studyMode === 'review') {
@@ -2452,7 +2520,10 @@ async function loadVocabularyData(rangeString, opts = {}) {
         }
 
         for (const item of filteredData) {
-            const meanings = item.meanings.map(m => {
+            const menuSource = useLemmaMode && lemmaHeadwordsOf(item).length === 1
+                ? dedupeLemmaMenu(item.meanings)
+                : item.meanings;
+            const meanings = menuSource.map(m => {
                 const { targetSentence, englishSentence, allExamples } = getExampleFromMeaning(m, exampleTargetField, exampleEnglishField);
                 const meaning = {
                     pos: m.pos,
@@ -2478,6 +2549,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
                 if (m.sense_id_aliases?.length) meaning.senseIdAliases = m.sense_id_aliases;
                 if (m.context) meaning.context = m.context;
                 if (m.headword) meaning.headword = m.headword;
+                if (m.source_reference) meaning.source_reference = m.source_reference;
                 if (m.metadata) meaning.metadata = m.metadata;
                 if (Array.isArray(m.regions) && m.regions.length) meaning.regions = [...m.regions];
                 if (m.type) meaning.type = m.type;
@@ -3608,3 +3680,5 @@ window.buildWordLookupMap = buildWordLookupMap;
 // Extras reports the forms merging absorbed, and must group them exactly as
 // the filter did. Exporting the rule keeps one definition of it.
 globalThis.lemmaGroupKey = lemmaGroupKey;
+globalThis.lemmaSeenKey = lemmaSeenKey;
+globalThis.lemmaHeadwordsOf = lemmaHeadwordsOf;

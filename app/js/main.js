@@ -16,8 +16,8 @@ import './estimation.js?v=20260825ak';
 import './config.js?v=20260921rh';
 import './progress.js?v=20260920e';
 import './knowledge.js?v=20260923rk';
-import './ui.js?v=20260923ft3';
-import './vocab.js?v=20260923gn';
+import './ui.js?v=20260924lm';
+import './vocab.js?v=20260924lm';
 import './cognates.js?v=20260922ft2';
 import './coverage.js?v=20260909a';
 import './fast-mode.js?v=20260923ft';
@@ -616,6 +616,14 @@ loadConfig().then(async () => {
         closeLearningContext();
         window.openLearningSourcePicker?.();
     });
+    document.getElementById('learningContextArtistBtn')?.addEventListener('click', () => {
+        closeLearningContext();
+        document.getElementById('artistSourceArtistBtn')?.click();
+    });
+    document.getElementById('learningContextSongsBtn')?.addEventListener('click', () => {
+        closeLearningContext();
+        document.getElementById('artistSourcePickerBtn')?.click();
+    });
 
     document.getElementById('dailyReviewBtn')?.addEventListener('click', () => {
         const button = document.getElementById('dailyReviewBtn');
@@ -773,6 +781,7 @@ loadConfig().then(async () => {
             if (!isResumeNavigation) deckOverviewHold = window.showDeckOverviewLoading?.();
             await renderLevelSelector(activeArtist.language || 'spanish');
             document.body.classList.add('has-learning-context');
+            document.getElementById('artistSourceStep')?.classList.add('context-ready');
             window.updateLearningContextUI?.();
         } finally {
             if (!isResumeNavigation) {
@@ -906,6 +915,7 @@ function renderArtistSourceSummary() {
     };
 
     window.renderSetupExtrasSection?.();
+    window.updateLearningContextUI?.();
 }
 
 window.renderArtistSourceSummary = renderArtistSourceSummary;

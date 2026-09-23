@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v555"
+EXPECTED_CACHE_NAME = "flashcards-v556"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -248,6 +248,24 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("Music &amp; lyrics", html)
         self.assertIn("Look up a playlist and study speech meanings", main)
         self.assertNotIn('<span class="step-number">1</span>', html)
+
+    def test_artist_landing_moves_into_the_learning_context_sheet(self) -> None:
+        html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
+        main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
+        css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
+        ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
+        for required_id in (
+            "learningContextPhoto",
+            "learningContextArtistBtn",
+            "learningContextSongsBtn",
+        ):
+            self.assertIn(f'id="{required_id}"', html)
+        self.assertIn("artistSourceStep')?.classList.add('context-ready')", main)
+        self.assertIn("learningContextArtistBtn')?.addEventListener", main)
+        self.assertIn("learningContextSongsBtn')?.addEventListener", main)
+        self.assertIn("#artistSourceStep.context-ready", css)
+        self.assertIn("paintLearningContextPhoto", ui)
+        self.assertIn("nameEl.textContent = artistName", ui)
 
     def test_merge_lemmas_remains_a_declared_learner_feature(self) -> None:
         ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
@@ -865,8 +883,8 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("error !== 'access_denied'", callback)
         self.assertIn("spotifyWebLogin", callback)
         self.assertIn("/js/spotify.js?v=20260923su", worker)
-        self.assertIn("/js/main.js?v=20260923ft3", worker)
-        self.assertIn("/js/ui.js?v=20260923ft3", worker)
+        self.assertIn("/js/main.js?v=20260924lm", worker)
+        self.assertIn("/js/ui.js?v=20260924lm", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -987,7 +1005,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
         self.assertIn("/js/spotify-playlist-import.js?v=20260923su", worker)
-        self.assertIn('css/style.css?v=20260923ft4', html)
+        self.assertIn('css/style.css?v=20260924lm', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
         self.assertIn("replaceRoute({\n        kind: 'live'", importer)
