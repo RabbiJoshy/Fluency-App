@@ -69,6 +69,74 @@ function shortGloss(text) {
         .trim();
 }
 
+// The shipped cognate file often has a score and no matched word (schema v1).
+// The card's first gloss is then a different sense, so the pair does not look
+// like a cognate. When the file names the match, that word wins. Otherwise
+// pick the gloss token on this card that most resembles the surface, and only
+// call it obvious past a floor — a weak resemblance would invent a pair.
+const LOOKALIKE_FLOOR = 0.55;
+const LOOKALIKE_STOP = new Set([
+    'the', 'a', 'an', 'to', 'of', 'and', 'or', 'for', 'in', 'on', 'at', 'by',
+    'with', 'from', 'as', 'is', 'are', 'be', 'it', 'its', 'that', 'this',
+    'these', 'those', 'your', 'you', 'not', 'one',
+]);
+
+function foldLetters(value) {
+    return String(value || '').normalize('NFD').replace(/\p{M}/gu, '').toLocaleLowerCase();
+}
+
+function editDistance(left, right) {
+    if (left === right) return 0;
+    if (!left || !right) return Math.max(left.length, right.length);
+    let prev = Array.from({ length: right.length + 1 }, (_, index) => index);
+    for (let i = 1; i <= left.length; i++) {
+        const cur = [i];
+        for (let j = 1; j <= right.length; j++) {
+            cur.push(Math.min(
+                cur[j - 1] + 1,
+                prev[j] + 1,
+                prev[j - 1] + (left[i - 1] === right[j - 1] ? 0 : 1),
+            ));
+        }
+        prev = cur;
+    }
+    return prev[right.length];
+}
+
+function letterSimilarity(left, right) {
+    const a = foldLetters(left);
+    const b = foldLetters(right);
+    if (!a || !b) return 0;
+    return 1 - editDistance(a, b) / Math.max(a.length, b.length);
+}
+
+function glossTokens(text) {
+    return String(text || '').split(/[^A-Za-zÀ-ÖØ-öø-ÿ]+/).filter(token => {
+        const word = token.toLocaleLowerCase();
+        return word.length >= 3 && !LOOKALIKE_STOP.has(word);
+    });
+}
+
+function cognateEnglish(item) {
+    const matched = g().matchedKnownWord?.(item);
+    if (matched?.word) return { word: String(matched.word), obvious: true };
+    const surface = String(item?.word || '');
+    let best = '';
+    let bestScore = 0;
+    for (const meaning of item?.meanings || []) {
+        for (const token of glossTokens(meaning?.translation)) {
+            const score = letterSimilarity(surface, token);
+            if (score > bestScore) {
+                bestScore = score;
+                best = token;
+            }
+        }
+    }
+    if (best && bestScore >= LOOKALIKE_FLOOR) return { word: best, obvious: true };
+    const gloss = shortGloss(firstTranslation(item));
+    return { word: gloss, obvious: false };
+}
+
 function lemmaDisplayOf(item, host) {
     // The surviving card is anchored to the most frequent surface, which can
     // itself be an inflection. Show the shared headword used for grouping,
@@ -154,32 +222,146 @@ function cognateNote(item) {
     return `Looks like ${label}${matched?.word ? ` ${matched.word}` : ''}`;
 }
 
+function cognatePairHtml(item) {
+    const choice = cognateEnglish(item);
+    const eq = choice.obvious ? '' : ' hidden';
+    const gloss = choice.obvious ? '' : ' is-gloss';
+    return `<span class="cognate-pair">
+        <button type="button" class="extras-open-card cognate-pair-surface" data-card-id="${escapeHtml(item.id || '')}" aria-label="View ${escapeHtml(item.word)} card">${escapeHtml(item.word)}</button>
+        <span class="cognate-pair-eq"${eq} aria-hidden="true">=</span>
+        <strong class="cognate-pair-known extras-translation-slot${gloss}">${escapeHtml(choice.word)}</strong>
+    </span>`;
+}
+
+function paintCognatePair(row, item) {
+    const known = row.querySelector('.cognate-pair-known');
+    if (!known) return false;
+    const choice = cognateEnglish(item);
+    known.textContent = choice.word;
+    known.classList.toggle('is-gloss', !choice.obvious);
+    const eq = row.querySelector('.cognate-pair-eq');
+    if (eq) eq.hidden = !choice.obvious;
+    return Boolean(choice.word);
+}
+
 function renderRows(entries, kind) {
     if (entries.length === 0) return '';
     return entries.map(({ item, mergedInto }) => {
         const translation = firstTranslation(item);
         const shortTranslation = shortGloss(translation);
         const lemma = kind === 'lemma' ? lemmaDisplayOf(item, mergedInto) : null;
-        const note = kind === 'cognate' ? cognateNote(item) : `${lemma.word} ${lemma.translation}`;
-        // The word the score was actually computed against. Only decks built
-        // from a v1.1 cognate file carry it; without it the row shows the card's
-        // meaning and no arrow, because an arrow would claim a match this gloss
-        // cannot make. Absence is declared, never inferred.
-        const matched = kind === 'cognate' ? g().matchedKnownWord?.(item) : null;
+        const english = kind === 'cognate' ? cognateEnglish(item).word : '';
+        const note = kind === 'cognate' ? `${cognateNote(item)} ${english}` : `${lemma.word} ${lemma.translation}`;
         // `data-extras-id` lets hydrateExtrasTranslations find this row again
         // once the meanings arrive; see the comment on that function.
         return `<li class="extras-row extras-row--${kind}" data-extras-id="${escapeHtml(item.id || '')}" data-search-text="${escapeHtml(`${item.word} ${translation} ${note}`.toLocaleLowerCase())}">
             ${kind === 'lemma'
                 ? `<span class="extras-base"><strong>${escapeHtml(lemma.word)}</strong><small class="extras-translation-slot">${escapeHtml(shortGloss(lemma.translation))}</small></span>`
                 : ''}
-            <span class="extras-word-stack"><button type="button" class="extras-open-card" data-card-id="${escapeHtml(item.id || '')}" aria-label="View ${escapeHtml(item.word)} card">${escapeHtml(item.word)}</button>${kind === 'lemma' ? `<span class="extras-translation">${escapeHtml(shortTranslation)}</span>` : ''}</span>
             ${kind === 'cognate'
-                ? (matched?.word
-                    ? `<span class="extras-match"><span aria-hidden="true">→</span><strong>${escapeHtml(matched.word)}</strong></span>`
-                    : `<span class="extras-translation extras-translation-slot">${escapeHtml(shortTranslation)}</span>`)
-                : ''}
+                ? cognatePairHtml(item)
+                : `<span class="extras-word-stack"><button type="button" class="extras-open-card" data-card-id="${escapeHtml(item.id || '')}" aria-label="View ${escapeHtml(item.word)} card">${escapeHtml(item.word)}</button><span class="extras-translation">${escapeHtml(shortTranslation)}</span></span>`}
         </li>`;
     }).join('');
+}
+
+function addLemmaSurface(group, item) {
+    if (!item?.word) return;
+    const key = String(item.word).normalize('NFC').toLocaleLowerCase();
+    if (group.seen.has(key)) return;
+    group.seen.add(key);
+    group.surfaces.push(item);
+    const rank = Number(item.rank);
+    if (Number.isFinite(rank) && rank < group.rank) group.rank = rank;
+}
+
+// One row per lemma: the headword on the left, every surface of that lemma
+// on the right. The rank is the most frequent surface in the group.
+function groupMergedLemmas(lemmas) {
+    const groups = new Map();
+    for (const { item, mergedInto } of lemmas) {
+        const key = lemmaKeyOf(item);
+        if (!key) continue;
+        let group = groups.get(key);
+        if (!group) {
+            group = {
+                key,
+                host: mergedInto || item,
+                lemma: lemmaDisplayOf(item, mergedInto),
+                rank: Infinity,
+                surfaces: [],
+                seen: new Set(),
+            };
+            groups.set(key, group);
+            addLemmaSurface(group, mergedInto);
+        }
+        addLemmaSurface(group, item);
+    }
+    const list = [...groups.values()];
+    for (const group of list) {
+        group.surfaces.sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity));
+    }
+    list.sort((a, b) => a.rank - b.rank);
+    return list;
+}
+
+function renderLemmaGroup(group) {
+    const rank = Number.isFinite(group.rank) ? String(group.rank) : '';
+    const words = group.surfaces.map(item => item.word).join(' ');
+    const translation = shortGloss(group.lemma.translation);
+    const chips = group.surfaces.map(item =>
+        `<span class="lemma-group-chip">${escapeHtml(item.word)}</span>`
+    ).join('');
+    return `<li class="lemma-group-row" data-extras-id="${escapeHtml(group.host?.id || '')}" data-search-text="${escapeHtml(`${group.lemma.word} ${group.lemma.translation} ${words}`.toLocaleLowerCase())}">
+        <span class="lemma-group-rank">${escapeHtml(rank)}</span>
+        <span class="lemma-group-lemma"><strong>${escapeHtml(group.lemma.word)}</strong><small class="extras-translation-slot">${escapeHtml(translation)}</small></span>
+        <span class="lemma-group-forms">${chips}<button type="button" class="lemma-group-more" hidden></button></span>
+    </li>`;
+}
+
+function fitLemmaGroupForms(root) {
+    if (!root) return;
+    root.querySelectorAll('.lemma-group-forms:not([data-expanded="true"])').forEach(box => {
+        const chips = [...box.querySelectorAll('.lemma-group-chip')];
+        const more = box.querySelector('.lemma-group-more');
+        if (!more || !chips.length) return;
+        chips.forEach(chip => { chip.hidden = false; });
+        more.hidden = true;
+        const available = box.clientWidth;
+        if (available < 8) return;
+        // Measure the chips themselves. A right-aligned row overflows to the
+        // left, and then scrollWidth stays equal to the box, so the overflow
+        // is invisible to that test.
+        const gap = 6;
+        const moreWidth = 48;
+        const widths = chips.map(chip => chip.offsetWidth);
+        let used = 0;
+        let visible = 0;
+        for (let index = 0; index < chips.length; index++) {
+            const remaining = chips.length - index - 1;
+            const reserve = remaining > 0 ? moreWidth + gap : 0;
+            if (visible > 0 && used + widths[index] + reserve > available) break;
+            used += widths[index] + gap;
+            visible += 1;
+        }
+        const hidden = chips.length - visible;
+        chips.forEach((chip, index) => { chip.hidden = index >= visible; });
+        if (hidden > 0) {
+            more.hidden = false;
+            more.textContent = `+ ${hidden}`;
+        }
+    });
+}
+
+function scheduleFitLemmaForms(root) {
+    const run = () => fitLemmaGroupForms(root);
+    requestAnimationFrame(run);
+    document.fonts?.ready?.then(run).catch(() => {});
+    if (typeof ResizeObserver === 'function' && root && !root.dataset.fitObserved) {
+        root.dataset.fitObserved = '1';
+        const observer = new ResizeObserver(run);
+        observer.observe(root);
+    }
 }
 
 // The setup screen loads the *skinny* index — id, word, rank, surface_card_id,
@@ -211,10 +393,14 @@ function hydrateExtrasTranslations(listEl, entries) {
     const fill = (row, item) => {
         const translation = firstTranslation(item);
         if (!translation) return false;
-        const shown = shortGloss(translation);
-        row.querySelectorAll('.extras-translation-slot').forEach(slot => {
-            slot.textContent = shown;
-        });
+        if (row.classList.contains('extras-row--cognate')) {
+            paintCognatePair(row, item);
+        } else {
+            const shown = shortGloss(translation);
+            row.querySelectorAll('.extras-translation-slot').forEach(slot => {
+                slot.textContent = shown;
+            });
+        }
         // The filter box reads data-search-text, so a hydrated row has to be
         // findable by the English word it now shows.
         const search = row.getAttribute('data-search-text') || '';
@@ -263,16 +449,28 @@ function renderMergedForms() {
     const { lemmas } = collectExtras();
     const body = document.getElementById('mergedFormsBody');
     if (!body) return lemmas;
+    const groups = groupMergedLemmas(lemmas);
     const total = document.getElementById('mergedFormsTotal');
-    if (total) total.textContent = `${lemmas.length.toLocaleString()} forms`;
+    const forms = groups.reduce((count, group) => count + group.surfaces.length, 0);
+    if (total) {
+        const wordLabel = groups.length === 1 ? 'word' : 'words';
+        const formLabel = forms === 1 ? 'form' : 'forms';
+        total.textContent = groups.length
+            ? `${groups.length.toLocaleString()} ${wordLabel} · ${forms.toLocaleString()} ${formLabel}`
+            : '';
+    }
 
-    if (lemmas.length === 0) {
+    if (groups.length === 0) {
         body.innerHTML = `<p class="extras-empty">No word forms are currently merged. Every form is shown as its own card.</p>`;
         return lemmas;
     }
 
-    body.innerHTML = `<ul class="extras-list">${renderRows(lemmas, 'lemma')}</ul>`;
-    hydrateExtrasTranslations(body.querySelector('.extras-list'), lemmas);
+    body.innerHTML = `<ul class="lemma-group-list">${groups.map(renderLemmaGroup).join('')}</ul>`;
+    hydrateExtrasTranslations(
+        body.querySelector('.lemma-group-list'),
+        groups.map(group => ({ item: group.host })),
+    );
+    scheduleFitLemmaForms(body);
     return lemmas;
 }
 
@@ -343,10 +541,7 @@ function renderFastTrackDeck({ cognates = [], lemmas = [] }, { ranges = [], sele
     const groups = skippedByLevel(cognates, ranges);
     const currentIndex = groups.find(group => String(group.range?.level) === String(selectedLevel))?.index ?? groups[0]?.index;
     const skippedBlock = cognates.length
-        ? `<section class="extras-deck-group">
-            <h4>Skipped look-alikes <span class="extras-count">${cognates.length}</span></h4>
-            <p class="extras-deck-hint">Study these words in decks of up to 20. Each deck belongs to its original level; your card progress carries over if you change Fast Track settings.</p>
-            <div class="extras-level-list">${groups.map(({ range, index, entries }) => {
+        ? `<div class="extras-level-list">${groups.map(({ range, index, entries }) => {
                 const current = index === currentIndex;
                 const label = range ? `Level ${index + 1}` : 'Skipped words';
                 const deckCount = Math.ceil(entries.length / 20);
@@ -354,8 +549,7 @@ function renderFastTrackDeck({ cognates = [], lemmas = [] }, { ranges = [], sele
                     <summary><strong>${label}</strong><span>${entries.length} words · ${deckCount} deck${deckCount === 1 ? '' : 's'}</span></summary>
                     ${extrasSetPills(entries, 'cognate', index, progressForItem)}
                 </details>`;
-            }).join('')}</div>
-           </section>`
+            }).join('')}</div>`
         : '';
     const mergedNote = lemmas.length
         ? `<p class="extras-deck-hint extras-merged-note">Merged word forms stay on their shared cards, so they do not need separate decks.</p>`
@@ -379,6 +573,8 @@ async function startFastTrackSkippedSet(kind, start, levelIndex = 0, ranges = []
         loadingMessage.textContent = `Loading ${levelLabel} skipped deck ${setNumber}...`;
     }
     window.showAppLoading?.(`Loading ${levelLabel} skipped deck ${setNumber}`, 'Preparing Fast Track cards…');
+    document.getElementById('fastTrackStudyModal')?.classList.add('hidden');
+    document.getElementById('fastModeModal')?.classList.add('hidden');
     try {
         await g().loadVocabularyData('1-50000', {
             rankBasis: 'source',
@@ -512,7 +708,7 @@ function refreshExtrasButton() {
 
 function filterList(bodyId, query) {
     const needle = String(query || '').trim().toLocaleLowerCase();
-    document.querySelectorAll(`#${bodyId} .extras-row`).forEach(row => {
+    document.querySelectorAll(`#${bodyId} .extras-row, #${bodyId} .lemma-group-row`).forEach(row => {
         row.hidden = Boolean(needle) && !String(row.dataset.searchText || '').includes(needle);
     });
 }
@@ -534,6 +730,7 @@ function openMergedForms() {
     const search = document.getElementById('mergedFormsSearch');
     if (search) search.value = '';
     document.getElementById('mergedFormsModal')?.classList.remove('hidden');
+    requestAnimationFrame(() => fitLemmaGroupForms(document.getElementById('mergedFormsBody')));
 }
 
 function closeMergedForms() {
@@ -603,6 +800,17 @@ function initExtras() {
     document.getElementById('extrasSearch')?.addEventListener('input', event => filterExtras(event.currentTarget.value));
 
     const handleModalBodyClick = async (event, closeFn) => {
+        const more = event.target.closest('.lemma-group-more');
+        if (more) {
+            const box = more.closest('.lemma-group-forms');
+            if (box) {
+                box.dataset.expanded = 'true';
+                box.classList.add('is-expanded');
+                box.querySelectorAll('.lemma-group-chip').forEach(chip => { chip.hidden = false; });
+                more.hidden = true;
+            }
+            return;
+        }
         const restore = event.target.closest('.extras-restore');
         if (restore) {
             restoreSection(restore.dataset.restoreKind);

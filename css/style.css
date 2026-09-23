@@ -4061,6 +4061,26 @@
             margin: -2px auto 10px;
         }
 
+        .grammar-card-note {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            max-width: 100%;
+            margin: 2px auto 8px;
+            color: color-mix(in srgb, rgb(var(--card-pos-rgb)) 48%, white);
+            font-family: var(--font-reading);
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.3;
+            text-align: center;
+        }
+
+        .grammar-card-note[hidden] {
+            display: none;
+        }
+
         .grammar-pair-chips {
             display: inline-flex;
             align-items: center;
@@ -16839,12 +16859,16 @@
 .fast-mode-controls .setup-substep {
   margin-top: 0;
   padding: 16px 18px;
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 34%, var(--border-color));
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--accent-primary) 8%, var(--bg-card));
 }
 /* Inside a card the prose and the controls sit beside each other rather than
-   stacking, which is what turns spare width into saved height. */
+   stacking, which is what turns spare width into saved height. The actions
+   column sizes to the toggle plus the view link, so those two stay on one line. */
 .fast-mode-card-body {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 280px);
+  grid-template-columns: minmax(0, 1fr) max-content;
   gap: 18px;
   align-items: start;
 }
@@ -16854,6 +16878,7 @@
   align-items: flex-start;
   gap: 10px;
   min-width: 0;
+  max-width: 100%;
 }
 .fast-mode-controls .fast-mode-control-row { margin-top: 0; }
 .fast-mode-controls .fast-mode-explainer { margin: 0; }
@@ -16892,18 +16917,25 @@
    trying to understand. `.fullscreen-modal` caps at 600px for the other
    walkthroughs; this overrides that deliberately. */
 .fast-mode-page {
-  --accent-primary: #8795ff;
-  --accent-primary-rgb: 135, 149, 255;
-  --accent-primary-text: #10141b;
   max-width: none;
   width: 100%;
   min-height: 100%;
   max-height: none;
   border-radius: 0;
   margin: 0;
-  background: var(--bg-primary, var(--bg-card));
+  border: 0;
+  background:
+    radial-gradient(circle at 50% -12%, rgba(var(--accent-primary-rgb), .28), transparent 46%),
+    var(--bg-primary, var(--bg-card));
   overflow-y: auto;
 }
+#fastModeModal.modal,
+#fastTrackStudyModal.modal {
+  padding: 0;
+  align-items: stretch;
+  justify-content: stretch;
+}
+#fastTrackStudyModal { z-index: 1020; }
 #fastModeModal .substep-title {
   color: var(--text-secondary);
   font-size: 14px;
@@ -17492,16 +17524,28 @@
 .fast-mode-control-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 8px;
+  flex-wrap: nowrap;
   margin-top: 8px;
+  max-width: 100%;
+}
+/* The shared toggle style scrolls and shrinks. On this row the label has to
+   stay readable beside the view link, so the switch keeps its own width. */
+.fast-mode-control-row .group-size-selector {
+  flex: 0 0 auto;
+  overflow: visible;
+}
+.fast-mode-control-row .cognate-toggle-btn,
+.fast-mode-control-row .lemma-toggle-btn {
+  min-width: 0;
+  padding: 6px 10px;
 }
 .fast-mode-view-items-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 13px;
+  padding: 6px 10px;
   border-radius: 999px;
   background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
   border: 1px solid color-mix(in srgb, var(--accent-primary) 32%, transparent);
@@ -18300,8 +18344,173 @@ body {
 }
 #skippedWordsModal .extras-translation,
 #extrasDeckCard .extras-row--cognate > .extras-translation { text-align: right; font-size: 12px; }
+
+/* Skipped words: the surface and the word it resembles sit in two columns
+   in the middle of the sheet, rather than pinned to opposite edges. */
+#skippedWordsModal .extras-row--cognate {
+  display: flex;
+  justify-content: center;
+}
+#skippedWordsModal .cognate-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: 12px;
+  width: min(100%, 280px);
+}
+/* The phone rule that parks .extras-open-card in column 2 must not apply
+   inside this pair, or the equals sign lands on the left and the two words
+   sit together on the right. */
+#skippedWordsModal .cognate-pair .extras-open-card {
+  grid-column: 1;
+  grid-row: auto;
+  justify-self: end;
+  max-width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--text-primary);
+  font: 700 16px/1.3 var(--font-emphasis);
+  text-align: right;
+}
+#skippedWordsModal .cognate-pair-eq { grid-column: 2; }
+#skippedWordsModal .cognate-pair-known { grid-column: 3; }
+#skippedWordsModal .cognate-pair-eq {
+  color: var(--accent-primary);
+  font: 700 16px/1 var(--font-emphasis);
+}
+#skippedWordsModal .cognate-pair-known {
+  justify-self: start;
+  color: var(--text-primary);
+  font: 700 16px/1.3 var(--font-emphasis);
+  text-align: left;
+}
+#skippedWordsModal .cognate-pair-known.is-gloss {
+  color: var(--text-muted);
+  font: 500 13px/1.35 var(--font-reading);
+}
+
+.lemma-group-list { margin: 0; padding: 0; list-style: none; }
+.lemma-group-row {
+  display: grid;
+  grid-template-columns: 3.4em minmax(0, 34%) minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+.lemma-group-row:last-child { border-bottom: 0; }
+.lemma-group-rank {
+  color: var(--text-muted);
+  font: 650 12px/1 var(--font-data, var(--font-reading));
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.lemma-group-lemma { min-width: 0; }
+.lemma-group-lemma strong {
+  display: block;
+  color: var(--text-primary);
+  font: 700 15px/1.3 var(--font-emphasis);
+}
+.lemma-group-lemma small {
+  display: block;
+  margin-top: 2px;
+  color: var(--text-muted);
+  font: 500 12px/1.35 var(--font-reading);
+}
+.lemma-group-forms {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+}
+.lemma-group-forms.is-expanded { flex-wrap: wrap; overflow: visible; }
+.lemma-group-chip,
+.lemma-group-more {
+  flex: none;
+  padding: 4px 9px;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font: 650 12px/1.2 var(--font-reading);
+}
+.lemma-group-more {
+  border-color: color-mix(in srgb, var(--accent-primary) 40%, var(--border-color));
+  background: color-mix(in srgb, var(--accent-primary) 14%, transparent);
+  color: var(--accent-primary);
+  cursor: pointer;
+}
+.lemma-group-chip[hidden],
+.lemma-group-more[hidden] { display: none; }
+
+.fast-track-study-launch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 58px;
+  padding: 14px 16px;
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 42%, var(--border-color));
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--accent-primary) 14%, var(--bg-card));
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+}
+.fast-track-study-launch strong { font: 700 15px/1.3 var(--font-emphasis); }
+.fast-track-study-launch span {
+  flex: none;
+  color: var(--accent-primary);
+  font: 650 12px/1.2 var(--font-reading);
+}
+.fast-track-study-launch:hover {
+  background: color-mix(in srgb, var(--accent-primary) 22%, var(--bg-card));
+}
+#fastTrackDeckCard:has(.fast-track-study-launch),
+#fastTrackDeckCard:has(.fast-track-study-empty) {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+.fast-track-study-empty {
+  margin: 0;
+  color: var(--text-muted);
+  font: 500 13px/1.45 var(--font-reading);
+}
+#fastTrackStudyBody .extras-level-list { margin-top: 4px; }
+
+@media (max-width: 700px) {
+  #fastModeModal,
+  #fastTrackStudyModal,
+  #mergedFormsModal,
+  #skippedWordsModal {
+    align-items: stretch !important;
+    justify-content: stretch !important;
+    padding: 0 !important;
+  }
+  #fastModeModal > .modal-content,
+  #fastTrackStudyModal > .modal-content,
+  #mergedFormsModal > .modal-content,
+  #skippedWordsModal > .modal-content {
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: none !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    border-width: 0 !important;
+  }
+  .lemma-group-row { grid-template-columns: 2.6em minmax(0, 38%) minmax(0, 1fr); gap: 8px; }
+}
 #mergedFormsModal .extras-intro .extras-count,
-#skippedWordsModal .extras-intro .extras-count { margin-left: 6px; }
+#skippedWordsModal .extras-intro .extras-count { margin-left: 6px; white-space: nowrap; }
 
 .settings-preference-cluster { margin-top: 22px; }
 .settings-preference-cluster:first-of-type { margin-top: 4px; }
