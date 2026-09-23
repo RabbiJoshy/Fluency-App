@@ -395,7 +395,13 @@ function init() {
         if (event.target?.id === 'fastModeModal') closeFastModePage();
     });
     document.addEventListener('keydown', event => {
-        if (event.key === 'Escape') closeFastModePage();
+        if (event.key !== 'Escape') return;
+        const study = document.getElementById('fastTrackStudyModal');
+        if (study && !study.classList.contains('hidden')) {
+            study.classList.add('hidden');
+            return;
+        }
+        closeFastModePage();
     });
 
     // ui.js and main.js show and hide the two containers directly, in about a

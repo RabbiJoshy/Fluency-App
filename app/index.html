@@ -46,14 +46,14 @@
             root.dataset.textSize = textSize;
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260923rk">
+    <link rel="stylesheet" href="css/style.css?v=20260923ft2">
     <link rel="stylesheet" href="css/light-theme.css?v=20260921freq">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260923sq">
+    <link rel="modulepreload" href="js/main.js?v=20260923ft2">
     <link rel="modulepreload" href="js/routes.js?v=20260923cj">
     <link rel="modulepreload" href="js/theme.js?v=20260922ui">
     <link rel="modulepreload" href="js/state.js?v=20260921x">
@@ -73,7 +73,7 @@
     <link rel="modulepreload" href="js/progress.js?v=20260920e">
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20260923rk">
-    <link rel="modulepreload" href="js/ui.js?v=20260923sq">
+    <link rel="modulepreload" href="js/ui.js?v=20260923ft">
     <link rel="modulepreload" href="js/review-home.js?v=20260922rw">
     <link rel="modulepreload" href="js/fast-track-preferences.js?v=20260920a">
     <link rel="modulepreload" href="js/vocab.js?v=20260923rk">
@@ -1202,32 +1202,9 @@
                      skipped and merged word lists live inside their own step, as
                      they did before, rather than as a second set of rows. -->
                 <div class="fast-mode-controls" id="fastModeFineTune">
-                    <div id="lemmaToggleContainer" class="setup-substep" style="display: none;">
-                        <div class="substep-header">
-                            <span class="fast-mode-number" aria-hidden="true">1</span>
-                            <span class="substep-title">Merge word forms</span>
-                        </div>
-                        <div class="fast-mode-card-body">
-                            <p class="fast-mode-explainer">Forms such as <em>hablo</em>, <em>habló</em> and <em>hablar</em> belong to the same word. Put them on one card so you learn it once while keeping every example.</p>
-                            <div class="fast-mode-card-actions">
-                                <div class="fast-mode-example" aria-label="Example of grouped word forms"><span>hablo</span><span>habló</span><span>hablar</span><b>→ hablar</b></div>
-                                <div class="fast-mode-control-row">
-                                    <div id="lemmaToggleSelector" class="group-size-selector">
-                                        <button class="lemma-toggle-btn selected" data-lemma="off" data-short="Off" data-full="Off">Off</button>
-                                        <button class="lemma-toggle-btn" data-lemma="on" data-short="On" data-full="On">On</button>
-                                    </div>
-                                    <button type="button" id="viewMergedFormsBtn" class="fast-mode-view-items-btn" style="display: none;">
-                                        <span id="mergedFormsCount">View merged forms</span> ›
-                                    </button>
-                                </div>
-                                <p id="lemmaNoneLine" class="fast-mode-none" hidden></p>
-                            </div>
-                        </div>
-                    </div>
-
                     <div id="cognateToggleContainer" class="setup-substep" style="display: none;">
                         <div class="substep-header">
-                            <span class="fast-mode-number" aria-hidden="true">2</span>
+                            <span class="fast-mode-number" aria-hidden="true">1</span>
                             <span class="substep-title">Skip obvious words</span>
                         </div>
                         <div class="fast-mode-card-body">
@@ -1255,13 +1232,34 @@
                         </div>
                     </div>
 
+                    <div id="lemmaToggleContainer" class="setup-substep" style="display: none;">
+                        <div class="substep-header">
+                            <span class="fast-mode-number" aria-hidden="true">2</span>
+                            <span class="substep-title">Merge word forms</span>
+                        </div>
+                        <div class="fast-mode-card-body">
+                            <p class="fast-mode-explainer">Forms such as <em>hablo</em>, <em>habló</em> and <em>hablar</em> belong to the same word. Put them on one card so you learn it once while keeping every example.</p>
+                            <div class="fast-mode-card-actions">
+                                <div class="fast-mode-example" aria-label="Example of grouped word forms"><span>hablo</span><span>habló</span><span>hablar</span><b>→ hablar</b></div>
+                                <div class="fast-mode-control-row">
+                                    <div id="lemmaToggleSelector" class="group-size-selector">
+                                        <button class="lemma-toggle-btn selected" data-lemma="off" data-short="Off" data-full="Off">Off</button>
+                                        <button class="lemma-toggle-btn" data-lemma="on" data-short="On" data-full="On">On</button>
+                                    </div>
+                                    <button type="button" id="viewMergedFormsBtn" class="fast-mode-view-items-btn" style="display: none;">
+                                        <span id="mergedFormsCount">View merged forms</span> ›
+                                    </button>
+                                </div>
+                                <p id="lemmaNoneLine" class="fast-mode-none" hidden></p>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
-                <!-- Fast Track review home: the skipped-word decks that used to be
-                     a second card on the setup screen. ui.js renders into the card;
-                     the pills keep their existing handler contract. -->
+                <!-- One action. The level and set picker is its own screen. -->
                 <section class="fast-mode-section" data-section="decks">
-                    <h4>Fast Track review home <span id="fastModeSkippedCount"></span></h4>
+                    <span id="fastModeSkippedCount" hidden></span>
                     <div class="extras-deck-card" id="fastTrackDeckCard"></div>
                 </section>
 
@@ -1276,6 +1274,18 @@
         </div>
     </div>
 
+    <!-- Study screen for words Fast Track set aside. -->
+    <div id="fastTrackStudyModal" class="modal hidden">
+        <div class="modal-content fullscreen-modal fast-mode-page">
+            <button class="modal-close fast-mode-close" id="closeFastTrackStudyModal" aria-label="Close">✕</button>
+            <div class="fast-mode-page-body">
+                <h2>Study words skipped by Fast Track</h2>
+                <p class="fast-mode-lede">Pick a level, then a set. Each set is up to 20 words, and progress stays on those cards.</p>
+                <div id="fastTrackStudyBody"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Merged Forms Modal — word forms grouped onto a base card -->
     <div id="mergedFormsModal" class="modal hidden">
         <div class="modal-content">
@@ -1283,7 +1293,7 @@
                 <div><span class="product-modal-eyebrow">Fast Track</span><h3>Merged word forms</h3></div>
                 <button class="modal-close" id="closeMergedFormsModal" aria-label="Close">✕</button>
             </div>
-            <p class="extras-intro">Forms grouped onto a shared base card. <span id="mergedFormsTotal" class="extras-count"></span></p>
+            <p class="extras-intro">Each word, with the forms that share its card. <span id="mergedFormsTotal" class="extras-count"></span></p>
             <input type="search" id="mergedFormsSearch" class="extras-search" placeholder="Search merged forms" autocomplete="off">
             <div class="extras-body" id="mergedFormsBody"></div>
         </div>
@@ -2142,6 +2152,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260923sq"></script>
+    <script type="module" src="js/main.js?v=20260923ft2"></script>
 </body>
 </html>
