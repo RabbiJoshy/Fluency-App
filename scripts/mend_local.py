@@ -430,8 +430,38 @@ def render_measure(doc: dict[str, Any]) -> str:
 # ------------------------------------------------------------------ step: lemmas
 
 LEMMA_OVERRIDES = REPO / "config/lemmas/es.json"
-REFETCH_OUT = "refetch-no-menu-v15.jsonl"
-NEW_SNAPSHOT_ID = "spanishdict-complete-menu-2026-09-23-v4"
+# One refetch file and one surface list per scope. "affected" is the 105;
+# "deck" is every kept ledger surface whose page SpanishDict has not answered in
+# a form that kept its relation. Each merge writes the next free snapshot id.
+REFETCH = {
+    "affected": ("refetch-no-menu-v15.surfaces.txt", "refetch-no-menu-v15.jsonl"),
+    "deck": ("refetch-lemma-relations.surfaces.txt", "refetch-lemma-relations.jsonl"),
+}
+MEND_SNAPSHOT_PREFIX = "spanishdict-complete-menu-2026-09-23-v"
+
+
+def _mend_snapshots(ws: Path) -> list[str]:
+    root = ws / SD_ROOT
+    found = []
+    for path in root.glob(MEND_SNAPSHOT_PREFIX + "*"):
+        suffix = path.name.removeprefix(MEND_SNAPSHOT_PREFIX)
+        if suffix.isdigit() and (path / "artifact.json").exists():
+            found.append((int(suffix), path.name))
+    return [name for _, name in sorted(found)]
+
+
+def _snapshot(args: argparse.Namespace, ws: Path, run: Path) -> str:
+    """The explicit snapshot, else the newest MEND snapshot, else the run's."""
+    if args.snapshot:
+        return args.snapshot
+    mend = _mend_snapshots(ws)
+    return mend[-1] if mend else _json(run / "stages/02_sense_menu/output/report.json")["snapshot_id"]
+
+
+def _next_snapshot_id(ws: Path) -> str:
+    mend = _mend_snapshots(ws)
+    last = int(mend[-1].removeprefix(MEND_SNAPSHOT_PREFIX)) if mend else 3
+    return f"{MEND_SNAPSHOT_PREFIX}{last + 1}"
 
 
 def _latest_flags(sd_root: Path) -> dict[str, list[str]]:
@@ -459,13 +489,32 @@ def _lemma_rule(ws: Path, snapshot_id: str):
     return rule, cache, reverse
 
 
+def _row_as_page(row: dict[str, Any]) -> dict[str, Any]:
+    return {"entry_lang": row.get("entry_lang") or "es",
+            "dictionary_analyses": [{"headword": a.get("headword") or row["word"]}
+                                    for a in row.get("analyses") or []],
+            "possible_results": [p if isinstance(p, dict) else {"result": p}
+                                 for p in row.get("possible_results") or []]}
+
+
 def step_lemmas(args: argparse.Namespace) -> int:
     """Read-only: apply the declared-lemma rule and compare it with the ledger."""
     ws = args.workspace.resolve()
     run = ws / "runs/es/speech" / args.run_id
-    snapshot_id = _json(run / "stages/02_sense_menu/output/report.json")["snapshot_id"]
+    snapshot_id = _snapshot(args, ws, run)
     rule, cache, reverse = _lemma_rule(ws, snapshot_id)
     flags = _latest_flags(ws / SD_ROOT)
+    # Deck-scope refetch rows are never merged into a menu snapshot; they are
+    # read here as the page, because they kept the relation the cache lost.
+    deck_rows = ws / SD_ROOT / REFETCH["deck"][1]
+    fresh = 0
+    if deck_rows.exists():
+        for line in deck_rows.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                row = json.loads(line)
+                if row.get("word") and not row.get("flags"):
+                    cache[row["word"]] = _row_as_page(row)
+                    fresh += 1
     ledger = _json(ledger_path(ws, "es")).get("surfaces") or {}
     empty = {c["surface"]: c for c in empty_cards(args.release.resolve())}
 
@@ -501,6 +550,9 @@ def step_lemmas(args: argparse.Namespace) -> int:
     refetch = [a["surface"] for a in affected if a["needs_refetch"]]
     queue = [a["surface"] for a in affected if a["status"] in ("no_lemma", "enclitic_ambiguous")
              and not a["needs_refetch"]]
+    deck_refetch = sorted((s for s, r in resolutions.items()
+                           if r.needs_refetch and (ledger.get(s) or {}).get("verdict") == "keep"),
+                          key=lambda s: (ledger[s].get("rank") is None, ledger[s].get("rank") or 0))
 
     out_dir = (args.out or ws / "raw/surfaces/es/mend").resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -511,6 +563,7 @@ def step_lemmas(args: argparse.Namespace) -> int:
         "conjugation_table": {"forms": len(reverse), "has_moods": rule.table_has_moods,
                               "sample_row": sample_rows[0] if sample_rows else None},
         "overrides": len(rule.overrides),
+        "deck_refetch_pages_read": fresh,
         "ledger_surfaces": len(ledger),
         "status_counts": dict(Counter(r.status for r in resolutions.values())),
         "ledger_comparison": dict(comparison),
@@ -518,16 +571,22 @@ def step_lemmas(args: argparse.Namespace) -> int:
         "disagreements": disagreements,
         "affected": affected,
         "refetch_surfaces": refetch,
+        "deck_refetch_count": len(deck_refetch),
+        "deck_refetch_by_reason": dict(Counter(
+            "unfetched" if resolutions[s].page_state == "unfetched"
+            else "relation_unknown" if resolutions[s].relation_unknown else "rejected_headword"
+            for s in deck_refetch)),
         "override_queue": queue,
     }
     path = out_dir / f"lemmas-{stamp}.json"
     path.write_text(json.dumps(document, ensure_ascii=False, indent=1), encoding="utf-8")
-    (out_dir / "refetch-no-menu-v15.surfaces.txt").write_text("\n".join(refetch) + "\n", encoding="utf-8")
+    (out_dir / REFETCH["affected"][0]).write_text("\n".join(refetch) + "\n", encoding="utf-8")
+    (out_dir / REFETCH["deck"][0]).write_text("\n".join(deck_refetch) + "\n", encoding="utf-8")
 
     lines = [f"# MEND lemmas — declared-lemma rule vs ledger ({snapshot_id})", "",
              f"conjugation table: {len(reverse):,} forms, moods present: {rule.table_has_moods}, "
              f"sample row: {document['conjugation_table']['sample_row']}",
-             f"overrides: {len(rule.overrides)}", "",
+             f"overrides: {len(rule.overrides)} · deck refetch pages read: {fresh}", "",
              "## All ledger surfaces", ""]
     lines += [f"- {k}: {v}" for k, v in sorted(document["status_counts"].items())]
     lines += ["", "ledger lemma vs declared lemmas:"]
@@ -544,55 +603,71 @@ def step_lemmas(args: argparse.Namespace) -> int:
         lemmas = ", ".join(f"{l['lemma']} ({l['provenance'].removeprefix('spanishdict-')})" for l in a["lemmas"]) or "—"
         lines.append(f"| {a['rank']} | {a['surface']} | {a['status']} | {lemmas} | {a['page_state']} | "
                      f"{', '.join(a['rejected_headwords']) or '—'} | {', '.join(a['relation_unknown']) or '—'} |")
-    lines += ["", f"refetch ({len(refetch)}): {' '.join(refetch) or '—'}",
+    lines += ["", f"refetch, the 105 ({len(refetch)}): {' '.join(refetch) or '—'}",
+              f"refetch, deck-wide kept surfaces ({len(deck_refetch)}): "
+              f"{document['deck_refetch_by_reason']} (list in {REFETCH['deck'][0]})",
               f"override queue ({len(queue)}): {' '.join(queue) or '—'}"]
     md = "\n".join(lines) + "\n"
     path.with_suffix(".md").write_text(md, encoding="utf-8")
     print(md)
-    print(f"\nwrote {path}\nwrote {path.with_suffix('.md')}\nwrote {out_dir / 'refetch-no-menu-v15.surfaces.txt'}")
+    print(f"\nwrote {path}\nwrote {path.with_suffix('.md')}")
+    for name, _ in REFETCH.values():
+        print(f"wrote {out_dir / name}")
     return 0
 
 
 # ----------------------------------------------------------------- step: refetch
 
 def step_refetch(args: argparse.Namespace) -> int:
-    """Ask SpanishDict about the queued surfaces, then merge into a NEW snapshot id.
+    """Ask SpanishDict about a scope's surface list (written by --step lemmas).
 
-    Only the 105's surfaces that the lemmas step marked unfetched or
-    relation-unknown are asked. The merge copies the run's snapshot and adds
-    this one file, so no other surface's entry changes.
+    affected: the 105's surfaces. The file is merged into the next free MEND
+      snapshot id, copied from the newest one, so only these surfaces' cache
+      entries change -- that snapshot is what the menus step builds from.
+    deck: kept surfaces across the ledger. Fetched only, never merged: those
+      pages would replace cache entries for cards whose menus must not move.
+      The lemmas step reads the file directly as lemma evidence.
     """
     import subprocess
 
     ws = args.workspace.resolve()
     run = ws / "runs/es/speech" / args.run_id
     out_dir = (args.out or ws / "raw/surfaces/es/mend").resolve()
-    surfaces = out_dir / "refetch-no-menu-v15.surfaces.txt"
+    list_name, out_name = REFETCH[args.scope]
+    surfaces = out_dir / list_name
     if not surfaces.exists() or not surfaces.read_text(encoding="utf-8").strip():
         print(f"no surface list at {surfaces}; run --step lemmas first"); return 1
-    snapshot_id = _json(run / "stages/02_sense_menu/output/report.json")["snapshot_id"]
-    target = ws / SD_ROOT / REFETCH_OUT
+    wanted = [w for w in surfaces.read_text(encoding="utf-8").split("\n") if w.strip()]
+    target = ws / SD_ROOT / out_name
     python = sys.executable
     fetch = [python, str(REPO / "scripts/fetch_spanishdict.py"), "--run-dir", str(run),
              "--surfaces", str(surfaces), "--out", str(target)]
     print("$ " + " ".join(fetch), flush=True)
     if subprocess.call(fetch) != 0:
         return 1
+    wanted_set = set(wanted)
     rows = [json.loads(l) for l in target.read_text(encoding="utf-8").splitlines() if l.strip()]
-    print(f"\n## {REFETCH_OUT}: {len(rows)} rows\n")
-    print("| word | entry_lang | flags | analyses | headwords | possible (relation) |\n|---|---|---|---:|---|---|")
-    for row in rows:
-        heads = sorted({a.get("headword") or row["word"] for a in row.get("analyses") or []})
-        possible = [f"{p.get('headword')} ({p.get('heuristic') or '?'})" if isinstance(p, dict) else f"{p} (?)"
-                    for p in row.get("possible_results") or []]
-        print(f"| {row['word']} | {row.get('entry_lang')} | {','.join(row.get('flags') or []) or '—'} | "
-              f"{len(row.get('analyses') or [])} | {', '.join(heads[:4]) or '—'} | {', '.join(possible[:4]) or '—'} |")
-    if args.no_merge:
+    rows = [r for r in rows if r.get("word") in wanted_set]
+    flagged = Counter(f.split(":")[0] for r in rows for f in r.get("flags") or [])
+    declared = sum(1 for r in rows if any(isinstance(p, dict) and p.get("heuristic") in ("conjugation", "inflection")
+                                          for p in r.get("possible_results") or []))
+    print(f"\n## {out_name}: {len(rows)} rows for {len(wanted)} surfaces; "
+          f"with a declared relation {declared}; flags {dict(flagged)}\n")
+    if len(rows) <= 60:
+        print("| word | entry_lang | flags | analyses | headwords | possible (relation) |\n|---|---|---|---:|---|---|")
+        for row in rows:
+            heads = sorted({a.get("headword") or row["word"] for a in row.get("analyses") or []})
+            possible = [f"{p.get('headword')} ({p.get('heuristic') or '?'})" if isinstance(p, dict) else f"{p} (?)"
+                        for p in row.get("possible_results") or []]
+            print(f"| {row['word']} | {row.get('entry_lang')} | {','.join(row.get('flags') or []) or '—'} | "
+                  f"{len(row.get('analyses') or [])} | {', '.join(heads[:4]) or '—'} | {', '.join(possible[:4]) or '—'} |")
+    if args.scope == "deck" or args.no_merge:
+        print("\nnot merged (deck scope is lemma evidence only)" if args.scope == "deck" else "\nnot merged")
         return 0
+    base = _snapshot(args, ws, run)
+    out_id = _next_snapshot_id(ws)
     merge = [python, str(REPO / "scripts/merge_spanishdict_refetch.py"), "--workspace", str(ws),
-             "--snapshot", snapshot_id, "--out-id", NEW_SNAPSHOT_ID, "--refetch", REFETCH_OUT]
-    if (ws / SD_ROOT / NEW_SNAPSHOT_ID).exists():
-        print(f"\nsnapshot {NEW_SNAPSHOT_ID} already exists; not overwriting. Stop and report."); return 1
+             "--snapshot", base, "--out-id", out_id, "--refetch", out_name]
     print("\n$ " + " ".join(merge), flush=True)
     return subprocess.call(merge)
 
@@ -602,6 +677,9 @@ def main() -> int:
     ap.add_argument("--step", required=True,
                     choices=["measure", "lemmas", "refetch", "menus", "wsd", "release"])
     ap.add_argument("--no-merge", action="store_true", help="refetch: fetch only, do not merge")
+    ap.add_argument("--scope", choices=sorted(REFETCH), default="affected",
+                    help="refetch: the 105 (merged into a new snapshot) or the deck (evidence only)")
+    ap.add_argument("--snapshot", help="SpanishDict snapshot id (default: newest MEND snapshot, else the run's)")
     ap.add_argument("--workspace", type=Path, default=REPO.parent / "Fluency-Workspace")
     ap.add_argument("--release", type=Path,
                     default=Path("/private/tmp/fluency-releases/es/speech") / RELEASE_ID)

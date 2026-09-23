@@ -108,6 +108,13 @@ class TableTests(unittest.TestCase):
         # chica has its own page: the table must not add chicar (decision 0021).
         self.assertEqual(rule().resolve("chica", page("chica")).lemma_names, ["chica"])
 
+    def test_a_table_only_lemma_for_an_unasked_surface_still_asks(self) -> None:
+        """borda is a form of bordar and, in every line, the noun: ask the page."""
+        found = rule().resolve("conduces")
+        self.assertEqual(found.status, STATUS_DECLARED)
+        self.assertTrue(found.needs_refetch)
+        self.assertFalse(rule().resolve("chica", page("chica")).needs_refetch)
+
     def test_never_asked_and_unresolved_is_declared_and_queued(self) -> None:
         found = rule().resolve("atrevo")
         self.assertEqual(found.status, STATUS_NO_LEMMA)

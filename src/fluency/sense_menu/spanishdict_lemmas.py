@@ -100,9 +100,18 @@ class LemmaResolution:
 
     @property
     def needs_refetch(self) -> bool:
-        return self.status == STATUS_NO_LEMMA and (
-            self.page_state == "unfetched" or bool(self.relation_unknown)
-        )
+        """SpanishDict has not yet said, in a form we kept, what this surface is.
+
+        True whatever the status: a lemma from the conjugation table alone for a
+        never-fetched surface is SpanishDict's table, not its answer about the
+        word -- *borda* is a form of *bordar* and, in every line, the noun
+        (*por la borda*). And a page headword that is neither the surface nor
+        a declared relation was stored by a scrape that did not keep relations,
+        so asking again is how a redirect (*buen* -> bueno) is told from a
+        substitution (*tómatelo* -> tomate).
+        """
+        return (self.page_state == "unfetched" or bool(self.relation_unknown)
+                or bool(self.rejected_headwords))
 
     def to_dict(self) -> dict[str, Any]:
         return {
