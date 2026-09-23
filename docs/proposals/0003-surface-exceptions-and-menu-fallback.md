@@ -1,8 +1,8 @@
 # Proposal 0003 — Surface exceptions and the menu-fallback layer
 
-**Status:** Draft, under discussion with Joshua. Not an instruction to any chat.
-When the plan settles, a prompt for **MEND** is written against this file and
-both are attached to that chat. Until then, edit freely.
+**Status:** Settled with Joshua (2026-09-23). This is **MEND**'s design; its
+prompt is in `CHAT_ROADMAP.md` under *MEND*. §10 records the decisions MEND
+works to. Changes from here go through Joshua.
 
 **One-line summary.** Some surfaces reach a release with no sense menu.
 Today that is a dead end: the card ships empty and the app drops it. This
@@ -119,7 +119,7 @@ treats them the same.
 
 ---
 
-## 4. One ledger, two labels: scope and trust
+## 4. Three stores, one format, read as a stack
 
 There are three kinds of work, and they need different amounts of certainty:
 - **Speech releases** are curated and slow to change.
@@ -127,9 +127,19 @@ There are three kinds of work, and they need different amounts of certainty:
 - **Playlists a user uploads live** must answer in seconds, grow quickly, and
   may be wrong.
 
-These are **not three ledgers.** They are one event store and one resolver.
-Every fact and every declared entry (expansion, gloss, entity, override)
-carries two labels.
+**These are three stores**, each kept where it belongs and sized for its job:
+
+| Store | Holds | Lives in | Size | Maintained by |
+|---|---|---|---|---|
+| Language ledger (exists today, one per language) | speech facts and language-wide declarations | `raw/surfaces/<lang>/` in the workspace | bounded, ~10k surfaces | pipeline chats |
+| Artist layer | only what differs for that artist | beside the language ledger, per artist | a few hundred entries | Joshua, when running an artist by hand |
+| Live store | heuristic facts from users' playlists | a database on SETLIST's server, never a JSON file | unbounded; grows with users | itself; Joshua works only the curation queue |
+
+What they share is **one event format and one resolver**. The resolver reads
+them **as a stack**: language, then artist, then live. It filters by scope and
+by minimum trust, and the narrowest scope wins. So a new kind of exception
+(entities, elisions…) is added once, not three times. Every fact and every
+declared entry (expansion, gloss, entity, override) carries two labels.
 
 **Scope: where it applies.** This works exactly as
 `src/fluency/lyrics/overrides.py` already scopes routing decisions. An empty
@@ -182,11 +192,11 @@ promotion can also widen the scope: an entity guessed in one playlist and
 confirmed becomes language-scoped, and every later artist and playlist gets it
 for free.
 
-**What this means for the eventual artist restructure.** The "artist surface
-ledger" is not a separate structure. It is the artist scope of the same store:
-events and declared entries at `es / lyrics / artist:<slug>`, at curated or
-derived trust. The live playlist ledger is the same again at playlist scope,
-where heuristic trust is allowed.
+**Why trust is a label and not just "which store".** A single store can mix
+trust levels. A hand-run artist layer holds both entries Joshua reviewed
+(`curated`) and entries a rule derived (`derived`). The label keeps them
+distinguishable wherever they sit, and promotion copies a fact up the stack
+(live → language) as a new event at the higher trust.
 
 **MEND builds the two labels and the trust gate in the resolver, and nothing
 else of the live tier.** Every fact MEND writes is curated or derived. The
@@ -344,33 +354,27 @@ examples and menus into the simpler surface.
 
 ---
 
-## 10. Open questions (settle here before writing MEND's prompt)
+## 10. Decisions MEND works to
 
-1. **Entity cards in speech.** Stay excluded by default (proposed), or on for a
-   short whitelist of culturally useful entities?
-2. **Wikidata snapshot.** Pin a filtered offline subset (proposed), and which
-   entity types go on the whitelist?
-3. **Interjections in speech.** Once contamination is removed, are uy / aló /
-   bum worth cards at all, or exclude in speech and keep for lyrics?
-4. **Where the strategy table lives.** Extend `surfaces/policy.py` with a
-   second fold (proposed), or a sibling module?
-5. **Unify lyrics routing onto the ledger classes now, or later?** Proposed:
-   MEND writes the mapping table (§7); VERSE adopts it.
-6. **The clitic split.** Confirm it is a next-rebuild decision (proposed) and
-   that VERSE's existing `clitic_merge` is the model.
-7. **Live tier storage and sharing (later, not MEND).** Heuristic facts in
-   SETLIST's worker store, shared across users as word-level facts only.
-   What recurrence count puts a word on the curation queue?
-8. **How provisional meanings look in the app.** A subtle marker on the card
-   (proposed), or hidden until promoted?
-9. **Hand-written entries: format and home.** A declared-data file per scope
-   under `config/` (reviewed, in git) or `raw/` in the workspace (large, not in
-   git)? Proposed: small hand lists in `config/`, large generated snapshots
-   (Wikidata subset) in the workspace.
+Settled 2026-09-23 by adopting the proposed defaults. Joshua can overturn any
+of them; MEND flags anything the evidence argues against rather than quietly
+deviating.
+
+| # | Question | Decision | Needed by |
+|---|---|---|---|
+| 1 | Entity cards in speech? | Excluded by default in speech; `entity` is on by default for artist scope | MEND (speech default only) |
+| 2 | Wikidata source | A pinned, filtered offline subset; type whitelist settled when artist entities are built | later |
+| 3 | Interjections in speech | Genuine Spanish ones (uy, aló, bum, if confirmed) get a `declared_gloss` in all modes. Contamination (je, uh) is excluded. | MEND |
+| 4 | Where the strategy table lives | A second fold beside the verdict fold in `surfaces/policy.py` (or a sibling module if that file would sprawl) | MEND |
+| 5 | Unify lyrics routing onto the classes | MEND writes the bucket → class mapping table (§7); VERSE adopts it | MEND (table only) |
+| 6 | Clitic split | A next-rebuild decision; VERSE's `clitic_merge` is the model. MEND drafts the decision record only | MEND (draft only) |
+| 7 | Live store and sharing | SETLIST's server; word-level facts shared across users; curation threshold set when built | later |
+| 8 | Provisional meanings in the app | A subtle marker on the card | later (UI) |
+| 9 | Home of declared entries | Small hand-written lists in `config/` (in git, reviewed); large generated snapshots (Wikidata subset) in the workspace | MEND |
 
 ---
 
-## 11. MEND at a glance (for the eventual prompt)
+## 11. MEND at a glance
 
 - **Deliverable:** the fallback layer (§2–§3), the scope and trust labels
   with a minimum-trust gate in the resolver (§4), the entity strategy shape (§5),

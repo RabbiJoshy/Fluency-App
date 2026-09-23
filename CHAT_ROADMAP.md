@@ -126,12 +126,12 @@ Say the bold name.
 | **CHISEL 2** | MWE tag refinement | Audit KILN 1 WSD outputs; discover additional axes/template bounds on real data. | Lab on KILN 1 output | **Done** (signed off in `raw/mwe/chisel-2`; ready for KILN 2) |
 | **KILN 2** | Precision 10k WSD | Re-run/finalize WSD with CHISEL 2 refined MWE overlay before release. | Plant | **Done** (precision 10k WSD published to Stage 04 across es, pt, cs; ready for GLASS) |
 | **GLASS** | v15 10k decks | Import bundle, compose, validate, activate the 10k speech decks. | Plant (no model) | **Done** (10k releases composed, validated, sharded, activated; deployed under `flashcards-v502`) |
-| **MEND** | menu fallback | Cards shipped with empty meanings (105 in es v15) get meanings deterministically: facts → class → strategy (lemma hop, expand, declared gloss, entity), shared by every provider and scoped language → mode → artist → song. Defines the declared-entry format GRAFT fills. | Lab + small plant (sense-menu rerun, WSD for affected cards only) | **Design in discussion**: `docs/proposals/0003-surface-exceptions-and-menu-fallback.md`. Prompt not written yet. Before GRAFT. |
+| **MEND** | menu fallback | Cards shipped with empty meanings (105 in es v15) get meanings deterministically: facts → class → strategy (lemma hop, expand, declared gloss, entity), shared by every provider and scoped language → mode → artist → song. Defines the declared-entry format GRAFT fills. | Lab + small plant (sense-menu rerun, WSD for affected cards only) | **Ready to start** (design settled: `docs/proposals/0003-surface-exceptions-and-menu-fallback.md`; prompt in the MEND card). Before GRAFT. |
 | **GRAFT** | lyrics overlays | Collect slang, fillers, and lyrics MWEs/words into overlay snapshots, **in MEND's declared-entry format and scopes**. | Lab / curation | After MEND (before VERSE) |
 | **VERSE** | lyrics **v16** | Rebase on SWEEP (v15) + GRAFT overlays; lyrics WSD v16. Bad Bunny lyrics stack is **v7**. | Lab first, plant later | After GRAFT; may sit idle until then |
 | **SETLIST** | live playlist UI | Spotify playlist → LRCLIB → worker persist → naive speech-overlay deck. No WSD. | beside WSD | In progress (brief `docs/runbooks/live-playlist.md`) |
 
-**Hold.** Sequence: SIEVE done, MILL done, SWEEP done, QUARRY done, CHISEL 1 done, KILN 1 done, CHISEL 2 done, KILN 2 done, GLASS done. **MEND is next** (design still being settled in proposal 0003), then **GRAFT**, then **VERSE**. SETLIST does not wait on that hold.
+**Hold.** Sequence: SIEVE done, MILL done, SWEEP done, QUARRY done, CHISEL 1 done, KILN 1 done, CHISEL 2 done, KILN 2 done, GLASS done. **MEND is next** (ready; prompt in its card), then **GRAFT**, then **VERSE**. SETLIST does not wait on that hold.
 
 KILN 1 executed on QUARRY’s freeze and CHISEL 1's 10k MWE overlay. Do not call the v12 freeze “v14 production 10k.”
 
@@ -334,12 +334,39 @@ Paste:
 
 ### MEND — menu fallback for empty cards (before GRAFT)
 
-**This chat is MEND.** Not started. The design is being settled in `docs/proposals/0003-surface-exceptions-and-menu-fallback.md`; a prompt will be written against it and added here.
+**This chat is MEND.** Design: `docs/proposals/0003-surface-exceptions-and-menu-fallback.md` (settled; §10 holds the decisions). Run it as a **local** chat: it needs `../Fluency-Workspace` and network access to SpanishDict.
+
+Paste into that chat:
+
+> You are **MEND**. Read `CHAT_ROADMAP.md` through SCAR and the freeze section, then only MEND. Then read `docs/INVARIANTS.md` and `docs/proposals/0003-surface-exceptions-and-menu-fallback.md` in full: it is your design, and its §10 decisions are settled. Your job: every Spanish speech card that shipped with empty `meanings` gets a real, usable menu, through a reusable **menu-fallback layer** (facts → class → strategy, scope and trust labels, one resolver for every provider), not one-off patches.
+>
+> 1. **Measure first.** List the empty-`meanings` cards in `es-speech-v15-10000x10` (Fluency-Releases clone) and classify every one against proposal §1, with evidence. The table there is a starting guess; correct it.
+> 2. **Diagnose the tail.** Read the refetch JSONL(s): were the ordinary words at ranks 9,870–10,000 queried, empty (rate-limited?), flagged, or never asked? Then refetch the affected surfaces with `scripts/fetch_spanishdict.py --surfaces … --out raw/dictionaries/es/spanishdict/refetch-no-menu-v15.jsonl`, and merge into a **new** snapshot id with `scripts/merge_spanishdict_refetch.py`. Record `absent` vs `unfetched` per proposal §3.
+> 3. **Build the layer** (proposal §2–§4):
+>    - the strategy fold with a fixed precedence;
+>    - scope and trust labels, and a minimum-trust gate in the resolver;
+>    - coverage declared per provider;
+>    - `external_lemmas` for the SpanishDict adapter (parity with Kaikki);
+>    - the reflexive pronominal-headword rule;
+>    - the abbreviation filter fix for surfaces tagged `abbreviation_form`;
+>    - an extension to `scripts/resolve_clitic_lemmas.py` using the full conjugation table, enclitic hosts only, abstaining on ambiguity;
+>    - the declared-entry format (compatible with `SenseOverlayEntry`) and the entity registry shape (proposal §5–§6).
+>
+>    Every strategy runs offline. Tests for each.
+> 4. **Seed only what the 105 need.** Expansions (ud → usted…); declared glosses for genuine interjections; exclude the contamination (check the `je`/`uh`/`tai` lines); `adjudicated_exclude` for brands like ferrari unless worth keeping; "off" as a loanword. Small lists go in `config/`, per §10.
+> 5. **Rebuild.** A new sense-menu run. Show the before/after menu coverage for the 105. WSD **only** for affected cards, as a new run reusing QUARRY's prewsd v2 and KILN 2's Stage 04 for everything else. Paid steps: print the projected units and wait for my go.
+> 6. **Candidate release.** Validate it. Acceptance: **0 cards with empty meanings (per card, not per set)**. Diff against v15: nothing outside the affected cards may change; report any that did.
+> 7. **Also write:** the lyrics bucket → class mapping table (§7), for VERSE; a draft decision record for the Spanish clitic tokenization split (§8) with numbers (how many cards merge into which surfaces, how ranks shift), proposal only.
+>
+> **Do not:** harvest (SCAR); rebuild the ledger from a smaller supply (append events; if you rebuild, the full 10k es ledger); change card identity; build any artist layer or the live store; write GRAFT's content; activate or publish without my say-so. If SETLIST or app config pins `es-speech-v15-10000x10` by id, list what changes on activation.
+>
+> **Report:** the 105 by class and fix; the tail diagnosis; what was coded; the seeded lists; before/after coverage; the release diff; open issues. Update this card's status and the proposal's §1 table with measured numbers.
+
 - Why: `es-speech-v15-10000x10` shipped 105 cards with empty `meanings` (WSD `no_menu` on every example). GLASS's "0 empty study sets" check was per set, not per card, so it missed them. They made Learn New bounce between sets (patched in the app).
-- Shape: fallback **fills** an empty menu at stage 02. GRAFT's overlays **add** competing senses at WSD time. Same entry format, same scopes (proposal §6).
-- Feeds GRAFT: MEND defines the strategy table, the scope field, the declared-entry format (glosses, expansions, entities) and the entity registry shape, seeded only with what the 105 need. GRAFT fills them.
+- Shape: fallback **fills** an empty menu at stage 02; GRAFT's overlays **add** competing senses at WSD time. Same entry format, same scopes (proposal §6).
+- Feeds GRAFT: the strategy table, the scope and trust labels, the declared-entry format (glosses, expansions, entities) and the entity registry shape, seeded only with what the 105 need. GRAFT fills them.
 - Feeds VERSE: the resolver, lemma hop and scopes; lyrics routing buckets map onto the same classes (proposal §7).
-- Do not: change card identity (the clitic tokenization split is a next-rebuild decision, proposal §8); harvest; activate without Joshua.
+- **Status:** Ready to start.
 
 ### GRAFT — lyrics & slang sense-menu overlays (before VERSE)
 
