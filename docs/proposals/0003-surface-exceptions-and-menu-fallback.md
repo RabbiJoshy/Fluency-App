@@ -4,13 +4,18 @@
 prompt is in `CHAT_ROADMAP.md` under *MEND*. §10 records the decisions MEND
 works to. Changes from here go through Joshua.
 
-**One-line summary.** Some surfaces reach a release with no sense menu.
-Today that is a dead end: the card ships empty and the app drops it. This
-proposal makes it a routed case. A fact about the surface (from the ledger, or
-from lyrics routing) picks a *strategy* that supplies meanings
-deterministically, from local data, without waiting on a scrape. Hand work is
-reduced to a few small declared lists, and those lists are scoped so a new
-artist can borrow what earlier artists already paid for.
+**One-line summary.** MEND sets up the structure the whole word database will
+live on: surface facts, the strategies they select, scope (language → mode →
+artist → song → playlist) and trust (curated / derived / heuristic). GRAFT
+fills it and VERSE and the new lyrics UI read from it. The 105 cards that
+shipped with empty meanings are the first proof of it, not the goal.
+
+In detail: some surfaces reach a release with no sense menu, which today is a
+dead end (the card ships empty and the app drops it). Here a fact about the
+surface picks a *strategy* that supplies meanings deterministically, from
+local data, without waiting on a scrape. Hand work shrinks to a few small
+declared lists, scoped so each new artist or playlist inherits what earlier
+ones already paid for.
 
 ---
 

@@ -126,7 +126,7 @@ Say the bold name.
 | **CHISEL 2** | MWE tag refinement | Audit KILN 1 WSD outputs; discover additional axes/template bounds on real data. | Lab on KILN 1 output | **Done** (signed off in `raw/mwe/chisel-2`; ready for KILN 2) |
 | **KILN 2** | Precision 10k WSD | Re-run/finalize WSD with CHISEL 2 refined MWE overlay before release. | Plant | **Done** (precision 10k WSD published to Stage 04 across es, pt, cs; ready for GLASS) |
 | **GLASS** | v15 10k decks | Import bundle, compose, validate, activate the 10k speech decks. | Plant (no model) | **Done** (10k releases composed, validated, sharded, activated; deployed under `flashcards-v502`) |
-| **MEND** | menu fallback | Cards shipped with empty meanings (105 in es v15) get meanings deterministically: facts → class → strategy (lemma hop, expand, declared gloss, entity), shared by every provider and scoped language → mode → artist → song. Defines the declared-entry format GRAFT fills. | Lab + small plant (sense-menu rerun, WSD for affected cards only) | **Ready to start** (design settled: `docs/proposals/0003-surface-exceptions-and-menu-fallback.md`; prompt in the MEND card). Before GRAFT. |
+| **MEND** | word-database structure | Sets up the structure the whole word database lives on (surface facts → strategies, scope language → mode → artist → song → playlist, trust curated / derived / heuristic), which GRAFT fills and VERSE and the new lyrics UI consume. First proof: the 105 es v15 cards that shipped with empty meanings get meanings deterministically. | Lab + small plant (sense-menu rerun, WSD for affected cards only) | **Ready to start** (design settled: `docs/proposals/0003-surface-exceptions-and-menu-fallback.md`; prompt in the MEND card). Before GRAFT. |
 | **GRAFT** | lyrics overlays | Collect slang, fillers, and lyrics MWEs/words into overlay snapshots, **in MEND's declared-entry format and scopes**. | Lab / curation | After MEND (before VERSE) |
 | **VERSE** | lyrics **v16** | Rebase on SWEEP (v15) + GRAFT overlays; lyrics WSD v16. Bad Bunny lyrics stack is **v7**. | Lab first, plant later | After GRAFT; may sit idle until then |
 | **SETLIST** | live playlist UI | Spotify playlist → LRCLIB → worker persist → naive speech-overlay deck. No WSD. | beside WSD | In progress (brief `docs/runbooks/live-playlist.md`) |
@@ -181,7 +181,7 @@ You already have a **v12 freeze**: sentences + scores + embedding cache + sparse
 8. **CHISEL** takes the new 10k freeze, curates and retags MWEs across the newly added 4,000 cards, verifies Invariant vs Ambiguous tags, and signs off on the 10k MWE overlay.
 9. **KILN** executes full-deck WSD on the 10k freeze using the signed-off `v15` profile from SWEEP + CHISEL's 10k MWE overlay.
 10. **GLASS** composes, validates, and activates the 10,000-card speech decks on v15.
-11. **MEND** fixes cards that shipped with no meanings, and builds the mechanism for it: each surface's ledger facts pick a strategy (borrow the lemma's menu, expand an abbreviation, a declared gloss, an entity card) instead of shipping empty. It runs offline, is shared by SpanishDict and Wiktionary, and is scoped so an artist borrows what the language already declared. Design: `docs/proposals/0003-surface-exceptions-and-menu-fallback.md`.
+11. **MEND** sets up the structure the whole word database will live on: facts about each surface pick a strategy (borrow the lemma's menu, expand an abbreviation, a declared gloss, an entity card), every fact is scoped (language → mode → artist → song → playlist) and trust-labelled (curated / derived / heuristic), and one offline resolver serves every provider. GRAFT fills it; VERSE and the new lyrics UI read from it. Its first proof is fixing the speech cards that shipped with no meanings. Design: `docs/proposals/0003-surface-exceptions-and-menu-fallback.md`.
 12. **GRAFT** collects domain-specific MWEs and single-word extra senses (Caribbean slang, reggaeton idioms, conversational fillers, elided locutions) into structured overlays via `fluency.wsd.overlays`, before lyrics WSD disambiguation.
 13. **VERSE** is the lyrics WSD chat. Rebased on speech v15 (SWEEP) + MEND's resolver + domain overlays (GRAFT), producing **lyrics WSD v16**. Do not treat speech v12 as the method to ship.
 
@@ -332,13 +332,13 @@ Paste:
   - Pinned speech frequency snapshots built and validated for all 3 releases.
   - Service worker cache bumped to `flashcards-v502` and activated in `config.json`. Deployed to live app.
 
-### MEND — menu fallback for empty cards (before GRAFT)
+### MEND — the word-database structure (before GRAFT)
 
 **This chat is MEND.** Design: `docs/proposals/0003-surface-exceptions-and-menu-fallback.md` (settled; §10 holds the decisions). Run it as a **local** chat: it needs `../Fluency-Workspace` and network access to SpanishDict.
 
 Paste into that chat:
 
-> You are **MEND**. Read `CHAT_ROADMAP.md` through SCAR and the freeze section, then only MEND. Then read `docs/INVARIANTS.md` and `docs/proposals/0003-surface-exceptions-and-menu-fallback.md` in full: it is your design, and its §10 decisions are settled. Your job: every Spanish speech card that shipped with empty `meanings` gets a real, usable menu, through a reusable **menu-fallback layer** (facts → class → strategy, scope and trust labels, one resolver for every provider), not one-off patches.
+> You are **MEND**. Read `CHAT_ROADMAP.md` through SCAR and the freeze section, then only MEND. Then read `docs/INVARIANTS.md` and `docs/proposals/0003-surface-exceptions-and-menu-fallback.md` in full: it is your design, and its §10 decisions are settled. Your job is pivotal: set up the structure the whole word database will live on (facts → class → strategy, scope and trust labels, one offline resolver for every provider). GRAFT fills it, and VERSE and the new lyrics UI consume it. Prove it on the Spanish speech cards that shipped with empty `meanings`: every one gets a real, usable menu, with no one-off patches.
 >
 > 1. **Measure first.** List the empty-`meanings` cards in `es-speech-v15-10000x10` (Fluency-Releases clone) and classify every one against proposal §1, with evidence. The table there is a starting guess; correct it.
 > 2. **Diagnose the tail.** Read the refetch JSONL(s): were the ordinary words at ranks 9,870–10,000 queried, empty (rate-limited?), flagged, or never asked? Then refetch the affected surfaces with `scripts/fetch_spanishdict.py --surfaces … --out raw/dictionaries/es/spanishdict/refetch-no-menu-v15.jsonl`, and merge into a **new** snapshot id with `scripts/merge_spanishdict_refetch.py`. Record `absent` vs `unfetched` per proposal §3.
