@@ -108,3 +108,13 @@ class CardFrequencyBreakdownTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SourceFrequencyReleaseMatchTests(unittest.TestCase):
+    def test_release_check_compares_on_the_release_site_footing(self) -> None:
+        # config.js maps every *Path onto the release site, so on the live app
+        # the deck's indexPath is a full URL while the frequency file names
+        # `releases/…`. A plain comparison dropped every live card's frequency.
+        vocab = (APP_ROOT / "js" / "vocab.js").read_text(encoding="utf-8")
+        self.assertIn("releaseUrl(data.indexPath) !== indexPath", vocab)
+        self.assertIn("import { releaseUrl } from './release-host.js", vocab)

@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-23T19:45:00+01:00",
+      "date": "2026-09-23 19:45 BST",
+      "agent": "Claude",
+      "summary": "The frequency is back on speech cards on the live site, and rarer senses are marked Known or Review right on the Rarer uses sheet.",
+      "detail": [
+        "Frequency had vanished from every speech card on the live site (Spanish, French, Portuguese, Czech), leaving only the rank. The app checks that the frequency file belongs to the deck's release, but on the live site the deck's address is rewritten to the releases site, so the check always failed and the frequency was dropped. The check now compares the two the same way. A local copy never showed the bug because it keeps the short address.",
+        "Rarer uses: each rare sense now has × (Review) and ✓ (Known) under it, for signed-in learners. They save to the same place as before, so marks you made earlier still show.",
+        "The 'Mark rarer senses Known or Review' button on the sheet is gone, and the meanings overview no longer has a 'Show N rarer senses' section: it lists only the card's own meanings, expressions and attached forms."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-23T19:05:00+01:00",
       "date": "2026-09-23 19:05 BST",
       "agent": "Claude",

@@ -5,6 +5,7 @@ import './state.js?v=20260825ak';
 import { validateVocabularyIndex } from './data-contracts.js?v=20260825ak';
 import { formatRoute } from './routes.js?v=20260923cj';
 import { applyGrammarCardOverlay } from './grammar-cards.js?v=20260921gc';
+import { releaseUrl } from './release-host.js?v=20260921rh';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -18,7 +19,11 @@ async function loadSpeechSourceFrequency(langConfig) {
         const pending = fetch(path).then(async response => {
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const data = await response.json();
-            if (data.schema !== 'speech-source-frequency/v1' || data.indexPath !== indexPath) {
+            // config.js maps every release path onto the release site, so the
+            // deck's indexPath is a full URL on the live app while this file
+            // names the release as `releases/…`. Compare them on the same
+            // footing, or every live card silently loses its frequency.
+            if (data.schema !== 'speech-source-frequency/v1' || releaseUrl(data.indexPath) !== indexPath) {
                 throw new Error('Source frequency file does not match this vocabulary release');
             }
             return data;
