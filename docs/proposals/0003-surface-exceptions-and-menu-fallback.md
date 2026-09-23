@@ -32,20 +32,66 @@ GLASS reported "0 empty study sets". That was true and still missed this: a set
 with 19 good cards and 1 empty one is not empty. **Acceptance for this work is
 per card, not per set.**
 
-### The 105, by what is actually wrong
+### The 105, measured (MEND, 2026-09-23)
 
-| Class | Count | Examples (rank) | Likely cause | Evidence so far |
-|---|---:|---|---|---|
-| Attached clitics | ~70 | decírtelo (1163), cógelo (4280), dígaselo (5342), vayámonos (6594), quédatelo (6096), concéntrate (3099) | SpanishDict files the verb, not each enclitic bundle, so the exact surface has no page | `resolve_clitic_lemmas.py` already writes lemmas to the ledger (72 surfaces). But the SpanishDict menu adapter never reads ledger lemmas (`BUILD_STATUS.md`, "Known and open": *external_lemmas is wired into the Kaikki adapter only*). 55/70 resolve with the app's 434-verb drill table alone; the rest are verbs outside it. |
-| Ordinary words | 23 | suponiendo (9995), conduces (9958), comprendí (9945), veían (9992), castigar (9985), bares (7583), fantasías (7739) | Not SpanishDict. 16 of the 23 sit at ranks 9,870–10,000. | The refetch ran (3,319 surfaces, **97.5% answered** → ~83 unanswered). The fetch script treats an empty response as a blip to retry, and runs in rank order. **Hypothesis:** the empties are the end of that run (rate limiting), and nobody reran it. Check the refetch JSONL. `bares` and `fantasías` may instead be the plural-conflict filter. |
-| Abbreviations | 4 | ud (323), sra (427), srta (564), uds (985) | `_abbreviation_mismatch` in `sense_menu/spanishdict.py` drops any headword containing "." when the surface has none. SpanishDict likely answers `Ud.`, `Sra.` | Not yet confirmed against the pinned snapshot. |
-| Interjections / sounds | 6 | uh (864), je (3980), uy, bum, aló, tai | Mixed. **The GRAFT dossier found sampled `je` lines are French and `uh` is English subtitle filler.** So some are source contamination, not Spanish words. | uy, aló, bum look like genuine Spanish. tai is unknown; read its lines. |
-| Proper nouns / foreign | 2 | ferrari (9954), off (9932) | No dictionary entry expected | "off" is used in Spanish (*voz en off*). |
+Measured by `scripts/mend_local.py --step measure` and `--step lemmas` against
+the run's snapshot `spanishdict-complete-menu-2026-09-15-v3`; reports in
+`docs/mend/`. The first table here was a guess and several guesses were wrong:
+nothing was rate-limited, and the abbreviations and interjections do have
+SpanishDict entries.
 
-The counts come from the release rows plus a quick analyser run in this chat.
-They are a starting table for MEND to verify, not a measurement to cite.
+| Class | Count | Why the menu was empty | Fixed by |
+|---|---:|---|---|
+| Attached clitics | 70 | 51 answered as a spelling substitution (SpanishDict has no page for the bundle), 10 answered in English, 9 answered with another word the plausibility filter rightly dropped | the enclitic host rule: all 70 resolve to exactly one verb; imperatives with a reflexive pronoun add the pronominal headword |
+| Ordinary words | 23 | 15 at ranks 9,872-10,000 were **never asked** (they entered the deck after the refetch ran); 6 were answered but the refetch lost SpanishDict's "conjugation of X" label, so a declared form looked fuzzy; 2 (bares, fantasías) answered in English | refetch with the relation kept (5 done: afirma, concuerda, condones, izan, digna); the 15 are next; bares, fantasías to a headwords override |
+| Abbreviations | 4 | ud, sra, srta, uds: SpanishDict answers *Ud.*, *Sra.*; `_abbreviation_mismatch` dropped dotted headwords | the exact-page rule compares without dots; no expansion list needed |
+| Interjections / sounds | 4 | uy, aló (SpanishDict *¡Uy!*, *¿Aló?*, dropped over punctuation); bum, uh (SpanishDict answers in English; the lines are Spanish) | uy, aló: the exact-page rule; bum, uh: Joshua's call (declared gloss) |
+| Not a word | 2 | je (French lines: *je ne sais pas*), tai (*Kido Tai-i*, *Tai Chi*) | tagged; Joshua's call |
+| Brand | 1 | ferrari | tagged; entity strategy is off in speech |
+| English in Spanish lines | 1 | off (*off the record*) | tagged; Joshua's call |
 
 ---
+
+## 2a. Settled 2026-09-23: the headword set comes first
+
+Measuring the 105 showed the real gap. The load-bearing fact about a surface
+is its **headword set** -- the dictionary entries its menu is built from.
+Menus, WSD, the app's lemma column and lemma-merge mode (decision 0024) all
+read it, and it was never recorded: each adapter computed it inside, from a
+page plus filters. The ledger's `lemma` field was a second, noisier answer
+that no Spanish release reads (1,368 kept surfaces disagree with a strict
+reading of SpanishDict, and v15 did not move).
+
+So the headword set is decided first, by one offline resolver, and the menu
+is built from it (`src/fluency/surfaces/resolver.py`):
+
+1. a hand-written `headwords` entry (curated) replaces the set;
+2. what the provider declares for the exact surface (provider trust), or our
+   rules derive from provider data (derived), above the consumer's floor;
+3. only for an empty set: `expansion`, then `declared_gloss`, then `entity`;
+4. `no_menu`, declared with its reason (`absent`, `unfetched`, `entity_not_in_mode`).
+
+For SpanishDict, "declares" is narrow (`sense_menu/spanishdict_lemmas.py`):
+the exact page's own headword or a relation it states, else its conjugation
+table, else the enclitic host rule. A page headword that is neither is
+SpanishDict answering about another word and is rejected, never used.
+Several lemmas per surface are normal; WSD chooses among their menus.
+
+**Trust has four levels**, not three: `curated`, `provider`, `derived`,
+`heuristic` (`surfaces/trust.py`). A provider statement is wrong only when the
+provider is and is corrected by an override; a derived answer is wrong when
+our rule is and is corrected by fixing the rule.
+
+**Hand-written facts** use one format (`surfaces/declared.py`, files in
+`config/declared/<lang>/`), four kinds -- `headwords`, `gloss`, `expansion`,
+`entity` -- each scoped and trust-labelled. An override must name real
+dictionary entries; a typo fails the build rather than emptying a menu.
+
+**Rollout.** Stage 02 builds only a profile's named cards from the resolver
+(`sense_menu.resolver.surfaces`); every other card is byte-identical to before.
+The 105 use it now. The full switch for Spanish is a decision for the next
+full rebuild, taken from a shadow diff of all 10k. **Kaikki parity is open**:
+the runner refuses a Kaikki profile with a resolver rather than imply it.
 
 ## 2. The core idea: facts → class → strategy
 
