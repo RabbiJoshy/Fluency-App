@@ -442,6 +442,20 @@ deviating.
 | 8 | Provisional meanings in the app | A subtle marker on the card | later (UI) |
 | 9 | Home of declared entries | Small hand-written lists in `config/` (in git, reviewed); large generated snapshots (Wikidata subset) in the workspace | MEND |
 
+**Updated by MEND, 2026-09-23** (Joshua asked MEND to take the open calls; each
+is recorded here so it can be overturned):
+
+| # | Question | Decision | Why |
+|---|---|---|---|
+| 1′ | Entity cards in speech? | **On.** A name with no menu becomes an entity card (one meaning: name, type, one-line description). A name with a provider menu keeps the menu. | Joshua: every card must explain itself. `config/surfaces/strategy.json` keeps a per-mode switch. |
+| 3′ | Interjections and contamination | Every card gets a class tag and a translation or explanation. `je` resolves to SpanishDict's own *¡Je!*; `uh` is a filler gloss; English words in Czech lines are glosses with class `contamination`. Exclusion stays a ledger-policy decision, never a hand-written one. | Tagging is the job; excluding is policy. |
+| 4′ | Where the strategy fold lives | `src/fluency/surfaces/resolver.py`, beside `policy.py`. The headword set is decided first; strategies fill only an empty set (§2a). | The measured gap was the headword set, not the verdict. |
+| 10 | Trust levels | Four: `curated`, `provider`, `derived`, `heuristic`. | A provider statement and our rule's inference fail differently. |
+| 11 | Czech CNK lemmas | `provider` trust, provenance kept (`external-lemma`, CNK). | A published morphological authority stated them; we inferred nothing. |
+| 12 | Hand-written entries for the v15 empties | Written by MEND as curated entries in `config/declared/{es,pt,cs}/mend-speech-v15.json`: es 8, pt 19, cs 381. Czech and Portuguese are glosses because their lemmas are missing from the Wiktionary dump, so a headword set cannot exist. | Joshua asked MEND to write them. |
+| 13 | Class tags | Every resolved card carries `word_class` into the release: `vocabulary`, `inflection`, `enclitic`, `abbreviation`, `interjection`, `onomatopoeia`, `filler`, `loanword`, `slang`, `entity`, `name_fragment`, `contamination`. | What the post-VERSE extra-words UI reads. |
+| 14 | Three stores | Built as structure (`src/fluency/surfaces/stores.py`): language store in `config/declared/`, artist layer in `<workspace>/artists/<lang>/<artist>/declared/`, live store behind a `LiveFactSource` protocol (heuristic only). Promotion appends, never edits. No artist or live content. | §4, shape only, as MEND's brief said. |
+
 ---
 
 ## 11. MEND at a glance

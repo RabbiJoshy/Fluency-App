@@ -150,6 +150,14 @@ class EncliticTests(unittest.TestCase):
         self.assertEqual(found.lemma_names, ["quedar", "quedarse"])
         self.assertEqual(found.lemmas[1].provenance, REFLEXIVE_HEADWORD)
 
+    def test_the_split_keeps_the_host_as_the_table_spells_it(self) -> None:
+        """dele splits to dé + le, never to the preposition de."""
+        self.assertEqual(rule().enclitic_split("dele"),
+                         {"surface": "dele", "host": "dé", "pronouns": ["le"], "lemma": "dar"})
+        self.assertEqual(rule().enclitic_split("vayámonos")["host"], "vayamos")
+        self.assertIsNone(rule().enclitic_split("vete"))   # ir | ver: abstain
+        self.assertIsNone(rule().enclitic_split("chica"))  # no enclitic
+
     def test_object_pronoun_is_not_reflexive(self) -> None:
         self.assertEqual(rule().resolve("cógelo").lemma_names, ["coger"])
 

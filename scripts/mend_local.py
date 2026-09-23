@@ -34,6 +34,8 @@ Steps:
             rows, fresh rows, declared rows -- through the importer.
   release   candidate releases <lang>-speech-v15-mend-10000x10, validated
             and sharded, diffed against v15 per card. Nothing is activated.
+  clitics   read-only. Numbers for the Spanish clitic-split decision record:
+            what would merge into what, rank shifts, what would enter.
 """
 
 from __future__ import annotations
@@ -1090,10 +1092,73 @@ def step_release(args: argparse.Namespace) -> int:
     return 0
 
 
+def step_clitics(args: argparse.Namespace) -> int:
+    """Read-only numbers for the Spanish clitic-split proposal (decision record draft).
+
+    Splits every verified enclitic surface in the 10k Spanish inventory into
+    its host (as the conjugation table spells it) and its pronouns, merges the
+    counts, and reports which cards would merge into which, how the hosts'
+    ranks move, and which surfaces from beyond rank 10,000 would enter.
+    """
+    from fluency.sense_menu.spanishdict_lemmas import SpanishDictLemmaRule
+
+    ws = args.workspace.resolve()
+    run = ws / "runs/es/speech" / SOURCE_RUNS["es"]
+    report = _json(run / "stages/01_inventory/output/report.json")
+    ranks = _json(run / "stages/01_inventory/output/frequency-ranks.json")
+    top = report["top_surfaces"]
+    count = {row["surface"]: float(row["source_frequency"]) for row in top}
+    snapshot_id = _json(run / "stages/02_sense_menu/output/report.json")["snapshot_id"]
+    rule = SpanishDictLemmaRule(_json(ws / SD_ROOT / snapshot_id / "conjugation_reverse.json"))
+    splits = [x for x in (rule.enclitic_split(row["surface"]) for row in top) if x]
+    merged = dict(count)
+    into: dict[str, list[str]] = defaultdict(list)
+    for split in splits:
+        merged.pop(split["surface"], None)
+        merged[split["host"]] = merged.get(split["host"], 0.0) + count[split["surface"]]
+        for pronoun in split["pronouns"]:
+            merged[pronoun] = merged.get(pronoun, 0.0) + count[split["surface"]]
+        into[split["host"]].append(split["surface"])
+    new_order = sorted(merged, key=lambda s: (-merged[s], ranks.get(s, 10**9), s))
+    new_rank = {s: i for i, s in enumerate(new_order, start=1)}
+    old_rank = {row["surface"]: row["rank"] for row in top}
+    hosts_in = [h for h in into if h in old_rank]
+    hosts_new = [h for h in into if h not in old_rank]
+    freed = len(splits) - len(hosts_new)
+    beyond = sorted((s for s, r in ranks.items() if r > len(top)), key=lambda s: ranks[s])[:max(freed, 0)]
+    moves = sorted(((old_rank[h], new_rank[h], h, len(into[h])) for h in hosts_in),
+                   key=lambda m: m[0] - m[1], reverse=True)
+    lines = ["# Spanish clitic split — measured (read-only)", "",
+             f"- inventory: {len(top):,} surfaces (run `{run.name}`, snapshot `{snapshot_id}`)",
+             f"- verified enclitic surfaces that would split: {len(splits):,} "
+             f"(abstained or not enclitic: the rest)",
+             f"- hosts they merge into: {len(into):,} ({len(hosts_in):,} already cards, "
+             f"{len(hosts_new):,} not yet in the 10k)",
+             f"- cards removed: {len(splits):,}; cards whose learner progress must migrate: {len(splits):,}",
+             f"- slots freed for surfaces beyond rank {len(top):,}: {freed:,} "
+             f"(first: {', '.join(beyond[:25])})", "",
+             "## Biggest rank gains among existing host cards", "",
+             "| host | rank before | rank after | forms merged in |", "|---|---:|---:|---|"]
+    for old, new, host, n in moves[:40]:
+        lines.append(f"| {host} | {old} | {new} | {', '.join(into[host][:6])}{' …' if n > 6 else ''} |")
+    lines += ["", "## Hosts not yet in the 10k (would become cards)", "",
+              ", ".join(f"{h} ({len(into[h])})" for h in sorted(hosts_new, key=lambda h: -merged[h])[:80])]
+    md = "\n".join(lines) + "\n"
+    out_dir = (args.out or ws / "raw/surfaces/es/mend").resolve()
+    out_dir.mkdir(parents=True, exist_ok=True)
+    stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+    (out_dir / f"clitics-{stamp}.md").write_text(md, encoding="utf-8")
+    (out_dir / f"clitics-{stamp}.json").write_text(json.dumps(
+        {"splits": splits, "into": into, "freed": freed, "entering": beyond}, ensure_ascii=False, indent=1),
+        encoding="utf-8")
+    print(md)
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--step", required=True,
-                    choices=["measure", "lemmas", "refetch", "menus", "wsd", "release"])
+                    choices=["measure", "lemmas", "refetch", "menus", "wsd", "release", "clitics"])
     ap.add_argument("--no-merge", action="store_true", help="refetch: fetch only, do not merge")
     ap.add_argument("--scope", choices=sorted(REFETCH), default="affected",
                     help="refetch: the 105 (merged into a new snapshot) or the deck (evidence only)")
@@ -1122,6 +1187,8 @@ def main() -> int:
         return step_wsd(args)
     if args.step == "release":
         return step_release(args)
+    if args.step == "clitics":
+        return step_clitics(args)
     print(f"step {args.step!r} is not written yet: it waits on the reviewed measure table. "
           "Pull the branch again when the MEND chat says it is ready.")
     return 2

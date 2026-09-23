@@ -533,6 +533,6 @@ being named in the script.
 - `cs` `alignment_floor` of 0.45 is a guess, not a measured sweep.
 - Observers run as a backfill script rather than inside the stages;
   `low_harvest_yield` is defined but never emitted.
-- `external_lemmas` is wired into the Kaikki adapter only, not SpanishDict.
+- `external_lemmas` is wired into the Kaikki adapter only, not SpanishDict. MEND (2026-09-23) did not change that path: instead, for a profile's named cards, both adapters take their headword set from `fluency.surfaces.resolver` (SpanishDict's declared lemmas, Wiktionary's redirect paths, hand-written entries). Switching every card over is a next-rebuild decision (proposal 0003 §2a).
 - 4 pre-existing test failures (pipeline planning ×2, spanishdict conjugation
   ×2), unchanged by this gate. 879 tests pass.

@@ -174,6 +174,7 @@ class SpanishDictLemmaRule:
     def __post_init__(self) -> None:
         self._exact: dict[str, list[str]] = {}
         self._rows_deaccented: dict[str, list[dict[str, Any]]] = {}
+        self._forms_deaccented: dict[str, list[str]] = {}
         self.table_has_moods = False
         for form, rows in self.conjugation_reverse.items():
             if not isinstance(rows, list):
@@ -188,6 +189,9 @@ class SpanishDictLemmaRule:
                 if lemma not in exact:
                     exact.append(lemma)
                 self._rows_deaccented.setdefault(deaccent(str(form).strip().casefold()), []).append(row)
+                forms = self._forms_deaccented.setdefault(deaccent(str(form).strip().casefold()), [])
+                if form not in forms:
+                    forms.append(form)
                 if row.get("mood"):
                     self.table_has_moods = True
 
@@ -309,6 +313,33 @@ class SpanishDictLemmaRule:
             if mood == "imperativo" and str(row.get("person") or "") in REFLEXIVE_PERSONS.get(first, ()):
                 return pronominal
         return None
+
+    def enclitic_split(self, surface: str) -> dict[str, Any] | None:
+        """How a clitic-attached surface would split, for the tokenization proposal.
+
+        Unlike ``resolve``, this ignores the page: decision 0014's alternative
+        splits every verified clitic form or none, whatever SpanishDict says.
+        The host is returned as the table spells it (``dé``, never the
+        preposition ``de``), with the pronouns in order. ``None`` when the rule
+        abstains or the surface carries no enclitic.
+        """
+        found: dict[tuple[str, str], tuple[str, tuple[str, ...]]] = {}
+        for host, pronouns in self._strip(surface):
+            bases = [host] + ([host + "s"] if pronouns[0] == "nos" else [])
+            for base in bases:
+                for form in self._forms_deaccented.get(deaccent(base), ()):
+                    for row in self.conjugation_reverse.get(form) or []:
+                        mood = str((row or {}).get("mood") or "").casefold()
+                        if self.table_has_moods and mood not in HOST_MOODS:
+                            continue
+                        found.setdefault((str(row.get("lemma")).strip(), form), (base, pronouns))
+        lemmas = {lemma for lemma, _ in found}
+        if len(lemmas) != 1:
+            return None
+        forms = sorted({form for _, form in found}, key=lambda f: (len(f), f))
+        (lemma, form), (base, pronouns) = next(
+            (key, value) for key, value in found.items() if key[1] == forms[0])
+        return {"surface": surface, "host": form, "pronouns": list(pronouns), "lemma": lemma}
 
     # ------------------------------------------------------------------ public
 
