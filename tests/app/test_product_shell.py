@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v551"
+EXPECTED_CACHE_NAME = "flashcards-v552"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -856,13 +856,15 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("https://accounts.spotify.com/authorize?", spotify)
         self.assertIn("spotify_app_login_broken", spotify)
         self.assertIn("options.webOnly !== true", spotify)
+        self.assertIn("navigator.standalone === true", spotify)
+        self.assertIn("!_isHomeScreenApp", spotify)
         self.assertIn("window.open(authUrl, 'spotify-auth'", spotify)
         callback = (APP_ROOT / "callback.html").read_text(encoding="utf-8")
         self.assertIn("error !== 'access_denied'", callback)
         self.assertIn("spotifyWebLogin", callback)
-        self.assertIn("/js/spotify.js?v=20260923st", worker)
-        self.assertIn("/js/main.js?v=20260923st", worker)
-        self.assertIn("/js/ui.js?v=20260923st", worker)
+        self.assertIn("/js/spotify.js?v=20260923su", worker)
+        self.assertIn("/js/main.js?v=20260923su", worker)
+        self.assertIn("/js/ui.js?v=20260923su", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -927,7 +929,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("spotify-music-visualizer", spotify)
         self.assertIn("spotify-playing-amplitude", css)
         self.assertNotIn("spotify-playing-ripple", css)
-        self.assertIn("/js/spotify.js?v=20260923st", worker)
+        self.assertIn("/js/spotify.js?v=20260923su", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_audit_accounts_and_flags_use_release_provenance(self) -> None:
@@ -982,7 +984,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("tracksHref", spotify)
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
-        self.assertIn("/js/spotify-playlist-import.js?v=20260923st", worker)
+        self.assertIn("/js/spotify-playlist-import.js?v=20260923su", worker)
         self.assertIn('css/style.css?v=20260923gn', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)

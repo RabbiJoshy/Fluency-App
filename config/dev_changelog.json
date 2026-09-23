@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-23T20:39:00+01:00",
+      "date": "2026-09-23 20:39 BST",
+      "agent": "Cursor",
+      "summary": "Connect from the home screen icon stays on Spotify's website, so the login comes back into Fluency. Safari still opens the Spotify app.",
+      "detail": [
+        "The home screen icon is detected with the iPhone's standalone flag.",
+        "Connect there uses Spotify's website inside the same window.",
+        "Connect in Safari still opens the Spotify app."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-23T20:19:00+01:00",
       "date": "2026-09-23 20:19 BST",
       "agent": "Cursor",

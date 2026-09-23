@@ -14,7 +14,7 @@ const DECK_STORE = 'decks';
 const LRCLIB_SEARCH = 'https://lrclib.net/api/search';
 const LRCLIB_CLIENT = 'Fluency playlist-import/0.1 (https://github.com/RabbiJoshy/Fluency-App)';
 const LOOKUP_CONCURRENCY = 6;
-const SPOTIFY_MODULE = './spotify.js?v=20260923st';
+const SPOTIFY_MODULE = './spotify.js?v=20260923su';
 const DISMISS_LOCK_MS = 1500;
 
 let _matchState = null;
