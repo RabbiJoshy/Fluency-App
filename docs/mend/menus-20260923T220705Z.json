@@ -1,0 +1,25 @@
+{
+ "cs": {
+  "run_id": "20260923T220659Z-80b0f6a4",
+  "snapshot_id": "enwiktionary-2026-09-06",
+  "affected": 381,
+  "released_empty": 381,
+  "strategies": {
+   "declared_gloss": 326,
+   "headwords": 55
+  },
+  "classes": {
+   "vocabulary": 222,
+   "interjection": 20,
+   "inflection": 55,
+   "loanword": 22,
+   "contamination": 44,
+   "onomatopoeia": 2,
+   "name_fragment": 5,
+   "abbreviation": 6,
+   "filler": 5
+  },
+  "still_empty": [],
+  "moved_outside_affected": []
+ }
+}
