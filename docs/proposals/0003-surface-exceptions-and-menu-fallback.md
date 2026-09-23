@@ -74,7 +74,7 @@ SpanishDict and Kaikki adapters both call the same resolver.
 | **Slang / regional sense** (guagua, corillo) | GRAFT evidence | overlay: an **extra** sense that competes in WSD (§6) | yes | GRAFT's lists |
 | **Unresolved** | none of the above | declared `no_menu` (Invariant 2) | no | queue for review |
 
-Precedence is fixed, not implicit, as `lyrics/overrides.py` already requires:
+Precedence is fixed, never implicit (an idea worth keeping from `lyrics/overrides.py`):
 1. a scoped human override;
 2. the provider menu for the exact surface;
 3. the class strategy;
@@ -141,8 +141,8 @@ by minimum trust, and the narrowest scope wins. So a new kind of exception
 (entities, elisions…) is added once, not three times. Every fact and every
 declared entry (expansion, gloss, entity, override) carries two labels.
 
-**Scope: where it applies.** This works exactly as
-`src/fluency/lyrics/overrides.py` already scopes routing decisions. An empty
+**Scope: where it applies.** This borrows the scoping idea from
+`src/fluency/lyrics/overrides.py`, not its format. An empty
 scope means "all", and two matching entries at the same scope are an error,
 never a silent precedence.
 
@@ -285,32 +285,51 @@ than speech.
 
 ---
 
-## 7. Artist mode: what already exists and what this adds
+## 7. Artist mode: the speech ledger leads, lyrics routing is legacy
 
-Lyrics routing (`src/fluency/lyrics/languages/spanish_routing.py`) is already
-the more developed classifier. It has deterministic buckets for:
+**The speech surface ledger is the mature system. Lyrics routing is not the
+model.** `src/fluency/lyrics/languages/spanish_routing.py` and its data
+structures date from the first version of the app. They were shaped around the
+UI of that time, and Joshua is not attached to them. GRAFT and VERSE are
+expected to consume something different from what lyrics mode reads today.
+After VERSE, new UI will change how learners meet "extra" words (fillers,
+slang, entities, ad-libs). So MEND is a pivotal chat. It designs the layer
+lyrics will move onto, and it is **allowed to question the current lyrics
+structure** wherever the ledger model does better.
+
+What lyrics routing is still good for: **evidence of which cases exist**, not
+a design to inherit. It already had to handle:
 - proper nouns: `exclude.proper_nouns`, `review.proper_noun_candidate`;
 - interjections: `classifier.spoken_particle`;
 - English: `exclude.english`;
 - repeated-character noise;
 - diminutive/derivation rules;
-- a guarded `clitic_merge` that already restricts hosts to imperative,
-  infinitive and gerund, tracks reflexive person, and merges the form into its
-  parent;
-- typed, scoped human overrides.
+- clitic merging, guarded to imperative, infinitive and gerund hosts, tracking
+  reflexive person (`clitic_merge`);
+- typed, scoped human overrides (`lyrics/overrides.py`).
 
-| Piece | Speech today | Lyrics today | After this proposal |
+Each of those is a test case the new layer must cover. How lyrics expresses
+them (bucket names, route objects, what the UI reads) is open to replacement.
+
+| Piece | Speech today (the base) | Lyrics today (legacy) | Direction |
 |---|---|---|---|
-| Surface facts | ledger events | routing buckets | same classes, one table. Lyrics buckets map onto speech facts |
+| Surface facts | append-only ledger events, folded at read time | routing buckets computed per run | ledger events for both; buckets become at most a view |
 | Missing-menu handling | ships empty | `no_menu` for unresolved routes | the strategy table, shared |
-| Clitics | own card, no menu when SpanishDict has no page | merged into parent (`clitic_merge`) | speech: lemma hop now; tokenization split at the next rebuild (§8) |
+| Clitics | own card; no menu when SpanishDict has no page | merged into the parent | speech: lemma hop now; the split is decided on its merits at the next rebuild (§8) |
 | Proper nouns | excluded or review | excluded or review | `entity` strategy, scoped |
-| Human decisions | `adjudicated_*` events | `lyrics-routing-overrides/v1`, scoped | one scoped format |
-| Per-artist data | — | per-song/artist override scope | thin artist layer (§4) |
+| Human decisions | `adjudicated_*` events | `lyrics-routing-overrides/v1` | one scoped, trust-labelled format |
+| Per-artist data | — | per-song/artist override scope | the artist layer (§4) |
 
-So when the full lyrics restructure lands, "how do we handle this odd surface"
-is already a class plus a strategy plus, at most, a scoped entry. Most of the
-per-artist work becomes filling small lists.
+**What MEND delivers for lyrics:** not a mapping that keeps routing alive, but
+a short **critique and migration proposal**. It lists:
+- which routing behaviours the ledger model already covers;
+- which it must add;
+- which should be dropped;
+- what GRAFT and VERSE should read instead;
+- what the post-VERSE "extra words" UI will need from the data (a class, a
+  strategy stamp, a trust level, an entity shape).
+
+Joshua decides; VERSE executes.
 
 ---
 
@@ -320,7 +339,7 @@ Joshua's proposal: treat `decírtelo` as `decir te lo`, merging frequency,
 examples and menus into the simpler surface.
 
 - **Precedent.** French already does this (Decision 0005 splits imperative
-  clitic groups). Lyrics routing already does it (`clitic_merge`). Spanish
+  clitic groups). Legacy lyrics routing does it too (`clitic_merge`), which shows it is workable, not that it is right. Spanish
   speech chose the opposite in Decision 0014 and
   `config/languages/es/tokenization.json` (`preserve_surface`,
   `may_replace_surface_card: false`).
@@ -366,8 +385,8 @@ deviating.
 | 2 | Wikidata source | A pinned, filtered offline subset; type whitelist settled when artist entities are built | later |
 | 3 | Interjections in speech | Genuine Spanish ones (uy, aló, bum, if confirmed) get a `declared_gloss` in all modes. Contamination (je, uh) is excluded. | MEND |
 | 4 | Where the strategy table lives | A second fold beside the verdict fold in `surfaces/policy.py` (or a sibling module if that file would sprawl) | MEND |
-| 5 | Unify lyrics routing onto the classes | MEND writes the bucket → class mapping table (§7); VERSE adopts it | MEND (table only) |
-| 6 | Clitic split | A next-rebuild decision; VERSE's `clitic_merge` is the model. MEND drafts the decision record only | MEND (draft only) |
+| 5 | Lyrics routing | Legacy, not the model. MEND writes a critique and migration proposal (§7): what the ledger covers, what to add, what to drop, what GRAFT, VERSE and the post-VERSE extra-words UI should read. Joshua decides; VERSE executes. | MEND (proposal only) |
+| 6 | Clitic split | A next-rebuild decision, argued on its merits (legacy `clitic_merge` is evidence, not the model). MEND drafts the decision record only | MEND (draft only) |
 | 7 | Live store and sharing | SETLIST's server; word-level facts shared across users; curation threshold set when built | later |
 | 8 | Provisional meanings in the app | A subtle marker on the card | later (UI) |
 | 9 | Home of declared entries | Small hand-written lists in `config/` (in git, reviewed); large generated snapshots (Wikidata subset) in the workspace | MEND |

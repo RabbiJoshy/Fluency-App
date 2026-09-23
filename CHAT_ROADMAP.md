@@ -356,7 +356,11 @@ Paste into that chat:
 > 4. **Seed only what the 105 need.** Expansions (ud → usted…); declared glosses for genuine interjections; exclude the contamination (check the `je`/`uh`/`tai` lines); `adjudicated_exclude` for brands like ferrari unless worth keeping; "off" as a loanword. Small lists go in `config/`, per §10.
 > 5. **Rebuild.** A new sense-menu run. Show the before/after menu coverage for the 105. WSD **only** for affected cards, as a new run reusing QUARRY's prewsd v2 and KILN 2's Stage 04 for everything else. Paid steps: print the projected units and wait for my go.
 > 6. **Candidate release.** Validate it. Acceptance: **0 cards with empty meanings (per card, not per set)**. Diff against v15: nothing outside the affected cards may change; report any that did.
-> 7. **Also write:** the lyrics bucket → class mapping table (§7), for VERSE; a draft decision record for the Spanish clitic tokenization split (§8) with numbers (how many cards merge into which surfaces, how ranks shift), proposal only.
+> 7. **Also write:**
+>    - a critique and migration proposal for lyrics mode (proposal §7);
+>    - a draft decision record for the Spanish clitic tokenization split (§8), with numbers (how many cards merge into which surfaces, how ranks shift), proposal only.
+>
+>    The speech surface ledger is the mature system. Lyrics routing (`src/fluency/lyrics/languages/spanish_routing.py` and its data structures) is legacy from the first app and is **not** the model. You are explicitly allowed to question it. Use its buckets as evidence of which cases exist. Then say what the ledger model covers, what it must add, what to drop, and what GRAFT, VERSE and the post-VERSE "extra words" UI should read instead. Do not change lyrics code; I decide, VERSE executes.
 >
 > **Do not:** harvest (SCAR); rebuild the ledger from a smaller supply (append events; if you rebuild, the full 10k es ledger); change card identity; build any artist layer or the live store; write GRAFT's content; activate or publish without my say-so. If SETLIST or app config pins `es-speech-v15-10000x10` by id, list what changes on activation.
 >
@@ -365,7 +369,7 @@ Paste into that chat:
 - Why: `es-speech-v15-10000x10` shipped 105 cards with empty `meanings` (WSD `no_menu` on every example). GLASS's "0 empty study sets" check was per set, not per card, so it missed them. They made Learn New bounce between sets (patched in the app).
 - Shape: fallback **fills** an empty menu at stage 02; GRAFT's overlays **add** competing senses at WSD time. Same entry format, same scopes (proposal §6).
 - Feeds GRAFT: the strategy table, the scope and trust labels, the declared-entry format (glosses, expansions, entities) and the entity registry shape, seeded only with what the 105 need. GRAFT fills them.
-- Feeds VERSE: the resolver, lemma hop and scopes; lyrics routing buckets map onto the same classes (proposal §7).
+- Feeds VERSE: the resolver, lemma hop and scopes, plus MEND's critique of legacy lyrics routing (proposal §7). MEND is pivotal: lyrics mode is expected to move onto the speech ledger model, not the other way round.
 - **Status:** Ready to start.
 
 ### GRAFT — lyrics & slang sense-menu overlays (before VERSE)
