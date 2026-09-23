@@ -988,7 +988,13 @@ def step_wsd(args: argparse.Namespace) -> int:
             print("$ " + " ".join(command[:12]) + f" ... ({len(targets)} surfaces)", flush=True)
             result = subprocess.run(command, capture_output=True, text=True,
                                     env={**__import__("os").environ, "PYTHONPATH": str(REPO / "src")})
-            tail = "\n".join((result.stdout + result.stderr).strip().splitlines()[-12:])
+            output = (result.stdout + result.stderr).strip().splitlines()
+            # The lines that carry numbers: the sampling summary, the texts to
+            # embed, and -- offline -- how many are absent from the cache.
+            keep = [l for l in output if any(k in l for k in (
+                "sampling:", "exact texts", "exact-text", "absent from the local embedding cache",
+                "newly embedded", "assigned", "not_evaluated", "abstained", "no_menu", "Error", "error"))]
+            tail = "\n".join((keep or output)[-14:])
             lines += ["", "```", tail, "```"]
             if result.returncode != 0:
                 lines += ["", f"**{lang}: wsd_execute stopped (exit {result.returncode}).** "
@@ -1137,7 +1143,32 @@ def step_clitics(args: argparse.Namespace) -> int:
     count = {row["surface"]: float(row["source_frequency"]) for row in top}
     snapshot_id = _json(run / "stages/02_sense_menu/output/report.json")["snapshot_id"]
     rule = SpanishDictLemmaRule(_json(ws / SD_ROOT / snapshot_id / "conjugation_reverse.json"))
-    splits = [x for x in (rule.enclitic_split(row["surface"]) for row in top) if x]
+    cache = _json(ws / SD_ROOT / snapshot_id / "surface_cache.json")
+    NON_VERB = ("noun", "adjective", "adverb", "preposition", "pronoun", "conjunction",
+                "article", "determiner", "numeral", "interjection")
+
+    def is_its_own_word(surface: str) -> str | None:
+        """A surface that is a word in its own right is not a clitic bundle.
+
+        seguidos is a participle, pase a subjunctive, palo and finales nouns
+        and adjectives: stripping a pronoun-shaped ending from them invents a
+        split. Two tests, both SpanishDict's: the surface is itself a form in
+        the conjugation table, or its page files it under a non-verb part of
+        speech.
+        """
+        if surface.lower() in rule._exact:
+            return "conjugation-table form"
+        page = cache.get(surface) or {}
+        for analysis in page.get("dictionary_analyses") or []:
+            for sense in (analysis or {}).get("senses") or []:
+                pos = str((sense or {}).get("pos") or "").lower()
+                if any(word in pos for word in NON_VERB):
+                    return f"SpanishDict files it as {pos}"
+        return None
+
+    candidates = [x for x in (rule.enclitic_split(row["surface"]) for row in top) if x]
+    guarded = {x["surface"]: why for x in candidates if (why := is_its_own_word(x["surface"]))}
+    splits = [x for x in candidates if x["surface"] not in guarded]
     merged = dict(count)
     into: dict[str, list[str]] = defaultdict(list)
     for split in splits:
@@ -1159,6 +1190,8 @@ def step_clitics(args: argparse.Namespace) -> int:
              f"- inventory: {len(top):,} surfaces (run `{run.name}`, snapshot `{snapshot_id}`)",
              f"- verified enclitic surfaces that would split: {len(splits):,} "
              f"(abstained or not enclitic: the rest)",
+             f"- not split because the surface is a word in its own right: {len(guarded):,} "
+             f"(e.g. {', '.join(f'{k} [{v}]' for k, v in list(guarded.items())[:8])})",
              f"- hosts they merge into: {len(into):,} ({len(hosts_in):,} already cards, "
              f"{len(hosts_new):,} not yet in the 10k)",
              f"- cards removed: {len(splits):,}; cards whose learner progress must migrate: {len(splits):,}",
@@ -1176,7 +1209,8 @@ def step_clitics(args: argparse.Namespace) -> int:
     stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     (out_dir / f"clitics-{stamp}.md").write_text(md, encoding="utf-8")
     (out_dir / f"clitics-{stamp}.json").write_text(json.dumps(
-        {"splits": splits, "into": into, "freed": freed, "entering": beyond}, ensure_ascii=False, indent=1),
+        {"splits": splits, "guarded": guarded, "into": into, "freed": freed, "entering": beyond},
+        ensure_ascii=False, indent=1),
         encoding="utf-8")
     print(md)
     return 0
