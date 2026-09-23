@@ -48,16 +48,28 @@ Spanish rebuild, taken on its merits.
 ## Numbers
 
 Measured by `python scripts/mend_local.py --step clitics` against the 10k
-inventory of run `20260914T223348Z-c35194bc`; the report lists every split,
-every host and every surface that would enter. **Pending the local run** —
-the table below is filled from that report:
+inventory of run `20260914T223348Z-c35194bc` (report
+`docs/mend/clitics-20260923T231844Z.md`, every split listed in the `.json`):
 
 | Measure | Value |
 |---|---|
-| verified enclitic surfaces in the 10k (cards removed, progress to migrate) | _pending_ |
-| hosts they merge into (already cards / new) | _pending_ |
-| slots freed for surfaces beyond rank 10,000 | _pending_ |
-| largest host rank gains | _pending_ |
+| verified enclitic surfaces in the 10k: cards removed, progress to migrate | **1,167** |
+| kept whole because the surface is a word in its own right (its own SpanishDict entry is a non-verb, or it is itself a conjugation-table form: *dios*, *pelo*, *regalo*, *verme*) | 35 |
+| hosts they merge into | **532** (397 already cards, 135 new) |
+| slots freed for surfaces beyond rank 10,000 | **1,032** (first in: *continuemos*, *pelirroja*, *erección*, *luchas*, *odie*) |
+| largest host rank gains | *deshacer* 9,853 → 1,472; *acostar* 9,597 → 1,404; *aleja* 8,455 → 1,209; *acompañar* 9,594 → 2,081 |
+
+About one card in nine is an enclitic bundle, and most hosts are infinitives
+(`sentarse`, `sentarme`, `sentarte` → *sentar*) that jump thousands of places
+once their bundles count toward them. The pronouns' own cards (*me*, *te*, *se*,
+*lo*) are already in the top 100 and barely move.
+
+Two things to settle before adopting, both visible in the report:
+- infinitive + *se* merges into the bare infinitive (*sentarse* → *sentar*):
+  the pronominal verb loses its own card. The resolver still offers both
+  menus, so meaning is not lost, but the card is.
+- some verified forms are also lexicalised expressions (*date prisa*,
+  *detente*); the guard keeps the ones the conjugation table lists whole.
 
 ## If adopted
 

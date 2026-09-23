@@ -1,6 +1,6 @@
 # Proposal 0003 — Surface exceptions and the menu-fallback layer
 
-**Status:** Settled with Joshua (2026-09-23). This is **MEND**'s design; its
+**Status:** Settled with Joshua (2026-09-23). **Built by MEND (2026-09-23)**: §2a and §10 record what was built and decided; candidate releases `<lang>-speech-v15-mend-10000x10` validated with 0 empty cards (reports in `docs/mend/`). This is **MEND**'s design; its
 prompt is in `CHAT_ROADMAP.md` under *MEND*. §10 records the decisions MEND
 works to. Changes from here go through Joshua.
 
