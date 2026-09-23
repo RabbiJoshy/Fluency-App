@@ -5619,6 +5619,34 @@
             top: 50%;
             transform: translateY(-50%);
         }
+        /* Example-source popover: the source mark at full size, "Open on …"
+           and the external arrow — one obvious target, raised above the chip
+           so a stray tap on the sentence never leaves the app. */
+        .example-source-chip .outbound-leave-btn--icon {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px 8px 8px;
+            border-radius: 14px;
+            animation: lookup-icon-rise 180ms cubic-bezier(0.2, 0.85, 0.25, 1.25) both;
+        }
+        .outbound-leave-btn--icon .outbound-visit-mark {
+            display: inline-flex;
+            flex: 0 0 auto;
+        }
+        .outbound-leave-btn--icon .outbound-visit-mark img {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+        }
+        .outbound-leave-btn--icon .outbound-leave-icon {
+            width: 16px;
+            height: 16px;
+            opacity: 0.8;
+        }
+        .example-source-chip:focus-visible {
+            box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-primary) 55%, transparent);
+        }
         .example-credit-row:has(.is-armed-outbound),
         .example-credit-start:has(.is-armed-outbound),
         .example-song-credit:has(.is-armed-outbound) {
@@ -19628,6 +19656,23 @@ html[data-text-size="large"] body {
 .knowledge-overview-focus.is-static { cursor: default; }
 .rare-knowledge-btn { width: calc(100% - 24px); margin: 0 12px 10px; }
 
+/* Rarer uses sheet: the expressions/rare-senses list from the old child
+   card, scrolling inside the sheet instead of the card face. */
+body.rare-uses-open { overflow: hidden; }
+.rare-uses-subtitle {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+  font: 500 13px/1.35 var(--font-reading);
+}
+.rare-uses-modal .rare-knowledge-btn { width: calc(100% - 40px); margin: 0 20px 10px; }
+.rare-uses-modal .rare-uses-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 0;
+  padding: 0 20px 20px;
+}
+#rareUsesModal[data-dock] .rare-uses-body { padding: 0 16px 16px; }
+
 
 /* Setup header: flag and language name sit side by side on one line — the
    two-line version stacked the flag above the word, which read as two
@@ -19834,7 +19879,8 @@ body:has(#appContent.hidden) .modal[data-dock]:is(#lyricBreakdownModal, #setting
 body:has(#appContent.hidden) .modal[data-dock-stack]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { background: transparent; }
 
 /* The rarer-sense knowledge sheet has its own structure. */
-#knowledgeOverviewModal[data-dock]:not([hidden]) {
+#knowledgeOverviewModal[data-dock]:not([hidden]),
+#rareUsesModal[data-dock]:not([hidden]) {
   place-items: center end;
   padding: 16px var(--dock-inset, 16px);
   background: transparent;
@@ -19842,15 +19888,19 @@ body:has(#appContent.hidden) .modal[data-dock-stack]:is(#lyricBreakdownModal, #s
   -webkit-backdrop-filter: none;
   pointer-events: none;
 }
-#knowledgeOverviewModal[data-dock="left"]:not([hidden]) { place-items: center start; }
-#knowledgeOverviewModal[data-dock] .knowledge-overview-sheet {
+#knowledgeOverviewModal[data-dock="left"]:not([hidden]),
+#rareUsesModal[data-dock="left"]:not([hidden]) { place-items: center start; }
+#knowledgeOverviewModal[data-dock] .knowledge-overview-sheet,
+#rareUsesModal[data-dock] .knowledge-overview-sheet {
   box-sizing: border-box;
   width: var(--dock-w, 400px);
   max-height: calc(calc(100dvh / var(--ui-zoom, 1)) - 32px);
   pointer-events: auto;
 }
-#knowledgeOverviewModal[data-dock] .knowledge-overview-header { padding: 16px 16px 10px; }
-#knowledgeOverviewModal[data-dock] .knowledge-overview-header h2 { font-size: 19px; }
+#knowledgeOverviewModal[data-dock] .knowledge-overview-header,
+#rareUsesModal[data-dock] .knowledge-overview-header { padding: 16px 16px 10px; }
+#knowledgeOverviewModal[data-dock] .knowledge-overview-header h2,
+#rareUsesModal[data-dock] .knowledge-overview-header h2 { font-size: 19px; }
 
 /* Card panels (dictionary, synonyms, conjugation, card data), hosted on
    <body> with .is-docked while docked: vertically centred, 16px from the

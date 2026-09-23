@@ -2,12 +2,25 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-23T15:27:00+01:00",
+      "date": "2026-09-23 15:27 BST",
+      "agent": "Claude",
+      "summary": "Example-sentence source icons open again (tap shows a bigger 'Open on …' link), the expressions card drops its repeated labels, and Rarer uses opens as a sheet instead of a follow-on card.",
+      "detail": [
+        "Source icons (Tatoeba, IMDb, SpanishDict, Wiktionary) under example sentences did nothing when tapped. The icon was a button containing another button, which HTML doesn't allow, so the browser moved the inner 'Visit' button out and there was nothing to reveal. Tapping now pops up the source's icon at full size with 'Open on Tatoeba' and an arrow; only that opens the site, and tapping anywhere else closes it. The same fix revives the icons in the Look up sheet.",
+        "The expressions card after a correct answer no longer repeats itself: the 'Expressions' heading and the PHRASE pill on every row are gone, and the subtitle reads just 'Expressions that use this word'.",
+        "Rare senses are no longer a follow-on card after a correct answer. The 'Rarer uses' tile on the back of the card opens them (with the word's expressions) in a sheet, docked beside the card on desktop and over it on phones.",
+        "Removed the 'Rare senses after a correct answer' setting (and the now-empty 'More study options' section) from Study settings."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-23T15:06:00+01:00",
       "date": "2026-09-23 15:06 BST",
       "agent": "Claude",
       "summary": "Learn New no longer bounces you to a different set: the set it lands on really has cards to learn, and if one turns out to be done it goes straight on to the next.",
       "detail": [
-        "Main cause: 110 Spanish cards have no translated meaning. Setup counts cards before their meanings load, but the deck builder drops those cards. Once everything else in a set was done, the set still said 'Learn 1 new card', built nothing, and the recount moved you elsewhere, on every fresh load. Setup now loads the landing set's meanings first (the same file Start fetches anyway) and counts again.",
+        "Main cause: 105 Spanish cards have no translated meaning. Setup counts cards before their meanings load, but the deck builder drops those cards. Once everything else in a set was done, the set still said 'Learn 1 new card', built nothing, and the recount moved you elsewhere, on every fresh load. Setup now loads the landing set's meanings first (the same file Start fetches anyway) and counts again.",
         "Starting a set waits (up to 5 seconds, behind the loading screen) for a progress sync that is still running, so the set is built from your current progress rather than the copy cached on this device.",
         "If a set still turns out to have nothing new, it no longer drops you back on the menu with a different set highlighted. It says 'Set 7 is already done. Starting Set 8…' and opens it.",
         "Fixed a stale cache in the set counts: whether a sibling form was seen, and the level estimate, were cached per card and could outlast a Fast Track change."

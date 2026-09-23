@@ -87,9 +87,6 @@ function applyGlobalStudyDefaults() {
     // Non-decompositional expressions are study content, not a preference.
     // They always follow a correct parent card and cannot be turned off.
     expressionsModeEnabled = true;
-    rareSensesModeEnabled = saved.rareSensesMode !== undefined
-        ? saved.rareSensesMode === true
-        : saved.phrasesMode !== false;
     phrasesModeEnabled = true;
     extraExamplesEnabled = false;
     try {
@@ -116,7 +113,6 @@ function syncStudyPreferenceControls() {
         directionFlipped: saved.directionFlipped === true,
         speechEnabled: saved.speechEnabled !== false,
         spacedRepetitionEnabled: saved.spacedRepetitionEnabled !== false,
-        rareSensesMode: rareSensesModeEnabled,
         extraExamples: false
     };
     document.querySelectorAll('.global-study-default-btn').forEach(button => {

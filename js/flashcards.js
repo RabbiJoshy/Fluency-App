@@ -4,7 +4,7 @@
 import './state.js?v=20260825ak';
 import './speech.js?v=20260825ak';
 import { goToRoute, routeCodeFor } from './routes.js?v=20260923cj';
-import './side-dock.js?v=20260922mod';
+import './side-dock.js?v=20260923rs';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
@@ -2543,8 +2543,7 @@ function handleSwipeAction(result) {
     // chain instead of advancing normally. Captured before recordCardResult
     // in case it mutates card state.
     // A correct grade on an ordinary deck card (not already inside a nav-
-    // stack popup/peek) can start a child chain: non-decompositional
-    // expressions always, rare senses when that preference is on.
+    // stack popup/peek) can start a child chain of its expressions.
     const swipedCard = flashcards[currentIndex];
     const isChainChild = swipedCard?.isChainChild === true;
     const mayChain = !isChainChild
@@ -3867,17 +3866,36 @@ function exampleLinkHTML(href, label) {
 
 const OUTBOUND_LEAVE_ICON = `<svg class="outbound-leave-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>`;
 
-function outboundLeaveButton(href, label, labeled = false) {
+function outboundLeaveButton(href, label, labeled = false, iconHTML = '') {
     const visit = `Visit ${label}`;
-    const cls = labeled ? 'outbound-leave-btn outbound-leave-btn--label' : 'outbound-leave-btn';
-    const body = labeled
-        ? `<span class="outbound-visit-label">${escapeCardText(visit)}</span>`
-        : OUTBOUND_LEAVE_ICON;
+    const cls = [
+        'outbound-leave-btn',
+        labeled ? 'outbound-leave-btn--label' : '',
+        iconHTML ? 'outbound-leave-btn--icon' : '',
+    ].filter(Boolean).join(' ');
+    // With an icon the popover repeats the source mark at full size beside
+    // "Open on …" and the external-link arrow, so it reads as a link the
+    // learner chose to follow rather than a second decoration.
+    const body = iconHTML
+        ? `<span class="outbound-visit-mark">${iconHTML}</span><span class="outbound-visit-label">Open on ${escapeCardText(label)}</span>${OUTBOUND_LEAVE_ICON}`
+        : (labeled ? `<span class="outbound-visit-label">${escapeCardText(visit)}</span>` : OUTBOUND_LEAVE_ICON);
     return `<button type="button" class="${cls}" hidden data-href="${escapeCardText(href)}" aria-label="${escapeCardText(visit)}" onclick="event.stopPropagation(); confirmOutboundLink(event);">${body}</button>`;
 }
 
-function outboundChipHTML(href, inner, label, attrs = '', labeled = false) {
-    return `<button type="button" ${attrs} data-href="${escapeCardText(href)}" aria-expanded="false" onclick="event.stopPropagation(); armOutboundLink(event)">${inner}${outboundLeaveButton(href, label, labeled)}</button>`;
+// The host is a span with button semantics, not a <button>: the "Visit"
+// button lives inside it, and a <button> inside a <button> is invalid HTML —
+// the parser hoists the inner one out as a sibling, so tapping the chip found
+// nothing to reveal and did nothing at all.
+function outboundChipHTML(href, inner, label, attrs = '', labeled = false, iconHTML = '') {
+    return `<span role="button" tabindex="0" ${attrs} data-href="${escapeCardText(href)}" aria-expanded="false" onclick="event.stopPropagation(); armOutboundLink(event)" onkeydown="outboundChipKeydown(event)">${inner}${outboundLeaveButton(href, label, labeled, iconHTML)}</span>`;
+}
+
+function outboundChipKeydown(event) {
+    if (event.target !== event.currentTarget) return;
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    event.stopPropagation();
+    armOutboundLink(event);
 }
 
 function disarmOutboundLinks(exceptHost = null) {
@@ -3920,6 +3938,7 @@ function confirmOutboundLink(event) {
 if (typeof window !== 'undefined') {
     window.armOutboundLink = armOutboundLink;
     window.confirmOutboundLink = confirmOutboundLink;
+    window.outboundChipKeydown = outboundChipKeydown;
 }
 
 function exampleFaviconHTML(domain) {
@@ -3947,7 +3966,7 @@ function exampleSourceChipHTML({ href, label, domain, text = '', extraClass = ''
     const inner = `${icon}${named ? `<span class="example-source-text">${escapeCardText(text)}</span>` : ''}`;
     const attrs = `class="${classes}" title="${escapeCardText(title)}" aria-label="${escapeCardText(named ? `${text} on ${label}` : label)}"`;
     if (!href) return `<span ${attrs}>${inner}</span>`;
-    return outboundChipHTML(href, inner, label, attrs, true);
+    return outboundChipHTML(href, inner, label, attrs, true, domain ? exampleFaviconHTML(domain) : '');
 }
 
 function dictionaryProviderCredit(name, href) {
@@ -4308,11 +4327,14 @@ function renderRareSenseGroups(rareItems) {
     }).join('');
 }
 
+// No PHRASE badge: every row in this list is a phrase, and the subtitle
+// already says so. Only the owner-account source pill still earns a row.
 function renderPhraseRow(item) {
     const example = (item.examples || [])[0];
     const exampleHTML = compactPhraseExampleHTML(example);
+    const sourcePill = phraseSourcePillHTML(item);
     return `<div class="phrase-summary-item">
-        <div class="phrase-badge-row"><span class="phrase-kind-badge">PHRASE</span>${phraseSourcePillHTML(item)}</div>
+        ${sourcePill ? `<div class="phrase-badge-row">${sourcePill}</div>` : ''}
         <div class="phrase-expression">${escapeCardText(item.expression)}</div>
         ${item.translation ? `<div class="phrase-translation">${escapeCardText(item.translation)}</div>` : ''}
         ${item.context ? `<div class="phrase-context">${escapeCardText(item.context)}</div>` : ''}
@@ -4320,8 +4342,11 @@ function renderPhraseRow(item) {
     </div>`;
 }
 
-function renderPhraseSummaryBack(card) {
-    const items = cardChainQueue || [];
+// The shared body of the expressions child card and the Rarer uses sheet.
+// Section headings appear only when there is more than one kind of section
+// to tell apart; a lone "Expressions" heading under "Expressions that use
+// this word" said the same thing twice.
+function phraseSummaryContent(items) {
     const cliticGroups = new Map();
     items.forEach((item, index) => {
         if (item.kind !== 'CLITIC') return;
@@ -4339,47 +4364,105 @@ function renderPhraseSummaryBack(card) {
     }).join('');
     const phraseItems = items.filter(item => item.kind !== 'CLITIC' && item.kind !== 'RARE_SENSE');
     const rareItems = items.filter(item => item.kind === 'RARE_SENSE');
+    const rareHTML = rareItems.length ? renderRareSenseGroups(rareItems) : '';
+    const phraseHeading = (rareHTML || cliticHTML)
+        ? '<h4 class="other-uses-pos-heading">Expressions</h4>'
+        : '';
     const phraseHTML = phraseItems.length
         ? `<section class="other-uses-pos">
-            <h4 class="other-uses-pos-heading">Expressions</h4>
+            ${phraseHeading}
             ${phraseItems.map(renderPhraseRow).join('')}
            </section>`
         : '';
-    const rareHTML = rareItems.length ? renderRareSenseGroups(rareItems) : '';
 
     const rareCount = rareItems.length;
     const phraseCount = items.length - rareCount;
-    const bits = [];
-    if (rareCount) bits.push(`${rareCount} rarer sense${rareCount === 1 ? '' : 's'}`);
-    if (phraseCount) bits.push(`${phraseCount} expression${phraseCount === 1 ? '' : 's'}`);
     let subtitle;
     if (rareCount && !phraseCount) {
-        subtitle = `Rarer senses — meanings that show up less often in speech${bits.length ? ` · ${bits.join(' · ')}` : ''}`;
+        subtitle = 'Meanings that show up less often in speech';
     } else if (phraseCount && !rareCount) {
-        subtitle = `Expressions that use this word${bits.length ? ` · ${bits.join(' · ')}` : ''}`;
+        subtitle = 'Expressions that use this word';
     } else {
-        subtitle = `Rarer uses — senses that show up less often in speech${bits.length ? ` · ${bits.join(' · ')}` : ''}`;
+        subtitle = 'Less common meanings, and expressions that use this word';
     }
-    const rareKnowledgeButton = rareCount && typeof currentUser !== 'undefined' && currentUser && !currentUser.isGuest
+    const knowledgeButton = rareCount && typeof currentUser !== 'undefined' && currentUser && !currentUser.isGuest
         ? '<button type="button" class="rare-knowledge-btn" onclick="openRareSenseKnowledge(event)">Mark rarer senses Known or Review</button>'
         : '';
+    return { subtitle, knowledgeButton, bodyHTML: `${rareHTML}${phraseHTML}${cliticHTML}` };
+}
 
+function renderPhraseSummaryBack(card) {
+    const { subtitle, knowledgeButton, bodyHTML } = phraseSummaryContent(cardChainQueue || []);
     return `<div class="back-header other-uses-header">
             <div class="back-headword-row">
                 <span class="back-headword other-uses-headword">${escapeCardText(card.chainParentWord || '')}</span>
             </div>
             <div class="phrase-summary-subtitle">${subtitle}</div>
         </div>
-        ${rareKnowledgeButton}
-        <div class="phrase-summary-scroll">${rareHTML}${phraseHTML}${cliticHTML}</div>`;
+        ${knowledgeButton}
+        <div class="phrase-summary-scroll">${bodyHTML}</div>`;
 }
 
 function openRareSenseKnowledge(event) {
     event?.stopPropagation();
-    const parent = cardChainQueue.find(item => item.kind === 'RARE_SENSE')?.parentCard;
-    if (parent) window.showKnowledgeOverview?.(event, { card: parent, showRare: true });
+    const parent = (_rareUsesItems.length ? _rareUsesItems : cardChainQueue)
+        .find(item => item.kind === 'RARE_SENSE')?.parentCard;
+    if (!parent) return;
+    closeRareUsesModal();
+    window.showKnowledgeOverview?.(event, { card: parent, showRare: true });
 }
 if (typeof window !== 'undefined') window.openRareSenseKnowledge = openRareSenseKnowledge;
+
+// --- Rarer uses sheet --------------------------------------------------------
+// Rare dictionary senses (and the word's expressions) open as a sheet over the
+// card, not as a child card in the deck: they are reference, not something
+// the learner is graded on, and on desktop the sheet docks beside the card.
+let _rareUsesItems = [];
+
+function ensureRareUsesModal() {
+    let modal = document.getElementById('rareUsesModal');
+    if (modal) return modal;
+    modal = document.createElement('div');
+    modal.id = 'rareUsesModal';
+    modal.className = 'knowledge-overview-modal rare-uses-modal';
+    modal.hidden = true;
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'rareUsesTitle');
+    modal.innerHTML = `
+        <div class="knowledge-overview-sheet rare-uses-sheet">
+            <header class="knowledge-overview-header">
+                <div>
+                    <span class="knowledge-overview-kicker">Rarer uses</span>
+                    <h2 id="rareUsesTitle"></h2>
+                    <p class="rare-uses-subtitle" id="rareUsesSubtitle"></p>
+                </div>
+                <button type="button" class="knowledge-overview-close" aria-label="Close rarer uses" onclick="closeRareUsesModal(event)">×</button>
+            </header>
+            <div id="rareUsesKnowledge"></div>
+            <div class="phrase-summary-scroll rare-uses-body" id="rareUsesBody"></div>
+        </div>`;
+    modal.addEventListener('click', event => {
+        event.stopPropagation();
+        if (event.target === modal) closeRareUsesModal(event);
+    });
+    modal.addEventListener('keydown', event => {
+        if (event.key !== 'Escape') return;
+        event.stopPropagation();
+        closeRareUsesModal(event);
+    });
+    document.body.appendChild(modal);
+    return modal;
+}
+
+function closeRareUsesModal(event) {
+    event?.stopPropagation?.();
+    const modal = document.getElementById('rareUsesModal');
+    document.body.classList.remove('rare-uses-open');
+    _rareUsesItems = [];
+    if (modal) modal.hidden = true;
+}
+if (typeof window !== 'undefined') window.closeRareUsesModal = closeRareUsesModal;
 
 // ---------------------------------------------------------------------------
 // Backup example sentences — the second chain child.
@@ -4583,10 +4666,8 @@ async function buildCardChildren(card) {
     const children = [];
     const expressions = collectExpressionItems(card);
     if (expressions.length > 0) children.push({ type: 'phrases', items: expressions });
-    if (rareSensesModeEnabled) {
-        const rareSenses = collectRareSenseItems(card);
-        if (rareSenses.length > 0) children.push({ type: 'phrases', items: rareSenses });
-    }
+    // Rare senses are no longer a child card: they open from the "Rarer uses"
+    // tile as a sheet (openRareAndExpressionsCard).
     return children;
 }
 
@@ -4705,8 +4786,8 @@ function finishPhraseChain(isCorrect) {
     }
 }
 
-// On-demand trigger from the card back: opens rare senses and expressions
-// as an interactive peek/child card pushed onto cardNavStack.
+// On-demand trigger from the card back ("Rarer uses" tile): opens the word's
+// rare senses and expressions in a sheet over the card.
 function openRareAndExpressionsCard(event) {
     event?.stopPropagation?.();
     const parentCard = flashcards[currentIndex];
@@ -4714,32 +4795,19 @@ function openRareAndExpressionsCard(event) {
     const items = collectRareAndExpressionItems(parentCard);
     if (!items.length) return;
 
-    cardChainQueue = items;
-    cardChainExamples = [];
-    cardChainReturnIndex = currentIndex;
-
-    const tempChild = phraseSummaryCard(items);
-    const tempIndex = flashcards.length;
-
-    cardNavStack.push({
-        index: currentIndex,
-        meaningIndex: currentMeaningIndex,
-        exampleIndex: currentExampleIndex,
-        mweIndex: currentMWEIndex,
-        tempCard: true,
-        tempIndex: tempIndex,
-        wasFlipped: true
-    });
-
-    flashcards.push(tempChild);
-    currentIndex = tempIndex;
-    currentMeaningIndex = 0;
-    currentExampleIndex = 0;
-    currentMWEIndex = 0;
-    currentGroupSelection = null;
-
-    document.getElementById('flashcard').classList.add('flipped');
-    updateCard({ announceHeadword: true });
+    _rareUsesItems = items;
+    const { subtitle, knowledgeButton, bodyHTML } = phraseSummaryContent(items);
+    const modal = ensureRareUsesModal();
+    modal.querySelector('#rareUsesTitle').textContent = parentCard.displaySurface || parentCard.targetWord || '';
+    modal.querySelector('#rareUsesSubtitle').textContent = subtitle;
+    modal.querySelector('#rareUsesKnowledge').innerHTML = knowledgeButton;
+    const body = modal.querySelector('#rareUsesBody');
+    body.innerHTML = bodyHTML;
+    body.scrollTop = 0;
+    modal.hidden = false;
+    document.body.classList.add('rare-uses-open');
+    window.sideDock?.placeById?.('rareUsesModal');
+    modal.querySelector('.knowledge-overview-close')?.focus();
 }
 window.openRareAndExpressionsCard = openRareAndExpressionsCard;
 
