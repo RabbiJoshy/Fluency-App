@@ -33,6 +33,7 @@ from fluency.sense_menu.spanishdict_lemmas import (
     SpanishDictLemmaRule,
 )
 from fluency.surfaces.declared import Context, DeclaredRegistry
+from fluency.surfaces.stores import stack as declared_stack
 from fluency.surfaces.resolver import RESOLVER_VERSION, ModePolicy, Resolver
 
 DECLARED_ROOT = Path("config/declared")
@@ -124,7 +125,8 @@ def _resolver_settings(
     surfaces = declared.get("surfaces")
     if not isinstance(surfaces, list) or not surfaces or not all(isinstance(s, str) and s for s in surfaces):
         raise SenseMenuRunError("sense_menu.resolver.surfaces must list the resolved surfaces explicitly")
-    registry = DeclaredRegistry.load(repository_root / DECLARED_ROOT, language)
+    # Speech reads the language store only (proposal 0003 §4).
+    registry = declared_stack(repository_root, language)
     policy = ModePolicy.load(repository_root / STRATEGY_POLICY, mode)
     pinned = {
         "resolver_version": RESOLVER_VERSION,
