@@ -429,6 +429,16 @@ class SpanishDictHeadwordSource:
                 if isinstance(a, dict) and str(a.get("headword") or "").strip() == headword]
 
     def has_entry(self, headword: str, surface: str | None = None) -> bool:
+        """SpanishDict holds senses for ``headword``, from any page we kept.
+
+        Three places, all SpanishDict's own: the headword cache (entries fetched
+        as hops), the surface's page (a headword it declares), and the
+        headword's own page when it is itself a word we fetched (*bar* for
+        *bares*). The headword cache alone missed the last: it only holds what
+        some other surface hopped to.
+        """
         if isinstance(self.headword_cache.get(headword), dict):
             return True
-        return bool(surface and self.page_analyses(surface, headword))
+        if surface and self.page_analyses(surface, headword):
+            return True
+        return bool(self.page_analyses(headword, headword))

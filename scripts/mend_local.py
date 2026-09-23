@@ -446,6 +446,8 @@ DECLARED_ROOT = REPO / "config/declared"
 REFETCH = {
     "affected": ("refetch-no-menu-v15.surfaces.txt", "refetch-no-menu-v15.jsonl"),
     "deck": ("refetch-lemma-relations.surfaces.txt", "refetch-lemma-relations.jsonl"),
+    # Headwords a hand-written entry names that no kept page holds (--words).
+    "words": ("refetch-headwords.surfaces.txt", "refetch-headwords.jsonl"),
 }
 MEND_SNAPSHOT_PREFIX = "spanishdict-complete-menu-2026-09-23-v"
 
@@ -663,6 +665,11 @@ def step_refetch(args: argparse.Namespace) -> int:
     out_dir = (args.out or ws / "raw/surfaces/es/mend").resolve()
     list_name, out_name = REFETCH[args.scope]
     surfaces = out_dir / list_name
+    if args.scope == "words":
+        if not args.words:
+            print("--scope words needs --words w1 w2 ..."); return 1
+        out_dir.mkdir(parents=True, exist_ok=True)
+        surfaces.write_text("\n".join(args.words) + "\n", encoding="utf-8")
     if not surfaces.exists() or not surfaces.read_text(encoding="utf-8").strip():
         print(f"no surface list at {surfaces}; run --step lemmas first"); return 1
     wanted = [w for w in surfaces.read_text(encoding="utf-8").split("\n") if w.strip()]
@@ -1164,6 +1171,7 @@ def main() -> int:
                     help="refetch: the 105 (merged into a new snapshot) or the deck (evidence only)")
     ap.add_argument("--snapshot", help="SpanishDict snapshot id (default: newest MEND snapshot, else the run's)")
     ap.add_argument("--language", choices=["es", "pt", "cs"], help="menus/wsd/release: one language (default all)")
+    ap.add_argument("--words", nargs="+", help="refetch --scope words: headword pages to fetch")
     ap.add_argument("--kaikki-snapshot", type=Path, help="menus: Kaikki dump path, if the search does not find it")
     ap.add_argument("--force-new-run", action="store_true", help="menus: build another run even if one is recorded")
     ap.add_argument("--go", action="store_true", help="wsd: run paid embeddings if needed, then splice and import")

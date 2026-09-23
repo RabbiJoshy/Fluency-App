@@ -15,7 +15,7 @@ from fluency.surfaces.declared import Context, DeclaredRegistry
 from fluency.surfaces.resolver import ModePolicy, Resolver
 
 REPO = Path(__file__).resolve().parents[2]
-SURFACES = ("está", "usted", "cura", "sr", "estate", "bum")
+SURFACES = ("está", "usted", "cura", "sr", "estate", "bum", "bares")
 
 
 def sense(pos, translation, context=""):
@@ -39,6 +39,9 @@ def write_snapshot(root: Path) -> Path:
                      "possible_results": []},
             "sr": {"query": "sr", "dictionary_analyses": [{"headword": "Sr.", "senses": [sense("NOUN", "Mr.")]}],
                    "possible_results": []},
+            "bar": {"query": "bar", "entry_lang": "es",
+                    "dictionary_analyses": [{"headword": "bar", "senses": [sense("NOUN", "bar, pub")]}],
+                    "possible_results": []},
         },
         "headword_cache.json": {
             "estar": {"dictionary_analyses": [{"headword": "estar", "senses": [
@@ -72,6 +75,9 @@ class ResolvedMenuTests(unittest.TestCase):
                 "entry_id": "es-gloss-bum", "kind": "gloss", "surface": "bum",
                 "payload": {"senses": [{"translation": "boom", "pos": "interjection"}]},
                 "reason": "onomatopoeia; SpanishDict answers in English",
+                "author": "test", "created_at": "2026-09-23"}, {
+                "entry_id": "es-headwords-bares", "kind": "headwords", "surface": "bares",
+                "payload": {"headwords": ["bar"]}, "reason": "SpanishDict answers in English",
                 "author": "test", "created_at": "2026-09-23"}]}))
         source = SpanishDictHeadwordSource(
             SpanishDictLemmaRule(load("conjugation_reverse.json"),
@@ -102,10 +108,10 @@ class ResolvedMenuTests(unittest.TestCase):
         others = lambda report: [r for r in report["per_surface"] if r["surface_form"] in {"está", "usted", "cura"}]
         self.assertEqual(others(legacy_report), others(resolved_report))
 
-    def test_the_legacy_path_left_these_three_empty(self):
+    def test_the_legacy_path_left_these_empty(self):
         legacy, _ = self.build()
         empty = {c["surface_form"] for c in legacy["cards"] if not c["analyses"]}
-        self.assertEqual(empty, {"sr", "estate", "bum"})
+        self.assertEqual(empty, {"sr", "estate", "bum", "bares"})
 
     def test_a_dotted_self_headword_is_the_menu(self):
         menu, report = self.build({"sr"})
@@ -126,6 +132,13 @@ class ResolvedMenuTests(unittest.TestCase):
         stamp = card["analyses"][0]["provider_metadata"]["resolver"]
         self.assertEqual(stamp["headword_trust"], "derived")
         self.assertIn("estate = esta + te", stamp["headword_detail"])
+
+    def test_an_override_headword_is_read_from_its_own_page(self):
+        """bar is not in the headword cache; its own fetched page is SpanishDict's entry."""
+        menu, _ = self.build({"bares"})
+        card = next(c for c in menu["cards"] if c["surface_form"] == "bares")
+        self.assertEqual([a["headword"] for a in card["analyses"]], ["bar"])
+        self.assertEqual(card["analyses"][0]["senses"][0]["translation"], "bar, pub")
 
     def test_a_declared_gloss_names_its_own_adapter(self):
         menu, report = self.build({"bum"})
