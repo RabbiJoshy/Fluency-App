@@ -1546,7 +1546,7 @@ function initializeApp() {
             { label: 'Main menu', iconHTML: icon('<path d="M9 7H5v12h12v-4"></path><path d="m9 11-4-4 4-4"></path><path d="M5 7h9a5 5 0 0 1 5 5"></path>'), onSelect: () => goBackToSetup() },
             { ...directionRow(), keepOpen: true, tail: '', refresh: directionRow, onSelect: () => flipDirection() },
             { ...speechRow(), keepOpen: true, tail: '', refresh: speechRow, onSelect: () => toggleAutoSpeak() },
-            { label: 'Study settings', iconHTML: icon('<path d="M4 6h10"></path><path d="M18 6h2"></path><circle cx="16" cy="6" r="2"></circle><path d="M4 12h2"></path><path d="M10 12h10"></path><circle cx="8" cy="12" r="2"></circle><path d="M4 18h8"></path><path d="M16 18h4"></path><circle cx="14" cy="18" r="2"></circle>'), onSelect: () => showSettingsModalWithTab('study', { singleTab: true }) }
+            { label: 'Study settings', iconHTML: icon('<path d="M4 6h10"></path><path d="M18 6h2"></path><circle cx="16" cy="6" r="2"></circle><path d="M4 12h2"></path><path d="M10 12h10"></path><circle cx="8" cy="12" r="2"></circle><path d="M4 18h8"></path><path d="M16 18h4"></path><circle cx="14" cy="18" r="2"></circle>'), onSelect: () => showSettingsModalWithTab('study', { singleTab: true, onBack: () => showStudyMenu() }) }
         ];
         // Card data is a product-level audit surface: it stays available when
         // optional model stamps are absent and does not require an owner login.
@@ -5815,7 +5815,10 @@ function updateCard({ announceHeadword = false } = {}) {
                 (card.sourceFrequencyBreakdown || []).map(row => [row.surface, row.value])));
             freqHtml = `<button class="card-freq-btn" onclick="window.showFreqInfo(event)" data-frequency-source="${source}" data-frequency-unit="${card.sourceFrequencyUnit || ''}" data-frequency-forms="${Number(card.sourceFrequencyForms) || 1}" data-frequency-is-total="${card.sourceFrequencyIsGroupTotal ? '1' : ''}" data-frequency-basis-surface="${escapeCardText(card.sourceFrequencyBasisSurface || '')}" data-frequency-breakdown="${breakdown}" aria-label="Source frequency information">${label}</button>`;
         }
-        const denominator = vocabularySize ? ` / ${vocabularySize.toLocaleString()}` : '';
+        // Only an artist's vocabulary is a real population; in speech mode the
+        // total is just the size of our deck, not of the language, so the rank
+        // stands alone.
+        const denominator = activeArtist && vocabularySize ? ` / ${vocabularySize.toLocaleString()}` : '';
         const rankLabel = card.artistVocabularyScope === 'extra' ? 'Extra rank' : 'Vocabulary rank';
         frontRankingEl.innerHTML =
             `<span class="card-rank-label">${rankLabel}: <strong class="card-stat-value">${Number(vocabularyRank).toLocaleString()}</strong>${denominator}</span>${freqHtml}`;

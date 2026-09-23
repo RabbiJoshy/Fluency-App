@@ -3190,7 +3190,13 @@ function showSettingsModal() {
     showSettingsModalWithTab('study');
 }
 
-function showSettingsModalWithTab(tabName, { singleTab = false } = {}) {
+// Where the settings header's ‹ goes. Sub-pages go back to the Settings list;
+// a caller that opened settings from somewhere else (Study options mid-set)
+// passes onBack so the page can go back there instead of only closing.
+let settingsBackHandler = null;
+let currentSettingsTab = 'study';
+
+function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } = {}) {
     setupSettingsOverview();
     // Show/hide refresh set option based on whether a study set is loaded and user is logged in
     const refreshSetToggle = document.getElementById('refreshSetToggle');
@@ -3288,7 +3294,11 @@ function showSettingsModalWithTab(tabName, { singleTab = false } = {}) {
     const title = studyOnly ? 'Study settings' : ({ study: 'Settings', vocabulary: 'Words & data', account: 'Account',
         offline: 'Storage', appData: 'Owner tools', about: 'About Fluency' }[requestedTab] || 'Settings');
     document.getElementById('settingsTitle').textContent = title;
-    document.getElementById('settingsBackBtn').hidden = requestedTab === 'study';
+    settingsBackHandler = requestedTab === 'study' && typeof onBack === 'function' ? onBack : null;
+    currentSettingsTab = requestedTab;
+    const settingsBackBtn = document.getElementById('settingsBackBtn');
+    settingsBackBtn.hidden = requestedTab === 'study' && !settingsBackHandler;
+    settingsBackBtn.setAttribute('aria-label', settingsBackHandler ? 'Back' : 'Back to Settings');
     settingsModal.querySelector('.settings-modal-content').scrollTop = 0;
     syncStudyPreferenceControls();
 
@@ -3322,7 +3332,15 @@ function setupSettingsOverview() {
     if (!modal || modal.dataset.overviewReady === 'true') return;
     modal.dataset.overviewReady = 'true';
     const go = (id, tab) => document.getElementById(id)?.addEventListener('click', () => showSettingsModalWithTab(tab));
-    go('settingsBackBtn', 'study');
+    document.getElementById('settingsBackBtn')?.addEventListener('click', () => {
+        const back = settingsBackHandler;
+        if (!back) {
+            showSettingsModalWithTab('study');
+            return;
+        }
+        hideSettingsModal();
+        back();
+    });
     go('settingsWordsDataBtn', 'vocabulary');
     go('settingsAccountBtn', 'account');
     go('settingsAdminBtn', 'appData');
@@ -3525,6 +3543,7 @@ async function renderDevFooter(freshnessEl) {
 function hideSettingsModal() {
     const modal = document.getElementById('settingsModal');
     modal.classList.add('hidden');
+    settingsBackHandler = null;
     const search = document.getElementById('settingsSearch');
     if (search?.value) {
         search.value = '';
@@ -3982,6 +4001,33 @@ window.renderRangeSelector = renderRangeSelector;
 window.getNextStudySetMeta = getNextStudySetMeta;
 window.getNextStudyLevelMeta = getNextStudyLevelMeta;
 window.startNextStudyLevelFirstSet = startNextStudyLevelFirstSet;
+// A panel opened from Settings (Saved words, Import) gets a ‹ in its header
+// that returns to the settings page it came from, so a sub-page never offers
+// only a way out. Returns the reopen function, or null when settings was not
+// open, and clears the button in that case.
+function attachSettingsReturn(modalId, closePanel) {
+    const settingsModal = document.getElementById('settingsModal');
+    const fromSettings = Boolean(settingsModal && !settingsModal.classList.contains('hidden'));
+    const header = document.querySelector(`#${modalId} .modal-header`);
+    if (!header) return null;
+    let button = header.querySelector('.settings-return-back');
+    if (!button) {
+        button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'settings-return-back';
+        button.setAttribute('aria-label', 'Back to Settings');
+        button.textContent = '‹';
+        button.addEventListener('click', () => button._back?.());
+        header.prepend(button);
+    }
+    const tab = currentSettingsTab;
+    const reopen = fromSettings ? () => showSettingsModalWithTab(tab) : null;
+    button._back = reopen ? () => { closePanel(); reopen(); } : null;
+    button.hidden = !reopen;
+    return reopen;
+}
+
+window.attachSettingsReturn = attachSettingsReturn;
 window.showStatsModal = showStatsModal;
 window.hideStatsModal = hideStatsModal;
 window.showSettingsModal = showSettingsModal;
