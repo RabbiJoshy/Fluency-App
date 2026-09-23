@@ -943,7 +943,10 @@ def step_wsd(args: argparse.Namespace) -> int:
     from fluency.core.hashing import file_content_id as _fid
     from fluency.core.workspace import Workspace
     from fluency.wsd.importer import import_wsd_assignments
-    from fluency.wsd.splice import carried_row, declared_row, splice_bundle
+    from fluency.wsd.splice import carried_row, declared_row, write_spliced_bundle
+
+    def say(message: str) -> None:
+        print(message, flush=True)
 
     ws = args.workspace.resolve()
     workspace = Workspace.load(ws)
@@ -974,9 +977,15 @@ def step_wsd(args: argparse.Namespace) -> int:
                   f"carried from `{source.name}`: all other cards"]
         fresh: list[dict[str, Any]] = []
         method = src_method
-        if targets:
-            command = [sys.executable, "-m", "fluency.speech.wsd_execute", "--run-dir", str(run),
-                       "--out", str(target_bundle), "--profile-id", src_method["profile_id"],
+        if targets and args.go and target_bundle.exists():
+            # wsd_execute already finished for this run (a later step may have
+            # crashed); its bundle is reused rather than recomputed.
+            say(f"{lang}: reusing finished targets bundle {target_bundle.name}")
+            lines += ["", f"- reused finished targets bundle `{target_bundle.name}`"]
+        elif targets:
+            command = [sys.executable, "-X", "faulthandler", "-m", "fluency.speech.wsd_execute",
+                       "--run-dir", str(run), "--out", str(target_bundle),
+                       "--profile-id", src_method["profile_id"],
                        "--prewsd", str(_prewsd_dir(ws, lang, source.name)),
                        "--target-surfaces", *targets]
             if mwe:
@@ -985,22 +994,32 @@ def step_wsd(args: argparse.Namespace) -> int:
                 command += ["--env-file", str(args.env_file)]
             if not args.go:
                 command.append("--offline-only")
-            print("$ " + " ".join(command[:12]) + f" ... ({len(targets)} surfaces)", flush=True)
-            result = subprocess.run(command, capture_output=True, text=True,
-                                    env={**__import__("os").environ, "PYTHONPATH": str(REPO / "src")})
-            output = (result.stdout + result.stderr).strip().splitlines()
-            # The lines that carry numbers: the sampling summary, the texts to
-            # embed, and -- offline -- how many are absent from the cache.
+            log_path = bundle_dir / f"mend-{run.name}-targets.log"
+            say("$ " + " ".join(command[:14]) + f" ... ({len(targets)} surfaces)  [log: {log_path}]")
+            # Streamed, not captured: a crash then shows where it happened, on
+            # screen and in the log, instead of taking the output with it.
+            output: list[str] = []
+            with log_path.open("w", encoding="utf-8") as log, subprocess.Popen(
+                    command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+                    env={**__import__("os").environ, "PYTHONPATH": str(REPO / "src")}) as process:
+                for line in process.stdout:
+                    print("  | " + line.rstrip(), flush=True)
+                    log.write(line)
+                    output.append(line.rstrip())
+                returncode = process.wait()
+            output = [l for l in output if l]
             keep = [l for l in output if any(k in l for k in (
                 "sampling:", "exact texts", "exact-text", "absent from the local embedding cache",
                 "newly embedded", "assigned", "not_evaluated", "abstained", "no_menu", "Error", "error"))]
             tail = "\n".join((keep or output)[-14:])
             lines += ["", "```", tail, "```"]
-            if result.returncode != 0:
-                lines += ["", f"**{lang}: wsd_execute stopped (exit {result.returncode}).** "
+            if returncode != 0:
+                lines += ["", f"**{lang}: wsd_execute stopped (exit {returncode}).** "
                           + ("With --offline-only this is the uncached count above: that is the projected "
-                             "embedding spend. Say go to run it paid." if not args.go else "Stop and report.")]
+                             "embedding spend. Say go to run it paid." if not args.go
+                             else f"Stop and report; full output in {log_path}.")]
                 continue
+        if targets:
             bundle = _json(target_bundle)
             fresh = [r for r in bundle["assignments"] if r["surface_form"] in set(targets)]
             method = bundle["method"]
@@ -1018,33 +1037,42 @@ def step_wsd(args: argparse.Namespace) -> int:
             continue
         new_menu_id = _fid(menu_path)
         redone = set(resolved)
-        carried = [carried_row(r, source_run_id=source.name, source_method=src_method,
-                               sense_menu_content_id=new_menu_id)
-                   for r in _jsonl(src4 / "assignments.jsonl") if r["card_id"] not in redone]
+        # re-resolved cards that still have no menu keep their source rows (no_menu)
+        still_empty = {cid for cid in redone if not menu[cid]["analyses"]}
         declared_rows = [declared_row(card_id=card["card_id"], surface_form=card["display_form"],
                                       sentence_id=item["sentence_id"], menu_card=menu[card["card_id"]],
                                       sense_menu_content_id=new_menu_id)
                          for card in candidates["cards"] if card["card_id"] in declared
                          for item in card.get("candidates") or []]
-        # re-resolved cards that still have no menu keep their source rows (no_menu)
-        still_empty = {cid for cid in redone if not menu[cid]["analyses"]}
-        carried += [carried_row(r, source_run_id=source.name, source_method=src_method,
-                                sense_menu_content_id=new_menu_id)
-                    for r in _jsonl(src4 / "assignments.jsonl") if r["card_id"] in still_empty]
         if not args.go and not targets:
-            lines += ["", f"{lang}: nothing needs a model; --go splices {len(carried)} carried and "
+            lines += ["", f"{lang}: nothing needs a model; --go splices the carried rows and "
                       f"{len(declared_rows)} declared rows and imports them."]
             continue
-        bundle, splice_report = splice_bundle(
-            run_id=run.name, language=lang, mode="speech", inputs=inputs, method=method,
-            sampling_policy=(src_report.get("occurrence_sampling") or {}).get("policy") or {},
-            carried=carried, fresh=fresh, declared=declared_rows)
+
+        def carried_rows():
+            # One pass, one row at a time: the Spanish source is 2.2 GB and was
+            # held several times over when read whole.
+            with (src4 / "assignments.jsonl").open(encoding="utf-8", newline="\n") as handle:
+                for line in handle:
+                    if not line.strip():
+                        continue
+                    row = json.loads(line)
+                    if row["card_id"] not in redone or row["card_id"] in still_empty:
+                        yield carried_row(row, source_run_id=source.name, source_method=src_method,
+                                          sense_menu_content_id=new_menu_id)
+
         spliced = bundle_dir / f"mend-{run.name}-spliced.json"
-        spliced.write_text(json.dumps(bundle, ensure_ascii=False) + "\n", encoding="utf-8")
+        say(f"{lang}: writing spliced bundle {spliced.name} (streaming carried rows)")
+        splice_report = write_spliced_bundle(
+            spliced, run_id=run.name, language=lang, mode="speech", inputs=inputs, method=method,
+            sampling_policy=(src_report.get("occurrence_sampling") or {}).get("policy") or {},
+            carried=carried_rows(), fresh=fresh, declared=declared_rows, progress=say)
+        say(f"{lang}: bundle written: {splice_report['rows_by_origin']}; importing")
         (bundle_dir / f"mend-{run.name}-splice-report.json").write_text(json.dumps(
             {**splice_report, "source_run": source.name, "source_method": src_method,
              "fresh_method": method}, ensure_ascii=False, indent=1), encoding="utf-8")
         import_wsd_assignments(workspace, run_id=run.name, language=lang, mode="speech", bundle_path=spliced)
+        say(f"{lang}: Stage 04 imported")
         lines += ["", f"- imported Stage 04: {splice_report['rows_by_origin']}; statuses {splice_report['statuses']}"]
     md = "\n".join(lines) + "\n"
     stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")

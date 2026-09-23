@@ -139,3 +139,56 @@ def splice_bundle(
         "statuses": dict(Counter(str(r.get("status")) for r in ordered)),
     }
     return bundle, report
+
+
+def write_spliced_bundle(
+    path, *, run_id: str, language: str, mode: str, inputs: Mapping[str, str],
+    method: Mapping[str, Any], sampling_policy: Mapping[str, Any],
+    carried: Iterable[Mapping[str, Any]], fresh: Iterable[Mapping[str, Any]],
+    declared: Iterable[Mapping[str, Any]], progress=None,
+) -> dict[str, Any]:
+    """``splice_bundle``, streamed to ``path`` without holding the rows.
+
+    A carried Stage 04 can be gigabytes (Spanish KILN 2: 2.2 GB, heavy with
+    MWE evidence), and the in-memory splice held it several times over. Here
+    rows are written as they arrive; only the set of (card, sentence) keys is
+    kept, to refuse a pair that appears twice. The object is written by hand
+    so ``assignments`` can stream and ``sampling`` -- counted on the way --
+    can follow it; key order means nothing to a JSON reader.
+    """
+    import json
+    from pathlib import Path
+
+    seen: set[tuple[str, str]] = set()
+    origin: Counter[str] = Counter()
+    statuses: Counter[str] = Counter()
+    path = Path(path)
+    temporary = path.with_name(path.name + ".partial")
+    with temporary.open("w", encoding="utf-8") as stream:
+        head = {"bundle_version": "wsd-assignment-bundle/v1", "run_id": run_id, "language": language,
+                "mode": mode, "coverage": "complete_candidate_pool", "method": dict(method),
+                "inputs": dict(inputs)}
+        stream.write(json.dumps(head, ensure_ascii=False)[:-1] + ', "assignments": [\n')
+        first = True
+        for label, group in (("carried", carried), ("fresh", fresh), ("declared", declared)):
+            for row in group:
+                key = (row["card_id"], row["sentence_id"])
+                if key in seen:
+                    raise ValueError(f"{key} appears in two parts of the splice")
+                seen.add(key)
+                origin[label] += 1
+                statuses[str(row.get("status"))] += 1
+                if not first:
+                    stream.write(",\n")
+                stream.write(json.dumps(row, ensure_ascii=False))
+                first = False
+                if progress and sum(origin.values()) % 100_000 == 0:
+                    progress(f"  written {sum(origin.values()):,} rows")
+        considered = sum(statuses.values())
+        not_evaluated = statuses.get(NOT_EVALUATED, 0)
+        sampling = {"policy": dict(sampling_policy), "occurrences_considered": considered,
+                    "occurrences_selected": considered - not_evaluated,
+                    "occurrences_not_evaluated": not_evaluated}
+        stream.write('\n], "sampling": ' + json.dumps(sampling, ensure_ascii=False) + "}\n")
+    temporary.replace(path)
+    return {"rows_by_origin": dict(origin), "statuses": dict(statuses)}

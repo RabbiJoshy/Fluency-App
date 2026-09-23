@@ -4,7 +4,9 @@ import unittest
 
 from fluency.wsd.contracts import WSDAssignment
 from fluency.wsd.importer import WSDAssignmentImportError, _is_declared_default
-from fluency.wsd.splice import carried_row, declared_row, sampling_from_rows, splice_bundle
+from fluency.wsd.splice import (
+    carried_row, declared_row, sampling_from_rows, splice_bundle, write_spliced_bundle,
+)
 
 CARD = "card_es_" + "a" * 32
 SENTENCE = "sentence_" + "b" * 32
@@ -60,6 +62,36 @@ class SpliceTests(unittest.TestCase):
             splice_bundle(run_id="r", language="es", mode="speech", inputs={}, method={},
                           sampling_policy={}, carried=[a], fresh=[a], declared=[])
         self.assertEqual(sampling_from_rows([], {})["occurrences_considered"], 0)
+
+
+class StreamedSpliceTests(unittest.TestCase):
+    def test_the_streamed_bundle_equals_the_in_memory_one(self):
+        import json, tempfile
+        from pathlib import Path
+        a = {"card_id": CARD, "sentence_id": SENTENCE, "status": "assigned", "evidence": {"x": "ñ"}}
+        b = {"card_id": CARD, "sentence_id": "sentence_" + "f" * 32, "status": "not_evaluated_example_cap"}
+        c = {"card_id": "card_es_" + "1" * 32, "sentence_id": SENTENCE, "status": "no_menu"}
+        kwargs = dict(run_id="r", language="es", mode="speech", inputs={"inventory": "sha256:x"},
+                      method={"profile_id": "p"}, sampling_policy={"cap": 30})
+        expected, expected_report = splice_bundle(carried=[a], fresh=[b], declared=[c], **kwargs)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "bundle.json"
+            report = write_spliced_bundle(path, carried=iter([a]), fresh=[b], declared=[c], **kwargs)
+            written = json.loads(path.read_text(encoding="utf-8"))
+            self.assertFalse((Path(tmp) / "bundle.json.partial").exists())
+        self.assertEqual(set(written), set(expected))
+        self.assertEqual(written["sampling"], expected["sampling"])
+        key = lambda r: (r["card_id"], r["sentence_id"])
+        self.assertEqual(sorted(written["assignments"], key=key), sorted(expected["assignments"], key=key))
+        self.assertEqual(report["rows_by_origin"], expected_report["rows_by_origin"])
+
+    def test_a_pair_twice_is_refused_while_streaming(self):
+        import tempfile
+        from pathlib import Path
+        a = {"card_id": CARD, "sentence_id": SENTENCE, "status": "assigned"}
+        with tempfile.TemporaryDirectory() as tmp, self.assertRaises(ValueError):
+            write_spliced_bundle(Path(tmp) / "b.json", run_id="r", language="es", mode="speech", inputs={},
+                                 method={}, sampling_policy={}, carried=[a], fresh=[a], declared=[])
 
 
 if __name__ == "__main__":
