@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-24T00:20:00+01:00",
+      "date": "2026-09-24 00:20 BST",
+      "agent": "Cursor",
+      "summary": "Merged lemmas skip spellings that belong to more than one headword, and the artist page opens from the photo and name.",
+      "detail": [
+        "A spelling joins a merged lemma only when every sense names that one headword. Casó joins casar. Casado stays its own card, so marking it does not clear casó.",
+        "Noun and adjective readings of the same headword stay one card. Duplicate sense rows on a merged card collapse to the headword's sense.",
+        "On an artist page the big lyrics card hides once the deck is open. The top-left chip is the photo and the name. Its sheet adds change artist and the song subset."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-23T23:25:00+01:00",
       "date": "2026-09-23 23:25 BST",
       "agent": "Cursor",
@@ -10,11 +22,11 @@
         "The close button shares its row with the title. The shortcut sections are no longer cards, so the words use the width of the screen.",
         "Study words skipped by Fast Track lists one deck per level."
       ],
-      "commit": "4046b198"
+      "commit": "pending"
     },
     {
-      "timestamp": "2026-09-23T22:15:00+01:00",
-      "date": "2026-09-23 22:15 BST",
+      "timestamp": "2026-09-23T21:25:00+01:00",
+      "date": "2026-09-23 21:25 BST",
       "agent": "Cursor",
       "summary": "Fast Track fills the phone screen in the language colour. Skip obvious words comes first, merged forms show each word beside its surfaces, and studying skipped words is its own level and set screen.",
       "detail": [
@@ -24,7 +36,43 @@
         "Merged forms are one row per word: frequency rank, the lemma and its translation, then the surface forms, with + x when they do not fit.",
         "Skipped words sit in two centred columns. The English side is the shipped cognate when the file has one, otherwise the gloss on the card that most resembles the word."
       ],
-      "commit": "1ff15617"
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-09-23T20:39:00+01:00",
+      "date": "2026-09-23 20:39 BST",
+      "agent": "Cursor",
+      "summary": "Connect from the home screen icon stays on Spotify's website, so the login comes back into Fluency. Safari still opens the Spotify app.",
+      "detail": [
+        "The home screen icon is detected with the iPhone's standalone flag.",
+        "Connect there uses Spotify's website inside the same window.",
+        "Connect in Safari still opens the Spotify app."
+      ],
+      "commit": "8c0282a1"
+    },
+    {
+      "timestamp": "2026-09-23T20:19:00+01:00",
+      "date": "2026-09-23 20:19 BST",
+      "agent": "Cursor",
+      "summary": "Connect on iPhone opens the Spotify app. If that does not finish, Connect uses Spotify's website. The Mac still uses the website popup.",
+      "detail": [
+        "iPhone Connect tries the Spotify app first. Cancelling in the app does not turn that off.",
+        "If the app does not open, or it opens and the login does not finish, Connect continues on Spotify's website. A real failure is remembered, so the next Connect goes straight to the website.",
+        "Owner tools, Try the Spotify app again, clears that memory and tries the app once more.",
+        "Connect on a computer is unchanged."
+      ],
+      "commit": "ca873445"
+    },
+    {
+      "timestamp": "2026-09-23T20:10:00+01:00",
+      "date": "2026-09-23 20:10 BST",
+      "agent": "Cursor",
+      "summary": "Function-word cards no longer print an English hint on the front. The merged senses stay on the back; del and al still show de+el / a+el after you flip.",
+      "detail": [
+        "Removed the front-of-card sentences such as \"it / him / you are one Spanish form here\".",
+        "Slash-joined senses are unchanged on the back. Contraction pairing chips for del and al now sit with the other back-of-card form cues."
+      ],
+      "commit": "pending"
     },
     {
       "timestamp": "2026-09-23T19:52:00+01:00",
