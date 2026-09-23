@@ -83,6 +83,15 @@ def deaccent(word: str) -> str:
     return unicodedata.normalize("NFC", "".join(out))
 
 
+RELATION = {
+    OVERRIDE: "override",
+    PAGE_SELF: "self",
+    PAGE_RELATION: "form",
+    CONJUGATION_TABLE: "form",
+    ENCLITIC_HOST: "enclitic",
+    REFLEXIVE_HEADWORD: "enclitic",
+}
+
 TRUST = {
     OVERRIDE: _trust.CURATED,
     PAGE_SELF: _trust.PROVIDER,
@@ -363,7 +372,8 @@ class SpanishDictHeadwordSource:
 
     def declare(self, surface: str) -> ProviderDeclaration:
         found = self.lemmas(surface)
-        heads = tuple(Headword(item.lemma, item.provenance, item.trust, item.detail)
+        heads = tuple(Headword(item.lemma, item.provenance, item.trust, item.detail,
+                               RELATION[item.provenance])
                       for item in found.lemmas)
         if heads:
             coverage = MENU

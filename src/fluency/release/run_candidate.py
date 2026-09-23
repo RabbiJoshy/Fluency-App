@@ -678,6 +678,10 @@ def build_inactive_run_candidate(
                 }
             )
         card_payload = {**card, "meanings": meanings, "examples": examples}
+        resolved = menu_card.get("resolution") or {}
+        if resolved.get("word_class"):
+            # The tag the app shows: what kind of word this is (proposal 0003 §2a).
+            card_payload["word_class"] = resolved["word_class"]
         if not meanings:
             # Absence is declared, never inferred (Invariant 2). The resolver
             # says why a card has no menu; a card built without one has no

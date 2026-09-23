@@ -25,6 +25,12 @@ from fluency.features.wiktionary import (
 )
 from fluency.features.wiktionary_gloss import project_gloss
 from fluency.menus import MenuAnalysis, SenseLeaf, build_analysis_id
+from fluency.sense_menu.declared_menu import declared_entity_analyses, declared_gloss_analyses
+from fluency.surfaces import trust as _trust
+from fluency.surfaces.resolver import (
+    ABSENT, COMPLETE_DUMP, DECLARED_GLOSS, ENTITY, EXPANSION, HEADWORDS, MENU,
+    Headword, ProviderDeclaration,
+)
 
 
 ADAPTER_ID = "wiktionary-sense-menu/v1"
@@ -416,10 +422,16 @@ class KaikkiSenseMenuAdapter:
             surface: tuple(lemmas) for surface, lemmas in (external_lemmas or {}).items() if lemmas
         }
         self.snapshot_content_id = file_content_id(self.path)
+        # Cards whose headword set comes from fluency.surfaces.resolver; every
+        # other card is built exactly as before (see SpanishDict's adapter).
+        self.resolver: Any = None
+        self.resolver_surfaces: frozenset[str] = frozenset()
+        self.external_provenance: dict[str, str] = {}
 
     def _collect(
         self,
         surfaces: set[str],
+        extra_first_hops: dict[str, tuple[str, ...]] | None = None,
     ) -> tuple[
         dict[str, list[dict[str, Any]]],
         dict[str, dict[str, tuple[str, ...]]],
@@ -435,7 +447,8 @@ class KaikkiSenseMenuAdapter:
             surface: {surface: None} for surface in surfaces
         }
         for surface in surfaces:
-            for lemma in self.external_lemmas.get(surface, ()):  # the missing first hop
+            hops = (*self.external_lemmas.get(surface, ()), *(extra_first_hops or {}).get(surface, ()))
+            for lemma in hops:  # the missing first hop
                 normalized = self._normalize(lemma)
                 if normalized and normalized not in paths[surface]:
                     paths[surface][normalized] = (surface, normalized)
@@ -515,6 +528,130 @@ class KaikkiSenseMenuAdapter:
             {"passes": passes, "rows_read": rows_read},
         )
 
+    def _card_analyses(
+        self,
+        card: dict[str, Any],
+        surface: str,
+        headwords: list[str],
+        rows_by_word: dict[str, list[dict[str, Any]]],
+        paths: dict[str, tuple[str, ...]],
+        allowed_positions: dict[str, set[str] | None],
+        surface_grammar: dict[str, dict[str, list[str]]],
+        stamp: dict[str, Any] | None = None,
+        headword_records: dict[str, dict[str, Any]] | None = None,
+    ) -> list[MenuAnalysis]:
+        """Menu analyses for one card from the rows of ``headwords``.
+
+        The legacy path passes every headword its redirect paths reached; a
+        resolved card passes the resolver's set and a ``stamp``. Unstamped
+        output is byte-identical to what the builder produced before.
+        """
+        grouped: dict[tuple[str, str], list[tuple[dict[str, Any], dict[str, Any]]]] = defaultdict(list)
+        entry_counts: dict[tuple[str, str], int] = defaultdict(int)
+        for headword in headwords:
+            for row in rows_by_word.get(headword, []):
+                part_of_speech = row.get("pos")
+                if not isinstance(part_of_speech, str) or not part_of_speech:
+                    continue
+                allowed = allowed_positions.get(headword)
+                if allowed is not None and part_of_speech not in allowed:
+                    continue
+                semantic = _semantic_senses(row)
+                if not semantic:
+                    continue
+                key = (headword, part_of_speech)
+                entry_counts[key] += 1
+                grouped[key].extend((row, sense) for sense in semantic)
+
+        analyses: list[MenuAnalysis] = []
+        for (headword, part_of_speech), row_senses in sorted(grouped.items()):
+            source_key = f"{self.language_code}:{headword}:{part_of_speech}"
+            analysis_grammar = extract_surface_grammar(
+                surface_grammar.get(surface, {}).get(headword, []),
+                policy=self.language_policy,
+            )
+            provider_id_counts: Counter[str] = Counter(
+                sense["id"]
+                for _, sense in row_senses
+                if isinstance(sense.get("id"), str) and sense["id"].strip()
+            )
+            sense_key_counts: Counter[tuple[str, ...]] = Counter(
+                _sense_keys(sense) for _, sense in row_senses
+            )
+            leaves: dict[str, SenseLeaf] = {}
+            for row, sense in row_senses:
+                glosses = _glosses(sense)
+                raw_provider_id = sense.get("id")
+                provider_id_collides = (
+                    isinstance(raw_provider_id, str)
+                    and provider_id_counts[raw_provider_id] > 1
+                )
+                sense_id, source_reference = _sense_id(
+                    sense,
+                    language_code=self.language_code,
+                    headword=headword,
+                    part_of_speech=part_of_speech,
+                    provider_id_collides=provider_id_collides,
+                    sense_keys_collide=sense_key_counts[_sense_keys(sense)] > 1,
+                )
+                leaf = SenseLeaf(
+                    sense_id=sense_id,
+                    translation=_display_gloss(sense),
+                    definition=_context(sense),
+                    source_reference=source_reference,
+                    provider_metadata=_metadata(row, sense, self.language_policy),
+                    specialist_features=tuple(dict.fromkeys((
+                        *_specialist_features(
+                            sense,
+                            self.language_policy,
+                            part_of_speech=part_of_speech,
+                        ),
+                        *analysis_grammar,
+                    ))),
+                    metadata_accounting=metadata_accounting(
+                        {**sense, "part_of_speech": part_of_speech},
+                        tags=sorted(_sense_tags(sense)),
+                        policy=self.language_policy,
+                    ),
+                )
+                previous = leaves.get(sense_id)
+                if previous is not None and previous != leaf:
+                    raise KaikkiMenuError(
+                        f"provider sense ID is not unique: {sense_id}"
+                    )
+                leaves[sense_id] = leaf
+            analysis = MenuAnalysis(
+                menu_analysis_id=build_analysis_id(
+                    card_id=card["card_id"],
+                    source_adapter=ADAPTER_ID,
+                    source_analysis_key=source_key,
+                ),
+                card_id=card["card_id"],
+                surface_form=surface,
+                headword=headword,
+                part_of_speech=part_of_speech,
+                source_adapter=ADAPTER_ID,
+                source_analysis_key=source_key,
+                senses=tuple(leaves[key] for key in sorted(leaves)),
+                provider_metadata={
+                    "resolution_path": list(paths.get(headword) or (surface, headword)),
+                    "resolution": "direct" if headword == surface else "structured_form_of",
+                    # Declared for every analysis; empty when the surface is
+                    # the headword or the dictionary offers no analysis.
+                    "surface_grammar": surface_grammar.get(surface, {}).get(headword, []),
+                    "allowed_parts_of_speech": (
+                        None
+                        if allowed_positions.get(headword) is None
+                        else sorted(allowed_positions[headword])
+                    ),
+                    "source_entry_count": entry_counts[(headword, part_of_speech)],
+                    **({"resolver": {**stamp, **(headword_records or {}).get(headword, {})}}
+                       if stamp else {}),
+                },
+            )
+            analyses.append(analysis)
+        return analyses
+
     def build(
         self,
         cards: Iterable[dict[str, Any]],
@@ -531,137 +668,74 @@ class KaikkiSenseMenuAdapter:
                 raise KaikkiMenuError(f"duplicate inventory surface: {surface}")
             by_surface[surface] = card
 
+        extra: dict[str, tuple[str, ...]] = {}
+        wanted = set(by_surface)
+        if self.resolver is not None:
+            # Rows are read in passes over the dump, so an override's headwords
+            # and an expansion's target must be asked for up front.
+            for surface in self.resolver_surfaces:
+                heads = self.resolver.declared_headwords(surface)
+                if heads:
+                    extra[surface] = tuple(self._normalize(h) or h for h in heads)
+                target = self.resolver.expansion_target(surface)
+                if target:
+                    wanted.add(target)
         rows_by_word, paths, allowed_positions, surface_grammar, scan = self._collect(
-            set(by_surface)
+            wanted, extra
         )
+        if self.resolver is not None and isinstance(self.resolver.source, KaikkiHeadwordSource):
+            self.resolver.source.bind(rows_by_word, paths, allowed_positions,
+                                      self.external_lemmas, self._normalize)
         menu_cards: list[dict[str, Any]] = []
         per_surface: list[dict[str, Any]] = []
         total_analyses = 0
         total_senses = 0
 
         for surface, card in by_surface.items():
-            grouped: dict[tuple[str, str], list[tuple[dict[str, Any], dict[str, Any]]]] = defaultdict(list)
-            entry_counts: dict[tuple[str, str], int] = defaultdict(int)
-            for headword in sorted(paths[surface]):
-                for row in rows_by_word.get(headword, []):
-                    part_of_speech = row.get("pos")
-                    if not isinstance(part_of_speech, str) or not part_of_speech:
-                        continue
-                    allowed = allowed_positions[surface][headword]
-                    if allowed is not None and part_of_speech not in allowed:
-                        continue
-                    semantic = _semantic_senses(row)
-                    if not semantic:
-                        continue
-                    key = (headword, part_of_speech)
-                    entry_counts[key] += 1
-                    grouped[key].extend((row, sense) for sense in semantic)
-
-            analyses: list[MenuAnalysis] = []
-            for (headword, part_of_speech), row_senses in sorted(grouped.items()):
-                source_key = f"{self.language_code}:{headword}:{part_of_speech}"
-                analysis_grammar = extract_surface_grammar(
-                    surface_grammar.get(surface, {}).get(headword, []),
-                    policy=self.language_policy,
-                )
-                provider_id_counts: Counter[str] = Counter(
-                    sense["id"]
-                    for _, sense in row_senses
-                    if isinstance(sense.get("id"), str) and sense["id"].strip()
-                )
-                sense_key_counts: Counter[tuple[str, ...]] = Counter(
-                    _sense_keys(sense) for _, sense in row_senses
-                )
-                leaves: dict[str, SenseLeaf] = {}
-                for row, sense in row_senses:
-                    glosses = _glosses(sense)
-                    raw_provider_id = sense.get("id")
-                    provider_id_collides = (
-                        isinstance(raw_provider_id, str)
-                        and provider_id_counts[raw_provider_id] > 1
-                    )
-                    sense_id, source_reference = _sense_id(
-                        sense,
-                        language_code=self.language_code,
-                        headword=headword,
-                        part_of_speech=part_of_speech,
-                        provider_id_collides=provider_id_collides,
-                        sense_keys_collide=sense_key_counts[_sense_keys(sense)] > 1,
-                    )
-                    leaf = SenseLeaf(
-                        sense_id=sense_id,
-                        translation=_display_gloss(sense),
-                        definition=_context(sense),
-                        source_reference=source_reference,
-                        provider_metadata=_metadata(row, sense, self.language_policy),
-                        specialist_features=tuple(dict.fromkeys((
-                            *_specialist_features(
-                                sense,
-                                self.language_policy,
-                                part_of_speech=part_of_speech,
-                            ),
-                            *analysis_grammar,
-                        ))),
-                        metadata_accounting=metadata_accounting(
-                            {**sense, "part_of_speech": part_of_speech},
-                            tags=sorted(_sense_tags(sense)),
-                            policy=self.language_policy,
-                        ),
-                    )
-                    previous = leaves.get(sense_id)
-                    if previous is not None and previous != leaf:
-                        raise KaikkiMenuError(
-                            f"provider sense ID is not unique: {sense_id}"
-                        )
-                    leaves[sense_id] = leaf
-                analysis = MenuAnalysis(
-                    menu_analysis_id=build_analysis_id(
-                        card_id=card["card_id"],
-                        source_adapter=ADAPTER_ID,
-                        source_analysis_key=source_key,
-                    ),
-                    card_id=card["card_id"],
-                    surface_form=surface,
-                    headword=headword,
-                    part_of_speech=part_of_speech,
-                    source_adapter=ADAPTER_ID,
-                    source_analysis_key=source_key,
-                    senses=tuple(leaves[key] for key in sorted(leaves)),
-                    provider_metadata={
-                        "resolution_path": list(paths[surface][headword]),
-                        "resolution": "direct" if headword == surface else "structured_form_of",
-                        # Declared for every analysis; empty when the surface is
-                        # the headword or the dictionary offers no analysis.
-                        "surface_grammar": surface_grammar.get(surface, {}).get(headword, []),
-                        "allowed_parts_of_speech": (
-                            None
-                            if allowed_positions[surface][headword] is None
-                            else sorted(allowed_positions[surface][headword])
-                        ),
-                        "source_entry_count": entry_counts[(headword, part_of_speech)],
-                    },
-                )
-                analyses.append(analysis)
+            resolution = None
+            if self.resolver is not None and surface in self.resolver_surfaces:
+                resolution = self.resolver.resolve(surface)
+            if resolution is None:
+                analyses = self._card_analyses(
+                    card, surface, sorted(paths[surface]), rows_by_word, paths[surface],
+                    allowed_positions[surface], surface_grammar)
+            elif resolution.strategy in (HEADWORDS, EXPANSION):
+                target = resolution.expanded_to or surface
+                records = {h.headword: {"headword_provenance": h.provenance, "headword_trust": h.trust,
+                                        "headword_detail": h.detail or None}
+                           for h in resolution.headwords}
+                analyses = self._card_analyses(
+                    card, surface, [h.headword for h in resolution.headwords], rows_by_word,
+                    paths.get(target, {}), allowed_positions.get(target, {}), surface_grammar,
+                    stamp=resolution.stamp(), headword_records=records)
+            elif resolution.strategy == DECLARED_GLOSS:
+                analyses = declared_gloss_analyses(card["card_id"], surface, resolution)
+            elif resolution.strategy == ENTITY:
+                analyses = declared_entity_analyses(card["card_id"], surface, resolution)
+            else:
+                analyses = []
 
             total_analyses += len(analyses)
             sense_count = sum(len(analysis.senses) for analysis in analyses)
             total_senses += sense_count
-            menu_cards.append(
-                {
-                    "card_id": card["card_id"],
-                    "surface_form": surface,
-                    "analyses": [analysis.to_dict() for analysis in analyses],
-                }
-            )
-            per_surface.append(
-                {
-                    "card_id": card["card_id"],
-                    "surface_form": surface,
-                    "analysis_count": len(analyses),
-                    "sense_count": sense_count,
-                    "status": "ready" if analyses else "no_menu",
-                }
-            )
+            menu_card = {
+                "card_id": card["card_id"],
+                "surface_form": surface,
+                "analyses": [analysis.to_dict() for analysis in analyses],
+            }
+            surface_report = {
+                "card_id": card["card_id"],
+                "surface_form": surface,
+                "analysis_count": len(analyses),
+                "sense_count": sense_count,
+                "status": "ready" if analyses else "no_menu",
+            }
+            if resolution is not None:
+                menu_card["resolution"] = resolution.to_dict()
+                surface_report.update(strategy=resolution.strategy, coverage=resolution.coverage,
+                                      reason=resolution.reason or None)
+            menu_cards.append(menu_card)
+            per_surface.append(surface_report)
 
         payload = {
             "menu_version": MENU_VERSION,
@@ -694,3 +768,61 @@ class KaikkiSenseMenuAdapter:
             "per_surface": per_surface,
         }
         return payload, report
+
+
+class KaikkiHeadwordSource:
+    """Wiktionary (Kaikki) as a ``fluency.surfaces.resolver.HeadwordSource``.
+
+    Provider parity with ``SpanishDictHeadwordSource``: the headword set is the
+    entries the adapter's redirect paths reach that carry senses. Each is a
+    Wiktionary statement -- the surface's own row, or a ``form_of`` chain -- or
+    an external morphology source's first hop (CNK for Czech), which the
+    ledger records with its provenance. All are ``provider`` trust: a published
+    source stated them; we inferred none (proposal 0003 §10).
+
+    Kaikki is a complete dump, so a surface with no sense-bearing entry is
+    ``absent`` for that edition, never ``unfetched``. The source is bound to
+    the adapter's scan inside ``build`` because rows are read in passes.
+    """
+
+    provider = "wiktionary"
+    coverage_kind = COMPLETE_DUMP
+
+    def __init__(self, external_provenance: dict[str, str] | None = None) -> None:
+        self.external_provenance = dict(external_provenance or {})
+        self._bound = False
+
+    def bind(self, rows_by_word, paths, allowed_positions, external_lemmas, normalize) -> None:
+        self.rows_by_word, self.paths, self.allowed = rows_by_word, paths, allowed_positions
+        self.external = {surface: {normalize(l) or l for l in lemmas}
+                         for surface, lemmas in (external_lemmas or {}).items()}
+        self._bound = True
+
+    def _has_senses(self, headword: str, allowed: set[str] | None = None) -> bool:
+        return any(
+            isinstance(row.get("pos"), str) and row.get("pos")
+            and (allowed is None or row.get("pos") in allowed)
+            and _semantic_senses(row)
+            for row in self.rows_by_word.get(headword, [])
+        )
+
+    def declare(self, surface: str) -> ProviderDeclaration:
+        if not self._bound:
+            raise KaikkiMenuError("KaikkiHeadwordSource used before the adapter scanned the dump")
+        heads = []
+        for headword, path in sorted((self.paths.get(surface) or {}).items()):
+            if not self._has_senses(headword, (self.allowed.get(surface) or {}).get(headword)):
+                continue
+            if headword == surface:
+                provenance, detail, relation = "wiktionary-self", "", "self"
+            elif len(path) == 2 and headword in self.external.get(surface, ()):
+                provenance, relation = "external-lemma", "form"
+                detail = self.external_provenance.get(surface, "ledger lemma")
+            else:
+                provenance, detail, relation = "wiktionary-form-of", " -> ".join(path), "form"
+            heads.append(Headword(headword, provenance, _trust.PROVIDER, detail, relation))
+        return ProviderDeclaration(surface, tuple(heads), MENU if heads else ABSENT,
+                                   {"paths": len(self.paths.get(surface) or {})})
+
+    def has_entry(self, headword: str, surface: str | None = None) -> bool:
+        return self._has_senses(headword)
