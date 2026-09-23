@@ -10,7 +10,6 @@ let indexedItemProgressSource = null;
 let indexedItemProgressSize = -1;
 let itemProgressByParent = new Map();
 let knowledgeOverviewCard = null;
-let rareSensesExpanded = false;
 
 function normalizeKnowledgeText(value) {
     return String(value || '')
@@ -247,9 +246,28 @@ function getRareSenseKnowledgeItems(card) {
     return [...unique.values()];
 }
 
+// Rarer senses are marked where they are read, on the Rarer uses sheet
+// (flashcards.js), so this overview lists only the card's own items.
 function getKnowledgeOverviewItems(card) {
-    const main = getCardKnowledgeItems(card);
-    return rareSensesExpanded ? [...main, ...getRareSenseKnowledgeItems(card)] : main;
+    return getCardKnowledgeItems(card);
+}
+
+// The knowledge item behind one row of the Rarer uses sheet. The sheet's row
+// and this item are built from the same unusedMenuSenses entry; matching on
+// the sense id (or, without one, on gloss, POS and context) keeps the item —
+// and so every saved Known/Review mark — the one the overview always used.
+function findRareSenseKnowledgeItem(card, row) {
+    if (!card || !row) return null;
+    const rowId = row.senseId || row.sense_id || '';
+    const text = value => normalizeKnowledgeText(value || '');
+    return getRareSenseKnowledgeItems(card).find(item => {
+        const sense = item.sourceSense || {};
+        const senseId = sense.senseId || sense.sense_id || '';
+        if (rowId || senseId) return rowId === senseId;
+        return text(sense.meaning || sense.translation) === text(row.translation)
+            && text(sense.pos || 'X') === text(row.pos || 'X')
+            && text(sense.context) === text(row.context);
+    }) || null;
 }
 
 function getActiveKnowledgeItems(card) {
@@ -611,12 +629,11 @@ function knowledgeSectionLabel(type) {
 function renderKnowledgeOverviewButton(card) {
     if (!currentUser || currentUser.isGuest) return '';
     const summary = getCardKnowledgeSummary(card);
-    const rareCount = getRareSenseKnowledgeItems(card).length;
     // A single-item card has nothing to break down: "0/1 known" restates the
     // whole-card answer the learner is about to give, and the overview it
     // opens would list one row. The tile only earns its place once the card
     // carries more than one meaning/Expression/attached form.
-    if (summary.total <= 1 && !rareCount) return '';
+    if (summary.total <= 1) return '';
     const label = summary.total <= 1 ? 'Meanings' : `${summary.learned} of ${summary.total} known`;
     return `<button type="button" class="ref-tile knowledge-overview-trigger" aria-label="Open meanings and expressions knowledge: ${label}" onclick="showKnowledgeOverview(event)">
         <svg class="ref-tile-icon" viewBox="10 10 26 26" aria-hidden="true">
@@ -686,7 +703,6 @@ function knowledgeOverviewRowsHTML(card, rows) {
 function renderKnowledgeOverview(card) {
     const modal = ensureKnowledgeOverviewModal();
     const items = getCardKnowledgeItems(card);
-    const rareItems = getRareSenseKnowledgeItems(card);
     const summary = getCardKnowledgeSummary(card);
     const summaryEl = modal.querySelector('#knowledgeOverviewSummary');
     const listEl = modal.querySelector('#knowledgeOverviewList');
@@ -711,22 +727,7 @@ function renderKnowledgeOverview(card) {
                 ${knowledgeOverviewRowsHTML(card, rows)}
             </div>
         </section>`).join('');
-    const rareToggle = rareItems.length ? `<button type="button" class="knowledge-rare-toggle" aria-expanded="${rareSensesExpanded}" onclick="toggleRareSensesInKnowledge(event)">${rareSensesExpanded ? 'Hide' : 'Show'} ${rareItems.length} rarer sense${rareItems.length === 1 ? '' : 's'} <span aria-hidden="true">${rareSensesExpanded ? '⌃' : '⌄'}</span></button>` : '';
-    const rareHTML = rareSensesExpanded ? `<section class="knowledge-overview-section knowledge-rare-section">
-        <h3>Rarer senses<span>${rareItems.length}</span></h3>
-        <p>Choose Known or Review for a specific rare meaning. These choices do not change the ordinary meaning count.</p>
-        <div class="knowledge-overview-rows">${knowledgeOverviewRowsHTML(card, rareItems.map((item, index) => ({ item, index: items.length + index })))}</div>
-    </section>` : '';
-    listEl.innerHTML = `${mainHTML}${rareToggle}${rareHTML}`;
-}
-
-function toggleRareSensesInKnowledge(event) {
-    event?.stopPropagation();
-    const list = document.getElementById('knowledgeOverviewList');
-    const scrollTop = list?.scrollTop || 0;
-    rareSensesExpanded = !rareSensesExpanded;
-    if (knowledgeOverviewCard) renderKnowledgeOverview(knowledgeOverviewCard);
-    if (list) list.scrollTop = scrollTop;
+    listEl.innerHTML = mainHTML;
 }
 
 function showKnowledgeOverview(event, options = {}) {
@@ -734,7 +735,6 @@ function showKnowledgeOverview(event, options = {}) {
     const card = options.card || flashcards[currentIndex];
     if (!card) return;
     knowledgeOverviewCard = card;
-    rareSensesExpanded = Boolean(options.showRare);
     const modal = ensureKnowledgeOverviewModal();
     renderKnowledgeOverview(card);
     modal.querySelector('.knowledge-overview-footer').hidden = card !== flashcards[currentIndex];
@@ -858,7 +858,7 @@ window.renderKnowledgeControl = renderKnowledgeControl;
 window.renderKnowledgeOverviewButton = renderKnowledgeOverviewButton;
 window.markCurrentKnowledge = markCurrentKnowledge;
 window.showKnowledgeOverview = showKnowledgeOverview;
-window.toggleRareSensesInKnowledge = toggleRareSensesInKnowledge;
+window.findRareSenseKnowledgeItem = findRareSenseKnowledgeItem;
 window.closeKnowledgeOverview = closeKnowledgeOverview;
 window.focusKnowledgeOverviewItem = focusKnowledgeOverviewItem;
 window.markKnowledgeOverviewItem = markKnowledgeOverviewItem;

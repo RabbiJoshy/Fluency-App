@@ -15,9 +15,9 @@ import './walkthrough.js?v=20260921ac';
 import './estimation.js?v=20260825ak';
 import './config.js?v=20260921rh';
 import './progress.js?v=20260920e';
-import './knowledge.js?v=20260922mod';
+import './knowledge.js?v=20260923rk';
 import './ui.js?v=20260923bk';
-import './vocab.js?v=20260923cj';
+import './vocab.js?v=20260923rk';
 import './cognates.js?v=20260922ft2';
 import './coverage.js?v=20260909a';
 import './fast-mode.js?v=20260922ft2';
@@ -27,7 +27,7 @@ import './song-sets.js?v=20260823ae';
 import './playlist-live.js?v=20260923cj';
 import './spotify-playlist-import.js?v=20260923cj';
 import './vocabulary-import.js?v=20260923bk';
-import './flashcards.js?v=20260923bk';
+import './flashcards.js?v=20260923rk';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 function startCardTutorial() {

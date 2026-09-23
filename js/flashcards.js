@@ -4228,8 +4228,40 @@ function rareSenseLeafHTML(item, posAccentRgb, { hideGloss = false, hideContext 
     const ctxHTML = (!hideContext && item.context)
         ? `<div class="phrase-context">${escapeCardText(item.context)}</div>` : '';
     if (!glossHTML && !ctxHTML && !exampleHTML) return '';
-    return `<div class="other-uses-leaf">${glossHTML}${ctxHTML}${exampleHTML}</div>`;
+    return `<div class="other-uses-leaf">${glossHTML}${ctxHTML}${exampleHTML}${rareSenseMarksHTML(item)}</div>`;
 }
+
+// Known / Review for one rare sense, right where it is read. The marks are
+// saved on the same knowledge item the meanings overview used to list under
+// "Show rarer senses" (knowledge.js findRareSenseKnowledgeItem), so marks made
+// there before still show here. Only on the Rarer uses sheet, and only for a
+// signed-in learner, as before.
+function rareSenseMarksHTML(item) {
+    if (typeof currentUser === 'undefined' || !currentUser || currentUser.isGuest) return '';
+    const index = _rareUsesItems.indexOf(item);
+    if (index < 0) return '';
+    const knowledgeItem = window.findRareSenseKnowledgeItem?.(item.parentCard, item);
+    if (!knowledgeItem) return '';
+    const state = window.getKnowledgeItemState?.(item.parentCard, knowledgeItem) || {};
+    const status = state.learned ? 'known' : (state.needsReview ? 'review' : 'unseen');
+    const label = escapeCardText(item.translation || '');
+    return `<div class="knowledge-overview-actions rare-use-marks is-${status}" aria-label="Knowledge for ${label}">
+        <button type="button" class="knowledge-overview-mark mark-review${status === 'review' ? ' is-active' : ''}" onclick="markRareUseKnowledge(event, ${index}, false)" aria-label="Mark for review" title="Mark for review">×</button>
+        <button type="button" class="knowledge-overview-mark mark-known${status === 'known' ? ' is-active' : ''}" onclick="markRareUseKnowledge(event, ${index}, true)" aria-label="Mark known" title="Mark known">✓</button>
+    </div>`;
+}
+
+async function markRareUseKnowledge(event, index, isCorrect) {
+    event?.stopPropagation?.();
+    const item = _rareUsesItems[index];
+    const card = item?.parentCard;
+    const knowledgeItem = card && window.findRareSenseKnowledgeItem?.(card, item);
+    if (!knowledgeItem || !window.saveKnowledgeProgress) return;
+    await window.saveKnowledgeProgress(card, [knowledgeItem], isCorrect);
+    renderRareUsesBody();
+    if (card === flashcards[currentIndex]) updateCard();
+}
+if (typeof window !== 'undefined') window.markRareUseKnowledge = markRareUseKnowledge;
 
 function cycleRarerShade(event, clusterKey, count, delta) {
     event?.stopPropagation?.();
@@ -4283,6 +4315,7 @@ function renderRareSenseCluster(group, pos, posAccentRgb, clusterId) {
             ${sharedContext ? `<div class="phrase-context">${escapeCardText(sharedContext)}</div>` : ''}
             ${compactPhraseExampleHTML((item.examples || [])[0], posAccentRgb)}
             ${pager}
+            ${rareSenseMarksHTML(item)}
         </div>`;
     }
 
@@ -4385,33 +4418,19 @@ function phraseSummaryContent(items) {
     } else {
         subtitle = 'Less common meanings, and expressions that use this word';
     }
-    const knowledgeButton = rareCount && typeof currentUser !== 'undefined' && currentUser && !currentUser.isGuest
-        ? '<button type="button" class="rare-knowledge-btn" onclick="openRareSenseKnowledge(event)">Mark rarer senses Known or Review</button>'
-        : '';
-    return { subtitle, knowledgeButton, bodyHTML: `${rareHTML}${phraseHTML}${cliticHTML}` };
+    return { subtitle, bodyHTML: `${rareHTML}${phraseHTML}${cliticHTML}` };
 }
 
 function renderPhraseSummaryBack(card) {
-    const { subtitle, knowledgeButton, bodyHTML } = phraseSummaryContent(cardChainQueue || []);
+    const { subtitle, bodyHTML } = phraseSummaryContent(cardChainQueue || []);
     return `<div class="back-header other-uses-header">
             <div class="back-headword-row">
                 <span class="back-headword other-uses-headword">${escapeCardText(card.chainParentWord || '')}</span>
             </div>
             <div class="phrase-summary-subtitle">${subtitle}</div>
         </div>
-        ${knowledgeButton}
         <div class="phrase-summary-scroll">${bodyHTML}</div>`;
 }
-
-function openRareSenseKnowledge(event) {
-    event?.stopPropagation();
-    const parent = (_rareUsesItems.length ? _rareUsesItems : cardChainQueue)
-        .find(item => item.kind === 'RARE_SENSE')?.parentCard;
-    if (!parent) return;
-    closeRareUsesModal();
-    window.showKnowledgeOverview?.(event, { card: parent, showRare: true });
-}
-if (typeof window !== 'undefined') window.openRareSenseKnowledge = openRareSenseKnowledge;
 
 // --- Rarer uses sheet --------------------------------------------------------
 // Rare dictionary senses (and the word's expressions) open as a sheet over the
@@ -4439,7 +4458,6 @@ function ensureRareUsesModal() {
                 </div>
                 <button type="button" class="knowledge-overview-close" aria-label="Close rarer uses" onclick="closeRareUsesModal(event)">×</button>
             </header>
-            <div id="rareUsesKnowledge"></div>
             <div class="phrase-summary-scroll rare-uses-body" id="rareUsesBody"></div>
         </div>`;
     modal.addEventListener('click', event => {
@@ -4796,20 +4814,28 @@ function openRareAndExpressionsCard(event) {
     if (!items.length) return;
 
     _rareUsesItems = items;
-    const { subtitle, knowledgeButton, bodyHTML } = phraseSummaryContent(items);
     const modal = ensureRareUsesModal();
     modal.querySelector('#rareUsesTitle').textContent = parentCard.displaySurface || parentCard.targetWord || '';
-    modal.querySelector('#rareUsesSubtitle').textContent = subtitle;
-    modal.querySelector('#rareUsesKnowledge').innerHTML = knowledgeButton;
-    const body = modal.querySelector('#rareUsesBody');
-    body.innerHTML = bodyHTML;
-    body.scrollTop = 0;
+    renderRareUsesBody();
+    modal.querySelector('#rareUsesBody').scrollTop = 0;
     modal.hidden = false;
     document.body.classList.add('rare-uses-open');
     window.sideDock?.placeById?.('rareUsesModal');
     modal.querySelector('.knowledge-overview-close')?.focus();
 }
 window.openRareAndExpressionsCard = openRareAndExpressionsCard;
+
+// Re-rendered in place after a Known/Review mark, keeping the scroll position.
+function renderRareUsesBody() {
+    const modal = document.getElementById('rareUsesModal');
+    if (!modal || !_rareUsesItems.length) return;
+    const { subtitle, bodyHTML } = phraseSummaryContent(_rareUsesItems);
+    modal.querySelector('#rareUsesSubtitle').textContent = subtitle;
+    const body = modal.querySelector('#rareUsesBody');
+    const top = body.scrollTop;
+    body.innerHTML = bodyHTML;
+    body.scrollTop = top;
+}
 
 function canonicalRecord(meaning) {
     if (!meaning) return null;
