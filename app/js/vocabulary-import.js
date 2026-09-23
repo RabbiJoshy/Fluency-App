@@ -27,8 +27,14 @@ function clearPreview() {
     element('confirmVocabularyImportBtn').disabled = true;
 }
 
+// Set when the import was opened from Settings: its ‹ goes back there, and
+// the × closes both.
+let backToSettings = null;
+
 function openVocabularyImportModal() {
     if (!currentUser || currentUser.isGuest) return;
+    backToSettings = window.attachSettingsReturn?.('vocabularyImportModal',
+        () => closeVocabularyImportModal({ reopenSettings: false })) || null;
     element('settingsModal')?.classList.add('hidden');
     element('vocabularyImportModal').classList.remove('hidden');
     setStatus('');
@@ -39,7 +45,9 @@ function openVocabularyImportModal() {
 function closeVocabularyImportModal({ reopenSettings = true } = {}) {
     element('vocabularyImportModal').classList.add('hidden');
     clearPreview();
-    if (reopenSettings) window.showSettingsModalWithTab?.('study');
+    const back = backToSettings;
+    backToSettings = null;
+    if (reopenSettings && back) back();
 }
 
 function summaryCell(value, label) {
@@ -283,7 +291,7 @@ function setupVocabularyImport() {
     if (!open || !modal || modal.dataset.listenersReady === '1') return;
     modal.dataset.listenersReady = '1';
     open.addEventListener('click', openVocabularyImportModal);
-    element('closeVocabularyImportModal').addEventListener('click', () => closeVocabularyImportModal());
+    element('closeVocabularyImportModal').addEventListener('click', () => closeVocabularyImportModal({ reopenSettings: false }));
     modal.addEventListener('click', event => {
         if (event.target === modal) closeVocabularyImportModal();
     });
@@ -310,7 +318,7 @@ function setupVocabularyImport() {
     });
     document.addEventListener('keydown', event => {
         if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
-            closeVocabularyImportModal();
+            closeVocabularyImportModal({ reopenSettings: false });
         }
     });
 }

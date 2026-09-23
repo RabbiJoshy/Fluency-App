@@ -636,7 +636,9 @@ function initExtras() {
     document.getElementById('downloadSavedWordsBtn')?.addEventListener('click', downloadSavedWords);
     document.getElementById('settingsSavedWordsBtn')?.addEventListener('click', () => {
         // On a wide screen saved words stacks over settings (side-dock.js),
-        // so closing it returns to settings; elsewhere it replaces settings.
+        // so closing it returns to settings; elsewhere it replaces settings,
+        // and its ‹ is the way back.
+        window.attachSettingsReturn?.('savedWordsModal', closeSavedWords);
         if (!window.sideDock?.keepsSettingsOpen()) {
             document.getElementById('settingsModal')?.classList.add('hidden');
         }

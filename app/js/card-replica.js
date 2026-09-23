@@ -339,9 +339,9 @@ const SPOTIFY_SVG = '<svg width="44" height="44" viewBox="0 0 24 24" fill="#1DB9
     + '</svg>';
 
 export function renderFront(card) {
-    // The live card prints the rank against the size of the deck it came from,
-    // which is what makes "rank 1" mean something.
-    const denominator = card.vocabSize ? ` / ${card.vocabSize.toLocaleString()}` : '';
+    // Like the live card: only a lyrics deck prints the rank against its
+    // vocabulary size; a speech deck's size says nothing about the language.
+    const denominator = card.mode === 'lyrics' && card.vocabSize ? ` / ${card.vocabSize.toLocaleString()}` : '';
     const rankLabel = `<span class="card-rank-label">Vocabulary rank: `
         + `<strong class="card-stat-value">${card.rank.toLocaleString()}</strong>${denominator}</span>`;
     const count = `<strong class="card-stat-value">${card.corpusCount.toLocaleString()}</strong>`;

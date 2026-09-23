@@ -18541,6 +18541,13 @@ body {
   font: 600 30px/1 var(--font-reading); cursor: pointer;
 }
 #settingsModal .settings-back[hidden] { display: none; }
+/* The same ‹ on a panel opened from Settings (Saved words, Import). */
+.modal-header > .settings-return-back {
+  margin-right: 10px; padding: 0 4px; border: 0; background: transparent;
+  color: var(--text-primary); font: 600 30px/1 var(--font-reading); cursor: pointer;
+}
+.modal-header > .settings-return-back[hidden] { display: none; }
+.modal-header > .settings-return-back:not([hidden]) + * { margin-right: auto; }
 #settingsModal .settings-defaults-heading { margin: 0; }
 #settingsModal .settings-preference-group { margin: 0; padding: 0; border: 0; background: none; }
 #settingsModal .settings-default-row { padding: 12px 0; }

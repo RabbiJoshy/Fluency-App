@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-23T19:05:00+01:00",
+      "date": "2026-09-23 19:05 BST",
+      "agent": "Claude",
+      "summary": "Settings pages can go back, not just close, and the speech-mode card front shows the vocabulary rank without the '/ 10,000' deck size.",
+      "detail": [
+        "Study options → Study settings now has a ‹ in its header that returns to the Study options list; before, the only way out was ✕.",
+        "Saved words and Import known words, opened from Settings, get the same ‹ back to the Settings page they came from. ✕ still closes everything.",
+        "Everyday Speech cards print 'Vocabulary rank: 12' instead of 'Vocabulary rank: 12 / 10,000'. The 10,000 was the size of the deck, not of the language. Lyrics decks keep the total because an artist's vocabulary is a real count. The About page's demo card matches."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-23T15:27:00+01:00",
       "date": "2026-09-23 15:27 BST",
       "agent": "Claude",
