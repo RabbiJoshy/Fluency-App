@@ -20,8 +20,8 @@ from fluency.features.spanishdict_metadata import (
 )
 from fluency.features.spanishdict import extract as extract_spanishdict_features
 from fluency.menus import MenuAnalysis, SenseLeaf, build_analysis_id
-from fluency.sense_menu.declared_menu import declared_gloss_analyses
-from fluency.surfaces.resolver import DECLARED_GLOSS, EXPANSION, HEADWORDS
+from fluency.sense_menu.declared_menu import declared_entity_analyses, declared_gloss_analyses
+from fluency.surfaces.resolver import DECLARED_GLOSS, ENTITY, EXPANSION, HEADWORDS
 
 
 ADAPTER_ID = "spanishdict-sense-menu/v1"
@@ -628,6 +628,8 @@ class SpanishDictSenseMenuAdapter:
             )
             if resolution is not None and resolution.strategy == DECLARED_GLOSS:
                 normalized = declared_gloss_analyses(card["card_id"], surface, resolution)
+            elif resolution is not None and resolution.strategy == ENTITY:
+                normalized = declared_entity_analyses(card["card_id"], surface, resolution)
             sense_count = sum(len(item.senses) for item in normalized)
             total_analyses += len(normalized)
             total_senses += sense_count

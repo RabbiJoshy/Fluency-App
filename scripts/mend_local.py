@@ -24,8 +24,18 @@ Steps:
             merges that one file into a NEW snapshot id. Nothing is
             overwritten.
 
-Later steps (menus, wsd, release) are added after review; until then they
-refuse to run.
+  menus     one new run per language (es, pt, cs; --language for one).
+            Stages 01 and 03 carried from the source run (no corpus scan);
+            stage 02 rebuilt with the resolver on for the cards v15 shipped
+            empty. Reports every card outside that set whose menu moved.
+  wsd       without --go: offline only. Prints how many texts are uncached
+            (the projected embedding spend) and stops. With --go: targeted
+            WSD for re-resolved cards, then one spliced bundle -- carried
+            rows, fresh rows, declared rows -- through the importer.
+  release   candidate releases <lang>-speech-v15-mend-10000x10, validated
+            and sharded, diffed against v15 per card. Nothing is activated.
+  clitics   read-only. Numbers for the Spanish clitic-split decision record:
+            what would merge into what, rank shifts, what would enter.
 """
 
 from __future__ import annotations
@@ -690,14 +700,474 @@ def step_refetch(args: argparse.Namespace) -> int:
     return subprocess.call(merge)
 
 
+# ------------------------------------------------------------- run steps (menus, wsd, release)
+#
+# One new run per language. Stages 01 and 03 are carried from the source run
+# byte-for-byte (the harvest's own reuse path, so nothing is rescanned); stage 02
+# is rebuilt with the resolver on for the cards v15 shipped empty; Stage 04 is a
+# complete spliced bundle -- carried rows, fresh WSD for the re-resolved cards,
+# deterministic rows for declared glosses and entities -- through the importer.
+
+SOURCE_RUNS = {
+    "es": "20260914T223348Z-c35194bc",
+    "pt": "20260914T222723Z-e43a0469",
+    "cs": "20260914T223828Z-ad405a28",
+}
+CANDIDATE_RELEASE = "{lang}-speech-v15-mend-10000x10"
+RUNS_FILE = "mend-runs.json"
+NEEDS_WSD = ("headwords", "expansion")
+DECLARED_STRATEGIES = ("declared_gloss", "entity")
+
+
+def _languages(args) -> list[str]:
+    return [args.language] if args.language else list(SOURCE_RUNS)
+
+
+def _release_dir(args, lang: str) -> Path:
+    base = args.release.resolve()
+    # --release points at es by default; derive the sibling for other languages.
+    root = base.parents[2] if base.name.endswith("10000x10") else base
+    return root / lang / "speech" / f"{lang}-speech-v15-10000x10"
+
+
+def _complete_contract(run: Path, stage_dir: str, *, note: str) -> None:
+    from fluency.core.hashing import file_content_id as _fid
+    contract_path = run / "stages" / stage_dir / "contract.json"
+    contract = _json(contract_path)
+    manifest = _json(run / "stages" / stage_dir / "output/manifest.json")
+    contract.update(status="complete", completed_at=manifest.get("completed_at"),
+                    output_directory="output",
+                    manifest_content_id=_fid(run / "stages" / stage_dir / "output/manifest.json"),
+                    carried_note=note)
+    contract_path.write_text(json.dumps(contract, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+
+
+def _carry_inventory(source: Path, run: Path) -> None:
+    import shutil
+    src, dst = source / "stages/01_inventory/output", run / "stages/01_inventory/output"
+    shutil.copytree(src, dst)
+    manifest = _json(dst / "manifest.json")
+    manifest["reused_from"] = str(src)
+    (dst / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=1) + "\n",
+                                       encoding="utf-8")
+    _complete_contract(run, "01_inventory", note=f"carried byte-for-byte from {source.name}")
+
+
+def _carry_harvest(source: Path, run: Path) -> None:
+    from fluency.harvest.runner import _reuse_harvest_output
+    src = source / "stages/03_sentence_harvest/output"
+    manifest = _json(src / "manifest.json")
+    _reuse_harvest_output(
+        src, run_id=run.name, output_directory=run / "stages/03_sentence_harvest/output",
+        started_at=datetime.now(UTC), cache_key=manifest["cache_key"],
+        implementation_content_id=manifest["implementation_hash"],
+        config_content_id=manifest["config_hash"], inputs=manifest["inputs"])
+    _complete_contract(run, "03_sentence_harvest", note=f"reused from {source.name}; no corpus scan")
+
+
+def _kaikki_snapshot(ws: Path, lang: str, content_id: str, override: Path | None) -> Path:
+    from fluency.core.hashing import file_content_id as _fid
+    if override:
+        return override
+    for path in sorted((ws / "raw").rglob("*.jsonl*")):
+        if lang not in path.as_posix() or "kaikki" not in path.as_posix().lower():
+            continue
+        if _fid(path) == content_id:
+            return path
+    raise SystemExit(f"{lang}: no Kaikki snapshot under raw/ matches {content_id}; pass --kaikki-snapshot")
+
+
+def _preflight_spanishdict(snapshot: Path, surfaces: list[str]) -> tuple[dict, list[str]]:
+    from fluency.sense_menu.spanishdict_lemmas import SpanishDictHeadwordSource, SpanishDictLemmaRule
+    from fluency.surfaces.declared import Context
+    from fluency.surfaces.resolver import ModePolicy, Resolver, ResolverError
+    from fluency.surfaces.stores import stack
+    cache, heads = _json(snapshot / "surface_cache.json"), _json(snapshot / "headword_cache.json")
+    rule = SpanishDictLemmaRule(_json(snapshot / "conjugation_reverse.json"), known_headwords=frozenset(heads))
+    resolver = Resolver(SpanishDictHeadwordSource(rule, cache, heads), stack(REPO, "es"),
+                        Context(language="es", mode="speech"),
+                        ModePolicy.load(REPO / "config/surfaces/strategy.json", "speech"))
+    found, errors = {}, []
+    for surface in surfaces:
+        try:
+            found[surface] = resolver.resolve(surface)
+        except ResolverError as error:
+            errors.append(str(error))
+    return found, errors
+
+
+def step_menus(args: argparse.Namespace) -> int:
+    from fluency.core.workspace import Workspace
+    from fluency.pipeline.planning import create_pipeline_plan
+    from fluency.sense_menu.runner import build_sense_menu_stage
+
+    ws = args.workspace.resolve()
+    workspace = Workspace.load(ws)
+    out_dir = (args.out or ws / "raw/surfaces/es/mend").resolve()
+    out_dir.mkdir(parents=True, exist_ok=True)
+    runs_path = out_dir / RUNS_FILE
+    runs = _json(runs_path) if runs_path.exists() else {}
+    lines = ["# MEND menus — new sense-menu runs, resolver on for the cards v15 shipped empty", ""]
+    report: dict[str, Any] = {}
+    for lang in _languages(args):
+        if lang in runs and not args.force_new_run:
+            print(f"{lang}: run {runs[lang]} already built; pass --force-new-run to build another")
+            continue
+        source = ws / "runs" / lang / "speech" / SOURCE_RUNS[lang]
+        # The release lists display forms; the run keys cards by surface key.
+        # Match through the source run's own cards, and only those whose menu
+        # really was empty there.
+        released_empty = {c["surface"].casefold() for c in empty_cards(_release_dir(args, lang))}
+        source_menu = _json(source / "stages/02_sense_menu/output/sense-menu.json")["cards"]
+        display = {c["card_id"]: c["display_form"] for c in
+                   _json(source / "stages/03_sentence_harvest/output/candidates.json")["cards"]}
+        affected_cards = [c for c in source_menu if not c["analyses"]
+                          and display.get(c["card_id"], c["surface_form"]).casefold() in released_empty]
+        surfaces = sorted({c["surface_form"] for c in affected_cards})
+        if len(affected_cards) != len(released_empty):
+            print(f"{lang}: {len(released_empty)} empty in the release, {len(affected_cards)} matched "
+                  "to empty menus in the source run; the difference is reported below")
+        source_menu_report = _json(source / "stages/02_sense_menu/output/report.json")
+        adapter = source_menu_report["source_adapter"]
+        profile = _json(source / "profile.json")
+        profile["profile_id"] = f"{profile['profile_id']}-mend"
+        profile["sense_menu"]["resolver"] = {"surfaces": surfaces}
+        if adapter.startswith("spanishdict"):
+            snapshot_id = args.snapshot or (_mend_snapshots(ws) or [source_menu_report["snapshot_id"]])[-1]
+            snapshot = ws / SD_ROOT / snapshot_id
+            resolved, errors = _preflight_spanishdict(snapshot, surfaces)
+            if errors:
+                print(f"{lang}: resolver preflight failed; no run created:\n  " + "\n  ".join(errors))
+                return 1
+        else:
+            snapshot_id = source_menu_report["snapshot_id"]
+            snapshot = _kaikki_snapshot(ws, lang, source_menu_report["snapshot_content_id"],
+                                        args.kaikki_snapshot)
+        if "snapshot_id" in profile["sense_menu"]:
+            profile["sense_menu"]["snapshot_id"] = snapshot_id
+        run = create_pipeline_plan(workspace, profile)
+        _carry_inventory(source, run)
+        _carry_harvest(source, run)
+        build_sense_menu_stage(REPO, workspace, run_id=run.name, language=lang, mode="speech",
+                               dictionary_snapshot=snapshot, snapshot_id=snapshot_id)
+        runs[lang] = run.name
+        runs_path.write_text(json.dumps(runs, indent=1) + "\n", encoding="utf-8")
+
+        before = {c["card_id"]: c for c in _json(source / "stages/02_sense_menu/output/sense-menu.json")["cards"]}
+        after = {c["card_id"]: c for c in _json(run / "stages/02_sense_menu/output/sense-menu.json")["cards"]}
+        affected_ids = {c["card_id"] for c in affected_cards}
+        moved = sorted(c["surface_form"] for cid, c in after.items() if cid not in affected_ids
+                       and json.dumps(c, sort_keys=True) != json.dumps(before.get(cid), sort_keys=True))
+        rows, strategies, classes, still_empty = [], Counter(), Counter(), []
+        for cid in sorted(affected_ids, key=lambda i: after[i]["surface_form"]):
+            card = after[cid]
+            res = card.get("resolution") or {}
+            strategies[res.get("strategy")] += 1
+            classes[res.get("word_class")] += 1
+            if not card["analyses"]:
+                still_empty.append(f"{card['surface_form']} ({res.get('reason')})")
+            heads = ", ".join(h["headword"] for h in res.get("headwords") or []) or \
+                (res.get("entry") or {}).get("entry_id") or "—"
+            rows.append(f"| {card['surface_form']} | {len(before.get(cid, {}).get('analyses') or [])} | "
+                        f"{len(card['analyses'])} | {res.get('strategy')} | {res.get('word_class')} | {heads} |")
+        report[lang] = {"run_id": run.name, "snapshot_id": snapshot_id, "affected": len(affected_ids),
+                        "released_empty": len(released_empty),
+                        "strategies": dict(strategies), "classes": dict(classes),
+                        "still_empty": still_empty, "moved_outside_affected": moved}
+        lines += [f"## {lang}: run `{run.name}` (snapshot `{snapshot_id}`)", "",
+                  f"- affected cards: {len(affected_ids)}; still empty: {len(still_empty)} {still_empty or ''}",
+                  f"- strategies: {dict(strategies)}", f"- classes: {dict(classes)}",
+                  f"- cards OUTSIDE the affected set whose menu moved: {len(moved)} {moved[:40] or ''}", "",
+                  "| surface | analyses before | after | strategy | class | headwords / entry |",
+                  "|---|---:|---:|---|---|---|", *rows, ""]
+    stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+    md = "\n".join(lines) + "\n"
+    (out_dir / f"menus-{stamp}.md").write_text(md, encoding="utf-8")
+    (out_dir / f"menus-{stamp}.json").write_text(json.dumps(report, ensure_ascii=False, indent=1), encoding="utf-8")
+    print(md)
+    print(f"wrote {out_dir / f'menus-{stamp}.md'}")
+    return 0
+
+
+def _multiword_path(ws: Path, content_id: str | None) -> Path | None:
+    from fluency.core.hashing import file_content_id as _fid
+    if not content_id:
+        return None
+    for path in sorted((ws / "raw/mwe").rglob("mwe_merged.json")):
+        if _fid(path) == content_id:
+            return path
+    raise SystemExit(f"no raw/mwe/**/mwe_merged.json matches {content_id}")
+
+
+def _prewsd_dir(ws: Path, lang: str, source_run: str) -> Path:
+    for name in (source_run + "-v2", source_run):
+        path = ws / "raw/surfaces" / lang / "prewsd" / name
+        if (path / "pairs.json").exists():
+            return path
+    raise SystemExit(f"{lang}: no prewsd for {source_run}")
+
+
+def _jsonl(path: Path) -> list[dict[str, Any]]:
+    return [json.loads(line) for line in path.read_text(encoding="utf-8").split("\n") if line.strip()]
+
+
+def step_wsd(args: argparse.Namespace) -> int:
+    import subprocess
+    from fluency.core.hashing import file_content_id as _fid
+    from fluency.core.workspace import Workspace
+    from fluency.wsd.importer import import_wsd_assignments
+    from fluency.wsd.splice import carried_row, declared_row, splice_bundle
+
+    ws = args.workspace.resolve()
+    workspace = Workspace.load(ws)
+    out_dir = (args.out or ws / "raw/surfaces/es/mend").resolve()
+    runs = _json(out_dir / RUNS_FILE)
+    lines = [f"# MEND wsd — {'DRY RUN (offline only, no spend)' if not args.go else 'targeted WSD + splice + import'}", ""]
+    for lang in _languages(args):
+        run = ws / "runs" / lang / "speech" / runs[lang]
+        source = ws / "runs" / lang / "speech" / SOURCE_RUNS[lang]
+        menu_path = run / "stages/02_sense_menu/output/sense-menu.json"
+        menu = {c["card_id"]: c for c in _json(menu_path)["cards"]}
+        resolved = {cid: c for cid, c in menu.items() if c.get("resolution")}
+        candidates = _json(run / "stages/03_sentence_harvest/output/candidates.json")
+        display = {card["card_id"]: card["display_form"] for card in candidates["cards"]}
+        # wsd_execute and the importer both name a card by its display form.
+        targets = sorted({display[cid] for cid, c in resolved.items()
+                          if c["resolution"]["strategy"] in NEEDS_WSD and c["analyses"]})
+        declared = {cid for cid, c in resolved.items() if c["resolution"]["strategy"] in DECLARED_STRATEGIES}
+        src4 = source / "stages/04_wsd_assignments/output"
+        src_method = _json(src4 / "method.json")["method"]
+        src_report = _json(src4 / "report.json")
+        mwe = _multiword_path(ws, (src_report.get("input_content_ids") or {}).get("multiword_inventory"))
+        bundle_dir = ws / "raw/wsd" / lang
+        bundle_dir.mkdir(parents=True, exist_ok=True)
+        target_bundle = bundle_dir / f"mend-{run.name}-targets.json"
+        lines += [f"## {lang}: run `{run.name}`", "",
+                  f"- re-resolved cards needing WSD: {len(targets)}; declared (no model): {len(declared)}; "
+                  f"carried from `{source.name}`: all other cards"]
+        fresh: list[dict[str, Any]] = []
+        method = src_method
+        if targets:
+            command = [sys.executable, "-m", "fluency.speech.wsd_execute", "--run-dir", str(run),
+                       "--out", str(target_bundle), "--profile-id", src_method["profile_id"],
+                       "--prewsd", str(_prewsd_dir(ws, lang, source.name)),
+                       "--target-surfaces", *targets]
+            if mwe:
+                command += ["--multiword-inventory", str(mwe)]
+            if args.env_file:
+                command += ["--env-file", str(args.env_file)]
+            if not args.go:
+                command.append("--offline-only")
+            print("$ " + " ".join(command[:12]) + f" ... ({len(targets)} surfaces)", flush=True)
+            result = subprocess.run(command, capture_output=True, text=True,
+                                    env={**__import__("os").environ, "PYTHONPATH": str(REPO / "src")})
+            tail = "\n".join((result.stdout + result.stderr).strip().splitlines()[-12:])
+            lines += ["", "```", tail, "```"]
+            if result.returncode != 0:
+                lines += ["", f"**{lang}: wsd_execute stopped (exit {result.returncode}).** "
+                          + ("With --offline-only this is the uncached count above: that is the projected "
+                             "embedding spend. Say go to run it paid." if not args.go else "Stop and report.")]
+                continue
+            bundle = _json(target_bundle)
+            fresh = [r for r in bundle["assignments"] if r["surface_form"] in set(targets)]
+            method = bundle["method"]
+            inputs = bundle["inputs"]
+        else:
+            stages = run / "stages"
+            inputs = {"inventory": _fid(stages / "01_inventory/output/inventory.json"),
+                      "sense_menu": _fid(menu_path),
+                      "candidates": _fid(stages / "03_sentence_harvest/output/candidates.json"),
+                      "sentence_bank": _fid(stages / "03_sentence_harvest/output/sentence-bank.jsonl")}
+            if mwe:
+                inputs["multiword_inventory"] = _fid(mwe)
+        if not args.go and targets:
+            lines += ["", f"{lang}: offline run succeeded, so no spend is needed. Rerun with --go to splice and import."]
+            continue
+        new_menu_id = _fid(menu_path)
+        redone = set(resolved)
+        carried = [carried_row(r, source_run_id=source.name, source_method=src_method,
+                               sense_menu_content_id=new_menu_id)
+                   for r in _jsonl(src4 / "assignments.jsonl") if r["card_id"] not in redone]
+        declared_rows = [declared_row(card_id=card["card_id"], surface_form=card["display_form"],
+                                      sentence_id=item["sentence_id"], menu_card=menu[card["card_id"]],
+                                      sense_menu_content_id=new_menu_id)
+                         for card in candidates["cards"] if card["card_id"] in declared
+                         for item in card.get("candidates") or []]
+        # re-resolved cards that still have no menu keep their source rows (no_menu)
+        still_empty = {cid for cid in redone if not menu[cid]["analyses"]}
+        carried += [carried_row(r, source_run_id=source.name, source_method=src_method,
+                                sense_menu_content_id=new_menu_id)
+                    for r in _jsonl(src4 / "assignments.jsonl") if r["card_id"] in still_empty]
+        if not args.go and not targets:
+            lines += ["", f"{lang}: nothing needs a model; --go splices {len(carried)} carried and "
+                      f"{len(declared_rows)} declared rows and imports them."]
+            continue
+        bundle, splice_report = splice_bundle(
+            run_id=run.name, language=lang, mode="speech", inputs=inputs, method=method,
+            sampling_policy=(src_report.get("occurrence_sampling") or {}).get("policy") or {},
+            carried=carried, fresh=fresh, declared=declared_rows)
+        spliced = bundle_dir / f"mend-{run.name}-spliced.json"
+        spliced.write_text(json.dumps(bundle, ensure_ascii=False) + "\n", encoding="utf-8")
+        (bundle_dir / f"mend-{run.name}-splice-report.json").write_text(json.dumps(
+            {**splice_report, "source_run": source.name, "source_method": src_method,
+             "fresh_method": method}, ensure_ascii=False, indent=1), encoding="utf-8")
+        import_wsd_assignments(workspace, run_id=run.name, language=lang, mode="speech", bundle_path=spliced)
+        lines += ["", f"- imported Stage 04: {splice_report['rows_by_origin']}; statuses {splice_report['statuses']}"]
+    md = "\n".join(lines) + "\n"
+    stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+    (out_dir / f"wsd-{stamp}.md").write_text(md, encoding="utf-8")
+    print(md)
+    return 0
+
+
+def _card_rows(app: Path) -> tuple[dict[str, dict], dict[str, dict], dict[str, str]]:
+    columns = _json(app / "vocabulary.index.columns.json")
+    word = dict(zip(columns["id"], columns["word"]))
+    rows: dict[str, dict] = {}
+    for path in sorted((app / "vocabulary.index.rows").glob("*.json")):
+        rows.update(_json(path))
+    examples: dict[str, dict] = {}
+    for path in sorted((app / "vocabulary.examples.shards").glob("*.json")):
+        examples.update(_json(path))
+    return rows, examples, word
+
+
+def step_release(args: argparse.Namespace) -> int:
+    from fluency.core.workspace import Workspace
+    from fluency.release.example_shards import shard_app_examples
+    from fluency.release.index_shards import shard_app_index
+    from fluency.release.run_candidate import build_inactive_run_candidate
+    from fluency.release.validation import validate_release_bundle
+
+    ws = args.workspace.resolve()
+    workspace = Workspace.load(ws)
+    out_dir = (args.out or ws / "raw/surfaces/es/mend").resolve()
+    runs = _json(out_dir / RUNS_FILE)
+    lines = ["# MEND release — candidate releases (inactive; nothing activated or published)", ""]
+    for lang in _languages(args):
+        v15 = _release_dir(args, lang)
+        composition = _json(v15 / "composition.json")
+        params = ((composition.get("layers") or {}).get("wsd_assignments") or {}).get("parameters") or {}
+        conj = ((composition.get("layers") or {}).get("conjugations") or {}).get("artifact_id")
+        _, old_examples, _ = _card_rows(v15 / "app")
+        titled = any("source_title" in (ex.get("metadata") or {})
+                     for card in list(old_examples.values())[:200] for group in card.get("m") or []
+                     for ex in group)
+        release_id = CANDIDATE_RELEASE.format(lang=lang)
+        output = build_inactive_run_candidate(
+            workspace, run_id=runs[lang], release_id=release_id, language=lang, mode="speech",
+            conjugations_artifact_id=conj,
+            source_titles_path=(REPO / "app/data/source_titles.json") if titled else None,
+            wsd_selection_projection=params.get("selection_projection", "provider_only"),
+            wsd_publication_projection=params.get("publication_projection", "forced_leaf"))
+        validate_release_bundle(output)
+        shard_app_index(output / "app")
+        shard_app_examples(output / "app")
+        deck = _json(output / "deck.json")
+        empty = [c["surface_key"] for c in deck["cards"] if not c.get("meanings")]
+        undeclared = [c["surface_key"] for c in deck["cards"] if not c.get("meanings") and not c.get("menu_absence")]
+        tagged = Counter(c.get("word_class") for c in deck["cards"] if c.get("word_class"))
+        new_rows, new_examples, word = _card_rows(output / "app")
+        old_rows, _, _ = _card_rows(v15 / "app")
+        affected = {c["card_id"] for c in empty_cards(v15)}
+        changed_meanings = sorted(word.get(cid, cid) for cid in new_rows if cid not in affected
+                                  and json.dumps(new_rows[cid], sort_keys=True) != json.dumps(old_rows.get(cid), sort_keys=True))
+        changed_examples = sorted(word.get(cid, cid) for cid in new_examples if cid not in affected
+                                  and json.dumps(new_examples[cid], sort_keys=True) != json.dumps(old_examples.get(cid), sort_keys=True))
+        lines += [f"## {lang}: `{release_id}` from run `{runs[lang]}`", "",
+                  f"- validated: yes; cards {len(deck['cards'])}; empty meanings {len(empty)} "
+                  f"(without a declared absence: {len(undeclared)}) {empty[:20] or ''}",
+                  f"- class tags on re-resolved cards: {dict(tagged)}",
+                  f"- cards outside the {len(affected)} affected whose meanings changed: {len(changed_meanings)} {changed_meanings[:30] or ''}",
+                  f"- cards outside the affected whose examples changed: {len(changed_examples)} {changed_examples[:30] or ''}",
+                  "  (examples can move where an affected card now takes a sentence another card had: "
+                  "the builder lets at most two cards share one)", ""]
+    lines += ["Activation would change: config/config.json and app/config/config.json (index, examples, "
+              "study structure, manifest and composition paths), app/data/speech-frequency/<lang>.json "
+              "indexSha256, tests/app/test_product_shell.py. SETLIST pins no release id. Not done."]
+    md = "\n".join(lines) + "\n"
+    stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+    (out_dir / f"release-{stamp}.md").write_text(md, encoding="utf-8")
+    print(md)
+    return 0
+
+
+def step_clitics(args: argparse.Namespace) -> int:
+    """Read-only numbers for the Spanish clitic-split proposal (decision record draft).
+
+    Splits every verified enclitic surface in the 10k Spanish inventory into
+    its host (as the conjugation table spells it) and its pronouns, merges the
+    counts, and reports which cards would merge into which, how the hosts'
+    ranks move, and which surfaces from beyond rank 10,000 would enter.
+    """
+    from fluency.sense_menu.spanishdict_lemmas import SpanishDictLemmaRule
+
+    ws = args.workspace.resolve()
+    run = ws / "runs/es/speech" / SOURCE_RUNS["es"]
+    report = _json(run / "stages/01_inventory/output/report.json")
+    ranks = _json(run / "stages/01_inventory/output/frequency-ranks.json")
+    top = report["top_surfaces"]
+    count = {row["surface"]: float(row["source_frequency"]) for row in top}
+    snapshot_id = _json(run / "stages/02_sense_menu/output/report.json")["snapshot_id"]
+    rule = SpanishDictLemmaRule(_json(ws / SD_ROOT / snapshot_id / "conjugation_reverse.json"))
+    splits = [x for x in (rule.enclitic_split(row["surface"]) for row in top) if x]
+    merged = dict(count)
+    into: dict[str, list[str]] = defaultdict(list)
+    for split in splits:
+        merged.pop(split["surface"], None)
+        merged[split["host"]] = merged.get(split["host"], 0.0) + count[split["surface"]]
+        for pronoun in split["pronouns"]:
+            merged[pronoun] = merged.get(pronoun, 0.0) + count[split["surface"]]
+        into[split["host"]].append(split["surface"])
+    new_order = sorted(merged, key=lambda s: (-merged[s], ranks.get(s, 10**9), s))
+    new_rank = {s: i for i, s in enumerate(new_order, start=1)}
+    old_rank = {row["surface"]: row["rank"] for row in top}
+    hosts_in = [h for h in into if h in old_rank]
+    hosts_new = [h for h in into if h not in old_rank]
+    freed = len(splits) - len(hosts_new)
+    beyond = sorted((s for s, r in ranks.items() if r > len(top)), key=lambda s: ranks[s])[:max(freed, 0)]
+    moves = sorted(((old_rank[h], new_rank[h], h, len(into[h])) for h in hosts_in),
+                   key=lambda m: m[0] - m[1], reverse=True)
+    lines = ["# Spanish clitic split — measured (read-only)", "",
+             f"- inventory: {len(top):,} surfaces (run `{run.name}`, snapshot `{snapshot_id}`)",
+             f"- verified enclitic surfaces that would split: {len(splits):,} "
+             f"(abstained or not enclitic: the rest)",
+             f"- hosts they merge into: {len(into):,} ({len(hosts_in):,} already cards, "
+             f"{len(hosts_new):,} not yet in the 10k)",
+             f"- cards removed: {len(splits):,}; cards whose learner progress must migrate: {len(splits):,}",
+             f"- slots freed for surfaces beyond rank {len(top):,}: {freed:,} "
+             f"(first: {', '.join(beyond[:25])})", "",
+             "## Biggest rank gains among existing host cards", "",
+             "| host | rank before | rank after | forms merged in |", "|---|---:|---:|---|"]
+    for old, new, host, n in moves[:40]:
+        lines.append(f"| {host} | {old} | {new} | {', '.join(into[host][:6])}{' …' if n > 6 else ''} |")
+    lines += ["", "## Hosts not yet in the 10k (would become cards)", "",
+              ", ".join(f"{h} ({len(into[h])})" for h in sorted(hosts_new, key=lambda h: -merged[h])[:80])]
+    md = "\n".join(lines) + "\n"
+    out_dir = (args.out or ws / "raw/surfaces/es/mend").resolve()
+    out_dir.mkdir(parents=True, exist_ok=True)
+    stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+    (out_dir / f"clitics-{stamp}.md").write_text(md, encoding="utf-8")
+    (out_dir / f"clitics-{stamp}.json").write_text(json.dumps(
+        {"splits": splits, "into": into, "freed": freed, "entering": beyond}, ensure_ascii=False, indent=1),
+        encoding="utf-8")
+    print(md)
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--step", required=True,
-                    choices=["measure", "lemmas", "refetch", "menus", "wsd", "release"])
+                    choices=["measure", "lemmas", "refetch", "menus", "wsd", "release", "clitics"])
     ap.add_argument("--no-merge", action="store_true", help="refetch: fetch only, do not merge")
     ap.add_argument("--scope", choices=sorted(REFETCH), default="affected",
                     help="refetch: the 105 (merged into a new snapshot) or the deck (evidence only)")
     ap.add_argument("--snapshot", help="SpanishDict snapshot id (default: newest MEND snapshot, else the run's)")
+    ap.add_argument("--language", choices=["es", "pt", "cs"], help="menus/wsd/release: one language (default all)")
+    ap.add_argument("--kaikki-snapshot", type=Path, help="menus: Kaikki dump path, if the search does not find it")
+    ap.add_argument("--force-new-run", action="store_true", help="menus: build another run even if one is recorded")
+    ap.add_argument("--go", action="store_true", help="wsd: run paid embeddings if needed, then splice and import")
+    ap.add_argument("--env-file", type=Path, help="wsd: env file holding GEMINI_API_KEY")
     ap.add_argument("--workspace", type=Path, default=REPO.parent / "Fluency-Workspace")
     ap.add_argument("--release", type=Path,
                     default=Path("/private/tmp/fluency-releases/es/speech") / RELEASE_ID)
@@ -711,6 +1181,14 @@ def main() -> int:
         return step_lemmas(args)
     if args.step == "refetch":
         return step_refetch(args)
+    if args.step == "menus":
+        return step_menus(args)
+    if args.step == "wsd":
+        return step_wsd(args)
+    if args.step == "release":
+        return step_release(args)
+    if args.step == "clitics":
+        return step_clitics(args)
     print(f"step {args.step!r} is not written yet: it waits on the reviewed measure table. "
           "Pull the branch again when the MEND chat says it is ready.")
     return 2

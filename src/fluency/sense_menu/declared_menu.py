@@ -14,6 +14,7 @@ from typing import Any
 from fluency.menus import MenuAnalysis, SenseLeaf, build_analysis_id
 
 DECLARED_GLOSS_ADAPTER = "declared-gloss/v1"
+DECLARED_ENTITY_ADAPTER = "declared-entity/v1"
 
 
 def declared_gloss_analyses(card_id: str, surface: str, resolution: Any) -> list[MenuAnalysis]:
@@ -52,3 +53,35 @@ def declared_gloss_analyses(card_id: str, surface: str, resolution: Any) -> list
             provider_metadata={"resolver": stamp, "menu_order_prior": order},
         ))
     return analyses
+
+
+def declared_entity_analyses(card_id: str, surface: str, resolution: Any) -> list[MenuAnalysis]:
+    """A name as one meaning: what it is, in a line. No senses to choose between."""
+    entry = resolution.entry
+    payload = entry.payload
+    key = f"{entry.entry_id}:PROPN"
+    leaf = SenseLeaf(
+        sense_id=f"{entry.entry_id}#1",
+        translation=str(payload.get("name") or surface),
+        definition=str(payload["description"]).strip(),
+        source_reference=f"declared:{entry.entry_id}#1",
+        provider_metadata={
+            "declared": {"entry_id": entry.entry_id, "trust": entry.trust,
+                         "scope": dict(entry.scope), "source_file": entry.source_file},
+            "entity": {"entity_type": payload.get("entity_type"),
+                       "wikidata_id": payload.get("wikidata_id")},
+            "translation_status": "present",
+        },
+    )
+    return [MenuAnalysis(
+        menu_analysis_id=build_analysis_id(
+            card_id=card_id, source_adapter=DECLARED_ENTITY_ADAPTER, source_analysis_key=key),
+        card_id=card_id,
+        surface_form=surface,
+        headword=str(payload.get("name") or surface),
+        part_of_speech="PROPN",
+        source_adapter=DECLARED_ENTITY_ADAPTER,
+        source_analysis_key=key,
+        senses=(leaf,),
+        provider_metadata={"resolver": resolution.stamp(), "menu_order_prior": 0},
+    )]

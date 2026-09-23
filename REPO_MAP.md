@@ -43,7 +43,7 @@ literal filename. See `docs/decisions/0021-*` and `docs/runbooks/surface-ledger.
 | **Harvest** | `src/fluency/harvest/` | `runner.py`, `tatoeba.py`, `opensubtitles.py` | `schemas/parallel-sentence.schema.json`, `schemas/harvest-pool.schema.json` |
 | **Sense Menus** | `src/fluency/sense_menu/`| `kaikki.py` (multi-lang), `spanishdict.py` (es) | `schemas/sense-menu.schema.json` |
 | **Features & Parity**| `src/fluency/features/`| `cognates.py`, `spanishdict.py`, `spanishdict_metadata.py` | Metadata projection & cross-lang cognates |
-| **Surface ledger** | `src/fluency/surfaces/` | `events.py` (append-only log), `policy.py` (fold → verdict), `ledger.py` (path + contract) | `raw/surfaces/<lang>/ledger.json` |
+| **Surface ledger** | `src/fluency/surfaces/` | `events.py` (append-only log), `policy.py` (fold → verdict), `ledger.py` (path + contract), `resolver.py` (headword set → strategy, one offline resolver for every provider), `declared.py` (hand-written entries: headwords/gloss/expansion/entity, scoped, trust-labelled), `stores.py` (language / artist / live stack, promotion), `trust.py` | `raw/surfaces/<lang>/ledger.json`; `config/declared/<lang>/*.json`; `config/surfaces/strategy.json` |
 | **WSD** | `src/fluency/wsd/` | `runner.py`, `importer.py` | `schemas/wsd-request-v2.schema.json`, `schemas/wsd-assignment.schema.json` |
 | **Release** | `src/fluency/release/` | `run_candidate.py`, `metadata_upgrade.py` | `schemas/release-manifest.schema.json`, `schemas/active-release.schema.json` |
 | **Conjugations** | `src/fluency/enrichments/` | `conjugations.py` (layer envelope), `kaikki_conjugations.py` (cs), `verbecc_conjugations.py` (pt/fr, ML off) | `schemas/conjugation-layer.schema.json` |

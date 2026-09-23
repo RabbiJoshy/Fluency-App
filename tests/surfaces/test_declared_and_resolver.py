@@ -89,7 +89,11 @@ class DeclaredFormatTests(unittest.TestCase):
         self.assertIsNotNone(reg.select("brr", "gloss", Context("es", "live"), trust.HEURISTIC))
 
     def test_the_repository_declared_lists_load(self) -> None:
-        DeclaredRegistry.load(REPO / "config/declared", "es")
+        for language in ("es", "pt", "cs"):
+            registry = DeclaredRegistry.load(REPO / "config/declared", language)
+            self.assertTrue(all(e.trust == trust.CURATED for e in registry.entries))
+            self.assertTrue(all(e.payload.get("class") for e in registry.entries),
+                            f"{language}: every hand-written entry carries its class tag")
 
 
 class ResolverTests(unittest.TestCase):
@@ -124,12 +128,27 @@ class ResolverTests(unittest.TestCase):
         self.assertEqual((found.strategy, found.headword_names, found.expanded_to),
                          (EXPANSION, ["usted"], "usted"))
 
-    def test_entities_are_off_in_speech_and_on_in_lyrics(self) -> None:
+    def test_a_mode_can_switch_entity_cards_off(self) -> None:
         reg = registry(entry("f", "entity", "ferrari",
                              {"name": "Ferrari", "entity_type": "brand", "description": "Italian sports-car maker"}))
-        speech = resolver(FakeSource(), reg).resolve("ferrari")
-        self.assertEqual((speech.strategy, speech.reason), (NO_MENU, "entity_not_in_mode"))
-        self.assertEqual(resolver(FakeSource(), reg, mode="lyrics").resolve("ferrari").strategy, ENTITY)
+        off = Resolver(FakeSource(), reg, SPEECH, ModePolicy("speech", trust.DERIVED, False))
+        found = off.resolve("ferrari")
+        self.assertEqual((found.strategy, found.reason), (NO_MENU, "entity_not_in_mode"))
+        # Every card explains itself (MEND, §10.1 updated): speech and lyrics show it.
+        for mode in ("speech", "lyrics"):
+            found = resolver(FakeSource(), reg, mode=mode).resolve("ferrari")
+            self.assertEqual((found.strategy, found.word_class), (ENTITY, "entity"))
+
+    def test_the_class_tag_follows_the_relation_or_the_entry(self) -> None:
+        source = FakeSource({"conduces": [("conducir", "table", "provider")]})
+        self.assertEqual(resolver(source, registry()).resolve("conduces").word_class, "vocabulary")
+        form = FakeSource()
+        form.declared = {}
+        form.declare = lambda s: ProviderDeclaration(s, (Headword("conducir", "table", "provider", "", "form"),), MENU)
+        self.assertEqual(resolver(form, registry()).resolve("conduces").word_class, "inflection")
+        reg = registry(entry("g", "gloss", "bum", {"class": "onomatopoeia", "senses": [{"translation": "boom"}]}))
+        self.assertEqual(resolver(FakeSource(), reg).resolve("bum").word_class, "onomatopoeia")
+        self.assertEqual(resolver(FakeSource(), registry()).resolve("tai").word_class, "unresolved")
 
     def test_absent_and_unfetched_are_declared_apart(self) -> None:
         source = FakeSource(unfetched={"borda"})

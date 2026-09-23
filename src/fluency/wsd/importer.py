@@ -138,6 +138,31 @@ def _validated_multiword_analysis(assignment: WSDAssignment, pair: Any):
     )
 
 
+DECLARED_ASSIGNMENT_METHOD = "declared-single-sense/v1"
+
+
+def _is_declared_default(assignment: WSDAssignment, card_menu: Any) -> bool:
+    """A card whose whole menu is one hand-written sense needs no model.
+
+    Proposal 0003: a declared gloss or entity is one sense, so there is no
+    choice to make. Its assignment says so -- ``deterministic_default``, no
+    model revisions, the declared method in its evidence -- and is accepted
+    only when the card's menu really holds exactly one sense. Anything else
+    must carry the method's model revisions like every other row.
+    """
+    if (assignment.evidence or {}).get("assignment_method") != DECLARED_ASSIGNMENT_METHOD:
+        return False
+    if assignment.decision_kind != "deterministic_default" or assignment.model_revisions:
+        raise WSDAssignmentImportError(
+            f"declared assignment must be a deterministic default with no model: "
+            f"{(assignment.card_id, assignment.sentence_id)}")
+    senses = [sense for _, _, ids in (card_menu or {}).values() for sense in ids]
+    if len(senses) != 1:
+        raise WSDAssignmentImportError(
+            f"declared assignment on a card whose menu is not one sense: {assignment.card_id}")
+    return True
+
+
 def _validate_selection(
     assignment: WSDAssignment,
     *,
@@ -413,7 +438,12 @@ def import_wsd_assignments(
             raise WSDAssignmentImportError(f"assignment is not a harvested candidate: {pair}")
         if assignment.surface_form != surfaces[assignment.card_id]:
             raise WSDAssignmentImportError(f"assignment surface does not match card: {pair}")
-        if assignment.status != "no_menu" and assignment.model_revisions != method["model_revisions"]:
+        declared = _is_declared_default(assignment, menus.get(assignment.card_id))
+        if (
+            assignment.status != "no_menu"
+            and not declared
+            and assignment.model_revisions != method["model_revisions"]
+        ):
             raise WSDAssignmentImportError(
                 f"assignment model revisions do not match the method manifest: {pair}"
             )

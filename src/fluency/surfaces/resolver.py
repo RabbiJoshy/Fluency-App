@@ -57,16 +57,22 @@ class ResolverError(ValueError):
     pass
 
 
+# How a headword relates to the surface, provider-neutrally. The provider's
+# own provenance string stays alongside; this is what the class tag reads.
+SELF, FORM, ENCLITIC, OVERRIDE = "self", "form", "enclitic", "override"
+
+
 @dataclass(frozen=True)
 class Headword:
     headword: str
     provenance: str
     trust: str
     detail: str = ""
+    relation: str = SELF
 
     def to_dict(self) -> dict[str, str]:
         return {"headword": self.headword, "provenance": self.provenance,
-                "trust": self.trust, "detail": self.detail}
+                "trust": self.trust, "detail": self.detail, "relation": self.relation}
 
 
 @dataclass(frozen=True)
@@ -123,6 +129,26 @@ class Resolution:
     def headword_names(self) -> list[str]:
         return [item.headword for item in self.headwords]
 
+    @property
+    def word_class(self) -> str:
+        """The tag a card carries: what kind of word this is, for the app to show.
+
+        A hand-written entry's own ``class`` wins. Otherwise it follows from the
+        strategy and from how the headwords relate to the surface.
+        """
+        declared = str((self.entry.payload.get("class") if self.entry else "") or "")
+        if declared:
+            return declared
+        if self.strategy == HEADWORDS:
+            relations = {item.relation for item in self.headwords}
+            if SELF in relations:
+                return "vocabulary"
+            if ENCLITIC in relations:
+                return "enclitic"
+            return "inflection" if FORM in relations else "vocabulary"
+        return {EXPANSION: "abbreviation", DECLARED_GLOSS: "vocabulary",
+                ENTITY: "entity"}.get(self.strategy, "unresolved")
+
     def stamp(self) -> dict[str, Any]:
         """What every menu analysis built from this answer carries."""
         return {
@@ -132,6 +158,7 @@ class Resolution:
             "coverage": self.coverage,
             "entry_id": self.entry.entry_id if self.entry else None,
             "expanded_to": self.expanded_to or None,
+            "word_class": self.word_class,
         }
 
     def to_dict(self) -> dict[str, Any]:
@@ -160,6 +187,15 @@ class Resolver:
     def _select(self, surface: str, kind: str) -> DeclaredEntry | None:
         return self.registry.select(surface, kind, self.context, self.policy.minimum_trust)
 
+    def declared_headwords(self, surface: str) -> list[str]:
+        """Headwords a hand-written entry names for ``surface`` (adapters pre-load them)."""
+        entry = self._select(surface, "headwords")
+        return entry.headwords if entry else []
+
+    def expansion_target(self, surface: str) -> str:
+        entry = self._select(surface, "expansion")
+        return entry.expands_to if entry else ""
+
     def resolve(self, surface: str, *, _expanding: bool = False) -> Resolution:
         declaration = self.source.declare(surface)
         base = dict(surface=surface, coverage=declaration.coverage,
@@ -172,7 +208,7 @@ class Resolver:
                 raise ResolverError(
                     f"{override.entry_id}: {surface!r} names headwords {self.source.provider} "
                     f"has no entry for: {', '.join(missing)}")
-            heads = tuple(Headword(h, "override", override.trust, override.reason)
+            heads = tuple(Headword(h, "override", override.trust, override.reason, OVERRIDE)
                           for h in override.headwords)
             return Resolution(strategy=HEADWORDS, headwords=heads, entry=override, **base)
 

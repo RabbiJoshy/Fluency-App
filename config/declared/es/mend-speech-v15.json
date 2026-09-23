@@ -1,0 +1,133 @@
+{
+ "schema": "declared-entries/v1",
+ "language": "es",
+ "note": "MEND, 2026-09-23: hand-written facts for the cards es-speech-v15-10000x10 shipped with empty meanings. The other 97 of the 105 resolve from SpanishDict itself (exact page, declared relation, conjugation table) or the enclitic host rule.",
+ "entries": [
+  {
+   "entry_id": "es-headwords-atrevo",
+   "kind": "headwords",
+   "surface": "atrevo",
+   "payload": {
+    "class": "inflection",
+    "headwords": [
+     "atreverse"
+    ]
+   },
+   "reason": "SpanishDict's page answered with 'atrezo' (props), another word; every line is 'me atrevo'; not in the conjugation table.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "es-headwords-bares",
+   "kind": "headwords",
+   "surface": "bares",
+   "payload": {
+    "class": "inflection",
+    "headwords": [
+     "bar"
+    ]
+   },
+   "reason": "SpanishDict answers 'bares' as English (bare); the lines are the Spanish plural of bar.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "es-headwords-fantasias",
+   "kind": "headwords",
+   "surface": "fantasías",
+   "payload": {
+    "class": "inflection",
+    "headwords": [
+     "fantasía"
+    ]
+   },
+   "reason": "SpanishDict answers 'fantasías' as English; the lines are the Spanish plural of fantasía.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "es-gloss-bum",
+   "kind": "gloss",
+   "surface": "bum",
+   "payload": {
+    "class": "onomatopoeia",
+    "senses": [
+     {
+      "translation": "boom, bang",
+      "definition": "sound of an explosion or a sudden event",
+      "pos": "interjection"
+     }
+    ]
+   },
+   "reason": "SpanishDict answers in English; every sampled line is Spanish '¡bum!'.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "es-gloss-uh",
+   "kind": "gloss",
+   "surface": "uh",
+   "payload": {
+    "class": "filler",
+    "senses": [
+     {
+      "translation": "uh, um",
+      "definition": "hesitation filler in speech",
+      "pos": "interjection"
+     }
+    ]
+   },
+   "reason": "SpanishDict answers in English; the lines are Spanish subtitles using 'uh' to hesitate.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "es-gloss-off",
+   "kind": "gloss",
+   "surface": "off",
+   "payload": {
+    "class": "loanword",
+    "senses": [
+     {
+      "translation": "off",
+      "definition": "English loanword: voz en off (voice-over), off the record"
+     }
+    ]
+   },
+   "reason": "SpanishDict answers in English; the lines use it in 'off the record' and 'voz en off'.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "es-gloss-tai",
+   "kind": "gloss",
+   "surface": "tai",
+   "payload": {
+    "class": "name_fragment",
+    "senses": [
+     {
+      "translation": "tai",
+      "definition": "part of names: Tai Chi; tai-i (Japanese army rank, captain)"
+     }
+    ]
+   },
+   "reason": "SpanishDict substitutes 'tan'; every line is 'Kido Tai-i' or 'Tai Chi'.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "es-entity-ferrari",
+   "kind": "entity",
+   "surface": "ferrari",
+   "payload": {
+    "class": "entity",
+    "name": "Ferrari",
+    "entity_type": "brand",
+    "description": "Italian sports-car maker"
+   },
+   "reason": "Brand; no dictionary entry; every line is about the car.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  }
+ ]
+}

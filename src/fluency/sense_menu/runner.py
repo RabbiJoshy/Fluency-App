@@ -18,7 +18,11 @@ from fluency.pipeline.planning import load_pipeline_profile
 from fluency.surfaces.ledger import ledger_path
 from fluency.core.io import atomic_write, json_bytes
 from fluency.sense_menu.config import load_sense_menu_language_policy
-from fluency.sense_menu.kaikki import ADAPTER_ID as KAIKKI_ADAPTER_ID, KaikkiSenseMenuAdapter
+from fluency.sense_menu.kaikki import (
+    ADAPTER_ID as KAIKKI_ADAPTER_ID,
+    KaikkiHeadwordSource,
+    KaikkiSenseMenuAdapter,
+)
 from fluency.sense_menu.spanishdict import (
     ADAPTER_ID as SPANISHDICT_ADAPTER_ID,
     SpanishDictSenseMenuAdapter,
@@ -29,6 +33,7 @@ from fluency.sense_menu.spanishdict_lemmas import (
     SpanishDictLemmaRule,
 )
 from fluency.surfaces.declared import Context, DeclaredRegistry
+from fluency.surfaces.stores import stack as declared_stack
 from fluency.surfaces.resolver import RESOLVER_VERSION, ModePolicy, Resolver
 
 DECLARED_ROOT = Path("config/declared")
@@ -120,7 +125,8 @@ def _resolver_settings(
     surfaces = declared.get("surfaces")
     if not isinstance(surfaces, list) or not surfaces or not all(isinstance(s, str) and s for s in surfaces):
         raise SenseMenuRunError("sense_menu.resolver.surfaces must list the resolved surfaces explicitly")
-    registry = DeclaredRegistry.load(repository_root / DECLARED_ROOT, language)
+    # Speech reads the language store only (proposal 0003 §4).
+    registry = declared_stack(repository_root, language)
     policy = ModePolicy.load(repository_root / STRATEGY_POLICY, mode)
     pinned = {
         "resolver_version": RESOLVER_VERSION,
@@ -132,6 +138,20 @@ def _resolver_settings(
         "minimum_trust": policy.minimum_trust,
     }
     return frozenset(surfaces), registry, policy, pinned
+
+
+def _store_lemma_provenance(workspace, language: str) -> dict[str, str]:
+    """Surface -> how the ledger's lemma was established (e.g. "CNK word at a glance")."""
+    view = ledger_path(workspace.root, language)
+    if not view.exists():
+        return {}
+    try:
+        payload = json.loads(view.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return {surface: str(row.get("lemma_provenance"))
+            for surface, row in (payload.get("surfaces") or {}).items()
+            if row.get("lemma_provenance")}
 
 
 def build_sense_menu_stage(
@@ -206,18 +226,21 @@ def build_sense_menu_stage(
         raise SenseMenuRunError("no installed sense-menu adapter matches the run profile")
     resolver_settings = _resolver_settings(repository_root, profile, language, mode)
     if resolver_settings is not None:
-        if not isinstance(adapter, SpanishDictSenseMenuAdapter):
-            raise SenseMenuRunError(
-                "the surface resolver is wired for SpanishDict only; Kaikki parity is recorded "
-                "as open in docs/proposals/0003 and must not be implied by a profile")
         surfaces, registry, policy, pinned = resolver_settings
-        reverse = json.loads((resolved_snapshot / "conjugation_reverse.json").read_text(encoding="utf-8"))
-        source = SpanishDictHeadwordSource(
-            SpanishDictLemmaRule(reverse, known_headwords=frozenset(adapter.headword_cache)),
-            adapter.surface_cache, adapter.headword_cache)
-        adapter.resolver = Resolver(source, registry, Context(language=language, mode=mode), policy)
+        context = Context(language=language, mode=mode)
+        if isinstance(adapter, SpanishDictSenseMenuAdapter):
+            reverse = json.loads((resolved_snapshot / "conjugation_reverse.json").read_text(encoding="utf-8"))
+            source = SpanishDictHeadwordSource(
+                SpanishDictLemmaRule(reverse, known_headwords=frozenset(adapter.headword_cache)),
+                adapter.surface_cache, adapter.headword_cache)
+            pinned["lemma_rule"] = SPANISHDICT_LEMMA_RULE
+        else:
+            # Kaikki: the dump is read in passes inside build(), which binds the
+            # source to its scan. External first hops keep the ledger's label.
+            source = KaikkiHeadwordSource(_store_lemma_provenance(workspace, language))
+            pinned["lemma_rule"] = "kaikki-redirect-paths/v1"
+        adapter.resolver = Resolver(source, registry, context, policy)
         adapter.resolver_surfaces = surfaces
-        pinned["lemma_rule"] = SPANISHDICT_LEMMA_RULE
     menu, report = adapter.build(cards, snapshot_id=snapshot_id)
     inventory_cards = int(report.get("inventory_cards", 0))
     cards_ready = int(report.get("cards_ready", 0))

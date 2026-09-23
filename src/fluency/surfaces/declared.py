@@ -40,6 +40,13 @@ SCHEMA = "declared-entries/v1"
 KINDS = ("headwords", "gloss", "expansion", "entity")
 SCOPE_FIELDS = ("mode", "artist", "song", "playlist")
 ENTITY_TYPES = ("brand", "place", "person", "work", "event", "organisation", "other")
+# The tag a card shows (Resolution.word_class). Optional on an entry; the
+# resolver infers one when it is missing.
+WORD_CLASSES = (
+    "vocabulary", "inflection", "enclitic", "abbreviation", "interjection",
+    "onomatopoeia", "filler", "loanword", "slang", "entity", "name_fragment",
+    "contamination",
+)
 
 
 def surface_key(text: str) -> str:
@@ -129,6 +136,8 @@ def _entry(raw: Mapping[str, Any], *, language: str, source: str) -> DeclaredEnt
         raise DeclaredError(f"{where}: unknown scope fields {sorted(unknown)}")
     level = trust.check(str(raw.get("trust") or trust.CURATED))
     payload = dict(raw.get("payload") or {})
+    if payload.get("class") and payload["class"] not in WORD_CLASSES:
+        raise DeclaredError(f"{where}: class must be one of {', '.join(WORD_CLASSES)}")
     if kind == "headwords":
         heads = [str(h).strip() for h in payload.get("headwords") or [] if str(h).strip()]
         if not heads:
