@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-23T14:49:00+01:00",
+      "date": "2026-09-23 14:49 BST",
+      "agent": "Claude",
+      "summary": "The study options menu is simpler: plain icon-and-text rows, two toggles that stay open and show their state, and Study settings that opens only the study controls.",
+      "detail": [
+        "Rows are icon and text only: no box round each one, no filled disc behind the icon.",
+        "'Front of Card: Spanish' replaces the English → Spanish row. Tapping it flips the direction and the row updates in place without closing the menu.",
+        "'Auto Speak Flashcards' replaces Mute/Enable automatic speech. The speaker icon shows whether it is on, and tapping it keeps the menu open.",
+        "Set progress and Saved words are gone from this menu. Saved words is still in Settings → Words & data.",
+        "Study settings (was Study preferences) now opens only the study section: Show first, Speak the word, Bring back learned words, More study options. Account, theme, text size and word tools stay in the full Settings from the main page. The option to open settings this way had existed but was being ignored."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-23T14:44:00+01:00",
       "date": "2026-09-23 14:44 BST",
       "agent": "Claude",

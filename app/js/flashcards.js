@@ -1526,21 +1526,27 @@ function initializeApp() {
         if (!window.showChoiceSheet) return;
         const targetLanguage = (config.languages[selectedLanguage]?.name || selectedLanguage || 'Target language')
             .replace(/\s*\(.*\)$/, '');
-        // Label the direction this action will switch TO, rather than the
-        // ambiguous language that will merely appear "first".
-        const switchOrderLabel = isFlipped
-            ? `${targetLanguage} → English`
-            : `English → ${targetLanguage}`;
         const icon = body => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+        // The two toggles stay open and name their current state: the
+        // direction says what is on the front now, and the speaker icon
+        // itself shows whether auto-speak is on.
+        const directionRow = () => ({
+            label: `Front of Card: ${isFlipped ? 'English' : targetLanguage}`,
+            iconHTML: icon('<path d="M7 7h11"></path><path d="m15 4 3 3-3 3"></path><path d="M17 17H6"></path><path d="m9 14-3 3 3 3"></path>')
+        });
+        const speechRow = () => ({
+            label: 'Auto Speak Flashcards',
+            iconHTML: speechEnabled
+                ? icon('<path d="M11 5 6 9H3v6h3l5 4z"></path><path d="M15 9a4 4 0 0 1 0 6"></path><path d="M18 6a8 8 0 0 1 0 12"></path>')
+                : icon('<path d="M11 5 6 9H3v6h3l5 4z"></path><path d="m16 10 5 5"></path><path d="m21 10-5 5"></path>')
+        });
+        // Set progress and Saved words are not offered mid-set: progress adds
+        // little here, and saved words lives in Settings → Words & data.
         const entries = [
             { label: 'Main menu', iconHTML: icon('<path d="M9 7H5v12h12v-4"></path><path d="m9 11-4-4 4-4"></path><path d="M5 7h9a5 5 0 0 1 5 5"></path>'), onSelect: () => goBackToSetup() },
-            { label: switchOrderLabel, iconHTML: icon('<path d="M7 7h11"></path><path d="m15 4 3 3-3 3"></path><path d="M17 17H6"></path><path d="m9 14-3 3 3 3"></path>'), onSelect: () => flipDirection() },
-            { label: speechEnabled ? 'Mute automatic speech' : 'Enable automatic speech', iconHTML: speechEnabled
-                ? icon('<path d="M11 5 6 9H3v6h3l5 4z"></path><path d="M15 9a4 4 0 0 1 0 6"></path><path d="M18 6a8 8 0 0 1 0 12"></path>')
-                : icon('<path d="M11 5 6 9H3v6h3l5 4z"></path><path d="m16 10 5 5"></path><path d="m21 10-5 5"></path>'), onSelect: () => toggleAutoSpeak() },
-            { label: 'Set progress', iconHTML: icon('<path d="M4 19V9"></path><path d="M10 19V5"></path><path d="M16 19v-7"></path><path d="M22 19H2"></path>'), onSelect: () => showStatsModal() },
-            { label: 'Study preferences', iconHTML: icon('<path d="M4 6h10"></path><path d="M18 6h2"></path><circle cx="16" cy="6" r="2"></circle><path d="M4 12h2"></path><path d="M10 12h10"></path><circle cx="8" cy="12" r="2"></circle><path d="M4 18h8"></path><path d="M16 18h4"></path><circle cx="14" cy="18" r="2"></circle>'), onSelect: () => showSettingsModalWithTab('study', { singleTab: true }) },
-            { label: 'Saved words', iconHTML: icon('<path d="M6 4h12v16l-6-3-6 3z"></path>'), onSelect: () => window.openSavedWords?.() }
+            { ...directionRow(), keepOpen: true, tail: '', refresh: directionRow, onSelect: () => flipDirection() },
+            { ...speechRow(), keepOpen: true, tail: '', refresh: speechRow, onSelect: () => toggleAutoSpeak() },
+            { label: 'Study settings', iconHTML: icon('<path d="M4 6h10"></path><path d="M18 6h2"></path><circle cx="16" cy="6" r="2"></circle><path d="M4 12h2"></path><path d="M10 12h10"></path><circle cx="8" cy="12" r="2"></circle><path d="M4 18h8"></path><path d="M16 18h4"></path><circle cx="14" cy="18" r="2"></circle>'), onSelect: () => showSettingsModalWithTab('study', { singleTab: true }) }
         ];
         // Card data is a product-level audit surface: it stays available when
         // optional model stamps are absent and does not require an owner login.

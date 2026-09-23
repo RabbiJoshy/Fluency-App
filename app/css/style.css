@@ -20332,3 +20332,35 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
     flex-wrap: wrap;
     gap: 2px 8px;
 }
+
+/* Study options, opened mid-set: plain rows of icon and text, no boxes and
+   no filled discs, so the list reads as a menu rather than a set of cards. */
+#studyChoiceSheet .choice-sheet-item {
+  min-height: 0;
+  padding: 11px 10px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  grid-template-columns: 28px minmax(0, 1fr) 18px;
+  gap: 14px;
+}
+#studyChoiceSheet .choice-sheet-item + .choice-sheet-item { margin-top: 2px; }
+#studyChoiceSheet .choice-sheet-item:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.06);
+}
+#studyChoiceSheet .choice-sheet-icon {
+  width: 28px;
+  height: 28px;
+  background: none;
+  box-shadow: none;
+  color: var(--accent-primary);
+}
+#studyChoiceSheet .choice-sheet-icon svg { width: 22px; height: 22px; }
+:root[data-theme="light"] #studyChoiceSheet .choice-sheet-item:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* Settings opened from a study session shows the study controls only. */
+#settingsModal.settings-study-only #studyTabContent .settings-overview-section {
+  display: none;
+}

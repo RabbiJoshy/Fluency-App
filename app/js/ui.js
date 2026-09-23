@@ -3228,12 +3228,16 @@ function showSettingsModalWithTab(tabName, { singleTab = false } = {}) {
         ? ({ lookup: 'study', review: 'study', appearance: 'study' }[tabName] || tabName)
         : 'study';
     settingsModal.classList.toggle('settings-single-tab', requestedTab === 'study');
+    // Opened from a study session: only the study controls, not the whole
+    // settings page with account, theme and word tools.
+    const studyOnly = singleTab && requestedTab === 'study';
+    settingsModal.classList.toggle('settings-study-only', studyOnly);
     settingsModal.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
     settingsModal.querySelector(`.settings-tab[data-tab="${requestedTab}"]`)?.classList.add('active');
     settingsModal.querySelectorAll('.settings-tab-content').forEach(c => c.classList.remove('active'));
     document.getElementById(tabContentIds[requestedTab]).classList.add('active');
-    const title = { study: 'Settings', vocabulary: 'Words & data', account: 'Account',
-        offline: 'Storage', appData: 'Owner tools', about: 'About Fluency' }[requestedTab] || 'Settings';
+    const title = studyOnly ? 'Study settings' : ({ study: 'Settings', vocabulary: 'Words & data', account: 'Account',
+        offline: 'Storage', appData: 'Owner tools', about: 'About Fluency' }[requestedTab] || 'Settings');
     document.getElementById('settingsTitle').textContent = title;
     document.getElementById('settingsBackBtn').hidden = requestedTab === 'study';
     settingsModal.querySelector('.settings-modal-content').scrollTop = 0;

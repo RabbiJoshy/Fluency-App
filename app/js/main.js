@@ -1314,11 +1314,23 @@ function showChoiceSheet({ id, ariaLabel, title, intro = '', stepLabel = '', ent
         const tail = document.createElement('span');
         tail.className = 'choice-sheet-tail';
         tail.setAttribute('aria-hidden', 'true');
-        tail.textContent = entry.selected ? '✓' : (entry.disabled ? '' : '›');
+        tail.textContent = entry.tail ?? (entry.selected ? '✓' : (entry.disabled ? '' : '›'));
         item.append(icon, copy, tail);
         item.addEventListener('click', event => {
             event.stopPropagation();
             if (entry.disabled) return;
+            // A toggle stays open and redraws itself from refresh(), so the
+            // row always states the current setting.
+            if (entry.keepOpen) {
+                entry.onSelect();
+                const next = entry.refresh?.() || {};
+                if (next.label) {
+                    label.textContent = next.label;
+                    item.setAttribute('aria-label', next.label);
+                }
+                if (next.iconHTML) icon.innerHTML = next.iconHTML;
+                return;
+            }
             closeChoiceSheet(id, true);
             entry.onSelect();
         });
