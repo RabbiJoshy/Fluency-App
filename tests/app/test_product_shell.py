@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v548"
+EXPECTED_CACHE_NAME = "flashcards-v549"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -850,9 +850,15 @@ class ProductShellTests(unittest.TestCase):
             spotify.index("_loadSpotifyPlaybackSdk();"),
         )
         self.assertNotIn("sdk.scdn.co/spotify-player.js", html)
-        self.assertIn("/js/spotify.js?v=20260923sp", worker)
-        self.assertIn("/js/main.js?v=20260921freqb", worker)
-        self.assertIn("/js/ui.js?v=20260921mwe", worker)
+        self.assertIn('id="trySpotifyAppLoginBtn"', html)
+        self.assertIn("function spotifyTryIphoneAppLogin()", spotify)
+        self.assertIn("spotify-action://authorize?", spotify)
+        login = spotify.split("function spotifyTryIphoneAppLogin")[0]
+        self.assertNotIn("spotify-action://", login)
+        self.assertIn("https://accounts.spotify.com/authorize?", login)
+        self.assertIn("/js/spotify.js?v=20260923sq", worker)
+        self.assertIn("/js/main.js?v=20260923sq", worker)
+        self.assertIn("/js/ui.js?v=20260923sq", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -917,7 +923,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("spotify-music-visualizer", spotify)
         self.assertIn("spotify-playing-amplitude", css)
         self.assertNotIn("spotify-playing-ripple", css)
-        self.assertIn("/js/spotify.js?v=20260923sp", worker)
+        self.assertIn("/js/spotify.js?v=20260923sq", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_audit_accounts_and_flags_use_release_provenance(self) -> None:
@@ -972,7 +978,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("tracksHref", spotify)
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
-        self.assertIn("/js/spotify-playlist-import.js?v=20260923cj", worker)
+        self.assertIn("/js/spotify-playlist-import.js?v=20260923sq", worker)
         self.assertIn('css/style.css?v=20260921freq', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
