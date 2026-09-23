@@ -1,0 +1,332 @@
+{
+ "schema": "declared-entries/v1",
+ "language": "pt",
+ "note": "MEND, 2026-09-23: one entry per card that shipped with empty meanings in pt-speech-v15-10000x10.",
+ "entries": [
+  {
+   "entry_id": "pt-gloss-cowboy",
+   "kind": "gloss",
+   "surface": "cowboy",
+   "payload": {
+    "class": "loanword",
+    "senses": [
+     {
+      "translation": "cowboy",
+      "definition": "English loanword"
+     }
+    ]
+   },
+   "reason": "Empty menu in pt-speech-v15-10000x10 (rank 4900): no Wiktionary entry reached for the surface; declared so the card explains itself.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "pt-gloss-parvalhão",
+   "kind": "gloss",
+   "surface": "parvalhão",
+   "payload": {
+    "class": "vocabulary",
+    "senses": [
+     {
+      "translation": "fool, idiot",
+      "definition": "colloquial noun"
+     }
+    ]
+   },
+   "reason": "Empty menu in pt-speech-v15-10000x10 (rank 5447): no Wiktionary entry reached for the surface; declared so the card explains itself.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "pt-gloss-etc",
+   "kind": "gloss",
+   "surface": "etc",
+   "payload": {
+    "class": "abbreviation",
+    "senses": [
+     {
+      "translation": "etc.",
+      "definition": "et cetera, and so on",
+      "pos": "abbreviation"
+     }
+    ]
+   },
+   "reason": "Empty menu in pt-speech-v15-10000x10 (rank 5689): no Wiktionary entry reached for the surface; declared so the card explains itself.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "pt-gloss-ex-mulher",
+   "kind": "gloss",
+   "surface": "ex-mulher",
+   "payload": {
+    "class": "vocabulary",
+    "senses": [
+     {
+      "translation": "ex-wife",
+      "definition": "noun"
+     }
+    ]
+   },
+   "reason": "Empty menu in pt-speech-v15-10000x10 (rank 5890): no Wiktionary entry reached for the surface; declared so the card explains itself.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "pt-gloss-ex-marido",
+   "kind": "gloss",
+   "surface": "ex-marido",
+   "payload": {
+    "class": "vocabulary",
+    "senses": [
+     {
+      "translation": "ex-husband",
+      "definition": "noun"
+     }
+    ]
+   },
+   "reason": "Empty menu in pt-speech-v15-10000x10 (rank 6500): no Wiktionary entry reached for the surface; declared so the card explains itself.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "pt-gloss-historial",
+   "kind": "gloss",
+   "surface": "historial",
+   "payload": {
+    "class": "vocabulary",
+    "senses": [
+     {
+      "translation": "record, history, track record",
+      "definition": "noun"
+     }
+    ]
+   },
+   "reason": "Empty menu in pt-speech-v15-10000x10 (rank 6908): no Wiktionary entry reached for the surface; declared so the card explains itself.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "pt-gloss-ballet",
+   "kind": "gloss",
+   "surface": "ballet",
+   "payload": {
+    "class": "loanword",
+    "senses": [
+     {
+      "translation": "ballet",
+      "definition": "loanword (also balé)"
+     }
+    ]
+   },
+   "reason": "Empty menu in pt-speech-v15-10000x10 (rank 7388): no Wiktionary entry reached for the surface; declared so the card explains itself.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "pt-gloss-kilos",
+   "kind": "gloss",
+   "surface": "kilos",
+   "payload": {
+    "class": "vocabulary",
+    "senses": [
+     {
+      "translation": "kilos, kilograms",
+      "definition": "plural of kilo (quilo)"
+     }
+    ]
+   },
+   "reason": "Empty menu in pt-speech-v15-10000x10 (rank 7886): no Wiktionary entry reached for the surface; declared so the card explains itself.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "pt-gloss-mini",
+   "kind": "gloss",
+   "surface": "mini",
+   "payload": {
+    "class": "loanword",
+    "senses": [
+     {
+      "translation": "mini",
+      "definition": "loanword; small"
+     }
+    ]
+   },
+   "reason": "Empty menu in pt-speech-v15-10000x10 (rank 8056): no Wiktionary entry reached for the surface; declared so the card explains itself.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "pt-gloss-memorial",
+   "kind": "gloss",
+   "surface": "memorial",
+   "payload": {
+    "class": "vocabulary",
+    "senses": [
+     {
+      "translation": "memorial",
+      "definition": "noun"
+     }
+    ]
+   },
+   "reason": "Empty menu in pt-speech-v15-10000x10 (rank 8389): no Wiktionary entry reached for the surface; declared so the card explains itself.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "pt-gloss-vip",
+   "kind": "gloss",
+   "surface": "vip",
+   "payload": {
+    "class": "abbreviation",
+    "senses": [
+     {
+      "translation": "VIP",
+      "definition": "very important person",
+      "pos": "abbreviation"
+     }
+    ]
+   },
+   "reason": "Empty menu in pt-speech-v15-10000x10 (rank 8409): no Wiktionary entry reached for the surface; declared so the card explains itself.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "pt-gloss-preparativos",
+   "kind": "gloss",
+   "surface": "preparativos",
+   "payload": {
+    "class": "vocabulary",
+    "senses": [
+     {
+      "translation": "preparations",
+      "definition": "plural noun"
+     }
+    ]
+   },
+   "reason": "Empty menu in pt-speech-v15-10000x10 (rank 8462): no Wiktionary entry reached for the surface; declared so the card explains itself.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "pt-gloss-cocktail",
+   "kind": "gloss",
+   "surface": "cocktail",
+   "payload": {
+    "class": "loanword",
+    "senses": [
+     {
+      "translation": "cocktail",
+      "definition": "loanword (also coquetel)"
+     }
+    ]
+   },
+   "reason": "Empty menu in pt-speech-v15-10000x10 (rank 8931): no Wiktionary entry reached for the surface; declared so the card explains itself.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "pt-gloss-replicadores",
+   "kind": "gloss",
+   "surface": "replicadores",
+   "payload": {
+    "class": "vocabulary",
+    "senses": [
+     {
+      "translation": "replicators",
+      "definition": "plural of replicador"
+     }
+    ]
+   },
+   "reason": "Empty menu in pt-speech-v15-10000x10 (rank 9457): no Wiktionary entry reached for the surface; declared so the card explains itself.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "pt-gloss-serial",
+   "kind": "gloss",
+   "surface": "serial",
+   "payload": {
+    "class": "loanword",
+    "senses": [
+     {
+      "translation": "serial",
+      "definition": "as in serial killer; loanword"
+     }
+    ]
+   },
+   "reason": "Empty menu in pt-speech-v15-10000x10 (rank 9476): no Wiktionary entry reached for the surface; declared so the card explains itself.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "pt-gloss-cowboys",
+   "kind": "gloss",
+   "surface": "cowboys",
+   "payload": {
+    "class": "loanword",
+    "senses": [
+     {
+      "translation": "cowboys",
+      "definition": "plural of cowboy"
+     }
+    ]
+   },
+   "reason": "Empty menu in pt-speech-v15-10000x10 (rank 9754): no Wiktionary entry reached for the surface; declared so the card explains itself.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "pt-gloss-infectados",
+   "kind": "gloss",
+   "surface": "infectados",
+   "payload": {
+    "class": "vocabulary",
+    "senses": [
+     {
+      "translation": "infected (people)",
+      "definition": "plural of infectado, from infectar"
+     }
+    ]
+   },
+   "reason": "Empty menu in pt-speech-v15-10000x10 (rank 9928): no Wiktionary entry reached for the surface; declared so the card explains itself.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "pt-gloss-western",
+   "kind": "gloss",
+   "surface": "western",
+   "payload": {
+    "class": "loanword",
+    "senses": [
+     {
+      "translation": "western (film)",
+      "definition": "film genre; loanword"
+     }
+    ]
+   },
+   "reason": "Empty menu in pt-speech-v15-10000x10 (rank 9959): no Wiktionary entry reached for the surface; declared so the card explains itself.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  },
+  {
+   "entry_id": "pt-gloss-habituada",
+   "kind": "gloss",
+   "surface": "habituada",
+   "payload": {
+    "class": "vocabulary",
+    "senses": [
+     {
+      "translation": "used to, accustomed (fem.)",
+      "definition": "feminine of habituado, from habituar"
+     }
+    ]
+   },
+   "reason": "Empty menu in pt-speech-v15-10000x10 (rank 9993): no Wiktionary entry reached for the surface; declared so the card explains itself.",
+   "author": "claude (MEND)",
+   "created_at": "2026-09-23"
+  }
+ ]
+}

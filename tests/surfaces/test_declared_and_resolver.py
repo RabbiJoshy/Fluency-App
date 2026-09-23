@@ -89,7 +89,11 @@ class DeclaredFormatTests(unittest.TestCase):
         self.assertIsNotNone(reg.select("brr", "gloss", Context("es", "live"), trust.HEURISTIC))
 
     def test_the_repository_declared_lists_load(self) -> None:
-        DeclaredRegistry.load(REPO / "config/declared", "es")
+        for language in ("es", "pt", "cs"):
+            registry = DeclaredRegistry.load(REPO / "config/declared", language)
+            self.assertTrue(all(e.trust == trust.CURATED for e in registry.entries))
+            self.assertTrue(all(e.payload.get("class") for e in registry.entries),
+                            f"{language}: every hand-written entry carries its class tag")
 
 
 class ResolverTests(unittest.TestCase):
