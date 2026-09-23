@@ -2989,7 +2989,7 @@ function openFastTrackStudy() {
         ranges: getActiveLevelRanges(), selectedLevel,
         progressForItem: item => getSetupLearningState(item)
     }) || '';
-    body.querySelectorAll('.extras-set-pill').forEach(button => {
+    body.querySelectorAll('.fast-track-level-deck').forEach(button => {
         button.addEventListener('click', event => {
             event.stopPropagation();
             globalThis.startFastTrackSkippedSet?.(
