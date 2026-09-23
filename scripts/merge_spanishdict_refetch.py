@@ -64,7 +64,19 @@ def main() -> int:
                 skipped += 1
                 continue
             analyses = row.get("analyses") or []
-            if not analyses:
+            # Rows written since the fetcher kept SpanishDict's relation label
+            # carry possible results as objects. One that declares a conjugation
+            # or inflection is a lemma statement even with no senses of its own
+            # -- the menu is the lemma's. Older rows hold bare strings, whose
+            # relation was lost, and are merged exactly as before.
+            possible = [
+                ({"headword": item.get("headword") or item.get("result"),
+                  "heuristic": item.get("heuristic") or ""}
+                 if isinstance(item, dict) else {"result": item})
+                for item in row.get("possible_results") or []
+            ]
+            declares = any(p.get("heuristic") in {"conjugation", "inflection"} for p in possible)
+            if not analyses and not declares:
                 continue
             cache[row["word"]] = {
                 "query": row["word"],
@@ -77,7 +89,7 @@ def main() -> int:
                                  "regions": a.get("regions") or []}]}
                     for a in analyses
                 ],
-                "possible_results": [{"result": h} for h in row.get("possible_results") or []],
+                "possible_results": possible,
                 "merged_from": refetch.stem,
             }
             merged += 1

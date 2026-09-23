@@ -15,8 +15,17 @@ Steps:
             Proposes a class per card (proposal 0003 §1) and says why the
             menu is empty. Writes nothing but the report.
 
-Later steps (refetch, menus, wsd, release) are added once the measured table
-has been reviewed; until then they refuse to run.
+  lemmas    read-only. Applies the SpanishDict declared-lemma rule
+            (fluency.sense_menu.spanishdict_lemmas) to every ledger surface
+            and compares it with the ledger's lemma; resolves the 105; writes
+            the refetch list and the override queue.
+  refetch   network. Asks SpanishDict about the refetch list only, into
+            raw/dictionaries/es/spanishdict/refetch-no-menu-v15.jsonl, then
+            merges that one file into a NEW snapshot id. Nothing is
+            overwritten.
+
+Later steps (menus, wsd, release) are added after review; until then they
+refuse to run.
 """
 
 from __future__ import annotations
@@ -418,9 +427,181 @@ def render_measure(doc: dict[str, Any]) -> str:
     return "\n".join(out) + "\n"
 
 
+# ------------------------------------------------------------------ step: lemmas
+
+LEMMA_OVERRIDES = REPO / "config/lemmas/es.json"
+REFETCH_OUT = "refetch-no-menu-v15.jsonl"
+NEW_SNAPSHOT_ID = "spanishdict-complete-menu-2026-09-23-v4"
+
+
+def _latest_flags(sd_root: Path) -> dict[str, list[str]]:
+    """The flags on each word's most recent refetch row (later files win)."""
+    flags: dict[str, list[str]] = {}
+    for path in sorted(sd_root.glob("refetch-*.jsonl")):
+        with path.open(encoding="utf-8") as handle:
+            for line in handle:
+                if line.strip():
+                    row = json.loads(line)
+                    if row.get("word"):
+                        flags[row["word"]] = list(row.get("flags") or [])
+    return flags
+
+
+def _lemma_rule(ws: Path, snapshot_id: str):
+    from fluency.sense_menu.spanishdict_lemmas import SpanishDictLemmaRule, load_overrides
+
+    snap = ws / SD_ROOT / snapshot_id
+    cache = _json(snap / "surface_cache.json")
+    headwords = _json(snap / "headword_cache.json")
+    reverse = _json(snap / "conjugation_reverse.json")
+    overrides = load_overrides(_json(LEMMA_OVERRIDES) if LEMMA_OVERRIDES.exists() else None)
+    rule = SpanishDictLemmaRule(reverse, overrides=overrides, known_headwords=frozenset(headwords))
+    return rule, cache, reverse
+
+
+def step_lemmas(args: argparse.Namespace) -> int:
+    """Read-only: apply the declared-lemma rule and compare it with the ledger."""
+    ws = args.workspace.resolve()
+    run = ws / "runs/es/speech" / args.run_id
+    snapshot_id = _json(run / "stages/02_sense_menu/output/report.json")["snapshot_id"]
+    rule, cache, reverse = _lemma_rule(ws, snapshot_id)
+    flags = _latest_flags(ws / SD_ROOT)
+    ledger = _json(ledger_path(ws, "es")).get("surfaces") or {}
+    empty = {c["surface"]: c for c in empty_cards(args.release.resolve())}
+
+    sample_rows = next((rows for rows in reverse.values() if isinstance(rows, list) and rows), [])
+    resolutions, comparison, disagreements = {}, Counter(), []
+    for surface, row in ledger.items():
+        found = rule.resolve(surface, cache.get(surface), flags.get(surface, ()))
+        resolutions[surface] = found
+        current = row.get("lemma")
+        declared = found.lemma_names
+        if declared and current in declared:
+            kind = "agrees"
+        elif declared and current:
+            kind = "differs"
+        elif declared:
+            kind = "gained"
+        elif current:
+            kind = "ledger_only"
+        else:
+            kind = "neither"
+        comparison[kind] += 1
+        if kind in ("differs", "ledger_only") and row.get("verdict") == "keep":
+            disagreements.append({"surface": surface, "rank": row.get("rank"), "kind": kind,
+                                  "ledger": current, "ledger_provenance": row.get("lemma_provenance"),
+                                  "declared": declared, "status": found.status,
+                                  "rejected": list(found.rejected_headwords)})
+    disagreements.sort(key=lambda d: (d["rank"] is None, d["rank"] or 0))
+
+    affected = []
+    for surface, card in sorted(empty.items(), key=lambda kv: kv[1]["rank"]):
+        found = resolutions.get(surface) or rule.resolve(surface, cache.get(surface), flags.get(surface, ()))
+        affected.append({"rank": card["rank"], "card_id": card["card_id"], **found.to_dict()})
+    refetch = [a["surface"] for a in affected if a["needs_refetch"]]
+    queue = [a["surface"] for a in affected if a["status"] in ("no_lemma", "enclitic_ambiguous")
+             and not a["needs_refetch"]]
+
+    out_dir = (args.out or ws / "raw/surfaces/es/mend").resolve()
+    out_dir.mkdir(parents=True, exist_ok=True)
+    stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+    document = {
+        "report_version": "mend-lemmas/v1", "created_at": stamp, "snapshot_id": snapshot_id,
+        "rule_version": affected[0]["rule_version"] if affected else None,
+        "conjugation_table": {"forms": len(reverse), "has_moods": rule.table_has_moods,
+                              "sample_row": sample_rows[0] if sample_rows else None},
+        "overrides": len(rule.overrides),
+        "ledger_surfaces": len(ledger),
+        "status_counts": dict(Counter(r.status for r in resolutions.values())),
+        "ledger_comparison": dict(comparison),
+        "relation_unknown_deckwide": sum(1 for r in resolutions.values() if r.relation_unknown),
+        "disagreements": disagreements,
+        "affected": affected,
+        "refetch_surfaces": refetch,
+        "override_queue": queue,
+    }
+    path = out_dir / f"lemmas-{stamp}.json"
+    path.write_text(json.dumps(document, ensure_ascii=False, indent=1), encoding="utf-8")
+    (out_dir / "refetch-no-menu-v15.surfaces.txt").write_text("\n".join(refetch) + "\n", encoding="utf-8")
+
+    lines = [f"# MEND lemmas — declared-lemma rule vs ledger ({snapshot_id})", "",
+             f"conjugation table: {len(reverse):,} forms, moods present: {rule.table_has_moods}, "
+             f"sample row: {document['conjugation_table']['sample_row']}",
+             f"overrides: {len(rule.overrides)}", "",
+             "## All ledger surfaces", ""]
+    lines += [f"- {k}: {v}" for k, v in sorted(document["status_counts"].items())]
+    lines += ["", "ledger lemma vs declared lemmas:"]
+    lines += [f"- {k}: {v}" for k, v in comparison.most_common()]
+    lines += [f"- page relations lost at fetch (deck-wide): {document['relation_unknown_deckwide']}", "",
+              f"## Kept surfaces whose ledger lemma is not declared ({len(disagreements)}; first 150)", "",
+              "| rank | surface | ledger (provenance) | declared | status | rejected |", "|---:|---|---|---|---|---|"]
+    for d in disagreements[:150]:
+        lines.append(f"| {d['rank']} | {d['surface']} | {d['ledger']} ({d['ledger_provenance']}) | "
+                     f"{', '.join(d['declared']) or '—'} | {d['status']} | {', '.join(d['rejected']) or '—'} |")
+    lines += ["", "## The 105", "", "| rank | surface | status | lemmas (provenance) | page | rejected | unknown relation |",
+              "|---:|---|---|---|---|---|---|"]
+    for a in affected:
+        lemmas = ", ".join(f"{l['lemma']} ({l['provenance'].removeprefix('spanishdict-')})" for l in a["lemmas"]) or "—"
+        lines.append(f"| {a['rank']} | {a['surface']} | {a['status']} | {lemmas} | {a['page_state']} | "
+                     f"{', '.join(a['rejected_headwords']) or '—'} | {', '.join(a['relation_unknown']) or '—'} |")
+    lines += ["", f"refetch ({len(refetch)}): {' '.join(refetch) or '—'}",
+              f"override queue ({len(queue)}): {' '.join(queue) or '—'}"]
+    md = "\n".join(lines) + "\n"
+    path.with_suffix(".md").write_text(md, encoding="utf-8")
+    print(md)
+    print(f"\nwrote {path}\nwrote {path.with_suffix('.md')}\nwrote {out_dir / 'refetch-no-menu-v15.surfaces.txt'}")
+    return 0
+
+
+# ----------------------------------------------------------------- step: refetch
+
+def step_refetch(args: argparse.Namespace) -> int:
+    """Ask SpanishDict about the queued surfaces, then merge into a NEW snapshot id.
+
+    Only the 105's surfaces that the lemmas step marked unfetched or
+    relation-unknown are asked. The merge copies the run's snapshot and adds
+    this one file, so no other surface's entry changes.
+    """
+    import subprocess
+
+    ws = args.workspace.resolve()
+    run = ws / "runs/es/speech" / args.run_id
+    out_dir = (args.out or ws / "raw/surfaces/es/mend").resolve()
+    surfaces = out_dir / "refetch-no-menu-v15.surfaces.txt"
+    if not surfaces.exists() or not surfaces.read_text(encoding="utf-8").strip():
+        print(f"no surface list at {surfaces}; run --step lemmas first"); return 1
+    snapshot_id = _json(run / "stages/02_sense_menu/output/report.json")["snapshot_id"]
+    target = ws / SD_ROOT / REFETCH_OUT
+    python = sys.executable
+    fetch = [python, str(REPO / "scripts/fetch_spanishdict.py"), "--run-dir", str(run),
+             "--surfaces", str(surfaces), "--out", str(target)]
+    print("$ " + " ".join(fetch), flush=True)
+    if subprocess.call(fetch) != 0:
+        return 1
+    rows = [json.loads(l) for l in target.read_text(encoding="utf-8").splitlines() if l.strip()]
+    print(f"\n## {REFETCH_OUT}: {len(rows)} rows\n")
+    print("| word | entry_lang | flags | analyses | headwords | possible (relation) |\n|---|---|---|---:|---|---|")
+    for row in rows:
+        heads = sorted({a.get("headword") or row["word"] for a in row.get("analyses") or []})
+        possible = [f"{p.get('headword')} ({p.get('heuristic') or '?'})" if isinstance(p, dict) else f"{p} (?)"
+                    for p in row.get("possible_results") or []]
+        print(f"| {row['word']} | {row.get('entry_lang')} | {','.join(row.get('flags') or []) or '—'} | "
+              f"{len(row.get('analyses') or [])} | {', '.join(heads[:4]) or '—'} | {', '.join(possible[:4]) or '—'} |")
+    if args.no_merge:
+        return 0
+    merge = [python, str(REPO / "scripts/merge_spanishdict_refetch.py"), "--workspace", str(ws),
+             "--snapshot", snapshot_id, "--out-id", NEW_SNAPSHOT_ID, "--refetch", REFETCH_OUT]
+    if (ws / SD_ROOT / NEW_SNAPSHOT_ID).exists():
+        print(f"\nsnapshot {NEW_SNAPSHOT_ID} already exists; not overwriting. Stop and report."); return 1
+    print("\n$ " + " ".join(merge), flush=True)
+    return subprocess.call(merge)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--step", required=True, choices=["measure", "refetch", "menus", "wsd", "release"])
+    ap.add_argument("--step", required=True,
+                    choices=["measure", "lemmas", "refetch", "menus", "wsd", "release"])
+    ap.add_argument("--no-merge", action="store_true", help="refetch: fetch only, do not merge")
     ap.add_argument("--workspace", type=Path, default=REPO.parent / "Fluency-Workspace")
     ap.add_argument("--release", type=Path,
                     default=Path("/private/tmp/fluency-releases/es/speech") / RELEASE_ID)
@@ -430,6 +611,10 @@ def main() -> int:
     args = ap.parse_args()
     if args.step == "measure":
         return step_measure(args)
+    if args.step == "lemmas":
+        return step_lemmas(args)
+    if args.step == "refetch":
+        return step_refetch(args)
     print(f"step {args.step!r} is not written yet: it waits on the reviewed measure table. "
           "Pull the branch again when the MEND chat says it is ready.")
     return 2

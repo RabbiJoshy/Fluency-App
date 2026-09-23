@@ -113,6 +113,9 @@ def rows_from(component: dict) -> tuple[list[dict], list[str], str]:
                         "regions": [r.get("nameEn", "") for r in
                                     (sense.get("regions") or []) + (tr.get("regions") or [])
                                     if r.get("nameEn")]})
+    # The relation is kept, not just the head. "conjugation of X" is SpanishDict
+    # declaring a lemma; a bare head string cannot be told from a word it merely
+    # suggested, which is how afirma -> afirmar ended up rejected as fuzzy.
     possible = []
     for item in component.get("dictionaryPossibleResults") or []:
         heuristic = (item.get("resultHeuristic") or "").strip()
@@ -120,7 +123,8 @@ def rows_from(component: dict) -> tuple[list[dict], list[str], str]:
         result = (item.get("result") or "").strip()
         head = source if heuristic in {"conjugation", "inflection"} and source else (result or source)
         if head:
-            possible.append(head)
+            possible.append({"headword": head, "heuristic": heuristic,
+                             "result": result, "word_source": source})
     return rows, possible, lang
 
 
