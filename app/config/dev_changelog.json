@@ -13,7 +13,7 @@
         "Merged forms are one row per word: frequency rank, the lemma and its translation, then the surface forms, with + x when they do not fit.",
         "Skipped words sit in two centred columns. The English side is the shipped cognate when the file has one, otherwise the gloss on the card that most resembles the word."
       ],
-      "commit": "pending"
+      "commit": "1ff15617"
     },
     {
       "timestamp": "2026-09-23T19:52:00+01:00",
