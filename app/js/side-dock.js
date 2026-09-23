@@ -121,6 +121,9 @@ const OCCUPANTS = [
     { id: 'knowledgeOverviewModal', home: 'right', card: true, priority: PRIORITY_KNOWLEDGE,
       open: el => !el.hidden && !el.classList.contains('is-closing'),
       close: () => window.closeKnowledgeOverview?.() },
+    { id: 'rareUsesModal', home: 'right', card: true, priority: PRIORITY_KNOWLEDGE,
+      open: el => !el.hidden,
+      close: () => window.closeRareUsesModal?.() },
     { id: 'studyChoiceSheet', home: 'left', priority: PRIORITY_STUDY,
       open: el => el.isConnected && !el.classList.contains('is-closing'),
       close: () => window.closeChoiceSheet?.('studyChoiceSheet', true) },
@@ -350,7 +353,8 @@ function init() {
         cancelAnimationFrame(resizeFrame);
         resizeFrame = requestAnimationFrame(applyPanelWidth);
     });
-    // knowledgeOverviewModal is created on first use; catch it when it lands.
+    // knowledgeOverviewModal and rareUsesModal are created on first use; catch
+    // them when they land.
     new MutationObserver(watchModals).observe(document.body, { childList: true });
     // Leaving the study view closes what described its cards and its session.
     // Settings, and whatever is stacked over it, belongs to the app, not the

@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v545"
+EXPECTED_CACHE_NAME = "flashcards-v546"
 
 
 class ProductShellTests(unittest.TestCase):
@@ -565,10 +565,12 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("Show first", html)
         self.assertIn("Speak the word", html)
         self.assertIn('Bring back learned words', overview)
-        self.assertIn('More study options', overview)
-        self.assertIn('Rare senses after a correct answer', overview)
+        # Rare senses open from the card's "Rarer uses" tile as a sheet, so
+        # there is no longer a setting that chains them as a child card.
+        self.assertNotIn('More study options', overview)
+        self.assertNotIn('Rare senses after a correct answer', overview)
         self.assertNotIn('Expressions after a correct answer', overview)
-        self.assertIn('data-setting="rareSensesMode"', overview)
+        self.assertNotIn('data-setting="rareSensesMode"', overview)
         self.assertNotIn('data-setting="expressionsMode"', overview)
         self.assertNotIn('data-setting="phrasesMode"', overview)
         self.assertIn('expressionsModeEnabled = true;', ui)
@@ -1403,6 +1405,14 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn('class="ref-tile ref-rare-uses-btn"', flashcards)
         self.assertIn(">Rarer uses</span>", flashcards)
         self.assertIn("function clusterRareSenses(items)", flashcards)
+        # The tile opens a sheet (docked beside the card on desktop); rare
+        # senses never chain after a correct answer.
+        self.assertIn("function ensureRareUsesModal()", flashcards)
+        self.assertIn("window.sideDock?.placeById?.('rareUsesModal')", flashcards)
+        self.assertNotIn("rareSensesModeEnabled", flashcards)
+        self.assertIn("id: 'rareUsesModal'", (APP_ROOT / "js" / "side-dock.js").read_text(encoding="utf-8"))
+        # Every row is a phrase, so no PHRASE badge on each one.
+        self.assertNotIn('<span class="phrase-kind-badge">PHRASE</span>', flashcards)
         self.assertNotIn("function toggleRareSenses(event)", flashcards)
         self.assertNotIn("rare-senses-toggle-btn", flashcards)
 
@@ -1417,6 +1427,10 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("ref-rare-uses-btn", flashcards)
         self.assertIn("example-source-chip", flashcards)
         self.assertIn("function armOutboundLink(event)", flashcards)
+        # The host holds the Visit button, so it cannot itself be a <button>:
+        # the parser would hoist the inner one out and the tap did nothing.
+        self.assertIn('return `<span role="button" tabindex="0" ${attrs} data-href=', flashcards)
+        self.assertIn("function outboundChipKeydown(event)", flashcards)
         self.assertIn("function confirmOutboundLink(event)", flashcards)
         self.assertIn("outbound-leave-btn", flashcards)
         self.assertIn(".dictionary-provenance-badge", css)
