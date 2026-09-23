@@ -111,6 +111,39 @@ class SenseMenuRunnerTests(unittest.TestCase):
                     snapshot_id="fixture-2026-08",
                 )
 
+    def test_a_resolver_run_carries_every_card_it_does_not_resolve(self):
+        """The ledger moves between runs, so a rebuilt menu can move; carried cards cannot."""
+        with tempfile.TemporaryDirectory() as directory:
+            workspace, source, snapshot = self._build_run(Path(directory))
+            build_sense_menu_stage(REPOSITORY_ROOT, workspace, run_id=source.name, language="fr",
+                                   mode="speech", dictionary_snapshot=snapshot, snapshot_id="fixture-2026-08")
+            # A later dump where every gloss changed: only the resolved card may show it.
+            changed = workspace.root / "raw/wiktionary/kaikki-french-later.jsonl"
+            changed.write_text(snapshot.read_text(encoding="utf-8").replace("English gloss", "New gloss"),
+                               encoding="utf-8")
+            profile = load_pipeline_profile(PROFILE_PATH)
+            profile["sense_menu"]["resolver"] = {"surfaces": ["chat"], "carry_from_run": source.name}
+            run = create_pipeline_plan(workspace, profile, started_at=datetime(2026, 8, 23, tzinfo=UTC),
+                                       suffix="9abcdef0")
+            (run / "stages/01_inventory/output").mkdir(parents=True)
+            (run / "stages/01_inventory/output/inventory.json").write_bytes(
+                (source / "stages/01_inventory/output/inventory.json").read_bytes())
+            output = build_sense_menu_stage(REPOSITORY_ROOT, workspace, run_id=run.name, language="fr",
+                                            mode="speech", dictionary_snapshot=changed,
+                                            snapshot_id="fixture-2026-09")
+            before = {c["surface_form"]: c for c in json.loads(
+                (source / "stages/02_sense_menu/output/sense-menu.json").read_text(encoding="utf-8"))["cards"]}
+            menu = json.loads((output / "sense-menu.json").read_text(encoding="utf-8"))
+            after = {c["surface_form"]: c for c in menu["cards"]}
+            for surface in SURFACES:
+                if surface != "chat":
+                    self.assertEqual(after[surface], before[surface])
+            self.assertIn("New gloss", json.dumps(after["chat"]))
+            self.assertEqual(after["chat"]["resolution"]["strategy"], "headwords")
+            self.assertEqual((menu["carried"]["from_run"], menu["carried"]["cards"]), (source.name, 19))
+            manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
+            self.assertIn("carried_sense_menu", manifest["inputs"])
+
     def test_rejects_dictionary_snapshot_outside_workspace_raw(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

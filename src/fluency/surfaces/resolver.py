@@ -214,8 +214,15 @@ class Resolver:
 
         accepted = tuple(h for h in declaration.headwords
                          if trust.accepts(self.policy.minimum_trust, h.trust))
-        if accepted:
-            return Resolution(strategy=HEADWORDS, headwords=accepted, **base)
+        # A headword the provider snapshot holds no entry for would build an
+        # empty menu while claiming a resolution. Keep only those with senses,
+        # and say which were missing so a fetch can add them.
+        missing = [h.headword for h in accepted if not self.source.has_entry(h.headword, surface)]
+        available = tuple(h for h in accepted if h.headword not in missing)
+        if missing:
+            base["notes"] = {**dict(base["notes"]), "headwords_without_entry": missing}
+        if available:
+            return Resolution(strategy=HEADWORDS, headwords=available, **base)
 
         expansion = self._select(surface, "expansion")
         if expansion is not None and not _expanding:
@@ -234,7 +241,9 @@ class Resolver:
                 return Resolution(strategy=ENTITY, entry=entity, **base)
             return Resolution(strategy=NO_MENU, entry=entity, reason="entity_not_in_mode", **base)
 
-        if declaration.headwords:
+        if missing:
+            reason = "headword_not_in_snapshot"
+        elif declaration.headwords:
             reason = "below_minimum_trust"
         else:
             reason = declaration.coverage if declaration.coverage in (ABSENT, UNFETCHED) else ABSENT

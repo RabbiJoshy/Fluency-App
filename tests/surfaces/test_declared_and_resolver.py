@@ -37,9 +37,9 @@ class FakeSource:
     provider = "fake"
     coverage_kind = "fetched_cache"
 
-    def __init__(self, declared=None, entries=(), unfetched=()):
+    def __init__(self, declared=None, entries=None, unfetched=()):
         self.declared = declared or {}
-        self.entries = set(entries)
+        self.entries = None if entries is None else set(entries)  # None: every headword has an entry
         self.unfetched = set(unfetched)
 
     def declare(self, surface):
@@ -48,7 +48,7 @@ class FakeSource:
         return ProviderDeclaration(surface, heads, coverage)
 
     def has_entry(self, headword, surface=None):
-        return headword in self.entries
+        return self.entries is None or headword in self.entries
 
 
 def resolver(source, reg, mode="speech", **context):
@@ -113,7 +113,18 @@ class ResolverTests(unittest.TestCase):
     def test_an_override_naming_no_real_entry_fails_loudly(self) -> None:
         reg = registry(entry("o", "headwords", "atrevo", {"headwords": ["atreverze"]}))
         with self.assertRaises(ResolverError):
-            resolver(FakeSource(), reg).resolve("atrevo")
+            resolver(FakeSource(entries=()), reg).resolve("atrevo")
+
+    def test_a_headword_with_no_entry_is_named_not_shipped_empty(self) -> None:
+        """detenlo -> detener: right verb, but the snapshot held no detener entry."""
+        source = FakeSource({"detenlo": [("detener", "enclitic", "derived")]}, entries=())
+        found = resolver(source, registry()).resolve("detenlo")
+        self.assertEqual((found.strategy, found.reason), (NO_MENU, "headword_not_in_snapshot"))
+        self.assertEqual(found.notes["headwords_without_entry"], ["detener"])
+        both = FakeSource({"condones": [("condonar", "p", "provider"), ("condón", "p", "provider")]},
+                          entries={"condón"})
+        found = resolver(both, registry()).resolve("condones")
+        self.assertEqual((found.headword_names, found.notes["headwords_without_entry"]), (["condón"], ["condonar"]))
 
     def test_a_gloss_fills_only_an_empty_set(self) -> None:
         reg = registry(entry("g", "gloss", "bum", {"senses": [{"translation": "boom"}]}))

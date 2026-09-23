@@ -154,6 +154,49 @@ def _store_lemma_provenance(workspace, language: str) -> dict[str, str]:
             if row.get("lemma_provenance")}
 
 
+def _build_and_carry(workspace, adapter, cards, *, snapshot_id, language, mode, resolved, carry_run):
+    """Build only the resolved cards; carry every other card's menu verbatim.
+
+    A menu depends on the ledger's lemmas as well as the dictionary, and the
+    ledger moves between runs, so rebuilding a card the resolver does not
+    touch can change it (measured: 877 Portuguese and 1,114 Czech cards). A run
+    that re-resolves a named set of cards must not move the rest, so the rest
+    are copied from ``carry_run``'s stage 02 and labelled as carried
+    (Invariant 1). The resolved cards are the only ones this stage computed.
+    """
+    source = workspace.root / "runs" / language / mode / carry_run / STAGE_RELATIVE / "output"
+    source_menu = _load_object(source / "sense-menu.json")
+    source_report = _load_object(source / "report.json")
+    built_cards = [card for card in cards if card.get("surface_key") in resolved]
+    menu, report = adapter.build(built_cards, snapshot_id=snapshot_id)
+    fresh = {card["card_id"]: card for card in menu["cards"]}
+    fresh_rows = {row["card_id"]: row for row in report["per_surface"]}
+    old = {card["card_id"]: card for card in source_menu.get("cards", [])}
+    old_rows = {row["card_id"]: row for row in source_report.get("per_surface", [])}
+    missing = [card["card_id"] for card in cards if card["card_id"] not in fresh and card["card_id"] not in old]
+    if missing:
+        raise SenseMenuRunError(f"{len(missing)} cards are neither resolved nor in {carry_run}'s menu")
+    menu["cards"] = [fresh.get(card["card_id"]) or old[card["card_id"]] for card in cards]
+    report["per_surface"] = [fresh_rows.get(card["card_id"]) or old_rows[card["card_id"]] for card in cards]
+    carried = {
+        "from_run": carry_run,
+        "cards": len(cards) - len(fresh),
+        "resolved_cards": len(fresh),
+        "source_snapshot_id": source_menu.get("snapshot_id"),
+        "source_snapshot_content_id": source_menu.get("snapshot_content_id"),
+        "source_sense_menu_content_id": file_content_id(source / "sense-menu.json"),
+    }
+    menu["carried"] = carried
+    report["carried"] = carried
+    report["inventory_cards"] = len(cards)
+    report["cards_ready"] = sum(row["status"] == "ready" for row in report["per_surface"])
+    report["cards_without_menu"] = sum(row["status"] == "no_menu" for row in report["per_surface"])
+    report["analysis_count"] = sum(len(card.get("analyses") or []) for card in menu["cards"])
+    report["sense_count"] = sum(len(a.get("senses") or []) for card in menu["cards"]
+                                for a in card.get("analyses") or [])
+    return menu, report
+
+
 def build_sense_menu_stage(
     repository_root: Path,
     workspace: Workspace,
@@ -241,7 +284,14 @@ def build_sense_menu_stage(
             pinned["lemma_rule"] = "kaikki-redirect-paths/v1"
         adapter.resolver = Resolver(source, registry, context, policy)
         adapter.resolver_surfaces = surfaces
-    menu, report = adapter.build(cards, snapshot_id=snapshot_id)
+    carried_from = (profile["sense_menu"].get("resolver") or {}).get("carry_from_run")
+    if resolver_settings is not None and carried_from:
+        menu, report = _build_and_carry(
+            workspace, adapter, cards, snapshot_id=snapshot_id, language=language, mode=mode,
+            resolved=resolver_settings[0], carry_run=carried_from)
+        resolver_settings[3]["carry_from_run"] = carried_from
+    else:
+        menu, report = adapter.build(cards, snapshot_id=snapshot_id)
     inventory_cards = int(report.get("inventory_cards", 0))
     cards_ready = int(report.get("cards_ready", 0))
     coverage = cards_ready / inventory_cards if inventory_cards else 0.0
@@ -273,6 +323,8 @@ def build_sense_menu_stage(
         "inventory": inventory_content_id,
         "dictionary_snapshot": adapter.snapshot_content_id,
     }
+    if menu.get("carried"):
+        inputs["carried_sense_menu"] = menu["carried"]["source_sense_menu_content_id"]
     implementation_content_id = _implementation_content_id()
     config_content_id = canonical_content_id(config)
     temporary_root = workspace.root / ".fluency" / "temporary"

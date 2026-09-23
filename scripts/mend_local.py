@@ -851,13 +851,20 @@ def step_menus(args: argparse.Namespace) -> int:
         adapter = source_menu_report["source_adapter"]
         profile = _json(source / "profile.json")
         profile["profile_id"] = f"{profile['profile_id']}-mend"
-        profile["sense_menu"]["resolver"] = {"surfaces": surfaces}
+        # Every card the resolver does not touch is carried from the source
+        # run's stage 02, so the ledger's drift since then cannot move it.
+        profile["sense_menu"]["resolver"] = {"surfaces": surfaces, "carry_from_run": source.name}
         if adapter.startswith("spanishdict"):
             snapshot_id = args.snapshot or (_mend_snapshots(ws) or [source_menu_report["snapshot_id"]])[-1]
             snapshot = ws / SD_ROOT / snapshot_id
             resolved, errors = _preflight_spanishdict(snapshot, surfaces)
-            if errors:
+            unfetched = sorted({h for r in resolved.values()
+                                for h in (r.notes or {}).get("headwords_without_entry", [])})
+            if errors or unfetched:
                 print(f"{lang}: resolver preflight failed; no run created:\n  " + "\n  ".join(errors))
+                if unfetched:
+                    print(f"  headwords the snapshot has no entry for: {' '.join(unfetched)}\n"
+                          f"  fetch them with: --step refetch --scope words --words {' '.join(unfetched)}")
                 return 1
         else:
             snapshot_id = source_menu_report["snapshot_id"]
