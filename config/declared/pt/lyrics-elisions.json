@@ -1,0 +1,199 @@
+{
+ "schema": "declared-entries/v1",
+ "language": "pt",
+ "note": "GRAFT: Formulaic spoken and lyrics elisions/contractions in Portuguese.",
+ "entries": [
+  {
+   "entry_id": "pt-elision-pra",
+   "kind": "expansion",
+   "surface": "pra",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "para"
+   },
+   "reason": "Standard colloquial contraction of para.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-elision-pras",
+   "kind": "expansion",
+   "surface": "pras",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "para as"
+   },
+   "reason": "Colloquial contraction of para + as.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-elision-pro",
+   "kind": "expansion",
+   "surface": "pro",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "para o"
+   },
+   "reason": "Colloquial contraction of para + o.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-elision-pros",
+   "kind": "expansion",
+   "surface": "pros",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "para os"
+   },
+   "reason": "Colloquial contraction of para + os.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-elision-to-accent",
+   "kind": "expansion",
+   "surface": "tô",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "estou"
+   },
+   "reason": "Colloquial spoken contraction of estou.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-elision-to",
+   "kind": "expansion",
+   "surface": "to",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "estou"
+   },
+   "reason": "Unaccented spelling of tô (estou).",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-elision-ta-accent",
+   "kind": "expansion",
+   "surface": "tá",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "está"
+   },
+   "reason": "Colloquial spoken contraction of está.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-elision-ta",
+   "kind": "expansion",
+   "surface": "ta",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "está"
+   },
+   "reason": "Unaccented spelling of tá (está).",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-elision-tava",
+   "kind": "expansion",
+   "surface": "tava",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "estava"
+   },
+   "reason": "Colloquial spoken contraction of estava.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-elision-tavamos",
+   "kind": "expansion",
+   "surface": "távamos",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "estávamos"
+   },
+   "reason": "Colloquial spoken contraction of estávamos.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-elision-tavam",
+   "kind": "expansion",
+   "surface": "tavam",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "estavam"
+   },
+   "reason": "Colloquial spoken contraction of estavam.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-elision-ce-accent",
+   "kind": "expansion",
+   "surface": "cê",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "você"
+   },
+   "reason": "Spoken reduction of você.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-elision-ce",
+   "kind": "expansion",
+   "surface": "ce",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "você"
+   },
+   "reason": "Unaccented spelling of cê (você).",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-elision-ces-accent",
+   "kind": "expansion",
+   "surface": "cês",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "vocês"
+   },
+   "reason": "Spoken reduction of vocês.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-elision-ces",
+   "kind": "expansion",
+   "surface": "ces",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "vocês"
+   },
+   "reason": "Unaccented spelling of cês (vocês).",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-elision-pera",
+   "kind": "expansion",
+   "surface": "pera",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "espera"
+   },
+   "reason": "Spoken aphaeresis of espera (pera aí / hold on).",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  }
+ ]
+}

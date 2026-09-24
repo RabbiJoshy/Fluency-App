@@ -1,0 +1,97 @@
+{
+ "schema": "declared-entries/v1",
+ "language": "pt",
+ "note": "GRAFT: Pragmatic fillers, discourse markers, and conversational crutches in Portuguese.",
+ "entries": [
+  {
+   "entry_id": "pt-filler-ne",
+   "kind": "gloss",
+   "surface": "né",
+   "payload": {
+    "class": "filler",
+    "senses": [
+      {
+       "translation": "right?, isn't it?",
+       "definition": "conversational tag particle / crutch contracted from não é",
+       "pos": "interjection"
+      }
+    ]
+   },
+   "reason": "Universal Portuguese discourse particle.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-filler-tipo-assim",
+   "kind": "gloss",
+   "surface": "tipo assim",
+   "payload": {
+    "class": "filler",
+    "senses": [
+      {
+       "translation": "like, sort of like",
+       "definition": "conversational crutch expressing hesitation, approximation, or manner",
+       "pos": "adverb"
+      }
+    ]
+   },
+   "reason": "Common spoken filler locution.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-filler-beleza",
+   "kind": "gloss",
+   "surface": "beleza",
+   "payload": {
+    "class": "filler",
+    "senses": [
+      {
+       "translation": "cool, alright, sounds good",
+       "definition": "interjection indicating agreement, satisfaction, or greeting (Brazil)",
+       "pos": "interjection"
+      }
+    ]
+   },
+   "reason": "Frequent conversational agreement sense distinct from literal beauty.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-filler-valeu",
+   "kind": "gloss",
+   "surface": "valeu",
+   "payload": {
+    "class": "filler",
+    "senses": [
+      {
+       "translation": "thanks, cheers, goodbye",
+       "definition": "colloquial expression of gratitude or casual parting (Brazil)",
+       "pos": "interjection"
+      }
+    ]
+   },
+   "reason": "Frequent informal pragmatic marker.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-filler-cara",
+   "kind": "gloss",
+   "surface": "cara",
+   "payload": {
+    "class": "filler",
+    "senses": [
+      {
+       "translation": "man, dude",
+       "definition": "filler vocative addressed to a person in conversational speech",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "High-frequency vocative filler overlaying literal face.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  }
+ ]
+}

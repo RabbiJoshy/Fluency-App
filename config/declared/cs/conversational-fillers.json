@@ -1,0 +1,115 @@
+{
+ "schema": "declared-entries/v1",
+ "language": "cs",
+ "note": "GRAFT: Pragmatic fillers, hesitation markers, and conversational crutches in Czech.",
+ "entries": [
+  {
+   "entry_id": "cs-filler-jako",
+   "kind": "gloss",
+   "surface": "jako",
+   "payload": {
+    "class": "filler",
+    "senses": [
+      {
+       "translation": "like, sort of",
+       "definition": "conversational crutch used repeatedly in spontaneous Czech speech",
+       "pos": "adverb"
+      }
+    ]
+   },
+   "reason": "Ubiquitous discourse filler overlaying conjunction as/like.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "cs-filler-proste",
+   "kind": "gloss",
+   "surface": "prostě",
+   "payload": {
+    "class": "filler",
+    "senses": [
+      {
+       "translation": "simply, just",
+       "definition": "discourse particle used to summarise, emphasize, or transition",
+       "pos": "adverb"
+      }
+    ]
+   },
+   "reason": "Frequent conversational crutch particle.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "cs-filler-takze",
+   "kind": "gloss",
+   "surface": "takže",
+   "payload": {
+    "class": "filler",
+    "senses": [
+      {
+       "translation": "so, therefore, alright then",
+       "definition": "discourse marker opening a statement or concluding a line of thought",
+       "pos": "conjunction"
+      }
+    ]
+   },
+   "reason": "Discourse marker opening turns in conversation.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "cs-filler-vlastne",
+   "kind": "gloss",
+   "surface": "vlastně",
+   "payload": {
+    "class": "filler",
+    "senses": [
+      {
+       "translation": "actually, in fact",
+       "definition": "filler particle qualifying a previous assertion or adding detail",
+       "pos": "adverb"
+      }
+    ]
+   },
+   "reason": "Common pragmatic qualification filler.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "cs-filler-jakoby",
+   "kind": "gloss",
+   "surface": "jakoby",
+   "payload": {
+    "class": "filler",
+    "senses": [
+      {
+       "translation": "as if, kind of, like",
+       "definition": "hesitation filler expressing vagueness or softening an assertion",
+       "pos": "adverb"
+      }
+    ]
+   },
+   "reason": "Colloquial hesitation filler in modern Czech speech.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "cs-filler-prej",
+   "kind": "gloss",
+   "surface": "prej",
+   "payload": {
+    "class": "filler",
+    "senses": [
+      {
+       "translation": "supposedly, apparently, they say",
+       "definition": "colloquial reportative particle (variant of prý) indicating hearsay",
+       "pos": "adverb"
+      }
+    ]
+   },
+   "reason": "High-frequency spoken reportative particle.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  }
+ ]
+}

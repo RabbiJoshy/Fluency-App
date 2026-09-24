@@ -188,3 +188,31 @@ class CompositeOverlayProvider:
                     seen_analysis_ids.add(analysis.menu_analysis_id)
                     combined.append((analysis, entry, span))
         return combined
+
+
+def declared_gloss_to_overlay(entry: Any) -> SenseOverlayEntry:
+    """Convert a DeclaredEntry of kind 'gloss' into a SenseOverlayEntry for WSD competition."""
+    if getattr(entry, "kind", None) != "gloss":
+        raise ValueError(f"expected gloss entry, got {getattr(entry, 'kind', None)}")
+    translations = tuple(
+        str(s.get("translation", "")).strip()
+        for s in getattr(entry, "senses", [])
+        if str(s.get("translation", "")).strip()
+    )
+    if not translations:
+        raise ValueError(f"{entry.entry_id}: no translations found in gloss entry")
+    cls_tag = getattr(entry, "payload", {}).get("class", "slang")
+    pos_tag = (
+        getattr(entry, "senses", [{}])[0].get("pos")
+        or ("NOUN" if cls_tag in {"slang", "vocabulary"} else "PHRASE")
+    ).upper()
+    return SenseOverlayEntry(
+        entry_id=entry.entry_id,
+        kind=cls_tag,
+        expression=entry.surface,
+        translations=translations,
+        part_of_speech=pos_tag,
+        attach_words=(entry.surface,),
+        domain_tags=tuple(k for k, v in entry.scope.items() if v),
+        metadata={"declared_entry_id": entry.entry_id, "scope": dict(entry.scope)},
+    )

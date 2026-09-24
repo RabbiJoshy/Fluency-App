@@ -1,0 +1,187 @@
+{
+ "schema": "declared-entries/v1",
+ "language": "pt",
+ "note": "GRAFT: Brazilian and urban Portuguese slang expressions.",
+ "entries": [
+  {
+   "entry_id": "pt-slang-mano",
+   "kind": "gloss",
+   "surface": "mano",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "bro, dude, brother",
+       "definition": "informal address for a male friend or acquaintance (Brazil)",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Universal Brazilian urban colloquial address.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-slang-role",
+   "kind": "gloss",
+   "surface": "rolê",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "outing, hanging out, spin, party",
+       "definition": "casual stroll, ride, hangout, or party with friends (Brazil)",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Dominant Brazilian urban youth slang for going out.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-slang-grana",
+   "kind": "gloss",
+   "surface": "grana",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "money, cash, dough",
+       "definition": "colloquial term for currency or wealth (Brazil / Portugal)",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Everyday colloquial noun for money.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-slang-trampo",
+   "kind": "gloss",
+   "surface": "trampo",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "work, job, gig",
+       "definition": "employment, chore, or hard work (Brazil)",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Ubiquitous Brazilian slang noun for job/work.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-slang-brecha",
+   "kind": "gloss",
+   "surface": "brecha",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "opening, chance, slip-up",
+       "definition": "opportunity, loophole, or moment of vulnerability (Brazil)",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Colloquial sense overlaying literal breach.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-slang-parca",
+   "kind": "gloss",
+   "surface": "parça",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "homie, partner, close buddy",
+       "definition": "shortened form of parceiro used as an affectionate address (Brazil)",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Urban Brazilian friendship term.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-slang-moleque",
+   "kind": "gloss",
+   "surface": "moleque",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "kid, rascal, boy",
+       "definition": "youngster, street-smart boy, or playful rogue (Brazil)",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Common Brazilian informal descriptor for young men.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-slang-mina",
+   "kind": "gloss",
+   "surface": "mina",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "girl, chick, girlfriend",
+       "definition": "informal term for a young woman (Brazil)",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Everyday Brazilian slang for a woman/girl.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-slang-vacilao",
+   "kind": "gloss",
+   "surface": "vacilão",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "screw-up, blunderer, disloyal person",
+       "definition": "someone who acts dishonourably or constantly blunders (Brazil)",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Urban Brazilian slang for an unreliable person.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "pt-slang-fita",
+   "kind": "gloss",
+   "surface": "fita",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "deal, scheme, situation",
+       "definition": "matter, scheme, or complex situation (São Paulo / funk slang)",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Urban slang sense overlaying literal tape/ribbon.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  }
+ ]
+}

@@ -1,0 +1,133 @@
+{
+ "schema": "declared-entries/v1",
+ "language": "es",
+ "note": "GRAFT: Cultural entities, places, and brands common in Spanish lyrics and contemporary speech.",
+ "entries": [
+  {
+   "entry_id": "es-entity-santurce",
+   "kind": "entity",
+   "surface": "santurce",
+   "payload": {
+    "class": "entity",
+    "name": "Santurce",
+    "entity_type": "place",
+    "description": "Vibrant arts and cultural barrio in San Juan, Puerto Rico"
+   },
+   "reason": "Prominent cultural and musical birthplace frequently referenced in Puerto Rican music.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-entity-condado",
+   "kind": "entity",
+   "surface": "condado",
+   "payload": {
+    "class": "entity",
+    "name": "Condado",
+    "entity_type": "place",
+    "description": "Upscale oceanfront neighbourhood and district in San Juan, Puerto Rico"
+   },
+   "reason": "Frequent lyrical reference for luxury and nightlife in San Juan.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-entity-bayamon",
+   "kind": "entity",
+   "surface": "bayamón",
+   "payload": {
+    "class": "entity",
+    "name": "Bayamón",
+    "entity_type": "place",
+    "description": "Major municipality and urban centre in northern Puerto Rico"
+   },
+   "reason": "Major municipality and urban music hub in Puerto Rico.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-entity-carolina",
+   "kind": "entity",
+   "surface": "carolina",
+   "payload": {
+    "class": "entity",
+    "name": "Carolina",
+    "entity_type": "place",
+    "description": "Municipality in Puerto Rico, birthplace of modern reggaeton"
+   },
+   "reason": "Puerto Rican municipality heralded as the cradle of reggaeton artists.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-entity-gucci",
+   "kind": "entity",
+   "surface": "gucci",
+   "payload": {
+    "class": "entity",
+    "name": "Gucci",
+    "entity_type": "brand",
+    "description": "Italian luxury fashion and leather goods house"
+   },
+   "reason": "Luxury brand ubiquitously cited in contemporary lyrics.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-entity-prada",
+   "kind": "entity",
+   "surface": "prada",
+   "payload": {
+    "class": "entity",
+    "name": "Prada",
+    "entity_type": "brand",
+    "description": "Italian luxury fashion house founded in Milan"
+   },
+   "reason": "Luxury fashion brand cited in urban lyrics.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-entity-balenciaga",
+   "kind": "entity",
+   "surface": "balenciaga",
+   "payload": {
+    "class": "entity",
+    "name": "Balenciaga",
+    "entity_type": "brand",
+    "description": "Luxury fashion house founded in Spain"
+   },
+   "reason": "High-fashion house prominently featured in reggaeton / Latin trap.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-entity-lamborghini",
+   "kind": "entity",
+   "surface": "lamborghini",
+   "payload": {
+    "class": "entity",
+    "name": "Lamborghini",
+    "entity_type": "brand",
+    "description": "Italian manufacturer of luxury supercars and SUVs"
+   },
+   "reason": "Automotive luxury brand featured in urban lyrics.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-entity-porsche",
+   "kind": "entity",
+   "surface": "porsche",
+   "payload": {
+    "class": "entity",
+    "name": "Porsche",
+    "entity_type": "brand",
+    "description": "German high-performance sports car manufacturer"
+   },
+   "reason": "High-performance sports car brand cited in song lyrics.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  }
+ ]
+}

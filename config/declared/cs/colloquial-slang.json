@@ -1,0 +1,169 @@
+{
+ "schema": "declared-entries/v1",
+ "language": "cs",
+ "note": "GRAFT: Colloquial Czech (Obecná čeština) slang and youth expressions.",
+ "entries": [
+  {
+   "entry_id": "cs-slang-kamo",
+   "kind": "gloss",
+   "surface": "kámo",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "bro, mate, dude",
+       "definition": "informal vocative address derived from kamarád (friend)",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Universal colloquial Czech address for friends.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "cs-slang-prachy",
+   "kind": "gloss",
+   "surface": "prachy",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "money, cash, dough",
+       "definition": "slang plural noun for currency or money",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Dominant colloquial slang word for money in Czech.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "cs-slang-husty",
+   "kind": "gloss",
+   "surface": "hustý",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "cool, sick, intense, crazy",
+       "definition": "evaluative slang adjective meaning impressive, extreme, or cool",
+       "pos": "adjective"
+      }
+    ]
+   },
+   "reason": "Youth slang sense overlaying literal dense/thick.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "cs-slang-fakt",
+   "kind": "gloss",
+   "surface": "fakt",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "really, seriously, truly",
+       "definition": "colloquial adverb or particle used for emphasis, assertion, or disbelief",
+       "pos": "adverb"
+      }
+    ]
+   },
+   "reason": "Everyday conversational particle overlaying literal fact.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "cs-slang-pohoda",
+   "kind": "gloss",
+   "surface": "pohoda",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "chill, easygoing, no problem",
+       "definition": "state of peace or well-being; 'v pohodě' means all good / no worries",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Everyday colloquial concept for relaxed comfort.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "cs-slang-cau",
+   "kind": "gloss",
+   "surface": "čau",
+   "payload": {
+    "class": "interjection",
+    "senses": [
+      {
+       "translation": "hi, bye, ciao",
+       "definition": "informal greeting or parting interjection",
+       "pos": "interjection"
+      }
+    ]
+   },
+   "reason": "Standard informal greeting across the Czech Republic.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "cs-slang-chcipnout",
+   "kind": "gloss",
+   "surface": "chcípnout",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "to kick the bucket, to croak, to die",
+       "definition": "vulgar/crude colloquial verb for dying",
+       "pos": "verb"
+      }
+    ]
+   },
+   "reason": "Common colloquial / expressive verb in speech.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "cs-slang-borec",
+   "kind": "gloss",
+   "surface": "borec",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "dude, champ, tough guy",
+       "definition": "informal praise or label for a capable, tough, or respected guy",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Common colloquial descriptor in spoken Czech.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "cs-slang-makat",
+   "kind": "gloss",
+   "surface": "makat",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "to work hard, to hustle, to slog",
+       "definition": "colloquial verb meaning to labor or work diligently",
+       "pos": "verb"
+      }
+    ]
+   },
+   "reason": "Standard colloquial verb for working.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  }
+ ]
+}

@@ -1,0 +1,322 @@
+{
+ "schema": "declared-entries/v1",
+ "language": "es",
+ "note": "GRAFT: Formulaic lyrics and spoken contractions/elisions for Spanish lyrics mode. Expanded surfaces borrow the target word's headword set.",
+ "entries": [
+  {
+   "entry_id": "es-elision-pa",
+   "kind": "expansion",
+   "surface": "pa'",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "para"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Common Caribbean/urban lyrics contraction of para.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-elision-to",
+   "kind": "expansion",
+   "surface": "to'",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "todo"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Apocope of todo in rapid Caribbean Spanish / reggaeton.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-elision-lead-to",
+   "kind": "expansion",
+   "surface": "'to",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "todo"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Leading apostrophe variant of todo.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-elision-na",
+   "kind": "expansion",
+   "surface": "na'",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "nada"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Elision of nada (de-occlusion of intervocalic -d-).",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-elision-lead-na",
+   "kind": "expansion",
+   "surface": "'na",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "nada"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Leading apostrophe variant of nada.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-elision-lead-ta",
+   "kind": "expansion",
+   "surface": "'tá",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "está"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Aphaeresis of está.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-elision-ta",
+   "kind": "expansion",
+   "surface": "ta'",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "está"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Trailing apostrophe variant of está.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-elision-lead-tas",
+   "kind": "expansion",
+   "surface": "'tás",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "estás"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Aphaeresis of estás.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-elision-tas",
+   "kind": "expansion",
+   "surface": "tas'",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "estás"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Trailing apostrophe variant of estás.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-elision-lead-tan",
+   "kind": "expansion",
+   "surface": "'tan",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "están"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Aphaeresis of están.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-elision-tan",
+   "kind": "expansion",
+   "surface": "tan'",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "están"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Trailing apostrophe variant of están.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-elision-lead-toy",
+   "kind": "expansion",
+   "surface": "'toy",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "estoy"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Aphaeresis of estoy.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-elision-toy",
+   "kind": "expansion",
+   "surface": "toy",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "estoy"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Bare aphaeresis of estoy in lyrics transcripts.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-elision-lead-taba",
+   "kind": "expansion",
+   "surface": "'taba",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "estaba"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Aphaeresis of estaba.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-elision-taba",
+   "kind": "expansion",
+   "surface": "taba",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "estaba"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Bare aphaeresis of estaba.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-elision-tamos",
+   "kind": "expansion",
+   "surface": "tamos",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "estamos"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Aphaeresis of estamos.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-elision-tamo",
+   "kind": "expansion",
+   "surface": "tamo",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "estamos"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Aphaeresis of estamos with dropped plural -s in Caribbean Spanish.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-elision-onde",
+   "kind": "expansion",
+   "surface": "onde",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "donde"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Colloquial aphaeresis of donde (d'onde / onde).",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-elision-e",
+   "kind": "expansion",
+   "surface": "e'",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "de"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Elision of preposition de in rapid Caribbean delivery.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-elision-pal",
+   "kind": "expansion",
+   "surface": "pa'l",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "para el"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Compound contraction of para + el.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-elision-pala",
+   "kind": "expansion",
+   "surface": "pa'la",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "para la"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Compound contraction of para + la.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  }
+ ]
+}

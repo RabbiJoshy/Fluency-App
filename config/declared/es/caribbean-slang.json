@@ -1,0 +1,277 @@
+{
+ "schema": "declared-entries/v1",
+ "language": "es",
+ "note": "GRAFT: Caribbean, Puerto Rican, and urban reggaeton slang expressions and extra senses.",
+ "entries": [
+  {
+   "entry_id": "es-slang-guagua",
+   "kind": "gloss",
+   "surface": "guagua",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "bus, public bus",
+       "definition": "public bus or transit vehicle (Puerto Rico, Caribbean, Canary Islands)",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Dominant Caribbean regional meaning of guagua (distinguished from Andean child/baby).",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-slang-corillo",
+   "kind": "gloss",
+   "surface": "corillo",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "crew, squad, circle of friends",
+       "definition": "tight-knit group of friends or entourage (Puerto Rico)",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Essential Puerto Rican urban and lyrics term.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-slang-vaina",
+   "kind": "gloss",
+   "surface": "vaina",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "thing, stuff, matter",
+       "definition": "versatile placeholder noun for any unspecified object, problem, or situation (Caribbean / Latin America)",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Ubiquitous Caribbean noun replacing sheath/pod.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-slang-acicalao",
+   "kind": "gloss",
+   "surface": "acicalao",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "dressed up, looking sharp, clean",
+       "definition": "well-groomed, dressed in high fashion or fine clothes (Puerto Rico / reggaeton)",
+       "pos": "adjective"
+      }
+    ]
+   },
+   "reason": "Signature reggaeton aesthetic adjective (acicalado -> acicalao).",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-slang-chavo",
+   "kind": "gloss",
+   "surface": "chavo",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "money, cash",
+       "definition": "money, penny; frequently plural 'chavos' (Puerto Rico)",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Core Puerto Rican currency slang distinct from Mexican chavo (kid).",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-slang-bichote",
+   "kind": "gloss",
+   "surface": "bichote",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "kingpin, big shot, boss",
+       "definition": "high-status figure, drug kingpin, or top boss in a neighbourhood (Puerto Rico; from English big shot)",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Central urban reggaeton status noun (source of bichota).",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-slang-pichear",
+   "kind": "gloss",
+   "surface": "pichear",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "to ignore, to blow off, to forget about it",
+       "definition": "to pay no attention to someone or drop an issue (Puerto Rico)",
+       "pos": "verb"
+      }
+    ]
+   },
+   "reason": "High-frequency Puerto Rican verb.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-slang-jangueo",
+   "kind": "gloss",
+   "surface": "jangueo",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "hanging out, partying, nightlife",
+       "definition": "going out with friends for leisure or partying (Puerto Rico; from English hang out)",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Standard Puerto Rican term for social nightlife.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-slang-janguear",
+   "kind": "gloss",
+   "surface": "janguear",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "to hang out, to party",
+       "definition": "to hang out casually with friends (Puerto Rico)",
+       "pos": "verb"
+      }
+    ]
+   },
+   "reason": "Verbal counterpart to jangueo.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-slang-al-garete",
+   "kind": "gloss",
+   "surface": "al garete",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "wild, crazy, out of control",
+       "definition": "adverbial idiom describing something reckless, wild, or chaotic (Puerto Rico)",
+       "pos": "adverb"
+      }
+    ]
+   },
+   "reason": "Essential Puerto Rican colloquial expression.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-slang-chuleria",
+   "kind": "gloss",
+   "surface": "chulería",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "something wonderful, cool thing, charm",
+       "definition": "something attractive, charming, or very neat (Puerto Rico)",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Caribbean affirmative praise noun.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-slang-bellacoso",
+   "kind": "gloss",
+   "surface": "bellacoso",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "horny, lustful, sensual",
+       "definition": "sexually provocative or aroused (Puerto Rico / reggaeton)",
+       "pos": "adjective"
+      }
+    ]
+   },
+   "reason": "Genre-defining reggaeton adjective from bellaco.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-slang-zafacon",
+   "kind": "gloss",
+   "surface": "zafacón",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "trash can, wastebasket",
+       "definition": "refuse container (Puerto Rico, Dominican Republic)",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Standard Caribbean word for bin/trash can.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-slang-roncar",
+   "kind": "gloss",
+   "surface": "roncar",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "to brag, to boast, to talk tough",
+       "definition": "to front, boast, or threaten without backing it up (Puerto Rico / urban)",
+       "pos": "verb"
+      }
+    ]
+   },
+   "reason": "Urban slang sense distinct from literal to snore.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-slang-duro",
+   "kind": "gloss",
+   "surface": "duro",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "badass, great, killer",
+       "definition": "slang descriptor for someone highly talented, tough, or impressive",
+       "pos": "adjective"
+      }
+    ]
+   },
+   "reason": "Urban slang evaluative sense overlaying literal hard/tough.",
+   "author": "claude (GRAFT)",
+   "created_at": "2026-09-24"
+  }
+ ]
+}
