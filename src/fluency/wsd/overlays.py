@@ -20,6 +20,7 @@ identities or deleting word-leaf evidence.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from pathlib import Path
 import re
 from typing import Any, Mapping, Protocol, Sequence, runtime_checkable
 
@@ -206,13 +207,47 @@ def declared_gloss_to_overlay(entry: Any) -> SenseOverlayEntry:
         getattr(entry, "senses", [{}])[0].get("pos")
         or ("NOUN" if cls_tag in {"slang", "vocabulary"} else "PHRASE")
     ).upper()
+    attach = tuple(
+        getattr(entry, "payload", {}).get("attach_words")
+        or ([entry.surface] + ([w for w in entry.surface.split() if len(w) > 2] if " " in entry.surface else []))
+    )
     return SenseOverlayEntry(
         entry_id=entry.entry_id,
         kind=cls_tag,
         expression=entry.surface,
         translations=translations,
         part_of_speech=pos_tag,
-        attach_words=(entry.surface,),
+        attach_words=attach,
         domain_tags=tuple(k for k, v in entry.scope.items() if v),
         metadata={"declared_entry_id": entry.entry_id, "scope": dict(entry.scope)},
     )
+
+
+def build_lyrics_overlay_provider(
+    repository_root: Path,
+    language: str,
+    *,
+    workspace: Path | None = None,
+    artist: str | None = None,
+    extra_entries: Sequence[SenseOverlayEntry] = (),
+) -> CompositeOverlayProvider:
+    """Build a CompositeOverlayProvider from declared entries across language and artist layers."""
+    from fluency.surfaces.stores import stack
+
+    declared_registry = stack(
+        Path(repository_root),
+        language,
+        workspace=Path(workspace) if workspace else None,
+        artist=artist,
+    )
+    overlay_entries: list[SenseOverlayEntry] = list(extra_entries)
+    for entry in declared_registry.entries:
+        if getattr(entry, "kind", None) == "gloss":
+            try:
+                overlay_entries.append(declared_gloss_to_overlay(entry))
+            except ValueError:
+                continue
+
+    overlay_source = InMemoryOverlayRegistry(overlay_entries)
+    return CompositeOverlayProvider(sources=[overlay_source])
+

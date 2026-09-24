@@ -63,18 +63,35 @@ def _validated_multiword_fields(
                 item
                 for item in candidates
                 if item.get("menu_analysis_id") == menu_analysis_id
-                and item.get("expression_id") == selected_sense_id
+                and (
+                    item.get("expression_id") == selected_sense_id
+                    or selected_sense_id.startswith(f"{item.get('expression_id')}#")
+                )
             ),
             None,
         )
         expression = None if declared_by_id is None else declared_by_id.get("expression")
     if not isinstance(expression, str) or not expression:
         return None
-    expected = build_analysis_id(
-        card_id=assignment.card_id,
-        source_adapter=MULTIWORD_SOURCE_ADAPTER,
-        source_analysis_key=expression,
+    is_overlay = (
+        declared_by_id is not None and (
+            declared_by_id.get("kind") is not None
+            or str(declared_by_id.get("menu_analysis_id", "")).startswith("overlay")
+        )
     )
+    if is_overlay:
+        adapter = f"overlay:{declared_by_id.get('kind', 'slang')}/v1"
+        expected = build_analysis_id(
+            card_id=assignment.card_id,
+            source_adapter=adapter,
+            source_analysis_key=expression.casefold(),
+        )
+    else:
+        expected = build_analysis_id(
+            card_id=assignment.card_id,
+            source_adapter=MULTIWORD_SOURCE_ADAPTER,
+            source_analysis_key=expression,
+        )
     if menu_analysis_id != expected:
         raise WSDAssignmentImportError(
             f"multiword analysis ID does not recompute from its expression: {pair}"
@@ -94,7 +111,10 @@ def _validated_multiword_fields(
     # The leaf must be the inventory entry, not merely something named after it:
     # the selected sense ID has to be the entry ID the candidate declared, and a
     # renderable translation must be present or the card cannot show it.
-    if declared.get("expression_id") != selected_sense_id:
+    if (
+        declared.get("expression_id") != selected_sense_id
+        and not selected_sense_id.startswith(f"{declared.get('expression_id')}#")
+    ):
         raise WSDAssignmentImportError(
             f"multiword sense ID does not match its inventory entry: {pair}"
         )
@@ -102,19 +122,20 @@ def _validated_multiword_fields(
         raise WSDAssignmentImportError(
             f"multiword selection carries no renderable translation: {pair}"
         )
-    if not str(declared.get("inventory_content_id") or "").startswith("sha256:"):
+    if not is_overlay and not str(declared.get("inventory_content_id") or "").startswith("sha256:"):
         raise WSDAssignmentImportError(
             f"multiword selection does not name a pinned inventory: {pair}"
         )
+    expected_pos = declared.get("part_of_speech", "PHRASE")
     if (
         selected_tuple is None
-        or selected_tuple.headword != expression
-        or selected_tuple.part_of_speech != "PHRASE"
+        or selected_tuple.headword.casefold() != expression.casefold()
+        or (selected_tuple.part_of_speech != expected_pos and selected_tuple.part_of_speech != "PHRASE")
     ):
         raise WSDAssignmentImportError(
             f"multiword tuple does not match its expression: {pair}"
         )
-    return (expression, "PHRASE", {selected_sense_id})
+    return (expression, selected_tuple.part_of_speech, {selected_sense_id})
 
 
 def _validated_multiword_analysis(assignment: WSDAssignment, pair: Any):

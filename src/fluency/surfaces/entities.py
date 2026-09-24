@@ -48,7 +48,8 @@ _TYPE_PATTERNS: tuple[tuple[re.Pattern, str], ...] = (
     (
         re.compile(
             r"\b(fabricante|marca|automóviles|empresa|compañía|corporación|automóvil|"
-            r"automaker|brand|company|corporation|car model|luxury)\b",
+            r"alta costura|casa de moda|diseñador|calzado|zapatillas|perfume|vestimenta|moda|"
+            r"automaker|brand|company|corporation|car model|luxury|fashion|clothing|footwear)\b",
             re.IGNORECASE,
         ),
         "brand",
@@ -82,10 +83,16 @@ _TYPE_PATTERNS: tuple[tuple[re.Pattern, str], ...] = (
 
 def infer_entity_type(description: str, extract: str = "") -> str:
     """Infer the canonical entity_type from Wikipedia description or extract."""
-    text = f"{description} {extract}"
-    for pattern, entity_type in _TYPE_PATTERNS:
-        if pattern.search(text):
-            return entity_type
+    # Check the high-signal description first
+    if description:
+        for pattern, entity_type in _TYPE_PATTERNS:
+            if pattern.search(description):
+                return entity_type
+    # Fall back to inspecting the first paragraph extract
+    if extract:
+        for pattern, entity_type in _TYPE_PATTERNS:
+            if pattern.search(extract):
+                return entity_type
     return "other"
 
 
@@ -203,10 +210,10 @@ class WikipediaEntityResolver:
     def _fetch(self, query: str, language: str) -> WikipediaEntity | None:
         headers = {"User-Agent": self.user_agent}
 
-        # Step 1: Search for the closest page title
+        # Step 1: Search for candidate page titles (up to 5 to handle disambiguation)
         search_url = (
             f"https://{language}.wikipedia.org/w/api.php?action=query&list=search"
-            f"&srsearch={urllib.parse.quote(query)}&srlimit=1&format=json"
+            f"&srsearch={urllib.parse.quote(query)}&srlimit=5&format=json"
         )
         try:
             req = urllib.request.Request(search_url, headers=headers)
@@ -215,35 +222,42 @@ class WikipediaEntityResolver:
             results = data.get("query", {}).get("search", [])
             if not results:
                 return None
-            title = str(results[0].get("title", "")).strip()
-            if not title:
+            candidate_titles = [
+                str(r.get("title", "")).strip()
+                for r in results
+                if str(r.get("title", "")).strip()
+            ]
+            if not candidate_titles:
                 return None
         except Exception:
             return None
 
-        # Step 2: Fetch the page summary
-        summary_url = f"https://{language}.wikipedia.org/api/rest_v1/page/summary/{urllib.parse.quote(title)}"
-        try:
-            req = urllib.request.Request(summary_url, headers=headers)
-            with urllib.request.urlopen(req, timeout=self.timeout) as resp:
-                sum_data = json.loads(resp.read().decode("utf-8"))
+        # Step 2: Fetch page summaries until a non-disambiguation entry is found
+        for title in candidate_titles:
+            summary_url = f"https://{language}.wikipedia.org/api/rest_v1/page/summary/{urllib.parse.quote(title)}"
+            try:
+                req = urllib.request.Request(summary_url, headers=headers)
+                with urllib.request.urlopen(req, timeout=self.timeout) as resp:
+                    sum_data = json.loads(resp.read().decode("utf-8"))
 
-            if sum_data.get("type") == "disambiguation":
-                return None
+                if sum_data.get("type") == "disambiguation":
+                    continue
 
-            desc = str(sum_data.get("description") or "").strip()
-            extract = str(sum_data.get("extract") or "").strip()
-            if not desc and not extract:
-                return None
+                desc = str(sum_data.get("description") or "").strip()
+                extract = str(sum_data.get("extract") or "").strip()
+                if not desc and not extract:
+                    continue
 
-            entity_type = infer_entity_type(desc, extract)
-            return WikipediaEntity(
-                query=query,
-                canonical_title=title,
-                description=desc,
-                extract=extract,
-                entity_type=entity_type,
-                language=language,
-            )
-        except Exception:
-            return None
+                entity_type = infer_entity_type(desc, extract)
+                return WikipediaEntity(
+                    query=query,
+                    canonical_title=title,
+                    description=desc,
+                    extract=extract,
+                    entity_type=entity_type,
+                    language=language,
+                )
+            except Exception:
+                continue
+
+        return None

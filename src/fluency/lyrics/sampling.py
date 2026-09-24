@@ -13,8 +13,8 @@ from typing import Any, Mapping, Sequence
 
 from fluency.harvest.matching import example_identity
 
-DEFAULT_MIN_TOKEN_LENGTH = 4
-DEFAULT_MAX_TOKEN_LENGTH = 25
+DEFAULT_MIN_TOKEN_LENGTH = 5
+DEFAULT_MAX_TOKEN_LENGTH = 18
 MIN_ALIGNMENT_RATIO = 0.40
 MAX_ALIGNMENT_RATIO = 2.50
 
@@ -27,13 +27,9 @@ class LyricsSamplingConfig:
     tier1_floor: int = 10
     tier1_multiplier: float = 3.0
 
-    tier2_rank_ceiling: int = 3000
+    tier2_rank_ceiling: int = 5000
     tier2_floor: int = 8
-    tier2_multiplier: float = 2.5
-
-    tier3_rank_ceiling: int = 6000
-    tier3_floor: int = 5
-    tier3_multiplier: float = 2.0
+    tier2_multiplier: float = 2.0
 
 
 DEFAULT_SAMPLING_CONFIG = LyricsSamplingConfig()
@@ -47,10 +43,9 @@ def calculate_lyrics_wsd_budget(
 ) -> int:
     """Calculate the exact number of occurrences of a card that should reach WSD.
 
-    - Rank 1–1,000: Hard floor of 10 examples (even monosemous), scaling by 3.0x per sense.
-    - Rank 1,001–3,000: Floor of 8 examples, scaling by 2.5x per sense.
-    - Rank 3,001–6,000: Floor of 5 examples, scaling by 2.0x per sense.
-    - Rank 6,001+: 100% of available supply (rare vocabulary / tail slang).
+    - Top Tier (Rank 1–1,000): Hard floor of 10 lines (even for monosemous words), scaling up to 24+ for polysemous words.
+    - Mid Tier (Rank 1,001–5,000): Floor of 8 lines.
+    - Tail/Slang (Rank 5,001+): 100% of available lines.
     """
     if available_lines <= 0:
         return 0
@@ -60,10 +55,8 @@ def calculate_lyrics_wsd_budget(
         budget = max(config.tier1_floor, int(config.tier1_multiplier * senses + 0.5))
     elif rank <= config.tier2_rank_ceiling:
         budget = max(config.tier2_floor, int(config.tier2_multiplier * senses + 0.5))
-    elif rank <= config.tier3_rank_ceiling:
-        budget = max(config.tier3_floor, int(config.tier3_multiplier * senses + 0.5))
     else:
-        # Rare vocabulary / slang: take all available
+        # Tail / slang: 100% of available supply
         return available_lines
 
     return min(available_lines, budget)

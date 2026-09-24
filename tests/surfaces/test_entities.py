@@ -23,6 +23,8 @@ class TestEntityInference(unittest.TestCase):
     def test_infer_brand(self):
         self.assertEqual(infer_entity_type("fabricante italiano de automóviles"), "brand")
         self.assertEqual(infer_entity_type("marca de ropa de lujo"), "brand")
+        self.assertEqual(infer_entity_type("casa alta costura francesa", "Balenciaga es una casa de moda"), "brand")
+        self.assertEqual(infer_entity_type("marca de zapatillas deportivas"), "brand")
 
     def test_infer_work(self):
         self.assertEqual(infer_entity_type("álbum de estudio de Bad Bunny"), "work")
@@ -86,6 +88,31 @@ class TestWikipediaResolverMocked(unittest.TestCase):
         resolver = WikipediaEntityResolver()
         result = resolver.resolve("asdkfjhasdf98234", language="es")
         self.assertIsNone(result)
+
+    @patch("urllib.request.urlopen")
+    def test_resolver_skips_disambiguation_to_pick_entity(self, mock_urlopen):
+        search_resp = MagicMock()
+        search_resp.read.return_value = b'{"query": {"search": [{"title": "Santurce"}, {"title": "Santurce (Puerto Rico)"}]}}'
+        search_resp.__enter__.return_value = search_resp
+
+        # First summary is disambiguation page
+        sum_disambig = MagicMock()
+        sum_disambig.read.return_value = b'{"type": "disambiguation", "description": "p\xc3\xa1gina de desambiguaci\xc3\xb3n"}'
+        sum_disambig.__enter__.return_value = sum_disambig
+
+        # Second summary is the real place
+        sum_place = MagicMock()
+        sum_place.read.return_value = b'{"type": "standard", "title": "Santurce (Puerto Rico)", "description": "barrio en San Juan, Puerto Rico", "extract": "Santurce es un barrio..."}'
+        sum_place.__enter__.return_value = sum_place
+
+        mock_urlopen.side_effect = [search_resp, sum_disambig, sum_place]
+
+        resolver = WikipediaEntityResolver()
+        result = resolver.resolve("Santurce", language="es")
+
+        self.assertIsNotNone(result)
+        self.assertEqual(result.canonical_title, "Santurce (Puerto Rico)")
+        self.assertEqual(result.entity_type, "place")
 
 
 if __name__ == "__main__":

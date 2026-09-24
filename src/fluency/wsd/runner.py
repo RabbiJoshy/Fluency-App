@@ -345,6 +345,7 @@ class ClosedMenuWSDRunner:
                     "menu_analysis_id": analysis.menu_analysis_id,
                     "translation": overlay_entry.translations[0] if overlay_entry.translations else "",
                     "domain_tags": list(overlay_entry.domain_tags),
+                    "part_of_speech": overlay_entry.part_of_speech,
                 })
 
         score_kwargs: dict[str, Any] = {}

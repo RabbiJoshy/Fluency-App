@@ -28,9 +28,9 @@ class TestLyricsSamplingBudget(unittest.TestCase):
         budget = calculate_lyrics_wsd_budget(rank=2500, sense_count=2, available_lines=30)
         self.assertEqual(budget, 8)
 
-        # Rank 2,500, 5 senses, 30 lines available -> 13 (2.5 * 5 = 12.5 -> 13)
+        # Rank 2,500, 5 senses, 30 lines available -> 10 (2.0 * 5 = 10)
         budget = calculate_lyrics_wsd_budget(rank=2500, sense_count=5, available_lines=30)
-        self.assertEqual(budget, 13)
+        self.assertEqual(budget, 10)
 
     def test_rare_tail_accepts_100_percent_of_supply(self):
         # Rank 8,000 (rare slang), 3 lines available -> accepts all 3

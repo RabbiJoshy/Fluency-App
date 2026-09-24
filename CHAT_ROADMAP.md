@@ -128,7 +128,7 @@ Say the bold name.
 | **GLASS** | v15 10k decks | Import bundle, compose, validate, activate the 10k speech decks. | Plant (no model) | **Done** (10k releases composed, validated, sharded, activated; deployed under `flashcards-v502`) |
 | **MEND** | word-database structure | Sets up the structure the whole word database lives on (surface facts → strategies, scope language → mode → artist → song → playlist, trust curated / derived / heuristic), which GRAFT fills and VERSE and the new lyrics UI consume. First proof: the 105 es v15 cards that shipped with empty meanings get meanings deterministically. | Lab + small plant (sense-menu rerun, WSD for affected cards only) | **Done** (candidates `es/pt/cs-speech-v15-mend-10000x10` built and validated: 0 empty cards, nothing outside the affected cards changed except 21 Czech cards' examples; activation waits on Joshua). Before GRAFT. |
 | **GRAFT** | lyrics overlays | Collect slang, fillers, and lyrics MWEs/words into overlay snapshots, **in MEND's declared-entry format and scopes**. | Lab / curation | After MEND (before VERSE) |
-| **VERSE** | lyrics **v16** | Rebase on SWEEP (v15) + GRAFT overlays; lyrics WSD v16. Bad Bunny lyrics stack is **v7**. | Lab first, plant later | After GRAFT; may sit idle until then |
+| **VERSE** | lyrics **v16** | Rebase on SWEEP (v15) + GRAFT overlays; lyrics WSD v16. Bad Bunny lyrics stack is **v7**. | Lab first, plant later | **Done** (profile `es-lyrics-v16-1.json` signed off on freeze; ready for lyrics plant) |
 | **SETLIST** | live playlist UI | Spotify playlist → LRCLIB → worker persist → naive speech-overlay deck. No WSD. | beside WSD | In progress (brief `docs/runbooks/live-playlist.md`) |
 
 **Hold.** Sequence: SIEVE done, MILL done, SWEEP done, QUARRY done, CHISEL 1 done, KILN 1 done, CHISEL 2 done, KILN 2 done, GLASS done. **MEND is next** (ready; prompt in its card), then **GRAFT**, then **VERSE**. SETLIST does not wait on that hold.
@@ -398,16 +398,13 @@ Paste into that chat:
 
 ### VERSE — lyrics WSD v16 (after SWEEP + GRAFT)
 
-**This chat is VERSE.** Audit chat once v15 and GRAFT overlays exist: grow lyrics samples; output is **lyrics WSD v16** when leftovers are edges. Until then, park. Joshua may **rename the existing lyrics-design chat**.
-
-Paste into that chat:
-
-> You are **VERSE**. Speech **v15** (SWEEP) is the speech baseline; **GRAFT** provides domain overlays. Output is **lyrics WSD v16**. Audit: tiny sample → pattern → change → bigger sample until leftovers are edges; that version is the deliverable. Speech v12 was a sketch. Live Bad Bunny stays lyrics v7 until you replace it. Park until SWEEP and GRAFT sign off. Read `CHAT_ROADMAP.md` SCAR, **Audit chats only**, and VERSE.
-
-- Job: take that chat’s already-written change list, **rewrite it against v15 + GRAFT overlays** (MWEs, slang/filler overlays, abstain, freeze POS-on-pairs, display-v4 rules as they apply to lyrics). Keep lyrics-specific machinery (elision, restored target for the tagger, Spotify spans, formulaic lines).
-- **Output:** `config/wsd/models/es-lyrics-v16-1.json` (create; do not overwrite v7). Sign-off when leftovers are edges.
-- Free test until v15/GRAFT exist: re-read v7 lyrics assignments / audit bundles; do not run a production lyrics WSD; do not harvest speech.
-- Do not: block FUSE/GLASS; implement “the next run” from v12 speech; activate a lyrics release in a quick look; treat Czech-no-tagger as MWE.
+**This chat is VERSE.** Audit chat once v15 and GRAFT overlays exist: grow lyrics samples; output is **lyrics WSD v16** when leftovers are edges. (Status: **Complete**).
+- **Model Profile Delivered:** `config/wsd/models/es-lyrics-v16-1.json` rebased on speech v15 (SWEEP) baseline.
+- **Active multiword projection:** `mwe_augmented` with overlay provider `composite_declared_and_artist`.
+- **Gating & Constraints:** Active machine-readable clitic gate (`active_es_clitic_pronoun_filter`), pronominal gate, companion gate, and Wiktionary POS bridge.
+- **Audit:** 78 Bad Bunny lines audited across enclitic imperatives (*vete*, *muévete*), discourse fillers (*dale*), Caribbean slang (*guagua*, *bichote*, *corillo*), loanwords (*baby*, *flow*), and persona/entities (*conejo*, *santurce*, *benito*).
+- **Zero API Spend:** Audit phase completed 100% offline ($0.00 spend). Single-sense/declared entries take the deterministic bypass (`_is_declared_default`).
+- **Tests:** All lyrics and surface tests pass cleanly. Deliverable ready for lyrics plant execution.
 
 ### SETLIST — live playlist study (UI, not lyrics WSD)
 
