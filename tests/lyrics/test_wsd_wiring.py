@@ -23,7 +23,8 @@ from fluency.wsd.runner import (
     WSDExecutionProfile,
     WSDRequest,
 )
-from fluency.wsd.splice import declared_row, _is_declared_default
+from fluency.wsd.splice import declared_row
+from fluency.wsd.importer import _is_declared_default
 
 
 class DummySpanishAdapter(LanguageAdapter):
