@@ -251,7 +251,7 @@
    "kind": "gloss",
    "surface": "ctihodnosti",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "Your Honour",
@@ -268,7 +268,7 @@
    "kind": "gloss",
    "surface": "otisky",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "prints, fingerprints",
@@ -285,7 +285,7 @@
    "kind": "gloss",
    "surface": "seržante",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "sergeant!",
@@ -337,7 +337,7 @@
    "kind": "gloss",
    "surface": "výsosti",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "Your Highness",
@@ -545,7 +545,7 @@
    "kind": "gloss",
    "surface": "povedlo",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(it) worked out, succeeded",
@@ -598,7 +598,7 @@
    "kind": "gloss",
    "surface": "zmlkni",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "shut up!",
@@ -821,7 +821,7 @@
    "kind": "gloss",
    "surface": "uhni",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "move (out of the way)!",
@@ -1009,7 +1009,7 @@
    "kind": "gloss",
    "surface": "přepínám",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "over (radio); I switch",
@@ -1179,7 +1179,7 @@
    "kind": "gloss",
    "surface": "odveďte",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "take (him/her) away!",
@@ -1333,7 +1333,7 @@
    "kind": "gloss",
    "surface": "strážníku",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "officer!",
@@ -1539,7 +1539,7 @@
    "kind": "gloss",
    "surface": "nastal",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(it) came, set in",
@@ -1590,7 +1590,7 @@
    "kind": "gloss",
    "surface": "uhněte",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "move (out of the way)!",
@@ -1658,7 +1658,7 @@
    "kind": "gloss",
    "surface": "opovažuješ",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(how) dare you",
@@ -1709,7 +1709,7 @@
    "kind": "gloss",
    "surface": "centů",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "cents",
@@ -1915,7 +1915,7 @@
    "kind": "gloss",
    "surface": "odvedl",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(he) took away, led away",
@@ -2018,7 +2018,7 @@
    "kind": "gloss",
    "surface": "zaslechl",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(he) overheard",
@@ -2120,7 +2120,7 @@
    "kind": "gloss",
    "surface": "lorde",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "lord!",
@@ -2274,7 +2274,7 @@
    "kind": "gloss",
    "surface": "nastane",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(it) will come, will set in",
@@ -2326,7 +2326,7 @@
    "kind": "gloss",
    "surface": "historku",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "story, anecdote",
@@ -2532,7 +2532,7 @@
    "kind": "gloss",
    "surface": "linii",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "line",
@@ -2566,7 +2566,7 @@
    "kind": "gloss",
    "surface": "historky",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "stories, anecdotes",
@@ -2600,7 +2600,7 @@
    "kind": "gloss",
    "surface": "překvapuje",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(it) surprises",
@@ -2651,7 +2651,7 @@
    "kind": "gloss",
    "surface": "vyzvednu",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "I'll pick up",
@@ -2991,7 +2991,7 @@
    "kind": "gloss",
    "surface": "odvedli",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(they) took away",
@@ -3059,7 +3059,7 @@
    "kind": "gloss",
    "surface": "rozmyslel",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(he) changed his mind, thought it over",
@@ -3076,7 +3076,7 @@
    "kind": "gloss",
    "surface": "parťáka",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "partner, buddy",
@@ -3280,7 +3280,7 @@
    "kind": "gloss",
    "surface": "tohodle",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "this",
@@ -3331,7 +3331,7 @@
    "kind": "gloss",
    "surface": "posluž",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "help yourself!",
@@ -3399,7 +3399,7 @@
    "kind": "gloss",
    "surface": "zahrajeme",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "we'll play",
@@ -3433,7 +3433,7 @@
    "kind": "gloss",
    "surface": "nepřekvapuje",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(it) doesn't surprise",
@@ -3450,7 +3450,7 @@
    "kind": "gloss",
    "surface": "incidentu",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "incident",
@@ -3467,7 +3467,7 @@
    "kind": "gloss",
    "surface": "nakopu",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "I'll kick",
@@ -3570,7 +3570,7 @@
    "kind": "gloss",
    "surface": "vyzvedl",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(he) picked up",
@@ -3723,7 +3723,7 @@
    "kind": "gloss",
    "surface": "lorda",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "lord",
@@ -3774,7 +3774,7 @@
    "kind": "gloss",
    "surface": "federálové",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "the feds",
@@ -3791,7 +3791,7 @@
    "kind": "gloss",
    "surface": "pohřešuje",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(he/she) is missing, misses",
@@ -3910,7 +3910,7 @@
    "kind": "gloss",
    "surface": "vyvádíš",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "you're acting up, making a scene",
@@ -3961,7 +3961,7 @@
    "kind": "gloss",
    "surface": "nadešel",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(it) has come",
@@ -4030,7 +4030,7 @@
    "kind": "gloss",
    "surface": "odveď",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "take (him/her) away!",
@@ -4098,7 +4098,7 @@
    "kind": "gloss",
    "surface": "přivítejte",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "welcome!",
@@ -4183,7 +4183,7 @@
    "kind": "gloss",
    "surface": "vymyslíme",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "we'll think of, we'll figure out",
@@ -4252,7 +4252,7 @@
    "kind": "gloss",
    "surface": "monstra",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "monsters",
@@ -4286,7 +4286,7 @@
    "kind": "gloss",
    "surface": "kliniku",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "clinic",
@@ -4406,7 +4406,7 @@
    "kind": "gloss",
    "surface": "klanu",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "clan",
@@ -4423,7 +4423,7 @@
    "kind": "gloss",
    "surface": "neopovažuj",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "don't you dare",
@@ -4508,7 +4508,7 @@
    "kind": "gloss",
    "surface": "nepovedlo",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(it) didn't work out",
@@ -4559,7 +4559,7 @@
    "kind": "gloss",
    "surface": "vyrážíme",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "we're setting off, let's go",
@@ -4696,7 +4696,7 @@
    "kind": "gloss",
    "surface": "reverende",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "Reverend!",
@@ -4748,7 +4748,7 @@
    "kind": "gloss",
    "surface": "postřelili",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(they) shot, wounded",
@@ -4782,7 +4782,7 @@
    "kind": "gloss",
    "surface": "klinice",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "clinic",
@@ -4799,7 +4799,7 @@
    "kind": "gloss",
    "surface": "návladního",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "prosecutor, district attorney",
@@ -4816,7 +4816,7 @@
    "kind": "gloss",
    "surface": "zaslechla",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(she) overheard",
@@ -4850,7 +4850,7 @@
    "kind": "gloss",
    "surface": "ujde",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "it'll do, it's passable",
@@ -4867,7 +4867,7 @@
    "kind": "gloss",
    "surface": "naboural",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(he) crashed; hacked into",
@@ -4953,7 +4953,7 @@
    "kind": "gloss",
    "surface": "prověřil",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(he) checked, vetted",
@@ -5106,7 +5106,7 @@
    "kind": "gloss",
    "surface": "pomyslím",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "I think of, when I think",
@@ -5174,7 +5174,7 @@
    "kind": "gloss",
    "surface": "seržanta",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "sergeant",
@@ -5191,7 +5191,7 @@
    "kind": "gloss",
    "surface": "parťáku",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "partner!, buddy!",
@@ -5276,7 +5276,7 @@
    "kind": "gloss",
    "surface": "vymyslím",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "I'll think of, I'll figure out",
@@ -5396,7 +5396,7 @@
    "kind": "gloss",
    "surface": "komatu",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "coma",
@@ -5464,7 +5464,7 @@
    "kind": "gloss",
    "surface": "vděční",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "grateful",
@@ -5481,7 +5481,7 @@
    "kind": "gloss",
    "surface": "zbavím",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "I'll get rid of",
@@ -5498,7 +5498,7 @@
    "kind": "gloss",
    "surface": "nehrozí",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "there's no danger (of)",
@@ -5515,7 +5515,7 @@
    "kind": "gloss",
    "surface": "policajta",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "cop",
@@ -5532,7 +5532,7 @@
    "kind": "gloss",
    "surface": "shodli",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(they) agreed",
@@ -5549,7 +5549,7 @@
    "kind": "gloss",
    "surface": "temnou",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "dark",
@@ -5566,7 +5566,7 @@
    "kind": "gloss",
    "surface": "jistotou",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "certainty",
@@ -5617,7 +5617,7 @@
    "kind": "gloss",
    "surface": "hodláte",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "you intend",
@@ -5634,7 +5634,7 @@
    "kind": "gloss",
    "surface": "nevezme",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(he) won't take",
@@ -5651,7 +5651,7 @@
    "kind": "gloss",
    "surface": "nevypadáte",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "you don't look (like)",
@@ -5668,7 +5668,7 @@
    "kind": "gloss",
    "surface": "dozvíme",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "we'll find out",
@@ -5685,7 +5685,7 @@
    "kind": "gloss",
    "surface": "neposlal",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(he) didn't send",
@@ -5702,7 +5702,7 @@
    "kind": "gloss",
    "surface": "kontroloval",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(he) checked",
@@ -5736,7 +5736,7 @@
    "kind": "gloss",
    "surface": "ukradené",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "stolen",
@@ -5753,7 +5753,7 @@
    "kind": "gloss",
    "surface": "užíváš",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "you enjoy; you use, take",
@@ -5770,7 +5770,7 @@
    "kind": "gloss",
    "surface": "vizitku",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "business card",
@@ -5787,7 +5787,7 @@
    "kind": "gloss",
    "surface": "alianci",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "alliance",
@@ -5821,7 +5821,7 @@
    "kind": "gloss",
    "surface": "nezasloužím",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "I don't deserve",
@@ -5838,7 +5838,7 @@
    "kind": "gloss",
    "surface": "pojistky",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "fuses; insurance policies",
@@ -5872,7 +5872,7 @@
    "kind": "gloss",
    "surface": "výrobu",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "production, manufacture",
@@ -5889,7 +5889,7 @@
    "kind": "gloss",
    "surface": "hrobě",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "grave",
@@ -5906,7 +5906,7 @@
    "kind": "gloss",
    "surface": "temnotě",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "darkness",
@@ -5923,7 +5923,7 @@
    "kind": "gloss",
    "surface": "zařídila",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(she) arranged, organised",
@@ -5940,7 +5940,7 @@
    "kind": "gloss",
    "surface": "e-maily",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "e-mails",
@@ -5974,7 +5974,7 @@
    "kind": "gloss",
    "surface": "nesnažil",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(he) didn't try",
@@ -5991,7 +5991,7 @@
    "kind": "gloss",
    "surface": "omdlel",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(he) fainted",
@@ -6008,7 +6008,7 @@
    "kind": "gloss",
    "surface": "sníš",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "you'll eat (up); you dream",
@@ -6042,7 +6042,7 @@
    "kind": "gloss",
    "surface": "umělce",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "artist",
@@ -6059,7 +6059,7 @@
    "kind": "gloss",
    "surface": "zachráníme",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "we'll save",
@@ -6076,7 +6076,7 @@
    "kind": "gloss",
    "surface": "kradl",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(he) stole",
@@ -6093,7 +6093,7 @@
    "kind": "gloss",
    "surface": "nuly",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "zeros",
@@ -6110,7 +6110,7 @@
    "kind": "gloss",
    "surface": "vojíne",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "private!, soldier!",
@@ -6127,7 +6127,7 @@
    "kind": "gloss",
    "surface": "všimnul",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(he) noticed",
@@ -6144,7 +6144,7 @@
    "kind": "gloss",
    "surface": "admirále",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "admiral!",
@@ -6161,7 +6161,7 @@
    "kind": "gloss",
    "surface": "atmosféru",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "atmosphere",
@@ -6178,7 +6178,7 @@
    "kind": "gloss",
    "surface": "chaosu",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "chaos",
@@ -6195,7 +6195,7 @@
    "kind": "gloss",
    "surface": "minutách",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "minutes",
@@ -6212,7 +6212,7 @@
    "kind": "gloss",
    "surface": "odpověděla",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(she) answered",
@@ -6229,7 +6229,7 @@
    "kind": "gloss",
    "surface": "dohodneme",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "we'll agree, we'll make a deal",
@@ -6246,7 +6246,7 @@
    "kind": "gloss",
    "surface": "doprovodím",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "I'll accompany, I'll see you out",
@@ -6263,7 +6263,7 @@
    "kind": "gloss",
    "surface": "hodíme",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "we'll throw",
@@ -6297,7 +6297,7 @@
    "kind": "gloss",
    "surface": "používáte",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "you use",
@@ -6331,7 +6331,7 @@
    "kind": "gloss",
    "surface": "posílal",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(he) was sending",
@@ -6348,7 +6348,7 @@
    "kind": "gloss",
    "surface": "brečel",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(he) cried",
@@ -6365,7 +6365,7 @@
    "kind": "gloss",
    "surface": "sportu",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "sport",
@@ -6382,7 +6382,7 @@
    "kind": "gloss",
    "surface": "zapsal",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(he) wrote down, registered",
@@ -6399,7 +6399,7 @@
    "kind": "gloss",
    "surface": "míříme",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "we're heading",
@@ -6416,7 +6416,7 @@
    "kind": "gloss",
    "surface": "pohodlné",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "comfortable",
@@ -6450,7 +6450,7 @@
    "kind": "gloss",
    "surface": "vysvětlovalo",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "(it) would explain, was explaining",
@@ -6467,7 +6467,7 @@
    "kind": "gloss",
    "surface": "činnosti",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "activity, activities",
@@ -6484,7 +6484,7 @@
    "kind": "gloss",
    "surface": "uvědomuji",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "I realise",
@@ -6501,7 +6501,7 @@
    "kind": "gloss",
    "surface": "doktorů",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "doctors",

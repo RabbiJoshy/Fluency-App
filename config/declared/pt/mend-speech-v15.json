@@ -128,7 +128,7 @@
    "kind": "gloss",
    "surface": "kilos",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "kilos, kilograms",
@@ -231,7 +231,7 @@
    "kind": "gloss",
    "surface": "replicadores",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "replicators",
@@ -282,7 +282,7 @@
    "kind": "gloss",
    "surface": "infectados",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "infected (people)",
@@ -316,7 +316,7 @@
    "kind": "gloss",
    "surface": "habituada",
    "payload": {
-    "class": "vocabulary",
+    "class": "inflection",
     "senses": [
      {
       "translation": "used to, accustomed (fem.)",
