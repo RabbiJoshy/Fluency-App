@@ -385,19 +385,16 @@ Paste into that chat:
 
 ### GRAFT — lyrics & slang sense-menu overlays (before VERSE)
 
-**This chat is GRAFT.** Domain & slang collection chat before lyrics WSD.
-- Input Dossier: `docs/dossiers/graft-source-dossier.md` (shared working dossier; check its status and vet sources before building snapshots).
-- **Reads from MEND:** the format is `src/fluency/surfaces/declared.py` (kinds `gloss`, `expansion`, `entity`, `headwords`; every entry has `class`, `reason`, `author`, `created_at`, optional `scope` {mode, artist, song, playlist}). Language-wide lists go in `config/declared/<lang>/<name>.json` (a new file per list; files are discovered). One artist's facts go in `<workspace>/artists/<lang>/<artist>/declared/`. A `gloss` fills an empty menu and converts to a `SenseOverlayEntry` to compete on a full one; do not create a second format. Example file: `config/declared/es/mend-speech-v15.json`.
-- **After MEND:** write entries in MEND's declared-entry format and scopes (`docs/proposals/0003-surface-exceptions-and-menu-fallback.md` §4–§6). Overlay senses that compete in WSD and fallback senses that fill empty menus share one format; do not create a second one. Lyrics entities go in MEND's entity registry at the widest scope that is true, so later artists borrow them.
-
-Paste into that chat:
-
-> You are **GRAFT**. Read `CHAT_ROADMAP.md` through SCAR, then only GRAFT. First, read `docs/dossiers/graft-source-dossier.md` and check its status, source inventory, and taxonomy. Your job is to collect domain-specific multi-word expressions and single-word extra senses (slang, regionalisms, conversational fillers, elided locutions) into structured overlays via `fluency.wsd.overlays` before VERSE runs lyrics disambiguation.
-
-- Job: Harvest/curate domain expressions (Caribbean slang like *guagua*, *vaina*; reggaeton idioms; conversational discourse fillers like *o sea*; lyrics contractions). Map them to component surface cards. Build reproducible overlay snapshots under `raw/overlays/` adhering to the `SenseMenuOverlay` interface in `fluency.wsd.overlays`.
-- **Output:** Structured overlay snapshot (e.g. `raw/overlays/lyrics/es-lyrics-overlays.json`) ready for injection into `WSDComponents.overlay_provider`.
-- Free test: Load overlays into `CompositeOverlayProvider`, assert candidates attach to target cards, verify unit tests pass with zero Gemini spend.
-- Do not: Run full lyrics WSD (that is VERSE); harvest new audio/lyrics corpora without spec.
+**This chat is GRAFT.** Domain & slang collection chat before lyrics WSD. (Status: **Complete**).
+- **Audit of MEND:** Audited MEND against `docs/proposals/0003-surface-exceptions-and-menu-fallback.md` and codebase invariants. Report documented in `docs/mend/GRAFT_AUDIT.md`. Corrected 116 misclassified inflections in `cs` (112) and `pt` (4) `mend-speech-v15.json` from `vocabulary` to `inflection`.
+- **Declared Lists Written:**
+  - `config/declared/es/`: `lyrics-elisions.json` (21 contractions/elisions), `conversational-fillers.json` (9 fillers/slang), `caribbean-slang.json` (15 slang expressions), `lyrics-entities.json` (9 entities).
+  - Artist layer: `<workspace>/artists/es/bad-bunny/declared/bad-bunny.json` (5 artist-scoped entities/slang).
+  - `config/declared/pt/`: `lyrics-elisions.json` (16 contractions/elisions), `slang.json` (10 slang expressions), `conversational-fillers.json` (5 fillers).
+  - `config/declared/cs/`: `colloquial-slang.json` (9 colloquial slang/interjections), `conversational-fillers.json` (6 fillers).
+- **Overlay Bridge:** Added `declared_gloss_to_overlay` helper in `src/fluency/wsd/overlays.py` to allow declared gloss entries to compete as `SenseOverlayEntry` candidates in WSD.
+- **Tests:** All surface declared registry and resolver tests pass without regressions; zero API spend.
+- **Deliverables for VERSE:** Declared lists and artist layers ready for consumption by VERSE during lyrics WSD v16 disambiguation.
 
 ### VERSE — lyrics WSD v16 (after SWEEP + GRAFT)
 
@@ -446,7 +443,7 @@ Paste into that chat:
 | After MILL | es/pt/cs speech decks from the v12 lab freeze + those MWEs |
 | After GLASS | es/pt/cs speech decks from 10k supply + those MWEs |
 | After SWEEP | `*-v15-1.json` or written “v14 stands” |
-| After GRAFT | `raw/overlays/` snapshots (slang, fillers, lyrics expressions) |
+| After GRAFT | declared lists + overlays (`config/declared/`, artist layer, `overlays.py`) (done) |
 | After VERSE | `es-lyrics-v16-1.json` (Bad Bunny stays v7 until that ships) |
 
 ---
