@@ -10,6 +10,8 @@ async function loadConfig() {
         config = await configResponse.json();
         cefrLevelsConfig = await cefrResponse.json();
 
+        // Release payloads (~1 GB) are served by the published release site
+        // (repo Fluency-Releases via release-host.js), mapped by releaseUrl().
         const params = new URLSearchParams(window.location?.search || '');
         const speechRelease = params.get('speechRelease');
         if (speechRelease) {
@@ -23,11 +25,11 @@ async function loadConfig() {
             }
         }
 
-        // Release payloads are served by the release site (release-host.js),
-        // not by the app's own origin path.
+        // Release payloads (~1 GB) are served by the published release site
+        // (repo Fluency-Releases via release-host.js), mapped by releaseUrl().
         for (const languageConfig of Object.values(config.languages || {})) {
             for (const [key, value] of Object.entries(languageConfig)) {
-                if (key.endsWith('Path') && typeof value === 'string') {
+                if (key.endsWith('Path') && typeof value === 'string' && value.startsWith('releases/')) {
                     languageConfig[key] = releaseUrl(value);
                 }
             }
@@ -77,7 +79,8 @@ async function loadConfig() {
 async function loadReleaseStudyStructure(language) {
     releaseStudyStructure = null;
     await loadReleaseProvenance(language);
-    const path = config.languages[language]?.studyStructurePath;
+    const rawPath = config.languages[language]?.studyStructurePath;
+    const path = rawPath ? releaseUrl(rawPath) : null;
     if (!path || activeArtist) return null;
     try {
         const response = await fetch(path, { cache: 'no-store' });
@@ -99,8 +102,8 @@ async function loadReleaseProvenance(language) {
     const languageConfig = config.languages[language] || {};
     window._activeReleaseCapabilities = { ...(languageConfig.capabilities || {}) };
     const releaseConfig = activeArtist || languageConfig;
-    const manifestPath = releaseConfig.releaseManifestPath;
-    const compositionPath = releaseConfig.releaseCompositionPath;
+    const manifestPath = releaseConfig.releaseManifestPath ? releaseUrl(releaseConfig.releaseManifestPath) : null;
+    const compositionPath = releaseConfig.releaseCompositionPath ? releaseUrl(releaseConfig.releaseCompositionPath) : null;
     if (!manifestPath || !compositionPath) return null;
     try {
         const [manifestResponse, compositionResponse] = await Promise.all([

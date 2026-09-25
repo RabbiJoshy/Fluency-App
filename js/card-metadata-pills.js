@@ -450,8 +450,7 @@ export function compactLearnerSenseMetadata(items, meaning, options = {}) {
         if (gloss && [display.short, display.full, item.value].some(value => metadataTextIsRedundant(value, gloss))) return false;
         if (item.family === 'functional' && functionalAlreadyInGloss(item, gloss)) return false;
         if (isInflectionalPersonNumber(item) && !differs(item) && !/\byour\b/i.test(gloss)) return false;
-        if (item.family === 'construction' && /^(?:intransitive|transitive|ditransitive)$/.test(item.value)
-            && !differs(item) && (hasCompanion || (peers.length && meaning?.context))) return false;
+        if (hasCompanion && item.family === 'construction' && /^(?:intransitive|transitive|ditransitive)$/.test(item.value) && !differs(item)) return false;
         if (usefulRegister(item)) return true;
         // A routine grammatical mark may be useful in details, but is not a
         // substitute for the semantic context that distinguishes these rows.
@@ -485,24 +484,12 @@ function functionalAlreadyInGloss(item, gloss) {
 }
 
 export function readableSenseNote(value) {
-    const clauses = String(value || '').trim().split(/;\s*/);
-    const seen = new Set();
-    const text = clauses.filter(clause => {
-        const key = clause.trim().toLowerCase();
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-    }).join('; ');
+    const text = String(value || '').trim();
     const match = /^(?:used to indicate|indicating|indicates) (place|time|mode|material|characteristics|content)$/i.exec(text);
     if (match) return ({place: 'place', time: 'time', mode: 'manner', material: 'material', characteristics: 'characteristics', content: 'contents'})[match[1].toLowerCase()];
     return text
-        // Dictionary frame notation becomes prose after the semantic cue.
-        .replace(/^\[(.+?)\]\s*\|\s*(.+)$/u, '$2 ($1)')
         .replace(/^used to indicate\s+/i, 'indicates ')
         .replace(/^used to express\s+/i, 'expresses ')
-        .replace(/^used to talk about\s+/i, 'about ')
-        .replace(/^used in forming\s+/i, 'forms ')
-        .replace(/^used to (elicit|give|make|call)\b/i, (_, verb) => ({elicit:'elicits', give:'gives', make:'makes', call:'calls'}[verb.toLowerCase()]))
         .replace(/^used to (ask|introduce|describe|refer|define)\b/i, (_, verb) => ({ask:'asks', introduce:'introduces', describe:'describes', refer:'refers', define:'defines'}[verb.toLowerCase()]))
         .replace(/^used with\s+/i, 'with ')
         .replace(/^used in\s+/i, 'in ');
@@ -699,10 +686,10 @@ export function senseMetadataHTML(meaning, active, options = {}) {
     const grammar = items.filter(item => item.family === 'grammar');
     const visibleKeys = new Set(items.map(metadataItemKey));
     const baseSupporting = active ? senseMetadataItems(meaning).filter(item =>
-        ((item.family === 'grammar' && !isSenseDefiningGrammar(item))
-            || (item.family === 'construction' && /^(?:intransitive|transitive|ditransitive)$/.test(item.value)))
+        item.family === 'grammar' && !isSenseDefiningGrammar(item)
         && !visibleKeys.has(metadataItemKey(item))
         && !grammarIsAlreadyInGloss(item, options.gloss || meaning?.meaning || meaning?.translation || '')
+        && !(options.peerMeanings || []).some(peer => senseMetadataItems(peer).some(p => metadataItemKey(p) === metadataItemKey(item)))
     ) : [];
 
     let displayPrimary = primary;
@@ -732,7 +719,7 @@ export function senseMetadataHTML(meaning, active, options = {}) {
         ? `<span class="sense-metadata-tier sense-metadata-tier--details${supporting.length === 1 ? ' is-single' : ''}" hidden>${renderItems(supporting, false)}</span>`
         : '';
     const more = supporting.length > 0
-        ? `<button type="button" class="sense-metadata-more" aria-expanded="false" onclick="toggleSenseMetadataOverflow(event, this)" data-count="${supporting.length}" aria-label="Show ${supporting.length} supporting details"><span class="sense-metadata-more-label">Details</span></button>`
+        ? `<button type="button" class="sense-metadata-more" aria-expanded="false" onclick="toggleSenseMetadataOverflow(event, this)" data-count="${supporting.length}" aria-label="Show ${supporting.length} supporting details"><span class="sense-metadata-more-label">More details</span><span class="sense-metadata-more-count">${supporting.length}</span></button>`
         : '';
     return `<span class="sense-metadata-list${densityClass}" aria-label="Sense details">${primaryHTML}${grammarHTML}${more}${supportingHTML}</span>`;
 }
@@ -785,8 +772,7 @@ export function toggleSenseMetadataOverflow(event, control) {
     control.setAttribute('aria-expanded', String(expand));
     control.setAttribute('aria-label', expand ? 'Hide supporting details' : `Show ${count} supporting details`);
     const label = control.querySelector('.sense-metadata-more-label');
-    if (label) label.textContent = expand ? 'Hide' : 'Details';
-    list.dispatchEvent(new CustomEvent('sense-details-change', { bubbles: true }));
+    if (label) label.textContent = expand ? 'Hide details' : 'More details';
 }
 
 export function scoreSenseMetadata(item) {

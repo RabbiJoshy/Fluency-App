@@ -77,6 +77,8 @@ export const state = {
     // by tool_8a_stamp_loanword_flag.py from the Wiktionary-etymology layer.
     // Hidden by default; toggle to study them.
     excludeEnglishLoanwords: true,
+    excludeGrammarParticles: false,
+    excludeSlang: false,
     speechEnabled: true,
     // Spaced repetition schedule. When off, time-based due cards remain Known;
     // explicit mistakes and partial cards still enter Review.

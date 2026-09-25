@@ -18,9 +18,14 @@ function normalize(value) {
     if (!value || typeof value !== 'object') return null;
     const merge = value.merge === true;
     const skip = value.skip === true;
+    const skipGrammar = value.skipGrammar === true;
+    const skipSlang = value.skipSlang === true;
+    const skipEntities = value.skipEntities === true;
+    const anyActive = merge || skip || skipGrammar || skipSlang || skipEntities;
     return {
-        enabled: value.enabled === true && (merge || skip),
+        enabled: value.enabled === true && anyActive,
         merge, skip,
+        skipGrammar, skipSlang, skipEntities,
         updatedAt: Number(value.updatedAt) || 0
     };
 }
@@ -30,9 +35,19 @@ function seed() {
         const old = JSON.parse(localStorage.getItem(LEGACY_KEY) || 'null') || {};
         const merge = old.mergeLemmas === true;
         const skip = old.excludeCognates === true;
-        return { enabled: merge || skip, merge, skip, updatedAt: 0 };
+        return {
+            enabled: merge || skip,
+            merge, skip,
+            skipGrammar: false, skipSlang: false, skipEntities: false,
+            updatedAt: 0
+        };
     } catch (_) {
-        return { enabled: false, merge: false, skip: false, updatedAt: 0 };
+        return {
+            enabled: false,
+            merge: false, skip: false,
+            skipGrammar: false, skipSlang: false, skipEntities: false,
+            updatedAt: 0
+        };
     }
 }
 

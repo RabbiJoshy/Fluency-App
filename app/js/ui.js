@@ -371,45 +371,74 @@ function updateReviewAccess() {
 }
 
 // How long the deck wheel holds before the setup screen behind it is revealed.
+// Extended by 3 seconds (from 5s to 8s) per user request to allow comfortable reading.
 // A tap ends it at once; this is the ceiling for someone who does not tap.
-const DECK_OVERVIEW_HOLD_MS = 5000;
+const DECK_OVERVIEW_HOLD_MS = 8000;
 
 // The big wheel: progress across the whole deck the learner just opened.
 //
-// It cannot paint before the vocabulary index lands -- the denominators are in
-// it -- but it does not have to wait for the screen to be built. Nothing the
-// coverage snapshot reads (corpus counts, word ids, progressData) comes from
-// renderLevelSelector or the toggle-visibility calls, so callers publish the
-// snapshot as soon as the index resolves, raise the wheel, and let the rest of
-// the setup screen render underneath it. An earlier version of this comment
-// claimed the opposite; it was wrong about the ordering, if not the fetch.
-//
-// Every figure is read, not recomputed: the coverage snapshot updateExclusionBars
-// has just published, and the same due summary the Review section uses.
+// Every figure is read directly from the deck's vocabulary and learning states
+// so known, review, and new (unseen) accurately reflect the deck rather than
+// global language review totals.
 function showDeckOverviewLoading() {
     const snapshot = window.currentCoverageSnapshot;
-    const cardCount = Number(snapshot?.totalCount) || 0;
-    const knownCount = Math.min(cardCount, Number(snapshot?.coveredCount) || 0);
-    if (!cardCount || !knownCount) return null;
+    const rawCount = Number(snapshot?.totalCount) || 0;
+    if (!rawCount && (!window.setupVocabularySnapshot || window.setupVocabularySnapshot.length === 0)) {
+        return null;
+    }
 
-    // A word waiting for review has been seen but is not known -- the coverage
-    // snapshot counts it as uncovered -- so it is the middle band, and the two
-    // together can never exceed the deck.
-    const due = Number(window.getGlobalDueReviewSummary?.(selectedLanguage)?.total) || 0;
-    const reviewCount = Math.max(0, Math.min(due, cardCount - knownCount));
+    const vocab = window.getPreparedSetupVocabulary?.(selectedLanguage, window.setupVocabularySnapshot)?.vocab
+        || window.setupVocabularySnapshot
+        || [];
+
+    let knownCount = 0;
+    let reviewCount = 0;
+    let unseenCount = 0;
+    const cardCount = vocab.length > 0 ? vocab.length : rawCount;
+
+    if (vocab.length > 0) {
+        for (let i = 0; i < vocab.length; i++) {
+            const state = typeof getSetupLearningState === 'function'
+                ? getSetupLearningState(vocab[i])
+                : null;
+            if (state?.seen) {
+                if (state.needsReview) reviewCount++;
+                else knownCount++;
+            } else {
+                unseenCount++;
+            }
+        }
+    } else {
+        knownCount = Math.min(cardCount, Number(snapshot?.coveredCount) || 0);
+        const due = Number(window.getGlobalDueReviewSummary?.(selectedLanguage)?.total) || 0;
+        reviewCount = Math.max(0, Math.min(due, Math.floor((cardCount - knownCount) * 0.5)));
+        unseenCount = Math.max(0, cardCount - knownCount - reviewCount);
+    }
+
+    // Nothing to demonstrate if untouched (0% known and 0% review)
+    if (knownCount === 0 && reviewCount === 0) return null;
 
     const languageName = config?.languages?.[selectedLanguage]?.name || selectedLanguage || '';
     const title = activeArtist
         ? (activeArtist.name || 'Lyrics')
-        : [languageName, 'speech'].filter(Boolean).join(' ');
+        : (languageName || 'Speech');
     const percent = Number(snapshot?.percentage) || 0;
-    const label = snapshot?.label || 'understood';
+
     return window.showDeckLoading?.(
-        { cardCount, seenCount: knownCount + reviewCount, reviewCount },
+        {
+            cardCount,
+            seenCount: knownCount + reviewCount,
+            knownCount,
+            reviewCount,
+            unseenCount,
+            percentage: percent
+        },
         {
             title,
-            detail: `${percent.toFixed(1)}% ${String(label).toLowerCase()}`,
-            holdMs: DECK_OVERVIEW_HOLD_MS
+            detail: '',
+            holdMs: DECK_OVERVIEW_HOLD_MS,
+            artist: activeArtist,
+            language: selectedLanguage
         }
     );
 }
@@ -889,7 +918,7 @@ function setupLanguageTabs() {
                     // the table says how much of the hold covered real work.
                     _setupTimings.push({ phase: '-- deck wheel raised --', ms: 0 });
                     await timePhase('renderLevelSelector',
-                        () => renderLevelSelector(selectedLanguage));
+                        () => renderLevelSelector(selectedLanguage, { preferActionable: true }));
                     reportSetupTimings(performance.now() - speechSetupStarted);
                     updateIncorrectButtonVisibility();
                     document.getElementById('step1')?.classList.add('context-ready');
@@ -1027,6 +1056,7 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
     };
 
     let firstIncomplete = null;
+    let firstWithReview = null;
     let lastAvailable = null;
     let lastSuggestionLevel = null;
 
@@ -1083,11 +1113,18 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
         lastAvailable = btn;
         const suggestionSkipped = window.isLevelMarkedDone?.(btn.dataset.level) || false;
         if (!suggestionSkipped) lastSuggestionLevel = btn;
-        const seenCount = wordsInLevel.filter(wordSeen).length;
+        let seenCount = 0;
+        let reviewCount = 0;
+        for (let w = 0; w < wordsInLevel.length; w++) {
+            const st = getSetupLearningState(wordsInLevel[w], { seenLemmas, estimatedIds, estimate });
+            if (st?.seen) seenCount++;
+            if (st?.needsReview) reviewCount++;
+        }
         const completion = Math.round(100 * seenCount / wordsInLevel.length);
         const hasUnseen = seenCount < wordsInLevel.length;
         const isPartial = seenCount > 0 && hasUnseen;
         btn.dataset.progressPct = String(completion);
+        btn.dataset.reviewCount = String(reviewCount);
         btn.classList.toggle('has-partial-progress', isPartial);
         btn.classList.toggle('is-suggestion-skipped', suggestionSkipped);
         btn.style.setProperty('--level-progress', `${completion}%`);
@@ -1104,8 +1141,9 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
             );
         }
         if (!firstIncomplete && hasUnseen && !suggestionSkipped) firstIncomplete = btn;
+        if (!firstWithReview && reviewCount > 0 && !suggestionSkipped) firstWithReview = btn;
     }
-    return firstIncomplete || lastSuggestionLevel || lastAvailable || buttons[buttons.length - 1];
+    return firstIncomplete || firstWithReview || lastSuggestionLevel || lastAvailable || buttons[buttons.length - 1];
 }
 
 async function renderLevelSelector(language, { preferActionable = false } = {}) {
@@ -1904,12 +1942,19 @@ function _scrollLevelSegToCenter(idx, smooth) {
     _levelProgrammaticScroll = true;
     const target = seg.offsetLeft + seg.offsetWidth / 2 - bar.clientWidth / 2;
     bar.scrollTo({ left: Math.max(0, target), behavior: smooth ? 'smooth' : 'auto' });
-    setTimeout(() => { _levelProgrammaticScroll = false; }, smooth ? 420 : 90);
+    setTimeout(() => { _levelProgrammaticScroll = false; }, smooth ? 500 : 250);
 }
 
 function wireLevelScrubber(segBar, buttons) {
     let commitTimer = null;
+    let userScrubbing = false;
+
+    segBar.addEventListener('pointerdown', () => { userScrubbing = true; }, { passive: true });
+    window.addEventListener('pointerup', () => { setTimeout(() => { userScrubbing = false; }, 300); }, { passive: true });
+    window.addEventListener('pointercancel', () => { userScrubbing = false; }, { passive: true });
+
     const commit = () => {
+        if (_levelProgrammaticScroll || !userScrubbing) return;
         const btn = buttons[_levelCenteredIdx(segBar)];
         if (btn) {
             _setupLevelSelectionWasManual = true;
@@ -1919,13 +1964,13 @@ function wireLevelScrubber(segBar, buttons) {
     segBar.addEventListener('scroll', () => {
         const i = _levelCenteredIdx(segBar);
         if (+segBar.dataset.value !== i) setLevelSegmentSelection(i); // live magnify + readout
-        if (_levelProgrammaticScroll) return;
+        if (_levelProgrammaticScroll || !userScrubbing) return;
         clearTimeout(commitTimer);
         commitTimer = setTimeout(commit, 150); // fallback for browsers without scrollend
     }, { passive: true });
     // scrollend fires once the snap animation settles — the reliable commit.
     segBar.addEventListener('scrollend', () => {
-        if (_levelProgrammaticScroll) return;
+        if (_levelProgrammaticScroll || !userScrubbing) return;
         clearTimeout(commitTimer);
         commit();
     }, { passive: true });
@@ -2881,7 +2926,9 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                 title: `Loading Set ${this.dataset.setNumber}`,
                 detail: selectedRangeStats?.seenCount > 0
                     ? 'Picking up where you left off…'
-                    : 'Preparing your next cards…'
+                    : 'Preparing your next cards…',
+                artist: activeArtist,
+                language: selectedLanguage
             });
         try {
             // Build the set from current progress, not the cached copy the
@@ -3041,6 +3088,26 @@ function openFastTrackStudy() {
             );
         });
     });
+    body.querySelectorAll('.fast-track-batch-deck-btn').forEach(btn => {
+        btn.addEventListener('click', async event => {
+            event.stopPropagation();
+            const kind = btn.dataset.batchKind;
+            const levelIdx = btn.dataset.batchLevel;
+            let entriesToMark = [];
+            if (kind === 'level') {
+                const groups = (globalThis.skippedByLevel ? globalThis.skippedByLevel(extrasData.cognates, getActiveLevelRanges()) : []);
+                entriesToMark = groups.find(g => String(g.index) === String(levelIdx))?.entries || [];
+            } else if (extrasData.byCategory && extrasData.byCategory[kind]) {
+                entriesToMark = extrasData.byCategory[kind];
+            } else {
+                entriesToMark = extrasData.allSkipped || extrasData.cognates;
+            }
+            btn.textContent = 'Marking…';
+            const marked = await globalThis.batchMarkSkippedKnown?.(entriesToMark);
+            btn.textContent = `✓ Marked ${marked}!`;
+            setTimeout(() => { openFastTrackStudy(); }, 900);
+        });
+    });
     const modal = document.getElementById('fastTrackStudyModal');
     const close = document.getElementById('closeFastTrackStudyModal');
     if (close && !close.dataset.bound) {
@@ -3060,43 +3127,99 @@ function renderFastTrackSkippedDecks() {
     const card = document.getElementById('fastTrackDeckCard');
     if (!card) return;
     const extrasData = globalThis.collectExtras ? globalThis.collectExtras() : { cognates: [], lemmas: [] };
-    const cognates = extrasData.cognates || [];
+    const allCount = extrasData.allSkipped ? extrasData.allSkipped.length : (extrasData.cognates?.length || 0);
 
     card.onclick = null;
     card.style.cursor = 'default';
-    if (cognates.length > 0) {
-        card.innerHTML = `
-            <button type="button" class="fast-track-study-launch" id="studySkippedWordsBtn">
-                <strong>Study words skipped by Fast Track</strong>
-                <span>${cognates.length.toLocaleString()} words</span>
+    if (allCount > 0) {
+        const categories = (extrasData.categories || []).filter(c => c.id !== 'all' && c.id !== 'lemma' && c.count > 0);
+        const chipsHtml = categories.map(c => `
+            <button type="button" class="fast-track-deck-chip" data-category="${_escapeHtml(c.id)}">
+                <span>${c.icon}</span> <strong>${c.count}</strong> ${c.label}
             </button>
+        `).join('');
+
+        card.innerHTML = `
+            <div class="fast-track-deck-summary-card">
+                <button type="button" class="fast-track-study-launch" id="studySkippedWordsBtn">
+                    <strong>Study words skipped by Fast Track</strong>
+                    <span>${allCount.toLocaleString()} words</span>
+                </button>
+                ${chipsHtml ? `<div class="fast-track-chips-row">${chipsHtml}</div>` : ''}
+                <div class="fast-track-deck-actions-row">
+                    <button type="button" class="fast-track-hub-action-btn" id="inspectSkippedWordsBtn">
+                        🔍 Inspect &amp; Triage
+                    </button>
+                    <button type="button" class="fast-track-hub-action-btn fast-track-hub-action-btn--primary" id="batchMarkAllKnownBtn">
+                        ✓ Mark all as Known
+                    </button>
+                </div>
+            </div>
         `;
         document.getElementById('studySkippedWordsBtn')?.addEventListener('click', event => {
             event.stopPropagation();
             openFastTrackStudy();
+        });
+        document.getElementById('inspectSkippedWordsBtn')?.addEventListener('click', event => {
+            event.stopPropagation();
+            globalThis.openSkippedWords?.('all');
+        });
+        document.getElementById('batchMarkAllKnownBtn')?.addEventListener('click', async event => {
+            event.stopPropagation();
+            const btn = document.getElementById('batchMarkAllKnownBtn');
+            if (btn) btn.textContent = 'Saving…';
+            const count = await globalThis.batchMarkSkippedKnown?.(extrasData.allSkipped || extrasData.cognates);
+            if (btn) btn.textContent = `✓ Marked ${count} as Known!`;
+            setTimeout(() => { renderFastTrackSkippedDecks(); }, 1200);
+        });
+        card.querySelectorAll('.fast-track-deck-chip').forEach(chip => {
+            chip.addEventListener('click', (e) => {
+                e.stopPropagation();
+                globalThis.openSkippedWords?.(chip.dataset.category);
+            });
         });
     } else {
         card.innerHTML = `<p class="fast-track-study-empty">No words are set aside with these settings. They stay in the main sets.</p>`;
     }
 }
 
-function getNextStudySetMeta(rangeString) {
+function _findLevelButtonIndex(buttons, targetLevel) {
+    if (!targetLevel && targetLevel !== 0) return -1;
+    const targetStr = String(targetLevel);
+    let idx = buttons.findIndex(b => b.dataset.level === targetStr || b.dataset.short === targetStr);
+    if (idx >= 0) return idx;
+    const num = parseInt(targetStr.replace(/\D/g, ''), 10);
+    if (!Number.isNaN(num)) {
+        idx = buttons.findIndex((b, i) => {
+            const bNum = parseInt(b.dataset.level?.replace(/\D/g, '') || '', 10);
+            return bNum === num || (i + 1) === num;
+        });
+        if (idx >= 0) return idx;
+    }
+    return -1;
+}
+
+function getNextStudySetMeta(rangeString, studyMode = 'new') {
     if (window.isLevelMarkedDone?.(selectedLevel)) return null;
     const dots = Array.from(document.querySelectorAll('#rangeSelector .study-set-dot'));
     const currentIndex = dots.findIndex(dot => dot.dataset.range === rangeString);
     if (currentIndex < 0) return null;
-    // Advance to a set that has something new, not merely one whose rounded
-    // percentage is under 100 — a large set with one unseen card rounds to 100
-    // and used to be skipped past.
     const remaining = dots.slice(currentIndex + 1).filter(dot => !dot.disabled);
-    const next = remaining.find(dot => Number(dot.dataset.unseen || 0) > 0)
-        || remaining.find(dot => Number(dot.dataset.review || 0) > 0);
+    let next = null;
+    if (studyMode === 'review') {
+        next = remaining.find(dot => Number(dot.dataset.review || 0) > 0);
+    } else {
+        next = remaining.find(dot => Number(dot.dataset.unseen || 0) > 0)
+            || remaining.find(dot => Number(dot.dataset.review || 0) > 0);
+    }
     if (!next) return null;
     return {
         range: next.dataset.range,
         rankBasis: next.dataset.rankBasis || (releaseStudyStructure?.levels && !activeArtist ? 'source' : 'stable'),
         setNumber: Number(next.dataset.index) + 1,
-        levelSetCount: dots.length
+        levelSetCount: dots.length,
+        hasUnseen: Number(next.dataset.unseen || 0) > 0,
+        hasReview: Number(next.dataset.review || 0) > 0
     };
 }
 
@@ -3104,12 +3227,12 @@ function getNextStudyLevelMeta() {
     const buttons = Array.from(document.querySelectorAll(
         '.level-selector-buttons .level-btn, #levelSelector > .level-btn'
     ));
-    const currentIndex = buttons.findIndex(button => button.dataset.level === selectedLevel);
+    const currentIndex = _findLevelButtonIndex(buttons, selectedLevel);
     const remaining = currentIndex >= 0 ? buttons.slice(currentIndex + 1) : buttons;
     const next = remaining.find(button => {
         const skipped = window.isLevelMarkedDone?.(button.dataset.level) || false;
         const completion = Number(button.dataset.progressPct || 0);
-        return !skipped && completion < 100;
+        return !skipped && (completion < 100 || currentIndex < 0);
     }) || null;
     if (!next) {
         if (activeArtist && artistVocabularyScope === 'main') {

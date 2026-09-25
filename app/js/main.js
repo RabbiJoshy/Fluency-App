@@ -16,7 +16,7 @@ import './estimation.js?v=20260825ak';
 import './config.js?v=20260921rh';
 import './progress.js?v=20260920e';
 import './knowledge.js?v=20260923rk';
-import './ui.js?v=20260924lm';
+import './ui.js?v=20260925ls';
 import './vocab.js?v=20260924lm';
 import './cognates.js?v=20260922ft2';
 import './coverage.js?v=20260909a';
@@ -115,11 +115,9 @@ perfMark('main.js top — module imports done');
 const APP_LOADING_MESSAGE_KEY = 'fluency_loading_message_v1';
 
 // How long the deck-progress ring stays up before the screen behind it is
-// revealed. A tap always ends it early; the number is the ceiling, not the
-// target. The ring finishes animating at roughly 750ms (450ms to expand, 700ms
-// of arc fill after a double rAF), so anything at or below that is over before
-// the figures have settled enough to read.
-const MIN_DECK_LOADING_BEAT_MS = 900;
+// revealed. Extended by 3 seconds per user request to allow comfortable reading.
+// A tap always ends it early; the number is the ceiling, not the target.
+const MIN_DECK_LOADING_BEAT_MS = 3900;
 const DECK_RING_CIRCUMFERENCE = 339.292;   // 2 * PI * r, r = 54 in the SVG
 // Once the arcs have settled, invite the tap. Earlier than this and the hint
 // would offer a way out of a screen that has not finished saying anything.
@@ -128,6 +126,93 @@ let deckLoadingBeat = null;
 let resolveDeckLoadingBeat = null;
 let deckLoadingBeatTimer = null;
 let deckLoadingHintTimer = null;
+
+// Dynamic loading mark image rotation and artist support
+let loadingImagesManifest = null;
+let loadingImagesManifestPromise = null;
+let loadingMarkRotationTimer = null;
+let currentLoadingImages = [];
+let currentLoadingImageIndex = 0;
+
+async function fetchLoadingImagesManifest() {
+    if (loadingImagesManifest) return loadingImagesManifest;
+    if (loadingImagesManifestPromise) return loadingImagesManifestPromise;
+    loadingImagesManifestPromise = fetch('images/loading/manifest.json')
+        .then(res => res.ok ? res.json() : {})
+        .then(manifest => {
+            loadingImagesManifest = manifest;
+            return manifest;
+        })
+        .catch(() => {
+            loadingImagesManifest = {};
+            return {};
+        });
+    return loadingImagesManifestPromise;
+}
+
+function stopLoadingMarkRotation() {
+    if (loadingMarkRotationTimer) {
+        clearInterval(loadingMarkRotationTimer);
+        loadingMarkRotationTimer = null;
+    }
+}
+
+function applyLoadingMarkImage(src) {
+    const mark = document.getElementById('appLoadingMark');
+    const art = document.getElementById('appLoadingMarkArt');
+    if (!mark || !art) return;
+    if (!src) {
+        art.hidden = true;
+        art.style.backgroundImage = '';
+        mark.classList.remove('has-art');
+        return;
+    }
+    const escaped = String(src).replace(/"/g, '%22');
+    art.style.backgroundImage = `url("${escaped}")`;
+    art.hidden = false;
+    mark.classList.add('has-art');
+}
+
+async function updateLoadingMark({ language = '', artist = null } = {}) {
+    const mark = document.getElementById('appLoadingMark');
+    const art = document.getElementById('appLoadingMarkArt');
+    if (!mark || !art) return;
+
+    stopLoadingMarkRotation();
+
+    // 1. Artist mode takes precedence: show the artist image
+    const effectiveArtist = artist || window.activeArtist;
+    if (effectiveArtist) {
+        const artistArt = effectiveArtist.pickerImage || effectiveArtist.image || effectiveArtist.defaultAlbumArt || '';
+        if (artistArt) {
+            applyLoadingMarkImage(artistArt);
+            return;
+        }
+    }
+
+    // 2. Language-specific rotating images
+    const langKey = String(language || window.selectedLanguage || 'default').trim().toLowerCase();
+    const manifest = await fetchLoadingImagesManifest();
+    const images = (manifest && manifest[langKey] && manifest[langKey].length > 0)
+        ? manifest[langKey]
+        : ((manifest && manifest['default'] && manifest['default'].length > 0) ? manifest['default'] : []);
+
+    if (!images || images.length === 0) {
+        applyLoadingMarkImage(null); // Fallback to 'F'
+        return;
+    }
+
+    currentLoadingImages = images;
+    currentLoadingImageIndex = 0;
+    applyLoadingMarkImage(images[0]);
+
+    if (images.length > 1) {
+        loadingMarkRotationTimer = setInterval(() => {
+            currentLoadingImageIndex = (currentLoadingImageIndex + 1) % currentLoadingImages.length;
+            applyLoadingMarkImage(currentLoadingImages[currentLoadingImageIndex]);
+        }, 2500);
+    }
+}
 
 function prefersReducedMotion() {
     try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
@@ -161,6 +246,7 @@ function resetDeckLoadingVisual() {
     resolveDeckLoadingBeat?.();
     resolveDeckLoadingBeat = null;
     deckLoadingBeat = null;
+    updateLoadingMark({ language: window.selectedLanguage, artist: window.activeArtist });
 }
 
 function showAppLoading(title = 'Getting things ready', detail = 'Loading your language and progress…', persist = false) {
@@ -181,11 +267,15 @@ function showAppLoading(title = 'Getting things ready', detail = 'Loading your l
 // runs before any release fetch is issued). Returns the minimum-beat promise, and
 // resolves immediately whenever there is nothing worth showing - so a caller that
 // has no stats needs no special case and keeps today's plain spinner.
-function showDeckLoading(stats, { title, detail, holdMs = MIN_DECK_LOADING_BEAT_MS } = {}) {
+function showDeckLoading(stats, { title, detail, holdMs = MIN_DECK_LOADING_BEAT_MS, artist, language } = {}) {
     showAppLoading(
         title || 'Getting things ready',
         detail || 'Preparing your next cards…'
     );
+    updateLoadingMark({
+        artist: artist || window.activeArtist,
+        language: language || window.selectedLanguage
+    });
     const cardCount = Number(stats?.cardCount) || 0;
     const seenCount = Math.max(0, Math.min(cardCount, Number(stats?.seenCount) || 0));
     const visual = document.getElementById('appLoadingVisual');
@@ -194,12 +284,22 @@ function showDeckLoading(stats, { title, detail, holdMs = MIN_DECK_LOADING_BEAT_
 
     const reviewCount = Math.max(0, Math.min(seenCount, Number(stats?.reviewCount) || 0));
     const knownCount = Math.max(0, seenCount - reviewCount);
-    const unseenCount = Math.max(0, cardCount - seenCount);
+    const unseenCount = stats?.unseenCount !== undefined
+        ? Math.max(0, Number(stats.unseenCount))
+        : Math.max(0, cardCount - seenCount);
+
     const pctOf = count => 100 * count / cardCount;
     const offsetFor = pct => DECK_RING_CIRCUMFERENCE * (1 - Math.min(100, Math.max(0, pct)) / 100);
 
+    const pctValue = stats?.percentage !== undefined
+        ? Math.round(Number(stats.percentage))
+        : Math.round(pctOf(knownCount));
+
     const value = document.getElementById('appLoadingRingValue');
-    if (value) value.textContent = `${knownCount}/${cardCount}`;
+    if (value) value.textContent = `${pctValue}%`;
+    const unit = document.getElementById('appLoadingRingUnit');
+    if (unit) unit.hidden = true;
+
     const legend = document.getElementById('appLoadingRingLegend');
     if (legend) {
         document.getElementById('appLoadingLegendKnown').textContent = String(knownCount);
@@ -262,6 +362,7 @@ document.getElementById('appLoadingScreen')?.addEventListener('click', () => {
 });
 
 function hideAppLoading() {
+    stopLoadingMarkRotation();
     const screen = document.getElementById('appLoadingScreen');
     document.documentElement.classList.remove('app-booting');
     screen?.classList.add('is-hidden');
@@ -280,6 +381,7 @@ window.showAppLoading = showAppLoading;
 window.hideAppLoading = hideAppLoading;
 window.showDeckLoading = showDeckLoading;
 window.awaitDeckLoadingBeat = awaitDeckLoadingBeat;
+window.updateLoadingMark = updateLoadingMark;
 
 // Wire the static authentication surface before any configuration fetch or
 // artist resolution. The HTML intentionally contains this modal as a boot

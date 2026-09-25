@@ -111,6 +111,7 @@ function _markAuthReady() { _resolveAuthReady?.(); }
 // linked word sees that card first and the tour on a later visit.
 function _openFirstRunTutorialUnlessLinked() {
     if (window.fluencyRoute?.kind === 'word') return;
+    if (window.maybeShowFrequencyIntro?.()) return;
     window.openFirstRunCardTutorial?.();
 }
 
@@ -216,10 +217,7 @@ function enterGuestMode() {
     showUserInfo();
     hideAuthModal();
     _markAuthReady();
-    updateIncorrectButtonVisibility();
-    setTimeout(() => {
-        if (!window.maybeShowFrequencyIntro?.()) _openFirstRunTutorialUnlessLinked();
-    }, 250);
+    setTimeout(_openFirstRunTutorialUnlessLinked, 250);
 }
 
 // Show login form
@@ -279,9 +277,7 @@ async function submitLogin() {
     localStorage.setItem('flashcardUser', JSON.stringify(currentUser));
     showUserInfo();
     hideAuthModal();
-    setTimeout(() => {
-        if (!window.maybeShowFrequencyIntro?.()) _openFirstRunTutorialUnlessLinked();
-    }, 250);
+    setTimeout(_openFirstRunTutorialUnlessLinked, 250);
 
     // Load user progress from Google Sheets
     await loadUserProgressFromSheet();

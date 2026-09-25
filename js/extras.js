@@ -43,6 +43,37 @@ function lemmaExtra(item) {
     return item._lemmaModeRepresentative === false;
 }
 
+function grammarExtra(item) {
+    const decide = g().isGrammarParticleItem;
+    if (!decide) return false;
+    return Boolean(g().excludeGrammarParticles && decide(item));
+}
+
+function slangExtra(item) {
+    const decide = g().isSlangItem;
+    if (!decide) return false;
+    return Boolean((g().excludeNoise || g().excludeSlang) && decide(item));
+}
+
+function entityExtra(item) {
+    if (!g().excludeProperNouns) return false;
+    if (item.is_propernoun || item.is_propernoun_corpus || item.extra_category === 'proper_noun' || item.extra_category === 'name') return true;
+    if (Array.isArray(item.meanings) && item.meanings.length > 0 && item.meanings.every(m => m.pos === 'PROPN')) return true;
+    return false;
+}
+
+function grammarNote(item) {
+    return item.is_clitic || item.clitic_form ? 'Attached clitic form' : 'Grammar particle / functional word';
+}
+
+function slangNote() {
+    return 'Slang & conversational filler';
+}
+
+function entityNote() {
+    return 'Named entity / proper noun';
+}
+
 function lemmaKeyOf(item) {
     // vocab.js derives this from the assigned sense's headword; a second copy
     // here would group the Extras list differently from the deck it describes.
@@ -170,7 +201,17 @@ function collectExtras() {
     // `ready` separates "we looked and found none" from "we have not looked
     // yet". Without it a caller cannot tell the two apart, and the buttons
     // announced a verified zero while the vocabulary was still loading.
-    const empty = { cognates: [], lemmas: [], ready: false };
+    const empty = {
+        cognates: [],
+        lemmas: [],
+        grammar: [],
+        slang: [],
+        entities: [],
+        byCategory: {},
+        categories: [],
+        allSkipped: [],
+        ready: false
+    };
     // The full loaded vocabulary, stamped by the last buildFilteredVocab pass.
     // Two routes reach it and they do not overlap: on the setup screen only
     // updateExclusionBars() holds it (it publishes the snapshot), and once a
@@ -185,24 +226,96 @@ function collectExtras() {
     const hosts = representativesByLemma(vocab);
     const cognates = [];
     const lemmas = [];
+    const grammar = [];
+    const slang = [];
+    const entities = [];
+    const allSkipped = [];
+    const seenItemIds = new Set();
+
     for (const item of vocab) {
         if (!item || !item.word || item.duplicate) continue;
         if (cognateExtra(item)) {
-            cognates.push({ item, mergedInto: null });
+            const entry = { item, mergedInto: null, category: 'cognate', reason: cognateNote(item) };
+            cognates.push(entry);
+            if (!seenItemIds.has(item.id || item.word)) {
+                seenItemIds.add(item.id || item.word);
+                allSkipped.push(entry);
+            }
             continue;
         }
         if (lemmaExtra(item)) {
             const host = hosts.get(lemmaKeyOf(item));
-            // A form whose host did not survive the other filters is not a
-            // merge — it is simply absent, and claiming otherwise would be a
-            // provenance lie.
-            if (host && host !== item) lemmas.push({ item, mergedInto: host });
+            if (host && host !== item) {
+                const entry = { item, mergedInto: host, category: 'lemma', reason: `Merged into ${host.word}` };
+                lemmas.push(entry);
+            }
+            continue;
+        }
+        if (grammarExtra(item)) {
+            const entry = { item, mergedInto: null, category: 'grammar', reason: grammarNote(item) };
+            grammar.push(entry);
+            if (!seenItemIds.has(item.id || item.word)) {
+                seenItemIds.add(item.id || item.word);
+                allSkipped.push(entry);
+            }
+            continue;
+        }
+        if (slangExtra(item)) {
+            const entry = { item, mergedInto: null, category: 'slang', reason: slangNote(item) };
+            slang.push(entry);
+            if (!seenItemIds.has(item.id || item.word)) {
+                seenItemIds.add(item.id || item.word);
+                allSkipped.push(entry);
+            }
+            continue;
+        }
+        if (entityExtra(item)) {
+            const entry = { item, mergedInto: null, category: 'entity', reason: entityNote(item) };
+            entities.push(entry);
+            if (!seenItemIds.has(item.id || item.word)) {
+                seenItemIds.add(item.id || item.word);
+                allSkipped.push(entry);
+            }
+            continue;
         }
     }
     const byRank = (a, b) => (a.item.rank ?? Infinity) - (b.item.rank ?? Infinity);
     cognates.sort(byRank);
     lemmas.sort(byRank);
-    return { cognates, lemmas, ready: true };
+    grammar.sort(byRank);
+    slang.sort(byRank);
+    entities.sort(byRank);
+    allSkipped.sort(byRank);
+
+    const categories = [
+        { id: 'all', label: 'All Skipped', icon: '⚡', count: allSkipped.length, entries: allSkipped, desc: 'All words set aside by active Fast Track shortcuts' },
+        { id: 'cognate', label: 'Transparent Cognates', icon: '⚡', count: cognates.length, entries: cognates, desc: 'Words obvious from languages you already know' },
+        { id: 'grammar', label: 'Grammar & Clitics', icon: '🧩', count: grammar.length, entries: grammar, desc: 'High-frequency pronouns, clitic particles & functional words' },
+        { id: 'slang', label: 'Slang & Fillers', icon: '💬', count: slang.length, entries: slang, desc: 'Urban slang, conversational fillers & interjections' },
+        { id: 'entity', label: 'Names & Entities', icon: '📍', count: entities.length, entries: entities, desc: 'Wikipedia-resolved entities, proper nouns & artist names' },
+        { id: 'lemma', label: 'Merged Forms', icon: '📚', count: lemmas.length, entries: lemmas, desc: 'Inflections sharing a base dictionary card' },
+    ].filter(c => c.id === 'all' || c.count > 0);
+
+    const byCategory = {
+        all: allSkipped,
+        cognate: cognates,
+        lemma: lemmas,
+        grammar,
+        slang,
+        entity: entities
+    };
+
+    return {
+        cognates,
+        lemmas,
+        grammar,
+        slang,
+        entities,
+        categories,
+        byCategory,
+        allSkipped,
+        ready: true
+    };
 }
 
 function escapeHtml(value) {
@@ -226,6 +339,14 @@ function cognatePairHtml(item) {
     const choice = cognateEnglish(item);
     const eq = choice.obvious ? '' : ' hidden';
     const gloss = choice.obvious ? '' : ' is-gloss';
+    const isFlipped = Boolean(g().isFlipped);
+    if (isFlipped) {
+        return `<span class="cognate-pair cognate-pair--flipped">
+            <strong class="cognate-pair-known extras-translation-slot${gloss}">${escapeHtml(choice.word)}</strong>
+            <span class="cognate-pair-eq"${eq} aria-hidden="true">=</span>
+            <button type="button" class="extras-open-card cognate-pair-surface" data-card-id="${escapeHtml(item.id || '')}" aria-label="View ${escapeHtml(item.word)} card">${escapeHtml(item.word)}</button>
+        </span>`;
+    }
     return `<span class="cognate-pair">
         <button type="button" class="extras-open-card cognate-pair-surface" data-card-id="${escapeHtml(item.id || '')}" aria-label="View ${escapeHtml(item.word)} card">${escapeHtml(item.word)}</button>
         <span class="cognate-pair-eq"${eq} aria-hidden="true">=</span>
@@ -245,22 +366,31 @@ function paintCognatePair(row, item) {
 }
 
 function renderRows(entries, kind) {
-    if (entries.length === 0) return '';
-    return entries.map(({ item, mergedInto }) => {
+    if (!entries || entries.length === 0) return '';
+    return entries.map(({ item, mergedInto, category, reason }) => {
+        const itemKind = category || kind || 'cognate';
         const translation = firstTranslation(item);
         const shortTranslation = shortGloss(translation);
-        const lemma = kind === 'lemma' ? lemmaDisplayOf(item, mergedInto) : null;
-        const english = kind === 'cognate' ? cognateEnglish(item).word : '';
-        const note = kind === 'cognate' ? `${cognateNote(item)} ${english}` : `${lemma.word} ${lemma.translation}`;
-        // `data-extras-id` lets hydrateExtrasTranslations find this row again
-        // once the meanings arrive; see the comment on that function.
-        return `<li class="extras-row extras-row--${kind}" data-extras-id="${escapeHtml(item.id || '')}" data-search-text="${escapeHtml(`${item.word} ${translation} ${note}`.toLocaleLowerCase())}">
-            ${kind === 'lemma'
+        const lemma = itemKind === 'lemma' ? lemmaDisplayOf(item, mergedInto) : null;
+        const english = itemKind === 'cognate' ? cognateEnglish(item).word : '';
+        const note = reason || (itemKind === 'cognate' ? `${cognateNote(item)} ${english}` : itemKind === 'lemma' ? `${lemma.word} ${lemma.translation}` : '');
+        const badgeLabel = itemKind === 'cognate' ? 'Cognate'
+            : itemKind === 'grammar' ? 'Grammar & Clitic'
+            : itemKind === 'slang' ? 'Slang & Filler'
+            : itemKind === 'entity' ? 'Named Entity'
+            : itemKind === 'lemma' ? 'Merged' : 'Skipped';
+
+        return `<li class="extras-row extras-row--${itemKind}" data-extras-id="${escapeHtml(item.id || '')}" data-category="${escapeHtml(itemKind)}" data-search-text="${escapeHtml(`${item.word} ${translation} ${note} ${badgeLabel}`.toLocaleLowerCase())}">
+            ${itemKind === 'lemma'
                 ? `<span class="extras-base"><strong>${escapeHtml(lemma.word)}</strong><small class="extras-translation-slot">${escapeHtml(shortGloss(lemma.translation))}</small></span>`
                 : ''}
-            ${kind === 'cognate'
+            ${itemKind === 'cognate'
                 ? cognatePairHtml(item)
                 : `<span class="extras-word-stack"><button type="button" class="extras-open-card" data-card-id="${escapeHtml(item.id || '')}" aria-label="View ${escapeHtml(item.word)} card">${escapeHtml(item.word)}</button><span class="extras-translation">${escapeHtml(shortTranslation)}</span></span>`}
+            <div class="extras-row-actions">
+                <span class="extras-badge extras-badge--${itemKind}">${escapeHtml(badgeLabel)}</span>
+                <button type="button" class="extras-row-mark-known" data-card-id="${escapeHtml(item.id || '')}" title="Mark as known">✓</button>
+            </div>
         </li>`;
     }).join('');
 }
@@ -474,21 +604,121 @@ function renderMergedForms() {
     return lemmas;
 }
 
-function renderSkippedWords() {
-    const { cognates } = collectExtras();
-    const body = document.getElementById('skippedWordsBody');
-    if (!body) return cognates;
-    const total = document.getElementById('skippedWordsTotal');
-    if (total) total.textContent = `${cognates.length.toLocaleString()} words`;
+let _activeSkippedCategory = 'all';
 
-    if (cognates.length === 0) {
-        body.innerHTML = `<p class="extras-empty">No words are currently set aside. Obvious look-alikes remain in the deck.</p>`;
-        return cognates;
+async function batchMarkSkippedKnown(entries = []) {
+    const list = Array.isArray(entries) ? entries : [];
+    if (!list.length) return 0;
+    const save = g().saveWordProgress;
+    let count = 0;
+    for (const entry of list) {
+        const item = entry.item || entry;
+        if (!item || !item.word) continue;
+        const state = g().getSetupLearningState?.(item);
+        if (state?.seen && !state?.needsReview) continue; // already known
+        if (save) {
+            save(item, true);
+            count++;
+        }
+    }
+    if (count > 0) {
+        window.cacheProgressLocally?.();
+        window.bumpProgressEpoch?.();
+        window.refreshFastMode?.();
+        window.renderFastTrackSkippedDecks?.();
+    }
+    return count;
+}
+
+function renderSkippedWords(filterCategory = _activeSkippedCategory) {
+    _activeSkippedCategory = filterCategory;
+    const extras = collectExtras();
+    const body = document.getElementById('skippedWordsBody');
+    if (!body) return extras.cognates;
+    const total = document.getElementById('skippedWordsTotal');
+    const allCount = extras.allSkipped.length;
+    if (total) total.textContent = `${allCount.toLocaleString()} words`;
+
+    if (allCount === 0) {
+        body.innerHTML = `<p class="extras-empty">No words are currently set aside. Every word form and particle remains in the deck.</p>`;
+        return extras.cognates;
     }
 
-    body.innerHTML = `<ul class="extras-list">${renderRows(cognates, 'cognate')}</ul>`;
-    hydrateExtrasTranslations(body.querySelector('.extras-list'), cognates);
-    return cognates;
+    const categories = extras.categories || [];
+    const activeEntries = (extras.byCategory && extras.byCategory[filterCategory]) || extras.allSkipped;
+
+    // Tabs for categories
+    const tabsHtml = categories.length > 1 ? `
+        <div class="fast-track-triage-tabs" id="skippedCategoryTabs">
+            ${categories.map(c => `
+                <button type="button" class="fast-track-triage-tab${c.id === filterCategory ? ' is-active' : ''}" data-cat-id="${escapeHtml(c.id)}">
+                    <span>${c.icon} ${escapeHtml(c.label)}</span>
+                    <span class="fast-track-tab-count">${c.count}</span>
+                </button>
+            `).join('')}
+        </div>
+    ` : '';
+
+    // Action bar with Study and Batch-mark
+    const actionsHtml = `
+        <div class="fast-track-triage-action-bar">
+            <button type="button" class="fast-track-batch-action-btn fast-track-batch-study-btn" id="studyFilteredSkippedBtn">
+                ⚡ Study ${escapeHtml(filterCategory === 'all' ? 'All' : filterCategory)} (${activeEntries.length})
+            </button>
+            <button type="button" class="fast-track-batch-action-btn fast-track-batch-known-btn" id="markFilteredSkippedKnownBtn">
+                ✓ Mark all as Known
+            </button>
+        </div>
+    `;
+
+    body.innerHTML = `
+        ${tabsHtml}
+        ${actionsHtml}
+        <ul class="extras-list">${renderRows(activeEntries, filterCategory)}</ul>
+    `;
+
+    // Bind tab clicks
+    body.querySelectorAll('.fast-track-triage-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            renderSkippedWords(tab.dataset.catId);
+        });
+    });
+
+    // Bind study filtered
+    body.querySelector('#studyFilteredSkippedBtn')?.addEventListener('click', () => {
+        document.getElementById('skippedWordsModal')?.classList.add('hidden');
+        startFastTrackSkippedSet(filterCategory);
+    });
+
+    // Bind batch-mark known
+    body.querySelector('#markFilteredSkippedKnownBtn')?.addEventListener('click', async () => {
+        const btn = body.querySelector('#markFilteredSkippedKnownBtn');
+        if (btn) btn.textContent = 'Saving progress…';
+        const marked = await batchMarkSkippedKnown(activeEntries);
+        renderSkippedWords(filterCategory);
+        if (btn) btn.textContent = `✓ Marked ${marked} words!`;
+    });
+
+    // Bind individual mark known buttons
+    body.querySelectorAll('.extras-row-mark-known').forEach(button => {
+        button.addEventListener('click', async event => {
+            event.stopPropagation();
+            const cardId = button.dataset.cardId;
+            const target = activeEntries.find(e => (e.item?.id || e.id) === cardId);
+            const item = target?.item || target;
+            if (item && window.saveWordProgress) {
+                window.saveWordProgress(item, true);
+                window.cacheProgressLocally?.();
+                window.bumpProgressEpoch?.();
+                button.classList.add('is-marked');
+                button.textContent = '✓ Known';
+                button.disabled = true;
+            }
+        });
+    });
+
+    hydrateExtrasTranslations(body.querySelector('.extras-list'), activeEntries);
+    return extras.cognates;
 }
 
 function skippedByLevel(cognates, ranges) {
@@ -516,39 +746,90 @@ function skippedByLevel(cognates, ranges) {
     return levels.filter(level => level.entries.length);
 }
 
-// One deck per level. Progress stays on each original card ID.
-function renderFastTrackDeck({ cognates = [], lemmas = [] }, { ranges = [], selectedLevel = null, progressForItem = null } = {}) {
-    const groups = skippedByLevel(cognates, ranges);
-    const currentIndex = groups.find(group => String(group.range?.level) === String(selectedLevel))?.index ?? groups[0]?.index;
-    const skippedBlock = cognates.length
-        ? `<div class="fast-track-level-list">${groups.map(({ range, index, entries }) => {
-                const label = range ? `Level ${index + 1}` : 'Skipped words';
-                const states = entries.map(({ item }) => progressForItem?.(item) || null);
-                const seen = states.filter(state => state?.seen).length;
-                const review = states.filter(state => state?.needsReview).length;
-                const complete = seen === entries.length && review === 0;
-                const mark = complete ? ' is-complete' : review ? ' needs-review' : '';
-                const current = index === currentIndex ? ' is-current' : '';
-                return `<button type="button" class="fast-track-level-deck${mark}${current}" data-ft-kind="cognate" data-ft-level="${index}" data-ft-start="0" aria-label="Study ${label}, ${entries.length} skipped words, ${seen} seen">
-                    <strong>${label}</strong>
-                    <span>${seen}/${entries.length}</span>
-                </button>`;
-            }).join('')}</div>`
-        : '';
-    const mergedNote = lemmas.length
-        ? `<p class="extras-deck-hint extras-merged-note">Merged word forms stay on their shared cards, so they do not need separate decks.</p>`
-        : '';
-    return `${skippedBlock}${mergedNote}`;
+// One deck per level in Speech; category decks in Lyrics. Progress stays on each original card ID.
+function renderFastTrackDeck({ cognates = [], lemmas = [] } = {}, { ranges = [], selectedLevel = null, progressForItem = null } = {}) {
+    const isArtist = Boolean(g().activeArtist);
+    if (!isArtist) {
+        const groups = skippedByLevel(cognates, ranges);
+        const currentIndex = groups.find(group => String(group.range?.level) === String(selectedLevel))?.index ?? groups[0]?.index;
+        const skippedBlock = cognates.length
+            ? `<div class="fast-track-level-list">${groups.map(({ range, index, entries }) => {
+                    const label = range ? `Level ${index + 1}` : 'Skipped words';
+                    const states = entries.map(({ item }) => progressForItem?.(item) || null);
+                    const seen = states.filter(state => state?.seen).length;
+                    const review = states.filter(state => state?.needsReview).length;
+                    const complete = seen === entries.length && review === 0;
+                    const mark = complete ? ' is-complete' : review ? ' needs-review' : '';
+                    const current = index === currentIndex ? ' is-current' : '';
+                    return `<button type="button" class="fast-track-level-deck${mark}${current}" data-ft-kind="cognate" data-ft-level="${index}" data-ft-start="0" aria-label="Study ${label}, ${entries.length} skipped words, ${seen} seen">
+                        <strong>${label}</strong>
+                        <span>${seen}/${entries.length}</span>
+                    </button>`;
+                }).join('')}</div>`
+            : '';
+        const mergedNote = lemmas.length
+            ? `<p class="extras-deck-hint extras-merged-note">Merged word forms stay on their shared cards, so they do not need separate decks.</p>`
+            : '';
+        return `${skippedBlock}${mergedNote}`;
+    }
+
+    // Lyrics mode: Category decks
+    const extras = collectExtras();
+    const categories = (extras.categories || []).filter(c => c.id !== 'lemma' && c.count > 0);
+    if (!categories.length) {
+        return `<p class="fast-track-study-empty">No words are set aside with these settings. All lyrics vocabulary is in your main sets.</p>`;
+    }
+    return `<div class="fast-track-level-list">${categories.map(cat => {
+        const entries = cat.entries || [];
+        const states = entries.map(({ item }) => progressForItem?.(item) || null);
+        const seen = states.filter(state => state?.seen).length;
+        const review = states.filter(state => state?.needsReview).length;
+        const complete = seen === entries.length && review === 0;
+        const mark = complete ? ' is-complete' : review ? ' needs-review' : '';
+        return `<button type="button" class="fast-track-level-deck${mark}" data-ft-kind="${cat.id}" data-ft-level="0" data-ft-start="0" aria-label="Study ${cat.label}, ${entries.length} skipped words, ${seen} seen">
+            <strong>${cat.icon} ${cat.label}</strong>
+            <span>${seen}/${entries.length}</span>
+        </button>`;
+    }).join('')}</div>`;
 }
 
 async function startFastTrackSkippedSet(kind, start, levelIndex = 0, ranges = []) {
     const extras = collectExtras();
-    const allEntries = kind === 'lemma' ? extras.lemmas : extras.cognates;
-    const level = skippedByLevel(allEntries, ranges).find(group => group.index === Number(levelIndex));
-    const entries = level?.entries || [];
+    let entries = [];
+    let label = 'Skipped words';
+    if (kind === 'lemma') {
+        const level = skippedByLevel(extras.lemmas, ranges).find(group => group.index === Number(levelIndex));
+        entries = level?.entries || [];
+        label = level?.range ? `Level ${Number(levelIndex) + 1} Merged` : 'Merged words';
+    } else if (kind === 'grammar') {
+        entries = extras.grammar || [];
+        label = 'Grammar & clitics';
+    } else if (kind === 'slang') {
+        entries = extras.slang || [];
+        label = 'Slang & fillers';
+    } else if (kind === 'entity') {
+        entries = extras.entities || [];
+        label = 'Names & entities';
+    } else if (kind === 'all') {
+        entries = extras.allSkipped || [];
+        label = 'All skipped words';
+    } else {
+        const allEntries = extras.cognates || [];
+        if (Number.isFinite(Number(levelIndex)) && ranges && ranges.length) {
+            const level = skippedByLevel(allEntries, ranges).find(group => group.index === Number(levelIndex));
+            if (level) {
+                entries = level.entries || [];
+                label = level.range ? `Level ${Number(levelIndex) + 1}` : 'Skipped words';
+            } else {
+                entries = allEntries;
+            }
+        } else {
+            entries = allEntries;
+        }
+    }
     const slice = entries.map(({ item }) => item);
     if (!slice.length || !g().loadVocabularyData) return;
-    const levelLabel = level?.range ? `Level ${Number(levelIndex) + 1}` : 'Skipped words';
+    const levelLabel = label;
     const loadingMessage = document.getElementById('loadingMessage');
     if (loadingMessage) {
         loadingMessage.style.display = 'block';
@@ -564,7 +845,7 @@ async function startFastTrackSkippedSet(kind, start, levelIndex = 0, ranges = []
             fastTrackCards: slice,
             setNumber: 1,
             levelSetCount: 1,
-            levelNumber: level?.range ? Number(levelIndex) + 1 : null,
+            levelNumber: null,
             setLabel: `${levelLabel} · ${slice.length} skipped words`,
             isFastTrack: true,
         });
@@ -719,8 +1000,8 @@ function closeMergedForms() {
     document.getElementById('mergedFormsModal')?.classList.add('hidden');
 }
 
-function openSkippedWords() {
-    renderSkippedWords();
+function openSkippedWords(initialCategory = 'all') {
+    renderSkippedWords(initialCategory);
     const search = document.getElementById('skippedWordsSearch');
     if (search) search.value = '';
     document.getElementById('skippedWordsModal')?.classList.remove('hidden');
@@ -942,3 +1223,4 @@ globalThis.isWordSaved = isWordSaved;
 globalThis.collectExtras = collectExtras;
 globalThis.renderFastTrackDeck = renderFastTrackDeck;
 globalThis.startFastTrackSkippedSet = startFastTrackSkippedSet;
+globalThis.batchMarkSkippedKnown = batchMarkSkippedKnown;

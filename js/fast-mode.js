@@ -48,10 +48,31 @@ function currentState() {
 
 function summaryText() {
     const preference = readFastTrack(selectedLanguage);
+    const isArtist = Boolean(globalThis.activeArtist);
+    if (isArtist) {
+        if (preference.enabled) {
+            const parts = [];
+            if (preference.skip) parts.push('look-alikes');
+            if (preference.skipGrammar) parts.push('clitics & particles');
+            if (preference.skipSlang) parts.push('slang & fillers');
+            if (preference.skipEntities) parts.push('names');
+            if (preference.merge) parts.push('related forms');
+            if (parts.length > 0) return `${parts.join(', ').replace(/, ([^,]+)$/, ' & $1')} are set aside`;
+        }
+        return 'Full lyrics · every word form, slang & particle is studied';
+    }
     if (preference.enabled && preference.merge && preference.skip) return 'Related forms share one card; familiar look-alikes are set aside';
     if (preference.enabled && preference.merge) return 'Related word forms share one card';
     if (preference.enabled && preference.skip) return 'Familiar look-alikes are set aside';
     return 'Full deck · every word form is its own card';
+}
+
+function setToggleState(prefix, value) {
+    const buttons = document.querySelectorAll(`.${prefix}-toggle-btn`);
+    buttons.forEach(btn => {
+        const matches = btn.dataset[prefix] === value;
+        btn.classList.toggle('selected', matches);
+    });
 }
 
 // Turning fast mode on or off drives the real controls, so every side effect
@@ -60,10 +81,15 @@ function summaryText() {
 // when the learner changes them by hand.
 function applyFastMode(on) {
     const previous = readFastTrack(selectedLanguage);
-    const hasChoices = previous.merge || previous.skip;
+    const isArtist = Boolean(globalThis.activeArtist);
+    const hasChoices = previous.merge || previous.skip || previous.skipGrammar || previous.skipSlang || previous.skipEntities;
     let merge = hasChoices ? previous.merge : lemmaAvailable();
     let skip = hasChoices ? previous.skip : cognateAvailable();
-    if (on && !((merge && lemmaAvailable()) || (skip && cognateAvailable()))) {
+    let skipGrammar = hasChoices ? (previous.skipGrammar ?? false) : false;
+    let skipSlang = hasChoices ? (previous.skipSlang ?? true) : true;
+    let skipEntities = hasChoices ? (previous.skipEntities ?? true) : true;
+
+    if (on && !isArtist && !((merge && lemmaAvailable()) || (skip && cognateAvailable()))) {
         if (lemmaAvailable()) merge = true;
         else if (cognateAvailable()) skip = true;
         else { showUnavailableMessage('all'); return; }
@@ -77,8 +103,22 @@ function applyFastMode(on) {
             `.cognate-toggle-btn[data-cognate="${on && skip ? 'exclude' : 'include'}"]`
         )?.click();
     }
+    if (isArtist) {
+        setToggleState('grammar', on && skipGrammar ? 'exclude' : 'include');
+        setToggleState('slang', on && skipSlang ? 'exclude' : 'include');
+        setToggleState('entity', on && skipEntities ? 'exclude' : 'include');
+        globalThis.excludeGrammarParticles = on && skipGrammar;
+        globalThis.excludeSlang = on && skipSlang;
+        globalThis.excludeProperNouns = on && skipEntities;
+    }
     applyingMasterSwitch = false;
-    saveFastTrack(selectedLanguage, { enabled: on, merge, skip });
+
+    if (!isArtist) {
+        saveFastTrack(selectedLanguage, { enabled: on, merge, skip });
+    } else {
+        saveFastTrack(selectedLanguage, { enabled: on, merge, skip, skipGrammar, skipSlang, skipEntities });
+    }
+
     window.invalidatePreparedSetupVocabulary?.();
     // The clicks above each schedule their own refresh; this only restates what
     // the buttons now say.
@@ -88,18 +128,64 @@ function applyFastMode(on) {
 function refresh() {
     const wrapper = document.getElementById('setupOptions');
     if (!wrapper) return;
+    const isArtist = Boolean(globalThis.activeArtist);
     const state = currentState();
     const featureCards = ['lemmaToggleContainer', 'cognateToggleContainer']
         .map(id => document.getElementById(id));
     const availabilityResolved = featureCards.every(card => card?.dataset.available === 'true'
         || card?.dataset.available === 'false');
-    wrapper.style.display = availabilityResolved ? 'block' : 'none';
+    wrapper.style.display = availabilityResolved || isArtist ? 'block' : 'none';
+
+    // Show/hide lyrics-specific fine tune containers
+    const grammarContainer = document.getElementById('grammarToggleContainer');
+    const slangContainer = document.getElementById('slangToggleContainer');
+    const entityContainer = document.getElementById('entityToggleContainer');
+    if (grammarContainer) grammarContainer.style.display = isArtist ? 'block' : 'none';
+    if (slangContainer) slangContainer.style.display = isArtist ? 'block' : 'none';
+    if (entityContainer) entityContainer.style.display = isArtist ? 'block' : 'none';
 
     const on = state === 'on';
     const extras = globalThis.collectExtras?.() || {};
-    const skipped = extras.cognates?.length || 0;
+    const skipped = extras.allSkipped ? extras.allSkipped.length : (extras.cognates?.length || 0);
     const count = document.getElementById('fastModeSkippedCount');
     if (count) count.textContent = skipped ? `· ${skipped.toLocaleString()} words` : '';
+
+    // Update item counts on buttons
+    const skippedWordsCount = document.getElementById('skippedWordsCount');
+    if (skippedWordsCount) {
+        const cLen = extras.cognates?.length || 0;
+        skippedWordsCount.textContent = cLen ? `View obvious words (${cLen.toLocaleString()})` : 'View skipped words';
+        const vBtn = document.getElementById('viewSkippedWordsBtn');
+        if (vBtn) vBtn.style.display = cLen ? 'inline-flex' : 'none';
+    }
+    const mergedFormsCount = document.getElementById('mergedFormsCount');
+    if (mergedFormsCount) {
+        const mLen = extras.lemmas?.length || 0;
+        mergedFormsCount.textContent = mLen ? `View merged forms (${mLen.toLocaleString()})` : 'View merged forms';
+        const mBtn = document.getElementById('viewMergedFormsBtn');
+        if (mBtn) mBtn.style.display = mLen ? 'inline-flex' : 'none';
+    }
+    const grammarCount = document.getElementById('grammarWordsCount');
+    if (grammarCount) {
+        const gLen = extras.grammar?.length || 0;
+        grammarCount.textContent = gLen ? `View grammar words (${gLen.toLocaleString()})` : 'View grammar words';
+        const gBtn = document.getElementById('viewGrammarWordsBtn');
+        if (gBtn) gBtn.style.display = gLen ? 'inline-flex' : 'none';
+    }
+    const slangCount = document.getElementById('slangWordsCount');
+    if (slangCount) {
+        const sLen = extras.slang?.length || 0;
+        slangCount.textContent = sLen ? `View slang words (${sLen.toLocaleString()})` : 'View slang words';
+        const sBtn = document.getElementById('viewSlangWordsBtn');
+        if (sBtn) sBtn.style.display = sLen ? 'inline-flex' : 'none';
+    }
+    const entityCount = document.getElementById('entityWordsCount');
+    if (entityCount) {
+        const eLen = extras.entities?.length || 0;
+        entityCount.textContent = eLen ? `View entities (${eLen.toLocaleString()})` : 'View entities';
+        const eBtn = document.getElementById('viewEntityWordsBtn');
+        if (eBtn) eBtn.style.display = eLen ? 'inline-flex' : 'none';
+    }
 
     // The setup screen's Fast Track row: the switch is the real master control,
     // and the line beneath it is an invitation on a first visit and the current
@@ -116,7 +202,7 @@ function refresh() {
     if (hubRow) hubRow.classList.toggle('is-unseen', unseen);
     const hubSummary = document.getElementById('fastTrackHubSummary');
     if (hubSummary) hubSummary.textContent = unseen
-        ? 'Learn fewer cards — see how'
+        ? (isArtist ? 'Filter lyrics & skip familiar words' : 'Learn fewer cards — see how')
         : summaryText();
 
     const summary = document.getElementById('fastModeSummary');
@@ -124,6 +210,7 @@ function refresh() {
     updateMappingStatus();
     updateStreamlineRecCallout();
     updateStreamlineLanguageExamples();
+    globalThis.renderFastTrackSkippedDecks?.();
     globalThis.refreshExtrasButtons?.();
     globalThis.refreshExtrasButton?.();
 }
@@ -426,6 +513,53 @@ function init() {
                 }
                 refresh();
             }, 0);
+        });
+    });
+
+    document.getElementById('viewGrammarWordsBtn')?.addEventListener('click', () => {
+        globalThis.openSkippedWords?.('grammar');
+    });
+    document.getElementById('viewSlangWordsBtn')?.addEventListener('click', () => {
+        globalThis.openSkippedWords?.('slang');
+    });
+    document.getElementById('viewEntityWordsBtn')?.addEventListener('click', () => {
+        globalThis.openSkippedWords?.('entity');
+    });
+    document.getElementById('viewSkippedWordsBtn')?.addEventListener('click', () => {
+        globalThis.openSkippedWords?.('cognate');
+    });
+
+    document.querySelectorAll('.grammar-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const exclude = btn.dataset.grammar === 'exclude';
+            setToggleState('grammar', btn.dataset.grammar);
+            globalThis.excludeGrammarParticles = exclude;
+            const prev = readFastTrack(selectedLanguage);
+            saveFastTrack(selectedLanguage, { ...prev, skipGrammar: exclude, enabled: prev.merge || prev.skip || exclude || prev.skipSlang || prev.skipEntities });
+            window.invalidatePreparedSetupVocabulary?.();
+            refresh();
+        });
+    });
+    document.querySelectorAll('.slang-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const exclude = btn.dataset.slang === 'exclude';
+            setToggleState('slang', btn.dataset.slang);
+            globalThis.excludeSlang = exclude;
+            const prev = readFastTrack(selectedLanguage);
+            saveFastTrack(selectedLanguage, { ...prev, skipSlang: exclude, enabled: prev.merge || prev.skip || prev.skipGrammar || exclude || prev.skipEntities });
+            window.invalidatePreparedSetupVocabulary?.();
+            refresh();
+        });
+    });
+    document.querySelectorAll('.entity-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const exclude = btn.dataset.entity === 'exclude';
+            setToggleState('entity', btn.dataset.entity);
+            globalThis.excludeProperNouns = exclude;
+            const prev = readFastTrack(selectedLanguage);
+            saveFastTrack(selectedLanguage, { ...prev, skipEntities: exclude, enabled: prev.merge || prev.skip || prev.skipGrammar || prev.skipSlang || exclude });
+            window.invalidatePreparedSetupVocabulary?.();
+            refresh();
         });
     });
 

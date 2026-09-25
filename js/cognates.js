@@ -105,10 +105,63 @@ function activeKnownLanguages() {
     return readSelected().filter(code => available.has(code));
 }
 
+const LOOKALIKE_FLOOR = 0.55;
+const LOOKALIKE_STOP = new Set([
+    'the', 'a', 'an', 'to', 'of', 'and', 'or', 'for', 'in', 'on', 'at', 'by',
+    'with', 'from', 'as', 'is', 'are', 'be', 'it', 'its', 'that', 'this',
+    'these', 'those', 'your', 'you', 'not', 'one',
+]);
+
+function foldLetters(value) {
+    return String(value || '').normalize('NFD').replace(/\p{M}/gu, '').toLocaleLowerCase();
+}
+
+function editDistance(left, right) {
+    if (left === right) return 0;
+    if (!left || !right) return Math.max(left.length, right.length);
+    let prev = Array.from({ length: right.length + 1 }, (_, index) => index);
+    for (let i = 1; i <= left.length; i++) {
+        const cur = [i];
+        for (let j = 1; j <= right.length; j++) {
+            cur.push(Math.min(
+                cur[j - 1] + 1,
+                prev[j] + 1,
+                prev[j - 1] + (left[i - 1] === right[j - 1] ? 0 : 1),
+            ));
+        }
+        prev = cur;
+    }
+    return prev[right.length];
+}
+
+function letterSimilarity(left, right) {
+    const a = foldLetters(left);
+    const b = foldLetters(right);
+    if (!a || !b) return 0;
+    return 1 - editDistance(a, b) / Math.max(a.length, b.length);
+}
+
+function hasCardLookalikeGloss(item) {
+    if (!item?.meanings || item.meanings.length === 0) return true;
+    const surface = String(item.word || '');
+    for (const meaning of item.meanings) {
+        const text = String(meaning?.translation || '');
+        const tokens = text.split(/[^A-Za-zÀ-ÖØ-öø-ÿ]+/).filter(token => {
+            const word = token.toLocaleLowerCase();
+            return word.length >= 3 && !LOOKALIKE_STOP.has(word);
+        });
+        for (const token of tokens) {
+            if (letterSimilarity(surface, token) >= LOOKALIKE_FLOOR) return true;
+        }
+    }
+    return false;
+}
+
 // Does any language the learner reads already give them this word? Each is
 // asked separately, at its own cutoff.
 function isCognateKnown(item) {
     if (!item) return false;
+    if (!hasCardLookalikeGloss(item)) return false;
     // Every source is asked, and any one of them saying yes is enough — the
     // same shape as the languages themselves. A language can hold both: Spanish
     // has hand-built flags in its artist data and a generated map for its

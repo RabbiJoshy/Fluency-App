@@ -1878,6 +1878,58 @@ function getVocabularyExclusionReason(item) {
     return null;
 }
 
+const GRAMMAR_FUNCTIONAL_POS = new Set(['PRON', 'DET', 'ADP', 'CCONJ', 'SCONJ', 'AUX', 'PART']);
+const COMMON_SPANISH_FUNCTION_WORDS = new Set([
+    'el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 'lo',
+    'de', 'del', 'al', 'a', 'en', 'con', 'por', 'para', 'sin', 'sobre', 'hacia', 'desde', 'hasta', 'entre',
+    'y', 'e', 'o', 'u', 'pero', 'mas', 'sino', 'aunque', 'que', 'si', 'como', 'porque',
+    'yo', 'tu', 'tú', 'el', 'él', 'ella', 'nosotros', 'vosotros', 'ellos', 'ellas', 'usted', 'ustedes',
+    'me', 'te', 'se', 'nos', 'os', 'le', 'les',
+    'mi', 'mis', 'tu', 'tus', 'su', 'sus', 'nuestro', 'nuestra', 'nuestros', 'nuestras',
+    'este', 'esta', 'estos', 'estas', 'ese', 'esa', 'esos', 'esas', 'aquel', 'aquella'
+]);
+
+function isGrammarParticleItem(item) {
+    if (!item || !item.word) return false;
+    if (item.is_clitic || item.clitic_form) return true;
+    const cat = String(item.extra_category || '').toLowerCase();
+    if (cat === 'grammar' || cat === 'particle' || cat === 'clitic') return true;
+    const w = String(item.word).toLowerCase().trim();
+    if (COMMON_SPANISH_FUNCTION_WORDS.has(w)) return true;
+    if (Array.isArray(item.meanings) && item.meanings.length > 0) {
+        if (item.meanings.some(m => Array.isArray(m.allClitics) && m.allClitics.length > 0)) return true;
+        const allFunctional = item.meanings.every(m => {
+            const pos = String(m.pos || '').toUpperCase();
+            return GRAMMAR_FUNCTIONAL_POS.has(pos);
+        });
+        if (allFunctional) return true;
+    }
+    return false;
+}
+
+function isSlangItem(item) {
+    if (!item) return false;
+    if (item.is_noise || item.is_interjection) return true;
+    const cat = String(item.extra_category || '').toLowerCase();
+    if (cat === 'slang' || cat === 'noise' || cat === 'interjection') return true;
+    if (Array.isArray(item.meanings) && item.meanings.length > 0) {
+        return item.meanings.some(m => {
+            const pos = String(m.pos || '').toUpperCase();
+            if (pos === 'INTJ' || pos === 'SLANG' || pos === 'FILLER') return true;
+            const src = String(m.source || '').toLowerCase();
+            if (src.includes('overlay:slang') || src.includes('overlay:conversational_filler') || src.includes('caribbean')) return true;
+            if (Array.isArray(m.tags) && m.tags.some(t => /slang|colloquial|filler/i.test(t))) return true;
+            const ctx = String(m.context || '').toLowerCase();
+            if (ctx.includes('slang') || ctx.includes('colloquial') || ctx.includes('filler')) return true;
+            return false;
+        });
+    }
+    return false;
+}
+
+globalThis.isGrammarParticleItem = isGrammarParticleItem;
+globalThis.isSlangItem = isSlangItem;
+
 function buildFilteredVocab(vocabData) {
     // Deck construction attaches examples and prunes senses in place. Restore
     // the joined master template only after a deck actually mutated it.
@@ -1955,9 +2007,13 @@ function buildFilteredVocab(vocabData) {
                 counts.english++;
                 continue;
             }
-            // Noise / interjections (single-letter "y", filler "uh", "yeah").
-            // Toggleable via excludeNoise in Advanced settings.
-            if (excludeNoise && (item.is_noise || item.is_interjection)) {
+            // Noise / interjections / slang
+            if ((excludeNoise || excludeSlang) && (item.is_noise || item.is_interjection || isSlangItem(item))) {
+                counts.english++;
+                continue;
+            }
+            // Grammar particles & clitics
+            if (excludeGrammarParticles && isGrammarParticleItem(item)) {
                 counts.english++;
                 continue;
             }
@@ -1980,7 +2036,7 @@ function buildFilteredVocab(vocabData) {
             //      builds that haven't been corpus-stamped yet.
             if (excludeProperNouns) {
                 const allPropn = item.meanings.length > 0 && item.meanings.every(m => m.pos === 'PROPN');
-                if (item.is_propernoun || item.is_propernoun_corpus || allPropn) {
+                if (item.is_propernoun || item.is_propernoun_corpus || allPropn || item.extra_category === 'proper_noun') {
                     counts.english++;
                     continue;
                 }

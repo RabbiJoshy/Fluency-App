@@ -6021,52 +6021,98 @@
         }
 
         .app-loading-mark {
-            width: 46px;
-            height: 46px;
+            position: relative;
+            width: 64px;
+            height: 64px;
             display: grid;
             place-items: center;
             margin-bottom: 24px;
             border: 1px solid color-mix(in srgb, var(--accent-primary) 46%, transparent);
-            border-radius: 14px;
+            border-radius: 18px;
             background: color-mix(in srgb, var(--accent-primary) 13%, transparent);
             color: var(--accent-primary);
             font-family: var(--font-emphasis);
-            font-size: 21px;
+            font-size: 28px;
             font-weight: 800;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+        }
+
+        .app-loading-mark-text {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            z-index: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .app-loading-mark.has-art .app-loading-mark-text {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .app-loading-mark-art {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            border-radius: 17px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            image-rendering: -webkit-optimize-contrast;
+            opacity: 0;
+            transition: opacity 0.45s ease-in-out;
+        }
+
+        .app-loading-mark.has-art .app-loading-mark-art {
+            opacity: 1;
+        }
+
+        .app-loading-mark-art[hidden] {
+            display: none;
         }
 
         .app-loading-spinner {
             grid-area: stack;
-            width: 30px;
-            height: 30px;
-            border: 2px solid color-mix(in srgb, var(--accent-primary) 18%, var(--border-color));
+            width: 40px;
+            height: 40px;
+            box-sizing: border-box;
+            border: 3px solid color-mix(in srgb, var(--accent-primary) 18%, var(--border-color));
             border-top-color: var(--accent-primary);
             border-radius: 50%;
+            transform-origin: center center;
             animation: spin 0.75s linear infinite;
             transition: opacity 0.18s ease;
         }
 
-        /* The spinner and the deck-progress ring share one slot so the ring reads
-           as the spinner expanding rather than as a second element appearing. The
-           slot resizes once, on the mode flip; the ring then scales into it, so no
-           frame of the growth animation reflows the card. */
+        /* The spinner and the deck-progress ring share one centered slot.
+           In spinner mode, the ring is removed from layout (display: none)
+           so it cannot push or offset the spinner down and to the right. */
         .app-loading-visual {
             display: grid;
             grid-template-areas: 'stack';
             place-items: center;
-            width: 30px;
-            height: 30px;
-            margin-bottom: 18px;
+            position: relative;
+            box-sizing: border-box;
+            width: 40px;
+            height: 40px;
+            margin-bottom: 20px;
+        }
+
+        .app-loading-visual[data-mode="spinner"] .app-loading-ring,
+        .app-loading-visual[data-mode="spinner"] .app-loading-ring-centre {
+            display: none !important;
         }
 
         .app-loading-visual[data-mode="progress"] {
-            width: 148px;
-            height: 148px;
+            width: 156px;
+            height: 156px;
             margin-bottom: 22px;
         }
 
         .app-loading-visual[data-mode="progress"] .app-loading-spinner {
-            opacity: 0;
+            display: none !important;
         }
 
         .app-loading-ring,
@@ -6078,13 +6124,14 @@
         }
 
         .app-loading-ring {
-            width: 148px;
-            height: 148px;
+            width: 156px;
+            height: 156px;
             overflow: visible;
         }
 
         .app-loading-visual[data-mode="progress"] .app-loading-ring,
         .app-loading-visual[data-mode="progress"] .app-loading-ring-centre {
+            display: grid;
             opacity: 1;
             transform: scale(1);
         }
@@ -6113,13 +6160,14 @@
         .app-loading-ring-centre {
             display: grid;
             justify-items: center;
+            align-content: center;
             gap: 2px;
             line-height: 1;
         }
 
         .app-loading-ring-centre strong {
             font-family: var(--font-emphasis);
-            font-size: 26px;
+            font-size: 32px;
             font-weight: 800;
             letter-spacing: -0.02em;
         }
@@ -6131,14 +6179,24 @@
             text-transform: uppercase;
         }
 
+        .app-loading-ring-centre span[hidden] {
+            display: none;
+        }
+
+        /* In progress mode, streamline text: hide the verbose detail string */
+        .app-loading-visual[data-mode="progress"] ~ #appLoadingDetail {
+            display: none;
+        }
+
         .app-loading-ring-legend {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            margin-top: 12px;
+            gap: 14px;
+            margin-top: 14px;
             color: var(--text-muted);
-            font: 600 9px/1 var(--font-emphasis);
+            font: 600 11px/1.2 var(--font-emphasis);
+            letter-spacing: 0.02em;
         }
 
         .app-loading-ring-legend[hidden] { display: none; }
@@ -6146,14 +6204,17 @@
         .app-loading-ring-legend span {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
         }
 
-        .app-loading-ring-legend b { color: var(--text-primary); }
+        .app-loading-ring-legend b {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
 
         .app-loading-ring-legend i {
-            width: 7px;
-            height: 7px;
+            width: 8px;
+            height: 8px;
             border-radius: 2px;
             background: var(--ring-unseen);
         }
@@ -6162,9 +6223,9 @@
         .app-loading-ring-legend i.is-review { background: var(--ring-review); }
 
         .app-loading-tap-hint {
-            margin: 16px 0 0;
+            margin: 18px 0 0;
             color: var(--text-muted);
-            font: 600 10px/1 var(--font-emphasis);
+            font: 600 11px/1 var(--font-emphasis);
             letter-spacing: 0.08em;
             text-transform: uppercase;
             opacity: 0.85;
@@ -6179,7 +6240,7 @@
 
         .app-loading-card strong {
             font-family: var(--font-emphasis);
-            font-size: 17px;
+            font-size: 19px;
             font-weight: 750;
             letter-spacing: -0.015em;
         }
@@ -6515,6 +6576,7 @@
         }
 
         @keyframes spin {
+            from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
 
@@ -16965,6 +17027,236 @@
 .fast-track-level-deck.is-complete span { color: #31ab70; }
 .fast-track-level-deck.needs-review span { color: #dc9a4c; }
 
+/* ── Unified Fast Track Summary, Triage & Category Surfaces ────────────── */
+.fast-track-deck-summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+.fast-track-deck-summary-card .fast-track-study-launch {
+  padding: 0;
+  border: 0;
+}
+.fast-track-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.fast-track-deck-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font: 500 12px/1.2 var(--font-reading);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.fast-track-deck-chip:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-light);
+  color: var(--text-primary);
+}
+.fast-track-deck-chip strong {
+  font-weight: 700;
+  color: var(--accent-primary);
+}
+.fast-track-deck-actions-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+.fast-track-hub-action-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font: 600 12px/1.2 var(--font-reading);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s ease;
+}
+.fast-track-hub-action-btn:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-light);
+  color: var(--text-primary);
+}
+.fast-track-hub-action-btn--primary {
+  background: rgba(var(--accent-primary-rgb, 200, 16, 46), 0.14);
+  border-color: color-mix(in srgb, var(--accent-primary) 40%, var(--border-color));
+  color: var(--accent-primary);
+}
+.fast-track-hub-action-btn--primary:hover {
+  background: rgba(var(--accent-primary-rgb, 200, 16, 46), 0.22);
+}
+
+/* Category Triage Tabs inside Skipped Words Modal */
+.fast-track-triage-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 20px 8px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+}
+.fast-track-triage-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+  font: 600 12px/1.2 var(--font-reading);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.fast-track-triage-tab:hover {
+  color: var(--text-secondary);
+  background: var(--bg-card-hover);
+}
+.fast-track-triage-tab.is-active {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary-text);
+}
+.fast-track-tab-count {
+  font-size: 11px;
+  opacity: 0.85;
+  font-variant-numeric: tabular-nums;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.2);
+}
+.fast-track-triage-tab.is-active .fast-track-tab-count {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* Triage batch action bar */
+.fast-track-triage-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 20px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+}
+.fast-track-batch-action-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font: 600 12px/1.2 var(--font-reading);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.fast-track-batch-action-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+.fast-track-batch-study-btn {
+  border-color: color-mix(in srgb, var(--accent-primary) 50%, var(--border-color));
+  color: var(--accent-primary);
+}
+.fast-track-batch-known-btn {
+  border-color: #31ab70;
+  color: #31ab70;
+  background: rgba(49, 171, 112, 0.08);
+}
+.fast-track-batch-known-btn:hover {
+  background: rgba(49, 171, 112, 0.16);
+}
+
+/* Category Badges & Row Actions */
+.extras-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.extras-badge {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+.extras-badge--cognate {
+  background: rgba(74, 158, 255, 0.1);
+  color: #4a9eff;
+  border-color: rgba(74, 158, 255, 0.3);
+}
+.extras-badge--grammar {
+  background: rgba(167, 139, 250, 0.1);
+  color: #a78bfa;
+  border-color: rgba(167, 139, 250, 0.3);
+}
+.extras-badge--slang {
+  background: rgba(245, 166, 35, 0.1);
+  color: #f5a623;
+  border-color: rgba(245, 166, 35, 0.3);
+}
+.extras-badge--entity {
+  background: rgba(0, 212, 170, 0.1);
+  color: #00d4aa;
+  border-color: rgba(0, 212, 170, 0.3);
+}
+.extras-badge--lemma {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-muted);
+}
+.extras-row-mark-known {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.extras-row-mark-known:hover {
+  border-color: #31ab70;
+  color: #31ab70;
+  background: rgba(49, 171, 112, 0.12);
+}
+.extras-row-mark-known.is-marked {
+  border-color: #31ab70;
+  color: #31ab70;
+  background: rgba(49, 171, 112, 0.2);
+  cursor: default;
+}
+.extras-word-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.extras-word-stack .extras-open-card {
+  text-align: left;
+}
+
+
 /* A page, not a dialogue. The explanation is the point, so it gets the whole
    screen rather than a card floating over the setup panel the learner is
    trying to understand. `.fullscreen-modal` caps at 600px for the other
@@ -18459,6 +18751,16 @@ body {
 #skippedWordsModal .cognate-pair-known.is-gloss {
   color: var(--text-muted);
   font: 500 13px/1.35 var(--font-reading);
+}
+#skippedWordsModal .cognate-pair--flipped .cognate-pair-known {
+  grid-column: 1;
+  justify-self: end;
+  text-align: right;
+}
+#skippedWordsModal .cognate-pair--flipped .extras-open-card {
+  grid-column: 3;
+  justify-self: start;
+  text-align: left;
 }
 
 .lemma-group-list { margin: 0; padding: 0; list-style: none; }
