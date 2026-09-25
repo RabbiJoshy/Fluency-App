@@ -8747,177 +8747,233 @@ window.toggleSpanishDictPanel = toggleSpanishDictPanel;
 
 // Card-data panel. Lists every ordinary
 // meaning and resolves stamped prompts against window._promptRegistry (loaded
-// in config.js). A missing prompt is identified as deterministic/retained
-// evidence rather than making the entire control disappear.
+// Card-data panel. Lists senses, human-friendly assignment methods,
+// example sentences, and provides collapsed technical diagnostics.
 function buildProvenancePanelHTML(card) {
     const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, c => (
         {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
     const registry = (window._promptRegistry) || {};
     const activeRelease = window._activeReleaseProvenance || {};
-    const releaseId = activeRelease.releaseId || activeRelease.release_id || '';
-    const assignmentStatus = activeRelease.wsd?.status || '';
-    const historicalRelease = /historical|retained|parity/i.test(assignmentStatus);
-    const readableAssignmentStatus = String(assignmentStatus || '')
-        .replace(/[_-]+/g, ' ').trim();
-    const releaseSummary = releaseId
-        ? `<div class="prov-notes"><strong>Release ${esc(releaseId)}</strong>${readableAssignmentStatus
-            ? ` · ${esc(readableAssignmentStatus)}` : ''}</div>`
-        : '<div class="prov-notes">Release identity unavailable · card-level evidence only</div>';
+    const releaseId = String(activeRelease.releaseId || activeRelease.release_id || '').trim();
+
+    // Determine release mode and version dynamically
+    const allMethods = (card.meanings || []).flatMap(m => {
+        const pex = m.allExamples || m.examples || [];
+        return [m.assignment_method, m.prompt_id, ...(pex.map(e => e?.assignment_method || e?.prompt_id))];
+    }).filter(Boolean).map(String);
+
+    const hasV16 = allMethods.some(s => /v16|overlay|wiktionary/i.test(s));
+    let detectedVersion = '';
+    const vMatch = allMethods.find(s => /v(\d+)/i.test(s));
+    if (vMatch) {
+        detectedVersion = `v${vMatch.match(/v(\d+)/i)[1]}`;
+    } else if (/v(\d+)/i.test(releaseId)) {
+        detectedVersion = `v${releaseId.match(/v(\d+)/i)[1]}`;
+    }
+
+    if (hasV16 && (!detectedVersion || detectedVersion === 'v7')) {
+        detectedVersion = 'v16';
+    }
+
+    const isLyrics = Boolean(window.activeArtist) || releaseId.includes('lyrics');
+    const releaseTitle = isLyrics
+        ? (detectedVersion ? `Lyrics Release ${detectedVersion}` : 'Lyrics Release')
+        : (detectedVersion ? `Speech Release ${detectedVersion}` : 'Speech Release');
+
+    const artistName = window.activeArtist?.name || '';
+    const releaseSub = hasV16
+        ? (artistName ? `${artistName} · Wiktionary & Slang Overlays Active` : 'Wiktionary & Slang Overlays Active')
+        : (artistName ? `${artistName} · Active Study Vocabulary` : 'Active Study Vocabulary');
+
+    const releaseSummary = `
+        <div class="prov-release-box">
+            <div class="prov-release-tag">${esc(releaseTitle)}</div>
+            <div class="prov-release-sub">${esc(releaseSub)}</div>
+        </div>`;
 
     function fmtTs(ts) {
         if (!ts) return '';
         const d = new Date(ts);
         if (isNaN(d.getTime())) return esc(ts);
-        // Date + HH:MM, not date alone. run_ts has always stored minutes
-        // (2026-08-19T20:57Z) and two classifier runs on the same day are
-        // routine while a change is being evaluated — printing only the date
-        // makes the two indistinguishable on the card, which is exactly the
-        // thing the panel exists to show.
         const day = d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
         const time = d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
         return `${day} ${time}`;
     }
 
+    function friendlyAlgorithm(method, promptId, isDictionary) {
+        const m = String(method || '').toLowerCase();
+        const p = String(promptId || '').toLowerCase();
+        const combined = `${m} ${p}`;
+
+        if (combined.includes('overlay') || combined.includes('declared') || combined.includes('slang')) {
+            return {
+                badge: 'Artist & Slang Overlay',
+                desc: 'Verified regional expression or artist slang',
+                cls: 'prov-badge--overlay'
+            };
+        }
+        if (combined.includes('wikipedia') || combined.includes('entity')) {
+            return {
+                badge: 'Wikipedia Named Entity',
+                desc: 'Recognized cultural reference, proper name, or location',
+                cls: 'prov-badge--entity'
+            };
+        }
+        if (combined.includes('wiktionary')) {
+            return {
+                badge: 'Wiktionary Entry',
+                desc: 'Community-curated multilingual dictionary sense',
+                cls: 'prov-badge--dict'
+            };
+        }
+        if (isDictionary || combined.includes('spanishdict')) {
+            return {
+                badge: 'SpanishDict Sense',
+                desc: 'Curated standard dictionary entry',
+                cls: 'prov-badge--dict'
+            };
+        }
+        if (combined.includes('pos-auto')) {
+            return {
+                badge: 'Grammar Match',
+                desc: 'Matched to sentence by part of speech',
+                cls: 'prov-badge--auto'
+            };
+        }
+        if (combined.includes('monosemous') || m === 'single-sense') {
+            return {
+                badge: 'Dictionary Match',
+                desc: 'Single unambiguous dictionary meaning',
+                cls: 'prov-badge--auto'
+            };
+        }
+        if (combined.includes('shared-register')) {
+            return {
+                badge: 'Cross-Artist Match',
+                desc: 'Usage verified across artist catalog',
+                cls: 'prov-badge--auto'
+            };
+        }
+        if (combined.includes('beto') || combined.includes('cal') || combined.includes('wsd') || combined.includes('embed')) {
+            return {
+                badge: 'AI Context Match',
+                desc: 'Contextually selected by language model',
+                cls: 'prov-badge--ai'
+            };
+        }
+        if (combined.includes('retained') || combined.includes('historical')) {
+            return {
+                badge: 'Standard Dictionary Sense',
+                desc: 'Preserved baseline assignment',
+                cls: 'prov-badge--dict'
+            };
+        }
+
+        // Future-proof dynamic formatting for any new algorithms
+        if (method) {
+            let clean = String(method)
+                .replace(/^(es-|fr-|pt-|cs-|lyrics-|speech-|sd-)+/gi, '')
+                .replace(/-(deterministic|auto|candidate)/gi, '')
+                .replace(/[-_]+/g, ' ')
+                .trim();
+            clean = clean.replace(/\b([a-z])/g, (_, l) => l.toUpperCase());
+            return {
+                badge: clean || 'Automated Match',
+                desc: 'Automated linguistic pipeline match',
+                cls: 'prov-badge--auto'
+            };
+        }
+
+        return {
+            badge: 'Dictionary Sense',
+            desc: 'Standard dictionary definition',
+            cls: 'prov-badge--dict'
+        };
+    }
+
     const rows = (card.meanings || []).map(m => {
-            // Meaning-level provenance can be lost between the index and the
-            // card. buildFilteredVocab() and mergeArtistVocabularies() rebuild
-            // meanings from scratch, and lemma mode pools sibling forms onto a
-            // host — any of those can drop prompt_id while the evidence itself
-            // is intact. The examples split stamps prompt_id / run_ts /
-            // assignment_method on every assigned example, so fall back to the
-            // example rather than reporting "No model prompt" for a sense that
-            // plainly has a model behind it.
-            // Card meanings expose `allExamples`; the joined/index shape uses
-            // `examples`. Read both — the panel is rendered from the card.
-            const pex = m.allExamples || m.examples || [];
-            const psrc = pex.find(e => e && (e.prompt_id || e.assignment_method || e.confidence != null)) || {};
-            const promptId = m.prompt_id || psrc.prompt_id || null;
-            const runTs = m.run_ts || psrc.run_ts || null;
-            const method = m.assignment_method || psrc.assignment_method || null;
-            const reg = registry[promptId] || {};
-            const isAutomatic = typeof method === 'string' && method.endsWith('-auto');
-            const hasPrompt = Boolean(promptId) && !isAutomatic;
-            const automaticLabel = method === 'shared-register-auto'
-                ? 'Shared sense register auto · no model call'
-                : method === 'pos-auto'
-                    ? 'POS-filtered auto · no model call'
-                    : 'SpanishDict auto · no model call';
-            const automaticDetail = method === 'shared-register-auto'
-                ? 'exact line reused from another registered artist'
-                : method === 'pos-auto'
-                    ? 'one menu sense remained after occurrence POS filtering'
-                    : 'single available dictionary sense';
-            const model = isAutomatic
-                ? automaticLabel
-                : (hasPrompt
-                    ? (reg.model || (historicalRelease
-                        ? 'Historical retained assignment'
-                        : 'Unregistered model'))
-                    : 'Deterministic or retained evidence');
-            const family = reg.family || '';
-            const tier = (reg.capability_tier != null) ? `tier ${reg.capability_tier}` : '';
-            const ts = fmtTs(runTs);
-            const meta = [family, tier, ts].filter(Boolean).join(' · ');
-            const notes = reg.notes ? `<div class="prov-notes">${esc(reg.notes)}</div>` : '';
-            const proposal = m.modelProposed
-                ? '<div class="prov-proposal">AI-proposed definition · outside the SpanishDict menu</div>'
-                : '';
-            // A SpanishDict example sentence is filed under its sense BY THE
-            // DICTIONARY, so no model was ever involved and "No model prompt"
-            // reads as a gap when it is actually the strongest provenance on the
-            // card. step_8a already marks these `evidence: "dictionary"`; say so
-            // rather than leaving the line blank-looking.
-            const isDictionary = !hasPrompt && !isAutomatic
-                && pex.some(e => e && e.evidence === 'dictionary');
-            const stamp = hasPrompt
-                ? `<div class="prov-meta"><code>${esc(promptId)}</code>${meta ? ` · ${esc(meta)}` : ''}</div>`
-                : isDictionary
-                    ? '<div class="prov-meta">SpanishDict example · filed by the dictionary, no model involved</div>'
-                    : `<div class="prov-meta">${esc(method || 'No model prompt')}${isAutomatic ? ` · ${esc(automaticDetail)}` : ''}</div>`;
-            // Confidence, when the assigning method reports one. The band cuts
-            // are absolute values transferred from the hand-labelled panel in
-            // Data/Spanish/Intermediates/wsd_sense_harness, not quantiles of a
-            // run: high is the gap at which that panel measured 100% acceptable.
-            // Confidence means different things per method and must not be
-            // labelled identically. step_6d reports a COSINE GAP between the top
-            // two lemma+POS tuples; step_6e reports a calibrated P(correct) from
-            // a learned ranker. Showing "gap 0.9857" for a probability would be
-            // actively misleading, so the unit follows the prompt family.
-            const cVal = (m.confidence != null) ? m.confidence : psrc.confidence;
-            const cBand = m.band || psrc.band || null;
-            const calibrated = typeof promptId === 'string' && promptId.startsWith('sd-beto-cal');
-            const conf = (cVal != null)
-                ? `<div class="prov-conf prov-conf--${esc(cBand || 'low')}">
-                       <span class="prov-conf-band">${esc(cBand || '?')}</span>
-                       <span class="prov-conf-val">${calibrated
-                           ? `P(correct) ${esc((Number(cVal) * 100).toFixed(1))}%`
-                           : `gap ${esc(Number(cVal).toFixed(4))}`}</span>
-                       <span class="prov-conf-note">${calibrated
-                           ? (cBand === 'high' ? 'held-out: 99% lemma+POS correct at this cut'
-                               : cBand === 'medium' ? 'held-out: 95% lemma+POS correct at this cut'
-                               : 'below the 95% cut — least reliable band')
-                           : (cBand === 'high' ? '100% acceptable on the 150-sentence panel'
-                               : cBand === 'medium' ? '91.9% acceptable on that panel'
-                               : '84.5% acceptable on that panel')}</span>
-                   </div>`
-                : '';
-            // The sentences this sense was actually assigned to. Without these
-            // the panel says a model made a decision but never shows the
-            // evidence it decided on, which is the only thing worth auditing.
-            const exs = pex.map((x, exampleIndex) => {
-                const pv = normalizedExampleProvenance(x);
-                let src = exampleProvenanceHTML(x) || '';
-                if (src) {
-                    src = src.replace('<a ', '<a class="prov-ex-src" ');
-                } else if (x.source) {
-                    src = `<span class="prov-ex-src">${esc(x.source)}</span>`;
-                }
-                const al = (x.alignment != null)
-                    ? `<span class="prov-ex-align">align ${esc(Number(x.alignment).toFixed(3))}</span>` : '';
-                const metadata = [
-                    ['Run', x.run_id], ['Example', x.example_id],
-                    ['Occurrence', x.occurrence_id], ['Analysis unit', x.analysis_unit_id],
-                    ['Route', x.route_id], ['Lexical candidate', x.lexical_candidate_id],
-                    ['Menu analysis', x.menu_analysis_id], ['Menu snapshot', x.menu_content_id],
-                    ['Sense', x.sense_id], ['WSD request', x.wsd_request_id],
-                    ['WSD result', x.wsd_result_id], ['Method', x.assignment_method],
-                    ['Decision path', Array.isArray(x.decision_path) ? x.decision_path.join(' → ') : x.decision_path],
-                    ['Source record', x.source_record_id || pv.source_record_id], ['Source snapshot', x.source_snapshot_content_id],
-                    ['Source URL', x.source_url || pv.url], ['Attribution', x.attribution || pv.attribution],
-                    ['Contributor', x.contributor || pv.contributor], ['License', x.license || pv.license],
-                    ['Alignment', x.alignment_id], ['Alignment snapshot', x.alignment_snapshot_content_id],
-                    ['Translation source', x.translation_source], ['Song ID', x.song],
-                    ['Vocalists', Array.isArray(x.vocalists) ? x.vocalists.join(', ') : x.vocalists],
-                ].filter(([, value]) => value != null && String(value).trim() !== '');
-                const metadataHTML = metadata.map(([label, value]) =>
-                    `<div class="prov-ex-field"><dt>${esc(label)}</dt><dd><code>${esc(value)}</code></dd></div>`
-                ).join('');
-                const rawRecord = esc(JSON.stringify(x, null, 2));
-                return `<details class="prov-ex-record"${exampleIndex === 0 ? ' open' : ''}>
-                    <summary>Example ${exampleIndex + 1} of ${pex.length}${x.song_name ? ` · ${esc(x.song_name)}` : ''}</summary>
-                    <div class="prov-ex">
-                    <div class="prov-ex-target">${esc(x.target || x.spanish || '')}</div>
-                    <div class="prov-ex-english">${x.english ? esc(x.english) : '<em>Translation unavailable</em>'}</div>
-                    <div class="prov-ex-meta">${src}${al}</div>
+        const pex = m.allExamples || m.examples || [];
+        const psrc = pex.find(e => e && (e.prompt_id || e.assignment_method || e.confidence != null)) || {};
+        const promptId = m.prompt_id || psrc.prompt_id || null;
+        const runTs = m.run_ts || psrc.run_ts || null;
+        const method = m.assignment_method || psrc.assignment_method || null;
+        const reg = registry[promptId] || {};
+        const isDictionary = !promptId && !method && pex.some(e => e && e.evidence === 'dictionary');
+        const algo = friendlyAlgorithm(method, promptId, isDictionary);
+
+        const cVal = (m.confidence != null) ? m.confidence : psrc.confidence;
+        const cBand = m.band || psrc.band || null;
+        const calibrated = typeof promptId === 'string' && promptId.startsWith('sd-beto-cal');
+        const confHTML = (cVal != null)
+            ? `<div class="prov-conf prov-conf--${esc(cBand || 'low')}">
+                   <span class="prov-conf-band">${esc(cBand === 'high' ? 'High Confidence' : cBand === 'medium' ? 'Probable Match' : 'Review')}</span>
+                   ${calibrated ? `<span class="prov-conf-val">${(Number(cVal) * 100).toFixed(0)}% match</span>` : ''}
+               </div>`
+            : '';
+
+        const proposal = m.modelProposed
+            ? '<div class="prov-proposal">AI-proposed definition · outside the standard menu</div>'
+            : '';
+
+        const exs = pex.map((x, exampleIndex) => {
+            const pv = normalizedExampleProvenance(x);
+            let src = exampleProvenanceHTML(x) || '';
+            if (src) {
+                src = src.replace('<a ', '<a class="prov-ex-src" ');
+            } else if (x.source) {
+                src = `<span class="prov-ex-src">${esc(x.source)}</span>`;
+            }
+            const songTitle = x.song_name || x.song || (pex.length > 1 ? `Sentence ${exampleIndex + 1}` : 'Example');
+
+            const metadata = [
+                ['Method', x.assignment_method || method],
+                ['Prompt', x.prompt_id || promptId],
+                ['Song', x.song_name || x.song],
+                ['Vocalists', Array.isArray(x.vocalists) ? x.vocalists.join(', ') : x.vocalists],
+                ['Alignment', x.alignment != null ? Number(x.alignment).toFixed(3) : null],
+                ['Source', x.source || pv.attribution || pv.contributor],
+                ['Run ID', x.run_id],
+                ['Example ID', x.example_id],
+                ['Occurrence ID', x.occurrence_id],
+                ['Sense ID', x.sense_id]
+            ].filter(([, value]) => value != null && String(value).trim() !== '');
+
+            const metadataHTML = metadata.map(([label, value]) =>
+                `<div class="prov-ex-field"><dt>${esc(label)}</dt><dd><code>${esc(value)}</code></dd></div>`
+            ).join('');
+            const rawRecord = esc(JSON.stringify(x, null, 2));
+
+            return `<div class="prov-ex-item">
+                <div class="prov-ex-heading">
+                    <span class="prov-ex-song">🎵 ${esc(songTitle)}</span>
+                    ${src ? `<span class="prov-ex-meta">${src}</span>` : ''}
+                </div>
+                <div class="prov-ex-target">${esc(x.target || x.spanish || '')}</div>
+                <div class="prov-ex-english">${x.english ? esc(x.english) : '<em>Translation unavailable</em>'}</div>
+                <details class="prov-tech-details">
+                    <summary>Technical diagnostics</summary>
                     <dl class="prov-ex-fields">${metadataHTML}</dl>
-                    <details class="prov-ex-raw"><summary>Raw example record</summary><pre>${rawRecord}</pre></details>
-                    </div>
-                </details>`;
-            }).join('');
-            const exBlock = exs
-                ? `<div class="prov-examples">${exs}</div>`
-                : '<div class="prov-examples prov-examples--empty">No sentence attached to this sense.</div>';
-            return `<div class="prov-row">
-                <div class="prov-gloss">${esc(m.meaning || m.translation || '')}
-                    <span class="prov-pos">${esc(m.pos || '')}</span></div>
-                <div class="prov-model">${esc(model)}</div>
-                ${stamp}
-                ${conf}
-                ${exBlock}
-                ${proposal}
-                ${notes}
+                    <details class="prov-ex-raw"><summary>Raw record</summary><pre>${rawRecord}</pre></details>
+                </details>
             </div>`;
         }).join('');
+
+        const exBlock = exs
+            ? `<div class="prov-examples">${exs}</div>`
+            : '<div class="prov-examples prov-examples--empty">No sentence attached to this sense.</div>';
+
+        return `<div class="prov-row">
+            <div class="prov-sense-top">
+                <span class="prov-gloss">${esc(m.meaning || m.translation || '')}</span>
+                ${m.pos ? `<span class="prov-pos">${esc(m.pos)}</span>` : ''}
+                <span class="prov-algo-pill ${esc(algo.cls)}">${esc(algo.badge)}</span>
+            </div>
+            <div class="prov-algo-detail">${esc(algo.desc)}</div>
+            ${confHTML}
+            ${exBlock}
+            ${proposal}
+        </div>`;
+    }).join('');
 
     return `<div id="provenancePanel" class="provenance-panel" style="display:none;">
         <button class="prov-close" title="Close" aria-label="Close" onclick="event.stopPropagation(); toggleProvenancePanel();">&times;</button>
