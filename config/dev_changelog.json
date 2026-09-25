@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-26T00:35:00+01:00",
+      "date": "2026-09-26 00:35 BST",
+      "agent": "Antigravity",
+      "summary": "Simplify Card Data panel with clear hierarchy and human-friendly algorithm names; bump cache to v560.",
+      "detail": [
+        "Restructures the Card Data panel with clear visual hierarchy, song headings, and friendly algorithm badges.",
+        "Replaces dense technical jargon with human-readable descriptions for dictionary, grammar, and AI context matches.",
+        "Bumps Service Worker cache name to flashcards-v560 and updates asset version tags."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-25T20:45:00+01:00",
       "date": "2026-09-25 20:45 BST",
       "agent": "Antigravity",
