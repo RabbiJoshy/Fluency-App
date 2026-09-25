@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-25T20:45:00+01:00",
+      "date": "2026-09-25 20:45 BST",
+      "agent": "Antigravity",
+      "summary": "Fix login crash by restoring missing batchMarkSkippedKnown function in extras.js and bump cache to v559.",
+      "detail": [
+        "Restores batchMarkSkippedKnown definition in extras.js, preventing a ReferenceError during module evaluation.",
+        "Fixes app initialization so login and language picker interactions work as expected.",
+        "Bumps Service Worker cache name to flashcards-v559 and updates asset version tags."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-25T20:15:00+01:00",
       "date": "2026-09-25 20:15 BST",
       "agent": "Antigravity",

@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v558';
+const CACHE_NAME = 'flashcards-v559';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -63,7 +63,7 @@ const urlsToCache = [
   '/js/cognates.js?v=20260922ft2',
   '/js/coverage.js?v=20260909a',
   '/js/fast-mode.js?v=20260923ft',
-  '/js/extras.js?v=20260923ft3',
+  '/js/extras.js?v=20260925cues',
   `/js/song-sets-core.js?v=${ASSET_VERSION}`,
   '/js/song-sets.js?v=20260823ae',
   '/js/spotify-playlist-import.js?v=20260923su',
