@@ -679,6 +679,30 @@ let _renderedCount = 0;
 let _currentSentinelObserver = null;
 const PAGE_CHUNK = 60;
 
+async function batchMarkSkippedKnown(entries = []) {
+    const list = Array.isArray(entries) ? entries : [];
+    if (!list.length) return 0;
+    const save = g().saveWordProgress;
+    let count = 0;
+    for (const entry of list) {
+        const item = entry.item || entry;
+        if (!item || !item.word) continue;
+        const state = g().getSetupLearningState?.(item);
+        if (state?.seen && !state?.needsReview) continue; // already known
+        if (save) {
+            save(item, true);
+            count++;
+        }
+    }
+    if (count > 0) {
+        window.cacheProgressLocally?.();
+        window.bumpProgressEpoch?.();
+        window.refreshFastMode?.();
+        window.renderFastTrackSkippedDecks?.();
+    }
+    return count;
+}
+
 function appendNextChunk(container, entries, isLemma) {
     if (!container || _renderedCount >= entries.length) return;
     const nextChunk = entries.slice(_renderedCount, _renderedCount + PAGE_CHUNK);
