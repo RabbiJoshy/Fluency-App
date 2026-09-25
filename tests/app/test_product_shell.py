@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v559"
+EXPECTED_CACHE_NAME = "flashcards-v560"
 
 
 
@@ -82,11 +82,11 @@ class ProductShellTests(unittest.TestCase):
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
         self.assertIn("label: 'Card data'", flashcards)
         self.assertNotIn("if (!isJstOwner()) return null", flashcards)
-        self.assertIn('class="prov-ex-record"', flashcards)
-        self.assertIn("['Occurrence', x.occurrence_id]", flashcards)
-        self.assertIn("Raw example record", flashcards)
-        self.assertIn("Historical retained assignment", flashcards)
-        self.assertIn("Release ${esc(releaseId)}", flashcards)
+        self.assertIn('class="prov-ex-item"', flashcards)
+        self.assertIn("['Occurrence ID', x.occurrence_id]", flashcards)
+        self.assertIn("Raw record", flashcards)
+        self.assertIn("Preserved baseline assignment", flashcards)
+        self.assertIn("prov-release-tag", flashcards)
 
     def test_spanishdict_inspector_is_audit_only(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
@@ -785,8 +785,8 @@ class ProductShellTests(unittest.TestCase):
             '.range-btn-new:not(.has-progress):not(:hover)',
             light_css,
         )
-        self.assertIn('css/light-theme.css?v=20260925cues', html)
-        self.assertIn('/css/light-theme.css?v=20260925cues', worker)
+        self.assertIn('css/light-theme.css?v=20260926carddata', html)
+        self.assertIn('/css/light-theme.css?v=20260926carddata', worker)
 
 
     def test_active_release_aliases_are_never_cached(self) -> None:
@@ -1008,7 +1008,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
         self.assertIn("/js/spotify-playlist-import.js?v=20260923su", worker)
-        self.assertIn('css/style.css?v=20260925cues', html)
+        self.assertIn('css/style.css?v=20260926carddata', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
         self.assertIn("replaceRoute({\n        kind: 'live'", importer)
