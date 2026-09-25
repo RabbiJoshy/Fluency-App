@@ -2000,10 +2000,10 @@ function buildFilteredVocab(vocabData) {
         // surface grouped by their `extra_category` rather than vanishing.
         // Main scope is unchanged — it still drops them so it stays clean.
         const isExtraScope = activeArtist && artistVocabularyScope === 'extra';
-        if (activeArtist && !isExtraScope) {
-            // English borrowings — always filtered (no toggle; they're not
+        if (!isExtraScope) {
+            // English borrowings — always filtered for artists (no toggle; they're not
             // Spanish words at all and have no Spanish meaning to teach).
-            if (item.is_english) {
+            if (activeArtist && item.is_english) {
                 counts.english++;
                 continue;
             }
@@ -2020,7 +2020,7 @@ function buildFilteredVocab(vocabData) {
             // English loanwords / code-switches (hey, baby, shot, panty),
             // flagged from Wiktionary etymology. Toggleable via
             // excludeEnglishLoanwords in Advanced settings.
-            if (excludeEnglishLoanwords && item.is_english_loanword) {
+            if (activeArtist && excludeEnglishLoanwords && item.is_english_loanword) {
                 counts.english++;
                 continue;
             }
@@ -2035,8 +2035,8 @@ function buildFilteredVocab(vocabData) {
             //      PROPN by Gemini. Kept for backwards-compat with vocab
             //      builds that haven't been corpus-stamped yet.
             if (excludeProperNouns) {
-                const allPropn = item.meanings.length > 0 && item.meanings.every(m => m.pos === 'PROPN');
-                if (item.is_propernoun || item.is_propernoun_corpus || allPropn || item.extra_category === 'proper_noun') {
+                const allPropn = Array.isArray(item.meanings) && item.meanings.length > 0 && item.meanings.every(m => m.pos === 'PROPN');
+                if (item.is_propernoun || item.is_propernoun_corpus || allPropn || item.extra_category === 'proper_noun' || item.extra_category === 'name') {
                     counts.english++;
                     continue;
                 }
@@ -2045,11 +2045,13 @@ function buildFilteredVocab(vocabData) {
             // card exists. Multi-occurrence rows with no assigned artist
             // sense are discarded later after examples attach; discard them
             // here too so they never appear as phantom new cards in a set.
-            const hasAssignedArtistSense = item.meanings.some(meaning =>
-                Number(meaning.frequency || 0) >= ARTIST_MIN_SENSE_FREQ);
-            if (Number(item.corpus_count) > 1 && !hasAssignedArtistSense) {
-                counts.singleOcc++;
-                continue;
+            if (activeArtist) {
+                const hasAssignedArtistSense = item.meanings.some(meaning =>
+                    Number(meaning.frequency || 0) >= ARTIST_MIN_SENSE_FREQ);
+                if (Number(item.corpus_count) > 1 && !hasAssignedArtistSense) {
+                    counts.singleOcc++;
+                    continue;
+                }
             }
         }
         // Cognates: dropped in Main/normal per the toggle, but KEPT in Extra so

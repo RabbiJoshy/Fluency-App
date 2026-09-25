@@ -103,14 +103,12 @@ function applyFastMode(on) {
             `.cognate-toggle-btn[data-cognate="${on && skip ? 'exclude' : 'include'}"]`
         )?.click();
     }
-    if (isArtist) {
-        setToggleState('grammar', on && skipGrammar ? 'exclude' : 'include');
-        setToggleState('slang', on && skipSlang ? 'exclude' : 'include');
-        setToggleState('entity', on && skipEntities ? 'exclude' : 'include');
-        globalThis.excludeGrammarParticles = on && skipGrammar;
-        globalThis.excludeSlang = on && skipSlang;
-        globalThis.excludeProperNouns = on && skipEntities;
-    }
+    setToggleState('grammar', on && skipGrammar ? 'exclude' : 'include');
+    setToggleState('slang', on && skipSlang ? 'exclude' : 'include');
+    setToggleState('entity', on && skipEntities ? 'exclude' : 'include');
+    globalThis.excludeGrammarParticles = on && skipGrammar;
+    globalThis.excludeSlang = on && skipSlang;
+    globalThis.excludeProperNouns = on && skipEntities;
     applyingMasterSwitch = false;
 
     if (!isArtist) {
@@ -136,13 +134,13 @@ function refresh() {
         || card?.dataset.available === 'false');
     wrapper.style.display = availabilityResolved || isArtist ? 'block' : 'none';
 
-    // Show/hide lyrics-specific fine tune containers
+    // Show fine tune containers in both speech and artist modes
     const grammarContainer = document.getElementById('grammarToggleContainer');
     const slangContainer = document.getElementById('slangToggleContainer');
     const entityContainer = document.getElementById('entityToggleContainer');
-    if (grammarContainer) grammarContainer.style.display = isArtist ? 'block' : 'none';
-    if (slangContainer) slangContainer.style.display = isArtist ? 'block' : 'none';
-    if (entityContainer) entityContainer.style.display = isArtist ? 'block' : 'none';
+    if (grammarContainer) grammarContainer.style.display = 'block';
+    if (slangContainer) slangContainer.style.display = 'block';
+    if (entityContainer) entityContainer.style.display = 'block';
 
     const on = state === 'on';
     const extras = globalThis.collectExtras?.() || {};
@@ -154,35 +152,35 @@ function refresh() {
     const skippedWordsCount = document.getElementById('skippedWordsCount');
     if (skippedWordsCount) {
         const cLen = extras.cognates?.length || 0;
-        skippedWordsCount.textContent = cLen ? `View obvious words (${cLen.toLocaleString()})` : 'View skipped words';
+        skippedWordsCount.textContent = cLen ? `${cLen.toLocaleString()} Skipped` : '0 Skipped';
         const vBtn = document.getElementById('viewSkippedWordsBtn');
         if (vBtn) vBtn.style.display = cLen ? 'inline-flex' : 'none';
     }
     const mergedFormsCount = document.getElementById('mergedFormsCount');
     if (mergedFormsCount) {
         const mLen = extras.lemmas?.length || 0;
-        mergedFormsCount.textContent = mLen ? `View merged forms (${mLen.toLocaleString()})` : 'View merged forms';
+        mergedFormsCount.textContent = mLen ? `${mLen.toLocaleString()} Merged` : '0 Merged';
         const mBtn = document.getElementById('viewMergedFormsBtn');
         if (mBtn) mBtn.style.display = mLen ? 'inline-flex' : 'none';
     }
     const grammarCount = document.getElementById('grammarWordsCount');
     if (grammarCount) {
         const gLen = extras.grammar?.length || 0;
-        grammarCount.textContent = gLen ? `View grammar words (${gLen.toLocaleString()})` : 'View grammar words';
+        grammarCount.textContent = gLen ? `${gLen.toLocaleString()} Skipped` : '0 Skipped';
         const gBtn = document.getElementById('viewGrammarWordsBtn');
         if (gBtn) gBtn.style.display = gLen ? 'inline-flex' : 'none';
     }
     const slangCount = document.getElementById('slangWordsCount');
     if (slangCount) {
         const sLen = extras.slang?.length || 0;
-        slangCount.textContent = sLen ? `View slang words (${sLen.toLocaleString()})` : 'View slang words';
+        slangCount.textContent = sLen ? `${sLen.toLocaleString()} Skipped` : '0 Skipped';
         const sBtn = document.getElementById('viewSlangWordsBtn');
         if (sBtn) sBtn.style.display = sLen ? 'inline-flex' : 'none';
     }
     const entityCount = document.getElementById('entityWordsCount');
     if (entityCount) {
         const eLen = extras.entities?.length || 0;
-        entityCount.textContent = eLen ? `View entities (${eLen.toLocaleString()})` : 'View entities';
+        entityCount.textContent = eLen ? `${eLen.toLocaleString()} Skipped` : '0 Skipped';
         const eBtn = document.getElementById('viewEntityWordsBtn');
         if (eBtn) eBtn.style.display = eLen ? 'inline-flex' : 'none';
     }
@@ -527,6 +525,9 @@ function init() {
     });
     document.getElementById('viewSkippedWordsBtn')?.addEventListener('click', () => {
         globalThis.openSkippedWords?.('cognate');
+    });
+    document.getElementById('viewMergedFormsBtn')?.addEventListener('click', () => {
+        globalThis.openSkippedWords?.('lemma');
     });
 
     document.querySelectorAll('.grammar-toggle-btn').forEach(btn => {

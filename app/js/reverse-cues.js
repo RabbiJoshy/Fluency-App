@@ -359,7 +359,7 @@ function englishPastParticiple(verb) {
     return inflectEnglishPast(lower, 0);
 }
 
-function finiteEnglishCue(kind, personIdx, head, rest, meaning) {
+function finiteEnglishCue(kind, personIdx, head, rest, meaning, options = {}) {
     const tail = rest || '';
     const base = String(head || '').toLocaleLowerCase('en');
     if (kind === 'imperative') {
@@ -383,10 +383,10 @@ function finiteEnglishCue(kind, personIdx, head, rest, meaning) {
     else return null;
     if (!body) return null;
     const form = `${pronoun} ${body}${tail}`;
-    return personIdx === 2 ? expandThirdSingular(form, meaning) : form;
+    return personIdx === 2 ? expandThirdSingular(form, meaning, options) : form;
 }
 
-function conjugationTableCue(card, meaning, translation, conjugationData) {
+function conjugationTableCue(card, meaning, translation, conjugationData, options = {}) {
     if (!conjugationData || !meaning) return null;
     if (isUsageNoteGloss(translation)) return null;
     const lemma = conjugationLemma(card, meaning);
@@ -410,14 +410,14 @@ function conjugationTableCue(card, meaning, translation, conjugationData) {
         if (!kind || !Array.isArray(forms)) continue;
         forms.forEach((form, personIdx) => {
             if (!form || form === '—' || foldCueForm(form) !== surfaceFold) return;
-            const cue = finiteEnglishCue(kind, personIdx, parts.head, parts.rest, meaning);
+            const cue = finiteEnglishCue(kind, personIdx, parts.head, parts.rest, meaning, options);
             if (cue && !seen.has(cue)) {
                 seen.add(cue);
                 cues.push(cue);
             }
         });
     }
-    return cues.length ? cues.join(' / ') : null;
+    return cues.length ? compressPronounCues(cues) : null;
 }
 
 function isUsageNoteGloss(translation) {
@@ -429,7 +429,7 @@ function isUsageNoteGloss(translation) {
  * the sense. SpanishDict cards do not carry those surface marks; they keep
  * using the optional conjugated-English table when one is present.
  */
-export function grammarProductionCue(card, meaning, translation) {
+export function grammarProductionCue(card, meaning, translation, options = {}) {
     if (!card || !meaning) return null;
     if (!meaningIsVerb(meaning)) return null;
     if (isUsageNoteGloss(translation)) return null;
@@ -449,7 +449,109 @@ export function grammarProductionCue(card, meaning, translation) {
     const inflected = inflectEnglishPresent(parts.head, personIdx);
     if (!inflected) return null;
     const form = `${ENGLISH_PRONOUNS[personIdx]} ${inflected}${parts.rest}`;
-    return personIdx === 2 ? expandThirdSingular(form, meaning) : form;
+    return personIdx === 2 ? expandThirdSingular(form, meaning, options) : form;
+}
+
+export function detectExamplePronoun(example) {
+    if (!example) return null;
+    const text = typeof example === 'string'
+        ? example
+        : String(example.english || example.translation || example.sentence || '');
+    if (!text.trim()) return null;
+    const hasShe = /\b(?:she|she['’](?:s|d|ll))\b/iu.test(text);
+    const hasHe = /\b(?:he|he['’](?:s|d|ll))\b/iu.test(text);
+    if (hasShe && !hasHe) return 'she';
+    if (hasHe && !hasShe) return 'he';
+    return null;
+}
+
+const CUE_PRONOUN_RE = /^((?:I|you|he\/she|he|she|it|we|you \(pl\)|they)(?:\/(?:I|you|he\/she|he|she|it|we|you \(pl\)|they))*)\s+(.+)$/i;
+
+function canMergePredicates(a, b) {
+    if (!a.pronoun || !b.pronoun) return null;
+    const aLower = a.pronoun.toLowerCase();
+    const bLower = b.pronoun.toLowerCase();
+    if (aLower === bLower) return null;
+
+    const combinePronouns = (p1, p2) => {
+        const parts = [...new Set([...p1.split('/'), ...p2.split('/')])];
+        return parts.join('/');
+    };
+
+    if (a.predicate === b.predicate) {
+        return `${combinePronouns(a.pronoun, b.pronoun)} ${a.predicate}`;
+    }
+
+    const aParts = aLower.split('/');
+    const bParts = bLower.split('/');
+    const aHas1s = aParts.includes('i');
+    const bHas1s = bParts.includes('i');
+    const aHas3s = aParts.some(p => ['he/she', 'he', 'she'].includes(p));
+    const bHas3s = bParts.some(p => ['he/she', 'he', 'she'].includes(p));
+
+    if ((aHas1s && !aHas3s && bHas3s && !bHas1s) || (bHas1s && !bHas3s && aHas3s && !aHas1s)) {
+        const first = aHas1s ? a : b;
+        const third = aHas1s ? b : a;
+
+        const head1 = first.predicate.split(' ')[0];
+        const rest1 = first.predicate.slice(head1.length);
+        const head3 = third.predicate.split(' ')[0];
+        const rest3 = third.predicate.slice(head3.length);
+
+        if (rest1 === rest3) {
+            let factoredHead = null;
+            if (head3 === `${head1}s`) {
+                factoredHead = `${head1}(s)`;
+            } else if (head3 === `${head1}es`) {
+                factoredHead = `${head1}(es)`;
+            }
+            if (factoredHead) {
+                return `${combinePronouns(first.pronoun, third.pronoun)} ${factoredHead}${rest1}`;
+            }
+        }
+    }
+
+    return null;
+}
+
+export function compressPronounCues(cuesInput) {
+    if (!cuesInput) return null;
+    const cues = Array.isArray(cuesInput)
+        ? cuesInput.filter(Boolean)
+        : String(cuesInput).split(/\s+\/\s+/).filter(Boolean);
+    if (cues.length === 0) return null;
+    if (cues.length === 1) return cues[0];
+
+    const parsed = cues.map(cue => {
+        const m = String(cue || '').trim().match(CUE_PRONOUN_RE);
+        if (m) {
+            return { raw: cue, pronoun: m[1], predicate: m[2], merged: false };
+        }
+        return { raw: cue, pronoun: null, predicate: cue, merged: false };
+    });
+
+    const result = [];
+    for (let i = 0; i < parsed.length; i++) {
+        if (parsed[i].merged) continue;
+        let current = parsed[i];
+        for (let j = i + 1; j < parsed.length; j++) {
+            if (parsed[j].merged) continue;
+            const mergedText = canMergePredicates(current, parsed[j]);
+            if (mergedText) {
+                parsed[j].merged = true;
+                const m = mergedText.match(CUE_PRONOUN_RE);
+                current = {
+                    raw: mergedText,
+                    pronoun: m ? m[1] : null,
+                    predicate: m ? m[2] : current.predicate,
+                    merged: false,
+                };
+            }
+        }
+        result.push(current.raw);
+    }
+
+    return result.join(' / ');
 }
 
 function normalizeAnalysis(morph) {
@@ -489,9 +591,8 @@ function glossPartsForCue(translation, meaning) {
     };
 }
 
-function expandThirdSingular(form, meaning) {
-    // Clock/weather copulas take dummy it; other 3sg stays he/she. "they"
-    // would collide with 3pl (habla vs hablan).
+export function expandThirdSingular(form, meaning, options = {}) {
+    // Clock/weather copulas take dummy it; other 3sg stays he/she or dynamically tracks example.
     if (isDummyItCopulaSense(meaning)) {
         if (/^he\/she\s/iu.test(form)) return form.replace(/^he\/she\s/iu, 'it ');
         if (/^he\/she'/iu.test(form)) return form.replace(/^he\/she'/iu, "it'");
@@ -499,8 +600,11 @@ function expandThirdSingular(form, meaning) {
         if (/^he'/iu.test(form)) return form.replace(/^he'/iu, "it'");
         return form;
     }
-    if (/^he\s/iu.test(form)) return form.replace(/^he\s/iu, 'he/she ');
-    if (/^he'/iu.test(form)) return form.replace(/^he'/iu, "he/she'");
+    const pronoun = detectExamplePronoun(options?.activeExample || options?.example) || 'he/she';
+    if (/^he\/she\s/iu.test(form)) return form.replace(/^he\/she\s/iu, `${pronoun} `);
+    if (/^he\/she'/iu.test(form)) return form.replace(/^he\/she'/iu, `${pronoun}'`);
+    if (/^he\s/iu.test(form)) return form.replace(/^he\s/iu, `${pronoun} `);
+    if (/^he'/iu.test(form)) return form.replace(/^he'/iu, `${pronoun}'`);
     return form;
 }
 
@@ -530,7 +634,7 @@ function deriveRegularAnalysisCue(translation, analysis, personIdx) {
     return personIdx === 3 ? `let's ${verb}!` : `${verb}!`;
 }
 
-function cueForAnalysis(analysisRows, morph, translation, meaning) {
+function cueForAnalysis(analysisRows, morph, translation, meaning, options = {}) {
     const analysis = normalizeAnalysis(morph);
     if (!analysis.key) return null;
 
@@ -543,7 +647,7 @@ function cueForAnalysis(analysisRows, morph, translation, meaning) {
     if (!Array.isArray(row)) {
         const derived = deriveRegularAnalysisCue(translation, analysis, personIdx);
         return derived && personIdx === 2 && analysis.mood !== 'imperativo'
-            ? expandThirdSingular(derived, meaning || { translation })
+            ? expandThirdSingular(derived, meaning || { translation }, options)
             : derived;
     }
 
@@ -555,7 +659,7 @@ function cueForAnalysis(analysisRows, morph, translation, meaning) {
     // 3sg English is labelled he/she (matching él/ella). Imperative 3sg is
     // an usted command, so its subject stays implicit.
     return personIdx === 2 && analysis.mood !== 'imperativo'
-        ? expandThirdSingular(form, meaning || { translation })
+        ? expandThirdSingular(form, meaning || { translation }, options)
         : form;
 }
 
@@ -579,10 +683,13 @@ export function englishProductionCue(card, meaningOrTranslation, conjugatedEngli
 
     if (meaning && !meaningIsVerb(meaning)) return null;
 
+    const activeExample = options?.activeExample || options?.example || card?._activeExample || null;
+    const resolvedOptions = { ...options, activeExample };
+
     const tableCue = meaning
-        ? conjugationTableCue(card, meaning, translation, options.conjugationData)
+        ? conjugationTableCue(card, meaning, translation, options.conjugationData, resolvedOptions)
         : null;
-    if (tableCue) return tableCue;
+    if (tableCue) return compressPronounCues(tableCue);
 
     if (conjugatedEnglishData) {
         const lemma = foldCueForm(conjugationLemma(card, meaning));
@@ -591,19 +698,19 @@ export function englishProductionCue(card, meaningOrTranslation, conjugatedEngli
             const rawMorph = card.mergedLemma ? card._activeExampleMorphology : card.morphology;
             const morphCandidates = (Array.isArray(rawMorph) ? rawMorph : [rawMorph]).filter(Boolean);
             const forms = morphCandidates
-                .map(morph => cueForAnalysis(analysisRows, morph, translation, meaning))
+                .map(morph => cueForAnalysis(analysisRows, morph, translation, meaning, resolvedOptions))
                 .filter((form, index, all) => form && all.indexOf(form) === index);
             if (forms.length) {
                 // Some Spanish surfaces genuinely encode more than one supported
                 // reading (da = indicative "gives" or command "give!"). Showing
                 // both compactly is more useful than reverting the entire card
                 // to an uninflected dictionary gloss.
-                return forms.join(' / ');
+                return compressPronounCues(forms);
             }
         }
     }
 
-    return meaning ? grammarProductionCue(card, meaning, translation) : null;
+    return meaning ? grammarProductionCue(card, meaning, translation, resolvedOptions) : null;
 }
 
 /**

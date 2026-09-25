@@ -20,7 +20,7 @@ import {
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=20260917a';
+} from './reverse-cues.js?v=20260925cues';
 import {
     compactConstructionMetadata,
     contextWithoutSenseMetadata,
@@ -43,10 +43,12 @@ import {
     splitSenseMetadataClauses,
     toggleSenseMetadataChip,
     toggleSenseMetadataOverflow,
+    extractSenseCompanion,
+    senseCollocationHTML,
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=20260921details';
+} from './card-metadata-pills.js?v=20260925colloc';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -111,10 +113,16 @@ function _matchedMweForm(mwe, text, preferred = '') {
     return '';
 }
 
-function getProductionEnglishCue(card, meaningOrTranslation) {
+function getProductionEnglishCue(card, meaningOrTranslation, options = {}) {
+    const activeExample = options?.activeExample
+        || card?._activeExample
+        || window._currentDisplayedExample
+        || null;
     return englishProductionCue(card, meaningOrTranslation, _conjugatedEnglishData, {
         reverseDirection: isFlipped,
         conjugationData: _conjugationData,
+        activeExample,
+        ...options,
     });
 }
 
@@ -698,6 +706,10 @@ function senseSummaryText(value) {
         previous = text;
         text = text.replace(/\s*\([^()]*\)/gu, ' ');
     }
+    // Take the primary concise translation before any semicolon (e.g. "to leave; to go" -> "to leave")
+    if (text.includes(';')) {
+        text = text.split(';')[0];
+    }
     return text
         .replace(/\s+([,;:.])/gu, '$1')
         .replace(/^[,;:.\s]+|[,;:.\s]+$/gu, '')
@@ -727,9 +739,16 @@ function fitPosSectionSummaries(root) {
             more.hidden = remaining === 0;
             more.textContent = `+${remaining}`;
             if (summary.scrollWidth > summary.clientWidth + 1) {
-                senses[index].hidden = true;
-                more.hidden = false;
-                more.textContent = `+${senses.length - shownCount}`;
+                if (index > 0) {
+                    senses[index].hidden = true;
+                    more.hidden = false;
+                    more.textContent = `+${senses.length - shownCount}`;
+                } else {
+                    // Always guarantee at least the first short translation is visible
+                    senses[0].hidden = false;
+                    more.hidden = senses.length <= 1;
+                    more.textContent = `+${senses.length - 1}`;
+                }
                 break;
             }
             shownCount++;
@@ -3217,6 +3236,107 @@ function highlightPossibleSpanishDictUsage(sentenceHTML, usage, targetWord = '')
     return { html, candidates };
 }
 
+const COMPANION_SURFACE_VARIANTS = {
+    spanish: {
+        a: ['a', 'al'],
+        de: ['de', 'del'],
+        con: ['con', 'conmigo', 'contigo', 'consigo'],
+        mismo: ['mismo', 'misma', 'mismos', 'mismas'],
+    },
+    portuguese: {
+        a: ['a', 'ao', 'aos', 'à', 'às'],
+        de: ['de', 'do', 'da', 'dos', 'das'],
+        em: ['em', 'no', 'na', 'nos', 'nas'],
+        com: ['com', 'comigo', 'contigo', 'consigo'],
+        por: ['por', 'pelo', 'pela', 'pelos', 'pelas'],
+    },
+    czech: {
+        s: ['s', 'se'],
+        v: ['v', 've'],
+        k: ['k', 'ke', 'ku'],
+        z: ['z', 'ze'],
+        o: ['o'],
+        na: ['na'],
+    },
+};
+
+function highlightUnifiedCompanionInSentence(sentenceHTML, meaning, card, language = 'spanish') {
+    const comp = extractSenseCompanion(meaning);
+    const spanishUsage = language === 'spanish' ? parseSpanishDictUsageContext(meaning?.context) : null;
+
+    let terms = [];
+    if (comp?.terms?.length) terms.push(...comp.terms);
+    if (spanishUsage?.terms?.length) terms.push(...spanishUsage.terms);
+    terms = [...new Set(terms.map(t => String(t || '').trim()).filter(Boolean))];
+    if (!terms.length) return { html: sentenceHTML, candidates: [] };
+
+    const langKey = language === 'portuguese' || language === 'portuguese_brazilian' ? 'pt' : (language === 'czech' ? 'cs' : 'es');
+    const variantsMap = COMPANION_SURFACE_VARIANTS[language] || COMPANION_SURFACE_VARIANTS[langKey === 'pt' ? 'portuguese' : (langKey === 'cs' ? 'czech' : 'spanish')] || {};
+
+    const candidateForms = [];
+    const seen = new Set();
+    for (const rawTerm of terms) {
+        const term = rawTerm.toLowerCase();
+        const variants = variantsMap[term] || [rawTerm];
+        for (const variant of variants) {
+            const key = variant.toLocaleLowerCase(langKey);
+            if (seen.has(key)) continue;
+            seen.add(key);
+            candidateForms.push(variant);
+        }
+    }
+    candidateForms.sort((a, b) => b.length - a.length);
+    if (!candidateForms.length) return { html: sentenceHTML, candidates: [] };
+
+    let html = String(sentenceHTML || '');
+    const target = String(card?.targetWord || card?.word || '').toLocaleLowerCase(langKey);
+
+    const validForms = candidateForms.filter(f => f.toLocaleLowerCase(langKey) !== target);
+    if (!validForms.length) return { html, candidates: candidateForms };
+
+    const termsPattern = validForms.map(f => f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+
+    // 1. Direct adjacency: target highlight span immediately followed by whitespace and companion
+    // e.g. <span class="example-word-highlight">Tengo</span> que
+    const adjacentAfterRegex = new RegExp(
+        `(<span class="example-word-highlight[^"]*"[^>]*>)([^<]+)(<\\/span>)(\\s+)(${termsPattern})(?![\\p{L}\\p{N}])`,
+        'giu'
+    );
+    let matchedAdjacent = false;
+    html = html.replace(adjacentAfterRegex, (match, openTag, text, closeTag, space, particle) => {
+        matchedAdjacent = true;
+        return `${openTag}${text}${space}${particle}${closeTag}`;
+    });
+
+    // Also check companion immediately before target (e.g. "para mim", "se levantó")
+    if (!matchedAdjacent) {
+        const adjacentBeforeRegex = new RegExp(
+            `(?<![\\p{L}\\p{N}])(${termsPattern})(\\s+)(<span class="example-word-highlight[^"]*"[^>]*>)([^<]+)(<\\/span>)`,
+            'giu'
+        );
+        html = html.replace(adjacentBeforeRegex, (match, particle, space, openTag, text, closeTag) => {
+            matchedAdjacent = true;
+            return `${openTag}${particle}${space}${text}${closeTag}`;
+        });
+    }
+
+    // 2. If no adjacent match was found, highlight the first matching separated companion
+    if (!matchedAdjacent) {
+        const separatedRegex = _cachedRegex(
+            `(?<![\\p{L}\\p{N}])(${termsPattern})(?![\\p{L}\\p{N}])(?![^<]*>)`,
+            'giu'
+        );
+        let separatedMatched = false;
+        html = html.replace(separatedRegex, (match, particle) => {
+            if (separatedMatched) return match;
+            separatedMatched = true;
+            return `<span class="example-word-highlight example-companion-highlight" title="Collocation with this sense">${particle}</span>`;
+        });
+    }
+
+    return { html, candidates: candidateForms };
+}
+
 // Choose a type scale from the amount of visible copy in a sense row. Short
 // glosses should use the room the card gives them; long glosses step down
 // before the existing wrap/clamp rules take over. Considering both the
@@ -5412,6 +5532,25 @@ function updateCard({ announceHeadword = false } = {}) {
     });
     card._activeExampleSurface = mergedExampleFocus?.surface || '';
     card._activeExampleMorphology = mergedExampleFocus?.morphology || null;
+    const cardActiveExamples = currentMeaning
+        ? getCyclableExamples(card, currentMeaning)
+        : (card.sentences || []);
+    let cardActiveExample = null;
+    if (cardActiveExamples.length > 0) {
+        cardActiveExample = cardActiveExamples[currentExampleIndex % cardActiveExamples.length];
+    } else if (currentMeaning?.targetSentence || currentMeaning?.englishSentence) {
+        cardActiveExample = {
+            target: currentMeaning.targetSentence,
+            english: currentMeaning.englishSentence,
+        };
+    } else if (card.targetSentence || card.englishSentence) {
+        cardActiveExample = {
+            target: card.targetSentence,
+            english: card.englishSentence,
+        };
+    }
+    card._activeExample = cardActiveExample;
+    window._currentDisplayedExample = cardActiveExample;
     const displayedTargetHeadword = getDisplayedTargetHeadword(card) || displaySurface;
 
     // Determine what to show on front and back based on flip direction
@@ -6659,11 +6798,13 @@ function updateCard({ announceHeadword = false } = {}) {
                         // Varying cell.
                         let varyingHtml;
                         if (isTransAxis) {
+                            const collocationHTML = senseCollocationHTML(mm, card);
                             const metaOptions = {
                                 senseCount: card.meanings?.length || orderedMembers.length,
                                 gloss: sharedText,
                                 peerMeanings: orderedMembers.filter(mi => mi !== memberIdx).map(mi => card.meanings[mi]),
                                 allowInactivePrimary: true,
+                                excludeCompanion: Boolean(collocationHTML),
                             };
                             const rawCtx = contextWithoutSenseMetadata(mm, isMemberSelected, metaOptions);
                             let cleanedCtx = cleanSenseContext(rawCtx, sharedText);
@@ -6674,8 +6815,11 @@ function updateCard({ announceHeadword = false } = {}) {
                                 cleanedCtx = '';
                             }
                             const metadataHTML = senseMetadataHTML(mm, isMemberSelected, metaOptions);
-                            if (cleanedCtx || metadataHTML) {
-                                varyingHtml = `<span class="meaning-context-cell" style="line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${renderSenseContextHTML(cleanedCtx, { leadingDot: false })}${metadataHTML}</span>`;
+                            const ctxWeight = isMemberSelected ? '700' : '500';
+                            const ctxColor = isMemberSelected ? 'var(--text-primary)' : 'var(--text-secondary)';
+                            if (collocationHTML || cleanedCtx || metadataHTML) {
+                                const colHTML = collocationHTML ? `${collocationHTML} ` : '';
+                                varyingHtml = `<span class="meaning-context-cell" style="font-weight: ${ctxWeight}; color: ${ctxColor}; line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${colHTML}${renderSenseContextHTML(cleanedCtx, { leadingDot: false })}${metadataHTML}</span>`;
                             } else {
                                 const diff = resolveMeaningDifferentiator(
                                     mm,
@@ -6685,26 +6829,35 @@ function updateCard({ announceHeadword = false } = {}) {
                                 );
                                 if (diff && diff.score >= 60) {
                                     if (diff.type === 'context') {
-                                        varyingHtml = `<span class="meaning-context-cell" style="line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${renderSenseContextHTML(diff.label, { leadingDot: false })}</span>`;
+                                        varyingHtml = `<span class="meaning-context-cell" style="font-weight: ${ctxWeight}; color: ${ctxColor}; line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${renderSenseContextHTML(diff.label, { leadingDot: false })}</span>`;
                                     } else {
                                         const family = escapeCardText(diff.type);
                                         const shortLabel = escapeCardText(diff.label);
-                                        varyingHtml = `<span class="meaning-context-cell" style="line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;"><span class="sense-metadata-detail sense-pill sense-pill--${family}" data-family="${family}"><span class="sense-pill-label">${shortLabel}</span></span></span>`;
+                                        varyingHtml = `<span class="meaning-context-cell" style="font-weight: ${ctxWeight}; color: ${ctxColor}; line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;"><span class="sense-metadata-detail sense-pill sense-pill--${family}" data-family="${family}"><span class="sense-pill-label">${shortLabel}</span></span></span>`;
                                     }
                                 } else {
                                     // The unqualified source gloss is the honest fallback for
                                     // a reading without its own qualifier; never an empty dash.
-                                    varyingHtml = `<span class="meaning-context-cell">${escapeCardText(displaySenseGloss(mm, mm.meaning || mm.translation || sharedText))}</span>`;
+                                    varyingHtml = `<span class="meaning-context-cell" style="font-weight: ${ctxWeight}; color: ${ctxColor};">${escapeCardText(displaySenseGloss(mm, mm.meaning || mm.translation || sharedText))}</span>`;
                                 }
                             }
                         } else {
+                            const collocationHTML = senseCollocationHTML(mm, card);
                             const transRaw = displaySenseGloss(
                                 mm,
                                 getProductionEnglishCue(card, mm) || mm.meaning || '',
                                 isMemberSelected
                             );
                             const transSafe = String(transRaw).replace(/"/g, '&quot;');
-                            varyingHtml = `<span class="row-adaptive-text" style="font-weight: 600; color: var(--text-primary); line-height: 1.25; min-width: 0; overflow: hidden; text-overflow: ellipsis;">${senseCrossReferenceHTML(mm, transSafe, isMemberSelected)}${senseMetadataHTML(mm, isMemberSelected, { senseCount: card.meanings?.length || orderedMembers.length, gloss: transRaw, peerMeanings: senseMetadataPeers(mm, card.meanings, transRaw), sharedContext: m.context, allowInactivePrimary: true })}${modelProposalMarkerHTML(mm)}</span>`;
+                            const metaOptions = {
+                                senseCount: card.meanings?.length || orderedMembers.length,
+                                gloss: transRaw,
+                                peerMeanings: senseMetadataPeers(mm, card.meanings, transRaw),
+                                sharedContext: m.context,
+                                allowInactivePrimary: true,
+                                excludeCompanion: Boolean(collocationHTML),
+                            };
+                            varyingHtml = `<span class="row-adaptive-text" style="font-weight: 600; color: var(--text-primary); line-height: 1.25; min-width: 0; overflow: hidden; text-overflow: ellipsis;">${collocationHTML ? `${collocationHTML} ` : ''}${senseCrossReferenceHTML(mm, transSafe, isMemberSelected)}${senseMetadataHTML(mm, isMemberSelected, metaOptions)}${modelProposalMarkerHTML(mm)}</span>`;
                         }
                         const varyingCol = isTransAxis ? 2 : 1;
                         const varyingCell = `<div class="group-card-varying-cell${isMemberSelected ? ' is-active-subsense' : ''}" onclick="event.stopPropagation(); selectMeaning(${memberIdx})" style="${baseCell} grid-column: ${varyingCol}; min-width: 0; overflow: hidden;">${varyingHtml}</div>`;
@@ -6780,11 +6933,13 @@ function updateCard({ announceHeadword = false } = {}) {
 
                     // Individual sense row: 2-line presentation when space permits
                     // Primary gloss on top, cleaned context underneath (no redundant repetition of the gloss).
+                    const collocationHTML = senseCollocationHTML(m, card);
                     const metadataOptions = {
                         senseCount: card.meanings?.length || 1,
                         gloss: displayMeaning,
                         peerMeanings: senseMetadataPeers(m, card.meanings, displayMeaning),
                         allowInactivePrimary: true,
+                        excludeCompanion: Boolean(collocationHTML),
                     };
                     const rawContext = contextWithoutSenseMetadata(m, isRowSelected, metadataOptions);
                     let cleanedContext = cleanSenseContext(rawContext, displayMeaning);
@@ -6817,7 +6972,7 @@ function updateCard({ announceHeadword = false } = {}) {
                         }
                     }
 
-                    const singletonTextClass = adaptiveRowTextClass(displayMeaning, cleanedContext || differentiator?.label || '');
+                    const singletonTextClass = adaptiveRowTextClass(collocationHTML ? `${collocationHTML} ${displayMeaning}` : displayMeaning, cleanedContext || differentiator?.label || '');
                     const useProminenceLabels = (typeof senseProminenceMode !== 'undefined' ? senseProminenceMode : globalThis.state?.senseProminenceMode) !== 'percentages';
                     const clusterInfo = glossProminence.infoByIndex.get(idx);
                     const clusterPooled = glossProminence.pooledIndexes.has(idx);
@@ -6838,7 +6993,7 @@ function updateCard({ announceHeadword = false } = {}) {
                     <div class="meaning-row meaning-row-regular ${singletonTextClass}${isRowSelected ? ' selected' : ''}${rowSelectedClasses}${rareRowClass}" style="position: relative; display: flex; align-items: center; padding: 2px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 44px;" onclick="selectMeaning(${idx})">
                         ${renderRowCheckSlot(isRowSelected)}
                         <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; width: 100%; padding: 2px ${sidePad} 2px ${sidePad};">
-                            <span class="meaning-row-translation meaning-row-gloss row-adaptive-text" style="font-weight: ${isRowSelected ? 700 : 600}; color: ${textColor}; text-align: center; width: 100%; line-height: 1.25;">${displayMeaningHTML}</span>
+                            <span class="meaning-row-translation meaning-row-gloss row-adaptive-text" style="font-weight: ${isRowSelected ? 700 : 600}; color: ${textColor}; text-align: center; width: 100%; line-height: 1.25;">${collocationHTML ? `${collocationHTML} ` : ''}${displayMeaningHTML}</span>
                             ${subContent ? `<span class="meaning-row-sub" style="text-align: center; width: 100%;">${subContent}</span>` : ''}
                         </div>
                         ${pctTail}
@@ -6990,6 +7145,9 @@ function updateCard({ announceHeadword = false } = {}) {
                     currentExample.english || displayEnglishSentence,
                     currentExample.bold_translation_offsets
                 );
+                const companionHighlight = highlightUnifiedCompanionInSentence(
+                    displayTargetSentence, currentMeaning, card, selectedLanguage);
+                displayTargetSentence = companionHighlight.html;
             } else {
             // Truncate sentences longer than 20 words
             displayTargetSentence = truncateText(displayTargetSentence, 20);
@@ -7051,21 +7209,15 @@ function updateCard({ announceHeadword = false } = {}) {
                 }
             }
 
-            // Surface a literal companion match as a possible realization of
-            // the SpanishDict note, not as proven WSD evidence. Same-sentence
-            // co-occurrence does not establish that a/de/con/etc. attaches to
-            // the target; the distinct style and tooltip make that limitation
-            // explicit until a future syntax-aware evidence layer exists.
-            const spanishDictUsage = selectedLanguage === 'spanish'
-                ? parseSpanishDictUsageContext(currentMeaning.context)
-                : null;
-            const usageMatch = spanishDictUsage
-                ? highlightPossibleSpanishDictUsage(
-                    displayTargetSentence, spanishDictUsage, card.targetWord)
-                : { html: displayTargetSentence, candidates: [] };
-            displayTargetSentence = usageMatch.html;
-            const usageCandidateKeys = new Set(usageMatch.candidates.map(
-                form => form.toLocaleLowerCase('es')));
+            // Highlight the companion collocation together with the studied target word
+            // using unified active phrase styling (e.g. "Tengo que", "gosto de", "sueña con").
+            const companionHighlight = highlightUnifiedCompanionInSentence(
+                displayTargetSentence, currentMeaning, card, selectedLanguage);
+            displayTargetSentence = companionHighlight.html;
+            const langCode = (selectedLanguage === 'portuguese' || selectedLanguage === 'portuguese_brazilian')
+                ? 'pt' : (selectedLanguage === 'czech' ? 'cs' : 'es');
+            const usageCandidateKeys = new Set(companionHighlight.candidates.map(
+                form => form.toLocaleLowerCase(langCode)));
 
             // Highlight other study set words in the sentence (same style for now)
             const deckWords = getDeckWords();

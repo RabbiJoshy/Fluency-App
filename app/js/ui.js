@@ -3150,9 +3150,6 @@ function renderFastTrackSkippedDecks() {
                     <button type="button" class="fast-track-hub-action-btn" id="inspectSkippedWordsBtn">
                         🔍 Inspect &amp; Triage
                     </button>
-                    <button type="button" class="fast-track-hub-action-btn fast-track-hub-action-btn--primary" id="batchMarkAllKnownBtn">
-                        ✓ Mark all as Known
-                    </button>
                 </div>
             </div>
         `;
@@ -3163,14 +3160,6 @@ function renderFastTrackSkippedDecks() {
         document.getElementById('inspectSkippedWordsBtn')?.addEventListener('click', event => {
             event.stopPropagation();
             globalThis.openSkippedWords?.('all');
-        });
-        document.getElementById('batchMarkAllKnownBtn')?.addEventListener('click', async event => {
-            event.stopPropagation();
-            const btn = document.getElementById('batchMarkAllKnownBtn');
-            if (btn) btn.textContent = 'Saving…';
-            const count = await globalThis.batchMarkSkippedKnown?.(extrasData.allSkipped || extrasData.cognates);
-            if (btn) btn.textContent = `✓ Marked ${count} as Known!`;
-            setTimeout(() => { renderFastTrackSkippedDecks(); }, 1200);
         });
         card.querySelectorAll('.fast-track-deck-chip').forEach(chip => {
             chip.addEventListener('click', (e) => {
