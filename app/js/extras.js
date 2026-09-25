@@ -116,29 +116,57 @@ function foldLetters(value) {
     return String(value || '').normalize('NFD').replace(/\p{M}/gu, '').toLocaleLowerCase();
 }
 
+const _editDistBuf = new Int32Array(128);
+
 function editDistance(left, right) {
     if (left === right) return 0;
-    if (!left || !right) return Math.max(left.length, right.length);
-    let prev = Array.from({ length: right.length + 1 }, (_, index) => index);
-    for (let i = 1; i <= left.length; i++) {
-        const cur = [i];
-        for (let j = 1; j <= right.length; j++) {
-            cur.push(Math.min(
-                cur[j - 1] + 1,
-                prev[j] + 1,
-                prev[j - 1] + (left[i - 1] === right[j - 1] ? 0 : 1),
-            ));
+    const n = left.length;
+    const m = right.length;
+    if (!n) return m;
+    if (!m) return n;
+    if (m >= 127) {
+        let prev = Array.from({ length: m + 1 }, (_, index) => index);
+        for (let i = 1; i <= n; i++) {
+            const cur = [i];
+            for (let j = 1; j <= m; j++) {
+                cur.push(Math.min(
+                    cur[j - 1] + 1,
+                    prev[j] + 1,
+                    prev[j - 1] + (left[i - 1] === right[j - 1] ? 0 : 1),
+                ));
+            }
+            prev = cur;
         }
-        prev = cur;
+        return prev[m];
     }
-    return prev[right.length];
+    for (let j = 0; j <= m; j++) _editDistBuf[j] = j;
+    for (let i = 1; i <= n; i++) {
+        let prevDiag = _editDistBuf[0];
+        _editDistBuf[0] = i;
+        const leftChar = left[i - 1];
+        for (let j = 1; j <= m; j++) {
+            const temp = _editDistBuf[j];
+            const cost = leftChar === right[j - 1] ? 0 : 1;
+            _editDistBuf[j] = Math.min(
+                _editDistBuf[j - 1] + 1,
+                _editDistBuf[j] + 1,
+                prevDiag + cost,
+            );
+            prevDiag = temp;
+        }
+    }
+    return _editDistBuf[m];
 }
 
 function letterSimilarity(left, right) {
     const a = foldLetters(left);
     const b = foldLetters(right);
     if (!a || !b) return 0;
-    return 1 - editDistance(a, b) / Math.max(a.length, b.length);
+    if (a === b) return 1;
+    const maxLen = Math.max(a.length, b.length);
+    const lenDiff = Math.abs(a.length - b.length);
+    if (1 - (lenDiff / maxLen) < LOOKALIKE_FLOOR) return 0;
+    return 1 - editDistance(a, b) / maxLen;
 }
 
 function glossTokens(text) {
@@ -149,8 +177,14 @@ function glossTokens(text) {
 }
 
 function cognateEnglish(item) {
+    if (!item) return { word: '', obvious: false };
+    if (item._cachedCognateEnglish) return item._cachedCognateEnglish;
     const matched = g().matchedKnownWord?.(item);
-    if (matched?.word) return { word: String(matched.word), obvious: true };
+    if (matched?.word) {
+        const res = { word: String(matched.word), obvious: true };
+        item._cachedCognateEnglish = res;
+        return res;
+    }
     const surface = String(item?.word || '');
     let best = '';
     let bestScore = 0;
@@ -160,12 +194,20 @@ function cognateEnglish(item) {
             if (score > bestScore) {
                 bestScore = score;
                 best = token;
+                if (score >= 0.95) break;
             }
         }
+        if (bestScore >= 0.95) break;
     }
-    if (best && bestScore >= LOOKALIKE_FLOOR) return { word: best, obvious: true };
-    const gloss = shortGloss(firstTranslation(item));
-    return { word: gloss, obvious: false };
+    let res;
+    if (best && bestScore >= LOOKALIKE_FLOOR) {
+        res = { word: best, obvious: true };
+    } else {
+        const gloss = shortGloss(firstTranslation(item));
+        res = { word: gloss, obvious: false };
+    }
+    item._cachedCognateEnglish = res;
+    return res;
 }
 
 function lemmaDisplayOf(item, host) {
@@ -335,22 +377,83 @@ function cognateNote(item) {
     return `Looks like ${label}${matched?.word ? ` ${matched.word}` : ''}`;
 }
 
-function cognatePairHtml(item) {
+function groupCognatesByLemmaAndEnglish(cognates) {
+    if (!cognates || !cognates.length) return [];
+    const groups = new Map();
+    for (const entry of cognates) {
+        const item = entry.item || entry;
+        const lemma = lemmaKeyOf(item);
+        const english = cognateEnglish(item);
+        const englishKey = (english.word || '').trim().toLocaleLowerCase();
+        const groupKey = `${lemma}:::${englishKey}`;
+        let group = groups.get(groupKey);
+        if (!group) {
+            group = {
+                groupKey,
+                lemma,
+                english,
+                primaryEntry: entry,
+                surfaces: [item],
+                entries: [entry],
+                rank: Number(item.rank ?? Infinity)
+            };
+            groups.set(groupKey, group);
+        } else {
+            group.surfaces.push(item);
+            group.entries.push(entry);
+            const r = Number(item.rank ?? Infinity);
+            if (r < group.rank) {
+                group.rank = r;
+                group.primaryEntry = entry;
+            }
+        }
+    }
+    const result = Array.from(groups.values());
+    result.sort((a, b) => a.rank - b.rank);
+    return result.map(g => {
+        const primary = g.primaryEntry;
+        const otherSurfaces = g.surfaces.filter(s => s !== primary.item);
+        return {
+            ...primary,
+            item: primary.item,
+            category: 'cognate',
+            extraSurfaces: otherSurfaces,
+            allWords: g.surfaces.map(s => s.word).join(' '),
+            cognateGroup: g
+        };
+    });
+}
+
+function cognatePairHtml(item, extraSurfaces = []) {
     const choice = cognateEnglish(item);
     const eq = choice.obvious ? '' : ' hidden';
     const gloss = choice.obvious ? '' : ' is-gloss';
     const isFlipped = Boolean(g().isFlipped);
+    const extraCount = extraSurfaces.length;
+    const badge = extraCount > 0
+        ? `<button type="button" class="cognate-extra-count" data-extra-toggle="true" title="Show all ${extraCount + 1} forms of this word">+${extraCount}</button>`
+        : '';
+    const chipsHtml = extraCount > 0
+        ? `<div class="cognate-folded-chips" hidden>
+            ${extraSurfaces.map(s => `<button type="button" class="cognate-folded-chip extras-open-card" data-card-id="${escapeHtml(s.id || '')}">${escapeHtml(s.word)}</button>`).join('')}
+          </div>`
+        : '';
+
     if (isFlipped) {
         return `<span class="cognate-pair cognate-pair--flipped">
             <strong class="cognate-pair-known extras-translation-slot${gloss}">${escapeHtml(choice.word)}</strong>
             <span class="cognate-pair-eq"${eq} aria-hidden="true">=</span>
             <button type="button" class="extras-open-card cognate-pair-surface" data-card-id="${escapeHtml(item.id || '')}" aria-label="View ${escapeHtml(item.word)} card">${escapeHtml(item.word)}</button>
+            ${badge}
+            ${chipsHtml}
         </span>`;
     }
     return `<span class="cognate-pair">
         <button type="button" class="extras-open-card cognate-pair-surface" data-card-id="${escapeHtml(item.id || '')}" aria-label="View ${escapeHtml(item.word)} card">${escapeHtml(item.word)}</button>
+        ${badge}
         <span class="cognate-pair-eq"${eq} aria-hidden="true">=</span>
         <strong class="cognate-pair-known extras-translation-slot${gloss}">${escapeHtml(choice.word)}</strong>
+        ${chipsHtml}
     </span>`;
 }
 
@@ -367,7 +470,12 @@ function paintCognatePair(row, item) {
 
 function renderRows(entries, kind) {
     if (!entries || entries.length === 0) return '';
-    return entries.map(({ item, mergedInto, category, reason }) => {
+    return entries.map(entry => {
+        const item = entry.item || entry;
+        const mergedInto = entry.mergedInto;
+        const category = entry.category;
+        const reason = entry.reason;
+        const extraSurfaces = entry.extraSurfaces || [];
         const itemKind = category || kind || 'cognate';
         const translation = firstTranslation(item);
         const shortTranslation = shortGloss(translation);
@@ -380,12 +488,14 @@ function renderRows(entries, kind) {
             : itemKind === 'entity' ? 'Named Entity'
             : itemKind === 'lemma' ? 'Merged' : 'Skipped';
 
-        return `<li class="extras-row extras-row--${itemKind}" data-extras-id="${escapeHtml(item.id || '')}" data-category="${escapeHtml(itemKind)}" data-search-text="${escapeHtml(`${item.word} ${translation} ${note} ${badgeLabel}`.toLocaleLowerCase())}">
+        const wordsToSearch = entry.allWords || item.word;
+
+        return `<li class="extras-row extras-row--${itemKind}" data-extras-id="${escapeHtml(item.id || '')}" data-category="${escapeHtml(itemKind)}" data-search-text="${escapeHtml(`${wordsToSearch} ${translation} ${note} ${badgeLabel}`.toLocaleLowerCase())}">
             ${itemKind === 'lemma'
                 ? `<span class="extras-base"><strong>${escapeHtml(lemma.word)}</strong><small class="extras-translation-slot">${escapeHtml(shortGloss(lemma.translation))}</small></span>`
                 : ''}
             ${itemKind === 'cognate'
-                ? cognatePairHtml(item)
+                ? cognatePairHtml(item, extraSurfaces)
                 : `<span class="extras-word-stack"><button type="button" class="extras-open-card" data-card-id="${escapeHtml(item.id || '')}" aria-label="View ${escapeHtml(item.word)} card">${escapeHtml(item.word)}</button><span class="extras-translation">${escapeHtml(shortTranslation)}</span></span>`}
             <div class="extras-row-actions">
                 <span class="extras-badge extras-badge--${itemKind}">${escapeHtml(badgeLabel)}</span>
@@ -439,78 +549,40 @@ function renderLemmaGroup(group) {
     const rank = Number.isFinite(group.rank) ? String(group.rank) : '';
     const words = group.surfaces.map(item => item.word).join(' ');
     const translation = shortGloss(group.lemma.translation);
-    const chips = group.surfaces.map(item =>
-        `<span class="lemma-group-chip">${escapeHtml(item.word)}</span>`
+    const maxPreview = 4;
+    const initialChips = group.surfaces.slice(0, maxPreview).map(item =>
+        `<button type="button" class="lemma-group-chip extras-open-card" data-card-id="${escapeHtml(item.id || '')}">${escapeHtml(item.word)}</button>`
     ).join('');
+    const extraCount = group.surfaces.length - maxPreview;
+    const moreBtn = extraCount > 0
+        ? `<button type="button" class="lemma-group-more" data-more-count="${extraCount}">+ ${extraCount}</button>`
+        : '';
+    const extraChips = extraCount > 0
+        ? group.surfaces.slice(maxPreview).map(item =>
+            `<button type="button" class="lemma-group-chip extras-open-card" data-card-id="${escapeHtml(item.id || '')}" hidden>${escapeHtml(item.word)}</button>`
+          ).join('')
+        : '';
+
     return `<li class="lemma-group-row" data-extras-id="${escapeHtml(group.host?.id || '')}" data-search-text="${escapeHtml(`${group.lemma.word} ${group.lemma.translation} ${words}`.toLocaleLowerCase())}">
         <span class="lemma-group-rank">${escapeHtml(rank)}</span>
         <span class="lemma-group-lemma"><strong>${escapeHtml(group.lemma.word)}</strong><small class="extras-translation-slot">${escapeHtml(translation)}</small></span>
-        <span class="lemma-group-forms">${chips}<button type="button" class="lemma-group-more" hidden></button></span>
+        <span class="lemma-group-forms">${initialChips}${extraChips}${moreBtn}</span>
     </li>`;
 }
 
-function fitLemmaGroupForms(root) {
-    if (!root) return;
-    root.querySelectorAll('.lemma-group-forms:not([data-expanded="true"])').forEach(box => {
-        const chips = [...box.querySelectorAll('.lemma-group-chip')];
-        const more = box.querySelector('.lemma-group-more');
-        if (!more || !chips.length) return;
-        chips.forEach(chip => { chip.hidden = false; });
-        more.hidden = true;
-        const available = box.clientWidth;
-        if (available < 8) return;
-        // Measure the chips themselves. A right-aligned row overflows to the
-        // left, and then scrollWidth stays equal to the box, so the overflow
-        // is invisible to that test.
-        const gap = 6;
-        const moreWidth = 48;
-        const widths = chips.map(chip => chip.offsetWidth);
-        let used = 0;
-        let visible = 0;
-        for (let index = 0; index < chips.length; index++) {
-            const remaining = chips.length - index - 1;
-            const reserve = remaining > 0 ? moreWidth + gap : 0;
-            if (visible > 0 && used + widths[index] + reserve > available) break;
-            used += widths[index] + gap;
-            visible += 1;
-        }
-        const hidden = chips.length - visible;
-        chips.forEach((chip, index) => { chip.hidden = index >= visible; });
-        if (hidden > 0) {
-            more.hidden = false;
-            more.textContent = `+ ${hidden}`;
-        }
-    });
-}
-
-function scheduleFitLemmaForms(root) {
-    const run = () => fitLemmaGroupForms(root);
-    requestAnimationFrame(run);
-    document.fonts?.ready?.then(run).catch(() => {});
-    if (typeof ResizeObserver === 'function' && root && !root.dataset.fitObserved) {
-        root.dataset.fitObserved = '1';
-        const observer = new ResizeObserver(run);
-        observer.observe(root);
-    }
+function renderLemmaRows(groups) {
+    if (!groups || groups.length === 0) return '';
+    return groups.map(renderLemmaGroup).join('');
 }
 
 // The setup screen loads the *skinny* index — id, word, rank, surface_card_id,
 // lemma and nothing else — so `firstTranslation` has nothing to read and every
-// row in this list came out with a blank English column. French looked fine
-// only because it is still on the older single-file index, which ships
-// `meanings` inline; es, pt and cs are on the sharded v15 format and were all
-// equally blank. It reads as a Portuguese bug because Portuguese is where you
-// happen to look.
-//
-// The fat rows are already fetchable per study set, and mergeIndexRowPayload
-// assigns them onto the very objects this list is holding — so fetching a
-// shard fills `item.meanings` in place. Fetch them as rows scroll into view
-// rather than up front: the excluded list runs to thousands of words and
-// eagerly pulling every shard would download most of the deck to label a list.
+// row in this list came out with a blank English column.
 function hydrateExtrasTranslations(listEl, entries) {
     if (!listEl) return;
     const pending = new Map();
-    for (const { item } of entries) {
+    for (const entry of entries) {
+        const item = entry.item || entry.host || entry;
         if (!item?.id || firstTranslation(item)) continue;
         pending.set(String(item.id), item);
     }
@@ -531,8 +603,6 @@ function hydrateExtrasTranslations(listEl, entries) {
                 slot.textContent = shown;
             });
         }
-        // The filter box reads data-search-text, so a hydrated row has to be
-        // findable by the English word it now shows.
         const search = row.getAttribute('data-search-text') || '';
         row.setAttribute('data-search-text',
             `${search} ${translation}`.toLocaleLowerCase());
@@ -562,7 +632,7 @@ function hydrateExtrasTranslations(listEl, entries) {
 
     const rows = [...listEl.querySelectorAll('[data-extras-id]')];
     if (typeof IntersectionObserver !== 'function') {
-        request(rows.slice(0, 120));
+        request(rows.slice(0, 100));
         return;
     }
     const observer = new IntersectionObserver(records => {
@@ -600,34 +670,43 @@ function renderMergedForms() {
         body.querySelector('.lemma-group-list'),
         groups.map(group => ({ item: group.host })),
     );
-    scheduleFitLemmaForms(body);
     return lemmas;
 }
 
 let _activeSkippedCategory = 'all';
+let _currentDisplayEntries = [];
+let _renderedCount = 0;
+let _currentSentinelObserver = null;
+const PAGE_CHUNK = 60;
 
-async function batchMarkSkippedKnown(entries = []) {
-    const list = Array.isArray(entries) ? entries : [];
-    if (!list.length) return 0;
-    const save = g().saveWordProgress;
-    let count = 0;
-    for (const entry of list) {
-        const item = entry.item || entry;
-        if (!item || !item.word) continue;
-        const state = g().getSetupLearningState?.(item);
-        if (state?.seen && !state?.needsReview) continue; // already known
-        if (save) {
-            save(item, true);
-            count++;
+function appendNextChunk(container, entries, isLemma) {
+    if (!container || _renderedCount >= entries.length) return;
+    const nextChunk = entries.slice(_renderedCount, _renderedCount + PAGE_CHUNK);
+    _renderedCount += nextChunk.length;
+
+    const html = isLemma ? renderLemmaRows(nextChunk) : renderRows(nextChunk);
+    const temp = document.createElement('div');
+    temp.innerHTML = html;
+    const frag = document.createDocumentFragment();
+    while (temp.firstChild) frag.appendChild(temp.firstChild);
+
+    const sentinel = container.querySelector('#extrasListSentinel');
+    if (sentinel) {
+        container.insertBefore(frag, sentinel);
+    } else {
+        container.appendChild(frag);
+    }
+
+    hydrateExtrasTranslations(container, nextChunk);
+
+    if (sentinel) {
+        if (_renderedCount >= entries.length) {
+            sentinel.remove();
+        } else {
+            const btn = sentinel.querySelector('.extras-load-more-btn');
+            if (btn) btn.textContent = `Load more (${entries.length - _renderedCount} remaining)`;
         }
     }
-    if (count > 0) {
-        window.cacheProgressLocally?.();
-        window.bumpProgressEpoch?.();
-        window.refreshFastMode?.();
-        window.renderFastTrackSkippedDecks?.();
-    }
-    return count;
 }
 
 function renderSkippedWords(filterCategory = _activeSkippedCategory) {
@@ -636,19 +715,69 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory) {
     const body = document.getElementById('skippedWordsBody');
     if (!body) return extras.cognates;
     const total = document.getElementById('skippedWordsTotal');
-    const allCount = extras.allSkipped.length;
-    if (total) total.textContent = `${allCount.toLocaleString()} words`;
 
-    if (allCount === 0) {
-        body.innerHTML = `<p class="extras-empty">No words are currently set aside. Every word form and particle remains in the deck.</p>`;
+    // Update shared category dropdown
+    const select = document.getElementById('skippedCategorySelect');
+    if (select && select.value !== filterCategory) {
+        select.value = filterCategory;
+    }
+
+    const allCount = extras.allSkipped.length;
+    const categories = [
+        { id: 'all', label: 'All Skipped', icon: '⚡', count: allCount },
+        { id: 'cognate', label: 'Transparent Cognates', icon: '⚡', count: extras.cognates.length },
+        { id: 'lemma', label: 'Merged Word Forms', icon: '📚', count: extras.lemmas.length },
+        { id: 'grammar', label: 'Grammar & Clitics', icon: '🧩', count: extras.grammar.length },
+        { id: 'slang', label: 'Slang & Fillers', icon: '💬', count: extras.slang.length },
+        { id: 'entity', label: 'Names & Entities', icon: '📍', count: extras.entities.length },
+    ].filter(c => c.id === 'all' || c.count > 0 || c.id === filterCategory);
+
+    // Populate dropdown options with counts
+    if (select) {
+        select.innerHTML = categories.map(c =>
+            `<option value="${escapeHtml(c.id)}"${c.id === filterCategory ? ' selected' : ''}>${c.icon} ${escapeHtml(c.label)} (${c.count.toLocaleString()})</option>`
+        ).join('');
+    }
+
+    // Resolve entries for selected category
+    const isLemma = filterCategory === 'lemma';
+    let entries = [];
+    if (isLemma) {
+        entries = groupMergedLemmas(extras.lemmas);
+        const forms = entries.reduce((count, g) => count + g.surfaces.length, 0);
+        if (total) total.textContent = `${entries.length.toLocaleString()} words · ${forms.toLocaleString()} forms`;
+    } else if (filterCategory === 'cognate') {
+        entries = groupCognatesByLemmaAndEnglish(extras.cognates);
+        if (total) total.textContent = `${extras.cognates.length.toLocaleString()} words (${entries.length.toLocaleString()} groups)`;
+    } else if (filterCategory === 'all') {
+        const foldedCognates = groupCognatesByLemmaAndEnglish(extras.cognates);
+        entries = [...foldedCognates, ...extras.grammar, ...extras.slang, ...extras.entities];
+        entries.sort((a, b) => (Number(a.item?.rank ?? Infinity) - Number(b.item?.rank ?? Infinity)));
+        if (total) total.textContent = `${allCount.toLocaleString()} words`;
+    } else {
+        entries = extras.byCategory?.[filterCategory] || [];
+        if (total) total.textContent = `${entries.length.toLocaleString()} words`;
+    }
+
+    _currentDisplayEntries = entries;
+    _renderedCount = 0;
+
+    if (entries.length === 0) {
+        body.innerHTML = `
+            <div class="fast-track-triage-tabs" id="skippedCategoryTabs">
+                ${categories.map(c => `
+                    <button type="button" class="fast-track-triage-tab${c.id === filterCategory ? ' is-active' : ''}" data-cat-id="${escapeHtml(c.id)}">
+                        <span>${c.icon} ${escapeHtml(c.label)}</span>
+                        <span class="fast-track-tab-count">${c.count}</span>
+                    </button>
+                `).join('')}
+            </div>
+            <p class="extras-empty">No words are set aside under ${escapeHtml(filterCategory)}. Every word remains in your deck.</p>
+        `;
         return extras.cognates;
     }
 
-    const categories = extras.categories || [];
-    const activeEntries = (extras.byCategory && extras.byCategory[filterCategory]) || extras.allSkipped;
-
-    // Tabs for categories
-    const tabsHtml = categories.length > 1 ? `
+    const tabsHtml = `
         <div class="fast-track-triage-tabs" id="skippedCategoryTabs">
             ${categories.map(c => `
                 <button type="button" class="fast-track-triage-tab${c.id === filterCategory ? ' is-active' : ''}" data-cat-id="${escapeHtml(c.id)}">
@@ -657,25 +786,52 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory) {
                 </button>
             `).join('')}
         </div>
-    ` : '';
+    `;
 
-    // Action bar with Study and Batch-mark
     const actionsHtml = `
         <div class="fast-track-triage-action-bar">
             <button type="button" class="fast-track-batch-action-btn fast-track-batch-study-btn" id="studyFilteredSkippedBtn">
-                ⚡ Study ${escapeHtml(filterCategory === 'all' ? 'All' : filterCategory)} (${activeEntries.length})
-            </button>
-            <button type="button" class="fast-track-batch-action-btn fast-track-batch-known-btn" id="markFilteredSkippedKnownBtn">
-                ✓ Mark all as Known
+                ⚡ Study ${escapeHtml(filterCategory === 'all' ? 'All' : filterCategory)} (${entries.length})
             </button>
         </div>
     `;
 
+    const initialChunk = entries.slice(0, PAGE_CHUNK);
+    _renderedCount = initialChunk.length;
+    const initialHtml = isLemma ? renderLemmaRows(initialChunk) : renderRows(initialChunk);
+
+    const hasMore = _renderedCount < entries.length;
+    const sentinelHtml = hasMore
+        ? `<li id="extrasListSentinel" class="extras-list-sentinel"><button type="button" class="extras-load-more-btn">Load more (${entries.length - _renderedCount} remaining)</button></li>`
+        : '';
+
+    const listTag = isLemma ? 'lemma-group-list' : 'extras-list';
     body.innerHTML = `
         ${tabsHtml}
         ${actionsHtml}
-        <ul class="extras-list">${renderRows(activeEntries, filterCategory)}</ul>
+        <ul class="${listTag}" id="extrasRowsList">${initialHtml}${sentinelHtml}</ul>
     `;
+
+    const listEl = body.querySelector('#extrasRowsList');
+    hydrateExtrasTranslations(listEl, initialChunk);
+
+    // Infinite scroll observer on sentinel
+    if (_currentSentinelObserver) {
+        _currentSentinelObserver.disconnect();
+        _currentSentinelObserver = null;
+    }
+    const sentinelEl = body.querySelector('#extrasListSentinel');
+    if (sentinelEl && typeof IntersectionObserver === 'function') {
+        _currentSentinelObserver = new IntersectionObserver(records => {
+            if (records.some(r => r.isIntersecting)) {
+                appendNextChunk(listEl, _currentDisplayEntries, isLemma);
+            }
+        }, { root: body, rootMargin: '300px' });
+        _currentSentinelObserver.observe(sentinelEl);
+    }
+    sentinelEl?.querySelector('.extras-load-more-btn')?.addEventListener('click', () => {
+        appendNextChunk(listEl, _currentDisplayEntries, isLemma);
+    });
 
     // Bind tab clicks
     body.querySelectorAll('.fast-track-triage-tab').forEach(tab => {
@@ -684,19 +840,10 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory) {
         });
     });
 
-    // Bind study filtered
+    // Bind study button
     body.querySelector('#studyFilteredSkippedBtn')?.addEventListener('click', () => {
         document.getElementById('skippedWordsModal')?.classList.add('hidden');
         startFastTrackSkippedSet(filterCategory);
-    });
-
-    // Bind batch-mark known
-    body.querySelector('#markFilteredSkippedKnownBtn')?.addEventListener('click', async () => {
-        const btn = body.querySelector('#markFilteredSkippedKnownBtn');
-        if (btn) btn.textContent = 'Saving progress…';
-        const marked = await batchMarkSkippedKnown(activeEntries);
-        renderSkippedWords(filterCategory);
-        if (btn) btn.textContent = `✓ Marked ${marked} words!`;
     });
 
     // Bind individual mark known buttons
@@ -704,7 +851,7 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory) {
         button.addEventListener('click', async event => {
             event.stopPropagation();
             const cardId = button.dataset.cardId;
-            const target = activeEntries.find(e => (e.item?.id || e.id) === cardId);
+            const target = entries.find(e => (e.item?.id || e.id) === cardId);
             const item = target?.item || target;
             if (item && window.saveWordProgress) {
                 window.saveWordProgress(item, true);
@@ -717,7 +864,6 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory) {
         });
     });
 
-    hydrateExtrasTranslations(body.querySelector('.extras-list'), activeEntries);
     return extras.cognates;
 }
 
@@ -981,7 +1127,39 @@ function filterMergedForms(query) {
 }
 
 function filterSkippedWords(query) {
-    filterList('skippedWordsBody', query);
+    const needle = String(query || '').trim().toLocaleLowerCase();
+    const isLemma = _activeSkippedCategory === 'lemma';
+    const listEl = document.getElementById('extrasRowsList');
+    if (!listEl) return;
+    if (!needle) {
+        _renderedCount = 0;
+        const initialChunk = _currentDisplayEntries.slice(0, PAGE_CHUNK);
+        _renderedCount = initialChunk.length;
+        const html = isLemma ? renderLemmaRows(initialChunk) : renderRows(initialChunk);
+        const hasMore = _renderedCount < _currentDisplayEntries.length;
+        const sentinelHtml = hasMore
+            ? `<li id="extrasListSentinel" class="extras-list-sentinel"><button type="button" class="extras-load-more-btn">Load more (${_currentDisplayEntries.length - _renderedCount} remaining)</button></li>`
+            : '';
+        listEl.innerHTML = html + sentinelHtml;
+        hydrateExtrasTranslations(listEl, initialChunk);
+        return;
+    }
+    const matched = _currentDisplayEntries.filter(entry => {
+        if (isLemma) {
+            const words = entry.surfaces?.map(s => s.word).join(' ') || '';
+            const text = `${entry.lemma?.word} ${entry.lemma?.translation} ${words}`.toLocaleLowerCase();
+            return text.includes(needle);
+        }
+        const item = entry.item || entry;
+        const translation = firstTranslation(item);
+        const allWords = entry.allWords || item.word;
+        const text = `${allWords} ${translation} ${entry.reason || ''}`.toLocaleLowerCase();
+        return text.includes(needle);
+    });
+    const chunk = matched.slice(0, PAGE_CHUNK);
+    const html = isLemma ? renderLemmaRows(chunk) : renderRows(chunk);
+    listEl.innerHTML = html;
+    hydrateExtrasTranslations(listEl, chunk);
 }
 
 function filterExtras(query) {
@@ -989,11 +1167,7 @@ function filterExtras(query) {
 }
 
 function openMergedForms() {
-    renderMergedForms();
-    const search = document.getElementById('mergedFormsSearch');
-    if (search) search.value = '';
-    document.getElementById('mergedFormsModal')?.classList.remove('hidden');
-    requestAnimationFrame(() => fitLemmaGroupForms(document.getElementById('mergedFormsBody')));
+    openSkippedWords('lemma');
 }
 
 function closeMergedForms() {
@@ -1047,12 +1221,15 @@ function initExtras() {
     });
     document.getElementById('mergedFormsSearch')?.addEventListener('input', event => filterMergedForms(event.currentTarget.value));
 
-    document.getElementById('viewSkippedWordsBtn')?.addEventListener('click', openSkippedWords);
+    document.getElementById('viewSkippedWordsBtn')?.addEventListener('click', () => openSkippedWords('cognate'));
     document.getElementById('closeSkippedWordsModal')?.addEventListener('click', closeSkippedWords);
     document.getElementById('skippedWordsModal')?.addEventListener('click', event => {
         if (event.target?.id === 'skippedWordsModal') closeSkippedWords();
     });
     document.getElementById('skippedWordsSearch')?.addEventListener('input', event => filterSkippedWords(event.currentTarget.value));
+    document.getElementById('skippedCategorySelect')?.addEventListener('change', event => {
+        renderSkippedWords(event.target.value);
+    });
 
     // Fallback extras modal
     document.getElementById('extrasBtn')?.addEventListener('click', openExtras);
@@ -1072,6 +1249,13 @@ function initExtras() {
                 box.querySelectorAll('.lemma-group-chip').forEach(chip => { chip.hidden = false; });
                 more.hidden = true;
             }
+            return;
+        }
+        const extraToggle = event.target.closest('[data-extra-toggle]');
+        if (extraToggle) {
+            const pair = extraToggle.closest('.cognate-pair');
+            const chips = pair?.querySelector('.cognate-folded-chips');
+            if (chips) chips.hidden = !chips.hidden;
             return;
         }
         const restore = event.target.closest('.extras-restore');

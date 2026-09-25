@@ -106,3 +106,96 @@ assert(asp.includes('>Details</span>'));assert(!asp.includes('sense-metadata-mor
 console.log('40 shipped cards: meaning preservation, restrictions, grammar, cases and provider parity passed');
 ''', capture_output=True)
         self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_sense_row_target_collocation_and_unified_example_highlighting(self):
+        result = subprocess.run(['node', '--input-type=module', '-'], cwd=ROOT, text=True,
+            input=r'''
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import * as ui from './app/js/card-metadata-pills.js';
+
+const fixture = JSON.parse(fs.readFileSync('tests/app/fixtures/sense_metadata.json'));
+const card = (lang, word) => fixture[lang].find(c => c.word === word);
+
+// 1. extractSenseCompanion: Spanish, Portuguese, Czech
+const tener = card('es', 'tener');
+const tenerQue = tener.meanings.find(m => m.translation === 'to have to');
+const compTener = ui.extractSenseCompanion(tenerQue);
+assert.deepEqual(compTener, { terms: ['que'], qualifier: null, isOptional: false });
+
+const gosto = card('pt', 'gosto');
+const compGosto = ui.extractSenseCompanion(gosto.meanings[0]);
+assert.deepEqual(compGosto, { terms: ['de'], qualifier: null, isOptional: false });
+
+const cekat = card('cs', 'čekat');
+const cekatNa = cekat.meanings.find(m => m.translation === 'to wait');
+const compCekat = ui.extractSenseCompanion(cekatNa);
+assert.deepEqual(compCekat, { terms: ['na'], qualifier: null, isOptional: false });
+
+// Optional companion extraction from context
+const optMeaning = { translation: 'to come', context: 'often used with "a"' };
+const compOpt = ui.extractSenseCompanion(optMeaning);
+assert.deepEqual(compOpt, { terms: ['a'], qualifier: 'often', isOptional: true });
+
+// 2. senseCollocationHTML: physically links the target surface to the companion
+const htmlTener = ui.senseCollocationHTML(tenerQue, tener);
+assert(htmlTener.includes('class="sense-target-collocation"'));
+assert(htmlTener.includes('<span class="sense-collocation-target">tener</span>'));
+assert(htmlTener.includes('<span class="sense-collocation-particle">que</span>'));
+
+const htmlGosto = ui.senseCollocationHTML(gosto.meanings[0], gosto);
+assert(htmlGosto.includes('<span class="sense-collocation-target">gostar</span>'));
+assert(htmlGosto.includes('<span class="sense-collocation-particle">de</span>'));
+
+const htmlOpt = ui.senseCollocationHTML(optMeaning, { targetWord: 'venir' });
+assert(htmlOpt.includes('is-optional'));
+assert(htmlOpt.includes('<span class="sense-collocation-target">venir</span>'));
+assert(htmlOpt.includes('<span class="sense-collocation-particle">+ a</span>'));
+assert(htmlOpt.includes('<span class="sense-collocation-qualifier">(often)</span>'));
+
+// 3. excludeCompanion: ensures companion is promoted to sense row and excluded from subsense tier
+const metaOptionsExcluded = { gloss: 'to have to', excludeCompanion: true, allowInactivePrimary: true };
+const itemsExcluded = ui.compactLearnerSenseMetadata(ui.senseMetadataItems(tenerQue), tenerQue, metaOptionsExcluded);
+assert(!itemsExcluded.some(i => i.family === 'companion'));
+const pillsHtml = ui.senseMetadataHTML(tenerQue, false, metaOptionsExcluded);
+assert(!pillsHtml.includes('sense-pill--companion'));
+
+// 4. Unified example sentence highlighting from flashcards.js
+const flashcardsSource = fs.readFileSync('app/js/flashcards.js', 'utf8');
+assert(flashcardsSource.includes('function highlightUnifiedCompanionInSentence'));
+assert(flashcardsSource.includes('senseCollocationHTML(m, card)'));
+assert(flashcardsSource.includes('senseCollocationHTML(mm, card)'));
+
+// Extract highlightUnifiedCompanionInSentence from flashcards.js to test directly
+const fnStart = flashcardsSource.indexOf('function highlightUnifiedCompanionInSentence');
+const fnEnd = flashcardsSource.indexOf('// Choose a type scale', fnStart);
+const fnCode = flashcardsSource.slice(fnStart, fnEnd);
+const variantsStart = flashcardsSource.indexOf('const COMPANION_SURFACE_VARIANTS');
+const variantsCode = flashcardsSource.slice(variantsStart, fnStart);
+
+const _cachedRegex = (pattern, flags) => new RegExp(pattern, flags);
+const highlightFn = new Function(
+    'extractSenseCompanion', 'parseSpanishDictUsageContext', '_cachedRegex',
+    variantsCode + '\n' + fnCode + '\nreturn highlightUnifiedCompanionInSentence;'
+)(ui.extractSenseCompanion, () => null, _cachedRegex);
+
+// Adjacent active phrase is merged into a single example-word-highlight
+const sentence1 = 'No sé qué hacer, pero <span class="example-word-highlight">tengo</span> que salir.';
+const res1 = highlightFn(sentence1, tenerQue, tener, 'spanish');
+assert.equal(res1.html, 'No sé qué hacer, pero <span class="example-word-highlight">tengo que</span> salir.');
+
+// Contiguous in Portuguese: "gosto de"
+const sentence2 = 'Eu <span class="example-word-highlight">gosto</span> de você.';
+const res2 = highlightFn(sentence2, gosto.meanings[0], gosto, 'portuguese');
+assert.equal(res2.html, 'Eu <span class="example-word-highlight">gosto de</span> você.');
+
+// Separated: companion receives unified active styling
+const sentence3 = '<span class="example-word-highlight">Tengo</span> mucho que aprender.';
+const res3 = highlightFn(sentence3, tenerQue, tener, 'spanish');
+assert(res3.html.includes('<span class="example-word-highlight">Tengo</span>'));
+assert(res3.html.includes('<span class="example-word-highlight example-companion-highlight" title="Collocation with this sense">que</span>'));
+
+console.log('Sense row collocation and unified example highlighting tests passed');
+''', capture_output=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+

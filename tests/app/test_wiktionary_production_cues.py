@@ -109,9 +109,9 @@ const verb = (headword, translation) => ({
 const cases = [
     [{ targetWord: 'hablo' }, verb('hablar', 'to speak'), tables, 'I speak'],
     [{ targetWord: 'habló' }, verb('hablar', 'to speak'), tables, 'he/she spoke'],
-    [{ targetWord: 'hablaba' }, verb('hablar', 'to speak'), tables, 'I was speaking / he/she was speaking'],
+    [{ targetWord: 'hablaba' }, verb('hablar', 'to speak'), tables, 'I/he/she was speaking'],
     [{ targetWord: 'hablaré' }, verb('hablar', 'to speak'), tables, 'I will speak'],
-    [{ targetWord: 'hablaría' }, verb('hablar', 'to speak'), tables, 'I would speak / he/she would speak'],
+    [{ targetWord: 'hablaría' }, verb('hablar', 'to speak'), tables, 'I/he/she would speak'],
     [{ targetWord: 'habla' }, verb('hablar', 'to speak'), tables, 'he/she speaks / speak!'],
     [{ targetWord: 'hablando' }, verb('hablar', 'to speak'), tables, 'speaking'],
     [{ targetWord: 'hablado' }, verb('hablar', 'to speak'), tables, 'spoken'],
@@ -149,7 +149,7 @@ const cases = [
         cycle_pos: 'verb',
         translation: 'to love',
         allSenses: [{ headword: 'aimer' }],
-    }, tables, 'I love / he/she loves'],
+    }, tables, 'I/he/she love(s)'],
 ];
 const out = cases.map(([card, sense, data, expected]) => ({
     expected,
@@ -206,6 +206,105 @@ const out = cases.map(([card, sense, expected]) => ({
     actual: englishProductionCue(card, sense, null, { conjugationData: tables }),
 }));
 console.log(JSON.stringify(out));
+""" % json.dumps(REVERSE_CUES.as_uri())
+        result = subprocess.run(
+            [node, "--input-type=module", "-e", script],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        rows = json.loads(result.stdout)
+        for row in rows:
+            self.assertEqual(row["actual"], row["expected"], row)
+
+    def test_dynamic_pronoun_tracking_and_predicate_factoring(self) -> None:
+        node = shutil.which("node")
+        if not node:
+            self.skipTest("node is required to execute reverse-cues.js")
+        script = r"""
+import {
+    detectExamplePronoun,
+    compressPronounCues,
+    englishProductionCue,
+} from %s;
+
+const tables = {
+    hablar: {
+        tenses: {
+            Presente: ['hablo', 'hablas', 'habla', 'hablamos', 'habláis', 'hablan'],
+            Pretérito: ['hablé', 'hablaste', 'habló', 'hablamos', 'hablasteis', 'hablaron'],
+            Imperfecto: ['hablaba', 'hablabas', 'hablaba', 'hablábamos', 'hablabais', 'hablaban'],
+            Condicional: ['hablaría', 'hablarías', 'hablaría', 'hablaríamos', 'hablaríais', 'hablarían'],
+            Imperativo: ['—', 'habla', 'hable', 'hablemos', 'hablad', 'hablen'],
+        },
+    },
+};
+const verb = (headword, translation) => ({
+    pos: 'verb',
+    translation,
+    headword,
+});
+
+// 1. Pronoun detection from example sentence translations
+const pronounCases = [
+    ['She always listens carefully.', 'she'],
+    ["He doesn't listen.", 'he'],
+    ["She's listening.", 'she'],
+    ["He’s listening.", 'he'],
+    ['Listening to music is fun.', null],
+    ['He told her that she should listen.', null],
+    ['She told him to leave.', 'she'],
+    ['He gave her a book.', 'he'],
+];
+for (const [text, expected] of pronounCases) {
+    const actual = detectExamplePronoun(text);
+    if (actual !== expected) {
+        throw new Error(`detectExamplePronoun(${JSON.stringify(text)}): expected ${expected}, got ${actual}`);
+    }
+}
+
+// 2. Predicate factoring & pronoun compression
+const compressCases = [
+    [['I listen', 'he/she listens'], 'I/he/she listen(s)'],
+    [['I listen', 'she listens'], 'I/she listen(s)'],
+    [['I listen', 'he listens'], 'I/he listen(s)'],
+    [['I watch', 'he/she watches'], 'I/he/she watch(es)'],
+    [['I should be', 'he/she should be'], 'I/he/she should be'],
+    [['I was speaking', 'she was speaking'], 'I/she was speaking'],
+    [['he/she speaks', 'speak!'], 'he/she speaks / speak!'],
+    ['I listen / he/she listens', 'I/he/she listen(s)'],
+    [['I listen to music', 'he/she listens to music'], 'I/he/she listen(s) to music'],
+];
+for (const [input, expected] of compressCases) {
+    const actual = compressPronounCues(input);
+    if (actual !== expected) {
+        throw new Error(`compressPronounCues(${JSON.stringify(input)}): expected ${expected}, got ${actual}`);
+    }
+}
+
+// 3. Dynamic 3sg resolution and factoring through englishProductionCue
+const cueCases = [
+    // 3sg present with imperative fallback: switches he vs she vs default
+    [{ targetWord: 'habla' }, verb('hablar', 'to speak'), { conjugationData: tables }, 'he/she speaks / speak!'],
+    [{ targetWord: 'habla' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'She speaks Spanish.' } }, 'she speaks / speak!'],
+    [{ targetWord: 'habla' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'He speaks Spanish.' } }, 'he speaks / speak!'],
+    // 1s/3s homophonous imperfect: factors into I/he/she, I/she, or I/he
+    [{ targetWord: 'hablaba' }, verb('hablar', 'to speak'), { conjugationData: tables }, 'I/he/she was speaking'],
+    [{ targetWord: 'hablaba' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'She was speaking Spanish.' } }, 'I/she was speaking'],
+    [{ targetWord: 'hablaba' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'He was speaking Spanish.' } }, 'I/he was speaking'],
+    // Card with card._activeExample set directly
+    [{ targetWord: 'hablaba', _activeExample: { english: 'She was speaking.' } }, verb('hablar', 'to speak'), { conjugationData: tables }, 'I/she was speaking'],
+    [{ targetWord: 'hablaba', _activeExample: { english: 'He was speaking.' } }, verb('hablar', 'to speak'), { conjugationData: tables }, 'I/he was speaking'],
+    // Conditional
+    [{ targetWord: 'hablaría' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'She would speak to him.' } }, 'I/she would speak'],
+    [{ targetWord: 'hablaría' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'He would speak to her.' } }, 'I/he would speak'],
+];
+
+const results = cueCases.map(([card, sense, options, expected]) => ({
+    expected,
+    actual: englishProductionCue(card, sense, null, options),
+}));
+console.log(JSON.stringify(results));
 """ % json.dumps(REVERSE_CUES.as_uri())
         result = subprocess.run(
             [node, "--input-type=module", "-e", script],

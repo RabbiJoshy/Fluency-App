@@ -128,10 +128,13 @@ Say the bold name.
 | **GLASS** | v15 10k decks | Import bundle, compose, validate, activate the 10k speech decks. | Plant (no model) | **Done** (10k releases composed, validated, sharded, activated; deployed under `flashcards-v502`) |
 | **MEND** | word-database structure | Sets up the structure the whole word database lives on (surface facts → strategies, scope language → mode → artist → song → playlist, trust curated / derived / heuristic), which GRAFT fills and VERSE and the new lyrics UI consume. First proof: the 105 es v15 cards that shipped with empty meanings get meanings deterministically. | Lab + small plant (sense-menu rerun, WSD for affected cards only) | **Done** (candidates `es/pt/cs-speech-v15-mend-10000x10` built and validated: 0 empty cards, nothing outside the affected cards changed except 21 Czech cards' examples; activation waits on Joshua). Before GRAFT. |
 | **GRAFT** | lyrics overlays | Collect slang, fillers, and lyrics MWEs/words into overlay snapshots, **in MEND's declared-entry format and scopes**. | Lab / curation | After MEND (before VERSE) |
-| **VERSE** | lyrics **v16** | Rebase on SWEEP (v15) + GRAFT overlays; lyrics WSD v16. Bad Bunny lyrics stack is **v7**. | Lab first, plant later | **Done** (profile `es-lyrics-v16-1.json` signed off on freeze; ready for lyrics plant) |
+| **VERSE** | lyrics **v16** | Rebase on SWEEP (v15) + GRAFT overlays; lyrics WSD v16. Planted on 3 artists (18,372 cards). | Lab + plant | **Done** (profile `es-lyrics-v16-1.json`, candidates built & validated across Bad Bunny, Rosalía, Young Miko) |
+| **CHORUS** | lyrics audit & **v17** | 1) Audit v16 algorithm; 2) Expand GRAFT menus; 3) Wiktionary entity hacks for missing menus; 4) Spot other languages; 5) Release v17 candidate; 6) SpanishDict scraping recommendation (e.g. up to 15k). | Lab + release | **Next** (prompt in CHORUS section below) |
+| **POLYGLOT** | artist mode scaling | Audit Artist mode scaling across languages (French test playlist completion, Portuguese test playlist, robust language adapters). | Lab / architecture | After CHORUS |
+| **TURBO** | live user WSD engine | Ultra-fast, live client-side/worker Spanish pipeline: clean, normalise, tag, and compute fast basic WSD on user-uploaded Spotify playlists. | App / pipeline engine | After POLYGLOT |
 | **SETLIST** | live playlist UI | Spotify playlist → LRCLIB → worker persist → naive speech-overlay deck. No WSD. | beside WSD | In progress (brief `docs/runbooks/live-playlist.md`) |
 
-**Hold.** Sequence: SIEVE done, MILL done, SWEEP done, QUARRY done, CHISEL 1 done, KILN 1 done, CHISEL 2 done, KILN 2 done, GLASS done. **MEND is next** (ready; prompt in its card), then **GRAFT**, then **VERSE**. SETLIST does not wait on that hold.
+**Hold.** Sequence: SIEVE done, MILL done, SWEEP done, QUARRY done, CHISEL 1 done, KILN 1 done, CHISEL 2 done, KILN 2 done, GLASS done, MEND done, GRAFT done, VERSE done. **CHORUS is next** (audit v16, expand overlays/multilingual detection, produce v17). POLYGLOT and TURBO follow. SETLIST runs beside.
 
 KILN 1 executed on QUARRY’s freeze and CHISEL 1's 10k MWE overlay. Do not call the v12 freeze “v14 production 10k.”
 
@@ -405,6 +408,55 @@ Paste into that chat:
 - **Audit:** 78 Bad Bunny lines audited across enclitic imperatives (*vete*, *muévete*), discourse fillers (*dale*), Caribbean slang (*guagua*, *bichote*, *corillo*), loanwords (*baby*, *flow*), and persona/entities (*conejo*, *santurce*, *benito*).
 - **Zero API Spend:** Audit phase completed 100% offline ($0.00 spend). Single-sense/declared entries take the deterministic bypass (`_is_declared_default`).
 - **Tests:** All lyrics and surface tests pass cleanly. Deliverable ready for lyrics plant execution.
+- **Plant Status:** Candidate decks planted and validated for Bad Bunny (10,687 cards), Rosalía (3,224 cards), Young Miko (4,461 cards), plus spanish-test-playlist (1,860 cards) live on GitHub Pages.
+
+### CHORUS — lyrics v16 audit & v17 release candidate
+
+**This chat is CHORUS.** Audit and upgrade chat following VERSE’s plant across Bad Bunny, Rosalía, and Young Miko.
+
+Paste into that chat:
+
+> You are **CHORUS**. Read `CHAT_ROADMAP.md` through SCAR and VERSE, then only your section. You are auditing the v16 plant across Bad Bunny, Rosalía, and Young Miko (18,372 cards sitting in `releases/lyrics/lyrics-*-v16-candidate/`). 
+> Your mission is to:
+> 1. Audit v16 as an algorithm (sense selection quality, clitic filtering, frequency distribution).
+> 2. Check for needed GRAFT-style additions to menus (slang, Caribbean / Peninsular idioms, discourse markers).
+> 3. Assess Wiktionary / Wikipedia entity fallback mechanisms to ensure cards remain usable and informative even when standard dictionary lookup yields `no_menu`.
+> 4. Detect foreign language intrusions / code-switching (e.g. English, Catalan, French in Rosalía's discography).
+> 5. Release **v17** candidate decks for full user audit.
+> 6. Formulate recommendations on expanding dictionary scrapes (e.g. extending SpanishDict scraping up to 15,000 words vs relying on Kaikki Wiktionary).
+
+- **Output:** Audited and refined profile `config/wsd/models/es-lyrics-v17-1.json` + published v17 candidate releases for Bad Bunny, Rosalía, and Young Miko.
+- Do not: re-harvest speech corpora; break the split app contract; push to live app without review.
+
+### POLYGLOT — artist mode cross-language scaling
+
+**This chat is POLYGLOT.** Architectural and multi-language scaling chat after CHORUS.
+
+Paste into that chat:
+
+> You are **POLYGLOT**. Read `CHAT_ROADMAP.md` through SCAR, VERSE, and CHORUS. Your job is to audit and expand Artist mode so that all pipeline and app mechanics scale seamlessly across languages.
+> Currently:
+> - French has a small test playlist (`testplaylist`, 4,000 cards) but its pipeline is incomplete.
+> - Portuguese has no artist playlist yet (build a Portuguese test playlist for verification).
+> - The core focus is establishing robust, language-agnostic adapters (morphology, clitics, dictionary menus, lyrics elisions) so any artist in any supported language works with the same quality as Spanish.
+
+- **Output:** Multi-language artist pipeline specification and working test releases for French and Portuguese.
+- Do not: regress Spanish artist contracts; hardcode Spanish linguistic rules into generic pipeline stages.
+
+### TURBO — live user-uploaded playlist WSD engine
+
+**This chat is TURBO.** Client-side and worker engineering chat after POLYGLOT.
+
+Paste into that chat:
+
+> You are **TURBO**. Read `CHAT_ROADMAP.md` through SCAR and SETLIST. Your mission is to build the fastest possible live Spanish pipeline that can run directly on the app (client/worker) when a user uploads or links their own Spotify playlist.
+> The pipeline must:
+> 1. Clean, normalize, and tag lyrics on the fly.
+> 2. Perform fast, basic WSD computation live on the user's uploaded songs (balancing speed and quality without requiring heavy server infrastructure).
+> 3. Generate a fully interactive, immediate flashcard deck from their playlist.
+
+- **Output:** Live, high-performance playlist processing engine running in `app/js/` and the worker.
+- Do not: block the UI thread during computation; break existing card shell progress tracking.
 
 ### SETLIST — live playlist study (UI, not lyrics WSD)
 
@@ -441,7 +493,10 @@ Paste into that chat:
 | After GLASS | es/pt/cs speech decks from 10k supply + those MWEs |
 | After SWEEP | `*-v15-1.json` or written “v14 stands” |
 | After GRAFT | declared lists + overlays (`config/declared/`, artist layer, `overlays.py`) (done) |
-| After VERSE | `es-lyrics-v16-1.json` (Bad Bunny stays v7 until that ships) |
+| After VERSE | `es-lyrics-v16-1.json` + candidate decks planted for Bad Bunny, Rosalía, Young Miko (done) |
+| After CHORUS | `es-lyrics-v17-1.json` + published v17 candidate decks for full audit + scraping recommendation |
+| After POLYGLOT | Multi-language artist pipeline spec + working French and Portuguese test releases |
+| After TURBO | Client/worker live playlist engine (fast WSD + instant study deck creation) |
 
 ---
 

@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-25T20:15:00+01:00",
+      "date": "2026-09-25 20:15 BST",
+      "agent": "Antigravity",
+      "summary": "Pronoun factoring, dynamic example-following 3sg cues, active context bolding, and guaranteed unexpanded sense translations.",
+      "detail": [
+        "Eliminates slash-heavy cues like 'I listen/ he/she listens' with predicate factoring ('I/he/she listen(s)', 'I/he/she was speaking') and dynamically tracks 'he' vs 'she' to match the active example sentence.",
+        "Emphasizes the active sense context with bold typography and elevated selection cues across SpanishDict and Wiktionary metadata.",
+        "Guarantees that unexpanded and collapsed sense headers retain at least one short primary English translation for an instant scan overview."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-25T10:59:00+01:00",
       "date": "2026-09-25 10:59 BST",
       "agent": "Antigravity",

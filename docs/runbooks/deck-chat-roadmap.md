@@ -125,12 +125,16 @@ Say the bold name.
 | **KILN 1** | 10k WSD baseline | Embed deltas; execute 10k WSD using `*-v15-1` + CHISEL 1 overlay. | Plant | **Done** (published Stage 04 across es, pt, cs; ready for CHISEL 2) |
 | **CHISEL 2** | MWE tag refinement | Audit KILN 1 WSD outputs; discover additional axes/template bounds on real data. | Lab on KILN 1 output | **Done** (signed off in `raw/mwe/chisel-2`; ready for KILN 2) |
 | **KILN 2** | Precision 10k WSD | Re-run/finalize WSD with CHISEL 2 refined MWE overlay before release. | Plant | **Done** (precision 10k WSD published to Stage 04 across es, pt, cs; ready for GLASS) |
-| **GLASS** | v15 10k decks | Import bundle, compose, validate, activate the 10k speech decks. | Plant (no model) | Ready after KILN 2 |
-| **GRAFT** | lyrics overlays | Collect slang, fillers, and lyrics MWEs/words into overlay snapshots. | Lab / curation | After GLASS (before VERSE) |
-| **VERSE** | lyrics **v16** | Rebase on SWEEP (v15) + GRAFT overlays; lyrics WSD v16. Bad Bunny lyrics stack is **v7**. | Lab first, plant later | After GRAFT; may sit idle until then |
+| **GLASS** | v15 10k decks | Import bundle, compose, validate, activate the 10k speech decks. | Plant (no model) | **Done** (10k releases composed, validated, sharded, activated; deployed under `flashcards-v502`) |
+| **MEND** | word-database structure | Sets up the structure the whole word database lives on (surface facts → strategies, scope language → mode → artist → song → playlist, trust curated / derived / heuristic), which GRAFT fills and VERSE and the new lyrics UI consume. First proof: the 105 es v15 cards that shipped with empty meanings get meanings deterministically. | Lab + small plant (sense-menu rerun, WSD for affected cards only) | **Done** (candidates `es/pt/cs-speech-v15-mend-10000x10` built and validated: 0 empty cards, nothing outside the affected cards changed except 21 Czech cards' examples; activation waits on Joshua). Before GRAFT. |
+| **GRAFT** | lyrics overlays | Collect slang, fillers, and lyrics MWEs/words into overlay snapshots, **in MEND's declared-entry format and scopes**. | Lab / curation | After MEND (before VERSE) |
+| **VERSE** | lyrics **v16** | Rebase on SWEEP (v15) + GRAFT overlays; lyrics WSD v16. Planted on 3 artists (18,372 cards). | Lab + plant | **Done** (profile `es-lyrics-v16-1.json`, candidates built & validated across Bad Bunny, Rosalía, Young Miko) |
+| **CHORUS** | lyrics audit & **v17** | 1) Audit v16 algorithm; 2) Expand GRAFT menus; 3) Wiktionary entity hacks for missing menus; 4) Spot other languages; 5) Release v17 candidate; 6) SpanishDict scraping recommendation (e.g. up to 15k). | Lab + release | **Next** (prompt in CHORUS section below) |
+| **POLYGLOT** | artist mode scaling | Audit Artist mode scaling across languages (French test playlist completion, Portuguese test playlist, robust language adapters). | Lab / architecture | After CHORUS |
+| **TURBO** | live user WSD engine | Ultra-fast, live client-side/worker Spanish pipeline: clean, normalise, tag, and compute fast basic WSD on user-uploaded Spotify playlists. | App / pipeline engine | After POLYGLOT |
 | **SETLIST** | live playlist UI | Spotify playlist → LRCLIB → worker persist → naive speech-overlay deck. No WSD. | beside WSD | In progress (brief `docs/runbooks/live-playlist.md`) |
 
-**Hold.** Sequence: SIEVE done, MILL done, SWEEP done, QUARRY done, CHISEL 1 done, KILN 1 done, CHISEL 2 done, KILN 2 done. **GLASS is next** to compose and activate the 10,000-card speech releases. SETLIST does not wait on that hold.
+**Hold.** Sequence: SIEVE done, MILL done, SWEEP done, QUARRY done, CHISEL 1 done, KILN 1 done, CHISEL 2 done, KILN 2 done, GLASS done, MEND done, GRAFT done, VERSE done. **CHORUS is next** (audit v16, expand overlays/multilingual detection, produce v17). POLYGLOT and TURBO follow. SETLIST runs beside.
 
 KILN 1 executed on QUARRY’s freeze and CHISEL 1's 10k MWE overlay. Do not call the v12 freeze “v14 production 10k.”
 
@@ -180,8 +184,9 @@ You already have a **v12 freeze**: sentences + scores + embedding cache + sparse
 8. **CHISEL** takes the new 10k freeze, curates and retags MWEs across the newly added 4,000 cards, verifies Invariant vs Ambiguous tags, and signs off on the 10k MWE overlay.
 9. **KILN** executes full-deck WSD on the 10k freeze using the signed-off `v15` profile from SWEEP + CHISEL's 10k MWE overlay.
 10. **GLASS** composes, validates, and activates the 10,000-card speech decks on v15.
-11. **GRAFT** collects domain-specific MWEs and single-word extra senses (Caribbean slang, reggaeton idioms, conversational fillers, elided locutions) into structured overlays via `fluency.wsd.overlays`, before lyrics WSD disambiguation.
-12. **VERSE** is the lyrics WSD chat. Rebased on speech v15 (SWEEP) + domain overlays (GRAFT), producing **lyrics WSD v16**. Do not treat speech v12 as the method to ship.
+11. **MEND** sets up the structure the whole word database will live on: facts about each surface pick a strategy (borrow the lemma's menu, expand an abbreviation, a declared gloss, an entity card), every fact is scoped (language → mode → artist → song → playlist) and trust-labelled (curated / derived / heuristic), and one offline resolver serves every provider. GRAFT fills it; VERSE and the new lyrics UI read from it. Its first proof is fixing the speech cards that shipped with no meanings. Design: `docs/proposals/0003-surface-exceptions-and-menu-fallback.md`.
+12. **GRAFT** collects domain-specific MWEs and single-word extra senses (Caribbean slang, reggaeton idioms, conversational fillers, elided locutions) into structured overlays via `fluency.wsd.overlays`, before lyrics WSD disambiguation.
+13. **VERSE** is the lyrics WSD chat. Rebased on speech v15 (SWEEP) + MEND's resolver + domain overlays (GRAFT), producing **lyrics WSD v16**. Do not treat speech v12 as the method to ship.
 
 ---
 
@@ -319,40 +324,139 @@ Paste:
   - **Czech (`cs`)**: Run `20260914T223828Z-ad405a28` re-imported into `runs/cs/speech/20260914T223828Z-ad405a28/stages/04_wsd_assignments/output`. Multiword inventory `sha256:e94d39d20b82ffe83a373bc0fdf35a14d87a8372ff2c677c8030500a6c819aa5`. (Assigned: 269,949, Abstained: 18,066, No-menu: 15,047, Cap-30 overflow: 152,199).
   All embeddings 100% offline cache hit ($0.00 spend; 0 API calls). Final Stage 04 assignments ready for GLASS release composition.
 
-### GLASS — v15 10k decks on the app (After KILN)
+### GLASS — v15 10k decks on the app (Done)
 
-**This chat is GLASS.**
+**This chat was GLASS.**
+- **Status:** **Done.**
+  - **Spanish (`es`)**: Release `es-speech-v15-10000x10` composed (10,000 cards, 97,248 assigned examples, 0 unassigned), validated (`example_selection`, `inventory`, `sense_menu`, `sentences`, `wsd_assignments`), sharded (500 index row shards, 500 example shards), and activated.
+  - **Portuguese (`pt`)**: Release `pt-speech-v15-10000x10` composed (10,000 cards, 97,593 assigned examples, 0 unassigned), validated, sharded, and activated.
+  - **Czech (`cs`)**: Release `cs-speech-v15-10000x10` composed (10,000 cards, 91,668 assigned examples, 0 unassigned), validated, sharded, and activated.
+  - Verified `SENTENCE_FLOW` ticks and canonical dictionary examples intact (9,061 in es, 3,102 in pt, 2,853 in cs). Verified all 500 study sets across all 3 languages have non-empty meanings (0 empty study sets).
+  - Pinned speech frequency snapshots built and validated for all 3 releases.
+  - Service worker cache bumped to `flashcards-v502` and activated in `config.json`. Deployed to live app.
 
-- Job: compose 10,000-card speech releases from KILN stage 04; validate; activate. Display still SENTENCE_FLOW (WSD-labelled ticks; one canonical per meaning on that card).
-- Free test: `fluency release validate`; load study sets locally (empty-set bug was skinny `meanings: []` — do not ship that).
-- Do not: change WSD; “quick harvest” to fill ticks
+### MEND — the word-database structure (before GRAFT)
+
+**This chat is MEND.** Design: `docs/proposals/0003-surface-exceptions-and-menu-fallback.md` (settled; §10 holds the decisions). Run it as a **local** chat: it needs `../Fluency-Workspace` and network access to SpanishDict.
+
+Paste into that chat:
+
+> You are **MEND**. Read `CHAT_ROADMAP.md` through SCAR and the freeze section, then only MEND. Then read `docs/INVARIANTS.md` and `docs/proposals/0003-surface-exceptions-and-menu-fallback.md` in full: it is your design, and its §10 decisions are settled. Your job is pivotal: set up the structure the whole word database will live on (facts → class → strategy, scope and trust labels, one offline resolver for every provider). GRAFT fills it, and VERSE and the new lyrics UI consume it. Prove it on the Spanish speech cards that shipped with empty `meanings`: every one gets a real, usable menu, with no one-off patches.
+>
+> 1. **Measure first.** List the empty-`meanings` cards in `es-speech-v15-10000x10` (Fluency-Releases clone) and classify every one against proposal §1, with evidence. The table there is a starting guess; correct it.
+> 2. **Diagnose the tail.** Read the refetch JSONL(s): were the ordinary words at ranks 9,870–10,000 queried, empty (rate-limited?), flagged, or never asked? Then refetch the affected surfaces with `scripts/fetch_spanishdict.py --surfaces … --out raw/dictionaries/es/spanishdict/refetch-no-menu-v15.jsonl`, and merge into a **new** snapshot id with `scripts/merge_spanishdict_refetch.py`. Record `absent` vs `unfetched` per proposal §3.
+> 3. **Build the layer** (proposal §2–§4):
+>    - the strategy fold with a fixed precedence;
+>    - scope and trust labels, and a minimum-trust gate in the resolver;
+>    - coverage declared per provider;
+>    - `external_lemmas` for the SpanishDict adapter (parity with Kaikki);
+>    - the reflexive pronominal-headword rule;
+>    - the abbreviation filter fix for surfaces tagged `abbreviation_form`;
+>    - an extension to `scripts/resolve_clitic_lemmas.py` using the full conjugation table, enclitic hosts only, abstaining on ambiguity;
+>    - the declared-entry format (compatible with `SenseOverlayEntry`) and the entity registry shape (proposal §5–§6).
+>
+>    Every strategy runs offline. Tests for each.
+> 4. **Seed only what the 105 need.** Expansions (ud → usted…); declared glosses for genuine interjections; exclude the contamination (check the `je`/`uh`/`tai` lines); `adjudicated_exclude` for brands like ferrari unless worth keeping; "off" as a loanword. Small lists go in `config/`, per §10.
+> 5. **Rebuild.** A new sense-menu run. Show the before/after menu coverage for the 105. WSD **only** for affected cards, as a new run reusing QUARRY's prewsd v2 and KILN 2's Stage 04 for everything else. Paid steps: print the projected units and wait for my go.
+> 6. **Candidate release.** Validate it. Acceptance: **0 cards with empty meanings (per card, not per set)**. Diff against v15: nothing outside the affected cards may change; report any that did.
+> 7. **Also write:**
+>    - a critique and migration proposal for lyrics mode (proposal §7);
+>    - a draft decision record for the Spanish clitic tokenization split (§8), with numbers (how many cards merge into which surfaces, how ranks shift), proposal only.
+>
+>    The speech surface ledger is the mature system. Lyrics routing (`src/fluency/lyrics/languages/spanish_routing.py` and its data structures) is legacy from the first app and is **not** the model. You are explicitly allowed to question it. Use its buckets as evidence of which cases exist. Then say what the ledger model covers, what it must add, what to drop, and what GRAFT, VERSE and the post-VERSE "extra words" UI should read instead. Do not change lyrics code; I decide, VERSE executes.
+>
+> **Do not:** harvest (SCAR); rebuild the ledger from a smaller supply (append events; if you rebuild, the full 10k es ledger); change card identity; build any artist layer or the live store; write GRAFT's content; activate or publish without my say-so. If SETLIST or app config pins `es-speech-v15-10000x10` by id, list what changes on activation.
+>
+> **Report:** the 105 by class and fix; the tail diagnosis; what was coded; the seeded lists; before/after coverage; the release diff; open issues. Update this card's status and the proposal's §1 table with measured numbers.
+
+- Why: `es-speech-v15-10000x10` shipped 105 cards with empty `meanings` (WSD `no_menu` on every example). GLASS's "0 empty study sets" check was per set, not per card, so it missed them. They made Learn New bounce between sets (patched in the app).
+- Shape: fallback **fills** an empty menu at stage 02; GRAFT's overlays **add** competing senses at WSD time. Same entry format, same scopes (proposal §6).
+- Feeds GRAFT: the strategy table, the scope and trust labels, the declared-entry format (glosses, expansions, entities) and the entity registry shape, seeded only with what the 105 need. GRAFT fills them.
+- Feeds VERSE: the resolver, lemma hop and scopes, plus MEND's critique of legacy lyrics routing (proposal §7). MEND is pivotal: lyrics mode is expected to move onto the speech ledger model, not the other way round.
+- **Status (2026-09-23): Done.** Candidate releases built, validated and diffed; **not activated** (Joshua decides).
+  - `es-speech-v15-mend-10000x10` (run `20260923T220622Z-e1ef2457`): 105 cards fixed (100 dictionary headwords, 4 glosses, 1 entity), 0 empty, 0 other cards changed. Stage 04 spliced: 443,143 carried from KILN 2, 2,865 fresh, 223 declared.
+  - `pt-speech-v15-mend-10000x10` (run `20260923T220643Z-1da6511e`): 19 fixed, 0 empty, 0 other cards changed.
+  - `cs-speech-v15-mend-10000x10` (run `20260923T220659Z-80b0f6a4`): 381 fixed (55 Wiktionary headwords, 326 glosses), 0 empty; 0 other cards' meanings changed, 21 other cards' examples moved (the two-cards-per-sentence cap).
+  - Paid: Gemini embeddings for 1,852 (es) + 531 (cs) texts, approved by Joshua.
+  - Reports: `docs/mend/` (measure, lemmas, menus, wsd, release, clitics).
+  - Found on the way: the ledger has drifted since KILN (877 pt, 1,114 cs menus would change if rebuilt today), so MEND carries every untouched card's menu verbatim; the next full rebuild should look at that drift.
+  - Measured the empties: es 105, pt 19, cs 381 (proposal 0003 §1, measured table). No rate limiting: the es tail was never asked; clitic bundles have no SpanishDict page; abbreviation and interjection headwords were dropped by filters.
+  - Built: `surfaces/resolver.py` (headword set first; strategies only for an empty set; declared `no_menu` with reason), `surfaces/declared.py` (one hand-written format), `surfaces/stores.py` (language / artist / live stack, promotion), `surfaces/trust.py` (curated / provider / derived / heuristic), SpanishDict declared-lemma rule and Kaikki headword source (parity), stage-02 wiring for a profile's named cards (others byte-identical), `word_class` and entity cards in releases, per-card `menu_absence` validation, spliced Stage 04 (`wsd/splice.py`).
+  - Wrote: `config/declared/{es,pt,cs}/mend-speech-v15.json` (8 / 19 / 381 entries).
+  - Docs: proposal 0003 §2a and §10 (decisions MEND took), proposal 0004 (lyrics onto the ledger), decision 0025 draft (clitic split; numbers from `--step clitics`).
+  - Local steps (`scripts/mend_local.py`): `menus` → `wsd` (dry run prints spend; `--go` after Joshua's yes) → `release` (candidates `<lang>-speech-v15-mend-10000x10`, never activated) → `clitics`.
 
 ### GRAFT — lyrics & slang sense-menu overlays (before VERSE)
 
-**This chat is GRAFT.** Domain & slang collection chat before lyrics WSD.
-- Input Dossier: `docs/dossiers/graft-source-dossier.md` (shared working dossier; check its status and vet sources before building snapshots).
-
-Paste into that chat:
-
-> You are **GRAFT**. Read `CHAT_ROADMAP.md` through SCAR, then only GRAFT. First, read `docs/dossiers/graft-source-dossier.md` and check its status, source inventory, and taxonomy. Your job is to collect domain-specific multi-word expressions and single-word extra senses (slang, regionalisms, conversational fillers, elided locutions) into structured overlays via `fluency.wsd.overlays` before VERSE runs lyrics disambiguation.
-
-- Job: Harvest/curate domain expressions (Caribbean slang like *guagua*, *vaina*; reggaeton idioms; conversational discourse fillers like *o sea*; lyrics contractions). Map them to component surface cards. Build reproducible overlay snapshots under `raw/overlays/` adhering to the `SenseMenuOverlay` interface in `fluency.wsd.overlays`.
-- **Output:** Structured overlay snapshot (e.g. `raw/overlays/lyrics/es-lyrics-overlays.json`) ready for injection into `WSDComponents.overlay_provider`.
-- Free test: Load overlays into `CompositeOverlayProvider`, assert candidates attach to target cards, verify unit tests pass with zero Gemini spend.
-- Do not: Run full lyrics WSD (that is VERSE); harvest new audio/lyrics corpora without spec.
+**This chat is GRAFT.** Domain & slang collection chat before lyrics WSD. (Status: **Complete**).
+- **Audit of MEND:** Audited MEND against `docs/proposals/0003-surface-exceptions-and-menu-fallback.md` and codebase invariants. Report documented in `docs/mend/GRAFT_AUDIT.md`. Corrected 116 misclassified inflections in `cs` (112) and `pt` (4) `mend-speech-v15.json` from `vocabulary` to `inflection`.
+- **Declared Lists Written:**
+  - `config/declared/es/`: `lyrics-elisions.json` (21 contractions/elisions), `conversational-fillers.json` (9 fillers/slang), `caribbean-slang.json` (15 slang expressions), `lyrics-entities.json` (9 entities).
+  - Artist layer: `<workspace>/artists/es/bad-bunny/declared/bad-bunny.json` (5 artist-scoped entities/slang).
+  - `config/declared/pt/`: `lyrics-elisions.json` (16 contractions/elisions), `slang.json` (10 slang expressions), `conversational-fillers.json` (5 fillers).
+  - `config/declared/cs/`: `colloquial-slang.json` (9 colloquial slang/interjections), `conversational-fillers.json` (6 fillers).
+- **Overlay Bridge:** Added `declared_gloss_to_overlay` helper in `src/fluency/wsd/overlays.py` to allow declared gloss entries to compete as `SenseOverlayEntry` candidates in WSD.
+- **Tests:** All surface declared registry and resolver tests pass without regressions; zero API spend.
+- **Deliverables for VERSE:** Declared lists and artist layers ready for consumption by VERSE during lyrics WSD v16 disambiguation.
 
 ### VERSE — lyrics WSD v16 (after SWEEP + GRAFT)
 
-**This chat is VERSE.** Audit chat once v15 and GRAFT overlays exist: grow lyrics samples; output is **lyrics WSD v16** when leftovers are edges. Until then, park. Joshua may **rename the existing lyrics-design chat**.
+**This chat is VERSE.** Audit chat once v15 and GRAFT overlays exist: grow lyrics samples; output is **lyrics WSD v16** when leftovers are edges. (Status: **Complete**).
+- **Model Profile Delivered:** `config/wsd/models/es-lyrics-v16-1.json` rebased on speech v15 (SWEEP) baseline.
+- **Active multiword projection:** `mwe_augmented` with overlay provider `composite_declared_and_artist`.
+- **Gating & Constraints:** Active machine-readable clitic gate (`active_es_clitic_pronoun_filter`), pronominal gate, companion gate, and Wiktionary POS bridge.
+- **Audit:** 78 Bad Bunny lines audited across enclitic imperatives (*vete*, *muévete*), discourse fillers (*dale*), Caribbean slang (*guagua*, *bichote*, *corillo*), loanwords (*baby*, *flow*), and persona/entities (*conejo*, *santurce*, *benito*).
+- **Zero API Spend:** Audit phase completed 100% offline ($0.00 spend). Single-sense/declared entries take the deterministic bypass (`_is_declared_default`).
+- **Tests:** All lyrics and surface tests pass cleanly. Deliverable ready for lyrics plant execution.
+- **Plant Status:** Candidate decks planted and validated for Bad Bunny (10,687 cards), Rosalía (3,224 cards), Young Miko (4,461 cards), plus spanish-test-playlist (1,860 cards) live on GitHub Pages.
+
+### CHORUS — lyrics v16 audit & v17 release candidate
+
+**This chat is CHORUS.** Audit and upgrade chat following VERSE’s plant across Bad Bunny, Rosalía, and Young Miko.
 
 Paste into that chat:
 
-> You are **VERSE**. Speech **v15** (SWEEP) is the speech baseline; **GRAFT** provides domain overlays. Output is **lyrics WSD v16**. Audit: tiny sample → pattern → change → bigger sample until leftovers are edges; that version is the deliverable. Speech v12 was a sketch. Live Bad Bunny stays lyrics v7 until you replace it. Park until SWEEP and GRAFT sign off. Read `CHAT_ROADMAP.md` SCAR, **Audit chats only**, and VERSE.
+> You are **CHORUS**. Read `CHAT_ROADMAP.md` through SCAR and VERSE, then only your section. You are auditing the v16 plant across Bad Bunny, Rosalía, and Young Miko (18,372 cards sitting in `releases/lyrics/lyrics-*-v16-candidate/`). 
+> Your mission is to:
+> 1. Audit v16 as an algorithm (sense selection quality, clitic filtering, frequency distribution).
+> 2. Check for needed GRAFT-style additions to menus (slang, Caribbean / Peninsular idioms, discourse markers).
+> 3. Assess Wiktionary / Wikipedia entity fallback mechanisms to ensure cards remain usable and informative even when standard dictionary lookup yields `no_menu`.
+> 4. Detect foreign language intrusions / code-switching (e.g. English, Catalan, French in Rosalía's discography).
+> 5. Release **v17** candidate decks for full user audit.
+> 6. Formulate recommendations on expanding dictionary scrapes (e.g. extending SpanishDict scraping up to 15,000 words vs relying on Kaikki Wiktionary).
 
-- Job: take that chat’s already-written change list, **rewrite it against v15 + GRAFT overlays** (MWEs, slang/filler overlays, abstain, freeze POS-on-pairs, display-v4 rules as they apply to lyrics). Keep lyrics-specific machinery (elision, restored target for the tagger, Spotify spans, formulaic lines).
-- **Output:** `config/wsd/models/es-lyrics-v16-1.json` (create; do not overwrite v7). Sign-off when leftovers are edges.
-- Free test until v15/GRAFT exist: re-read v7 lyrics assignments / audit bundles; do not run a production lyrics WSD; do not harvest speech.
-- Do not: block FUSE/GLASS; implement “the next run” from v12 speech; activate a lyrics release in a quick look; treat Czech-no-tagger as MWE.
+- **Output:** Audited and refined profile `config/wsd/models/es-lyrics-v17-1.json` + published v17 candidate releases for Bad Bunny, Rosalía, and Young Miko.
+- Do not: re-harvest speech corpora; break the split app contract; push to live app without review.
+
+### POLYGLOT — artist mode cross-language scaling
+
+**This chat is POLYGLOT.** Architectural and multi-language scaling chat after CHORUS.
+
+Paste into that chat:
+
+> You are **POLYGLOT**. Read `CHAT_ROADMAP.md` through SCAR, VERSE, and CHORUS. Your job is to audit and expand Artist mode so that all pipeline and app mechanics scale seamlessly across languages.
+> Currently:
+> - French has a small test playlist (`testplaylist`, 4,000 cards) but its pipeline is incomplete.
+> - Portuguese has no artist playlist yet (build a Portuguese test playlist for verification).
+> - The core focus is establishing robust, language-agnostic adapters (morphology, clitics, dictionary menus, lyrics elisions) so any artist in any supported language works with the same quality as Spanish.
+
+- **Output:** Multi-language artist pipeline specification and working test releases for French and Portuguese.
+- Do not: regress Spanish artist contracts; hardcode Spanish linguistic rules into generic pipeline stages.
+
+### TURBO — live user-uploaded playlist WSD engine
+
+**This chat is TURBO.** Client-side and worker engineering chat after POLYGLOT.
+
+Paste into that chat:
+
+> You are **TURBO**. Read `CHAT_ROADMAP.md` through SCAR and SETLIST. Your mission is to build the fastest possible live Spanish pipeline that can run directly on the app (client/worker) when a user uploads or links their own Spotify playlist.
+> The pipeline must:
+> 1. Clean, normalize, and tag lyrics on the fly.
+> 2. Perform fast, basic WSD computation live on the user's uploaded songs (balancing speed and quality without requiring heavy server infrastructure).
+> 3. Generate a fully interactive, immediate flashcard deck from their playlist.
+
+- **Output:** Live, high-performance playlist processing engine running in `app/js/` and the worker.
+- Do not: block the UI thread during computation; break existing card shell progress tracking.
 
 ### SETLIST — live playlist study (UI, not lyrics WSD)
 
@@ -388,8 +492,11 @@ Paste into that chat:
 | After MILL | es/pt/cs speech decks from the v12 lab freeze + those MWEs |
 | After GLASS | es/pt/cs speech decks from 10k supply + those MWEs |
 | After SWEEP | `*-v15-1.json` or written “v14 stands” |
-| After GRAFT | `raw/overlays/` snapshots (slang, fillers, lyrics expressions) |
-| After VERSE | `es-lyrics-v16-1.json` (Bad Bunny stays v7 until that ships) |
+| After GRAFT | declared lists + overlays (`config/declared/`, artist layer, `overlays.py`) (done) |
+| After VERSE | `es-lyrics-v16-1.json` + candidate decks planted for Bad Bunny, Rosalía, Young Miko (done) |
+| After CHORUS | `es-lyrics-v17-1.json` + published v17 candidate decks for full audit + scraping recommendation |
+| After POLYGLOT | Multi-language artist pipeline spec + working French and Portuguese test releases |
+| After TURBO | Client/worker live playlist engine (fast WSD + instant study deck creation) |
 
 ---
 

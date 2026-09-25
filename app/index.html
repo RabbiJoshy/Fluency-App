@@ -46,14 +46,14 @@
             root.dataset.textSize = textSize;
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260924lm">
-    <link rel="stylesheet" href="css/light-theme.css?v=20260921freq">
+    <link rel="stylesheet" href="css/style.css?v=20260925cues">
+    <link rel="stylesheet" href="css/light-theme.css?v=20260925cues">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260925ls">
+    <link rel="modulepreload" href="js/main.js?v=20260925cues">
     <link rel="modulepreload" href="js/routes.js?v=20260923cj">
     <link rel="modulepreload" href="js/theme.js?v=20260922ui">
     <link rel="modulepreload" href="js/state.js?v=20260921x">
@@ -85,8 +85,8 @@
     <link rel="modulepreload" href="js/vocabulary-import-core.js?v=20260825ak">
     <link rel="modulepreload" href="js/vocabulary-import.js?v=20260923bk">
     <link rel="modulepreload" href="js/spanishdict-usage.js?v=20260825ak">
-    <link rel="modulepreload" href="js/reverse-cues.js?v=20260917a">
-    <link rel="modulepreload" href="js/flashcards.js?v=20260923gn">
+    <link rel="modulepreload" href="js/reverse-cues.js?v=20260925cues">
+    <link rel="modulepreload" href="js/flashcards.js?v=20260925cues">
     <link rel="modulepreload" href="js/example-personalisation.js?v=20260825ak">
     <script>
         // Fail open if a boot-time script error prevents main.js from taking
@@ -1229,8 +1229,9 @@
                                         <button class="cognate-toggle-btn" data-cognate="exclude" data-short="Exclude" data-full="Exclude">Exclude</button>
                                         <button class="cognate-toggle-btn selected" data-cognate="include" data-short="Include" data-full="Include">Include</button>
                                     </div>
-                                    <button type="button" id="viewSkippedWordsBtn" class="fast-mode-view-items-btn" style="display: none;">
-                                        <span id="skippedWordsCount">View skipped words</span> ›
+                                    <span id="skippedWordsCount" class="fast-mode-stat-label">0 Skipped</span>
+                                    <button type="button" id="viewSkippedWordsBtn" class="fast-mode-view-btn" style="display: none;">
+                                        View ›
                                     </button>
                                 </div>
                                 <p id="cognateNoneLine" class="fast-mode-none" hidden></p>
@@ -1259,8 +1260,9 @@
                                         <button class="lemma-toggle-btn selected" data-lemma="off" data-short="Off" data-full="Off">Off</button>
                                         <button class="lemma-toggle-btn" data-lemma="on" data-short="On" data-full="On">On</button>
                                     </div>
-                                    <button type="button" id="viewMergedFormsBtn" class="fast-mode-view-items-btn" style="display: none;">
-                                        <span id="mergedFormsCount">View merged forms</span> ›
+                                    <span id="mergedFormsCount" class="fast-mode-stat-label">0 Merged</span>
+                                    <button type="button" id="viewMergedFormsBtn" class="fast-mode-view-btn" style="display: none;">
+                                        View ›
                                     </button>
                                 </div>
                                 <p id="lemmaNoneLine" class="fast-mode-none" hidden></p>
@@ -1282,8 +1284,9 @@
                                         <button class="grammar-toggle-btn" data-grammar="exclude" data-short="Exclude" data-full="Exclude">Exclude</button>
                                         <button class="grammar-toggle-btn selected" data-grammar="include" data-short="Include" data-full="Include">Include</button>
                                     </div>
-                                    <button type="button" id="viewGrammarWordsBtn" class="fast-mode-view-items-btn" style="display: none;">
-                                        <span id="grammarWordsCount">View grammar words</span> ›
+                                    <span id="grammarWordsCount" class="fast-mode-stat-label">0 Skipped</span>
+                                    <button type="button" id="viewGrammarWordsBtn" class="fast-mode-view-btn" style="display: none;">
+                                        View ›
                                     </button>
                                 </div>
                                 <p id="grammarNoneLine" class="fast-mode-none" hidden></p>
@@ -1294,10 +1297,10 @@
                     <div id="slangToggleContainer" class="setup-substep" style="display: none;">
                         <div class="substep-header">
                             <span class="fast-mode-number" aria-hidden="true">4</span>
-                            <span class="substep-title">Skip artist slang &amp; fillers</span>
+                            <span class="substep-title">Skip slang &amp; fillers</span>
                         </div>
                         <div class="fast-mode-card-body">
-                            <p class="fast-mode-explainer">Urban and Caribbean slang overlays, conversational fillers (<em>o sea</em>, <em>tipo</em>, <em>bueno</em>), and interjections can be filtered or studied separately.</p>
+                            <p class="fast-mode-explainer">Urban and colloquial slang, conversational fillers (<em>o sea</em>, <em>tipo</em>, <em>bueno</em>), and interjections can be filtered or studied separately.</p>
                             <div class="fast-mode-card-actions">
                                 <div class="fast-mode-example" aria-label="Example of slang and conversational fillers"><span>guagua</span><span>chabón</span><span>o sea</span><b>→ slang &amp; filler overlays</b></div>
                                 <div class="fast-mode-control-row">
@@ -1305,8 +1308,9 @@
                                         <button class="slang-toggle-btn" data-slang="exclude" data-short="Exclude" data-full="Exclude">Exclude</button>
                                         <button class="slang-toggle-btn selected" data-slang="include" data-short="Include" data-full="Include">Include</button>
                                     </div>
-                                    <button type="button" id="viewSlangWordsBtn" class="fast-mode-view-items-btn" style="display: none;">
-                                        <span id="slangWordsCount">View slang words</span> ›
+                                    <span id="slangWordsCount" class="fast-mode-stat-label">0 Skipped</span>
+                                    <button type="button" id="viewSlangWordsBtn" class="fast-mode-view-btn" style="display: none;">
+                                        View ›
                                     </button>
                                 </div>
                                 <p id="slangNoneLine" class="fast-mode-none" hidden></p>
@@ -1328,8 +1332,9 @@
                                         <button class="entity-toggle-btn selected" data-entity="exclude" data-short="Exclude" data-full="Exclude">Exclude</button>
                                         <button class="entity-toggle-btn" data-entity="include" data-short="Include" data-full="Include">Include</button>
                                     </div>
-                                    <button type="button" id="viewEntityWordsBtn" class="fast-mode-view-items-btn" style="display: none;">
-                                        <span id="entityWordsCount">View entities</span> ›
+                                    <span id="entityWordsCount" class="fast-mode-stat-label">0 Skipped</span>
+                                    <button type="button" id="viewEntityWordsBtn" class="fast-mode-view-btn" style="display: none;">
+                                        View ›
                                     </button>
                                 </div>
                                 <p id="entityNoneLine" class="fast-mode-none" hidden></p>
@@ -1385,11 +1390,24 @@
     <div id="skippedWordsModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <div><span class="product-modal-eyebrow">Fast Track</span><h3>Skipped obvious words</h3></div>
+                <div><span class="product-modal-eyebrow">Fast Track</span><h3>Fast Track words</h3></div>
                 <button class="modal-close" id="closeSkippedWordsModal" aria-label="Close">✕</button>
             </div>
-            <p class="extras-intro">Words set aside because they look familiar. <span id="skippedWordsTotal" class="extras-count"></span></p>
-            <input type="search" id="skippedWordsSearch" class="extras-search" placeholder="Search skipped words" autocomplete="off">
+            <div class="fast-track-modal-toolbar">
+                <div class="fast-track-category-dropdown-wrap">
+                    <label for="skippedCategorySelect" class="fast-track-dropdown-label">Category:</label>
+                    <select id="skippedCategorySelect" class="fast-track-category-select" aria-label="Filter category">
+                        <option value="all">⚡ All Skipped</option>
+                        <option value="cognate">⚡ Transparent Cognates</option>
+                        <option value="lemma">📚 Merged Word Forms</option>
+                        <option value="grammar">🧩 Grammar &amp; Clitics</option>
+                        <option value="slang">💬 Slang &amp; Fillers</option>
+                        <option value="entity">📍 Names &amp; Entities</option>
+                    </select>
+                </div>
+                <span id="skippedWordsTotal" class="extras-count"></span>
+            </div>
+            <input type="search" id="skippedWordsSearch" class="extras-search" placeholder="Search words" autocomplete="off">
             <div class="extras-body" id="skippedWordsBody"></div>
         </div>
     </div>
