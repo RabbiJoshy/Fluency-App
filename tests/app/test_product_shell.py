@@ -907,9 +907,9 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertIn("config?.publicServices?.progressSyncUrl", auth)
         self.assertIn("secrets.googleScriptUrl || GOOGLE_SCRIPT_URL", auth)
-        self.assertIn('js/auth.js?v=20260921rt', html)
-        self.assertIn("auth.js?v=20260921rt", main)
-        self.assertIn("/js/auth.js?v=20260921rt", worker)
+        self.assertIn('js/auth.js?v=20260923sb', html)
+        self.assertIn("auth.js?v=20260923sb", main)
+        self.assertIn("/js/auth.js?v=20260923sb", worker)
 
     def test_progress_identity_bridges_historical_mode_ids_by_surface(self) -> None:
         progress = (APP_ROOT / "js" / "progress.js").read_text(encoding="utf-8")

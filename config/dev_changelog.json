@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-25T10:59:00+01:00",
+      "date": "2026-09-25 10:59 BST",
+      "agent": "Antigravity",
+      "summary": "Unified Fast Track & Skipped Words triage across Speech and Lyrics modes with categorized batch actions.",
+      "detail": [
+        "Unifies the mental model across Speech mode (frequency tiers, cognates, merged lemmas) and Lyrics mode (grammar particles/clitics, urban slang/fillers, named entities).",
+        "Adds category triage tabs, quick search, and 1-tap card inspection in the Skipped Words surface.",
+        "Adds 1-tap batch 'Mark all as Known' and filtered category study sets directly from Fast Track decks and the triage modal."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-24T00:20:00+01:00",
       "date": "2026-09-24 00:20 BST",
       "agent": "Cursor",

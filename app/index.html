@@ -53,7 +53,7 @@
          which serializes ~11 round trips behind the main.js parse step.
          Preload starts them all in parallel during HTML parse. Versions
          must stay in lockstep with main.js's import URLs. -->
-    <link rel="modulepreload" href="js/main.js?v=20260924lm">
+    <link rel="modulepreload" href="js/main.js?v=20260925ls">
     <link rel="modulepreload" href="js/routes.js?v=20260923cj">
     <link rel="modulepreload" href="js/theme.js?v=20260922ui">
     <link rel="modulepreload" href="js/state.js?v=20260921x">
@@ -73,7 +73,7 @@
     <link rel="modulepreload" href="js/progress.js?v=20260920e">
     <link rel="modulepreload" href="js/progress-identity.js?v=20260831a">
     <link rel="modulepreload" href="js/knowledge.js?v=20260923rk">
-    <link rel="modulepreload" href="js/ui.js?v=20260924lm">
+    <link rel="modulepreload" href="js/ui.js?v=20260925ls">
     <link rel="modulepreload" href="js/review-home.js?v=20260922rw">
     <link rel="modulepreload" href="js/fast-track-preferences.js?v=20260920a">
     <link rel="modulepreload" href="js/vocab.js?v=20260924lm">
@@ -144,13 +144,16 @@
 <body>
     <div id="appLoadingScreen" class="app-loading-screen" role="status" aria-live="polite" aria-busy="true">
         <div class="app-loading-card">
-            <div class="app-loading-mark" aria-hidden="true">F</div>
+            <div class="app-loading-mark" id="appLoadingMark" aria-hidden="true">
+                <span class="app-loading-mark-text" id="appLoadingMarkText">F</span>
+                <div class="app-loading-mark-art" id="appLoadingMarkArt" hidden></div>
+            </div>
             <!-- One visual in two modes. "spinner" is the boot/unknown-progress
                  state and is exactly what shipped before. "progress" expands the
                  same slot into a legible ring drawn from numbers the setup screen
                  already computed, so it paints before any release fetch. -->
             <div class="app-loading-visual" id="appLoadingVisual" data-mode="spinner">
-                <div class="app-loading-spinner" aria-hidden="true"></div>
+                <div class="app-loading-spinner" id="appLoadingSpinner" aria-hidden="true"></div>
                 <svg class="app-loading-ring" viewBox="0 0 120 120" aria-hidden="true">
                     <circle class="app-loading-ring-track" cx="60" cy="60" r="54"></circle>
                     <circle class="app-loading-ring-arc is-review" id="appLoadingRingSeen" cx="60" cy="60" r="54"></circle>
@@ -158,7 +161,7 @@
                 </svg>
                 <div class="app-loading-ring-centre" aria-hidden="true">
                     <strong id="appLoadingRingValue"></strong>
-                    <span id="appLoadingRingUnit">known</span>
+                    <span id="appLoadingRingUnit" hidden></span>
                 </div>
             </div>
             <strong id="appLoadingTitle">Getting things ready</strong>
@@ -1265,6 +1268,75 @@
                         </div>
                     </div>
 
+                    <div id="grammarToggleContainer" class="setup-substep" style="display: none;">
+                        <div class="substep-header">
+                            <span class="fast-mode-number" aria-hidden="true">3</span>
+                            <span class="substep-title">Skip grammar particles &amp; clitics</span>
+                        </div>
+                        <div class="fast-mode-card-body">
+                            <p class="fast-mode-explainer">High-frequency function words like pronouns, attached clitics (<em>-me</em>, <em>-te</em>, <em>-se</em>, <em>-lo</em>), and prepositions can be set aside to focus study on content vocabulary.</p>
+                            <div class="fast-mode-card-actions">
+                                <div class="fast-mode-example" aria-label="Example of clitic particles"><span>dímelo</span><span>se lo da</span><b>→ clitic pronouns</b></div>
+                                <div class="fast-mode-control-row">
+                                    <div id="grammarToggleSelector" class="group-size-selector">
+                                        <button class="grammar-toggle-btn" data-grammar="exclude" data-short="Exclude" data-full="Exclude">Exclude</button>
+                                        <button class="grammar-toggle-btn selected" data-grammar="include" data-short="Include" data-full="Include">Include</button>
+                                    </div>
+                                    <button type="button" id="viewGrammarWordsBtn" class="fast-mode-view-items-btn" style="display: none;">
+                                        <span id="grammarWordsCount">View grammar words</span> ›
+                                    </button>
+                                </div>
+                                <p id="grammarNoneLine" class="fast-mode-none" hidden></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="slangToggleContainer" class="setup-substep" style="display: none;">
+                        <div class="substep-header">
+                            <span class="fast-mode-number" aria-hidden="true">4</span>
+                            <span class="substep-title">Skip artist slang &amp; fillers</span>
+                        </div>
+                        <div class="fast-mode-card-body">
+                            <p class="fast-mode-explainer">Urban and Caribbean slang overlays, conversational fillers (<em>o sea</em>, <em>tipo</em>, <em>bueno</em>), and interjections can be filtered or studied separately.</p>
+                            <div class="fast-mode-card-actions">
+                                <div class="fast-mode-example" aria-label="Example of slang and conversational fillers"><span>guagua</span><span>chabón</span><span>o sea</span><b>→ slang &amp; filler overlays</b></div>
+                                <div class="fast-mode-control-row">
+                                    <div id="slangToggleSelector" class="group-size-selector">
+                                        <button class="slang-toggle-btn" data-slang="exclude" data-short="Exclude" data-full="Exclude">Exclude</button>
+                                        <button class="slang-toggle-btn selected" data-slang="include" data-short="Include" data-full="Include">Include</button>
+                                    </div>
+                                    <button type="button" id="viewSlangWordsBtn" class="fast-mode-view-items-btn" style="display: none;">
+                                        <span id="slangWordsCount">View slang words</span> ›
+                                    </button>
+                                </div>
+                                <p id="slangNoneLine" class="fast-mode-none" hidden></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="entityToggleContainer" class="setup-substep" style="display: none;">
+                        <div class="substep-header">
+                            <span class="fast-mode-number" aria-hidden="true">5</span>
+                            <span class="substep-title">Skip names &amp; entities</span>
+                        </div>
+                        <div class="fast-mode-card-body">
+                            <p class="fast-mode-explainer">Wikipedia-resolved entities, proper nouns, artist names, brands, and geographic places are tagged and can be set aside.</p>
+                            <div class="fast-mode-card-actions">
+                                <div class="fast-mode-example" aria-label="Example of named entities"><span>Bad Bunny</span><span>Puerto Rico</span><b>→ Wikipedia entities</b></div>
+                                <div class="fast-mode-control-row">
+                                    <div id="entityToggleSelector" class="group-size-selector">
+                                        <button class="entity-toggle-btn selected" data-entity="exclude" data-short="Exclude" data-full="Exclude">Exclude</button>
+                                        <button class="entity-toggle-btn" data-entity="include" data-short="Include" data-full="Include">Include</button>
+                                    </div>
+                                    <button type="button" id="viewEntityWordsBtn" class="fast-mode-view-items-btn" style="display: none;">
+                                        <span id="entityWordsCount">View entities</span> ›
+                                    </button>
+                                </div>
+                                <p id="entityNoneLine" class="fast-mode-none" hidden></p>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- One action. The level and set picker is its own screen. -->
@@ -2162,6 +2234,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js?v=20260924lm"></script>
+    <script type="module" src="js/main.js?v=20260925ls"></script>
 </body>
 </html>
