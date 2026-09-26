@@ -8975,10 +8975,78 @@ function buildProvenancePanelHTML(card) {
         </div>`;
     }).join('');
 
+    // Construct human-readable WSD Pipeline Summary for the card
+    const meaningsList = card.meanings || [];
+    const senseCount = meaningsList.length;
+    const polysemyLabel = senseCount > 1
+        ? `Polysemous (${senseCount} active senses)`
+        : 'Monosemous (Single unambiguous sense)';
+
+    // Menu origin
+    let menuOrigin = 'SpanishDict (Direct)';
+    let graftOverlay = 'None (Standard Catalog)';
+    let decisionAlgo = 'Deterministic / Direct Match';
+
+    const sources = meaningsList.map(m => String(m.source || m.assignment_method || m.prompt_id || '')).join(' ').toLowerCase();
+    if (sources.includes('override:') || sources.includes('curated:lyrics_cultural')) {
+        menuOrigin = 'Cultural Overrides';
+        graftOverlay = 'Cultural Expression Overlay';
+        decisionAlgo = 'Deterministic Priority Override';
+    } else if (sources.includes('overlay:entity') || sources.includes('entity:wikipedia')) {
+        menuOrigin = 'Wikipedia Named Entity';
+        graftOverlay = 'Artist Discography Entity';
+        decisionAlgo = 'Entity Resolver (Named Entity)';
+    } else if (sources.includes('overlay:') || sources.includes('slang')) {
+        menuOrigin = 'Artist GRAFT Overlay';
+        graftOverlay = 'Curated Artist / Slang Grafts';
+        decisionAlgo = 'GRAFT Priority Insertion';
+    } else if (sources.includes('headword_borrow')) {
+        menuOrigin = 'SpanishDict (Headword Borrow)';
+        decisionAlgo = 'Inflected Form -> Headword Borrow';
+    } else if (sources.includes('wiktionary')) {
+        menuOrigin = 'Wiktionary Entry';
+        if (sources.includes('polysemous')) {
+            decisionAlgo = 'spaCy TRF + Heuristic Sieve';
+        } else {
+            decisionAlgo = 'Deterministic Wiktionary Match';
+        }
+    } else if (sources.includes('polysemous')) {
+        decisionAlgo = 'spaCy TRF + Embedding Cosine Similarity';
+    } else if (sources.includes('monosemous')) {
+        decisionAlgo = 'Deterministic Monosemous Assignment';
+    }
+
+    const wsdSummaryCard = `
+        <div class="prov-wsd-card">
+            <div class="prov-wsd-head">
+                <span>WSD Pipeline Audit</span>
+                <span class="prov-algo-pill prov-badge--auto">${esc(detectedVersion || 'v19')}</span>
+            </div>
+            <div class="prov-wsd-grid">
+                <div class="prov-wsd-stage">
+                    <span class="prov-wsd-label">Menu Origin</span>
+                    <span class="prov-wsd-val">📖 ${esc(menuOrigin)}</span>
+                </div>
+                <div class="prov-wsd-stage">
+                    <span class="prov-wsd-label">GRAFT / Overlay</span>
+                    <span class="prov-wsd-val">✨ ${esc(graftOverlay)}</span>
+                </div>
+                <div class="prov-wsd-stage">
+                    <span class="prov-wsd-label">Polysemy Status</span>
+                    <span class="prov-wsd-val">⚖️ ${esc(polysemyLabel)}</span>
+                </div>
+                <div class="prov-wsd-stage">
+                    <span class="prov-wsd-label">Resolution Algorithm</span>
+                    <span class="prov-wsd-val">🎯 ${esc(decisionAlgo)}</span>
+                </div>
+            </div>
+        </div>`;
+
     return `<div id="provenancePanel" class="provenance-panel" style="display:none;">
         <button class="prov-close" title="Close" aria-label="Close" onclick="event.stopPropagation(); toggleProvenancePanel();">&times;</button>
         <div class="prov-title">Card data</div>
         ${releaseSummary}
+        ${wsdSummaryCard}
         ${rows || '<div class="prov-empty">No sense assignments on this card.</div>'}
     </div>`;
 }

@@ -609,7 +609,7 @@ export function expandThirdSingular(form, meaning, options = {}) {
 }
 
 function infinitiveParts(translation) {
-    const value = String(translation || '').trim();
+    const value = String(translation || '').trim().replace(/[.]+$/u, '');
     if (!value.startsWith('to ')) return null;
     const body = value.slice(3).trim();
     if (!body) return null;
