@@ -57,6 +57,7 @@ def _validated_multiword_fields(
         if isinstance(item, dict)
     ]
     expression = (assignment.evidence or {}).get("selected_multiword")
+    declared_by_id = None
     if source_kind == "multiword":
         declared_by_id = next(
             (

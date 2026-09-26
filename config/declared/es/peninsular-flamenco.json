@@ -1,0 +1,223 @@
+{
+ "schema": "declared-entries/v1",
+ "language": "es",
+ "note": "GRAFT: Peninsular, Andalusian, Flamenco, and Caló expressions and cultural vocabulary (crucial for artists like Rosalía).",
+ "entries": [
+  {
+   "entry_id": "es-flamenco-ducas",
+   "kind": "gloss",
+   "surface": "ducas",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "sorrows, grief, heartache",
+       "definition": "deep emotional sorrows, suffering, or heartbreak in Caló and flamenco traditions",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Traditional Caló/flamenco grief noun featured prominently in Rosalía El Mal Querer.",
+   "author": "claude (CHORUS)",
+   "created_at": "2026-09-26"
+  },
+  {
+   "entry_id": "es-flamenco-duquelas",
+   "kind": "gloss",
+   "surface": "duquelas",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "deep sorrows, afflictions, tribulations",
+       "definition": "tribulations, painful trials, or grief in Romani Caló and flamenco lyricism",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Classical flamenco Caló noun of sorrow.",
+   "author": "claude (CHORUS)",
+   "created_at": "2026-09-26"
+  },
+  {
+   "entry_id": "es-flamenco-undibel",
+   "kind": "gloss",
+   "surface": "undibel",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "God, the Almighty",
+       "definition": "God in Caló (Spanish Romani language) and flamenco singing",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Caló religious noun frequent in flamenco and urban Spanish lyrics.",
+   "author": "claude (CHORUS)",
+   "created_at": "2026-09-26"
+  },
+  {
+   "entry_id": "es-flamenco-undive",
+   "kind": "gloss",
+   "surface": "undivé",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "God, the Lord",
+       "definition": "variant of Undibel; God in Caló and flamenco invocation",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Caló invocation of God in flamenco lyrics.",
+   "author": "claude (CHORUS)",
+   "created_at": "2026-09-26"
+  },
+  {
+   "entry_id": "es-flamenco-jaliyo",
+   "kind": "gloss",
+   "surface": "jaliyo",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "commotion, ruckus, party, cheer",
+       "definition": "festive commotion, clapping and shouting encouragement (Andalusian jaleo)",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Andalusian dialectal spelling of jaleo.",
+   "author": "claude (CHORUS)",
+   "created_at": "2026-09-26"
+  },
+  {
+   "entry_id": "es-flamenco-jonda",
+   "kind": "gloss",
+   "surface": "jonda",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "deep, profound, traditional (flamenco)",
+       "definition": "deep and emotionally intense; feminine form of jondo (Andalusian hondo, as in cante jondo)",
+       "pos": "adjective"
+      }
+    ]
+   },
+   "reason": "Foundational flamenco aesthetic descriptor.",
+   "author": "claude (CHORUS)",
+   "created_at": "2026-09-26"
+  },
+  {
+   "entry_id": "es-flamenco-laico",
+   "kind": "gloss",
+   "surface": "laíco",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "vocal trill, melodic ornament",
+       "definition": "ornate vocal flourish or melisma typical of flamenco singing",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Flamenco vocal ornamentation term.",
+   "author": "claude (CHORUS)",
+   "created_at": "2026-09-26"
+  },
+  {
+   "entry_id": "es-flamenco-punala",
+   "kind": "gloss",
+   "surface": "puñalá",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "stab wound, betrayal, blow to the heart",
+       "definition": "stab wound or devastating betrayal; Andalusian elision of puñalada",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "High-frequency flamenco lyric term for heartbreak/stabbing.",
+   "author": "claude (CHORUS)",
+   "created_at": "2026-09-26"
+  },
+  {
+   "entry_id": "es-flamenco-alocao",
+   "kind": "gloss",
+   "surface": "alocao",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "wild, crazy, reckless",
+       "definition": "mad, crazy, acting without inhibition; elision of alocado",
+       "pos": "adjective"
+      }
+    ]
+   },
+   "reason": "Spoken/lyrics elision of alocado.",
+   "author": "claude (CHORUS)",
+   "created_at": "2026-09-26"
+  },
+  {
+   "entry_id": "es-flamenco-motomami",
+   "kind": "gloss",
+   "surface": "motomami",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "Motomami; fierce yet tender woman, badass feminine energy",
+       "definition": "Rosalía's celebrated aesthetic concept combining toughness, speed, and confidence (moto) with gentleness and warmth (mami)",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Global cultural term and title of Rosalía's Grammy-winning album.",
+   "author": "claude (CHORUS)",
+   "created_at": "2026-09-26"
+  },
+  {
+   "entry_id": "es-flamenco-bizcochito",
+   "kind": "gloss",
+   "surface": "bizcochito",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "cutie, sweetheart, darling",
+       "definition": "endearing term for a cute, attractive person; diminutive of bizcocho (Rosalía hit song)",
+       "pos": "noun"
+      }
+    ]
+   },
+   "reason": "Affectionate slang noun popularized globally by Rosalía.",
+   "author": "claude (CHORUS)",
+   "created_at": "2026-09-26"
+  },
+  {
+   "entry_id": "es-flamenco-despecha",
+   "kind": "gloss",
+   "surface": "despechá",
+   "payload": {
+    "class": "slang",
+    "senses": [
+      {
+       "translation": "scorned woman partying, moving on after heartbreak",
+       "definition": "woman overcoming a breakup by dancing and living freely; elision of despechada",
+       "pos": "adjective"
+      }
+    ]
+   },
+   "reason": "Title and anthem of Rosalía's worldwide summer hit DESPECHÁ.",
+   "author": "claude (CHORUS)",
+   "created_at": "2026-09-26"
+  }
+ ]
+}

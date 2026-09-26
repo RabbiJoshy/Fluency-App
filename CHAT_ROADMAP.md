@@ -129,12 +129,12 @@ Say the bold name.
 | **MEND** | word-database structure | Sets up the structure the whole word database lives on (surface facts → strategies, scope language → mode → artist → song → playlist, trust curated / derived / heuristic), which GRAFT fills and VERSE and the new lyrics UI consume. First proof: the 105 es v15 cards that shipped with empty meanings get meanings deterministically. | Lab + small plant (sense-menu rerun, WSD for affected cards only) | **Done** (candidates `es/pt/cs-speech-v15-mend-10000x10` built and validated: 0 empty cards, nothing outside the affected cards changed except 21 Czech cards' examples; activation waits on Joshua). Before GRAFT. |
 | **GRAFT** | lyrics overlays | Collect slang, fillers, and lyrics MWEs/words into overlay snapshots, **in MEND's declared-entry format and scopes**. | Lab / curation | After MEND (before VERSE) |
 | **VERSE** | lyrics **v16** | Rebase on SWEEP (v15) + GRAFT overlays; lyrics WSD v16. Planted on 3 artists (18,372 cards). | Lab + plant | **Done** (profile `es-lyrics-v16-1.json`, candidates built & validated across Bad Bunny, Rosalía, Young Miko) |
-| **CHORUS** | lyrics audit & **v17** | 1) Audit v16 algorithm; 2) Expand GRAFT menus; 3) Wiktionary entity hacks for missing menus; 4) Spot other languages; 5) Release v17 candidate; 6) SpanishDict scraping recommendation (e.g. up to 15k). | Lab + release | **Next** (prompt in CHORUS section below) |
-| **POLYGLOT** | artist mode scaling | Audit Artist mode scaling across languages (French test playlist completion, Portuguese test playlist, robust language adapters). | Lab / architecture | After CHORUS |
+| **CHORUS** | lyrics audit & **v17/v18** | 1) Audit v16 algorithm; 2) Expand GRAFT menus; 3) Wiktionary entity hacks for missing menus; 4) Spot other languages; 5) Release v17 candidate; 6) Release v18 full deck to GitHub Pages; 7) SpanishDict scraping recommendation. | Lab + release | **Done** (profiles `es-lyrics-v17-1.json` & `es-lyrics-v18-1.json`, v18 released & deployed to gh-pages across Bad Bunny, Rosalía, Young Miko) |
+| **POLYGLOT** | artist mode scaling | Audit Artist mode scaling across languages (French test playlist completion, Portuguese test playlist, robust language adapters). | Lab / architecture | **Next** (prompt in POLYGLOT section below) |
 | **TURBO** | live user WSD engine | Ultra-fast, live client-side/worker Spanish pipeline: clean, normalise, tag, and compute fast basic WSD on user-uploaded Spotify playlists. | App / pipeline engine | After POLYGLOT |
 | **SETLIST** | live playlist UI | Spotify playlist → LRCLIB → worker persist → naive speech-overlay deck. No WSD. | beside WSD | In progress (brief `docs/runbooks/live-playlist.md`) |
 
-**Hold.** Sequence: SIEVE done, MILL done, SWEEP done, QUARRY done, CHISEL 1 done, KILN 1 done, CHISEL 2 done, KILN 2 done, GLASS done, MEND done, GRAFT done, VERSE done. **CHORUS is next** (audit v16, expand overlays/multilingual detection, produce v17). POLYGLOT and TURBO follow. SETLIST runs beside.
+**Hold.** Sequence: SIEVE done, MILL done, SWEEP done, QUARRY done, CHISEL 1 done, KILN 1 done, CHISEL 2 done, KILN 2 done, GLASS done, MEND done, GRAFT done, VERSE done, CHORUS done. **POLYGLOT is next** (audit Artist mode scaling across languages). TURBO follows. SETLIST runs beside.
 
 KILN 1 executed on QUARRY’s freeze and CHISEL 1's 10k MWE overlay. Do not call the v12 freeze “v14 production 10k.”
 
@@ -425,7 +425,8 @@ Paste into that chat:
 > 5. Release **v17** candidate decks for full user audit.
 > 6. Formulate recommendations on expanding dictionary scrapes (e.g. extending SpanishDict scraping up to 15,000 words vs relying on Kaikki Wiktionary).
 
-- **Output:** Audited and refined profile `config/wsd/models/es-lyrics-v17-1.json` + published v17 candidate releases for Bad Bunny, Rosalía, and Young Miko.
+- **Output:** Audited and refined profiles `config/wsd/models/es-lyrics-v17-1.json` and `es-lyrics-v18-1.json` + published v18 production releases for Bad Bunny, Rosalía, and Young Miko (`lyrics-all-artists-v18`).
+- **Status:** **Done.** Released candidate decks `lyrics-*-v17-candidate` and production decks `lyrics-*-v18` (`lyrics-bad-bunny-v18` [10,687 cards], `lyrics-rosalia-v18` [3,224 cards], `lyrics-young-miko-v18` [4,461 cards], `lyrics-all-artists-v18` [18,372 cards]). 0 split app contract violations, full-corpus line back-search eliminating dummy fallback lines, entity false positives eliminated, slang overlays added, app pointed to `lyrics-all-artists-v18`, cache bumped to `v561`, and deployed to GitHub Pages. Ready for POLYGLOT.
 - Do not: re-harvest speech corpora; break the split app contract; push to live app without review.
 
 ### POLYGLOT — artist mode cross-language scaling
@@ -494,7 +495,7 @@ Paste into that chat:
 | After SWEEP | `*-v15-1.json` or written “v14 stands” |
 | After GRAFT | declared lists + overlays (`config/declared/`, artist layer, `overlays.py`) (done) |
 | After VERSE | `es-lyrics-v16-1.json` + candidate decks planted for Bad Bunny, Rosalía, Young Miko (done) |
-| After CHORUS | `es-lyrics-v17-1.json` + published v17 candidate decks for full audit + scraping recommendation |
+| After CHORUS | `es-lyrics-v17-1.json` & `es-lyrics-v18-1.json` + published v18 decks deployed to GitHub Pages + scraping recommendation (done) |
 | After POLYGLOT | Multi-language artist pipeline spec + working French and Portuguese test releases |
 | After TURBO | Client/worker live playlist engine (fast WSD + instant study deck creation) |
 

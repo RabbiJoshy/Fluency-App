@@ -10,11 +10,11 @@
    "payload": {
     "class": "filler",
     "senses": [
-      {
-       "translation": "hey, listen",
-       "definition": "attention-getting discourse marker in spoken conversation or lyrics",
-       "pos": "interjection"
-      }
+     {
+      "translation": "hey, listen",
+      "definition": "attention-getting discourse marker in spoken conversation or lyrics",
+      "pos": "interjection"
+     }
     ]
    },
    "reason": "SpanishDict only routes to literal oír (to hear); pervasive pragmatic 'hey' sense in dialogue and lyrics.",
@@ -28,11 +28,11 @@
    "payload": {
     "class": "filler",
     "senses": [
-      {
-       "translation": "come on",
-       "definition": "exhortative or dismissive particle (come on, let's go, yeah right)",
-       "pos": "interjection"
-      }
+     {
+      "translation": "come on",
+      "definition": "exhortative or dismissive particle (come on, let's go, yeah right)",
+      "pos": "interjection"
+     }
     ]
    },
    "reason": "SpanishDict routes to venir/vengar; exhortative 'come on' missing from the single-word menu.",
@@ -46,11 +46,11 @@
    "payload": {
     "class": "filler",
     "senses": [
-      {
-       "translation": "like, sort of like",
-       "definition": "conversational filler indicating manner, approximation, or attitude",
-       "pos": "adverb"
-      }
+     {
+      "translation": "like, sort of like",
+      "definition": "conversational filler indicating manner, approximation, or attitude",
+      "pos": "adverb"
+     }
     ]
    },
    "reason": "Modern colloquial filler phrase in European and global Spanish.",
@@ -64,11 +64,11 @@
    "payload": {
     "class": "filler",
     "senses": [
-      {
-       "translation": "I mean, that is, like",
-       "definition": "discourse marker used for clarification, restatement, or hesitation",
-       "pos": "conjunction"
-      }
+     {
+      "translation": "I mean, that is, like",
+      "definition": "discourse marker used for clarification, restatement, or hesitation",
+      "pos": "conjunction"
+     }
     ]
    },
    "reason": "High-frequency conversational and lyrics restatement particle.",
@@ -82,11 +82,11 @@
    "payload": {
     "class": "filler",
     "senses": [
-      {
-       "translation": "let's see, well now",
-       "definition": "discourse particle introducing reflection, expectation, or calling attention",
-       "pos": "interjection"
-      }
+     {
+      "translation": "let's see, well now",
+      "definition": "discourse particle introducing reflection, expectation, or calling attention",
+      "pos": "interjection"
+     }
     ]
    },
    "reason": "Frequent pragmatic discourse marker distinguished from literal preposition + verb.",
@@ -100,11 +100,11 @@
    "payload": {
     "class": "interjection",
     "senses": [
-      {
-       "translation": "damn!, holy shit!, wow!",
-       "definition": "vulgar/colloquial exclamation expressing shock, anger, or surprise",
-       "pos": "interjection"
-      }
+     {
+      "translation": "damn!, holy shit!, wow!",
+      "definition": "vulgar/colloquial exclamation expressing shock, anger, or surprise",
+      "pos": "interjection"
+     }
     ]
    },
    "reason": "Missing colloquial exclamation in Spanish speech/film dialogue.",
@@ -118,11 +118,11 @@
    "payload": {
     "class": "slang",
     "senses": [
-      {
-       "translation": "huge, incredible, intense",
-       "definition": "colloquial intensifier meaning enormous, incredible, or overwhelming",
-       "pos": "adjective"
-      }
+     {
+      "translation": "huge, incredible, intense",
+      "definition": "colloquial intensifier meaning enormous, incredible, or overwhelming",
+      "pos": "adjective"
+     }
     ]
    },
    "reason": "Colloquial Spanish intensifier locution.",
@@ -136,11 +136,11 @@
    "payload": {
     "class": "slang",
     "senses": [
-      {
-       "translation": "at full speed, at breakneck speed",
-       "definition": "idiomatic expression meaning very fast",
-       "pos": "adverb"
-      }
+     {
+      "translation": "at full speed, at breakneck speed",
+      "definition": "idiomatic expression meaning very fast",
+      "pos": "adverb"
+     }
     ]
    },
    "reason": "Colloquial velocity idiom.",
@@ -154,16 +154,75 @@
    "payload": {
     "class": "filler",
     "senses": [
-      {
-       "translation": "go ahead, do it, alright",
-       "definition": "exhortation or affirmation particle pervasive in Caribbean and urban Spanish/reggaeton",
-       "pos": "interjection"
-      }
+     {
+      "translation": "go ahead, do it, alright",
+      "definition": "exhortation or affirmation particle pervasive in Caribbean and urban Spanish/reggaeton",
+      "pos": "interjection"
+     }
     ]
    },
    "reason": "Ubiquitous reggaeton and Latin American spoken discourse marker.",
    "author": "claude (GRAFT)",
    "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-filler-dimelo",
+   "kind": "gloss",
+   "surface": "dímelo",
+   "payload": {
+    "class": "filler",
+    "senses": [
+     {
+      "translation": "what's up, tell me, what's good",
+      "definition": "ubiquitous urban greeting and conversational check-in (Puerto Rico / reggaeton)",
+      "pos": "interjection"
+     },
+     {
+      "translation": "tell me (it)",
+      "definition": "imperative of decir combined with indirect me and direct lo",
+      "pos": "verb"
+     }
+    ]
+   },
+   "reason": "Iconic Caribbean / urban greeting (dimelo papi) distinct from raw clitic description.",
+   "author": "claude (CHORUS)",
+   "created_at": "2026-09-26"
+  },
+  {
+   "entry_id": "es-filler-vete",
+   "kind": "gloss",
+   "surface": "vete",
+   "payload": {
+    "class": "filler",
+    "senses": [
+     {
+      "translation": "go away, leave, get out",
+      "definition": "imperative of irse (to leave, depart) combined with te",
+      "pos": "verb"
+     }
+    ]
+   },
+   "reason": "Dominant lyrics imperative of irse, preventing misclassification to vetar (to veto).",
+   "author": "claude (CHORUS)",
+   "created_at": "2026-09-26"
+  },
+  {
+   "entry_id": "es-filler-vamonos",
+   "kind": "gloss",
+   "surface": "vámonos",
+   "payload": {
+    "class": "filler",
+    "senses": [
+     {
+      "translation": "let's go, let's leave",
+      "definition": "first-person plural imperative of irse",
+      "pos": "verb"
+     }
+    ]
+   },
+   "reason": "High-frequency imperative exhortation.",
+   "author": "claude (CHORUS)",
+   "created_at": "2026-09-26"
   }
  ]
 }

@@ -15,6 +15,7 @@ dist/
 artifacts/
 cache/
 runs/
+app/releases/
 
 # Large datasets, model artifacts, and research outputs
 research/**/results/
