@@ -27,7 +27,7 @@ import './song-sets.js?v=20260823ae';
 import './playlist-live.js?v=20260923cj';
 import './spotify-playlist-import.js?v=20260923su';
 import './vocabulary-import.js?v=20260923bk';
-import './flashcards.js?v=20260926mend';
+import './flashcards.js?v=20260926v19';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 function startCardTutorial() {
@@ -389,6 +389,7 @@ window.updateLoadingMark = updateLoadingMark;
 setupAuthEventListeners();
 checkAuthentication();
 perfMark('after early authentication');
+setTimeout(() => window.checkAndShowAdminUpdateModal?.(), 500);
 
 // Register service worker for PWA functionality
 if ('serviceWorker' in navigator) {
@@ -402,7 +403,10 @@ if ('serviceWorker' in navigator) {
                     if (indicator) {
                         indicator.className = 'sync-status is-update';
                         indicator.textContent = 'Update ready';
-                        indicator.onclick = () => registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                        indicator.onclick = () => {
+                            sessionStorage.setItem('fluency_admin_update_pending', 'true');
+                            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                        };
                     }
                 };
                 announceUpdate();

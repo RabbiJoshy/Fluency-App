@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-26T15:10:00+01:00",
+      "date": "2026-09-26 15:10 BST",
+      "agent": "Antigravity",
+      "summary": "Deploy Lyrics v19 with SpanishDict primary hierarchy, headword borrowing, Spotify audio priority, full-menu WSD, and admin update changelog modal; bump cache to v563.",
+      "detail": [
+        "Restores SpanishDict as primary dictionary authority and borrows headword menus for inflected forms (1,319 verb forms borrowed in Bad Bunny), ensuring 100% lemma-merge consistency.",
+        "Fixes candidate sense truncation bug: evaluates all candidate senses during ClosedMenu WSD without pre-slicing menus.",
+        "Prioritizes candidate lyric lines with valid LRC snippet timestamps and Spotify track IDs, boosting playable in-app audio to 96.6% on test playlist and 75% on Bad Bunny.",
+        "Adds automatic Admin Update Changelog popup showing authoring agent, exact timestamp, summary, and bullet points on update ready refresh or reload.",
+        "Deploys lyrics-all-artists-v19, lyrics-bad-bunny-v19, and lyrics-test-playlist-v19 to Fluency-Releases CDN; bumps cache to flashcards-v563 and asset tags to 20260926v19."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-26T13:15:00+01:00",
       "date": "2026-09-26 13:15 BST",
       "agent": "Antigravity",

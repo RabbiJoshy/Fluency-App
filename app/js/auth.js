@@ -150,6 +150,7 @@ function checkAuthentication() {
                 showUserInfo();
                 hideAuthModal();
                 _markAuthReady();
+                setTimeout(() => window.checkAndShowAdminUpdateModal?.(), 300);
                 return;
             }
         } catch (e) {
@@ -282,6 +283,7 @@ async function submitLogin() {
     // Load user progress from Google Sheets
     await loadUserProgressFromSheet();
     _markAuthReady();
+    setTimeout(() => window.checkAndShowAdminUpdateModal?.(), 300);
     // Artist/song metadata may have initialized while the login modal was
     // still open, when there was no named user to reconcile. Complete the
     // per-user playlist restore now that identity is known.

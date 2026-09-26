@@ -66,11 +66,13 @@ def score_lyric_line_quality(
     line_text: str,
     translation_text: str | None = None,
     alignment_score: float | None = None,
+    has_spotify_audio: bool = False,
 ) -> float:
     """Score a candidate lyric line for learner clarity and lexical quality.
 
     Higher is better (0.0 to 1.0 scale).
     Penalizes extreme short/long lines and wildly divergent translation ratios.
+    Awards significant bonus to lines with playable Spotify snippets.
     """
     tokens = [t for t in re.split(r"\s+", line_text.strip()) if t]
     token_count = len(tokens)
@@ -102,6 +104,10 @@ def score_lyric_line_quality(
     # 4. Clean punctuation bonus (complete thought with punctuation)
     if line_text.endswith((".", "!", "?", "—", "...")):
         score += 0.05
+
+    # 5. Playable Spotify snippet bonus (prioritize lines learner can hear in app)
+    if has_spotify_audio:
+        score += 0.35
 
     return round(max(0.01, score), 4)
 

@@ -46,8 +46,8 @@
             root.dataset.textSize = textSize;
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css?v=20260926mend">
-    <link rel="stylesheet" href="css/light-theme.css?v=20260926mend">
+    <link rel="stylesheet" href="css/style.css?v=20260926v19">
+    <link rel="stylesheet" href="css/light-theme.css?v=20260926v19">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
          which serializes ~11 round trips behind the main.js parse step.
@@ -86,7 +86,7 @@
     <link rel="modulepreload" href="js/vocabulary-import.js?v=20260923bk">
     <link rel="modulepreload" href="js/spanishdict-usage.js?v=20260825ak">
     <link rel="modulepreload" href="js/reverse-cues.js?v=20260925cues">
-    <link rel="modulepreload" href="js/flashcards.js?v=20260926mend">
+    <link rel="modulepreload" href="js/flashcards.js?v=20260926v19">
     <link rel="modulepreload" href="js/example-personalisation.js?v=20260825ak">
     <script>
         // Fail open if a boot-time script error prevents main.js from taking
@@ -950,6 +950,26 @@
                 <h3>Choose a language</h3>
                 <p>We’ll use a real card and only show features available for that language.</p>
                 <div id="tutorialLanguageChoices" class="tutorial-language-grid" role="list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Update Changelog Modal -->
+    <div id="adminUpdateModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Deployment Update Information">
+        <div class="modal-content admin-update-modal-sheet">
+            <div class="admin-update-modal-header">
+                <div class="admin-update-badge-row">
+                    <span class="admin-update-title">Deployment Installed</span>
+                    <span class="dev-deploy-cache-pill" id="adminUpdateCachePill">
+                        <span class="dev-status-dot"></span>
+                        <span id="adminUpdateCacheText">Loading...</span>
+                    </span>
+                </div>
+                <button type="button" class="modal-close" id="closeAdminUpdateModal" aria-label="Close">&#10005;</button>
+            </div>
+            <div class="admin-update-modal-body" id="adminUpdateModalBody"></div>
+            <div class="admin-update-modal-footer">
+                <button type="button" class="admin-update-dismiss-btn" id="dismissAdminUpdateBtn">Got it</button>
             </div>
         </div>
     </div>
