@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-26T01:10:00+01:00",
+      "date": "2026-09-26 01:10 BST",
+      "agent": "Antigravity",
+      "summary": "Deploy Lyrics WSD v18 releases (CHORUS audit & plant), resolve dummy occurrences, enrich Caribbean/Peninsular slang, and bump cache to v561.",
+      "detail": [
+        "Releases v18 lyrics candidate decks for Bad Bunny, Rosalía, and Young Miko with full-corpus line back-search, reducing dummy fallbacks to near zero.",
+        "Sanitizes Wikipedia entity resolution, pruning noisy dictionary senses (alphabet names, acronyms) and preventing false entity matches.",
+        "Adds declared overlays for Caribbean slang, Peninsular flamenco vocabulary, and Puerto Rican/Catalan discourse markers.",
+        "Bumps Service Worker cache name to flashcards-v561 and points app/config/artists.json to lyrics-all-artists-v18."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-26T00:35:00+01:00",
       "date": "2026-09-26 00:35 BST",
       "agent": "Antigravity",
