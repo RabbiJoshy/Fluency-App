@@ -3686,6 +3686,106 @@ async function renderDevFooter(freshnessEl) {
     devEl.innerHTML = lines.join('');
 }
 
+async function checkAndShowAdminUpdateModal() {
+    if (!window.isAuditAccount?.()) return;
+
+    let entries = [];
+    try {
+        if (!window._devChangelog) {
+            const resp = await fetch('config/dev_changelog.json');
+            if (resp.ok) window._devChangelog = await resp.json();
+        }
+        entries = (window._devChangelog && window._devChangelog.entries) || [];
+    } catch (_) { return; }
+
+    if (!entries.length) return;
+    const latest = entries[0];
+    const updateKey = latest.timestamp || latest.date || '';
+
+    const isPendingFromUpdate = sessionStorage.getItem('fluency_admin_update_pending') === 'true';
+    const lastSeenUpdate = localStorage.getItem('fluency_last_seen_dev_update');
+
+    if (!isPendingFromUpdate && lastSeenUpdate === updateKey) {
+        return;
+    }
+
+    sessionStorage.removeItem('fluency_admin_update_pending');
+    localStorage.setItem('fluency_last_seen_dev_update', updateKey);
+
+    const modal = document.getElementById('adminUpdateModal');
+    const bodyEl = document.getElementById('adminUpdateModalBody');
+    const cacheText = document.getElementById('adminUpdateCacheText');
+    if (!modal || !bodyEl) return;
+
+    let swCache = null;
+    try {
+        const cacheNames = await caches.keys();
+        swCache = cacheNames.find(n => n.startsWith('flashcards-v')) || null;
+    } catch (_) {}
+
+    if (cacheText) {
+        cacheText.textContent = swCache || latest.cache || 'Active Cache';
+    }
+
+    const agentName = latest.agent || 'Agent';
+    let exactDateTime = latest.date || '';
+    if (latest.timestamp) {
+        try {
+            const dt = new Date(latest.timestamp);
+            if (!isNaN(dt.getTime())) {
+                exactDateTime = dt.toLocaleString(undefined, {
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    timeZoneName: 'short'
+                });
+            }
+        } catch (_) {}
+    }
+
+    const bullets = (latest.detail || latest.details || []).map(b =>
+        `<li class="dev-deploy-bullet">${escapeDevText(b)}</li>`
+    ).join('');
+
+    const commitText = latest.commit && latest.commit !== 'pending'
+        ? `commit ${escapeDevText(latest.commit)}`
+        : '';
+
+    bodyEl.innerHTML = `
+        <div class="dev-deploy-card">
+            <div class="dev-deploy-top-row">
+                <div class="dev-deploy-meta">
+                    <span class="dev-deploy-agent-badge">${escapeDevText(agentName)}</span>
+                    <span class="dev-deploy-time">${escapeDevText(exactDateTime)}</span>
+                </div>
+            </div>
+            <div class="dev-deploy-summary">${escapeDevText(latest.summary)}</div>
+            ${bullets ? `<ul class="dev-deploy-bullets">${bullets}</ul>` : ''}
+            ${commitText ? `
+            <div class="dev-deploy-footer-bar">
+                <div class="dev-deploy-footer-stats">
+                    <span>${commitText}</span>
+                </div>
+            </div>` : ''}
+        </div>
+    `;
+
+    modal.classList.remove('hidden');
+
+    const closeBtn = document.getElementById('closeAdminUpdateModal');
+    const dismissBtn = document.getElementById('dismissAdminUpdateBtn');
+    const hide = () => modal.classList.add('hidden');
+    if (closeBtn) closeBtn.onclick = hide;
+    if (dismissBtn) dismissBtn.onclick = hide;
+    modal.onclick = (e) => { if (e.target === modal) hide(); };
+}
+
+window.checkAndShowAdminUpdateModal = checkAndShowAdminUpdateModal;
+
 
 function hideSettingsModal() {
     const modal = document.getElementById('settingsModal');
