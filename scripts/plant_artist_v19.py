@@ -37,8 +37,10 @@ import numpy as np
 
 from fluency.core.hashing import canonical_content_id, file_content_id
 from fluency.lyrics.assemble import _validate_split
+from fluency.lyrics.inflector import inflect_card_senses, inflect_clitic_memberships
 from fluency.lyrics.sampling import (
     calculate_lyrics_wsd_budget,
+    calculate_target_occurrence_budget,
     score_lyric_line_quality,
 )
 from fluency.surfaces.entities import WikipediaEntityResolver
@@ -211,15 +213,13 @@ def clean_wiktionary_gloss(gloss: str) -> str:
         return ""
     if re.search(r"\bUsed to express gratitude\b", g, re.I) and "thank" not in g.lower():
         g = "thank you, thanks"
-    clitic_m = re.match(
-        r"^(?:second-person|third-person|first-person)?\s*(?:singular|plural)?\s*(?:formal|informal)?\s*(?:affirmative|negative)?\s*imperative of\s+([a-záéíóúñ]+)\s+combined with\s+([a-záéíóúñ,\s]+)\.?$",
-        g,
-        re.I,
-    )
-    if clitic_m:
-        verb_base = clitic_m.group(1).lower()
-        clitics = clitic_m.group(2).lower()
-        return f"{verb_base} (imperative with {clitics})"
+    # Filter out empty or raw form-of meta definitions
+    if re.search(r"^(?:[a-z-]+\s+)*(?:singular|plural|indicative|subjunctive|imperative|participle)?\s*(?:form of|plural of|inflection of)\b", g, re.I):
+        return ""
+    if re.search(r"\b(?:first|second|third)-person\s+(?:singular|plural)\b.*?\bof\s+[a-záéíóúñ]+$", g, re.I):
+        return ""
+    if re.search(r"^(?:masculine|feminine)\s+(?:plural|singular)\s+of\s+[a-záéíóúñ]+$", g, re.I):
+        return ""
     return g
 
 
@@ -302,13 +302,20 @@ def extract_senses_from_sd_analyses(headword: str, analyses: list[dict[str, Any]
     return senses
 
 
+def normalize_lyrics_token(token: str) -> str:
+    """Normalize curly quotes, accents on contractions, and punctuation for token matching."""
+    t = token.replace("\u2019", "'").replace("\u2018", "'").replace("`", "'")
+    return re.sub(r"^[^\w']+|[^\w']+$", "", t.lower())
+
+
 def build_corpus_line_index(raw_examples: dict[str, dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
     print("Indexing entire artist lyrics corpus for line back-search...")
     index: dict[str, list[dict[str, Any]]] = defaultdict(list)
     seen_spanish: set[str] = set()
 
     for cid, payload in raw_examples.items():
-        for b_name in ("m", "r"):
+        # Scan m, r, AND w (multi-word expressions) so all genuine artist lyric lines are searchable
+        for b_name in ("m", "r", "w"):
             bucket_list = payload.get(b_name, [])
             for bucket in bucket_list:
                 items = bucket if isinstance(bucket, list) else [bucket]
@@ -318,14 +325,23 @@ def build_corpus_line_index(raw_examples: dict[str, dict[str, Any]]) -> dict[str
                     stext = ex.get("spanish", "").strip()
                     if not stext or stext.lower() in seen_spanish:
                         continue
+                    # Never re-index synthetic dummy placeholder lines
+                    if ex.get("song_name") in {"Unknown", "Lyrical Context", None, ""} or "en la letra" in stext:
+                        continue
                     seen_spanish.add(stext.lower())
-                    tokens = [
-                        re.sub(r"^[^\w]+|[^\w]+$", "", t.lower())
-                        for t in re.split(r"\s+", stext)
-                    ]
-                    for t in set(tokens):
-                        if len(t) > 1:
-                            index[t].append(ex)
+
+                    raw_tokens = re.split(r"\s+", stext)
+                    cleaned_tokens: set[str] = set()
+                    for t in raw_tokens:
+                        clean = normalize_lyrics_token(t)
+                        if clean:
+                            cleaned_tokens.add(clean)
+                            # Also add without apostrophes for elision matches (e.g. burla'o -> burlao)
+                            if "'" in clean:
+                                cleaned_tokens.add(clean.replace("'", ""))
+
+                    for token in cleaned_tokens:
+                        index[token].append(ex)
 
     print(f"  Indexed {len(seen_spanish):,} unique lyric lines across {len(index):,} vocabulary tokens.")
     return index
@@ -441,6 +457,7 @@ def plant_artist(
 
     song_id_to_name: dict[str, str] = {}
     song_id_to_spotify: dict[str, str] = {}
+    card_to_song_ids: dict[str, list[str]] = defaultdict(list)
     for s in songs_doc.get("songs", []):
         sid = str(s.get("id"))
         sname = s.get("track_name") or s.get("title") or "Unknown"
@@ -448,10 +465,27 @@ def plant_artist(
         sp_id = s.get("spotifyTrackId") or s.get("spotify_track_id")
         if sp_id:
             song_id_to_spotify[sid] = sp_id
+        for cid in s.get("cardIds", []):
+            card_to_song_ids[cid].append(sid)
 
     print(f"  Loaded {len(songs_doc.get('songs', []))} songs ({len(song_id_to_spotify)} with Spotify track IDs), {len(raw_master):,} cards, {len(raw_index):,} index rows.")
 
     corpus_line_index = build_corpus_line_index(raw_examples)
+
+    # Pre-index valid non-dummy lyric lines by song ID for fallback
+    song_id_to_valid_lines: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for cid, payload in raw_examples.items():
+        for b_name in ("m", "r", "w"):
+            bucket_list = payload.get(b_name, [])
+            for bucket in bucket_list:
+                items = bucket if isinstance(bucket, list) else [bucket]
+                for ex in items:
+                    if not isinstance(ex, dict):
+                        continue
+                    sid = str(ex.get("song", ""))
+                    stext = ex.get("spanish", "").strip()
+                    if sid and stext and ex.get("song_name") not in {"Unknown", "Lyrical Context", None, ""} and "en la letra" not in stext:
+                        song_id_to_valid_lines[sid].append(ex)
 
     # 2. Setup Wikipedia Entity Resolver and Declared Registry
     print("\n2. Initializing Entity Resolver & Declared Overlays...")
@@ -663,7 +697,8 @@ def plant_artist(
             )
             borrowed_senses = extract_senses_from_sd_analyses(headword, borrowed_analyses)
             if borrowed_senses:
-                # Update senses to reference surface while retaining headword lineage
+                # Inflect borrowed senses to surface form (verb conjugation, attached clitics, noun plurals)
+                borrowed_senses = inflect_card_senses(word, headword, borrowed_senses, conj_rev)
                 for s in borrowed_senses:
                     s["source"] = "spanishdict:headword_borrow"
                     s["surface_word"] = word
@@ -709,6 +744,8 @@ def plant_artist(
                     break
 
             if wikt_senses:
+                card_lemma = orig_card.get("lemma") or word
+                wikt_senses = inflect_card_senses(word, card_lemma, wikt_senses, conj_rev)
                 resolved_cards[card_id] = orig_card
                 resolved_senses_by_card[card_id] = wikt_senses
                 wiktionary_hits += 1
@@ -760,6 +797,10 @@ def plant_artist(
 
     for rank, item in enumerate(raw_index, start=1):
         cid = item["id"]
+        card = resolved_cards[cid]
+        senses = resolved_senses_by_card[cid]
+        target_budget = calculate_target_occurrence_budget(rank, len(senses))
+
         occurrences: list[dict[str, Any]] = []
 
         m_buckets = raw_examples.get(cid, {}).get("m", [])
@@ -773,15 +814,54 @@ def plant_artist(
             r_bucket = raw_examples.get(cid, {}).get("r", [])
             occurrences.extend(r_bucket)
 
+        # Filter out dummy placeholder lines from older builds
+        occurrences = [
+            ex for ex in occurrences
+            if ex.get("song_name") not in {"Unknown", "Lyrical Context", None, ""}
+            and "en la letra" not in ex.get("spanish", "")
+        ]
+
+        # 1. Back-fill to target budget using corpus_line_index (Fixes 'el' and words starved by MWE partitioning)
+        # 2. Expand search terms to include lemma, clitics, variants, and display forms (Fixes 'perderse', slang contractions)
+        if len(occurrences) < target_budget:
+            word_str = normalize_lyrics_token(card.get("word", ""))
+            lemma_str = normalize_lyrics_token(card.get("lemma", ""))
+            disp_str = normalize_lyrics_token(card.get("display_form") or "")
+            clitic_terms = [normalize_lyrics_token(cl) for cl in card.get("merged_clitic_ids", {}).values()]
+            variant_terms = [normalize_lyrics_token(v) for v in item.get("variants", [])]
+
+            search_terms: list[str] = []
+            for t in [word_str, lemma_str, disp_str] + clitic_terms + variant_terms:
+                if t and t not in search_terms:
+                    search_terms.append(t)
+                    if "'" in t:
+                        unquoted = t.replace("'", "")
+                        if unquoted not in search_terms:
+                            search_terms.append(unquoted)
+
+            seen_sp = {ex.get("spanish", "").strip().lower() for ex in occurrences}
+            for term in search_terms:
+                for match_ex in corpus_line_index.get(term, []):
+                    sp_text = match_ex.get("spanish", "").strip().lower()
+                    if sp_text not in seen_sp:
+                        seen_sp.add(sp_text)
+                        occurrences.append(match_ex)
+                        if len(occurrences) >= target_budget:
+                            break
+                if len(occurrences) >= target_budget:
+                    break
+
+        # 3. For any rare or unrepresented card that still has zero lines, use real lines from its linked songs
         if not occurrences:
-            word = resolved_cards[cid].get("word", "").casefold()
-            corpus_matches = corpus_line_index.get(word, [])
-            if corpus_matches:
-                occurrences = list(corpus_matches[:3])
+            linked_sids = card_to_song_ids.get(cid, [])
+            for l_sid in linked_sids:
+                song_lines = song_id_to_valid_lines.get(l_sid, [])
+                if song_lines:
+                    occurrences.append(song_lines[0])
+                    break
 
         total_raw_occurrences += len(occurrences)
-        senses = resolved_senses_by_card[cid]
-        budget = calculate_lyrics_wsd_budget(rank, len(senses), len(occurrences))
+        budget = min(len(occurrences), target_budget) if occurrences else 0
 
         seen_lines: set[str] = set()
         scored_candidates: list[tuple[float, dict[str, Any]]] = []
@@ -852,12 +932,27 @@ def plant_artist(
         examples_to_assign = card_selected_examples.get(cid, [])
 
         if not examples_to_assign:
-            examples_to_assign = [{
-                "song": "unknown",
-                "song_name": "Lyrical Context",
-                "spanish": f"{word} en la letra",
-                "english": f"{word} in lyrics",
-            }]
+            # Fallback to general artist lyric line with valid song metadata instead of dummy "en la letra"
+            fallback_line = None
+            linked_sids = card_to_song_ids.get(cid, [])
+            for l_sid in linked_sids:
+                s_lines = song_id_to_valid_lines.get(l_sid, [])
+                if s_lines:
+                    fallback_line = s_lines[0]
+                    break
+            if not fallback_line and song_id_to_valid_lines:
+                first_sid = next(iter(song_id_to_valid_lines))
+                fallback_line = song_id_to_valid_lines[first_sid][0]
+
+            if fallback_line:
+                examples_to_assign = [fallback_line]
+            else:
+                examples_to_assign = [{
+                    "song": "unknown",
+                    "song_name": "Lyrical Context",
+                    "spanish": f"{word} en la letra",
+                    "english": f"{word} in lyrics",
+                }]
 
         # CRITICAL FIX IN v19: DO NOT PRE-TRUNCATE senses[:len(examples)]!
         # Evaluate ALL candidate senses in the menu!
@@ -990,7 +1085,7 @@ def plant_artist(
         }
 
         forced_counts = {s["sense_id"][:4]: len(b) for s, b in zip(active_senses, active_buckets)}
-        final_index.append({
+        index_entry = {
             **item,
             "sense_frequencies": sense_frequencies,
             "sense_confidence": avg_confidences,
@@ -1011,7 +1106,19 @@ def plant_artist(
                 "supported_unavailable_mass": tot_assigned,
                 "unresolved_mass": 0,
             },
-        })
+        }
+
+        # Inflect clitic_memberships if present
+        if item.get("clitic_memberships"):
+            base_trans = active_senses[0].get("translation", "")
+            index_entry["clitic_memberships"] = inflect_clitic_memberships(
+                item["clitic_memberships"],
+                card.get("lemma") or word,
+                base_trans,
+                conj_rev,
+            )
+
+        final_index.append(index_entry)
         final_decisions[cid] = card_decisions
 
     print(f"  WSD assignments completed: {assigned_occurrences_count:,}")

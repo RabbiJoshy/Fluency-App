@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-26T17:55:00+01:00",
+      "date": "2026-09-26 17:55 BST",
+      "agent": "Antigravity",
+      "summary": "Deploy Unified Inflection Engine, human-readable WSD Pipeline Audit panel, and rebuilt Bad Bunny + Test Playlist decks; bump cache to v564.",
+      "detail": [
+        "Introduces Unified Inflection Engine (src/fluency/lyrics/inflector.py) automatically inflecting verbs, plurals, and attached clitics (e.g. 'guíllate' -> 'beat it! / go away!') across both SpanishDict and Wiktionary definitions.",
+        "Adds human-readable WSD Pipeline Audit card to Card Data / Provenance Panel showing Menu Origin, GRAFT/Overlays, Polysemy status, and Resolution Algorithm in clear terms.",
+        "Fixes uninflected forms, filters raw Wiktionary meta-grammar descriptions (e.g. 'third-person plural...'), and ensures headword definitions flow cleanly to inflected cards.",
+        "Fixes synthetic dummy 'Lyrical Context' fallback leakage (perderse) and high-frequency example line starvation (el now has rich context).",
+        "Rebuilds and synchronizes lyrics-all-artists-v19, lyrics-bad-bunny-v19, and lyrics-test-playlist-v19 to Fluency-Releases CDN; bumps cache to flashcards-v564 and asset tags to 20260926v20."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-26T15:10:00+01:00",
       "date": "2026-09-26 15:10 BST",
       "agent": "Antigravity",

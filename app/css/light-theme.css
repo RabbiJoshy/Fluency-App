@@ -1067,6 +1067,14 @@
     background: rgba(0, 0, 0, 0.03);
     border-color: rgba(0, 0, 0, 0.08);
 }
+:root[data-theme="light"] .provenance-panel .prov-wsd-card {
+    background: rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.08);
+}
+:root[data-theme="light"] .provenance-panel .prov-wsd-stage {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.06);
+}
 :root[data-theme="light"] .provenance-panel .prov-badge--overlay {
     background: rgba(147, 51, 234, 0.1);
     color: #7e22ce;

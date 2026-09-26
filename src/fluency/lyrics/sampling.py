@@ -35,6 +35,25 @@ class LyricsSamplingConfig:
 DEFAULT_SAMPLING_CONFIG = LyricsSamplingConfig()
 
 
+def calculate_target_occurrence_budget(
+    rank: int,
+    sense_count: int,
+    config: LyricsSamplingConfig = DEFAULT_SAMPLING_CONFIG,
+) -> int:
+    """Calculate the target number of occurrences desired for a card before supply capping.
+
+    - Top Tier (Rank 1–1,000): Hard floor of 10 lines (even for monosemous words), scaling up to 24+ for polysemous words.
+    - Mid Tier (Rank 1,001–5,000): Floor of 8 lines.
+    - Tail/Slang (Rank 5,001+): 1 line floor.
+    """
+    senses = max(1, sense_count)
+    if rank <= config.tier1_rank_ceiling:
+        return max(config.tier1_floor, int(config.tier1_multiplier * senses + 0.5))
+    elif rank <= config.tier2_rank_ceiling:
+        return max(config.tier2_floor, int(config.tier2_multiplier * senses + 0.5))
+    return 1
+
+
 def calculate_lyrics_wsd_budget(
     rank: int,
     sense_count: int,
@@ -50,16 +69,12 @@ def calculate_lyrics_wsd_budget(
     if available_lines <= 0:
         return 0
 
-    senses = max(1, sense_count)
-    if rank <= config.tier1_rank_ceiling:
-        budget = max(config.tier1_floor, int(config.tier1_multiplier * senses + 0.5))
-    elif rank <= config.tier2_rank_ceiling:
-        budget = max(config.tier2_floor, int(config.tier2_multiplier * senses + 0.5))
-    else:
+    if rank > config.tier2_rank_ceiling:
         # Tail / slang: 100% of available supply
         return available_lines
 
-    return min(available_lines, budget)
+    target = calculate_target_occurrence_budget(rank, sense_count, config=config)
+    return min(available_lines, target)
 
 
 def score_lyric_line_quality(
