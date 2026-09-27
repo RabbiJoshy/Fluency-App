@@ -12,7 +12,7 @@
 
 import {
     REPLICA_CARDS, esc, renderBack, replicaCardHTML, wireReplicaBack, fitReplicaCard,
-} from './card-replica.js?v=8dcaf4d1';
+} from './card-replica.js?v=2926610e';
 
 
 // Each language selects its own representative card and dictionary wording.
@@ -915,7 +915,7 @@ function playSetupIntro(onDone) {
     t += BEAT;
     at(t, () => {
         if (caption) caption.textContent = 'That is the whole setup. Here is what a card looks like.';
-        if (status) status.textContent = 'Press Learn 20 new cards to see your first card';
+        if (status) status.textContent = 'Press Learn 25 new cards to see your first card';
         el('setupAnimActionBtn')?.classList.add('is-ready');
         moveSetupPointer(el('setupAnimActionBtn'));
     });

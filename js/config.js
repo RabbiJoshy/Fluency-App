@@ -1,5 +1,5 @@
-import './state.js?v=8dcaf4d1';
-import { releaseUrl } from './release-host.js?v=8dcaf4d1';
+import './state.js?v=2926610e';
+import { releaseUrl } from './release-host.js?v=2926610e';
 
 async function loadConfig() {
     try {
@@ -77,25 +77,14 @@ async function loadConfig() {
     }
 }
 
+// Speech releases still ship app/study-structure.json, but the app no longer
+// reads its levels: every mode uses the app-built 100-card levels in
+// computeSmartLevelRanges (docs/proposals/0005). The release's structure
+// remains in the release as published. This still loads release provenance.
 async function loadReleaseStudyStructure(language) {
     releaseStudyStructure = null;
     await loadReleaseProvenance(language);
-    const rawPath = config.languages[language]?.studyStructurePath;
-    const path = rawPath ? releaseUrl(rawPath) : null;
-    if (!path || activeArtist) return null;
-    try {
-        const response = await fetch(path, { cache: 'no-store' });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const structure = await response.json();
-        if (structure?.structure_version !== 'study-structure/v1' || !Array.isArray(structure.levels)) {
-            throw new Error('unsupported study structure');
-        }
-        releaseStudyStructure = structure;
-        return structure;
-    } catch (error) {
-        console.warn('Release study structure unavailable; using legacy levels:', error);
-        return null;
-    }
+    return null;
 }
 
 async function loadReleaseProvenance(language) {

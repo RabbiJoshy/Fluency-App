@@ -1,6 +1,6 @@
 // Durable, local-first synchronization queue.
-import './state.js?v=8dcaf4d1';
-import { dbDelete, dbGetAll, dbPut, makeOperationId, openOfflineDb } from './offline-db.js?v=8dcaf4d1';
+import './state.js?v=2926610e';
+import { dbDelete, dbGetAll, dbPut, makeOperationId, openOfflineDb } from './offline-db.js?v=2926610e';
 
 const LEGACY_QUEUE_KEY = 'fluency_sync_queue_v1';
 const LAST_SYNC_KEY = 'fluency_last_sync_v1';
@@ -324,17 +324,12 @@ export function applyPendingItemProgressOverlay(items) {
     return items;
 }
 
-export function applyPendingMetaProgressOverlay(estimates, doneLevels) {
+export function applyPendingMetaProgressOverlay(estimates) {
     for (const { payload: p } of queue) {
         if (p?.action === 'save' && p.word === '_LEVEL_ESTIMATE_' && p.language) estimates[p.language] = p.wordId;
         if (p?.action === 'saveMeta' && p.metaKey === 'level-estimate' && p.language) estimates[p.language] = p.value;
-        if (p?.action !== 'saveMeta' || p.metaKey !== 'level-done' || !p.scopeKey || !p.metaId) continue;
-        const scope = { ...(doneLevels[p.scopeKey] || {}) };
-        if (p.value === true || p.value === 1 || p.value === '1') scope[p.metaId] = true;
-        else delete scope[p.metaId];
-        doneLevels[p.scopeKey] = scope;
     }
-    return { estimates, doneLevels };
+    return estimates;
 }
 
 export async function initSync() {

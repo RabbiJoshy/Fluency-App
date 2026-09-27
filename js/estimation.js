@@ -1,4 +1,4 @@
-import './state.js?v=8dcaf4d1';
+import './state.js?v=2926610e';
 
 const ESTIMATION_QUESTION_LIMIT = 30;
 const ESTIMATION_BAND_TARGET = 10;
@@ -426,15 +426,42 @@ function showEstimationResult() {
 
     const levelEl = document.getElementById('estimationResultLevel');
     const descEl = document.getElementById('estimationResultDesc');
+    const pointLevel = levelButtonForRank(result.point);
     if (result.point <= 0) {
-        levelEl.textContent = 'Start at the beginning';
+        levelEl.textContent = 'Start at Level 1';
         descEl.textContent = 'This sample did not find a reliable known range yet.';
+    } else if (pointLevel) {
+        // The estimate is stored as a rank; the level is only derived here,
+        // against the levels on screen, so it follows any change to level size.
+        const lowLevel = levelButtonForRank(result.low)?.number ?? pointLevel.number;
+        const highLevel = levelButtonForRank(result.high)?.number ?? pointLevel.number;
+        const words = `${result.low.toLocaleString()}–${result.high.toLocaleString()} words`;
+        levelEl.textContent = `Start at Level ${pointLevel.number}`;
+        descEl.textContent = lowLevel === highLevel
+            ? `About ${words} you'd recognise.`
+            : `Likely somewhere in Levels ${lowLevel}–${highLevel} (about ${words}).`;
     } else {
         levelEl.textContent = `${result.low.toLocaleString()}–${result.high.toLocaleString()} words`;
         descEl.textContent =
             `Best estimate: about ${result.point.toLocaleString()} receptive words. ` +
             'The range reflects uncertainty from a short check.';
     }
+}
+
+// The level button whose [startRank, endRank) span holds a rank, clamped to the
+// first and last levels. Both the result screen and the landing use it, so the
+// level named is the level that opens.
+function levelButtonForRank(rank) {
+    const buttons = Array.from(document.querySelectorAll(
+        '.level-selector-buttons .level-btn, #levelSelector > .level-btn'
+    )).filter(button => Number.isFinite(Number(button.dataset.startRank))
+        && Number.isFinite(Number(button.dataset.endRank))
+        && button.dataset.startRank !== '' && button.dataset.endRank !== '');
+    if (!buttons.length) return null;
+    let index = buttons.findIndex(button =>
+        rank >= Number(button.dataset.startRank) && rank < Number(button.dataset.endRank));
+    if (index < 0) index = rank < Number(buttons[0].dataset.startRank) ? 0 : buttons.length - 1;
+    return { button: buttons[index], number: index + 1 };
 }
 
 // Apply the point estimate. The interval remains explanatory UI; the existing
@@ -458,76 +485,10 @@ function retryEstimation() {
     startEstimation();
 }
 
-// Select the appropriate level and range for a given rank
+// Open the level containing a given rank; the level's own routing then lands
+// on its first set with unseen cards.
 function selectLevelForRank(rank) {
-    const levels = getCefrLevels(selectedLanguage);
-    let targetLevel = null;
-    for (const level of levels) {
-        if (rank >= level.minRank && rank <= level.maxRank) {
-            targetLevel = level;
-            break;
-        }
-        if (rank <= level.maxRank) {
-            targetLevel = level;
-            break;
-        }
-    }
-
-    if (!targetLevel && levels.length > 0) {
-        targetLevel = levels[levels.length - 1];
-    }
-
-    if (!targetLevel) return;
-
-    const buttons = Array.from(document.querySelectorAll(
-        '.level-selector-buttons .level-btn, #levelSelector > .level-btn'
-    ));
-    let targetIndex = buttons.findIndex(button => button.dataset.level === targetLevel.level);
-    if (targetIndex < 0) {
-        targetIndex = buttons.findIndex(button => {
-            const start = Number(button.dataset.startRank);
-            const end = Number(button.dataset.endRank);
-            return Number.isFinite(start) && Number.isFinite(end) && rank >= start && rank < end;
-        });
-    }
-    if (targetIndex < 0) return;
-
-    const originalButton = buttons[targetIndex];
-    const levelBtn = buttons.slice(targetIndex)
-        .find(button => !window.isLevelMarkedDone?.(button.dataset.level))
-        || buttons.slice().reverse()
-            .find(button => !window.isLevelMarkedDone?.(button.dataset.level))
-        || originalButton;
-    levelBtn.click();
-    // Only select the exact sub-range when the estimate's containing level
-    // remains eligible. If it was explicitly skipped, the chosen next level's
-    // normal first-unseen-set routing should take over.
-    if (levelBtn === originalButton) setTimeout(() => selectRangeForRank(rank), 100);
-}
-
-// Select the range containing a given rank
-function selectRangeForRank(rank) {
-    const rangeButtons = document.querySelectorAll('.range-btn');
-    for (const btn of rangeButtons) {
-        const start = parseInt(btn.dataset.start);
-        const end = parseInt(btn.dataset.end);
-        if (rank >= start && rank <= end) {
-            btn.click();
-            return;
-        }
-        if (rank < start) {
-            const prevBtn = btn.previousElementSibling;
-            if (prevBtn?.classList.contains('range-btn')) {
-                prevBtn.click();
-            } else {
-                btn.click();
-            }
-            return;
-        }
-    }
-    if (rangeButtons.length > 0) {
-        rangeButtons[rangeButtons.length - 1].click();
-    }
+    levelButtonForRank(rank)?.button.click();
 }
 
 window.openEstimationModal = openEstimationModal;
@@ -539,7 +500,6 @@ window.showEstimationResult = showEstimationResult;
 window.useEstimatedLevel = useEstimatedLevel;
 window.retryEstimation = retryEstimation;
 window.selectLevelForRank = selectLevelForRank;
-window.selectRangeForRank = selectRangeForRank;
 
 // Pure helpers are exported for lightweight regression checks without a DOM.
 export {

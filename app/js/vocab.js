@@ -1,11 +1,11 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=8dcaf4d1';
-import { validateVocabularyIndex } from './data-contracts.js?v=8dcaf4d1';
-import { formatRoute } from './routes.js?v=8dcaf4d1';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=8dcaf4d1';
-import { releaseUrl } from './release-host.js?v=8dcaf4d1';
+import './state.js?v=2926610e';
+import { validateVocabularyIndex } from './data-contracts.js?v=2926610e';
+import { formatRoute } from './routes.js?v=2926610e';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=2926610e';
+import { releaseUrl } from './release-host.js?v=2926610e';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -174,18 +174,6 @@ function renderResumeLastSetCard() {
     // explicit ?resume=1 hop is already committed to resuming and skips this.
     const explicitResume = new URLSearchParams(window.location.search).get('resume') === '1';
     if (explicitResume) return;
-    const snapshotScope = window.getProgressScopeKey?.({
-        mode: snapshot.mode,
-        artistSlug: snapshot.artistSlug,
-        artistSlugs: snapshot.artistSlugs,
-        language: snapshot.language
-    });
-    if (snapshot.selectedLevel
-        && snapshotScope
-        && window.isLevelMarkedDone?.(snapshot.selectedLevel, snapshotScope)) {
-        if (card) card.remove();
-        return;
-    }
     try {
         if (sessionStorage.getItem('fluency_resume_prompt_seen_v1') === snapshot.savedAt) return;
     } catch (_) {}
@@ -1794,8 +1782,10 @@ function assignStableVocabularyRanks(vocabData, spuriousSelfInfinitives = new Se
         if (!item.word || item.word.trim() === '' || item.duplicate || item.is_english
             || spuriousSelfInfinitives.has(item)) return false;
         if (!artistItemMatchesScope(item)) return false;
-        const hasTranslation = Array.isArray(item.meanings)
-            && item.meanings.some(meaning => meaning.translation && meaning.translation.trim());
+        // Skinny index columns ship with empty meanings until the study-set
+        // row shard lands; those cards still hold their place in the order.
+        const hasTranslation = item._indexRowsPending === true || (Array.isArray(item.meanings)
+            && item.meanings.some(meaning => meaning.translation && meaning.translation.trim()));
         // Artist Extra deliberately includes raw lyric-only entries. A one-off
         // surface form inside a recurring lemma stays in Main and receives the
         // same fallback treatment, so it must also keep its stable slot.
@@ -2472,7 +2462,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
             }).catch(() => { window._spotifyTracks = {}; });
         }
 
-        // Fat index rows belong to the twenty cards in this set, not the
+        // Fat index rows belong to the cards in this set, not the
         // language-pick payload. Examples stay on the same study-set shards.
         const ranks = filteredData.map(item => Number(item.rank));
         if (!window.playlistLiveActive?.() && !activeArtist) {

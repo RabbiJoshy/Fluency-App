@@ -1,7 +1,7 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=8dcaf4d1';
-import { readFastTrack } from './fast-track-preferences.js?v=8dcaf4d1';
+import './state.js?v=2926610e';
+import { readFastTrack } from './fast-track-preferences.js?v=2926610e';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -1030,11 +1030,12 @@ function updateStep2Tooltip() {
 function updateStep5Tooltip() {
     const description = document.getElementById('step5Description');
     if (!description) return;
+    const setSize = `A set is ${STABLE_SET_SLOT_COUNT} cards, about 5–10 minutes.`;
     if (activeArtist) {
         const name = activeArtist.name;
-        description.textContent = `Fluency highlights the next unfinished set from ${name}'s lyrics, so you can jump right in.`;
+        description.textContent = `Fluency highlights the next unfinished set from ${name}'s lyrics, so you can jump right in. ${setSize}`;
     } else {
-        description.textContent = 'Fluency highlights your next unfinished set so you can jump right in.';
+        description.textContent = `Fluency highlights your next unfinished set so you can jump right in. ${setSize}`;
     }
 }
 
@@ -1068,7 +1069,6 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
     let firstIncomplete = null;
     let firstWithReview = null;
     let lastAvailable = null;
-    let lastSuggestionLevel = null;
 
     const sliderSegmentMap = new Map();
     document.querySelectorAll('#lswSlider .lsw-seg').forEach(seg => {
@@ -1121,8 +1121,6 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
         const { btn, buttonIndex, words: wordsInLevel } = parsedButtons[i];
         if (wordsInLevel.length === 0) continue;
         lastAvailable = btn;
-        const suggestionSkipped = window.isLevelMarkedDone?.(btn.dataset.level) || false;
-        if (!suggestionSkipped) lastSuggestionLevel = btn;
         let seenCount = 0;
         let reviewCount = 0;
         for (let w = 0; w < wordsInLevel.length; w++) {
@@ -1136,24 +1134,22 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
         btn.dataset.progressPct = String(completion);
         btn.dataset.reviewCount = String(reviewCount);
         btn.classList.toggle('has-partial-progress', isPartial);
-        btn.classList.toggle('is-suggestion-skipped', suggestionSkipped);
         btn.style.setProperty('--level-progress', `${completion}%`);
 
         const visibleSegment = sliderSegmentMap.get(String(buttonIndex));
         if (visibleSegment) {
             visibleSegment.dataset.progressPct = String(completion);
             visibleSegment.classList.toggle('has-partial-progress', isPartial);
-            visibleSegment.classList.toggle('is-suggestion-skipped', suggestionSkipped);
             visibleSegment.style.setProperty('--level-progress', `${completion}%`);
             visibleSegment.setAttribute(
                 'aria-label',
-                `Level ${buttonIndex + 1}, ${completion}% complete${suggestionSkipped ? ', skipped in suggestions' : ''}`
+                `Level ${buttonIndex + 1}, ${completion}% complete`
             );
         }
-        if (!firstIncomplete && hasUnseen && !suggestionSkipped) firstIncomplete = btn;
-        if (!firstWithReview && reviewCount > 0 && !suggestionSkipped) firstWithReview = btn;
+        if (!firstIncomplete && hasUnseen) firstIncomplete = btn;
+        if (!firstWithReview && reviewCount > 0) firstWithReview = btn;
     }
-    return firstIncomplete || firstWithReview || lastSuggestionLevel || lastAvailable || buttons[buttons.length - 1];
+    return firstIncomplete || firstWithReview || lastAvailable || buttons[buttons.length - 1];
 }
 
 async function renderLevelSelector(language, { preferActionable = false } = {}) {
@@ -1192,13 +1188,9 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
     const releaseLevels = !activeArtist && !window.playlistLiveActive?.() && Array.isArray(releaseStudyStructure?.levels)
         ? releaseStudyStructure.levels
         : [];
-    // A Speech release ships its own levels — two hundred cards each, ten sets
-    // of twenty — and used to render them as a row of numbered buttons while
-    // Lyrics got the scrubber. There was never a reason for two controls: both
-    // are a list of levels with a rank span and a card count. Publishing the
-    // release levels as the active ranges lets the same scrubber, readout and
-    // example line serve both, and every reader of getActiveLevelRanges()
-    // stays consistent with what is on screen.
+    // Speech releases used to ship their own levels. The app now builds
+    // levels for every mode (computeSmartLevelRanges), so releaseStudyStructure
+    // stays null and the release-level branches below are inert.
     const usingReleaseLevels = releaseLevels.length > 0;
     if (usingReleaseLevels) {
         _smartLevelRangesCache = releaseLevels.map(level => ({
@@ -1214,7 +1206,7 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
     } else if (window.playlistLiveActive?.()) {
         const deck = window.playlistLiveDeck?.();
         const totalCards = deck?.matchedCount || 0;
-        const targetPerLevel = 200;
+        const targetPerLevel = STUDY_LEVEL_TARGET_CARDS;
         const levelCount = Math.max(1, Math.ceil(totalCards / targetPerLevel));
         _smartLevelRangesCache = [];
         for (let i = 0; i < levelCount; i++) {
@@ -1258,7 +1250,8 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
             ? 'lyrics comprehension'
             : (window.playlistLiveActive?.()
                 ? 'playlist words'
-                : (usingReleaseLevels && globalThis.coverageAvailable?.()
+                : (globalThis.coverageAvailable?.()
+                    && (usingReleaseLevels || getActiveLevelRanges()[0]?.threshold == null)
                     ? globalThis.coverageLabel()
                     : 'speech comprehension'));
         const buttonsHTML = percentageRanges.map(level => {
@@ -1300,10 +1293,12 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
             if (savedIdx >= 0) selectedLevel = percentageRanges[savedIdx].level;
         }
         // Coverage levels are cumulative, so the widest is the useful default.
-        // Release levels are consecutive bands of two hundred cards, where the
-        // last one is the rarest vocabulary in the deck — a learner starts at
-        // the first, and the actionable-level pass refines it from there.
-        const initialIdx = savedIdx >= 0 ? savedIdx : (usingReleaseLevels || window.playlistLiveActive?.() ? 0 : lastIdx);
+        // App-built levels are consecutive 100-card bands, where the last one
+        // is the rarest vocabulary in the deck — a learner starts at the
+        // first, and the actionable-level pass refines it from there.
+        const consecutiveLevels = usingReleaseLevels || window.playlistLiveActive?.()
+            || (_smartLevelRangesCache?.length > 0);
+        const initialIdx = savedIdx >= 0 ? savedIdx : (consecutiveLevels ? 0 : lastIdx);
         const initial = percentageRanges[initialIdx];
         if (!initial) {
             console.warn('No level ranges available for', language);
@@ -1312,19 +1307,17 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
         }
         const initialMetrics = _levelBandMetrics(initial, preparedSamples);
         const initialDeckTotal = _levelDeckTotal(percentageRanges, preparedSamples);
-        // Coverage display: use threshold for smart ranges, level string for legacy.
-        // Smart ranges carry their own coverage. Release levels are a pure
-        // ordering, so the figure comes from the shipped corpus shares when the
+        // Coverage display. Ranges built from corpus counts carry their own
+        // coverage. Speech levels are a pure ordering, so the figure comes
+        // from the shipped corpus shares when the
         // language has them, and the span stays hidden when it does not —
         // printing the level id where a percentage belongs read as a glitch.
-        const releaseCoverage = usingReleaseLevels
+        const releaseCoverage = initial.threshold == null
             ? globalThis.levelCoverage?.(preparedSamples, initial.startRank, initial.endRank)
             : null;
         const initialCoverage = initial.threshold != null
             ? `${(initial.threshold * 100).toFixed(1)}%`
-            : (usingReleaseLevels
-                ? (releaseCoverage != null ? `${(releaseCoverage * 100).toFixed(1)}%` : '')
-                : initial.level);
+            : (releaseCoverage != null ? `${(releaseCoverage * 100).toFixed(1)}%` : '');
         container.classList.add('level-selector--slider');
         container.innerHTML = `
             <div class="level-slider-wrap">
@@ -1568,14 +1561,17 @@ async function renderExtraCategorySelector(container, language, { preferActionab
 // cannot change these boundaries.
 let _smartLevelRangesCache = null;
 
-// Build an adaptive number of finishable study bands: roughly one per 200
-// cards, with ten bands for small decks and a ceiling of 80 for very large
-// ones. Each level is subdivided into stable 20-position study sets.
-// Each boundary starts at an equal-card quantile, then snaps to a genuine
-// frequency cliff when one is nearby.
-// If no cliff is close, keeping the quantile deliberately subdivides a
-// large tied tail (2x/3x in artist decks) instead of collapsing it into one
-// enormous final band.
+// Study shape, shared by every level builder and the set slotter: levels of
+// 100 cards split into four 25-card sets (docs/proposals/0005).
+const STUDY_LEVEL_TARGET_CARDS = 100;
+const STUDY_LEVEL_MIN_COUNT = 10;
+const STUDY_LEVEL_MAX_COUNT = 120;
+const STABLE_SET_SLOT_COUNT = 25;
+
+// Build finishable study levels of STUDY_LEVEL_TARGET_CARDS cards each, with
+// ten levels for small decks and a ceiling of STUDY_LEVEL_MAX_COUNT for very
+// large ones. Each level is subdivided into stable STABLE_SET_SLOT_COUNT-position
+// study sets. Every mode (Speech, Lyrics, artist) uses these app-built levels.
 //
 // Boundaries always use the form-level corpus frequency baseline. Merge
 // Lemmas anchors a merged card to its highest-frequency form, and every
@@ -1593,52 +1589,27 @@ function computeSmartLevelRanges(filteredVocab) {
         ? (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, '') + 'k'
         : String(Math.round(n));
 
-    const targetCardsPerLevel = 200;
-    const minimumLevelCount = 10;
-    const maximumLevelCount = 80;
-    const segmentCount = Math.min(
-        total,
-        maximumLevelCount,
-        Math.max(minimumLevelCount, Math.ceil(total / targetCardsPerLevel))
-    );
-    const idealBandSize = total / segmentCount;
-    const snapWindow = Math.max(2, Math.round(idealBandSize * 0.25));
-    const minBandSize = Math.max(1, Math.round(idealBandSize * 0.5));
-
-    // A cliff count is the number of cards included immediately before the
-    // effective frequency drops. Counts are exclusive endpoints, matching
-    // the range loader's stableRank >= start && stableRank < end contract.
-    const cliffCounts = [];
-    for (let count = 1; count < total; count++) {
-        if (frequencyOf(items[count - 1]) !== frequencyOf(items[count])) {
-            cliffCounts.push(count);
-        }
+    // Fixed-size levels: every level is STUDY_LEVEL_TARGET_CARDS cards, so
+    // each splits into whole study sets. Small decks still get ten (smaller)
+    // levels; decks past the level cap get larger levels, rounded up to whole
+    // sets. Levels no longer snap to frequency cliffs.
+    const naturalCount = Math.ceil(total / STUDY_LEVEL_TARGET_CARDS);
+    let bandSize = STUDY_LEVEL_TARGET_CARDS;
+    if (naturalCount > STUDY_LEVEL_MAX_COUNT) {
+        bandSize = Math.ceil(total / STUDY_LEVEL_MAX_COUNT / STABLE_SET_SLOT_COUNT) * STABLE_SET_SLOT_COUNT;
+    } else if (naturalCount < STUDY_LEVEL_MIN_COUNT) {
+        bandSize = Math.max(1, Math.ceil(total / STUDY_LEVEL_MIN_COUNT));
     }
-
     const boundaryCounts = [];
-    let previousCount = 0;
-    for (let segment = 1; segment < segmentCount; segment++) {
-        const remainingBands = segmentCount - segment;
-        const minCount = previousCount + minBandSize;
-        const maxCount = total - remainingBands * minBandSize;
-        const idealCount = Math.round(total * segment / segmentCount);
-        const targetCount = Math.max(minCount, Math.min(maxCount, idealCount));
-        const nearbyCliffs = cliffCounts.filter(count =>
-            count >= minCount
-            && count <= maxCount
-            && Math.abs(count - targetCount) <= snapWindow
-        );
-        const count = nearbyCliffs.length > 0
-            ? nearbyCliffs.reduce((best, candidate) =>
-                Math.abs(candidate - targetCount) < Math.abs(best - targetCount) ? candidate : best)
-            : targetCount;
-        boundaryCounts.push(count);
-        previousCount = count;
-    }
+    for (let count = bandSize; count < total; count += bandSize) boundaryCounts.push(count);
     boundaryCounts.push(total);
 
     let totalFreq = 0;
     for (const item of items) totalFreq += frequencyOf(item);
+    // Speech decks carry no per-card corpus counts. Their levels then have no
+    // frequency or coverage of their own: the readout takes coverage from the
+    // language's shipped corpus shares, or hides it, rather than printing 0.
+    const hasFrequency = totalFreq > 0;
 
     const ranges = [];
     let cumFreq = 0;
@@ -1661,7 +1632,9 @@ function computeSmartLevelRanges(filteredVocab) {
             : `≥${fmtCompact(freqMin)}`;
         const basisDescription = 'baseline corpus occurrences';
         const rankDescription = `Ranks ${startRank.toLocaleString()}–${cardCount.toLocaleString()} · ${bandCardCount.toLocaleString()} cards`;
-        const description = splitTier
+        const description = !hasFrequency
+            ? rankDescription
+            : splitTier
             ? `${rankDescription} · cutoff partway through the ${fmtCompact(freqMin)}× tier · ${(coverage * 100).toFixed(1)}% cumulative coverage by ${basisDescription}`
             : `${rankDescription} · frequency ≥${fmtCompact(freqMin)} · ${(coverage * 100).toFixed(1)}% cumulative coverage by ${basisDescription}`;
 
@@ -1672,11 +1645,11 @@ function computeSmartLevelRanges(filteredVocab) {
             rankBasis: 'stable',
             cardCount,
             bandCardCount,
-            threshold: coverage,
+            threshold: hasFrequency ? coverage : null,
             kind: splitTier ? 'tie-split' : 'freq-cliff',
-            freqMin,
+            freqMin: hasFrequency ? freqMin : null,
             splitTier,
-            tickLabel,
+            tickLabel: hasFrequency ? tickLabel : null,
             description,
         });
         previousBoundary = cardCount;
@@ -2503,7 +2476,6 @@ window.addEventListener('fluency-theme-change', () => {
 // Returns { vocab: filteredArray, counts: { english, cognates, singleOcc, lemma } }
 
 
-const STABLE_SET_SLOT_COUNT = 20;
 
 function getSetupLearningState(item, { seenLemmas = new Set(), estimatedIds = null, estimate = 0 } = {}) {
     if (!currentUser || currentUser.isGuest || !progressData) return false;
@@ -3099,7 +3071,6 @@ function _findLevelButtonIndex(buttons, targetLevel) {
 }
 
 function getNextStudySetMeta(rangeString, studyMode = 'new') {
-    if (window.isLevelMarkedDone?.(selectedLevel)) return null;
     const dots = Array.from(document.querySelectorAll('#rangeSelector .study-set-dot'));
     const currentIndex = dots.findIndex(dot => dot.dataset.range === rangeString);
     if (currentIndex < 0) return null;
@@ -3129,9 +3100,8 @@ function getNextStudyLevelMeta() {
     const currentIndex = _findLevelButtonIndex(buttons, selectedLevel);
     const remaining = currentIndex >= 0 ? buttons.slice(currentIndex + 1) : buttons;
     const next = remaining.find(button => {
-        const skipped = window.isLevelMarkedDone?.(button.dataset.level) || false;
         const completion = Number(button.dataset.progressPct || 0);
-        return !skipped && (completion < 100 || currentIndex < 0);
+        return completion < 100 || currentIndex < 0;
     }) || null;
     if (!next) {
         if (activeArtist && artistVocabularyScope === 'main') {
@@ -3288,7 +3258,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=8dcaf4d1')
+        import('./spotify.js?v=2926610e')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
