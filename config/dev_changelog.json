@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T17:03:00+01:00",
+      "date": "2026-09-27 17:03 BST",
+      "agent": "Claude",
+      "summary": "Lyrics v19 rebuilt: elisions (ta, pa, to, tas), statement-before-command glosses, and verb readings SpanishDict states (muerdo → morder) now show.",
+      "detail": [
+        "Bad Bunny and test-playlist decks re-planted on today's fixes and republished to Fluency-Releases-lyrics; Rosalía and Young Miko carried over from v18 unchanged.",
+        "143 Bad Bunny cards gained a sense from a relation their SpanishDict page states (e.g. muerdo gets morder 'I bite').",
+        "Bare elisions read their full form: ta = está, tas = estás, to = todo, pa = para.",
+        "This app deploy is what makes phones refetch the rebuilt deck files."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T16:32:01+01:00",
       "date": "2026-09-27 16:32 BST",
       "agent": "Claude",
