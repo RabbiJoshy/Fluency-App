@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T16:07:00+01:00",
+      "date": "2026-09-27 16:07 BST",
+      "agent": "Claude",
+      "summary": "In merged-lemma mode the translation now follows the example you are on, so despejas reads 'you clear' rather than repeating the first form's 'clear!'.",
+      "detail": [
+        "A merged card collects examples from every form of the word. Each example now shows the translation of its own form while it is the active example.",
+        "Examples from other forms are filed under the matching meaning by sense, not by identical translation text, which no longer lines up once translations are inflected per form.",
+        "Lyrics forms like despeja and condene still read as commands in the current decks; that is fixed in the pipeline and changes when the lyrics decks are rebuilt."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T15:55:00+01:00",
       "date": "2026-09-27 15:55 BST",
       "agent": "Claude",

@@ -3462,6 +3462,25 @@ function getActiveProductionAnswer(card, meaning = null) {
     return card.productionAnswer || card.targetWord || '';
 }
 
+// A merged lemma pools its sibling forms' examples under one shared sense, but
+// each form's gloss is inflected for that form: despeja "clear!", despejas
+// "you clear", condené "I condemned". Showing the representative's gloss over
+// every example read as if every form were a command. While a pooled example
+// is active, its own form's gloss is shown; the representative's comes back
+// on the next render. Only for meanings with a sense id, which is what
+// Known/Review marks are keyed on, so the swap never moves a saved mark.
+let _pooledGlossOverride = null;
+function applyPooledExampleGloss(card, meaning, example) {
+    if (_pooledGlossOverride) {
+        _pooledGlossOverride.meaning.meaning = _pooledGlossOverride.original;
+        _pooledGlossOverride = null;
+    }
+    const gloss = String(example?.pooledTranslation || '').trim();
+    if (!card?.mergedLemma || !meaning?.senseId || !gloss || gloss === meaning.meaning) return;
+    _pooledGlossOverride = { meaning, original: meaning.meaning };
+    meaning.meaning = gloss;
+}
+
 // A merged lemma remains one stable progress/rank card, but its teaching
 // surface follows the currently displayed pooled example. Keep a lightweight
 // in-session cursor so returning to a card advances through its evidence
@@ -5552,6 +5571,7 @@ function updateCard({ announceHeadword = false } = {}) {
     }
     card._activeExample = cardActiveExample;
     window._currentDisplayedExample = cardActiveExample;
+    applyPooledExampleGloss(card, currentMeaning, cardActiveExample);
     const displayedTargetHeadword = getDisplayedTargetHeadword(card) || displaySurface;
 
     // Determine what to show on front and back based on flip direction

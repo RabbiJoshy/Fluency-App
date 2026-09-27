@@ -957,7 +957,11 @@ function poolLemmaSiblingExamples(filteredData, allVocabData, examplesData) {
             const sibExamples = examplesForMeaning(sib, sm, i, examplesData);
             if (sibExamples.length === 0) continue;
 
-            const target = host.meanings.find(hm => normalize(hm.translation) === normalize(sm.translation))
+            // Match on the sense itself first. Each form's gloss is inflected
+            // for that form (despeja "clear!", despejas "you clear"), so the
+            // same sense no longer shares its translation text across forms.
+            const target = (sm.sense_id && host.meanings.find(hm => hm.sense_id === sm.sense_id))
+                || host.meanings.find(hm => normalize(hm.translation) === normalize(sm.translation))
                 || host.meanings[0];
             if (!target) continue;
             if (!target.examples) target.examples = [];
@@ -973,7 +977,10 @@ function poolLemmaSiblingExamples(filteredData, allVocabData, examplesData) {
                     // its pooled example. Merged cards can then present the
                     // evidenced form (dieron) while retaining the shared
                     // lemma (dar) as their stable identity.
-                    pooledMorphology: e.pooledMorphology || sib.morphology || null
+                    pooledMorphology: e.pooledMorphology || sib.morphology || null,
+                    // The sibling form's own gloss, shown while this example
+                    // is the active one (flashcards.js applyPooledExampleGloss).
+                    pooledTranslation: e.pooledTranslation || sm.translation || null
                 });
             }
         }
