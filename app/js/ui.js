@@ -347,37 +347,6 @@ function updateIncorrectButtonVisibility() {
     }
 }
 
-function updateReviewAccess() {
-    const reviewButton = document.getElementById('dailyReviewBtn');
-    const label = document.getElementById('dailyReviewLabel');
-    if (!reviewButton) return;
-
-    const hide = () => {
-        reviewButton.hidden = true;
-        reviewButton.removeAttribute('aria-label');
-        reviewButton.removeAttribute('data-limit');
-    };
-
-    if (!currentUser || currentUser.isGuest) {
-        hide();
-        return;
-    }
-    const summary = window.getGlobalDueReviewSummary?.(selectedLanguage) || { total: 0 };
-    const total = summary.total || 0;
-    if (!total) {
-        hide();
-        return;
-    }
-
-    const batch = Math.min(total, 100);
-    reviewButton.hidden = false;
-    reviewButton.dataset.limit = String(batch);
-    reviewButton.setAttribute('aria-label', `Review ${batch} of ${total} cards waiting`);
-    if (label) {
-        label.textContent = total === 1 ? '1 card waiting' : `${total} cards waiting`;
-    }
-}
-
 // How long the deck wheel holds before the setup screen behind it is revealed.
 // Extended twice by 3 seconds (5s → 8s → 11s) per user request, for comfortable reading.
 // A tap ends it at once; this is the ceiling for someone who does not tap.
@@ -475,9 +444,6 @@ async function startDailyReview(opts = {}) {
 function setActiveSetupStep(stepId) {
     document.querySelectorAll('#step1 .step-number, #step2 .step-number, #step4 .step-number')
         .forEach(number => number.classList.toggle('--active', number.closest('.setup-step')?.id === stepId));
-    if (stepId === 'step2') {
-        updateReviewAccess();
-    }
 }
 
 const PREFERRED_LANGUAGE_KEY = 'fluencyPreferredLanguageV1';
@@ -596,7 +562,6 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
     document.getElementById('learningContextProgressLabel').textContent = coverageLabel;
     document.getElementById('learningContextProgressValue').textContent = `${coverage.toFixed(1)}%`;
     document.getElementById('learningContextProgressFill').style.width = `${Math.min(coverage, 100)}%`;
-    updateReviewAccess();
 }
 
 function mergeStandardProgressIntoLanguageStep() {
@@ -4231,7 +4196,6 @@ window.hideTotalStatsModal = hideTotalStatsModal;
 window.updateTotalStatsButtonVisibility = updateTotalStatsButtonVisibility;
 window.updateStatsModal = updateStatsModal;
 window.renderSetupExtrasSection = renderSetupExtrasSection;
-window.updateReviewAccess = updateReviewAccess;
 window.startDailyReview = startDailyReview;
 window.renderFastTrackSkippedDecks = renderFastTrackSkippedDecks;
 window.getActiveLevelRanges = getActiveLevelRanges;

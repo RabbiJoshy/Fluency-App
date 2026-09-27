@@ -795,13 +795,6 @@ loadConfig().then(async () => {
         document.getElementById('artistSourcePickerBtn')?.click();
     });
 
-    document.getElementById('dailyReviewBtn')?.addEventListener('click', () => {
-        const button = document.getElementById('dailyReviewBtn');
-        const limit = Number(button?.dataset.limit || 100);
-        closeLearningContext();
-        window.startDailyReview?.({ limit, urgencyTier: 'all' });
-    });
-
     // "?" is the learner tutorial. The portfolio About page links the
     // walkthrough instead and never opens this.
     document.getElementById('helpBtn').addEventListener('click', openTutorialIntroduction);

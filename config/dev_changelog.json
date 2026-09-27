@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T20:36:03+01:00",
+      "date": "2026-09-27 20:36 BST",
+      "agent": "Claude",
+      "summary": "The top bar is ringed in the language's two colours, and the chip's sheet no longer has a Review row.",
+      "detail": [
+        "The bar's outline runs all the way round, fading from the flag's first colour to its second (Spanish red to yellow), in place of the two stripes along the bottom. A hard top/bottom split is one attribute away (data-ring=\"split\" on #topBar).",
+        "Review is gone from the language chip's sheet; it has its own section on the main page."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T20:26:33+01:00",
       "date": "2026-09-27 20:26 BST",
       "agent": "Claude",
