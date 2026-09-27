@@ -56,7 +56,10 @@ function slangExtra(item) {
 }
 
 function entityExtra(item) {
-    if (!g().excludeProperNouns) return false;
+    return Boolean(g().excludeProperNouns) && isEntityItem(item);
+}
+
+function isEntityItem(item) {
     if (item.is_propernoun || item.is_propernoun_corpus || item.extra_category === 'proper_noun' || item.extra_category === 'name') return true;
     if (Array.isArray(item.meanings) && item.meanings.length > 0 && item.meanings.every(m => m.pos === 'PROPN')) return true;
     return false;
@@ -252,6 +255,7 @@ function collectExtras() {
         byCategory: {},
         categories: [],
         allSkipped: [],
+        potential: { grammar: 0, slang: 0, entity: 0 },
         ready: false
     };
     // The full loaded vocabulary, stamped by the last buildFilteredVocab pass.
@@ -273,9 +277,15 @@ function collectExtras() {
     const entities = [];
     const allSkipped = [];
     const seenItemIds = new Set();
+    // How many words each optional shortcut WOULD skip, whether or not it is
+    // on, so the page can list only the shortcuts that do something here.
+    const potential = { grammar: 0, slang: 0, entity: 0 };
 
     for (const item of vocab) {
         if (!item || !item.word || item.duplicate) continue;
+        if (g().isGrammarParticleItem?.(item)) potential.grammar++;
+        if (g().isSlangItem?.(item)) potential.slang++;
+        if (isEntityItem(item)) potential.entity++;
         if (cognateExtra(item)) {
             const entry = { item, mergedInto: null, category: 'cognate', reason: cognateNote(item) };
             cognates.push(entry);
@@ -330,12 +340,12 @@ function collectExtras() {
     allSkipped.sort(byRank);
 
     const categories = [
-        { id: 'all', label: 'All Skipped', icon: '⚡', count: allSkipped.length, entries: allSkipped, desc: 'All words set aside by active Fast Track shortcuts' },
-        { id: 'cognate', label: 'Transparent Cognates', icon: '⚡', count: cognates.length, entries: cognates, desc: 'Words obvious from languages you already know' },
-        { id: 'grammar', label: 'Grammar & Clitics', icon: '🧩', count: grammar.length, entries: grammar, desc: 'High-frequency pronouns, clitic particles & functional words' },
-        { id: 'slang', label: 'Slang & Fillers', icon: '💬', count: slang.length, entries: slang, desc: 'Urban slang, conversational fillers & interjections' },
-        { id: 'entity', label: 'Names & Entities', icon: '📍', count: entities.length, entries: entities, desc: 'Wikipedia-resolved entities, proper nouns & artist names' },
-        { id: 'lemma', label: 'Merged Forms', icon: '📚', count: lemmas.length, entries: lemmas, desc: 'Inflections sharing a base dictionary card' },
+        { id: 'all', label: 'All skipped', count: allSkipped.length, entries: allSkipped },
+        { id: 'cognate', label: 'Look-alikes', count: cognates.length, entries: cognates },
+        { id: 'grammar', label: 'Pronouns & particles', count: grammar.length, entries: grammar },
+        { id: 'slang', label: 'Slang & fillers', count: slang.length, entries: slang },
+        { id: 'entity', label: 'Names & places', count: entities.length, entries: entities },
+        { id: 'lemma', label: 'Combined forms', count: lemmas.length, entries: lemmas },
     ].filter(c => c.id === 'all' || c.count > 0);
 
     const byCategory = {
@@ -356,6 +366,7 @@ function collectExtras() {
         categories,
         byCategory,
         allSkipped,
+        potential,
         ready: true
     };
 }
@@ -499,7 +510,6 @@ function renderRows(entries, kind) {
                 : `<span class="extras-word-stack"><button type="button" class="extras-open-card" data-card-id="${escapeHtml(item.id || '')}" aria-label="View ${escapeHtml(item.word)} card">${escapeHtml(item.word)}</button><span class="extras-translation">${escapeHtml(shortTranslation)}</span></span>`}
             <div class="extras-row-actions">
                 <span class="extras-badge extras-badge--${itemKind}">${escapeHtml(badgeLabel)}</span>
-                <button type="button" class="extras-row-mark-known" data-card-id="${escapeHtml(item.id || '')}" title="Mark as known">✓</button>
             </div>
         </li>`;
     }).join('');
@@ -543,36 +553,6 @@ function groupMergedLemmas(lemmas) {
     }
     list.sort((a, b) => a.rank - b.rank);
     return list;
-}
-
-function renderLemmaGroup(group) {
-    const rank = Number.isFinite(group.rank) ? String(group.rank) : '';
-    const words = group.surfaces.map(item => item.word).join(' ');
-    const translation = shortGloss(group.lemma.translation);
-    const maxPreview = 4;
-    const initialChips = group.surfaces.slice(0, maxPreview).map(item =>
-        `<button type="button" class="lemma-group-chip extras-open-card" data-card-id="${escapeHtml(item.id || '')}">${escapeHtml(item.word)}</button>`
-    ).join('');
-    const extraCount = group.surfaces.length - maxPreview;
-    const moreBtn = extraCount > 0
-        ? `<button type="button" class="lemma-group-more" data-more-count="${extraCount}">+ ${extraCount}</button>`
-        : '';
-    const extraChips = extraCount > 0
-        ? group.surfaces.slice(maxPreview).map(item =>
-            `<button type="button" class="lemma-group-chip extras-open-card" data-card-id="${escapeHtml(item.id || '')}" hidden>${escapeHtml(item.word)}</button>`
-          ).join('')
-        : '';
-
-    return `<li class="lemma-group-row" data-extras-id="${escapeHtml(group.host?.id || '')}" data-search-text="${escapeHtml(`${group.lemma.word} ${group.lemma.translation} ${words}`.toLocaleLowerCase())}">
-        <span class="lemma-group-rank">${escapeHtml(rank)}</span>
-        <span class="lemma-group-lemma"><strong>${escapeHtml(group.lemma.word)}</strong><small class="extras-translation-slot">${escapeHtml(translation)}</small></span>
-        <span class="lemma-group-forms">${initialChips}${extraChips}${moreBtn}</span>
-    </li>`;
-}
-
-function renderLemmaRows(groups) {
-    if (!groups || groups.length === 0) return '';
-    return groups.map(renderLemmaGroup).join('');
 }
 
 // The setup screen loads the *skinny* index — id, word, rank, surface_card_id,
@@ -645,249 +625,241 @@ function hydrateExtrasTranslations(listEl, entries) {
     rows.forEach(row => observer.observe(row));
 }
 
-function renderMergedForms() {
-    const { lemmas } = collectExtras();
-    const body = document.getElementById('mergedFormsBody');
-    if (!body) return lemmas;
-    const groups = groupMergedLemmas(lemmas);
-    const total = document.getElementById('mergedFormsTotal');
-    const forms = groups.reduce((count, group) => count + group.surfaces.length, 0);
-    if (total) {
-        const wordLabel = groups.length === 1 ? 'word' : 'words';
-        const formLabel = forms === 1 ? 'form' : 'forms';
-        total.textContent = groups.length
-            ? `${groups.length.toLocaleString()} ${wordLabel} · ${forms.toLocaleString()} ${formLabel}`
-            : '';
-    }
+// ---------------------------------------------------------------- Smart Skip
+//
+// The Smart Skip page's word list. One menu picks what to look at; the list
+// runs in rank order with a row wherever the level changes, and each of those
+// rows studies that level alone. There is deliberately no "study everything":
+// a whole category can run to thousands of cards.
+//
+// Rows are one line each and never carry controls of their own. Tapping one
+// opens a quick preview (openSmartSkipPreview); the full card is one tap past
+// that, and leaving it comes back to this exact spot.
 
-    if (groups.length === 0) {
-        body.innerHTML = `<p class="extras-empty">No word forms are currently merged. Every form is shown as its own card.</p>`;
-        return lemmas;
-    }
-
-    body.innerHTML = `<ul class="lemma-group-list">${groups.map(renderLemmaGroup).join('')}</ul>`;
-    hydrateExtrasTranslations(
-        body.querySelector('.lemma-group-list'),
-        groups.map(group => ({ item: group.host })),
-    );
-    return lemmas;
-}
+const SKIP_KINDS = [
+    { id: 'cognate', menu: 'Look-alikes', tag: 'look-alike', why: 'Look-alike' },
+    { id: 'grammar', menu: 'Pronouns & particles', tag: 'grammar', why: 'Pronoun or particle' },
+    { id: 'slang', menu: 'Slang & fillers', tag: 'slang', why: 'Slang or filler' },
+    { id: 'entity', menu: 'Names & places', tag: 'name', why: 'Name or place' },
+];
+const KIND_BY_ID = Object.fromEntries(SKIP_KINDS.map(kind => [kind.id, kind]));
+const PAGE_CHUNK = 80;
 
 let _activeSkippedCategory = 'all';
-let _currentDisplayEntries = [];
-let _renderedCount = 0;
-let _currentSentinelObserver = null;
-const PAGE_CHUNK = 60;
+let _ssQuery = '';
+let _ssItems = [];          // flat display list: level dividers and rows
+let _ssRows = [];           // row payloads, indexed by data-ss-row
+let _ssLevels = [];         // level payloads, indexed by data-ss-level
+let _ssRendered = 0;
+let _ssObserver = null;
+let _ssSignature = '';
 
-async function batchMarkSkippedKnown(entries = []) {
-    const list = Array.isArray(entries) ? entries : [];
-    if (!list.length) return 0;
-    const save = g().saveWordProgress;
-    let count = 0;
-    for (const entry of list) {
-        const item = entry.item || entry;
-        if (!item || !item.word) continue;
-        const state = g().getSetupLearningState?.(item);
-        if (state?.seen && !state?.needsReview) continue; // already known
-        if (save) {
-            save(item, true);
-            count++;
-        }
-    }
-    if (count > 0) {
-        window.cacheProgressLocally?.();
-        window.bumpProgressEpoch?.();
-        window.refreshFastMode?.();
-        window.renderFastTrackSkippedDecks?.();
-    }
-    return count;
+function skipEntriesFor(extras, category) {
+    if (category === 'all') return extras.allSkipped || [];
+    return extras.byCategory?.[category] || [];
 }
 
-function appendNextChunk(container, entries, isLemma) {
-    if (!container || _renderedCount >= entries.length) return;
-    const nextChunk = entries.slice(_renderedCount, _renderedCount + PAGE_CHUNK);
-    _renderedCount += nextChunk.length;
-
-    const html = isLemma ? renderLemmaRows(nextChunk) : renderRows(nextChunk);
-    const temp = document.createElement('div');
-    temp.innerHTML = html;
-    const frag = document.createDocumentFragment();
-    while (temp.firstChild) frag.appendChild(temp.firstChild);
-
-    const sentinel = container.querySelector('#extrasListSentinel');
-    if (sentinel) {
-        container.insertBefore(frag, sentinel);
-    } else {
-        container.appendChild(frag);
+function smartSkipMenu(extras) {
+    const skips = SKIP_KINDS
+        .map(kind => ({ ...kind, count: skipEntriesFor(extras, kind.id).length }))
+        .filter(kind => kind.count > 0);
+    const options = [];
+    // "All" only earns its place when there is more than one thing to mix.
+    if (skips.length > 1) {
+        options.push({ id: 'all', label: `All skipped (${(extras.allSkipped || []).length.toLocaleString()})` });
     }
+    skips.forEach(kind => options.push({ id: kind.id, label: `${kind.menu} (${kind.count.toLocaleString()})` }));
+    const combined = groupMergedLemmas(extras.lemmas || []);
+    if (combined.length) {
+        options.push({ id: 'lemma', label: `Combined forms (${combined.length.toLocaleString()} cards)` });
+    }
+    return { options, combined };
+}
 
-    hydrateExtrasTranslations(container, nextChunk);
+function entryMatches(entry, needle) {
+    if (!needle) return true;
+    if (entry.group) {
+        const words = entry.group.surfaces.map(item => item.word).join(' ');
+        return `${entry.group.lemma.word} ${entry.group.lemma.translation} ${words}`
+            .toLocaleLowerCase().includes(needle);
+    }
+    const item = entry.item || entry;
+    return `${item.word} ${firstTranslation(item)}`.toLocaleLowerCase().includes(needle);
+}
 
-    if (sentinel) {
-        if (_renderedCount >= entries.length) {
-            sentinel.remove();
+function levelLabel(range, index) {
+    return range ? `Level ${index + 1}` : 'Other words';
+}
+
+// Level groups are cut from the unfolded entries, so each divider's count is
+// exactly what "Study these" loads. Look-alikes are folded only for display.
+function buildSmartSkipItems(extras, category, combined, needle) {
+    const ranges = g().getActiveLevelRanges?.() || [];
+    const isLemma = category === 'lemma';
+    const source = isLemma
+        ? combined.map(group => ({ item: group.host, group }))
+        : skipEntriesFor(extras, category);
+    const matched = source.filter(entry => entryMatches(entry, needle));
+    const items = [];
+    const rows = [];
+    const levels = [];
+    for (const { range, index, entries } of skippedByLevel(matched, ranges)) {
+        const levelIndex = levels.length;
+        levels.push({ range, index, label: levelLabel(range, index), entries, category });
+        items.push({ type: 'level', levelIndex });
+        let display;
+        if (isLemma) {
+            display = entries.map(entry => ({ kind: 'lemma', item: entry.item, group: entry.group }));
         } else {
-            const btn = sentinel.querySelector('.extras-load-more-btn');
-            if (btn) btn.textContent = `Load more (${entries.length - _renderedCount} remaining)`;
+            const cognates = groupCognatesByLemmaAndEnglish(entries.filter(entry => entry.category === 'cognate'))
+                .map(entry => ({ kind: 'cognate', item: entry.item, extra: entry.extraSurfaces || [] }));
+            const others = entries.filter(entry => entry.category !== 'cognate')
+                .map(entry => ({ kind: entry.category, item: entry.item, extra: [] }));
+            display = [...cognates, ...others]
+                .sort((a, b) => Number(a.item.rank ?? Infinity) - Number(b.item.rank ?? Infinity));
+        }
+        for (const row of display) {
+            row.levelIndex = levelIndex;
+            items.push({ type: 'row', rowIndex: rows.length });
+            rows.push(row);
         }
     }
+    return { items, rows, levels };
 }
 
-function renderSkippedWords(filterCategory = _activeSkippedCategory) {
-    _activeSkippedCategory = filterCategory;
+function smartSkipRowHtml(row, index, showTag) {
+    const item = row.item;
+    const id = escapeHtml(item.id || '');
+    if (row.kind === 'lemma') {
+        const lemma = row.group.lemma;
+        const forms = row.group.surfaces.map(surface => escapeHtml(surface.word)).join(' · ');
+        return `<li><button type="button" class="smart-skip-row smart-skip-row--lemma" data-ss-row="${index}" data-extras-id="${id}">
+            <span class="smart-skip-w">${escapeHtml(lemma.word)}</span>
+            <span class="smart-skip-g extras-translation-slot">${escapeHtml(shortGloss(lemma.translation))}</span>
+            <span class="smart-skip-forms">${forms}</span>
+        </button></li>`;
+    }
+    const tag = showTag ? escapeHtml(KIND_BY_ID[row.kind]?.tag || '') : '';
+    const more = row.extra.length ? `<span class="smart-skip-more">+${row.extra.length}</span>` : '';
+    let gloss;
+    if (row.kind === 'cognate') {
+        const choice = cognateEnglish(item);
+        gloss = `<span class="smart-skip-g"><span class="cognate-pair-eq"${choice.obvious ? '' : ' hidden'} aria-hidden="true">=</span><span class="cognate-pair-known${choice.obvious ? '' : ' is-gloss'}">${escapeHtml(choice.word)}</span></span>`;
+    } else {
+        gloss = `<span class="smart-skip-g is-gloss extras-translation-slot">${escapeHtml(shortGloss(firstTranslation(item)))}</span>`;
+    }
+    return `<li><button type="button" class="smart-skip-row extras-row--${escapeHtml(row.kind)}" data-ss-row="${index}" data-extras-id="${id}">
+        <span class="smart-skip-w">${escapeHtml(item.word)}${more}</span>
+        ${gloss}
+        <span class="smart-skip-tag">${tag}</span>
+    </button></li>`;
+}
+
+// Each level is its own group so its sticky header is pushed off by the
+// next one instead of staying stuck above it.
+function smartSkipLevelHtml(level, index) {
+    const isLemma = level.category === 'lemma';
+    const count = level.entries.length;
+    const unit = isLemma ? (count === 1 ? 'card' : 'cards') : (count === 1 ? 'word' : 'words');
+    const study = isLemma ? ''
+        : `<button type="button" class="smart-skip-study" data-ss-level="${index}">Study these</button>`;
+    return `<li class="smart-skip-group" data-ss-group="${index}">
+        <div class="smart-skip-level"><b>${escapeHtml(level.label)}</b><span>${count.toLocaleString()} ${unit}</span>${study}</div>
+        <ul class="smart-skip-group-rows"></ul>
+    </li>`;
+}
+
+function smartSkipScroller() {
+    return document.querySelector('#fastModeModal > .modal-content');
+}
+
+function appendSmartSkipChunk(list) {
+    if (!list || _ssRendered >= _ssItems.length) return;
+    const chunk = _ssItems.slice(_ssRendered, _ssRendered + PAGE_CHUNK);
+    _ssRendered += chunk.length;
+    const showTag = _activeSkippedCategory === 'all';
+    const sentinel = list.querySelector(':scope > .smart-skip-sentinel');
+    let rows = null;
+    let pending = '';
+    const flush = () => {
+        if (rows && pending) rows.insertAdjacentHTML('beforeend', pending);
+        pending = '';
+    };
+    for (const entry of chunk) {
+        if (entry.type === 'level') {
+            flush();
+            sentinel.insertAdjacentHTML('beforebegin', smartSkipLevelHtml(_ssLevels[entry.levelIndex], entry.levelIndex));
+            rows = list.querySelector(`[data-ss-group="${entry.levelIndex}"] > .smart-skip-group-rows`);
+        } else {
+            if (!rows) {
+                const row = _ssRows[entry.rowIndex];
+                rows = list.querySelector(`[data-ss-group="${row.levelIndex}"] > .smart-skip-group-rows`);
+            }
+            pending += smartSkipRowHtml(_ssRows[entry.rowIndex], entry.rowIndex, showTag);
+        }
+    }
+    flush();
+    hydrateExtrasTranslations(list, chunk.filter(entry => entry.type === 'row')
+        .map(entry => ({ item: _ssRows[entry.rowIndex].item })));
+    if (_ssRendered >= _ssItems.length) sentinel?.remove();
+}
+
+// Re-rendering resets the list, so it happens only when what the list shows
+// has changed. fast-mode.js refreshes on every toggle and mutation.
+function renderSkippedWords(filterCategory = _activeSkippedCategory, { force = false } = {}) {
     const extras = collectExtras();
     const body = document.getElementById('skippedWordsBody');
-    if (!body) return extras.cognates;
-    const total = document.getElementById('skippedWordsTotal');
-
-    // Update shared category dropdown
     const select = document.getElementById('skippedCategorySelect');
-    if (select && select.value !== filterCategory) {
-        select.value = filterCategory;
-    }
+    if (!body) return extras.cognates;
 
-    const allCount = extras.allSkipped.length;
-    const categories = [
-        { id: 'all', label: 'All Skipped', icon: '⚡', count: allCount },
-        { id: 'cognate', label: 'Transparent Cognates', icon: '⚡', count: extras.cognates.length },
-        { id: 'lemma', label: 'Merged Word Forms', icon: '📚', count: extras.lemmas.length },
-        { id: 'grammar', label: 'Grammar & Clitics', icon: '🧩', count: extras.grammar.length },
-        { id: 'slang', label: 'Slang & Fillers', icon: '💬', count: extras.slang.length },
-        { id: 'entity', label: 'Names & Entities', icon: '📍', count: extras.entities.length },
-    ].filter(c => c.id === 'all' || c.count > 0 || c.id === filterCategory);
+    const { options, combined } = smartSkipMenu(extras);
+    const category = options.some(option => option.id === filterCategory)
+        ? filterCategory
+        : (options[0]?.id || 'all');
+    const needle = _ssQuery.trim().toLocaleLowerCase();
+    const signature = JSON.stringify([
+        g().selectedLanguage, Boolean(g().activeArtist), category, needle, extras.ready,
+        options.map(option => option.label), (g().getActiveLevelRanges?.() || []).length,
+    ]);
+    if (!force && signature === _ssSignature) return extras.cognates;
+    _ssSignature = signature;
+    _activeSkippedCategory = category;
 
-    // Populate dropdown options with counts
     if (select) {
-        select.innerHTML = categories.map(c =>
-            `<option value="${escapeHtml(c.id)}"${c.id === filterCategory ? ' selected' : ''}>${c.icon} ${escapeHtml(c.label)} (${c.count.toLocaleString()})</option>`
+        select.innerHTML = options.map(option =>
+            `<option value="${escapeHtml(option.id)}"${option.id === category ? ' selected' : ''}>${escapeHtml(option.label)}</option>`
         ).join('');
+        select.closest('.smart-skip-toolbar')?.toggleAttribute('hidden', options.length === 0);
     }
+    _ssObserver?.disconnect();
+    _ssObserver = null;
 
-    // Resolve entries for selected category
-    const isLemma = filterCategory === 'lemma';
-    let entries = [];
-    if (isLemma) {
-        entries = groupMergedLemmas(extras.lemmas);
-        const forms = entries.reduce((count, g) => count + g.surfaces.length, 0);
-        if (total) total.textContent = `${entries.length.toLocaleString()} words · ${forms.toLocaleString()} forms`;
-    } else if (filterCategory === 'cognate') {
-        entries = groupCognatesByLemmaAndEnglish(extras.cognates);
-        if (total) total.textContent = `${extras.cognates.length.toLocaleString()} words (${entries.length.toLocaleString()} groups)`;
-    } else if (filterCategory === 'all') {
-        const foldedCognates = groupCognatesByLemmaAndEnglish(extras.cognates);
-        entries = [...foldedCognates, ...extras.grammar, ...extras.slang, ...extras.entities];
-        entries.sort((a, b) => (Number(a.item?.rank ?? Infinity) - Number(b.item?.rank ?? Infinity)));
-        if (total) total.textContent = `${allCount.toLocaleString()} words`;
-    } else {
-        entries = extras.byCategory?.[filterCategory] || [];
-        if (total) total.textContent = `${entries.length.toLocaleString()} words`;
-    }
-
-    _currentDisplayEntries = entries;
-    _renderedCount = 0;
-
-    if (entries.length === 0) {
-        body.innerHTML = `
-            <div class="fast-track-triage-tabs" id="skippedCategoryTabs">
-                ${categories.map(c => `
-                    <button type="button" class="fast-track-triage-tab${c.id === filterCategory ? ' is-active' : ''}" data-cat-id="${escapeHtml(c.id)}">
-                        <span>${c.icon} ${escapeHtml(c.label)}</span>
-                        <span class="fast-track-tab-count">${c.count}</span>
-                    </button>
-                `).join('')}
-            </div>
-            <p class="extras-empty">No words are set aside under ${escapeHtml(filterCategory)}. Every word remains in your deck.</p>
-        `;
+    if (!options.length) {
+        _ssItems = []; _ssRows = []; _ssLevels = [];
+        body.innerHTML = extras.ready
+            ? '<p class="smart-skip-empty">Nothing is skipped, so every word is in your sets.</p>'
+            : '';
         return extras.cognates;
     }
 
-    const tabsHtml = `
-        <div class="fast-track-triage-tabs" id="skippedCategoryTabs">
-            ${categories.map(c => `
-                <button type="button" class="fast-track-triage-tab${c.id === filterCategory ? ' is-active' : ''}" data-cat-id="${escapeHtml(c.id)}">
-                    <span>${c.icon} ${escapeHtml(c.label)}</span>
-                    <span class="fast-track-tab-count">${c.count}</span>
-                </button>
-            `).join('')}
-        </div>
-    `;
-
-    const actionsHtml = `
-        <div class="fast-track-triage-action-bar">
-            <button type="button" class="fast-track-batch-action-btn fast-track-batch-study-btn" id="studyFilteredSkippedBtn">
-                ⚡ Study ${escapeHtml(filterCategory === 'all' ? 'All' : filterCategory)} (${entries.length})
-            </button>
-        </div>
-    `;
-
-    const initialChunk = entries.slice(0, PAGE_CHUNK);
-    _renderedCount = initialChunk.length;
-    const initialHtml = isLemma ? renderLemmaRows(initialChunk) : renderRows(initialChunk);
-
-    const hasMore = _renderedCount < entries.length;
-    const sentinelHtml = hasMore
-        ? `<li id="extrasListSentinel" class="extras-list-sentinel"><button type="button" class="extras-load-more-btn">Load more (${entries.length - _renderedCount} remaining)</button></li>`
-        : '';
-
-    const listTag = isLemma ? 'lemma-group-list' : 'extras-list';
-    body.innerHTML = `
-        ${tabsHtml}
-        ${actionsHtml}
-        <ul class="${listTag}" id="extrasRowsList">${initialHtml}${sentinelHtml}</ul>
-    `;
-
-    const listEl = body.querySelector('#extrasRowsList');
-    hydrateExtrasTranslations(listEl, initialChunk);
-
-    // Infinite scroll observer on sentinel
-    if (_currentSentinelObserver) {
-        _currentSentinelObserver.disconnect();
-        _currentSentinelObserver = null;
+    ({ items: _ssItems, rows: _ssRows, levels: _ssLevels } = buildSmartSkipItems(extras, category, combined, needle));
+    if (!_ssItems.length) {
+        body.innerHTML = `<p class="smart-skip-empty">No matches for “${escapeHtml(_ssQuery.trim())}”.</p>`;
+        return extras.cognates;
     }
-    const sentinelEl = body.querySelector('#extrasListSentinel');
-    if (sentinelEl && typeof IntersectionObserver === 'function') {
-        _currentSentinelObserver = new IntersectionObserver(records => {
-            if (records.some(r => r.isIntersecting)) {
-                appendNextChunk(listEl, _currentDisplayEntries, isLemma);
-            }
-        }, { root: body, rootMargin: '300px' });
-        _currentSentinelObserver.observe(sentinelEl);
+    body.innerHTML = '<ul class="smart-skip-list" id="extrasRowsList"><li class="smart-skip-sentinel" aria-hidden="true"></li></ul>';
+    const list = body.querySelector('.smart-skip-list');
+    _ssRendered = 0;
+    appendSmartSkipChunk(list);
+    const sentinel = list.querySelector('.smart-skip-sentinel');
+    if (sentinel && typeof IntersectionObserver === 'function') {
+        _ssObserver = new IntersectionObserver(records => {
+            if (records.some(record => record.isIntersecting)) appendSmartSkipChunk(list);
+        }, { root: smartSkipScroller(), rootMargin: '400px' });
+        _ssObserver.observe(sentinel);
+    } else {
+        while (_ssRendered < _ssItems.length) appendSmartSkipChunk(list);
     }
-    sentinelEl?.querySelector('.extras-load-more-btn')?.addEventListener('click', () => {
-        appendNextChunk(listEl, _currentDisplayEntries, isLemma);
-    });
-
-    // Bind tab clicks
-    body.querySelectorAll('.fast-track-triage-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            renderSkippedWords(tab.dataset.catId);
-        });
-    });
-
-    // Bind study button
-    body.querySelector('#studyFilteredSkippedBtn')?.addEventListener('click', () => {
-        document.getElementById('skippedWordsModal')?.classList.add('hidden');
-        startFastTrackSkippedSet(filterCategory);
-    });
-
-    // Bind individual mark known buttons
-    body.querySelectorAll('.extras-row-mark-known').forEach(button => {
-        button.addEventListener('click', async event => {
-            event.stopPropagation();
-            const cardId = button.dataset.cardId;
-            const target = entries.find(e => (e.item?.id || e.id) === cardId);
-            const item = target?.item || target;
-            if (item && window.saveWordProgress) {
-                window.saveWordProgress(item, true);
-                window.cacheProgressLocally?.();
-                window.bumpProgressEpoch?.();
-                button.classList.add('is-marked');
-                button.textContent = '✓ Known';
-                button.disabled = true;
-            }
-        });
-    });
-
     return extras.cognates;
 }
 
@@ -916,97 +888,23 @@ function skippedByLevel(cognates, ranges) {
     return levels.filter(level => level.entries.length);
 }
 
-// One deck per level in Speech; category decks in Lyrics. Progress stays on each original card ID.
-function renderFastTrackDeck({ cognates = [], lemmas = [] } = {}, { ranges = [], selectedLevel = null, progressForItem = null } = {}) {
-    const isArtist = Boolean(g().activeArtist);
-    if (!isArtist) {
-        const groups = skippedByLevel(cognates, ranges);
-        const currentIndex = groups.find(group => String(group.range?.level) === String(selectedLevel))?.index ?? groups[0]?.index;
-        const skippedBlock = cognates.length
-            ? `<div class="fast-track-level-list">${groups.map(({ range, index, entries }) => {
-                    const label = range ? `Level ${index + 1}` : 'Skipped words';
-                    const states = entries.map(({ item }) => progressForItem?.(item) || null);
-                    const seen = states.filter(state => state?.seen).length;
-                    const review = states.filter(state => state?.needsReview).length;
-                    const complete = seen === entries.length && review === 0;
-                    const mark = complete ? ' is-complete' : review ? ' needs-review' : '';
-                    const current = index === currentIndex ? ' is-current' : '';
-                    return `<button type="button" class="fast-track-level-deck${mark}${current}" data-ft-kind="cognate" data-ft-level="${index}" data-ft-start="0" aria-label="Study ${label}, ${entries.length} skipped words, ${seen} seen">
-                        <strong>${label}</strong>
-                        <span>${seen}/${entries.length}</span>
-                    </button>`;
-                }).join('')}</div>`
-            : '';
-        const mergedNote = lemmas.length
-            ? `<p class="extras-deck-hint extras-merged-note">Merged word forms stay on their shared cards, so they do not need separate decks.</p>`
-            : '';
-        return `${skippedBlock}${mergedNote}`;
-    }
-
-    // Lyrics mode: Category decks
-    const extras = collectExtras();
-    const categories = (extras.categories || []).filter(c => c.id !== 'lemma' && c.count > 0);
-    if (!categories.length) {
-        return `<p class="fast-track-study-empty">No words are set aside with these settings. All lyrics vocabulary is in your main sets.</p>`;
-    }
-    return `<div class="fast-track-level-list">${categories.map(cat => {
-        const entries = cat.entries || [];
-        const states = entries.map(({ item }) => progressForItem?.(item) || null);
-        const seen = states.filter(state => state?.seen).length;
-        const review = states.filter(state => state?.needsReview).length;
-        const complete = seen === entries.length && review === 0;
-        const mark = complete ? ' is-complete' : review ? ' needs-review' : '';
-        return `<button type="button" class="fast-track-level-deck${mark}" data-ft-kind="${cat.id}" data-ft-level="0" data-ft-start="0" aria-label="Study ${cat.label}, ${entries.length} skipped words, ${seen} seen">
-            <strong>${cat.icon} ${cat.label}</strong>
-            <span>${seen}/${entries.length}</span>
-        </button>`;
-    }).join('')}</div>`;
-}
-
+// One level of one category becomes a deck. Progress stays on each original
+// card id, so studying here and in the main sets is the same progress.
 async function startFastTrackSkippedSet(kind, start, levelIndex = 0, ranges = []) {
     const extras = collectExtras();
-    let entries = [];
-    let label = 'Skipped words';
-    if (kind === 'lemma') {
-        const level = skippedByLevel(extras.lemmas, ranges).find(group => group.index === Number(levelIndex));
-        entries = level?.entries || [];
-        label = level?.range ? `Level ${Number(levelIndex) + 1} Merged` : 'Merged words';
-    } else if (kind === 'grammar') {
-        entries = extras.grammar || [];
-        label = 'Grammar & clitics';
-    } else if (kind === 'slang') {
-        entries = extras.slang || [];
-        label = 'Slang & fillers';
-    } else if (kind === 'entity') {
-        entries = extras.entities || [];
-        label = 'Names & entities';
-    } else if (kind === 'all') {
-        entries = extras.allSkipped || [];
-        label = 'All skipped words';
-    } else {
-        const allEntries = extras.cognates || [];
-        if (Number.isFinite(Number(levelIndex)) && ranges && ranges.length) {
-            const level = skippedByLevel(allEntries, ranges).find(group => group.index === Number(levelIndex));
-            if (level) {
-                entries = level.entries || [];
-                label = level.range ? `Level ${Number(levelIndex) + 1}` : 'Skipped words';
-            } else {
-                entries = allEntries;
-            }
-        } else {
-            entries = allEntries;
-        }
-    }
-    const slice = entries.map(({ item }) => item);
+    const entries = skipEntriesFor(extras, kind);
+    const level = skippedByLevel(entries, ranges).find(group => group.index === Number(levelIndex));
+    const slice = (level?.entries || []).map(({ item }) => item);
     if (!slice.length || !g().loadVocabularyData) return;
-    const levelLabel = label;
+    const what = kind === 'all' ? 'skipped words' : (KIND_BY_ID[kind]?.menu || 'Skipped words').toLocaleLowerCase();
+    const levelLabelText = levelLabel(level.range, level.index);
     const loadingMessage = document.getElementById('loadingMessage');
     if (loadingMessage) {
         loadingMessage.style.display = 'block';
-        loadingMessage.textContent = `Loading ${levelLabel} skipped words...`;
+        loadingMessage.textContent = `Loading ${levelLabelText}: ${what}…`;
     }
-    window.showAppLoading?.(`Loading ${levelLabel} skipped words`, 'Preparing Fast Track cards…');
-    document.getElementById('fastTrackStudyModal')?.classList.add('hidden');
+    window.showAppLoading?.(`Loading ${levelLabelText}: ${what}`, 'Preparing Smart Skip cards…');
+    closeSmartSkipPreview();
     document.getElementById('fastModeModal')?.classList.add('hidden');
     try {
         await g().loadVocabularyData('1-50000', {
@@ -1016,7 +914,7 @@ async function startFastTrackSkippedSet(kind, start, levelIndex = 0, ranges = []
             setNumber: 1,
             levelSetCount: 1,
             levelNumber: null,
-            setLabel: `${levelLabel} · ${slice.length} skipped words`,
+            setLabel: `${levelLabelText} · ${slice.length} ${what}`,
             isFastTrack: true,
         });
     } finally {
@@ -1025,8 +923,122 @@ async function startFastTrackSkippedSet(kind, start, levelIndex = 0, ranges = []
     }
 }
 
+// ---------------------------------------------------------------- preview
+
+let _ssPreviewRow = null;
+let _ssPreviewToken = 0;
+
+function markWord(sentence, word) {
+    const safe = escapeHtml(sentence);
+    const target = escapeHtml(word).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    if (!target) return safe;
+    return safe.replace(new RegExp(`(^|[^\\p{L}])(${target})(?![\\p{L}])`, 'iu'), '$1<mark>$2</mark>');
+}
+
+// The setup screen holds the skinny index, so both the gloss and the example
+// may need fetching. popupFoundWord reads the same two sources.
+async function previewExample(item) {
+    const langConfig = g().config?.languages?.[g().selectedLanguage] || {};
+    const rank = Number(item.rank) || 1;
+    if (!firstTranslation(item) && g().ensureIndexRowsForRange) {
+        try { await g().ensureIndexRowsForRange(langConfig, rank, rank + 1, [rank]); } catch (_) {}
+    }
+    if (langConfig.examplesPath && g().ensureExamplesForRange) {
+        try { await g().ensureExamplesForRange(langConfig, rank, rank + 1); } catch (_) {}
+    }
+    const stored = g()._cachedExamplesData?.[item.id];
+    const targetField = langConfig.exampleTargetField || 'example_spanish';
+    const englishField = langConfig.exampleEnglishField || 'example_english';
+    const meanings = item.meanings || [];
+    for (let i = 0; i < meanings.length; i++) {
+        const meaning = meanings[i];
+        const examples = meaning.examples?.length ? meaning.examples : (stored?.m?.[meaning._masterSenseIndex ?? i] || []);
+        const example = g().getExampleFromMeaning?.({ ...meaning, examples }, targetField, englishField);
+        if (example?.targetSentence) return example;
+    }
+    return null;
+}
+
+function paintPreviewGloss(row) {
+    const gloss = document.getElementById('smartSkipPreviewGloss');
+    if (!gloss) return;
+    if (row.kind === 'cognate') {
+        const choice = cognateEnglish(row.item);
+        gloss.textContent = choice.obvious ? `= ${choice.word}` : choice.word;
+    } else if (row.kind === 'lemma') {
+        gloss.textContent = shortGloss(row.group.lemma.translation || firstTranslation(row.item));
+    } else {
+        gloss.textContent = shortGloss(firstTranslation(row.item));
+    }
+}
+
+async function openSmartSkipPreview(rowIndex) {
+    const row = _ssRows[rowIndex];
+    const modal = document.getElementById('smartSkipPreview');
+    if (!row || !modal) return;
+    _ssPreviewRow = row;
+    const token = ++_ssPreviewToken;
+    const level = _ssLevels[row.levelIndex];
+    const why = row.kind === 'lemma' ? 'Combined forms' : (KIND_BY_ID[row.kind]?.why || 'Skipped');
+    const word = row.kind === 'lemma' ? row.group.lemma.word : row.item.word;
+    document.getElementById('smartSkipPreviewWhy').textContent = level ? `${why} · ${level.label}` : why;
+    document.getElementById('smartSkipPreviewWord').textContent = word;
+    paintPreviewGloss(row);
+    const forms = document.getElementById('smartSkipPreviewForms');
+    const others = row.kind === 'lemma'
+        ? row.group.surfaces.map(surface => surface.word).filter(surface => surface !== word)
+        : row.extra.map(surface => surface.word);
+    forms.textContent = others.length
+        ? `${row.kind === 'lemma' ? 'On this card' : 'Also'}: ${others.join(' · ')}`
+        : '';
+    forms.hidden = !others.length;
+    const exampleBox = document.getElementById('smartSkipPreviewExample');
+    exampleBox.hidden = true;
+    modal.hidden = false;
+    modal.querySelector('.smart-skip-preview-card')?.focus();
+
+    const example = await previewExample(row.item);
+    if (token !== _ssPreviewToken || modal.hidden) return;
+    paintPreviewGloss(row);
+    if (example) {
+        document.getElementById('smartSkipPreviewTarget').innerHTML = markWord(example.targetSentence, row.item.word);
+        document.getElementById('smartSkipPreviewEnglish').textContent = example.englishSentence || '';
+        exampleBox.hidden = false;
+    }
+}
+
+function closeSmartSkipPreview() {
+    const modal = document.getElementById('smartSkipPreview');
+    if (modal) modal.hidden = true;
+    _ssPreviewRow = null;
+    _ssPreviewToken++;
+}
+
+// The page is only hidden while the card is up, so everything on it -- menu,
+// search, rendered rows -- is still there to come back to. Only the scroll
+// position is lost with display:none, so it is carried across by hand.
+async function openSmartSkipCard() {
+    const row = _ssPreviewRow;
+    const id = row?.item?.id;
+    if (!id || !g().popupFoundWord) return;
+    const page = document.getElementById('fastModeModal');
+    const scroller = smartSkipScroller();
+    const scrollTop = scroller?.scrollTop || 0;
+    closeSmartSkipPreview();
+    page?.classList.add('hidden');
+    const comeBack = () => {
+        page?.classList.remove('hidden');
+        requestAnimationFrame(() => { if (scroller) scroller.scrollTop = scrollTop; });
+    };
+    try {
+        await g().popupFoundWord({ id }, { reopenSearchOnBack: false, startFlipped: true, onClose: comeBack, returnLabel: 'Smart Skip' });
+    } catch (error) {
+        console.error('Could not open the card', error);
+        comeBack();
+    }
+}
+
 function renderExtras() {
-    renderMergedForms();
     renderSkippedWords();
 
     const { cognates, lemmas } = collectExtras();
@@ -1056,72 +1068,38 @@ function renderExtras() {
     }
     body.innerHTML = sections.length > 0
         ? sections.join('')
-        : `<p class="extras-empty">Nothing is being skipped. Fast Track is currently showing every word as its own card.</p>`;
+        : `<p class="extras-empty">Nothing is being skipped. Every word is its own card.</p>`;
     body.querySelectorAll('.extras-list').forEach((list, index) => {
         hydrateExtrasTranslations(list, index === 0 && cognates.length ? cognates : lemmas);
     });
     return { cognates, lemmas };
 }
 
-// One number per setting, and only when it has been counted.
-//
-// The count used to appear twice -- on the button and again in an info line
-// underneath, written by two different functions in two different wordings.
-// The info lines are gone; the button carries the figure, because the button is
-// the thing that acts on it.
-//
-// A count of zero is now three different states and they are no longer
-// conflated: nothing loaded yet (say nothing), the filter is off (say nothing),
-// and the filter is on but matched no word (say exactly that). The last one is
-// what "View skipped words (0)" used to render, which read like a broken button
-// rather than a result.
-function applyCountedButton(button, label, none, { active, ready, count, noneText }) {
-    if (!button) return;
-    const show = active && ready && count > 0;
-    button.style.display = show ? 'inline-flex' : 'none';
-    if (label && show) label.textContent = `View ${count.toLocaleString()} ${count === 1 ? noneText.one : noneText.many}`;
-    if (none) {
-        const empty = active && ready && count === 0;
-        none.hidden = !empty;
-        if (empty) none.textContent = noneText.empty;
-    }
+// A switched-on shortcut that matched nothing says so under its row. The
+// three states stay apart: nothing loaded yet (say nothing), the shortcut is
+// off (say nothing), and on but empty (say exactly that). The counts
+// themselves sit on each shortcut's row, written by fast-mode.js.
+function applyNoneLine(none, { active, ready, count, text }) {
+    if (!none) return;
+    const empty = active && ready && count === 0;
+    none.hidden = !empty;
+    if (empty) none.textContent = text;
 }
 
 function refreshExtrasButtons() {
     const { cognates, lemmas, ready } = collectExtras();
-
-    applyCountedButton(
-        document.getElementById('viewMergedFormsBtn'),
-        document.getElementById('mergedFormsCount'),
-        document.getElementById('lemmaNoneLine'),
-        {
-            active: Boolean(g().useLemmaMode && g().lemmaFieldAvailable),
-            ready,
-            count: lemmas.length,
-            noneText: {
-                one: 'merged form',
-                many: 'merged forms',
-                empty: 'No forms shared a word here, so nothing was merged.',
-            },
-        }
-    );
-
-    applyCountedButton(
-        document.getElementById('viewSkippedWordsBtn'),
-        document.getElementById('skippedWordsCount'),
-        document.getElementById('cognateNoneLine'),
-        {
-            active: Boolean(g().excludeCognates && g().cognateFieldAvailable),
-            ready,
-            count: cognates.length,
-            noneText: {
-                one: 'skipped word',
-                many: 'skipped words',
-                empty: 'No word in this deck was close enough to skip, so every word stayed in.',
-            },
-        }
-    );
-
+    applyNoneLine(document.getElementById('lemmaNoneLine'), {
+        active: Boolean(g().useLemmaMode && g().lemmaFieldAvailable),
+        ready,
+        count: lemmas.length,
+        text: 'No forms share a word here, so nothing was combined.',
+    });
+    applyNoneLine(document.getElementById('cognateNoneLine'), {
+        active: Boolean(g().excludeCognates && g().cognateFieldAvailable),
+        ready,
+        count: cognates.length,
+        text: 'No word in this deck was close enough to skip.',
+    });
     refreshExtrasButton();
 }
 
@@ -1133,8 +1111,8 @@ function refreshExtrasButton() {
     if (button) {
         button.style.display = 'inline-flex';
         button.textContent = total === 0
-            ? 'See Fast Track words'
-            : total === 1 ? 'See 1 Fast Track word' : `See ${total} Fast Track words`;
+            ? 'See skipped words'
+            : total === 1 ? 'See 1 skipped word' : `See ${total} skipped words`;
     }
     window.renderSetupExtrasSection?.();
 }
@@ -1146,44 +1124,9 @@ function filterList(bodyId, query) {
     });
 }
 
-function filterMergedForms(query) {
-    filterList('mergedFormsBody', query);
-}
-
 function filterSkippedWords(query) {
-    const needle = String(query || '').trim().toLocaleLowerCase();
-    const isLemma = _activeSkippedCategory === 'lemma';
-    const listEl = document.getElementById('extrasRowsList');
-    if (!listEl) return;
-    if (!needle) {
-        _renderedCount = 0;
-        const initialChunk = _currentDisplayEntries.slice(0, PAGE_CHUNK);
-        _renderedCount = initialChunk.length;
-        const html = isLemma ? renderLemmaRows(initialChunk) : renderRows(initialChunk);
-        const hasMore = _renderedCount < _currentDisplayEntries.length;
-        const sentinelHtml = hasMore
-            ? `<li id="extrasListSentinel" class="extras-list-sentinel"><button type="button" class="extras-load-more-btn">Load more (${_currentDisplayEntries.length - _renderedCount} remaining)</button></li>`
-            : '';
-        listEl.innerHTML = html + sentinelHtml;
-        hydrateExtrasTranslations(listEl, initialChunk);
-        return;
-    }
-    const matched = _currentDisplayEntries.filter(entry => {
-        if (isLemma) {
-            const words = entry.surfaces?.map(s => s.word).join(' ') || '';
-            const text = `${entry.lemma?.word} ${entry.lemma?.translation} ${words}`.toLocaleLowerCase();
-            return text.includes(needle);
-        }
-        const item = entry.item || entry;
-        const translation = firstTranslation(item);
-        const allWords = entry.allWords || item.word;
-        const text = `${allWords} ${translation} ${entry.reason || ''}`.toLocaleLowerCase();
-        return text.includes(needle);
-    });
-    const chunk = matched.slice(0, PAGE_CHUNK);
-    const html = isLemma ? renderLemmaRows(chunk) : renderRows(chunk);
-    listEl.innerHTML = html;
-    hydrateExtrasTranslations(listEl, chunk);
+    _ssQuery = String(query || '');
+    renderSkippedWords(_activeSkippedCategory);
 }
 
 function filterExtras(query) {
@@ -1194,19 +1137,15 @@ function openMergedForms() {
     openSkippedWords('lemma');
 }
 
-function closeMergedForms() {
-    document.getElementById('mergedFormsModal')?.classList.add('hidden');
-}
-
+// The word lists live on the Smart Skip page now. Opening one opens the page
+// with the menu already on that category.
 function openSkippedWords(initialCategory = 'all') {
-    renderSkippedWords(initialCategory);
+    _ssQuery = '';
     const search = document.getElementById('skippedWordsSearch');
     if (search) search.value = '';
-    document.getElementById('skippedWordsModal')?.classList.remove('hidden');
-}
-
-function closeSkippedWords() {
-    document.getElementById('skippedWordsModal')?.classList.add('hidden');
+    _activeSkippedCategory = initialCategory;
+    if (g().openFastModePage) g().openFastModePage({ section: 'decks' });
+    renderSkippedWords(initialCategory, { force: true });
 }
 
 function openExtras() {
@@ -1230,7 +1169,6 @@ function restoreSection(kind) {
     if (!control) return;
     control.click();
     setTimeout(() => {
-        renderMergedForms();
         renderSkippedWords();
         renderExtras();
         refreshExtrasButtons();
@@ -1238,21 +1176,25 @@ function restoreSection(kind) {
 }
 
 function initExtras() {
-    document.getElementById('viewMergedFormsBtn')?.addEventListener('click', openMergedForms);
-    document.getElementById('closeMergedFormsModal')?.addEventListener('click', closeMergedForms);
-    document.getElementById('mergedFormsModal')?.addEventListener('click', event => {
-        if (event.target?.id === 'mergedFormsModal') closeMergedForms();
-    });
-    document.getElementById('mergedFormsSearch')?.addEventListener('input', event => filterMergedForms(event.currentTarget.value));
-
-    document.getElementById('viewSkippedWordsBtn')?.addEventListener('click', () => openSkippedWords('cognate'));
-    document.getElementById('closeSkippedWordsModal')?.addEventListener('click', closeSkippedWords);
-    document.getElementById('skippedWordsModal')?.addEventListener('click', event => {
-        if (event.target?.id === 'skippedWordsModal') closeSkippedWords();
-    });
     document.getElementById('skippedWordsSearch')?.addEventListener('input', event => filterSkippedWords(event.currentTarget.value));
     document.getElementById('skippedCategorySelect')?.addEventListener('change', event => {
+        closeSmartSkipPreview();
         renderSkippedWords(event.target.value);
+    });
+    document.getElementById('skippedWordsBody')?.addEventListener('click', event => {
+        const study = event.target.closest('.smart-skip-study');
+        if (study) {
+            const level = _ssLevels[Number(study.dataset.ssLevel)];
+            if (level) startFastTrackSkippedSet(level.category, 0, level.index, g().getActiveLevelRanges?.() || []);
+            return;
+        }
+        const row = event.target.closest('.smart-skip-row');
+        if (row) openSmartSkipPreview(Number(row.dataset.ssRow));
+    });
+    document.getElementById('smartSkipPreviewClose')?.addEventListener('click', closeSmartSkipPreview);
+    document.getElementById('smartSkipPreviewOpen')?.addEventListener('click', openSmartSkipCard);
+    document.getElementById('smartSkipPreview')?.addEventListener('click', event => {
+        if (event.target?.id === 'smartSkipPreview') closeSmartSkipPreview();
     });
 
     // Fallback extras modal
@@ -1295,14 +1237,10 @@ function initExtras() {
         await globalThis.popupFoundWord({ id }, { reopenSearchOnBack: false, startFlipped: true });
     };
 
-    document.getElementById('mergedFormsBody')?.addEventListener('click', e => handleModalBodyClick(e, closeMergedForms));
-    document.getElementById('skippedWordsBody')?.addEventListener('click', e => handleModalBodyClick(e, closeSkippedWords));
     document.getElementById('extrasBody')?.addEventListener('click', e => handleModalBodyClick(e, closeExtras));
 
     document.addEventListener('keydown', event => {
         if (event.key === 'Escape') {
-            closeMergedForms();
-            closeSkippedWords();
             closeExtras();
             closeSavedWords();
         }
@@ -1429,6 +1367,7 @@ globalThis.openSavedWords = openSavedWords;
 globalThis.toggleSavedWord = toggleSavedWord;
 globalThis.isWordSaved = isWordSaved;
 globalThis.collectExtras = collectExtras;
-globalThis.renderFastTrackDeck = renderFastTrackDeck;
 globalThis.startFastTrackSkippedSet = startFastTrackSkippedSet;
-globalThis.batchMarkSkippedKnown = batchMarkSkippedKnown;
+globalThis.renderSkippedWords = renderSkippedWords;
+globalThis.closeSmartSkipPreview = closeSmartSkipPreview;
+globalThis.isSmartSkipPreviewOpen = () => !document.getElementById('smartSkipPreview')?.hidden;

@@ -133,7 +133,7 @@ const OCCUPANTS = [
     ...['savedWordsModal', 'statsModal', 'totalStatsModal', 'reviewHomeModal', 'spacedRepetitionInfoModal', 'keyboardShortcutsModal', 'helpModal'].map(id => ({
         id, home: 'left', stacks: true, open: isShown, close: closeButtonFor(id) })),
     // Setup-page reference sheets: word lists and rules.
-    ...['mergedFormsModal', 'skippedWordsModal', 'extrasModal', 'cognateRulesModal'].map(id => ({
+    ...['extrasModal', 'cognateRulesModal'].map(id => ({
         id, home: 'right', stacks: true, open: isShown, close: closeButtonFor(id) })),
     // Pages reached from settings: they stack over it, and stay centred
     // when opened any other way.

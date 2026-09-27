@@ -563,16 +563,19 @@ class ProductShellTests(unittest.TestCase):
         self.assertNotIn('id="fastModeFineTuneBtn"', html)
         self.assertNotIn('id="fastModeLanguageStatus"', html)
         self.assertIn('id="fastModeFineTune"', html)
-        # The skipped and merged word lists belong to the steps that create
-        # them, not to a duplicate set of rows above them.
-        self.assertIn('id="viewSkippedWordsBtn"', html)
-        self.assertIn('id="viewMergedFormsBtn"', html)
+        # One line per shortcut: no per-shortcut "View" buttons or second
+        # modal, because the word list is on the same page.
+        self.assertNotIn('id="viewSkippedWordsBtn"', html)
+        self.assertNotIn('id="viewMergedFormsBtn"', html)
+        self.assertNotIn('id="skippedWordsModal"', html)
+        self.assertNotIn('id="fastTrackStudyModal"', html)
         self.assertNotIn('id="fastModeSkippedWordsRow"', html)
         self.assertNotIn('id="fastModeMergedFormsRow"', html)
         self.assertNotIn('id="fastModeSkippedLink"', html)
-        # The skipped-word decks sit below the controls that produce them.
+        # The skipped-word list sits below the controls that produce them.
         self.assertIn('id="fastTrackDeckCard"', html)
         self.assertLess(html.index('id="fastModeFineTune"'), html.index('id="fastTrackDeckCard"'))
+        self.assertLess(html.index('id="fastTrackDeckCard"'), html.index('id="skippedWordsBody"'))
 
     def test_settings_are_organised_around_learner_tasks(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
@@ -609,23 +612,25 @@ class ProductShellTests(unittest.TestCase):
         extras = (APP_ROOT / "js" / "extras.js").read_text(encoding="utf-8")
         ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
-        self.assertIn('id="viewSkippedWordsBtn"', html)
         self.assertIn('id="skippedWordsSearch"', html)
-        self.assertIn('id="mergedFormsTotal"', html)
-        self.assertIn('id="skippedWordsTotal"', html)
-        self.assertIn("class=\"extras-open-card\"", extras)
-        self.assertIn("${escapeHtml(item.word)}</button>", extras)
-        self.assertIn("globalThis.popupFoundWord", extras)
-        self.assertIn('class="fast-track-level-deck', extras)
-        self.assertIn('entries.map(({ item }) => item)', extras)
+        self.assertIn('id="skippedCategorySelect"', html)
+        # A level row in the list studies that level alone; nothing studies
+        # the whole list, which can run to thousands of cards.
+        self.assertIn('class="smart-skip-study" data-ss-level=', extras)
+        self.assertIn('entries || []).map(({ item }) => item)', extras)
         self.assertNotIn('start += 20', extras)
+        self.assertNotIn('Study All', extras)
         self.assertIn('function skippedByLevel', extras)
         self.assertIn("function startFastTrackSkippedSet", extras)
         self.assertIn("fastTrackCards: slice", extras)
-        self.assertIn(".fast-track-level-deck", ui)
-        self.assertIn("startFastTrackSkippedSet", ui)
-        self.assertIn(".fast-track-level-deck", css)
+        self.assertIn(".smart-skip-level", css)
         self.assertNotIn("openSpeechExtrasBtn", ui)
+        # Rows carry no controls: a tap previews the word, and the full card
+        # returns to the same place in the list when it is closed.
+        self.assertNotIn("extras-row-mark-known", extras)
+        self.assertIn('id="smartSkipPreview"', html)
+        self.assertIn("globalThis.popupFoundWord", extras)
+        self.assertIn("onClose: comeBack", extras)
         self.assertIn("#settingsModal.product-modal { align-items: flex-start; }", css)
 
     def test_wsd_publication_view_is_user_selectable(self) -> None:
@@ -1196,11 +1201,12 @@ class FastModeSurfaceTests(unittest.TestCase):
         self.assertIn("saveFastTrack(selectedLanguage, { enabled: on, merge, skip })", self.script)
         self.assertNotIn("if (!lemmaAvailable() && !cognateAvailable())", self.script)
         self.assertIn("updateMappingStatus()", self.script)
-        self.assertIn('class="fast-mode-number" aria-hidden="true">1</span>', self.html)
-        self.assertIn('class="fast-mode-number" aria-hidden="true">2</span>', self.html)
         self.assertIn('id="lemmaMappingStatus"', self.html)
         self.assertIn('id="cognateMappingStatus"', self.html)
-        self.assertIn("chocolate</b><small>Spanish", self.html)
+        # Each shortcut's switch drives its hidden real control.
+        self.assertIn('data-ss-toggle="cognate"', self.html)
+        self.assertIn('data-ss-toggle="lemma"', self.html)
+        self.assertIn("querySelector(`.${kind}-toggle-btn[data-${kind}=\"${value}\"]`)?.click()", self.script)
 
 
 class ReleaseLevelSetsTests(unittest.TestCase):
