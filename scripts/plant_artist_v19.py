@@ -735,7 +735,7 @@ def plant_artist(
             page = surf_cache.get(word_lower)
             for form_of in page_declared_forms(lemma_rule, word_lower, page):
                 stated = extract_senses_from_sd_analyses(
-                    form_of, headword_analyses(form_of, page, norm_menu, hw_cache))
+                    form_of, headword_analyses(form_of, page, norm_menu, hw_cache, surf_cache))
                 stated = inflect_card_senses(target_surface, form_of, stated, conj_rev, is_plural=card_is_plural)
                 for x in stated:
                     if x.get("sense_id") in have:

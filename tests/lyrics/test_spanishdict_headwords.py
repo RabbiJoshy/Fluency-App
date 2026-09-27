@@ -39,4 +39,6 @@ def test_analyses_come_from_spanishdict_entries_only() -> None:
     assert headword_analyses("morder", MUERDO, menu, {}) == menu["morder"]
     cache = {"morder": {"dictionary_analyses": [{"headword": "morder"}]}}
     assert headword_analyses("morder", MUERDO, {}, cache) == [{"headword": "morder"}]
+    own_page = {"morder": {"dictionary_analyses": [{"headword": "morder", "pos": "VERB"}]}}
+    assert headword_analyses("morder", MUERDO, {}, {}, own_page) == [{"headword": "morder", "pos": "VERB"}]
     assert headword_analyses("morder", MUERDO, {}, {}) == []

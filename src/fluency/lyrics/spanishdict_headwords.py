@@ -40,14 +40,26 @@ def headword_analyses(
     surface_page: Mapping[str, Any] | None,
     normalized_menu: Mapping[str, Any],
     headword_cache: Mapping[str, Any],
+    surface_cache: Mapping[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
-    """SpanishDict's own entry for ``headword``: its menu, its cached page, or the surface page's analyses under it."""
+    """SpanishDict's own entry for ``headword``, from any page kept.
+
+    The same places ``SpanishDictHeadwordSource.has_entry`` looks: the
+    normalised menu, the headword cache, the surface page's analyses under the
+    headword, and the headword's own page when it was fetched as a word itself
+    (*morder* is a speech card, so its page is in the surface cache).
+    """
     menu = normalized_menu.get(headword)
     if menu:
         return list(menu)
     cached = headword_cache.get(headword)
     if isinstance(cached, Mapping) and cached.get("dictionary_analyses"):
         return list(cached["dictionary_analyses"])
-    page = surface_page if isinstance(surface_page, Mapping) else {}
-    return [a for a in page.get("dictionary_analyses") or []
-            if isinstance(a, Mapping) and str(a.get("headword") or "").strip() == headword]
+    for page in (surface_page, (surface_cache or {}).get(headword)):
+        if not isinstance(page, Mapping):
+            continue
+        found = [a for a in page.get("dictionary_analyses") or []
+                 if isinstance(a, Mapping) and str(a.get("headword") or "").strip() == headword]
+        if found:
+            return found
+    return []
