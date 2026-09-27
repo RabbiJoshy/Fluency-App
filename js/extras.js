@@ -15,7 +15,7 @@
 // module reads the same state the filter used and reports what it discarded.
 // That keeps one source of truth for the rules: if the filter changes, this
 // follows without edits.
-import './state.js?v=19f19785';
+import './state.js?v=ee17976c';
 
 // Every name below is read off globalThis rather than as a bare identifier.
 // state.js defines these lazily via defineProperty, and this module can run
@@ -52,7 +52,7 @@ function grammarExtra(item) {
 function slangExtra(item) {
     const decide = g().isSlangItem;
     if (!decide) return false;
-    return Boolean((g().excludeNoise || g().excludeSlang) && decide(item));
+    return Boolean(g().excludeSlang && decide(item));
 }
 
 function entityExtra(item) {
