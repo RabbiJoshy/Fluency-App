@@ -2,6 +2,21 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T15:35:00+01:00",
+      "date": "2026-09-27 15:35 BST",
+      "agent": "Claude",
+      "summary": "Card fronts show Frequency per million in whole numbers for every speech deck (traje now reads 113, not 113,380), with bigger lemma/POS pills and two-line stats; the knowledge sheet now groups meanings by lemma and POS, with Meanings and Expressions tabs.",
+      "detail": [
+        "Spanish frequencies were 1,000x too large since the 10k release went live; rebuilt from EsPal at the correct scale.",
+        "Portuguese and Czech no longer say 'List occurrences': their raw counts are converted to per million using the source list's token total.",
+        "Every figure on the card front is two lines: the wording on top and a larger bold number below. Vocabulary rank and Frequency now use the same sizes.",
+        "Lemma/POS pills on the front are bigger for the usual one or two pairs; three or more, or very long lemmas, still shrink to fit.",
+        "Card knowledge sheet: one tab each for Meanings and Expressions, and meanings grouped under the same coloured POS + lemma headers as the card back.",
+        "A one-card set's scrubber drops the rail, so the lone '1' no longer suggests more cards to come."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T14:25:00+01:00",
       "date": "2026-09-27 14:25 BST",
       "agent": "Claude",

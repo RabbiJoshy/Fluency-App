@@ -5874,9 +5874,11 @@ function renderCardWikipediaBadge(card) {
             // equal space per pair; only unusually long lemmas reduce the
             // group's type size, so neighbouring cards retain a steady rhythm.
             const names = [...frontPOSEl.querySelectorAll('.front-lemma-name')];
-            const baseSize = pairs.length === 1 ? 16 : pairs.length === 2 ? 15 : pairs.length === 3 ? 14 : 13;
+            // Sized for the common one- or two-pair card (matches the CSS);
+            // only a lemma that will not fit steps down from there.
+            const baseSize = pairs.length <= 2 ? 20 : pairs.length === 3 ? 14 : 13;
             const floorSize = pairs.length > 3 ? 10.5 : 11.5;
-            let labelSize = window.innerWidth < 768 ? baseSize - 1 : baseSize;
+            let labelSize = window.innerWidth < 768 ? (pairs.length <= 2 ? 17 : baseSize - 1) : baseSize;
             for (; labelSize > floorSize && names.some(name => name.scrollWidth > name.clientWidth + 1); labelSize -= 0.5) {
                 names.forEach(name => { name.style.fontSize = `${labelSize - 0.5}px`; });
             }
@@ -5967,40 +5969,44 @@ function renderCardWikipediaBadge(card) {
         frontRankingEl.style.display = 'flex';
     } else if (vocabularyRank !== undefined) {
         let freqHtml = '';
-        // The count and the rank are the figures worth reading; the wording
-        // around them and the total-vocabulary denominator are context. Only
-        // the former get the bold white treatment.
+        // Each figure is a two-line block: the wording on top, the number
+        // beneath it. The number is what a learner reads, so it gets the
+        // size; the wording, units and the total-vocabulary denominator are
+        // context and stay muted.
         if (activeArtist && card.corpusCount) {
-            const count = `<strong class="card-stat-value">${Number(card.corpusCount).toLocaleString()}</strong>`;
-            freqHtml = `<span class="card-freq-label">Lyric lines: ${count}</span>`;
+            freqHtml = cardStatHTML('card-freq-label', 'Lyric lines',
+                Number(card.corpusCount).toLocaleString());
         } else if (!activeArtist && Number(card.sourceFrequency) > 0) {
             const perMillion = card.sourceFrequencyUnit === 'per_million';
-            const count = `<strong class="card-stat-value">${Number(card.sourceFrequency).toLocaleString(undefined, { maximumFractionDigits: perMillion ? 2 : 0 })}</strong>`;
             const source = escapeCardText(card.sourceFrequencySource || 'Published frequency list');
-            // A card whose printed form the source never measured still shows a
-            // figure, but must say whose it is — the number is real, it is just
-            // not this form's. Never let the three read alike.
-            const unitSuffix = perMillion ? '/million' : '';
+            // Every speech deck says "Frequency", per million, in whole
+            // numbers. A card whose printed form the source never measured
+            // still shows a figure, but must say whose it is — the number is
+            // real, it is just not this form's. Never let the three read alike.
             const basis = card.sourceFrequencyBasis || 'own';
             const label = basis === 'total'
-                ? `All forms: ${count}${unitSuffix}`
+                ? 'Frequency · all forms'
                 : basis === 'other-surface'
-                    ? `${escapeCardText(card.sourceFrequencyBasisSurface || 'Listed form')}: ${count}${unitSuffix}`
-                    : (perMillion ? `Frequency: ${count}/million` : `List occurrences: ${count}`);
+                    ? `Frequency · ${escapeCardText(card.sourceFrequencyBasisSurface || 'listed form')}`
+                    : 'Frequency';
             // The breakdown travels as an attribute so the tooltip needs no
             // access to the card model; it is already HTML-escaped for the
             // attribute context by escapeCardText.
             const breakdown = escapeCardText(JSON.stringify(
                 (card.sourceFrequencyBreakdown || []).map(row => [row.surface, row.value])));
-            freqHtml = `<button class="card-freq-btn" onclick="window.showFreqInfo(event)" data-frequency-source="${source}" data-frequency-unit="${card.sourceFrequencyUnit || ''}" data-frequency-forms="${Number(card.sourceFrequencyForms) || 1}" data-frequency-is-total="${card.sourceFrequencyIsGroupTotal ? '1' : ''}" data-frequency-basis-surface="${escapeCardText(card.sourceFrequencyBasisSurface || '')}" data-frequency-breakdown="${breakdown}" aria-label="Source frequency information">${label}</button>`;
+            freqHtml = `<button class="card-freq-btn card-stat card-stat--end card-freq-label" onclick="window.showFreqInfo(event)" data-frequency-source="${source}" data-frequency-unit="${card.sourceFrequencyUnit || ''}" data-frequency-forms="${Number(card.sourceFrequencyForms) || 1}" data-frequency-is-total="${card.sourceFrequencyIsGroupTotal ? '1' : ''}" data-frequency-basis-surface="${escapeCardText(card.sourceFrequencyBasisSurface || '')}" data-frequency-breakdown="${breakdown}" aria-label="Source frequency information">`
+                + `<span class="card-stat-label">${label}</span>`
+                + `<span class="card-stat-line"><strong class="card-stat-value">${formatCardFrequency(card.sourceFrequency)}</strong>${perMillion ? '<span class="card-stat-unit">per million</span>' : ''}</span>`
+                + '</button>';
         }
         // Only an artist's vocabulary is a real population; in speech mode the
         // total is just the size of our deck, not of the language, so the rank
         // stands alone.
-        const denominator = activeArtist && vocabularySize ? ` / ${vocabularySize.toLocaleString()}` : '';
+        const denominator = activeArtist && vocabularySize ? `/ ${vocabularySize.toLocaleString()}` : '';
         const rankLabel = card.artistVocabularyScope === 'extra' ? 'Extra rank' : 'Vocabulary rank';
         frontRankingEl.innerHTML =
-            `<span class="card-rank-label">${rankLabel}: <strong class="card-stat-value">${Number(vocabularyRank).toLocaleString()}</strong>${denominator}</span>${freqHtml}`;
+            cardStatHTML('card-rank-label', rankLabel, Number(vocabularyRank).toLocaleString(), denominator)
+            + freqHtml;
         frontRankingEl.style.display = 'flex';
     } else {
         frontRankingEl.style.display = 'none';
@@ -7716,6 +7722,7 @@ function renderCardWikipediaBadge(card) {
     const progressSegments = document.getElementById('deckProgressSegments');
     if (progressSegments) {
         const segmentCount = scrubCount;
+        progressSegments.classList.toggle('is-single', segmentCount <= 1);
         if (progressSegments.childElementCount !== segmentCount) {
             progressSegments.replaceChildren(...Array.from({ length: segmentCount }, (_, i) => {
                 const segment = document.createElement('button');
@@ -7769,6 +7776,9 @@ function renderCardWikipediaBadge(card) {
         const last = Math.max(0, scrubCount - 1);
         const t = last === 0 ? 0.5 : (scrubIndex / last);
         cardBackPips.style.setProperty('--cbs-t', String(t));
+        // A one-card set has no position to show: a rail either side of the
+        // "1" reads as cards still to come, so the rail goes.
+        cardBackPips.classList.toggle('is-single', scrubCount <= 1);
         const thumb = cardBackPips.querySelector('.cbs-thumb');
         const thumbNum = cardBackPips.querySelector('.cbs-thumb-num');
         if (thumbNum) thumbNum.textContent = String(scrubIndex + 1);
@@ -9278,6 +9288,24 @@ function _freqBreakdownOf(button) {
     }
 }
 
+// One front-of-card figure: wording on the first line, the number (and any
+// muted unit or denominator) on the second. The first class names the block
+// for the tutorial anchors (.card-rank-label, .card-freq-label).
+function cardStatHTML(kindClass, label, value, unit = '') {
+    const end = kindClass === 'card-rank-label' ? '' : ' card-stat--end';
+    return `<span class="card-stat${end} ${kindClass}">`
+        + `<span class="card-stat-label">${label}</span>`
+        + `<span class="card-stat-line"><strong class="card-stat-value">${value}</strong>`
+        + `${unit ? `<span class="card-stat-unit">${unit}</span>` : ''}</span></span>`;
+}
+
+// Whole numbers only: a decimal on a per-million figure is noise to a
+// learner. Anything that rounds to zero is still a real occurrence.
+function formatCardFrequency(value) {
+    const n = Number(value);
+    return n > 0 && n < 0.5 ? '<1' : Math.round(n).toLocaleString();
+}
+
 window.showFreqInfo = function showFreqInfo(event, options = {}) {
     event.stopPropagation();
     const pinned = options.pinned === true;
@@ -9295,8 +9323,7 @@ window.showFreqInfo = function showFreqInfo(event, options = {}) {
         ? 'occurrences per million words' : 'occurrences in the source list';
     const forms = Number(button?.dataset.frequencyForms) || 1;
     const breakdown = _freqBreakdownOf(button);
-    const fmt = value => Number(value).toLocaleString(undefined,
-        { maximumFractionDigits: perMillion ? 2 : 0 });
+    const fmt = value => formatCardFrequency(value);
 
     // The list is worth the room only when it says something the headline
     // does not: a single form is already the number on the card.
@@ -9391,6 +9418,8 @@ window.flipDirection = flipDirection;
 window.toggleAutoSpeak = toggleAutoSpeak;
 window.updateSpeakIcons = updateSpeakIcons;
 window.getPosColorClass = getPosColorClass;
+window.getPosAccentRgb = getPosAccentRgb;
+window.posDisplayName = posDisplayName;
 window.updateReverseButton = updateReverseButton;
 window.updateStats = updateStats;
 window.dedupeExamples = dedupeExamples;

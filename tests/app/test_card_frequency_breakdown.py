@@ -64,7 +64,7 @@ class CardFrequencyBreakdownTests(unittest.TestCase):
         # 22% of merged citation forms are absent from the source. Their total
         # may be shown, but never as though the source had measured that form.
         self.assertIn("sourceFrequencyIsGroupTotal", self.vocab)
-        self.assertIn("All forms: ${count}", self.flashcards)
+        self.assertIn("'Frequency · all forms'", self.flashcards)
         self.assertIn("The source does not list this exact form", self.flashcards)
 
     def test_a_card_never_loses_its_frequency(self) -> None:

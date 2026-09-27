@@ -22,8 +22,11 @@ class ProductShellTests(unittest.TestCase):
         worker = (APP_ROOT / "service-worker.js").read_text(encoding="utf-8")
         vocab = (APP_ROOT / "js" / "vocab.js").read_text(encoding="utf-8")
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
+        # Every speech deck shows one phrase, "Frequency … per million", so every
+        # file must already be per million — a raw count list is converted with
+        # --per-million-from-list-total when the snapshot is built.
         for language, unit in (("spanish", "per_million"), ("french", "per_million"),
-                               ("portuguese", "occurrences"), ("czech", "occurrences")):
+                               ("portuguese", "per_million"), ("czech", "per_million")):
             language_config = config["languages"][language]
             path = language_config["frequencyPath"]
             data = json.loads((APP_ROOT / path).read_text(encoding="utf-8"))
@@ -31,6 +34,10 @@ class ProductShellTests(unittest.TestCase):
             self.assertEqual(data["indexPath"], language_config["indexPath"])
             self.assertEqual(data["unit"], unit)
             self.assertGreaterEqual(data["covered"], data["total"] * 0.95)
+            # A per-million figure above ~100k is a unit error, not a word:
+            # the MEND rebuild once stored EsPal's per-billion column as per
+            # million and showed *traje* at 113,380.
+            self.assertLess(max(data["values"].values()), 100_000, language)
             self.assertIn(f"'/{path}'", worker)
         self.assertIn("lemmaSourceFrequencies.get(lemmaGroupKey(item))", vocab)
         self.assertIn("!activeArtist && Number(card.sourceFrequency) > 0", flashcards)
