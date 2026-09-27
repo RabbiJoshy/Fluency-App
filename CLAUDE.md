@@ -185,6 +185,11 @@ Languages with profiles or packages: `es`, `fr`, `pt`, `cs`, `nl`, `pl`. Modes: 
      into HEAD and pushes HEAD to `main`, from any branch. Changelog-only
      conflicts (two sessions deploying close together) it resolves itself,
      keeping both entries; any other conflict stops it for you to resolve.
+     Other sessions' uncommitted edits in files `main` changed are carried
+     across the merge (rehearsed first; untouched if they would clash).
+     Never push to `main` from a side worktree to get round a stop: it
+     lands the change but leaves this checkout behind `main`. `make sync`
+     brings `main` in without deploying.
   5. Check the run at
      https://github.com/RabbiJoshy/Fluency-App/actions/workflows/deploy-pages.yml
      (then ~30 s for the Pages build). A deploy is done when that run is green,
