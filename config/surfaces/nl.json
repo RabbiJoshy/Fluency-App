@@ -1,6 +1,0 @@
-{
-  "policy_version": "surface-policy/v1",
-  "language": "nl",
-  "note": "Starts with the shared evidence policy. Add Dutch overrides only after the 2,000-card manual audit records a measured reason.",
-  "reason_codes": {}
-}
