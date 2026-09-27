@@ -2,6 +2,21 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-28T00:37:00+01:00",
+      "date": "2026-09-28 00:37 BST",
+      "agent": "Claude",
+      "summary": "Word by word now breaks down the sentence the card is showing, glosses every word, and saves with a star.",
+      "detail": [
+        "Fixed: the panel could break down a different example from the one on the card.",
+        "Fixed: most words outside the deck showed a dash; their meanings are now fetched before glossing.",
+        "Fixed: opening a word could land on a sibling form sharing its lemma (rubio opened rubia); exact surfaces now win.",
+        "Rows show gloss, lemma and part of speech; the card's own word shows the sense being studied; repeated words appear once.",
+        "Tap a row to open that word's card; the floating popup and per-row Save buttons are replaced by a chevron and a star.",
+        "The dotted underline under the example sentence is gone; the sentence still opens Word by word."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T23:49:47+01:00",
       "date": "2026-09-27 23:49 BST",
       "agent": "Codex",

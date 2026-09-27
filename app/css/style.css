@@ -9166,68 +9166,6 @@
             max-height: calc(calc(90vh / var(--ui-zoom, 1)) - 60px);
         }
 
-        .breakdown-header {
-            text-align: center;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .breakdown-header .target-line {
-            font-size: 16px;
-            color: var(--text-primary);
-            margin-bottom: 6px;
-            line-height: 1.4;
-        }
-
-        .breakdown-header .english-line {
-            font-size: 13px;
-            color: var(--text-secondary);
-            font-style: italic;
-        }
-
-        .breakdown-word-row {
-            display: flex;
-            align-items: center;
-            padding: 10px 12px;
-            margin-bottom: 4px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.15s;
-            border-left: 3px solid transparent;
-        }
-
-        .breakdown-word-row:hover {
-            background: var(--bg-tertiary);
-        }
-
-        .breakdown-word-row.in-deck {
-            border-left-color: var(--accent-green, #4CAF50);
-        }
-
-        .breakdown-word-row .word-spanish {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-primary);
-            min-width: 100px;
-        }
-
-        .breakdown-word-row .word-translation {
-            font-size: 14px;
-            color: var(--text-secondary);
-            flex: 1;
-            margin-left: 12px;
-        }
-
-        .breakdown-word-row .word-pos {
-            font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            color: white;
-            margin-left: 8px;
-            white-space: nowrap;
-        }
-
         /* Homograph chips */
         .homograph-chips {
             display: flex;
@@ -9566,16 +9504,6 @@
             .spotify-autoplay-popover { animation: none; }
         }
 
-        .breakdown-trigger {
-            text-decoration-line: underline;
-            text-decoration-style: dotted;
-            text-decoration-color: rgba(255,255,255,0.3);
-            text-underline-offset: 3px;
-            transition: text-decoration-color 0.2s;
-        }
-        .breakdown-trigger:hover {
-            text-decoration-color: rgba(255,255,255,0.6);
-        }
 
         .ref-icon-btn {
             display: inline-flex;
@@ -19743,21 +19671,117 @@ html[data-text-size="large"] {
 html[data-text-size="large"] body {
   zoom: var(--ui-zoom);
 }
-.breakdown-word-row .word-save {
-  margin-left: 8px;
-  flex-shrink: 0;
-  border: 1px solid var(--border-light);
+/* Word by word: the sentence the card is showing, then one row per distinct
+   word — gloss, lemma and part of speech, a way to its card, and a star to
+   keep it. The card's own word carries the sense being studied. */
+.wbw-sentence {
+  margin: 0 0 14px;
+  padding: 14px 16px;
+  border-radius: 14px;
   background: var(--bg-tertiary);
-  color: var(--text-secondary);
-  border-radius: 999px;
-  padding: 4px 10px;
-  font: 650 11px/1 var(--font-reading);
-  cursor: pointer;
 }
-.breakdown-word-row .word-save.is-saved {
-  border-color: var(--accent-green);
+.wbw-target {
+  margin: 0;
+  font: 600 17px/1.45 var(--font-reading);
+  color: var(--text-primary);
+}
+.wbw-english {
+  margin: 6px 0 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+.wbw-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+}
+.wbw-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px 9px 12px;
+  border-radius: 10px;
+  border-left: 3px solid transparent;
+}
+.wbw-row:hover { background: var(--bg-tertiary); }
+.wbw-row.in-deck { border-left-color: var(--border-light); }
+.wbw-row.is-card-word {
+  border-left-color: var(--text-secondary);
+  background: var(--bg-tertiary);
+}
+.wbw-main {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(64px, max-content) 1fr;
+  column-gap: 12px;
+  row-gap: 2px;
+  align-items: baseline;
+}
+.wbw-word {
+  font: 650 16px/1.3 var(--font-reading);
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+.wbw-known {
+  margin-left: 5px;
+  font-size: 12px;
   color: var(--accent-green);
 }
+.wbw-gloss {
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+.wbw-none { color: var(--text-muted); }
+.wbw-meta {
+  grid-column: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.wbw-lemma::before { content: '← '; }
+.wbw-pos {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+.wbw-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.wbw-row.can-open { cursor: pointer; }
+.wbw-row:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: -2px; }
+.wbw-chevron {
+  width: 12px;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--text-muted);
+}
+.wbw-row.can-open:hover .wbw-chevron { color: var(--text-primary); }
+.wbw-star {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--text-muted);
+  font-size: 19px;
+  line-height: 1;
+  cursor: pointer;
+}
+.wbw-star:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+.wbw-star.is-saved { color: #f5c542; }
 .saved-words-toolbar {
   display: flex;
   justify-content: flex-end;
