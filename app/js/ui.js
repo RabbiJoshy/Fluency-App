@@ -734,18 +734,18 @@ const MODE_ICON_MUSIC = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" s
 function learningModeCopy(language = selectedLanguage) {
     const lyricsCatalog = config?.languages?.[language]?.capabilities?.lyrics !== false;
     return {
-        title: 'Most common words in…',
-        intro: 'Fluency teaches words in order of how often they come up. Choose what to count. A word you learn counts in both.',
+        title: 'Choose your flashcard vocabulary',
+        intro: 'This decides which words become your flashcards, and their order.',
         speech: {
             label: 'Everyday speech',
-            description: 'Counted across films and TV. Best for understanding people talking.',
+            description: 'From films and TV — the words people use when they talk.',
             iconHTML: MODE_ICON_SPEECH
         },
         lyrics: {
             label: 'Your music',
             description: lyricsCatalog
-                ? 'Counted across the artists or Spotify playlist you pick. Best for understanding those songs.'
-                : 'Counted across a Spotify playlist you pick. Best for understanding those songs.',
+                ? 'Pick an artist, or build a deck from your Spotify playlists — the words in those songs.'
+                : 'Build a deck from your Spotify playlists — the words in those songs.',
             iconHTML: MODE_ICON_MUSIC
         }
     };
@@ -857,6 +857,7 @@ function setupLanguageTabs() {
             const choiceIntro = document.getElementById('standardSourceChoiceIntro');
             if (choiceTitle) choiceTitle.textContent = modeCopy.title;
             if (choiceIntro) choiceIntro.textContent = modeCopy.intro;
+            window.renderSpotifyStatus?.(document.getElementById('standardSourceSpotify'));
             if (sourceCardButton) {
                 sourceCardButton.disabled = !lyricsAvailable;
                 sourceCardButton.title = lyricsCatalog
