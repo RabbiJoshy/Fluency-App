@@ -28,10 +28,22 @@ IRREGULAR_ENGLISH_PLURALS: dict[str, str] = {
     "person": "people",
     "tooth": "teeth",
     "woman": "women",
+    "knife": "knives",
+    "life": "lives",
+    "wife": "wives",
+    "leaf": "leaves",
+    "thief": "thieves",
+    "half": "halves",
+    "wolf": "wolves",
+    "calf": "calves",
+    "shelf": "shelves",
+    "loaf": "loaves",
 }
 
 INVARIANT_ENGLISH_PLURALS: frozenset[str] = frozenset({
-    "deer", "fish", "means", "offspring", "series", "sheep", "species"
+    "deer", "fish", "means", "offspring", "series", "sheep", "species",
+    "clothes", "glasses", "scissors", "pants", "trousers", "jeans",
+    "buttocks", "kisses", "remains", "congratulations", "thanks", "belongings",
 })
 
 IRREGULAR_ENGLISH_PRESENT: dict[str, list[str]] = {
@@ -186,14 +198,24 @@ def pluralize_english_noun(gloss: str) -> str:
         return word
     head = tokens[-1]
     lower = head.lower()
+
+    if lower in INVARIANT_ENGLISH_PLURALS:
+        return word
+
+    # Do not double-pluralize words that already end in plural -s / -es in the dictionary
+    if lower.endswith("s") and not lower.endswith("ss") and not lower.endswith("us") and not lower.endswith("is"):
+        return word
+
     if lower in IRREGULAR_ENGLISH_PLURALS:
         plural_head = IRREGULAR_ENGLISH_PLURALS[lower]
-    elif lower in INVARIANT_ENGLISH_PLURALS:
-        plural_head = lower
     elif re.search(r"[^aeiou]y$", lower):
         plural_head = f"{lower[:-1]}ies"
     elif re.search(r"(?:s|x|z|ch|sh)$", lower):
         plural_head = f"{lower}es"
+    elif lower.endswith("fe") and lower[:-2] + "f" in IRREGULAR_ENGLISH_PLURALS:
+        plural_head = IRREGULAR_ENGLISH_PLURALS[lower[:-2] + "f"]
+    elif lower.endswith("f") and lower in IRREGULAR_ENGLISH_PLURALS:
+        plural_head = IRREGULAR_ENGLISH_PLURALS[lower]
     else:
         plural_head = f"{lower}s"
 
@@ -345,21 +367,37 @@ def inflect_card_senses(
     lemma: str,
     senses: Sequence[dict[str, Any]],
     conj_rev: Mapping[str, Sequence[Mapping[str, Any]]],
+    is_plural: bool = False,
 ) -> list[dict[str, Any]]:
     """Produce inflected copies of senses for an inflected surface form."""
     surf_norm = surface.strip().lower()
     lem_norm = lemma.strip().lower()
 
     if not surf_norm or surf_norm == lem_norm:
-        return list(senses)
+        if not is_plural:
+            return list(senses)
 
     # 1. Check if surface is a regular noun/adjective plural
-    is_plural = False
-    candidates = {f"{lem_norm}s", f"{lem_norm}es"}
-    if lem_norm.endswith("z"):
-        candidates.add(f"{lem_norm[:-1]}ces")
-    if surf_norm in candidates:
-        is_plural = True
+    if not is_plural:
+        lem_clean = strip_accents(lem_norm)
+        candidates = {
+            f"{lem_norm}s", f"{lem_norm}es",
+            f"{lem_clean}s", f"{lem_clean}es",
+        }
+        if lem_norm.endswith("z") or lem_clean.endswith("z"):
+            candidates.add(f"{lem_clean[:-1]}ces")
+            candidates.add(f"{lem_norm[:-1]}ces")
+
+        surfaces_to_test = {surf_norm, strip_accents(surf_norm)}
+        if surf_norm.endswith("'") or surf_norm.endswith("’"):
+            base_s = surf_norm[:-1]
+            surfaces_to_test.add(f"{base_s}s")
+            surfaces_to_test.add(f"{base_s}es")
+            surfaces_to_test.add(f"{strip_accents(base_s)}s")
+            surfaces_to_test.add(f"{strip_accents(base_s)}es")
+
+        if surfaces_to_test & candidates:
+            is_plural = True
 
     # 2. Check verb conjugation and clitics
     morph_entries: list[Mapping[str, Any]] = []
