@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T23:17:28+01:00",
+      "date": "2026-09-27 23:17 BST",
+      "agent": "Claude",
+      "summary": "Card tidy-ups: words stay lowercase, no more highlighting of other set words in examples, a bigger lemma on the back, and stacked rank and frequency on the front.",
+      "detail": [
+        "Headwords no longer flip between 'No' and 'no' depending on the example. A form taken from a sentence is lowercased unless the card's own form or part of speech marks it a proper noun.",
+        "Example sentences no longer highlight other words from the same set; only the studied word (and its companion phrase) is marked.",
+        "The lemma beside the word on the back is a little larger (19px, was 16px).",
+        "Card front: 'Vocabulary / Rank / 1' and 'Frequency / 29,783 / per million', each stacked; artist decks show 'Song / Lines / n'. The tutorial card matches."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T23:10:00+01:00",
       "date": "2026-09-27 23:10 BST",
       "agent": "Claude",
