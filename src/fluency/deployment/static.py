@@ -22,7 +22,10 @@ from fluency.release.validation import validate_release_bundle
 MANIFEST_VERSION = "static-deployment/v1"
 SAFE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 LANGUAGE_KEYS = language_keys()
-EXCLUDED_APP_ROOTS = frozenset({"backend", "docs", "lyrics-audit"})
+# Release trees in the development app may be convenience symlinks into the
+# mutable workspace. A deployment must contain only the exact validated
+# releases selected below, never whatever that symlink happens to expose.
+EXCLUDED_APP_ROOTS = frozenset({"backend", "docs", "lyrics-audit", "releases"})
 
 
 class StaticDeploymentError(ValueError):

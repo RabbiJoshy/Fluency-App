@@ -37,7 +37,7 @@ class SenseMenuPolicyTests(unittest.TestCase):
         registry = load_sense_menu_registry(REPOSITORY_ROOT)
         self.assertEqual(
             set(registry["languages"]),
-            {"cs", "es", "fr", "it", "nl", "pl", "pt", "ru", "sv"},
+            {"cs", "es", "fi", "fr", "it", "nl", "pl", "pt", "ru", "sv"},
         )
 
     def test_scaffold_language_inherits_safe_wiktionary_adapter_defaults(self):

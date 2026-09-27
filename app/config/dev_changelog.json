@@ -2,6 +2,21 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T01:45:00+01:00",
+      "date": "2026-09-27 01:45 BST",
+      "agent": "Antigravity",
+      "summary": "Deploy systemic fixes across all deck tiers: universal inflection engine routing, SD headword preservation, sentence token isolation, and vocal ad-lib overrides; bump cache to v566.",
+      "detail": [
+        "Eliminates bare infinitive translations across all tiers: Tier 1 (SpanishDict direct cache) now passes all inflected forms through inflect_card_senses, ensuring verbs like 'perreando' -> 'twerking' and 'puse' -> 'put' inflect accurately rather than showing citation forms.",
+        "Fixes SpanishDict analysis headword extraction: senses extracted from SD analyses preserve the lexical headword ('seguir') rather than taking the query surface ('siga'), fixing citation lemma resolution in the frontend.",
+        "Enforces example sentence token isolation during back-search: cards only backfill on exact surface matches, and cloned example lines strictly rebind surface to the target card's word, eliminating cross-contamination (e.g. 'va'' showing on 'querer' cards).",
+        "Adds cultural onomatopoeia/vocal ad-lib overrides for urban trap sounds ('wua', 'wuo', 'woh') preventing them from falling through as 'retained surface'.",
+        "Supports CVC consonant doubling in English past tense and gerund inflection ('get' -> 'getting', 'stop' -> 'stopped').",
+        "Rebuilds and synchronizes lyrics-all-artists-v19, lyrics-bad-bunny-v19, and lyrics-test-playlist-v19 to Fluency-Releases CDN; bumps cache to flashcards-v566 and asset tags to 20260927v21."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-26T17:55:00+01:00",
       "date": "2026-09-26 17:55 BST",
       "agent": "Antigravity",

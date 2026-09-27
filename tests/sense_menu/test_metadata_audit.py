@@ -51,7 +51,8 @@ class MetadataAuditTests(unittest.TestCase):
     def test_status_is_generated_for_every_registered_language(self):
         report = metadata_status(REPOSITORY_ROOT)
         self.assertEqual(report["metadata_contract"], "sense-metadata/v1")
-        self.assertEqual(len(report["languages"]), 9)
+        self.assertEqual(len(report["languages"]), 10)
+        self.assertIn("fi", {row["language"] for row in report["languages"]})
         self.assertTrue(all("snapshot" in row for row in report["languages"]))
         self.assertTrue(all(row["release_status"] == "not_checked" for row in report["languages"]))
 

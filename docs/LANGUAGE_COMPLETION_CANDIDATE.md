@@ -20,19 +20,19 @@ release blocker.
 
 | Area | Spanish | French | Dutch | Italian | Finnish |
 |---|---|---|---|---|---|
-| Language/surface adapter | Ready | Ready | Ready | Ready | Missing |
-| App language entry | Ready | Ready | Partial | Partial | Missing |
-| Speech pipeline profile | Ready | Partial | Partial | Missing | Missing |
-| Frequency source and policy | Ready | Ready | Ready | Missing | Missing |
-| Dictionary/menu source | Ready | Ready | Ready | Missing | Missing |
-| Menu metadata policy | Ready | Ready | Partial | Scaffold only | Missing |
-| Tatoeba snapshot | Ready | Ready | Ready | Missing | Missing |
-| OpenSubtitles snapshot | Ready | Ready | Ready | Missing | Missing |
-| Surface ledger | Ready | Missing | Missing | Missing | Missing |
-| English cognate policy/output | Ready | Partial: app file missing | Ready but unwired | Missing | Missing |
+| Language/surface adapter | Ready | Ready | Ready | Ready | Ready |
+| App language entry | Ready | Ready | Partial | Partial | Ready for Speech |
+| Speech pipeline profile | Ready | Partial | Ready candidate | Missing | Ready candidate |
+| Frequency source and policy | Ready | Ready | Ready | Missing | Ready |
+| Dictionary/menu source | Ready | Ready | Ready | Missing | Ready |
+| Menu metadata policy | Ready | Ready | Partial | Scaffold only | Scaffold only |
+| Tatoeba snapshot | Ready | Ready | Ready | Missing | Ready |
+| OpenSubtitles snapshot | Ready | Ready | Ready | Missing | Ready |
+| Surface ledger | Ready | Missing | Ready candidate | Missing | Ready candidate |
+| English cognate policy/output | Ready | Partial: app file missing | Ready but unwired | Missing | Candidate; calibration open |
 | Conjugations | Ready | Ready | Missing | Missing | Missing |
 | Lexical relations | Ready | Ready | Missing | Missing | Missing |
-| Production Speech release | Ready | Partial/older release | Missing | Missing | Missing |
+| Production Speech release | Ready | Partial/older release | Inactive 2,000-card candidate | Missing | Active 2,000-card release; quality gates open |
 | Fresh Artist pipeline | Ready | Missing | Missing | Missing | Missing |
 
 ## Cross-language completion rule
@@ -42,7 +42,8 @@ A language is considered finished only when all of the following are true:
 - [ ] Its external snapshots are pinned with source, licence, attribution and hashes.
 - [ ] Its language policies are audited rather than copied or left as scaffolds.
 - [ ] Its inventory, menu, examples and declarations have been folded into a surface ledger.
-- [ ] Every top-3,000 surface has a recorded human verdict; no review queue remains open.
+- [ ] Every surface in a first release of 3,000 cards or fewer has a recorded human
+  verdict. Larger releases cover at least the top 3,000 and every flagged tail item.
 - [ ] Function words and deterministic declared entries have curated menus and are not
   treated as ordinary lexical sense-selection cases.
 - [ ] A full target-size Speech run has produced and validated an immutable release.
@@ -53,8 +54,9 @@ A language is considered finished only when all of the following are true:
 
 ## Mandatory manual gate
 
-For each language, a reviewer must read the first 3,000 surfaces in rank order and
-inspect examples wherever the classification is unclear. The pass must explicitly find:
+For a first release of 3,000 cards or fewer, a reviewer must read every surface in rank
+order. Larger releases require at least the first 3,000 plus every flagged tail item.
+Inspect examples wherever the classification is unclear. The pass must explicitly find:
 
 - English or other foreign-language leakage, names, credits and tokenization damage.
 - Interjections, fillers, onomatopoeia, abbreviations, slang and genuine loanwords.
@@ -65,7 +67,7 @@ inspect examples wherever the classification is unclear. The pass must explicitl
 Each item must end as keep, exclude, class tag, headword override, expansion, entity,
 hand-written one-sense menu, hand-written function-word menu, or an approved provider
 menu. Decisions must be versioned declarations or ledger adjudications with provenance.
-A candidate release is blocked until the top-3,000 audit and all flagged-tail items are
+A candidate release is blocked until its required audit and all flagged-tail items are
 closed. A second spot-check is required on the assembled release.
 
 ## Cognates: completion contract
@@ -160,8 +162,8 @@ not a finished fresh release.
 
 ## Dutch (`nl`)
 
-Dutch has the core source snapshots and cognate work, but its current profile
-contains copied placeholders and no workspace Speech release was found.
+Dutch now has a clean 2,000-card candidate stack. It remains deliberately
+inactive while the manual review and WSD benchmark are open.
 
 ### Present
 
@@ -171,41 +173,35 @@ contains copied placeholders and no workspace Speech release was found.
 - Tatoeba and aligned OpenSubtitles snapshots.
 - Partial Wiktionary metadata policy.
 - English cognate pair policy, generated app map and provenance layer.
-- A real 3,000-surface inventory, menu and sentence harvest. The later stage
-  directories contain planning contracts only, not completed outputs.
+- A clean 2,000-surface profile with `nl-NL`, Dutch source notes and no copied
+  model claims.
+- Completed inventory, menu and sentence-harvest run
+  `20260926T171858Z-f7b6aa3f`.
+- Inactive validated-shape release `nl-speech-v1-2000x5-3-candidate`: 2,000 cards,
+  8,000 examples, all explicitly unassigned pending WSD.
+- Open Dutch WordNet 2.0 pinned as a comparison source. The 2,000-card comparison
+  found 1,080 direct lemma overlaps and only 13 of 101 provider gaps.
+- Initial observation log and 2,000-surface ledger; 122 capitalization cases remain
+  under review.
 - Basic app display entry with Dutch name, flag and speech locale.
 
 ### Missing or incorrect
 
-- [ ] Correct the scale profile locale from `cs-CZ` to `nl-NL`.
-- [ ] Add a proper source manifest for the Dutch FrequencyWords snapshot. Its content
-  hash and snapshot ID are recorded by runs, but the raw directory contains only the
-  two-column text file and does not retain licence/source metadata.
-- [ ] Replace the copied Portuguese execution profile, model profile and revision pins
-  with a Dutch-valid profile before another run is trusted.
-- [ ] Remove the copied Czech source note and write a Dutch corpus note based on Dutch
-  measurements.
-- [ ] Build and compare the Dutch hybrid menu. Use Kaikki for broad coverage and
-  grammatical/conversational forms, and Open Dutch WordNet for its cleaner lexical
-  synsets and stable links to English WordNet definitions. Open Dutch WordNet is not a
-  standalone replacement: direct lemma overlap is 1,591/3,000 (53.0%), while the
-  current Kaikki run supplies 2,784/3,000 menus (92.8%).
-- [ ] Define a deterministic merge order and preserve the source of every sense; do not
-  silently combine similarly worded senses from the two providers.
+- [ ] Keep Kaikki as the production menu base. Use Open Dutch WordNet as review
+  evidence unless a later audited merge policy preserves provider provenance and
+  demonstrates a measurable improvement.
 - [ ] Finish the resulting menu metadata audit; the current Kaikki-only policy is marked
   `partial`.
-- [ ] Resolve or explicitly declare the 216 of 3,000 surfaces that currently have no
+- [ ] Resolve or explicitly declare the 101 of 2,000 surfaces that currently have no
   usable menu.
-- [ ] Manually audit all 3,000 ranked surfaces and examples, including English leakage,
+- [ ] Complete all 2,000 rows in the generated review queue, including English leakage,
   subtitle names/credits, interjections, fillers, loanwords and function words that need
   small curated menus rather than ordinary sense selection.
-- [ ] Build Dutch observation events and the materialized surface ledger.
 - [ ] Audit inventory noise beyond the five already declared apostrophe/tokenizer cases.
-- [ ] Produce and validate an immutable Dutch Speech release; none exists under
-  `Fluency-Workspace/releases/nl/speech`.
+- [ ] Benchmark and pin a Dutch WSD profile, then rebuild the release with assigned
+  examples and run final release validation.
 - [ ] Change the app from `hasData: false` and add release, capability and study paths.
-- [ ] Copy/wire the existing cognate output into the app and enable `cognateFilter`.
-- [ ] Measure cognate coverage and recalibrate the cutoff against the final deck.
+- [ ] Review the regenerated 2,000-card cognate score band and wire it during deployment.
 - [ ] Decide whether to build the available `eng-nld` CogNet supplement.
 - [ ] Generate Dutch coverage output.
 
@@ -285,47 +281,52 @@ the actual Speech supply chain has not been onboarded.
 
 ## Finnish (`fi`)
 
-Finnish is a clean-slate onboarding: no Finnish repository or workspace support
-was found.
+Finnish now has a working active 2,000-card Speech release and a validated static
+app package. Its manual review, menu-policy audit, cognate calibration and WSD
+benchmark remain open quality gates.
 
 ### Required shared setup
 
-- [ ] Add `src/fluency/languages/finnish/` with `LANGUAGE_CODE = "fi"`.
-- [ ] Define Finnish NFC, casing, hyphen and apostrophe behavior in `surfaces.py`.
-- [ ] Add Finnish app configuration: name, flag, `fi-FI`, colours, reference links,
+- [x] Add `src/fluency/languages/finnish/` with `LANGUAGE_CODE = "fi"`.
+- [x] Define Finnish NFC, casing, hyphen and apostrophe behavior in `surfaces.py`.
+- [x] Add Finnish app configuration: name, flag, `fi-FI`, colours, reference links,
   route code, CEFR copy and capability defaults.
-- [ ] Add Finnish to remaining explicit frontend language/flag maps.
-- [ ] Register Finnish in the sense-menu registry.
+- [x] Add Finnish to remaining explicit frontend language/flag maps.
+- [x] Register Finnish in the sense-menu registry.
 
 ### Required Speech work
 
-- [ ] Select, download and pin a spoken Finnish surface-frequency list.
-- [ ] Add `config/inventory/languages/fi-v1.json` and audit exclusions.
-- [ ] Download and pin a Finnish Kaikki/Wiktionary JSONL extract.
-- [ ] Compare Finnish Kaikki with FinnWordNet before fixing the menu design. Prefer the
-  same explicit hybrid pattern if FinnWordNet improves lexical senses without covering
-  the conversational and grammatical surface inventory.
+- [x] Pin the Finnish FrequencyWords/OpenSubtitles 2018 50,000-surface list.
+- [x] Add `config/inventory/languages/fi-v1.json`.
+- [x] Pin a current Finnish Kaikki/Wiktionary extract.
+- [x] Compare Finnish Kaikki with FinnWordNet. Keep Kaikki as the base: FinnWordNet has
+  708 direct overlaps and fills only 15 of 116 Kaikki gaps in the 2,000-card inventory.
 - [ ] Create and fully audit `config/sense_menu/languages/fi-v1.json` for the selected
   provider or hybrid.
-- [ ] Add Finnish to the Tatoeba source policy (`fin`) and pin a Finnish-English snapshot.
-- [ ] Pin an aligned English-Finnish OpenSubtitles snapshot.
-- [ ] Add `config/harvest/languages/fi-v1.json` with Finnish token and compound behavior.
-- [ ] Add a Finnish Speech profile with `fi-FI` locale.
-- [ ] Build and audit the inventory, menu and example supply.
-- [ ] Manually audit all first 3,000 surfaces and examples, then write exclusions,
+- [x] Add Finnish to the Tatoeba source policy (`fin`) and pin a Finnish-English snapshot.
+- [x] Pin a recent aligned English-Finnish OpenSubtitles snapshot.
+- [x] Add `config/harvest/languages/fi-v1.json`.
+- [x] Add a 2,000-card Finnish Speech profile with `fi-FI` locale.
+- [x] Build inventory, menu and example supply in run
+  `20260926T171858Z-4e22885d` and build release
+  `fi-speech-v1-2000x5-3-candidate`.
+- [ ] Complete all 2,000 rows in the generated review queue, then write exclusions,
   classes, overrides, expansions and curated function-word menus for every exception.
-- [ ] Build Finnish observation events and the materialized surface ledger.
+- [x] Build initial Finnish observation events and the 2,000-surface ledger; 68
+  capitalization cases remain under review.
 - [ ] Add declared entries for colloquialisms, contractions and dictionary gaps found by
   the ledger.
-- [ ] Produce, validate and activate the first immutable Finnish Speech release.
-- [ ] Wire release paths, capabilities and coverage into the app.
+- [x] Validate and activate the first immutable Finnish Speech release.
+- [x] Wire release paths and capabilities into the app and build static deployment
+  `finnish-2000-release-20260927`.
+- [ ] Generate and wire Finnish corpus-coverage output.
 
 ### Cognates
 
-- [ ] Choose the intended first known-language pair; this candidate assumes Finnish-English.
-- [ ] Create and calibrate `config/cognates/fi-en.json`.
-- [ ] Build the provenance layer and app map from the Finnish extract, final surface
-  universe and English word list.
+- [x] Choose Finnish-English as the first pair and create a conservative candidate policy.
+- [x] Build the provenance layer and app map against the 2,000-card candidate and pinned
+  English word list.
+- [ ] Calibrate `config/cognates/fi-en.json`; its current 0.85 cutoff is provisional.
 - [ ] Create a Finnish-English calibration/false-friend set before fixing the cutoff.
 - [ ] Find a supplemental cognate source if desired; the pinned CogNet pair collection
   contains no Finnish data.

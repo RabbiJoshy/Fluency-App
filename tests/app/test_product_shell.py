@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v563"
+EXPECTED_CACHE_NAME = "flashcards-v566"
 
 
 
@@ -112,7 +112,7 @@ class ProductShellTests(unittest.TestCase):
             key for key, value in config["languages"].items()
             if value.get("hasData", True)
         }
-        self.assertEqual(enabled, {"czech", "french", "portuguese", "spanish"})
+        self.assertEqual(enabled, {"czech", "finnish", "french", "portuguese", "spanish"})
         self.assertEqual(config["languages"]["portuguese"]["name"], "Portuguese")
         self.assertEqual(config["languages"]["portuguese"]["flag"], "🇵🇹")
         self.assertEqual(config["languages"]["portuguese"]["speechLang"], "pt-PT")
@@ -785,8 +785,8 @@ class ProductShellTests(unittest.TestCase):
             '.range-btn-new:not(.has-progress):not(:hover)',
             light_css,
         )
-        self.assertIn('css/light-theme.css?v=20260926v19', html)
-        self.assertIn('/css/light-theme.css?v=20260926v19', worker)
+        self.assertIn('css/light-theme.css?v=20260927v21', html)
+        self.assertIn('/css/light-theme.css?v=20260927v21', worker)
 
 
     def test_active_release_aliases_are_never_cached(self) -> None:
@@ -1008,7 +1008,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
         self.assertIn("/js/spotify-playlist-import.js?v=20260923su", worker)
-        self.assertIn('css/style.css?v=20260926v19', html)
+        self.assertIn('css/style.css?v=20260927v21', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
         self.assertIn("replaceRoute({\n        kind: 'live'", importer)

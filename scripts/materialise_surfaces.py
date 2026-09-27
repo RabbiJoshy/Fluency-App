@@ -45,6 +45,10 @@ AUTHORITY = {
            "enwiktionary-is-headword"),
     "cs": ("cnk-word-at-a-glance", "enwiktionary-closed-class-headword",
            "enwiktionary-form-of", "enwiktionary-is-headword"),
+    "nl": ("enwiktionary-closed-class-headword", "enwiktionary-form-of",
+           "enwiktionary-is-headword"),
+    "fi": ("enwiktionary-closed-class-headword", "enwiktionary-form-of",
+           "enwiktionary-is-headword"),
 }
 PROVENANCE_LABEL = {
     "spanishdict-clitic-dephrased": "spanishdict clitic de-phrased",

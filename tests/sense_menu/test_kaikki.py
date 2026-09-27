@@ -311,6 +311,34 @@ class KaikkiSenseMenuTests(unittest.TestCase):
             {("cette", "det")},
         )
 
+    def test_complete_dump_declares_absence_for_a_missing_surface(self):
+        cards = [{**create_card_record("fr", "inconnu").to_dict(), "rank": 1}]
+        menu, report = KaikkiSenseMenuAdapter(
+            self.snapshot, language_policy=self.policy
+        ).build(cards, snapshot_id="fixture-2026-08")
+
+        card = menu["cards"][0]
+        self.assertEqual(card["analyses"], [])
+        self.assertEqual(
+            card["resolution"],
+            {
+                "resolver_version": "surface-resolver/v1",
+                "strategy": "no_menu",
+                "provider": "wiktionary",
+                "coverage": "absent",
+                "entry_id": None,
+                "expanded_to": None,
+                "word_class": "unresolved",
+                "surface": "inconnu",
+                "reason": "absent",
+                "headwords": [],
+                "entry": None,
+                "notes": {},
+            },
+        )
+        self.assertEqual(report["per_surface"][0]["strategy"], "no_menu")
+        self.assertEqual(report["per_surface"][0]["reason"], "absent")
+
 
 if __name__ == "__main__":
     unittest.main()

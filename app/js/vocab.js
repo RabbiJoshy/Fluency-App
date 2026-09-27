@@ -440,7 +440,7 @@ async function resumeLastStudySession() {
 // ISO 639-1 codes for each language key used in config.json
 const LANG_CODES = {
     spanish: 'es', swedish: 'sv', italian: 'it',
-    dutch: 'nl', polish: 'pl', french: 'fr', russian: 'ru'
+    dutch: 'nl', finnish: 'fi', polish: 'pl', french: 'fr', russian: 'ru'
 };
 
 /**
@@ -3218,7 +3218,7 @@ function getExampleFromMeaning(meaning, exampleTargetField, exampleEnglishField)
         const example = meaning.examples[0];
         // Support both 'target'/'english' and language-specific keys like 'spanish'/'english'
         const targetSentence = example.target || example.spanish || example.swedish ||
-                               example.dutch || example.italian || example.polish || '';
+                               example.dutch || example.finnish || example.italian || example.polish || '';
         const englishSentence = example.english || '';
         return { targetSentence, englishSentence, allExamples: meaning.examples };
     }

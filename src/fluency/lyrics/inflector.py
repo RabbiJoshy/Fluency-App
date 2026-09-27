@@ -130,6 +130,18 @@ def inflect_english_present(verb: str, person_idx: int) -> str:
     return third_person_singular(lower) if person_idx == 2 else lower
 
 
+def should_double_consonant(lower: str) -> bool:
+    if len(lower) <= 1:
+        return False
+    # Monosyllabic CVC ending in single vowel + single consonant (not w, x, y)
+    if re.search(r"^[bcdfghjklmnpqrstvwxyz]*[aeiou][bcdfghjklmnpqrstvz]$", lower):
+        return True
+    # Common multi-syllable verbs with stress on final syllable
+    if lower in {"begin", "forget", "admit", "occur", "prefer", "refer", "commit", "control"}:
+        return True
+    return False
+
+
 def inflect_english_past(verb: str, person_idx: int) -> str:
     lower = verb.lower()
     irregular = IRREGULAR_ENGLISH_PAST.get(lower)
@@ -141,6 +153,8 @@ def inflect_english_past(verb: str, person_idx: int) -> str:
         return f"{lower}d"
     if re.search(r"[^aeiou]y$", lower):
         return f"{lower[:-1]}ied"
+    if should_double_consonant(lower):
+        return f"{lower}{lower[-1]}ed"
     return f"{lower}ed"
 
 
@@ -152,6 +166,8 @@ def english_ing(verb: str) -> str:
         return f"{lower[:-2]}ying"
     if lower.endswith("e") and not lower.endswith("ee"):
         return f"{lower[:-1]}ing"
+    if should_double_consonant(lower):
+        return f"{lower}{lower[-1]}ing"
     return f"{lower}ing"
 
 

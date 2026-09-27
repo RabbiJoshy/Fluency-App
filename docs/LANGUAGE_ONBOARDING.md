@@ -62,8 +62,9 @@ section. Internal WSD and classifier design is intentionally out of scope.
 
 The first release must not go directly from downloaded data to automated processing.
 
-- Review every surface in the first 3,000, in frequency order. For larger releases,
-  also review every flagged item and samples from each later rank band.
+- For a first release of 3,000 cards or fewer, review every surface in frequency
+  order. For larger releases, review at least the first 3,000, every flagged item
+  and samples from each later rank band.
 - Check English leakage, names, subtitle credits, tokenization damage, abbreviations,
   dialect forms, loanwords, interjections, fillers, onomatopoeia and slang.
 - Review each surface's menu for wrong-language entries, wrong headwords or parts of
@@ -84,7 +85,7 @@ The first release must not go directly from downloaded data to automated process
   raw dictionary menu.
 - Store all decisions as versioned inventory adjudications or declared entries, with
   reason, author, date and scope. Do not leave decisions in an informal spreadsheet.
-- Block release while any top-3,000 surface remains unresolved or any manual review
+- Block release while any required surface remains unresolved or any manual review
   queue is open.
 
 Repeat a shorter human pass after the candidate release is assembled: inspect the

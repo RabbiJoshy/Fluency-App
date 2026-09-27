@@ -15,6 +15,7 @@ import sys
 LANGUAGE_CODES = {
     "en": "eng",
     "es": "spa",
+    "fi": "fin",
     "fr": "fra",
     "nl": "nld",
     "pt": "por",

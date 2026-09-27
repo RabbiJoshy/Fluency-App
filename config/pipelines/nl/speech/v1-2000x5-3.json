@@ -1,0 +1,75 @@
+{
+  "profile_version": "speech-pipeline-profile/v1",
+  "profile_id": "nl_speech_v1_2000x5_3",
+  "language": "nl",
+  "locale": "nl-NL",
+  "mode": "speech",
+  "identity": {
+    "unit_type": "surface",
+    "identity_version": "surface-card/v1",
+    "allow_lemma_identity": false
+  },
+  "source_policy": {
+    "fresh_snapshots_only": true,
+    "allow_legacy_inputs": false,
+    "allow_recovered_inputs": false,
+    "fallback_policy": "none"
+  },
+  "scope": {
+    "surface_limit": 2000,
+    "shortfall_policy": "publish_explicit",
+    "display_examples_per_card": [
+      {"through_rank": 1000, "examples": 5},
+      {"through_rank": 2000, "examples": 3}
+    ]
+  },
+  "inventory": {
+    "source_adapter": "published-surface-frequency-list/v1",
+    "language_policy": "nl-v1",
+    "source_edition": "FrequencyWords OpenSubtitles 2018 nl 50k",
+    "frequency_measure": "surface_token_occurrences",
+    "output_schema": "surface-inventory/v1",
+    "identity_unit": "surface",
+    "lemma_role": "excluded"
+  },
+  "harvest": {
+    "shared_policy": "speech-v1",
+    "language_policy": "nl-v1",
+    "source_policy": "explicit_union",
+    "sources": ["tatoeba", "opensubtitles"],
+    "wsd_budget_per_card": [
+      {"through_rank": 1000, "budget": 60},
+      {"through_rank": 2000, "budget": 30}
+    ],
+    "source_note": "Dutch Tatoeba plus the pinned 2016-2017 OpenSubtitles slice. Source quality and shortfalls are measured from the Dutch run; no Czech corpus judgement is inherited.",
+    "source_share": {"tatoeba": 0.6, "opensubtitles": 0.4}
+  },
+  "stage_order": [
+    "inventory", "sense_menu", "sentence_harvest",
+    "wsd_assignments", "example_selection", "release_build"
+  ],
+  "wsd": {
+    "strategy": "language-adapted-closed-menu/v1",
+    "shared_profile": "closed-menu-provider-prior-v1",
+    "language_profile": "nl-v1",
+    "model_profile": "nl-unselected",
+    "require_model_pins": true,
+    "execution_status": "blocked_pending_benchmark",
+    "model_revisions": {},
+    "max_wsd_units_per_run": 20000,
+    "execution_cap_per_card": 10,
+    "max_wsd_units_per_run_note": "2,000 surfaces x an execution cap of 10. The copied Portuguese model declaration is removed; Dutch model and calibration choices remain unclaimed until benchmarked."
+  },
+  "release": {"activation": "manual", "fallback_policy": "none"},
+  "sense_menu": {
+    "source_adapter": "wiktionary-sense-menu/v1",
+    "language_policy": "nl-v1",
+    "source_edition": "enwiktionary",
+    "gloss_language": "en",
+    "snapshot_id": null,
+    "output_schema": "sense-menu/v1",
+    "join_key": "surface_card_id",
+    "lemma_role": "lookup_metadata_only",
+    "comparison_sources": ["open-dutch-wordnet"]
+  }
+}

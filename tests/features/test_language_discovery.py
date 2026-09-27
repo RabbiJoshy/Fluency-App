@@ -22,6 +22,7 @@ class DiscoveryTests(unittest.TestCase):
 
     def test_normalizer_resolves_per_language(self) -> None:
         self.assertEqual(normalizer_for_language("pt")("  Você  "), "você")
+        self.assertEqual(normalizer_for_language("fi")("  YÖPÖYTÄ  "), "yöpöytä")
 
     def test_unknown_language_names_what_is_available(self) -> None:
         with self.assertRaises(LanguageSupportError) as caught:
@@ -41,7 +42,8 @@ class DerivedRegistryTests(unittest.TestCase):
     def test_keys_include_discovered_and_app_only_languages(self) -> None:
         keys = language_keys()
         self.assertEqual(keys["pt"], "portuguese")
-        self.assertEqual(keys["nl"], "dutch")  # app-only, no pipeline package
+        self.assertEqual(keys["nl"], "dutch")
+        self.assertEqual(keys["fi"], "finnish")
 
     def test_data_directories_are_capitalised(self) -> None:
         self.assertEqual(language_directories()["pt"], "Portuguese")

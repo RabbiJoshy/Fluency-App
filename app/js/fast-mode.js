@@ -239,7 +239,7 @@ function updateStreamlineRecCallout() {
 }
 
 function languageName(code) {
-    const names = { en: 'English', es: 'Spanish', fr: 'French', pt: 'Portuguese', cs: 'Czech', nl: 'Dutch', pl: 'Polish' };
+    const names = { en: 'English', es: 'Spanish', fi: 'Finnish', fr: 'French', pt: 'Portuguese', cs: 'Czech', nl: 'Dutch', pl: 'Polish' };
     return names[code] || String(code || '').toUpperCase();
 }
 

@@ -94,6 +94,7 @@ SUPPORTED_PROFILE_CONSTRAINT_MODES = {
     "es-v15-1": "filter",
     "pt-v15-1": "filter",
     "cs-v15-1": "filter",
+    "fi-v15-1": "filter",
 }
 PROFILE_LANGUAGES = {
     "es-v6-1": "es", "es-v7-1": "es", "pt-v7-1": "pt",
@@ -106,6 +107,7 @@ PROFILE_LANGUAGES = {
     "es-v13-1": "es", "pt-v13-1": "pt", "cs-v13-1": "cs",
     "es-v14-1": "es", "pt-v14-1": "pt", "cs-v14-1": "cs",
     "es-v15-1": "es", "pt-v15-1": "pt", "cs-v15-1": "cs",
+    "fi-v15-1": "fi",
 }
 ALIGNMENT_PROFILES = frozenset({"es-v8-english-1", "pt-v8-english-1"})
 RANK_AGREEMENT_PROFILES = frozenset(
@@ -116,6 +118,7 @@ RANK_AGREEMENT_PROFILES = frozenset(
         "es-v13-1", "pt-v13-1", "cs-v13-1",
         "es-v14-1", "pt-v14-1", "cs-v14-1",
         "es-v15-1", "pt-v15-1", "cs-v15-1",
+        "fi-v15-1",
     }
 )
 EVIDENCE_GUARD_PROFILES = frozenset(
@@ -126,6 +129,7 @@ EVIDENCE_GUARD_PROFILES = frozenset(
         "es-v13-1", "pt-v13-1", "cs-v13-1",
         "es-v14-1", "pt-v14-1", "cs-v14-1",
         "es-v15-1", "pt-v15-1", "cs-v15-1",
+        "fi-v15-1",
     }
 )
 ABSTAIN_UNRESOLVED_PROFILES = frozenset(
@@ -133,12 +137,14 @@ ABSTAIN_UNRESOLVED_PROFILES = frozenset(
         "es-v13-1", "pt-v13-1", "cs-v13-1",
         "es-v14-1", "pt-v14-1", "cs-v14-1",
         "es-v15-1", "pt-v15-1", "cs-v15-1",
+        "fi-v15-1",
     }
 )
 PHRASE_SKIP_PROVIDER_ORDER_PROFILES = frozenset(
     {
         "es-v14-1", "pt-v14-1", "cs-v14-1",
         "es-v15-1", "pt-v15-1", "cs-v15-1",
+        "fi-v15-1",
     }
 )
 

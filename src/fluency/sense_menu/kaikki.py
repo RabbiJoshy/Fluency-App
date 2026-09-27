@@ -29,7 +29,7 @@ from fluency.sense_menu.declared_menu import declared_entity_analyses, declared_
 from fluency.surfaces import trust as _trust
 from fluency.surfaces.resolver import (
     ABSENT, COMPLETE_DUMP, DECLARED_GLOSS, ENTITY, EXPANSION, HEADWORDS, MENU,
-    Headword, ProviderDeclaration,
+    NO_MENU, Headword, ProviderDeclaration, Resolution,
 )
 
 
@@ -714,6 +714,21 @@ class KaikkiSenseMenuAdapter:
                 analyses = declared_entity_analyses(card["card_id"], surface, resolution)
             else:
                 analyses = []
+
+            # Kaikki is a complete dictionary dump. If its scan found no
+            # sense-bearing entry, that is a declared absence rather than an
+            # unknown lookup state. Preserve the declaration on the menu card
+            # even when this profile does not opt specific surfaces into the
+            # hand-curated resolver. Release validation can then distinguish
+            # an honest no-menu card from an accidentally empty one.
+            if resolution is None and not analyses:
+                resolution = Resolution(
+                    surface=surface,
+                    strategy=NO_MENU,
+                    coverage=ABSENT,
+                    reason=ABSENT,
+                    provider="wiktionary",
+                )
 
             total_analyses += len(analyses)
             sense_count = sum(len(analysis.senses) for analysis in analyses)

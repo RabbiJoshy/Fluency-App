@@ -712,7 +712,7 @@ async function popupFoundWord(entry, opts) {
             const seen = new Set();
             const examples = gathered.filter(example => {
                 const target = example.target || example.spanish || example.swedish
-                    || example.dutch || example.italian || example.polish || '';
+                    || example.dutch || example.finnish || example.italian || example.polish || '';
                 const key = example.id || `${example.song || ''}\u0000${target}`;
                 if (!target || seen.has(key)) return false;
                 seen.add(key);
@@ -724,7 +724,7 @@ async function popupFoundWord(entry, opts) {
                 meaning: '',
                 percentage: 1,
                 targetSentence: first.target || first.spanish || first.swedish
-                    || first.dutch || first.italian || first.polish || '',
+                    || first.dutch || first.finnish || first.italian || first.polish || '',
                 englishSentence: first.english || '',
                 allExamples: examples,
                 exampleOnly: true,

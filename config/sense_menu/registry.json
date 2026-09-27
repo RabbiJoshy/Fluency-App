@@ -4,6 +4,7 @@
   "languages": {
     "cs": {"app_key": "czech", "policy_id": "cs-v1", "provider": "wiktionary", "audit_status": "audited"},
     "es": {"app_key": "spanish", "policy_id": "es-spanishdict-v1", "provider": "spanishdict", "audit_status": "audited"},
+    "fi": {"app_key": "finnish", "policy_id": "fi-v1", "provider": "wiktionary", "audit_status": "scaffold"},
     "fr": {"app_key": "french", "policy_id": "fr-v1", "provider": "wiktionary", "audit_status": "audited"},
     "it": {"app_key": "italian", "policy_id": "it-v1", "provider": "wiktionary", "audit_status": "scaffold"},
     "nl": {"app_key": "dutch", "policy_id": "nl-v1", "provider": "wiktionary", "audit_status": "partial"},

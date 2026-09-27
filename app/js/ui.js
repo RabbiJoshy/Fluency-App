@@ -474,7 +474,7 @@ function setActiveSetupStep(stepId) {
 const PREFERRED_LANGUAGE_KEY = 'fluencyPreferredLanguageV1';
 const LEARNING_CONTEXT_FLAGS = {
     spanish: '🇪🇸', portuguese: '🇵🇹', portuguese_brazilian: '🇧🇷', french: '🇫🇷', italian: '🇮🇹',
-    swedish: '🇸🇪', dutch: '🇳🇱', polish: '🇵🇱', russian: '🇷🇺', czech: '🇨🇿'
+    swedish: '🇸🇪', dutch: '🇳🇱', finnish: '🇫🇮', polish: '🇵🇱', russian: '🇷🇺', czech: '🇨🇿'
 };
 
 function learningContextInitials(name) {
@@ -584,7 +584,7 @@ function mergeArtistProgressIntoSourceStep() {
     if (!wrapper || !progressSlot) return;
 
     const flagMap = {
-        spanish: '🇪🇸', swedish: '🇸🇪', italian: '🇮🇹', dutch: '🇳🇱',
+        spanish: '🇪🇸', swedish: '🇸🇪', italian: '🇮🇹', dutch: '🇳🇱', finnish: '🇫🇮',
         polish: '🇵🇱', french: '🇫🇷', russian: '🇷🇺', czech: '🇨🇿',
         portuguese: '🇵🇹', portuguese_brazilian: '🇧🇷'
     };

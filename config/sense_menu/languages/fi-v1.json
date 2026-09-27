@@ -1,0 +1,18 @@
+{
+  "config_version": "sense-menu-language-policy/v1",
+  "policy_id": "fi-v1",
+  "language": "fi",
+  "provider": "wiktionary",
+  "provider_policy_id": "wiktionary-v1",
+  "audit_status": "scaffold",
+  "card_binding": {"identity": "surface-card/v1", "headword_role": "lookup_metadata_only"},
+  "menu_order_role": "provider_prior",
+  "region_tags": [],
+  "register_tags": [],
+  "construction_tags": [],
+  "domain_tags": [],
+  "construction_tag_mappings": {},
+  "grammar_tags": {},
+  "ignored_tags": [],
+  "feature_vocabulary_note": "Scaffold only. Audit against the pinned English-Wiktionary Finnish extract before promotion. FinnWordNet is pinned as a comparison source, not silently merged into this provider menu."
+}

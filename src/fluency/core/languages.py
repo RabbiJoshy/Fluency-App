@@ -20,7 +20,7 @@ from fluency.languages.surfaces import _packages_by_code
 
 # Languages served by the app that have no pipeline package of their own.
 # Anything with a package is discovered and does not belong here.
-APP_ONLY_LANGUAGES = {"nl": "dutch"}
+APP_ONLY_LANGUAGES: dict[str, str] = {}
 
 # The per-language files the app requests, and the release field each maps to.
 APP_DATA_FILES = (

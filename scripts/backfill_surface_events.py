@@ -30,7 +30,9 @@ def deacc(word: str) -> str:
     return unicodedata.normalize("NFD", word.lower()).encode("ascii", "ignore").decode()
 
 
-def latest_run(workspace: Path, language: str) -> Path | None:
+def latest_run(workspace: Path, language: str, run_id: str | None = None) -> Path | None:
+    if run_id:
+        return workspace / "runs" / language / "speech" / run_id
     marker = workspace / f"runs/{language}/speech/LATEST_V11"
     if not marker.exists():
         return None
@@ -41,13 +43,22 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--workspace", type=Path, required=True)
     ap.add_argument("--language", required=True)
+    ap.add_argument("--run-id", help="explicit Speech run to observe")
+    ap.add_argument(
+        "--english-wordlist",
+        type=Path,
+        default=WORDLIST,
+        help="English word list; the first tab-separated field is read",
+    )
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
     ws, lang = args.workspace, args.language
 
-    run = latest_run(ws, lang)
+    run = latest_run(ws, lang, args.run_id)
     if run is None:
-        print(f"{lang}: no LATEST_V11 run"); return 1
+        print(f"{lang}: no run selected and no LATEST_V11 run"); return 1
+    if not run.exists():
+        print(f"{lang}: run does not exist: {run}"); return 1
     stages = run / "stages"
     inv = json.loads((stages / "01_inventory/output/inventory.json").read_text())
     surfaces = {c["card_id"]: c["display_form"] for c in inv["cards"]}
@@ -59,7 +70,11 @@ def main() -> int:
                                   evidence=evidence, run_id=run.name))
 
     # 1. the list against an English wordlist, and against its own accented forms
-    english = {l.strip().lower() for l in WORDLIST.open(encoding="utf-8", errors="ignore") if l.strip()}
+    english = {
+        line.split("\t", 1)[0].strip().lower()
+        for line in args.english_wordlist.open(encoding="utf-8", errors="ignore")
+        if line.strip()
+    }
     stripped = {}
     for form in surfaces.values():
         if deacc(form) != form.lower():
@@ -67,7 +82,7 @@ def main() -> int:
     for form in surfaces.values():
         low = form.lower()
         if low in english and deacc(low) == low:
-            note(form, "list", "english_wordlist", {"wordlist": "web2"})
+            note(form, "list", "english_wordlist", {"wordlist": str(args.english_wordlist)})
         if low in stripped:
             note(form, "list", "accent_stripped_duplicate",
                  {"accented_form": stripped[low]})

@@ -185,6 +185,36 @@ CULTURAL_ENTITY_OVERRIDES: dict[str, dict[str, Any]] = {
         "pos": "INTJ",
         "source": "curated:onomatopoeia",
     },
+    "wua": {
+        "translation": "wua (ad-lib / vocal sound)",
+        "context": "Signature urban trap vocal sound effect",
+        "pos": "INTJ",
+        "source": "curated:onomatopoeia",
+    },
+    "wuo": {
+        "translation": "wuo (ad-lib / vocal sound)",
+        "context": "Signature urban vocal exclamation",
+        "pos": "INTJ",
+        "source": "curated:onomatopoeia",
+    },
+    "woh": {
+        "translation": "woh (ad-lib / vocal sound)",
+        "context": "Signature urban vocal exclamation",
+        "pos": "INTJ",
+        "source": "curated:onomatopoeia",
+    },
+    "uoh": {
+        "translation": "uoh (ad-lib / vocal sound)",
+        "context": "Signature urban vocal exclamation",
+        "pos": "INTJ",
+        "source": "curated:onomatopoeia",
+    },
+    "buoh": {
+        "translation": "buoh (ad-lib / Safaera chant)",
+        "context": "Signature Safaera perreo chant exclamation",
+        "pos": "INTJ",
+        "source": "curated:onomatopoeia",
+    },
 }
 
 ENGLISH_STOPWORDS = {
@@ -285,10 +315,11 @@ def extract_senses_from_sd_analyses(headword: str, analyses: list[dict[str, Any]
             if not trans or trans.lower() in seen:
                 continue
             seen.add(trans.lower())
+            analysis_hw = a.get("headword") or headword
+            sid = s.get("sense_id") or f"sd:{analysis_hw}#{len(senses)+1}"
             ctx = s.get("context") or ""
-            sid = s.get("sense_id") or f"sd:{headword}#{len(senses)+1}"
             senses.append({
-                "headword": headword,
+                "headword": analysis_hw,
                 "pos": pos,
                 "translation": trans,
                 "context": ctx,
@@ -526,6 +557,17 @@ def plant_artist(
         is_propn = orig_card.get("is_propernoun", False)
         orig_senses = orig_card.get("senses", [])
 
+        # Check if card has merged clitics and represents an unsung citation infinitive
+        merged_clitics = orig_card.get("merged_clitic_ids") or {}
+        clitic_surfaces = [cl.strip() for cl in merged_clitics.values() if cl.strip()]
+        primary_clitic = clitic_surfaces[0] if clitic_surfaces else None
+
+        if primary_clitic and (word.endswith("se") or word_lower in {"guillar", "guillarse"}):
+            target_surface = primary_clitic
+            orig_card["display_form"] = primary_clitic
+        else:
+            target_surface = orig_card.get("display_form") or word
+
         # Priority 0: Cultural entity overrides
         if word_lower in CULTURAL_ENTITY_OVERRIDES:
             ov = CULTURAL_ENTITY_OVERRIDES[word_lower]
@@ -644,7 +686,15 @@ def plant_artist(
             sd_senses = extract_senses_from_sd_analyses(word, surf_cache[word_lower]["dictionary_analyses"])
 
         if sd_senses:
-            resolved_cards[card_id] = orig_card
+            analysis_hw = sd_senses[0].get("headword")
+            card_lemma = orig_card.get("lemma")
+            if not card_lemma or card_lemma == word:
+                card_lemma = analysis_hw or word
+            sd_senses = inflect_card_senses(target_surface, card_lemma, sd_senses, conj_rev)
+            resolved_cards[card_id] = {
+                **orig_card,
+                "lemma": card_lemma,
+            }
             resolved_senses_by_card[card_id] = sd_senses
             sd_direct_hits += 1
             continue
@@ -698,10 +748,10 @@ def plant_artist(
             borrowed_senses = extract_senses_from_sd_analyses(headword, borrowed_analyses)
             if borrowed_senses:
                 # Inflect borrowed senses to surface form (verb conjugation, attached clitics, noun plurals)
-                borrowed_senses = inflect_card_senses(word, headword, borrowed_senses, conj_rev)
+                borrowed_senses = inflect_card_senses(target_surface, headword, borrowed_senses, conj_rev)
                 for s in borrowed_senses:
                     s["source"] = "spanishdict:headword_borrow"
-                    s["surface_word"] = word
+                    s["surface_word"] = target_surface
                 resolved_cards[card_id] = {
                     **orig_card,
                     "lemma": headword,
@@ -745,7 +795,7 @@ def plant_artist(
 
             if wikt_senses:
                 card_lemma = orig_card.get("lemma") or word
-                wikt_senses = inflect_card_senses(word, card_lemma, wikt_senses, conj_rev)
+                wikt_senses = inflect_card_senses(target_surface, card_lemma, wikt_senses, conj_rev)
                 resolved_cards[card_id] = orig_card
                 resolved_senses_by_card[card_id] = wikt_senses
                 wiktionary_hits += 1
@@ -774,6 +824,8 @@ def plant_artist(
                 "sense_id": f"fallback:{word_lower}#1",
             }]
 
+        card_lemma = orig_card.get("lemma") or word
+        clean_fallbacks = inflect_card_senses(target_surface, card_lemma, clean_fallbacks, conj_rev)
         resolved_cards[card_id] = orig_card
         resolved_senses_by_card[card_id] = clean_fallbacks
         retained_hits += 1
@@ -831,13 +883,19 @@ def plant_artist(
             variant_terms = [normalize_lyrics_token(v) for v in item.get("variants", [])]
 
             search_terms: list[str] = []
-            for t in [word_str, lemma_str, disp_str] + clitic_terms + variant_terms:
-                if t and t not in search_terms:
+            primary_terms = [t for t in [disp_str, word_str] + clitic_terms + variant_terms if t]
+            for t in primary_terms:
+                if t not in search_terms:
                     search_terms.append(t)
                     if "'" in t:
                         unquoted = t.replace("'", "")
                         if unquoted not in search_terms:
                             search_terms.append(unquoted)
+
+            # Only search lemma if card is a base lemma card (word == lemma)
+            if word_str == lemma_str or not search_terms:
+                if lemma_str and lemma_str not in search_terms:
+                    search_terms.append(lemma_str)
 
             seen_sp = {ex.get("spanish", "").strip().lower() for ex in occurrences}
             for term in search_terms:
@@ -845,7 +903,9 @@ def plant_artist(
                     sp_text = match_ex.get("spanish", "").strip().lower()
                     if sp_text not in seen_sp:
                         seen_sp.add(sp_text)
-                        occurrences.append(match_ex)
+                        cloned = dict(match_ex)
+                        cloned["surface"] = card.get("display_form") or card.get("word") or term
+                        occurrences.append(cloned)
                         if len(occurrences) >= target_budget:
                             break
                 if len(occurrences) >= target_budget:
@@ -857,7 +917,9 @@ def plant_artist(
             for l_sid in linked_sids:
                 song_lines = song_id_to_valid_lines.get(l_sid, [])
                 if song_lines:
-                    occurrences.append(song_lines[0])
+                    cloned = dict(song_lines[0])
+                    cloned["surface"] = card.get("display_form") or card.get("word") or ""
+                    occurrences.append(cloned)
                     break
 
         total_raw_occurrences += len(occurrences)
@@ -923,6 +985,7 @@ def plant_artist(
     assigned_occurrences_count = 0
     monosemous_count = 0
     polysemous_wsd_count = 0
+    trf_doc_cache: dict[str, Any] = {}
 
     for item in raw_index:
         cid = item["id"]
@@ -993,7 +1056,9 @@ def plant_artist(
             polysemous_wsd_count += len(examples_to_assign)
             for ex_idx, ex in enumerate(examples_to_assign):
                 stext = ex.get("spanish", "").strip()
-                doc = nlp(stext)
+                if stext not in trf_doc_cache:
+                    trf_doc_cache[stext] = nlp(stext)
+                doc = trf_doc_cache[stext]
                 target_token = None
                 for t in doc:
                     if t.text.casefold() == word.casefold():
@@ -1107,6 +1172,9 @@ def plant_artist(
                 "unresolved_mass": 0,
             },
         }
+
+        if card.get("display_form"):
+            index_entry["display_form"] = card["display_form"]
 
         # Inflect clitic_memberships if present
         if item.get("clitic_memberships"):

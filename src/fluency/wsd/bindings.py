@@ -63,10 +63,17 @@ def _french() -> Any:
     return FrenchWSDAdapter()
 
 
+def _finnish() -> Any:
+    from fluency.wsd.languages.finnish import FinnishWSDAdapter
+
+    return FinnishWSDAdapter()
+
+
 _BINDINGS["es"] = LanguageBinding("es", _spanish, "occurrence-pos", "spanishdict")
 _BINDINGS["pt"] = LanguageBinding("pt", _portuguese, "occurrence-pos-pt", "wiktionary")
 _BINDINGS["fr"] = LanguageBinding("fr", _french, "occurrence-pos-fr", "wiktionary")
 _BINDINGS["cs"] = LanguageBinding("cs", _czech, None, "wiktionary")
+_BINDINGS["fi"] = LanguageBinding("fi", _finnish, None, "wiktionary")
 
 
 def binding_for(language: str) -> LanguageBinding:
