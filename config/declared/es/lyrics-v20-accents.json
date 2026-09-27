@@ -1,0 +1,983 @@
+{
+ "schema": "declared-entries/v1",
+ "language": "es",
+ "note": "Lyric spellings that differ from a dictionary word by an accent or clipping. Trust derived: a rule proposed them and each was read in its line.",
+ "entries": [
+  {
+   "entry_id": "es-lyrics-v20-accent-angulos",
+   "kind": "expansion",
+   "surface": "angulos",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "ángulos"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-area",
+   "kind": "expansion",
+   "surface": "area",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "área"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-bombon",
+   "kind": "expansion",
+   "surface": "bombon",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "bombón"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-buscamé",
+   "kind": "expansion",
+   "surface": "buscamé",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "búscame"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-cabron",
+   "kind": "expansion",
+   "surface": "cabron",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "cabrón"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-caidas",
+   "kind": "expansion",
+   "surface": "caidas",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "caídas"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-caimos",
+   "kind": "expansion",
+   "surface": "caimos",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "caímos"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-capitulos",
+   "kind": "expansion",
+   "surface": "capitulos",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "capítulos"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-catequésis",
+   "kind": "expansion",
+   "surface": "catequésis",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "catequesis"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-chapulin",
+   "kind": "expansion",
+   "surface": "chapulin",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "chapulín"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-cirugia",
+   "kind": "expansion",
+   "surface": "cirugia",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "cirugía"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-codigo",
+   "kind": "expansion",
+   "surface": "codigo",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "código"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-critícan",
+   "kind": "expansion",
+   "surface": "critícan",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "critican"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-detras",
+   "kind": "expansion",
+   "surface": "detras",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "detrás"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-dí",
+   "kind": "expansion",
+   "surface": "dí",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "di"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-envíaste",
+   "kind": "expansion",
+   "surface": "envíaste",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "enviaste"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-eramos",
+   "kind": "expansion",
+   "surface": "eramos",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "éramos"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-estabamos",
+   "kind": "expansion",
+   "surface": "estabamos",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "estábamos"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-facil",
+   "kind": "expansion",
+   "surface": "facil",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "fácil"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-fregues",
+   "kind": "expansion",
+   "surface": "fregues",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "fregués"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-fria",
+   "kind": "expansion",
+   "surface": "fria",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "fría"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-lapiz",
+   "kind": "expansion",
+   "surface": "lapiz",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "lápiz"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-locacion",
+   "kind": "expansion",
+   "surface": "locacion",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "locación"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-magía",
+   "kind": "expansion",
+   "surface": "magía",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "magia"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-meti",
+   "kind": "expansion",
+   "surface": "meti",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "metí"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-mia",
+   "kind": "expansion",
+   "surface": "mia",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "mía"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-mientrás",
+   "kind": "expansion",
+   "surface": "mientrás",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "mientras"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-millon",
+   "kind": "expansion",
+   "surface": "millon",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "millón"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-má",
+   "kind": "expansion",
+   "surface": "má",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "más"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-nomas",
+   "kind": "expansion",
+   "surface": "nomas",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "nomás"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-ocurrio",
+   "kind": "expansion",
+   "surface": "ocurrio",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "ocurrió"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-oiste",
+   "kind": "expansion",
+   "surface": "oiste",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "oíste"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-pais",
+   "kind": "expansion",
+   "surface": "pais",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "país"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-peleémos",
+   "kind": "expansion",
+   "surface": "peleémos",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "peleemos"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-podiamos",
+   "kind": "expansion",
+   "surface": "podiamos",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "podíamos"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-polícia",
+   "kind": "expansion",
+   "surface": "polícia",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "policía"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-prendi",
+   "kind": "expansion",
+   "surface": "prendi",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "prendí"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-prometi",
+   "kind": "expansion",
+   "surface": "prometi",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "prometí"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-pusé",
+   "kind": "expansion",
+   "surface": "pusé",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "puse"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-reimos",
+   "kind": "expansion",
+   "surface": "reimos",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "reímos"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-repítamos",
+   "kind": "expansion",
+   "surface": "repítamos",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "repitamos"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-revol",
+   "kind": "expansion",
+   "surface": "revol",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "revólver"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-rococo",
+   "kind": "expansion",
+   "surface": "rococo",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "rococó"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-sacais",
+   "kind": "expansion",
+   "surface": "sacais",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "sacáis"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-segui",
+   "kind": "expansion",
+   "surface": "segui",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "seguí"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-semaforo",
+   "kind": "expansion",
+   "surface": "semaforo",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "semáforo"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-sera",
+   "kind": "expansion",
+   "surface": "sera",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "será"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-seras",
+   "kind": "expansion",
+   "surface": "seras",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "serás"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-servi",
+   "kind": "expansion",
+   "surface": "servi",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "serví"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-sonreias",
+   "kind": "expansion",
+   "surface": "sonreias",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "sonreías"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-sólamente",
+   "kind": "expansion",
+   "surface": "sólamente",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "solamente"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-taina",
+   "kind": "expansion",
+   "surface": "taina",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "taína"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-tiguere",
+   "kind": "expansion",
+   "surface": "tiguere",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "tíguere"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-trás",
+   "kind": "expansion",
+   "surface": "trás",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "tras"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-tó",
+   "kind": "expansion",
+   "surface": "tó",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "todo"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-unica",
+   "kind": "expansion",
+   "surface": "unica",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "única"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-unico",
+   "kind": "expansion",
+   "surface": "unico",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "único"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-verda",
+   "kind": "expansion",
+   "surface": "verda",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "verdad"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-victoría",
+   "kind": "expansion",
+   "surface": "victoría",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "victoria"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-yá",
+   "kind": "expansion",
+   "surface": "yá",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "ya"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-accent-ójala",
+   "kind": "expansion",
+   "surface": "ójala",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "trust": "derived",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "ojalá"
+   },
+   "reason": "lyrics v20: spelling differs from a dictionary word only by an accent (or clipping); read in its lyric line",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  }
+ ]
+}

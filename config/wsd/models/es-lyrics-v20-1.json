@@ -10,8 +10,14 @@
     "resolver": "surface-resolver/v1",
     "mode": "lyrics",
     "strategy_policy": "config/surfaces/strategy.json",
-    "declared_stores": ["language", "artist"],
-    "headword_sources": ["spanishdict", "wiktionary"],
+    "declared_stores": [
+      "language",
+      "artist"
+    ],
+    "headword_sources": [
+      "spanishdict",
+      "wiktionary"
+    ],
     "spanishdict_snapshot": "raw/dictionaries/es/spanishdict/spanishdict-complete-menu-2026-09-23-v7",
     "spanishdict_policy_id": "es-spanishdict-v1",
     "wiktionary_snapshot": "raw/wiktionary/enwiktionary-2026-09-13/kaikki.org-dictionary-Spanish.jsonl",
@@ -22,13 +28,20 @@
   },
   "wsd": {
     "scoring_gloss": "uninflected",
-    "provider_prior": {"weight": 0.02, "decay": 0.5},
-    "pos_mismatch_penalty": 0.30,
+    "provider_prior": {
+      "weight": 0.02,
+      "decay": 0.5
+    },
+    "pos_mismatch_penalty": 0.3,
     "overlay_bonus": 0.15,
-    "uncached_overlap_scores": [0.40, 0.10],
-    "polysemous_fallback_default": "heuristic",
+    "uncached_overlap_scores": [
+      0.4,
+      0.1
+    ],
+    "polysemous_fallback_default": "embedding",
     "occurrence_pos": "occurrence-pos",
     "embedding": "exact-text-embedding",
-    "embedding_cache": "embeddings/es/exact-text-gemini-embedding-001.npz"
+    "embedding_cache": "embeddings/es/exact-text-gemini-embedding-001.npz",
+    "note": "Wiktionary senses are scored by embedding like SpanishDict's (decided 2026-09-27, provider parity); v19 scored them by POS and word overlap."
   }
 }

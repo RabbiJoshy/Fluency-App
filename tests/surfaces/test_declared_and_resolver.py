@@ -91,7 +91,10 @@ class DeclaredFormatTests(unittest.TestCase):
     def test_the_repository_declared_lists_load(self) -> None:
         for language in ("es", "pt", "cs"):
             registry = DeclaredRegistry.load(REPO / "config/declared", language)
-            self.assertTrue(all(e.trust == trust.CURATED for e in registry.entries))
+            # Curated, or derived when a rule proposed it and a person checked it
+            # (lyrics v20 accent expansions). Never heuristic: guesses belong in
+            # the live store, not the reviewed one.
+            self.assertTrue(all(e.trust in (trust.CURATED, trust.DERIVED) for e in registry.entries))
             self.assertTrue(all(e.payload.get("class") for e in registry.entries),
                             f"{language}: every hand-written entry carries its class tag")
 

@@ -1,0 +1,1367 @@
+{
+ "schema": "declared-entries/v1",
+ "language": "es",
+ "note": "Names used 5+ times across the lyrics v20 decks, and brand/artist cards whose old-deck gloss named them. Each checked against every use; a card whose uses name several people says so.",
+ "entries": [
+  {
+   "entry_id": "es-lyrics-v20-entity-pr",
+   "kind": "entity",
+   "surface": "pr",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Puerto Rico",
+    "entity_type": "place",
+    "description": "PR, the island; Bad Bunny and Young Miko's home"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-luian",
+   "kind": "entity",
+   "surface": "luian",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "DJ Luian",
+    "entity_type": "person",
+    "description": "Puerto Rican producer and head of the label Hear This Music; shouted as a producer tag"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-kingz",
+   "kind": "entity",
+   "surface": "kingz",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Trap Kingz",
+    "entity_type": "organisation",
+    "description": "Puerto Rican trap crew and label, shouted as a tag (\"¡Trap Kingz, baby!\")"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-balvin",
+   "kind": "entity",
+   "surface": "balvin",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "J Balvin",
+    "entity_type": "person",
+    "description": "Colombian reggaeton singer"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-lebron",
+   "kind": "entity",
+   "surface": "lebron",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "LeBron James",
+    "entity_type": "person",
+    "description": "American NBA star"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-martino",
+   "kind": "entity",
+   "surface": "martino",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Young Martino",
+    "entity_type": "person",
+    "description": "Puerto Rican producer, shouted as a tag"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-vuitton",
+   "kind": "entity",
+   "surface": "vuitton",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Louis Vuitton",
+    "entity_type": "brand",
+    "description": "French luxury fashion house"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-versace",
+   "kind": "entity",
+   "surface": "versace",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Versace",
+    "entity_type": "brand",
+    "description": "Italian luxury fashion house"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-anuel",
+   "kind": "entity",
+   "surface": "anuel",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Anuel AA",
+    "entity_type": "person",
+    "description": "Puerto Rican trap singer"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-chanel",
+   "kind": "entity",
+   "surface": "chanel",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Chanel",
+    "entity_type": "brand",
+    "description": "French luxury fashion house (also its perfume)"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-benz",
+   "kind": "entity",
+   "surface": "benz",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Mercedes-Benz",
+    "entity_type": "brand",
+    "description": "German luxury car maker"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-farru",
+   "kind": "entity",
+   "surface": "farru",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Farruko",
+    "entity_type": "person",
+    "description": "Puerto Rican reggaeton singer"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-panamera",
+   "kind": "entity",
+   "surface": "panamera",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Porsche Panamera",
+    "entity_type": "brand",
+    "description": "Porsche luxury saloon"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-grammy",
+   "kind": "entity",
+   "surface": "grammy",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Grammy",
+    "entity_type": "event",
+    "description": "the American music award"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-tainy",
+   "kind": "entity",
+   "surface": "tainy",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Tainy",
+    "entity_type": "person",
+    "description": "Puerto Rican producer"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-caleb",
+   "kind": "entity",
+   "surface": "caleb",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Caleb Calloway",
+    "entity_type": "person",
+    "description": "Puerto Rican producer"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-calloway",
+   "kind": "entity",
+   "surface": "calloway",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Caleb Calloway",
+    "entity_type": "person",
+    "description": "Puerto Rican producer"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-ak",
+   "kind": "entity",
+   "surface": "ak",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "AK",
+    "entity_type": "brand",
+    "description": "AK-47 rifle"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-tego",
+   "kind": "entity",
+   "surface": "tego",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Tego Calderón",
+    "entity_type": "person",
+    "description": "Puerto Rican reggaeton pioneer"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-bugatti",
+   "kind": "entity",
+   "surface": "bugatti",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Bugatti",
+    "entity_type": "brand",
+    "description": "French supercar maker"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-alofoke",
+   "kind": "entity",
+   "surface": "alofoke",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Alofoke",
+    "entity_type": "person",
+    "description": "Dominican radio host and media personality"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-rolex",
+   "kind": "entity",
+   "surface": "rolex",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Rolex",
+    "entity_type": "brand",
+    "description": "Swiss luxury watchmaker"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-bryant",
+   "kind": "entity",
+   "surface": "bryant",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Bryant Myers",
+    "entity_type": "person",
+    "description": "Puerto Rican trap singer (in one line, Kobe Bryant)"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-myers",
+   "kind": "entity",
+   "surface": "myers",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Bryant Myers",
+    "entity_type": "person",
+    "description": "Puerto Rican trap singer"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-yandel",
+   "kind": "entity",
+   "surface": "yandel",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Yandel",
+    "entity_type": "person",
+    "description": "Puerto Rican reggaeton singer, of Wisin & Yandel"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-rvssian",
+   "kind": "entity",
+   "surface": "rvssian",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Rvssian",
+    "entity_type": "person",
+    "description": "Jamaican producer"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-biggie",
+   "kind": "entity",
+   "surface": "biggie",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Biggie",
+    "entity_type": "person",
+    "description": "The Notorious B.I.G., American rapper"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-dior",
+   "kind": "entity",
+   "surface": "dior",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Dior",
+    "entity_type": "brand",
+    "description": "French luxury fashion house"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-karol",
+   "kind": "entity",
+   "surface": "karol",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Karol G",
+    "entity_type": "person",
+    "description": "Colombian reggaeton singer"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-ricky",
+   "kind": "entity",
+   "surface": "ricky",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Ricky",
+    "entity_type": "person",
+    "description": "Ricky Rosselló, Puerto Rico governor who resigned after the 2019 protests (\"Ricky, renuncia\"); also Ricky Martin, Puerto Rican singer"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-lavoe",
+   "kind": "entity",
+   "surface": "lavoe",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Héctor Lavoe",
+    "entity_type": "person",
+    "description": "Puerto Rican salsa singer"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-valentino",
+   "kind": "entity",
+   "surface": "valentino",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Valentino",
+    "entity_type": "brand",
+    "description": "Italian luxury fashion house"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-yonaguni",
+   "kind": "entity",
+   "surface": "yonaguni",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Yonaguni",
+    "entity_type": "place",
+    "description": "Japanese island; title of a Bad Bunny song"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-bm",
+   "kind": "entity",
+   "surface": "bm",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "BMW",
+    "entity_type": "brand",
+    "description": "German car maker (\"la BM\")"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-ap",
+   "kind": "entity",
+   "surface": "ap",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Audemars Piguet",
+    "entity_type": "brand",
+    "description": "Swiss luxury watchmaker (\"el AP\")"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-drake",
+   "kind": "entity",
+   "surface": "drake",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Drake",
+    "entity_type": "person",
+    "description": "Canadian rapper"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-trump",
+   "kind": "entity",
+   "surface": "trump",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Donald Trump",
+    "entity_type": "person",
+    "description": "US president"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-donald",
+   "kind": "entity",
+   "surface": "donald",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Donald Trump",
+    "entity_type": "person",
+    "description": "US president"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-jeday",
+   "kind": "entity",
+   "surface": "jeday",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Chris Jeday",
+    "entity_type": "person",
+    "description": "Puerto Rican producer"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-billboard",
+   "kind": "entity",
+   "surface": "billboard",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Billboard",
+    "entity_type": "organisation",
+    "description": "American music magazine and its charts"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-natti",
+   "kind": "entity",
+   "surface": "natti",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Natti Natasha",
+    "entity_type": "person",
+    "description": "Dominican reggaeton singer"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-darell",
+   "kind": "entity",
+   "surface": "darell",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Darell",
+    "entity_type": "person",
+    "description": "Puerto Rican trap singer"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-father",
+   "kind": "entity",
+   "surface": "father",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Héctor el Father",
+    "entity_type": "person",
+    "description": "Puerto Rican reggaeton singer"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-casper",
+   "kind": "entity",
+   "surface": "casper",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Casper Mágico",
+    "entity_type": "person",
+    "description": "Puerto Rican trap singer"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-shaq",
+   "kind": "entity",
+   "surface": "shaq",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Shaquille O'Neal",
+    "entity_type": "person",
+    "description": "American basketball player"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-dei",
+   "kind": "entity",
+   "surface": "dei",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Dei V",
+    "entity_type": "person",
+    "description": "Puerto Rican trap singer"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-netflix",
+   "kind": "entity",
+   "surface": "netflix",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Netflix",
+    "entity_type": "brand",
+    "description": "streaming service"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-bentley",
+   "kind": "entity",
+   "surface": "bentley",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Bentley",
+    "entity_type": "brand",
+    "description": "British luxury car maker"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-shakira",
+   "kind": "entity",
+   "surface": "shakira",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Shakira",
+    "entity_type": "person",
+    "description": "Colombian singer"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-eddie",
+   "kind": "entity",
+   "surface": "eddie",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Eddie Dee",
+    "entity_type": "person",
+    "description": "Puerto Rican rapper"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-adidas",
+   "kind": "entity",
+   "surface": "adidas",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Adidas",
+    "entity_type": "brand",
+    "description": "German sportswear brand"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-snapchat",
+   "kind": "entity",
+   "surface": "snapchat",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Snapchat",
+    "entity_type": "brand",
+    "description": "messaging app"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-mayweather",
+   "kind": "entity",
+   "surface": "mayweather",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Floyd Mayweather",
+    "entity_type": "person",
+    "description": "undefeated American boxer"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-ñejo",
+   "kind": "entity",
+   "surface": "ñejo",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Ñejo",
+    "entity_type": "person",
+    "description": "Puerto Rican reggaeton singer, of Ñejo & Dálmata"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-diddy",
+   "kind": "entity",
+   "surface": "diddy",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Diddy",
+    "entity_type": "person",
+    "description": "Sean Combs, American rapper and producer"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-fendi",
+   "kind": "entity",
+   "surface": "fendi",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Fendi",
+    "entity_type": "brand",
+    "description": "Italian luxury fashion house"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-tokischa",
+   "kind": "entity",
+   "surface": "tokischa",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Tokischa",
+    "entity_type": "person",
+    "description": "Dominican dembow singer"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-ritz",
+   "kind": "entity",
+   "surface": "ritz",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Ritz-Carlton",
+    "entity_type": "brand",
+    "description": "luxury hotel chain"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-romeo",
+   "kind": "entity",
+   "surface": "romeo",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Romeo Santos",
+    "entity_type": "person",
+    "description": "Dominican-American bachata singer, of Aventura (also Shakespeare's Romeo)"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-nicky",
+   "kind": "entity",
+   "surface": "nicky",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Nicky Jam",
+    "entity_type": "person",
+    "description": "reggaeton singer (in one line, Nicki Minaj)"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-jordan",
+   "kind": "entity",
+   "surface": "jordan",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Jordan",
+    "entity_type": "brand",
+    "description": "Air Jordan sneakers, after Michael Jordan"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-royce",
+   "kind": "entity",
+   "surface": "royce",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Prince Royce",
+    "entity_type": "person",
+    "description": "American bachata singer"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-ez",
+   "kind": "entity",
+   "surface": "ez",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "EZ",
+    "entity_type": "person",
+    "description": "producer tag: \"EZ made the beat\" (E Zeta)"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-sugar",
+   "kind": "entity",
+   "surface": "sugar",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Edwin \"Sugar\" Díaz",
+    "entity_type": "person",
+    "description": "Puerto Rican baseball pitcher"
+   },
+   "reason": "lyrics v20: unanswered name with 5+ uses across the four decks, checked against its lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-music",
+   "kind": "entity",
+   "surface": "music",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "name_fragment",
+    "name": "Hear This Music",
+    "entity_type": "organisation",
+    "description": "DJ Luian's label, shouted as a tag"
+   },
+   "reason": "lyrics v20: one word of a longer name used 5+ times; the card explains the whole name",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-hear",
+   "kind": "entity",
+   "surface": "hear",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "name_fragment",
+    "name": "Hear This Music",
+    "entity_type": "organisation",
+    "description": "DJ Luian's label, shouted as a tag"
+   },
+   "reason": "lyrics v20: one word of a longer name used 5+ times; the card explains the whole name",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-alex",
+   "kind": "entity",
+   "surface": "alex",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "name_fragment",
+    "name": "Alex",
+    "entity_type": "person",
+    "description": "Alex Killer (\"firmé con Alex Killer\", Bad Bunny's early tracks) or Alex Sensation, reggaeton DJ"
+   },
+   "reason": "lyrics v20: one word of a longer name used 5+ times; the card explains the whole name",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-killer",
+   "kind": "entity",
+   "surface": "killer",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "name_fragment",
+    "name": "Alex Killer",
+    "entity_type": "person",
+    "description": "named in Bad Bunny's early tracks: \"firmé con Alex Killer\""
+   },
+   "reason": "lyrics v20: one word of a longer name used 5+ times; the card explains the whole name",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-life",
+   "kind": "entity",
+   "surface": "life",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "name_fragment",
+    "name": "Real G4 Life",
+    "entity_type": "organisation",
+    "description": "Ñengo Flow's crew and slogan"
+   },
+   "reason": "lyrics v20: one word of a longer name used 5+ times; the card explains the whole name",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-factory",
+   "kind": "entity",
+   "surface": "factory",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "name_fragment",
+    "name": "Flow Factory",
+    "entity_type": "organisation",
+    "description": "producer tag"
+   },
+   "reason": "lyrics v20: one word of a longer name used 5+ times; the card explains the whole name",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-blanc",
+   "kind": "entity",
+   "surface": "blanc",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "name_fragment",
+    "name": "Sauvignon Blanc",
+    "entity_type": "other",
+    "description": "white wine; title of a Rosalía song"
+   },
+   "reason": "lyrics v20: one word of a longer name used 5+ times; the card explains the whole name",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-kil",
+   "kind": "entity",
+   "surface": "kil",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "name_fragment",
+    "name": "La Kilié",
+    "entity_type": "work",
+    "description": "Rosalía song; the card is its stuttered first syllable"
+   },
+   "reason": "lyrics v20: one word of a longer name used 5+ times; the card explains the whole name",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-candy",
+   "kind": "entity",
+   "surface": "candy",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "name_fragment",
+    "name": "Dulce Como Candy",
+    "entity_type": "person",
+    "description": "Puerto Rican singer"
+   },
+   "reason": "lyrics v20: one word of a longer name used 5+ times; the card explains the whole name",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-farrus",
+   "kind": "entity",
+   "surface": "farrus",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Farruko",
+    "entity_type": "person",
+    "description": "Puerto Rican reggaeton singer"
+   },
+   "reason": "lyrics v20: old-deck gloss named a brand or artist; declared as an entity",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-zendaya",
+   "kind": "entity",
+   "surface": "zendaya",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Zendaya",
+    "entity_type": "person",
+    "description": "American actress and singer"
+   },
+   "reason": "lyrics v20: old-deck gloss named a brand or artist; declared as an entity",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-margiela",
+   "kind": "entity",
+   "surface": "margiela",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Maison Margiela",
+    "entity_type": "brand",
+    "description": "French luxury fashion house"
+   },
+   "reason": "lyrics v20: old-deck gloss named a brand or artist; declared as an entity",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-ferxxo",
+   "kind": "entity",
+   "surface": "ferxxo",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Feid",
+    "entity_type": "person",
+    "description": "Colombian reggaeton singer, \"Ferxxo\""
+   },
+   "reason": "lyrics v20: old-deck gloss named a brand or artist; declared as an entity",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-stussy",
+   "kind": "entity",
+   "surface": "stussy",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Stüssy",
+    "entity_type": "brand",
+    "description": "streetwear brand"
+   },
+   "reason": "lyrics v20: old-deck gloss named a brand or artist; declared as an entity",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-jhay",
+   "kind": "entity",
+   "surface": "jhay",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Jhayco",
+    "entity_type": "person",
+    "description": "Puerto Rican reggaeton singer (Jhay Cortez)"
+   },
+   "reason": "lyrics v20: old-deck gloss named a brand or artist; declared as an entity",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-entity-tous",
+   "kind": "entity",
+   "surface": "tous",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "entity",
+    "name": "Tous",
+    "entity_type": "brand",
+    "description": "Spanish jewellery brand"
+   },
+   "reason": "lyrics v20: old-deck gloss named a brand or artist; declared as an entity",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  }
+ ]
+}

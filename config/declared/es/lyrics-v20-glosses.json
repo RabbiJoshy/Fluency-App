@@ -1,0 +1,1687 @@
+{
+ "schema": "declared-entries/v1",
+ "language": "es",
+ "note": "Meanings for lyric words no dictionary holds, from the old decks (kept or corrected after reading the lines).",
+ "entries": [
+  {
+   "entry_id": "es-lyrics-v20-gloss-ratatá",
+   "kind": "gloss",
+   "surface": "ratatá",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "rat-a-tat, rapid-fire",
+      "pos": "adj"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-glopeta",
+   "kind": "gloss",
+   "surface": "glopeta",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "pistol (slang)",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-locotrón",
+   "kind": "gloss",
+   "surface": "locotrón",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "crazy man",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-switchear",
+   "kind": "gloss",
+   "surface": "switchear",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "to switch",
+      "pos": "verb"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-rolié",
+   "kind": "gloss",
+   "surface": "rolié",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "I got high (from \"roll\" a joint)",
+      "pos": "verb"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-perco",
+   "kind": "gloss",
+   "surface": "perco",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "Percocet (pill)",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-caile",
+   "kind": "gloss",
+   "surface": "caile",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "come over, drop by",
+      "pos": "verb"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-capsuleando",
+   "kind": "gloss",
+   "surface": "capsuleando",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "cruising in a car",
+      "pos": "verb"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-cienes",
+   "kind": "gloss",
+   "surface": "cienes",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "hundreds (hundred-dollar bills)",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-fronteando",
+   "kind": "gloss",
+   "surface": "fronteando",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "showing off, fronting",
+      "pos": "verb"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-sata",
+   "kind": "gloss",
+   "surface": "sata",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "slutty, promiscuous",
+      "pos": "adj"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-manín",
+   "kind": "gloss",
+   "surface": "manín",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "bro, buddy",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-blunes",
+   "kind": "gloss",
+   "surface": "blunes",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "blunts",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-bluntes",
+   "kind": "gloss",
+   "surface": "bluntes",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "blunts",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-bellaquita",
+   "kind": "gloss",
+   "surface": "bellaquita",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "horny girl (from bellaco)",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-nalgotas",
+   "kind": "gloss",
+   "surface": "nalgotas",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "big butt",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-estilazo",
+   "kind": "gloss",
+   "surface": "estilazo",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "great style",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-tota",
+   "kind": "gloss",
+   "surface": "tota",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "pussy (vulgar)",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-toditas",
+   "kind": "gloss",
+   "surface": "toditas",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "all of them (fem.)",
+      "pos": "pron"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-toítas",
+   "kind": "gloss",
+   "surface": "toítas",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "all of them (fem.)",
+      "pos": "pron"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-toítos",
+   "kind": "gloss",
+   "surface": "toítos",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "all of them, everyone",
+      "pos": "pron"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-toditos",
+   "kind": "gloss",
+   "surface": "toditos",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "all of them, everyone",
+      "pos": "pron"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-bebesota",
+   "kind": "gloss",
+   "surface": "bebesota",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "hot girl, baby girl",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-juquear",
+   "kind": "gloss",
+   "surface": "juquear",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "to get hooked",
+      "pos": "verb"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-juqueó",
+   "kind": "gloss",
+   "surface": "juqueó",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "got hooked",
+      "pos": "verb"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-hookiás",
+   "kind": "gloss",
+   "surface": "hookiás",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "hooked (fem. pl.)",
+      "pos": "adj"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-fuletazo",
+   "kind": "gloss",
+   "surface": "fuletazo",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "gunshot",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-chamaquita",
+   "kind": "gloss",
+   "surface": "chamaquita",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "young girl",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-lambebicho",
+   "kind": "gloss",
+   "surface": "lambebicho",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "suck-up, sycophant (vulgar)",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-squirteé",
+   "kind": "gloss",
+   "surface": "squirteé",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "I squirted",
+      "pos": "verb"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-ojalái",
+   "kind": "gloss",
+   "surface": "ojalái",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "hopefully, if only",
+      "pos": "intj"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-durota",
+   "kind": "gloss",
+   "surface": "durota",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "really hard; really hot",
+      "pos": "adj"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-soliá",
+   "kind": "gloss",
+   "surface": "soliá",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "all alone (solita)",
+      "pos": "adj"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-conne",
+   "kind": "gloss",
+   "surface": "conne",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "connect (drug supplier)",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-connes",
+   "kind": "gloss",
+   "surface": "connes",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "connects (drug suppliers)",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-chapi",
+   "kind": "gloss",
+   "surface": "chapi",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "gold digger",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-esnúa",
+   "kind": "gloss",
+   "surface": "esnúa",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "naked (desnuda)",
+      "pos": "adj"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-trili",
+   "kind": "gloss",
+   "surface": "trili",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "nobody, wack person",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-fronteo",
+   "kind": "gloss",
+   "surface": "fronteo",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "I show off",
+      "pos": "verb"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-frontee",
+   "kind": "gloss",
+   "surface": "frontee",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "(that he/she) show off",
+      "pos": "verb"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-piquetú",
+   "kind": "gloss",
+   "surface": "piquetú",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "stylish, with swagger",
+      "pos": "adj"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-piquetúa",
+   "kind": "gloss",
+   "surface": "piquetúa",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "stylish, with swagger (fem.)",
+      "pos": "adj"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-pikete",
+   "kind": "gloss",
+   "surface": "pikete",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "swagger, style",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-bleacher",
+   "kind": "gloss",
+   "surface": "bleacher",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "bleachers (stands)",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-neverita",
+   "kind": "gloss",
+   "surface": "neverita",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "cooler, small fridge",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-caripelao",
+   "kind": "gloss",
+   "surface": "caripelao",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "shameless person",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-maliantes",
+   "kind": "gloss",
+   "surface": "maliantes",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "thugs, gangsters",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-malianteos",
+   "kind": "gloss",
+   "surface": "malianteos",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "thug life, hustling",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-puertorro",
+   "kind": "gloss",
+   "surface": "puertorro",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "Puerto Rico, Puerto Rican (slang)",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-wheeliando",
+   "kind": "gloss",
+   "surface": "wheeliando",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "doing wheelies",
+      "pos": "verb"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-illuminatis",
+   "kind": "gloss",
+   "surface": "illuminatis",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "the Illuminati",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-tranquilita",
+   "kind": "gloss",
+   "surface": "tranquilita",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "calm, chill (fem.)",
+      "pos": "adj"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-safaera",
+   "kind": "gloss",
+   "surface": "safaera",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "wild, shameless partying (PR)",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-hijeputa",
+   "kind": "gloss",
+   "surface": "hijeputa",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "son of a bitch",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-hijeputada",
+   "kind": "gloss",
+   "surface": "hijeputada",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "dirty move, low blow",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-saramambiche",
+   "kind": "gloss",
+   "surface": "saramambiche",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "son of a bitch",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-perfumito",
+   "kind": "gloss",
+   "surface": "perfumito",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "perfume",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-sandunguera",
+   "kind": "gloss",
+   "surface": "sandunguera",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "fun-loving, party-loving (fem.)",
+      "pos": "adj"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-diablona",
+   "kind": "gloss",
+   "surface": "diablona",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "devilish woman",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-depres",
+   "kind": "gloss",
+   "surface": "depres",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "down, depressed (depre)",
+      "pos": "adj"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-panita",
+   "kind": "gloss",
+   "surface": "panita",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "buddy (pana)",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-diosito",
+   "kind": "gloss",
+   "surface": "diosito",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "dear God",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-donitas",
+   "kind": "gloss",
+   "surface": "donitas",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "donuts",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-switche",
+   "kind": "gloss",
+   "surface": "switche",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "switch",
+      "pos": "verb"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-tetotas",
+   "kind": "gloss",
+   "surface": "tetotas",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "big boobs (vulgar)",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-totito",
+   "kind": "gloss",
+   "surface": "totito",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "pussy (vulgar, diminutive)",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-totitos",
+   "kind": "gloss",
+   "surface": "totitos",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "pussy (vulgar, diminutive)",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-arrópame",
+   "kind": "gloss",
+   "surface": "arrópame",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "wrap me up, cover me",
+      "pos": "verb"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-callaito",
+   "kind": "gloss",
+   "surface": "callaito",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "quietly, on the down-low",
+      "pos": "adv"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-encuerna",
+   "kind": "gloss",
+   "surface": "encuerna",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "gets cheated on (gets horns)",
+      "pos": "verb"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-perriaba",
+   "kind": "gloss",
+   "surface": "perriaba",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "was twerking (perreaba)",
+      "pos": "verb"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-planking",
+   "kind": "gloss",
+   "surface": "planking",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "planking",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-filoteado",
+   "kind": "gloss",
+   "surface": "filoteado",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "decked out, sharp",
+      "pos": "adj"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-completita",
+   "kind": "gloss",
+   "surface": "completita",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "whole, all of her",
+      "pos": "adj"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-verdecitos",
+   "kind": "gloss",
+   "surface": "verdecitos",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "dollars, greenbacks",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-sudaditas",
+   "kind": "gloss",
+   "surface": "sudaditas",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "sweaty (fem. pl.)",
+      "pos": "adj"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-omg",
+   "kind": "gloss",
+   "surface": "omg",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "oh my god",
+      "pos": "intj"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-brilloteo",
+   "kind": "gloss",
+   "surface": "brilloteo",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "bling, flashy glitter",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-pantycitos",
+   "kind": "gloss",
+   "surface": "pantycitos",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "panties",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-thottie",
+   "kind": "gloss",
+   "surface": "thottie",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "thot (English slang)",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss corrected after reading the lyric lines",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-pequitas",
+   "kind": "gloss",
+   "surface": "pequitas",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "freckles",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: no dictionary entry; old-deck gloss kept",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-kush",
+   "kind": "gloss",
+   "surface": "kush",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "kush (a strong cannabis strain)",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: word with no dictionary entry (Josh, 2026-09-27)",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-bori",
+   "kind": "gloss",
+   "surface": "bori",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "Puerto Rican (boricua)",
+      "pos": "noun"
+     }
+    ]
+   },
+   "reason": "lyrics v20: word with no dictionary entry (Josh, 2026-09-27)",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-lyrics-v20-gloss-todítos",
+   "kind": "gloss",
+   "surface": "todítos",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "payload": {
+    "class": "slang",
+    "senses": [
+     {
+      "translation": "all of them, everyone",
+      "pos": "pron"
+     }
+    ]
+   },
+   "reason": "lyrics v20: word with no dictionary entry (Josh, 2026-09-27)",
+   "author": "claude (lyrics v20, approved by Josh 2026-09-27)",
+   "created_at": "2026-09-27"
+  }
+ ]
+}
