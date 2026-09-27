@@ -1,26 +1,26 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=7df6da54';
-import './speech.js?v=7df6da54';
-import { goToRoute, routeCodeFor } from './routes.js?v=7df6da54';
-import './side-dock.js?v=7df6da54';
+import './state.js?v=19f19785';
+import './speech.js?v=19f19785';
+import { goToRoute, routeCodeFor } from './routes.js?v=19f19785';
+import './side-dock.js?v=19f19785';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=7df6da54';
+} from './example-personalisation.js?v=19f19785';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=7df6da54';
+} from './spanishdict-usage.js?v=19f19785';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=7df6da54';
+} from './reverse-cues.js?v=19f19785';
 import {
     compactConstructionMetadata,
     contextWithoutSenseMetadata,
@@ -48,7 +48,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=7df6da54';
+} from './card-metadata-pills.js?v=19f19785';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -4702,6 +4702,7 @@ async function loadBackupExampleShardForIds(wordIds) {
 function describeNavReturnTarget() {
     const previous = cardNavStack[cardNavStack.length - 1];
     if (!previous) return 'the set';
+    if (previous.returnLabel) return previous.returnLabel;
     if (previous.popupOnly) return previous.wasOnSetup ? 'the menu' : 'the set';
     const parent = flashcards[previous.index];
     const word = parent?.displaySurface || parent?.targetWord || '';
@@ -9560,8 +9561,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '7df6da54';
-const MODALS_ASSET_VERSION = '7df6da54';
+const ASSET_VERSION = '19f19785';
+const MODALS_ASSET_VERSION = '19f19785';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

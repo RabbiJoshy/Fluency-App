@@ -590,6 +590,9 @@ function navigateToVocabCard(tokenIndex) {
 // opts.onClose — runs once the card is left, after the menu or deck is back.
 // A linked word (#/es/w/…) uses it to clear the route and choose the language.
 //
+// opts.returnLabel — names where back goes when onClose takes the learner
+// somewhere other than the menu or the set (Smart Skip reopens its list).
+//
 // In-flight guard: a fast double-click on a search result before the
 // first invocation completes would push two entries onto cardNavStack
 // and append two temp cards. The guard makes the second call a no-op.
@@ -803,7 +806,8 @@ async function popupFoundWord(entry, opts) {
                 popupOnly: true,
                 wasOnSetup: wasOnSetup,
                 reopenSearchOnBack: reopenSearchOnBack,
-                onClose: opts.onClose || null
+                onClose: opts.onClose || null,
+                returnLabel: opts.returnLabel || null
             });
             flashcards.length = 0;
             flashcards.push(tempCard);
@@ -828,7 +832,8 @@ async function popupFoundWord(entry, opts) {
                 tempCard: true,
                 tempIndex: tempIndex,
                 reopenSearchOnBack: reopenSearchOnBack,
-                onClose: opts.onClose || null
+                onClose: opts.onClose || null,
+                returnLabel: opts.returnLabel || null
             };
             flashcards.push(tempCard);
             cardNavStack.push(restore);

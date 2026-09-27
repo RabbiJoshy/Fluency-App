@@ -17186,6 +17186,11 @@
   background: rgba(255, 255, 255, 0.1);
 }
 .fast-mode-master-switch {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
   position: relative;
   width: 34px;
   height: 20px;
@@ -17274,33 +17279,11 @@
   border-radius: 16px;
   background: color-mix(in srgb, var(--accent-primary) 8%, var(--bg-card));
 }
-/* Inside a card the prose and the controls sit beside each other rather than
-   stacking, which is what turns spare width into saved height. The actions
-   column sizes to the toggle plus the view link, so those two stay on one line. */
-.fast-mode-card-body {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) max-content;
-  gap: 18px;
-  align-items: start;
-}
-.fast-mode-card-actions {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
-  min-width: 0;
-  max-width: 100%;
-}
-.fast-mode-controls .fast-mode-control-row { margin-top: 0; }
 .fast-mode-controls .fast-mode-explainer { margin: 0; }
 .fast-mode-none {
   margin: 0;
   font: 500 11.5px/1.45 var(--font-reading);
   color: var(--text-muted);
-}
-.fast-mode-card-actions > .known-languages-context { align-self: stretch; }
-@media (max-width: 1180px) {
-  .fast-mode-card-body { grid-template-columns: 1fr; gap: 10px; }
 }
 .fast-mode-explainer {
   margin: 0 0 10px;
@@ -17326,13 +17309,11 @@
 /* The Fast Track sheet is the page. A card around each shortcut added a second
    inset, so the words sat in a narrow band under the close button. The title
    shares the close button's row, and the sections run to the page edges. */
-#fastModeModal .fast-mode-close,
-#fastTrackStudyModal .fast-mode-close {
+#fastModeModal .fast-mode-close {
   top: 0;
   right: 4px;
 }
-#fastModeModal .fast-mode-page-body,
-#fastTrackStudyModal .fast-mode-page-body {
+#fastModeModal .fast-mode-page-body {
   max-width: none;
   padding: 0 16px 32px;
 }
@@ -17340,14 +17321,11 @@
   min-height: 32px;
   margin: 0 28px 2px 0;
 }
-#fastModeModal .fast-mode-page-body h2,
-#fastTrackStudyModal .fast-mode-page-body h2 {
+#fastModeModal .fast-mode-page-body h2 {
   margin: 0;
   line-height: 32px;
 }
-#fastTrackStudyModal .fast-mode-page-body h2 { padding-right: 32px; }
-#fastModeModal .fast-mode-lede,
-#fastTrackStudyModal .fast-mode-lede {
+#fastModeModal .fast-mode-lede {
   margin: 2px 0 14px;
 }
 #fastModeModal .fast-mode-controls {
@@ -17360,194 +17338,12 @@
   background: none;
   border-top: 1px solid color-mix(in srgb, var(--accent-primary) 28%, var(--border-color));
 }
-#fastModeModal .fast-track-study-launch {
-  min-height: 0;
-  padding: 14px 0;
-  border: 0;
-  border-radius: 0;
-  border-top: 1px solid color-mix(in srgb, var(--accent-primary) 28%, var(--border-color));
-  background: none;
-}
-#fastModeModal .fast-track-study-launch:hover {
-  background: none;
-  color: var(--accent-primary);
-}
-.fast-track-level-list { display: flex; flex-direction: column; }
-.fast-track-level-deck {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  width: 100%;
-  padding: 14px 0;
-  border: 0;
-  border-top: 1px solid color-mix(in srgb, var(--accent-primary) 28%, var(--border-color));
-  background: none;
-  color: var(--text-primary);
-  text-align: left;
-  cursor: pointer;
-}
-.fast-track-level-deck strong { font: 700 16px/1.3 var(--font-emphasis); }
-.fast-track-level-deck span {
-  color: var(--accent-primary);
-  font: 650 13px/1.2 var(--font-reading);
-}
-.fast-track-level-deck.is-current strong { color: var(--accent-primary); }
-.fast-track-level-deck.is-complete span { color: #31ab70; }
-.fast-track-level-deck.needs-review span { color: #dc9a4c; }
 
 /* ── Unified Fast Track Summary, Triage & Category Surfaces ────────────── */
-.fast-track-deck-summary-card {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 14px;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  margin-bottom: 8px;
-}
-.fast-track-deck-summary-card .fast-track-study-launch {
-  padding: 0;
-  border: 0;
-}
-.fast-track-chips-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.fast-track-deck-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background: var(--bg-card);
-  color: var(--text-secondary);
-  font: 500 12px/1.2 var(--font-reading);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-.fast-track-deck-chip:hover {
-  background: var(--bg-card-hover);
-  border-color: var(--border-light);
-  color: var(--text-primary);
-}
-.fast-track-deck-chip strong {
-  font-weight: 700;
-  color: var(--accent-primary);
-}
-.fast-track-deck-actions-row {
-  display: flex;
-  gap: 8px;
-  margin-top: 4px;
-}
-.fast-track-hub-action-btn {
-  flex: 1;
-  padding: 8px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background: var(--bg-card);
-  color: var(--text-secondary);
-  font: 600 12px/1.2 var(--font-reading);
-  cursor: pointer;
-  text-align: center;
-  transition: all 0.15s ease;
-}
-.fast-track-hub-action-btn:hover {
-  background: var(--bg-card-hover);
-  border-color: var(--border-light);
-  color: var(--text-primary);
-}
-.fast-track-hub-action-btn--primary {
-  background: rgba(var(--accent-primary-rgb, 200, 16, 46), 0.14);
-  border-color: color-mix(in srgb, var(--accent-primary) 40%, var(--border-color));
-  color: var(--accent-primary);
-}
-.fast-track-hub-action-btn--primary:hover {
-  background: rgba(var(--accent-primary-rgb, 200, 16, 46), 0.22);
-}
 
 /* Category Triage Tabs inside Skipped Words Modal */
-.fast-track-triage-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding: 10px 20px 8px;
-  border-bottom: 1px solid var(--border-color);
-  background: var(--bg-secondary);
-}
-.fast-track-triage-tab {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: 20px;
-  background: var(--bg-tertiary);
-  color: var(--text-muted);
-  font: 600 12px/1.2 var(--font-reading);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-.fast-track-triage-tab:hover {
-  color: var(--text-secondary);
-  background: var(--bg-card-hover);
-}
-.fast-track-triage-tab.is-active {
-  background: var(--accent-primary);
-  border-color: var(--accent-primary);
-  color: var(--accent-primary-text);
-}
-.fast-track-tab-count {
-  font-size: 11px;
-  opacity: 0.85;
-  font-variant-numeric: tabular-nums;
-  padding: 1px 6px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.2);
-}
-.fast-track-triage-tab.is-active .fast-track-tab-count {
-  background: rgba(255, 255, 255, 0.22);
-}
 
 /* Triage batch action bar */
-.fast-track-triage-action-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 10px 20px;
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border-color);
-}
-.fast-track-batch-action-btn {
-  padding: 6px 14px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background: var(--bg-tertiary);
-  color: var(--text-secondary);
-  font: 600 12px/1.2 var(--font-reading);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-.fast-track-batch-action-btn:hover {
-  background: var(--bg-card-hover);
-  color: var(--text-primary);
-}
-.fast-track-batch-study-btn {
-  border-color: color-mix(in srgb, var(--accent-primary) 50%, var(--border-color));
-  color: var(--accent-primary);
-}
-.fast-track-batch-known-btn {
-  border-color: #31ab70;
-  color: #31ab70;
-  background: rgba(49, 171, 112, 0.08);
-}
-.fast-track-batch-known-btn:hover {
-  background: rgba(49, 171, 112, 0.16);
-}
 
 /* Category Badges & Row Actions */
 .extras-row-actions {
@@ -17590,31 +17386,6 @@
   background: rgba(255, 255, 255, 0.06);
   color: var(--text-muted);
 }
-.extras-row-mark-known {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  background: var(--bg-tertiary);
-  color: var(--text-muted);
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-.extras-row-mark-known:hover {
-  border-color: #31ab70;
-  color: #31ab70;
-  background: rgba(49, 171, 112, 0.12);
-}
-.extras-row-mark-known.is-marked {
-  border-color: #31ab70;
-  color: #31ab70;
-  background: rgba(49, 171, 112, 0.2);
-  cursor: default;
-}
 .extras-word-stack {
   display: flex;
   flex-direction: column;
@@ -17644,13 +17415,11 @@
     var(--bg-primary, var(--bg-card));
   overflow-y: auto;
 }
-#fastModeModal.modal,
-#fastTrackStudyModal.modal {
+#fastModeModal.modal {
   padding: 0;
   align-items: stretch;
   justify-content: stretch;
 }
-#fastTrackStudyModal { z-index: 1020; }
 #fastModeModal .substep-title {
   color: var(--text-secondary);
   font-size: 14px;
@@ -18252,37 +18021,9 @@
   color: var(--text-muted);
   font: 500 11px/1.3 var(--font-reading);
 }
-.fast-mode-control-row {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 8px;
-  flex-wrap: nowrap;
-  margin-top: 8px;
-  max-width: 100%;
-}
 /* The shared toggle style scrolls and shrinks. On this row the label has to
    stay readable beside the view link, so the switch keeps its own width. */
-.fast-mode-control-row .group-size-selector {
-  flex: 0 0 auto;
-  overflow: visible;
-}
-.fast-mode-control-row .cognate-toggle-btn,
-.fast-mode-control-row .lemma-toggle-btn,
-.fast-mode-control-row .grammar-toggle-btn,
-.fast-mode-control-row .slang-toggle-btn,
-.fast-mode-control-row .entity-toggle-btn {
-  min-width: 0;
-  padding: 6px 12px;
-}
-.fast-mode-stat-label {
-  display: inline-flex;
-  align-items: center;
-  font: 500 12.5px/1.3 var(--font-reading);
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-.fast-mode-view-btn,
+
 .fast-mode-view-items-btn {
   display: inline-flex;
   align-items: center;
@@ -18297,39 +18038,9 @@
   transition: all 0.18s ease;
   white-space: nowrap;
 }
-.fast-mode-view-btn:hover,
+
 .fast-mode-view-items-btn:hover {
   background: color-mix(in srgb, var(--accent-primary) 22%, transparent);
-  border-color: var(--accent-primary);
-}
-.fast-track-modal-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 6px 0 12px;
-  flex-wrap: wrap;
-}
-.fast-track-category-dropdown-wrap {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-.fast-track-dropdown-label {
-  font: 600 12px/1 var(--font-reading);
-  color: var(--text-muted);
-}
-.fast-track-category-select {
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 6px 12px;
-  font: 600 13px/1.2 var(--font-reading);
-  cursor: pointer;
-  outline: none;
-}
-.fast-track-category-select:focus {
   border-color: var(--accent-primary);
 }
 .cognate-extra-count {
@@ -18580,7 +18291,7 @@ body {
   -webkit-backdrop-filter: blur(10px);
 }
 :is(#learningContextModal, #findWordModal, #statsModal, #totalStatsModal,
-    #extrasModal, #mergedFormsModal, #skippedWordsModal, #cognateRulesModal, #estimationModal, #lyricBreakdownModal,
+    #extrasModal, #cognateRulesModal, #estimationModal, #lyricBreakdownModal,
     #songSetModal, #vocabularyImportModal, #extraScopeModal, #helpModal) {
   background: rgba(3, 7, 12, .74);
   backdrop-filter: blur(10px);
@@ -18936,23 +18647,6 @@ body {
   border-color: color-mix(in srgb, var(--accent-primary) 34%, var(--border-color));
   background: linear-gradient(135deg, rgba(var(--accent-primary-rgb), .10), rgba(var(--accent-primary-rgb), .035));
 }
-.fast-mode-example {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
-  margin: 2px 0 14px;
-}
-.fast-mode-example span,
-.fast-mode-example b {
-  padding: 4px 8px;
-  border: 1px solid var(--border-color);
-  border-radius: 7px;
-  background: var(--bg-tertiary);
-  color: var(--text-secondary);
-  font: 600 11px/1.2 var(--font-reading);
-}
-.fast-mode-example b { border-color: rgba(var(--accent-primary-rgb), .35); color: var(--accent-primary); }
 .fast-mode-details {
   margin-top: 13px;
   padding-top: 11px;
@@ -18967,9 +18661,7 @@ body {
 }
 .fast-mode-details p { margin: 9px 0 0; line-height: 1.5; }
 
-#extrasModal .modal-content,
-#mergedFormsModal .modal-content,
-#skippedWordsModal .modal-content {
+#extrasModal .modal-content {
   max-width: 640px;
   width: min(94vw, 640px);
   max-height: min(calc(84vh / var(--ui-zoom, 1)), 620px);
@@ -18980,17 +18672,13 @@ body {
   overflow: hidden;
 }
 
-#extrasModal .modal-header,
-#mergedFormsModal .modal-header,
-#skippedWordsModal .modal-header {
+#extrasModal .modal-header {
   margin-bottom: 6px;
   padding-bottom: 8px;
   flex: none;
 }
 
-#extrasModal .extras-intro,
-#mergedFormsModal .extras-intro,
-#skippedWordsModal .extras-intro {
+#extrasModal .extras-intro {
   margin: 0 0 8px;
   color: var(--text-muted);
   font-size: 12px;
@@ -18998,9 +18686,7 @@ body {
   flex: none;
 }
 
-#extrasModal .extras-search,
-#mergedFormsModal .extras-search,
-#skippedWordsModal .extras-search {
+#extrasModal .extras-search {
   box-sizing: border-box;
   width: 100%;
   min-height: 34px;
@@ -19015,16 +18701,12 @@ body {
   flex: none;
 }
 
-#extrasModal .extras-search:focus,
-#mergedFormsModal .extras-search:focus,
-#skippedWordsModal .extras-search:focus {
+#extrasModal .extras-search:focus {
   border-color: var(--accent-primary);
   box-shadow: 0 0 0 3px rgba(var(--accent-primary-rgb), .12);
 }
 
-#extrasModal .extras-body,
-#mergedFormsModal .extras-body,
-#skippedWordsModal .extras-body {
+#extrasModal .extras-body {
   flex: 1 1 auto;
   min-height: 0;
   max-height: none;
@@ -19033,15 +18715,11 @@ body {
   overscroll-behavior: contain;
 }
 
-#extrasModal .extras-section + .extras-section,
-#mergedFormsModal .extras-section + .extras-section,
-#skippedWordsModal .extras-section + .extras-section {
+#extrasModal .extras-section + .extras-section {
   margin-top: 14px;
 }
 
-#extrasModal .extras-section-header,
-#mergedFormsModal .extras-section-header,
-#skippedWordsModal .extras-section-header {
+#extrasModal .extras-section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -19049,9 +18727,7 @@ body {
   margin-bottom: 2px;
 }
 
-#extrasModal .extras-body h4,
-#mergedFormsModal .extras-body h4,
-#skippedWordsModal .extras-body h4 {
+#extrasModal .extras-body h4 {
   margin: 0;
   font-size: 12px;
   font-family: var(--font-emphasis);
@@ -19061,18 +18737,14 @@ body {
   gap: 6px;
 }
 
-#extrasModal .extras-blurb,
-#mergedFormsModal .extras-blurb,
-#skippedWordsModal .extras-blurb {
+#extrasModal .extras-blurb {
   margin: 0 0 6px;
   font-size: 11px;
   line-height: 1.35;
   color: var(--text-muted);
 }
 
-#extrasModal .extras-row,
-#mergedFormsModal .extras-row,
-#skippedWordsModal .extras-row {
+#extrasModal .extras-row {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.4fr) minmax(0, 1.1fr) auto;
   gap: 8px;
@@ -19082,9 +18754,7 @@ body {
   font-size: 12px;
 }
 
-#extrasModal .extras-open-card,
-#mergedFormsModal .extras-open-card,
-#skippedWordsModal .extras-open-card {
+#extrasModal .extras-open-card {
   padding: 3px 8px;
   border: 1px solid var(--border-color);
   border-radius: 6px;
@@ -19095,16 +18765,13 @@ body {
   white-space: nowrap;
 }
 
-#extrasModal .extras-open-card:hover,
-#mergedFormsModal .extras-open-card:hover,
-#skippedWordsModal .extras-open-card:hover {
+#extrasModal .extras-open-card:hover {
   border-color: var(--accent-primary);
   color: var(--accent-primary);
 }
 
 /* Fast Track audit lists: the word itself opens its card. */
-#mergedFormsModal .extras-row,
-#skippedWordsModal .extras-row,
+
 #extrasDeckCard .extras-row {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 12px;
@@ -19134,8 +18801,7 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-#mergedFormsModal .extras-open-card,
-#skippedWordsModal .extras-open-card,
+
 #extrasDeckCard .extras-open-card {
   max-width: 100%;
   padding: 5px 10px;
@@ -19145,8 +18811,7 @@ body {
   white-space: normal;
   text-align: left;
 }
-#mergedFormsModal .extras-translation,
-#skippedWordsModal .extras-translation,
+
 #extrasDeckCard .extras-translation {
   grid-column: auto;
   white-space: normal;
@@ -19154,64 +18819,14 @@ body {
   text-overflow: clip;
   font-size: 11px;
 }
-#skippedWordsModal .extras-translation,
+
 #extrasDeckCard .extras-row--cognate > .extras-translation { text-align: right; font-size: 12px; }
 
 /* Skipped words: the surface and the word it resembles sit in two columns
    in the middle of the sheet, rather than pinned to opposite edges. */
-#skippedWordsModal .extras-row--cognate {
-  display: flex;
-  justify-content: center;
-}
-#skippedWordsModal .cognate-pair {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  align-items: baseline;
-  gap: 12px;
-  width: min(100%, 280px);
-}
 /* The phone rule that parks .extras-open-card in column 2 must not apply
    inside this pair, or the equals sign lands on the left and the two words
    sit together on the right. */
-#skippedWordsModal .cognate-pair .extras-open-card {
-  grid-column: 1;
-  grid-row: auto;
-  justify-self: end;
-  max-width: 100%;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: none;
-  color: var(--text-primary);
-  font: 700 16px/1.3 var(--font-emphasis);
-  text-align: right;
-}
-#skippedWordsModal .cognate-pair-eq { grid-column: 2; }
-#skippedWordsModal .cognate-pair-known { grid-column: 3; }
-#skippedWordsModal .cognate-pair-eq {
-  color: var(--accent-primary);
-  font: 700 16px/1 var(--font-emphasis);
-}
-#skippedWordsModal .cognate-pair-known {
-  justify-self: start;
-  color: var(--text-primary);
-  font: 700 16px/1.3 var(--font-emphasis);
-  text-align: left;
-}
-#skippedWordsModal .cognate-pair-known.is-gloss {
-  color: var(--text-muted);
-  font: 500 13px/1.35 var(--font-reading);
-}
-#skippedWordsModal .cognate-pair--flipped .cognate-pair-known {
-  grid-column: 1;
-  justify-self: end;
-  text-align: right;
-}
-#skippedWordsModal .cognate-pair--flipped .extras-open-card {
-  grid-column: 3;
-  justify-self: start;
-  text-align: left;
-}
 
 .lemma-group-list { margin: 0; padding: 0; list-style: none; }
 .lemma-group-row {
@@ -19270,56 +18885,13 @@ body {
 .lemma-group-chip[hidden],
 .lemma-group-more[hidden] { display: none; }
 
-.fast-track-study-launch {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  width: 100%;
-  min-height: 58px;
-  padding: 14px 16px;
-  border: 1px solid color-mix(in srgb, var(--accent-primary) 42%, var(--border-color));
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--accent-primary) 14%, var(--bg-card));
-  color: var(--text-primary);
-  text-align: left;
-  cursor: pointer;
-}
-.fast-track-study-launch strong { font: 700 15px/1.3 var(--font-emphasis); }
-.fast-track-study-launch span {
-  flex: none;
-  color: var(--accent-primary);
-  font: 650 12px/1.2 var(--font-reading);
-}
-.fast-track-study-launch:hover {
-  background: color-mix(in srgb, var(--accent-primary) 22%, var(--bg-card));
-}
-#fastTrackDeckCard:has(.fast-track-study-launch),
-#fastTrackDeckCard:has(.fast-track-study-empty) {
-  padding: 0;
-  border: 0;
-  background: none;
-}
-.fast-track-study-empty {
-  margin: 0;
-  color: var(--text-muted);
-  font: 500 13px/1.45 var(--font-reading);
-}
-#fastTrackStudyBody .extras-level-list { margin-top: 4px; }
-
 @media (max-width: 700px) {
-  #fastModeModal,
-  #fastTrackStudyModal,
-  #mergedFormsModal,
-  #skippedWordsModal {
+  #fastModeModal {
     align-items: stretch !important;
     justify-content: stretch !important;
     padding: 0 !important;
   }
-  #fastModeModal > .modal-content,
-  #fastTrackStudyModal > .modal-content,
-  #mergedFormsModal > .modal-content,
-  #skippedWordsModal > .modal-content {
+  #fastModeModal > .modal-content {
     width: 100% !important;
     max-width: none !important;
     height: 100% !important;
@@ -19331,8 +18903,6 @@ body {
   }
   .lemma-group-row { grid-template-columns: 2.6em minmax(0, 38%) minmax(0, 1fr); gap: 8px; }
 }
-#mergedFormsModal .extras-intro .extras-count,
-#skippedWordsModal .extras-intro .extras-count { margin-left: 6px; white-space: nowrap; }
 
 .settings-preference-cluster { margin-top: 22px; }
 .settings-preference-cluster:first-of-type { margin-top: 4px; }
@@ -19499,33 +19069,6 @@ body {
   gap: 10px;
   margin-bottom: 9px;
 }
-.fast-mode-number {
-  display: grid;
-  place-items: center;
-  flex: 0 0 26px;
-  width: 26px;
-  height: 26px;
-  border-radius: 8px;
-  background: rgba(var(--accent-primary-rgb), .15);
-  color: var(--accent-primary);
-  font: 750 12px/1 var(--font-reading);
-}
-.fast-mode-example--cognate { gap: 9px; }
-.fast-mode-example--cognate > span {
-  display: flex;
-  flex-direction: column;
-  min-width: 92px;
-  gap: 2px;
-}
-.fast-mode-example--cognate span b {
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--text-primary);
-  font-size: 12px;
-}
-.fast-mode-example--cognate span small { color: var(--text-muted); font-size: 9px; font-weight: 500; }
-.fast-mode-example--cognate > strong { color: var(--text-muted); font: 700 13px/1 var(--font-reading); }
 .fast-mode-mapping-status {
   margin: 10px 0 0;
   padding: 9px 10px;
@@ -19710,7 +19253,6 @@ body {
 .extras-deck-groups { display: grid; gap: 12px; padding-top: 10px; border-top: 1px solid var(--border-color); }
 .extras-deck-group h4 { display: flex; align-items: center; gap: 8px; margin: 0 0 4px; color: var(--text-primary); font: 700 13px/1.3 var(--font-emphasis); }
 .extras-deck-hint { margin: 0 0 8px; color: var(--text-secondary); font: 500 12px/1.4 var(--font-reading); }
-.extras-merged-note { margin-top: 4px; }
 .extras-set-pills {
   display: flex;
   flex-wrap: wrap;
@@ -20505,16 +20047,17 @@ html[data-text-size="large"] body {
 }
 .review-home-link:hover { text-decoration: underline; }
 
-/* Fast Track is one row that opens its own sheet. */
+/* Smart Skip is one row that opens its own page. The left part is the link
+   (hover state, count, chevron); a divider separates it from the switch. */
 #setupOptions.setup-options {
   margin: 0;
-  padding: 6px 10px 10px;
+  padding: 0;
   border: 0;
   border-top: 1px solid var(--border-color);
   border-radius: 0;
   background: transparent;
 }
-.fast-track-hub-row { display: flex; align-items: center; gap: 10px; }
+.fast-track-hub-row { display: flex; align-items: stretch; }
 .fast-track-hub-btn {
   flex: 1;
   min-width: 0;
@@ -20522,45 +20065,45 @@ html[data-text-size="large"] body {
   align-items: center;
   gap: 12px;
   min-height: 56px;
-  padding: 8px 6px;
+  padding: 10px 12px 10px 14px;
   border: 0;
   background: transparent;
   color: var(--text-primary);
   text-align: left;
   cursor: pointer;
-  transition: transform 0.16s ease, opacity 0.16s ease;
+  transition: background 0.16s ease;
 }
-.fast-track-hub-btn:hover { transform: translateX(1px); opacity: 0.88; }
-.fast-track-hub-row .fast-mode-master-switch { flex: none; width: 42px; height: 24px; cursor: pointer; }
-.fast-track-hub-row .fast-mode-master-switch i { width: 18px; height: 18px; }
-.fast-track-hub-row .fast-mode-master-switch.selected { background: var(--accent-primary); }
-.fast-track-hub-row .fast-mode-master-switch.selected i { transform: translateX(18px); background: #10141b; }
+.fast-track-hub-btn:hover { background: var(--bg-card-hover); }
+.fast-track-hub-btn:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: -2px; }
 .fast-track-hub-btn .fast-mode-master-icon {
   flex: none;
-  width: 23px;
-  height: 23px;
+  width: 22px;
+  height: 22px;
   fill: none;
-  stroke: currentColor;
+  stroke: var(--accent-primary);
   stroke-width: 1.8;
   stroke-linejoin: round;
 }
-.fast-track-hub-copy { flex: 1; display: grid; gap: 3px; min-width: 0; }
-.fast-track-hub-copy .fast-mode-title-row { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
-.fast-track-hub-copy strong { font: 700 16px/1.2 var(--font-emphasis); }
-.fast-track-hub-copy small {
+.fast-track-hub-btn { container-type: inline-size; }
+.fast-track-hub-copy { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; overflow: hidden; }
+/* The badge argues for turning Smart Skip on; once it is on, the count takes
+   its place, so the two never compete for the row. */
+.fast-track-hub-row.is-on .fast-track-hub-copy .streamline-rec-badge { display: none; }
+.fast-track-hub-copy strong { font: 700 16px/1.2 var(--font-emphasis); white-space: nowrap; }
+.fast-track-hub-copy .streamline-rec-badge { flex: none; font-size: 10px; padding: 3px 7px; }
+.fast-track-hub-meta { flex: none; display: flex; align-items: center; gap: 6px; }
+.fast-track-hub-meta small {
   color: var(--text-muted);
-  font: 500 11px/1.35 var(--font-reading);
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font: 500 12.5px/1 var(--font-reading);
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-/* Until the sheet has been opened once, the second line is an invitation
-   rather than a status, and the chevron carries a dot so the eye lands on it.
-   Both retire permanently after that first visit. */
-.fast-track-hub-row.is-unseen .fast-track-hub-copy small {
-  color: var(--accent-primary);
-  font-weight: 650;
-}
+.fast-track-hub-meta small:empty { display: none; }
+/* On a narrow row the count drops out before anything can wrap. */
+@container (max-width: 250px) { .fast-track-hub-meta small { display: none; } }
+.fast-track-hub-chevron { flex: none; color: var(--text-muted); font-size: 20px; line-height: 1; }
+/* Until the page has been opened once the chevron carries a dot, so the eye
+   lands on it. It retires permanently after that first visit. */
 .fast-track-hub-row.is-unseen .fast-track-hub-chevron { position: relative; color: var(--accent-primary); }
 .fast-track-hub-row.is-unseen .fast-track-hub-chevron::after {
   content: '';
@@ -20572,8 +20115,309 @@ html[data-text-size="large"] body {
   border-radius: 50%;
   background: var(--accent-primary);
 }
-#setupOptions .streamline-rec-badge { font-size: 10px; padding: 3px 7px; }
-.fast-track-hub-chevron { flex: none; color: var(--text-muted); font-size: 20px; line-height: 1; }
+.fast-track-hub-switch-cell {
+  flex: none;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  border-left: 1px solid var(--border-color);
+}
+
+/* One switch, used on the home row and for every shortcut: a flat pill with
+   a round knob. `.selected` / aria-checked carry the state. */
+.fast-track-hub-row .fast-mode-master-switch,
+.smart-skip-switch {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  flex: none;
+  width: 42px;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--border-light);
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+.fast-track-hub-row .fast-mode-master-switch i,
+.smart-skip-switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+.fast-track-hub-row .fast-mode-master-switch.selected,
+.smart-skip-switch[aria-checked="true"] { background: var(--accent-primary); }
+.fast-track-hub-row .fast-mode-master-switch.selected i,
+.smart-skip-switch[aria-checked="true"]::after { transform: translateX(18px); }
+.fast-track-hub-row .fast-mode-master-switch:focus-visible,
+.smart-skip-switch:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
+.smart-skip-switch { width: 36px; height: 21px; }
+.smart-skip-switch::after { width: 15px; height: 15px; }
+.smart-skip-switch[aria-checked="true"]::after { transform: translateX(15px); }
+
+/* ---- Smart Skip page -------------------------------------------------------
+   One column: the shortcuts, one line each, then the word list. Rows are one
+   line tall whatever they hold; long text is cut, never wrapped. */
+#fastModeModal .smart-skip-body {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 18px 16px 40px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+}
+#fastModeModal .smart-skip-body h2 { margin: 0; padding-right: 40px; line-height: 32px; }
+#fastModeModal .smart-skip-shortcuts {
+  display: block;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-card);
+  overflow: hidden;
+}
+/* The divider is a shadow above each shortcut: the container clips the first
+   one's, whichever shortcut happens to be first. */
+.smart-skip-shortcut { box-shadow: 0 -1px 0 var(--border-color); }
+.smart-skip-shortcut[data-available="false"] { display: none !important; }
+.smart-skip-shortcut-row { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 12px 0 14px; }
+.smart-skip-shortcut-name {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 12px 0;
+  border: 0;
+  background: none;
+  color: var(--text-primary);
+  font: 600 14px/1.2 var(--font-reading);
+  text-align: left;
+  cursor: pointer;
+}
+.smart-skip-shortcut-name span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.smart-skip-shortcut-name svg { flex: none; width: 14px; height: 14px; fill: none; stroke: var(--text-muted); stroke-width: 2; opacity: 0.7; }
+.smart-skip-shortcut-count {
+  flex: none;
+  color: var(--text-muted);
+  font: 500 12.5px/1 var(--font-reading);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.smart-skip-shortcut-detail { padding: 0 14px 12px; display: grid; gap: 10px; }
+.smart-skip-shortcut-detail[hidden],
+.smart-skip-shortcut > .fast-mode-none[hidden] { display: none; }
+/* The real Exclude/Include control stays in the DOM for ui.js; the switch
+   stands in for it on screen. */
+.smart-skip-shortcut > .group-size-selector { display: none !important; }
+#fastModeModal .smart-skip-shortcut-detail .fast-mode-explainer { margin: 0; font-size: 13px; opacity: 1; }
+.smart-skip-shortcut-detail em { color: var(--text-secondary); font-style: normal; font-weight: 600; }
+.smart-skip-shortcut > .fast-mode-none { padding: 0 14px 12px; }
+
+#fastModeModal .smart-skip-words { margin: 0; display: grid; gap: 8px; }
+.smart-skip-label {
+  margin: 0;
+  color: var(--text-muted);
+  font: 700 11px/1 var(--font-reading);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.smart-skip-toolbar { display: flex; gap: 8px; align-items: center; }
+.smart-skip-toolbar[hidden] { display: none; }
+.smart-skip-select-wrap { position: relative; flex: 0 1 auto; min-width: 0; }
+.smart-skip-select-wrap select {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  max-width: 100%;
+  padding: 11px 34px 11px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font: 600 14px/1.1 var(--font-reading);
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+.smart-skip-select-wrap svg {
+  position: absolute;
+  right: 11px;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  transform: translateY(-50%);
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 2;
+  pointer-events: none;
+}
+.smart-skip-search {
+  flex: 1 1 110px;
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font: 400 14px/1.1 var(--font-reading);
+}
+.smart-skip-select-wrap select:focus-visible,
+.smart-skip-search:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 1px; }
+#fastTrackDeckCard.extras-deck-card { margin: 0; padding: 0; border: 0; background: none; box-shadow: none; }
+
+.smart-skip-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-card);
+  overflow: clip;
+}
+.smart-skip-list li { margin: 0; }
+.smart-skip-group-rows { margin: 0; padding: 0; list-style: none; }
+.smart-skip-group + .smart-skip-group > .smart-skip-level { border-top: 1px solid var(--border-color); }
+.smart-skip-level {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 40px;
+  padding: 0 8px 0 14px;
+  background: color-mix(in srgb, var(--bg-card) 88%, var(--text-primary) 12%);
+}
+.smart-skip-level b { font: 700 13px/1 var(--font-emphasis); color: var(--text-primary); }
+.smart-skip-level span { color: var(--text-muted); font: 500 12px/1 var(--font-reading); font-variant-numeric: tabular-nums; }
+.smart-skip-study {
+  margin-left: auto;
+  padding: 8px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--accent-primary);
+  font: 700 12.5px/1 var(--font-reading);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.smart-skip-study:hover { background: color-mix(in srgb, var(--accent-primary) 14%, transparent); }
+.smart-skip-row {
+  width: 100%;
+  height: 42px;
+  display: grid;
+  grid-template-columns: minmax(0, max-content) minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 10px;
+  padding: 0 14px;
+  border: 0;
+  border-top: 1px solid var(--border-color);
+  background: none;
+  color: var(--text-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.smart-skip-group-rows > li:first-child > .smart-skip-row { border-top: 0; }
+.smart-skip-row:hover { background: var(--bg-card-hover); }
+.smart-skip-row:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: -2px; }
+.smart-skip-row > span { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.smart-skip-w { font: 700 15px/1.2 var(--font-reading); }
+.smart-skip-more { margin-left: 5px; color: var(--text-muted); font-size: 12px; font-weight: 500; opacity: 0.8; }
+.smart-skip-g { color: var(--text-secondary); font: 400 14px/1.2 var(--font-reading); }
+.smart-skip-g.is-gloss, .smart-skip-g .is-gloss { color: var(--text-muted); }
+.smart-skip-g .cognate-pair-eq { margin-right: 6px; color: var(--text-muted); opacity: 0.8; }
+.smart-skip-g .cognate-pair-eq[hidden] { display: none; }
+.smart-skip-tag { color: var(--text-muted); font: 500 12px/1 var(--font-reading); opacity: 0.85; }
+.smart-skip-row--lemma { grid-template-columns: minmax(0, max-content) minmax(0, max-content) minmax(0, 1fr); }
+.smart-skip-row--lemma .smart-skip-g { color: var(--text-muted); }
+.smart-skip-forms { color: var(--text-muted); font: 400 13px/1.2 var(--font-reading); text-align: right; opacity: 0.85; }
+.smart-skip-sentinel { height: 1px; }
+.smart-skip-empty { margin: 0; padding: 20px 14px; color: var(--text-muted); font: 500 13.5px/1.45 var(--font-reading); }
+
+/* The word preview: a small card over the list, a bottom sheet on phones. */
+.smart-skip-preview {
+  position: fixed;
+  inset: 0;
+  z-index: 1030;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(3, 7, 12, 0.55);
+}
+.smart-skip-preview[hidden] { display: none; }
+.smart-skip-preview-card {
+  width: min(400px, 100%);
+  display: grid;
+  gap: 14px;
+  padding: 18px 18px 16px;
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+  animation: smart-skip-preview-in 0.16s ease-out;
+}
+.smart-skip-preview-card:focus { outline: none; }
+@keyframes smart-skip-preview-in { from { opacity: 0; transform: scale(0.97); } }
+.smart-skip-preview-why {
+  color: var(--text-muted);
+  font: 700 11px/1 var(--font-reading);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.smart-skip-preview-word { display: grid; gap: 4px; }
+.smart-skip-preview-word b { font: 700 28px/1.1 var(--font-emphasis); overflow-wrap: anywhere; }
+.smart-skip-preview-word span { color: var(--text-secondary); font: 400 16px/1.3 var(--font-reading); }
+.smart-skip-preview-forms { margin: 0; color: var(--text-muted); font: 400 13px/1.4 var(--font-reading); }
+.smart-skip-preview-example { display: grid; gap: 3px; padding: 2px 0 2px 12px; border-left: 2px solid var(--accent-primary); }
+.smart-skip-preview-example[hidden] { display: none; }
+.smart-skip-preview-example p { margin: 0; font: 400 14.5px/1.45 var(--font-reading); }
+.smart-skip-preview-example p + p { color: var(--text-muted); font-size: 13px; }
+.smart-skip-preview-example mark { background: none; color: var(--accent-primary); font-weight: 700; }
+.smart-skip-preview-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+.smart-skip-preview-close {
+  padding: 13px 10px;
+  border: 0;
+  background: none;
+  color: var(--text-muted);
+  font: 600 14px/1 var(--font-reading);
+  cursor: pointer;
+}
+.smart-skip-preview-open {
+  padding: 13px 16px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--accent-primary);
+  color: var(--accent-primary-text, #fff);
+  font: 700 14px/1 var(--font-reading);
+  cursor: pointer;
+}
+.smart-skip-preview-card button:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
+@media (max-width: 600px) {
+  .smart-skip-preview { align-items: flex-end; padding: 0; }
+  .smart-skip-preview-card {
+    width: 100%;
+    padding-bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+    border-bottom: 0;
+    border-radius: 18px 18px 0 0;
+    animation-name: smart-skip-preview-up;
+  }
+}
+@keyframes smart-skip-preview-up { from { transform: translateY(24px); opacity: 0.4; } }
+@media (prefers-reduced-motion: reduce) {
+  .smart-skip-preview-card { animation: none; }
+  .fast-track-hub-row .fast-mode-master-switch, .smart-skip-switch,
+  .fast-track-hub-row .fast-mode-master-switch i, .smart-skip-switch::after { transition: none; }
+}
 
 /* Sections inside the Fast Track sheet: the review home for skipped decks and
    the skipped-words lists, above the fine-tune controls. */
@@ -20689,7 +20533,6 @@ html[data-text-size="large"] body {
 .extras-level-group .extras-set-pill small { font-size: 10px; }
 .extras-level-group .extras-set-pill.is-complete { border-color: color-mix(in srgb, #31ab70 60%, var(--border-color)); background: color-mix(in srgb, #31ab70 12%, var(--bg-card)); }
 .extras-level-group .extras-set-pill.needs-review { border-color: color-mix(in srgb, #dc9a4c 65%, var(--border-color)); background: color-mix(in srgb, #dc9a4c 11%, var(--bg-card)); }
-.extras-merged-note { margin: 0; }
 
 /* Keep the inflected word and its lemma together, even at phone widths. */
 .back-headword.back-surface-pair { max-width: 100%; white-space: nowrap; }
@@ -20905,15 +20748,15 @@ body.rare-uses-open { overflow: hidden; }
    The selectors list the ids inside :is() so they outrank each modal's own
    id-level sizing. Phones and narrow windows never get data-dock. */
 
-.modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) {
+.modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) {
   align-items: center;
   padding: 16px var(--dock-inset, 16px);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
-.modal[data-dock="left"]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { justify-content: flex-start; }
-.modal[data-dock="right"]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { justify-content: flex-end; }
-.modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) > .modal-content {
+.modal[data-dock="left"]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { justify-content: flex-start; }
+.modal[data-dock="right"]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { justify-content: flex-end; }
+.modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) > .modal-content {
   box-sizing: border-box;
   width: var(--dock-w, 400px);
   max-width: none;
@@ -20921,11 +20764,11 @@ body.rare-uses-open { overflow: hidden; }
   margin: 0;
   overflow-y: auto;
 }
-.modal[data-dock="left"]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) > .modal-content { animation: dock-sheet-in-left 0.22s ease-out; }
-.modal[data-dock="right"]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) > .modal-content { animation: dock-sheet-in-right 0.22s ease-out; }
+.modal[data-dock="left"]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) > .modal-content { animation: dock-sheet-in-left 0.22s ease-out; }
+.modal[data-dock="right"]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) > .modal-content { animation: dock-sheet-in-right 0.22s ease-out; }
 /* These three scroll an inner list rather than the sheet; give the list the
    full height instead of the centred sheet's 620px cap. */
-.modal[data-dock]:is(#mergedFormsModal, #skippedWordsModal, #extrasModal) > .modal-content {
+.modal[data-dock]:is(#extrasModal) > .modal-content {
   height: calc(calc(100dvh / var(--ui-zoom, 1)) - 32px);
   overflow: hidden;
 }
@@ -20943,20 +20786,20 @@ body.rare-uses-open { overflow: hidden; }
   border-radius: 22px;
 }
 /* A sheet opened over settings sits on top of it; closing it shows settings. */
-.modal[data-dock-stack]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) { z-index: 1010; }
+.modal[data-dock-stack]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) { z-index: 1010; }
 
 /* Study session: the card stays usable beside a docked sheet, so the
    full-viewport backdrop is transparent and lets clicks through. Close with
    the sheet's own close button or Escape. */
-body:has(#appContent:not(.hidden)) .modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) {
+body:has(#appContent:not(.hidden)) .modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) {
   background: transparent;
   pointer-events: none;
 }
-body:has(#appContent:not(.hidden)) .modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) > .modal-content { pointer-events: auto; }
+body:has(#appContent:not(.hidden)) .modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal) > .modal-content { pointer-events: auto; }
 /* Setup page: a light dim, and a click outside still closes. A sheet stacked
    over settings does not dim settings a second time. */
-body:has(#appContent.hidden) .modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { background: rgba(3, 7, 12, 0.32); }
-body:has(#appContent.hidden) .modal[data-dock-stack]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #mergedFormsModal, #skippedWordsModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { background: transparent; }
+body:has(#appContent.hidden) .modal[data-dock]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { background: rgba(3, 7, 12, 0.32); }
+body:has(#appContent.hidden) .modal[data-dock-stack]:is(#lyricBreakdownModal, #settingsModal, #savedWordsModal, #statsModal, #totalStatsModal, #keyboardShortcutsModal, #helpModal, #extrasModal, #cognateRulesModal, #fastModeModal, #vocabularyImportModal):not(.hidden) { background: transparent; }
 
 /* The rarer-sense knowledge sheet has its own structure. */
 #knowledgeOverviewModal[data-dock]:not([hidden]),
