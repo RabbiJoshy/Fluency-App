@@ -415,10 +415,17 @@ class OfflineEmbeddingManager:
                 self.vectors[k] = v
             print(f"  Loaded {len(data['keys'])} delta cached vectors.")
 
+        # A pair with an uncached side is scored by word overlap, not by
+        # meaning. Counted so a run reports how much of WSD that was.
+        self.pairs_scored = 0
+        self.pairs_uncached = 0
+
     def similarity(self, query: str, candidate: str) -> float:
         qv = self.vectors.get(query)
         cv = self.vectors.get(candidate)
+        self.pairs_scored += 1
         if qv is None or cv is None:
+            self.pairs_uncached += 1
             q_words = set(query.lower().split())
             c_words = set(candidate.lower().split())
             if q_words & c_words:
@@ -1270,6 +1277,10 @@ def plant_artist(
     print(f"  WSD assignments completed: {assigned_occurrences_count:,}")
     print(f"    - Monosemous / Deterministic: {monosemous_count:,}")
     print(f"    - Genuine Polysemous Evaluated: {polysemous_wsd_count:,}")
+    if embed_mgr.pairs_scored:
+        print(f"    - Embedding pairs without a cached vector (word-overlap fallback): "
+              f"{embed_mgr.pairs_uncached:,} of {embed_mgr.pairs_scored:,} "
+              f"({embed_mgr.pairs_uncached / embed_mgr.pairs_scored:.1%})")
 
     # 7. Assembled evidence document
     final_evidence = {

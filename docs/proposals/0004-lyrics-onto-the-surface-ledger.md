@@ -1,8 +1,54 @@
 # Proposal 0004 — Lyrics mode moves onto the surface ledger
 
-**Status:** Proposal by MEND (2026-09-23) for Joshua to decide; VERSE executes.
-Nothing here changes lyrics code. It is the critique and migration asked for in
-proposal 0003 §7.
+**Status:** Proposal by MEND (2026-09-23). **Not executed.** Joshua agreed the
+direction on 2026-09-27 (update below); the menu step (5, step 4) goes first.
+
+## Update, 2026-09-27: where lyrics actually is
+
+The roadmap row for VERSE says lyrics was rebased on MEND's resolver. The code
+was not. Lyrics shipped v16 → v19 as one script per version
+(`scripts/plant_artist_v16.py` … `plant_artist_v19.py`), each with its own
+dictionary logic: a tier chain (declared overlay → Wikipedia entity →
+SpanishDict page → SpanishDict headword borrow → Kaikki glosses → spaCy lemma).
+None of it calls `fluency.surfaces.resolver`, so speech fixes never reach
+lyrics (Invariant 4). The legacy routing this document critiques
+(`spanish_routing.py`) is no longer what builds lyrics menus; the tier chain
+in `plant_artist_v19.py` is.
+
+Four live bugs found on 2026-09-27 in the v19 decks, three of which the shared
+resolver already handles for speech:
+
+| Symptom | Lyrics cause | Speech already does |
+|---|---|---|
+| `ta` → "TA (Terminologia Anatomica)", `pa` → "dad", `tas` → "small anvil" | declared elisions keyed with apostrophes (`ta'`); card surfaces arrive stripped (`ta`), so none matched | declared entries resolve through one store |
+| `muerdo` → noun "bite" only, WSD never ran | tier 1 reads a page's own dictionary entries and drops the relation it states (`muerdo`: conjugation of `morder`) | `spanishdict_lemmas.py` keeps page-self and every stated relation |
+| `muerdo`, `despejás` → "first-person singular present indicative of morder" | Kaikki tier uses form-of glosses as meanings | `KaikkiHeadwordSource` follows form-of chains to entries with senses and drops form-of glosses |
+| `despeja`, `condene` → "clear!", "condemn!" | lyrics inflector took the first reading; table lists moods alphabetically | (lyrics-only code) |
+
+Patched in v19 on 2026-09-27 (commits `98f802f4`..`d38948d4`): bare elision
+entries, statement-before-command ordering, a Kaikki cache that rescans for
+missing words, and tier 1 asking `SpanishDictLemmaRule` for the page's stated
+relations (`src/fluency/lyrics/spanishdict_headwords.py`). The Kaikki form-of
+bug is not patched; it belongs to the step below.
+
+Two more facts for whoever executes this:
+
+- `lyrics-all-artists-v19` plants only Bad Bunny and the Spanish test playlist;
+  `scripts/package_lyrics_release_v19.py` copies Rosalía and Young Miko from
+  v18 unchanged.
+- WSD scores sense pairs from a local embedding cache and never calls Gemini;
+  an uncached side falls back to word overlap (0.40 / 0.10). v19 now prints how
+  many pairs that was.
+
+**Revised order.** Do §5 step 4 first, as v20: build every lyrics card's
+headword set with `fluency.surfaces.resolver` (SpanishDict and Kaikki sources,
+declared entries at lyrics scope), take the menu from those headwords, and
+delete the tier chain. Shadow-diff v19 against v20 menus for all four artists
+before switching, as MEND did for speech. Steps 1–3 and 5 (overrides to
+declared entries, routing tests as ledger observations, buckets as a view)
+follow once menus come from the resolver.
+
+---
 
 **One line.** Legacy lyrics routing (`src/fluency/lyrics/languages/spanish_routing.py`,
 `lyrics/overrides.py`) decides, per run, what each word *is* and hides the
