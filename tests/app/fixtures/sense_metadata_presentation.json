@@ -1,0 +1,124 @@
+{
+  "pt": [
+    {
+      "word": "vocês",
+      "meanings": [{
+        "translation": "you", "headword": "vocês", "part_of_speech": "pron",
+        "metadata": {"sense_metadata": {"contract_version": "sense-metadata/v1", "features": [
+          {"family": "grammar", "kind": "sense_mark", "value": "gender=variable-by-person"},
+          {"family": "grammar", "kind": "sense_mark", "value": "gender=feminine"},
+          {"family": "grammar", "kind": "sense_mark", "value": "gender=masculine"},
+          {"family": "grammar", "kind": "sense_mark", "value": "number=plural"},
+          {"family": "grammar", "kind": "gloss_note", "value": "second-person plural personal pronoun"}
+        ]}}
+      }]
+    },
+    {
+      "word": "pra",
+      "meanings": [{
+        "translation": "syncopic form of para", "context": "colloquial", "headword": "pra", "part_of_speech": "prep",
+        "metadata": {"source_adapter": "wiktionary-sense-menu/v1", "sense_metadata": {"contract_version": "sense-metadata/v1", "features": [
+          {"family": "register", "kind": "usage_tag", "value": "colloquial"},
+          {"family": "grammar", "kind": "surface_mark", "value": "gender=feminine"},
+          {"family": "grammar", "kind": "surface_mark", "value": "number=singular"}
+        ]}}
+      }]
+    },
+    {
+      "word": "parece",
+      "meanings": [
+        {"translation": "to seem", "context": "copulative or auxiliary", "headword": "parecer", "part_of_speech": "verb", "metadata": {"sense_metadata": {"contract_version": "sense-metadata/v1", "features": [
+          {"family": "construction", "kind": "auxiliary_frame", "value": "auxiliary"},
+          {"family": "construction", "kind": "grammar_tag", "value": "copulative"},
+          {"family": "construction", "kind": "gloss_phrase", "value": "copulative or auxiliary"}
+        ]}}},
+        {"translation": "to resemble", "context": "pronominal", "headword": "parecer", "part_of_speech": "verb", "metadata": {"sense_metadata": {"contract_version": "sense-metadata/v1", "features": [
+          {"family": "construction", "kind": "grammar_tag", "value": "pronominal"},
+          {"family": "companion", "kind": "required_word", "value": "com"}
+        ]}}}
+      ]
+    },
+    {
+      "word": "uma",
+      "meanings": [
+        {"translation": "a, an", "context": "indefinite", "headword": "um", "part_of_speech": "article", "metadata": {"sense_metadata": {"contract_version": "sense-metadata/v1", "features": [{"family": "grammar", "kind": "sense_mark", "value": "definiteness=indefinite"}]}}},
+        {"translation": "a, an", "context": "a bit of", "headword": "um", "part_of_speech": "article", "metadata": {"sense_metadata": {"contract_version": "sense-metadata/v1", "features": [{"family": "grammar", "kind": "sense_mark", "value": "definiteness=indefinite"}]}}},
+        {"translation": "a, an", "context": "indicates that what follows is exceptional; quite a; quite the", "headword": "um", "part_of_speech": "article", "metadata": {"sense_metadata": {"contract_version": "sense-metadata/v1", "features": [{"family": "grammar", "kind": "sense_mark", "value": "emphasis=emphatic"}]}}}
+      ]
+    },
+    {
+      "word": "talvez",
+      "meanings": [{
+        "translation": "perhaps; maybe", "headword": "talvez", "part_of_speech": "adv",
+        "metadata": {"sense_metadata": {"contract_version": "sense-metadata/v1", "features": [{"family": "functional", "kind": "usage_note", "value": "indicates possibility or doubt"}]}}
+      }]
+    }
+  ],
+  "cs": [
+    {
+      "word": "vás",
+      "meanings": [
+        {"translation": "you", "headword": "vy", "part_of_speech": "pron", "metadata": {"sense_metadata": {"contract_version": "sense-metadata/v1", "features": [{"family": "grammar", "kind": "gloss_note", "value": "personal second person plural"}]}}},
+        {"translation": "you", "headword": "vy", "part_of_speech": "pron", "metadata": {"sense_metadata": {"contract_version": "sense-metadata/v1", "features": [{"family": "grammar", "kind": "gloss_note", "value": "formal second person singular"}]}}}
+      ]
+    },
+    {
+      "word": "na",
+      "meanings": [
+        {"translation": "onto", "headword": "na", "part_of_speech": "prep", "metadata": {"sense_metadata": {"contract_version": "sense-metadata/v1", "features": [{"family": "companion", "kind": "required_word", "value": "accusative"}]}}},
+        {"translation": "on", "headword": "na", "part_of_speech": "prep", "metadata": {"sense_metadata": {"contract_version": "sense-metadata/v1", "features": [{"family": "companion", "kind": "required_word", "value": "locative"}]}}},
+        {"translation": "at", "headword": "na", "part_of_speech": "prep", "metadata": {"sense_metadata": {"contract_version": "sense-metadata/v1", "features": [{"family": "companion", "kind": "required_word", "value": "locative"}]}}},
+        {"translation": "for", "headword": "na", "part_of_speech": "prep", "metadata": {"sense_metadata": {"contract_version": "sense-metadata/v1", "features": [{"family": "companion", "kind": "required_word", "value": "accusative"}]}}},
+        {"translation": "up to", "headword": "na", "part_of_speech": "prep", "metadata": {"sense_metadata": {"contract_version": "sense-metadata/v1", "features": [{"family": "companion", "kind": "required_word", "value": "locative"}]}}}
+      ]
+    },
+    {
+      "word": "podívej",
+      "meanings": [{
+        "translation": "to look, take a look, check out", "context": "reflexive with se", "headword": "podívat", "part_of_speech": "verb",
+        "metadata": {"sense_metadata": {"contract_version": "sense-metadata/v1", "features": [
+          {"family": "grammar", "kind": "sense_mark", "value": "aspect=perfective"},
+          {"family": "grammar", "kind": "sense_mark", "value": "reflexive=true"},
+          {"family": "companion", "kind": "required_word", "value": "na"},
+          {"family": "construction", "kind": "gloss_phrase", "value": "reflexive with se"}
+        ]}}
+      }]
+    },
+    {
+      "word": "to",
+      "meanings": [{
+        "translation": "the, this, that", "headword": "ten", "part_of_speech": "pron",
+        "metadata": {"sense_metadata": {"contract_version": "sense-metadata/v1", "features": [
+          {"family": "grammar", "kind": "surface_mark", "value": "case=accusative"},
+          {"family": "grammar", "kind": "surface_mark", "value": "gender=neuter"},
+          {"family": "grammar", "kind": "surface_mark", "value": "case=nominative"},
+          {"family": "grammar", "kind": "surface_mark", "value": "number=singular"},
+          {"family": "grammar", "kind": "surface_mark", "value": "case=vocative"}
+        ]}}
+      }]
+    }
+  ],
+  "es": [
+    {
+      "word": "su",
+      "meanings": [
+        {"translation": "your", "headword": "su", "part_of_speech": "ADJ", "metadata": {"sense_metadata": {"contract_version": "sense-metadata/v1", "features": [{"family": "grammar", "kind": "sense_mark", "value": "person=2"}, {"family": "grammar", "kind": "sense_mark", "value": "number=singular"}]}}},
+        {"translation": "your", "headword": "su", "part_of_speech": "ADJ", "metadata": {"sense_metadata": {"contract_version": "sense-metadata/v1", "features": [{"family": "grammar", "kind": "sense_mark", "value": "person=2"}, {"family": "grammar", "kind": "sense_mark", "value": "number=plural"}]}}}
+      ]
+    },
+    {
+      "word": "ven",
+      "meanings": [
+        {"translation": "come", "headword": "ven", "part_of_speech": "PHRASE", "metadata": {"sense_metadata": {"contract_version": "sense-metadata/v1", "features": [
+          {"family": "grammar", "kind": "sense_mark", "value": "mood=imperative"},
+          {"family": "grammar", "kind": "sense_mark", "value": "person=2"},
+          {"family": "grammar", "kind": "sense_mark", "value": "number=singular"}
+        ]} }},
+        {"translation": "they see", "headword": "ven", "part_of_speech": "PHRASE", "metadata": {"sense_metadata": {"contract_version": "sense-metadata/v1", "features": []}}},
+        {"translation": "to see", "headword": "ver", "part_of_speech": "VERB", "metadata": {"sense_metadata": {"contract_version": "sense-metadata/v1", "features": []}}},
+        {"translation": "to come", "headword": "venir", "part_of_speech": "VERB", "metadata": {"sense_metadata": {"contract_version": "sense-metadata/v1", "features": []}}},
+        {"translation": "to arrive", "headword": "venir", "part_of_speech": "VERB", "metadata": {"sense_metadata": {"contract_version": "sense-metadata/v1", "features": []}}}
+      ]
+    }
+  ]
+}

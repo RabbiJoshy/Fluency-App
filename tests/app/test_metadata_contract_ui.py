@@ -43,8 +43,9 @@ class MetadataContractUITests(unittest.TestCase):
         metadata_pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")
         styles = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
         self.assertIn("const familyOrder = {", metadata_pills)
-        self.assertIn("const primary = items.filter", metadata_pills)
-        self.assertIn("const grammar = items.filter", metadata_pills)
+        self.assertIn("function learnerSensePresentation(meaning, active, options = {})", metadata_pills)
+        self.assertIn("const displayPrimary = presentation.visibleItems.filter", metadata_pills)
+        self.assertIn("const grammar = presentation.visibleItems.filter", metadata_pills)
         self.assertIn("display.short", metadata_pills)
         self.assertIn("toggleSenseMetadataOverflow(event, this)", metadata_pills)
         self.assertIn("'gender=variable-by-person': 'varies by gender'", metadata_pills)
@@ -56,7 +57,7 @@ class MetadataContractUITests(unittest.TestCase):
         self.assertIn("item.family === 'grammar' && !isSenseDefiningGrammar(item)", metadata_pills)
         self.assertIn("function isSupportingSenseMetadata(item)", metadata_pills)
         self.assertIn("feature.embedding_text", metadata_pills)
-        self.assertIn("const represented = items.flatMap", metadata_pills)
+        self.assertIn("residualContext: contextAfterMetadataPolicy", metadata_pills)
         self.assertIn("item.kind === 'optional_companion'", metadata_pills)
         self.assertIn("function|mood|noun-class|number|person", metadata_pills)
         self.assertIn("supporting.length === 1 ? ' is-single'", metadata_pills)
@@ -88,7 +89,7 @@ class MetadataContractUITests(unittest.TestCase):
             metadata_pills.index("function toggleSenseMetadataChip")
         ]
         self.assertNotIn("if (!active || !context) return context;", context_renderer)
-        self.assertIn("Exact source spans only", context_renderer)
+        self.assertIn("learnerSensePresentation(meaning, active, options).residualContext", context_renderer)
 
     def test_canonical_wiktionary_context_is_not_repeated_beside_features(self) -> None:
         metadata_pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")
@@ -159,7 +160,7 @@ class MetadataContractUITests(unittest.TestCase):
 
         # Adaptive density based on sense count
         self.assertIn("senseCount >= 3", metadata_pills)
-        self.assertNotIn("primary.slice(0, 2)", metadata_pills)
+        self.assertIn("slice(0, 2)", metadata_pills)
         self.assertIn("is-dense", metadata_pills)
         self.assertIn("senseCount: card.meanings?.length", flashcards)
 

@@ -8,6 +8,54 @@ ROOT = Path(__file__).resolve().parents[2]
 
 @unittest.skipUnless(shutil.which('node'), 'Node.js required')
 class SenseMetadataBehaviorTests(unittest.TestCase):
+    def test_adaptive_presentation_budget_for_portuguese_czech_and_spanish(self):
+        result = subprocess.run(['node', '--input-type=module', '-'], cwd=ROOT, text=True,
+            input=r'''
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import * as ui from './app/js/card-metadata-pills.js';
+const fixture=JSON.parse(fs.readFileSync('tests/app/fixtures/sense_metadata_presentation.json'));
+const card=(lang,word)=>fixture[lang].find(c=>c.word===word);
+const show=(c,index=0,active=false)=>{
+ const meaning=c.meanings[index];
+ const gloss=ui.projectWiktionaryGloss(meaning,meaning.translation).display;
+ const options={gloss,peerMeanings:ui.senseMetadataPeers(meaning,c.meanings,gloss),cardMeanings:c.meanings,senseCount:c.meanings.length,allowInactivePrimary:true};
+ const presentation=ui.learnerSensePresentation(meaning,active,options);
+ return {gloss,context:presentation.residualContext,
+  visible:presentation.visibleItems.map(item=>ui.senseMetadataDisplay(item,options).short),
+  details:presentation.detailItems.map(item=>ui.senseMetadataDisplay(item,options).short)};
+};
+
+const voces=show(card('pt','vocês'),0,true);
+assert.deepEqual(voces.visible,['addressing several people']);
+assert(!voces.details.some(label=>/gender|feminine|masculine/.test(label)));
+const pra=show(card('pt','pra'));
+assert.equal(pra.gloss,'informal form of para');assert.equal(pra.context,'');assert.deepEqual(pra.visible,[]);
+const parece=card('pt','parece');
+assert.deepEqual(show(parece,0).visible,[]);assert.equal(show(parece,0).context,'');
+assert.deepEqual(show(parece,0,true).details,['copulative or auxiliary']);
+assert.deepEqual(show(parece,1,true).visible,['with com']);
+const uma=card('pt','uma');
+assert.equal(show(uma,0).context,'');assert.equal(show(uma,1).context,'a bit of');assert(show(uma,2).context.includes('quite a'));
+const talvez=show(card('pt','talvez'),0,true);
+assert.deepEqual(talvez.visible,[]);assert.deepEqual(talvez.details,[]);
+
+const vas=card('cs','vás');
+assert.deepEqual(show(vas,0).visible,['plural']);assert.deepEqual(show(vas,1).visible,['formal singular']);
+for(const meaning of card('cs','na').meanings){
+ const c=card('cs','na'),index=c.meanings.indexOf(meaning),view=show(c,index);
+ assert.equal(view.visible.length,1);assert.match(view.visible[0],/^takes (?:accusative|locative) case$/);
+}
+const podivej=show(card('cs','podívej'),0,true);
+assert.deepEqual(podivej.visible,['podívat se na…']);assert(podivej.details.includes('perfective'));assert(!podivej.details.includes('reflexive'));
+assert.deepEqual(show(card('cs','to')).visible,['neuter · singular · nom./acc.']);
+
+const su=card('es','su');assert.deepEqual(show(su,1).visible,['addressing several people']);
+assert.deepEqual(show(card('es','ven')).visible,['command']);
+console.log('Adaptive metadata presentation examples passed');
+''', capture_output=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_shipped_meaning_distinctions_and_provider_parity(self):
         result = subprocess.run(['node', '--input-type=module', '-'], cwd=ROOT, text=True,
             input=r'''
@@ -18,10 +66,10 @@ const fixture = JSON.parse(fs.readFileSync('tests/app/fixtures/sense_metadata.js
 const card = (lang, word) => fixture[lang].find(c => c.word === word);
 const project = (c, m) => {
  const gloss = ui.projectWiktionaryGloss(m, m.translation).display;
- const options = {gloss, peerMeanings: ui.senseMetadataPeers(m, c.meanings, gloss), allowInactivePrimary: true, senseCount: c.meanings.length};
- const items = ui.compactLearnerSenseMetadata(ui.senseMetadataItems(m), m, options);
- return {gloss, context: ui.contextWithoutSenseMetadata(m, false, options),
-  labels: items.map(i => ui.senseMetadataDisplay(i, options).short),
+ const options = {gloss, peerMeanings: ui.senseMetadataPeers(m, c.meanings, gloss), cardMeanings:c.meanings, allowInactivePrimary: true, senseCount: c.meanings.length};
+ const presentation = ui.learnerSensePresentation(m, false, options);
+ return {gloss, context: presentation.residualContext,
+  labels: presentation.visibleItems.map(i => ui.senseMetadataDisplay(i, options).short),
   html: ui.senseMetadataHTML(m, false, options), options};
 };
 for(const word of ['um','uma']) {
@@ -45,7 +93,7 @@ assert.equal(project(gosto,gosto.meanings[0]).context,'');
 const s=card('cs','s'),sp=project(s,s.meanings[0]);
 assert(sp.labels.includes('takes instrumental case'));assert(!sp.html.includes('sense-pill--companion'));
 const cekat=card('cs','čekat'),wait=cekat.meanings.find(m=>m.translation==='to wait');
-assert(project(cekat,wait).labels.includes('with na'));
+assert(ui.senseMetadataHTML(wait,true,project(cekat,wait).options).includes('with na'));
 const su=card('es','su'),your=su.meanings.find(m=>m.translation==='your');
 assert(project(su,your).labels.includes('addressing several people'));
 assert.equal(project(su,your).context,'');
@@ -57,13 +105,16 @@ const v=card('cs','v'),space=v.meanings.find(m=>m.translation.includes('enclosed
 assert(project(v,space).gloss.includes('enclosed space'));
 const para=card('pt','para'),purpose=para.meanings.find(m=>m.translation.includes('in order to'));
 assert.deepEqual(project(para,purpose).labels,[]);
-// Shared restrictions must not disappear, even when several other cues exist.
+// Restrictions compete for the same learner-facing budget rather than all
+// appearing just because the release contains them.
 const restricted={translation:'to speak',pos:'verb',metadata:{sense_metadata:{contract_version:'sense-metadata/v1',features:[
  {family:'register',kind:'region',value:'Brazil'}, {family:'register',kind:'usage_tag',value:'vulgar'},
  {family:'companion',kind:'required_word',value:'de'}, {family:'domain',kind:'topic',value:'music'}
 ]}}};
-const restrictions=ui.compactLearnerSenseMetadata(ui.senseMetadataItems(restricted),restricted,{peerMeanings:[structuredClone(restricted)]});
-assert(restrictions.some(i=>i.value==='Brazil'));assert(restrictions.some(i=>i.value==='vulgar'));
+const restrictionOptions={gloss:'to speak',peerMeanings:[],cardMeanings:[restricted],senseCount:1,allowInactivePrimary:true};
+const restrictions=ui.learnerSensePresentation(restricted,true,restrictionOptions);
+assert.equal(restrictions.visibleItems.length,2);
+assert(restrictions.detailItems.length>=1);
 // Provider prose is escaped; long notes remain visible without character truncation.
 const long={translation:'test',context:'A genuinely distinguishing explanation '.repeat(8)+'<script>',metadata:{sense_metadata:{contract_version:'sense-metadata/v1',features:[]}}};
 assert.equal(ui.contextWithoutSenseMetadata(long,false),long.context);
@@ -198,4 +249,3 @@ assert(res3.html.includes('<span class="example-word-highlight example-companion
 console.log('Sense row collocation and unified example highlighting tests passed');
 ''', capture_output=True)
         self.assertEqual(result.returncode, 0, result.stderr)
-

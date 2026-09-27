@@ -48,7 +48,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=20260925colloc';
+} from './card-metadata-pills.js?v=20260927meta1';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -6839,6 +6839,7 @@ function renderCardWikipediaBadge(card) {
                             const collocationHTML = senseCollocationHTML(mm, card);
                             const metaOptions = {
                                 senseCount: card.meanings?.length || orderedMembers.length,
+                                cardMeanings: card.meanings,
                                 gloss: sharedText,
                                 peerMeanings: orderedMembers.filter(mi => mi !== memberIdx).map(mi => card.meanings[mi]),
                                 allowInactivePrimary: true,
@@ -6889,6 +6890,7 @@ function renderCardWikipediaBadge(card) {
                             const transSafe = String(transRaw).replace(/"/g, '&quot;');
                             const metaOptions = {
                                 senseCount: card.meanings?.length || orderedMembers.length,
+                                cardMeanings: card.meanings,
                                 gloss: transRaw,
                                 peerMeanings: senseMetadataPeers(mm, card.meanings, transRaw),
                                 sharedContext: m.context,
@@ -6974,6 +6976,7 @@ function renderCardWikipediaBadge(card) {
                     const collocationHTML = senseCollocationHTML(m, card);
                     const metadataOptions = {
                         senseCount: card.meanings?.length || 1,
+                        cardMeanings: card.meanings,
                         gloss: displayMeaning,
                         peerMeanings: senseMetadataPeers(m, card.meanings, displayMeaning),
                         allowInactivePrimary: true,
