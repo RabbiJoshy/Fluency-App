@@ -182,8 +182,9 @@ Languages with profiles or packages: `es`, `fr`, `pt`, `cs`, `nl`, `pl`. Modes: 
   3. `git add` only the files you changed. Do not stage other sessions'
      uncommitted work. Commit.
   4. `make deploy` (or `python3 scripts/deploy.py`). It merges `origin/main`
-     into HEAD and pushes HEAD to `main`, from any branch. On a conflict it
-     stops for you to resolve.
+     into HEAD and pushes HEAD to `main`, from any branch. Changelog-only
+     conflicts (two sessions deploying close together) it resolves itself,
+     keeping both entries; any other conflict stops it for you to resolve.
   5. Check the run at
      https://github.com/RabbiJoshy/Fluency-App/actions/workflows/deploy-pages.yml
      (then ~30 s for the Pages build). A deploy is done when that run is green,
