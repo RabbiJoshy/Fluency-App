@@ -3815,7 +3815,7 @@ function phraseSummaryCard(items) {
 function exampleTargetText(example) {
     if (!example) return '';
     return example.target || example.spanish || example.swedish
-        || example.dutch || example.italian || example.polish || '';
+        || example.dutch || example.finnish || example.italian || example.polish || '';
 }
 
 // The base verb every attached form on this card shares. Taken from the parent
@@ -8438,6 +8438,7 @@ function updateReverseButton() {
     // Map language codes to flag emojis
     const flagMap = {
         'dutch': '🇳🇱',
+        'finnish': '🇫🇮',
         'polish': '🇵🇱',
         'spanish': '🇪🇸',
         'italian': '🇮🇹',

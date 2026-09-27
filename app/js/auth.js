@@ -352,7 +352,7 @@ async function migrateLocalStorageIds() {
     }
 
     // Determine which languages have progress (from the 2-char prefix of fullIds)
-    const langMap = { es: 'Spanish', sv: 'Swedish', it: 'Italian', nl: 'Dutch', pl: 'Polish' };
+    const langMap = { es: 'Spanish', fi: 'Finnish', sv: 'Swedish', it: 'Italian', nl: 'Dutch', pl: 'Polish' };
     const neededLangs = new Set();
     for (const fullId of Object.keys(guestProgress)) {
         const prefix = fullId.slice(0, 2);
@@ -416,7 +416,7 @@ async function migrateLocalStorageIdsV2() {
         return;
     }
 
-    const langMap = { es: 'Spanish', sv: 'Swedish', it: 'Italian', nl: 'Dutch', pl: 'Polish' };
+    const langMap = { es: 'Spanish', fi: 'Finnish', sv: 'Swedish', it: 'Italian', nl: 'Dutch', pl: 'Polish' };
     const neededLangs = new Set();
     for (const fullId of Object.keys(guestProgress)) {
         const prefix = fullId.slice(0, 2);

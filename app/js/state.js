@@ -187,6 +187,7 @@ export const speechLangCodes = {
     swedish: 'sv-SE',
     italian: 'it-IT',
     dutch:   'nl-NL',
+    finnish: 'fi-FI',
     polish:  'pl-PL',
     french:  'fr-FR',
     russian: 'ru-RU',

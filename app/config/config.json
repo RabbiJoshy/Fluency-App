@@ -266,6 +266,40 @@
       "shortCode": "NL",
       "speechLang": "nl-NL"
     },
+    "finnish": {
+      "name": "Finnish",
+      "dataPath": "Data/Finnish/vocabulary.json",
+      "indexPath": "releases/fi/speech/fi-speech-v1-2000x5-3-candidate/app/vocabulary.index.json",
+      "examplesPath": "releases/fi/speech/fi-speech-v1-2000x5-3-candidate/app/vocabulary.examples.json",
+      "studyStructurePath": "releases/fi/speech/fi-speech-v1-2000x5-3-candidate/app/study-structure.json",
+      "releaseManifestPath": "releases/fi/speech/fi-speech-v1-2000x5-3-candidate/manifest.json",
+      "releaseCompositionPath": "releases/fi/speech/fi-speech-v1-2000x5-3-candidate/composition.json",
+      "conjugationsPath": null,
+      "cognatesPath": "cognates/fi/cognates.json",
+      "coveragePath": null,
+      "exampleTargetField": "example_finnish",
+      "exampleEnglishField": "example_english",
+      "colorTheme": {"primary": "#003580", "secondary": "#FFFFFF"},
+      "cefrLevels": [
+        {"level": "A1", "description": "Beginner", "comprehension": "Not yet measured", "wordCount": "1-800"},
+        {"level": "A2", "description": "Elementary", "comprehension": "Not yet measured", "wordCount": "800-1500"},
+        {"level": "B1", "description": "Intermediate", "comprehension": "Not yet measured", "wordCount": "1500-2000"}
+      ],
+      "cefrLevelsNote": "The first Finnish candidate is capped at 2,000 surfaces; comprehension percentages have not been measured.",
+      "fileFormat": "json",
+      "referenceLinks": {"wiktionary": "https://en.wiktionary.org/wiki/{word}#Finnish"},
+      "hasData": true,
+      "capabilities": {
+        "speech": true,
+        "lyrics": false,
+        "mergeLemmas": true,
+        "cognateFilter": true
+      },
+      "flag": "🇫🇮",
+      "routeCode": "fi",
+      "shortCode": "FI",
+      "speechLang": "fi-FI"
+    },
     "french": {
       "name": "French",
       "indexPath": "releases/fr/speech/fr-speech-v7-dual-metadata-v5-20260918/app/vocabulary.index.json",
@@ -625,6 +659,7 @@
     "swedish",
     "italian",
     "dutch",
+    "finnish",
     "polish",
     "french",
     "portuguese",
