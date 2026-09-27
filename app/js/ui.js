@@ -552,6 +552,16 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
         modeIcon.innerHTML = modeKey === 'speech' ? MODE_ICON_SPEECH
             : modeKey ? MODE_ICON_MUSIC : '';
     }
+    // Verb drills are a separate page, not a third vocabulary, so they live
+    // here beside the language rather than on the vocabulary choice. Only
+    // languages whose config names a drill deck get the row.
+    const verbsRow = document.getElementById('learningContextVerbsBtn');
+    if (verbsRow) {
+        const drillLanguage = activeArtist?.language || selectedLanguage;
+        const drillHref = window.fluencyRoutes?.conjugationDrillHref?.(drillLanguage, null, config.languages);
+        verbsRow.hidden = !drillHref;
+        verbsRow.dataset.href = drillHref || '';
+    }
     // No vocabulary chosen yet means no deck to measure.
     const progressButton = document.getElementById('learningContextProgressBtn');
     if (progressButton) progressButton.hidden = !modeKey;
@@ -865,17 +875,6 @@ function setupLanguageTabs() {
                     ? 'Build vocabulary around music you choose'
                     : 'Look up lyrics from a playlist and study a live deck';
             }
-            // Conjugation is an add-on beside the two vocabulary modes: a
-            // separate drill page, offered only where the language names a
-            // drill deck in config.
-            const addons = document.getElementById('standardSourceAddons');
-            const conjugationButton = document.getElementById('standardSourceConjugationBtn');
-            if (addons && conjugationButton) {
-                const drillHref = window.fluencyRoutes?.conjugationDrillHref?.(newLanguage, null, config.languages);
-                addons.style.display = drillHref ? '' : 'none';
-                conjugationButton.onclick = drillHref ? () => { window.location.href = drillHref; } : null;
-            }
-
             // Nothing belonging to a deck shows until a vocabulary is chosen.
             hideStudySurfaces();
 

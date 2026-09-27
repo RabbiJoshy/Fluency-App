@@ -786,6 +786,10 @@ loadConfig().then(async () => {
         closeLearningContext();
         document.getElementById('artistSourceArtistBtn')?.click();
     });
+    document.getElementById('learningContextVerbsBtn')?.addEventListener('click', event => {
+        const href = event.currentTarget.dataset.href;
+        if (href) window.location.href = href;
+    });
     document.getElementById('learningContextSongsBtn')?.addEventListener('click', () => {
         closeLearningContext();
         document.getElementById('artistSourcePickerBtn')?.click();
