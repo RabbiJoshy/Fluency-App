@@ -172,17 +172,18 @@ Languages with profiles or packages: `es`, `fr`, `pt`, `cs`, `nl`, `pl`. Modes: 
      *Why:* The app's Settings → Developer tab renders this latest entry at the
      **very top of the section** so Josh can immediately verify what changed,
      who made the change, and whether the Service Worker cache is fresh or stale.
-  2. Bump the `?v=` tags of the assets you changed and `CACHE_NAME` (see
-     `docs/ui/UI_WORK_ORDERS.md` rule 3), and the pins in
-     `tests/app/test_product_shell.py`. Run the app tests:
+  2. **Do not bump `?v=` tags or `CACHE_NAME`.** The deploy stamps every tag,
+     `ASSET_VERSION` and `CACHE_NAME` with the commit id
+     (`scripts/build_pages_site.py`), so every deploy busts the cache and no two
+     sessions can claim one version. Leave the committed tags alone; editing
+     them only makes merge conflicts. Run the app tests:
      `PYTHONPATH=src python3 -m unittest discover -s tests/app -t .` — the
      workflow runs them too and will not deploy if they fail.
   3. `git add` only the files you changed. Do not stage other sessions'
      uncommitted work. Commit.
   4. `make deploy` (or `python3 scripts/deploy.py`). It merges `origin/main`
      into HEAD and pushes HEAD to `main`, from any branch. On a conflict it
-     stops; in version tags, resolve with a fresh tag and a `CACHE_NAME` above
-     both sides'.
+     stops for you to resolve.
   5. Check the run at
      https://github.com/RabbiJoshy/Fluency-App/actions/workflows/deploy-pages.yml
      (then ~30 s for the Pages build). A deploy is done when that run is green,

@@ -43,19 +43,15 @@ need code, so they come last.
    this), and clashes in `flashcards.js`, the version tags or the two
    `dev_changelog.json` files surface as merge conflicts instead of one deploy
    silently overwriting another. Never push to `gh-pages` directly.
-3. **Cache busting needs three edits, not one.** Bumping `CACHE_NAME` alone
-   is **not enough** — it clears the service worker's cache but not the
-   browser's HTTP cache, which keys on the `?v=` tag. Changing an asset means:
-   bump that asset's `?v=` (in `index.html`, `main.js` and the service-worker
-   pre-cache list), bump **`main.js`'s own** `?v=` too (a cached `main.js`
-   keeps importing the old URL), and bump `CACHE_NAME`. This cost three
-   deploys to learn; the detail is under section 1.
-   **Never reuse a tag another session has already chosen.** On 2026-09-21 a
-   concurrent session had bumped `flashcards.js` to `20260921a` in its
-   uncommitted working tree while also editing `flashcards.js`. Deploying under
-   that same tag would have cached one session's file at a URL the other then
-   ships different content under — and browsers would never re-fetch it. Pick
-   the next letter. Whoever deploys second must bump again.
+3. **Cache busting is stamped at deploy; do not bump tags by hand.**
+   `scripts/build_pages_site.py` rewrites every `.js`/`.css` `?v=` tag, the
+   `ASSET_VERSION` constants and `CACHE_NAME` to the deployed commit id. That
+   covers what used to take three edits (the asset's tag, `main.js`'s own tag,
+   `CACHE_NAME`) and ends two sessions claiming one tag — on 2026-09-27 three
+   deploys claimed `v568` and `v569`. One tag for the whole shell also means no
+   module is loaded twice under two tags: before it, `state.js`, `speech.js`
+   and `reverse-cues.js` each ran as two instances on the live site. The
+   committed tags only matter for local runs; leave them.
    **When a shared file holds someone else's uncommitted hunks**, do not
    `git add` it. Rebuild the file from `HEAD` with only your own edits
    applied, then stage that blob with `git hash-object -w` +

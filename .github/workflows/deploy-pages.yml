@@ -24,7 +24,6 @@ concurrency:
 
 permissions:
   contents: write
-  pages: write
 
 jobs:
   deploy:
@@ -70,11 +69,3 @@ jobs:
             git -C site reset -q --hard origin/gh-pages
           done
           exit 1
-
-      - name: Request a Pages build
-        # Pushes made with GITHUB_TOKEN normally start the Pages build on
-        # their own; this makes sure one is queued either way.
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh api -X POST "repos/${{ github.repository }}/pages/builds" --silent
