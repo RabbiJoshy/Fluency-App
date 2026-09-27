@@ -195,6 +195,7 @@ button.primary, button.secondary, button.ghost {
   border: 1px solid transparent;
 }
 button.primary { background: var(--accent); color: var(--accent-ink); }
+#start { background: var(--start-accent, var(--accent)); color: #fff; }
 button.primary[disabled] { opacity: .45; cursor: default; }
 button.secondary { background: var(--surface-2); color: var(--ink); border-color: var(--line); }
 button.ghost { background: none; color: var(--ink-2); }
@@ -331,3 +332,15 @@ code {
   .ptable { font-size: 16px; }
   .ptable th { font-size: 14px; }
 }
+
+/* ── Verb drills: two steps, plainer header ───────────────── */
+.back-to-study { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; }
+.back-to-study span { font-size: 20px; line-height: 1; }
+.setup-intro { margin: 4px 0 6px; }
+.setup-intro h1 { margin: 0; font: 700 24px/1.2 var(--font-emphasis); letter-spacing: -0.01em; }
+.setup-intro p { margin: 4px 0 0; color: var(--ink-2); font-size: 15px; }
+.drill-head { justify-content: center; }
+.tables-back { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 12px; padding-left: 0; font-size: 15px; }
+.tables-back span { font-size: 20px; line-height: 1; }
+.back-to-study[hidden] { display: none; }
+.tabs { margin-left: auto; }

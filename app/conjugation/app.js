@@ -401,8 +401,8 @@
       if (queue.length) renderCard();
     };
     label.appendChild(input);
-    label.appendChild(el('span', 'check-name', 'Easy mode'));
-    label.appendChild(el('span', 'check-count', 'colour the prompt, name the family'));
+    label.appendChild(el('span', 'check-name', 'Stem hints'));
+    label.appendChild(el('span', 'check-count', 'colour the verb when its form is unusual'));
     host.appendChild(label);
   }
 
@@ -473,7 +473,7 @@
     host.innerHTML = '';
     [
       { value: 'all', name: 'Every form', note: 'the full selection' },
-      { value: 'one', name: 'One per lesson', note: 'skip what repeats' }
+      { value: 'one', name: 'One per pattern', note: 'skip what repeats' }
     ].forEach(function (option) {
       var wrap = el('label', 'check');
       var input = document.createElement('input');
@@ -543,9 +543,9 @@
     $('state-patterns').textContent = on === deck.patterns.length ? 'all ' + on
       : on === 0 ? 'none' : on + ' of ' + deck.patterns.length;
     $('state-coverage').textContent =
-      state.coverage === 'one' ? 'one per lesson' : 'every form';
+      state.coverage === 'one' ? 'one per pattern' : 'every form';
 
-    $('state-clue').textContent = state.easy ? 'easy mode' : 'off';
+    $('state-clue').textContent = state.easy ? 'on' : 'off';
 
     $('state-prompt').textContent =
       (state.reverse ? 'meaning' : 'infinitive') +
@@ -556,7 +556,7 @@
     // inside it — otherwise a narrowed pattern set looks like a missing deck.
     $('state-advanced').textContent = [
       on === deck.patterns.length ? null : 'patterns narrowed',
-      state.coverage === 'one' ? 'one per lesson' : null,
+      state.coverage === 'one' ? 'one per pattern' : null,
       state.reverse ? 'prompted by meaning' : null
     ].filter(Boolean).join(' · ') || 'defaults';
   }
@@ -574,21 +574,20 @@
     var cardCount = state.coverage === 'one' ? lessonCount : cards.length;
 
     $('sum-cards').textContent = cardCount.toLocaleString();
-    $('sum-detail').textContent =
-      selection.verbs.length + ' verbs · ' +
-      selection.tenseIds.length + ' tenses · ' +
-      selection.persons.length + ' persons' +
-      (state.coverage === 'one'
-        ? ''
-        : ' · ' + lessonCount.toLocaleString() + ' distinct lessons');
+    var plural = function (n, word) { return n + ' ' + word + (n === 1 ? '' : 's'); };
+    $('sum-detail').textContent = [
+      plural(selection.verbs.length, 'verb'),
+      plural(selection.tenseIds.length, 'tense'),
+      plural(selection.persons.length, 'person')
+    ].join(' · ');
 
     $('coverage-hint').textContent = state.coverage === 'one'
       ? 'Your selection holds ' + cards.length.toLocaleString() + ' forms but only ' +
-        lessonCount.toLocaleString() + ' distinct lessons. You will be shown each ' +
-        'lesson once, by a verb picked at random from the verbs that share it.'
+        lessonCount.toLocaleString() + ' different patterns. You will see each ' +
+        'pattern once, on a verb picked at random from the verbs that share it.'
       : 'Every form in the selection, including the ' +
         (cards.length - lessonCount).toLocaleString() +
-        ' that repeat a lesson you have already been shown.';
+        ' that repeat a pattern you have already seen.';
 
     var bar = $('sum-bar');
     bar.innerHTML = '';
@@ -715,7 +714,7 @@
 
     $('card-answer').hidden = !revealed;
     $('drill-progress').textContent =
-      (position + 1) + ' of ' + queue.length + ' · shuffled, nothing recorded';
+      (position + 1).toLocaleString() + ' of ' + queue.length.toLocaleString();
     $('drill-hint').innerHTML = revealed
       ? '<kbd>space</kbd> next · <kbd>←</kbd> back · <kbd>s</kbd> say it again · <kbd>t</kbd> full table'
       : '<kbd>space</kbd> or tap to reveal · swipe to skip';
@@ -893,6 +892,12 @@
     ['setup', 'drill', 'tables'].forEach(function (screen) {
       $('screen-' + screen).classList.toggle('is-active', screen === name);
     });
+    // A table is a detour with its own "Back to drill"; two backs read as two
+    // different exits.
+    $('back-to-study').hidden = name === 'tables';
+    if (name === 'tables') {
+      $('tables-back').lastChild.textContent = queue.length ? ' Back to drill' : ' Back';
+    }
     Array.prototype.forEach.call(document.querySelectorAll('#tabs .tab'), function (tab) {
       tab.classList.toggle('is-active', tab.dataset.screen === name);
     });
@@ -1007,6 +1012,23 @@
     window.location.href = '../';
   }
 
+  /* Start drilling wears the language's own colour, read from the app's
+   * config (the language whose conjugationDrill names this deck). Everything
+   * else keeps this page's palette. */
+  function applyLanguageAccent() {
+    fetch('../config/config.json').then(function (response) {
+      return response.ok ? response.json() : null;
+    }).then(function (config) {
+      var languages = (config && config.languages) || {};
+      Object.keys(languages).forEach(function (key) {
+        var cfg = languages[key];
+        if (cfg.conjugationDrill === deck.language && cfg.colorTheme && cfg.colorTheme.primary) {
+          document.documentElement.style.setProperty('--start-accent', cfg.colorTheme.primary);
+        }
+      });
+    }).catch(function () { /* keep the page accent */ });
+  }
+
   /* One entry point from the app: conjugation/?lang=pt&verb=ter drills that
    * verb across every tense it has. ?view=table opens the paradigm instead. */
   function applyDeepLink() {
@@ -1062,6 +1084,10 @@
     loadDeck(decks[requestedLanguage()]);
 
     $('back-to-study').onclick = leaveConjugationMode;
+    // The table is a detour from a card: back returns to that card, or to
+    // Choose when the table was opened by a link with no drill running.
+    $('tables-back').onclick = function () { showScreen(queue.length ? 'drill' : 'setup'); };
+    applyLanguageAccent();
     $('scope').oninput = function () {
       state.scope = parseInt(this.value, 10);
       refreshSummary();
