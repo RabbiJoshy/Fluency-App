@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T19:53:59+01:00",
+      "date": "2026-09-27 19:53 BST",
+      "agent": "Claude",
+      "summary": "Verb drills are simpler: just Choose and Drill, plainer settings, and the Start button in the language's colour.",
+      "detail": [
+        "Header is '‹ Vocabulary' plus two tabs, Choose and Drill. The Tables tab, the 'Conjugation mode' title, the 'nothing is recorded' notes and the Change selection button are gone.",
+        "A verb's table opens from its card and has its own back button to that card; the top back link hides while a table is open.",
+        "Easy mode is now Stem hints, with a plain description. Patterns, Repetition and 'Where this data comes from' are hidden for now.",
+        "Card summary reads '193 verbs · 1 tense · 6 persons'; the drill counter is just '1 of 1,154'. Start drilling uses the language colour (Spanish red)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T19:45:53+01:00",
       "date": "2026-09-27 19:45 BST",
       "agent": "Claude",

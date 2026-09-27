@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Conjugation mode</title>
+<title>Verb drills</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
@@ -12,15 +12,12 @@
 <body>
 
 <header class="topbar">
-  <a class="back-to-study" id="back-to-study" href="../">Back to study</a>
-  <div class="brand">
-    <span class="brand-mark">Conjugation mode</span>
-    <span class="brand-note">nothing is recorded yet — this session only</span>
-  </div>
+  <a class="back-to-study" id="back-to-study" href="../"><span aria-hidden="true">‹</span> Vocabulary</a>
+  <!-- Two steps only: choose what to practise, then drill it. A verb's full
+       table opens from its card, and goes back to the drill. -->
   <nav class="tabs" id="tabs">
     <button class="tab is-active" data-screen="setup">Choose</button>
     <button class="tab" data-screen="drill">Drill</button>
-    <button class="tab" data-screen="tables">Tables</button>
   </nav>
 </header>
 
@@ -29,6 +26,11 @@
 <!-- ───────────────────────── SETUP ───────────────────────── -->
 <section class="screen is-active" id="screen-setup">
   <div class="stack">
+
+    <div class="setup-intro">
+      <h1>Verb drills</h1>
+      <p>Pick the verbs and tenses to practise, then press Start.</p>
+    </div>
 
     <details class="section">
       <summary>
@@ -77,15 +79,15 @@
 
     <details class="section">
       <summary>
-        <span class="section-name">Easy mode</span>
+        <span class="section-name">Stem hints</span>
         <span class="section-state" id="state-clue"></span>
       </summary>
       <div class="section-body">
-        <p class="hint">The colour is about this card, not this verb:
-          <em>tener</em> changes its stem in <em>tengo</em> and does not in
-          <em>tenemos</em>, so it is orange on one and green on the other.
-          The line above it names the family without saying whether the
-          pattern applies to this person.</p>
+        <p class="hint">Before you answer, the verb is coloured to warn you
+          when its form is unusual: green means it follows the normal rule,
+          orange or red means it doesn’t. For example, <em>tener</em> is
+          orange for <em>yo</em> (<em>tengo</em>) but green for
+          <em>nosotros</em> (<em>tenemos</em>).</p>
         <div class="checks" id="clue"></div>
       </div>
     </details>
@@ -99,7 +101,9 @@
         <span class="section-state" id="state-advanced"></span>
       </summary>
       <div class="section-body section-body-nested">
-      <details class="section">
+      <!-- Hidden for now: verb type and stem hints cover this for learners.
+           Remove `hidden` to bring it back; its state still defaults to all. -->
+      <details class="section" hidden>
         <summary>
           <span class="section-name">Patterns</span>
           <span class="section-state" id="state-patterns"></span>
@@ -116,7 +120,8 @@
           <div class="checks" id="patterns"></div>
         </div>
       </details>
-      <details class="section">
+      <!-- Hidden for now; remove `hidden` to bring it back. -->
+      <details class="section" hidden>
         <summary>
           <span class="section-name">Repetition</span>
           <span class="section-state" id="state-coverage"></span>
@@ -139,7 +144,8 @@
           </div>
         </div>
       </details>
-      <details class="section">
+      <!-- Hidden for now; remove `hidden` to bring it back. -->
+      <details class="section" hidden>
         <summary>
           <span class="section-name">Where this data comes from</span>
           <span class="section-state"></span>
@@ -168,7 +174,6 @@
 
     <div class="drill-head">
       <span id="drill-progress" class="drill-progress"></span>
-      <button class="ghost" data-screen="setup">Change selection</button>
     </div>
 
     <div class="card" id="card">
@@ -194,6 +199,7 @@
 <!-- ───────────────────────── TABLES ───────────────────────── -->
 <section class="screen" id="screen-tables">
   <div class="tables-wrap">
+    <button class="ghost tables-back" id="tables-back" type="button"><span aria-hidden="true">‹</span> Back to drill</button>
     <div class="lookup">
       <input type="search" id="table-search" placeholder="Look up a verb — e.g. tener" autocomplete="off">
       <select id="table-tense"></select>

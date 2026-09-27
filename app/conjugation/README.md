@@ -3,8 +3,8 @@
 A Conjugato-shaped drill built on the existing `conjugation-layer/v1`
 enrichment. It is a **separate page** under `app/conjugation/`, sharing no
 HTML, CSS or JS with the study app. It is entered three ways: the *Verb
-conjugation* option on the main page (shown for languages whose config entry
-names a `conjugationDrill` deck), the *Drill this verb in conjugation mode*
+drills* row in the pop-up behind the top-left language button (shown for
+languages whose config entry names a `conjugationDrill` deck), the *Drill this verb in conjugation mode*
 link in the conjugate drawer on the back of a card (`app/js/flashcards-conj.js`),
 and the shareable routes `#/es/conjugate` and `#/es/conjugate/<verb>`, which
 the app redirects here.
@@ -41,19 +41,19 @@ The familiar verb types are read off the delta rather than stored separately:
 
 ## Screens
 
-- **Choose** — eight collapsed sections, each stating its own selection so the
-  whole menu is legible at phone width without opening anything: tenses, verb
-  type, patterns, repetition, how common, persons, prompt, provenance.
-- **Patterns** — one row per alternation, with example verbs. *Only the odd
-  ones* drops the no-change pattern and leaves the verbs that actually differ.
-- **Repetition** — *every form*, or *one per lesson*, which shows each lesson
-  once by a verb picked at random from the verbs that share it. The Choose
-  screen reports both numbers so the trade is visible before you start.
+Two tabs, **Choose** and **Drill**. The learner-facing copy says *pattern*,
+never *lesson*.
+
+- **Choose** — verb type, how common, tenses, persons, stem hints, and an
+  Advanced group (prompt). *Patterns*, *Repetition* and *Where this data comes
+  from* are still built but carry `hidden` in `index.html`; remove it to bring
+  one back. Hidden settings keep their defaults (all patterns, every form).
+- **Stem hints** (was *Easy mode*) — colours the prompt by what this card does
+  and names the verb's family.
 - **Drill** — no buttons. Space or tap reveals, space again advances, `←` goes
-  back, swipe left/right moves, `t` opens the full table on the tense you just
-  missed. The answer names the pattern and the verbs that share it.
-- **Tables** — type a verb, pick one tense or all, read the paradigm coloured
-  by form type.
+  back, swipe left/right moves, `t` or *see the table* opens that verb's table.
+- **Table** — no tab of its own: reached from a card or a `?view=table` link,
+  with its own back button (to the same card, or to Choose when no drill runs).
 
 Nothing is scored, stored or scheduled. A progress model is a later decision.
 
