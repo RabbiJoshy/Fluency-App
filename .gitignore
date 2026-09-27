@@ -24,5 +24,6 @@ research/**/results/
 *.joblib
 *.pickle
 *.log
-.claude/
+.claude/*
+!.claude/settings.json
 .cursor/
