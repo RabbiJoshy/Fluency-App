@@ -15,7 +15,7 @@ const scopedPath = path => `${SCOPE_PATH}${path}`;
 // Single source of truth for the module/CSS version tags. Must match
 // js/main.js's import URLs and index.html's modulepreload links. When you
 // bump the ?v= tags, change this and bump CACHE_NAME above.
-const ASSET_VERSION = '20260927v22';
+const ASSET_VERSION = '20260927v23';
 
 // Pre-cache the boot-critical static assets on install. Without this, the
 // first install populates the cache lazily — visit 1 doesn't go through
@@ -26,8 +26,8 @@ const ASSET_VERSION = '20260927v22';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/css/style.css?v=20260927lm',
-  '/css/light-theme.css?v=20260927lm',
+  '/css/style.css?v=20260927v23',
+  '/css/light-theme.css?v=20260927v23',
   '/config/config.json',
   '/data/speech-frequency/es.json',
   '/data/speech-frequency/fr.json',
@@ -36,7 +36,7 @@ const urlsToCache = [
   '/config/cefr_levels.json',
   '/config/offline-content-manifest.json',
   '/js/routes.js?v=20260923cj',
-  '/js/main.js?v=20260927lm',
+  '/js/main.js?v=20260925cues',
   '/js/theme.js?v=20260922ui',
   '/js/state.js?v=20260921x',
   `/js/data-contracts.js?v=${ASSET_VERSION}`,
@@ -71,9 +71,9 @@ const urlsToCache = [
   `/js/vocabulary-import-core.js?v=${ASSET_VERSION}`,
   '/js/vocabulary-import.js?v=20260923bk',
   `/js/spanishdict-usage.js?v=${ASSET_VERSION}`,
-  '/js/reverse-cues.js?v=20260927v22',
+  '/js/reverse-cues.js?v=20260927v23',
   '/js/card-metadata-pills.js?v=20260925cues',
-  '/js/flashcards.js?v=20260927lm',
+  '/js/flashcards.js?v=20260927v23',
   '/icons/tatoeba.svg',
   '/icons/wikipedia-w.svg',
   `/js/example-personalisation.js?v=${ASSET_VERSION}`,
