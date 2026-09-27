@@ -1,26 +1,26 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=441265f5';
-import './speech.js?v=441265f5';
-import { goToRoute, routeCodeFor } from './routes.js?v=441265f5';
-import './side-dock.js?v=441265f5';
+import './state.js?v=73afad4f';
+import './speech.js?v=73afad4f';
+import { goToRoute, routeCodeFor } from './routes.js?v=73afad4f';
+import './side-dock.js?v=73afad4f';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=441265f5';
+} from './example-personalisation.js?v=73afad4f';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=441265f5';
+} from './spanishdict-usage.js?v=73afad4f';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=441265f5';
+} from './reverse-cues.js?v=73afad4f';
 import {
     compactConstructionMetadata,
     contextWithoutSenseMetadata,
@@ -48,7 +48,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=441265f5';
+} from './card-metadata-pills.js?v=73afad4f';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -1941,7 +1941,7 @@ function initializeApp() {
             : 'Loading the Next Level';
         hideDeckCompleteModal();
         if (action === 'next-daily-review') {
-            window.showAppLoading?.('Loading Daily Review', 'Preparing your next review cards…');
+            window.showAppLoading?.('Loading practice', 'Preparing your next practice cards…');
             try {
                 await window.loadDailyReviewDeck?.({
                     urgencyTier: stats.dailyReviewTier,
@@ -4367,7 +4367,7 @@ function rareSenseMarksHTML(item) {
     const status = state.learned ? 'known' : (state.needsReview ? 'review' : 'unseen');
     const label = escapeCardText(item.translation || '');
     return `<div class="knowledge-overview-actions rare-use-marks is-${status}" aria-label="Knowledge for ${label}">
-        <button type="button" class="knowledge-overview-mark mark-review${status === 'review' ? ' is-active' : ''}" onclick="markRareUseKnowledge(event, ${index}, false)" aria-label="Mark for review" title="Mark for review">×</button>
+        <button type="button" class="knowledge-overview-mark mark-review${status === 'review' ? ' is-active' : ''}" onclick="markRareUseKnowledge(event, ${index}, false)" aria-label="Mark for practice" title="Mark for practice">×</button>
         <button type="button" class="knowledge-overview-mark mark-known${status === 'known' ? ' is-active' : ''}" onclick="markRareUseKnowledge(event, ${index}, true)" aria-label="Mark known" title="Mark known">✓</button>
     </div>`;
 }
@@ -9544,8 +9544,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '441265f5';
-const MODALS_ASSET_VERSION = '441265f5';
+const ASSET_VERSION = '73afad4f';
+const MODALS_ASSET_VERSION = '73afad4f';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

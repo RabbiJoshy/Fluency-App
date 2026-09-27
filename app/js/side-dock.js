@@ -131,7 +131,9 @@ const OCCUPANTS = [
     { id: 'settingsModal', home: 'left', settings: true,
       open: isShown, close: closeButtonFor('settingsModal') },
     ...['savedWordsModal', 'statsModal', 'totalStatsModal', 'reviewHomeModal', 'spacedRepetitionInfoModal', 'keyboardShortcutsModal', 'helpModal'].map(id => ({
-        id, home: 'left', stacks: true, open: isShown, close: closeButtonFor(id) })),
+        id, home: 'left', stacks: true,
+        stackOver: id === 'spacedRepetitionInfoModal' ? 'reviewHomeModal' : null,
+        open: isShown, close: closeButtonFor(id) })),
     // Setup-page reference sheets: word lists and rules.
     ...['extrasModal', 'cognateRulesModal'].map(id => ({
         id, home: 'right', stacks: true, open: isShown, close: closeButtonFor(id) })),
@@ -207,6 +209,15 @@ function place(occupant) {
         closeAll(openOn('left', occupant.id));
         mark(el, 'left');
         return 'left';
+    }
+
+    const parent = occupant.stackOver ? byId[occupant.stackOver] : null;
+    if (parent && isOpen(parent) && sideOf(parent)) {
+        // A short explainer opened from a sheet belongs directly above that
+        // sheet, on the same side, without replacing or moving its context.
+        const side = sideOf(parent);
+        mark(el, side, true);
+        return side;
     }
 
     if (occupant.stacks && settingsOpen()) {

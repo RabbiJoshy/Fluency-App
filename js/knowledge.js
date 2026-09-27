@@ -1,8 +1,8 @@
 // Granular sense / expression knowledge layered over whole-card progress.
 // Whole-card answers are the baseline; only explicit row-level answers create
 // ItemProgress records. The newest card-level or item-level event wins.
-import './state.js?v=441265f5';
-import { sendOrQueue } from './sync-queue.js?v=441265f5';
+import './state.js?v=73afad4f';
+import { sendOrQueue } from './sync-queue.js?v=73afad4f';
 
 const KNOWLEDGE_SCHEMA_VERSION = 1;
 
@@ -454,12 +454,20 @@ function getWordKnowledgeReviewInfo(parentWordId, surface = '') {
         }
     }
 
+    // Queue surfaces need one truthful, compact account of the latest answer.
+    // Include item-level answers as well as the parent card: a rare meaning can
+    // be the reason a word needs practice even when the parent was last right.
+    const lastCorrect = Math.max(0, ...allStates.map(state => state.lastCorrect || 0));
+    const lastWrong = Math.max(0, ...allStates.map(state => state.lastWrong || 0));
+
     return {
         needsReview,
         reason: hasIncorrect ? 'incorrect' : (hasDue ? 'due' : (isPartial ? 'partial' : null)),
         reviewAt: relevantTimes.length ? Math.min(...relevantTimes) : 0,
         urgencyTier,
-        needfulnessScore: maxNeedfulnessScore
+        needfulnessScore: maxNeedfulnessScore,
+        lastCorrect,
+        lastWrong
     };
 }
 
@@ -672,7 +680,7 @@ function ensureKnowledgeOverviewModal() {
                 </div>
                 <button type="button" class="knowledge-overview-close" aria-label="Close knowledge overview" onclick="closeKnowledgeOverview(event)">×</button>
             </header>
-            <p class="knowledge-overview-intro">This card can hold more than one meaning or expression. Mark each one on its own — separate from grading the card itself: <span class="knowledge-overview-legend-known">✓ Known</span> stops it coming back, <span class="knowledge-overview-legend-review">× Review</span> brings it back sooner.</p>
+            <p class="knowledge-overview-intro">This card can hold more than one meaning or expression. Mark each one on its own — separate from grading the card itself: <span class="knowledge-overview-legend-known">✓ Known</span> stops it coming back, <span class="knowledge-overview-legend-review">× Practice</span> brings it back sooner.</p>
             <div id="knowledgeOverviewSummary" class="knowledge-overview-summary"></div>
             <div id="knowledgeOverviewList" class="knowledge-overview-list"></div>
             <div class="knowledge-overview-footer" style="display: flex; justify-content: flex-end; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-color, rgba(255,255,255,0.1));">
@@ -690,7 +698,7 @@ function knowledgeOverviewRowsHTML(card, rows, { groupedByPos = false } = {}) {
     return rows.map(({ item, index }) => {
         const state = getKnowledgeItemState(card, item);
         const status = state.learned ? 'known' : (state.needsReview ? 'review' : 'unseen');
-        const statusText = status === 'known' ? 'Known' : (status === 'review' ? 'Review' : 'Unmarked');
+        const statusText = status === 'known' ? 'Known' : (status === 'review' ? 'Practice' : 'Unmarked');
         const pos = !groupedByPos && item.pos && (item.type === 'sense' || item.isRare)
             ? `<span class="knowledge-overview-pos">${escapeKnowledgeHTML(item.pos)}</span>` : '';
         const detail = [item.detail, item.isRare ? item.example : ''].filter(Boolean).join(' · ');
@@ -702,7 +710,7 @@ function knowledgeOverviewRowsHTML(card, rows, { groupedByPos = false } = {}) {
         return `<div class="knowledge-overview-row is-${status}">
             ${lead}
             <div class="knowledge-overview-actions" aria-label="Knowledge for ${escapeKnowledgeHTML(item.label)}">
-                <button type="button" class="knowledge-overview-mark mark-review${status === 'review' ? ' is-active' : ''}" onclick="markKnowledgeOverviewItem(event, ${index}, false)" aria-label="Mark for review" title="Mark for review">×</button>
+                <button type="button" class="knowledge-overview-mark mark-review${status === 'review' ? ' is-active' : ''}" onclick="markKnowledgeOverviewItem(event, ${index}, false)" aria-label="Mark for practice" title="Mark for practice">×</button>
                 <button type="button" class="knowledge-overview-mark mark-known${status === 'known' ? ' is-active' : ''}" onclick="markKnowledgeOverviewItem(event, ${index}, true)" aria-label="Mark known" title="Mark known">✓</button>
             </div>
         </div>`;

@@ -1,11 +1,11 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=441265f5';
-import { validateVocabularyIndex } from './data-contracts.js?v=441265f5';
-import { formatRoute } from './routes.js?v=441265f5';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=441265f5';
-import { releaseUrl } from './release-host.js?v=441265f5';
+import './state.js?v=73afad4f';
+import { validateVocabularyIndex } from './data-contracts.js?v=73afad4f';
+import { formatRoute } from './routes.js?v=73afad4f';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=73afad4f';
+import { releaseUrl } from './release-host.js?v=73afad4f';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -187,7 +187,7 @@ function renderResumeLastSetCard() {
     const source = snapshot.mode === 'lyrics' ? 'Lyrics' : 'Speech';
     const level = snapshot.levelNumber ? `Level ${snapshot.levelNumber}` : 'Saved level';
     const set = snapshot.setNumber ? `Set ${snapshot.setNumber}` : 'Saved set';
-    const track = snapshot.studyMode === 'review' ? 'Review' : 'Learn new';
+    const track = snapshot.studyMode === 'review' ? 'Practice' : 'Learn new';
     const forms = snapshot.useLemmaMode ? 'Merged lemmas' : 'Forms';
     const cognates = snapshot.excludeCognates ? 'Cognates excluded' : 'Cognates included';
     const title = snapshot.mode === 'lyrics'
@@ -3113,7 +3113,7 @@ async function loadDailyReviewDeck(opts = {}) {
     else if (tier === 'due') pool = summary.due;
 
     if (!pool || pool.length === 0) {
-        alert('No cards due for review in this queue.');
+        alert('No cards are ready to practise in this queue.');
         return false;
     }
 

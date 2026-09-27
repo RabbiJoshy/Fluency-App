@@ -1,143 +1,188 @@
-// Review home: the sheet behind the setup screen's "Review home" button.
-//
-// It composes; it does not compute. Every figure here comes from a function that
-// already owned it — getGlobalDueReviewSummary() for the queue, the level totals
-// that renderRangeSelector() publishes on window.__reviewHomeContext, and
-// getCurrentCoverageSnapshot() for progress. Adding a second copy of the review
-// maths here is exactly how the two surfaces would start disagreeing.
-//
-// Categories with a zero count still render, stating the zero. Absence is
-// declared, never inferred — a hidden row reads as "no such thing", not "none
-// right now".
+// Practice: an explanation and browsable view of the language-wide queue.
+// The queue and its ordering still belong to progress.js. Opening a group
+// only explains the queue; it must never start a study session.
 
-import './state.js?v=441265f5';
+import './state.js?v=73afad4f';
 
-const TIERS = [
-    {
-        tier: 'never_right',
-        key: 'neverRight',
-        title: 'Never got right',
-        blurb: 'Cards you have answered, but never correctly.'
-    },
-    {
-        tier: 'critical',
-        key: 'critical',
-        title: 'Recent mistakes',
-        blurb: 'Missed lately, or long past the date they were due.'
-    },
-    {
-        tier: 'due',
-        key: 'due',
-        title: 'Due today',
-        blurb: 'The spaced-repetition schedule says these are ready.'
-    }
+const QUICK_PRACTICE_LIMIT = 20;
+const LIST_PAGE_SIZE = 50;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+const GROUPS = [
+    { tier: 'never_right', key: 'neverRight', title: 'Not right yet',
+        blurb: 'Words you have answered, but have not got right yet.' },
+    { tier: 'critical', key: 'critical', title: 'Needs attention',
+        blurb: 'Recent mistakes and words that are very late.' },
+    { tier: 'due', key: 'due', title: 'Due now',
+        blurb: 'Scheduled words whose practice time has arrived.' }
 ];
 
+let activeGroup = null;
+let visibleWords = LIST_PAGE_SIZE;
+
 function escapeHtml(value) {
-    return String(value ?? '').replace(/[&<>"']/g, c => ({
+    return String(value ?? '').replace(/[&<>"']/g, char => ({
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-    }[c]));
+    }[char]));
 }
 
 function contextSnapshot() {
     return globalThis.__reviewHomeContext || null;
 }
 
-function tierRow({ tier, title, blurb, count }) {
-    const disabled = count > 0 ? '' : 'disabled';
-    return `<button type="button" class="review-home-row" data-tier="${tier}" ${disabled}>
+function queueSummary() {
+    const context = contextSnapshot();
+    const language = context?.language || globalThis.selectedLanguage;
+    return globalThis.getGlobalDueReviewSummary?.(language) || {
+        total: 0, neverRight: [], critical: [], due: [], all: []
+    };
+}
+
+function cardsFor(summary, group) {
+    const cards = summary?.[group?.key];
+    return Array.isArray(cards) ? cards : [];
+}
+
+function relativePast(timestamp, now = Date.now()) {
+    const elapsed = Math.max(0, now - Number(timestamp || 0));
+    if (elapsed < 60 * 1000) return 'just now';
+    if (elapsed < 60 * 60 * 1000) {
+        const minutes = Math.max(1, Math.floor(elapsed / (60 * 1000)));
+        return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+    }
+    if (elapsed < DAY_MS) {
+        const hours = Math.max(1, Math.floor(elapsed / (60 * 60 * 1000)));
+        return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+    }
+    const days = Math.max(1, Math.floor(elapsed / DAY_MS));
+    if (days < 14) return `${days} day${days === 1 ? '' : 's'} ago`;
+    if (days < 60) {
+        const weeks = Math.floor(days / 7);
+        return `${weeks} week${weeks === 1 ? '' : 's'} ago`;
+    }
+    if (days < 730) {
+        const months = Math.floor(days / 30);
+        return `${months} month${months === 1 ? '' : 's'} ago`;
+    }
+    const years = Math.floor(days / 365);
+    return `${years} year${years === 1 ? '' : 's'} ago`;
+}
+
+function latenessLabel(overdueMs) {
+    const elapsed = Math.max(0, Number(overdueMs) || 0);
+    if (elapsed < DAY_MS) return 'due today';
+    const days = Math.max(1, Math.floor(elapsed / DAY_MS));
+    if (days < 14) return `${days} day${days === 1 ? '' : 's'} late`;
+    if (days < 60) {
+        const weeks = Math.floor(days / 7);
+        return `${weeks} week${weeks === 1 ? '' : 's'} late`;
+    }
+    const months = Math.floor(days / 30);
+    return `${months} month${months === 1 ? '' : 's'} late`;
+}
+
+function cardStatus(card) {
+    const answeredAt = Number(card?.lastAnsweredAt) || 0;
+    const outcome = card?.lastOutcome;
+    const answer = answeredAt && outcome
+        ? `${outcome === 'wrong' ? 'Wrong' : 'Right'} ${relativePast(answeredAt)}`
+        : '';
+    const late = card?.reviewReason === 'due' ? latenessLabel(card.overdueMs) : '';
+    return [answer, late].filter(Boolean).join(' · ') || 'Ready to practise';
+}
+
+function groupRow(group, count) {
+    return `<button type="button" class="review-home-row" data-action="open-group"
+            data-tier="${group.tier}" ${count > 0 ? '' : 'disabled'}>
             <span class="review-home-row-copy">
-                <strong>${escapeHtml(title)}</strong>
-                <small>${escapeHtml(blurb)}</small>
+                <strong>${escapeHtml(group.title)}</strong>
+                <small>${escapeHtml(group.blurb)}</small>
             </span>
-            <span class="review-home-row-count">${count}</span>
+            <span class="review-home-row-tail">
+                <span class="review-home-row-count">${count.toLocaleString()}</span>
+                <span class="review-home-row-chevron" aria-hidden="true">›</span>
+            </span>
         </button>`;
+}
+
+function srsHTML() {
+    const srsOn = globalThis.spacedRepetitionEnabled !== false;
+    return `<div class="review-home-srs">
+            <span class="review-home-srs-copy">
+                <strong>Spaced repetition is ${srsOn ? 'on' : 'off'}</strong>
+                <small>${srsOn
+                    ? 'Known words return when they are likely to need practice.'
+                    : 'Only words you get wrong stay in Practice.'}</small>
+            </span>
+            <button type="button" class="review-home-srs-info" data-action="srs-info" aria-label="How practice is scheduled">
+                <span aria-hidden="true">?</span>
+            </button>
+        </div>`;
+}
+
+function renderOverview(body, summary) {
+    const total = Number(summary?.total) || 0;
+    const quickCount = Math.min(total, QUICK_PRACTICE_LIMIT);
+    const headline = total > 0
+        ? `${total.toLocaleString()} card${total === 1 ? '' : 's'} ready to practise`
+        : 'No cards need practice right now.';
+    const explanation = total > 0
+        ? 'Words you have not got right come first, followed by recent mistakes and the most overdue scheduled cards.'
+        : 'You are caught up. New mistakes and scheduled words will appear here when they need another attempt.';
+    const groupsHTML = GROUPS
+        .map(group => groupRow(group, cardsFor(summary, group).length))
+        .join('');
+
+    body.innerHTML = `
+        <div class="review-home-hero">
+            <strong>${headline}</strong>
+            <p>${explanation}</p>
+            <button type="button" class="study-set-review review-home-quick" data-action="quick-practice"
+                    ${quickCount > 0 ? '' : 'disabled'}>
+                Quick practice${quickCount > 0 ? ` · ${quickCount}` : ''}
+            </button>
+            <small>${quickCount > 0
+                ? `Starts with the first ${quickCount} cards in this order.`
+                : 'Quick practice will become available when a card needs attention.'}</small>
+        </div>
+        ${srsHTML()}
+        <section class="review-home-section" data-section="queue">
+            <h4>Practice order</h4>
+            ${groupsHTML}
+        </section>`;
+}
+
+function renderGroupDetail(body, summary, group) {
+    const cards = cardsFor(summary, group);
+    const shown = cards.slice(0, visibleWords);
+    const rows = shown.map(card => `<li class="review-home-word-row">
+            <strong>${escapeHtml(card.word)}</strong>
+            <span>${escapeHtml(cardStatus(card))}</span>
+        </li>`).join('');
+    const remaining = Math.max(0, cards.length - shown.length);
+
+    body.innerHTML = `
+        <div class="review-home-detail-head">
+            <button type="button" class="review-home-back" data-action="back-to-groups">‹ Back</button>
+            <span>${cards.length.toLocaleString()} card${cards.length === 1 ? '' : 's'}</span>
+        </div>
+        <div class="review-home-detail-title">
+            <h4>${escapeHtml(group.title)}</h4>
+            <p>${escapeHtml(group.blurb)}</p>
+        </div>
+        <ol class="review-home-word-list">${rows}</ol>
+        ${remaining > 0 ? `<button type="button" class="secondary-btn review-home-more" data-action="show-more">
+            Show ${Math.min(LIST_PAGE_SIZE, remaining)} more
+        </button>` : ''}`;
 }
 
 function renderReviewHome() {
     const body = document.getElementById('reviewHomeBody');
     if (!body) return;
-
-    const context = contextSnapshot();
-    const language = context?.language || globalThis.selectedLanguage;
-    const summary = globalThis.getGlobalDueReviewSummary?.(language) || null;
-    const total = Number(summary?.total) || 0;
-
-    const tiersHTML = TIERS
-        .map(entry => tierRow({ ...entry, count: Number(summary?.[entry.key]) || 0 }))
-        .join('');
-
-    const levelReview = Number(context?.levelReviewCount) || 0;
-    const levelLabel = escapeHtml(context?.levelLabel || 'This level');
-    const levelBlurb = context
-        ? `${Number(context.levelDueCount) || 0} due · ${Number(context.levelUnfinishedCount) || 0} unfinished`
-        : 'Pick a level to see its review queue.';
-    const levelHTML = `<button type="button" class="review-home-row" data-scope="level" ${levelReview > 0 ? '' : 'disabled'}>
-            <span class="review-home-row-copy">
-                <strong>${levelLabel}</strong>
-                <small>${escapeHtml(levelBlurb)}</small>
-            </span>
-            <span class="review-home-row-count">${levelReview}</span>
-        </button>`;
-
-    // Same numbers as the all-time progress sheet, read rather than recomputed.
-    const snapshot = globalThis.getCurrentCoverageSnapshot?.() || null;
-    const coveragePct = Number(snapshot?.percentage) || 0;
-    const covered = Number(snapshot?.coveredCount) || 0;
-    const totalWords = Number(snapshot?.totalCount) || 0;
-    const progressHTML = `<div class="review-home-progress">
-            <div class="review-home-progress-head">
-                <strong>${coveragePct.toFixed(1)}%</strong>
-                <span>${covered.toLocaleString()} of ${totalWords.toLocaleString()} cards seen</span>
-            </div>
-            <div class="review-home-progress-track"><i id="reviewHomeProgressFill"></i></div>
-            <button type="button" class="review-home-link" data-action="total-stats">All-time progress ›</button>
-        </div>`;
-
-    // How reviews are timed decides every count below it, so it states itself
-    // first rather than as a footnote under the numbers it explains.
-    const srsOn = globalThis.spacedRepetitionEnabled !== false;
-    const srsHTML = `<div class="review-home-srs">
-            <span class="review-home-srs-copy">
-                <strong>Spaced repetition is ${srsOn ? 'on' : 'off'}</strong>
-                <small>${srsOn
-                    ? 'Words come back just before you would forget them.'
-                    : 'Nothing returns on a schedule — only words you got wrong.'}</small>
-            </span>
-            <button type="button" class="review-home-srs-info" data-action="srs-info" aria-label="How reviews are timed">
-                <span aria-hidden="true">?</span>
-            </button>
-        </div>`;
-
-    body.innerHTML = `
-        <p class="review-home-lead">${total > 0
-            ? `${total} card${total === 1 ? '' : 's'} waiting across this language.`
-            : 'Nothing is waiting for review right now.'}</p>
-        ${srsHTML}
-        <section class="review-home-section" data-section="queue">
-            <h4>By urgency</h4>
-            ${tiersHTML}
-        </section>
-        <section class="review-home-section" data-section="level">
-            <h4>By level</h4>
-            ${levelHTML}
-        </section>
-        <section class="review-home-section" data-section="progress">
-            <h4>Progress</h4>
-            ${progressHTML}
-        </section>`;
-
-    // Same double-rAF fill the setup screen's coverage bar uses, so the two bars
-    // animate identically.
-    const fill = document.getElementById('reviewHomeProgressFill');
-    if (fill) {
-        fill.style.transition = 'none';
-        fill.style.width = '0%';
-        requestAnimationFrame(() => requestAnimationFrame(() => {
-            fill.style.transition = 'width 1s ease-out';
-            fill.style.width = `${Math.min(100, Math.max(0, coveragePct))}%`;
-        }));
-    }
+    const summary = queueSummary();
+    const group = GROUPS.find(entry => entry.tier === activeGroup);
+    if (group) renderGroupDetail(body, summary, group);
+    else renderOverview(body, summary);
 }
 
 function openSpacedRepetitionInfo() {
@@ -148,42 +193,24 @@ function closeSpacedRepetitionInfo() {
     document.getElementById('spacedRepetitionInfoModal')?.classList.add('hidden');
 }
 
-function openReviewHome({ section } = {}) {
+function openReviewHome() {
+    activeGroup = null;
+    visibleWords = LIST_PAGE_SIZE;
     renderReviewHome();
     document.getElementById('reviewHomeModal')?.classList.remove('hidden');
-    if (section) {
-        document.querySelector(`.review-home-section[data-section="${section}"]`)
-            ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
 }
 
 function closeReviewHome() {
     document.getElementById('reviewHomeModal')?.classList.add('hidden');
+    activeGroup = null;
 }
 
-async function startTier(tier) {
-    const context = contextSnapshot();
-    const summary = globalThis.getGlobalDueReviewSummary?.(context?.language || globalThis.selectedLanguage) || null;
-    const key = TIERS.find(entry => entry.tier === tier)?.key;
-    const available = Number(summary?.[key]) || 0;
-    if (available <= 0) return;
+async function startQuickPractice() {
+    const total = Number(queueSummary()?.total) || 0;
+    const limit = Math.min(total, QUICK_PRACTICE_LIMIT);
+    if (limit <= 0) return;
     closeReviewHome();
-    await globalThis.startDailyReview?.({ limit: Math.min(available, 100), urgencyTier: tier });
-}
-
-async function startLevelReview() {
-    const context = contextSnapshot();
-    if (!context?.range || !(context.levelReviewCount > 0)) return;
-    closeReviewHome();
-    globalThis.showAppLoading?.('Loading review', 'Collecting the cards that need another look…');
-    try {
-        await globalThis.loadLevelReviewSet?.(context.range, {
-            rankBasis: context.rankBasis,
-            levelNumber: context.levelNumber
-        });
-    } finally {
-        globalThis.hideAppLoading?.();
-    }
+    await globalThis.startDailyReview?.({ limit, urgencyTier: 'all' });
 }
 
 function initReviewHome() {
@@ -192,23 +219,25 @@ function initReviewHome() {
         if (event.target?.id === 'reviewHomeModal') closeReviewHome();
     });
     document.getElementById('reviewHomeBody')?.addEventListener('click', async event => {
-        const row = event.target.closest('.review-home-row');
-        if (row && !row.disabled) {
-            if (row.dataset.scope === 'level') await startLevelReview();
-            else if (row.dataset.tier) await startTier(row.dataset.tier);
-            return;
+        const action = event.target.closest('[data-action]')?.dataset.action;
+        if (!action) return;
+        if (action === 'open-group') {
+            activeGroup = event.target.closest('[data-tier]')?.dataset.tier || null;
+            visibleWords = LIST_PAGE_SIZE;
+            renderReviewHome();
+            document.querySelector('#reviewHomeBody .review-home-back')?.focus();
+        } else if (action === 'back-to-groups') {
+            activeGroup = null;
+            renderReviewHome();
+            document.querySelector('#reviewHomeBody [data-action="open-group"]:not([disabled])')?.focus();
+        } else if (action === 'show-more') {
+            visibleWords += LIST_PAGE_SIZE;
+            renderReviewHome();
+        } else if (action === 'quick-practice') {
+            await startQuickPractice();
+        } else if (action === 'srs-info') {
+            openSpacedRepetitionInfo();
         }
-        const link = event.target.closest('.review-home-link');
-        if (!link) return;
-        if (link.dataset.action === 'total-stats') {
-            closeReviewHome();
-            globalThis.showTotalStatsModal?.();
-        }
-    });
-    document.getElementById('reviewHomeBody')?.addEventListener('click', event => {
-        // The explainer stacks over this sheet rather than replacing it: it
-        // answers a question about what is on screen, so the screen stays.
-        if (event.target.closest('[data-action="srs-info"]')) openSpacedRepetitionInfo();
     });
     document.getElementById('spacedRepetitionSettingsBtn')?.addEventListener('click', () => {
         closeSpacedRepetitionInfo();
@@ -221,17 +250,19 @@ function initReviewHome() {
         if (event.target?.id === 'spacedRepetitionInfoModal') closeSpacedRepetitionInfo();
     });
     document.addEventListener('keydown', event => {
-        if (event.key === 'Escape') {
-            // Topmost first, so one press does not close both sheets.
-            const info = document.getElementById('spacedRepetitionInfoModal');
-            if (info && !info.classList.contains('hidden')) closeSpacedRepetitionInfo();
-            else closeReviewHome();
+        if (event.key !== 'Escape') return;
+        const info = document.getElementById('spacedRepetitionInfoModal');
+        if (info && !info.classList.contains('hidden')) {
+            closeSpacedRepetitionInfo();
+        } else if (activeGroup) {
+            activeGroup = null;
+            renderReviewHome();
+        } else {
+            closeReviewHome();
         }
     });
 }
 
-// Self-initialising, the same shape extras.js uses, so no caller has to
-// remember to wire it.
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initReviewHome);
 } else {

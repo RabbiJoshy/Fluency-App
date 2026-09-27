@@ -1097,7 +1097,7 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
         titleEl.textContent = isLevelCompletion
             ? `Level ${stats.levelNumber} complete`
             : stats.studyMode === 'review'
-            ? 'Review complete'
+            ? 'Practice complete'
             : stats.setNumber
             ? `Set ${stats.setNumber} complete`
             : 'Set complete';
@@ -1106,7 +1106,7 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
     const celebration = document.getElementById('levelCompleteCelebration');
     const restartButton = document.getElementById('restartAllBtn');
     restartButton.dataset.action = isLevelCompletion ? 'review-level' : 'redo-set';
-    restartButton.querySelector('span').textContent = isLevelCompletion ? 'Review this level' : 'Redo set';
+    restartButton.querySelector('span').textContent = isLevelCompletion ? 'Practise this level' : 'Redo set';
     celebration.hidden = !isLevelCompletion;
     if (isLevelCompletion) {
         const before = window.lastSetupCoverageSnapshot || window.currentCoverageSnapshot || {};
@@ -1199,7 +1199,7 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
             const remaining = Number(stats.remainingDueCount || 0);
             if (remaining > 0) {
                 const batchSize = Math.min(stats.dailyReviewLimit || 100, remaining);
-                finishLabel.textContent = `Review Next ${batchSize}`;
+                finishLabel.textContent = `Practise next ${batchSize}`;
                 finishIcon.textContent = '→';
                 finishBtn.dataset.action = 'next-daily-review';
                 finishBtn.classList.add('has-next-set');
@@ -1241,8 +1241,8 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
         ? `${finishLabel.textContent} automatically…`
         : stats.isDailyReview
             ? (stats.remainingDueCount > 0
-                ? `${stats.remainingDueCount} more word${stats.remainingDueCount === 1 ? '' : 's'} waiting in this review queue.`
-                : 'All caught up on this review queue!')
+                ? `${stats.remainingDueCount} more word${stats.remainingDueCount === 1 ? '' : 's'} waiting in this Practice queue.`
+                : 'All caught up on this Practice queue!')
             : isLevelCompletion
             ? 'Take the win, or keep the momentum going.'
             : stats.levelSetCount && stats.setNumber
