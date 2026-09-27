@@ -6,6 +6,15 @@ Agreed in conversation with Josh on 2026-09-27. Not started. No users besides
 Josh, so no learner data needs preserving beyond his own progress, which is
 keyed per card and is untouched by any of this.
 
+**Implemented 2026-09-27.** Step 3 was settled differently from both options
+below: Josh chose to have the app build Speech levels itself, like Lyrics
+(`loadReleaseStudyStructure()` no longer applies release levels), because
+frequency-cliff boundaries are deprecated and levels are now plain 100-card
+bands. Nothing was republished; releases keep their `study-structure.json` as
+published, and the app ignores its levels. This reverses decision 0009's
+"release-owned levels" for the app. The builder defaults in
+`study_structure.py` moved to 100 / 120 / 25 for any future release.
+
 ## Why
 
 A level is ~200 words split into ten 20-card sets: ten squares to choose from,
