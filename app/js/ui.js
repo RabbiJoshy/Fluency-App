@@ -355,8 +355,8 @@ const DECK_OVERVIEW_HOLD_MS = 11000;
 // The big wheel: progress across the whole deck the learner just opened.
 //
 // Every figure is read directly from the deck's vocabulary and learning states
-// so known, review, and new (unseen) accurately reflect the deck rather than
-// global language review totals.
+// so Known, Practice, and New accurately reflect the deck rather than global
+// language-wide practice totals.
 function showDeckOverviewLoading() {
     const snapshot = window.currentCoverageSnapshot;
     const rawCount = Number(snapshot?.totalCount) || 0;
@@ -425,9 +425,9 @@ async function startDailyReview(opts = {}) {
     const loadingMessage = document.getElementById('loadingMessage');
     if (loadingMessage) {
         loadingMessage.style.display = 'block';
-        loadingMessage.textContent = 'Collecting cards due for review…';
+        loadingMessage.textContent = 'Collecting cards ready to practise…';
     }
-    window.showAppLoading?.('Loading review', 'Preparing your cards…');
+    window.showAppLoading?.('Loading practice', 'Preparing your cards…');
     try {
         await window.loadDailyReviewDeck?.({
             limit: opts.limit || 100,
@@ -2757,8 +2757,8 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                     data-unseen="${range.unseenCount}" data-review="${range.reviewCount}"
                     style="--set-known-end: ${range.knownPct}%; --set-review-end: ${range.reviewEndPct}%"
                     role="radio" aria-checked="${index === initialIndex ? 'true' : 'false'}"
-                    aria-label="Set ${index + 1}: ${range.knownCount} known, ${range.reviewCount} to review, ${range.unseenCount} new"
-                    title="Set ${index + 1} · ${range.knownCount} known · ${range.reviewCount} review · ${range.unseenCount} new"
+                    aria-label="Set ${index + 1}: ${range.knownCount} known, ${range.reviewCount} to practise, ${range.unseenCount} new"
+                    title="Set ${index + 1} · ${range.knownCount} known · ${range.reviewCount} practice · ${range.unseenCount} new"
                     ${range.available ? '' : 'disabled'}><span>${index + 1}</span></button>`;
     }).join('');
 
@@ -2773,9 +2773,8 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     ));
     const levelNumber = levelButtonsForNumber.findIndex(button => button.dataset.level === selectedLevel) + 1;
 
-    // Everything the Review home sheet needs about the level the user is looking
-    // at. Published rather than recomputed there, so the level figures on the home
-    // screen and inside the sheet can never disagree.
+    // The language context lets the Practice sheet read the same global queue as
+    // the setup screen without depending on the currently selected set.
     window.__reviewHomeContext = {
         language: selectedLanguage,
         range: `${minWord}-${maxWord}`,
@@ -2792,24 +2791,28 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
 
     let reviewHTML = '';
     if (currentUser && !currentUser.isGuest) {
-        // The headline figure is now the global queue, not the level's: the level
-        // count moved into the sheet as one category among several. Absence is
-        // declared - a zero queue says so rather than hiding the section.
         const summary = window.getGlobalDueReviewSummary?.(selectedLanguage) || null;
         const globalTotal = Number(summary?.total) || 0;
-        const neverRight = Number(summary?.neverRight) || 0;
+        const neverRight = Array.isArray(summary?.neverRight) ? summary.neverRight.length : 0;
         const reviewMeta = globalTotal === 0
-            ? 'Nothing waiting for review right now.'
+            ? 'No cards need practice right now.'
+            : `${globalTotal.toLocaleString()} card${globalTotal === 1 ? '' : 's'} ready to practise`;
+        const reviewDetail = globalTotal === 0
+            ? 'You are caught up for now.'
             : neverRight > 0
-                ? `${globalTotal} waiting · ${neverRight} you've never got right`
-                : `${globalTotal} card${globalTotal === 1 ? '' : 's'} waiting`;
+                ? `Fluency puts the cards that need you most first · ${neverRight.toLocaleString()} not right yet`
+                : 'Fluency puts the cards that need you most first.';
         const quickCount = Math.min(globalTotal, QUICK_REVIEW_LIMIT);
         reviewHTML = `<div class="review-deck-content">
-                <div><h3 id="reviewDeckTitle">Review &amp; Progress</h3><p>${reviewMeta}</p></div>
-                <div class="review-deck-actions">
-                    <button class="review-deck-home" type="button" id="openReviewHomeBtn">Review home <span aria-hidden="true">›</span></button>
-                    <button class="study-set-review" type="button" id="quickReviewBtn" ${quickCount > 0 ? '' : 'disabled'}>Quick review${quickCount > 0 ? ` · ${quickCount}` : ''}</button>
-                </div>
+                <button class="review-deck-summary" type="button" id="openReviewHomeBtn">
+                    <span class="review-deck-summary-copy">
+                        <h3 id="reviewDeckTitle">Practice</h3>
+                        <strong>${reviewMeta}</strong>
+                        <small>${reviewDetail}</small>
+                    </span>
+                    <span class="review-deck-summary-chevron" aria-hidden="true">›</span>
+                </button>
+                <button class="study-set-review" type="button" id="quickReviewBtn" ${quickCount > 0 ? '' : 'disabled'}>Quick practice${quickCount > 0 ? ` · ${quickCount}` : ''}</button>
             </div>`;
     }
 
@@ -2819,7 +2822,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                 <strong class="study-set-overview">${levelNumber > 0 ? `Level ${levelNumber}` : 'This level'} · ${completedCount}/${availableCount} sets studied</strong>
                 <div class="study-set-legend" aria-label="Set progress colours">
                     <span><i class="is-known"></i>Known</span>
-                    <span><i class="is-review"></i>Review</span>
+                    <span><i class="is-review"></i>Practice</span>
                     <span><i class="is-unseen"></i>New</span>
                 </div>
             </div>
@@ -2855,7 +2858,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         // three colours, so the counts use the same three words.
         document.getElementById('studySetCurrentTitle').textContent = `Set ${index + 1}`;
         document.getElementById('studySetCurrentMeta').textContent =
-            `${range.knownCount} known · ${range.reviewCount} review · ${range.unseenCount} new`;
+            `${range.knownCount} known · ${range.reviewCount} practice · ${range.unseenCount} new`;
         const startBtn = document.getElementById('studySetStartBtn');
         // Three distinct states, because collapsing the last two is what made
         // finished sets hand back every card in them. studyMode 'all' keeps no
@@ -2869,7 +2872,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
             startBtn.dataset.studyMode = 'new';
         } else if (range.reviewCount > 0) {
             startBtn.textContent =
-                `Review ${range.reviewCount} card${range.reviewCount === 1 ? '' : 's'}`;
+                `Practise ${range.reviewCount} card${range.reviewCount === 1 ? '' : 's'}`;
             startBtn.dataset.studyMode = 'review';
         } else {
             startBtn.textContent = `Study Set ${index + 1} again`;
@@ -2954,7 +2957,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         if (limit <= 0) return;
         const loadingMessage = document.getElementById('loadingMessage');
         loadingMessage.style.display = 'block';
-        loadingMessage.textContent = `Loading ${limit} review card${limit === 1 ? '' : 's'}...`;
+        loadingMessage.textContent = `Loading ${limit} practice card${limit === 1 ? '' : 's'}...`;
         await startDailyReview({ limit, urgencyTier: 'all' });
     });
 

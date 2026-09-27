@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T23:25:12+01:00",
+      "date": "2026-09-27 23:25 BST",
+      "agent": "Codex",
+      "summary": "Review is now a clearer Practice area with honest counts, a priority-first Quick practice, and browsable word lists.",
+      "detail": [
+        "Known / Practice / New replaces the old learner-facing Known / Review / New wording, and the setup page leads with how many cards are ready to practise.",
+        "The wider Practice sheet explains the ordering in plain language and groups cards as Not right yet, Needs attention, and Due now.",
+        "Opening a group now shows its words, latest right or wrong answer, and lateness without starting flashcards; Quick practice starts the first 20 priority cards.",
+        "Fixed zero group counts and the spaced-repetition explainer appearing behind the Practice sheet."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T23:17:28+01:00",
       "date": "2026-09-27 23:17 BST",
       "agent": "Claude",

@@ -4,7 +4,7 @@
 import './state.js?v=20260825ak';
 import './speech.js?v=20260825ak';
 import { goToRoute, routeCodeFor } from './routes.js?v=20260923cj';
-import './side-dock.js?v=20260923rs';
+import './side-dock.js?v=20260927pa';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
@@ -1941,7 +1941,7 @@ function initializeApp() {
             : 'Loading the Next Level';
         hideDeckCompleteModal();
         if (action === 'next-daily-review') {
-            window.showAppLoading?.('Loading Daily Review', 'Preparing your next review cards…');
+            window.showAppLoading?.('Loading practice', 'Preparing your next practice cards…');
             try {
                 await window.loadDailyReviewDeck?.({
                     urgencyTier: stats.dailyReviewTier,
@@ -4367,7 +4367,7 @@ function rareSenseMarksHTML(item) {
     const status = state.learned ? 'known' : (state.needsReview ? 'review' : 'unseen');
     const label = escapeCardText(item.translation || '');
     return `<div class="knowledge-overview-actions rare-use-marks is-${status}" aria-label="Knowledge for ${label}">
-        <button type="button" class="knowledge-overview-mark mark-review${status === 'review' ? ' is-active' : ''}" onclick="markRareUseKnowledge(event, ${index}, false)" aria-label="Mark for review" title="Mark for review">×</button>
+        <button type="button" class="knowledge-overview-mark mark-review${status === 'review' ? ' is-active' : ''}" onclick="markRareUseKnowledge(event, ${index}, false)" aria-label="Mark for practice" title="Mark for practice">×</button>
         <button type="button" class="knowledge-overview-mark mark-known${status === 'known' ? ' is-active' : ''}" onclick="markRareUseKnowledge(event, ${index}, true)" aria-label="Mark known" title="Mark known">✓</button>
     </div>`;
 }
@@ -9545,7 +9545,7 @@ document.addEventListener('click', (e) => {
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
 const ASSET_VERSION = '20260922mod';
-const MODALS_ASSET_VERSION = '20260921rt';
+const MODALS_ASSET_VERSION = '20260927pa';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

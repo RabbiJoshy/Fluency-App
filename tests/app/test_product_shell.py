@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v570"
+EXPECTED_CACHE_NAME = "flashcards-v571"
 
 
 
@@ -245,7 +245,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("getCurrentCoverageSnapshot", progress)
         self.assertIn("window.lastSetupCoverageSnapshot", progress)
         self.assertIn("isLevelCompletion", modals)
-        self.assertIn("Review this level", modals)
+        self.assertIn("Practise this level", modals)
         self.assertIn("this.dataset.action === 'review-level'", flashcards)
         self.assertNotIn("Natural speech", html)
         # One wording for the vocabulary choice: the inline page, the modal
@@ -907,8 +907,8 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("error !== 'access_denied'", callback)
         self.assertIn("spotifyWebLogin", callback)
         self.assertIn("/js/spotify.js?v=20260923su", worker)
-        self.assertIn("/js/main.js?v=20260927m3", worker)
-        self.assertIn("/js/ui.js?v=20260924lm", worker)
+        self.assertIn("/js/main.js?v=20260927pa", worker)
+        self.assertIn("/js/ui.js?v=20260927pa", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
     def test_progress_sync_uses_deployable_public_configuration(self) -> None:
@@ -934,6 +934,32 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('js/auth.js?v=20260923sb', html)
         self.assertIn("auth.js?v=20260923sb", main)
         self.assertIn("/js/auth.js?v=20260923sb", worker)
+
+    def test_practice_queue_is_browsable_prioritised_and_layered(self) -> None:
+        html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
+        ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
+        practice = (APP_ROOT / "js" / "review-home.js").read_text(encoding="utf-8")
+        progress = (APP_ROOT / "js" / "progress.js").read_text(encoding="utf-8")
+        knowledge = (APP_ROOT / "js" / "knowledge.js").read_text(encoding="utf-8")
+        dock = (APP_ROOT / "js" / "side-dock.js").read_text(encoding="utf-8")
+        css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
+
+        self.assertIn('<h3 id="reviewHomeTitle">Practice</h3>', html)
+        self.assertIn("Known · Practice · New", html)
+        self.assertNotIn("Review home", ui)
+        self.assertIn("cardsFor(summary, group).length", practice)
+        self.assertIn("const LIST_PAGE_SIZE = 50", practice)
+        self.assertIn('data-action="open-group"', practice)
+        self.assertIn('data-action="quick-practice"', practice)
+        self.assertIn("Math.min(total, QUICK_PRACTICE_LIMIT)", practice)
+        self.assertNotIn("startTier", practice)
+        self.assertNotIn("startLevelReview", practice)
+        self.assertIn("lastOutcome", progress)
+        self.assertIn("overdueMs", progress)
+        self.assertIn("lastCorrect,", knowledge)
+        self.assertIn("stackOver: id === 'spacedRepetitionInfoModal' ? 'reviewHomeModal'", dock)
+        self.assertIn("width: min(760px, 94vw)", css)
+        self.assertIn("#spacedRepetitionInfoModal.modal[data-dock-stack] { z-index: 1020; }", css)
 
     def test_progress_identity_bridges_historical_mode_ids_by_surface(self) -> None:
         progress = (APP_ROOT / "js" / "progress.js").read_text(encoding="utf-8")
@@ -1030,7 +1056,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
         self.assertIn("/js/spotify-playlist-import.js?v=20260923su", worker)
-        self.assertIn('css/style.css?v=20260927m3', html)
+        self.assertIn('css/style.css?v=20260927pa', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
         self.assertIn("replaceRoute({\n        kind: 'live'", importer)

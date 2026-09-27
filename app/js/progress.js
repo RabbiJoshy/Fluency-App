@@ -428,6 +428,7 @@ function getGlobalDueReviewWords(language = '') {
     const seenSurfaces = new Set();
     const targetLang = String(language || window.selectedLanguage || '').trim().toLowerCase();
 
+    const now = Date.now();
     for (const [id, record] of Object.entries(data)) {
         if (!record || !record.word) continue;
         const recLang = String(record.language || '').trim().toLowerCase();
@@ -450,13 +451,30 @@ function getGlobalDueReviewWords(language = '') {
             const reviewAt = reviewInfo?.reviewAt || state?.reviewAt || 0;
             const urgencyTier = reviewInfo?.urgencyTier || state?.urgencyTier || 'due';
             const needfulnessScore = reviewInfo?.needfulnessScore ?? state?.needfulnessScore ?? 100;
+            const lastCorrect = reviewInfo?.lastCorrect ?? state?.lastCorrect
+                ?? parseProgressTimestamp(record.lastCorrect);
+            const lastWrong = reviewInfo?.lastWrong ?? state?.lastWrong
+                ?? parseProgressTimestamp(record.lastWrong);
+            const lastAnsweredAt = Math.max(lastCorrect || 0, lastWrong || 0);
+            const lastOutcome = lastAnsweredAt > 0
+                ? (lastWrong > lastCorrect ? 'wrong' : 'right')
+                : null;
+            const reviewReason = reviewInfo?.reason || state?.reviewReason || null;
             dueWords.push({
                 id,
                 word: record.word,
                 record,
                 reviewAt,
                 urgencyTier,
-                needfulnessScore
+                needfulnessScore,
+                reviewReason,
+                lastCorrect,
+                lastWrong,
+                lastAnsweredAt,
+                lastOutcome,
+                overdueMs: reviewReason === 'due' && reviewAt > 0
+                    ? Math.max(0, now - reviewAt)
+                    : 0
             });
         }
     }

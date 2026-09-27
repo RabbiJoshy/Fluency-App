@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v570';
+const CACHE_NAME = 'flashcards-v571';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -26,7 +26,7 @@ const ASSET_VERSION = '20260927v24';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/css/style.css?v=20260927m3',
+  '/css/style.css?v=20260927pa',
   '/css/light-theme.css?v=20260927m3',
   '/config/config.json',
   '/data/speech-frequency/es.json',
@@ -36,7 +36,7 @@ const urlsToCache = [
   '/config/cefr_levels.json',
   '/config/offline-content-manifest.json',
   '/js/routes.js?v=20260923cj',
-  '/js/main.js?v=20260927m3',
+  '/js/main.js?v=20260927pa',
   '/js/theme.js?v=20260922ui',
   '/js/state.js?v=20260921x',
   `/js/data-contracts.js?v=${ASSET_VERSION}`,
@@ -53,12 +53,12 @@ const urlsToCache = [
   `/js/estimation.js?v=${ASSET_VERSION}`,
   '/js/release-host.js?v=20260921rh',
   '/js/config.js?v=20260921rh',
-  '/js/progress.js?v=20260920e',
+  '/js/progress.js?v=20260927pa',
   '/js/progress-identity.js?v=20260831a',
-  '/js/knowledge.js?v=20260923rk',
-  '/js/ui.js?v=20260924lm',
+  '/js/knowledge.js?v=20260927pa',
+  '/js/ui.js?v=20260927pa',
   '/js/fast-track-preferences.js?v=20260920a',
-  '/js/vocab.js?v=20260924lm',
+  '/js/vocab.js?v=20260927pa',
   '/js/grammar-cards.js?v=20260923gn',
   '/js/cognates.js?v=20260922ft2',
   '/js/coverage.js?v=20260909a',
@@ -73,14 +73,14 @@ const urlsToCache = [
   `/js/spanishdict-usage.js?v=${ASSET_VERSION}`,
   '/js/reverse-cues.js?v=20260927v24',
   '/js/card-metadata-pills.js?v=20260925cues',
-  '/js/flashcards.js?v=20260927m3',
+  '/js/flashcards.js?v=20260927pa',
   '/icons/tatoeba.svg',
   '/icons/wikipedia-w.svg',
   `/js/example-personalisation.js?v=${ASSET_VERSION}`,
-  '/js/flashcards-modals.js?v=20260921rt',
+  '/js/flashcards-modals.js?v=20260927pa',
   '/js/flashcards-conj.js?v=20260922mod',
-  '/js/side-dock.js?v=20260923rs',
-  '/js/review-home.js?v=20260922rw'
+  '/js/side-dock.js?v=20260927pa',
+  '/js/review-home.js?v=20260927pa'
 ];
 
 self.addEventListener('install', event => {

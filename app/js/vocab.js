@@ -187,7 +187,7 @@ function renderResumeLastSetCard() {
     const source = snapshot.mode === 'lyrics' ? 'Lyrics' : 'Speech';
     const level = snapshot.levelNumber ? `Level ${snapshot.levelNumber}` : 'Saved level';
     const set = snapshot.setNumber ? `Set ${snapshot.setNumber}` : 'Saved set';
-    const track = snapshot.studyMode === 'review' ? 'Review' : 'Learn new';
+    const track = snapshot.studyMode === 'review' ? 'Practice' : 'Learn new';
     const forms = snapshot.useLemmaMode ? 'Merged lemmas' : 'Forms';
     const cognates = snapshot.excludeCognates ? 'Cognates excluded' : 'Cognates included';
     const title = snapshot.mode === 'lyrics'
@@ -3113,7 +3113,7 @@ async function loadDailyReviewDeck(opts = {}) {
     else if (tier === 'due') pool = summary.due;
 
     if (!pool || pool.length === 0) {
-        alert('No cards due for review in this queue.');
+        alert('No cards are ready to practise in this queue.');
         return false;
     }
 

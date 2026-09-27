@@ -14,20 +14,20 @@ import './tutorial.js?v=20260921ac';
 import './walkthrough.js?v=20260921ac';
 import './estimation.js?v=20260825ak';
 import './config.js?v=20260921rh';
-import './progress.js?v=20260920e';
-import './knowledge.js?v=20260923rk';
-import './ui.js?v=20260925ls';
-import './vocab.js?v=20260924lm';
+import './progress.js?v=20260927pa';
+import './knowledge.js?v=20260927pa';
+import './ui.js?v=20260927pa';
+import './vocab.js?v=20260927pa';
 import './cognates.js?v=20260922ft2';
 import './coverage.js?v=20260909a';
 import './fast-mode.js?v=20260923ft';
 import './extras.js?v=20260925cues';
-import './review-home.js?v=20260922rw';
+import './review-home.js?v=20260927pa';
 import './song-sets.js?v=20260823ae';
 import './playlist-live.js?v=20260923cj';
 import './spotify-playlist-import.js?v=20260923su';
 import './vocabulary-import.js?v=20260923bk';
-import './flashcards.js?v=20260927m3';
+import './flashcards.js?v=20260927pa';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 function startCardTutorial() {
@@ -2055,7 +2055,7 @@ function renderFindResults(query) {
         } else if (state.status === 'review') {
             doneHTML = state.reviewReason === 'due'
                 ? '<span class="fw-done fw-done--due">Due</span>'
-                : '<span class="fw-done fw-done--review">Review</span>';
+                : '<span class="fw-done fw-done--review">Practice</span>';
         }
 
         let promBadgeHTML = '';
