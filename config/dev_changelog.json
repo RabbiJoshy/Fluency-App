@@ -2,6 +2,21 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T19:45:53+01:00",
+      "date": "2026-09-27 19:45 BST",
+      "agent": "Claude",
+      "summary": "Lyrics decks move to v20: all four artists now get their meanings from the same dictionary resolver as speech, with better meanings, names and slang. Rosalía and Young Miko move from v18 to v20.",
+      "detail": [
+        "Bad Bunny, Rosalía, Young Miko and the Spanish test playlist now load lyrics-all-artists-v20. Rosalía and Young Miko were still on v18; Bad Bunny and the test playlist were on v19 (kept on the lyrics site as the rollback).",
+        "Meanings come from the shared resolver over SpanishDict then Wiktionary, the same one speech uses: a conjugated form shows its verb's senses (muerdo: bite and 'I bite'), and elisions show the full word's (ta: estar, pa: para).",
+        "80 names used often in the lyrics now explain themselves (DJ Luian, Tego Calderón, Louis Vuitton, Bad Bunny), plus 84 slang meanings and 61 accent fixes, all checked against the lyrics.",
+        "Words no dictionary knows are marked as having no meaning rather than echoing the word; study decks already leave them out.",
+        "Meaning choice uses embeddings for every lyric line (v19 fell back to word overlap for almost all of Bad Bunny). On a 100-example hand check v20 was right 85% of the time, v19 81%. Confidence is now the margin between the top two senses; low-margin picks are marked low.",
+        "The card provenance panel names v20's sources (declared entity, declared gloss, no dictionary entry, shared resolver)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T19:55:00+01:00",
       "date": "2026-09-27 19:55 BST",
       "agent": "Claude",

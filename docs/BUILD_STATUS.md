@@ -628,4 +628,19 @@ The POS check (v19's -0.30 for the wrong word class) is applied, and now finds
 the card's word when the line spells it with an apostrophe (`'ta`, `pa'`);
 83% of multi-sense examples get a POS.
 
-Follow-up after release: `condenarse` senses on `condene` are not inflected.
+### Published (2026-09-27)
+
+`lyrics-all-artists-v20` and the four per-artist v20 releases
+(`scripts/package_lyrics_release_v20.py`) are on Fluency-Releases-lyrics,
+published without `--prune`, so v19 (rollback) and
+`lyrics-all-artists-v7-native-20260825b` (the fallback `app/js/main.js`
+loads) remain. `app/config/artists.json` names v20.
+
+### Follow-ups
+
+- **Group near-identical senses** within one entry (estar's several "to be"
+  senses). WSD separates them by noise: `ta` ships as "he/she is on".
+- **`condenarse` inflection gap**: pronominal senses on a non-pronominal
+  surface (`condene`) are not inflected ("to be damned").
+- **Recalibrate the bands on a larger sample.** At n=100, medium (93%) and
+  high (92%) are not separable; only the 0.01 low cut-off is supported.

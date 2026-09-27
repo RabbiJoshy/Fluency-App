@@ -9046,7 +9046,22 @@ function buildProvenancePanelHTML(card) {
     let decisionAlgo = 'Deterministic / Direct Match';
 
     const sources = meaningsList.map(m => String(m.source || m.assignment_method || m.prompt_id || '')).join(' ').toLowerCase();
-    if (sources.includes('override:') || sources.includes('curated:lyrics_cultural')) {
+    if (sources.includes('no_menu')) {
+        // Lyrics v20: the shared resolver found no headword; declared, not guessed.
+        menuOrigin = 'No dictionary entry (declared)';
+        decisionAlgo = 'None: meaning withheld';
+    } else if (sources.includes('declared:entity')) {
+        menuOrigin = 'Declared Entity';
+        graftOverlay = 'Hand-written name entry';
+        decisionAlgo = 'Deterministic (one meaning)';
+    } else if (sources.includes('declared:gloss')) {
+        menuOrigin = 'Declared Gloss';
+        graftOverlay = 'Hand-written meaning';
+        decisionAlgo = 'Deterministic (one meaning)';
+    } else if (/lyrics-[a-z-]*v2\d/.test(String(releaseId || '')) && senseCount > 1) {
+        menuOrigin = sources.includes('wiktionary') ? 'Shared resolver: Wiktionary' : 'Shared resolver: SpanishDict';
+        decisionAlgo = 'spaCy TRF + Embedding margin';
+    } else if (sources.includes('override:') || sources.includes('curated:lyrics_cultural')) {
         menuOrigin = 'Cultural Overrides';
         graftOverlay = 'Cultural Expression Overlay';
         decisionAlgo = 'Deterministic Priority Override';
