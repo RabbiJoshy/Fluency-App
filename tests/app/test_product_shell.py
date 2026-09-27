@@ -248,14 +248,16 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("Review this level", modals)
         self.assertIn("this.dataset.action === 'review-level'", flashcards)
         self.assertNotIn("Natural speech", html)
-        self.assertIn("The words people say in films and TV", html)
-        self.assertIn("The words in songs you choose", html)
-        self.assertIn("original line as the example", html)
+        # One wording for the vocabulary choice: the inline page, the modal
+        # picker and the tutorial replica all say the same thing.
+        self.assertIn("function learningModeCopy(", ui)
+        self.assertIn("window.learningModeCopy(language)", main)
+        self.assertNotIn("What do you want to understand?", main)
+        self.assertEqual(html.count("Where should your words come from?"), 2)
+        self.assertIn("The most common words in films and TV.", ui)
+        self.assertIn("Pick artists, or build a deck from your own Spotify playlist.", ui)
         self.assertNotIn('id="learningContextMode"', html)
         self.assertNotIn('id="learningContextCoverage"', html)
-        self.assertIn("Recommended", html)
-        self.assertIn("Music &amp; lyrics", html)
-        self.assertIn("Look up a playlist and study speech meanings", main)
         self.assertNotIn('<span class="step-number">1</span>', html)
 
     def test_artist_landing_moves_into_the_learning_context_sheet(self) -> None:
@@ -344,7 +346,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn(".setup-anim-learn-btn.is-ready", styles)
         # The intro is a replica of the real setup screen, so it reuses that
         # screen's own class names rather than a lookalike.
-        self.assertIn("standard-source-choice-btn", html)
+        self.assertIn('class="choice-sheet-item setup-anim-target"', html)
         self.assertIn("learning-context-chip", html)
         self.assertIn("function moveSetupPointer(target)", tutorial)
         # The numbered badges indexed a numbered note list; both are gone, and
@@ -707,13 +709,20 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("dock: true", flashcards)
         self.assertIn("id: 'lyricsSourceSheet'", main)
         self.assertIn("id: 'artistChoiceSheet'", main)
-        self.assertIn("Import a playlist and use songs already in the Fluency lyrics library.", main)
         self.assertIn("onBack: openLearningSourcePicker", main)
-        self.assertIn("label: 'Live playlist'", main)
-        self.assertIn("label: 'Match a Spotify playlist'", main)
+        # Two ways into Lyrics; what to build from a playlist is asked after
+        # the playlist is picked.
+        self.assertIn("label: 'Pick artists'", main)
+        self.assertIn("label: 'Build from a Spotify playlist'", main)
+        self.assertIn("{ mode: 'choose' }", main)
+        self.assertNotIn("label: 'Live playlist'", main)
+        spotify_import = (APP_ROOT / "js" / "spotify-playlist-import.js").read_text(encoding="utf-8")
+        self.assertIn("function renderDeckChoices(", spotify_import)
+        self.assertIn("label: 'Ready-made deck'", spotify_import)
+        self.assertIn("label: 'New deck · quick'", spotify_import)
+        self.assertIn("label: 'New deck · full'", spotify_import)
         ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
         self.assertIn("lyricsCatalog || speechAvailable", ui)
-        self.assertIn("lyricsStatus.textContent = lyricsCatalog ? '›' : 'Live'", ui)
         self.assertNotIn("id: 'artistRadialPicker'", main)
         self.assertIn(".choice-sheet-grid .choice-sheet-body", css)
         self.assertIn(".choice-sheet-list .choice-sheet-item", css)

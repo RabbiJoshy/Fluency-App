@@ -59,7 +59,8 @@ async function loadConfig() {
             const lang = activeArtist.language || 'spanish';
             config.languages[lang] = {
                 ...config.languages[lang],
-                name: `${config.languages[lang].name} (${activeArtist.name})`,
+                // The language keeps its own name; the artist is named on its
+                // own wherever the deck is shown, never as "Spanish (Artist)".
                 dataPath: null,
                 indexPath: activeArtist.indexPath,
                 examplesPath: activeArtist.examplesPath || null,

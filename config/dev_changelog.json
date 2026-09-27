@@ -2,6 +2,21 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T16:32:01+01:00",
+      "date": "2026-09-27 16:32 BST",
+      "agent": "Claude",
+      "summary": "Setup chooser is cleaner and knows where you are: flat rows instead of boxes, one wording for the Speech/Music choice, no reload when you pick what you already have, and Music is now two routes — artists or your own Spotify playlist.",
+      "detail": [
+        "Top-left chip: no box, bigger flag or artist photo, bigger name. Artist decks read 'Bad Bunny', never 'Spanish (Bad Bunny)'.",
+        "Every row in the language / vocabulary / music / tutorial-language menus is a flat row split by hairlines; the current choice has an accent label and a tick.",
+        "The inline page and the modal ask the same question — 'Where should your words come from?' — with the same two rows: Everyday speech, Music you choose.",
+        "Picking your current vocabulary, language or artist just closes the menu; nothing reloads. Opening the language picker no longer tears down the deck.",
+        "The vocabulary choice page no longer shows the Review & Progress panel, progress bar or level steps before a vocabulary is chosen.",
+        "Music has two options: Pick artists, or Build from a Spotify playlist. After choosing a playlist: Ready-made deck (songs already in Fluency), New deck · quick (lyrics looked up now, no meaning matching), or New deck · full (WSD — coming soon)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T16:07:00+01:00",
       "date": "2026-09-27 16:07 BST",
       "agent": "Claude",
