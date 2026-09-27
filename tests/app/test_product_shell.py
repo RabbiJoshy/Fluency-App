@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v569"
+EXPECTED_CACHE_NAME = "flashcards-v570"
 
 
 
@@ -785,8 +785,8 @@ class ProductShellTests(unittest.TestCase):
             '.range-btn-new:not(.has-progress):not(:hover)',
             light_css,
         )
-        self.assertIn('css/light-theme.css?v=20260927m2', html)
-        self.assertIn('/css/light-theme.css?v=20260927m2', worker)
+        self.assertIn('css/light-theme.css?v=20260927m3', html)
+        self.assertIn('/css/light-theme.css?v=20260927m3', worker)
 
 
     def test_active_release_aliases_are_never_cached(self) -> None:
@@ -886,7 +886,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("error !== 'access_denied'", callback)
         self.assertIn("spotifyWebLogin", callback)
         self.assertIn("/js/spotify.js?v=20260923su", worker)
-        self.assertIn("/js/main.js?v=20260927m2", worker)
+        self.assertIn("/js/main.js?v=20260927m3", worker)
         self.assertIn("/js/ui.js?v=20260924lm", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
@@ -1008,7 +1008,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
         self.assertIn("/js/spotify-playlist-import.js?v=20260923su", worker)
-        self.assertIn('css/style.css?v=20260927m2', html)
+        self.assertIn('css/style.css?v=20260927m3', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
         self.assertIn("replaceRoute({\n        kind: 'live'", importer)

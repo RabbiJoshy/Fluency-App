@@ -373,11 +373,23 @@ def inflect_card_senses(
     surf_norm = surface.strip().lower()
     lem_norm = lemma.strip().lower()
 
+    # Check if any verb sense on the card is a past participle of its own headword
+    has_participle_sense = False
+    if surf_norm in conj_rev or strip_accents(surf_norm) in conj_rev:
+        surf_entries = conj_rev.get(surf_norm) or conj_rev.get(strip_accents(surf_norm)) or []
+        participle_lemmas = {m.get("lemma", "").lower() for m in surf_entries if str(m.get("mood", "")).lower() in {"participo", "participio"}}
+        for s in senses:
+            if str(s.get("pos", "")).upper() in {"VERB", "AUX"}:
+                s_hw = str(s.get("headword", "")).lower()
+                if s_hw in participle_lemmas:
+                    has_participle_sense = True
+                    break
+
     if not surf_norm or surf_norm == lem_norm:
-        if not is_plural:
+        if not is_plural and not has_participle_sense:
             return list(senses)
 
-    # 1. Check if surface is a regular noun/adjective plural
+    # 1. Check if surface is a regular noun plural
     if not is_plural:
         lem_clean = strip_accents(lem_norm)
         candidates = {
@@ -431,15 +443,25 @@ def inflect_card_senses(
         s_copy = dict(s)
         pos = str(s.get("pos", "")).upper()
         trans = s.get("translation") or s.get("gloss") or ""
+        s_hw = str(s.get("headword", "")).lower()
 
-        if pos in {"VERB", "AUX"} and morph_entries:
-            inf = inflect_verb_translation(trans, morph_entries, clitics)
+        # Find morphology matching card lemma, or matching sense headword for participles
+        s_morph = morph_entries
+        if not s_morph and pos in {"VERB", "AUX"} and s_hw:
+            surf_entries = conj_rev.get(surf_norm) or conj_rev.get(strip_accents(surf_norm)) or []
+            s_morph = [
+                m for m in surf_entries
+                if m.get("lemma", "").lower() == s_hw and str(m.get("mood", "")).lower() in {"participo", "participio"}
+            ]
+
+        if pos in {"VERB", "AUX"} and s_morph:
+            inf = inflect_verb_translation(trans, s_morph, clitics)
             if "translation" in s:
                 s_copy["translation"] = inf
             if "gloss" in s or "translation" not in s:
                 s_copy["gloss"] = inf
             s_copy["inflected_surface"] = surface
-        elif pos in {"NOUN", "ADJ"} and is_plural:
+        elif pos == "NOUN" and is_plural:
             inf = pluralize_english_noun(trans)
             if "translation" in s:
                 s_copy["translation"] = inf

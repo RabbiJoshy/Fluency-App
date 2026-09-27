@@ -9,7 +9,7 @@
       "detail": [
         "The lemma beside an inflected word (tenemos → tener) no longer sits in a green pill. It lines up with the middle of the word's lowercase letters at every word size, where the pill sat high.",
         "The frequency icon has three bars instead of four: Uncommon fills one, Common two, Dominant three, and Rare leaves all three empty.",
-        "Bumps cache to flashcards-v569 and the flashcards.js, main.js, style.css and light-theme.css tags to 20260927m2."
+        "Bumps cache to flashcards-v570 and the flashcards.js, main.js, style.css and light-theme.css tags to 20260927m3."
       ],
       "commit": "pending"
     },
