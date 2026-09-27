@@ -92,6 +92,20 @@
       </div>
     </details>
 
+    <details class="section">
+      <summary>
+        <span class="section-name">Progress</span>
+        <span class="section-state" id="state-focus"></span>
+      </summary>
+      <div class="section-body">
+        <p class="hint" id="progress-hint"></p>
+        <div class="checks" id="focus"></div>
+        <div class="pattern-actions">
+          <button class="linkish" id="progress-reset" type="button">reset progress for this language</button>
+        </div>
+      </div>
+    </details>
+
     <!-- Everything below changes the drill for someone who already knows what
          they want out of it. The four settings above are the ones a learner
          opening this page for the first time has an opinion about. -->
@@ -163,8 +177,12 @@
       <span class="summary-unit">cards</span>
     </div>
     <div class="summary-detail" id="sum-detail"></div>
+    <div class="summary-actions">
+      <button class="secondary" id="resume" type="button" hidden>Resume</button>
+      <button class="primary" id="start" disabled>Start</button>
+    </div>
     <div class="summary-bar" id="sum-bar"></div>
-    <button class="primary" id="start" disabled>Start</button>
+    <div class="summary-progress" id="sum-progress"></div>
   </div>
 </section>
 
@@ -188,6 +206,22 @@
       <div class="card-answer" id="card-answer" hidden>
         <div class="card-form" id="card-form"></div>
         <div class="card-chips" id="card-chips"></div>
+      </div>
+    </div>
+
+    <div class="grade" id="grade" hidden>
+      <button class="secondary grade-miss" id="grade-miss" type="button">Missed it <kbd>x</kbd></button>
+      <button class="primary grade-hit" id="grade-hit" type="button">Got it <kbd>space</kbd></button>
+    </div>
+
+    <div class="done" id="drill-done" hidden>
+      <h2 id="done-title">Round complete</h2>
+      <p class="done-score" id="done-score"></p>
+      <ul class="done-missed" id="done-missed"></ul>
+      <div class="done-actions">
+        <button class="primary" id="done-retry" type="button">Drill the missed ones</button>
+        <button class="secondary" id="done-again" type="button">New round</button>
+        <button class="ghost" id="done-setup" type="button">Back to set up</button>
       </div>
     </div>
 
@@ -215,6 +249,7 @@
      same voice, chosen by the same scorer, as a flashcard. It is a leaf
      module: it imports only state.js and touches no UI. -->
 <script type="module" src="../js/speech.js"></script>
+<script src="progress.js?v=20260927cp"></script>
 <script src="app.js?v=20260923cj"></script>
 <script src="data/es.js?v=20260922conj"></script>
 <script src="data/pt.js?v=20260922conj"></script>
