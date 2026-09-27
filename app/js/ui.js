@@ -1,7 +1,7 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=526eecbd';
-import { readFastTrack } from './fast-track-preferences.js?v=526eecbd';
+import './state.js?v=d0ffeadf';
+import { readFastTrack } from './fast-track-preferences.js?v=d0ffeadf';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -494,16 +494,44 @@ function paintLearningContextPhoto(el, artist) {
     el.style.backgroundColor = art ? '' : (artist.colorTheme?.primary || 'var(--accent-primary)');
 }
 
+// Which vocabulary the learner is in right now, or null while they are still
+// choosing. Speech counts only once it has been picked, not merely because no
+// artist is active.
+function currentLearningMode() {
+    if (window.playlistLiveActive?.()) return 'live';
+    if (activeArtist) return 'lyrics';
+    if (document.getElementById('step1')?.classList.contains('source-speech-active')) return 'speech';
+    return null;
+}
+
+window.currentLearningMode = currentLearningMode;
+
+// Everything that belongs to a chosen deck. The mode choice shows none of it —
+// #reviewDeckSection sits outside #step4, so it has to be named here too.
+function hideStudySurfaces() {
+    ['step2', 'step4', 'extrasDeckSection', 'lemmaToggleContainer', 'cognateToggleContainer']
+        .forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+        });
+    const reviewSection = document.getElementById('reviewDeckSection');
+    if (reviewSection) reviewSection.hidden = true;
+    hideAllSelectionPills();
+}
+
 function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
     const button = document.getElementById('learningContextBtn');
     const languageConfig = config.languages?.[selectedLanguage];
     if (!button || !languageConfig) return;
 
-    const mode = window.playlistLiveActive?.()
+    const modeKey = currentLearningMode();
+    const mode = modeKey === 'live'
         ? `Live · ${window.playlistLiveDeck?.()?.playlistName || 'playlist'}`
-        : activeArtist
-            ? `Lyrics · ${activeArtist.name || 'Songs'}`
-            : 'Speech';
+        : modeKey === 'lyrics'
+            ? 'Music you choose'
+            : modeKey === 'speech'
+                ? 'Everyday speech'
+                : 'Choose…';
     const flag = languageConfig.flag || LEARNING_CONTEXT_FLAGS[selectedLanguage] || selectedLanguage.slice(0, 2).toUpperCase();
     const coverage = Number(snapshot?.percentage || 0);
     const coverageLabel = snapshot?.label || (activeArtist ? 'Lyrics understood' : 'Speech understood');
@@ -518,6 +546,14 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
     document.getElementById('learningContextSheetFlag').textContent = flag;
     document.getElementById('learningContextSheetLanguage').textContent = languageConfig.name || selectedLanguage;
     document.getElementById('learningContextSheetMode').textContent = mode;
+    const modeIcon = document.getElementById('learningContextSheetModeIcon');
+    if (modeIcon) {
+        modeIcon.innerHTML = modeKey === 'speech' ? MODE_ICON_SPEECH
+            : modeKey ? MODE_ICON_MUSIC : '';
+    }
+    // No vocabulary chosen yet means no deck to measure.
+    const progressButton = document.getElementById('learningContextProgressBtn');
+    if (progressButton) progressButton.hidden = !modeKey;
     if (activeArtist) {
         const artistName = activeArtist.name || 'Artist';
         nameEl.textContent = artistName;
@@ -549,27 +585,23 @@ function mergeStandardProgressIntoLanguageStep() {
     const step = document.getElementById('step1');
     const header = document.getElementById('step1Header');
     const title = document.getElementById('step1Title');
-    const wrapper = document.getElementById('personalCoverageWrapper');
-    const progressHeader = wrapper && wrapper.querySelector('.personal-progress-header');
     const inlinePill = document.getElementById('selectedLanguageInline');
     const sourcePill = document.getElementById('selectedSourceInline');
     const sourceCard = document.getElementById('standardSourceCard');
-    const progressSlot = document.getElementById('standardSourceProgress');
     const languageName = document.getElementById('standardSourceLanguageName');
     const languageIcon = document.getElementById('standardSourceLanguageIcon');
-    if (!step || !header || !title || !wrapper || !progressHeader || !inlinePill || !sourcePill
-        || !sourceCard || !progressSlot || !languageName || !languageIcon) return;
+    if (!step || !header || !title || !inlinePill || !sourcePill
+        || !sourceCard || !languageName || !languageIcon) return;
 
     languageName.textContent = config.languages[selectedLanguage]?.name || selectedLanguage;
     languageIcon.textContent = config.languages[selectedLanguage]?.flag || LEARNING_CONTEXT_FLAGS[selectedLanguage] || selectedLanguage.slice(0, 2).toUpperCase();
-    progressSlot.appendChild(wrapper);
+    // Progress is not shown here: until a vocabulary is chosen there is no deck
+    // to measure. It lives in the chip's sheet and on the study page.
     title.textContent = 'Language';
     step.classList.add('language-summary-active');
     header.removeAttribute('role');
     header.removeAttribute('tabindex');
     header.removeAttribute('aria-haspopup');
-    wrapper.classList.add('personal-coverage-wrapper--merged', 'personal-coverage-wrapper--empty', 'visible');
-    wrapper.style.display = 'block';
     inlinePill.style.display = 'none';
     sourcePill.style.display = 'none';
     sourceCard.style.display = 'grid';
@@ -635,8 +667,7 @@ function unmergeStandardProgressFromLanguageStep() {
     wrapper.style.display = 'none';
     sourcePill.style.display = 'none';
     sourceCard.style.display = 'none';
-    const extrasSection = document.getElementById('extrasDeckSection');
-    if (extrasSection) extrasSection.style.display = 'none';
+    hideStudySurfaces();
 }
 
 window.mergeArtistProgressIntoSourceStep = mergeArtistProgressIntoSourceStep;
@@ -695,15 +726,41 @@ function renderLanguageTabs() {
     setupLanguageTabs();
 }
 
-// Each vocabulary mode is described by its "best for" lines, one per row.
-function setSourceBullets(button, lines) {
-    const host = button?.querySelector('.standard-source-bullets');
-    if (!host) return;
-    host.replaceChildren(...lines.map(line => {
-        const row = document.createElement('span');
-        row.textContent = line;
-        return row;
-    }));
+// The vocabulary choice, worded once. The inline page and the modal picker
+// (main.js openLearningSourcePicker) both read this, so they cannot drift.
+const MODE_ICON_SPEECH = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.6A8 8 0 1 1 21 12z"></path></svg>';
+const MODE_ICON_MUSIC = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l11-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="17" cy="16" r="3"></circle></svg>';
+
+function learningModeCopy(language = selectedLanguage) {
+    const lyricsCatalog = config?.languages?.[language]?.capabilities?.lyrics !== false;
+    return {
+        title: 'Where should your words come from?',
+        intro: 'Each source has its own vocabulary. Start with one — you can add the other later.',
+        speech: {
+            label: 'Everyday speech',
+            description: 'The most common words in films and TV.',
+            iconHTML: MODE_ICON_SPEECH
+        },
+        lyrics: {
+            label: 'Music you choose',
+            description: lyricsCatalog
+                ? 'Pick artists, or build a deck from your own Spotify playlist.'
+                : 'Build a deck from your own Spotify playlist.',
+            iconHTML: MODE_ICON_MUSIC
+        }
+    };
+}
+
+window.learningModeCopy = learningModeCopy;
+
+function paintModeButton(button, entry) {
+    if (!button) return;
+    const icon = button.querySelector('.choice-sheet-icon');
+    const label = button.querySelector('.choice-sheet-copy strong');
+    const detail = button.querySelector('.choice-sheet-copy small');
+    if (icon) icon.innerHTML = entry.iconHTML;
+    if (label) label.textContent = entry.label;
+    if (detail) detail.textContent = entry.description;
 }
 
 function setupLanguageTabs() {
@@ -714,28 +771,15 @@ function setupLanguageTabs() {
     const speechSourceButton = document.getElementById('standardSourceSpeechBtn');
     const sourceCardButton = document.getElementById('standardSourcePickerBtn');
 
-    // The compact language summary reopens the radial picker directly.
+    // Opening the language picker changes nothing by itself. The deck on screen
+    // stays until a different language is actually chosen — the .lang-tab click
+    // below does that switch — so closing the picker, or picking the language
+    // already in use, leaves the learner exactly where they were.
     const reopenLanguagePicker = function(event) {
         event?.stopPropagation?.();
         window.closeRadialPicker?.('artistRadialPicker');
         window.closeChoiceSheet?.('lyricsSourceSheet');
         window.closeChoiceSheet?.('artistChoiceSheet');
-        unmergeStandardProgressFromLanguageStep();
-        document.getElementById('step1')?.classList.remove('source-speech-active', 'context-ready');
-        document.body.classList.remove('has-learning-context');
-        speechSourceButton?.classList.remove('is-selected');
-        sourceCardButton?.classList.remove('is-selected');
-        inlinePill.style.display = 'none';
-        document.getElementById('languageTabs').style.display = 'flex';
-        // Hide subsequent steps
-        document.getElementById('step2').style.display = 'none';
-        document.getElementById('lemmaToggleContainer').style.display = 'none';
-        document.getElementById('cognateToggleContainer').style.display = 'none';
-        document.getElementById('step4').style.display = 'none';
-        const extrasSection = document.getElementById('extrasDeckSection');
-        if (extrasSection) extrasSection.style.display = 'none';
-        hideAllSelectionPills();
-        setActiveSetupStep('step1');
         window.showLanguagePicker?.(config.languages);
     };
     window.reopenLanguagePicker = reopenLanguagePicker;
@@ -748,6 +792,12 @@ function setupLanguageTabs() {
             if (this.disabled || this.classList.contains('disabled')) {
                 return;
             }
+            // The language already in use: nothing to switch.
+            if (this.dataset.lang === selectedLanguage && currentLearningMode()) {
+                return;
+            }
+            document.getElementById('step1')?.classList.remove('source-speech-active', 'context-ready');
+            document.body.classList.remove('has-learning-context');
             document.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
             this.classList.add('active');
             const newLanguage = this.dataset.lang;
@@ -794,32 +844,24 @@ function setupLanguageTabs() {
             const speechAvailable = languageCapabilities.speech !== false;
             const lyricsCatalog = languageCapabilities.lyrics !== false;
             const lyricsAvailable = lyricsCatalog || speechAvailable;
-            const lyricsStatus = document.getElementById('standardLyricsStatus');
             if (speechSourceButton) {
                 speechSourceButton.disabled = !speechAvailable;
                 speechSourceButton.title = speechAvailable
                     ? 'Start with general-purpose vocabulary'
                     : `Speech vocabulary is not ready for ${langConfig?.name || newLanguage} yet`;
-                setSourceBullets(speechSourceButton, [
-                    `Best for understanding everyday ${langConfig?.name || 'spoken'} speech`,
-                    'Words ranked by how often they\'re said in films and TV',
-                ]);
             }
+            const modeCopy = learningModeCopy(newLanguage);
+            paintModeButton(speechSourceButton, modeCopy.speech);
+            paintModeButton(sourceCardButton, modeCopy.lyrics);
+            const choiceTitle = document.getElementById('standardSourceChoiceTitle');
+            const choiceIntro = document.getElementById('standardSourceChoiceIntro');
+            if (choiceTitle) choiceTitle.textContent = modeCopy.title;
+            if (choiceIntro) choiceIntro.textContent = modeCopy.intro;
             if (sourceCardButton) {
                 sourceCardButton.disabled = !lyricsAvailable;
                 sourceCardButton.title = lyricsCatalog
                     ? 'Build vocabulary around music you choose'
                     : 'Look up lyrics from a playlist and study a live deck';
-                setSourceBullets(sourceCardButton, lyricsCatalog
-                    ? [
-                        'Best for understanding the lyrics of the artists you listen to',
-                        'Pick artists or songs; each word comes with the line it\'s sung in',
-                    ]
-                    : [
-                        'Best for understanding the songs in your own playlists',
-                        'Lyrics are looked up live from a playlist you choose',
-                    ]);
-                if (lyricsStatus) lyricsStatus.textContent = lyricsCatalog ? '›' : 'Live';
             }
             // Conjugation is an add-on beside the two vocabulary modes: a
             // separate drill page, offered only where the language names a
@@ -832,14 +874,8 @@ function setupLanguageTabs() {
                 conjugationButton.onclick = drillHref ? () => { window.location.href = drillHref; } : null;
             }
 
-            // Hide all subsequent steps while loading
-            document.getElementById('step2').style.display = 'none';
-            document.getElementById('lemmaToggleContainer').style.display = 'none';
-            document.getElementById('cognateToggleContainer').style.display = 'none';
-            document.getElementById('step4').style.display = 'none';
-            const extrasSection = document.getElementById('extrasDeckSection');
-            if (extrasSection) extrasSection.style.display = 'none';
-            hideAllSelectionPills();
+            // Nothing belonging to a deck shows until a vocabulary is chosen.
+            hideStudySurfaces();
 
             const continueToSpeech = async () => {
                 if (selectedLanguage !== newLanguage) return;
@@ -3379,7 +3415,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=526eecbd')
+        import('./spotify.js?v=d0ffeadf')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
@@ -3806,7 +3842,7 @@ async function showTotalStatsModal() {
         ? 'Import is available when signed in to Spanish speech.' : '';
     // Update language name in the header
     const langConfig = config.languages[selectedLanguage];
-    const langName = langConfig ? langConfig.name : selectedLanguage;
+    const langName = activeArtist?.name || (langConfig ? langConfig.name : selectedLanguage);
     document.getElementById('totalStatsLanguage').textContent = langName;
 
     // Ensure vocabulary index is loaded (needed for comprehension + words understood)

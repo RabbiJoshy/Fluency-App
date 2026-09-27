@@ -1,34 +1,34 @@
 // First: rewrites old ?artist=/?about= links to their #/ route before
 // anything below reads the address.
-import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=526eecbd';
-import { releaseUrl } from './release-host.js?v=526eecbd';
-import './theme.js?v=526eecbd';
-import './state.js?v=526eecbd';
-import './offline-db.js?v=526eecbd';
-import './sync-queue.js?v=526eecbd';
-import { initOfflineContent } from './offline-content.js?v=526eecbd';
-import './speech.js?v=526eecbd';
-import './artist-ui.js?v=526eecbd';
-import './auth.js?v=526eecbd';
-import './tutorial.js?v=526eecbd';
-import './walkthrough.js?v=526eecbd';
-import './estimation.js?v=526eecbd';
-import './config.js?v=526eecbd';
-import './progress.js?v=526eecbd';
-import './knowledge.js?v=526eecbd';
-import './ui.js?v=526eecbd';
-import './vocab.js?v=526eecbd';
-import './cognates.js?v=526eecbd';
-import './coverage.js?v=526eecbd';
-import './fast-mode.js?v=526eecbd';
-import './extras.js?v=526eecbd';
-import './review-home.js?v=526eecbd';
-import './song-sets.js?v=526eecbd';
-import './playlist-live.js?v=526eecbd';
-import './spotify-playlist-import.js?v=526eecbd';
-import './vocabulary-import.js?v=526eecbd';
-import './flashcards.js?v=526eecbd';
-import { validateArtistCatalog } from './data-contracts.js?v=526eecbd';
+import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=d0ffeadf';
+import { releaseUrl } from './release-host.js?v=d0ffeadf';
+import './theme.js?v=d0ffeadf';
+import './state.js?v=d0ffeadf';
+import './offline-db.js?v=d0ffeadf';
+import './sync-queue.js?v=d0ffeadf';
+import { initOfflineContent } from './offline-content.js?v=d0ffeadf';
+import './speech.js?v=d0ffeadf';
+import './artist-ui.js?v=d0ffeadf';
+import './auth.js?v=d0ffeadf';
+import './tutorial.js?v=d0ffeadf';
+import './walkthrough.js?v=d0ffeadf';
+import './estimation.js?v=d0ffeadf';
+import './config.js?v=d0ffeadf';
+import './progress.js?v=d0ffeadf';
+import './knowledge.js?v=d0ffeadf';
+import './ui.js?v=d0ffeadf';
+import './vocab.js?v=d0ffeadf';
+import './cognates.js?v=d0ffeadf';
+import './coverage.js?v=d0ffeadf';
+import './fast-mode.js?v=d0ffeadf';
+import './extras.js?v=d0ffeadf';
+import './review-home.js?v=d0ffeadf';
+import './song-sets.js?v=d0ffeadf';
+import './playlist-live.js?v=d0ffeadf';
+import './spotify-playlist-import.js?v=d0ffeadf';
+import './vocabulary-import.js?v=d0ffeadf';
+import './flashcards.js?v=d0ffeadf';
+import { validateArtistCatalog } from './data-contracts.js?v=d0ffeadf';
 
 function startCardTutorial() {
     const knownLanguage = window.getCardTutorialLanguageKey?.();
@@ -83,7 +83,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
 const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
-    ? import('./spotify.js?v=526eecbd').catch(error => {
+    ? import('./spotify.js?v=d0ffeadf').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })
@@ -712,8 +712,7 @@ loadConfig().then(async () => {
     document.getElementById('learningContextLanguageBtn')?.addEventListener('click', () => {
         closeLearningContext();
         if (activeArtist) {
-            try { localStorage.removeItem('fluencyPreferredLanguageV1'); } catch (_) {}
-            window.location.href = window.location.pathname;
+            showLanguagePicker(config.languages);
         } else {
             window.reopenLanguagePicker?.();
         }
@@ -1414,7 +1413,11 @@ function showChoiceSheet({ id, ariaLabel, title, intro = '', stepLabel = '', ent
             icon.classList.add('choice-sheet-icon--image');
             icon.style.backgroundImage = `url('${entry.image}')`;
         }
-        else icon.textContent = entry.fallbackText || '•';
+        else {
+            icon.textContent = entry.fallbackText || '•';
+            // Initials stand on a coloured disc; flags and glyphs stand bare.
+            if (/^[A-Za-z]{1,3}$/.test(icon.textContent)) icon.classList.add('choice-sheet-icon--initials');
+        }
 
         const copy = document.createElement('span');
         copy.className = 'choice-sheet-copy';
@@ -1487,13 +1490,17 @@ window.closeChoiceSheet = closeChoiceSheet;
 
 function showAvailableMusicPicker(artists) {
     const pickerLanguage = Object.values(artists || {})[0]?.language || 'spanish';
+    const currentSlug = activeArtist ? String(activeArtist.slug || window._urlArtistSlug || '') : '';
     const entries = Object.entries(artists || {}).map(([slug, cfg]) => ({
         label: cfg.name,
-        description: 'Build a set from this artist’s available songs.',
+        description: slug === currentSlug ? 'You’re studying this now.' : 'All their songs — narrow it to a few from Songs later.',
         image: artistPickerImage(cfg),
         fallbackText: artistInitials(cfg.name),
         accent: (cfg.colorTheme && cfg.colorTheme.primary) || 'var(--accent-primary)',
+        selected: slug === currentSlug,
         onSelect: () => {
+            // The artist already open: close, don't reload it.
+            if (slug === currentSlug) return;
             window.clearPlaylistLiveSession?.();
             showAppLoading(`Loading ${cfg.name}`, 'Preparing lyrics, levels and progress…', true);
             goToRoute({ kind: 'artist', artist: slug });
@@ -1501,8 +1508,8 @@ function showAvailableMusicPicker(artists) {
     }));
     if (Object.values(artists || {}).some(cfg => cfg.songsPath)) {
         entries.push({
-            label: 'Choose individual songs',
-            description: 'Build a mix from the songs currently available in Fluency.',
+            label: 'Mix several artists',
+            description: 'Pick individual songs from any artists in Fluency.',
             iconHTML: customSongsIcon(),
             accent: '#10B981',
             onSelect: () => {
@@ -1515,9 +1522,9 @@ function showAvailableMusicPicker(artists) {
     showChoiceSheet({
         id: 'artistChoiceSheet',
         ariaLabel: 'Choose artists or songs',
-        title: 'Choose your music',
-        intro: 'Pick an artist, or combine individual songs into one vocabulary list.',
-        stepLabel: 'Lyrics · Choose songs',
+        title: 'Pick artists',
+        intro: 'One artist, or songs from several in one deck.',
+        stepLabel: `${languageDisplayName(pickerLanguage)} · Music`,
         onBack: () => showArtistPicker(null, artists, pickerLanguage),
         variant: 'list',
         entries
@@ -1565,21 +1572,24 @@ async function showArtistPicker(anchorBtn, artists, targetLanguage = null) {
             (cfg.language || 'spanish') === language));
     }
     const hasAvailableMusic = Object.keys(resolvedArtists || {}).length > 0;
+    // Two ways in: artists you pick from the library, or a Spotify playlist
+    // of your own. What to build from the playlist is asked once it is chosen
+    // (spotify-playlist-import.js renderDeckChoices).
     showChoiceSheet({
         id: 'lyricsSourceSheet',
         ariaLabel: 'Choose how to add music',
-        title: 'How would you like to choose music?',
-        intro: 'Your choice determines where the song words and example lines come from.',
-        stepLabel: 'Lyrics · Choose source',
+        title: 'Which music?',
+        intro: 'Your deck is built from the words in the songs you pick.',
+        stepLabel: `${languageDisplayName(language)} · Music`,
         onBack: openLearningSourcePicker,
         variant: 'list',
         entries: [
             {
-                label: 'Choose artists or songs',
+                label: 'Pick artists',
                 description: hasAvailableMusic
-                    ? 'Pick an artist or individual songs from the Fluency lyrics library.'
+                    ? 'One or more artists from the Fluency library — all their songs, or just the ones you choose.'
                     : 'No music collection has been published for this language yet.',
-                fallbackText: '♫',
+                iconHTML: artistsIcon(),
                 accent: 'var(--accent-primary)',
                 disabled: !hasAvailableMusic,
                 onSelect: () => {
@@ -1588,49 +1598,55 @@ async function showArtistPicker(anchorBtn, artists, targetLanguage = null) {
                 }
             },
             {
-                label: 'Match a Spotify playlist',
-                description: hasAvailableMusic
-                    ? 'Import a playlist and use songs already in the Fluency lyrics library.'
-                    : 'No music collection has been published for this language yet.',
-                fallbackText: '∩',
-                accent: '#10B981',
-                disabled: !hasAvailableMusic,
-                onSelect: () => {
-                    window.clearPlaylistLiveSession?.();
-                    window.openSpotifyPlaylistImport?.(resolvedArtists, language, { live: false });
-                }
-            },
-            {
-                label: 'Live playlist',
-                description: 'Look up your playlist now. Cards use speech meanings with your song lines; meaning matching is limited.',
-                fallbackText: '＋',
-                accent: '#F59E0B',
-                onSelect: () => window.openSpotifyPlaylistImport?.(resolvedArtists, language, { live: true })
+                label: 'Build from a Spotify playlist',
+                description: 'Use a playlist you made. Open a ready-made deck from songs Fluency has, or build a new one.',
+                iconHTML: playlistIcon(),
+                accent: '#1DB954',
+                onSelect: () => window.openSpotifyPlaylistImport?.(resolvedArtists, language, { mode: 'choose' })
             }
         ]
     });
 }
 
+function artistsIcon() {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path><path d="M16 4.5a3.5 3.5 0 0 1 0 7"></path><path d="M18.5 14.5A6.5 6.5 0 0 1 21.5 20"></path></svg>';
+}
+
+function playlistIcon() {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h12M3 12h12M3 18h8"></path><path d="M19 8v9"></path><circle cx="17" cy="17" r="2"></circle></svg>';
+}
+
+// The plain language name, even in artist mode.
+function languageDisplayName(language) {
+    return window._normalModeLangConfigs?.[language]?.name || config.languages?.[language]?.name || language;
+}
+
 function openLearningSourcePicker() {
     const language = activeArtist?.language || selectedLanguage || 'spanish';
-    const languageConfig = config.languages?.[language] || {};
+    const languageConfig = window._normalModeLangConfigs?.[language] || config.languages?.[language] || {};
     const lyricsCatalog = languageConfig.capabilities?.lyrics !== false;
     const speechAvailable = languageConfig.capabilities?.speech !== false;
     const lyricsAvailable = lyricsCatalog || speechAvailable;
+    const copy = window.learningModeCopy(language);
+    const current = window.currentLearningMode?.() || null;
+    const inSpeech = current === 'speech';
+    const inMusic = current === 'lyrics' || current === 'live';
     showChoiceSheet({
         id: 'learningSourceChoiceSheet',
         ariaLabel: 'Choose vocabulary',
-        title: 'What do you want to understand?',
-        intro: 'Choose a source for your words. You can switch later and keep your card progress.',
-        stepLabel: `${languageConfig.name || language} · Choose mode`,
+        title: copy.title,
+        intro: copy.intro,
+        stepLabel: `${languageDisplayName(language)} · Vocabulary`,
         variant: 'list',
         entries: [
             {
-                label: 'Everyday Speech',
-                description: 'Common words from films and TV, ordered by how often people say them.',
-                fallbackText: '1',
-                selected: !activeArtist && !window.playlistLiveActive?.(),
+                ...copy.speech,
+                description: inSpeech ? 'You’re studying this now.' : copy.speech.description,
+                selected: inSpeech,
+                disabled: !speechAvailable,
                 onSelect: () => {
+                    // Already here: the sheet just closes. Nothing reloads.
+                    if (inSpeech) return;
                     if (window.playlistLiveActive?.()) {
                         window.clearPlaylistLiveSession?.();
                         sessionStorage.setItem('fluencyPendingSpeechLanguage', language);
@@ -1647,12 +1663,10 @@ function openLearningSourcePicker() {
                 }
             },
             {
-                label: 'Music & lyrics',
-                description: lyricsCatalog
-                    ? 'Learn words from artists and songs you choose, with their lyric lines as examples.'
-                    : 'Look up a playlist and study speech meanings with its lyric lines.',
-                fallbackText: '2',
-                selected: Boolean(activeArtist || window.playlistLiveActive?.()),
+                ...copy.lyrics,
+                description: inMusic ? 'You’re studying this now. Change artist or songs.' : copy.lyrics.description,
+                selected: inMusic,
+                tail: '›',
                 disabled: !lyricsAvailable,
                 onSelect: () => {
                     showArtistPicker(null, null, language);
@@ -1735,6 +1749,15 @@ function showLanguagePicker(languages) {
             disabled: cfg.hasData === false,
             selected: key === selectedLanguage,
             onSelect: () => {
+                // An artist deck is its own page: leaving it for another
+                // language reloads; its own language keeps it open.
+                if (activeArtist) {
+                    if (key === (activeArtist.language || 'spanish')) return;
+                    try { localStorage.setItem('fluencyPreferredLanguageV1', key); } catch (_) {}
+                    showAppLoading('Switching language', 'Preparing your language and progress…', true);
+                    window.location.href = window.location.pathname;
+                    return;
+                }
                 if (isPortuguese) {
                     showPortugueseVarietyPicker();
                 } else {
@@ -1747,8 +1770,8 @@ function showLanguagePicker(languages) {
         id: 'languageChoiceSheet',
         ariaLabel: 'Choose a language',
         title: 'Choose a language',
-        intro: 'Pick the language you want to understand. You will choose Speech or Lyrics next.',
-        stepLabel: 'Learning setup · Language',
+        intro: 'You’ll choose where your words come from next.',
+        stepLabel: 'Language',
         variant: 'grid',
         entries
     });

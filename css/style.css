@@ -16176,14 +16176,6 @@
     opacity: 0.45;
 }
 
-/* The real setup screen resolves this button to three columns (icon, copy,
-   chevron). Outside that screen's own context it falls back to a two-column
-   variant and the chevron drops onto a second row, so the replica states the
-   three columns itself rather than chasing the original's specificity. */
-.card-tutorial-setup-anim .standard-source-choice-btn {
-    grid-template-columns: auto minmax(0, 1fr) auto;
-}
-
 /* Pressed and chosen states, shared by every replica control. */
 .setup-anim-target {
     transition: transform 0.12s ease, box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
@@ -21468,4 +21460,155 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
 /* Settings opened from a study session shows the study controls only. */
 #settingsModal.settings-study-only #studyTabContent .settings-overview-section {
   display: none;
+}
+
+/* ===== Setup chooser: flat rows, no boxes =====
+   The chip, the language/vocabulary/music sheets, the inline vocabulary
+   choice and the tutorial's language list are one flow and share one look:
+   a list of rows split by hairlines. No row is a card of its own. The current
+   choice is named by its accent-coloured label and a tick, not a filled box.
+   Kept last so it wins over the earlier, boxed rules. */
+#topBar .learning-context-chip {
+  min-width: 0;
+  max-width: 300px;
+  min-height: 44px;
+  column-gap: 10px;
+  padding: 2px 6px 2px 2px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+}
+#topBar .learning-context-flag { font-size: 30px; }
+#topBar .learning-context-photo { width: 32px; height: 32px; font-size: 12px; }
+#topBar .learning-context-chip-copy strong { font-size: 19px; letter-spacing: -0.01em; }
+#topBar .learning-context-chevron { font-size: 22px; transition: transform .15s ease, color .15s ease; }
+#topBar .learning-context-chip:hover .learning-context-chip-copy strong,
+#topBar .learning-context-chip:focus-visible .learning-context-chip-copy strong { color: var(--accent-primary); }
+#topBar .learning-context-chip:hover .learning-context-chevron { color: var(--accent-primary); transform: translateX(2px); }
+#topBar .learning-context-chip:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
+
+/* Rows */
+.choice-sheet-item,
+.learning-context-choice,
+.tutorial-language-choice,
+#step1 .standard-source-addon-btn {
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.choice-sheet-list .choice-sheet-item,
+.choice-sheet-grid .choice-sheet-item {
+  min-height: 64px;
+  border-color: color-mix(in srgb, var(--border-color) 70%, transparent);
+  background: transparent;
+}
+.choice-sheet-item:last-child,
+.learning-context-choice:last-of-type,
+.tutorial-language-choice:last-child { border-bottom-color: transparent; }
+.choice-sheet-list .choice-sheet-item + .choice-sheet-item { margin-top: 0; }
+.choice-sheet-item { padding: 12px 6px; gap: 14px; }
+.choice-sheet-item:hover:not(:disabled),
+.learning-context-choice:hover,
+.tutorial-language-choice:hover,
+#step1 .standard-source-addon-btn:hover {
+  border-color: color-mix(in srgb, var(--border-color) 70%, transparent);
+  background: color-mix(in srgb, var(--text-primary) 4%, transparent);
+}
+.choice-sheet-list .choice-sheet-copy strong,
+.choice-sheet-grid .choice-sheet-copy strong { font-size: 16px; font-weight: 700; }
+.choice-sheet-list .choice-sheet-copy small,
+.choice-sheet-grid .choice-sheet-copy small { font-size: 13px; line-height: 1.4; }
+.choice-sheet-tail { font-size: 20px; }
+
+/* Current choice */
+.choice-sheet-item.is-selected,
+.tutorial-language-choice.is-current {
+  border-color: color-mix(in srgb, var(--border-color) 70%, transparent);
+  background: transparent;
+}
+.choice-sheet-item.is-selected .choice-sheet-copy strong,
+.tutorial-language-choice.is-current strong { color: var(--accent-primary); }
+.choice-sheet-item.is-selected .choice-sheet-tail { color: var(--accent-primary); }
+.choice-sheet-item:disabled { opacity: .45; }
+
+/* Icons: flags stand bare and large; line icons sit in the accent colour. */
+.choice-sheet-icon,
+.choice-sheet-grid .choice-sheet-icon {
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--choice-accent, var(--accent-primary));
+  font-size: 32px;
+}
+.choice-sheet-icon svg { width: 26px; height: 26px; }
+.choice-sheet-icon--image {
+  width: 42px;
+  height: 42px;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12);
+}
+.choice-sheet-icon--initials {
+  width: 42px;
+  height: 42px;
+  background: color-mix(in srgb, var(--choice-accent) 72%, #0b1118);
+  color: #fff;
+  font: 700 15px/1 var(--font-emphasis);
+}
+.choice-sheet-item { grid-template-columns: 42px minmax(0, 1fr) 18px; }
+.choice-sheet-grid .choice-sheet-body { column-gap: 18px; row-gap: 0; }
+.choice-sheet-grid .choice-sheet-item {
+  min-height: 60px;
+  grid-template-columns: 40px minmax(0, 1fr) 14px;
+  padding: 10px 4px;
+}
+/* In two columns the last row of each column loses its rule. */
+.choice-sheet-grid .choice-sheet-item:nth-last-child(2):nth-child(odd) { border-bottom-color: transparent; }
+
+/* Settings sheet from the chip */
+.learning-context-switches { gap: 0; }
+.learning-context-choice { min-height: 60px; padding: 10px 4px; }
+.learning-context-sheet-flag { font-size: 32px; }
+.learning-context-choice strong { font-size: 16px; }
+.learning-context-choice > span:last-child { font-size: 20px; }
+.learning-context-mode-icon { width: 32px; }
+.learning-context-mode-icon svg { width: 24px; height: 24px; stroke: currentColor; }
+.learning-context-progress[hidden] { display: none; }
+
+/* Inline vocabulary choice (language chosen, vocabulary not yet) */
+#step1.language-summary-active .standard-source-card {
+  padding: 16px 6px 6px;
+  background: transparent;
+}
+#step1.language-summary-active .standard-source-choice-buttons { gap: 0; }
+.standard-source-choice-intro .standard-source-choice-title { font-size: 20px; }
+.standard-source-choice-intro p { color: var(--text-muted); font-size: 14px; }
+#step1 .standard-source-addon-btn { padding: 12px 6px; border-bottom-color: transparent; }
+/* No deck exists yet, so nothing that belongs to one may show here. */
+#step1.language-summary-active:not(.context-ready) ~ #step2,
+#step1.language-summary-active:not(.context-ready) ~ #step4,
+#step1.language-summary-active:not(.context-ready) ~ #extrasDeckSection,
+#step1.language-summary-active:not(.context-ready) ~ #reviewDeckSection,
+#setupPanel > #personalCoverageWrapper { display: none !important; }
+
+/* Tutorial language list */
+.tutorial-language-grid { gap: 0; }
+.tutorial-language-choice { padding: 12px 4px; }
+.tutorial-language-flag { font-size: 30px; }
+.tutorial-language-choice strong { font-size: 16px; }
+.tutorial-language-choice small { font-size: 12px; }
+
+@media (max-width: 560px) {
+  #topBar .learning-context-chip { max-width: 200px; padding-left: 0; }
+  #topBar .learning-context-flag { font-size: 27px; }
+  #topBar .learning-context-chip-copy strong { font-size: 17px; }
+}
+@media (max-width: 400px) {
+  #topBar .learning-context-chip { max-width: 170px; column-gap: 7px; }
+  #topBar .learning-context-flag { font-size: 25px; }
+  #topBar .learning-context-chip-copy strong { font-size: 16px; }
 }

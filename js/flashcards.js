@@ -1,26 +1,26 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=526eecbd';
-import './speech.js?v=526eecbd';
-import { goToRoute, routeCodeFor } from './routes.js?v=526eecbd';
-import './side-dock.js?v=526eecbd';
+import './state.js?v=d0ffeadf';
+import './speech.js?v=d0ffeadf';
+import { goToRoute, routeCodeFor } from './routes.js?v=d0ffeadf';
+import './side-dock.js?v=d0ffeadf';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=526eecbd';
+} from './example-personalisation.js?v=d0ffeadf';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=526eecbd';
+} from './spanishdict-usage.js?v=d0ffeadf';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=526eecbd';
+} from './reverse-cues.js?v=d0ffeadf';
 import {
     compactConstructionMetadata,
     contextWithoutSenseMetadata,
@@ -48,7 +48,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=526eecbd';
+} from './card-metadata-pills.js?v=d0ffeadf';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -9560,8 +9560,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '526eecbd';
-const MODALS_ASSET_VERSION = '526eecbd';
+const ASSET_VERSION = 'd0ffeadf';
+const MODALS_ASSET_VERSION = 'd0ffeadf';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
