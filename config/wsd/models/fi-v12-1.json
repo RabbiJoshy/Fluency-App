@@ -4,11 +4,11 @@
   "language": "fi",
   "execution_status": "ready",
   "source_method_id": "provider-neutral-v12-stratified-difficulty-gated",
-  "method_summary": "Forced closed-menu leaf selection with rank agreement and machine-readable evidence guards; no unmeasured POS gate.",
+  "method_summary": "Forced closed-menu leaf selection with rank agreement, machine-readable evidence guards, and pinned Finnish Universal Dependencies occurrence tagging.",
   "provider_prior": {"enabled": true, "source": "wiktionary_menu_order", "weight": 0.02, "decay": 0.5},
   "gloss": {"enabled": true, "model_revision": "gemini-embedding-001", "task_type": "SEMANTIC_SIMILARITY", "dimensions": 3072, "cache_lookup": "exact_text", "translation_overlap_bonus": 0.04},
-  "occurrence_pos": {"enabled": false, "model_revision": "none", "role": "unconstrained_no_pos_model"},
-  "constrain": {"pos_filter": "unconstrained_no_pos_model", "grammar_gate": "none", "companion_gate": "none", "clitic_gate": "none", "pronominal_gate": "none", "domain_penalty": 0.04},
+  "occurrence_pos": {"enabled": true, "model_revision": "stanza-fi-default@1.14.0", "role": "occurrence-pos-fi"},
+  "constrain": {"pos_filter": "wiktionary_ud_bridge", "contextual_lemma_filter": "provider_headword_match", "contextual_headword_rules": {"tapaan": "preceding_token_ends_n => tapa; otherwise => tavata"}, "grammar_gate": "normalized_metadata", "companion_gate": "normalized_metadata", "clitic_gate": "none", "pronominal_gate": "none", "domain_penalty": 0.04},
   "multiword": {"enabled": false, "status": "no_finnish_mwe_inventory"},
   "commit": {"strategy": "rank_agreement_with_machine_readable_guards", "choices": ["provider_order", "raw_gloss", "forced_selection"], "status": "forced_leaf_always_retained", "raw_margins_are_confidence": false},
   "specialists": {"enabled": false},
@@ -16,5 +16,5 @@
   "calibration": {"enabled": false},
   "alignment": {"enabled": false},
   "generative_escalation": false,
-  "asset_gate": {"required_before_ready": ["gemini_exact_text_embedding_cache"], "derived_per_run": ["gemini_exact_text_cache_delta"], "assignment_outputs_are_inputs": false}
+  "asset_gate": {"required_before_ready": ["gemini_exact_text_embedding_cache", "stanza_finnish_default_1.14.0"], "derived_per_run": ["gemini_exact_text_cache_delta"], "assignment_outputs_are_inputs": false}
 }

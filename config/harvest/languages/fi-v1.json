@@ -2,6 +2,8 @@
   "config_version": "harvest-language-policy/v1",
   "policy_id": "fi-v1",
   "language": "fi",
+  "alignment_floor": 0.7,
+  "alignment_floor_note": "Measured on the 2,000-card Finnish Speech harvest: 106,115 of 126,581 candidates remain eligible, every card retains at least 12 examples, and the release fills exactly 10 examples per card. The shared 0.30 floor admitted low-alignment duplicates and produced a one-example release shortfall.",
   "normalization": {
     "unicode_form": "NFC",
     "casefold": true,

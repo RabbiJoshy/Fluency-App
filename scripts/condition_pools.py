@@ -43,13 +43,34 @@ def main() -> int:
                         help="cross-run score store (default: <workspace>/embeddings/alignment/<lang>.json)")
     parser.add_argument("--skip-alignment", action="store_true",
                         help="tag variety, hardness and length only; leave alignment unscored")
-    parser.add_argument("--alignment-floor", type=float, default=DEFAULT_ALIGNMENT_FLOOR)
+    parser.add_argument(
+        "--alignment-floor",
+        type=float,
+        default=None,
+        help="override the language policy's floor (shared default only when undeclared)",
+    )
     parser.add_argument("--out", type=Path)
     args = parser.parse_args()
 
     harvest = args.run_dir / "stages/03_sentence_harvest/output"
     out = args.out or (args.run_dir / "stages/04_pools/output/pools.json")
     language = args.run_dir.resolve().parents[1].name
+    if args.alignment_floor is None:
+        profile = json.loads((args.run_dir / "profile.json").read_text(encoding="utf-8"))
+        policy_id = str((profile.get("harvest") or {}).get("language_policy") or "")
+        policy_path = (
+            Path(__file__).resolve().parents[1]
+            / "config/harvest/languages"
+            / f"{policy_id}.json"
+        )
+        policy = (
+            json.loads(policy_path.read_text(encoding="utf-8"))
+            if policy_path.is_file()
+            else {}
+        )
+        args.alignment_floor = float(
+            policy.get("alignment_floor", DEFAULT_ALIGNMENT_FLOOR)
+        )
     cache_path = args.alignment_cache or (
         args.run_dir.resolve().parents[3] / f"embeddings/alignment/{language}.json"
     )

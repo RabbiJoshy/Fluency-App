@@ -92,7 +92,64 @@ Repeat a shorter human pass after the candidate release is assembled: inspect th
 highest-frequency cards, every declared or excluded item, every remaining menu gap and
 a sample from each rank band.
 
-## 4. Speech mode: optional quality inputs
+## 4. Selection and publication policy
+
+These choices are required onboarding inputs. The engine is shared, but the values and
+enabled gates may differ by language and mode. Record them in the pipeline, harvest,
+WSD-model and mode profiles, together with the measurement or judgement behind each
+non-default value.
+
+### What enters the candidate pool
+
+- Per-source harvest quota: for source `s`, reserve
+  `q_s = min(available_s, floor(card_cap * source_share_s))`, then redistribute unused
+  slots to sources that still have supply. Source share controls what survives harvest;
+  it does not directly control what the learner sees.
+- Record the rank-banded harvest budget, candidate cap, source shares and every cheap
+  rejection rule. These are language/mode choices because recovering discarded rows
+  requires another harvest.
+- Record cleaning gates such as the language-specific alignment floor, variety rules,
+  length rules and contamination rules. Cleaning tags rejected rows; it does not erase
+  them.
+
+### What reaches WSD
+
+- Record the execution cap or rank/polysemy budget. Speech normally takes at most the
+  configured cap from each eligible, priority-ordered pool. Lyrics uses a separate
+  rank-and-polysemy budget, so mode parity does not mean identical numbers.
+- Record the exact candidate constraints: POS bridge, contextual lemma rule, grammar,
+  companion/clitic rules, multi-word routing and deterministic bypasses. A language may
+  disable a gate only by declaring that absence.
+- Record the scoring profile: provider-order prior, gloss/context score, translation
+  overlap bonus, domain penalty, and any language-specific repair. Do not copy Spanish
+  settings to a Wiktionary language without measuring provider parity.
+- Record the commit rule: forced leaf, rank agreement, evidence guards, abstain/redraw,
+  or escalation. Also record the release projection: `forced_leaf` publishes the chosen
+  leaf; `supported_specificity` publishes only leaf-level supported decisions.
+
+### What reaches the learner UI
+
+- Speech computes an audit-only difficulty value from distinct harder words:
+  `c_i = log10(rank_i / target_rank)`,
+  `burden = first_new_word_discount * max(c_i) + sum(other c_i)`, plus configured
+  short/long sentence penalties. The exact weights live in the shared harvest policy.
+- Difficulty is a ceiling, not the final order. For a card with more than 12 candidates,
+  retain the lower two-thirds of its own difficulty distribution, then rank by formal
+  sentence quality, difficulty and stable sentence ID.
+- Fill display slots in four passes: unseen senses before repeats, first with strict
+  single-sentence/no-placeholder rules and then relaxed; next fill remaining slots with
+  the same strict-then-relaxed order. Deduplicate near-identical lines and cap reuse of
+  one sentence across cards.
+- Record the number of examples shown per rank band and the shortfall policy. These can
+  differ by release even when harvesting and WSD are shared.
+- Artist/Lyrics mode must separately record its occurrence-budget equation and line
+  quality equation, including length, alignment, punctuation and playable-audio terms.
+
+For every candidate release, archive a compact policy summary with the actual values,
+not only profile names. This is what lets a later onboarding answer “why did this line
+reach WSD?” and “why did this example reach the UI?” without reading implementation code.
+
+## 5. Speech mode: optional quality inputs
 
 - Declared surface/headword entries for contractions, slang, fillers and dictionary gaps.
 - Conjugation dataset and provider adapter.
@@ -109,7 +166,7 @@ a sample from each rank band.
 - Source-title metadata for subtitle examples.
 - Manual redirects, exclusions and corrections.
 
-## 5. Artist mode: additional required inputs
+## 6. Artist mode: additional required inputs
 
 - A pinned lyrics corpus containing song ID, title, artist, raw lyrics, source URL,
   licence and attribution.
@@ -126,7 +183,7 @@ a sample from each rank band.
   - routing snapshot or equivalent language rules
 - The same dictionary snapshot, menu adapter and metadata policy used by Speech mode.
 
-## 6. Artist mode: optional quality inputs
+## 7. Artist mode: optional quality inputs
 
 - English frequency list and target-language English-loanword list.
 - Reverse conjugation lookup.
