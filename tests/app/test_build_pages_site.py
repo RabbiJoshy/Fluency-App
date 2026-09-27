@@ -3,6 +3,7 @@
 import importlib.util
 from pathlib import Path
 import re
+import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -45,6 +46,23 @@ class StampTests(unittest.TestCase):
             text = stamp((ROOT / "app" / rel).read_text(encoding="utf-8"), "abc12345")
             tags = set(re.findall(r"\.(?:js|css)\?v=([A-Za-z0-9_.-]+)", text))
             self.assertLessEqual(tags, {"abc12345"}, rel)
+
+
+class BuildTests(unittest.TestCase):
+    def test_removes_what_the_app_no_longer_ships_but_keeps_external_data(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            site = Path(tmp)
+            (site / ".git").mkdir()
+            kept = ["cognates/fi/cognates.json", "coverage/es/coverage.json", "app/cognates/fi/cognates.json"]
+            for rel in kept + ["config/pipelines/old.json", "js/retired.js", ".git/HEAD"]:
+                (site / rel).parent.mkdir(parents=True, exist_ok=True)
+                (site / rel).write_text("x")
+            build_pages_site.build(site, "HEAD", "abc12345")
+            for rel in kept + [".git/HEAD", "index.html", "app/index.html", ".nojekyll"]:
+                self.assertTrue((site / rel).exists(), rel)
+            self.assertFalse((site / "config/pipelines/old.json").exists())
+            self.assertFalse((site / "js/retired.js").exists())
+            self.assertFalse((site / "backend").exists())
 
 
 if __name__ == "__main__":

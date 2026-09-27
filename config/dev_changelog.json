@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T15:06:00+01:00",
+      "date": "2026-09-27 15:06 BST",
+      "agent": "Claude",
+      "summary": "The live site no longer carries files the app does not use, such as the pipeline settings that had been published by mistake.",
+      "detail": [
+        "51 unused files were removed from the site: pipeline and WSD settings, an unused script, and stray project files. Cognate and coverage data stay.",
+        "From now on, a file deleted from the app is also deleted from the live site.",
+        "app/backend/secrets.json is no longer in the repository; it only repeated the public values in config.json."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T14:25:00+01:00",
       "date": "2026-09-27 14:25 BST",
       "agent": "Claude",
