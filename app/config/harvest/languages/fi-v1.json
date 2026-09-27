@@ -1,0 +1,22 @@
+{
+  "config_version": "harvest-language-policy/v1",
+  "policy_id": "fi-v1",
+  "language": "fi",
+  "normalization": {
+    "unicode_form": "NFC",
+    "casefold": true,
+    "canonical_apostrophe": "'",
+    "apostrophe_variants": ["’", "‘", "ʼ", "‛", "＇"],
+    "collapse_whitespace": true
+  },
+  "matching": {
+    "boundary_policy": "unicode_word",
+    "token_pattern": "[^\\W\\d_]+(?:['’-][^\\W\\d_]+)*"
+  },
+  "sentence_rules": {
+    "reject_contains_apostrophe": false,
+    "reject_contains_hyphen": false,
+    "forbidden_substrings": ["http://", "https://", "<", ">", "♪", "♫"]
+  },
+  "policy_note": "Finnish letters, including ä, ö and å, remain distinct under NFC normalization. Apostrophes can mark a morpheme or syllable boundary and hyphens occur in compounds and foreign-name inflection, so neither is rejected globally. Compound and colon-inflection behaviour remains an explicit first-run audit item."
+}

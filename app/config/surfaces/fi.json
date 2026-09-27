@@ -1,0 +1,6 @@
+{
+  "policy_version": "surface-policy/v1",
+  "language": "fi",
+  "note": "Starts with the shared evidence policy. Add Finnish overrides only after the 2,000-card manual audit records a measured reason.",
+  "reason_codes": {}
+}

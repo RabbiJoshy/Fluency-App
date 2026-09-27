@@ -1,0 +1,28 @@
+{
+  "target_language": "fi",
+  "known_language": "en",
+  "notes": "Finnish read by an English speaker. This first-release policy is deliberately conservative: Finnish is not closely related to English, so the useful transparent words are mainly international loans. The skeleton folds Finnish vowel marks and common loanword gemination, but does not strip productive Finnish endings wholesale. The 0.85 cutoff is provisional until the generated 2,000-card score bands and false-friend list have been manually reviewed; the candidate layer must not be treated as calibrated merely because it builds.",
+  "target_skeleton": [
+    ["ä", "a"],
+    ["ö", "o"],
+    ["kk", "k"],
+    ["pp", "p"],
+    ["tt", "t"],
+    ["ll", "l"],
+    ["mm", "m"],
+    ["nn", "n"],
+    ["rr", "r"],
+    ["ss", "s"]
+  ],
+  "known_skeleton": [
+    ["ck", "k"]
+  ],
+  "minimum_length": 4,
+  "length_guard": 0.7,
+  "gloss_maximum_words": 6,
+  "meaning_floor": 0.75,
+  "meaning_weight": 0.25,
+  "candidate_budget": 400,
+  "default_threshold": 0.85,
+  "known_must_be_a_gloss": true
+}
