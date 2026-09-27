@@ -178,9 +178,13 @@ function getFullVocabLookup() {
     if (fullVocabLookup) return fullVocabLookup;
     if (!cachedVocabularyData) return new Map();
     fullVocabLookup = new Map();
+    // Surfaces first: a card is its surface, so *rubio* must find the rubio
+    // card even when the commoner *rubia* shares its lemma.
     for (const entry of cachedVocabularyData) {
         const w = entry.word.toLowerCase().trim();
         if (!fullVocabLookup.has(w)) fullVocabLookup.set(w, entry);
+    }
+    for (const entry of cachedVocabularyData) {
         if (entry.lemma) {
             const l = entry.lemma.toLowerCase().trim();
             if (!fullVocabLookup.has(l)) fullVocabLookup.set(l, entry);
@@ -257,198 +261,201 @@ function resolveToken(token) {
     return { token, source: 'unknown', entry: null, deckIndex: null };
 }
 
-// Store current breakdown for popup access
+// Store current breakdown for the row actions (go to card, save).
 let currentBreakdownResults = [];
 let currentBreakdownSentence = { target: '', english: '' };
+let breakdownRenderId = 0;
 
-function showLyricBreakdown(event) {
-    event.stopPropagation();
-    event.preventDefault();
+function escapeBreakdownText(value) {
+    return String(value ?? '').replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+}
 
-    const card = flashcards[currentIndex];
-    if (!card) return;
+// The sentence the card is showing. updateCard() records the example it
+// rendered; recomputing the index here picked a different list (dedupeExamples
+// rather than the card's cyclable examples) and so broke down another sentence.
+function breakdownSentenceForCurrentCard() {
+    const shown = window._currentDisplayedExample;
+    const target = shown && (shown.target || shown.spanish);
+    if (target) return { target, english: shown.english || '' };
+    const meaning = flashcards[currentIndex]?.meanings?.[currentMeaningIndex];
+    return { target: meaning?.targetSentence || '', english: meaning?.englishSentence || '' };
+}
 
-    const currentMeaning = card.meanings[currentMeaningIndex];
-    if (!currentMeaning) return;
-
-    // Get the raw (un-truncated) sentence — use MWE-specific examples if applicable
-    let targetSentence = '';
-    let englishSentence = '';
-    let activeExamples;
-    if (currentMeaning.allMWEs) {
-        const mweIdx = currentMWEIndex % currentMeaning.allMWEs.length;
-        activeExamples = dedupeExamples(currentMeaning.allMWEs[mweIdx].examples || []);
-    } else {
-        activeExamples = dedupeExamples(currentMeaning.allExamples || []);
+// Gloss and POS for a resolved token. The card's own word reads the sense
+// being studied, not the headword's first meaning.
+function breakdownGloss(result) {
+    if (!result.entry) return { gloss: '', pos: '' };
+    if (result.source === 'deck') {
+        const isCurrent = result.deckIndex === currentIndex;
+        const meaning = (isCurrent && result.entry.meanings?.[currentMeaningIndex]) || result.entry.meanings?.[0];
+        return { gloss: meaning?.meaning || result.entry.translation || '', pos: meaning?.pos || '' };
     }
-    if (activeExamples.length > 0) {
-        const exIdx = currentExampleIndex % activeExamples.length;
-        const example = activeExamples[exIdx];
-        targetSentence = example.target || example.spanish || '';
-        englishSentence = example.english || '';
-    } else {
-        targetSentence = currentMeaning.targetSentence || '';
-        englishSentence = currentMeaning.englishSentence || '';
+    const meaning = result.entry.meanings?.[0];
+    return { gloss: meaning?.translation || meaning?.meaning || '', pos: meaning?.pos || '' };
+}
+
+function breakdownIsKnown(result) {
+    if (!result.entry || typeof window.isWordKnown !== 'function') return false;
+    const fullId = result.source === 'deck' ? result.entry.fullId : getWordId(result.entry);
+    try { return Boolean(fullId && window.isWordKnown(fullId)); } catch (_) { return false; }
+}
+
+// The vocabulary index loads as columns first and fetches each word's
+// meanings on demand, so most words outside the deck arrive empty. Fetch the
+// rows for the words in this sentence before glossing them.
+async function hydrateBreakdownEntries(results) {
+    if (typeof window.ensureIndexRowsForRange !== 'function') return false;
+    const ranks = results
+        .filter(r => r.source === 'vocab' && r.entry?._indexRowsPending)
+        .map(r => Number(r.entry.rank))
+        .filter(Number.isFinite);
+    if (!ranks.length) return false;
+    const langConfig = config?.languages?.[selectedLanguage] || {};
+    try {
+        await window.ensureIndexRowsForRange(langConfig, Math.min(...ranks), Math.max(...ranks) + 1, ranks);
+        return true;
+    } catch (e) {
+        console.warn('Word by word: failed to fetch index rows', e);
+        return false;
     }
+}
 
-    if (!targetSentence) return;
-
-    currentBreakdownSentence = { target: targetSentence, english: englishSentence };
-
-    // Tokenize and resolve each word
-    const tokens = tokenizeLyricLine(targetSentence);
-    currentBreakdownResults = tokens.map(t => resolveToken(t));
-
-    // Build modal HTML
-    let html = `
-        <div class="breakdown-header">
-            <div class="target-line">${targetSentence}</div>
-            <div class="english-line">${englishSentence}</div>
-        </div>
-    `;
-
+function renderBreakdownBody() {
+    const body = document.getElementById('lyricBreakdownBody');
+    if (!body) return;
+    const { target, english } = currentBreakdownSentence;
+    const seen = new Set();
+    const rows = [];
     currentBreakdownResults.forEach((result, idx) => {
-        if (!result.token.clean) return; // skip pure punctuation
-
-        const inDeck = result.source === 'deck';
-        const rowClass = 'breakdown-word-row' + (inDeck ? ' in-deck' : '');
-
-        let translation = '';
-        let pos = '';
-        if (result.entry) {
-            if (result.source === 'deck') {
-                // Flashcard object
-                translation = result.entry.meanings?.[0]?.meaning || result.entry.translation || '';
-                pos = result.entry.meanings?.[0]?.pos || '';
-            } else {
-                // Raw vocab entry
-                translation = result.entry.meanings?.[0]?.translation || '';
-                pos = result.entry.meanings?.[0]?.pos || '';
-            }
-        }
-
-        const posClass = pos ? getPosColorClass(pos) : '';
-        const posHTML = pos ? `<span class="word-pos card-pos ${posClass}">${pos}</span>` : '';
         const surface = result.token.clean;
-        const saved = Boolean(window.isWordSaved?.(surface, targetSentence, selectedLanguage));
-        const saveHTML = `<button type="button" class="word-save${saved ? ' is-saved' : ''}" data-breakdown-save="${idx}">${saved ? 'Saved' : 'Save'}</button>`;
+        if (!surface) return;
+        const key = surface.toLocaleLowerCase();
+        if (seen.has(key)) return;
+        seen.add(key);
 
-        html += `
-            <div class="${rowClass}" onclick="showWordPopup(event, ${idx})">
-                <span class="word-spanish">${surface}</span>
-                <span class="word-translation">${translation || '<span style="color: var(--text-secondary);">—</span>'}</span>
-                ${posHTML}
-                ${saveHTML}
-            </div>
-        `;
+        const { gloss, pos } = breakdownGloss(result);
+        const isCardWord = result.source === 'deck' && result.deckIndex === currentIndex;
+        const known = breakdownIsKnown(result);
+        const saved = Boolean(window.isWordSaved?.(surface, target, selectedLanguage));
+        const classes = ['wbw-row'];
+        if (isCardWord) classes.push('is-card-word');
+        else if (result.source === 'deck') classes.push('in-deck');
+        if (!result.entry) classes.push('is-unmatched');
+        const posHTML = pos
+            ? `<span class="wbw-pos card-pos ${getPosColorClass(pos) || ''}">${escapeBreakdownText(pos)}</span>`
+            : '';
+        const knownHTML = known ? '<span class="wbw-known" title="Known" aria-label="Known">✓</span>' : '';
+        const lemma = result.entry?.lemma || '';
+        const showLemma = lemma && lemma.toLocaleLowerCase() !== key;
+        const canOpen = Boolean(result.entry) && !isCardWord;
+        if (canOpen) classes.push('can-open');
+        rows.push(`
+            <li class="${classes.join(' ')}"${canOpen ? ` data-breakdown-open="${idx}" role="button" tabindex="0" aria-label="Go to card: ${escapeBreakdownText(surface)}"` : ''}>
+                <div class="wbw-main">
+                    <span class="wbw-word">${escapeBreakdownText(surface)}${knownHTML}</span>
+                    <span class="wbw-gloss">${gloss ? escapeBreakdownText(gloss) : '<span class="wbw-none">—</span>'}</span>
+                    ${showLemma || posHTML ? `<span class="wbw-meta">${showLemma ? `<span class="wbw-lemma">${escapeBreakdownText(lemma)}</span>` : ''}${posHTML}</span>` : ''}
+                </div>
+                <div class="wbw-actions">
+                    <button type="button" class="wbw-star${saved ? ' is-saved' : ''}" data-breakdown-save="${idx}" aria-pressed="${saved}" aria-label="${saved ? 'Saved' : 'Save'}: ${escapeBreakdownText(surface)}" title="${saved ? 'Saved' : 'Save'}">${saved ? '★' : '☆'}</button>
+                    <span class="wbw-chevron" aria-hidden="true">${canOpen ? '›' : ''}</span>
+                </div>
+            </li>`);
     });
 
-    document.getElementById('lyricBreakdownBody').innerHTML = html;
-    document.getElementById('lyricBreakdownBody')?.querySelectorAll('[data-breakdown-save]').forEach(button => {
-        button.addEventListener('click', event => {
-            event.stopPropagation();
-            event.preventDefault();
-            const idx = Number(button.dataset.breakdownSave);
-            const result = currentBreakdownResults[idx];
-            if (!result?.token?.clean) return;
-            let gloss = '';
-            let pos = '';
-            if (result.entry) {
-                gloss = result.source === 'deck'
-                    ? (result.entry.meanings?.[0]?.meaning || result.entry.translation || '')
-                    : (result.entry.meanings?.[0]?.translation || '');
-                pos = result.entry.meanings?.[0]?.pos || '';
-            }
-            const saved = window.toggleSavedWord?.({
-                surface: result.token.clean,
-                gloss,
-                pos,
-                sentence: currentBreakdownSentence.target,
-                english: currentBreakdownSentence.english,
-                language: selectedLanguage,
-            });
-            button.classList.toggle('is-saved', Boolean(saved));
-            button.textContent = saved ? 'Saved' : 'Save';
-        });
-    });
+    body.innerHTML = `
+        <div class="wbw-sentence">
+            <p class="wbw-target">${escapeBreakdownText(target)}</p>
+            ${english ? `<p class="wbw-english">${escapeBreakdownText(english)}</p>` : ''}
+        </div>
+        <ul class="wbw-list">${rows.join('')}</ul>`;
+}
+
+function onBreakdownBodyKeydown(event) {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    if (!event.target.matches?.('[data-breakdown-open]')) return;
+    onBreakdownBodyClick(event);
+}
+
+function onBreakdownBodyClick(event) {
+    const star = event.target.closest('[data-breakdown-save]');
+    if (!star) {
+        const open = event.target.closest('[data-breakdown-open]');
+        if (!open) return;
+        event.stopPropagation();
+        event.preventDefault();
+        const idx = Number(open.dataset.breakdownOpen);
+        const result = currentBreakdownResults[idx];
+        if (result?.source === 'deck') navigateToCard(result.deckIndex);
+        else if (result?.entry) navigateToVocabCard(idx);
+        return;
+    }
+    event.stopPropagation();
+    const result = currentBreakdownResults[Number(star.dataset.breakdownSave)];
+    if (!result?.token?.clean) return;
+    const { gloss, pos } = breakdownGloss(result);
+    const saved = Boolean(window.toggleSavedWord?.({
+        surface: result.token.clean,
+        gloss,
+        pos,
+        sentence: currentBreakdownSentence.target,
+        english: currentBreakdownSentence.english,
+        language: selectedLanguage,
+    }));
+    star.classList.toggle('is-saved', saved);
+    star.setAttribute('aria-pressed', String(saved));
+    star.title = saved ? 'Saved' : 'Save';
+    star.setAttribute('aria-label', `${saved ? 'Saved' : 'Save'}: ${result.token.clean}`);
+    star.textContent = saved ? '★' : '☆';
+}
+
+async function showLyricBreakdown(event) {
+    event?.stopPropagation();
+    event?.preventDefault();
+
+    if (!flashcards[currentIndex]) return;
+    const sentence = breakdownSentenceForCurrentCard();
+    if (!sentence.target) return;
+
+    currentBreakdownSentence = {
+        target: sentence.target.replace(/<[^>]+>/g, ''),
+        english: String(sentence.english || '').replace(/<[^>]+>/g, ''),
+    };
+    currentBreakdownResults = tokenizeLyricLine(currentBreakdownSentence.target).map(t => resolveToken(t));
+
+    const body = document.getElementById('lyricBreakdownBody');
+    if (body && !body.dataset.bound) {
+        body.addEventListener('click', onBreakdownBodyClick);
+        body.addEventListener('keydown', onBreakdownBodyKeydown);
+        body.dataset.bound = '1';
+    }
+    const renderId = ++breakdownRenderId;
+    renderBreakdownBody();
     document.getElementById('lyricBreakdownModal').classList.remove('hidden');
+
+    if (await hydrateBreakdownEntries(currentBreakdownResults) && renderId === breakdownRenderId) {
+        renderBreakdownBody();
+    }
 }
 
 function hideLyricBreakdown() {
+    breakdownRenderId++;
     document.getElementById('lyricBreakdownModal').classList.add('hidden');
     hideWordPopup();
 }
 
 function hideWordPopup() {
-    document.getElementById('wordPopup').classList.add('hidden');
+    document.getElementById('wordPopup')?.classList.add('hidden');
 }
 
+// Kept for callers of the old floating popup: a row now opens its card.
 function showWordPopup(event, tokenIndex) {
-    event.stopPropagation();
-
+    event?.stopPropagation();
     const result = currentBreakdownResults[tokenIndex];
-    if (!result || !result.entry) return;
-
-    const popup = document.getElementById('wordPopup');
-    const inDeck = result.source === 'deck';
-
-    let word, translation, pos, corpusCount;
-    if (inDeck) {
-        word = result.entry.targetWord;
-        translation = result.entry.meanings?.[0]?.meaning || result.entry.translation || '';
-        pos = result.entry.meanings?.[0]?.pos || '';
-        corpusCount = result.entry.corpusCount;
-    } else {
-        word = result.entry.word;
-        translation = result.entry.meanings?.[0]?.translation || '';
-        pos = result.entry.meanings?.[0]?.pos || '';
-        corpusCount = result.entry.corpus_count || null;
-    }
-
-    let html = `<div class="popup-word">${word}</div>`;
-    html += `<div class="popup-translation">${translation || '—'}</div>`;
-    if (pos) html += `<div class="popup-detail">POS: ${pos}</div>`;
-    if (corpusCount) html += `<div class="popup-detail">Corpus count: ${corpusCount}</div>`;
-
-    if (inDeck) {
-        html += `<button class="popup-go-btn" onclick="navigateToCard(${result.deckIndex})">Go to card →</button>`;
-    } else if (result.entry) {
-        html += `<button class="popup-go-btn" onclick="navigateToVocabCard(${tokenIndex})">Go to card →</button>`;
-    }
-
-    popup.innerHTML = html;
-    popup.classList.remove('hidden');
-
-    // Position near the clicked row
-    const rect = event.currentTarget.getBoundingClientRect();
-    const popupWidth = 260;
-    let left = rect.right + 8;
-    let top = rect.top;
-
-    // If would overflow right, put it to the left
-    if (left + popupWidth > window.innerWidth) {
-        left = rect.left - popupWidth - 8;
-    }
-    // If would overflow left, center below
-    if (left < 8) {
-        left = Math.max(8, (rect.left + rect.right) / 2 - popupWidth / 2);
-        top = rect.bottom + 8;
-    }
-    // Clamp to viewport
-    top = Math.max(8, Math.min(top, window.innerHeight - 250));
-
-    popup.style.left = left + 'px';
-    popup.style.top = top + 'px';
-
-    // Dismiss on next click anywhere
-    setTimeout(() => {
-        document.addEventListener('click', function dismiss(e) {
-            if (!popup.contains(e.target)) {
-                hideWordPopup();
-            }
-            document.removeEventListener('click', dismiss);
-        });
-    }, 0);
+    if (result?.source === 'deck') navigateToCard(result.deckIndex);
+    else if (result?.entry) navigateToVocabCard(tokenIndex);
 }
 
 // ---------------------------------------------------------------------------
