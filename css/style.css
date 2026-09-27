@@ -6152,6 +6152,21 @@
             display: none;
         }
 
+        .app-loading-mark-art.is-clipart {
+            inset: 9px;
+            border-radius: 0;
+            background-size: contain;
+        }
+
+        .app-loading-mark-art.is-popping {
+            animation: app-loading-mark-pop 0.28s ease-out;
+        }
+
+        @keyframes app-loading-mark-pop {
+            from { transform: scale(0.82); }
+            to { transform: scale(1); }
+        }
+
         .app-loading-spinner {
             grid-area: stack;
             width: 40px;

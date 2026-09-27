@@ -1,34 +1,34 @@
 // First: rewrites old ?artist=/?about= links to their #/ route before
 // anything below reads the address.
-import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=a95acfc2';
-import { releaseUrl } from './release-host.js?v=a95acfc2';
-import './theme.js?v=a95acfc2';
-import './state.js?v=a95acfc2';
-import './offline-db.js?v=a95acfc2';
-import './sync-queue.js?v=a95acfc2';
-import { initOfflineContent } from './offline-content.js?v=a95acfc2';
-import './speech.js?v=a95acfc2';
-import './artist-ui.js?v=a95acfc2';
-import './auth.js?v=a95acfc2';
-import './tutorial.js?v=a95acfc2';
-import './walkthrough.js?v=a95acfc2';
-import './estimation.js?v=a95acfc2';
-import './config.js?v=a95acfc2';
-import './progress.js?v=a95acfc2';
-import './knowledge.js?v=a95acfc2';
-import './ui.js?v=a95acfc2';
-import './vocab.js?v=a95acfc2';
-import './cognates.js?v=a95acfc2';
-import './coverage.js?v=a95acfc2';
-import './fast-mode.js?v=a95acfc2';
-import './extras.js?v=a95acfc2';
-import './review-home.js?v=a95acfc2';
-import './song-sets.js?v=a95acfc2';
-import './playlist-live.js?v=a95acfc2';
-import './spotify-playlist-import.js?v=a95acfc2';
-import './vocabulary-import.js?v=a95acfc2';
-import './flashcards.js?v=a95acfc2';
-import { validateArtistCatalog } from './data-contracts.js?v=a95acfc2';
+import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=69d817bf';
+import { releaseUrl } from './release-host.js?v=69d817bf';
+import './theme.js?v=69d817bf';
+import './state.js?v=69d817bf';
+import './offline-db.js?v=69d817bf';
+import './sync-queue.js?v=69d817bf';
+import { initOfflineContent } from './offline-content.js?v=69d817bf';
+import './speech.js?v=69d817bf';
+import './artist-ui.js?v=69d817bf';
+import './auth.js?v=69d817bf';
+import './tutorial.js?v=69d817bf';
+import './walkthrough.js?v=69d817bf';
+import './estimation.js?v=69d817bf';
+import './config.js?v=69d817bf';
+import './progress.js?v=69d817bf';
+import './knowledge.js?v=69d817bf';
+import './ui.js?v=69d817bf';
+import './vocab.js?v=69d817bf';
+import './cognates.js?v=69d817bf';
+import './coverage.js?v=69d817bf';
+import './fast-mode.js?v=69d817bf';
+import './extras.js?v=69d817bf';
+import './review-home.js?v=69d817bf';
+import './song-sets.js?v=69d817bf';
+import './playlist-live.js?v=69d817bf';
+import './spotify-playlist-import.js?v=69d817bf';
+import './vocabulary-import.js?v=69d817bf';
+import './flashcards.js?v=69d817bf';
+import { validateArtistCatalog } from './data-contracts.js?v=69d817bf';
 
 function startCardTutorial() {
     const knownLanguage = window.getCardTutorialLanguageKey?.();
@@ -83,7 +83,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
 const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
-    ? import('./spotify.js?v=a95acfc2').catch(error => {
+    ? import('./spotify.js?v=69d817bf').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })
@@ -131,6 +131,7 @@ let deckLoadingHintTimer = null;
 let loadingImagesManifest = null;
 let loadingImagesManifestPromise = null;
 let loadingMarkRotationTimer = null;
+const LOADING_MARK_ROTATION_MS = 750;
 let currentLoadingImages = [];
 let currentLoadingImageIndex = 0;
 
@@ -157,18 +158,27 @@ function stopLoadingMarkRotation() {
     }
 }
 
-function applyLoadingMarkImage(src) {
+// Language images are transparent clipart: contained and padded, with a small pop
+// on each swap. Artist art is a photo and keeps filling the tile edge to edge.
+function applyLoadingMarkImage(src, { clipart = false } = {}) {
     const mark = document.getElementById('appLoadingMark');
     const art = document.getElementById('appLoadingMarkArt');
     if (!mark || !art) return;
     if (!src) {
         art.hidden = true;
         art.style.backgroundImage = '';
+        art.classList.remove('is-clipart', 'is-popping');
         mark.classList.remove('has-art');
         return;
     }
     const escaped = String(src).replace(/"/g, '%22');
     art.style.backgroundImage = `url("${escaped}")`;
+    art.classList.toggle('is-clipart', clipart);
+    if (clipart && !prefersReducedMotion()) {
+        art.classList.remove('is-popping');
+        void art.offsetWidth; // restart the pop animation
+        art.classList.add('is-popping');
+    }
     art.hidden = false;
     mark.classList.add('has-art');
 }
@@ -202,15 +212,18 @@ async function updateLoadingMark({ language = '', artist = null } = {}) {
         return;
     }
 
+    // Preload the set so a swap never shows an empty tile, and start somewhere
+    // random so repeated loads don't always open on the same picture.
+    images.forEach(src => { const img = new Image(); img.src = src; });
     currentLoadingImages = images;
-    currentLoadingImageIndex = 0;
-    applyLoadingMarkImage(images[0]);
+    currentLoadingImageIndex = Math.floor(Math.random() * images.length);
+    applyLoadingMarkImage(images[currentLoadingImageIndex], { clipart: true });
 
-    if (images.length > 1) {
+    if (images.length > 1 && !prefersReducedMotion()) {
         loadingMarkRotationTimer = setInterval(() => {
             currentLoadingImageIndex = (currentLoadingImageIndex + 1) % currentLoadingImages.length;
-            applyLoadingMarkImage(currentLoadingImages[currentLoadingImageIndex]);
-        }, 2500);
+            applyLoadingMarkImage(currentLoadingImages[currentLoadingImageIndex], { clipart: true });
+        }, LOADING_MARK_ROTATION_MS);
     }
 }
 
