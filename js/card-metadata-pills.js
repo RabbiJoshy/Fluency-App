@@ -121,8 +121,9 @@ export function projectWiktionaryGloss(meaning, value) {
             break;
         }
     }
+    const display = (remaining || text).replace(/^syncopic form of\s+/i, 'informal form of ');
     return {
-        display: remaining || text,
+        display,
         features: notes,
         qualifier: notes.find(n => n.family === 'context' || n.kind === 'gloss_note')?.value || '',
     };
@@ -289,7 +290,8 @@ export function senseMetadataItems(meaning) {
     // and make the active sense look busier than it is. Reassemble grammar
     // that belongs to this one sense into one readable, source-ordered detail.
     const grammarIndexes = items
-        .map((item, index) => item.family === 'grammar' && /^(?:person|number|mood|tense)=/.test(item.value) ? index : -1)
+        .map((item, index) => item.family === 'grammar' && item.kind !== 'surface_mark'
+            && /^(?:person|number|mood|tense)=/.test(item.value) ? index : -1)
         .filter(index => index >= 0);
     if (grammarIndexes.length > 1) {
         const grammarItems = grammarIndexes.map(index => items[index]);
@@ -436,6 +438,15 @@ function grammarIsAlreadyInGloss(item, gloss) {
     return false;
 }
 
+function grammarNavigationCue(item) {
+    if (item?.family !== 'grammar') return false;
+    const value = String(item.value || '').toLowerCase();
+    return item.kind === 'combined_sense_mark'
+        || /(?:first|second|third|1st|2nd|3rd)[ -]person/.test(value)
+        || /\bformal\b.*\b(?:singular|plural)\b/.test(value)
+        || /\b(?:singular|plural)\b.*\b(?:personal )?pronoun\b/.test(value);
+}
+
 export function compactLearnerSenseMetadata(items, meaning, options = {}) {
     const gloss = String(options.gloss || meaning?.meaning || meaning?.translation || '');
     const peers = Array.isArray(options.peerMeanings) ? options.peerMeanings.filter(p => p !== meaning) : [];
@@ -444,10 +455,13 @@ export function compactLearnerSenseMetadata(items, meaning, options = {}) {
     const hasCompanion = items.some(item => item.family === 'companion' || item.kind === 'required_case');
     const kept = (items || []).filter(item => {
         if (options.excludeCompanion && (item.family === 'companion' || (item.family === 'construction' && item.kind === 'optional_companion'))) return false;
+        if (item.family === 'grammar' && item.kind === 'surface_mark') return false;
         const display = senseMetadataDisplay(item, { gloss });
         if (item.family === 'register' && SUPPORTING_REGISTER_VALUES.has(item.value.toLowerCase())) return false;
         if (options.sharedContext && [item.value, item.sourceText, display.short, display.full].some(value => metadataTextIsRedundant(value, options.sharedContext))) return false;
         if (grammarIsAlreadyInGloss(item, gloss)) return false;
+        if (item.family === 'register' && item.value.toLowerCase() === 'colloquial'
+            && /^informal form of\b/i.test(gloss)) return false;
         if (gloss && [display.short, display.full, item.value].some(value => metadataTextIsRedundant(value, gloss))) return false;
         if (item.family === 'functional' && functionalAlreadyInGloss(item, gloss)) return false;
         if (isInflectionalPersonNumber(item) && !differs(item) && !/\byour\b/i.test(gloss)) return false;
@@ -456,7 +470,7 @@ export function compactLearnerSenseMetadata(items, meaning, options = {}) {
         if (usefulRegister(item)) return true;
         // A routine grammatical mark may be useful in details, but is not a
         // substitute for the semantic context that distinguishes these rows.
-        if (item.family === 'grammar' && !isSenseDefiningGrammar(item)
+        if (item.family === 'grammar' && !isSenseDefiningGrammar(item) && !grammarNavigationCue(item)
             && (!differs(item) || String(meaning?.context || '').trim())) return false;
         if (peerKeys.length && peerKeys.every(keys => keys.has(metadataItemKey(item)))
             && item.family === 'grammar') return false;
@@ -481,7 +495,8 @@ const FUNCTION_LABELS = {
 function functionalAlreadyInGloss(item, gloss) {
     const value = item.value.toLowerCase().replace(/^indicates? /, '');
     const text = String(gloss || '').toLowerCase();
-    return (value === 'purpose' && /\b(?:in order to|so that)\b/.test(text))
+    return ((/possibility|doubt/.test(value)) && /\b(?:perhaps|maybe|possibly)\b/.test(text))
+        || (value === 'purpose' && /\b(?:in order to|so that)\b/.test(text))
         || (value === 'destination' && /\b(?:towards|in the direction of|homewards)\b/.test(text));
 }
 
@@ -526,6 +541,7 @@ export function senseMetadataDisplay(item, options = {}) {
         return { short: `with ${token}`, full: `with ${token}` };
     }
     if (item.family === 'construction') {
+        if (item.kind === 'combined_frame') return { short: item.value, full: item.value };
         if (item.kind === 'required_case') return { short: `takes ${item.value} case`, full: `takes ${item.value} case` };
         // Canonical frame kinds are intentionally provider-neutral. Give their
         // atomic values enough syntax to remain clear to a learner: a bare
@@ -555,6 +571,7 @@ export function senseMetadataDisplay(item, options = {}) {
         return { short: FUNCTION_LABELS[canonical] || readableSenseNote(label), full: label };
     }
     if (item.family === 'grammar') {
+        if (item.kind === 'surface_summary') return { short: item.value, full: item.value };
         if (item.components?.length) {
             const values = item.components.map(part => part.value);
             const imperative = values.includes('mood=imperative');
@@ -564,6 +581,16 @@ export function senseMetadataDisplay(item, options = {}) {
             }
             const labels = item.components.map(part => senseMetadataDisplay(part).short);
             return { short: [...new Set(labels)].join(' · '), full: item.sourceText || item.value };
+        }
+        const learnerPhrase = String(item.value || '').toLowerCase();
+        if (/^personal (?:second|2nd)[ -]person plural$/.test(learnerPhrase)) {
+            return { short: 'plural', full: item.sourceText || item.value };
+        }
+        if (/(?:second|2nd)[ -]person plural/.test(learnerPhrase)) {
+            return { short: 'addressing several people', full: item.sourceText || item.value };
+        }
+        if (/formal.*(?:second|2nd)[ -]person singular|(?:second|2nd)[ -]person singular.*formal/.test(learnerPhrase)) {
+            return { short: 'formal singular', full: item.sourceText || item.value };
         }
         const exact = ({
             'reflexive=true': 'reflexive',
@@ -627,6 +654,8 @@ export function senseMetadataDisplay(item, options = {}) {
 
 export function isSenseDefiningGrammar(item) {
     return item.kind === 'combined_sense_mark'
+        || item.kind === 'surface_summary'
+        || grammarNavigationCue(item)
         || /^(?:countability|definiteness|formation|function|mood|noun-class|number|person|polarity|position|pronoun-class|pronoun-use|tense|verb-class|voice|word-class)=/u.test(item.value)
         || new Set([
             'reflexive=true',
@@ -635,6 +664,240 @@ export function isSenseDefiningGrammar(item) {
             'number=no-plural',
             'number=singular-only',
         ]).has(item.value);
+}
+
+function metadataPresentationRole(item) {
+    if (!item) return 'supporting';
+    if (item.family === 'companion'
+        || (item.family === 'construction' && [
+            'required_case', 'combined_frame', 'complement_form', 'argument_type',
+            'clause_context', 'object_role', 'polarity_context',
+        ].includes(item.kind))) return 'production';
+    if (item.family === 'register' || item.family === 'domain') return 'usage';
+    if (grammarNavigationCue(item) || item.kind === 'surface_summary') return 'navigation';
+    return 'supporting';
+}
+
+function metadataItemsDiffer(item, peers) {
+    if (!peers.length) return false;
+    const key = metadataItemKey(item);
+    return peers.some(peer => !senseMetadataItems(peer).some(candidate => metadataItemKey(candidate) === key));
+}
+
+function requiredCaseVaries(item, relatedMeanings) {
+    if (item.kind !== 'required_case' || !relatedMeanings.length) return false;
+    const cases = new Set();
+    for (const related of relatedMeanings) {
+        for (const candidate of senseMetadataItems(related)) {
+            if (candidate.kind === 'required_case') cases.add(String(candidate.value || '').toLowerCase());
+        }
+    }
+    return cases.size > 1;
+}
+
+function surfaceGrammarSummary(items) {
+    const values = new Map();
+    for (const item of items) {
+        if (item.family !== 'grammar' || item.kind !== 'surface_mark') continue;
+        const match = /^(case|gender|number)=(.+)$/u.exec(item.value);
+        if (!match) continue;
+        if (!values.has(match[1])) values.set(match[1], []);
+        values.get(match[1]).push(match[2]);
+    }
+    const gender = [...new Set(values.get('gender') || [])]
+        .filter(value => !['feminine', 'masculine'].every(candidate => values.get('gender')?.includes(candidate)));
+    const number = [...new Set(values.get('number') || [])];
+    const caseOrder = ['nominative', 'accusative', 'genitive', 'dative', 'instrumental', 'locative', 'vocative'];
+    let cases = [...new Set(values.get('case') || [])]
+        .sort((left, right) => caseOrder.indexOf(left) - caseOrder.indexOf(right));
+    if (cases.length > 1) cases = cases.filter(value => value !== 'vocative');
+    const caseLabels = {
+        nominative: 'nom.', accusative: 'acc.', genitive: 'gen.', dative: 'dat.',
+        instrumental: 'inst.', locative: 'loc.', vocative: 'voc.',
+    };
+    const labels = [
+        ...gender.map(value => value.replace(/-/g, ' ')),
+        ...number.map(value => value.replace(/-/g, ' ')),
+        cases.map(value => caseLabels[value] || value.replace(/-/g, ' ')).join('/'),
+    ].filter(Boolean);
+    if (!labels.length) return null;
+    return {
+        family: 'grammar',
+        kind: 'surface_summary',
+        value: labels.join(' · '),
+        components: items.filter(item => item.family === 'grammar' && item.kind === 'surface_mark'),
+        sourceIndex: Number.MAX_SAFE_INTEGER,
+    };
+}
+
+function senseSurfaceGrammarItems(meaning) {
+    const metadata = meaning?.metadata || {};
+    const canonical = metadata.sense_metadata || {};
+    const features = [
+        ...(Array.isArray(canonical.features) ? canonical.features : []),
+        ...(Array.isArray(meaning?.specialist_features) ? meaning.specialist_features : []),
+        ...(Array.isArray(metadata.specialist_features) ? metadata.specialist_features : []),
+    ];
+    const seen = new Set();
+    return features.filter(feature => {
+        if (feature?.family !== 'grammar' || feature.kind !== 'surface_mark' || !feature.value) return false;
+        const key = String(feature.value).toLowerCase();
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    }).map((feature, sourceIndex) => ({
+        family: 'grammar',
+        kind: 'surface_mark',
+        value: String(feature.value),
+        sourceText: String(feature.embedding_text || ''),
+        sourceIndex,
+    }));
+}
+
+function combineLearnerMetadata(items, meaning, options = {}) {
+    const combined = [...items];
+    const frameIndex = combined.findIndex(item => item.family === 'construction'
+        && /^(?:reflexive|pronominal) with\s+([^\s;,.]+)/iu.test(item.value));
+    const companionIndex = combined.findIndex(item => item.family === 'companion');
+    if (frameIndex >= 0 && companionIndex >= 0) {
+        const reflexive = /^(?:reflexive|pronominal) with\s+([^\s;,.]+)/iu.exec(combined[frameIndex].value)?.[1];
+        const companion = String(combined[companionIndex].value || '').trim();
+        const headword = String(meaning?.headword || options.targetWord || '').trim();
+        if (reflexive && companion) {
+            const components = [combined[frameIndex], combined[companionIndex]];
+            combined.splice(Math.max(frameIndex, companionIndex), 1);
+            combined.splice(Math.min(frameIndex, companionIndex), 1);
+            combined.unshift({
+                family: 'construction',
+                kind: 'combined_frame',
+                value: `${headword ? `${headword} ` : ''}${reflexive} ${companion}…`,
+                sourceText: components.map(item => item.sourceText || item.value).join('; '),
+                components,
+                sourceIndex: Math.min(...components.map(item => item.sourceIndex ?? 0)),
+            });
+        }
+    }
+    return combined.filter((item, index, values) => {
+        const components = values.flatMap(value => value.components || []);
+        if (components.some(component => metadataItemKey(component) === metadataItemKey(item))) return false;
+        const label = senseMetadataDisplay(item, options).short.toLocaleLowerCase('en');
+        if (values.some((candidate, candidateIndex) => candidateIndex !== index
+            && candidate.family === item.family
+            && senseMetadataDisplay(candidate, options).short.length > label.length
+            && metadataTextIsRedundant(label, senseMetadataDisplay(candidate, options).short))) return false;
+        return values.findIndex(candidate => senseMetadataDisplay(candidate, options).short.toLocaleLowerCase('en') === label) === index;
+    });
+}
+
+function contextAfterMetadataPolicy(meaning, represented, options = {}) {
+    const context = String(meaning?.context || '').trim();
+    if (!context) return context;
+    const gloss = options.gloss || meaning?.meaning || meaning?.translation || '';
+    const sourceItems = senseMetadataItems(meaning);
+    const redundant = sourceItems.filter(item =>
+        grammarIsAlreadyInGloss(item, gloss)
+        || (isInflectionalPersonNumber(item) && /^(?:his|her|its|their|my|our|me|us)$/i.test(gloss))
+        || (item.family === 'construction' && /^(?:intransitive|transitive|ditransitive)$/i.test(item.value)
+            && represented.some(visible => visible.family === 'companion'
+                || visible.kind === 'required_case' || visible.kind === 'combined_frame'))
+    );
+    const comparable = [...represented, ...redundant].flatMap(item => [item, ...(item.components || [])]);
+    const clauses = splitSenseMetadataClauses(context);
+    const residual = clauses.filter(clause => {
+        if (/^informal form of\b/i.test(gloss) && /^colloquial$/i.test(clause)) return false;
+        return !comparable.some(item => {
+            const display = senseMetadataDisplay(item, options);
+            return [item.value, item.sourceText, display.short, display.full]
+                .some(value => foldMetadataComparable(value) === foldMetadataComparable(clause));
+        });
+    });
+    return residual.length === clauses.length ? context : residual.join('; ');
+}
+
+// One policy surface for every dictionary adapter. Extraction stays faithful
+// to the release contract; this selector decides what earns space on a card.
+export function learnerSensePresentation(meaning, active, options = {}) {
+    const sourceItems = senseMetadataItems(meaning);
+    const compact = compactLearnerSenseMetadata(sourceItems, meaning, options);
+    let candidates = combineLearnerMetadata(compact, meaning, options);
+    const senseCount = Math.max(1, Number(options.senseCount) || 1);
+    const partOfSpeech = String(meaning?.pos || meaning?.part_of_speech || '').toLowerCase();
+    if (senseCount === 1 && /^(?:pron|pronoun|det|determiner|article)$/.test(partOfSpeech)) {
+        const surfaceSummary = surfaceGrammarSummary(senseSurfaceGrammarItems(meaning));
+        if (surfaceSummary) candidates.push(surfaceSummary);
+    }
+
+    const peers = Array.isArray(options.peerMeanings) ? options.peerMeanings.filter(peer => peer !== meaning) : [];
+    const related = (options.cardMeanings || []).filter(peer => peer !== meaning
+        && (peer.headword || '') === (meaning?.headword || '')
+        && (peer.pos || peer.part_of_speech || '') === (meaning?.pos || meaning?.part_of_speech || ''));
+    const ranked = candidates.map(item => {
+        const role = metadataPresentationRole(item);
+        const distinguishing = metadataItemsDiffer(item, peers) || requiredCaseVaries(item, related);
+        const roleScore = ({ production: 400, usage: 300, navigation: 250, supporting: 100 })[role];
+        return { item, role, distinguishing, score: (distinguishing ? 1000 : 0) + roleScore + scoreSenseMetadata(item) };
+    }).sort((left, right) => right.score - left.score || (left.item.sourceIndex ?? 0) - (right.item.sourceIndex ?? 0));
+
+    let visible = [];
+    if (!active && !options.allowInactivePrimary) {
+        visible = [];
+    } else if (senseCount === 1) {
+        visible = ranked.filter(entry => entry.role !== 'supporting').slice(0, 2).map(entry => entry.item);
+    } else if (!active) {
+        visible = ranked.filter(entry => entry.distinguishing || entry.role === 'navigation')
+            .slice(0, 1).map(entry => entry.item);
+    } else {
+        const differentiator = ranked.find(entry => entry.distinguishing);
+        if (differentiator) visible.push(differentiator.item);
+        const useful = ranked.find(entry => !visible.includes(entry.item)
+            && ['production', 'usage', 'navigation'].includes(entry.role));
+        if (useful) visible.push(useful.item);
+        visible = visible.slice(0, 2);
+    }
+
+    // A semantic context is already the more natural navigation label. Do not
+    // append technical metadata to an inactive row unless it is a construction
+    // the learner must actually produce (for example a companion or case).
+    const semanticContext = contextAfterMetadataPolicy(meaning, candidates, options);
+    if (!active && semanticContext) {
+        visible = visible.filter(item => metadataPresentationRole(item) === 'production');
+    }
+
+    const visibleKeys = new Set(visible.map(metadataItemKey));
+    const hardDetails = sourceItems.filter(item => {
+        if (item.family === 'source' || item.kind === 'surface_mark') return false;
+        if (item.family === 'grammar' && /^(?:gender|number|person)=/.test(item.value)) return false;
+        if (visible.some(shown => shown.kind === 'combined_frame')
+            && ((item.family === 'grammar' && item.value === 'reflexive=true')
+                || (item.family === 'construction' && /^(?:reflexive|pronominal)$/i.test(item.value)))) return false;
+        if (options.excludeCompanion && item.family === 'companion') return false;
+        if (item.family === 'register' && SUPPORTING_REGISTER_VALUES.has(item.value.toLowerCase())) return false;
+        const gloss = options.gloss || meaning?.meaning || meaning?.translation || '';
+        if (grammarIsAlreadyInGloss(item, gloss)) return false;
+        if (item.family === 'functional' && functionalAlreadyInGloss(item, gloss)) return false;
+        if (item.family === 'register' && item.value.toLowerCase() === 'colloquial'
+            && /^informal form of\b/i.test(gloss)) return false;
+        return !visibleKeys.has(metadataItemKey(item));
+    });
+    const details = active
+        ? combineLearnerMetadata([...candidates.filter(item => !visibleKeys.has(metadataItemKey(item))), ...hardDetails], meaning, options)
+            .filter(item => {
+                if (item.family === 'grammar' && item.value === 'degree=not-comparable') return false;
+                if (visible.some(shown => shown.kind === 'combined_frame')
+                    && ((item.family === 'grammar' && item.value === 'reflexive=true')
+                        || (item.family === 'construction' && /^(?:reflexive|pronominal)$/i.test(item.value)))) return false;
+                return !visible.some(shown => metadataTextIsRedundant(
+                    senseMetadataDisplay(item, options).short,
+                    senseMetadataDisplay(shown, options).short
+                ));
+            })
+        : [];
+    const represented = combineLearnerMetadata([...visible, ...details, ...candidates], meaning, options);
+    return {
+        visibleItems: visible,
+        detailItems: details,
+        residualContext: contextAfterMetadataPolicy(meaning, represented, options),
+    };
 }
 
 const SUPPORTING_REGISTER_VALUES = new Set([
@@ -663,7 +926,7 @@ export function isSupportingSenseMetadata(item) {
 
 export function senseMetadataHTML(meaning, active, options = {}) {
     if (!active && !options.allowInactivePrimary) return '';
-    const items = compactLearnerSenseMetadata(senseMetadataItems(meaning), meaning, options);
+    const presentation = learnerSensePresentation(meaning, active, options);
     const senseCount = Number(options?.senseCount) || 1;
     const isDense = senseCount >= 3;
     const isVeryDense = senseCount >= 5;
@@ -691,23 +954,9 @@ export function senseMetadataHTML(meaning, active, options = {}) {
         return `<span class="${pillClass}" data-family="${family}" title="${titleAttr}" aria-label="${ariaLabel}">${labelHTML}</span>`;
     }).join('');
 
-    const primary = items.filter(item => (
-        ['construction', 'companion', 'register', 'domain', 'functional', 'source'].includes(item.family)
-    ));
-    // Grammar that changes which sense applies is a navigation cue. Routine
-    // inflectional detail is still available, but does not compete with the
-    // gloss and example until the learner asks for it.
-    const grammar = items.filter(item => item.family === 'grammar');
-    const visibleKeys = new Set(items.map(metadataItemKey));
-    const baseSupporting = active ? senseMetadataItems(meaning).filter(item =>
-        ((item.family === 'grammar' && !isSenseDefiningGrammar(item))
-            || (item.family === 'construction' && /^(?:intransitive|transitive|ditransitive)$/.test(item.value)))
-        && !visibleKeys.has(metadataItemKey(item))
-        && !grammarIsAlreadyInGloss(item, options.gloss || meaning?.meaning || meaning?.translation || '')
-    ) : [];
-
-    let displayPrimary = primary;
-    let supporting = baseSupporting;
+    const displayPrimary = presentation.visibleItems.filter(item => item.family !== 'grammar');
+    const grammar = presentation.visibleItems.filter(item => item.family === 'grammar');
+    const supporting = presentation.detailItems;
 
     if (!active && options.allowInactivePrimary) {
         if (!displayPrimary.length && !grammar.length) return '';
@@ -739,30 +988,7 @@ export function senseMetadataHTML(meaning, active, options = {}) {
 }
 
 export function contextWithoutSenseMetadata(meaning, active, options = {}) {
-    const context = String(meaning?.context || '').trim();
-    if (!context) return context;
-    const items = compactLearnerSenseMetadata(senseMetadataItems(meaning), meaning, options);
-    const gloss = options.gloss || meaning?.meaning || meaning?.translation || '';
-    const sourceItems = senseMetadataItems(meaning);
-    const represented = items.flatMap(item => [item, ...(item.components || [])]);
-    // Grammatical facts already expressed by the English cue need not be
-    // repeated as raw prose after being deliberately removed from metadata.
-    const redundant = sourceItems.filter(item =>
-        grammarIsAlreadyInGloss(item, gloss)
-        && !(item.value.startsWith('definiteness=') && options.peerMeanings?.length)
-        || (isInflectionalPersonNumber(item) && /^(?:his|her|its|their|my|our|me|us)$/i.test(gloss))
-        || (item.family === 'construction' && /^(?:intransitive|transitive|ditransitive)$/.test(item.value)
-            && items.some(visible => visible.family === 'companion' || visible.kind === 'required_case'))
-    );
-    const clauses = splitSenseMetadataClauses(context);
-    const residual = clauses.filter(clause => ![...represented, ...redundant].some(item => {
-        const display = senseMetadataDisplay(item, options);
-        // Exact source spans only. The presence of an unrelated canonical
-        // tag does not establish that any of this prose is represented.
-        return [item.value, item.sourceText, display.short, display.full]
-            .some(value => foldMetadataComparable(value) === foldMetadataComparable(clause));
-    }));
-    return residual.length === clauses.length ? context : residual.join('; ');
+    return learnerSensePresentation(meaning, active, options).residualContext;
 }
 
 export function toggleSenseMetadataChip(event, chip) {

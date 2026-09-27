@@ -1,26 +1,26 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=73afad4f';
-import './speech.js?v=73afad4f';
-import { goToRoute, routeCodeFor } from './routes.js?v=73afad4f';
-import './side-dock.js?v=73afad4f';
+import './state.js?v=2dc2bb45';
+import './speech.js?v=2dc2bb45';
+import { goToRoute, routeCodeFor } from './routes.js?v=2dc2bb45';
+import './side-dock.js?v=2dc2bb45';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=73afad4f';
+} from './example-personalisation.js?v=2dc2bb45';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=73afad4f';
+} from './spanishdict-usage.js?v=2dc2bb45';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=73afad4f';
+} from './reverse-cues.js?v=2dc2bb45';
 import {
     compactConstructionMetadata,
     contextWithoutSenseMetadata,
@@ -48,7 +48,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=73afad4f';
+} from './card-metadata-pills.js?v=2dc2bb45';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -6839,6 +6839,7 @@ function renderCardWikipediaBadge(card) {
                             const collocationHTML = senseCollocationHTML(mm, card);
                             const metaOptions = {
                                 senseCount: card.meanings?.length || orderedMembers.length,
+                                cardMeanings: card.meanings,
                                 gloss: sharedText,
                                 peerMeanings: orderedMembers.filter(mi => mi !== memberIdx).map(mi => card.meanings[mi]),
                                 allowInactivePrimary: true,
@@ -6889,6 +6890,7 @@ function renderCardWikipediaBadge(card) {
                             const transSafe = String(transRaw).replace(/"/g, '&quot;');
                             const metaOptions = {
                                 senseCount: card.meanings?.length || orderedMembers.length,
+                                cardMeanings: card.meanings,
                                 gloss: transRaw,
                                 peerMeanings: senseMetadataPeers(mm, card.meanings, transRaw),
                                 sharedContext: m.context,
@@ -6974,6 +6976,7 @@ function renderCardWikipediaBadge(card) {
                     const collocationHTML = senseCollocationHTML(m, card);
                     const metadataOptions = {
                         senseCount: card.meanings?.length || 1,
+                        cardMeanings: card.meanings,
                         gloss: displayMeaning,
                         peerMeanings: senseMetadataPeers(m, card.meanings, displayMeaning),
                         allowInactivePrimary: true,
@@ -9544,8 +9547,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '73afad4f';
-const MODALS_ASSET_VERSION = '73afad4f';
+const ASSET_VERSION = '2dc2bb45';
+const MODALS_ASSET_VERSION = '2dc2bb45';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
