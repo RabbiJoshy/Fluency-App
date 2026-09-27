@@ -380,6 +380,7 @@ def occurrence_pos_tags(
                     TargetOccurrence(observed_text, surface.casefold(), start, end),
                 )
             tags: list[str] = []
+            lemmas: list[str] = []
             grammar_marks: list[dict[str, str]] = []
             companion_marks: list[set[str]] = []
             for occurrence in occurrences:
@@ -391,6 +392,9 @@ def occurrence_pos_tags(
                 ]
                 if overlapping:
                     tags.append(overlapping[0].pos_)
+                    lemma = str(getattr(overlapping[0], "lemma_", "") or "").strip()
+                    if lemma:
+                        lemmas.append(lemma)
                     grammar_marks.append(_canonical_grammar(overlapping[0]))
                     if hasattr(overlapping[0], "head") and hasattr(overlapping[0], "dep_"):
                         companion_marks.append(
@@ -408,6 +412,9 @@ def occurrence_pos_tags(
                 shared_grammar["attached_companions"] = ",".join(
                     sorted(set.intersection(*companion_marks))
                 )
+            unique_lemmas = sorted({lemma.casefold() for lemma in lemmas})
+            if len(unique_lemmas) == 1:
+                shared_grammar["lemma"] = unique_lemmas[0]
             status = (
                 "observed"
                 if len(unique) == 1
@@ -1030,8 +1037,9 @@ def main() -> None:
     print(f"exact-text cache: {len(vectors):,} vectors at {cache_path}")
     print(f"reused {len(needed) - newly_embedded:,}, newly embedded {newly_embedded:,}")
 
+    language_adapter = binding.adapter_factory()
     components = WSDComponents(
-        language=binding.adapter_factory(),
+        language=language_adapter,
         gloss=ExactTextGlossScorer(vectors),
         candidate_policy=SpanishV5CandidatePolicy(
             language=run_language,
@@ -1043,6 +1051,9 @@ def main() -> None:
             pronominal_gate=True,
             domain_penalty=0.04,
             normalized_leaf_gates=args.profile_id in EVIDENCE_GUARD_PROFILES,
+            contextual_headword_selector=getattr(
+                language_adapter, "contextual_headwords", None
+            ),
         ),
         aligner=aligner,
         multiword_index=multiword_index,

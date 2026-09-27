@@ -271,6 +271,9 @@ class SpanishV5CandidatePolicy:
         pronominal_gate: bool = True,
         domain_penalty: float = 0.04,
         normalized_leaf_gates: bool = False,
+        contextual_headword_selector: (
+            Callable[[str, str], frozenset[str]] | None
+        ) = None,
     ) -> None:
         self.language = language
         self.pronominal_gate = pronominal_gate
@@ -293,6 +296,7 @@ class SpanishV5CandidatePolicy:
         self.constraint_mode = constraint_mode
         self.clitic_gate = clitic_gate
         self.normalized_leaf_gates = normalized_leaf_gates
+        self.contextual_headword_selector = contextual_headword_selector
 
     def prepare(
         self,
@@ -304,10 +308,22 @@ class SpanishV5CandidatePolicy:
         analyses: tuple[MenuAnalysis, ...],
     ) -> CandidatePreparation:
         keep_ids = {analysis.menu_analysis_id for analysis in analyses}
+        requested_contextual_headwords = (
+            self.contextual_headword_selector(sentence, surface_form)
+            if self.contextual_headword_selector is not None
+            else frozenset()
+        )
+        menu_headwords = frozenset(analysis.headword.casefold() for analysis in analyses)
+        contextual_headwords = frozenset(
+            headword.casefold()
+            for headword in requested_contextual_headwords
+            if headword.casefold() in menu_headwords
+        )
+        bypass_contextual_constraints = bool(contextual_headwords)
         pos_removed: list[str] = []
         pos_match_status = "not_observed"
         pos_match_kind = "not_observed"
-        if observed_pos:
+        if observed_pos and not bypass_contextual_constraints:
             def phrase_matches_imperative(analysis: MenuAnalysis) -> bool:
                 return (
                     analysis.part_of_speech == "PHRASE"
@@ -348,6 +364,35 @@ class SpanishV5CandidatePolicy:
             else:
                 pos_match_status = "no_compatible_analysis"
                 pos_match_kind = "none"
+
+        # Finnish's pinned UD parser supplies a contextual lemma as well as a
+        # POS tag. Use it only when the dictionary actually contains that
+        # headword, so a parser miss can never empty a provider or declared
+        # menu. This resolves same-POS collisions which POS alone cannot touch
+        # (for example, haluaa: haluta vs haluttaa).
+        observed_lemma = str((observed_grammar or {}).get("lemma") or "").casefold()
+        lemma_removed: list[str] = []
+        if self.language == "fi" and observed_lemma and not bypass_contextual_constraints:
+            lemma_compatible = {
+                analysis.menu_analysis_id
+                for analysis in analyses
+                if analysis.headword.casefold() == observed_lemma
+            }
+            lemma_compatible &= keep_ids
+            if lemma_compatible:
+                lemma_removed = sorted(keep_ids - lemma_compatible)
+                keep_ids &= lemma_compatible
+
+        contextual_removed: list[str] = []
+        if contextual_headwords:
+            contextual_compatible = {
+                analysis.menu_analysis_id
+                for analysis in analyses
+                if analysis.headword.casefold() in contextual_headwords
+            }
+            if contextual_compatible:
+                contextual_removed = sorted(keep_ids - contextual_compatible)
+                keep_ids &= contextual_compatible
 
         evidence = (
             se_reflexive_evidence(surface_form, sentence, observed_grammar)
@@ -507,7 +552,11 @@ class SpanishV5CandidatePolicy:
                 "pos_match_status": pos_match_status,
                 "pos_match_kind": pos_match_kind,
                 "observed_grammar": dict(observed_grammar or {}),
+                "contextual_constraint_bypass": bypass_contextual_constraints,
+                "contextual_headword_override": sorted(contextual_headwords),
+                "contextual_removed_analysis_ids": contextual_removed,
                 "pos_removed_analysis_ids": pos_removed,
+                "lemma_removed_analysis_ids": lemma_removed,
                 "se_reflexive_evidence": evidence,
                 "clitic_removed_analysis_ids": clitic_removed,
                 "constraint_supported_analysis_ids": sorted(keep_ids),

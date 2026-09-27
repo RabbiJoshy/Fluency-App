@@ -106,6 +106,7 @@ class _StanzaToken:
             raise PinnedModelError("Stanza token has no character offset")
         self.idx = int(start_char)
         self.pos_ = word.upos
+        self.lemma_ = word.lemma or ""
         self.dep_ = word.deprel
         self.morph = _Morph(word.feats)
         self.head: Any = self
