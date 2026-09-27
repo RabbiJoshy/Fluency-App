@@ -432,7 +432,7 @@ function replicaMetadata(meaning, selected) {
     const supportingHTML = supporting.length
         ? `<span class="sense-metadata-tier sense-metadata-tier--details${supporting.length === 1 ? ' is-single' : ''}"${supporting.length > 1 ? ' hidden' : ''}>${renderItems(supporting, false)}</span>` : '';
     const more = supporting.length > 1
-        ? `<button type="button" class="sense-metadata-more" aria-expanded="false" data-count="${supporting.length}" aria-label="Show ${supporting.length} supporting details"><span class="sense-metadata-more-label">More details</span><span class="sense-metadata-more-count">${supporting.length}</span></button>` : '';
+        ? `<button type="button" class="sense-metadata-more" aria-expanded="false" data-count="${supporting.length}" aria-label="Show notes" title="More about this meaning"><span class="sense-metadata-more-label" aria-hidden="true">•••</span></button>` : '';
     return `<span class="sense-metadata-list" aria-label="Sense details">${primaryHTML}${grammarHTML}${more}${supportingHTML}</span>`;
 }
 
@@ -605,11 +605,8 @@ export function wireReplicaBack(root, { onSelectMeaning, onCycleExample, onLayou
             const details = list?.querySelector('.sense-metadata-tier--details');
             if (details) details.hidden = expanded;
             control.setAttribute('aria-expanded', String(!expanded));
-            const label = control.querySelector('.sense-metadata-more-label');
-            if (label) label.textContent = expanded ? 'More details' : 'Hide details';
-            control.setAttribute('aria-label', expanded
-                ? `Show ${control.dataset.count} supporting details`
-                : 'Hide supporting details');
+            control.setAttribute('aria-label', expanded ? 'Show notes' : 'Collapse notes');
+            control.setAttribute('title', expanded ? 'More about this meaning' : 'Collapse notes');
             onLayoutChange?.();
         });
     });

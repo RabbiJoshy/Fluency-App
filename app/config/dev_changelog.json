@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T23:49:47+01:00",
+      "date": "2026-09-27 23:49 BST",
+      "agent": "Codex",
+      "summary": "Supporting sense notes now use a small more-content icon instead of Details and Hide buttons.",
+      "detail": [
+        "A compact ellipsis keeps dense meaning rows quieter without suggesting that a numbered set of extra senses is hidden.",
+        "The same control remains in place when opened, while tooltips and screen-reader labels clearly describe showing or collapsing notes.",
+        "The live card, tutorial and walkthrough use the same interaction."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T23:34:27+01:00",
       "date": "2026-09-27 23:34 BST",
       "agent": "Codex",

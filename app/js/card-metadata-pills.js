@@ -982,7 +982,7 @@ export function senseMetadataHTML(meaning, active, options = {}) {
         ? `<span class="sense-metadata-tier sense-metadata-tier--details${supporting.length === 1 ? ' is-single' : ''}" hidden>${renderItems(supporting, false)}</span>`
         : '';
     const more = supporting.length > 0
-        ? `<button type="button" class="sense-metadata-more" aria-expanded="false" onclick="toggleSenseMetadataOverflow(event, this)" data-count="${supporting.length}" aria-label="Show ${supporting.length} supporting details"><span class="sense-metadata-more-label">Details</span></button>`
+        ? `<button type="button" class="sense-metadata-more" aria-expanded="false" onclick="toggleSenseMetadataOverflow(event, this)" data-count="${supporting.length}" aria-label="Show notes" title="More about this meaning"><span class="sense-metadata-more-label" aria-hidden="true">•••</span></button>`
         : '';
     return `<span class="sense-metadata-list${densityClass}" aria-label="Sense details">${primaryHTML}${grammarHTML}${more}${supportingHTML}</span>`;
 }
@@ -1008,11 +1008,9 @@ export function toggleSenseMetadataOverflow(event, control) {
     const expand = control.getAttribute('aria-expanded') !== 'true';
     const details = list.querySelector('.sense-metadata-tier--details');
     if (details) details.hidden = !expand;
-    const count = Number(control.dataset.count) || 0;
     control.setAttribute('aria-expanded', String(expand));
-    control.setAttribute('aria-label', expand ? 'Hide supporting details' : `Show ${count} supporting details`);
-    const label = control.querySelector('.sense-metadata-more-label');
-    if (label) label.textContent = expand ? 'Hide' : 'Details';
+    control.setAttribute('aria-label', expand ? 'Collapse notes' : 'Show notes');
+    control.setAttribute('title', expand ? 'Collapse notes' : 'More about this meaning');
     list.dispatchEvent(new CustomEvent('sense-details-change', { bubbles: true }));
 }
 

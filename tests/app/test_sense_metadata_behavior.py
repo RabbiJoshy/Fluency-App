@@ -136,14 +136,14 @@ for(const m of dar.meanings){
  assert(ui.senseMetadataHTML(m,true,p.options).includes('ditransitive'));
 }
 // A disclosure exposes content, changes its accessible state and asks for layout.
-const detail={hidden:true},label={textContent:'Details'},attrs={'aria-expanded':'false'};
+const detail={hidden:true},attrs={'aria-expanded':'false'};
 let layoutEvent='';
 const list={querySelector:()=>detail,dispatchEvent:e=>layoutEvent=e.type};
-const control={dataset:{count:'2'},closest:()=>list,getAttribute:k=>attrs[k],setAttribute:(k,v)=>attrs[k]=v,querySelector:()=>label};
+const control={dataset:{count:'2'},closest:()=>list,getAttribute:k=>attrs[k],setAttribute:(k,v)=>attrs[k]=v};
 ui.toggleSenseMetadataOverflow(null,control);
-assert.equal(detail.hidden,false);assert.equal(label.textContent,'Hide');assert.equal(attrs['aria-expanded'],'true');assert.equal(layoutEvent,'sense-details-change');
+assert.equal(detail.hidden,false);assert.equal(attrs['aria-expanded'],'true');assert.equal(attrs['aria-label'],'Collapse notes');assert.equal(layoutEvent,'sense-details-change');
 ui.toggleSenseMetadataOverflow(null,control);
-assert.equal(detail.hidden,true);assert.equal(label.textContent,'Details');
+assert.equal(detail.hidden,true);assert.equal(attrs['aria-label'],'Show notes');
 // Empty space above the bottom toolbar is available for expanded meanings.
 const source=fs.readFileSync('app/js/flashcards.js','utf8');
 const start=source.indexOf('function availableHeightForMeaningScroll');
@@ -153,7 +153,7 @@ const scroll={};
 const child=(height,margin,links=false,display='block')=>({offsetHeight:height,classList:{contains:k=>links&&k==='links-section'},css:{position:'static',display,marginTop:String(margin),marginBottom:'0'}});
 const back={clientHeight:600,children:[scroll,child(100,0),child(120,0),child(40,200,true),child(99,0,false,'none')],css:{rowGap:'10',paddingTop:'0',paddingBottom:'0'}};
 assert.equal(available(back,scroll),310);
-assert(asp.includes('>Details</span>'));assert(!asp.includes('sense-metadata-more-count'));
+assert(asp.includes('aria-hidden="true">•••</span>'));assert(!asp.includes('sense-metadata-more-count'));
 console.log('40 shipped cards: meaning preservation, restrictions, grammar, cases and provider parity passed');
 ''', capture_output=True)
         self.assertEqual(result.returncode, 0, result.stderr)
