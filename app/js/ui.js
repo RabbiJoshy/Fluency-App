@@ -1,7 +1,7 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=9d77737e';
-import { readFastTrack } from './fast-track-preferences.js?v=9d77737e';
+import './state.js?v=3275cadb';
+import { readFastTrack } from './fast-track-preferences.js?v=3275cadb';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -371,9 +371,9 @@ function updateReviewAccess() {
 }
 
 // How long the deck wheel holds before the setup screen behind it is revealed.
-// Extended by 3 seconds (from 5s to 8s) per user request to allow comfortable reading.
+// Extended twice by 3 seconds (5s → 8s → 11s) per user request, for comfortable reading.
 // A tap ends it at once; this is the ceiling for someone who does not tap.
-const DECK_OVERVIEW_HOLD_MS = 8000;
+const DECK_OVERVIEW_HOLD_MS = 11000;
 
 // The big wheel: progress across the whole deck the learner just opened.
 //
@@ -431,7 +431,8 @@ function showDeckOverviewLoading() {
             knownCount,
             reviewCount,
             unseenCount,
-            percentage: percent
+            speechPercentage: percent,
+            speechLabel: activeArtist ? 'of these lyrics understood' : 'of everyday speech understood'
         },
         {
             title,
@@ -3416,7 +3417,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=9d77737e')
+        import('./spotify.js?v=3275cadb')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
