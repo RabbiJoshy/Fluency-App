@@ -10,10 +10,11 @@ to main; nothing else should write to gh-pages.
 
 Every file tracked under app/ at --ref is written, byte for byte, to both the
 site root and the app/ mirror. It writes the whole tree, not the files one
-commit touched, so a deploy never depends on which commit ran it. It deletes
-nothing: gh-pages also holds data that is not in this repository
-(cognates/<lang>/ for languages other than es, coverage/<lang>/), which the
-app reads through config.json's cognatesPath and coveragePath.
+commit touched, so a deploy never depends on which commit ran it. Files the
+app no longer ships are removed, except under EXTERNAL_DATA: gh-pages also
+holds data that is not in this repository (cognates/<lang>/ for languages
+other than es, coverage/<lang>/), which the app reads through config.json's
+cognatesPath and coveragePath. Those are never deleted.
 
 Cache busting is stamped here, not by hand. Every `.js`/`.css` `?v=` tag, the
 `*ASSET_VERSION` constants and the service worker's CACHE_NAME are rewritten to
@@ -36,6 +37,8 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 EXCLUDED_PREFIXES = ("backend/", "lyrics-audit/")
 EXCLUDED_NAMES = (".DS_Store",)
 STAMPED_SUFFIXES = (".html", ".js", ".css")
+# Published data with no source in this repository; see the docstring.
+EXTERNAL_DATA = ("cognates/", "coverage/", "app/cognates/", "app/coverage/")
 
 _ASSET_TAG = re.compile(r"(\.(?:js|css))\?v=[A-Za-z0-9_.-]+")
 _VERSION_CONST = re.compile(r"(const [A-Z_]*ASSET_VERSION\s*=\s*)(['\"])[^'\"]*\2")
@@ -89,6 +92,14 @@ def build(dest: Path, ref: str, version: str | None = None) -> int:
             target.write_bytes(content)
             written += 1
     (dest / ".nojekyll").touch()
+    shipped = {".nojekyll"} | {rel for _, rel in files} | {f"app/{rel}" for _, rel in files}
+    for path in sorted(p for p in dest.rglob("*") if p.is_file() and ".git" not in p.relative_to(dest).parts):
+        rel = path.relative_to(dest).as_posix()
+        if rel in shipped or rel.startswith(EXTERNAL_DATA):
+            continue
+        path.unlink()
+        written += 1
+        print(f"  removed {rel}")
     return written
 
 
