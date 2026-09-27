@@ -3303,8 +3303,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     updateCognateSensitivityVisibility();
 
     // Update account tab with current user
-    const userBadge = currentUser ? (currentUser.isGuest ? 'GUEST' : currentUser.initials) : 'GUEST';
-    document.getElementById('accountUserBadge').textContent = userBadge;
+    window.renderAccountPanel?.();
     const vocabularyImportButton = document.getElementById('openVocabularyImportBtn');
     const vocabularyImportAvailability = document.getElementById('vocabularyImportAvailability');
     if (vocabularyImportButton) {

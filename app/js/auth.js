@@ -300,6 +300,91 @@ async function submitLogin() {
     }
 }
 
+// Settings → Account. The password is the one submitLogin keeps on this
+// device (`auth_pwd_<initials>`): it guards against someone else on the
+// device studying under your initials and overwriting your progress, not
+// against an attacker, so the owner may read and change it here.
+function devicePasswordKey() {
+    return currentUser && !currentUser.isGuest ? `auth_pwd_${currentUser.initials}` : null;
+}
+
+function renderAccountPanel() {
+    const named = Boolean(currentUser && !currentUser.isGuest);
+    const badge = document.getElementById('accountUserBadge');
+    if (badge) {
+        badge.textContent = named ? currentUser.initials : '?';
+        badge.classList.toggle('is-guest', !named);
+    }
+    const name = document.getElementById('accountProfileName');
+    if (name) name.textContent = named ? currentUser.initials : 'Guest';
+    const note = document.getElementById('accountProfileNote');
+    if (note) note.textContent = named ? 'Progress syncs across devices' : 'Progress is not saved';
+
+    const row = document.getElementById('accountPasswordRow');
+    if (!row) return;
+    row.hidden = !named;
+    if (!named) return;
+    const stored = localStorage.getItem(devicePasswordKey()) || '';
+    const input = document.getElementById('accountPasswordInput');
+    if (document.activeElement === input) input.blur();
+    input.value = stored;
+    input.placeholder = 'None on this device';
+    input.readOnly = true;
+    input.classList.toggle('is-concealed', Boolean(stored));
+    const show = document.getElementById('accountPasswordShowBtn');
+    show.textContent = stored ? 'Show' : 'Set';
+    show.hidden = false;
+    document.getElementById('accountPasswordSaveBtn').hidden = true;
+    document.getElementById('accountPasswordStatus').textContent = '';
+}
+
+function wireAccountPassword() {
+    const input = document.getElementById('accountPasswordInput');
+    const show = document.getElementById('accountPasswordShowBtn');
+    const save = document.getElementById('accountPasswordSaveBtn');
+    const status = document.getElementById('accountPasswordStatus');
+    if (!input || !show || !save) return;
+    const stored = () => localStorage.getItem(devicePasswordKey()) || '';
+    const syncSave = () => {
+        save.hidden = input.readOnly || input.value.trim() === stored();
+    };
+    show.addEventListener('click', () => {
+        if (input.readOnly) {
+            // Revealed means editable: the owner sees it and can change it.
+            input.readOnly = false;
+            input.classList.remove('is-concealed');
+            show.textContent = 'Hide';
+            input.focus();
+            input.setSelectionRange(input.value.length, input.value.length);
+        } else {
+            renderAccountPanel();
+            return;
+        }
+        status.textContent = '';
+        syncSave();
+    });
+    input.addEventListener('input', syncSave);
+    input.addEventListener('keydown', event => {
+        if (event.key === 'Enter' && !save.hidden) save.click();
+        if (event.key === 'Escape') { event.stopPropagation(); renderAccountPanel(); }
+    });
+    save.addEventListener('click', () => {
+        const key = devicePasswordKey();
+        if (!key) return;
+        const next = input.value.trim();
+        if (next) {
+            localStorage.setItem(key, next);
+        } else {
+            if (!confirm('Remove the password? Anyone on this device could then use your initials.')) return;
+            localStorage.removeItem(key);
+        }
+        currentUser.hasPassword = Boolean(next);
+        localStorage.setItem('flashcardUser', JSON.stringify(currentUser));
+        renderAccountPanel();
+        status.textContent = next ? 'Password saved on this device.' : 'Password removed.';
+    });
+}
+
 // Logout handler. Guests skip the confirm (nothing to lose); named users get
 // the prompt since they might have unsaved progress in flight.
 function logout() {
@@ -1845,6 +1930,7 @@ function setupAuthEventListeners() {
         hideSettingsModal();
         logout();
     });
+    wireAccountPassword();
 
     // Settings → Account → "About this project" row. Dismisses settings and
     // opens the landing page modal so signed-in users can revisit the
@@ -1905,6 +1991,7 @@ window.hideAboutProjectModal = hideAboutProjectModal;
 window.hideLoginForm = hideLoginForm;
 window.submitLogin = submitLogin;
 window.logout = logout;
+window.renderAccountPanel = renderAccountPanel;
 window.loadUserProgressFromSheet = loadUserProgressFromSheet;
 window.getProgressMode = getProgressMode;
 window.getProgressSheetName = getProgressSheetName;

@@ -21531,3 +21531,157 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
 .spotify-status.is-connected:hover { background: transparent; }
 .choice-sheet-footer { flex: none; padding: 0 14px 16px; }
 .choice-sheet-footer .spotify-status { margin-top: 0; }
+
+/* Smart Skip exit. The ✕ sat at the page's very top edge — under a phone's
+   status bar — and scrolled away with the word list, so there was no way out
+   once you scrolled. It now stays pinned below the safe area, on a disc so
+   it reads over the list. Docked over Settings it stays in the sheet. */
+#fastModeModal:not([data-dock]) .fast-mode-close {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 7px);
+  right: 12px;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--bg-card) 88%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--text-primary);
+  font-size: 17px;
+  line-height: 1;
+}
+/* The title is a bar that stays put, the ✕ sits in it, and each level's
+   header sticks just beneath it rather than sliding under the ✕. */
+#fastModeModal:not([data-dock]) .fast-mode-page-body h2 {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  margin: 0 -16px;
+  padding: calc(env(safe-area-inset-top, 0px) + 12px) 64px 10px 16px;
+  background: color-mix(in srgb, var(--bg-primary, var(--bg-card)) 86%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+#fastModeModal:not([data-dock]) .smart-skip-level { top: calc(env(safe-area-inset-top, 0px) + 54px); }
+
+/* ===== Settings: one card per group =====
+   Study, Your words and App were separated by a hairline each, the same
+   hairline that separates rows inside a group, so the page read as one long
+   list. Each group is now its own filled card with its name at the top. */
+#settingsModal #studyTabContent > section {
+  margin: 0 0 14px;
+  padding: 4px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--text-primary) 4%, transparent);
+}
+#settingsModal #studyTabContent > section > .settings-defaults-heading {
+  padding: 12px 0 8px;
+}
+#settingsModal #studyTabContent > section > .settings-defaults-heading strong {
+  color: var(--accent-primary);
+  font: 700 12px/1.2 var(--font-reading);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+#settingsModal #studyTabContent > section > .settings-compact-note { margin-top: -2px; }
+#settingsModal .settings-overview-links { padding: 0 4px; }
+#settingsModal .settings-overview-links .settings-footer-link { margin-top: 0; }
+#settingsModal.settings-study-only #studyTabContent .settings-overview-links { display: none; }
+
+/* ===== Settings → Account =====
+   Profile first (a big initials disc, with Log out beside it), then the
+   device password, then connections. */
+.account-profile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 4px 0 18px;
+}
+.account-avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  color: #fff;
+  font: 700 22px/1 var(--font-emphasis);
+  letter-spacing: .02em;
+}
+.account-avatar.is-guest {
+  background: color-mix(in srgb, var(--text-primary) 10%, transparent);
+  color: var(--text-muted);
+}
+.account-profile-copy { display: grid; gap: 3px; min-width: 0; margin-right: auto; }
+.account-profile-copy strong { font: 700 20px/1.2 var(--font-emphasis); color: var(--text-primary); }
+.account-profile-copy small { color: var(--text-muted); font-size: 12px; }
+.account-logout {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex: none;
+  padding: 9px 14px;
+  border: 1px solid color-mix(in srgb, var(--error, #e5484d) 45%, var(--border-color));
+  border-radius: 999px;
+  background: transparent;
+  color: var(--error, #e5484d);
+  font: 650 13px/1 var(--font-reading);
+  cursor: pointer;
+}
+.account-logout svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.account-logout:hover { background: color-mix(in srgb, var(--error, #e5484d) 10%, transparent); }
+.account-password {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 8px 12px;
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--text-primary) 4%, transparent);
+}
+.account-password[hidden] { display: none; }
+.account-password-label { font: 650 13px/1.2 var(--font-reading); color: var(--text-primary); }
+.account-password-input {
+  min-width: 0;
+  padding: 7px 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-primary);
+  font: 600 15px/1.2 var(--font-data, monospace);
+  transition: filter .15s ease;
+}
+.account-password-input:not([readonly]) { border-color: var(--border-color); background: var(--bg-primary, transparent); }
+.account-password-input:focus { outline: none; border-color: var(--accent-primary); }
+.account-password-input.is-concealed { filter: blur(6px); user-select: none; }
+.account-password-input::placeholder { color: var(--text-muted); font-family: var(--font-reading); font-weight: 500; font-size: 13px; }
+.account-password-action {
+  padding: 7px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-primary);
+  font: 650 12px/1 var(--font-reading);
+  cursor: pointer;
+}
+.account-password-action[hidden] { display: none; }
+.account-password-save { border-color: var(--accent-primary); background: var(--accent-primary); color: #fff; }
+.account-password-status { grid-column: 1 / -1; margin: 0; color: var(--text-muted); font-size: 12px; }
+.account-password-status:empty { display: none; }
+
+/* Set legend: 9px was too small to read at a glance. */
+#step4 .study-set-legend { gap: 14px; font-size: 12px; }
+#step4 .study-set-legend span { gap: 6px; }
+#step4 .study-set-legend i { width: 10px; height: 10px; border-radius: 3px; }
+@media (max-width: 480px) {
+  .account-password { grid-template-columns: minmax(0, 1fr) auto auto; }
+  .account-password-input { grid-column: 1 / -1; grid-row: 2; }
+}
