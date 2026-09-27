@@ -16,6 +16,11 @@ PERSON_TO_INDEX: dict[str, int] = {
     "1s": 0, "2s": 1, "3s": 2, "1p": 3, "2p": 4, "3p": 5
 }
 ENGLISH_PRONOUNS: list[str] = ["I", "you", "he/she", "we", "you (pl)", "they"]
+# Lower is preferred when a surface has several readings (see inflect_verb_translation).
+MOOD_PREFERENCE: dict[str, int] = {
+    "indicativo": 0, "subjuntivo": 1, "participo": 2, "participio": 2,
+    "gerundio": 2, "imperativo": 3,
+}
 
 IRREGULAR_ENGLISH_PLURALS: dict[str, str] = {
     "child": "children",
@@ -339,8 +344,13 @@ def inflect_verb_translation(
     if not morph_list:
         return translation
 
-    # Try matching first valid morphology
-    for morph in morph_list:
+    # Ambiguous forms list their readings in the conjugation table's order,
+    # which is alphabetical by mood, so "imperativo" came first: despeja
+    # (he clears / clear!) and despeje (that he clear / clear!) were glossed as
+    # commands. Prefer the reading a lyric most often means; the command only
+    # when nothing else applies. flashcards.js ranks readings the same way.
+    ordered = sorted(morph_list, key=lambda m: MOOD_PREFERENCE.get(str(m.get("mood", "")).lower(), 2))
+    for morph in ordered:
         mood = str(morph.get("mood", "")).lower()
         tense = str(morph.get("tense", "")).lower()
         person = str(morph.get("person", "")).lower()

@@ -1,7 +1,7 @@
 {
  "schema": "declared-entries/v1",
  "language": "es",
- "note": "GRAFT: Formulaic lyrics and spoken contractions/elisions for Spanish lyrics mode. Expanded surfaces borrow the target word's headword set.",
+ "note": "GRAFT: Formulaic lyrics and spoken contractions/elisions for Spanish lyrics mode. Expanded surfaces borrow the target word's headword set. Card surfaces reach the resolver with apostrophes stripped, so an entry must also exist under the bare spelling (ta, pa) to apply; the apostrophe forms alone never matched. tan and e are left out: bare, they are ordinary words (so, and).",
  "entries": [
   {
    "entry_id": "es-elision-pa",
@@ -317,6 +317,81 @@
    "reason": "Compound contraction of para + la.",
    "author": "claude (GRAFT)",
    "created_at": "2026-09-24"
+  },
+  {
+   "entry_id": "es-elision-bare-ta",
+   "kind": "expansion",
+   "surface": "ta",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "está"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Lyric cards drop apostrophes, so 'ta and ta' reach the resolver as bare ta; every line in the v19 decks is está ('Ta lloviendo, Me ta' mirando). Without this it resolved to TA (Terminologia Anatomica) and Tamaulipas.",
+   "author": "claude",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-elision-bare-tas",
+   "kind": "expansion",
+   "surface": "tas",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "estás"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Bare form of 'tas/tas' as lyric cards carry it; it resolved to 'small anvil'.",
+   "author": "claude",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-elision-bare-to",
+   "kind": "expansion",
+   "surface": "to",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "todo"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Bare form of to'/'to as lyric cards carry it; it resolved to 'whoa' and 'a'.",
+   "author": "claude",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-elision-bare-na",
+   "kind": "expansion",
+   "surface": "na",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "nada"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Bare form of na'/'na as lyric cards carry it.",
+   "author": "claude",
+   "created_at": "2026-09-27"
+  },
+  {
+   "entry_id": "es-elision-bare-pa",
+   "kind": "expansion",
+   "surface": "pa",
+   "payload": {
+    "class": "abbreviation",
+    "expands_to": "para"
+   },
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Bare form of pa' as lyric cards carry it; it resolved to 'dad' and 'initialism of presión arterial'.",
+   "author": "claude",
+   "created_at": "2026-09-27"
   }
  ]
 }

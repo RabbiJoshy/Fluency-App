@@ -273,8 +273,14 @@ def load_kaikki_entries(
     kaikki_path: Path, target_words: set[str], cache_path: Path | None = None
 ) -> dict[str, list[dict[str, Any]]]:
     if cache_path and cache_path.is_file():
-        print(f"Loading cached Kaikki Wiktionary extract: {cache_path}")
-        return json.loads(cache_path.read_text(encoding="utf-8"))
+        cached = json.loads(cache_path.read_text(encoding="utf-8"))
+        # The cache records which words it was scanned for. An older cache, or
+        # one scanned for fewer words (a new elision target), is rescanned:
+        # returning it silently left those words without Wiktionary senses.
+        if isinstance(cached, dict) and set(cached.get("_queried", [])) >= target_words:
+            print(f"Loading cached Kaikki Wiktionary extract: {cache_path}")
+            return {w: rows for w, rows in cached.items() if w != "_queried"}
+        print(f"Kaikki cache {cache_path.name} does not cover every target word; rescanning.")
 
     entries: dict[str, list[dict[str, Any]]] = defaultdict(list)
     print(f"Scanning Kaikki Wiktionary snapshot ({kaikki_path.name}) for {len(target_words)} words...")
@@ -292,7 +298,7 @@ def load_kaikki_entries(
 
     if cache_path:
         cache_path.parent.mkdir(parents=True, exist_ok=True)
-        cache_path.write_text(json.dumps(entries, ensure_ascii=False), encoding="utf-8")
+        cache_path.write_text(json.dumps({**entries, "_queried": sorted(target_words)}, ensure_ascii=False), encoding="utf-8")
         print(f"  Cached Kaikki extract to {cache_path}")
 
     return entries
@@ -544,6 +550,13 @@ def plant_artist(
     norm_menu, surf_cache, hw_cache, conj_rev = load_spanishdict_snapshot(SPANISHDICT_DIR)
 
     all_target_words = {card.get("word", "").strip().lower() for card in raw_master.values() if card.get("word")}
+    # Elisions take their senses from the expanded word (ta -> está), which
+    # need not be in this artist's vocabulary.
+    all_target_words |= {
+        str(e.payload.get("expands_to", "")).strip().casefold()
+        for e in declared_registry.entries
+        if e.kind == "expansion" and e.payload.get("expands_to")
+    }
     kaikki_cache_path = workspace / "raw" / "cache" / "kaikki" / f"{artist_slug}-kaikki.json"
     kaikki_entries = load_kaikki_entries(KAIKKI_SPANISH_SNAPSHOT, all_target_words, cache_path=kaikki_cache_path)
 
@@ -712,6 +725,31 @@ def plant_artist(
             if not card_lemma or card_lemma == word:
                 card_lemma = analysis_hw or word
             sd_senses = inflect_card_senses(target_surface, card_lemma, sd_senses, conj_rev, is_plural=card_is_plural)
+            # A conjugated form can have its own page as another word: muerdo
+            # is the noun "bite" on SpanishDict, but "te muerdo" is morder.
+            # When the page offers no verb reading, add the verb's senses
+            # first so WSD can choose it instead of being handed only the noun.
+            if not any(str(x.get("pos", "")).upper() in {"VERB", "AUX"} for x in sd_senses):
+                verb_hw = next((
+                    str(m.get("lemma", "")).strip().casefold()
+                    for m in conj_rev.get(word_lower, [])
+                    if str(m.get("lemma", "")).strip().casefold() not in {"", word_lower}
+                    and (str(m.get("lemma", "")).strip().casefold() in norm_menu
+                         or str(m.get("lemma", "")).strip().casefold() in hw_cache)
+                ), None)
+                if verb_hw:
+                    verb_analyses = norm_menu.get(verb_hw) or hw_cache.get(verb_hw, {}).get("dictionary_analyses") or []
+                    verb_senses = [
+                        x for x in extract_senses_from_sd_analyses(verb_hw, verb_analyses)
+                        if str(x.get("pos", "")).upper() in {"VERB", "AUX"}
+                    ]
+                    verb_senses = inflect_card_senses(target_surface, verb_hw, verb_senses, conj_rev, is_plural=card_is_plural)
+                    for x in verb_senses:
+                        x["source"] = "spanishdict:headword_borrow"
+                        x["surface_word"] = target_surface
+                    if verb_senses:
+                        sd_senses = verb_senses + sd_senses
+                        card_lemma = verb_hw
             resolved_cards[card_id] = {
                 **orig_card,
                 "lemma": card_lemma,

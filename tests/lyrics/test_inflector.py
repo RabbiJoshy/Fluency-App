@@ -90,3 +90,28 @@ def test_inflect_card_senses_participle():
     res_pl = inflect_card_senses("metidos", "metido", senses, conj_rev, is_plural=True)
     assert res_pl[0]["translation"] == "involved"
 
+
+def test_ambiguous_forms_prefer_statement_over_command() -> None:
+    from fluency.lyrics.inflector import inflect_card_senses
+
+    # Table order is alphabetical by mood, so the command reading comes first.
+    conj_rev = {
+        "despeja": [
+            {"lemma": "despejar", "mood": "imperativo", "tense": "afirmativo", "person": "2s"},
+            {"lemma": "despejar", "mood": "indicativo", "tense": "presente", "person": "3s"},
+        ],
+        "condene": [
+            {"lemma": "condenar", "mood": "imperativo", "tense": "afirmativo", "person": "3s"},
+            {"lemma": "condenar", "mood": "subjuntivo", "tense": "presente", "person": "3s"},
+        ],
+        "despejad": [
+            {"lemma": "despejar", "mood": "imperativo", "tense": "afirmativo", "person": "2p"},
+        ],
+    }
+    senses = [{"pos": "VERB", "translation": "to clear", "headword": "despejar"}]
+    assert inflect_card_senses("despeja", "despejar", senses, conj_rev)[0]["translation"] == "he/she clears"
+    condemn = [{"pos": "VERB", "translation": "to condemn", "headword": "condenar"}]
+    assert "!" not in inflect_card_senses("condene", "condenar", condemn, conj_rev)[0]["translation"]
+    # A form that is only a command stays a command.
+    assert inflect_card_senses("despejad", "despejar", senses, conj_rev)[0]["translation"] == "clear!"
+
