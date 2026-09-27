@@ -40,6 +40,40 @@ Two more facts for whoever executes this:
   an uncached side falls back to word overlap (0.40 / 0.10). v19 now prints how
   many pairs that was.
 
+**WSD embedding coverage (rebuild of 2026-09-27).** The v19 rebuild reported
+how many sense pairs had no cached vector on one side:
+
+| Deck | Pairs without a cached vector |
+|---|---|
+| Bad Bunny | 156,239 of 156,240 (100.0%) |
+| Spanish test playlist | 20,144 of 23,019 (87.5%) |
+
+So Bad Bunny's WSD is word overlap throughout (confidence 0.45, band low), as
+the deck it replaced already was (22,420 of 24,282 classifier examples at
+0.45/low). Three causes, measured against the shipped decks:
+
+- **Exact-text keys.** `OfflineEmbeddingManager` looks vectors up by the raw
+  string. `exact-text-gemini-embedding-001.npz` (386,280 keys) holds speech
+  sentences, so any string it has not seen verbatim misses. It also holds no
+  English glosses, not even plain ones like `to bite` or `that`.
+- **Lyric lines were never embedded.** 2 of Bad Bunny's 11,096 shipped lyric
+  lines are in the cache. The test playlist has a one-off per-artist delta
+  (`raw/cache/embeddings/spanish-test-playlist-delta.npz`, 3,997 vectors)
+  covering 834 of its 960 lines; that delta is its whole 12.5%. Bad Bunny,
+  Rosalía and Young Miko have no delta.
+- **Inflected glosses create new strings.** The lyrics inflector rewrites a
+  menu gloss for the surface (`to bite` → `I bite`, `to clear` →
+  `he/she clears`), producing a string nothing embedded. The test-playlist
+  delta has 436 `to …` glosses, yet only 9 of the deck's 415 inflected verb
+  glosses; Bad Bunny has 1 of 2,572.
+
+**Fix, part of v20** (not built yet): embed every lyric line and every
+*uninflected* menu gloss through the resumable embedding store in
+`src/fluency/nlp/embeddings.py`, and have WSD score the uninflected gloss,
+keeping inflection for display only. Run it for all four artists as one
+spend-gated Gemini run that prints projected units before calling the model,
+and retire the per-artist delta file.
+
 **Revised order.** Do §5 step 4 first, as v20: build every lyrics card's
 headword set with `fluency.surfaces.resolver` (SpanishDict and Kaikki sources,
 declared entries at lyrics scope), take the menu from those headwords, and
