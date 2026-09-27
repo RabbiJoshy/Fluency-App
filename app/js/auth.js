@@ -404,7 +404,6 @@ function logout() {
     progressData = {}; window.bumpProgressEpoch?.();
     itemProgressData = {}; window.bumpProgressEpoch?.();
     levelEstimates = {};
-    markedDoneLevels = {};
     document.getElementById('userInfo').classList.add('hidden');
 
     // Reset app state
@@ -582,10 +581,6 @@ function getProgressScopeKey(options = {}) {
     return `${mode}|${language}|${source}`;
 }
 
-function isLevelMarkedDone(levelId, scopeKey = getProgressScopeKey()) {
-    return !!(levelId && markedDoneLevels?.[scopeKey]?.[levelId]);
-}
-
 const PROGRESS_CACHE_DELAY_MS = 750;
 let progressCacheTimer = null;
 let progressCacheIdleHandle = null;
@@ -613,7 +608,6 @@ function flushProgressCache() {
         progress: progressData,
         itemProgress: itemProgressData,
         estimates: levelEstimates,
-        doneLevels: markedDoneLevels,
         backendSchema: progressBackendSchemaVersion >= 4 ? progressBackendSchemaVersion : 0,
         // Watermark for incremental sync: the newest updated_at the backend has
         // sent us. Next startup asks only for rows changed after this.
@@ -630,7 +624,7 @@ function flushProgressCache() {
     try {
         localStorage.setItem(`progress_cache_${currentUser.initials}`, JSON.stringify({
             progress: record.progress, itemProgress: record.itemProgress,
-            estimates: record.estimates, doneLevels: record.doneLevels,
+            estimates: record.estimates,
             backendSchema: record.backendSchema,
             syncVersion: record.syncVersion, lastFullSyncAt: record.lastFullSyncAt
         }));
@@ -669,8 +663,7 @@ function getProgressUiFingerprint() {
     return JSON.stringify({
         progress: progressData || {},
         itemProgress: itemProgressData || {},
-        estimates: levelEstimates || {},
-        doneLevels: markedDoneLevels || {}
+        estimates: levelEstimates || {}
     });
 }
 
@@ -705,7 +698,7 @@ async function loadLegacyProgress(cacheKey, cached) {
     if (!normalResult?.success && !artistResult?.success) {
         applyPendingProgressOverlay(progressData);
         applyPendingItemProgressOverlay(itemProgressData);
-        applyPendingMetaProgressOverlay(levelEstimates, markedDoneLevels);
+        applyPendingMetaProgressOverlay(levelEstimates);
         return false;
     }
 
@@ -740,53 +733,11 @@ async function loadLegacyProgress(cacheKey, cached) {
     };
     applyPendingProgressOverlay(progressData);
     applyPendingItemProgressOverlay(itemProgressData);
-    applyPendingMetaProgressOverlay(levelEstimates, markedDoneLevels);
+    applyPendingMetaProgressOverlay(levelEstimates);
     updateIncorrectButtonVisibility();
     updateTotalStatsButtonVisibility();
     cacheProgressLocally();
     return getProgressUiFingerprint() !== previousUiState || !cached;
-}
-
-function markedDoneFromMeta(metaRows) {
-    const result = {};
-    for (const row of metaRows || []) {
-        if (row?.metaKey !== 'level-done') continue;
-        const scope = getProgressScopeKey({
-            mode: row.mode,
-            source: row.source,
-            language: row.language
-        });
-        if (!result[scope]) result[scope] = {};
-        const enabled = row.value === true || row.value === 1 || row.value === '1'
-            || String(row.value).toLowerCase() === 'true';
-        if (enabled) result[scope][row.metaId] = true;
-    }
-    return result;
-}
-
-async function saveMarkedLevelDone(levelId, done) {
-    if (!levelId || !currentUser || currentUser.isGuest) return false;
-    const mode = getProgressMode();
-    const source = getProgressSource({ mode });
-    const scopeKey = getProgressScopeKey({ mode, source, language: selectedLanguage });
-    const nextScope = { ...(markedDoneLevels?.[scopeKey] || {}) };
-    if (done) nextScope[levelId] = true;
-    else delete nextScope[levelId];
-    markedDoneLevels = { ...(markedDoneLevels || {}), [scopeKey]: nextScope };
-    cacheProgressLocally();
-    return sendOrQueue({
-        action: 'saveMeta',
-        sheet: 'Progress',
-        user: currentUser.initials,
-        metaKey: 'level-done',
-        metaId: levelId,
-        mode,
-        source,
-        scopeKey,
-        language: selectedLanguage,
-        value: done ? 1 : 0,
-        lastSeen: new Date().toISOString()
-    }, `meta|level-done|${currentUser.initials}|${scopeKey}|${levelId}`);
 }
 
 // Load unified Google Sheets progress while retaining cross-mode sharing.
@@ -824,7 +775,7 @@ async function loadUserProgressFromSheetNow() {
     const applyCachedProgress = raw => {
         if (!raw) return false;
         try {
-            const { progress, itemProgress, estimates, doneLevels, backendSchema,
+            const { progress, itemProgress, estimates, backendSchema,
                     syncVersion, lastFullSyncAt } =
                 typeof raw === 'string' ? JSON.parse(raw) : raw;
             progressSyncVersion = typeof syncVersion === 'string' ? syncVersion : '';
@@ -832,7 +783,6 @@ async function loadUserProgressFromSheetNow() {
             progressData = progress || {}; window.bumpProgressEpoch?.();
             itemProgressData = itemProgress || {}; window.bumpProgressEpoch?.();
             levelEstimates = estimates || {};
-            markedDoneLevels = doneLevels || {};
             progressBackendSchemaVersion = Number(backendSchema) >= 4 ? Number(backendSchema) : 0;
             // The cache is the learner's real progress, not a placeholder —
             // enough to lay out the setup screen correctly while the Sheets
@@ -916,7 +866,7 @@ async function loadUserProgressFromSheetNow() {
         if (!progressResult?.success) {
             applyPendingProgressOverlay(progressData);
             applyPendingItemProgressOverlay(itemProgressData);
-            applyPendingMetaProgressOverlay(levelEstimates, markedDoneLevels);
+            applyPendingMetaProgressOverlay(levelEstimates);
             // We have looked. Even a failed fetch settles the question the
             // setup screen is waiting on, and waiting longer will not help.
             window.markProgressLoaded?.();
@@ -973,9 +923,6 @@ async function loadUserProgressFromSheetNow() {
         levelEstimates = progressResult?.success
             ? (progressResult.data?.levelEstimates || {})
             : levelEstimates;
-        markedDoneLevels = progressResult?.success
-            ? markedDoneFromMeta(progressResult.data?.meta)
-            : markedDoneLevels;
         applyRemoteFastTrack(progressResult.data?.meta, { full: !gotDelta });
 
         // Overlay any still-queued (un-synced) local writes on top of the
@@ -983,7 +930,7 @@ async function loadUserProgressFromSheetNow() {
         // knows, so a reconnect reload must not visually regress them.
         applyPendingProgressOverlay(progressData);
         applyPendingItemProgressOverlay(itemProgressData);
-        applyPendingMetaProgressOverlay(levelEstimates, markedDoneLevels);
+        applyPendingMetaProgressOverlay(levelEstimates);
 
         updateIncorrectButtonVisibility();
         updateTotalStatsButtonVisibility();
@@ -1997,8 +1944,6 @@ window.getProgressMode = getProgressMode;
 window.getProgressSheetName = getProgressSheetName;
 window.getProgressSource = getProgressSource;
 window.getProgressScopeKey = getProgressScopeKey;
-window.isLevelMarkedDone = isLevelMarkedDone;
-window.saveMarkedLevelDone = saveMarkedLevelDone;
 window.cacheProgressLocally = cacheProgressLocally;
 window.flushProgressCache = flushProgressCache;
 window.saveLevelEstimateToSheet = saveLevelEstimateToSheet;

@@ -19,10 +19,10 @@ def build_study_structure(
     cards: Sequence[dict[str, Any]],
     *,
     frequency_of: Callable[[dict[str, Any]], int | float],
-    target_cards_per_level: int = 200,
+    target_cards_per_level: int = 100,
     minimum_levels: int = 10,
-    maximum_levels: int = 80,
-    set_size: int = 20,
+    maximum_levels: int = 120,
+    set_size: int = 25,
 ) -> dict[str, Any]:
     """Port the existing smart-level algorithm into immutable release metadata."""
 

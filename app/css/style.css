@@ -7012,11 +7012,6 @@
             border: none;
             box-shadow: none;
         }
-        .lsw-segments.lsw-scrubber .lsw-seg.is-suggestion-skipped:not(.selected) {
-            opacity: 0.28;
-            text-decoration: line-through;
-            text-decoration-thickness: 1px;
-        }
         .lsw-ticks.lsw-ticks--hidden { display: none !important; }
         .lsw-ticks {
             display: flex;
@@ -19830,7 +19825,8 @@ html[data-text-size="large"] body {
 .study-set-choice { display: grid; gap: 12px; padding: 16px; background: color-mix(in srgb, var(--accent-primary) 5%, var(--bg-card)); }
 .study-set-choice-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 4px 12px; }
 .study-set-choice-heading small { color: var(--text-muted); font: 500 11px/1.35 var(--font-reading); }
-#step4 .study-set-dots { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+/* A level holds a handful of sets (four at 100 cards); they share one row. */
+#step4 .study-set-dots { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 8px; }
 #step4 .study-set-dot { height: 40px; font-size: 13px; border-radius: 9px; }
 #step4 .range-btn-new.study-set-start { min-height: 52px; }
 

@@ -4,6 +4,7 @@ const ESTIMATION_QUESTION_LIMIT = 30;
 const ESTIMATION_BAND_TARGET = 10;
 const ESTIMATION_CONFIDENCE_Z = 1.645; // Approximate 90% interval.
 const ESTIMATION_PRIOR = 0.5;          // Jeffreys prior for adaptive selection.
+const ESTIMATION_PICK_ATTEMPTS = 8;    // Candidates tried per question before giving up.
 
 // Always use the normal-mode vocabulary for placement. Artist ordering measures
 // familiarity with one corpus, not general vocabulary size.
@@ -12,6 +13,10 @@ function getEstimationLangConfig() {
     if (!activeArtist) return langConfig;
     return window._normalModeLangConfigs?.[selectedLanguage] || langConfig;
 }
+
+// Every state gets a fresh sequence number, so a word still loading when the
+// check is closed or retried is dropped instead of landing in the new run.
+let estimationSequence = 0;
 
 function createEstimationState() {
     return {
@@ -24,7 +29,10 @@ function createEstimationState() {
         wordsTestedCount: 0,
         shownWordIds: new Set(),
         shownLemmaKeys: new Set(),
+        prefetched: new Map(),
         currentWord: null,
+        loading: false,
+        sequence: ++estimationSequence,
         currentBandIndex: null,
         translationRevealed: false,
         estimatedLevel: null,
@@ -46,6 +54,7 @@ function openEstimationModal() {
 function closeEstimationModal() {
     document.getElementById('estimationModal').classList.add('hidden');
     estimationState.active = false;
+    estimationState.sequence = ++estimationSequence;
     if (estimationState.autoAdvanceTimer) {
         clearTimeout(estimationState.autoAdvanceTimer);
     }
@@ -58,24 +67,68 @@ function buildEstimationWordList() {
     const vocabData = estimationState.vocabularyData;
     if (!vocabData) return [];
 
+    // Lean columnar indexes ship every card with empty meanings until its
+    // study-set row shard lands, so a pending row counts as a candidate and is
+    // hydrated just before it is shown. Requiring meanings here left only the
+    // landing set's cards -- for Spanish, a pool of clitics and pronouns.
     const valid = vocabData.filter(item =>
         item.word && item.word.trim() !== '' &&
         !item.duplicate &&
-        item.meanings && item.meanings.length > 0 &&
+        (item._indexRowsPending === true || hasTranslatedMeaning(item)) &&
         (item.cognate_score ?? 0) < 0.83 &&
         !item.is_noise && !item.is_interjection &&
         !item.is_propernoun &&
         !item.is_english &&
+        !isFunctionWord(item) &&
         (!hideSingleOccurrence || !item.hasOwnProperty('corpus_count') || item.corpus_count > 1)
     );
 
-    // Preserve the source frequency order without overwriting the rank used by
-    // the actual deck. The saved estimate remains a compatible rank high-water
-    // mark for existing progress and level selection code.
-    return valid.map((item, index) => ({
-        ...item,
-        estimationRank: index + 1
-    }));
+    // Candidates keep a reference to the deck card rather than a copy, so the
+    // meanings a row shard merges into the deck reach the estimator too.
+    // estimationRank is the position among candidates; results are mapped back
+    // to deck ranks by deckRankForCount.
+    valid.forEach((item, index) => { item.estimationRank = index + 1; });
+    return valid;
+}
+
+function hasTranslatedMeaning(item) {
+    return Array.isArray(item?.meanings)
+        && item.meanings.some(meaning => meaning?.translation && String(meaning.translation).trim());
+}
+
+// Clitics, articles, pronouns and prepositions are known by every learner who
+// can open the app, so they measure nothing. Before hydration this sees the
+// clitic flags and function-word list; afterwards it also sees sense POS.
+function isFunctionWord(item) {
+    return globalThis.isGrammarParticleItem?.(item) === true;
+}
+
+// A candidate is ready once its meanings are loaded and it still qualifies.
+function isShowableWord(word) {
+    return word && word._indexRowsPending !== true
+        && hasTranslatedMeaning(word) && !isFunctionWord(word);
+}
+
+async function hydrateEstimationWord(word) {
+    if (!word || word._indexRowsPending !== true) return;
+    try {
+        await window.ensureIndexRowsForRange?.(
+            getEstimationLangConfig(), 0, 0, [Number(word.rank)]
+        );
+    } catch (error) {
+        console.warn('Level check could not load a word:', error);
+    }
+}
+
+// The deck position of the count-th candidate: learners who know the first
+// k candidates also know the cognates and function words ranked among them.
+// stableRank is the basis of the level buttons; source rank is the fallback
+// when the deck has not yet assigned stable ranks, and keeps the same order.
+function deckRankForCount(words, count) {
+    if (!words.length || count <= 0) return 0;
+    const word = words[Math.min(words.length, Math.round(count)) - 1];
+    const rank = Number(word?.stableRank) || Number(word?.rank);
+    return Number.isFinite(rank) && rank > 0 ? rank : Math.round(count);
 }
 
 function buildCoverageOrder(count) {
@@ -228,6 +281,11 @@ function pickWordFromBand(bandIndex) {
     const band = estimationState.bands[bandIndex];
     if (!band) return null;
 
+    const prefetched = estimationState.prefetched.get(bandIndex);
+    if (prefetched && !estimationState.shownWordIds.has(getWordKey(prefetched))) {
+        return prefetched;
+    }
+
     const words = estimationState.validWords.slice(band.start, band.end);
     const unused = words.filter(word => !estimationState.shownWordIds.has(getWordKey(word)));
     if (!unused.length) return null;
@@ -294,23 +352,90 @@ async function startEstimation() {
     showNextWord();
 }
 
+// Pick the next word, loading its meanings if the index shipped it lean. A
+// candidate that turns out to have no translation, or only function-word
+// senses, is set aside and another is tried.
+async function selectNextWord() {
+    for (let attempt = 0; attempt < ESTIMATION_PICK_ATTEMPTS; attempt++) {
+        const selection = findAvailableWord(chooseNextBandIndex());
+        if (!selection) return null;
+        const sequence = estimationState.sequence;
+        await hydrateEstimationWord(selection.word);
+        if (sequence !== estimationState.sequence) return null;
+        if (isShowableWord(selection.word)) return selection;
+        estimationState.shownWordIds.add(getWordKey(selection.word));
+        estimationState.prefetched.delete(selection.bandIndex);
+    }
+    return null;
+}
+
+// While the learner reads a word, load a candidate for each band the next
+// answer could send them to, so the following word appears without a wait.
+function prefetchLikelyNextWords() {
+    const bandIndex = estimationState.currentBandIndex;
+    const band = estimationState.bands[bandIndex];
+    if (!band) return;
+    const targets = new Set();
+    for (const known of [true, false]) {
+        band.answers++;
+        if (known) band.known++;
+        targets.add(chooseNextBandIndex());
+        band.answers--;
+        if (known) band.known--;
+    }
+    targets.forEach(index => {
+        if (index === null || index === undefined) return;
+        const existing = estimationState.prefetched.get(index);
+        if (existing && !estimationState.shownWordIds.has(getWordKey(existing))) return;
+        estimationState.prefetched.delete(index);
+        const word = pickWordFromBand(index);
+        if (!word) return;
+        estimationState.prefetched.set(index, word);
+        hydrateEstimationWord(word);
+    });
+}
+
+// loading blocks reveal and answers for the whole hand-over to the next word;
+// showPlaceholder also blanks the card when that hand-over waits on a fetch.
+function setEstimationLoading(loading, showPlaceholder = loading) {
+    estimationState.loading = loading;
+    if (showPlaceholder) {
+        document.getElementById('estimationWord').textContent = 'Loading…';
+        document.getElementById('estimationLemma').style.visibility = 'hidden';
+        document.getElementById('estimationPOS').textContent = '';
+        document.getElementById('estimationTranslation').classList.remove('visible');
+        document.getElementById('estimationReveal').style.display = 'none';
+        document.getElementById('estimationButtons').style.display = 'none';
+    }
+}
+
 // Show the next word
-function showNextWord() {
-    if (!estimationState.active) return;
+async function showNextWord() {
+    if (!estimationState.active || estimationState.loading) return;
 
     if (estimationState.wordsTestedCount >= ESTIMATION_QUESTION_LIMIT) {
         showEstimationResult();
         return;
     }
 
+    const sequence = estimationState.sequence;
     const preferredBand = chooseNextBandIndex();
-    const selection = findAvailableWord(preferredBand);
+    const ready = findAvailableWord(preferredBand);
+    setEstimationLoading(true, !(ready && isShowableWord(ready.word)));
+    let selection;
+    try {
+        selection = await selectNextWord();
+    } finally {
+        if (sequence === estimationState.sequence) setEstimationLoading(false);
+    }
+    if (sequence !== estimationState.sequence || !estimationState.active) return;
     if (!selection) {
         showEstimationResult();
         return;
     }
 
     const { word, bandIndex } = selection;
+    estimationState.prefetched.delete(bandIndex);
     estimationState.currentWord = word;
     estimationState.currentBandIndex = bandIndex;
     estimationState.translationRevealed = false;
@@ -335,11 +460,13 @@ function showNextWord() {
     document.getElementById('estimationReveal').style.display = 'block';
     document.getElementById('estimationButtons').style.display = 'none';
     updateEstimationProgress();
+    prefetchLikelyNextWords();
 }
 
 // Reveal first, then self-score whether the meaning was known before reveal.
 function revealTranslation() {
-    if (!estimationState.active || estimationState.translationRevealed) return;
+    if (!estimationState.active || estimationState.loading
+        || estimationState.translationRevealed) return;
     estimationState.translationRevealed = true;
     document.getElementById('estimationTranslation').classList.add('visible');
     document.getElementById('estimationReveal').style.display = 'none';
@@ -348,13 +475,15 @@ function revealTranslation() {
 
 // Handle answer
 function handleAnswer(known) {
-    if (!estimationState.active || !estimationState.translationRevealed) return;
+    if (!estimationState.active || estimationState.loading
+        || !estimationState.translationRevealed) return;
     const band = estimationState.bands[estimationState.currentBandIndex];
     if (!band) return;
 
     band.answers++;
     if (known) band.known++;
     estimationState.wordsTestedCount++;
+    estimationState.translationRevealed = false;
     showNextWord();
 }
 
@@ -409,10 +538,20 @@ function updateEstimationProgress() {
 // Show the estimation result
 function showEstimationResult() {
     estimationState.active = false;
-    const result = calculateEstimationResult(
+    estimationState.sequence = ++estimationSequence;
+    const counts = calculateEstimationResult(
         estimationState.bands,
         estimationState.maxLevel
     );
+    // The fit counts known candidates; levels and the saved estimate are deck
+    // ranks, which also cover the cognates and function words left out here.
+    const candidates = estimationState.validWords;
+    const result = {
+        point: deckRankForCount(candidates, counts.point),
+        low: deckRankForCount(candidates, counts.low),
+        high: deckRankForCount(candidates, counts.high)
+    };
+    const shown = value => roundEstimate(value, Infinity).toLocaleString();
     estimationState.estimatedLevel = result.point;
     estimationState.estimateInterval = result;
 
@@ -426,15 +565,45 @@ function showEstimationResult() {
 
     const levelEl = document.getElementById('estimationResultLevel');
     const descEl = document.getElementById('estimationResultDesc');
+    const pointLevel = levelButtonForRank(result.point);
+    const ranOut = estimationState.wordsTestedCount < ESTIMATION_QUESTION_LIMIT;
     if (result.point <= 0) {
-        levelEl.textContent = 'Start at the beginning';
-        descEl.textContent = 'This sample did not find a reliable known range yet.';
+        levelEl.textContent = 'Start at Level 1';
+        descEl.textContent = ranOut
+            ? `The check ran out of words after ${estimationState.wordsTestedCount}, so it could not place you.`
+            : 'Most of the words sampled were new to you.';
+    } else if (pointLevel) {
+        // The estimate is stored as a rank; the level is only derived here,
+        // against the levels on screen, so it follows any change to level size.
+        const lowLevel = levelButtonForRank(result.low)?.number ?? pointLevel.number;
+        const highLevel = levelButtonForRank(result.high)?.number ?? pointLevel.number;
+        const words = `${shown(result.low)}–${shown(result.high)} words`;
+        levelEl.textContent = `Start at Level ${pointLevel.number}`;
+        descEl.textContent = lowLevel === highLevel
+            ? `About ${words} you'd recognise.`
+            : `Likely somewhere in Levels ${lowLevel}–${highLevel} (about ${words}).`;
     } else {
-        levelEl.textContent = `${result.low.toLocaleString()}–${result.high.toLocaleString()} words`;
+        levelEl.textContent = `${shown(result.low)}–${shown(result.high)} words`;
         descEl.textContent =
-            `Best estimate: about ${result.point.toLocaleString()} receptive words. ` +
+            `Best estimate: about ${shown(result.point)} receptive words. ` +
             'The range reflects uncertainty from a short check.';
     }
+}
+
+// The level button whose [startRank, endRank) span holds a rank, clamped to the
+// first and last levels. Both the result screen and the landing use it, so the
+// level named is the level that opens.
+function levelButtonForRank(rank) {
+    const buttons = Array.from(document.querySelectorAll(
+        '.level-selector-buttons .level-btn, #levelSelector > .level-btn'
+    )).filter(button => Number.isFinite(Number(button.dataset.startRank))
+        && Number.isFinite(Number(button.dataset.endRank))
+        && button.dataset.startRank !== '' && button.dataset.endRank !== '');
+    if (!buttons.length) return null;
+    let index = buttons.findIndex(button =>
+        rank >= Number(button.dataset.startRank) && rank < Number(button.dataset.endRank));
+    if (index < 0) index = rank < Number(buttons[0].dataset.startRank) ? 0 : buttons.length - 1;
+    return { button: buttons[index], number: index + 1 };
 }
 
 // Apply the point estimate. The interval remains explanatory UI; the existing
@@ -458,76 +627,10 @@ function retryEstimation() {
     startEstimation();
 }
 
-// Select the appropriate level and range for a given rank
+// Open the level containing a given rank; the level's own routing then lands
+// on its first set with unseen cards.
 function selectLevelForRank(rank) {
-    const levels = getCefrLevels(selectedLanguage);
-    let targetLevel = null;
-    for (const level of levels) {
-        if (rank >= level.minRank && rank <= level.maxRank) {
-            targetLevel = level;
-            break;
-        }
-        if (rank <= level.maxRank) {
-            targetLevel = level;
-            break;
-        }
-    }
-
-    if (!targetLevel && levels.length > 0) {
-        targetLevel = levels[levels.length - 1];
-    }
-
-    if (!targetLevel) return;
-
-    const buttons = Array.from(document.querySelectorAll(
-        '.level-selector-buttons .level-btn, #levelSelector > .level-btn'
-    ));
-    let targetIndex = buttons.findIndex(button => button.dataset.level === targetLevel.level);
-    if (targetIndex < 0) {
-        targetIndex = buttons.findIndex(button => {
-            const start = Number(button.dataset.startRank);
-            const end = Number(button.dataset.endRank);
-            return Number.isFinite(start) && Number.isFinite(end) && rank >= start && rank < end;
-        });
-    }
-    if (targetIndex < 0) return;
-
-    const originalButton = buttons[targetIndex];
-    const levelBtn = buttons.slice(targetIndex)
-        .find(button => !window.isLevelMarkedDone?.(button.dataset.level))
-        || buttons.slice().reverse()
-            .find(button => !window.isLevelMarkedDone?.(button.dataset.level))
-        || originalButton;
-    levelBtn.click();
-    // Only select the exact sub-range when the estimate's containing level
-    // remains eligible. If it was explicitly skipped, the chosen next level's
-    // normal first-unseen-set routing should take over.
-    if (levelBtn === originalButton) setTimeout(() => selectRangeForRank(rank), 100);
-}
-
-// Select the range containing a given rank
-function selectRangeForRank(rank) {
-    const rangeButtons = document.querySelectorAll('.range-btn');
-    for (const btn of rangeButtons) {
-        const start = parseInt(btn.dataset.start);
-        const end = parseInt(btn.dataset.end);
-        if (rank >= start && rank <= end) {
-            btn.click();
-            return;
-        }
-        if (rank < start) {
-            const prevBtn = btn.previousElementSibling;
-            if (prevBtn?.classList.contains('range-btn')) {
-                prevBtn.click();
-            } else {
-                btn.click();
-            }
-            return;
-        }
-    }
-    if (rangeButtons.length > 0) {
-        rangeButtons[rangeButtons.length - 1].click();
-    }
+    levelButtonForRank(rank)?.button.click();
 }
 
 window.openEstimationModal = openEstimationModal;
@@ -539,7 +642,6 @@ window.showEstimationResult = showEstimationResult;
 window.useEstimatedLevel = useEstimatedLevel;
 window.retryEstimation = retryEstimation;
 window.selectLevelForRank = selectLevelForRank;
-window.selectRangeForRank = selectRangeForRank;
 
 // Pure helpers are exported for lightweight regression checks without a DOM.
 export {

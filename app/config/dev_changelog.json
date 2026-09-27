@@ -2,17 +2,47 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T23:10:00+01:00",
+      "date": "2026-09-27 23:10 BST",
+      "agent": "Claude",
+      "summary": "The placement check tests words from the whole deck again, skips clitics and pronouns, and runs the full 30 questions.",
+      "detail": [
+        "Fixed: on Spanish (and any lean-index deck) the check only saw the few dozen cards whose meanings had already loaded, so it showed clitics and pronouns, ran out after about 30 of them and then said to start at Level 1.",
+        "Each word's meanings are now loaded just before it is shown, and the likely next words are loaded while you read the current one.",
+        "Clitics, articles, pronouns and prepositions are left out: everyone knows them, so they say nothing about level.",
+        "The estimate is now a deck position, counting the cognates and function words the check skips, so \"Start at Level N\" matches the level that opens.",
+        "Reveal and answer taps are ignored while the next word is loading, so one answer can no longer be counted twice."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T23:08:28+01:00",
       "date": "2026-09-27 23:08 BST",
       "agent": "Claude",
       "summary": "Shorter wording on the set box, Help and verb drills; 'Best for' lines under the two vocabulary choices; the set legend reads properly in light mode.",
       "detail": [
-        "Set box: 'Choose a set' heading; one line 'Level 1 · 0/10 sets studied' with the legend beside it; the 'Continue with the highlighted set' hint is gone; the chosen set reads 'Set 1 · 0 known · 0 review · 3 new'. Unseen is now New.",
-        "The set ⓘ sheet says each set is designed to take 5–10 minutes.",
+        "Set box: 'Choose a set' heading; one line 'Level 1 · 0/4 sets studied' with the legend beside it; the 'Continue with the highlighted set' hint is gone; the chosen set reads 'Set 1 · 0 known · 0 review · 3 new'. Unseen is now New.",
+        "The set ⓘ sheet says sets hold up to 25 cards and are designed to take 5–10 minutes.",
         "Vocabulary choice: Best for 'Starting a new language' under Everyday speech; 'Understanding the artists you listen to' and 'Hearing words sung in real songs' under Your music.",
         "Help: 'A quick tour of a real flashcard, part by part.' and 'Start tutorial (2 minutes)'.",
         "Verb drills: tabs are Set up / Practise, and the button is just Start.",
         "Light mode: the Known and Review legend squares are green and amber again instead of three identical greys."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-09-27T22:12:00+01:00",
+      "date": "2026-09-27 22:12 BST",
+      "agent": "Claude",
+      "summary": "Levels are 100 words and sets are 25 cards in every mode, Speech included, and the placement check now says which level to start at.",
+      "detail": [
+        "Every deck, Speech, Lyrics, artist and playlist, splits into levels of exactly 100 cards (at most 120 levels; smaller decks still get ten). Each level is four 25-card sets, shown as four squares filling the row.",
+        "Speech no longer takes its levels from the release's study-structure file; the app builds them the same way as Lyrics. Progress is per card, so nothing learned is lost, only the set numbering moves.",
+        "Level boundaries no longer snap to frequency cliffs.",
+        "The placement check result reads \"Start at Level N\", with \"Likely somewhere in Levels X–Y (about … words)\" underneath. Use Suggested Level opens that level. The estimate is still saved as a word rank.",
+        "\"Mark level as done\" is gone: the app no longer reads it, and no level is skipped because of it.",
+        "The set help sheet says a set is 25 cards, about 5–10 minutes. The tutorial shows Set 1 of 4 and Learn 25 new cards.",
+        "Fixed: Speech decks with lean indexes (Spanish, Portuguese, Czech) had no stable ranks, which app-built levels need."
       ],
       "commit": "pending"
     },
@@ -38,6 +68,18 @@
         "Account: a big initials disc with Log out beside it, then Password (blurred; Show reveals it and lets you change it, Save stores it on this device), then Spotify.",
         "Verb drills: the card-count box is the same width as the setting rows, with more room above Start on phones.",
         "Set legend (Known / Review / Unseen) is larger."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-09-27T19:55:00+01:00",
+      "date": "2026-09-27 19:55 BST",
+      "agent": "Claude",
+      "summary": "The Smart Skip slang switch now actually works, and everyday words like sí, bueno and claro are back in Speech sets.",
+      "detail": [
+        "A hidden always-on filter removed slang and fillers whatever the switch said, and it also caught any word with one interjection sense: sí, bueno, hola, claro, vale, adiós, cuidado, perdón… Speech Set 2 had 19 cards because sí was missing.",
+        "Now only the 'Skip slang & fillers' switch removes slang and fillers, and only words whose every sense is slang or a filler count (eh, oh, ay, perreo), not words that merely have one such sense.",
+        "The slang and pronoun switches are restored on reload; before, both reset to off every time the page loaded."
       ],
       "commit": "pending"
     },
@@ -70,18 +112,6 @@
       "commit": "pending"
     },
     {
-      "timestamp": "2026-09-27T19:55:00+01:00",
-      "date": "2026-09-27 19:55 BST",
-      "agent": "Claude",
-      "summary": "The Smart Skip slang switch now actually works, and everyday words like sí, bueno and claro are back in Speech sets.",
-      "detail": [
-        "A hidden always-on filter removed slang and fillers whatever the switch said, and it also caught any word with one interjection sense: sí, bueno, hola, claro, vale, adiós, cuidado, perdón… Speech Set 2 had 19 cards because sí was missing.",
-        "Now only the 'Skip slang & fillers' switch removes slang and fillers, and only words whose every sense is slang or a filler count (eh, oh, ay, perreo), not words that merely have one such sense.",
-        "The slang and pronoun switches are restored on reload; before, both reset to off every time the page loaded."
-      ],
-      "commit": "pending"
-    },
-    {
       "timestamp": "2026-09-27T19:15:00+01:00",
       "date": "2026-09-27 19:15 BST",
       "agent": "Claude",
@@ -98,18 +128,6 @@
       "commit": "pending"
     },
     {
-      "timestamp": "2026-09-27T18:04:01+01:00",
-      "date": "2026-09-27 18:04 BST",
-      "agent": "Claude",
-      "summary": "Verb drills moved off the vocabulary choice and into the top-left language pop-up.",
-      "detail": [
-        "The vocabulary page now offers only Everyday speech and Your music; the 'Optional add-on: Verb conjugation' row is gone from it.",
-        "Tapping the language/artist button at the top left shows a 'Verb drills · Practise conjugations' row for languages that have a drill deck.",
-        "Verb cards' conjugation drawer still links straight to drilling that verb."
-      ],
-      "commit": "pending"
-    },
-    {
       "timestamp": "2026-09-27T18:05:00+01:00",
       "date": "2026-09-27 18:05 BST",
       "agent": "Claude",
@@ -119,6 +137,18 @@
         "Ring centre now matches the ring: % of cards known. The frequency-weighted figure has its own line: 'X% of everyday speech understood' (or 'of these lyrics').",
         "Legend 'New' renamed 'Unseen'.",
         "Deck overview hold 8s → 11s, set-loading hold 3.9s → 6.9s; a tap still ends it."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-09-27T18:04:01+01:00",
+      "date": "2026-09-27 18:04 BST",
+      "agent": "Claude",
+      "summary": "Verb drills moved off the vocabulary choice and into the top-left language pop-up.",
+      "detail": [
+        "The vocabulary page now offers only Everyday speech and Your music; the 'Optional add-on: Verb conjugation' row is gone from it.",
+        "Tapping the language/artist button at the top left shows a 'Verb drills · Practise conjugations' row for languages that have a drill deck.",
+        "Verb cards' conjugation drawer still links straight to drilling that verb."
       ],
       "commit": "pending"
     },
