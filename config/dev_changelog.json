@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T23:34:27+01:00",
+      "date": "2026-09-27 23:34 BST",
+      "agent": "Codex",
+      "summary": "Back-of-card sense metadata is quieter and more useful, especially for Portuguese and Czech.",
+      "detail": [
+        "Sense rows now show only the shortest cue needed to distinguish or produce a meaning, with supporting grammar behind Details.",
+        "Portuguese removes redundant labels on cards such as vocês, pra, parece, uma and talvez.",
+        "Czech combines constructions such as podívat se na…, keeps useful case cues, and distinguishes plural from formal singular pronouns.",
+        "The rules are shared across dictionary languages, with Spanish examples retained as regression controls."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T23:25:12+01:00",
       "date": "2026-09-27 23:25 BST",
       "agent": "Codex",
