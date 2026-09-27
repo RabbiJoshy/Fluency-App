@@ -1,26 +1,26 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=ee17976c';
-import './speech.js?v=ee17976c';
-import { goToRoute, routeCodeFor } from './routes.js?v=ee17976c';
-import './side-dock.js?v=ee17976c';
+import './state.js?v=e0345846';
+import './speech.js?v=e0345846';
+import { goToRoute, routeCodeFor } from './routes.js?v=e0345846';
+import './side-dock.js?v=e0345846';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=ee17976c';
+} from './example-personalisation.js?v=e0345846';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=ee17976c';
+} from './spanishdict-usage.js?v=e0345846';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=ee17976c';
+} from './reverse-cues.js?v=e0345846';
 import {
     compactConstructionMetadata,
     contextWithoutSenseMetadata,
@@ -48,7 +48,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=ee17976c';
+} from './card-metadata-pills.js?v=e0345846';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -9046,7 +9046,22 @@ function buildProvenancePanelHTML(card) {
     let decisionAlgo = 'Deterministic / Direct Match';
 
     const sources = meaningsList.map(m => String(m.source || m.assignment_method || m.prompt_id || '')).join(' ').toLowerCase();
-    if (sources.includes('override:') || sources.includes('curated:lyrics_cultural')) {
+    if (sources.includes('no_menu')) {
+        // Lyrics v20: the shared resolver found no headword; declared, not guessed.
+        menuOrigin = 'No dictionary entry (declared)';
+        decisionAlgo = 'None: meaning withheld';
+    } else if (sources.includes('declared:entity')) {
+        menuOrigin = 'Declared Entity';
+        graftOverlay = 'Hand-written name entry';
+        decisionAlgo = 'Deterministic (one meaning)';
+    } else if (sources.includes('declared:gloss')) {
+        menuOrigin = 'Declared Gloss';
+        graftOverlay = 'Hand-written meaning';
+        decisionAlgo = 'Deterministic (one meaning)';
+    } else if (/lyrics-[a-z-]*v2\d/.test(String(releaseId || '')) && senseCount > 1) {
+        menuOrigin = sources.includes('wiktionary') ? 'Shared resolver: Wiktionary' : 'Shared resolver: SpanishDict';
+        decisionAlgo = 'spaCy TRF + Embedding margin';
+    } else if (sources.includes('override:') || sources.includes('curated:lyrics_cultural')) {
         menuOrigin = 'Cultural Overrides';
         graftOverlay = 'Cultural Expression Overlay';
         decisionAlgo = 'Deterministic Priority Override';
@@ -9561,8 +9576,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'ee17976c';
-const MODALS_ASSET_VERSION = 'ee17976c';
+const ASSET_VERSION = 'e0345846';
+const MODALS_ASSET_VERSION = 'e0345846';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
