@@ -976,6 +976,15 @@
     background: #f3f6f8;
 }
 
+:root[data-theme="light"] .knowledge-overview-tabs {
+    background: #eef2f5;
+}
+
+:root[data-theme="light"] .knowledge-overview-tab.is-active {
+    background: var(--bg-card);
+    box-shadow: 0 1px 3px rgba(27, 39, 51, 0.12);
+}
+
 :root[data-theme="light"] .knowledge-overview-row.is-known {
     border-color: rgba(8, 127, 104, 0.34);
     background: rgba(8, 127, 104, 0.07);

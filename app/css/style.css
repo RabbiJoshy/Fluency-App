@@ -2099,6 +2099,14 @@
             box-shadow: 0 1px 5px rgba(0, 0, 0, 0.28);
             pointer-events: none;
         }
+        .cbs-scrub.is-single {
+            cursor: default;
+        }
+        .cbs-scrub.is-single .cbs-track,
+        .cbs-scrub.is-single .cbs-fill,
+        .deck-progress-segments.is-single::before {
+            display: none;
+        }
         .cbs-thumb.is-phrases {
             background: var(--accent-phrases);
             color: #241b3d;
@@ -4683,19 +4691,51 @@
             pointer-events: none;
             z-index: 2;
         }
-        .card-rank-label,
-        .card-freq-label {
+        .card-ranking {
+            align-items: flex-end;
+            gap: 12px;
+        }
+        /* Two-line figure: the wording above, the number below. Rank and
+           frequency share every size so the two read as a pair. */
+        .card-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1px;
+            min-width: 0;
             font-family: var(--font-reading);
-            font-size: 15px;
             color: rgba(255, 255, 255, 0.55);
+            text-align: left;
+        }
+        .card-stat--end {
+            align-items: flex-end;
+            text-align: right;
+        }
+        .card-stat-label {
+            font-size: 13px;
+            line-height: 1.2;
+            letter-spacing: 0.01em;
+            white-space: nowrap;
+        }
+        .card-stat-line {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 5px;
+            line-height: 1.1;
+            white-space: nowrap;
+        }
+        .card-stat-unit {
+            font-size: 13px;
         }
         /* The figure itself, lifted out of the muted label around it. Applies
            to the lyric-line count, the spoken frequency and the vocabulary
-           rank — but never the "/ total vocabulary" denominator, which is
-           reference, not the number being reported. */
+           rank — but never the unit or the "/ total vocabulary" denominator,
+           which are reference, not the number being reported. */
         .card-stat-value {
             color: #fff;
+            font-size: 22px;
             font-weight: 750;
+            font-variant-numeric: tabular-nums;
         }
         .card-exclusion-label {
             max-width: 100%;
@@ -4723,7 +4763,6 @@
         }
         .card-freq-btn {
             font-family: var(--font-reading);
-            font-size: 18px;
             color: rgba(255, 255, 255, 0.55);
             background: none;
             border: none;
@@ -7436,6 +7475,76 @@
         .knowledge-overview-rows {
             display: grid;
             gap: 6px;
+        }
+        /* Section tabs: Meanings / Expressions / Attached forms, one at a
+           time. Sticky so the switch stays in reach down a long list. */
+        .knowledge-overview-tabs {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            display: flex;
+            gap: 4px;
+            margin: 0 0 12px;
+            padding: 4px;
+            border-radius: 11px;
+            background: color-mix(in srgb, var(--bg-card) 92%, #fff 8%);
+        }
+        .knowledge-overview-tab {
+            flex: 1 1 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            min-height: 36px;
+            padding: 6px 10px;
+            border: 0;
+            border-radius: 8px;
+            background: none;
+            color: var(--text-muted);
+            font: 700 13px/1.2 var(--font-emphasis);
+            cursor: pointer;
+        }
+        .knowledge-overview-tab span {
+            color: inherit;
+            font: 600 11px/1 var(--font-reading);
+            opacity: 0.75;
+        }
+        .knowledge-overview-tab.is-active {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+        /* One block per (lemma, POS) pair, headed the way the card back heads
+           its sections: coloured POS, then the lemma it belongs to. */
+        .knowledge-overview-group + .knowledge-overview-group {
+            margin-top: 14px;
+        }
+        .knowledge-overview-group-head {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin: 0 0 7px;
+            padding: 6px 10px;
+            border-left: 3px solid rgb(var(--sense-match-rgb));
+            border-radius: 6px;
+            background: rgba(var(--sense-match-rgb), 0.1);
+        }
+        .knowledge-overview-group-pos {
+            color: rgb(var(--sense-match-rgb));
+            font: 800 12px/1.2 var(--font-emphasis);
+            letter-spacing: 0.04em;
+        }
+        .knowledge-overview-group-lemma {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: color-mix(in srgb, rgb(var(--sense-match-rgb)) 58%, var(--text-primary));
+            font: 700 15px/1.2 var(--font-emphasis);
+        }
+        .knowledge-overview-group-count {
+            margin-left: auto;
+            color: var(--text-muted);
+            font: 600 11px/1 var(--font-reading);
         }
         .knowledge-overview-row {
             display: grid;
@@ -20667,6 +20776,25 @@ body.rare-uses-open { overflow: hidden; }
 .card-pos-list.is-lemma-map.pos-count-4 .front-lemma-pair,
 .card-pos-list.is-lemma-map.pos-count-many .front-lemma-pair { font-size: 13px; }
 .card-pos-list.is-lemma-map .card-pos { min-height: 30px; padding: 6px 10px; }
+/* One or two lemma/POS pairs is the common case, and the bay has the room:
+   size for that. Only three or more step back down to fit. */
+.card-front .card-pos-list.is-lemma-map.pos-count-1,
+.card-front .card-pos-list.is-lemma-map.pos-count-2 { grid-auto-rows: minmax(48px, auto); gap: 10px; }
+.card-front .card-pos-list.is-lemma-map.pos-count-1 { max-width: min(380px, calc(100% - 60px)); }
+.card-front .card-pos-list.is-lemma-map.pos-count-2 { max-width: min(560px, calc(100% - 60px)); }
+.card-pos-list.is-lemma-map.pos-count-1 .front-lemma-pair,
+.card-pos-list.is-lemma-map.pos-count-2 .front-lemma-pair {
+  min-height: 48px;
+  gap: 8px;
+  padding: 6px 14px 6px 6px;
+  font-size: 20px;
+}
+.card-pos-list.is-lemma-map.pos-count-1 .card-pos,
+.card-pos-list.is-lemma-map.pos-count-2 .card-pos {
+  min-height: 36px;
+  padding: 7px 13px;
+  font-size: 16px;
+}
 
 @media (min-width: 768px) {
   .card-face.card-front { padding: 38px; }
@@ -20681,6 +20809,10 @@ body.rare-uses-open { overflow: hidden; }
   .card-front .card-pos-list.is-lemma-map.pos-count-3 > :last-child { grid-column: 1 / -1; }
   .card-pos-list.is-lemma-map .front-lemma-pair { min-height: 36px; padding-right: 7px; }
   .card-pos-list.is-lemma-map .card-pos { padding: 5px 7px; font-size: 12px; }
+  .card-pos-list.is-lemma-map.pos-count-1 .front-lemma-pair,
+  .card-pos-list.is-lemma-map.pos-count-2 .front-lemma-pair { min-height: 42px; font-size: 17px; padding-right: 10px; }
+  .card-pos-list.is-lemma-map.pos-count-1 .card-pos,
+  .card-pos-list.is-lemma-map.pos-count-2 .card-pos { min-height: 32px; padding: 6px 10px; font-size: 14px; }
   #topBar .learning-context-chip { min-width: 0; max-width: 148px; min-height: 48px; padding: 4px 8px; column-gap: 5px; }
   #topBar .learning-context-flag { font-size: 20px; }
   #topBar .learning-context-chip-copy strong { font-size: 12.5px; }

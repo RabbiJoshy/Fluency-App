@@ -1,8 +1,8 @@
 // Granular sense / expression knowledge layered over whole-card progress.
 // Whole-card answers are the baseline; only explicit row-level answers create
 // ItemProgress records. The newest card-level or item-level event wins.
-import './state.js?v=08011a81';
-import { sendOrQueue } from './sync-queue.js?v=08011a81';
+import './state.js?v=68f240bf';
+import { sendOrQueue } from './sync-queue.js?v=68f240bf';
 
 const KNOWLEDGE_SCHEMA_VERSION = 1;
 
@@ -10,6 +10,8 @@ let indexedItemProgressSource = null;
 let indexedItemProgressSize = -1;
 let itemProgressByParent = new Map();
 let knowledgeOverviewCard = null;
+// Which section tab the open overview shows (Meanings / Expressions / …).
+let knowledgeOverviewTab = '';
 
 function normalizeKnowledgeText(value) {
     return String(value || '')
@@ -113,7 +115,8 @@ function knowledgeItemsForMeaning(card, meaning, meaningIndex) {
                         : []
                 ),
                 detail: context,
-                pos
+                pos,
+                headword: sense.headword || meaning.headword || ''
             };
         });
     }
@@ -142,6 +145,7 @@ function knowledgeItemsForMeaning(card, meaning, meaningIndex) {
         ),
         detail: context,
         pos,
+        headword: meaning.headword || '',
         isRare
     };
     if (stableSenseId && !isRare) {
@@ -620,8 +624,13 @@ function escapeKnowledgeHTML(value) {
     })[character]);
 }
 
-function knowledgeSectionLabel(type) {
-    if (type === 'expression') return 'Expressions';
+// Expressions arrive two ways: as MWE items, and (on current releases) as
+// ordinary senses whose POS is PHRASE — `por qué`, `así que`. Both are
+// expressions to the learner. The section is display only; item ids do not
+// depend on it.
+function knowledgeSectionLabel(item) {
+    const type = item?.type;
+    if (type === 'expression' || String(item?.pos || '').toUpperCase() === 'PHRASE') return 'Expressions';
     if (type === 'clitic') return 'Attached forms';
     return 'Meanings';
 }
@@ -677,12 +686,12 @@ function ensureKnowledgeOverviewModal() {
     return modal;
 }
 
-function knowledgeOverviewRowsHTML(card, rows) {
+function knowledgeOverviewRowsHTML(card, rows, { groupedByPos = false } = {}) {
     return rows.map(({ item, index }) => {
         const state = getKnowledgeItemState(card, item);
         const status = state.learned ? 'known' : (state.needsReview ? 'review' : 'unseen');
         const statusText = status === 'known' ? 'Known' : (status === 'review' ? 'Review' : 'Unmarked');
-        const pos = item.pos && (item.type === 'sense' || item.isRare)
+        const pos = !groupedByPos && item.pos && (item.type === 'sense' || item.isRare)
             ? `<span class="knowledge-overview-pos">${escapeKnowledgeHTML(item.pos)}</span>` : '';
         const detail = [item.detail, item.isRare ? item.example : ''].filter(Boolean).join(' · ');
         const copy = `<span class="knowledge-overview-status" aria-label="${statusText}"></span>
@@ -715,25 +724,76 @@ function renderKnowledgeOverview(card) {
 
     const sections = new Map();
     items.forEach((item, index) => {
-        const label = knowledgeSectionLabel(item.type);
+        const label = knowledgeSectionLabel(item);
         if (!sections.has(label)) sections.set(label, []);
         sections.get(label).push({ item, index });
     });
+    if (!sections.has(knowledgeOverviewTab)) knowledgeOverviewTab = sections.keys().next().value || '';
 
-    const mainHTML = Array.from(sections, ([label, rows]) => `
-        <section class="knowledge-overview-section">
-            <h3>${label}<span>${rows.length}</span></h3>
-            <div class="knowledge-overview-rows">
-                ${knowledgeOverviewRowsHTML(card, rows)}
+    // One section at a time: with meanings and expressions both on the card,
+    // a single long list hides where one kind ends and the other begins.
+    const knownIn = rows => rows.filter(({ item }) => getKnowledgeItemState(card, item).learned).length;
+    const tabsHTML = sections.size > 1
+        ? `<div class="knowledge-overview-tabs" role="tablist" aria-label="Knowledge sections">${Array.from(sections, ([label, rows]) => {
+            const active = label === knowledgeOverviewTab;
+            return `<button type="button" role="tab" class="knowledge-overview-tab${active ? ' is-active' : ''}" aria-selected="${active}" onclick="selectKnowledgeOverviewTab(event, '${escapeKnowledgeHTML(label)}')">${label}<span>${knownIn(rows)}/${rows.length}</span></button>`;
+        }).join('')}</div>`
+        : '';
+
+    const rows = sections.get(knowledgeOverviewTab) || [];
+    // MWE and clitic items name their own expression or form in the row, so
+    // they stay a flat list; anything with a POS groups like the card back.
+    const groupable = rows.length > 0
+        && rows.every(({ item }) => item.pos && item.pos !== 'MWE' && item.pos !== 'CLITIC');
+    const sectionHTML = groupable
+        ? knowledgeOverviewMeaningGroupsHTML(card, rows)
+        : `<div class="knowledge-overview-rows">${knowledgeOverviewRowsHTML(card, rows)}</div>`;
+    const heading = sections.size > 1 ? '' : `<h3>${knowledgeOverviewTab}<span>${rows.length}</span></h3>`;
+    listEl.innerHTML = `${tabsHTML}
+        <section class="knowledge-overview-section" role="${sections.size > 1 ? 'tabpanel' : 'region'}">
+            ${heading}${sectionHTML}
+        </section>`;
+}
+
+// Meanings grouped as the card back groups them: one block per (lemma, POS)
+// pair, headed by the same coloured POS label and lemma, so a learner marking
+// `fue` can see which rows are ir and which are ser.
+function knowledgeOverviewMeaningGroupsHTML(card, rows) {
+    const groups = new Map();
+    rows.forEach(row => {
+        const pos = row.item.pos || 'X';
+        const headword = String(row.item.headword || card.lemma || card.targetWord || '').trim();
+        const key = `${headword}\0${pos}`;
+        if (!groups.has(key)) groups.set(key, { pos, headword, rows: [] });
+        groups.get(key).rows.push(row);
+    });
+    const posName = pos => (window.posDisplayName ? window.posDisplayName(pos) : pos);
+    return Array.from(groups.values()).map(group => {
+        const accent = window.getPosAccentRgb?.(group.pos) || '150, 160, 180';
+        const known = group.rows.filter(({ item }) => getKnowledgeItemState(card, item).learned).length;
+        return `<div class="knowledge-overview-group" style="--sense-match-rgb: ${accent};">
+            <div class="knowledge-overview-group-head">
+                <span class="knowledge-overview-group-pos">${escapeKnowledgeHTML(posName(group.pos))}</span>
+                ${group.headword ? `<span class="knowledge-overview-group-lemma">${escapeKnowledgeHTML(group.headword)}</span>` : ''}
+                <span class="knowledge-overview-group-count">${known}/${group.rows.length}</span>
             </div>
-        </section>`).join('');
-    listEl.innerHTML = mainHTML;
+            <div class="knowledge-overview-rows">${knowledgeOverviewRowsHTML(card, group.rows, { groupedByPos: true })}</div>
+        </div>`;
+    }).join('');
+}
+
+function selectKnowledgeOverviewTab(event, label) {
+    event?.stopPropagation();
+    knowledgeOverviewTab = label;
+    if (knowledgeOverviewCard) renderKnowledgeOverview(knowledgeOverviewCard);
+    document.querySelector('#knowledgeOverviewList .knowledge-overview-tab.is-active')?.focus();
 }
 
 function showKnowledgeOverview(event, options = {}) {
     event?.stopPropagation();
     const card = options.card || flashcards[currentIndex];
     if (!card) return;
+    if (knowledgeOverviewCard !== card) knowledgeOverviewTab = '';
     knowledgeOverviewCard = card;
     const modal = ensureKnowledgeOverviewModal();
     renderKnowledgeOverview(card);
@@ -862,6 +922,7 @@ window.findRareSenseKnowledgeItem = findRareSenseKnowledgeItem;
 window.closeKnowledgeOverview = closeKnowledgeOverview;
 window.focusKnowledgeOverviewItem = focusKnowledgeOverviewItem;
 window.markKnowledgeOverviewItem = markKnowledgeOverviewItem;
+window.selectKnowledgeOverviewTab = selectKnowledgeOverviewTab;
 window.saveAndNextCardFromKnowledge = saveAndNextCardFromKnowledge;
 window.cacheItemProgress = cacheItemProgress;
 
