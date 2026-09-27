@@ -131,6 +131,7 @@ let deckLoadingHintTimer = null;
 let loadingImagesManifest = null;
 let loadingImagesManifestPromise = null;
 let loadingMarkRotationTimer = null;
+const LOADING_MARK_ROTATION_MS = 750;
 let currentLoadingImages = [];
 let currentLoadingImageIndex = 0;
 
@@ -157,18 +158,27 @@ function stopLoadingMarkRotation() {
     }
 }
 
-function applyLoadingMarkImage(src) {
+// Language images are transparent clipart: contained and padded, with a small pop
+// on each swap. Artist art is a photo and keeps filling the tile edge to edge.
+function applyLoadingMarkImage(src, { clipart = false } = {}) {
     const mark = document.getElementById('appLoadingMark');
     const art = document.getElementById('appLoadingMarkArt');
     if (!mark || !art) return;
     if (!src) {
         art.hidden = true;
         art.style.backgroundImage = '';
+        art.classList.remove('is-clipart', 'is-popping');
         mark.classList.remove('has-art');
         return;
     }
     const escaped = String(src).replace(/"/g, '%22');
     art.style.backgroundImage = `url("${escaped}")`;
+    art.classList.toggle('is-clipart', clipart);
+    if (clipart && !prefersReducedMotion()) {
+        art.classList.remove('is-popping');
+        void art.offsetWidth; // restart the pop animation
+        art.classList.add('is-popping');
+    }
     art.hidden = false;
     mark.classList.add('has-art');
 }
@@ -202,15 +212,18 @@ async function updateLoadingMark({ language = '', artist = null } = {}) {
         return;
     }
 
+    // Preload the set so a swap never shows an empty tile, and start somewhere
+    // random so repeated loads don't always open on the same picture.
+    images.forEach(src => { const img = new Image(); img.src = src; });
     currentLoadingImages = images;
-    currentLoadingImageIndex = 0;
-    applyLoadingMarkImage(images[0]);
+    currentLoadingImageIndex = Math.floor(Math.random() * images.length);
+    applyLoadingMarkImage(images[currentLoadingImageIndex], { clipart: true });
 
-    if (images.length > 1) {
+    if (images.length > 1 && !prefersReducedMotion()) {
         loadingMarkRotationTimer = setInterval(() => {
             currentLoadingImageIndex = (currentLoadingImageIndex + 1) % currentLoadingImages.length;
-            applyLoadingMarkImage(currentLoadingImages[currentLoadingImageIndex]);
-        }, 2500);
+            applyLoadingMarkImage(currentLoadingImages[currentLoadingImageIndex], { clipart: true });
+        }, LOADING_MARK_ROTATION_MS);
     }
 }
 

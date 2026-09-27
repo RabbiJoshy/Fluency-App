@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T17:35:30+01:00",
+      "date": "2026-09-27 17:35 BST",
+      "agent": "Claude",
+      "summary": "The loading screen now cycles through little pictures for your language (paella, guitar, bull, flamenco dancer…) every ¾ second while the deck loads.",
+      "detail": [
+        "96 flat clipart images (Microsoft Fluent Emoji, MIT) in app/images/loading: 8 each for Spanish, French, Italian, Portuguese, Brazilian Portuguese, Dutch, Czech, Polish, Swedish, Russian, Finnish and a default set.",
+        "Rotation 2.5 s → 750 ms, starts on a random picture, preloads the set, small pop on each swap; stays still under reduced motion.",
+        "Clipart is contained and padded inside the tile; artist photos still fill it edge to edge."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T17:26:58+01:00",
       "date": "2026-09-27 17:26 BST",
       "agent": "Claude",

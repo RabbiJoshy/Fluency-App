@@ -1,13 +1,122 @@
 {
-  "default": [],
-  "spanish": [],
-  "french": [],
-  "italian": [],
-  "portuguese": [],
-  "portuguese_brazilian": [],
-  "swedish": [],
-  "dutch": [],
-  "russian": [],
-  "polish": [],
-  "czech": []
+  "default": [
+    "images/loading/default/books.svg",
+    "images/loading/default/globe-showing-europe-africa.svg",
+    "images/loading/default/speech-balloon.svg",
+    "images/loading/default/musical-notes.svg",
+    "images/loading/default/open-book.svg",
+    "images/loading/default/light-bulb.svg",
+    "images/loading/default/airplane.svg",
+    "images/loading/default/world-map.svg"
+  ],
+  "spanish": [
+    "images/loading/languages/spanish/shallow-pan-of-food.svg",
+    "images/loading/languages/spanish/guitar.svg",
+    "images/loading/languages/spanish/ox.svg",
+    "images/loading/languages/spanish/woman-dancing.svg",
+    "images/loading/languages/spanish/sun.svg",
+    "images/loading/languages/spanish/olive.svg",
+    "images/loading/languages/spanish/tangerine.svg",
+    "images/loading/languages/spanish/folding-hand-fan.svg"
+  ],
+  "french": [
+    "images/loading/languages/french/croissant.svg",
+    "images/loading/languages/french/baguette-bread.svg",
+    "images/loading/languages/french/cheese-wedge.svg",
+    "images/loading/languages/french/wine-glass.svg",
+    "images/loading/languages/french/bicycle.svg",
+    "images/loading/languages/french/snail.svg",
+    "images/loading/languages/french/rooster.svg",
+    "images/loading/languages/french/fleur-de-lis.svg"
+  ],
+  "italian": [
+    "images/loading/languages/italian/pizza.svg",
+    "images/loading/languages/italian/spaghetti.svg",
+    "images/loading/languages/italian/tomato.svg",
+    "images/loading/languages/italian/classical-building.svg",
+    "images/loading/languages/italian/motor-scooter.svg",
+    "images/loading/languages/italian/wine-glass.svg",
+    "images/loading/languages/italian/violin.svg",
+    "images/loading/languages/italian/lemon.svg"
+  ],
+  "portuguese": [
+    "images/loading/languages/portuguese/fish.svg",
+    "images/loading/languages/portuguese/custard.svg",
+    "images/loading/languages/portuguese/water-wave.svg",
+    "images/loading/languages/portuguese/sailboat.svg",
+    "images/loading/languages/portuguese/guitar.svg",
+    "images/loading/languages/portuguese/lemon.svg",
+    "images/loading/languages/portuguese/anchor.svg",
+    "images/loading/languages/portuguese/sun.svg"
+  ],
+  "portuguese_brazilian": [
+    "images/loading/languages/portuguese_brazilian/soccer-ball.svg",
+    "images/loading/languages/portuguese_brazilian/parrot.svg",
+    "images/loading/languages/portuguese_brazilian/palm-tree.svg",
+    "images/loading/languages/portuguese_brazilian/beach-with-umbrella.svg",
+    "images/loading/languages/portuguese_brazilian/maracas.svg",
+    "images/loading/languages/portuguese_brazilian/pineapple.svg",
+    "images/loading/languages/portuguese_brazilian/banana.svg",
+    "images/loading/languages/portuguese_brazilian/long-drum.svg"
+  ],
+  "dutch": [
+    "images/loading/languages/dutch/tulip.svg",
+    "images/loading/languages/dutch/bicycle.svg",
+    "images/loading/languages/dutch/cheese-wedge.svg",
+    "images/loading/languages/dutch/sailboat.svg",
+    "images/loading/languages/dutch/waffle.svg",
+    "images/loading/languages/dutch/water-wave.svg",
+    "images/loading/languages/dutch/orange-heart.svg",
+    "images/loading/languages/dutch/canoe.svg"
+  ],
+  "czech": [
+    "images/loading/languages/czech/beer-mug.svg",
+    "images/loading/languages/czech/castle.svg",
+    "images/loading/languages/czech/bridge-at-night.svg",
+    "images/loading/languages/czech/violin.svg",
+    "images/loading/languages/czech/brown-mushroom.svg",
+    "images/loading/languages/czech/deer.svg",
+    "images/loading/languages/czech/evergreen-tree.svg",
+    "images/loading/languages/czech/musical-score.svg"
+  ],
+  "polish": [
+    "images/loading/languages/polish/dumpling.svg",
+    "images/loading/languages/polish/bison.svg",
+    "images/loading/languages/polish/eagle.svg",
+    "images/loading/languages/polish/musical-keyboard.svg",
+    "images/loading/languages/polish/red-apple.svg",
+    "images/loading/languages/polish/brown-mushroom.svg",
+    "images/loading/languages/polish/evergreen-tree.svg",
+    "images/loading/languages/polish/honey-pot.svg"
+  ],
+  "swedish": [
+    "images/loading/languages/swedish/moose.svg",
+    "images/loading/languages/swedish/hot-beverage.svg",
+    "images/loading/languages/swedish/evergreen-tree.svg",
+    "images/loading/languages/swedish/snowflake.svg",
+    "images/loading/languages/swedish/strawberry.svg",
+    "images/loading/languages/swedish/fish.svg",
+    "images/loading/languages/swedish/canoe.svg",
+    "images/loading/languages/swedish/carousel-horse.svg"
+  ],
+  "russian": [
+    "images/loading/languages/russian/nesting-dolls.svg",
+    "images/loading/languages/russian/bear.svg",
+    "images/loading/languages/russian/ballet-shoes.svg",
+    "images/loading/languages/russian/teapot.svg",
+    "images/loading/languages/russian/snowflake.svg",
+    "images/loading/languages/russian/rocket.svg",
+    "images/loading/languages/russian/pancakes.svg",
+    "images/loading/languages/russian/chess-pawn.svg"
+  ],
+  "finnish": [
+    "images/loading/languages/finnish/person-in-steamy-room.svg",
+    "images/loading/languages/finnish/deer.svg",
+    "images/loading/languages/finnish/blueberries.svg",
+    "images/loading/languages/finnish/evergreen-tree.svg",
+    "images/loading/languages/finnish/snowflake.svg",
+    "images/loading/languages/finnish/fish.svg",
+    "images/loading/languages/finnish/hot-beverage.svg",
+    "images/loading/languages/finnish/mobile-phone.svg"
+  ]
 }
