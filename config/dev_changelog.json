@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T20:26:33+01:00",
+      "date": "2026-09-27 20:26 BST",
+      "agent": "Claude",
+      "summary": "Smart Skip always has a way out, Settings is grouped into cards, and Account leads with your profile and a password you can see and change.",
+      "detail": [
+        "Smart Skip: the title is a bar that stays at the top with the ✕ in it, below the phone's status bar, so you can leave from anywhere in the word list. Level headers stick beneath it.",
+        "Settings: Study, Your words and App are each their own card with the group name at the top.",
+        "Account: a big initials disc with Log out beside it, then Password (blurred; Show reveals it and lets you change it, Save stores it on this device), then Spotify.",
+        "Verb drills: the card-count box is the same width as the setting rows, with more room above Start on phones.",
+        "Set legend (Known / Review / Unseen) is larger."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T19:53:59+01:00",
       "date": "2026-09-27 19:53 BST",
       "agent": "Claude",

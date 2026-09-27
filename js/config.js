@@ -1,5 +1,5 @@
-import './state.js?v=79b7f839';
-import { releaseUrl } from './release-host.js?v=79b7f839';
+import './state.js?v=9dd8c6dd';
+import { releaseUrl } from './release-host.js?v=9dd8c6dd';
 
 async function loadConfig() {
     try {

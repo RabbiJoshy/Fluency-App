@@ -344,3 +344,10 @@ code {
 .tables-back span { font-size: 20px; line-height: 1; }
 .back-to-study[hidden] { display: none; }
 .tabs { margin-left: auto; }
+
+/* The summary lines up with the setting rows above it (same column), and
+   the bar gets room before the Start button. */
+.summary { max-width: 680px; margin-left: auto; margin-right: auto; bottom: 12px; }
+@media (max-width: 620px) {
+  .summary #start { margin-top: 12px; }
+}
