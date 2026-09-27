@@ -1,26 +1,26 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=68f240bf';
-import './speech.js?v=68f240bf';
-import { goToRoute, routeCodeFor } from './routes.js?v=68f240bf';
-import './side-dock.js?v=68f240bf';
+import './state.js?v=2d19c8e6';
+import './speech.js?v=2d19c8e6';
+import { goToRoute, routeCodeFor } from './routes.js?v=2d19c8e6';
+import './side-dock.js?v=2d19c8e6';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=68f240bf';
+} from './example-personalisation.js?v=2d19c8e6';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=68f240bf';
+} from './spanishdict-usage.js?v=2d19c8e6';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=68f240bf';
+} from './reverse-cues.js?v=2d19c8e6';
 import {
     compactConstructionMetadata,
     contextWithoutSenseMetadata,
@@ -48,7 +48,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=68f240bf';
+} from './card-metadata-pills.js?v=2d19c8e6';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -5876,9 +5876,9 @@ function renderCardWikipediaBadge(card) {
             const names = [...frontPOSEl.querySelectorAll('.front-lemma-name')];
             // Sized for the common one- or two-pair card (matches the CSS);
             // only a lemma that will not fit steps down from there.
-            const baseSize = pairs.length <= 2 ? 20 : pairs.length === 3 ? 14 : 13;
+            const baseSize = pairs.length <= 2 ? 23 : pairs.length === 3 ? 14 : 13;
             const floorSize = pairs.length > 3 ? 10.5 : 11.5;
-            let labelSize = window.innerWidth < 768 ? (pairs.length <= 2 ? 17 : baseSize - 1) : baseSize;
+            let labelSize = window.innerWidth < 768 ? (pairs.length <= 2 ? 18 : baseSize - 1) : baseSize;
             for (; labelSize > floorSize && names.some(name => name.scrollWidth > name.clientWidth + 1); labelSize -= 0.5) {
                 names.forEach(name => { name.style.fontSize = `${labelSize - 0.5}px`; });
             }
@@ -5974,7 +5974,7 @@ function renderCardWikipediaBadge(card) {
         // size; the wording, units and the total-vocabulary denominator are
         // context and stay muted.
         if (activeArtist && card.corpusCount) {
-            freqHtml = cardStatHTML('card-freq-label', 'Lyric lines',
+            freqHtml = cardStatHTML('card-freq-label', 'Song Lines',
                 Number(card.corpusCount).toLocaleString());
         } else if (!activeArtist && Number(card.sourceFrequency) > 0) {
             const perMillion = card.sourceFrequencyUnit === 'per_million';
@@ -5985,9 +5985,9 @@ function renderCardWikipediaBadge(card) {
             // real, it is just not this form's. Never let the three read alike.
             const basis = card.sourceFrequencyBasis || 'own';
             const label = basis === 'total'
-                ? 'Frequency · all forms'
+                ? 'Frequency · All Forms'
                 : basis === 'other-surface'
-                    ? `Frequency · ${escapeCardText(card.sourceFrequencyBasisSurface || 'listed form')}`
+                    ? `Frequency · ${escapeCardText(card.sourceFrequencyBasisSurface || 'Listed Form')}`
                     : 'Frequency';
             // The breakdown travels as an attribute so the tooltip needs no
             // access to the card model; it is already HTML-escaped for the
@@ -6003,7 +6003,7 @@ function renderCardWikipediaBadge(card) {
         // total is just the size of our deck, not of the language, so the rank
         // stands alone.
         const denominator = activeArtist && vocabularySize ? `/ ${vocabularySize.toLocaleString()}` : '';
-        const rankLabel = card.artistVocabularyScope === 'extra' ? 'Extra rank' : 'Vocabulary rank';
+        const rankLabel = card.artistVocabularyScope === 'extra' ? 'Extra Rank' : 'Vocabulary Rank';
         frontRankingEl.innerHTML =
             cardStatHTML('card-rank-label', rankLabel, Number(vocabularyRank).toLocaleString(), denominator)
             + freqHtml;
@@ -9540,8 +9540,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '68f240bf';
-const MODALS_ASSET_VERSION = '68f240bf';
+const ASSET_VERSION = '2d19c8e6';
+const MODALS_ASSET_VERSION = '2d19c8e6';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

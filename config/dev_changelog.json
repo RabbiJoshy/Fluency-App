@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T15:55:00+01:00",
+      "date": "2026-09-27 15:55 BST",
+      "agent": "Claude",
+      "summary": "'Lyric lines' is now 'Song Lines'; card-front labels are Title Case, and both the labels, the numbers and the lemma/POS pills are bigger.",
+      "detail": [
+        "Vocabulary Rank, Extra Rank, Song Lines and Frequency · All Forms are Title Case.",
+        "Card-front labels 13→15px, numbers 22→26px, 'per million' 15px.",
+        "One or two lemma/POS pairs on the front: lemma 20→23px and POS 16→18px on desktop; 17→18px and 14→15px on phones."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T15:35:00+01:00",
       "date": "2026-09-27 15:35 BST",
       "agent": "Claude",

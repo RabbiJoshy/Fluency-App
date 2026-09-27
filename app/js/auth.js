@@ -1,10 +1,10 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=68f240bf';
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=68f240bf';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=68f240bf';
-import { dbGet, dbPut } from './offline-db.js?v=68f240bf';
-import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=68f240bf';
+import './state.js?v=2d19c8e6';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=2d19c8e6';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=2d19c8e6';
+import { dbGet, dbPut } from './offline-db.js?v=2d19c8e6';
+import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=2d19c8e6';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -13,7 +13,7 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=68f240bf';
+} from './sync-queue.js?v=2d19c8e6';
 
 const AUDIT_ACCOUNT_INITIALS = new Set(['JST', 'JSTA']);
 
@@ -1585,7 +1585,7 @@ async function _runAboutDemo(container, mode) {
             // Mirror the live labels while keeping this small demo on one line.
             if (entry.rank && entry.corpusCount) {
                 rankEl.textContent = mode === 'artist'
-                    ? `Vocabulary rank: ${entry.rank.toLocaleString()} · Lyric lines: ${entry.corpusCount.toLocaleString()}`
+                    ? `Vocabulary Rank: ${entry.rank.toLocaleString()} · Song Lines: ${entry.corpusCount.toLocaleString()}`
                     : `Vocabulary rank: ${entry.rank.toLocaleString()} · Frequency: ${entry.corpusCount.toLocaleString()}/million`;
             } else if (entry.rank) {
                 rankEl.textContent = `Vocabulary rank: ${entry.rank}`;

@@ -347,13 +347,13 @@ export function renderFront(card) {
         + `<span class="card-stat-label">${label}</span>`
         + `<span class="card-stat-line"><strong class="card-stat-value">${value}</strong>`
         + `${unit ? `<span class="card-stat-unit">${unit}</span>` : ''}</span></span>`;
-    const rankLabel = stat('card-rank-label', 'Vocabulary rank', card.rank.toLocaleString(), denominator);
+    const rankLabel = stat('card-rank-label', 'Vocabulary Rank', card.rank.toLocaleString(), denominator);
     // Same two figures the live card puts here, in the same words. An earlier
     // draft hedged with "Frequency from the Spanish release", which told a
     // visitor nothing: the number is the point, and a count per million is
     // what the real front says.
     const freqLabel = card.mode === 'lyrics'
-        ? stat('card-freq-label', 'Lyric lines', card.corpusCount.toLocaleString())
+        ? stat('card-freq-label', 'Song Lines', card.corpusCount.toLocaleString())
         : stat('card-freq-label', 'Frequency', Math.round(card.corpusCount).toLocaleString(), 'per million');
 
     // updateCard() pairs each POS pill with the lemma it governs inside one

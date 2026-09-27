@@ -4712,7 +4712,7 @@
             text-align: right;
         }
         .card-stat-label {
-            font-size: 13px;
+            font-size: 15px;
             line-height: 1.2;
             letter-spacing: 0.01em;
             white-space: nowrap;
@@ -4725,7 +4725,7 @@
             white-space: nowrap;
         }
         .card-stat-unit {
-            font-size: 13px;
+            font-size: 15px;
         }
         /* The figure itself, lifted out of the muted label around it. Applies
            to the lyric-line count, the spoken frequency and the vocabulary
@@ -4733,7 +4733,7 @@
            which are reference, not the number being reported. */
         .card-stat-value {
             color: #fff;
-            font-size: 22px;
+            font-size: 26px;
             font-weight: 750;
             font-variant-numeric: tabular-nums;
         }
@@ -20779,21 +20779,21 @@ body.rare-uses-open { overflow: hidden; }
 /* One or two lemma/POS pairs is the common case, and the bay has the room:
    size for that. Only three or more step back down to fit. */
 .card-front .card-pos-list.is-lemma-map.pos-count-1,
-.card-front .card-pos-list.is-lemma-map.pos-count-2 { grid-auto-rows: minmax(48px, auto); gap: 10px; }
-.card-front .card-pos-list.is-lemma-map.pos-count-1 { max-width: min(380px, calc(100% - 60px)); }
-.card-front .card-pos-list.is-lemma-map.pos-count-2 { max-width: min(560px, calc(100% - 60px)); }
+.card-front .card-pos-list.is-lemma-map.pos-count-2 { grid-auto-rows: minmax(56px, auto); gap: 12px; }
+.card-front .card-pos-list.is-lemma-map.pos-count-1 { max-width: min(420px, calc(100% - 60px)); }
+.card-front .card-pos-list.is-lemma-map.pos-count-2 { max-width: min(620px, calc(100% - 60px)); }
 .card-pos-list.is-lemma-map.pos-count-1 .front-lemma-pair,
 .card-pos-list.is-lemma-map.pos-count-2 .front-lemma-pair {
-  min-height: 48px;
-  gap: 8px;
-  padding: 6px 14px 6px 6px;
-  font-size: 20px;
+  min-height: 56px;
+  gap: 10px;
+  padding: 7px 16px 7px 7px;
+  font-size: 23px;
 }
 .card-pos-list.is-lemma-map.pos-count-1 .card-pos,
 .card-pos-list.is-lemma-map.pos-count-2 .card-pos {
-  min-height: 36px;
-  padding: 7px 13px;
-  font-size: 16px;
+  min-height: 42px;
+  padding: 8px 15px;
+  font-size: 18px;
 }
 
 @media (min-width: 768px) {
@@ -20810,9 +20810,9 @@ body.rare-uses-open { overflow: hidden; }
   .card-pos-list.is-lemma-map .front-lemma-pair { min-height: 36px; padding-right: 7px; }
   .card-pos-list.is-lemma-map .card-pos { padding: 5px 7px; font-size: 12px; }
   .card-pos-list.is-lemma-map.pos-count-1 .front-lemma-pair,
-  .card-pos-list.is-lemma-map.pos-count-2 .front-lemma-pair { min-height: 42px; font-size: 17px; padding-right: 10px; }
+  .card-pos-list.is-lemma-map.pos-count-2 .front-lemma-pair { min-height: 46px; font-size: 18px; padding-right: 11px; }
   .card-pos-list.is-lemma-map.pos-count-1 .card-pos,
-  .card-pos-list.is-lemma-map.pos-count-2 .card-pos { min-height: 32px; padding: 6px 10px; font-size: 14px; }
+  .card-pos-list.is-lemma-map.pos-count-2 .card-pos { min-height: 34px; padding: 6px 11px; font-size: 15px; }
   #topBar .learning-context-chip { min-width: 0; max-width: 148px; min-height: 48px; padding: 4px 8px; column-gap: 5px; }
   #topBar .learning-context-flag { font-size: 20px; }
   #topBar .learning-context-chip-copy strong { font-size: 12.5px; }
