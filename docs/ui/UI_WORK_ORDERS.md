@@ -37,10 +37,12 @@ need code, so they come last.
 ## Rules for every chat in this batch
 
 1. **Check `git status` first.** Concurrent sessions are normal.
-2. **One chat deploys at a time.** `gh-pages` and the two `dev_changelog.json`
-   files are the contention points. Groups 2, 3, 6 and 7 all live in
-   `flashcards.js` — write in parallel if you like, but do not deploy
-   simultaneously.
+2. **Deploys go through `main`.** `.github/workflows/deploy-pages.yml`
+   publishes `app/` from `main` one run at a time, so chats may deploy in
+   parallel: the second push must first merge the first (`make deploy` does
+   this), and clashes in `flashcards.js`, the version tags or the two
+   `dev_changelog.json` files surface as merge conflicts instead of one deploy
+   silently overwriting another. Never push to `gh-pages` directly.
 3. **Cache busting needs three edits, not one.** Bumping `CACHE_NAME` alone
    is **not enough** — it clears the service worker's cache but not the
    browser's HTTP cache, which keys on the `?v=` tag. Changing an asset means:

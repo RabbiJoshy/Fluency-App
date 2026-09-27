@@ -151,9 +151,14 @@ Languages with profiles or packages: `es`, `fr`, `pt`, `cs`, `nl`, `pl`. Modes: 
 - **Concurrent sessions are normal.** Check `git status` before committing;
   commit only your own paths. Others' uncommitted work is routinely present.
   Named jobs: **`CHAT_ROADMAP.md`** — do only your codename.
-- **Deploy every UI change.** Any edit to files under `app/` must be committed
-  on `main` and deployed to `gh-pages` at the end of the response — don't wait
-  to be asked. Josh needs to see the result on the live site to judge it.
+- **Deploy every UI change.** Any edit to files under `app/` must reach `main`
+  at the end of the response — don't wait to be asked. Josh needs to see the
+  result on the live site to judge it. **`main` is the only source of the live
+  site**: `.github/workflows/deploy-pages.yml` publishes the whole committed
+  `app/` tree to `gh-pages` (root + `app/` mirror) on every push to `main`.
+  Never write to `gh-pages` yourself; the next run overwrites it. Standing
+  permission: pushing to `main` to deploy is authorised for local and cloud
+  sessions alike, whatever branch the session was given.
   Deploy procedure:
   1. **Record the change in changelog:** Before staging or committing, you MUST
      prepend an entry to **BOTH** `app/config/dev_changelog.json` and
@@ -167,16 +172,21 @@ Languages with profiles or packages: `es`, `fr`, `pt`, `cs`, `nl`, `pl`. Modes: 
      *Why:* The app's Settings → Developer tab renders this latest entry at the
      **very top of the section** so Josh can immediately verify what changed,
      who made the change, and whether the Service Worker cache is fresh or stale.
-  2. `git add` only the files you changed (including changelog, bumped service worker
-     and asset version tags). Do not stage other sessions' uncommitted work.
-  3. Commit on `main` with a descriptive message and `git push origin main`.
-  4. Copy each changed file into the gh-pages worktree at
-     `/private/tmp/fluency-pages-deploy/`, writing to **both** the root path
-     (e.g. `js/about-example.js`) and the `app/` mirror (e.g.
-     `app/js/about-example.js`). Use `git show main:<path>` to get the
-     committed version.
-  5. Commit on `gh-pages` and `git push origin gh-pages`.
-  Keep deploys surgical: only the files you touched, nothing else.
+  2. Bump the `?v=` tags of the assets you changed and `CACHE_NAME` (see
+     `docs/ui/UI_WORK_ORDERS.md` rule 3), and the pins in
+     `tests/app/test_product_shell.py`. Run the app tests:
+     `PYTHONPATH=src python3 -m unittest discover -s tests/app -t .` — the
+     workflow runs them too and will not deploy if they fail.
+  3. `git add` only the files you changed. Do not stage other sessions'
+     uncommitted work. Commit.
+  4. `make deploy` (or `python3 scripts/deploy.py`). It merges `origin/main`
+     into HEAD and pushes HEAD to `main`, from any branch. On a conflict it
+     stops; in version tags, resolve with a fresh tag and a `CACHE_NAME` above
+     both sides'.
+  5. Check the run at
+     https://github.com/RabbiJoshy/Fluency-App/actions/workflows/deploy-pages.yml
+     (then ~30 s for the Pages build). A deploy is done when that run is green,
+     not when the commit exists.
 - **Releases are not on `gh-pages`.** The app is repo `RabbiJoshy/Fluency-App`
   (served at `rabbijoshy.github.io/Fluency-App/`; it was `Fluency-Next`, and a
   tiny `Fluency-Next` repo now only forwards old links). Release files live in

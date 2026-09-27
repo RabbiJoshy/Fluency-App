@@ -4,7 +4,7 @@ VENV_PYTHON := $(VENV)/bin/python
 RUN_PYTHON := $(if $(wildcard $(VENV_PYTHON)),$(VENV_PYTHON),$(PYTHON))
 FLUENCY_WORKSPACE ?= /Users/joshuathomasamar/PycharmProjects/Fluency-Workspace
 
-.PHONY: bootstrap test pilot dev clean-venv
+.PHONY: bootstrap test pilot dev deploy clean-venv
 
 bootstrap:
 	$(PYTHON) -m venv $(VENV)
@@ -19,6 +19,10 @@ pilot:
 
 dev:
 	PYTHONPATH=src $(RUN_PYTHON) -m fluency dev --workspace $(FLUENCY_WORKSPACE)
+
+# Push HEAD to main; .github/workflows/deploy-pages.yml publishes app/.
+deploy:
+	python3 scripts/deploy.py
 
 clean-venv:
 	$(PYTHON) -c 'import shutil; shutil.rmtree(".venv", ignore_errors=True)'

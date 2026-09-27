@@ -118,7 +118,7 @@ Live is enabled when speech exists for the language, even if published lyrics ar
 | `tests/app/test_product_shell.py` | Shell contracts for the importer |
 | `tests/lyrics/test_playlist_live.py` | Local dump |
 
-UI edits under `app/` still deploy to **gh-pages** (root + `app/` mirror) at the end of the turn.
+UI edits under `app/` still deploy at the end of the turn: push to `main` (`make deploy`) and `.github/workflows/deploy-pages.yml` publishes them to **gh-pages** (root + `app/` mirror).
 
 ---
 

@@ -1,0 +1,80 @@
+# Publishes the app to GitHub Pages on every push to main that touches app/.
+#
+# main is the only source of the live site. Sessions (local or cloud) deploy
+# by pushing to main; this job lays the whole committed app/ tree over the
+# gh-pages branch with scripts/build_pages_site.py, so a deploy can neither
+# miss files from an earlier commit nor roll back another session's work.
+# Do not push to gh-pages by hand: the next run overwrites what it manages.
+name: Deploy app to Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "app/**"
+      - "scripts/build_pages_site.py"
+      - ".github/workflows/deploy-pages.yml"
+  workflow_dispatch:
+
+# One deploy at a time; a queued run publishes the newest main, which
+# already contains everything the runs before it would have.
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pages: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          path: src
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: App shell tests
+        working-directory: src
+        run: PYTHONPATH=src python -m unittest discover -s tests/app -t .
+
+      - name: Check out gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: site
+          fetch-depth: 1
+
+      - name: Build and push
+        env:
+          SHA: ${{ github.sha }}
+        run: |
+          subject=$(git -C src log -1 --format=%s "$SHA")
+          git -C site config user.name "github-actions[bot]"
+          git -C site config user.email "41898299+github-actions[bot]@users.noreply.github.com"
+          for attempt in 1 2 3; do
+            python src/scripts/build_pages_site.py --dest site --ref "$SHA"
+            git -C site add -A
+            if git -C site diff --cached --quiet; then
+              echo "gh-pages already matches main ${SHA::8}"; exit 0
+            fi
+            git -C site commit -q -m "Deploy main ${SHA::8}: $subject"
+            if git -C site push origin HEAD:gh-pages; then exit 0; fi
+            # Someone pushed gh-pages meanwhile: rebuild on top of it.
+            git -C site fetch -q --depth 1 origin gh-pages
+            git -C site reset -q --hard origin/gh-pages
+          done
+          exit 1
+
+      - name: Request a Pages build
+        # Pushes made with GITHUB_TOKEN normally start the Pages build on
+        # their own; this makes sure one is queued either way.
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST "repos/${{ github.repository }}/pages/builds" --silent
