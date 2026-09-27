@@ -1911,6 +1911,8 @@ function findWordCacheKey() {
         activeArtist ? artistVocabularyScope : (hideSingleOccurrence ? '1' : '0'),
         excludeProperNouns ? '1' : '0',
         excludeNoise ? '1' : '0',
+        excludeSlang ? '1' : '0',
+        excludeGrammarParticles ? '1' : '0',
         excludeEnglishLoanwords ? '1' : '0'
     ].join('|');
 }

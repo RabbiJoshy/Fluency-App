@@ -81,6 +81,10 @@ function applyGlobalStudyDefaults() {
     const fastTrack = readFastTrack(selectedLanguage);
     useLemmaMode = fastTrack.enabled && fastTrack.merge;
     excludeCognates = fastTrack.enabled && fastTrack.skip;
+    // Smart Skip's other two switches were saved but never read back, so a
+    // reload silently undid them.
+    excludeGrammarParticles = fastTrack.enabled && fastTrack.skipGrammar;
+    excludeSlang = fastTrack.enabled && fastTrack.skipSlang;
     isFlipped = saved.directionFlipped === true;
     speechEnabled = saved.speechEnabled !== false;
     spacedRepetitionEnabled = saved.spacedRepetitionEnabled !== false;
@@ -104,6 +108,10 @@ function syncStudyPreferenceControls() {
         button.classList.toggle('selected', (button.dataset.lemma === 'on') === useLemmaMode));
     document.querySelectorAll('.cognate-toggle-btn').forEach(button =>
         button.classList.toggle('selected', (button.dataset.cognate === 'exclude') === excludeCognates));
+    document.querySelectorAll('.grammar-toggle-btn').forEach(button =>
+        button.classList.toggle('selected', (button.dataset.grammar === 'exclude') === Boolean(excludeGrammarParticles)));
+    document.querySelectorAll('.slang-toggle-btn').forEach(button =>
+        button.classList.toggle('selected', (button.dataset.slang === 'exclude') === Boolean(excludeSlang)));
 
     const saved = readGlobalStudyDefaults();
     const fastTrack = readFastTrack(selectedLanguage);
@@ -1754,6 +1762,8 @@ function _setupVocabularySignature(language) {
         hideSingleOccurrence,
         excludeProperNouns,
         excludeNoise,
+        excludeSlang,
+        excludeGrammarParticles,
         excludeEnglishLoanwords,
     ].join('|');
 }
@@ -3101,112 +3111,10 @@ function renderSetupExtrasSection() {
     }
 }
 
-// The Fast Track sheet's "review home" section. Same content as the card that
-// used to sit under the set picker, rendered into #fastTrackDeckCard instead, so
-// the setup screen keeps to one button per section.
-function closeFastTrackStudy() {
-    document.getElementById('fastTrackStudyModal')?.classList.add('hidden');
-}
-
-function openFastTrackStudy() {
-    const extrasData = globalThis.collectExtras ? globalThis.collectExtras() : { cognates: [], lemmas: [] };
-    const body = document.getElementById('fastTrackStudyBody');
-    if (!body) return;
-    body.innerHTML = globalThis.renderFastTrackDeck?.(extrasData, {
-        ranges: getActiveLevelRanges(), selectedLevel,
-        progressForItem: item => getSetupLearningState(item)
-    }) || '';
-    body.querySelectorAll('.fast-track-level-deck').forEach(button => {
-        button.addEventListener('click', event => {
-            event.stopPropagation();
-            globalThis.startFastTrackSkippedSet?.(
-                button.dataset.ftKind, Number(button.dataset.ftStart),
-                Number(button.dataset.ftLevel), getActiveLevelRanges()
-            );
-        });
-    });
-    body.querySelectorAll('.fast-track-batch-deck-btn').forEach(btn => {
-        btn.addEventListener('click', async event => {
-            event.stopPropagation();
-            const kind = btn.dataset.batchKind;
-            const levelIdx = btn.dataset.batchLevel;
-            let entriesToMark = [];
-            if (kind === 'level') {
-                const groups = (globalThis.skippedByLevel ? globalThis.skippedByLevel(extrasData.cognates, getActiveLevelRanges()) : []);
-                entriesToMark = groups.find(g => String(g.index) === String(levelIdx))?.entries || [];
-            } else if (extrasData.byCategory && extrasData.byCategory[kind]) {
-                entriesToMark = extrasData.byCategory[kind];
-            } else {
-                entriesToMark = extrasData.allSkipped || extrasData.cognates;
-            }
-            btn.textContent = 'Marking…';
-            const marked = await globalThis.batchMarkSkippedKnown?.(entriesToMark);
-            btn.textContent = `✓ Marked ${marked}!`;
-            setTimeout(() => { openFastTrackStudy(); }, 900);
-        });
-    });
-    const modal = document.getElementById('fastTrackStudyModal');
-    const close = document.getElementById('closeFastTrackStudyModal');
-    if (close && !close.dataset.bound) {
-        close.dataset.bound = '1';
-        close.addEventListener('click', closeFastTrackStudy);
-    }
-    if (modal && !modal.dataset.bound) {
-        modal.dataset.bound = '1';
-        modal.addEventListener('click', event => {
-            if (event.target?.id === 'fastTrackStudyModal') closeFastTrackStudy();
-        });
-    }
-    modal?.classList.remove('hidden');
-}
-
+// The Smart Skip page's word list. extras.js owns it; this only hands over the
+// level ranges, which live here.
 function renderFastTrackSkippedDecks() {
-    const card = document.getElementById('fastTrackDeckCard');
-    if (!card) return;
-    const extrasData = globalThis.collectExtras ? globalThis.collectExtras() : { cognates: [], lemmas: [] };
-    const allCount = extrasData.allSkipped ? extrasData.allSkipped.length : (extrasData.cognates?.length || 0);
-
-    card.onclick = null;
-    card.style.cursor = 'default';
-    if (allCount > 0) {
-        const categories = (extrasData.categories || []).filter(c => c.id !== 'all' && c.id !== 'lemma' && c.count > 0);
-        const chipsHtml = categories.map(c => `
-            <button type="button" class="fast-track-deck-chip" data-category="${_escapeHtml(c.id)}">
-                <span>${c.icon}</span> <strong>${c.count}</strong> ${c.label}
-            </button>
-        `).join('');
-
-        card.innerHTML = `
-            <div class="fast-track-deck-summary-card">
-                <button type="button" class="fast-track-study-launch" id="studySkippedWordsBtn">
-                    <strong>Study words skipped by Fast Track</strong>
-                    <span>${allCount.toLocaleString()} words</span>
-                </button>
-                ${chipsHtml ? `<div class="fast-track-chips-row">${chipsHtml}</div>` : ''}
-                <div class="fast-track-deck-actions-row">
-                    <button type="button" class="fast-track-hub-action-btn" id="inspectSkippedWordsBtn">
-                        🔍 Inspect &amp; Triage
-                    </button>
-                </div>
-            </div>
-        `;
-        document.getElementById('studySkippedWordsBtn')?.addEventListener('click', event => {
-            event.stopPropagation();
-            openFastTrackStudy();
-        });
-        document.getElementById('inspectSkippedWordsBtn')?.addEventListener('click', event => {
-            event.stopPropagation();
-            globalThis.openSkippedWords?.('all');
-        });
-        card.querySelectorAll('.fast-track-deck-chip').forEach(chip => {
-            chip.addEventListener('click', (e) => {
-                e.stopPropagation();
-                globalThis.openSkippedWords?.(chip.dataset.category);
-            });
-        });
-    } else {
-        card.innerHTML = `<p class="fast-track-study-empty">No words are set aside with these settings. They stay in the main sets.</p>`;
-    }
+    globalThis.renderSkippedWords?.();
 }
 
 function _findLevelButtonIndex(buttons, targetLevel) {
@@ -4327,4 +4235,5 @@ window.renderSetupExtrasSection = renderSetupExtrasSection;
 window.updateReviewAccess = updateReviewAccess;
 window.startDailyReview = startDailyReview;
 window.renderFastTrackSkippedDecks = renderFastTrackSkippedDecks;
+window.getActiveLevelRanges = getActiveLevelRanges;
 window.showDeckOverviewLoading = showDeckOverviewLoading;

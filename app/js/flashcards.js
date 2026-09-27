@@ -4702,6 +4702,7 @@ async function loadBackupExampleShardForIds(wordIds) {
 function describeNavReturnTarget() {
     const previous = cardNavStack[cardNavStack.length - 1];
     if (!previous) return 'the set';
+    if (previous.returnLabel) return previous.returnLabel;
     if (previous.popupOnly) return previous.wasOnSetup ? 'the menu' : 'the set';
     const parent = flashcards[previous.index];
     const word = parent?.displaySurface || parent?.targetWord || '';

@@ -2,6 +2,34 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T19:55:00+01:00",
+      "date": "2026-09-27 19:55 BST",
+      "agent": "Claude",
+      "summary": "The Smart Skip slang switch now actually works, and everyday words like sí, bueno and claro are back in Speech sets.",
+      "detail": [
+        "A hidden always-on filter removed slang and fillers whatever the switch said, and it also caught any word with one interjection sense: sí, bueno, hola, claro, vale, adiós, cuidado, perdón… Speech Set 2 had 19 cards because sí was missing.",
+        "Now only the 'Skip slang & fillers' switch removes slang and fillers, and only words whose every sense is slang or a filler count (eh, oh, ay, perreo), not words that merely have one such sense.",
+        "The slang and pronoun switches are restored on reload; before, both reset to off every time the page loaded."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-09-27T19:15:00+01:00",
+      "date": "2026-09-27 19:15 BST",
+      "agent": "Claude",
+      "summary": "Fast Track is now Smart Skip: one quiet page with one-line shortcuts, a level-by-level word list and a quick word preview.",
+      "detail": [
+        "Home row: a plain switch with no bevel on desktop, no second line of text; it shows 'N words skipped' and a chevron when on, and the Recommended badge when off.",
+        "The explainer sheet, 'Inspect & Triage' and the 'Study skipped words' screen are merged into one Smart Skip page.",
+        "Shortcuts are one line each (name, count, switch); tap a name for a one-line explanation. Shortcuts with nothing to skip in this deck are hidden.",
+        "One category menu, no pill tabs, no 'Study all', no emojis. The list is split by level, and each level row has 'Study these', which loads that level alone.",
+        "Rows are always one line: no ✓ button, no badge; the label (look-alike, slang…) appears only in the 'All skipped' view.",
+        "Tapping a row opens a quick preview (meaning, why skipped, one example). 'Open full card' goes to the card, and Back returns to the same spot in the list.",
+        "'Merge word forms' is renamed 'Combine word forms'; combined forms are not counted as skipped."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T18:04:01+01:00",
       "date": "2026-09-27 18:04 BST",
       "agent": "Claude",

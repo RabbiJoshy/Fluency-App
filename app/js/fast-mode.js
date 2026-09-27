@@ -46,33 +46,19 @@ function currentState() {
     return readFastTrack(selectedLanguage).enabled ? 'on' : 'off';
 }
 
-function summaryText() {
-    const preference = readFastTrack(selectedLanguage);
-    const isArtist = Boolean(globalThis.activeArtist);
-    if (isArtist) {
-        if (preference.enabled) {
-            const parts = [];
-            if (preference.skip) parts.push('look-alikes');
-            if (preference.skipGrammar) parts.push('clitics & particles');
-            if (preference.skipSlang) parts.push('slang & fillers');
-            if (preference.skipEntities) parts.push('names');
-            if (preference.merge) parts.push('related forms');
-            if (parts.length > 0) return `${parts.join(', ').replace(/, ([^,]+)$/, ' & $1')} are set aside`;
-        }
-        return 'Full lyrics · every word form, slang & particle is studied';
-    }
-    if (preference.enabled && preference.merge && preference.skip) return 'Related forms share one card; familiar look-alikes are set aside';
-    if (preference.enabled && preference.merge) return 'Related word forms share one card';
-    if (preference.enabled && preference.skip) return 'Familiar look-alikes are set aside';
-    return 'Full deck · every word form is its own card';
-}
-
 function setToggleState(prefix, value) {
     const buttons = document.querySelectorAll(`.${prefix}-toggle-btn`);
     buttons.forEach(btn => {
         const matches = btn.dataset[prefix] === value;
         btn.classList.toggle('selected', matches);
     });
+}
+
+// What each shortcut's hidden control says, read from the control itself.
+function shortcutOn(kind) {
+    const selected = document.querySelector(`.${kind}-toggle-btn.selected`);
+    if (!selected) return false;
+    return kind === 'lemma' ? selected.dataset.lemma === 'on' : selected.dataset[kind] === 'exclude';
 }
 
 // Turning fast mode on or off drives the real controls, so every side effect
@@ -134,77 +120,58 @@ function refresh() {
         || card?.dataset.available === 'false');
     wrapper.style.display = availabilityResolved || isArtist ? 'block' : 'none';
 
-    // Show fine tune containers in both speech and artist modes
-    const grammarContainer = document.getElementById('grammarToggleContainer');
-    const slangContainer = document.getElementById('slangToggleContainer');
-    const entityContainer = document.getElementById('entityToggleContainer');
-    if (grammarContainer) grammarContainer.style.display = 'block';
-    if (slangContainer) slangContainer.style.display = 'block';
-    if (entityContainer) entityContainer.style.display = 'block';
-
     const on = state === 'on';
     const extras = globalThis.collectExtras?.() || {};
     const skipped = extras.allSkipped ? extras.allSkipped.length : (extras.cognates?.length || 0);
-    const count = document.getElementById('fastModeSkippedCount');
-    if (count) count.textContent = skipped ? `· ${skipped.toLocaleString()} words` : '';
 
-    // Update item counts on buttons
-    const skippedWordsCount = document.getElementById('skippedWordsCount');
-    if (skippedWordsCount) {
-        const cLen = extras.cognates?.length || 0;
-        skippedWordsCount.textContent = cLen ? `${cLen.toLocaleString()} Skipped` : '0 Skipped';
-        const vBtn = document.getElementById('viewSkippedWordsBtn');
-        if (vBtn) vBtn.style.display = cLen ? 'inline-flex' : 'none';
-    }
-    const mergedFormsCount = document.getElementById('mergedFormsCount');
-    if (mergedFormsCount) {
-        const mLen = extras.lemmas?.length || 0;
-        mergedFormsCount.textContent = mLen ? `${mLen.toLocaleString()} Merged` : '0 Merged';
-        const mBtn = document.getElementById('viewMergedFormsBtn');
-        if (mBtn) mBtn.style.display = mLen ? 'inline-flex' : 'none';
-    }
-    const grammarCount = document.getElementById('grammarWordsCount');
-    if (grammarCount) {
-        const gLen = extras.grammar?.length || 0;
-        grammarCount.textContent = gLen ? `${gLen.toLocaleString()} Skipped` : '0 Skipped';
-        const gBtn = document.getElementById('viewGrammarWordsBtn');
-        if (gBtn) gBtn.style.display = gLen ? 'inline-flex' : 'none';
-    }
-    const slangCount = document.getElementById('slangWordsCount');
-    if (slangCount) {
-        const sLen = extras.slang?.length || 0;
-        slangCount.textContent = sLen ? `${sLen.toLocaleString()} Skipped` : '0 Skipped';
-        const sBtn = document.getElementById('viewSlangWordsBtn');
-        if (sBtn) sBtn.style.display = sLen ? 'inline-flex' : 'none';
-    }
-    const entityCount = document.getElementById('entityWordsCount');
-    if (entityCount) {
-        const eLen = extras.entities?.length || 0;
-        entityCount.textContent = eLen ? `${eLen.toLocaleString()} Skipped` : '0 Skipped';
-        const eBtn = document.getElementById('viewEntityWordsBtn');
-        if (eBtn) eBtn.style.display = eLen ? 'inline-flex' : 'none';
+    // A shortcut is listed only where it can do something: look-alikes and
+    // combined forms need the release's mapping, the other three need at least
+    // one word of their kind in this deck.
+    for (const kind of ['grammar', 'slang', 'entity']) {
+        const container = document.getElementById(`${kind}ToggleContainer`);
+        if (container) container.style.display = (extras.potential?.[kind] || 0) > 0 ? 'block' : 'none';
     }
 
-    // The setup screen's Fast Track row: the switch is the real master control,
-    // and the line beneath it is an invitation on a first visit and the current
-    // setting after that. A learner who has never opened the sheet has no idea
-    // what "related forms share one card" means, so they are not told it yet.
+    const counts = {
+        cognate: extras.cognates?.length || 0,
+        lemma: extras.lemmas?.length || 0,
+        grammar: extras.grammar?.length || 0,
+        slang: extras.slang?.length || 0,
+        entity: extras.entities?.length || 0,
+    };
+    for (const kind of Object.keys(counts)) {
+        const active = shortcutOn(kind);
+        const toggle = document.querySelector(`[data-ss-toggle="${kind}"]`);
+        if (toggle) toggle.setAttribute('aria-checked', String(active));
+        const count = document.querySelector(`[data-ss-count="${kind}"]`);
+        if (count) {
+            const n = counts[kind];
+            count.textContent = active && n
+                ? `${n.toLocaleString()} ${kind === 'lemma' ? 'combined' : 'skipped'}`
+                : '';
+        }
+    }
+
+    // The home row: the switch is the real master control, and the count next
+    // to the chevron is what tells a learner there is more behind the row.
+    // Combined forms are still studied, so only skipped words are counted.
     const hubSwitch = document.getElementById('fastTrackHubSwitch');
     if (hubSwitch) {
         hubSwitch.classList.toggle('selected', on);
-        hubSwitch.setAttribute('aria-pressed', String(on));
-        hubSwitch.setAttribute('aria-label', on ? 'Turn Fast Track off' : 'Turn Fast Track on');
+        hubSwitch.setAttribute('aria-checked', String(on));
     }
     const hubRow = document.getElementById('setupOptions')?.querySelector('.fast-track-hub-row');
-    const unseen = !hasSeenFastTrackPage();
-    if (hubRow) hubRow.classList.toggle('is-unseen', unseen);
+    if (hubRow) {
+        hubRow.classList.toggle('is-unseen', !hasSeenFastTrackPage());
+        hubRow.classList.toggle('is-on', on);
+    }
     const hubSummary = document.getElementById('fastTrackHubSummary');
-    if (hubSummary) hubSummary.textContent = unseen
-        ? (isArtist ? 'Filter lyrics & skip familiar words' : 'Learn fewer cards — see how')
-        : summaryText();
+    if (hubSummary) {
+        hubSummary.textContent = !on ? ''
+            : skipped ? `${skipped.toLocaleString()} ${skipped === 1 ? 'word' : 'words'} skipped`
+            : 'No words skipped';
+    }
 
-    const summary = document.getElementById('fastModeSummary');
-    if (summary) summary.textContent = summaryText();
     updateMappingStatus();
     updateStreamlineRecCallout();
     updateStreamlineLanguageExamples();
@@ -274,7 +241,7 @@ function showUnavailableMessage(feature) {
         alert(`${languageName(knownCode)} to ${target} familiar-word mapping not found. Every word will stay in your deck.`);
         return;
     }
-    alert(`Fast Track mappings have not been published for ${target}. Your full deck is still available.`);
+    alert(`Smart Skip is not available for ${target} yet. Your full deck is still available.`);
 }
 
 function updateMappingStatus() {
@@ -306,33 +273,27 @@ function updateMappingStatus() {
 const STREAMLINE_LANGUAGE_EXAMPLES = {
     spanish: {
         name: 'Spanish',
-        lemmaExplainer: 'Forms such as <em>hablo</em>, <em>habló</em> and <em>hablar</em> belong to the same word. Put them on one card so you learn it once while keeping every example.',
-        lemmaExample: '<span>hablo</span><span>habló</span><span>hablar</span><b>→ hablar</b>'
+        lemmaExplainer: '<em>hablo</em>, <em>habló</em> and <em>hablar</em> share one card.'
     },
     french: {
         name: 'French',
-        lemmaExplainer: 'Forms such as <em>parle</em>, <em>parla</em> and <em>parler</em> belong to the same word. Put them on one card so you learn it once while keeping every example.',
-        lemmaExample: '<span>parle</span><span>parla</span><span>parler</span><b>→ parler</b>'
+        lemmaExplainer: '<em>parle</em>, <em>parla</em> and <em>parler</em> share one card.'
     },
     portuguese: {
         name: 'Portuguese',
-        lemmaExplainer: 'Forms such as <em>falo</em>, <em>falou</em> and <em>falar</em> belong to the same word. Put them on one card so you learn it once while keeping every example.',
-        lemmaExample: '<span>falo</span><span>falou</span><span>falar</span><b>→ falar</b>'
+        lemmaExplainer: '<em>falo</em>, <em>falou</em> and <em>falar</em> share one card.'
     },
     italian: {
         name: 'Italian',
-        lemmaExplainer: 'Forms such as <em>parlo</em>, <em>parlò</em> and <em>parlare</em> belong to the same word. Put them on one card so you learn it once while keeping every example.',
-        lemmaExample: '<span>parlo</span><span>parlò</span><span>parlare</span><b>→ parlare</b>'
+        lemmaExplainer: '<em>parlo</em>, <em>parlò</em> and <em>parlare</em> share one card.'
     },
     german: {
         name: 'German',
-        lemmaExplainer: 'Forms such as <em>spreche</em>, <em>sprach</em> and <em>sprechen</em> belong to the same word. Put them on one card so you learn it once while keeping every example.',
-        lemmaExample: '<span>spreche</span><span>sprach</span><span>sprechen</span><b>→ sprechen</b>'
+        lemmaExplainer: '<em>spreche</em>, <em>sprach</em> and <em>sprechen</em> share one card.'
     },
     czech: {
         name: 'Czech',
-        lemmaExplainer: 'Forms such as <em>dělám</em>, <em>dělal</em> and <em>dělat</em> belong to the same word. Put them on one card so you learn it once while keeping every example.',
-        lemmaExample: '<span>dělám</span><span>dělal</span><span>dělat</span><b>→ dělat</b>'
+        lemmaExplainer: '<em>dělám</em>, <em>dělal</em> and <em>dělat</em> share one card.'
     }
 };
 
@@ -373,33 +334,20 @@ function escapeExample(value) {
     }[c]));
 }
 
-// Prefer a curated pair for a language the learner has actually selected; fall
-// back to a real excluded word; show nothing rather than an English pair the
-// setting does not describe.
-function cognateExampleHtml(langKey, targetName) {
+// Prefer a curated word for a language the learner has actually selected; fall
+// back to a real skipped word; name no example rather than one the setting
+// does not describe.
+function cognateExampleWord(langKey) {
     const active = globalThis.activeKnownLanguages?.() || [];
-    const label = globalThis.knownLanguageLabel || languageName;
     for (const code of active) {
         const pair = COGNATE_EXAMPLES[`${langKey}:${code}`];
-        if (!pair) continue;
-        return {
-            html: `<span><b>${escapeExample(pair.target)}</b><small>${escapeExample(targetName)}</small></span>`
-                + `<strong>=</strong>`
-                + `<span><b>${escapeExample(pair.known)}</b><small>${escapeExample(label(code))}</small></span>`,
-            note: `Example of a ${targetName} word that is obvious in ${label(code)}`,
-        };
+        if (pair) return pair.target;
     }
     for (const code of active) {
         const word = liveCognateExample(code);
-        if (!word) continue;
-        return {
-            html: `<span><b>${escapeExample(word)}</b><small>${escapeExample(targetName)}</small></span>`
-                + `<strong>=</strong>`
-                + `<span><small>already clear in ${escapeExample(label(code))}</small></span>`,
-            note: `Example of a ${targetName} word that is obvious in ${label(code)}`,
-        };
+        if (word) return word;
     }
-    return null;
+    return '';
 }
 
 function updateStreamlineLanguageExamples() {
@@ -410,16 +358,14 @@ function updateStreamlineLanguageExamples() {
     if (lemmaExplainer) {
         lemmaExplainer.innerHTML = config.lemmaExplainer;
     }
-    const lemmaExample = document.querySelector('#lemmaToggleContainer .fast-mode-example');
-    if (lemmaExample) {
-        lemmaExample.innerHTML = config.lemmaExample;
-    }
-    const cognateExample = document.querySelector('#cognateToggleContainer .fast-mode-example--cognate');
-    if (cognateExample) {
-        const example = cognateExampleHtml(langKey, config.name);
-        cognateExample.innerHTML = example ? example.html : '';
-        cognateExample.hidden = !example;
-        if (example) cognateExample.setAttribute('aria-label', example.note);
+    const cognateExplainer = document.querySelector('#cognateToggleContainer .fast-mode-explainer');
+    if (cognateExplainer) {
+        const word = cognateExampleWord(langKey);
+        const labels = knownLanguageLabels();
+        const from = labels.length && !(labels.length === 1 && labels[0] === 'English')
+            ? ` from ${escapeExample(knownLanguagePhrase())}` : '';
+        cognateExplainer.innerHTML = `Words you can already read${from}`
+            + (word ? `, like <em>${escapeExample(word)}</em>.` : '.');
     }
     updateKnownLanguageCopy();
 }
@@ -462,6 +408,7 @@ function openFastModePage({ section } = {}) {
 }
 
 function closeFastModePage({ reopenSettings = true } = {}) {
+    globalThis.closeSmartSkipPreview?.();
     document.getElementById('fastModeModal')?.classList.add('hidden');
     if (reopenSettings && returnToSettings) window.showSettingsModalWithTab?.('study');
     returnToSettings = false;
@@ -481,11 +428,11 @@ function init() {
     });
     document.addEventListener('keydown', event => {
         if (event.key !== 'Escape') return;
-        const study = document.getElementById('fastTrackStudyModal');
-        if (study && !study.classList.contains('hidden')) {
-            study.classList.add('hidden');
+        if (globalThis.isSmartSkipPreviewOpen?.()) {
+            globalThis.closeSmartSkipPreview?.();
             return;
         }
+        if (document.getElementById('fastModeModal')?.classList.contains('hidden')) return;
         closeFastModePage();
     });
 
@@ -514,20 +461,23 @@ function init() {
         });
     });
 
-    document.getElementById('viewGrammarWordsBtn')?.addEventListener('click', () => {
-        globalThis.openSkippedWords?.('grammar');
+    // Each shortcut's switch clicks its hidden control, so what a change means
+    // stays in the handlers above and in ui.js.
+    document.querySelectorAll('[data-ss-toggle]').forEach(toggle => {
+        toggle.addEventListener('click', () => {
+            const kind = toggle.dataset.ssToggle;
+            const turnOn = !shortcutOn(kind);
+            const value = kind === 'lemma' ? (turnOn ? 'on' : 'off') : (turnOn ? 'exclude' : 'include');
+            document.querySelector(`.${kind}-toggle-btn[data-${kind}="${value}"]`)?.click();
+        });
     });
-    document.getElementById('viewSlangWordsBtn')?.addEventListener('click', () => {
-        globalThis.openSkippedWords?.('slang');
-    });
-    document.getElementById('viewEntityWordsBtn')?.addEventListener('click', () => {
-        globalThis.openSkippedWords?.('entity');
-    });
-    document.getElementById('viewSkippedWordsBtn')?.addEventListener('click', () => {
-        globalThis.openSkippedWords?.('cognate');
-    });
-    document.getElementById('viewMergedFormsBtn')?.addEventListener('click', () => {
-        globalThis.openSkippedWords?.('lemma');
+    document.querySelectorAll('.smart-skip-shortcut-name').forEach(name => {
+        name.addEventListener('click', () => {
+            const detail = name.closest('.smart-skip-shortcut')?.querySelector('.smart-skip-shortcut-detail');
+            if (!detail) return;
+            detail.hidden = !detail.hidden;
+            name.setAttribute('aria-expanded', String(!detail.hidden));
+        });
     });
 
     document.querySelectorAll('.grammar-toggle-btn').forEach(btn => {
