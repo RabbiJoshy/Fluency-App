@@ -299,6 +299,8 @@ function _writeStudySessionSnapshot() {
         hideSingleOccurrence,
         excludeProperNouns,
         excludeNoise,
+        excludeSlang,
+        excludeGrammarParticles,
         excludeEnglishLoanwords,
         directionFlipped: isFlipped,
         speechEnabled,
@@ -378,6 +380,8 @@ async function resumeLastStudySession() {
     artistVocabularyScope = requestedExtra ? 'extra' : 'main';
     excludeProperNouns = snapshot.excludeProperNouns !== false;
     excludeNoise = snapshot.excludeNoise !== false;
+    if (typeof snapshot.excludeSlang === 'boolean') excludeSlang = snapshot.excludeSlang;
+    if (typeof snapshot.excludeGrammarParticles === 'boolean') excludeGrammarParticles = snapshot.excludeGrammarParticles;
     excludeEnglishLoanwords = snapshot.excludeEnglishLoanwords !== false;
     isFlipped = !!snapshot.directionFlipped;
     if (typeof snapshot.speechEnabled === 'boolean') speechEnabled = snapshot.speechEnabled;
@@ -1862,7 +1866,7 @@ function getVocabularyExclusionReason(item) {
             return artistVocabularyScope === 'extra' ? 'main artist vocabulary' : 'Artist Extra';
         }
         if (item.is_english) return 'English-language item';
-        if (excludeNoise && (item.is_noise || item.is_interjection)) return 'noise or interjection';
+        if (excludeSlang && isSlangItem(item)) return 'slang or filler';
         if (excludeEnglishLoanwords && item.is_english_loanword) return 'English loanword';
         if (excludeProperNouns) {
             const allProperNoun = meanings.length > 0
@@ -1919,8 +1923,10 @@ function isSlangItem(item) {
     if (item.is_noise || item.is_interjection) return true;
     const cat = String(item.extra_category || '').toLowerCase();
     if (cat === 'slang' || cat === 'noise' || cat === 'interjection') return true;
+    // Every sense, not any: a word with one interjection or slang sense among
+    // ordinary ones (sí, bueno, hombre) is a word to learn, not a filler.
     if (Array.isArray(item.meanings) && item.meanings.length > 0) {
-        return item.meanings.some(m => {
+        return item.meanings.every(m => {
             const pos = String(m.pos || '').toUpperCase();
             if (pos === 'INTJ' || pos === 'SLANG' || pos === 'FILLER') return true;
             const src = String(m.source || '').toLowerCase();
@@ -2014,8 +2020,10 @@ function buildFilteredVocab(vocabData) {
                 counts.english++;
                 continue;
             }
-            // Noise / interjections / slang
-            if ((excludeNoise || excludeSlang) && (item.is_noise || item.is_interjection || isSlangItem(item))) {
+            // Slang, fillers and interjections: Smart Skip's switch alone decides.
+            // The old always-on noise flag also caught every word with one
+            // interjection sense (sí, bueno, claro), so they never reached a set.
+            if (excludeSlang && isSlangItem(item)) {
                 counts.english++;
                 continue;
             }

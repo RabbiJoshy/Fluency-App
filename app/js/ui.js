@@ -81,6 +81,10 @@ function applyGlobalStudyDefaults() {
     const fastTrack = readFastTrack(selectedLanguage);
     useLemmaMode = fastTrack.enabled && fastTrack.merge;
     excludeCognates = fastTrack.enabled && fastTrack.skip;
+    // Smart Skip's other two switches were saved but never read back, so a
+    // reload silently undid them.
+    excludeGrammarParticles = fastTrack.enabled && fastTrack.skipGrammar;
+    excludeSlang = fastTrack.enabled && fastTrack.skipSlang;
     isFlipped = saved.directionFlipped === true;
     speechEnabled = saved.speechEnabled !== false;
     spacedRepetitionEnabled = saved.spacedRepetitionEnabled !== false;
@@ -104,6 +108,10 @@ function syncStudyPreferenceControls() {
         button.classList.toggle('selected', (button.dataset.lemma === 'on') === useLemmaMode));
     document.querySelectorAll('.cognate-toggle-btn').forEach(button =>
         button.classList.toggle('selected', (button.dataset.cognate === 'exclude') === excludeCognates));
+    document.querySelectorAll('.grammar-toggle-btn').forEach(button =>
+        button.classList.toggle('selected', (button.dataset.grammar === 'exclude') === Boolean(excludeGrammarParticles)));
+    document.querySelectorAll('.slang-toggle-btn').forEach(button =>
+        button.classList.toggle('selected', (button.dataset.slang === 'exclude') === Boolean(excludeSlang)));
 
     const saved = readGlobalStudyDefaults();
     const fastTrack = readFastTrack(selectedLanguage);
@@ -1754,6 +1762,8 @@ function _setupVocabularySignature(language) {
         hideSingleOccurrence,
         excludeProperNouns,
         excludeNoise,
+        excludeSlang,
+        excludeGrammarParticles,
         excludeEnglishLoanwords,
     ].join('|');
 }

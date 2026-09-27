@@ -1209,6 +1209,19 @@ class FastModeSurfaceTests(unittest.TestCase):
         self.assertIn("querySelector(`.${kind}-toggle-btn[data-${kind}=\"${value}\"]`)?.click()", self.script)
 
 
+    def test_slang_switch_alone_decides_and_survives_a_reload(self) -> None:
+        # An always-on noise flag used to drop slang regardless of the switch,
+        # and it matched any word with one interjection sense (sí, bueno), so
+        # those never reached a set.
+        vocab = (APP_ROOT / "js" / "vocab.js").read_text(encoding="utf-8")
+        ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
+        self.assertIn("if (excludeSlang && isSlangItem(item)) {", vocab)
+        self.assertNotIn("(excludeNoise || excludeSlang)", vocab)
+        self.assertIn("return item.meanings.every(m => {", vocab)
+        self.assertIn("excludeSlang = fastTrack.enabled && fastTrack.skipSlang;", ui)
+        self.assertIn("excludeGrammarParticles = fastTrack.enabled && fastTrack.skipGrammar;", ui)
+
+
 class ReleaseLevelSetsTests(unittest.TestCase):
     """Routing release levels through the scrubber dropped the marker the range
     selector branches on, and every Speech language rendered no sets at all."""

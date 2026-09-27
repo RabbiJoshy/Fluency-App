@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T19:55:00+01:00",
+      "date": "2026-09-27 19:55 BST",
+      "agent": "Claude",
+      "summary": "The Smart Skip slang switch now actually works, and everyday words like sí, bueno and claro are back in Speech sets.",
+      "detail": [
+        "A hidden always-on filter removed slang and fillers whatever the switch said, and it also caught any word with one interjection sense: sí, bueno, hola, claro, vale, adiós, cuidado, perdón… Speech Set 2 had 19 cards because sí was missing.",
+        "Now only the 'Skip slang & fillers' switch removes slang and fillers, and only words whose every sense is slang or a filler count (eh, oh, ay, perreo), not words that merely have one such sense.",
+        "The slang and pronoun switches are restored on reload; before, both reset to off every time the page loaded."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T19:15:00+01:00",
       "date": "2026-09-27 19:15 BST",
       "agent": "Claude",

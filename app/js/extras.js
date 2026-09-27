@@ -52,7 +52,7 @@ function grammarExtra(item) {
 function slangExtra(item) {
     const decide = g().isSlangItem;
     if (!decide) return false;
-    return Boolean((g().excludeNoise || g().excludeSlang) && decide(item));
+    return Boolean(g().excludeSlang && decide(item));
 }
 
 function entityExtra(item) {
