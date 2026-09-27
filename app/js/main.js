@@ -1487,6 +1487,7 @@ function showChoiceSheet({ id, ariaLabel, title, intro = '', stepLabel = '', ent
             detail.textContent = entry.description || (entry.disabled ? 'Coming soon' : '');
             copy.appendChild(detail);
         }
+        if (entry.bestFor?.length && !entry.selected) copy.appendChild(bestForList(entry.bestFor));
 
         const tail = document.createElement('span');
         tail.className = 'choice-sheet-tail';
@@ -1779,6 +1780,23 @@ function openLearningSourcePicker() {
 }
 
 window.openLearningSourcePicker = openLearningSourcePicker;
+
+// "Best for" under a vocabulary choice: who each one suits, so the pick is
+// obvious without reading the description.
+function bestForList(items) {
+    const list = document.createElement('span');
+    list.className = 'choice-sheet-bestfor';
+    const heading = document.createElement('em');
+    heading.textContent = 'Best for';
+    list.appendChild(heading);
+    for (const text of items) {
+        const item = document.createElement('span');
+        item.textContent = text;
+        list.appendChild(item);
+    }
+    return list;
+}
+window.bestForList = bestForList;
 
 // Language is chosen first; this lightweight picker is the Lyrics branch of
 // the subsequent source choice. It loads only catalogue metadata until the

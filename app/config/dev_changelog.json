@@ -2,6 +2,21 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T23:08:28+01:00",
+      "date": "2026-09-27 23:08 BST",
+      "agent": "Claude",
+      "summary": "Shorter wording on the set box, Help and verb drills; 'Best for' lines under the two vocabulary choices; the set legend reads properly in light mode.",
+      "detail": [
+        "Set box: 'Choose a set' heading; one line 'Level 1 · 0/10 sets studied' with the legend beside it; the 'Continue with the highlighted set' hint is gone; the chosen set reads 'Set 1 · 0 known · 0 review · 3 new'. Unseen is now New.",
+        "The set ⓘ sheet says each set is designed to take 5–10 minutes.",
+        "Vocabulary choice: Best for 'Starting a new language' under Everyday speech; 'Understanding the artists you listen to' and 'Hearing words sung in real songs' under Your music.",
+        "Help: 'A quick tour of a real flashcard, part by part.' and 'Start tutorial (2 minutes)'.",
+        "Verb drills: tabs are Set up / Practise, and the button is just Start.",
+        "Light mode: the Known and Review legend squares are green and amber again instead of three identical greys."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T20:36:03+01:00",
       "date": "2026-09-27 20:36 BST",
       "agent": "Claude",
