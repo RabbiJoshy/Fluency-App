@@ -21723,3 +21723,12 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
   border-radius: 50%;
   background: var(--accent-primary);
 }
+
+/* Card front figures, three short lines a side: "Vocabulary / Rank / 1"
+   and "Frequency / 29,783 / per million". The stacked label and the unit
+   below keep both blocks narrow. */
+.card-stat-label { white-space: normal; }
+.card-stat-unit--below { font-size: 12px; line-height: 1.2; opacity: .85; }
+
+/* Back of card: the lemma beside the surface form, a little larger. */
+.back-headword.back-surface-pair .back-lemma-chip { font-size: clamp(14px, 4.4vw, 19px); }

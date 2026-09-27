@@ -63,8 +63,7 @@ let _suppressDeckScrubberClickUntil = 0;
 // Regex cache for the render hot path. Word/MWE/clitic highlight + filter
 // patterns are deterministic in their inputs, so compiling once per unique
 // (pattern, flags) and reusing avoids thousands of RegExp constructions
-// per card render — especially the deck-word highlight loop which scales
-// with deck size. Safe to share: callers use .test() on non-/g regexes
+// per card render. Safe to share: callers use .test() on non-/g regexes
 // and .replace() on /g ones, both of which are stateless across calls.
 const _regexCache = new Map();
 // One immutable front-side sentence prompt per card attempt. Weak keys keep
@@ -907,37 +906,6 @@ function computeLinesUnderstood(allowedEntryIds = null) {
     }
 
     return { understood, total, pct: total > 0 ? (understood / total * 100) : 0 };
-}
-
-// --- Example relevance sorting ---
-let _cachedDeckWords = null;
-let _cachedDeckRef = null;
-let _cachedDeckLength = -1;
-let _cachedDeckFirstId = null;
-let _cachedDeckLastId = null;
-
-function getDeckWords() {
-    if (!flashcards || flashcards.length === 0) return new Set();
-    const firstId = flashcards[0]?.fullId;
-    const lastId = flashcards[flashcards.length - 1]?.fullId;
-    if (_cachedDeckWords && _cachedDeckRef === flashcards && _cachedDeckLength === flashcards.length
-        && _cachedDeckFirstId === firstId && _cachedDeckLastId === lastId) {
-        return _cachedDeckWords;
-    }
-    _cachedDeckWords = new Set();
-    for (let i = 0; i < flashcards.length; i++) {
-        const card = flashcards[i];
-        if (card.targetWord) _cachedDeckWords.add(String(card.targetWord).toLowerCase());
-        if (card.lemma) _cachedDeckWords.add(String(card.lemma).toLowerCase());
-        if (card.displaySurface) _cachedDeckWords.add(String(card.displaySurface).toLowerCase());
-        if (card.citationForm) _cachedDeckWords.add(String(card.citationForm).toLowerCase());
-        if (card.productionAnswer) _cachedDeckWords.add(String(card.productionAnswer).toLowerCase());
-    }
-    _cachedDeckRef = flashcards;
-    _cachedDeckLength = flashcards.length;
-    _cachedDeckFirstId = firstId;
-    _cachedDeckLastId = lastId;
-    return _cachedDeckWords;
 }
 
 let _cachedWrongWordsEpoch = -1;
@@ -3528,6 +3496,20 @@ function getMergedLemmaExampleFocus(card, meaning, { advanceOnEntry = false } = 
     return { example, examples, surface, morphology };
 }
 
+// A merged card shows the form its current example uses, and a form taken
+// from a sentence carries that sentence's casing: "No" at the start of "No me
+// acuerdo", "no" mid-sentence, so the headword flickered between the two.
+// Headwords are lowercase unless the card's own recorded form, or its part of
+// speech, says it is a proper noun; that is the only deterministic signal.
+function headwordCase(card, surface) {
+    const text = String(surface || '');
+    if (!text) return text;
+    const recorded = String(card?.targetWord || card?.displaySurface || '');
+    const properNoun = card?.partOfSpeech === 'PROPN'
+        || recorded !== recorded.toLocaleLowerCase();
+    return properNoun ? text : text.toLocaleLowerCase();
+}
+
 function getDisplayedTargetHeadword(card) {
     if (!card) return '';
     if (!isFlipped && card.mergedLemma && card._activeExampleSurface) {
@@ -5551,7 +5533,7 @@ function updateCard({ announceHeadword = false } = {}) {
     const mergedExampleFocus = getMergedLemmaExampleFocus(card, currentMeaning, {
         advanceOnEntry: announceHeadword
     });
-    card._activeExampleSurface = mergedExampleFocus?.surface || '';
+    card._activeExampleSurface = headwordCase(card, mergedExampleFocus?.surface || '');
     card._activeExampleMorphology = mergedExampleFocus?.morphology || null;
     const cardActiveExamples = currentMeaning
         ? getCyclableExamples(card, currentMeaning)
@@ -5990,12 +5972,12 @@ function renderCardWikipediaBadge(card) {
         frontRankingEl.style.display = 'flex';
     } else if (vocabularyRank !== undefined) {
         let freqHtml = '';
-        // Each figure is a two-line block: the wording on top, the number
+        // Each figure is a stacked block: the wording on top, the number
         // beneath it. The number is what a learner reads, so it gets the
         // size; the wording, units and the total-vocabulary denominator are
         // context and stay muted.
         if (activeArtist && card.corpusCount) {
-            freqHtml = cardStatHTML('card-freq-label', 'Song Lines',
+            freqHtml = cardStatHTML('card-freq-label', 'Song<br>Lines',
                 Number(card.corpusCount).toLocaleString());
         } else if (!activeArtist && Number(card.sourceFrequency) > 0) {
             const perMillion = card.sourceFrequencyUnit === 'per_million';
@@ -6017,14 +5999,17 @@ function renderCardWikipediaBadge(card) {
                 (card.sourceFrequencyBreakdown || []).map(row => [row.surface, row.value])));
             freqHtml = `<button class="card-freq-btn card-stat card-stat--end card-freq-label" onclick="window.showFreqInfo(event)" data-frequency-source="${source}" data-frequency-unit="${card.sourceFrequencyUnit || ''}" data-frequency-forms="${Number(card.sourceFrequencyForms) || 1}" data-frequency-is-total="${card.sourceFrequencyIsGroupTotal ? '1' : ''}" data-frequency-basis-surface="${escapeCardText(card.sourceFrequencyBasisSurface || '')}" data-frequency-breakdown="${breakdown}" aria-label="Source frequency information">`
                 + `<span class="card-stat-label">${label}</span>`
-                + `<span class="card-stat-line"><strong class="card-stat-value">${formatCardFrequency(card.sourceFrequency)}</strong>${perMillion ? '<span class="card-stat-unit">per million</span>' : ''}</span>`
+                + `<span class="card-stat-line"><strong class="card-stat-value">${formatCardFrequency(card.sourceFrequency)}</strong></span>`
+                + (perMillion ? '<span class="card-stat-unit card-stat-unit--below">per million</span>' : '')
                 + '</button>';
         }
         // Only an artist's vocabulary is a real population; in speech mode the
         // total is just the size of our deck, not of the language, so the rank
         // stands alone.
         const denominator = activeArtist && vocabularySize ? `/ ${vocabularySize.toLocaleString()}` : '';
-        const rankLabel = card.artistVocabularyScope === 'extra' ? 'Extra Rank' : 'Vocabulary Rank';
+        // Three short lines a side: the two-word labels stack, so each block
+        // is narrow and the number sits at the same height on both sides.
+        const rankLabel = card.artistVocabularyScope === 'extra' ? 'Extra<br>Rank' : 'Vocabulary<br>Rank';
         frontRankingEl.innerHTML =
             cardStatHTML('card-rank-label', rankLabel, Number(vocabularyRank).toLocaleString(), denominator)
             + freqHtml;
@@ -7267,23 +7252,6 @@ function renderCardWikipediaBadge(card) {
             const companionHighlight = highlightUnifiedCompanionInSentence(
                 displayTargetSentence, currentMeaning, card, selectedLanguage);
             displayTargetSentence = companionHighlight.html;
-            const langCode = (selectedLanguage === 'portuguese' || selectedLanguage === 'portuguese_brazilian')
-                ? 'pt' : (selectedLanguage === 'czech' ? 'cs' : 'es');
-            const usageCandidateKeys = new Set(companionHighlight.candidates.map(
-                form => form.toLocaleLowerCase(langCode)));
-
-            // Highlight other study set words in the sentence (same style for now)
-            const deckWords = getDeckWords();
-            const targetLower = card.targetWord.toLowerCase();
-            for (const dw of deckWords) {
-                if (dw === targetLower || dw.length <= 2
-                    || usageCandidateKeys.has(dw.toLocaleLowerCase('es'))) continue;
-                // Skip if already inside a <span> tag (already highlighted)
-                const dwEscaped = dw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                const dwRegex = _cachedRegex(`(?<![\\p{L}\\p{N}])(${dwEscaped})(?![\\p{L}\\p{N}])(?![^<]*>)`, 'giu');
-                displayTargetSentence = displayTargetSentence.replace(dwRegex,
-                    '<span class="example-related-highlight">$1</span>');
-            }
 
             // Highlight the English translation in the English sentence for keyword-assigned examples
             const exampleMethod = currentExample && currentExample.assignment_method;

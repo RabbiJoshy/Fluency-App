@@ -342,19 +342,21 @@ export function renderFront(card) {
     // Like the live card: only a lyrics deck prints the rank against its
     // vocabulary size; a speech deck's size says nothing about the language.
     const denominator = card.mode === 'lyrics' && card.vocabSize ? `/ ${card.vocabSize.toLocaleString()}` : '';
-    const stat = (kind, label, value, unit = '') =>
+    // `below` puts the unit on its own line, as "per million" is on the live card.
+    const stat = (kind, label, value, unit = '', below = false) =>
         `<span class="card-stat${kind === 'card-rank-label' ? '' : ' card-stat--end'} ${kind}">`
         + `<span class="card-stat-label">${label}</span>`
         + `<span class="card-stat-line"><strong class="card-stat-value">${value}</strong>`
-        + `${unit ? `<span class="card-stat-unit">${unit}</span>` : ''}</span></span>`;
-    const rankLabel = stat('card-rank-label', 'Vocabulary Rank', card.rank.toLocaleString(), denominator);
+        + `${unit && !below ? `<span class="card-stat-unit">${unit}</span>` : ''}</span>`
+        + `${unit && below ? `<span class="card-stat-unit card-stat-unit--below">${unit}</span>` : ''}</span>`;
+    const rankLabel = stat('card-rank-label', 'Vocabulary<br>Rank', card.rank.toLocaleString(), denominator);
     // Same two figures the live card puts here, in the same words. An earlier
     // draft hedged with "Frequency from the Spanish release", which told a
     // visitor nothing: the number is the point, and a count per million is
     // what the real front says.
     const freqLabel = card.mode === 'lyrics'
-        ? stat('card-freq-label', 'Song Lines', card.corpusCount.toLocaleString())
-        : stat('card-freq-label', 'Frequency', Math.round(card.corpusCount).toLocaleString(), 'per million');
+        ? stat('card-freq-label', 'Song<br>Lines', card.corpusCount.toLocaleString())
+        : stat('card-freq-label', 'Frequency', Math.round(card.corpusCount).toLocaleString(), 'per million', true);
 
     // updateCard() pairs each POS pill with the lemma it governs inside one
     // capsule (.front-lemma-pair), which is how a learner sees that `tem` is
