@@ -16,6 +16,21 @@
       "commit": "pending"
     },
     {
+      "timestamp": "2026-09-27T23:08:28+01:00",
+      "date": "2026-09-27 23:08 BST",
+      "agent": "Claude",
+      "summary": "Shorter wording on the set box, Help and verb drills; 'Best for' lines under the two vocabulary choices; the set legend reads properly in light mode.",
+      "detail": [
+        "Set box: 'Choose a set' heading; one line 'Level 1 · 0/4 sets studied' with the legend beside it; the 'Continue with the highlighted set' hint is gone; the chosen set reads 'Set 1 · 0 known · 0 review · 3 new'. Unseen is now New.",
+        "The set ⓘ sheet says sets hold up to 25 cards and are designed to take 5–10 minutes.",
+        "Vocabulary choice: Best for 'Starting a new language' under Everyday speech; 'Understanding the artists you listen to' and 'Hearing words sung in real songs' under Your music.",
+        "Help: 'A quick tour of a real flashcard, part by part.' and 'Start tutorial (2 minutes)'.",
+        "Verb drills: tabs are Set up / Practise, and the button is just Start.",
+        "Light mode: the Known and Review legend squares are green and amber again instead of three identical greys."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T22:12:00+01:00",
       "date": "2026-09-27 22:12 BST",
       "agent": "Claude",
@@ -57,6 +72,18 @@
       "commit": "pending"
     },
     {
+      "timestamp": "2026-09-27T19:55:00+01:00",
+      "date": "2026-09-27 19:55 BST",
+      "agent": "Claude",
+      "summary": "The Smart Skip slang switch now actually works, and everyday words like sí, bueno and claro are back in Speech sets.",
+      "detail": [
+        "A hidden always-on filter removed slang and fillers whatever the switch said, and it also caught any word with one interjection sense: sí, bueno, hola, claro, vale, adiós, cuidado, perdón… Speech Set 2 had 19 cards because sí was missing.",
+        "Now only the 'Skip slang & fillers' switch removes slang and fillers, and only words whose every sense is slang or a filler count (eh, oh, ay, perreo), not words that merely have one such sense.",
+        "The slang and pronoun switches are restored on reload; before, both reset to off every time the page loaded."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T19:53:59+01:00",
       "date": "2026-09-27 19:53 BST",
       "agent": "Claude",
@@ -85,18 +112,6 @@
       "commit": "pending"
     },
     {
-      "timestamp": "2026-09-27T19:55:00+01:00",
-      "date": "2026-09-27 19:55 BST",
-      "agent": "Claude",
-      "summary": "The Smart Skip slang switch now actually works, and everyday words like sí, bueno and claro are back in Speech sets.",
-      "detail": [
-        "A hidden always-on filter removed slang and fillers whatever the switch said, and it also caught any word with one interjection sense: sí, bueno, hola, claro, vale, adiós, cuidado, perdón… Speech Set 2 had 19 cards because sí was missing.",
-        "Now only the 'Skip slang & fillers' switch removes slang and fillers, and only words whose every sense is slang or a filler count (eh, oh, ay, perreo), not words that merely have one such sense.",
-        "The slang and pronoun switches are restored on reload; before, both reset to off every time the page loaded."
-      ],
-      "commit": "pending"
-    },
-    {
       "timestamp": "2026-09-27T19:15:00+01:00",
       "date": "2026-09-27 19:15 BST",
       "agent": "Claude",
@@ -113,18 +128,6 @@
       "commit": "pending"
     },
     {
-      "timestamp": "2026-09-27T18:04:01+01:00",
-      "date": "2026-09-27 18:04 BST",
-      "agent": "Claude",
-      "summary": "Verb drills moved off the vocabulary choice and into the top-left language pop-up.",
-      "detail": [
-        "The vocabulary page now offers only Everyday speech and Your music; the 'Optional add-on: Verb conjugation' row is gone from it.",
-        "Tapping the language/artist button at the top left shows a 'Verb drills · Practise conjugations' row for languages that have a drill deck.",
-        "Verb cards' conjugation drawer still links straight to drilling that verb."
-      ],
-      "commit": "pending"
-    },
-    {
       "timestamp": "2026-09-27T18:05:00+01:00",
       "date": "2026-09-27 18:05 BST",
       "agent": "Claude",
@@ -134,6 +137,18 @@
         "Ring centre now matches the ring: % of cards known. The frequency-weighted figure has its own line: 'X% of everyday speech understood' (or 'of these lyrics').",
         "Legend 'New' renamed 'Unseen'.",
         "Deck overview hold 8s → 11s, set-loading hold 3.9s → 6.9s; a tap still ends it."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-09-27T18:04:01+01:00",
+      "date": "2026-09-27 18:04 BST",
+      "agent": "Claude",
+      "summary": "Verb drills moved off the vocabulary choice and into the top-left language pop-up.",
+      "detail": [
+        "The vocabulary page now offers only Everyday speech and Your music; the 'Optional add-on: Verb conjugation' row is gone from it.",
+        "Tapping the language/artist button at the top left shows a 'Verb drills · Practise conjugations' row for languages that have a drill deck.",
+        "Verb cards' conjugation drawer still links straight to drilling that verb."
       ],
       "commit": "pending"
     },

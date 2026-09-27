@@ -1,34 +1,34 @@
 // First: rewrites old ?artist=/?about= links to their #/ route before
 // anything below reads the address.
-import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=d712970f';
-import { releaseUrl } from './release-host.js?v=d712970f';
-import './theme.js?v=d712970f';
-import './state.js?v=d712970f';
-import './offline-db.js?v=d712970f';
-import './sync-queue.js?v=d712970f';
-import { initOfflineContent } from './offline-content.js?v=d712970f';
-import './speech.js?v=d712970f';
-import './artist-ui.js?v=d712970f';
-import './auth.js?v=d712970f';
-import './tutorial.js?v=d712970f';
-import './walkthrough.js?v=d712970f';
-import './estimation.js?v=d712970f';
-import './config.js?v=d712970f';
-import './progress.js?v=d712970f';
-import './knowledge.js?v=d712970f';
-import './ui.js?v=d712970f';
-import './vocab.js?v=d712970f';
-import './cognates.js?v=d712970f';
-import './coverage.js?v=d712970f';
-import './fast-mode.js?v=d712970f';
-import './extras.js?v=d712970f';
-import './review-home.js?v=d712970f';
-import './song-sets.js?v=d712970f';
-import './playlist-live.js?v=d712970f';
-import './spotify-playlist-import.js?v=d712970f';
-import './vocabulary-import.js?v=d712970f';
-import './flashcards.js?v=d712970f';
-import { validateArtistCatalog } from './data-contracts.js?v=d712970f';
+import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=529666ec';
+import { releaseUrl } from './release-host.js?v=529666ec';
+import './theme.js?v=529666ec';
+import './state.js?v=529666ec';
+import './offline-db.js?v=529666ec';
+import './sync-queue.js?v=529666ec';
+import { initOfflineContent } from './offline-content.js?v=529666ec';
+import './speech.js?v=529666ec';
+import './artist-ui.js?v=529666ec';
+import './auth.js?v=529666ec';
+import './tutorial.js?v=529666ec';
+import './walkthrough.js?v=529666ec';
+import './estimation.js?v=529666ec';
+import './config.js?v=529666ec';
+import './progress.js?v=529666ec';
+import './knowledge.js?v=529666ec';
+import './ui.js?v=529666ec';
+import './vocab.js?v=529666ec';
+import './cognates.js?v=529666ec';
+import './coverage.js?v=529666ec';
+import './fast-mode.js?v=529666ec';
+import './extras.js?v=529666ec';
+import './review-home.js?v=529666ec';
+import './song-sets.js?v=529666ec';
+import './playlist-live.js?v=529666ec';
+import './spotify-playlist-import.js?v=529666ec';
+import './vocabulary-import.js?v=529666ec';
+import './flashcards.js?v=529666ec';
+import { validateArtistCatalog } from './data-contracts.js?v=529666ec';
 
 function startCardTutorial() {
     const knownLanguage = window.getCardTutorialLanguageKey?.();
@@ -83,7 +83,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
 const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
-    ? import('./spotify.js?v=d712970f').catch(error => {
+    ? import('./spotify.js?v=529666ec').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })
@@ -1487,6 +1487,7 @@ function showChoiceSheet({ id, ariaLabel, title, intro = '', stepLabel = '', ent
             detail.textContent = entry.description || (entry.disabled ? 'Coming soon' : '');
             copy.appendChild(detail);
         }
+        if (entry.bestFor?.length && !entry.selected) copy.appendChild(bestForList(entry.bestFor));
 
         const tail = document.createElement('span');
         tail.className = 'choice-sheet-tail';
@@ -1704,7 +1705,7 @@ function spotifyStatusElement() {
         el.type = 'button';
         el.addEventListener('click', async event => {
             event.stopPropagation();
-            await (_spotifyModulePromise || import('./spotify.js?v=d712970f')).catch(() => null);
+            await (_spotifyModulePromise || import('./spotify.js?v=529666ec')).catch(() => null);
             window.spotifyLogin?.();
         });
     }
@@ -1779,6 +1780,23 @@ function openLearningSourcePicker() {
 }
 
 window.openLearningSourcePicker = openLearningSourcePicker;
+
+// "Best for" under a vocabulary choice: who each one suits, so the pick is
+// obvious without reading the description.
+function bestForList(items) {
+    const list = document.createElement('span');
+    list.className = 'choice-sheet-bestfor';
+    const heading = document.createElement('em');
+    heading.textContent = 'Best for';
+    list.appendChild(heading);
+    for (const text of items) {
+        const item = document.createElement('span');
+        item.textContent = text;
+        list.appendChild(item);
+    }
+    return list;
+}
+window.bestForList = bestForList;
 
 // Language is chosen first; this lightweight picker is the Lyrics branch of
 // the subsequent source choice. It loads only catalogue metadata until the

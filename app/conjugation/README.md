@@ -41,19 +41,20 @@ The familiar verb types are read off the delta rather than stored separately:
 
 ## Screens
 
-Two tabs, **Choose** and **Drill**. The learner-facing copy says *pattern*,
+Two tabs, **Set up** and **Practise** (internally `setup` and `drill`). The learner-facing copy says *pattern*,
 never *lesson*.
 
-- **Choose** — verb type, how common, tenses, persons, stem hints, and an
+- **Set up** — verb type, how common, tenses, persons, stem hints, and an
   Advanced group (prompt). *Patterns*, *Repetition* and *Where this data comes
   from* are still built but carry `hidden` in `index.html`; remove it to bring
   one back. Hidden settings keep their defaults (all patterns, every form).
+  The button that starts is just **Start**.
 - **Stem hints** (was *Easy mode*) — colours the prompt by what this card does
   and names the verb's family.
-- **Drill** — no buttons. Space or tap reveals, space again advances, `←` goes
+- **Practise** — no buttons. Space or tap reveals, space again advances, `←` goes
   back, swipe left/right moves, `t` or *see the table* opens that verb's table.
 - **Table** — no tab of its own: reached from a card or a `?view=table` link,
-  with its own back button (to the same card, or to Choose when no drill runs).
+  with its own back button (to the same card, or to Set up when no drill runs).
 
 Nothing is scored, stored or scheduled. A progress model is a later decision.
 

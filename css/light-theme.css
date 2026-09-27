@@ -104,9 +104,17 @@
     background: var(--bg-card-hover);
 }
 
+/* The grey fill is for New only; Known and Review keep the colours the set
+   squares use, or the legend reads as three identical grey boxes. */
 :root[data-theme="light"] .study-set-legend i {
     background: #dce4ea;
     box-shadow: inset 0 0 0 1px rgba(27, 39, 51, 0.08);
+}
+:root[data-theme="light"] .study-set-legend i.is-known {
+    background: color-mix(in srgb, var(--success) 58%, var(--bg-card));
+}
+:root[data-theme="light"] .study-set-legend i.is-review {
+    background: color-mix(in srgb, var(--warning) 66%, var(--bg-card));
 }
 
 :root[data-theme="light"] .study-set-dot {

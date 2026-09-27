@@ -1,7 +1,7 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=d712970f';
-import { readFastTrack } from './fast-track-preferences.js?v=d712970f';
+import './state.js?v=529666ec';
+import { readFastTrack } from './fast-track-preferences.js?v=529666ec';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -723,6 +723,7 @@ function learningModeCopy(language = selectedLanguage) {
         speech: {
             label: 'Everyday speech',
             description: 'From films and TV — the words people use when they talk.',
+            bestFor: ['Starting a new language'],
             iconHTML: MODE_ICON_SPEECH
         },
         lyrics: {
@@ -730,6 +731,7 @@ function learningModeCopy(language = selectedLanguage) {
             description: lyricsCatalog
                 ? 'Pick an artist, or build a deck from your Spotify playlists — the words in those songs.'
                 : 'Build a deck from your Spotify playlists — the words in those songs.',
+            bestFor: ['Understanding the artists you listen to', 'Hearing words sung in real songs'],
             iconHTML: MODE_ICON_MUSIC
         }
     };
@@ -745,6 +747,9 @@ function paintModeButton(button, entry) {
     if (icon) icon.innerHTML = entry.iconHTML;
     if (label) label.textContent = entry.label;
     if (detail) detail.textContent = entry.description;
+    const copy = button.querySelector('.choice-sheet-copy');
+    copy?.querySelector('.choice-sheet-bestfor')?.remove();
+    if (copy && entry.bestFor?.length) copy.appendChild(window.bestForList(entry.bestFor));
 }
 
 function setupLanguageTabs() {
@@ -2752,7 +2757,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                     data-unseen="${range.unseenCount}" data-review="${range.reviewCount}"
                     style="--set-known-end: ${range.knownPct}%; --set-review-end: ${range.reviewEndPct}%"
                     role="radio" aria-checked="${index === initialIndex ? 'true' : 'false'}"
-                    aria-label="Set ${index + 1}: ${range.knownCount} known, ${range.reviewCount} to review, ${range.unseenCount} unseen"
+                    aria-label="Set ${index + 1}: ${range.knownCount} known, ${range.reviewCount} to review, ${range.unseenCount} new"
                     title="Set ${index + 1} · ${range.knownCount} known · ${range.reviewCount} review · ${range.unseenCount} new"
                     ${range.available ? '' : 'disabled'}><span>${index + 1}</span></button>`;
     }).join('');
@@ -2811,18 +2816,14 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     container.innerHTML = `
         <div class="study-set-panel">
             <div class="study-set-level-context">
-                <span class="study-set-group-label">This level</span>
-                <div class="study-set-overview">
-                    <strong>${completedCount} of ${availableCount} sets seen</strong>
-                </div>
+                <strong class="study-set-overview">${levelNumber > 0 ? `Level ${levelNumber}` : 'This level'} · ${completedCount}/${availableCount} sets studied</strong>
                 <div class="study-set-legend" aria-label="Set progress colours">
                     <span><i class="is-known"></i>Known</span>
                     <span><i class="is-review"></i>Review</span>
-                    <span><i class="is-unseen"></i>Unseen</span>
+                    <span><i class="is-unseen"></i>New</span>
                 </div>
             </div>
             <div class="study-set-choice">
-                <div class="study-set-choice-heading"><span class="study-set-group-label">Choose a set</span><small>Continue with the highlighted set, or choose another</small></div>
                 <div class="study-set-dots" role="radiogroup" aria-label="Sets in this level">${dotsHTML}</div>
                 <div class="study-set-current-copy">
                     <strong id="studySetCurrentTitle"></strong>
@@ -2850,14 +2851,11 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
             dot.classList.toggle('is-current', selected);
             dot.setAttribute('aria-checked', selected ? 'true' : 'false');
         });
-        document.getElementById('studySetCurrentTitle').textContent = `Set ${index + 1} of ${ranges.length}`;
-        // Extra sets page within a category, so position labels read as "Words"
-        // rather than frequency "Ranks".
-        const positionLabel = rankBasis === 'category'
-            ? `Words ${range.start.toLocaleString()}–${(range.end - 1).toLocaleString()} in this group`
-            : `Ranks ${range.start.toLocaleString()}–${(range.end - 1).toLocaleString()}`;
+        // One line: which set, and what is in it. The legend above names the
+        // three colours, so the counts use the same three words.
+        document.getElementById('studySetCurrentTitle').textContent = `Set ${index + 1}`;
         document.getElementById('studySetCurrentMeta').textContent =
-            `${positionLabel} · ${range.knownCount} known · ${range.reviewCount} review · ${range.unseenCount} unseen`;
+            `${range.knownCount} known · ${range.reviewCount} review · ${range.unseenCount} new`;
         const startBtn = document.getElementById('studySetStartBtn');
         // Three distinct states, because collapsing the last two is what made
         // finished sets hand back every card in them. studyMode 'all' keeps no
@@ -3258,7 +3256,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=d712970f')
+        import('./spotify.js?v=529666ec')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
