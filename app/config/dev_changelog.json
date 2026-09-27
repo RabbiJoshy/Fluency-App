@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T23:10:00+01:00",
+      "date": "2026-09-27 23:10 BST",
+      "agent": "Claude",
+      "summary": "The placement check tests words from the whole deck again, skips clitics and pronouns, and runs the full 30 questions.",
+      "detail": [
+        "Fixed: on Spanish (and any lean-index deck) the check only saw the few dozen cards whose meanings had already loaded, so it showed clitics and pronouns, ran out after about 30 of them and then said to start at Level 1.",
+        "Each word's meanings are now loaded just before it is shown, and the likely next words are loaded while you read the current one.",
+        "Clitics, articles, pronouns and prepositions are left out: everyone knows them, so they say nothing about level.",
+        "The estimate is now a deck position, counting the cognates and function words the check skips, so \"Start at Level N\" matches the level that opens.",
+        "Reveal and answer taps are ignored while the next word is loading, so one answer can no longer be counted twice."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T22:12:00+01:00",
       "date": "2026-09-27 22:12 BST",
       "agent": "Claude",
