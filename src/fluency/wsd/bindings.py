@@ -73,7 +73,7 @@ _BINDINGS["es"] = LanguageBinding("es", _spanish, "occurrence-pos", "spanishdict
 _BINDINGS["pt"] = LanguageBinding("pt", _portuguese, "occurrence-pos-pt", "wiktionary")
 _BINDINGS["fr"] = LanguageBinding("fr", _french, "occurrence-pos-fr", "wiktionary")
 _BINDINGS["cs"] = LanguageBinding("cs", _czech, None, "wiktionary")
-_BINDINGS["fi"] = LanguageBinding("fi", _finnish, None, "wiktionary")
+_BINDINGS["fi"] = LanguageBinding("fi", _finnish, "occurrence-pos-fi", "wiktionary")
 
 
 def binding_for(language: str) -> LanguageBinding:

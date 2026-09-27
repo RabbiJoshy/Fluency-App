@@ -2,6 +2,21 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T10:45:00+01:00",
+      "date": "2026-09-27 10:45 BST",
+      "agent": "Antigravity",
+      "summary": "Deploy clickable Wikipedia icon on entity cards, exact token indexing without apostrophe elision collisions, tag-driven dynamic fallback, and organized reference documentation; bump cache to v567.",
+      "detail": [
+        "Adds clickable Wikipedia icon beside surface forms at the top of cards for Wikipedia and Wiktionary named entities, opening the reference article in a new tab without triggering card flip.",
+        "Fixes grammatical person collision across elisions: eliminates blind apostrophe stripping in corpus indexing and back-search, preventing 2nd-person elisions ('busca'') from colliding with 3rd-person forms ('busca') or proper nouns ('Mato'') from colliding with verbs ('mato').",
+        "Replaces overfitted ad-lib overrides with tag-driven dynamic fallback generator in Tier 4: cards tagged as noise/interjection automatically receive '(interjection / vocal sound)' with POS INTJ, proper nouns receive PROPN, and general items receive clean lyrical contexts.",
+        "Recognizes 'Juana Matos' / 'Matos' (Residencial Juana Matos, Cataño, PR) as a proper noun entity, eliminating common noun 'thicket' and verb 'matar' collisions.",
+        "Structures docs/reference/ into dedicated lyrics/ and speech/ operational directories and publishes comprehensive Spanish lyrics WSD hierarchy flowchart in docs/reference/lyrics/wsd-hierarchy.md.",
+        "Bumps cache to flashcards-v567 and asset tags to 20260927v22."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T01:45:00+01:00",
       "date": "2026-09-27 01:45 BST",
       "agent": "Antigravity",

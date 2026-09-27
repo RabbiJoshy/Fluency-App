@@ -20,6 +20,9 @@ class RegistryTests(unittest.TestCase):
     def test_pos_pin_is_name_at_revision(self) -> None:
         self.assertEqual(pin("occurrence-pos"), "es_dep_news_trf@3.8.0")
 
+    def test_finnish_pos_pin_is_declared(self) -> None:
+        self.assertEqual(pin("occurrence-pos-fi"), "stanza-fi-default@1.14.0")
+
     def test_unknown_role_lists_what_exists(self) -> None:
         with self.assertRaises(ModelRegistryError) as caught:
             model("not-a-role")

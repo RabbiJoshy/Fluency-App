@@ -71,7 +71,22 @@
     "output_schema": "sense-menu/v1",
     "join_key": "surface_card_id",
     "lemma_role": "lookup_metadata_only",
-    "comparison_sources": ["finnwordnet"]
+    "comparison_sources": ["finnwordnet"],
+    "resolver": {
+      "surfaces": [
+        "ettei", "etkö", "olevan", "etten", "ketään", "kanssasi", "ettet",
+        "samaa", "kanssani", "kanssaan", "mikset", "parasta", "näitä", "tekemään",
+        "olemaan", "kenen", "miksei", "olemassa", "ettekö", "saman", "tapaamaan",
+        "puhumaan", "olevansa", "etsimään", "tri", "millaista", "enkö", "parempaa",
+        "ensimmäisen", "kenelle", "mukaani", "auttamaan", "näistä", "kenenkään",
+        "kenellekään", "mutten", "samaan", "olevani", "mennyttä", "niille", "olevasi",
+        "saaneet", "näiden", "niillä", "ettemme", "pitämään", "luokseni", "niihin",
+        "kenet", "etteivät", "niissä", "ensimmäistä", "olleen", "emmekö", "muttei",
+        "kanssamme", "istumaan", "lähtemään", "tulemaan", "kanssanne", "tappamaan",
+        "useimmat", "ketkä", "ottamaan", "ensimmäisenä", "parhaat", "klo", "mukaasi",
+        "eivätkö"
+      ]
+    }
   },
   "release": {"activation": "manual", "fallback_policy": "none"}
 }

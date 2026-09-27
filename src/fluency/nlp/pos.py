@@ -10,6 +10,8 @@ downstream has reason to doubt it.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
+from importlib.metadata import version as package_version
 from typing import Any
 
 
@@ -42,6 +44,24 @@ def load_pinned(pin: str, *, model: Any | None = None) -> Any:
     if model is not None:
         return model
 
+    if name == "stanza-fi-default":
+        import stanza
+
+        actual = package_version("stanza")
+        if actual != version:
+            raise PinnedModelError(
+                f"installed stanza is version {actual}, but this run claims {pin}. "
+                "Install the pinned revision, or change the pin deliberately."
+            )
+        pipeline = stanza.Pipeline(
+            "fi",
+            processors="tokenize,mwt,pos,lemma,depparse",
+            download_method=None,
+            use_gpu=False,
+            verbose=False,
+        )
+        return _StanzaPipe(pipeline)
+
     import spacy
 
     if hasattr(spacy, "prefer_gpu"):
@@ -58,6 +78,64 @@ def load_pinned(pin: str, *, model: Any | None = None) -> Any:
             f"deliberately -- do not record a version that was not used."
         )
     return model
+
+
+class _Morph:
+    def __init__(self, feats: str | None) -> None:
+        self._values = dict(
+            item.split("=", 1)
+            for item in (feats or "").split("|")
+            if "=" in item
+        )
+
+    def to_dict(self) -> dict[str, str]:
+        return dict(self._values)
+
+
+class _StanzaToken:
+    """The small spaCy-shaped token interface used by occurrence_pos_tags."""
+
+    def __init__(self, word: Any) -> None:
+        self._word = word
+        self.text = word.text
+        parent = getattr(word, "parent", None)
+        start_char = word.start_char
+        if start_char is None and parent is not None:
+            start_char = parent.start_char
+        if start_char is None:
+            raise PinnedModelError("Stanza token has no character offset")
+        self.idx = int(start_char)
+        self.pos_ = word.upos
+        self.dep_ = word.deprel
+        self.morph = _Morph(word.feats)
+        self.head: Any = self
+
+
+class _StanzaPipe:
+    """Expose Stanza's Finnish UD pipeline through the existing batch contract."""
+
+    def __init__(self, pipeline: Any) -> None:
+        self.pipeline = pipeline
+
+    @staticmethod
+    def _document(document: Any) -> tuple[_StanzaToken, ...]:
+        tokens: list[_StanzaToken] = []
+        for sentence in document.sentences:
+            sentence_tokens = [_StanzaToken(word) for word in sentence.words]
+            by_id = {int(token._word.id): token for token in sentence_tokens}
+            for token in sentence_tokens:
+                token.head = by_id.get(int(token._word.head), token)
+            tokens.extend(sentence_tokens)
+        return tuple(tokens)
+
+    def pipe(self, texts: Iterable[str], batch_size: int = 64):
+        import stanza
+
+        values = list(texts)
+        for start in range(0, len(values), batch_size):
+            raw = [stanza.Document([], text=text) for text in values[start : start + batch_size]]
+            for document in self.pipeline.bulk_process(raw):
+                yield self._document(document)
 
 
 def canonicalize_target(

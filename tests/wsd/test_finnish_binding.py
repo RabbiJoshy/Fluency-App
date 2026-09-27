@@ -7,10 +7,10 @@ from fluency.wsd.languages.finnish import FinnishWSDAdapter
 
 
 class FinnishBindingTests(unittest.TestCase):
-    def test_binding_uses_wiktionary_without_an_unpinned_pos_model(self) -> None:
+    def test_binding_uses_wiktionary_with_pinned_finnish_pos_model(self) -> None:
         binding = binding_for("fi")
         self.assertEqual(binding.menu_provider, "wiktionary")
-        self.assertIsNone(binding.pos_model_role)
+        self.assertEqual(binding.pos_model_role, "occurrence-pos-fi")
 
     def test_exact_surface_location_preserves_diacritics(self) -> None:
         adapter = FinnishWSDAdapter()
@@ -21,9 +21,10 @@ class FinnishBindingTests(unittest.TestCase):
         )
         self.assertEqual(adapter.locate("Han on täällä.", "hän"), ())
 
-    def test_absent_pos_model_never_removes_menu_senses(self) -> None:
+    def test_finnish_pos_gate_uses_wiktionary_bridge(self) -> None:
         compatible, orthogonal = pos_gate_for("fi")
-        self.assertTrue(compatible("verb", "NOUN"))
+        self.assertFalse(compatible("verb", "NOUN"))
+        self.assertTrue(compatible("verb", "VERB"))
         self.assertFalse(orthogonal("verb"))
 
 

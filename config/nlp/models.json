@@ -41,6 +41,14 @@
       "language": "fr",
       "note": "French. Elision splits a token (n', j'), so a surface span may not align with a whole word the way it does in Spanish or Portuguese."
     },
+    "occurrence-pos-fi": {
+      "provider": "stanza",
+      "name": "stanza-fi-default",
+      "revision": "1.14.0",
+      "language": "fi",
+      "processors": "tokenize,mwt,pos,lemma,depparse",
+      "note": "Finnish Universal Dependencies tagger. The Stanza package revision and its versioned default Finnish resources are pinned together; POS is required before a Finnish sense may compete across dictionary categories."
+    },
     "word-alignment": {
       "provider": "huggingface",
       "name": "bert-base-multilingual-cased",

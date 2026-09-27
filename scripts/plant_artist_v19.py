@@ -209,6 +209,18 @@ CULTURAL_ENTITY_OVERRIDES: dict[str, dict[str, Any]] = {
         "pos": "INTJ",
         "source": "curated:onomatopoeia",
     },
+    "matos": {
+        "translation": "Matos (surname / Residencial Juana Matos)",
+        "context": "Proper name / Puerto Rican community reference (Juana Matos)",
+        "pos": "PROPN",
+        "source": "curated:lyrics_cultural",
+    },
+    "juana matos": {
+        "translation": "Juana Matos (Residencial Juana Matos, Cataño, PR)",
+        "context": "Public housing complex in Cataño, Puerto Rico",
+        "pos": "PROPN",
+        "source": "curated:lyrics_cultural",
+    },
     "buoh": {
         "translation": "buoh (ad-lib / Safaera chant)",
         "context": "Signature Safaera perreo chant exclamation",
@@ -367,9 +379,6 @@ def build_corpus_line_index(raw_examples: dict[str, dict[str, Any]]) -> dict[str
                         clean = normalize_lyrics_token(t)
                         if clean:
                             cleaned_tokens.add(clean)
-                            # Also add without apostrophes for elision matches (e.g. burla'o -> burlao)
-                            if "'" in clean:
-                                cleaned_tokens.add(clean.replace("'", ""))
 
                     for token in cleaned_tokens:
                         index[token].append(ex)
@@ -815,14 +824,44 @@ def plant_artist(
                     "sense_id": f"retained:{word_lower}#{idx}",
                 })
         if not clean_fallbacks:
-            clean_fallbacks = [{
-                "headword": word,
-                "pos": "NOUN",
-                "translation": word,
-                "context": "retained surface",
-                "source": "retained_fallback",
-                "sense_id": f"fallback:{word_lower}#1",
-            }]
+            is_noise = (
+                orig_card.get("extra_category") == "noise"
+                or orig_card.get("is_noise")
+                or orig_card.get("is_interjection")
+                or orig_card.get("pos") == "INTJ"
+            )
+            is_propn = (
+                orig_card.get("is_propernoun")
+                or orig_card.get("extra_category") == "proper_noun"
+                or orig_card.get("pos") == "PROPN"
+            )
+            if is_noise:
+                clean_fallbacks = [{
+                    "headword": word,
+                    "pos": "INTJ",
+                    "translation": f"{word} (interjection / vocal sound)",
+                    "context": "Vocal sound effect / interjection",
+                    "source": "retained_fallback:interjection",
+                    "sense_id": f"fallback:{word_lower}#1",
+                }]
+            elif is_propn:
+                clean_fallbacks = [{
+                    "headword": word,
+                    "pos": "PROPN",
+                    "translation": word,
+                    "context": "Proper noun / name",
+                    "source": "retained_fallback:proper_noun",
+                    "sense_id": f"fallback:{word_lower}#1",
+                }]
+            else:
+                clean_fallbacks = [{
+                    "headword": word,
+                    "pos": orig_card.get("pos") or "NOUN",
+                    "translation": word,
+                    "context": "Lyrical occurrence",
+                    "source": "retained_fallback",
+                    "sense_id": f"fallback:{word_lower}#1",
+                }]
 
         card_lemma = orig_card.get("lemma") or word
         clean_fallbacks = inflect_card_senses(target_surface, card_lemma, clean_fallbacks, conj_rev)
@@ -887,10 +926,6 @@ def plant_artist(
             for t in primary_terms:
                 if t not in search_terms:
                     search_terms.append(t)
-                    if "'" in t:
-                        unquoted = t.replace("'", "")
-                        if unquoted not in search_terms:
-                            search_terms.append(unquoted)
 
             # Only search lemma if card is a base lemma card (word == lemma)
             if word_str == lemma_str or not search_terms:
@@ -904,7 +939,7 @@ def plant_artist(
                     if sp_text not in seen_sp:
                         seen_sp.add(sp_text)
                         cloned = dict(match_ex)
-                        cloned["surface"] = card.get("display_form") or card.get("word") or term
+                        cloned["surface"] = term
                         occurrences.append(cloned)
                         if len(occurrences) >= target_budget:
                             break
