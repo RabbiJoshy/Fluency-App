@@ -2,6 +2,21 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T23:57:00+01:00",
+      "date": "2026-09-27 23:57 BST",
+      "agent": "Claude",
+      "summary": "Verb drills now save your progress: grade each card, resume an unfinished round, and missed forms come back first.",
+      "detail": [
+        "After revealing a card, mark it Got it (space/enter) or Missed it (x); each form climbs a spaced-repetition ladder saved on this device per account and language.",
+        "Closing the tab mid-round keeps it: Set up shows Resume with how many cards are left.",
+        "A new Progress section orders rounds weakest first, only what needs work, or random, and the summary bar shows known / learning / missed / new.",
+        "Finishing a round shows your score and the missed forms, with a button to drill just those again.",
+        "Set up choices (tenses, persons, verb types, how common, prompt) are remembered per language; a one-verb deep link no longer overwrites them.",
+        "Verb tables mark practised forms with a coloured dot."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T23:34:27+01:00",
       "date": "2026-09-27 23:34 BST",
       "agent": "Codex",
