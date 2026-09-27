@@ -70,3 +70,23 @@ def test_inflect_card_senses_noun_plural():
     # Test explicit is_plural flag
     res_flagged = inflect_card_senses("razone'", "razón", senses, {}, is_plural=True)
     assert res_flagged[1]["translation"] == "reasons"
+
+
+def test_inflect_card_senses_participle():
+    conj_rev = {
+        "metido": [{"lemma": "meter", "mood": "participo", "tense": "participo", "person": ""}]
+    }
+    senses = [
+        {"headword": "metido", "pos": "ADJ", "translation": "involved"},
+        {"headword": "meter", "pos": "VERB", "translation": "to put"},
+    ]
+    # In base participle form (surface == lemma), the verb sense inflects to 'put',
+    # while the adjective sense remains unpluralized 'involved'
+    res = inflect_card_senses("metido", "metido", senses, conj_rev)
+    assert res[0]["translation"] == "involved"
+    assert res[1]["translation"] == "put"
+
+    # In plural form (metidos), the adjective must NOT become 'involveds'
+    res_pl = inflect_card_senses("metidos", "metido", senses, conj_rev, is_plural=True)
+    assert res_pl[0]["translation"] == "involved"
+
