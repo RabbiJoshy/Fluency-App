@@ -455,6 +455,79 @@ def score_heuristic_sense(observed_pos: str | None, sense: dict[str, Any], engli
     return score
 
 
+def _bare(token: str) -> str:
+    return normalize_lyrics_token(token).replace("'", "")
+
+
+def target_pos(doc: Any, word: str) -> str | None:
+    """The tagger's POS for the card's word in a line. Apostrophes are ignored on
+    both sides: a line tokenised as 'ta or pa' still finds the card ta or pa."""
+    key = _bare(word)
+    token = next((t for t in doc if _bare(t.text) == key), None)
+    return token.pos_ if token is not None else None
+
+
+def score_senses(stext: str, senses: list[dict[str, Any]], observed_pos: str | None, embed: Any,
+                 wsd_cfg: dict[str, Any], polysemous_fallback: str, english: str | None) -> list[float]:
+    """v19's score per sense: menu-order prior, POS penalty, similarity to the uninflected gloss."""
+    prior_w, prior_decay = wsd_cfg["provider_prior"]["weight"], wsd_cfg["provider_prior"]["decay"]
+    scores = []
+    for s_i, s in enumerate(senses):
+        score = prior_w * (prior_decay ** s_i)
+        if not embedding_scored(s, polysemous_fallback):
+            score += score_heuristic_sense(observed_pos, s, english)
+        else:
+            if observed_pos and not pos_matches(s["pos"], observed_pos) and not s["source"].startswith("overlay"):
+                score -= wsd_cfg["pos_mismatch_penalty"]
+            score += embed.similarity(stext, s.get("gloss_base") or s["translation"])
+            score += wsd_cfg["overlay_bonus"] if s["source"].startswith("overlay") else 0.0
+        scores.append(score)
+    return scores
+
+
+def fallback_index(senses: list[dict[str, Any]], observed_pos: str | None) -> int:
+    """The first dictionary sense of the observed word class (dictionaries list the commonest first)."""
+    listed = [i for i, s in enumerate(senses) if s["source"] in ("spanishdict", "wiktionary")] or list(range(len(senses)))
+    return next((i for i in listed if pos_matches(senses[i]["pos"], observed_pos)), listed[0])
+
+
+def same_entry_index(senses: list[dict[str, Any]], best: int) -> int:
+    """The first-listed sense of the best-scoring sense's own entry (headword and word class).
+
+    WSD keeps its choice of entry; only near-duplicate senses inside it
+    (estar: "to be" / "to be on") fall back to the dictionary's order.
+    """
+    head, pos = senses[best]["headword"], senses[best]["pos"]
+    return next(i for i, s in enumerate(senses) if s["headword"] == head and s["pos"] == pos)
+
+
+def decide(scores: list[float], senses: list[dict[str, Any]], observed_pos: str | None,
+           wsd_cfg: dict[str, Any]) -> tuple[int, float, str, bool, float]:
+    """(chosen index, confidence, band, fell back, margin).
+
+    Confidence is the margin between the best and second-best score. Below the
+    profile's low cut-off the scores cannot tell the senses apart, so the first
+    listed dictionary sense of the observed word class is taken instead.
+    """
+    order = sorted(range(len(scores)), key=lambda i: -scores[i])
+    margin = round(scores[order[0]] - scores[order[1]], 4)
+    cfg = wsd_cfg.get("confidence") or {}
+    if cfg.get("kind") != "margin":  # v19's raw-score confidence
+        best = scores[order[0]]
+        conf = round(max(0.45, min(0.99, best if best > 0 else 0.60)), 4)
+        return order[0], conf, ("high" if conf >= 0.70 else "medium" if conf >= 0.50 else "low"), False, margin
+    if margin < cfg["low"]:
+        mode = cfg.get("fallback", "none")
+        if mode == "first_listed":
+            pick = fallback_index(senses, observed_pos)
+        elif mode == "same_entry":
+            pick = same_entry_index(senses, order[0])
+        else:
+            pick = order[0]
+        return pick, margin, "low", pick != order[0], margin
+    return order[0], margin, ("high" if margin >= cfg["high"] else "medium"), False, margin
+
+
 def embedding_scored(sense: dict[str, Any], polysemous_fallback: str) -> bool:
     """Whether v19's WSD scores this sense by embedding rather than the heuristic."""
     return not (sense["source"].startswith("wiktionary") and polysemous_fallback == "heuristic")
@@ -513,8 +586,6 @@ def plant_artist(artist: str, *, workspace: Path = WORKSPACE, polysemous_fallbac
     from fluency.nlp.pos import load_pinned
     nlp = load_pinned(pin(wsd_cfg["occurrence_pos"]))
     embed = StoreEmbeddings(workspace / wsd_cfg["embedding_cache"], tuple(wsd_cfg["uncached_overlap_scores"]))
-    prior_w, prior_decay = wsd_cfg["provider_prior"]["weight"], wsd_cfg["provider_prior"]["decay"]
-    pos_penalty, overlay_bonus_w = wsd_cfg["pos_mismatch_penalty"], wsd_cfg["overlay_bonus"]
 
     final_master: dict[str, dict[str, Any]] = {}
     final_index: list[dict[str, Any]] = []
@@ -522,6 +593,7 @@ def plant_artist(artist: str, *, workspace: Path = WORKSPACE, polysemous_fallbac
     final_decisions: dict[str, list[dict[str, Any]]] = {}
     assigned = monosemous = polysemous = 0
     trf_doc_cache: dict[str, Any] = {}
+    stats: Counter[str] = Counter()
     run_ts = datetime.now(UTC).strftime("%Y-%m-%dT%H:%MZ")
     prompt_poly = f"lyrics-v20-polysemous-{polysemous_fallback}"
 
@@ -569,32 +641,26 @@ def plant_artist(artist: str, *, workspace: Path = WORKSPACE, polysemous_fallbac
                 stext = ex.get("spanish", "").strip()
                 if stext not in trf_doc_cache:
                     trf_doc_cache[stext] = nlp(stext)
-                target_token = next((t for t in trf_doc_cache[stext] if t.text.casefold() == word.casefold()), None)
-                observed_pos = target_token.pos_ if target_token else None
-                best_idx, best_score = 0, -999.0
-                for s_i, s in enumerate(senses):
-                    score = prior_w * (prior_decay ** s_i)
-                    if not embedding_scored(s, polysemous_fallback):
-                        score += score_heuristic_sense(observed_pos, s, ex.get("english"))
-                    else:
-                        if observed_pos and not pos_matches(s["pos"], observed_pos) and not s["source"].startswith("overlay"):
-                            score -= pos_penalty
-                        # The uninflected gloss: the string the store holds.
-                        score += embed.similarity(stext, s.get("gloss_base") or s["translation"])
-                        score += overlay_bonus_w if s["source"].startswith("overlay") else 0.0
-                    if score > best_score:
-                        best_score, best_idx = score, s_i
+                observed_pos = target_pos(trf_doc_cache[stext], word)
+                stats["pos_observed"] += observed_pos is not None
+                scores = score_senses(stext, senses, observed_pos, embed, wsd_cfg, polysemous_fallback, ex.get("english"))
+                best_idx, conf, band, fell_back, margin = decide(scores, senses, observed_pos, wsd_cfg)
+                stats["fallback"] += fell_back
                 chosen = senses[best_idx]
-                conf = round(max(0.45, min(0.99, best_score if best_score > 0 else 0.60)), 4)
-                band = "high" if conf >= 0.70 else ("medium" if conf >= 0.50 else "low")
+                provenance = {"assignment_method": PROFILE_ID, "prompt_id": prompt_poly, "run_ts": run_ts,
+                              "margin": margin}
+                if fell_back:
+                    # Too close to call: the dictionary's own order decides, and says so.
+                    provenance["fallback"] = "first_listed_dictionary_sense"
                 sense_buckets[best_idx].append({**ex, "assignment_method": PROFILE_ID, "prompt_id": prompt_poly,
-                                                "run_ts": run_ts, "confidence": conf, "band": band})
+                                                "run_ts": run_ts, "confidence": conf, "band": band,
+                                                **({"fallback": provenance["fallback"]} if fell_back else {})})
                 sense_confidences[best_idx].append(conf)
                 card_decisions.append({
                     "decision_id": f"decision_{cid}_{ex_idx}",
                     "forced_selection": {"selected_tuple": {"headword": chosen["headword"], "part_of_speech": chosen["pos"]},
                                          "sense_id": chosen["sense_id"]},
-                    "provenance": {"assignment_method": PROFILE_ID, "prompt_id": prompt_poly, "run_ts": run_ts},
+                    "provenance": provenance,
                     "subject": {"bucket_index": best_idx, "example_index": len(sense_buckets[best_idx]) - 1,
                                 "kind": "materialized_example"},
                 })
@@ -644,6 +710,8 @@ def plant_artist(artist: str, *, workspace: Path = WORKSPACE, polysemous_fallbac
         final_decisions[cid] = card_decisions
 
     print(f"  WSD assignments: {assigned:,} (monosemous {monosemous:,}, polysemous {polysemous:,})")
+    print(f"  Polysemous examples with an observed POS: {stats['pos_observed']:,} of {polysemous:,}; "
+          f"first-listed fallback: {stats['fallback']:,}")
     if embed.pairs_scored:
         print(f"  Embedding pairs without a stored vector (word-overlap fallback): "
               f"{embed.pairs_uncached:,} of {embed.pairs_scored:,} ({embed.pairs_uncached / embed.pairs_scored:.1%})")
@@ -660,6 +728,8 @@ def plant_artist(artist: str, *, workspace: Path = WORKSPACE, polysemous_fallbac
         "profile_id": PROFILE_ID, "menu_provenance": plan["resolved"]["pinned"],
         "embedding_pairs": {"scored": embed.pairs_scored, "without_vector": embed.pairs_uncached},
         "polysemous_fallback": polysemous_fallback,
+        "confidence": wsd_cfg.get("confidence", {"kind": "raw_best_score"}),
+        "wsd_stats": dict(stats),
     }
     _validate_split(final_index, final_examples, final_master)
     out = output_dir(workspace, artist)

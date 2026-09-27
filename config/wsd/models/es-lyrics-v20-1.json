@@ -42,6 +42,13 @@
     "occurrence_pos": "occurrence-pos",
     "embedding": "exact-text-embedding",
     "embedding_cache": "embeddings/es/exact-text-gemini-embedding-001.npz",
-    "note": "Wiktionary senses are scored by embedding like SpanishDict's (decided 2026-09-27, provider parity); v19 scored them by POS and word overlap."
+    "note": "Wiktionary senses are scored by embedding like SpanishDict's (decided 2026-09-27, provider parity); v19 scored them by POS and word overlap.",
+    "confidence": {
+      "kind": "margin",
+      "low": 0.01,
+      "high": 0.02,
+      "fallback": "none",
+      "note": "Confidence is the best score minus the second-best (monosemous 1.0). Cut-offs from a 100-example accuracy sample (2026-09-27): margin < 0.01 was right 59% of the time (n=34), 0.01-0.02 93% (n=15), >= 0.02 92% (n=51). No fallback: below 0.005 the embedding pick beat the first-listed dictionary sense (13 vs 10 of 23) and a same-entry fallback (about -1 of 23). Low-margin examples keep the pick and are marked band low."
+    }
   }
 }

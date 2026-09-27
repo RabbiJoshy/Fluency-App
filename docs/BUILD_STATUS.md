@@ -577,13 +577,6 @@ Existing speech runs are immutable and unaffected; a rebuild picks these up.
   (`chance` -> "oportunidad"), while the retained `normalized_menu` holds the
   Spanish one. The resolver path reads the page. 7 of 3,833 surfaces with both
   share no gloss. Shared SpanishDict adapter; speech too. Not fixed.
-- **WSD confidence is not calibrated.** v20 scores every pair with a stored
-  vector (0% word-overlap fallback, against 100% for Bad Bunny in v19), so
-  confidence moved off 0.45/low. But it is the raw best score, and Gemini
-  cosine similarity sits near 0.83 for most line/gloss pairs; on the test
-  playlist the margin to the second-best sense has median 0.017 (75% under
-  0.03). The "high" band reflects that scale, not certainty. Near-duplicate
-  senses of one lemma (estar's "to be" / "to be on") are separated by noise.
 - Dropped-final-s lyric forms (`cabe'`, `cena'`) need a derived-form headword
   source (proposal 0004 §5 step 3); they ship as `no_menu` until then.
 
@@ -599,3 +592,40 @@ Young Miko's uses are English. Expansions whose target has no menu: `omertá`
 through). Embeddings: 28,217 strings as approved, plus a 16-string top-up.
 All four decks built to `<workspace>/releases/lyrics/lyrics-*-v20`; not
 published.
+
+### Accuracy check and margin confidence (2026-09-27)
+
+100 examples with 2+ senses on the menu, drawn at random (seed 20260927) in
+proportion to deck size (Bad Bunny 53, Rosalía 16, Young Miko 22, test
+playlist 9), each read and judged by hand
+(`<workspace>/reviews/lyrics-v20/accuracy-sample-judged.json`):
+
+| | correct | wrong | unsure | accuracy (judged) |
+|---|---:|---:|---:|---:|
+| v19 | 78 | 18 | 4 | 81.2% |
+| v20 | 81 | 14 | 5 | 85.3% |
+
+Rosalía and Young Miko have no shipped v19, so v19 was run for them into a
+scratch folder; it read the shared vector store, which by then held the
+lines embedded for v20, so that v19 is stronger than a real one would have been.
+
+**Confidence is the margin** between the best and second-best score
+(monosemous 1.0), replacing the raw best score, which sat near 0.83 for any
+pair. Cut-offs from the sample: margin < 0.01 was right 59% of the time
+(n=34), 0.01-0.02 93% (n=15), >= 0.02 92% (n=51). So `low` < 0.01,
+`medium` 0.01-0.02, `high` >= 0.02 (`config/wsd/models/es-lyrics-v20-1.json`).
+About 30% of multi-sense examples are `low`.
+
+**No fallback below the low cut-off** (Josh, 2026-09-27). The sample did not
+support one: below a 0.005 margin the embedding pick was right 13 of 23
+times, the first-listed dictionary sense 10 of 23, and the first sense of the
+chosen entry about one fewer than the pick. The mechanism is in
+`plant_artist_v20.decide` (`fallback`: `none` | `same_entry` |
+`first_listed`) should a larger sample say otherwise. Known consequence:
+`ta` shows "he/she is on" rather than "is", marked `low`.
+
+The POS check (v19's -0.30 for the wrong word class) is applied, and now finds
+the card's word when the line spells it with an apostrophe (`'ta`, `pa'`);
+83% of multi-sense examples get a POS.
+
+Follow-up after release: `condenarse` senses on `condene` are not inflected.
