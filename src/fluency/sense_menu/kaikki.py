@@ -457,6 +457,12 @@ class KaikkiSenseMenuAdapter:
         rows_read = 0
         passes = 0
 
+        # Which headwords' rows have been followed, per surface. A headword
+        # is followed once, from every row read so far -- not only from rows
+        # read in the pass that reached it: estan -> están -> estar stalled at
+        # están whenever están was also an inventory surface, because its rows
+        # had been read in an earlier pass and were never looked at again.
+        followed: dict[str, set[str]] = {surface: set() for surface in surfaces}
         for _ in range(self.max_redirect_hops + 1):
             wanted = {
                 headword
@@ -464,18 +470,24 @@ class KaikkiSenseMenuAdapter:
                 for headword in by_headword
                 if headword not in scanned
             }
-            if not wanted:
+            pending = any(
+                headword in scanned and headword not in followed[surface]
+                for surface, by_headword in paths.items()
+                for headword in by_headword
+            )
+            if not wanted and not pending:
                 break
-            passes += 1
             found: dict[str, list[dict[str, Any]]] = defaultdict(list)
-            for row in _iter_rows(self.path, language_code=self.language_code):
-                rows_read += 1
-                word = _safe_surface(row.get("word"), self._normalize)
-                if word in wanted:
-                    found[word].append(row)
-            for word in sorted(wanted):
-                rows_by_word[word].extend(found.get(word, []))
-            scanned.update(wanted)
+            if wanted:
+                passes += 1
+                for row in _iter_rows(self.path, language_code=self.language_code):
+                    rows_read += 1
+                    word = _safe_surface(row.get("word"), self._normalize)
+                    if word in wanted:
+                        found[word].append(row)
+                for word in sorted(wanted):
+                    rows_by_word[word].extend(found.get(word, []))
+                scanned.update(wanted)
 
             for surface, by_headword in paths.items():
                 additions: dict[str, tuple[str, ...]] = {}
@@ -485,9 +497,12 @@ class KaikkiSenseMenuAdapter:
                         surface_grammar[surface][target] = sorted(merged)
                 addition_positions: dict[str, set[str]] = defaultdict(set)
                 for headword, path in tuple(by_headword.items()):
+                    if headword not in scanned or headword in followed[surface]:
+                        continue
+                    followed[surface].add(headword)
                     if len(path) > self.max_redirect_hops:
                         continue
-                    for row in found.get(headword, []):
+                    for row in rows_by_word.get(headword, []):
                         source_pos = row.get("pos")
                         allowed_source = allowed_positions[surface][headword]
                         if allowed_source is not None and source_pos not in allowed_source:

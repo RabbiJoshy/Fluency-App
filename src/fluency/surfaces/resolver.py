@@ -12,6 +12,8 @@ Strategies, in a fixed precedence (never implicit):
 2. ``headwords`` the provider declares for the exact surface (provider trust),
    or our deterministic rules reach from provider data (derived), filtered by
    the consumer's minimum trust.
+   A mode whose policy sets ``expansion_first`` (lyrics) reads a declared
+   ``expansion`` before this step instead of after it.
 3. Only if the set is still empty, the declared fallbacks:
    ``expansion`` (borrow another surface's set: ``ud`` -> ``usted``), then
    ``declared_gloss`` (no entry exists; a hand-written meaning), then
@@ -100,6 +102,12 @@ class ModePolicy:
     mode: str
     minimum_trust: str
     entity: bool
+    # Whether a declared expansion outranks the provider's headwords. Off, an
+    # expansion only fills an empty set (speech: ``ud`` -> ``usted``). On, it
+    # replaces the set, as an override does: in lyrics the elision list names
+    # what the bare letters stand for, and the provider's page for them answers
+    # about another word (``ta`` -> "TA", ``pa`` -> "dad").
+    expansion_first: bool = False
 
     @classmethod
     def load(cls, path: Path, mode: str) -> "ModePolicy":
@@ -109,7 +117,8 @@ class ModePolicy:
         declared = (document.get("modes") or {}).get(mode)
         if not isinstance(declared, dict):
             raise ResolverError(f"{path}: no policy for mode {mode!r}")
-        return cls(mode, trust.check(str(declared["minimum_trust"])), bool(declared.get("entity")))
+        return cls(mode, trust.check(str(declared["minimum_trust"])), bool(declared.get("entity")),
+                   bool(declared.get("expansion_first", False)))
 
 
 @dataclass(frozen=True)
@@ -212,6 +221,18 @@ class Resolver:
                           for h in override.headwords)
             return Resolution(strategy=HEADWORDS, headwords=heads, entry=override, **base)
 
+        expansion = self._select(surface, "expansion")
+        if expansion is not None and not _expanding and self.policy.expansion_first:
+            target = self.resolve(expansion.expands_to, _expanding=True)
+            if target.strategy == HEADWORDS:
+                # The provider's own answer is kept in the notes, so a card
+                # can say what the expansion replaced.
+                replaced = [h.headword for h in declaration.headwords]
+                if replaced:
+                    base["notes"] = {**dict(base["notes"]), "provider_headwords_replaced": replaced}
+                return Resolution(strategy=EXPANSION, headwords=target.headwords, entry=expansion,
+                                  expanded_to=expansion.expands_to, **base)
+
         accepted = tuple(h for h in declaration.headwords
                          if trust.accepts(self.policy.minimum_trust, h.trust))
         # A headword the provider snapshot holds no entry for would build an
@@ -224,8 +245,7 @@ class Resolver:
         if available:
             return Resolution(strategy=HEADWORDS, headwords=available, **base)
 
-        expansion = self._select(surface, "expansion")
-        if expansion is not None and not _expanding:
+        if expansion is not None and not _expanding and not self.policy.expansion_first:
             target = self.resolve(expansion.expands_to, _expanding=True)
             if target.strategy == HEADWORDS:
                 return Resolution(strategy=EXPANSION, headwords=target.headwords, entry=expansion,

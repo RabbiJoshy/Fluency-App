@@ -1,0 +1,285 @@
+{
+  "config_version": "sense-menu-language-policy/v1",
+  "policy_id": "es-wiktionary-v1",
+  "language": "es",
+  "provider": "wiktionary",
+  "audit_status": "partial",
+  "note": "Spanish on Wiktionary (Kaikki), for lyrics v20: the second headword source behind SpanishDict (proposal 0004, 2026-09-27). Structure copied from pt-v1; region_tags are the place tags that occur on 20 or more senses in kaikki.org-dictionary-Spanish (enwiktionary-2026-09-13), counted 2026-09-27. Not the Spanish speech policy: that is es-spanishdict-v1 in the registry. allow_if_tags adds apocopic: Spanish Wiktionary tags apocopes (algún -> alguno, buen -> bueno) 'abbreviation', which reject_tags would otherwise refuse.",
+  "card_binding": {
+    "identity": "surface-card/v1",
+    "headword_role": "lookup_metadata_only"
+  },
+  "menu_order_role": "provider_prior",
+  "redirects": {
+    "require_source_case_match": true,
+    "reject_tags": [
+      "abbreviation",
+      "initialism"
+    ],
+    "allow_if_tags": [
+      "apocopic",
+      "contraction"
+    ],
+    "target_pos_by_source_pos": {
+      "adj": [
+        "adj"
+      ],
+      "adv": [
+        "adv"
+      ],
+      "article": [
+        "article"
+      ],
+      "conj": [
+        "conj"
+      ],
+      "contraction": [
+        "article",
+        "prep"
+      ],
+      "det": [
+        "det"
+      ],
+      "intj": [
+        "intj"
+      ],
+      "name": [
+        "name"
+      ],
+      "noun": [
+        "noun"
+      ],
+      "num": [
+        "num"
+      ],
+      "particle": [
+        "particle"
+      ],
+      "phrase": [
+        "phrase"
+      ],
+      "prep": [
+        "prep"
+      ],
+      "pron": [
+        "pron"
+      ],
+      "verb": [
+        "verb"
+      ]
+    }
+  },
+  "region_tags": [
+    "Andalusia",
+    "Aragon",
+    "Argentina",
+    "Asturias",
+    "Bolivia",
+    "Canary-Islands",
+    "Caribbean",
+    "Central-America",
+    "Chile",
+    "Colombia",
+    "Costa-Rica",
+    "Cuba",
+    "Dominican-Republic",
+    "Ecuador",
+    "El-Salvador",
+    "Guatemala",
+    "Honduras",
+    "Latin-America",
+    "Louisiana",
+    "Mexico",
+    "Nicaragua",
+    "Northern",
+    "Panama",
+    "Paraguay",
+    "Peru",
+    "Philippines",
+    "Puerto-Rico",
+    "Rioplatense",
+    "South-America",
+    "Spain",
+    "US",
+    "Uruguay",
+    "Venezuela"
+  ],
+  "register_tags": [
+    "archaic",
+    "childish",
+    "colloquial",
+    "dated",
+    "endearing",
+    "euphemistic",
+    "excessive",
+    "Early",
+    "formal",
+    "historical",
+    "honorific",
+    "hypercorrect",
+    "idiomatic",
+    "informal",
+    "jargon",
+    "Modern",
+    "neologism",
+    "nonce-word",
+    "nonstandard",
+    "obsolete",
+    "offensive",
+    "ethnic",
+    "poetic",
+    "polite",
+    "possibly",
+    "proscribed",
+    "sarcastic",
+    "slang",
+    "slur",
+    "term-of-address",
+    "uncommon",
+    "vulgar",
+    "Lunfardo",
+    "derogatory",
+    "humorous",
+    "literary",
+    "dialectal",
+    "regional",
+    "familiar",
+    "rare"
+  ],
+  "construction_tags": [
+    "auxiliary",
+    "attributive",
+    "copulative",
+    "ditransitive",
+    "impersonal",
+    "in-compounds",
+    "intransitive",
+    "ergative",
+    "postpositional",
+    "predicative",
+    "pronominal",
+    "reflexive",
+    "transitive"
+  ],
+  "domain_tags": [
+    "Africa",
+    "Ancient-Greek",
+    "Ancient-Rome",
+    "Chinese",
+    "Christian",
+    "Classical",
+    "Egyptian",
+    "English",
+    "European-Union",
+    "French",
+    "German",
+    "Germanic",
+    "Greco-Roman",
+    "Greek",
+    "Hinduism",
+    "India",
+    "Indo-European-studies",
+    "Internet",
+    "Irish",
+    "Jainism",
+    "Japanese",
+    "Jehovah's-Witnesses",
+    "Judaism",
+    "Marxism",
+    "Mormonism",
+    "Nazism",
+    "New-Age",
+    "Nordic",
+    "Norse",
+    "particle",
+    "Persian",
+    "physical",
+    "Provençal",
+    "rhetoric",
+    "Roman",
+    "Sanskrit",
+    "Sikhism",
+    "Tibetan",
+    "World-War-I"
+  ],
+  "construction_tag_mappings": {
+    "auxiliary": {
+      "kind": "auxiliary_frame",
+      "value": "auxiliary"
+    }
+  },
+  "grammar_tags": {
+    "agent": "noun-class=agent",
+    "capitalized": "orthography=capitalized",
+    "conjunction": "word-class=conjunction",
+    "conjunctive": "function=conjunctive",
+    "continuative": "aspect=continuative",
+    "demonym": "noun-class=demonym",
+    "diacritic": "character-class=diacritic",
+    "disjunctive": "pronoun-class=disjunctive",
+    "elative": "case=elative",
+    "feminine-usually": "gender=usually-feminine",
+    "in-variation": "inflection=variable",
+    "intensifier": "function=intensifier",
+    "irregular": "inflection=irregular",
+    "lowercase": "orthography=lowercase",
+    "modal": "function=modal",
+    "negative": "polarity=negative",
+    "no-first-person-singular-present": "inflection=no-first-person-singular-present",
+    "numeral": "word-class=numeral",
+    "onomatopoeic": "formation=onomatopoeic",
+    "prepositional": "function=prepositional",
+    "pronoun": "word-class=pronoun",
+    "sentence-final": "position=sentence-final",
+    "short-form": "form=short",
+    "subordinating": "verb-class=subordinating",
+    "uninflected": "inflection=uninflected",
+    "uppercase": "orthography=uppercase",
+    "without-noun": "pronoun-use=standalone"
+  },
+  "contextual_grammar_tags": {
+    "personal": [
+      {
+        "parts_of_speech": [
+          "verb"
+        ],
+        "requires_tags": [
+          "infinitive"
+        ],
+        "value": "form=personal-infinitive"
+      },
+      {
+        "parts_of_speech": [
+          "pron"
+        ],
+        "value": "pronoun-class=personal"
+      }
+    ]
+  },
+  "ignored_tags": [
+    "-i",
+    "abbreviation",
+    "acronym",
+    "adverb",
+    "also",
+    "alternative",
+    "clipping",
+    "contraction",
+    "deliberate",
+    "ellipsis",
+    "empty-gloss",
+    "error-lua-exec",
+    "error-unknown-tag",
+    "initialism",
+    "letter",
+    "misconstruction",
+    "misspelling",
+    "mnemonic",
+    "morpheme",
+    "no-gloss",
+    "noun",
+    "pronunciation-spelling",
+    "retronym",
+    "suffix"
+  ]
+}

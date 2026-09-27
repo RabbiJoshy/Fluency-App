@@ -1,0 +1,403 @@
+{
+ "schema": "declared-entries/v1",
+ "language": "es",
+ "note": "Hand-written overrides that lived as a dict inside scripts/plant_artist_v19.py (CULTURAL_ENTITY_OVERRIDES), moved here unchanged in meaning when lyrics v20 replaced the tier chain with fluency.surfaces.resolver. Entries already declared elsewhere (saoco, algarete, phillie, alí, tkn, miko) were not copied. As declared entries they fill an empty menu (gloss, entity) or compete as an overlay sense when the provider has a menu; v19 instead replaced the menu outright.",
+ "entries": [
+  {
+   "entry_id": "es-lyrics-v19-kobe",
+   "surface": "kobe",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Carried from plant_artist_v19.py CULTURAL_ENTITY_OVERRIDES (curated:entity): 5-time NBA champion frequently cited in Latin trap as a symbol of elite clutch performance",
+   "author": "claude (lyrics v20, converted from v19)",
+   "created_at": "2026-09-27",
+   "kind": "entity",
+   "payload": {
+    "class": "entity",
+    "name": "Kobe Bryant",
+    "entity_type": "person",
+    "description": "legendary NBA basketball icon"
+   }
+  },
+  {
+   "entry_id": "es-lyrics-v19-louis",
+   "surface": "louis",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Carried from plant_artist_v19.py CULTURAL_ENTITY_OVERRIDES (curated:entity): Luxury fashion label ubiquitous in reggaeton aesthetic (las Louis, las Gucci)",
+   "author": "claude (lyrics v20, converted from v19)",
+   "created_at": "2026-09-27",
+   "kind": "entity",
+   "payload": {
+    "class": "entity",
+    "name": "Louis Vuitton",
+    "entity_type": "brand",
+    "description": "French luxury fashion house"
+   }
+  },
+  {
+   "entry_id": "es-lyrics-v19-ali",
+   "surface": "ali",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Carried from plant_artist_v19.py CULTURAL_ENTITY_OVERRIDES (curated:entity): Boxing icon celebrated in Rosalía song 'Como Alí'",
+   "author": "claude (lyrics v20, converted from v19)",
+   "created_at": "2026-09-27",
+   "kind": "entity",
+   "payload": {
+    "class": "entity",
+    "name": "Muhammad Ali",
+    "entity_type": "person",
+    "description": "legendary world heavyweight boxing champion"
+   }
+  },
+  {
+   "entry_id": "es-lyrics-v19-toki",
+   "surface": "toki",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Carried from plant_artist_v19.py CULTURAL_ENTITY_OVERRIDES (curated:entity): Dominican dembow/trap artist collaborating on 'Linda' and 'La Combi Versace'",
+   "author": "claude (lyrics v20, converted from v19)",
+   "created_at": "2026-09-27",
+   "kind": "entity",
+   "payload": {
+    "class": "entity",
+    "name": "Tokischa",
+    "entity_type": "person",
+    "description": "Dominican rapper and Rosalía collaborator"
+   }
+  },
+  {
+   "entry_id": "es-lyrics-v19-gyal",
+   "surface": "gyal",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Carried from plant_artist_v19.py CULTURAL_ENTITY_OVERRIDES (curated:slang): Patois/Caribbean loanword for woman/girl common in dancehall and urban trap",
+   "author": "claude (lyrics v20, converted from v19)",
+   "created_at": "2026-09-27",
+   "kind": "gloss",
+   "payload": {
+    "class": "loanword",
+    "senses": [
+     {
+      "translation": "gyal, girl (Caribbean English / patois slang)",
+      "definition": "Patois/Caribbean loanword for woman/girl common in dancehall and urban trap",
+      "pos": "noun"
+     }
+    ]
+   }
+  },
+  {
+   "entry_id": "es-lyrics-v19-damn",
+   "surface": "damn",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Carried from plant_artist_v19.py CULTURAL_ENTITY_OVERRIDES (curated:lyrics_loanword): English colloquial exclamation pervasive in bilingual Latin trap verses",
+   "author": "claude (lyrics v20, converted from v19)",
+   "created_at": "2026-09-27",
+   "kind": "gloss",
+   "payload": {
+    "class": "loanword",
+    "senses": [
+     {
+      "translation": "damn (English exclamation / intensifier)",
+      "definition": "English colloquial exclamation pervasive in bilingual Latin trap verses",
+      "pos": "intj"
+     }
+    ]
+   }
+  },
+  {
+   "entry_id": "es-lyrics-v19-dios",
+   "surface": "dios",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Carried from plant_artist_v19.py CULTURAL_ENTITY_OVERRIDES (curated:core_vocab): Supreme being in monotheistic faith; pervasive lyrical invocation",
+   "author": "claude (lyrics v20, converted from v19)",
+   "created_at": "2026-09-27",
+   "kind": "gloss",
+   "payload": {
+    "class": "vocabulary",
+    "senses": [
+     {
+      "translation": "God, the Lord, the Almighty",
+      "definition": "Supreme being in monotheistic faith; pervasive lyrical invocation",
+      "pos": "noun"
+     }
+    ]
+   }
+  },
+  {
+   "entry_id": "es-lyrics-v19-hound",
+   "surface": "hound",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Carried from plant_artist_v19.py CULTURAL_ENTITY_OVERRIDES (curated:code_switching): English loanword in bilingual duet or Spanish poetic dog",
+   "author": "claude (lyrics v20, converted from v19)",
+   "created_at": "2026-09-27",
+   "kind": "gloss",
+   "payload": {
+    "class": "loanword",
+    "senses": [
+     {
+      "translation": "hound dog (English loanword)",
+      "definition": "English loanword in bilingual duet or Spanish poetic dog",
+      "pos": "noun"
+     }
+    ]
+   }
+  },
+  {
+   "entry_id": "es-lyrics-v19-noms",
+   "surface": "només",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Carried from plant_artist_v19.py CULTURAL_ENTITY_OVERRIDES (curated:catalan): Catalan adverb from Rosalía song Milionària",
+   "author": "claude (lyrics v20, converted from v19)",
+   "created_at": "2026-09-27",
+   "kind": "gloss",
+   "payload": {
+    "class": "loanword",
+    "senses": [
+     {
+      "translation": "only, just (Catalan)",
+      "definition": "Catalan adverb from Rosalía song Milionària",
+      "pos": "adv"
+     }
+    ]
+   }
+  },
+  {
+   "entry_id": "es-lyrics-v19-sempre",
+   "surface": "sempre",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Carried from plant_artist_v19.py CULTURAL_ENTITY_OVERRIDES (curated:catalan): Catalan/Italian adverb in Rosalía song Milionària",
+   "author": "claude (lyrics v20, converted from v19)",
+   "created_at": "2026-09-27",
+   "kind": "gloss",
+   "payload": {
+    "class": "loanword",
+    "senses": [
+     {
+      "translation": "always (Catalan / Italian)",
+      "definition": "Catalan/Italian adverb in Rosalía song Milionària",
+      "pos": "adv"
+     }
+    ]
+   }
+  },
+  {
+   "entry_id": "es-lyrics-v19-tra",
+   "surface": "tra",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Carried from plant_artist_v19.py CULTURAL_ENTITY_OVERRIDES (curated:onomatopoeia): Signature reggaeton dance rhythm chant (dale tra tra tra)",
+   "author": "claude (lyrics v20, converted from v19)",
+   "created_at": "2026-09-27",
+   "kind": "gloss",
+   "payload": {
+    "class": "onomatopoeia",
+    "senses": [
+     {
+      "translation": "tra (rhythmic perreo chant)",
+      "definition": "Signature reggaeton dance rhythm chant (dale tra tra tra)",
+      "pos": "intj"
+     }
+    ]
+   }
+  },
+  {
+   "entry_id": "es-lyrics-v19-prr",
+   "surface": "prr",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Carried from plant_artist_v19.py CULTURAL_ENTITY_OVERRIDES (curated:onomatopoeia): Signature urban trap ad-lib",
+   "author": "claude (lyrics v20, converted from v19)",
+   "created_at": "2026-09-27",
+   "kind": "gloss",
+   "payload": {
+    "class": "onomatopoeia",
+    "senses": [
+     {
+      "translation": "prr (ad-lib / vocal sound)",
+      "definition": "Signature urban trap ad-lib",
+      "pos": "intj"
+     }
+    ]
+   }
+  },
+  {
+   "entry_id": "es-lyrics-v19-brr",
+   "surface": "brr",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Carried from plant_artist_v19.py CULTURAL_ENTITY_OVERRIDES (curated:onomatopoeia): Signature Latin trap vocal sound effect",
+   "author": "claude (lyrics v20, converted from v19)",
+   "created_at": "2026-09-27",
+   "kind": "gloss",
+   "payload": {
+    "class": "onomatopoeia",
+    "senses": [
+     {
+      "translation": "brr (ad-lib / Anuel / urban ad-lib)",
+      "definition": "Signature Latin trap vocal sound effect",
+      "pos": "intj"
+     }
+    ]
+   }
+  },
+  {
+   "entry_id": "es-lyrics-v19-wua",
+   "surface": "wua",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Carried from plant_artist_v19.py CULTURAL_ENTITY_OVERRIDES (curated:onomatopoeia): Signature urban trap vocal sound effect",
+   "author": "claude (lyrics v20, converted from v19)",
+   "created_at": "2026-09-27",
+   "kind": "gloss",
+   "payload": {
+    "class": "onomatopoeia",
+    "senses": [
+     {
+      "translation": "wua (ad-lib / vocal sound)",
+      "definition": "Signature urban trap vocal sound effect",
+      "pos": "intj"
+     }
+    ]
+   }
+  },
+  {
+   "entry_id": "es-lyrics-v19-wuo",
+   "surface": "wuo",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Carried from plant_artist_v19.py CULTURAL_ENTITY_OVERRIDES (curated:onomatopoeia): Signature urban vocal exclamation",
+   "author": "claude (lyrics v20, converted from v19)",
+   "created_at": "2026-09-27",
+   "kind": "gloss",
+   "payload": {
+    "class": "onomatopoeia",
+    "senses": [
+     {
+      "translation": "wuo (ad-lib / vocal sound)",
+      "definition": "Signature urban vocal exclamation",
+      "pos": "intj"
+     }
+    ]
+   }
+  },
+  {
+   "entry_id": "es-lyrics-v19-woh",
+   "surface": "woh",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Carried from plant_artist_v19.py CULTURAL_ENTITY_OVERRIDES (curated:onomatopoeia): Signature urban vocal exclamation",
+   "author": "claude (lyrics v20, converted from v19)",
+   "created_at": "2026-09-27",
+   "kind": "gloss",
+   "payload": {
+    "class": "onomatopoeia",
+    "senses": [
+     {
+      "translation": "woh (ad-lib / vocal sound)",
+      "definition": "Signature urban vocal exclamation",
+      "pos": "intj"
+     }
+    ]
+   }
+  },
+  {
+   "entry_id": "es-lyrics-v19-uoh",
+   "surface": "uoh",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Carried from plant_artist_v19.py CULTURAL_ENTITY_OVERRIDES (curated:onomatopoeia): Signature urban vocal exclamation",
+   "author": "claude (lyrics v20, converted from v19)",
+   "created_at": "2026-09-27",
+   "kind": "gloss",
+   "payload": {
+    "class": "onomatopoeia",
+    "senses": [
+     {
+      "translation": "uoh (ad-lib / vocal sound)",
+      "definition": "Signature urban vocal exclamation",
+      "pos": "intj"
+     }
+    ]
+   }
+  },
+  {
+   "entry_id": "es-lyrics-v19-matos",
+   "surface": "matos",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Carried from plant_artist_v19.py CULTURAL_ENTITY_OVERRIDES (curated:lyrics_cultural): Proper name / Puerto Rican community reference (Juana Matos)",
+   "author": "claude (lyrics v20, converted from v19)",
+   "created_at": "2026-09-27",
+   "kind": "entity",
+   "payload": {
+    "class": "entity",
+    "name": "Matos",
+    "entity_type": "other",
+    "description": "surname / Residencial Juana Matos"
+   }
+  },
+  {
+   "entry_id": "es-lyrics-v19-juana-matos",
+   "surface": "juana matos",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Carried from plant_artist_v19.py CULTURAL_ENTITY_OVERRIDES (curated:lyrics_cultural): Public housing complex in Cataño, Puerto Rico",
+   "author": "claude (lyrics v20, converted from v19)",
+   "created_at": "2026-09-27",
+   "kind": "entity",
+   "payload": {
+    "class": "entity",
+    "name": "Juana Matos",
+    "entity_type": "place",
+    "description": "Residencial Juana Matos, Cataño, PR"
+   }
+  },
+  {
+   "entry_id": "es-lyrics-v19-buoh",
+   "surface": "buoh",
+   "scope": {
+    "mode": "lyrics"
+   },
+   "reason": "Carried from plant_artist_v19.py CULTURAL_ENTITY_OVERRIDES (curated:onomatopoeia): Signature Safaera perreo chant exclamation",
+   "author": "claude (lyrics v20, converted from v19)",
+   "created_at": "2026-09-27",
+   "kind": "gloss",
+   "payload": {
+    "class": "onomatopoeia",
+    "senses": [
+     {
+      "translation": "buoh (ad-lib / Safaera chant)",
+      "definition": "Signature Safaera perreo chant exclamation",
+      "pos": "intj"
+     }
+    ]
+   }
+  }
+ ]
+}

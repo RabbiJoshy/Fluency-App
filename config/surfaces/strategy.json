@@ -9,7 +9,9 @@
     },
     "lyrics": {
       "minimum_trust": "derived",
-      "entity": true
+      "entity": true,
+      "expansion_first": true,
+      "note": "Updated 2026-09-27 (lyrics v20, proposal 0004): a declared expansion outranks the provider's headwords. The elision list says what the bare letters stand for (ta -> está); SpanishDict's page for ta answers about the abbreviation TA. A curated headwords override still comes first."
     },
     "live": {
       "minimum_trust": "heuristic",

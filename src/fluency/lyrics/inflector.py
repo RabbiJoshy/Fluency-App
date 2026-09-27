@@ -195,7 +195,30 @@ def english_past_participle(verb: str) -> str:
     return inflect_english_past(lower, 0)
 
 
+_TRAILING_NOTE = re.compile(r"^(?P<core>.*?)(?P<note>\s*\([^()]*\))$")
+_DEFINITION_START = re.compile(r"^(?:a|an|the|used|someone|something|one who|any|of|in|to)\b", re.IGNORECASE)
+
+
 def pluralize_english_noun(gloss: str) -> str:
+    """Plural of a translation gloss, leaving a definition or a note alone.
+
+    Wiktionary glosses are often definitions or carry a note: "flower
+    (structure in angiosperms)" became "flower (structure in angiosperms)s",
+    and "A globular buildup of carbon on the end of a wick" "...wicks". The
+    note stays after the plural; a gloss that reads as a definition, or runs
+    longer than a short noun phrase, is returned unchanged.
+    """
+    text = gloss.strip()
+    note = ""
+    match = _TRAILING_NOTE.match(text)
+    if match and match.group("core").strip():
+        text, note = match.group("core").strip(), match.group("note")
+    if _DEFINITION_START.match(text) or len(text.split()) > 4 or any(ch in text for ch in ";,.:"):
+        return gloss.strip()
+    return _pluralize_phrase(text) + note
+
+
+def _pluralize_phrase(gloss: str) -> str:
     word = gloss.strip()
     # Handle phrasal nouns e.g. "altar boy" -> "altar boys"
     tokens = word.split()

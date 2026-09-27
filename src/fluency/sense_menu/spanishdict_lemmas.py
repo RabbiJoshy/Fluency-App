@@ -372,6 +372,18 @@ class SpanishDictLemmaRule:
                                tuple(unknown), page_state, tuple(candidates))
 
 
+def has_translation(analyses: Any) -> bool:
+    """Whether any sense in ``analyses`` carries a non-empty translation."""
+    for analysis in analyses or ():
+        if not isinstance(analysis, dict):
+            continue
+        senses = analysis.get("senses")
+        senses = senses.values() if isinstance(senses, dict) else (senses or ())
+        if any(isinstance(sense, dict) and str(sense.get("translation") or "").strip() for sense in senses):
+            return True
+    return False
+
+
 class SpanishDictHeadwordSource:
     """SpanishDict as a ``fluency.surfaces.resolver.HeadwordSource``.
 
@@ -436,9 +448,15 @@ class SpanishDictHeadwordSource:
         headword's own page when it is itself a word we fetched (*bar* for
         *bares*). The headword cache alone missed the last: it only holds what
         some other surface hopped to.
+
+        An entry whose every sense has an empty translation holds nothing to
+        show (``eramos`` -> *erar*, ``let's``): counting it built an empty menu
+        while claiming a resolution. Kaikki's source already requires a
+        sense-bearing entry; this is the same rule (provider parity).
         """
-        if isinstance(self.headword_cache.get(headword), dict):
+        cached = self.headword_cache.get(headword)
+        if isinstance(cached, dict) and has_translation(cached.get("dictionary_analyses")):
             return True
-        if surface and self.page_analyses(surface, headword):
+        if surface and has_translation(self.page_analyses(surface, headword)):
             return True
-        return bool(self.page_analyses(headword, headword))
+        return has_translation(self.page_analyses(headword, headword))

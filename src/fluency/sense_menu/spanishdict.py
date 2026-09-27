@@ -21,6 +21,7 @@ from fluency.features.spanishdict_metadata import (
 from fluency.features.spanishdict import extract as extract_spanishdict_features
 from fluency.menus import MenuAnalysis, SenseLeaf, build_analysis_id
 from fluency.sense_menu.declared_menu import declared_entity_analyses, declared_gloss_analyses
+from fluency.sense_menu.spanishdict_lemmas import has_translation
 from fluency.surfaces.resolver import DECLARED_GLOSS, ENTITY, EXPANSION, HEADWORDS
 
 
@@ -493,7 +494,7 @@ class SpanishDictSenseMenuAdapter:
             record = {"headword_provenance": item.provenance, "headword_trust": item.trust,
                       "headword_detail": item.detail or None}
             own = [a for a in page_analyses if str(a.get("headword") or "").strip() == item.headword]
-            if not own:
+            if not has_translation(own):  # the same places, in the same order, as has_entry
                 entry = self.headword_cache.get(item.headword)
                 own = _normalize_analyses(entry.get("dictionary_analyses")) if isinstance(entry, dict) else []
                 if not own:

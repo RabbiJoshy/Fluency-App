@@ -30,10 +30,17 @@ class DiscoveryTests(unittest.TestCase):
         self.assertIn("available:", str(caught.exception))
 
     def test_missing_optional_helper_is_explicit(self) -> None:
-        """Spanish has no typography canonicalizer; that must not silently
-        fall back to another language's rules."""
+        """A language without a typography canonicalizer must not silently
+        fall back to another language's rules. (Spanish was the real example
+        until lyrics v20 gave it one; every package now has one, so a stand-in
+        module plays the part.)"""
 
-        with self.assertRaises(LanguageSupportError) as caught:
+        from types import ModuleType
+        from unittest import mock
+
+        bare = ModuleType("fluency.languages.bare.surfaces")
+        with mock.patch("fluency.languages.surfaces._surfaces_module", return_value=bare), \
+                self.assertRaises(LanguageSupportError) as caught:
             typography_canonicalizer_for_language("es")
         self.assertIn("canonicalize_typography", str(caught.exception))
 

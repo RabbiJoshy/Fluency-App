@@ -536,3 +536,46 @@ being named in the script.
 - `external_lemmas` is wired into the Kaikki adapter only, not SpanishDict. MEND (2026-09-23) did not change that path: instead, for a profile's named cards, both adapters take their headword set from `fluency.surfaces.resolver` (SpanishDict's declared lemmas, Wiktionary's redirect paths, hand-written entries). Switching every card over is a next-rebuild decision (proposal 0003 §2a).
 - 4 pre-existing test failures (pipeline planning ×2, spanishdict conjugation
   ×2), unchanged by this gate. 879 tests pass.
+
+## Lyrics v20 — menus from the shared resolver (2026-09-27, in progress)
+
+Proposal 0004, update of 2026-09-27. `scripts/plant_artist_v20.py` (profile
+`es-lyrics-v20-1`) takes every lyric card's headword set from
+`fluency.surfaces.resolver` over SpanishDict then Wiktionary
+(`surfaces/provider_chain.py`), with declared entries at lyrics scope, and
+builds each menu with the stage-02 adapters (`sense_menu/chain_menus.py`).
+v19's tier chain is not used. A shadow diff of v19 against v20 for all four
+decks (`scripts/shadow_diff_lyrics_v20.py`, output in
+`<workspace>/reviews/lyrics-v20/shadow-diff/`) was reviewed before building.
+
+### Shared-code changes that reach speech on its next rebuild
+
+Existing speech runs are immutable and unaffected; a rebuild picks these up.
+
+- **Kaikki redirects past a scanned middle form.** `KaikkiSenseMenuAdapter._collect`
+  followed only rows read in the current pass, so `estan` -> `están` -> `estar`
+  stopped at `están` whenever `están` was itself an inventory surface. It now
+  follows every row read so far. Measured on the latest speech inventories:
+  **pt 77 of 10,000** cards change headword set, **fr 62 of 3,000** (21 of them
+  gain a menu they lacked), **cs 31 of 10,000**.
+- **SpanishDict `has_entry` requires a translated sense.** An entry whose senses
+  all have empty translations (`eramos` -> *erar*, `let's`) built an empty menu
+  while claiming a resolution. Kaikki's source already required a sense-bearing
+  entry. Affects speech cards built through the resolver.
+- **`expansion_first` mode policy** (`config/surfaces/strategy.json`): on for
+  lyrics only, a declared expansion outranks the provider's headwords
+  (`ta` -> *está*, not SpanishDict's "TA"). Speech unchanged.
+- **Lyrics inflector** keeps a trailing note after a plural and leaves
+  definitions unpluralised ("flower (structure in angiosperms)s" was the bug).
+- Spanish gained `canonicalize_typography` and a Wiktionary sense-menu policy
+  (`es-wiktionary-v1`, which allows `apocopic` redirects: `algún` -> *alguno*).
+
+### Known and open
+
+- **SpanishDict English-direction pages.** For a few surfaces the snapshot's
+  surface page holds SpanishDict's English->Spanish entry with no language mark
+  (`chance` -> "oportunidad"), while the retained `normalized_menu` holds the
+  Spanish one. The resolver path reads the page. 7 of 3,833 surfaces with both
+  share no gloss. Shared SpanishDict adapter; speech too. Not fixed.
+- Dropped-final-s lyric forms (`cabe'`, `cena'`) need a derived-form headword
+  source (proposal 0004 §5 step 3); they ship as `no_menu` until then.

@@ -26,6 +26,11 @@ def test_noun_pluralization():
     assert pluralize_english_noun("kisses") == "kisses"
     assert pluralize_english_noun("buttocks") == "buttocks"
     assert pluralize_english_noun("things") == "things"
+    # Wiktionary glosses: a note stays after the plural; a definition is left alone.
+    assert pluralize_english_noun("flower (structure in angiosperms)") == "flowers (structure in angiosperms)"
+    assert pluralize_english_noun("hit (success)") == "hits (success)"
+    assert pluralize_english_noun("A globular buildup of carbon on the end of a wick") == "A globular buildup of carbon on the end of a wick"
+    assert pluralize_english_noun("The name of the Latin-script letter Y/y.") == "The name of the Latin-script letter Y/y."
 
 
 def test_split_attached_clitics():

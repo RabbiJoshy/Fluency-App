@@ -11,6 +11,19 @@ from fluency.core.identity import CardRecord, create_card_record
 _WHITESPACE = re.compile(r"\s+")
 
 
+def canonicalize_typography(text: str) -> str:
+    """Normalize Unicode without casing or folding Spanish word punctuation.
+
+    Needed by the Wiktionary adapter, whose redirects require the source row's
+    spelling to match the surface's case (lyrics v20 reads Spanish Wiktionary).
+    Lyric elisions keep their apostrophe exactly as observed.
+    """
+
+    if not isinstance(text, str):
+        raise TypeError("text must be a string")
+    return unicodedata.normalize("NFC", text)
+
+
 def normalize_surface(surface: str) -> str:
     """Normalize typography without lemmatizing or folding Spanish accents."""
 
