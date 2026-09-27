@@ -607,7 +607,14 @@ def plant_artist(artist: str, *, workspace: Path = WORKSPACE, polysemous_fallbac
         tot = sum(len(b) for b in active_buckets)
         assigned += tot
         avg_conf = [round(sum(a[2]) / len(a[2]), 4) if a[2] else 0.60 for a in active]
-        final_master[cid] = {**card, "senses": active_senses}
+        # The lookup lemma follows WSD: the headword of the dictionary sense
+        # most examples chose (pa -> para, ta -> estar), not a relation order.
+        lemma_card = dict(card)
+        chosen = [(len(b), s["headword"]) for s, b in zip(active_senses, active_buckets)
+                  if s["source"] in ("spanishdict", "wiktionary") and s["headword"] in card.get("headwords", ())]
+        if chosen:
+            lemma_card["lemma"] = max(chosen, key=lambda item: item[0])[1]
+        final_master[cid] = {**lemma_card, "senses": active_senses}
         final_examples[cid] = {"m": active_buckets, "w": raw_examples.get(cid, {}).get("w", [])}
         forced_counts = {s["sense_id"][:4]: len(b) for s, b in zip(active_senses, active_buckets)}
         index_entry = {

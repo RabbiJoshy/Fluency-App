@@ -577,5 +577,25 @@ Existing speech runs are immutable and unaffected; a rebuild picks these up.
   (`chance` -> "oportunidad"), while the retained `normalized_menu` holds the
   Spanish one. The resolver path reads the page. 7 of 3,833 surfaces with both
   share no gloss. Shared SpanishDict adapter; speech too. Not fixed.
+- **WSD confidence is not calibrated.** v20 scores every pair with a stored
+  vector (0% word-overlap fallback, against 100% for Bad Bunny in v19), so
+  confidence moved off 0.45/low. But it is the raw best score, and Gemini
+  cosine similarity sits near 0.83 for most line/gloss pairs; on the test
+  playlist the margin to the second-best sense has median 0.017 (75% under
+  0.03). The "high" band reflects that scale, not certainty. Near-duplicate
+  senses of one lemma (estar's "to be" / "to be on") are separated by noise.
 - Dropped-final-s lyric forms (`cabe'`, `cena'`) need a derived-form headword
   source (proposal 0004 §5 step 3); they ship as `no_menu` until then.
+
+### Declared entries and build (2026-09-27)
+
+Approved by Josh: `config/declared/es/lyrics-v20-entities.json` (80: 64 names
+used 5+ times, 9 name fragments, 7 brand/artist cards from old glosses),
+`lyrics-v20-glosses.json` (84), `lyrics-v20-accents.json` (61 expansions,
+trust derived). The commit adding them says 76 entities; 80 is right. `bad` is
+declared only in the Bad Bunny and test-playlist artist layers (workspace);
+Young Miko's uses are English. Expansions whose target has no menu: `omertá`
+(dropped), and GRAFT's `pa'l`/`pa'la` (two-word targets; the resolver falls
+through). Embeddings: 28,217 strings as approved, plus a 16-string top-up.
+All four decks built to `<workspace>/releases/lyrics/lyrics-*-v20`; not
+published.
