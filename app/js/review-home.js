@@ -10,7 +10,7 @@
 // declared, never inferred — a hidden row reads as "no such thing", not "none
 // right now".
 
-import './state.js?v=20260921x';
+import './state.js?v=7565361c';
 
 const TIERS = [
     {

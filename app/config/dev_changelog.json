@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T14:00:00+01:00",
+      "date": "2026-09-27 14:00 BST",
+      "agent": "Claude",
+      "summary": "The app now deploys itself from main, and every deploy carries its own version, so the cache is always fresh and no two deploys can clash.",
+      "detail": [
+        "Pushing to main publishes the app automatically; nothing is copied to the live site by hand any more.",
+        "Every script and stylesheet tag, and the service-worker cache name, carry the deployed commit (the SW cache reads flashcards-v570-<commit>), so this tab shows exactly which commit you are running.",
+        "state.js, speech.js and reverse-cues.js were each loaded twice under two different tags; they now load once."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T12:20:00+01:00",
       "date": "2026-09-27 12:20 BST",
       "agent": "Claude",
