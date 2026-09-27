@@ -18,7 +18,7 @@ class StudyStructureTests(unittest.TestCase):
         ]
         self.assertEqual(ids, [card["card_id"] for card in cards])
         self.assertEqual(len(ids), len(set(ids)))
-        self.assertTrue(all(len(study_set["card_ids"]) <= 20 for level in structure["levels"] for study_set in level["sets"]))
+        self.assertTrue(all(len(study_set["card_ids"]) <= 25 for level in structure["levels"] for study_set in level["sets"]))
         self.assertEqual(structure["levels"][0]["start_rank"], 1)
         self.assertEqual(structure["levels"][-1]["end_rank"], 425)
 

@@ -106,7 +106,6 @@ export const state = {
     // Suggestion-only per-level overrides, keyed by a stable
     // mode|language|source scope. Values are { levelId: true } maps so they
     // serialize directly into the per-user progress cache.
-    markedDoneLevels: {},
     // Starts unknown so writes use the legacy sheet names until a harmless
     // capabilities request confirms the consolidated v4 backend is deployed.
     progressBackendSchemaVersion: 0,

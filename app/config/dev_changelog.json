@@ -2,6 +2,22 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T22:12:00+01:00",
+      "date": "2026-09-27 22:12 BST",
+      "agent": "Claude",
+      "summary": "Levels are 100 words and sets are 25 cards in every mode, Speech included, and the placement check now says which level to start at.",
+      "detail": [
+        "Every deck, Speech, Lyrics, artist and playlist, splits into levels of exactly 100 cards (at most 120 levels; smaller decks still get ten). Each level is four 25-card sets, shown as four squares filling the row.",
+        "Speech no longer takes its levels from the release's study-structure file; the app builds them the same way as Lyrics. Progress is per card, so nothing learned is lost, only the set numbering moves.",
+        "Level boundaries no longer snap to frequency cliffs.",
+        "The placement check result reads \"Start at Level N\", with \"Likely somewhere in Levels X–Y (about … words)\" underneath. Use Suggested Level opens that level. The estimate is still saved as a word rank.",
+        "\"Mark level as done\" is gone: the app no longer reads it, and no level is skipped because of it.",
+        "The set help sheet says a set is 25 cards, about 5–10 minutes. The tutorial shows Set 1 of 4 and Learn 25 new cards.",
+        "Fixed: Speech decks with lean indexes (Spanish, Portuguese, Czech) had no stable ranks, which app-built levels need."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T20:36:03+01:00",
       "date": "2026-09-27 20:36 BST",
       "agent": "Claude",
