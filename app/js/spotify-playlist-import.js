@@ -447,6 +447,72 @@ function renderPlaylistList(playlists, onSelect) {
     list.appendChild(fragment);
 }
 
+// After a playlist is picked in 'choose' mode: the ways to turn it into a
+// deck. Ready-made keeps only songs Fluency already publishes; a new deck
+// looks up every song's lyrics, either now without meaning matching or,
+// once it exists, through the full cleaning and WSD pipeline.
+function renderDeckChoices(playlist, matchCount, trackCount, { onReady, onQuick, onBack }) {
+    const list = element('spotifyPlaylistList');
+    list.replaceChildren();
+    list.classList.remove('hidden');
+    const rows = [
+        {
+            label: 'Ready-made deck',
+            description: matchCount
+                ? `${matchCount} of ${trackCount} songs are already in Fluency. Opens now.`
+                : 'None of these songs are in Fluency’s library yet.',
+            disabled: !matchCount,
+            onSelect: onReady
+        },
+        {
+            label: 'New deck · quick',
+            description: `Looks up lyrics for all ${trackCount} songs now. Meanings are not matched to each line.`,
+            onSelect: onQuick
+        },
+        {
+            label: 'New deck · full',
+            description: 'Cleans every lyric and matches each line to its meaning. Coming soon.',
+            disabled: true
+        }
+    ];
+    const group = document.createElement('div');
+    group.className = 'choice-sheet-list playlist-deck-choices';
+    for (const row of rows) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'choice-sheet-item';
+        button.disabled = !!row.disabled;
+        const copy = document.createElement('span');
+        copy.className = 'choice-sheet-copy';
+        const label = document.createElement('strong');
+        label.textContent = row.label;
+        const detail = document.createElement('small');
+        detail.textContent = row.description;
+        copy.append(label, detail);
+        const tail = document.createElement('span');
+        tail.className = 'choice-sheet-tail';
+        tail.setAttribute('aria-hidden', 'true');
+        tail.textContent = row.disabled ? '' : '›';
+        button.append(copy, tail);
+        button.addEventListener('click', event => {
+            event.preventDefault();
+            event.stopPropagation();
+            if (!row.disabled) row.onSelect();
+        });
+        group.appendChild(button);
+    }
+    const back = document.createElement('button');
+    back.type = 'button';
+    back.className = 'product-back-action playlist-deck-back';
+    back.textContent = '← Another playlist';
+    back.addEventListener('click', event => {
+        event.preventDefault();
+        event.stopPropagation();
+        onBack();
+    });
+    list.append(group, back);
+}
+
 async function ensureSpotifyModule() {
     if (!window.isSpotifyConnected) {
         await import(SPOTIFY_MODULE).catch(error => {
@@ -463,7 +529,9 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
     if (!modal || !status || !useBtn) return;
 
     document.getElementById('lyricsSourceSheet')?.remove();
-    _importMode = options.live ? 'live' : 'filter';
+    // 'choose' picks the playlist first and asks how to build it afterwards;
+    // 'filter' and 'live' go straight to one way.
+    _importMode = options.mode || (options.live ? 'live' : 'filter');
     _matchState = null;
     _liveState = null;
     _importAbort?.abort();
@@ -477,9 +545,14 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
     resetProgressUi();
     const title = element('spotifyPlaylistTitle');
     const intro = element('spotifyPlaylistIntro');
-    if (title) title.textContent = _importMode === 'live' ? 'Live playlist' : 'Match a Spotify playlist';
+    if (title) {
+        title.textContent = _importMode === 'choose' ? 'Build from a Spotify playlist'
+            : _importMode === 'live' ? 'Live playlist' : 'Match a Spotify playlist';
+    }
     if (intro) {
-        intro.textContent = _importMode === 'live'
+        intro.textContent = _importMode === 'choose'
+            ? 'Choose a playlist you created — Spotify doesn’t let apps read ones you only follow. Then pick how to build its deck.'
+            : _importMode === 'live'
             ? 'Choose a playlist you created. Spotify no longer lets apps read mixes or playlists you only follow. Fluency then looks up lyrics, saves each song to your Fluency account, and builds a study deck.'
             : 'Choose a playlist you created. Fluency keeps only the songs already in the published lyrics library.';
     }
@@ -511,13 +584,18 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
         return;
     }
     status.textContent = playlists.length
-        ? (_importMode === 'live' ? 'Choose a playlist you created.' : 'Choose a playlist you created to match.')
+        ? (_importMode === 'filter' ? 'Choose a playlist you created to match.' : 'Choose a playlist you created.')
         : 'No playlists found on this Spotify account.';
     if (playlists.length && playlists.every(playlist => playlist.canReadItems === false)) {
         status.textContent = 'Spotify listed playlists, but none are ones you own. Create a playlist in Spotify, then try again.';
     }
 
-    renderPlaylistList(playlists, async (playlist, button) => {
+    const showPlaylists = () => {
+        status.textContent = 'Choose a playlist you created.';
+        renderPlaylistList(playlists, runPlaylist);
+    };
+
+    const runPlaylist = async (playlist, button, mode = _importMode) => {
         _importAbort?.abort();
         const abort = new AbortController();
         _importAbort = abort;
@@ -532,7 +610,39 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
         button.disabled = true;
         status.textContent = `Loading tracks from "${playlist.name}"…`;
         try {
-            if (_importMode === 'filter') {
+            if (mode === 'choose') {
+                const [catalog, trackIds] = await Promise.all([
+                    buildLanguageCatalog(matchingArtists),
+                    window.fetchSpotifyPlaylistTrackIds(playlist.id, {
+                        tracksHref: playlist.tracksHref,
+                        canReadItems: playlist.canReadItems
+                    })
+                ]);
+                if (abort.signal.aborted) return;
+                const matches = catalog.songs.filter(song => song.spotifyTrackId && trackIds.has(song.spotifyTrackId));
+                status.textContent = `"${playlist.name}" · ${trackIds.size} songs`;
+                renderDeckChoices(playlist, matches.length, trackIds.size, {
+                    onReady: () => {
+                        _importMode = 'filter';
+                        _matchState = {
+                            language,
+                            playlistName: playlist.name,
+                            songIds: matches.map(song => String(song.id)),
+                            artistSlugs: artistSlugsForMatches(catalog, matches.map(song => song.id))
+                        };
+                        setImportBusy(false);
+                        element('spotifyPlaylistModal')?.classList.add('hidden');
+                        confirmSpotifyMatches();
+                    },
+                    onQuick: () => {
+                        _importMode = 'live';
+                        runPlaylist(playlist, button, 'live');
+                    },
+                    onBack: showPlaylists
+                });
+                return;
+            }
+            if (mode === 'filter') {
                 const [catalog, trackIds] = await Promise.all([
                     buildLanguageCatalog(matchingArtists),
                     window.fetchSpotifyPlaylistTrackIds(playlist.id, {
@@ -628,7 +738,9 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
             }
             button.disabled = false;
         }
-    });
+    };
+
+    renderPlaylistList(playlists, runPlaylist);
 }
 
 function closeSpotifyPlaylistImport() {
