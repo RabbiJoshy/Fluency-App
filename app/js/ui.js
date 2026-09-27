@@ -528,7 +528,7 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
     const mode = modeKey === 'live'
         ? `Live · ${window.playlistLiveDeck?.()?.playlistName || 'playlist'}`
         : modeKey === 'lyrics'
-            ? 'Music you choose'
+            ? 'Your music'
             : modeKey === 'speech'
                 ? 'Everyday speech'
                 : 'Choose…';
@@ -734,18 +734,18 @@ const MODE_ICON_MUSIC = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" s
 function learningModeCopy(language = selectedLanguage) {
     const lyricsCatalog = config?.languages?.[language]?.capabilities?.lyrics !== false;
     return {
-        title: 'Where should your words come from?',
-        intro: 'Each source has its own vocabulary. Start with one — you can add the other later.',
+        title: 'Most common words in…',
+        intro: 'Fluency teaches words in order of how often they come up. Choose what to count. A word you learn counts in both.',
         speech: {
             label: 'Everyday speech',
-            description: 'The most common words in films and TV.',
+            description: 'Counted across films and TV. Best for understanding people talking.',
             iconHTML: MODE_ICON_SPEECH
         },
         lyrics: {
-            label: 'Music you choose',
+            label: 'Your music',
             description: lyricsCatalog
-                ? 'Pick artists, or build a deck from your own Spotify playlist.'
-                : 'Build a deck from your own Spotify playlist.',
+                ? 'Counted across the artists or Spotify playlist you pick. Best for understanding those songs.'
+                : 'Counted across a Spotify playlist you pick. Best for understanding those songs.',
             iconHTML: MODE_ICON_MUSIC
         }
     };

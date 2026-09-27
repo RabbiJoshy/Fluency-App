@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T17:26:58+01:00",
+      "date": "2026-09-27 17:26 BST",
+      "agent": "Claude",
+      "summary": "The Speech/Music choice now says what it actually decides: which words count as most common, and so what you learn first.",
+      "detail": [
+        "Heading reads as a sentence the rows finish: 'Most common words in… Everyday speech / Your music'.",
+        "Intro: Fluency teaches words in order of how often they come up; you choose what to count; a word you learn counts in both.",
+        "Everyday speech: counted across films and TV, best for understanding people talking. Your music: counted across the artists or Spotify playlist you pick, best for understanding those songs."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T17:03:00+01:00",
       "date": "2026-09-27 17:03 BST",
       "agent": "Claude",
