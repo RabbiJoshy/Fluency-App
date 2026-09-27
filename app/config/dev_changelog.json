@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T15:56:55+01:00",
+      "date": "2026-09-27 15:56 BST",
+      "agent": "Codex",
+      "summary": "Finnish now has a complete 2,000-card Speech deck with ten WSD-selected examples on every card.",
+      "detail": [
+        "Published 2,000 Finnish surface cards with exactly 20,000 assigned examples and no menu gaps, abstentions or unassigned examples.",
+        "Finnish occurrence tagging now uses the pinned Stanza model, contextual lemmas and a measured rule for the tapaan noun/verb ambiguity.",
+        "The manually audited Finnish inventory and sense-menu overrides remove subtitle contamination and repair frequent inflected forms before WSD."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T15:55:00+01:00",
       "date": "2026-09-27 15:55 BST",
       "agent": "Claude",
