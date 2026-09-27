@@ -725,31 +725,6 @@ def plant_artist(
             if not card_lemma or card_lemma == word:
                 card_lemma = analysis_hw or word
             sd_senses = inflect_card_senses(target_surface, card_lemma, sd_senses, conj_rev, is_plural=card_is_plural)
-            # A conjugated form can have its own page as another word: muerdo
-            # is the noun "bite" on SpanishDict, but "te muerdo" is morder.
-            # When the page offers no verb reading, add the verb's senses
-            # first so WSD can choose it instead of being handed only the noun.
-            if not any(str(x.get("pos", "")).upper() in {"VERB", "AUX"} for x in sd_senses):
-                verb_hw = next((
-                    str(m.get("lemma", "")).strip().casefold()
-                    for m in conj_rev.get(word_lower, [])
-                    if str(m.get("lemma", "")).strip().casefold() not in {"", word_lower}
-                    and (str(m.get("lemma", "")).strip().casefold() in norm_menu
-                         or str(m.get("lemma", "")).strip().casefold() in hw_cache)
-                ), None)
-                if verb_hw:
-                    verb_analyses = norm_menu.get(verb_hw) or hw_cache.get(verb_hw, {}).get("dictionary_analyses") or []
-                    verb_senses = [
-                        x for x in extract_senses_from_sd_analyses(verb_hw, verb_analyses)
-                        if str(x.get("pos", "")).upper() in {"VERB", "AUX"}
-                    ]
-                    verb_senses = inflect_card_senses(target_surface, verb_hw, verb_senses, conj_rev, is_plural=card_is_plural)
-                    for x in verb_senses:
-                        x["source"] = "spanishdict:headword_borrow"
-                        x["surface_word"] = target_surface
-                    if verb_senses:
-                        sd_senses = verb_senses + sd_senses
-                        card_lemma = verb_hw
             resolved_cards[card_id] = {
                 **orig_card,
                 "lemma": card_lemma,
