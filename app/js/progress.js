@@ -1,10 +1,10 @@
-import './state.js?v=9dd8c6dd';
+import './state.js?v=8dcaf4d1';
 import {
     crossModeProgressId,
     matchingProgressRecords,
     mergeProgressRecords,
     normalizeProgressSurface
-} from './progress-identity.js?v=9dd8c6dd';
+} from './progress-identity.js?v=8dcaf4d1';
 
 const SRS_DAY_MS = 24 * 60 * 60 * 1000;
 const SRS_INTERVAL_DAYS = [1, 3, 7, 14, 30, 60, 120, 240, 365];
@@ -413,7 +413,6 @@ function updatePersonalCoverage(filteredVocab) {
             fill.style.transition = 'width 1s ease-out';
             fill.style.width = Math.min(coveragePct, 100) + '%';
             wrapper.classList.add('visible');
-            window.updateReviewAccess?.();
         });
     });
 }
