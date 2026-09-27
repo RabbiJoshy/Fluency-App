@@ -351,3 +351,41 @@ code {
 @media (max-width: 620px) {
   .summary #start { margin-top: 12px; }
 }
+
+/* ── progress ──────────────────────────────────────────── */
+.summary-actions { display: flex; gap: 8px; align-items: center; justify-content: flex-end; }
+.summary-actions [hidden] { display: none; }
+.summary-progress { grid-column: 1 / -1; font-size: 12.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.summary-progress:empty { display: none; }
+@media (max-width: 620px) {
+  .summary-actions { justify-content: stretch; margin-top: 12px; }
+  .summary-actions button { flex: 1; }
+  .summary .summary-actions #start { margin-top: 0; }
+}
+
+.grade { display: flex; gap: 10px; justify-content: center; margin-top: 14px; }
+.grade[hidden] { display: none; }
+.grade button { flex: 1; max-width: 220px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.grade kbd { opacity: .7; }
+.grade-hit { background: var(--c0) !important; color: #fff !important; }
+
+.done {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 28px 24px; text-align: center;
+}
+.done[hidden], .card[hidden] { display: none; }
+.done h2 { margin: 0; font: 700 22px/1.2 var(--font-emphasis); }
+.done-score { margin: 6px 0 0; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.done-missed { list-style: none; margin: 18px 0 0; padding: 0; text-align: left; display: grid; gap: 4px; }
+.done-missed li { display: flex; justify-content: space-between; gap: 12px; padding: 7px 10px; border-radius: 8px; background: var(--surface-2); font-size: 14px; }
+.done-missed .done-prompt { color: var(--ink-2); }
+.done-missed b { font-family: var(--font-emphasis); color: var(--c3); }
+.done-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 20px; }
+.done-actions [hidden] { display: none; }
+
+.pdot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-left: 8px; vertical-align: middle; background: var(--ink-3); }
+.pdot.is-known { background: var(--c0); }
+.pdot.is-learning { background: var(--c1); }
+.pdot.is-missed { background: var(--c3); }
+#progress-reset[hidden] { display: none; }
+.grade-hit kbd { background: rgba(255,255,255,.18); border-color: rgba(255,255,255,.35); color: #fff; opacity: 1; }

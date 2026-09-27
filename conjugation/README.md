@@ -51,12 +51,35 @@ never *lesson*.
   The button that starts is just **Start**.
 - **Stem hints** (was *Easy mode*) — colours the prompt by what this card does
   and names the verb's family.
-- **Practise** — no buttons. Space or tap reveals, space again advances, `←` goes
-  back, swipe left/right moves, `t` or *see the table* opens that verb's table.
+- **Practise** — space or tap reveals; then **Got it** (space/enter) or
+  **Missed it** (`x`) grades and moves to the next unanswered card. `←` goes
+  back (re-grading replaces the first answer), swipe skips without grading,
+  `t` or *see the table* opens that verb's table. Answering the last card
+  shows the round summary with *Drill the missed ones*.
+- **Progress** (Set up section) — order: weakest first (default), only what
+  needs work, or random; the summary bar shows known / learning / missed / new.
 - **Table** — no tab of its own: reached from a card or a `?view=table` link,
   with its own back button (to the same card, or to Set up when no drill runs).
 
-Nothing is scored, stored or scheduled. A progress model is a later decision.
+## Progress
+
+`progress.js` keeps three things in `localStorage`, each under its own key:
+
+| key | holds |
+| --- | --- |
+| `conj_progress_v1_<account>_<lang>` | one record per form, keyed `verb\|tenseId\|person` |
+| `conj_session_v1_<account>_<lang>` | the round in flight, so a closed tab offers *Resume* |
+| `conj_settings_v1_<lang>` | the Set up choices (a one-verb deep link never overwrites them) |
+
+`<account>` is the study app's signed-in initials, else `guest`. Each form
+climbs a Leitner ladder (waits 10 min, 1 d, 3 d, 7 d, 21 d, 60 d); a miss drops
+it to the bottom and makes it due at once. *Known* means box 3 or above. A form
+with no record is declared *new*. Pattern-level progress is folded from form
+records at read time, never stored. The table view marks practised forms with
+a dot.
+
+Progress is device-local: it does not go through the study app's sync queue
+or the Google Sheets backend. Syncing it would need a new backend sheet.
 
 ## Deep links
 
@@ -102,5 +125,5 @@ verb's type on its own.
 ## Where it would have to connect
 
 A conjugation cell is not an observed surface form, so it cannot take a
-`card_id = f(language, surface_key)`. A progress store would key on the lesson
-signature, parallel to the vocabulary system rather than inside it.
+`card_id = f(language, surface_key)`. The progress store above runs parallel
+to the vocabulary system rather than inside it.

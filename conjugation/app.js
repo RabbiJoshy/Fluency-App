@@ -1,9 +1,9 @@
 /* Conjugation mode — standalone prototype.
  *
- * Deliberately has no progress model: nothing is scored, stored or scheduled.
- * The only job here is the selection layer — pick tenses, pick a slice of
- * verbs, and see exactly which cards that produces — plus a keyboard/swipe
- * drill and a reference table.
+ * The selection layer — pick tenses, pick a slice of verbs, and see exactly
+ * which cards that produces — plus a keyboard/swipe drill and a reference
+ * table. Progress (per-form Leitner boxes, the drill in flight, the Set up
+ * choices) lives in progress.js; this file only decides when to write it.
  *
  * Decks are emitted by scripts/build_conjugation_drill.py and register
  * themselves by calling window.registerConjugationDeck(deck).
@@ -23,8 +23,17 @@
     patterns: {},    // stem delta -> true
     coverage: 'all', // 'all' every card, 'one' one card per lesson
     speak: true,     // read the answer out loud on reveal
-    easy: false      // tint the prompt by what this card does, and name the family
+    easy: false,     // tint the prompt by what this card does, and name the family
+    focus: 'weakest' // 'weakest' missed/due/new first, 'due' only those, 'shuffle'
   };
+
+  var P = window.ConjugationProgress;
+  var progress = { forms: {} };  // this deck's records, mirrored from storage
+  // The round in flight: form key -> true/false once graded, and the record
+  // each form had before this round touched it, so re-grading a card after
+  // going back replaces the first answer instead of stacking on it.
+  var results = {};
+  var before = {};
 
   // The study app names languages ('spanish'); the deck codes them ('es').
   // speech.js reads window.selectedLanguage to pick a locale.
@@ -243,6 +252,7 @@
           var delta = lesson ? lesson.d : null;
           if (delta !== null && !state.patterns[delta]) return;
           cards.push({
+            key: P.formKey(verb.h, tenseId, person),
             verb: verb,
             tense: tense,
             person: person,
@@ -264,11 +274,30 @@
     return cards;
   }
 
+  /* Shuffle first so ties break randomly, then (unless the learner asked for
+   * pure shuffle) put what needs work in front: missed, overdue, new, and
+   * last whatever is not due yet. 'due' drops that last group entirely. */
+  function orderByFocus(cards) {
+    shuffle(cards);
+    if (state.focus === 'shuffle') return cards;
+    var now = Date.now();
+    var ranked = cards.map(function (card, index) {
+      return { card: card, rank: P.priority(progress.forms[card.key], now), index: index };
+    });
+    if (state.focus === 'due') {
+      ranked = ranked.filter(function (item) { return item.rank[0] < 3; });
+    }
+    ranked.sort(function (a, b) {
+      return a.rank[0] - b.rank[0] || a.rank[1] - b.rank[1] || a.index - b.index;
+    });
+    return ranked.map(function (item) { return item.card; });
+  }
+
   /* In coverage mode the queue holds one card per lesson. Shuffling first
    * means the surviving card is a random verb from that lesson, so you are
    * not always taught `o>ue` by the same verb. */
   function buildQueue(selection) {
-    var cards = shuffle(enumerateCards(selection));
+    var cards = orderByFocus(enumerateCards(selection));
     if (state.coverage !== 'one') return cards;
     var seen = {};
     return cards.filter(function (card) {
@@ -440,6 +469,99 @@
     host.appendChild(sound);
   }
 
+  function renderFocus() {
+    var host = $('focus');
+    host.innerHTML = '';
+    [
+      { value: 'weakest', name: 'Weakest first', note: 'missed, then due, then new' },
+      { value: 'due', name: 'Only what needs work', note: 'skip forms not due yet' },
+      { value: 'shuffle', name: 'Random order', note: 'ignore past answers' }
+    ].forEach(function (option) {
+      var label = el('label', 'check');
+      var input = document.createElement('input');
+      input.type = 'radio';
+      input.name = 'focus';
+      input.checked = state.focus === option.value;
+      input.onchange = function () {
+        state.focus = option.value;
+        refreshSummary();
+      };
+      label.appendChild(input);
+      label.appendChild(el('span', 'check-name', option.name));
+      label.appendChild(el('span', 'check-count', option.note));
+      host.appendChild(label);
+    });
+  }
+
+  function languageName() {
+    var names = { es: 'Spanish', pt: 'Portuguese', fr: 'French', cs: 'Czech' };
+    return names[deck.language] || deck.language.toUpperCase();
+  }
+
+  function resetProgress() {
+    var seen = Object.keys(progress.forms).length;
+    if (!seen) return;
+    if (!window.confirm('Forget your answers to all ' + seen.toLocaleString() + ' ' +
+        languageName() + ' forms you have practised? This cannot be undone.')) return;
+    P.resetLanguage(deck.language);
+    progress = P.load(deck.language);
+    results = {};
+    before = {};
+    queue = [];
+    refreshSummary();
+  }
+
+  /* ── settings that outlive the page ─────────────────── */
+
+  function settingsSnapshot() {
+    return {
+      tenses: selectedTenseIds(),
+      persons: selectedPersons(),
+      types: CODE_ORDER.filter(function (code) { return state.types[code]; }),
+      scope: state.scope,
+      reverse: state.reverse,
+      speak: state.speak,
+      easy: state.easy,
+      focus: state.focus,
+      coverage: state.coverage
+    };
+  }
+
+  /* Only values this deck can use are taken back: a tense id another deck
+   * wrote, or one a rebuild dropped, is ignored rather than trusted. */
+  function applySavedSettings() {
+    var saved = P.loadSettings(deck.language);
+    if (!saved) return;
+    if (Array.isArray(saved.tenses)) {
+      var known = saved.tenses.filter(function (id) { return tenseById(id); });
+      if (known.length) {
+        deck.tenses.forEach(function (t) { state.tenses[t.id] = known.indexOf(t.id) !== -1; });
+      }
+    }
+    if (Array.isArray(saved.persons)) {
+      var persons = saved.persons.filter(function (x) { return deck.person_order.indexOf(x) !== -1; });
+      if (persons.length) {
+        deck.person_order.forEach(function (x) { state.persons[x] = persons.indexOf(x) !== -1; });
+      }
+    }
+    if (Array.isArray(saved.types)) {
+      CODE_ORDER.forEach(function (code) { state.types[code] = saved.types.indexOf(code) !== -1; });
+    }
+    if (typeof saved.scope === 'number' && saved.scope >= 10 && saved.scope <= 100) state.scope = saved.scope;
+    if (typeof saved.reverse === 'boolean') state.reverse = saved.reverse;
+    if (typeof saved.speak === 'boolean') state.speak = saved.speak;
+    if (typeof saved.easy === 'boolean') state.easy = saved.easy;
+    if (['weakest', 'due', 'shuffle'].indexOf(saved.focus) !== -1) state.focus = saved.focus;
+    if (saved.coverage === 'one' || saved.coverage === 'all') state.coverage = saved.coverage;
+  }
+
+  /* A single-verb drill from a deep link is a detour: it must not become the
+   * learner's saved selection. */
+  function persistSettings() {
+    if (!deck || soloVerb) return;
+    P.saveSettings(deck.language, settingsSnapshot());
+  }
+
   function patternLabel(pattern) {
     if (pattern.d === '') return 'no change · the plain pattern';
     // '*' means the ending did not match the model at all. Those forms do
@@ -566,6 +688,13 @@
     renderTypes(selection.byType);
 
     var cards = enumerateCards(selection);
+    var now = Date.now();
+    var stats = P.summarise(progress, cards.map(function (card) { return card.key; }), now);
+    if (state.focus === 'due') {
+      cards = cards.filter(function (card) {
+        return P.priority(progress.forms[card.key], now)[0] < 3;
+      });
+    }
     var lessonKeys = {};
     cards.forEach(function (card) {
       lessonKeys[(card.lesson ? card.lesson.d : 'x') + '|' + card.tense.id + '|' + card.person] = 1;
@@ -611,7 +740,44 @@
       : 'Ranked by how often the infinitive appears in the ' +
         deck.language.toUpperCase() + ' speech inventory.';
 
+    renderProgressSummary(stats);
     refreshSectionStates(selection);
+    refreshResume();
+    persistSettings();
+  }
+
+  /* What the selection holds, by how well it is known. Absent records are
+   * "new", declared as such, not hidden. */
+  function renderProgressSummary(stats) {
+    var parts = [];
+    if (stats.known) parts.push(stats.known.toLocaleString() + ' known');
+    if (stats.learning) parts.push(stats.learning.toLocaleString() + ' learning');
+    if (stats.missed) parts.push(stats.missed.toLocaleString() + ' missed');
+    if (stats.new) parts.push(stats.new.toLocaleString() + ' new');
+    var line = stats.total ? parts.join(' · ') : '';
+    if (stats.due) line += ' · ' + stats.due.toLocaleString() + ' due';
+    $('sum-progress').textContent = line;
+
+    var practised = Object.keys(progress.forms).length;
+    $('progress-hint').textContent = practised
+      ? 'Saved on this device: ' + practised.toLocaleString() + ' ' + languageName() +
+        ' forms answered. A form counts as known once you get it right again a day or more later.'
+      : 'Mark each card “Got it” or “Missed it” and your answers are saved on this device. ' +
+        'Missed forms come back first next time.';
+    $('progress-reset').hidden = !practised;
+    var focusNames = { weakest: 'weakest first', due: 'only what needs work', shuffle: 'random' };
+    $('state-focus').textContent = (stats.total ? stats.known + ' of ' + stats.total + ' known · ' : '') +
+      focusNames[state.focus];
+  }
+
+  function refreshResume() {
+    var session = P.loadSession(deck.language);
+    var button = $('resume');
+    var left = session ? session.keys.length - Object.keys(session.results || {}).length : 0;
+    button.hidden = !session || left <= 0;
+    if (!button.hidden) {
+      button.textContent = 'Resume · ' + left.toLocaleString() + ' left';
+    }
   }
 
   function renderProvenance() {
@@ -641,9 +807,15 @@
   /* ── drill screen ───────────────────────────────────── */
 
   function renderCard() {
+    $('drill-done').hidden = true;
+    $('card').hidden = false;
     if (!queue.length) {
-      $('card').innerHTML = '<p class="empty">No cards in this selection.</p>';
-      $('drill-hint').textContent = '';
+      $('card').hidden = true;
+      $('grade').hidden = true;
+      $('drill-progress').textContent = '';
+      $('drill-hint').textContent = state.focus === 'due'
+        ? 'Nothing in this selection needs work right now. Widen it, or switch Progress to “Weakest first”.'
+        : 'No cards in this selection.';
       return;
     }
     var card = queue[position];
@@ -713,28 +885,172 @@
     chips.appendChild(inspect);
 
     $('card-answer').hidden = !revealed;
+    $('grade').hidden = !revealed;
+    var graded = card.key in results ? (results[card.key] ? 'got it' : 'missed') : null;
+    var tally = roundTally();
     $('drill-progress').textContent =
-      (position + 1).toLocaleString() + ' of ' + queue.length.toLocaleString();
+      (position + 1).toLocaleString() + ' of ' + queue.length.toLocaleString() +
+      (tally.right || tally.wrong
+        ? ' · ' + tally.right + ' right · ' + tally.wrong + ' missed' : '') +
+      (graded ? ' · this one: ' + graded : '');
     $('drill-hint').innerHTML = revealed
-      ? '<kbd>space</kbd> next · <kbd>←</kbd> back · <kbd>s</kbd> say it again · <kbd>t</kbd> full table'
+      ? '<kbd>space</kbd> got it · <kbd>x</kbd> missed it · <kbd>←</kbd> back · <kbd>s</kbd> say it again · <kbd>t</kbd> full table'
       : '<kbd>space</kbd> or tap to reveal · swipe to skip';
   }
 
+  function roundTally() {
+    var right = 0, wrong = 0;
+    Object.keys(results).forEach(function (key) {
+      if (results[key]) right += 1; else wrong += 1;
+    });
+    return { right: right, wrong: wrong };
+  }
+
+  /* One answer: move the form's box, remember it for this round, save the
+   * round so a closed tab can resume, then go to the next unanswered card. */
+  function gradeCurrent(correct) {
+    if (!queue.length || !revealed) return;
+    var card = queue[position];
+    if (!(card.key in before)) {
+      before[card.key] = progress.forms[card.key] || null;
+    }
+    progress.forms[card.key] = P.grade(before[card.key], correct, Date.now());
+    P.save(deck.language, progress);
+    results[card.key] = correct;
+    saveRound();
+
+    var next = nextUngraded(position);
+    if (next === -1) { finishRound(); return; }
+    position = next;
+    revealed = false;
+    renderCard();
+  }
+
+  function nextUngraded(from) {
+    for (var step = 1; step <= queue.length; step++) {
+      var index = (from + step) % queue.length;
+      if (!(queue[index].key in results)) return index;
+    }
+    return -1;
+  }
+
+  function saveRound() {
+    if (!queue.length) { P.clearSession(deck.language); return; }
+    P.saveSession(deck.language, {
+      keys: queue.map(function (card) { return card.key; }),
+      position: position,
+      results: results,
+      before: before,
+      solo: soloVerb ? soloVerb.h : null
+    });
+  }
+
+  function finishRound() {
+    P.clearSession(deck.language);
+    var missed = queue.filter(function (card) { return results[card.key] === false; });
+    var tally = roundTally();
+    $('card').hidden = true;
+    $('grade').hidden = true;
+    $('drill-done').hidden = false;
+    $('drill-progress').textContent = '';
+    $('drill-hint').textContent = '';
+    $('done-title').textContent = missed.length ? 'Round complete' : 'Round complete — clean sweep';
+    $('done-score').textContent = tally.right + ' of ' + queue.length + ' right' +
+      (missed.length ? ' · ' + missed.length + ' to go over' : '');
+    var list = $('done-missed');
+    list.innerHTML = '';
+    missed.slice(0, 30).forEach(function (card) {
+      var item = el('li');
+      item.appendChild(el('span', 'done-prompt',
+        card.verb.h + ' · ' + personLabel(card.person) + ' · ' + card.tense.tense));
+      item.appendChild(el('b', null, card.form));
+      list.appendChild(item);
+    });
+    if (missed.length > 30) list.appendChild(el('li', 'hint', '+ ' + (missed.length - 30) + ' more'));
+    $('done-retry').hidden = !missed.length;
+    $('done-retry').textContent = 'Drill the ' + missed.length + ' missed ' + (missed.length === 1 ? 'one' : 'ones');
+    $('done-retry').onclick = function () { beginRound(shuffle(missed.slice())); };
+    finished = true;
+  }
+
+  var finished = false;
+
+  function beginRound(cards) {
+    queue = cards;
+    position = 0;
+    revealed = false;
+    results = {};
+    before = {};
+    finished = false;
+    saveRound();
+    renderCard();
+  }
+
+  /* Rebuild a card from its key against the current deck. A key the deck no
+   * longer has (a rebuild dropped the verb or tense) is skipped, not faked. */
+  function cardFromKey(key) {
+    var parts = key.split('|');
+    if (parts.length !== 3) return null;
+    var verb = verbByHead[parts[0]];
+    var tense = tenseById(parts[1]);
+    if (!verb || !tense) return null;
+    var paradigm = verb.p[tense.id];
+    var index = tense.persons.indexOf(parts[2]);
+    if (!paradigm || index === -1 || !paradigm.f[index]) return null;
+    return {
+      key: key, verb: verb, tense: tense, person: parts[2],
+      form: paradigm.f[index], code: paradigm.c.charAt(index),
+      lesson: lessonAt(paradigm, index)
+    };
+  }
+
+  var verbByHead = {};
+
+  function resumeRound() {
+    var session = P.loadSession(deck.language);
+    if (!session) return;
+    var cards = session.keys.map(cardFromKey).filter(Boolean);
+    if (!cards.length) { P.clearSession(deck.language); refreshResume(); return; }
+    soloVerb = session.solo ? verbByHead[session.solo] || null : null;
+    queue = cards;
+    results = {};
+    before = {};
+    Object.keys(session.results || {}).forEach(function (key) {
+      if (typeof session.results[key] === 'boolean') results[key] = session.results[key];
+    });
+    Object.keys(session.before || {}).forEach(function (key) {
+      before[key] = session.before[key];
+    });
+    finished = false;
+    revealed = false;
+    var start = Math.min(Math.max(session.position | 0, 0), queue.length - 1);
+    if (start in queue && queue[start].key in results) start = nextUngraded(start);
+    showScreen('drill');
+    if (start === -1) { position = 0; finishRound(); }
+    else { position = start; renderCard(); }
+    blurActive();
+  }
+
+  function blurActive() {
+    // Keep the space bar meaning "reveal", not "press the button I just used".
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+  }
+
   function advance(step) {
-    if (!queue.length) return;
+    if (!queue.length || finished) return;
     position = (position + step + queue.length) % queue.length;
     revealed = false;
     renderCard();
   }
 
   function flipOrAdvance() {
-    if (!queue.length) return;
+    if (!queue.length || finished) return;
     if (!revealed) {
       revealed = true;
       renderCard();
       speak(queue[position].form);
     } else {
-      advance(1);
+      gradeCurrent(true);
     }
   }
 
@@ -859,6 +1175,13 @@
           var strong = el('b');
           paintForm(strong, form, lessonAt(paradigm, index), code);
           td.appendChild(strong);
+          var rec = progress.forms[P.formKey(tableVerb.h, tense.id, person)];
+          if (rec) {
+            var mark = P.status(rec, Date.now()).state;
+            var dot = el('span', 'pdot is-' + mark);
+            dot.title = mark + ' · ' + rec.right + ' right, ' + rec.wrong + ' missed';
+            td.appendChild(dot);
+          }
         } else {
           td.appendChild(el('span', null, '—'));
         }
@@ -885,10 +1208,12 @@
 
   function showScreen(name) {
     if (name === 'setup' && soloVerb) {
+      // Leaving a one-verb drill: put back the learner's own selection.
       soloVerb = null;
       queue = [];
-      refreshSummary();
+      restoreSelection();
     }
+    if (name === 'setup') refreshResume();
     ['setup', 'drill', 'tables'].forEach(function (screen) {
       $('screen-' + screen).classList.toggle('is-active', screen === name);
     });
@@ -902,10 +1227,7 @@
       tab.classList.toggle('is-active', tab.dataset.screen === name);
     });
     if (name === 'drill' && !queue.length) {
-      queue = buildQueue(currentSelection());
-      position = 0;
-      revealed = false;
-      renderCard();
+      beginRound(buildQueue(currentSelection()));
     }
     if (name === 'tables') {
       renderTableResults($('table-search').value);
@@ -936,13 +1258,9 @@
   }
 
   function startDrill() {
-    queue = buildQueue(currentSelection());
-    position = 0;
-    revealed = false;
-    renderCard();
+    beginRound(buildQueue(currentSelection()));
     showScreen('drill');
-    // Keep the space bar meaning "reveal", not "press the button I just used".
-    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    blurActive();
   }
 
   /* ── boot ───────────────────────────────────────────── */
@@ -952,6 +1270,25 @@
     var speechName = SPEECH_LANGUAGE[deck.language];
     if (speechName) window.selectedLanguage = speechName;
 
+    verbByHead = {};
+    deck.verbs.forEach(function (verb) { verbByHead[verb.h] = verb; });
+    progress = P.load(deck.language);
+    results = {};
+    before = {};
+    finished = false;
+    queue = [];
+    tableVerb = null;
+    expandedMoods = {};
+    computeFamilies();
+    renderDeckPicker();
+    renderProvenance();
+    renderTableTenses();
+    restoreSelection();
+  }
+
+  /* Defaults first, then whatever this device saved for the language, then
+   * every control redrawn from that state. */
+  function restoreSelection() {
     state.tenses = {};
     // Start on one tense only — the simple present of the indicative, which
     // every language in this shape has — rather than every mood's present.
@@ -965,21 +1302,19 @@
     deck.person_order.forEach(function (person) { state.persons[person] = true; });
     state.patterns = {};
     deck.patterns.forEach(function (pattern) { state.patterns[pattern.d] = true; });
+    state.types = { 0: true, 1: true, 2: true, 3: true, 4: false };
+    state.scope = 50;
 
-    expandedMoods = {};
-    renderDeckPicker();
+    applySavedSettings();
+    $('scope').value = state.scope;
     renderTenses();
     renderPersons();
-    computeFamilies();
     renderDirection();
     renderClue();
+    renderFocus();
     renderPatterns();
     renderCoverage();
-    renderProvenance();
-    renderTableTenses();
     refreshSummary();
-    tableVerb = null;
-    queue = [];
   }
 
   function setPatterns(predicate) {
@@ -1093,6 +1428,23 @@
       refreshSummary();
     };
     $('start').onclick = startDrill;
+    $('resume').onclick = resumeRound;
+    $('progress-reset').onclick = resetProgress;
+    $('grade-hit').onclick = function () { gradeCurrent(true); blurActive(); };
+    $('grade-miss').onclick = function () { gradeCurrent(false); blurActive(); };
+    $('done-again').onclick = function () {
+      soloVerb = null;
+      restoreSelection();
+      beginRound(buildQueue(currentSelection()));
+      blurActive();
+    };
+    $('done-setup').onclick = function () { queue = []; finished = false; showScreen('setup'); };
+    // Another tab answering cards writes the same store; pick its answers up.
+    window.addEventListener('storage', function (event) {
+      if (!deck || !event.key || event.key.indexOf('conj_progress_v1_') !== 0) return;
+      progress = P.load(deck.language);
+      if ($('screen-setup').classList.contains('is-active')) refreshSummary();
+    });
     $('table-search').oninput = function () { renderTableResults(this.value); };
 
     $('patterns-all').onclick = function () { setPatterns(function () { return true; }); };
@@ -1110,6 +1462,11 @@
       if (!$('screen-drill').classList.contains('is-active')) return;
       var isSpace = event.code === 'Space' || event.key === ' ' || event.key === 'Spacebar';
       if (isSpace) { event.preventDefault(); flipOrAdvance(); }
+      if (event.key === 'Enter' && revealed) { event.preventDefault(); gradeCurrent(true); }
+      if ((event.key === 'x' || event.key === 'X') && revealed) {
+        event.preventDefault();
+        gradeCurrent(false);
+      }
       if (event.key === 't' || event.key === 'T') inspectCurrent();
       if ((event.key === 's' || event.key === 'S') && revealed && queue.length) {
         speak(queue[position].form);
