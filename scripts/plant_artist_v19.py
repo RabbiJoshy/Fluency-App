@@ -42,11 +42,13 @@ from fluency.lyrics.inflector import (
     inflect_clitic_memberships,
     strip_accents,
 )
+from fluency.lyrics.spanishdict_headwords import headword_analyses, page_declared_forms
 from fluency.lyrics.sampling import (
     calculate_lyrics_wsd_budget,
     calculate_target_occurrence_budget,
     score_lyric_line_quality,
 )
+from fluency.sense_menu.spanishdict_lemmas import SpanishDictLemmaRule
 from fluency.surfaces.entities import WikipediaEntityResolver
 from fluency.surfaces.stores import stack
 from fluency.wsd.pos_bridge import acceptable_categories
@@ -548,6 +550,7 @@ def plant_artist(
     # 3. Load SpanishDict Snapshot & Kaikki Wiktionary
     print("\n3. Loading Dictionaries (SpanishDict snapshot & Kaikki Wiktionary)...")
     norm_menu, surf_cache, hw_cache, conj_rev = load_spanishdict_snapshot(SPANISHDICT_DIR)
+    lemma_rule = SpanishDictLemmaRule(conj_rev)
 
     all_target_words = {card.get("word", "").strip().lower() for card in raw_master.values() if card.get("word")}
     # Elisions take their senses from the expanded word (ta -> está), which
@@ -725,6 +728,21 @@ def plant_artist(
             if not card_lemma or card_lemma == word:
                 card_lemma = analysis_hw or word
             sd_senses = inflect_card_senses(target_surface, card_lemma, sd_senses, conj_rev, is_plural=card_is_plural)
+            # The page's own entry is not the whole answer: it also states which
+            # verb the surface is a form of (muerdo: the noun, and a conjugation
+            # of morder). Keep every headword the page declares; WSD chooses.
+            have = {x.get("sense_id") for x in sd_senses}
+            page = surf_cache.get(word_lower)
+            for form_of in page_declared_forms(lemma_rule, word_lower, page):
+                stated = extract_senses_from_sd_analyses(
+                    form_of, headword_analyses(form_of, page, norm_menu, hw_cache))
+                stated = inflect_card_senses(target_surface, form_of, stated, conj_rev, is_plural=card_is_plural)
+                for x in stated:
+                    if x.get("sense_id") in have:
+                        continue
+                    x["source"] = "spanishdict:page_relation"
+                    x["surface_word"] = target_surface
+                    sd_senses.append(x)
             resolved_cards[card_id] = {
                 **orig_card,
                 "lemma": card_lemma,
