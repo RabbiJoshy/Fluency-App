@@ -341,17 +341,20 @@ const SPOTIFY_SVG = '<svg width="44" height="44" viewBox="0 0 24 24" fill="#1DB9
 export function renderFront(card) {
     // Like the live card: only a lyrics deck prints the rank against its
     // vocabulary size; a speech deck's size says nothing about the language.
-    const denominator = card.mode === 'lyrics' && card.vocabSize ? ` / ${card.vocabSize.toLocaleString()}` : '';
-    const rankLabel = `<span class="card-rank-label">Vocabulary rank: `
-        + `<strong class="card-stat-value">${card.rank.toLocaleString()}</strong>${denominator}</span>`;
-    const count = `<strong class="card-stat-value">${card.corpusCount.toLocaleString()}</strong>`;
+    const denominator = card.mode === 'lyrics' && card.vocabSize ? `/ ${card.vocabSize.toLocaleString()}` : '';
+    const stat = (kind, label, value, unit = '') =>
+        `<span class="card-stat${kind === 'card-rank-label' ? '' : ' card-stat--end'} ${kind}">`
+        + `<span class="card-stat-label">${label}</span>`
+        + `<span class="card-stat-line"><strong class="card-stat-value">${value}</strong>`
+        + `${unit ? `<span class="card-stat-unit">${unit}</span>` : ''}</span></span>`;
+    const rankLabel = stat('card-rank-label', 'Vocabulary Rank', card.rank.toLocaleString(), denominator);
     // Same two figures the live card puts here, in the same words. An earlier
     // draft hedged with "Frequency from the Spanish release", which told a
     // visitor nothing: the number is the point, and a count per million is
     // what the real front says.
     const freqLabel = card.mode === 'lyrics'
-        ? `<span class="card-freq-label">Lyric lines: ${count}</span>`
-        : `<span class="card-freq-label">Frequency: ${count}/million</span>`;
+        ? stat('card-freq-label', 'Song Lines', card.corpusCount.toLocaleString())
+        : stat('card-freq-label', 'Frequency', Math.round(card.corpusCount).toLocaleString(), 'per million');
 
     // updateCard() pairs each POS pill with the lemma it governs inside one
     // capsule (.front-lemma-pair), which is how a learner sees that `tem` is
@@ -365,7 +368,7 @@ export function renderFront(card) {
             <div class="card-pos-list is-lemma-map pos-count-1" style="display: flex;">
                 <span class="front-lemma-pair">${posUnit}<span class="front-lemma-name">${esc(lemma)}</span></span>
             </div>
-            <div class="card-ranking" style="display: flex; justify-content: space-between; align-items: baseline; width: 100%; gap: 12px;">${rankLabel}${freqLabel}</div>
+            <div class="card-ranking" style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; gap: 12px;">${rankLabel}${freqLabel}</div>
             <div class="card-tint" aria-hidden="true"></div>
         </div>`;
 }

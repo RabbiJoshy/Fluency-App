@@ -1585,7 +1585,7 @@ async function _runAboutDemo(container, mode) {
             // Mirror the live labels while keeping this small demo on one line.
             if (entry.rank && entry.corpusCount) {
                 rankEl.textContent = mode === 'artist'
-                    ? `Vocabulary rank: ${entry.rank.toLocaleString()} · Lyric lines: ${entry.corpusCount.toLocaleString()}`
+                    ? `Vocabulary Rank: ${entry.rank.toLocaleString()} · Song Lines: ${entry.corpusCount.toLocaleString()}`
                     : `Vocabulary rank: ${entry.rank.toLocaleString()} · Frequency: ${entry.corpusCount.toLocaleString()}/million`;
             } else if (entry.rank) {
                 rankEl.textContent = `Vocabulary rank: ${entry.rank}`;

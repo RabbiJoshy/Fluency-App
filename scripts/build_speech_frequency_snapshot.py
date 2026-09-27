@@ -30,6 +30,12 @@ def main() -> None:
     parser.add_argument("--format", choices=("published-list", "lexique4"), required=True)
     parser.add_argument("--unit", choices=("per_million", "occurrences", "lexique_freqortho"), required=True)
     parser.add_argument("--scale", type=float, default=1.0)
+    parser.add_argument(
+        "--per-million-from-list-total",
+        action="store_true",
+        help="Convert raw occurrence counts to per-million using the sum of every "
+        "count in the source list; the output unit is then per_million.",
+    )
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
 
@@ -37,6 +43,18 @@ def main() -> None:
         frequencies = read_lexique4(args.source).frequencies
     else:
         frequencies = read_frequency_list(args.source, language=args.language).frequencies
+    unit = args.unit
+    scale = args.scale
+    source_tokens = None
+    if args.per_million_from_list_total:
+        if args.unit != "occurrences":
+            raise ValueError("--per-million-from-list-total converts raw occurrence counts only")
+        # The published lists are truncated (FrequencyWords keeps the top
+        # 50k), so this total is the listed tokens, a slight undercount of
+        # the corpus. It is recorded so the conversion can be audited.
+        source_tokens = sum(frequencies.values())
+        scale = 1_000_000 / source_tokens
+        unit = "per_million"
     normalise = normalizer_for_language(args.language)
     rows = json.loads(args.index.read_text())
     if not isinstance(rows, list):
@@ -50,7 +68,7 @@ def main() -> None:
         if raw is None:
             missing.append(surface)
             continue
-        value = raw * args.scale
+        value = raw * scale
         values[key] = int(value) if value.is_integer() else round(value, 6)
     if len(values) < len(rows) * 0.95:
         raise ValueError(f"Source covers only {len(values)} of {len(rows)} released surfaces")
@@ -60,11 +78,13 @@ def main() -> None:
         "language": args.language,
         "indexPath": args.index_path,
         "source": args.source_name,
-        "unit": args.unit,
+        "unit": unit,
         "sourceSha256": sha256(args.source),
         "indexSha256": sha256(args.index),
         "covered": len(values),
         "total": len(rows),
+        **({"sourceTokens": int(source_tokens), "perMillionBasis": "listed-tokens"}
+           if source_tokens is not None else {}),
         "values": values,
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
