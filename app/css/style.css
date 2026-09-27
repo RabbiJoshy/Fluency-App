@@ -2923,10 +2923,9 @@
             background: currentColor;
             opacity: 0.28;
         }
-        .sense-prominence-meter i:nth-child(1) { height: 4px; }
-        .sense-prominence-meter i:nth-child(2) { height: 7px; }
-        .sense-prominence-meter i:nth-child(3) { height: 10px; }
-        .sense-prominence-meter i:nth-child(4) { height: 13px; }
+        .sense-prominence-meter i:nth-child(1) { height: 5px; }
+        .sense-prominence-meter i:nth-child(2) { height: 9px; }
+        .sense-prominence-meter i:nth-child(3) { height: 13px; }
         .sense-prominence-meter i.is-on { opacity: 1; }
         .sense-prominence-detail {
             display: none;
@@ -19988,12 +19987,15 @@ body.artist-mode #flashcardMode::before {
 .back-headword.back-surface-pair {
   display: inline-flex;
   flex-direction: row;
-  align-items: center;
+  align-items: baseline;
   gap: 8px;
   background: none;
   border: none;
   padding: 0;
   vertical-align: middle;
+  /* Half the surface's x-height, resolved in the surface's own font and
+     size (registered below), so the lemma can centre on it. */
+  --back-surface-half-ex: 0.5ex;
 }
 .back-headword.back-surface-pair .back-surface-name {
   display: block;
@@ -20001,27 +20003,35 @@ body.artist-mode #flashcardMode::before {
   font-weight: inherit;
   min-width: 0;
   overflow: visible;
-  /* Cap-to-baseline, not the em box: otherwise the chip centres on
-     empty descender space and reads low against the letters. */
   line-height: 1cap;
   height: 1cap;
   text-box: cap alphabetic;
   text-box-trim: trim-both;
   text-box-edge: cap alphabetic;
 }
+/* Plain coloured text, no capsule. Sharing the surface's baseline and then
+   lifting by the difference of the two half x-heights puts the lemma's
+   lowercase middle on the surface's lowercase middle, whatever size
+   fitBackHeadword chose. Browsers without @property fall back to a plain
+   shared baseline. */
 .back-lemma-chip {
   display: inline-flex;
-  align-items: center;
-  align-self: center;
+  align-items: baseline;
   flex: 0 0 auto;
-  padding: 3px 8px;
-  border-radius: 999px;
+  position: relative;
+  top: calc(0.5ex - var(--back-surface-half-ex, 0.5ex));
+  padding: 0;
   color: rgb(var(--card-pos-rgb, var(--accent-primary-rgb)));
-  background: color-mix(in srgb, rgb(var(--card-pos-rgb, var(--accent-primary-rgb))) 14%, transparent);
-  border: 1px solid color-mix(in srgb, rgb(var(--card-pos-rgb, var(--accent-primary-rgb))) 40%, transparent);
+  background: none;
+  border: 0;
   font: 650 16px/1 var(--font-reading);
   font-style: normal;
   text-shadow: none;
+}
+@property --back-surface-half-ex {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
 }
 .back-lemma-se {
   margin-left: 5px;

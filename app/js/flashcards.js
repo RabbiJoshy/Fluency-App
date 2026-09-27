@@ -5349,8 +5349,9 @@ const PROMINENCE_BLURBS = {
 };
 
 function prominenceMeterHTML(key) {
-    const filled = key === 'dominant' ? 4 : key === 'common' ? 3 : key === 'uncommon' ? 2 : 1;
-    return `<span class="sense-prominence-meter" aria-hidden="true">${[1, 2, 3, 4].map(i => `<i${i <= filled ? ' class="is-on"' : ''}></i>`).join('')}</span>`;
+    // Three bars; Rare is all three empty rather than a fourth, lowest step.
+    const filled = key === 'dominant' ? 3 : key === 'common' ? 2 : key === 'uncommon' ? 1 : 0;
+    return `<span class="sense-prominence-meter" aria-hidden="true">${[1, 2, 3].map(i => `<i${i <= filled ? ' class="is-on"' : ''}></i>`).join('')}</span>`;
 }
 
 function prominenceBadgeHTML(promInfo, extraStyle = '') {

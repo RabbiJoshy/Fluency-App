@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T12:20:00+01:00",
+      "date": "2026-09-27 12:20 BST",
+      "agent": "Claude",
+      "summary": "On the back of a card the lemma is plain coloured text beside the word, centred on it, and the frequency icon is three bars, with Rare shown as three empty bars.",
+      "detail": [
+        "The lemma beside an inflected word (tenemos → tener) no longer sits in a green pill. It lines up with the middle of the word's lowercase letters at every word size, where the pill sat high.",
+        "The frequency icon has three bars instead of four: Uncommon fills one, Common two, Dominant three, and Rare leaves all three empty.",
+        "Bumps cache to flashcards-v568 and the flashcards.js, main.js, style.css and light-theme.css tags to 20260927lm."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-26T15:10:00+01:00",
       "date": "2026-09-26 15:10 BST",
       "agent": "Antigravity",
