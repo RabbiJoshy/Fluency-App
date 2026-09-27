@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T14:25:00+01:00",
+      "date": "2026-09-27 14:25 BST",
+      "agent": "Claude",
+      "summary": "Decks now load from one site per language, so publishing a Spanish deck no longer rebuilds every other language.",
+      "detail": [
+        "Spanish, Portuguese, Czech, Finnish, French and lyrics decks load from their own sites (Fluency-Releases-es, -pt, -cs, -fi, -fr, -lyrics). The files are identical to before.",
+        "Each phone re-downloads its current deck once, because the address changed.",
+        "The Bad Bunny and test-playlist v19 lyrics previews moved too, so ?lyricsRelease= links keep working."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T14:00:00+01:00",
       "date": "2026-09-27 14:00 BST",
       "agent": "Claude",

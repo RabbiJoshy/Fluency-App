@@ -191,11 +191,16 @@ Languages with profiles or packages: `es`, `fr`, `pt`, `cs`, `nl`, `pl`. Modes: 
 - **Releases are not on `gh-pages`.** The app is repo `RabbiJoshy/Fluency-App`
   (served at `rabbijoshy.github.io/Fluency-App/`; it was `Fluency-Next`, and a
   tiny `Fluency-Next` repo now only forwards old links). Release files live in
-  repo `RabbiJoshy/Fluency-Releases` (clone at `/private/tmp/fluency-releases`),
-  served at `rabbijoshy.github.io/Fluency-Releases/<lang>/speech/<id>/…`.
-  Config keeps naming them `releases/…`; `app/js/release-host.js` maps that
-  onto the release site. Publish a release by committing it there, never by
-  adding `releases/` to `gh-pages` — that republishes ~1 GB on every deploy.
+  one repo per first path segment, `RabbiJoshy/Fluency-Releases-<segment>`
+  (es, pt, cs, fi, fr, lyrics), branch `gh-pages`, served at
+  `rabbijoshy.github.io/Fluency-Releases-<segment>/…`. Config keeps naming them
+  `releases/<segment>/…`; `app/js/release-host.js` maps that onto the segment's
+  site. Publish with `python3 scripts/publish_release.py --segment <seg>
+  --release <workspace release dir>` **before** pointing config at it; it
+  uploads only new files and replaces `gh-pages` with one commit. Never add
+  `releases/` to the app's `gh-pages`. A new language needs a new repo (Josh
+  creates it; the first publish turns its Pages on). Decision 0026 has the why.
+  The old combined `Fluency-Releases` repo is retired; do not publish there.
 - **Don't rebuild what a pool already holds.** Named, described sentence pools
   live in `<workspace>/pools/<lang>/`; `fluency pools list` shows them.
 

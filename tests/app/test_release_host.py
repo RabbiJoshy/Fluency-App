@@ -1,4 +1,4 @@
-"""Release files are served by the separate Fluency-Releases Pages site."""
+"""Release files are served by one Fluency-Releases-<segment> Pages site each."""
 
 import json
 from pathlib import Path
@@ -20,6 +20,7 @@ RUNNER = r"""
         const context = { URL, window: { location } };
         vm.runInNewContext(source + '\n;globalThis.api = { releaseUrl };', context);
         out[href] = context.api.releaseUrl('releases/es/speech/r1/manifest.json');
+        out[href + '#lyrics'] = context.api.releaseUrl('releases/lyrics/lyrics-x-v1/app/config/artists.json');
     }
     console.log(JSON.stringify(out));
 """
@@ -39,8 +40,12 @@ class ReleaseHostTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stderr)
         got = json.loads(result.stdout)
-        published = "https://rabbijoshy.github.io/Fluency-Releases/es/speech/r1/manifest.json"
+        published = "https://rabbijoshy.github.io/Fluency-Releases-es/speech/r1/manifest.json"
         self.assertEqual(got[pages[0]], published)
+        self.assertEqual(
+            got[pages[0] + "#lyrics"],
+            "https://rabbijoshy.github.io/Fluency-Releases-lyrics/lyrics-x-v1/app/config/artists.json",
+        )
         # The repository preview has no releases of its own.
         self.assertEqual(got[pages[1]], published)
         # The local speech pilot mounts workspace releases at /releases/.

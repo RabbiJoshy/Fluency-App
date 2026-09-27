@@ -932,9 +932,10 @@ class ProductShellTests(unittest.TestCase):
         worker = (APP_ROOT / "service-worker.js").read_text(encoding="utf-8")
 
         release_host = (APP_ROOT / "js" / "release-host.js").read_text(encoding="utf-8")
-        # Releases are served by their own Pages site, not the app's path.
+        # Releases are served by one Pages site per segment, not the app's path.
         self.assertIn("releaseUrl(`releases/lyrics/", main)
-        self.assertIn("export const RELEASE_BASE_URL = 'https://rabbijoshy.github.io/Fluency-Releases/'", release_host)
+        self.assertIn("export const RELEASE_SITE_ROOT = 'https://rabbijoshy.github.io/'", release_host)
+        self.assertIn("Fluency-Releases-${", release_host)
         self.assertIn("const SCOPE_PATH = new URL(self.registration.scope)", worker)
         self.assertIn("new Request(scopedPath(url)", worker)
         self.assertIn("new URL(file.path, self.registration.scope)", worker)

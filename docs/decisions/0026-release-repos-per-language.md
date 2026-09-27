@@ -1,8 +1,7 @@
 # Decision 0026 — One release site per language (DRAFT)
 
-**Status:** Draft, 2026-09-27. **Proposed, not decided.** Joshua decides. The
-steps that create repositories or turn on Pages are his; a session can do the
-rest.
+**Status:** Adopted 2026-09-27. Steps 1–4 and 6 done; step 5 (retiring the
+combined site) is due from 2026-10-04.
 
 ## Problem
 
@@ -74,6 +73,15 @@ service-worker scope change; only the path prefix moves.
   same way `gh-pages` of the app is written only by its workflow.
 
 ## Work
+
+Done 2026-09-27: all six sites exist and were seeded from `Fluency-Releases`
+at `6890cf0` with the releases the app names plus the `bad-bunny-v19` and
+`test-playlist-v19` lyrics previews (opened by `?lyricsRelease=`, so named
+nowhere in code — the reason `publish_release.py` prunes only with `--prune`).
+Every seeded release's git tree hash equals the old site's, so the files are
+byte-identical. Pages builds took 27–36 s each, against 2–2.5 min for the
+combined site. Left behind on the old site only: the non-MEND `v15-10000x10`
+speech releases, lyrics v18 and `test-playlist-v16`.
 
 Step 1 needs Josh: a session cannot create repositories. Everything else a
 session can do.

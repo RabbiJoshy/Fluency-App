@@ -18,10 +18,9 @@ import time
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-# Release files are published by their own GitHub Pages site (repo
-# Fluency-Releases), not the app's gh-pages; see app/js/release-host.js.
-RELEASES_REPO = Path(os.environ.get("FLUENCY_RELEASES_REPO", "/private/tmp/fluency-releases"))
-RELEASES_REMOTE = "https://github.com/RabbiJoshy/Fluency-Releases.git"
+# Release files are published to their language's own Pages site (repo
+# Fluency-Releases-<lang>) by scripts/publish_release.py; the app is published
+# from main by .github/workflows/deploy-pages.yml. See app/js/release-host.js.
 PYTHON_BIN = REPO_ROOT / ".venv/bin/python"
 
 CONFIG = {
@@ -97,7 +96,7 @@ def run_cmd(cmd: list[str], env: dict[str, str] | None = None, cwd: Path | None 
 
 
 def deploy_language_release(workspace: Path, language: str, release_id: str) -> None:
-    """Deploy single release to gh-pages branch and main repo."""
+    """Publish one release to its language's site and point the app at it."""
     print(f"\n=== DEPLOYING {language.upper()} RELEASE ({release_id}) TO LIVE APP ===")
     rel_dir = workspace / "releases" / language / "speech" / release_id
     if not rel_dir.exists():
@@ -136,67 +135,17 @@ def deploy_language_release(workspace: Path, language: str, release_id: str) -> 
     config_text = json.dumps(cfg_data, indent=2, ensure_ascii=False) + "\n"
     config_path.write_text(config_text, encoding="utf-8")
 
-    # 3. Bump Service Worker cache version
-    sw_path = REPO_ROOT / "app/service-worker.js"
-    sw_text = sw_path.read_text(encoding="utf-8")
-    match = re.search(r"CACHE_NAME = ['\"]flashcards-v(\d+)['\"]", sw_text)
-    if match:
-        old_v = int(match.group(1))
-        new_v = old_v + 1
-        sw_text = sw_text.replace(f"flashcards-v{old_v}", f"flashcards-v{new_v}")
-        sw_path.write_text(sw_text, encoding="utf-8")
-        print(f"Bumped service worker cache to flashcards-v{new_v}")
+    # 3. Publish the release files before the config that points at them.
+    run_cmd([sys.executable, "scripts/publish_release.py", "--segment", language,
+             "--release", str(rel_dir)], cwd=REPO_ROOT)
 
-        test_shell_path = REPO_ROOT / "tests/app/test_product_shell.py"
-        if test_shell_path.exists():
-            test_text = test_shell_path.read_text(encoding="utf-8")
-            test_text = re.sub(r'EXPECTED_CACHE_NAME = "flashcards-v\d+"', f'EXPECTED_CACHE_NAME = "flashcards-v{new_v}"', test_text)
-            test_shell_path.write_text(test_text, encoding="utf-8")
-
-    # 4. Commit config updates on main before switching branch
-    run_cmd(["git", "add", "app/config/dev_changelog.json", "app/config/config.json", "app/service-worker.js", "tests/app/test_product_shell.py"], cwd=REPO_ROOT)
-    run_cmd(["git", "commit", "-m", f"Update config and changelog for {language.upper()} V12 release ({release_id})"], cwd=REPO_ROOT)
-    run_cmd(["git", "push", "origin", "main"], cwd=REPO_ROOT)
-
-    # 5. Publish the release files to the Fluency-Releases site, without
-    # deck.json (>100MB). Its layout is the app's releases/ path minus the
-    # leading releases/.
-    if not (RELEASES_REPO / ".git").exists():
-        run_cmd(["git", "clone", RELEASES_REMOTE, str(RELEASES_REPO)], cwd=REPO_ROOT)
-    run_cmd(["git", "pull", "--rebase", "origin", "main"], cwd=RELEASES_REPO)
-    target_rel = RELEASES_REPO / language / "speech" / release_id
-    target_rel.mkdir(parents=True, exist_ok=True)
-    run_cmd([
-        "rsync", "-av", "--exclude=deck.json",
-        f"{rel_dir}/", f"{target_rel}/"
-    ], cwd=RELEASES_REPO)
-    run_cmd(["git", "add", str(target_rel.relative_to(RELEASES_REPO))], cwd=RELEASES_REPO)
-    run_cmd(["git", "commit", "-m", f"Publish {language.upper()} release {release_id}"], cwd=RELEASES_REPO)
-    run_cmd(["git", "push", "origin", "main"], cwd=RELEASES_REPO)
-
-    # 6. Sync the app to gh-pages
-    run_cmd(["git", "checkout", "gh-pages"], cwd=REPO_ROOT)
-    run_cmd(["git", "pull", "--rebase", "origin", "gh-pages"], cwd=REPO_ROOT)
-
-    # Sync config, sw, and app assets to gh-pages root
-    (REPO_ROOT / "config/dev_changelog.json").write_text(changelog_text, encoding="utf-8")
-    (REPO_ROOT / "config/config.json").write_text(config_text, encoding="utf-8")
-    (REPO_ROOT / "service-worker.js").write_text(sw_text, encoding="utf-8")
-    run_cmd(["git", "checkout", "main", "--", "app/js", "app/css", "app/index.html"], cwd=REPO_ROOT)
-    run_cmd(["rsync", "-av", f"{REPO_ROOT / 'app/js'}/", f"{REPO_ROOT / 'js'}/"], cwd=REPO_ROOT)
-    run_cmd(["rsync", "-av", f"{REPO_ROOT / 'app/css'}/", f"{REPO_ROOT / 'css'}/"], cwd=REPO_ROOT)
-    run_cmd(["cp", str(REPO_ROOT / "app/index.html"), str(REPO_ROOT / "index.html")], cwd=REPO_ROOT)
-    if (REPO_ROOT / "app").exists():
-        shutil.rmtree(REPO_ROOT / "app")
-
-    run_cmd(["git", "add", "config", "service-worker.js", "js", "css", "index.html"], cwd=REPO_ROOT)
-    run_cmd(["git", "commit", "-m", f"Deploy: {language.upper()} V12 deck ({release_id})"], cwd=REPO_ROOT)
-    run_cmd(["git", "push", "origin", "gh-pages"], cwd=REPO_ROOT)
-
-    # Return to main branch
-    run_cmd(["git", "checkout", "main"], cwd=REPO_ROOT)
-    run_cmd(["git", "checkout", "HEAD", "--", "app"], cwd=REPO_ROOT)
-    print(f"Successfully deployed {release_id} to gh-pages and synchronized main!")
+    # 4. Commit the config and changelog, then deploy the app through main.
+    # Cache versions are stamped at deploy; nothing to bump here.
+    run_cmd(["git", "add", "app/config/dev_changelog.json", "config/dev_changelog.json",
+             "app/config/config.json"], cwd=REPO_ROOT)
+    run_cmd(["git", "commit", "-m", f"Point {language} at the V12 release {release_id}"], cwd=REPO_ROOT)
+    run_cmd([sys.executable, "scripts/deploy.py"], cwd=REPO_ROOT)
+    print(f"Published {release_id} and deployed the app from main.")
 
 
 def run_pipeline_for_language(workspace: Path, language: str, run_id: str | None = None) -> str:
