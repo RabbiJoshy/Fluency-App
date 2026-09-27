@@ -21,6 +21,12 @@ def test_noun_pluralization():
     assert pluralize_english_noun("cat") == "cats"
     assert pluralize_english_noun("box") == "boxes"
     assert pluralize_english_noun("city") == "cities"
+    assert pluralize_english_noun("knife") == "knives"
+    assert pluralize_english_noun("woman") == "women"
+    assert pluralize_english_noun("kisses") == "kisses"
+    assert pluralize_english_noun("buttocks") == "buttocks"
+    assert pluralize_english_noun("things") == "things"
+
 
 def test_split_attached_clitics():
     stem, clitics = split_attached_clitics("guíllate")
@@ -35,6 +41,7 @@ def test_split_attached_clitics():
     assert stem == "hablar"
     assert clitics == []
 
+
 def test_inflect_card_senses():
     senses = [
         {"gloss": "to lose; to misplace", "pos": "verb"},
@@ -44,3 +51,22 @@ def test_inflect_card_senses():
     }
     inflected = inflect_card_senses("pierdo", "perder", senses, conj_rev)
     assert "I lose" in inflected[0]["gloss"]
+
+
+def test_inflect_card_senses_noun_plural():
+    senses = [
+        {"headword": "razonar", "pos": "VERB", "translation": "to reason"},
+        {"headword": "razón", "pos": "NOUN", "translation": "reason"},
+    ]
+    # Test standard plural with accent loss (razón -> razones)
+    res = inflect_card_senses("razones", "razón", senses, {})
+    assert res[0]["translation"] == "to reason"  # verb untouched
+    assert res[1]["translation"] == "reasons"    # noun pluralized
+
+    # Test Caribbean elision plural (razón -> razone')
+    res_elided = inflect_card_senses("razone'", "razón", senses, {})
+    assert res_elided[1]["translation"] == "reasons"
+
+    # Test explicit is_plural flag
+    res_flagged = inflect_card_senses("razone'", "razón", senses, {}, is_plural=True)
+    assert res_flagged[1]["translation"] == "reasons"

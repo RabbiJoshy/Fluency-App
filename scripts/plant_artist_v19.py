@@ -37,7 +37,11 @@ import numpy as np
 
 from fluency.core.hashing import canonical_content_id, file_content_id
 from fluency.lyrics.assemble import _validate_split
-from fluency.lyrics.inflector import inflect_card_senses, inflect_clitic_memberships
+from fluency.lyrics.inflector import (
+    inflect_card_senses,
+    inflect_clitic_memberships,
+    strip_accents,
+)
 from fluency.lyrics.sampling import (
     calculate_lyrics_wsd_budget,
     calculate_target_occurrence_budget,
@@ -577,6 +581,14 @@ def plant_artist(
         else:
             target_surface = orig_card.get("display_form") or word
 
+        # Plural check against SpanishDict inflection metadata and canonical plural morphology
+        card_is_plural = False
+        if word_lower in surf_cache:
+            for pr in surf_cache[word_lower].get("possible_results", []):
+                if pr.get("inflection_type") == "plural":
+                    card_is_plural = True
+                    break
+
         # Priority 0: Cultural entity overrides
         if word_lower in CULTURAL_ENTITY_OVERRIDES:
             ov = CULTURAL_ENTITY_OVERRIDES[word_lower]
@@ -699,7 +711,7 @@ def plant_artist(
             card_lemma = orig_card.get("lemma")
             if not card_lemma or card_lemma == word:
                 card_lemma = analysis_hw or word
-            sd_senses = inflect_card_senses(target_surface, card_lemma, sd_senses, conj_rev)
+            sd_senses = inflect_card_senses(target_surface, card_lemma, sd_senses, conj_rev, is_plural=card_is_plural)
             resolved_cards[card_id] = {
                 **orig_card,
                 "lemma": card_lemma,
@@ -757,7 +769,7 @@ def plant_artist(
             borrowed_senses = extract_senses_from_sd_analyses(headword, borrowed_analyses)
             if borrowed_senses:
                 # Inflect borrowed senses to surface form (verb conjugation, attached clitics, noun plurals)
-                borrowed_senses = inflect_card_senses(target_surface, headword, borrowed_senses, conj_rev)
+                borrowed_senses = inflect_card_senses(target_surface, headword, borrowed_senses, conj_rev, is_plural=card_is_plural)
                 for s in borrowed_senses:
                     s["source"] = "spanishdict:headword_borrow"
                     s["surface_word"] = target_surface
@@ -804,7 +816,7 @@ def plant_artist(
 
             if wikt_senses:
                 card_lemma = orig_card.get("lemma") or word
-                wikt_senses = inflect_card_senses(target_surface, card_lemma, wikt_senses, conj_rev)
+                wikt_senses = inflect_card_senses(target_surface, card_lemma, wikt_senses, conj_rev, is_plural=card_is_plural)
                 resolved_cards[card_id] = orig_card
                 resolved_senses_by_card[card_id] = wikt_senses
                 wiktionary_hits += 1
@@ -864,7 +876,7 @@ def plant_artist(
                 }]
 
         card_lemma = orig_card.get("lemma") or word
-        clean_fallbacks = inflect_card_senses(target_surface, card_lemma, clean_fallbacks, conj_rev)
+        clean_fallbacks = inflect_card_senses(target_surface, card_lemma, clean_fallbacks, conj_rev, is_plural=card_is_plural)
         resolved_cards[card_id] = orig_card
         resolved_senses_by_card[card_id] = clean_fallbacks
         retained_hits += 1
