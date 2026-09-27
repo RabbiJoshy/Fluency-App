@@ -371,9 +371,9 @@ function updateReviewAccess() {
 }
 
 // How long the deck wheel holds before the setup screen behind it is revealed.
-// Extended by 3 seconds (from 5s to 8s) per user request to allow comfortable reading.
+// Extended twice by 3 seconds (5s → 8s → 11s) per user request, for comfortable reading.
 // A tap ends it at once; this is the ceiling for someone who does not tap.
-const DECK_OVERVIEW_HOLD_MS = 8000;
+const DECK_OVERVIEW_HOLD_MS = 11000;
 
 // The big wheel: progress across the whole deck the learner just opened.
 //
@@ -431,7 +431,8 @@ function showDeckOverviewLoading() {
             knownCount,
             reviewCount,
             unseenCount,
-            percentage: percent
+            speechPercentage: percent,
+            speechLabel: activeArtist ? 'of these lyrics understood' : 'of everyday speech understood'
         },
         {
             title,

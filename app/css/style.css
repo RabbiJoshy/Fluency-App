@@ -6153,10 +6153,42 @@
         }
 
         .app-loading-mark-art.is-clipart {
-            inset: 9px;
+            inset: 0;
             border-radius: 0;
             background-size: contain;
         }
+
+        /* Clipart and the flag stand on their own: no tile behind them. */
+        .app-loading-mark.is-free {
+            width: 72px;
+            height: 72px;
+            border-color: transparent;
+            background: transparent;
+            box-shadow: none;
+            overflow: visible;
+        }
+
+        .app-loading-mark-text.is-flag {
+            font-family: system-ui, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+            font-size: 60px;
+            font-weight: 400;
+            line-height: 1;
+            animation: app-loading-mark-pop 0.36s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .app-loading-speech {
+            margin: -8px 0 18px;
+            color: var(--text-muted);
+            font: 600 13px/1.3 var(--font-emphasis);
+        }
+
+        .app-loading-speech b {
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .app-loading-speech[hidden] { display: none; }
 
         .app-loading-mark-art.is-popping {
             animation: app-loading-mark-pop 0.28s ease-out;
@@ -6354,6 +6386,7 @@
             .app-loading-ring-centre,
             .app-loading-ring-arc { transition: none; }
             .app-loading-tap-hint { animation: none; }
+            .app-loading-mark-text.is-flag { animation: none; }
         }
 
         #appContent {

@@ -115,9 +115,9 @@ perfMark('main.js top — module imports done');
 const APP_LOADING_MESSAGE_KEY = 'fluency_loading_message_v1';
 
 // How long the deck-progress ring stays up before the screen behind it is
-// revealed. Extended by 3 seconds per user request to allow comfortable reading.
+// revealed. Extended twice by 3 seconds per user request, for comfortable reading.
 // A tap always ends it early; the number is the ceiling, not the target.
-const MIN_DECK_LOADING_BEAT_MS = 3900;
+const MIN_DECK_LOADING_BEAT_MS = 6900;
 const DECK_RING_CIRCUMFERENCE = 339.292;   // 2 * PI * r, r = 54 in the SVG
 // Once the arcs have settled, invite the tap. Earlier than this and the hint
 // would offer a way out of a screen that has not finished saying anything.
@@ -131,6 +131,10 @@ let deckLoadingHintTimer = null;
 let loadingImagesManifest = null;
 let loadingImagesManifestPromise = null;
 let loadingMarkRotationTimer = null;
+let loadingMarkRotationKey = '';
+// Bumped by every change of what the mark shows, so a manifest fetch that
+// resolves late cannot restart the cycle after the mark has landed on the flag.
+let loadingMarkGeneration = 0;
 const LOADING_MARK_ROTATION_MS = 750;
 let currentLoadingImages = [];
 let currentLoadingImageIndex = 0;
@@ -156,6 +160,28 @@ function stopLoadingMarkRotation() {
         clearInterval(loadingMarkRotationTimer);
         loadingMarkRotationTimer = null;
     }
+    loadingMarkRotationKey = '';
+}
+
+// Plain "F" tile, or a free-standing picture/flag with no tile behind it.
+function setLoadingMarkText(text = 'F', { flag = false } = {}) {
+    const mark = document.getElementById('appLoadingMark');
+    const label = document.getElementById('appLoadingMarkText');
+    if (!mark || !label) return;
+    label.textContent = text;
+    label.classList.toggle('is-flag', flag);
+    mark.classList.toggle('is-free', flag || mark.classList.contains('has-clipart'));
+}
+
+// The progress is known: stop cycling and settle on the language's flag.
+function landLoadingMarkOnFlag(language) {
+    const flag = config?.languages?.[language]?.flag
+        || window._normalModeLangConfigs?.[language]?.flag || '';
+    if (!flag) return;
+    loadingMarkGeneration++;
+    stopLoadingMarkRotation();
+    applyLoadingMarkImage(null);
+    setLoadingMarkText(flag, { flag: true });
 }
 
 // Language images are transparent clipart: contained and padded, with a small pop
@@ -168,7 +194,7 @@ function applyLoadingMarkImage(src, { clipart = false } = {}) {
         art.hidden = true;
         art.style.backgroundImage = '';
         art.classList.remove('is-clipart', 'is-popping');
-        mark.classList.remove('has-art');
+        mark.classList.remove('has-art', 'has-clipart', 'is-free');
         return;
     }
     const escaped = String(src).replace(/"/g, '%22');
@@ -181,6 +207,8 @@ function applyLoadingMarkImage(src, { clipart = false } = {}) {
     }
     art.hidden = false;
     mark.classList.add('has-art');
+    mark.classList.toggle('has-clipart', clipart);
+    mark.classList.toggle('is-free', clipart);
 }
 
 async function updateLoadingMark({ language = '', artist = null } = {}) {
@@ -188,10 +216,17 @@ async function updateLoadingMark({ language = '', artist = null } = {}) {
     const art = document.getElementById('appLoadingMarkArt');
     if (!mark || !art) return;
 
+    // 2. Language-specific rotating images
+    const langKey = String(language || window.selectedLanguage || 'default').trim().toLowerCase();
+    const effectiveArtist = artist || window.activeArtist;
+    // Already cycling this language: carry on rather than jump back to a new start.
+    if (!effectiveArtist && loadingMarkRotationTimer && loadingMarkRotationKey === langKey) return;
+
     stopLoadingMarkRotation();
+    const generation = ++loadingMarkGeneration;
+    setLoadingMarkText('F');
 
     // 1. Artist mode takes precedence: show the artist image
-    const effectiveArtist = artist || window.activeArtist;
     if (effectiveArtist) {
         const artistArt = effectiveArtist.pickerImage || effectiveArtist.image || effectiveArtist.defaultAlbumArt || '';
         if (artistArt) {
@@ -200,9 +235,8 @@ async function updateLoadingMark({ language = '', artist = null } = {}) {
         }
     }
 
-    // 2. Language-specific rotating images
-    const langKey = String(language || window.selectedLanguage || 'default').trim().toLowerCase();
     const manifest = await fetchLoadingImagesManifest();
+    if (generation !== loadingMarkGeneration) return;
     const images = (manifest && manifest[langKey] && manifest[langKey].length > 0)
         ? manifest[langKey]
         : ((manifest && manifest['default'] && manifest['default'].length > 0) ? manifest['default'] : []);
@@ -220,6 +254,7 @@ async function updateLoadingMark({ language = '', artist = null } = {}) {
     applyLoadingMarkImage(images[currentLoadingImageIndex], { clipart: true });
 
     if (images.length > 1 && !prefersReducedMotion()) {
+        loadingMarkRotationKey = langKey;
         loadingMarkRotationTimer = setInterval(() => {
             currentLoadingImageIndex = (currentLoadingImageIndex + 1) % currentLoadingImages.length;
             applyLoadingMarkImage(currentLoadingImages[currentLoadingImageIndex], { clipart: true });
@@ -240,6 +275,8 @@ function resetDeckLoadingVisual() {
     if (visual) visual.dataset.mode = 'spinner';
     const legend = document.getElementById('appLoadingRingLegend');
     if (legend) legend.hidden = true;
+    const speech = document.getElementById('appLoadingSpeech');
+    if (speech) speech.hidden = true;
     for (const id of ['appLoadingRingSeen', 'appLoadingRingKnown']) {
         const arc = document.getElementById(id);
         if (!arc) continue;
@@ -285,10 +322,9 @@ function showDeckLoading(stats, { title, detail, holdMs = MIN_DECK_LOADING_BEAT_
         title || 'Getting things ready',
         detail || 'Preparing your next cards…'
     );
-    updateLoadingMark({
-        artist: artist || window.activeArtist,
-        language: language || window.selectedLanguage
-    });
+    const markArtist = artist || window.activeArtist;
+    const markLanguage = language || window.selectedLanguage;
+    updateLoadingMark({ artist: markArtist, language: markLanguage });
     const cardCount = Number(stats?.cardCount) || 0;
     const seenCount = Math.max(0, Math.min(cardCount, Number(stats?.seenCount) || 0));
     const visual = document.getElementById('appLoadingVisual');
@@ -304,14 +340,26 @@ function showDeckLoading(stats, { title, detail, holdMs = MIN_DECK_LOADING_BEAT_
     const pctOf = count => 100 * count / cardCount;
     const offsetFor = pct => DECK_RING_CIRCUMFERENCE * (1 - Math.min(100, Math.max(0, pct)) / 100);
 
-    const pctValue = stats?.percentage !== undefined
-        ? Math.round(Number(stats.percentage))
-        : Math.round(pctOf(knownCount));
-
+    // The ring and its centre both count cards, so the arc and the number agree.
+    // How much of the language those cards cover is frequency-weighted, a
+    // different quantity, and gets its own line rather than sharing the ring.
     const value = document.getElementById('appLoadingRingValue');
-    if (value) value.textContent = `${pctValue}%`;
+    if (value) value.textContent = `${Math.round(pctOf(knownCount))}%`;
     const unit = document.getElementById('appLoadingRingUnit');
-    if (unit) unit.hidden = true;
+    if (unit) {
+        unit.textContent = 'cards known';
+        unit.hidden = false;
+    }
+    const speech = document.getElementById('appLoadingSpeech');
+    if (speech && stats?.speechPercentage !== undefined) {
+        document.getElementById('appLoadingSpeechValue').textContent = `${Math.round(Number(stats.speechPercentage))}%`;
+        document.getElementById('appLoadingSpeechLabel').textContent = stats.speechLabel || 'of speech understood';
+        speech.hidden = false;
+    }
+
+    // The numbers are in, so the pictures stop and the mark settles on the flag.
+    // An artist deck keeps the artist's picture.
+    if (!markArtist) landLoadingMarkOnFlag(markLanguage);
 
     const legend = document.getElementById('appLoadingRingLegend');
     if (legend) {

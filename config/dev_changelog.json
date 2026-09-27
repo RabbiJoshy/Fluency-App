@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T18:05:00+01:00",
+      "date": "2026-09-27 18:05 BST",
+      "agent": "Claude",
+      "summary": "Loading screen: pictures float free and land on the language's flag once your progress is in; the wheel now shows % of cards known with % of speech understood beneath it.",
+      "detail": [
+        "Clipart no longer sits in a tile; when the progress numbers arrive the cycling stops and the mark settles on the flag (artist decks keep the artist photo).",
+        "Ring centre now matches the ring: % of cards known. The frequency-weighted figure has its own line: 'X% of everyday speech understood' (or 'of these lyrics').",
+        "Legend 'New' renamed 'Unseen'.",
+        "Deck overview hold 8s → 11s, set-loading hold 3.9s → 6.9s; a tap still ends it."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T17:50:15+01:00",
       "date": "2026-09-27 17:50 BST",
       "agent": "Claude",
