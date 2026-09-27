@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T18:04:01+01:00",
+      "date": "2026-09-27 18:04 BST",
+      "agent": "Claude",
+      "summary": "Verb drills moved off the vocabulary choice and into the top-left language pop-up.",
+      "detail": [
+        "The vocabulary page now offers only Everyday speech and Your music; the 'Optional add-on: Verb conjugation' row is gone from it.",
+        "Tapping the language/artist button at the top left shows a 'Verb drills · Practise conjugations' row for languages that have a drill deck.",
+        "Verb cards' conjugation drawer still links straight to drilling that verb."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T18:05:00+01:00",
       "date": "2026-09-27 18:05 BST",
       "agent": "Claude",
