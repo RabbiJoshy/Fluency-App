@@ -5647,6 +5647,31 @@ function updateCard({ announceHeadword = false } = {}) {
     exampleSentence = stripAdlibParentheticals(exampleSentence);
     exampleTranslation = stripAdlibParentheticals(exampleTranslation);
 
+function getCardWikipediaUrl(card) {
+    if (!card) return null;
+    if (card.entity_url && String(card.entity_url).includes('wikipedia.org')) {
+        return card.entity_url;
+    }
+    const isEntity = Boolean(card.is_propernoun || card.extra_category === 'proper_noun' || card.partOfSpeech === 'PROPN');
+    const meanings = card.meanings || [];
+    const hasEntitySource = meanings.some(m => {
+        const s = String(m.source || m.assignment_method || m.prompt_id || '').toLowerCase();
+        const pos = String(m.pos || '').toUpperCase();
+        return s.includes('entity:wikipedia') || s.includes('overlay:entity') || (s.includes('wiktionary') && pos === 'PROPN');
+    });
+    if (isEntity || hasEntitySource) {
+        const queryTerm = card.lemma || card.word;
+        return `https://es.wikipedia.org/wiki/${encodeURIComponent(queryTerm)}`;
+    }
+    return null;
+}
+
+function renderCardWikipediaBadge(card) {
+    const url = getCardWikipediaUrl(card);
+    if (!url) return '';
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="surface-wikipedia-badge" title="Open Wikipedia article" onclick="event.stopPropagation()" aria-label="Open Wikipedia article"><img src="icons/wikipedia-w.svg" alt="Wikipedia" class="surface-wikipedia-icon" /></a>`;
+}
+
     const frontProductionHintEl = document.getElementById('frontProductionHint');
     // Fix one sense-linked sentence to the card attempt. Example browsing on
     // the revealed back may change currentExampleIndex/currentMeaningIndex, but
@@ -5799,7 +5824,7 @@ function updateCard({ announceHeadword = false } = {}) {
         frontMeaningsEl.innerHTML = '';
         frontMeaningsEl.style.display = 'none';
         frontWordEl.style.display = '';
-        frontWordEl.innerHTML = frontText;
+        frontWordEl.innerHTML = `${frontText}${renderCardWikipediaBadge(card)}`;
         // Auto-shrink the word font so it fits on a single line instead of
         // wrapping. The old heuristic keyed off character count (>13 chars),
         // which missed cases where the chars were wide enough to overflow a
@@ -6142,7 +6167,7 @@ function updateCard({ announceHeadword = false } = {}) {
         <div class="back-header">
             <div class="flip-back-area" id="flipBackArea">
                 <div class="back-headword-row">
-                    <span class="back-headword${backHeadwordPairClass}" style="font-size: ${backHeadwordSize}px; font-weight: bold; line-height: ${showBackLemmaPair ? 1 : 1.1};">${wordDisplay}</span>
+                    <span class="back-headword${backHeadwordPairClass}" style="font-size: ${backHeadwordSize}px; font-weight: bold; line-height: ${showBackLemmaPair ? 1 : 1.1};">${wordDisplay}</span>${renderCardWikipediaBadge(card)}
                     ${backPosLegendHTML}
                 </div>
                 ${notableSurfaceRelation

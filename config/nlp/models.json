@@ -1,0 +1,64 @@
+{
+  "config_version": "nlp-model-registry/v1",
+  "note": "Every model this pipeline calls, declared once. The same three identifiers were previously written into five modules, so a provider or revision change meant finding all of them and the run manifests recorded whichever copy happened to be read.",
+  "models": {
+    "exact-text-embedding": {
+      "provider": "google-genai",
+      "name": "gemini-embedding-001",
+      "task_type": "SEMANTIC_SIMILARITY",
+      "batch_size": 100,
+      "checkpoint_every": 1000,
+      "max_quota_retries": 12,
+      "workers": 10,
+      "min_seconds_per_batch": 0.1,
+      "note": "High-throughput parallel batch embedding with automatic backoff."
+    },
+    "occurrence-pos": {
+      "provider": "spacy",
+      "name": "es_dep_news_trf",
+      "revision": "3.8.0",
+      "language": "es",
+      "note": "Spanish. Pinned and enforced at load: a run must not record a revision it did not verify."
+    },
+    "token-context": {
+      "provider": "huggingface",
+      "name": "dccuchile/bert-base-spanish-wwm-cased",
+      "revision": "c4d86612f51b4f46759c8390d1798c2febe71b93",
+      "language": "es",
+      "note": "BETO, used by the lyrics token-tuple vote."
+    },
+    "occurrence-pos-pt": {
+      "provider": "spacy",
+      "name": "pt_core_news_lg",
+      "revision": "3.8.0",
+      "language": "pt",
+      "note": "Portuguese. Verified to tag `do`/`ao` as ADP, `a` as DET and `é` as AUX -- none of which Wiktionary publishes under those names, which is why the wiktionary POS bridge is required before any filtering."
+    },
+    "occurrence-pos-fr": {
+      "provider": "spacy",
+      "name": "fr_core_news_lg",
+      "revision": "3.8.0",
+      "language": "fr",
+      "note": "French. Elision splits a token (n', j'), so a surface span may not align with a whole word the way it does in Spanish or Portuguese."
+    },
+    "occurrence-pos-fi": {
+      "provider": "stanza",
+      "name": "stanza-fi-default",
+      "revision": "1.14.0",
+      "language": "fi",
+      "processors": "tokenize,mwt,pos,lemma,depparse",
+      "note": "Finnish Universal Dependencies tagger. The Stanza package revision and its versioned default Finnish resources are pinned together; POS is required before a Finnish sense may compete across dictionary categories."
+    },
+    "word-alignment": {
+      "provider": "huggingface",
+      "name": "bert-base-multilingual-cased",
+      "revision": "3f076fdb1ab68d5b2880cb87a0886f315b8146f8",
+      "adapter": "simalign@0.4",
+      "token_type": "bpe",
+      "layer": 8,
+      "matching_method": "inter",
+      "network_policy": "local_files_only",
+      "note": "Shared source-to-English word alignment. It consumes an existing translation and never calls a translator."
+    }
+  }
+}
