@@ -21627,3 +21627,31 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
   #topBar .learning-context-flag { font-size: 25px; }
   #topBar .learning-context-chip-copy strong { font-size: 16px; }
 }
+
+/* Spotify status under the vocabulary choice: connect, or say it is connected. */
+.spotify-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin: 10px 0 2px 6px;
+  padding: 8px 14px 8px 10px;
+  border: 1px solid color-mix(in srgb, #1DB954 45%, var(--border-color));
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-primary);
+  font: 600 13px/1.2 var(--font-emphasis);
+  cursor: pointer;
+}
+.spotify-status svg { width: 20px; height: 20px; color: #1DB954; flex: none; }
+.spotify-status:hover { background: color-mix(in srgb, #1DB954 10%, transparent); }
+.spotify-status:focus-visible { outline: 2px solid #1DB954; outline-offset: 2px; }
+.spotify-status.is-connected {
+  padding: 0;
+  border: 0;
+  color: var(--text-muted);
+  font-weight: 500;
+  cursor: default;
+}
+.spotify-status.is-connected:hover { background: transparent; }
+.choice-sheet-footer { flex: none; padding: 0 14px 16px; }
+.choice-sheet-footer .spotify-status { margin-top: 0; }

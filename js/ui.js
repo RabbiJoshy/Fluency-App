@@ -1,7 +1,7 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=69d817bf';
-import { readFastTrack } from './fast-track-preferences.js?v=69d817bf';
+import './state.js?v=9d77737e';
+import { readFastTrack } from './fast-track-preferences.js?v=9d77737e';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -734,18 +734,18 @@ const MODE_ICON_MUSIC = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" s
 function learningModeCopy(language = selectedLanguage) {
     const lyricsCatalog = config?.languages?.[language]?.capabilities?.lyrics !== false;
     return {
-        title: 'Most common words in…',
-        intro: 'Fluency teaches words in order of how often they come up. Choose what to count. A word you learn counts in both.',
+        title: 'Choose your flashcard vocabulary',
+        intro: 'This decides which words become your flashcards, and their order.',
         speech: {
             label: 'Everyday speech',
-            description: 'Counted across films and TV. Best for understanding people talking.',
+            description: 'From films and TV — the words people use when they talk.',
             iconHTML: MODE_ICON_SPEECH
         },
         lyrics: {
             label: 'Your music',
             description: lyricsCatalog
-                ? 'Counted across the artists or Spotify playlist you pick. Best for understanding those songs.'
-                : 'Counted across a Spotify playlist you pick. Best for understanding those songs.',
+                ? 'Pick an artist, or build a deck from your Spotify playlists — the words in those songs.'
+                : 'Build a deck from your Spotify playlists — the words in those songs.',
             iconHTML: MODE_ICON_MUSIC
         }
     };
@@ -857,6 +857,7 @@ function setupLanguageTabs() {
             const choiceIntro = document.getElementById('standardSourceChoiceIntro');
             if (choiceTitle) choiceTitle.textContent = modeCopy.title;
             if (choiceIntro) choiceIntro.textContent = modeCopy.intro;
+            window.renderSpotifyStatus?.(document.getElementById('standardSourceSpotify'));
             if (sourceCardButton) {
                 sourceCardButton.disabled = !lyricsAvailable;
                 sourceCardButton.title = lyricsCatalog
@@ -3415,7 +3416,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=69d817bf')
+        import('./spotify.js?v=9d77737e')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

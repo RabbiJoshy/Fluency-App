@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T17:50:15+01:00",
+      "date": "2026-09-27 17:50 BST",
+      "agent": "Claude",
+      "summary": "The vocabulary choice is now 'Choose your flashcard vocabulary', framed by where the words come from, with a Spotify connect button (or 'Spotify connected') underneath.",
+      "detail": [
+        "Heading: 'Choose your flashcard vocabulary'. Line under it: 'This decides which words become your flashcards, and their order.'",
+        "Everyday speech: from films and TV — the words people use when they talk. Your music: pick an artist, or build a deck from your Spotify playlists — the words in those songs.",
+        "Under the two options, on the page and in the pop-up: 'Connect your Spotify' with the Spotify logo, or 'Spotify connected · name' once connected."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T17:35:30+01:00",
       "date": "2026-09-27 17:35 BST",
       "agent": "Claude",
