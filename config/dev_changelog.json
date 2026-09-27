@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-27T16:07:00+01:00",
+      "date": "2026-09-27 16:07 BST",
+      "agent": "Claude",
+      "summary": "In merged-lemma mode the translation now follows the example you are on, so despejas reads 'you clear' rather than repeating the first form's 'clear!'.",
+      "detail": [
+        "A merged card collects examples from every form of the word. Each example now shows the translation of its own form while it is the active example.",
+        "Examples from other forms are filed under the matching meaning by sense, not by identical translation text, which no longer lines up once translations are inflected per form.",
+        "Lyrics forms like despeja and condene still read as commands in the current decks; that is fixed in the pipeline and changes when the lyrics decks are rebuilt."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-27T15:56:55+01:00",
       "date": "2026-09-27 15:56 BST",
       "agent": "Codex",
@@ -570,6 +582,20 @@
       "commit": "pending"
     },
     {
+      "timestamp": "2026-09-21T21:13:37+01:00",
+      "date": "2026-09-21 21:13 BST",
+      "agent": "Codex",
+      "summary": "Cleaner inline Details, sensible card expansion and summaries of visible meanings.",
+      "detail": [
+        "Details / Hide replaces More details and its counter. The gloss, control and supporting information share a line where space permits.",
+        "Opening details recalculates available height; empty space above the bottom buttons can move the example down before meanings need to scroll.",
+        "Meaning summaries and +N use emitted rows rather than the complete inventory, so hidden meanings do not appear in the preview.",
+        "Expanded Portuguese and Spanish review: shared rules remove repeated clauses, shorten usage boilerplate and place semantic explanations before bracketed constructions. Long contexts use full-width rows on phones.",
+        "Verified 127 app tests, 134 expanded group/width checks across 40 release-card fixtures, and 12 normal/enlarged text checks."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-21T21:10:00+01:00",
       "date": "2026-09-21 21:10 BST",
       "agent": "Claude",
@@ -585,16 +611,15 @@
       "commit": "pending"
     },
     {
-      "timestamp": "2026-09-21T21:13:37+01:00",
-      "date": "2026-09-21 21:13 BST",
-      "agent": "Codex",
-      "summary": "Cleaner inline Details, sensible card expansion and summaries of visible meanings.",
+      "timestamp": "2026-09-21T20:30:00+01:00",
+      "date": "2026-09-21 20:30 BST",
+      "agent": "Claude",
+      "summary": "The app's word and song files now load from a separate release site, so app updates go live in about a minute instead of several.",
       "detail": [
-        "Details / Hide replaces More details and its counter. The gloss, control and supporting information share a line where space permits.",
-        "Opening details recalculates available height; empty space above the bottom buttons can move the example down before meanings need to scroll.",
-        "Meaning summaries and +N use emitted rows rather than the complete inventory, so hidden meanings do not appear in the preview.",
-        "Expanded Portuguese and Spanish review: shared rules remove repeated clauses, shorten usage boilerplate and place semantic explanations before bracketed constructions. Long contexts use full-width rows on phones.",
-        "Verified 127 app tests, 134 expanded group/width checks across 40 release-card fixtures, and 12 normal/enlarged text checks."
+        "Release files (about 1 GB) moved to their own GitHub Pages site, rabbijoshy.github.io/Fluency-Releases/. The app site now republishes only the app on each deploy.",
+        "Config still names releases as releases/…; the new js/release-host.js maps that to the release site. A local dev server serving the app at its root keeps reading its own /releases/, so unpublished releases stay testable.",
+        "The old unused v12 display-v4 decks (842 MB) were removed from the app site.",
+        "The app repo is being renamed from Fluency-Next to Fluency-App; old links are forwarded."
       ],
       "commit": "pending"
     },
@@ -607,19 +632,6 @@
         "Essential context remains visible before selecting a subsense; long explanations wrap and phone groups stack when needed. Meaning text is at least 13px and supporting badges at least 12px.",
         "Portuguese keeps a bit of and article-use explanations; Spanish preserves place/time/manner; Czech keeps reflexive distinctions and separates case requirements from companion words.",
         "Checked all six metadata families across 30,000 cards, compared shared-gloss cues in the first 1,000 per language, and reviewed 20 real-card fixtures across 82 expanded group/width combinations. Source defects are recorded in docs/ui/SENSE_METADATA_AUDIT.md."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-09-21T20:30:00+01:00",
-      "date": "2026-09-21 20:30 BST",
-      "agent": "Claude",
-      "summary": "The app's word and song files now load from a separate release site, so app updates go live in about a minute instead of several.",
-      "detail": [
-        "Release files (about 1 GB) moved to their own GitHub Pages site, rabbijoshy.github.io/Fluency-Releases/. The app site now republishes only the app on each deploy.",
-        "Config still names releases as releases/…; the new js/release-host.js maps that to the release site. A local dev server serving the app at its root keeps reading its own /releases/, so unpublished releases stay testable.",
-        "The old unused v12 display-v4 decks (842 MB) were removed from the app site.",
-        "The app repo is being renamed from Fluency-Next to Fluency-App; old links are forwarded."
       ],
       "commit": "pending"
     },
@@ -664,6 +676,23 @@
       "commit": "pending"
     },
     {
+      "timestamp": "2026-09-21T15:10:00+01:00",
+      "date": "2026-09-21 15:10 BST",
+      "agent": "Claude",
+      "summary": "Everything that doesn't move you within your set now opens at the side on a wide desktop: dictionary, synonyms, conjugation and card data dock beside the card, and session sheets stay open while you study.",
+      "detail": [
+        "Right side, about this card: dictionary, synonyms, conjugation, card data, lyric breakdown, rarer-sense knowledge and word search. One at a time; opening one closes the other.",
+        "Right-side panels close when the card changes or flips to its front, because what they show gives the answer away.",
+        "Left side, about the session: saved words, progress, shortcuts and help. One at a time, and they stay open while you flip, grade and move between cards; the card is no longer blocked behind them.",
+        "Conjugation docks beside the card instead of taking over the screen; narrower windows and phones keep the full-screen table.",
+        "Escape now closes the nearest open panel instead of leaving the set.",
+        "Leaving the study view closes anything docked in it.",
+        "Rarer uses is unchanged: it moves you onto a temporary card, so it is not a side panel.",
+        "New module js/side-dock.js holds the rule, so the individual panels only call into it."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-21T14:35:00+01:00",
       "date": "2026-09-21 14:35 BST",
       "agent": "Claude",
@@ -687,23 +716,6 @@
         "The animated About cards use the walkthrough's own real cards (que, cielo) instead of hand-written ones. fuego is gone; its \"light\" example did not show that meaning.",
         "They now draw meanings the way a live card does: part-of-speech colour, a tick on the chosen meaning, the four-bar meter instead of \"≈50%\", and the studied word underlined in the example.",
         "Prose no longer quotes percentages the cards no longer show."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-09-21T15:10:00+01:00",
-      "date": "2026-09-21 15:10 BST",
-      "agent": "Claude",
-      "summary": "Everything that doesn't move you within your set now opens at the side on a wide desktop: dictionary, synonyms, conjugation and card data dock beside the card, and session sheets stay open while you study.",
-      "detail": [
-        "Right side, about this card: dictionary, synonyms, conjugation, card data, lyric breakdown, rarer-sense knowledge and word search. One at a time; opening one closes the other.",
-        "Right-side panels close when the card changes or flips to its front, because what they show gives the answer away.",
-        "Left side, about the session: saved words, progress, shortcuts and help. One at a time, and they stay open while you flip, grade and move between cards; the card is no longer blocked behind them.",
-        "Conjugation docks beside the card instead of taking over the screen; narrower windows and phones keep the full-screen table.",
-        "Escape now closes the nearest open panel instead of leaving the set.",
-        "Leaving the study view closes anything docked in it.",
-        "Rarer uses is unchanged: it moves you onto a temporary card, so it is not a side panel.",
-        "New module js/side-dock.js holds the rule, so the individual panels only call into it."
       ],
       "commit": "pending"
     },
@@ -806,20 +818,6 @@
       ]
     },
     {
-      "timestamp": "2026-09-20T21:05:00+01:00",
-      "date": "2026-09-20 21:05 BST",
-      "agent": "Claude",
-      "commit": "pending",
-      "summary": "Top bar reads as one line again, conjugation settings lead with what matters, and the language's colour is back as a trim",
-      "detail": [
-        "The language chip stacked the flag above the language name, which read as two unrelated controls. Flag and name now sit side by side on one row at every width.",
-        "Every icon in the main-page top bar is larger (50px target, 27px glyph; 46/25 on phones) — they were sitting at the 44px accessibility floor rather than a size chosen for legibility.",
-        "The 'Update ready' pill was clipped to 'Update rea' on every phone by a hardcoded 92px cap. It now gets its content and the language chip is the one that shortens.",
-        "Conjugation mode setup now opens on Verb type, How common, Tenses, Persons and Easy mode; Patterns, Repetition, Prompt and the data-provenance note are folded into Advanced settings, which summarises itself while closed.",
-        "The per-language colour is visible again as a trim on the language chip and a hairline under the top bar. The setup panel keeps its neutral accent, so switching to Spanish no longer threatens to turn every control flag-red. Dark flag colours (Czech, Portuguese, Italian) are lifted to a lightness floor so every language actually shows one."
-      ]
-    },
-    {
       "timestamp": "2026-09-20T21:27:48+01:00",
       "date": "2026-09-20 21:27 BST",
       "agent": "Codex",
@@ -844,6 +842,20 @@
       "commit": "pending"
     },
     {
+      "timestamp": "2026-09-20T21:05:00+01:00",
+      "date": "2026-09-20 21:05 BST",
+      "agent": "Claude",
+      "commit": "pending",
+      "summary": "Top bar reads as one line again, conjugation settings lead with what matters, and the language's colour is back as a trim",
+      "detail": [
+        "The language chip stacked the flag above the language name, which read as two unrelated controls. Flag and name now sit side by side on one row at every width.",
+        "Every icon in the main-page top bar is larger (50px target, 27px glyph; 46/25 on phones) — they were sitting at the 44px accessibility floor rather than a size chosen for legibility.",
+        "The 'Update ready' pill was clipped to 'Update rea' on every phone by a hardcoded 92px cap. It now gets its content and the language chip is the one that shortens.",
+        "Conjugation mode setup now opens on Verb type, How common, Tenses, Persons and Easy mode; Patterns, Repetition, Prompt and the data-provenance note are folded into Advanced settings, which summarises itself while closed.",
+        "The per-language colour is visible again as a trim on the language chip and a hairline under the top bar. The setup panel keeps its neutral accent, so switching to Spanish no longer threatens to turn every control flag-red. Dark flag colours (Czech, Portuguese, Italian) are lifted to a lightness floor so every language actually shows one."
+      ]
+    },
+    {
       "timestamp": "2026-09-20T19:20:00+01:00",
       "date": "2026-09-20 19:20 BST",
       "agent": "Claude",
@@ -853,31 +865,6 @@
         "The rarer-senses list inherited touch-action: none from the card (set there so a drag grades the card), which disabled the browser's own scrolling and left the scrollbar as the only way to move the list. Vertical drags are handed back to the browser and the scrollbar is hidden.",
         "The lemma line under the word appeared for one sense and vanished for the next, shunting the surface form up and down the card. The slot is now held open for any card whose senses disagree about the citation form, so only the lemma changes.",
         "Sense metadata pills had a 9px floor in a muted colour — 'indicating time' on en was effectively illegible. Minimum type is now 10px (11px undense) and the grammar tier carries real contrast."
-      ]
-    },
-    {
-      "timestamp": "2026-09-20T18:05:00+01:00",
-      "date": "2026-09-20 18:05 BST",
-      "agent": "Antigravity (GLASS)",
-      "commit": "pending",
-      "summary": "10,000-card V15 speech releases deployed for Spanish, Portuguese, and Czech",
-      "detail": [
-        "Composed, validated, and activated full 10,000-card Speech decks (es-speech-v15-10000x10, pt-speech-v15-10000x10, cs-speech-v15-10000x10) from KILN 2's published Stage 04 assignments.",
-        "Every deck is sharded into 500 study sets with 100% valid meanings across all sets, preserving SENTENCE_FLOW ticks with canonical examples and multi-word expression routing."
-      ]
-    },
-    {
-      "timestamp": "2026-09-20T17:42:00+01:00",
-      "date": "2026-09-20 17:42 BST",
-      "agent": "Claude",
-      "commit": "pending",
-      "summary": "The tutorial card gets its colour back, stops cutting off senses, and sizes itself to what it is showing",
-      "detail": [
-        "The card was grey because the replica used the live card's colour rules but never set the variable that feeds them. Part-of-speech colour is back: the sense group is tinted and edged in its colour, the selected sense is outlined and ticked in it, the prominence bars carry it, and the word you are studying is picked out and underlined in it inside the example, the way it is on a real card.",
-        "Sense rows were being cut off. The Portuguese card lost a whole sense and the grammar pills under the selected one. The card now measures what it is showing and takes the height it needs, instead of a fixed height that was too short for the dense cards and too tall for the sparse ones.",
-        "On a phone the densest cards want more height than the screen has, so the guided tour scrolls whatever it is explaining into view rather than leaving it hidden.",
-        "The rank and the frequency now sit at opposite ends of the foot of the card, as they do when you are studying, and read Vocabulary rank: 1 / 6,000 and Frequency: 33,170/million, the real figures from the Spanish deck.",
-        "More space between the header, the senses and the example, and a little more inset from the card edge, so borders are not running into each other."
       ]
     },
     {
@@ -910,6 +897,17 @@
     {
       "timestamp": "2026-09-20T18:05:00+01:00",
       "date": "2026-09-20 18:05 BST",
+      "agent": "Antigravity (GLASS)",
+      "commit": "pending",
+      "summary": "10,000-card V15 speech releases deployed for Spanish, Portuguese, and Czech",
+      "detail": [
+        "Composed, validated, and activated full 10,000-card Speech decks (es-speech-v15-10000x10, pt-speech-v15-10000x10, cs-speech-v15-10000x10) from KILN 2's published Stage 04 assignments.",
+        "Every deck is sharded into 500 study sets with 100% valid meanings across all sets, preserving SENTENCE_FLOW ticks with canonical examples and multi-word expression routing."
+      ]
+    },
+    {
+      "timestamp": "2026-09-20T18:05:00+01:00",
+      "date": "2026-09-20 18:05 BST",
       "agent": "Claude",
       "commit": "pending",
       "summary": "Conjugation mode: the pronoun sits above the verb, answers are read out loud, endings are coloured, and the fonts now match the cards",
@@ -919,6 +917,20 @@
         "The ending is coloured and the stem is dimmed, on the cards and in the tables. tengo and tienes carry the stem-change colour on -o and -es while tenemos and tenéis carry the regular colour on -emos and -éis, so what changes and what does not is visible at a glance.",
         "The colouring is only applied where the split is honest. Compound tenses, off-model forms like voy, and anything whose ending the model could not identify are left whole rather than split at a guessed boundary.",
         "The page now uses the app's three fonts — DM Sans for prose, Space Grotesk for the words being learned, JetBrains Mono for figures — instead of the system stack."
+      ]
+    },
+    {
+      "timestamp": "2026-09-20T17:42:00+01:00",
+      "date": "2026-09-20 17:42 BST",
+      "agent": "Claude",
+      "commit": "pending",
+      "summary": "The tutorial card gets its colour back, stops cutting off senses, and sizes itself to what it is showing",
+      "detail": [
+        "The card was grey because the replica used the live card's colour rules but never set the variable that feeds them. Part-of-speech colour is back: the sense group is tinted and edged in its colour, the selected sense is outlined and ticked in it, the prominence bars carry it, and the word you are studying is picked out and underlined in it inside the example, the way it is on a real card.",
+        "Sense rows were being cut off. The Portuguese card lost a whole sense and the grammar pills under the selected one. The card now measures what it is showing and takes the height it needs, instead of a fixed height that was too short for the dense cards and too tall for the sparse ones.",
+        "On a phone the densest cards want more height than the screen has, so the guided tour scrolls whatever it is explaining into view rather than leaving it hidden.",
+        "The rank and the frequency now sit at opposite ends of the foot of the card, as they do when you are studying, and read Vocabulary rank: 1 / 6,000 and Frequency: 33,170/million, the real figures from the Spanish deck.",
+        "More space between the header, the senses and the example, and a little more inset from the card edge, so borders are not running into each other."
       ]
     },
     {
@@ -936,6 +948,16 @@
       ]
     },
     {
+      "timestamp": "2026-09-20T17:02:00+01:00",
+      "date": "2026-09-20 17:02 BST",
+      "agent": "Claude",
+      "commit": "pending",
+      "summary": "Conjugation mode: the off-model pattern no longer calls itself one-offs while listing the verbs that share it",
+      "detail": [
+        "Forms whose ending does not match the model at all were labelled no shared pattern, one-offs, and then immediately listed three other verbs that behave the same way. They are off the model, not one-offs, and the chip now says so."
+      ]
+    },
+    {
       "timestamp": "2026-09-20T16:57:35+01:00",
       "date": "2026-09-20 16:57 BST",
       "agent": "Codex",
@@ -946,16 +968,6 @@
         "Merged-lemma cards now sum those source-listed form frequencies for their front-of-card figure; harvested example sentences no longer supply a misleading per-million number.",
         "Spanish and French use per-million rates. Portuguese and Czech show source-list occurrence counts because those published lists do not provide a per-million denominator.",
         "On wide desktop screens, Find a word, lyric breakdown, and card knowledge open to the right of the visible card; smaller screens keep the existing sheet layout."
-      ]
-    },
-    {
-      "timestamp": "2026-09-20T17:02:00+01:00",
-      "date": "2026-09-20 17:02 BST",
-      "agent": "Claude",
-      "commit": "pending",
-      "summary": "Conjugation mode: the off-model pattern no longer calls itself one-offs while listing the verbs that share it",
-      "detail": [
-        "Forms whose ending does not match the model at all were labelled no shared pattern, one-offs, and then immediately listed three other verbs that behave the same way. They are off the model, not one-offs, and the chip now says so."
       ]
     },
     {
@@ -1189,18 +1201,6 @@
       ]
     },
     {
-      "timestamp": "2026-09-19T14:14:52+01:00",
-      "date": "2026-09-19 14:14 BST",
-      "agent": "Cursor",
-      "commit": "pending",
-      "summary": "Keep the coloured POS pill as the icon, drop italics, and put a small quiet lemma chip beside the back headword",
-      "detail": [
-        "Front capsule again uses the real POS pill on the left, with the lemma as a roman label on the right.",
-        "Back title is the large surface plus a compact lemma chip — no filled green capsule and no extra vertical bulk.",
-        "Lemma text is no longer italic on either face."
-      ]
-    },
-    {
       "timestamp": "2026-09-19T13:33:56+01:00",
       "date": "2026-09-19 13:33 BST",
       "agent": "Cursor",
@@ -1283,38 +1283,6 @@
       "summary": "Deploy CS V12 deck (cs-speech-v12-4000x10)",
       "detail": [
         "4,000 cards with 10 display examples using WSD v12-1 with difficulty stratification and tail gating."
-      ]
-    },
-    {
-      "date": "2026-09-15",
-      "commit": "pending",
-      "summary": "Deploy ES V12 deck (es-speech-v12-6000x10)",
-      "detail": [
-        "6,000 cards with 10 display examples using WSD v12-1 with difficulty stratification and tail gating."
-      ]
-    },
-    {
-      "date": "2026-09-15",
-      "commit": "pending",
-      "summary": "Deploy PT V12 deck (pt-speech-v12-6000x10)",
-      "detail": [
-        "6,000 cards with 10 display examples using WSD v12-1 with difficulty stratification and tail gating."
-      ]
-    },
-    {
-      "date": "2026-09-15",
-      "commit": "pending",
-      "summary": "Deploy PT V12 deck (pt-speech-v12-6000x10)",
-      "detail": [
-        "6,000 cards with 10 display examples using WSD v12-1 with difficulty stratification and tail gating."
-      ]
-    },
-    {
-      "date": "2026-09-15",
-      "commit": "pending",
-      "summary": "Deploy PT V12 deck (pt-speech-v12-6000x10)",
-      "detail": [
-        "6,000 cards with 10 display examples using WSD v12-1 with difficulty stratification and tail gating."
       ]
     },
     {

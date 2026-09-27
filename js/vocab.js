@@ -1,11 +1,11 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=2b37b0f8';
-import { validateVocabularyIndex } from './data-contracts.js?v=2b37b0f8';
-import { formatRoute } from './routes.js?v=2b37b0f8';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=2b37b0f8';
-import { releaseUrl } from './release-host.js?v=2b37b0f8';
+import './state.js?v=526eecbd';
+import { validateVocabularyIndex } from './data-contracts.js?v=526eecbd';
+import { formatRoute } from './routes.js?v=526eecbd';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=526eecbd';
+import { releaseUrl } from './release-host.js?v=526eecbd';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -957,7 +957,11 @@ function poolLemmaSiblingExamples(filteredData, allVocabData, examplesData) {
             const sibExamples = examplesForMeaning(sib, sm, i, examplesData);
             if (sibExamples.length === 0) continue;
 
-            const target = host.meanings.find(hm => normalize(hm.translation) === normalize(sm.translation))
+            // Match on the sense itself first. Each form's gloss is inflected
+            // for that form (despeja "clear!", despejas "you clear"), so the
+            // same sense no longer shares its translation text across forms.
+            const target = (sm.sense_id && host.meanings.find(hm => hm.sense_id === sm.sense_id))
+                || host.meanings.find(hm => normalize(hm.translation) === normalize(sm.translation))
                 || host.meanings[0];
             if (!target) continue;
             if (!target.examples) target.examples = [];
@@ -973,7 +977,10 @@ function poolLemmaSiblingExamples(filteredData, allVocabData, examplesData) {
                     // its pooled example. Merged cards can then present the
                     // evidenced form (dieron) while retaining the shared
                     // lemma (dar) as their stable identity.
-                    pooledMorphology: e.pooledMorphology || sib.morphology || null
+                    pooledMorphology: e.pooledMorphology || sib.morphology || null,
+                    // The sibling form's own gloss, shown while this example
+                    // is the active one (flashcards.js applyPooledExampleGloss).
+                    pooledTranslation: e.pooledTranslation || sm.translation || null
                 });
             }
         }
