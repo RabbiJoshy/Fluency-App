@@ -66,7 +66,7 @@ service-worker scope change; only the path prefix moves.
 
 - **Holds only what config references, plus one rollback per mode.** A
   publish prunes the rest in the same commit.
-- **One commit, force-pushed.** These repositories hold generated output; the
+- **One commit on `gh-pages`, force-pushed.** These repositories hold generated output; the
   workspace is the source of truth (UI_WORK_ORDERS rule 6). Publishing replaces
   the branch with a single commit of the current tree, so the repository stays
   the size of the site. This is the one place force-pushing is the convention.
@@ -75,19 +75,19 @@ service-worker scope change; only the path prefix moves.
 
 ## Work
 
-Steps 1 and 5 need Josh (repository creation and Pages settings; the Claude
-GitHub App is not installed for `Fluency-Releases`, so a session cannot push
-there today).
+Step 1 needs Josh: a session cannot create repositories. Everything else a
+session can do.
 
 1. **Create the repositories** `Fluency-Releases-{es,pt,cs,fi,fr,lyrics}`
-   (public, empty) and turn on Pages for each (Settings → Pages → Deploy from
-   branch → `main` / root). Install the Claude GitHub App on them if cloud
-   sessions should publish.
+   (public). *Done 2026-09-27 for es, pt, cs, fr and lyrics; `-fi` does not
+   exist yet.* Each publishes from a `gh-pages` branch: pushing that branch
+   turned Pages on without a settings change, and a session can do it. A
+   README on `main` (fr, lyrics) is harmless and unused.
 2. **`scripts/publish_release.py --segment es --release-dir <workspace path>`**:
    sparse-clone the segment's repository, copy the release in, prune releases
    no longer referenced by `app/config/config.json` or `app/config/artists.json`
    (keeping one rollback per mode), write a single commit, force-push, then wait
-   for the Pages build. Replace the hard-coded `/private/tmp/fluency-releases`
+   for the Pages build. Push to `gh-pages`, never `main`. Replace the hard-coded `/private/tmp/fluency-releases`
    in `scripts/run_v12_production.py` and `scripts/mend_local.py` with it.
 3. **Seed the new repositories** from the current `Fluency-Releases` tree, keeping
    only referenced releases: roughly es 357 MB, pt 346 MB, cs 280 MB,
