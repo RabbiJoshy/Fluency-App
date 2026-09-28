@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-28T14:40:12+01:00",
+      "date": "2026-09-28 14:40 BST",
+      "agent": "Claude",
+      "summary": "Word by word: each word is now the button, rows read part of speech · word · translation, and fixed expressions like 'por favor' show as one row.",
+      "detail": [
+        "The star and card icons are gone: tap a word for a quick look at its card, or, if it has no card, a popup offering to save it for export (Save / Cancel, or Remove if already saved).",
+        "Rows line up in three columns: the part-of-speech pill, the word, and the translation on one line, which shrinks for long glosses and then ends in an ellipsis.",
+        "Fixed, deterministic expressions (por favor, sin embargo, a lo mejor, …) are merged into a single Phrase row whose quick look shows the expression's own meaning and example."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-28T14:34:13+01:00",
       "date": "2026-09-28 14:34 BST",
       "agent": "Claude",
