@@ -83,6 +83,7 @@ function buildEstimationWordList() {
         !item.is_propernoun &&
         !item.is_english &&
         !isFunctionWord(item) &&
+        (item._indexRowsPending === true || ESTIMATION_CONTENT_POS.has(mainSensePos(item))) &&
         (!hideSingleOccurrence || !item.hasOwnProperty('corpus_count') || item.corpus_count > 1)
     );
 
@@ -106,10 +107,25 @@ function isFunctionWord(item) {
     return globalThis.isGrammarParticleItem?.(item) === true;
 }
 
+// Only content words measure vocabulary size. A word is tested when its main
+// sense (the most frequent, else the first) is one of these; pronouns,
+// clitics, articles, prepositions, conjunctions, auxiliaries, numbers,
+// interjections, names, contractions and phrases are all skipped.
+const ESTIMATION_CONTENT_POS = new Set(['NOUN', 'VERB', 'ADJ', 'ADV']);
+
+function mainSensePos(word) {
+    const meanings = (word?.meanings || []).filter(m => m?.translation && String(m.translation).trim());
+    if (!meanings.length) return '';
+    const share = m => parseFloat(m.display_frequency ?? m.frequency ?? m.percentage) || 0;
+    const main = meanings.reduce((best, m) => (share(m) > share(best) ? m : best), meanings[0]);
+    return String(main.pos || '').toUpperCase();
+}
+
 // A candidate is ready once its meanings are loaded and it still qualifies.
 function isShowableWord(word) {
     return word && word._indexRowsPending !== true
-        && hasTranslatedMeaning(word) && !isFunctionWord(word);
+        && hasTranslatedMeaning(word) && !isFunctionWord(word)
+        && ESTIMATION_CONTENT_POS.has(mainSensePos(word));
 }
 
 async function hydrateEstimationWord(word) {

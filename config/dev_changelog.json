@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-29T09:20:00+01:00",
+      "date": "2026-09-29 09:20 BST",
+      "agent": "Claude",
+      "summary": "The level check only tests content words: nouns, verbs, adjectives and adverbs.",
+      "detail": [
+        "A word is tested only when its main sense (the most frequent one) is a noun, verb, adjective or adverb.",
+        "Skipped: pronouns, clitics, articles, prepositions, conjunctions, auxiliaries, numbers, interjections, names, contractions, phrases and unclassified words. For example, como (mainly 'as') and nada (mainly 'nothing') are skipped, while bobo and bien are tested."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-28T23:49:00+01:00",
       "date": "2026-09-28 23:49 BST",
       "agent": "Claude",
