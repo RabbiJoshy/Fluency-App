@@ -1,26 +1,26 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=3bdda143';
-import './speech.js?v=3bdda143';
-import { goToRoute, routeCodeFor } from './routes.js?v=3bdda143';
-import './side-dock.js?v=3bdda143';
+import './state.js?v=d71b8f63';
+import './speech.js?v=d71b8f63';
+import { goToRoute, routeCodeFor } from './routes.js?v=d71b8f63';
+import './side-dock.js?v=d71b8f63';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=3bdda143';
+} from './example-personalisation.js?v=d71b8f63';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=3bdda143';
+} from './spanishdict-usage.js?v=d71b8f63';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=3bdda143';
+} from './reverse-cues.js?v=d71b8f63';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -48,7 +48,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=3bdda143';
+} from './card-metadata-pills.js?v=d71b8f63';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -9501,6 +9501,8 @@ window.updateSpeakIcons = updateSpeakIcons;
 window.getPosColorClass = getPosColorClass;
 window.getPosAccentRgb = getPosAccentRgb;
 window.posDisplayName = posDisplayName;
+// Word by word glosses a sentence with the same inflected English as the sense rows.
+window.getProductionEnglishCue = getProductionEnglishCue;
 window.updateReverseButton = updateReverseButton;
 window.updateStats = updateStats;
 window.dedupeExamples = dedupeExamples;
@@ -9621,8 +9623,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '3bdda143';
-const MODALS_ASSET_VERSION = '3bdda143';
+const ASSET_VERSION = 'd71b8f63';
+const MODALS_ASSET_VERSION = 'd71b8f63';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

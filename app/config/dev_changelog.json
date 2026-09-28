@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-28T18:27:44+01:00",
+      "date": "2026-09-28 18:27 BST",
+      "agent": "Claude",
+      "summary": "Word by word translations are inflected like the sense rows: tengo reads \"I have\", quiere \"she wants\", not the dictionary infinitive.",
+      "detail": [
+        "Each row and each meaning in the quick look uses the same inflected-English code as the card's sense rows.",
+        "Word by word now loads the conjugation tables itself if Speech setup has not yet, instead of falling back to \"to have\"."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-28T14:40:12+01:00",
       "date": "2026-09-28 14:40 BST",
       "agent": "Claude",
