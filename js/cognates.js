@@ -19,7 +19,7 @@
 //
 // The old scalar still works. Where a release predates this, `cognate_score`
 // is read as the English entry, so Spanish is untouched.
-import './state.js?v=0714de0d';
+import './state.js?v=ed04835f';
 
 const SELECTED_KEY = 'fluency_known_languages_v1';
 
@@ -60,6 +60,16 @@ let cognateSchema = 'cognate-score/v1';
 // revisions differ only by carrying `matches`, so the shape tests read the
 // route, never the exact string.
 const isLemmaRouted = schema => String(schema).startsWith('cognate-score/v2');
+// v3 is per sense: surface -> headword -> English word -> closeness. A card is
+// set aside only when every sense it shows is a free cognate, so the verdict
+// is computed from the card's own meanings rather than shipped as one number.
+const isSenseRouted = schema => String(schema).startsWith('cognate-score/v3');
+// Languages the v3 map speaks for (English: the known word is the gloss
+// itself). Any other known language travels in the file's carried v2 block.
+let senseLanguages = [];
+let carriedScores = null;
+// surface -> [closeness, word] for release cards, decided before their senses load.
+let cognateCards = null;
 // The language the loaded map was built for. Scores are keyed by bare surface,
 // which several languages share, so the map must never outlive its language.
 let cognateLanguage = null;
@@ -157,10 +167,86 @@ function hasCardLookalikeGloss(item) {
     return false;
 }
 
+const GLOSS_PARENTHETICAL = /\([^)]*\)/g;
+const GLOSS_LEADING = /^(?:to|the|a|an)\s+/;
+
+function normalHeadword(value) {
+    return String(value || '').normalize('NFC').trim().toLocaleLowerCase();
+}
+
+// The English words one sense offers, the way the map was built: its
+// translation split on commas and semicolons, single words only.
+function senseAlternatives(translation) {
+    const out = new Set();
+    for (const part of String(translation || '').replace(GLOSS_PARENTHETICAL, ' ').split(/[,;]/)) {
+        const text = part.toLocaleLowerCase().replace(/[^a-z' ]+/g, ' ').replace(/\s+/g, ' ').trim()
+            .replace(GLOSS_LEADING, '');
+        if (text && !text.includes(' ')) out.add(text);
+    }
+    return out;
+}
+
+// How freely one shown sense comes: its best cognate's closeness, or 0 when it
+// has none. An expression is never free -- the card is worth studying for it.
+function senseCognate(item, meaning) {
+    if (globalThis.isExpressionSenseForLemma?.(meaning, item)) return { score: 0, word: null };
+    const map = item.cognate_sense_map || {};
+    const headword = normalHeadword(meaning?.headword);
+    // A sense from an older release names no headword; any lemma the surface
+    // has may answer for it.
+    const buckets = headword ? [map[headword], map['']] : Object.values(map);
+    let best = { score: 0, word: null };
+    for (const word of senseAlternatives(meaning?.translation || meaning?.meaning)) {
+        for (const bucket of buckets) {
+            const score = Number(bucket?.[word] || 0);
+            if (score > best.score) best = { score, word };
+        }
+    }
+    return best;
+}
+
+// The card's closeness is its WEAKEST shown sense: one sense that is not a
+// cognate keeps the whole card. Null when the card shows no sense yet (index
+// rows still loading), which must never read as "free".
+function cardSenseCognate(item) {
+    const meanings = (item?.meanings || []).filter(meaning =>
+        String(meaning?.translation || meaning?.meaning || '').trim());
+    if (meanings.length === 0) {
+        // Senses not loaded yet (Speech set-up runs on the skinny index): the
+        // pipeline decided this card from the release's own senses, by this
+        // same rule (fluency.enrichments.card_rules.card_cognate).
+        const shipped = item?.cognate_card;
+        return shipped ? { score: Number(shipped[0]) || 0, word: shipped[1] || null } : null;
+    }
+    if (!item?.cognate_sense_map) return null;
+    let weakest = null;
+    for (const meaning of meanings) {
+        const verdict = senseCognate(item, meaning);
+        if (weakest === null || verdict.score < weakest.score) weakest = verdict;
+        if (weakest.score === 0) break;
+    }
+    return weakest;
+}
+
+// One language's score for a card, whichever route the file uses. Exposed so
+// display code (Fast Track's live example) never reads a stale field.
+function cognateScoreFor(item, code) {
+    if (!item) return 0;
+    if (senseLanguages.includes(code)) return Number(cardSenseCognate(item)?.score || 0);
+    return Number(item.cognate_scores?.[code] || 0);
+}
+
 // Does any language the learner reads already give them this word? Each is
 // asked separately, at its own cutoff.
 function isCognateKnown(item) {
     if (!item) return false;
+    if (item.cognate_sense_map || item.cognate_card) {
+        for (const code of activeKnownLanguages()) {
+            const cutoff = Number(cognateThresholds[code] ?? globalThis.cognateThreshold ?? 1);
+            if (cognateScoreFor(item, code) >= cutoff) return true;
+        }
+        return false;
+    }
     if (!hasCardLookalikeGloss(item)) return false;
     // Every source is asked, and any one of them saying yes is enough — the
     // same shape as the languages themselves. A language can hold both: Spanish
@@ -184,12 +270,11 @@ function isCognateKnown(item) {
 // Never used to decide anything, because comparing two scales would be
 // meaningless.
 function strongestKnownLanguage(item) {
-    const perLanguage = item && item.cognate_scores;
-    if (!perLanguage) return null;
+    if (!item || (!item.cognate_scores && !item.cognate_sense_map && !item.cognate_card)) return null;
     let bestCode = null;
     let best = -1;
     for (const code of activeKnownLanguages()) {
-        const score = Number(perLanguage[code] || 0);
+        const score = cognateScoreFor(item, code);
         if (score >= Number(cognateThresholds[code] ?? 1) && score > best) {
             best = score;
             bestCode = code;
@@ -205,6 +290,11 @@ function strongestKnownLanguage(item) {
 function matchedKnownWord(item) {
     const strongest = strongestKnownLanguage(item);
     if (!strongest) return null;
+    if (senseLanguages.includes(strongest.code)) {
+        // The weakest free sense is the one that decided, so it is named.
+        const word = cardSenseCognate(item)?.word;
+        return word ? { code: strongest.code, word: String(word) } : null;
+    }
     const word = item?.cognate_match_words?.[strongest.code];
     return word ? { code: strongest.code, word: String(word) } : null;
 }
@@ -218,6 +308,12 @@ function applyCognateScores(vocabularyData, languageCode) {
     if (languageCode && cognateLanguage && languageCode !== cognateLanguage) return;
     for (const item of vocabularyData) {
         const surface = String(item.word || '').toLowerCase();
+        if (isSenseRouted(cognateSchema)) {
+            item.cognate_sense_map = cognateScores[surface] || null;
+            item.cognate_card = cognateCards?.[surface] || null;
+            applyCarriedScores(item, surface);
+            continue;
+        }
         const entry = cognateScores[surface];
         if (!entry) continue;
         const matched = cognateMatches?.[surface];
@@ -243,6 +339,25 @@ function applyCognateScores(vocabularyData, languageCode) {
             item.cognate_scores = entry;
             if (matched) item.cognate_match_words = matched;
         }
+    }
+}
+
+// A v3 file speaks per sense for English only. Another known language (Czech
+// read by a Polish speaker) keeps its v2 lemma map, carried inside the file.
+function applyCarriedScores(item, surface) {
+    const entry = carriedScores?.scores?.[surface];
+    if (!entry) return;
+    item.cognate_lemma_scores = entry;
+    const best = bestPerLanguage(entry);
+    item.cognate_scores = best.scores;
+    const matched = carriedScores?.matches?.[surface];
+    if (matched) {
+        const words = {};
+        for (const [code, lemma] of Object.entries(best.lemmas)) {
+            const word = matched[lemma]?.[code];
+            if (word) words[code] = word;
+        }
+        if (Object.keys(words).length) item.cognate_match_words = words;
     }
 }
 
@@ -289,6 +404,9 @@ async function loadCognateScores(langConfig) {
     cognateThresholds = {};
     cognateLanguage = null;
     cognateSchema = 'cognate-score/v1';
+    senseLanguages = [];
+    carriedScores = null;
+    cognateCards = null;
     const path = langConfig && langConfig.cognatesPath;
     if (!path) return;
     try {
@@ -314,6 +432,15 @@ async function loadCognateScores(langConfig) {
         cognateThresholds = (payload.thresholds && typeof payload.thresholds === 'object')
             ? payload.thresholds
             : {};
+        if (isSenseRouted(cognateSchema)) {
+            senseLanguages = Array.isArray(payload.sense_languages)
+                ? payload.sense_languages.slice()
+                : ['en'];
+            carriedScores = (payload.carried && typeof payload.carried === 'object') ? payload.carried : null;
+            cognateCards = (payload.cards && typeof payload.cards === 'object') ? payload.cards : null;
+            cognateLanguages = [...senseLanguages, ...(carriedScores?.known_languages || [])];
+            cognateThresholds = { ...(carriedScores?.thresholds || {}), ...cognateThresholds };
+        }
     } catch (error) {
         // Absence is declared, not inferred: with no scores the picker stays
         // hidden and the deck keeps every word, rather than silently filtering
@@ -325,6 +452,9 @@ async function loadCognateScores(langConfig) {
         cognateThresholds = {};
         cognateLanguage = null;
         cognateSchema = 'cognate-score/v1';
+        senseLanguages = [];
+        carriedScores = null;
+        cognateCards = null;
     }
     renderKnownLanguagePicker();
 }
@@ -384,6 +514,7 @@ function cognateThresholdFor(code) {
 
 globalThis.cognateThresholdFor = cognateThresholdFor;
 globalThis.isCognateKnown = isCognateKnown;
+globalThis.cognateScoreFor = cognateScoreFor;
 globalThis.strongestKnownLanguage = strongestKnownLanguage;
 globalThis.matchedKnownWord = matchedKnownWord;
 globalThis.applyCognateScores = applyCognateScores;

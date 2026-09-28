@@ -86,6 +86,7 @@
       "shortCode": "ES",
       "speechLang": "es-ES",
       "cognatesPath": "cognates/es/cognates.json",
+      "mergeExceptionsPath": "data/merge-exceptions/es.json",
       "coveragePath": "coverage/es/coverage.json"
     },
     "swedish": {
@@ -276,6 +277,7 @@
       "releaseCompositionPath": "releases/fi/speech/fi-speech-v12-wsd-2000x10-20260927-r2/composition.json",
       "conjugationsPath": null,
       "cognatesPath": "cognates/fi/cognates.json",
+      "mergeExceptionsPath": "data/merge-exceptions/fi.json",
       "coveragePath": null,
       "exampleTargetField": "example_finnish",
       "exampleEnglishField": "example_english",
@@ -371,6 +373,7 @@
       "shortCode": "FR",
       "speechLang": "fr-FR",
       "cognatesPath": "cognates/fr/cognates.json",
+      "mergeExceptionsPath": "data/merge-exceptions/fr.json",
       "coveragePath": null
     },
     "russian": {
@@ -563,6 +566,7 @@
       "shortCode": "PT",
       "speechLang": "pt-PT",
       "cognatesPath": "cognates/pt/cognates.json",
+      "mergeExceptionsPath": "data/merge-exceptions/pt.json",
       "coveragePath": "coverage/pt/coverage.json"
     },
     "portuguese_brazilian": {
@@ -651,6 +655,7 @@
       "releaseManifestPath": "releases/cs/speech/cs-speech-v15-mend-10000x10/manifest.json",
       "releaseCompositionPath": "releases/cs/speech/cs-speech-v15-mend-10000x10/composition.json",
       "cognatesPath": "cognates/cs/cognates.json",
+      "mergeExceptionsPath": "data/merge-exceptions/cs.json",
       "coveragePath": "coverage/cs/coverage.json"
     }
   },

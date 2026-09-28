@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-28T20:34:00+01:00",
+      "date": "2026-09-28 20:34 BST",
+      "agent": "Claude",
+      "summary": "Merge Lemmas and Exclude Cognates now keep the words that matter: cognates are set aside only when every meaning on the card is one.",
+      "detail": [
+        "Merge Lemmas keeps a form on its own card when it names two headwords (fue), is a contraction (pt no, disso; fr au), or shows an expression built on that exact form (no sé, muchas gracias). Merged cards are fronted by the lemma's own spelling (estar, not estaba).",
+        "These rules now apply before a Speech set is opened: each card's decision is computed from its full meanings and shipped, instead of the bare lemma column that folded fue into ser.",
+        "Exclude Cognates is per meaning: a card is set aside only if every meaning it shows is a close-looking cognate (CogNet where it has the word) and no meaning is an expression. Spanish top 300 now sets aside tres, idea, familia; French and Dutch no longer set aside false friends like nous, heel or bang.",
+        "New cognate maps for es, pt, cs, fr, nl and fi ship with the app; Czech keeps its Polish scores.",
+        "The look-alike scorer is now plain edit distance (provisional, decision 0027); the rules are decision 0028."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-28T19:24:00+01:00",
       "date": "2026-09-28 19:24 BST",
       "agent": "Codex",

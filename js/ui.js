@@ -1,7 +1,7 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=0714de0d';
-import { readFastTrack } from './fast-track-preferences.js?v=0714de0d';
+import './state.js?v=ed04835f';
+import { readFastTrack } from './fast-track-preferences.js?v=ed04835f';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -2311,6 +2311,7 @@ async function updateCognateToggleVisibility() {
             cognateFieldAvailable = vocabData.some(item =>
                 (item.cognate_score > 0)
                 || item.cognate_scores
+                || item.cognate_sense_map
                 || item.cognet_cognate
                 || item.is_transparent_cognate
             );
@@ -3259,7 +3260,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=0714de0d')
+        import('./spotify.js?v=ed04835f')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

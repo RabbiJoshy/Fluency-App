@@ -1,11 +1,11 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=0714de0d';
-import { validateVocabularyIndex } from './data-contracts.js?v=0714de0d';
-import { formatRoute } from './routes.js?v=0714de0d';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=0714de0d';
-import { releaseUrl } from './release-host.js?v=0714de0d';
+import './state.js?v=ed04835f';
+import { validateVocabularyIndex } from './data-contracts.js?v=ed04835f';
+import { formatRoute } from './routes.js?v=ed04835f';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=ed04835f';
+import { releaseUrl } from './release-host.js?v=ed04835f';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -827,6 +827,16 @@ function mergeArtistExtraSupport(item, splitExamples) {
 // that lemma only when every non-expression sense names that one headword.
 // Casó joins casar. Casado does not: it also names casado, so it stays its own
 // card, and a yes there does not clear casó.
+//
+// Two more things keep a spelling on its own card, both read from the data:
+//   - it is a contraction (SpanishDict's CONTRACTION part of speech, or the
+//     language's Wiktionary contraction list, stamped as is_contraction):
+//     pt "no" is em + o, not a form of em;
+//   - it shows an expression built on this exact form, and the form is not
+//     the lemma's own spelling: "no sé" keeps sé, "muchas gracias" keeps
+//     muchas, while "tener cuidado" on tener or "por favor" on favor do not.
+// Vocabulary cards teach meanings; conjugation mode teaches forms, so an
+// irregular form is not, by itself, a reason to stay separate.
 function normalizeLemmaToken(value) {
     return String(value || '').normalize('NFC').toLocaleLowerCase('es').trim();
 }
@@ -863,6 +873,30 @@ function lemmaHeadwordsOf(item) {
     return headwords;
 }
 
+function isContractionForLemma(item) {
+    if (item?.is_contraction) return true;
+    return (item?.meanings || []).some(meaning =>
+        String(meaning?.pos || meaning?.part_of_speech || '').toUpperCase() === 'CONTRACTION');
+}
+
+function expressionTokens(value) {
+    return normalizeLemmaToken(value).split(/[^\p{L}\p{M}'’]+/u).filter(Boolean);
+}
+
+// An expression frozen on this very spelling. The lemma's own spelling never
+// counts: a construction headed by the lemma (tener cuidado, dejar de) belongs
+// on the merged card as one of its senses, and argues for no form in particular.
+function hasFrozenFormExpression(item, lemma) {
+    const surface = normalizeLemmaToken(item?.word || item?.targetWord);
+    if (!surface || surface === lemma) return false;
+    return (item?.meanings || []).some(meaning => {
+        if (!isExpressionSenseForLemma(meaning, item)) return false;
+        const phrase = meaning.headword || meaning.expression || '';
+        const tokens = expressionTokens(phrase);
+        return tokens.length > 1 && tokens.includes(surface);
+    });
+}
+
 function lemmaGroupKey(item) {
     // Derived, not shipped. Identity stays the surface card. This key only
     // decides which unambiguous spellings share a merged card.
@@ -872,7 +906,15 @@ function lemmaGroupKey(item) {
     // shipped lemma or a yes on casado would clear casó.
     const headwords = lemmaHeadwordsOf(item);
     if (headwords.length > 1) return '';
-    return headwords[0] || normalizeLemmaToken(item?.lemma);
+    // A Speech card whose senses have not loaded yet carries the key the
+    // pipeline computed from those same senses by this same rule
+    // (fluency.enrichments.card_rules); without it only the shipped lemma
+    // column would be left, and fue would fold into ser.
+    if (headwords.length === 0 && typeof item?.merge_key === 'string') return item.merge_key;
+    const lemma = headwords[0] || normalizeLemmaToken(item?.lemma);
+    if (!lemma) return '';
+    if (isContractionForLemma(item) || hasFrozenFormExpression(item, lemma)) return '';
+    return lemma;
 }
 
 function lemmaSeenKey(item) {
@@ -901,6 +943,9 @@ function dedupeLemmaMenu(meanings) {
     return kept;
 }
 // /lemma-merge-pure
+// Cognate mode asks the same question per sense: an expression is never a
+// free cognate, so it reads the one definition of "expression" there is.
+globalThis.isExpressionSenseForLemma = isExpressionSenseForLemma;
 
 function computeLemmaExampleCounts(vocabData, examplesData) {
     const linesByLemma = new Map();
@@ -1535,7 +1580,45 @@ async function fetchActiveVocabularyData(langConfig) {
         _coverageLoadedFor = coveragePath;
         await globalThis.loadCoverage?.(langConfig);
     }
+    await stampContractions(vocabulary, langConfig);
     return vocabulary;
+}
+
+// A small per-language file carries what Merge Lemmas cannot read from a card
+// whose senses have not loaded: the Wiktionary contractions (pt no = em + o),
+// and each release card's merge key, computed from its full senses. A language
+// without one keeps the old behaviour; stamps are cleared, never carried over
+// from the previous language.
+let _mergeExceptionsFor;
+let _contractionSurfaces = null;
+let _mergeKeys = null;
+
+async function stampContractions(vocabulary, langConfig) {
+    const path = langConfig?.mergeExceptionsPath || null;
+    if (_mergeExceptionsFor !== path) {
+        _mergeExceptionsFor = path;
+        _contractionSurfaces = null;
+        _mergeKeys = null;
+        if (path) {
+            try {
+                const response = await fetch(path);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const payload = await response.json();
+                _contractionSurfaces = new Set((payload?.contractions || []).map(normalizeLemmaToken));
+                _mergeKeys = (payload?.keys && typeof payload.keys === 'object') ? payload.keys : null;
+            } catch (error) {
+                console.warn('Merge exceptions unavailable:', error);
+            }
+        }
+    }
+    if (!Array.isArray(vocabulary)) return;
+    for (const item of vocabulary) {
+        const surface = normalizeLemmaToken(item?.word);
+        item.is_contraction = Boolean(_contractionSurfaces?.has(surface));
+        const key = _mergeKeys?.[surface];
+        if (typeof key === 'string') item.merge_key = key;
+        else delete item.merge_key;
+    }
 }
 
 async function fetchActiveVocabularyIndex(langConfig) {
@@ -1817,6 +1900,15 @@ function selectLemmaModeRepresentatives(items) {
             continue;
         }
         const previous = representativeByLemma.get(lemmaKey);
+        // The lemma's own spelling fronts the merged card whenever it is in
+        // the deck (estar, not estaba), so the face does not move when a rule
+        // keeps some other form apart.
+        const itemIsLemma = normalizeLemmaToken(item.word) === lemmaKey;
+        const previousIsLemma = previous ? normalizeLemmaToken(previous.word) === lemmaKey : false;
+        if (previous && itemIsLemma !== previousIsLemma) {
+            if (itemIsLemma) representativeByLemma.set(lemmaKey, item);
+            continue;
+        }
         const itemStable = Number.isFinite(item.stableRank) ? item.stableRank : Infinity;
         const previousStable = Number.isFinite(previous?.stableRank) ? previous.stableRank : Infinity;
         const itemRank = Number.isFinite(item.rank) ? item.rank : Infinity;
@@ -1960,7 +2052,7 @@ function buildFilteredVocab(vocabData) {
 
     if (!cognateFieldAvailable && Array.isArray(vocabData)) {
         cognateFieldAvailable = vocabData.some(item =>
-            (item.cognate_score > 0) || item.cognate_scores || item.cognet_cognate || item.is_transparent_cognate
+            (item.cognate_score > 0) || item.cognate_scores || item.cognate_sense_map || item.cognet_cognate || item.is_transparent_cognate
         );
     }
     if (!lemmaFieldAvailable && Array.isArray(vocabData)) {
@@ -2269,7 +2361,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
         // unavailable on every deck the current pipeline builds.
         lemmaFieldAvailable = vocabularyData.some(item => lemmaGroupKey(item));
         cognateFieldAvailable = vocabularyData.some(item =>
-            (item.cognate_score > 0) || item.cognate_scores || item.cognet_cognate || item.is_transparent_cognate
+            (item.cognate_score > 0) || item.cognate_scores || item.cognate_sense_map || item.cognet_cognate || item.is_transparent_cognate
         );
         if (useLemmaMode) await ensureLemmaPoolingData(langConfig);
         cachedVocabularyData = vocabularyData;

@@ -16,8 +16,8 @@
 // Applies to Speech and Lyrics alike. A language whose release supports only one
 // of the two parts still gets fast mode — it just moves the part it has, and the
 // page says which part is missing.
-import './state.js?v=0714de0d';
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=0714de0d';
+import './state.js?v=ed04835f';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=ed04835f';
 
 let applyingMasterSwitch = false;
 let returnToSettings = false;
@@ -321,7 +321,9 @@ function liveCognateExample(code) {
     if (!Array.isArray(vocab) || !Number.isFinite(cutoff)) return null;
     let best = null;
     for (const item of vocab) {
-        const score = Number(item?.cognate_scores?.[code] || 0);
+        const score = globalThis.cognateScoreFor
+            ? globalThis.cognateScoreFor(item, code)
+            : Number(item?.cognate_scores?.[code] || 0);
         if (score < cutoff) continue;
         if (best === null || (item.rank ?? Infinity) < (best.rank ?? Infinity)) best = item;
     }
