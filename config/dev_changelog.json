@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-28T14:34:13+01:00",
+      "date": "2026-09-28 14:34 BST",
+      "agent": "Claude",
+      "summary": "Word by word's open-card icon is now a single tilted flashcard instead of two stacked pages that read as 'copy'.",
+      "detail": [
+        "The icon shows one card, slightly tilted, with a word on it; upright variants read as a keyboard or a credit card at this size."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-28T14:26:40+01:00",
       "date": "2026-09-28 14:26 BST",
       "agent": "Claude",
