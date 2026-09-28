@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-28T14:02:15+01:00",
+      "date": "2026-09-28 14:02 BST",
+      "agent": "Codex",
+      "summary": "Back-of-card meanings now use shorter learner-facing context and avoid repeating open section summaries.",
+      "detail": [
+        "Long or duplicated dictionary explanations are reduced to the shortest useful distinction, with the full note kept behind the ellipsis control.",
+        "Repeated glosses use compact labels such as general use, a bit of, and quite a/the, while indistinguishable display rows share their examples.",
+        "Open part-of-speech sections no longer repeat the glosses directly underneath them; collapsed sections retain their summaries.",
+        "Unassigned dictionary cycles are labelled Possible meanings and retain every candidate in source order."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-28T00:37:00+01:00",
       "date": "2026-09-28 00:37 BST",
       "agent": "Claude",

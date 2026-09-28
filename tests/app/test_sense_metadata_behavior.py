@@ -21,7 +21,7 @@ const show=(c,index=0,active=false)=>{
  const gloss=ui.projectWiktionaryGloss(meaning,meaning.translation).display;
  const options={gloss,peerMeanings:ui.senseMetadataPeers(meaning,c.meanings,gloss),cardMeanings:c.meanings,senseCount:c.meanings.length,allowInactivePrimary:true};
  const presentation=ui.learnerSensePresentation(meaning,active,options);
- return {gloss,context:presentation.residualContext,
+ return {gloss,context:presentation.residualContext,visibleContext:presentation.visibleContext,detailContext:presentation.detailContext,
   visible:presentation.visibleItems.map(item=>ui.senseMetadataDisplay(item,options).short),
   details:presentation.detailItems.map(item=>ui.senseMetadataDisplay(item,options).short)};
 };
@@ -36,7 +36,8 @@ assert.deepEqual(show(parece,0).visible,[]);assert.equal(show(parece,0).context,
 assert.deepEqual(show(parece,0,true).details,['copulative or auxiliary']);
 assert.deepEqual(show(parece,1,true).visible,['with com']);
 const uma=card('pt','uma');
-assert.equal(show(uma,0).context,'');assert.equal(show(uma,1).context,'a bit of');assert(show(uma,2).context.includes('quite a'));
+assert.equal(show(uma,0).visibleContext,'');assert.equal(show(uma,1).visibleContext,'a bit of');
+assert.equal(show(uma,2).visibleContext,'quite a; quite the');assert(show(uma,2).detailContext.includes('quite a'));
 const talvez=show(card('pt','talvez'),0,true);
 assert.deepEqual(talvez.visible,[]);assert.deepEqual(talvez.details,[]);
 
@@ -119,6 +120,8 @@ assert(restrictions.detailItems.length>=1);
 const long={translation:'test',context:'A genuinely distinguishing explanation '.repeat(8)+'<script>',metadata:{sense_metadata:{contract_version:'sense-metadata/v1',features:[]}}};
 assert.equal(ui.contextWithoutSenseMetadata(long,false),long.context);
 assert(ui.escapeCardText(long.context).includes('&lt;script&gt;'));
+const longPresentation=ui.learnerSensePresentation(long,true,{gloss:'test',senseCount:3,cardMeanings:[long],peerMeanings:[]});
+assert(longPresentation.visibleContext.length<=73);assert.equal(longPresentation.detailContext,long.context);
 // Low-level aspect stays accessible on selection, not in every navigation row.
 const asp=ui.senseMetadataHTML(wait,true,{...project(cekat,wait).options,peerMeanings:[]});
 assert(asp.includes('imperfective'));assert(asp.includes(' hidden'));

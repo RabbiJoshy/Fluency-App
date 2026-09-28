@@ -664,6 +664,8 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("hasAssignedEvidence", flashcards)
         self.assertIn("pos-pill-unassigned", flashcards)
         self.assertIn(".pos-collapsible .pos-pill-unassigned", css)
+        self.assertIn("Possible meanings", flashcards)
+        self.assertIn("sense-cycle-notes", flashcards)
 
     def test_collapsed_sense_group_uses_measured_overflow_and_clear_hierarchy(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
@@ -674,6 +676,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("senses[index].hidden = true", flashcards)
         self.assertIn('class="pos-summary-sense"', flashcards)
         self.assertIn('class="pos-pill-more" hidden', flashcards)
+        self.assertIn("const collapsedSummary = open", flashcards)
         self.assertIn("fitPosSectionSummaries(backEl)", flashcards)
         self.assertIn("fitPosSectionSummaries(document.getElementById('backContent'))", flashcards)
         self.assertIn(".pos-collapsible .pos-section-summary", css)
