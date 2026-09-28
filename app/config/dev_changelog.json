@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-28T14:26:40+01:00",
+      "date": "2026-09-28 14:26 BST",
+      "agent": "Claude",
+      "summary": "Word by word is wider, shows each word over its part-of-speech pill, and opens a quick look at a word's card; verb drills can show example sentences for a form.",
+      "detail": [
+        "Word by word: much less padding, so the list uses the width on a phone; up to 560px when centred.",
+        "Each row: the word over a card-front-style part-of-speech pill on the left, the translation (up to two lines) on the right.",
+        "A card icon on words that have a card opens a quick look popup (meanings, one example, Open full card), styled like the Smart Skip preview.",
+        "A star appears only on words with no card; saving shows a popup explaining the saved-words list is for export, with OK and a link to the list.",
+        "Verb drills: once a card is revealed, 'see sentences' lists up to three harvested sentences using that exact form (Spanish, Portuguese, Czech), loaded only on first use."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-28T14:02:15+01:00",
       "date": "2026-09-28 14:02 BST",
       "agent": "Codex",

@@ -266,6 +266,76 @@
     return cards;
   }
 
+  /* Example sentences for a form, from data/<lang>-examples.json (built by
+   * scripts/build_conjugation_examples.py from the harvested pool). Fetched
+   * once per language, the first time a revealed card could show them; a form
+   * the pool never saw simply has no entry, and its card offers nothing. */
+  var examplesByLanguage = {};
+  var examplesOpenFor = null;
+
+  function loadExamples() {
+    var language = deck.language;
+    if (!(language in examplesByLanguage)) {
+      examplesByLanguage[language] = fetch('data/' + language + '-examples.json')
+        .then(function (response) { return response.ok ? response.json() : null; })
+        .catch(function () { return null; });
+    }
+    return examplesByLanguage[language];
+  }
+
+  function examplesFor(payload, form) {
+    var words = String(form || '').toLocaleLowerCase().match(/[\p{L}\p{N}_]+/gu);
+    var positions = payload && words ? payload.forms[words.join(' ')] : null;
+    return (positions || []).map(function (i) { return payload.sentences[i]; });
+  }
+
+  function highlightForm(text, form) {
+    var node = el('span');
+    var escaped = form.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
+    var match = new RegExp('(^|[^\\p{L}\\p{N}])(' + escaped + ')(?![\\p{L}\\p{N}])', 'iu').exec(text);
+    if (!match) { node.textContent = text; return node; }
+    var start = match.index + match[1].length;
+    node.appendChild(document.createTextNode(text.slice(0, start)));
+    node.appendChild(el('mark', null, match[2]));
+    node.appendChild(document.createTextNode(text.slice(start + match[2].length)));
+    return node;
+  }
+
+  function renderExamples(card, sentences) {
+    var box = $('card-examples');
+    box.innerHTML = '';
+    box.hidden = examplesOpenFor !== card.key || !sentences.length;
+    if (box.hidden) return;
+    sentences.forEach(function (sentence) {
+      var item = el('li', 'card-example');
+      var target = el('span', 'card-example-target');
+      target.appendChild(highlightForm(sentence[0], card.form));
+      item.appendChild(target);
+      item.appendChild(el('span', 'card-example-english', sentence[1]));
+      box.appendChild(item);
+    });
+  }
+
+  // Adds the chip once the file is in, if this form has sentences; the card
+  // may have moved on by then, so it checks it is still the one showing.
+  function offerExamples(card, chips) {
+    loadExamples().then(function (payload) {
+      var sentences = examplesFor(payload, card.form);
+      if (!sentences.length || queue[position] !== card || !revealed) return;
+      var toggle = el('button', 'chip chip-action', 'see sentences');
+      toggle.type = 'button';
+      toggle.setAttribute('aria-expanded', String(examplesOpenFor === card.key));
+      toggle.onclick = function (event) {
+        event.stopPropagation();   // don't also flip the card
+        examplesOpenFor = examplesOpenFor === card.key ? null : card.key;
+        toggle.setAttribute('aria-expanded', String(examplesOpenFor === card.key));
+        renderExamples(card, sentences);
+      };
+      chips.appendChild(toggle);
+      renderExamples(card, sentences);
+    });
+  }
+
   function shuffle(cards) {
     for (var i = cards.length - 1; i > 0; i--) {
       var j = Math.floor(Math.random() * (i + 1));
@@ -883,6 +953,10 @@
       inspectCurrent();
     };
     chips.appendChild(inspect);
+
+    if (examplesOpenFor !== card.key) examplesOpenFor = null;
+    $('card-examples').hidden = true;
+    if (revealed) offerExamples(card, chips);
 
     $('card-answer').hidden = !revealed;
     $('grade').hidden = !revealed;

@@ -144,7 +144,7 @@ KILN 1 executed on QUARRY’s freeze and CHISEL 1's 10k MWE overlay. Do not call
 
 This file’s index is the **WSD campaign**, including chats that have not started (SWEEP, QUARRY, …).
 
-Product pieces that are not that campaign live in **`OPEN.md`**. SWEEP and QUARRY do not wait on them. When a non-WSD chat is actually running, name it here so it does not collide with SWEEP. Today that is **SETLIST**. When conjugations reopen, name that chat **DRAWER** for the duration of the work.
+Product pieces that are not that campaign live in **`OPEN.md`**. SWEEP and QUARRY do not wait on them. When a non-WSD chat is actually running, name it here so it does not collide with SWEEP. Today that is **SETLIST**. When conjugations reopen, name that chat **DRAWER** for the duration of the work. **DRAWER is open (2026-09-28):** per-form example sentences for verb drills (`scripts/build_conjugation_examples.py`, `app/conjugation/`).
 
 ---
 
