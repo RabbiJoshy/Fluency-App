@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-28T23:49:00+01:00",
+      "date": "2026-09-28 23:49 BST",
+      "agent": "Claude",
+      "summary": "Importing known words from inside a lyrics deck now matches them against Speech vocabulary, and the lyrics deck shows them as known straight away.",
+      "detail": [
+        "The import in Settings used to read the active artist's vocabulary when opened from a lyrics deck, while saving the matches as Speech cards. It now always reads Speech, as its wording says.",
+        "Lyrics cards find the imported words through the shared spelling. Before, a lyrics deck in the same session could miss them until progress reloaded; it now picks them up right away."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-28T09:40:00+01:00",
       "date": "2026-09-28 09:40 BST",
       "agent": "Claude",
