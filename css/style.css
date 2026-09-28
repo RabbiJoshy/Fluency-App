@@ -3753,42 +3753,31 @@
             color: color-mix(in srgb, #2563eb 72%, var(--text-primary));
         }
 
-        .sense-metadata-more {
+        .sense-note-trigger {
             appearance: none;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 7px;
-            width: min(100%, 180px);
-            min-height: 26px;
-            border: 1px solid rgba(var(--sense-match-rgb), 0.24);
-            border-radius: 999px;
-            padding: 3px 10px;
-            background: rgba(var(--sense-match-rgb), 0.06);
+            width: 22px;
+            min-width: 22px;
+            height: 22px;
+            min-height: 22px;
+            border: 1px solid rgba(var(--sense-match-rgb), 0.46);
+            border-radius: 50%;
+            padding: 0;
+            background: rgba(var(--sense-match-rgb), 0.09);
             color: rgb(var(--sense-match-rgb));
-            font: inherit;
-            font-size: 10.5px;
-            margin: 4px auto 0;
-            font-weight: 650;
-            line-height: 1.2;
+            font: 700 12px/1 var(--font-data);
+            font-style: normal;
+            margin: 0;
             cursor: pointer;
         }
 
-        .sense-metadata-more:hover {
-            background: rgba(var(--sense-match-rgb), 0.11);
+        .sense-note-trigger:hover {
+            background: rgba(var(--sense-match-rgb), 0.17);
         }
 
-        .sense-metadata-more-count {
-            min-width: 17px;
-            border-radius: 999px;
-            padding: 1px 5px;
-            background: rgba(var(--sense-match-rgb), 0.13);
-            font-family: var(--font-data);
-            font-size: 9px;
-            line-height: 1.4;
-        }
-
-        .sense-metadata-more:focus-visible {
+        .sense-note-trigger:focus-visible {
             outline: 2px solid rgb(var(--sense-match-rgb));
             outline-offset: 2px;
         }
@@ -21259,12 +21248,7 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
 .meaning-row .sense-metadata-detail + .sense-metadata-detail::before { content: none; }
 .meaning-row .sense-metadata-tier--grammar,
 .meaning-row .sense-metadata-tier--details { gap: 4px 8px; }
-.meaning-row .sense-metadata-more {
-    font-size: var(--sense-badge-size);
-    min-height: 36px;
-    width: auto;
-}
-.meaning-row .sense-metadata-more-count { font-size: inherit; }
+.meaning-row .sense-note-trigger { font-size: 11px; }
 .meaning-row .group-card-varying-cell > .meaning-context-cell,
 .meaning-row .group-card-varying-cell > .row-adaptive-text,
 .meaning-row-regular:not(.is-current-sense) .meaning-row-translation {
@@ -21317,17 +21301,31 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
     margin-top: 0;
 }
 .meaning-row .sense-metadata-tier[hidden] { display: none; }
-.meaning-row .sense-metadata-more {
+.meaning-row .sense-note-trigger {
+    position: absolute;
+    left: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
     display: inline-flex;
     margin: 0;
-    width: 30px;
-    min-width: 30px;
-    height: 30px;
-    min-height: 30px;
+    width: 22px;
+    min-width: 22px;
+    height: 22px;
+    min-height: 22px;
     padding: 0;
     border-radius: 50%;
     flex: 0 0 auto;
 }
+.meaning-row:has(.sense-note-trigger) { padding-left: 32px !important; }
+.meaning-row:has(.meaning-row-check):has(.sense-note-trigger) { padding-left: 54px !important; }
+.meaning-row:has(.meaning-row-check):has(.sense-note-trigger) .meaning-row-check { left: 32px; }
+.meaning-row .group-card-varying-cell,
+.meaning-row .group-card-shared { position: relative; }
+.meaning-row .group-card-varying-cell:has(.sense-note-trigger),
+.meaning-row .group-card-shared:has(.sense-note-trigger) { padding-left: 32px !important; }
+.meaning-row .group-card-varying-cell .sense-note-trigger,
+.meaning-row .group-card-shared .sense-note-trigger { left: 4px; }
 .meaning-row .sense-definition-detail { flex-basis: 100%; }
 
 /* Optional learner note for one sense. The row stays compact; secondary
