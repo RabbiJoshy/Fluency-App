@@ -127,7 +127,7 @@ const long={translation:'test',context:'A genuinely distinguishing explanation '
 assert.equal(ui.contextWithoutSenseMetadata(long,false),long.context);
 assert(ui.escapeCardText(long.context).includes('&lt;script&gt;'));
 const longPresentation=ui.learnerSensePresentation(long,true,{gloss:'test',senseCount:3,cardMeanings:[long],peerMeanings:[]});
-assert(longPresentation.visibleContext.length<=73);assert.equal(longPresentation.detailContext,long.context);
+assert.equal(longPresentation.visibleContext,'');assert.equal(longPresentation.detailContext,long.context);
 // Low-level aspect stays accessible on selection, not in every navigation row.
 const asp=ui.senseMetadataHTML(wait,true,{...project(cekat,wait).options,peerMeanings:[]});
 assert(asp.includes('imperfective'));assert(asp.includes('sense-note-template'));
@@ -160,7 +160,8 @@ const scroll={};
 const child=(height,margin,links=false,display='block')=>({offsetHeight:height,classList:{contains:k=>links&&k==='links-section'},css:{position:'static',display,marginTop:String(margin),marginBottom:'0'}});
 const back={clientHeight:600,children:[scroll,child(100,0),child(120,0),child(40,200,true),child(99,0,false,'none')],css:{rowGap:'10',paddingTop:'0',paddingBottom:'0'}};
 assert.equal(available(back,scroll),310);
-assert(asp.includes('aria-hidden="true">•••</span>'));assert(!asp.includes('sense-metadata-more-count'));
+assert(asp.includes('aria-hidden="true">i</span>'));assert(asp.includes('class="sense-note-trigger"'));
+assert(!asp.includes('•••'));
 console.log('40 shipped cards: meaning preservation, restrictions, grammar, cases and provider parity passed');
 ''', capture_output=True)
         self.assertEqual(result.returncode, 0, result.stderr)

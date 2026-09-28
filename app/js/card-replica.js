@@ -433,7 +433,7 @@ function replicaMetadata(meaning, selected) {
         ? supporting.map(item => `<p>${esc(item.full || item.short)}</p>`).join('')
         : '';
     const more = supportingNote
-        ? `<button type="button" class="sense-metadata-more" aria-haspopup="dialog" aria-label="More about this meaning" title="More about this meaning"><span class="sense-metadata-more-label" aria-hidden="true">•••</span></button><template class="sense-note-template"><div class="sense-note-copy" data-sense-note-title="${esc(meaning.translation || 'This meaning')}"><section class="sense-note-section sense-note-section--usage"><h3>Usage</h3>${supportingNote}</section></div></template>`
+        ? `<button type="button" class="sense-note-trigger" aria-haspopup="dialog" aria-label="Information about this meaning" title="Information about this meaning"><span aria-hidden="true">i</span></button><template class="sense-note-template"><div class="sense-note-copy" data-sense-note-title="${esc(meaning.translation || 'This meaning')}"><section class="sense-note-section sense-note-section--usage"><h3>Usage</h3>${supportingNote}</section></div></template>`
         : '';
     return `<span class="sense-metadata-list" aria-label="Sense information">${primaryHTML}${grammarHTML}${more}</span>`;
 }
@@ -592,14 +592,14 @@ export function wireReplicaBack(root, { onSelectMeaning, onCycleExample, onLayou
     // same as selectMeaning() does on a live card.
     root.querySelectorAll('.meaning-row').forEach(row => {
         row.addEventListener('click', e => {
-            if (e.target.closest('.sense-metadata-more, .sense-cross-reference')) return;
+            if (e.target.closest('.sense-note-trigger, .sense-cross-reference')) return;
             e.stopPropagation();
             const idx = Number(row.dataset.meaningIndex);
             if (!Number.isNaN(idx)) onSelectMeaning?.(idx, row);
         });
     });
 
-    root.querySelectorAll('.sense-metadata-more').forEach(control => {
+    root.querySelectorAll('.sense-note-trigger').forEach(control => {
         control.addEventListener('click', e => {
             if (typeof window.openSenseNote === 'function') window.openSenseNote(e, control);
             else e.stopPropagation();

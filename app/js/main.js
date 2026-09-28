@@ -9,9 +9,9 @@ import './sync-queue.js?v=20260825ak';
 import { initOfflineContent } from './offline-content.js?v=20260825ak';
 import './speech.js?v=20260914b';
 import './artist-ui.js?v=20260825ak';
-import './auth.js?v=20260928sense3';
-import './tutorial.js?v=20260928sense3';
-import './walkthrough.js?v=20260928sense3';
+import './auth.js?v=20260928sense4f';
+import './tutorial.js?v=20260928sense4f';
+import './walkthrough.js?v=20260928sense4f';
 import './estimation.js?v=20260825ak';
 import './config.js?v=20260921rh';
 import './progress.js?v=20260927pa';
@@ -27,7 +27,7 @@ import './song-sets.js?v=20260823ae';
 import './playlist-live.js?v=20260923cj';
 import './spotify-playlist-import.js?v=20260923su';
 import './vocabulary-import.js?v=20260923bk';
-import './flashcards.js?v=20260928sense3';
+import './flashcards.js?v=20260928sense4f';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 function startCardTutorial() {

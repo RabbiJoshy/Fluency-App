@@ -845,7 +845,7 @@ function compactLearnerContextClause(value) {
         .trim();
 }
 
-function learnerContextBudget(value, active, senseCount) {
+function learnerContextBudget(value, active, senseCount, roomForInlineDetails = false) {
     const sourceClauses = splitLearnerContextClauses(value);
     const sourceSeen = new Set();
     const sourceForDetails = [];
@@ -869,7 +869,7 @@ function learnerContextBudget(value, active, senseCount) {
     if (!full) return { visibleContext: '', detailContext: '' };
 
     const count = Math.max(1, Number(senseCount) || 1);
-    const budget = count === 1 ? 120 : (active ? 72 : 52);
+    const budget = roomForInlineDetails ? 104 : (count === 1 ? 120 : (active ? 72 : 52));
     if (full.length <= budget) {
         return {
             visibleContext: full,
@@ -892,20 +892,15 @@ function learnerContextBudget(value, active, senseCount) {
     }
     let visible = chosen.join('; ');
     if (!visible) {
-        const first = candidates[0] || clauses[0];
-        const words = first.split(/\s+/u);
-        while (words.length > 1 && `${words.join(' ')}…`.length > budget) words.pop();
-        visible = `${words.join(' ')}…`;
+        // Do not leave the learner with an arbitrary half-sentence. If no
+        // complete detachable clause fits, keep the explanation in the note.
+        return { visibleContext: '', detailContext: fullDetail };
     }
-    return { visibleContext: visible, detailContext: fullDetail };
-}
-
-function truncateGlossAtWord(value, budget) {
-    const text = String(value || '').trim();
-    if (text.length <= budget) return text;
-    const words = text.split(/\s+/u);
-    while (words.length > 1 && `${words.join(' ')}…`.length > budget) words.pop();
-    return `${words.join(' ')}…`;
+    return {
+        visibleContext: visible,
+        detailContext: foldMetadataComparable(visible) === foldMetadataComparable(fullDetail)
+            ? '' : fullDetail,
+    };
 }
 
 function glossParentheticalParts(value) {
@@ -957,7 +952,7 @@ function compactGlossClause(value, budget) {
             : parenthetical.before;
         text = withQualifier.length <= budget ? withQualifier : parenthetical.before;
     }
-    return truncateGlossAtWord(text, budget);
+    return text;
 }
 
 function glossProjectionKey(value) {
@@ -1009,7 +1004,7 @@ export function learnerGlossPresentation(meaning, active, options = {}) {
         return glossProjectionKey(compactGlossClause(splitLearnerContextClauses(peerSource)[0] || peerSource, budget)) === visibleKey;
     });
     if (collision) {
-        visibleGloss = truncateGlossAtWord(clauses[0] || source, budget);
+        visibleGloss = clauses[0] || source;
     }
 
     const noteGloss = foldMetadataComparable(visibleGloss) === foldMetadataComparable(source)
@@ -1099,7 +1094,12 @@ export function learnerSensePresentation(meaning, active, options = {}) {
     const details = active ? allDetails : [];
     const represented = combineLearnerMetadata([...visible, ...details, ...candidates], meaning, options);
     const residualContext = contextAfterMetadataPolicy(meaning, represented, options);
-    const contextPresentation = learnerContextBudget(residualContext, active, senseCount);
+    const contextPresentation = learnerContextBudget(
+        residualContext,
+        active,
+        senseCount,
+        Boolean(options.roomForInlineDetails)
+    );
     const glossPresentation = learnerGlossPresentation(meaning, active, {
         ...options,
         senseCount,
@@ -1128,15 +1128,27 @@ export function learnerSensePresentation(meaning, active, options = {}) {
         && contextRemainder.every(clause => /^(?:indicates?|expresses?|refers?|used to)\b/i.test(clause));
     const noteContext = contextOnlyExplainsVisible ? '' : contextPresentation.detailContext;
     const noteworthyItems = allDetails.filter(individuallyNoteworthy);
+    const shortConstruction = noteworthyItems.find(item => item.family === 'construction'
+        && /^(?:connecting|only in|only with|followed by)\b/i.test(
+            senseMetadataDisplay(item, options).short
+        )
+        && senseMetadataDisplay(item, options).short.length <= 28)
+        || allDetails.find(item => senseMetadataDisplay(item, options).short === 'interrogative');
+    const inlineAdditions = options.roomForInlineDetails
+        ? noteworthyItems.slice(0, 1)
+        : (shortConstruction ? [shortConstruction] : []);
+    const inlineKeys = new Set(inlineAdditions.map(metadataItemKey));
+    const visibleWithRoom = combineLearnerMetadata([...visible, ...inlineAdditions], meaning, options);
+    const remainingNoteworthyItems = noteworthyItems.filter(item => !inlineKeys.has(metadataItemKey(item)));
     const supportingItems = allDetails.filter(item => !noteworthyItems.includes(item));
     const noteItems = [
-        ...noteworthyItems,
+        ...remainingNoteworthyItems,
         ...((glossPresentation.noteGloss || noteContext || supportingItems.length >= 2)
             ? supportingItems : []),
     ];
     const hasSenseNote = Boolean(glossPresentation.noteGloss || noteContext || noteItems.length);
     return {
-        visibleItems: visible,
+        visibleItems: visibleWithRoom,
         detailItems: details,
         residualContext,
         visibleContext: contextPresentation.visibleContext,
@@ -1205,7 +1217,7 @@ export function senseNoteHTML(presentation, options = {}) {
     ].join('');
     if (!body) return '';
     const title = presentation.visibleGloss || options.gloss || 'This meaning';
-    return `<button type="button" class="sense-metadata-more" aria-haspopup="dialog" onclick="openSenseNote(event, this)" aria-label="More about this meaning" title="More about this meaning"><span class="sense-metadata-more-label" aria-hidden="true">•••</span></button><template class="sense-note-template"><div class="sense-note-copy" data-sense-note-title="${escapeCardText(title)}">${body}</div></template>`;
+    return `<button type="button" class="sense-note-trigger" aria-haspopup="dialog" onclick="openSenseNote(event, this)" aria-label="Information about this meaning" title="Information about this meaning"><span aria-hidden="true">i</span></button><template class="sense-note-template"><div class="sense-note-copy" data-sense-note-title="${escapeCardText(title)}">${body}</div></template>`;
 }
 
 export function senseMetadataHTML(meaning, active, options = {}) {

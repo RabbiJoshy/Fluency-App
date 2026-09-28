@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-28T19:24:00+01:00",
+      "date": "2026-09-28 19:24 BST",
+      "agent": "Codex",
+      "summary": "Compact meaning cards now open every section and use a small information icon for optional notes.",
+      "detail": [
+        "When section headings and their visible sense rows total six or fewer, every section stays open; denser cards keep only the selected section open.",
+        "Short production distinctions such as connecting noun clause remain on the row when useful, while intact excess explanations move to the note.",
+        "The ellipsis control is replaced by a small information icon on the left edge of the relevant sense row."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-28T18:58:11+01:00",
       "date": "2026-09-28 18:58 BST",
       "agent": "Codex",

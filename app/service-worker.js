@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v572';
+const CACHE_NAME = 'flashcards-v578';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -26,7 +26,7 @@ const ASSET_VERSION = '20260927v24';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/css/style.css?v=20260928sense3',
+  '/css/style.css?v=20260928sense4f',
   '/css/light-theme.css?v=20260927m3',
   '/config/config.json',
   '/data/speech-frequency/es.json',
@@ -36,7 +36,7 @@ const urlsToCache = [
   '/config/cefr_levels.json',
   '/config/offline-content-manifest.json',
   '/js/routes.js?v=20260923cj',
-  '/js/main.js?v=20260928sense3',
+  '/js/main.js?v=20260928sense4f',
   '/js/theme.js?v=20260922ui',
   '/js/state.js?v=20260921x',
   `/js/data-contracts.js?v=${ASSET_VERSION}`,
@@ -45,10 +45,10 @@ const urlsToCache = [
   `/js/offline-content.js?v=${ASSET_VERSION}`,
   '/js/speech.js?v=20260914b',
   `/js/artist-ui.js?v=${ASSET_VERSION}`,
-  '/js/auth.js?v=20260928sense3',
-  '/js/card-replica.js?v=20260928sense3',
-  '/js/tutorial.js?v=20260928sense3',
-  '/js/walkthrough.js?v=20260928sense3',
+  '/js/auth.js?v=20260928sense4f',
+  '/js/card-replica.js?v=20260928sense4f',
+  '/js/tutorial.js?v=20260928sense4f',
+  '/js/walkthrough.js?v=20260928sense4f',
   '/js/spotify.js?v=20260923su',
   `/js/estimation.js?v=${ASSET_VERSION}`,
   '/js/release-host.js?v=20260921rh',
@@ -72,8 +72,8 @@ const urlsToCache = [
   '/js/vocabulary-import.js?v=20260923bk',
   `/js/spanishdict-usage.js?v=${ASSET_VERSION}`,
   '/js/reverse-cues.js?v=20260927v24',
-  '/js/card-metadata-pills.js?v=20260928sense3',
-  '/js/flashcards.js?v=20260928sense3',
+  '/js/card-metadata-pills.js?v=20260928sense4f',
+  '/js/flashcards.js?v=20260928sense4f',
   '/icons/tatoeba.svg',
   '/icons/wikipedia-w.svg',
   `/js/example-personalisation.js?v=${ASSET_VERSION}`,

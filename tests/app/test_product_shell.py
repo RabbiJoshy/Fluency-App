@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v572"
+EXPECTED_CACHE_NAME = "flashcards-v578"
 
 
 
@@ -302,7 +302,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertNotIn('class="compact-example-counter-label"', replica)
         self.assertIn("speechCard: 'tem'", tutorial)
         self.assertIn('class="sense-metadata-tier sense-metadata-tier--primary"', replica)
-        self.assertIn('class="sense-metadata-more"', replica)
+        self.assertIn('class="sense-note-trigger"', replica)
         self.assertIn('class="sense-cross-reference"', replica)
         self.assertIn('replicaSenseSummary(meaning.translation)', replica)
         self.assertNotIn("font-family: var(--font-data); font-size: 14px", replica)
@@ -387,12 +387,12 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertNotIn('compact-example-counter-label', flashcards)
 
-    def test_only_the_active_meaning_group_exposes_subsenses(self) -> None:
+    def test_small_cards_open_every_meaning_group(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
-        self.assertIn(
-            "card._expandedPos = new Set([lemmaPosGroupKeyForMeaning(currentMeaning)])",
-            flashcards,
-        )
+        self.assertIn("const AUTO_OPEN_SECTION_ROW_LIMIT = 6", flashcards)
+        self.assertIn("renderedSectionRowCount <= AUTO_OPEN_SECTION_ROW_LIMIT", flashcards)
+        self.assertIn("new Set(Array.from(scrollSections.keys()).filter", flashcards)
+        self.assertIn("roomForInlineDetails", flashcards)
 
     def test_wiktionary_grammar_tails_become_compact_metadata(self) -> None:
         metadata_pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")
@@ -910,7 +910,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("error !== 'access_denied'", callback)
         self.assertIn("spotifyWebLogin", callback)
         self.assertIn("/js/spotify.js?v=20260923su", worker)
-        self.assertIn("/js/main.js?v=20260928sense3", worker)
+        self.assertIn("/js/main.js?v=20260928sense4f", worker)
         self.assertIn("/js/ui.js?v=20260927pa", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
@@ -934,9 +934,9 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertIn("config?.publicServices?.progressSyncUrl", auth)
         self.assertIn("secrets.googleScriptUrl || GOOGLE_SCRIPT_URL", auth)
-        self.assertIn('js/auth.js?v=20260928sense3', html)
-        self.assertIn("auth.js?v=20260928sense3", main)
-        self.assertIn("/js/auth.js?v=20260928sense3", worker)
+        self.assertIn('js/auth.js?v=20260928sense4f', html)
+        self.assertIn("auth.js?v=20260928sense4f", main)
+        self.assertIn("/js/auth.js?v=20260928sense4f", worker)
 
     def test_practice_queue_is_browsable_prioritised_and_layered(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
@@ -1059,7 +1059,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
         self.assertIn("/js/spotify-playlist-import.js?v=20260923su", worker)
-        self.assertIn('css/style.css?v=20260928sense3', html)
+        self.assertIn('css/style.css?v=20260928sense4f', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
         self.assertIn("replaceRoute({\n        kind: 'live'", importer)
