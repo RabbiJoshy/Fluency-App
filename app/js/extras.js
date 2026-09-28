@@ -15,7 +15,7 @@
 // module reads the same state the filter used and reports what it discarded.
 // That keeps one source of truth for the rules: if the filter changes, this
 // follows without edits.
-import './state.js?v=d71b8f63';
+import './state.js?v=eeda2b33';
 
 // Every name below is read off globalThis rather than as a bare identifier.
 // state.js defines these lazily via defineProperty, and this module can run

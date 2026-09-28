@@ -429,11 +429,13 @@ function replicaMetadata(meaning, selected) {
         ? `<span class="sense-metadata-tier sense-metadata-tier--primary">${renderItems(primary, true)}</span>` : '';
     const grammarHTML = grammar.length
         ? `<span class="sense-metadata-tier sense-metadata-tier--grammar">${renderItems(grammar, false)}</span>` : '';
-    const supportingHTML = supporting.length
-        ? `<span class="sense-metadata-tier sense-metadata-tier--details${supporting.length === 1 ? ' is-single' : ''}"${supporting.length > 1 ? ' hidden' : ''}>${renderItems(supporting, false)}</span>` : '';
-    const more = supporting.length > 1
-        ? `<button type="button" class="sense-metadata-more" aria-expanded="false" data-count="${supporting.length}" aria-label="Show notes" title="More about this meaning"><span class="sense-metadata-more-label" aria-hidden="true">•••</span></button>` : '';
-    return `<span class="sense-metadata-list" aria-label="Sense details">${primaryHTML}${grammarHTML}${more}${supportingHTML}</span>`;
+    const supportingNote = supporting.length
+        ? supporting.map(item => `<p>${esc(item.full || item.short)}</p>`).join('')
+        : '';
+    const more = supportingNote
+        ? `<button type="button" class="sense-metadata-more" aria-haspopup="dialog" aria-label="More about this meaning" title="More about this meaning"><span class="sense-metadata-more-label" aria-hidden="true">•••</span></button><template class="sense-note-template"><div class="sense-note-copy" data-sense-note-title="${esc(meaning.translation || 'This meaning')}"><section class="sense-note-section sense-note-section--usage"><h3>Usage</h3>${supportingNote}</section></div></template>`
+        : '';
+    return `<span class="sense-metadata-list" aria-label="Sense information">${primaryHTML}${grammarHTML}${more}</span>`;
 }
 
 // Share → the live card's four-bar meter. Exported so About's animated demo
@@ -599,15 +601,8 @@ export function wireReplicaBack(root, { onSelectMeaning, onCycleExample, onLayou
 
     root.querySelectorAll('.sense-metadata-more').forEach(control => {
         control.addEventListener('click', e => {
-            e.stopPropagation();
-            const list = control.closest('.sense-metadata-list');
-            const expanded = control.getAttribute('aria-expanded') === 'true';
-            const details = list?.querySelector('.sense-metadata-tier--details');
-            if (details) details.hidden = expanded;
-            control.setAttribute('aria-expanded', String(!expanded));
-            control.setAttribute('aria-label', expanded ? 'Show notes' : 'Collapse notes');
-            control.setAttribute('title', expanded ? 'More about this meaning' : 'Collapse notes');
-            onLayoutChange?.();
+            if (typeof window.openSenseNote === 'function') window.openSenseNote(e, control);
+            else e.stopPropagation();
         });
     });
 

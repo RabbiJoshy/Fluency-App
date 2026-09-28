@@ -900,6 +900,124 @@ function learnerContextBudget(value, active, senseCount) {
     return { visibleContext: visible, detailContext: fullDetail };
 }
 
+function truncateGlossAtWord(value, budget) {
+    const text = String(value || '').trim();
+    if (text.length <= budget) return text;
+    const words = text.split(/\s+/u);
+    while (words.length > 1 && `${words.join(' ')}…`.length > budget) words.pop();
+    return `${words.join(' ')}…`;
+}
+
+function glossParentheticalParts(value) {
+    const text = String(value || '').trim();
+    if (!text.endsWith(')')) return null;
+    let depth = 0;
+    for (let index = text.length - 1; index >= 0; index--) {
+        if (text[index] === ')') depth++;
+        else if (text[index] === '(') {
+            depth--;
+            if (depth === 0 && index > 0) {
+                return {
+                    before: text.slice(0, index).trim(),
+                    inside: text.slice(index + 1, -1).trim(),
+                };
+            }
+        }
+    }
+    return null;
+}
+
+function compactGlossClause(value, budget) {
+    let text = String(value || '').trim();
+    if (text.length <= budget) return text;
+
+    // Dictionary glosses often place an editorial explanation after a useful
+    // first clause. Keep the source wording, but move the explanation to the
+    // optional note instead of making it the learner's primary translation.
+    let depth = 0;
+    for (let index = 0; index < text.length; index++) {
+        const character = text[index];
+        if ('([{'.includes(character)) depth++;
+        else if (')]}'.includes(character) && depth) depth--;
+        else if (character === ',' && depth === 0) {
+            const suffix = text.slice(index + 1).trim();
+            if (/^(?:especially|contrasting|which|where|when|usually|chiefly|literally|figuratively|used\b)/i.test(suffix)) {
+                const prefix = text.slice(0, index).trim();
+                if (prefix.length >= 3 && prefix.length <= budget) return prefix;
+            }
+        }
+    }
+
+    const parenthetical = glossParentheticalParts(text);
+    if (parenthetical && parenthetical.before && parenthetical.inside.length > 36) {
+        const firstQualifier = splitLearnerContextClauses(parenthetical.inside)[0] || '';
+        const withQualifier = firstQualifier && firstQualifier.length <= 28
+            && !/^(?:used|indicates?|expresses?|refers?)\b/i.test(firstQualifier)
+            ? `${parenthetical.before} (${firstQualifier})`
+            : parenthetical.before;
+        text = withQualifier.length <= budget ? withQualifier : parenthetical.before;
+    }
+    return truncateGlossAtWord(text, budget);
+}
+
+function glossProjectionKey(value) {
+    return foldMetadataComparable(String(value || '').replace(/…$/u, ''));
+}
+
+// Source-preserving projection for the bold learner-facing meaning. It never
+// rewrites a definition: it selects complete source clauses where possible,
+// and keeps the full projected gloss for the optional sense note.
+export function learnerGlossPresentation(meaning, active, options = {}) {
+    const source = String(options.gloss
+        ?? projectWiktionaryGloss(meaning, meaning?.meaning || meaning?.translation || '').display
+        ?? '').trim();
+    if (!source) return { visibleGloss: '', noteGloss: '' };
+
+    const senseCount = Math.max(1, Number(options.senseCount) || 1);
+    const budget = senseCount === 1 ? 84 : (active ? 64 : 48);
+    if (source.length <= budget) return { visibleGloss: source, noteGloss: '' };
+
+    const clauses = splitLearnerContextClauses(source);
+    const conciseClauses = clauses.filter(clause => clause.length <= 32
+        && !/^(?:indicates?|expresses?|modifies?|refers?|used to|where\b)/i.test(clause));
+    const candidates = clauses[0]?.length > budget && conciseClauses.length
+        ? conciseClauses
+        : clauses;
+    const clauseLimit = senseCount === 1 ? 3 : 2;
+    const chosen = [];
+    for (const clause of candidates) {
+        const compact = compactGlossClause(clause, budget);
+        if (!compact) continue;
+        const next = [...chosen, compact].join('; ');
+        if (next.length > budget) break;
+        chosen.push(compact);
+        if (chosen.length >= clauseLimit) break;
+    }
+    let visibleGloss = chosen.join('; ')
+        || compactGlossClause(candidates[0] || clauses[0] || source, budget);
+
+    // If shortening would make this row visually collide with a peer whose
+    // complete meaning is different, retain more of this row's first clause.
+    const peers = Array.isArray(options.peerMeanings) ? options.peerMeanings : [];
+    const visibleKey = glossProjectionKey(visibleGloss);
+    const collision = peers.some(peer => {
+        const peerSource = projectWiktionaryGloss(
+            peer,
+            peer?.meaning || peer?.translation || ''
+        ).display;
+        if (!peerSource || foldMetadataComparable(peerSource) === foldMetadataComparable(source)) return false;
+        return glossProjectionKey(compactGlossClause(splitLearnerContextClauses(peerSource)[0] || peerSource, budget)) === visibleKey;
+    });
+    if (collision) {
+        visibleGloss = truncateGlossAtWord(clauses[0] || source, budget);
+    }
+
+    const noteGloss = foldMetadataComparable(visibleGloss) === foldMetadataComparable(source)
+        ? ''
+        : source;
+    return { visibleGloss, noteGloss };
+}
+
 // One policy surface for every dictionary adapter. Extraction stays faithful
 // to the release contract; this selector decides what earns space on a card.
 export function learnerSensePresentation(meaning, active, options = {}) {
@@ -965,9 +1083,10 @@ export function learnerSensePresentation(meaning, active, options = {}) {
             && /^informal form of\b/i.test(gloss)) return false;
         return !visibleKeys.has(metadataItemKey(item));
     });
-    const details = active
-        ? combineLearnerMetadata([...candidates.filter(item => !visibleKeys.has(metadataItemKey(item))), ...hardDetails], meaning, options)
-            .filter(item => {
+    const allDetails = combineLearnerMetadata([
+        ...candidates.filter(item => !visibleKeys.has(metadataItemKey(item))),
+        ...hardDetails,
+    ], meaning, options).filter(item => {
                 if (item.family === 'grammar' && item.value === 'degree=not-comparable') return false;
                 if (visible.some(shown => shown.kind === 'combined_frame')
                     && ((item.family === 'grammar' && item.value === 'reflexive=true')
@@ -976,17 +1095,57 @@ export function learnerSensePresentation(meaning, active, options = {}) {
                     senseMetadataDisplay(item, options).short,
                     senseMetadataDisplay(shown, options).short
                 ));
-            })
-        : [];
+            });
+    const details = active ? allDetails : [];
     const represented = combineLearnerMetadata([...visible, ...details, ...candidates], meaning, options);
     const residualContext = contextAfterMetadataPolicy(meaning, represented, options);
     const contextPresentation = learnerContextBudget(residualContext, active, senseCount);
+    const glossPresentation = learnerGlossPresentation(meaning, active, {
+        ...options,
+        senseCount,
+        peerMeanings: peers,
+    });
+    const rankedByKey = new Map(ranked.map(entry => [metadataItemKey(entry.item), entry]));
+    const individuallyNoteworthy = item => {
+        const entry = rankedByKey.get(metadataItemKey(item));
+        if (item.family === 'companion' || item.family === 'domain') return true;
+        if (item.family === 'register') {
+            return !SUPPORTING_REGISTER_VALUES.has(String(item.value || '').toLocaleLowerCase('en'));
+        }
+        if (item.family === 'construction') {
+            return ['required_case', 'complement_form', 'argument_type', 'clause_context',
+                'object_role', 'context_phrase', 'gloss_phrase', 'combined_frame'].includes(item.kind)
+                || /^(?:with|takes?|only in|only with|connecting|followed by)\b/i.test(item.value);
+        }
+        return Boolean(entry?.distinguishing
+            && item.family === 'grammar' && isSenseDefiningGrammar(item));
+    };
+    const visibleContextKeys = new Set(splitLearnerContextClauses(contextPresentation.visibleContext)
+        .map(foldMetadataComparable).filter(Boolean));
+    const contextRemainder = splitLearnerContextClauses(contextPresentation.detailContext)
+        .filter(clause => !visibleContextKeys.has(foldMetadataComparable(clause)));
+    const contextOnlyExplainsVisible = Boolean(contextPresentation.visibleContext && contextRemainder.length)
+        && contextRemainder.every(clause => /^(?:indicates?|expresses?|refers?|used to)\b/i.test(clause));
+    const noteContext = contextOnlyExplainsVisible ? '' : contextPresentation.detailContext;
+    const noteworthyItems = allDetails.filter(individuallyNoteworthy);
+    const supportingItems = allDetails.filter(item => !noteworthyItems.includes(item));
+    const noteItems = [
+        ...noteworthyItems,
+        ...((glossPresentation.noteGloss || noteContext || supportingItems.length >= 2)
+            ? supportingItems : []),
+    ];
+    const hasSenseNote = Boolean(glossPresentation.noteGloss || noteContext || noteItems.length);
     return {
         visibleItems: visible,
         detailItems: details,
         residualContext,
         visibleContext: contextPresentation.visibleContext,
         detailContext: contextPresentation.detailContext,
+        visibleGloss: glossPresentation.visibleGloss,
+        noteGloss: glossPresentation.noteGloss,
+        noteContext,
+        noteItems,
+        hasSenseNote,
     };
 }
 
@@ -1012,6 +1171,41 @@ export function isSupportingSenseMetadata(item) {
         || (item.family === 'construction' && item.kind === 'optional_companion')
         || (item.family === 'register'
             && SUPPORTING_REGISTER_VALUES.has(item.value.toLocaleLowerCase('en')));
+}
+
+function senseNoteSectionHTML(title, values, className) {
+    const seen = new Set();
+    const clean = [];
+    for (const value of values) {
+        const text = String(value || '').trim();
+        const key = foldMetadataComparable(text);
+        if (!text || !key || seen.has(key)) continue;
+        seen.add(key);
+        clean.push(text);
+    }
+    if (!clean.length) return '';
+    return `<section class="sense-note-section sense-note-section--${className}"><h3>${title}</h3>${clean.map(value => `<p>${escapeCardText(value)}</p>`).join('')}</section>`;
+}
+
+export function senseNoteHTML(presentation, options = {}) {
+    if (!presentation.hasSenseNote) return '';
+    const usage = [];
+    const production = [];
+    if (presentation.noteContext) usage.push(presentation.noteContext);
+    for (const item of presentation.noteItems) {
+        const label = senseMetadataDisplay(item, options).full;
+        if (!label) continue;
+        if (['companion', 'construction', 'grammar'].includes(item.family)) production.push(label);
+        else usage.push(label);
+    }
+    const body = [
+        senseNoteSectionHTML('Meaning', [presentation.noteGloss], 'meaning'),
+        senseNoteSectionHTML('Usage', usage, 'usage'),
+        senseNoteSectionHTML('How it is used', production, 'production'),
+    ].join('');
+    if (!body) return '';
+    const title = presentation.visibleGloss || options.gloss || 'This meaning';
+    return `<button type="button" class="sense-metadata-more" aria-haspopup="dialog" onclick="openSenseNote(event, this)" aria-label="More about this meaning" title="More about this meaning"><span class="sense-metadata-more-label" aria-hidden="true">•••</span></button><template class="sense-note-template"><div class="sense-note-copy" data-sense-note-title="${escapeCardText(title)}">${body}</div></template>`;
 }
 
 export function senseMetadataHTML(meaning, active, options = {}) {
@@ -1050,11 +1244,10 @@ export function senseMetadataHTML(meaning, active, options = {}) {
     const grammar = options.hideVisibleItems
         ? []
         : presentation.visibleItems.filter(item => item.family === 'grammar');
-    const supporting = presentation.detailItems;
-    const supportingContext = active ? presentation.detailContext : '';
+    const noteHTML = senseNoteHTML(presentation, options);
 
     if (!active && options.allowInactivePrimary) {
-        if (!displayPrimary.length && !grammar.length) return '';
+        if (!displayPrimary.length && !grammar.length && !noteHTML) return '';
         const densityClass = isVeryDense ? ' is-dense is-very-dense' : (isDense ? ' is-dense' : '');
         const primaryHTML = displayPrimary.length
             ? `<span class="sense-metadata-tier sense-metadata-tier--primary">${renderItems(displayPrimary, true)}</span>`
@@ -1062,10 +1255,10 @@ export function senseMetadataHTML(meaning, active, options = {}) {
         const grammarHTML = grammar.length
             ? `<span class="sense-metadata-tier sense-metadata-tier--grammar">${renderItems(grammar, false)}</span>`
             : '';
-        return `<span class="sense-metadata-list${densityClass}" aria-label="Sense details">${primaryHTML}${grammarHTML}</span>`;
+        return `<span class="sense-metadata-list${densityClass}" aria-label="Sense information">${primaryHTML}${grammarHTML}${noteHTML}</span>`;
     }
 
-    if (!displayPrimary.length && !grammar.length && !supporting.length && !supportingContext) return '';
+    if (!displayPrimary.length && !grammar.length && !noteHTML) return '';
     const densityClass = isVeryDense ? ' is-dense is-very-dense' : (isDense ? ' is-dense' : '');
     const primaryHTML = displayPrimary.length
         ? `<span class="sense-metadata-tier sense-metadata-tier--primary">${renderItems(displayPrimary, true)}</span>`
@@ -1073,14 +1266,7 @@ export function senseMetadataHTML(meaning, active, options = {}) {
     const grammarHTML = grammar.length
         ? `<span class="sense-metadata-tier sense-metadata-tier--grammar">${renderItems(grammar, false)}</span>`
         : '';
-    const supportingCount = supporting.length + (supportingContext ? 1 : 0);
-    const supportingHTML = supportingCount
-        ? `<span class="sense-metadata-tier sense-metadata-tier--details${supportingCount === 1 ? ' is-single' : ''}" hidden>${supportingContext ? `<span class="sense-metadata-detail" data-family="context">${escapeCardText(supportingContext)}</span>` : ''}${renderItems(supporting, false)}</span>`
-        : '';
-    const more = supportingCount > 0
-        ? `<button type="button" class="sense-metadata-more" aria-expanded="false" onclick="toggleSenseMetadataOverflow(event, this)" data-count="${supportingCount}" aria-label="Show notes" title="More about this meaning"><span class="sense-metadata-more-label" aria-hidden="true">•••</span></button>`
-        : '';
-    return `<span class="sense-metadata-list${densityClass}" aria-label="Sense details">${primaryHTML}${grammarHTML}${more}${supportingHTML}</span>`;
+    return `<span class="sense-metadata-list${densityClass}" aria-label="Sense information">${primaryHTML}${grammarHTML}${noteHTML}</span>`;
 }
 
 export function contextWithoutSenseMetadata(meaning, active, options = {}) {
@@ -1096,18 +1282,43 @@ export function toggleSenseMetadataChip(event, chip) {
     chip.setAttribute('aria-expanded', String(!expanded));
 }
 
-export function toggleSenseMetadataOverflow(event, control) {
+export function openSenseNote(event, control) {
     event?.preventDefault?.();
     event?.stopPropagation?.();
-    const list = control?.closest?.('.sense-metadata-list, .sense-cycle-notes');
-    if (!list) return;
-    const expand = control.getAttribute('aria-expanded') !== 'true';
-    const details = list.querySelector('.sense-metadata-tier--details');
-    if (details) details.hidden = !expand;
-    control.setAttribute('aria-expanded', String(expand));
-    control.setAttribute('aria-label', expand ? 'Collapse notes' : 'Show notes');
-    control.setAttribute('title', expand ? 'Collapse notes' : 'More about this meaning');
-    list.dispatchEvent(new CustomEvent('sense-details-change', { bubbles: true }));
+    if (!control || typeof document === 'undefined') return;
+    const template = control.parentElement?.querySelector?.('.sense-note-template');
+    const source = template?.content?.querySelector?.('.sense-note-copy');
+    if (!source) return;
+
+    document.querySelector('.sense-note-overlay')?.remove();
+    const title = source.dataset.senseNoteTitle || 'This meaning';
+    const overlay = document.createElement('div');
+    overlay.className = 'sense-note-overlay';
+    overlay.innerHTML = `<div class="sense-note-dialog" role="dialog" aria-modal="true" aria-labelledby="senseNoteTitle" tabindex="-1"><button type="button" class="sense-note-close" aria-label="Close sense note">×</button><div class="sense-note-eyebrow">About this meaning</div><h2 id="senseNoteTitle">${escapeCardText(title)}</h2><div class="sense-note-body"></div></div>`;
+    overlay.querySelector('.sense-note-body').append(...source.cloneNode(true).children);
+    document.body.appendChild(overlay);
+
+    const dialog = overlay.querySelector('.sense-note-dialog');
+    const closeButton = overlay.querySelector('.sense-note-close');
+    const close = () => {
+        document.removeEventListener('keydown', onKey);
+        overlay.remove();
+        control.focus?.({ preventScroll: true });
+    };
+    const onKey = keyEvent => {
+        if (keyEvent.key === 'Escape') close();
+        else if (keyEvent.key === 'Tab') {
+            keyEvent.preventDefault();
+            closeButton.focus();
+        }
+    };
+    overlay.addEventListener('click', clickEvent => {
+        if (clickEvent.target === overlay) close();
+    });
+    dialog.addEventListener('click', clickEvent => clickEvent.stopPropagation());
+    closeButton.addEventListener('click', close);
+    document.addEventListener('keydown', onKey);
+    dialog.focus({ preventScroll: true });
 }
 
 export function scoreSenseMetadata(item) {
@@ -1274,7 +1485,7 @@ export function senseCollocationHTML(meaning, card = null) {
 // Window attachments for inline HTML onclick handlers
 if (typeof window !== 'undefined') {
     window.toggleSenseMetadataChip = toggleSenseMetadataChip;
-    window.toggleSenseMetadataOverflow = toggleSenseMetadataOverflow;
+    window.openSenseNote = openSenseNote;
     window.scoreSenseMetadata = scoreSenseMetadata;
     window.resolveMeaningDifferentiator = resolveMeaningDifferentiator;
     window.compactLearnerSenseMetadata = compactLearnerSenseMetadata;

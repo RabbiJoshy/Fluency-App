@@ -2,7 +2,7 @@
 // The queue and its ordering still belong to progress.js. Opening a group
 // only explains the queue; it must never start a study session.
 
-import './state.js?v=d71b8f63';
+import './state.js?v=eeda2b33';
 
 const QUICK_PRACTICE_LIMIT = 20;
 const LIST_PAGE_SIZE = 50;
