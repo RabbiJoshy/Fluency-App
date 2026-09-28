@@ -19672,11 +19672,10 @@ html[data-text-size="large"] body {
   zoom: var(--ui-zoom);
 }
 /* Word by word: the sentence the card is showing, then one row per distinct
-   word. Left: the word over its part-of-speech pill (the card front's pill).
-   Right: the translation, up to two lines. Last: a card icon for a word that
-   has a card, which opens a quick look at it in a popup, or a star for a word
-   that has none, which saves it for export. The card's own word carries
-   neither. */
+   word or fixed expression: its part-of-speech pill (the card front's pill),
+   the word, and the translation on one line, shrinking and then cut short.
+   The word is the button: a quick look at its card in a popup, or, for a word
+   with no card, an offer to save it for export. */
 #lyricBreakdownModal > .modal-content {
   box-sizing: border-box;
   width: min(560px, calc(100% - 32px));
@@ -19708,19 +19707,25 @@ html[data-text-size="large"] body {
   line-height: 1.4;
   color: var(--text-secondary);
 }
+/* Three columns shared by every row (subgrid), so pills, words and
+   translations line up down the list. */
 .wbw-list {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 2px;
+  /* The word never breaks inside itself; an expression may wrap at a space. */
+  grid-template-columns: max-content minmax(min-content, max-content) minmax(0, 1fr);
+  column-gap: 12px;
+  row-gap: 2px;
 }
 .wbw-row {
+  grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: minmax(0, 40%) minmax(0, 1fr) 36px;
-  column-gap: 12px;
-  align-items: start;
-  padding: 10px 6px 10px 12px;
+  grid-template-columns: subgrid;
+  align-items: center;
+  min-height: 44px;
+  padding: 4px 10px 4px 9px;
   border-radius: 12px;
   border-left: 3px solid transparent;
 }
@@ -19728,23 +19733,7 @@ html[data-text-size="large"] body {
   border-left-color: var(--text-secondary);
   background: var(--bg-tertiary);
 }
-.wbw-left {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-  min-width: 0;
-}
-.wbw-word {
-  font: 650 17px/1.25 var(--font-reading);
-  color: var(--text-primary);
-  overflow-wrap: anywhere;
-}
-.wbw-known {
-  margin-left: 5px;
-  font-size: 12px;
-  color: var(--accent-green);
-}
+.wbw-pos-cell { display: flex; }
 .wbw-row .wbw-pos.card-pos {
   display: inline-flex;
   align-items: center;
@@ -19758,37 +19747,47 @@ html[data-text-size="large"] body {
   text-transform: none;
   white-space: nowrap;
 }
+.wbw-word {
+  justify-self: start;
+  max-width: 100%;
+  margin: 0;
+  padding: 6px 8px;
+  margin-left: -8px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  font: 650 17px/1.25 var(--font-reading);
+  color: var(--text-primary);
+  text-align: left;
+}
+button.wbw-word {
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--text-primary) 28%, transparent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+}
+button.wbw-word:hover {
+  background: var(--bg-tertiary);
+  text-decoration-color: currentColor;
+}
+button.wbw-word:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 1px; }
+.wbw-row.is-unmatched button.wbw-word { color: var(--text-secondary); }
+.wbw-known {
+  margin-left: 5px;
+  font-size: 12px;
+  color: var(--accent-green);
+}
 .wbw-gloss {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  min-width: 0;
   overflow: hidden;
-  padding-top: 1px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   font-size: 15px;
   line-height: 1.35;
   color: var(--text-secondary);
-  overflow-wrap: anywhere;
 }
 .wbw-none { color: var(--text-muted); }
-.wbw-slot { display: flex; justify-content: center; }
-.wbw-action {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  margin-top: -4px;
-  border: none;
-  border-radius: 50%;
-  background: none;
-  color: var(--text-muted);
-  cursor: pointer;
-}
-.wbw-action:hover { background: var(--bg-tertiary); color: var(--text-primary); }
-.wbw-action:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 1px; }
-.wbw-star svg { fill: none; }
-.wbw-star.is-saved { color: #f5c542; }
-.wbw-star.is-saved svg { fill: currentColor; }
 /* The popup over the panel borrows the Smart Skip preview's styles. */
 .word-by-word-popup { z-index: 1040; }
 .word-by-word-meanings {

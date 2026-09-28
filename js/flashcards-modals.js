@@ -322,16 +322,97 @@ async function hydrateBreakdownEntries(results) {
     }
 }
 
-// One flashcard, tilted, with a word on it: not the stacked-pages "copy"
-// glyph, and upright it read as a keyboard or a credit card.
-const WBW_CARD_ICON = '<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g transform="rotate(-8 12 11)"><rect x="3" y="4.5" width="18" height="12.5" rx="2.5"/><path d="M8.6 11.6h7" stroke-width="2.1"/></g></svg>';
-const WBW_STAR_ICON = '<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.6l2.55 5.2 5.7.83-4.13 4.02.98 5.68L12 16.64l-5.1 2.69.98-5.68L3.75 9.63l5.7-.83z"/></svg>';
-
+// Rows as rendered: one per distinct word, except that a fixed expression in
+// the sentence (por favor, sin embargo) is one row. Each row's word is the
+// button: a quick look at its card, or, for a word with no card, an offer to
+// save it for export.
+let currentBreakdownRows = [];
 
 function breakdownPosPill(pos) {
     if (!pos) return '';
     const name = window.posDisplayName ? window.posDisplayName(pos) : pos;
     return `<span class="wbw-pos card-pos ${getPosColorClass(pos) || ''}">${escapeBreakdownText(name)}</span>`;
+}
+
+function breakdownWords(text) {
+    return String(text || '').toLocaleLowerCase().match(/[\p{L}\p{N}]+/gu) || [];
+}
+
+// Fixed expressions reach the app as PHRASE meanings on their anchor word's
+// card, each carrying the expression and how it may vary. Only the ones the
+// expression inventory marks frozen and deterministic are merged: they read
+// the same wherever they occur, so the merge cannot be wrong. Head-inflecting
+// ones (tener que -> tengo que) would need the conjugation tables.
+function findFixedExpressions(results) {
+    const words = results.map(r => (r.token.clean || '').toLocaleLowerCase());
+    const found = [];
+    results.forEach((result, anchorIdx) => {
+        (result.entry?.meanings || []).forEach((meaning, meaningIndex) => {
+            for (const evidence of meaning.metadata?.multiword_evidence || []) {
+                if (evidence.flexibility !== 'frozen' || evidence.wsd_routing !== 'deterministic_bypass') continue;
+                const parts = breakdownWords(evidence.expression);
+                if (parts.length < 2) continue;
+                for (let start = 0; start + parts.length <= words.length; start++) {
+                    const end = start + parts.length;
+                    if (anchorIdx < start || anchorIdx >= end) continue;
+                    if (!parts.every((part, k) => words[start + k] === part)) continue;
+                    // Punctuation between the words breaks the expression.
+                    const broken = results.slice(start, end - 1).some(r => r.token.punctAfter)
+                        || results.slice(start + 1, end).some(r => r.token.punctBefore);
+                    if (broken) continue;
+                    found.push({
+                        start, end, anchorIdx, meaningIndex,
+                        gloss: evidence.translation || meaning.meaning || meaning.translation || '',
+                    });
+                }
+            }
+        });
+    });
+    found.sort((a, b) => (b.end - b.start) - (a.end - a.start) || a.start - b.start);
+    const taken = new Set();
+    return found.filter(group => {
+        for (let i = group.start; i < group.end; i++) if (taken.has(i)) return false;
+        for (let i = group.start; i < group.end; i++) taken.add(i);
+        return true;
+    });
+}
+
+function buildBreakdownRows(results) {
+    const groups = findFixedExpressions(results);
+    const groupAt = new Map(groups.map(group => [group.start, group]));
+    const rows = [];
+    const seen = new Set();
+    for (let i = 0; i < results.length; i++) {
+        const group = groupAt.get(i);
+        if (group) {
+            const text = results.slice(group.start, group.end).map(r => r.token.clean).join(' ');
+            i = group.end - 1;
+            const key = text.toLocaleLowerCase();
+            if (seen.has(key)) continue;
+            seen.add(key);
+            const anchor = results[group.anchorIdx];
+            rows.push({
+                text, pos: 'PHRASE', gloss: group.gloss, result: anchor, tokenIndex: group.anchorIdx,
+                meaningIndex: group.meaningIndex, isPhrase: true, hasCard: true,
+                isCardWord: results.slice(group.start, group.end)
+                    .some(r => r.source === 'deck' && r.deckIndex === currentIndex),
+            });
+            continue;
+        }
+        const result = results[i];
+        const text = result.token.clean;
+        if (!text) continue;
+        const key = text.toLocaleLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        const { gloss, pos } = breakdownGloss(result);
+        rows.push({
+            text, pos, gloss, result, tokenIndex: i, meaningIndex: null, isPhrase: false,
+            hasCard: Boolean(result.entry),
+            isCardWord: result.source === 'deck' && result.deckIndex === currentIndex,
+        });
+    }
+    return rows;
 }
 
 // The quick look: the word's meanings and one sentence, without leaving the
@@ -348,7 +429,9 @@ function stripDialogueDash(text) {
     return String(text).replace(/^\s*[-–—]\s*/, '');
 }
 
-async function breakdownPeekExample(result) {
+// An example other than the sentence being broken down; for an expression,
+// one from the expression's own meaning.
+async function breakdownPeekExample(result, meaningIndex = null) {
     const current = currentBreakdownSentence.target.trim();
     const pick = list => (list || [])
         .map(e => ({
@@ -356,9 +439,11 @@ async function breakdownPeekExample(result) {
             english: stripDialogueDash(e.english || e.englishSentence || ''),
         }))
         .find(e => e.target && e.target.replace(/<[^>]+>/g, '').trim() !== current) || null;
+    const meanings = result.entry.meanings || [];
+    const order = meaningIndex === null ? meanings.map((_, i) => i) : [meaningIndex];
     if (result.source === 'deck') {
-        for (const meaning of result.entry.meanings || []) {
-            const found = pick(meaning.allExamples);
+        for (const i of order) {
+            const found = pick(meanings[i]?.allExamples);
             if (found) return found;
         }
         return null;
@@ -370,11 +455,12 @@ async function breakdownPeekExample(result) {
         try { await window.ensureExamplesForRange(langConfig, rank, rank + 1); } catch (_) {}
     }
     const stored = window._cachedExamplesData?.[entry.id];
-    const meanings = entry.meanings || [];
-    for (let i = 0; i < meanings.length; i++) {
-        const examples = meanings[i].examples?.length
-            ? meanings[i].examples
-            : (stored?.m?.[meanings[i]._masterSenseIndex ?? i] || []);
+    for (const i of order) {
+        const meaning = meanings[i];
+        if (!meaning) continue;
+        const examples = meaning.examples?.length
+            ? meaning.examples
+            : (stored?.m?.[meaning._masterSenseIndex ?? i] || []);
         const found = pick(examples);
         if (found) return found;
     }
@@ -383,13 +469,31 @@ async function breakdownPeekExample(result) {
 
 function markBreakdownWord(sentence, word) {
     const safe = escapeBreakdownText(sentence.replace(/<[^>]+>/g, ''));
-    const target = escapeBreakdownText(word).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const target = escapeBreakdownText(word).replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
     return safe.replace(new RegExp(`(^|[^\\p{L}])(${target})(?![\\p{L}])`, 'iu'), '$1<mark>$2</mark>');
 }
 
 // One popup over the panel, in the Smart Skip preview's style: the quick look
-// at a word's card, or the note after saving a word that has none.
+// at a word's card, or the offer to save a word that has none.
 let breakdownPopupToken = 0;
+
+function openBreakdownRowCard(row) {
+    if (!row?.result?.entry) return;
+    if (row.result.source === 'deck') navigateToCard(row.result.deckIndex);
+    else navigateToVocabCard(row.tokenIndex);
+}
+
+function saveBreakdownRow(row) {
+    const { gloss, pos } = breakdownGloss(row.result);
+    window.toggleSavedWord?.({
+        surface: row.text,
+        gloss,
+        pos,
+        sentence: currentBreakdownSentence.target,
+        english: currentBreakdownSentence.english,
+        language: selectedLanguage,
+    });
+}
 
 function breakdownPopupElement() {
     let popup = document.getElementById('wordByWordPopup');
@@ -399,18 +503,12 @@ function breakdownPopupElement() {
     popup.className = 'smart-skip-preview word-by-word-popup';
     popup.hidden = true;
     popup.addEventListener('click', event => {
-        const open = event.target.closest('[data-breakdown-open]');
-        if (open) {
-            const idx = Number(open.dataset.breakdownOpen);
+        const action = event.target.closest('[data-breakdown-action]');
+        if (action) {
+            const row = currentBreakdownRows[Number(action.dataset.row)];
             closeBreakdownPopup();
-            const result = currentBreakdownResults[idx];
-            if (result?.source === 'deck') navigateToCard(result.deckIndex);
-            else if (result?.entry) navigateToVocabCard(idx);
-            return;
-        }
-        if (event.target.closest('[data-breakdown-saved-list]')) {
-            closeBreakdownPopup();
-            window.openSavedWords?.();
+            if (action.dataset.breakdownAction === 'open') openBreakdownRowCard(row);
+            else if (row) saveBreakdownRow(row);
             return;
         }
         if (event.target === popup || event.target.closest('[data-breakdown-popup-close]')) {
@@ -443,91 +541,95 @@ function closeBreakdownPopup() {
     breakdownPopupToken++;
 }
 
-function quickLookHTML(idx, example) {
-    const result = currentBreakdownResults[idx];
-    const { gloss, pos } = breakdownGloss(result);
-    const glosses = breakdownMeaningGlosses(result);
-    const posName = pos ? (window.posDisplayName ? window.posDisplayName(pos) : pos) : '';
+function quickLookHTML(rowIndex, example) {
+    const row = currentBreakdownRows[rowIndex];
+    const glosses = row.isPhrase ? [] : breakdownMeaningGlosses(row.result);
+    const posName = row.pos ? (window.posDisplayName ? window.posDisplayName(row.pos) : row.pos) : '';
     const exampleHTML = example
-        ? `<div class="smart-skip-preview-example"><p>${markBreakdownWord(example.target, result.token.clean)}</p>${example.english ? `<p>${escapeBreakdownText(example.english.replace(/<[^>]+>/g, ''))}</p>` : ''}</div>`
+        ? `<div class="smart-skip-preview-example"><p>${markBreakdownWord(example.target, row.text)}</p>${example.english ? `<p>${escapeBreakdownText(example.english.replace(/<[^>]+>/g, ''))}</p>` : ''}</div>`
         : '';
     return `
         ${posName ? `<span class="smart-skip-preview-why">${escapeBreakdownText(posName)}</span>` : ''}
         <div class="smart-skip-preview-word">
-            <b>${escapeBreakdownText(result.token.clean)}</b>
+            <b>${escapeBreakdownText(row.text)}</b>
             ${glosses.length > 1
                 ? `<ol class="word-by-word-meanings">${glosses.map(g => `<li>${escapeBreakdownText(g)}</li>`).join('')}</ol>`
-                : `<span>${escapeBreakdownText(gloss)}</span>`}
+                : `<span>${escapeBreakdownText(row.gloss)}</span>`}
         </div>
         ${exampleHTML}
         <div class="smart-skip-preview-actions">
             <button type="button" class="smart-skip-preview-close" data-breakdown-popup-close>Close</button>
-            <button type="button" class="smart-skip-preview-open" data-breakdown-open="${idx}">Open full card</button>
+            <button type="button" class="smart-skip-preview-open" data-breakdown-action="open" data-row="${rowIndex}">Open full card</button>
         </div>`;
 }
 
-async function showQuickLook(idx) {
-    const result = currentBreakdownResults[idx];
-    if (!result?.entry) return;
-    const token = showBreakdownPopup(quickLookHTML(idx, null), result.token.clean);
-    const example = await breakdownPeekExample(result);
+async function showQuickLook(rowIndex) {
+    const row = currentBreakdownRows[rowIndex];
+    if (!row?.hasCard) return;
+    const token = showBreakdownPopup(quickLookHTML(rowIndex, null), row.text);
+    const example = await breakdownPeekExample(row.result, row.meaningIndex);
     const popup = document.getElementById('wordByWordPopup');
     if (token !== breakdownPopupToken || !popup || popup.hidden || !example) return;
     const card = popup.querySelector('.smart-skip-preview-card');
-    if (card) card.innerHTML = quickLookHTML(idx, example);
+    if (card) card.innerHTML = quickLookHTML(rowIndex, example);
 }
 
-function showSavedNote(surface) {
-    const word = escapeBreakdownText(surface);
+function showSaveOffer(rowIndex) {
+    const row = currentBreakdownRows[rowIndex];
+    const word = escapeBreakdownText(row.text);
+    const saved = Boolean(window.isWordSaved?.(row.text, currentBreakdownSentence.target, selectedLanguage));
     showBreakdownPopup(`
         <div class="smart-skip-preview-word"><b>${word}</b></div>
-        <p class="word-by-word-popup-text"><strong>${word}</strong> isn’t a flashcard in this app, so it’s been saved to your saved words: a list you can export to use in other apps.</p>
+        <p class="word-by-word-popup-text">${saved
+            ? `<strong>${word}</strong> is in your saved words, a list you can export to use in other apps.`
+            : `<strong>${word}</strong> isn’t one of the flashcards in this app. You can save it to your saved words, a list you can export to use in other apps.`}</p>
         <div class="smart-skip-preview-actions">
-            <button type="button" class="smart-skip-preview-close" data-breakdown-saved-list>Saved words</button>
-            <button type="button" class="smart-skip-preview-open" data-breakdown-popup-close>OK</button>
-        </div>`, surface);
+            ${saved
+                ? `<button type="button" class="smart-skip-preview-close" data-breakdown-action="save" data-row="${rowIndex}">Remove</button>
+                   <button type="button" class="smart-skip-preview-open" data-breakdown-popup-close>OK</button>`
+                : `<button type="button" class="smart-skip-preview-close" data-breakdown-popup-close>Cancel</button>
+                   <button type="button" class="smart-skip-preview-open" data-breakdown-action="save" data-row="${rowIndex}">Save</button>`}
+        </div>`, row.text);
+}
+
+// A long translation shrinks to a floor and is then cut with an ellipsis;
+// the quick look has the whole of it.
+const GLOSS_SIZE = 15;
+const GLOSS_FLOOR = 12;
+
+function fitBreakdownGlosses() {
+    document.querySelectorAll('#lyricBreakdownBody .wbw-gloss').forEach(el => {
+        let size = GLOSS_SIZE;
+        el.style.fontSize = '';
+        while (el.scrollWidth > el.clientWidth + 1 && size > GLOSS_FLOOR) {
+            size -= 0.5;
+            el.style.fontSize = `${size}px`;
+        }
+    });
 }
 
 function renderBreakdownBody() {
     const body = document.getElementById('lyricBreakdownBody');
     if (!body) return;
     const { target, english } = currentBreakdownSentence;
-    const seen = new Set();
-    const rows = [];
-    currentBreakdownResults.forEach((result, idx) => {
-        const surface = result.token.clean;
-        if (!surface) return;
-        const key = surface.toLocaleLowerCase();
-        if (seen.has(key)) return;
-        seen.add(key);
-
-        const { gloss, pos } = breakdownGloss(result);
-        const isCardWord = result.source === 'deck' && result.deckIndex === currentIndex;
-        const known = breakdownIsKnown(result);
+    currentBreakdownRows = buildBreakdownRows(currentBreakdownResults);
+    const rows = currentBreakdownRows.map((row, index) => {
         const classes = ['wbw-row'];
-        if (isCardWord) classes.push('is-card-word');
-        if (!result.entry) classes.push('is-unmatched');
-        const label = escapeBreakdownText(surface);
-
-        // A word with a card opens a quick look at it; a word without one can
-        // be saved for export. The card's own word needs neither.
-        let action = '';
-        if (result.entry && !isCardWord) {
-            action = `<button type="button" class="wbw-action wbw-card" data-breakdown-peek="${idx}" aria-haspopup="dialog" aria-label="Show card: ${label}" title="Show card">${WBW_CARD_ICON}</button>`;
-        } else if (!result.entry) {
-            const saved = Boolean(window.isWordSaved?.(surface, target, selectedLanguage));
-            action = `<button type="button" class="wbw-action wbw-star${saved ? ' is-saved' : ''}" data-breakdown-save="${idx}" aria-pressed="${saved}" aria-label="${saved ? 'Saved' : 'Save'}: ${label}" title="${saved ? 'Saved' : 'Save'}">${WBW_STAR_ICON}</button>`;
-        }
-
-        rows.push(`
+        if (row.isCardWord) classes.push('is-card-word');
+        if (row.isPhrase) classes.push('is-phrase');
+        if (!row.hasCard) classes.push('is-unmatched');
+        const label = escapeBreakdownText(row.text);
+        const known = !row.isPhrase && breakdownIsKnown(row.result)
+            ? '<span class="wbw-known" title="Known" aria-label="Known">✓</span>' : '';
+        const word = row.isCardWord
+            ? `<span class="wbw-word">${label}${known}</span>`
+            : `<button type="button" class="wbw-word" data-row="${index}" aria-haspopup="dialog">${label}${known}</button>`;
+        return `
             <li class="${classes.join(' ')}">
-                <div class="wbw-left">
-                    <span class="wbw-word">${label}${known ? '<span class="wbw-known" title="Known" aria-label="Known">✓</span>' : ''}</span>
-                    ${breakdownPosPill(pos)}
-                </div>
-                <span class="wbw-gloss">${gloss ? escapeBreakdownText(gloss) : '<span class="wbw-none">—</span>'}</span>
-                <span class="wbw-slot">${action}</span>
-            </li>`);
+                <span class="wbw-pos-cell">${breakdownPosPill(row.pos)}</span>
+                ${word}
+                <span class="wbw-gloss"${row.gloss ? ` title="${escapeBreakdownText(row.gloss)}"` : ''}>${row.gloss ? escapeBreakdownText(row.gloss) : '<span class="wbw-none">—</span>'}</span>
+            </li>`;
     });
 
     body.innerHTML = `
@@ -536,32 +638,16 @@ function renderBreakdownBody() {
             ${english ? `<p class="wbw-english">${escapeBreakdownText(english)}</p>` : ''}
         </div>
         <ul class="wbw-list">${rows.join('')}</ul>`;
+    fitBreakdownGlosses();
 }
 
 function onBreakdownBodyClick(event) {
-    const peek = event.target.closest('[data-breakdown-peek]');
-    if (peek) {
-        event.stopPropagation();
-        showQuickLook(Number(peek.dataset.breakdownPeek));
-        return;
-    }
-    const star = event.target.closest('[data-breakdown-save]');
-    if (!star) return;
+    const button = event.target.closest('button.wbw-word[data-row]');
+    if (!button) return;
     event.stopPropagation();
-    const idx = Number(star.dataset.breakdownSave);
-    const result = currentBreakdownResults[idx];
-    if (!result?.token?.clean) return;
-    const { gloss, pos } = breakdownGloss(result);
-    const saved = Boolean(window.toggleSavedWord?.({
-        surface: result.token.clean,
-        gloss,
-        pos,
-        sentence: currentBreakdownSentence.target,
-        english: currentBreakdownSentence.english,
-        language: selectedLanguage,
-    }));
-    renderBreakdownBody();
-    if (saved) showSavedNote(result.token.clean);
+    const rowIndex = Number(button.dataset.row);
+    if (currentBreakdownRows[rowIndex]?.hasCard) showQuickLook(rowIndex);
+    else showSaveOffer(rowIndex);
 }
 
 async function showLyricBreakdown(event) {
@@ -587,6 +673,7 @@ async function showLyricBreakdown(event) {
     closeBreakdownPopup();
     renderBreakdownBody();
     document.getElementById('lyricBreakdownModal').classList.remove('hidden');
+    fitBreakdownGlosses();
 
     if (await hydrateBreakdownEntries(currentBreakdownResults) && renderId === breakdownRenderId) {
         renderBreakdownBody();
@@ -604,7 +691,7 @@ function hideWordPopup() {
     document.getElementById('wordPopup')?.classList.add('hidden');
 }
 
-// Kept for callers of the old floating popup: a row now opens its card.
+// Kept for callers of the old floating popup: opens the token's card.
 function showWordPopup(event, tokenIndex) {
     event?.stopPropagation();
     const result = currentBreakdownResults[tokenIndex];
