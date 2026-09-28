@@ -78,6 +78,18 @@
       "commit": "pending"
     },
     {
+      "timestamp": "2026-09-28T20:02:45+01:00",
+      "date": "2026-09-28 20:02 BST",
+      "agent": "Codex",
+      "summary": "Matching learner glosses now form one compact family with short distinguishing keys.",
+      "detail": [
+        "Dictionary senses that shorten to the same learner gloss, such as Portuguese porque, share that gloss instead of repeating it.",
+        "Useful source wording becomes a short second-line key when it distinguishes siblings; the complete definition remains in the information panel.",
+        "Compact cards keep every section open up to six visible rows on phones and eight on larger screens."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-28T19:24:00+01:00",
       "date": "2026-09-28 19:24 BST",
       "agent": "Codex",
