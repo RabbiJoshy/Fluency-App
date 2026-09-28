@@ -126,7 +126,10 @@ async function previewVocabularyImport() {
         const parsed = parseVocabularyImport(text);
         const normalConfig = window._normalModeLangConfigs?.spanish;
         if (!normalConfig) throw new Error('Spanish Speech configuration is not ready yet.');
-        const vocabulary = await window.fetchAndJoinIndex(normalConfig);
+        // Always the Speech deck, even from inside an artist deck: the rows
+        // are written as Speech ids, and artist cards reach them through the
+        // shared surface (see progress-identity.js).
+        const vocabulary = await window.fetchAndJoinIndex(normalConfig, { ignoreArtist: true });
         currentPlan = buildVocabularyImportPlan(parsed, vocabulary, progressData, { now: Date.now() });
         previewAccount = currentUser.initials;
         renderPreview(currentPlan);
@@ -161,6 +164,9 @@ async function confirmVocabularyImport() {
         for (const entry of currentPlan.changedEntries) {
             progressData[entry.itemId] = { ...entry.progress };
         }
+        // The surface index that lets artist cards find these Speech rows is
+        // rebuilt only when the epoch moves.
+        window.bumpProgressEpoch?.();
         window.cacheProgressLocally?.({ immediate: true });
         window.updateIncorrectButtonVisibility?.();
         window.updateTotalStatsButtonVisibility?.();
