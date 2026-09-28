@@ -10,6 +10,9 @@ let indexedItemProgressSource = null;
 let indexedItemProgressSize = -1;
 let itemProgressByParent = new Map();
 let knowledgeOverviewCard = null;
+// The card whose one-tap exception still owes its untouched siblings a
+// "known" mark (see commitPendingKnowledgeSiblings).
+let knowledgeSiblingsPendingCard = null;
 // Which section tab the open overview shows (Meanings / Expressions / …).
 let knowledgeOverviewTab = '';
 
@@ -309,6 +312,24 @@ function mergeKnowledgeProgress(parent, item) {
     const itemLastCorrect = parseProgressTimestamp(item?.lastCorrect);
     const itemUnresolvedWrong = itemLastWrong > 0 && itemLastWrong >= itemLastCorrect;
 
+    // An item with answers of its own keeps its own schedule. A later
+    // whole-card "yes" was not an answer about it: that card showed the item
+    // greyed as known, or completed the card by promoting the parent. Only a
+    // newer whole-card "no" still reaches it.
+    const parentLastWrong = parseProgressTimestamp(parent?.lastWrong);
+    const parentWrongIsNewest = parentLastWrong > itemTime
+        && parentLastWrong >= parseProgressTimestamp(parent?.lastCorrect);
+    if (itemTime > 0 && !parentWrongIsNewest) {
+        return {
+            correct: (Number(parent?.correct) || 0) + (Number(item?.correct) || 0),
+            wrong: (Number(parent?.wrong) || 0) + (Number(item?.wrong) || 0),
+            lastCorrect: item.lastCorrect || null,
+            lastWrong: item.lastWrong || null,
+            lastSeen: newestIso(parent?.lastSeen, item?.lastSeen),
+            srsStage: getSrsStage(item)
+        };
+    }
+
     const newest = itemTime > parentTime ? item : parent;
     return {
         correct: (Number(parent?.correct) || 0) + (Number(item?.correct) || 0),
@@ -475,18 +496,33 @@ function wordNeedsKnowledgeReview(parentWordId, surface = '') {
     return getWordKnowledgeReviewInfo(parentWordId, surface).needsReview;
 }
 
-function buildFocusedReviewCard(card) {
+// One card shape for a word however it is reached, from a set or from Review.
+// A part-known card keeps its known senses, flagged `isKnownSense` so they
+// render greyed as Known and stay out of the cycle; the senses not yet known
+// are the ones fronted and answered. "Known" is `learned`: a known sense that
+// has fallen due is active again. A cycle row (expressions, clitics, possible
+// meanings) drops its known entries, since it shows one entry at a time.
+// Review also skips a word with nothing left to practise; a set shows it whole.
+function buildKnowledgeAwareCard(card, { skipWhenNothingToPractise = false } = {}) {
     if (!card?.meanings?.length) return card;
     const focusedMeanings = [];
+    let unresolvedCount = 0;
+    let shaped = false;
     for (let meaningIndex = 0; meaningIndex < card.meanings.length; meaningIndex++) {
         const meaning = card.meanings[meaningIndex];
         const items = knowledgeItemsForMeaning(card, meaning, meaningIndex);
-        // A partially answered card reviews every item that is not currently
-        // known: explicit mistakes plus untouched sibling senses/expressions.
-        // A newer whole-card correct is inherited by every item, so it still
-        // resolves the complete card in one action.
         const unresolved = items.filter(item => !getKnowledgeItemState(card, item).learned);
-        if (unresolved.length === 0) continue;
+        unresolvedCount += unresolved.length;
+        if (items.length && unresolved.length === 0) {
+            focusedMeanings.push({ ...meaning, isKnownSense: true });
+            shaped = true;
+            continue;
+        }
+        if (unresolved.length === items.length) {
+            focusedMeanings.push({ ...meaning });
+            continue;
+        }
+        shaped = true;
 
         if (meaning.allMWEs?.length) {
             const keep = new Set(unresolved.map(item => item.cycleIndex));
@@ -513,9 +549,11 @@ function buildFocusedReviewCard(card) {
         }
     }
     // Rare senses remain opt-in during ordinary study. Once explicitly marked
-    // for review, they become focused review meanings on the same parent card.
+    // for review, they become active meanings on the same parent card.
     for (const item of getRareSenseKnowledgeItems(card)) {
         if (!getKnowledgeItemState(card, item).needsReview) continue;
+        unresolvedCount += 1;
+        shaped = true;
         const sense = item.sourceSense;
         focusedMeanings.push({
             ...sense,
@@ -528,20 +566,27 @@ function buildFocusedReviewCard(card) {
             allExamples: sense.allExamples || []
         });
     }
-    if (focusedMeanings.length === 0) return null;
+    if (unresolvedCount === 0) {
+        // Every sense is current on its own schedule. Review still shows the
+        // word whole when the card itself is due, so the answer can resolve it
+        // rather than leave a word counted in Review that never appears.
+        const cardNeedsReview = window.getWordProgressState?.(card.fullId, card.targetWord)?.needsReview;
+        return skipWhenNothingToPractise && !cardNeedsReview ? null : card;
+    }
+    if (!shaped) return card;
     const focusedRareIds = new Set(focusedMeanings
         .filter(meaning => meaning.isRareSense)
         .map(meaning => meaning.senseId || meaning.sense_id)
         .filter(Boolean));
+    const firstActive = focusedMeanings.find(meaning => !meaning.isKnownSense) || focusedMeanings[0];
     return {
         ...card,
         meanings: focusedMeanings,
         unusedMenuSenses: (card.unusedMenuSenses || []).filter(sense =>
             !focusedRareIds.has(sense.senseId || sense.sense_id)),
-        translation: focusedMeanings[0]?.meaning || card.translation,
-        targetSentence: focusedMeanings[0]?.targetSentence || card.targetSentence,
-        englishSentence: focusedMeanings[0]?.englishSentence || card.englishSentence,
-        reviewFocused: true,
+        translation: firstActive?.meaning || card.translation,
+        targetSentence: firstActive?.targetSentence || card.targetSentence,
+        englishSentence: firstActive?.englishSentence || card.englishSentence,
         _grouping: null
     };
 }
@@ -620,6 +665,49 @@ async function saveKnowledgeProgress(card, items, isCorrect) {
         && summary.total > 0 && summary.learned === summary.total) {
         await window.saveWordProgress?.(card, true);
     }
+}
+
+// Card entry stamps the visit so a whole-card answer can tell which senses
+// the learner already answered one by one on this card.
+function beginKnowledgeCardVisit(card) {
+    if (!card) return;
+    if (knowledgeSiblingsPendingCard && knowledgeSiblingsPendingCard !== card) {
+        commitPendingKnowledgeSiblings(knowledgeSiblingsPendingCard);
+    }
+    card._knowledgeVisitStart = Date.now();
+}
+
+function answeredDuringVisit(card, item) {
+    const visitStart = card?._knowledgeVisitStart || 0;
+    const lastSeen = parseProgressTimestamp(getSpecificItemProgress(item)?.lastSeen);
+    return visitStart > 0 && lastSeen >= visitStart;
+}
+
+// A whole-card answer on a part-known card is an answer about the senses it
+// was testing: every sense not greyed as known, less those answered one by
+// one on this visit. Greyed senses keep their own schedules. Returns false
+// when the card has no known senses and the answer belongs to the card.
+async function saveWholeCardKnowledgeAnswer(card, isCorrect) {
+    // The whole-card answer supersedes a pending one-tap exception.
+    if (knowledgeSiblingsPendingCard === card) knowledgeSiblingsPendingCard = null;
+    if (!currentUser || currentUser.isGuest) return false;
+    if (!card?.meanings?.some(meaning => meaning.isKnownSense)) return false;
+    const items = card.meanings
+        .flatMap((meaning, index) => meaning.isKnownSense ? [] : knowledgeItemsForMeaning(card, meaning, index))
+        .filter(item => !answeredDuringVisit(card, item));
+    if (items.length) await saveKnowledgeProgress(card, items, isCorrect);
+    return true;
+}
+
+// The one-tap exception ("I only missed this one") marks the untouched
+// siblings known when the learner leaves the card, not at the first tap, so
+// a second missed sense is never briefly recorded as known.
+async function commitPendingKnowledgeSiblings(card) {
+    if (!card || knowledgeSiblingsPendingCard !== card) return;
+    knowledgeSiblingsPendingCard = null;
+    const siblings = getKnowledgeOverviewItems(card).filter(item =>
+        !item.isRare && !getKnowledgeItemState(card, item).seen);
+    if (siblings.length) await saveKnowledgeProgress(card, siblings, true);
 }
 
 function escapeKnowledgeHTML(value) {
@@ -865,28 +953,21 @@ async function markKnowledgeOverviewItem(event, index, isCorrect) {
     const item = items?.[index];
     if (!card || !item) return;
 
-    // 1-tap exception flow: if the learner marks one sense as unknown (isCorrect === false),
-    // automatically mark all other unmarked items on this card as known (true) so the learner
-    // only has to tap the single exception they missed.
-    if (!isCorrect && !item.isRare) {
-        const unmarkedSiblings = items.filter((sibling, sibIdx) => {
-            if (sibIdx === index || sibling.isRare) return false;
-            const state = getKnowledgeItemState(card, sibling);
-            return !state.seen;
-        });
-        if (unmarkedSiblings.length > 0) {
-            await saveKnowledgeProgress(card, unmarkedSiblings, true);
-        }
-    }
+    // 1-tap exception flow: marking one sense unknown means the learner knew
+    // the other unmarked ones. They are marked known on leaving the card
+    // (commitPendingKnowledgeSiblings), so further misses can still be tapped.
+    if (!isCorrect && !item.isRare) knowledgeSiblingsPendingCard = card;
 
     await saveKnowledgeProgress(card, [item], isCorrect);
     if (card === flashcards[currentIndex]) updateCard();
     renderKnowledgeOverview(card);
 }
 
-function saveAndNextCardFromKnowledge(event) {
+async function saveAndNextCardFromKnowledge(event) {
     event?.stopPropagation();
+    const card = knowledgeOverviewCard;
     closeKnowledgeOverview(event);
+    await commitPendingKnowledgeSiblings(card);
     if (typeof window.advanceToNextDeckCard === 'function') {
         window.advanceToNextDeckCard();
     } else if (typeof window.nextCard === 'function') {
@@ -920,8 +1001,10 @@ window.getCardKnowledgeSummary = getCardKnowledgeSummary;
 window.wordHasKnowledgeProgress = wordHasKnowledgeProgress;
 window.wordNeedsKnowledgeReview = wordNeedsKnowledgeReview;
 window.getWordKnowledgeReviewInfo = getWordKnowledgeReviewInfo;
-window.buildFocusedReviewCard = buildFocusedReviewCard;
+window.buildKnowledgeAwareCard = buildKnowledgeAwareCard;
 window.saveKnowledgeProgress = saveKnowledgeProgress;
+window.beginKnowledgeCardVisit = beginKnowledgeCardVisit;
+window.saveWholeCardKnowledgeAnswer = saveWholeCardKnowledgeAnswer;
 window.renderKnowledgeControl = renderKnowledgeControl;
 window.renderKnowledgeOverviewButton = renderKnowledgeOverviewButton;
 window.markCurrentKnowledge = markCurrentKnowledge;

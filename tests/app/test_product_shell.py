@@ -655,7 +655,7 @@ class ProductShellTests(unittest.TestCase):
             self.assertIn(behavior, flashcards)
         self.assertIn('id="cardBackScrubber"', (APP_ROOT / "index.html").read_text(encoding="utf-8"))
         self.assertIn("saveStudySessionSnapshot", flashcards)
-        self.assertIn("buildFocusedReviewCard", vocab)
+        self.assertIn("buildKnowledgeAwareCard", vocab)
 
     def test_unassigned_dictionary_menu_does_not_claim_wsd_confidence(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")

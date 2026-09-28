@@ -3016,7 +3016,12 @@ async function loadVocabularyData(rangeString, opts = {}) {
             card.cognate_scores = item.cognate_scores ?? null;
             card.translationUnavailable = meanings.every(meaning => !String(meaning.meaning || '').trim());
             card.artistVocabularyScope = activeArtist ? artistVocabularyScope : null;
-            const deckCard = studyMode === 'review' ? buildFocusedReviewCard(card) : card;
+            // Sets and Review share one card shape: known senses greyed,
+            // the rest fronted and answered. Review skips a word with
+            // nothing left to practise.
+            const deckCard = buildKnowledgeAwareCard(card, {
+                skipWhenNothingToPractise: studyMode === 'review'
+            });
             if (deckCard) flashcards.push(deckCard);
         }
 
