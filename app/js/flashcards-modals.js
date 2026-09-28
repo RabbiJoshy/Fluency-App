@@ -283,17 +283,57 @@ function breakdownSentenceForCurrentCard() {
     return { target: meaning?.targetSentence || '', english: meaning?.englishSentence || '' };
 }
 
+// A word outside the deck as the card it would open as, so its glosses can be
+// inflected by the same code as the sense rows. Built only once its meanings
+// have arrived.
+function breakdownCardFor(result) {
+    if (result.source === 'deck') return result.entry;
+    const entry = result.entry;
+    if (!entry?.meanings?.length) return null;
+    if (entry._breakdownCard) return entry._breakdownCard;
+    const langConfig = config?.languages?.[selectedLanguage] || {};
+    const meanings = entry.meanings.map(m => projectInspectableMeaning(
+        m, langConfig.exampleTargetField || 'example_spanish', langConfig.exampleEnglishField || 'example_english'));
+    entry._breakdownCard = {
+        targetWord: entry.word,
+        lemma: entry.lemma || '',
+        ...(window.buildCardFormModel?.(entry, meanings) || {}),
+        id: entry.id,
+        meanings,
+    };
+    return entry._breakdownCard;
+}
+
+// The English for one meaning as the sense rows show it: inflected for this
+// surface (es -> "is", tengo -> "I have") where the conjugation data supports
+// it, the dictionary gloss otherwise.
+function breakdownMeaningGloss(result, meaning) {
+    const plain = meaning?.meaning || meaning?.translation || '';
+    const card = breakdownCardFor(result);
+    if (!card || !meaning || typeof window.getProductionEnglishCue !== 'function') return plain;
+    try {
+        const cue = window.getProductionEnglishCue(card, meaning, {
+            activeExample: { target: currentBreakdownSentence.target, english: currentBreakdownSentence.english },
+        });
+        return String(cue || '').trim() || plain;
+    } catch (_) {
+        return plain;
+    }
+}
+
 // Gloss and POS for a resolved token. The card's own word reads the sense
 // being studied, not the headword's first meaning.
 function breakdownGloss(result) {
     if (!result.entry) return { gloss: '', pos: '' };
-    if (result.source === 'deck') {
-        const isCurrent = result.deckIndex === currentIndex;
-        const meaning = (isCurrent && result.entry.meanings?.[currentMeaningIndex]) || result.entry.meanings?.[0];
-        return { gloss: meaning?.meaning || result.entry.translation || '', pos: meaning?.pos || '' };
-    }
-    const meaning = result.entry.meanings?.[0];
-    return { gloss: meaning?.translation || meaning?.meaning || '', pos: meaning?.pos || '' };
+    const card = breakdownCardFor(result);
+    const meanings = card?.meanings || [];
+    const isCurrent = result.source === 'deck' && result.deckIndex === currentIndex;
+    const meaning = (isCurrent && meanings[currentMeaningIndex]) || meanings[0];
+    if (!meaning) return { gloss: result.entry.translation || '', pos: '' };
+    return {
+        gloss: breakdownMeaningGloss(result, meaning) || result.entry.translation || '',
+        pos: meaning.pos || '',
+    };
 }
 
 function breakdownIsKnown(result) {
@@ -419,8 +459,8 @@ function buildBreakdownRows(results) {
 // card. The Smart Skip preview does the same for skipped words; the full card
 // stays one tap away.
 function breakdownMeaningGlosses(result) {
-    const meanings = result.entry?.meanings || [];
-    const glosses = meanings.map(m => (result.source === 'deck' ? m.meaning : (m.translation || m.meaning)) || '');
+    const meanings = breakdownCardFor(result)?.meanings || [];
+    const glosses = meanings.map(m => breakdownMeaningGloss(result, m));
     return [...new Set(glosses.map(g => g.trim()).filter(Boolean))].slice(0, 4);
 }
 
@@ -675,8 +715,24 @@ async function showLyricBreakdown(event) {
     document.getElementById('lyricBreakdownModal').classList.remove('hidden');
     fitBreakdownGlosses();
 
-    if (await hydrateBreakdownEntries(currentBreakdownResults) && renderId === breakdownRenderId) {
+    // Inflected glosses read the conjugation tables, which Speech setup loads
+    // in the background; wait for them here rather than gloss "to have".
+    const [hydrated, conjugated] = await Promise.all([
+        hydrateBreakdownEntries(currentBreakdownResults),
+        ensureBreakdownConjugations(),
+    ]);
+    if ((hydrated || conjugated) && renderId === breakdownRenderId) {
         renderBreakdownBody();
+    }
+}
+
+async function ensureBreakdownConjugations() {
+    if (typeof window.loadConjugationData !== 'function') return false;
+    try {
+        await window.loadConjugationData();
+        return true;
+    } catch (_) {
+        return false;
     }
 }
 

@@ -9501,6 +9501,8 @@ window.updateSpeakIcons = updateSpeakIcons;
 window.getPosColorClass = getPosColorClass;
 window.getPosAccentRgb = getPosAccentRgb;
 window.posDisplayName = posDisplayName;
+// Word by word glosses a sentence with the same inflected English as the sense rows.
+window.getProductionEnglishCue = getProductionEnglishCue;
 window.updateReverseButton = updateReverseButton;
 window.updateStats = updateStats;
 window.dedupeExamples = dedupeExamples;
