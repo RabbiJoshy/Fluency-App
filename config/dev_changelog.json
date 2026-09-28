@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-28T18:58:11+01:00",
+      "date": "2026-09-28 18:58 BST",
+      "agent": "Codex",
+      "summary": "Long sense rows now keep the essential meaning visible and place worthwhile secondary guidance in a compact note.",
+      "detail": [
+        "Short meanings stay unchanged; longer dictionary wording is shortened deterministically according to how crowded the card is, without changing sense identity or order.",
+        "Only rows with useful secondary meaning, usage, or construction guidance receive a small ellipsis button; redundant and technical metadata remains hidden.",
+        "The button opens an accessible centred dialog on desktop and a bottom sheet on phones, replacing inline Details and Hide expansion."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-28T18:27:44+01:00",
       "date": "2026-09-28 18:27 BST",
       "agent": "Claude",

@@ -21,7 +21,8 @@ const show=(c,index=0,active=false)=>{
  const gloss=ui.projectWiktionaryGloss(meaning,meaning.translation).display;
  const options={gloss,peerMeanings:ui.senseMetadataPeers(meaning,c.meanings,gloss),cardMeanings:c.meanings,senseCount:c.meanings.length,allowInactivePrimary:true};
  const presentation=ui.learnerSensePresentation(meaning,active,options);
- return {gloss,context:presentation.residualContext,visibleContext:presentation.visibleContext,detailContext:presentation.detailContext,
+ return {gloss,visibleGloss:presentation.visibleGloss,noteGloss:presentation.noteGloss,hasSenseNote:presentation.hasSenseNote,
+  context:presentation.residualContext,visibleContext:presentation.visibleContext,detailContext:presentation.detailContext,
   visible:presentation.visibleItems.map(item=>ui.senseMetadataDisplay(item,options).short),
   details:presentation.detailItems.map(item=>ui.senseMetadataDisplay(item,options).short)};
 };
@@ -38,6 +39,7 @@ assert.deepEqual(show(parece,1,true).visible,['with com']);
 const uma=card('pt','uma');
 assert.equal(show(uma,0).visibleContext,'');assert.equal(show(uma,1).visibleContext,'a bit of');
 assert.equal(show(uma,2).visibleContext,'quite a; quite the');assert(show(uma,2).detailContext.includes('quite a'));
+assert.equal(show(uma,2).hasSenseNote,false);
 const talvez=show(card('pt','talvez'),0,true);
 assert.deepEqual(talvez.visible,[]);assert.deepEqual(talvez.details,[]);
 
@@ -50,6 +52,10 @@ for(const meaning of card('cs','na').meanings){
 const podivej=show(card('cs','podívej'),0,true);
 assert.deepEqual(podivej.visible,['podívat se na…']);assert(podivej.details.includes('perfective'));assert(!podivej.details.includes('reflexive'));
 assert.deepEqual(show(card('cs','to')).visible,['neuter · singular · nom./acc.']);
+
+const longSer={translation:'to be (to have the given quality), especially a quality that is intrinsic or not expected to change, contrasting with estar which denotes a temporary quality',pos:'verb'};
+const serView=ui.learnerSensePresentation(longSer,true,{gloss:longSer.translation,senseCount:4,cardMeanings:[longSer],peerMeanings:[]});
+assert.equal(serView.visibleGloss,'to be (to have the given quality)');assert.equal(serView.noteGloss,longSer.translation);assert.equal(serView.hasSenseNote,true);
 
 const su=card('es','su');assert.deepEqual(show(su,1).visible,['addressing several people']);
 assert.deepEqual(show(card('es','ven')).visible,['command']);
@@ -124,7 +130,7 @@ const longPresentation=ui.learnerSensePresentation(long,true,{gloss:'test',sense
 assert(longPresentation.visibleContext.length<=73);assert.equal(longPresentation.detailContext,long.context);
 // Low-level aspect stays accessible on selection, not in every navigation row.
 const asp=ui.senseMetadataHTML(wait,true,{...project(cekat,wait).options,peerMeanings:[]});
-assert(asp.includes('imperfective'));assert(asp.includes(' hidden'));
+assert(asp.includes('imperfective'));assert(asp.includes('sense-note-template'));
 // One shared prose rule for dictionary notes, retaining constraints.
 assert.equal(ui.readableSenseNote('used to talk about characteristics'),'about characteristics');
 assert.equal(ui.readableSenseNote('used in forming the perfect aspect'),'forms the perfect aspect');
@@ -136,17 +142,15 @@ const dar=card('pt','dar');
 for(const m of dar.meanings){
  const p=project(dar,m);
  assert(!p.labels.includes('ditransitive'));
- assert(ui.senseMetadataHTML(m,true,p.options).includes('ditransitive'));
+assert(ui.senseMetadataHTML(m,true,p.options).includes('ditransitive'));
 }
-// A disclosure exposes content, changes its accessible state and asks for layout.
-const detail={hidden:true},attrs={'aria-expanded':'false'};
-let layoutEvent='';
-const list={querySelector:()=>detail,dispatchEvent:e=>layoutEvent=e.type};
-const control={dataset:{count:'2'},closest:()=>list,getAttribute:k=>attrs[k],setAttribute:(k,v)=>attrs[k]=v};
-ui.toggleSenseMetadataOverflow(null,control);
-assert.equal(detail.hidden,false);assert.equal(attrs['aria-expanded'],'true');assert.equal(attrs['aria-label'],'Collapse notes');assert.equal(layoutEvent,'sense-details-change');
-ui.toggleSenseMetadataOverflow(null,control);
-assert.equal(detail.hidden,true);assert.equal(attrs['aria-label'],'Show notes');
+// Secondary information opens in a dialog instead of expanding the row.
+assert(asp.includes('aria-haspopup="dialog"'));
+assert(asp.includes('onclick="openSenseNote(event, this)"'));
+assert(asp.includes('class="sense-note-template"'));
+assert(asp.includes('How it is used'));
+assert(!asp.includes('aria-expanded'));
+assert(!asp.includes('Collapse notes'));
 // Empty space above the bottom toolbar is available for expanded meanings.
 const source=fs.readFileSync('app/js/flashcards.js','utf8');
 const start=source.indexOf('function availableHeightForMeaningScroll');
