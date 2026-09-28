@@ -6,8 +6,10 @@ const ESTIMATION_CONFIDENCE_Z = 1.645; // Approximate 90% interval.
 const ESTIMATION_PRIOR = 0.5;          // Jeffreys prior for adaptive selection.
 const ESTIMATION_PICK_ATTEMPTS = 8;    // Candidates tried per question before giving up.
 
-// Always use the normal-mode vocabulary for placement. Artist ordering measures
-// familiarity with one corpus, not general vocabulary size.
+// Always use the Speech vocabulary for placement. Artist ordering measures
+// familiarity with one corpus, not general vocabulary size. In an artist deck
+// the estimate is not a level: it marks the Speech words ranked within it as
+// known (buildEstimatedKnownIds), which lands the learner past them.
 function getEstimationLangConfig() {
     const langConfig = config.languages[selectedLanguage];
     if (!activeArtist) return langConfig;
@@ -36,6 +38,7 @@ function createEstimationState() {
         currentBandIndex: null,
         translationRevealed: false,
         estimatedLevel: null,
+        estimatedLevelRank: 0,
         estimateInterval: null,
         autoAdvanceTimer: null
     };
@@ -120,15 +123,28 @@ async function hydrateEstimationWord(word) {
     }
 }
 
-// The deck position of the count-th candidate: learners who know the first
-// k candidates also know the cognates and function words ranked among them.
-// stableRank is the basis of the level buttons; source rank is the fallback
-// when the deck has not yet assigned stable ranks, and keeps the same order.
+function isSpeechMode() {
+    return !activeArtist && !window.playlistLiveActive?.();
+}
+
+function candidateForCount(words, count) {
+    if (!words.length || count <= 0) return null;
+    return words[Math.min(words.length, Math.round(count)) - 1] || null;
+}
+
+// The saved estimate is the Speech source rank of the count-th candidate:
+// learners who know the first k candidates also know the cognates and function
+// words ranked among them. Source rank is what setup and Learn New compare
+// (item.rank <= estimate) and what buildEstimatedKnownIds walks.
 function deckRankForCount(words, count) {
-    if (!words.length || count <= 0) return 0;
-    const word = words[Math.min(words.length, Math.round(count)) - 1];
-    const rank = Number(word?.stableRank) || Number(word?.rank);
-    return Number.isFinite(rank) && rank > 0 ? rank : Math.round(count);
+    const rank = Number(candidateForCount(words, count)?.rank);
+    return Number.isFinite(rank) && rank > 0 ? rank : Math.max(0, Math.round(count));
+}
+
+// Level buttons span stable ranks, which skip cards the deck leaves out, so
+// the level is looked up by the same candidate's stable rank.
+function levelRankOf(word) {
+    return Number(word?.stableRank) || Number(word?.rank) || 0;
 }
 
 function buildCoverageOrder(count) {
@@ -316,12 +332,62 @@ function findAvailableWord(preferredBandIndex) {
 }
 
 // Get translation for a word
+// Glosses read as the card back's sense rows do: inflected for this surface
+// (tengo -> "I have") where the conjugation data supports it, the dictionary
+// gloss otherwise. The same (POS, gloss) pair is listed once.
 function getWordTranslation(word) {
     if (!word?.meanings?.length) return '';
-    return word.meanings.map(meaning => {
-        const pos = meaning.pos ? `(${meaning.pos}) ` : '';
-        return meaning.translation ? pos + meaning.translation : '';
-    }).filter(Boolean).join(', ');
+    const meanings = word.meanings
+        .filter(m => m?.translation && String(m.translation).trim())
+        .map(m => ({
+            pos: m.pos,
+            meaning: m.translation,
+            ...(m.context ? { context: m.context } : {}),
+            ...(m.headword ? { headword: m.headword } : {}),
+            ...(m.metadata ? { metadata: m.metadata } : {})
+        }));
+    let card = null;
+    try {
+        card = {
+            targetWord: word.word,
+            lemma: word.lemma || '',
+            ...(window.buildCardFormModel?.(word, meanings) || {}),
+            id: word.id,
+            meanings
+        };
+    } catch (_) {
+        card = null;
+    }
+    const seen = new Set();
+    const parts = [];
+    for (const meaning of meanings) {
+        let gloss = meaning.meaning;
+        if (card && typeof window.getProductionEnglishCue === 'function') {
+            try {
+                gloss = String(window.getProductionEnglishCue(card, meaning, {
+                    activeExample: null,
+                    reverseDirection: false
+                }) || '').trim() || gloss;
+            } catch (_) {}
+        }
+        gloss = String(gloss).trim();
+        const key = `${meaning.pos || ''}|${gloss.toLocaleLowerCase()}`;
+        if (!gloss || seen.has(key)) continue;
+        seen.add(key);
+        parts.push(meaning.pos ? `(${meaning.pos}) ${gloss}` : gloss);
+    }
+    return parts.join(', ');
+}
+
+// Shown with the meaning, never before it, so it cannot sway the answer.
+function getWordRankLabel(word) {
+    const rank = Number(word?.rank);
+    if (!Number.isFinite(rank) || rank <= 0) return '';
+    if (!isSpeechMode()) return `Speech #${rank.toLocaleString()}`;
+    const level = levelButtonForRank(levelRankOf(word));
+    return level
+        ? `Level ${level.number} · #${rank.toLocaleString()}`
+        : `#${rank.toLocaleString()}`;
 }
 
 // Start the estimation test
@@ -329,7 +395,12 @@ async function startEstimation() {
     estimationState = createEstimationState();
 
     try {
-        estimationState.vocabularyData = await fetchAndJoinIndex(getEstimationLangConfig());
+        // Conjugation tables inflect the glosses; Speech setup loads them in
+        // the background, so start them now rather than show "to have".
+        Promise.resolve(window.loadConjugationData?.()).catch(() => {});
+        estimationState.vocabularyData = await fetchAndJoinIndex(
+            getEstimationLangConfig(), { ignoreArtist: true }
+        );
     } catch (error) {
         alert('Failed to load vocabulary for estimation.');
         return;
@@ -404,6 +475,7 @@ function setEstimationLoading(loading, showPlaceholder = loading) {
         document.getElementById('estimationLemma').style.visibility = 'hidden';
         document.getElementById('estimationPOS').textContent = '';
         document.getElementById('estimationTranslation').classList.remove('visible');
+        document.getElementById('estimationRank')?.classList.remove('visible');
         document.getElementById('estimationReveal').style.display = 'none';
         document.getElementById('estimationButtons').style.display = 'none';
     }
@@ -454,9 +526,16 @@ async function showNextWord() {
     }
 
     document.getElementById('estimationPOS').textContent = word.meanings?.[0]?.pos || '';
+    // The gloss is written at reveal, by which time the conjugation tables
+    // that inflect it have usually arrived.
     const translationEl = document.getElementById('estimationTranslation');
-    translationEl.textContent = getWordTranslation(word);
+    translationEl.textContent = '';
     translationEl.classList.remove('visible');
+    const rankEl = document.getElementById('estimationRank');
+    if (rankEl) {
+        rankEl.textContent = '';
+        rankEl.classList.remove('visible');
+    }
     document.getElementById('estimationReveal').style.display = 'block';
     document.getElementById('estimationButtons').style.display = 'none';
     updateEstimationProgress();
@@ -468,7 +547,15 @@ function revealTranslation() {
     if (!estimationState.active || estimationState.loading
         || estimationState.translationRevealed) return;
     estimationState.translationRevealed = true;
-    document.getElementById('estimationTranslation').classList.add('visible');
+    const word = estimationState.currentWord;
+    const translationEl = document.getElementById('estimationTranslation');
+    translationEl.textContent = getWordTranslation(word);
+    translationEl.classList.add('visible');
+    const rankEl = document.getElementById('estimationRank');
+    if (rankEl) {
+        rankEl.textContent = getWordRankLabel(word);
+        rankEl.classList.add('visible');
+    }
     document.getElementById('estimationReveal').style.display = 'none';
     document.getElementById('estimationButtons').style.display = 'flex';
 }
@@ -543,9 +630,11 @@ function showEstimationResult() {
         estimationState.bands,
         estimationState.maxLevel
     );
-    // The fit counts known candidates; levels and the saved estimate are deck
-    // ranks, which also cover the cognates and function words left out here.
+    // The fit counts known candidates; the saved estimate is a Speech source
+    // rank and the level a stable rank, both covering the cognates and
+    // function words left out here.
     const candidates = estimationState.validWords;
+    const levelRankFor = count => levelRankOf(candidateForCount(candidates, count));
     const result = {
         point: deckRankForCount(candidates, counts.point),
         low: deckRankForCount(candidates, counts.low),
@@ -553,6 +642,7 @@ function showEstimationResult() {
     };
     const shown = value => roundEstimate(value, Infinity).toLocaleString();
     estimationState.estimatedLevel = result.point;
+    estimationState.estimatedLevelRank = levelRankFor(counts.point);
     estimationState.estimateInterval = result;
 
     if (estimationState.autoAdvanceTimer) {
@@ -565,9 +655,21 @@ function showEstimationResult() {
 
     const levelEl = document.getElementById('estimationResultLevel');
     const descEl = document.getElementById('estimationResultDesc');
-    const pointLevel = levelButtonForRank(result.point);
+    const speech = isSpeechMode();
+    const pointLevel = speech ? levelButtonForRank(estimationState.estimatedLevelRank) : null;
     const ranOut = estimationState.wordsTestedCount < ESTIMATION_QUESTION_LIMIT;
-    if (result.point <= 0) {
+    if (!speech) {
+        // Speech knowledge is not a run of this artist's levels. The estimate
+        // marks the Speech words within it as known here instead.
+        levelEl.textContent = result.point > 0
+            ? `About ${shown(result.point)} Speech words`
+            : 'Most of the words sampled were new to you';
+        descEl.textContent = result.point > 0
+            ? `Range ${shown(result.low)}–${shown(result.high)}. Words you likely know are skipped in this deck.`
+            : (ranOut
+                ? `The check ran out of words after ${estimationState.wordsTestedCount}, so it could not place you.`
+                : 'Nothing will be skipped in this deck.');
+    } else if (result.point <= 0) {
         levelEl.textContent = 'Start at Level 1';
         descEl.textContent = ranOut
             ? `The check ran out of words after ${estimationState.wordsTestedCount}, so it could not place you.`
@@ -575,8 +677,8 @@ function showEstimationResult() {
     } else if (pointLevel) {
         // The estimate is stored as a rank; the level is only derived here,
         // against the levels on screen, so it follows any change to level size.
-        const lowLevel = levelButtonForRank(result.low)?.number ?? pointLevel.number;
-        const highLevel = levelButtonForRank(result.high)?.number ?? pointLevel.number;
+        const lowLevel = levelButtonForRank(levelRankFor(counts.low))?.number ?? pointLevel.number;
+        const highLevel = levelButtonForRank(levelRankFor(counts.high))?.number ?? pointLevel.number;
         const words = `${shown(result.low)}–${shown(result.high)} words`;
         levelEl.textContent = `Start at Level ${pointLevel.number}`;
         descEl.textContent = lowLevel === highLevel
@@ -614,10 +716,14 @@ function useEstimatedLevel() {
     saveLevelEstimateToSheet(level);
     closeEstimationModal();
 
-    if (level === 0) {
+    if (!isSpeechMode()) {
+        // Land on the first level whose cards are not all covered by the
+        // estimate (findFirstIncompleteLevelBtn reads buildEstimatedKnownIds).
+        window.renderLevelSelector?.(selectedLanguage, { preferActionable: true });
+    } else if (level === 0) {
         document.querySelector('.level-btn')?.click();
     } else {
-        selectLevelForRank(level);
+        selectLevelForRank(estimationState.estimatedLevelRank || level);
     }
 }
 

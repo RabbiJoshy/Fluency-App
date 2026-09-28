@@ -2506,7 +2506,7 @@ function getSetupLearningState(item, { seenLemmas = new Set(), estimatedIds = nu
     }
 
     if (activeArtist) {
-        if (item.id && estimatedIds?.has(item.id)) {
+        if (window.isCoveredByEstimatedIds?.(item, estimatedIds)) {
             return { seen: true, needsReview: false, learned: true, estimated: true };
         }
     } else if (item.rank <= estimate) {

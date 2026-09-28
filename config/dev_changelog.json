@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-28T09:40:00+01:00",
+      "date": "2026-09-28 09:40 BST",
+      "agent": "Claude",
+      "summary": "The level check shows inflected meanings without repeats, tells you each word's level after you reveal it, and always measures Speech vocabulary.",
+      "detail": [
+        "Meanings read as the card back's sense rows do: tengo shows \"I have\", not \"to have\". A repeated part of speech and meaning is listed once.",
+        "After you reveal a word, a small line shows its level and rank, e.g. \"Level 12 · #1,327\" (\"Speech #1,327\" in a lyrics deck).",
+        "Opened from a lyrics deck, the check used to test that artist's words. It now always tests Speech words. The result reads \"About N Speech words\", and Use estimate lands on the first level that still has words you don't know, instead of naming an artist level.",
+        "Fixed: in lyrics decks the estimate never marked any word as known, because Speech and Lyrics cards have different ids. It now matches words by surface form.",
+        "The saved estimate is a Speech source rank again, which is what setup and Learn New compare against. The level named still follows the level buttons."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-28T22:46:00+01:00",
       "date": "2026-09-28 22:46 BST",
       "agent": "Claude",
