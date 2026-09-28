@@ -57,6 +57,19 @@ const longSer={translation:'to be (to have the given quality), especially a qual
 const serView=ui.learnerSensePresentation(longSer,true,{gloss:longSer.translation,senseCount:4,cardMeanings:[longSer],peerMeanings:[]});
 assert.equal(serView.visibleGloss,'to be (to have the given quality)');assert.equal(serView.noteGloss,longSer.translation);assert.equal(serView.hasSenseNote,true);
 
+const porqueGlosses=[
+ 'because (introduces an explanation to a claim in the previous clause)',
+ 'because (introduces a reason for that described in the previous clause)',
+];
+const porqueMeanings=porqueGlosses.map(translation=>({translation,pos:'conj'}));
+const porqueViews=porqueMeanings.map((meaning,index)=>ui.learnerSensePresentation(
+ meaning,false,{gloss:meaning.translation,senseCount:2,cardMeanings:porqueMeanings,
+  peerMeanings:porqueMeanings.filter((_,peerIndex)=>peerIndex!==index),preservePeerGlossDistinction:false}
+));
+assert.deepEqual(porqueViews.map(view=>view.visibleGloss),['because','because']);
+assert.deepEqual(porqueViews.map(view=>view.visibleKey),['introduces an explanation','introduces a reason']);
+assert.deepEqual(porqueViews.map(view=>view.noteGloss),porqueGlosses);
+
 const su=card('es','su');assert.deepEqual(show(su,1).visible,['addressing several people']);
 assert.deepEqual(show(card('es','ven')).visible,['command']);
 console.log('Adaptive metadata presentation examples passed');
