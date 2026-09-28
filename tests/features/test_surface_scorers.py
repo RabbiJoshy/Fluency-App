@@ -36,8 +36,7 @@ class DiscoveryTests(unittest.TestCase):
         for path in sorted((CONFIG_ROOT / "cognates").glob("*.json")):
             target, known = path.stem.split("-", 1)
             policy = load_policy(CONFIG_ROOT, target, known)
-            expected = "edit-distance/v1" if known == "en" else "legacy-max4/v1"
-            self.assertEqual(policy.surface_scorer, expected, path.name)
+            self.assertEqual(policy.surface_scorer, "edit-distance/v1", path.name)
 
 
 class EditDistanceTests(unittest.TestCase):

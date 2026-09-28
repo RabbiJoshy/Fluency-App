@@ -60,15 +60,17 @@ let cognateSchema = 'cognate-score/v1';
 // revisions differ only by carrying `matches`, so the shape tests read the
 // route, never the exact string.
 const isLemmaRouted = schema => String(schema).startsWith('cognate-score/v2');
-// v3 is per sense: surface -> headword -> English word -> closeness. A card is
-// set aside only when every sense it shows is a free cognate, so the verdict
-// is computed from the card's own meanings rather than shipped as one number.
-const isSenseRouted = schema => String(schema).startsWith('cognate-score/v3');
-// Languages the v3 map speaks for (English: the known word is the gloss
-// itself). Any other known language travels in the file's carried v2 block.
-let senseLanguages = [];
-let carriedScores = null;
-// surface -> [closeness, word] for release cards, decided before their senses load.
+// v4 is per sense and per known language:
+//   surface -> headword -> English word -> {language: closeness}
+// The card's English word is the pivot: for English it IS the known word, and
+// for any other language the map names (in `matches`) the known word that has
+// that sense. A card is set aside for a language only when every sense it
+// shows is a free cognate there, so the verdict is read from the card's own
+// meanings rather than shipped as one number per word. Decision 0028.
+const isSenseRouted = schema => String(schema).startsWith('cognate-score/v4');
+// surface -> {language: [closeness, word]} for the release's own cards, decided
+// by the pipeline before their senses load. Only trusted for the release it was
+// built from.
 let cognateCards = null;
 // The language the loaded map was built for. Scores are keyed by bare surface,
 // which several languages share, so the map must never outlive its language.
@@ -186,53 +188,59 @@ function senseAlternatives(translation) {
     return out;
 }
 
-// How freely one shown sense comes: its best cognate's closeness, or 0 when it
-// has none. An expression is never free -- the card is worth studying for it.
-function senseCognate(item, meaning) {
+// How freely one shown sense comes in one known language: its best cognate's
+// closeness and the known word, or 0 when it has none. An expression is never
+// free -- the card is worth studying for it.
+function senseCognate(item, meaning, code) {
     if (globalThis.isExpressionSenseForLemma?.(meaning, item)) return { score: 0, word: null };
     const map = item.cognate_sense_map || {};
+    const named = item.cognate_sense_matches || {};
     const headword = normalHeadword(meaning?.headword);
     // A sense from an older release names no headword; any lemma the surface
     // has may answer for it.
-    const buckets = headword ? [map[headword], map['']] : Object.values(map);
+    const keys = headword ? [headword, ''] : Object.keys(map).sort();
     let best = { score: 0, word: null };
-    for (const word of senseAlternatives(meaning?.translation || meaning?.meaning)) {
-        for (const bucket of buckets) {
-            const score = Number(bucket?.[word] || 0);
-            if (score > best.score) best = { score, word };
+    for (const pivot of [...senseAlternatives(meaning?.translation || meaning?.meaning)].sort()) {
+        for (const key of keys) {
+            const score = Number(map[key]?.[pivot]?.[code] || 0);
+            if (score > best.score) best = { score, word: named[key]?.[pivot]?.[code] || pivot };
         }
     }
     return best;
 }
 
 // The card's closeness is its WEAKEST shown sense: one sense that is not a
-// cognate keeps the whole card. Null when the card shows no sense yet (index
-// rows still loading), which must never read as "free".
-function cardSenseCognate(item) {
+// cognate keeps the whole card. Null when nothing can be said, which must
+// never read as "free".
+function cardSenseCognate(item, code) {
     const meanings = (item?.meanings || []).filter(meaning =>
         String(meaning?.translation || meaning?.meaning || '').trim());
     if (meanings.length === 0) {
         // Senses not loaded yet (Speech set-up runs on the skinny index): the
         // pipeline decided this card from the release's own senses, by this
         // same rule (fluency.enrichments.card_rules.card_cognate).
-        const shipped = item?.cognate_card;
+        const shipped = item?.cognate_card?.[code];
         return shipped ? { score: Number(shipped[0]) || 0, word: shipped[1] || null } : null;
     }
     if (!item?.cognate_sense_map) return null;
     let weakest = null;
     for (const meaning of meanings) {
-        const verdict = senseCognate(item, meaning);
+        const verdict = senseCognate(item, meaning, code);
         if (weakest === null || verdict.score < weakest.score) weakest = verdict;
         if (weakest.score === 0) break;
     }
     return weakest;
 }
 
+function isSenseItem(item) {
+    return Boolean(item?.cognate_sense_map || item?.cognate_card);
+}
+
 // One language's score for a card, whichever route the file uses. Exposed so
 // display code (Fast Track's live example) never reads a stale field.
 function cognateScoreFor(item, code) {
     if (!item) return 0;
-    if (senseLanguages.includes(code)) return Number(cardSenseCognate(item)?.score || 0);
+    if (isSenseItem(item)) return Number(cardSenseCognate(item, code)?.score || 0);
     return Number(item.cognate_scores?.[code] || 0);
 }
 
@@ -240,7 +248,7 @@ function cognateScoreFor(item, code) {
 // asked separately, at its own cutoff.
 function isCognateKnown(item) {
     if (!item) return false;
-    if (item.cognate_sense_map || item.cognate_card) {
+    if (isSenseItem(item)) {
         for (const code of activeKnownLanguages()) {
             const cutoff = Number(cognateThresholds[code] ?? globalThis.cognateThreshold ?? 1);
             if (cognateScoreFor(item, code) >= cutoff) return true;
@@ -270,7 +278,7 @@ function isCognateKnown(item) {
 // Never used to decide anything, because comparing two scales would be
 // meaningless.
 function strongestKnownLanguage(item) {
-    if (!item || (!item.cognate_scores && !item.cognate_sense_map && !item.cognate_card)) return null;
+    if (!item || (!item.cognate_scores && !isSenseItem(item))) return null;
     let bestCode = null;
     let best = -1;
     for (const code of activeKnownLanguages()) {
@@ -290,9 +298,9 @@ function strongestKnownLanguage(item) {
 function matchedKnownWord(item) {
     const strongest = strongestKnownLanguage(item);
     if (!strongest) return null;
-    if (senseLanguages.includes(strongest.code)) {
+    if (isSenseItem(item)) {
         // The weakest free sense is the one that decided, so it is named.
-        const word = cardSenseCognate(item)?.word;
+        const word = cardSenseCognate(item, strongest.code)?.word;
         return word ? { code: strongest.code, word: String(word) } : null;
     }
     const word = item?.cognate_match_words?.[strongest.code];
@@ -310,8 +318,8 @@ function applyCognateScores(vocabularyData, languageCode) {
         const surface = String(item.word || '').toLowerCase();
         if (isSenseRouted(cognateSchema)) {
             item.cognate_sense_map = cognateScores[surface] || null;
+            item.cognate_sense_matches = cognateMatches?.[surface] || null;
             item.cognate_card = cognateCards?.[surface] || null;
-            applyCarriedScores(item, surface);
             continue;
         }
         const entry = cognateScores[surface];
@@ -339,25 +347,6 @@ function applyCognateScores(vocabularyData, languageCode) {
             item.cognate_scores = entry;
             if (matched) item.cognate_match_words = matched;
         }
-    }
-}
-
-// A v3 file speaks per sense for English only. Another known language (Czech
-// read by a Polish speaker) keeps its v2 lemma map, carried inside the file.
-function applyCarriedScores(item, surface) {
-    const entry = carriedScores?.scores?.[surface];
-    if (!entry) return;
-    item.cognate_lemma_scores = entry;
-    const best = bestPerLanguage(entry);
-    item.cognate_scores = best.scores;
-    const matched = carriedScores?.matches?.[surface];
-    if (matched) {
-        const words = {};
-        for (const [code, lemma] of Object.entries(best.lemmas)) {
-            const word = matched[lemma]?.[code];
-            if (word) words[code] = word;
-        }
-        if (Object.keys(words).length) item.cognate_match_words = words;
     }
 }
 
@@ -404,8 +393,6 @@ async function loadCognateScores(langConfig) {
     cognateThresholds = {};
     cognateLanguage = null;
     cognateSchema = 'cognate-score/v1';
-    senseLanguages = [];
-    carriedScores = null;
     cognateCards = null;
     const path = langConfig && langConfig.cognatesPath;
     if (!path) return;
@@ -432,14 +419,15 @@ async function loadCognateScores(langConfig) {
         cognateThresholds = (payload.thresholds && typeof payload.thresholds === 'object')
             ? payload.thresholds
             : {};
-        if (isSenseRouted(cognateSchema)) {
-            senseLanguages = Array.isArray(payload.sense_languages)
-                ? payload.sense_languages.slice()
-                : ['en'];
-            carriedScores = (payload.carried && typeof payload.carried === 'object') ? payload.carried : null;
-            cognateCards = (payload.cards && typeof payload.cards === 'object') ? payload.cards : null;
-            cognateLanguages = [...senseLanguages, ...(carriedScores?.known_languages || [])];
-            cognateThresholds = { ...(carriedScores?.thresholds || {}), ...cognateThresholds };
+        if (isSenseRouted(cognateSchema) && payload.cards && typeof payload.cards === 'object') {
+            // The precomputed card verdicts describe one release's senses. A
+            // deck built from another release keeps every card until its
+            // senses load, rather than trusting decisions made for other data.
+            const built = payload.built_from_release_id;
+            const sameRelease = !built || [langConfig.indexPath, langConfig.releaseManifestPath]
+                .some(value => String(value || '').includes(`/${built}/`));
+            if (sameRelease) cognateCards = payload.cards;
+            else console.warn(`Cognate card verdicts were built for ${built}; ignoring them for this release.`);
         }
     } catch (error) {
         // Absence is declared, not inferred: with no scores the picker stays
@@ -452,8 +440,6 @@ async function loadCognateScores(langConfig) {
         cognateThresholds = {};
         cognateLanguage = null;
         cognateSchema = 'cognate-score/v1';
-        senseLanguages = [];
-        carriedScores = null;
         cognateCards = null;
     }
     renderKnownLanguagePicker();

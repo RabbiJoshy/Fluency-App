@@ -1605,7 +1605,13 @@ async function stampContractions(vocabulary, langConfig) {
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const payload = await response.json();
                 _contractionSurfaces = new Set((payload?.contractions || []).map(normalizeLemmaToken));
-                _mergeKeys = (payload?.keys && typeof payload.keys === 'object') ? payload.keys : null;
+                // The keys describe one release's senses; another release's
+                // deck falls back to reading senses as they load.
+                const built = payload?.release_id;
+                const sameRelease = !built || [langConfig?.indexPath, langConfig?.releaseManifestPath]
+                    .some(value => String(value || '').includes(`/${built}/`));
+                _mergeKeys = (sameRelease && payload?.keys && typeof payload.keys === 'object') ? payload.keys : null;
+                if (!sameRelease) console.warn(`Merge keys were built for ${built}; ignoring them for this release.`);
             } catch (error) {
                 console.warn('Merge exceptions unavailable:', error);
             }

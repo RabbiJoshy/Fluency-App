@@ -72,21 +72,16 @@ def register(subparsers) -> None:
     # glosses are already English; any other language takes its dictionary.
     cognates.add_argument(
         "--schema",
-        choices=("v1", "v3"),
+        choices=("v1", "v4"),
         default="v1",
-        help="v3: the per-sense map (surface -> headword -> English word), English only",
-    )
-    cognates.add_argument(
-        "--carry-from",
-        type=Path,
-        help="v3: an existing v2 cognates.json whose non-English known languages ride along",
+        help="v4: the per-sense map (surface -> headword -> English word -> language)",
     )
     cognates.add_argument(
         "--release-index-extra",
         type=Path,
         action="append",
         default=[],
-        help="v3: further release indexes whose surfaces and senses the map must cover",
+        help="v4: further release indexes whose surfaces and senses the map must cover",
     )
     cognates.add_argument(
         "--known",
@@ -155,7 +150,7 @@ def handle_enrichment(args: argparse.Namespace) -> int:
             print("Missing headwords: " + ", ".join(coverage["missing_headwords"]))
         print("No release was composed or activated.")
         return 0
-    if args.enrichment_command == "build-cognates" and getattr(args, "schema", "v1") == "v3":
+    if args.enrichment_command == "build-cognates" and getattr(args, "schema", "v1") == "v4":
         from fluency.enrichments.cognates import build_app_cognates_by_sense, read_english_wordlist
 
         workspace_root = Workspace.load(_workspace_path(args.workspace)).root
@@ -169,7 +164,12 @@ def handle_enrichment(args: argparse.Namespace) -> int:
             from fluency.inventory.coverage import read_frequency_counts
             counts, _total = read_frequency_counts(args.surface_universe)
             universe = set(counts)
+        known: dict[str, Path | None] = {}
+        for item in args.known or ["en"]:
+            code, _, extract = str(item).partition("=")
+            known[code.strip()] = Path(extract) if extract else None
         payload = build_app_cognates_by_sense(
+            known_extracts=known,
             language=args.language,
             config_root=args.config_root,
             raw_root=workspace_root / "raw",
@@ -180,16 +180,12 @@ def handle_enrichment(args: argparse.Namespace) -> int:
                 read_english_wordlist(args.english_wordlist) if args.english_wordlist else None
             ),
             release_id=args.release_id,
-            carried=(
-                json.loads(Path(args.carry_from).read_text(encoding="utf-8"))
-                if args.carry_from else None
-            ),
         )
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_bytes(json_bytes(payload))
         print(
-            f"{args.language}->en: {len(payload['scores'])} surfaces, routes {payload['routes']}, "
-            f"scorer {payload['surface_scorer']}"
+            f"{args.language}: {len(payload['scores'])} surfaces, routes {payload['routes']}, "
+            f"scorers {payload['surface_scorers']}"
         )
         print(f"Wrote {out}")
         print("No release was composed or activated.")

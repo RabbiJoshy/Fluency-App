@@ -378,6 +378,32 @@ def live_glosses(entry: Mapping[str, Any], maximum_words: int) -> frozenset[str]
 
 
 
+def primary_glosses(entry: Mapping[str, Any], maximum_words: int) -> frozenset[str]:
+    """The English glosses of an entry's first live sense only.
+
+    Wiktionary lists an entry's senses roughly by prominence, so the first one
+    that is still current is what a reader of that language takes the word to
+    mean. Polish ``czerstwy`` is "stale" first and "fresh, hale (of a person)"
+    far down; reading every sense would make Czech ``čerstvý`` (fresh) look
+    free to a Polish reader, who would in fact read it as its opposite.
+    """
+
+    for sense in entry.get("senses") or []:
+        if not isinstance(sense, Mapping):
+            continue
+        if DEAD_SENSE_TAGS & {str(tag) for tag in (sense.get("tags") or [])}:
+            continue
+        out = {
+            text
+            for gloss in sense.get("glosses") or []
+            for text in gloss_alternatives(str(gloss))
+            if len(text.split()) <= maximum_words
+        }
+        if out:
+            return frozenset(out)
+    return frozenset()
+
+
 def _is_scorable_surface(word: str) -> bool:
     return bool(word) and "-" not in word and " " not in word
 
@@ -401,6 +427,9 @@ class DictionaryRelations:
     # one lemma (Czech ``stát`` alone yields several), and taking all of them
     # matches what a reader could recognise it as.
     inflections: Mapping[str, frozenset[str]]
+    # word -> the glosses of each of its entries' first live sense: what a
+    # reader of the language takes the word to mean (see primary_glosses).
+    primary_glosses: Mapping[str, frozenset[str]] = field(default_factory=dict)
 
     def forms_by_lemma(self) -> dict[str, frozenset[str]]:
         """The inverse: every surface a lemma is known to inflect to.
@@ -435,6 +464,7 @@ def read_relations(
     """
 
     lemma_glosses: dict[str, set[str]] = {}
+    primary: dict[str, set[str]] = {}
     inflections: dict[str, set[str]] = {}
     pronunciations: dict[str, set[str]] = {}
 
@@ -449,6 +479,7 @@ def read_relations(
         glosses = live_glosses(entry, policy.gloss_maximum_words)
         if glosses:
             lemma_glosses.setdefault(word, set()).update(glosses)
+            primary.setdefault(word, set()).update(primary_glosses(entry, policy.gloss_maximum_words))
         for sound in entry.get("sounds") or []:
             if isinstance(sound, Mapping) and sound.get("ipa"):
                 pronunciations.setdefault(word, set()).add(str(sound["ipa"]))
@@ -472,6 +503,7 @@ def read_relations(
 
     return DictionaryRelations(
         lemma_glosses={word: frozenset(g) for word, g in lemma_glosses.items()},
+        primary_glosses={word: frozenset(g) for word, g in primary.items()},
         pronunciations={w: frozenset(p) for w, p in pronunciations.items()},
         inflections={s: frozenset(l) for s, l in inflections.items()},
     )

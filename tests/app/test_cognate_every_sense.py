@@ -17,15 +17,18 @@ class EverySenseTests(unittest.TestCase):
             const vm = require('node:vm');
             const source = fs.readFileSync(process.env.COGNATES_JS, 'utf8').replace(/^import .*$/mg, '');
             const payload = {
-                schema: 'cognate-score/v3', language: 'es', sense_languages: ['en'],
-                known_languages: ['en'], thresholds: { en: 0.75 },
+                schema: 'cognate-score/v4', language: 'cs',
+                known_languages: ['en', 'pl'], thresholds: { en: 0.75, pl: 0.8 },
+                built_from_release_id: 'cs-speech-test',
                 scores: {
-                    idea: { idea: { idea: 1.0 } },
-                    banco: { banco: { bank: 0.8, bench: 0.6 } },
-                    problema: { problema: { problem: 0.88 } },
-                    tres: { tres: { three: 0.7 } },
+                    idea: { idea: { idea: { en: 1.0 } } },
+                    banco: { banco: { bank: { en: 0.8 }, bench: { en: 0.6 } } },
+                    problema: { problema: { problem: { en: 0.88 } } },
+                    tres: { tres: { three: { en: 0.7 } } },
+                    kotě: { kotě: { kitten: { pl: 0.9 } } },
                 },
-                cards: { familia: [0.86, 'family'] },
+                matches: { kotě: { kotě: { kitten: { pl: 'kocię' } } } },
+                cards: { familia: { en: [0.86, 'family'] } },
             };
             const context = {
                 console, localStorage: { getItem: () => null, setItem: () => {} },
@@ -37,7 +40,8 @@ class EverySenseTests(unittest.TestCase):
             vm.runInNewContext(source, context);
             const fail = message => { throw new Error(message); };
             (async () => {
-                await context.loadCognateScores({ cognatesPath: 'x' });
+                await context.loadCognateScores({ cognatesPath: 'x', indexPath: 'releases/cs/speech/cs-speech-test/app/vocabulary.index.json' });
+                context.localStorage.getItem = () => JSON.stringify(['en', 'pl']);
                 const deck = [
                     { word: 'idea', meanings: [{ headword: 'idea', translation: 'idea' }] },
                     // bank is free, "school (of fish)" is not a cognate: kept.
@@ -58,14 +62,19 @@ class EverySenseTests(unittest.TestCase):
                     { word: 'casa', meanings: [{ headword: 'casa', translation: 'house' }] },
                     // Senses not loaded: the pipeline's card verdict decides.
                     { word: 'familia', meanings: [] },
+                    // A Polish reader gets kotě free; an English reader does not.
+                    { word: 'kotě', meanings: [{ headword: 'kotě', translation: 'kitten' }] },
                 ];
-                context.applyCognateScores(deck, 'es');
+                context.applyCognateScores(deck, 'cs');
                 const verdicts = deck.map(item => context.isCognateKnown(item));
-                const expected = [true, false, false, false, false, false, true];
+                const expected = [true, false, false, false, false, false, true, true];
                 if (JSON.stringify(verdicts) !== JSON.stringify(expected)) fail('verdicts ' + JSON.stringify(verdicts));
                 const named = context.matchedKnownWord(deck[0]);
                 if (!named || named.word !== 'idea') fail('the deciding word is named');
                 if (context.cognateScoreFor(deck[1], 'en') !== 0) fail('a card scores as its weakest sense');
+                if (context.cognateScoreFor(deck[7], 'en') !== 0) fail('kotě is not free in English');
+                const polish = context.matchedKnownWord(deck[7]);
+                if (!polish || polish.code !== 'pl' || polish.word !== 'kocię') fail('the Polish word is named: ' + JSON.stringify(polish));
             })().catch(error => { console.error(error.message); process.exit(1); });
         """
         completed = subprocess.run(

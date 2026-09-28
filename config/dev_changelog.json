@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-28T21:05:00+01:00",
+      "date": "2026-09-28 21:05 BST",
+      "agent": "Claude",
+      "summary": "Czech read by a Polish speaker now uses the per-meaning cognate rule, with false friends like čerstvý (Polish czerstwy, 'stale') kept in the deck.",
+      "detail": [
+        "Every known language now uses one method: a Czech card is set aside for a Polish reader only if every meaning it shows has a Polish cognate with that meaning, and the Polish word's main sense is one the card teaches.",
+        "False friends that share only a minor sense stay in the deck: čerstvý/czerstwy, dívka/dziwka, prachy/prochy, vysvětlit/wyświetlić.",
+        "Czech first 300 cards: Polish sets aside 55 (tak, ale, dobře, můj, musím, trochu, každý…); the old per-word scores matched nonsense such as víc to wystarczająco.",
+        "Precomputed card and merge decisions are only used for the release they were built from; any other release keeps every card until its meanings load."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-28T20:34:00+01:00",
       "date": "2026-09-28 20:34 BST",
       "agent": "Claude",

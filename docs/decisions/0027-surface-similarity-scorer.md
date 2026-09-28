@@ -39,9 +39,11 @@ spelling. Measured on the English pairs:
   `src/fluency/features/surface_scorers/`, declaring `SCORER_ID`, and they are
   discovered by listing the package. Every `config/cognates/<pair>.json` must
   name its `surface_scorer`, and a file without one is refused.
-- `legacy-max4/v1` is today's code, moved as it was. Czech–Polish keeps it
-  (its recall table was measured on it).
-- `edit-distance/v1` is the stop-gap for every `*-en` pair. It is one
+- `legacy-max4/v1` is the old code, moved as it was. No pair uses it now. It
+  stays available for comparison. Czech–Polish moved off it once measured: on
+  the cs v15 deck it matched nonsense (víc/wystarczająco, myslíš/iszli,
+  všechno/wszechrzecz) that edit distance does not.
+- `edit-distance/v1` is the stop-gap for every pair, English and Czech–Polish alike. It is one
   normalised Levenshtein, computed after these steps:
   - the pair's rewrite rules, applied to **both** words;
   - accents stripped;

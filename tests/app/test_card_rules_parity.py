@@ -41,10 +41,11 @@ ROWS = [
 ]
 CONTRACTIONS = ["no"]
 SCORES = {
-    "problema": {"problema": {"problem": 0.88}},
-    "idea": {"idea": {"idea": 1.0, "notion": 0.6}},
-    "banco": {"banco": {"bank": 0.8}},
+    "problema": {"problema": {"problem": {"en": 0.88}}},
+    "idea": {"idea": {"idea": {"en": 1.0, "pl": 0.9}, "notion": {"en": 0.6}}},
+    "banco": {"banco": {"bank": {"en": 0.8}}},
 }
+MATCHES = {"idea": {"idea": {"idea": {"pl": "idea"}}}}
 
 
 class ParityTests(unittest.TestCase):
@@ -63,11 +64,16 @@ class ParityTests(unittest.TestCase):
             const rows = JSON.parse(process.env.ROWS);
             const contractions = new Set(JSON.parse(process.env.CONTRACTIONS));
             const scores = JSON.parse(process.env.SCORES);
+            const matches = JSON.parse(process.env.MATCHES);
             const out = rows.map(row => {
                 const item = { ...row, is_contraction: contractions.has(row.word) };
                 item.cognate_sense_map = scores[row.word] || null;
-                const verdict = context.cardSenseCognate(item);
-                return [context.lemmaGroupKey(item), verdict ? [verdict.score, verdict.word] : null];
+                item.cognate_sense_matches = matches[row.word] || null;
+                const verdicts = ['en', 'pl'].map(code => {
+                    const v = context.cardSenseCognate(item, code);
+                    return v ? [v.score, v.word] : null;
+                });
+                return [context.lemmaGroupKey(item), verdicts];
             });
             process.stdout.write(JSON.stringify(out));
         """
@@ -76,16 +82,17 @@ class ParityTests(unittest.TestCase):
             env={**os.environ, "VOCAB_JS": str(ROOT / "app/js/vocab.js"),
                  "COGNATES_JS": str(ROOT / "app/js/cognates.js"),
                  "ROWS": json.dumps(ROWS), "CONTRACTIONS": json.dumps(CONTRACTIONS),
-                 "SCORES": json.dumps(SCORES)},
+                 "SCORES": json.dumps(SCORES), "MATCHES": json.dumps(MATCHES)},
         )
         if completed.returncode != 0:
             self.fail(completed.stderr or completed.stdout)
         js = json.loads(completed.stdout)
-        for row, (js_key, js_verdict) in zip(ROWS, js):
+        for row, (js_key, js_verdicts) in zip(ROWS, js):
             with self.subTest(word=row["word"]):
                 self.assertEqual(lemma_group_key(row, CONTRACTIONS), js_key)
-                py = card_cognate(row, SCORES.get(row["word"]))
-                self.assertEqual(list(py) if py else None, js_verdict)
+                for code, js_verdict in zip(("en", "pl"), js_verdicts):
+                    py = card_cognate(row, SCORES.get(row["word"]), code, MATCHES.get(row["word"]))
+                    self.assertEqual(list(py) if py else None, js_verdict, code)
 
 
 if __name__ == "__main__":

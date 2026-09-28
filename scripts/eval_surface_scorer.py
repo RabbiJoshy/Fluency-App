@@ -10,68 +10,32 @@ first N cards, the words each scorer skips that the other keeps.
     PYTHONPATH=src python scripts/eval_surface_scorer.py --language es \
         --release-index <workspace>/releases/es/speech/<id>/app/vocabulary.index.json \
         --a edit-distance/v1 --b legacy-max4/v1
+
+    # any other known language: add --known pl --known-extract <kaikki-Polish.jsonl>
 """
 
 from __future__ import annotations
 
 import argparse
 import json
-import re
 from pathlib import Path
 
+from fluency.enrichments.card_rules import card_cognate
 from fluency.enrichments.cognates import build_app_cognates_by_sense
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPRESSION_ROUTES = {"deterministic_bypass", "invariant", "competitive_wsd", "ambiguous"}
 
 
-def is_expression(meaning: dict, word: str) -> bool:
-    # Mirrors isExpressionSenseForLemma in app/js/vocab.js.
-    pos = meaning.get("pos") or ""
-    if pos in {"MWE", "CLITIC"}:
-        return True
-    metadata = meaning.get("metadata") or {}
-    evidence = (metadata.get("multiword_evidence") or [{}])[0]
-    if (evidence.get("wsd_routing") or evidence.get("route")) in EXPRESSION_ROUTES:
-        return True
-    head = str(meaning.get("headword") or "")
-    return pos == "PHRASE" and " " in head and head.lower() != word.lower()
+def skipped(rows: list[dict], payload: dict, code: str) -> dict[str, tuple[float, str | None]]:
+    """The cards the app would set aside for a reader of ``code``."""
 
-
-def alternatives(translation: str) -> set[str]:
-    out = set()
-    for part in re.split(r"[,;]", re.sub(r"\([^)]*\)", " ", translation or "")):
-        text = re.sub(r"\s+", " ", re.sub(r"[^a-z' ]+", " ", part.lower())).strip()
-        text = re.sub(r"^(?:to|the|a|an)\s+", "", text)
-        if text and " " not in text:
-            out.add(text)
-    return out
-
-
-def skipped(rows: list[dict], payload: dict) -> dict[str, tuple[float, str | None]]:
-    cutoff = payload["thresholds"]["en"]
+    cutoff = payload["thresholds"][code]
     out = {}
     for row in rows:
-        word = str(row.get("word") or "")
-        by_headword = payload["scores"].get(word.lower())
-        meanings = [m for m in row.get("meanings") or [] if str(m.get("translation") or "").strip()]
-        if not by_headword or not meanings:
-            continue
-        weakest = None
-        for meaning in meanings:
-            best = (0.0, None)
-            if not is_expression(meaning, word):
-                headword = str(meaning.get("headword") or "").lower()
-                buckets = [by_headword.get(headword), by_headword.get("")] if headword else list(by_headword.values())
-                for alt in alternatives(meaning["translation"]):
-                    for bucket in buckets:
-                        score = (bucket or {}).get(alt, 0.0)
-                        if score > best[0]:
-                            best = (score, alt)
-            if weakest is None or best[0] < weakest[0]:
-                weakest = best
-        if weakest and weakest[0] >= cutoff:
-            out[word] = weakest
+        surface = str(row.get("word") or "").lower()
+        verdict = card_cognate(row, payload["scores"].get(surface), code, payload["matches"].get(surface))
+        if verdict and verdict[0] >= cutoff:
+            out[row["word"]] = verdict
     return out
 
 
@@ -82,6 +46,8 @@ def main() -> int:
     parser.add_argument("--a", required=True, help="scorer id, e.g. edit-distance/v1")
     parser.add_argument("--b", required=True)
     parser.add_argument("--first", type=int, default=2000)
+    parser.add_argument("--known", default="en", help="known language, e.g. pl")
+    parser.add_argument("--known-extract", type=Path, help="its English-glossed extract (not for en)")
     parser.add_argument("--workspace", type=Path, default=ROOT.parent / "Fluency-Workspace")
     args = parser.parse_args()
 
@@ -94,11 +60,12 @@ def main() -> int:
             config_root=ROOT / "config",
             raw_root=args.workspace / "raw",
             release_rows=rows,
+            known_extracts={args.known: args.known_extract},
             surface_scorer=scorer,
         )
-        results[scorer] = skipped(rows, payload)
+        results[scorer] = skipped(rows, payload, args.known)
     a, b = results[args.a], results[args.b]
-    print(f"{args.language}, first {len(rows)} cards: {args.a} skips {len(a)}, {args.b} skips {len(b)}")
+    print(f"{args.language} read by {args.known}, first {len(rows)} cards: {args.a} skips {len(a)}, {args.b} skips {len(b)}")
     for name, mine, other in ((args.a, a, b), (args.b, b, a)):
         only = [f"{w}({mine[w][1]} {mine[w][0]:.2f})" for w in mine if w not in other]
         print(f"\nonly {name} ({len(only)}):\n  " + ", ".join(only))
