@@ -1,11 +1,11 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=ed04835f';
-import { validateVocabularyIndex } from './data-contracts.js?v=ed04835f';
-import { formatRoute } from './routes.js?v=ed04835f';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=ed04835f';
-import { releaseUrl } from './release-host.js?v=ed04835f';
+import './state.js?v=7775aeb6';
+import { validateVocabularyIndex } from './data-contracts.js?v=7775aeb6';
+import { formatRoute } from './routes.js?v=7775aeb6';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=7775aeb6';
+import { releaseUrl } from './release-host.js?v=7775aeb6';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -1605,7 +1605,13 @@ async function stampContractions(vocabulary, langConfig) {
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const payload = await response.json();
                 _contractionSurfaces = new Set((payload?.contractions || []).map(normalizeLemmaToken));
-                _mergeKeys = (payload?.keys && typeof payload.keys === 'object') ? payload.keys : null;
+                // The keys describe one release's senses; another release's
+                // deck falls back to reading senses as they load.
+                const built = payload?.release_id;
+                const sameRelease = !built || [langConfig?.indexPath, langConfig?.releaseManifestPath]
+                    .some(value => String(value || '').includes(`/${built}/`));
+                _mergeKeys = (sameRelease && payload?.keys && typeof payload.keys === 'object') ? payload.keys : null;
+                if (!sameRelease) console.warn(`Merge keys were built for ${built}; ignoring them for this release.`);
             } catch (error) {
                 console.warn('Merge exceptions unavailable:', error);
             }
