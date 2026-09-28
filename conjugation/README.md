@@ -54,8 +54,9 @@ never *lesson*.
 - **Practise** — space or tap reveals; then **Got it** (space/enter) or
   **Missed it** (`x`) grades and moves to the next unanswered card. `←` goes
   back (re-grading replaces the first answer), swipe skips without grading,
-  `t` or *see the table* opens that verb's table. Answering the last card
-  shows the round summary with *Drill the missed ones*.
+  `t` or *see the table* opens that verb's table, and *see sentences* (only on
+  a form with examples) lists up to three sentences using it. Answering the
+  last card shows the round summary with *Drill the missed ones*.
 - **Progress** (Set up section) — order: weakest first (default), only what
   needs work, or random; the summary bar shows known / learning / missed / new.
 - **Table** — no tab of its own: reached from a card or a `?view=table` link,
@@ -108,6 +109,26 @@ imperative only, 162 lessons) with ranks from `20260919T122021Z-0606a927`.
 Czech tables stay present + imperative; that is the layer, not a drill
 omission. French still has no deck file, so it stays off
 `CONJ_DRILL_DECKS` in `app/js/flashcards-conj.js`.
+
+## Example sentences
+
+`data/<lang>-examples.json` gives each form up to three example sentences
+taken from a harvest pool: no corpus rescan, only sentences already harvested
+for the vocabulary. The drill fetches it the first time a revealed card could
+use it. How many a form gets follows its verb's rank (three for the top 50,
+two to 200, then one); a form the pool never saw has no entry and its card
+offers none. Homographs are accepted (*fue* is *ir* or *ser*, *limpia* may be
+the adjective). Each sentence's pool `sentence_id` is in the unloaded sidecar
+`data/<lang>-examples.ids.json`. The script's docstring has the cleaning rules.
+
+```bash
+python scripts/build_conjugation_examples.py --language es \
+  --pool <workspace>/pools/es/es-10k-speech
+```
+
+Built from `es-10k-speech` (9,469 of 40,105 forms, 14,118 sentences),
+`pt-10k-speech` (6,449 of 52,916; European only, so mostly subtitles) and
+`cs-10k-speech` (2,255 of 3,403).
 
 ## Two things that are derived, not supplied
 

@@ -322,6 +322,170 @@ async function hydrateBreakdownEntries(results) {
     }
 }
 
+const WBW_CARD_ICON = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="7.5" y="3.5" width="12.5" height="16" rx="2.5"/><path d="M4.5 7.5v10a3 3 0 0 0 3 3h8.5" stroke-linecap="round"/></svg>';
+const WBW_STAR_ICON = '<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.6l2.55 5.2 5.7.83-4.13 4.02.98 5.68L12 16.64l-5.1 2.69.98-5.68L3.75 9.63l5.7-.83z"/></svg>';
+
+
+function breakdownPosPill(pos) {
+    if (!pos) return '';
+    const name = window.posDisplayName ? window.posDisplayName(pos) : pos;
+    return `<span class="wbw-pos card-pos ${getPosColorClass(pos) || ''}">${escapeBreakdownText(name)}</span>`;
+}
+
+// The quick look: the word's meanings and one sentence, without leaving the
+// card. The Smart Skip preview does the same for skipped words; the full card
+// stays one tap away.
+function breakdownMeaningGlosses(result) {
+    const meanings = result.entry?.meanings || [];
+    const glosses = meanings.map(m => (result.source === 'deck' ? m.meaning : (m.translation || m.meaning)) || '');
+    return [...new Set(glosses.map(g => g.trim()).filter(Boolean))].slice(0, 4);
+}
+
+// Subtitle rows often open with a speaker's dash.
+function stripDialogueDash(text) {
+    return String(text).replace(/^\s*[-–—]\s*/, '');
+}
+
+async function breakdownPeekExample(result) {
+    const current = currentBreakdownSentence.target.trim();
+    const pick = list => (list || [])
+        .map(e => ({
+            target: stripDialogueDash(e.target || e.spanish || e.targetSentence || ''),
+            english: stripDialogueDash(e.english || e.englishSentence || ''),
+        }))
+        .find(e => e.target && e.target.replace(/<[^>]+>/g, '').trim() !== current) || null;
+    if (result.source === 'deck') {
+        for (const meaning of result.entry.meanings || []) {
+            const found = pick(meaning.allExamples);
+            if (found) return found;
+        }
+        return null;
+    }
+    const entry = result.entry;
+    const langConfig = config?.languages?.[selectedLanguage] || {};
+    const rank = Number(entry.rank) || 1;
+    if (langConfig.examplesPath && window.ensureExamplesForRange) {
+        try { await window.ensureExamplesForRange(langConfig, rank, rank + 1); } catch (_) {}
+    }
+    const stored = window._cachedExamplesData?.[entry.id];
+    const meanings = entry.meanings || [];
+    for (let i = 0; i < meanings.length; i++) {
+        const examples = meanings[i].examples?.length
+            ? meanings[i].examples
+            : (stored?.m?.[meanings[i]._masterSenseIndex ?? i] || []);
+        const found = pick(examples);
+        if (found) return found;
+    }
+    return null;
+}
+
+function markBreakdownWord(sentence, word) {
+    const safe = escapeBreakdownText(sentence.replace(/<[^>]+>/g, ''));
+    const target = escapeBreakdownText(word).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return safe.replace(new RegExp(`(^|[^\\p{L}])(${target})(?![\\p{L}])`, 'iu'), '$1<mark>$2</mark>');
+}
+
+// One popup over the panel, in the Smart Skip preview's style: the quick look
+// at a word's card, or the note after saving a word that has none.
+let breakdownPopupToken = 0;
+
+function breakdownPopupElement() {
+    let popup = document.getElementById('wordByWordPopup');
+    if (popup) return popup;
+    popup = document.createElement('div');
+    popup.id = 'wordByWordPopup';
+    popup.className = 'smart-skip-preview word-by-word-popup';
+    popup.hidden = true;
+    popup.addEventListener('click', event => {
+        const open = event.target.closest('[data-breakdown-open]');
+        if (open) {
+            const idx = Number(open.dataset.breakdownOpen);
+            closeBreakdownPopup();
+            const result = currentBreakdownResults[idx];
+            if (result?.source === 'deck') navigateToCard(result.deckIndex);
+            else if (result?.entry) navigateToVocabCard(idx);
+            return;
+        }
+        if (event.target.closest('[data-breakdown-saved-list]')) {
+            closeBreakdownPopup();
+            window.openSavedWords?.();
+            return;
+        }
+        if (event.target === popup || event.target.closest('[data-breakdown-popup-close]')) {
+            closeBreakdownPopup();
+        }
+    });
+    // Escape closes the popup alone, not the panel beneath it.
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && !popup.hidden) {
+            event.stopImmediatePropagation();
+            event.preventDefault();
+            closeBreakdownPopup();
+        }
+    }, true);
+    document.body.appendChild(popup);
+    return popup;
+}
+
+function showBreakdownPopup(html, label) {
+    const popup = breakdownPopupElement();
+    popup.innerHTML = `<div class="smart-skip-preview-card" role="dialog" aria-modal="true" aria-label="${escapeBreakdownText(label)}" tabindex="-1">${html}</div>`;
+    popup.hidden = false;
+    popup.querySelector('.smart-skip-preview-card')?.focus();
+    return ++breakdownPopupToken;
+}
+
+function closeBreakdownPopup() {
+    const popup = document.getElementById('wordByWordPopup');
+    if (popup) popup.hidden = true;
+    breakdownPopupToken++;
+}
+
+function quickLookHTML(idx, example) {
+    const result = currentBreakdownResults[idx];
+    const { gloss, pos } = breakdownGloss(result);
+    const glosses = breakdownMeaningGlosses(result);
+    const posName = pos ? (window.posDisplayName ? window.posDisplayName(pos) : pos) : '';
+    const exampleHTML = example
+        ? `<div class="smart-skip-preview-example"><p>${markBreakdownWord(example.target, result.token.clean)}</p>${example.english ? `<p>${escapeBreakdownText(example.english.replace(/<[^>]+>/g, ''))}</p>` : ''}</div>`
+        : '';
+    return `
+        ${posName ? `<span class="smart-skip-preview-why">${escapeBreakdownText(posName)}</span>` : ''}
+        <div class="smart-skip-preview-word">
+            <b>${escapeBreakdownText(result.token.clean)}</b>
+            ${glosses.length > 1
+                ? `<ol class="word-by-word-meanings">${glosses.map(g => `<li>${escapeBreakdownText(g)}</li>`).join('')}</ol>`
+                : `<span>${escapeBreakdownText(gloss)}</span>`}
+        </div>
+        ${exampleHTML}
+        <div class="smart-skip-preview-actions">
+            <button type="button" class="smart-skip-preview-close" data-breakdown-popup-close>Close</button>
+            <button type="button" class="smart-skip-preview-open" data-breakdown-open="${idx}">Open full card</button>
+        </div>`;
+}
+
+async function showQuickLook(idx) {
+    const result = currentBreakdownResults[idx];
+    if (!result?.entry) return;
+    const token = showBreakdownPopup(quickLookHTML(idx, null), result.token.clean);
+    const example = await breakdownPeekExample(result);
+    const popup = document.getElementById('wordByWordPopup');
+    if (token !== breakdownPopupToken || !popup || popup.hidden || !example) return;
+    const card = popup.querySelector('.smart-skip-preview-card');
+    if (card) card.innerHTML = quickLookHTML(idx, example);
+}
+
+function showSavedNote(surface) {
+    const word = escapeBreakdownText(surface);
+    showBreakdownPopup(`
+        <div class="smart-skip-preview-word"><b>${word}</b></div>
+        <p class="word-by-word-popup-text"><strong>${word}</strong> isn’t a flashcard in this app, so it’s been saved to your saved words: a list you can export to use in other apps.</p>
+        <div class="smart-skip-preview-actions">
+            <button type="button" class="smart-skip-preview-close" data-breakdown-saved-list>Saved words</button>
+            <button type="button" class="smart-skip-preview-open" data-breakdown-popup-close>OK</button>
+        </div>`, surface);
+}
+
 function renderBreakdownBody() {
     const body = document.getElementById('lyricBreakdownBody');
     if (!body) return;
@@ -338,30 +502,29 @@ function renderBreakdownBody() {
         const { gloss, pos } = breakdownGloss(result);
         const isCardWord = result.source === 'deck' && result.deckIndex === currentIndex;
         const known = breakdownIsKnown(result);
-        const saved = Boolean(window.isWordSaved?.(surface, target, selectedLanguage));
         const classes = ['wbw-row'];
         if (isCardWord) classes.push('is-card-word');
-        else if (result.source === 'deck') classes.push('in-deck');
         if (!result.entry) classes.push('is-unmatched');
-        const posHTML = pos
-            ? `<span class="wbw-pos card-pos ${getPosColorClass(pos) || ''}">${escapeBreakdownText(pos)}</span>`
-            : '';
-        const knownHTML = known ? '<span class="wbw-known" title="Known" aria-label="Known">✓</span>' : '';
-        const lemma = result.entry?.lemma || '';
-        const showLemma = lemma && lemma.toLocaleLowerCase() !== key;
-        const canOpen = Boolean(result.entry) && !isCardWord;
-        if (canOpen) classes.push('can-open');
+        const label = escapeBreakdownText(surface);
+
+        // A word with a card opens a quick look at it; a word without one can
+        // be saved for export. The card's own word needs neither.
+        let action = '';
+        if (result.entry && !isCardWord) {
+            action = `<button type="button" class="wbw-action wbw-card" data-breakdown-peek="${idx}" aria-haspopup="dialog" aria-label="Show card: ${label}" title="Show card">${WBW_CARD_ICON}</button>`;
+        } else if (!result.entry) {
+            const saved = Boolean(window.isWordSaved?.(surface, target, selectedLanguage));
+            action = `<button type="button" class="wbw-action wbw-star${saved ? ' is-saved' : ''}" data-breakdown-save="${idx}" aria-pressed="${saved}" aria-label="${saved ? 'Saved' : 'Save'}: ${label}" title="${saved ? 'Saved' : 'Save'}">${WBW_STAR_ICON}</button>`;
+        }
+
         rows.push(`
-            <li class="${classes.join(' ')}"${canOpen ? ` data-breakdown-open="${idx}" role="button" tabindex="0" aria-label="Go to card: ${escapeBreakdownText(surface)}"` : ''}>
-                <div class="wbw-main">
-                    <span class="wbw-word">${escapeBreakdownText(surface)}${knownHTML}</span>
-                    <span class="wbw-gloss">${gloss ? escapeBreakdownText(gloss) : '<span class="wbw-none">—</span>'}</span>
-                    ${showLemma || posHTML ? `<span class="wbw-meta">${showLemma ? `<span class="wbw-lemma">${escapeBreakdownText(lemma)}</span>` : ''}${posHTML}</span>` : ''}
+            <li class="${classes.join(' ')}">
+                <div class="wbw-left">
+                    <span class="wbw-word">${label}${known ? '<span class="wbw-known" title="Known" aria-label="Known">✓</span>' : ''}</span>
+                    ${breakdownPosPill(pos)}
                 </div>
-                <div class="wbw-actions">
-                    <button type="button" class="wbw-star${saved ? ' is-saved' : ''}" data-breakdown-save="${idx}" aria-pressed="${saved}" aria-label="${saved ? 'Saved' : 'Save'}: ${escapeBreakdownText(surface)}" title="${saved ? 'Saved' : 'Save'}">${saved ? '★' : '☆'}</button>
-                    <span class="wbw-chevron" aria-hidden="true">${canOpen ? '›' : ''}</span>
-                </div>
+                <span class="wbw-gloss">${gloss ? escapeBreakdownText(gloss) : '<span class="wbw-none">—</span>'}</span>
+                <span class="wbw-slot">${action}</span>
             </li>`);
     });
 
@@ -373,27 +536,18 @@ function renderBreakdownBody() {
         <ul class="wbw-list">${rows.join('')}</ul>`;
 }
 
-function onBreakdownBodyKeydown(event) {
-    if (event.key !== 'Enter' && event.key !== ' ') return;
-    if (!event.target.matches?.('[data-breakdown-open]')) return;
-    onBreakdownBodyClick(event);
-}
-
 function onBreakdownBodyClick(event) {
-    const star = event.target.closest('[data-breakdown-save]');
-    if (!star) {
-        const open = event.target.closest('[data-breakdown-open]');
-        if (!open) return;
+    const peek = event.target.closest('[data-breakdown-peek]');
+    if (peek) {
         event.stopPropagation();
-        event.preventDefault();
-        const idx = Number(open.dataset.breakdownOpen);
-        const result = currentBreakdownResults[idx];
-        if (result?.source === 'deck') navigateToCard(result.deckIndex);
-        else if (result?.entry) navigateToVocabCard(idx);
+        showQuickLook(Number(peek.dataset.breakdownPeek));
         return;
     }
+    const star = event.target.closest('[data-breakdown-save]');
+    if (!star) return;
     event.stopPropagation();
-    const result = currentBreakdownResults[Number(star.dataset.breakdownSave)];
+    const idx = Number(star.dataset.breakdownSave);
+    const result = currentBreakdownResults[idx];
     if (!result?.token?.clean) return;
     const { gloss, pos } = breakdownGloss(result);
     const saved = Boolean(window.toggleSavedWord?.({
@@ -404,11 +558,8 @@ function onBreakdownBodyClick(event) {
         english: currentBreakdownSentence.english,
         language: selectedLanguage,
     }));
-    star.classList.toggle('is-saved', saved);
-    star.setAttribute('aria-pressed', String(saved));
-    star.title = saved ? 'Saved' : 'Save';
-    star.setAttribute('aria-label', `${saved ? 'Saved' : 'Save'}: ${result.token.clean}`);
-    star.textContent = saved ? '★' : '☆';
+    renderBreakdownBody();
+    if (saved) showSavedNote(result.token.clean);
 }
 
 async function showLyricBreakdown(event) {
@@ -428,10 +579,10 @@ async function showLyricBreakdown(event) {
     const body = document.getElementById('lyricBreakdownBody');
     if (body && !body.dataset.bound) {
         body.addEventListener('click', onBreakdownBodyClick);
-        body.addEventListener('keydown', onBreakdownBodyKeydown);
         body.dataset.bound = '1';
     }
     const renderId = ++breakdownRenderId;
+    closeBreakdownPopup();
     renderBreakdownBody();
     document.getElementById('lyricBreakdownModal').classList.remove('hidden');
 
@@ -442,6 +593,7 @@ async function showLyricBreakdown(event) {
 
 function hideLyricBreakdown() {
     breakdownRenderId++;
+    closeBreakdownPopup();
     document.getElementById('lyricBreakdownModal').classList.add('hidden');
     hideWordPopup();
 }
