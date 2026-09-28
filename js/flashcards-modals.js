@@ -322,7 +322,9 @@ async function hydrateBreakdownEntries(results) {
     }
 }
 
-const WBW_CARD_ICON = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="7.5" y="3.5" width="12.5" height="16" rx="2.5"/><path d="M4.5 7.5v10a3 3 0 0 0 3 3h8.5" stroke-linecap="round"/></svg>';
+// One flashcard, tilted, with a word on it: not the stacked-pages "copy"
+// glyph, and upright it read as a keyboard or a credit card.
+const WBW_CARD_ICON = '<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g transform="rotate(-8 12 11)"><rect x="3" y="4.5" width="18" height="12.5" rx="2.5"/><path d="M8.6 11.6h7" stroke-width="2.1"/></g></svg>';
 const WBW_STAR_ICON = '<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.6l2.55 5.2 5.7.83-4.13 4.02.98 5.68L12 16.64l-5.1 2.69.98-5.68L3.75 9.63l5.7-.83z"/></svg>';
 
 
