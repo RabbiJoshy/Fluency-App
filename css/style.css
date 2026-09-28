@@ -2970,6 +2970,30 @@
         .meaning-row.meaning-row-rare {
             animation: rareSenseRowFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
+        /* A sense already known stays on a part-known card, greyed, so the
+           word is still shown whole without competing with what is being
+           practised. */
+        .meaning-row.meaning-row-known,
+        .group-card-varying-cell.is-known-subsense {
+            /* Beats the cycle row's inline opacity and the rare row's fade-in. */
+            opacity: 0.45 !important;
+            animation: none;
+            filter: grayscale(1);
+        }
+        .known-sense-tag {
+            display: inline-flex;
+            align-items: center;
+            font-family: var(--font-reading);
+            font-size: 10px;
+            font-weight: 650;
+            line-height: 1.2;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        .group-card-varying-cell .known-sense-tag {
+            margin-left: 6px;
+        }
         @keyframes rareSenseRowFadeIn {
             0% {
                 opacity: 0;

@@ -1,11 +1,11 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=7775aeb6';
-import { validateVocabularyIndex } from './data-contracts.js?v=7775aeb6';
-import { formatRoute } from './routes.js?v=7775aeb6';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=7775aeb6';
-import { releaseUrl } from './release-host.js?v=7775aeb6';
+import './state.js?v=e5322366';
+import { validateVocabularyIndex } from './data-contracts.js?v=e5322366';
+import { formatRoute } from './routes.js?v=e5322366';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=e5322366';
+import { releaseUrl } from './release-host.js?v=e5322366';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -3016,7 +3016,12 @@ async function loadVocabularyData(rangeString, opts = {}) {
             card.cognate_scores = item.cognate_scores ?? null;
             card.translationUnavailable = meanings.every(meaning => !String(meaning.meaning || '').trim());
             card.artistVocabularyScope = activeArtist ? artistVocabularyScope : null;
-            const deckCard = studyMode === 'review' ? buildFocusedReviewCard(card) : card;
+            // Sets and Review share one card shape: known senses greyed,
+            // the rest fronted and answered. Review skips a word with
+            // nothing left to practise.
+            const deckCard = buildKnowledgeAwareCard(card, {
+                skipWhenNothingToPractise: studyMode === 'review'
+            });
             if (deckCard) flashcards.push(deckCard);
         }
 

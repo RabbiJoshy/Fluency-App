@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-28T22:46:00+01:00",
+      "date": "2026-09-28 22:46 BST",
+      "agent": "Claude",
+      "summary": "Part-known words now show the meanings you know greyed out as Known, the same way from a set or from Review.",
+      "detail": [
+        "Review no longer hides the senses you already know; they stay on the back, greyed with a Known tag, and the card opens on one you are still learning.",
+        "Swiping and the arrow keys pass over Known senses, and autoplay skips them.",
+        "Answering a part-known card counts only for the senses it was testing; Known senses keep their own review schedule and come back on their own when due.",
+        "Marking one sense wrong in the meanings list now marks the untouched ones known when you leave the card, so a second miss can still be tapped."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-28T21:05:00+01:00",
       "date": "2026-09-28 21:05 BST",
       "agent": "Claude",
