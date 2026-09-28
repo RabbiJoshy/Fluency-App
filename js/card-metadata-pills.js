@@ -959,6 +959,31 @@ function glossProjectionKey(value) {
     return foldMetadataComparable(String(value || '').replace(/…$/u, ''));
 }
 
+function compactGlossDistinction(value) {
+    const text = readableSenseNote(value);
+    if (!text) return '';
+    if (text.length <= 44) return text;
+
+    // Keep a short source phrase when the dictionary has supplied a useful
+    // semantic key inside a much longer editorial parenthetical. This gives
+    // repeated learner glosses (for example two readings of “because”) a
+    // natural second line without manufacturing a new label.
+    const semanticPrefix = text.match(
+        /^(introduces?\s+(?:(?:an?|the)\s+)?(?:explanation|reason|cause|condition|contrast|result|purpose|question|alternative|comparison|consequence))\b/i
+    );
+    if (semanticPrefix) return semanticPrefix[1];
+
+    const firstClause = splitLearnerContextClauses(text)[0] || '';
+    return firstClause.length <= 44 ? firstClause : '';
+}
+
+function glossDistinctionKey(source, visibleGloss) {
+    const parenthetical = glossParentheticalParts(source);
+    if (!parenthetical || !parenthetical.before || !parenthetical.inside) return '';
+    if (glossProjectionKey(parenthetical.before) !== glossProjectionKey(visibleGloss)) return '';
+    return compactGlossDistinction(parenthetical.inside);
+}
+
 // Source-preserving projection for the bold learner-facing meaning. It never
 // rewrites a definition: it selects complete source clauses where possible,
 // and keeps the full projected gloss for the optional sense note.
@@ -966,11 +991,11 @@ export function learnerGlossPresentation(meaning, active, options = {}) {
     const source = String(options.gloss
         ?? projectWiktionaryGloss(meaning, meaning?.meaning || meaning?.translation || '').display
         ?? '').trim();
-    if (!source) return { visibleGloss: '', noteGloss: '' };
+    if (!source) return { visibleGloss: '', visibleKey: '', noteGloss: '' };
 
     const senseCount = Math.max(1, Number(options.senseCount) || 1);
     const budget = senseCount === 1 ? 84 : (active ? 64 : 48);
-    if (source.length <= budget) return { visibleGloss: source, noteGloss: '' };
+    if (source.length <= budget) return { visibleGloss: source, visibleKey: '', noteGloss: '' };
 
     const clauses = splitLearnerContextClauses(source);
     const conciseClauses = clauses.filter(clause => clause.length <= 32
@@ -994,14 +1019,14 @@ export function learnerGlossPresentation(meaning, active, options = {}) {
     // If shortening would make this row visually collide with a peer whose
     // complete meaning is different, retain more of this row's first clause.
     const peers = Array.isArray(options.peerMeanings) ? options.peerMeanings : [];
-    const visibleKey = glossProjectionKey(visibleGloss);
-    const collision = peers.some(peer => {
+    const visibleProjectionKey = glossProjectionKey(visibleGloss);
+    const collision = options.preservePeerGlossDistinction !== false && peers.some(peer => {
         const peerSource = projectWiktionaryGloss(
             peer,
             peer?.meaning || peer?.translation || ''
         ).display;
         if (!peerSource || foldMetadataComparable(peerSource) === foldMetadataComparable(source)) return false;
-        return glossProjectionKey(compactGlossClause(splitLearnerContextClauses(peerSource)[0] || peerSource, budget)) === visibleKey;
+        return glossProjectionKey(compactGlossClause(splitLearnerContextClauses(peerSource)[0] || peerSource, budget)) === visibleProjectionKey;
     });
     if (collision) {
         visibleGloss = clauses[0] || source;
@@ -1010,7 +1035,8 @@ export function learnerGlossPresentation(meaning, active, options = {}) {
     const noteGloss = foldMetadataComparable(visibleGloss) === foldMetadataComparable(source)
         ? ''
         : source;
-    return { visibleGloss, noteGloss };
+    const visibleKey = noteGloss ? glossDistinctionKey(source, visibleGloss) : '';
+    return { visibleGloss, visibleKey, noteGloss };
 }
 
 // One policy surface for every dictionary adapter. Extraction stays faithful
@@ -1154,6 +1180,7 @@ export function learnerSensePresentation(meaning, active, options = {}) {
         visibleContext: contextPresentation.visibleContext,
         detailContext: contextPresentation.detailContext,
         visibleGloss: glossPresentation.visibleGloss,
+        visibleKey: glossPresentation.visibleKey,
         noteGloss: glossPresentation.noteGloss,
         noteContext,
         noteItems,
