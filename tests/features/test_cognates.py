@@ -128,8 +128,12 @@ class FormTests(unittest.TestCase):
         self.assertGreater(jaro_winkler_similarity("comunicar", "communicate"), 0.88)
         self.assertGreater(jaro_winkler_similarity("abandonar", "abandon"), 0.90)
 
-    def test_spanish_inflections_score_strongly_on_form(self) -> None:
-        es_policy = load_policy(CONFIG_ROOT, "es", "en")
+    def test_the_legacy_scorer_rewards_spanish_stems(self) -> None:
+        # Pinned to legacy-max4/v1: these numbers come from Jaro-Winkler, which
+        # the English pairs no longer use (decision 0027).
+        from dataclasses import replace
+
+        es_policy = replace(load_policy(CONFIG_ROOT, "es", "en"), surface_scorer="legacy-max4/v1")
         self.assertGreater(form_score("abandonar", "abandon", es_policy), 0.90)
         self.assertGreater(form_score("comunicar", "communicate", es_policy), 0.90)
 

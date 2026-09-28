@@ -133,6 +133,7 @@ Say the bold name.
 | **POLYGLOT** | artist mode scaling | Audit Artist mode scaling across languages (French test playlist completion, Portuguese test playlist, robust language adapters). | Lab / architecture | **Next** (prompt in POLYGLOT section below) |
 | **TURBO** | live user WSD engine | Ultra-fast, live client-side/worker Spanish pipeline: clean, normalise, tag, and compute fast basic WSD on user-uploaded Spotify playlists. | App / pipeline engine | After POLYGLOT |
 | **SETLIST** | live playlist UI | Spotify playlist → LRCLIB → worker persist → naive speech-overlay deck. No WSD. | beside WSD | In progress (brief `docs/runbooks/live-playlist.md`) |
+| **GLEAN** | MWE re-harvest | Two new phrase lists: (a) expressions frozen on one inflected form (*no sé*, *ya voy*, *muchas gracias*), which keep that form off Merge Lemmas; (b) lemma constructions hidden in glosses (*dejar de*, *tener que*), which become senses on the merged lemma card. | Lab / curation | Not started (decision 0028) |
 
 **Hold.** Sequence: SIEVE done, MILL done, SWEEP done, QUARRY done, CHISEL 1 done, KILN 1 done, CHISEL 2 done, KILN 2 done, GLASS done, MEND done, GRAFT done, VERSE done, CHORUS done. **POLYGLOT is next** (audit Artist mode scaling across languages). TURBO follows. SETLIST runs beside.
 
@@ -472,6 +473,23 @@ Paste into that chat:
 - Do not: harvest; run lyrics WSD; merge the three music picker rows; treat Daily Mix 403s as the product; reopen Genius/dump research.
 
 ---
+
+### GLEAN — MWE re-harvest for Merge Lemmas (not started)
+
+**This chat is GLEAN.** Merge Lemmas keeps a form on its own card when the card
+shows an expression frozen on that exact form (decision 0028, rule 3). How well
+that works depends entirely on the phrase lists, and today's are uneven: some
+kept phrases are weak (*qué tiene*, *aquí estamos*), and many real ones are
+missing.
+- **List (a), frozen-form expressions:** phrases that contain one specific
+  non-citation form (*no sé*, *ya voy*, *¿qué tal?*, *muchas gracias*, *às vezes*).
+  These feed rule 3. Candidate source: Wiktionary multiword entries containing
+  the surface verbatim, for both providers.
+- **List (b), lemma constructions:** constructions headed by the lemma that now
+  live only as gloss text (*dejar de*, *tener que*, *ir a*). They are
+  compositional and argue for no particular form, so they become senses on the
+  merged lemma card, never reasons to keep a form apart.
+- Do not: reopen the merge rules themselves (settled in 0028); use rank cutoffs.
 
 ## Ground rules for every chat
 

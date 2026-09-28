@@ -321,7 +321,9 @@ function liveCognateExample(code) {
     if (!Array.isArray(vocab) || !Number.isFinite(cutoff)) return null;
     let best = null;
     for (const item of vocab) {
-        const score = Number(item?.cognate_scores?.[code] || 0);
+        const score = globalThis.cognateScoreFor
+            ? globalThis.cognateScoreFor(item, code)
+            : Number(item?.cognate_scores?.[code] || 0);
         if (score < cutoff) continue;
         if (best === null || (item.rank ?? Infinity) < (best.rank ?? Infinity)) best = item;
     }

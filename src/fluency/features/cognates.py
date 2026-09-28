@@ -43,7 +43,6 @@ from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
 
 from fluency.features.correspondences import Correspondences
-from fluency.features.phonetics import best_pronunciation_similarity
 
 
 COGNATE_SCORE_SCHEMA = "cognate-score/v1"
@@ -148,6 +147,19 @@ class CognatePolicy:
     # max() term — so every cutoff calibrated without it would silently loosen.
     # A pair enables it and recalibrates together.
     use_pronunciation: bool = False
+    # Which module in ``features/surface_scorers`` measures written likeness.
+    # Declared per pair, never defaulted from a file: a pair calibrated on one
+    # scorer silently changes meaning under another. Decision 0027.
+    surface_scorer: str = "legacy-max4/v1"
+    # Target-side ending rewrites for ``edit-distance/v1`` (idad -> ity). The
+    # first rule whose ending matches is applied, so plural forms are listed
+    # before their singulars.
+    ending_rules: tuple[tuple[str, str], ...] = ()
+    # The CogNet pair file for this pair, relative to the workspace's raw/, and
+    # which column holds the target word. None declares that CogNet has no data
+    # for the pair (Finnish), rather than leaving it to be inferred.
+    cognet_pairs: str | None = None
+    cognet_target_column: int = 0
     notes: str = ""
 
     def __post_init__(self) -> None:
@@ -161,6 +173,14 @@ class CognatePolicy:
             raise CognatePolicyError("length_guard is a ratio between 0 and 1")
         if not 0.0 <= self.lemma_share_floor <= 1.0:
             raise CognatePolicyError("lemma_share_floor is a ratio between 0 and 1")
+        from fluency.features.surface_scorers import UnknownScorerError, get_scorer
+
+        try:
+            get_scorer(self.surface_scorer)
+        except UnknownScorerError as error:
+            raise CognatePolicyError(str(error)) from None
+        if self.cognet_target_column not in (0, 1):
+            raise CognatePolicyError("cognet_target_column is 0 or 1")
         if abs(self.meaning_floor + self.meaning_weight - 1.0) > 1e-9:
             raise CognatePolicyError(
                 "meaning_floor + meaning_weight must be 1.0 so a perfect pair scores 1.0"
@@ -180,6 +200,10 @@ class CognatePolicy:
             return tuple(out)
 
         known = dict(value)
+        if not known.get("surface_scorer"):
+            raise CognatePolicyError(
+                "a cognate policy file must name its surface_scorer (decision 0027)"
+            )
         return cls(
             target_language=str(known.get("target_language", "")),
             known_language=str(known.get("known_language", "")),
@@ -195,6 +219,10 @@ class CognatePolicy:
             known_must_be_a_gloss=bool(known.get("known_must_be_a_gloss", False)),
             lemma_share_floor=float(known.get("lemma_share_floor", 0.90)),
             use_pronunciation=bool(known.get("use_pronunciation", False)),
+            surface_scorer=str(known["surface_scorer"]),
+            ending_rules=rules("ending_rules"),
+            cognet_pairs=(str(known["cognet_pairs"]) if known.get("cognet_pairs") else None),
+            cognet_target_column=int(known.get("cognet_target_column", 0)),
             notes=str(known.get("notes", "")),
         )
 
@@ -214,6 +242,10 @@ class CognatePolicy:
             "known_must_be_a_gloss": self.known_must_be_a_gloss,
             "lemma_share_floor": self.lemma_share_floor,
             "use_pronunciation": self.use_pronunciation,
+            "surface_scorer": self.surface_scorer,
+            "ending_rules": [list(rule) for rule in self.ending_rules],
+            "cognet_pairs": self.cognet_pairs,
+            "cognet_target_column": self.cognet_target_column,
             "notes": self.notes,
         }
 
@@ -595,38 +627,23 @@ def form_score(
     known_sounds: Iterable[str] = (),
     correspondences: "Correspondences | None" = None,
 ) -> float:
-    """Best of up to four readings of one question: could this be recognised?
+    """Could a reader of the known language recognise this written form?
 
-    Each tier is independent evidence and each is sufficient alone, so they
-    combine with max() rather than an average — a learner who recognises a word
-    from its spelling is not helped less because it is also said differently.
-    The tiers degrade rather than fail: one with nothing to say contributes
-    nothing, instead of a zero that would argue against the pair.
-
-        tier                        needs                 cs-pl recall @ 0.80
-        raw spelling (Levenshtein + JW)  nothing                       0.479
-        learned correspondences     nothing                            0.616
-        hand skeleton               rules someone wrote                0.670
-        pronunciation               IPA on both sides                  0.776
-
-    Precision stays at 1.000 through the third tier and 0.998 at the fourth,
-    measured against CogNet's asserted pairs with random pairs as negatives.
+    Delegates to the scorer the pair's policy names. The methods themselves
+    live in ``features/surface_scorers``, one module each, so a pair moves to a
+    better one by editing its own policy file. Decision 0027.
     """
 
-    left, right = strip_accents(target_word), strip_accents(known_word)
-    skel_left = skeleton(target_word, policy.target_skeleton)
-    skel_right = skeleton(known_word, policy.known_skeleton)
-    best = max(
-        similarity(left, right),
-        jaro_winkler_similarity(left, right),
-        similarity(skel_left, skel_right),
-        jaro_winkler_similarity(skel_left, skel_right),
+    from fluency.features.surface_scorers import get_scorer
+
+    return get_scorer(policy.surface_scorer).score(
+        target_word,
+        known_word,
+        policy,
+        target_sounds=target_sounds,
+        known_sounds=known_sounds,
+        correspondences=correspondences,
     )
-    if correspondences is not None and best < 1.0:
-        best = max(best, correspondences.similarity(left, right))
-    if policy.use_pronunciation and best < 1.0:
-        best = max(best, best_pronunciation_similarity(target_sounds, known_sounds))
-    return best
 
 
 def meaning_score(

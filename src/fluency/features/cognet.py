@@ -209,11 +209,13 @@ class CognetPair:
     parts_of_speech: frozenset[str]
 
 
-def read_pairs(path: Path | str) -> dict[str, tuple[CognetPair, ...]]:
+def read_pairs(path: Path | str, *, target_column: int = 0) -> dict[str, tuple[CognetPair, ...]]:
     """Read an extracted CogNet pair file into target lemma -> known lemmas.
 
-    The file is the three columns the extractor writes — target word, known
-    word, concept part of speech — one pair per line.
+    The file is the three columns the extractor writes — two words and the
+    concept part of speech — one pair per line. The extractor names a file by
+    its two languages in alphabetical order (``eng-spa.tsv``), so for Spanish
+    the target word is the second column; the pair's policy says which.
     """
 
     source = Path(path)
@@ -226,8 +228,8 @@ def read_pairs(path: Path | str) -> dict[str, tuple[CognetPair, ...]]:
             columns = line.rstrip("\n").split("\t")
             if len(columns) < 2:
                 continue
-            target = columns[0].strip().lower()
-            known = columns[1].strip().lower()
+            target = columns[target_column].strip().lower()
+            known = columns[1 - target_column].strip().lower()
             if not target or not known:
                 continue
             marker = columns[2].strip() if len(columns) > 2 else ""

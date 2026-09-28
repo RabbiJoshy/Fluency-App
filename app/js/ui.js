@@ -2311,6 +2311,7 @@ async function updateCognateToggleVisibility() {
             cognateFieldAvailable = vocabData.some(item =>
                 (item.cognate_score > 0)
                 || item.cognate_scores
+                || item.cognate_sense_map
                 || item.cognet_cognate
                 || item.is_transparent_cognate
             );

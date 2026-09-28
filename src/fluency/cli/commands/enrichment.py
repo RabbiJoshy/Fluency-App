@@ -71,9 +71,27 @@ def register(subparsers) -> None:
     # One flag per known language: "en" needs no extract because the deck's
     # glosses are already English; any other language takes its dictionary.
     cognates.add_argument(
+        "--schema",
+        choices=("v1", "v3"),
+        default="v1",
+        help="v3: the per-sense map (surface -> headword -> English word), English only",
+    )
+    cognates.add_argument(
+        "--carry-from",
+        type=Path,
+        help="v3: an existing v2 cognates.json whose non-English known languages ride along",
+    )
+    cognates.add_argument(
+        "--release-index-extra",
+        type=Path,
+        action="append",
+        default=[],
+        help="v3: further release indexes whose surfaces and senses the map must cover",
+    )
+    cognates.add_argument(
         "--known",
         action="append",
-        required=True,
+        default=[],
         metavar="CODE[=EXTRACT]",
         help="known language, e.g. --known en --known pl=/path/kaikki-Polish.jsonl",
     )
@@ -137,7 +155,48 @@ def handle_enrichment(args: argparse.Namespace) -> int:
             print("Missing headwords: " + ", ".join(coverage["missing_headwords"]))
         print("No release was composed or activated.")
         return 0
+    if args.enrichment_command == "build-cognates" and getattr(args, "schema", "v1") == "v3":
+        from fluency.enrichments.cognates import build_app_cognates_by_sense, read_english_wordlist
+
+        workspace_root = Workspace.load(_workspace_path(args.workspace)).root
+        out = args.out or workspace_root / "cognates" / args.language / "cognates.json"
+        rows: list = []
+        for index in [args.release_index, *args.release_index_extra]:
+            if index is not None:
+                rows.extend(json.loads(Path(index).read_text(encoding="utf-8")))
+        universe = None
+        if getattr(args, "surface_universe", None):
+            from fluency.inventory.coverage import read_frequency_counts
+            counts, _total = read_frequency_counts(args.surface_universe)
+            universe = set(counts)
+        payload = build_app_cognates_by_sense(
+            language=args.language,
+            config_root=args.config_root,
+            raw_root=workspace_root / "raw",
+            release_rows=rows,
+            target_extract=getattr(args, "target_extract", None),
+            surface_universe=universe,
+            english_words=(
+                read_english_wordlist(args.english_wordlist) if args.english_wordlist else None
+            ),
+            release_id=args.release_id,
+            carried=(
+                json.loads(Path(args.carry_from).read_text(encoding="utf-8"))
+                if args.carry_from else None
+            ),
+        )
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_bytes(json_bytes(payload))
+        print(
+            f"{args.language}->en: {len(payload['scores'])} surfaces, routes {payload['routes']}, "
+            f"scorer {payload['surface_scorer']}"
+        )
+        print(f"Wrote {out}")
+        print("No release was composed or activated.")
+        return 0
     if args.enrichment_command == "build-cognates":
+        if not args.known:
+            raise SystemExit("build-cognates needs at least one --known language")
         known: dict[str, Path | None] = {}
         for item in args.known:
             code, _, extract = str(item).partition("=")

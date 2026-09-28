@@ -75,3 +75,72 @@ class LemmaMergeKeyTests(unittest.TestCase):
         )
         if completed.returncode != 0:
             self.fail(completed.stderr or completed.stdout)
+
+
+class LemmaMergeExceptionTests(unittest.TestCase):
+    """Contractions and expressions frozen on one form keep their own card."""
+
+    @unittest.skipUnless(shutil.which("node"), "Node.js is needed to run JS vm tests")
+    def test_contractions_frozen_forms_and_the_lemma_host(self) -> None:
+        script = r"""
+            const fs = require('node:fs');
+            const vm = require('node:vm');
+            const source = fs.readFileSync(process.env.LEMMA_VOCAB, 'utf8');
+            const pure = source.slice(source.indexOf('// lemma-merge-pure'), source.indexOf('// /lemma-merge-pure'));
+            const hostStart = source.indexOf('function selectLemmaModeRepresentatives');
+            const host = source.slice(hostStart, source.indexOf('\n}\n', hostStart) + 3);
+            const context = {};
+            vm.runInNewContext(pure + host, context);
+            const { lemmaGroupKey, selectLemmaModeRepresentatives } = context;
+            const fail = message => { throw new Error(message); };
+
+            // SpanishDict marks a contraction in its part of speech.
+            const al = { word: 'al', meanings: [{ headword: 'a', pos: 'CONTRACTION', translation: 'to the' }] };
+            if (lemmaGroupKey(al) !== '') fail('al is a contraction');
+            // Wiktionary languages are stamped from their exceptions file.
+            const no = { word: 'no', is_contraction: true, meanings: [{ headword: 'em', pos: 'prep', translation: 'in' }] };
+            if (lemmaGroupKey(no) !== '') fail('pt no = em + o must not fold into em');
+            const nao = { word: 'na', meanings: [{ headword: 'em', pos: 'prep', translation: 'in' }] };
+            if (lemmaGroupKey(nao) !== 'em') fail('an unstamped form still merges');
+
+            // An expression frozen on this exact form keeps it.
+            const se = { word: 'sé', meanings: [
+                { headword: 'ser', pos: 'VERB', translation: 'to be' },
+                { headword: 'no sé', pos: 'PHRASE', translation: "I don't know" },
+            ]};
+            if (lemmaGroupKey(se) !== '') fail('no sé keeps sé');
+            // A construction headed by the lemma's own spelling does not.
+            const tener = { word: 'tener', meanings: [
+                { headword: 'tener', pos: 'VERB', translation: 'to have' },
+                { headword: 'tener cuidado', pos: 'PHRASE', translation: 'to be careful' },
+            ]};
+            if (lemmaGroupKey(tener) !== 'tener') fail('tener cuidado must not keep tener apart');
+            const favor = { word: 'favor', meanings: [
+                { headword: 'favor', pos: 'NOUN', translation: 'favor' },
+                { headword: 'por favor', pos: 'PHRASE', translation: 'please' },
+            ]};
+            if (lemmaGroupKey(favor) !== 'favor') fail('por favor must not keep favor apart');
+
+            // A Speech card whose senses have not loaded uses the shipped key.
+            const pending = { word: 'fue', lemma: 'ser', merge_key: '', meanings: [] };
+            if (lemmaGroupKey(pending) !== '') fail('a shipped key beats the lemma column');
+            const columnOnly = { word: 'fue', lemma: 'ser', meanings: [] };
+            if (lemmaGroupKey(columnOnly) !== 'ser') fail('without a key the lemma column still applies');
+
+            // The lemma's own spelling fronts the merged card.
+            const estaba = { word: 'estaba', stableRank: 1, rank: 1, meanings: [{ headword: 'estar', pos: 'VERB', translation: 'to be' }] };
+            const estar = { word: 'estar', stableRank: 9, rank: 9, meanings: [{ headword: 'estar', pos: 'VERB', translation: 'to be' }] };
+            const kept = selectLemmaModeRepresentatives([estaba, estar]);
+            if (kept.length !== 1 || kept[0] !== estar) fail('estar should host the merged card');
+            const alone = selectLemmaModeRepresentatives([{ ...estaba }]);
+            if (alone.length !== 1 || alone[0].word !== 'estaba') fail('without estar the most frequent form hosts');
+        """
+        completed = subprocess.run(
+            ["node", "-e", script],
+            check=False,
+            capture_output=True,
+            text=True,
+            env={**os.environ, "LEMMA_VOCAB": str(VOCAB)},
+        )
+        if completed.returncode != 0:
+            self.fail(completed.stderr or completed.stdout)
