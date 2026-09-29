@@ -134,6 +134,7 @@ Say the bold name.
 | **TURBO** | live user WSD engine | Ultra-fast, live client-side/worker Spanish pipeline: clean, normalise, tag, and compute fast basic WSD on user-uploaded Spotify playlists. | App / pipeline engine | After POLYGLOT |
 | **SETLIST** | live playlist UI | Spotify playlist → LRCLIB → worker persist → naive speech-overlay deck. No WSD. | beside WSD | In progress (brief `docs/runbooks/live-playlist.md`) |
 | **GLEAN** | MWE re-harvest | Two new phrase lists: (a) expressions frozen on one inflected form (*no sé*, *ya voy*, *muchas gracias*), which keep that form off Merge Lemmas; (b) lemma constructions hidden in glosses (*dejar de*, *tener que*), which become senses on the merged lemma card. | Lab / curation | Not started (decision 0028) |
+| **KINDRED** | cognate mapping, any pair | Make Exclude Cognates right for every language combination: recalibrate cutoffs, better surface scorer, Czech→Polish less conservative, fr/nl on real releases, Spanish lyrics coverage, rebuild-on-release step. | Lab (maps + app) | Not started; runs directly after GLEAN (decisions 0027, 0028) |
 
 **Hold.** Sequence: SIEVE done, MILL done, SWEEP done, QUARRY done, CHISEL 1 done, KILN 1 done, CHISEL 2 done, KILN 2 done, GLASS done, MEND done, GRAFT done, VERSE done, CHORUS done. **POLYGLOT is next** (audit Artist mode scaling across languages). TURBO follows. SETLIST runs beside.
 
@@ -490,6 +491,38 @@ missing.
   compositional and argue for no particular form, so they become senses on the
   merged lemma card, never reasons to keep a form apart.
 - Do not: reopen the merge rules themselves (settled in 0028); use rank cutoffs.
+
+### KINDRED — cognate mapping for any language pair (after GLEAN)
+
+**This chat is KINDRED.** Goal: Exclude Cognates is right for *any* pair of
+deck language and known language, not just the ones shipped. The engine is in
+place (decision 0028, `cognate-score/v4`): the card's English gloss is the
+pivot; a sense is free for known language L when an L word carries that sense,
+is a cognate (CogNet where it knows the headword), looks close, and, for
+non-English L, has a primary sense the card also teaches. A new pair is a
+`config/cognates/<target>-<known>.json` plus an English-glossed extract. Runs
+directly after GLEAN because GLEAN's phrase lists change which cards carry
+expressions, and expressions are never free cognates.
+- **Calibrate:** set every pair's cutoff on the new scorer from its first-300
+  and first-2,000 set-aside lists; Czech→Polish 0.80 first. Cutoffs were carried
+  over from the legacy scorer, not recalibrated.
+- **Scorer:** replace provisional `edit-distance/v1` (decision 0027, owner not
+  satisfied). It misses capitán/captain and número/number. Judge candidates
+  with `scripts/eval_surface_scorer.py`. Options: correspondences learned from
+  CogNet, panphon on IPA, stems.
+- **Czech→Polish:** less conservative where Polish leads with another sense
+  (mluvit/mówić stays in the deck), and name the standard Polish word as the
+  match, not a dialect or archaic form (pane→panek, bylo→byłom).
+- **Coverage:** recheck fr and nl on real releases (both were measured on
+  menus); give Dutch a `cognatesPath`; add the lyrics releases' surfaces to the
+  Spanish map.
+- **Release step:** the merge keys (`app/data/merge-exceptions/<lang>.json`)
+  and cognate card verdicts are tied to one release and ignored for any other.
+  Make rebuilding them part of activating a Speech release (runbook, or a check).
+- **Prove any-pair:** add at least one new pair end to end (e.g. es read by a
+  pt or fr speaker) to show a new combination is only a config file.
+- Do not: reintroduce per-word scoring, rank cutoffs or false-friend lists; touch
+  the WSD self-reading bugs (separate task).
 
 ## Ground rules for every chat
 

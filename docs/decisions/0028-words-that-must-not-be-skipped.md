@@ -28,30 +28,51 @@ Rejected:
   missä, es sé) are WSD errors on the card itself, and they belong to a WSD fix.
 - **Rank cutoffs and percentage thresholds.**
 
-## Exclude Cognates (`app/js/cognates.js`, `cognate-score/v3`)
+## Exclude Cognates (`app/js/cognates.js`, `cognate-score/v4`)
 
-A card is set aside only if **every sense it shows is a free cognate**. A sense
-is free when all three hold:
+A card is set aside for a known language only if **every sense it shows is a
+free cognate in that language**. The card's English translation is the pivot,
+which is what makes this work for any pair. A sense is free for known language
+L when all of these hold:
+
 - it is not an expression;
-- one of the English words in its translation is a cognate of the sense's
-  headword. With CogNet (es, pt, fr, nl, cs) that means CogNet pairs them.
-  Without CogNet coverage (fi, or a headword CogNet lacks), the English word
-  only has to be the translation itself;
-- that word's surface score (decision 0027) reaches the language's cutoff.
+- for some English word g in its translation, an L word **has that sense**. For
+  English, the L word is g itself. For any other language, g is one of the L
+  word's own live Wiktionary glosses;
+- it is a **cognate**: CogNet pairs the L word with the sense's headword, where
+  CogNet has the headword. Otherwise the shared gloss is the evidence, and for
+  English g must also be a real English word;
+- for a non-English L, **the L word's primary sense is one this card teaches**.
+  This blocks false friends that share only a minor sense: Polish *czerstwy* is
+  "stale" first and "fresh" far down, so Czech *čerstvý* stays. Likewise
+  *dívka*/*dziwka*, *prachy*/*prochy*, *vysvětlit*/*wyświetlić*. English needs no
+  such check, because the known word is the card's own gloss;
+- its surface score (decision 0027) reaches L's cutoff.
 
-The file is `surface → headword → English word → score`, built by
-`fluency enrichment build-cognates --schema v3`. Czech's Polish scores ride along
-unchanged in `carried`.
+The file is `surface → headword → English word → {language: score}`, with
+`matches` naming the L word where it isn't g. It is built by
+`fluency enrichment build-cognates --schema v4 --known en --known pl=<extract>`.
+A new pair needs only a `config/cognates/<target>-<known>.json` and an
+English-glossed extract.
+
+The per-card verdicts the app uses before a Speech card's senses load, and the
+merge keys, are trusted only for the release they were built from
+(`built_from_release_id` / `release_id`). For any other release the app keeps
+every card until the senses load.
 
 This replaces the per-word best-of-lemmas score and the look-alike gloss gate
-(bench matched banco). No gender or false-friend list is used: the every-sense
-test does that job.
+(which let bench match banco). No gender or false-friend list is used.
 
-Top-300 set-asides at the shipped cutoffs:
+First-300 set-asides at the shipped cutoffs (en 0.75, or 0.80 for fr/nl; pl 0.80):
 
 | | before | after |
 |---|---|---|
 | es | problema, idea, serio, familia | tres, idea, familia |
 | pt | favor, nome, problema, parte, momento, caso, forma | nome, problema, carro, realmente |
-| nl | 12 incl. over, even, heel, bang | vind, sorry, idee, zoon, probleem |
-| fr | 12 incl. nous, plus, part, grand | famille |
+| nl | 12, including over, even, heel, bang | vind, sorry, idee, zoon, probleem |
+| fr | 12, including nous, plus, part, grand | famille |
+| cs→en | problém, fakt | musí, fakt |
+| cs→pl | 70 (per word; legacy scorer matched víc/wystarczająco, všechno/wszechrzecz) | 55: tak, ale, dobře, můj, musím, trochu, každý, … |
+
+Known gap in cs→pl: it is conservative where Polish leads with a different
+sense (*mluvit*/*mówić*, which is "say" first, stays in the deck).

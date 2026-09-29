@@ -8,15 +8,18 @@ import unittest
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 IDENTITY_MODULE = REPOSITORY_ROOT / "app" / "js" / "progress-identity.js"
+IMPORT_CORE_MODULE = REPOSITORY_ROOT / "app" / "js" / "vocabulary-import-core.js"
 
 
 @unittest.skipUnless(shutil.which("node"), "Node.js is required for browser-helper tests")
 class ProgressIdentityTests(unittest.TestCase):
     def run_module_assertions(self, assertions: str) -> None:
         encoded = base64.b64encode(IDENTITY_MODULE.read_bytes()).decode("ascii")
+        core = base64.b64encode(IMPORT_CORE_MODULE.read_bytes()).decode("ascii")
         script = textwrap.dedent(
             f"""
             import * as identity from 'data:text/javascript;base64,{encoded}';
+            import * as importCore from 'data:text/javascript;base64,{core}';
             {assertions}
             """
         )
@@ -48,6 +51,28 @@ class ProgressIdentityTests(unittest.TestCase):
             const merged = identity.mergeProgressRecords(records);
             if (merged.word !== 'que' || merged.correct !== 3 || merged.srsStage !== 2) {
                 throw new Error('Merged history lost the historical Lyrics answer');
+            }
+            """
+        )
+
+    def test_imported_speech_row_reaches_an_artist_card_by_surface(self) -> None:
+        # The known-word import always reads the Speech deck, so it writes
+        # Speech ids. An artist card with a different id must still find the
+        # row through its surface and language.
+        self.run_module_assertions(
+            """
+            const speech = [{ id: 'b528b569', word: 'que' }];
+            const parsed = importCore.parseVocabularyImport('que');
+            const plan = importCore.buildVocabularyImportPlan(parsed, speech, {}, { now: Date.parse('2026-09-28T10:00:00Z') });
+            if (plan.entries.length !== 1 || plan.entries[0].itemId !== 'es0b528b569') {
+                throw new Error('Import did not key the row by its Speech id');
+            }
+            const progress = { [plan.entries[0].itemId]: plan.entries[0].progress };
+            const records = identity.matchingProgressRecords(progress, {
+                fullId: 'es1d6ffed1a', surface: 'Que', language: 'spanish'
+            });
+            if (records.length !== 1 || records[0].id !== 'es0b528b569') {
+                throw new Error('Artist card did not find the imported Speech row');
             }
             """
         )

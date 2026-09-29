@@ -959,6 +959,31 @@ function glossProjectionKey(value) {
     return foldMetadataComparable(String(value || '').replace(/…$/u, ''));
 }
 
+function compactGlossDistinction(value) {
+    const text = readableSenseNote(value);
+    if (!text) return '';
+    if (text.length <= 44) return text;
+
+    // Keep a short source phrase when the dictionary has supplied a useful
+    // semantic key inside a much longer editorial parenthetical. This gives
+    // repeated learner glosses (for example two readings of “because”) a
+    // natural second line without manufacturing a new label.
+    const semanticPrefix = text.match(
+        /^(introduces?\s+(?:(?:an?|the)\s+)?(?:explanation|reason|cause|condition|contrast|result|purpose|question|alternative|comparison|consequence))\b/i
+    );
+    if (semanticPrefix) return semanticPrefix[1];
+
+    const firstClause = splitLearnerContextClauses(text)[0] || '';
+    return firstClause.length <= 44 ? firstClause : '';
+}
+
+function glossDistinctionKey(source, visibleGloss) {
+    const parenthetical = glossParentheticalParts(source);
+    if (!parenthetical || !parenthetical.before || !parenthetical.inside) return '';
+    if (glossProjectionKey(parenthetical.before) !== glossProjectionKey(visibleGloss)) return '';
+    return compactGlossDistinction(parenthetical.inside);
+}
+
 // Source-preserving projection for the bold learner-facing meaning. It never
 // rewrites a definition: it selects complete source clauses where possible,
 // and keeps the full projected gloss for the optional sense note.
@@ -966,11 +991,12 @@ export function learnerGlossPresentation(meaning, active, options = {}) {
     const source = String(options.gloss
         ?? projectWiktionaryGloss(meaning, meaning?.meaning || meaning?.translation || '').display
         ?? '').trim();
-    if (!source) return { visibleGloss: '', noteGloss: '' };
+    if (!source) return { visibleGloss: '', visibleKey: '', noteGloss: '' };
+    if (options.ignoreBudget) return { visibleGloss: source, visibleKey: '', noteGloss: '' };
 
     const senseCount = Math.max(1, Number(options.senseCount) || 1);
     const budget = senseCount === 1 ? 84 : (active ? 64 : 48);
-    if (source.length <= budget) return { visibleGloss: source, noteGloss: '' };
+    if (source.length <= budget) return { visibleGloss: source, visibleKey: '', noteGloss: '' };
 
     const clauses = splitLearnerContextClauses(source);
     const conciseClauses = clauses.filter(clause => clause.length <= 32
@@ -994,14 +1020,14 @@ export function learnerGlossPresentation(meaning, active, options = {}) {
     // If shortening would make this row visually collide with a peer whose
     // complete meaning is different, retain more of this row's first clause.
     const peers = Array.isArray(options.peerMeanings) ? options.peerMeanings : [];
-    const visibleKey = glossProjectionKey(visibleGloss);
-    const collision = peers.some(peer => {
+    const visibleProjectionKey = glossProjectionKey(visibleGloss);
+    const collision = options.preservePeerGlossDistinction !== false && peers.some(peer => {
         const peerSource = projectWiktionaryGloss(
             peer,
             peer?.meaning || peer?.translation || ''
         ).display;
         if (!peerSource || foldMetadataComparable(peerSource) === foldMetadataComparable(source)) return false;
-        return glossProjectionKey(compactGlossClause(splitLearnerContextClauses(peerSource)[0] || peerSource, budget)) === visibleKey;
+        return glossProjectionKey(compactGlossClause(splitLearnerContextClauses(peerSource)[0] || peerSource, budget)) === visibleProjectionKey;
     });
     if (collision) {
         visibleGloss = clauses[0] || source;
@@ -1010,7 +1036,8 @@ export function learnerGlossPresentation(meaning, active, options = {}) {
     const noteGloss = foldMetadataComparable(visibleGloss) === foldMetadataComparable(source)
         ? ''
         : source;
-    return { visibleGloss, noteGloss };
+    const visibleKey = noteGloss ? glossDistinctionKey(source, visibleGloss) : '';
+    return { visibleGloss, visibleKey, noteGloss };
 }
 
 // One policy surface for every dictionary adapter. Extraction stays faithful
@@ -1038,7 +1065,13 @@ export function learnerSensePresentation(meaning, active, options = {}) {
     }).sort((left, right) => right.score - left.score || (left.item.sourceIndex ?? 0) - (right.item.sourceIndex ?? 0));
 
     let visible = [];
-    if (!active && !options.allowInactivePrimary) {
+    if (options.ignoreBudget) {
+        // Importance, not selection or spare space, determines visible cues.
+        visible = ranked.filter(entry => entry.role !== 'supporting'
+            || ['semantic_relation', 'temporal_relation', 'discourse_function'].includes(entry.item.kind)
+            || isSenseDefiningGrammar(entry.item))
+            .map(entry => entry.item);
+    } else if (!active && !options.allowInactivePrimary) {
         visible = [];
     } else if (senseCount === 1) {
         visible = ranked.filter(entry => entry.role !== 'supporting').slice(0, 2).map(entry => entry.item);
@@ -1058,7 +1091,7 @@ export function learnerSensePresentation(meaning, active, options = {}) {
     // append technical metadata to an inactive row unless it is a construction
     // the learner must actually produce (for example a companion or case).
     const semanticContext = contextAfterMetadataPolicy(meaning, candidates, options);
-    if (!active && semanticContext) {
+    if (!options.ignoreBudget && !active && semanticContext) {
         visible = visible.filter(item => metadataPresentationRole(item) === 'production');
     }
 
@@ -1094,7 +1127,9 @@ export function learnerSensePresentation(meaning, active, options = {}) {
     const details = active ? allDetails : [];
     const represented = combineLearnerMetadata([...visible, ...details, ...candidates], meaning, options);
     const residualContext = contextAfterMetadataPolicy(meaning, represented, options);
-    const contextPresentation = learnerContextBudget(
+    const contextPresentation = options.ignoreBudget
+        ? { visibleContext: residualContext, detailContext: '' }
+        : learnerContextBudget(
         residualContext,
         active,
         senseCount,
@@ -1134,26 +1169,49 @@ export function learnerSensePresentation(meaning, active, options = {}) {
         )
         && senseMetadataDisplay(item, options).short.length <= 28)
         || allDetails.find(item => senseMetadataDisplay(item, options).short === 'interrogative');
-    const inlineAdditions = options.roomForInlineDetails
+    const inlineAdditions = options.ignoreBudget
+        ? noteworthyItems.filter(item => metadataPresentationRole(item) === 'production')
+        : options.roomForInlineDetails
         ? noteworthyItems.slice(0, 1)
         : (shortConstruction ? [shortConstruction] : []);
     const inlineKeys = new Set(inlineAdditions.map(metadataItemKey));
     const visibleWithRoom = combineLearnerMetadata([...visible, ...inlineAdditions], meaning, options);
     const remainingNoteworthyItems = noteworthyItems.filter(item => !inlineKeys.has(metadataItemKey(item)));
-    const supportingItems = allDetails.filter(item => !noteworthyItems.includes(item));
+    const supportingItems = options.ignoreBudget ? [] : allDetails.filter(item => !noteworthyItems.includes(item));
     const noteItems = [
         ...remainingNoteworthyItems,
         ...((glossPresentation.noteGloss || noteContext || supportingItems.length >= 2)
             ? supportingItems : []),
     ];
     const hasSenseNote = Boolean(glossPresentation.noteGloss || noteContext || noteItems.length);
+    // Canonical learner-facing contract. Dictionary/provider fields are input;
+    // every language leaves this selector as exactly three presentation tiers:
+    // a required gloss, an optional compact key, and an optional curated note.
+    // The flat fields below remain as compatibility aliases while renderers
+    // migrate to these named slots.
+    const gloss = glossPresentation.visibleGloss;
+    const key = {
+        text: contextPresentation.visibleContext || glossPresentation.visibleKey || '',
+        items: visibleWithRoom,
+    };
+    const note = {
+        gloss: glossPresentation.noteGloss,
+        context: noteContext,
+        items: noteItems,
+        available: hasSenseNote,
+    };
     return {
+        gloss,
+        key,
+        note,
+        grammar: { items: visibleWithRoom.filter(isGrammarCue) },
         visibleItems: visibleWithRoom,
         detailItems: details,
         residualContext,
         visibleContext: contextPresentation.visibleContext,
         detailContext: contextPresentation.detailContext,
         visibleGloss: glossPresentation.visibleGloss,
+        visibleKey: glossPresentation.visibleKey,
         noteGloss: glossPresentation.noteGloss,
         noteContext,
         noteItems,
@@ -1200,27 +1258,46 @@ function senseNoteSectionHTML(title, values, className) {
 }
 
 export function senseNoteHTML(presentation, options = {}) {
-    if (!presentation.hasSenseNote) return '';
+    const note = presentation.note || {
+        gloss: presentation.noteGloss,
+        context: presentation.noteContext,
+        items: presentation.noteItems || [],
+        available: presentation.hasSenseNote,
+    };
+    if (!note.available) return '';
     const usage = [];
     const production = [];
-    if (presentation.noteContext) usage.push(presentation.noteContext);
-    for (const item of presentation.noteItems) {
+    if (note.context) usage.push(note.context);
+    for (const item of note.items) {
         const label = senseMetadataDisplay(item, options).full;
         if (!label) continue;
         if (['companion', 'construction', 'grammar'].includes(item.family)) production.push(label);
         else usage.push(label);
     }
     const body = [
-        senseNoteSectionHTML('Meaning', [presentation.noteGloss], 'meaning'),
+        senseNoteSectionHTML('Meaning', [note.gloss], 'meaning'),
         senseNoteSectionHTML('Usage', usage, 'usage'),
         senseNoteSectionHTML('How it is used', production, 'production'),
     ].join('');
     if (!body) return '';
-    const title = presentation.visibleGloss || options.gloss || 'This meaning';
+    const title = presentation.gloss || presentation.visibleGloss || options.gloss || 'This meaning';
     return `<button type="button" class="sense-note-trigger" aria-haspopup="dialog" onclick="openSenseNote(event, this)" aria-label="Information about this meaning" title="Information about this meaning"><span aria-hidden="true">i</span></button><template class="sense-note-template"><div class="sense-note-copy" data-sense-note-title="${escapeCardText(title)}">${body}</div></template>`;
 }
 
+export function grammarCueCategory(item) {
+    if (item.family === 'companion' || (item.family === 'construction'
+        && !SENSE_CONSTRUCTION_TAGS.has(item.value))) return 'construction';
+    if (item.family === 'grammar' && /^(?:person|number|gender|tense|mood|aspect|degree|case)=/.test(item.value)
+        || item.kind === 'surface_summary') return 'form';
+    return 'function';
+}
+
+export function isGrammarCue(item) {
+    return ['grammar', 'construction', 'companion'].includes(item.family);
+}
+
 export function senseMetadataHTML(meaning, active, options = {}) {
+    options = { ignoreBudget: true, ...options };
     if (!active && !options.allowInactivePrimary) return '';
     const presentation = learnerSensePresentation(meaning, active, options);
     const senseCount = Number(options?.senseCount) || 1;
@@ -1230,10 +1307,11 @@ export function senseMetadataHTML(meaning, active, options = {}) {
     const renderItems = (values, isPillTier = true) => values.map((item) => {
         const display = senseMetadataDisplay(item, options);
         const family = escapeCardText(item.family);
+        const category = isGrammarCue(item) ? ` data-grammar-category="${grammarCueCategory(item)}"` : '';
         const shortLabel = escapeCardText(display.short);
         const fullLabel = escapeCardText(display.full);
         if (!isPillTier || display.short.length > 28 || item.family === 'functional') {
-            return `<span class="sense-metadata-detail" data-family="${family}" title="${family}: ${fullLabel}" aria-label="${fullLabel}">${shortLabel}</span>`;
+            return `<span class="sense-metadata-detail" data-family="${family}"${category} title="${family}: ${fullLabel}" aria-label="${fullLabel}">${shortLabel}</span>`;
         }
         const isCompanion = item.family === 'companion';
         const isSyntax = item.family === 'construction';
@@ -1250,12 +1328,13 @@ export function senseMetadataHTML(meaning, active, options = {}) {
         return `<span class="${pillClass}" data-family="${family}" title="${titleAttr}" aria-label="${ariaLabel}">${labelHTML}</span>`;
     }).join('');
 
+    const keyItems = presentation.key?.items || presentation.visibleItems;
     const displayPrimary = options.hideVisibleItems
         ? []
-        : presentation.visibleItems.filter(item => item.family !== 'grammar');
+        : keyItems.filter(item => !isGrammarCue(item));
     const grammar = options.hideVisibleItems
         ? []
-        : presentation.visibleItems.filter(item => item.family === 'grammar');
+        : keyItems.filter(isGrammarCue);
     const noteHTML = senseNoteHTML(presentation, options);
 
     if (!active && options.allowInactivePrimary) {
@@ -1265,7 +1344,7 @@ export function senseMetadataHTML(meaning, active, options = {}) {
             ? `<span class="sense-metadata-tier sense-metadata-tier--primary">${renderItems(displayPrimary, true)}</span>`
             : '';
         const grammarHTML = grammar.length
-            ? `<span class="sense-metadata-tier sense-metadata-tier--grammar">${renderItems(grammar, false)}</span>`
+            ? `<span class="sense-metadata-tier sense-metadata-tier--grammar sense-grammar-cue">${renderItems(grammar, false)}</span>`
             : '';
         return `<span class="sense-metadata-list${densityClass}" aria-label="Sense information">${primaryHTML}${grammarHTML}${noteHTML}</span>`;
     }
@@ -1276,7 +1355,7 @@ export function senseMetadataHTML(meaning, active, options = {}) {
         ? `<span class="sense-metadata-tier sense-metadata-tier--primary">${renderItems(displayPrimary, true)}</span>`
         : '';
     const grammarHTML = grammar.length
-        ? `<span class="sense-metadata-tier sense-metadata-tier--grammar">${renderItems(grammar, false)}</span>`
+        ? `<span class="sense-metadata-tier sense-metadata-tier--grammar sense-grammar-cue">${renderItems(grammar, false)}</span>`
         : '';
     return `<span class="sense-metadata-list${densityClass}" aria-label="Sense information">${primaryHTML}${grammarHTML}${noteHTML}</span>`;
 }

@@ -2,6 +2,104 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-29T18:18:13+01:00",
+      "date": "2026-09-29 18:18 BST",
+      "agent": "Codex",
+      "summary": "Shared shaded cue areas for SpanishDict and Wiktionary sense rows.",
+      "detail": [
+        "Glosses and useful secondary cues use the same main-and-shaded layout across providers. Cue areas fit their content, wrap within a maximum width, and stack below glosses on narrow rows.",
+        "Information and commonness controls have dedicated edge space; note-only rows do not leave empty shaded areas. Source data and cue-selection rules are unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-09-29T17:57:31+01:00",
+      "date": "2026-09-29 17:57 BST",
+      "agent": "Codex",
+      "summary": "First-pass shared grammar cues, centered card rows, and whole-row information buttons.",
+      "detail": [
+        "SpanishDict and Wiktionary cues share grammar formatting, with form, construction and function classifications. Useful cues remain present on inactive rows.",
+        "This experiment ignores stored row-count and text budgets; content wraps and the meanings area scrolls naturally. Different meanings no longer group merely because they share a context or grammar label.",
+        "Information buttons sit at the left edge of the whole row. Grouped rows collect their notes in one labeled disclosure; row text is centered.",
+        "Presentation only: source data, releases, dictionary adapters and WSD are unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-09-29T01:05:33+01:00",
+      "date": "2026-09-29 01:05 BST",
+      "agent": "Codex",
+      "summary": "Every dictionary sense now follows one gloss, key and note presentation contract.",
+      "detail": [
+        "The gloss is the required learner meaning; the optional key is the shortest useful distinction or production cue; the optional note retains worthwhile secondary information.",
+        "Singletons, grouped senses, section summaries and possible-meaning rows now obtain their learner wording from the same provider-neutral selector.",
+        "Existing source fields remain intact and compatibility aliases remain available; this changes presentation rather than dictionary data or sense selection."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-09-29T09:20:00+01:00",
+      "date": "2026-09-29 09:20 BST",
+      "agent": "Claude",
+      "summary": "The level check only tests content words: nouns, verbs, adjectives and adverbs.",
+      "detail": [
+        "A word is tested only when its main sense (the most frequent one) is a noun, verb, adjective or adverb.",
+        "Skipped: pronouns, clitics, articles, prepositions, conjunctions, auxiliaries, numbers, interjections, names, contractions, phrases and unclassified words. For example, como (mainly 'as') and nada (mainly 'nothing') are skipped, while bobo and bien are tested."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-09-28T23:49:00+01:00",
+      "date": "2026-09-28 23:49 BST",
+      "agent": "Claude",
+      "summary": "Importing known words from inside a lyrics deck now matches them against Speech vocabulary, and the lyrics deck shows them as known straight away.",
+      "detail": [
+        "The import in Settings used to read the active artist's vocabulary when opened from a lyrics deck, while saving the matches as Speech cards. It now always reads Speech, as its wording says.",
+        "Lyrics cards find the imported words through the shared spelling. Before, a lyrics deck in the same session could miss them until progress reloaded; it now picks them up right away."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-09-28T09:40:00+01:00",
+      "date": "2026-09-28 09:40 BST",
+      "agent": "Claude",
+      "summary": "The level check shows inflected meanings without repeats, tells you each word's level after you reveal it, and always measures Speech vocabulary.",
+      "detail": [
+        "Meanings read as the card back's sense rows do: tengo shows \"I have\", not \"to have\". A repeated part of speech and meaning is listed once.",
+        "After you reveal a word, a small line shows its level and rank, e.g. \"Level 12 · #1,327\" (\"Speech #1,327\" in a lyrics deck).",
+        "Opened from a lyrics deck, the check used to test that artist's words. It now always tests Speech words. The result reads \"About N Speech words\", and Use estimate lands on the first level that still has words you don't know, instead of naming an artist level.",
+        "Fixed: in lyrics decks the estimate never marked any word as known, because Speech and Lyrics cards have different ids. It now matches words by surface form.",
+        "The saved estimate is a Speech source rank again, which is what setup and Learn New compare against. The level named still follows the level buttons."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-09-28T22:46:00+01:00",
+      "date": "2026-09-28 22:46 BST",
+      "agent": "Claude",
+      "summary": "Part-known words now show the meanings you know greyed out as Known, the same way from a set or from Review.",
+      "detail": [
+        "Review no longer hides the senses you already know; they stay on the back, greyed with a Known tag, and the card opens on one you are still learning.",
+        "Swiping and the arrow keys pass over Known senses, and autoplay skips them.",
+        "Answering a part-known card counts only for the senses it was testing; Known senses keep their own review schedule and come back on their own when due.",
+        "Marking one sense wrong in the meanings list now marks the untouched ones known when you leave the card, so a second miss can still be tapped."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-09-28T21:05:00+01:00",
+      "date": "2026-09-28 21:05 BST",
+      "agent": "Claude",
+      "summary": "Czech read by a Polish speaker now uses the per-meaning cognate rule, with false friends like čerstvý (Polish czerstwy, 'stale') kept in the deck.",
+      "detail": [
+        "Every known language now uses one method: a Czech card is set aside for a Polish reader only if every meaning it shows has a Polish cognate with that meaning, and the Polish word's main sense is one the card teaches.",
+        "False friends that share only a minor sense stay in the deck: čerstvý/czerstwy, dívka/dziwka, prachy/prochy, vysvětlit/wyświetlić.",
+        "Czech first 300 cards: Polish sets aside 55 (tak, ale, dobře, můj, musím, trochu, každý…); the old per-word scores matched nonsense such as víc to wystarczająco.",
+        "Precomputed card and merge decisions are only used for the release they were built from; any other release keeps every card until its meanings load."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-28T20:34:00+01:00",
       "date": "2026-09-28 20:34 BST",
       "agent": "Claude",
@@ -12,6 +110,18 @@
         "Exclude Cognates is per meaning: a card is set aside only if every meaning it shows is a close-looking cognate (CogNet where it has the word) and no meaning is an expression. Spanish top 300 now sets aside tres, idea, familia; French and Dutch no longer set aside false friends like nous, heel or bang.",
         "New cognate maps for es, pt, cs, fr, nl and fi ship with the app; Czech keeps its Polish scores.",
         "The look-alike scorer is now plain edit distance (provisional, decision 0027); the rules are decision 0028."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-09-28T20:02:45+01:00",
+      "date": "2026-09-28 20:02 BST",
+      "agent": "Codex",
+      "summary": "Matching learner glosses now form one compact family with short distinguishing keys.",
+      "detail": [
+        "Dictionary senses that shorten to the same learner gloss, such as Portuguese porque, share that gloss instead of repeating it.",
+        "Useful source wording becomes a short second-line key when it distinguishes siblings; the complete definition remains in the information panel.",
+        "Compact cards keep every section open up to six visible rows on phones and eight on larger screens."
       ],
       "commit": "pending"
     },

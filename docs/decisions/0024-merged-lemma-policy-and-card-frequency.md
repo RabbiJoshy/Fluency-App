@@ -1,5 +1,11 @@
 # Decision 0024 — Merged-Lemma Policy and Card Frequency Display
 
+> **Superseded in part by [0028](0028-words-that-must-not-be-skipped.md).**
+> Merging is by spelling, not by sense: a spelling whose senses name more than
+> one headword (fue → ser/ir) keeps its own card rather than contributing its
+> senses to each lemma. Decision 1 below no longer describes the code; 0028
+> lists the rules that do.
+
 Settles UI work order 7 (`docs/ui/UI_WORK_ORDERS.md`). Measured against the
 shipped `es-speech-v15-10000x10` and `fr-speech-v7-dual-metadata-v5-20260918`
 releases.

@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import json
 import unicodedata
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any, Iterable, Mapping
 
@@ -37,6 +38,7 @@ from fluency.features.cognates import (
     gloss_alternatives,
     live_glosses,
     load_policy,
+    _inherit_glosses,
     normalise_gloss,
     read_relations,
     score_deck,
@@ -424,7 +426,7 @@ def build_app_cognates(layer: Mapping[str, Any]) -> dict[str, Any]:
 
 # ------------------------------------------------------------ the sense route
 
-COGNATE_SENSE_SCHEMA = "cognate-score/v3"
+COGNATE_SENSE_SCHEMA = "cognate-score/v4"
 
 
 def _normal_headword(value: Any) -> str:
@@ -440,61 +442,136 @@ def _single_word_alternatives(gloss: str) -> set[str]:
     return ours | sense_alternatives(gloss)
 
 
+@dataclass
+class _KnownSide:
+    """One known language, ready to answer: which of its words mean ``pivot``?
+
+    English needs no dictionary: the pivot IS the English word. Any other
+    language is read from its own English-glossed Wiktionary extract, so the
+    question "does this known word have this sense?" becomes "is the card's
+    English word one of the known word's own glosses?" -- the same pivot every
+    Wiktionary language already carries, which is what makes this any-pair.
+    """
+
+    code: str
+    policy: CognatePolicy
+    pairs: Mapping[str, Any] | None
+    by_pivot: dict[str, set[str]] | None = None
+    lemmas_of: Mapping[str, frozenset[str]] | None = None
+    headwords: frozenset[str] = frozenset()
+    primary: Mapping[str, frozenset[str]] | None = None
+
+    def default_reading_taught(self, word: str, pivots: set[str]) -> bool:
+        """Does the card teach the meaning this known word has FIRST?
+
+        A false friend shares a minor sense and differs in the main one:
+        Polish czerstwy is "stale" first and "fresh, hale" far down, so Czech
+        čerstvý (fresh) matches it on "fresh" -- and a Polish reader still
+        reads it as stale. Requiring the known word's primary sense to be one
+        the card also teaches blocks exactly that, while każdy ("each, every"
+        first, "everyone" second) stays free on a card teaching both.
+        English needs no such check: the known word is the card's own gloss.
+        """
+
+        if self.primary is None:
+            return True
+        return bool(set(self.primary.get(word, ())) & pivots)
+
+    def candidates(self, pivot: str) -> Iterable[str]:
+        if self.by_pivot is None:
+            return (pivot,)
+        # Dictionary headwords first, then alphabetical: among equally close
+        # words the one shown is the standard word, not a dialect spelling.
+        return sorted(self.by_pivot.get(pivot, ()), key=lambda word: (word not in self.headwords, word))
+
+    def lemmas(self, word: str) -> set[str]:
+        if self.lemmas_of is None:
+            return {word}
+        return {word, *self.lemmas_of.get(word, ())}
+
+
+def _known_side(code: str, extract: Path | None, *, language: str, config_root: Path, raw_root: Path) -> _KnownSide:
+    policy = load_policy(config_root, language, code)
+    pairs = None
+    if policy.cognet_pairs:
+        from fluency.features.cognet import read_pairs
+
+        pairs = read_pairs(Path(raw_root) / policy.cognet_pairs, target_column=policy.cognet_target_column)
+    side = _KnownSide(code=code, policy=policy, pairs=pairs)
+    if code == "en":
+        return side
+    if extract is None:
+        raise CognateLayerError(f"{code} needs a dictionary extract; only en may omit one")
+    relations = read_relations(_extract_entries(Path(extract)), policy)
+    by_pivot: dict[str, set[str]] = {}
+    for word, glosses in _inherit_glosses(relations, limit_to=None).items():
+        for gloss in glosses:
+            if " " not in gloss:
+                by_pivot.setdefault(gloss, set()).add(word)
+    side.by_pivot = by_pivot
+    # What a reader of the known language takes each word to mean first. See
+    # _KnownSide.default_reading_taught.
+    side.primary = _inherit_glosses(
+        replace(relations, lemma_glosses=relations.primary_glosses), limit_to=None
+    )
+    side.lemmas_of = relations.inflections
+    side.headwords = frozenset(relations.lemma_glosses)
+    return side
+
+
 def build_app_cognates_by_sense(
     *,
     language: str,
     config_root: Path,
     raw_root: Path,
+    known_extracts: Mapping[str, Path | None] | None = None,
     release_rows: Iterable[Mapping[str, Any]] = (),
     target_extract: Path | None = None,
     surface_universe: set[str] | None = None,
     english_words: set[str] | None = None,
     score_floor: float = 0.6,
     release_id: str | None = None,
-    carried: Mapping[str, Any] | None = None,
     surface_scorer: str | None = None,
 ) -> dict[str, Any]:
-    """The per-sense map: surface -> headword -> English word -> closeness.
+    """The per-sense map, for any known language:
 
-    A card is set aside only when *every* sense it shows is a free cognate, so
-    the app needs a verdict per sense, not one number per word. A sense is
-    identified the way the card shows it: by its headword and the English words
-    its translation lists. So the map answers, for one surface and one
-    headword, which English words are cognates of that headword and how close
-    each looks to the surface on the page.
+        surface -> headword -> English word -> {known language: closeness}
 
-    Two questions, kept apart:
+    A card is set aside for a known language only when *every* sense it shows
+    is a free cognate in that language. A sense is identified the way the card
+    shows it -- its headword and the English words its translation lists --
+    and the English word is the pivot: for each known language the map holds
+    the best known word that
 
-        is it a cognate?   CogNet, where CogNet knows the headword; otherwise
-                           the English word being a whole gloss of the sense
-                           (and a real English word, when a list is given)
-        how close is it?   the pair's surface scorer, card surface vs the
-                           English word -- the one knob, cut in the app
+        has that sense      the English word is one of its own glosses
+                            (for English: it is the English word)
+        is a cognate        CogNet pairs it with the headword, where CogNet
+                            knows the headword; otherwise the shared gloss is
+                            the evidence (and, for English, it must be a real
+                            English word when a list is given)
+        looks close         the pair's surface scorer, card surface vs the
+                            known word -- the one knob, cut in the app
 
-    ``carried`` is an existing v2 (surface, lemma) map whose non-English known
-    languages ride along unchanged -- Czech read by a Polish speaker is not an
-    English-gloss question, so it keeps the route and scorer it was calibrated
-    on.
+    Only entries at or above ``score_floor`` are kept, so the file stays small
+    while leaving each cutoff room to move. Absent means not a cognate.
 
-    Only pairs that pass the first question are listed, and only at or above
-    ``score_floor`` so the file stays small while leaving the cutoff room to
-    move. A (surface, headword, word) absent from the map is not a cognate.
-
-    English only: the known word must be the translation itself, which is
-    what makes this route safe against false friends.
+    English stays the special case of the same engine rather than a second
+    one: its "dictionary" is the pivot itself. Adding a known language is a
+    policy file plus an English-glossed extract.
     """
 
-    policy = load_policy(config_root, language, "en")
+    known_extracts = dict(known_extracts or {"en": None})
+    sides = [
+        _known_side(code, known_extracts[code], language=language, config_root=config_root, raw_root=raw_root)
+        for code in sorted(known_extracts)
+    ]
     if surface_scorer:
         # Comparing scorers (scripts/eval_surface_scorer.py), never shipping.
         from dataclasses import replace
 
-        policy = replace(policy, surface_scorer=surface_scorer)
-    pairs = None
-    if policy.cognet_pairs:
-        from fluency.features.cognet import read_pairs
-
-        pairs = read_pairs(Path(raw_root) / policy.cognet_pairs, target_column=policy.cognet_target_column)
+        for side in sides:
+            side.policy = replace(side.policy, surface_scorer=surface_scorer)
+    target_policy = sides[0].policy
 
     candidates: dict[str, dict[str, set[str]]] = {}
 
@@ -511,7 +588,7 @@ def build_app_cognates_by_sense(
 
     if target_extract is not None:
         relations = read_relations(
-            _extract_entries(Path(target_extract)), policy, excluded_pos=EXCLUDED_TARGET_POS
+            _extract_entries(Path(target_extract)), target_policy, excluded_pos=EXCLUDED_TARGET_POS
         )
         for surface in universe:
             lemmas = set(relations.inflections.get(surface, ()))
@@ -531,84 +608,69 @@ def build_app_cognates_by_sense(
                 _single_word_alternatives(str(meaning.get("translation") or "")),
             )
 
-    scores: dict[str, dict[str, dict[str, float]]] = {}
-    routes = {"cognet": 0, "glosses": 0}
+    scores: dict[str, dict[str, dict[str, dict[str, float]]]] = {}
+    matches: dict[str, dict[str, dict[str, dict[str, str]]]] = {}
+    routes = {side.code: {"cognet": 0, "glosses": 0} for side in sides}
     for surface, by_headword in sorted(candidates.items()):
-        if len(strip_accents(surface)) < policy.minimum_length:
-            continue
         known_lemmas = set(by_headword) - {""}
-        for headword, words in sorted(by_headword.items()):
-            # A sense with no headword (older releases) may be any lemma the
-            # surface has; CogNet is asked about each of them.
-            asked = [headword] if headword else sorted(known_lemmas) or [surface]
-            covered = [lemma for lemma in asked if pairs is not None and lemma in pairs]
-            for word in sorted(words):
-                if covered:
-                    if not any(
-                        word == pair.known_lemma for lemma in covered for pair in pairs[lemma]
-                    ):
+        for side in sides:
+            policy = side.policy
+            if len(strip_accents(surface)) < policy.minimum_length:
+                continue
+            for headword, pivots in sorted(by_headword.items()):
+                # A sense with no headword (older releases) may be any lemma
+                # the surface has; CogNet is asked about each of them.
+                asked = [headword] if headword else sorted(known_lemmas) or [surface]
+                covered = [lemma for lemma in asked if side.pairs is not None and lemma in side.pairs]
+                cognates = {pair.known_lemma for lemma in covered for pair in side.pairs[lemma]} if covered else None
+                for pivot in sorted(pivots):
+                    best: tuple[float, str] | None = None
+                    for word in side.candidates(pivot):
+                        if side.code == "en" and cognates is None and english_words is not None and word not in english_words:
+                            continue
+                        if cognates is not None and not (side.lemmas(word) & cognates):
+                            continue
+                        if not side.default_reading_taught(word, pivots):
+                            continue
+                        score = form_score(surface, word, policy)
+                        if score >= score_floor and (best is None or score > best[0]):
+                            best = (score, word)
+                    if best is None:
                         continue
-                    route = "cognet"
-                elif english_words is not None and word not in english_words:
-                    continue
-                else:
-                    route = "glosses"
-                score = form_score(surface, word, policy)
-                if score < score_floor:
-                    continue
-                scores.setdefault(surface, {}).setdefault(headword, {})[word] = round(score, 3)
-                routes[route] += 1
+                    scores.setdefault(surface, {}).setdefault(headword, {}).setdefault(pivot, {})[side.code] = round(best[0], 3)
+                    if best[1] != pivot:
+                        matches.setdefault(surface, {}).setdefault(headword, {}).setdefault(pivot, {})[side.code] = best[1]
+                    routes[side.code]["cognet" if cognates is not None else "glosses"] += 1
 
     # Speech decks load a card's senses only when its set opens, but set-up
     # filtering runs before that. So the card-level verdict for every release
     # row is decided here, by the same rule the app applies to loaded senses.
     from fluency.enrichments.card_rules import card_cognate
 
-    cards: dict[str, list] = {}
+    cards: dict[str, dict[str, list]] = {}
     for row in rows:
         surface = _normal_headword(row.get("word"))
-        verdict = card_cognate(row, scores.get(surface))
-        if verdict is not None and verdict[0] > 0:
-            cards[surface] = [round(verdict[0], 3), verdict[1]]
-
-    carry = None
-    if carried:
-        if not str(carried.get("schema", "")).startswith("cognate-score/v2"):
-            raise CognateLayerError("only a v2 (surface, lemma) map can be carried into v3")
-        others = [code for code in carried.get("known_languages") or [] if code != "en"]
-        carry = {
-            "schema": carried["schema"],
-            "known_languages": others,
-            "thresholds": {code: carried["thresholds"][code] for code in others},
-            "scores": _only_languages(carried.get("scores") or {}, others),
-            "matches": _only_languages(carried.get("matches") or {}, others),
-        }
+        for side in sides:
+            verdict = card_cognate(row, scores.get(surface), side.code, matches.get(surface))
+            if verdict is not None and verdict[0] > 0:
+                cards.setdefault(surface, {})[side.code] = [round(verdict[0], 3), verdict[1]]
 
     return {
         "schema": COGNATE_SENSE_SCHEMA,
         "language": language,
-        "sense_languages": ["en"],
-        "known_languages": ["en", *((carry or {}).get("known_languages") or [])],
-        "carried": carry,
+        "known_languages": [side.code for side in sides],
         "built_from_release_id": release_id,
-        "surface_scorer": policy.surface_scorer,
+        "surface_scorers": {side.code: side.policy.surface_scorer for side in sides},
         "score_floor": score_floor,
-        "cognet": policy.cognet_pairs,
+        "cognet": {side.code: side.policy.cognet_pairs for side in sides},
         "routes": routes,
-        "thresholds": {"en": float(policy.default_threshold)},
-        # surface -> headword -> English word -> closeness
+        "thresholds": {side.code: float(side.policy.default_threshold) for side in sides},
+        # surface -> headword -> English word -> known language -> closeness
         "scores": scores,
-        # surface -> [weakest shown sense's closeness, its word], for the
-        # release's own rows, used while a card's senses are not yet loaded
+        # the same keys -> the known word, where it is not the English word itself
+        "matches": matches,
+        # surface -> known language -> [weakest shown sense's closeness, its
+        # word], for the release's own rows, used before a card's senses load
         "cards": cards,
     }
 
-
-def _only_languages(by_surface: Mapping[str, Any], codes: list[str]) -> dict[str, Any]:
-    out: dict[str, Any] = {}
-    for surface, by_lemma in by_surface.items():
-        for lemma, by_language in (by_lemma or {}).items():
-            kept = {code: value for code, value in (by_language or {}).items() if code in codes}
-            if kept:
-                out.setdefault(surface, {})[lemma] = kept
-    return out

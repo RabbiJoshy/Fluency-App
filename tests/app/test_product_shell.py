@@ -11,7 +11,7 @@ APP_ROOT = REPOSITORY_ROOT / "app"
 # The service worker's cache name, pinned so that bumping an asset version
 # without bumping the cache fails here rather than silently serving a stale
 # shell. Update alongside app/service-worker.js.
-EXPECTED_CACHE_NAME = "flashcards-v578"
+EXPECTED_CACHE_NAME = "flashcards-v580"
 
 
 
@@ -389,10 +389,13 @@ class ProductShellTests(unittest.TestCase):
 
     def test_small_cards_open_every_meaning_group(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
-        self.assertIn("const AUTO_OPEN_SECTION_ROW_LIMIT = 6", flashcards)
-        self.assertIn("renderedSectionRowCount <= AUTO_OPEN_SECTION_ROW_LIMIT", flashcards)
+        self.assertIn("const AUTO_OPEN_SECTION_ROW_LIMIT_PHONE = 6", flashcards)
+        self.assertIn("const AUTO_OPEN_SECTION_ROW_LIMIT_DESKTOP = 8", flashcards)
+        self.assertIn("renderedSectionRowCount <= autoOpenSectionRowLimit()", flashcards)
         self.assertIn("new Set(Array.from(scrollSections.keys()).filter", flashcards)
         self.assertIn("roomForInlineDetails", flashcards)
+        self.assertIn("function learnerGroupingGloss(card, meaning)", flashcards)
+        self.assertIn("presentation.key.text || groupingGloss.key.text || metadataLabel", flashcards)
 
     def test_wiktionary_grammar_tails_become_compact_metadata(self) -> None:
         metadata_pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")
@@ -655,7 +658,7 @@ class ProductShellTests(unittest.TestCase):
             self.assertIn(behavior, flashcards)
         self.assertIn('id="cardBackScrubber"', (APP_ROOT / "index.html").read_text(encoding="utf-8"))
         self.assertIn("saveStudySessionSnapshot", flashcards)
-        self.assertIn("buildFocusedReviewCard", vocab)
+        self.assertIn("buildKnowledgeAwareCard", vocab)
 
     def test_unassigned_dictionary_menu_does_not_claim_wsd_confidence(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
@@ -910,7 +913,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("error !== 'access_denied'", callback)
         self.assertIn("spotifyWebLogin", callback)
         self.assertIn("/js/spotify.js?v=20260923su", worker)
-        self.assertIn("/js/main.js?v=20260928sense4f", worker)
+        self.assertIn("/js/main.js?v=20260929sense6", worker)
         self.assertIn("/js/ui.js?v=20260927pa", worker)
         self.assertIn(f"const CACHE_NAME = '{EXPECTED_CACHE_NAME}'", worker)
 
@@ -934,9 +937,9 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertIn("config?.publicServices?.progressSyncUrl", auth)
         self.assertIn("secrets.googleScriptUrl || GOOGLE_SCRIPT_URL", auth)
-        self.assertIn('js/auth.js?v=20260928sense4f', html)
-        self.assertIn("auth.js?v=20260928sense4f", main)
-        self.assertIn("/js/auth.js?v=20260928sense4f", worker)
+        self.assertIn('js/auth.js?v=20260929sense6', html)
+        self.assertIn("auth.js?v=20260929sense6", main)
+        self.assertIn("/js/auth.js?v=20260929sense6", worker)
 
     def test_practice_queue_is_browsable_prioritised_and_layered(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
@@ -1059,7 +1062,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="reconnectSpotifyPlaylistBtn"', html)
         self.assertIn("showDialog", spotify)
         self.assertIn("/js/spotify-playlist-import.js?v=20260923su", worker)
-        self.assertIn('css/style.css?v=20260928sense4f', html)
+        self.assertIn('css/style.css?v=20260929sense6', html)
         self.assertIn('id="useSpotifyLiveBtn"', html)
         self.assertIn("buildPlaylistLiveDeck", importer)
         self.assertIn("replaceRoute({\n        kind: 'live'", importer)

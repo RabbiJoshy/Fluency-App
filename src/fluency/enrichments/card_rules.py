@@ -106,9 +106,13 @@ def sense_alternatives(translation: str) -> set[str]:
 
 
 def card_cognate(
-    row: Mapping[str, Any], by_headword: Mapping[str, Mapping[str, float]] | None
+    row: Mapping[str, Any],
+    by_headword: Mapping[str, Mapping[str, Mapping[str, float]]] | None,
+    code: str,
+    matches: Mapping[str, Mapping[str, Mapping[str, str]]] | None = None,
 ) -> tuple[float, str | None] | None:
-    """The card's weakest shown sense: (closeness, deciding word), or None."""
+    """The card's weakest shown sense in one known language:
+    (closeness, the known word that decided it), or None."""
 
     if not by_headword:
         return None
@@ -119,21 +123,19 @@ def card_cognate(
     ]
     if not meanings:
         return None
+    matches = matches or {}
     weakest: tuple[float, str | None] | None = None
     for meaning in meanings:
         best: tuple[float, str | None] = (0.0, None)
         if not is_expression_sense(meaning, word):
             headword = normal_token(meaning.get("headword"))
-            buckets = (
-                [by_headword.get(headword), by_headword.get("")]
-                if headword
-                else list(by_headword.values())
-            )
-            for alternative in sense_alternatives(str(meaning.get("translation") or meaning.get("meaning") or "")):
-                for bucket in buckets:
-                    score = float((bucket or {}).get(alternative, 0.0))
+            keys = [headword, ""] if headword else sorted(by_headword)
+            for alternative in sorted(sense_alternatives(str(meaning.get("translation") or meaning.get("meaning") or ""))):
+                for key in keys:
+                    score = float(((by_headword.get(key) or {}).get(alternative) or {}).get(code, 0.0))
                     if score > best[0]:
-                        best = (score, alternative)
+                        known = ((matches.get(key) or {}).get(alternative) or {}).get(code) or alternative
+                        best = (score, known)
         if weakest is None or best[0] < weakest[0]:
             weakest = best
         if weakest[0] == 0.0:

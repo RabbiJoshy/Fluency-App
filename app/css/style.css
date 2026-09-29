@@ -2970,6 +2970,30 @@
         .meaning-row.meaning-row-rare {
             animation: rareSenseRowFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
+        /* A sense already known stays on a part-known card, greyed, so the
+           word is still shown whole without competing with what is being
+           practised. */
+        .meaning-row.meaning-row-known,
+        .group-card-varying-cell.is-known-subsense {
+            /* Beats the cycle row's inline opacity and the rare row's fade-in. */
+            opacity: 0.45 !important;
+            animation: none;
+            filter: grayscale(1);
+        }
+        .known-sense-tag {
+            display: inline-flex;
+            align-items: center;
+            font-family: var(--font-reading);
+            font-size: 10px;
+            font-weight: 650;
+            line-height: 1.2;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        .group-card-varying-cell .known-sense-tag {
+            margin-left: 6px;
+        }
         @keyframes rareSenseRowFadeIn {
             0% {
                 opacity: 0;
@@ -10883,6 +10907,21 @@
         }
 
         .estimation-translation.visible {
+            opacity: 1;
+        }
+
+        .estimation-rank {
+            text-align: center;
+            font-family: var(--font-data);
+            font-size: 12px;
+            color: var(--text-muted);
+            min-height: 16px;
+            margin-top: 6px;
+            opacity: 0;
+            transition: opacity 0.3s ease-in;
+        }
+
+        .estimation-rank.visible {
             opacity: 1;
         }
 
@@ -21915,3 +21954,131 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 
 /* Back of card: the lemma beside the surface form, a little larger. */
 .back-headword.back-surface-pair .back-lemma-chip { font-size: clamp(14px, 4.4vw, 19px); }
+
+/* Shared learner cues: selection changes emphasis, not which cues are present. */
+.meaning-row-regular .meaning-row-body {
+    flex-direction: column !important;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.meaning-row-regular .meaning-row-gloss,
+.meaning-row-regular .meaning-row-sub {
+    display: block;
+    width: 100% !important;
+    text-align: center;
+}
+.meaning-row .meaning-context-cell,
+.meaning-row .meaning-context,
+.meaning-row .sense-metadata-tier,
+.meaning-row .group-card-varying-cell {
+    text-align: center;
+    justify-content: center !important;
+}
+.meaning-row .sense-grammar-cue {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 3px 8px;
+    width: 100%;
+    margin-top: 3px;
+    color: var(--text-secondary);
+    font-size: var(--sense-reading-size);
+    line-height: 1.4;
+    font-weight: 500;
+    text-align: center;
+}
+.meaning-row .sense-grammar-cue .sense-metadata-detail {
+    font: inherit;
+    color: inherit;
+}
+.meaning-row.has-row-information {
+    padding-left: 32px !important;
+    padding-right: 32px !important;
+}
+.meaning-row-regular.has-row-information .meaning-row-body {
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+}
+.meaning-row-group.has-row-information > .pct-column {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.meaning-row-group.has-row-information { grid-template-columns: minmax(0, 1fr) !important; }
+.meaning-row.has-row-information > .sense-note-trigger { left: 6px; }
+
+/* One provider-neutral layout: edge controls, gloss, and optional fitted cues. */
+.meaning-row-regular { container-type: inline-size; container-name: sense-row; }
+.meaning-row.meaning-row-regular,
+.meaning-row.meaning-row-group {
+    padding: 4px 38px !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+}
+.meaning-row.meaning-row-known { padding-right: 58px !important; }
+.meaning-row .meaning-row-body,
+.meaning-row .group-card-body:is(.has-long-shared, .is-stacked) {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 8px;
+    padding: 2px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+.meaning-row .meaning-row-gloss,
+.meaning-row .group-card-shared {
+    flex: 1 1 0;
+    width: auto !important;
+    min-width: 0;
+    text-align: center;
+    padding: 0 !important;
+    overflow-wrap: anywhere;
+}
+.meaning-row .sense-cue-area {
+    display: flex;
+    flex: 0 1 auto;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: fit-content !important;
+    max-width: 48%;
+    min-width: 0;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: rgba(var(--sense-match-rgb), 0.09);
+    text-align: center;
+    overflow-wrap: anywhere;
+    box-sizing: border-box;
+}
+.meaning-row .sense-cue-group {
+    display: grid;
+    gap: 3px;
+    padding: 0;
+}
+.meaning-row .sense-cue-group > .group-card-varying-cell {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    padding: 6px 10px;
+    overflow: visible !important;
+}
+.meaning-row .sense-cue-area .sense-grammar-cue { margin-top: 0; }
+.meaning-row > .pct-column {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 26px;
+    padding: 0 !important;
+    align-items: center !important;
+    justify-content: center;
+}
+.meaning-row > .sense-note-trigger { left: 6px; }
+@container sense-row (max-width: 340px) {
+    .meaning-row .meaning-row-body { flex-direction: column !important; }
+    .meaning-row .sense-cue-area { max-width: 100%; }
+    .meaning-row .meaning-row-gloss,
+    .meaning-row .group-card-shared { flex-basis: auto; width: 100% !important; }
+}

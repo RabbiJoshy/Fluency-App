@@ -28,7 +28,6 @@ import {
     isSupportingSenseMetadata,
     isWiktionaryGrammarNote,
     legacyObjectPronounProjection,
-    learnerGlossPresentation,
     learnerSensePresentation,
     projectWiktionaryGloss,
     compactLearnerSenseMetadata,
@@ -49,7 +48,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=20260928sense4f';
+} from './card-metadata-pills.js?v=20260929sense6';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -757,6 +756,64 @@ function fitPosSectionSummaries(root) {
     });
 }
 
+// One disclosure belongs to the whole row, never a nested context box.
+// A grouped row collects its notes with their sense labels intact.
+function placeRowInformationButtons(root) {
+    root.querySelectorAll('.meaning-row').forEach(row => {
+        const buttons = [...row.querySelectorAll('.sense-note-trigger')];
+        if (!buttons.length) return;
+        const combined = document.createElement('template');
+        combined.className = 'sense-note-template';
+        const copy = document.createElement('div');
+        copy.className = 'sense-note-copy';
+        const seen = new Set();
+        for (const button of buttons) {
+            const template = button.nextElementSibling;
+            const source = template?.content?.querySelector('.sense-note-copy');
+            if (!source) continue;
+            copy.dataset.senseNoteTitle ||= source.dataset.senseNoteTitle;
+            const cell = button.closest('.group-card-varying-cell');
+            const label = cell?.cloneNode(true);
+            label?.querySelectorAll('.sense-note-trigger, template').forEach(el => el.remove());
+            const senseLabel = label?.textContent.trim() || source.dataset.senseNoteTitle;
+            const key = senseLabel + source.innerHTML;
+            if (!seen.has(key)) {
+                seen.add(key);
+                const section = document.createElement('section');
+                if (buttons.length > 1) {
+                    const heading = document.createElement('h3');
+                    heading.textContent = senseLabel;
+                    section.append(heading);
+                }
+                section.append(...source.cloneNode(true).children);
+                copy.append(section);
+            }
+            template.remove();
+        }
+        combined.content.append(copy);
+        const button = buttons[0];
+        buttons.slice(1).forEach(el => el.remove());
+        row.prepend(button, combined);
+        row.classList.add('has-row-information');
+    });
+}
+
+// Give both providers the same optional cue area, after moving disclosures out.
+function arrangeSenseCueAreas(root) {
+    root.querySelectorAll('.meaning-row-regular .meaning-row-sub').forEach(cue => {
+        if (!cue.textContent.trim()) cue.remove();
+        else cue.classList.add('sense-cue-area');
+    });
+    root.querySelectorAll('.meaning-row-group[data-axis="translation"] .group-card-body').forEach(body => {
+        const cells = [...body.querySelectorAll('.group-card-varying-cell')];
+        if (!cells.length) return;
+        const cues = document.createElement('div');
+        cues.className = 'sense-cue-area sense-cue-group';
+        cues.append(...cells);
+        body.append(cues);
+    });
+}
+
 // A short shared gloss must not split a word merely to preserve two columns.
 // Measure the rendered cell; longer labels already request a stacked layout.
 function fitSenseRowLayouts(root) {
@@ -998,14 +1055,15 @@ function selectInitialMeaningGroup(card, grouping) {
     const groupKey = groupKeyOf.get(currentMeaningIndex);
     const meaning = card.meanings[currentMeaningIndex];
     const compKey = `${meaning.pos}\u0000${meaning.headword || ''}\u0000${axis}\u0000${groupKey}`;
-    const members = groupMembers.get(compKey);
-    if (!members || members.length < 2) return;
+    const members = (groupMembers.get(compKey) || [])
+        .filter(index => !card.meanings[index]?.isKnownSense);
+    if (members.length < 2) return;
     currentGroupSelection = {
         axis,
         groupKey,
         pos: meaning.pos,
         headword: meaning.headword || '',
-        members: [...members]
+        members
     };
 }
 
@@ -1074,7 +1132,7 @@ function buildCardAutoplayItems(card) {
     if (!card?.meanings?.length) return [];
     const items = [];
     card.meanings.forEach((meaning, meaningIndex) => {
-        if (!meaning || meaning.exampleOnly) return;
+        if (!meaning || meaning.exampleOnly || meaning.isKnownSense) return;
         const cycleCount = meaning.allMWEs?.length
             || meaning.allClitics?.length
             || (meaning.pos === 'SENSE_CYCLE' && meaning.allSenses?.length)
@@ -2231,11 +2289,7 @@ function setupSwipeGestures() {
             // Vertical swipe - cycle through meanings for multi-meaning cards
             const currentCard = flashcards[currentIndex];
             if (currentCard && currentCard.isMultiMeaning) {
-                if (diffY < 0) {
-                    currentMeaningIndex = (currentMeaningIndex + 1) % currentCard.meanings.length;
-                } else {
-                    currentMeaningIndex = (currentMeaningIndex - 1 + currentCard.meanings.length) % currentCard.meanings.length;
-                }
+                currentMeaningIndex = stepPractisedMeaningIndex(currentCard, currentMeaningIndex, diffY < 0 ? 1 : -1);
                 updateCard();
             } else if (currentCard && currentCard.sentences) {
                 if (diffY < 0) {
@@ -2381,20 +2435,18 @@ function setupKeyboardShortcuts() {
             e.preventDefault();
             nextCard();
         }
-        // Up arrow = previous meaning
-        else if (e.key === 'ArrowUp') {
+        // Up/down arrow = previous/next meaning, passing over senses greyed
+        // as known
+        else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
             e.preventDefault();
             const card = flashcards[currentIndex];
-            if (card && card.meanings && card.meanings.length > 1 && currentMeaningIndex > 0) {
-                selectMeaning(currentMeaningIndex - 1);
-            }
-        }
-        // Down arrow = next meaning
-        else if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            const card = flashcards[currentIndex];
-            if (card && card.meanings && card.meanings.length > 1 && currentMeaningIndex < card.meanings.length - 1) {
-                selectMeaning(currentMeaningIndex + 1);
+            if (!card?.meanings || card.meanings.length < 2) return;
+            const direction = e.key === 'ArrowDown' ? 1 : -1;
+            for (let index = currentMeaningIndex + direction;
+                index >= 0 && index < card.meanings.length; index += direction) {
+                if (card.meanings[index]?.isKnownSense) continue;
+                selectMeaning(index);
+                break;
             }
         }
         // Shift+Tab = next card (alternative to right arrow)
@@ -2628,8 +2680,15 @@ function recordCardResult(result) {
     const currentCard = flashcards[currentIndex];
     if (currentCard?.previewOnly) return;
     if (currentCard && currentCard.rank) {
-        saveWordProgress(currentCard, isCorrect);
+        saveCardAnswer(currentCard, isCorrect);
     }
+}
+
+// A part-known card's answer is about the senses it was testing; greyed
+// known senses keep their own schedules. Any other card answers as a whole.
+async function saveCardAnswer(card, isCorrect) {
+    if (await window.saveWholeCardKnowledgeAnswer?.(card, isCorrect)) return;
+    saveWordProgress(card, isCorrect);
 }
 
 function showFloatingBtns(show) {
@@ -2937,12 +2996,35 @@ function displayLearnerGloss(card, meaning, active = false) {
     const raw = String(getProductionEnglishCue(card, meaning)
         || meaning?.meaning || meaning?.translation || '').trim();
     const projected = projectWiktionaryGloss(meaning, raw).display;
-    return learnerGlossPresentation(meaning, active, {
+    return learnerSensePresentation(meaning, active, {
         gloss: projected,
         senseCount: card?.meanings?.length || 1,
         cardMeanings: card?.meanings || [meaning],
         peerMeanings: senseMetadataPeers(meaning, card?.meanings || [meaning], projected),
-    }).visibleGloss;
+        allowInactivePrimary: true,
+    }).gloss;
+}
+
+function learnerGroupingGloss(card, meaning) {
+    const raw = String(getProductionEnglishCue(card, meaning)
+        || meaning?.meaning || meaning?.translation || '').trim();
+    const projected = projectWiktionaryGloss(meaning, raw).display;
+    const presentation = learnerSensePresentation(meaning, false, {
+        gloss: projected,
+        senseCount: card?.meanings?.length || 1,
+        cardMeanings: card?.meanings || [meaning],
+        ignoreBudget: true,
+        // Grouping intentionally compares the concise learner gloss. Any
+        // source distinction removed here is retained as a key and in notes.
+        peerMeanings: [],
+        allowInactivePrimary: true,
+    });
+    const visibleGloss = presentation.gloss || projected;
+    const groupingKey = visibleGloss.toLocaleLowerCase('en')
+        .replace(/\s+/g, ' ')
+        .replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '')
+        .trim();
+    return { ...presentation, visibleGloss, groupingKey };
 }
 
 function senseCrossReferences(meaning) {
@@ -3147,10 +3229,13 @@ function cleanSenseContext(rawContext, mainGloss) {
 }
 
 function learnerRowPresentation(meaning, active, options = {}) {
-    const presentation = learnerSensePresentation(meaning, active, options);
+    const presentation = learnerSensePresentation(meaning, active, { ...options, ignoreBudget: true });
+    const visibleContext = cleanSenseContext(presentation.visibleContext, options.gloss || '');
+    const keyText = cleanSenseContext(presentation.key?.text || '', options.gloss || '');
     return {
         ...presentation,
-        visibleContext: cleanSenseContext(presentation.visibleContext, options.gloss || ''),
+        key: { ...presentation.key, text: keyText },
+        visibleContext,
     };
 }
 window.cleanSenseContext = cleanSenseContext;
@@ -3185,8 +3270,8 @@ function renderSenseContextHTML(context, { leadingDot = true, gloss = null } = {
 // Note: SENSE_CONSTRUCTION_TAGS, SENSE_REGISTER_TAGS, SENSE_CONSTRUCTION_SHORT,
 // splitSenseMetadataClauses, compactConstructionMetadata, senseMetadataItems,
 // senseMetadataDisplay, isSenseDefiningGrammar, isSupportingSenseMetadata,
-// senseMetadataHTML, learnerSensePresentation, toggleSenseMetadataChip,
-// and learnerGlossPresentation are now imported from ./card-metadata-pills.js
+// senseMetadataHTML, learnerSensePresentation, and toggleSenseMetadataChip
+// are now imported from ./card-metadata-pills.js
 
 
 function highlightPossibleSpanishDictUsage(sentenceHTML, usage, targetWord = '') {
@@ -3655,6 +3740,18 @@ function cardHasOnlyInvariantMwes(card) {
     return cardHasOnlyExpressionMeanings(card);
 }
 
+// Step through a card's meanings, passing over senses greyed as known. A
+// card whose every meaning is known (never built that way) steps normally.
+function stepPractisedMeaningIndex(card, fromIndex, direction) {
+    const count = card?.meanings?.length || 0;
+    if (!count) return 0;
+    for (let offset = 1; offset <= count; offset++) {
+        const index = (fromIndex + direction * offset + count * offset) % count;
+        if (!card.meanings[index]?.isKnownSense) return index;
+    }
+    return (fromIndex + direction + count) % count;
+}
+
 function isHiddenExpressionOnParent(card, meaning) {
     return Boolean(card && meaning
         && isExpressionChildMeaning(meaning, card)
@@ -3886,7 +3983,20 @@ function lemmaPosGroupKeyForMeaning(meaning) {
     return `${pos || 'X'}\u0000${meaning.headword || ''}`;
 }
 
-const AUTO_OPEN_SECTION_ROW_LIMIT = 6;
+const LEARNER_ROW_BUDGET_ENABLED = false;
+const AUTO_OPEN_SECTION_ROW_LIMIT_PHONE = 6;
+const AUTO_OPEN_SECTION_ROW_LIMIT_DESKTOP = 8;
+
+function autoOpenSectionRowLimit() {
+    // First-pass experiment: retain configured limits, but let rows scroll.
+    if (!LEARNER_ROW_BUDGET_ENABLED) return Number.POSITIVE_INFINITY;
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+        return AUTO_OPEN_SECTION_ROW_LIMIT_PHONE;
+    }
+    return window.matchMedia('(min-width: 601px)').matches
+        ? AUTO_OPEN_SECTION_ROW_LIMIT_DESKTOP
+        : AUTO_OPEN_SECTION_ROW_LIMIT_PHONE;
+}
 
 // A lemma–POS heading is a selection control, not only an accordion label.
 // Switching it moves the card's complete active state (lemma, sense, examples,
@@ -5371,6 +5481,13 @@ function prominenceMeterHTML(key) {
     return `<span class="sense-prominence-meter" aria-hidden="true">${[1, 2, 3].map(i => `<i${i <= filled ? ' class="is-on"' : ''}></i>`).join('')}</span>`;
 }
 
+// A sense the learner already knows stays on the card, greyed, with this tag
+// where its prominence badge would be. The tag reads the same on every row.
+function knownSenseTagHTML(extraStyle = '') {
+    const style = extraStyle ? ` style="${extraStyle}"` : '';
+    return `<span class="known-sense-tag"${style}>Known</span>`;
+}
+
 function prominenceBadgeHTML(promInfo, extraStyle = '') {
     if (!promInfo) return '';
     const key = promInfo.key || 'rare';
@@ -5458,7 +5575,10 @@ function updateCard({ announceHeadword = false } = {}) {
 
     // A card entry starts from its structural group selection. An explicit
     // sub-sense choice lasts only while the learner remains on this card.
-    if (announceHeadword) _explicitMeaningSelectionKey = null;
+    if (announceHeadword) {
+        _explicitMeaningSelectionKey = null;
+        window.beginKnowledgeCardVisit?.(card);
+    }
 
     // Most updateCard() calls are in-card rerenders: cycling an example,
     // selecting a sense/expression, starting autoplay, or changing a display
@@ -5484,12 +5604,15 @@ function updateCard({ announceHeadword = false } = {}) {
 
     // On first entry, start multi-POS cards on the part of speech carrying
     // the most corpus weight. Source order remains the stable tie-breaker.
+    // Senses greyed as known are not candidates: the card opens on what is
+    // being practised.
     if (announceHeadword && card.isMultiMeaning && card.meanings?.length && !card._activePosTab) {
         const posWeights = new Map();
         card.meanings.forEach((meaning, index) => {
             const pos = meaning.pos === 'SENSE_CYCLE' ? (meaning.cycle_pos || 'X') : meaning.pos;
             if (!pos || ['MWE', 'CLITIC', 'EXAMPLE_ONLY'].includes(pos)) return;
             if (isHiddenExpressionOnParent(card, meaning)) return;
+            if (meaning.isKnownSense) return;
             const weight = Number(meaning.percentage ?? meaning.frequency ?? meaning.count) || 0;
             const entry = posWeights.get(pos) || { pos, weight: 0, firstIndex: index };
             entry.weight += weight;
@@ -5503,6 +5626,10 @@ function updateCard({ announceHeadword = false } = {}) {
             currentMeaningIndex = primaryPos.firstIndex;
             currentGroupSelection = null;
         }
+    }
+    if (announceHeadword && card.meanings?.[currentMeaningIndex]?.isKnownSense) {
+        currentMeaningIndex = stepPractisedMeaningIndex(card, currentMeaningIndex, 1);
+        currentGroupSelection = null;
     }
 
     // Validate the group selection against the current card. If any member
@@ -6398,11 +6525,14 @@ function renderCardWikipediaBadge(card) {
         // singletons, so there is no reason to require a third sense.
         const GROUP_DUPLICATE_MEANINGS = activeMeaningsCount >= 2;
         const contextLabelByMeaning = new Map();
+        const groupingGlossByMeaning = new Map();
         card.meanings.forEach((meaning, index) => {
             if (!meaning || meaning.exampleOnly || ['MWE', 'CLITIC', 'SENSE_CYCLE'].includes(meaning.pos)) {
                 contextLabelByMeaning.set(index, '');
                 return;
             }
+            const groupingGloss = learnerGroupingGloss(card, meaning);
+            groupingGlossByMeaning.set(index, groupingGloss);
             const gloss = displaySenseGloss(
                 meaning,
                 getProductionEnglishCue(card, meaning) || meaning.meaning || meaning.translation || '',
@@ -6420,11 +6550,14 @@ function renderCardWikipediaBadge(card) {
                 allowInactivePrimary: true,
             };
             const presentation = learnerRowPresentation(meaning, false, options);
-            const metadataLabel = presentation.visibleItems
+            const metadataLabel = presentation.key.items
                 .map(item => senseMetadataDisplay(item, options).short)
                 .filter(Boolean)
                 .join(' · ');
-            contextLabelByMeaning.set(index, presentation.visibleContext || metadataLabel);
+            contextLabelByMeaning.set(
+                index,
+                presentation.key.text || groupingGloss.key.text || metadataLabel
+            );
         });
         // Per-meaning-idx axis assignment: 'translation' | 'context' |
         // 'singleton' | 'special' (MWE/CLITIC/SENSE_CYCLE — opted out).
@@ -6451,7 +6584,7 @@ function renderCardWikipediaBadge(card) {
                         return;
                     }
                     const groupPrefix = `${m.pos}\u0000${m.headword || ''}\u0000`;
-                    const tk = `${groupPrefix}${m.meaning || m.translation || ''}`;
+                    const tk = `${groupPrefix}${groupingGlossByMeaning.get(idx)?.groupingKey || ''}`;
                     transRawSize.set(tk, (transRawSize.get(tk) || 0) + 1);
                     const learnerContext = contextLabelByMeaning.get(idx) || '';
                     if (learnerContext) {
@@ -6464,11 +6597,13 @@ function renderCardWikipediaBadge(card) {
                 // on a single sense, which manifests as duplicate translations).
                 card.meanings.forEach((m, idx) => {
                     if (axisOf.get(idx) === 'special') return;
-                    const tk = m.meaning || m.translation || '';
+                    const groupingGloss = groupingGlossByMeaning.get(idx);
+                    const tk = groupingGloss?.groupingKey || '';
                     const groupPrefix = `${m.pos}\u0000${m.headword || ''}\u0000`;
                     const ts = transRawSize.get(`${groupPrefix}${tk}`) || 0;
                     const ck = contextLabelByMeaning.get(idx) || null;
-                    const cs = ck ? (ctxRawSize.get(`${groupPrefix}${ck}`) || 0) : 0;
+                    // A shared grammatical/context label is not a shared meaning.
+                    const cs = 0;
                     if (ts > 1 && cs > 1) {
                         if (ts >= cs) { axisOf.set(idx, 'translation'); groupKeyOf.set(idx, tk); }
                         else { axisOf.set(idx, 'context'); groupKeyOf.set(idx, ck); }
@@ -6595,14 +6730,14 @@ function renderCardWikipediaBadge(card) {
         const compactSectionRowCount = compactSectionGroups.reduce((total, [, group]) => {
             const visibleSenseKeys = new Set(group.mainMeanings.map(meaning => {
                 const meaningIndex = card.meanings.indexOf(meaning);
-                return `${displayLearnerGloss(card, meaning, false).toLocaleLowerCase('en')}\u0000${(
+                return `${(groupingGlossByMeaning.get(meaningIndex)?.groupingKey || '').toLocaleLowerCase('en')}\u0000${(
                     contextLabelByMeaning.get(meaningIndex) || ''
                 ).toLocaleLowerCase('en')}`;
             }));
             return total + 1 + Math.max(1, visibleSenseKeys.size);
         }, 0);
         const roomForInlineDetails = !compactKnowledgeView
-            && compactSectionRowCount <= AUTO_OPEN_SECTION_ROW_LIMIT;
+            && compactSectionRowCount <= autoOpenSectionRowLimit();
 
         orderMeaningEntriesForDisplay(card.meanings).forEach(({ meaning: m, index: idx }) => {
             if (m.exampleOnly) return;
@@ -6732,7 +6867,7 @@ function renderCardWikipediaBadge(card) {
                 const cycleSenses = m.allSenses || [m];
                 const rawTranslations = cycleSenses
                     .map(s => projectWiktionaryGloss(s, s.translation || s.meaning).display);
-                const projectedTranslations = cycleSenses.map((sense, senseIndex) => learnerGlossPresentation(
+                const cyclePresentations = cycleSenses.map((sense, senseIndex) => learnerSensePresentation(
                     sense,
                     isSelected,
                     {
@@ -6740,8 +6875,10 @@ function renderCardWikipediaBadge(card) {
                         senseCount: cycleSenses.length,
                         cardMeanings: cycleSenses,
                         peerMeanings: cycleSenses.filter(peer => peer !== sense),
+                        allowInactivePrimary: true,
                     }
-                ).visibleGloss);
+                ));
+                const projectedTranslations = cyclePresentations.map(presentation => presentation.gloss);
                 // Prettify the remainder bucket:
                 //   1. Split any semicolon-packed gloss into atomic translations
                 //      (Wiktionary often bundles synonyms: "to pull out; to remove; to extract").
@@ -6787,9 +6924,7 @@ function renderCardWikipediaBadge(card) {
                 const visibleTranslations = allTranslations.slice(0, 2);
                 const overflowTranslations = allTranslations.slice(2);
                 const joinedDisplay = visibleTranslations.join(joinSep);
-                const cycleWasShortened = rawTranslations.some((translation, index) =>
-                    String(translation || '').trim().toLocaleLowerCase('en')
-                    !== String(projectedTranslations[index] || '').trim().toLocaleLowerCase('en'));
+                const cycleWasShortened = cyclePresentations.some(presentation => presentation.note.gloss);
                 const cycleNoteText = rawTranslations.join(' | ');
                 const informationButton = overflowTranslations.length || cycleWasShortened
                     ? `<button type="button" class="sense-note-trigger" aria-haspopup="dialog" onclick="openSenseNote(event, this)" aria-label="Information about possible meanings" title="Information about possible meanings"><span aria-hidden="true">i</span></button><template class="sense-note-template"><div class="sense-note-copy" data-sense-note-title="Possible meanings"><section class="sense-note-section sense-note-section--meaning"><h3>All possibilities</h3><p>${escapeCardText(cycleNoteText)}</p></section></div></template>`
@@ -6797,9 +6932,10 @@ function renderCardWikipediaBadge(card) {
                 const cycleTextClass = adaptiveRowTextClass(joinedFull);
                 recordSectionMeanings(target, m.allSenses || [m]);
                 target.push(`
-                <div class="meaning-row meaning-row-cycle ${cycleTextClass}${isSelected ? ' selected' : ''}${rowStateClasses}" style="position: relative; display: flex; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 39px; opacity: 0.75;" onclick="selectMeaning(${idx})">
+                <div class="meaning-row meaning-row-cycle ${cycleTextClass}${isSelected ? ' selected' : ''}${rowStateClasses}${m.isKnownSense ? ' meaning-row-known' : ''}" style="position: relative; display: flex; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 39px; opacity: 0.75;" onclick="selectMeaning(${idx})">
                     ${renderRowCheckSlot(isSelected)}
                     <span class="row-adaptive-text sense-cycle-notes" aria-label="Possible meanings" style="flex: 1; font-weight: 600; color: white; min-width: 0; text-align: center; line-height: 1.4; padding: 4px 8px;"><span class="sense-cycle-label" style="display: block; font-size: 10px; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-secondary);">Possible meanings</span><span class="sense-cycle-short">${escapeCardText(joinedDisplay)}</span>${informationButton}</span>
+                    ${m.isKnownSense ? knownSenseTagHTML('position: absolute; right: 8px; top: 50%; transform: translateY(-50%);') : ''}
                 </div>
                 `);
             } else {
@@ -6839,7 +6975,7 @@ function renderCardWikipediaBadge(card) {
                     const sumPct = Math.round((pctSumRaw || 0) * 100);
                     const isTransAxis = axis === 'translation';
                     const sharedFullText = isTransAxis
-                        ? displayMeaning
+                        ? (groupingGlossByMeaning.get(idx)?.gloss || displayMeaning)
                         : String(groupKey || '').replace(/"/g, '&quot;');
                     const sharedPresentation = isTransAxis
                         ? learnerRowPresentation(m, isSelected, {
@@ -6852,20 +6988,15 @@ function renderCardWikipediaBadge(card) {
                         })
                         : null;
                     const sharedText = isTransAxis
-                        ? (sharedPresentation.visibleGloss || sharedFullText)
+                        ? (sharedPresentation.gloss || sharedFullText)
                         : sharedFullText;
                     const sharedTextHTML = isTransAxis
                         ? senseCrossReferenceHTML(m, sharedText, isSelected)
                         : sharedText;
-                    const sharedNoteHTML = isTransAxis && sharedPresentation?.noteGloss
-                        ? senseNoteHTML({
-                            visibleGloss: sharedPresentation.visibleGloss,
-                            noteGloss: sharedPresentation.noteGloss,
-                            noteContext: '',
-                            noteItems: [],
-                            hasSenseNote: true,
-                        }, { gloss: sharedFullText })
-                        : '';
+                    // A family heading is only the shared gloss. Notes belong
+                    // to the specific subrow unless a future policy proves
+                    // that every member shares the same secondary information.
+                    const sharedNoteHTML = '';
                     const maxMemberLength = orderedMembers.reduce((max, mi) => {
                         const member = card.meanings[mi];
                         const memberText = isTransAxis
@@ -6938,6 +7069,7 @@ function renderCardWikipediaBadge(card) {
                         }
                     }
 
+                    const groupKnown = orderedMembers.every(index => card.meanings[index]?.isKnownSense);
                     const memberCells = displayMemberEntries.map((entry, rowIdx) => {
                         const memberIdx = entry.representative;
                         const mm = card.meanings[memberIdx];
@@ -6953,17 +7085,25 @@ function renderCardWikipediaBadge(card) {
                         let varyingHtml;
                         if (isTransAxis) {
                             const collocationHTML = senseCollocationHTML(mm, card);
+                            const memberFullGloss = displaySenseGloss(
+                                mm,
+                                getProductionEnglishCue(card, mm) || mm.meaning || mm.translation || '',
+                                isMemberSelected
+                            );
                             const metaOptions = {
                                 senseCount: card.meanings?.length || orderedMembers.length,
                                 cardMeanings: card.meanings,
-                                gloss: sharedText,
+                                gloss: memberFullGloss,
                                 peerMeanings: orderedMembers.filter(mi => mi !== memberIdx).map(mi => card.meanings[mi]),
+                                preservePeerGlossDistinction: false,
                                 allowInactivePrimary: true,
                                 excludeCompanion: Boolean(collocationHTML),
                                 roomForInlineDetails,
                             };
                             const rowPresentation = learnerRowPresentation(mm, isMemberSelected, metaOptions);
-                            let cleanedCtx = rowPresentation.visibleContext;
+                            let cleanedCtx = entry.label === 'general use'
+                                ? rowPresentation.key.text
+                                : entry.label;
                             if (cleanedCtx && contextCollidesWithMetadata(
                                 cleanedCtx,
                                 compactLearnerSenseMetadata(senseMetadataItems(mm), mm, metaOptions)
@@ -6974,7 +7114,7 @@ function renderCardWikipediaBadge(card) {
                             const ctxWeight = isMemberSelected ? '700' : '500';
                             const ctxColor = isMemberSelected ? 'var(--text-primary)' : 'var(--text-secondary)';
                             if (collocationHTML || cleanedCtx || metadataHTML) {
-                                const colHTML = collocationHTML ? `${collocationHTML} ` : '';
+                                const colHTML = collocationHTML ? `<span class="sense-grammar-cue">${collocationHTML}</span>` : '';
                                 varyingHtml = `<span class="meaning-context-cell" style="font-weight: ${ctxWeight}; color: ${ctxColor}; line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${colHTML}${renderSenseContextHTML(cleanedCtx, { leadingDot: false })}${metadataHTML}</span>`;
                             } else {
                                 const diff = resolveMeaningDifferentiator(
@@ -7014,11 +7154,13 @@ function renderCardWikipediaBadge(card) {
                                 roomForInlineDetails,
                             };
                             const transPresentation = learnerRowPresentation(mm, isMemberSelected, metaOptions);
-                            const transSafe = String(transPresentation.visibleGloss || transRaw).replace(/"/g, '&quot;');
+                            const transSafe = String(transPresentation.gloss || transRaw).replace(/"/g, '&quot;');
                             varyingHtml = `<span class="row-adaptive-text" style="font-weight: 600; color: var(--text-primary); line-height: 1.25; min-width: 0; overflow: hidden; text-overflow: ellipsis;">${collocationHTML ? `${collocationHTML} ` : ''}${senseCrossReferenceHTML(mm, transSafe, isMemberSelected)}${senseMetadataHTML(mm, isMemberSelected, metaOptions)}${modelProposalMarkerHTML(mm)}</span>`;
                         }
                         const varyingCol = isTransAxis ? 2 : 1;
-                        const varyingCell = `<div class="group-card-varying-cell${isMemberSelected ? ' is-active-subsense' : ''}" onclick="event.stopPropagation(); selectMeaning(${memberIdx})" style="${baseCell} grid-column: ${varyingCol}; min-width: 0; overflow: hidden;">${varyingHtml}</div>`;
+                        const memberKnown = entry.memberIndices.every(index => card.meanings[index]?.isKnownSense);
+                        const knownTag = memberKnown && !groupKnown ? ` ${knownSenseTagHTML()}` : '';
+                        const varyingCell = `<div class="group-card-varying-cell${isMemberSelected ? ' is-active-subsense' : ''}${memberKnown ? ' is-known-subsense' : ''}" onclick="event.stopPropagation(); selectMeaning(${memberIdx})" style="${baseCell} grid-column: ${varyingCol}; min-width: 0; overflow: hidden;">${varyingHtml}${knownTag}</div>`;
                         return varyingCell;
                     }).join('');
 
@@ -7059,6 +7201,10 @@ function renderCardWikipediaBadge(card) {
                             : `<div class="pct-column"></div>`);
                     }
 
+                    if (groupKnown) {
+                        pctColumnHtml = `<div class="pct-column pct-column--group" style="display: flex; align-items: center; padding-left: 4px;">${knownSenseTagHTML()}</div>`;
+                    }
+
                     // Shared cell — spans all body rows.
                     const sharedCol = isTransAxis ? 1 : 2;
                     const sharedSpan = `grid-column: ${sharedCol}; grid-row: 1 / span ${displayMemberEntries.length}; align-self: center;`;
@@ -7075,7 +7221,7 @@ function renderCardWikipediaBadge(card) {
                     const outerGridCols = '1fr auto';
 
                     target.push(`
-                    <div class="meaning-row meaning-row-group ${groupedTextClass}${groupIsCurrent ? ' selected' : ''}${groupStateClasses}" data-axis="${axis}" onclick="selectGroup('${axis}', ${idx})" style="position: relative; display: grid; grid-template-columns: ${outerGridCols}; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${cardBg}; border-radius: 8px; cursor: pointer;">
+                    <div class="meaning-row meaning-row-group ${groupedTextClass}${groupIsCurrent ? ' selected' : ''}${groupStateClasses}${groupKnown ? ' meaning-row-known' : ''}" data-axis="${axis}" onclick="selectGroup('${axis}', ${idx})" style="position: relative; display: grid; grid-template-columns: ${outerGridCols}; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${cardBg}; border-radius: 8px; cursor: pointer;">
                         ${renderRowCheckSlot(groupIsCurrent)}
                         <div class="meaning-row-body group-card-body${sharedCleanLength > 48 ? ' has-long-shared' : ''}${maxMemberLength > 80 ? ' has-long-context' : ''}" style="display: grid; grid-template-columns: ${gridCols}; align-items: center; gap: 3px 6px; min-width: 0; width: 100%; max-width: 100%; box-sizing: border-box; padding: 4px 8px; background: ${sharedBg}; ${sharedBorder} border-radius: 6px; justify-self: center;">
                             ${memberCells}
@@ -7106,16 +7252,17 @@ function renderCardWikipediaBadge(card) {
                         roomForInlineDetails,
                     };
                     const rowPresentation = learnerRowPresentation(m, isRowSelected, metadataOptions);
-                    const visibleMeaning = rowPresentation.visibleGloss || displayMeaning;
+                    const visibleMeaning = rowPresentation.gloss || displayMeaning;
                     const visibleMeaningHTML = senseCrossReferenceHTML(m, visibleMeaning, isRowSelected);
-                    let cleanedContext = rowPresentation.visibleContext;
+                    let cleanedContext = rowPresentation.key.text;
                     if (cleanedContext && contextCollidesWithMetadata(
                         cleanedContext,
                         compactLearnerSenseMetadata(senseMetadataItems(m), m, metadataOptions)
                     )) {
                         cleanedContext = '';
                     }
-                    let subContent = '';
+                    let subContent = collocationHTML
+                        ? `<span class="sense-grammar-cue">${collocationHTML}</span>` : '';
                     if (cleanedContext) {
                         subContent += renderSenseContextHTML(cleanedContext, { leadingDot: false });
                     }
@@ -7148,17 +7295,23 @@ function renderCardWikipediaBadge(card) {
                     const rareRowClass = isFoldedLeader
                         ? (foldInfo.hasOnlyRare ? ' meaning-row-rare' : '')
                         : ((m.unassigned || m.isRareSense || m.prominenceLabel === 'Rare') ? ' meaning-row-rare' : '');
-                    const pctTail = useProminenceLabels
+                    const rowKnown = isFoldedLeader
+                        ? foldInfo.allIndices.every(index => card.meanings[index]?.isKnownSense)
+                        : Boolean(m.isKnownSense);
+                    const knownRowClass = rowKnown ? ' meaning-row-known' : '';
+                    const pctTail = rowKnown
+                        ? knownSenseTagHTML('position: absolute; right: 8px; top: 50%; transform: translateY(-50%);')
+                        : useProminenceLabels
                         ? prominenceBadgeHTML(promInfo, 'position: absolute; right: 8px; top: 50%; transform: translateY(-50%);')
                         : (!m.unassigned && displayPctVal < 100
                             ? `<span class="sense-percentage sense-percentage-tail" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">${displayPctVal}%</span>`
                             : (m.unassigned ? prominenceBadgeHTML({ label: 'Rare', key: 'rare' }, 'position: absolute; right: 8px; top: 50%; transform: translateY(-50%);') : ''));
-                    const sidePad = useProminenceLabels ? '32px' : (!m.unassigned && displayPctVal < 100 ? '42px' : '10px');
+                    const sidePad = rowKnown ? '52px' : (useProminenceLabels ? '32px' : (!m.unassigned && displayPctVal < 100 ? '42px' : '10px'));
                     target.push(`
-                    <div class="meaning-row meaning-row-regular ${singletonTextClass}${isRowSelected ? ' selected' : ''}${rowSelectedClasses}${rareRowClass}" style="position: relative; display: flex; align-items: center; padding: 2px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 44px;" onclick="selectMeaning(${idx})">
+                    <div class="meaning-row meaning-row-regular ${singletonTextClass}${isRowSelected ? ' selected' : ''}${rowSelectedClasses}${rareRowClass}${knownRowClass}" style="position: relative; display: flex; align-items: center; padding: 2px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 44px;" onclick="selectMeaning(${idx})">
                         ${renderRowCheckSlot(isRowSelected)}
                         <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; width: 100%; padding: 2px ${sidePad} 2px ${sidePad};">
-                            <span class="meaning-row-translation meaning-row-gloss row-adaptive-text" style="font-weight: ${isRowSelected ? 700 : 600}; color: ${textColor}; text-align: center; width: 100%; line-height: 1.25;">${collocationHTML ? `${collocationHTML} ` : ''}${visibleMeaningHTML}</span>
+                            <span class="meaning-row-translation meaning-row-gloss row-adaptive-text" style="font-weight: ${isRowSelected ? 700 : 600}; color: ${textColor}; text-align: center; width: 100%; line-height: 1.25;">${visibleMeaningHTML}</span>
                             ${subContent ? `<span class="meaning-row-sub" style="text-align: center; width: 100%;">${subContent}</span>` : ''}
                         </div>
                         ${pctTail}
@@ -7175,7 +7328,7 @@ function renderCardWikipediaBadge(card) {
             0
         );
         const allSectionsFitInline = !compactKnowledgeView
-            && renderedSectionRowCount <= AUTO_OPEN_SECTION_ROW_LIMIT;
+            && renderedSectionRowCount <= autoOpenSectionRowLimit();
         if (!card._backSectionsManuallySet) {
             card._expandedPos = allSectionsFitInline
                 ? new Set(Array.from(scrollSections.keys()).filter(key => groupInfo.has(key)))
@@ -7731,6 +7884,8 @@ function renderCardWikipediaBadge(card) {
         // the side sheets that described the old one (side-dock.js).
         window.sideDock?.beforeBackRender(card);
         renderedBack.innerHTML = backHTML;
+        placeRowInformationButtons(renderedBack);
+        arrangeSenseCueAreas(renderedBack);
         renderedBack._fluencyRenderedHTML = backHTML;
         bindGrammarPairChips(renderedBack);
     }
