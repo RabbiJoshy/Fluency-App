@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-29T18:31:00+01:00",
+      "date": "2026-09-29 18:31 BST",
+      "agent": "Claude",
+      "summary": "Speech decks rescored with WSD v21: common words get back the reading a dictionary's listing order hid.",
+      "detail": [
+        "Spanish, Portuguese, Czech and Finnish Speech now load es/pt/cs-speech-v21-10000x10 and fi-speech-v21-2000x10 (decision 0029).",
+        "Dictionary order no longer vetoes the sense the sentence fits: cs ty 'you', tu 'here', já 'I', smrt 'death'; es sé 'to know', este 'this'; pt obrigado 'thanks', tu 'you'; fi missä 'where', huomenta 'good morning'.",
+        "Cards where every example was withheld fell from 84 to 0 in the first 2,000 Czech cards (34 to 6 Portuguese); none is labelled with a surname any more.",
+        "Merge Lemmas keys and Exclude Cognates verdicts are rebuilt for the new releases."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-29T18:18:13+01:00",
       "date": "2026-09-29 18:18 BST",
       "agent": "Codex",
