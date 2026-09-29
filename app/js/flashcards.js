@@ -28,7 +28,6 @@ import {
     isSupportingSenseMetadata,
     isWiktionaryGrammarNote,
     legacyObjectPronounProjection,
-    learnerGlossPresentation,
     learnerSensePresentation,
     projectWiktionaryGloss,
     compactLearnerSenseMetadata,
@@ -49,7 +48,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=20260928sense5';
+} from './card-metadata-pills.js?v=20260929sense6';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -2939,27 +2938,29 @@ function displayLearnerGloss(card, meaning, active = false) {
     const raw = String(getProductionEnglishCue(card, meaning)
         || meaning?.meaning || meaning?.translation || '').trim();
     const projected = projectWiktionaryGloss(meaning, raw).display;
-    return learnerGlossPresentation(meaning, active, {
+    return learnerSensePresentation(meaning, active, {
         gloss: projected,
         senseCount: card?.meanings?.length || 1,
         cardMeanings: card?.meanings || [meaning],
         peerMeanings: senseMetadataPeers(meaning, card?.meanings || [meaning], projected),
-    }).visibleGloss;
+        allowInactivePrimary: true,
+    }).gloss;
 }
 
 function learnerGroupingGloss(card, meaning) {
     const raw = String(getProductionEnglishCue(card, meaning)
         || meaning?.meaning || meaning?.translation || '').trim();
     const projected = projectWiktionaryGloss(meaning, raw).display;
-    const presentation = learnerGlossPresentation(meaning, false, {
+    const presentation = learnerSensePresentation(meaning, false, {
         gloss: projected,
         senseCount: card?.meanings?.length || 1,
         cardMeanings: card?.meanings || [meaning],
         // Grouping intentionally compares the concise learner gloss. Any
         // source distinction removed here is retained as a key and in notes.
         peerMeanings: [],
+        allowInactivePrimary: true,
     });
-    const visibleGloss = presentation.visibleGloss || projected;
+    const visibleGloss = presentation.gloss || projected;
     const groupingKey = visibleGloss.toLocaleLowerCase('en')
         .replace(/\s+/g, ' ')
         .replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '')
@@ -3170,9 +3171,12 @@ function cleanSenseContext(rawContext, mainGloss) {
 
 function learnerRowPresentation(meaning, active, options = {}) {
     const presentation = learnerSensePresentation(meaning, active, options);
+    const visibleContext = cleanSenseContext(presentation.visibleContext, options.gloss || '');
+    const keyText = cleanSenseContext(presentation.key?.text || '', options.gloss || '');
     return {
         ...presentation,
-        visibleContext: cleanSenseContext(presentation.visibleContext, options.gloss || ''),
+        key: { ...presentation.key, text: keyText },
+        visibleContext,
     };
 }
 window.cleanSenseContext = cleanSenseContext;
@@ -3207,8 +3211,8 @@ function renderSenseContextHTML(context, { leadingDot = true, gloss = null } = {
 // Note: SENSE_CONSTRUCTION_TAGS, SENSE_REGISTER_TAGS, SENSE_CONSTRUCTION_SHORT,
 // splitSenseMetadataClauses, compactConstructionMetadata, senseMetadataItems,
 // senseMetadataDisplay, isSenseDefiningGrammar, isSupportingSenseMetadata,
-// senseMetadataHTML, learnerSensePresentation, toggleSenseMetadataChip,
-// and learnerGlossPresentation are now imported from ./card-metadata-pills.js
+// senseMetadataHTML, learnerSensePresentation, and toggleSenseMetadataChip
+// are now imported from ./card-metadata-pills.js
 
 
 function highlightPossibleSpanishDictUsage(sentenceHTML, usage, targetWord = '') {
@@ -6484,13 +6488,13 @@ function renderCardWikipediaBadge(card) {
                 allowInactivePrimary: true,
             };
             const presentation = learnerRowPresentation(meaning, false, options);
-            const metadataLabel = presentation.visibleItems
+            const metadataLabel = presentation.key.items
                 .map(item => senseMetadataDisplay(item, options).short)
                 .filter(Boolean)
                 .join(' · ');
             contextLabelByMeaning.set(
                 index,
-                presentation.visibleContext || groupingGloss.visibleKey || metadataLabel
+                presentation.key.text || groupingGloss.key.text || metadataLabel
             );
         });
         // Per-meaning-idx axis assignment: 'translation' | 'context' |
@@ -6800,7 +6804,7 @@ function renderCardWikipediaBadge(card) {
                 const cycleSenses = m.allSenses || [m];
                 const rawTranslations = cycleSenses
                     .map(s => projectWiktionaryGloss(s, s.translation || s.meaning).display);
-                const projectedTranslations = cycleSenses.map((sense, senseIndex) => learnerGlossPresentation(
+                const cyclePresentations = cycleSenses.map((sense, senseIndex) => learnerSensePresentation(
                     sense,
                     isSelected,
                     {
@@ -6808,8 +6812,10 @@ function renderCardWikipediaBadge(card) {
                         senseCount: cycleSenses.length,
                         cardMeanings: cycleSenses,
                         peerMeanings: cycleSenses.filter(peer => peer !== sense),
+                        allowInactivePrimary: true,
                     }
-                ).visibleGloss);
+                ));
+                const projectedTranslations = cyclePresentations.map(presentation => presentation.gloss);
                 // Prettify the remainder bucket:
                 //   1. Split any semicolon-packed gloss into atomic translations
                 //      (Wiktionary often bundles synonyms: "to pull out; to remove; to extract").
@@ -6855,9 +6861,7 @@ function renderCardWikipediaBadge(card) {
                 const visibleTranslations = allTranslations.slice(0, 2);
                 const overflowTranslations = allTranslations.slice(2);
                 const joinedDisplay = visibleTranslations.join(joinSep);
-                const cycleWasShortened = rawTranslations.some((translation, index) =>
-                    String(translation || '').trim().toLocaleLowerCase('en')
-                    !== String(projectedTranslations[index] || '').trim().toLocaleLowerCase('en'));
+                const cycleWasShortened = cyclePresentations.some(presentation => presentation.note.gloss);
                 const cycleNoteText = rawTranslations.join(' | ');
                 const informationButton = overflowTranslations.length || cycleWasShortened
                     ? `<button type="button" class="sense-note-trigger" aria-haspopup="dialog" onclick="openSenseNote(event, this)" aria-label="Information about possible meanings" title="Information about possible meanings"><span aria-hidden="true">i</span></button><template class="sense-note-template"><div class="sense-note-copy" data-sense-note-title="Possible meanings"><section class="sense-note-section sense-note-section--meaning"><h3>All possibilities</h3><p>${escapeCardText(cycleNoteText)}</p></section></div></template>`
@@ -6908,7 +6912,7 @@ function renderCardWikipediaBadge(card) {
                     const sumPct = Math.round((pctSumRaw || 0) * 100);
                     const isTransAxis = axis === 'translation';
                     const sharedFullText = isTransAxis
-                        ? (groupingGlossByMeaning.get(idx)?.visibleGloss || displayMeaning)
+                        ? (groupingGlossByMeaning.get(idx)?.gloss || displayMeaning)
                         : String(groupKey || '').replace(/"/g, '&quot;');
                     const sharedPresentation = isTransAxis
                         ? learnerRowPresentation(m, isSelected, {
@@ -6921,20 +6925,15 @@ function renderCardWikipediaBadge(card) {
                         })
                         : null;
                     const sharedText = isTransAxis
-                        ? (sharedPresentation.visibleGloss || sharedFullText)
+                        ? (sharedPresentation.gloss || sharedFullText)
                         : sharedFullText;
                     const sharedTextHTML = isTransAxis
                         ? senseCrossReferenceHTML(m, sharedText, isSelected)
                         : sharedText;
-                    const sharedNoteHTML = isTransAxis && sharedPresentation?.noteGloss
-                        ? senseNoteHTML({
-                            visibleGloss: sharedPresentation.visibleGloss,
-                            noteGloss: sharedPresentation.noteGloss,
-                            noteContext: '',
-                            noteItems: [],
-                            hasSenseNote: true,
-                        }, { gloss: sharedFullText })
-                        : '';
+                    // A family heading is only the shared gloss. Notes belong
+                    // to the specific subrow unless a future policy proves
+                    // that every member shares the same secondary information.
+                    const sharedNoteHTML = '';
                     const maxMemberLength = orderedMembers.reduce((max, mi) => {
                         const member = card.meanings[mi];
                         const memberText = isTransAxis
@@ -7040,7 +7039,7 @@ function renderCardWikipediaBadge(card) {
                             };
                             const rowPresentation = learnerRowPresentation(mm, isMemberSelected, metaOptions);
                             let cleanedCtx = entry.label === 'general use'
-                                ? rowPresentation.visibleContext
+                                ? rowPresentation.key.text
                                 : entry.label;
                             if (cleanedCtx && contextCollidesWithMetadata(
                                 cleanedCtx,
@@ -7092,7 +7091,7 @@ function renderCardWikipediaBadge(card) {
                                 roomForInlineDetails,
                             };
                             const transPresentation = learnerRowPresentation(mm, isMemberSelected, metaOptions);
-                            const transSafe = String(transPresentation.visibleGloss || transRaw).replace(/"/g, '&quot;');
+                            const transSafe = String(transPresentation.gloss || transRaw).replace(/"/g, '&quot;');
                             varyingHtml = `<span class="row-adaptive-text" style="font-weight: 600; color: var(--text-primary); line-height: 1.25; min-width: 0; overflow: hidden; text-overflow: ellipsis;">${collocationHTML ? `${collocationHTML} ` : ''}${senseCrossReferenceHTML(mm, transSafe, isMemberSelected)}${senseMetadataHTML(mm, isMemberSelected, metaOptions)}${modelProposalMarkerHTML(mm)}</span>`;
                         }
                         const varyingCol = isTransAxis ? 2 : 1;
@@ -7190,12 +7189,11 @@ function renderCardWikipediaBadge(card) {
                         roomForInlineDetails,
                     };
                     const rowPresentation = learnerRowPresentation(m, isRowSelected, metadataOptions);
-                    const visibleMeaning = rowPresentation.visibleGloss || displayMeaning;
+                    const visibleMeaning = rowPresentation.gloss || displayMeaning;
                     const visibleMeaningHTML = senseCrossReferenceHTML(m, visibleMeaning, isRowSelected);
-                    let cleanedContext = rowPresentation.visibleContext;
-                    if (!cleanedContext && (isRowSelected || roomForInlineDetails)) {
-                        cleanedContext = rowPresentation.visibleKey || '';
-                    }
+                    let cleanedContext = (isRowSelected || roomForInlineDetails)
+                        ? rowPresentation.key.text
+                        : (rowPresentation.visibleContext || '');
                     if (cleanedContext && contextCollidesWithMetadata(
                         cleanedContext,
                         compactLearnerSenseMetadata(senseMetadataItems(m), m, metadataOptions)

@@ -69,6 +69,13 @@ const porqueViews=porqueMeanings.map((meaning,index)=>ui.learnerSensePresentatio
 assert.deepEqual(porqueViews.map(view=>view.visibleGloss),['because','because']);
 assert.deepEqual(porqueViews.map(view=>view.visibleKey),['introduces an explanation','introduces a reason']);
 assert.deepEqual(porqueViews.map(view=>view.noteGloss),porqueGlosses);
+for(const view of porqueViews){
+ assert.equal(view.gloss,view.visibleGloss);
+ assert.equal(view.key.text,view.visibleKey);
+ assert.deepEqual(view.key.items,view.visibleItems);
+ assert.equal(view.note.gloss,view.noteGloss);
+ assert.equal(view.note.available,view.hasSenseNote);
+}
 
 const su=card('es','su');assert.deepEqual(show(su,1).visible,['addressing several people']);
 assert.deepEqual(show(card('es','ven')).visible,['command']);

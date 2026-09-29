@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-29T01:05:33+01:00",
+      "date": "2026-09-29 01:05 BST",
+      "agent": "Codex",
+      "summary": "Every dictionary sense now follows one gloss, key and note presentation contract.",
+      "detail": [
+        "The gloss is the required learner meaning; the optional key is the shortest useful distinction or production cue; the optional note retains worthwhile secondary information.",
+        "Singletons, grouped senses, section summaries and possible-meaning rows now obtain their learner wording from the same provider-neutral selector.",
+        "Existing source fields remain intact and compatibility aliases remain available; this changes presentation rather than dictionary data or sense selection."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-29T09:20:00+01:00",
       "date": "2026-09-29 09:20 BST",
       "agent": "Claude",
