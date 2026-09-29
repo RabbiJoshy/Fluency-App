@@ -1173,7 +1173,26 @@ export function learnerSensePresentation(meaning, active, options = {}) {
             ? supportingItems : []),
     ];
     const hasSenseNote = Boolean(glossPresentation.noteGloss || noteContext || noteItems.length);
+    // Canonical learner-facing contract. Dictionary/provider fields are input;
+    // every language leaves this selector as exactly three presentation tiers:
+    // a required gloss, an optional compact key, and an optional curated note.
+    // The flat fields below remain as compatibility aliases while renderers
+    // migrate to these named slots.
+    const gloss = glossPresentation.visibleGloss;
+    const key = {
+        text: contextPresentation.visibleContext || glossPresentation.visibleKey || '',
+        items: visibleWithRoom,
+    };
+    const note = {
+        gloss: glossPresentation.noteGloss,
+        context: noteContext,
+        items: noteItems,
+        available: hasSenseNote,
+    };
     return {
+        gloss,
+        key,
+        note,
         visibleItems: visibleWithRoom,
         detailItems: details,
         residualContext,
@@ -1227,23 +1246,29 @@ function senseNoteSectionHTML(title, values, className) {
 }
 
 export function senseNoteHTML(presentation, options = {}) {
-    if (!presentation.hasSenseNote) return '';
+    const note = presentation.note || {
+        gloss: presentation.noteGloss,
+        context: presentation.noteContext,
+        items: presentation.noteItems || [],
+        available: presentation.hasSenseNote,
+    };
+    if (!note.available) return '';
     const usage = [];
     const production = [];
-    if (presentation.noteContext) usage.push(presentation.noteContext);
-    for (const item of presentation.noteItems) {
+    if (note.context) usage.push(note.context);
+    for (const item of note.items) {
         const label = senseMetadataDisplay(item, options).full;
         if (!label) continue;
         if (['companion', 'construction', 'grammar'].includes(item.family)) production.push(label);
         else usage.push(label);
     }
     const body = [
-        senseNoteSectionHTML('Meaning', [presentation.noteGloss], 'meaning'),
+        senseNoteSectionHTML('Meaning', [note.gloss], 'meaning'),
         senseNoteSectionHTML('Usage', usage, 'usage'),
         senseNoteSectionHTML('How it is used', production, 'production'),
     ].join('');
     if (!body) return '';
-    const title = presentation.visibleGloss || options.gloss || 'This meaning';
+    const title = presentation.gloss || presentation.visibleGloss || options.gloss || 'This meaning';
     return `<button type="button" class="sense-note-trigger" aria-haspopup="dialog" onclick="openSenseNote(event, this)" aria-label="Information about this meaning" title="Information about this meaning"><span aria-hidden="true">i</span></button><template class="sense-note-template"><div class="sense-note-copy" data-sense-note-title="${escapeCardText(title)}">${body}</div></template>`;
 }
 
@@ -1277,12 +1302,13 @@ export function senseMetadataHTML(meaning, active, options = {}) {
         return `<span class="${pillClass}" data-family="${family}" title="${titleAttr}" aria-label="${ariaLabel}">${labelHTML}</span>`;
     }).join('');
 
+    const keyItems = presentation.key?.items || presentation.visibleItems;
     const displayPrimary = options.hideVisibleItems
         ? []
-        : presentation.visibleItems.filter(item => item.family !== 'grammar');
+        : keyItems.filter(item => item.family !== 'grammar');
     const grammar = options.hideVisibleItems
         ? []
-        : presentation.visibleItems.filter(item => item.family === 'grammar');
+        : keyItems.filter(item => item.family === 'grammar');
     const noteHTML = senseNoteHTML(presentation, options);
 
     if (!active && options.allowInactivePrimary) {
