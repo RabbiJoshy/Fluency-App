@@ -8,6 +8,34 @@ ROOT = Path(__file__).resolve().parents[2]
 
 @unittest.skipUnless(shutil.which('node'), 'Node.js required')
 class SenseMetadataBehaviorTests(unittest.TestCase):
+    def test_unbudgeted_cues_are_stable_across_selection_and_density(self):
+        result = subprocess.run(['node', '--input-type=module', '-'], cwd=ROOT, text=True,
+            input=r'''import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import * as ui from './app/js/card-metadata-pills.js';
+const fixture=JSON.parse(fs.readFileSync('tests/app/fixtures/sense_metadata_presentation.json'));
+for(const cards of Object.values(fixture)) for(const card of cards) for(const meaning of card.meanings) {
+ const options={ignoreBudget:true,allowInactivePrimary:true,gloss:ui.projectWiktionaryGloss(meaning,meaning.translation).display,cardMeanings:card.meanings,peerMeanings:ui.senseMetadataPeers(meaning,card.meanings)};
+ const active=ui.learnerSensePresentation(meaning,true,{...options,senseCount:20});
+ const inactive=ui.learnerSensePresentation(meaning,false,{...options,senseCount:20});
+ assert.deepEqual(active.key,inactive.key,card.word);
+ assert.equal(active.gloss,inactive.gloss,card.word);
+ assert.equal(active.gloss,options.gloss,card.word);
+ for(const item of active.grammar.items) assert(['form','construction','function'].includes(ui.grammarCueCategory(item)));
+}
+const long={translation:'meaning',context:'A useful sense distinction '.repeat(20),pos:'noun'};
+for(const senseCount of [1,6,20]) {
+ const p=ui.learnerSensePresentation(long,false,{ignoreBudget:true,senseCount,allowInactivePrimary:true});
+ assert.equal(p.key.text,long.context.trim());
+}
+const providers=JSON.parse(fs.readFileSync('tests/app/fixtures/sense_metadata.json'));
+for(const [language,word] of [['es','tener'],['pt','gosto'],['cs','čekat']]) {
+ const card=providers[language].find(c=>c.word===word);
+ assert(card.meanings.some(m=>ui.senseMetadataHTML(m,false,{ignoreBudget:true,allowInactivePrimary:true}).includes('sense-grammar-cue')),word);
+}
+''', capture_output=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_adaptive_presentation_budget_for_portuguese_czech_and_spanish(self):
         result = subprocess.run(['node', '--input-type=module', '-'], cwd=ROOT, text=True,
             input=r'''
@@ -93,7 +121,7 @@ const fixture = JSON.parse(fs.readFileSync('tests/app/fixtures/sense_metadata.js
 const card = (lang, word) => fixture[lang].find(c => c.word === word);
 const project = (c, m) => {
  const gloss = ui.projectWiktionaryGloss(m, m.translation).display;
- const options = {gloss, peerMeanings: ui.senseMetadataPeers(m, c.meanings, gloss), cardMeanings:c.meanings, allowInactivePrimary: true, senseCount: c.meanings.length};
+ const options = {ignoreBudget:false, gloss, peerMeanings: ui.senseMetadataPeers(m, c.meanings, gloss), cardMeanings:c.meanings, allowInactivePrimary: true, senseCount: c.meanings.length};
  const presentation = ui.learnerSensePresentation(m, false, options);
  return {gloss, context: presentation.residualContext,
   labels: presentation.visibleItems.map(i => ui.senseMetadataDisplay(i, options).short),

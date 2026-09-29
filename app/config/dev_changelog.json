@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-29T17:57:31+01:00",
+      "date": "2026-09-29 17:57 BST",
+      "agent": "Codex",
+      "summary": "First-pass shared grammar cues, centered card rows, and whole-row information buttons.",
+      "detail": [
+        "SpanishDict and Wiktionary cues share grammar formatting, with form, construction and function classifications. Useful cues remain present on inactive rows.",
+        "This experiment ignores stored row-count and text budgets; content wraps and the meanings area scrolls naturally. Different meanings no longer group merely because they share a context or grammar label.",
+        "Information buttons sit at the left edge of the whole row. Grouped rows collect their notes in one labeled disclosure; row text is centered.",
+        "Presentation only: source data, releases, dictionary adapters and WSD are unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-29T01:05:33+01:00",
       "date": "2026-09-29 01:05 BST",
       "agent": "Codex",
