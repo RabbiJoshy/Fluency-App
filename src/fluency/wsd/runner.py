@@ -121,6 +121,26 @@ def _provider_order_scores(
     )
 
 
+def _order_vote_scores(
+    order_ranked: Sequence[LeafScore],
+    raw_winner: LeafScore,
+    policy: CommitPolicy,
+) -> tuple[LeafScore, ...]:
+    """Leaves in provider order, as the dictionary-order vote may see them.
+
+    Under ``gloss_margin`` that vote is cast only inside the gloss winner's
+    analysis: "sense 1 is the common one" holds within an entry, not between
+    entries a provider happened to list alphabetically or by page position.
+    """
+
+    if policy.cross_analysis_vote != "gloss_margin":
+        return tuple(order_ranked)
+    return tuple(
+        item for item in order_ranked
+        if item.menu_analysis_id == raw_winner.menu_analysis_id
+    )
+
+
 def _selection_projection(
     *,
     selected: LeafScore,
@@ -584,9 +604,14 @@ class ClosedMenuWSDRunner:
             "deterministic_default" if candidate_leaf_count <= 1 else "disambiguated"
         )
         rank_agreement_choices: tuple[LeafScore, ...] = ()
+        menu_first_ref: tuple[str, str] | None = None
         if self.profile.commit.strategy == "rank_agreement":
-            provider_order_ranked = _provider_order_scores(
-                raw_provider_ranked, provider_analyses
+            menu_order_ranked = _provider_order_scores(raw_provider_ranked, provider_analyses)
+            menu_first_ref = (
+                menu_order_ranked[0].menu_analysis_id, menu_order_ranked[0].sense_id
+            )
+            provider_order_ranked = _order_vote_scores(
+                menu_order_ranked, raw_provider_ranked[0], self.profile.commit,
             )
             provider_order_choice = provider_order_ranked[0]
             raw_gloss_choice = raw_provider_ranked[0]
@@ -616,6 +641,8 @@ class ClosedMenuWSDRunner:
                 (item.menu_analysis_id, item.sense_id)
                 for item in rank_agreement_choices
             ),
+            raw_scores=raw_provider_ranked,
+            menu_first=menu_first_ref,
         )
         emitted_level = commit_decision.level
         evidence_guard_reasons: list[str] = []
@@ -714,8 +741,13 @@ class ClosedMenuWSDRunner:
                 "unresolved_falls_back_to_phrase": (
                     self.profile.commit.unresolved_falls_back_to_phrase
                 ),
+                "cross_analysis_vote": self.profile.commit.cross_analysis_vote,
+                "cross_analysis_margin": self.profile.commit.cross_analysis_margin,
+                "contested_abstains": self.profile.commit.contested_abstains,
             },
         }
+        if commit_decision.cross_analysis is not None:
+            evidence["commit"]["cross_analysis"] = commit_decision.cross_analysis
         if evidence_guard_reasons:
             evidence["commit"]["evidence_guards"] = evidence_guard_reasons
         if rank_agreement_choices:
@@ -763,8 +795,12 @@ class ClosedMenuWSDRunner:
             )
             if self.profile.commit.strategy == "rank_agreement":
                 raw_augmented_choice = raw_combined_ranked[0]
-                combined_order_ranked = _provider_order_scores(
-                    raw_combined_ranked, combined_analyses
+                combined_menu_order = _provider_order_scores(raw_combined_ranked, combined_analyses)
+                combined_menu_first = (
+                    combined_menu_order[0].menu_analysis_id, combined_menu_order[0].sense_id
+                )
+                combined_order_ranked = _order_vote_scores(
+                    combined_menu_order, raw_combined_ranked[0], self.profile.commit,
                 )
                 combined_order_choice = combined_order_ranked[0]
                 if self.components.candidate_policy is not None:
@@ -803,11 +839,27 @@ class ClosedMenuWSDRunner:
                     )
             else:
                 augmented_refs = ()
+                combined_menu_first = None
+            # The cross-analysis gloss margin judges word analyses against each
+            # other. A PHRASE winner keeps its own v14 licence, and phrases are
+            # not rivals: they compete through the phrase commit, as before.
+            phrase_ids = {
+                analysis.menu_analysis_id
+                for analysis in combined_analyses
+                if is_multiword_analysis(analysis)
+            }
+            augmented_raw_scores = (
+                tuple(item for item in raw_combined_ranked if item.menu_analysis_id not in phrase_ids)
+                if len(augmented_refs) == 3 and augmented_refs[1][0] not in phrase_ids
+                else ()
+            )
             augmented_commit = commit_decide(
                 combined_ranked,
                 combined_analyses,
                 self.profile.commit,
                 rank_agreement_refs=augmented_refs,
+                raw_scores=augmented_raw_scores,
+                menu_first=combined_menu_first,
             )
             projections["mwe_augmented"] = _selection_projection(
                 selected=augmented_selected_score,
@@ -869,6 +921,8 @@ class ClosedMenuWSDRunner:
                 evidence["commit"]["uncertain_axis"] = augmented_commit.uncertain_axis
                 evidence["commit"]["escalate"] = augmented_commit.escalate
                 evidence["commit"]["raw_axis_margins"] = dict(augmented_commit.margins)
+                if augmented_commit.cross_analysis is not None:
+                    evidence["commit"]["cross_analysis"] = augmented_commit.cross_analysis
                 if self.profile.commit.strategy == "rank_agreement":
                     if self.profile.commit.phrase_winner_skips_provider_order:
                         evidence["commit"]["rank_agreement"] = {
@@ -911,9 +965,12 @@ class ClosedMenuWSDRunner:
         else:
             evidence["selected_multiword"] = None
 
-        if (
+        if final_level == "unresolved" and (
             self.profile.commit.unresolved_outcome == "abstain"
-            and final_level == "unresolved"
+            or (
+                self.profile.commit.contested_abstains
+                and evidence["commit"].get("cross_analysis") == "contested"
+            )
         ):
             fallback_score = None
             if (

@@ -42,6 +42,28 @@ class AppCompatibilityTests(unittest.TestCase):
         self.assertEqual(len(app_examples["m"][0]), 3)
         self.assertNotIn("assignment_method", app_examples["m"][0][0])
 
+    def test_sense_cycle_label_is_never_a_proper_name(self) -> None:
+        # cs smrt: every line abstained and Wiktionary lists "name" first, so
+        # the card read "a male surname" instead of "death".
+        seed = json.loads(default_seed_path().read_text(encoding="utf-8"))
+        deck = build_pilot_deck(seed)
+        card = deck["cards"][0]
+        common = card["meanings"][0]
+        common["assignment_status"] = "unassigned"
+        name = {**deepcopy(common), "sense_id": common["sense_id"] + "-name",
+                "part_of_speech": "name", "translation": "a male surname"}
+        card["meanings"] = [name, common]
+        for example in card["examples"]:
+            example["assignment_status"] = "unassigned"
+            example["sense_id"] = None
+
+        index, _ = build_app_compatibility_assets(deck)
+
+        cycle = index[0]["meanings"][0]
+        self.assertEqual(cycle["pos"], "SENSE_CYCLE")
+        self.assertEqual(cycle["translation"], common["translation"])
+        self.assertEqual(len(cycle["allSenses"]), 2)
+
     def test_meaning_provider_metadata_reaches_the_app_contract(self) -> None:
         seed = json.loads(default_seed_path().read_text(encoding="utf-8"))
         deck = build_pilot_deck(seed)

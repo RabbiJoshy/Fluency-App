@@ -96,6 +96,10 @@ SUPPORTED_PROFILE_CONSTRAINT_MODES = {
     "pt-v15-1": "filter",
     "cs-v15-1": "filter",
     "fi-v15-1": "filter",
+    "es-v21-1": "filter",
+    "pt-v21-1": "filter",
+    "cs-v21-1": "filter",
+    "fi-v21-1": "filter",
 }
 PROFILE_LANGUAGES = {
     "es-v6-1": "es", "es-v7-1": "es", "pt-v7-1": "pt",
@@ -110,6 +114,8 @@ PROFILE_LANGUAGES = {
     "es-v14-1": "es", "pt-v14-1": "pt", "cs-v14-1": "cs",
     "es-v15-1": "es", "pt-v15-1": "pt", "cs-v15-1": "cs",
     "fi-v15-1": "fi",
+    "es-v21-1": "es", "pt-v21-1": "pt", "cs-v21-1": "cs",
+    "fi-v21-1": "fi",
 }
 ALIGNMENT_PROFILES = frozenset({"es-v8-english-1", "pt-v8-english-1"})
 RANK_AGREEMENT_PROFILES = frozenset(
@@ -122,6 +128,8 @@ RANK_AGREEMENT_PROFILES = frozenset(
         "es-v14-1", "pt-v14-1", "cs-v14-1",
         "es-v15-1", "pt-v15-1", "cs-v15-1",
         "fi-v15-1",
+        "es-v21-1", "pt-v21-1", "cs-v21-1",
+        "fi-v21-1",
     }
 )
 EVIDENCE_GUARD_PROFILES = frozenset(
@@ -134,6 +142,8 @@ EVIDENCE_GUARD_PROFILES = frozenset(
         "es-v14-1", "pt-v14-1", "cs-v14-1",
         "es-v15-1", "pt-v15-1", "cs-v15-1",
         "fi-v15-1",
+        "es-v21-1", "pt-v21-1", "cs-v21-1",
+        "fi-v21-1",
     }
 )
 ABSTAIN_UNRESOLVED_PROFILES = frozenset(
@@ -142,6 +152,7 @@ ABSTAIN_UNRESOLVED_PROFILES = frozenset(
         "es-v14-1", "pt-v14-1", "cs-v14-1",
         "es-v15-1", "pt-v15-1", "cs-v15-1",
         "fi-v15-1",
+        "es-v21-1", "pt-v21-1", "cs-v21-1",
     }
 )
 PHRASE_SKIP_PROVIDER_ORDER_PROFILES = frozenset(
@@ -149,8 +160,19 @@ PHRASE_SKIP_PROVIDER_ORDER_PROFILES = frozenset(
         "es-v14-1", "pt-v14-1", "cs-v14-1",
         "es-v15-1", "pt-v15-1", "cs-v15-1",
         "fi-v15-1",
+        "es-v21-1", "pt-v21-1", "cs-v21-1",
     }
 )
+
+# v21 and later read their commit and constraint knobs from the profile file,
+# so a new version is a new file rather than another id in the sets above.
+MODEL_PROFILE_DIR = Path(__file__).resolve().parents[3] / "config/wsd/models"
+
+
+def model_profile(profile_id: str) -> dict[str, Any]:
+    path = MODEL_PROFILE_DIR / f"{profile_id}.json"
+    return json.loads(path.read_text(encoding="utf-8")) if path.is_file() else {}
+
 
 MORPH_VALUE_MAP = {
     ("Number", "Sing"): ("number", "singular"),
@@ -679,6 +701,11 @@ def main() -> None:
     # absence, not a model name, and it is recorded in provenance as such so a
     # reader can tell "no tagger existed" from "a tagger ran".
     pos_pin = pin(binding.pos_model_role) if binding.pos_model_role else "none@no-pos-model-declared"
+    profile_config = model_profile(args.profile_id)
+    cross_analysis = (profile_config.get("commit") or {}).get("cross_analysis") or {}
+    keep_self_reading_pos = frozenset(
+        (profile_config.get("constrain") or {}).get("keep_self_reading_pos") or ()
+    )
     alignment_enabled = args.profile_id in ALIGNMENT_PROFILES
     aligner = (
         LiteralGlossAlignmentCorrector(SimAlignWordAligner())
@@ -740,7 +767,10 @@ def main() -> None:
         multiword_candidates=multiword_index is not None,
         active_projection=(
             "mwe_augmented"
-            if multiword_index is not None and (args.profile_id.endswith("-v14-1") or args.profile_id.endswith("-v15-1"))
+            if multiword_index is not None and (
+                args.profile_id.endswith(("-v14-1", "-v15-1"))
+                or (profile_config.get("multiword") or {}).get("active_projection") == "mwe_augmented"
+            )
             else "provider_only"
         ),
         commit=CommitPolicy(
@@ -764,6 +794,9 @@ def main() -> None:
             unresolved_falls_back_to_phrase=(
                 args.profile_id in PHRASE_SKIP_PROVIDER_ORDER_PROFILES
             ),
+            cross_analysis_vote=cross_analysis.get("vote", "provider_order"),
+            cross_analysis_margin=float(cross_analysis.get("margin", 0.0)),
+            contested_abstains=cross_analysis.get("contested_outcome") == "abstain",
         ),
     )
 
@@ -1054,6 +1087,7 @@ def main() -> None:
             contextual_headword_selector=getattr(
                 language_adapter, "contextual_headwords", None
             ),
+            keep_self_reading_pos=keep_self_reading_pos,
         ),
         aligner=aligner,
         multiword_index=multiword_index,
