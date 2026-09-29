@@ -22009,3 +22009,76 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 }
 .meaning-row-group.has-row-information { grid-template-columns: minmax(0, 1fr) !important; }
 .meaning-row.has-row-information > .sense-note-trigger { left: 6px; }
+
+/* One provider-neutral layout: edge controls, gloss, and optional fitted cues. */
+.meaning-row-regular { container-type: inline-size; container-name: sense-row; }
+.meaning-row.meaning-row-regular,
+.meaning-row.meaning-row-group {
+    padding: 4px 38px !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+}
+.meaning-row.meaning-row-known { padding-right: 58px !important; }
+.meaning-row .meaning-row-body,
+.meaning-row .group-card-body:is(.has-long-shared, .is-stacked) {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 8px;
+    padding: 2px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+.meaning-row .meaning-row-gloss,
+.meaning-row .group-card-shared {
+    flex: 1 1 0;
+    width: auto !important;
+    min-width: 0;
+    text-align: center;
+    padding: 0 !important;
+    overflow-wrap: anywhere;
+}
+.meaning-row .sense-cue-area {
+    display: flex;
+    flex: 0 1 auto;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: fit-content !important;
+    max-width: 48%;
+    min-width: 0;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: rgba(var(--sense-match-rgb), 0.09);
+    text-align: center;
+    overflow-wrap: anywhere;
+    box-sizing: border-box;
+}
+.meaning-row .sense-cue-group {
+    display: grid;
+    gap: 3px;
+    padding: 0;
+}
+.meaning-row .sense-cue-group > .group-card-varying-cell {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    padding: 6px 10px;
+    overflow: visible !important;
+}
+.meaning-row .sense-cue-area .sense-grammar-cue { margin-top: 0; }
+.meaning-row > .pct-column {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 26px;
+    padding: 0 !important;
+    align-items: center !important;
+    justify-content: center;
+}
+.meaning-row > .sense-note-trigger { left: 6px; }
+@container sense-row (max-width: 340px) {
+    .meaning-row .meaning-row-body { flex-direction: column !important; }
+    .meaning-row .sense-cue-area { max-width: 100%; }
+    .meaning-row .meaning-row-gloss,
+    .meaning-row .group-card-shared { flex-basis: auto; width: 100% !important; }
+}

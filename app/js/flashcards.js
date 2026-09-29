@@ -1,26 +1,26 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=20db82de';
-import './speech.js?v=20db82de';
-import { goToRoute, routeCodeFor } from './routes.js?v=20db82de';
-import './side-dock.js?v=20db82de';
+import './state.js?v=39829ee9';
+import './speech.js?v=39829ee9';
+import { goToRoute, routeCodeFor } from './routes.js?v=39829ee9';
+import './side-dock.js?v=39829ee9';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=20db82de';
+} from './example-personalisation.js?v=39829ee9';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=20db82de';
+} from './spanishdict-usage.js?v=39829ee9';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=20db82de';
+} from './reverse-cues.js?v=39829ee9';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -48,7 +48,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=20db82de';
+} from './card-metadata-pills.js?v=39829ee9';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -795,6 +795,22 @@ function placeRowInformationButtons(root) {
         buttons.slice(1).forEach(el => el.remove());
         row.prepend(button, combined);
         row.classList.add('has-row-information');
+    });
+}
+
+// Give both providers the same optional cue area, after moving disclosures out.
+function arrangeSenseCueAreas(root) {
+    root.querySelectorAll('.meaning-row-regular .meaning-row-sub').forEach(cue => {
+        if (!cue.textContent.trim()) cue.remove();
+        else cue.classList.add('sense-cue-area');
+    });
+    root.querySelectorAll('.meaning-row-group[data-axis="translation"] .group-card-body').forEach(body => {
+        const cells = [...body.querySelectorAll('.group-card-varying-cell')];
+        if (!cells.length) return;
+        const cues = document.createElement('div');
+        cues.className = 'sense-cue-area sense-cue-group';
+        cues.append(...cells);
+        body.append(cues);
     });
 }
 
@@ -7869,6 +7885,7 @@ function renderCardWikipediaBadge(card) {
         window.sideDock?.beforeBackRender(card);
         renderedBack.innerHTML = backHTML;
         placeRowInformationButtons(renderedBack);
+        arrangeSenseCueAreas(renderedBack);
         renderedBack._fluencyRenderedHTML = backHTML;
         bindGrammarPairChips(renderedBack);
     }
@@ -9823,8 +9840,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '20db82de';
-const MODALS_ASSET_VERSION = '20db82de';
+const ASSET_VERSION = '39829ee9';
+const MODALS_ASSET_VERSION = '39829ee9';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
