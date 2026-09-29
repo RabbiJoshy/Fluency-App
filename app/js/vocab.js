@@ -487,14 +487,29 @@ async function buildEstimatedKnownIds(estimate) {
     const normalConfig = window._normalModeLangConfigs?.[selectedLanguage];
     if (!normalConfig) return new Set();
 
-    const normalVocab = await fetchAndJoinIndex(normalConfig);
+    // The estimate is a Speech source rank. Speech and Lyrics cards carry
+    // different id schemes, so the set holds each word's surface as well: the
+    // observed surface is the bridge between modes (see progress-identity.js).
+    const normalVocab = await fetchAndJoinIndex(normalConfig, { ignoreArtist: true });
     const ids = new Set();
-    for (let i = 0; i < Math.min(estimate, normalVocab.length); i++) {
-        if (normalVocab[i].id) ids.add(normalVocab[i].id);
-    }
+    normalVocab.forEach((item, index) => {
+        const rank = Number(item.rank) || index + 1;
+        if (rank > estimate) return;
+        if (item.id) ids.add(item.id);
+        const surface = window.normalizeProgressSurface?.(item.word);
+        if (surface) ids.add(`surface:${surface}`);
+    });
 
     window._estimatedKnownIdsCache = { key: cacheKey, ids };
     return ids;
+}
+
+// Whether a card is covered by the Speech-rank estimate in an artist deck.
+function isCoveredByEstimatedIds(item, estimatedIds) {
+    if (!item || !estimatedIds?.size) return false;
+    if (item.id && estimatedIds.has(item.id)) return true;
+    const surface = window.normalizeProgressSurface?.(item.word);
+    return Boolean(surface && estimatedIds.has(`surface:${surface}`));
 }
 
 async function buildSeenLemmaSet(vocabData) {
@@ -1469,8 +1484,15 @@ function rememberLyricsReleaseVocabulary(indexPath, data) {
     window._lyricsReleaseVocabularyCache = { releaseId, indexPath, data };
 }
 
-async function fetchAndJoinIndex(langConfig) {
-    const effectiveConfig = (activeArtist && (activeArtist.language || 'spanish') === (langConfig?.language || selectedLanguage))
+// `ignoreArtist` reads the Speech deck as it is, whatever mode is active: the
+// level check and the estimate's known-word set are measured against Speech
+// frequency. While an artist or playlist is active that read is detached: it
+// leaves the active-source pointers and the lyrics release cache alone, and
+// takes the monolith, whose rows carry their meanings without set shards.
+async function fetchAndJoinIndex(langConfig, { ignoreArtist = false } = {}) {
+    const detached = ignoreArtist && (Boolean(activeArtist) || Boolean(window.playlistLiveActive?.()));
+    if (detached) return fetchDetachedIndex(langConfig);
+    const effectiveConfig = (!ignoreArtist && activeArtist && (activeArtist.language || 'spanish') === (langConfig?.language || selectedLanguage))
         ? { ...(langConfig || {}), ...activeArtist }
         : langConfig;
     const indexPath = effectiveConfig.indexPath || effectiveConfig.dataPath;
@@ -1532,6 +1554,20 @@ async function fetchAndJoinIndex(langConfig) {
     window._cachedJoinedIndexPath = cacheKey;
     joinedIndexCacheByPath.set(cacheKey, data);
     rememberLyricsReleaseVocabulary(indexPath, data);
+    return data;
+}
+
+async function fetchDetachedIndex(langConfig) {
+    const indexPath = langConfig?.indexPath || langConfig?.dataPath;
+    if (!indexPath) throw new Error('No index path');
+    const cacheKey = `${indexPath}:detached`;
+    if (joinedIndexCacheByPath.has(cacheKey)) return joinedIndexCacheByPath.get(cacheKey);
+    const response = await fetch(indexPath);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    trackDataFreshness(response);
+    const data = await response.json();
+    validateVocabularyIndex(data, { source: indexPath });
+    joinedIndexCacheByPath.set(cacheKey, data);
     return data;
 }
 
@@ -2479,7 +2515,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
                     if (studyMode === 'all') return true;
 
                     const coveredByEstimate = !hasRelatedProgress && (activeArtist
-                        ? (item.id && estimatedIds?.has(item.id))
+                        ? isCoveredByEstimatedIds(item, estimatedIds)
                         : item.rank <= estimate);
                     return !coveredByEstimate
                         && !hasRelatedProgress
@@ -3820,6 +3856,7 @@ window.getWordId = getWordId;
 window.getCrossModeId = getCrossModeId;
 window.isWordKnown = isWordKnown;
 window.buildEstimatedKnownIds = buildEstimatedKnownIds;
+window.isCoveredByEstimatedIds = isCoveredByEstimatedIds;
 window.buildSeenLemmaSet = buildSeenLemmaSet;
 window.LANG_CODES = LANG_CODES;
 window.buildFilteredVocab = buildFilteredVocab;
