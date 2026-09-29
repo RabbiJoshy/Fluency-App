@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-29T18:18:13+01:00",
+      "date": "2026-09-29 18:18 BST",
+      "agent": "Codex",
+      "summary": "Shared shaded cue areas for SpanishDict and Wiktionary sense rows.",
+      "detail": [
+        "Glosses and useful secondary cues use the same main-and-shaded layout across providers. Cue areas fit their content, wrap within a maximum width, and stack below glosses on narrow rows.",
+        "Information and commonness controls have dedicated edge space; note-only rows do not leave empty shaded areas. Source data and cue-selection rules are unchanged."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-29T17:57:31+01:00",
       "date": "2026-09-29 17:57 BST",
       "agent": "Codex",

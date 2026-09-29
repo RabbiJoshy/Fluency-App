@@ -798,6 +798,22 @@ function placeRowInformationButtons(root) {
     });
 }
 
+// Give both providers the same optional cue area, after moving disclosures out.
+function arrangeSenseCueAreas(root) {
+    root.querySelectorAll('.meaning-row-regular .meaning-row-sub').forEach(cue => {
+        if (!cue.textContent.trim()) cue.remove();
+        else cue.classList.add('sense-cue-area');
+    });
+    root.querySelectorAll('.meaning-row-group[data-axis="translation"] .group-card-body').forEach(body => {
+        const cells = [...body.querySelectorAll('.group-card-varying-cell')];
+        if (!cells.length) return;
+        const cues = document.createElement('div');
+        cues.className = 'sense-cue-area sense-cue-group';
+        cues.append(...cells);
+        body.append(cues);
+    });
+}
+
 // A short shared gloss must not split a word merely to preserve two columns.
 // Measure the rendered cell; longer labels already request a stacked layout.
 function fitSenseRowLayouts(root) {
@@ -7869,6 +7885,7 @@ function renderCardWikipediaBadge(card) {
         window.sideDock?.beforeBackRender(card);
         renderedBack.innerHTML = backHTML;
         placeRowInformationButtons(renderedBack);
+        arrangeSenseCueAreas(renderedBack);
         renderedBack._fluencyRenderedHTML = backHTML;
         bindGrammarPairChips(renderedBack);
     }
