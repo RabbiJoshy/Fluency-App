@@ -72,6 +72,7 @@ const urlsToCache = [
   '/js/vocabulary-import.js?v=20260923bk',
   `/js/spanishdict-usage.js?v=${ASSET_VERSION}`,
   '/js/reverse-cues.js?v=20260927v24',
+  '/js/flags.js?v=20260929flags',
   '/js/card-metadata-pills.js?v=20260929sense6',
   '/js/flashcards.js?v=20260929sense6',
   '/icons/tatoeba.svg',

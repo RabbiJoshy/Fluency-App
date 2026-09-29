@@ -3,6 +3,7 @@
 import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=20260923cj';
 import { releaseUrl } from './release-host.js?v=20260921rh';
 import './theme.js?v=20260922ui';
+import { installFlagRendering } from './flags.js?v=20260929flags';
 import './state.js?v=20260921x';
 import './offline-db.js?v=20260825ak';
 import './sync-queue.js?v=20260825ak';
@@ -29,6 +30,9 @@ import './spotify-playlist-import.js?v=20260923su';
 import './vocabulary-import.js?v=20260923bk';
 import './flashcards.js?v=20260929sense6';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
+
+// Emoji flags anywhere on the page render as rectangular pictures.
+installFlagRendering();
 
 function startCardTutorial() {
     const knownLanguage = window.getCardTutorialLanguageKey?.();

@@ -561,6 +561,7 @@
         "conjugation": "https://conjugator.reverso.net/conjugation-portuguese-verb-{word}.html"
       },
       "flag": "🇵🇹",
+      "privilegedRegions": ["Brazil"],
       "routeCode": "pt",
       "conjugationDrill": "pt",
       "shortCode": "PT",

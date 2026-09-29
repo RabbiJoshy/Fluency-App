@@ -2,6 +2,21 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-29T22:55:00+01:00",
+      "date": "2026-09-29 22:55 BST",
+      "agent": "Claude",
+      "summary": "Rectangular flags everywhere, country regions shown as flags, Brazil flag leads Portuguese rows, tidier rank/frequency footer, bigger commonness meter.",
+      "detail": [
+        "Every flag in the app (language chip, picker, loading mark, reverse button) is a rectangular picture instead of an emoji; SVGs vendored from flag-icons (MIT) in app/assets/flags.",
+        "Region cues that name a whole country (Mexico, Spain, Brazil, Portugal, Argentina…) show only the flag; the name stays in the tooltip. Non-country regions (Latin America, Azores) keep their words.",
+        "Portuguese: a Brazil-only sense puts the Brazil flag at the start of the row, beside the information button (config: privilegedRegions).",
+        "Card front: 'Vocab. Rank' and 'Frequency' on one line each, bold numbers level and centred beneath, 'per million' small under the frequency.",
+        "Commonness meter is slightly wider and taller.",
+        "Cards with fewer than eight sense rows keep every section open, even after tapping a heading."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-29T18:18:13+01:00",
       "date": "2026-09-29 18:18 BST",
       "agent": "Codex",

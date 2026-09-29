@@ -1,3 +1,5 @@
+import { flagImgHTML, regionFlagCode } from './flags.js?v=20260929flags';
+
 // Card metadata badges, chips, and sense-detail formatting.
 // Handles canonical features, qualifier formatting, and grammar pill presentation
 // for SpanishDict, Wiktionary, and other sense-menu providers.
@@ -1304,8 +1306,18 @@ export function senseMetadataHTML(meaning, active, options = {}) {
     const isDense = senseCount >= 3;
     const isVeryDense = senseCount >= 5;
 
+    const privilegedRegions = new Set((options.privilegedRegions || [])
+        .map(region => regionFlagCode(region)).filter(Boolean));
     const renderItems = (values, isPillTier = true) => values.map((item) => {
         const display = senseMetadataDisplay(item, options);
+        // A country reads as its flag alone; the name stays in the tooltip
+        // and for screen readers. A language's privileged variety (Brazil,
+        // for Portuguese) leads the row beside the information button.
+        const flagCode = item.family === 'register' && item.kind === 'region' ? regionFlagCode(item.value) : '';
+        if (flagCode) {
+            const leading = privilegedRegions.has(flagCode) ? ' sense-region-flag--leading' : '';
+            return `<span class="sense-metadata-detail sense-region-flag${leading}" data-family="register" role="img" title="${escapeCardText(item.value)}" aria-label="${escapeCardText(item.value)}">${flagImgHTML(flagCode)}</span>`;
+        }
         const family = escapeCardText(item.family);
         const category = isGrammarCue(item) ? ` data-grammar-category="${grammarCueCategory(item)}"` : '';
         const shortLabel = escapeCardText(display.short);
