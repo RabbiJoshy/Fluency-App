@@ -1,5 +1,8 @@
 # Sense metadata architecture
 
+For the learner-facing categories, gloss/key/note contract, shaded cue layout,
+current experiment and handover, see [Learner sense presentation](learner-sense-presentation.md).
+
 Sense metadata is one subsystem with deliberately separate ownership layers.
 No provider or language may bypass the canonical contract to add a card pill.
 
