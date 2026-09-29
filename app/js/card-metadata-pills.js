@@ -992,6 +992,7 @@ export function learnerGlossPresentation(meaning, active, options = {}) {
         ?? projectWiktionaryGloss(meaning, meaning?.meaning || meaning?.translation || '').display
         ?? '').trim();
     if (!source) return { visibleGloss: '', visibleKey: '', noteGloss: '' };
+    if (options.ignoreBudget) return { visibleGloss: source, visibleKey: '', noteGloss: '' };
 
     const senseCount = Math.max(1, Number(options.senseCount) || 1);
     const budget = senseCount === 1 ? 84 : (active ? 64 : 48);
@@ -1064,7 +1065,13 @@ export function learnerSensePresentation(meaning, active, options = {}) {
     }).sort((left, right) => right.score - left.score || (left.item.sourceIndex ?? 0) - (right.item.sourceIndex ?? 0));
 
     let visible = [];
-    if (!active && !options.allowInactivePrimary) {
+    if (options.ignoreBudget) {
+        // Importance, not selection or spare space, determines visible cues.
+        visible = ranked.filter(entry => entry.role !== 'supporting'
+            || ['semantic_relation', 'temporal_relation', 'discourse_function'].includes(entry.item.kind)
+            || isSenseDefiningGrammar(entry.item))
+            .map(entry => entry.item);
+    } else if (!active && !options.allowInactivePrimary) {
         visible = [];
     } else if (senseCount === 1) {
         visible = ranked.filter(entry => entry.role !== 'supporting').slice(0, 2).map(entry => entry.item);
@@ -1084,7 +1091,7 @@ export function learnerSensePresentation(meaning, active, options = {}) {
     // append technical metadata to an inactive row unless it is a construction
     // the learner must actually produce (for example a companion or case).
     const semanticContext = contextAfterMetadataPolicy(meaning, candidates, options);
-    if (!active && semanticContext) {
+    if (!options.ignoreBudget && !active && semanticContext) {
         visible = visible.filter(item => metadataPresentationRole(item) === 'production');
     }
 
@@ -1120,7 +1127,9 @@ export function learnerSensePresentation(meaning, active, options = {}) {
     const details = active ? allDetails : [];
     const represented = combineLearnerMetadata([...visible, ...details, ...candidates], meaning, options);
     const residualContext = contextAfterMetadataPolicy(meaning, represented, options);
-    const contextPresentation = learnerContextBudget(
+    const contextPresentation = options.ignoreBudget
+        ? { visibleContext: residualContext, detailContext: '' }
+        : learnerContextBudget(
         residualContext,
         active,
         senseCount,
@@ -1160,13 +1169,15 @@ export function learnerSensePresentation(meaning, active, options = {}) {
         )
         && senseMetadataDisplay(item, options).short.length <= 28)
         || allDetails.find(item => senseMetadataDisplay(item, options).short === 'interrogative');
-    const inlineAdditions = options.roomForInlineDetails
+    const inlineAdditions = options.ignoreBudget
+        ? noteworthyItems.filter(item => metadataPresentationRole(item) === 'production')
+        : options.roomForInlineDetails
         ? noteworthyItems.slice(0, 1)
         : (shortConstruction ? [shortConstruction] : []);
     const inlineKeys = new Set(inlineAdditions.map(metadataItemKey));
     const visibleWithRoom = combineLearnerMetadata([...visible, ...inlineAdditions], meaning, options);
     const remainingNoteworthyItems = noteworthyItems.filter(item => !inlineKeys.has(metadataItemKey(item)));
-    const supportingItems = allDetails.filter(item => !noteworthyItems.includes(item));
+    const supportingItems = options.ignoreBudget ? [] : allDetails.filter(item => !noteworthyItems.includes(item));
     const noteItems = [
         ...remainingNoteworthyItems,
         ...((glossPresentation.noteGloss || noteContext || supportingItems.length >= 2)
@@ -1193,6 +1204,7 @@ export function learnerSensePresentation(meaning, active, options = {}) {
         gloss,
         key,
         note,
+        grammar: { items: visibleWithRoom.filter(isGrammarCue) },
         visibleItems: visibleWithRoom,
         detailItems: details,
         residualContext,
@@ -1272,7 +1284,20 @@ export function senseNoteHTML(presentation, options = {}) {
     return `<button type="button" class="sense-note-trigger" aria-haspopup="dialog" onclick="openSenseNote(event, this)" aria-label="Information about this meaning" title="Information about this meaning"><span aria-hidden="true">i</span></button><template class="sense-note-template"><div class="sense-note-copy" data-sense-note-title="${escapeCardText(title)}">${body}</div></template>`;
 }
 
+export function grammarCueCategory(item) {
+    if (item.family === 'companion' || (item.family === 'construction'
+        && !SENSE_CONSTRUCTION_TAGS.has(item.value))) return 'construction';
+    if (item.family === 'grammar' && /^(?:person|number|gender|tense|mood|aspect|degree|case)=/.test(item.value)
+        || item.kind === 'surface_summary') return 'form';
+    return 'function';
+}
+
+export function isGrammarCue(item) {
+    return ['grammar', 'construction', 'companion'].includes(item.family);
+}
+
 export function senseMetadataHTML(meaning, active, options = {}) {
+    options = { ignoreBudget: true, ...options };
     if (!active && !options.allowInactivePrimary) return '';
     const presentation = learnerSensePresentation(meaning, active, options);
     const senseCount = Number(options?.senseCount) || 1;
@@ -1282,10 +1307,11 @@ export function senseMetadataHTML(meaning, active, options = {}) {
     const renderItems = (values, isPillTier = true) => values.map((item) => {
         const display = senseMetadataDisplay(item, options);
         const family = escapeCardText(item.family);
+        const category = isGrammarCue(item) ? ` data-grammar-category="${grammarCueCategory(item)}"` : '';
         const shortLabel = escapeCardText(display.short);
         const fullLabel = escapeCardText(display.full);
         if (!isPillTier || display.short.length > 28 || item.family === 'functional') {
-            return `<span class="sense-metadata-detail" data-family="${family}" title="${family}: ${fullLabel}" aria-label="${fullLabel}">${shortLabel}</span>`;
+            return `<span class="sense-metadata-detail" data-family="${family}"${category} title="${family}: ${fullLabel}" aria-label="${fullLabel}">${shortLabel}</span>`;
         }
         const isCompanion = item.family === 'companion';
         const isSyntax = item.family === 'construction';
@@ -1305,10 +1331,10 @@ export function senseMetadataHTML(meaning, active, options = {}) {
     const keyItems = presentation.key?.items || presentation.visibleItems;
     const displayPrimary = options.hideVisibleItems
         ? []
-        : keyItems.filter(item => item.family !== 'grammar');
+        : keyItems.filter(item => !isGrammarCue(item));
     const grammar = options.hideVisibleItems
         ? []
-        : keyItems.filter(item => item.family === 'grammar');
+        : keyItems.filter(isGrammarCue);
     const noteHTML = senseNoteHTML(presentation, options);
 
     if (!active && options.allowInactivePrimary) {
@@ -1318,7 +1344,7 @@ export function senseMetadataHTML(meaning, active, options = {}) {
             ? `<span class="sense-metadata-tier sense-metadata-tier--primary">${renderItems(displayPrimary, true)}</span>`
             : '';
         const grammarHTML = grammar.length
-            ? `<span class="sense-metadata-tier sense-metadata-tier--grammar">${renderItems(grammar, false)}</span>`
+            ? `<span class="sense-metadata-tier sense-metadata-tier--grammar sense-grammar-cue">${renderItems(grammar, false)}</span>`
             : '';
         return `<span class="sense-metadata-list${densityClass}" aria-label="Sense information">${primaryHTML}${grammarHTML}${noteHTML}</span>`;
     }
@@ -1329,7 +1355,7 @@ export function senseMetadataHTML(meaning, active, options = {}) {
         ? `<span class="sense-metadata-tier sense-metadata-tier--primary">${renderItems(displayPrimary, true)}</span>`
         : '';
     const grammarHTML = grammar.length
-        ? `<span class="sense-metadata-tier sense-metadata-tier--grammar">${renderItems(grammar, false)}</span>`
+        ? `<span class="sense-metadata-tier sense-metadata-tier--grammar sense-grammar-cue">${renderItems(grammar, false)}</span>`
         : '';
     return `<span class="sense-metadata-list${densityClass}" aria-label="Sense information">${primaryHTML}${grammarHTML}${noteHTML}</span>`;
 }

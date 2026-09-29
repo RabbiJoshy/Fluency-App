@@ -21954,3 +21954,58 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 
 /* Back of card: the lemma beside the surface form, a little larger. */
 .back-headword.back-surface-pair .back-lemma-chip { font-size: clamp(14px, 4.4vw, 19px); }
+
+/* Shared learner cues: selection changes emphasis, not which cues are present. */
+.meaning-row-regular .meaning-row-body {
+    flex-direction: column !important;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.meaning-row-regular .meaning-row-gloss,
+.meaning-row-regular .meaning-row-sub {
+    display: block;
+    width: 100% !important;
+    text-align: center;
+}
+.meaning-row .meaning-context-cell,
+.meaning-row .meaning-context,
+.meaning-row .sense-metadata-tier,
+.meaning-row .group-card-varying-cell {
+    text-align: center;
+    justify-content: center !important;
+}
+.meaning-row .sense-grammar-cue {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 3px 8px;
+    width: 100%;
+    margin-top: 3px;
+    color: var(--text-secondary);
+    font-size: var(--sense-reading-size);
+    line-height: 1.4;
+    font-weight: 500;
+    text-align: center;
+}
+.meaning-row .sense-grammar-cue .sense-metadata-detail {
+    font: inherit;
+    color: inherit;
+}
+.meaning-row.has-row-information {
+    padding-left: 32px !important;
+    padding-right: 32px !important;
+}
+.meaning-row-regular.has-row-information .meaning-row-body {
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+}
+.meaning-row-group.has-row-information > .pct-column {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.meaning-row-group.has-row-information { grid-template-columns: minmax(0, 1fr) !important; }
+.meaning-row.has-row-information > .sense-note-trigger { left: 6px; }

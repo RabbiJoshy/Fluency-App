@@ -1,26 +1,26 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=52d760ec';
-import './speech.js?v=52d760ec';
-import { goToRoute, routeCodeFor } from './routes.js?v=52d760ec';
-import './side-dock.js?v=52d760ec';
+import './state.js?v=20db82de';
+import './speech.js?v=20db82de';
+import { goToRoute, routeCodeFor } from './routes.js?v=20db82de';
+import './side-dock.js?v=20db82de';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=52d760ec';
+} from './example-personalisation.js?v=20db82de';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=52d760ec';
+} from './spanishdict-usage.js?v=20db82de';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=52d760ec';
+} from './reverse-cues.js?v=20db82de';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -48,7 +48,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=52d760ec';
+} from './card-metadata-pills.js?v=20db82de';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -753,6 +753,48 @@ function fitPosSectionSummaries(root) {
             shownCount++;
         }
         summary.classList.remove('is-measuring');
+    });
+}
+
+// One disclosure belongs to the whole row, never a nested context box.
+// A grouped row collects its notes with their sense labels intact.
+function placeRowInformationButtons(root) {
+    root.querySelectorAll('.meaning-row').forEach(row => {
+        const buttons = [...row.querySelectorAll('.sense-note-trigger')];
+        if (!buttons.length) return;
+        const combined = document.createElement('template');
+        combined.className = 'sense-note-template';
+        const copy = document.createElement('div');
+        copy.className = 'sense-note-copy';
+        const seen = new Set();
+        for (const button of buttons) {
+            const template = button.nextElementSibling;
+            const source = template?.content?.querySelector('.sense-note-copy');
+            if (!source) continue;
+            copy.dataset.senseNoteTitle ||= source.dataset.senseNoteTitle;
+            const cell = button.closest('.group-card-varying-cell');
+            const label = cell?.cloneNode(true);
+            label?.querySelectorAll('.sense-note-trigger, template').forEach(el => el.remove());
+            const senseLabel = label?.textContent.trim() || source.dataset.senseNoteTitle;
+            const key = senseLabel + source.innerHTML;
+            if (!seen.has(key)) {
+                seen.add(key);
+                const section = document.createElement('section');
+                if (buttons.length > 1) {
+                    const heading = document.createElement('h3');
+                    heading.textContent = senseLabel;
+                    section.append(heading);
+                }
+                section.append(...source.cloneNode(true).children);
+                copy.append(section);
+            }
+            template.remove();
+        }
+        combined.content.append(copy);
+        const button = buttons[0];
+        buttons.slice(1).forEach(el => el.remove());
+        row.prepend(button, combined);
+        row.classList.add('has-row-information');
     });
 }
 
@@ -2955,6 +2997,7 @@ function learnerGroupingGloss(card, meaning) {
         gloss: projected,
         senseCount: card?.meanings?.length || 1,
         cardMeanings: card?.meanings || [meaning],
+        ignoreBudget: true,
         // Grouping intentionally compares the concise learner gloss. Any
         // source distinction removed here is retained as a key and in notes.
         peerMeanings: [],
@@ -3170,7 +3213,7 @@ function cleanSenseContext(rawContext, mainGloss) {
 }
 
 function learnerRowPresentation(meaning, active, options = {}) {
-    const presentation = learnerSensePresentation(meaning, active, options);
+    const presentation = learnerSensePresentation(meaning, active, { ...options, ignoreBudget: true });
     const visibleContext = cleanSenseContext(presentation.visibleContext, options.gloss || '');
     const keyText = cleanSenseContext(presentation.key?.text || '', options.gloss || '');
     return {
@@ -3924,10 +3967,13 @@ function lemmaPosGroupKeyForMeaning(meaning) {
     return `${pos || 'X'}\u0000${meaning.headword || ''}`;
 }
 
+const LEARNER_ROW_BUDGET_ENABLED = false;
 const AUTO_OPEN_SECTION_ROW_LIMIT_PHONE = 6;
 const AUTO_OPEN_SECTION_ROW_LIMIT_DESKTOP = 8;
 
 function autoOpenSectionRowLimit() {
+    // First-pass experiment: retain configured limits, but let rows scroll.
+    if (!LEARNER_ROW_BUDGET_ENABLED) return Number.POSITIVE_INFINITY;
     if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
         return AUTO_OPEN_SECTION_ROW_LIMIT_PHONE;
     }
@@ -6540,7 +6586,8 @@ function renderCardWikipediaBadge(card) {
                     const groupPrefix = `${m.pos}\u0000${m.headword || ''}\u0000`;
                     const ts = transRawSize.get(`${groupPrefix}${tk}`) || 0;
                     const ck = contextLabelByMeaning.get(idx) || null;
-                    const cs = ck ? (ctxRawSize.get(`${groupPrefix}${ck}`) || 0) : 0;
+                    // A shared grammatical/context label is not a shared meaning.
+                    const cs = 0;
                     if (ts > 1 && cs > 1) {
                         if (ts >= cs) { axisOf.set(idx, 'translation'); groupKeyOf.set(idx, tk); }
                         else { axisOf.set(idx, 'context'); groupKeyOf.set(idx, ck); }
@@ -7051,7 +7098,7 @@ function renderCardWikipediaBadge(card) {
                             const ctxWeight = isMemberSelected ? '700' : '500';
                             const ctxColor = isMemberSelected ? 'var(--text-primary)' : 'var(--text-secondary)';
                             if (collocationHTML || cleanedCtx || metadataHTML) {
-                                const colHTML = collocationHTML ? `${collocationHTML} ` : '';
+                                const colHTML = collocationHTML ? `<span class="sense-grammar-cue">${collocationHTML}</span>` : '';
                                 varyingHtml = `<span class="meaning-context-cell" style="font-weight: ${ctxWeight}; color: ${ctxColor}; line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${colHTML}${renderSenseContextHTML(cleanedCtx, { leadingDot: false })}${metadataHTML}</span>`;
                             } else {
                                 const diff = resolveMeaningDifferentiator(
@@ -7191,16 +7238,15 @@ function renderCardWikipediaBadge(card) {
                     const rowPresentation = learnerRowPresentation(m, isRowSelected, metadataOptions);
                     const visibleMeaning = rowPresentation.gloss || displayMeaning;
                     const visibleMeaningHTML = senseCrossReferenceHTML(m, visibleMeaning, isRowSelected);
-                    let cleanedContext = (isRowSelected || roomForInlineDetails)
-                        ? rowPresentation.key.text
-                        : (rowPresentation.visibleContext || '');
+                    let cleanedContext = rowPresentation.key.text;
                     if (cleanedContext && contextCollidesWithMetadata(
                         cleanedContext,
                         compactLearnerSenseMetadata(senseMetadataItems(m), m, metadataOptions)
                     )) {
                         cleanedContext = '';
                     }
-                    let subContent = '';
+                    let subContent = collocationHTML
+                        ? `<span class="sense-grammar-cue">${collocationHTML}</span>` : '';
                     if (cleanedContext) {
                         subContent += renderSenseContextHTML(cleanedContext, { leadingDot: false });
                     }
@@ -7249,7 +7295,7 @@ function renderCardWikipediaBadge(card) {
                     <div class="meaning-row meaning-row-regular ${singletonTextClass}${isRowSelected ? ' selected' : ''}${rowSelectedClasses}${rareRowClass}${knownRowClass}" style="position: relative; display: flex; align-items: center; padding: 2px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 44px;" onclick="selectMeaning(${idx})">
                         ${renderRowCheckSlot(isRowSelected)}
                         <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; width: 100%; padding: 2px ${sidePad} 2px ${sidePad};">
-                            <span class="meaning-row-translation meaning-row-gloss row-adaptive-text" style="font-weight: ${isRowSelected ? 700 : 600}; color: ${textColor}; text-align: center; width: 100%; line-height: 1.25;">${collocationHTML ? `${collocationHTML} ` : ''}${visibleMeaningHTML}</span>
+                            <span class="meaning-row-translation meaning-row-gloss row-adaptive-text" style="font-weight: ${isRowSelected ? 700 : 600}; color: ${textColor}; text-align: center; width: 100%; line-height: 1.25;">${visibleMeaningHTML}</span>
                             ${subContent ? `<span class="meaning-row-sub" style="text-align: center; width: 100%;">${subContent}</span>` : ''}
                         </div>
                         ${pctTail}
@@ -7822,6 +7868,7 @@ function renderCardWikipediaBadge(card) {
         // the side sheets that described the old one (side-dock.js).
         window.sideDock?.beforeBackRender(card);
         renderedBack.innerHTML = backHTML;
+        placeRowInformationButtons(renderedBack);
         renderedBack._fluencyRenderedHTML = backHTML;
         bindGrammarPairChips(renderedBack);
     }
@@ -9776,8 +9823,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '52d760ec';
-const MODALS_ASSET_VERSION = '52d760ec';
+const ASSET_VERSION = '20db82de';
+const MODALS_ASSET_VERSION = '20db82de';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
