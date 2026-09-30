@@ -24,10 +24,15 @@ for(const cards of Object.values(fixture)) for(const card of cards) for(const me
  for(const item of active.grammar.items) assert(['form','construction','function'].includes(ui.grammarCueCategory(item)));
 }
 const long={translation:'meaning',context:'A useful sense distinction '.repeat(20),pos:'noun'};
-for(const senseCount of [1,6,20]) {
+// A paragraph of context never becomes the key line; it moves to the note,
+// and the row reads the same at every density.
+const longKeys=[1,6,20].map(senseCount=>{
  const p=ui.learnerSensePresentation(long,false,{ignoreBudget:true,senseCount,allowInactivePrimary:true});
- assert.equal(p.key.text,long.context.trim());
-}
+ assert(p.key.text.length<=72);
+ assert(p.note.available);
+ return p.key.text;
+});
+assert.equal(new Set(longKeys).size,1);
 const providers=JSON.parse(fs.readFileSync('tests/app/fixtures/sense_metadata.json'));
 for(const [language,word] of [['es','tener'],['pt','gosto'],['cs','čekat']]) {
  const card=providers[language].find(c=>c.word===word);

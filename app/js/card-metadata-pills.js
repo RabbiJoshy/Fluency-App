@@ -1036,8 +1036,10 @@ function definitionParentheticalIsRedundant(meaning, source, options) {
     if (GLOSS_RESTRICTING_PARENTHETICAL.test(split.inside)) return null;
     if (/\b(?:by|of|to|with|for|on|in|at|from|about|into|than|as)$/i.test(split.before)) return null;
     const partOfSpeech = String(meaning?.pos || meaning?.part_of_speech || '');
-    if (FUNCTION_WORD_POS.test(partOfSpeech)) return null;
-    if (!/\s/.test(split.before) && split.before.length <= 3) return null;
+    // A grammar word keeps a short bracket ("in (wearing)"), never a paragraph.
+    const shortInside = split.inside.length <= 32;
+    if (shortInside && FUNCTION_WORD_POS.test(partOfSpeech)) return null;
+    if (shortInside && !/\s/.test(split.before) && split.before.length <= 3) return null;
     const clauses = new Set(splitLearnerContextClauses(split.before).map(foldMetadataComparable).filter(Boolean));
     const collides = (options.cardMeanings || []).some(peer => {
         if (!peer || peer === meaning) return false;
@@ -1054,6 +1056,15 @@ function definitionParentheticalIsRedundant(meaning, source, options) {
     return split.before;
 }
 
+const ROW_GLOSS_BUDGET = 72;
+
+function clipAtWord(value, limit) {
+    const text = String(value || '').trim();
+    if (text.length <= limit) return text;
+    const cut = text.slice(0, limit + 1).replace(/\s+\S*$/u, '').replace(/[\s,;:]+$/u, '');
+    return `${cut || text.slice(0, limit)}…`;
+}
+
 // Source-preserving projection for the bold learner-facing meaning. It never
 // rewrites a definition: it selects complete source clauses where possible,
 // and keeps the full projected gloss for the optional sense note.
@@ -1065,10 +1076,26 @@ export function learnerGlossPresentation(meaning, active, options = {}) {
     const withoutDefinition = options.keepDefinitionParenthetical
         ? null : definitionParentheticalIsRedundant(meaning, source, options);
     if (withoutDefinition) return { visibleGloss: withoutDefinition, visibleKey: '', noteGloss: source };
-    if (options.ignoreBudget) return { visibleGloss: source, visibleKey: '', noteGloss: '' };
+    // The bracket is needed to tell senses apart, but a long one reads as a
+    // paragraph. When the source offers a compact distinction, show the short
+    // gloss with that distinction on the key line ("because" + "introduces a
+    // reason"); the full definition stays in the note.
+    const kept = options.keepDefinitionParenthetical ? null : splitDefinitionParenthetical(source);
+    if (kept?.before && !kept.rest && kept.inside.length > 28) {
+        const distinction = compactGlossDistinction(kept.inside);
+        if (distinction && distinction.length < kept.inside.length) {
+            return { visibleGloss: kept.before, visibleKey: distinction, noteGloss: source };
+        }
+    }
+    // Rows get one fixed budget, whatever the selection, so a gloss never
+    // changes when tapped. Grouping (keepDefinitionParenthetical) compares
+    // complete source glosses and is left alone.
+    if (options.ignoreBudget && (options.keepDefinitionParenthetical || source.length <= ROW_GLOSS_BUDGET)) {
+        return { visibleGloss: source, visibleKey: '', noteGloss: '' };
+    }
 
     const senseCount = Math.max(1, Number(options.senseCount) || 1);
-    const budget = senseCount === 1 ? 84 : (active ? 64 : 48);
+    const budget = options.ignoreBudget ? ROW_GLOSS_BUDGET : (senseCount === 1 ? 84 : (active ? 64 : 48));
     if (source.length <= budget) return { visibleGloss: source, visibleKey: '', noteGloss: '' };
 
     const clauses = splitLearnerContextClauses(source);
@@ -1092,7 +1119,12 @@ export function learnerGlossPresentation(meaning, active, options = {}) {
 
     // If shortening would make this row visually collide with a peer whose
     // complete meaning is different, retain more of this row's first clause.
-    const peers = Array.isArray(options.peerMeanings) ? options.peerMeanings : [];
+    // Any other sense on the card can collide, not only exact-gloss peers:
+    // "and (connects two clauses…)" shortened to "and" collides with a plain
+    // "and" sense.
+    const peers = (Array.isArray(options.cardMeanings) && options.cardMeanings.length
+        ? options.cardMeanings : (Array.isArray(options.peerMeanings) ? options.peerMeanings : []))
+        .filter(peer => peer && peer !== meaning);
     const visibleProjectionKey = glossProjectionKey(visibleGloss);
     const collision = options.preservePeerGlossDistinction !== false && peers.some(peer => {
         const peerSource = projectWiktionaryGloss(
@@ -1103,7 +1135,18 @@ export function learnerGlossPresentation(meaning, active, options = {}) {
         return glossProjectionKey(compactGlossClause(splitLearnerContextClauses(peerSource)[0] || peerSource, budget)) === visibleProjectionKey;
     });
     if (collision) {
-        visibleGloss = clauses[0] || source;
+        // Two senses would read alike. Keep the short gloss when the source
+        // offers a compact distinction for the key line ("because" +
+        // "introduces a reason"); otherwise show a clipped bracket rather
+        // than the whole definition, which stays in the note.
+        const distinction = glossDistinctionKey(source, visibleGloss);
+        if (!distinction) {
+            const parts = glossParentheticalParts(clauses[0] || source)
+                || splitDefinitionParenthetical(clauses[0] || source);
+            visibleGloss = parts?.before && parts.inside
+                ? `${parts.before} (${clipAtWord(parts.inside, 40)})`
+                : clipAtWord(clauses[0] || source, budget);
+        }
     }
 
     const noteGloss = foldMetadataComparable(visibleGloss) === foldMetadataComparable(source)
@@ -1200,8 +1243,12 @@ export function learnerSensePresentation(meaning, active, options = {}) {
     const details = active ? allDetails : [];
     const represented = combineLearnerMetadata([...visible, ...details, ...candidates], meaning, options);
     const residualContext = contextAfterMetadataPolicy(meaning, represented, options);
+    // Rows (ignoreBudget) still get one fixed context budget, independent of
+    // selection and sense count so a row's key never changes when tapped:
+    // repeated clauses fold, dictionary preambles compact, and a paragraph
+    // ("...because it is presumed to be definitely known...") goes to the note.
     const contextPresentation = options.ignoreBudget
-        ? { visibleContext: residualContext, detailContext: '' }
+        ? learnerContextBudget(residualContext, true, 2, false)
         : learnerContextBudget(
         residualContext,
         active,
