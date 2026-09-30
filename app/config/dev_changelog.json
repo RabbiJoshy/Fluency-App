@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-30T18:40:00+01:00",
+      "date": "2026-09-30 18:40 BST",
+      "agent": "Claude",
+      "summary": "'Secret word' instead of password, saveable by the browser; fixed a sign-in that let anyone past a secret word.",
+      "detail": [
+        "Sign-in field is 'Secret word (optional)' with placeholder 'A word you like'; the pop-up says to pick any word and never a real password. Alerts and Settings say 'secret word'.",
+        "The sign-in is now a real form marked username/current-password, so browsers offer to save it (Chrome/Edge also ask explicitly) but do not suggest a generated strong password.",
+        "Bug fix: the no-script fallback on Continue ran before the real check and signed in without the secret word. It now only acts if the main script never loaded, and checks the word itself."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-30T18:05:00+01:00",
       "date": "2026-09-30 18:05 BST",
       "agent": "Claude",
