@@ -22271,3 +22271,5 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 }
 .sense-note-overlay.is-anchored .sense-note-dialog { border-radius: 14px; }
 .knowledge-overview-summary[hidden] { display: none !important; }
+/* The footer's button sat flush against the sheet's right edge on phones. */
+.knowledge-overview-footer { padding: 12px 12px 12px !important; }

@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-01T00:55:00+01:00",
+      "date": "2026-10-01 00:55 BST",
+      "agent": "Claude",
+      "summary": "Meanings overview: 'Save & Next Card' no longer runs off the right edge on phones.",
+      "detail": [
+        "The overview footer gets side padding so its button sits inside the sheet."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-01T00:45:00+01:00",
       "date": "2026-10-01 00:45 BST",
       "agent": "Claude",
