@@ -1,4 +1,4 @@
-import { flagImgHTML, regionFlagCode } from './flags.js?v=468fd439';
+import { flagImgHTML, regionFlagCode } from './flags.js?v=cae8dd7c';
 
 // Card metadata badges, chips, and sense-detail formatting.
 // Handles canonical features, qualifier formatting, and grammar pill presentation
@@ -986,6 +986,74 @@ function glossDistinctionKey(source, visibleGloss) {
     return compactGlossDistinction(parenthetical.inside);
 }
 
+// Wiktionary-derived glosses append the English word's own definition in
+// brackets: "king (male monarch)", "to wake up (to stop being sleepy)". The
+// translation already says it; the definition belongs in the information
+// note. It stays on the row only where it does work:
+//   - another sense on this card has the same translation, so the brackets
+//     are what tells the two apart ("to leave (to refrain from taking)");
+//   - the translation is a bare function word ("in (wearing)", "of (in
+//     relation to)") or ends on a preposition ("offended by (a comment)");
+//   - it restricts use rather than defining ("said of weather", "especially").
+// Argument slots such as "(something)" or "(someone)" are never touched.
+const GLOSS_SLOT_PARENTHETICAL = /^(?:some(?:one|thing|body|where)|oneself|one's|its|their|his|her|with|of|from|for|at|on|in|to|by|about)\b/i;
+const GLOSS_RESTRICTING_PARENTHETICAL = /^(?:said of|of (?:a|an|the)\b|in (?:a|an|the)\b|when\b|especially\b|usually\b|chiefly\b|often\b|figuratively\b|informal|colloquial|slang|vulgar|dated|archaic|obsolete)/i;
+const FUNCTION_WORD_POS = /^(?:adp|prep|preposition|postp|det|determiner|article|pron|pronoun|part|particle|conj|cconj|sconj|conjunction)$/i;
+
+function splitDefinitionParenthetical(text) {
+    // The first top-level bracket that is not an argument slot, followed by
+    // nothing or by a comma/full stop continuing the explanation.
+    let depth = 0;
+    let open = -1;
+    for (let index = 0; index < text.length; index++) {
+        const character = text[index];
+        if (character === '(') {
+            if (depth === 0) open = index;
+            depth++;
+        } else if (character === ')' && depth) {
+            depth--;
+            if (depth !== 0 || open <= 0) continue;
+            const inside = text.slice(open + 1, index).trim();
+            const rest = text.slice(index + 1).trim();
+            if (GLOSS_SLOT_PARENTHETICAL.test(inside) && inside.split(/\s+/).length <= 4 && rest) continue;
+            if (rest && !/^[,.;]/.test(rest)) return null;
+            return { before: text.slice(0, open).trim().replace(/[,;:]$/, '').trim(), inside, rest };
+        }
+    }
+    return null;
+}
+
+function glossBase(meaning) {
+    const display = projectWiktionaryGloss(meaning, meaning?.meaning || meaning?.translation || '').display;
+    const split = splitDefinitionParenthetical(String(display || '').trim());
+    return split ? split.before : String(display || '').trim();
+}
+
+function definitionParentheticalIsRedundant(meaning, source, options) {
+    const split = splitDefinitionParenthetical(source);
+    if (!split || !split.before || split.before.length < 2) return null;
+    if (GLOSS_SLOT_PARENTHETICAL.test(split.inside) && split.inside.split(/\s+/).length <= 4) return null;
+    if (GLOSS_RESTRICTING_PARENTHETICAL.test(split.inside)) return null;
+    if (/\b(?:by|of|to|with|for|on|in|at|from|about|into|than|as)$/i.test(split.before)) return null;
+    const partOfSpeech = String(meaning?.pos || meaning?.part_of_speech || '');
+    if (FUNCTION_WORD_POS.test(partOfSpeech)) return null;
+    if (!/\s/.test(split.before) && split.before.length <= 3) return null;
+    const clauses = new Set(splitLearnerContextClauses(split.before).map(foldMetadataComparable).filter(Boolean));
+    const collides = (options.cardMeanings || []).some(peer => {
+        if (!peer || peer === meaning) return false;
+        return splitLearnerContextClauses(glossBase(peer))
+            .some(clause => clauses.has(foldMetadataComparable(clause)));
+    });
+    if (collides) return null;
+    // "to exit; to leave (go away …); to get out (of)": later clauses stay.
+    if (split.rest.startsWith(';')) {
+        const rest = split.rest.slice(1).trim();
+        const restVisible = definitionParentheticalIsRedundant(meaning, rest, options) || rest;
+        return restVisible ? `${split.before}; ${restVisible}` : split.before;
+    }
+    return split.before;
+}
+
 // Source-preserving projection for the bold learner-facing meaning. It never
 // rewrites a definition: it selects complete source clauses where possible,
 // and keeps the full projected gloss for the optional sense note.
@@ -994,6 +1062,9 @@ export function learnerGlossPresentation(meaning, active, options = {}) {
         ?? projectWiktionaryGloss(meaning, meaning?.meaning || meaning?.translation || '').display
         ?? '').trim();
     if (!source) return { visibleGloss: '', visibleKey: '', noteGloss: '' };
+    const withoutDefinition = options.keepDefinitionParenthetical
+        ? null : definitionParentheticalIsRedundant(meaning, source, options);
+    if (withoutDefinition) return { visibleGloss: withoutDefinition, visibleKey: '', noteGloss: source };
     if (options.ignoreBudget) return { visibleGloss: source, visibleKey: '', noteGloss: '' };
 
     const senseCount = Math.max(1, Number(options.senseCount) || 1);

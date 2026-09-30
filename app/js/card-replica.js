@@ -339,9 +339,8 @@ const SPOTIFY_SVG = '<svg width="44" height="44" viewBox="0 0 24 24" fill="#1DB9
     + '</svg>';
 
 export function renderFront(card) {
-    // Like the live card: only a lyrics deck prints the rank against its
-    // vocabulary size; a speech deck's size says nothing about the language.
-    const denominator = card.mode === 'lyrics' && card.vocabSize ? `/ ${card.vocabSize.toLocaleString()}` : '';
+    // Like the live card: the deck's size sits small under the rank.
+    const rankOf = card.vocabSize ? `of ${card.vocabSize.toLocaleString()}` : '';
     // `below` puts the unit on its own line, as "per million" is on the live card.
     const stat = (kind, label, value, unit = '', below = false) =>
         `<span class="card-stat${kind === 'card-rank-label' ? '' : ' card-stat--end'} ${kind}">`
@@ -349,7 +348,7 @@ export function renderFront(card) {
         + `<span class="card-stat-line"><strong class="card-stat-value">${value}</strong>`
         + `${unit && !below ? `<span class="card-stat-unit">${unit}</span>` : ''}</span>`
         + `${unit && below ? `<span class="card-stat-unit card-stat-unit--below">${unit}</span>` : ''}</span>`;
-    const rankLabel = stat('card-rank-label', 'Vocab. Rank', card.rank.toLocaleString(), denominator);
+    const rankLabel = stat('card-rank-label', 'Vocabulary Rank', card.rank.toLocaleString(), rankOf, true);
     // Same two figures the live card puts here, in the same words. An earlier
     // draft hedged with "Frequency from the Spanish release", which told a
     // visitor nothing: the number is the point, and a count per million is

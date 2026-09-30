@@ -1407,33 +1407,13 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
             : 'Set complete';
     }
 
-    const celebration = document.getElementById('levelCompleteCelebration');
+    // A level is a milestone, not a report: the title, a burst of confetti,
+    // and the way on. Coverage barely moves over one level, so a
+    // "0.3 percentage points" line read as a let-down rather than a reward.
     const restartButton = document.getElementById('restartAllBtn');
-    restartButton.dataset.action = isLevelCompletion ? 'review-level' : 'redo-set';
-    restartButton.querySelector('span').textContent = isLevelCompletion ? 'Practise this level' : 'Redo set';
-    celebration.hidden = !isLevelCompletion;
-    if (isLevelCompletion) {
-        const before = window.lastSetupCoverageSnapshot || window.currentCoverageSnapshot || {};
-        const after = window.getCurrentCoverageSnapshot?.() || window.currentCoverageSnapshot || before;
-        const beforePct = Number(before.percentage || 0);
-        const afterPct = Math.max(beforePct, Number(after.percentage || 0));
-        document.getElementById('levelCompleteCoverageLabel').textContent = after.label || (activeArtist ? 'Lyrics understood' : 'Speech understood');
-        document.getElementById('levelCoverageBefore').textContent = `${beforePct.toFixed(1)}%`;
-        document.getElementById('levelCoverageAfter').textContent = `${afterPct.toFixed(1)}%`;
-        document.getElementById('levelCompleteDescription').textContent = afterPct > beforePct
-            ? `That level added ${(afterPct - beforePct).toFixed(1)} percentage points to your real-world coverage.`
-            : 'This level is now secure and ready to build on.';
-        const fill = document.getElementById('levelCompleteFill');
-        fill.style.transition = 'none';
-        fill.style.width = `${Math.min(beforePct, 100)}%`;
-        requestAnimationFrame(() => requestAnimationFrame(() => {
-            fill.style.transition = 'width 1.4s cubic-bezier(.2,.8,.2,1)';
-            fill.style.width = `${Math.min(afterPct, 100)}%`;
-            celebration.classList.add('is-celebrating');
-        }));
-    } else {
-        celebration.classList.remove('is-celebrating');
-    }
+    restartButton.hidden = isLevelCompletion;
+    document.querySelector('.deck-complete-content')?.classList.toggle('is-level-complete', isLevelCompletion);
+    if (isLevelCompletion) triggerDeckCompleteConfetti();
 
     const statsContainer = document.querySelector('.deck-complete-stats');
     const correctEl = document.getElementById('completeCorrect');
@@ -1548,7 +1528,7 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
                 ? `${stats.remainingDueCount} more word${stats.remainingDueCount === 1 ? '' : 's'} waiting in this Practice queue.`
                 : 'All caught up on this Practice queue!')
             : isLevelCompletion
-            ? 'Take the win, or keep the momentum going.'
+            ? ''
             : stats.levelSetCount && stats.setNumber
                 ? `Set ${stats.setNumber} of ${stats.levelSetCount} finished.`
                 : '';
