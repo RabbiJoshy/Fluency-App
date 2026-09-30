@@ -762,7 +762,10 @@ function smartSkipLevelHtml(level, index) {
     const count = level.entries.length;
     const unit = isLemma ? (count === 1 ? 'card' : 'cards') : (count === 1 ? 'word' : 'words');
     const study = isLemma ? ''
-        : `<button type="button" class="smart-skip-study" data-ss-level="${index}">Study these</button>`;
+        : (window.isAuditAccount?.()
+            // Admin only for now: loading a skipped level as a set confused
+            // learners more than it helped.
+            ? `<button type="button" class="smart-skip-study" data-ss-level="${index}">Study these</button>` : '');
     return `<li class="smart-skip-group" data-ss-group="${index}">
         <div class="smart-skip-level"><b>${escapeHtml(level.label)}</b><span>${count.toLocaleString()} ${unit}</span>${study}</div>
         <ul class="smart-skip-group-rows"></ul>
