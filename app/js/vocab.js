@@ -2851,20 +2851,8 @@ async function loadVocabularyData(rangeString, opts = {}) {
                 });
             }
 
-            // Normalize percentages if they're missing or sum to 0
-            const totalPercentage = meanings.reduce((sum, m) => sum + (m.percentage || 0), 0);
-            if (totalPercentage === 0 || isNaN(totalPercentage)) {
-                // Default to equal distribution
-                const equalPercentage = 1.0 / meanings.length;
-                meanings.forEach(m => {
-                    m.percentage = equalPercentage;
-                });
-            } else if (totalPercentage !== 1.0) {
-                // Normalize to sum to 1.0
-                meanings.forEach(m => {
-                    m.percentage = (m.percentage || 0) / totalPercentage;
-                });
-            }
+            const finished = finishCardMeanings(item, meanings);
+            meanings.splice(0, meanings.length, ...finished.meanings);
 
             // Synthesize a single MWE meaning that cycles through all expressions
             if (item.mwe_memberships && item.mwe_memberships.length > 0) {
@@ -3086,21 +3074,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
                         : (item.corpus_count || null)),
                 meanings: meanings,
                 grammarPairs: item._grammarCard?.pairs || [],
-                unusedMenuSenses: (item.unused_menu_senses || []).map(m => ({
-                    pos: m.pos,
-                    meaning: m.translation || '',
-                    percentage: 0,
-                    unassigned: true,
-                    assignment_method: m.assignment_method || 'unassigned',
-                    source: m.source || '',
-                    senseId: m.sense_id || '',
-                    context: m.context || '',
-                    headword: m.headword || '',
-                    regions: Array.isArray(m.regions) ? [...m.regions] : [],
-                    metadata: m.metadata || null,
-                    canonicalExample: m.canonical_example || null,
-                    allExamples: [],
-                })),
+                unusedMenuSenses: finished.unusedMenuSenses,
                 translation: meanings[0]?.meaning || '',
                 targetSentence: firstExample.targetSentence,
                 englishSentence: firstExample.englishSentence,
@@ -3836,6 +3810,70 @@ async function mergeArtistVocabularies(artistConfigs, master) {
 // flashcards.js (popupFoundWord, navigateToVocabCard) which previously
 // skipped this synthesis entirely, hiding all MWEs (including curated ones)
 // on cards reached via search or click-through.
+// low-share-pure
+// A sense needs this share of the card's assigned sentences to sit on the
+// main card; below it, it moves to Rarer uses with its sentences. With ~30
+// assigned sentences per card that is three: a sense resting on one or two is
+// as often a WSD slip as a real use (que "how", from a single "that" line).
+// Near-synonym leaves count together, as prominence labels do.
+const MAIN_CARD_MIN_SHARE = 0.10;
+const NON_SENSE_POS = new Set(['PHRASE', 'MWE', 'CLITIC', 'SENSE_CYCLE', 'EXAMPLE_ONLY']);
+
+function normalizeMeaningShares(meanings) {
+    const total = meanings.reduce((sum, m) => sum + (m.percentage || 0), 0);
+    if (total === 0 || isNaN(total)) {
+        meanings.forEach(m => { m.percentage = 1.0 / meanings.length; });
+    } else if (total !== 1.0) {
+        meanings.forEach(m => { m.percentage = (m.percentage || 0) / total; });
+    }
+    return meanings;
+}
+
+function splitLowShareMeanings(meanings) {
+    const eligible = m => m && !m.unassigned && !m.exampleOnly
+        && !NON_SENSE_POS.has(String(m.pos || '').toUpperCase()) && Number(m.percentage) > 0;
+    const key = m => [m.pos, m.headword, m.meaning]
+        .map(v => String(v || '').trim().toLocaleLowerCase('en')).join('\u0000');
+    const shares = new Map();
+    for (const m of meanings) {
+        if (eligible(m)) shares.set(key(m), (shares.get(key(m)) || 0) + Number(m.percentage));
+    }
+    // Shares are ratios of small counts: 3 of 30 arrives as 0.0999…, and three
+    // sentences is exactly the bar.
+    const low = m => eligible(m) && shares.get(key(m)) < MAIN_CARD_MIN_SHARE - 1e-9;
+    const kept = meanings.filter(m => !low(m));
+    // Never leave a card without a sense of its own on the front.
+    if (!kept.some(eligible)) return { meanings, rare: [] };
+    return { meanings: kept, rare: meanings.filter(low).map(m => ({ ...m, lowShare: true })) };
+}
+
+function unusedMenuSensesOf(item) {
+    return (item?.unused_menu_senses || []).map(m => ({
+        pos: m.pos,
+        meaning: m.translation || '',
+        percentage: 0,
+        unassigned: true,
+        assignment_method: m.assignment_method || 'unassigned',
+        source: m.source || '',
+        senseId: m.sense_id || '',
+        context: m.context || '',
+        headword: m.headword || '',
+        regions: Array.isArray(m.regions) ? [...m.regions] : [],
+        metadata: m.metadata || null,
+        canonicalExample: m.canonical_example || null,
+        allExamples: [],
+    }));
+}
+
+// The last step every card builder shares: shares over the card's assigned
+// sentences, then low-share senses moved beside the unused menu senses.
+function finishCardMeanings(item, meanings) {
+    const { meanings: kept, rare } = splitLowShareMeanings(normalizeMeaningShares(meanings));
+    return { meanings: kept, unusedMenuSenses: [...rare, ...unusedMenuSensesOf(item)] };
+}
+// /low-share-pure
+window.finishCardMeanings = finishCardMeanings;
+
 function synthesizeSpecialMeanings(item, meanings) {
     if (item.mwe_memberships && item.mwe_memberships.length > 0) {
         const sortedMWEs = [...item.mwe_memberships].sort((a, b) => {

@@ -3904,7 +3904,10 @@ function collectRareSenseItems(card) {
             pos: q.pos || '',
             translation: trans,
             context: q.context || '',
-            examples: ex.length > 0 ? ex : (q.canonicalExample ? [q.canonicalExample] : [])
+            examples: [
+                ...(ex.length > 0 ? ex : (q.canonicalExample ? [q.canonicalExample] : [])),
+                ...(q.allExamples || []),
+            ]
         });
     }
 
@@ -3927,7 +3930,12 @@ function collectRareSenseItems(card) {
                 pos: unused.pos || '',
                 translation: trans,
                 context: unused.context || '',
-                examples: ex.length > 0 ? ex : (unused.canonicalExample ? [unused.canonicalExample] : [])
+                // A low-share sense moved off the main card keeps its corpus
+                // sentences; an unused menu sense has none.
+                examples: [
+                    ...(ex.length > 0 ? ex : (unused.canonicalExample ? [unused.canonicalExample] : [])),
+                    ...(unused.allExamples || []),
+                ]
             });
         }
     }
@@ -4511,10 +4519,14 @@ function compactPhraseExampleHTML(example, posAccentRgb) {
         </div>`;
 }
 
+const RARE_SENSE_EXAMPLE_LIMIT = 3;
+
 function rareSenseLeafHTML(item, posAccentRgb, { hideGloss = false, hideContext = false } = {}) {
     const gloss = item.translation || item.expression || '';
-    const example = (item.examples || [])[0];
-    const exampleHTML = compactPhraseExampleHTML(example, posAccentRgb);
+    // A handful, not one: a sense here may rest on two or three corpus lines,
+    // and those are what show whether it belongs on the card at all.
+    const exampleHTML = (item.examples || []).slice(0, RARE_SENSE_EXAMPLE_LIMIT)
+        .map(example => compactPhraseExampleHTML(example, posAccentRgb)).join('');
     const glossHTML = (!hideGloss && gloss)
         ? `<div class="other-uses-gloss">${escapeCardText(gloss)}</div>` : '';
     const ctxHTML = (!hideContext && item.context)
