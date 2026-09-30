@@ -2,6 +2,21 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-30T22:47:00+01:00",
+      "date": "2026-09-30 22:47 BST",
+      "agent": "Claude",
+      "summary": "Senses that show the same translation now share one row with a shaded sub-row each; info notes stop repeating the meaning; a sense's context sits beside it; sections open only when they fit above the sentence; '+que'-style partner chips lead their own sub-row.",
+      "detail": [
+        "Grouping compares the translation a row actually shows: 'if, whether' and 'if (introduces a relevance conditional)' become one 'if' row with sub-rows 'whether' and 'introduces a relevance conditional'. Two sub-rows that would read alike also show the definition that was cut (deixar: 'to give permission to' / 'to give possibility to').",
+        "A bracket that restates the verb ('to allow to (to give permission to)') is treated as a definition and moves to the note.",
+        "Info notes: the body no longer repeats the title; 'if (introduces a relevance conditional)' under 'if' reads 'Introduces a relevance conditional'. In family rows, a paragraph that only repeats its sub-row label is dropped.",
+        "Row layout: the gloss and its context box sit next to each other as one centred unit; the context box wraps beside the gloss and drops underneath only when the gloss fills the line.",
+        "Sections: every section opens unless that would push a sense row below the example sentence (measured on the card); otherwise only the active one opens. Replaces the fixed under-8-rows rule. Tapping another heading no longer locks the card into collapsed mode.",
+        "A 'used with \"a\"' context no longer repeats beside the '+a' chip; lists ('used with words tudo, nada…') stay as text. In family rows the chip leads its own sub-row."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-01T00:05:00+01:00",
       "date": "2026-10-01 00:05 BST",
       "agent": "Claude",

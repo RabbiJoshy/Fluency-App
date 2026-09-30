@@ -22205,3 +22205,49 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
     font: 700 14px var(--font-emphasis);
     cursor: pointer;
 }
+
+/* A gloss and its cues sit side by side as one centred unit. The cue box
+   takes the room beside the gloss and wraps its own text there; only when
+   the gloss itself fills the line does the cue box drop underneath. */
+.meaning-row .meaning-row-body,
+.meaning-row .group-card-body:is(.has-long-shared, .is-stacked) {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px 8px;
+}
+.meaning-row .meaning-row-gloss,
+.meaning-row .group-card-shared {
+    flex: 0 1 auto;
+    max-width: 100%;
+}
+.meaning-row .sense-cue-area {
+    flex: 1 1 7em;
+    max-width: max-content;
+}
+@container sense-row (max-width: 340px) {
+    .meaning-row .meaning-row-body { flex-direction: row !important; }
+    .meaning-row .meaning-row-gloss,
+    .meaning-row .group-card-shared { flex-basis: auto; width: auto !important; }
+}
+.meaning-row .group-member-gloss {
+    display: block;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* A family sub-row's partner word ("+de") leads that sub-row. */
+.group-card-varying-cell.has-cell-lead { position: relative; }
+.group-card-varying-cell > .cell-lead-mark {
+    position: absolute;
+    left: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+    padding: 1px 5px;
+    font-size: 12px;
+    line-height: 1.2;
+    border-radius: 6px;
+    white-space: nowrap;
+}
+.cell-lead-mark .sense-collocation-particle { font-style: normal; font-weight: 800; }
+.cell-lead-mark .sense-collocation-qualifier { font-size: 10px; font-weight: 600; opacity: .75; }

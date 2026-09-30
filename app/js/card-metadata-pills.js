@@ -1,4 +1,4 @@
-import { flagImgHTML, regionFlagCode } from './flags.js?v=c931a393';
+import { flagImgHTML, regionFlagCode } from './flags.js?v=da5b4faf';
 
 // Card metadata badges, chips, and sense-detail formatting.
 // Handles canonical features, qualifier formatting, and grammar pill presentation
@@ -1116,7 +1116,7 @@ function senseSharesTranslation(meaning, before, options) {
 // qualifying clause. "to be an example or type of, or the same as" → "to be
 // an example or type of"; "connects two clauses indicating that…" →
 // "connects two clauses".
-function definitionHead(value) {
+export function definitionHead(value) {
     const text = readableSenseNote(value).trim().replace(/^(?:\.\.\.|…)\s*/, '');
     const cut = text.search(/,|;|\s(?:that|which|who|whom|because|whether|rather than|such as|indicating|especially|with the|in order)\b/i);
     return (cut > 0 ? text.slice(0, cut) : text).trim();
@@ -1138,7 +1138,10 @@ function ruleBasedGloss(meaning, source, options) {
         // Argument slots and usage restrictions are part of the translation.
         if (GLOSS_SLOT_PARENTHETICAL.test(inside) && inside.split(/\s+/).length <= LABEL_MAX_WORDS) return text;
         if (GLOSS_RESTRICTING_PARENTHETICAL.test(inside) && isLabelLikeText(inside)) return text;
-        if (/\b(?:by|of|to|with|for|on|in|at|from|about|into|than|as)$/i.test(before) && isLabelLikeText(inside)) return text;
+        // "to allow to (to give permission to)" restates the verb: a bracket
+        // that opens with another infinitive is a definition, not a slot.
+        const restatesVerb = /^to\s+\p{L}/iu.test(inside);
+        if (!restatesVerb && /\b(?:by|of|to|with|for|on|in|at|from|about|into|than|as)$/i.test(before) && isLabelLikeText(inside)) return text;
         // A label in brackets stays where it is needed to read the row: to
         // tell two senses with the same translation apart, or to give a bare
         // grammar word ("in (wearing)") its sense.
@@ -1187,7 +1190,7 @@ function ruleBasedGloss(meaning, source, options) {
         key = (labels[0] || candidates[0] || '');
     }
     if (foldMetadataComparable(visibleGloss) === foldMetadataComparable(source) && !key) return null;
-    return { visibleGloss, visibleKey: key };
+    return { visibleGloss, visibleKey: key, removed };
 }
 
 // Source-preserving projection for the bold learner-facing meaning. It never
@@ -1337,7 +1340,11 @@ export function learnerSensePresentation(meaning, active, options = {}) {
             });
     const details = active ? allDetails : [];
     const represented = combineLearnerMetadata([...visible, ...details, ...candidates], meaning, options);
-    const residualContext = contextAfterMetadataPolicy(meaning, represented, options);
+    // A companion the row shows as a chip ("+que") is not repeated in the
+    // context as "used with "que"".
+    const residualContext = extractSenseCompanion(meaning)
+        ? withoutCompanionClauses(contextAfterMetadataPolicy(meaning, represented, options))
+        : contextAfterMetadataPolicy(meaning, represented, options);
     // Rows keep the context's labels ("when stressed", "already mentioned")
     // and send its definitions and synonym lists to the note.
     const contextPresentation = options.ignoreBudget
@@ -1426,6 +1433,9 @@ export function learnerSensePresentation(meaning, active, options = {}) {
         visibleGloss: glossPresentation.visibleGloss,
         visibleKey: glossPresentation.visibleKey,
         noteGloss: glossPresentation.noteGloss,
+        // What the rules cut from the gloss, in source order: a family row
+        // uses its head to tell sub-senses apart.
+        removedDefinitions: glossPresentation.removed || [],
         noteContext,
         noteItems,
         hasSenseNote,
@@ -1467,7 +1477,52 @@ function senseNoteSectionHTML(title, values, className) {
         clean.push(text);
     }
     if (!clean.length) return '';
-    return `<section class="sense-note-section sense-note-section--${className}"><h3>${title}</h3>${clean.map(value => `<p>${escapeCardText(value)}</p>`).join('')}</section>`;
+    const heading = title ? `<h3>${title}</h3>` : '';
+    return `<section class="sense-note-section sense-note-section--${className}">${heading}${clean.map(value => `<p>${escapeCardText(value)}</p>`).join('')}</section>`;
+}
+
+// Top-level comma, semicolon or bar pieces of a gloss: "if, whether" → two.
+export function glossPieces(value) {
+    const text = String(value || '').trim();
+    const pieces = [];
+    let depth = 0;
+    let start = 0;
+    for (let index = 0; index < text.length; index++) {
+        const character = text[index];
+        if ('([{'.includes(character)) depth++;
+        else if (')]}'.includes(character) && depth) depth--;
+        else if (',;|'.includes(character) && depth === 0) {
+            const piece = text.slice(start, index).trim();
+            if (piece) pieces.push(piece);
+            start = index + 1;
+        }
+    }
+    const final = text.slice(start).trim();
+    if (final) pieces.push(final);
+    return pieces;
+}
+
+// The note sits under the row's gloss as its title, so it says only what the
+// title does not: "if (introduces a relevance conditional)" under "if" reads
+// "Introduces a relevance conditional".
+function noteGlossBeyondTitle(noteGloss, title) {
+    const titleKeys = new Set(glossPieces(title).map(foldMetadataComparable).filter(Boolean));
+    const inTitle = text => titleKeys.has(foldMetadataComparable(text));
+    const out = [];
+    for (const clause of splitLearnerContextClauses(noteGloss)) {
+        const pieces = glossPieces(clause);
+        let lead = 0;
+        while (lead < pieces.length && inTitle(pieces[lead])) lead++;
+        const restPieces = pieces.slice(lead);
+        if (!restPieces.length) continue;
+        const first = splitDefinitionParenthetical(restPieces[0]);
+        if (first && first.before && glossPieces(first.before).every(inTitle)) {
+            restPieces[0] = [first.inside, first.rest.replace(/^[,.;]\s*/, '')].filter(Boolean).join(', ');
+        }
+        const text = restPieces.join(', ').trim();
+        if (text) out.push(text.charAt(0).toLocaleUpperCase('en') + text.slice(1));
+    }
+    return out;
 }
 
 export function senseNoteHTML(presentation, options = {}) {
@@ -1487,13 +1542,13 @@ export function senseNoteHTML(presentation, options = {}) {
         if (['companion', 'construction', 'grammar'].includes(item.family)) production.push(label);
         else usage.push(label);
     }
+    const title = presentation.gloss || presentation.visibleGloss || options.gloss || 'This meaning';
     const body = [
-        senseNoteSectionHTML('Meaning', [note.gloss], 'meaning'),
+        senseNoteSectionHTML('', noteGlossBeyondTitle(note.gloss, title), 'meaning'),
         senseNoteSectionHTML('Usage', usage, 'usage'),
         senseNoteSectionHTML('How it is used', production, 'production'),
     ].join('');
     if (!body) return '';
-    const title = presentation.gloss || presentation.visibleGloss || options.gloss || 'This meaning';
     return `<button type="button" class="sense-note-trigger" aria-haspopup="dialog" onclick="openSenseNote(event, this)" aria-label="Information about this meaning" title="Information about this meaning"><span aria-hidden="true">i</span></button><template class="sense-note-template"><div class="sense-note-copy" data-sense-note-title="${escapeCardText(title)}">${body}</div></template>`;
 }
 
@@ -1727,6 +1782,14 @@ export function resolveMeaningDifferentiator(meaning, peerMeanings, gloss = '', 
     return bestDiff;
 }
 
+const COMPANION_CLAUSE = /^(?:(?:often|frequently|sometimes)\s+)?used with\s+/i;
+
+function withoutCompanionClauses(value) {
+    const clauses = splitLearnerContextClauses(value);
+    const kept = clauses.filter(clause => !COMPANION_CLAUSE.test(clause));
+    return kept.length === clauses.length ? value : kept.join('; ');
+}
+
 export function extractSenseCompanion(meaning) {
     if (!meaning) return null;
     const items = senseMetadataItems(meaning);
@@ -1751,7 +1814,8 @@ export function extractSenseCompanion(meaning) {
             terms.push(val.replace(/^(?:often|frequently|sometimes)\s+used with\s+/iu, '').replace(/["“”]/g, '').trim());
         }
     } else if (typeof meaning.context === 'string') {
-        const match = /\b(?:(often|frequently|sometimes)\s+)?used with\s+(.+)$/iu.exec(meaning.context);
+        const usedWith = splitLearnerContextClauses(meaning.context).find(clause => COMPANION_CLAUSE.test(clause)) || '';
+        const match = /^(?:(often|frequently|sometimes)\s+)?used with\s+(.+)$/iu.exec(usedWith);
         if (match) {
             qualifier = (match[1] || '').toLowerCase() || null;
             isOptional = Boolean(qualifier);
@@ -1760,8 +1824,11 @@ export function extractSenseCompanion(meaning) {
             if (quoted.length) {
                 terms.push(...quoted);
             } else {
-                const clean = rawTail.replace(/^an?\s+/iu, '').trim();
-                terms.push(clean);
+                // "used with words tudo, nada, mais, muito, algo etc." is a
+                // list, not one partner word: it stays in the context.
+                const clean = rawTail.replace(/^(?:an?|the)\s+/iu, '')
+                    .replace(/^(?:words?|the preposition|preposition)\s+/iu, '').trim();
+                if (!/[,/]|\betc\b/i.test(clean) && clean.split(/\s+/).length <= 2) terms.push(clean);
             }
         }
     }
