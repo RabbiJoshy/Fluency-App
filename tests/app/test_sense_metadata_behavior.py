@@ -245,21 +245,20 @@ const optMeaning = { translation: 'to come', context: 'often used with "a"' };
 const compOpt = ui.extractSenseCompanion(optMeaning);
 assert.deepEqual(compOpt, { terms: ['a'], qualifier: 'often', isOptional: true });
 
-// 2. senseCollocationHTML: physically links the target surface to the companion
+// 2. senseCollocationHTML: a compact "+partner" chip; the lemma is the headword
 const htmlTener = ui.senseCollocationHTML(tenerQue, tener);
-assert(htmlTener.includes('class="sense-target-collocation"'));
-assert(htmlTener.includes('<span class="sense-collocation-target">tener</span>'));
-assert(htmlTener.includes('<span class="sense-collocation-particle">que</span>'));
+assert(htmlTener.includes('sense-companion-lead'));
+assert(htmlTener.includes('<span class="sense-collocation-particle">+que</span>'));
+assert(htmlTener.includes('Used with: tener que'));
 
 const htmlGosto = ui.senseCollocationHTML(gosto.meanings[0], gosto);
-assert(htmlGosto.includes('<span class="sense-collocation-target">gostar</span>'));
-assert(htmlGosto.includes('<span class="sense-collocation-particle">de</span>'));
+assert(htmlGosto.includes('<span class="sense-collocation-particle">+de</span>'));
+assert(htmlGosto.includes('Used with: gostar de'));
 
 const htmlOpt = ui.senseCollocationHTML(optMeaning, { targetWord: 'venir' });
 assert(htmlOpt.includes('is-optional'));
-assert(htmlOpt.includes('<span class="sense-collocation-target">venir</span>'));
-assert(htmlOpt.includes('<span class="sense-collocation-particle">+ a</span>'));
-assert(htmlOpt.includes('<span class="sense-collocation-qualifier">(often)</span>'));
+assert(htmlOpt.includes('<span class="sense-collocation-particle">+a</span>'));
+assert(htmlOpt.includes('<span class="sense-collocation-qualifier">often</span>'));
 
 // 3. excludeCompanion: ensures companion is promoted to sense row and excluded from subsense tier
 const metaOptionsExcluded = { gloss: 'to have to', excludeCompanion: true, allowInactivePrimary: true };

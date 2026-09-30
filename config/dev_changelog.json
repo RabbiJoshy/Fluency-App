@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-30T16:05:00+01:00",
+      "date": "2026-09-30 16:05 BST",
+      "agent": "Claude",
+      "summary": "'+de' chip leads the sense row, one menu for everyone (signed-in compact view removed), password note on first keystroke, one-line 'Back to' on child cards.",
+      "detail": [
+        "A sense used with a partner word shows a compact '+de' chip at the row's left edge beside ⓘ (and the Brazil flag), instead of a 'precisar de' pill among the cues. The full phrase stays in the tooltip.",
+        "Signed-in users no longer get a compact view that hid every sense but the active one. It relied on a knowledge-map button that no longer exists; everyone now sees the same menu.",
+        "The optional-password explanation is no longer printed under the field; it appears once as a small note when you start typing a password.",
+        "Child cards: 'BACK TO' and the word on one line instead of two small rows."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-30T15:10:00+01:00",
       "date": "2026-09-30 15:10 BST",
       "agent": "Claude",

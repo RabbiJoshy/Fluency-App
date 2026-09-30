@@ -1650,10 +1650,12 @@ export function senseCollocationHTML(meaning, card = null) {
         ? (qualifier ? `${qualifier} used with: ${target} + ${particle}` : `Used with: ${target} + ${particle}`)
         : `Used with: ${target} ${particle}`;
 
-    const particleDisplay = isOptional ? `+ ${particle}` : particle;
-    const qualifierTag = qualifier ? ` <span class="sense-collocation-qualifier">(${qualifier})</span>` : '';
-
-    return `<span class="sense-target-collocation${isOptional ? ' is-optional' : ''}" title="${titleAttr}" aria-label="${titleAttr}"><span class="sense-collocation-target">${target}</span> <span class="sense-collocation-particle">${particleDisplay}</span>${qualifierTag}</span>`;
+    // The partner word is a privileged cue, not a sub-meaning: a compact
+    // "+de" that the row places at its leading edge beside the information
+    // button. The lemma is already the card's headword, so only the partner
+    // is printed; the full "precisar de" stays in the tooltip.
+    const qualifierTag = qualifier ? `<span class="sense-collocation-qualifier">${qualifier}</span> ` : '';
+    return `<span class="sense-target-collocation sense-companion-lead${isOptional ? ' is-optional' : ''}" title="${titleAttr}" aria-label="${titleAttr}">${qualifierTag}<span class="sense-collocation-particle">+${particle}</span></span>`;
 }
 
 // Window attachments for inline HTML onclick handlers

@@ -1841,6 +1841,21 @@ function setupAuthEventListeners() {
         }
     });
 
+    // The note about the optional password appears once, on the first
+    // character typed, and hands focus straight back to the field.
+    const passwordNote = document.getElementById('authPasswordNote');
+    let passwordNoteShown = false;
+    document.getElementById('userPassword')?.addEventListener('input', (e) => {
+        if (passwordNoteShown || !passwordNote || !e.target.value) return;
+        passwordNoteShown = true;
+        passwordNote.hidden = false;
+        document.getElementById('authPasswordNoteOk')?.focus();
+    });
+    document.getElementById('authPasswordNoteOk')?.addEventListener('click', () => {
+        passwordNote.hidden = true;
+        document.getElementById('userPassword')?.focus();
+    });
+
     // Enter key in password input
     document.getElementById('userPassword')?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
