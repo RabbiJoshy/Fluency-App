@@ -6,6 +6,9 @@ from typing import Any
 
 
 APP_CONTRACT_VERSION = "fluency-split-speech/v1"
+# Proper-name parts of speech as providers write them (Wiktionary "name",
+# UD-style "propn"), casefolded.
+PROPER_NAME_POS = frozenset({"name", "propn", "proper noun"})
 
 APP_TENSE_LABELS = {
     ("indicativo", "presente"): "Presente",
@@ -210,7 +213,14 @@ def build_app_compatibility_assets(
             # field, so an entirely unassigned Speech deck remains teachable.
             # The renderer still sees `unassigned: true` and never presents the
             # pooled examples as evidence for a particular dictionary leaf.
-            first = unassigned_senses[0] if unassigned_senses else {}
+            # The label is the first listed sense, which is a guess; never let
+            # it be a proper name. Wiktionary sorts "name" before "noun", so
+            # smrt, strach and nevím were labelled "a male surname".
+            first = next(
+                (sense for sense in unassigned_senses
+                 if str(sense.get("pos") or "").casefold() not in PROPER_NAME_POS),
+                unassigned_senses[0] if unassigned_senses else {},
+            )
             meanings.append(
                 {
                     "pos": "SENSE_CYCLE",

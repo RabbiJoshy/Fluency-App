@@ -47,7 +47,10 @@ WIKTIONARY_BRIDGE = {
     "ADV": frozenset({"adv", "particle", "prep_phrase"}),
     # `contraction` appears wherever a preposition has fused with an article,
     # which Universal Dependencies expresses as ADP or DET on the fused token.
-    "ADP": frozenset({"prep", "contraction"}),
+    # Finnish adpositions are mostly postpositions (kanssa, jälkeen, takia);
+    # without `postp` every one failed the gate and, once fi abstained,
+    # shipped with a wrong fallback label ("kanssa: also, too").
+    "ADP": frozenset({"prep", "postp", "contraction"}),
     # DET must not keep ``pron``. Portuguese ``as`` is tagged DET in
     # ``as pessoas`` and PRON in ``vi-as``; leaving both analyses in for DET
     # made rank-agreement unresolved between "the" and "them". Object
@@ -116,7 +119,7 @@ def dictionary_pos_family(dictionary_pos: str) -> str:
         return "adj"
     if pos in {"pron"}:
         return "pron"
-    if pos in {"prep", "adp", "contraction"}:
+    if pos in {"prep", "postp", "adp", "contraction"}:
         return "adp"
     if pos in {"adv", "particle"}:
         return "adv"

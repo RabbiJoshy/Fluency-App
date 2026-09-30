@@ -67,6 +67,8 @@ from fluency.wsd.menus import MenuAnalysis, require_analysis
 EmitLevel = Literal["leaf", "glosskey", "tuple", "unresolved"]
 UncertainAxis = Literal["none", "gloss", "tuple"]
 UnresolvedOutcome = Literal["assign", "abstain"]
+CrossAnalysisVote = Literal["provider_order", "gloss_margin"]
+CrossAnalysisOutcome = Literal["order_agrees", "clear", "shared_translation", "contested"]
 
 EMIT_LEVELS: tuple[EmitLevel, ...] = ("leaf", "glosskey", "tuple", "unresolved")
 
@@ -88,6 +90,24 @@ class CommitPolicy:
     ``unresolved_falls_back_to_phrase`` is the other v14 exception. v13 abstain
     was built for a word menu: unresolved meant publish nothing. With phrases
     on the menu, an unlicensed word must not discard a competing PHRASE.
+
+    ``cross_analysis_vote`` says what may overrule the gloss BETWEEN analyses
+    (different headword or part of speech). ``provider_order`` is the v9-v15
+    rule: the first-listed leaf of the whole menu votes, so a gloss winner in
+    any other analysis is unresolved. That order carries no information across
+    analyses -- Wiktionary's is alphabetical (ten before ty, name before noun)
+    and SpanishDict's is page order (ser before saber) -- and it cost cs 99.7%
+    of its abstentions. ``gloss_margin`` keeps dictionary order as a vote only
+    inside the gloss winner's analysis, and between analyses asks the gloss to
+    win by ``cross_analysis_margin`` (raw scores, no menu prior). A rival within
+    the margin that renders the same English commits at glosskey (vy/ty "you").
+    Order can no longer veto the gloss, but it still confirms it: any line the
+    ``provider_order`` rule would publish is published exactly as it would
+    be, so only lines that rule abstains on can change. (A margin on every
+    line made es more cautious, not less: que CCONJ/PRON and querer/quererse
+    are split entries of one word that order used to settle, and 3,255 es
+    lines v15 published through a shared English gloss met a third entry
+    inside the margin.)
     """
 
     leaf_minimum: float = 0.0
@@ -100,6 +120,13 @@ class CommitPolicy:
     shared_translation_licenses_glosskey: bool = False
     phrase_winner_skips_provider_order: bool = False
     unresolved_falls_back_to_phrase: bool = False
+    cross_analysis_vote: CrossAnalysisVote = "provider_order"
+    cross_analysis_margin: float = 0.0
+    # A contested cross-analysis line abstains even where unresolved lines are
+    # otherwise assigned. fi assigns unresolved lines (its dictionary-POS
+    # guard fires on correct menus: entä conj tagged ADV), but a close call
+    # between entries published et as "and".
+    contested_abstains: bool = False
 
     def __post_init__(self) -> None:
         for name, value in (
@@ -115,6 +142,10 @@ class CommitPolicy:
             raise ValueError("unsupported commit strategy")
         if self.unresolved_outcome not in {"assign", "abstain"}:
             raise ValueError("unsupported unresolved outcome")
+        if self.cross_analysis_vote not in {"provider_order", "gloss_margin"}:
+            raise ValueError("unsupported cross-analysis vote")
+        if not 0.0 <= self.cross_analysis_margin <= 1.0:
+            raise ValueError("cross_analysis_margin must be between zero and one")
 
     @property
     def enabled(self) -> bool:
@@ -130,6 +161,45 @@ class CommitDecision:
     uncertain_axis: UncertainAxis
     margins: Mapping[str, float]
     escalate: bool
+    cross_analysis: CrossAnalysisOutcome | None = None
+
+
+def cross_analysis_license(
+    raw_scores: Sequence[LeafScore],
+    analyses: Sequence[MenuAnalysis],
+    winner: tuple[str, str],
+    margin: float,
+) -> CrossAnalysisOutcome:
+    """Does the gloss winner's analysis beat every other analysis by ``margin``?
+
+    Scores are raw gloss scores, so no menu-order prior can decide it. A rival
+    inside the margin whose English matches the winner's is no contest for a
+    learner, so it licenses the shared rendering rather than blocking it.
+    """
+
+    winner_analysis_id, winner_sense_id = winner
+    winner_analysis = require_analysis(analyses, winner_analysis_id)
+
+    def translation(analysis_id: str, sense_id: str) -> str:
+        sense = require_analysis(analyses, analysis_id).sense(sense_id)
+        return (sense.translation or "").casefold().strip()
+
+    own = [item.score for item in raw_scores if item.menu_analysis_id == winner_analysis_id]
+    if not own:
+        return "clear"
+    best_own = max(own)
+    rivals = [
+        item for item in raw_scores
+        if item.menu_analysis_id != winner_analysis_id and item.score > best_own - margin
+    ]
+    if not rivals:
+        return "clear"
+    shared = translation(winner_analysis.menu_analysis_id, winner_sense_id)
+    if shared and all(
+        translation(item.menu_analysis_id, item.sense_id) == shared for item in rivals
+    ):
+        return "shared_translation"
+    return "contested"
 
 
 def _probabilities(scores: Sequence[LeafScore], temperature: float) -> dict[tuple[str, str], float]:
@@ -197,44 +267,46 @@ def decide(
     policy: CommitPolicy,
     *,
     rank_agreement_refs: Sequence[tuple[str, str]] = (),
+    raw_scores: Sequence[LeafScore] = (),
+    menu_first: tuple[str, str] | None = None,
 ) -> CommitDecision:
-    """Most specific level the scores support, plus which axis is weak."""
+    """Most specific level the scores support, plus which axis is weak.
+
+    ``raw_scores`` feeds the ``gloss_margin`` cross-analysis vote; the caller
+    passes it empty where that vote does not apply (a PHRASE winner).
+    """
 
     margins = axis_margins(scores, analyses, temperature=policy.temperature)
     if policy.strategy == "rank_agreement":
         if len(rank_agreement_refs) < 2:
             raise ValueError("rank-agreement commit requires at least two choices")
-        leaves = []
-        glosskeys = []
-        tuples = []
-        translations = []
-        for menu_analysis_id, sense_id in rank_agreement_refs:
-            analysis = require_analysis(analyses, menu_analysis_id)
-            sense = analysis.sense(sense_id)
-            leaves.append((menu_analysis_id, sense_id))
-            glosskeys.append(
-                (
-                    analysis.part_of_speech,
-                    analysis.headword.casefold(),
-                    sense.translation or "<EMPTY>",
+        if policy.cross_analysis_vote == "gloss_margin" and raw_scores:
+            # Whatever the provider-order rule would publish, publish unchanged:
+            # v21 only rescues lines that rule abstains on.
+            if menu_first is not None and len(rank_agreement_refs) == 3:
+                ordered = _rank_agreement_level(
+                    analyses, policy, (menu_first, *rank_agreement_refs[1:]), margins
                 )
+                if ordered.level != "unresolved":
+                    return CommitDecision(
+                        ordered.level, ordered.uncertain_axis, margins, ordered.escalate,
+                        "order_agrees",
+                    )
+            decision = _rank_agreement_level(analyses, policy, rank_agreement_refs, margins)
+            if decision.level == "unresolved":
+                return decision
+            outcome = cross_analysis_license(
+                raw_scores, analyses, tuple(rank_agreement_refs[1]),
+                policy.cross_analysis_margin,
             )
-            tuples.append((analysis.part_of_speech, analysis.headword.casefold()))
-            translations.append((sense.translation or "").casefold().strip())
-        if len(set(leaves)) == 1:
-            return CommitDecision("leaf", "none", margins, False)
-        if len(set(glosskeys)) == 1:
-            return CommitDecision("glosskey", "gloss", margins, False)
-        if len(set(tuples)) == 1:
-            return CommitDecision("tuple", "gloss", margins, False)
-        if (
-            policy.shared_translation_licenses_glosskey
-            and translations
-            and all(translations)
-            and len(set(translations)) == 1
-        ):
-            return CommitDecision("glosskey", "gloss", margins, False)
-        return CommitDecision("unresolved", "tuple", margins, True)
+            if outcome == "contested":
+                return CommitDecision("unresolved", "tuple", margins, True, outcome)
+            if outcome == "shared_translation" and decision.level == "leaf":
+                return CommitDecision("glosskey", "gloss", margins, False, outcome)
+            return CommitDecision(
+                decision.level, decision.uncertain_axis, margins, decision.escalate, outcome
+            )
+        return _rank_agreement_level(analyses, policy, rank_agreement_refs, margins)
     if margins["tuple"] < policy.tuple_minimum:
         return CommitDecision(
             level="unresolved", uncertain_axis="tuple", margins=margins, escalate=True
@@ -250,6 +322,47 @@ def decide(
     return CommitDecision(
         level="leaf", uncertain_axis="none", margins=margins, escalate=False
     )
+
+
+def _rank_agreement_level(
+    analyses: Sequence[MenuAnalysis],
+    policy: CommitPolicy,
+    rank_agreement_refs: Sequence[tuple[str, str]],
+    margins: Mapping[str, float],
+) -> CommitDecision:
+    """Deepest level every cheap choice shares."""
+
+    leaves = []
+    glosskeys = []
+    tuples = []
+    translations = []
+    for menu_analysis_id, sense_id in rank_agreement_refs:
+        analysis = require_analysis(analyses, menu_analysis_id)
+        sense = analysis.sense(sense_id)
+        leaves.append((menu_analysis_id, sense_id))
+        glosskeys.append(
+            (
+                analysis.part_of_speech,
+                analysis.headword.casefold(),
+                sense.translation or "<EMPTY>",
+            )
+        )
+        tuples.append((analysis.part_of_speech, analysis.headword.casefold()))
+        translations.append((sense.translation or "").casefold().strip())
+    if len(set(leaves)) == 1:
+        return CommitDecision("leaf", "none", margins, False)
+    if len(set(glosskeys)) == 1:
+        return CommitDecision("glosskey", "gloss", margins, False)
+    if len(set(tuples)) == 1:
+        return CommitDecision("tuple", "gloss", margins, False)
+    if (
+        policy.shared_translation_licenses_glosskey
+        and translations
+        and all(translations)
+        and len(set(translations)) == 1
+    ):
+        return CommitDecision("glosskey", "gloss", margins, False)
+    return CommitDecision("unresolved", "tuple", margins, True)
 
 
 def published_fields(level: EmitLevel, analysis: MenuAnalysis, sense_id: str) -> dict[str, object]:

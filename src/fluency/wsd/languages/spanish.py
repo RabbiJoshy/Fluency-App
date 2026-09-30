@@ -274,8 +274,17 @@ class SpanishV5CandidatePolicy:
         contextual_headword_selector: (
             Callable[[str, str], frozenset[str]] | None
         ) = None,
+        keep_self_reading_pos: frozenset[str] = frozenset(),
     ) -> None:
         self.language = language
+        # Provider POS (casefolded) of a headword spelled like the surface that
+        # the tagger's POS and lemma may not remove. UD files interrogative
+        # missä as PRON of mikä and Wiktionary files "where" as adv; the two
+        # gates then deleted the reading before any gloss was scored. The
+        # entry stays a candidate; the commit still has to license it.
+        self.keep_self_reading_pos = frozenset(
+            value.casefold() for value in keep_self_reading_pos
+        )
         self.pronominal_gate = pronominal_gate
         self.domain_penalty = domain_penalty
         # The POS gate is a property of the DICTIONARY, not the language: the
@@ -382,6 +391,18 @@ class SpanishV5CandidatePolicy:
             if lemma_compatible:
                 lemma_removed = sorted(keep_ids - lemma_compatible)
                 keep_ids &= lemma_compatible
+
+        self_restored: list[str] = []
+        if self.keep_self_reading_pos:
+            gated = set(pos_removed) | set(lemma_removed)
+            self_restored = sorted(
+                analysis.menu_analysis_id
+                for analysis in analyses
+                if analysis.menu_analysis_id in gated
+                and analysis.headword.casefold() == surface_form.casefold()
+                and str(analysis.part_of_speech or "").casefold() in self.keep_self_reading_pos
+            )
+            keep_ids |= set(self_restored)
 
         contextual_removed: list[str] = []
         if contextual_headwords:
@@ -557,6 +578,7 @@ class SpanishV5CandidatePolicy:
                 "contextual_removed_analysis_ids": contextual_removed,
                 "pos_removed_analysis_ids": pos_removed,
                 "lemma_removed_analysis_ids": lemma_removed,
+                "self_reading_restored_analysis_ids": self_restored,
                 "se_reflexive_evidence": evidence,
                 "clitic_removed_analysis_ids": clitic_removed,
                 "constraint_supported_analysis_ids": sorted(keep_ids),
