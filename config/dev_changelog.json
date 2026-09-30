@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-30T23:05:00+01:00",
+      "date": "2026-09-30 23:05 BST",
+      "agent": "Claude",
+      "summary": "Commonness meters no longer pool separate rows (Portuguese 'me' read Dominant twice); rows and sections are ordered by how much of the word they cover, counting every sub-sense of a family row.",
+      "detail": [
+        "Prominence pooling now keys on the gloss the row shows. 'me' (26 sentences) and '(to) me' (3) are two rows, so they read Dominant and Uncommon instead of both Dominant. The separate context-based pooling is removed for the same reason.",
+        "Row order: a family row counts all its sub-senses (deixar: 'to leave' 40% → 'to let' 27% → 'to stop' 20%, where 'to stop' used to lead as the largest single sense). Sections are ordered by their total share too; rare senses sink.",
+        "Sections keep the accordion from the last change: when the full menu does not fit above the sentence, only the active section is open, and choosing another swaps it."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-30T22:47:00+01:00",
       "date": "2026-09-30 22:47 BST",
       "agent": "Claude",

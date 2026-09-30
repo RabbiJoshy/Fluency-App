@@ -5457,33 +5457,16 @@ function prominenceInfoFromShare(meanings) {
 const GLOSS_LEAF_DOMINANCE = 0.70;
 const GLOSS_LEAF_MARGIN = 0.35;
 
+// Senses pool their share only when the learner sees them as one row: the
+// same gloss on screen. "me" and "(to) me" are two rows, so each shows its
+// own share; pooling them made both read Dominant.
 function glossClusterKey(card, meaning) {
     if (!meaning || meaning.exampleOnly) return null;
     const pos = meaning.pos === 'SENSE_CYCLE' ? (meaning.cycle_pos || 'X') : meaning.pos;
     if (!pos || pos === 'MWE' || pos === 'CLITIC' || pos === 'EXAMPLE_ONLY') return null;
-    const raw = String(getProductionEnglishCue(card, meaning) || meaning.meaning || meaning.translation || '').trim();
-    const gloss = senseSummaryText(projectWiktionaryGloss(meaning, raw).display)
-        .toLocaleLowerCase('en')
-        .replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '')
-        .replace(/\s+/g, ' ')
-        .trim();
+    const gloss = glossPieceKey(learnerGroupingGloss(card, meaning).visibleGloss);
     if (!gloss) return null;
     return `${pos}\u0000${meaning.headword || ''}\u0000${gloss}`;
-}
-
-function contextClusterKey(card, meaning) {
-    if (!meaning || meaning.exampleOnly) return null;
-    const pos = meaning.pos === 'SENSE_CYCLE' ? (meaning.cycle_pos || 'X') : meaning.pos;
-    if (!pos || pos === 'MWE' || pos === 'CLITIC' || pos === 'EXAMPLE_ONLY') return null;
-    const rawCtx = String(meaning.context || '').trim();
-    if (!rawCtx) return null;
-    const ctx = senseSummaryText(rawCtx)
-        .toLocaleLowerCase('en')
-        .replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '')
-        .replace(/\s+/g, ' ')
-        .trim();
-    if (!ctx) return null;
-    return `${pos}\u0000${meaning.headword || ''}\u0000ctx:${ctx}`;
 }
 
 function withinGlossLeafWeight(meaning, useConfidence) {
@@ -5520,11 +5503,6 @@ function glossClusterProminenceState(card) {
         if (key) {
             if (!groups.has(key)) groups.set(key, []);
             groups.get(key).push(index);
-        }
-        const ctxKey = contextClusterKey(card, meaning);
-        if (ctxKey) {
-            if (!groups.has(ctxKey)) groups.set(ctxKey, []);
-            if (!groups.get(ctxKey).includes(index)) groups.get(ctxKey).push(index);
         }
     });
     const infoByIndex = new Map();
@@ -6813,7 +6791,31 @@ function renderCardWikipediaBadge(card) {
         }, 0);
         const roomForInlineDetails = compactSectionRowCount <= autoOpenSectionRowLimit();
 
-        orderMeaningEntriesForDisplay(card.meanings).forEach(({ meaning: m, index: idx }) => {
+        // Rows are ordered by how much of the word they cover: a family row
+        // counts all its sub-senses, so "to leave" with 12 sentences over two
+        // sub-rows comes before a single sense with 7. Sections are ordered
+        // the same way, by their total.
+        const rowShare = idx => {
+            const m = card.meanings[idx];
+            if (!m || m.unassigned || m.isRareSense) return 0;
+            const ax = GROUP_DUPLICATE_MEANINGS ? (axisOf.get(idx) || 'singleton') : 'singleton';
+            if (ax === 'translation' || ax === 'context') {
+                return groupPctSum.get(`${m.pos}\u0000${m.headword || ''}\u0000${ax}\u0000${groupKeyOf.get(idx)}`) || 0;
+            }
+            const fold = singletonFoldLeaders.get(idx);
+            if (fold) return fold.allIndices.reduce((sum, i) => sum + (Number(card.meanings[i]?.percentage) || 0), 0);
+            return Number(m.percentage) || 0;
+        };
+        const sectionShare = new Map();
+        const sectionKeyOf = m => `${m.pos === 'SENSE_CYCLE' ? (m.cycle_pos || 'X') : m.pos}\u0000${m.headword || ''}`;
+        card.meanings.forEach(m => {
+            if (!m || m.exampleOnly || m.unassigned || m.isRareSense) return;
+            sectionShare.set(sectionKeyOf(m), (sectionShare.get(sectionKeyOf(m)) || 0) + (Number(m.percentage) || 0));
+        });
+        const displayEntries = orderMeaningEntriesForDisplay(card.meanings)
+            .map(entry => ({ ...entry, section: sectionShare.get(sectionKeyOf(entry.meaning)) || 0, share: rowShare(entry.index) }))
+            .sort((a, b) => (b.section - a.section) || (b.share - a.share) || (a.index - b.index));
+        displayEntries.forEach(({ meaning: m, index: idx }) => {
             if (m.exampleOnly) return;
             if (singletonFoldFollowers.has(idx)) return;
             const isSelected = idx === currentMeaningIndex;
