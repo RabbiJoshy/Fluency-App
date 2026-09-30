@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-01T00:45:00+01:00",
+      "date": "2026-10-01 00:45 BST",
+      "agent": "Claude",
+      "summary": "The meanings overview lists exactly the card's rows, in the card's order and wording; on phones a sense note opens beside its ⓘ button.",
+      "detail": [
+        "Overview rows come from the card as drawn: same order, a family row's heading ('to leave') with its sub-senses beneath, the same short labels instead of raw dictionary glosses, and no sense the card does not show (moved to Rarer uses, or folded into another row).",
+        "The overall 'x/y known' line shows only when the card has more than one group; with one group it repeated the group's own count.",
+        "Phone: the sense note opens just below its ⓘ button, or just above it when there is no room below, instead of as a sheet at the bottom of the screen."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-01T00:20:00+01:00",
       "date": "2026-10-01 00:20 BST",
       "agent": "Antigravity",

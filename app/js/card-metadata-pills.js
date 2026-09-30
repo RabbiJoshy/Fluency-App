@@ -1727,6 +1727,19 @@ export function openSenseNote(event, control) {
     document.body.appendChild(overlay);
 
     const dialog = overlay.querySelector('.sense-note-dialog');
+    // On a phone the note opens beside the button that asked for it: just
+    // below it, or just above when there is no room below.
+    if (window.matchMedia?.('(max-width: 600px)').matches) {
+        const anchor = control.getBoundingClientRect();
+        const height = dialog.getBoundingClientRect().height;
+        const gap = 8;
+        const edge = 10;
+        let top = anchor.bottom + gap;
+        if (top + height > window.innerHeight - edge) top = anchor.top - gap - height;
+        top = Math.max(edge, Math.min(top, window.innerHeight - edge - height));
+        overlay.classList.add('is-anchored');
+        dialog.style.marginTop = `${Math.round(top)}px`;
+    }
     const closeButton = overlay.querySelector('.sense-note-close');
     const close = () => {
         document.removeEventListener('keydown', onKey);

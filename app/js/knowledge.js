@@ -785,9 +785,14 @@ function knowledgeOverviewRowsHTML(card, rows, { groupedByPos = false } = {}) {
         const statusText = status === 'known' ? 'Known' : (status === 'review' ? 'Practice' : 'Unmarked');
         const pos = !groupedByPos && item.pos && (item.type === 'sense' || item.isRare)
             ? `<span class="knowledge-overview-pos">${escapeKnowledgeHTML(item.pos)}</span>` : '';
-        const detail = [item.detail, item.isRare ? item.example : ''].filter(Boolean).join(' · ');
+        // Rows read as they do on the card when the card has been drawn.
+        const display = card._senseDisplay?.get(item.meaningIndex);
+        const label = display?.label || item.label;
+        const detail = display
+            ? (display.label ? display.detail : item.detail)
+            : [item.detail, item.isRare ? item.example : ''].filter(Boolean).join(' · ');
         const copy = `<span class="knowledge-overview-status" aria-label="${statusText}"></span>
-            <span class="knowledge-overview-copy">${pos}<strong>${escapeKnowledgeHTML(item.label)}</strong>${detail ? `<small>${escapeKnowledgeHTML(detail)}</small>` : ''}</span>`;
+            <span class="knowledge-overview-copy">${pos}<strong>${escapeKnowledgeHTML(label)}</strong>${detail ? `<small>${escapeKnowledgeHTML(detail)}</small>` : ''}</span>`;
         const lead = item.isRare
             ? `<div class="knowledge-overview-focus is-static">${copy}</div>`
             : `<button type="button" class="knowledge-overview-focus" onclick="focusKnowledgeOverviewItem(event, ${index})" title="Show this item on the card">${copy}</button>`;
@@ -822,12 +827,23 @@ function renderKnowledgeOverview(card) {
 
     // Force to Meanings only — skip Expressions / Attached forms tabs
     const meaningRows = sections.get('Meanings') || [];
-    const rows = meaningRows.length > 0 ? meaningRows : (sections.values().next().value || []);
+    let rows = meaningRows.length > 0 ? meaningRows : (sections.values().next().value || []);
+    // Only the senses the card shows, in the card's order: a sense moved to
+    // Rarer uses, or folded into another row, is not listed here.
+    const display = card._senseDisplay;
+    if (display?.size) {
+        rows = rows
+            .filter(({ item }) => display.has(item.meaningIndex) && !display.get(item.meaningIndex).hidden)
+            .sort((a, b) => (display.get(a.item.meaningIndex).order - display.get(b.item.meaningIndex).order)
+                || (a.item.cycleIndex - b.item.cycleIndex));
+    }
 
-    // Summary counts only what's displayed
-    const displayedTotal = rows.length;
+    // The total repeats the one group's own count, so it shows only when the
+    // card has several groups.
+    const groupCount = new Set(rows.map(({ item }) => `${item.headword || ''}\0${item.pos || ''}`)).size;
     const displayedLearned = rows.filter(({ item }) => getKnowledgeItemState(card, item).learned).length;
-    summaryEl.innerHTML = `<strong>${displayedLearned}/${displayedTotal} known</strong>`;
+    summaryEl.hidden = groupCount <= 1;
+    summaryEl.innerHTML = groupCount <= 1 ? '' : `<strong>${displayedLearned}/${rows.length} known</strong>`;
 
     const groupable = rows.length > 0
         && rows.every(({ item }) => item.pos && item.pos !== 'MWE' && item.pos !== 'CLITIC');
@@ -859,9 +875,23 @@ function knowledgeOverviewMeaningGroupsHTML(card, rows) {
                 ${group.headword ? `<span class="knowledge-overview-group-lemma">${escapeKnowledgeHTML(group.headword)}</span>` : ''}
                 <span class="knowledge-overview-group-count">${known}/${group.rows.length}</span>
             </div>
-            <div class="knowledge-overview-rows">${knowledgeOverviewRowsHTML(card, group.rows, { groupedByPos: true })}</div>
+            ${knowledgeOverviewFamilyRunsHTML(card, group.rows)}
         </div>`;
     }).join('');
+}
+
+// A family row on the card ("if" over "whether" / "introduces a relevance
+// conditional") keeps its heading here, with its sub-senses beneath it.
+function knowledgeOverviewFamilyRunsHTML(card, rows) {
+    const runs = [];
+    for (const row of rows) {
+        const family = card._senseDisplay?.get(row.item.meaningIndex)?.family || '';
+        const last = runs[runs.length - 1];
+        if (last && last.family === family) last.rows.push(row);
+        else runs.push({ family, rows: [row] });
+    }
+    return runs.map(run => `${run.family
+        ? `<div class="knowledge-overview-family">${escapeKnowledgeHTML(run.family)}</div>` : ''}<div class="knowledge-overview-rows${run.family ? ' is-family' : ''}">${knowledgeOverviewRowsHTML(card, run.rows, { groupedByPos: true })}</div>`).join('');
 }
 
 function selectKnowledgeOverviewTab(event, label) {

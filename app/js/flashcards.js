@@ -6822,6 +6822,11 @@ function renderCardWikipediaBadge(card) {
         const displayEntries = orderMeaningEntriesForDisplay(card.meanings)
             .map(entry => ({ ...entry, section: sectionShare.get(sectionKeyOf(entry.meaning)) || 0, share: rowShare(entry.index) }))
             .sort((a, b) => (b.section - a.section) || (b.share - a.share) || (a.index - b.index));
+        // The rows exactly as the card shows them — order, family heading,
+        // sub-row label — so the meanings overview lists the same thing.
+        const senseDisplay = new Map();
+        card._senseDisplay = senseDisplay;
+        const recordSenseDisplay = (index, entry) => senseDisplay.set(index, { order: senseDisplay.size, ...entry });
         displayEntries.forEach(({ meaning: m, index: idx }) => {
             if (m.exampleOnly) return;
             if (singletonFoldFollowers.has(idx)) return;
@@ -7009,6 +7014,7 @@ function renderCardWikipediaBadge(card) {
                 const informationButton = overflowTranslations.length || cycleWasShortened
                     ? `<button type="button" class="sense-note-trigger" aria-haspopup="dialog" onclick="openSenseNote(event, this)" aria-label="Information about possible meanings" title="Information about possible meanings"><span aria-hidden="true">i</span></button><template class="sense-note-template"><div class="sense-note-copy" data-sense-note-title="Possible meanings"><section class="sense-note-section sense-note-section--meaning"><h3>All possibilities</h3><p>${escapeCardText(cycleNoteText)}</p></section></div></template>`
                     : '';
+                recordSenseDisplay(idx, { family: '', label: '', detail: '', hidden: false });
                 const cycleTextClass = adaptiveRowTextClass(joinedFull);
                 recordSectionMeanings(target, m.allSenses || [m]);
                 target.push(`
@@ -7214,6 +7220,18 @@ function renderCardWikipediaBadge(card) {
                         }
                     }
 
+                    const familyText = String(sharedText || '').replace(/<[^>]*>/g, '').replace(/&quot;/g, '"').trim();
+                    for (const entry of displayMemberEntries) {
+                        const label = [entry.extra, entry.context].filter(Boolean).join(' · ') || 'general use';
+                        for (const memberIdx of entry.memberIndices) {
+                            recordSenseDisplay(memberIdx, {
+                                family: isTransAxis ? familyText : '',
+                                label: isTransAxis ? label : '',
+                                detail: '',
+                                hidden: memberIdx !== entry.representative,
+                            });
+                        }
+                    }
                     const groupKnown = orderedMembers.every(index => card.meanings[index]?.isKnownSense);
                     const memberCells = displayMemberEntries.map((entry, rowIdx) => {
                         const memberIdx = entry.representative;
@@ -7451,6 +7469,10 @@ function renderCardWikipediaBadge(card) {
                         }
                     }
 
+                    recordSenseDisplay(idx, { family: '', label: visibleMeaning, detail: cleanedContext || '', hidden: false });
+                    for (const followerIdx of foldInfo?.allIndices || []) {
+                        if (followerIdx !== idx) recordSenseDisplay(followerIdx, { family: '', label: visibleMeaning, detail: '', hidden: true });
+                    }
                     const singletonTextClass = adaptiveRowTextClass(collocationHTML ? `${collocationHTML} ${visibleMeaning}` : visibleMeaning, cleanedContext || differentiator?.label || '');
                     const useProminenceLabels = (typeof senseProminenceMode !== 'undefined' ? senseProminenceMode : globalThis.state?.senseProminenceMode) !== 'percentages';
                     const clusterInfo = glossProminence.infoByIndex.get(idx);
