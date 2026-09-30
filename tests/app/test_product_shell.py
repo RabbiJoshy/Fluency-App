@@ -228,7 +228,6 @@ class ProductShellTests(unittest.TestCase):
             "learningContextBtn",
             "learningContextModal",
             "learningContextSourceBtn",
-            "levelCompleteCelebration",
         ):
             self.assertIn(f'id="{required_id}"', html)
         self.assertIn("fluencyPreferredLanguageV1", main)
@@ -245,8 +244,9 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("getCurrentCoverageSnapshot", progress)
         self.assertIn("window.lastSetupCoverageSnapshot", progress)
         self.assertIn("isLevelCompletion", modals)
-        self.assertIn("Practise this level", modals)
-        self.assertIn("this.dataset.action === 'review-level'", flashcards)
+        # A level completion is title, confetti, next level and main menu.
+        self.assertNotIn("levelCompleteCelebration", html)
+        self.assertIn("restartButton.hidden = isLevelCompletion", modals)
         self.assertNotIn("Natural speech", html)
         # One wording for the vocabulary choice: the inline page, the modal
         # picker and the tutorial replica all say the same thing.

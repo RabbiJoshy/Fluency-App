@@ -1609,12 +1609,31 @@ function initializeApp() {
                 ? icon('<path d="M11 5 6 9H3v6h3l5 4z"></path><path d="M15 9a4 4 0 0 1 0 6"></path><path d="M18 6a8 8 0 0 1 0 12"></path>')
                 : icon('<path d="M11 5 6 9H3v6h3l5 4z"></path><path d="m16 10 5 5"></path><path d="m21 10-5 5"></path>')
         });
+        // Appearance without leaving the set: the same preferences as
+        // Settings → App, flipped in place.
+        const darkModeRow = () => {
+            const dark = document.documentElement.dataset.theme !== 'light';
+            return {
+                label: `Dark Mode: ${dark ? 'On' : 'Off'}`,
+                iconHTML: dark
+                    ? icon('<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"></path>')
+                    : icon('<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.9 4.9 1.4 1.4"></path><path d="m17.7 17.7 1.4 1.4"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m4.9 19.1 1.4-1.4"></path><path d="m17.7 6.3 1.4-1.4"></path>')
+            };
+        };
+        const textSizeRow = () => ({
+            label: `Text Size: ${document.documentElement.dataset.textSize === 'large' ? 'Bigger' : 'Normal'}`,
+            iconHTML: icon('<path d="M3 19 8 6l5 13"></path><path d="M4.5 15h7"></path><path d="M15 19l3-8 3 8"></path><path d="M16 16.5h4"></path>')
+        });
         // Set progress and Saved words are not offered mid-set: progress adds
         // little here, and saved words lives in Settings → Words & data.
         const entries = [
             { label: 'Main menu', iconHTML: icon('<path d="M9 7H5v12h12v-4"></path><path d="m9 11-4-4 4-4"></path><path d="M5 7h9a5 5 0 0 1 5 5"></path>'), onSelect: () => goBackToSetup() },
             { ...directionRow(), keepOpen: true, tail: '', refresh: directionRow, onSelect: () => flipDirection() },
             { ...speechRow(), keepOpen: true, tail: '', refresh: speechRow, onSelect: () => toggleAutoSpeak() },
+            { ...darkModeRow(), keepOpen: true, tail: '', refresh: darkModeRow, onSelect: () => window.applyThemePreference?.(
+                document.documentElement.dataset.theme === 'light' ? 'dark' : 'light', { persist: true }) },
+            { ...textSizeRow(), keepOpen: true, tail: '', refresh: textSizeRow, onSelect: () => window.applyTextSize?.(
+                document.documentElement.dataset.textSize === 'large' ? 'normal' : 'large', { persist: true }) },
             { label: 'Study settings', iconHTML: icon('<path d="M4 6h10"></path><path d="M18 6h2"></path><circle cx="16" cy="6" r="2"></circle><path d="M4 12h2"></path><path d="M10 12h10"></path><circle cx="8" cy="12" r="2"></circle><path d="M4 18h8"></path><path d="M16 18h4"></path><circle cx="14" cy="18" r="2"></circle>'), onSelect: () => showSettingsModalWithTab('study', { singleTab: true, onBack: () => showStudyMenu() }) }
         ];
         // Card data is a product-level audit surface: it stays available when
@@ -1984,26 +2003,6 @@ function initializeApp() {
 
     // Deck complete modal buttons
     document.getElementById('restartAllBtn').addEventListener('click', async function() {
-        if (this.dataset.action === 'review-level') {
-            const completedLevel = selectedLevel;
-            hideDeckCompleteModal();
-            await goBackToSetup();
-            const completedLevelButton = Array.from(document.querySelectorAll(
-                '.level-selector-buttons .level-btn, #levelSelector > .level-btn'
-            )).find(button => button.dataset.level === completedLevel);
-            if (completedLevelButton && !completedLevelButton.classList.contains('selected')) {
-                completedLevelButton.click();
-            }
-            for (let attempt = 0; attempt < 30; attempt++) {
-                const reviewButton = document.querySelector('.study-set-review');
-                if (reviewButton && !reviewButton.disabled) {
-                    reviewButton.click();
-                    return;
-                }
-                await new Promise(resolve => setTimeout(resolve, 50));
-            }
-            return;
-        }
         hideDeckCompleteModal();
         restartAllCards();
     });
@@ -3037,6 +3036,9 @@ function learnerGroupingGloss(card, meaning) {
         senseCount: card?.meanings?.length || 1,
         cardMeanings: card?.meanings || [meaning],
         ignoreBudget: true,
+        // Grouping must not merge two senses just because their bracketed
+        // definitions were moved to the note.
+        keepDefinitionParenthetical: true,
         // Grouping intentionally compares the concise learner gloss. Any
         // source distinction removed here is retained as a key and in notes.
         peerMeanings: [],
@@ -6169,15 +6171,12 @@ function renderCardWikipediaBadge(card) {
                 + (perMillion ? '<span class="card-stat-unit card-stat-unit--below">per million</span>' : '')
                 + '</button>';
         }
-        // Only an artist's vocabulary is a real population; in speech mode the
-        // total is just the size of our deck, not of the language, so the rank
-        // stands alone.
-        const denominator = activeArtist && vocabularySize ? `/ ${vocabularySize.toLocaleString()}` : '';
-        // One-line labels on both sides, so the two numbers share a line and
-        // "per million" hangs below the frequency figure alone.
-        const rankLabel = card.artistVocabularyScope === 'extra' ? 'Extra Rank' : 'Vocab. Rank';
+        // The deck's size sits small under the rank, as "per million" does
+        // under the frequency: rank 23 of 3,200.
+        const rankOf = vocabularySize ? `of ${vocabularySize.toLocaleString()}` : '';
+        const rankLabel = card.artistVocabularyScope === 'extra' ? 'Extra Rank' : 'Vocabulary Rank';
         frontRankingEl.innerHTML =
-            cardStatHTML('card-rank-label', rankLabel, Number(vocabularyRank).toLocaleString(), denominator)
+            cardStatHTML('card-rank-label', rankLabel, Number(vocabularyRank).toLocaleString(), rankOf, true)
             + freqHtml;
         frontRankingEl.style.display = 'flex';
     } else {
@@ -6371,13 +6370,14 @@ function renderCardWikipediaBadge(card) {
     if (card.isMultiMeaning && !card.isChainChild) {
         // Merged-lemma cards can carry a large learnable inventory (dictionary
         // senses plus Expressions/clitics). Once that inventory grows beyond a
-        // small glanceable menu, keep the ordinary card focused on the active
+        // small glanceable menu (eight or more senses — below that every
+        // section stays open), keep the ordinary card focused on the active
         // item. The bottom knowledge-map button remains the explicit route to
         // the complete list and can focus any other item directly.
         const knowledgeItemCount = getCardKnowledgeItems(card).length;
         const compactKnowledgeView = useLemmaMode
             && currentUser && !currentUser.isGuest
-            && knowledgeItemCount > 4;
+            && knowledgeItemCount >= ALL_SECTIONS_OPEN_BELOW_SENSE_ROWS;
 
         // Two POS-section maps:
         //   - scrollSections: regular meanings + SENSE_CYCLE (these scroll)
@@ -9624,12 +9624,13 @@ function _freqBreakdownOf(button) {
 // One front-of-card figure: wording on the first line, the number (and any
 // muted unit or denominator) on the second. The first class names the block
 // for the tutorial anchors (.card-rank-label, .card-freq-label).
-function cardStatHTML(kindClass, label, value, unit = '') {
+function cardStatHTML(kindClass, label, value, unit = '', below = false) {
     const end = kindClass === 'card-rank-label' ? '' : ' card-stat--end';
     return `<span class="card-stat${end} ${kindClass}">`
         + `<span class="card-stat-label">${label}</span>`
         + `<span class="card-stat-line"><strong class="card-stat-value">${value}</strong>`
-        + `${unit ? `<span class="card-stat-unit">${unit}</span>` : ''}</span></span>`;
+        + `${unit && !below ? `<span class="card-stat-unit">${unit}</span>` : ''}</span>`
+        + `${unit && below ? `<span class="card-stat-unit card-stat-unit--below">${unit}</span>` : ''}</span>`;
 }
 
 // Whole numbers only: a decimal on a per-million figure is noise to a

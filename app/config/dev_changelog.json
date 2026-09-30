@@ -2,6 +2,21 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-30T15:10:00+01:00",
+      "date": "2026-09-30 15:10 BST",
+      "agent": "Claude",
+      "summary": "Fewer bracketed definitions on sense rows, all senses open under 8 for signed-in users, cleaner level-complete screen, wrapping front pills, Dark Mode and Text Size in Study options, 'Vocabulary Rank … of N'.",
+      "detail": [
+        "Wiktionary glosses (Portuguese, Czech) no longer show the English word's bracketed definition ('king (male monarch)' → 'king'); it moves to the ⓘ note. Brackets stay when another sense on the card has the same translation, for function words, argument slots like '(something)', and usage restrictions like 'said of weather'.",
+        "Signed-in users now get every section open on cards with fewer than eight senses (the compact one-sense view previously kicked in above four).",
+        "Level complete: medal, title, next level and Main menu only. The speech-understood percentage block is gone, and a CSS bug that showed an empty 0% accuracy ring and 0/0 on every completion is fixed.",
+        "Front lemma/POS pills wrap to a second centred row when they do not fit (e.g. 'isso') instead of overflowing.",
+        "Study options (gear during study) has Dark Mode and Text Size toggles.",
+        "Card front: 'Vocabulary Rank' with 'of 3,200' (deck size) small underneath, like 'per million'."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-29T22:55:00+01:00",
       "date": "2026-09-29 22:55 BST",
       "agent": "Claude",

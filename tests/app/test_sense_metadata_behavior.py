@@ -83,7 +83,8 @@ assert.deepEqual(show(card('cs','to')).visible,['neuter · singular · nom./acc.
 
 const longSer={translation:'to be (to have the given quality), especially a quality that is intrinsic or not expected to change, contrasting with estar which denotes a temporary quality',pos:'verb'};
 const serView=ui.learnerSensePresentation(longSer,true,{gloss:longSer.translation,senseCount:4,cardMeanings:[longSer],peerMeanings:[]});
-assert.equal(serView.visibleGloss,'to be (to have the given quality)');assert.equal(serView.noteGloss,longSer.translation);assert.equal(serView.hasSenseNote,true);
+// No sibling shares 'to be', so the bracketed definition moves to the note.
+assert.equal(serView.visibleGloss,'to be');assert.equal(serView.noteGloss,longSer.translation);assert.equal(serView.hasSenseNote,true);
 
 const porqueGlosses=[
  'because (introduces an explanation to a claim in the previous clause)',
