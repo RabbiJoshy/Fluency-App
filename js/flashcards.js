@@ -1,26 +1,26 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=cae8dd7c';
-import './speech.js?v=cae8dd7c';
-import { goToRoute, routeCodeFor } from './routes.js?v=cae8dd7c';
-import './side-dock.js?v=cae8dd7c';
+import './state.js?v=b0bbe67f';
+import './speech.js?v=b0bbe67f';
+import { goToRoute, routeCodeFor } from './routes.js?v=b0bbe67f';
+import './side-dock.js?v=b0bbe67f';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=cae8dd7c';
+} from './example-personalisation.js?v=b0bbe67f';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=cae8dd7c';
+} from './spanishdict-usage.js?v=b0bbe67f';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=cae8dd7c';
+} from './reverse-cues.js?v=b0bbe67f';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -48,7 +48,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=cae8dd7c';
+} from './card-metadata-pills.js?v=b0bbe67f';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -756,8 +756,6 @@ function fitPosSectionSummaries(root) {
     });
 }
 
-// A language's privileged region (Brazil, for Portuguese) is not one cue
-// among many: its flag leads the row, beside the information button.
 // Declared on the language's config entry, so the shared renderer stays
 // language-neutral and a new variety needs no code.
 function languagePrivilegedRegions() {
@@ -765,17 +763,36 @@ function languagePrivilegedRegions() {
     return Array.isArray(regions) ? regions : [];
 }
 
-function placeLeadingRegionFlags(root) {
-    root.querySelectorAll('.meaning-row').forEach(row => {
-        const flags = [...row.querySelectorAll('.sense-region-flag--leading')];
-        if (!flags.length) return;
-        flags.slice(1).forEach(el => el.remove());
-        const flag = flags[0];
+// Privileged cues lead a sense row, beside the information button: the
+// language's headline region (the Brazil flag, for Portuguese) and the word
+// the sense must be used with ("+de" on precisar de). They are not
+// sub-meanings, so they leave the cue area. The gloss stays centred: both
+// sides get the lead's width as padding.
+function placeRowLeadMarks(root) {
+    root.querySelectorAll('.meaning-row-regular').forEach(row => {
+        const flag = row.querySelector('.sense-region-flag--leading');
+        const companion = row.querySelector('.sense-companion-lead');
+        row.querySelectorAll('.sense-region-flag--leading').forEach(el => { if (el !== flag) el.remove(); });
+        if (!flag && !companion) return;
+        const lead = document.createElement('span');
+        lead.className = 'row-lead-marks';
+        if (flag) lead.append(flag);
+        if (companion) {
+            const cue = companion.closest('.sense-grammar-cue');
+            lead.append(companion);
+            if (cue && !cue.textContent.trim()) cue.remove();
+        }
         const info = row.querySelector(':scope > .sense-note-trigger');
-        if (info) info.after(flag);
-        else row.prepend(flag);
-        row.classList.add('has-leading-flag');
-        if (info) row.classList.add('has-leading-flag-and-info');
+        if (info) info.after(lead);
+        else row.prepend(lead);
+        row.classList.add('has-row-lead');
+        if (info) row.classList.add('has-row-lead-and-info');
+        const leftEdge = info ? 32 : 8;
+        const measured = lead.getBoundingClientRect().width
+            || (lead.textContent.length * 8 + (flag ? 22 : 0) + 12);
+        const pad = Math.max(38, Math.ceil(leftEdge + measured + 6));
+        row.style.setProperty('padding-left', `${pad}px`, 'important');
+        row.style.setProperty('padding-right', `${pad}px`, 'important');
     });
 }
 
@@ -6362,23 +6379,11 @@ function renderCardWikipediaBadge(card) {
         backHTML += `<div class="extra-translation-unavailable"><strong>No translation available yet.</strong><br>This one-off lyric remains available as corpus evidence.</div>`;
     }
 
-    // Multi-meaning cards keep a compact active-item view for large merged
-    // inventories; smaller and unmerged cards retain the full inline menu.
-    // Chain-child cards skip this entirely — renderPhraseChildHeader already
+    // Multi-meaning cards list their senses by lemma/POS section; every
+    // learner, signed in or not, sees the same menu. Chain-child cards skip this entirely — renderPhraseChildHeader already
     // rendered the expression/translation, and renderPhraseChildExample
     // (below) is a self-contained example panel, not a sense-row list.
     if (card.isMultiMeaning && !card.isChainChild) {
-        // Merged-lemma cards can carry a large learnable inventory (dictionary
-        // senses plus Expressions/clitics). Once that inventory grows beyond a
-        // small glanceable menu (eight or more senses — below that every
-        // section stays open), keep the ordinary card focused on the active
-        // item. The bottom knowledge-map button remains the explicit route to
-        // the complete list and can focus any other item directly.
-        const knowledgeItemCount = getCardKnowledgeItems(card).length;
-        const compactKnowledgeView = useLemmaMode
-            && currentUser && !currentUser.isGuest
-            && knowledgeItemCount >= ALL_SECTIONS_OPEN_BELOW_SENSE_ROWS;
-
         // Two POS-section maps:
         //   - scrollSections: regular meanings + SENSE_CYCLE (these scroll)
         //   - traySections: MWE + CLITIC (always visible, pinned below the
@@ -6760,8 +6765,7 @@ function renderCardWikipediaBadge(card) {
             }));
             return total + 1 + Math.max(1, visibleSenseKeys.size);
         }, 0);
-        const roomForInlineDetails = !compactKnowledgeView
-            && compactSectionRowCount <= autoOpenSectionRowLimit();
+        const roomForInlineDetails = compactSectionRowCount <= autoOpenSectionRowLimit();
 
         orderMeaningEntriesForDisplay(card.meanings).forEach(({ meaning: m, index: idx }) => {
             if (m.exampleOnly) return;
@@ -6809,7 +6813,6 @@ function renderCardWikipediaBadge(card) {
                 ? rawDisplayMeaning
                 : displaySenseGloss(m, rawDisplayMeaning, isSelected);
             if (isMWE) {
-                if (compactKnowledgeView && !isSelected) return;
                 // Expression row: plain bold expression (left), translation
                 // (middle), counter (right). The row tint already provides
                 // enough structure; an inner capsule only adds clutter.
@@ -6866,7 +6869,6 @@ function renderCardWikipediaBadge(card) {
                 </div>
                 `);
             } else if (isClitic) {
-                if (compactKnowledgeView && !isSelected) return;
                 // Clitic row mirrors expressions: plain bold form, translation,
                 // counter. The outer row already supplies grouping and color.
                 const activeClitic = m.allClitics ? m.allClitics[cliticIdx] : null;
@@ -6885,7 +6887,6 @@ function renderCardWikipediaBadge(card) {
                 </div>
                 `);
             } else if (isSenseCycle) {
-                if (compactKnowledgeView && !isSelected) return;
                 // Sense cycle row: all unassigned/remainder senses for this
                 // POS; the shared POS pill now lives in the header legend.
                 const cycleSenses = m.allSenses || [m];
@@ -7050,7 +7051,6 @@ function renderCardWikipediaBadge(card) {
                     //   ctx-axis:   varying trans | shared ctx
                     const anyMemberSelected = orderedMembers.some(mi => mi === currentMeaningIndex);
                     const groupIsCurrent = groupSelected || anyMemberSelected;
-                    if (compactKnowledgeView && !groupIsCurrent) return;
                     recordSectionMeanings(target, orderedMembers.map(i => card.meanings[i]));
                     const groupStateClasses = groupIsCurrent ? ' is-current-sense' : '';
                     const cardBg = 'rgba(var(--sense-match-rgb), 0.08)';
@@ -7257,7 +7257,6 @@ function renderCardWikipediaBadge(card) {
                     </div>
                     `);
                 } else {
-                    if (compactKnowledgeView && !isSelected) return;
                     recordSectionMeanings(target, [m]);
                     const foldInfo = singletonFoldLeaders.get(idx);
                     const isFoldedLeader = !!foldInfo;
@@ -7354,14 +7353,13 @@ function renderCardWikipediaBadge(card) {
             }, 0) + (groupInfo.has(key) ? 1 : 0),
             0
         );
-        const allSectionsFitInline = !compactKnowledgeView
-            && renderedSectionRowCount <= autoOpenSectionRowLimit();
+        const allSectionsFitInline = renderedSectionRowCount <= autoOpenSectionRowLimit();
         // A small card is one complete menu: with fewer than eight sense rows
         // every section stays open, even after a heading is tapped (tapping
         // still selects that group; it just no longer hides the others).
         const senseRowCount = renderedSectionRowCount
             - Array.from(scrollSections.keys()).filter(key => groupInfo.has(key)).length;
-        if (!compactKnowledgeView && senseRowCount < ALL_SECTIONS_OPEN_BELOW_SENSE_ROWS) {
+        if (senseRowCount < ALL_SECTIONS_OPEN_BELOW_SENSE_ROWS) {
             card._expandedPos = new Set(Array.from(scrollSections.keys()).filter(key => groupInfo.has(key)));
         } else if (!card._backSectionsManuallySet) {
             card._expandedPos = allSectionsFitInline
@@ -7919,7 +7917,7 @@ function renderCardWikipediaBadge(card) {
         window.sideDock?.beforeBackRender(card);
         renderedBack.innerHTML = backHTML;
         placeRowInformationButtons(renderedBack);
-        placeLeadingRegionFlags(renderedBack);
+        placeRowLeadMarks(renderedBack);
         arrangeSenseCueAreas(renderedBack);
         renderedBack._fluencyRenderedHTML = backHTML;
         bindGrammarPairChips(renderedBack);
@@ -9876,8 +9874,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'cae8dd7c';
-const MODALS_ASSET_VERSION = 'cae8dd7c';
+const ASSET_VERSION = 'b0bbe67f';
+const MODALS_ASSET_VERSION = 'b0bbe67f';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

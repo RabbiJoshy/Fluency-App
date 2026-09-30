@@ -1,10 +1,10 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=cae8dd7c';
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=cae8dd7c';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=cae8dd7c';
-import { dbGet, dbPut } from './offline-db.js?v=cae8dd7c';
-import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=cae8dd7c';
+import './state.js?v=b0bbe67f';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=b0bbe67f';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=b0bbe67f';
+import { dbGet, dbPut } from './offline-db.js?v=b0bbe67f';
+import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=b0bbe67f';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -13,7 +13,7 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=cae8dd7c';
+} from './sync-queue.js?v=b0bbe67f';
 
 const AUDIT_ACCOUNT_INITIALS = new Set(['JST', 'JSTA']);
 
@@ -1839,6 +1839,21 @@ function setupAuthEventListeners() {
             }
             submitLogin();
         }
+    });
+
+    // The note about the optional password appears once, on the first
+    // character typed, and hands focus straight back to the field.
+    const passwordNote = document.getElementById('authPasswordNote');
+    let passwordNoteShown = false;
+    document.getElementById('userPassword')?.addEventListener('input', (e) => {
+        if (passwordNoteShown || !passwordNote || !e.target.value) return;
+        passwordNoteShown = true;
+        passwordNote.hidden = false;
+        document.getElementById('authPasswordNoteOk')?.focus();
+    });
+    document.getElementById('authPasswordNoteOk')?.addEventListener('click', () => {
+        passwordNote.hidden = true;
+        document.getElementById('userPassword')?.focus();
     });
 
     // Enter key in password input
