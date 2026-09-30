@@ -3,6 +3,12 @@
 Setup and stats need id/word/rank for the whole deck. Senses and leftover
 menu leaves are only needed for the twenty cards in the active set. The
 monolith remains as a fallback for older clients.
+
+With ``slim=True`` row shards drop what the app never reads (``slim_index_row``):
+etymology and raw glosses, analysis bookkeeping ids, WSD count tables it does
+not use, and the second copy of provider metadata and specialist features that
+the release carries in two places. Nothing is added or renamed, so the app
+reads a slim row exactly as a full one; the monolith keeps everything.
 """
 
 from __future__ import annotations
@@ -13,6 +19,17 @@ from typing import Any
 
 
 MANIFEST_VERSION = "index-shards/v1"
+SLIM_MANIFEST_VERSION = "index-shards/v2"
+SLIM_ROW_FORMAT = "slim-index-row/v1"
+# Read by nothing in app/js (checked field by field); the audit copy is the
+# monolith and deck.json.
+_UNREAD_SENSE_FIELDS = ("menu_analysis_id", "source_sense_id")
+_UNREAD_METADATA_FIELDS = ("source_analysis_key", "source_edition")
+_UNREAD_SENSE_METADATA_FIELDS = ("coverage", "ignored", "unclassified")
+_UNREAD_PROVIDER_FIELDS = ("etymology_text", "raw_glosses")
+# vocab.js projectedSenseFrequency and the card model read only these.
+_READ_DISTRIBUTION_FIELDS = ("distribution_version", "denominator",
+                             "supported_leaf_counts", "supported_level_counts")
 COLUMNS_SCHEMA = "vocabulary-index-columns/v1"
 COLUMNS_NAME = "vocabulary.index.columns.json"
 SHARD_DIRECTORY = "vocabulary.index.rows"
@@ -66,7 +83,51 @@ def assigned_headword(meanings: Any) -> str:
     return first
 
 
-def shard_app_index(release_app_dir: Path) -> dict[str, Any]:
+def _slim_sense(sense: Any) -> Any:
+    if not isinstance(sense, dict):
+        return sense
+    sense = {key: value for key, value in sense.items() if key not in _UNREAD_SENSE_FIELDS}
+    metadata = sense.get("metadata")
+    if not isinstance(metadata, dict):
+        return sense
+    metadata = {key: value for key, value in metadata.items() if key not in _UNREAD_METADATA_FIELDS}
+    provider = metadata.get("sense_provider_metadata")
+    if isinstance(provider, dict):
+        provider = {k: v for k, v in provider.items() if k not in _UNREAD_PROVIDER_FIELDS}
+        metadata["sense_provider_metadata"] = provider
+    canonical = metadata.get("sense_metadata")
+    if isinstance(canonical, dict):
+        canonical = {k: v for k, v in canonical.items() if k not in _UNREAD_SENSE_METADATA_FIELDS}
+        source = canonical.get("source_metadata")
+        if isinstance(source, dict):
+            source = {k: v for k, v in source.items() if k not in _UNREAD_PROVIDER_FIELDS}
+            # Every reader tries sense_provider_metadata when this is absent.
+            if source == provider:
+                canonical.pop("source_metadata")
+            else:
+                canonical["source_metadata"] = source
+        # The pills concatenate both lists and drop repeats; one copy suffices.
+        if metadata.get("specialist_features") == canonical.get("features"):
+            metadata.pop("specialist_features", None)
+        metadata["sense_metadata"] = canonical
+    sense["metadata"] = metadata
+    return sense
+
+
+def slim_index_row(row: dict[str, Any]) -> dict[str, Any]:
+    """A row shard entry without the fields the app never reads."""
+
+    slim = dict(row)
+    for field in ("meanings", "unused_menu_senses"):
+        if isinstance(slim.get(field), list):
+            slim[field] = [_slim_sense(sense) for sense in slim[field]]
+    distribution = slim.get("wsd_distribution")
+    if isinstance(distribution, dict):
+        slim["wsd_distribution"] = {k: distribution[k] for k in _READ_DISTRIBUTION_FIELDS if k in distribution}
+    return slim
+
+
+def shard_app_index(release_app_dir: Path, *, slim: bool = False) -> dict[str, Any]:
     """Write columnar identity fields and one fat-row shard per study set."""
 
     app_dir = release_app_dir.expanduser().resolve()
@@ -137,7 +198,7 @@ def shard_app_index(release_app_dir: Path) -> dict[str, Any]:
                     missing += 1
                     continue
                 fat = {field: card[field] for field in FAT_FIELDS if field in card}
-                payload[app_id] = fat
+                payload[app_id] = slim_index_row(fat) if slim else fat
             filename = f"{set_id}.json"
             (shard_dir / filename).write_bytes(_json_bytes(payload))
             shards.append(
@@ -152,7 +213,7 @@ def shard_app_index(release_app_dir: Path) -> dict[str, Any]:
     if not shards:
         raise IndexShardError("study structure contains no sets")
     manifest = {
-        "manifest_version": MANIFEST_VERSION,
+        "manifest_version": SLIM_MANIFEST_VERSION if slim else MANIFEST_VERSION,
         "fallback": "vocabulary.index.json",
         "columns": COLUMNS_NAME,
         "fat_fields": list(FAT_FIELDS),
@@ -160,5 +221,7 @@ def shard_app_index(release_app_dir: Path) -> dict[str, Any]:
         "missing_cards": missing,
         "shards": shards,
     }
+    if slim:
+        manifest["row_format"] = SLIM_ROW_FORMAT
     (app_dir / MANIFEST_NAME).write_bytes(_json_bytes(manifest))
     return manifest

@@ -78,9 +78,10 @@ def step_plan(args, ws: Path, out: Path) -> int:
 
 def step_release(args, ws: Path, out: Path) -> int:
     import functools
-    from fluency.release import example_shards
-    # v21_runs imports shard_app_examples at call time, so this reaches it.
+    from fluency.release import example_shards, index_shards
+    # v21_runs imports both sharders at call time, so this reaches them.
     example_shards.shard_app_examples = functools.partial(example_shards.shard_app_examples, slim=True)
+    index_shards.shard_app_index = functools.partial(index_shards.shard_app_index, slim=True)
     v21_runs.SOURCES = {lang: (None, None, LIVE_RELEASE[lang]) for lang in RELEASE_ID}
     v21_runs.RELEASE_ID = RELEASE_ID
     v21_runs.RUNS_FILE = RUNS_FILE
