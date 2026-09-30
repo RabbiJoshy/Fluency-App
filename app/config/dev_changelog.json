@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-30T20:55:00+01:00",
+      "date": "2026-09-30 20:55 BST",
+      "agent": "Claude",
+      "summary": "Speech cards now really show up to 30 examples (about 29 per card), from example files about 4x smaller.",
+      "detail": [
+        "Selection no longer stops at the easier two thirds of a card's sentences: it fills the remaining slots from the rest, after them. Cards went from about 21 examples to about 29 (Portuguese 'para': 17 to 24).",
+        "Example shards are slim (example-shards/v2): only the fields the app reads, with each source's shared attribution, licence and URL stored once. Portuguese examples: 475 MB to 110 MB; each study set downloads about 2.7x less.",
+        "The app expands slim records back to the full shape as each shard loads (vocab.js), so cards, credits, report details and example ranking are unchanged. Older releases still load as before.",
+        "Releases: es/pt/cs-speech-v21-10000x30-slim and fi-speech-v21-2000x30-slim."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-30T18:40:00+01:00",
       "date": "2026-09-30 18:40 BST",
       "agent": "Claude",
