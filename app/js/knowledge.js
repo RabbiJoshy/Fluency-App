@@ -1,8 +1,8 @@
 // Granular sense / expression knowledge layered over whole-card progress.
 // Whole-card answers are the baseline; only explicit row-level answers create
 // ItemProgress records. The newest card-level or item-level event wins.
-import './state.js?v=09b5c77f';
-import { sendOrQueue } from './sync-queue.js?v=09b5c77f';
+import './state.js?v=87f0c601';
+import { sendOrQueue } from './sync-queue.js?v=87f0c601';
 
 const KNOWLEDGE_SCHEMA_VERSION = 1;
 
@@ -765,6 +765,7 @@ function ensureKnowledgeOverviewModal() {
                 <h2 id="knowledgeOverviewTitle">Meanings</h2>
                 <button type="button" class="knowledge-overview-close" aria-label="Close" onclick="closeKnowledgeOverview(event)">×</button>
             </header>
+            <p class="knowledge-overview-hint">✓ the meanings you already know; × the ones you want to practise.</p>
             <div id="knowledgeOverviewSummary" class="knowledge-overview-summary"></div>
             <div id="knowledgeOverviewList" class="knowledge-overview-list"></div>
             <div class="knowledge-overview-footer" style="display: flex; justify-content: flex-end; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-color, rgba(255,255,255,0.1));">

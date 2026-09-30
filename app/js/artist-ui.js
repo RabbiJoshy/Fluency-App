@@ -1,4 +1,4 @@
-import './state.js?v=09b5c77f';
+import './state.js?v=87f0c601';
 
 // Per-artist default album art, keyed by slug (for multi-artist fallback)
 const artistDefaultArt = {};

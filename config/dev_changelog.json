@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-01T01:10:00+01:00",
+      "date": "2026-10-01 01:10 BST",
+      "agent": "Claude",
+      "summary": "Smart Skip leads with its two main shortcuts: ones that are on open with their example, the rest wait behind '+ More skip options'; 'Study these' is admin-only; the meanings overview gets one line on how to use it.",
+      "detail": [
+        "A shortcut that is on opens showing what it skips ('Words you can already read, like hotel.'); one that is off stays folded. Tapping a name still opens or closes it by hand for that visit.",
+        "Pronouns & particles, slang & fillers and names are hidden behind '+ More skip options' unless one of them is on.",
+        "'Study these' on skipped levels shows only for admin accounts; the code is kept.",
+        "Meanings overview: '✓ the meanings you already know; × the ones you want to practise.' under the word (wording approved by Josh)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-01T00:55:00+01:00",
       "date": "2026-10-01 00:55 BST",
       "agent": "Claude",

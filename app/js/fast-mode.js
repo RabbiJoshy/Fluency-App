@@ -16,8 +16,8 @@
 // Applies to Speech and Lyrics alike. A language whose release supports only one
 // of the two parts still gets fast mode — it just moves the part it has, and the
 // page says which part is missing.
-import './state.js?v=09b5c77f';
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=09b5c77f';
+import './state.js?v=87f0c601';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=87f0c601';
 
 let applyingMasterSwitch = false;
 let returnToSettings = false;
@@ -109,6 +109,8 @@ function applyFastMode(on) {
     setTimeout(refresh, 0);
 }
 
+let moreSkipOptionsOpen = false;
+
 function refresh() {
     const wrapper = document.getElementById('setupOptions');
     if (!wrapper) return;
@@ -127,10 +129,19 @@ function refresh() {
     // A shortcut is listed only where it can do something: look-alikes and
     // combined forms need the release's mapping, the other three need at least
     // one word of their kind in this deck.
+    // The two main shortcuts always show. The others sit behind "More skip
+    // options" until the learner opens it or turns one of them on.
+    let hiddenExtras = 0;
     for (const kind of ['grammar', 'slang', 'entity']) {
         const container = document.getElementById(`${kind}ToggleContainer`);
-        if (container) container.style.display = (extras.potential?.[kind] || 0) > 0 ? 'block' : 'none';
+        if (!container) continue;
+        const available = (extras.potential?.[kind] || 0) > 0;
+        const shown = available && (moreSkipOptionsOpen || shortcutOn(kind));
+        if (available && !shown) hiddenExtras++;
+        container.style.display = shown ? 'block' : 'none';
     }
+    const moreButton = document.getElementById('smartSkipMoreOptions');
+    if (moreButton) moreButton.hidden = hiddenExtras === 0;
 
     const counts = {
         cognate: extras.cognates?.length || 0,
@@ -143,6 +154,14 @@ function refresh() {
         const active = shortcutOn(kind);
         const toggle = document.querySelector(`[data-ss-toggle="${kind}"]`);
         if (toggle) toggle.setAttribute('aria-checked', String(active));
+        // A shortcut that is on shows what it skips; one that is off stays
+        // folded — until the learner opens or closes it themselves.
+        const shortcut = toggle?.closest('.smart-skip-shortcut');
+        const detail = shortcut?.querySelector('.smart-skip-shortcut-detail');
+        if (detail && !shortcut.dataset.userExpanded) {
+            detail.hidden = !active;
+            shortcut.querySelector('.smart-skip-shortcut-name')?.setAttribute('aria-expanded', String(active));
+        }
         const count = document.querySelector(`[data-ss-count="${kind}"]`);
         if (count) {
             const n = counts[kind];
@@ -399,6 +418,9 @@ function updateKnownLanguageCopy() {
 function openFastModePage({ section } = {}) {
     returnToSettings = !document.getElementById('settingsModal')?.classList.contains('hidden');
     markFastTrackPageSeen();
+    // Each visit starts from the defaults: open what is on, fold the rest.
+    moreSkipOptionsOpen = false;
+    document.querySelectorAll('.smart-skip-shortcut').forEach(el => { delete el.dataset.userExpanded; });
     refresh();
     updateStreamlineLanguageExamples();
     globalThis.renderFastTrackSkippedDecks?.();
@@ -475,11 +497,17 @@ function init() {
     });
     document.querySelectorAll('.smart-skip-shortcut-name').forEach(name => {
         name.addEventListener('click', () => {
-            const detail = name.closest('.smart-skip-shortcut')?.querySelector('.smart-skip-shortcut-detail');
+            const shortcut = name.closest('.smart-skip-shortcut');
+            const detail = shortcut?.querySelector('.smart-skip-shortcut-detail');
             if (!detail) return;
             detail.hidden = !detail.hidden;
+            shortcut.dataset.userExpanded = '1';
             name.setAttribute('aria-expanded', String(!detail.hidden));
         });
+    });
+    document.getElementById('smartSkipMoreOptions')?.addEventListener('click', () => {
+        moreSkipOptionsOpen = true;
+        refresh();
     });
 
     document.querySelectorAll('.grammar-toggle-btn').forEach(btn => {

@@ -15,7 +15,7 @@
 // module reads the same state the filter used and reports what it discarded.
 // That keeps one source of truth for the rules: if the filter changes, this
 // follows without edits.
-import './state.js?v=09b5c77f';
+import './state.js?v=87f0c601';
 
 // Every name below is read off globalThis rather than as a bare identifier.
 // state.js defines these lazily via defineProperty, and this module can run
@@ -762,7 +762,10 @@ function smartSkipLevelHtml(level, index) {
     const count = level.entries.length;
     const unit = isLemma ? (count === 1 ? 'card' : 'cards') : (count === 1 ? 'word' : 'words');
     const study = isLemma ? ''
-        : `<button type="button" class="smart-skip-study" data-ss-level="${index}">Study these</button>`;
+        : (window.isAuditAccount?.()
+            // Admin only for now: loading a skipped level as a set confused
+            // learners more than it helped.
+            ? `<button type="button" class="smart-skip-study" data-ss-level="${index}">Study these</button>` : '');
     return `<li class="smart-skip-group" data-ss-group="${index}">
         <div class="smart-skip-level"><b>${escapeHtml(level.label)}</b><span>${count.toLocaleString()} ${unit}</span>${study}</div>
         <ul class="smart-skip-group-rows"></ul>

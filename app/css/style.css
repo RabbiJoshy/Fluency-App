@@ -22271,5 +22271,26 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 }
 .sense-note-overlay.is-anchored .sense-note-dialog { border-radius: 14px; }
 .knowledge-overview-summary[hidden] { display: none !important; }
+.knowledge-overview-hint {
+    margin: -2px 12px 10px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    line-height: 1.4;
+}
 /* The footer's button sat flush against the sheet's right edge on phones. */
 .knowledge-overview-footer { padding: 12px 12px 12px !important; }
+
+/* Smart Skip: the folded shortcuts behind one quiet button. */
+.smart-skip-more-options {
+    align-self: flex-start;
+    margin: 2px 0 4px;
+    padding: 8px 14px;
+    border: 0;
+    background: none;
+    color: var(--text-secondary);
+    font: 600 14px/1.2 var(--font-reading);
+    cursor: pointer;
+}
+.smart-skip-more-options:hover,
+.smart-skip-more-options:focus-visible { color: var(--text-primary); }
+.smart-skip-more-options[hidden] { display: none !important; }
