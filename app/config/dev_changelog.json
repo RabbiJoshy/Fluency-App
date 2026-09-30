@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-30T16:45:00+01:00",
+      "date": "2026-09-30 16:45 BST",
+      "agent": "Claude",
+      "summary": "Sense rows no longer print paragraph-long contexts or glosses (Portuguese articles, conjunctions, ser).",
+      "detail": [
+        "The line under a gloss is capped again: repeated clauses fold, dictionary preambles compact ('known from context/shared knowledge'), and anything longer moves to the ⓘ note. 'o/a/os/as' went from ~300 characters to 'the' plus a short key.",
+        "Glosses over 72 characters are shortened the same way, whatever the selection.",
+        "Two senses with the same translation are told apart by a short key ('because' + 'introduces a reason') or a clipped bracket, never the whole definition.",
+        "Grammar words keep only short brackets ('in (wearing)')."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-30T16:05:00+01:00",
       "date": "2026-09-30 16:05 BST",
       "agent": "Claude",

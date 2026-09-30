@@ -1,35 +1,35 @@
 // First: rewrites old ?artist=/?about= links to their #/ route before
 // anything below reads the address.
-import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=b0bbe67f';
-import { releaseUrl } from './release-host.js?v=b0bbe67f';
-import './theme.js?v=b0bbe67f';
-import { installFlagRendering } from './flags.js?v=b0bbe67f';
-import './state.js?v=b0bbe67f';
-import './offline-db.js?v=b0bbe67f';
-import './sync-queue.js?v=b0bbe67f';
-import { initOfflineContent } from './offline-content.js?v=b0bbe67f';
-import './speech.js?v=b0bbe67f';
-import './artist-ui.js?v=b0bbe67f';
-import './auth.js?v=b0bbe67f';
-import './tutorial.js?v=b0bbe67f';
-import './walkthrough.js?v=b0bbe67f';
-import './estimation.js?v=b0bbe67f';
-import './config.js?v=b0bbe67f';
-import './progress.js?v=b0bbe67f';
-import './knowledge.js?v=b0bbe67f';
-import './ui.js?v=b0bbe67f';
-import './vocab.js?v=b0bbe67f';
-import './cognates.js?v=b0bbe67f';
-import './coverage.js?v=b0bbe67f';
-import './fast-mode.js?v=b0bbe67f';
-import './extras.js?v=b0bbe67f';
-import './review-home.js?v=b0bbe67f';
-import './song-sets.js?v=b0bbe67f';
-import './playlist-live.js?v=b0bbe67f';
-import './spotify-playlist-import.js?v=b0bbe67f';
-import './vocabulary-import.js?v=b0bbe67f';
-import './flashcards.js?v=b0bbe67f';
-import { validateArtistCatalog } from './data-contracts.js?v=b0bbe67f';
+import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=da4e458a';
+import { releaseUrl } from './release-host.js?v=da4e458a';
+import './theme.js?v=da4e458a';
+import { installFlagRendering } from './flags.js?v=da4e458a';
+import './state.js?v=da4e458a';
+import './offline-db.js?v=da4e458a';
+import './sync-queue.js?v=da4e458a';
+import { initOfflineContent } from './offline-content.js?v=da4e458a';
+import './speech.js?v=da4e458a';
+import './artist-ui.js?v=da4e458a';
+import './auth.js?v=da4e458a';
+import './tutorial.js?v=da4e458a';
+import './walkthrough.js?v=da4e458a';
+import './estimation.js?v=da4e458a';
+import './config.js?v=da4e458a';
+import './progress.js?v=da4e458a';
+import './knowledge.js?v=da4e458a';
+import './ui.js?v=da4e458a';
+import './vocab.js?v=da4e458a';
+import './cognates.js?v=da4e458a';
+import './coverage.js?v=da4e458a';
+import './fast-mode.js?v=da4e458a';
+import './extras.js?v=da4e458a';
+import './review-home.js?v=da4e458a';
+import './song-sets.js?v=da4e458a';
+import './playlist-live.js?v=da4e458a';
+import './spotify-playlist-import.js?v=da4e458a';
+import './vocabulary-import.js?v=da4e458a';
+import './flashcards.js?v=da4e458a';
+import { validateArtistCatalog } from './data-contracts.js?v=da4e458a';
 
 // Emoji flags anywhere on the page render as rectangular pictures.
 installFlagRendering();
@@ -87,7 +87,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
 const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
-    ? import('./spotify.js?v=b0bbe67f').catch(error => {
+    ? import('./spotify.js?v=da4e458a').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })
@@ -1709,7 +1709,7 @@ function spotifyStatusElement() {
         el.type = 'button';
         el.addEventListener('click', async event => {
             event.stopPropagation();
-            await (_spotifyModulePromise || import('./spotify.js?v=b0bbe67f')).catch(() => null);
+            await (_spotifyModulePromise || import('./spotify.js?v=da4e458a')).catch(() => null);
             window.spotifyLogin?.();
         });
     }
