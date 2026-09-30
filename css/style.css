@@ -22268,3 +22268,10 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
     border-top: 0 !important;
 }
 .sense-note-subsense .sense-note-section h3 { margin-top: 6px; }
+.meaning-row .sense-cue-bare {
+    display: inline-flex;
+    flex: 0 0 auto;
+    width: auto !important;
+    align-items: center;
+    gap: 4px;
+}
