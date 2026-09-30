@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-01T00:05:00+01:00",
+      "date": "2026-10-01 00:05 BST",
+      "agent": "Claude",
+      "summary": "Senses resting on under 10% of a word's example sentences move from the card to Rarer uses, with their sentences; search cards now show the same percentages as study cards.",
+      "detail": [
+        "A sense needs at least 10% of the card's WSD-assigned sentences (about 3 of 30) to sit on the main card; near-synonym senses count together. Below that it is listed under Rarer uses with up to three of its sentences, so one-off WSD slips (que 'how') stop showing as real meanings.",
+        "Cards opened from search, word links (#/pt/w/que) and lyric tokens now divide shares by the assigned sentences, like study cards. They divided by every harvested sentence, so 'que' 'what' read 9% instead of 32%.",
+        "Those cards also list the word's unused dictionary senses under Rarer uses, which they previously dropped.",
+        "Rarer uses shows up to three sentences per sense instead of one."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-30T22:10:00+01:00",
       "date": "2026-09-30 22:10 BST",
       "agent": "Claude",

@@ -75,6 +75,9 @@ function projectInspectableMeaning(m, exampleTargetField, exampleEnglishField) {
     if (m.metadata) meaning.metadata = m.metadata;
     if (m.allSenses) meaning.allSenses = m.allSenses;
     if (m.cycle_pos) meaning.cycle_pos = m.cycle_pos;
+    if (m.sense_id || m.id) meaning.senseId = m.sense_id || m.id;
+    if (m.canonical_example) meaning.canonicalExample = m.canonical_example;
+    if (Array.isArray(m.regions) && m.regions.length) meaning.regions = [...m.regions];
     return meaning;
 }
 
@@ -831,6 +834,9 @@ function navigateToVocabCard(tokenIndex) {
         projectInspectableMeaning(m, exampleTargetField, exampleEnglishField)
     );
 
+    const finishedMenu = window.finishCardMeanings?.(vocabEntry, meanings);
+    if (finishedMenu) meanings.splice(0, meanings.length, ...finishedMenu.meanings);
+
     // Synthesize MWE / CLITIC / SENSE_CYCLE meanings, mirroring
     // loadVocabularyData. The popup paths previously skipped this and so
     // never showed MWEs on cards reached via lyric-token click-through.
@@ -849,6 +855,7 @@ function navigateToVocabCard(tokenIndex) {
         rank: vocabEntry.rank || 0,
         corpusCount: vocabEntry.corpus_count || null,
         meanings: meanings,
+        unusedMenuSenses: finishedMenu?.unusedMenuSenses || [],
         translation: meanings.length > 0 ? meanings[0].meaning : '',
         targetSentence: firstExample.targetSentence,
         englishSentence: firstExample.englishSentence,
@@ -994,6 +1001,8 @@ async function popupFoundWord(entry, opts) {
         const meanings = sourceMeanings.map(m =>
             projectInspectableMeaning(m, exampleTargetField, exampleEnglishField)
         );
+        const finishedMenu = window.finishCardMeanings?.(vocabEntry, meanings);
+        if (finishedMenu) meanings.splice(0, meanings.length, ...finishedMenu.meanings);
 
         // A searchable source entry can legitimately have corpus examples but
         // no usable translation or artist-matched sense. Keep it inspectable:
@@ -1083,6 +1092,7 @@ async function popupFoundWord(entry, opts) {
             rank: vocabEntry.rank || 0,
             corpusCount: vocabEntry.corpus_count || null,
             meanings: meanings,
+            unusedMenuSenses: finishedMenu?.unusedMenuSenses || [],
             translation: meanings.length > 0 ? meanings[0].meaning : '',
             targetSentence: firstExample.targetSentence,
             englishSentence: firstExample.englishSentence,
@@ -1263,6 +1273,9 @@ function peekHomograph(siblingId) {
         projectInspectableMeaning(m, exampleTargetField, exampleEnglishField)
     );
 
+    const finishedMenu = window.finishCardMeanings?.(vocabEntry, meanings);
+    if (finishedMenu) meanings.splice(0, meanings.length, ...finishedMenu.meanings);
+
     const firstExample = meanings.length > 0
         ? { targetSentence: meanings[0].targetSentence, englishSentence: meanings[0].englishSentence }
         : { targetSentence: '', englishSentence: '' };
@@ -1276,6 +1289,7 @@ function peekHomograph(siblingId) {
         rank: vocabEntry.rank || 0,
         corpusCount: vocabEntry.corpus_count || null,
         meanings: meanings,
+        unusedMenuSenses: finishedMenu?.unusedMenuSenses || [],
         translation: meanings.length > 0 ? meanings[0].meaning : '',
         targetSentence: firstExample.targetSentence,
         englishSentence: firstExample.englishSentence,

@@ -1,26 +1,26 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=78fa16e8';
-import './speech.js?v=78fa16e8';
-import { goToRoute, routeCodeFor } from './routes.js?v=78fa16e8';
-import './side-dock.js?v=78fa16e8';
+import './state.js?v=c931a393';
+import './speech.js?v=c931a393';
+import { goToRoute, routeCodeFor } from './routes.js?v=c931a393';
+import './side-dock.js?v=c931a393';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=78fa16e8';
+} from './example-personalisation.js?v=c931a393';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=78fa16e8';
+} from './spanishdict-usage.js?v=c931a393';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=78fa16e8';
+} from './reverse-cues.js?v=c931a393';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -48,7 +48,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=78fa16e8';
+} from './card-metadata-pills.js?v=c931a393';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -3904,7 +3904,10 @@ function collectRareSenseItems(card) {
             pos: q.pos || '',
             translation: trans,
             context: q.context || '',
-            examples: ex.length > 0 ? ex : (q.canonicalExample ? [q.canonicalExample] : [])
+            examples: [
+                ...(ex.length > 0 ? ex : (q.canonicalExample ? [q.canonicalExample] : [])),
+                ...(q.allExamples || []),
+            ]
         });
     }
 
@@ -3927,7 +3930,12 @@ function collectRareSenseItems(card) {
                 pos: unused.pos || '',
                 translation: trans,
                 context: unused.context || '',
-                examples: ex.length > 0 ? ex : (unused.canonicalExample ? [unused.canonicalExample] : [])
+                // A low-share sense moved off the main card keeps its corpus
+                // sentences; an unused menu sense has none.
+                examples: [
+                    ...(ex.length > 0 ? ex : (unused.canonicalExample ? [unused.canonicalExample] : [])),
+                    ...(unused.allExamples || []),
+                ]
             });
         }
     }
@@ -4511,10 +4519,14 @@ function compactPhraseExampleHTML(example, posAccentRgb) {
         </div>`;
 }
 
+const RARE_SENSE_EXAMPLE_LIMIT = 3;
+
 function rareSenseLeafHTML(item, posAccentRgb, { hideGloss = false, hideContext = false } = {}) {
     const gloss = item.translation || item.expression || '';
-    const example = (item.examples || [])[0];
-    const exampleHTML = compactPhraseExampleHTML(example, posAccentRgb);
+    // A handful, not one: a sense here may rest on two or three corpus lines,
+    // and those are what show whether it belongs on the card at all.
+    const exampleHTML = (item.examples || []).slice(0, RARE_SENSE_EXAMPLE_LIMIT)
+        .map(example => compactPhraseExampleHTML(example, posAccentRgb)).join('');
     const glossHTML = (!hideGloss && gloss)
         ? `<div class="other-uses-gloss">${escapeCardText(gloss)}</div>` : '';
     const ctxHTML = (!hideContext && item.context)
@@ -9877,8 +9889,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '78fa16e8';
-const MODALS_ASSET_VERSION = '78fa16e8';
+const ASSET_VERSION = 'c931a393';
+const MODALS_ASSET_VERSION = 'c931a393';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
