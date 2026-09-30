@@ -1,26 +1,26 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=328c1ccd';
-import './speech.js?v=328c1ccd';
-import { goToRoute, routeCodeFor } from './routes.js?v=328c1ccd';
-import './side-dock.js?v=328c1ccd';
+import './state.js?v=098f25de';
+import './speech.js?v=098f25de';
+import { goToRoute, routeCodeFor } from './routes.js?v=098f25de';
+import './side-dock.js?v=098f25de';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=328c1ccd';
+} from './example-personalisation.js?v=098f25de';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=328c1ccd';
+} from './spanishdict-usage.js?v=098f25de';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=328c1ccd';
+} from './reverse-cues.js?v=098f25de';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -50,7 +50,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=328c1ccd';
+} from './card-metadata-pills.js?v=098f25de';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -6822,6 +6822,11 @@ function renderCardWikipediaBadge(card) {
         const displayEntries = orderMeaningEntriesForDisplay(card.meanings)
             .map(entry => ({ ...entry, section: sectionShare.get(sectionKeyOf(entry.meaning)) || 0, share: rowShare(entry.index) }))
             .sort((a, b) => (b.section - a.section) || (b.share - a.share) || (a.index - b.index));
+        // The rows exactly as the card shows them — order, family heading,
+        // sub-row label — so the meanings overview lists the same thing.
+        const senseDisplay = new Map();
+        card._senseDisplay = senseDisplay;
+        const recordSenseDisplay = (index, entry) => senseDisplay.set(index, { order: senseDisplay.size, ...entry });
         displayEntries.forEach(({ meaning: m, index: idx }) => {
             if (m.exampleOnly) return;
             if (singletonFoldFollowers.has(idx)) return;
@@ -7009,6 +7014,7 @@ function renderCardWikipediaBadge(card) {
                 const informationButton = overflowTranslations.length || cycleWasShortened
                     ? `<button type="button" class="sense-note-trigger" aria-haspopup="dialog" onclick="openSenseNote(event, this)" aria-label="Information about possible meanings" title="Information about possible meanings"><span aria-hidden="true">i</span></button><template class="sense-note-template"><div class="sense-note-copy" data-sense-note-title="Possible meanings"><section class="sense-note-section sense-note-section--meaning"><h3>All possibilities</h3><p>${escapeCardText(cycleNoteText)}</p></section></div></template>`
                     : '';
+                recordSenseDisplay(idx, { family: '', label: '', detail: '', hidden: false });
                 const cycleTextClass = adaptiveRowTextClass(joinedFull);
                 recordSectionMeanings(target, m.allSenses || [m]);
                 target.push(`
@@ -7214,6 +7220,18 @@ function renderCardWikipediaBadge(card) {
                         }
                     }
 
+                    const familyText = String(sharedText || '').replace(/<[^>]*>/g, '').replace(/&quot;/g, '"').trim();
+                    for (const entry of displayMemberEntries) {
+                        const label = [entry.extra, entry.context].filter(Boolean).join(' · ') || 'general use';
+                        for (const memberIdx of entry.memberIndices) {
+                            recordSenseDisplay(memberIdx, {
+                                family: isTransAxis ? familyText : '',
+                                label: isTransAxis ? label : '',
+                                detail: '',
+                                hidden: memberIdx !== entry.representative,
+                            });
+                        }
+                    }
                     const groupKnown = orderedMembers.every(index => card.meanings[index]?.isKnownSense);
                     const memberCells = displayMemberEntries.map((entry, rowIdx) => {
                         const memberIdx = entry.representative;
@@ -7451,6 +7469,10 @@ function renderCardWikipediaBadge(card) {
                         }
                     }
 
+                    recordSenseDisplay(idx, { family: '', label: visibleMeaning, detail: cleanedContext || '', hidden: false });
+                    for (const followerIdx of foldInfo?.allIndices || []) {
+                        if (followerIdx !== idx) recordSenseDisplay(followerIdx, { family: '', label: visibleMeaning, detail: '', hidden: true });
+                    }
                     const singletonTextClass = adaptiveRowTextClass(collocationHTML ? `${collocationHTML} ${visibleMeaning}` : visibleMeaning, cleanedContext || differentiator?.label || '');
                     const useProminenceLabels = (typeof senseProminenceMode !== 'undefined' ? senseProminenceMode : globalThis.state?.senseProminenceMode) !== 'percentages';
                     const clusterInfo = glossProminence.infoByIndex.get(idx);
@@ -10020,8 +10042,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '328c1ccd';
-const MODALS_ASSET_VERSION = '328c1ccd';
+const ASSET_VERSION = '098f25de';
+const MODALS_ASSET_VERSION = '098f25de';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

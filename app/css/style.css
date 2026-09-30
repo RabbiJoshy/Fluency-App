@@ -22256,3 +22256,18 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
     font-weight: 500;
     line-height: 1.3;
 }
+
+/* Meanings overview: a card family row's heading, its sub-senses beneath. */
+.knowledge-overview-family {
+    margin: 8px 0 4px;
+    color: var(--text-primary);
+    font: 650 14px/1.3 var(--font-reading);
+}
+.knowledge-overview-rows.is-family { padding-left: 12px; }
+/* Phone: the sense note sits by its ⓘ button rather than at the bottom. */
+.sense-note-overlay.is-anchored {
+    align-items: flex-start !important;
+    padding-top: 0 !important;
+}
+.sense-note-overlay.is-anchored .sense-note-dialog { border-radius: 14px; }
+.knowledge-overview-summary[hidden] { display: none !important; }
