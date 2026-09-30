@@ -2,7 +2,7 @@
  "schema": "merge-exceptions/v2",
  "language": "pt",
  "source": "wiktionary:enwiktionary-2026-08-20/kaikki.org-dictionary-Portuguese.jsonl",
- "release_id": "pt-speech-v21-10000x10",
+ "release_id": "pt-speech-v21-10000x30",
  "contractions": [
   "ajudá-lo",
   "ao",

@@ -2,7 +2,7 @@
  "schema": "merge-exceptions/v2",
  "language": "fi",
  "source": "wiktionary:enwiktionary-2026-09-26/kaikki.org-dictionary-Finnish.jsonl.gz",
- "release_id": "fi-speech-v21-2000x10",
+ "release_id": "fi-speech-v21-2000x30",
  "contractions": [
   "ehkei",
   "ehkeivät",

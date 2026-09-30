@@ -2,7 +2,7 @@
  "schema": "merge-exceptions/v2",
  "language": "es",
  "source": null,
- "release_id": "es-speech-v21-10000x10",
+ "release_id": "es-speech-v21-10000x30",
  "contractions": [],
  "keys": {
   "que": "que",
