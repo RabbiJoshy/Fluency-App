@@ -2,7 +2,7 @@
  "schema": "merge-exceptions/v2",
  "language": "cs",
  "source": "wiktionary:enwiktionary-2026-09-06/kaikki.org-dictionary-Czech.jsonl",
- "release_id": "cs-speech-v21-10000x30",
+ "release_id": "cs-speech-v21-10000x30-slim",
  "contractions": [
   "-s",
   "doň",

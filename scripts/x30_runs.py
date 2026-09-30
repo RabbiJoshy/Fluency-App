@@ -10,6 +10,11 @@ run behind the live release, and only selection and the release are rebuilt.
     python scripts/x30_runs.py --step plan      # new runs, stages 01-04 carried
     python scripts/x30_runs.py --step release   # inactive candidates, validated, sharded
 
+The first x30 build showed ~21 per card: selection kept only the lower two
+thirds of each pool by burden. Selection now fills from the rest after those,
+and shards are slim (example-shards/v2), so this second set of runs is
+published as <release>-slim.
+
 Nothing is activated or published.
 """
 
@@ -27,9 +32,10 @@ sys.path.insert(0, str(REPO / "scripts"))
 import v21_runs  # noqa: E402
 
 DISPLAY = 30
-RUNS_FILE = "x30-runs.json"
+RUNS_FILE = "x30-slim-runs.json"
 LIVE_RELEASE = {lang: f"{lang}/speech/{rid}" for lang, rid in v21_runs.RELEASE_ID.items()}
-RELEASE_ID = {lang: rid.replace("x10", f"x{DISPLAY}") for lang, rid in v21_runs.RELEASE_ID.items()}
+RELEASE_ID = {lang: rid.replace("x10", f"x{DISPLAY}") + "-slim"
+              for lang, rid in v21_runs.RELEASE_ID.items()}
 STAGES = ("01_inventory", "02_sense_menu", "03_sentence_harvest", "04_wsd_assignments")
 
 
@@ -71,6 +77,10 @@ def step_plan(args, ws: Path, out: Path) -> int:
 
 
 def step_release(args, ws: Path, out: Path) -> int:
+    import functools
+    from fluency.release import example_shards
+    # v21_runs imports shard_app_examples at call time, so this reaches it.
+    example_shards.shard_app_examples = functools.partial(example_shards.shard_app_examples, slim=True)
     v21_runs.SOURCES = {lang: (None, None, LIVE_RELEASE[lang]) for lang in RELEASE_ID}
     v21_runs.RELEASE_ID = RELEASE_ID
     v21_runs.RUNS_FILE = RUNS_FILE

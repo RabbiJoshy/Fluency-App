@@ -378,19 +378,25 @@ def build_inactive_run_candidate(
         )
         # Band, then rank on form. See _form_penalty: burden is a ceiling here,
         # not an ordering, so a sentence is never chosen merely for being cheap.
+        # The band orders, it does not exclude: a card showing more examples
+        # than its lower two thirds hold fills from the denser third, after
+        # every banded sentence, so the first slots are unchanged.
         ceiling = _burden_ceiling(pool) if pool else 0.0
         banded = [item for item in pool if item["metrics"]["score"] <= ceiling] or pool
-        ranked = sorted(
-            banded,
-            key=lambda item: (
+        dense = [item for item in pool if item not in banded]
+
+        def form_order(item):
+            return (
                 _form_penalty(
                     (sentences.get(item["sentence_id"]) or {}).get("target", {}).get("text", ""),
                     common_words=common_words,
                 ),
                 item["metrics"]["score"],
                 item["sentence_id"],
-            ),
-        )
+            )
+
+        tiers = (sorted(banded, key=form_order), sorted(dense, key=form_order))
+        ranked = [item for tier in tiers for item in tier]
         # Take the best of each distinct example rather than the best `limit`
         # rows, which would spend all three slots on one sentence's variants.
         # A subtitle row is a unit of display, not of language: it often carries a
@@ -426,10 +432,15 @@ def build_inactive_run_candidate(
         # Pass 1 and 2 take the best-formed example of each unseen sense; 3 and
         # 4 fill any remaining slots. An unassigned candidate has no sense to
         # spread, so it waits for the filling passes rather than blocking one.
-        for phase, strict in ((True, True), (True, False), (False, True), (False, False)):
+        passes_in_order = [
+            (tier, phase, strict)
+            for tier in tiers
+            for phase, strict in ((True, True), (True, False), (False, True), (False, False))
+        ]
+        for tier, phase, strict in passes_in_order:
             if len(selected) == limit:
                 break
-            for item in ranked:
+            for item in tier:
                 if phase:
                     sense = sense_of.get(item["sentence_id"])
                     if sense is None or sense in covered:

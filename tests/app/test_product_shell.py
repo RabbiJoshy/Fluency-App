@@ -128,15 +128,15 @@ class ProductShellTests(unittest.TestCase):
         self.assertEqual(config["languages"]["portuguese_brazilian"]["speechLang"], "pt-BR")
         self.assertEqual(
             config["languages"]["spanish"]["studyStructurePath"],
-            "releases/es/speech/es-speech-v21-10000x30/app/study-structure.json",
+            "releases/es/speech/es-speech-v21-10000x30-slim/app/study-structure.json",
         )
         self.assertEqual(
             config["languages"]["spanish"]["releaseManifestPath"],
-            "releases/es/speech/es-speech-v21-10000x30/manifest.json",
+            "releases/es/speech/es-speech-v21-10000x30-slim/manifest.json",
         )
         self.assertEqual(
             config["languages"]["spanish"]["releaseCompositionPath"],
-            "releases/es/speech/es-speech-v21-10000x30/composition.json",
+            "releases/es/speech/es-speech-v21-10000x30-slim/composition.json",
         )
         for legacy_path in (
             "conjugatedEnglishPath",
@@ -149,7 +149,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertEqual(
             config["languages"]["portuguese"]["indexPath"],
-            "releases/pt/speech/pt-speech-v21-10000x30/app/vocabulary.index.json",
+            "releases/pt/speech/pt-speech-v21-10000x30-slim/app/vocabulary.index.json",
         )
         self.assertEqual(
             config["languages"]["portuguese"]["conjugationsPath"],
@@ -157,7 +157,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertEqual(
             config["languages"]["czech"]["indexPath"],
-            "releases/cs/speech/cs-speech-v21-10000x30/app/vocabulary.index.json",
+            "releases/cs/speech/cs-speech-v21-10000x30-slim/app/vocabulary.index.json",
         )
         self.assertEqual(
             config["languages"]["czech"]["conjugationsPath"],

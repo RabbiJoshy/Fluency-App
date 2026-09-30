@@ -1,0 +1,2372 @@
+[
+{
+"assignment_method": "tatoeba",
+"attribution": "Tatoeba sentence #1534156 by alexmarcelo; English translation #1534426 by erikspen",
+"contributor": "alexmarcelo",
+"easiness": 1.736642,
+"english": "I'd like to speak with my lawyer.",
+"example_id": "example_fb91ee76dccfb2be01d6fb72da3350a2",
+"license": "CC BY 2.0 FR",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 0.536642,
+"harder_tokens": 2,
+"length_penalty": 1.2,
+"score": 1.736642,
+"target_tokens": 6
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_0b9a7daea3c658ec4392531a54be1e3e",
+"source": {
+"adapter": "tatoeba-weekly/v1",
+"attribution": "Tatoeba sentence #1534156 by alexmarcelo; English translation #1534426 by erikspen",
+"license": "CC BY 2.0 FR",
+"name": "tatoeba",
+"snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+"source_record_id": "1534156:1534426",
+"url": "https://tatoeba.org/en/sentences/show/1534156"
+},
+"target": {
+"contributor": "alexmarcelo",
+"created_at": "2012-04-15 18:52:39",
+"language": "pt",
+"modified_at": "2012-04-15 18:52:39",
+"source_sentence_id": "1534156",
+"text": "Quero falar com o meu advogado.",
+"url": "https://tatoeba.org/en/sentences/show/1534156"
+},
+"translation": {
+"contributor": "erikspen",
+"created_at": "2012-04-15 21:24:16",
+"language": "en",
+"modified_at": "2012-04-15 21:24:16",
+"source_sentence_id": "1534426",
+"text": "I'd like to speak with my lawyer.",
+"url": "https://tatoeba.org/en/sentences/show/1534426"
+},
+"wsd": {
+"forced_selection": {
+"menu_analysis_id": "analysis_55569651a3497a79911288a1147dc803",
+"selected_tuple": {
+"headword": "querer",
+"part_of_speech": "verb"
+},
+"sense_id": "en-querer-pt-verb-2YhoD5Cz"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "tuple",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "cheap_leaf_choices_disagree",
+"recommended": true
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "mwe_augmented",
+"supported_level": "tuple",
+"supported_status": "recorded"
+}
+},
+"sentence_url": "https://tatoeba.org/en/sentences/show/1534156",
+"source": "tatoeba",
+"source_record_id": "1534156:1534426",
+"source_url": "https://tatoeba.org/en/sentences/show/1534156",
+"target": "Quero falar com o meu advogado."
+},
+{
+"assignment_method": "opensubtitles",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"easiness": 2.257785,
+"english": "Daddy, I wanna go home!",
+"example_id": "example_8a6f4e7ffb2ddbc0e19a9d4a58c78b55",
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 0.457785,
+"harder_tokens": 3,
+"length_penalty": 1.8,
+"score": 2.257785,
+"target_tokens": 5
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_f8def4c725a45b14e35ceb76418c4ef4",
+"source": {
+"adapter": "opensubtitles-aligned/v1",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"document": {
+"aligned_row": 1241426,
+"line": "5",
+"subtitle_id": "6018554",
+"title_id": "4279026",
+"year": "2015"
+},
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"name": "opensubtitles",
+"snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+"source_record_id": "4279026:6018554:5:1241426",
+"url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+},
+"target": {
+"language": "pt",
+"text": "Papá, quero ir para casa!"
+},
+"translation": {
+"language": "en",
+"text": "Daddy, I wanna go home!"
+},
+"wsd": {
+"forced_selection": {
+"menu_analysis_id": "analysis_55569651a3497a79911288a1147dc803",
+"selected_tuple": {
+"headword": "querer",
+"part_of_speech": "verb"
+},
+"sense_id": "en-querer-pt-verb-2YhoD5Cz"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "tuple",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "cheap_leaf_choices_disagree",
+"recommended": true
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "mwe_augmented",
+"supported_level": "tuple",
+"supported_status": "recorded"
+}
+},
+"provenance": {
+"aligned_row": 1241426,
+"corpus": "opensubtitles",
+"line": "5",
+"subtitle_id": "6018554",
+"title_id": "4279026",
+"year": "2015"
+},
+"source": "opensubtitles",
+"source_record_id": "4279026:6018554:5:1241426",
+"source_url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php",
+"target": "Papá, quero ir para casa!"
+},
+{
+"assignment_method": "opensubtitles",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"easiness": 0.204252,
+"english": "How can you say that in front of everyone?",
+"example_id": "example_68b0647b173115c5f0e5d94b3991835b",
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 0.204252,
+"harder_tokens": 1,
+"length_penalty": 0.0,
+"score": 0.204252,
+"target_tokens": 8
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_defe63dcd7079bbe33985c07d24c615b",
+"source": {
+"adapter": "opensubtitles-aligned/v1",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"document": {
+"aligned_row": 4508226,
+"line": "563",
+"subtitle_id": "6957998",
+"title_id": "5460276",
+"year": "2017"
+},
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"name": "opensubtitles",
+"snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+"source_record_id": "5460276:6957998:563:4508226",
+"url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+},
+"target": {
+"language": "pt",
+"text": "Como pode dizer isso na frente de todos?"
+},
+"translation": {
+"language": "en",
+"text": "How can you say that in front of everyone?"
+},
+"wsd": {
+"forced_selection": {
+"menu_analysis_id": "analysis_c3a27dfdc4b0c356bb047d9b22f4f160",
+"selected_tuple": {
+"headword": "todos",
+"part_of_speech": "pron"
+},
+"sense_id": "en-todos-pt-pron-JJcgvTtu"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "leaf",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "cheap_leaf_choices_agree",
+"recommended": false
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "mwe_augmented",
+"supported_level": "leaf",
+"supported_status": "recorded"
+}
+},
+"provenance": {
+"aligned_row": 4508226,
+"corpus": "opensubtitles",
+"line": "563",
+"subtitle_id": "6957998",
+"title_id": "5460276",
+"year": "2017"
+},
+"source": "opensubtitles",
+"source_record_id": "5460276:6957998:563:4508226",
+"source_url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php",
+"target": "Como pode dizer isso na frente de todos?"
+},
+{
+"assignment_method": "tatoeba",
+"attribution": "Tatoeba sentence #969495 by brauliobezerra; English translation #385392 by Mouseneb",
+"contributor": "brauliobezerra",
+"easiness": 2.640756,
+"english": "Excuse me, what time is it?",
+"example_id": "example_646288676682d381778991dece8bf90f",
+"license": "CC BY 2.0 FR",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 0.840756,
+"harder_tokens": 2,
+"length_penalty": 1.8,
+"score": 2.640756,
+"target_tokens": 5
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_37f35c20c2e5e5094b4187730cc9fb2b",
+"source": {
+"adapter": "tatoeba-weekly/v1",
+"attribution": "Tatoeba sentence #969495 by brauliobezerra; English translation #385392 by Mouseneb",
+"license": "CC BY 2.0 FR",
+"name": "tatoeba",
+"snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+"source_record_id": "969495:385392",
+"url": "https://tatoeba.org/en/sentences/show/969495"
+},
+"target": {
+"contributor": "brauliobezerra",
+"created_at": "2011-07-01 13:15:03",
+"language": "pt",
+"modified_at": "2011-07-01 13:15:03",
+"source_sentence_id": "969495",
+"text": "Com licença, que horas são?",
+"url": "https://tatoeba.org/en/sentences/show/969495"
+},
+"translation": {
+"contributor": "Mouseneb",
+"created_at": "2010-05-03 15:29:45",
+"language": "en",
+"modified_at": "2010-05-03 15:29:45",
+"source_sentence_id": "385392",
+"text": "Excuse me, what time is it?",
+"url": "https://tatoeba.org/en/sentences/show/385392"
+},
+"wsd": {
+"forced_selection": {
+"menu_analysis_id": "analysis_1aaef1e17b3d9fb667f03f64c5b2ea47",
+"selected_tuple": {
+"headword": "que horas são",
+"part_of_speech": "PHRASE"
+},
+"sense_id": "mwe:que horas são"
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "mwe_augmented",
+"supported_level": "leaf",
+"supported_status": "recorded"
+}
+},
+"sentence_url": "https://tatoeba.org/en/sentences/show/969495",
+"source": "tatoeba",
+"source_record_id": "969495:385392",
+"source_url": "https://tatoeba.org/en/sentences/show/969495",
+"target": "Com licença, que horas são?"
+},
+{
+"assignment_method": "tatoeba",
+"attribution": "Tatoeba sentence #6761298 by Ricardo14; English translation #1294730 by Eldad",
+"contributor": "Ricardo14",
+"easiness": 1.288845,
+"english": "What on earth does this have to do with me?",
+"example_id": "example_d19706bd7c03e67cc29db166fd864190",
+"license": "CC BY 2.0 FR",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 0.688845,
+"harder_tokens": 2,
+"length_penalty": 0.6,
+"score": 1.288845,
+"target_tokens": 7
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_c21f4ff7dad52d2949241afd162ecddf",
+"source": {
+"adapter": "tatoeba-weekly/v1",
+"attribution": "Tatoeba sentence #6761298 by Ricardo14; English translation #1294730 by Eldad",
+"license": "CC BY 2.0 FR",
+"name": "tatoeba",
+"snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+"source_record_id": "6761298:1294730",
+"url": "https://tatoeba.org/en/sentences/show/6761298"
+},
+"target": {
+"contributor": "Ricardo14",
+"created_at": "2018-03-10 16:37:49",
+"language": "pt",
+"modified_at": "2018-03-10 16:37:49",
+"source_sentence_id": "6761298",
+"text": "Que diabos isso tem a ver comigo?",
+"url": "https://tatoeba.org/en/sentences/show/6761298"
+},
+"translation": {
+"contributor": "Eldad",
+"created_at": "2011-12-11 23:10:49",
+"language": "en",
+"modified_at": "2011-12-12 09:21:38",
+"source_sentence_id": "1294730",
+"text": "What on earth does this have to do with me?",
+"url": "https://tatoeba.org/en/sentences/show/1294730"
+},
+"wsd": {
+"confidence_reasons": [
+"selected_leaf_ignores_matching_companion"
+],
+"forced_selection": {
+"menu_analysis_id": "analysis_cfdec95b8da21dc6fdf9e4241860936c",
+"selected_tuple": {
+"headword": "a ver",
+"part_of_speech": "PHRASE"
+},
+"sense_id": "mwe:a ver"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "leaf",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "cheap_leaf_choices_agree",
+"recommended": false
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "mwe_augmented",
+"supported_level": "leaf",
+"supported_status": "recorded"
+}
+},
+"sentence_url": "https://tatoeba.org/en/sentences/show/6761298",
+"source": "tatoeba",
+"source_record_id": "6761298:1294730",
+"source_url": "https://tatoeba.org/en/sentences/show/6761298",
+"target": "Que diabos isso tem a ver comigo?"
+},
+{
+"assignment_method": "tatoeba",
+"attribution": "Tatoeba sentence #11095382 by lucasmg123; English translation #4826271 by Hybrid",
+"contributor": "lucasmg123",
+"easiness": 1.584711,
+"english": "What would your dream home look like?",
+"example_id": "example_1de5777c88ffc1451452f91f6a7df67d",
+"license": "CC BY 2.0 FR",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 0.984711,
+"harder_tokens": 3,
+"length_penalty": 0.6,
+"score": 1.584711,
+"target_tokens": 7
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_402fed6b80a38955e8827911101c1978",
+"source": {
+"adapter": "tatoeba-weekly/v1",
+"attribution": "Tatoeba sentence #11095382 by lucasmg123; English translation #4826271 by Hybrid",
+"license": "CC BY 2.0 FR",
+"name": "tatoeba",
+"snapshot_id": "tatoeba-weekly-retrieved-2026-08-24-pt-en",
+"source_record_id": "11095382:4826271",
+"url": "https://tatoeba.org/en/sentences/show/11095382"
+},
+"target": {
+"contributor": "lucasmg123",
+"created_at": "2022-09-03 22:55:47",
+"language": "pt",
+"modified_at": "2022-09-03 22:55:47",
+"source_sentence_id": "11095382",
+"text": "Como seria a sua casa dos sonhos?",
+"url": "https://tatoeba.org/en/sentences/show/11095382"
+},
+"translation": {
+"contributor": "Hybrid",
+"created_at": "2016-01-12 02:58:25",
+"language": "en",
+"modified_at": "2016-01-15 06:42:48",
+"source_sentence_id": "4826271",
+"text": "What would your dream home look like?",
+"url": "https://tatoeba.org/en/sentences/show/4826271"
+},
+"wsd": {
+"forced_selection": {
+"menu_analysis_id": "analysis_9e5279e547af81aaba1b1a2c8305536c",
+"selected_tuple": {
+"headword": "de",
+"part_of_speech": "prep"
+},
+"sense_id": "en-de-pt-prep--c1lj84C"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "glosskey",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "cheap_leaf_choices_disagree",
+"recommended": true
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "mwe_augmented",
+"supported_level": "glosskey",
+"supported_status": "recorded"
+}
+},
+"sentence_url": "https://tatoeba.org/en/sentences/show/11095382",
+"source": "tatoeba",
+"source_record_id": "11095382:4826271",
+"source_url": "https://tatoeba.org/en/sentences/show/11095382",
+"target": "Como seria a sua casa dos sonhos?"
+},
+{
+"assignment_method": "opensubtitles",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"easiness": 3.759051,
+"english": "The woman who controls the President of the United States?",
+"example_id": "example_0ed9730575deb6cb940c7691a4b15add",
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 3.759051,
+"harder_tokens": 4,
+"length_penalty": 0.0,
+"score": 3.759051,
+"target_tokens": 8
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_36653f62cf9a47e8c4dec3451b5c5147",
+"source": {
+"adapter": "opensubtitles-aligned/v1",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"document": {
+"aligned_row": 1380850,
+"line": "740",
+"subtitle_id": "6041012",
+"title_id": "4366706",
+"year": "2015"
+},
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"name": "opensubtitles",
+"snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+"source_record_id": "4366706:6041012:740:1380850",
+"url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+},
+"target": {
+"language": "pt",
+"text": "A mulher que controla o Presidente dos EUA?"
+},
+"translation": {
+"language": "en",
+"text": "The woman who controls the President of the United States?"
+},
+"wsd": {
+"forced_selection": {
+"menu_analysis_id": "analysis_9e5279e547af81aaba1b1a2c8305536c",
+"selected_tuple": {
+"headword": "de",
+"part_of_speech": "prep"
+},
+"sense_id": "en-de-pt-prep--c1lj84C"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "glosskey",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "cheap_leaf_choices_disagree",
+"recommended": true
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "mwe_augmented",
+"supported_level": "glosskey",
+"supported_status": "recorded"
+}
+},
+"provenance": {
+"aligned_row": 1380850,
+"corpus": "opensubtitles",
+"line": "740",
+"subtitle_id": "6041012",
+"title_id": "4366706",
+"year": "2015"
+},
+"source": "opensubtitles",
+"source_record_id": "4366706:6041012:740:1380850",
+"source_url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php",
+"target": "A mulher que controla o Presidente dos EUA?"
+},
+{
+"assignment_method": "opensubtitles",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"easiness": 1.846467,
+"english": "She wants to go home.",
+"example_id": "example_435867d8e84a8b411ba5a89c29445292",
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 0.046467,
+"harder_tokens": 2,
+"length_penalty": 1.8,
+"score": 1.846467,
+"target_tokens": 5
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_25d94e72c80b45ab26faff8c8f746b84",
+"source": {
+"adapter": "opensubtitles-aligned/v1",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"document": {
+"aligned_row": 2514707,
+"line": "593",
+"subtitle_id": "6544046",
+"title_id": "3832096",
+"year": "2016"
+},
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"name": "opensubtitles",
+"snapshot_id": "opensubtitles-v2018-en-pt-2015plus",
+"source_record_id": "3832096:6544046:593:2514707",
+"url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+},
+"target": {
+"language": "pt",
+"text": "Ela quer ir para casa."
+},
+"translation": {
+"language": "en",
+"text": "She wants to go home."
+},
+"wsd": {
+"forced_selection": {
+"menu_analysis_id": "analysis_75fdf873f8eee5e469077377b5713e28",
+"selected_tuple": {
+"headword": "para casa",
+"part_of_speech": "PHRASE"
+},
+"sense_id": "mwe:para casa"
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "mwe_augmented",
+"supported_level": "leaf",
+"supported_status": "recorded"
+}
+},
+"provenance": {
+"aligned_row": 2514707,
+"corpus": "opensubtitles",
+"line": "593",
+"subtitle_id": "6544046",
+"title_id": "3832096",
+"year": "2016"
+},
+"source": "opensubtitles",
+"source_record_id": "3832096:6544046:593:2514707",
+"source_url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php",
+"target": "Ela quer ir para casa."
+},
+{
+"assignment_method": "tatoeba",
+"attribution": "Tatoeba sentence #8016317 by Seael; English translation #6899251 by CK",
+"contributor": "Seael",
+"easiness": 1.414294,
+"english": "You're a little taller than I am, aren't you?",
+"example_id": "example_1e3175efcba1f6f13a1d565ed67e3bdc",
+"license": "CC BY 2.0 FR",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 1.414294,
+"harder_tokens": 3,
+"length_penalty": 0.0,
+"score": 1.414294,
+"target_tokens": 9
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_1f5680367e571cb69faf5545230ae48b",
+"source": {
+"adapter": "tatoeba-weekly/v1",
+"attribution": "Tatoeba sentence #8016317 by Seael; English translation #6899251 by CK",
+"license": "CC BY 2.0 FR",
+"name": "tatoeba",
+"snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+"source_record_id": "8016317:6899251",
+"url": "https://tatoeba.org/en/sentences/show/8016317"
+},
+"target": {
+"contributor": "Seael",
+"created_at": "2019-07-02 15:50:11",
+"language": "es",
+"modified_at": "2019-07-02 15:50:11",
+"source_sentence_id": "8016317",
+"text": "Ustedes son un poco más altos que yo ¿no?",
+"url": "https://tatoeba.org/en/sentences/show/8016317",
+"variety": "419"
+},
+"translation": {
+"contributor": "CK",
+"created_at": "2018-05-19 05:56:22",
+"language": "en",
+"modified_at": "2018-05-19 05:56:22",
+"source_sentence_id": "6899251",
+"text": "You're a little taller than I am, aren't you?",
+"url": "https://tatoeba.org/en/sentences/show/6899251"
+},
+"wsd": {
+"forced_selection": {
+"menu_analysis_id": "analysis_ff3145dc034015bb4689b2e9ac8e89a5",
+"selected_tuple": {
+"headword": "ser",
+"part_of_speech": "VERB"
+},
+"sense_id": "654"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "leaf",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "cheap_leaf_choices_agree",
+"recommended": false
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "mwe_augmented",
+"supported_level": "leaf",
+"supported_status": "recorded"
+}
+},
+"sentence_url": "https://tatoeba.org/en/sentences/show/8016317",
+"source": "tatoeba",
+"source_record_id": "8016317:6899251",
+"source_url": "https://tatoeba.org/en/sentences/show/8016317",
+"target": "Ustedes son un poco más altos que yo ¿no?"
+},
+{
+"assignment_method": "opensubtitles",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"easiness": 1.559034,
+"english": "You know, I mean, because women are special.",
+"example_id": "example_ef2a22cf17ab86547a040dad70bae3f9",
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 1.559034,
+"harder_tokens": 5,
+"length_penalty": 0.0,
+"score": 1.559034,
+"target_tokens": 9
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_45b31de99946dc92fb907e66e049fb53",
+"source": {
+"adapter": "opensubtitles-aligned/v1",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"document": {
+"aligned_row": 2181713,
+"line": "140",
+"subtitle_id": "6671232",
+"title_id": "5521746",
+"year": "2016"
+},
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"name": "opensubtitles",
+"snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+"source_record_id": "5521746:6671232:140:2181713",
+"url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+},
+"target": {
+"language": "es",
+"text": "Ya sabes, quiero decir, porque las mujeres son especiales."
+},
+"translation": {
+"language": "en",
+"text": "You know, I mean, because women are special."
+},
+"wsd": {
+"forced_selection": {
+"menu_analysis_id": "analysis_ff3145dc034015bb4689b2e9ac8e89a5",
+"selected_tuple": {
+"headword": "ser",
+"part_of_speech": "VERB"
+},
+"sense_id": "654"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "leaf",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "cheap_leaf_choices_agree",
+"recommended": false
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "mwe_augmented",
+"supported_level": "leaf",
+"supported_status": "recorded"
+}
+},
+"provenance": {
+"aligned_row": 2181713,
+"corpus": "opensubtitles",
+"line": "140",
+"subtitle_id": "6671232",
+"title_id": "5521746",
+"year": "2016"
+},
+"source": "opensubtitles",
+"source_record_id": "5521746:6671232:140:2181713",
+"source_url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php",
+"target": "Ya sabes, quiero decir, porque las mujeres son especiales."
+},
+{
+"assignment_method": "tatoeba",
+"attribution": "Tatoeba sentence #2736043 by cueyayotl; English translation #2686464 by aandrusiak",
+"contributor": "cueyayotl",
+"easiness": 1.710439,
+"english": "Children are the flowers of our lives.",
+"example_id": "example_f5073cedd68d32f9d97cf3c0979bc332",
+"license": "CC BY 2.0 FR",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 1.710439,
+"harder_tokens": 4,
+"length_penalty": 0.0,
+"score": 1.710439,
+"target_tokens": 8
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_15c8d0a2176843b5414896620da2cd1b",
+"source": {
+"adapter": "tatoeba-weekly/v1",
+"attribution": "Tatoeba sentence #2736043 by cueyayotl; English translation #2686464 by aandrusiak",
+"license": "CC BY 2.0 FR",
+"name": "tatoeba",
+"snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+"source_record_id": "2736043:2686464",
+"url": "https://tatoeba.org/en/sentences/show/2736043"
+},
+"target": {
+"contributor": "cueyayotl",
+"created_at": "2013-09-12 14:05:29",
+"language": "es",
+"modified_at": "2015-08-26 00:03:42",
+"source_sentence_id": "2736043",
+"text": "Los niños son las flores de nuestra vida.",
+"url": "https://tatoeba.org/en/sentences/show/2736043"
+},
+"translation": {
+"contributor": "aandrusiak",
+"created_at": "2013-08-18 23:04:50",
+"language": "en",
+"modified_at": "2013-08-18 23:04:50",
+"source_sentence_id": "2686464",
+"text": "Children are the flowers of our lives.",
+"url": "https://tatoeba.org/en/sentences/show/2686464"
+},
+"wsd": {
+"confidence_reasons": [
+"selected_leaf_ignores_matching_companion"
+],
+"forced_selection": {
+"menu_analysis_id": "analysis_ff3145dc034015bb4689b2e9ac8e89a5",
+"selected_tuple": {
+"headword": "ser",
+"part_of_speech": "VERB"
+},
+"sense_id": "654"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "tuple",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "machine_readable_contradiction",
+"recommended": true
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "mwe_augmented",
+"supported_level": "tuple",
+"supported_status": "recorded"
+}
+},
+"sentence_url": "https://tatoeba.org/en/sentences/show/2736043",
+"source": "tatoeba",
+"source_record_id": "2736043:2686464",
+"source_url": "https://tatoeba.org/en/sentences/show/2736043",
+"target": "Los niños son las flores de nuestra vida."
+},
+{
+"assignment_method": "tatoeba",
+"attribution": "Tatoeba sentence #2192149 by marcelostockle; English translation #276841 by CK",
+"contributor": "marcelostockle",
+"easiness": 3.523833,
+"english": "They are very popular among boys.",
+"example_id": "example_ef9f733e4386840d8ee0c5590772c566",
+"license": "CC BY 2.0 FR",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 2.923833,
+"harder_tokens": 4,
+"length_penalty": 0.6,
+"score": 3.523833,
+"target_tokens": 7
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_f152a056dba60b079e215ded31c78448",
+"source": {
+"adapter": "tatoeba-weekly/v1",
+"attribution": "Tatoeba sentence #2192149 by marcelostockle; English translation #276841 by CK",
+"license": "CC BY 2.0 FR",
+"name": "tatoeba",
+"snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+"source_record_id": "2192149:276841",
+"url": "https://tatoeba.org/en/sentences/show/2192149"
+},
+"target": {
+"contributor": "marcelostockle",
+"created_at": "2013-02-05 02:27:10",
+"language": "es",
+"modified_at": "2013-02-05 02:27:10",
+"source_sentence_id": "2192149",
+"text": "Ellas son muy populares entre los chicos.",
+"url": "https://tatoeba.org/en/sentences/show/2192149"
+},
+"translation": {
+"contributor": "CK",
+"created_at": "\\N",
+"language": "en",
+"modified_at": "2010-11-21 01:06:20",
+"source_sentence_id": "276841",
+"text": "They are very popular among boys.",
+"url": "https://tatoeba.org/en/sentences/show/276841"
+},
+"wsd": {
+"forced_selection": {
+"menu_analysis_id": "analysis_ff3145dc034015bb4689b2e9ac8e89a5",
+"selected_tuple": {
+"headword": "ser",
+"part_of_speech": "VERB"
+},
+"sense_id": "654"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "glosskey",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "cheap_leaf_choices_disagree",
+"recommended": true
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "mwe_augmented",
+"supported_level": "glosskey",
+"supported_status": "recorded"
+}
+},
+"sentence_url": "https://tatoeba.org/en/sentences/show/2192149",
+"source": "tatoeba",
+"source_record_id": "2192149:276841",
+"source_url": "https://tatoeba.org/en/sentences/show/2192149",
+"target": "Ellas son muy populares entre los chicos."
+},
+{
+"assignment_method": "opensubtitles",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"easiness": 3.783825,
+"english": "Those are my boundaries.",
+"example_id": "example_ad44d886efa065cb0ffbdefdeb47f7a0",
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 1.383825,
+"harder_tokens": 3,
+"length_penalty": 2.4,
+"score": 3.783825,
+"target_tokens": 4
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_18173b47d09a94043427da71a699a707",
+"source": {
+"adapter": "opensubtitles-aligned/v1",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"document": {
+"aligned_row": 3042220,
+"line": "447",
+"subtitle_id": "6962315",
+"title_id": "4465564",
+"year": "2017"
+},
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"name": "opensubtitles",
+"snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+"source_record_id": "4465564:6962315:447:3042220",
+"url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+},
+"target": {
+"language": "es",
+"text": "Esos son mis límites."
+},
+"translation": {
+"language": "en",
+"text": "Those are my boundaries."
+},
+"wsd": {
+"forced_selection": {
+"menu_analysis_id": "analysis_ff3145dc034015bb4689b2e9ac8e89a5",
+"selected_tuple": {
+"headword": "ser",
+"part_of_speech": "VERB"
+},
+"sense_id": "654"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "glosskey",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "cheap_leaf_choices_disagree",
+"recommended": true
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "mwe_augmented",
+"supported_level": "glosskey",
+"supported_status": "recorded"
+}
+},
+"provenance": {
+"aligned_row": 3042220,
+"corpus": "opensubtitles",
+"line": "447",
+"subtitle_id": "6962315",
+"title_id": "4465564",
+"year": "2017"
+},
+"source": "opensubtitles",
+"source_record_id": "4465564:6962315:447:3042220",
+"source_url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php",
+"target": "Esos son mis límites."
+},
+{
+"assignment_method": "opensubtitles",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"easiness": 1.101074,
+"english": "First off, you have nothing to worry about.",
+"example_id": "example_3a8993110292bf50f980bdd9d298f3ff",
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 1.101074,
+"harder_tokens": 2,
+"length_penalty": 0.0,
+"score": 1.101074,
+"target_tokens": 8
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_b712f82301de342e39f0366151b24ba1",
+"source": {
+"adapter": "opensubtitles-aligned/v1",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"document": {
+"aligned_row": 3405337,
+"line": "248",
+"subtitle_id": "6892380",
+"title_id": "5728924",
+"year": "2017"
+},
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"name": "opensubtitles",
+"snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+"source_record_id": "5728924:6892380:248:3405337",
+"url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+},
+"target": {
+"language": "es",
+"text": "Primero, no tienes nada de lo que preocuparte."
+},
+"translation": {
+"language": "en",
+"text": "First off, you have nothing to worry about."
+},
+"wsd": {
+"confidence_reasons": [
+"dictionary_does_not_distinguish_sibling_leaves"
+],
+"forced_selection": {
+"menu_analysis_id": "analysis_8a7ee29680ae05c7db5afbfde2824b01",
+"selected_tuple": {
+"headword": "tener",
+"part_of_speech": "VERB"
+},
+"sense_id": "9b6"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "tuple",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "machine_readable_contradiction",
+"recommended": true
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "mwe_augmented",
+"supported_level": "tuple",
+"supported_status": "recorded"
+}
+},
+"provenance": {
+"aligned_row": 3405337,
+"corpus": "opensubtitles",
+"line": "248",
+"subtitle_id": "6892380",
+"title_id": "5728924",
+"year": "2017"
+},
+"source": "opensubtitles",
+"source_record_id": "5728924:6892380:248:3405337",
+"source_url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php",
+"target": "Primero, no tienes nada de lo que preocuparte."
+},
+{
+"assignment_method": "tatoeba",
+"attribution": "Tatoeba sentence #2000010 by marcelostockle; English translation #240998 by CK",
+"contributor": "marcelostockle",
+"easiness": 2.665894,
+"english": "Tell me what you have in mind.",
+"example_id": "example_3d9672ac2d8342b4696c3144fbc2e813",
+"license": "CC BY 2.0 FR",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 0.865894,
+"harder_tokens": 2,
+"length_penalty": 1.8,
+"score": 2.665894,
+"target_tokens": 5
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_48c3017d503d53ede64c540315e727e0",
+"source": {
+"adapter": "tatoeba-weekly/v1",
+"attribution": "Tatoeba sentence #2000010 by marcelostockle; English translation #240998 by CK",
+"license": "CC BY 2.0 FR",
+"name": "tatoeba",
+"snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-es-en",
+"source_record_id": "2000010:240998",
+"url": "https://tatoeba.org/en/sentences/show/2000010"
+},
+"target": {
+"contributor": "marcelostockle",
+"created_at": "2012-11-12 00:03:46",
+"language": "es",
+"modified_at": "2012-11-12 00:03:46",
+"source_sentence_id": "2000010",
+"text": "Dime qué tienes en mente.",
+"url": "https://tatoeba.org/en/sentences/show/2000010"
+},
+"translation": {
+"contributor": "CK",
+"created_at": "\\N",
+"language": "en",
+"modified_at": "2011-03-08 16:50:59",
+"source_sentence_id": "240998",
+"text": "Tell me what you have in mind.",
+"url": "https://tatoeba.org/en/sentences/show/240998"
+},
+"wsd": {
+"forced_selection": {
+"menu_analysis_id": "analysis_afc4465b2d7eae1cf25578e4ce3e2259",
+"selected_tuple": {
+"headword": "qué tienes",
+"part_of_speech": "PHRASE"
+},
+"sense_id": "mwe:qué tienes"
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "mwe_augmented",
+"supported_level": "leaf",
+"supported_status": "recorded"
+}
+},
+"sentence_url": "https://tatoeba.org/en/sentences/show/2000010",
+"source": "tatoeba",
+"source_record_id": "2000010:240998",
+"source_url": "https://tatoeba.org/en/sentences/show/2000010",
+"target": "Dime qué tienes en mente."
+},
+{
+"assignment_method": "opensubtitles",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"easiness": 1.001455,
+"english": "Does she know who her mother really is?",
+"example_id": "example_e342ffa8266859a4528b9724417c849d",
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 0.401455,
+"harder_tokens": 2,
+"length_penalty": 0.6,
+"score": 1.001455,
+"target_tokens": 7
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_553563162f0e196b1708c48e0aa7ef82",
+"source": {
+"adapter": "opensubtitles-aligned/v1",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"document": {
+"aligned_row": 2619532,
+"line": "416",
+"subtitle_id": "6804672",
+"title_id": "5957628",
+"year": "2016"
+},
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"name": "opensubtitles",
+"snapshot_id": "opensubtitles-v2018-en-es-2016plus",
+"source_record_id": "5957628:6804672:416:2619532",
+"url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+},
+"target": {
+"language": "es",
+"text": "¿Sabe quién es en verdad su madre?"
+},
+"translation": {
+"language": "en",
+"text": "Does she know who her mother really is?"
+},
+"wsd": {
+"forced_selection": {
+"menu_analysis_id": "analysis_2fb824003d5cc92fc236e4145a87de6a",
+"selected_tuple": {
+"headword": "en verdad",
+"part_of_speech": "PHRASE"
+},
+"sense_id": "mwe:en verdad"
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "mwe_augmented",
+"supported_level": "leaf",
+"supported_status": "recorded"
+}
+},
+"provenance": {
+"aligned_row": 2619532,
+"corpus": "opensubtitles",
+"line": "416",
+"subtitle_id": "6804672",
+"title_id": "5957628",
+"year": "2016"
+},
+"source": "opensubtitles",
+"source_record_id": "5957628:6804672:416:2619532",
+"source_url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php",
+"target": "¿Sabe quién es en verdad su madre?"
+},
+{
+"assignment_method": "tatoeba",
+"attribution": "Tatoeba sentence #3277643 by Silja; English translation #3180652 by CK",
+"contributor": "Silja",
+"easiness": 1.301426,
+"english": "I've already told you all I know about that.",
+"example_id": "example_aec4a20113ae491554cb89a4a5e6bb4a",
+"license": "CC BY 2.0 FR",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 1.301426,
+"harder_tokens": 4,
+"length_penalty": 0.0,
+"score": 1.301426,
+"target_tokens": 8
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_b11954c2038b30ce6a4f3ab9048ad287",
+"source": {
+"adapter": "tatoeba-weekly/v1",
+"attribution": "Tatoeba sentence #3277643 by Silja; English translation #3180652 by CK",
+"license": "CC BY 2.0 FR",
+"name": "tatoeba",
+"snapshot_id": "tatoeba-weekly-retrieved-2026-09-26-fi-en",
+"source_record_id": "3277643:3180652",
+"url": "https://tatoeba.org/en/sentences/show/3277643"
+},
+"target": {
+"contributor": "Silja",
+"created_at": "2014-05-25 21:41:37",
+"language": "fi",
+"modified_at": "2014-05-25 21:41:37",
+"source_sentence_id": "3277643",
+"text": "Olen jo kertonut sinulle kaiken, minkä tiedän siitä.",
+"url": "https://tatoeba.org/en/sentences/show/3277643"
+},
+"translation": {
+"contributor": "CK",
+"created_at": "2014-04-16 07:58:08",
+"language": "en",
+"modified_at": "2014-05-14 12:10:46",
+"source_sentence_id": "3180652",
+"text": "I've already told you all I know about that.",
+"url": "https://tatoeba.org/en/sentences/show/3180652"
+},
+"wsd": {
+"confidence_reasons": [
+"dictionary_does_not_distinguish_sibling_leaves"
+],
+"forced_selection": {
+"menu_analysis_id": "analysis_96032a54763e81fc10afb625d0bd0587",
+"selected_tuple": {
+"headword": "jo",
+"part_of_speech": "adv"
+},
+"sense_id": "en-jo-fi-adv-KmOIJsgP"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "tuple",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "machine_readable_contradiction",
+"recommended": true
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "provider_only",
+"supported_level": "tuple",
+"supported_status": "recorded"
+}
+},
+"sentence_url": "https://tatoeba.org/en/sentences/show/3277643",
+"source": "tatoeba",
+"source_record_id": "3277643:3180652",
+"source_url": "https://tatoeba.org/en/sentences/show/3277643",
+"target": "Olen jo kertonut sinulle kaiken, minkä tiedän siitä."
+},
+{
+"assignment_method": "opensubtitles",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"easiness": 1.883553,
+"english": "I already told you, it's not mine.",
+"example_id": "example_1ecb417b63f5c150364af0e93d55db23",
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 0.683553,
+"harder_tokens": 2,
+"length_penalty": 1.2,
+"score": 1.883553,
+"target_tokens": 6
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_9b489be07ae8fe7ebe340fccec867e4e",
+"source": {
+"adapter": "opensubtitles-aligned/v1",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"document": {
+"aligned_row": 1824746,
+"line": "422",
+"subtitle_id": "6940257",
+"title_id": "5174266",
+"year": "2017"
+},
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"name": "opensubtitles",
+"snapshot_id": "opensubtitles-v2018-en-fi-2016plus",
+"source_record_id": "5174266:6940257:422:1824746",
+"url": "https://opus.nlpl.eu/OpenSubtitles-v2018.php"
+},
+"target": {
+"language": "fi",
+"text": "Kerroin jo, ettei se ole minun."
+},
+"translation": {
+"language": "en",
+"text": "I already told you, it's not mine."
+},
+"wsd": {
+"confidence_reasons": [
+"dictionary_does_not_distinguish_sibling_leaves"
+],
+"forced_selection": {
+"menu_analysis_id": "analysis_96032a54763e81fc10afb625d0bd0587",
+"selected_tuple": {
+"headword": "jo",
+"part_of_speech": "adv"
+},
+"sense_id": "en-jo-fi-adv-KmOIJsgP"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "tuple",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "machine_readable_contradiction",
+"recommended": true
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "provider_only",
+"supported_level": "tuple",
+"supported_status": "recorded"
+}
+},
+"provenance": {
+"aligned_row": 1824746,
+"corpus": "opensubtitles",
+"line": "422",
+"subtitle_id": "6940257",
+"title_id": "5174266",
+"year": "2017"
+},
+"source": "opensubtitles",
+"source_record_id": "5174266:6940257:422:1824746",
+"source_url": "https://opus.nlpl.eu/OpenSubtitles-v2018.php",
+"target": "Kerroin jo, ettei se ole minun."
+},
+{
+"assignment_method": "opensubtitles",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"easiness": 2.810369,
+"english": "You're waiting on him to leave, only you don't know when it's gonna be?",
+"example_id": "example_b56f46ba215e1154631ef7808e41d826",
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 2.210369,
+"harder_tokens": 2,
+"length_penalty": 0.6,
+"score": 2.810369,
+"target_tokens": 7
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_881c7041b8a9d48e3d85c272de8bb53b",
+"source": {
+"adapter": "opensubtitles-aligned/v1",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"document": {
+"aligned_row": 1079605,
+"line": "200",
+"subtitle_id": "6669674",
+"title_id": "5236124",
+"year": "2016"
+},
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"name": "opensubtitles",
+"snapshot_id": "opensubtitles-v2018-en-fi-2016plus",
+"source_record_id": "5236124:6669674:200:1079605",
+"url": "https://opus.nlpl.eu/OpenSubtitles-v2018.php"
+},
+"target": {
+"language": "fi",
+"text": "- Odotat hänen lähtevän, et vain tiedä koska."
+},
+"translation": {
+"language": "en",
+"text": "You're waiting on him to leave, only you don't know when it's gonna be?"
+},
+"wsd": {
+"forced_selection": {
+"menu_analysis_id": "analysis_ef609a8f798ee5c57000c52c30debdba",
+"selected_tuple": {
+"headword": "koska",
+"part_of_speech": "adv"
+},
+"sense_id": "en-koska-fi-adv-GD16p1Mg"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "leaf",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "cheap_leaf_choices_agree",
+"recommended": false
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "provider_only",
+"supported_level": "leaf",
+"supported_status": "recorded"
+}
+},
+"provenance": {
+"aligned_row": 1079605,
+"corpus": "opensubtitles",
+"line": "200",
+"subtitle_id": "6669674",
+"title_id": "5236124",
+"year": "2016"
+},
+"source": "opensubtitles",
+"source_record_id": "5236124:6669674:200:1079605",
+"source_url": "https://opus.nlpl.eu/OpenSubtitles-v2018.php",
+"target": "- Odotat hänen lähtevän, et vain tiedä koska."
+},
+{
+"assignment_method": "tatoeba",
+"attribution": "Tatoeba sentence #3216588 by Silja; English translation #1667917 by fanty",
+"contributor": "Silja",
+"easiness": 0.938579,
+"english": "Since I have no money, I can't come there.",
+"example_id": "example_afb237b5370ead26eb49e4c06da7f418",
+"license": "CC BY 2.0 FR",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 0.938579,
+"harder_tokens": 3,
+"length_penalty": 0.0,
+"score": 0.938579,
+"target_tokens": 9
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_fa30293e6d7891d58f64cba02771005e",
+"source": {
+"adapter": "tatoeba-weekly/v1",
+"attribution": "Tatoeba sentence #3216588 by Silja; English translation #1667917 by fanty",
+"license": "CC BY 2.0 FR",
+"name": "tatoeba",
+"snapshot_id": "tatoeba-weekly-retrieved-2026-09-26-fi-en",
+"source_record_id": "3216588:1667917",
+"url": "https://tatoeba.org/en/sentences/show/3216588"
+},
+"target": {
+"contributor": "Silja",
+"created_at": "2014-04-30 07:40:29",
+"language": "fi",
+"modified_at": "2014-04-30 07:40:29",
+"source_sentence_id": "3216588",
+"text": "Koska minulla ei ole rahaa, en voi tulla sinne.",
+"url": "https://tatoeba.org/en/sentences/show/3216588"
+},
+"translation": {
+"contributor": "fanty",
+"created_at": "2012-07-05 13:38:22",
+"language": "en",
+"modified_at": "2012-07-05 13:38:22",
+"source_sentence_id": "1667917",
+"text": "Since I have no money, I can't come there.",
+"url": "https://tatoeba.org/en/sentences/show/1667917"
+},
+"wsd": {
+"forced_selection": {
+"menu_analysis_id": "analysis_5b0cee447ab952938438686229290ba7",
+"selected_tuple": {
+"headword": "koska",
+"part_of_speech": "conj"
+},
+"sense_id": "en-koska-fi-conj-NCr9SFzZ"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "leaf",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "cheap_leaf_choices_agree",
+"recommended": false
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "provider_only",
+"supported_level": "leaf",
+"supported_status": "recorded"
+}
+},
+"sentence_url": "https://tatoeba.org/en/sentences/show/3216588",
+"source": "tatoeba",
+"source_record_id": "3216588:1667917",
+"source_url": "https://tatoeba.org/en/sentences/show/3216588",
+"target": "Koska minulla ei ole rahaa, en voi tulla sinne."
+},
+{
+"assignment_method": "tatoeba",
+"attribution": "Tatoeba sentence #3413711 by Silja; English translation #3313164 by CK",
+"contributor": "Silja",
+"easiness": 1.809328,
+"english": "We don't know where we are.",
+"example_id": "example_5008c672bff368acea1d3640852540dd",
+"license": "CC BY 2.0 FR",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 0.009328,
+"harder_tokens": 1,
+"length_penalty": 1.8,
+"score": 1.809328,
+"target_tokens": 5
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_17a2b9066c11e7d27233e67e3fc95888",
+"source": {
+"adapter": "tatoeba-weekly/v1",
+"attribution": "Tatoeba sentence #3413711 by Silja; English translation #3313164 by CK",
+"license": "CC BY 2.0 FR",
+"name": "tatoeba",
+"snapshot_id": "tatoeba-weekly-retrieved-2026-09-26-fi-en",
+"source_record_id": "3413711:3313164",
+"url": "https://tatoeba.org/en/sentences/show/3413711"
+},
+"target": {
+"contributor": "Silja",
+"created_at": "2014-08-08 13:24:21",
+"language": "fi",
+"modified_at": "2014-08-08 13:24:21",
+"source_sentence_id": "3413711",
+"text": "Emme tiedä missä me olemme.",
+"url": "https://tatoeba.org/en/sentences/show/3413711"
+},
+"translation": {
+"contributor": "CK",
+"created_at": "2014-06-13 07:12:56",
+"language": "en",
+"modified_at": "2014-06-13 07:12:56",
+"source_sentence_id": "3313164",
+"text": "We don't know where we are.",
+"url": "https://tatoeba.org/en/sentences/show/3313164"
+},
+"wsd": {
+"forced_selection": {
+"menu_analysis_id": "analysis_9ecabb9054d415b0b7c78516073f872c",
+"selected_tuple": {
+"headword": "olla",
+"part_of_speech": "verb"
+},
+"sense_id": "en-olla-fi-verb-35brZ~W7"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "glosskey",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "cheap_leaf_choices_disagree",
+"recommended": true
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "provider_only",
+"supported_level": "glosskey",
+"supported_status": "recorded"
+}
+},
+"sentence_url": "https://tatoeba.org/en/sentences/show/3413711",
+"source": "tatoeba",
+"source_record_id": "3413711:3313164",
+"source_url": "https://tatoeba.org/en/sentences/show/3413711",
+"target": "Emme tiedä missä me olemme."
+},
+{
+"assignment_method": "opensubtitles",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"easiness": 2.974243,
+"english": "And that's what we are.",
+"example_id": "example_de31d194365fc0c395f4d9bd459eeaa0",
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 0.574243,
+"harder_tokens": 1,
+"length_penalty": 2.4,
+"score": 2.974243,
+"target_tokens": 4
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_485ee34642c5b28f9fb846ccc0670e67",
+"source": {
+"adapter": "opensubtitles-aligned/v1",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"document": {
+"aligned_row": 2396703,
+"line": "641",
+"subtitle_id": "7065883",
+"title_id": "6769302",
+"year": "2017"
+},
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"name": "opensubtitles",
+"snapshot_id": "opensubtitles-v2018-en-fi-2016plus",
+"source_record_id": "6769302:7065883:641:2396703",
+"url": "https://opus.nlpl.eu/OpenSubtitles-v2018.php"
+},
+"target": {
+"language": "fi",
+"text": "Ja sitähän me olemme."
+},
+"translation": {
+"language": "en",
+"text": "And that's what we are."
+},
+"wsd": {
+"forced_selection": {
+"menu_analysis_id": "analysis_9ecabb9054d415b0b7c78516073f872c",
+"selected_tuple": {
+"headword": "olla",
+"part_of_speech": "verb"
+},
+"sense_id": "en-olla-fi-verb-y2zYMf8G"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "glosskey",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "cheap_leaf_choices_disagree",
+"recommended": true
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "provider_only",
+"supported_level": "glosskey",
+"supported_status": "recorded"
+}
+},
+"provenance": {
+"aligned_row": 2396703,
+"corpus": "opensubtitles",
+"line": "641",
+"subtitle_id": "7065883",
+"title_id": "6769302",
+"year": "2017"
+},
+"source": "opensubtitles",
+"source_record_id": "6769302:7065883:641:2396703",
+"source_url": "https://opus.nlpl.eu/OpenSubtitles-v2018.php",
+"target": "Ja sitähän me olemme."
+},
+{
+"assignment_method": "tatoeba",
+"attribution": "Tatoeba sentence #3336916 by Silja; English translation #3330940 by CK",
+"contributor": "Silja",
+"easiness": 2.023554,
+"english": "You already have one of those.",
+"example_id": "example_3a584e50ab729490a7c5740e0869108e",
+"license": "CC BY 2.0 FR",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 0.223554,
+"harder_tokens": 1,
+"length_penalty": 1.8,
+"score": 2.023554,
+"target_tokens": 5
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_03d79fe8e19e564943a2ce246b869b57",
+"source": {
+"adapter": "tatoeba-weekly/v1",
+"attribution": "Tatoeba sentence #3336916 by Silja; English translation #3330940 by CK",
+"license": "CC BY 2.0 FR",
+"name": "tatoeba",
+"snapshot_id": "tatoeba-weekly-retrieved-2026-09-26-fi-en",
+"source_record_id": "3336916:3330940",
+"url": "https://tatoeba.org/en/sentences/show/3336916"
+},
+"target": {
+"contributor": "Silja",
+"created_at": "2014-06-23 13:38:13",
+"language": "fi",
+"modified_at": "2014-06-23 13:38:13",
+"source_sentence_id": "3336916",
+"text": "Sinulla on jo yksi niistä.",
+"url": "https://tatoeba.org/en/sentences/show/3336916"
+},
+"translation": {
+"contributor": "CK",
+"created_at": "2014-06-21 09:02:21",
+"language": "en",
+"modified_at": "2014-06-21 09:02:21",
+"source_sentence_id": "3330940",
+"text": "You already have one of those.",
+"url": "https://tatoeba.org/en/sentences/show/3330940"
+},
+"wsd": {
+"confidence_reasons": [
+"pronoun_only_matches_possessive_bridge"
+],
+"forced_selection": {
+"menu_analysis_id": "analysis_e3bbc8361ce54795557c53a2c3baf7ce",
+"selected_tuple": {
+"headword": "yksi",
+"part_of_speech": "det"
+},
+"sense_id": "en-yksi-fi-det-5yM-~k1i"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "unresolved",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "machine_readable_contradiction",
+"recommended": true
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "provider_only",
+"supported_level": "unresolved",
+"supported_status": "recorded"
+}
+},
+"sentence_url": "https://tatoeba.org/en/sentences/show/3336916",
+"source": "tatoeba",
+"source_record_id": "3336916:3330940",
+"source_url": "https://tatoeba.org/en/sentences/show/3336916",
+"target": "Sinulla on jo yksi niistä."
+},
+{
+"assignment_method": "opensubtitles",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"easiness": 2.760317,
+"english": "It's probably one of 'em.",
+"example_id": "example_a4c76d7df4de7ed795fe743e8e9247c7",
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 0.960317,
+"harder_tokens": 2,
+"length_penalty": 1.8,
+"score": 2.760317,
+"target_tokens": 5
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_3f50e0e0b028bd1c7cf94cad052b3a70",
+"source": {
+"adapter": "opensubtitles-aligned/v1",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"document": {
+"aligned_row": 768842,
+"line": "476",
+"subtitle_id": "6999627",
+"title_id": "4911996",
+"year": "2016"
+},
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"name": "opensubtitles",
+"snapshot_id": "opensubtitles-v2018-en-fi-2016plus",
+"source_record_id": "4911996:6999627:476:768842",
+"url": "https://opus.nlpl.eu/OpenSubtitles-v2018.php"
+},
+"target": {
+"language": "fi",
+"text": "Se on luultavasti yksi niistä."
+},
+"translation": {
+"language": "en",
+"text": "It's probably one of 'em."
+},
+"wsd": {
+"confidence_reasons": [
+"pronoun_only_matches_possessive_bridge"
+],
+"forced_selection": {
+"menu_analysis_id": "analysis_e3bbc8361ce54795557c53a2c3baf7ce",
+"selected_tuple": {
+"headword": "yksi",
+"part_of_speech": "det"
+},
+"sense_id": "en-yksi-fi-det-xpLA3eeg"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "unresolved",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "machine_readable_contradiction",
+"recommended": true
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "provider_only",
+"supported_level": "unresolved",
+"supported_status": "recorded"
+}
+},
+"provenance": {
+"aligned_row": 768842,
+"corpus": "opensubtitles",
+"line": "476",
+"subtitle_id": "6999627",
+"title_id": "4911996",
+"year": "2016"
+},
+"source": "opensubtitles",
+"source_record_id": "4911996:6999627:476:768842",
+"source_url": "https://opus.nlpl.eu/OpenSubtitles-v2018.php",
+"target": "Se on luultavasti yksi niistä."
+},
+{
+"assignment_method": "tatoeba",
+"attribution": "Tatoeba sentence #8114812 by Ergulis; English translation #8114813 by Ergulis",
+"contributor": "Ergulis",
+"easiness": 3.929868,
+"english": "We had no choice but to wait.",
+"example_id": "example_c991b48a08d6bac77c4a1cc1953d87bc",
+"license": "CC BY 2.0 FR",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 2.729868,
+"harder_tokens": 4,
+"length_penalty": 1.2,
+"score": 3.929868,
+"target_tokens": 6
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_e454eec000c5738d2d54bab5dfb6d981",
+"source": {
+"adapter": "tatoeba-weekly/v1",
+"attribution": "Tatoeba sentence #8114812 by Ergulis; English translation #8114813 by Ergulis",
+"license": "CC BY 2.0 FR",
+"name": "tatoeba",
+"snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-cs-en",
+"source_record_id": "8114812:8114813",
+"url": "https://tatoeba.org/en/sentences/show/8114812"
+},
+"target": {
+"contributor": "Ergulis",
+"created_at": "2019-08-18 15:46:13",
+"language": "cs",
+"modified_at": "2019-08-18 15:46:13",
+"source_sentence_id": "8114812",
+"text": "Nezbývalo nám nic jiného, než počkat.",
+"url": "https://tatoeba.org/en/sentences/show/8114812"
+},
+"translation": {
+"contributor": "Ergulis",
+"created_at": "2019-08-18 15:46:34",
+"language": "en",
+"modified_at": "2019-08-18 15:46:34",
+"source_sentence_id": "8114813",
+"text": "We had no choice but to wait.",
+"url": "https://tatoeba.org/en/sentences/show/8114813"
+},
+"wsd": {
+"confidence_reasons": [
+"dictionary_does_not_distinguish_sibling_leaves"
+],
+"forced_selection": {
+"menu_analysis_id": "analysis_7d3ad2e1dcccf293e5f50f210ff7a375",
+"selected_tuple": {
+"headword": "než",
+"part_of_speech": "conj"
+},
+"sense_id": "en-než-cs-conj-bbfYA-dP"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "tuple",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "machine_readable_contradiction",
+"recommended": true
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "mwe_augmented",
+"supported_level": "tuple",
+"supported_status": "recorded"
+}
+},
+"sentence_url": "https://tatoeba.org/en/sentences/show/8114812",
+"source": "tatoeba",
+"source_record_id": "8114812:8114813",
+"source_url": "https://tatoeba.org/en/sentences/show/8114812",
+"target": "Nezbývalo nám nic jiného, než počkat."
+},
+{
+"assignment_method": "opensubtitles",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"easiness": 1.001156,
+"english": "I thought you were stronger than this, eh?",
+"example_id": "example_f9ced460b863483db21aafd6c1fbec7f",
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 1.001156,
+"harder_tokens": 2,
+"length_penalty": 0.0,
+"score": 1.001156,
+"target_tokens": 8
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_6d6d205c145e509a0a35204524d49404",
+"source": {
+"adapter": "opensubtitles-aligned/v1",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"document": {
+"aligned_row": 3054202,
+"line": "613",
+"subtitle_id": "6919322",
+"title_id": "4174084",
+"year": "2017"
+},
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"name": "opensubtitles",
+"snapshot_id": "opensubtitles-v2018-en-cs-2016plus",
+"source_record_id": "4174084:6919322:613:3054202",
+"url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+},
+"target": {
+"language": "cs",
+"text": "Myslel jsem, že jsi silnější než to, co?"
+},
+"translation": {
+"language": "en",
+"text": "I thought you were stronger than this, eh?"
+},
+"wsd": {
+"confidence_reasons": [
+"dictionary_does_not_distinguish_sibling_leaves"
+],
+"forced_selection": {
+"menu_analysis_id": "analysis_7d3ad2e1dcccf293e5f50f210ff7a375",
+"selected_tuple": {
+"headword": "než",
+"part_of_speech": "conj"
+},
+"sense_id": "en-než-cs-conj-c4NxHBsF"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "tuple",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "machine_readable_contradiction",
+"recommended": true
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "mwe_augmented",
+"supported_level": "tuple",
+"supported_status": "recorded"
+}
+},
+"provenance": {
+"aligned_row": 3054202,
+"corpus": "opensubtitles",
+"line": "613",
+"subtitle_id": "6919322",
+"title_id": "4174084",
+"year": "2017"
+},
+"source": "opensubtitles",
+"source_record_id": "4174084:6919322:613:3054202",
+"source_url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php",
+"target": "Myslel jsem, že jsi silnější než to, co?"
+},
+{
+"assignment_method": "opensubtitles",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"easiness": 0.670023,
+"english": "No... please, my lord, just tell me what to do.",
+"example_id": "example_cc87d40543289ec840ce15943d6670a2",
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 0.670023,
+"harder_tokens": 3,
+"length_penalty": 0.0,
+"score": 0.670023,
+"target_tokens": 10
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_c06607f46101822c2d01d889e5dc86d5",
+"source": {
+"adapter": "opensubtitles-aligned/v1",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"document": {
+"aligned_row": 3538745,
+"line": "550",
+"subtitle_id": "6937826",
+"title_id": "5868512",
+"year": "2017"
+},
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"name": "opensubtitles",
+"snapshot_id": "opensubtitles-v2018-en-cs-2016plus",
+"source_record_id": "5868512:6937826:550:3538745",
+"url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+},
+"target": {
+"language": "cs",
+"text": "Ne, prosím, můj pane, jen mi řekněte, co mám dělat."
+},
+"translation": {
+"language": "en",
+"text": "No... please, my lord, just tell me what to do."
+},
+"wsd": {
+"forced_selection": {
+"menu_analysis_id": "analysis_1cd59d6ba06ef50790c483695a1f6fb6",
+"selected_tuple": {
+"headword": "můj",
+"part_of_speech": "pron"
+},
+"sense_id": "en-můj-cs-pron-QVm76NR8"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "leaf",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "cheap_leaf_choices_agree",
+"recommended": false
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "mwe_augmented",
+"supported_level": "leaf",
+"supported_status": "recorded"
+}
+},
+"provenance": {
+"aligned_row": 3538745,
+"corpus": "opensubtitles",
+"line": "550",
+"subtitle_id": "6937826",
+"title_id": "5868512",
+"year": "2017"
+},
+"source": "opensubtitles",
+"source_record_id": "5868512:6937826:550:3538745",
+"source_url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php",
+"target": "Ne, prosím, můj pane, jen mi řekněte, co mám dělat."
+},
+{
+"assignment_method": "tatoeba",
+"attribution": "Tatoeba sentence #10050747 by aldar; English translation #9200792 by Nylez",
+"contributor": "aldar",
+"easiness": 1.685389,
+"english": "My God, what have I done!",
+"example_id": "example_8c58ff0b82c4b5ec62e9fef51b4ddc71",
+"license": "CC BY 2.0 FR",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 0.485389,
+"harder_tokens": 2,
+"length_penalty": 1.2,
+"score": 1.685389,
+"target_tokens": 6
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_1cc0321ca7ab7ef6fb59f2e7a3b83d75",
+"source": {
+"adapter": "tatoeba-weekly/v1",
+"attribution": "Tatoeba sentence #10050747 by aldar; English translation #9200792 by Nylez",
+"license": "CC BY 2.0 FR",
+"name": "tatoeba",
+"snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-cs-en",
+"source_record_id": "10050747:9200792",
+"url": "https://tatoeba.org/en/sentences/show/10050747"
+},
+"target": {
+"contributor": "aldar",
+"created_at": "2021-05-20 12:52:45",
+"language": "cs",
+"modified_at": "2021-05-20 12:52:45",
+"source_sentence_id": "10050747",
+"text": "Bože můj, co jsem to udělal!",
+"url": "https://tatoeba.org/en/sentences/show/10050747"
+},
+"translation": {
+"contributor": "Nylez",
+"created_at": "2020-10-28 09:49:34",
+"language": "en",
+"modified_at": "2020-10-28 09:49:34",
+"source_sentence_id": "9200792",
+"text": "My God, what have I done!",
+"url": "https://tatoeba.org/en/sentences/show/9200792"
+},
+"wsd": {
+"forced_selection": {
+"menu_analysis_id": "analysis_1cd59d6ba06ef50790c483695a1f6fb6",
+"selected_tuple": {
+"headword": "můj",
+"part_of_speech": "pron"
+},
+"sense_id": "en-můj-cs-pron-QVm76NR8"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "leaf",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "cheap_leaf_choices_agree",
+"recommended": false
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "mwe_augmented",
+"supported_level": "leaf",
+"supported_status": "recorded"
+}
+},
+"sentence_url": "https://tatoeba.org/en/sentences/show/10050747",
+"source": "tatoeba",
+"source_record_id": "10050747:9200792",
+"source_url": "https://tatoeba.org/en/sentences/show/10050747",
+"target": "Bože můj, co jsem to udělal!"
+},
+{
+"assignment_method": "tatoeba",
+"attribution": "Tatoeba sentence #338166 by vinhan; English translation #138868 by CK",
+"contributor": "vinhan",
+"easiness": 2.435739,
+"english": "Hello, how are you?",
+"example_id": "example_2ff647bc6520cfedb7431275952cff15",
+"license": "CC BY 2.0 FR",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 0.035739,
+"harder_tokens": 1,
+"length_penalty": 2.4,
+"score": 2.435739,
+"target_tokens": 4
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_53fa263324e6758b68c1c8e69a09b324",
+"source": {
+"adapter": "tatoeba-weekly/v1",
+"attribution": "Tatoeba sentence #338166 by vinhan; English translation #138868 by CK",
+"license": "CC BY 2.0 FR",
+"name": "tatoeba",
+"snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-cs-en",
+"source_record_id": "338166:138868",
+"url": "https://tatoeba.org/en/sentences/show/338166"
+},
+"target": {
+"contributor": "vinhan",
+"created_at": "2010-07-05 01:09:50",
+"language": "cs",
+"modified_at": "2014-04-05 17:30:43",
+"source_sentence_id": "338166",
+"text": "Ahoj, jak se máš?",
+"url": "https://tatoeba.org/en/sentences/show/338166"
+},
+"translation": {
+"contributor": "CK",
+"created_at": "\\N",
+"language": "en",
+"modified_at": "2010-10-13 16:38:32",
+"source_sentence_id": "138868",
+"text": "Hello, how are you?",
+"url": "https://tatoeba.org/en/sentences/show/138868"
+},
+"wsd": {
+"forced_selection": {
+"menu_analysis_id": "analysis_c6a82ab3ac6bba44e699b3daa919dee3",
+"selected_tuple": {
+"headword": "jak se máš",
+"part_of_speech": "PHRASE"
+},
+"sense_id": "mwe:jak se máš"
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "mwe_augmented",
+"supported_level": "leaf",
+"supported_status": "recorded"
+}
+},
+"sentence_url": "https://tatoeba.org/en/sentences/show/338166",
+"source": "tatoeba",
+"source_record_id": "338166:138868",
+"source_url": "https://tatoeba.org/en/sentences/show/338166",
+"target": "Ahoj, jak se máš?"
+},
+{
+"assignment_method": "opensubtitles",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"easiness": 3.400676,
+"english": "How are you, Max?",
+"example_id": "example_0e04ca2cd9b2693e7069c7c3c4a264aa",
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 1.000676,
+"harder_tokens": 1,
+"length_penalty": 2.4,
+"score": 3.400676,
+"target_tokens": 4
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_d5b5d851318aeeb4f0fed3fee0f9c150",
+"source": {
+"adapter": "opensubtitles-aligned/v1",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"document": {
+"aligned_row": 1785912,
+"line": "316",
+"subtitle_id": "6574292",
+"title_id": "5359712",
+"year": "2016"
+},
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"name": "opensubtitles",
+"snapshot_id": "opensubtitles-v2018-en-cs-2016plus",
+"source_record_id": "5359712:6574292:316:1785912",
+"url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+},
+"target": {
+"language": "cs",
+"text": "Jak se máš, Max?"
+},
+"translation": {
+"language": "en",
+"text": "How are you, Max?"
+},
+"wsd": {
+"forced_selection": {
+"menu_analysis_id": "analysis_c6a82ab3ac6bba44e699b3daa919dee3",
+"selected_tuple": {
+"headword": "jak se máš",
+"part_of_speech": "PHRASE"
+},
+"sense_id": "mwe:jak se máš"
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "mwe_augmented",
+"supported_level": "leaf",
+"supported_status": "recorded"
+}
+},
+"provenance": {
+"aligned_row": 1785912,
+"corpus": "opensubtitles",
+"line": "316",
+"subtitle_id": "6574292",
+"title_id": "5359712",
+"year": "2016"
+},
+"source": "opensubtitles",
+"source_record_id": "5359712:6574292:316:1785912",
+"source_url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php",
+"target": "Jak se máš, Max?"
+},
+{
+"assignment_method": "opensubtitles",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"easiness": 1.442656,
+"english": "Thanks for coming to get me.",
+"example_id": "example_dccfc611fd6752c99556668947644de8",
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 0.242656,
+"harder_tokens": 1,
+"length_penalty": 1.2,
+"score": 1.442656,
+"target_tokens": 6
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_51986a81acc5f3c7430a5c4ba8fd5bd8",
+"source": {
+"adapter": "opensubtitles-aligned/v1",
+"attribution": "OpenSubtitles.org via OPUS (Lison & Tiedemann 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles, LREC 2016)",
+"document": {
+"aligned_row": 2747721,
+"line": "656",
+"subtitle_id": "6785935",
+"title_id": "6021850",
+"year": "2016"
+},
+"license": "OPUS OpenSubtitles v2018; subtitles from OpenSubtitles.org. Use requires a visible link to http://www.opensubtitles.org/ in reports and publications produced with the data.",
+"name": "opensubtitles",
+"snapshot_id": "opensubtitles-v2018-en-cs-2016plus",
+"source_record_id": "6021850:6785935:656:2747721",
+"url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php"
+},
+"target": {
+"language": "cs",
+"text": "Díky, že jsi pro mě přišla."
+},
+"translation": {
+"language": "en",
+"text": "Thanks for coming to get me."
+},
+"wsd": {
+"forced_selection": {
+"menu_analysis_id": "analysis_363e955e854941ea4f8d796431c0eb82",
+"selected_tuple": {
+"headword": "dík",
+"part_of_speech": "noun"
+},
+"sense_id": "en-dík-cs-noun-pqJynL9r"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "glosskey",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "cheap_leaf_choices_disagree",
+"recommended": true
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "mwe_augmented",
+"supported_level": "glosskey",
+"supported_status": "recorded"
+}
+},
+"provenance": {
+"aligned_row": 2747721,
+"corpus": "opensubtitles",
+"line": "656",
+"subtitle_id": "6785935",
+"title_id": "6021850",
+"year": "2016"
+},
+"source": "opensubtitles",
+"source_record_id": "6021850:6785935:656:2747721",
+"source_url": "http://opus.nlpl.eu/OpenSubtitles-v2018.php",
+"target": "Díky, že jsi pro mě přišla."
+},
+{
+"assignment_method": "tatoeba",
+"attribution": "Tatoeba sentence #1138668 by tommy390; English translation #773262 by marloncori",
+"contributor": "tommy390",
+"easiness": 1.478783,
+"english": "My family is fine, thanks.",
+"example_id": "example_7247c01d3f5303cfa1bc17e359a1218b",
+"license": "CC BY 2.0 FR",
+"metadata": {
+"selection_metrics": {
+"frequency_burden": 0.278783,
+"harder_tokens": 1,
+"length_penalty": 1.2,
+"score": 1.478783,
+"target_tokens": 6
+},
+"selection_policy": "selection-wsd-only-form-and-sense/v3",
+"sentence_id": "sentence_8abaf56fb30f3c9748fc88adb1921437",
+"source": {
+"adapter": "tatoeba-weekly/v1",
+"attribution": "Tatoeba sentence #1138668 by tommy390; English translation #773262 by marloncori",
+"license": "CC BY 2.0 FR",
+"name": "tatoeba",
+"snapshot_id": "tatoeba-weekly-retrieved-2026-09-08-cs-en",
+"source_record_id": "1138668:773262",
+"url": "https://tatoeba.org/en/sentences/show/1138668"
+},
+"target": {
+"contributor": "tommy390",
+"created_at": "2011-09-30 22:29:46",
+"language": "cs",
+"modified_at": "2011-09-30 22:29:46",
+"source_sentence_id": "1138668",
+"text": "Moje rodina se má dobře, díky.",
+"url": "https://tatoeba.org/en/sentences/show/1138668"
+},
+"translation": {
+"contributor": "marloncori",
+"created_at": "2011-02-28 02:23:49",
+"language": "en",
+"modified_at": "2011-02-28 02:23:49",
+"source_sentence_id": "773262",
+"text": "My family is fine, thanks.",
+"url": "https://tatoeba.org/en/sentences/show/773262"
+},
+"wsd": {
+"forced_selection": {
+"menu_analysis_id": "analysis_363e955e854941ea4f8d796431c0eb82",
+"selected_tuple": {
+"headword": "dík",
+"part_of_speech": "noun"
+},
+"sense_id": "en-dík-cs-noun-pqJynL9r"
+},
+"gemini_recommendation": {
+"deepest_shared_level": "glosskey",
+"gemini_called": false,
+"independent_of_publication_projection": true,
+"reason": "cheap_leaf_choices_disagree",
+"recommended": true
+},
+"publication_projection": "forced_leaf",
+"selection_projection": "mwe_augmented",
+"supported_level": "glosskey",
+"supported_status": "recorded"
+}
+},
+"sentence_url": "https://tatoeba.org/en/sentences/show/1138668",
+"source": "tatoeba",
+"source_record_id": "1138668:773262",
+"source_url": "https://tatoeba.org/en/sentences/show/1138668",
+"target": "Moje rodina se má dobře, díky."
+}
+]

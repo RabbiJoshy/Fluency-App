@@ -1262,6 +1262,86 @@ function exampleShardsForRange(manifest, rangeStart, rangeEnd) {
     );
 }
 
+// slim-example-pure
+// Slim shards (example-shards/v2, fluency.release.example_shards.slim_example)
+// carry only what the app reads, keyed short, with each source's shared
+// attribution, licence and URL in the manifest. Expand back to the full
+// record shape here so nothing downstream knows the difference.
+const SLIM_EXAMPLE_FORMAT = 'slim-example/v1';
+
+function slimId(value, prefix) {
+    if (value == null || value === '') return undefined;
+    return value[0] === '=' ? value.slice(1) : prefix + value;
+}
+
+function expandSlimExample(record, sources) {
+    const shared = (sources && sources[record.s]) || {};
+    const attribution = record.b ?? shared.attribution;
+    const license = record.l ?? shared.license;
+    const url = record.o ?? shared.url;
+    const example = {
+        target: record.t,
+        english: record.e,
+        source: record.s,
+        assignment_method: record.a ?? record.s,
+    };
+    const exampleId = slimId(record.x, 'example_');
+    if (exampleId) example.example_id = exampleId;
+    if (attribution) example.attribution = attribution;
+    if (license) example.license = license;
+    if (record.r) example.source_record_id = record.r;
+    if (record.c) example.contributor = record.c;
+    if (record.su) example.source_url = record.su;
+    if (record.ul) example.sentence_url = record.ul;
+    if (record.ts) example.translation_source = record.ts;
+    const source = { name: record.s };
+    if (url) source.url = url;
+    if (attribution) source.attribution = attribution;
+    if (license) source.license = license;
+    if (record.r) source.source_record_id = record.r;
+    const metadata = { source };
+    const sentenceId = slimId(record.i, 'sentence_');
+    if (sentenceId) metadata.sentence_id = sentenceId;
+    if (Array.isArray(record.d)) {
+        const [title_id, subtitle_id, line] = record.d;
+        source.document = { title_id, subtitle_id, line };
+        example.provenance = { corpus: record.pc || record.s, title_id, subtitle_id, line };
+    }
+    const targetUrl = record.tu === 1 ? url : record.tu;
+    const targetContributor = record.tc ?? record.c;
+    if (targetUrl || targetContributor) {
+        metadata.target = {};
+        if (targetUrl) metadata.target.url = targetUrl;
+        if (targetContributor) metadata.target.contributor = targetContributor;
+    }
+    if (record.st) {
+        example.source_title = record.st;
+        metadata.source_title = record.st;
+    }
+    if (Array.isArray(record.w)) {
+        const [level, agree] = record.w;
+        metadata.wsd = {};
+        if (level) metadata.wsd.supported_level = level;
+        if (agree) metadata.wsd.gemini_recommendation = { reason: 'cheap_leaf_choices_agree' };
+    }
+    example.metadata = metadata;
+    return example;
+}
+
+function expandSlimExamplePayload(payload, manifest) {
+    if (manifest?.example_format !== SLIM_EXAMPLE_FORMAT || !payload) return payload;
+    const sources = manifest.sources || {};
+    const expanded = {};
+    for (const [id, card] of Object.entries(payload)) {
+        expanded[id] = {
+            ...card,
+            m: (card?.m || []).map(group => (group || []).map(record => expandSlimExample(record, sources))),
+        };
+    }
+    return expanded;
+}
+// /slim-example-pure
+
 function mergeExamplePayload(payload, examplesPath) {
     const existing = (
         window._cachedExamplesDataPath === examplesPath
@@ -1291,7 +1371,8 @@ async function fetchExampleShard(langConfig, shard) {
     const pending = fetch(`${examplesDirectory(examplesPath)}${shard.path}`).then(async response => {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         trackDataFreshness(response);
-        mergeExamplePayload(await response.json(), examplesPath);
+        const manifest = exampleShardManifestFor === examplesPath ? exampleShardManifest : null;
+        mergeExamplePayload(expandSlimExamplePayload(await response.json(), manifest), examplesPath);
         loadedExampleShards.add(key);
     }).finally(() => exampleShardInflight.delete(key));
     exampleShardInflight.set(key, pending);
