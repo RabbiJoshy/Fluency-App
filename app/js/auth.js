@@ -1,10 +1,10 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=783f9174';
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=783f9174';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=783f9174';
-import { dbGet, dbPut } from './offline-db.js?v=783f9174';
-import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=783f9174';
+import './state.js?v=f4e887f9';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=f4e887f9';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=f4e887f9';
+import { dbGet, dbPut } from './offline-db.js?v=f4e887f9';
+import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=f4e887f9';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -13,7 +13,7 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=783f9174';
+} from './sync-queue.js?v=f4e887f9';
 
 const AUDIT_ACCOUNT_INITIALS = new Set(['JST', 'JSTA']);
 
@@ -260,17 +260,25 @@ async function submitLogin() {
 
     if (storedPassword) {
         if (!password) {
-            alert(`A password is set for initials ${initials}. Please enter your password to continue.`);
+            alert(`A secret word is set for ${initials}. Enter it to continue.`);
             passwordInput?.focus();
             return;
         }
         if (password !== storedPassword) {
-            alert(`Incorrect password for initials ${initials}. Please try again.`);
+            alert(`That is not the secret word for ${initials}. Try again.`);
             passwordInput?.focus();
             return;
         }
     } else if (password) {
         localStorage.setItem(savedPasswordKey, password);
+    }
+
+    // Offer to save the initials and secret word where the browser supports
+    // asking explicitly (Chrome, Edge, Android); Safari and Firefox pick the
+    // form submission up themselves.
+    if (password && typeof window.PasswordCredential === 'function' && navigator.credentials?.store) {
+        navigator.credentials.store(new window.PasswordCredential({ id: initials, password, name: initials }))
+            .catch(() => {});
     }
 
     currentUser = { initials: initials, isGuest: false, hasPassword: Boolean(password || storedPassword) };
@@ -375,13 +383,13 @@ function wireAccountPassword() {
         if (next) {
             localStorage.setItem(key, next);
         } else {
-            if (!confirm('Remove the password? Anyone on this device could then use your initials.')) return;
+            if (!confirm('Remove the secret word? Anyone on this device could then use your initials.')) return;
             localStorage.removeItem(key);
         }
         currentUser.hasPassword = Boolean(next);
         localStorage.setItem('flashcardUser', JSON.stringify(currentUser));
         renderAccountPanel();
-        status.textContent = next ? 'Password saved on this device.' : 'Password removed.';
+        status.textContent = next ? 'Secret word saved on this device.' : 'Secret word removed.';
     });
 }
 
@@ -1823,21 +1831,22 @@ function setupAuthEventListeners() {
     // Cancel login button
     document.getElementById('cancelLoginBtn').addEventListener('click', hideLoginForm);
 
-    // Submit initials button
-    document.getElementById('submitInitialsBtn').addEventListener('click', submitLogin);
+    // The sign-in is a real form (so browsers can save it); Continue and
+    // Enter both submit it. The inline fallback in index.html stands down.
+    window.fluencyAuthHandlersReady = true;
+    document.getElementById('loginForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        submitLogin();
+    });
 
-    // Enter key in initials input
-    document.getElementById('userInitials').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            const pwd = document.getElementById('userPassword');
-            if (pwd && !pwd.value.trim()) {
-                const initials = e.target.value.trim().toUpperCase();
-                if (localStorage.getItem(`auth_pwd_${initials}`)) {
-                    pwd.focus();
-                    return;
-                }
-            }
-            submitLogin();
+    // Enter in the initials field moves on to the secret word when one is set.
+    document.getElementById('userInitials').addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter') return;
+        const pwd = document.getElementById('userPassword');
+        const initials = e.target.value.trim().toUpperCase();
+        if (pwd && !pwd.value.trim() && localStorage.getItem(`auth_pwd_${initials}`)) {
+            e.preventDefault();
+            pwd.focus();
         }
     });
 
@@ -1856,12 +1865,6 @@ function setupAuthEventListeners() {
         document.getElementById('userPassword')?.focus();
     });
 
-    // Enter key in password input
-    document.getElementById('userPassword')?.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            submitLogin();
-        }
-    });
 
     // Enable/disable submit button based on input, and reflect password requirement
     document.getElementById('userInitials').addEventListener('input', (e) => {
@@ -1874,8 +1877,8 @@ function setupAuthEventListeners() {
         if (pwdLabel) {
             const hasStored = isValid && Boolean(localStorage.getItem(`auth_pwd_${initials}`));
             pwdLabel.innerHTML = hasStored
-                ? 'Password <span class="auth-optional-tag" style="color: var(--accent-primary); font-weight: 600;">(required)</span>'
-                : 'Password <span class="auth-optional-tag" style="font-weight: normal; opacity: 0.7;">(optional)</span>';
+                ? 'Secret word <span class="auth-optional-tag" style="color: var(--accent-primary); font-weight: 600;">(required)</span>'
+                : 'Secret word <span class="auth-optional-tag" style="font-weight: normal; opacity: 0.7;">(optional)</span>';
         }
     });
 
