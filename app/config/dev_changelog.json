@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-30T22:10:00+01:00",
+      "date": "2026-09-30 22:10 BST",
+      "agent": "Claude",
+      "summary": "Word data for each study set is about half the size (es, pt, cs, fi); cards look exactly the same.",
+      "detail": [
+        "Index row shards no longer carry what the app never reads: etymology text, raw glosses, analysis bookkeeping ids, unused WSD count tables, and the second copy of provider metadata and grammar features.",
+        "Portuguese 108 to 57 MB, Czech 44 to 21 MB, Finnish 24 to 12 MB, Spanish 122 to 81 MB. Release sites are now 60-196 MB each.",
+        "A test runs the app's own sense pills, notes, reverse cues, cross references, dictionary examples and WSD frequencies on full and slim rows from all four languages and requires identical output."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-30T20:55:00+01:00",
       "date": "2026-09-30 20:55 BST",
       "agent": "Claude",
