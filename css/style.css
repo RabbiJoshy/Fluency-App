@@ -22082,3 +22082,63 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
     .meaning-row .meaning-row-gloss,
     .meaning-row .group-card-shared { flex-basis: auto; width: 100% !important; }
 }
+
+/* Card front figures: "Vocab. Rank" and "Frequency" on one line each, the
+   bold numbers level beneath them, "per million" small underneath the
+   frequency. Each block is centred on itself; tops align so labels and
+   numbers line up across the card. */
+.card-ranking { align-items: flex-start !important; padding: 0 22px; }
+.card-ranking .card-stat,
+.card-ranking .card-stat--end {
+    align-items: center;
+    text-align: center;
+    gap: 2px;
+}
+.card-ranking .card-stat-label { white-space: nowrap; font-size: 13px; letter-spacing: 0.02em; }
+.card-ranking .card-stat-line { justify-content: center; }
+.card-ranking .card-stat-unit--below { font-size: 11px; margin-top: -1px; }
+
+/* Commonness meter: a little wider and taller. */
+.sense-prominence-meter { height: 16px; gap: 2.5px; }
+.sense-prominence-meter i { width: 4.5px; border-radius: 1.5px; }
+.sense-prominence-meter i:nth-child(1) { height: 6px; }
+.sense-prominence-meter i:nth-child(2) { height: 11px; }
+.sense-prominence-meter i:nth-child(3) { height: 16px; }
+
+/* Rectangular flags (js/flags.js) in place of emoji. Sized in em so every
+   spot that sized the emoji by font-size keeps its scale. */
+.flag-img {
+    display: inline-block;
+    width: 1.33em;
+    height: 1em;
+    object-fit: cover;
+    vertical-align: -0.12em;
+    border-radius: 0.14em;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14), 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+/* A country region on a sense row is its flag alone. */
+.sense-region-flag {
+    display: inline-flex;
+    align-items: center;
+    font-size: 13px;
+    line-height: 1;
+}
+.sense-metadata-tier:empty,
+.sense-metadata-list:empty { display: none; }
+.meaning-row > .sense-region-flag--leading {
+    position: absolute;
+    left: 9px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    font-size: 14px;
+    pointer-events: none;
+}
+.meaning-row.has-leading-flag-and-info > .sense-region-flag--leading { left: 33px; }
+.meaning-row.meaning-row-regular.has-leading-flag-and-info,
+.meaning-row.meaning-row-group.has-leading-flag-and-info {
+    padding-left: 58px !important;
+    padding-right: 58px !important;
+}
+.choice-sheet-icon .flag-img { width: 100%; height: auto; aspect-ratio: 4 / 3; }

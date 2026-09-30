@@ -1,26 +1,26 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=47646118';
-import './speech.js?v=47646118';
-import { goToRoute, routeCodeFor } from './routes.js?v=47646118';
-import './side-dock.js?v=47646118';
+import './state.js?v=468fd439';
+import './speech.js?v=468fd439';
+import { goToRoute, routeCodeFor } from './routes.js?v=468fd439';
+import './side-dock.js?v=468fd439';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=47646118';
+} from './example-personalisation.js?v=468fd439';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=47646118';
+} from './spanishdict-usage.js?v=468fd439';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=47646118';
+} from './reverse-cues.js?v=468fd439';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -48,7 +48,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=47646118';
+} from './card-metadata-pills.js?v=468fd439';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -753,6 +753,29 @@ function fitPosSectionSummaries(root) {
             shownCount++;
         }
         summary.classList.remove('is-measuring');
+    });
+}
+
+// A language's privileged region (Brazil, for Portuguese) is not one cue
+// among many: its flag leads the row, beside the information button.
+// Declared on the language's config entry, so the shared renderer stays
+// language-neutral and a new variety needs no code.
+function languagePrivilegedRegions() {
+    const regions = config?.languages?.[selectedLanguage]?.privilegedRegions;
+    return Array.isArray(regions) ? regions : [];
+}
+
+function placeLeadingRegionFlags(root) {
+    root.querySelectorAll('.meaning-row').forEach(row => {
+        const flags = [...row.querySelectorAll('.sense-region-flag--leading')];
+        if (!flags.length) return;
+        flags.slice(1).forEach(el => el.remove());
+        const flag = flags[0];
+        const info = row.querySelector(':scope > .sense-note-trigger');
+        if (info) info.after(flag);
+        else row.prepend(flag);
+        row.classList.add('has-leading-flag');
+        if (info) row.classList.add('has-leading-flag-and-info');
     });
 }
 
@@ -3986,6 +4009,7 @@ function lemmaPosGroupKeyForMeaning(meaning) {
 const LEARNER_ROW_BUDGET_ENABLED = false;
 const AUTO_OPEN_SECTION_ROW_LIMIT_PHONE = 6;
 const AUTO_OPEN_SECTION_ROW_LIMIT_DESKTOP = 8;
+const ALL_SECTIONS_OPEN_BELOW_SENSE_ROWS = 8;
 
 function autoOpenSectionRowLimit() {
     // First-pass experiment: retain configured limits, but let rows scroll.
@@ -6119,7 +6143,7 @@ function renderCardWikipediaBadge(card) {
         // size; the wording, units and the total-vocabulary denominator are
         // context and stay muted.
         if (activeArtist && card.corpusCount) {
-            freqHtml = cardStatHTML('card-freq-label', 'Song<br>Lines',
+            freqHtml = cardStatHTML('card-freq-label', 'Song Lines',
                 Number(card.corpusCount).toLocaleString());
         } else if (!activeArtist && Number(card.sourceFrequency) > 0) {
             const perMillion = card.sourceFrequencyUnit === 'per_million';
@@ -6149,9 +6173,9 @@ function renderCardWikipediaBadge(card) {
         // total is just the size of our deck, not of the language, so the rank
         // stands alone.
         const denominator = activeArtist && vocabularySize ? `/ ${vocabularySize.toLocaleString()}` : '';
-        // Three short lines a side: the two-word labels stack, so each block
-        // is narrow and the number sits at the same height on both sides.
-        const rankLabel = card.artistVocabularyScope === 'extra' ? 'Extra<br>Rank' : 'Vocabulary<br>Rank';
+        // One-line labels on both sides, so the two numbers share a line and
+        // "per million" hangs below the frequency figure alone.
+        const rankLabel = card.artistVocabularyScope === 'extra' ? 'Extra Rank' : 'Vocab. Rank';
         frontRankingEl.innerHTML =
             cardStatHTML('card-rank-label', rankLabel, Number(vocabularyRank).toLocaleString(), denominator)
             + freqHtml;
@@ -7092,6 +7116,7 @@ function renderCardWikipediaBadge(card) {
                             );
                             const metaOptions = {
                                 senseCount: card.meanings?.length || orderedMembers.length,
+                                privilegedRegions: languagePrivilegedRegions(),
                                 cardMeanings: card.meanings,
                                 gloss: memberFullGloss,
                                 peerMeanings: orderedMembers.filter(mi => mi !== memberIdx).map(mi => card.meanings[mi]),
@@ -7144,6 +7169,7 @@ function renderCardWikipediaBadge(card) {
                             );
                             const metaOptions = {
                                 senseCount: card.meanings?.length || orderedMembers.length,
+                                privilegedRegions: languagePrivilegedRegions(),
                                 cardMeanings: card.meanings,
                                 gloss: transRaw,
                                 peerMeanings: senseMetadataPeers(mm, card.meanings, transRaw),
@@ -7244,6 +7270,7 @@ function renderCardWikipediaBadge(card) {
                     const collocationHTML = senseCollocationHTML(m, card);
                     const metadataOptions = {
                         senseCount: card.meanings?.length || 1,
+                        privilegedRegions: languagePrivilegedRegions(),
                         cardMeanings: card.meanings,
                         gloss: displayMeaning,
                         peerMeanings: senseMetadataPeers(m, card.meanings, displayMeaning),
@@ -7329,7 +7356,14 @@ function renderCardWikipediaBadge(card) {
         );
         const allSectionsFitInline = !compactKnowledgeView
             && renderedSectionRowCount <= autoOpenSectionRowLimit();
-        if (!card._backSectionsManuallySet) {
+        // A small card is one complete menu: with fewer than eight sense rows
+        // every section stays open, even after a heading is tapped (tapping
+        // still selects that group; it just no longer hides the others).
+        const senseRowCount = renderedSectionRowCount
+            - Array.from(scrollSections.keys()).filter(key => groupInfo.has(key)).length;
+        if (!compactKnowledgeView && senseRowCount < ALL_SECTIONS_OPEN_BELOW_SENSE_ROWS) {
+            card._expandedPos = new Set(Array.from(scrollSections.keys()).filter(key => groupInfo.has(key)));
+        } else if (!card._backSectionsManuallySet) {
             card._expandedPos = allSectionsFitInline
                 ? new Set(Array.from(scrollSections.keys()).filter(key => groupInfo.has(key)))
                 : new Set(activeLemmaPosKey ? [activeLemmaPosKey] : []);
@@ -7885,6 +7919,7 @@ function renderCardWikipediaBadge(card) {
         window.sideDock?.beforeBackRender(card);
         renderedBack.innerHTML = backHTML;
         placeRowInformationButtons(renderedBack);
+        placeLeadingRegionFlags(renderedBack);
         arrangeSenseCueAreas(renderedBack);
         renderedBack._fluencyRenderedHTML = backHTML;
         bindGrammarPairChips(renderedBack);
@@ -9840,8 +9875,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '47646118';
-const MODALS_ASSET_VERSION = '47646118';
+const ASSET_VERSION = '468fd439';
+const MODALS_ASSET_VERSION = '468fd439';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
