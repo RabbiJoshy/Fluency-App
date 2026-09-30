@@ -22275,3 +22275,12 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
     align-items: center;
     gap: 4px;
 }
+/* A context every sub-sense shares sits under the family heading. */
+.meaning-row .group-shared-context {
+    display: block;
+    margin-top: 2px;
+    color: var(--text-secondary);
+    font-size: var(--sense-reading-size, 13px);
+    font-weight: 500;
+    line-height: 1.3;
+}

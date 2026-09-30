@@ -7062,8 +7062,19 @@ function renderCardWikipediaBadge(card) {
                     const sharedPieces = (memberPieces.get(idx) || []).filter(piece => orderedMembers
                         .every(mi => memberPieces.get(mi).some(other => glossPieceKey(other) === glossPieceKey(piece))));
                     const sharedKeys = new Set(sharedPieces.map(glossPieceKey));
+                    // A translation already given by an earlier sub-row is
+                    // not repeated in a later one (bem: "all right, fine, OK"
+                    // once, then just "healthy").
+                    const extraSeen = new Set();
                     const memberExtraGloss = mi => (memberPieces.get(mi) || [])
-                        .filter(piece => !sharedKeys.has(glossPieceKey(piece))).join(', ');
+                        .filter(piece => !sharedKeys.has(glossPieceKey(piece)))
+                        .filter(piece => {
+                            const key = glossPieceKey(piece.replace(/\s*\([^()]*\)/g, ''));
+                            if (extraSeen.has(key)) return false;
+                            extraSeen.add(key);
+                            return true;
+                        })
+                        .join(', ');
                     const sharedFullText = isTransAxis
                         ? (sharedPieces.join(', ') || groupingGlossByMeaning.get(idx)?.gloss || displayMeaning)
                         : String(groupKey || '').replace(/"/g, '&quot;');
@@ -7143,6 +7154,22 @@ function renderCardWikipediaBadge(card) {
                             ? definitionLabel(groupingGlossByMeaning.get(memberIdx)?.removedDefinitions?.[0] || '')
                             : '',
                     }]));
+                    // A context every sub-row carries ("preceding the verb"
+                    // on both of só's) describes the family: it moves up
+                    // beside the heading and leaves the sub-rows.
+                    const contextParts = text => String(text || '').split(/\s+·\s+|;\s*/).map(part => part.trim()).filter(Boolean);
+                    const sharedContextParts = isTransAxis && orderedMembers.length > 1
+                        ? contextParts(memberParts.get(orderedMembers[0]).context).filter(part => orderedMembers
+                            .every(mi => contextParts(memberParts.get(mi).context)
+                                .some(other => glossPieceKey(other) === glossPieceKey(part))))
+                        : [];
+                    if (sharedContextParts.length) {
+                        const sharedKeys = new Set(sharedContextParts.map(glossPieceKey));
+                        for (const parts of memberParts.values()) {
+                            parts.context = contextParts(parts.context)
+                                .filter(part => !sharedKeys.has(glossPieceKey(part))).join(' · ');
+                        }
+                    }
                     const partsLabel = parts => [parts.extra, parts.context].filter(Boolean).join(' · ').toLocaleLowerCase('en');
                     const labelCounts = new Map();
                     for (const parts of memberParts.values()) {
@@ -7221,7 +7248,10 @@ function renderCardWikipediaBadge(card) {
                             };
                             const rowPresentation = learnerRowPresentation(mm, isMemberSelected, metaOptions);
                             let cleanedCtx = entry.label === 'general use'
-                                ? rowPresentation.key.text
+                                ? String(rowPresentation.key.text || '').split(/\s+·\s+|;\s*/)
+                                    .filter(part => part && !sharedContextParts
+                                        .some(shared => glossPieceKey(shared) === glossPieceKey(part)))
+                                    .join(' · ')
                                 : entry.context;
                             const extraGlossHTML = entry.extra
                                 ? `<span class="group-member-gloss">${escapeCardText(entry.extra)}</span>` : '';
@@ -7253,7 +7283,9 @@ function renderCardWikipediaBadge(card) {
                                     sharedText,
                                     meaning => contextLabelByMeaning.get(card.meanings.indexOf(meaning)) || ''
                                 );
-                                if (diff && diff.score >= 60) {
+                                const diffRepeatsHeading = diff && sharedContextParts
+                                    .some(shared => glossPieceKey(shared) === glossPieceKey(diff.label));
+                                if (diff && diff.score >= 60 && !diffRepeatsHeading) {
                                     if (diff.type === 'context') {
                                         varyingHtml = `<span class="meaning-context-cell" style="font-weight: ${ctxWeight}; color: ${ctxColor}; line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${renderSenseContextHTML(diff.label, { leadingDot: false })}</span>`;
                                     } else {
@@ -7341,8 +7373,10 @@ function renderCardWikipediaBadge(card) {
                     // Shared cell — spans all body rows.
                     const sharedCol = isTransAxis ? 1 : 2;
                     const sharedSpan = `grid-column: ${sharedCol}; grid-row: 1 / span ${displayMemberEntries.length}; align-self: center;`;
+                    const sharedContextHTML = sharedContextParts.length
+                        ? `<span class="group-shared-context">${escapeCardText(sharedContextParts.join(' · '))}</span>` : '';
                     const sharedCellHtml = isTransAxis
-                        ? `<div class="group-card-shared row-adaptive-text" style="${sharedSpan} font-weight: 600; color: var(--text-primary); text-align: center; line-height: 1.25; min-width: 0; word-break: break-word;">${sharedTextHTML}${sharedNoteHTML}${modelProposalMarkerHTML(orderedMembers.some(memberIdx => card.meanings[memberIdx].modelProposed) ? { modelProposed: true } : null)}</div>`
+                        ? `<div class="group-card-shared row-adaptive-text" style="${sharedSpan} font-weight: 600; color: var(--text-primary); text-align: center; line-height: 1.25; min-width: 0; word-break: break-word;">${sharedTextHTML}${sharedContextHTML}${sharedNoteHTML}${modelProposalMarkerHTML(orderedMembers.some(memberIdx => card.meanings[memberIdx].modelProposed) ? { modelProposed: true } : null)}</div>`
                         : `<div class="group-card-shared" style="${sharedSpan} text-align: center; line-height: 1.25; min-width: 0; word-break: break-word;">${renderSenseContextHTML(groupKey, { leadingDot: false })}</div>`;
 
                     // Body grid: shared + varying. The pct column lives in the
