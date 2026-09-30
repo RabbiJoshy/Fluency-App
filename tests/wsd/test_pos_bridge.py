@@ -27,6 +27,12 @@ class WiktionaryBridgeTests(unittest.TestCase):
             with self.subTest(tag=tag):
                 self.assertTrue(compatible("wiktionary", tag, "contraction"))
 
+    def test_wiktionary_postpositions_are_adpositions(self) -> None:
+        """Finnish kanssa/takia/varten are filed as postp, while UD emits ADP."""
+
+        self.assertTrue(compatible("wiktionary", "ADP", "postp"))
+        self.assertEqual(dictionary_pos_family("postp"), "adp")
+
     def test_auxiliaries_reach_verb(self) -> None:
         """Wiktionary has no `aux`; e and esta are plain verbs."""
 

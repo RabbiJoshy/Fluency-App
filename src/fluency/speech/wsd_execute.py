@@ -174,6 +174,34 @@ def model_profile(profile_id: str) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8")) if path.is_file() else {}
 
 
+def _single_leaf_is_deterministic(
+    only: tuple[MenuAnalysis, SenseLeaf] | None,
+    *,
+    profile_id: str,
+    has_multiword_alternative: bool,
+    declared_single_leaf_is_fact: bool = False,
+) -> bool:
+    """Whether a one-leaf menu is a fact rather than a WSD decision.
+
+    Evidence-guard profiles still score ordinary provider menus because their
+    sole surviving leaf may be the result of a contextual constraint. A
+    declared one-sense menu is different: a reviewer explicitly supplied the
+    answer, so asking rank agreement to rediscover it can only turn a recorded
+    fact into a false abstention. This is provider- and language-neutral, but
+    opt-in per profile file (commit.declared_single_leaf_is_fact) so profiles
+    that already shipped keep their method.
+    """
+
+    if only is None or has_multiword_alternative:
+        return False
+    if profile_id not in EVIDENCE_GUARD_PROFILES:
+        return True
+    if not declared_single_leaf_is_fact:
+        return False
+    analysis, _leaf = only
+    return analysis.source_adapter in {"declared-gloss/v1", "declared-entity/v1"}
+
+
 MORPH_VALUE_MAP = {
     ("Number", "Sing"): ("number", "singular"),
     ("Number", "Plur"): ("number", "plural"),
@@ -960,10 +988,13 @@ def main() -> None:
                 continue
 
             has_multiword_alternative = bool(amb_matches)
-            if (
-                only is not None
-                and not has_multiword_alternative
-                and args.profile_id not in EVIDENCE_GUARD_PROFILES
+            if _single_leaf_is_deterministic(
+                only,
+                profile_id=args.profile_id,
+                has_multiword_alternative=has_multiword_alternative,
+                declared_single_leaf_is_fact=bool(
+                    (profile_config.get("commit") or {}).get("declared_single_leaf_is_fact")
+                ),
             ):
                 # A one-sense menu is not disambiguation. Assign it without any
                 # contextual model and mark it as a default, so the auditor can

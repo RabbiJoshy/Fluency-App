@@ -58,7 +58,7 @@ WIKTIONARY_BRIDGE = {
     "DET": frozenset({"det", "article", "contraction", "adj"}),
     "PRON": frozenset({"pron", "det", "article", "contraction"}),
     "NUM": frozenset({"num", "adj", "det"}),
-    "PART": frozenset({"particle", "adv", "prep"}),
+    "PART": frozenset({"particle", "adv", "prep", "postp"}),
     "CCONJ": frozenset({"conj"}),
     "SCONJ": frozenset({"conj"}),
     "INTJ": frozenset({"intj"}),

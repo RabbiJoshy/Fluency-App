@@ -7,6 +7,7 @@ from fluency.speech.wsd_execute import (
     ExactTextGlossScorer,
     SPACY_POS_MODEL,
     _attached_companions,
+    _single_leaf_is_deterministic,
     occurrence_pos_tags,
 )
 from fluency.wsd.menus import MenuAnalysis, SenseLeaf, build_analysis_id
@@ -55,6 +56,57 @@ def work_item(
 
 
 class SpeechOccurrencePOSTests(unittest.TestCase):
+    def test_declared_one_sense_menu_bypasses_evidence_guard_wsd(self):
+        card_id = "card_fi_" + "d" * 32
+        analysis = MenuAnalysis(
+            menu_analysis_id=build_analysis_id(
+                card_id=card_id,
+                source_adapter="declared-gloss/v1",
+                source_analysis_key="fi-review-ettei",
+            ),
+            card_id=card_id,
+            surface_form="ettei",
+            headword="ettei",
+            part_of_speech="X",
+            source_adapter="declared-gloss/v1",
+            source_analysis_key="fi-review-ettei",
+            provider_metadata={},
+            senses=(
+                SenseLeaf(
+                    sense_id="declared:fi-review-ettei#1",
+                    translation="that ... not; so that ... not",
+                    definition="",
+                    source_reference="declared:fi-review-ettei#1",
+                    provider_metadata={},
+                ),
+            ),
+        )
+
+        self.assertTrue(
+            _single_leaf_is_deterministic(
+                (analysis, analysis.senses[0]),
+                profile_id="fi-v21-1",
+                has_multiword_alternative=False,
+                declared_single_leaf_is_fact=True,
+            )
+        )
+        # Off unless the profile file opts in: shipped profiles keep their method.
+        self.assertFalse(
+            _single_leaf_is_deterministic(
+                (analysis, analysis.senses[0]),
+                profile_id="fi-v21-1",
+                has_multiword_alternative=False,
+            )
+        )
+        self.assertFalse(
+            _single_leaf_is_deterministic(
+                (analysis, analysis.senses[0]),
+                profile_id="fi-v21-1",
+                has_multiword_alternative=True,
+                declared_single_leaf_is_fact=True,
+            )
+        )
+
     def test_one_leaf_menu_does_not_require_embeddings(self):
         card_id = "card_pt_" + "b" * 32
         source_adapter = "wiktionary-sense-menu/v1"
