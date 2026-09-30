@@ -74,7 +74,7 @@ class MetadataContractUITests(unittest.TestCase):
         self.assertIn("renderSenseContextHTML(groupKey", flashcards)
         self.assertNotIn("renderSenseContextHTML(m.context", flashcards)
         self.assertIn("const sharedNoteHTML = '';", flashcards)
-        self.assertIn("${sharedTextHTML}${sharedNoteHTML}", flashcards)
+        self.assertIn("${sharedTextHTML}${sharedContextHTML}${sharedNoteHTML}", flashcards)
         self.assertIn("item.kind === 'optional_companion'", metadata_pills)
         self.assertIn("function|mood|noun-class|number|person", metadata_pills)
         self.assertIn('aria-haspopup="dialog"', metadata_pills)
