@@ -1,4 +1,4 @@
-import { flagImgHTML, regionFlagCode } from './flags.js?v=a872faf5';
+import { flagImgHTML, regionFlagCode } from './flags.js?v=328c1ccd';
 
 // Card metadata badges, chips, and sense-detail formatting.
 // Handles canonical features, qualifier formatting, and grammar pill presentation
@@ -60,8 +60,24 @@ export function isWiktionaryGrammarNote(note) {
 
 const WIKTIONARY_PRONOUN_DEFINITION = /^(?:(?:first|second|third)-person[a-z0-9\s,–-]+(?:pronoun|determiner|article)(?:,\s*when\s+used\s+with\s+[^\;]+)?);\s*(.+)$/i;
 
+// "(Brazil) exactly; right on": a gloss that opens with a bracketed region
+// or register label. The label is a tag (a flag, for a country), not part of
+// the translation. Provider-neutral: any adapter's gloss may carry one.
+function leadingGlossLabels(value) {
+    const match = /^\(([^()]+)\)\s+(\S.*)$/u.exec(String(value || '').trim());
+    if (!match) return null;
+    const labels = match[1].split(/\s*,\s*/).filter(Boolean);
+    const items = labels.map(label => regionFlagCode(label)
+        ? { family: 'register', kind: 'region', value: label }
+        : (SENSE_REGISTER_TAGS.has(label.toLocaleLowerCase('en'))
+            ? { family: 'register', kind: 'usage_tag', value: label } : null));
+    if (!items.length || items.some(item => !item)) return null;
+    return { items, rest: match[2].trim(), sourceText: `(${match[1]})` };
+}
+
 export function projectWiktionaryGloss(meaning, value) {
-    const text = String(value || '').trim();
+    const leading = leadingGlossLabels(value);
+    const text = String(leading ? leading.rest : (value || '')).trim();
     const metadata = meaning?.metadata || {};
     if (!text || metadata.source_adapter !== 'wiktionary-sense-menu/v1') {
         return { display: text, features: [] };
@@ -234,6 +250,8 @@ export function senseMetadataItems(meaning) {
             add(feature.family, feature.kind || '', feature.value, feature.embedding_text);
         }
     }
+    const leading = leadingGlossLabels(meaning?.meaning || meaning?.translation || '');
+    for (const item of leading?.items || []) add(item.family, item.kind, item.value, leading.sourceText);
     // Provider-shaped fallbacks exist only for older releases. Once a release
     // carries the canonical contract, its adapter is the authority: reading
     // raw regions/tags again can resurrect values that it explicitly ignored

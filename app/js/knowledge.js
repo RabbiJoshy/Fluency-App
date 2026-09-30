@@ -1,8 +1,8 @@
 // Granular sense / expression knowledge layered over whole-card progress.
 // Whole-card answers are the baseline; only explicit row-level answers create
 // ItemProgress records. The newest card-level or item-level event wins.
-import './state.js?v=a872faf5';
-import { sendOrQueue } from './sync-queue.js?v=a872faf5';
+import './state.js?v=328c1ccd';
+import { sendOrQueue } from './sync-queue.js?v=328c1ccd';
 
 const KNOWLEDGE_SCHEMA_VERSION = 1;
 
@@ -733,19 +733,19 @@ function knowledgeSectionLabel(item) {
 
 function renderKnowledgeOverviewButton(card) {
     if (!currentUser || currentUser.isGuest) return '';
-    const summary = getCardKnowledgeSummary(card);
-    // A single-item card has nothing to break down: "0/1 known" restates the
-    // whole-card answer the learner is about to give, and the overview it
-    // opens would list one row. The tile only earns its place once the card
-    // carries more than one meaning/Expression/attached form.
-    if (summary.total <= 1) return '';
-    const label = summary.total <= 1 ? 'Meanings' : `${summary.learned} of ${summary.total} known`;
-    return `<button type="button" class="ref-tile knowledge-overview-trigger" aria-label="Open meanings and expressions knowledge: ${label}" onclick="showKnowledgeOverview(event)">
+    const items = getCardKnowledgeItems(card);
+    // Show only meanings in the trigger count, matching the modal.
+    const meaningItems = items.filter(item => knowledgeSectionLabel(item) === 'Meanings');
+    const displayItems = meaningItems.length > 0 ? meaningItems : items;
+    if (displayItems.length <= 1) return '';
+    const learned = displayItems.filter(item => getKnowledgeItemState(card, item).learned).length;
+    const total = displayItems.length;
+    return `<button type="button" class="ref-tile knowledge-overview-trigger" aria-label="Meanings: ${learned}/${total} known" onclick="showKnowledgeOverview(event)">
         <svg class="ref-tile-icon" viewBox="10 10 26 26" aria-hidden="true">
             <path d="M12 13.5h18M12 21h18M12 28.5h11" class="knowledge-overview-icon-lines"/>
             <path d="m27 29 2.4 2.4L34 26.8" class="knowledge-overview-icon-check"/>
         </svg>
-        <span class="ref-tile-label">${summary.total <= 1 ? 'Meanings' : `${summary.learned}/${summary.total} known`}</span>
+        <span class="ref-tile-label">${learned}/${total} known</span>
     </button>`;
 }
 
@@ -762,13 +762,9 @@ function ensureKnowledgeOverviewModal() {
     modal.innerHTML = `
         <div class="knowledge-overview-sheet">
             <header class="knowledge-overview-header">
-                <div>
-                    <span class="knowledge-overview-kicker">Card knowledge</span>
-                    <h2 id="knowledgeOverviewTitle">Meanings and expressions</h2>
-                </div>
-                <button type="button" class="knowledge-overview-close" aria-label="Close knowledge overview" onclick="closeKnowledgeOverview(event)">×</button>
+                <h2 id="knowledgeOverviewTitle">Meanings</h2>
+                <button type="button" class="knowledge-overview-close" aria-label="Close" onclick="closeKnowledgeOverview(event)">×</button>
             </header>
-            <p class="knowledge-overview-intro">This card can hold more than one meaning or expression. Mark each one on its own — separate from grading the card itself: <span class="knowledge-overview-legend-known">✓ Known</span> stops it coming back, <span class="knowledge-overview-legend-review">× Practice</span> brings it back sooner.</p>
             <div id="knowledgeOverviewSummary" class="knowledge-overview-summary"></div>
             <div id="knowledgeOverviewList" class="knowledge-overview-list"></div>
             <div class="knowledge-overview-footer" style="display: flex; justify-content: flex-end; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-color, rgba(255,255,255,0.1));">
@@ -808,47 +804,37 @@ function knowledgeOverviewRowsHTML(card, rows, { groupedByPos = false } = {}) {
 function renderKnowledgeOverview(card) {
     const modal = ensureKnowledgeOverviewModal();
     const items = getCardKnowledgeItems(card);
-    const summary = getCardKnowledgeSummary(card);
     const summaryEl = modal.querySelector('#knowledgeOverviewSummary');
     const listEl = modal.querySelector('#knowledgeOverviewList');
-    const reviewLabel = summary.review === 1 ? '1 review' : `${summary.review} review`;
-    const unseenLabel = summary.unseen === 1 ? '1 unmarked' : `${summary.unseen} unmarked`;
-    summaryEl.innerHTML = `
-        <strong>${summary.learned}/${summary.total} known</strong>
-        <span class="knowledge-overview-summary-review">${reviewLabel}</span>
-        <span>${unseenLabel}</span>`;
 
+    // Title: the word itself
+    const titleEl = modal.querySelector('#knowledgeOverviewTitle');
+    if (titleEl) titleEl.textContent = card.targetWord || 'Meanings';
+
+    // Build sections but only show Meanings (hide Expressions to simplify).
+    // Expression knowledge is preserved in the data model; only the UI hides it.
     const sections = new Map();
     items.forEach((item, index) => {
         const label = knowledgeSectionLabel(item);
         if (!sections.has(label)) sections.set(label, []);
         sections.get(label).push({ item, index });
     });
-    if (!sections.has(knowledgeOverviewTab)) knowledgeOverviewTab = sections.keys().next().value || '';
 
-    // One section at a time: with meanings and expressions both on the card,
-    // a single long list hides where one kind ends and the other begins.
-    const knownIn = rows => rows.filter(({ item }) => getKnowledgeItemState(card, item).learned).length;
-    const tabsHTML = sections.size > 1
-        ? `<div class="knowledge-overview-tabs" role="tablist" aria-label="Knowledge sections">${Array.from(sections, ([label, rows]) => {
-            const active = label === knowledgeOverviewTab;
-            return `<button type="button" role="tab" class="knowledge-overview-tab${active ? ' is-active' : ''}" aria-selected="${active}" onclick="selectKnowledgeOverviewTab(event, '${escapeKnowledgeHTML(label)}')">${label}<span>${knownIn(rows)}/${rows.length}</span></button>`;
-        }).join('')}</div>`
-        : '';
+    // Force to Meanings only — skip Expressions / Attached forms tabs
+    const meaningRows = sections.get('Meanings') || [];
+    const rows = meaningRows.length > 0 ? meaningRows : (sections.values().next().value || []);
 
-    const rows = sections.get(knowledgeOverviewTab) || [];
-    // MWE and clitic items name their own expression or form in the row, so
-    // they stay a flat list; anything with a POS groups like the card back.
+    // Summary counts only what's displayed
+    const displayedTotal = rows.length;
+    const displayedLearned = rows.filter(({ item }) => getKnowledgeItemState(card, item).learned).length;
+    summaryEl.innerHTML = `<strong>${displayedLearned}/${displayedTotal} known</strong>`;
+
     const groupable = rows.length > 0
         && rows.every(({ item }) => item.pos && item.pos !== 'MWE' && item.pos !== 'CLITIC');
     const sectionHTML = groupable
         ? knowledgeOverviewMeaningGroupsHTML(card, rows)
         : `<div class="knowledge-overview-rows">${knowledgeOverviewRowsHTML(card, rows)}</div>`;
-    const heading = sections.size > 1 ? '' : `<h3>${knowledgeOverviewTab}<span>${rows.length}</span></h3>`;
-    listEl.innerHTML = `${tabsHTML}
-        <section class="knowledge-overview-section" role="${sections.size > 1 ? 'tabpanel' : 'region'}">
-            ${heading}${sectionHTML}
-        </section>`;
+    listEl.innerHTML = `<section class="knowledge-overview-section" role="region">${sectionHTML}</section>`;
 }
 
 // Meanings grouped as the card back groups them: one block per (lemma, POS)
