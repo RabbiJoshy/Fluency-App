@@ -1,26 +1,26 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=7b2826bc';
-import './speech.js?v=7b2826bc';
-import { goToRoute, routeCodeFor } from './routes.js?v=7b2826bc';
-import './side-dock.js?v=7b2826bc';
+import './state.js?v=f979b079';
+import './speech.js?v=f979b079';
+import { goToRoute, routeCodeFor } from './routes.js?v=f979b079';
+import './side-dock.js?v=f979b079';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=7b2826bc';
+} from './example-personalisation.js?v=f979b079';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=7b2826bc';
+} from './spanishdict-usage.js?v=f979b079';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=7b2826bc';
+} from './reverse-cues.js?v=f979b079';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -45,12 +45,12 @@ import {
     toggleSenseMetadataChip,
     extractSenseCompanion,
     senseCollocationHTML,
-    definitionHead,
+    definitionLabel,
     glossPieces,
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=7b2826bc';
+} from './card-metadata-pills.js?v=f979b079';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -833,23 +833,27 @@ function placeRowInformationButtons(root) {
             const senseLabel = label?.textContent.trim() || source.dataset.senseNoteTitle;
             const key = senseLabel + source.innerHTML;
             const body = source.cloneNode(true);
-            // Under its sub-row's label, a paragraph that only repeats the
-            // label says nothing.
+            // A family row's note lists its sub-senses, each under its label
+            // as a plain bold line; a paragraph that only repeats the label
+            // is dropped.
             if (buttons.length > 1) {
                 const fold = text => String(text || '').toLocaleLowerCase('en').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
                 body.querySelectorAll('p').forEach(p => { if (fold(p.textContent) === fold(senseLabel)) p.remove(); });
                 body.querySelectorAll('section').forEach(sec => { if (!sec.querySelector('p')) sec.remove(); });
             }
-            if (!seen.has(key) && body.children.length) {
+            if (!seen.has(key) && (body.children.length || buttons.length > 1)) {
                 seen.add(key);
-                const section = document.createElement('section');
                 if (buttons.length > 1) {
+                    const section = document.createElement('section');
+                    section.className = 'sense-note-section sense-note-subsense';
                     const heading = document.createElement('h3');
+                    heading.className = 'sense-note-subsense-title';
                     heading.textContent = senseLabel;
-                    section.append(heading);
+                    section.append(heading, ...body.children);
+                    copy.append(section);
+                } else {
+                    copy.append(...body.children);
                 }
-                section.append(...body.children);
-                copy.append(section);
             }
             template.remove();
         }
@@ -7133,7 +7137,7 @@ function renderCardWikipediaBadge(card) {
                         extra: isTransAxis ? memberExtraGloss(memberIdx) : '',
                         context: isTransAxis ? (contextLabelByMeaning.get(memberIdx) || '') : '',
                         cut: isTransAxis
-                            ? definitionHead(groupingGlossByMeaning.get(memberIdx)?.removedDefinitions?.[0] || '')
+                            ? definitionLabel(groupingGlossByMeaning.get(memberIdx)?.removedDefinitions?.[0] || '')
                             : '',
                     }]));
                     const partsLabel = parts => [parts.extra, parts.context].filter(Boolean).join(' · ').toLocaleLowerCase('en');
@@ -9968,8 +9972,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '7b2826bc';
-const MODALS_ASSET_VERSION = '7b2826bc';
+const ASSET_VERSION = 'f979b079';
+const MODALS_ASSET_VERSION = 'f979b079';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

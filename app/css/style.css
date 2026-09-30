@@ -22251,3 +22251,20 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 }
 .cell-lead-mark .sense-collocation-particle { font-style: normal; font-weight: 800; }
 .cell-lead-mark .sense-collocation-qualifier { font-size: 10px; font-weight: 600; opacity: .75; }
+
+/* Info note: one reading style. A family row's sub-senses are plain bold
+   lines in the body font, not headings; their own sections sit inside
+   without extra rules between them. */
+.sense-note-section h3.sense-note-subsense-title {
+    margin: 0 0 3px;
+    color: var(--text-primary);
+    font: 650 15px/1.35 var(--font-reading);
+    letter-spacing: 0;
+    text-transform: none;
+}
+.sense-note-subsense .sense-note-section {
+    margin-top: 4px !important;
+    padding-top: 0 !important;
+    border-top: 0 !important;
+}
+.sense-note-subsense .sense-note-section h3 { margin-top: 6px; }
