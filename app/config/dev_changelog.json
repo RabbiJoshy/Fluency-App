@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-01T00:20:00+01:00",
+      "date": "2026-10-01 00:20 BST",
+      "agent": "Antigravity",
+      "summary": "Meanings overview simplified: titled with the word, meanings only, one 'x/y known' count; the intro paragraph, legend, kicker and Expressions tab are gone.",
+      "detail": [
+        "The card's knowledge tile counts meanings only ('3/5 known'), matching what the overview shows; hidden on single-meaning cards.",
+        "The overview's title is the word itself; the 'Card knowledge' kicker, explanatory paragraph and Known/Practice legend are removed.",
+        "Only the Meanings section is listed (Expressions and attached forms are hidden in the UI; their knowledge data is kept). The summary is one count.",
+        "Committed and deployed by Claude on Josh's request."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-30T23:58:00+01:00",
       "date": "2026-09-30 23:58 BST",
       "agent": "Claude",
