@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-30T18:35:00+01:00",
+      "date": "2026-09-30 18:35 BST",
+      "agent": "Claude",
+      "summary": "Spanish, Portuguese, Czech and Finnish speech cards now show up to 30 examples instead of 10.",
+      "detail": [
+        "Every example WSD already assigned a sense is shown (about 30 per card); nothing was re-scored, and cards, senses and Rare/Uncommon/Common/Dominant labels are unchanged.",
+        "New releases es/pt/cs-speech-v21-10000x30 and fi-speech-v21-2000x30 carry stages 01-04 byte-for-byte from the v21 runs; only example selection was rebuilt.",
+        "Cognate, merge-key and source-frequency files rebound to the new release ids (the index files are byte-identical)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-30T16:45:00+01:00",
       "date": "2026-09-30 16:45 BST",
       "agent": "Claude",

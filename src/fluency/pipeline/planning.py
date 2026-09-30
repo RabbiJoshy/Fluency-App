@@ -146,10 +146,12 @@ def validate_pipeline_profile(profile: dict[str, Any]) -> None:
     # five examples is a scope choice, not a contract violation, and the app
     # cycles the examples array with no fixed length. What must stay bounded is
     # the upper end -- display examples cost bytes in every card of every deck.
+    # Thirty is what stage 04 already scores per card (execution cap 30), so a
+    # deck can show every assigned sentence without another WSD pass.
     _display = display_examples_per_card(scope)
     _require(
-        1 <= _display <= 12,
-        f"a Speech profile must show between 1 and 12 final examples per surface, not {_display}",
+        1 <= _display <= 30,
+        f"a Speech profile must show between 1 and 30 final examples per surface, not {_display}",
     )
     _require(
         scope.get("shortfall_policy") in {"block_release", "publish_explicit"},
