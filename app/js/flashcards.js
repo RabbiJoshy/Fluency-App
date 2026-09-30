@@ -1,26 +1,26 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=a3e776ea';
-import './speech.js?v=a3e776ea';
-import { goToRoute, routeCodeFor } from './routes.js?v=a3e776ea';
-import './side-dock.js?v=a3e776ea';
+import './state.js?v=783f9174';
+import './speech.js?v=783f9174';
+import { goToRoute, routeCodeFor } from './routes.js?v=783f9174';
+import './side-dock.js?v=783f9174';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=a3e776ea';
+} from './example-personalisation.js?v=783f9174';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=a3e776ea';
+} from './spanishdict-usage.js?v=783f9174';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=a3e776ea';
+} from './reverse-cues.js?v=783f9174';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -48,7 +48,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=a3e776ea';
+} from './card-metadata-pills.js?v=783f9174';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -3272,8 +3272,11 @@ function cleanSenseContext(rawContext, mainGloss) {
 
 function learnerRowPresentation(meaning, active, options = {}) {
     const presentation = learnerSensePresentation(meaning, active, { ...options, ignoreBudget: true });
-    const visibleContext = cleanSenseContext(presentation.visibleContext, options.gloss || '');
-    const keyText = cleanSenseContext(presentation.key?.text || '', options.gloss || '');
+    // Compare with the gloss the row shows, not the source: a key drawn from
+    // the source's own bracket ("to have the given quality") is not a repeat.
+    const shownGloss = presentation.gloss || options.gloss || '';
+    const visibleContext = cleanSenseContext(presentation.visibleContext, shownGloss);
+    const keyText = cleanSenseContext(presentation.key?.text || '', shownGloss);
     return {
         ...presentation,
         key: { ...presentation.key, text: keyText },
@@ -9874,8 +9877,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'a3e776ea';
-const MODALS_ASSET_VERSION = 'a3e776ea';
+const ASSET_VERSION = '783f9174';
+const MODALS_ASSET_VERSION = '783f9174';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

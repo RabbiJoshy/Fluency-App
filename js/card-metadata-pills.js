@@ -1,4 +1,4 @@
-import { flagImgHTML, regionFlagCode } from './flags.js?v=a3e776ea';
+import { flagImgHTML, regionFlagCode } from './flags.js?v=783f9174';
 
 // Card metadata badges, chips, and sense-detail formatting.
 // Handles canonical features, qualifier formatting, and grammar pill presentation
@@ -847,6 +847,36 @@ function compactLearnerContextClause(value) {
         .trim();
 }
 
+function learnerContextByRule(value, gloss = '') {
+    const visible = [];
+    const detail = [];
+    const seenVisible = new Set();
+    const seenDetail = new Set();
+    const glossIsVerb = /^to\s/i.test(String(gloss).trim());
+    for (const source of splitLearnerContextClauses(value)) {
+        const readable = readableSenseNote(source).trim();
+        const readableKey = foldMetadataComparable(readable);
+        if (readable && readableKey && !seenDetail.has(readableKey)) {
+            seenDetail.add(readableKey);
+            detail.push(readable);
+        }
+        const compact = compactLearnerContextClause(source);
+        const key = foldMetadataComparable(compact);
+        if (!compact || !key || seenVisible.has(key)) continue;
+        // "to own; to possess" under "to have" is a synonym list, not a cue.
+        const synonym = glossIsVerb && /^to\s/i.test(compact);
+        if (synonym || !isLabelLikeText(compact)) continue;
+        seenVisible.add(key);
+        visible.push(compact);
+    }
+    const visibleContext = visible.join('; ');
+    const fullDetail = detail.join('; ');
+    return {
+        visibleContext,
+        detailContext: foldMetadataComparable(visibleContext) === foldMetadataComparable(fullDetail) ? '' : fullDetail,
+    };
+}
+
 function learnerContextBudget(value, active, senseCount, roomForInlineDetails = false) {
     const sourceClauses = splitLearnerContextClauses(value);
     const sourceSeen = new Set();
@@ -996,7 +1026,9 @@ function glossDistinctionKey(source, visibleGloss) {
 //     relation to)") or ends on a preposition ("offended by (a comment)");
 //   - it restricts use rather than defining ("said of weather", "especially").
 // Argument slots such as "(something)" or "(someone)" are never touched.
-const GLOSS_SLOT_PARENTHETICAL = /^(?:some(?:one|thing|body|where)|oneself|one's|its|their|his|her|with|of|from|for|at|on|in|to|by|about)\b/i;
+// "to" counts only before a person or thing ("(to someone)"), never before a
+// verb: "(to cause to die)" is a definition.
+const GLOSS_SLOT_PARENTHETICAL = /^(?:some(?:one|thing|body|where)|oneself|one's|its|their|his|her|with|of|from|for|at|on|in|by|about|to (?:some(?:one|thing|body|where)|oneself|one's|a|an|the|him|her|them|me|us))\b/i;
 const GLOSS_RESTRICTING_PARENTHETICAL = /^(?:said of|of (?:a|an|the)\b|in (?:a|an|the)\b|when\b|especially\b|usually\b|chiefly\b|often\b|figuratively\b|informal|colloquial|slang|vulgar|dated|archaic|obsolete)/i;
 const FUNCTION_WORD_POS = /^(?:adp|prep|preposition|postp|det|determiner|article|pron|pronoun|part|particle|conj|cconj|sconj|conjunction)$/i;
 
@@ -1015,8 +1047,10 @@ function splitDefinitionParenthetical(text) {
             if (depth !== 0 || open <= 0) continue;
             const inside = text.slice(open + 1, index).trim();
             const rest = text.slice(index + 1).trim();
-            if (GLOSS_SLOT_PARENTHETICAL.test(inside) && inside.split(/\s+/).length <= 4 && rest) continue;
-            if (rest && !/^[,.;]/.test(rest)) return null;
+            // An earlier bracket followed by more text ("yours (singular)
+            // (that or those…)", "to be still (doing something) (to not…)")
+            // is part of the translation; the definition is the next one.
+            if (rest && !/^[,.;]/.test(rest)) continue;
             return { before: text.slice(0, open).trim().replace(/[,;:]$/, '').trim(), inside, rest };
         }
     }
@@ -1029,40 +1063,131 @@ function glossBase(meaning) {
     return split ? split.before : String(display || '').trim();
 }
 
-function definitionParentheticalIsRedundant(meaning, source, options) {
-    const split = splitDefinitionParenthetical(source);
-    if (!split || !split.before || split.before.length < 2) return null;
-    if (GLOSS_SLOT_PARENTHETICAL.test(split.inside) && split.inside.split(/\s+/).length <= 4) return null;
-    if (GLOSS_RESTRICTING_PARENTHETICAL.test(split.inside)) return null;
-    if (/\b(?:by|of|to|with|for|on|in|at|from|about|into|than|as)$/i.test(split.before)) return null;
-    const partOfSpeech = String(meaning?.pos || meaning?.part_of_speech || '');
-    // A grammar word keeps a short bracket ("in (wearing)"), never a paragraph.
-    const shortInside = split.inside.length <= 32;
-    if (shortInside && FUNCTION_WORD_POS.test(partOfSpeech)) return null;
-    if (shortInside && !/\s/.test(split.before) && split.before.length <= 3) return null;
-    const clauses = new Set(splitLearnerContextClauses(split.before).map(foldMetadataComparable).filter(Boolean));
-    const collides = (options.cardMeanings || []).some(peer => {
+// A row shows labels, not definitions. A label names a sense or a use in a
+// few words ("to depart", "when stressed", "already mentioned"); a
+// definition is a sentence ("to be related in some way to…", "…because it is
+// presumed to be definitely known…"). Definitions, and synonym lists, belong
+// in the information note. The test is what the text is, not how much room
+// is left on the row.
+const DEFINITION_MARKERS = /^(?:\.\.\.|…)|\b(?:that|which|who|whom|whose|because|whether|rather than|such as|e\.g\.|i\.e\.|eg:|instead of|as opposed to|in order to|so that)\b|:/i;
+const DEFINITION_OPENERS = /^(?:used|indicates?|introduces?|describes?|signif(?:y|ies)|expresses?|refers?|denotes?|connects?|forms?|serves?|shows?|asks?|negates?|modifies?|makes?|gives?|is|are|was|has|having|being|any|one|someone|something|anything)\b/i;
+const LABEL_MAX_WORDS = 4;
+
+export function isLabelLikeText(value) {
+    const text = String(value || '').trim();
+    if (!text) return false;
+    if (DEFINITION_MARKERS.test(text) || DEFINITION_OPENERS.test(text)) return false;
+    // "or shortly afterwards" continues the previous clause; it is not a label.
+    if (/^(?:or|and|but|nor)\b/i.test(text)) return false;
+    return text.split(/\s+/).length <= LABEL_MAX_WORDS;
+}
+
+// A gloss clause that describes the word instead of translating it
+// ("second-person singular personal pronoun, formal or informal in Brazil").
+function isDescriptiveGlossClause(value) {
+    const text = String(value || '').trim();
+    return DEFINITION_MARKERS.test(text) || DEFINITION_OPENERS.test(text)
+        || /\b(?:pronoun|article|determiner|conjunction|preposition|particle|suffix|prefix|possessive|spelling|form of)\b/i.test(text);
+}
+
+const EDITORIAL_SUFFIX = /,\s*(?:especially|contrasting|which|where|when|usually|chiefly|literally|figuratively|as opposed|rather than|used|indicates?|introduces?|describes?|expresses?|refers?|denotes?|forms?|serves?|makes?)\b.*$/i;
+// "first-person plural nominative personal pronoun: we" → "we".
+const PRONOUN_DESCRIPTION = /^(?:[\w-]+\s+){1,6}?pronoun\b:?\s+(?:used in all positions\s+)?(?!,)(.+)$/i;
+
+// "because (introduces a reason for …)" → "introduces a reason": a named
+// semantic role the source itself states, usable as a label.
+function semanticRoleLabel(value) {
+    const match = String(value || '').match(
+        /^(introduces?\s+(?:(?:an?|the)\s+)?(?:explanation|reason|cause|condition|contrast|result|purpose|question|alternative|comparison|consequence))\b/i
+    );
+    return match ? match[1] : '';
+}
+
+function senseSharesTranslation(meaning, before, options) {
+    const clauses = new Set(splitLearnerContextClauses(before).map(foldMetadataComparable).filter(Boolean));
+    return (options.cardMeanings || []).some(peer => {
         if (!peer || peer === meaning) return false;
         return splitLearnerContextClauses(glossBase(peer))
             .some(clause => clauses.has(foldMetadataComparable(clause)));
     });
-    if (collides) return null;
-    // "to exit; to leave (go away …); to get out (of)": later clauses stay.
-    if (split.rest.startsWith(';')) {
-        const rest = split.rest.slice(1).trim();
-        const restVisible = definitionParentheticalIsRedundant(meaning, rest, options) || rest;
-        return restVisible ? `${split.before}; ${restVisible}` : split.before;
-    }
-    return split.before;
 }
 
-const ROW_GLOSS_BUDGET = 72;
+// The grammatical head of a definition: what it says before its first
+// qualifying clause. "to be an example or type of, or the same as" → "to be
+// an example or type of"; "connects two clauses indicating that…" →
+// "connects two clauses".
+function definitionHead(value) {
+    const text = readableSenseNote(value).trim().replace(/^(?:\.\.\.|…)\s*/, '');
+    const cut = text.search(/,|;|\s(?:that|which|who|whom|because|whether|rather than|such as|indicating|especially|with the|in order)\b/i);
+    return (cut > 0 ? text.slice(0, cut) : text).trim();
+}
 
-function clipAtWord(value, limit) {
-    const text = String(value || '').trim();
-    if (text.length <= limit) return text;
-    const cut = text.slice(0, limit + 1).replace(/\s+\S*$/u, '').replace(/[\s,;:]+$/u, '');
-    return `${cut || text.slice(0, limit)}…`;
+// Returns the row's gloss and optional key when the rules change the source,
+// or null when the source already reads as a translation.
+function ruleBasedGloss(meaning, source, options) {
+    const partOfSpeech = String(meaning?.pos || meaning?.part_of_speech || '');
+    let key = '';
+    const removed = [];
+    const rewritten = splitLearnerContextClauses(source).map(clause => {
+        let text = clause.replace(EDITORIAL_SUFFIX, '').trim() || clause;
+        const described = text.match(PRONOUN_DESCRIPTION);
+        if (described && !isDescriptiveGlossClause(described[1])) text = described[1].trim();
+        const split = splitDefinitionParenthetical(text);
+        if (!split || !split.before || split.before.length < 2) return text;
+        const { before, inside } = split;
+        // Argument slots and usage restrictions are part of the translation.
+        if (GLOSS_SLOT_PARENTHETICAL.test(inside) && inside.split(/\s+/).length <= LABEL_MAX_WORDS) return text;
+        if (GLOSS_RESTRICTING_PARENTHETICAL.test(inside) && isLabelLikeText(inside)) return text;
+        if (/\b(?:by|of|to|with|for|on|in|at|from|about|into|than|as)$/i.test(before) && isLabelLikeText(inside)) return text;
+        // A label in brackets stays where it is needed to read the row: to
+        // tell two senses with the same translation apart, or to give a bare
+        // grammar word ("in (wearing)") its sense.
+        const needed = senseSharesTranslation(meaning, before, options)
+            || FUNCTION_WORD_POS.test(partOfSpeech)
+            || (!/\s/.test(before) && before.length <= 3);
+        if (needed && isLabelLikeText(inside)) return `${before} (${inside})`;
+        if (needed && !key) key = semanticRoleLabel(inside);
+        removed.push(inside);
+        return before;
+    });
+    // Describing clauses give way when the gloss also has a real translation:
+    // "second-person singular personal pronoun, …; you" → "you".
+    // When every clause describes, the first one says it; the rest are notes.
+    const translations = rewritten.filter(clause => !isDescriptiveGlossClause(clause));
+    const kept = translations.length ? translations : rewritten.slice(0, 1);
+    removed.push(...rewritten.filter(clause => !kept.includes(clause)));
+    const visibleGloss = kept.join('; ');
+    // Two senses must never read alike. If this gloss now matches another
+    // sense on the card, the row carries one distinguishing label: the head
+    // of whatever the source says about this sense and not the other.
+    // Only a gloss with nothing of its own collides: "to be; to cost" is
+    // already told apart by "to cost".
+    const ownClauses = splitLearnerContextClauses(visibleGloss);
+    // A region or register cue ("Brazil", "colloquial") already tells the row
+    // apart.
+    const hasOwnLabel = senseMetadataItems(meaning).some(item => item.family === 'register'
+        && !SUPPORTING_REGISTER_VALUES.has(String(item.value || '').toLocaleLowerCase('en')));
+    const collides = !hasOwnLabel && ownClauses.length > 0
+        && ownClauses.every(clause => senseSharesTranslation(meaning, clause, options));
+    if (!key && collides) {
+        const glossKey = foldMetadataComparable(visibleGloss);
+        const cueValues = new Set(senseMetadataItems(meaning)
+            .flatMap(item => [item.value, item.sourceText]).map(foldMetadataComparable).filter(Boolean));
+        const candidates = [...removed, ...splitLearnerContextClauses(meaning?.context || '')]
+            .map(text => {
+                // "to have (to be related in some way to…)" repeats the gloss.
+                const inner = splitDefinitionParenthetical(String(text));
+                return inner && foldMetadataComparable(inner.before) === glossKey ? inner.inside : text;
+            })
+            .map(definitionHead)
+            .filter(text => text && foldMetadataComparable(text) !== glossKey
+                && !cueValues.has(foldMetadataComparable(text))
+                && !/^(?:transitive|intransitive|copulative|impersonal|pronominal|auxiliary|reflexive)\b/i.test(text));
+        const labels = candidates.filter(isLabelLikeText);
+        key = (labels[0] || candidates[0] || '');
+    }
+    if (foldMetadataComparable(visibleGloss) === foldMetadataComparable(source) && !key) return null;
+    return { visibleGloss, visibleKey: key };
 }
 
 // Source-preserving projection for the bold learner-facing meaning. It never
@@ -1073,29 +1198,15 @@ export function learnerGlossPresentation(meaning, active, options = {}) {
         ?? projectWiktionaryGloss(meaning, meaning?.meaning || meaning?.translation || '').display
         ?? '').trim();
     if (!source) return { visibleGloss: '', visibleKey: '', noteGloss: '' };
-    const withoutDefinition = options.keepDefinitionParenthetical
-        ? null : definitionParentheticalIsRedundant(meaning, source, options);
-    if (withoutDefinition) return { visibleGloss: withoutDefinition, visibleKey: '', noteGloss: source };
-    // The bracket is needed to tell senses apart, but a long one reads as a
-    // paragraph. When the source offers a compact distinction, show the short
-    // gloss with that distinction on the key line ("because" + "introduces a
-    // reason"); the full definition stays in the note.
-    const kept = options.keepDefinitionParenthetical ? null : splitDefinitionParenthetical(source);
-    if (kept?.before && !kept.rest && kept.inside.length > 28) {
-        const distinction = compactGlossDistinction(kept.inside);
-        if (distinction && distinction.length < kept.inside.length) {
-            return { visibleGloss: kept.before, visibleKey: distinction, noteGloss: source };
-        }
+    const ruled = options.keepDefinitionParenthetical ? null : ruleBasedGloss(meaning, source, options);
+    if (ruled) {
+        const unchanged = foldMetadataComparable(ruled.visibleGloss) === foldMetadataComparable(source);
+        return { ...ruled, noteGloss: unchanged ? '' : source };
     }
-    // Rows get one fixed budget, whatever the selection, so a gloss never
-    // changes when tapped. Grouping (keepDefinitionParenthetical) compares
-    // complete source glosses and is left alone.
-    if (options.ignoreBudget && (options.keepDefinitionParenthetical || source.length <= ROW_GLOSS_BUDGET)) {
-        return { visibleGloss: source, visibleKey: '', noteGloss: '' };
-    }
+    if (options.ignoreBudget) return { visibleGloss: source, visibleKey: '', noteGloss: '' };
 
     const senseCount = Math.max(1, Number(options.senseCount) || 1);
-    const budget = options.ignoreBudget ? ROW_GLOSS_BUDGET : (senseCount === 1 ? 84 : (active ? 64 : 48));
+    const budget = senseCount === 1 ? 84 : (active ? 64 : 48);
     if (source.length <= budget) return { visibleGloss: source, visibleKey: '', noteGloss: '' };
 
     const clauses = splitLearnerContextClauses(source);
@@ -1119,12 +1230,7 @@ export function learnerGlossPresentation(meaning, active, options = {}) {
 
     // If shortening would make this row visually collide with a peer whose
     // complete meaning is different, retain more of this row's first clause.
-    // Any other sense on the card can collide, not only exact-gloss peers:
-    // "and (connects two clauses…)" shortened to "and" collides with a plain
-    // "and" sense.
-    const peers = (Array.isArray(options.cardMeanings) && options.cardMeanings.length
-        ? options.cardMeanings : (Array.isArray(options.peerMeanings) ? options.peerMeanings : []))
-        .filter(peer => peer && peer !== meaning);
+    const peers = Array.isArray(options.peerMeanings) ? options.peerMeanings : [];
     const visibleProjectionKey = glossProjectionKey(visibleGloss);
     const collision = options.preservePeerGlossDistinction !== false && peers.some(peer => {
         const peerSource = projectWiktionaryGloss(
@@ -1135,18 +1241,7 @@ export function learnerGlossPresentation(meaning, active, options = {}) {
         return glossProjectionKey(compactGlossClause(splitLearnerContextClauses(peerSource)[0] || peerSource, budget)) === visibleProjectionKey;
     });
     if (collision) {
-        // Two senses would read alike. Keep the short gloss when the source
-        // offers a compact distinction for the key line ("because" +
-        // "introduces a reason"); otherwise show a clipped bracket rather
-        // than the whole definition, which stays in the note.
-        const distinction = glossDistinctionKey(source, visibleGloss);
-        if (!distinction) {
-            const parts = glossParentheticalParts(clauses[0] || source)
-                || splitDefinitionParenthetical(clauses[0] || source);
-            visibleGloss = parts?.before && parts.inside
-                ? `${parts.before} (${clipAtWord(parts.inside, 40)})`
-                : clipAtWord(clauses[0] || source, budget);
-        }
+        visibleGloss = clauses[0] || source;
     }
 
     const noteGloss = foldMetadataComparable(visibleGloss) === foldMetadataComparable(source)
@@ -1243,12 +1338,10 @@ export function learnerSensePresentation(meaning, active, options = {}) {
     const details = active ? allDetails : [];
     const represented = combineLearnerMetadata([...visible, ...details, ...candidates], meaning, options);
     const residualContext = contextAfterMetadataPolicy(meaning, represented, options);
-    // Rows (ignoreBudget) still get one fixed context budget, independent of
-    // selection and sense count so a row's key never changes when tapped:
-    // repeated clauses fold, dictionary preambles compact, and a paragraph
-    // ("...because it is presumed to be definitely known...") goes to the note.
+    // Rows keep the context's labels ("when stressed", "already mentioned")
+    // and send its definitions and synonym lists to the note.
     const contextPresentation = options.ignoreBudget
-        ? learnerContextBudget(residualContext, true, 2, false)
+        ? learnerContextByRule(residualContext, options.gloss || meaning?.meaning || meaning?.translation || '')
         : learnerContextBudget(
         residualContext,
         active,
