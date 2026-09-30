@@ -871,9 +871,12 @@ function placeRowInformationButtons(root) {
 
 // Give both providers the same optional cue area, after moving disclosures out.
 function arrangeSenseCueAreas(root) {
+    // A cue area is shaded only when it has words in it. A flag on its own
+    // stays, unshaded; nothing at all leaves no box.
     root.querySelectorAll('.meaning-row-regular .meaning-row-sub').forEach(cue => {
-        if (!cue.textContent.trim()) cue.remove();
-        else cue.classList.add('sense-cue-area');
+        if (cue.textContent.trim()) cue.classList.add('sense-cue-area');
+        else if (cue.querySelector('img')) cue.classList.add('sense-cue-bare');
+        else cue.remove();
     });
     root.querySelectorAll('.meaning-row-group[data-axis="translation"] .group-card-body').forEach(body => {
         const cells = [...body.querySelectorAll('.group-card-varying-cell')];
@@ -7222,16 +7225,25 @@ function renderCardWikipediaBadge(card) {
                                 : entry.context;
                             const extraGlossHTML = entry.extra
                                 ? `<span class="group-member-gloss">${escapeCardText(entry.extra)}</span>` : '';
-                            if (cleanedCtx && contextCollidesWithMetadata(
-                                cleanedCtx,
-                                compactLearnerSenseMetadata(senseMetadataItems(mm), mm, metaOptions)
-                            )) {
-                                cleanedCtx = '';
-                            }
+                            // A label part the cell already shows as a tag or
+                            // flag ("Brazil · colloquial" beside the flag and
+                            // "colloquial" pill) is not repeated as text.
+                            const memberItems = [
+                                ...compactLearnerSenseMetadata(senseMetadataItems(mm), mm, metaOptions),
+                                ...senseMetadataItems(mm),
+                            ];
+                            cleanedCtx = String(cleanedCtx || '').split(' · ')
+                                .filter(part => part && !contextCollidesWithMetadata(part, memberItems))
+                                .join(' · ');
                             const metadataHTML = senseMetadataHTML(mm, isMemberSelected, metaOptions);
+                            // The information button leaves the cell for the
+                            // row's edge, so it is not content: a cell holding
+                            // only it would be an empty shaded box.
+                            const metadataShowsSomething = /sense-metadata-detail|sense-pill/.test(
+                                metadataHTML.replace(/<template[\s\S]*?<\/template>/g, ''));
                             const ctxWeight = isMemberSelected ? '700' : '500';
                             const ctxColor = isMemberSelected ? 'var(--text-primary)' : 'var(--text-secondary)';
-                            if (collocationHTML || cleanedCtx || metadataHTML || extraGlossHTML) {
+                            if (collocationHTML || cleanedCtx || metadataShowsSomething || extraGlossHTML) {
                                 const colHTML = collocationHTML ? `<span class="sense-grammar-cue">${collocationHTML}</span>` : '';
                                 varyingHtml = `<span class="meaning-context-cell" style="font-weight: ${ctxWeight}; color: ${ctxColor}; line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${colHTML}${extraGlossHTML}${cleanedCtx ? renderSenseContextHTML(cleanedCtx, { leadingDot: false }) : ''}${metadataHTML}</span>`;
                             } else {
@@ -7252,6 +7264,8 @@ function renderCardWikipediaBadge(card) {
                                 } else {
                                     varyingHtml = `<span class="meaning-context-cell" style="font-weight: ${ctxWeight}; color: ${ctxColor};">general use</span>`;
                                 }
+                                // Keep the member's note; the row gathers it.
+                                if (metadataHTML) varyingHtml = varyingHtml.replace(/<\/span>$/, `${metadataHTML}</span>`);
                             }
                         } else {
                             const collocationHTML = senseCollocationHTML(mm, card);

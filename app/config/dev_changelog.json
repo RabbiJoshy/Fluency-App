@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-30T23:40:00+01:00",
+      "date": "2026-09-30 23:40 BST",
+      "agent": "Claude",
+      "summary": "No more empty shaded boxes on sense rows; sub-rows stop repeating a register word as text beside its own tag.",
+      "detail": [
+        "A family sub-row whose only content was its information button showed as an empty shaded box once the button moved to the row edge (ter, de, nós). It now shows its distinguishing cue or 'general use', and its note still reaches the row's ⓘ.",
+        "A cue area with nothing in it is removed; one holding only a flag keeps the flag without a shaded box.",
+        "nós: 'Brazil · colloquial' next to the flag and 'colloquial' tag no longer repeats; label parts already shown as tags or flags are dropped.",
+        "'see notes' (a pointer to the dictionary's notes) no longer appears as a row cue.",
+        "Checked across 50 common Portuguese cards: no text-less shaded areas remain."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-30T23:25:00+01:00",
       "date": "2026-09-30 23:25 BST",
       "agent": "Claude",

@@ -844,6 +844,8 @@ function compactLearnerContextClause(value) {
         .replace(/^is to be completely specified in the same sentence$/i, 'specified in this sentence')
         .replace(/^or very shortly thereafter$/i, 'or shortly afterwards')
         .replace(/^indicates that what follows is exceptional$/i, '')
+        // A pointer to the dictionary's own notes is not a cue on a card.
+        .replace(/^see (?:the )?(?:usage )?notes?(?: below| above)?$/i, '')
         .trim();
 }
 
