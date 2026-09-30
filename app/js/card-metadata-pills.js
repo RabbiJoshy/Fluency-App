@@ -1072,6 +1072,8 @@ function glossBase(meaning) {
 const DEFINITION_MARKERS = /^(?:\.\.\.|…)|\b(?:that|which|who|whom|whose|because|whether|rather than|such as|e\.g\.|i\.e\.|eg:|instead of|as opposed to|in order to|so that)\b|:/i;
 const DEFINITION_OPENERS = /^(?:used|indicates?|introduces?|describes?|signif(?:y|ies)|expresses?|refers?|denotes?|connects?|forms?|serves?|shows?|asks?|negates?|modifies?|makes?|gives?|is|are|was|has|having|being|any|one|someone|something|anything)\b/i;
 const LABEL_MAX_WORDS = 4;
+// Longest whole definition a sub-row may carry as its label.
+const WHOLE_LABEL_MAX_WORDS = 10;
 
 export function isLabelLikeText(value) {
     const text = String(value || '').trim();
@@ -1112,14 +1114,14 @@ function senseSharesTranslation(meaning, before, options) {
     });
 }
 
-// The grammatical head of a definition: what it says before its first
-// qualifying clause. "to be an example or type of, or the same as" → "to be
-// an example or type of"; "connects two clauses indicating that…" →
-// "connects two clauses".
-export function definitionHead(value) {
-    const text = readableSenseNote(value).trim().replace(/^(?:\.\.\.|…)\s*/, '');
-    const cut = text.search(/,|;|\s(?:that|which|who|whom|because|whether|rather than|such as|indicating|especially|with the|in order)\b/i);
-    return (cut > 0 ? text.slice(0, cut) : text).trim();
+// A definition as a row label: its first whole clause with brackets
+// removed, or nothing if even that is long. A sentence is never cut in half
+// ("to end one's connection, affiliation or relationship with" stays whole).
+export function definitionLabel(value) {
+    const text = readableSenseNote(value).trim().replace(/^(?:\.\.\.|…)\s*/, '')
+        .replace(/\s*\([^()]*\)/g, '').replace(/\s{2,}/g, ' ').trim();
+    const clause = splitLearnerContextClauses(text)[0] || '';
+    return clause.split(/\s+/).length <= WHOLE_LABEL_MAX_WORDS ? clause.replace(/[,.:]$/, '') : '';
 }
 
 // Returns the row's gloss and optional key when the rules change the source,
@@ -1182,7 +1184,7 @@ function ruleBasedGloss(meaning, source, options) {
                 const inner = splitDefinitionParenthetical(String(text));
                 return inner && foldMetadataComparable(inner.before) === glossKey ? inner.inside : text;
             })
-            .map(definitionHead)
+            .map(definitionLabel)
             .filter(text => text && foldMetadataComparable(text) !== glossKey
                 && !cueValues.has(foldMetadataComparable(text))
                 && !/^(?:transitive|intransitive|copulative|impersonal|pronominal|auxiliary|reflexive)\b/i.test(text));
@@ -1279,12 +1281,33 @@ export function learnerSensePresentation(meaning, active, options = {}) {
     }).sort((left, right) => right.score - left.score || (left.item.sourceIndex ?? 0) - (right.item.sourceIndex ?? 0));
 
     let visible = [];
+    // Register cues the row had no place for: they lead the note's Usage.
+    let registerForNote = [];
     if (options.ignoreBudget) {
         // Importance, not selection or spare space, determines visible cues.
         visible = ranked.filter(entry => entry.role !== 'supporting'
             || ['semantic_relation', 'temporal_relation', 'discourse_function'].includes(entry.item.kind)
             || isSenseDefiningGrammar(entry.item))
             .map(entry => entry.item);
+        // A row carries its country flags and one register word, the most
+        // important. "colloquial · nonstandard · Alentejo" is a note, not a
+        // row: further registers and named areas go there.
+        let registerShown = false;
+        const hidden = [];
+        visible = visible.filter(item => {
+            if (item.family !== 'register') return true;
+            if (item.kind === 'region' && regionFlagCode(item.value)) return true;
+            if (item.kind !== 'region' && !registerShown) {
+                registerShown = true;
+                return true;
+            }
+            hidden.push(item);
+            return false;
+        });
+        if (hidden.length) {
+            registerForNote = sourceItems.filter(item => item.family === 'register'
+                && !SUPPORTING_REGISTER_VALUES.has(String(item.value || '').toLocaleLowerCase('en')));
+        }
     } else if (!active && !options.allowInactivePrimary) {
         visible = [];
     } else if (senseCount === 1) {
@@ -1398,8 +1421,17 @@ export function learnerSensePresentation(meaning, active, options = {}) {
     const visibleWithRoom = combineLearnerMetadata([...visible, ...inlineAdditions], meaning, options);
     const remainingNoteworthyItems = noteworthyItems.filter(item => !inlineKeys.has(metadataItemKey(item)));
     const supportingItems = options.ignoreBudget ? [] : allDetails.filter(item => !noteworthyItems.includes(item));
+    // A note that exists anyway also lists the register cues the row shows,
+    // so the note is the complete account of how the sense is used.
+    if (!registerForNote.length && options.ignoreBudget
+        && (glossPresentation.noteGloss || noteContext || remainingNoteworthyItems.length)) {
+        registerForNote = sourceItems.filter(item => item.family === 'register'
+            && !SUPPORTING_REGISTER_VALUES.has(String(item.value || '').toLocaleLowerCase('en')));
+    }
+    const noteKeys = new Set(registerForNote.map(metadataItemKey));
     const noteItems = [
-        ...remainingNoteworthyItems,
+        ...registerForNote,
+        ...remainingNoteworthyItems.filter(item => !noteKeys.has(metadataItemKey(item))),
         ...((glossPresentation.noteGloss || noteContext || supportingItems.length >= 2)
             ? supportingItems : []),
     ];
@@ -1535,12 +1567,19 @@ export function senseNoteHTML(presentation, options = {}) {
     if (!note.available) return '';
     const usage = [];
     const production = [];
+    const registers = [];
     if (note.context) usage.push(note.context);
     for (const item of note.items) {
         const label = senseMetadataDisplay(item, options).full;
         if (!label) continue;
         if (['companion', 'construction', 'grammar'].includes(item.family)) production.push(label);
+        else if (item.family === 'register') registers.push(label);
         else usage.push(label);
+    }
+    // Register and region read as one line: "Colloquial, nonstandard; Brazil, Alentejo".
+    if (registers.length) {
+        const line = [...new Set(registers)].join(', ');
+        usage.unshift(line.charAt(0).toLocaleUpperCase('en') + line.slice(1));
     }
     const title = presentation.gloss || presentation.visibleGloss || options.gloss || 'This meaning';
     const body = [

@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-30T23:25:00+01:00",
+      "date": "2026-09-30 23:25 BST",
+      "agent": "Claude",
+      "summary": "Sense rows never show half a sentence; rows carry country flags and one register word, with every register cue listed in the info note; family-row notes use one consistent reading style.",
+      "detail": [
+        "Sub-row labels and same-gloss distinguishing keys use a whole clause with brackets removed, or nothing: 'to end one's connection, affiliation or relationship with' instead of 'to end one's connection'. A clause longer than 10 words stays in the note.",
+        "Registers: a row keeps its country flags and its single most important register word. Further ones and named areas (Alentejo, Northeast Brazil) move to the note, which then lists all of them on one Usage line (se 'each other': flag + 'colloquial' on the row; 'Brazil, colloquial, nonstandard, Alentejo' in the note).",
+        "Info note in family rows: sub-senses are bold lines in the body font instead of oversized default headings, and every sub-sense is listed even when its definition only repeats its label."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-30T23:05:00+01:00",
       "date": "2026-09-30 23:05 BST",
       "agent": "Claude",

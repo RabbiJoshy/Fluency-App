@@ -45,7 +45,7 @@ import {
     toggleSenseMetadataChip,
     extractSenseCompanion,
     senseCollocationHTML,
-    definitionHead,
+    definitionLabel,
     glossPieces,
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
@@ -833,23 +833,27 @@ function placeRowInformationButtons(root) {
             const senseLabel = label?.textContent.trim() || source.dataset.senseNoteTitle;
             const key = senseLabel + source.innerHTML;
             const body = source.cloneNode(true);
-            // Under its sub-row's label, a paragraph that only repeats the
-            // label says nothing.
+            // A family row's note lists its sub-senses, each under its label
+            // as a plain bold line; a paragraph that only repeats the label
+            // is dropped.
             if (buttons.length > 1) {
                 const fold = text => String(text || '').toLocaleLowerCase('en').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
                 body.querySelectorAll('p').forEach(p => { if (fold(p.textContent) === fold(senseLabel)) p.remove(); });
                 body.querySelectorAll('section').forEach(sec => { if (!sec.querySelector('p')) sec.remove(); });
             }
-            if (!seen.has(key) && body.children.length) {
+            if (!seen.has(key) && (body.children.length || buttons.length > 1)) {
                 seen.add(key);
-                const section = document.createElement('section');
                 if (buttons.length > 1) {
+                    const section = document.createElement('section');
+                    section.className = 'sense-note-section sense-note-subsense';
                     const heading = document.createElement('h3');
+                    heading.className = 'sense-note-subsense-title';
                     heading.textContent = senseLabel;
-                    section.append(heading);
+                    section.append(heading, ...body.children);
+                    copy.append(section);
+                } else {
+                    copy.append(...body.children);
                 }
-                section.append(...body.children);
-                copy.append(section);
             }
             template.remove();
         }
@@ -7133,7 +7137,7 @@ function renderCardWikipediaBadge(card) {
                         extra: isTransAxis ? memberExtraGloss(memberIdx) : '',
                         context: isTransAxis ? (contextLabelByMeaning.get(memberIdx) || '') : '',
                         cut: isTransAxis
-                            ? definitionHead(groupingGlossByMeaning.get(memberIdx)?.removedDefinitions?.[0] || '')
+                            ? definitionLabel(groupingGlossByMeaning.get(memberIdx)?.removedDefinitions?.[0] || '')
                             : '',
                     }]));
                     const partsLabel = parts => [parts.extra, parts.context].filter(Boolean).join(' · ').toLocaleLowerCase('en');
