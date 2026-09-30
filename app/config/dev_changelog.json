@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-09-30T18:05:00+01:00",
+      "date": "2026-09-30 18:05 BST",
+      "agent": "Claude",
+      "summary": "Sense rows show labels, not definitions: rule-based, no length limits.",
+      "detail": [
+        "Replaced the length caps with one rule: a bracket or context clause stays on the row only if it is a label (a few words, no 'that/which/because/used to/indicates…'); definitions and synonym lists go to the ⓘ note. Portuguese glosses with brackets (top 3,000 words): 3,992 → 951.",
+        "A label in brackets stays only where it is needed: to tell two senses with the same translation apart, or to give a bare grammar word its sense ('in (wearing)').",
+        "If two senses would otherwise read alike, the row gets one key: the head of the source's own wording ('to be' + 'to have the given quality'). Senses with their own region/register cue need none.",
+        "Pronoun descriptions give way to the translation ('first-person plural … pronoun: we' → 'we'); a comma followed by 'forms/used/indicates…' is treated as editorial.",
+        "Fixed keys being deleted because they appeared inside the source gloss."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-09-30T18:35:00+01:00",
       "date": "2026-09-30 18:35 BST",
       "agent": "Claude",

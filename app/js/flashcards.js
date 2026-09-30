@@ -3272,8 +3272,11 @@ function cleanSenseContext(rawContext, mainGloss) {
 
 function learnerRowPresentation(meaning, active, options = {}) {
     const presentation = learnerSensePresentation(meaning, active, { ...options, ignoreBudget: true });
-    const visibleContext = cleanSenseContext(presentation.visibleContext, options.gloss || '');
-    const keyText = cleanSenseContext(presentation.key?.text || '', options.gloss || '');
+    // Compare with the gloss the row shows, not the source: a key drawn from
+    // the source's own bracket ("to have the given quality") is not a repeat.
+    const shownGloss = presentation.gloss || options.gloss || '';
+    const visibleContext = cleanSenseContext(presentation.visibleContext, shownGloss);
+    const keyText = cleanSenseContext(presentation.key?.text || '', shownGloss);
     return {
         ...presentation,
         key: { ...presentation.key, text: keyText },
