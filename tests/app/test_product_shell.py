@@ -395,7 +395,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("new Set(Array.from(scrollSections.keys()).filter", flashcards)
         self.assertIn("roomForInlineDetails", flashcards)
         self.assertIn("function learnerGroupingGloss(card, meaning)", flashcards)
-        self.assertIn("presentation.key.text || groupingGloss.key.text || metadataLabel", flashcards)
+        self.assertIn("withoutGrammarLabels(presentation.key.text) || withoutGrammarLabels(groupingGloss.key.text) || metadataLabel", flashcards)
 
     def test_wiktionary_grammar_tails_become_compact_metadata(self) -> None:
         metadata_pills = (APP_ROOT / "js" / "card-metadata-pills.js").read_text(encoding="utf-8")

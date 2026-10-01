@@ -558,7 +558,7 @@ export function contextCollidesWithMetadata(context, items) {
 export function senseMetadataDisplay(item, options = {}) {
     if (item.family === 'companion') {
         const token = String(item.value || '').trim();
-        return { short: `with ${token}`, full: `with ${token}` };
+        return { short: `+ ${token}`, full: `with ${token}` };
     }
     if (item.family === 'construction') {
         if (item.kind === 'combined_frame') return { short: item.value, full: item.value };
@@ -567,10 +567,10 @@ export function senseMetadataDisplay(item, options = {}) {
         // atomic values enough syntax to remain clear to a learner: a bare
         // "infinitive" is ambiguous, while "+ infinitive" reads as a frame.
         if (item.kind === 'complement_form') {
-            return { short: `followed by ${item.value === "infinitive" ? "an infinitive" : item.value}`, full: `used with ${item.value}` };
+            return { short: `+ ${item.value}`, full: `followed by ${item.value === "infinitive" ? "an infinitive" : item.value}` };
         }
         if (item.kind === 'argument_type') {
-            return { short: `with ${item.value}`, full: `used with ${item.value}` };
+            return { short: `+ ${item.value}`, full: `used with ${item.value}` };
         }
         if (item.kind === 'polarity_context') {
             return { short: `in ${item.value} forms`, full: `used in ${item.value} forms` };
@@ -579,7 +579,7 @@ export function senseMetadataDisplay(item, options = {}) {
             return { short: `in ${item.value}`, full: `used in ${item.value}` };
         }
         const full = String(item.value || '').replace(/^\[|\]$/g, '');
-        return { short: readableSenseNote(full), full };
+        return { short: compactLearnerContextClause(String(item.value || '')) || readableSenseNote(full), full };
     }
     if (item.family === 'functional') {
         const label = item.sourceText || item.value;
@@ -672,6 +672,23 @@ export function senseMetadataDisplay(item, options = {}) {
     };
 }
 
+// Grammar a row shows because it changes what the learner says: a person
+// or formality for pronouns, "reflexive", "plural only", a command form.
+const ROW_GRAMMAR_VALUES = new Set([
+    'reflexive=true',
+    'form=personal-infinitive',
+    'number=plural-only',
+    'number=singular-only',
+    'number=no-plural',
+    'mood=imperative',
+]);
+
+export function grammarBelongsOnRow(item) {
+    return grammarNavigationCue(item)
+        || ROW_GRAMMAR_VALUES.has(item.value)
+        || /^polarity=/u.test(item.value);
+}
+
 export function isSenseDefiningGrammar(item) {
     return item.kind === 'combined_sense_mark'
         || item.kind === 'surface_summary'
@@ -690,7 +707,7 @@ function metadataPresentationRole(item) {
     if (!item) return 'supporting';
     if (item.family === 'companion'
         || (item.family === 'construction' && [
-            'required_case', 'combined_frame', 'complement_form', 'argument_type',
+            'required_case', 'combined_frame', 'complement_form', 'companion_form', 'argument_type',
             'clause_context', 'object_role', 'polarity_context',
         ].includes(item.kind))) return 'production';
     if (item.family === 'register' || item.family === 'domain') return 'usage';
@@ -854,7 +871,46 @@ function splitLearnerContextClauses(value) {
     return clauses;
 }
 
+// Dictionary frame notation as the learner says it: "[transitive with a or
+// para or indirect object pronoun]" → "+ a / para"; "[with gerund]" →
+// "+ gerund"; "[an amount of time]" → "+ an amount of time".
+export function frameCue(value) {
+    const match = /^\[([^\]]+)\]$/u.exec(String(value || '').trim());
+    if (!match || /^[mfn]$/i.test(match[1].trim())) return '';
+    // One frame is enough on a row: the first of several ("…; or with …").
+    const first = match[1].split(/;\s*/)[0]
+        .replace(/\s*‘[^’]*’/gu, '')
+        .replace(/^(?:(?:in)?transitive|ditransitive|pronominal|reflexive|intransitive)(?:\s+or\s+\w+)?\s*/i, '')
+        .replace(/^with\s+/i, '')
+        // "(+ infinitive)" is part of the frame; other brackets qualify it.
+        .replace(/\(\+\s*([^)]+)\)/g, '+ $1')
+        .replace(/\s*\([^)]*\)/g, '')
+        .replace(/\bcopulative\s+/gi, '')
+        .trim();
+    const OBJECT = /^(?:(?:in)?direct object(?: pronoun)?|object|subject pronoun|indirect question|someone|something)$/i;
+    const segments = first.split(/,\s*along with\s+|\s+and\s+/i).map(segment => {
+        const alternatives = [...new Set(segment.replace(/,?\s*etc\.?$/i, '').split(/\s+or\s+|,\s*/i).map(part => part.trim())
+            .filter(part => part && !OBJECT.test(part)))];
+        const plain = alternatives.includes('infinitive')
+            ? alternatives.filter(part => part !== 'personal infinitive') : alternatives;
+        return plain.join(' / ');
+    }).filter(Boolean);
+    if (!segments.length) {
+        // "[noun]", "[a debt or bill]": the slot itself.
+        const slot = match[1].trim();
+        return /^(?:noun|adjective|adverb|someone|something|an? [\w\s]+)$/i.test(slot) && slot.length <= 24 ? `+ ${slot}` : '';
+    }
+    const cue = `+ ${segments.join(' + ')}`;
+    return cue.length <= 36 ? cue : '';
+}
+
 function compactLearnerContextClause(value) {
+    const frame = frameCue(value);
+    if (frame) return frame;
+    // "followed by gerund", "followed by an infinitive" → "+ gerund".
+    const followed = /^(?:usually |often |always )?(?:followed by|used with|with|takes|\+)\s*(?:an?\s+|the\s+)?(gerund|infinitive|(?:personal )?infinitive|subjunctive|indicative|participle|past participle|noun|adjective|adverb|que|de|a|em|para|por|com)$/i
+        .exec(readableSenseNote(value).trim());
+    if (followed) return `+ ${followed[1].toLocaleLowerCase('en')}`;
     return readableSenseNote(value)
         .replace(/^\.\.\.because\s+/i, '')
         .replace(/^it has already been mentioned$/i, 'already mentioned')
@@ -867,10 +923,10 @@ function compactLearnerContextClause(value) {
         .trim();
 }
 
-const GRAMMAR_LABEL_WORDS = /^(?:transitive|intransitive|ditransitive|ambitransitive|auxiliary|copulative|catenative|pronominal|reflexive|impersonal|periphrastic|uncountable|countable|not comparable|comparable|indefinite|definite|plural|singular|masculine|feminine|invariable|with de|with que)$/i;
+const GRAMMAR_LABEL_WORDS = /^(?:transitive|intransitive|ditransitive|ambitransitive|auxiliary|copulative|catenative|pronominal|reflexive|impersonal|periphrastic|uncountable|countable|not comparable|comparable|indefinite|definite|demonstrative|plural|singular|masculine|feminine|invariable|with de|with que)$/i;
 
 // A context clause made only of grammar labels ("impersonal, transitive").
-function isGrammarLabelClause(value) {
+export function isGrammarLabelClause(value) {
     const pieces = String(value || '').split(/\s*,\s*/).map(piece => piece.trim()).filter(Boolean);
     return pieces.length > 0 && pieces.every(piece => GRAMMAR_LABEL_WORDS.test(piece));
 }
@@ -1058,6 +1114,7 @@ function glossDistinctionKey(source, visibleGloss) {
 // "to" counts only before a person or thing ("(to someone)"), never before a
 // verb: "(to cause to die)" is a definition.
 const GLOSS_SLOT_PARENTHETICAL = /^(?:some(?:one|thing|body|where)|oneself|one's|its|their|his|her|with|of|from|for|at|on|in|by|about|to (?:some(?:one|thing|body|where)|oneself|one's|a|an|the|him|her|them|me|us))\b/i;
+const GLOSS_PLACEHOLDER = /\b(?:some(?:one|thing|body|where)|any(?:one|thing|body)|oneself|one's|one|a person|people|it|them)\b/i;
 const GLOSS_RESTRICTING_PARENTHETICAL = /^(?:said of|of (?:a|an|the)\b|in (?:a|an|the)\b|when\b|especially\b|usually\b|chiefly\b|often\b|figuratively\b|informal|colloquial|slang|vulgar|dated|archaic|obsolete)/i;
 const FUNCTION_WORD_POS = /^(?:adp|prep|preposition|postp|det|determiner|article|pron|pronoun|part|particle|conj|cconj|sconj|conjunction)$/i;
 
@@ -1167,7 +1224,11 @@ function ruleBasedGloss(meaning, source, options) {
         if (!split || !split.before || split.before.length < 2) return text;
         const { before, inside } = split;
         // Argument slots and usage restrictions are part of the translation.
-        if (GLOSS_SLOT_PARENTHETICAL.test(inside) && inside.split(/\s+/).length <= LABEL_MAX_WORDS) return text;
+        // "(with someone)", "(at)" are slots; "(in this place)" says which
+        // "here" is meant, so it is the row's cue like any other bracket.
+        if (GLOSS_SLOT_PARENTHETICAL.test(inside) && inside.split(/\s+/).length <= LABEL_MAX_WORDS
+            && (inside.split(/\s+/).length === 1 || GLOSS_PLACEHOLDER.test(inside)
+                || !/^(?:with|of|from|for|at|on|in|by|about)\b/i.test(inside))) return text;
         if (GLOSS_RESTRICTING_PARENTHETICAL.test(inside) && isLabelLikeText(inside)) return text;
         // "to allow to (to give permission to)" restates the verb: a bracket
         // that opens with another infinitive is a definition, not a slot.
@@ -1206,6 +1267,7 @@ function ruleBasedGloss(meaning, source, options) {
         const cueValues = new Set(senseMetadataItems(meaning)
             .flatMap(item => [item.value, item.sourceText]).map(foldMetadataComparable).filter(Boolean));
         const candidates = [...removed, ...splitLearnerContextClauses(meaning?.context || '')]
+            .map(text => frameCue(text) || text)
             .map(text => {
                 // "to have (to be related in some way to…)" repeats the gloss.
                 const inner = splitDefinitionParenthetical(String(text));
@@ -1315,6 +1377,12 @@ export function learnerSensePresentation(meaning, active, options = {}) {
         visible = ranked.filter(entry => entry.role !== 'supporting'
             || ['semantic_relation', 'temporal_relation', 'discourse_function'].includes(entry.item.kind)
             || isSenseDefiningGrammar(entry.item))
+            // Word-class labels ("demonstrative", "indefinite pronoun",
+            // "countable") describe the word, not how to use it: the note.
+            // A person label ("first-person singular personal pronoun")
+            // stays only where it tells this row from a sibling.
+            .filter(entry => entry.item.family !== 'grammar' || (grammarBelongsOnRow(entry.item)
+                && (entry.distinguishing || !grammarNavigationCue(entry.item))))
             .map(entry => entry.item);
         // A row carries its country flags and one register word, the most
         // important. "colloquial · nonstandard · Alentejo" is a note, not a
@@ -1422,6 +1490,9 @@ export function learnerSensePresentation(meaning, active, options = {}) {
                 'object_role', 'context_phrase', 'gloss_phrase', 'combined_frame'].includes(item.kind)
                 || /^(?:with|takes?|only in|only with|connecting|followed by)\b/i.test(item.value);
         }
+        // Grammar the row no longer shows ("demonstrative", "imperfective")
+        // is kept in the note.
+        if (options.ignoreBudget && item.family === 'grammar') return true;
         return Boolean(entry?.distinguishing
             && item.family === 'grammar' && isSenseDefiningGrammar(item));
     };
@@ -1600,11 +1671,13 @@ export function senseNoteHTML(presentation, options = {}) {
     const usage = [];
     const production = [];
     const registers = [];
+    const grammar = [];
     if (note.context) usage.push(note.context);
     for (const item of note.items) {
         const label = senseMetadataDisplay(item, options).full;
         if (!label) continue;
-        if (['companion', 'construction', 'grammar'].includes(item.family)) production.push(label);
+        if (item.family === 'grammar' && !grammarBelongsOnRow(item)) grammar.push(label);
+        else if (['companion', 'construction', 'grammar'].includes(item.family)) production.push(label);
         else if (item.family === 'register') registers.push(label);
         else usage.push(label);
     }
@@ -1618,6 +1691,8 @@ export function senseNoteHTML(presentation, options = {}) {
         senseNoteSectionHTML('', noteGlossBeyondTitle(note.gloss, title), 'meaning'),
         senseNoteSectionHTML('Usage', usage, 'usage'),
         senseNoteSectionHTML('How it is used', production, 'production'),
+        senseNoteSectionHTML('Grammar', grammar.length
+            ? [[...new Set(grammar)].join(', ').replace(/^./u, c => c.toLocaleUpperCase('en'))] : [], 'grammar'),
     ].join('');
     if (!body) return '';
     return `<button type="button" class="sense-note-trigger" aria-haspopup="dialog" onclick="openSenseNote(event, this)" aria-label="Information about this meaning" title="Information about this meaning"><span aria-hidden="true">i</span></button><template class="sense-note-template"><div class="sense-note-copy" data-sense-note-title="${escapeCardText(title)}">${body}</div></template>`;
@@ -1941,12 +2016,11 @@ export function senseCollocationHTML(meaning, card = null) {
         ? (qualifier ? `${qualifier} used with: ${target} + ${particle}` : `Used with: ${target} + ${particle}`)
         : `Used with: ${target} ${particle}`;
 
-    // The partner word is a privileged cue, not a sub-meaning: a compact
-    // "+de" that the row places at its leading edge beside the information
-    // button. The lemma is already the card's headword, so only the partner
-    // is printed; the full "precisar de" stays in the tooltip.
+    // The partner word is a privileged cue, not a sub-meaning: "+ de" opens
+    // the row's context. The lemma is already the card's headword, so only
+    // the partner is printed; the full "precisar de" stays in the tooltip.
     const qualifierTag = qualifier ? `<span class="sense-collocation-qualifier">${qualifier}</span> ` : '';
-    return `<span class="sense-target-collocation sense-companion-lead${isOptional ? ' is-optional' : ''}" title="${titleAttr}" aria-label="${titleAttr}">${qualifierTag}<span class="sense-collocation-particle">+${particle}</span></span>`;
+    return `<span class="sense-target-collocation sense-companion-lead${isOptional ? ' is-optional' : ''}" title="${titleAttr}" aria-label="${titleAttr}">${qualifierTag}<span class="sense-collocation-particle">+ ${particle}</span></span>`;
 }
 
 // Window attachments for inline HTML onclick handlers

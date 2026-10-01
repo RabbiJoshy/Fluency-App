@@ -68,7 +68,7 @@ assert.equal(pra.gloss,'informal form of para');assert.equal(pra.context,'');ass
 const parece=card('pt','parece');
 assert.deepEqual(show(parece,0).visible,[]);assert.equal(show(parece,0).context,'');
 assert.deepEqual(show(parece,0,true).details,['copulative or auxiliary']);
-assert.deepEqual(show(parece,1,true).visible,['with com']);
+assert.deepEqual(show(parece,1,true).visible,['+ com']);
 const uma=card('pt','uma');
 assert.equal(show(uma,0).visibleContext,'');assert.equal(show(uma,1).visibleContext,'a bit of');
 assert.equal(show(uma,2).visibleContext,'quite a; quite the');assert(show(uma,2).detailContext.includes('quite a'));
@@ -149,12 +149,12 @@ for(const [context,label] of [['indicating place','place'],['indicating time','t
  const m=en.meanings.find(m=>m.translation==='in' && m.context===context),p=project(en,m);
  assert(p.labels.includes(label));assert(p.html.includes(label));assert.equal(p.context,'');
 }
-const gosto=card('pt','gosto');assert.deepEqual(project(gosto,gosto.meanings[0]).labels,['with de']);
+const gosto=card('pt','gosto');assert.deepEqual(project(gosto,gosto.meanings[0]).labels,['+ de']);
 assert.equal(project(gosto,gosto.meanings[0]).context,'');
 const s=card('cs','s'),sp=project(s,s.meanings[0]);
 assert(sp.labels.includes('takes instrumental case'));assert(!sp.html.includes('sense-pill--companion'));
 const cekat=card('cs','čekat'),wait=cekat.meanings.find(m=>m.translation==='to wait');
-assert(ui.senseMetadataHTML(wait,true,project(cekat,wait).options).includes('with na'));
+assert(ui.senseMetadataHTML(wait,true,project(cekat,wait).options).includes('+ na'));
 const su=card('es','su'),your=su.meanings.find(m=>m.translation==='your');
 assert(project(su,your).labels.includes('addressing several people'));
 assert.equal(project(su,your).context,'');
@@ -184,7 +184,7 @@ const longPresentation=ui.learnerSensePresentation(long,true,{gloss:'test',sense
 assert.equal(longPresentation.visibleContext,'');assert.equal(longPresentation.detailContext,long.context);
 // Low-level aspect stays accessible on selection, not in every navigation row.
 const asp=ui.senseMetadataHTML(wait,true,{...project(cekat,wait).options,peerMeanings:[]});
-assert(asp.includes('imperfective'));assert(asp.includes('sense-note-template'));
+assert(asp.toLowerCase().includes('imperfective'));assert(asp.includes('sense-note-template'));
 // One shared prose rule for dictionary notes, retaining constraints.
 assert.equal(ui.readableSenseNote('used to talk about characteristics'),'about characteristics');
 assert.equal(ui.readableSenseNote('used in forming the perfect aspect'),'forms the perfect aspect');
@@ -253,16 +253,16 @@ assert.deepEqual(compOpt, { terms: ['a'], qualifier: 'often', isOptional: true }
 // 2. senseCollocationHTML: a compact "+partner" chip; the lemma is the headword
 const htmlTener = ui.senseCollocationHTML(tenerQue, tener);
 assert(htmlTener.includes('sense-companion-lead'));
-assert(htmlTener.includes('<span class="sense-collocation-particle">+que</span>'));
+assert(htmlTener.includes('<span class="sense-collocation-particle">+ que</span>'));
 assert(htmlTener.includes('Used with: tener que'));
 
 const htmlGosto = ui.senseCollocationHTML(gosto.meanings[0], gosto);
-assert(htmlGosto.includes('<span class="sense-collocation-particle">+de</span>'));
+assert(htmlGosto.includes('<span class="sense-collocation-particle">+ de</span>'));
 assert(htmlGosto.includes('Used with: gostar de'));
 
 const htmlOpt = ui.senseCollocationHTML(optMeaning, { targetWord: 'venir' });
 assert(htmlOpt.includes('is-optional'));
-assert(htmlOpt.includes('<span class="sense-collocation-particle">+a</span>'));
+assert(htmlOpt.includes('<span class="sense-collocation-particle">+ a</span>'));
 assert(htmlOpt.includes('<span class="sense-collocation-qualifier">often</span>'));
 
 // 3. excludeCompanion: ensures companion is promoted to sense row and excluded from subsense tier

@@ -25,6 +25,8 @@ import {
     compactConstructionMetadata,
     escapeCardText,
     isSenseDefiningGrammar,
+    grammarBelongsOnRow,
+    isGrammarLabelClause,
     isSupportingSenseMetadata,
     isWiktionaryGrammarNote,
     legacyObjectPronounProjection,
@@ -775,15 +777,19 @@ function placeRowLeadMarks(root) {
         const flag = row.querySelector('.sense-region-flag--leading');
         const companion = row.querySelector('.sense-companion-lead');
         row.querySelectorAll('.sense-region-flag--leading').forEach(el => { if (el !== flag) el.remove(); });
-        if (!flag && !companion) return;
-        const lead = document.createElement('span');
-        lead.className = 'row-lead-marks';
-        if (flag) lead.append(flag);
+        // The partner word ("+ em") is the row's context: plain words at the
+        // head of the cue, not a chip at the edge.
         if (companion) {
             const cue = companion.closest('.sense-grammar-cue');
-            lead.append(companion);
+            const area = row.querySelector('.meaning-row-sub');
+            companion.classList.add('companion-as-context');
+            if (area) area.prepend(companion);
             if (cue && !cue.textContent.trim()) cue.remove();
         }
+        if (!flag) return;
+        const lead = document.createElement('span');
+        lead.className = 'row-lead-marks';
+        lead.append(flag);
         const info = row.querySelector(':scope > .sense-note-trigger');
         if (info) info.after(lead);
         else row.prepend(lead);
@@ -802,12 +808,9 @@ function placeRowLeadMarks(root) {
         const companion = cell.querySelector('.sense-companion-lead');
         if (!companion) return;
         const cue = companion.closest('.sense-grammar-cue');
-        companion.classList.add('cell-lead-mark');
-        cell.prepend(companion);
+        companion.classList.add('companion-as-context');
+        (cell.querySelector('.meaning-context-cell') || cell).prepend(companion);
         if (cue && !cue.textContent.trim()) cue.remove();
-        cell.classList.add('has-cell-lead');
-        const measured = companion.getBoundingClientRect().width || (companion.textContent.length * 8 + 10);
-        cell.style.setProperty('padding-left', `${Math.ceil(6 + measured + 6)}px`, 'important');
     });
 }
 
@@ -857,6 +860,21 @@ function placeRowInformationButtons(root) {
             }
             template.remove();
         }
+        // A note line the row already shows in full is not news: "Brazil,
+        // informal" beside a flag and "informal", or a bracket that is the
+        // row's cue. A note left with nothing new loses its button.
+        const foldRow = text => ` ${String(text || '').toLocaleLowerCase('en').replace(/[^\p{L}\p{N}]+/gu, ' ').trim()} `;
+        const rowCopy = row.cloneNode(true);
+        rowCopy.querySelectorAll('.sense-note-trigger, template, .sense-prominence-badge').forEach(el => el.remove());
+        const flagNames = [...row.querySelectorAll('[aria-label], [title]')]
+            .filter(el => !el.closest('.sense-note-trigger, .sense-prominence-badge'))
+            .map(el => el.getAttribute('aria-label') || el.getAttribute('title'));
+        const rowText = foldRow([rowCopy.textContent, ...flagNames].join(' '));
+        copy.querySelectorAll('p').forEach(p => {
+            const pieces = p.textContent.split(/[;,]/).map(foldRow).filter(piece => piece.trim());
+            if (pieces.length && pieces.every(piece => rowText.includes(piece))) p.remove();
+        });
+        copy.querySelectorAll('section').forEach(sec => { if (!sec.querySelector('p')) sec.remove(); });
         if (!copy.children.length) {
             buttons.forEach(el => el.remove());
             return;
@@ -866,6 +884,28 @@ function placeRowInformationButtons(root) {
         buttons.slice(1).forEach(el => el.remove());
         row.prepend(button, combined);
         row.classList.add('has-row-information');
+    });
+}
+
+// Only the active sense spreads over more than one line. Each other row or
+// sub-row keeps to one line, cut with an ellipsis, unless the open menu has so
+// few rows that there is room for everything.
+const COMPACT_ROWS_FROM = 4;
+function markCompactInactiveRows(root) {
+    // The frame ("+ infinitive") leads its cue, so a one-line cut never
+    // takes it.
+    root?.querySelectorAll('.meaning-context-cell, .meaning-row-sub').forEach(cue => {
+        const frame = cue.querySelector(':scope .sense-grammar-cue');
+        if (!frame || !frame.textContent.trim()) return;
+        const lead = cue.querySelector(':scope > .companion-as-context');
+        if (lead) lead.after(frame);
+        else cue.prepend(frame);
+        frame.classList.add('is-leading-frame');
+    });
+    root?.querySelectorAll('.meanings-scroll').forEach(scroll => {
+        const visibleRows = [...scroll.querySelectorAll('.meaning-row-regular, .group-card-varying-cell')]
+            .filter(row => !row.closest('.pos-collapsible:not(.is-open)'));
+        scroll.classList.toggle('has-compact-rows', visibleRows.length >= COMPACT_ROWS_FROM);
     });
 }
 
@@ -3329,7 +3369,7 @@ window.cleanSenseContext = cleanSenseContext;
 // reads as plain cue text — one whole clause, or nothing (it is in the note).
 function differentiatorCueHTML(diff) {
     const label = String(diff?.label || '').trim();
-    if (!label) return '';
+    if (!label || isGrammarLabelClause(label)) return '';
     if ((diff.type === 'register' || diff.type === 'domain') && label.length <= 28) {
         const family = escapeCardText(diff.type);
         return `<span class="sense-metadata-detail sense-pill sense-pill--${family}" data-family="${family}"><span class="sense-pill-label">${escapeCardText(label)}</span></span>`;
@@ -6598,7 +6638,8 @@ function renderCardWikipediaBadge(card) {
                 // Don't label genuine rare dictionary senses as "Unassigned"
                 const assignmentState = (!g.hasAssignedEvidence && !g.hasOnlyRareSenses)
                     ? '<span class="pos-pill-unassigned">Unassigned</span>'
-                    : (rows.length <= 1 ? '' : g.hasOnlyRareSenses
+                    // A folded section still says how common it is.
+                    : (g.hasOnlyRareSenses
                         ? prominenceBadgeHTML({ label: 'Rare', key: 'rare' })
                         : (useProminenceLabels && g.pct > 0
                             ? prominenceBadgeHTML(prominenceInfoFromShare(g.mainMeanings)) : ''));
@@ -6667,12 +6708,16 @@ function renderCardWikipediaBadge(card) {
             };
             const presentation = learnerRowPresentation(meaning, false, options);
             const metadataLabel = presentation.key.items
+                .filter(item => item.family !== 'grammar' || grammarBelongsOnRow(item))
                 .map(item => senseMetadataDisplay(item, options).short)
-                .filter(Boolean)
+                .filter(label => label && !isGrammarLabelClause(label))
                 .join(' · ');
+            // "indefinite", "transitive" name the word class: never a sub-row.
+            const withoutGrammarLabels = text => String(text || '').split(/;\s*|\s+·\s+/)
+                .filter(part => part.trim() && !isGrammarLabelClause(part)).join(' · ');
             contextLabelByMeaning.set(
                 index,
-                presentation.key.text || groupingGloss.key.text || metadataLabel
+                withoutGrammarLabels(presentation.key.text) || withoutGrammarLabels(groupingGloss.key.text) || metadataLabel
             );
         });
         // Per-meaning-idx axis assignment: 'translation' | 'context' |
@@ -7212,8 +7257,12 @@ function renderCardWikipediaBadge(card) {
                     const memberParts = new Map(orderedMembers.map(memberIdx => [memberIdx, {
                         extra: isTransAxis ? memberExtraGloss(memberIdx) : '',
                         context: isTransAxis ? (contextLabelByMeaning.get(memberIdx) || '') : '',
+                        // The cut bracket, or else the context's own
+                        // definition ("to provide a service") after its frame.
                         cut: isTransAxis
-                            ? definitionLabel(groupingGlossByMeaning.get(memberIdx)?.removedDefinitions?.[0] || '')
+                            ? definitionLabel(groupingGlossByMeaning.get(memberIdx)?.removedDefinitions?.[0]
+                                || String(card.meanings[memberIdx]?.context || '').split('|')
+                                    .map(part => part.trim()).find(part => part && !part.startsWith('[') && !isGrammarLabelClause(part)) || '')
                             : '',
                     }]));
                     // A context every sub-row carries ("preceding the verb"
@@ -7239,7 +7288,9 @@ function renderCardWikipediaBadge(card) {
                     }
                     for (const parts of memberParts.values()) {
                         const plain = partsLabel(parts);
+                        const headingKeys = new Set(glossPieces(String(sharedText || '').replace(/<[^>]*>/g, '')).map(glossPieceKey));
                         if (parts.cut && (!plain || labelCounts.get(plain) > 1)
+                            && !headingKeys.has(glossPieceKey(parts.cut))
                             && glossPieceKey(parts.cut) !== glossPieceKey(parts.context)) {
                             // A context every sub-row shares tells none apart.
                             const sharedByAll = !parts.extra && labelCounts.get(plain) === orderedMembers.length;
@@ -7346,7 +7397,8 @@ function renderCardWikipediaBadge(card) {
                             const metadataShowsSomething = /sense-metadata-detail|sense-pill/.test(
                                 metadataHTML.replace(/<template[\s\S]*?<\/template>/g, ''));
                             const ctxWeight = isMemberSelected ? '700' : '500';
-                            const ctxColor = isMemberSelected ? 'var(--text-primary)' : 'var(--text-secondary)';
+                            // Every sub-row reads in full colour; the selected one is bolder.
+                            const ctxColor = 'var(--text-primary)';
                             if (collocationHTML || cleanedCtx || metadataShowsSomething || extraGlossHTML) {
                                 const colHTML = collocationHTML ? `<span class="sense-grammar-cue">${collocationHTML}</span>` : '';
                                 varyingHtml = `<span class="meaning-context-cell" style="font-weight: ${ctxWeight}; color: ${ctxColor}; line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${colHTML}${extraGlossHTML}${cleanedCtx ? renderSenseContextHTML(cleanedCtx, { leadingDot: false }) : ''}${metadataHTML}</span>`;
@@ -7359,7 +7411,13 @@ function renderCardWikipediaBadge(card) {
                                 );
                                 const diffRepeatsHeading = diff && sharedContextParts
                                     .some(shared => glossPieceKey(shared) === glossPieceKey(diff.label));
-                                const diffHTML = diff && diff.score >= 60 && !diffRepeatsHeading ? differentiatorCueHTML(diff) : '';
+                                // A word-class label ("auxiliary") tells a
+                                // learner nothing; the clause the gloss lost
+                                // ("forms the progressive aspect") does.
+                                const lostClause = definitionLabel(rowPresentation.removedDefinitions?.[0] || '');
+                                const diffHTML = diff && diff.score >= 60 && !diffRepeatsHeading && !isGrammarLabelClause(diff.label)
+                                    ? differentiatorCueHTML(diff)
+                                    : (lostClause ? renderSenseContextHTML(lostClause, { leadingDot: false }) : '');
                                 if (diffHTML) {
                                     varyingHtml = `<span class="meaning-context-cell" style="font-weight: ${ctxWeight}; color: ${ctxColor}; line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${diffHTML}</span>`;
                                 } else {
@@ -8137,6 +8195,7 @@ function renderCardWikipediaBadge(card) {
         placeRowInformationButtons(renderedBack);
         placeRowLeadMarks(renderedBack);
         arrangeSenseCueAreas(renderedBack);
+        markCompactInactiveRows(renderedBack);
         renderedBack._fluencyRenderedHTML = backHTML;
         bindGrammarPairChips(renderedBack);
     }
