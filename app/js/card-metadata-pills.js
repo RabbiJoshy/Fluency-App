@@ -948,7 +948,8 @@ function learnerContextByRule(value, gloss = '') {
         const key = foldMetadataComparable(compact);
         if (!compact || !key || seenVisible.has(key)) continue;
         // "to own; to possess" under "to have" is a synonym list, not a cue.
-        const synonym = glossIsVerb && /^to\s/i.test(compact);
+        // "to receive one's wage" is a definition, so it stays.
+        const synonym = glossIsVerb && /^to\s/i.test(compact) && compact.split(/\s+/).length <= 3;
         // "transitive", "impersonal, transitive": grammar labels, for the note.
         if (synonym || isGrammarLabelClause(compact) || !isLabelLikeText(compact)) continue;
         seenVisible.add(key);
@@ -1466,7 +1467,9 @@ export function learnerSensePresentation(meaning, active, options = {}) {
     // Rows keep the context's labels ("when stressed", "already mentioned")
     // and send its definitions and synonym lists to the note.
     const contextPresentation = options.ignoreBudget
-        ? learnerContextByRule(residualContext, options.gloss || meaning?.meaning || meaning?.translation || '')
+        // The dictionary gloss decides whether "to own; to possess" is a
+        // synonym list: an inflected row ("I have") must not hide that.
+        ? learnerContextByRule(residualContext, meaning?.meaning || meaning?.translation || options.gloss || '')
         : learnerContextBudget(
         residualContext,
         active,

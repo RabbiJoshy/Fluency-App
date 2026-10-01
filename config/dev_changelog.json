@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-01T20:55:00+01:00",
+      "date": "2026-10-01 20:55 BST",
+      "agent": "Claude",
+      "summary": "Family rows no longer change shape when you tap a sub-row (estar: 'to be' turning into 'I am' with '+ adjective I am').",
+      "detail": [
+        "Families are grouped and compared on the dictionary gloss, which does not follow the example on screen; only the heading is inflected ('I am', 'he/she is').",
+        "Inflected cards (tenho) drop the same repeats as their lemma (ter): 'in hand' rather than 'to have in hand', 'to own' rather than the whole synonym list.",
+        "A 'to …' clause of four or more words ('to receive one's wage') is a definition and stays on its sub-row."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-01T20:10:00+01:00",
       "date": "2026-10-01 20:10 BST",
       "agent": "Claude",
