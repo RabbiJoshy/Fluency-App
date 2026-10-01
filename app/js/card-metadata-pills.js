@@ -1208,7 +1208,13 @@ export function definitionLabel(value) {
     const text = readableSenseNote(value).trim().replace(/^(?:\.\.\.|…)\s*/, '')
         .replace(/\s*\([^()]*\)/g, '').replace(/\s{2,}/g, ' ').trim();
     const clause = splitLearnerContextClauses(text)[0] || '';
-    return clause.split(/\s+/).length <= WHOLE_LABEL_MAX_WORDS ? clause.replace(/[,.:]$/, '') : '';
+    if (clause.split(/\s+/).length <= WHOLE_LABEL_MAX_WORDS) return clause.replace(/[,.:]$/, '');
+    // A long clause whose head stands alone before a comma ("to be related
+    // in some way to, with the object identifying the relationship") keeps
+    // that head; anything else stays whole in the note.
+    const head = clause.split(/,\s+/)[0].trim();
+    const headWords = head.split(/\s+/).length;
+    return head !== clause && headWords >= 3 && headWords <= WHOLE_LABEL_MAX_WORDS ? head : '';
 }
 
 // Returns the row's gloss and optional key when the rules change the source,
@@ -1292,9 +1298,10 @@ function ruleBasedGloss(meaning, source, options) {
 // rewrites a definition: it selects complete source clauses where possible,
 // and keeps the full projected gloss for the optional sense note.
 export function learnerGlossPresentation(meaning, active, options = {}) {
+    // "who[m]" is the dictionary's optional letter: "who(m)".
     const source = String(options.gloss
         ?? projectWiktionaryGloss(meaning, meaning?.meaning || meaning?.translation || '').display
-        ?? '').trim();
+        ?? '').trim().replace(/(\p{L})\[(\p{L}{1,3})\]/gu, '$1($2)');
     if (!source) return { visibleGloss: '', visibleKey: '', noteGloss: '' };
     const ruled = options.keepDefinitionParenthetical ? null : ruleBasedGloss(meaning, source, options);
     if (ruled) {

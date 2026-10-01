@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-01T22:40:00+01:00",
+      "date": "2026-10-01 22:40 BST",
+      "agent": "Claude",
+      "summary": "Sub-rows whose definition was too long now keep its head before the comma (ter: 'to be related in some way to'); the dictionary's optional letter no longer shows as a bracket (quem).",
+      "detail": [
+        "A label longer than ten words keeps its first comma clause when that clause has three to ten words; otherwise the definition stays in the note.",
+        "'who[m]' renders without the square bracket."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-01T22:05:00+01:00",
       "date": "2026-10-01 22:05 BST",
       "agent": "Claude",
