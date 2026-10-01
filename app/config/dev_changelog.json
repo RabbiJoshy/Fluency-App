@@ -2,6 +2,33 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-01T22:05:00+01:00",
+      "date": "2026-10-01 22:05 BST",
+      "agent": "Claude",
+      "summary": "More brackets become row cues (dele 'of · in relation to', 'as · in the role of'); a bracket every sub-sense shares moves to the family heading and each sub-row shows its own context.",
+      "detail": [
+        "A bracket after 'of', 'to', 'in'… is kept in the translation only when it names a slot ('fond of (something)'); otherwise it is the cue.",
+        "'(in a state of)', '(in the role of)' and the other 'in a/the …' brackets are cues; only '(in the plural/singular)' stays a restriction.",
+        "de/dele/do: seven senses share 'of (in relation to)'; the heading reads 'of · in relation to' and the sub-rows read 'being a part of', '-'s · made by', 'about · on the subject of'.",
+        "Long frames shorten their '(+ …)' part: saber '+ que + indicative clause'; a frame that still cannot be said as '+ …' stays in the note.",
+        "Unblocks the deploy: English cues match verb forms with their accents again (hablo 'I speak' no longer also reads as habló 'he/she spoke'), and the hand-bumped version tags from 7fc8b2d1 are put back so the app tests pass; the 'be;s' fix from that commit now reaches the site."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-01T20:36:00+01:00",
+      "date": "2026-10-01 20:36 BST",
+      "agent": "Antigravity",
+      "summary": "Fix English inflection corruption on multi-clause glosses ('be;s', 'mind;s') and preserve uncountable nouns.",
+      "detail": [
+        "Uncountable nouns (dark, music, information...) are guarded against pluralisation on plural surface cards ('noches' no longer inflects 'dark' to 'darks').",
+        "Infinitive parsing splits on semicolons and commas and strips trailing punctuation, preventing multi-clause glosses from producing corrupted third-person verbs like 'be;s' or 'mind;s'.",
+        "Accent folding in reverse cues allows unaccented surfaces like 'esta' to correctly match conjugation tables ('está' -> 'he/she is').",
+        "Bumped Service Worker cache to v581 and updated module version tags."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-01T20:55:00+01:00",
       "date": "2026-10-01 20:55 BST",
       "agent": "Claude",

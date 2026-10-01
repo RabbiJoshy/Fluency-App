@@ -27,6 +27,30 @@ const INVARIANT_ENGLISH_PLURALS = new Set([
     'deer', 'fish', 'means', 'offspring', 'series', 'sheep', 'species',
 ]);
 
+const UNCOUNTABLE_ENGLISH_NOUNS = new Set([
+    'dark', 'darkness', 'dusk', 'nightfall', 'daylight', 'sunlight', 'moonlight',
+    'twilight', 'dawn', 'midnight', 'noon',
+    'sadness', 'happiness', 'anger', 'love', 'hate', 'fear', 'grief', 'joy',
+    'sorrow', 'pity', 'envy', 'pride', 'shame', 'guilt', 'hope', 'faith',
+    'courage', 'patience', 'silence', 'peace', 'violence', 'justice',
+    'beauty', 'ugliness', 'youth', 'age', 'childhood', 'adulthood',
+    'information', 'advice', 'knowledge', 'wisdom', 'news', 'evidence',
+    'research', 'progress', 'homework', 'work', 'fun',
+    'furniture', 'luggage', 'baggage', 'equipment', 'machinery',
+    'clothing', 'jewelry', 'mail', 'money', 'cash', 'currency',
+    'music', 'art', 'poetry', 'literature', 'fiction',
+    'weather', 'rain', 'snow', 'thunder', 'lightning', 'fog', 'wind', 'heat', 'cold',
+    'water', 'milk', 'wine', 'beer', 'coffee', 'tea', 'juice', 'blood',
+    'bread', 'rice', 'pasta', 'meat', 'fruit', 'food', 'sugar', 'salt', 'flour',
+    'air', 'oxygen', 'smoke', 'dust', 'dirt', 'mud', 'sand', 'grass',
+    'gold', 'silver', 'iron', 'steel', 'wood', 'cotton', 'silk', 'wool',
+    'traffic', 'transport', 'travel', 'tourism',
+    'help', 'luck', 'magic', 'power', 'energy', 'electricity',
+    'health', 'fitness', 'strength', 'weakness',
+    'space', 'room', 'time', 'sleep', 'rest',
+    'laughter', 'applause', 'chaos', 'calm',
+]);
+
 function cueText(meaning) {
     return String(meaning?.meaning ?? meaning?.translation ?? '').trim();
 }
@@ -166,6 +190,7 @@ function pluralizeEnglishWord(gloss) {
     const word = String(gloss || '').trim();
     if (!/^[A-Za-z]+$/u.test(word)) return null;
     const lower = word.toLocaleLowerCase('en');
+    if (UNCOUNTABLE_ENGLISH_NOUNS.has(lower)) return lower;
     let plural;
     if (IRREGULAR_ENGLISH_PLURALS[lower]) {
         plural = IRREGULAR_ENGLISH_PLURALS[lower];
@@ -190,6 +215,8 @@ function nounProductionCue(card, meaning, translation) {
     return pluralizeEnglishWord(translation);
 }
 
+// Accents tell verb forms apart (hablo / habló, está / esta): fold case and
+// Unicode composition only.
 function foldCueForm(value) {
     return String(value || '').normalize('NFC').toLocaleLowerCase().trim();
 }
@@ -321,22 +348,31 @@ const TENSE_KIND = {
     'Subj. Imparfait': 'imperfect', 'Subj. Futuro': 'future',
 };
 
+function cleanVerb(verb) {
+    return String(verb || '').replace(/[^\p{L}\p{N}]+$/gu, '').trim();
+}
+
 function thirdPersonSingular(verb) {
-    const lower = String(verb || '').toLocaleLowerCase('en');
+    const clean = cleanVerb(verb);
+    const lower = clean.toLocaleLowerCase('en');
+    if (!lower) return '';
+    if (lower === 'be') return 'is';
     if (/(?:s|x|z|ch|sh)$/u.test(lower)) return `${lower}es`;
     if (/[^aeiou]y$/u.test(lower)) return `${lower.slice(0, -1)}ies`;
     return `${lower}s`;
 }
 
 function inflectEnglishPresent(verb, personIdx) {
-    const lower = String(verb || '').toLocaleLowerCase('en');
+    const clean = cleanVerb(verb);
+    const lower = clean.toLocaleLowerCase('en');
     const irregular = IRREGULAR_ENGLISH_PRESENT[lower];
     if (irregular) return irregular[personIdx];
     return personIdx === 2 ? thirdPersonSingular(lower) : lower;
 }
 
 function inflectEnglishPast(verb, personIdx) {
-    const lower = String(verb || '').toLocaleLowerCase('en');
+    const clean = cleanVerb(verb);
+    const lower = clean.toLocaleLowerCase('en');
     const irregular = IRREGULAR_ENGLISH_PAST[lower];
     if (Array.isArray(irregular)) return irregular[personIdx];
     if (typeof irregular === 'string') return irregular;
@@ -346,7 +382,8 @@ function inflectEnglishPast(verb, personIdx) {
 }
 
 function englishIng(verb) {
-    const lower = String(verb || '').toLocaleLowerCase('en');
+    const clean = cleanVerb(verb);
+    const lower = clean.toLocaleLowerCase('en');
     if (lower === 'be') return 'being';
     if (/ie$/u.test(lower)) return `${lower.slice(0, -2)}ying`;
     if (/e$/u.test(lower) && !/ee$/u.test(lower)) return `${lower.slice(0, -1)}ing`;
@@ -354,7 +391,8 @@ function englishIng(verb) {
 }
 
 function englishPastParticiple(verb) {
-    const lower = String(verb || '').toLocaleLowerCase('en');
+    const clean = cleanVerb(verb);
+    const lower = clean.toLocaleLowerCase('en');
     if (IRREGULAR_ENGLISH_PP[lower]) return IRREGULAR_ENGLISH_PP[lower];
     return inflectEnglishPast(lower, 0);
 }
@@ -613,10 +651,16 @@ function infinitiveParts(translation) {
     if (!value.startsWith('to ')) return null;
     const body = value.slice(3).trim();
     if (!body) return null;
-    const splitAt = body.indexOf(' ');
-    return splitAt === -1
-        ? { head: body, rest: '' }
-        : { head: body.slice(0, splitAt), rest: body.slice(splitAt) };
+    // Strip any trailing semicolon or comma separated alternatives before parsing
+    // the head verb. E.g. "to matter; to mind", "to be, to exist"
+    const firstClause = body.split(/\s*[;,]\s*/)[0].trim();
+    if (!firstClause) return null;
+    const splitAt = firstClause.indexOf(' ');
+    const rawHead = splitAt === -1 ? firstClause : firstClause.slice(0, splitAt);
+    const head = cleanVerb(rawHead);
+    const rest = splitAt === -1 ? '' : firstClause.slice(splitAt);
+    if (!head) return null;
+    return { head, rest };
 }
 
 function deriveRegularAnalysisCue(translation, analysis, personIdx) {
