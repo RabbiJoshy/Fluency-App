@@ -20,7 +20,7 @@ import {
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=20260925cues';
+} from './reverse-cues.js?v=20261001inflect';
 import {
     compactConstructionMetadata,
     escapeCardText,

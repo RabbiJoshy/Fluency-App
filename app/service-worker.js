@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v580';
+const CACHE_NAME = 'flashcards-v581';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -26,7 +26,7 @@ const ASSET_VERSION = '20260927v24';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/css/style.css?v=20260929sense6',
+  '/css/style.css?v=20261001inflect',
   '/css/light-theme.css?v=20260927m3',
   '/config/config.json',
   '/data/speech-frequency/es.json',
@@ -71,10 +71,10 @@ const urlsToCache = [
   `/js/vocabulary-import-core.js?v=${ASSET_VERSION}`,
   '/js/vocabulary-import.js?v=20260923bk',
   `/js/spanishdict-usage.js?v=${ASSET_VERSION}`,
-  '/js/reverse-cues.js?v=20260927v24',
+  '/js/reverse-cues.js?v=20261001inflect',
   '/js/flags.js?v=20260929flags',
   '/js/card-metadata-pills.js?v=20260929sense6',
-  '/js/flashcards.js?v=20260929sense6',
+  '/js/flashcards.js?v=20261001inflect',
   '/icons/tatoeba.svg',
   '/icons/wikipedia-w.svg',
   `/js/example-personalisation.js?v=${ASSET_VERSION}`,

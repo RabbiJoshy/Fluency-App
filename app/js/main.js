@@ -28,7 +28,7 @@ import './song-sets.js?v=20260823ae';
 import './playlist-live.js?v=20260923cj';
 import './spotify-playlist-import.js?v=20260923su';
 import './vocabulary-import.js?v=20260923bk';
-import './flashcards.js?v=20260929sense6';
+import './flashcards.js?v=20261001inflect';
 import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 
 // Emoji flags anywhere on the page render as rectangular pictures.

@@ -51,6 +51,31 @@ INVARIANT_ENGLISH_PLURALS: frozenset[str] = frozenset({
     "buttocks", "kisses", "remains", "congratulations", "thanks", "belongings",
 })
 
+UNCOUNTABLE_ENGLISH_NOUNS: frozenset[str] = frozenset({
+    # Abstract/mass nouns that should never take -s when pluralising glosses
+    "dark", "darkness", "dusk", "nightfall", "daylight", "sunlight", "moonlight",
+    "twilight", "dawn", "midnight", "noon",
+    "sadness", "happiness", "anger", "love", "hate", "fear", "grief", "joy",
+    "sorrow", "pity", "envy", "pride", "shame", "guilt", "hope", "faith",
+    "courage", "patience", "silence", "peace", "violence", "justice",
+    "beauty", "ugliness", "youth", "age", "childhood", "adulthood",
+    "information", "advice", "knowledge", "wisdom", "news", "evidence",
+    "research", "progress", "homework", "work", "fun",
+    "furniture", "luggage", "baggage", "equipment", "machinery",
+    "clothing", "jewelry", "mail", "money", "cash", "currency",
+    "music", "art", "poetry", "literature", "fiction",
+    "weather", "rain", "snow", "thunder", "lightning", "fog", "wind", "heat", "cold",
+    "water", "milk", "wine", "beer", "coffee", "tea", "juice", "blood",
+    "bread", "rice", "pasta", "meat", "fruit", "food", "sugar", "salt", "flour",
+    "air", "oxygen", "smoke", "dust", "dirt", "mud", "sand", "grass",
+    "gold", "silver", "iron", "steel", "wood", "cotton", "silk", "wool",
+    "traffic", "transport", "travel", "tourism",
+    "help", "luck", "magic", "power", "energy", "electricity",
+    "health", "fitness", "strength", "weakness",
+    "space", "room", "time", "sleep", "rest",
+    "laughter", "applause", "chaos", "calm",
+})
+
 IRREGULAR_ENGLISH_PRESENT: dict[str, list[str]] = {
     "be": ["am", "are", "is", "are", "are", "are"],
     "have": ["have", "have", "has", "have", "have", "have"],
@@ -131,7 +156,11 @@ def split_attached_clitics(form: str) -> tuple[str, list[str]]:
 
 
 def third_person_singular(verb: str) -> str:
-    lower = verb.lower()
+    lower = re.sub(r"[^\w]+$", "", verb).lower()
+    if not lower:
+        return ""
+    if lower == "be":
+        return "is"
     if re.search(r"(?:s|x|z|ch|sh)$", lower):
         return f"{lower}es"
     if re.search(r"[^aeiou]y$", lower):
@@ -140,7 +169,7 @@ def third_person_singular(verb: str) -> str:
 
 
 def inflect_english_present(verb: str, person_idx: int) -> str:
-    lower = verb.lower()
+    lower = re.sub(r"[^\w]+$", "", verb).lower()
     irregular = IRREGULAR_ENGLISH_PRESENT.get(lower)
     if irregular:
         return irregular[person_idx]
@@ -160,7 +189,7 @@ def should_double_consonant(lower: str) -> bool:
 
 
 def inflect_english_past(verb: str, person_idx: int) -> str:
-    lower = verb.lower()
+    lower = re.sub(r"[^\w]+$", "", verb).lower()
     irregular = IRREGULAR_ENGLISH_PAST.get(lower)
     if isinstance(irregular, list):
         return irregular[person_idx]
@@ -176,7 +205,7 @@ def inflect_english_past(verb: str, person_idx: int) -> str:
 
 
 def english_ing(verb: str) -> str:
-    lower = verb.lower()
+    lower = re.sub(r"[^\w]+$", "", verb).lower()
     if lower == "be":
         return "being"
     if lower.endswith("ie"):
@@ -189,7 +218,7 @@ def english_ing(verb: str) -> str:
 
 
 def english_past_participle(verb: str) -> str:
-    lower = verb.lower()
+    lower = re.sub(r"[^\w]+$", "", verb).lower()
     if lower in IRREGULAR_ENGLISH_PP:
         return IRREGULAR_ENGLISH_PP[lower]
     return inflect_english_past(lower, 0)
@@ -230,6 +259,10 @@ def _pluralize_phrase(gloss: str) -> str:
     if lower in INVARIANT_ENGLISH_PLURALS:
         return word
 
+    # Mass/uncountable nouns must not take -s
+    if lower in UNCOUNTABLE_ENGLISH_NOUNS:
+        return word
+
     # Do not double-pluralize words that already end in plural -s / -es in the dictionary
     if lower.endswith("s") and not lower.endswith("ss") and not lower.endswith("us") and not lower.endswith("is"):
         return word
@@ -263,8 +296,11 @@ def parse_infinitive_gloss(gloss: str) -> tuple[str, str] | None:
     body = text[3:].strip()
     if not body:
         return None
-    tokens = body.split(None, 1)
-    head = tokens[0]
+    first_clause = re.split(r"\s*[;,]\s*", body)[0].strip()
+    if not first_clause:
+        return None
+    tokens = first_clause.split(None, 1)
+    head = re.sub(r"[^\w]+$", "", tokens[0])
     rest = f" {tokens[1]}" if len(tokens) > 1 else ""
     return head, rest
 
@@ -279,15 +315,18 @@ def inflect_single_verb_gloss(
     parts = parse_infinitive_gloss(gloss)
     if not parts:
         # If it doesn't start with "to ", treat the first word as the head if imperative
-        tokens = gloss.strip().split(None, 1)
+        clean_gloss = re.split(r"\s*[;,]\s*", gloss.strip())[0].strip()
+        tokens = clean_gloss.split(None, 1)
         if not tokens:
             return None
-        head = tokens[0]
+        head = re.sub(r"[^\w]+$", "", tokens[0])
         rest = f" {tokens[1]}" if len(tokens) > 1 else ""
     else:
         head, rest = parts
 
     base = head.lower()
+    if not base:
+        return None
     tail = rest
 
     # Add clitic objects to tail if present and not already mentioned

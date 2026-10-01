@@ -120,3 +120,40 @@ def test_ambiguous_forms_prefer_statement_over_command() -> None:
     # A form that is only a command stays a command.
     assert inflect_card_senses("despejad", "despejar", senses, conj_rev)[0]["translation"] == "clear!"
 
+
+def test_uncountable_nouns_not_pluralized():
+    """Mass/uncountable nouns like 'dark' stay singular even on plural cards."""
+    assert pluralize_english_noun("dark") == "dark"
+    assert pluralize_english_noun("darkness") == "darkness"
+    assert pluralize_english_noun("nightfall") == "nightfall"
+    assert pluralize_english_noun("sadness") == "sadness"
+    assert pluralize_english_noun("information") == "information"
+    assert pluralize_english_noun("furniture") == "furniture"
+    assert pluralize_english_noun("music") == "music"
+    assert pluralize_english_noun("weather") == "weather"
+    # Countable nouns must still pluralize normally
+    assert pluralize_english_noun("night") == "nights"
+    assert pluralize_english_noun("evening") == "evenings"
+    assert pluralize_english_noun("reason") == "reasons"
+
+
+def test_inflect_card_senses_uncountable_noun():
+    """A plural surface must not pluralize an uncountable English gloss."""
+    senses = [
+        {"headword": "noche", "pos": "NOUN", "translation": "night"},
+        {"headword": "noche", "pos": "NOUN", "translation": "dark"},
+        {"headword": "noche", "pos": "NOUN", "translation": "sadness"},
+    ]
+    res = inflect_card_senses("noches", "noche", senses, {})
+    assert res[0]["translation"] == "nights"    # countable: pluralised
+    assert res[1]["translation"] == "dark"       # uncountable: unchanged
+    assert res[2]["translation"] == "sadness"    # uncountable: unchanged
+
+
+def test_inflect_verb_with_embedded_punctuation():
+    """Verb glosses with semicolons, commas, or notes must not corrupt into ';s' or ',s'."""
+    assert inflect_single_verb_gloss("to be; forms the progressive aspect", "indicativo", "presente", 2) == "he/she is"
+    assert inflect_single_verb_gloss("to be, to exist", "indicativo", "presente", 2) == "he/she is"
+    assert inflect_single_verb_gloss("to matter; to mind", "indicativo", "presente", 2) == "he/she matters"
+    assert inflect_single_verb_gloss("to mind, why don't", "indicativo", "presente", 2) == "he/she minds"
+
