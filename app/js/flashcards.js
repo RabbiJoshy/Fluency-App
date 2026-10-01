@@ -1,26 +1,26 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=971f3e8e';
-import './speech.js?v=971f3e8e';
-import { goToRoute, routeCodeFor } from './routes.js?v=971f3e8e';
-import './side-dock.js?v=971f3e8e';
+import './state.js?v=65e9b308';
+import './speech.js?v=65e9b308';
+import { goToRoute, routeCodeFor } from './routes.js?v=65e9b308';
+import './side-dock.js?v=65e9b308';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=971f3e8e';
+} from './example-personalisation.js?v=65e9b308';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=971f3e8e';
+} from './spanishdict-usage.js?v=65e9b308';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=971f3e8e';
+} from './reverse-cues.js?v=65e9b308';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -52,7 +52,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=971f3e8e';
+} from './card-metadata-pills.js?v=65e9b308';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -3119,8 +3119,11 @@ function displayLearnerGloss(card, meaning, active = false) {
 }
 
 function learnerGroupingGloss(card, meaning) {
-    const raw = String(getProductionEnglishCue(card, meaning)
-        || meaning?.meaning || meaning?.translation || '').trim();
+    // The dictionary gloss, not the inflected cue: the cue follows the
+    // example on screen and can inflect one sense ("I am") but not its
+    // sibling ("to be"), which would reshape the family on every tap. The
+    // family heading is inflected once, from the shared gloss.
+    const raw = String(meaning?.meaning || meaning?.translation || '').trim();
     const projected = projectWiktionaryGloss(meaning, raw).display;
     const presentation = learnerSensePresentation(meaning, false, {
         gloss: projected,
@@ -3354,8 +3357,12 @@ function learnerRowPresentation(meaning, active, options = {}) {
     // Compare with the gloss the row shows, not the source: a key drawn from
     // the source's own bracket ("to have the given quality") is not a repeat.
     const shownGloss = presentation.gloss || options.gloss || '';
-    const visibleContext = cleanSenseContext(presentation.visibleContext, shownGloss);
-    const keyText = cleanSenseContext(presentation.key?.text || '', shownGloss);
+    // An inflected row ("I have") still repeats its dictionary gloss
+    // ("to have in hand" under "to have"): clean against both.
+    const dictionaryGloss = String(meaning?.meaning || meaning?.translation || '').trim();
+    const clean = text => cleanSenseContext(cleanSenseContext(text, shownGloss), dictionaryGloss);
+    const visibleContext = clean(presentation.visibleContext);
+    const keyText = clean(presentation.key?.text || '');
     return {
         ...presentation,
         key: { ...presentation.key, text: keyText },
@@ -7182,8 +7189,11 @@ function renderCardWikipediaBadge(card) {
                             return true;
                         })
                         .join(', ');
+                    const sharedPlainText = sharedPieces.join(', ') || groupingGlossByMeaning.get(idx)?.gloss || '';
                     const sharedFullText = isTransAxis
-                        ? (sharedPieces.join(', ') || groupingGlossByMeaning.get(idx)?.gloss || displayMeaning)
+                        ? (sharedPlainText
+                            ? (getProductionEnglishCue(card, { ...m, meaning: sharedPlainText, translation: sharedPlainText }) || sharedPlainText)
+                            : displayMeaning)
                         : String(groupKey || '').replace(/"/g, '&quot;');
                     const sharedPresentation = isTransAxis
                         ? learnerRowPresentation(m, isSelected, {
@@ -7288,7 +7298,8 @@ function renderCardWikipediaBadge(card) {
                     }
                     for (const parts of memberParts.values()) {
                         const plain = partsLabel(parts);
-                        const headingKeys = new Set(glossPieces(String(sharedText || '').replace(/<[^>]*>/g, '')).map(glossPieceKey));
+                        const headingKeys = new Set([sharedText, sharedPlainText]
+                            .flatMap(text => glossPieces(String(text || '').replace(/<[^>]*>/g, ''))).map(glossPieceKey));
                         if (parts.cut && (!plain || labelCounts.get(plain) > 1)
                             && !headingKeys.has(glossPieceKey(parts.cut))
                             && glossPieceKey(parts.cut) !== glossPieceKey(parts.context)) {
@@ -10158,8 +10169,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '971f3e8e';
-const MODALS_ASSET_VERSION = '971f3e8e';
+const ASSET_VERSION = '65e9b308';
+const MODALS_ASSET_VERSION = '65e9b308';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
