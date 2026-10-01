@@ -815,75 +815,108 @@ function placeRowLeadMarks(root) {
     });
 }
 
-// One disclosure belongs to the whole row, never a nested context box.
-// A grouped row collects its notes with their sense labels intact.
+// The words an element shows, one piece per text node, so chips and cues
+// stay apart ("leader, boss" and "colloquial", not "leader, bosscolloquial").
+function shownTextPieces(element) {
+    const copy = element.cloneNode(true);
+    copy.querySelectorAll('.sense-note-trigger, template, .sense-prominence-badge').forEach(el => el.remove());
+    const pieces = [];
+    const walker = document.createTreeWalker(copy, NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) {
+        const text = walker.currentNode.textContent.trim();
+        if (text) pieces.push(text);
+    }
+    // Flags and other icons say their words in a label.
+    copy.querySelectorAll('[role="img"][aria-label]').forEach(el => {
+        pieces.push(el.getAttribute('aria-label'));
+    });
+    return pieces;
+}
+
+// A note line the learner already sees in full is not news: "Brazil,
+// informal" beside a flag and "informal", or the sub-row's own words.
+function dropNoteLinesShownIn(copy, ...scopes) {
+    // Compared word by word: "of (being a part of)" adds nothing under a
+    // family "of" whose sub-row reads "being a part of".
+    // Dictionary frame notation reads as the row does: "(+ gerund)".
+    copy.querySelectorAll('p').forEach(p => {
+        p.textContent = p.textContent.replace(/\s*(\[[^\]]+\])/g, (_, frame) => {
+            const cue = frameCue(frame);
+            return cue ? ` (${cue})` : '';
+        }).trim();
+    });
+    const words = text => String(text || '').toLocaleLowerCase('en').split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+    const shown = new Set(scopes.filter(Boolean).flatMap(shownTextPieces).flatMap(words));
+    const isShown = text => {
+        const textWords = words(text);
+        return textWords.length > 0 && textWords.every(word => shown.has(word));
+    };
+    copy.querySelectorAll('p').forEach(p => {
+        // "At this time; at the present situation" under "at this time"
+        // keeps only "At the present situation".
+        const pieces = p.textContent.split(/;\s*/).filter(piece => piece.trim() && !isShown(piece));
+        const text = pieces.join('; ').trim();
+        if (!text) p.remove();
+        else p.textContent = text.charAt(0).toLocaleUpperCase('en') + text.slice(1);
+    });
+    copy.querySelectorAll('section').forEach(sec => { if (!sec.querySelector('p')) sec.remove(); });
+    return copy.children.length > 0;
+}
+
+// A sub-sense's note sits on its own sub-row, so the button says which
+// meaning it explains. Everything else has one button at the row's edge.
 function placeRowInformationButtons(root) {
     root.querySelectorAll('.meaning-row').forEach(row => {
         const buttons = [...row.querySelectorAll('.sense-note-trigger')];
         if (!buttons.length) return;
-        const combined = document.createElement('template');
-        combined.className = 'sense-note-template';
+        const heading = row.querySelector('.group-card-shared');
+        const rowButtons = [];
+        for (const button of buttons) {
+            const cell = button.closest('.group-card-varying-cell');
+            if (!cell) {
+                rowButtons.push(button);
+                continue;
+            }
+            const template = button.nextElementSibling;
+            const source = template?.content?.querySelector('.sense-note-copy');
+            const copy = source?.cloneNode(true);
+            if (!copy || !dropNoteLinesShownIn(copy, cell, heading)) {
+                button.remove();
+                template?.remove();
+                continue;
+            }
+            copy.dataset.senseNoteTitle = shownTextPieces(cell).join(' · ') || source.dataset.senseNoteTitle;
+            const own = document.createElement('template');
+            own.className = 'sense-note-template';
+            own.content.append(copy);
+            template.remove();
+            cell.prepend(button, own);
+            cell.classList.add('has-cell-information');
+        }
+        if (!rowButtons.length) return;
         const copy = document.createElement('div');
         copy.className = 'sense-note-copy';
         const seen = new Set();
-        for (const button of buttons) {
+        for (const button of rowButtons) {
             const template = button.nextElementSibling;
             const source = template?.content?.querySelector('.sense-note-copy');
-            if (!source) continue;
+            template?.remove();
+            if (!source || seen.has(source.innerHTML)) continue;
+            seen.add(source.innerHTML);
             copy.dataset.senseNoteTitle ||= source.dataset.senseNoteTitle;
-            const cell = button.closest('.group-card-varying-cell');
-            const label = cell?.cloneNode(true);
-            label?.querySelectorAll('.sense-note-trigger, template').forEach(el => el.remove());
-            const senseLabel = label?.textContent.trim() || source.dataset.senseNoteTitle;
-            const key = senseLabel + source.innerHTML;
-            const body = source.cloneNode(true);
-            // A family row's note lists its sub-senses, each under its label
-            // as a plain bold line; a paragraph that only repeats the label
-            // is dropped.
-            if (buttons.length > 1) {
-                const fold = text => String(text || '').toLocaleLowerCase('en').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
-                body.querySelectorAll('p').forEach(p => { if (fold(p.textContent) === fold(senseLabel)) p.remove(); });
-                body.querySelectorAll('section').forEach(sec => { if (!sec.querySelector('p')) sec.remove(); });
-            }
-            if (!seen.has(key) && (body.children.length || buttons.length > 1)) {
-                seen.add(key);
-                if (buttons.length > 1) {
-                    const section = document.createElement('section');
-                    section.className = 'sense-note-section sense-note-subsense';
-                    const heading = document.createElement('h3');
-                    heading.className = 'sense-note-subsense-title';
-                    heading.textContent = senseLabel;
-                    section.append(heading, ...body.children);
-                    copy.append(section);
-                } else {
-                    copy.append(...body.children);
-                }
-            }
-            template.remove();
+            copy.append(...source.cloneNode(true).children);
         }
-        // A note line the row already shows in full is not news: "Brazil,
-        // informal" beside a flag and "informal", or a bracket that is the
-        // row's cue. A note left with nothing new loses its button.
-        const foldRow = text => ` ${String(text || '').toLocaleLowerCase('en').replace(/[^\p{L}\p{N}]+/gu, ' ').trim()} `;
-        const rowCopy = row.cloneNode(true);
-        rowCopy.querySelectorAll('.sense-note-trigger, template, .sense-prominence-badge').forEach(el => el.remove());
-        const flagNames = [...row.querySelectorAll('[aria-label], [title]')]
-            .filter(el => !el.closest('.sense-note-trigger, .sense-prominence-badge'))
-            .map(el => el.getAttribute('aria-label') || el.getAttribute('title'));
-        const rowText = foldRow([rowCopy.textContent, ...flagNames].join(' '));
-        copy.querySelectorAll('p').forEach(p => {
-            const pieces = p.textContent.split(/[;,]/).map(foldRow).filter(piece => piece.trim());
-            if (pieces.length && pieces.every(piece => rowText.includes(piece))) p.remove();
-        });
-        copy.querySelectorAll('section').forEach(sec => { if (!sec.querySelector('p')) sec.remove(); });
-        if (!copy.children.length) {
-            buttons.forEach(el => el.remove());
+        const rowScope = row.cloneNode(true);
+        rowScope.querySelectorAll('.group-card-varying-cell.has-cell-information').forEach(el => el.remove());
+        if (!dropNoteLinesShownIn(copy, rowScope)) {
+            rowButtons.forEach(el => el.remove());
             return;
         }
+        const combined = document.createElement('template');
+        combined.className = 'sense-note-template';
         combined.content.append(copy);
-        const button = buttons[0];
-        buttons.slice(1).forEach(el => el.remove());
-        row.prepend(button, combined);
+        rowButtons.slice(1).forEach(el => el.remove());
+        row.prepend(rowButtons[0], combined);
         row.classList.add('has-row-information');
     });
 }
@@ -3360,7 +3393,9 @@ function learnerRowPresentation(meaning, active, options = {}) {
     const shownGloss = presentation.gloss || options.gloss || '';
     // An inflected row ("I have") still repeats its dictionary gloss
     // ("to have in hand" under "to have"): clean against both.
-    const dictionaryGloss = String(meaning?.meaning || meaning?.translation || '').trim();
+    // Without its bracket: the bracket is this row's cue, not a repeat.
+    const dictionaryGloss = String(meaning?.meaning || meaning?.translation || '')
+        .replace(/\s*\([^()]*\)/g, '').replace(/\s*\[[^\]]*\]/g, '').trim();
     const clean = text => cleanSenseContext(cleanSenseContext(text, shownGloss), dictionaryGloss);
     const visibleContext = clean(presentation.visibleContext);
     const keyText = clean(presentation.key?.text || '');

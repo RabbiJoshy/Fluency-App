@@ -2,6 +2,21 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-01T23:20:00+01:00",
+      "date": "2026-10-01 23:20 BST",
+      "agent": "Claude",
+      "summary": "A sub-sense's info button now sits on its own sub-row and its note only says what the row does not; card-front corner labels are larger and brighter, figures larger.",
+      "detail": [
+        "Family rows no longer gather one sub-sense's note behind the family's button: each sub-row with something to add has its own ⓘ, titled with that sub-row.",
+        "Notes drop every line, and every part of a line, whose words the row already shows (cabeça 'leader, boss' no longer repeats; aqui 'at this time' adds only 'at the present situation').",
+        "Labels in a note title keep their spacing ('leader, boss · colloquial').",
+        "Dictionary frames inside notes read '(+ gerund)'.",
+        "Fixes a regression where a row's own bracket cue was removed as a repeat of its gloss (muito 'to a great extent or degree').",
+        "Card front: corner labels 14.5px at 76% white, figures 30px."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-01T22:40:00+01:00",
       "date": "2026-10-01 22:40 BST",
       "agent": "Claude",
