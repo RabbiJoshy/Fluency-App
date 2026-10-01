@@ -1843,7 +1843,14 @@
             </nav>
             <!-- Settings tab content -->
             <div class="settings-tab-content" id="studyTabContent">
-                <section class="settings-defaults-card" aria-labelledby="studyDefaultsTitle">
+                <!-- The Settings page is three tabs. Opened from a study session
+                     it is the Study tab alone, without the bar. -->
+                <div class="settings-pane-tabs group-size-selector" role="tablist" aria-label="Settings">
+                    <button type="button" class="group-size-btn settings-pane-tab selected" role="tab" id="settingsPaneTabStudy" data-settings-pane="study" aria-controls="settingsPaneStudy" aria-selected="true">Study</button>
+                    <button type="button" class="group-size-btn settings-pane-tab" role="tab" id="settingsPaneTabApp" data-settings-pane="app" aria-controls="settingsPaneApp" aria-selected="false" tabindex="-1">App</button>
+                    <button type="button" class="group-size-btn settings-pane-tab" role="tab" id="settingsPaneTabWords" data-settings-pane="words" aria-controls="settingsPaneWords" aria-selected="false" tabindex="-1">Your words</button>
+                </div>
+                <section class="settings-defaults-card settings-pane is-active" id="settingsPaneStudy" role="tabpanel" data-settings-pane="study" aria-labelledby="studyDefaultsTitle">
                     <div class="settings-defaults-heading">
                         <strong id="studyDefaultsTitle">Study</strong>
                     </div>
@@ -1879,7 +1886,7 @@
                     </div>
                     
                 </section>
-                <section class="settings-overview-section" aria-labelledby="settingsWordsTitle">
+                <section class="settings-overview-section settings-pane" id="settingsPaneWords" role="tabpanel" data-settings-pane="words" aria-labelledby="settingsWordsTitle">
                     <div class="settings-defaults-heading"><strong id="settingsWordsTitle">Your words</strong></div>
                     <button type="button" class="settings-link-row" id="settingsFindWordBtn" data-open-find-word><span><strong>Find a word</strong><small>Look up any word in this language. On a computer, press Cmd+F or Ctrl+F.</small></span><span aria-hidden="true">›</span></button>
                     <div class="settings-data-actions">
@@ -1889,7 +1896,7 @@
                     <p id="settingsDataActionStatus" class="settings-compact-note" role="status" aria-live="polite"></p>
                     <button type="button" class="settings-link-row" id="settingsWordsDataBtn"><span><strong>Words &amp; data</strong><small>Manage imports, exports and practice tools</small></span><span aria-hidden="true">›</span></button>
                 </section>
-                <section class="settings-overview-section settings-overview-footer" aria-labelledby="settingsAppTitle">
+                <section class="settings-overview-section settings-overview-footer settings-pane" id="settingsPaneApp" role="tabpanel" data-settings-pane="app" aria-labelledby="settingsAppTitle">
                     <div class="settings-defaults-heading"><strong id="settingsAppTitle">App</strong></div>
                     <button type="button" class="settings-link-row" id="settingsAccountBtn"><span><strong>Account</strong><small>Your profile and connections</small></span><span aria-hidden="true">›</span></button>
                     <div class="appearance-settings-card" aria-labelledby="appearanceSettingsTitle">
@@ -1907,11 +1914,11 @@
                             <button type="button" class="group-size-btn text-size-btn" data-text-size="large" role="radio" aria-checked="false" tabindex="-1">Bigger</button>
                         </div>
                     </div>
+                    <div class="settings-overview-links">
+                        <button type="button" class="settings-footer-link" id="settingsAboutBtn">About Fluency</button>
+                        <button type="button" class="settings-footer-link" id="settingsAdminBtn" hidden>Owner tools</button>
+                    </div>
                 </section>
-                <div class="settings-overview-links">
-                    <button type="button" class="settings-footer-link" id="settingsAboutBtn">About Fluency</button>
-                    <button type="button" class="settings-footer-link" id="settingsAdminBtn" hidden>Owner tools</button>
-                </div>
             </div>
             <div class="settings-tab-content" id="lookupTabContent">
                 <p class="settings-section-intro">Look up any word in this language, including words that are not in the set you are studying.</p>
