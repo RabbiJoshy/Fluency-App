@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-01T23:30:00+01:00",
+      "date": "2026-10-01 23:30 BST",
+      "agent": "Claude",
+      "summary": "Settings is three tabs (Study, App, Your words) and opens as a wide sheet in the middle on desktop; loading pictures add each country's flag, acoustic guitars for Spanish and Portuguese, and a few more items.",
+      "detail": [
+        "Settings page: Study, App and Your words are tabs instead of one long page. Study settings opened from a set still shows the Study tab alone, docked beside the card.",
+        "On a wide screen the full Settings page is no longer a side panel: it opens centred and up to 880px wide. A detail page's back arrow returns to the tab it was opened from.",
+        "Loading screen: every language's picture set now includes its flag; Spanish and Portuguese have an acoustic guitar instead of the electric one.",
+        "Extra pictures: Portuguese rooster and wine glass, Italian ice cream, Czech clock, Polish castle, Swedish crown, Finnish swan, Brazilian coffee, Dutch fries."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-01T23:20:00+01:00",
       "date": "2026-10-01 23:20 BST",
       "agent": "Claude",

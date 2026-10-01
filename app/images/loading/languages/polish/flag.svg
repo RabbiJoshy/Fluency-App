@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 640 480">
+<!-- PL flag from flag-icons (MIT, app/assets/flags/LICENSE), rounded for the loading screen. -->
+<defs><clipPath id="loading-flag-clip"><rect x="0" y="0" width="640" height="480" rx="57.6"/></clipPath></defs>
+<g clip-path="url(#loading-flag-clip)">
+  <g fill-rule="evenodd">
+    <path fill="#fff" d="M640 480H0V0h640z"/>
+    <path fill="#dc143c" d="M640 480H0V240h640z"/>
+  </g>
+</g>
+<rect x="0" y="0" width="640" height="480" rx="57.6" fill="none" stroke="#000" stroke-opacity=".12" stroke-width="9.6"/>
+</svg>

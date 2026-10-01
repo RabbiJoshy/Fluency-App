@@ -22406,3 +22406,34 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 .meaning-row .group-card-varying-cell.has-cell-information { position: relative; padding-left: 30px !important; }
 .meaning-row .group-card-varying-cell.has-cell-information > .sense-note-trigger { left: 4px; }
 .meanings-scroll.has-compact-rows .group-card-varying-cell:not(.is-active-subsense) > .sense-note-trigger { display: inline-flex !important; }
+
+/* ===== Settings: three tabs =====
+   Study, App and Your words are tabs rather than one long page; each group's
+   own heading would only repeat its tab, so it goes. Study settings opened
+   from a set shows the Study tab alone. On a wide screen the page is a broad
+   sheet in the middle rather than a side panel (side-dock.js leaves it
+   undocked); the detail pages it opens use the same frame. */
+#settingsModal .settings-pane-tabs { display: flex; width: 100%; margin: 0 0 14px; }
+#settingsModal .settings-pane-tab { flex: 1 1 0; }
+#settingsModal #studyTabContent > .settings-pane:not(.is-active) { display: none; }
+#settingsModal #studyTabContent > .settings-pane > .settings-defaults-heading { display: none; }
+#settingsModal #studyTabContent > .settings-pane { padding-top: 2px; }
+#settingsModal #studyTabContent > .settings-pane > .settings-compact-note { margin-top: 12px; }
+#settingsModal #studyTabContent > .settings-pane > .settings-link-row:first-child,
+#settingsModal #studyTabContent > .settings-pane > .settings-compact-note + .settings-preference-group .settings-default-row:first-child { border-top: 0; }
+#settingsModal #studyTabContent > .settings-pane > .settings-overview-links { padding: 4px 0 12px; border-top: 1px solid var(--border-color); }
+#settingsModal.settings-study-only .settings-pane-tabs { display: none; }
+@media (min-width: 701px) {
+  #settingsModal:not([data-dock]) .settings-modal-content {
+    width: min(94vw, 880px);
+    max-width: 880px;
+    padding: 0 32px 30px;
+  }
+  #settingsModal:not([data-dock]) .settings-modal-content > .settings-tabs-header {
+    margin: 0 -32px 18px;
+    padding: 20px 32px 14px;
+  }
+  #settingsModal:not([data-dock]).settings-single-tab:not(.settings-study-only) .settings-modal-content {
+    min-height: min(calc(80dvh / var(--ui-zoom, 1)), 520px);
+  }
+}

@@ -1,0 +1,21 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!-- Acoustic guitar drawn for Fluency in the flat Fluent Emoji palette (Fluent has only the electric one). -->
+<g transform="rotate(45 16 16)">
+<rect x="14" y="-3.2" width="4" height="6" rx="1" fill="#6D4534"/>
+<circle cx="13.2" cy="-1.6" r=".75" fill="#D3D3D3"/>
+<circle cx="13.2" cy="1.1" r=".75" fill="#D3D3D3"/>
+<circle cx="18.8" cy="-1.6" r=".75" fill="#D3D3D3"/>
+<circle cx="18.8" cy="1.1" r=".75" fill="#D3D3D3"/>
+<circle cx="16" cy="20.6" r="6" fill="#A56953"/>
+<circle cx="16" cy="28.4" r="7.3" fill="#A56953"/>
+<circle cx="16" cy="20.6" r="5.2" fill="#F3AD61"/>
+<circle cx="16" cy="28.4" r="6.5" fill="#F3AD61"/>
+<rect x="14.9" y="2.6" width="2.2" height="16.4" fill="#6D4534"/>
+<rect x="14.6" y="2.4" width="2.8" height=".7" rx=".2" fill="#F3EEF8"/>
+<path d="M14.9 6.2H17.1M14.9 9.4H17.1M14.9 12.3H17.1M14.9 14.9H17.1M14.9 17.2H17.1" stroke="#B4ACBC" stroke-width=".35"/>
+<circle cx="16" cy="22" r="3" fill="#6D4534"/>
+<circle cx="16" cy="22" r="2.3" fill="#321B41"/>
+<rect x="12.8" y="28.6" width="6.4" height="1.6" rx=".6" fill="#6D4534"/>
+<path d="M15.25 3.1V29.2M15.75 3.1V29.2M16.25 3.1V29.2M16.75 3.1V29.2" stroke="#F3EEF8" stroke-width=".22"/>
+</g>
+</svg>

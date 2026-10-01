@@ -1,2 +1,6 @@
 Fluent Emoji (flat) by Microsoft, MIT licence.
 https://github.com/microsoft/fluentui-emoji
+
+flag.svg in each language folder: flag-icons by Panayiotis Lipiridis, MIT licence
+(see app/assets/flags/LICENSE), clipped to rounded corners.
+acoustic-guitar.svg: drawn for Fluency in the Fluent flat palette.

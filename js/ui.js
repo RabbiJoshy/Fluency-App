@@ -1,7 +1,7 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=a5b30408';
-import { readFastTrack } from './fast-track-preferences.js?v=a5b30408';
+import './state.js?v=4ca65bd2';
+import { readFastTrack } from './fast-track-preferences.js?v=4ca65bd2';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -3216,6 +3216,7 @@ function hideStatsModal() {
 }
 
 function showSettingsModal() {
+    currentSettingsPane = 'study';
     showSettingsModalWithTab('study');
 }
 
@@ -3224,6 +3225,25 @@ function showSettingsModal() {
 // passes onBack so the page can go back there instead of only closing.
 let settingsBackHandler = null;
 let currentSettingsTab = 'study';
+// Which of the Settings page's three tabs shows. Kept while a detail page is
+// open, so its ‹ lands back on the tab it was opened from.
+let currentSettingsPane = 'study';
+const SETTINGS_PANE_FOR_TAB = { study: 'study', review: 'study', appearance: 'app', lookup: 'words' };
+const SETTINGS_PANE_FOR_DETAIL = { vocabulary: 'words', account: 'app', about: 'app', appData: 'app', offline: 'app' };
+
+function showSettingsPane(pane) {
+    const content = document.getElementById('studyTabContent');
+    if (!content) return;
+    currentSettingsPane = pane;
+    content.querySelectorAll('.settings-pane-tab').forEach(tab => {
+        const on = tab.dataset.settingsPane === pane;
+        tab.classList.toggle('selected', on);
+        tab.setAttribute('aria-selected', String(on));
+        tab.tabIndex = on ? 0 : -1;
+    });
+    content.querySelectorAll('.settings-pane').forEach(section =>
+        section.classList.toggle('is-active', section.dataset.settingsPane === pane));
+}
 
 function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } = {}) {
     setupSettingsOverview();
@@ -3260,7 +3280,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=a5b30408')
+        import('./spotify.js?v=4ca65bd2')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
@@ -3315,6 +3335,12 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     // settings page with account, theme and word tools.
     const studyOnly = singleTab && requestedTab === 'study';
     settingsModal.classList.toggle('settings-study-only', studyOnly);
+    if (requestedTab === 'study') {
+        showSettingsPane(studyOnly ? 'study' : (SETTINGS_PANE_FOR_TAB[tabName] && tabName !== 'study'
+            ? SETTINGS_PANE_FOR_TAB[tabName] : currentSettingsPane));
+    } else if (SETTINGS_PANE_FOR_DETAIL[requestedTab]) {
+        currentSettingsPane = SETTINGS_PANE_FOR_DETAIL[requestedTab];
+    }
     settingsModal.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
     settingsModal.querySelector(`.settings-tab[data-tab="${requestedTab}"]`)?.classList.add('active');
     settingsModal.querySelectorAll('.settings-tab-content').forEach(c => c.classList.remove('active'));
@@ -3368,6 +3394,21 @@ function setupSettingsOverview() {
         }
         hideSettingsModal();
         back();
+    });
+    const paneTabs = Array.from(modal.querySelectorAll('.settings-pane-tab'));
+    paneTabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => {
+            showSettingsPane(tab.dataset.settingsPane);
+            modal.querySelector('.settings-modal-content').scrollTop = 0;
+        });
+        tab.addEventListener('keydown', event => {
+            const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
+            if (!step) return;
+            event.preventDefault();
+            const next = paneTabs[(index + step + paneTabs.length) % paneTabs.length];
+            next.click();
+            next.focus();
+        });
     });
     go('settingsWordsDataBtn', 'vocabulary');
     go('settingsAccountBtn', 'account');

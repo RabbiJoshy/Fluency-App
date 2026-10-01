@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 640 480">
+<!-- SE flag from flag-icons (MIT, app/assets/flags/LICENSE), rounded for the loading screen. -->
+<defs><clipPath id="loading-flag-clip"><rect x="0" y="0" width="640" height="480" rx="57.6"/></clipPath></defs>
+<g clip-path="url(#loading-flag-clip)">
+  <path fill="#005293" d="M0 0h640v480H0z"/>
+  <path fill="#fecb00" d="M176 0v192H0v96h176v192h96V288h368v-96H272V0z"/>
+</g>
+<rect x="0" y="0" width="640" height="480" rx="57.6" fill="none" stroke="#000" stroke-opacity=".12" stroke-width="9.6"/>
+</svg>

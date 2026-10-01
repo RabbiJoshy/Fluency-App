@@ -127,8 +127,11 @@ const OCCUPANTS = [
     { id: 'studyChoiceSheet', home: 'left', priority: PRIORITY_STUDY,
       open: el => el.isConnected && !el.classList.contains('is-closing'),
       close: () => window.closeChoiceSheet?.('studyChoiceSheet', true) },
-    // Settings, and the sheets about you and the session.
+    // Settings, and the sheets about you and the session. The full Settings
+    // page is a wide sheet over the page; only Study settings, opened from a
+    // set, docks beside the card.
     { id: 'settingsModal', home: 'left', settings: true,
+      centred: el => !el.classList.contains('settings-study-only'),
       open: isShown, close: closeButtonFor('settingsModal') },
     ...['savedWordsModal', 'statsModal', 'totalStatsModal', 'reviewHomeModal', 'spacedRepetitionInfoModal', 'keyboardShortcutsModal', 'helpModal'].map(id => ({
         id, home: 'left', stacks: true,
@@ -204,6 +207,10 @@ function place(occupant) {
     }
     applyPanelWidth();
 
+    if (occupant.centred?.(el)) {
+        mark(el, null);
+        return null;
+    }
     if (occupant.settings) {
         // Settings is the base of the left: it clears what was there.
         closeAll(openOn('left', occupant.id));
@@ -346,7 +353,11 @@ function watch(occupant) {
     let wasOpen = occupant.open(el);
     new MutationObserver(() => {
         const nowOpen = occupant.open(el);
-        if (nowOpen && !wasOpen) place(occupant);
+        // Settings switches between its centred page and docked Study
+        // settings while open; place it again when that changes.
+        const shapeChanged = nowOpen && wasOpen && occupant.centred
+            && occupant.centred(el) === Boolean(sideOf(occupant));
+        if ((nowOpen && !wasOpen) || shapeChanged) place(occupant);
         wasOpen = nowOpen;
     }).observe(el, { attributes: true, attributeFilter: ['class', 'hidden'] });
 }
