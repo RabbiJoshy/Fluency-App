@@ -54,6 +54,26 @@ class ContextDerivationTests(unittest.TestCase):
         }
         self.assertEqual(_context(sense), "transitive (Portugal), slang")
 
+    def test_leading_parenthetical_takes_priority_over_secondary_glosses(self) -> None:
+        sense = {
+            "glosses": ["to abandon", "to desert", "to leave behind"],
+            "raw_glosses": ["(transitive) to abandon, to desert, to leave behind"],
+        }
+        self.assertEqual(_context(sense), "transitive")
+
+    def test_overlong_secondary_glosses_not_used_as_context(self) -> None:
+        sense = {
+            "glosses": [
+                "to abandon",
+                "to completely give up or cease to support or look after someone, leaving them entirely without aid",
+            ],
+            "raw_glosses": [
+                "to abandon",
+                "to completely give up or cease to support or look after someone, leaving them entirely without aid",
+            ],
+        }
+        self.assertEqual(_context(sense), "")
+
 
 class RegionDerivationTests(unittest.TestCase):
     def test_regional_tags_are_extracted(self) -> None:

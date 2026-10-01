@@ -6,9 +6,9 @@
   "source_method_id": "provider-neutral-v21-order-confirms-never-vetoes",
   "method_summary": "pt-v15-1 with dictionary order unable to veto the gloss between analyses (headword or POS). Order still votes inside the gloss winner's analysis and confirms a gloss winner that is the first-listed analysis; a gloss winner elsewhere must beat every other analysis by 0.02 raw, or tie only with rivals of the same English (glosskey). A headword spelled like the surface (adv, intj, particle, pron, det) survives the tagger's POS and lemma gates as a candidate.",
   "provider_prior": {
-    "enabled": true,
+    "enabled": false,
     "source": "wiktionary_menu_order",
-    "weight": 0.02,
+    "weight": 0.0,
     "decay": 0.5
   },
   "gloss": {
@@ -59,6 +59,7 @@
     ],
     "status": "unresolved_abstains_parent_or_leaf_when_licensed",
     "unresolved_outcome": "abstain",
+    "provider_order_votes": false,
     "shared_translation_licenses_glosskey": true,
     "phrase_winner_skips_provider_order": true,
     "unresolved_falls_back_to_phrase": true,

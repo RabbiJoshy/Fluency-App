@@ -495,13 +495,55 @@ _IRREGULAR_VERBS = {
     "make": {"make", "makes", "made", "making"},
     "give": {"give", "gives", "gave", "given", "giving"},
     "take": {"take", "takes", "took", "taken", "taking"},
+    "get": {"get", "gets", "got", "gotten", "getting"},
+    "know": {"know", "knows", "knew", "known", "knowing"},
+    "think": {"think", "thinks", "thought", "thinking"},
+    "tell": {"tell", "tells", "told", "telling"},
+    "leave": {"leave", "leaves", "left", "leaving"},
+    "feel": {"feel", "feels", "felt", "feeling"},
+    "find": {"find", "finds", "found", "finding"},
+    "bring": {"bring", "brings", "brought", "bringing"},
+    "spend": {"spend", "spends", "spent", "spending"},
+    "keep": {"keep", "keeps", "kept", "keeping"},
+    "hold": {"hold", "holds", "held", "holding"},
+    "write": {"write", "writes", "wrote", "written", "writing"},
+    "stand": {"stand", "stands", "stood", "standing"},
+    "hear": {"hear", "hears", "heard", "hearing"},
+    "let": {"let", "lets", "letting"},
+    "mean": {"mean", "means", "meant", "meaning"},
+    "set": {"set", "sets", "setting"},
+    "meet": {"meet", "meets", "met", "meeting"},
+    "run": {"run", "runs", "ran", "running"},
+    "pay": {"pay", "pays", "paid", "paying"},
+    "sit": {"sit", "sits", "sat", "sitting"},
+    "speak": {"speak", "speaks", "spoke", "spoken", "speaking"},
+    "lie": {"lie", "lies", "lay", "lain", "lying"},
+    "lead": {"lead", "leads", "led", "leading"},
+    "read": {"read", "reads", "reading"},
+    "grow": {"grow", "grows", "grew", "grown", "growing"},
+    "lose": {"lose", "loses", "lost", "losing"},
+    "fall": {"fall", "falls", "fell", "fallen", "falling"},
+    "send": {"send", "sends", "sent", "sending"},
+    "build": {"build", "builds", "built", "building"},
+    "understand": {"understand", "understands", "understood", "understanding"},
+    "draw": {"draw", "draws", "drew", "drawn", "drawing"},
+    "break": {"break", "breaks", "broke", "broken", "breaking"},
+    "cut": {"cut", "cuts", "cutting"},
+    "rise": {"rise", "rises", "rose", "risen", "rising"},
+    "drive": {"drive", "drives", "drove", "driven", "driving"},
+    "buy": {"buy", "buys", "bought", "buying"},
+    "wear": {"wear", "wears", "wore", "worn", "wearing"},
+    "choose": {"choose", "chooses", "chose", "chosen", "choosing"},
 }
 _PRONOUN_EXPANSIONS = {
-    "he": {"he", "him", "his"},
-    "she": {"she", "her", "hers"},
-    "they": {"they", "them", "their", "theirs"},
-    "we": {"we", "us", "our", "ours"},
-    "it": {"it", "its"},
+    "he": {"he", "him", "his", "himself"},
+    "she": {"she", "her", "hers", "herself"},
+    "they": {"they", "them", "their", "theirs", "themselves"},
+    "we": {"we", "us", "our", "ours", "ourselves"},
+    "it": {"it", "its", "itself"},
+    "you": {"you", "your", "yours", "yourself", "yourselves"},
+    "i": {"i", "me", "my", "mine", "myself"},
+    "who": {"who", "whom", "whose"},
 }
 
 
@@ -566,8 +608,6 @@ class ExactTextGlossScorer:
         analyses: tuple[MenuAnalysis, ...],
         translation: str = "",
     ) -> Sequence[LeafScore]:
-        import numpy as np
-
         leaves = [
             (analysis.menu_analysis_id, leaf.sense_id)
             for analysis in analyses
@@ -579,6 +619,7 @@ class ExactTextGlossScorer:
         if len(leaves) == 1:
             return (LeafScore(leaves[0][0], leaves[0][1], 0.0),)
 
+        import numpy as np
         query = self.vectors.get(sentence)
         scores: list[LeafScore] = []
         for analysis in analyses:
@@ -825,6 +866,13 @@ def main() -> None:
             cross_analysis_vote=cross_analysis.get("vote", "provider_order"),
             cross_analysis_margin=float(cross_analysis.get("margin", 0.0)),
             contested_abstains=cross_analysis.get("contested_outcome") == "abstain",
+            provider_order_votes=bool(
+                (profile_config.get("commit") or {}).get(
+                    "provider_order_votes",
+                    (profile_config.get("provider_prior") or {}).get("enabled", True)
+                    and float((profile_config.get("provider_prior") or {}).get("weight", 0.02)) > 0,
+                )
+            ),
         ),
     )
 
@@ -1102,12 +1150,19 @@ def main() -> None:
     print(f"reused {len(needed) - newly_embedded:,}, newly embedded {newly_embedded:,}")
 
     language_adapter = binding.adapter_factory()
+    prior_cfg = profile_config.get("provider_prior") or {}
+    prior_enabled = prior_cfg.get("enabled", True)
+    menu_prior = float(prior_cfg.get("weight", 0.02)) if prior_enabled else 0.0
+    menu_prior_decay = float(prior_cfg.get("decay", 0.5))
+
     components = WSDComponents(
         language=language_adapter,
         gloss=ExactTextGlossScorer(vectors),
         candidate_policy=SpanishV5CandidatePolicy(
             language=run_language,
             constraint_mode=SUPPORTED_PROFILE_CONSTRAINT_MODES[args.profile_id],
+            menu_prior=menu_prior,
+            menu_prior_decay=menu_prior_decay,
             # The POS gate follows the dictionary, not the language.
             sense_compatible=sense_compatible,
             pos_is_orthogonal=pos_is_orthogonal,

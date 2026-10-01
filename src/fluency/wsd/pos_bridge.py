@@ -38,13 +38,13 @@ WIKTIONARY_ORTHOGONAL = frozenset(
 
 # Universal Dependencies tag -> acceptable Wiktionary categories.
 WIKTIONARY_BRIDGE = {
-    "NOUN": frozenset({"noun", "name"}),
-    "PROPN": frozenset({"name", "noun"}),
-    "VERB": frozenset({"verb"}),
+    "NOUN": frozenset({"noun", "name", "adj", "adv"}),
+    "PROPN": frozenset({"name", "noun", "pron"}),
+    "VERB": frozenset({"verb", "adj"}),
     # Wiktionary has no `aux`; auxiliaries and copulas are plain verbs.
     "AUX": frozenset({"verb"}),
-    "ADJ": frozenset({"adj", "det", "num", "pron"}),
-    "ADV": frozenset({"adv", "particle", "prep_phrase"}),
+    "ADJ": frozenset({"adj", "det", "num", "pron", "noun"}),
+    "ADV": frozenset({"adv", "particle", "prep_phrase", "prep", "contraction"}),
     # `contraction` appears wherever a preposition has fused with an article,
     # which Universal Dependencies expresses as ADP or DET on the fused token.
     # Finnish adpositions are mostly postpositions (kanssa, jälkeen, takia);
@@ -56,8 +56,8 @@ WIKTIONARY_BRIDGE = {
     # made rank-agreement unresolved between "the" and "them". Object
     # pronouns still match on the PRON tag.
     "DET": frozenset({"det", "article", "contraction", "adj"}),
-    "PRON": frozenset({"pron", "det", "article", "contraction"}),
-    "NUM": frozenset({"num", "adj", "det"}),
+    "PRON": frozenset({"pron", "det", "article", "contraction", "prep", "adv"}),
+    "NUM": frozenset({"num", "adj", "det", "noun"}),
     "PART": frozenset({"particle", "adv", "prep", "postp"}),
     "CCONJ": frozenset({"conj"}),
     "SCONJ": frozenset({"conj"}),
@@ -137,14 +137,14 @@ def dictionary_pos_family(dictionary_pos: str) -> str:
 # as PHRASE; fused prepositions as PRON. This is not a POS filter — it only
 # decides whether a total POS miss is tagger noise or a real two-word fight.
 _FAMILY_TAGGER_ALIASES = {
-    "verb": frozenset({"VERB", "AUX", "NOUN", "PROPN", "ADJ", "ADV", "INTJ", "PRON", "SCONJ", "PART", "X"}),
+    "verb": frozenset({"VERB", "AUX", "NOUN", "PROPN", "ADJ", "ADV", "INTJ", "PRON", "SCONJ", "PART", "PUNCT", "X"}),
     "phrase": frozenset({"VERB", "AUX", "INTJ", "NOUN", "PROPN"}),
     "intj": frozenset({"INTJ", "PROPN", "NOUN", "X", "ADV", "VERB"}),
-    "adj": frozenset({"ADJ", "NOUN", "PROPN", "DET", "NUM"}),
-    "noun": frozenset({"NOUN", "PROPN", "INTJ"}),
-    "adp": frozenset({"ADP", "DET", "PRON", "SCONJ", "PART"}),
-    "adv": frozenset({"ADV", "ADJ", "PRON", "ADP"}),
-    "pron": frozenset({"PRON", "DET"}),
+    "adj": frozenset({"ADJ", "NOUN", "PROPN", "DET", "NUM", "VERB"}),
+    "noun": frozenset({"NOUN", "PROPN", "INTJ", "NUM", "ADJ"}),
+    "adp": frozenset({"ADP", "DET", "PRON", "SCONJ", "PART", "ADV"}),
+    "adv": frozenset({"ADV", "ADJ", "PRON", "ADP", "NOUN"}),
+    "pron": frozenset({"PRON", "DET", "AUX", "VERB", "PROPN"}),
     "conj": frozenset({"CCONJ", "SCONJ", "ADP"}),
 }
 

@@ -211,17 +211,13 @@ def _context(sense: dict[str, Any]) -> str:
     """Return a short disambiguating label, the equivalent of SpanishDict's context.
 
     SpanishDict publishes ``context`` on every sense; Wiktionary carries the same
-    information but embedded in the prose. A nested sub-gloss is preferred when
-    present, then the leading parenthetical of a raw gloss -- ``(interrogative)``,
-    ``(relative)``, ``(only in subordinate clauses)`` -- then topic and qualifier
-    labels. Deriving it lifts coverage from 16.5% to roughly 61% of senses, and
-    the recovered labels are mostly grammatical rather than topical, which is the
-    axis a bilingual dictionary's context field usually marks.
+    information but embedded in the prose. Explicit disambiguating labels --
+    the leading parenthetical of a raw gloss (e.g. ``(interrogative)``,
+    ``(transitive)``, ``(only in subordinate clauses)``), topics, and qualifiers --
+    are preferred first. A short nested sub-gloss (<= 60 characters) is used
+    as a fallback when no explicit context tags exist.
     """
 
-    glosses = _glosses(sense)
-    if len(glosses) > 1:
-        return " | ".join(glosses[1:])
     for raw in _glosses(sense, "raw_glosses"):
         parenthetical = leading_parenthetical(raw, max_length=60)
         if parenthetical:
@@ -232,6 +228,11 @@ def _context(sense: dict[str, Any]) -> str:
     qualifier = sense.get("qualifier")
     if isinstance(qualifier, str) and qualifier.strip():
         return qualifier.strip()
+    glosses = _glosses(sense)
+    if len(glosses) > 1:
+        sub = " | ".join(glosses[1:])
+        if len(sub) <= 60:
+            return sub
     return ""
 
 

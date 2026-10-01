@@ -393,7 +393,7 @@ class SpanishV5CandidatePolicy:
                 keep_ids &= lemma_compatible
 
         self_restored: list[str] = []
-        if self.keep_self_reading_pos:
+        if self.keep_self_reading_pos and str(observed_pos or "").upper() not in {"SCONJ", "CCONJ"}:
             gated = set(pos_removed) | set(lemma_removed)
             self_restored = sorted(
                 analysis.menu_analysis_id

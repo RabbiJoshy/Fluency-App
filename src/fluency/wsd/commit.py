@@ -127,6 +127,7 @@ class CommitPolicy:
     # guard fires on correct menus: entä conj tagged ADV), but a close call
     # between entries published et as "and".
     contested_abstains: bool = False
+    provider_order_votes: bool = True
 
     def __post_init__(self) -> None:
         for name, value in (

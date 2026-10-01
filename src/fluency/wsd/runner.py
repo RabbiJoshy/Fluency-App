@@ -606,28 +606,36 @@ class ClosedMenuWSDRunner:
         rank_agreement_choices: tuple[LeafScore, ...] = ()
         menu_first_ref: tuple[str, str] | None = None
         if self.profile.commit.strategy == "rank_agreement":
-            menu_order_ranked = _provider_order_scores(raw_provider_ranked, provider_analyses)
-            menu_first_ref = (
-                menu_order_ranked[0].menu_analysis_id, menu_order_ranked[0].sense_id
-            )
-            provider_order_ranked = _order_vote_scores(
-                menu_order_ranked, raw_provider_ranked[0], self.profile.commit,
-            )
-            provider_order_choice = provider_order_ranked[0]
             raw_gloss_choice = raw_provider_ranked[0]
-            if self.components.candidate_policy is not None:
-                provider_order_choice = self.components.candidate_policy.repair_leaf(
-                    sentence=request.sentence,
-                    analyses=provider_analyses,
-                    selected=provider_order_choice,
-                    ranked_scores=provider_order_ranked,
+            if self.profile.commit.provider_order_votes:
+                menu_order_ranked = _provider_order_scores(raw_provider_ranked, provider_analyses)
+                menu_first_ref = (
+                    menu_order_ranked[0].menu_analysis_id, menu_order_ranked[0].sense_id
                 )
+                provider_order_ranked = _order_vote_scores(
+                    menu_order_ranked, raw_provider_ranked[0], self.profile.commit,
+                )
+                provider_order_choice = provider_order_ranked[0]
+                if self.components.candidate_policy is not None:
+                    provider_order_choice = self.components.candidate_policy.repair_leaf(
+                        sentence=request.sentence,
+                        analyses=provider_analyses,
+                        selected=provider_order_choice,
+                        ranked_scores=provider_order_ranked,
+                    )
+            else:
+                menu_first_ref = None
+                provider_order_choice = raw_gloss_choice
+
+            if self.components.candidate_policy is not None:
                 raw_gloss_choice = self.components.candidate_policy.repair_leaf(
                     sentence=request.sentence,
                     analyses=provider_analyses,
                     selected=raw_gloss_choice,
                     ranked_scores=raw_provider_ranked,
                 )
+            if not self.profile.commit.provider_order_votes:
+                provider_order_choice = raw_gloss_choice
             rank_agreement_choices = (
                 provider_order_choice,
                 raw_gloss_choice,
@@ -671,18 +679,17 @@ class ClosedMenuWSDRunner:
                     ),
                     observed_pos=preparation_evidence.get("observed_pos"),
                 ):
-                    # Menu is one category; the tagger named a known alias.
-                    # License the parent, not a leaf and not an abstain.
-                    if emitted_level in {"leaf", "unresolved"}:
-                        emitted_level = "tuple"
                     evidence_guard_reasons.append(
                         "tagger_pos_disagrees_with_single_menu_category"
                     )
                 else:
-                    emitted_level = "unresolved"
                     evidence_guard_reasons.append(
                         "dictionary_has_no_matching_part_of_speech"
                     )
+                # When the tagger's label fits no entry on the dictionary menu,
+                # the dictionary is telling us the tagger is wrong or noisy.
+                # Treat the tag as uninformative: preserve the level determined
+                # by commit_decision rather than forcing an abstention.
             elif (
                 preparation_evidence.get("pos_match_kind") == "bridged_only"
                 and str(preparation_evidence.get("observed_pos") or "").upper() == "PRON"

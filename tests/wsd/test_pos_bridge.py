@@ -112,11 +112,48 @@ class WiktionaryBridgeTests(unittest.TestCase):
             )
         )
 
-    def test_noun_menu_does_not_absorb_a_verb_tag(self) -> None:
-        self.assertFalse(
+    def test_numerals_match_wiktionary_noun(self) -> None:
+        """milhão, bilhões, centenas are filed as noun; UD emits NUM."""
+        self.assertTrue(compatible("wiktionary", "NUM", "noun"))
+
+    def test_participles_match_adj(self) -> None:
+        """Participles like suspensa, estúpidas are filed as adj; UD emits VERB."""
+        self.assertTrue(compatible("wiktionary", "VERB", "adj"))
+
+    def test_adjective_noun_alternations(self) -> None:
+        """parva, amorzinho filed as noun; initials, culpados filed as adj."""
+        self.assertTrue(compatible("wiktionary", "ADJ", "noun"))
+        self.assertTrue(compatible("wiktionary", "NOUN", "adj"))
+        self.assertTrue(compatible("wiktionary", "NOUN", "adv"))
+
+    def test_pronouns_reach_contractions_and_prepositions(self) -> None:
+        """dele, disto, dali, daqui tagged PRON/ADV reach prep and contraction."""
+        self.assertTrue(compatible("wiktionary", "PRON", "prep"))
+        self.assertTrue(compatible("wiktionary", "ADV", "contraction"))
+
+    def test_single_family_noise_recognizes_new_aliases(self) -> None:
+        self.assertTrue(
             tagger_pos_is_noise_against_single_family(
-                dictionary_parts_of_speech=("NOUN",),
+                dictionary_parts_of_speech=("adj",),
                 observed_pos="VERB",
+            )
+        )
+        self.assertTrue(
+            tagger_pos_is_noise_against_single_family(
+                dictionary_parts_of_speech=("noun",),
+                observed_pos="NUM",
+            )
+        )
+        self.assertTrue(
+            tagger_pos_is_noise_against_single_family(
+                dictionary_parts_of_speech=("pron",),
+                observed_pos="AUX",
+            )
+        )
+        self.assertTrue(
+            tagger_pos_is_noise_against_single_family(
+                dictionary_parts_of_speech=("verb",),
+                observed_pos="PUNCT",
             )
         )
 

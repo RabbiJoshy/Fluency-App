@@ -8,6 +8,7 @@ from fluency.speech.wsd_execute import (
     SPACY_POS_MODEL,
     _attached_companions,
     _single_leaf_is_deterministic,
+    _translation_overlap_bonus,
     occurrence_pos_tags,
 )
 from fluency.wsd.menus import MenuAnalysis, SenseLeaf, build_analysis_id
@@ -312,6 +313,48 @@ class SpeechOccurrencePOSTests(unittest.TestCase):
         self.assertEqual(observed[key], "AUX")
         self.assertEqual(evidence[key]["occurrence_tags"], ["AUX"])
         self.assertTrue(evidence[key]["canonicalized_target_for_model"])
+
+class TranslationOverlapTests(unittest.TestCase):
+    def test_overlap_matches_irregular_verb_forms(self) -> None:
+        leaf = SenseLeaf(
+            sense_id="sense_spend",
+            translation="to spend",
+            definition="time",
+            source_reference="wiktionary:spend",
+            provider_metadata={},
+        )
+        bonus = _translation_overlap_bonus(leaf, "We spent the whole night talking.")
+        self.assertEqual(bonus, 0.04)
+
+    def test_overlap_matches_pronoun_expansions(self) -> None:
+        leaf = SenseLeaf(
+            sense_id="sense_you",
+            translation="you",
+            definition="",
+            source_reference="wiktionary:you",
+            provider_metadata={},
+        )
+        bonus = _translation_overlap_bonus(leaf, "Take care of yourself.")
+        self.assertEqual(bonus, 0.04)
+
+    def test_overlap_matches_conjunction_that(self) -> None:
+        leaf_that = SenseLeaf(
+            sense_id="sense_that",
+            translation="that",
+            definition="",
+            source_reference="wiktionary:that",
+            provider_metadata={},
+        )
+        leaf_because = SenseLeaf(
+            sense_id="sense_because",
+            translation="because",
+            definition="",
+            source_reference="wiktionary:because",
+            provider_metadata={},
+        )
+        sentence = "I think that you need help."
+        self.assertEqual(_translation_overlap_bonus(leaf_that, sentence), 0.04)
+        self.assertEqual(_translation_overlap_bonus(leaf_because, sentence), 0.0)
 
 
 if __name__ == "__main__":
