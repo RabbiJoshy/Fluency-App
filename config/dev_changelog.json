@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-01T01:35:00+01:00",
+      "date": "2026-10-01 01:35 BST",
+      "agent": "Claude",
+      "summary": "A sense's bracket is now its row cue and its context field goes to the note; definitions never appear as pills; the remaining tags are coloured words at reading size instead of tiny capsules.",
+      "detail": [
+        "Row cue: the gloss's own bracket, when it is one whole clause of up to 10 words (ser 'to be' → 'to have the given quality'; levar 'to take' → 'to require a given amount of time'). The context field — mostly grammar labels and parent definitions in Wiktionary — moves to the ⓘ note.",
+        "Grammar-only context ('transitive', 'impersonal, transitive', 'auxiliary') never shows as row text.",
+        "The fallback that tells same-gloss senses apart no longer draws definitions as pills ('used as an alternative to a possessive pronoun'); they read as plain cue text under the whole-clause rule, or stay in the note.",
+        "Tags (register, subject, grammar) are coloured words at the row's reading size, amber/blue/indigo, with no capsule; colours darken in light mode for contrast."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-01T01:10:00+01:00",
       "date": "2026-10-01 01:10 BST",
       "agent": "Claude",

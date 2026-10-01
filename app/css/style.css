@@ -5235,6 +5235,16 @@
             box-shadow: inset 0 -1px 0 rgba(var(--sense-match-rgb), 0.38);
         }
 
+        /* Attached clitic pronoun within a highlighted verb form.
+           Uses the orange clitic accent directly so the pronoun portion
+           is visually distinct from the host verb stem. */
+        .example-clitic-highlight {
+            color: color-mix(in srgb, rgb(249, 115, 22) 60%, white);
+            text-decoration: underline;
+            text-decoration-color: rgba(249, 115, 22, 0.6);
+            text-underline-offset: 3px;
+        }
+
         @media (max-width: 767px) {
             .sentence {
                 font-size: 18px;
@@ -22294,3 +22304,24 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 .smart-skip-more-options:hover,
 .smart-skip-more-options:focus-visible { color: var(--text-primary); }
 .smart-skip-more-options[hidden] { display: none !important; }
+
+/* Tags on sense rows read as coloured words at the row's reading size, not
+   tiny capsules inside the shaded cue box. The colour still says which kind
+   of tag it is: amber for register, blue for subject, indigo for grammar. */
+.meaning-row .sense-pill:not(.sense-pill--companion) {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    font-size: var(--sense-reading-size, 13px);
+    font-weight: 650;
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+}
+.meaning-row .sense-pill:not(.sense-pill--companion):hover { background: none; }
+.meaning-row .sense-pill--register { color: color-mix(in srgb, #d97706 58%, var(--text-primary)); }
+.meaning-row .sense-pill--domain { color: color-mix(in srgb, #3b82f6 58%, var(--text-primary)); }
+.meaning-row .sense-pill--construction,
+.meaning-row .sense-pill--syntax,
+.meaning-row .sense-pill--grammar { color: color-mix(in srgb, #6366f1 58%, var(--text-primary)); }
+.meaning-row .sense-pill .sense-pill-label { font-size: inherit; }

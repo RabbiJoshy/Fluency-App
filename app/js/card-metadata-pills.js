@@ -867,6 +867,14 @@ function compactLearnerContextClause(value) {
         .trim();
 }
 
+const GRAMMAR_LABEL_WORDS = /^(?:transitive|intransitive|ditransitive|ambitransitive|auxiliary|copulative|catenative|pronominal|reflexive|impersonal|periphrastic|uncountable|countable|not comparable|comparable|indefinite|definite|plural|singular|masculine|feminine|invariable|with de|with que)$/i;
+
+// A context clause made only of grammar labels ("impersonal, transitive").
+function isGrammarLabelClause(value) {
+    const pieces = String(value || '').split(/\s*,\s*/).map(piece => piece.trim()).filter(Boolean);
+    return pieces.length > 0 && pieces.every(piece => GRAMMAR_LABEL_WORDS.test(piece));
+}
+
 function learnerContextByRule(value, gloss = '') {
     const visible = [];
     const detail = [];
@@ -885,7 +893,8 @@ function learnerContextByRule(value, gloss = '') {
         if (!compact || !key || seenVisible.has(key)) continue;
         // "to own; to possess" under "to have" is a synonym list, not a cue.
         const synonym = glossIsVerb && /^to\s/i.test(compact);
-        if (synonym || !isLabelLikeText(compact)) continue;
+        // "transitive", "impersonal, transitive": grammar labels, for the note.
+        if (synonym || isGrammarLabelClause(compact) || !isLabelLikeText(compact)) continue;
         seenVisible.add(key);
         visible.push(compact);
     }
@@ -1164,14 +1173,12 @@ function ruleBasedGloss(meaning, source, options) {
         // that opens with another infinitive is a definition, not a slot.
         const restatesVerb = /^to\s+\p{L}/iu.test(inside);
         if (!restatesVerb && /\b(?:by|of|to|with|for|on|in|at|from|about|into|than|as)$/i.test(before) && isLabelLikeText(inside)) return text;
-        // A label in brackets stays where it is needed to read the row: to
-        // tell two senses with the same translation apart, or to give a bare
-        // grammar word ("in (wearing)") its sense.
-        const needed = senseSharesTranslation(meaning, before, options)
-            || FUNCTION_WORD_POS.test(partOfSpeech)
-            || (!/\s/.test(before) && before.length <= 3);
-        if (needed && isLabelLikeText(inside)) return `${before} (${inside})`;
-        if (needed && !key) key = semanticRoleLabel(inside);
+        // The bracket is what sets this sense apart ("to be (to have as
+        // one's place of origin)"), so it becomes the row's cue beside the
+        // gloss: a named role, or the bracket itself when it is one whole
+        // clause short enough to read at a glance. Longer ones stay in the
+        // note.
+        if (!key) key = semanticRoleLabel(inside) || definitionLabel(inside);
         removed.push(inside);
         return before;
     });
@@ -1462,13 +1469,18 @@ export function learnerSensePresentation(meaning, active, options = {}) {
     // The flat fields below remain as compatibility aliases while renderers
     // migrate to these named slots.
     const gloss = glossPresentation.visibleGloss;
+    // A sense's own bracket is its cue; its context field (mostly grammar
+    // labels and parent definitions in Wiktionary) then belongs in the note.
+    const bracketKey = options.ignoreBudget ? (glossPresentation.visibleKey || '') : '';
+    const fullContext = splitLearnerContextClauses(residualContext)
+        .map(clause => readableSenseNote(clause).trim()).filter(Boolean).join('; ');
     const key = {
-        text: contextPresentation.visibleContext || glossPresentation.visibleKey || '',
+        text: bracketKey || contextPresentation.visibleContext || glossPresentation.visibleKey || '',
         items: visibleWithRoom,
     };
     const note = {
         gloss: glossPresentation.noteGloss,
-        context: noteContext,
+        context: bracketKey ? fullContext : noteContext,
         items: noteItems,
         available: hasSenseNote,
     };
@@ -1488,7 +1500,7 @@ export function learnerSensePresentation(meaning, active, options = {}) {
         // What the rules cut from the gloss, in source order: a family row
         // uses its head to tell sub-senses apart.
         removedDefinitions: glossPresentation.removed || [],
-        noteContext,
+        noteContext: note.context,
         noteItems,
         hasSenseNote,
     };

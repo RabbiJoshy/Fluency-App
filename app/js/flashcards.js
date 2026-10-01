@@ -3324,6 +3324,20 @@ function learnerRowPresentation(meaning, active, options = {}) {
 }
 window.cleanSenseContext = cleanSenseContext;
 
+// What tells two same-gloss senses apart, when nothing else does. A short
+// register or subject tag keeps its pill; anything else is a definition and
+// reads as plain cue text — one whole clause, or nothing (it is in the note).
+function differentiatorCueHTML(diff) {
+    const label = String(diff?.label || '').trim();
+    if (!label) return '';
+    if ((diff.type === 'register' || diff.type === 'domain') && label.length <= 28) {
+        const family = escapeCardText(diff.type);
+        return `<span class="sense-metadata-detail sense-pill sense-pill--${family}" data-family="${family}"><span class="sense-pill-label">${escapeCardText(label)}</span></span>`;
+    }
+    const clause = definitionLabel(label);
+    return clause ? renderSenseContextHTML(clause, { leadingDot: false }) : '';
+}
+
 function renderSenseContextHTML(context, { leadingDot = true, gloss = null } = {}) {
     let raw = String(context || '').trim();
     if (!raw) return '';
@@ -3510,6 +3524,48 @@ function adaptiveRowTextClass(...parts) {
     if (density <= 44) return 'row-text-lg';
     if (density <= 72) return 'row-text-md';
     return 'row-text-sm';
+}
+
+/**
+ * Within an already-highlighted word span, split the attached clitic pronoun
+ * into its own sub-span so it renders with the clitic accent colour.
+ * E.g. <span class="example-word-highlight">decirse</span>
+ *   → <span class="example-word-highlight">decir<span class="example-clitic-highlight">se</span></span>
+ */
+function highlightAttachedCliticInSentence(html, highlightedForm) {
+    if (!highlightedForm) return html;
+    const form = String(highlightedForm).trim();
+    if (!form) return html;
+
+    // Check if the form ends with a known clitic
+    const CLITIC_SUFFIXES = [
+        'melo', 'mela', 'melos', 'melas', 'telo', 'tela', 'telos', 'telas',
+        'selo', 'sela', 'selos', 'selas', 'noslo', 'nosla', 'noslos', 'noslas',
+        'oslo', 'osla', 'oslos', 'oslas',
+        'me', 'te', 'se', 'nos', 'os', 'le', 'les', 'lo', 'la', 'los', 'las',
+    ];
+    const folded = foldSurfaceForm(form);
+    let clitic = '';
+    for (const suffix of CLITIC_SUFFIXES) {
+        if (folded.endsWith(suffix) && folded.length > suffix.length + 2) {
+            clitic = suffix;
+            break;
+        }
+    }
+    if (!clitic) return html;
+
+    // Find the highlight span containing this form and split the clitic portion
+    const stemLen = form.length - clitic.length;
+    const escaped = form.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const pattern = new RegExp(
+        `(<span class="example-word-highlight[^"]*"[^>]*>)(${escaped})(</span>)`,
+        'iu'
+    );
+    return html.replace(pattern, (match, open, word, close) => {
+        const stem = word.slice(0, stemLen);
+        const cliticPart = word.slice(stemLen);
+        return `${open}${stem}<span class="example-clitic-highlight">${cliticPart}</span>${close}`;
+    });
 }
 
 function getExampleProductionForm(card, meaning, example, targetSentence) {
@@ -7303,14 +7359,9 @@ function renderCardWikipediaBadge(card) {
                                 );
                                 const diffRepeatsHeading = diff && sharedContextParts
                                     .some(shared => glossPieceKey(shared) === glossPieceKey(diff.label));
-                                if (diff && diff.score >= 60 && !diffRepeatsHeading) {
-                                    if (diff.type === 'context') {
-                                        varyingHtml = `<span class="meaning-context-cell" style="font-weight: ${ctxWeight}; color: ${ctxColor}; line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${renderSenseContextHTML(diff.label, { leadingDot: false })}</span>`;
-                                    } else {
-                                        const family = escapeCardText(diff.type);
-                                        const shortLabel = escapeCardText(diff.label);
-                                        varyingHtml = `<span class="meaning-context-cell" style="font-weight: ${ctxWeight}; color: ${ctxColor}; line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;"><span class="sense-metadata-detail sense-pill sense-pill--${family}" data-family="${family}"><span class="sense-pill-label">${shortLabel}</span></span></span>`;
-                                    }
+                                const diffHTML = diff && diff.score >= 60 && !diffRepeatsHeading ? differentiatorCueHTML(diff) : '';
+                                if (diffHTML) {
+                                    varyingHtml = `<span class="meaning-context-cell" style="font-weight: ${ctxWeight}; color: ${ctxColor}; line-height: 1.3; min-width: 0; overflow-wrap: anywhere; word-break: break-word;">${diffHTML}</span>`;
                                 } else {
                                     varyingHtml = `<span class="meaning-context-cell" style="font-weight: ${ctxWeight}; color: ${ctxColor};">general use</span>`;
                                 }
@@ -7460,13 +7511,7 @@ function renderCardWikipediaBadge(card) {
 
                     const differentiator = singletonDiffByMeaningIndex.get(idx);
                     if (differentiator && differentiator.score >= 60 && !subContent) {
-                        if (differentiator.type === 'context') {
-                            subContent = renderSenseContextHTML(differentiator.label, { leadingDot: false });
-                        } else {
-                            const family = escapeCardText(differentiator.type);
-                            const shortLabel = escapeCardText(differentiator.label);
-                            subContent = `<span class="sense-metadata-detail sense-pill sense-pill--${family}" data-family="${family}"><span class="sense-pill-label">${shortLabel}</span></span>`;
-                        }
+                        subContent = differentiatorCueHTML(differentiator);
                     }
 
                     recordSenseDisplay(idx, { family: '', label: visibleMeaning, detail: cleanedContext || '', hidden: false });
@@ -7732,6 +7777,18 @@ function renderCardWikipediaBadge(card) {
                             : '<span class="example-word-highlight">$1</span>'
                     );
                 }
+            }
+
+            // Split any attached clitic pronoun within the highlighted word
+            // into its own sub-span with the clitic accent colour, so that
+            // e.g. "decirse" shows "decir" + orange "se" in the sentence.
+            if (card.isPronominal || /se$/iu.test(card.citationForm || card.lemma || '')) {
+                const occurrenceForm = resolveExampleOccurrence(
+                    card, currentExample, displayTargetSentence
+                ).surface;
+                displayTargetSentence = highlightAttachedCliticInSentence(
+                    displayTargetSentence, occurrenceForm
+                );
             }
 
             // Highlight the companion collocation together with the studied target word
