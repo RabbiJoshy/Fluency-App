@@ -20,13 +20,14 @@ import {
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=20261001inflect';
+} from './reverse-cues.js?v=20260925cues';
 import {
     compactConstructionMetadata,
     escapeCardText,
     isSenseDefiningGrammar,
     grammarBelongsOnRow,
     isGrammarLabelClause,
+    frameCue,
     isSupportingSenseMetadata,
     isWiktionaryGrammarNote,
     legacyObjectPronounProjection,
@@ -7284,11 +7285,34 @@ function renderCardWikipediaBadge(card) {
                             .every(mi => contextParts(memberParts.get(mi).context)
                                 .some(other => glossPieceKey(other) === glossPieceKey(part))))
                         : [];
+                    const sharedContextKeys = new Set(sharedContextParts.map(glossPieceKey));
                     if (sharedContextParts.length) {
-                        const sharedKeys = new Set(sharedContextParts.map(glossPieceKey));
-                        for (const parts of memberParts.values()) {
+                        for (const [memberIdx, parts] of memberParts) {
                             parts.context = contextParts(parts.context)
-                                .filter(part => !sharedKeys.has(glossPieceKey(part))).join(' · ');
+                                .filter(part => !sharedContextKeys.has(glossPieceKey(part))).join(' · ');
+                            // A bracket every sense shares ("of (in relation
+                            // to)" on seven of de's) is the family's; each
+                            // sub-row then reads its own context ("-'s (made
+                            // by)", "of (being a part of)").
+                            if (!parts.context && !parts.extra) {
+                                // "of (being a part of)" under "of" reads
+                                // "being a part of"; "of; about (on the
+                                // subject of)" reads "about · on the subject of".
+                                const familyKeys = new Set(memberPieces.get(idx)?.map(glossPieceKey) || []);
+                                parts.context = splitSenseMetadataClauses(String(card.meanings[memberIdx]?.context || '').replace(/\|/g, ';'))
+                                    // A frame too long to shorten stays in the note.
+                                    .map(clause => frameCue(clause) || (clause.trim().startsWith('[') ? '' : clause.trim()))
+                                    .filter(clause => clause && !isGrammarLabelClause(clause))
+                                    .map(clause => {
+                                        const bracket = /^(.*?)\s*\(([^()]+)\)$/u.exec(clause);
+                                        const pieces = bracket ? [bracket[1], bracket[2]] : [clause];
+                                        return pieces.map(piece => piece.trim())
+                                            .filter(piece => piece && !familyKeys.has(glossPieceKey(piece)))
+                                            .join(' · ');
+                                    })
+                                    .filter(clause => clause && !sharedContextKeys.has(glossPieceKey(clause)))
+                                    .join(' · ');
+                            }
                         }
                     }
                     const partsLabel = parts => [parts.extra, parts.context].filter(Boolean).join(' · ').toLocaleLowerCase('en');
@@ -7302,6 +7326,7 @@ function renderCardWikipediaBadge(card) {
                             .flatMap(text => glossPieces(String(text || '').replace(/<[^>]*>/g, ''))).map(glossPieceKey));
                         if (parts.cut && (!plain || labelCounts.get(plain) > 1)
                             && !headingKeys.has(glossPieceKey(parts.cut))
+                            && !sharedContextKeys.has(glossPieceKey(parts.cut))
                             && glossPieceKey(parts.cut) !== glossPieceKey(parts.context)) {
                             // A context every sub-row shares tells none apart.
                             const sharedByAll = !parts.extra && labelCounts.get(plain) === orderedMembers.length;
@@ -7425,7 +7450,8 @@ function renderCardWikipediaBadge(card) {
                                 // A word-class label ("auxiliary") tells a
                                 // learner nothing; the clause the gloss lost
                                 // ("forms the progressive aspect") does.
-                                const lostClause = definitionLabel(rowPresentation.removedDefinitions?.[0] || '');
+                                const lostClause = [definitionLabel(rowPresentation.removedDefinitions?.[0] || '')]
+                                    .find(clause => clause && !sharedContextKeys.has(glossPieceKey(clause))) || '';
                                 const diffHTML = diff && diff.score >= 60 && !diffRepeatsHeading && !isGrammarLabelClause(diff.label)
                                     ? differentiatorCueHTML(diff)
                                     : (lostClause ? renderSenseContextHTML(lostClause, { leadingDot: false }) : '');

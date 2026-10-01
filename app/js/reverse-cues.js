@@ -215,12 +215,10 @@ function nounProductionCue(card, meaning, translation) {
     return pluralizeEnglishWord(translation);
 }
 
+// Accents tell verb forms apart (hablo / habló, está / esta): fold case and
+// Unicode composition only.
 function foldCueForm(value) {
-    return String(value || '')
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .toLocaleLowerCase('en')
-        .trim();
+    return String(value || '').normalize('NFC').toLocaleLowerCase().trim();
 }
 
 function meaningIsVerb(meaning) {

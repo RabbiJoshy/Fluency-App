@@ -883,7 +883,7 @@ export function frameCue(value) {
         .replace(/^(?:(?:in)?transitive|ditransitive|pronominal|reflexive|intransitive)(?:\s+or\s+\w+)?\s*/i, '')
         .replace(/^with\s+/i, '')
         // "(+ infinitive)" is part of the frame; other brackets qualify it.
-        .replace(/\(\+\s*([^)]+)\)/g, '+ $1')
+        .replace(/\(\+\s*([^)]+)\)/g, (_, inner) => `+ ${inner.split(/\s+(?:when|or|if)\s+/)[0]}`)
         .replace(/\s*\([^)]*\)/g, '')
         .replace(/\bcopulative\s+/gi, '')
         .trim();
@@ -1116,7 +1116,7 @@ function glossDistinctionKey(source, visibleGloss) {
 // verb: "(to cause to die)" is a definition.
 const GLOSS_SLOT_PARENTHETICAL = /^(?:some(?:one|thing|body|where)|oneself|one's|its|their|his|her|with|of|from|for|at|on|in|by|about|to (?:some(?:one|thing|body|where)|oneself|one's|a|an|the|him|her|them|me|us))\b/i;
 const GLOSS_PLACEHOLDER = /\b(?:some(?:one|thing|body|where)|any(?:one|thing|body)|oneself|one's|one|a person|people|it|them)\b/i;
-const GLOSS_RESTRICTING_PARENTHETICAL = /^(?:said of|of (?:a|an|the)\b|in (?:a|an|the)\b|when\b|especially\b|usually\b|chiefly\b|often\b|figuratively\b|informal|colloquial|slang|vulgar|dated|archaic|obsolete)/i;
+const GLOSS_RESTRICTING_PARENTHETICAL = /^(?:said of|of (?:a|an|the)\b|in the (?:plural|singular)\b|when\b|especially\b|usually\b|chiefly\b|often\b|figuratively\b|informal|colloquial|slang|vulgar|dated|archaic|obsolete)/i;
 const FUNCTION_WORD_POS = /^(?:adp|prep|preposition|postp|det|determiner|article|pron|pronoun|part|particle|conj|cconj|sconj|conjunction)$/i;
 
 function splitDefinitionParenthetical(text) {
@@ -1234,7 +1234,10 @@ function ruleBasedGloss(meaning, source, options) {
         // "to allow to (to give permission to)" restates the verb: a bracket
         // that opens with another infinitive is a definition, not a slot.
         const restatesVerb = /^to\s+\p{L}/iu.test(inside);
-        if (!restatesVerb && /\b(?:by|of|to|with|for|on|in|at|from|about|into|than|as)$/i.test(before) && isLabelLikeText(inside)) return text;
+        // "fond of (something)" names the slot after the preposition; "of
+        // (in relation to)" says which "of" is meant, so it is a cue.
+        if (!restatesVerb && /\b(?:by|of|to|with|for|on|in|at|from|about|into|than|as)$/i.test(before)
+            && isLabelLikeText(inside) && GLOSS_PLACEHOLDER.test(inside)) return text;
         // The bracket is what sets this sense apart ("to be (to have as
         // one's place of origin)"), so it becomes the row's cue beside the
         // gloss: a named role, or the bracket itself when it is one whole
@@ -1382,6 +1385,8 @@ export function learnerSensePresentation(meaning, active, options = {}) {
             // "countable") describe the word, not how to use it: the note.
             // A person label ("first-person singular personal pronoun")
             // stays only where it tells this row from a sibling.
+            // A frame too long to say as "+ …" stays in the note.
+            .filter(entry => entry.item.kind !== 'companion_form' || frameCue(entry.item.value))
             .filter(entry => entry.item.family !== 'grammar' || (grammarBelongsOnRow(entry.item)
                 && (entry.distinguishing || !grammarNavigationCue(entry.item))))
             .map(entry => entry.item);
