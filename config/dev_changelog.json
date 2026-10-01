@@ -2,6 +2,22 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-01T20:10:00+01:00",
+      "date": "2026-10-01 20:10 BST",
+      "agent": "Claude",
+      "summary": "Calmer sense rows: only the active sense takes more than one line, contexts read in full colour, \"+ infinitive\"-style frames lead the cue as plain words, grammar labels moved to the info note, and the info button only appears when it adds something.",
+      "detail": [
+        "Once a menu has four or more rows, every inactive row and sub-row is one line, cut with an ellipsis; the translation keeps its words first.",
+        "Folded part-of-speech headings show the commonness bars.",
+        "Contexts use the row's secondary size in full colour; unselected sub-rows are no longer grey.",
+        "Dictionary frames become learner frames: '[with gerund (Brazil) or a (+ infinitive)]' → '+ gerund / a + infinitive', '[transitive with a or para …]' → '+ a / para', 'followed by gerund' → '+ gerund'. Partner words ('+ em') are plain text at the head of the cue instead of a chip.",
+        "Word-class labels (demonstrative, indefinite, pronoun, auxiliary, first-person singular personal pronoun…) leave the row; the note gains a Grammar line.",
+        "Brackets like 'here (in this place)' become the row's cue, so aqui is one 'here' family: 'in this place' / 'at this time'.",
+        "The ⓘ button is removed when everything in the note is already on the row (muito)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-01T01:35:00+01:00",
       "date": "2026-10-01 01:35 BST",
       "agent": "Claude",

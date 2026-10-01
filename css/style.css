@@ -22325,3 +22325,72 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 .meaning-row .sense-pill--syntax,
 .meaning-row .sense-pill--grammar { color: color-mix(in srgb, #6366f1 58%, var(--text-primary)); }
 .meaning-row .sense-pill .sense-pill-label { font-size: inherit; }
+
+/* Row cues read as words, not as fine print: the translation stays a
+   little larger; contexts, "+ infinitive", "reflexive" are full colour. */
+.meaning-row {
+    --sense-reading-size: var(--row-secondary-size, max(15px, calc(var(--card-fs, 18px) * 0.95)));
+}
+.meaning-row .meaning-context,
+.meaning-row .meaning-context-cell,
+.meaning-row .sense-grammar-cue,
+.meaning-row .sense-metadata-tier--grammar,
+.meaning-row .sense-metadata-detail:not(.sense-pill),
+.meaning-row .group-shared-context {
+    color: var(--text-primary);
+    font-style: normal;
+    font-weight: 500;
+}
+
+/* Only the active sense takes more than one line once the menu has four or
+   more rows; the rest are cut to one line with an ellipsis. */
+.meanings-scroll.has-compact-rows .meaning-row-regular:not(.selected) .meaning-row-body,
+.meanings-scroll.has-compact-rows .meaning-row-group:not(.selected) .group-card-body {
+    flex-wrap: nowrap !important;
+    flex-direction: row !important;
+}
+.meanings-scroll.has-compact-rows .meaning-row-regular:not(.selected) :is(.meaning-row-gloss, .sense-cue-area),
+.meanings-scroll.has-compact-rows .meaning-row-group:not(.selected) .group-card-shared,
+.meanings-scroll.has-compact-rows .group-card-varying-cell:not(.is-active-subsense) {
+    display: block !important;
+    min-width: 0;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: unset;
+}
+.meanings-scroll.has-compact-rows .meaning-row-regular:not(.selected) :is(.meaning-row-gloss, .sense-cue-area) *,
+.meanings-scroll.has-compact-rows .meaning-row-group:not(.selected) .group-card-shared *,
+.meanings-scroll.has-compact-rows .group-card-varying-cell:not(.is-active-subsense) > :not(.cell-lead-mark),
+.meanings-scroll.has-compact-rows .group-card-varying-cell:not(.is-active-subsense) > :not(.cell-lead-mark) * {
+    display: inline !important;
+    white-space: nowrap !important;
+    margin-top: 0 !important;
+}
+/* The translation keeps its words; the cue gives way first. */
+.meanings-scroll.has-compact-rows .meaning-row-regular:not(.selected) .meaning-row-gloss { flex: 0 0 auto; max-width: 72%; }
+.meanings-scroll.has-compact-rows .meaning-row-regular:not(.selected) .sense-cue-area { flex: 0 1 auto; min-width: 0; max-width: none; padding: 3px 8px; }
+.meanings-scroll.has-compact-rows .group-card-varying-cell:not(.is-active-subsense) { min-height: 0 !important; padding: 4px 10px; }
+.meanings-scroll.has-compact-rows .group-card-varying-cell:not(.is-active-subsense) .group-member-gloss { margin-right: 6px; }
+.meanings-scroll.has-compact-rows .meaning-row-regular:not(.selected) .sense-metadata-detail + .sense-metadata-detail,
+.meanings-scroll.has-compact-rows .meaning-row-regular:not(.selected) .meaning-context + .sense-metadata-list { margin-left: 6px; }
+/* The partner word reads as the first words of the context, not a chip. */
+.meaning-row .companion-as-context {
+    display: inline !important;
+    position: static !important;
+    margin: 0 6px 0 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: none !important;
+    box-shadow: none !important;
+    color: var(--text-primary) !important;
+    font: inherit !important;
+    font-size: var(--sense-reading-size) !important;
+    font-weight: 700 !important;
+    white-space: nowrap;
+}
+.meaning-row .companion-as-context .sense-collocation-particle { font: inherit !important; color: inherit !important; }
+.meaning-row .companion-as-context .sense-collocation-qualifier { font-size: 0.85em; font-weight: 500; margin-right: 4px; }
+.meaning-row .sense-grammar-cue.is-leading-frame { font-weight: 700; }
+.meanings-scroll.has-compact-rows .sense-grammar-cue.is-leading-frame { margin-right: 6px !important; }
+.meaning-row-regular .meaning-row-sub > .sense-grammar-cue.is-leading-frame { width: auto; }
