@@ -1,7 +1,7 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=4ca65bd2';
-import { readFastTrack } from './fast-track-preferences.js?v=4ca65bd2';
+import './state.js?v=ab5121ba';
+import { readFastTrack } from './fast-track-preferences.js?v=ab5121ba';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -3228,8 +3228,9 @@ let currentSettingsTab = 'study';
 // Which of the Settings page's three tabs shows. Kept while a detail page is
 // open, so its ‹ lands back on the tab it was opened from.
 let currentSettingsPane = 'study';
-const SETTINGS_PANE_FOR_TAB = { study: 'study', review: 'study', appearance: 'app', lookup: 'words' };
-const SETTINGS_PANE_FOR_DETAIL = { vocabulary: 'words', account: 'app', about: 'app', appData: 'app', offline: 'app' };
+// Words & data is part of the Your words tab now; 'vocabulary' still names it.
+const SETTINGS_PANE_FOR_TAB = { study: 'study', review: 'study', appearance: 'app', lookup: 'words', vocabulary: 'words' };
+const SETTINGS_PANE_FOR_DETAIL = { account: 'app', about: 'app', appData: 'app', offline: 'app' };
 
 function showSettingsPane(pane) {
     const content = document.getElementById('studyTabContent');
@@ -3261,17 +3262,6 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
 
     // Update account tab with current user
     window.renderAccountPanel?.();
-    const vocabularyImportButton = document.getElementById('openVocabularyImportBtn');
-    const vocabularyImportAvailability = document.getElementById('vocabularyImportAvailability');
-    if (vocabularyImportButton) {
-        const canImport = Boolean(currentUser && !currentUser.isGuest);
-        vocabularyImportButton.hidden = !canImport;
-        if (vocabularyImportAvailability) {
-            vocabularyImportAvailability.textContent = canImport
-                ? 'Currently available for Spanish everyday speech.'
-                : 'Continue with initials to import and save vocabulary.';
-        }
-    }
     // Spotify's controls live in a sizeable module that normal Speech-mode
     // startup never loads (see main.js). The settings panel is the one place
     // a Speech-mode learner can still connect ahead of switching to Lyrics,
@@ -3280,7 +3270,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=4ca65bd2')
+        import('./spotify.js?v=ab5121ba')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
@@ -3292,6 +3282,8 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (appDataTabBtn) appDataTabBtn.hidden = !isJstAccount;
     if (adminLabel) adminLabel.hidden = !isJstAccount;
     document.getElementById('settingsAdminBtn').hidden = !isJstAccount;
+    const chatgptCard = document.getElementById('chatgptPromptCard');
+    if (chatgptCard) chatgptCard.hidden = !isJstAccount;
     const canImport = Boolean(currentUser && !currentUser.isGuest && selectedLanguage === 'spanish');
     for (const id of ['settingsImportKnownBtn', 'progressImportKnownBtn']) {
         const button = document.getElementById(id);
@@ -3328,7 +3320,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     };
     const adminOnlyTabs = new Set(['offline', 'appData']);
     const requestedTab = tabContentIds[tabName] && (!adminOnlyTabs.has(tabName) || isJstAccount)
-        ? ({ lookup: 'study', review: 'study', appearance: 'study' }[tabName] || tabName)
+        ? ({ lookup: 'study', review: 'study', appearance: 'study', vocabulary: 'study' }[tabName] || tabName)
         : 'study';
     settingsModal.classList.toggle('settings-single-tab', requestedTab === 'study');
     // Opened from a study session: only the study controls, not the whole
@@ -3410,7 +3402,10 @@ function setupSettingsOverview() {
             next.focus();
         });
     });
-    go('settingsWordsDataBtn', 'vocabulary');
+    document.getElementById('settingsSrsInfoBtn')?.addEventListener('click', event => {
+        event.stopPropagation();
+        window.openSpacedRepetitionInfo?.({ fromSettings: true });
+    });
     go('settingsAccountBtn', 'account');
     go('settingsAdminBtn', 'appData');
     document.getElementById('settingsAboutBtn')?.addEventListener('click', () =>
@@ -3419,11 +3414,7 @@ function setupSettingsOverview() {
         if (!currentUser || currentUser.isGuest || selectedLanguage !== 'spanish') return;
         window.openVocabularyImportModal?.();
     };
-    const runExport = statusId => {
-        document.getElementById('exportMistakesBtn')?.click();
-        const status = document.getElementById(statusId);
-        if (status) status.textContent = document.getElementById('mistakeExportStatus')?.textContent || '';
-    };
+    const runExport = statusId => window.exportMistakes?.(statusId);
     document.getElementById('settingsImportKnownBtn')?.addEventListener('click', runImport);
     document.getElementById('settingsExportMistakesBtn')?.addEventListener('click', () => runExport('settingsDataActionStatus'));
     document.getElementById('progressImportKnownBtn')?.addEventListener('click', () => {

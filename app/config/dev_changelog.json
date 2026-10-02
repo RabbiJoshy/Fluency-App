@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-02T00:10:00+01:00",
+      "date": "2026-10-02 00:10 BST",
+      "agent": "Claude",
+      "summary": "Settings: the App tab is now Account, Words & data lives in the Your words tab, the ChatGPT prompt is owner-only, and Bring back learned words has a ? that explains it.",
+      "detail": [
+        "Tab renamed App → Account.",
+        "Your words tab holds everything Words & data had: Find a word, Import known words and Export mistakes up front, then Saved words. The separate Words & data page is gone; links to it (Progress → Your words) open this tab.",
+        "Practice sentences from ChatGPT shows only for the owner account.",
+        "A ? beside Bring back learned words opens the How practice is scheduled explainer over Settings (without its own link back to settings).",
+        "On desktop, a sheet opened over the centred Settings page centres on top of it instead of docking at the edge."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-01T23:30:00+01:00",
       "date": "2026-10-01 23:30 BST",
       "agent": "Claude",

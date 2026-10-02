@@ -22437,3 +22437,14 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
     min-height: min(calc(80dvh / var(--ui-zoom, 1)), 520px);
   }
 }
+
+/* Settings: the ? beside "Bring back learned words" opens the practice
+   explainer over the settings page. */
+#settingsModal .settings-row-label .settings-row-info {
+  display: inline-grid; width: 20px; height: 20px; margin-left: 6px;
+  font-size: 11px; vertical-align: 1px; cursor: pointer;
+}
+#spacedRepetitionInfoModal.is-over-settings { z-index: 1020; }
+#spacedRepetitionSettingsBtn[hidden] { display: none; }
+#chatgptPromptCard[hidden] { display: none; }
+#settingsModal .settings-pane > .settings-feature-card { margin: 4px 0 14px; }

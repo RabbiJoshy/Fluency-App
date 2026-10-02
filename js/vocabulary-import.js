@@ -1,11 +1,11 @@
-import './state.js?v=4ca65bd2';
-import { sendOrQueue } from './sync-queue.js?v=4ca65bd2';
+import './state.js?v=ab5121ba';
+import { sendOrQueue } from './sync-queue.js?v=ab5121ba';
 import {
     buildImportBulkChunks,
     buildVocabularyImportPlan,
     importPlanFingerprint,
     parseVocabularyImport
-} from './vocabulary-import-core.js?v=4ca65bd2';
+} from './vocabulary-import-core.js?v=ab5121ba';
 
 let currentPlan = null;
 let previewAccount = '';
@@ -208,8 +208,8 @@ function buildMistakeExportRows(progress) {
     return rows;
 }
 
-function exportMistakes() {
-    const status = element('mistakeExportStatus');
+function exportMistakes(statusId = 'settingsDataActionStatus') {
+    const status = element(statusId);
     const rows = buildMistakeExportRows(progressData);
     if (!rows.length) {
         if (status) status.textContent = "No mistakes recorded yet on this device.";
@@ -232,12 +232,6 @@ function exportMistakes() {
     if (status) status.textContent = `Exported ${rows.length} word${rows.length === 1 ? '' : 's'} you've gotten wrong.`;
 }
 
-function setupMistakeExport() {
-    const button = element('exportMistakesBtn');
-    if (!button || button.dataset.listenerReady === '1') return;
-    button.dataset.listenerReady = '1';
-    button.addEventListener('click', exportMistakes);
-}
 
 // Ad hoc ChatGPT hand-off: no API call from Fluency (that's the expensive
 // path), just a prompt built from the words the learner keeps missing,
@@ -292,11 +286,9 @@ function setupChatGptPrompt() {
 }
 
 function setupVocabularyImport() {
-    const open = element('openVocabularyImportBtn');
     const modal = element('vocabularyImportModal');
-    if (!open || !modal || modal.dataset.listenersReady === '1') return;
+    if (!modal || modal.dataset.listenersReady === '1') return;
     modal.dataset.listenersReady = '1';
-    open.addEventListener('click', openVocabularyImportModal);
     element('closeVocabularyImportModal').addEventListener('click', () => closeVocabularyImportModal({ reopenSettings: false }));
     modal.addEventListener('click', event => {
         if (event.target === modal) closeVocabularyImportModal();
@@ -330,7 +322,7 @@ function setupVocabularyImport() {
 }
 
 setupVocabularyImport();
-setupMistakeExport();
 setupChatGptPrompt();
 
 window.openVocabularyImportModal = openVocabularyImportModal;
+window.exportMistakes = exportMistakes;

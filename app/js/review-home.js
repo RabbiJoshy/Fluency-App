@@ -2,7 +2,7 @@
 // The queue and its ordering still belong to progress.js. Opening a group
 // only explains the queue; it must never start a study session.
 
-import './state.js?v=4ca65bd2';
+import './state.js?v=ab5121ba';
 
 const QUICK_PRACTICE_LIMIT = 20;
 const LIST_PAGE_SIZE = 50;
@@ -185,8 +185,15 @@ function renderReviewHome() {
     else renderOverview(body, summary);
 }
 
-function openSpacedRepetitionInfo() {
-    document.getElementById('spacedRepetitionInfoModal')?.classList.remove('hidden');
+// From Settings it sits over the settings page, and its own link to the
+// setting would only lead back to where you already are.
+function openSpacedRepetitionInfo({ fromSettings = false } = {}) {
+    const modal = document.getElementById('spacedRepetitionInfoModal');
+    if (!modal) return;
+    modal.classList.toggle('is-over-settings', fromSettings);
+    const settingsLink = document.getElementById('spacedRepetitionSettingsBtn');
+    if (settingsLink) settingsLink.hidden = fromSettings;
+    modal.classList.remove('hidden');
 }
 
 function closeSpacedRepetitionInfo() {

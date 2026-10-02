@@ -218,6 +218,12 @@ function place(occupant) {
         return 'left';
     }
 
+    // Over the centred Settings page a sheet centres too, on top of it.
+    if (occupant.stacks && isOpen(byId.settingsModal) && !sideOf(byId.settingsModal)) {
+        mark(el, null);
+        return null;
+    }
+
     const parent = occupant.stackOver ? byId[occupant.stackOver] : null;
     if (parent && isOpen(parent) && sideOf(parent)) {
         // A short explainer opened from a sheet belongs directly above that
