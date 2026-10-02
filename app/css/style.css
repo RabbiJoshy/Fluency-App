@@ -22610,3 +22610,21 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 #settingsModal .settings-words-saved-list .extras-list { margin: 0; }
 #settingsModal .settings-words-row small.settings-words-note { color: var(--text-secondary); }
 #settingsModal .settings-words-row small.settings-words-note:empty { display: none; }
+
+/* Tutorial: after a few idle seconds the Next button glows softly so a
+   first-time reader sees how the tour moves on (tutorial.js adds
+   .is-hinting). */
+@keyframes card-tutorial-next-hint {
+    0%, 100% { box-shadow: 0 0 0 0 transparent; }
+    50%      { box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent-primary) 24%, transparent); }
+}
+#cardTutorialContinue.is-hinting,
+#cardTutorialMobileNext.is-hinting {
+    animation: card-tutorial-next-hint 2.2s ease-in-out infinite;
+}
+#cardTutorialContinue.is-hinting:hover,
+#cardTutorialMobileNext.is-hinting:hover { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+    #cardTutorialContinue.is-hinting,
+    #cardTutorialMobileNext.is-hinting { animation: none; }
+}
