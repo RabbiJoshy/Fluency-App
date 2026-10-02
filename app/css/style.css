@@ -22446,6 +22446,19 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 }
 #spacedRepetitionInfoModal.is-over-settings { z-index: 1020; }
 #spacedRepetitionSettingsBtn[hidden] { display: none; }
+/* Level estimate intro: a quiet way to bring in a list instead. */
+.estimation-import-link {
+  display: block; margin: 14px auto 0; padding: 10px 16px;
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 40%, var(--border-color));
+  border-radius: 12px; background: color-mix(in srgb, var(--accent-primary) 6%, transparent);
+  color: var(--accent-primary); font: 600 13px/1.4 var(--font-reading); cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease;
+}
+.estimation-import-link:hover {
+  border-color: color-mix(in srgb, var(--accent-primary) 65%, var(--border-color));
+  background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
+}
+.estimation-import-link[hidden] { display: none; }
 #chatgptPromptCard[hidden] { display: none; }
 #settingsModal .settings-pane > .settings-feature-card { margin: 4px 0 14px; }
 
@@ -22499,6 +22512,17 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
   #step1.language-summary-active #standardSourceCard .standard-source-spotify {
     /* Under the Your music column: half the row past the "or". */
     margin-left: calc(50% + 20px);
-    padding-left: 66px;
+    padding-left: 74px;
   }
 }
+/* One rhythm: the same space above the title as below the last control, and
+   the same gap from the note to the first option as from the last option to
+   the Spotify button. */
+#step1.language-summary-active #standardSourceCard { padding-top: 20px; padding-bottom: 18px; }
+#step1.language-summary-active #standardSourceCard .standard-source-choice-intro { margin-bottom: 0; }
+#step1.language-summary-active #standardSourceCard .standard-source-spotify { margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0; }
+@media (min-width: 900px) {
+  #step1.language-summary-active #standardSourceCard .standard-source-spotify { margin-top: 8px; }
+}
+#step1.language-summary-active #standardSourceCard .standard-source-spotify:empty { display: none; }
+#step1.language-summary-active #standardSourceCard .standard-source-spotify .spotify-status { margin: 0; }

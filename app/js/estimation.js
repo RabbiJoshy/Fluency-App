@@ -1,4 +1,4 @@
-import './state.js?v=181352d6';
+import './state.js?v=b1613a46';
 
 const ESTIMATION_QUESTION_LIMIT = 30;
 const ESTIMATION_BAND_TARGET = 10;
@@ -50,6 +50,10 @@ function openEstimationModal() {
     document.getElementById('estimationIntro').style.display = 'block';
     document.getElementById('estimationTest').style.display = 'none';
     document.getElementById('estimationResult').style.display = 'none';
+    // Words you already know can come in by list instead. Import only exists
+    // for signed-in Spanish learners; it does not feed the estimate.
+    const importLink = document.getElementById('estimationImportKnownBtn');
+    if (importLink) importLink.hidden = !(currentUser && !currentUser.isGuest && selectedLanguage === 'spanish');
     estimationState = createEstimationState();
 }
 
