@@ -300,7 +300,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('class="meaning-row-check"', replica)
         self.assertIn('class="example-ticks"', replica)
         self.assertNotIn('class="compact-example-counter-label"', replica)
-        self.assertIn("speechCard: 'tem'", tutorial)
+        self.assertIn("speechCard: 'ptBancoSpeech'", tutorial)
         self.assertIn('class="sense-metadata-tier sense-metadata-tier--primary"', replica)
         self.assertIn('class="sense-note-trigger"', replica)
         self.assertIn('class="sense-cross-reference"', replica)
@@ -312,7 +312,7 @@ class ProductShellTests(unittest.TestCase):
         tutorial = (APP_ROOT / "js" / "tutorial.js").read_text(encoding="utf-8")
         styles = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
         self.assertIn('id="cardTutorialMobileCoach"', html)
-        self.assertIn("function moveMobileTour(direction)", tutorial)
+        self.assertIn("function moveTour(direction)", tutorial)
         self.assertIn("MOBILE_TUTORIAL_QUERY", tutorial)
         # Front and back of a flashcard, not "question side" / "answer side":
         # anyone reaching for a tutorial already knows what a flashcard is.

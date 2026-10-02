@@ -22526,3 +22526,44 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 }
 #step1.language-summary-active #standardSourceCard .standard-source-spotify:empty { display: none; }
 #step1.language-summary-active #standardSourceCard .standard-source-spotify .spotify-status { margin: 0; }
+
+/* Tutorial on a phone: tutorial.js scales the card to fit between the summary
+   and the coach sheet; the box it leaves behind shrinks with it. The face
+   title ("The back of the card —") is dropped, since the coach already says
+   which side is showing, and the summary sits closer to the top bar. */
+@media (max-width: 700px) {
+    #cardTutorialStage .card-replica {
+        transform: scale(var(--replica-card-scale, 1));
+        transform-origin: top center;
+        margin-bottom: calc(var(--replica-card-h, 480px) * (var(--replica-card-scale, 1) - 1));
+    }
+    .card-tutorial-blurb .card-tutorial-lede { display: none; }
+    .card-tutorial-topbar { row-gap: 6px; }
+}
+
+/* Tutorial on desktop: the notes are walked one at a time. All stay on show;
+   the current one is lit (its element on the card is ringed) and the rest
+   step back. Back / count / Next sit under the card. */
+.card-tutorial-desktop-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 8px;
+}
+.card-tutorial-desktop-actions[hidden] { display: none; }
+.card-tutorial-desktop-actions .card-tutorial-continue { margin-top: 0; }
+.card-tutorial-desktop-actions .card-tutorial-continue[hidden] { display: none; }
+.card-tutorial-desktop-progress {
+    min-width: 54px;
+    color: var(--text-muted);
+    font: 700 11px/1 var(--font-data);
+    letter-spacing: 0.06em;
+    text-align: center;
+}
+@media (min-width: 701px) {
+    .card-tutorial-note { cursor: pointer; }
+    .card-tutorial-note:not(.is-active) { opacity: 0.5; }
+    .card-tutorial-note:not(.is-active):hover { opacity: 0.8; }
+    .card-tutorial-note { transition: background 0.15s ease, border-color 0.15s ease, opacity 0.2s ease; }
+}

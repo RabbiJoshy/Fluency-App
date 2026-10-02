@@ -205,6 +205,35 @@ export const REPLICA_CARDS = {
             },
         ],
     },
+    // The Portuguese tutorial card, replacing `tem`, whose four senses, grammar
+    // pills and cross-reference made a first card too busy to read. Read out
+    // of the live release (pt-speech-v21-10000x30-slim): rank 793, 103 per
+    // million; of 30 assigned sentences 26 are the bank and 3 the bench (the
+    // one left over is a third, rarer sense not shown). Examples are the
+    // release's own, sentence and translation unchanged.
+    ptBancoSpeech: {
+        mode: 'speech', word: 'banco', pos: 'NOUN', lemma: 'banco', rank: 793, vocabSize: 10000, corpusCount: 103,
+        defaultMeaningIndex: 1,
+        meanings: [
+            {
+                pos: 'NOUN', translation: 'bench', context: 'long seat', pct: 10,
+                metadata: [{ short: 'masc.', full: 'masculine', family: 'grammar' }],
+                examples: [
+                    { target: 'Ele estava sentado num banco com os olhos fechados.', english: 'He was sitting on a bench with his eyes closed.', sourceLabel: 'Tatoeba example' },
+                    { target: 'Por que você pintou o banco de vermelho?', english: 'Why did you paint the bench red?', sourceLabel: 'Tatoeba example' },
+                ],
+            },
+            {
+                pos: 'NOUN', translation: 'bank', context: 'financial institution', pct: 90,
+                metadata: [{ short: 'masc.', full: 'masculine', family: 'grammar' }],
+                examples: [
+                    { target: 'Nem sequer sabia que havia ali um banco.', english: "I didn't even know there was a bank there.", sourceLabel: 'Speech example' },
+                    { target: 'Por que você não vai a um banco?', english: "Why don't you go to a bank?", sourceLabel: 'Tatoeba example' },
+                    { target: 'Achas que talvez tenha sido alguém do banco?', english: 'You think maybe it was someone at the bank?', sourceLabel: 'Speech example' },
+                ],
+            },
+        ],
+    },
     queSpeech: {
         mode: 'speech', word: 'que', pos: 'CCONJ', lemma: 'que', rank: 1, vocabSize: 6000, corpusCount: 33170,
         meanings: [

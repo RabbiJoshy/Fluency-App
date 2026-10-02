@@ -1113,7 +1113,13 @@
                             <div class="card-tutorial-stage" id="cardTutorialStage"></div>
                         </div>
                         <button type="button" class="card-tutorial-flip" id="cardTutorialFlip" style="display: none;" hidden>Flip to the answer side</button>
-                        <button type="button" class="card-tutorial-continue" id="cardTutorialContinue" hidden></button>
+                        <!-- Desktop steps through the notes one at a time, the way the
+                             phone coach does, with every note still on show. -->
+                        <div class="card-tutorial-desktop-actions" id="cardTutorialDesktopActions" hidden>
+                            <button type="button" class="card-tutorial-continue is-secondary" id="cardTutorialPrev">Back</button>
+                            <span class="card-tutorial-desktop-progress" id="cardTutorialDesktopProgress"></span>
+                            <button type="button" class="card-tutorial-continue" id="cardTutorialContinue" hidden></button>
+                        </div>
                     </div>
                     <div class="card-tutorial-notes card-tutorial-notes-right" id="cardTutorialNotesRight"></div>
                 </div>

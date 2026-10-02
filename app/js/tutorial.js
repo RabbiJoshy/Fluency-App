@@ -20,7 +20,7 @@ import {
 // and one adapter entry instead of a forked tutorial.
 const TUTORIAL_LANGUAGE_ADAPTERS = {
     spanish: { language: 'Spanish', flag: '🇪🇸', speechCard: 'queSpeech', provider: 'SpanishDict', lyrics: true, usageShares: true },
-    portuguese: { language: 'Portuguese', flag: '🇵🇹', speechCard: 'tem', provider: 'Wiktionary', lyrics: false, usageShares: true, crossReferences: true },
+    portuguese: { language: 'Portuguese', flag: '🇵🇹', speechCard: 'ptBancoSpeech', provider: 'Wiktionary', lyrics: false, usageShares: true },
     czech: { language: 'Czech', flag: '🇨🇿', speechCard: 'jeSpeech', provider: 'Wiktionary', lyrics: false, usageShares: true },
     french: { language: 'French', flag: '🇫🇷', speechCard: 'deSpeech', provider: 'Wiktionary', lyrics: false },
 };
@@ -376,8 +376,10 @@ function renderCard() {
     });
 
     wireBack(stage);
-    fitCardToContent();
+    // The summary first: on a phone the card is fitted to the space left
+    // under it.
     renderFaceCopy();
+    fitCardToContent();
     renderNotes();
     markAnchors();
     syncContinueButton();
@@ -415,11 +417,10 @@ function flipCardFace(mobileNote = 0) {
     syncContinueButton();
     // Re-place once the transform has settled, so boxes are measured flat.
     setTimeout(() => {
+        fitCardToContent();
         markAnchors();
-        if (isMobileTutorial()) {
-            const finalIndex = Math.max(0, orderedNotes().length - 1);
-            setActiveNote(Math.min(mobileNote, finalIndex));
-        }
+        const finalIndex = Math.max(0, orderedNotes().length - 1);
+        setActiveNote(Math.min(mobileNote, finalIndex));
     }, 640);
 }
 
@@ -448,8 +449,11 @@ function syncFlipButton() {
 
 // One button, one job: go to the next step. Its label says what that step is,
 // so the reader always knows what pressing it will do.
+// On desktop it walks the notes first, one at a time, and only once the last
+// note on this face is showing does it flip the card or move on.
 function syncContinueButton() {
     const btn = document.getElementById('cardTutorialContinue');
+    const actions = document.getElementById('cardTutorialDesktopActions');
     if (!btn) return;
     const steps = tutorialSteps();
     const step = steps[state.stepIndex];
@@ -457,14 +461,26 @@ function syncContinueButton() {
     // column that is hidden behind it.
     const ready = !isMobileTutorial() && step && step.kind === 'card';
     btn.hidden = !ready;
+    if (actions) actions.hidden = !ready;
     if (!ready) return;
 
+    const notes = orderedNotes();
+    const index = Math.max(0, Math.min(state.activeNote, notes.length - 1));
     const next = steps[state.stepIndex + 1];
     const turningSameCard = next && next.kind === 'card' && next.deck === step.deck;
-    btn.textContent = !next ? 'Finish tutorial'
+    btn.textContent = index < notes.length - 1 ? 'Next →'
+        : !next ? 'Finish tutorial'
         : turningSameCard ? 'Flip the card over →'
         : 'Next →';
-    btn.classList.toggle('is-secondary', Boolean(turningSameCard));
+    btn.classList.remove('is-secondary');
+
+    const prev = document.getElementById('cardTutorialPrev');
+    if (prev) prev.hidden = state.stepIndex === 0 && index === 0;
+    const progress = document.getElementById('cardTutorialDesktopProgress');
+    if (progress) {
+        const position = tutorialStepPosition(index);
+        progress.textContent = `${position.current} of ${position.total}`;
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -485,7 +501,31 @@ function syncContinueButton() {
 // back's own content beats guessing a height that suits one card: `que` has
 // three senses and `tem` has four with grammar pills under the selected one.
 function fitCardToContent() {
-    fitReplicaCard(document.querySelector('#cardTutorialStage .card-replica'));
+    const inner = document.querySelector('#cardTutorialStage .card-replica');
+    const height = fitReplicaCard(inner);
+    fitCardToPhone(inner, height);
+}
+
+// On a phone the card shares the screen with the summary above it and the
+// coach sheet pinned below, and the back of a card can be taller than the gap
+// between them, leaving its example under the coach. Scale the whole card
+// down until it fits, rather than making the reader scroll behind the sheet.
+// The space kept for the coach is its tallest usual size, so the card does not
+// change size from one step to the next.
+const PHONE_COACH_RESERVE = 168;
+const PHONE_MIN_CARD_SCALE = 0.72;
+
+function fitCardToPhone(inner, height) {
+    if (!inner) return;
+    const body = document.getElementById('cardTutorialBody');
+    if (!isMobileTutorial() || !height || !body) {
+        inner.style.removeProperty('--replica-card-scale');
+        return;
+    }
+    const top = inner.getBoundingClientRect().top - body.getBoundingClientRect().top + body.scrollTop;
+    const room = window.innerHeight - PHONE_COACH_RESERVE - top;
+    const scale = Math.max(PHONE_MIN_CARD_SCALE, Math.min(1, room / height));
+    inner.style.setProperty('--replica-card-scale', scale.toFixed(3));
 }
 
 
@@ -522,6 +562,7 @@ function setActiveNote(index) {
     // this to the smallest scroll that works and never moves the page.
     if (active) active.scrollIntoView({ block: 'nearest', inline: 'nearest' });
     renderMobileCoach();
+    syncContinueButton();
 }
 
 function renderMobileCoach() {
@@ -555,8 +596,11 @@ function renderMobileCoach() {
         : 'Continue';
 }
 
-function moveMobileTour(direction) {
-    if (!isMobileTutorial()) return;
+// One note forwards or back, on either layout; past either end of a face it
+// moves to the neighbouring step.
+function moveTour(direction) {
+    const step = currentStep();
+    if (!step) return;
     const notes = orderedNotes();
     const index = Math.max(0, Math.min(state.activeNote, notes.length - 1));
     const candidate = index + direction;
@@ -616,8 +660,8 @@ function renderNotes() {
         ?.querySelectorAll('.card-tutorial-note')
         .forEach((el) => {
             const i = Number(el.dataset.note);
-            el.addEventListener('mouseenter', () => setActiveNote(i));
-            el.addEventListener('mouseleave', () => setActiveNote(-1));
+            // Every note stays readable; clicking one jumps the tour to it.
+            el.addEventListener('click', () => setActiveNote(i));
         });
 }
 
@@ -668,9 +712,7 @@ function goToStep(index, mobileNote = 0) {
 
     state.meaningIndex = currentCard().defaultMeaningIndex || 0;
     state.exampleIndex = 0;
-    state.activeNote = isMobileTutorial()
-        ? Math.min(mobileNote, Math.max(0, stepNotes(to).length - 1))
-        : 0;
+    state.activeNote = Math.min(mobileNote, Math.max(0, stepNotes(to).length - 1));
     renderCard();
     syncFlipButton();
     renderMobileCoach();
@@ -877,10 +919,10 @@ function playSetupIntro(onDone) {
         }, 760));
     };
 
-    // Each beat is one decision, held long enough to read the thing being
-    // pressed before the next panel appears.
-    const BEAT = 1500;
-    let t = 400;
+    // Each beat is one decision, held long enough to read the caption and see
+    // the thing being pressed before the next panel appears.
+    const BEAT = 2600;
+    let t = 600;
 
     at(t, () => {
         if (caption) caption.textContent = `First you pick a language.`;
@@ -909,15 +951,22 @@ function playSetupIntro(onDone) {
         press(el('setupAnimSet1'));
     });
 
-    // The sequence stops here rather than pressing its own last button. The
-    // visitor opens their first card, which is both the real gesture and what
-    // gives the whole thing a moment to land.
+    // The last beat presses the start button itself after a pause long enough
+    // to read, and the first card follows. It used to stop and wait for the
+    // visitor to press it, which read as being hurried to a button; the
+    // button still works for anyone who wants to go sooner.
     t += BEAT;
     at(t, () => {
         if (caption) caption.textContent = 'That is the whole setup. Here is what a card looks like.';
-        if (status) status.textContent = 'Press Learn 25 new cards to see your first card';
+        if (status) status.textContent = 'Opening your first card…';
         el('setupAnimActionBtn')?.classList.add('is-ready');
         moveSetupPointer(el('setupAnimActionBtn'));
+    });
+    t += BEAT;
+    at(t, () => pointer?.classList.add('is-pressing'));
+    at(t + 240, () => {
+        pointer?.classList.remove('is-pressing');
+        startSetupIntroCard();
     });
 }
 
@@ -1016,20 +1065,19 @@ function setupCardTutorial() {
     document.getElementById('setupAnimActionBtn')?.addEventListener('click', startSetupIntroCard);
     document.getElementById('setupAnimSkipBtn')?.addEventListener('click', skipSetupIntro);
     document.getElementById('cardTutorialFlip')?.addEventListener('click', () => flipCardFace(0));
-    document.getElementById('cardTutorialContinue')?.addEventListener('click', () => {
-        advanceStep();
-    });
-    document.getElementById('cardTutorialMobileBack')?.addEventListener('click', () => moveMobileTour(-1));
-    document.getElementById('cardTutorialMobileNext')?.addEventListener('click', () => moveMobileTour(1));
+    document.getElementById('cardTutorialContinue')?.addEventListener('click', () => moveTour(1));
+    document.getElementById('cardTutorialPrev')?.addEventListener('click', () => moveTour(-1));
+    document.getElementById('cardTutorialMobileBack')?.addEventListener('click', () => moveTour(-1));
+    document.getElementById('cardTutorialMobileNext')?.addEventListener('click', () => moveTour(1));
 
-    // Escape closes; left/right jump chapters, kept as an escape hatch for
-    // anyone who wants to skip ahead. Space deliberately does nothing: the
-    // tutorial owns the flip, so the card only turns when the tour says so.
+    // Escape closes; left/right step through the tour like Back and Next.
+    // Space deliberately does nothing: the tutorial owns the flip, so the card
+    // only turns when the tour says so.
     document.addEventListener('keydown', (e) => {
         if (modal.classList.contains('hidden')) return;
         if (e.key === 'Escape') closeCardTutorial();
-        else if (e.key === 'ArrowRight') goToStep(state.stepIndex + 1);
-        else if (e.key === 'ArrowLeft') goToStep(state.stepIndex - 1);
+        else if (e.key === 'ArrowRight') moveTour(1);
+        else if (e.key === 'ArrowLeft') moveTour(-1);
     });
 }
 
