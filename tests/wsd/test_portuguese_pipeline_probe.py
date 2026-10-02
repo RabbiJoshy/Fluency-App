@@ -26,7 +26,11 @@ from fluency.wsd.runner import (
     WSDExecutionProfile,
     WSDRequest,
 )
-from fluency.speech.wsd_execute import _translation_overlap_bonus
+from fluency.speech.wsd_execute import (
+    _is_conflicting_regional_leaf,
+    _regional_register_penalty,
+    _translation_overlap_bonus,
+)
 
 
 def make_leaf(sense_id: str, translation: str, definition: str = "") -> SenseLeaf:
@@ -179,6 +183,84 @@ class PortugueseWSDProbeTests(unittest.TestCase):
         assignment = runner.assign(request)
         self.assertEqual(assignment.status, "assigned")
         self.assertEqual(assignment.selected_sense_id, "sense_that")
+        self.assertEqual(assignment.emitted_level, "leaf")
+
+    def test_se_reflexive_vs_brazil_ce_disambiguation(self) -> None:
+        card_id = "card_pt_" + "2" * 32
+        ce_leaf = SenseLeaf(
+            sense_id="sense_ce_you",
+            translation="you",
+            definition="",
+            source_reference="wiktionary:cê",
+            provider_metadata={"regions": ["Brazil"], "tags": ["Brazil", "informal"]},
+        )
+        reflexive_leaf = SenseLeaf(
+            sense_id="sense_se_yourself",
+            translation="second-person singular and plural reflexive and reciprocal pronoun; yourself; yourselves",
+            definition="",
+            source_reference="wiktionary:se",
+            provider_metadata={"regions": [], "tags": []},
+        )
+        analysis_ce = make_analysis(card_id, "cê", "pron", [ce_leaf])
+        analysis_se = make_analysis(card_id, "se", "pron", [reflexive_leaf])
+
+        class SeGlossScorer:
+            model_revision = "gemini-embedding-001"
+            def score(self, sentence: str, analyses, translation: str = ""):
+                # Raw embedding gives slightly higher score to short "you" (0.80) than long gloss (0.78),
+                # plus translation has "you", but regional penalty penalizes Brazil by 0.06 and denies overlap bonus.
+                scores = []
+                for analysis in analyses:
+                    for leaf in analysis.senses:
+                        val = 0.80 if leaf.sense_id == "sense_ce_you" else 0.78
+                        # Overlap:
+                        if translation and not _is_conflicting_regional_leaf(leaf, "pt-PT"):
+                            val += _translation_overlap_bonus(leaf, translation)
+                        val -= _regional_register_penalty(leaf, "pt-PT")
+                        scores.append(LeafScore(analysis.menu_analysis_id, leaf.sense_id, val))
+                return scores
+
+        sense_compatible, pos_is_orthogonal = pos_gate_for("pt")
+        candidate_policy = SpanishV5CandidatePolicy(
+            language="pt",
+            menu_prior=0.0,
+            sense_compatible=sense_compatible,
+            pos_is_orthogonal=pos_is_orthogonal,
+        )
+        components = WSDComponents(
+            language=PortugueseWSDAdapter(),
+            gloss=SeGlossScorer(),
+            candidate_policy=candidate_policy,
+        )
+        profile = WSDExecutionProfile(
+            token_tuple_vote=False,
+            tuple_vote_minimum_margin=0.0,
+            calibration=False,
+            alignment=False,
+            generative_escalation=False,
+            disposition=DispositionPolicy(minimum_confidence=None, weak="retain"),
+            candidate_preparation=True,
+            commit=CommitPolicy(
+                strategy="rank_agreement",
+                evidence_guards=True,
+                unresolved_outcome="abstain",
+                provider_order_votes=False,
+            ),
+        )
+        runner = ClosedMenuWSDRunner(profile, components)
+        request = WSDRequest(
+            card_id=card_id,
+            surface_form="se",
+            sentence_id="sentence_" + "2" * 32,
+            sentence="Está a sentir-se bem?",
+            translation="You doing okay?",
+            sense_menu_content_id="sha256:" + "0" * 64,
+            analyses=(analysis_ce, analysis_se),
+            observed_pos="PRON",
+        )
+        assignment = runner.assign(request)
+        self.assertEqual(assignment.status, "assigned")
+        self.assertEqual(assignment.selected_sense_id, "sense_se_yourself")
         self.assertEqual(assignment.emitted_level, "leaf")
 
 

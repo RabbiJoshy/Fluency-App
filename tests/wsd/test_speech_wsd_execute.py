@@ -7,6 +7,8 @@ from fluency.speech.wsd_execute import (
     ExactTextGlossScorer,
     SPACY_POS_MODEL,
     _attached_companions,
+    _is_conflicting_regional_leaf,
+    _regional_register_penalty,
     _single_leaf_is_deterministic,
     _translation_overlap_bonus,
     occurrence_pos_tags,
@@ -355,6 +357,39 @@ class TranslationOverlapTests(unittest.TestCase):
         sentence = "I think that you need help."
         self.assertEqual(_translation_overlap_bonus(leaf_that, sentence), 0.04)
         self.assertEqual(_translation_overlap_bonus(leaf_because, sentence), 0.0)
+
+    def test_regional_register_penalty_and_filtering(self) -> None:
+        brazil_leaf = SenseLeaf(
+            sense_id="sense_cê",
+            translation="you",
+            definition="",
+            source_reference="wiktionary:cê",
+            provider_metadata={"regions": ["Brazil"], "tags": ["colloquial", "informal"]},
+        )
+        portugal_leaf = SenseLeaf(
+            sense_id="sense_se_refl",
+            translation="yourself",
+            definition="",
+            source_reference="wiktionary:se",
+            provider_metadata={"regions": ["Portugal"]},
+        )
+        proscribed_leaf = SenseLeaf(
+            sense_id="sense_mim",
+            translation="I",
+            definition="nonstandard, highly proscribed",
+            source_reference="wiktionary:mim",
+            provider_metadata={"tags": ["proscribed", "nonstandard"], "qualifier": "highly proscribed"},
+        )
+
+        # In pt-PT:
+        self.assertTrue(_is_conflicting_regional_leaf(brazil_leaf, "pt-PT"))
+        self.assertFalse(_is_conflicting_regional_leaf(portugal_leaf, "pt-PT"))
+        self.assertTrue(_is_conflicting_regional_leaf(proscribed_leaf, "pt-PT"))
+
+        # Penalties:
+        self.assertAlmostEqual(_regional_register_penalty(brazil_leaf, "pt-PT"), 0.06)
+        self.assertAlmostEqual(_regional_register_penalty(portugal_leaf, "pt-PT"), 0.0)
+        self.assertAlmostEqual(_regional_register_penalty(proscribed_leaf, "pt-PT"), 0.08)
 
 
 if __name__ == "__main__":

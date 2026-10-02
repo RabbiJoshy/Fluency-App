@@ -589,6 +589,66 @@ def _translation_overlap_bonus(leaf: SenseLeaf, english_sentence: str, bonus_val
     return 0.0
 
 
+def _is_conflicting_regional_leaf(leaf: SenseLeaf, target_locale: str = "") -> bool:
+    """Return True if a leaf is explicitly marked with a conflicting region or proscribed register."""
+    if not target_locale:
+        return False
+    meta = leaf.provider_metadata or {}
+    regions = meta.get("regions") or []
+    tags = set(meta.get("tags") or [])
+    qual = (meta.get("qualifier") or "").lower()
+    ctx = (meta.get("context") or "").lower()
+    defin = (leaf.definition or "").lower()
+
+    if target_locale.startswith("pt-PT") or target_locale == "pt":
+        brazil_markers = {
+            "Brazil", "Brazilian", "North-Brazil", "Northeast-Brazil",
+            "South-Brazil", "São-Paulo", "Rio-de-Janeiro", "Bahia", "Minas-Gerais",
+        }
+        pt_markers = {"Portugal", "European", "Alentejo", "Azores", "Madeira"}
+        has_brazil = any(r in brazil_markers for r in regions) or "brazil" in qual or "brazil" in ctx or "brazil" in defin
+        has_pt = any(r in pt_markers for r in regions) or "portugal" in qual or "portugal" in ctx or "portugal" in defin
+        if has_brazil and not has_pt:
+            return True
+        if "proscribed" in tags or "proscribed" in qual or "proscribed" in ctx or "proscribed" in defin:
+            return True
+    return False
+
+
+def _regional_register_penalty(leaf: SenseLeaf, target_locale: str = "") -> float:
+    """Soft penalty for non-target regions and nonstandard/archaic/proscribed registers."""
+    if not target_locale:
+        return 0.0
+    meta = leaf.provider_metadata or {}
+    regions = meta.get("regions") or []
+    tags = set(meta.get("tags") or [])
+    qual = (meta.get("qualifier") or "").lower()
+    ctx = (meta.get("context") or "").lower()
+    defin = (leaf.definition or "").lower()
+    penalty = 0.0
+
+    if target_locale.startswith("pt-PT") or target_locale == "pt":
+        brazil_markers = {
+            "Brazil", "Brazilian", "North-Brazil", "Northeast-Brazil",
+            "South-Brazil", "São-Paulo", "Rio-de-Janeiro", "Bahia", "Minas-Gerais",
+        }
+        pt_markers = {"Portugal", "European", "Alentejo", "Azores", "Madeira"}
+        has_brazil = any(r in brazil_markers for r in regions) or "brazil" in qual or "brazil" in ctx or "brazil" in defin
+        has_pt = any(r in pt_markers for r in regions) or "portugal" in qual or "portugal" in ctx or "portugal" in defin
+        if has_brazil and not has_pt:
+            penalty += 0.06
+        if "proscribed" in tags or "proscribed" in qual or "proscribed" in ctx or "proscribed" in defin:
+            penalty += 0.08
+        elif "nonstandard" in tags or "nonstandard" in qual or "nonstandard" in ctx or "nonstandard" in defin:
+            penalty += 0.04
+        if any(t in tags for t in ("archaic", "obsolete")):
+            penalty += 0.06
+        elif any(t in qual for t in ("archaic", "obsolete")):
+            penalty += 0.06
+
+    return penalty
+
+
 class ExactTextGlossScorer:
     """Cosine between the sentence vector and each leaf's gloss vector.
 
@@ -599,8 +659,9 @@ class ExactTextGlossScorer:
 
     model_revision = EMBED_MODEL
 
-    def __init__(self, vectors: dict[str, Any]) -> None:
+    def __init__(self, vectors: dict[str, Any], *, target_locale: str = "") -> None:
         self.vectors = vectors
+        self.target_locale = target_locale
 
     def score(
         self,
@@ -637,8 +698,10 @@ class ExactTextGlossScorer:
                     if vector is None:
                         raise KeyError(f"missing exact-text embedding for gloss: {gloss!r}")
                     value = float(np.dot(query, vector))
-                if translation:
+                if translation and not _is_conflicting_regional_leaf(leaf, self.target_locale):
                     value += _translation_overlap_bonus(leaf, translation)
+                if self.target_locale:
+                    value -= _regional_register_penalty(leaf, self.target_locale)
                 scores.append(
                     LeafScore(
                         menu_analysis_id=analysis.menu_analysis_id,
@@ -756,9 +819,11 @@ def main() -> None:
     # The run states its own language. Counting directory levels is how
     # project_root() silently resolved to src/, and the same arithmetic here
     # produced "runs" instead of "pt".
-    run_language = json.loads(
+    profile_data = json.loads(
         (args.run_dir / "profile.json").read_text(encoding="utf-8")
-    )["language"]
+    )
+    run_language = profile_data["language"]
+    run_locale = profile_data.get("locale") or run_language
     binding = binding_for(run_language)
     if PROFILE_LANGUAGES[args.profile_id] != run_language:
         raise SystemExit(
@@ -1157,7 +1222,7 @@ def main() -> None:
 
     components = WSDComponents(
         language=language_adapter,
-        gloss=ExactTextGlossScorer(vectors),
+        gloss=ExactTextGlossScorer(vectors, target_locale=run_locale),
         candidate_policy=SpanishV5CandidatePolicy(
             language=run_language,
             constraint_mode=SUPPORTED_PROFILE_CONSTRAINT_MODES[args.profile_id],
