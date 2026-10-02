@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-02T10:30:00+01:00",
+      "date": "2026-10-02 10:30 BST",
+      "agent": "Claude",
+      "summary": "Settings → Your words: one row pattern with descriptions back on Import and Export, Saved words inline, ChatGPT prompt hidden for everyone, and every page opened from Settings returns to it.",
+      "detail": [
+        "Your words: Import known words and Export mistakes first, each with its description and an accented action; then Find a word; then Saved words with its list in place (no separate sheet). Every item is the same row: name, one line on what it does, action on the right.",
+        "Saved words: Download appears only when there are saved words; the line about a later request button is gone.",
+        "Practice sentences from ChatGPT is hidden for all accounts, the owner included.",
+        "Going back: Find a word opened from Settings returns to Your words when closed; About opened from Settings (or Account → About this project) says Back to Settings and returns to that tab."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-02T09:40:00+01:00",
       "date": "2026-10-02 09:40 BST",
       "agent": "Claude",

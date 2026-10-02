@@ -3286,14 +3286,13 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (appDataTabBtn) appDataTabBtn.hidden = !isJstAccount;
     if (adminLabel) adminLabel.hidden = !isJstAccount;
     document.getElementById('settingsAdminBtn').hidden = !isJstAccount;
-    const chatgptCard = document.getElementById('chatgptPromptCard');
-    if (chatgptCard) chatgptCard.hidden = !isJstAccount;
+    window.renderSavedWords?.();
     const canImport = Boolean(currentUser && !currentUser.isGuest && selectedLanguage === 'spanish');
     for (const id of ['settingsImportKnownBtn', 'progressImportKnownBtn']) {
         const button = document.getElementById(id);
         if (button) button.disabled = !canImport;
     }
-    const importNote = document.getElementById('settingsDataActionStatus');
+    const importNote = document.getElementById('settingsImportNote');
     if (importNote) importNote.textContent = canImport ? ''
         : currentUser?.isGuest ? 'Sign in to import known words.'
         : 'Import is currently available for Spanish speech.';
@@ -3412,8 +3411,12 @@ function setupSettingsOverview() {
     });
     go('settingsAccountBtn', 'account');
     go('settingsAdminBtn', 'appData');
-    document.getElementById('settingsAboutBtn')?.addEventListener('click', () =>
-        document.getElementById('aboutProjectSettingsRow')?.click());
+    // About is a full page that replaces Settings; its back button returns
+    // to the Settings tab it was opened from.
+    document.getElementById('settingsAboutBtn')?.addEventListener('click', () => {
+        hideSettingsModal();
+        window.openAboutProjectModal?.({ returnTo: () => showSettingsModalWithTab('study') });
+    });
     const runImport = () => {
         if (!currentUser || currentUser.isGuest || selectedLanguage !== 'spanish') return;
         window.openVocabularyImportModal?.();

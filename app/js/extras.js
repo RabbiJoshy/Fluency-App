@@ -1245,25 +1245,10 @@ function initExtras() {
     document.addEventListener('keydown', event => {
         if (event.key === 'Escape') {
             closeExtras();
-            closeSavedWords();
         }
     });
 
-    document.getElementById('closeSavedWordsModal')?.addEventListener('click', closeSavedWords);
-    document.getElementById('savedWordsModal')?.addEventListener('click', event => {
-        if (event.target?.id === 'savedWordsModal') closeSavedWords();
-    });
     document.getElementById('downloadSavedWordsBtn')?.addEventListener('click', downloadSavedWords);
-    document.getElementById('settingsSavedWordsBtn')?.addEventListener('click', () => {
-        // On a wide screen saved words stacks over settings (side-dock.js),
-        // so closing it returns to settings; elsewhere it replaces settings,
-        // and its ‹ is the way back.
-        window.attachSettingsReturn?.('savedWordsModal', closeSavedWords);
-        if (!window.sideDock?.keepsSettingsOpen()) {
-            document.getElementById('settingsModal')?.classList.add('hidden');
-        }
-        openSavedWords();
-    });
 
     refreshExtrasButtons();
 }
@@ -1314,10 +1299,15 @@ function toggleSavedWord(entry) {
     return index < 0;
 }
 
+// Saved words live in Settings → Your words, under the other word tools,
+// rather than in a sheet of their own. Download appears only when there is
+// something to download.
 function renderSavedWords() {
     const body = document.getElementById('savedWordsBody');
     if (!body) return;
     const items = loadSavedWords();
+    const download = document.getElementById('downloadSavedWordsBtn');
+    if (download) download.hidden = items.length === 0;
     if (items.length === 0) {
         body.innerHTML = '<p class="saved-words-empty">No saved words yet. Save one from Word by word on a sentence.</p>';
         return;
@@ -1337,12 +1327,7 @@ function _escapeHtml(value) {
 }
 
 function openSavedWords() {
-    renderSavedWords();
-    document.getElementById('savedWordsModal')?.classList.remove('hidden');
-}
-
-function closeSavedWords() {
-    document.getElementById('savedWordsModal')?.classList.add('hidden');
+    globalThis.showSettingsModalWithTab?.('vocabulary');
 }
 
 function downloadSavedWords() {
@@ -1367,6 +1352,7 @@ globalThis.openMergedForms = openMergedForms;
 globalThis.openSkippedWords = openSkippedWords;
 globalThis.openExtras = openExtras;
 globalThis.openSavedWords = openSavedWords;
+globalThis.renderSavedWords = renderSavedWords;
 globalThis.toggleSavedWord = toggleSavedWord;
 globalThis.isWordSaved = isWordSaved;
 globalThis.collectExtras = collectExtras;

@@ -22567,3 +22567,46 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
     .card-tutorial-note:not(.is-active):hover { opacity: 0.8; }
     .card-tutorial-note { transition: background 0.15s ease, border-color 0.15s ease, opacity 0.2s ease; }
 }
+
+/* ===== Settings → Your words: one row pattern =====
+   Every item is a row: its name, one line on what it does, and the action on
+   the right as a small pill. Import and export lead and carry the accent;
+   Saved words is the same row with its list beneath. */
+#settingsModal .settings-words-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  width: 100%; padding: 13px 0;
+  border: 0; border-top: 1px solid var(--border-color);
+  background: transparent; color: var(--text-primary); text-align: left;
+}
+#settingsModal .settings-pane > .settings-words-row:first-of-type { border-top: 0; }
+#settingsModal .settings-words-row > span:first-child { min-width: 0; }
+#settingsModal .settings-words-row strong,
+#settingsModal .settings-words-row small { display: block; }
+#settingsModal .settings-words-row strong { font-size: 13px; }
+#settingsModal .settings-words-row small { margin-top: 3px; color: var(--text-muted); font-size: 11px; line-height: 1.4; }
+#settingsModal .settings-words-action,
+#settingsModal .settings-link-row.settings-words-row > span.settings-words-action {
+  flex: none; padding: 7px 13px;
+  border: 1px solid var(--border-color); border-radius: 999px;
+  background: var(--bg-tertiary); color: var(--text-primary);
+  font: 650 12px/1 var(--font-reading); text-transform: none; letter-spacing: 0; cursor: pointer;
+}
+#settingsModal .settings-link-row.settings-words-row.is-primary > span.settings-words-action {
+  border-color: color-mix(in srgb, var(--accent-primary) 55%, var(--border-color));
+  background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
+  color: var(--accent-primary);
+}
+#settingsModal button.settings-words-row:hover .settings-words-action { border-color: var(--accent-primary); }
+#settingsModal button.settings-words-row:disabled { cursor: not-allowed; }
+#settingsModal button.settings-words-row:disabled .settings-words-action { opacity: .45; }
+#settingsModal .settings-words-action[hidden] { display: none; }
+#settingsModal .settings-words-status { margin: 0; }
+#settingsModal .settings-words-status:empty { display: none; }
+#settingsModal .settings-words-status:not(:empty) { margin: -4px 0 10px; }
+#settingsModal .settings-words-saved { border-top: 1px solid var(--border-color); }
+#settingsModal .settings-words-saved-head { border-top: 0; }
+#settingsModal .settings-words-saved-list { padding: 0 0 10px; }
+#settingsModal .settings-words-saved-list .saved-words-empty { margin: 0; color: var(--text-muted); font-size: 12px; }
+#settingsModal .settings-words-saved-list .extras-list { margin: 0; }
+#settingsModal .settings-words-row small.settings-words-note { color: var(--text-secondary); }
+#settingsModal .settings-words-row small.settings-words-note:empty { display: none; }

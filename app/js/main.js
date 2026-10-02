@@ -2176,8 +2176,17 @@ function isFindWordOpen() {
     return Boolean(modal && !modal.classList.contains('hidden'));
 }
 
+// Opened from Settings, closing the search goes back to Settings (on the tab
+// it came from) rather than leaving the learner on the bare page. A card
+// opened from the results returns to the search first, so this survives it.
+let _findWordReturnsToSettings = false;
+
 function closeFindWord() {
     document.getElementById('findWordModal')?.classList.add('hidden');
+    if (_findWordReturnsToSettings) {
+        _findWordReturnsToSettings = false;
+        window.showSettingsModalWithTab?.('study');
+    }
 }
 
 function moveFindWordHighlight(delta) {
@@ -2218,7 +2227,9 @@ function setupFindWord() {
     }
 
     async function openFindWord() {
-        document.getElementById('settingsModal')?.classList.add('hidden');
+        const settings = document.getElementById('settingsModal');
+        _findWordReturnsToSettings = Boolean(settings && !settings.classList.contains('hidden'));
+        settings?.classList.add('hidden');
         modal.classList.remove('hidden');
         input.value = '';
         _findWordFilter = 'all';

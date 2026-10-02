@@ -1528,20 +1528,6 @@
     </div>
 
     <!-- Saved words from sentence breakdown. Not a study queue. -->
-    <div id="savedWordsModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div><span class="product-modal-eyebrow">Personal</span><h3>Saved words</h3></div>
-                <button class="modal-close" id="closeSavedWordsModal" aria-label="Close">✕</button>
-            </div>
-            <p class="extras-intro">Words you saved from a sentence. They are not study cards. A later request button can cover words, languages, and features.</p>
-            <div class="saved-words-toolbar">
-                <button type="button" class="extras-restore" id="downloadSavedWordsBtn">Download JSON</button>
-            </div>
-            <div class="extras-body" id="savedWordsBody"></div>
-        </div>
-    </div>
-
     <!-- Keyboard Shortcuts Modal -->
     <div id="keyboardShortcutsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="keyboardShortcutsTitle">
         <div class="modal-content keyboard-shortcuts-content" style="max-width: 480px;">
@@ -1896,14 +1882,20 @@
                 </section>
                 <section class="settings-overview-section settings-pane" id="settingsPaneWords" role="tabpanel" data-settings-pane="words" aria-labelledby="settingsWordsTitle">
                     <div class="settings-defaults-heading"><strong id="settingsWordsTitle">Your words</strong></div>
-                    <button type="button" class="settings-link-row" id="settingsFindWordBtn" data-open-find-word><span><strong>Find a word</strong><small>Look up any word in this language. On a computer, press Cmd+F or Ctrl+F.</small></span><span aria-hidden="true">›</span></button>
-                    <div class="settings-data-actions">
-                        <button type="button" id="settingsImportKnownBtn">Import known words</button>
-                        <button type="button" id="settingsExportMistakesBtn">Export mistakes</button>
+                    <!-- One pattern for every item: what it is, what it does, and
+                         the action on the right. -->
+                    <button type="button" class="settings-link-row settings-words-row is-primary" id="settingsImportKnownBtn"><span><strong>Import known words</strong><small>Paste words or upload a text, CSV or TSV file. Review changes before importing.</small><small class="settings-words-note" id="settingsImportNote"></small></span><span class="settings-words-action">Import</span></button>
+                    <button type="button" class="settings-link-row settings-words-row is-primary" id="settingsExportMistakesBtn"><span><strong>Export mistakes</strong><small>Download your mistake history as a CSV.</small></span><span class="settings-words-action">Download</span></button>
+                    <p id="settingsDataActionStatus" class="settings-compact-note settings-words-status" role="status" aria-live="polite"></p>
+                    <button type="button" class="settings-link-row settings-words-row" id="settingsFindWordBtn" data-open-find-word><span><strong>Find a word</strong><small>Look up any word in this language. On a computer, press Cmd+F or Ctrl+F.</small></span><span class="settings-words-action">Search</span></button>
+                    <div class="settings-words-saved" aria-labelledby="savedWordsTitle">
+                        <div class="settings-words-row settings-words-saved-head">
+                            <span><strong id="savedWordsTitle">Saved words</strong><small>Words you saved from a sentence. They are not study cards.</small></span>
+                            <button type="button" class="settings-words-action" id="downloadSavedWordsBtn" hidden>Download</button>
+                        </div>
+                        <div class="settings-words-saved-list" id="savedWordsBody"></div>
                     </div>
-                    <p id="settingsDataActionStatus" class="settings-compact-note" role="status" aria-live="polite"></p>
-                    <button type="button" class="settings-link-row" id="settingsSavedWordsBtn"><span><strong>Saved words</strong><small>Words you marked while reading a sentence. This is a personal list, not a study set.</small></span><span aria-hidden="true">›</span></button>
-                    <!-- Owner only for now (showSettingsModalWithTab). -->
+                    <!-- Hidden for everyone for now; may come back. -->
                     <section class="settings-feature-card" id="chatgptPromptCard" aria-labelledby="chatgptPromptTitle" hidden>
                         <span class="settings-feature-icon" aria-hidden="true">💬</span>
                         <div>
