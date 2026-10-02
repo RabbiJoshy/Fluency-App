@@ -1,10 +1,10 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=a95cd200';
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=a95cd200';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=a95cd200';
-import { dbGet, dbPut } from './offline-db.js?v=a95cd200';
-import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=a95cd200';
+import './state.js?v=b959a6e8';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=b959a6e8';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=b959a6e8';
+import { dbGet, dbPut } from './offline-db.js?v=b959a6e8';
+import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=b959a6e8';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -13,7 +13,7 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=a95cd200';
+} from './sync-queue.js?v=b959a6e8';
 
 const AUDIT_ACCOUNT_INITIALS = new Set(['JST', 'JSTA']);
 
@@ -1323,9 +1323,10 @@ function _appendAboutFootnotes(body) {
 function _updateAboutCloseButton() {
     const btn = document.getElementById('closeAboutProjectModal');
     if (!btn) return;
-    btn.textContent = '← Back to app';
+    const label = _aboutReturnTo ? 'Back to Settings' : 'Back to app';
+    btn.textContent = `← ${label}`;
     btn.classList.add('about-close-as-pill');
-    btn.setAttribute('aria-label', 'Back to app');
+    btn.setAttribute('aria-label', label);
 }
 
 // Append CTAs to the rendered About body so a first-time visitor has a direct
@@ -1342,7 +1343,8 @@ function _appendAboutCTAs(body) {
         const name = currentUser.isGuest ? 'Guest' : (currentUser.initials || 'Back');
         cta.innerHTML =
             '<button type="button" class="about-cta-btn primary" id="aboutCTABack">'
-            + 'Back to the app' + (currentUser.isGuest ? '' : ' (' + name + ')') + '</button>';
+            + (_aboutReturnTo ? 'Back to Settings'
+                : 'Back to the app' + (currentUser.isGuest ? '' : ' (' + name + ')')) + '</button>';
         body.appendChild(cta);
         document.getElementById('aboutCTABack').addEventListener('click', hideAboutProjectModal);
     } else {
@@ -1366,7 +1368,12 @@ function _appendAboutCTAs(body) {
 }
 
 let _aboutMarkdownCache = null;
-async function openAboutProjectModal() {
+// Set when About was opened from somewhere it should go back to (Settings);
+// closing About runs it instead of leaving the learner on the bare app.
+let _aboutReturnTo = null;
+
+async function openAboutProjectModal({ returnTo = null } = {}) {
+    _aboutReturnTo = typeof returnTo === 'function' ? returnTo : null;
     const modal = document.getElementById('aboutProjectModal');
     const body = document.getElementById('aboutProjectBody');
     modal.classList.remove('hidden');
@@ -1403,6 +1410,9 @@ function hideAboutProjectModal() {
     modal.classList.add('hidden');
     modal.querySelectorAll('video').forEach(v => { try { v.pause(); } catch (_) {} });
     _setAboutURLParam(false);
+    const returnTo = _aboutReturnTo;
+    _aboutReturnTo = null;
+    returnTo?.();
 }
 
 // ----- About-modal card demos --------------------------------------------------
@@ -1897,14 +1907,14 @@ function setupAuthEventListeners() {
     });
     wireAccountPassword();
 
-    // Settings → Account → "About this project" row. Dismisses settings and
-    // opens the landing page modal so signed-in users can revisit the
-    // explainer after using the app for a bit.
+    // Settings → Account → "About this project" row. Replaces settings with
+    // the landing page so signed-in users can revisit the explainer; its back
+    // button returns to Account.
     const aboutSettingsRow = document.getElementById('aboutProjectSettingsRow');
     if (aboutSettingsRow) {
         aboutSettingsRow.addEventListener('click', function() {
             hideSettingsModal();
-            openAboutProjectModal();
+            openAboutProjectModal({ returnTo: () => showSettingsModalWithTab('account') });
         });
     }
 

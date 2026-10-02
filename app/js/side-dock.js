@@ -133,7 +133,7 @@ const OCCUPANTS = [
     { id: 'settingsModal', home: 'left', settings: true,
       centred: el => !el.classList.contains('settings-study-only'),
       open: isShown, close: closeButtonFor('settingsModal') },
-    ...['savedWordsModal', 'statsModal', 'totalStatsModal', 'reviewHomeModal', 'spacedRepetitionInfoModal', 'keyboardShortcutsModal', 'helpModal'].map(id => ({
+    ...['statsModal', 'totalStatsModal', 'reviewHomeModal', 'spacedRepetitionInfoModal', 'keyboardShortcutsModal', 'helpModal'].map(id => ({
         id, home: 'left', stacks: true,
         stackOver: id === 'spacedRepetitionInfoModal' ? 'reviewHomeModal' : null,
         open: isShown, close: closeButtonFor(id) })),
