@@ -141,3 +141,126 @@ def card_cognate(
         if weakest[0] == 0.0:
             break
     return weakest
+
+
+RADICAL_REFLEXIVE_ROOTS: Mapping[str, frozenset[str]] = {
+    "es": frozenset({
+        "llamar", "ir", "quedar", "parecer", "poner", "sentir",
+        "volver", "acordar", "despedir", "dormir", "fijar", "negar", "ocupar"
+    }),
+    "pt": frozenset({
+        "chamar", "ir", "ficar", "parecer", "pôr", "sentir",
+        "voltar", "lembrar", "despedir", "dormir", "ocupar"
+    }),
+}
+
+
+def clean_headword(hw: Any) -> str:
+    token = normal_token(hw)
+    if token.endswith("se") and len(token) > 3:
+        return token[:-2]
+    return token
+
+
+def detect_split_card_tuples(
+    row: Mapping[str, Any],
+    language: str = "es",
+) -> dict[str, Any] | None:
+    word = normal_token(row.get("word"))
+    meanings = row.get("meanings") or []
+    lex = [m for m in meanings if not is_expression_sense(m, word)]
+    if len(lex) < 4:
+        return None
+
+    # Class 1: True Homograph (Distinct base headwords, e.g. ser vs ir, paso vs pasar)
+    hws: dict[str, list[dict[str, Any]]] = {}
+    for m in lex:
+        hw = clean_headword(m.get("headword") or word)
+        hws.setdefault(hw, []).append(m)
+
+    collapsed: dict[str, list[dict[str, Any]]] = {}
+    for hw, ms in hws.items():
+        matched = False
+        for c in collapsed:
+            c_root = c.rstrip("osae")
+            hw_root = hw.rstrip("osae")
+            if c_root == hw_root and len(c_root) >= 3:
+                collapsed[c].extend(ms)
+                matched = True
+                break
+        if not matched:
+            collapsed[hw] = ms
+
+    total_len = len(lex)
+    viable = {
+        hw: ms for hw, ms in collapsed.items()
+        if (len(ms) / total_len >= 0.14 and len(ms) >= 1)
+    }
+    if len(viable) >= 2:
+        sorted_v = sorted(viable.items(), key=lambda x: len(x[1]), reverse=True)[:2]
+        hw1, ms1 = sorted_v[0]
+        hw2, ms2 = sorted_v[1]
+        tr1 = ms1[0].get("translation") or ms1[0].get("meaning") or ""
+        tr2 = ms2[0].get("translation") or ms2[0].get("meaning") or ""
+        pos1 = str(ms1[0].get("pos") or "X").upper()
+        pos2 = str(ms2[0].get("pos") or "X").upper()
+        return {
+            "kind": "homograph",
+            "tuple1": {
+                "headword": hw1,
+                "pos": pos1,
+                "label": f"{hw1} ({tr1})",
+                "meanings": ms1,
+                "share": round(len(ms1) / total_len, 2),
+                "isReflexive": False,
+            },
+            "tuple2": {
+                "headword": hw2,
+                "pos": pos2,
+                "label": f"{hw2} ({tr2})",
+                "meanings": ms2,
+                "share": round(len(ms2) / total_len, 2),
+                "isReflexive": False,
+            },
+        }
+
+    # Class 2: Radical Reflexive Shift
+    base_m = [m for m in lex if not normal_token(m.get("headword")).endswith("se")]
+    refl_m = [m for m in lex if normal_token(m.get("headword")).endswith("se")]
+    if len(base_m) >= 1 and len(refl_m) >= 1:
+        base_hws = {normal_token(m.get("headword") or word) for m in base_m}
+        refl_hws = {normal_token(m.get("headword")) for m in refl_m}
+        roots = RADICAL_REFLEXIVE_ROOTS.get(language, RADICAL_REFLEXIVE_ROOTS["es"])
+        matched_root = None
+        for root in roots:
+            if root in base_hws or any(r.startswith(root) for r in refl_hws):
+                matched_root = root
+                break
+        if matched_root and (len(refl_m) / total_len >= 0.14):
+            tr1 = base_m[0].get("translation") or base_m[0].get("meaning") or ""
+            tr2 = refl_m[0].get("translation") or refl_m[0].get("meaning") or ""
+            pos1 = str(base_m[0].get("pos") or "VERB").upper()
+            pos2 = str(refl_m[0].get("pos") or "VERB").upper()
+            return {
+                "kind": "reflexive",
+                "root": matched_root,
+                "tuple1": {
+                    "headword": matched_root,
+                    "pos": pos1,
+                    "label": f"{matched_root} ({tr1})",
+                    "meanings": base_m,
+                    "share": round(len(base_m) / total_len, 2),
+                    "isReflexive": False,
+                },
+                "tuple2": {
+                    "headword": f"{matched_root}se",
+                    "pos": pos2,
+                    "label": f"{matched_root}se ({tr2})",
+                    "meanings": refl_m,
+                    "share": round(len(refl_m) / total_len, 2),
+                    "isReflexive": True,
+                },
+            }
+
+    return None
+

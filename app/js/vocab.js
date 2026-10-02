@@ -957,10 +957,145 @@ function dedupeLemmaMenu(meanings) {
     }
     return kept;
 }
+
+const RADICAL_REFLEXIVE_ROOTS = {
+    es: new Set([
+        'llamar', 'ir', 'quedar', 'parecer', 'poner', 'sentir',
+        'volver', 'acordar', 'despedir', 'dormir', 'fijar', 'negar', 'ocupar'
+    ]),
+    pt: new Set([
+        'chamar', 'ir', 'ficar', 'parecer', 'pôr', 'sentir',
+        'voltar', 'lembrar', 'despedir', 'dormir', 'ocupar'
+    ])
+};
+
+function cleanHeadwordToken(hw) {
+    const token = normalizeLemmaToken(hw);
+    if (token.endsWith('se') && token.length > 3) {
+        return token.slice(0, -2);
+    }
+    return token;
+}
+
+function detectSplitCardTuples(item, lang = 'es') {
+    const word = normalizeLemmaToken(item?.word || item?.targetWord);
+    const meanings = Array.isArray(item?.meanings) ? item.meanings : [];
+    const lex = meanings.filter(m => m && !isExpressionSenseForLemma(m, item));
+    if (lex.length < 4) return null;
+
+    // Class 1: True Homograph (Distinct base headwords, e.g. ser vs ir, paso vs pasar)
+    const hws = new Map();
+    for (const m of lex) {
+        const hw = cleanHeadwordToken(m.headword || word);
+        if (!hws.has(hw)) hws.set(hw, []);
+        hws.get(hw).push(m);
+    }
+
+    const collapsed = new Map();
+    for (const [hw, ms] of hws.entries()) {
+        let matched = false;
+        for (const c of collapsed.keys()) {
+            const cRoot = c.replace(/[osae]+$/u, '');
+            const hwRoot = hw.replace(/[osae]+$/u, '');
+            if (cRoot === hwRoot && cRoot.length >= 3) {
+                collapsed.get(c).push(...ms);
+                matched = true;
+                break;
+            }
+        }
+        if (!matched) collapsed.set(hw, [...ms]);
+    }
+
+    const totalLen = lex.length;
+    const viable = [];
+    for (const [hw, ms] of collapsed.entries()) {
+        if (ms.length / totalLen >= 0.14 && ms.length >= 1) {
+            viable.push([hw, ms]);
+        }
+    }
+
+    if (viable.length >= 2) {
+        viable.sort((a, b) => b[1].length - a[1].length);
+        const [hw1, ms1] = viable[0];
+        const [hw2, ms2] = viable[1];
+        const tr1 = String(ms1[0]?.translation || ms1[0]?.meaning || '').trim();
+        const tr2 = String(ms2[0]?.translation || ms2[0]?.meaning || '').trim();
+        const pos1 = String(ms1[0]?.pos || 'X').toUpperCase();
+        const pos2 = String(ms2[0]?.pos || 'X').toUpperCase();
+        return {
+            kind: 'homograph',
+            tuple1: {
+                headword: hw1,
+                pos: pos1,
+                label: `${hw1} (${tr1})`,
+                meanings: ms1,
+                share: Math.round((ms1.length / totalLen) * 100) / 100,
+                isReflexive: false
+            },
+            tuple2: {
+                headword: hw2,
+                pos: pos2,
+                label: `${hw2} (${tr2})`,
+                meanings: ms2,
+                share: Math.round((ms2.length / totalLen) * 100) / 100,
+                isReflexive: false
+            }
+        };
+    }
+
+    // Class 2: Radical Reflexive Shift
+    const baseM = lex.filter(m => !normalizeLemmaToken(m.headword).endsWith('se'));
+    const reflM = lex.filter(m => normalizeLemmaToken(m.headword).endsWith('se'));
+    if (baseM.length >= 1 && reflM.length >= 1) {
+        const baseHws = new Set(baseM.map(m => normalizeLemmaToken(m.headword || word)));
+        const reflHws = new Set(reflM.map(m => normalizeLemmaToken(m.headword)));
+        const langKey = String(lang || 'es').slice(0, 2).toLowerCase();
+        const roots = RADICAL_REFLEXIVE_ROOTS[langKey] || RADICAL_REFLEXIVE_ROOTS.es;
+        let matchedRoot = null;
+        for (const root of roots) {
+            if (baseHws.has(root) || Array.from(reflHws).some(r => r.startsWith(root))) {
+                matchedRoot = root;
+                break;
+            }
+        }
+        if (matchedRoot && (reflM.length / totalLen >= 0.14)) {
+            const tr1 = String(baseM[0]?.translation || baseM[0]?.meaning || '').trim();
+            const tr2 = String(reflM[0]?.translation || reflM[0]?.meaning || '').trim();
+            const pos1 = String(baseM[0]?.pos || 'VERB').toUpperCase();
+            const pos2 = String(reflM[0]?.pos || 'VERB').toUpperCase();
+            return {
+                kind: 'reflexive',
+                root: matchedRoot,
+                tuple1: {
+                    headword: matchedRoot,
+                    pos: pos1,
+                    label: `${matchedRoot} (${tr1})`,
+                    meanings: baseM,
+                    share: Math.round((baseM.length / totalLen) * 100) / 100,
+                    isReflexive: false
+                },
+                tuple2: {
+                    headword: `${matchedRoot}se`,
+                    pos: pos2,
+                    label: `${matchedRoot}se (${tr2})`,
+                    meanings: reflM,
+                    share: Math.round((reflM.length / totalLen) * 100) / 100,
+                    isReflexive: true
+                }
+            };
+        }
+    }
+
+    return null;
+}
+
 // /lemma-merge-pure
 // Cognate mode asks the same question per sense: an expression is never a
 // free cognate, so it reads the one definition of "expression" there is.
 globalThis.isExpressionSenseForLemma = isExpressionSenseForLemma;
+globalThis.detectSplitCardTuples = detectSplitCardTuples;
+globalThis.cleanHeadwordToken = cleanHeadwordToken;
+globalThis.RADICAL_REFLEXIVE_ROOTS = RADICAL_REFLEXIVE_ROOTS;
 
 function computeLemmaExampleCounts(vocabData, examplesData) {
     const linesByLemma = new Map();
@@ -3107,13 +3242,90 @@ async function loadVocabularyData(rangeString, opts = {}) {
             card.cognate_scores = item.cognate_scores ?? null;
             card.translationUnavailable = meanings.every(meaning => !String(meaning.meaning || '').trim());
             card.artistVocabularyScope = activeArtist ? artistVocabularyScope : null;
-            // Sets and Review share one card shape: known senses greyed,
-            // the rest fronted and answered. Review skips a word with
-            // nothing left to practise.
-            const deckCard = buildKnowledgeAwareCard(card, {
-                skipWhenNothingToPractise: studyMode === 'review'
-            });
-            if (deckCard) flashcards.push(deckCard);
+
+            const splitTuples = detectSplitCardTuples(item, selectedLanguage);
+            if (splitTuples && splitTuples.tuple1 && splitTuples.tuple2) {
+                const t1 = splitTuples.tuple1;
+                const t2 = splitTuples.tuple2;
+                const baseFullId = getWordId(item);
+                const baseId = item.id;
+
+                const firstEx1 = t1.meanings.length > 0
+                    ? {
+                        targetSentence: t1.meanings[0].targetSentence || '',
+                        englishSentence: t1.meanings[0].englishSentence || '',
+                    }
+                    : { targetSentence: '', englishSentence: '' };
+                const firstEx2 = t2.meanings.length > 0
+                    ? {
+                        targetSentence: t2.meanings[0].targetSentence || '',
+                        englishSentence: t2.meanings[0].englishSentence || '',
+                    }
+                    : { targetSentence: '', englishSentence: '' };
+
+                const card1 = {
+                    ...card,
+                    id: `${baseId}::split::${t1.headword}_${t1.pos}`,
+                    fullId: `${baseFullId}::split::${t1.headword}_${t1.pos}`,
+                    citationForm: t1.headword,
+                    partOfSpeech: t1.pos,
+                    meanings: t1.meanings,
+                    translation: t1.meanings[0]?.meaning || '',
+                    targetSentence: firstEx1.targetSentence,
+                    englishSentence: firstEx1.englishSentence,
+                    splitInfo: {
+                        index: 1,
+                        total: 2,
+                        kind: splitTuples.kind,
+                        headword: t1.headword,
+                        label: t1.label,
+                        share: t1.share,
+                        siblingHeadword: t2.headword,
+                        siblingLabel: t2.label,
+                        siblingShare: t2.share
+                    }
+                };
+
+                const card2 = {
+                    ...card,
+                    id: `${baseId}::split::${t2.headword}_${t2.pos}`,
+                    fullId: `${baseFullId}::split::${t2.headword}_${t2.pos}`,
+                    citationForm: t2.headword,
+                    partOfSpeech: t2.pos,
+                    meanings: t2.meanings,
+                    translation: t2.meanings[0]?.meaning || '',
+                    targetSentence: firstEx2.targetSentence,
+                    englishSentence: firstEx2.englishSentence,
+                    splitInfo: {
+                        index: 2,
+                        total: 2,
+                        kind: splitTuples.kind,
+                        headword: t2.headword,
+                        label: t2.label,
+                        share: t2.share,
+                        siblingHeadword: t1.headword,
+                        siblingLabel: t1.label,
+                        siblingShare: t1.share
+                    }
+                };
+
+                const deckCard1 = buildKnowledgeAwareCard(card1, {
+                    skipWhenNothingToPractise: studyMode === 'review'
+                });
+                const deckCard2 = buildKnowledgeAwareCard(card2, {
+                    skipWhenNothingToPractise: studyMode === 'review'
+                });
+                if (deckCard1) flashcards.push(deckCard1);
+                if (deckCard2) flashcards.push(deckCard2);
+            } else {
+                // Sets and Review share one card shape: known senses greyed,
+                // the rest fronted and answered. Review skips a word with
+                // nothing left to practise.
+                const deckCard = buildKnowledgeAwareCard(card, {
+                    skipWhenNothingToPractise: studyMode === 'review'
+                });
+                if (deckCard) flashcards.push(deckCard);
+            }
         }
 
         if (flashcards.length === 0) {
@@ -3998,6 +4210,7 @@ window.generateLinks = generateLinks;
 window.getExampleFromMeaning = getExampleFromMeaning;
 window.getVocabularyExclusionReason = getVocabularyExclusionReason;
 window.buildWordLookupMap = buildWordLookupMap;
+window.detectSplitCardTuples = detectSplitCardTuples;
 
 // Extras reports the forms merging absorbed, and must group them exactly as
 // the filter did. Exporting the rule keeps one definition of it.

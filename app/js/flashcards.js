@@ -6046,11 +6046,22 @@ function renderCardWikipediaBadge(card) {
     const notableSurfaceRelation = getNotableSurfaceRelation(card);
     const frontSurfaceRelationEl = document.getElementById('frontSurfaceRelation');
     if (frontSurfaceRelationEl) {
-        const showRelation = Boolean(notableSurfaceRelation && !isFlipped && !flippedFrontMeanings);
-        frontSurfaceRelationEl.hidden = !showRelation;
-        frontSurfaceRelationEl.textContent = showRelation
-            ? `${notableSurfaceRelation.surface} → ${notableSurfaceRelation.canonical}`
-            : '';
+        if (card.splitInfo && !isFlipped && !flippedFrontMeanings) {
+            const s = card.splitInfo;
+            const activePill = `<span class="split-card-pill is-active"><span class="split-card-dot" aria-hidden="true">●</span> Card ${s.index} of ${s.total}: <strong>${escapeCardText(s.headword)}</strong></span>`;
+            const otherIndex = s.index === 1 ? 2 : 1;
+            const otherPill = `<span class="split-card-pill is-companion"><span class="split-card-dot" aria-hidden="true">○</span> Card ${otherIndex} of ${s.total}: <strong>${escapeCardText(s.siblingHeadword)}</strong></span>`;
+            frontSurfaceRelationEl.className = 'surface-relation-cue front-surface-relation split-card-banner';
+            frontSurfaceRelationEl.hidden = false;
+            frontSurfaceRelationEl.innerHTML = s.index === 1 ? `${activePill} ${otherPill}` : `${otherPill} ${activePill}`;
+        } else {
+            frontSurfaceRelationEl.className = 'surface-relation-cue front-surface-relation';
+            const showRelation = Boolean(notableSurfaceRelation && !isFlipped && !flippedFrontMeanings);
+            frontSurfaceRelationEl.hidden = !showRelation;
+            frontSurfaceRelationEl.textContent = showRelation
+                ? `${notableSurfaceRelation.surface} → ${notableSurfaceRelation.canonical}`
+                : '';
+        }
     }
 
     const frontWordEl = document.getElementById('frontWord');
@@ -6336,10 +6347,14 @@ function renderCardWikipediaBadge(card) {
             // attribute context by escapeCardText.
             const breakdown = escapeCardText(JSON.stringify(
                 (card.sourceFrequencyBreakdown || []).map(row => [row.surface, row.value])));
+            const isSplit = Boolean(card.splitInfo);
+            const splitSubtext = isSplit
+                ? `<span class="card-stat-unit card-stat-unit--below split-freq-subtext">${Math.round(card.splitInfo.share * 100)}% ${escapeCardText(card.splitInfo.headword)} · ${Math.round(card.splitInfo.siblingShare * 100)}% ${escapeCardText(card.splitInfo.siblingHeadword)}</span>`
+                : (perMillion ? '<span class="card-stat-unit card-stat-unit--below">per million</span>' : '');
             freqHtml = `<button class="card-freq-btn card-stat card-stat--end card-freq-label" onclick="window.showFreqInfo(event)" data-frequency-source="${source}" data-frequency-unit="${card.sourceFrequencyUnit || ''}" data-frequency-forms="${Number(card.sourceFrequencyForms) || 1}" data-frequency-is-total="${card.sourceFrequencyIsGroupTotal ? '1' : ''}" data-frequency-basis-surface="${escapeCardText(card.sourceFrequencyBasisSurface || '')}" data-frequency-breakdown="${breakdown}" aria-label="Source frequency information">`
                 + `<span class="card-stat-label">${label}</span>`
                 + `<span class="card-stat-line"><strong class="card-stat-value">${formatCardFrequency(card.sourceFrequency)}</strong></span>`
-                + (perMillion ? '<span class="card-stat-unit card-stat-unit--below">per million</span>' : '')
+                + splitSubtext
                 + '</button>';
         }
         // The deck's size sits small under the rank, as "per million" does
@@ -6503,6 +6518,15 @@ function renderCardWikipediaBadge(card) {
            </div>`
         : '';
 
+    let backSplitBadgeHTML = '';
+    let backSplitCompanionCueHTML = '';
+    if (card.splitInfo) {
+        const s = card.splitInfo;
+        const otherIndex = s.index === 1 ? 2 : 1;
+        backSplitBadgeHTML = `<span class="split-card-back-badge">Card ${s.index} of ${s.total}</span>`;
+        backSplitCompanionCueHTML = `<div class="split-card-companion-cue">🔗 Companion: Card ${otherIndex} of ${s.total} · <strong>${escapeCardText(s.siblingHeadword)}</strong> (${Math.round(s.siblingShare * 100)}%)</div>`;
+    }
+
     // line-height: 1.1 keeps multi-line wraps tight (long word + lemma
     // on narrow viewports) so the header grows by a reasonable amount
     // rather than adding a full line of whitespace each wrap. Single-line
@@ -6516,9 +6540,10 @@ function renderCardWikipediaBadge(card) {
         <div class="back-header">
             <div class="flip-back-area" id="flipBackArea">
                 <div class="back-headword-row">
-                    <span class="back-headword${backHeadwordPairClass}" style="font-size: ${backHeadwordSize}px; font-weight: bold; line-height: ${showBackLemmaPair ? 1 : 1.1};">${wordDisplay}</span>${renderCardWikipediaBadge(card)}
+                    <span class="back-headword${backHeadwordPairClass}" style="font-size: ${backHeadwordSize}px; font-weight: bold; line-height: ${showBackLemmaPair ? 1 : 1.1};">${wordDisplay}</span>${backSplitBadgeHTML}${renderCardWikipediaBadge(card)}
                     ${backPosLegendHTML}
                 </div>
+                ${backSplitCompanionCueHTML}
                 ${notableSurfaceRelation
                     ? `<div class="surface-relation-cue back-surface-relation">${escapeCardText(notableSurfaceRelation.surface)} <span aria-hidden="true">→</span> ${escapeCardText(notableSurfaceRelation.canonical)}</div>`
                     : ''}

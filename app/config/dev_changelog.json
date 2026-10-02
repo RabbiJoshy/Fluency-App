@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-02T14:48:00+01:00",
+      "date": "2026-10-02 14:48 BST",
+      "agent": "Antigravity",
+      "summary": "Cards: split heavily cluttered polysemous homographs (e.g. fue/foi for ser vs ir, radical reflexives like llamar/llamarse) into consecutive Card 1 & Card 2 companions.",
+      "detail": [
+        "Card splitting: detects distinct (lemma, POS) collisions and radical pseudo-reflexive shifts with >= 4 meanings and >= 14% share, dividing 10+ row walls of text into clean 3-4 sense cards.",
+        "Consecutive study order: sibling split cards (Card 1 of 2 and Card 2 of 2) are presented back-to-back in study sets with shared ranking.",
+        "Front-face dual declaration: front face displays an active/companion banner highlighting the current reading alongside frequency percentage breakdown (e.g. 81% ser · 19% ir).",
+        "Back-face focus: back face shows clean meanings and examples strictly for the active reading, with accurate conjugation drawer targeting.",
+        "Progress & SRS isolation: split cards use scoped IDs (::split::) so practicing or passing Card 1 does not prematurely mark Card 2 mastered."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-02T11:05:00+01:00",
       "date": "2026-10-02 11:05 BST",
       "agent": "Claude",
