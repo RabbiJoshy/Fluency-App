@@ -5666,10 +5666,10 @@ window.glossClusterProminenceState = glossClusterProminenceState;
 window.getSenseProminenceInfo = getSenseProminenceInfo;
 
 const PROMINENCE_BLURBS = {
-    dominant: 'used most often',
-    common: 'used often',
-    uncommon: 'used sometimes',
-    rare: 'used rarely',
+    dominant: 'means this most often',
+    common: 'means this often',
+    uncommon: 'means this sometimes',
+    rare: 'means this rarely',
 };
 
 function prominenceMeterHTML(key) {
