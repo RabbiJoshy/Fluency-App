@@ -5461,26 +5461,10 @@ function canonicalAsDisplayExample(meaning) {
 
 function findCanonicalForCard(card, meaning) {
     if (meaning) {
-        const direct = canonicalAsDisplayExample(meaning);
-        if (direct) return direct;
+        return canonicalAsDisplayExample(meaning);
     }
-    if (card) {
-        if (card.canonicalExample || card.canonical_example) {
-            const cardCan = canonicalAsDisplayExample(card);
-            if (cardCan) return cardCan;
-        }
-        if (Array.isArray(card.meanings)) {
-            for (const m of card.meanings) {
-                const ex = canonicalAsDisplayExample(m);
-                if (ex) return ex;
-            }
-        }
-        if (Array.isArray(card.unusedMenuSenses)) {
-            for (const u of card.unusedMenuSenses) {
-                const ex = canonicalAsDisplayExample(u);
-                if (ex) return ex;
-            }
-        }
+    if (card && (card.canonicalExample || card.canonical_example)) {
+        return canonicalAsDisplayExample(card);
     }
     return null;
 }
