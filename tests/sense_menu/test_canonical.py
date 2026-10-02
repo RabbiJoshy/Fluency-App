@@ -8,10 +8,24 @@ def wikt(**kw):
 
 
 class CanonicalExampleTests(unittest.TestCase):
-    def test_a_quotation_is_not_a_use_example(self):
-        self.assertFalse(is_proper(
+    def test_a_quotation_is_allowed_as_a_fallback_canonical_example(self):
+        self.assertTrue(is_proper(
             {"type": "quotation", "text": "Assim falou", "english": "Thus spoke",
              "ref": "Camoes"}))
+
+    def test_long_quotation_over_token_limit_is_rejected(self):
+        long_text = " ".join(["palavra"] * 36)
+        self.assertFalse(is_proper(
+            {"type": "quotation", "text": long_text, "english": "many words"}
+        ))
+
+    def test_ordinary_example_preferred_over_quotation(self):
+        sense = wikt(examples=[
+            {"type": "quotation", "text": "Assim falou Camões", "english": "Thus spoke Camoes"},
+            {"type": "example", "text": "Ele falou alto", "english": "He spoke loudly"},
+        ])
+        chosen = choose(sense)
+        self.assertEqual(chosen["text"], "Ele falou alto")
 
     def test_a_collocation_is_a_pattern_not_a_sentence(self):
         self.assertFalse(is_proper(
@@ -50,11 +64,11 @@ class CanonicalExampleTests(unittest.TestCase):
     def test_spanishdict_shape_is_read_without_knowing_the_provider(self):
         sense = {"provider_metadata": {"spanishdict": {"examples": [
             {"original": "Tenga en cuenta que es diferente.",
-             "translated": "Note that it is different."}]}}}
+              "translated": "Note that it is different."}]}}}
         self.assertEqual(choose(sense)["translation"], "Note that it is different.")
 
     def test_a_sense_with_only_unusable_examples_gets_none(self):
-        sense = wikt(examples=[{"type": "quotation", "text": "x", "english": "y"}])
+        sense = wikt(examples=[{"type": "example", "text": "sem tradução"}])
         self.assertIsNone(choose(sense))
 
 

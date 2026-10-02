@@ -373,6 +373,8 @@ class ClosedMenuWSDRunner:
         sig = inspect.signature(self.components.gloss.score)
         if "translation" in sig.parameters and request.translation:
             score_kwargs["translation"] = request.translation
+        if "target_word" in sig.parameters and request.surface_form:
+            score_kwargs["target_word"] = request.surface_form
         raw_combined_ranked = validated_leaf_scores(
             self.components.gloss.score(request.sentence, combined_analyses, **score_kwargs),
             combined_analyses,

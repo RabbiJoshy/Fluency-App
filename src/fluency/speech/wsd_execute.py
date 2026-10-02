@@ -589,7 +589,49 @@ def _translation_overlap_bonus(leaf: SenseLeaf, english_sentence: str, bonus_val
     return 0.0
 
 
-def _is_conflicting_regional_leaf(leaf: SenseLeaf, target_locale: str = "") -> bool:
+def detect_sentence_variety(sentence: str, target_word: str = "") -> str:
+    """Detect Portuguese sentence regional variety ('br', 'eu', or 'neutral').
+
+    The target_word is excluded from consideration to avoid circular reasoning.
+    """
+    cleaned = sentence
+    if target_word:
+        cleaned = re.sub(rf"\b{re.escape(target_word)}\b", " ", sentence, flags=re.IGNORECASE)
+
+    # Progressive aspect cues (syntax marker):
+    # e.g. estar/andar + gerúndio (br) vs estar/andar a + infinitivo (eu)
+    if re.search(r"\b(?:est[aáâeéií]\w*|and[aáâeéií]\w*|t[oô]|t[aá])\s+a\s+\w+[aei]r\b", sentence, re.IGNORECASE):
+        return "eu"
+    if re.search(r"\b(?:est[aáâeéií]\w*|and[aáâeéií]\w*|t[oô]|t[aá])\s+\w+ndo\b", sentence, re.IGNORECASE):
+        return "br"
+
+    # Enclisis check on full sentence: hyphenated object clitic (dá-me, amo-te, disse-lhe) is distinctly European
+    if re.search(r"\w+-(?:me|te|se|lhe|lhes|nos|vos|lo|la|los|las)\b", sentence, re.IGNORECASE):
+        return "eu"
+
+    # Brazilian cues on cleaned context:
+    # 1. Clitic proclisis at clause/sentence start: e.g. "Me dá", "Te amo"
+    if re.search(r"(?:^|[.?!,;—\-])\s*(?:me|te|se|lhe|nos)\s+[a-záàâãéêíóôõúç]+", cleaned, re.IGNORECASE):
+        return "br"
+    # 2. Brazilian-specific pronouns and expressions
+    if re.search(r"\b(você|vocês|a\s+gente)\b", cleaned, re.IGNORECASE):
+        return "br"
+    # 3. Brazilian lexis
+    if re.search(r"\b(ônibus|trem|celular|banheiro|geladeira|sorvete|bonde|xícara|grampo|moça|grana|bacana)\b", cleaned, re.IGNORECASE):
+        return "br"
+
+    # European cues on cleaned context:
+    # 1. European 2nd person pronouns
+    if re.search(r"\b(tu|teu|teus|tua|tuas|ti|contigo|vós)\b", cleaned, re.IGNORECASE):
+        return "eu"
+    # 2. European lexis
+    if re.search(r"\b(autocarro|comboio|telemóvel|casa\s+de\s+banho|frigorífico|chávena|relva|equipa|peúga|miúd[oa]s?|fixe|puto|rapariga|pequeno-almoço)\b", cleaned, re.IGNORECASE):
+        return "eu"
+
+    return "neutral"
+
+
+def _is_conflicting_regional_leaf(leaf: SenseLeaf, target_locale: str = "", sentence_variety: str = "") -> bool:
     """Return True if a leaf is explicitly marked with a conflicting region or proscribed register."""
     if not target_locale:
         return False
@@ -608,6 +650,9 @@ def _is_conflicting_regional_leaf(leaf: SenseLeaf, target_locale: str = "") -> b
         pt_markers = {"Portugal", "European", "Alentejo", "Azores", "Madeira"}
         has_brazil = any(r in brazil_markers for r in regions) or "brazil" in qual or "brazil" in ctx or "brazil" in defin
         has_pt = any(r in pt_markers for r in regions) or "portugal" in qual or "portugal" in ctx or "portugal" in defin
+        # If the sentence itself is Brazilian, Brazilian senses do not conflict
+        if sentence_variety == "br" and has_brazil:
+            return False
         if has_brazil and not has_pt:
             return True
         if "proscribed" in tags or "proscribed" in qual or "proscribed" in ctx or "proscribed" in defin:
@@ -615,7 +660,7 @@ def _is_conflicting_regional_leaf(leaf: SenseLeaf, target_locale: str = "") -> b
     return False
 
 
-def _regional_register_penalty(leaf: SenseLeaf, target_locale: str = "") -> float:
+def _regional_register_penalty(leaf: SenseLeaf, target_locale: str = "", sentence_variety: str = "") -> float:
     """Soft penalty for non-target regions and nonstandard/archaic/proscribed registers."""
     if not target_locale:
         return 0.0
@@ -636,7 +681,9 @@ def _regional_register_penalty(leaf: SenseLeaf, target_locale: str = "") -> floa
         has_brazil = any(r in brazil_markers for r in regions) or "brazil" in qual or "brazil" in ctx or "brazil" in defin
         has_pt = any(r in pt_markers for r in regions) or "portugal" in qual or "portugal" in ctx or "portugal" in defin
         if has_brazil and not has_pt:
-            penalty += 0.06
+            # If the sentence itself is Brazilian, do not penalize Brazilian senses!
+            if sentence_variety != "br":
+                penalty += 0.06
         if "proscribed" in tags or "proscribed" in qual or "proscribed" in ctx or "proscribed" in defin:
             penalty += 0.08
         elif "nonstandard" in tags or "nonstandard" in qual or "nonstandard" in ctx or "nonstandard" in defin:
@@ -668,6 +715,8 @@ class ExactTextGlossScorer:
         sentence: str,
         analyses: tuple[MenuAnalysis, ...],
         translation: str = "",
+        sentence_variety: str = "",
+        target_word: str = "",
     ) -> Sequence[LeafScore]:
         leaves = [
             (analysis.menu_analysis_id, leaf.sense_id)
@@ -679,6 +728,9 @@ class ExactTextGlossScorer:
         # choice. Do not require paid vectors merely to compare it with itself.
         if len(leaves) == 1:
             return (LeafScore(leaves[0][0], leaves[0][1], 0.0),)
+
+        if not sentence_variety and self.target_locale.startswith("pt"):
+            sentence_variety = detect_sentence_variety(sentence, target_word)
 
         import numpy as np
         query = self.vectors.get(sentence)
@@ -698,10 +750,10 @@ class ExactTextGlossScorer:
                     if vector is None:
                         raise KeyError(f"missing exact-text embedding for gloss: {gloss!r}")
                     value = float(np.dot(query, vector))
-                if translation and not _is_conflicting_regional_leaf(leaf, self.target_locale):
+                if translation and not _is_conflicting_regional_leaf(leaf, self.target_locale, sentence_variety):
                     value += _translation_overlap_bonus(leaf, translation)
                 if self.target_locale:
-                    value -= _regional_register_penalty(leaf, self.target_locale)
+                    value -= _regional_register_penalty(leaf, self.target_locale, sentence_variety)
                 scores.append(
                     LeafScore(
                         menu_analysis_id=analysis.menu_analysis_id,

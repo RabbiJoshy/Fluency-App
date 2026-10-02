@@ -11,6 +11,7 @@ from fluency.speech.wsd_execute import (
     _regional_register_penalty,
     _single_leaf_is_deterministic,
     _translation_overlap_bonus,
+    detect_sentence_variety,
     occurrence_pos_tags,
 )
 from fluency.wsd.menus import MenuAnalysis, SenseLeaf, build_analysis_id
@@ -390,6 +391,35 @@ class TranslationOverlapTests(unittest.TestCase):
         self.assertAlmostEqual(_regional_register_penalty(brazil_leaf, "pt-PT"), 0.06)
         self.assertAlmostEqual(_regional_register_penalty(portugal_leaf, "pt-PT"), 0.0)
         self.assertAlmostEqual(_regional_register_penalty(proscribed_leaf, "pt-PT"), 0.08)
+
+    def test_sentence_variety_detection(self) -> None:
+        # Brazilian cues: progressive gerund, proclisis, lexis, vocês
+        self.assertEqual(detect_sentence_variety("Você está fazendo o quê?", target_word="fazendo"), "br")
+        self.assertEqual(detect_sentence_variety("Me dá isso agora!", target_word="dá"), "br")
+        self.assertEqual(detect_sentence_variety("Eu peguei o ônibus cedo.", target_word="ônibus"), "neutral") # ônibus excluded as target
+        self.assertEqual(detect_sentence_variety("Você pegou o ônibus cedo.", target_word="pegou"), "br")
+
+        # European cues: estar a + inf, enclisis, tu
+        self.assertEqual(detect_sentence_variety("Está a fazer frio lá fora.", target_word="fazer"), "eu")
+        self.assertEqual(detect_sentence_variety("Dá-me o livro, por favor.", target_word="Dá"), "eu")
+        self.assertEqual(detect_sentence_variety("Tu tens a certeza?", target_word="tens"), "eu")
+
+    def test_dynamic_regional_scoring_based_on_sentence_variety(self) -> None:
+        brazil_leaf = SenseLeaf(
+            sense_id="sense_liga_br",
+            translation="to care (about)",
+            definition="",
+            source_reference="wiktionary:ligar",
+            provider_metadata={"regions": ["Brazil"], "tags": ["colloquial"]},
+        )
+
+        # In pt-PT for a European/neutral sentence: penalized
+        self.assertTrue(_is_conflicting_regional_leaf(brazil_leaf, "pt-PT", sentence_variety="eu"))
+        self.assertAlmostEqual(_regional_register_penalty(brazil_leaf, "pt-PT", sentence_variety="eu"), 0.06)
+
+        # In pt-PT for an authentic Brazilian sentence: NOT penalized, and not conflicting
+        self.assertFalse(_is_conflicting_regional_leaf(brazil_leaf, "pt-PT", sentence_variety="br"))
+        self.assertAlmostEqual(_regional_register_penalty(brazil_leaf, "pt-PT", sentence_variety="br"), 0.0)
 
 
 if __name__ == "__main__":

@@ -32,24 +32,35 @@ def _translation(example: Mapping[str, Any]) -> str:
             or example.get("translated") or "").strip()
 
 
+MAX_QUOTATION_TOKENS = 35
+
+
 def is_proper(example: Mapping[str, Any]) -> bool:
-    """Whether this is a usable sentence rather than a citation or a pattern.
+    """Whether this is a usable sentence rather than a pattern or fragment.
 
-    Three provider declarations, each rejecting a different thing:
-
-    - ``type: quotation`` is a literary citation carrying a ``ref``. It
-      illustrates attested use, not ordinary use.
     - ``tags: [collocation]`` is a pattern, not a sentence -- Czech
-      ``setkat se s nekym`` / *to meet someone*. A quarter of Czech canonical
-      examples are these.
+      ``setkat se s nekym`` / *to meet someone*.
+    - quotations over MAX_QUOTATION_TOKENS are rejected to avoid multi-paragraph prose.
     - no English at all is unusable on a bilingual card.
+    - non-Latin scripts (e.g. untranslated foreign citations) are unusable.
     """
 
-    if (example.get("type") or "example") != "example":
+    ex_type = example.get("type") or "example"
+    if ex_type not in {"example", "quotation"}:
         return False
     if "collocation" in (example.get("tags") or ()):
         return False
-    return bool(_text(example)) and bool(_translation(example))
+    text = _text(example)
+    trans = _translation(example)
+    if not text or not trans:
+        return False
+    tokens = len(text.split())
+    if ex_type == "quotation" and tokens > MAX_QUOTATION_TOKENS:
+        return False
+    # Basic sanity check: text should contain latin letters
+    if not any("a" <= c <= "z" or "A" <= c <= "Z" or ord(c) > 127 for c in text):
+        return False
+    return True
 
 
 def _rank(example: Mapping[str, Any]) -> tuple:
@@ -57,7 +68,10 @@ def _rank(example: Mapping[str, Any]) -> tuple:
 
     tags = tuple(example.get("tags") or ())
     tokens = len(_text(example).split())
+    ex_type = example.get("type") or "example"
     return (
+        # Ordinary illustrative examples strictly preferred to literary quotations
+        0 if ex_type == "example" else 1,
         # The headword's position is marked, so the card can highlight it and
         # the reader's eye lands in the right place.
         0 if example.get("bold_text_offsets") else 1,
