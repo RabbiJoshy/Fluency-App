@@ -589,7 +589,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('id="settingsExportMistakesBtn"', overview)
         self.assertIn('id="settingsFindWordBtn"', overview)
         self.assertIn('data-open-find-word', overview)
-        self.assertIn('id="settingsWordsDataBtn"', overview)
+        self.assertIn('id="settingsSavedWordsBtn"', overview)
         self.assertIn('id="settingsAccountBtn"', overview)
         self.assertIn('id="appearanceSettingsTitle">Theme', overview)
         self.assertIn('id="progressImportKnownBtn"', html)
