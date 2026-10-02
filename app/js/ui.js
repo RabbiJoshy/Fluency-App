@@ -718,8 +718,8 @@ const MODE_ICON_MUSIC = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" s
 function learningModeCopy(language = selectedLanguage) {
     const lyricsCatalog = config?.languages?.[language]?.capabilities?.lyrics !== false;
     return {
-        title: 'Choose your flashcard vocabulary',
-        intro: 'This decides which words become your flashcards, and their order.',
+        title: 'Choose your flashcard vocabulary source',
+        intro: 'This decides which words become your flashcards, and their order is decided by how common each word is in the source.',
         speech: {
             label: 'Everyday speech',
             description: 'From films and TV — the words people use when they talk.',
