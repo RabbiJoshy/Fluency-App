@@ -1,26 +1,26 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=b959a6e8';
-import './speech.js?v=b959a6e8';
-import { goToRoute, routeCodeFor } from './routes.js?v=b959a6e8';
-import './side-dock.js?v=b959a6e8';
+import './state.js?v=e52cad20';
+import './speech.js?v=e52cad20';
+import { goToRoute, routeCodeFor } from './routes.js?v=e52cad20';
+import './side-dock.js?v=e52cad20';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=b959a6e8';
+} from './example-personalisation.js?v=e52cad20';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=b959a6e8';
+} from './spanishdict-usage.js?v=e52cad20';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=b959a6e8';
+} from './reverse-cues.js?v=e52cad20';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -53,7 +53,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=b959a6e8';
+} from './card-metadata-pills.js?v=e52cad20';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -5461,26 +5461,10 @@ function canonicalAsDisplayExample(meaning) {
 
 function findCanonicalForCard(card, meaning) {
     if (meaning) {
-        const direct = canonicalAsDisplayExample(meaning);
-        if (direct) return direct;
+        return canonicalAsDisplayExample(meaning);
     }
-    if (card) {
-        if (card.canonicalExample || card.canonical_example) {
-            const cardCan = canonicalAsDisplayExample(card);
-            if (cardCan) return cardCan;
-        }
-        if (Array.isArray(card.meanings)) {
-            for (const m of card.meanings) {
-                const ex = canonicalAsDisplayExample(m);
-                if (ex) return ex;
-            }
-        }
-        if (Array.isArray(card.unusedMenuSenses)) {
-            for (const u of card.unusedMenuSenses) {
-                const ex = canonicalAsDisplayExample(u);
-                if (ex) return ex;
-            }
-        }
+    if (card && (card.canonicalExample || card.canonical_example)) {
+        return canonicalAsDisplayExample(card);
     }
     return null;
 }
@@ -10230,8 +10214,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'b959a6e8';
-const MODALS_ASSET_VERSION = 'b959a6e8';
+const ASSET_VERSION = 'e52cad20';
+const MODALS_ASSET_VERSION = 'e52cad20';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
