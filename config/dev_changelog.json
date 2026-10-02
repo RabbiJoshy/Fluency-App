@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-02T11:05:00+01:00",
+      "date": "2026-10-02 11:05 BST",
+      "agent": "Claude",
+      "summary": "Tutorial: the setup intro's pointer now presses inside each control instead of just below it, and the Next button glows softly after a few idle seconds.",
+      "detail": [
+        "Setup intro pointer: placed from layout offsets, so panels that slide in no longer leave it 13px under its target; it lands inside the control, right of and a little below centre, so the label stays readable.",
+        "Card steps: after 3.5 s on the same note, Next (desktop and phone) starts a slow, faint glow; any step restarts the wait; off with reduced motion."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-02T10:30:00+01:00",
       "date": "2026-10-02 10:30 BST",
       "agent": "Claude",

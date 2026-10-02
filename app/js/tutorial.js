@@ -563,6 +563,28 @@ function setActiveNote(index) {
     if (active) active.scrollIntoView({ block: 'nearest', inline: 'nearest' });
     renderMobileCoach();
     syncContinueButton();
+    scheduleNextHint();
+}
+
+// A first-time reader can stall on a step not knowing the tour moves on with
+// Next. After a few seconds on the same note, the Next button starts a slow,
+// faint glow; any step restarts the wait.
+const NEXT_HINT_DELAY_MS = 3500;
+let _nextHintTimer = null;
+
+function scheduleNextHint() {
+    clearTimeout(_nextHintTimer);
+    const buttons = ['cardTutorialContinue', 'cardTutorialMobileNext']
+        .map(id => document.getElementById(id)).filter(Boolean);
+    buttons.forEach(btn => btn.classList.remove('is-hinting'));
+    _nextHintTimer = setTimeout(() => {
+        buttons.forEach(btn => btn.classList.add('is-hinting'));
+    }, NEXT_HINT_DELAY_MS);
+}
+
+function clearNextHint() {
+    clearTimeout(_nextHintTimer);
+    document.querySelectorAll('.is-hinting').forEach(btn => btn.classList.remove('is-hinting'));
 }
 
 function renderMobileCoach() {
@@ -801,6 +823,7 @@ function renderBreakStep() {
 // The card and its note columns, or the slide — never both. The mobile coach
 // belongs to the card, so it goes with it.
 function showBreakChrome() {
+    clearNextHint();
     document.getElementById('cardTutorialBody')?.classList.add('is-break-step');
     const host = document.getElementById('cardTutorialBreak');
     if (host) host.hidden = false;
@@ -856,18 +879,28 @@ function skipSetupIntro() {
     _setupIntroFinish?.();
 }
 
-// Park the pointer over an element's centre, in the coordinate space of the
-// replica screen. Measuring rather than hard-coding keeps the pointer on
-// target when the panel reflows at narrow widths.
+// Park the pointer on an element, in the coordinate space of the replica
+// screen. Measuring rather than hard-coding keeps it on target when the panel
+// reflows at narrow widths. Offsets, not bounding boxes: a panel that has just
+// appeared is still sliding up into place, and a box measured mid-slide put
+// the pointer under its target. The point is inside the target, right of and
+// a little below centre, so it reads as a press without covering the label.
 function moveSetupPointer(target) {
     const pointer = document.getElementById('setupAnimPointer');
     const screen = document.querySelector('.setup-anim-screen');
     if (!pointer || !screen || !target) return;
-    const box = target.getBoundingClientRect();
-    const frame = screen.getBoundingClientRect();
-    if (!box.width && !box.height) return;
-    pointer.style.left = `${box.left - frame.left + box.width / 2}px`;
-    pointer.style.top = `${box.top - frame.top + box.height / 2}px`;
+    if (!target.offsetWidth && !target.offsetHeight) return;
+    let left = 0;
+    let top = 0;
+    for (let el = target; el && el !== screen; el = el.offsetParent) {
+        left += el.offsetLeft;
+        top += el.offsetTop;
+        if (el.offsetParent && !screen.contains(el.offsetParent)) return;
+    }
+    const x = left + Math.min(target.offsetWidth * 0.68, target.offsetWidth - 14);
+    const y = top + target.offsetHeight * 0.62;
+    pointer.style.left = `${x}px`;
+    pointer.style.top = `${y}px`;
     pointer.classList.add('is-visible');
 }
 
@@ -1043,6 +1076,7 @@ function closeCardTutorial() {
     const modal = document.getElementById('cardTutorialModal');
     if (!modal) return;
     modal.classList.add('hidden');
+    clearNextHint();
     resetSetupIntro();
     showCardChrome();
     // Leave any Spotify playback the visitor started running — they pressed
