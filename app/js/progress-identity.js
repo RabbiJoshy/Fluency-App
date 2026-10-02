@@ -47,8 +47,10 @@ export function matchingProgressRecords(
     );
     if (!normalizedSurface) return result;
 
+    const isSplitId = fullId.includes('::split::');
     for (const [id, row] of Object.entries(progress)) {
         if (matchedIds.has(id) || !row) continue;
+        if (isSplitId && id.includes('::split::') && id !== fullId) continue;
         if (language && row.language !== language) continue;
         if (normalizeProgressSurface(row.word) !== normalizedSurface) continue;
         add(id);
