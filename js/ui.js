@@ -1,7 +1,7 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=ab5121ba';
-import { readFastTrack } from './fast-track-preferences.js?v=ab5121ba';
+import './state.js?v=181352d6';
+import { readFastTrack } from './fast-track-preferences.js?v=181352d6';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -718,8 +718,8 @@ const MODE_ICON_MUSIC = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" s
 function learningModeCopy(language = selectedLanguage) {
     const lyricsCatalog = config?.languages?.[language]?.capabilities?.lyrics !== false;
     return {
-        title: 'Choose your flashcard vocabulary',
-        intro: 'This decides which words become your flashcards, and their order.',
+        title: 'Choose your flashcard vocabulary source',
+        intro: 'This decides which words become your flashcards, and their order is decided by how common each word is in the source.',
         speech: {
             label: 'Everyday speech',
             description: 'From films and TV — the words people use when they talk.',
@@ -3270,7 +3270,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=ab5121ba')
+        import('./spotify.js?v=181352d6')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

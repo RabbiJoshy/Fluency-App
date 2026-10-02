@@ -22448,3 +22448,57 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 #spacedRepetitionSettingsBtn[hidden] { display: none; }
 #chatgptPromptCard[hidden] { display: none; }
 #settingsModal .settings-pane > .settings-feature-card { margin: 4px 0 14px; }
+
+/* ===== Inline vocabulary source choice: centred, two options =====
+   The heading and its note are centred and the note is kept no wider than
+   the heading. A small "or" between the two options says it is one choice
+   of two, without turning the flat rows into boxes. On a wide screen the
+   options stand side by side under a centred heading instead of stretching
+   along the left. The Spotify button belongs to Your music, so it sits
+   under that option's text, never in the icon column. */
+#step1.language-summary-active #standardSourceCard .standard-source-choice-intro {
+  justify-items: center;
+  text-align: center;
+}
+#step1.language-summary-active #standardSourceCard .standard-source-choice-title { max-width: 22ch; text-wrap: balance; }
+/* The intro is as wide as the title: the note does not count towards it. */
+#step1.language-summary-active #standardSourceCard .standard-source-choice-intro { width: fit-content; max-width: 100%; margin-inline: auto; }
+#step1.language-summary-active #standardSourceCard .standard-source-choice-intro p { contain: inline-size; width: 100%; max-width: none; text-wrap: balance; }
+#step1.language-summary-active #standardSourceCard .choice-sheet-item + .standard-source-or + .choice-sheet-item { border-top: 0; }
+#step1.language-summary-active #standardSourceCard .standard-source-or {
+  display: flex; align-items: center; gap: 12px;
+  color: var(--text-muted);
+  font: 700 10px/1 var(--font-reading); letter-spacing: .12em; text-transform: uppercase;
+}
+#step1.language-summary-active #standardSourceCard .standard-source-or::before,
+#step1.language-summary-active #standardSourceCard .standard-source-or::after {
+  content: ""; flex: 1; height: 1px; background: var(--border-color);
+}
+#step1.language-summary-active #standardSourceCard .standard-source-spotify {
+  display: flex; justify-content: flex-start;
+  padding-left: 56px; /* lines the button up with the options' text */
+}
+@media (min-width: 900px) {
+  #step1.language-summary-active #standardSourceCard .standard-source-choice {
+    max-width: 920px; margin: 0 auto;
+  }
+  #step1.language-summary-active #standardSourceCard .standard-source-choice-title { max-width: none; }
+  #step1.language-summary-active #standardSourceCard .standard-source-choice-intro p { contain: none; width: auto; max-width: 46ch; }
+  #step1.language-summary-active #standardSourceCard .standard-source-choice-buttons {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: start;
+    column-gap: 20px;
+    margin-top: 8px;
+  }
+  #step1.language-summary-active #standardSourceCard .choice-sheet-item { border-top: 0; border-bottom: 0; padding: 14px 10px; border-radius: 14px; }
+  #step1.language-summary-active #standardSourceCard .standard-source-or {
+    flex-direction: column; align-self: stretch; gap: 10px;
+  }
+  #step1.language-summary-active #standardSourceCard .standard-source-or::before,
+  #step1.language-summary-active #standardSourceCard .standard-source-or::after { width: 1px; height: auto; }
+  #step1.language-summary-active #standardSourceCard .standard-source-spotify {
+    /* Under the Your music column: half the row past the "or". */
+    margin-left: calc(50% + 20px);
+    padding-left: 66px;
+  }
+}

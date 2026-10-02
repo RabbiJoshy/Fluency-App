@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-02T00:45:00+01:00",
+      "date": "2026-10-02 00:45 BST",
+      "agent": "Claude",
+      "summary": "The vocabulary source choice is reworded, centred, and shows its two options as one choice: side by side on desktop, with a small 'or' between them on phones.",
+      "detail": [
+        "Title: Choose your flashcard vocabulary source. Note: ...and their order is decided by how common each word is in the source.",
+        "The note is never wider than the title on a phone; title and note are centred.",
+        "A quiet OR divider between Everyday speech and Your music; on a wide screen the two stand side by side under a centred heading instead of stretching along the left.",
+        "Connect your Spotify sits under Your music's text, out of the icon column, so it no longer reads as a third option."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-02T00:10:00+01:00",
       "date": "2026-10-02 00:10 BST",
       "agent": "Claude",
