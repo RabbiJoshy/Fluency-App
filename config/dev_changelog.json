@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-02T01:15:00+01:00",
+      "date": "2026-10-02 01:15 BST",
+      "agent": "Claude",
+      "summary": "Even spacing on the vocabulary source choice, and the level estimator offers Import known words as a quiet outlined button.",
+      "detail": [
+        "Vocabulary source choice: the same space above the title as below the last control, and the same gap from the note to the options as from the options to Connect your Spotify, on phones and desktop.",
+        "Connect your Spotify lines up exactly with Your music's text on desktop.",
+        "Level estimator: under Start, 'Already have a list of words you know? Import them' opens Import known words (signed-in Spanish learners only; it does not change the estimate)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-02T00:45:00+01:00",
       "date": "2026-10-02 00:45 BST",
       "agent": "Claude",

@@ -2242,6 +2242,10 @@ function setupEstimationModal() {
     document.getElementById('startEstimationBtn').addEventListener('click', function() {
         startEstimation();
     });
+    document.getElementById('estimationImportKnownBtn')?.addEventListener('click', () => {
+        closeEstimationModal();
+        window.openVocabularyImportModal?.();
+    });
 
     // Use estimated level
     document.getElementById('useEstimatedLevelBtn').addEventListener('click', useEstimatedLevel);
