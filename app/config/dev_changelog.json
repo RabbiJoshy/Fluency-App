@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-02T09:40:00+01:00",
+      "date": "2026-10-02 09:40 BST",
+      "agent": "Claude",
+      "summary": "Tutorial: the setup intro is slower and opens the first card by itself; phones fit the whole card above the coach; Portuguese uses a simple card (banco); desktop steps through the notes one at a time.",
+      "detail": [
+        "Setup intro: each caption holds about 2.6 s instead of 1.5 s, and the pointer presses Learn 25 new cards itself; the first card follows without a tap (the button still works to go sooner).",
+        "Phones: the card is scaled to fit between the summary and the coach sheet (to no less than 72%), so the example is never hidden under the coach; the 'The back of the card —' lead-in is dropped on phones, since the coach already names the side, saving a line.",
+        "Portuguese tutorial card is now banco (bench / bank), real data from the live release, instead of tem with four senses, grammar pills and a cross-reference.",
+        "Desktop: every note is still on show, but Next walks them one at a time (the current note lit, its element on the card ringed, the rest dimmed), with Back and an 'n of N' count; the last Next flips the card or moves on. Click a note to jump to it; ← and → step too."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-02T01:15:00+01:00",
       "date": "2026-10-02 01:15 BST",
       "agent": "Claude",
