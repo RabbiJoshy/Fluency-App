@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-03T12:51:00+01:00",
+      "date": "2026-10-03 12:51 BST",
+      "agent": "Antigravity",
+      "summary": "Cards: streamlined split card presentation — reused existing front lemma-POS pills tagged by card, removed clutter/emojis, and added a concise explanatory note.",
+      "detail": [
+        "Front lemma-POS integration: reused existing header pills for both readings with Card 1 and Card 2 tags, highlighting the active card and muting the companion.",
+        "Concise split note: replaced bulky banners with a clean note: 'This word has distinct meanings and is split across 2 cards.'",
+        "Streamlined frequency: removed redundant percentage breakdowns from the frequency button, preserving clean standard frequency presentation.",
+        "Emoji removal: removed emojis from the back companion cue and simplified companion text."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-02T14:48:00+01:00",
       "date": "2026-10-02 14:48 BST",
       "agent": "Antigravity",

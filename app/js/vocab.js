@@ -3278,9 +3278,11 @@ async function loadVocabularyData(rangeString, opts = {}) {
                         total: 2,
                         kind: splitTuples.kind,
                         headword: t1.headword,
+                        pos: t1.pos,
                         label: t1.label,
                         share: t1.share,
                         siblingHeadword: t2.headword,
+                        siblingPos: t2.pos,
                         siblingLabel: t2.label,
                         siblingShare: t2.share
                     }
@@ -3301,9 +3303,11 @@ async function loadVocabularyData(rangeString, opts = {}) {
                         total: 2,
                         kind: splitTuples.kind,
                         headword: t2.headword,
+                        pos: t2.pos,
                         label: t2.label,
                         share: t2.share,
                         siblingHeadword: t1.headword,
+                        siblingPos: t1.pos,
                         siblingLabel: t1.label,
                         siblingShare: t1.share
                     }

@@ -4122,49 +4122,42 @@
             margin: -2px auto 10px;
         }
 
-        .split-card-banner {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin: 0 auto 12px;
+        .split-card-note {
+            display: inline-block;
+            margin: -2px auto 10px;
             font-size: 12px;
+            color: var(--text-muted);
+            letter-spacing: 0.1px;
         }
 
-        .split-card-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 3px 10px;
-            border-radius: 999px;
+        .front-split-card-tag {
             font-family: var(--font-data);
             font-size: 11px;
-            letter-spacing: 0.2px;
+            padding: 2px 7px;
+            border-radius: 999px;
+            margin-left: 6px;
             white-space: nowrap;
-            transition: all 0.15s ease;
         }
 
-        .split-card-pill.is-active {
-            background: rgba(74, 158, 255, 0.16);
-            border: 1px solid rgba(74, 158, 255, 0.45);
-            color: #60a5fa;
-            font-weight: 600;
+        .front-lemma-pair.is-active-split {
+            border-color: rgba(74, 158, 255, 0.45);
+            background: rgba(74, 158, 255, 0.12);
         }
 
-        .split-card-pill.is-active strong {
+        .front-lemma-pair.is-active-split .front-split-card-tag {
+            background: rgba(74, 158, 255, 0.25);
             color: #93c5fd;
+            font-weight: 700;
         }
 
-        .split-card-pill.is-companion {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+        .front-lemma-pair.is-companion-split {
+            opacity: 0.55;
+            filter: grayscale(35%);
+        }
+
+        .front-lemma-pair.is-companion-split .front-split-card-tag {
+            background: rgba(255, 255, 255, 0.08);
             color: var(--text-muted);
-            opacity: 0.75;
-        }
-
-        .split-card-dot {
-            font-size: 9px;
-            line-height: 1;
         }
 
         .split-card-back-badge {
@@ -4195,12 +4188,6 @@
 
         .split-card-companion-cue strong {
             color: var(--text-primary);
-        }
-
-        .split-freq-subtext {
-            color: #93c5fd !important;
-            font-family: var(--font-data);
-            font-size: 10px !important;
         }
 
         .grammar-pair-chips {
