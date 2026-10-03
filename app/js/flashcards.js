@@ -6049,7 +6049,7 @@ function renderCardWikipediaBadge(card) {
         if (card.splitInfo && !isFlipped && !flippedFrontMeanings) {
             frontSurfaceRelationEl.className = 'surface-relation-cue front-surface-relation split-card-note';
             frontSurfaceRelationEl.hidden = false;
-            frontSurfaceRelationEl.textContent = 'This word has distinct meanings and is split across 2 cards.';
+            frontSurfaceRelationEl.textContent = `Card ${card.splitInfo.index} of ${card.splitInfo.total}`;
         } else {
             frontSurfaceRelationEl.className = 'surface-relation-cue front-surface-relation';
             const showRelation = Boolean(notableSurfaceRelation && !isFlipped && !flippedFrontMeanings);
@@ -6225,8 +6225,8 @@ function renderCardWikipediaBadge(card) {
                 const renderSplitPill = (pair, cardNum, isActive) => {
                     const posUnit = renderFrontPosUnit(pair.pos, isVerbPos(pair.pos));
                     const statusClass = isActive ? 'is-active-split' : 'is-companion-split';
-                    const badgeText = `Card ${cardNum}`;
-                    return `<span class="front-lemma-pair ${statusClass}">${posUnit}<span class="front-lemma-name">${escapeCardText(pair.lemma)}</span><span class="front-split-card-tag">${badgeText}</span></span>`;
+                    const badgeText = `${cardNum}/2`;
+                    return `<span class="front-lemma-pair ${statusClass}">${posUnit}<span class="front-lemma-name"><span class="front-lemma-from">from </span>${escapeCardText(pair.lemma)}</span><span class="front-split-card-tag">${badgeText}</span></span>`;
                 };
 
                 const splitPairsHTML = [
@@ -6244,7 +6244,10 @@ function renderCardWikipediaBadge(card) {
                     if (!pair.lemma) return posUnit;
                     // POS is the iconographic pill; the lemma is the label it
                     // governs, sitting to its right inside the same capsule.
-                    return `<span class="front-lemma-pair">${posUnit}<span class="front-lemma-name">${escapeCardText(pair.lemma)}</span></span>`;
+                    const fromPrefix = foldSurfaceForm(pair.lemma) !== foldSurfaceForm(displayedTargetHeadword)
+                        ? '<span class="front-lemma-from">from </span>'
+                        : '';
+                    return `<span class="front-lemma-pair">${posUnit}<span class="front-lemma-name">${fromPrefix}${escapeCardText(pair.lemma)}</span></span>`;
                 }).join('');
             }
             frontPOSEl.style.display = 'grid';
@@ -6540,12 +6543,9 @@ function renderCardWikipediaBadge(card) {
         : '';
 
     let backSplitBadgeHTML = '';
-    let backSplitCompanionCueHTML = '';
     if (card.splitInfo) {
         const s = card.splitInfo;
-        const otherIndex = s.index === 1 ? 2 : 1;
         backSplitBadgeHTML = `<span class="split-card-back-badge">Card ${s.index} of ${s.total}</span>`;
-        backSplitCompanionCueHTML = `<div class="split-card-companion-cue">Companion: Card ${otherIndex} of ${s.total} · <strong>${escapeCardText(s.siblingHeadword)}</strong></div>`;
     }
 
     // line-height: 1.1 keeps multi-line wraps tight (long word + lemma
@@ -6564,7 +6564,6 @@ function renderCardWikipediaBadge(card) {
                     <span class="back-headword${backHeadwordPairClass}" style="font-size: ${backHeadwordSize}px; font-weight: bold; line-height: ${showBackLemmaPair ? 1 : 1.1};">${wordDisplay}</span>${backSplitBadgeHTML}${renderCardWikipediaBadge(card)}
                     ${backPosLegendHTML}
                 </div>
-                ${backSplitCompanionCueHTML}
                 ${notableSurfaceRelation
                     ? `<div class="surface-relation-cue back-surface-relation">${escapeCardText(notableSurfaceRelation.surface)} <span aria-hidden="true">→</span> ${escapeCardText(notableSurfaceRelation.canonical)}</div>`
                     : ''}

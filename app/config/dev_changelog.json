@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-03T22:08:00+01:00",
+      "date": "2026-10-03 22:08 BST",
+      "agent": "Antigravity",
+      "summary": "Streamlined polysemous split cards: clean 'from [lemma]' pills, concise 'Card 1 of 2' labels, and removed back redundancy.",
+      "detail": [
+        "Prefixed lemmas differing from card surface form with a clean 'from ' label in front POS pills, avoiding confusing linguistic jargon.",
+        "Simplified split card note to 'Card 1 of 2' and labeled active vs companion pill capsules with '1/2' and '2/2'.",
+        "Unified all badges and tags to standard reading typography (--font-reading) without monospaced fonts.",
+        "Removed redundant companion footer box on card back, keeping a single clean header badge."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-03T21:49:52+01:00",
       "date": "2026-10-03 21:49 BST",
       "agent": "Codex",

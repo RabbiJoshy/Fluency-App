@@ -4125,14 +4125,24 @@
         .split-card-note {
             display: inline-block;
             margin: -2px auto 10px;
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-muted);
             letter-spacing: 0.1px;
+            font-family: var(--font-reading);
+        }
+
+        .front-lemma-from {
+            color: var(--text-muted);
+            font-size: 0.85em;
+            font-weight: 500;
+            font-family: var(--font-reading);
+            margin-right: 2px;
         }
 
         .front-split-card-tag {
-            font-family: var(--font-data);
-            font-size: 11px;
+            font-family: var(--font-reading);
+            font-size: 12px;
+            font-weight: 700;
             padding: 2px 7px;
             border-radius: 999px;
             margin-left: 6px;
@@ -4151,8 +4161,8 @@
         }
 
         .front-lemma-pair.is-companion-split {
-            opacity: 0.55;
-            filter: grayscale(35%);
+            opacity: 0.45;
+            filter: grayscale(40%);
         }
 
         .front-lemma-pair.is-companion-split .front-split-card-tag {
@@ -4169,25 +4179,10 @@
             background: rgba(74, 158, 255, 0.14);
             border: 1px solid rgba(74, 158, 255, 0.35);
             color: #93c5fd;
-            font-family: var(--font-data);
-            font-size: 11px;
+            font-family: var(--font-reading);
+            font-size: 12px;
             font-weight: 600;
             vertical-align: middle;
-        }
-
-        .split-card-companion-cue {
-            margin: 6px 0 2px;
-            font-size: 12px;
-            color: var(--text-muted);
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.07);
-            border-radius: 6px;
-            padding: 4px 10px;
-            display: inline-block;
-        }
-
-        .split-card-companion-cue strong {
-            color: var(--text-primary);
         }
 
         .grammar-pair-chips {
