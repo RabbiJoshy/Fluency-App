@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-03T21:49:52+01:00",
+      "date": "2026-10-03 21:49 BST",
+      "agent": "Codex",
+      "summary": "French and Portuguese Artist decks: fixed filtering by selected songs.",
+      "detail": [
+        "Built complete per-song card membership from all frozen lyric occurrences, rather than sampled examples.",
+        "Verified native profile summaries and preserved nine existing public release trees, including Spanish artists.",
+        "Updated catalog to the final French and Portuguese releases."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-03T16:09:24+01:00",
       "date": "2026-10-03 16:09 BST",
       "agent": "Codex",
