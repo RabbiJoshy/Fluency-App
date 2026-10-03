@@ -2,7 +2,7 @@
 
 Date: 2026-10-03. Scope: POLYGLOT, following SCAR, VERSE and CHORUS.
 
-**Status: validated French and Portuguese test releases; deployment verification pending.** These are conservative test decks with native WSD evidence. Targeted semantic regressions pass; this is not a certification of perfect sense accuracy or complete vocabulary coverage.
+**Status: French and Portuguese test releases published, activated in the live Artist catalog, and interactively verified.** These are conservative test decks with native WSD evidence. Targeted semantic regressions pass; this is not a certification of perfect sense accuracy or complete vocabulary coverage.
 
 ## Releases and measured coverage
 
@@ -64,9 +64,26 @@ French negative `n’`, unknown hyphenated forms, unsupported code-switching, ad
 
 User approval: **up to $1 total**. Every uncached embedding request printed projected cost before calls. Across initial and follow-up fills, **7,521 exact texts** were requested: projected total **$0.01265925**, conservative planning allowance **$0.03942780**. Estimates use $0.15 per million input tokens (characters/3; one token per UTF-8 byte for conservative planning), not invoice totals. Final runs are offline cache-only with zero paid calls. The helper enforces an invocation allowance; cumulative task cost is accounted separately.
 
-Packaging refuses incomplete cache evaluation, changed pinned output/config artifacts or contract-invalid runs. Existing output directories cannot be overwritten. `spanish-before.json` pins 33 Bad Bunny/Rosalía/Young Miko v18 files; every hash remains unchanged. Existing production v20 catalog entries are retained exactly.
+Packaging refuses incomplete cache evaluation, changed pinned output/config artifacts or contract-invalid runs. Existing output directories cannot be overwritten. `spanish-before.json` pins 33 Bad Bunny/Rosalía/Young Miko v18 files; every hash remains unchanged. Existing production v20 catalog entries are retained exactly. `spanish-publication-preservation.json` also compares Git tree objects before/after release publication: all nine pre-existing published release trees (including current Spanish v20 artist trees) are identical.
 
 Focused lyrics/Artist/WSD/sense-menu/provider/French suite: **514 passed, 91 subtests**. App suite with catalog and missing-colour regression check: **184 passed**. Two previously failing SpanishDict tests now pass after canonical accented reverse-lookup repair and applying conjugation/plausibility recovery to retained menus; all eight tests in that module pass. No Spanish release was rebuilt or overwritten.
+
+## Signed release verification
+
+Reviewer: **Codex / POLYGLOT, 2026-10-03**. App deployment [`cf6a5dbb`](https://github.com/RabbiJoshy/Fluency-App/actions/runs/37153088947) and release-site deployment [`ba1e863e`](https://github.com/RabbiJoshy/Fluency-Releases-lyrics/actions/runs/37152884057) completed successfully. `raw/playlists/polyglot-followup-20261003/live-verification.json` records the checks.
+
+| Check | French | Portuguese |
+| --- | --- | --- |
+| Live complete deck | 2,097 cards / 64 songs | 869 cards / 19 songs |
+| Single-song selection | Balance ton quoi: 114 cards | Sozinho: 78 cards |
+| Study card flip | Pass | Pass |
+| Meaning display | Article readings and multi-meaning menu verified | você → you and source lyric verified |
+| Full selection restored | All 64 songs | All 19 songs |
+| Exact source spans / freeze / split contract | Pass | Pass |
+| Native profile decision coverage | 5,903 / 5,903 | 2,491 / 2,491 |
+| Uncached final embeddings | 0 | 0 |
+
+Published catalogs and song membership match packaged artifacts. No knowledge votes were submitted during the interactive checks. Sampled examples can be absent when a card is restricted to a particular song; complete source membership still preserves the correct card, and no substitute lyric is fabricated. Test release sign-off covers these measured contracts and targeted regressions; complete semantic accuracy, full coverage, and sentence translations remain explicitly outside the sign-off.
 
 ## Reproduction and publication
 
