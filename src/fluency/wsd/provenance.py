@@ -54,7 +54,7 @@ def _method_of(decision: Mapping[str, Any]) -> str:
     return UNRECORDED
 
 
-def method_composition(index: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
+def method_composition(index: Iterable[Mapping[str, Any]], *, native_method: str = NATIVE_METHOD) -> dict[str, Any]:
     """Return the mix of methods behind one release's decisions.
 
     ``native_share`` is the number that answers "is this deck actually v7?".
@@ -63,12 +63,12 @@ def method_composition(index: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
 
     counts: Counter[str] = Counter(_method_of(d) for d in _decisions(index))
     total = sum(counts.values())
-    native = counts.get(NATIVE_METHOD, 0)
+    native = counts.get(native_method, 0)
     return {
         "composition_version": COMPOSITION_VERSION,
         "decision_count": total,
         "methods": dict(sorted(counts.items())),
-        "native_method": NATIVE_METHOD,
+        "native_method": native_method,
         "native_decisions": native,
         "native_share": round(native / total, 4) if total else 0.0,
         "fully_native": total > 0 and native == total,

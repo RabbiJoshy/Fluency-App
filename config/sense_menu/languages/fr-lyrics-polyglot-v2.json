@@ -1,0 +1,192 @@
+{
+  "config_version": "sense-menu-language-policy/v1",
+  "policy_id": "fr-lyrics-polyglot-v2",
+  "language": "fr",
+  "provider": "wiktionary",
+  "audit_status": "partial",
+  "card_binding": {
+    "identity": "surface-card/v1",
+    "headword_role": "lookup_metadata_only"
+  },
+  "menu_order_role": "provider_prior",
+  "redirects": {
+    "require_source_case_match": true,
+    "reject_tags": [
+      "abbreviation",
+      "initialism"
+    ],
+    "allow_if_tags": [
+      "contraction"
+    ],
+    "target_pos_by_source_pos": {
+      "adj": [
+        "adj"
+      ],
+      "adv": [
+        "adv"
+      ],
+      "article": [
+        "article"
+      ],
+      "conj": [
+        "conj"
+      ],
+      "contraction": [
+        "article",
+        "prep"
+      ],
+      "det": [
+        "det"
+      ],
+      "intj": [
+        "intj"
+      ],
+      "name": [
+        "name"
+      ],
+      "noun": [
+        "noun"
+      ],
+      "num": [
+        "num"
+      ],
+      "particle": [
+        "particle"
+      ],
+      "phrase": [
+        "phrase"
+      ],
+      "prep": [
+        "prep"
+      ],
+      "pron": [
+        "pron"
+      ],
+      "verb": [
+        "verb"
+      ]
+    }
+  },
+  "region_tags": [
+    "Alsace",
+    "Antilles",
+    "Belgium",
+    "Canada",
+    "Congo",
+    "France",
+    "Louisiana",
+    "Luxembourg",
+    "Lyon",
+    "Montreal",
+    "Morocco",
+    "Normandy",
+    "North-America",
+    "Quebec",
+    "Rwanda",
+    "Switzerland"
+  ],
+  "register_tags": [
+    "childish",
+    "endearing",
+    "historical",
+    "idiomatic",
+    "neologism",
+    "nonstandard",
+    "proscribed",
+    "sarcastic",
+    "slur",
+    "uncommon"
+  ],
+  "construction_tags": [
+    "attributive",
+    "direct-object",
+    "ergative",
+    "in-compounds"
+  ],
+  "domain_tags": [
+    "Ancient-Rome",
+    "Internet",
+    "Judaism",
+    "rhetoric"
+  ],
+  "construction_tag_mappings": {
+    "direct-object": {
+      "kind": "object_role",
+      "value": "direct object"
+    }
+  },
+  "grammar_tags": {
+    "historic": "tense=past-historic"
+  },
+  "contextual_grammar_tags": {},
+  "ignored_tags": [
+    "abbreviation",
+    "acronym",
+    "alternative",
+    "clipping",
+    "empty-gloss",
+    "contraction",
+    "ellipsis",
+    "initialism",
+    "letter",
+    "misspelling",
+    "morpheme",
+    "no-gloss",
+    "pronunciation-spelling"
+  ],
+  "feature_vocabulary_note": "Audited against the pinned 2026-08-05 French snapshot. Unmapped qualifiers remain explicit in the metadata audit queue.",
+  "gloss_grammar_patterns": [
+    {
+      "pattern": "\\bprepositional pronoun\\b",
+      "value": "pronoun_role=prepositional"
+    },
+    {
+      "pattern": "\\bsubject pronoun\\b",
+      "value": "pronoun_role=subject"
+    },
+    {
+      "pattern": "\\bfirst-person\\b",
+      "value": "person=1"
+    },
+    {
+      "pattern": "\\bsecond-person\\b",
+      "value": "person=2"
+    },
+    {
+      "pattern": "\\bthird-person\\b",
+      "value": "person=3"
+    },
+    {
+      "pattern": "\\b(?:first|second|third)-person singular\\b",
+      "value": "number=singular"
+    },
+    {
+      "pattern": "\\b(?:first|second|third)-person plural\\b",
+      "value": "number=plural"
+    },
+    {
+      "pattern": "\\bpreceding adjectives\\b",
+      "value": "following_pos=ADJ"
+    },
+    {
+      "pattern": "\\bfirst-person singular and plural\\b",
+      "value": "number=plural"
+    },
+    {
+      "pattern": "\\bsecond-person singular and plural\\b",
+      "value": "number=plural"
+    },
+    {
+      "pattern": "\\bthird-person singular and plural\\b",
+      "value": "number=plural"
+    },
+    {
+      "pattern": "\\bname of the letter\\b",
+      "value": "function=letter_name"
+    },
+    {
+      "pattern": "\\bintensifier in underlying rhetorical questions\\b",
+      "value": "function=rhetorical"
+    }
+  ]
+}

@@ -57,6 +57,11 @@ async function loadConfig() {
         // Override config for artist/lyrics mode
         if (activeArtist) {
             const lang = activeArtist.language || 'spanish';
+            // Optional artist colours inherit complete language defaults.
+            activeArtist.colorTheme = {
+                ...config.languages[lang].colorTheme,
+                ...activeArtist.colorTheme
+            };
             config.languages[lang] = {
                 ...config.languages[lang],
                 // The language keeps its own name; the artist is named on its

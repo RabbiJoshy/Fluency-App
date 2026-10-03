@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-03T16:09:24+01:00",
+      "date": "2026-10-03 16:09 BST",
+      "agent": "Codex",
+      "summary": "Artist mode: added reviewed French and Portuguese test decks.",
+      "detail": [
+        "French Test Playlist: 64 songs and 2,097 cards; Portuguese Test Playlist: 19 songs and 869 cards.",
+        "Added language adapters, reviewed morphology and phrase menus, native WSD provenance, and complete source/span validation.",
+        "Artist colours inherit language defaults when a release supplies no bespoke theme.",
+        "Existing Spanish artists and the older French playlist remain available. Sentence translations are explicitly unavailable."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-03T12:51:00+01:00",
       "date": "2026-10-03 12:51 BST",
       "agent": "Antigravity",

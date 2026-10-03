@@ -413,6 +413,13 @@ def extract(
             # from `tags` entirely, so nothing else in the pipeline carries them.
             add("construction", "gloss_phrase", part)
 
+    # Opt-in provider prose rules are profile data, never language branches.
+    # Only explicit grammatical descriptions may introduce hard constraints.
+    for rule in (policy or {}).get("gloss_grammar_patterns", []):
+        for gloss in [*(sense.get("glosses", []) or []), *(sense.get("raw_glosses", []) or [])]:
+            if isinstance(gloss, str) and re.search(rule["pattern"], gloss, re.IGNORECASE):
+                add("grammar", "gloss_mark", rule["value"])
+
     for field in ("glosses", "raw_glosses"):
         values = sense.get(field)
         if not isinstance(values, Sequence) or isinstance(values, (str, bytes)):

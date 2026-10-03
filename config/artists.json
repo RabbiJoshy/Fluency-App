@@ -111,5 +111,63 @@
     "songsPath": "Artists/es/young-miko/songs.json",
     "spotifyPath": "Artists/spotify_tracks.json",
     "wsdEvidencePath": "Artists/es/young-miko/wsd-evidence.json"
+  },
+  "french-test-playlist": {
+    "colorTheme": {
+      "primary": "#4A7FFF",
+      "secondary": "#ED2939"
+    },
+    "examplesPath": "Artists/fr/french-test-playlist/examples.json",
+    "indexPath": "Artists/fr/french-test-playlist/index.json",
+    "language": "french",
+    "masterPath": "Artists/fr/french-test-playlist/vocabulary_master.json",
+    "maxLevel": 2097,
+    "name": "French Test Playlist",
+    "releaseCompositionPath": "Artists/release-composition.json",
+    "releaseId": "lyrics-french-test-playlist-polyglot-v4",
+    "releaseManifestPath": "Artists/release-manifest.json",
+    "songsPath": "Artists/fr/french-test-playlist/songs.json",
+    "spotifyPath": "Artists/spotify_tracks.json",
+    "wsdEvidencePath": "Artists/fr/french-test-playlist/wsd-evidence.json",
+    "wsdMethodComposition": {
+      "composition_version": "wsd-method-composition/v1",
+      "decision_count": 5903,
+      "fully_native": true,
+      "methods": {
+        "fr-lyrics-polyglot-v3": 5903
+      },
+      "native_decisions": 5903,
+      "native_method": "fr-lyrics-polyglot-v3",
+      "native_share": 1.0
+    }
+  },
+  "portuguese-test-playlist": {
+    "colorTheme": {
+      "primary": "#046A38",
+      "secondary": "#DA291C"
+    },
+    "examplesPath": "Artists/pt/portuguese-test-playlist/examples.json",
+    "indexPath": "Artists/pt/portuguese-test-playlist/index.json",
+    "language": "portuguese",
+    "masterPath": "Artists/pt/portuguese-test-playlist/vocabulary_master.json",
+    "maxLevel": 869,
+    "name": "Portuguese Test Playlist",
+    "releaseCompositionPath": "Artists/release-composition.json",
+    "releaseId": "lyrics-portuguese-test-playlist-polyglot-v5",
+    "releaseManifestPath": "Artists/release-manifest.json",
+    "songsPath": "Artists/pt/portuguese-test-playlist/songs.json",
+    "spotifyPath": "Artists/spotify_tracks.json",
+    "wsdEvidencePath": "Artists/pt/portuguese-test-playlist/wsd-evidence.json",
+    "wsdMethodComposition": {
+      "composition_version": "wsd-method-composition/v1",
+      "decision_count": 2491,
+      "fully_native": true,
+      "methods": {
+        "pt-lyrics-polyglot-v3": 2491
+      },
+      "native_decisions": 2491,
+      "native_method": "pt-lyrics-polyglot-v3",
+      "native_share": 1.0
+    }
   }
 }

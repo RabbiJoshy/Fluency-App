@@ -275,8 +275,17 @@ class SpanishV5CandidatePolicy:
             Callable[[str, str], frozenset[str]] | None
         ) = None,
         keep_self_reading_pos: frozenset[str] = frozenset(),
+        clitic_evidence: Callable[[str, str, dict[str, str] | None], bool | None] | None = None,
+        pronominal_base: Callable[[str], str] | None = None,
+        has_clitic: Callable[[str], bool] | None = None,
+        contextual_lemma_gate: bool = False,
     ) -> None:
         self.language = language
+        self.contextual_lemma_gate = contextual_lemma_gate
+        self._clitic_evidence = clitic_evidence or se_reflexive_evidence
+        self._custom_pronominal_base = pronominal_base is not None
+        self._pronominal_base = pronominal_base or (lambda word: word[:-2] if word.endswith("se") else word)
+        self._has_clitic = has_clitic or (lambda text: _sentence_has_clitic(text, language))
         # Provider POS (casefolded) of a headword spelled like the surface that
         # the tagger's POS and lemma may not remove. UD files interrogative
         # missä as PRON of mikä and Wiktionary files "where" as adv; the two
@@ -381,7 +390,7 @@ class SpanishV5CandidatePolicy:
         # (for example, haluaa: haluta vs haluttaa).
         observed_lemma = str((observed_grammar or {}).get("lemma") or "").casefold()
         lemma_removed: list[str] = []
-        if self.language == "fi" and observed_lemma and not bypass_contextual_constraints:
+        if (self.language == "fi" or self.contextual_lemma_gate) and observed_lemma and not bypass_contextual_constraints:
             lemma_compatible = {
                 analysis.menu_analysis_id
                 for analysis in analyses
@@ -416,7 +425,7 @@ class SpanishV5CandidatePolicy:
                 keep_ids &= contextual_compatible
 
         evidence = (
-            se_reflexive_evidence(surface_form, sentence, observed_grammar)
+            self._clitic_evidence(surface_form, sentence, observed_grammar)
             if self.clitic_gate
             else None
         )
@@ -427,16 +436,18 @@ class SpanishV5CandidatePolicy:
         if self.clitic_gate and str(observed_pos or "").upper() == "AUX":
             evidence = False
         headwords = {analysis.headword.casefold() for analysis in analyses}
-        reflexive_ambiguous = any(
-            not headword.endswith("se") and headword + "se" in headwords
-            for headword in headwords
+        reflexive_ambiguous = (
+            any(self._pronominal_base(headword) != headword
+                and self._pronominal_base(headword) in headwords for headword in headwords)
+            if self._custom_pronominal_base else
+            any(not headword.endswith("se") and headword + "se" in headwords for headword in headwords)
         )
         clitic_removed: list[str] = []
         if reflexive_ambiguous and evidence is not None:
             compatible = {
                 analysis.menu_analysis_id
                 for analysis in analyses
-                if analysis.headword.casefold().endswith("se") is evidence
+                if (self._pronominal_base(analysis.headword.casefold()) != analysis.headword.casefold()) is evidence
             }
             compatible &= keep_ids
             if compatible:
@@ -520,7 +531,7 @@ class SpanishV5CandidatePolicy:
             features_of=lambda item: item[1].specialist_features,
         )
         pronominal_rejected = ()
-        if self.pronominal_gate and not _sentence_has_clitic(sentence, self.language):
+        if self.pronominal_gate and not self._has_clitic(sentence):
             surviving_non_pronominal = tuple(
                 (analysis, leaf) for analysis, leaf in grammar_kept if not is_pronominal_leaf(leaf)
             )

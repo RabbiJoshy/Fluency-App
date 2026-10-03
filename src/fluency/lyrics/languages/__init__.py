@@ -1,12 +1,25 @@
 """Language adapters for Lyrics processing."""
 
+from importlib import import_module
+import re
+from fluency.lyrics.languages.base import LyricsLanguageAdapter
 from fluency.lyrics.languages.spanish import SpanishLyricsAdapter
 from fluency.lyrics.languages.spanish_routing import SpanishLiveRouter, SpanishRoutingResources
 
 
-def load_lyrics_adapter(language: str, **kwargs: object) -> SpanishLyricsAdapter:
+def load_lyrics_adapter(language: str, **kwargs: object) -> LyricsLanguageAdapter:
     if language == "es":
         return SpanishLyricsAdapter(**kwargs)
+    from pkgutil import iter_modules
+    from pathlib import Path
+    if re.fullmatch(r"[a-z]{2,3}", language):
+        for info in iter_modules([str(Path(__file__).parent)]):
+            if info.name in {"base", "spanish", "spanish_routing"}:
+                continue
+            module = import_module(f"{__package__}.{info.name}")
+            adapter = getattr(module, "ADAPTER_CLASS", None)
+            if adapter is not None and adapter.language == language:
+                return adapter(**kwargs)
     raise ValueError(f"no Lyrics processing adapter is installed for language {language!r}")
 
 

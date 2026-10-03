@@ -123,7 +123,7 @@ def build_provider_menu(
             dictionary_snapshot,
             language_code=language,
             gloss_language="en",
-            source_edition="kaikki-pinned-snapshot",
+            source_edition="enwiktionary",
             language_policy=policy,
         )
     else:

@@ -1,0 +1,11 @@
+{
+  "profile_id": "fr-lyrics-polyglot-v1",
+  "language": "fr",
+  "dictionary_snapshot": "raw/wiktionary/enwiktionary-2026-08-05/kaikki.org-dictionary-French.jsonl",
+  "menu_policy": "fr-lyrics-polyglot-v1",
+  "clitic_gate": false,
+  "mwe_snapshot": null,
+  "reference_prewsd": null,
+  "embedding_policy": "offline-only",
+  "french_mwe_status": "no_frozen_inventory"
+}

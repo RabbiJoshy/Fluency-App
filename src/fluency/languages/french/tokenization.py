@@ -148,6 +148,11 @@ def _split_hyphenated(
     config: FrenchTokenizationConfig,
 ) -> tuple[TokenUnit, ...]:
     parts = observed_text.split("-")
+    if any(not part for part in parts):
+        return (_rejected_unit(
+            observed_text, start, token_class="unresolved_hyphenated",
+            decision="unresolved_hyphenation", rejection_reason="empty_hyphen_component",
+        ),)
     normalized_parts = [normalize_surface(part) for part in parts]
     grammatical = False
     has_inversion_marker = False

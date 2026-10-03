@@ -1,0 +1,23 @@
+{
+  "profile_id": "pt-lyrics-polyglot-v2",
+  "language": "pt",
+  "dictionary_snapshot": "raw/wiktionary/enwiktionary-2026-08-20/kaikki.org-dictionary-Portuguese.jsonl",
+  "menu_policy": "pt-lyrics-polyglot-v2",
+  "clitic_gate": true,
+  "mwe_snapshot": "raw/playlists/polyglot-followup-20261003/pt-mwe-signed-v2.json",
+  "reference_prewsd": "raw/surfaces/pt/prewsd/20260914T222723Z-e43a0469-v2",
+  "embedding_policy": "offline-only",
+  "french_mwe_status": null,
+  "required_grammar_axes": [
+    "person",
+    "function"
+  ],
+  "surface_pos_constraints": {},
+  "reviewed_gloss_overrides": [
+    "nê",
+    "tê",
+    "mó",
+    "iê",
+    "chamá"
+  ]
+}

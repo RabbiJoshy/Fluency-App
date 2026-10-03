@@ -1,0 +1,315 @@
+{
+  "schema": "declared-entries/v1",
+  "language": "pt",
+  "entries": [
+    {
+      "entry_id": "polyglot-pt-flacidas",
+      "kind": "headwords",
+      "surface": "flácidas",
+      "scope": {
+        "mode": "lyrics",
+        "artist": "portuguese-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Regular feminine plural adjective; contextual tagger proposed nonexistent flácir",
+      "author": "Codex",
+      "created_at": "2026-10-03",
+      "payload": {
+        "headwords": [
+          "flácido"
+        ]
+      }
+    },
+    {
+      "entry_id": "polyglot-pt-ie",
+      "kind": "gloss",
+      "surface": "iê",
+      "scope": {
+        "mode": "lyrics",
+        "artist": "portuguese-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Repeated sung adlib in Infiel, not the capoeira silence-command reading",
+      "author": "Codex",
+      "created_at": "2026-10-03",
+      "payload": {
+        "senses": [
+          {
+            "translation": "rhythmic vocalization; hey",
+            "pos": "INTJ"
+          }
+        ]
+      }
+    },
+    {
+      "entry_id": "polyglot-pt-naturê",
+      "kind": "expansion",
+      "surface": "naturê",
+      "payload": {
+        "expands_to": "natureza"
+      },
+      "scope": {
+        "mode": "lyrics",
+        "artist": "portuguese-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Reviewed observed diminutive or deliberate sung clipping; no generic suffix guessing",
+      "author": "Codex",
+      "created_at": "2026-10-03"
+    },
+    {
+      "entry_id": "polyglot-pt-tropí",
+      "kind": "expansion",
+      "surface": "tropí",
+      "payload": {
+        "expands_to": "tropical"
+      },
+      "scope": {
+        "mode": "lyrics",
+        "artist": "portuguese-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Reviewed observed diminutive or deliberate sung clipping; no generic suffix guessing",
+      "author": "Codex",
+      "created_at": "2026-10-03"
+    },
+    {
+      "entry_id": "polyglot-pt-feverê",
+      "kind": "expansion",
+      "surface": "feverê",
+      "payload": {
+        "expands_to": "fevereiro"
+      },
+      "scope": {
+        "mode": "lyrics",
+        "artist": "portuguese-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Reviewed observed diminutive or deliberate sung clipping; no generic suffix guessing",
+      "author": "Codex",
+      "created_at": "2026-10-03"
+    },
+    {
+      "entry_id": "polyglot-pt-viô",
+      "kind": "expansion",
+      "surface": "viô",
+      "payload": {
+        "expands_to": "violão"
+      },
+      "scope": {
+        "mode": "lyrics",
+        "artist": "portuguese-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Reviewed observed diminutive or deliberate sung clipping; no generic suffix guessing",
+      "author": "Codex",
+      "created_at": "2026-10-03"
+    },
+    {
+      "entry_id": "polyglot-pt-carná",
+      "kind": "expansion",
+      "surface": "carná",
+      "payload": {
+        "expands_to": "carnaval"
+      },
+      "scope": {
+        "mode": "lyrics",
+        "artist": "portuguese-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Reviewed observed diminutive or deliberate sung clipping; no generic suffix guessing",
+      "author": "Codex",
+      "created_at": "2026-10-03"
+    },
+    {
+      "entry_id": "polyglot-pt-abençoá",
+      "kind": "expansion",
+      "surface": "abençoá",
+      "payload": {
+        "expands_to": "abençoado"
+      },
+      "scope": {
+        "mode": "lyrics",
+        "artist": "portuguese-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Reviewed observed diminutive or deliberate sung clipping; no generic suffix guessing",
+      "author": "Codex",
+      "created_at": "2026-10-03"
+    },
+    {
+      "entry_id": "polyglot-pt-boní",
+      "kind": "expansion",
+      "surface": "boní",
+      "payload": {
+        "expands_to": "bonito"
+      },
+      "scope": {
+        "mode": "lyrics",
+        "artist": "portuguese-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Reviewed observed diminutive or deliberate sung clipping; no generic suffix guessing",
+      "author": "Codex",
+      "created_at": "2026-10-03"
+    },
+    {
+      "entry_id": "polyglot-pt-camaradinhas",
+      "kind": "expansion",
+      "surface": "camaradinhas",
+      "payload": {
+        "expands_to": "camaradas"
+      },
+      "scope": {
+        "mode": "lyrics",
+        "artist": "portuguese-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Reviewed observed diminutive or deliberate sung clipping; no generic suffix guessing",
+      "author": "Codex",
+      "created_at": "2026-10-03"
+    },
+    {
+      "entry_id": "polyglot-pt-cuíquinha",
+      "kind": "expansion",
+      "surface": "cuíquinha",
+      "payload": {
+        "expands_to": "cuíca"
+      },
+      "scope": {
+        "mode": "lyrics",
+        "artist": "portuguese-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Reviewed observed diminutive or deliberate sung clipping; no generic suffix guessing",
+      "author": "Codex",
+      "created_at": "2026-10-03"
+    },
+    {
+      "entry_id": "polyglot-pt-nê",
+      "kind": "gloss",
+      "surface": "nê",
+      "payload": {
+        "senses": [
+          {
+            "translation": "woman; girl (familiar sung slang, clipped nega)",
+            "pos": "NOUN"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "lyrics",
+        "artist": "portuguese-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Targeted review of the attested lyric construction; scoped meaning replaces irrelevant letter-name or absent menu",
+      "author": "Codex",
+      "created_at": "2026-10-03"
+    },
+    {
+      "entry_id": "polyglot-pt-tê",
+      "kind": "gloss",
+      "surface": "tê",
+      "payload": {
+        "senses": [
+          {
+            "translation": "I have (sung clipping of tenho)",
+            "pos": "VERB"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "lyrics",
+        "artist": "portuguese-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Targeted review of the attested lyric construction; scoped meaning replaces irrelevant letter-name or absent menu",
+      "author": "Codex",
+      "created_at": "2026-10-03"
+    },
+    {
+      "entry_id": "polyglot-pt-mó",
+      "kind": "gloss",
+      "surface": "mó",
+      "payload": {
+        "senses": [
+          {
+            "translation": "I live (sung clipping of moro)",
+            "pos": "VERB"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "lyrics",
+        "artist": "portuguese-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Targeted review of the attested lyric construction; scoped meaning replaces irrelevant letter-name or absent menu",
+      "author": "Codex",
+      "created_at": "2026-10-03"
+    },
+    {
+      "entry_id": "polyglot-pt-chamá",
+      "kind": "gloss",
+      "surface": "chamá",
+      "payload": {
+        "senses": [
+          {
+            "translation": "named; called (sung clipping of chamada)",
+            "pos": "ADJ"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "lyrics",
+        "artist": "portuguese-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Targeted review of the attested lyric construction; scoped meaning replaces irrelevant letter-name or absent menu",
+      "author": "Codex",
+      "created_at": "2026-10-03"
+    },
+    {
+      "entry_id": "polyglot-pt-desentristecer",
+      "kind": "gloss",
+      "surface": "desentristecer",
+      "payload": {
+        "senses": [
+          {
+            "translation": "to relieve sadness; to cheer up",
+            "pos": "VERB"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "lyrics",
+        "artist": "portuguese-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Targeted review of the attested lyric construction; scoped meaning replaces irrelevant letter-name or absent menu",
+      "author": "Codex",
+      "created_at": "2026-10-03"
+    },
+    {
+      "entry_id": "polyglot-pt-bicheiras",
+      "kind": "gloss",
+      "surface": "bicheiras",
+      "payload": {
+        "senses": [
+          {
+            "translation": "maggot-producing; causing myiasis (of flies)",
+            "pos": "ADJ"
+          }
+        ]
+      },
+      "scope": {
+        "mode": "lyrics",
+        "artist": "portuguese-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Targeted review of the attested lyric construction; scoped meaning replaces irrelevant letter-name or absent menu",
+      "author": "Codex",
+      "created_at": "2026-10-03"
+    }
+  ]
+}

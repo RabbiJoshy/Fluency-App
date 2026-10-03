@@ -72,7 +72,9 @@ def build_lyrics_corpus_processing_profile(
         raise LyricsCorpusProcessingError("processing profile source language does not match the plan")
     specs = PROCESSING_INPUT_SPECS.get(language)
     if specs is None:
-        raise LyricsCorpusProcessingError(f"no processing input contract is installed for {language!r}")
+        from fluency.lyrics.languages import load_lyrics_adapter
+        load_lyrics_adapter(language)  # fail closed for an uninstalled language
+        specs = {"routing_snapshot": "legacy-word-routing/v2"}
     shared = config.get("shared_inputs")
     artist_sources = config.get("artist_sources")
     if not isinstance(shared, dict) or not isinstance(artist_sources, list):

@@ -349,9 +349,12 @@ def _artist_config(
     if SAFE_SLUG.fullmatch(slug) is None:
         raise LyricsReleaseError(f"unsafe artist slug: {slug}")
     language_name = str(source.get("language", "spanish"))
-    language = LANGUAGE_CODES.get(language_name)
-    if language is None:
-        raise LyricsReleaseError(f"unsupported artist language: {language_name}")
+    language = LANGUAGE_CODES.get(language_name, language_name)
+    from fluency.languages.surfaces import normalizer_for_language
+    try:
+        normalizer_for_language(language)
+    except ValueError as error:
+        raise LyricsReleaseError(f"unsupported artist language: {language_name}") from error
     index_source, examples_source = _split_paths(source_root, source)
     card_count, example_card_count = _validate_index_examples(index_source, examples_source)
     artist_base = f"Artists/{language}/{slug}"
@@ -372,9 +375,11 @@ def _artist_config(
     bridged_index, wsd_evidence = bridge_materialized_assignments(
         index, examples, master, artist_slug=slug
     )
+    explicit_native_methods = set()
     if wsd_assignments_path is not None:
         with wsd_assignments_path.open(encoding="utf-8") as assignment_file:
-            records = (json.loads(line) for line in assignment_file if line.strip())
+            records = [json.loads(line) for line in assignment_file if line.strip()]
+            explicit_native_methods = {r["assignment_method"] for r in records if r.get("assignment_method")}
             bridged_index, wsd_evidence = overlay_native_assignments(
                 bridged_index, wsd_evidence, master, records
             )
@@ -382,6 +387,13 @@ def _artist_config(
     # contract either way, so without this a fully migrated deck and a fully
     # native one are indistinguishable from the outside.
     composition = method_composition(bridged_index)
+    if len(explicit_native_methods) == 1 and wsd_evidence is not None:
+        # Native Artist evidence stores occurrence decisions outside index buckets.
+        # Summarise those actual decisions with the explicitly named profile.
+        composition = method_composition(
+            [{"wsd_distribution": {"buckets": card["decisions"]}}
+             for card in wsd_evidence["cards"].values()],
+            native_method=next(iter(explicit_native_methods)))
     if wsd_evidence is not None:
         wsd_evidence["method_composition"] = composition
 

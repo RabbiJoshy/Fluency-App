@@ -1,0 +1,44 @@
+{
+  "profile_id": "fr-lyrics-polyglot-v2",
+  "language": "fr",
+  "dictionary_snapshot": "raw/wiktionary/enwiktionary-2026-08-05/kaikki.org-dictionary-French.jsonl",
+  "menu_policy": "fr-lyrics-polyglot-v2",
+  "clitic_gate": false,
+  "mwe_snapshot": "raw/playlists/polyglot-followup-20261003/fr-mwe-signed-v2.json",
+  "reference_prewsd": null,
+  "embedding_policy": "offline-only",
+  "french_mwe_status": null,
+  "required_grammar_axes": [
+    "person",
+    "function"
+  ],
+  "surface_pos_constraints": {
+    "c’": [
+      "pron",
+      "det"
+    ],
+    "j’": [
+      "pron"
+    ],
+    "d’": [
+      "prep"
+    ],
+    "qu’": [
+      "conj",
+      "pron"
+    ],
+    "m’": [
+      "pron"
+    ],
+    "t’": [
+      "pron"
+    ],
+    "s’": [
+      "pron"
+    ],
+    "n’": [
+      "adv",
+      "particle"
+    ]
+  }
+}

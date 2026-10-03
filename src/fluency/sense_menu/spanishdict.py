@@ -209,6 +209,7 @@ class SpanishDictSenseMenuAdapter:
     spanish_forms: set[str] = field(init=False)
     conjugation_deaccented: dict[str, set[str]] = field(init=False)
     conjugation_original: dict[str, set[str]] = field(init=False)
+    conjugation_lookup_original: dict[str, set[str]] = field(init=False)
 
     def __post_init__(self) -> None:
         self.path = self.path.expanduser().resolve()
@@ -264,6 +265,7 @@ class SpanishDictSenseMenuAdapter:
         self.spanish_forms = {_deaccent(str(value)) for value in forms}
         self.conjugation_deaccented = defaultdict(set)
         self.conjugation_original = defaultdict(set)
+        self.conjugation_lookup_original = defaultdict(set)
         for form, entries in reverse.items():
             if not isinstance(entries, list):
                 continue
@@ -272,6 +274,7 @@ class SpanishDictSenseMenuAdapter:
                 if isinstance(lemma, str) and lemma.strip():
                     self.conjugation_deaccented[_deaccent(form)].add(_deaccent(lemma))
                     self.conjugation_original[form.strip().lower()].add(lemma.strip().lower())
+                    self.conjugation_lookup_original[_deaccent(form)].add(lemma.strip().lower())
 
     def _reverse_conjugation(self, surface: str, headword: str) -> bool:
         base = headword[:-2] if headword.endswith("se") else headword
@@ -354,18 +357,16 @@ class SpanishDictSenseMenuAdapter:
 
     def _analyses(self, surface: str, quarantine: list[dict[str, str]]) -> list[dict[str, Any]]:
         retained = self.normalized_menu.get(surface)
-        if isinstance(retained, list):
-            return _normalize_analyses(retained)
         surface_entry = self.surface_cache.get(surface)
         if not isinstance(surface_entry, dict):
-            return []
+            surface_entry = {}
         entry_language = str(surface_entry.get("entry_lang", "")).strip()
         if entry_language and entry_language != "es":
             quarantine.append({"surface": surface, "headword": "", "reason": "provider_wrong_language"})
             return []
         analyses = [
             item
-            for item in _normalize_analyses(surface_entry.get("dictionary_analyses"))
+            for item in _normalize_analyses(retained if isinstance(retained, list) else surface_entry.get("dictionary_analyses"))
             if not _abbreviation_mismatch(surface, item.get("headword"))
         ]
         seen_headwords = {item.get("headword") for item in analyses if item.get("headword")}
@@ -416,9 +417,9 @@ class SpanishDictSenseMenuAdapter:
                     kept.append(analysis)
             analyses = kept
 
-        if not entry_language and self._reverse_direction_conjugation(surface, analyses):
+        if not entry_language and (not analyses or self._reverse_direction_conjugation(surface, analyses)):
             replacements: list[dict[str, Any]] = []
-            for lemma in sorted(self.conjugation_original.get(surface.lower(), set())):
+            for lemma in sorted(self.conjugation_lookup_original.get(_deaccent(surface), set())):
                 entry = self.headword_cache.get(lemma)
                 if not isinstance(entry, dict):
                     continue

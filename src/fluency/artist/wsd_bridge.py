@@ -190,12 +190,16 @@ def overlay_native_assignments(
                 by_sense.setdefault(str(sense_id), []).append((card_id, str(canonical)))
 
     native: dict[str, list[dict[str, Any]]] = {}
+    native_projections: dict[str, set[str]] = {}
     for record in records:
         assignment = record.get("assignment") or {}
-        projection = (assignment.get("selection_projections") or {}).get("provider_only") or {}
+        projection_name = record.get("selection_projection", "provider_only")
+        if projection_name not in {"provider_only", "mwe_augmented"}:
+            raise ArtistWSDBridgeError("native record names an unsupported projection")
+        projection = (assignment.get("selection_projections") or {}).get(projection_name) or {}
         selected_id = projection.get("selected_sense_id")
         if not selected_id:
-            raise ArtistWSDBridgeError("native v7 record lost its provider-only leaf")
+            raise ArtistWSDBridgeError("native v7 record lost its selected projection leaf")
         surface_ids = set(by_surface.get(str(record.get("surface") or "").casefold(), []))
         matches = by_sense.get(str(selected_id), [])
         matches = [match for match in matches if match[0] in surface_ids] or matches
@@ -216,13 +220,16 @@ def overlay_native_assignments(
             "card_id": card_id, "occurrence_id": record.get("occurrence_id"),
             "example_id": record.get("example_id"), "example_index": record.get("example_index"),
         }
+        native_projections.setdefault(card_id, set()).add(projection_name)
         native.setdefault(card_id, []).append({
             "decision_id": "native_v7_" + canonical_content_id(identity).removeprefix("sha256:")[:32],
             "subject": {"kind": "persisted_occurrence", **{k: record.get(k) for k in ("occurrence_id", "example_id", "example_index")}},
             "forced_selection": {"sense_id": canonical or selected_id, "selected_tuple": projection.get("selected_tuple")},
             "supported_selection": supported,
             "supported_status": status,
-            "provenance": {"assignment_method": "native-v7", "menu_analysis_id": projection.get("menu_analysis_id"), "raw_margin": projection.get("raw_margin")},
+            "provenance": {"assignment_method": record.get("assignment_method") or "native-v7", "menu_analysis_id": projection.get("menu_analysis_id"), "raw_margin": projection.get("raw_margin")},
+            **({"selection_projection": projection_name, "selection_projections": assignment["selection_projections"]}
+               if record.get("selection_projection") else {}),
         })
 
     result = deepcopy(evidence or {
@@ -240,7 +247,8 @@ def overlay_native_assignments(
         statuses = Counter(row["supported_status"] for row in decisions)
         distribution = {
             "distribution_version": WSD_DISTRIBUTION_VERSION,
-            "selection_projection": "provider_only", "publication_projection": "forced_leaf",
+            "selection_projection": (next(iter(native_projections[card_id]))
+                                     if len(native_projections[card_id]) == 1 else "mixed"), "publication_projection": "forced_leaf",
             "denominator": len(decisions), "forced_leaf_counts": dict(forced),
             "supported_leaf_counts": dict(supported), "published_leaf_counts": dict(forced),
             "supported_level_counts": {level: levels[level] for level in SUPPORT_LEVELS},
@@ -249,6 +257,11 @@ def overlay_native_assignments(
         }
         index_by_id[card_id]["wsd_distribution"] = distribution
         cards[card_id] = {"surface_form": master[card_id].get("word"), "lemma": master[card_id].get("lemma"), "distribution": distribution, "decisions": decisions}
+    projections = set().union(*native_projections.values()) if native_projections else set()
+    if len(projections) == 1:
+        result["selection_projection"] = next(iter(projections))
+    elif projections:
+        result["selection_projection"] = "mixed"
     result["publication_views"] = {"forced_leaf": {"status": "available"}, "supported_specificity": {"status": "available"}}
     result["source_kind"] = "native_v7_with_materialized_fallback"
     result["card_count"] = len(cards)

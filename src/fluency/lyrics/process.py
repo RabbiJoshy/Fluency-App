@@ -184,8 +184,14 @@ def _payload_path(workspace: Workspace, metadata: ArtifactMetadata) -> Path:
 
 
 def processing_implementation_content_id(language: str) -> str:
-    if language != "es":
-        raise LyricsProcessingError(f"no processing implementation is installed for {language!r}")
+    if language not in PROCESSING_INPUT_SPECS:
+        import inspect
+        adapter = load_lyrics_adapter(language)
+        return canonical_content_id({
+            "process": file_content_id(Path(__file__)),
+            "adapter": file_content_id(Path(inspect.getfile(type(adapter)))),
+            "routing": file_content_id(Path(__file__).with_name("routing.py")),
+        })
     return canonical_content_id(
         {
             "process": file_content_id(Path(__file__)),
@@ -214,7 +220,16 @@ def prepare_lyrics_processing(
 
     specs = PROCESSING_INPUT_SPECS.get(language)
     if specs is None:
-        raise LyricsProcessingError(f"no Lyrics processing profile is installed for {language!r}")
+        adapter = load_lyrics_adapter(language)
+        if routing_mode != "snapshot" or set(artifact_ids) != {"routing_snapshot"}:
+            raise LyricsProcessingError("dictionary adapters require only a routing snapshot; live routing is separate")
+        metadata = verify_artifact(workspace, artifact_ids["routing_snapshot"])
+        if metadata.schema != "legacy-word-routing/v2":
+            raise LyricsProcessingError("routing snapshot schema mismatch")
+        return PreparedLyricsProcessing(
+            language, routing_mode, {"routing_snapshot": metadata}, adapter,
+            RoutingSnapshot(_payload_path(workspace, metadata)), None,
+        )
     if routing_mode not in {"snapshot", "live"}:
         raise LyricsProcessingError("routing mode must be 'snapshot' or 'live'")
     required = set(BASE_INPUTS)
@@ -324,6 +339,12 @@ def process_lyrics_run(
     if output_directory.exists():
         raise LyricsProcessingError("processing output already exists; create a new run instead of overwriting it")
 
+    if _prepared is None and language not in PROCESSING_INPUT_SPECS:
+        if routing_snapshot is None:
+            raise LyricsProcessingError("dictionary processing requires a routing snapshot")
+        metadata = _pin_json(workspace, routing_snapshot, filename="word-routing.json", schema="legacy-word-routing/v2")
+        _prepared = prepare_lyrics_processing(workspace, language=language, routing_mode=routing_mode,
+                                             artifact_ids={"routing_snapshot": metadata.artifact_id})
     if _prepared is None:
         base_paths = {
             "elision_mapping": elision_mapping,
@@ -412,7 +433,15 @@ def process_lyrics_run(
     route_counts: dict[str, int] = {}
     comparison_rows: dict[tuple[str, str, str | None, str, str | None], dict[str, Any]] = {}
     for line in lines:
-        scanned = _scan_tokens(line["text"])
+        tokenizer = getattr(adapter, "tokenize", None)
+        if tokenizer is None:
+            scanned = _scan_tokens(line["text"])
+        else:
+            result = tokenizer(line["text"])
+            if len(result.canonical_text) != len(line["text"]):
+                raise LyricsProcessingError("source lines must be NFC-normalized before tokenization")
+            scanned = [(line["text"][u.start:u.end], u.start, u.end)
+                       for u in result.units if u.eligible]
         enclosed = _enclosed_ranges(line["text"])
         surfaces = [surface for surface, _start, _end in scanned]
         for ordinal, (surface, start, end) in enumerate(scanned):
@@ -444,7 +473,7 @@ def process_lyrics_run(
                     phase="extract",
                     operation="split",
                     run_id=run_id,
-                    method_id=TOKENIZER_ID,
+                    method_id=adapter.method_id if getattr(adapter, "tokenize", None) else TOKENIZER_ID,
                     input_refs=[{"kind": "lyrics_line", "id": line["line_id"]}],
                     output_refs=[{"kind": "occurrence", "id": occurrence_id}],
                     evidence_kind="direct",
@@ -613,7 +642,7 @@ def process_lyrics_run(
             "status": "complete",
             "started_at": started_at.isoformat().replace("+00:00", "Z"),
             "completed_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
-            "methods": {"tokenize": TOKENIZER_ID, "normalize": adapter.method_id, "route": router.method_id},
+            "methods": {"tokenize": adapter.method_id if getattr(adapter, "tokenize", None) else TOKENIZER_ID, "normalize": adapter.method_id, "route": router.method_id},
             "implementation_content_id": processing_implementation_content_id(language),
             "inputs": inputs,
             "outputs": outputs,

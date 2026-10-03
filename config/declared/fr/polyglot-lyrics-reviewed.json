@@ -1,0 +1,280 @@
+{
+  "schema": "declared-entries/v1",
+  "language": "fr",
+  "entries": [
+    {
+      "entry_id": "polyglot-fr-maint’nant",
+      "kind": "expansion",
+      "surface": "maint’nant",
+      "scope": {
+        "mode": "lyrics",
+        "artist": "french-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Observed lyrics elision; expansion preserves surface identity",
+      "author": "Codex",
+      "created_at": "2026-10-03",
+      "payload": {
+        "expands_to": "maintenant"
+      }
+    },
+    {
+      "entry_id": "polyglot-fr-souv’nir",
+      "kind": "expansion",
+      "surface": "souv’nir",
+      "scope": {
+        "mode": "lyrics",
+        "artist": "french-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Observed lyrics elision; expansion preserves surface identity",
+      "author": "Codex",
+      "created_at": "2026-10-03",
+      "payload": {
+        "expands_to": "souvenir"
+      }
+    },
+    {
+      "entry_id": "polyglot-fr-rev’nir",
+      "kind": "expansion",
+      "surface": "rev’nir",
+      "scope": {
+        "mode": "lyrics",
+        "artist": "french-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Observed lyrics elision; expansion preserves surface identity",
+      "author": "Codex",
+      "created_at": "2026-10-03",
+      "payload": {
+        "expands_to": "revenir"
+      }
+    },
+    {
+      "entry_id": "polyglot-fr-r’garde",
+      "kind": "expansion",
+      "surface": "r’garde",
+      "scope": {
+        "mode": "lyrics",
+        "artist": "french-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Observed lyrics elision; expansion preserves surface identity",
+      "author": "Codex",
+      "created_at": "2026-10-03",
+      "payload": {
+        "expands_to": "regarde"
+      }
+    },
+    {
+      "entry_id": "polyglot-fr-appart’",
+      "kind": "expansion",
+      "surface": "appart’",
+      "scope": {
+        "mode": "lyrics",
+        "artist": "french-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Observed lyrics elision; expansion preserves surface identity",
+      "author": "Codex",
+      "created_at": "2026-10-03",
+      "payload": {
+        "expands_to": "appartement"
+      }
+    },
+    {
+      "entry_id": "polyglot-fr-y’a",
+      "kind": "gloss",
+      "surface": "y’a",
+      "scope": {
+        "mode": "lyrics",
+        "artist": "french-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Observed lyrics elision; expansion preserves surface identity",
+      "author": "Codex",
+      "created_at": "2026-10-03",
+      "payload": {
+        "class": "slang",
+        "senses": [
+          {
+            "translation": "there is; there are",
+            "pos": "PHRASE"
+          }
+        ]
+      }
+    },
+    {
+      "entry_id": "polyglot-fr-y’avait",
+      "kind": "gloss",
+      "surface": "y’avait",
+      "scope": {
+        "mode": "lyrics",
+        "artist": "french-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Observed lyrics elision; expansion preserves surface identity",
+      "author": "Codex",
+      "created_at": "2026-10-03",
+      "payload": {
+        "class": "slang",
+        "senses": [
+          {
+            "translation": "there was; there were",
+            "pos": "PHRASE"
+          }
+        ]
+      }
+    },
+    {
+      "entry_id": "polyglot-fr-y’aura",
+      "kind": "gloss",
+      "surface": "y’aura",
+      "scope": {
+        "mode": "lyrics",
+        "artist": "french-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Observed lyrics elision; expansion preserves surface identity",
+      "author": "Codex",
+      "created_at": "2026-10-03",
+      "payload": {
+        "class": "slang",
+        "senses": [
+          {
+            "translation": "there will be",
+            "pos": "PHRASE"
+          }
+        ]
+      }
+    },
+    {
+      "entry_id": "polyglot-fr-p’t’être",
+      "kind": "expansion",
+      "surface": "p’t’être",
+      "scope": {
+        "mode": "lyrics",
+        "artist": "french-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Observed lyrics elision; expansion preserves surface identity",
+      "author": "Codex",
+      "created_at": "2026-10-03",
+      "payload": {
+        "expands_to": "peut-être"
+      }
+    },
+    {
+      "entry_id": "polyglot-fr-mystèrе",
+      "kind": "expansion",
+      "surface": "mystèrе",
+      "scope": {
+        "mode": "lyrics",
+        "artist": "french-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Observed source spelling/Unicode contamination; lookup repair only",
+      "author": "Codex",
+      "created_at": "2026-10-03",
+      "payload": {
+        "expands_to": "mystère"
+      }
+    },
+    {
+      "entry_id": "polyglot-fr-poubellе",
+      "kind": "expansion",
+      "surface": "poubellе",
+      "scope": {
+        "mode": "lyrics",
+        "artist": "french-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Observed source spelling/Unicode contamination; lookup repair only",
+      "author": "Codex",
+      "created_at": "2026-10-03",
+      "payload": {
+        "expands_to": "poubelle"
+      }
+    },
+    {
+      "entry_id": "polyglot-fr-pеndant",
+      "kind": "expansion",
+      "surface": "pеndant",
+      "scope": {
+        "mode": "lyrics",
+        "artist": "french-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Observed source spelling/Unicode contamination; lookup repair only",
+      "author": "Codex",
+      "created_at": "2026-10-03",
+      "payload": {
+        "expands_to": "pendant"
+      }
+    },
+    {
+      "entry_id": "polyglot-fr-quе",
+      "kind": "expansion",
+      "surface": "quе",
+      "scope": {
+        "mode": "lyrics",
+        "artist": "french-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Observed source spelling/Unicode contamination; lookup repair only",
+      "author": "Codex",
+      "created_at": "2026-10-03",
+      "payload": {
+        "expands_to": "que"
+      }
+    },
+    {
+      "entry_id": "polyglot-fr-facon",
+      "kind": "expansion",
+      "surface": "facon",
+      "scope": {
+        "mode": "lyrics",
+        "artist": "french-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Observed source spelling/Unicode contamination; lookup repair only",
+      "author": "Codex",
+      "created_at": "2026-10-03",
+      "payload": {
+        "expands_to": "façon"
+      }
+    },
+    {
+      "entry_id": "polyglot-fr-sourir",
+      "kind": "expansion",
+      "surface": "sourir",
+      "scope": {
+        "mode": "lyrics",
+        "artist": "french-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Observed source spelling/Unicode contamination; lookup repair only",
+      "author": "Codex",
+      "created_at": "2026-10-03",
+      "payload": {
+        "expands_to": "sourire"
+      }
+    },
+    {
+      "entry_id": "polyglot-fr-supendent",
+      "kind": "expansion",
+      "surface": "supendent",
+      "scope": {
+        "mode": "lyrics",
+        "artist": "french-test-playlist"
+      },
+      "trust": "curated",
+      "reason": "Observed source spelling/Unicode contamination; lookup repair only",
+      "author": "Codex",
+      "created_at": "2026-10-03",
+      "payload": {
+        "expands_to": "suspendent"
+      }
+    }
+  ]
+}

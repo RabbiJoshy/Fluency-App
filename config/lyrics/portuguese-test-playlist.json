@@ -1,0 +1,86 @@
+{
+  "language": "pt",
+  "slug": "portuguese-test-playlist",
+  "tracks": [
+    {
+      "artist": "Caetano Veloso",
+      "title": "Sozinho"
+    },
+    {
+      "artist": "Caetano Veloso",
+      "title": "O Leãozinho"
+    },
+    {
+      "artist": "Caetano Veloso",
+      "title": "Você É Linda"
+    },
+    {
+      "artist": "Marília Mendonça",
+      "title": "Infiel"
+    },
+    {
+      "artist": "Marília Mendonça",
+      "title": "Todo Mundo Vai Sofrer"
+    },
+    {
+      "artist": "Marília Mendonça",
+      "title": "De Quem É a Culpa?"
+    },
+    {
+      "artist": "Anitta",
+      "title": "Show das Poderosas"
+    },
+    {
+      "artist": "Anitta",
+      "title": "Meiga e Abusada"
+    },
+    {
+      "artist": "Gilberto Gil",
+      "title": "Aquele Abraço"
+    },
+    {
+      "artist": "Gilberto Gil",
+      "title": "Andar com Fé"
+    },
+    {
+      "artist": "Djavan",
+      "title": "Oceano"
+    },
+    {
+      "artist": "Djavan",
+      "title": "Flor de Lis"
+    },
+    {
+      "artist": "Tim Maia",
+      "title": "Não Quero Dinheiro"
+    },
+    {
+      "artist": "Tim Maia",
+      "title": "Gostava Tanto de Você"
+    },
+    {
+      "artist": "Chico Buarque",
+      "title": "Construção"
+    },
+    {
+      "artist": "Elis Regina",
+      "title": "Como Nossos Pais"
+    },
+    {
+      "artist": "Jorge Ben Jor",
+      "title": "País Tropical"
+    },
+    {
+      "artist": "Alceu Valença",
+      "title": "Anunciação"
+    },
+    {
+      "artist": "Maria Gadú",
+      "title": "Shimbalaiê"
+    },
+    {
+      "artist": "Tribalistas",
+      "title": "Velha Infância"
+    }
+  ]
+}
