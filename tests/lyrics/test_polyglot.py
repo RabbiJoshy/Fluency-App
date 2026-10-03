@@ -282,3 +282,15 @@ def test_method_composition_names_explicit_language_profile():
     assert composition['decision_count']==composition['native_decisions']==1
     assert composition['fully_native'] and composition['native_share']==1
     assert method_composition(cards)['native_decisions']==0  # legacy default preserved
+
+
+def test_artist_song_membership_uses_all_occurrences_not_sampled_examples(tmp_path):
+    import runpy
+    catalog=runpy.run_path(str(Path(__file__).resolve().parents[2]/'scripts/package_polyglot_artist.py'))['song_catalog']
+    (tmp_path/'lines.json').write_text(json.dumps([{'line_id':'a','song':'1'},{'line_id':'b','song':'2'}]))
+    (tmp_path/'occurrences.json').write_text(json.dumps({'amor':[{'line_id':'a'},{'line_id':'b'}],'eu':[{'line_id':'a'}]}))
+    source={'songs':[{'id':'1','title':'First'},{'id':'2','title':'Second'}]}
+    master={'love-card':{'word':'amor'},'i-card':{'word':'eu'}}
+    songs=catalog(tmp_path,source,master)['songs']
+    assert songs[0]['cardIds']==['i-card','love-card']
+    assert songs[1]['cardIds']==['love-card']

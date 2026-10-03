@@ -10,6 +10,20 @@ from fluency.artist.release import build_lyrics_catalog_release, validate_lyrics
 from fluency.lyrics.polyglot import write_json
 
 
+def song_catalog(run, source, master):
+    """Complete membership comes from full occurrences, never sampled examples."""
+    lines={row['line_id']:str(row['song']) for row in json.loads((run/'lines.json').read_text())}
+    occurrences=json.loads((run/'occurrences.json').read_text())
+    members={str(song['id']):set() for song in source['songs']}
+    for card_id, card in master.items():
+        for occurrence in occurrences[card['word']]:
+            members[lines[occurrence['line_id']]].add(card_id)
+    return {'schemaVersion':1,'source':'polyglot-pinned-source',
+        'membershipSource':'complete-frozen-lyric-occurrences',
+        'songs':[{'id':str(s['id']),'title':s['title'],'artist':s.get('artist'),
+                  'cardIds':sorted(members[str(s['id'])])} for s in source['songs']]}
+
+
 def package(workspace, run, release_id):
     manifest=json.loads((run/'manifest.json').read_text())
     for name,digest in manifest['outputs'].items():
@@ -27,8 +41,8 @@ def package(workspace, run, release_id):
     target=staging/base;target.mkdir(parents=True)
     for name in ('index.json','examples.json','vocabulary_master.json'):
         shutil.copy2(run/name,target/name)
-    write_json(target/'songs.json',{'schemaVersion':1,'source':'polyglot-pinned-source',
-               'songs':[{'id':s['id'],'title':s['title'],'artist':s.get('artist')} for s in source['songs']]})
+    master=json.loads((run/'vocabulary_master.json').read_text())
+    write_json(target/'songs.json',song_catalog(run,source,master))
     (staging/'config').mkdir()
     write_json(staging/'config/artists.json',{slug:{'name':slug.replace('-',' ').title(),
          'language':language_keys()[language],'indexPath':base+'/index.json','examplesPath':base+'/examples.json',

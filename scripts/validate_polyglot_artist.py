@@ -24,6 +24,16 @@ def validate(run, release):
     catalog = json.loads((release / 'app/config/artists.json').read_text())
     artist = next(iter(catalog.values()))
     evidence = json.loads((release / 'app' / artist['wsdEvidencePath']).read_text())
+    song_catalog = json.loads((release / 'app' / artist['songsPath']).read_text())
+    membership = {str(song['id']):set(song['cardIds']) for song in song_catalog['songs']}
+    line_songs = {row['line_id']:str(row['song']) for row in json.loads((run/'lines.json').read_text())}
+    master = json.loads((run/'vocabulary_master.json').read_text())
+    expected = {song:set() for song in membership}
+    for card_id, card in master.items():
+        for occurrence in occurrences[card['word']]:
+            expected[line_songs[occurrence['line_id']]].add(card_id)
+    if membership != expected:
+        raise ValueError('song membership differs from complete lyric occurrences')
     examples = json.loads((run / 'examples.json').read_text())
     published = sum(len(bucket) for card in examples.values() for bucket in card['m'])
     composition = evidence['method_composition']
@@ -35,7 +45,7 @@ def validate(run, release):
             'freeze_errors': 0, 'native_decisions': evidence['decision_count'],
             'projection': evidence['selection_projection'], 'language_key': artist['language'],
             'release_id': release.name, 'run_id': run.name,
-            'split_contract_violations': 0, 'embedding_cache_misses': json.loads((run / 'report.json').read_text())['cache_misses']}
+            'song_membership_verified': True, 'split_contract_violations': 0, 'embedding_cache_misses': json.loads((run / 'report.json').read_text())['cache_misses']}
 
 
 if __name__ == '__main__':
@@ -51,8 +61,8 @@ if __name__ == '__main__':
         raise ValueError('Spanish release changed: ' + ', '.join(differences))
     candidates = {}
     for language, run_id, release_id in (args.candidate or [
-        ('pt', 'polyglot-review-20261003-v4', 'lyrics-portuguese-test-playlist-polyglot-v5'),
-        ('fr', 'polyglot-review-20261003-v5', 'lyrics-french-test-playlist-polyglot-v4'),
+        ('pt', 'polyglot-review-20261003-v4', 'lyrics-portuguese-test-playlist-polyglot-v6'),
+        ('fr', 'polyglot-review-20261003-v5', 'lyrics-french-test-playlist-polyglot-v5'),
     ]):
         candidates[language] = validate(args.workspace / 'runs' / language / 'lyrics' / run_id,
                                         args.workspace / 'releases/lyrics' / release_id)

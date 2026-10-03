@@ -444,7 +444,7 @@ Paste into that chat:
 > - The core focus is establishing robust, language-agnostic adapters (morphology, clitics, dictionary menus, lyrics elisions) so any artist in any supported language works with the same quality as Spanish.
 
 - **Output:** Multi-language artist pipeline specification and working test releases for French and Portuguese.
-- **Status (2026-10-03):** Reviewed French (64 songs / 2,097 cards) and Portuguese (19 songs / 869 cards) releases validated with 0 split violations and 0 embedding misses: `lyrics-french-test-playlist-polyglot-v4`, `lyrics-portuguese-test-playlist-polyglot-v5`. Signed lyric phrase inventories (46 fr / 33 pt), scoped morphology/POS guards and all 348 earlier withheld-form outcomes documented. Spanish releases unchanged. Published assets; catalog deployment verification in progress. Architecture, measured coverage, remaining omissions and cost: `docs/dossiers/polyglot-artist-scaling.md`.
+- **Status (2026-10-03):** Reviewed French (64 songs / 2,097 cards) and Portuguese (19 songs / 869 cards) releases validated with 0 split violations and 0 embedding misses: `lyrics-french-test-playlist-polyglot-v5`, `lyrics-portuguese-test-playlist-polyglot-v6`. Signed lyric phrase inventories (46 fr / 33 pt), scoped morphology/POS guards and all 348 earlier withheld-form outcomes documented. Spanish releases unchanged. Published assets; catalog deployment verification in progress. Architecture, measured coverage, remaining omissions and cost: `docs/dossiers/polyglot-artist-scaling.md`.
 - Do not: regress Spanish artist contracts; hardcode Spanish linguistic rules into generic pipeline stages.
 
 ### TURBO — live user-uploaded playlist WSD engine
