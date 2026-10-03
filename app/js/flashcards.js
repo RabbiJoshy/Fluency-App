@@ -1,26 +1,26 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=825ff7b7';
-import './speech.js?v=825ff7b7';
-import { goToRoute, routeCodeFor } from './routes.js?v=825ff7b7';
-import './side-dock.js?v=825ff7b7';
+import './state.js?v=c950a57b';
+import './speech.js?v=c950a57b';
+import { goToRoute, routeCodeFor } from './routes.js?v=c950a57b';
+import './side-dock.js?v=c950a57b';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=825ff7b7';
+} from './example-personalisation.js?v=c950a57b';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=825ff7b7';
+} from './spanishdict-usage.js?v=c950a57b';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=825ff7b7';
+} from './reverse-cues.js?v=c950a57b';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -53,7 +53,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=825ff7b7';
+} from './card-metadata-pills.js?v=c950a57b';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -6047,13 +6047,9 @@ function renderCardWikipediaBadge(card) {
     const frontSurfaceRelationEl = document.getElementById('frontSurfaceRelation');
     if (frontSurfaceRelationEl) {
         if (card.splitInfo && !isFlipped && !flippedFrontMeanings) {
-            const s = card.splitInfo;
-            const activePill = `<span class="split-card-pill is-active"><span class="split-card-dot" aria-hidden="true">●</span> Card ${s.index} of ${s.total}: <strong>${escapeCardText(s.headword)}</strong></span>`;
-            const otherIndex = s.index === 1 ? 2 : 1;
-            const otherPill = `<span class="split-card-pill is-companion"><span class="split-card-dot" aria-hidden="true">○</span> Card ${otherIndex} of ${s.total}: <strong>${escapeCardText(s.siblingHeadword)}</strong></span>`;
-            frontSurfaceRelationEl.className = 'surface-relation-cue front-surface-relation split-card-banner';
+            frontSurfaceRelationEl.className = 'surface-relation-cue front-surface-relation split-card-note';
             frontSurfaceRelationEl.hidden = false;
-            frontSurfaceRelationEl.innerHTML = s.index === 1 ? `${activePill} ${otherPill}` : `${otherPill} ${activePill}`;
+            frontSurfaceRelationEl.textContent = 'This word has distinct meanings and is split across 2 cards.';
         } else {
             frontSurfaceRelationEl.className = 'surface-relation-cue front-surface-relation';
             const showRelation = Boolean(notableSurfaceRelation && !isFlipped && !flippedFrontMeanings);
@@ -6213,15 +6209,44 @@ function renderCardWikipediaBadge(card) {
         if (pairs.length === 0) {
             frontPOSEl.style.display = 'none';
         } else {
-            frontPOSEl.classList.add('is-lemma-map', `pos-count-${Math.min(pairs.length, 4)}`);
-            if (pairs.length > 4) frontPOSEl.classList.add('pos-count-many');
-            frontPOSEl.innerHTML = pairs.map(pair => {
-                const posUnit = renderFrontPosUnit(pair.pos, isVerbPos(pair.pos));
-                if (!pair.lemma) return posUnit;
-                // POS is the iconographic pill; the lemma is the label it
-                // governs, sitting to its right inside the same capsule.
-                return `<span class="front-lemma-pair">${posUnit}<span class="front-lemma-name">${escapeCardText(pair.lemma)}</span></span>`;
-            }).join('');
+            const isSplitCard = Boolean(card.splitInfo);
+            if (isSplitCard) {
+                const s = card.splitInfo;
+                const activePair = pairs[0];
+                const companionPos = s.siblingPos || (isVerbPos(s.siblingHeadword) ? 'VERB' : activePair.pos);
+                const companionPair = {
+                    lemma: s.siblingHeadword,
+                    pos: companionPos
+                };
+
+                const card1Pair = s.index === 1 ? activePair : companionPair;
+                const card2Pair = s.index === 1 ? companionPair : activePair;
+
+                const renderSplitPill = (pair, cardNum, isActive) => {
+                    const posUnit = renderFrontPosUnit(pair.pos, isVerbPos(pair.pos));
+                    const statusClass = isActive ? 'is-active-split' : 'is-companion-split';
+                    const badgeText = `Card ${cardNum}`;
+                    return `<span class="front-lemma-pair ${statusClass}">${posUnit}<span class="front-lemma-name">${escapeCardText(pair.lemma)}</span><span class="front-split-card-tag">${badgeText}</span></span>`;
+                };
+
+                const splitPairsHTML = [
+                    renderSplitPill(card1Pair, 1, s.index === 1),
+                    renderSplitPill(card2Pair, 2, s.index === 2)
+                ].join('');
+
+                frontPOSEl.classList.add('is-lemma-map', 'pos-count-2', 'is-split-deck-map');
+                frontPOSEl.innerHTML = splitPairsHTML;
+            } else {
+                frontPOSEl.classList.add('is-lemma-map', `pos-count-${Math.min(pairs.length, 4)}`);
+                if (pairs.length > 4) frontPOSEl.classList.add('pos-count-many');
+                frontPOSEl.innerHTML = pairs.map(pair => {
+                    const posUnit = renderFrontPosUnit(pair.pos, isVerbPos(pair.pos));
+                    if (!pair.lemma) return posUnit;
+                    // POS is the iconographic pill; the lemma is the label it
+                    // governs, sitting to its right inside the same capsule.
+                    return `<span class="front-lemma-pair">${posUnit}<span class="front-lemma-name">${escapeCardText(pair.lemma)}</span></span>`;
+                }).join('');
+            }
             frontPOSEl.style.display = 'grid';
             // Keep every label in a group at the same size. The grid reserves
             // equal space per pair; only unusually long lemmas reduce the
@@ -6347,14 +6372,10 @@ function renderCardWikipediaBadge(card) {
             // attribute context by escapeCardText.
             const breakdown = escapeCardText(JSON.stringify(
                 (card.sourceFrequencyBreakdown || []).map(row => [row.surface, row.value])));
-            const isSplit = Boolean(card.splitInfo);
-            const splitSubtext = isSplit
-                ? `<span class="card-stat-unit card-stat-unit--below split-freq-subtext">${Math.round(card.splitInfo.share * 100)}% ${escapeCardText(card.splitInfo.headword)} · ${Math.round(card.splitInfo.siblingShare * 100)}% ${escapeCardText(card.splitInfo.siblingHeadword)}</span>`
-                : (perMillion ? '<span class="card-stat-unit card-stat-unit--below">per million</span>' : '');
             freqHtml = `<button class="card-freq-btn card-stat card-stat--end card-freq-label" onclick="window.showFreqInfo(event)" data-frequency-source="${source}" data-frequency-unit="${card.sourceFrequencyUnit || ''}" data-frequency-forms="${Number(card.sourceFrequencyForms) || 1}" data-frequency-is-total="${card.sourceFrequencyIsGroupTotal ? '1' : ''}" data-frequency-basis-surface="${escapeCardText(card.sourceFrequencyBasisSurface || '')}" data-frequency-breakdown="${breakdown}" aria-label="Source frequency information">`
                 + `<span class="card-stat-label">${label}</span>`
                 + `<span class="card-stat-line"><strong class="card-stat-value">${formatCardFrequency(card.sourceFrequency)}</strong></span>`
-                + splitSubtext
+                + (perMillion ? '<span class="card-stat-unit card-stat-unit--below">per million</span>' : '')
                 + '</button>';
         }
         // The deck's size sits small under the rank, as "per million" does
@@ -6524,7 +6545,7 @@ function renderCardWikipediaBadge(card) {
         const s = card.splitInfo;
         const otherIndex = s.index === 1 ? 2 : 1;
         backSplitBadgeHTML = `<span class="split-card-back-badge">Card ${s.index} of ${s.total}</span>`;
-        backSplitCompanionCueHTML = `<div class="split-card-companion-cue">🔗 Companion: Card ${otherIndex} of ${s.total} · <strong>${escapeCardText(s.siblingHeadword)}</strong> (${Math.round(s.siblingShare * 100)}%)</div>`;
+        backSplitCompanionCueHTML = `<div class="split-card-companion-cue">Companion: Card ${otherIndex} of ${s.total} · <strong>${escapeCardText(s.siblingHeadword)}</strong></div>`;
     }
 
     // line-height: 1.1 keeps multi-line wraps tight (long word + lemma
@@ -10239,8 +10260,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '825ff7b7';
-const MODALS_ASSET_VERSION = '825ff7b7';
+const ASSET_VERSION = 'c950a57b';
+const MODALS_ASSET_VERSION = 'c950a57b';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

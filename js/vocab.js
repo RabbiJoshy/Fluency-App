@@ -1,11 +1,11 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=825ff7b7';
-import { validateVocabularyIndex } from './data-contracts.js?v=825ff7b7';
-import { formatRoute } from './routes.js?v=825ff7b7';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=825ff7b7';
-import { releaseUrl } from './release-host.js?v=825ff7b7';
+import './state.js?v=c950a57b';
+import { validateVocabularyIndex } from './data-contracts.js?v=c950a57b';
+import { formatRoute } from './routes.js?v=c950a57b';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=c950a57b';
+import { releaseUrl } from './release-host.js?v=c950a57b';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -3278,9 +3278,11 @@ async function loadVocabularyData(rangeString, opts = {}) {
                         total: 2,
                         kind: splitTuples.kind,
                         headword: t1.headword,
+                        pos: t1.pos,
                         label: t1.label,
                         share: t1.share,
                         siblingHeadword: t2.headword,
+                        siblingPos: t2.pos,
                         siblingLabel: t2.label,
                         siblingShare: t2.share
                     }
@@ -3301,9 +3303,11 @@ async function loadVocabularyData(rangeString, opts = {}) {
                         total: 2,
                         kind: splitTuples.kind,
                         headword: t2.headword,
+                        pos: t2.pos,
                         label: t2.label,
                         share: t2.share,
                         siblingHeadword: t1.headword,
+                        siblingPos: t1.pos,
                         siblingLabel: t1.label,
                         siblingShare: t1.share
                     }
