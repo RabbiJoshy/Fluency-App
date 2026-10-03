@@ -1,9 +1,9 @@
 // Live playlist: look up lyrics on LRCLIB (six at a time), land each song in
 // the progress list, save tracks to Fluency, then build a study deck from
 // speech-inventory tokens plus unassigned song-line examples.
-import './state.js?v=c950a57b';
-import { combineSongCatalogs } from './song-sets-core.js?v=c950a57b';
-import { goToRoute, replaceRoute, routeCodeFor } from './routes.js?v=c950a57b';
+import './state.js?v=f5e36fff';
+import { combineSongCatalogs } from './song-sets-core.js?v=f5e36fff';
+import { goToRoute, replaceRoute, routeCodeFor } from './routes.js?v=f5e36fff';
 
 const CUSTOM_SONG_SET_KEY = 'fluency_song_set_v1:custom';
 const LYRICS_DB_NAME = 'fluency-playlist-lyrics';
@@ -14,7 +14,7 @@ const DECK_STORE = 'decks';
 const LRCLIB_SEARCH = 'https://lrclib.net/api/search';
 const LRCLIB_CLIENT = 'Fluency playlist-import/0.1 (https://github.com/JoshuaThomasAmar/Fluency-Next)';
 const LOOKUP_CONCURRENCY = 6;
-const SPOTIFY_MODULE = './spotify.js?v=c950a57b';
+const SPOTIFY_MODULE = './spotify.js?v=f5e36fff';
 const DISMISS_LOCK_MS = 1500;
 
 let _matchState = null;

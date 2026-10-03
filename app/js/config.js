@@ -1,5 +1,5 @@
-import './state.js?v=c950a57b';
-import { releaseUrl } from './release-host.js?v=c950a57b';
+import './state.js?v=f5e36fff';
+import { releaseUrl } from './release-host.js?v=f5e36fff';
 
 async function loadConfig() {
     try {
@@ -57,6 +57,11 @@ async function loadConfig() {
         // Override config for artist/lyrics mode
         if (activeArtist) {
             const lang = activeArtist.language || 'spanish';
+            // Optional artist colours inherit complete language defaults.
+            activeArtist.colorTheme = {
+                ...config.languages[lang].colorTheme,
+                ...activeArtist.colorTheme
+            };
             config.languages[lang] = {
                 ...config.languages[lang],
                 // The language keeps its own name; the artist is named on its
