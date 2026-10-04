@@ -1310,7 +1310,7 @@ function _appendAboutFootnotes(body) {
         + '<strong>Sources:</strong> lyrics from Genius, synced timestamps via LRCLIB and Spotify, '
         + 'word meanings from Wiktionary and SpanishDict, subtitle frequency from OpenSubtitles, '
         + 'examples from OpenSubtitles and Tatoeba, '
-        + 'Spanish conjugations from Jehle, cognate detection via CogNet.'
+        + 'conjugations from Wiktionary, cognate detection via CogNet.'
         + '</p>';
     body.appendChild(notes);
 }
