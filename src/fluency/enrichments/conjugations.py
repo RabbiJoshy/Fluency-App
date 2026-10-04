@@ -197,7 +197,7 @@ def _source_records(
     if provider == "kaikki":
         from fluency.enrichments.kaikki_conjugations import kaikki_records, resolve_kaikki_payload
         payload = resolve_kaikki_payload(workspace, snapshot, manifest)
-        return kaikki_records(payload, requested), payload
+        return kaikki_records(payload, requested, str(manifest.get("language") or "")), payload
     if provider == "verbecc":
         from fluency.enrichments.verbecc_conjugations import verbecc_records
         files = {item.get("path"): item for item in manifest.get("content_files") or [] if isinstance(item, dict)}

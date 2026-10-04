@@ -94,6 +94,29 @@ def is_pronominal_leaf(leaf: SenseLeaf) -> bool:
     return False
 
 
+def _leaf_is_transitive(leaf: SenseLeaf) -> bool:
+    return any(
+        str(feature.family).lower() == "construction"
+        and str(feature.value).lower() in {"transitive", "ditransitive"}
+        for feature in leaf.specialist_features
+    )
+
+
+def reflexive_families(analyses: Sequence[MenuAnalysis]) -> str | None:
+    """How a menu splits pronominal from non-pronominal readings, if it does.
+
+    ``"headword"``: the provider files them as separate headwords (SpanishDict
+    ``hacer`` / ``hacerse``). ``"sense"``: one headword whose senses are tagged
+    (Wiktionary ``pronominal`` / ``reflexive=true``). ``None``: nothing to narrow.
+    """
+
+    headwords = {analysis.headword.casefold() for analysis in analyses}
+    if any(not h.endswith("se") and h + "se" in headwords for h in headwords):
+        return "headword"
+    flags = {is_pronominal_leaf(leaf) for analysis in analyses for leaf in analysis.senses}
+    return "sense" if flags == {True, False} else None
+
+
 def _leaf_domain_or_register_penalty(leaf: SenseLeaf, penalty_value: float = -0.04) -> float:
     features = leaf.specialist_features
     ctx = (leaf.definition or "").lower()
@@ -279,8 +302,15 @@ class SpanishV5CandidatePolicy:
         pronominal_base: Callable[[str], str] | None = None,
         has_clitic: Callable[[str], bool] | None = None,
         contextual_lemma_gate: bool = False,
+        reflexive_tag: Callable[[str, str], str | None] | None = None,
     ) -> None:
         self.language = language
+        # fluency.reflexive's verdict for (surface, sentence): NO_SE, SE_FIRM,
+        # BOTH or Z, precomputed per run. When present it replaces the
+        # se-only clitic evidence and the clitic-absent pronominal gate.
+        self._reflexive_tag = reflexive_tag
+        if reflexive_tag is not None:
+            self.method_id = "spanish-v5-candidate-policy/v2-reflexive-tag"
         self.contextual_lemma_gate = contextual_lemma_gate
         self._clitic_evidence = clitic_evidence or se_reflexive_evidence
         self._custom_pronominal_base = pronominal_base is not None
@@ -433,6 +463,18 @@ class SpanishV5CandidatePolicy:
         # predicate, not to a lexical ``haberse`` / ``estarse`` reading of the
         # auxiliary. Once the occurrence tag says AUX, the non-reflexive
         # dictionary analysis is the only compatible side of that ambiguity.
+        reflexive_tag = (
+            self._reflexive_tag(surface_form, sentence)
+            if self._reflexive_tag is not None
+            else None
+        )
+        # Only a committed tag replaces the older se-only evidence. BOTH (a
+        # 3rd-person ``se`` that may be passive or impersonal, or no
+        # controller found) and Z (the parser saw no verb) are abstentions
+        # and keep v22's behaviour: clearing the evidence instead let the
+        # gloss move 2,772 Spanish lines, many of them wrongly.
+        if reflexive_tag in {"NO_SE", "SE_FIRM"}:
+            evidence = reflexive_tag == "SE_FIRM"
         if self.clitic_gate and str(observed_pos or "").upper() == "AUX":
             evidence = False
         headwords = {analysis.headword.casefold() for analysis in analyses}
@@ -531,7 +573,36 @@ class SpanishV5CandidatePolicy:
             features_of=lambda item: item[1].specialist_features,
         )
         pronominal_rejected = ()
-        if self.pronominal_gate and not self._has_clitic(sentence):
+        reflexive_rejected = ()
+        if (
+            reflexive_tag in {"NO_SE", "SE_FIRM"}
+            and reflexive_families(structurally_kept) == "sense"
+        ):
+            # Wiktionary files pronominal uses as tagged senses of one
+            # headword, so the tag narrows leaves rather than headwords. Its
+            # pronominal tag is incomplete (``virar`` "to turn around" is
+            # untagged), so SE_FIRM drops only what is marked transitive --
+            # a reading a reflexive clitic rules out -- not everything
+            # untagged. NO_SE drops the tagged pronominal senses. An empty
+            # survivor set leaves the menu alone.
+            if reflexive_tag == "SE_FIRM":
+                surviving = tuple(
+                    (analysis, leaf) for analysis, leaf in grammar_kept
+                    if is_pronominal_leaf(leaf) or not _leaf_is_transitive(leaf)
+                )
+            else:
+                surviving = tuple(
+                    (analysis, leaf) for analysis, leaf in grammar_kept
+                    if not is_pronominal_leaf(leaf)
+                )
+            if surviving:
+                kept = {(analysis.menu_analysis_id, leaf.sense_id) for analysis, leaf in surviving}
+                reflexive_rejected = tuple(
+                    (analysis, leaf) for analysis, leaf in grammar_kept
+                    if (analysis.menu_analysis_id, leaf.sense_id) not in kept
+                )
+                grammar_kept = surviving
+        elif self.pronominal_gate and not self._has_clitic(sentence):
             surviving_non_pronominal = tuple(
                 (analysis, leaf) for analysis, leaf in grammar_kept if not is_pronominal_leaf(leaf)
             )
@@ -563,7 +634,11 @@ class SpanishV5CandidatePolicy:
             analyses
             if self.constraint_mode == "evidence_only"
             else filtered_analyses
-            if (self.normalized_leaf_gates or (self.pronominal_gate and pronominal_rejected))
+            if (
+                self.normalized_leaf_gates
+                or (self.pronominal_gate and pronominal_rejected)
+                or reflexive_rejected
+            )
             else structurally_kept
         )
 
@@ -591,6 +666,14 @@ class SpanishV5CandidatePolicy:
                 "lemma_removed_analysis_ids": lemma_removed,
                 "self_reading_restored_analysis_ids": self_restored,
                 "se_reflexive_evidence": evidence,
+                **(
+                    {
+                        "reflexive_tag": reflexive_tag,
+                        "reflexive_rejected_leaf_refs": refs(reflexive_rejected),
+                    }
+                    if self._reflexive_tag is not None
+                    else {}
+                ),
                 "clitic_removed_analysis_ids": clitic_removed,
                 "constraint_supported_analysis_ids": sorted(keep_ids),
                 "constraint_rejected_analysis_ids": sorted(

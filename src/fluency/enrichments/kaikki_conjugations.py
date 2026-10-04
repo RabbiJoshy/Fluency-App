@@ -24,6 +24,66 @@ NOISE_TAGS = frozenset({"table-tags", "inflection-template", "error-unrecognized
 NOISE_FORMS = frozenset({
     "", "-", "—", "future", "future present", "no-table-tags", "inflection-box-top",
 })
+PERSON_ORDER = ("1s", "2s", "3s", "1p", "2p", "3p")
+PERSON_TAGS = frozenset({"first-person", "second-person", "third-person", "singular", "plural"})
+
+# Languages whose Wiktionary tables are read in full rather than as present +
+# imperative. Each paradigm is (mood, tense, tags a form must carry, tags it
+# must not). Mood and tense are the labels the drill and the card back key
+# on. Several forms can match one person (``tienes`` informal, ``tenés``
+# vos-form, a Brazil-only variant): the one carrying the fewest extra tags
+# wins, so the standard form beats its regional or register variants.
+FULL_PARADIGMS: dict[str, tuple[tuple[str, str, frozenset[str], frozenset[str]], ...]] = {
+    "es": (
+        ("indicativo", "presente", frozenset({"indicative", "present"}), frozenset()),
+        ("indicativo", "pretérito", frozenset({"indicative", "preterite"}), frozenset()),
+        ("indicativo", "imperfecto", frozenset({"indicative", "imperfect"}), frozenset()),
+        ("indicativo", "futuro", frozenset({"indicative", "future"}), frozenset()),
+        ("indicativo", "condicional", frozenset({"conditional"}), frozenset()),
+        ("subjuntivo", "presente", frozenset({"subjunctive", "present"}), frozenset()),
+        ("subjuntivo", "imperfecto", frozenset({"subjunctive", "imperfect"}), frozenset({"imperfect-se"})),
+        ("subjuntivo", "futuro", frozenset({"subjunctive", "future"}), frozenset()),
+        ("imperativo", "afirmativo", frozenset({"imperative"}), frozenset({"negative"})),
+        ("imperativo", "negativo", frozenset({"imperative", "negative"}), frozenset()),
+    ),
+    "pt": (
+        ("indicativo", "presente", frozenset({"indicative", "present"}), frozenset()),
+        ("indicativo", "pretérito-perfeito", frozenset({"indicative", "preterite"}), frozenset()),
+        ("indicativo", "pretérito-imperfeito", frozenset({"indicative", "imperfect"}), frozenset()),
+        ("indicativo", "pretérito-mais-que-perfeito", frozenset({"indicative", "pluperfect"}), frozenset()),
+        ("indicativo", "futuro-do-presente", frozenset({"indicative", "future"}), frozenset()),
+        ("condicional", "futuro-do-pretérito", frozenset({"conditional"}), frozenset()),
+        ("subjuntivo", "presente", frozenset({"subjunctive", "present"}), frozenset()),
+        ("subjuntivo", "pretérito-imperfeito", frozenset({"subjunctive", "imperfect"}), frozenset()),
+        ("subjuntivo", "futuro", frozenset({"subjunctive", "future"}), frozenset()),
+        ("imperativo", "afirmativo", frozenset({"imperative"}), frozenset({"negative"})),
+        ("imperativo", "negativo", frozenset({"imperative", "negative"}), frozenset()),
+    ),
+}
+# Never a cell of the six-person table: object-clitic combinations, voseo,
+# the formal imperative repeated under "second-person-semantically", and the
+# non-finite rows.
+FULL_EXCLUDED_TAGS = frozenset({
+    "combined-form", "vos-form", "second-person-semantically", "participle", "gerund",
+    "infinitive", "obsolete", "archaic", "misspelling", "nonstandard",
+})
+# Wiktionary prints the Spanish negative imperative without its "no"
+# (Portuguese prints "não"). The drill strips both as particles.
+NEGATIVE_PREFIX = {"es": "no "}
+# Compound tenses are not in the tables: they are the auxiliary's simple tense
+# plus the past participle, built here and labelled as derived.
+COMPOUND_TENSES: dict[str, tuple[str, tuple[tuple[str, str, str, str], ...]]] = {
+    "es": ("haber", (
+        ("indicativo", "pretérito perfecto", "indicativo", "presente"),
+        ("indicativo", "pluscuamperfecto", "indicativo", "imperfecto"),
+        ("indicativo", "futuro perfecto", "indicativo", "futuro"),
+        ("indicativo", "condicional perfecto", "indicativo", "condicional"),
+        ("indicativo", "pretérito anterior", "indicativo", "pretérito"),
+        ("subjuntivo", "pretérito perfecto", "subjuntivo", "presente"),
+        ("subjuntivo", "pluscuamperfecto", "subjuntivo", "imperfecto"),
+        ("subjuntivo", "futuro perfecto", "subjuntivo", "futuro"),
+    )),
+}
 
 
 def pin_kaikki_snapshot(
@@ -197,12 +257,192 @@ def _record_from_row(row: dict[str, Any]) -> dict[str, Any] | None:
     }
 
 
-def kaikki_records(payload: Path, requested: set[str]) -> dict[str, dict[str, Any]]:
-    """Stream one dump and keep the best verb table per requested headword."""
+def _full_record_from_row(row: dict[str, Any], language: str) -> dict[str, Any] | None:
+    headword = str(row.get("word") or "").strip().casefold()
+    if not headword or row.get("pos") not in VERB_POS:
+        return None
+    paradigms = FULL_PARADIGMS[language]
+    best: dict[tuple[int, str], tuple[int, str]] = {}
+    gerund = past_participle = None
+    for item in row.get("forms") or []:
+        if not isinstance(item, dict):
+            continue
+        tags = {tag for tag in item.get("tags") or [] if isinstance(tag, str)}
+        form = _usable_form(item.get("form"), tags)
+        if form is None:
+            continue
+        if gerund is None and tags == {"gerund"}:
+            gerund = form
+        if past_participle is None and {"participle", "past", "masculine", "singular"} <= tags:
+            past_participle = form
+        if tags & FULL_EXCLUDED_TAGS:
+            continue
+        person = _person(tags)
+        if person is None:
+            continue
+        for index, (_mood, _tense, required, excluded) in enumerate(paradigms):
+            if required <= tags and not tags & excluded:
+                extra = len(tags - required - PERSON_TAGS)
+                key = (index, person)
+                if key not in best or extra < best[key][0]:
+                    best[key] = (extra, form)
+    prefix = NEGATIVE_PREFIX.get(language, "")
+    built = []
+    for index, (mood, tense, _required, _excluded) in enumerate(paradigms):
+        forms = []
+        for person in PERSON_ORDER:
+            if (index, person) not in best:
+                continue
+            form = best[(index, person)][1]
+            if tense == "negativo" and prefix and not form.startswith(prefix):
+                form = prefix + form
+            forms.append({"person": person, "form": form})
+        if forms:
+            built.append({"mood": mood, "tense": tense, "forms": forms})
+    if not built:
+        return None
+    return {
+        "headword": headword,
+        "translation": _translation(row),
+        "nonfinite": {"gerund": gerund, "past_participle": past_participle},
+        "paradigms": built,
+        "_present_count": sum(len(p["forms"]) for p in built),
+    }
+
+
+# Spanish pronominal verbs Wiktionary files only under the base verb
+# (acostarse under acostar): their table is the base table with the
+# reflexive pronoun, and their affirmative imperative is the base entry's
+# combined form with that pronoun attached (acuéstate, acuéstese, ...).
+REFLEXIVE_PRONOUNS = {"es": {"1s": "me", "2s": "te", "3s": "se", "1p": "nos", "2p": "os", "3p": "se"}}
+REFLEXIVE_IMPERATIVE = {  # person -> (tags the combined form carries, tags it must not, clitic it ends in)
+    "es": {
+        "2s": (frozenset({"imperative", "informal", "with-tú", "object-second-person", "object-singular"}), frozenset(), "te"),
+        "3s": (frozenset({"imperative", "formal", "object-third-person", "object-singular"}), frozenset(), "se"),
+        "1p": (frozenset({"imperative", "object-first-person", "object-plural"}), frozenset({"formal", "informal"}), "nos"),
+        "2p": (frozenset({"imperative", "informal", "object-second-person", "object-plural"}),
+               frozenset({"with-tú", "with-vos"}), "os"),
+        "3p": (frozenset({"imperative", "formal", "object-third-person", "object-plural"}), frozenset(), "nse"),
+    },
+}
+
+
+def _reflexive_extras(row: dict[str, Any], language: str) -> dict[str, Any]:
+    """The base entry's attached-reflexive imperatives and gerund, and a reflexive gloss."""
+    wanted = REFLEXIVE_IMPERATIVE[language]
+    imperative: dict[str, str] = {}
+    gerund = None
+    for item in row.get("forms") or []:
+        if not isinstance(item, dict):
+            continue
+        tags = {tag for tag in item.get("tags") or [] if isinstance(tag, str)}
+        form = str(item.get("form") or "").strip()
+        if "combined-form" not in tags or not form or form == "-":
+            continue
+        if gerund is None and "gerund" in tags and form.endswith("se"):
+            gerund = form
+        for person, (required, excluded, clitic) in wanted.items():
+            if person in imperative or not required <= tags or tags & excluded:
+                continue
+            # 3s "se" must not take the 3p "-nse" form, and vice versa.
+            if form.endswith(clitic) and not (clitic == "se" and form.endswith("nse")):
+                imperative[person] = form
+    translation = None
+    for sense in row.get("senses") or []:
+        tags = set(sense.get("tags") or [])
+        glosses = sense.get("glosses") or []
+        if tags & {"reflexive", "pronominal"} and glosses and isinstance(glosses[0], str):
+            translation = glosses[0].strip()
+            break
+    return {"imperative": imperative, "gerund": gerund, "translation": translation}
+
+
+def _reflexive_from_base(headword: str, base: dict[str, Any], extras: dict[str, Any],
+                         language: str) -> dict[str, Any] | None:
+    pronouns = REFLEXIVE_PRONOUNS[language]
+    paradigms = []
+    for paradigm in base["paradigms"]:
+        if paradigm.get("derived"):
+            continue
+        if paradigm["mood"] == "imperativo" and paradigm["tense"] == "afirmativo":
+            forms = [{"person": person, "form": extras["imperative"][person]}
+                     for person in PERSON_ORDER if person in extras["imperative"]]
+        elif paradigm["mood"] == "imperativo":
+            forms = [{"person": f["person"],
+                      "form": "no " + pronouns[f["person"]] + " " + f["form"].removeprefix("no ")}
+                     for f in paradigm["forms"]]
+        else:
+            forms = [{"person": f["person"], "form": pronouns[f["person"]] + " " + f["form"]}
+                     for f in paradigm["forms"]]
+        if forms:
+            paradigms.append({**paradigm, "forms": forms})
+    # The attached imperatives come from the base's combined forms, which a
+    # base without its own affirmative row can still list.
+    if extras["imperative"] and not any(
+        (p["mood"], p["tense"]) == ("imperativo", "afirmativo") for p in paradigms
+    ):
+        paradigms.append({"mood": "imperativo", "tense": "afirmativo", "forms": [
+            {"person": person, "form": extras["imperative"][person]}
+            for person in PERSON_ORDER if person in extras["imperative"]]})
+    if not paradigms:
+        return None
+    return {
+        "headword": headword,
+        "translation": extras["translation"] or base["translation"],
+        "nonfinite": {"gerund": extras["gerund"], "past_participle": base["nonfinite"].get("past_participle")},
+        "paradigms": paradigms,
+        "derived": f"reflexive of {base['headword']}: its Wiktionary table with the reflexive pronoun",
+    }
+
+
+def _add_compound_tenses(records: dict[str, dict[str, Any]], auxiliary: dict[str, Any] | None,
+                         language: str) -> None:
+    if language not in COMPOUND_TENSES or auxiliary is None:
+        return
+    aux_name, compounds = COMPOUND_TENSES[language]
+    aux_tables = {
+        (p["mood"], p["tense"]): {f["person"]: f["form"] for f in p["forms"]}
+        for p in auxiliary["paradigms"]
+    }
+    for record in records.values():
+        participle = record["nonfinite"].get("past_participle")
+        if not participle:
+            continue
+        for mood, tense, aux_mood, aux_tense in compounds:
+            table = aux_tables.get((aux_mood, aux_tense))
+            if not table:
+                continue
+            pronouns = (
+                REFLEXIVE_PRONOUNS.get(language, {})
+                if record["headword"].endswith("se") and language in REFLEXIVE_PRONOUNS
+                else {}
+            )
+            record["paradigms"].append({
+                "mood": mood,
+                "tense": tense,
+                "derived": f"{aux_name} {aux_mood} {aux_tense} + past participle",
+                "forms": [{"person": person,
+                           "form": " ".join(filter(None, (pronouns.get(person), table[person], participle)))}
+                          for person in PERSON_ORDER if person in table],
+            })
+
+
+def kaikki_records(payload: Path, requested: set[str], language: str | None = None) -> dict[str, dict[str, Any]]:
+    """Stream one dump and keep the best verb table per requested headword.
+
+    For a language in ``FULL_PARADIGMS`` every simple tense is read (plus the
+    derived compound tenses); otherwise present and imperative only.
+    """
 
     if not requested:
         return {}
+    full = language in FULL_PARADIGMS
     wanted = {item.casefold() for item in requested}
+    auxiliary_name = COMPOUND_TENSES[language][0] if language in COMPOUND_TENSES else None
+    auxiliary: dict[str, Any] | None = None
+    reflexive = full and language in REFLEXIVE_PRONOUNS
+    bases_wanted = {word[:-2] for word in wanted if reflexive and word.endswith("se") and len(word) > 3}
+    bases: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {}
     records: dict[str, dict[str, Any]] = {}
     try:
         with payload.open(encoding="utf-8") as stream:
@@ -211,16 +451,34 @@ def kaikki_records(payload: Path, requested: set[str]) -> dict[str, dict[str, An
                     continue
                 row = json.loads(line)
                 word = str(row.get("word") or "").strip().casefold()
-                if word not in wanted:
+                if word not in wanted and word != auxiliary_name and word not in bases_wanted:
                     continue
-                record = _record_from_row(row)
+                record = _full_record_from_row(row, language) if full else _record_from_row(row)
                 if record is None:
+                    continue
+                if word == auxiliary_name and (
+                    auxiliary is None or record["_present_count"] > auxiliary["_present_count"]
+                ):
+                    auxiliary = record
+                if word in bases_wanted and (
+                    word not in bases or record["_present_count"] > bases[word][0]["_present_count"]
+                ):
+                    bases[word] = (record, _reflexive_extras(row, language))
+                if word not in wanted:
                     continue
                 previous = records.get(word)
                 if previous is None or record["_present_count"] > previous["_present_count"]:
                     records[word] = record
     except (OSError, UnicodeError, json.JSONDecodeError) as error:
         raise ConjugationLayerError(f"Kaikki conjugation dump is unreadable: {payload}") from error
+    for word in sorted(wanted - records.keys()):
+        if word[:-2] in bases and word.endswith("se"):
+            base, extras = bases[word[:-2]]
+            derived = _reflexive_from_base(word, base, extras, language)
+            if derived is not None:
+                records[word] = derived
     for record in records.values():
         record.pop("_present_count", None)
+    if full:
+        _add_compound_tenses(records, auxiliary, language)
     return records

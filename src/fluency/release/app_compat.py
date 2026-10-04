@@ -18,6 +18,9 @@ APP_TENSE_LABELS = {
     ("indicativo", "condicional"): "Condicional",
     ("subjuntivo", "presente"): "Subj. Presente",
     ("subjuntivo", "imperfecto"): "Subj. Imperfecto",
+    ("subjuntivo", "futuro"): "Subj. Futuro",
+    ("imperativo", "afirmativo"): "Imperativo",
+    ("imperativo", "negativo"): "Imp. Negativo",
 }
 APP_TENSE_LABELS_BY_LANGUAGE = {
     "es": APP_TENSE_LABELS,

@@ -54,6 +54,81 @@ CONFIGS = {
 }
 
 
+def splice_invariant_mwe(row: dict, text: str, mwe_index) -> str | None:
+    """Turn ``row`` into a deterministic invariant-MWE assignment when one matches.
+
+    Returns the expression spliced in, or None when the row is left alone.
+    """
+    surf = row.get("surface_form", "")
+    card_id = row.get("card_id", "")
+    if not (text and surf):
+        return None
+    matches = list(multiword_analyses(card_id=card_id, surface_form=surf, sentence=text, index=mwe_index))
+    inv_matches = [
+        m for m in matches
+        if getattr(m[1], "wsd_routing", "") == "deterministic_bypass"
+        or getattr(m[1], "route", "") == "invariant"
+    ]
+    if inv_matches:
+        best_inv = max(inv_matches, key=lambda m: len(m[1].expression))
+        analysis, entry, span = best_inv
+
+        row["status"] = "assigned"
+        row["decision_kind"] = "deterministic_default"
+        row["decision_path"] = ["multiword"]
+        row["menu_analysis_id"] = analysis.menu_analysis_id
+        row["selected_sense_id"] = entry.entry_id
+        row["selected_tuple"] = {"headword": entry.expression, "part_of_speech": "PHRASE"}
+        row["emitted_level"] = "leaf"
+
+        ev = row.setdefault("evidence", {})
+        ev["reason"] = "deterministic_invariant_mwe"
+        ev["decision_kind"] = "deterministic_invariant_mwe"
+        ev["selected_multiword"] = entry.expression
+        ev["wsd_routing"] = "deterministic_bypass"
+        ev["flexibility"] = entry.flexibility
+        ev["ui_role"] = entry.ui_role
+        ev["verbal_idiom"] = entry.verbal_idiom
+        ev["transparency"] = entry.transparency
+        ev["template_gap_limit"] = entry.template_gap_limit
+        ev["multiword_candidates"] = [
+            {
+                "expression": entry.expression,
+                "expression_id": entry.entry_id,
+                "menu_analysis_id": analysis.menu_analysis_id,
+                "span": list(span),
+                "sources": list(entry.sources),
+                "corpus_frequency": entry.corpus_frequency,
+                "translation": entry.translations[0],
+                "additional_translations": list(entry.translations[1:]),
+                "route": "invariant",
+                "wsd_routing": "deterministic_bypass",
+                "flexibility": entry.flexibility,
+                "ui_role": entry.ui_role,
+                "verbal_idiom": entry.verbal_idiom,
+                "transparency": entry.transparency,
+                "template_gap_limit": entry.template_gap_limit,
+            }
+        ]
+
+        sp = row.setdefault("selection_projections", {})
+        sp["mwe_augmented"] = {
+            "emitted_level": "leaf",
+            "menu_analysis_id": analysis.menu_analysis_id,
+            "rank": 1,
+            "raw_axis_margins": {"glosskey": 1.0, "leaf": 1.0, "tuple": 1.0},
+            "raw_margin": None,
+            "runner_up_score": None,
+            "selected_score": 1.0,
+            "selected_sense_id": entry.entry_id,
+            "selected_tuple": {"headword": entry.expression, "part_of_speech": "PHRASE"},
+            "source_kind": "multiword",
+        }
+
+        return entry.expression
+    return None
+
+
 def build_release_for_lang(ws: Workspace, lang: str) -> Path:
     cfg = CONFIGS[lang]
     source_run = ws.root / f"runs/{lang}/speech/{cfg['source_run']}"
@@ -124,74 +199,11 @@ def build_release_for_lang(ws: Workspace, lang: str) -> Path:
             row = json.loads(line)
             sid = row.get("sentence_id", "").replace("sentence_", "")
             text = sid_to_target.get(sid)
-            surf = row.get("surface_form", "")
-            card_id = row.get("card_id", "")
 
-            if text and surf:
-                matches = list(multiword_analyses(card_id=card_id, surface_form=surf, sentence=text, index=mwe_index))
-                inv_matches = [
-                    m for m in matches
-                    if getattr(m[1], "wsd_routing", "") == "deterministic_bypass"
-                    or getattr(m[1], "route", "") == "invariant"
-                ]
-                if inv_matches:
-                    best_inv = max(inv_matches, key=lambda m: len(m[1].expression))
-                    analysis, entry, span = best_inv
-
-                    row["status"] = "assigned"
-                    row["decision_kind"] = "deterministic_default"
-                    row["decision_path"] = ["multiword"]
-                    row["menu_analysis_id"] = analysis.menu_analysis_id
-                    row["selected_sense_id"] = entry.entry_id
-                    row["selected_tuple"] = {"headword": entry.expression, "part_of_speech": "PHRASE"}
-                    row["emitted_level"] = "leaf"
-
-                    ev = row.setdefault("evidence", {})
-                    ev["reason"] = "deterministic_invariant_mwe"
-                    ev["decision_kind"] = "deterministic_invariant_mwe"
-                    ev["selected_multiword"] = entry.expression
-                    ev["wsd_routing"] = "deterministic_bypass"
-                    ev["flexibility"] = entry.flexibility
-                    ev["ui_role"] = entry.ui_role
-                    ev["verbal_idiom"] = entry.verbal_idiom
-                    ev["transparency"] = entry.transparency
-                    ev["template_gap_limit"] = entry.template_gap_limit
-                    ev["multiword_candidates"] = [
-                        {
-                            "expression": entry.expression,
-                            "expression_id": entry.entry_id,
-                            "menu_analysis_id": analysis.menu_analysis_id,
-                            "span": list(span),
-                            "sources": list(entry.sources),
-                            "corpus_frequency": entry.corpus_frequency,
-                            "translation": entry.translations[0],
-                            "additional_translations": list(entry.translations[1:]),
-                            "route": "invariant",
-                            "wsd_routing": "deterministic_bypass",
-                            "flexibility": entry.flexibility,
-                            "ui_role": entry.ui_role,
-                            "verbal_idiom": entry.verbal_idiom,
-                            "transparency": entry.transparency,
-                            "template_gap_limit": entry.template_gap_limit,
-                        }
-                    ]
-
-                    sp = row.setdefault("selection_projections", {})
-                    sp["mwe_augmented"] = {
-                        "emitted_level": "leaf",
-                        "menu_analysis_id": analysis.menu_analysis_id,
-                        "rank": 1,
-                        "raw_axis_margins": {"glosskey": 1.0, "leaf": 1.0, "tuple": 1.0},
-                        "raw_margin": None,
-                        "runner_up_score": None,
-                        "selected_score": 1.0,
-                        "selected_sense_id": entry.entry_id,
-                        "selected_tuple": {"headword": entry.expression, "part_of_speech": "PHRASE"},
-                        "source_kind": "multiword",
-                    }
-
-                    updated_rows += 1
-                    mwe_updates[entry.expression] = mwe_updates.get(entry.expression, 0) + 1
+            spliced = splice_invariant_mwe(row, text, mwe_index)
+            if spliced:
+                updated_rows += 1
+                mwe_updates[spliced] = mwe_updates.get(spliced, 0) + 1
 
             fout.write(json.dumps(row, ensure_ascii=False) + "\n")
 

@@ -8,9 +8,12 @@
  *
  * Three things are kept, each under its own key so one can be cleared or
  * corrupted without touching the others:
- *   conj_progress_v1_<account>_<lang>   form -> record
- *   conj_session_v1_<account>_<lang>    the drill in flight, for resuming
- *   conj_settings_v1_<lang>             the Set up choices (device-wide)
+ *   conj_progress_v2_<account>_<lang>   form -> record
+ *   conj_session_v2_<account>_<lang>    the drill in flight, for resuming
+ *   conj_settings_v2_<lang>             the Set up choices (device-wide)
+ *
+ * v2 (2026-10-04): the decks moved to Wiktionary tables, which renamed the
+ * Spanish tense ids, so every key moved to v2 and v1 progress was let go.
  *
  * Scheduling is a plain Leitner ladder. A miss drops the form to the bottom
  * and makes it due at once; a hit moves it up a box and pushes it out.
@@ -63,9 +66,9 @@
     return initials ? String(initials).replace(/[^\w-]/g, '') || 'guest' : 'guest';
   }
 
-  function progressKey(lang) { return 'conj_progress_v1_' + account() + '_' + lang; }
-  function sessionKey(lang) { return 'conj_session_v1_' + account() + '_' + lang; }
-  function settingsKey(lang) { return 'conj_settings_v1_' + lang; }
+  function progressKey(lang) { return 'conj_progress_v2_' + account() + '_' + lang; }
+  function sessionKey(lang) { return 'conj_session_v2_' + account() + '_' + lang; }
+  function settingsKey(lang) { return 'conj_settings_v2_' + lang; }
 
   function formKey(verbHead, tenseId, person) {
     return verbHead + '|' + tenseId + '|' + person;

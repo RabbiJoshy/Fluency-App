@@ -97,9 +97,9 @@ class ConjugationProgressTests(unittest.TestCase):
         self.assertEqual((s["total"], s["missed"], s["learning"], s["new"], s["due"]), (3, 1, 1, 1, 1))
 
     def test_storage_is_per_account_and_language(self):
-        self.assertEqual(self.out["keys"], ["conj_progress_v1_guest_es"])
+        self.assertEqual(self.out["keys"], ["conj_progress_v2_guest_es"])
         self.assertEqual(self.out["accountSplit"], 0)
-        self.assertEqual(self.out["session"], ["conj_session_v1_JT_es"])
+        self.assertEqual(self.out["session"], ["conj_session_v2_JT_es"])
 
     def test_reset_clears_progress_and_round_only(self):
         self.assertEqual(self.out["afterReset"], [None, []])

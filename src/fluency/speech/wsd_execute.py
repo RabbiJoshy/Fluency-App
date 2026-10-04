@@ -174,6 +174,40 @@ def model_profile(profile_id: str) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8")) if path.is_file() else {}
 
 
+def _register_file_profiles() -> None:
+    """Register every profile file that names ``flags_from``.
+
+    Such a profile takes the language, constraint mode and set memberships of
+    the profile it names, so adding a version is creating its file, not
+    appending its id to each set above.
+    """
+
+    global ALIGNMENT_PROFILES, RANK_AGREEMENT_PROFILES, EVIDENCE_GUARD_PROFILES
+    global ABSTAIN_UNRESOLVED_PROFILES, PHRASE_SKIP_PROVIDER_ORDER_PROFILES
+    for path in sorted(MODEL_PROFILE_DIR.glob("*.json")):
+        data = json.loads(path.read_text(encoding="utf-8"))
+        base = data.get("flags_from")
+        if not base:
+            continue
+        profile_id = data["profile_id"]
+        if base not in SUPPORTED_PROFILE_CONSTRAINT_MODES:
+            raise ValueError(f"{path.name}: flags_from {base!r} is not a registered profile")
+        SUPPORTED_PROFILE_CONSTRAINT_MODES[profile_id] = SUPPORTED_PROFILE_CONSTRAINT_MODES[base]
+        PROFILE_LANGUAGES[profile_id] = data.get("language") or PROFILE_LANGUAGES[base]
+
+        def extend(flags: frozenset[str]) -> frozenset[str]:
+            return flags | {profile_id} if base in flags else flags
+
+        ALIGNMENT_PROFILES = extend(ALIGNMENT_PROFILES)
+        RANK_AGREEMENT_PROFILES = extend(RANK_AGREEMENT_PROFILES)
+        EVIDENCE_GUARD_PROFILES = extend(EVIDENCE_GUARD_PROFILES)
+        ABSTAIN_UNRESOLVED_PROFILES = extend(ABSTAIN_UNRESOLVED_PROFILES)
+        PHRASE_SKIP_PROVIDER_ORDER_PROFILES = extend(PHRASE_SKIP_PROVIDER_ORDER_PROFILES)
+
+
+_register_file_profiles()
+
+
 def _single_leaf_is_deterministic(
     only: tuple[MenuAnalysis, SenseLeaf] | None,
     *,
@@ -850,6 +884,11 @@ def main() -> None:
              "to ensure complete coverage with Stage 05 selection).",
     )
     parser.add_argument(
+        "--reflexive-tags", type=Path,
+        help="fluency.reflexive tags for this freeze (scripts/build_reflexive_tags.py). "
+             "Required by, and only read for, a profile whose reflexive filter is enabled.",
+    )
+    parser.add_argument(
         "--offline-only",
         action="store_true",
         help="use only the existing local embedding cache and fail on any miss",
@@ -1266,6 +1305,26 @@ def main() -> None:
     print(f"exact-text cache: {len(vectors):,} vectors at {cache_path}")
     print(f"reused {len(needed) - newly_embedded:,}, newly embedded {newly_embedded:,}")
 
+    reflexive_tag = None
+    if (profile_config.get("reflexive") or {}).get("enabled"):
+        if args.reflexive_tags is None:
+            raise SystemExit(f"profile {args.profile_id} filters by reflexive tag; pass --reflexive-tags")
+        tag_doc = json.loads(args.reflexive_tags.read_text(encoding="utf-8"))
+        if tag_doc.get("language") != run_language:
+            raise SystemExit(f"reflexive tags are for {tag_doc.get('language')}, not {run_language}")
+        # Keyed by the text the policy sees. A tag depends on the surface and
+        # the sentence only, so two cards sharing both share the tag.
+        by_text: dict[tuple[str, str], str] = {}
+        for card, _menu_card, sentence_id, text, _translation in work:
+            value = (tag_doc["tags"].get(card["card_id"]) or {}).get(sentence_id)
+            if value:
+                by_text[(card["display_form"], text)] = value[0]
+        reflexive_tag = lambda surface, sentence: by_text.get((surface, sentence))  # noqa: E731
+        print(f"reflexive tags: {args.reflexive_tags.name}, {len(by_text):,} occurrences "
+              f"(detector {tag_doc.get('detector_id')})")
+    elif args.reflexive_tags is not None:
+        raise SystemExit(f"profile {args.profile_id} does not enable the reflexive filter")
+
     language_adapter = binding.adapter_factory()
     prior_cfg = profile_config.get("provider_prior") or {}
     prior_enabled = prior_cfg.get("enabled", True)
@@ -1291,6 +1350,7 @@ def main() -> None:
                 language_adapter, "contextual_headwords", None
             ),
             keep_self_reading_pos=keep_self_reading_pos,
+            reflexive_tag=reflexive_tag,
         ),
         aligner=aligner,
         multiword_index=multiword_index,

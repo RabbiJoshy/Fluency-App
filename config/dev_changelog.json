@@ -2,6 +2,21 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-04T17:35:00+01:00",
+      "date": "2026-10-04 17:35 BST",
+      "agent": "Claude",
+      "summary": "Spanish and Portuguese decks now tell reflexive verbs apart (hacer vs hacerse), and all conjugations come from Wiktionary.",
+      "detail": [
+        "New v23 speech decks for Spanish and Portuguese. On verbs with both a plain and a reflexive meaning, each example is checked for a reflexive pronoun that belongs to the verb (te vas a sentar, siéntate, virou-se) before a meaning is picked.",
+        "About 9,400 Spanish and 1,300 Portuguese examples changed meaning family, e.g. ¿No vas a sentarte? now shows sentarse and Me voy a casar shows casarse. Unclear cases (a 3rd-person se that may be passive) keep the previous choice.",
+        "Verb drills and card-back conjugation tables are rebuilt from Wiktionary: Spanish goes from 434 to 1,783 verbs (including reflexive verbs such as acostarse and compound tenses), Portuguese from 955 to 1,420 verbs with the pluperfect added.",
+        "Fixes the broken Portuguese 'nós' preterites in the drill (dan -> dançámos, ris) -> riscámos).",
+        "Spanish card backs now include the imperative and future subjunctive.",
+        "Verb-drill progress starts fresh (storage keys v2) because the Spanish tense names changed."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-04T16:44:00+01:00",
       "date": "2026-10-04 16:44 BST",
       "agent": "Claude",
