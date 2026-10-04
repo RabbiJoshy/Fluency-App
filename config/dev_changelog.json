@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-04T19:45:00+01:00",
+      "date": "2026-10-04 19:45 BST",
+      "agent": "Claude",
+      "summary": "The first visit after an update now reads the new config, not the previous one.",
+      "detail": [
+        "The service worker served config files from its cache, so new app code could run against the old release list until a second reload (seen with Czech loading v21 after v22 shipped).",
+        "Config files are now fetched from the network first; the cached copy is used only when offline."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-04T19:25:00+01:00",
       "date": "2026-10-04 19:25 BST",
       "agent": "Claude",

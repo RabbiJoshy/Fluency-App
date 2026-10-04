@@ -1,6 +1,6 @@
 // Durable, local-first synchronization queue.
-import './state.js?v=b23cc88d';
-import { dbDelete, dbGetAll, dbPut, makeOperationId, openOfflineDb } from './offline-db.js?v=b23cc88d';
+import './state.js?v=891e316b';
+import { dbDelete, dbGetAll, dbPut, makeOperationId, openOfflineDb } from './offline-db.js?v=891e316b';
 
 const LEGACY_QUEUE_KEY = 'fluency_sync_queue_v1';
 const LAST_SYNC_KEY = 'fluency_last_sync_v1';

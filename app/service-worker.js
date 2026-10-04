@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v580-b23cc88d';
+const CACHE_NAME = 'flashcards-v580-891e316b';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -15,7 +15,7 @@ const scopedPath = path => `${SCOPE_PATH}${path}`;
 // Single source of truth for the module/CSS version tags. Must match
 // js/main.js's import URLs and index.html's modulepreload links. When you
 // bump the ?v= tags, change this and bump CACHE_NAME above.
-const ASSET_VERSION = 'b23cc88d';
+const ASSET_VERSION = '891e316b';
 
 // Pre-cache the boot-critical static assets on install. Without this, the
 // first install populates the cache lazily — visit 1 doesn't go through
@@ -26,8 +26,8 @@ const ASSET_VERSION = 'b23cc88d';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/css/style.css?v=b23cc88d',
-  '/css/light-theme.css?v=b23cc88d',
+  '/css/style.css?v=891e316b',
+  '/css/light-theme.css?v=891e316b',
   '/config/config.json',
   '/data/speech-frequency/es.json',
   '/data/speech-frequency/fr.json',
@@ -35,53 +35,53 @@ const urlsToCache = [
   '/data/speech-frequency/cs.json',
   '/config/cefr_levels.json',
   '/config/offline-content-manifest.json',
-  '/js/routes.js?v=b23cc88d',
-  '/js/main.js?v=b23cc88d',
-  '/js/theme.js?v=b23cc88d',
-  '/js/state.js?v=b23cc88d',
+  '/js/routes.js?v=891e316b',
+  '/js/main.js?v=891e316b',
+  '/js/theme.js?v=891e316b',
+  '/js/state.js?v=891e316b',
   `/js/data-contracts.js?v=${ASSET_VERSION}`,
   `/js/offline-db.js?v=${ASSET_VERSION}`,
   `/js/sync-queue.js?v=${ASSET_VERSION}`,
   `/js/offline-content.js?v=${ASSET_VERSION}`,
-  '/js/speech.js?v=b23cc88d',
+  '/js/speech.js?v=891e316b',
   `/js/artist-ui.js?v=${ASSET_VERSION}`,
-  '/js/auth.js?v=b23cc88d',
-  '/js/card-replica.js?v=b23cc88d',
-  '/js/tutorial.js?v=b23cc88d',
-  '/js/walkthrough.js?v=b23cc88d',
-  '/js/spotify.js?v=b23cc88d',
+  '/js/auth.js?v=891e316b',
+  '/js/card-replica.js?v=891e316b',
+  '/js/tutorial.js?v=891e316b',
+  '/js/walkthrough.js?v=891e316b',
+  '/js/spotify.js?v=891e316b',
   `/js/estimation.js?v=${ASSET_VERSION}`,
-  '/js/release-host.js?v=b23cc88d',
-  '/js/config.js?v=b23cc88d',
-  '/js/progress.js?v=b23cc88d',
-  '/js/progress-identity.js?v=b23cc88d',
-  '/js/knowledge.js?v=b23cc88d',
-  '/js/ui.js?v=b23cc88d',
-  '/js/fast-track-preferences.js?v=b23cc88d',
-  '/js/vocab.js?v=b23cc88d',
-  '/js/grammar-cards.js?v=b23cc88d',
-  '/js/cognates.js?v=b23cc88d',
-  '/js/coverage.js?v=b23cc88d',
-  '/js/fast-mode.js?v=b23cc88d',
-  '/js/extras.js?v=b23cc88d',
+  '/js/release-host.js?v=891e316b',
+  '/js/config.js?v=891e316b',
+  '/js/progress.js?v=891e316b',
+  '/js/progress-identity.js?v=891e316b',
+  '/js/knowledge.js?v=891e316b',
+  '/js/ui.js?v=891e316b',
+  '/js/fast-track-preferences.js?v=891e316b',
+  '/js/vocab.js?v=891e316b',
+  '/js/grammar-cards.js?v=891e316b',
+  '/js/cognates.js?v=891e316b',
+  '/js/coverage.js?v=891e316b',
+  '/js/fast-mode.js?v=891e316b',
+  '/js/extras.js?v=891e316b',
   `/js/song-sets-core.js?v=${ASSET_VERSION}`,
-  '/js/song-sets.js?v=b23cc88d',
-  '/js/spotify-playlist-import.js?v=b23cc88d',
-  '/js/playlist-live.js?v=b23cc88d',
+  '/js/song-sets.js?v=891e316b',
+  '/js/spotify-playlist-import.js?v=891e316b',
+  '/js/playlist-live.js?v=891e316b',
   `/js/vocabulary-import-core.js?v=${ASSET_VERSION}`,
-  '/js/vocabulary-import.js?v=b23cc88d',
+  '/js/vocabulary-import.js?v=891e316b',
   `/js/spanishdict-usage.js?v=${ASSET_VERSION}`,
-  '/js/reverse-cues.js?v=b23cc88d',
-  '/js/flags.js?v=b23cc88d',
-  '/js/card-metadata-pills.js?v=b23cc88d',
-  '/js/flashcards.js?v=b23cc88d',
+  '/js/reverse-cues.js?v=891e316b',
+  '/js/flags.js?v=891e316b',
+  '/js/card-metadata-pills.js?v=891e316b',
+  '/js/flashcards.js?v=891e316b',
   '/icons/tatoeba.svg',
   '/icons/wikipedia-w.svg',
   `/js/example-personalisation.js?v=${ASSET_VERSION}`,
-  '/js/flashcards-modals.js?v=b23cc88d',
-  '/js/flashcards-conj.js?v=b23cc88d',
-  '/js/side-dock.js?v=b23cc88d',
-  '/js/review-home.js?v=b23cc88d'
+  '/js/flashcards-modals.js?v=891e316b',
+  '/js/flashcards-conj.js?v=891e316b',
+  '/js/side-dock.js?v=891e316b',
+  '/js/review-home.js?v=891e316b'
 ];
 
 self.addEventListener('install', event => {
@@ -214,6 +214,26 @@ self.addEventListener('fetch', event => {
   }
   if (/^\/Data\/[^/]+\/(?:vocabulary\.(?:index|examples)|study-structure|release-(?:manifest|composition)|conjugations)\.json$/u.test(appPathname)) {
     event.respondWith(fetch(request, { cache: 'no-store' }));
+    return;
+  }
+
+  // Config files name the active releases, so they must match the code that
+  // reads them. Served from cache, the first visit after a deploy ran new
+  // modules against the previous config (Czech v22 loaded v21). Network
+  // first, cache only as the offline fallback.
+  if (/^\/config\/[^/]+\.json$/u.test(appPathname)) {
+    event.respondWith(
+      fetch(request, { cache: 'no-store' }).then(response => {
+        if (response && response.status === 200 && response.type === 'basic') {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(scopedPath(appPathname), copy));
+        }
+        return response;
+      }).catch(() => caches.open(CACHE_NAME).then(cache =>
+        cache.match(request, { ignoreSearch: true })
+          .then(cached => cached || cache.match(scopedPath(appPathname)))
+      ))
+    );
     return;
   }
 
