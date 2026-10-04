@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-04T16:37:00+01:00",
+      "date": "2026-10-04 16:37 BST",
+      "agent": "Claude",
+      "summary": "Verb drills can start with the verbs you got wrong in your vocabulary flashcards this week.",
+      "detail": [
+        "New Set up switch under Progress, on by default: \"Start with verbs from your flashcard mistakes\".",
+        "Reads flashcard misses from the last 7 days (signed in, this device) and matches them to any form or infinitive in the drill.",
+        "Words the vocabulary treats as non-verbs (casa, para, entre) no longer pull a look-alike verb forward; lists built by scripts/build_conjugation_not_verbs.py for es, pt and cs.",
+        "A line under the switch says how many verbs will come first."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-04T15:25:00+01:00",
       "date": "2026-10-04 15:25 BST",
       "agent": "Antigravity",
