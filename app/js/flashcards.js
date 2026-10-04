@@ -1,26 +1,26 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=9e1f0cea';
-import './speech.js?v=9e1f0cea';
-import { goToRoute, routeCodeFor } from './routes.js?v=9e1f0cea';
-import './side-dock.js?v=9e1f0cea';
+import './state.js?v=58d8569a';
+import './speech.js?v=58d8569a';
+import { goToRoute, routeCodeFor } from './routes.js?v=58d8569a';
+import './side-dock.js?v=58d8569a';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=9e1f0cea';
+} from './example-personalisation.js?v=58d8569a';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=9e1f0cea';
+} from './spanishdict-usage.js?v=58d8569a';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=9e1f0cea';
+} from './reverse-cues.js?v=58d8569a';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -53,7 +53,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=9e1f0cea';
+} from './card-metadata-pills.js?v=58d8569a';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -5635,14 +5635,26 @@ function hasDeterministicConstructionDifference(meanings) {
         if (diff && (diff.type === 'construction' || diff.type === 'companion')) {
             return true;
         }
-        // Direct checks on items if resolveMeaningDifferentiator is not loaded or for specific construction cues
-        const items = m?.metadata || [];
-        const hasDirectConstruction = items.some(it =>
-            it.family === 'construction' || it.family === 'companion'
-        );
-        if (hasDirectConstruction) return true;
+        // Direct check when resolveMeaningDifferentiator is not loaded: a
+        // construction or companion feature this sense has and a sibling lacks.
+        const own = constructionFeatureKeys(m);
+        if (own.size && meanings.some(peer => peer !== m
+            && [...own].some(key => !constructionFeatureKeys(peer).has(key)))) {
+            return true;
+        }
     }
     return false;
+}
+
+// Release metadata is an object ({ sense_metadata: { features: [...] } }),
+// never a bare list; reading it as one threw "items.some is not a function"
+// and stopped whole decks loading.
+function constructionFeatureKeys(meaning) {
+    const metadata = meaning?.metadata;
+    const features = Array.isArray(metadata) ? metadata : (metadata?.sense_metadata?.features || []);
+    return new Set(features
+        .filter(item => item && (item.family === 'construction' || item.family === 'companion'))
+        .map(item => `${item.family}|${item.kind}|${item.value}`));
 }
 
 function withinGlossLeafSeparationIsReliable(meanings) {
@@ -10332,8 +10344,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '9e1f0cea';
-const MODALS_ASSET_VERSION = '9e1f0cea';
+const ASSET_VERSION = '58d8569a';
+const MODALS_ASSET_VERSION = '58d8569a';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

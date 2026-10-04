@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-04T18:20:00+01:00",
+      "date": "2026-10-04 18:20 BST",
+      "agent": "Claude",
+      "summary": "Fixed decks failing to load with \"items.some is not a function\".",
+      "detail": [
+        "The sense-prominence check read each meaning's metadata as a list, but releases store it as an object, so some sets stopped loading.",
+        "It now reads the features inside the object and only counts a construction difference when a sibling sense lacks it."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-04T17:55:00+01:00",
       "date": "2026-10-04 17:55 BST",
       "agent": "Claude",
