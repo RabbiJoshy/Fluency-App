@@ -1,11 +1,11 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=0eafc870';
-import { validateVocabularyIndex } from './data-contracts.js?v=0eafc870';
-import { formatRoute } from './routes.js?v=0eafc870';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=0eafc870';
-import { releaseUrl } from './release-host.js?v=0eafc870';
+import './state.js?v=92c573e3';
+import { validateVocabularyIndex } from './data-contracts.js?v=92c573e3';
+import { formatRoute } from './routes.js?v=92c573e3';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=92c573e3';
+import { releaseUrl } from './release-host.js?v=92c573e3';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -2925,6 +2925,29 @@ async function loadVocabularyData(rangeString, opts = {}) {
         for (const item of filteredData) {
             applyGrammarCardOverlay(item, selectedLanguage);
             item.meanings = item.meanings || [];
+        }
+
+        // Suppress redundant base cards when a polysemous/homograph split card
+        // in the same set already covers that headword reading. This prevents the
+        // "3rd card" bug where learners see an infinitive card followed by Card 1
+        // and Card 2 of the split companion pair.
+        const splitTupleHeadwords = new Set();
+        for (const it of filteredData) {
+            const sp = detectSplitCardTuples(it, selectedLanguage);
+            if (sp && sp.tuple1 && sp.tuple2) {
+                splitTupleHeadwords.add(cleanHeadwordToken(sp.tuple1.headword));
+                splitTupleHeadwords.add(cleanHeadwordToken(sp.tuple2.headword));
+            }
+        }
+        if (splitTupleHeadwords.size > 0) {
+            filteredData = filteredData.filter(it => {
+                const sp = detectSplitCardTuples(it, selectedLanguage);
+                if (sp && sp.tuple1 && sp.tuple2) return true;
+                const token = cleanHeadwordToken(it.lemma || it.word);
+                // If this is an unsplit base item whose headword is already explicitly
+                // split into companion cards in this set, drop the redundant parent card
+                return !splitTupleHeadwords.has(token);
+            });
         }
 
         for (const item of filteredData) {

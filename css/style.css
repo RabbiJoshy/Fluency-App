@@ -19566,6 +19566,7 @@ body.artist-mode #flashcardMode::before {
 .front-lemma-pair.is-pos-only {
   padding: 4px 5px;
   gap: 0;
+  justify-content: center;
 }
 .front-lemma-pair .front-lemma-name {
   color: var(--text-primary);
@@ -20715,6 +20716,7 @@ body.rare-uses-open { overflow: hidden; }
 .card-pos-list.is-lemma-map .front-lemma-pair.is-pos-only {
   padding: 5px;
   gap: 0;
+  justify-content: center;
 }
 .card-pos-list.is-lemma-map .front-lemma-name { display: block; min-width: 0; flex: 0 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card-pos-list.is-lemma-map.pos-count-3 .front-lemma-pair { font-size: 14px; }
@@ -20738,6 +20740,7 @@ body.rare-uses-open { overflow: hidden; }
 .card-pos-list.is-lemma-map.pos-count-2 .front-lemma-pair.is-pos-only {
   padding: 7px;
   gap: 0;
+  justify-content: center;
 }
 .card-pos-list.is-lemma-map.pos-count-1 .card-pos,
 .card-pos-list.is-lemma-map.pos-count-2 .card-pos {
@@ -20762,7 +20765,7 @@ body.rare-uses-open { overflow: hidden; }
   .card-pos-list.is-lemma-map.pos-count-1 .front-lemma-pair,
   .card-pos-list.is-lemma-map.pos-count-2 .front-lemma-pair { min-height: 46px; font-size: 18px; padding-right: 11px; }
   .card-pos-list.is-lemma-map.pos-count-1 .front-lemma-pair.is-pos-only,
-  .card-pos-list.is-lemma-map.pos-count-2 .front-lemma-pair.is-pos-only { padding: 5px 7px; gap: 0; }
+  .card-pos-list.is-lemma-map.pos-count-2 .front-lemma-pair.is-pos-only { padding: 6px; gap: 0; justify-content: center; }
   .card-pos-list.is-lemma-map.pos-count-1 .card-pos,
   .card-pos-list.is-lemma-map.pos-count-2 .card-pos { min-height: 34px; padding: 6px 11px; font-size: 15px; }
   #topBar .learning-context-chip { min-width: 0; max-width: 148px; min-height: 48px; padding: 4px 8px; column-gap: 5px; }
