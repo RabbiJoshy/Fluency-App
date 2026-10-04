@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-04T18:45:00+01:00",
+      "date": "2026-10-04 18:45 BST",
+      "agent": "Claude",
+      "summary": "Resuming a Speech session or opening a word link no longer waits for the conjugation tables.",
+      "detail": [
+        "The Wiktionary tables are 250-330 KB compressed; they now load in the background on every route, as they already did after choosing a language.",
+        "The first card may show an uninflected English gloss (\"to have\") for a moment, then switches to \"I have\" when the tables arrive."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-04T21:35:00+01:00",
       "date": "2026-10-04 21:35 BST",
       "agent": "Antigravity",

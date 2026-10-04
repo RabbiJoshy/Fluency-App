@@ -1,35 +1,35 @@
 // First: rewrites old ?artist=/?about= links to their #/ route before
 // anything below reads the address.
-import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=92c573e3';
-import { releaseUrl } from './release-host.js?v=92c573e3';
-import './theme.js?v=92c573e3';
-import { installFlagRendering } from './flags.js?v=92c573e3';
-import './state.js?v=92c573e3';
-import './offline-db.js?v=92c573e3';
-import './sync-queue.js?v=92c573e3';
-import { initOfflineContent } from './offline-content.js?v=92c573e3';
-import './speech.js?v=92c573e3';
-import './artist-ui.js?v=92c573e3';
-import './auth.js?v=92c573e3';
-import './tutorial.js?v=92c573e3';
-import './walkthrough.js?v=92c573e3';
-import './estimation.js?v=92c573e3';
-import './config.js?v=92c573e3';
-import './progress.js?v=92c573e3';
-import './knowledge.js?v=92c573e3';
-import './ui.js?v=92c573e3';
-import './vocab.js?v=92c573e3';
-import './cognates.js?v=92c573e3';
-import './coverage.js?v=92c573e3';
-import './fast-mode.js?v=92c573e3';
-import './extras.js?v=92c573e3';
-import './review-home.js?v=92c573e3';
-import './song-sets.js?v=92c573e3';
-import './playlist-live.js?v=92c573e3';
-import './spotify-playlist-import.js?v=92c573e3';
-import './vocabulary-import.js?v=92c573e3';
-import './flashcards.js?v=92c573e3';
-import { validateArtistCatalog } from './data-contracts.js?v=92c573e3';
+import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=327deb08';
+import { releaseUrl } from './release-host.js?v=327deb08';
+import './theme.js?v=327deb08';
+import { installFlagRendering } from './flags.js?v=327deb08';
+import './state.js?v=327deb08';
+import './offline-db.js?v=327deb08';
+import './sync-queue.js?v=327deb08';
+import { initOfflineContent } from './offline-content.js?v=327deb08';
+import './speech.js?v=327deb08';
+import './artist-ui.js?v=327deb08';
+import './auth.js?v=327deb08';
+import './tutorial.js?v=327deb08';
+import './walkthrough.js?v=327deb08';
+import './estimation.js?v=327deb08';
+import './config.js?v=327deb08';
+import './progress.js?v=327deb08';
+import './knowledge.js?v=327deb08';
+import './ui.js?v=327deb08';
+import './vocab.js?v=327deb08';
+import './cognates.js?v=327deb08';
+import './coverage.js?v=327deb08';
+import './fast-mode.js?v=327deb08';
+import './extras.js?v=327deb08';
+import './review-home.js?v=327deb08';
+import './song-sets.js?v=327deb08';
+import './playlist-live.js?v=327deb08';
+import './spotify-playlist-import.js?v=327deb08';
+import './vocabulary-import.js?v=327deb08';
+import './flashcards.js?v=327deb08';
+import { validateArtistCatalog } from './data-contracts.js?v=327deb08';
 
 // Emoji flags anywhere on the page render as rectangular pictures.
 installFlagRendering();
@@ -87,7 +87,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
 const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
-    ? import('./spotify.js?v=92c573e3').catch(error => {
+    ? import('./spotify.js?v=327deb08').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })
@@ -742,14 +742,17 @@ loadConfig().then(async () => {
     // small Spanish-only helpers here for that route. Ordinary language choice
     // deliberately fetches neither: ui.js starts them only after Speech is
     // selected, allowing Lyrics learners to avoid the Speech loading phase.
-    // Conjugation tables are needed for inflected English glosses on first
-    // paint, so prefetch them for any resumed Speech language that has a path.
+    // Conjugation tables inflect the English glosses ("I have", not "to
+    // have"). Fetch them in the background, as ui.js does for a chosen
+    // language: the Wiktionary tables are 250-330 KB compressed and the
+    // first card must not wait for them. loadConjugationData repaints the
+    // card when they arrive.
     if ((isResumeNavigation || wordRoute) && !activeArtist) {
         if (selectedLanguage === 'spanish') {
             if (window.loadSpanishRanks) window.loadSpanishRanks();
             if (window.loadConjugatedEnglishData) window.loadConjugatedEnglishData();
         }
-        if (window.loadConjugationData) await window.loadConjugationData();
+        if (window.loadConjugationData) Promise.resolve(window.loadConjugationData()).catch(() => {});
     }
     applyLanguageColorTheme();
     setupLemmaToggle();
@@ -1709,7 +1712,7 @@ function spotifyStatusElement() {
         el.type = 'button';
         el.addEventListener('click', async event => {
             event.stopPropagation();
-            await (_spotifyModulePromise || import('./spotify.js?v=92c573e3')).catch(() => null);
+            await (_spotifyModulePromise || import('./spotify.js?v=327deb08')).catch(() => null);
             window.spotifyLogin?.();
         });
     }
