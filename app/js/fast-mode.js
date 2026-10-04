@@ -16,8 +16,8 @@
 // Applies to Speech and Lyrics alike. A language whose release supports only one
 // of the two parts still gets fast mode — it just moves the part it has, and the
 // page says which part is missing.
-import './state.js?v=58d8569a';
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=58d8569a';
+import './state.js?v=0eafc870';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=0eafc870';
 
 let applyingMasterSwitch = false;
 let returnToSettings = false;
@@ -286,6 +286,25 @@ function updateMappingStatus() {
         cognateStatus.textContent = cognateAvailable()
             ? ''
             : `${languageName(knownCode)} → ${target} mapping not found. Look-alike words will remain in the deck.`;
+    }
+    const algoStatus = document.getElementById('cognateAlgorithmStatus');
+    if (algoStatus) {
+        const info = globalThis.getCognateAlgorithmInfo?.();
+        if (info && info.hasScores) {
+            const knowns = (info.knownLanguages && info.knownLanguages.length)
+                ? info.knownLanguages
+                : (globalThis.activeKnownLanguages?.() || ['en']);
+            const details = knowns.map(code => {
+                const scorer = info.surfaceScorers?.[code] || 'learner-align/v1';
+                const thresh = info.thresholds?.[code] ?? globalThis.cognateThresholdFor?.(code) ?? '–';
+                return `${languageName(code)} (${code}): scorer=${scorer}, threshold=${thresh}`;
+            }).join(' · ');
+            algoStatus.hidden = false;
+            algoStatus.innerHTML = `<strong>Cognate Algorithm:</strong> ${details} (schema: ${info.schema || 'v4'})`;
+        } else {
+            algoStatus.hidden = true;
+            algoStatus.textContent = '';
+        }
     }
 }
 

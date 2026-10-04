@@ -19,7 +19,7 @@
 //
 // The old scalar still works. Where a release predates this, `cognate_score`
 // is read as the English entry, so Spanish is untouched.
-import './state.js?v=58d8569a';
+import './state.js?v=0eafc870';
 
 const SELECTED_KEY = 'fluency_known_languages_v1';
 
@@ -75,6 +75,7 @@ let cognateCards = null;
 // The language the loaded map was built for. Scores are keyed by bare surface,
 // which several languages share, so the map must never outlive its language.
 let cognateLanguage = null;
+let cognateSurfaceScorers = {};
 let selectedKnownLanguages = null;
 
 function readSelected() {
@@ -419,6 +420,9 @@ async function loadCognateScores(langConfig) {
         cognateThresholds = (payload.thresholds && typeof payload.thresholds === 'object')
             ? payload.thresholds
             : {};
+        cognateSurfaceScorers = (payload.surface_scorers && typeof payload.surface_scorers === 'object')
+            ? payload.surface_scorers
+            : {};
         if (isSenseRouted(cognateSchema) && payload.cards && typeof payload.cards === 'object') {
             // The precomputed card verdicts describe one release's senses. A
             // deck built from another release keeps every card until its
@@ -438,11 +442,23 @@ async function loadCognateScores(langConfig) {
         cognateMatches = null;
         cognateLanguages = [];
         cognateThresholds = {};
+        cognateSurfaceScorers = {};
         cognateLanguage = null;
         cognateSchema = 'cognate-score/v1';
         cognateCards = null;
     }
     renderKnownLanguagePicker();
+}
+
+function getCognateAlgorithmInfo() {
+    return {
+        schema: cognateSchema,
+        language: cognateLanguage,
+        knownLanguages: cognateLanguages.slice(),
+        surfaceScorers: { ...cognateSurfaceScorers },
+        thresholds: { ...cognateThresholds },
+        hasScores: Boolean(cognateScores),
+    };
 }
 
 // ---------------------------------------------------------------- the picker
@@ -510,3 +526,4 @@ globalThis.activeKnownLanguages = activeKnownLanguages;
 globalThis.renderKnownLanguagePicker = renderKnownLanguagePicker;
 globalThis.knownLemmas = knownLemmas;
 globalThis.knownLanguageLabel = languageLabel;
+globalThis.getCognateAlgorithmInfo = getCognateAlgorithmInfo;

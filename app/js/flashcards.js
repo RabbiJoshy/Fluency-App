@@ -1,26 +1,26 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=58d8569a';
-import './speech.js?v=58d8569a';
-import { goToRoute, routeCodeFor } from './routes.js?v=58d8569a';
-import './side-dock.js?v=58d8569a';
+import './state.js?v=0eafc870';
+import './speech.js?v=0eafc870';
+import { goToRoute, routeCodeFor } from './routes.js?v=0eafc870';
+import './side-dock.js?v=0eafc870';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=58d8569a';
+} from './example-personalisation.js?v=0eafc870';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=58d8569a';
+} from './spanishdict-usage.js?v=0eafc870';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=58d8569a';
+} from './reverse-cues.js?v=0eafc870';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -53,7 +53,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=58d8569a';
+} from './card-metadata-pills.js?v=0eafc870';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -9854,6 +9854,26 @@ function buildProvenancePanelHTML(card) {
         decisionAlgo = 'Deterministic Monosemous Assignment';
     }
 
+    // Cognate algorithm and card score audit
+    const cognateInfo = globalThis.getCognateAlgorithmInfo?.();
+    let cognateAuditVal = 'None / Inactive';
+    if (cognateInfo && cognateInfo.hasScores) {
+        const strong = globalThis.strongestKnownLanguage?.(card);
+        const match = globalThis.matchedKnownWord?.(card);
+        const knownCode = strong ? strong.code : (globalThis.activeKnownLanguages?.()[0] || 'en');
+        const scorer = cognateInfo.surfaceScorers?.[knownCode] || 'learner-align/v1';
+        const cutoff = cognateInfo.thresholds?.[knownCode] ?? globalThis.cognateThresholdFor?.(knownCode) ?? 0.75;
+        const score = globalThis.cognateScoreFor?.(card, knownCode);
+        if (score && score > 0) {
+            const isCognate = globalThis.isCognateKnown?.(card);
+            const statusLabel = isCognate ? 'Cognate' : 'Not skipped';
+            const matchedStr = match?.word ? ` (${match.word})` : '';
+            cognateAuditVal = `${scorer} · ${score.toFixed(2)}${matchedStr} · cutoff ${cutoff} (${statusLabel})`;
+        } else {
+            cognateAuditVal = `${scorer} · cutoff ${cutoff} (no match)`;
+        }
+    }
+
     const wsdSummaryCard = `
         <div class="prov-wsd-card">
             <div class="prov-wsd-head">
@@ -9876,6 +9896,10 @@ function buildProvenancePanelHTML(card) {
                 <div class="prov-wsd-stage">
                     <span class="prov-wsd-label">Resolution Algorithm</span>
                     <span class="prov-wsd-val">🎯 ${esc(decisionAlgo)}</span>
+                </div>
+                <div class="prov-wsd-stage">
+                    <span class="prov-wsd-label">Cognate Scorer</span>
+                    <span class="prov-wsd-val">🔗 ${esc(cognateAuditVal)}</span>
                 </div>
             </div>
         </div>`;
@@ -10344,8 +10368,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '58d8569a';
-const MODALS_ASSET_VERSION = '58d8569a';
+const ASSET_VERSION = '0eafc870';
+const MODALS_ASSET_VERSION = '0eafc870';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
