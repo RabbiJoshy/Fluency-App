@@ -207,7 +207,10 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("sourceCardButton.onclick = openLyrics", ui)
         self.assertNotIn("sessionStorage.removeItem('fluencyPendingSpeechLanguage');\n            await continueToSpeech();", ui)
         self.assertIn("if ((isResumeNavigation || wordRoute) && !activeArtist) {", main)
-        self.assertIn("if (window.loadConjugationData) await window.loadConjugationData();", main)
+        # Resume no longer waits for the conjugation tables (250-330 KB
+        # compressed since v23); the loader repaints the card when they land.
+        self.assertIn("if (window.loadConjugationData) Promise.resolve(window.loadConjugationData()).catch(() => {});", main)
+        self.assertNotIn("if (window.loadConjugationData) await window.loadConjugationData();", main)
         self.assertIn("if (window.loadConjugationData) window.loadConjugationData();", ui)
         self.assertNotIn("if (window.loadConjugationData) await window.loadConjugationData();", ui)
         self.assertTrue(config["languages"]["spanish"]["capabilities"]["speech"])

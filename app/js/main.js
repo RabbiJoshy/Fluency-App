@@ -742,14 +742,17 @@ loadConfig().then(async () => {
     // small Spanish-only helpers here for that route. Ordinary language choice
     // deliberately fetches neither: ui.js starts them only after Speech is
     // selected, allowing Lyrics learners to avoid the Speech loading phase.
-    // Conjugation tables are needed for inflected English glosses on first
-    // paint, so prefetch them for any resumed Speech language that has a path.
+    // Conjugation tables inflect the English glosses ("I have", not "to
+    // have"). Fetch them in the background, as ui.js does for a chosen
+    // language: the Wiktionary tables are 250-330 KB compressed and the
+    // first card must not wait for them. loadConjugationData repaints the
+    // card when they arrive.
     if ((isResumeNavigation || wordRoute) && !activeArtist) {
         if (selectedLanguage === 'spanish') {
             if (window.loadSpanishRanks) window.loadSpanishRanks();
             if (window.loadConjugatedEnglishData) window.loadConjugatedEnglishData();
         }
-        if (window.loadConjugationData) await window.loadConjugationData();
+        if (window.loadConjugationData) Promise.resolve(window.loadConjugationData()).catch(() => {});
     }
     applyLanguageColorTheme();
     setupLemmaToggle();
