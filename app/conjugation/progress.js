@@ -158,6 +158,38 @@
 
   function clearSession(lang) { remove(sessionKey(lang)); }
 
+  /* Words the learner got wrong in the vocabulary flashcards lately, read from
+   * the study app's own local cache (auth.js writes progress_cache_<initials>
+   * for signed-in users). "Lately" is the same seven days the example
+   * personalisation uses (js/example-personalisation.js). Returns
+   * word -> last miss in ms, or null when there is nothing to read: a guest,
+   * or a device that has never synced flashcard progress. */
+  var RECENT_MISTAKE_WINDOW_MS = 7 * DAY;
+  var LANGUAGE_NAMES = { es: 'spanish', pt: 'portuguese', fr: 'french', cs: 'czech' };
+
+  function flashcardMisses(lang, now) {
+    var user = read('flashcardUser');
+    var initials = user && !user.isGuest && user.initials;
+    if (!initials) return null;
+    var cache = read('progress_cache_' + initials);
+    var rows = cache && cache.progress;
+    if (!rows || typeof rows !== 'object') return null;
+    var name = LANGUAGE_NAMES[lang] || lang;
+    var cutoff = (now || Date.now()) - RECENT_MISTAKE_WINDOW_MS;
+    var out = {};
+    Object.keys(rows).forEach(function (id) {
+      var row = rows[id];
+      if (!row || !(Number(row.wrong) > 0) || !row.lastWrong) return;
+      var language = row.language;
+      if (language ? language !== name && language !== lang : id.indexOf(lang) !== 0) return;
+      var when = new Date(row.lastWrong).getTime();
+      if (!(when > cutoff)) return;
+      var word = String(row.word || '').trim().toLowerCase();
+      if (word && !(out[word] >= when)) out[word] = when;
+    });
+    return out;
+  }
+
   function loadSettings(lang) { return read(settingsKey(lang)); }
   function saveSettings(lang, settings) { write(settingsKey(lang), settings); }
 
@@ -177,6 +209,7 @@
     loadSession: loadSession,
     saveSession: saveSession,
     clearSession: clearSession,
+    flashcardMisses: flashcardMisses,
     loadSettings: loadSettings,
     saveSettings: saveSettings
   };

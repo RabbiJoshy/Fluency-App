@@ -24,10 +24,14 @@
     coverage: 'all', // 'all' every card, 'one' one card per lesson
     speak: true,     // read the answer out loud on reveal
     easy: false,     // tint the prompt by what this card does, and name the family
-    focus: 'weakest' // 'weakest' missed/due/new first, 'due' only those, 'shuffle'
+    focus: 'weakest', // 'weakest' missed/due/new first, 'due' only those, 'shuffle'
+    fromCards: true   // verbs missed in the vocabulary flashcards go first
   };
 
   var P = window.ConjugationProgress;
+  // Verbs (by headword) with a form missed in the vocabulary flashcards this
+  // past week, or null when there are no flashcard results to read.
+  var cardMisses = null;
   var progress = { forms: {} };  // this deck's records, mirrored from storage
   // The round in flight: form key -> true/false once graded, and the record
   // each form had before this round touched it, so re-grading a card after
@@ -50,6 +54,16 @@
 
   window.registerConjugationDeck = function (payload) {
     decks[payload.language] = payload;
+  };
+
+  // Drill forms the vocabulary treats as something else (casa, para), built by
+  // scripts/build_conjugation_not_verbs.py; a missed card for one of these
+  // does not pull its look-alike verb forward.
+  var notVerbs = {};
+  window.registerConjugationNotVerbs = function (payload) {
+    var words = {};
+    (payload.words || []).forEach(function (word) { words[word] = true; });
+    notVerbs[payload.language] = words;
   };
 
   /* ── helpers ────────────────────────────────────────── */
@@ -346,19 +360,27 @@
 
   /* Shuffle first so ties break randomly, then (unless the learner asked for
    * pure shuffle) put what needs work in front: missed, overdue, new, and
-   * last whatever is not due yet. 'due' drops that last group entirely. */
+   * last whatever is not due yet. 'due' drops that last group entirely.
+   * With fromCards on, verbs missed in the flashcards go ahead of all that. */
   function orderByFocus(cards) {
     shuffle(cards);
-    if (state.focus === 'shuffle') return cards;
+    var fromCards = state.fromCards && cardMisses;
+    if (state.focus === 'shuffle' && !fromCards) return cards;
     var now = Date.now();
     var ranked = cards.map(function (card, index) {
-      return { card: card, rank: P.priority(progress.forms[card.key], now), index: index };
+      var rank = state.focus === 'shuffle' ? [0, 0] : P.priority(progress.forms[card.key], now);
+      var tier = fromCards && cardMisses[card.verb.h] ? 0 : 1;
+      return { card: card, tier: tier, rank: rank, index: index };
     });
     if (state.focus === 'due') {
-      ranked = ranked.filter(function (item) { return item.rank[0] < 3; });
+      // A verb missed in the flashcards needs work even if its forms here don't.
+      ranked = ranked.filter(function (item) { return item.tier === 0 || item.rank[0] < 3; });
     }
+    // Flashcard-missed verbs form one block in front; inside it the drill's
+    // own order still applies, so their forms interleave rather than queue
+    // up verb by verb.
     ranked.sort(function (a, b) {
-      return a.rank[0] - b.rank[0] || a.rank[1] - b.rank[1] || a.index - b.index;
+      return a.tier - b.tier || a.rank[0] - b.rank[0] || a.rank[1] - b.rank[1] || a.index - b.index;
     });
     return ranked.map(function (item) { return item.card; });
   }
@@ -561,6 +583,57 @@
       label.appendChild(el('span', 'check-count', option.note));
       host.appendChild(label);
     });
+
+    var cards = el('label', 'check');
+    var box = document.createElement('input');
+    box.type = 'checkbox';
+    box.checked = state.fromCards;
+    box.onchange = function () { state.fromCards = box.checked; refreshSummary(); };
+    cards.appendChild(box);
+    cards.appendChild(el('span', 'check-name', 'Start with verbs from your flashcard mistakes'));
+    cards.appendChild(el('span', 'check-count', 'verbs you got wrong in the flashcards this week'));
+    host.appendChild(cards);
+    var hint = el('p', 'hint', '');
+    hint.id = 'cards-hint';
+    host.appendChild(hint);
+  }
+
+  /* Which verbs the flashcard mistakes point at. A missed card is a word as
+   * it appeared (tuvimos), so it is matched against every form in the deck
+   * as well as the infinitive; a homograph (fue) flags each verb it could be,
+   * unless the vocabulary says the word is not a verb at all (casa). */
+  function refreshCardMisses() {
+    var misses = P.flashcardMisses(deck.language, Date.now());
+    if (!misses) { cardMisses = null; return; }
+    var skip = notVerbs[deck.language] || {};
+    Object.keys(skip).forEach(function (word) { delete misses[word]; });
+    cardMisses = {};
+    deck.verbs.forEach(function (verb) {
+      if (misses[verb.h.toLowerCase()]) { cardMisses[verb.h] = true; return; }
+      Object.keys(verb.p).some(function (tenseId) {
+        return verb.p[tenseId].f.some(function (form) {
+          if (form && misses[form.toLowerCase()]) { cardMisses[verb.h] = true; return true; }
+          return false;
+        });
+      });
+    });
+  }
+
+  /* Counted against the current selection, so the number is the number of
+   * verbs that will actually go first. */
+  function renderCardsHint(selection) {
+    var hint = $('cards-hint');
+    if (!hint) return;
+    var total = cardMisses ? Object.keys(cardMisses).length : 0;
+    var picked = cardMisses ? selection.verbs.filter(function (verb) {
+      return cardMisses[verb.h];
+    }).length : 0;
+    hint.textContent = !cardMisses
+      ? 'Sign in and practise some flashcards to use this.'
+      : !total ? 'No verbs missed in your ' + languageName() + ' flashcards this week.'
+      : picked === total
+        ? picked + ' verb' + (picked === 1 ? '' : 's') + ' from your flashcard mistakes will come first.'
+        : picked + ' of the ' + total + ' verbs from your flashcard mistakes are in what you picked; they will come first.';
   }
 
   function languageName() {
@@ -593,6 +666,7 @@
       speak: state.speak,
       easy: state.easy,
       focus: state.focus,
+      fromCards: state.fromCards,
       coverage: state.coverage
     };
   }
@@ -622,6 +696,7 @@
     if (typeof saved.speak === 'boolean') state.speak = saved.speak;
     if (typeof saved.easy === 'boolean') state.easy = saved.easy;
     if (['weakest', 'due', 'shuffle'].indexOf(saved.focus) !== -1) state.focus = saved.focus;
+    if (typeof saved.fromCards === 'boolean') state.fromCards = saved.fromCards;
     if (saved.coverage === 'one' || saved.coverage === 'all') state.coverage = saved.coverage;
   }
 
@@ -811,6 +886,7 @@
         deck.language.toUpperCase() + ' speech inventory.';
 
     renderProgressSummary(stats);
+    renderCardsHint(selection);
     refreshSectionStates(selection);
     refreshResume();
     persistSettings();
@@ -837,7 +913,8 @@
     $('progress-reset').hidden = !practised;
     var focusNames = { weakest: 'weakest first', due: 'only what needs work', shuffle: 'random' };
     $('state-focus').textContent = (stats.total ? stats.known + ' of ' + stats.total + ' known · ' : '') +
-      focusNames[state.focus];
+      focusNames[state.focus] +
+      (state.fromCards && cardMisses && Object.keys(cardMisses).length ? ' · flashcard mistakes first' : '');
   }
 
   function refreshResume() {
@@ -1332,6 +1409,7 @@
   }
 
   function startDrill() {
+    refreshCardMisses();
     beginRound(buildQueue(currentSelection()));
     showScreen('drill');
     blurActive();
@@ -1347,6 +1425,7 @@
     verbByHead = {};
     deck.verbs.forEach(function (verb) { verbByHead[verb.h] = verb; });
     progress = P.load(deck.language);
+    refreshCardMisses();
     results = {};
     before = {};
     finished = false;
@@ -1514,8 +1593,15 @@
     };
     $('done-setup').onclick = function () { queue = []; finished = false; showScreen('setup'); };
     // Another tab answering cards writes the same store; pick its answers up.
+    // Flashcards studied in another tab update the study app's cache the same way.
     window.addEventListener('storage', function (event) {
-      if (!deck || !event.key || event.key.indexOf('conj_progress_v1_') !== 0) return;
+      if (!deck || !event.key) return;
+      if (event.key.indexOf('progress_cache_') === 0) {
+        refreshCardMisses();
+        if ($('screen-setup').classList.contains('is-active')) refreshSummary();
+        return;
+      }
+      if (event.key.indexOf('conj_progress_v1_') !== 0) return;
       progress = P.load(deck.language);
       if ($('screen-setup').classList.contains('is-active')) refreshSummary();
     });

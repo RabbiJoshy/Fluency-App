@@ -50,6 +50,18 @@ RUNNER = r"""
     out.afterReset = [P.loadSession('es'), Object.keys(data).filter(k => k.includes('_JT_'))];
     P.saveSettings('es', { focus: 'due' });
     out.settings = P.loadSettings('es');
+    // Flashcard mistakes come from the study app's cache, signed-in users only.
+    const iso = ms => new Date(ms).toISOString();
+    out.missesNoCache = P.flashcardMisses('es', t0);
+    data.progress_cache_JT = JSON.stringify({ progress: {
+        es1: { word: 'Tuvimos', language: 'spanish', wrong: 1, lastWrong: iso(t0 - DAY) },
+        es2: { word: 'casa', language: 'spanish', wrong: 2, lastWrong: iso(t0 - 8 * DAY) },
+        es3: { word: 'fue', language: 'spanish', wrong: 0, lastWrong: null },
+        pt1: { word: 'tivemos', language: 'portuguese', wrong: 1, lastWrong: iso(t0 - DAY) },
+    } });
+    out.misses = P.flashcardMisses('es', t0);
+    data.flashcardUser = JSON.stringify({ isGuest: true });
+    out.missesGuest = P.flashcardMisses('es', t0);
     console.log(JSON.stringify(out));
 """
 
@@ -92,6 +104,11 @@ class ConjugationProgressTests(unittest.TestCase):
     def test_reset_clears_progress_and_round_only(self):
         self.assertEqual(self.out["afterReset"], [None, []])
         self.assertEqual(self.out["settings"], {"focus": "due"})
+
+    def test_flashcard_misses_are_recent_wrong_answers_in_this_language(self):
+        self.assertIsNone(self.out["missesNoCache"])
+        self.assertEqual(list(self.out["misses"]), ["tuvimos"])
+        self.assertIsNone(self.out["missesGuest"])
 
     def test_page_loads_the_store_before_the_drill(self):
         html = (APP / "conjugation/index.html").read_text()
