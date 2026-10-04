@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-04T19:10:00+01:00",
+      "date": "2026-10-04 19:10 BST",
+      "agent": "Claude",
+      "summary": "French card-back conjugation tables now come from Wiktionary as well.",
+      "detail": [
+        "The French Conjugate drawer reads a Wiktionary table (32 verbs, up from 29 from verbecc) published with release fr-speech-v7-dual-metadata-v6-20261004; the French deck itself is unchanged.",
+        "Jehle and verbecc are no longer used anywhere: their source code and pin commands are removed."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-04T18:45:00+01:00",
       "date": "2026-10-04 18:45 BST",
       "agent": "Claude",

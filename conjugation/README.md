@@ -115,7 +115,9 @@ the layer. `data/pt.js` is `sha256:ed493d47…` from `enwiktionary-2026-08-20`:
 (`sha256:b683bd1d…`, 404 verbs, present + imperative only, 162 lessons) with
 ranks from `20260919T122021Z-0606a927`.
 Czech tables stay present + imperative; that is the layer, not a drill
-omission. French still has no deck file, so it stays off
+omission. French card-back tables are Wiktionary too (`sha256:89213b0f…`, 32
+verbs, in release `fr-speech-v7-dual-metadata-v6-20261004`), but French still
+has no drill deck file, so it stays off
 `CONJ_DRILL_DECKS` in `app/js/flashcards-conj.js`.
 
 ## Example sentences
