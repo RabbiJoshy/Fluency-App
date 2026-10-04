@@ -5635,14 +5635,26 @@ function hasDeterministicConstructionDifference(meanings) {
         if (diff && (diff.type === 'construction' || diff.type === 'companion')) {
             return true;
         }
-        // Direct checks on items if resolveMeaningDifferentiator is not loaded or for specific construction cues
-        const items = m?.metadata || [];
-        const hasDirectConstruction = items.some(it =>
-            it.family === 'construction' || it.family === 'companion'
-        );
-        if (hasDirectConstruction) return true;
+        // Direct check when resolveMeaningDifferentiator is not loaded: a
+        // construction or companion feature this sense has and a sibling lacks.
+        const own = constructionFeatureKeys(m);
+        if (own.size && meanings.some(peer => peer !== m
+            && [...own].some(key => !constructionFeatureKeys(peer).has(key)))) {
+            return true;
+        }
     }
     return false;
+}
+
+// Release metadata is an object ({ sense_metadata: { features: [...] } }),
+// never a bare list; reading it as one threw "items.some is not a function"
+// and stopped whole decks loading.
+function constructionFeatureKeys(meaning) {
+    const metadata = meaning?.metadata;
+    const features = Array.isArray(metadata) ? metadata : (metadata?.sense_metadata?.features || []);
+    return new Set(features
+        .filter(item => item && (item.family === 'construction' || item.family === 'companion'))
+        .map(item => `${item.family}|${item.kind}|${item.value}`));
 }
 
 function withinGlossLeafSeparationIsReliable(meanings) {
