@@ -143,18 +143,6 @@ def card_cognate(
     return weakest
 
 
-RADICAL_REFLEXIVE_ROOTS: Mapping[str, frozenset[str]] = {
-    "es": frozenset({
-        "llamar", "ir", "quedar", "parecer", "poner", "sentir",
-        "volver", "acordar", "despedir", "dormir", "fijar", "negar", "ocupar"
-    }),
-    "pt": frozenset({
-        "chamar", "ir", "ficar", "parecer", "pôr", "sentir",
-        "voltar", "lembrar", "despedir", "dormir", "ocupar"
-    }),
-}
-
-
 def clean_headword(hw: Any) -> str:
     token = normal_token(hw)
     if token.endswith("se") and len(token) > 3:
@@ -224,18 +212,26 @@ def detect_split_card_tuples(
             },
         }
 
-    # Class 2: Radical Reflexive Shift
+    # Class 2: Pronominal / Reflexive Shift (Attested base vs pronominal headword)
     base_m = [m for m in lex if not normal_token(m.get("headword")).endswith("se")]
     refl_m = [m for m in lex if normal_token(m.get("headword")).endswith("se")]
     if len(base_m) >= 1 and len(refl_m) >= 1:
-        base_hws = {normal_token(m.get("headword") or word) for m in base_m}
-        refl_hws = {normal_token(m.get("headword")) for m in refl_m}
-        roots = RADICAL_REFLEXIVE_ROOTS.get(language, RADICAL_REFLEXIVE_ROOTS["es"])
+        base_hws = [normal_token(m.get("headword") or word) for m in base_m]
+        refl_hws = [normal_token(m.get("headword")) for m in refl_m]
+        # Find matching base and pronominal headword pair (e.g. hacer and hacerse, llamar and llamarse)
         matched_root = None
-        for root in roots:
-            if root in base_hws or any(r.startswith(root) for r in refl_hws):
-                matched_root = root
+        for r_hw in refl_hws:
+            r_base = r_hw[:-2] if r_hw.endswith("se") and len(r_hw) > 3 else None
+            if r_base and (r_base in base_hws or r_base == word or any(b.startswith(r_base) for b in base_hws)):
+                matched_root = r_base
                 break
+        if not matched_root and base_hws:
+            # Fallback check: any base headword whose +se form matches a reflexive headword
+            for b_hw in base_hws:
+                if f"{b_hw}se" in refl_hws:
+                    matched_root = b_hw
+                    break
+
         if matched_root and (len(refl_m) / total_len >= 0.14):
             tr1 = base_m[0].get("translation") or base_m[0].get("meaning") or ""
             tr2 = refl_m[0].get("translation") or refl_m[0].get("meaning") or ""

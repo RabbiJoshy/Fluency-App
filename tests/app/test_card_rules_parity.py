@@ -45,6 +45,15 @@ SPLIT_ROWS = [
             {"headword": "banco", "pos": "NOUN", "translation": "shoal"},
         ],
     },
+    {
+        "word": "hace",
+        "meanings": [
+            {"headword": "hacer", "pos": "VERB", "translation": "to make"},
+            {"headword": "hacer", "pos": "VERB", "translation": "to do"},
+            {"headword": "hacerse", "pos": "VERB", "translation": "to become"},
+            {"headword": "hacerse", "pos": "VERB", "translation": "to pretend"},
+        ],
+    },
 ]
 
 ROWS = [

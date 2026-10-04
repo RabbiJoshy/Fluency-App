@@ -54,7 +54,29 @@ class SplitCardsAppTests(unittest.TestCase):
             };
             const splitRegular = context.detectSplitCardTuples(regularItem, 'es');
 
-            process.stdout.write(JSON.stringify({ splitFue, splitLlama, splitRegular }));
+            const hacerItem = {
+                word: 'hace',
+                meanings: [
+                    { headword: 'hacer', pos: 'VERB', translation: 'he makes', percentage: 55 },
+                    { headword: 'hacer', pos: 'VERB', translation: 'he does', percentage: 20 },
+                    { headword: 'hacerse', pos: 'VERB', translation: 'he becomes', percentage: 20 },
+                    { headword: 'hacerse', pos: 'VERB', translation: 'he pretends', percentage: 5 }
+                ]
+            };
+            const splitHacer = context.detectSplitCardTuples(hacerItem, 'es');
+
+            const fazerItem = {
+                word: 'faz',
+                meanings: [
+                    { headword: 'fazer', pos: 'VERB', translation: 'faz / makes', percentage: 70 },
+                    { headword: 'fazer', pos: 'VERB', translation: 'does', percentage: 10 },
+                    { headword: 'fazerse', pos: 'VERB', translation: 'torna-se / becomes', percentage: 15 },
+                    { headword: 'fazerse', pos: 'VERB', translation: 'pretends', percentage: 5 }
+                ]
+            };
+            const splitFazer = context.detectSplitCardTuples(fazerItem, 'pt');
+
+            process.stdout.write(JSON.stringify({ splitFue, splitLlama, splitRegular, splitHacer, splitFazer }));
         """
         completed = subprocess.run(
             ["node", "-e", script], check=False, capture_output=True, text=True,
@@ -79,6 +101,18 @@ class SplitCardsAppTests(unittest.TestCase):
         self.assertEqual(split_llama["tuple2"]["headword"], "llamarse")
 
         self.assertIsNone(data["splitRegular"])
+
+        split_hacer = data["splitHacer"]
+        self.assertIsNotNone(split_hacer)
+        self.assertEqual(split_hacer["kind"], "reflexive")
+        self.assertEqual(split_hacer["tuple1"]["headword"], "hacer")
+        self.assertEqual(split_hacer["tuple2"]["headword"], "hacerse")
+
+        split_fazer = data["splitFazer"]
+        self.assertIsNotNone(split_fazer)
+        self.assertEqual(split_fazer["kind"], "reflexive")
+        self.assertEqual(split_fazer["tuple1"]["headword"], "fazer")
+        self.assertEqual(split_fazer["tuple2"]["headword"], "fazerse")
 
 
 if __name__ == "__main__":

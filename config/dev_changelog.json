@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-04T14:26:00+01:00",
+      "date": "2026-10-04 14:26 BST",
+      "agent": "Antigravity",
+      "summary": "Deterministic dictionary-attested pronominal card splitting across languages.",
+      "detail": [
+        "Replaced hardcoded RADICAL_REFLEXIVE_ROOTS whitelist with deterministic root pairing between base and attested pronominal headwords.",
+        "Automatically enables split companion cards for verbs with distinct pronominal semantics (e.g. hacer/hacerse, fazer/fazer-se) without manual lists.",
+        "Preserved Class 1 homograph and Class 2 reflexive parity across Python and JavaScript runtimes with complete test coverage."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-03T22:08:00+01:00",
       "date": "2026-10-03 22:08 BST",
       "agent": "Antigravity",
