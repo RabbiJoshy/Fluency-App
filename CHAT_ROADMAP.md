@@ -27,6 +27,7 @@ anywhere else.
 | Codename | Job | Status | Read |
 |---|---|---|---|
 | **TURBO** | Live Spanish pipeline for a user-uploaded Spotify playlist: clean, normalise, tag and run fast WSD in the client/worker, then build a study deck immediately. Must not block the UI thread or break card progress. | **In progress** (`app/turbo/`). The last big piece of the app. | `docs/runbooks/live-playlist.md` (SETLIST, which it builds on) |
+| **MIRROR-CS** | Extend the reflexive/pronominal tagger (`src/fluency/reflexive/`) to Czech: 999 of 10,000 cs cards have both a plain and a *se*/*si* meaning. A research chat, not a port: Czech *se*/*si* are second-position clitics with one form for every person, so the person-agreement method behind ~99% in es/pt does not carry over. Needs a Czech parser (Stanza or UDPipe; **ask Josh before downloading**) and new hand-labelled Czech gold sets. No other language is worth extending to (fr deck too small, no pl deck, nl unpublished). | Not started. | `research/reflexives/FINDINGS.md`; reuse the eval harness in `research/reflexives/` |
 | **DUTCH** | Ship the Dutch 2,000-card speech release: review the 122 ledger surfaces, finish the readiness checklist, activate. | Not started. Candidate `nl-speech-v1-2000x5-3-candidate` exists, inactive. | `docs/NL_FI_2000_RELEASE.md` → Dutch; `docs/LANGUAGE_COMPLETION_CANDIDATE.md` |
 
 ## Live today (2026-10-04)
@@ -59,7 +60,7 @@ new row above, not editing this list.
 | GLEAN | MWE re-harvest for Merge Lemmas (decision 0028) |
 | KINDRED | Cognates for any language pair; `learner-align/v1` scorer (decision 0027) |
 | DRAWER | Conjugation tables and their English glosses |
-| MIRROR | Speech v23: reflexive tagging as a WSD filter; Wiktionary-only conjugations |
+| MIRROR | Speech v23 (es, pt): reflexive tagging as a WSD filter; Wiktionary-only conjugations. Keep `research/reflexives/` (eval harness + gold sets): it is how any change to the tagger is re-checked |
 | — | Function words (*lo*, *de*, *que*): curated sense grouping in the app, not WSD |
 | — | Smaller levels and sets (100-card levels, 25-card sets) |
 | — | Release hosting split per language (decision 0026); the old combined `Fluency-Releases` repo was pruned to a README and archived on 2026-10-04 |
