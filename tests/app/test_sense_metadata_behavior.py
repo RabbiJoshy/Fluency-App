@@ -307,6 +307,48 @@ const res3 = highlightFn(sentence3, tenerQue, tener, 'spanish');
 assert(res3.html.includes('<span class="example-word-highlight">Tengo</span>'));
 assert(res3.html.includes('<span class="example-word-highlight example-companion-highlight" title="Collocation with this sense">que</span>'));
 
+// Verify resolveExampleOccurrence prioritizes targetWord and resolves exact surface
+const resolveStart = flashcardsSource.indexOf('function foldSurfaceForm(');
+const resolveEnd = flashcardsSource.indexOf('function getExampleOccurrenceSurface', resolveStart);
+const resolveCode = flashcardsSource.slice(resolveStart, resolveEnd);
+
+const resolveFn = new Function(
+    '_cachedRegex',
+    resolveCode + '\nreturn resolveExampleOccurrence;'
+)(_cachedRegex);
+
+// Card for Portuguese "a" with lemma "o" against a sentence with "a":
+const cardA = { targetWord: 'a', word: 'a', lemma: 'o', citationForm: 'o' };
+const exampleA = { target: 'E viva a minha nêga Tereza!' };
+const resOccurrence = resolveFn(cardA, exampleA, exampleA.target);
+assert.equal(resOccurrence.surface, 'a');
+
+// Test deterministic construction rule for withinGlossLeafSeparationIsReliable
+const reliableStart = flashcardsSource.indexOf('function hasDeterministicConstructionDifference');
+const reliableEnd = flashcardsSource.indexOf('function glossClusterProminenceState', reliableStart);
+const reliableCode = flashcardsSource.slice(reliableStart, reliableEnd);
+
+const testReliableFn = new Function(
+    'GLOSS_LEAF_DOMINANCE', 'GLOSS_LEAF_MARGIN', 'withinGlossLeafWeight',
+    reliableCode + '\nreturn withinGlossLeafSeparationIsReliable;'
+)(0.70, 0.35, (m, useConf) => Number(m.confidence) || 0);
+
+// Two senses sharing a gloss with domain/register difference (slang vs colloquial) but no construction difference:
+// MUST NOT separate (must pool)
+const slangSenses = [
+    { meaning: 'cool', translation: 'cool', confidence: 0.9, metadata: [{ family: 'register', value: 'slang' }] },
+    { meaning: 'cool', translation: 'cool', confidence: 0.1, metadata: [{ family: 'register', value: 'colloquial' }] }
+];
+assert.equal(testReliableFn(slangSenses), false, 'slang or register differences must never split prominence');
+
+// Two senses with a deterministic syntactic construction difference (transitive vs intransitive):
+// SHOULD separate when confidence meets dominance criteria
+const constructionSenses = [
+    { meaning: 'to leave', translation: 'to leave', confidence: 0.85, metadata: [{ family: 'construction', value: 'transitive' }] },
+    { meaning: 'to leave', translation: 'to leave', confidence: 0.15, metadata: [{ family: 'construction', value: 'intransitive' }] }
+];
+assert.equal(testReliableFn(constructionSenses), true, 'deterministic construction difference must separate prominence');
+
 console.log('Sense row collocation and unified example highlighting tests passed');
 ''', capture_output=True)
         self.assertEqual(result.returncode, 0, result.stderr)

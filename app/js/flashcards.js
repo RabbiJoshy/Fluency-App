@@ -890,7 +890,10 @@ function placeRowInformationButtons(root) {
             own.className = 'sense-note-template';
             own.content.append(copy);
             template.remove();
-            cell.prepend(button, own);
+            // The note explains this context, so its button follows the
+            // context text on the right rather than leading the sub-row.
+            button.classList.add('is-context-info');
+            cell.append(own, button);
             cell.classList.add('has-cell-information');
         }
         if (!rowButtons.length) return;
@@ -916,6 +919,16 @@ function placeRowInformationButtons(root) {
         combined.className = 'sense-note-template';
         combined.content.append(copy);
         rowButtons.slice(1).forEach(el => el.remove());
+        // A single-sense row with a context: the button sits just right of
+        // the shaded context box, so it reads as explaining that context.
+        const cue = row.matches('.meaning-row-regular') ? row.querySelector('.meaning-row-sub') : null;
+        const cueHasWords = cue && shownTextPieces(cue).length > 0;
+        if (cueHasWords) {
+            rowButtons[0].classList.add('is-context-info');
+            cue.after(combined, rowButtons[0]);
+            row.classList.add('has-context-information');
+            return;
+        }
         row.prepend(rowButtons[0], combined);
         row.classList.add('has-row-information');
     });
@@ -3071,9 +3084,10 @@ function resolveExampleOccurrence(card, example, sentence) {
     const declared = [
         example?.surface,
         example?.matched_surface,
+        card?.targetWord,
+        card?.displaySurface,
         example?.pooledFrom,
-        card?.representativeSurface,
-        card?.targetWord
+        card?.representativeSurface
     ];
     const seen = new Set();
     const tried = [];
@@ -5608,9 +5622,40 @@ function withinGlossLeafWeight(meaning, useConfidence) {
     return Number(meaning.percentage) || 0;
 }
 
+function hasDeterministicConstructionDifference(meanings) {
+    if (!Array.isArray(meanings) || meanings.length < 2) return false;
+    // Check if there is a strictly deterministic syntactic/construction difference between siblings
+    // (e.g. transitivity, required particle/preposition, complement form).
+    // Domain, register, slang, or fuzzy context notes are NEVER sufficient to split prominence.
+    for (let i = 0; i < meanings.length; i++) {
+        const m = meanings[i];
+        const diff = globalThis.resolveMeaningDifferentiator
+            ? globalThis.resolveMeaningDifferentiator(m, meanings, m.meaning || m.translation || '')
+            : null;
+        if (diff && (diff.type === 'construction' || diff.type === 'companion')) {
+            return true;
+        }
+        // Direct checks on items if resolveMeaningDifferentiator is not loaded or for specific construction cues
+        const items = m?.metadata || [];
+        const hasDirectConstruction = items.some(it =>
+            it.family === 'construction' || it.family === 'companion'
+        );
+        if (hasDirectConstruction) return true;
+    }
+    return false;
+}
+
 function withinGlossLeafSeparationIsReliable(meanings) {
     const list = (Array.isArray(meanings) ? meanings : []).filter(m => m && !m.unassigned && !m.isRareSense);
     if (list.length < 2) return false;
+
+    // Senses sharing a gloss/context may only split prominence if there is a
+    // strictly deterministic syntactic or construction difference (transitivity,
+    // required particle, etc.). Fuzzy register, domain, or slang tags NEVER split counts.
+    if (!hasDeterministicConstructionDifference(list)) {
+        return false;
+    }
+
     const confidenceCount = list.filter(m => Number.isFinite(Number(m.confidence)) && Number(m.confidence) > 0).length;
     if (confidenceCount < 2) {
         // Without calibrated per-leaf model confidence, raw assignment counts
@@ -6244,7 +6289,8 @@ function renderCardWikipediaBadge(card) {
                     const lemmaHTML = foldSurfaceForm(pair.lemma) !== foldSurfaceForm(displayedTargetHeadword)
                         ? `<span class="front-lemma-name">${fromPrefix}${escapeCardText(pair.lemma)}</span>`
                         : '';
-                    return `<span class="front-lemma-pair ${statusClass}" ${activeStyle}>${posUnit}${lemmaHTML}</span>`;
+                    const posOnlyClass = !lemmaHTML ? ' is-pos-only' : '';
+                    return `<span class="front-lemma-pair ${statusClass}${posOnlyClass}" ${activeStyle}>${posUnit}${lemmaHTML}</span>`;
                 };
 
                 const splitPairsHTML = [

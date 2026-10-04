@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-04T16:44:00+01:00",
+      "date": "2026-10-04 16:44 BST",
+      "agent": "Claude",
+      "summary": "An information button that explains a context now sits to the right of that context.",
+      "detail": [
+        "Single-sense rows: the (i) sits just outside the shaded context box, clear of the commonness meter.",
+        "Sub-rows that share a translation: the (i) ends the sub-row on the right instead of leading it.",
+        "Rows without a context keep the button at the left edge."
+      ]
+    },
+    {
       "timestamp": "2026-10-04T16:37:00+01:00",
       "date": "2026-10-04 16:37 BST",
       "agent": "Claude",
@@ -11,6 +22,18 @@
         "Reads flashcard misses from the last 7 days (signed in, this device) and matches them to any form or infinitive in the drill.",
         "Words the vocabulary treats as non-verbs (casa, para, entre) no longer pull a look-alike verb forward; lists built by scripts/build_conjugation_not_verbs.py for es, pt and cs.",
         "A line under the switch says how many verbs will come first."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-04T16:25:00+01:00",
+      "date": "2026-10-04 16:25 BST",
+      "agent": "Antigravity",
+      "summary": "Deterministic syntactic prominence splitting, symmetric POS-only pill padding, and split card meaning reconstruction.",
+      "detail": [
+        "Enforced strict deterministic syntactic/construction difference requirement for splitting prominence scores of senses sharing a gloss (never split on fuzzy register/slang/domain).",
+        "Made front POS pills perfectly symmetric when the lemma is hidden, adding dedicated is-pos-only pill padding rules.",
+        "Ensured split companion cards slice meanings from processed/formatted meanings rather than raw source index meanings."
       ],
       "commit": "pending"
     },
