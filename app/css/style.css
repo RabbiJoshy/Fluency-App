@@ -2937,16 +2937,29 @@
         .sense-prominence-meter i.is-on { opacity: 1; }
         .sense-prominence-detail {
             display: none;
+            position: absolute;
+            right: calc(100% + 8px);
+            top: 50%;
+            transform: translateY(-50%);
             font-size: 11px;
-            font-weight: 650;
+            font-weight: 600;
+            white-space: nowrap;
+            background: rgba(15, 23, 42, 0.95);
+            color: #f8fafc;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 6px;
+            padding: 4px 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+            pointer-events: none;
+            z-index: 100;
         }
         .sense-prominence-badge[aria-expanded="true"] {
-            background: color-mix(in srgb, var(--bg-primary) 88%, transparent);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
-            padding: 4px 7px;
+            background: transparent;
+            box-shadow: none;
+            padding: 2px 3px;
         }
         .sense-prominence-badge[aria-expanded="true"] .sense-prominence-detail {
-            display: inline;
+            display: block;
         }
         @media (max-width: 480px) {
             .meaning-row .meaning-row-body {
@@ -19550,6 +19563,10 @@ body.artist-mode #flashcardMode::before {
   max-width: 100%;
   box-sizing: border-box;
 }
+.front-lemma-pair.is-pos-only {
+  padding: 4px 5px;
+  gap: 0;
+}
 .front-lemma-pair .front-lemma-name {
   color: var(--text-primary);
   font-style: normal;
@@ -20695,6 +20712,10 @@ body.rare-uses-open { overflow: hidden; }
   padding: 5px 10px 5px 5px;
   font-size: 16px;
 }
+.card-pos-list.is-lemma-map .front-lemma-pair.is-pos-only {
+  padding: 5px;
+  gap: 0;
+}
 .card-pos-list.is-lemma-map .front-lemma-name { display: block; min-width: 0; flex: 0 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card-pos-list.is-lemma-map.pos-count-3 .front-lemma-pair { font-size: 14px; }
 .card-pos-list.is-lemma-map.pos-count-4 .front-lemma-pair,
@@ -20712,6 +20733,11 @@ body.rare-uses-open { overflow: hidden; }
   gap: 10px;
   padding: 7px 16px 7px 7px;
   font-size: 23px;
+}
+.card-pos-list.is-lemma-map.pos-count-1 .front-lemma-pair.is-pos-only,
+.card-pos-list.is-lemma-map.pos-count-2 .front-lemma-pair.is-pos-only {
+  padding: 7px;
+  gap: 0;
 }
 .card-pos-list.is-lemma-map.pos-count-1 .card-pos,
 .card-pos-list.is-lemma-map.pos-count-2 .card-pos {
@@ -20735,6 +20761,8 @@ body.rare-uses-open { overflow: hidden; }
   .card-pos-list.is-lemma-map .card-pos { padding: 5px 7px; font-size: 12px; }
   .card-pos-list.is-lemma-map.pos-count-1 .front-lemma-pair,
   .card-pos-list.is-lemma-map.pos-count-2 .front-lemma-pair { min-height: 46px; font-size: 18px; padding-right: 11px; }
+  .card-pos-list.is-lemma-map.pos-count-1 .front-lemma-pair.is-pos-only,
+  .card-pos-list.is-lemma-map.pos-count-2 .front-lemma-pair.is-pos-only { padding: 5px 7px; gap: 0; }
   .card-pos-list.is-lemma-map.pos-count-1 .card-pos,
   .card-pos-list.is-lemma-map.pos-count-2 .card-pos { min-height: 34px; padding: 6px 11px; font-size: 15px; }
   #topBar .learning-context-chip { min-width: 0; max-width: 148px; min-height: 48px; padding: 4px 8px; column-gap: 5px; }
@@ -22424,10 +22452,20 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 .card-ranking .card-stat-unit--below { font-size: 12.5px; opacity: 1; }
 .card-ranking .card-stat-value { font-size: 30px; }
 
-/* A sub-sense's own information button sits at the start of its sub-row. */
-.meaning-row .group-card-varying-cell.has-cell-information { position: relative; padding-left: 30px !important; }
-.meaning-row .group-card-varying-cell.has-cell-information > .sense-note-trigger { left: 4px; }
+/* An information button that explains a context sits on the context's right.
+   On a sub-row it ends the sub-row; on a single-sense row it sits just outside
+   the shaded context box. The row's side padding keeps it clear of the
+   commonness meter at the far right. */
+.meaning-row .group-card-varying-cell.has-cell-information { position: relative; padding-left: 10px !important; padding-right: 32px !important; }
+.meaning-row .group-card-varying-cell.has-cell-information > .sense-note-trigger.is-context-info { left: auto; right: 4px; }
 .meanings-scroll.has-compact-rows .group-card-varying-cell:not(.is-active-subsense) > .sense-note-trigger { display: inline-flex !important; }
+.meaning-row.has-context-information { padding-left: 38px !important; }
+.meaning-row .meaning-row-body > .sense-note-trigger.is-context-info {
+    position: static;
+    transform: none;
+    align-self: center;
+    margin-left: -2px;
+}
 
 /* ===== Settings: three tabs =====
    Study, App and Your words are tabs rather than one long page; each group's

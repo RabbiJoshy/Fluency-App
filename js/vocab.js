@@ -1,11 +1,11 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=24014e19';
-import { validateVocabularyIndex } from './data-contracts.js?v=24014e19';
-import { formatRoute } from './routes.js?v=24014e19';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=24014e19';
-import { releaseUrl } from './release-host.js?v=24014e19';
+import './state.js?v=d857b5e1';
+import { validateVocabularyIndex } from './data-contracts.js?v=d857b5e1';
+import { formatRoute } from './routes.js?v=d857b5e1';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=d857b5e1';
+import { releaseUrl } from './release-host.js?v=d857b5e1';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -3258,16 +3258,28 @@ async function loadVocabularyData(rangeString, opts = {}) {
                     }
                     : { targetSentence: '', englishSentence: '' };
 
+                // Filter the formatted meanings for each tuple's headword/reading
+                const m1 = meanings.filter(m => {
+                    const hw = cleanHeadwordToken(m.headword || item.word);
+                    return hw === t1.headword || (!t1.isReflexive && hw === cleanHeadwordToken(t1.headword));
+                });
+                const m2 = meanings.filter(m => {
+                    const hw = cleanHeadwordToken(m.headword || item.word);
+                    return hw === t2.headword || (t2.isReflexive && normalizeLemmaToken(m.headword).endsWith('se'));
+                });
+                const meanings1 = m1.length > 0 ? m1 : meanings;
+                const meanings2 = m2.length > 0 ? m2 : meanings;
+
                 const card1 = {
                     ...card,
                     id: `${baseId}::split::${t1.headword}_${t1.pos}`,
                     fullId: `${baseFullId}::split::${t1.headword}_${t1.pos}`,
                     citationForm: t1.headword,
                     partOfSpeech: t1.pos,
-                    meanings: t1.meanings,
-                    translation: t1.meanings[0]?.meaning || '',
-                    targetSentence: firstEx1.targetSentence,
-                    englishSentence: firstEx1.englishSentence,
+                    meanings: meanings1,
+                    translation: meanings1[0]?.meaning || '',
+                    targetSentence: meanings1[0]?.targetSentence || firstEx1.targetSentence,
+                    englishSentence: meanings1[0]?.englishSentence || firstEx1.englishSentence,
                     splitInfo: {
                         index: 1,
                         total: 2,
@@ -3289,10 +3301,10 @@ async function loadVocabularyData(rangeString, opts = {}) {
                     fullId: `${baseFullId}::split::${t2.headword}_${t2.pos}`,
                     citationForm: t2.headword,
                     partOfSpeech: t2.pos,
-                    meanings: t2.meanings,
-                    translation: t2.meanings[0]?.meaning || '',
-                    targetSentence: firstEx2.targetSentence,
-                    englishSentence: firstEx2.englishSentence,
+                    meanings: meanings2,
+                    translation: meanings2[0]?.meaning || '',
+                    targetSentence: meanings2[0]?.targetSentence || firstEx2.targetSentence,
+                    englishSentence: meanings2[0]?.englishSentence || firstEx2.englishSentence,
                     splitInfo: {
                         index: 2,
                         total: 2,
