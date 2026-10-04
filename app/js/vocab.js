@@ -2927,6 +2927,29 @@ async function loadVocabularyData(rangeString, opts = {}) {
             item.meanings = item.meanings || [];
         }
 
+        // Suppress redundant base cards when a polysemous/homograph split card
+        // in the same set already covers that headword reading. This prevents the
+        // "3rd card" bug where learners see an infinitive card followed by Card 1
+        // and Card 2 of the split companion pair.
+        const splitTupleHeadwords = new Set();
+        for (const it of filteredData) {
+            const sp = detectSplitCardTuples(it, selectedLanguage);
+            if (sp && sp.tuple1 && sp.tuple2) {
+                splitTupleHeadwords.add(cleanHeadwordToken(sp.tuple1.headword));
+                splitTupleHeadwords.add(cleanHeadwordToken(sp.tuple2.headword));
+            }
+        }
+        if (splitTupleHeadwords.size > 0) {
+            filteredData = filteredData.filter(it => {
+                const sp = detectSplitCardTuples(it, selectedLanguage);
+                if (sp && sp.tuple1 && sp.tuple2) return true;
+                const token = cleanHeadwordToken(it.lemma || it.word);
+                // If this is an unsplit base item whose headword is already explicitly
+                // split into companion cards in this set, drop the redundant parent card
+                return !splitTupleHeadwords.has(token);
+            });
+        }
+
         for (const item of filteredData) {
             const menuSource = useLemmaMode && lemmaHeadwordsOf(item).length === 1
                 ? dedupeLemmaMenu(item.meanings)

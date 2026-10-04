@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-04T21:35:00+01:00",
+      "date": "2026-10-04 21:35 BST",
+      "agent": "Antigravity",
+      "summary": "Fix 3rd card in split-card sets and balance POS-only pill padding.",
+      "detail": [
+        "Deduplicated study sets so polysemous/homograph split cards suppress redundant base/infinitive cards covering the same readings, ensuring only Card 1 of 2 and Card 2 of 2 are presented without an extra 3rd card.",
+        "Balanced horizontal padding and centering on .front-lemma-pair.is-pos-only so standalone POS pills are perfectly symmetric."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-04T18:35:00+01:00",
       "date": "2026-10-04 18:35 BST",
       "agent": "KINDRED",
