@@ -649,12 +649,12 @@
         "wordReference": "https://en.wiktionary.org/wiki/{word}#Czech",
         "conjugation": "https://en.wiktionary.org/wiki/{word}#Czech"
       },
-      "indexPath": "releases/cs/speech/cs-speech-v21-10000x30-slim/app/vocabulary.index.json",
+      "indexPath": "releases/cs/speech/cs-speech-v22-10000x30-slim/app/vocabulary.index.json",
       "frequencyPath": "data/speech-frequency/cs.json",
-      "examplesPath": "releases/cs/speech/cs-speech-v21-10000x30-slim/app/vocabulary.examples.json",
-      "studyStructurePath": "releases/cs/speech/cs-speech-v21-10000x30-slim/app/study-structure.json",
-      "releaseManifestPath": "releases/cs/speech/cs-speech-v21-10000x30-slim/manifest.json",
-      "releaseCompositionPath": "releases/cs/speech/cs-speech-v21-10000x30-slim/composition.json",
+      "examplesPath": "releases/cs/speech/cs-speech-v22-10000x30-slim/app/vocabulary.examples.json",
+      "studyStructurePath": "releases/cs/speech/cs-speech-v22-10000x30-slim/app/study-structure.json",
+      "releaseManifestPath": "releases/cs/speech/cs-speech-v22-10000x30-slim/manifest.json",
+      "releaseCompositionPath": "releases/cs/speech/cs-speech-v22-10000x30-slim/composition.json",
       "cognatesPath": "cognates/cs/cognates.json",
       "mergeExceptionsPath": "data/merge-exceptions/cs.json",
       "coveragePath": "coverage/cs/coverage.json"
