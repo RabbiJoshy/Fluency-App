@@ -68,9 +68,9 @@ never *lesson*.
 
 | key | holds |
 | --- | --- |
-| `conj_progress_v1_<account>_<lang>` | one record per form, keyed `verb\|tenseId\|person` |
-| `conj_session_v1_<account>_<lang>` | the round in flight, so a closed tab offers *Resume* |
-| `conj_settings_v1_<lang>` | the Set up choices (a one-verb deep link never overwrites them) |
+| `conj_progress_v2_<account>_<lang>` | one record per form, keyed `verb\|tenseId\|person` |
+| `conj_session_v2_<account>_<lang>` | the round in flight, so a closed tab offers *Resume* |
+| `conj_settings_v2_<lang>` | the Set up choices (a one-verb deep link never overwrites them) |
 
 `<account>` is the study app's signed-in initials, else `guest`. Each form
 climbs a Leitner ladder (waits 10 min, 1 d, 3 d, 7 d, 21 d, 60 d); a miss drops
@@ -100,12 +100,20 @@ python scripts/build_conjugation_drill.py \
   --ranks <workspace>/runs/es/speech/<run-id>/stages/01_inventory/output/frequency-ranks.json
 ```
 
-`data/es.js` was built from the `fred-jehle` layer (`sha256:c1c66373…`,
-434 verbs, 18 paradigms) with ranks from run `20260919T122017Z-c088090a`.
-`data/pt.js` is the verbecc layer (`sha256:4f2abe83…`, 955 verbs, 10 tenses,
-485 lessons) with ranks from `20260919T122019Z-a3c6945d`.
-`data/cs.js` is the kaikki layer (`sha256:b683bd1d…`, 404 verbs, present +
-imperative only, 162 lessons) with ranks from `20260919T122021Z-0606a927`.
+Every deck is built from a Wiktionary (Kaikki) layer; Fred Jehle and verbecc
+were dropped on 2026-10-04. `data/es.js` is `sha256:c9210195…` from
+`enwiktionary-2026-09-13`: 1,783 verbs, 18 tenses, 1,427 lessons, ranks from
+run `20261004T160042Z-fe49e477`. The eight compound tenses are built from
+*haber* + participle, and the 625 `-se` verbs Wiktionary files only under
+their base verb are that verb's table with the reflexive pronoun and its
+listed attached imperatives (*acuéstate*); both are labelled `derived` in
+the layer. `data/pt.js` is `sha256:ed493d47…` from `enwiktionary-2026-08-20`:
+1,420 verbs, 11 tenses (the pluperfect is new), 1,030 lessons, ranks from
+`20261004T160042Z-b4bc9acd`. Against the old decks, shared cells agree
+99.4% (es) and 98.6% (pt); the Portuguese differences are verbecc's broken
+*nós* preterites (*dan* for *dançámos*). `data/cs.js` is the kaikki layer
+(`sha256:b683bd1d…`, 404 verbs, present + imperative only, 162 lessons) with
+ranks from `20260919T122021Z-0606a927`.
 Czech tables stay present + imperative; that is the layer, not a drill
 omission. French still has no deck file, so it stays off
 `CONJ_DRILL_DECKS` in `app/js/flashcards-conj.js`.
@@ -126,15 +134,15 @@ python scripts/build_conjugation_examples.py --language es \
   --pool <workspace>/pools/es/es-10k-speech
 ```
 
-Built from `es-10k-speech` (9,469 of 40,105 forms, 14,118 sentences),
-`pt-10k-speech` (6,449 of 52,916; European only, so mostly subtitles) and
+Built from `es-10k-speech` (17,039 of 188,854 forms, 18,986 sentences),
+`pt-10k-speech` (11,019 of 90,464; European only, so mostly subtitles) and
 `cs-10k-speech` (2,255 of 3,403).
 
 ## Two things that are derived, not supplied
 
 **Commonness** is the rank of the **infinitive** in the speech inventory, not
 the best rank across inflected forms — those collide with homographic function
-words and rank `parar` at 22 because `para` is a preposition. 386 of 434
+words and rank `parar` at 22 because `para` is a preposition. 955 of 1,783
 Spanish verbs have a rank; the rest are declared unranked and only appear when
 the slider reaches the end.
 

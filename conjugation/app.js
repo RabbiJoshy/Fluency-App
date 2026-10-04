@@ -1601,7 +1601,7 @@
         if ($('screen-setup').classList.contains('is-active')) refreshSummary();
         return;
       }
-      if (event.key.indexOf('conj_progress_v1_') !== 0) return;
+      if (event.key.indexOf('conj_progress_v2_') !== 0) return;
       progress = P.load(deck.language);
       if ($('screen-setup').classList.contains('is-active')) refreshSummary();
     });
