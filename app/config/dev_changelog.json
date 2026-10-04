@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-04T23:22:00+01:00",
+      "date": "2026-10-04 23:22 BST",
+      "agent": "Claude",
+      "summary": "Split words show only Flashcard 1 of 2 and 2 of 2; lighter front POS labels",
+      "detail": [
+        "No phrase follow-up card after a split companion card (it read as a third card)",
+        "Any other card for the same surface is dropped when the surface is split; replaces the lemma-based filter, which could drop unrelated words",
+        "'Card 1 of 2' is now plain 'Flashcard 1 of 2' text, larger, with a tap-for-explanation tooltip",
+        "Front lemma/POS labels lose the capsule behind them and grow ~10%"
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-04T19:45:00+01:00",
       "date": "2026-10-04 19:45 BST",
       "agent": "Claude",

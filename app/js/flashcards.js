@@ -1,26 +1,26 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=891e316b';
-import './speech.js?v=891e316b';
-import { goToRoute, routeCodeFor } from './routes.js?v=891e316b';
-import './side-dock.js?v=891e316b';
+import './state.js?v=7efe5a11';
+import './speech.js?v=7efe5a11';
+import { goToRoute, routeCodeFor } from './routes.js?v=7efe5a11';
+import './side-dock.js?v=7efe5a11';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=891e316b';
+} from './example-personalisation.js?v=7efe5a11';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=891e316b';
+} from './spanishdict-usage.js?v=7efe5a11';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=891e316b';
+} from './reverse-cues.js?v=7efe5a11';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -53,7 +53,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=891e316b';
+} from './card-metadata-pills.js?v=7efe5a11';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -2746,7 +2746,9 @@ function handleSwipeAction(result) {
     // stack popup/peek) can start a child chain of its expressions.
     const swipedCard = flashcards[currentIndex];
     const isChainChild = swipedCard?.isChainChild === true;
-    const mayChain = !isChainChild
+    // Split companion cards never chain: the pair is the whole set for that
+    // surface, and a phrase child would read as a third card.
+    const mayChain = !isChainChild && !swipedCard?.splitInfo
         && cardNavStack.length === 0 && result === 'correct';
 
     // Record the result
@@ -6106,12 +6108,15 @@ function renderCardWikipediaBadge(card) {
         if (card.splitInfo && !isFlipped && !flippedFrontMeanings) {
             frontSurfaceRelationEl.className = 'surface-relation-cue front-surface-relation split-card-note';
             frontSurfaceRelationEl.hidden = false;
-            frontSurfaceRelationEl.textContent = `Card ${card.splitInfo.index} of ${card.splitInfo.total}`;
+            frontSurfaceRelationEl.innerHTML = `<button type="button" class="split-card-note-toggle" aria-expanded="false" onclick="toggleSplitCardTip(event)">Flashcard ${card.splitInfo.index} of ${card.splitInfo.total}</button>`
+                + '<span class="split-card-tip" role="tooltip" hidden>This word has two common, unrelated uses, so it gets a flashcard for each. '
+                + 'Learning them separately keeps one meaning from crowding out the other. '
+                + 'You see both, one after the other.</span>';
             const activePos = card.splitInfo.pos || card.partOfSpeech;
             const posRgb = posAccentRgb(activePos);
             frontSurfaceRelationEl.style.color = `rgb(${posRgb})`;
-            frontSurfaceRelationEl.style.borderColor = `rgba(${posRgb}, 0.35)`;
-            frontSurfaceRelationEl.style.background = `rgba(${posRgb}, 0.08)`;
+            frontSurfaceRelationEl.style.borderColor = '';
+            frontSurfaceRelationEl.style.background = '';
         } else {
             frontSurfaceRelationEl.className = 'surface-relation-cue front-surface-relation';
             frontSurfaceRelationEl.style.color = '';
@@ -6291,10 +6296,6 @@ function renderCardWikipediaBadge(card) {
                 const renderSplitPill = (pair, cardNum, isActive) => {
                     const posUnit = renderFrontPosUnit(pair.pos, isVerbPos(pair.pos));
                     const statusClass = isActive ? 'is-active-split' : 'is-companion-split';
-                    const posRgb = posAccentRgb(pair.pos);
-                    const activeStyle = isActive
-                        ? `style="border-color: rgba(${posRgb}, 0.55); background: rgba(${posRgb}, 0.16);"`
-                        : '';
                     const fromPrefix = foldSurfaceForm(pair.lemma) !== foldSurfaceForm(displayedTargetHeadword)
                         ? '<span class="front-lemma-from">from </span>'
                         : '';
@@ -6302,7 +6303,7 @@ function renderCardWikipediaBadge(card) {
                         ? `<span class="front-lemma-name">${fromPrefix}${escapeCardText(pair.lemma)}</span>`
                         : '';
                     const posOnlyClass = !lemmaHTML ? ' is-pos-only' : '';
-                    return `<span class="front-lemma-pair ${statusClass}${posOnlyClass}" ${activeStyle}>${posUnit}${lemmaHTML}</span>`;
+                    return `<span class="front-lemma-pair ${statusClass}${posOnlyClass}">${posUnit}${lemmaHTML}</span>`;
                 };
 
                 const splitPairsHTML = [
@@ -9009,6 +9010,17 @@ function toggleMorphAlternatives(event) {
     if (sign) sign.textContent = opening ? '−' : '+';
 }
 
+// The "Flashcard 1 of 2" note on a split card explains itself on tap. The
+// click must not reach the card, which would flip it.
+function toggleSplitCardTip(event) {
+    event.stopPropagation();
+    const button = event.currentTarget;
+    const tip = button.parentElement?.querySelector('.split-card-tip');
+    if (!tip) return;
+    tip.hidden = !tip.hidden;
+    button.setAttribute('aria-expanded', String(!tip.hidden));
+}
+
 function toggleFrontProductionHint(event) {
     event?.stopPropagation();
     event?.preventDefault();
@@ -10089,6 +10101,7 @@ window.selectPartOfSpeech = selectPartOfSpeech;
 window.toggleMorphPopover = toggleMorphPopover;
 window.toggleMorphAlternatives = toggleMorphAlternatives;
 window.toggleFrontProductionHint = toggleFrontProductionHint;
+window.toggleSplitCardTip = toggleSplitCardTip;
 window.focusKnowledgeCardItem = focusKnowledgeCardItem;
 window.selectGroup = selectGroup;
 window.previousCard = previousCard;
@@ -10368,8 +10381,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '891e316b';
-const MODALS_ASSET_VERSION = '891e316b';
+const ASSET_VERSION = '7efe5a11';
+const MODALS_ASSET_VERSION = '7efe5a11';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
