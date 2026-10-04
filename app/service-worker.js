@@ -217,6 +217,26 @@ self.addEventListener('fetch', event => {
     return;
   }
 
+  // Config files name the active releases, so they must match the code that
+  // reads them. Served from cache, the first visit after a deploy ran new
+  // modules against the previous config (Czech v22 loaded v21). Network
+  // first, cache only as the offline fallback.
+  if (/^\/config\/[^/]+\.json$/u.test(appPathname)) {
+    event.respondWith(
+      fetch(request, { cache: 'no-store' }).then(response => {
+        if (response && response.status === 200 && response.type === 'basic') {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(scopedPath(appPathname), copy));
+        }
+        return response;
+      }).catch(() => caches.open(CACHE_NAME).then(cache =>
+        cache.match(request, { ignoreSearch: true })
+          .then(cached => cached || cache.match(scopedPath(appPathname)))
+      ))
+    );
+    return;
+  }
+
   // The old cache-first navigation path meant the cached HTML continued to
   // request yesterday's ?v= modules on the first visit after every deploy.
   // Pay one small HTML request while online, cache it for offline fallback,
