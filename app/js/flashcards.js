@@ -1,26 +1,26 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=eed60b91';
-import './speech.js?v=eed60b91';
-import { goToRoute, routeCodeFor } from './routes.js?v=eed60b91';
-import './side-dock.js?v=eed60b91';
+import './state.js?v=02514721';
+import './speech.js?v=02514721';
+import { goToRoute, routeCodeFor } from './routes.js?v=02514721';
+import './side-dock.js?v=02514721';
 import {
     collectRecentWrongWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=eed60b91';
+} from './example-personalisation.js?v=02514721';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=eed60b91';
+} from './spanishdict-usage.js?v=02514721';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=eed60b91';
+} from './reverse-cues.js?v=02514721';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -53,7 +53,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=eed60b91';
+} from './card-metadata-pills.js?v=02514721';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -6050,8 +6050,16 @@ function renderCardWikipediaBadge(card) {
             frontSurfaceRelationEl.className = 'surface-relation-cue front-surface-relation split-card-note';
             frontSurfaceRelationEl.hidden = false;
             frontSurfaceRelationEl.textContent = `Card ${card.splitInfo.index} of ${card.splitInfo.total}`;
+            const activePos = card.splitInfo.pos || card.partOfSpeech;
+            const posRgb = posAccentRgb(activePos);
+            frontSurfaceRelationEl.style.color = `rgb(${posRgb})`;
+            frontSurfaceRelationEl.style.borderColor = `rgba(${posRgb}, 0.35)`;
+            frontSurfaceRelationEl.style.background = `rgba(${posRgb}, 0.08)`;
         } else {
             frontSurfaceRelationEl.className = 'surface-relation-cue front-surface-relation';
+            frontSurfaceRelationEl.style.color = '';
+            frontSurfaceRelationEl.style.borderColor = '';
+            frontSurfaceRelationEl.style.background = '';
             const showRelation = Boolean(notableSurfaceRelation && !isFlipped && !flippedFrontMeanings);
             frontSurfaceRelationEl.hidden = !showRelation;
             frontSurfaceRelationEl.textContent = showRelation
@@ -6212,21 +6220,31 @@ function renderCardWikipediaBadge(card) {
             const isSplitCard = Boolean(card.splitInfo);
             if (isSplitCard) {
                 const s = card.splitInfo;
-                const activePair = pairs[0];
-                const companionPos = s.siblingPos || (isVerbPos(s.siblingHeadword) ? 'VERB' : activePair.pos);
-                const companionPair = {
-                    lemma: s.siblingHeadword,
-                    pos: companionPos
+                // Card 1 is always tuple 1; Card 2 is always tuple 2.
+                // The order of the pills is strictly [Card 1 Reading, Card 2 Reading].
+                const card1Pair = {
+                    lemma: s.index === 1 ? s.headword : s.siblingHeadword,
+                    pos: s.index === 1 ? s.pos : s.siblingPos
                 };
-
-                const card1Pair = s.index === 1 ? activePair : companionPair;
-                const card2Pair = s.index === 1 ? companionPair : activePair;
+                const card2Pair = {
+                    lemma: s.index === 2 ? s.headword : s.siblingHeadword,
+                    pos: s.index === 2 ? s.pos : s.siblingPos
+                };
 
                 const renderSplitPill = (pair, cardNum, isActive) => {
                     const posUnit = renderFrontPosUnit(pair.pos, isVerbPos(pair.pos));
                     const statusClass = isActive ? 'is-active-split' : 'is-companion-split';
-                    const badgeText = `${cardNum}/2`;
-                    return `<span class="front-lemma-pair ${statusClass}">${posUnit}<span class="front-lemma-name"><span class="front-lemma-from">from </span>${escapeCardText(pair.lemma)}</span><span class="front-split-card-tag">${badgeText}</span></span>`;
+                    const posRgb = posAccentRgb(pair.pos);
+                    const activeStyle = isActive
+                        ? `style="border-color: rgba(${posRgb}, 0.55); background: rgba(${posRgb}, 0.16);"`
+                        : '';
+                    const fromPrefix = foldSurfaceForm(pair.lemma) !== foldSurfaceForm(displayedTargetHeadword)
+                        ? '<span class="front-lemma-from">from </span>'
+                        : '';
+                    const lemmaHTML = foldSurfaceForm(pair.lemma) !== foldSurfaceForm(displayedTargetHeadword)
+                        ? `<span class="front-lemma-name">${fromPrefix}${escapeCardText(pair.lemma)}</span>`
+                        : '';
+                    return `<span class="front-lemma-pair ${statusClass}" ${activeStyle}>${posUnit}${lemmaHTML}</span>`;
                 };
 
                 const splitPairsHTML = [
@@ -6241,13 +6259,10 @@ function renderCardWikipediaBadge(card) {
                 if (pairs.length > 4) frontPOSEl.classList.add('pos-count-many');
                 frontPOSEl.innerHTML = pairs.map(pair => {
                     const posUnit = renderFrontPosUnit(pair.pos, isVerbPos(pair.pos));
-                    if (!pair.lemma) return posUnit;
-                    // POS is the iconographic pill; the lemma is the label it
-                    // governs, sitting to its right inside the same capsule.
-                    const fromPrefix = foldSurfaceForm(pair.lemma) !== foldSurfaceForm(displayedTargetHeadword)
-                        ? '<span class="front-lemma-from">from </span>'
-                        : '';
-                    return `<span class="front-lemma-pair">${posUnit}<span class="front-lemma-name">${fromPrefix}${escapeCardText(pair.lemma)}</span></span>`;
+                    if (!pair.lemma || foldSurfaceForm(pair.lemma) === foldSurfaceForm(displayedTargetHeadword)) {
+                        return `<span class="front-lemma-pair is-pos-only">${posUnit}</span>`;
+                    }
+                    return `<span class="front-lemma-pair">${posUnit}<span class="front-lemma-name"><span class="front-lemma-from">from </span>${escapeCardText(pair.lemma)}</span></span>`;
                 }).join('');
             }
             frontPOSEl.style.display = 'grid';
@@ -6543,10 +6558,6 @@ function renderCardWikipediaBadge(card) {
         : '';
 
     let backSplitBadgeHTML = '';
-    if (card.splitInfo) {
-        const s = card.splitInfo;
-        backSplitBadgeHTML = `<span class="split-card-back-badge">Card ${s.index} of ${s.total}</span>`;
-    }
 
     // line-height: 1.1 keeps multi-line wraps tight (long word + lemma
     // on narrow viewports) so the header grows by a reasonable amount
@@ -8427,13 +8438,29 @@ function renderCardWikipediaBadge(card) {
         const segmentCount = scrubCount;
         progressSegments.classList.toggle('is-single', segmentCount <= 1);
         if (progressSegments.childElementCount !== segmentCount) {
+            // Compute base item number and split suffix (e.g. 7A, 7B) for each card in the deck
+            let baseItemNum = 0;
+            const segmentLabels = [];
+            for (let i = 0; i < segmentCount; i++) {
+                const c = flashcards[i];
+                if (c && c.splitInfo) {
+                    if (c.splitInfo.index === 1) baseItemNum++;
+                    const letter = c.splitInfo.index === 1 ? 'A' : (c.splitInfo.index === 2 ? 'B' : String(c.splitInfo.index));
+                    segmentLabels.push(`${baseItemNum}${letter}`);
+                } else {
+                    baseItemNum++;
+                    segmentLabels.push(String(baseItemNum));
+                }
+            }
+
             progressSegments.replaceChildren(...Array.from({ length: segmentCount }, (_, i) => {
                 const segment = document.createElement('button');
                 segment.type = 'button';
                 segment.className = 'deck-progress-segment';
-                segment.textContent = String(i + 1);
+                const labelText = segmentLabels[i] || String(i + 1);
+                segment.textContent = labelText;
                 segment.dataset.cardIndex = String(i);
-                segment.setAttribute('aria-label', `Go to card ${i + 1} of ${segmentCount}`);
+                segment.setAttribute('aria-label', `Go to card ${labelText} of ${baseItemNum}`);
                 segment.addEventListener('click', event => {
                     event.stopPropagation();
                     if (Date.now() < _suppressDeckScrubberClickUntil) return;
@@ -10259,8 +10286,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'eed60b91';
-const MODALS_ASSET_VERSION = 'eed60b91';
+const ASSET_VERSION = '02514721';
+const MODALS_ASSET_VERSION = '02514721';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
