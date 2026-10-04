@@ -1,0 +1,272 @@
+{
+  "schema": "mwe-inventory/v1",
+  "language": "es",
+  "frozen_expressions": [
+    {
+      "expression": "no sé",
+      "surface": "sé",
+      "lemma": "saber",
+      "gloss": "I don't know",
+      "source": "wiktionary",
+      "notes": "Keeps non-citation verb form 'sé' off merged lemma card."
+    },
+    {
+      "expression": "ya voy",
+      "surface": "voy",
+      "lemma": "ir",
+      "gloss": "I'm coming, on my way",
+      "source": "spanishdict+wiktionary",
+      "notes": "Keeps non-citation verb form 'voy' off merged lemma card."
+    },
+    {
+      "expression": "¿qué tal?",
+      "surface": "qué",
+      "lemma": "qué",
+      "gloss": "how is, how about",
+      "source": "spanishdict+wiktionary",
+      "notes": "Fixed interrogative greeting formula."
+    },
+    {
+      "expression": "muchas gracias",
+      "surface": "muchas",
+      "lemma": "mucho",
+      "gloss": "thank you very much",
+      "source": "spanishdict+wiktionary",
+      "notes": "Keeps inflected feminine plural form 'muchas' off merged card."
+    },
+    {
+      "expression": "buenos días",
+      "surface": "días",
+      "lemma": "día",
+      "gloss": "good morning",
+      "source": "spanishdict+wiktionary",
+      "notes": "Frozen plural formula keeps 'días' distinct."
+    },
+    {
+      "expression": "buenas noches",
+      "surface": "buenas",
+      "lemma": "bueno",
+      "gloss": "good evening, good night",
+      "source": "spanishdict+wiktionary",
+      "notes": "Frozen greeting formula on feminine plural."
+    },
+    {
+      "expression": "buenas tardes",
+      "surface": "buenas",
+      "lemma": "bueno",
+      "gloss": "good afternoon",
+      "source": "spanishdict+wiktionary",
+      "notes": "Frozen greeting formula on feminine plural."
+    },
+    {
+      "expression": "lo que sea",
+      "surface": "sea",
+      "lemma": "ser",
+      "gloss": "whatever",
+      "source": "wiktionary",
+      "notes": "Subjunctive frozen form 'sea'."
+    },
+    {
+      "expression": "puede que",
+      "surface": "puede",
+      "lemma": "poder",
+      "gloss": "maybe, perhaps",
+      "source": "spanishdict+wiktionary",
+      "notes": "Impersonal frozen modal."
+    },
+    {
+      "expression": "se puede",
+      "surface": "puede",
+      "lemma": "poder",
+      "gloss": "may I?, one can",
+      "source": "spanishdict+wiktionary",
+      "notes": "Impersonal frozen formula."
+    },
+    {
+      "expression": "nunca se sabe",
+      "surface": "sabe",
+      "lemma": "saber",
+      "gloss": "you never know",
+      "source": "wiktionary",
+      "notes": "Impersonal frozen expression."
+    },
+    {
+      "expression": "no importa",
+      "surface": "importa",
+      "lemma": "importar",
+      "gloss": "it doesn't matter",
+      "source": "spanishdict+wiktionary",
+      "notes": "Impersonal frozen negative."
+    },
+    {
+      "expression": "no me importa",
+      "surface": "importa",
+      "lemma": "importar",
+      "gloss": "I don't care",
+      "source": "spanishdict+wiktionary",
+      "notes": "Frozen 3rd person singular with clitic."
+    },
+    {
+      "expression": "lo siento",
+      "surface": "siento",
+      "lemma": "sentir",
+      "gloss": "I'm sorry",
+      "source": "spanishdict+wiktionary",
+      "notes": "Frozen 1st person singular apology formula."
+    },
+    {
+      "expression": "qué pasa",
+      "surface": "pasa",
+      "lemma": "pasar",
+      "gloss": "what's up?, what's happening?",
+      "source": "spanishdict+wiktionary",
+      "notes": "Fixed greeting/interrogative."
+    },
+    {
+      "expression": "no pasa nada",
+      "surface": "pasa",
+      "lemma": "pasar",
+      "gloss": "don't worry about it, nothing's wrong",
+      "source": "spanishdict+wiktionary",
+      "notes": "Fixed idiom."
+    },
+    {
+      "expression": "qué pasó",
+      "surface": "pasó",
+      "lemma": "pasar",
+      "gloss": "what happened?, what's up?",
+      "source": "spanishdict+wiktionary",
+      "notes": "Fixed preterite interrogative formula."
+    },
+    {
+      "expression": "te veo",
+      "surface": "veo",
+      "lemma": "ver",
+      "gloss": "I see you; I see your plan",
+      "source": "wiktionary",
+      "notes": "Idiomatic formula on 1st person singular."
+    },
+    {
+      "expression": "buena suerte",
+      "surface": "buena",
+      "lemma": "bueno",
+      "gloss": "good luck",
+      "source": "spanishdict+wiktionary",
+      "notes": "Feminine singular frozen formula."
+    }
+  ],
+  "lemma_constructions": [
+    {
+      "construction": "dejar de",
+      "head_lemma": "dejar",
+      "gloss": "to stop, to quit",
+      "pattern": "dejar de + infinitive",
+      "source": "spanishdict+wiktionary",
+      "notes": "Periphrastic verbal construction; must merge onto 'dejar' lemma card as a sense, never keeps inflected forms separate."
+    },
+    {
+      "construction": "tener que",
+      "head_lemma": "tener",
+      "gloss": "to have to, must",
+      "pattern": "tener que + infinitive",
+      "source": "spanishdict+wiktionary",
+      "notes": "Periphrastic obligation construction; sense on 'tener' card; never keeps inflected forms (tiene, tengo, tienes) separate."
+    },
+    {
+      "construction": "ir a",
+      "head_lemma": "ir",
+      "gloss": "going to (future)",
+      "pattern": "ir a + infinitive",
+      "source": "spanishdict+wiktionary",
+      "notes": "Periphrastic future construction; sense on 'ir' card; never keeps forms separate."
+    },
+    {
+      "construction": "tener cuidado",
+      "head_lemma": "tener",
+      "gloss": "to be careful",
+      "pattern": "tener cuidado",
+      "source": "spanishdict+wiktionary",
+      "notes": "Verbal collocation headed by lemma 'tener'; belongs on 'tener' card."
+    },
+    {
+      "construction": "tener en cuenta",
+      "head_lemma": "tener",
+      "gloss": "to take into account, to bear in mind",
+      "pattern": "tener en cuenta",
+      "source": "wiktionary",
+      "notes": "Verbal idiom headed by lemma 'tener'."
+    },
+    {
+      "construction": "echar de menos",
+      "head_lemma": "echar",
+      "gloss": "to miss (someone/something)",
+      "pattern": "echar de menos",
+      "source": "spanishdict+wiktionary",
+      "notes": "Verbal idiom headed by lemma 'echar'."
+    },
+    {
+      "construction": "dar a luz",
+      "head_lemma": "dar",
+      "gloss": "to give birth",
+      "pattern": "dar a luz",
+      "source": "spanishdict+wiktionary",
+      "notes": "Verbal idiom headed by lemma 'dar'."
+    },
+    {
+      "construction": "querer decir",
+      "head_lemma": "querer",
+      "gloss": "to mean, to signify",
+      "pattern": "querer decir",
+      "source": "spanishdict+wiktionary",
+      "notes": "Verbal idiom headed by lemma 'querer'."
+    },
+    {
+      "construction": "acabar de",
+      "head_lemma": "acabar",
+      "gloss": "to have just (done something)",
+      "pattern": "acabar de + infinitive",
+      "source": "spanishdict+wiktionary",
+      "notes": "Aspectual periphrasis headed by lemma 'acabar'."
+    },
+    {
+      "construction": "volver a",
+      "head_lemma": "volver",
+      "gloss": "to do again",
+      "pattern": "volver a + infinitive",
+      "source": "spanishdict+wiktionary",
+      "notes": "Iterative periphrasis headed by lemma 'volver'."
+    },
+    {
+      "construction": "hacer caso",
+      "head_lemma": "hacer",
+      "gloss": "to pay attention, to heed, to listen to",
+      "pattern": "hacer caso (a/de)",
+      "source": "spanishdict+wiktionary",
+      "notes": "High-frequency non-compositional idiom on 'hacer'; prevents WSD falling back to literal 'make/do'."
+    },
+    {
+      "construction": "dar cuenta",
+      "head_lemma": "dar",
+      "gloss": "to realize, to notice",
+      "pattern": "darse cuenta (de) / dar cuenta",
+      "source": "spanishdict+wiktionary",
+      "notes": "Non-compositional verbal idiom on 'dar'."
+    },
+    {
+      "construction": "valer la pena",
+      "head_lemma": "valer",
+      "gloss": "to be worth it, to be worthwhile",
+      "pattern": "valer la pena",
+      "source": "spanishdict+wiktionary",
+      "notes": "Non-compositional verbal idiom on 'valer'."
+    },
+    {
+      "construction": "prestar atención",
+      "head_lemma": "prestar",
+      "gloss": "to pay attention",
+      "pattern": "prestar atención (a)",
+      "source": "spanishdict+wiktionary",
+      "notes": "High-frequency verbal collocation on 'prestar'."
+    }
+  ]
+}

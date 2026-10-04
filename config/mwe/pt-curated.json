@@ -1,0 +1,312 @@
+{
+  "schema": "mwe-inventory/v1",
+  "language": "pt",
+  "frozen_expressions": [
+    {
+      "expression": "às vezes",
+      "surface": "vezes",
+      "lemma": "vez",
+      "gloss": "sometimes",
+      "source": "wiktionary",
+      "notes": "Frozen adverbial locution keeps plural 'vezes' separate."
+    },
+    {
+      "expression": "não sei",
+      "surface": "sei",
+      "lemma": "saber",
+      "gloss": "I don't know",
+      "source": "wiktionary",
+      "notes": "Frozen negative 1st person singular formula keeps 'sei' off 'saber'."
+    },
+    {
+      "expression": "muito obrigado",
+      "surface": "obrigado",
+      "lemma": "obrigar",
+      "gloss": "thank you very much, much obliged",
+      "source": "wiktionary",
+      "notes": "Frozen courtesy formula keeps participle/adjective 'obrigado' off verb 'obrigar'."
+    },
+    {
+      "expression": "muito obrigada",
+      "surface": "obrigada",
+      "lemma": "obrigar",
+      "gloss": "thank you very much",
+      "source": "wiktionary",
+      "notes": "Feminine courtesy formula keeps 'obrigada' off 'obrigar'."
+    },
+    {
+      "expression": "não é",
+      "surface": "é",
+      "lemma": "ser",
+      "gloss": "isn't it?, right?",
+      "source": "wiktionary",
+      "notes": "Tag question / interjection formula on 3rd singular 'é'."
+    },
+    {
+      "expression": "é que",
+      "surface": "é",
+      "lemma": "ser",
+      "gloss": "the thing is, it's just that",
+      "source": "wiktionary",
+      "notes": "Focus/cleft particle expression."
+    },
+    {
+      "expression": "será que",
+      "surface": "será",
+      "lemma": "ser",
+      "gloss": "could it be that?, I wonder if",
+      "source": "wiktionary",
+      "notes": "Dubitative question particle on future 'será'."
+    },
+    {
+      "expression": "que seja",
+      "surface": "seja",
+      "lemma": "ser",
+      "gloss": "even so, be that as it may",
+      "source": "wiktionary",
+      "notes": "Subjunctive concessive formula on 'seja'."
+    },
+    {
+      "expression": "que horas são",
+      "surface": "são",
+      "lemma": "ser",
+      "gloss": "what time is it?",
+      "source": "wiktionary",
+      "notes": "Fixed question on 3rd plural 'são'."
+    },
+    {
+      "expression": "vamos lá",
+      "surface": "vamos",
+      "lemma": "ir",
+      "gloss": "let's go, come on",
+      "source": "wiktionary",
+      "notes": "Exhortative interjection on 1st plural 'vamos'."
+    },
+    {
+      "expression": "sinto muito",
+      "surface": "sinto",
+      "lemma": "sentir",
+      "gloss": "I'm sorry",
+      "source": "wiktionary",
+      "notes": "Apology formula on 1st singular 'sinto'."
+    },
+    {
+      "expression": "não me diga",
+      "surface": "diga",
+      "lemma": "dizer",
+      "gloss": "you don't say!",
+      "source": "wiktionary",
+      "notes": "Exclamative formula on subjunctive 'diga'."
+    },
+    {
+      "expression": "como se diz",
+      "surface": "diz",
+      "lemma": "dizer",
+      "gloss": "how do you say?",
+      "source": "wiktionary",
+      "notes": "Formulaic query on 3rd singular 'diz'."
+    },
+    {
+      "expression": "boa noite",
+      "surface": "boa",
+      "lemma": "bom",
+      "gloss": "good evening, good night",
+      "source": "wiktionary",
+      "notes": "Feminine singular greeting formula."
+    },
+    {
+      "expression": "há quanto tempo",
+      "surface": "há",
+      "lemma": "haver",
+      "gloss": "long time no see",
+      "source": "wiktionary",
+      "notes": "Exclamative formula on impersonal 'há'."
+    },
+    {
+      "expression": "de uma vez",
+      "surface": "uma",
+      "lemma": "um",
+      "gloss": "at once, already",
+      "source": "wiktionary",
+      "notes": "Adverbial locution on feminine 'uma'."
+    },
+    {
+      "expression": "outra vez",
+      "surface": "outra",
+      "lemma": "outro",
+      "gloss": "again, once more",
+      "source": "wiktionary",
+      "notes": "Adverbial locution on feminine 'outra'."
+    },
+    {
+      "expression": "toda vida",
+      "surface": "toda",
+      "lemma": "todo",
+      "gloss": "forever, all the time",
+      "source": "wiktionary",
+      "notes": "Adverbial locution on feminine 'toda'."
+    },
+    {
+      "expression": "na minha opinião",
+      "surface": "minha",
+      "lemma": "meu",
+      "gloss": "in my opinion",
+      "source": "wiktionary",
+      "notes": "Prepositional phrase on feminine possessive 'minha'."
+    }
+  ],
+  "lemma_constructions": [
+    {
+      "construction": "ter de",
+      "head_lemma": "ter",
+      "gloss": "to have to, must",
+      "pattern": "ter de + infinitive",
+      "source": "wiktionary",
+      "notes": "Obligation periphrasis; sense on 'ter' lemma card; never keeps inflected forms separate."
+    },
+    {
+      "construction": "ter que",
+      "head_lemma": "ter",
+      "gloss": "to have to",
+      "pattern": "ter que + infinitive",
+      "source": "wiktionary",
+      "notes": "Obligation periphrasis; sense on 'ter' lemma card."
+    },
+    {
+      "construction": "deixar de",
+      "head_lemma": "deixar",
+      "gloss": "to stop, to refrain from doing",
+      "pattern": "deixar de + infinitive",
+      "source": "wiktionary",
+      "notes": "Verbal periphrasis; sense on 'deixar' lemma card."
+    },
+    {
+      "construction": "haver de",
+      "head_lemma": "haver",
+      "gloss": "shall, ought to, must",
+      "pattern": "haver de + infinitive",
+      "source": "wiktionary",
+      "notes": "Modal future/obligation construction; sense on 'haver' lemma card."
+    },
+    {
+      "construction": "acabar de",
+      "head_lemma": "acabar",
+      "gloss": "to have just (done something)",
+      "pattern": "acabar de + infinitive",
+      "source": "wiktionary",
+      "notes": "Aspectual construction headed by 'acabar'."
+    },
+    {
+      "construction": "ter a ver",
+      "head_lemma": "ter",
+      "gloss": "to have to do with, to be related to",
+      "pattern": "ter a ver com",
+      "source": "wiktionary",
+      "notes": "Verbal idiom headed by 'ter'."
+    },
+    {
+      "construction": "dar à luz",
+      "head_lemma": "dar",
+      "gloss": "to give birth",
+      "pattern": "dar à luz",
+      "source": "wiktionary",
+      "notes": "Verbal idiom headed by 'dar'."
+    },
+    {
+      "construction": "estar a",
+      "head_lemma": "estar",
+      "gloss": "to be currently doing (progressive)",
+      "pattern": "estar a + infinitive",
+      "source": "wiktionary",
+      "notes": "European Portuguese progressive construction headed by 'estar'."
+    },
+    {
+      "construction": "dar um jeito",
+      "head_lemma": "dar",
+      "gloss": "to find a way, to fix, to sort out",
+      "pattern": "dar um jeito (em/de)",
+      "source": "wiktionary",
+      "notes": "High-frequency non-compositional verbal idiom on 'dar'."
+    },
+    {
+      "construction": "dar certo",
+      "head_lemma": "dar",
+      "gloss": "to work out, to succeed",
+      "pattern": "dar certo",
+      "source": "curated_wsd",
+      "notes": "High-frequency non-compositional phrasal expression on 'dar'; prevents WSD falling back to literal 'give'."
+    },
+    {
+      "construction": "dar conta",
+      "head_lemma": "dar",
+      "gloss": "to realize, to manage, to cope with",
+      "pattern": "dar conta (de)",
+      "source": "wiktionary",
+      "notes": "Non-compositional verbal idiom on 'dar'."
+    },
+    {
+      "construction": "dar para",
+      "head_lemma": "dar",
+      "gloss": "to be possible, to be enough",
+      "pattern": "dar para + infinitive",
+      "source": "curated_wsd",
+      "notes": "Impersonal high-frequency modal periphrasis on 'dar'."
+    },
+    {
+      "construction": "ficar com",
+      "head_lemma": "ficar",
+      "gloss": "to keep, to stay with, to catch (illness)",
+      "pattern": "ficar com + noun",
+      "source": "curated_wsd",
+      "notes": "High-frequency non-compositional phrasal verb on 'ficar'."
+    },
+    {
+      "construction": "ficar de olho",
+      "head_lemma": "ficar",
+      "gloss": "to keep an eye on, to watch closely",
+      "pattern": "ficar de olho (em)",
+      "source": "curated_wsd",
+      "notes": "High-frequency conversational idiom on 'ficar'."
+    },
+    {
+      "construction": "valer a pena",
+      "head_lemma": "valer",
+      "gloss": "to be worth it, to be worthwhile",
+      "pattern": "valer a pena",
+      "source": "wiktionary",
+      "notes": "Non-compositional verbal idiom on 'valer'."
+    },
+    {
+      "construction": "fazer questão",
+      "head_lemma": "fazer",
+      "gloss": "to insist, to make a point of",
+      "pattern": "fazer questão (de)",
+      "source": "wiktionary",
+      "notes": "High-frequency conversational idiom on 'fazer'."
+    },
+    {
+      "construction": "abrir mão",
+      "head_lemma": "abrir",
+      "gloss": "to give up, to relinquish",
+      "pattern": "abrir mão (de)",
+      "source": "wiktionary",
+      "notes": "Non-compositional verbal idiom on 'abrir'."
+    },
+    {
+      "construction": "tomar conta",
+      "head_lemma": "tomar",
+      "gloss": "to look after, to take care of",
+      "pattern": "tomar conta (de)",
+      "source": "wiktionary",
+      "notes": "Non-compositional phrasal verb on 'tomar'."
+    },
+    {
+      "construction": "prestar atenção",
+      "head_lemma": "prestar",
+      "gloss": "to pay attention",
+      "pattern": "prestar atenção (a/em)",
+      "source": "wiktionary",
+      "notes": "High-frequency verbal collocation on 'prestar'."
+    }
+  ]
+}

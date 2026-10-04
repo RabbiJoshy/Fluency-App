@@ -136,7 +136,7 @@ def build_wiktionary_inventory(
             pos = row.get("pos", "")
 
             # Multiword headwords
-            if " " in word and pos in {"phrase", "prep_phrase", "adv", "conj", "prep", "intj", "noun", "adj", "particle"}:
+            if " " in word and pos in {"verb", "phrase", "prep_phrase", "adv", "conj", "prep", "intj", "noun", "adj", "particle"}:
                 tokens = word.split()
                 if 2 <= len(tokens) <= 5:
                     cleaned_glosses: list[str] = []
@@ -220,12 +220,14 @@ def build_wiktionary_inventory(
         else:
             unattested += 1
 
+        cand_pos = cand.get("pos")
         disposition = classify_mwe(
             expression=expr,
             translations=trans_list,
             language=lang,
             corpus_freq=freq,
             sources=["wiktionary"],
+            pos=cand_pos,
         )
 
         if disposition.verdict == "keep":
@@ -240,6 +242,7 @@ def build_wiktionary_inventory(
             "sources": ["wiktionary"],
             "attach_words": cand["attach_words"],
             "corpus_freq": freq,
+            "pos": [cand_pos] if isinstance(cand_pos, str) else list(cand_pos or []),
             "verdict": disposition.verdict,
             "reason": disposition.reason,
             "status": disposition.status,

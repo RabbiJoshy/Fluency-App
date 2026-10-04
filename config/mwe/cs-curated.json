@@ -1,0 +1,176 @@
+{
+  "schema": "mwe-inventory/v1",
+  "language": "cs",
+  "frozen_expressions": [
+    {
+      "expression": "není zač",
+      "surface": "není",
+      "lemma": "být",
+      "gloss": "not at all, don't mention it, you're welcome",
+      "source": "wiktionary",
+      "notes": "Frozen courtesy response keeps negative verb form 'není' off 'být'."
+    },
+    {
+      "expression": "mám za to",
+      "surface": "mám",
+      "lemma": "mít",
+      "gloss": "I assume, I reckon, I am of the opinion",
+      "source": "wiktionary",
+      "notes": "Frozen epistemic parenthetical on 1st person singular 'mám'."
+    },
+    {
+      "expression": "co je ti?",
+      "surface": "ti",
+      "lemma": "ty",
+      "gloss": "what is the matter with you?",
+      "source": "wiktionary",
+      "notes": "Frozen dative idiom keeps clitic 'ti' off lemma 'ty'."
+    },
+    {
+      "expression": "jak se máš",
+      "surface": "máš",
+      "lemma": "mít",
+      "gloss": "how are you?",
+      "source": "wiktionary",
+      "notes": "Fixed greeting on 2nd person singular 'máš'."
+    },
+    {
+      "expression": "jak se máte",
+      "surface": "máte",
+      "lemma": "mít",
+      "gloss": "how are you (formal/plural)?",
+      "source": "wiktionary",
+      "notes": "Fixed greeting on 2nd person plural 'máte'."
+    },
+    {
+      "expression": "kolik je hodin",
+      "surface": "je",
+      "lemma": "být",
+      "gloss": "what time is it?",
+      "source": "wiktionary",
+      "notes": "Fixed time question."
+    },
+    {
+      "expression": "miluji tě",
+      "surface": "tě",
+      "lemma": "ty",
+      "gloss": "I love you",
+      "source": "wiktionary",
+      "notes": "Fixed formula with clitic accusative 'tě'."
+    },
+    {
+      "expression": "děkuji vám",
+      "surface": "vám",
+      "lemma": "vy",
+      "gloss": "thank you (formal/plural)",
+      "source": "wiktionary",
+      "notes": "Fixed courtesy formula with dative 'vám'."
+    },
+    {
+      "expression": "děkuji ti",
+      "surface": "ti",
+      "lemma": "ty",
+      "gloss": "thank you (informal)",
+      "source": "wiktionary",
+      "notes": "Fixed courtesy formula with dative 'ti'."
+    },
+    {
+      "expression": "ve skutečnosti",
+      "surface": "ve",
+      "lemma": "v",
+      "gloss": "in fact, actually",
+      "source": "wiktionary",
+      "notes": "Prepositional vocalized form 've'."
+    },
+    {
+      "expression": "dobrou noc",
+      "surface": "noc",
+      "lemma": "noc",
+      "gloss": "good night",
+      "source": "wiktionary",
+      "notes": "Accusative greeting formula."
+    },
+    {
+      "expression": "dobré ráno",
+      "surface": "ráno",
+      "lemma": "ráno",
+      "gloss": "good morning",
+      "source": "wiktionary",
+      "notes": "Greeting formula."
+    },
+    {
+      "expression": "hodně štěstí",
+      "surface": "hodně",
+      "lemma": "hodně",
+      "gloss": "good luck",
+      "source": "wiktionary",
+      "notes": "Exclamative wishing formula."
+    }
+  ],
+  "lemma_constructions": [
+    {
+      "construction": "mít rád",
+      "head_lemma": "mít",
+      "gloss": "to like, to love",
+      "pattern": "mít rád / mít ráda",
+      "source": "wiktionary",
+      "notes": "Verbal phrase headed by 'mít'; becomes a sense on 'mít' lemma card; never keeps inflected forms separate."
+    },
+    {
+      "construction": "dát se do",
+      "head_lemma": "dát",
+      "gloss": "to begin, to set about (doing)",
+      "pattern": "dát se do + genitive / infinitive",
+      "source": "wiktionary",
+      "notes": "Inchoative phrasal construction headed by 'dát'; belongs on 'dát' card."
+    },
+    {
+      "construction": "jít o",
+      "head_lemma": "jít",
+      "gloss": "to be about, to concern, to be at stake",
+      "pattern": "jít o + accusative",
+      "source": "wiktionary",
+      "notes": "Impersonal verbal construction headed by 'jít'; belongs on 'jít' card as a distinct sense."
+    },
+    {
+      "construction": "dávat pozor",
+      "head_lemma": "dávat",
+      "gloss": "to pay attention, to be careful",
+      "pattern": "dávat pozor",
+      "source": "wiktionary",
+      "notes": "Verbal collocation headed by 'dávat'."
+    },
+    {
+      "construction": "být rád",
+      "head_lemma": "být",
+      "gloss": "to be glad",
+      "pattern": "být rád / být ráda",
+      "source": "wiktionary",
+      "notes": "Copular verbal collocation headed by 'být'."
+    },
+    {
+      "construction": "dávat smysl",
+      "head_lemma": "dávat",
+      "gloss": "to make sense",
+      "pattern": "dávat smysl",
+      "source": "wiktionary",
+      "notes": "Verbal collocation headed by 'dávat'."
+    },
+    {
+      "construction": "vzít v úvahu",
+      "head_lemma": "vzít",
+      "gloss": "to take into account, to consider",
+      "pattern": "vzít v úvahu",
+      "source": "wiktionary",
+      "notes": "High-frequency verbal idiom on 'vzít'."
+    },
+    {
+      "construction": "dát vědět",
+      "head_lemma": "dát",
+      "gloss": "to let know, to inform",
+      "pattern": "dát vědět",
+      "source": "wiktionary",
+      "notes": "High-frequency communicative idiom on 'dát'."
+    }
+  ]
+}
