@@ -17,7 +17,8 @@
       "payload": {
         "headwords": [
           "flácido"
-        ]
+        ],
+        "class": "inflection"
       }
     },
     {
@@ -38,7 +39,8 @@
             "translation": "rhythmic vocalization; hey",
             "pos": "INTJ"
           }
-        ]
+        ],
+        "class": "interjection"
       }
     },
     {
@@ -46,7 +48,8 @@
       "kind": "expansion",
       "surface": "naturê",
       "payload": {
-        "expands_to": "natureza"
+        "expands_to": "natureza",
+        "class": "abbreviation"
       },
       "scope": {
         "mode": "lyrics",
@@ -62,7 +65,8 @@
       "kind": "expansion",
       "surface": "tropí",
       "payload": {
-        "expands_to": "tropical"
+        "expands_to": "tropical",
+        "class": "abbreviation"
       },
       "scope": {
         "mode": "lyrics",
@@ -78,7 +82,8 @@
       "kind": "expansion",
       "surface": "feverê",
       "payload": {
-        "expands_to": "fevereiro"
+        "expands_to": "fevereiro",
+        "class": "abbreviation"
       },
       "scope": {
         "mode": "lyrics",
@@ -94,7 +99,8 @@
       "kind": "expansion",
       "surface": "viô",
       "payload": {
-        "expands_to": "violão"
+        "expands_to": "violão",
+        "class": "abbreviation"
       },
       "scope": {
         "mode": "lyrics",
@@ -110,7 +116,8 @@
       "kind": "expansion",
       "surface": "carná",
       "payload": {
-        "expands_to": "carnaval"
+        "expands_to": "carnaval",
+        "class": "abbreviation"
       },
       "scope": {
         "mode": "lyrics",
@@ -126,7 +133,8 @@
       "kind": "expansion",
       "surface": "abençoá",
       "payload": {
-        "expands_to": "abençoado"
+        "expands_to": "abençoado",
+        "class": "abbreviation"
       },
       "scope": {
         "mode": "lyrics",
@@ -142,7 +150,8 @@
       "kind": "expansion",
       "surface": "boní",
       "payload": {
-        "expands_to": "bonito"
+        "expands_to": "bonito",
+        "class": "abbreviation"
       },
       "scope": {
         "mode": "lyrics",
@@ -158,7 +167,8 @@
       "kind": "expansion",
       "surface": "camaradinhas",
       "payload": {
-        "expands_to": "camaradas"
+        "expands_to": "camaradas",
+        "class": "inflection"
       },
       "scope": {
         "mode": "lyrics",
@@ -174,7 +184,8 @@
       "kind": "expansion",
       "surface": "cuíquinha",
       "payload": {
-        "expands_to": "cuíca"
+        "expands_to": "cuíca",
+        "class": "inflection"
       },
       "scope": {
         "mode": "lyrics",
@@ -195,7 +206,8 @@
             "translation": "woman; girl (familiar sung slang, clipped nega)",
             "pos": "NOUN"
           }
-        ]
+        ],
+        "class": "abbreviation"
       },
       "scope": {
         "mode": "lyrics",
@@ -216,7 +228,8 @@
             "translation": "I have (sung clipping of tenho)",
             "pos": "VERB"
           }
-        ]
+        ],
+        "class": "abbreviation"
       },
       "scope": {
         "mode": "lyrics",
@@ -237,7 +250,8 @@
             "translation": "I live (sung clipping of moro)",
             "pos": "VERB"
           }
-        ]
+        ],
+        "class": "abbreviation"
       },
       "scope": {
         "mode": "lyrics",
@@ -258,7 +272,8 @@
             "translation": "named; called (sung clipping of chamada)",
             "pos": "ADJ"
           }
-        ]
+        ],
+        "class": "abbreviation"
       },
       "scope": {
         "mode": "lyrics",
@@ -279,7 +294,8 @@
             "translation": "to relieve sadness; to cheer up",
             "pos": "VERB"
           }
-        ]
+        ],
+        "class": "vocabulary"
       },
       "scope": {
         "mode": "lyrics",
@@ -300,7 +316,8 @@
             "translation": "maggot-producing; causing myiasis (of flies)",
             "pos": "ADJ"
           }
-        ]
+        ],
+        "class": "vocabulary"
       },
       "scope": {
         "mode": "lyrics",

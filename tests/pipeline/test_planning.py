@@ -79,12 +79,12 @@ class PipelinePlanningTests(unittest.TestCase):
         profile = load_pipeline_profile(SPANISH_PROFILE_PATH)
         self.assertEqual(profile["language"], "es")
         self.assertEqual(profile["identity"]["unit_type"], "surface")
-        self.assertEqual(profile["inventory"]["source_adapter"], "recovered-surface-ranking/v1")
+        self.assertEqual(profile["inventory"]["source_adapter"], "published-surface-frequency-list/v1")
         self.assertEqual(
             profile["inventory"]["frequency_measure"],
-            "recovered_corpus_count_upstream_unknown",
+            "surface_occurrences_per_billion",
         )
-        self.assertTrue(profile["source_policy"]["allow_recovered_inputs"])
+        self.assertFalse(profile["source_policy"]["allow_recovered_inputs"])
         self.assertEqual(profile["sense_menu"]["source_adapter"], "spanishdict-sense-menu/v1")
         self.assertEqual(profile["sense_menu"]["source_edition"], "spanishdict-pinned-snapshot")
         self.assertEqual(profile["harvest"]["sources"], ["retained-opensubtitles"])
@@ -99,7 +99,7 @@ class PipelinePlanningTests(unittest.TestCase):
 
     def test_recovered_permission_cannot_drift_from_inventory_adapter(self) -> None:
         changed = load_pipeline_profile(SPANISH_PROFILE_PATH)
-        changed["source_policy"]["allow_recovered_inputs"] = False
+        changed["source_policy"]["allow_recovered_inputs"] = True
         with self.assertRaises(PipelineProfileError):
             validate_pipeline_profile(changed)
 

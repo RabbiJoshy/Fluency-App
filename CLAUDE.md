@@ -214,7 +214,7 @@ Languages with packages: `es`, `pt`, `cs`, `fi`, `fr`, `nl`, `pl` (plus stubs fo
 
 ```bash
 make test        # unittest discovery
-PYTHONPATH=src .venv/bin/python -m pytest -q   # 1285 pass, 6 known failures (2026-10-04)
+PYTHONPATH=src .venv/bin/python -m pytest -q   # 1287 pass, 0 failures (2026-10-04)
 python scripts/materialise_surfaces.py --workspace $W --language <lang>  # rebuild the ledger
 python scripts/audit_surfaces_html.py  --workspace $W --language <lang>  # audit it in a browser
 PYTHONPATH=src python -m fluency pipeline plan --profile config/pipelines/<lang>/speech/<profile>.json

@@ -37,8 +37,8 @@ class StageLayeringTests(unittest.TestCase):
         blocker = _BlockWsd()
         saved = {name: sys.modules.pop(name) for name in list(sys.modules)
                  if name == "fluency.wsd" or name.startswith("fluency.wsd.")}
-        for name in self.MENU_SIDE:
-            sys.modules.pop(name, None)
+        menu_side = {name: sys.modules.pop(name) for name in self.MENU_SIDE
+                     if name in sys.modules}
         sys.meta_path.insert(0, blocker)
         try:
             for name in self.MENU_SIDE:
@@ -46,6 +46,11 @@ class StageLayeringTests(unittest.TestCase):
                     importlib.import_module(name)
         finally:
             sys.meta_path.remove(blocker)
+            # Put the original modules back so later tests see one copy of each
+            # class; the fresh imports above would otherwise shadow them.
+            for name in self.MENU_SIDE:
+                sys.modules.pop(name, None)
+            sys.modules.update(menu_side)
             sys.modules.update(saved)
 
     def test_legacy_import_paths_still_resolve(self) -> None:
