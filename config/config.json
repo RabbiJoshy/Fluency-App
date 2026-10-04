@@ -10,18 +10,18 @@
   "languages": {
     "spanish": {
       "name": "Spanish",
-      "indexPath": "releases/es/speech/es-speech-v21-10000x10/app/vocabulary.index.json",
+      "indexPath": "releases/es/speech/es-speech-v22-10000x30-slim/app/vocabulary.index.json",
       "frequencyPath": "data/speech-frequency/es.json",
-      "examplesPath": "releases/es/speech/es-speech-v21-10000x10/app/vocabulary.examples.json",
-      "studyStructurePath": "releases/es/speech/es-speech-v21-10000x10/app/study-structure.json",
-      "releaseManifestPath": "releases/es/speech/es-speech-v21-10000x10/manifest.json",
-      "releaseCompositionPath": "releases/es/speech/es-speech-v21-10000x10/composition.json",
+      "examplesPath": "releases/es/speech/es-speech-v22-10000x30-slim/app/vocabulary.examples.json",
+      "studyStructurePath": "releases/es/speech/es-speech-v22-10000x30-slim/app/study-structure.json",
+      "releaseManifestPath": "releases/es/speech/es-speech-v22-10000x30-slim/manifest.json",
+      "releaseCompositionPath": "releases/es/speech/es-speech-v22-10000x30-slim/composition.json",
       "conjugationsPath": "releases/es/speech/es-speech-v12-6000x10-conj/app/conjugations.json",
       "exampleTargetField": "example_spanish",
       "exampleEnglishField": "example_english",
       "pipelineDefaults": {
         "minPriority": 50,
-        "_comment": "Gemini flash-lite covers every Spanish word, so keyword-tier claims (priority 10) are dropped by default. Other languages without Gemini coverage should omit this key — missing config falls back to 0 in both step_8a and step_8b."
+        "_comment": "Gemini flash-lite covers every Spanish word, so keyword-tier claims (priority 10) are dropped by default. Other languages without Gemini coverage should omit this key \u2014 missing config falls back to 0 in both step_8a and step_8b."
       },
       "colorTheme": {
         "primary": "#C8102E",
@@ -80,12 +80,13 @@
         "morphology": true
       },
       "hasData": true,
-      "flag": "🇪🇸",
+      "flag": "\ud83c\uddea\ud83c\uddf8",
       "routeCode": "es",
       "conjugationDrill": "es",
       "shortCode": "ES",
       "speechLang": "es-ES",
       "cognatesPath": "cognates/es/cognates.json",
+      "mergeExceptionsPath": "data/merge-exceptions/es.json",
       "coveragePath": "coverage/es/coverage.json"
     },
     "swedish": {
@@ -142,7 +143,7 @@
         "babla": "https://en.bab.la/dictionary/swedish-english/{word}"
       },
       "hasData": false,
-      "flag": "🇸🇪",
+      "flag": "\ud83c\uddf8\ud83c\uddea",
       "routeCode": "sv",
       "shortCode": "SE",
       "speechLang": "sv-SE"
@@ -201,7 +202,7 @@
         "conjugation": "https://www.italian-verbs.com/italian-verbs/conjugation.php?verbo={word}"
       },
       "hasData": false,
-      "flag": "🇮🇹",
+      "flag": "\ud83c\uddee\ud83c\uddf9",
       "routeCode": "it",
       "shortCode": "IT",
       "speechLang": "it-IT"
@@ -261,7 +262,7 @@
         "conjugation": "https://www.verbix.com/webverbix/Dutch/{word}"
       },
       "hasData": false,
-      "flag": "🇳🇱",
+      "flag": "\ud83c\uddf3\ud83c\uddf1",
       "routeCode": "nl",
       "shortCode": "NL",
       "speechLang": "nl-NL"
@@ -279,15 +280,35 @@
       "coveragePath": null,
       "exampleTargetField": "example_finnish",
       "exampleEnglishField": "example_english",
-      "colorTheme": {"primary": "#003580", "secondary": "#FFFFFF"},
+      "colorTheme": {
+        "primary": "#003580",
+        "secondary": "#FFFFFF"
+      },
       "cefrLevels": [
-        {"level": "A1", "description": "Beginner", "comprehension": "Not yet measured", "wordCount": "1-800"},
-        {"level": "A2", "description": "Elementary", "comprehension": "Not yet measured", "wordCount": "800-1500"},
-        {"level": "B1", "description": "Intermediate", "comprehension": "Not yet measured", "wordCount": "1500-2000"}
+        {
+          "level": "A1",
+          "description": "Beginner",
+          "comprehension": "Not yet measured",
+          "wordCount": "1-800"
+        },
+        {
+          "level": "A2",
+          "description": "Elementary",
+          "comprehension": "Not yet measured",
+          "wordCount": "800-1500"
+        },
+        {
+          "level": "B1",
+          "description": "Intermediate",
+          "comprehension": "Not yet measured",
+          "wordCount": "1500-2000"
+        }
       ],
       "cefrLevelsNote": "The first Finnish candidate is capped at 2,000 surfaces; comprehension percentages have not been measured.",
       "fileFormat": "json",
-      "referenceLinks": {"wiktionary": "https://en.wiktionary.org/wiki/{word}#Finnish"},
+      "referenceLinks": {
+        "wiktionary": "https://en.wiktionary.org/wiki/{word}#Finnish"
+      },
       "hasData": true,
       "capabilities": {
         "speech": true,
@@ -295,7 +316,7 @@
         "mergeLemmas": true,
         "cognateFilter": true
       },
-      "flag": "🇫🇮",
+      "flag": "\ud83c\uddeb\ud83c\uddee",
       "routeCode": "fi",
       "shortCode": "FI",
       "speechLang": "fi-FI"
@@ -366,7 +387,7 @@
         "reverso": "https://context.reverso.net/translation/french-english/{word}",
         "conjugation": "https://conjugator.reverso.net/conjugation-french-verb-{word}.html"
       },
-      "flag": "🇫🇷",
+      "flag": "\ud83c\uddeb\ud83c\uddf7",
       "routeCode": "fr",
       "shortCode": "FR",
       "speechLang": "fr-FR",
@@ -427,7 +448,7 @@
         "reverso": "https://context.reverso.net/translation/russian-english/{word}",
         "conjugation": "https://cooljugator.com/ru/{word}"
       },
-      "flag": "🇷🇺",
+      "flag": "\ud83c\uddf7\ud83c\uddfa",
       "routeCode": "ru",
       "shortCode": "RU",
       "speechLang": "ru-RU"
@@ -486,19 +507,19 @@
         "conjugation": "https://pl.pons.com/odmiana/polski/{word}"
       },
       "hasData": false,
-      "flag": "🇵🇱",
+      "flag": "\ud83c\uddf5\ud83c\uddf1",
       "routeCode": "pl",
       "shortCode": "PL",
       "speechLang": "pl-PL"
     },
     "portuguese": {
       "name": "Portuguese",
-      "indexPath": "releases/pt/speech/pt-speech-v21-10000x10/app/vocabulary.index.json",
+      "indexPath": "releases/pt/speech/pt-speech-v22-10000x30-slim/app/vocabulary.index.json",
       "frequencyPath": "data/speech-frequency/pt.json",
-      "examplesPath": "releases/pt/speech/pt-speech-v21-10000x10/app/vocabulary.examples.json",
-      "studyStructurePath": "releases/pt/speech/pt-speech-v21-10000x10/app/study-structure.json",
-      "releaseManifestPath": "releases/pt/speech/pt-speech-v21-10000x10/manifest.json",
-      "releaseCompositionPath": "releases/pt/speech/pt-speech-v21-10000x10/composition.json",
+      "examplesPath": "releases/pt/speech/pt-speech-v22-10000x30-slim/app/vocabulary.examples.json",
+      "studyStructurePath": "releases/pt/speech/pt-speech-v22-10000x30-slim/app/study-structure.json",
+      "releaseManifestPath": "releases/pt/speech/pt-speech-v22-10000x30-slim/manifest.json",
+      "releaseCompositionPath": "releases/pt/speech/pt-speech-v22-10000x30-slim/composition.json",
       "conjugationsPath": "releases/pt/speech/pt-speech-v12-6000x10-conj/app/conjugations.json",
       "exampleTargetField": "example_portuguese",
       "exampleEnglishField": "example_english",
@@ -557,19 +578,23 @@
         "reverso": "https://context.reverso.net/translation/portuguese-english/{word}",
         "conjugation": "https://conjugator.reverso.net/conjugation-portuguese-verb-{word}.html"
       },
-      "flag": "🇵🇹",
+      "flag": "\ud83c\uddf5\ud83c\uddf9",
+      "privilegedRegions": [
+        "Brazil"
+      ],
       "routeCode": "pt",
       "conjugationDrill": "pt",
       "shortCode": "PT",
       "speechLang": "pt-PT",
       "cognatesPath": "cognates/pt/cognates.json",
+      "mergeExceptionsPath": "data/merge-exceptions/pt.json",
       "coveragePath": "coverage/pt/coverage.json"
     },
     "portuguese_brazilian": {
       "name": "Brazilian Portuguese",
       "routeCode": "pt-br",
       "shortCode": "BR",
-      "flag": "🇧🇷",
+      "flag": "\ud83c\udde7\ud83c\uddf7",
       "speechLang": "pt-BR",
       "hasData": false,
       "fileFormat": "json",
@@ -583,7 +608,7 @@
       "routeCode": "cs",
       "conjugationDrill": "cs",
       "shortCode": "CZ",
-      "flag": "🇨🇿",
+      "flag": "\ud83c\udde8\ud83c\uddff",
       "speechLang": "cs-CZ",
       "hasData": true,
       "fileFormat": "json",
@@ -644,13 +669,14 @@
         "wordReference": "https://en.wiktionary.org/wiki/{word}#Czech",
         "conjugation": "https://en.wiktionary.org/wiki/{word}#Czech"
       },
-      "indexPath": "releases/cs/speech/cs-speech-v21-10000x10/app/vocabulary.index.json",
+      "indexPath": "releases/cs/speech/cs-speech-v22-10000x30-slim/app/vocabulary.index.json",
       "frequencyPath": "data/speech-frequency/cs.json",
-      "examplesPath": "releases/cs/speech/cs-speech-v21-10000x10/app/vocabulary.examples.json",
-      "studyStructurePath": "releases/cs/speech/cs-speech-v21-10000x10/app/study-structure.json",
-      "releaseManifestPath": "releases/cs/speech/cs-speech-v21-10000x10/manifest.json",
-      "releaseCompositionPath": "releases/cs/speech/cs-speech-v21-10000x10/composition.json",
+      "examplesPath": "releases/cs/speech/cs-speech-v22-10000x30-slim/app/vocabulary.examples.json",
+      "studyStructurePath": "releases/cs/speech/cs-speech-v22-10000x30-slim/app/study-structure.json",
+      "releaseManifestPath": "releases/cs/speech/cs-speech-v22-10000x30-slim/manifest.json",
+      "releaseCompositionPath": "releases/cs/speech/cs-speech-v22-10000x30-slim/composition.json",
       "cognatesPath": "cognates/cs/cognates.json",
+      "mergeExceptionsPath": "data/merge-exceptions/cs.json",
       "coveragePath": "coverage/cs/coverage.json"
     }
   },

@@ -9854,6 +9854,26 @@ function buildProvenancePanelHTML(card) {
         decisionAlgo = 'Deterministic Monosemous Assignment';
     }
 
+    // Cognate algorithm and card score audit
+    const cognateInfo = globalThis.getCognateAlgorithmInfo?.();
+    let cognateAuditVal = 'None / Inactive';
+    if (cognateInfo && cognateInfo.hasScores) {
+        const strong = globalThis.strongestKnownLanguage?.(card);
+        const match = globalThis.matchedKnownWord?.(card);
+        const knownCode = strong ? strong.code : (globalThis.activeKnownLanguages?.()[0] || 'en');
+        const scorer = cognateInfo.surfaceScorers?.[knownCode] || 'learner-align/v1';
+        const cutoff = cognateInfo.thresholds?.[knownCode] ?? globalThis.cognateThresholdFor?.(knownCode) ?? 0.75;
+        const score = globalThis.cognateScoreFor?.(card, knownCode);
+        if (score && score > 0) {
+            const isCognate = globalThis.isCognateKnown?.(card);
+            const statusLabel = isCognate ? 'Cognate' : 'Not skipped';
+            const matchedStr = match?.word ? ` (${match.word})` : '';
+            cognateAuditVal = `${scorer} · ${score.toFixed(2)}${matchedStr} · cutoff ${cutoff} (${statusLabel})`;
+        } else {
+            cognateAuditVal = `${scorer} · cutoff ${cutoff} (no match)`;
+        }
+    }
+
     const wsdSummaryCard = `
         <div class="prov-wsd-card">
             <div class="prov-wsd-head">
@@ -9876,6 +9896,10 @@ function buildProvenancePanelHTML(card) {
                 <div class="prov-wsd-stage">
                     <span class="prov-wsd-label">Resolution Algorithm</span>
                     <span class="prov-wsd-val">🎯 ${esc(decisionAlgo)}</span>
+                </div>
+                <div class="prov-wsd-stage">
+                    <span class="prov-wsd-label">Cognate Scorer</span>
+                    <span class="prov-wsd-val">🔗 ${esc(cognateAuditVal)}</span>
                 </div>
             </div>
         </div>`;

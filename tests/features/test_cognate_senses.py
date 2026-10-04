@@ -51,7 +51,7 @@ class SenseMapTests(unittest.TestCase):
             {"eng-spa.tsv": [("problems", "problema"), ("bank", "banco"), ("bench", "banco")]},
         )
         self.assertEqual(payload["schema"], "cognate-score/v4")
-        self.assertEqual(payload["surface_scorers"], {"en": "edit-distance/v1"})
+        self.assertEqual(payload["surface_scorers"], {"en": "learner-align/v1"})
         self.assertGreaterEqual(payload["scores"]["problemas"]["problema"]["problems"]["en"], 0.85)
         banco = payload["scores"]["banco"]["banco"]
         self.assertIn("bank", banco)

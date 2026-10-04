@@ -1,7 +1,7 @@
 {
   "target_language": "fi",
   "known_language": "en",
-  "surface_scorer": "edit-distance/v1",
+  "surface_scorer": "learner-align/v1",
   "ending_rules": [],
   "cognet_pairs": null,
   "notes": "Finnish read by an English speaker. This first-release policy is deliberately conservative: Finnish is not closely related to English, so the useful transparent words are mainly international loans. The skeleton folds Finnish vowel marks and common loanword gemination, but does not strip productive Finnish endings wholesale. The 0.85 cutoff is provisional until the generated 2,000-card score bands and false-friend list have been manually reviewed; the candidate layer must not be treated as calibrated merely because it builds. 2026-09-28: the surface scorer moved to edit-distance/v1 (decision 0027, provisional) and cognate mode became per sense (decision 0028). The cutoff above was carried over, not recalibrated; the calibration figures earlier in this note were measured on the legacy scorer.",

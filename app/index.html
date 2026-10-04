@@ -1326,6 +1326,7 @@
                     <h4>Technical &amp; Audit Details (Admin Only)</h4>
                     <p id="lemmaMappingStatus" class="fast-mode-mapping-status" hidden></p>
                     <p id="cognateMappingStatus" class="fast-mode-mapping-status" hidden></p>
+                    <p id="cognateAlgorithmStatus" class="fast-mode-mapping-status"></p>
                     <p>Inflected forms are grouped by dictionary lemma. Cognate thresholds are determined by cross-language phonetic/orthographic scoring.</p>
                 </div>
             </div>
@@ -2079,6 +2080,13 @@
                         <button type="button" class="group-size-btn wsd-publication-btn selected" data-wsd-publication="forced_leaf" aria-pressed="true" onclick="event.stopImmediatePropagation();if(window.selectWsdPublicationView){window.selectWsdPublicationView('forced_leaf',this)}else{const u=new URL(location.href);u.searchParams.set('wsdPublication','forced_leaf');location.assign(u)}">Forced leaf</button>
                         <button type="button" class="group-size-btn wsd-publication-btn" data-wsd-publication="supported_specificity" aria-pressed="false" onclick="event.stopImmediatePropagation();if(window.selectWsdPublicationView){window.selectWsdPublicationView('supported_specificity',this)}else{const u=new URL(location.href);u.searchParams.set('wsdPublication','supported_specificity');location.assign(u)}">Supported</button>
                     </div>
+                </div>
+                <div class="settings-default-row" id="cognateAlgorithmRow">
+                    <span class="settings-row-label-block">
+                        <span class="settings-row-label">Cognate Scorer Algorithm</span>
+                        <small class="settings-row-explanation" id="cognateAlgorithmExplanation">Loading algorithm metadata…</small>
+                    </span>
+                    <span class="prov-algo-pill prov-badge--auto" id="cognateAlgorithmBadge" style="font-family: monospace; font-size: 12px; padding: 4px 8px;">–</span>
                 </div>
                 <!-- Filled on open from the vocab files' Last-Modified headers;
                      an old date here means the service worker served cached data. -->

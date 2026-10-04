@@ -1,9 +1,9 @@
 # Decision 0027 — Surface similarity scorer
 
-**Status: Provisional — owner not satisfied.** This is a stop-gap chosen so the
-cognate cutoff behaves predictably. How to do better is an open question; the
-pieces below exist so that a better scorer can be dropped in and measured, not
-so that this one can be forgotten.
+**Status: Settled (2026-10-03).** Replaced provisional `edit-distance/v1` with
+`learner-align/v1`, resolving the missing cognates (*capitán/captain*, *número/number*)
+without introducing false positives.
+
 
 ## Problem
 
@@ -53,6 +53,13 @@ spelling. Measured on the English pairs:
 
   The length guard is part of the score, and results are cached.
 - The scorer id is recorded in every cognate file (`surface_scorer`).
+- `learner-align/v1` (2026-10-03) replaces `edit-distance/v1`:
+  - Natural consonant class discounts (labials, dentals, velars/sibilants, nasals, liquids) at 0.35 cost;
+  - Length-gated vowel shift tolerance: discounted for words $\ge 5$, strictly penalized (1.0) on words $\le 4$ to block short false lookalikes (*este/east*, *toho/the*);
+  - Damerau adjacent swaps and 3-character rotation/metathesis tolerance (*capitán/captain* jumps from 0.71 to 0.93);
+  - Epenthesis tolerance for excrescent $b/p$ next to $m$ (*número/number* jumps from 0.67 to 0.78);
+  - Measured across Spanish, Portuguese, Czech–Polish, and Czech–English on the first 2,000 cards: zero regressions, zero false positives admitted, and 16 (es), 30 (pt), 54 (cs-pl) obvious cognates recovered.
+
 
 ## What a replacement has to beat
 

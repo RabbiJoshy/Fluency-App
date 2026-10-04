@@ -1,7 +1,7 @@
 {
   "target_language": "nl",
   "known_language": "en",
-  "surface_scorer": "edit-distance/v1",
+  "surface_scorer": "learner-align/v1",
   "ending_rules": [],
   "cognet_pairs": "cognet/pairs/eng-nld.tsv",
   "cognet_target_column": 1,

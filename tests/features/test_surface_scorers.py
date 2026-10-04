@@ -36,7 +36,7 @@ class DiscoveryTests(unittest.TestCase):
         for path in sorted((CONFIG_ROOT / "cognates").glob("*.json")):
             target, known = path.stem.split("-", 1)
             policy = load_policy(CONFIG_ROOT, target, known)
-            self.assertEqual(policy.surface_scorer, "edit-distance/v1", path.name)
+            self.assertEqual(policy.surface_scorer, "learner-align/v1", path.name)
 
 
 class EditDistanceTests(unittest.TestCase):
@@ -62,6 +62,39 @@ class EditDistanceTests(unittest.TestCase):
     def test_the_legacy_scorer_is_still_reachable(self) -> None:
         legacy = replace(self.es, surface_scorer="legacy-max4/v1")
         self.assertGreater(form_score("este", "east", legacy), 0.8)
+
+
+class LearnerAlignTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.es = replace(load_policy(CONFIG_ROOT, "es", "en"), surface_scorer="learner-align/v1")
+        self.pt = replace(load_policy(CONFIG_ROOT, "pt", "en"), surface_scorer="learner-align/v1")
+        self.cs_pl = replace(load_policy(CONFIG_ROOT, "cs", "pl"), surface_scorer="learner-align/v1")
+        self.cs_en = replace(load_policy(CONFIG_ROOT, "cs", "en"), surface_scorer="learner-align/v1")
+
+    def test_captures_obvious_cognates_missed_by_edit_distance(self) -> None:
+        # Decision 0027: capitán/captain and número/number missed by edit-distance
+        self.assertGreaterEqual(form_score("capitán", "captain", self.es), 0.75)
+        self.assertGreaterEqual(form_score("número", "number", self.es), 0.75)
+        self.assertGreaterEqual(form_score("capitão", "captain", self.pt), 0.75)
+        self.assertGreaterEqual(form_score("número", "number", self.pt), 0.75)
+
+    def test_regular_endings_preserved(self) -> None:
+        self.assertEqual(form_score("eternidad", "eternity", self.es), 1.0)
+        self.assertEqual(form_score("necesidad", "necessity", self.es), 1.0)
+        self.assertEqual(form_score("información", "information", self.es), 1.0)
+
+    def test_short_lookalikes_do_not_overmatch(self) -> None:
+        # Short words do not get vowel substitution discounts
+        self.assertLess(form_score("este", "east", self.es), 0.6)
+        self.assertLess(form_score("toho", "the", self.cs_en), 0.6)
+
+    def test_length_guard_enforced(self) -> None:
+        self.assertEqual(form_score("eres", "be", self.es), 0.0)
+
+    def test_czech_polish_shared_inflections(self) -> None:
+        self.assertEqual(form_score("můj", "mój", self.cs_pl), 1.0)
+        self.assertEqual(form_score("bůh", "bóg", self.cs_pl), 1.0)
+
 
 
 if __name__ == "__main__":

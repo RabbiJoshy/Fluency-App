@@ -64,7 +64,7 @@
   "meaning_weight": 0.25,
   "candidate_budget": 400,
   "default_threshold": 0.75,
-  "surface_scorer": "edit-distance/v1",
+  "surface_scorer": "learner-align/v1",
   "ending_rules": [
     [
       "idades",

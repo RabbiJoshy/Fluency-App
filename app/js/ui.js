@@ -3571,6 +3571,31 @@ async function renderDevFooter(freshnessEl) {
         }
     }
 
+    // Cognate scorer algorithm details for Developer tab
+    const cognateAlgoBadge = document.getElementById('cognateAlgorithmBadge');
+    const cognateAlgoExplanation = document.getElementById('cognateAlgorithmExplanation');
+    if (cognateAlgoBadge && cognateAlgoExplanation) {
+        const info = globalThis.getCognateAlgorithmInfo?.();
+        if (info && info.hasScores) {
+            const knowns = (info.knownLanguages && info.knownLanguages.length)
+                ? info.knownLanguages
+                : (globalThis.activeKnownLanguages?.() || ['en']);
+            const scorers = knowns.map(code => info.surfaceScorers?.[code] || 'learner-align/v1');
+            const uniqueScorers = Array.from(new Set(scorers));
+            cognateAlgoBadge.textContent = uniqueScorers.join(', ');
+
+            const cuts = knowns.map(code => {
+                const s = info.surfaceScorers?.[code] || 'learner-align/v1';
+                const t = info.thresholds?.[code] ?? globalThis.cognateThresholdFor?.(code) ?? '–';
+                return `${code.toUpperCase()}: ${s} (threshold: ${t})`;
+            }).join(' · ');
+            cognateAlgoExplanation.textContent = `${cuts} · schema: ${info.schema || 'cognate-score/v4'}`;
+        } else {
+            cognateAlgoBadge.textContent = 'None / Inactive';
+            cognateAlgoExplanation.textContent = 'No cognate scores loaded for the active language/release.';
+        }
+    }
+
     // Per-file freshness (which file is stale, not just the newest).
     const perFile = window._vocabDataFreshness || {};
     const fileNames = Object.keys(perFile).sort((a, b) => perFile[b] - perFile[a]);

@@ -287,6 +287,25 @@ function updateMappingStatus() {
             ? ''
             : `${languageName(knownCode)} → ${target} mapping not found. Look-alike words will remain in the deck.`;
     }
+    const algoStatus = document.getElementById('cognateAlgorithmStatus');
+    if (algoStatus) {
+        const info = globalThis.getCognateAlgorithmInfo?.();
+        if (info && info.hasScores) {
+            const knowns = (info.knownLanguages && info.knownLanguages.length)
+                ? info.knownLanguages
+                : (globalThis.activeKnownLanguages?.() || ['en']);
+            const details = knowns.map(code => {
+                const scorer = info.surfaceScorers?.[code] || 'learner-align/v1';
+                const thresh = info.thresholds?.[code] ?? globalThis.cognateThresholdFor?.(code) ?? '–';
+                return `${languageName(code)} (${code}): scorer=${scorer}, threshold=${thresh}`;
+            }).join(' · ');
+            algoStatus.hidden = false;
+            algoStatus.innerHTML = `<strong>Cognate Algorithm:</strong> ${details} (schema: ${info.schema || 'v4'})`;
+        } else {
+            algoStatus.hidden = true;
+            algoStatus.textContent = '';
+        }
+    }
 }
 
 const STREAMLINE_LANGUAGE_EXAMPLES = {
