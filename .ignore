@@ -12,3 +12,15 @@ research/**/results/
 
 # Scratch and log artifacts
 *.log
+
+# Large generated app data (read targeted keys, never search these)
+app/conjugation/data/
+app/cognates/*/cognates.json
+app/data/merge-exceptions/
+app/data/speech-frequency/
+app/data/source_titles.json
+*dev_changelog.json
+
+# History: not a source of open work
+docs/archive/
+scripts/archive/

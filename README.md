@@ -31,24 +31,11 @@ workspace. It has no production or GitHub dependency.
 
 ## Current scope
 
-The stable surface-card identity, external workspace, immutable artifact/run
-contracts, French tokenization boundary, exact release composition, and the
-transplanted Fluency application running a 25-card French Speech pilot are
-implemented. The old app's split French data URLs resolve only to files
-generated inside the manually active immutable release, and those aliases are
-never service-worker cached. The first fresh French audit profile is locked to
-200 surface cards and three examples per card. Its language-agnostic harvester
-uses shared Speech rules plus French and source adapters, reads only run-owned
-surface inventories, and supports explicit Tatoeba or aligned OpenSubtitles
-snapshots without fallback. Its Wiktionary-ready sense-menu boundary normalizes
-dictionary data without making lemmas card identities. The profile creates six
-inspectable stage folders without loading historical deck data, installing
-model packages, executing WSD, or activating a release. A complete assignment
-bundle produced by a separate WSD task can now be validated and published into
-immutable Stage 04 without stale-run mixing or method coupling. French WSD
-results, final selection, release diagnostics in the transplanted UI, Spanish
-migration, Artist mode, and production integration are not complete.
+The app is live at <https://rabbijoshy.github.io/Fluency-App/> with Speech
+decks for Spanish, Portuguese, Czech, Finnish and French, Lyrics decks for
+Spanish artists, and Artist mode test releases in French and Portuguese.
+Releases are published to one repository per language (decision 0026).
 
-See `docs/runbooks/local-speech-pilot.md` for the exact local test flow.
-The agreed long-running migration sequence and operating rules are recorded in
-`docs/ROADMAP.md`.
+What is open, and which chat owns it, is `CHAT_ROADMAP.md`. Eventual direction
+is `LATER.md`. Decisions and their reasons are in `docs/decisions/`; the
+migration history that got here is in `docs/archive/`.

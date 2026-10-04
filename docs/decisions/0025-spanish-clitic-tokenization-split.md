@@ -49,7 +49,7 @@ Spanish rebuild, taken on its merits.
 
 Measured by `python scripts/mend_local.py --step clitics` against the 10k
 inventory of run `20260914T223348Z-c35194bc` (report
-`docs/mend/clitics-20260923T231844Z.md`, every split listed in the `.json`):
+`docs/mend/clitics-20260923T231844Z.md` (raw dump removed 2026-10-04; in git history before that date), every split listed in the `.json`):
 
 | Measure | Value |
 |---|---|

@@ -1,7 +1,7 @@
 # Invariants
 
-Rules that outlive any particular plan. `ROADMAP.md` describes a migration that
-will finish; the decisions in `decisions/` record particular choices. These
+Rules that outlive any particular plan. `archive/ROADMAP.md` described a migration that
+has finished; the decisions in `decisions/` record particular choices. These
 constrain both, and a change that breaks one of them is wrong even when it is
 convenient.
 

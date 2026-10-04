@@ -126,15 +126,18 @@ Say the bold name.
 | **CHISEL 2** | MWE tag refinement | Audit KILN 1 WSD outputs; discover additional axes/template bounds on real data. | Lab on KILN 1 output | **Done** (signed off in `raw/mwe/chisel-2`; ready for KILN 2) |
 | **KILN 2** | Precision 10k WSD | Re-run/finalize WSD with CHISEL 2 refined MWE overlay before release. | Plant | **Done** (precision 10k WSD published to Stage 04 across es, pt, cs; ready for GLASS) |
 | **GLASS** | v15 10k decks | Import bundle, compose, validate, activate the 10k speech decks. | Plant (no model) | **Done** (10k releases composed, validated, sharded, activated; deployed under `flashcards-v502`) |
-| **MEND** | word-database structure | Sets up the structure the whole word database lives on (surface facts → strategies, scope language → mode → artist → song → playlist, trust curated / derived / heuristic), which GRAFT fills and VERSE and the new lyrics UI consume. First proof: the 105 es v15 cards that shipped with empty meanings get meanings deterministically. | Lab + small plant (sense-menu rerun, WSD for affected cards only) | **Done** (candidates `es/pt/cs-speech-v15-mend-10000x10` built and validated: 0 empty cards, nothing outside the affected cards changed except 21 Czech cards' examples; activation waits on Joshua). Before GRAFT. |
+| **MEND** | word-database structure | Sets up the structure the whole word database lives on (surface facts → strategies, scope language → mode → artist → song → playlist, trust curated / derived / heuristic), which GRAFT fills and VERSE and the new lyrics UI consume. First proof: the 105 es v15 cards that shipped with empty meanings get meanings deterministically. | Lab + small plant (sense-menu rerun, WSD for affected cards only) | **Done** (releases `es/pt/cs-speech-v15-mend-10000x10` built, validated, and **activated live in production under `flashcards-v562`**: 0 empty cards). |
 | **GRAFT** | lyrics overlays | Collect slang, fillers, and lyrics MWEs/words into overlay snapshots, **in MEND's declared-entry format and scopes**. | Lab / curation | After MEND (before VERSE) |
 | **VERSE** | lyrics **v16** | Rebase on SWEEP (v15) + GRAFT overlays; lyrics WSD v16. Planted on 3 artists (18,372 cards). | Lab + plant | **Done** (profile `es-lyrics-v16-1.json`, candidates built & validated across Bad Bunny, Rosalía, Young Miko) |
-| **CHORUS** | lyrics audit & **v17** | 1) Audit v16 algorithm; 2) Expand GRAFT menus; 3) Wiktionary entity hacks for missing menus; 4) Spot other languages; 5) Release v17 candidate; 6) SpanishDict scraping recommendation (e.g. up to 15k). | Lab + release | **Next** (prompt in CHORUS section below) |
-| **POLYGLOT** | artist mode scaling | Audit Artist mode scaling across languages (French test playlist completion, Portuguese test playlist, robust language adapters). | Lab / architecture | After CHORUS |
+| **CHORUS** | lyrics audit & **v17/v18** | 1) Audit v16 algorithm; 2) Expand GRAFT menus; 3) Wiktionary entity hacks for missing menus; 4) Spot other languages; 5) Release v17 candidate; 6) Release v18 full deck to GitHub Pages; 7) SpanishDict scraping recommendation. | Lab + release | **Done** (profiles `es-lyrics-v17-1.json` & `es-lyrics-v18-1.json`, v18 released & deployed to gh-pages across Bad Bunny, Rosalía, Young Miko) |
+| **POLYGLOT** | artist mode scaling | Audit Artist mode scaling across languages (French test playlist completion, Portuguese test playlist, robust language adapters). | Lab / architecture | **Reviewed test releases** (2026-10-03: French 2,097 cards / 64 songs; Portuguese 869 cards / 19 songs; 0 split violations; live catalog deployed and verified). |
 | **TURBO** | live user WSD engine | Ultra-fast, live client-side/worker Spanish pipeline: clean, normalise, tag, and compute fast basic WSD on user-uploaded Spotify playlists. | App / pipeline engine | After POLYGLOT |
 | **SETLIST** | live playlist UI | Spotify playlist → LRCLIB → worker persist → naive speech-overlay deck. No WSD. | beside WSD | In progress (brief `docs/runbooks/live-playlist.md`) |
+| **GLEAN** | MWE re-harvest | Two new phrase lists: (a) expressions frozen on one inflected form (*no sé*, *ya voy*, *muchas gracias*), which keep that form off Merge Lemmas; (b) lemma constructions hidden in glosses (*dejar de*, *tener que*), which become senses on the merged lemma card. | Lab / curation | Not started (decision 0028) |
+| **KINDRED** | cognate mapping, any pair | Make Exclude Cognates right for every language combination: recalibrate cutoffs, better surface scorer, Czech→Polish less conservative, fr/nl on real releases, Spanish lyrics coverage, rebuild-on-release step. | Lab (maps + app) | Not started; runs directly after GLEAN (decisions 0027, 0028) |
+| **MIRROR** | speech **v23** (es, pt) | Reflexive/pronominal tagging (`fluency.reflexive`) as a WSD candidate filter on X/Xse pair cards, plus conjugations moved wholly to Wiktionary (Jehle and verbecc dropped; drill progress keys v2). | Lab + plant (offline WSD on pair cards only; 34 embeddings) | **Done** (releases `es/pt-speech-v23-10000x30-slim` published and live under `93567dcd`; runs `20261004T160042Z-fe49e477` es, `-b4bc9acd` pt; findings `research/reflexives/FINDINGS.md`). Open: About-page credit wording; French conjugations still verbecc |
 
-**Hold.** Sequence: SIEVE done, MILL done, SWEEP done, QUARRY done, CHISEL 1 done, KILN 1 done, CHISEL 2 done, KILN 2 done, GLASS done, MEND done, GRAFT done, VERSE done. **CHORUS is next** (audit v16, expand overlays/multilingual detection, produce v17). POLYGLOT and TURBO follow. SETLIST runs beside.
+**Hold.** Sequence: SIEVE done, MILL done, SWEEP done, QUARRY done, CHISEL 1 done, KILN 1 done, CHISEL 2 done, KILN 2 done, GLASS done, MEND done, GRAFT done, VERSE done, CHORUS done. **POLYGLOT is next** (audit Artist mode scaling across languages). TURBO follows. SETLIST runs beside.
 
 KILN 1 executed on QUARRY’s freeze and CHISEL 1's 10k MWE overlay. Do not call the v12 freeze “v14 production 10k.”
 
@@ -144,7 +147,7 @@ KILN 1 executed on QUARRY’s freeze and CHISEL 1's 10k MWE overlay. Do not call
 
 This file’s index is the **WSD campaign**, including chats that have not started (SWEEP, QUARRY, …).
 
-Product pieces that are not that campaign live in **`OPEN.md`**. SWEEP and QUARRY do not wait on them. When a non-WSD chat is actually running, name it here so it does not collide with SWEEP. Today that is **SETLIST**. When conjugations reopen, name that chat **DRAWER** for the duration of the work.
+Product pieces that are not that campaign live in **`OPEN.md`**. SWEEP and QUARRY do not wait on them. When a non-WSD chat is actually running, name it here so it does not collide with SWEEP. Today that is **SETLIST**. When conjugations reopen, name that chat **DRAWER** for the duration of the work. **DRAWER is open (2026-09-28):** per-form example sentences for verb drills (`scripts/build_conjugation_examples.py`, `app/conjugation/`).
 
 ---
 
@@ -373,7 +376,7 @@ Paste into that chat:
 - Shape: fallback **fills** an empty menu at stage 02; GRAFT's overlays **add** competing senses at WSD time. Same entry format, same scopes (proposal §6).
 - Feeds GRAFT: the strategy table, the scope and trust labels, the declared-entry format (glosses, expansions, entities) and the entity registry shape, seeded only with what the 105 need. GRAFT fills them.
 - Feeds VERSE: the resolver, lemma hop and scopes, plus MEND's critique of legacy lyrics routing (proposal §7). MEND is pivotal: lyrics mode is expected to move onto the speech ledger model, not the other way round.
-- **Status (2026-09-23): Done.** Candidate releases built, validated and diffed; **not activated** (Joshua decides).
+- **Status (2026-09-26): Done & Activated.** Production releases deployed to `Fluency-Releases` and activated in `config.json` under `flashcards-v562`.
   - `es-speech-v15-mend-10000x10` (run `20260923T220622Z-e1ef2457`): 105 cards fixed (100 dictionary headwords, 4 glosses, 1 entity), 0 empty, 0 other cards changed. Stage 04 spliced: 443,143 carried from KILN 2, 2,865 fresh, 223 declared.
   - `pt-speech-v15-mend-10000x10` (run `20260923T220643Z-1da6511e`): 19 fixed, 0 empty, 0 other cards changed.
   - `cs-speech-v15-mend-10000x10` (run `20260923T220659Z-80b0f6a4`): 381 fixed (55 Wiktionary headwords, 326 glosses), 0 empty; 0 other cards' meanings changed, 21 other cards' examples moved (the two-cards-per-sentence cap).
@@ -425,7 +428,8 @@ Paste into that chat:
 > 5. Release **v17** candidate decks for full user audit.
 > 6. Formulate recommendations on expanding dictionary scrapes (e.g. extending SpanishDict scraping up to 15,000 words vs relying on Kaikki Wiktionary).
 
-- **Output:** Audited and refined profile `config/wsd/models/es-lyrics-v17-1.json` + published v17 candidate releases for Bad Bunny, Rosalía, and Young Miko.
+- **Output:** Audited and refined profiles `config/wsd/models/es-lyrics-v17-1.json` and `es-lyrics-v18-1.json` + published v18 production releases for Bad Bunny, Rosalía, and Young Miko (`lyrics-all-artists-v18`).
+- **Status:** **Done.** Released candidate decks `lyrics-*-v17-candidate` and production decks `lyrics-*-v18` (`lyrics-bad-bunny-v18` [10,687 cards], `lyrics-rosalia-v18` [3,224 cards], `lyrics-young-miko-v18` [4,461 cards], `lyrics-all-artists-v18` [18,372 cards]). 0 split app contract violations, full-corpus line back-search eliminating dummy fallback lines, entity false positives eliminated, slang overlays added, app pointed to `lyrics-all-artists-v18`, cache bumped to `v561`, and deployed to GitHub Pages. Ready for POLYGLOT.
 - Do not: re-harvest speech corpora; break the split app contract; push to live app without review.
 
 ### POLYGLOT — artist mode cross-language scaling
@@ -441,6 +445,7 @@ Paste into that chat:
 > - The core focus is establishing robust, language-agnostic adapters (morphology, clitics, dictionary menus, lyrics elisions) so any artist in any supported language works with the same quality as Spanish.
 
 - **Output:** Multi-language artist pipeline specification and working test releases for French and Portuguese.
+- **Status (2026-10-03):** Reviewed French (64 songs / 2,097 cards) and Portuguese (19 songs / 869 cards) releases validated with 0 split violations and 0 embedding misses: `lyrics-french-test-playlist-polyglot-v5`, `lyrics-portuguese-test-playlist-polyglot-v6`. Signed lyric phrase inventories (46 fr / 33 pt), scoped morphology/POS guards and all 348 earlier withheld-form outcomes documented. Spanish releases unchanged. Published assets and live catalog deployed; interactive song filtering and card/meaning checks pass. Architecture, measured coverage, remaining omissions and cost: `docs/dossiers/polyglot-artist-scaling.md`.
 - Do not: regress Spanish artist contracts; hardcode Spanish linguistic rules into generic pipeline stages.
 
 ### TURBO — live user-uploaded playlist WSD engine
@@ -472,6 +477,55 @@ Paste into that chat:
 
 ---
 
+### GLEAN — MWE re-harvest for Merge Lemmas (not started)
+
+**This chat is GLEAN.** Merge Lemmas keeps a form on its own card when the card
+shows an expression frozen on that exact form (decision 0028, rule 3). How well
+that works depends entirely on the phrase lists, and today's are uneven: some
+kept phrases are weak (*qué tiene*, *aquí estamos*), and many real ones are
+missing.
+- **List (a), frozen-form expressions:** phrases that contain one specific
+  non-citation form (*no sé*, *ya voy*, *¿qué tal?*, *muchas gracias*, *às vezes*).
+  These feed rule 3. Candidate source: Wiktionary multiword entries containing
+  the surface verbatim, for both providers.
+- **List (b), lemma constructions:** constructions headed by the lemma that now
+  live only as gloss text (*dejar de*, *tener que*, *ir a*). They are
+  compositional and argue for no particular form, so they become senses on the
+  merged lemma card, never reasons to keep a form apart.
+- Do not: reopen the merge rules themselves (settled in 0028); use rank cutoffs.
+
+### KINDRED — cognate mapping for any language pair (after GLEAN)
+
+**This chat is KINDRED.** Goal: Exclude Cognates is right for *any* pair of
+deck language and known language, not just the ones shipped. The engine is in
+place (decision 0028, `cognate-score/v4`): the card's English gloss is the
+pivot; a sense is free for known language L when an L word carries that sense,
+is a cognate (CogNet where it knows the headword), looks close, and, for
+non-English L, has a primary sense the card also teaches. A new pair is a
+`config/cognates/<target>-<known>.json` plus an English-glossed extract. Runs
+directly after GLEAN because GLEAN's phrase lists change which cards carry
+expressions, and expressions are never free cognates.
+- **Calibrate:** set every pair's cutoff on the new scorer from its first-300
+  and first-2,000 set-aside lists; Czech→Polish 0.80 first. Cutoffs were carried
+  over from the legacy scorer, not recalibrated.
+- **Scorer:** replace provisional `edit-distance/v1` (decision 0027, owner not
+  satisfied). It misses capitán/captain and número/number. Judge candidates
+  with `scripts/eval_surface_scorer.py`. Options: correspondences learned from
+  CogNet, panphon on IPA, stems.
+- **Czech→Polish:** less conservative where Polish leads with another sense
+  (mluvit/mówić stays in the deck), and name the standard Polish word as the
+  match, not a dialect or archaic form (pane→panek, bylo→byłom).
+- **Coverage:** recheck fr and nl on real releases (both were measured on
+  menus); give Dutch a `cognatesPath`; add the lyrics releases' surfaces to the
+  Spanish map.
+- **Release step:** the merge keys (`app/data/merge-exceptions/<lang>.json`)
+  and cognate card verdicts are tied to one release and ignored for any other.
+  Make rebuilding them part of activating a Speech release (runbook, or a check).
+- **Prove any-pair:** add at least one new pair end to end (e.g. es read by a
+  pt or fr speaker) to show a new combination is only a config file.
+- Do not: reintroduce per-word scoring, rank cutoffs or false-friend lists; touch
+  the WSD self-reading bugs (separate task).
+
 ## Ground rules for every chat
 
 - `--language` defaults to `fr` in the CLI. Pass `es` / `pt` / `cs` every time.
@@ -494,7 +548,7 @@ Paste into that chat:
 | After SWEEP | `*-v15-1.json` or written “v14 stands” |
 | After GRAFT | declared lists + overlays (`config/declared/`, artist layer, `overlays.py`) (done) |
 | After VERSE | `es-lyrics-v16-1.json` + candidate decks planted for Bad Bunny, Rosalía, Young Miko (done) |
-| After CHORUS | `es-lyrics-v17-1.json` + published v17 candidate decks for full audit + scraping recommendation |
+| After CHORUS | `es-lyrics-v17-1.json` & `es-lyrics-v18-1.json` + published v18 decks deployed to GitHub Pages + scraping recommendation (done) |
 | After POLYGLOT | Multi-language artist pipeline spec + working French and Portuguese test releases |
 | After TURBO | Client/worker live playlist engine (fast WSD + instant study deck creation) |
 

@@ -28,7 +28,7 @@ What that costs:
    files, but the Pages build re-packages and re-uploads the whole 2.67 GB site.
    The build has grown from 1m05s (2026-09-25) to 2m05s–2m35s (2026-09-27).
    Publishing a lyrics fix redeploys Spanish, Portuguese and Czech speech.
-   `docs/ui/UI_WORK_ORDERS.md` rule 6 measured the same effect on the app site:
+   `docs/archive/ui/UI_WORK_ORDERS.md` rule 6 measured the same effect on the app site:
    pruning 7.2 GB to 1.8 GB cut a build from 5m05s to 1m35s.
 2. **It is past GitHub's limit.** Pages documents a 1 GB limit for a published
    site; this one is 2.67 GB. It still builds, but the limit is GitHub's to

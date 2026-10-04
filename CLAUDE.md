@@ -6,16 +6,16 @@ the old repository's virtualenv.
 
 **Two roots.** Code, config, tests and compact release metadata live here. Large
 corpora, model caches, runs, pools and generated releases live in
-`../Fluency-Workspace` and never in git. `../Fluency` is the older repository,
-still the live app; treat it as reference, not a target.
+`../Fluency-Workspace` and never in git. `../Fluency` is the older repository;
+treat it as reference, not a target. The live app is built from this repo.
 
 ## Read first
 
-**`CHAT_ROADMAP.md`** (repo root) — named chats for the live deck campaign
-(FUSE, SIEVE, QUARRY, …). Concurrent sessions: read SCAR, then **only your
-codename**. Do not invent a parallel job. Copy to
-`../Fluency-Workspace/raw/surfaces/DECK_CHAT_ROADMAP.md` after edits.
-UI/app chats: not a pipeline row unless named as a blocker; still skim it.
+**`CHAT_ROADMAP.md`** (repo root) — short: the **Open** table (the only open
+work), what is live, what is done, and the pipeline rules. Named chats read it,
+then **only their row**. Do not invent a parallel job or start work from
+anything not in Open. Copy to `../Fluency-Workspace/raw/surfaces/DECK_CHAT_ROADMAP.md`
+after edits. `LATER.md` is eventual direction, not work.
 
 **`REPO_MAP.md`** — dense architecture map, pipeline dataflow, and frontend `window.*` globals registry. Consult this before running exploratory searches or reading large files.
 
@@ -28,9 +28,9 @@ before altering architecture, contracts or provenance.
 4. Adapters absorb irregularity at the edges; the engine exists once.
 5. A language or mode is added by creating files, not by editing lists.
 
-Then `CHAT_ROADMAP.md` for **which chat is allowed to do what**, `docs/ROADMAP.md`
-for the long migration plan, and `docs/decisions/` for why things are as they
-are. `docs/reference/` holds WSD measurements carried over from the older
+Then `docs/decisions/` for why things are as they are. `docs/archive/` is
+history (old campaign cards, proposals, migration audits): read a file there
+only when a task names it, never as a source of open work. `docs/reference/` holds WSD measurements carried over from the older
 repository — read its README first, because those were taken on Spanish against
 a SpanishDict menu and not all of them transfer.
 
@@ -131,7 +131,7 @@ are rejected because they are not hex.
 **WSD is optional.** A deck ships with every example marked explicitly
 unassigned rather than blocking. Portuguese and Spanish both have such releases.
 
-Languages with profiles or packages: `es`, `fr`, `pt`, `cs`, `nl`, `pl`. Modes: speech, lyrics, artist.
+Languages with packages: `es`, `pt`, `cs`, `fi`, `fr`, `nl`, `pl` (plus stubs for `it`, `ru`, `sv`). Live: es, pt, cs, fi, fr. Modes: speech, lyrics, artist.
 
 ## Working with Josh
 
@@ -214,7 +214,7 @@ Languages with profiles or packages: `es`, `fr`, `pt`, `cs`, `nl`, `pl`. Modes: 
 
 ```bash
 make test        # unittest discovery
-PYTHONPATH=src .venv/bin/python -m pytest -q   # 879 pass, 4 known failures
+PYTHONPATH=src .venv/bin/python -m pytest -q   # 1285 pass, 6 known failures (2026-10-04)
 python scripts/materialise_surfaces.py --workspace $W --language <lang>  # rebuild the ledger
 python scripts/audit_surfaces_html.py  --workspace $W --language <lang>  # audit it in a browser
 PYTHONPATH=src python -m fluency pipeline plan --profile config/pipelines/<lang>/speech/<profile>.json
