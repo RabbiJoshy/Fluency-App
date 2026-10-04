@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-04T17:55:00+01:00",
+      "date": "2026-10-04 17:55 BST",
+      "agent": "Claude",
+      "summary": "About page now credits Wiktionary for conjugations.",
+      "detail": [
+        "The sources line read \"Spanish conjugations from Jehle\"; every conjugation table now comes from Wiktionary, so it reads \"conjugations from Wiktionary\"."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-04T17:35:00+01:00",
       "date": "2026-10-04 17:35 BST",
       "agent": "Claude",
