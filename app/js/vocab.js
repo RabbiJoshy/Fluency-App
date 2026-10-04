@@ -1,11 +1,11 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=a04a16c3';
-import { validateVocabularyIndex } from './data-contracts.js?v=a04a16c3';
-import { formatRoute } from './routes.js?v=a04a16c3';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=a04a16c3';
-import { releaseUrl } from './release-host.js?v=a04a16c3';
+import './state.js?v=eed60b91';
+import { validateVocabularyIndex } from './data-contracts.js?v=eed60b91';
+import { formatRoute } from './routes.js?v=eed60b91';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=eed60b91';
+import { releaseUrl } from './release-host.js?v=eed60b91';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -958,17 +958,6 @@ function dedupeLemmaMenu(meanings) {
     return kept;
 }
 
-const RADICAL_REFLEXIVE_ROOTS = {
-    es: new Set([
-        'llamar', 'ir', 'quedar', 'parecer', 'poner', 'sentir',
-        'volver', 'acordar', 'despedir', 'dormir', 'fijar', 'negar', 'ocupar'
-    ]),
-    pt: new Set([
-        'chamar', 'ir', 'ficar', 'parecer', 'pôr', 'sentir',
-        'voltar', 'lembrar', 'despedir', 'dormir', 'ocupar'
-    ])
-};
-
 function cleanHeadwordToken(hw) {
     const token = normalizeLemmaToken(hw);
     if (token.endsWith('se') && token.length > 3) {
@@ -1043,19 +1032,26 @@ function detectSplitCardTuples(item, lang = 'es') {
         };
     }
 
-    // Class 2: Radical Reflexive Shift
+    // Class 2: Pronominal / Reflexive Shift (Attested base vs pronominal headword)
     const baseM = lex.filter(m => !normalizeLemmaToken(m.headword).endsWith('se'));
     const reflM = lex.filter(m => normalizeLemmaToken(m.headword).endsWith('se'));
     if (baseM.length >= 1 && reflM.length >= 1) {
-        const baseHws = new Set(baseM.map(m => normalizeLemmaToken(m.headword || word)));
-        const reflHws = new Set(reflM.map(m => normalizeLemmaToken(m.headword)));
-        const langKey = String(lang || 'es').slice(0, 2).toLowerCase();
-        const roots = RADICAL_REFLEXIVE_ROOTS[langKey] || RADICAL_REFLEXIVE_ROOTS.es;
+        const baseHws = baseM.map(m => normalizeLemmaToken(m.headword || word));
+        const reflHws = reflM.map(m => normalizeLemmaToken(m.headword));
         let matchedRoot = null;
-        for (const root of roots) {
-            if (baseHws.has(root) || Array.from(reflHws).some(r => r.startsWith(root))) {
-                matchedRoot = root;
+        for (const rHw of reflHws) {
+            const rBase = rHw.endsWith('se') && rHw.length > 3 ? rHw.slice(0, -2) : null;
+            if (rBase && (baseHws.includes(rBase) || rBase === word || baseHws.some(b => b.startsWith(rBase)))) {
+                matchedRoot = rBase;
                 break;
+            }
+        }
+        if (!matchedRoot && baseHws.length > 0) {
+            for (const bHw of baseHws) {
+                if (reflHws.includes(`${bHw}se`)) {
+                    matchedRoot = bHw;
+                    break;
+                }
             }
         }
         if (matchedRoot && (reflM.length / totalLen >= 0.14)) {
@@ -1095,7 +1091,6 @@ function detectSplitCardTuples(item, lang = 'es') {
 globalThis.isExpressionSenseForLemma = isExpressionSenseForLemma;
 globalThis.detectSplitCardTuples = detectSplitCardTuples;
 globalThis.cleanHeadwordToken = cleanHeadwordToken;
-globalThis.RADICAL_REFLEXIVE_ROOTS = RADICAL_REFLEXIVE_ROOTS;
 
 function computeLemmaExampleCounts(vocabData, examplesData) {
     const linesByLemma = new Map();
