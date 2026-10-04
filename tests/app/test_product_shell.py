@@ -157,7 +157,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertEqual(
             config["languages"]["czech"]["indexPath"],
-            "releases/cs/speech/cs-speech-v21-10000x30-slim/app/vocabulary.index.json",
+            "releases/cs/speech/cs-speech-v22-10000x30-slim/app/vocabulary.index.json",
         )
         self.assertEqual(
             config["languages"]["czech"]["conjugationsPath"],
