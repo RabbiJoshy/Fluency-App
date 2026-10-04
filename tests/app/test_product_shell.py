@@ -169,7 +169,7 @@ class ProductShellTests(unittest.TestCase):
         )
         self.assertEqual(
             config["languages"]["french"]["conjugationsPath"],
-            "releases/fr/speech/fr-speech-v7-dual-metadata-v3-20260910-conj/app/conjugations.json",
+            "releases/fr/speech/fr-speech-v7-dual-metadata-v6-20261004/app/conjugations.json",
         )
         self.assertIsNone(config["languages"]["dutch"]["conjugationsPath"])
         self.assertNotIn("ppmDataPath", config["languages"]["french"])

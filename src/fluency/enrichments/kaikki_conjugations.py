@@ -59,13 +59,25 @@ FULL_PARADIGMS: dict[str, tuple[tuple[str, str, frozenset[str], frozenset[str]],
         ("imperativo", "afirmativo", frozenset({"imperative"}), frozenset({"negative"})),
         ("imperativo", "negativo", frozenset({"imperative", "negative"}), frozenset()),
     ),
+    # Wiktionary spells French compound tenses as "avoir + past participle"
+    # rows (multiword-construction); only the simple tenses are cells here.
+    "fr": (
+        ("indicatif", "présent", frozenset({"indicative", "present"}), frozenset()),
+        ("indicatif", "imparfait", frozenset({"indicative", "imperfect"}), frozenset()),
+        ("indicatif", "passé-simple", frozenset({"indicative", "historic", "past"}), frozenset({"anterior"})),
+        ("indicatif", "futur-simple", frozenset({"indicative", "future"}), frozenset({"perfect"})),
+        ("conditionnel", "présent", frozenset({"conditional"}), frozenset({"perfect"})),
+        ("subjonctif", "présent", frozenset({"subjunctive", "present"}), frozenset()),
+        ("subjonctif", "imparfait", frozenset({"subjunctive", "imperfect"}), frozenset()),
+        ("imperatif", "imperatif-présent", frozenset({"imperative"}), frozenset()),
+    ),
 }
 # Never a cell of the six-person table: object-clitic combinations, voseo,
 # the formal imperative repeated under "second-person-semantically", and the
 # non-finite rows.
 FULL_EXCLUDED_TAGS = frozenset({
     "combined-form", "vos-form", "second-person-semantically", "participle", "gerund",
-    "infinitive", "obsolete", "archaic", "misspelling", "nonstandard",
+    "infinitive", "obsolete", "archaic", "misspelling", "nonstandard", "multiword-construction",
 })
 # Wiktionary prints the Spanish negative imperative without its "no"
 # (Portuguese prints "não"). The drill strips both as particles.
@@ -97,7 +109,7 @@ def pin_kaikki_snapshot(
 
     Dumps already inside the workspace are referenced by relative path so the
     193 MB Czech extract is not copied. Outside dumps are copied into the pin
-    directory, matching the Jehle recovery path.
+    directory.
     """
 
     if not language or any(character not in "abcdefghijklmnopqrstuvwxyz" for character in language):
@@ -264,6 +276,7 @@ def _full_record_from_row(row: dict[str, Any], language: str) -> dict[str, Any] 
     paradigms = FULL_PARADIGMS[language]
     best: dict[tuple[int, str], tuple[int, str]] = {}
     gerund = past_participle = None
+    participle_rank = 2
     for item in row.get("forms") or []:
         if not isinstance(item, dict):
             continue
@@ -271,10 +284,16 @@ def _full_record_from_row(row: dict[str, Any], language: str) -> dict[str, Any] 
         form = _usable_form(item.get("form"), tags)
         if form is None:
             continue
-        if gerund is None and tags == {"gerund"}:
+        plain = not tags & {"multiword-construction", "combined-form"}
+        # Spanish tags the gerund alone; French tags it "gerund participle present".
+        if gerund is None and plain and "gerund" in tags and not tags & PERSON_TAGS:
             gerund = form
-        if past_participle is None and {"participle", "past", "masculine", "singular"} <= tags:
-            past_participle = form
+        # Masculine singular where gender is marked (es, pt); else the bare
+        # past-participle row (fr). Lower rank wins; ties keep the first seen.
+        if plain and {"participle", "past"} <= tags and not tags & {"feminine", "plural"}:
+            rank = 0 if {"masculine", "singular"} <= tags else 1
+            if past_participle is None or rank < participle_rank:
+                past_participle, participle_rank = form, rank
         if tags & FULL_EXCLUDED_TAGS:
             continue
         person = _person(tags)
