@@ -1,4 +1,4 @@
-import { dbDelete, dbGetAll, dbPut } from './offline-db.js?v=02514721';
+import { dbDelete, dbGetAll, dbPut } from './offline-db.js?v=24014e19';
 
 const MANIFEST_URL = 'config/offline-content-manifest.json';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
