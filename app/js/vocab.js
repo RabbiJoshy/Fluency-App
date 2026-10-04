@@ -2927,29 +2927,6 @@ async function loadVocabularyData(rangeString, opts = {}) {
             item.meanings = item.meanings || [];
         }
 
-        // Suppress redundant base cards when a polysemous/homograph split card
-        // in the same set already covers that headword reading. This prevents the
-        // "3rd card" bug where learners see an infinitive card followed by Card 1
-        // and Card 2 of the split companion pair.
-        const splitTupleHeadwords = new Set();
-        for (const it of filteredData) {
-            const sp = detectSplitCardTuples(it, selectedLanguage);
-            if (sp && sp.tuple1 && sp.tuple2) {
-                splitTupleHeadwords.add(cleanHeadwordToken(sp.tuple1.headword));
-                splitTupleHeadwords.add(cleanHeadwordToken(sp.tuple2.headword));
-            }
-        }
-        if (splitTupleHeadwords.size > 0) {
-            filteredData = filteredData.filter(it => {
-                const sp = detectSplitCardTuples(it, selectedLanguage);
-                if (sp && sp.tuple1 && sp.tuple2) return true;
-                const token = cleanHeadwordToken(it.lemma || it.word);
-                // If this is an unsplit base item whose headword is already explicitly
-                // split into companion cards in this set, drop the redundant parent card
-                return !splitTupleHeadwords.has(token);
-            });
-        }
-
         for (const item of filteredData) {
             const menuSource = useLemmaMode && lemmaHeadwordsOf(item).length === 1
                 ? dedupeLemmaMenu(item.meanings)
@@ -3359,6 +3336,22 @@ async function loadVocabularyData(rangeString, opts = {}) {
                     skipWhenNothingToPractise: studyMode === 'review'
                 });
                 if (deckCard) flashcards.push(deckCard);
+            }
+        }
+
+        // A surface split into a companion pair is studied as exactly those
+        // two cards. Card identity is the surface, so any other card for the
+        // same surface in this deck (a duplicate item, a merged parent) would
+        // read as a third card and is dropped.
+        const splitSurfaces = new Set(flashcards
+            .filter(c => c && c.splitInfo)
+            .map(c => normalizeLemmaToken(c.targetWord)));
+        if (splitSurfaces.size > 0) {
+            for (let i = flashcards.length - 1; i >= 0; i--) {
+                const c = flashcards[i];
+                if (c && !c.splitInfo && splitSurfaces.has(normalizeLemmaToken(c.targetWord))) {
+                    flashcards.splice(i, 1);
+                }
             }
         }
 

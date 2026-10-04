@@ -22691,3 +22691,53 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
     #cardTutorialContinue.is-hinting,
     #cardTutorialMobileNext.is-hinting { animation: none; }
 }
+
+/* Front lemma/POS map: the coloured POS pill and its "from x" stand on
+   their own, without a capsule behind them, and gain ~10% in size. */
+.card-front .card-pos-list.is-lemma-map .front-lemma-pair {
+  background: none;
+  border: 0;
+  padding: 0;
+  min-height: 0;
+  zoom: 1.1;
+}
+
+/* "Flashcard 1 of 2": plain text under the surface, tappable for a short
+   explanation. */
+.surface-relation-cue.split-card-note {
+  position: relative;
+  border: 0;
+  background: none;
+  padding: 0;
+  margin: 0 auto 10px;
+  font-size: 15.5px;
+  white-space: normal;
+}
+.split-card-note-toggle {
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 2px 0;
+  color: inherit;
+  font: inherit;
+  cursor: help;
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}
+.split-card-tip {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  width: min(280px, 80vw);
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  color: var(--text-secondary);
+  font: 500 13.5px/1.45 var(--font-reading);
+  text-align: left;
+}
+.split-card-tip[hidden] { display: none; }
