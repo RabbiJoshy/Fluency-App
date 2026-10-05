@@ -22601,6 +22601,13 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
   cursor: pointer;
 }
 
+/* A grouped sense's one commonness meter, under its gloss (see sharedMeterHTML). */
+.group-card-shared > .group-shared-meter {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+}
+
 /* Give source annotations one complete box instead of outlining an inline
    wrapper's line fragment beside a taller icon. */
 #cardTutorialStage .example-song-credit,
@@ -22634,3 +22641,22 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 #cardTutorialStage .example-song-credit:has(.example-source-chip) {
     overflow: visible;
 }
+
+/* "N rarer senses" under a lone, non-Dominant sense (addRarerSensesRow). */
+.rarer-senses-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  margin: 2px 0 4px;
+  padding: 8px 12px;
+  border: 1px dashed color-mix(in srgb, var(--border-color) 90%, transparent);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary);
+  font: 600 14px/1.2 var(--font-reading);
+  text-align: left;
+  cursor: pointer;
+}
+.rarer-senses-row:hover { color: var(--text-primary); }
