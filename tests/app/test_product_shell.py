@@ -303,7 +303,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertNotIn('class="meaning-row-check"', replica)
         self.assertIn('class="example-ticks"', replica)
         self.assertNotIn('class="compact-example-counter-label"', replica)
-        self.assertIn("speechCard: 'ptBancoSpeech'", tutorial)
+        self.assertIn("speechCard: 'ptProvarSpeech'", tutorial)
         self.assertIn('class="sense-metadata-tier sense-metadata-tier--primary"', replica)
         self.assertIn('class="sense-note-trigger"', replica)
         self.assertIn('class="sense-cross-reference"', replica)

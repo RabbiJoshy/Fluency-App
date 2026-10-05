@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-05T19:26:50+01:00",
+      "date": "2026-10-05 19:26 BST",
+      "agent": "Codex",
+      "summary": "Use a richer Portuguese tutorial card and make practice instructions explicit",
+      "detail": [
+        "Replace banco with provar: prove, taste and try on, with 14 curated release examples",
+        "Keep the dominant meaning first and preserve verified IMDb and Tatoeba sources",
+        "Replace button-like Try it labels with instructions naming the card control to click or tap",
+        "Highlight the whole example sentence when explaining example cycling",
+        "Reveal closed meaning groups when the next explanation needs their rows and fit mobile cards to the instruction sheet"
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-05T19:18:15+01:00",
       "date": "2026-10-05 19:18 BST",
       "agent": "Claude",
