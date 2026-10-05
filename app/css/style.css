@@ -22183,3 +22183,12 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 .pos-collapsible.is-open .pos-section-head > .pos-pill-pct { margin-left: auto; }
 .pos-collapsible.is-single-sense > .meaning-pos-rows > .meaning-row > .pct-column,
 .pos-collapsible.is-single-sense > .meaning-pos-rows > .meaning-row > .sense-prominence-badge { display: none !important; }
+
+/* The section-head badge anchors its own explanation (it sat static, so the
+   label opened outside the card), and pointer devices see it on hover too. */
+.pos-section-head .sense-prominence-badge { position: relative; }
+@media (hover: hover) {
+  .sense-prominence-badge:hover .sense-prominence-detail { display: block; }
+}
+/* Every row in an open section has its own meter: the head drops its total. */
+.pos-collapsible.is-open.rows-carry-meters > .pos-section-head > .sense-prominence-badge { display: none; }

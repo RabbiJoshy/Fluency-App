@@ -1,27 +1,27 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=4322b7cb';
-import './speech.js?v=4322b7cb';
-import { goToRoute, routeCodeFor } from './routes.js?v=4322b7cb';
-import './side-dock.js?v=4322b7cb';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=4322b7cb';
+import './state.js?v=81cf2f42';
+import './speech.js?v=81cf2f42';
+import { goToRoute, routeCodeFor } from './routes.js?v=81cf2f42';
+import './side-dock.js?v=81cf2f42';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=81cf2f42';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=4322b7cb';
+} from './example-personalisation.js?v=81cf2f42';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=4322b7cb';
+} from './spanishdict-usage.js?v=81cf2f42';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=4322b7cb';
+} from './reverse-cues.js?v=81cf2f42';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -54,7 +54,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=4322b7cb';
+} from './card-metadata-pills.js?v=81cf2f42';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -964,11 +964,15 @@ function markSingleSenseSections(root) {
     root?.querySelectorAll('.pos-collapsible').forEach(section => {
         const rows = section.querySelectorAll(':scope > .meaning-pos-rows > .meaning-row');
         section.classList.toggle('is-single-sense', rows.length === 1);
+        // Every row already says how common it is: the head's total would be
+        // a fourth meter saying less, so it shows only while folded.
+        section.classList.toggle('rows-carry-meters', rows.length > 1
+            && [...rows].every(row => row.querySelector('.sense-prominence-badge, .known-sense-tag')));
     });
 }
 
 // A card with one sense that is not Dominant has its other uses in Rarer uses.
-// Say so in the list, with their combined commonness, so the one label does
+// Say so in the list, so the one label does
 // not look wrong on its own. Tapping it opens Rarer uses.
 function addRarerSensesRow(root, card) {
     const scroll = root?.querySelector('.meanings-scroll');
@@ -977,14 +981,13 @@ function addRarerSensesRow(root, card) {
     if (rows.length !== 1) return;
     const badge = rows[0].querySelector('.sense-prominence-badge');
     if (!badge || badge.classList.contains('prominence-dominant')) return;
-    const rarer = (card.unusedMenuSenses || []).filter(m => m.lowShare);
     const count = collectRareSenseItems(card).length;
-    if (!rarer.length || !count) return;
-    const info = prominenceInfoFromShare(rarer);
+    if (!count) return;
+    // No meter: their pooled share can reach Dominant though each one is
+    // rare, which reads as the opposite of "rarer".
     rows[0].insertAdjacentHTML('afterend',
-        `<button type="button" class="rarer-senses-row" aria-label="${count} rarer sense${count === 1 ? '' : 's'}: ${escapeCardText(info.label)}. Open Rarer uses." onclick="event.stopPropagation(); openRareAndExpressionsCard(event)">`
-        + `<span class="rarer-senses-row-label">${count} rarer sense${count === 1 ? '' : 's'}</span>`
-        + `${prominenceMeterHTML(info.key)}</button>`);
+        `<button type="button" class="rarer-senses-row" aria-label="${count} rarer sense${count === 1 ? '' : 's'}. Open Rarer uses." onclick="event.stopPropagation(); openRareAndExpressionsCard(event)">`
+        + `<span class="rarer-senses-row-label">${count} rarer sense${count === 1 ? '' : 's'}</span></button>`);
 }
 
 // Give both providers the same optional cue area, after moving disclosures out.
@@ -10328,8 +10331,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '4322b7cb';
-const MODALS_ASSET_VERSION = '4322b7cb';
+const ASSET_VERSION = '81cf2f42';
+const MODALS_ASSET_VERSION = '81cf2f42';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
