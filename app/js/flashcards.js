@@ -957,6 +957,16 @@ function markCompactInactiveRows(root) {
     });
 }
 
+// An open section with a single sense row already shows that sense's
+// commonness in its head; the row's own meter would repeat it. Rows keep
+// meters only where a section has several senses that can differ.
+function markSingleSenseSections(root) {
+    root?.querySelectorAll('.pos-collapsible').forEach(section => {
+        const rows = section.querySelectorAll(':scope > .meaning-pos-rows > .meaning-row');
+        section.classList.toggle('is-single-sense', rows.length === 1);
+    });
+}
+
 // A card with one sense that is not Dominant has its other uses in Rarer uses.
 // Say so in the list, with their combined commonness, so the one label does
 // not look wrong on its own. Tapping it opens Rarer uses.
@@ -6765,13 +6775,15 @@ function renderCardWikipediaBadge(card) {
                 // Don't label genuine rare dictionary senses as "Unassigned"
                 const assignmentState = (!g.hasAssignedEvidence && !g.hasOnlyRareSenses)
                     ? '<span class="pos-pill-unassigned">Unassigned</span>'
-                    // A folded section still says how common it is.
+                    // The section head always says how common the sense is,
+                    // open or folded; a section with one sense shows it only
+                    // here (markSingleSenseSections hides the row's copy).
                     : (g.hasOnlyRareSenses
                         ? prominenceBadgeHTML({ label: 'Rare', key: 'rare' })
                         : (useProminenceLabels && g.pct > 0
                             ? prominenceBadgeHTML(prominenceInfoFromShare(g.mainMeanings)) : ''));
                 const collapsedSummary = open
-                    ? ''
+                    ? `${assignmentState}${pct}`
                     : `<span class="pos-section-summary">${summaryHTML}${extra}</span>${assignmentState}${pct}`;
                 // No known-tick here. A check mark on this row read as "you
                 // answered this", which is what the tick means everywhere else
@@ -8360,6 +8372,7 @@ function renderCardWikipediaBadge(card) {
         placeRowLeadMarks(renderedBack);
         arrangeSenseCueAreas(renderedBack);
         markCompactInactiveRows(renderedBack);
+        markSingleSenseSections(renderedBack);
         addRarerSensesRow(renderedBack, card);
         renderedBack._fluencyRenderedHTML = backHTML;
         bindGrammarPairChips(renderedBack);
