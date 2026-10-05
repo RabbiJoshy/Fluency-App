@@ -1,27 +1,27 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=e5b34a4e';
-import './speech.js?v=e5b34a4e';
-import { goToRoute, routeCodeFor } from './routes.js?v=e5b34a4e';
-import './side-dock.js?v=e5b34a4e';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=e5b34a4e';
+import './state.js?v=f1680a98';
+import './speech.js?v=f1680a98';
+import { goToRoute, routeCodeFor } from './routes.js?v=f1680a98';
+import './side-dock.js?v=f1680a98';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=f1680a98';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=e5b34a4e';
+} from './example-personalisation.js?v=f1680a98';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=e5b34a4e';
+} from './spanishdict-usage.js?v=f1680a98';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=e5b34a4e';
+} from './reverse-cues.js?v=f1680a98';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -54,7 +54,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=e5b34a4e';
+} from './card-metadata-pills.js?v=f1680a98';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -2782,6 +2782,7 @@ function advanceAfterFlag() {
         card.classList.remove('swipe-flag');
         card.style.transform = '';
 
+        if (stepToSplitSibling()) return;
         if (cardNavStack.length > 0) {
             navigateBack();
             return;
@@ -2856,6 +2857,7 @@ function handleSwipeAction(result) {
         }
 
         // If we're on a linked card (nav stack), go back instead of advancing
+        if (stepToSplitSibling()) return;
         if (cardNavStack.length > 0) {
             navigateBack();
             return;
@@ -2863,6 +2865,21 @@ function handleSwipeAction(result) {
 
         advanceToNextDeckCard();
     }, 300);
+}
+
+// A split word opened on its own (search, word link) shows Flashcard 1 of 2
+// first (splitAwareTempCard); moving on brings up 2 of 2 in the same slot
+// before the way back. The return button still leaves at once.
+function stepToSplitSibling() {
+    const next = flashcards[currentIndex]?._splitNext;
+    if (!next || cardNavStack.length === 0) return false;
+    flashcards[currentIndex] = next;
+    currentMeaningIndex = 0;
+    currentExampleIndex = 0;
+    currentMWEIndex = 0;
+    document.getElementById('flashcard')?.classList.remove('flipped');
+    updateCard({ announceHeadword: true });
+    return true;
 }
 
 // Plain forward step through the deck, shared by the ordinary swipe path and
@@ -9263,6 +9280,7 @@ function previousCard() {
 }
 
 function nextCard() {
+    if (stepToSplitSibling()) return;
     if (flashcards[currentIndex]?.isChainChild) return goToDeckCard(cardChainReturnIndex + 1);
     if (currentIndex < flashcards.length - 1) _navCard('next');
 }
@@ -10423,8 +10441,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'e5b34a4e';
-const MODALS_ASSET_VERSION = 'e5b34a4e';
+const ASSET_VERSION = 'f1680a98';
+const MODALS_ASSET_VERSION = 'f1680a98';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

@@ -1,6 +1,6 @@
 // Spotify OAuth PKCE + Web Playback SDK for in-browser playback.
 // Key functions: spotifyLogin(), spotifyPlayTrack(trackId, positionMs), isSpotifyConnected().
-import './state.js?v=e5b34a4e';
+import './state.js?v=f1680a98';
 
 const SPOTIFY_SCOPES = 'streaming user-modify-playback-state user-read-playback-state user-read-email user-read-private playlist-read-private playlist-read-collaborative';
 const _isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
