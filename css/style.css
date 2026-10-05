@@ -22610,17 +22610,10 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 
 /* Give source annotations one complete box instead of outlining an inline
    wrapper's line fragment beside a taller icon. */
-#cardTutorialStage .example-song-credit,
-#cardTutorialStage .replica-dictionary-source {
+#cardTutorialStage .example-song-credit {
     display: inline-flex;
     align-items: center;
     width: fit-content;
-}
-#cardTutorialStage .back-headword-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
 }
 #cardTutorialStage .example-source-chip.is-annotation-active {
     outline-offset: 5px;

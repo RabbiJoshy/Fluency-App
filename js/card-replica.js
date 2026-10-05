@@ -213,7 +213,6 @@ export const REPLICA_CARDS = {
     // release's own, sentence and translation unchanged. Dialogue title IDs are
     // preserved from the release; display titles come from source_titles.json.
     ptBancoSpeech: {
-        provider: 'Wiktionary',
         mode: 'speech', word: 'banco', pos: 'NOUN', lemma: 'banco', rank: 793, vocabSize: 10000, corpusCount: 103,
         defaultMeaningIndex: 1,
         meanings: [
@@ -599,7 +598,6 @@ export function renderBack(card, selectedIdx, exampleIdx) {
                     <div class="flip-back-area">
                         <div class="back-headword-row">
                             <span class="back-headword" style="font-size: 42px; font-weight: bold; line-height: 1.1;">${esc(card.word)}</span>
-                            ${card.provider ? `<span class="replica-dictionary-source">${replicaSourceChip(card.provider)}</span>` : ''}
                         </div>
                     </div>
                 </div>
