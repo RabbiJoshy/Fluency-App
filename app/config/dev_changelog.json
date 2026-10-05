@@ -2,6 +2,21 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-05T14:11:16+01:00",
+      "date": "2026-10-05 14:11 BST",
+      "agent": "Claude",
+      "summary": "Split-card note under the POS pills; info buttons outside shaded sub-rows; colour fixes; reinforcement follows the review queue",
+      "detail": [
+        "'Flashcard 1 of 2' sits directly under the lemma/POS pills, no underline; the other reading is greyed more clearly",
+        "'POS from x' pairs get their capsule back so the lemma reads as belonging to its pill; bare POS pills stay plain",
+        "Info buttons on grouped sub-rows now sit outside the shaded context area, as on single-sense rows",
+        "Rarer uses: example borders take the POS colour (a hard-coded teal overrode it); expression examples use the phrase purple, like the scrubber's phrase pip",
+        "Back of card: gear icon 28px; scrubber track no longer leaves a wide gap before the gear",
+        "Example reinforcement ranks sentences by words due in the review queue instead of words missed in the last 7 days"
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-05T13:56:26+01:00",
       "date": "2026-10-05 13:56 BST",
       "agent": "Claude",

@@ -6,7 +6,7 @@ import './speech.js?v=20260825ak';
 import { goToRoute, routeCodeFor } from './routes.js?v=20260923cj';
 import './side-dock.js?v=20260927pa';
 import {
-    collectRecentWrongWords,
+    collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
 } from './example-personalisation.js?v=20260825ak';
@@ -1127,20 +1127,23 @@ function computeLinesUnderstood(allowedEntryIds = null) {
     return { understood, total, pct: total > 0 ? (understood / total * 100) : 0 };
 }
 
-let _cachedWrongWordsEpoch = -1;
-let _cachedWrongWords = null;
-let _cachedWrongWordsTime = 0;
+let _cachedReviewWordsEpoch = -1;
+let _cachedReviewWords = null;
+let _cachedReviewWordsTime = 0;
 
-function getRecentWrongWords() {
+// The review queue, as a Set of surfaces, for example reinforcement. Built
+// once per progress change (and at most once a minute, since due times move
+// on by themselves), so ranking examples is a Set lookup per token.
+function getReinforcementWords() {
     const epoch = window.__progressEpoch || 0;
     const now = Date.now();
-    if (_cachedWrongWords && _cachedWrongWordsEpoch === epoch && (now - _cachedWrongWordsTime) < 60000) {
-        return _cachedWrongWords;
+    if (_cachedReviewWords && _cachedReviewWordsEpoch === epoch && (now - _cachedReviewWordsTime) < 60000) {
+        return _cachedReviewWords;
     }
-    _cachedWrongWords = collectRecentWrongWords(progressData, now);
-    _cachedWrongWordsEpoch = epoch;
-    _cachedWrongWordsTime = now;
-    return _cachedWrongWords;
+    _cachedReviewWords = collectReviewWords(window.getGlobalDueReviewWords?.() || []);
+    _cachedReviewWordsEpoch = epoch;
+    _cachedReviewWordsTime = now;
+    return _cachedReviewWords;
 }
 
 // Count "content" tokens after stripping ad-libs/brackets/parentheticals —
@@ -1628,7 +1631,7 @@ function exampleReinforcementScore(example, wrongWords) {
 }
 
 function sortExamplesByRelevance(examples) {
-    const wrongWords = getRecentWrongWords();
+    const wrongWords = getReinforcementWords();
     const scored = filterPersonalisedExamples(examples, wrongWords).map((ex, index) => ({
         ex,
         index,
@@ -1662,7 +1665,7 @@ function sortExamplesByRelevance(examples) {
 
 function dedupeExamples(examples) {
     const seen = new Set();
-    return filterPersonalisedExamples(examples, getRecentWrongWords()).filter(ex => {
+    return filterPersonalisedExamples(examples, getReinforcementWords()).filter(ex => {
         const key = (ex.target || ex.spanish || '').trim();
         if (!key || seen.has(key)) return false;
         seen.add(key);
@@ -4861,7 +4864,8 @@ function renderRareSenseGroups(rareItems) {
 // already says so. Only the owner-account source pill still earns a row.
 function renderPhraseRow(item) {
     const example = (item.examples || [])[0];
-    const exampleHTML = compactPhraseExampleHTML(example);
+    // Expressions share the phrase accent with the set scrubber's phrase pip.
+    const exampleHTML = compactPhraseExampleHTML(example, 'var(--accent-phrases-rgb)');
     const sourcePill = phraseSourcePillHTML(item);
     return `<div class="phrase-summary-item">
         ${sourcePill ? `<div class="phrase-badge-row">${sourcePill}</div>` : ''}
@@ -6105,18 +6109,12 @@ function renderCardWikipediaBadge(card) {
     const notableSurfaceRelation = getNotableSurfaceRelation(card);
     const frontSurfaceRelationEl = document.getElementById('frontSurfaceRelation');
     if (frontSurfaceRelationEl) {
-        if (card.splitInfo && !isFlipped && !flippedFrontMeanings) {
-            frontSurfaceRelationEl.className = 'surface-relation-cue front-surface-relation split-card-note';
-            frontSurfaceRelationEl.hidden = false;
-            frontSurfaceRelationEl.innerHTML = `<button type="button" class="split-card-note-toggle" aria-expanded="false" onclick="toggleSplitCardTip(event)">Flashcard ${card.splitInfo.index} of ${card.splitInfo.total}</button>`
-                + '<span class="split-card-tip" role="tooltip" hidden>This word has two common, unrelated uses, so it gets a flashcard for each. '
-                + 'Learning them separately keeps one meaning from crowding out the other. '
-                + 'You see both, one after the other.</span>';
-            const activePos = card.splitInfo.pos || card.partOfSpeech;
-            const posRgb = getPosAccentRgb(activePos);
-            frontSurfaceRelationEl.style.color = `rgb(${posRgb})`;
-            frontSurfaceRelationEl.style.borderColor = '';
-            frontSurfaceRelationEl.style.background = '';
+        if (card.splitInfo) {
+            // The "Flashcard 1 of 2" note sits under the POS pills instead
+            // (see the split branch of the front POS map).
+            frontSurfaceRelationEl.className = 'surface-relation-cue front-surface-relation';
+            frontSurfaceRelationEl.hidden = true;
+            frontSurfaceRelationEl.textContent = '';
         } else {
             frontSurfaceRelationEl.className = 'surface-relation-cue front-surface-relation';
             frontSurfaceRelationEl.style.color = '';
@@ -6311,8 +6309,15 @@ function renderCardWikipediaBadge(card) {
                     renderSplitPill(card2Pair, 2, s.index === 2)
                 ].join('');
 
+                const noteRgb = getPosAccentRgb(s.pos || card.partOfSpeech);
+                const splitNoteHTML = `<div class="split-card-note" style="color: rgb(${noteRgb});">`
+                    + `<button type="button" class="split-card-note-toggle" aria-expanded="false" onclick="toggleSplitCardTip(event)">Flashcard ${s.index} of ${s.total}</button>`
+                    + '<span class="split-card-tip" role="tooltip" hidden>This word has two common, unrelated uses, so it gets a flashcard for each. '
+                    + 'Learning them separately keeps one meaning from crowding out the other. '
+                    + 'You see both, one after the other.</span></div>';
+
                 frontPOSEl.classList.add('is-lemma-map', 'pos-count-2', 'is-split-deck-map');
-                frontPOSEl.innerHTML = splitPairsHTML;
+                frontPOSEl.innerHTML = splitPairsHTML + splitNoteHTML;
             } else {
                 frontPOSEl.classList.add('is-lemma-map', `pos-count-${Math.min(pairs.length, 4)}`);
                 if (pairs.length > 4) frontPOSEl.classList.add('pos-count-many');
