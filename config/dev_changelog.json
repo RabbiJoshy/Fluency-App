@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-05T18:59:30+01:00",
+      "date": "2026-10-05 18:59 BST",
+      "agent": "Codex",
+      "summary": "Import known words is available for every language",
+      "detail": [
+        "Enable import in Settings, progress and placement for all signed-in learners",
+        "Match against the selected language’s Speech deck and save its language and card IDs",
+        "Accept current surface card IDs and preserve exact accents, preview and repeat-import behaviour"
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-05T14:52:50+01:00",
       "date": "2026-10-05 14:52 BST",
       "agent": "Codex",

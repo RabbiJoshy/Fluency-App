@@ -1,4 +1,4 @@
-// Pure parsing and merge helpers for the Spanish Speech vocabulary importer.
+// Pure parsing and merge helpers for the Speech vocabulary importer.
 // This module deliberately has no browser/app imports so its identity and
 // timestamp rules can be exercised directly in Node.
 
@@ -9,8 +9,8 @@ const LEMMA_HEADERS = new Set(['lemma', 'headword']);
 const CORRECT_HEADERS = new Set(['last_correct', 'lastcorrect']);
 const WRONG_HEADERS = new Set(['last_incorrect', 'lastincorrect', 'last_wrong', 'lastwrong']);
 
-export function normalizeImportedSurface(value) {
-    return String(value ?? '').trim().normalize('NFC').toLocaleLowerCase('es');
+export function normalizeImportedSurface(value, languageCode = 'es') {
+    return String(value ?? '').trim().normalize('NFC').toLocaleLowerCase(languageCode);
 }
 
 function normalizeHeader(value) {
@@ -87,7 +87,7 @@ export function parseVocabularyImport(text) {
                 lastWrong: ''
             }))
             .filter(row => row.surface);
-        if (!rows.length) throw new Error('Paste at least one Spanish surface form.');
+        if (!rows.length) throw new Error('Paste at least one surface form.');
         return { format: 'text', rows };
     }
 
@@ -175,7 +175,7 @@ function mergeProgress(existing, imported) {
     }
     return {
         word: imported.word,
-        language: 'spanish',
+        language: imported.language,
         correct: Math.max(normalizedCount(current.correct), normalizedCount(imported.correct), 1),
         wrong: Math.max(normalizedCount(current.wrong), normalizedCount(imported.wrong)),
         lastCorrect: finalLastCorrect,
@@ -186,11 +186,13 @@ function mergeProgress(existing, imported) {
 }
 
 export function buildVocabularyImportPlan(parsed, vocabularyIndex, existingProgress = {}, options = {}) {
+    const language = options.language || 'spanish';
+    const languageCode = options.languageCode || (language === 'spanish' ? 'es' : language.slice(0, 2));
     const now = Number.isFinite(Number(options.now)) ? Number(options.now) : Date.now();
     const nowIso = new Date(now).toISOString();
     const bySurface = new Map();
     for (const entry of vocabularyIndex || []) {
-        const surface = normalizeImportedSurface(entry?.word);
+        const surface = normalizeImportedSurface(entry?.word, languageCode);
         if (!surface) continue;
         if (!bySurface.has(surface)) bySurface.set(surface, []);
         bySurface.get(surface).push(entry);
@@ -200,7 +202,7 @@ export function buildVocabularyImportPlan(parsed, vocabularyIndex, existingProgr
     const invalid = [];
     let duplicateCount = 0;
     for (const row of parsed?.rows || []) {
-        const surface = normalizeImportedSurface(row.surface);
+        const surface = normalizeImportedSurface(row.surface, languageCode);
         if (!surface) {
             invalid.push({ ...row, reason: 'Missing surface form.' });
             continue;
@@ -233,16 +235,17 @@ export function buildVocabularyImportPlan(parsed, vocabularyIndex, existingProgr
             unmatched.push({ surface: input.sourceSurface, lines: input.lines });
             continue;
         }
-        if (matches.length !== 1 || !/^[0-9a-f]{8}$/.test(String(matches[0].id || ''))) {
+        if (matches.length !== 1 || !String(matches[0].id || '').trim()) {
             ambiguous.push({ surface: input.sourceSurface, lines: input.lines });
             continue;
         }
         const card = matches[0];
-        const itemId = `es0${card.id}`;
+        const itemId = `${languageCode}0${card.id}`;
         const importedLastCorrect = input.hasUndatedRow ? nowIso : input.lastCorrect;
         const importedLastWrong = input.lastWrong;
         const imported = {
             word: card.word,
+            language,
             correct: 1,
             wrong: importedLastWrong ? 1 : 0,
             lastCorrect: importedLastCorrect,
@@ -286,7 +289,7 @@ export function buildImportBulkChunks(plan, user, chunkSize = IMPORT_CHUNK_SIZE)
         itemType: 'word',
         mode: 'normal',
         label: entry.surface,
-        language: 'spanish',
+        language: entry.progress.language,
         correct: entry.progress.correct,
         wrong: entry.progress.wrong,
         lastCorrect: entry.progress.lastCorrect,
