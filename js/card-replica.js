@@ -205,35 +205,144 @@ export const REPLICA_CARDS = {
             },
         ],
     },
-    // The Portuguese tutorial card, replacing `tem`, whose four senses, grammar
-    // pills and cross-reference made a first card too busy to read. Read out
-    // of the live release (pt-speech-v23-10000x30-slim): rank 793, 103 per
-    // million; of 30 assigned sentences 26 are the bank and 3 the bench (the
-    // one left over is a third, rarer sense not shown). Examples are the
-    // release's own, sentence and translation unchanged. Dialogue title IDs are
-    // preserved from the release; display titles come from source_titles.json.
-    ptBancoSpeech: {
-        mode: 'speech', word: 'banco', pos: 'NOUN', lemma: 'banco', rank: 793, vocabSize: 10000, corpusCount: 103,
-        defaultMeaningIndex: 1,
-        meanings: [
+    // Portuguese learner tutorial: three distinct uses of provar and fourteen
+    // curated examples from pt-speech-v23-10000x30-slim, unchanged. The live
+    // release assigns 22 examples to prove, four to taste and two to try on;
+    // shares are relative to those three displayed senses. The general "try
+    // out" sense is omitted because its examples overlap the clothing sense.
+    // IMDb titles are resolved from the shipped source_titles.json mapping.
+    ptProvarSpeech: {
+        "mode": "speech",
+        "word": "provar",
+        "pos": "VERB",
+        "lemma": "provar",
+        "rank": 1165,
+        "vocabSize": 10000,
+        "corpusCount": 74.556751,
+        "defaultMeaningIndex": 0,
+        "meanings": [
             {
-                pos: 'NOUN', translation: 'bench', context: 'long seat', pct: 10,
-                metadata: [{ short: 'masc.', full: 'masculine', family: 'grammar' }],
-                examples: [
-                    { target: 'Ele estava sentado num banco com os olhos fechados.', english: 'He was sitting on a bench with his eyes closed.', sourceLabel: 'Tatoeba example' },
-                    { target: 'Por que você pintou o banco de vermelho?', english: 'Why did you paint the bench red?', sourceLabel: 'Tatoeba example' },
+                "pos": "VERB",
+                "translation": "to prove",
+                "context": "show that something is true",
+                "pct": 78.57142857142857,
+                "metadata": [
+                    {
+                        "short": "tr.",
+                        "full": "transitive: used with an object",
+                        "family": "construction"
+                    }
                 ],
+                "examples": [
+                    {
+                        "target": "Tens de me ajudar a provar que estou inocente.",
+                        "english": "I need you to help me prove that I'm innocent.",
+                        "sourceLabel": "IMDb",
+                        "titleId": "5273862",
+                        "sourceTitle": "Power · S3 E7"
+                    },
+                    {
+                        "target": "Você não precisa provar nada para mim.",
+                        "english": "You don't need to prove anything to me.",
+                        "sourceLabel": "Tatoeba example"
+                    },
+                    {
+                        "target": "Eu posso provar que tenho razão.",
+                        "english": "I can prove that I am right.",
+                        "sourceLabel": "Tatoeba example"
+                    },
+                    {
+                        "target": "Pode provar que estou errado?",
+                        "english": "Can you prove I'm wrong?",
+                        "sourceLabel": "Tatoeba example"
+                    },
+                    {
+                        "target": "Eu posso provar isso.",
+                        "english": "I can prove it.",
+                        "sourceLabel": "Tatoeba example"
+                    },
+                    {
+                        "target": "Você pode provar isso?",
+                        "english": "Can you prove that?",
+                        "sourceLabel": "Tatoeba example"
+                    },
+                    {
+                        "target": "Não o vou deixar em paz até o conseguir provar.",
+                        "english": "I'm not letting you alone until I prove it.",
+                        "sourceLabel": "IMDb",
+                        "titleId": "4172404",
+                        "sourceTitle": "The Mentalist · S7 E6"
+                    },
+                    {
+                        "target": "Sempre tive de provar que sou bom.",
+                        "english": "I've always had to prove I'm good enough.",
+                        "sourceLabel": "IMDb",
+                        "titleId": "5521456",
+                        "sourceTitle": "Avengers Assemble · S3 E2"
+                    }
+                ]
             },
             {
-                pos: 'NOUN', translation: 'bank', context: 'financial institution', pct: 90,
-                metadata: [{ short: 'masc.', full: 'masculine', family: 'grammar' }],
-                examples: [
-                    { target: 'Nem sequer sabia que havia ali um banco.', english: "I didn't even know there was a bank there.", sourceLabel: 'IMDb', titleId: '4743562', sourceTitle: 'The Last Heist (2016)' },
-                    { target: 'Por que você não vai a um banco?', english: "Why don't you go to a bank?", sourceLabel: 'Tatoeba example' },
-                    { target: 'Achas que talvez tenha sido alguém do banco?', english: 'You think maybe it was someone at the bank?', sourceLabel: 'IMDb', titleId: '6129120', sourceTitle: 'Imposters · S1 E5' },
+                "pos": "VERB",
+                "translation": "to taste; to try",
+                "context": "food",
+                "pct": 14.285714285714285,
+                "metadata": [
+                    {
+                        "short": "tr.",
+                        "full": "transitive: used with an object",
+                        "family": "construction"
+                    }
                 ],
+                "examples": [
+                    {
+                        "target": "Que tal provar um pouco de sushi?",
+                        "english": "How about trying some sushi?",
+                        "sourceLabel": "Tatoeba example"
+                    },
+                    {
+                        "target": "Parece delicioso. Acho que vou provar algum.",
+                        "english": "Looks delicious. Think I'll try some.",
+                        "sourceLabel": "Tatoeba example"
+                    },
+                    {
+                        "target": "Isso parece delicioso. Gostaria de provar.",
+                        "english": "That looks delicious. I'd like to try it.",
+                        "sourceLabel": "Tatoeba example"
+                    },
+                    {
+                        "target": "Quando você provar, vai achar toda esta comida excelente e muito nutritiva.",
+                        "english": "When you taste it, you will find all this food excellent and very nourishing.",
+                        "sourceLabel": "Tatoeba example"
+                    }
+                ]
             },
-        ],
+            {
+                "pos": "VERB",
+                "translation": "to try on",
+                "context": "clothes",
+                "pct": 7.142857142857142,
+                "metadata": [
+                    {
+                        "short": "tr.",
+                        "full": "transitive: used with an object",
+                        "family": "construction"
+                    }
+                ],
+                "examples": [
+                    {
+                        "target": "Eu gostaria de provar este vestido.",
+                        "english": "I'd like to try on this dress.",
+                        "sourceLabel": "Tatoeba example"
+                    },
+                    {
+                        "target": "Gostaria de provar um tamanho menor que este.",
+                        "english": "I'd like to try on one size smaller than this.",
+                        "sourceLabel": "Tatoeba example"
+                    }
+                ]
+            }
+        ]
     },
     queSpeech: {
         mode: 'speech', word: 'que', pos: 'CCONJ', lemma: 'que', rank: 1, vocabSize: 6000, corpusCount: 33170,

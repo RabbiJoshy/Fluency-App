@@ -12,7 +12,7 @@
 
 import {
     REPLICA_CARDS, esc, renderBack, replicaCardHTML, wireReplicaBack, fitReplicaCard,
-} from './card-replica.js?v=f1680a98';
+} from './card-replica.js?v=55ca5fe1';
 
 
 // Each language selects its own representative card and dictionary wording.
@@ -20,7 +20,7 @@ import {
 // and one adapter entry instead of a forked tutorial.
 const TUTORIAL_LANGUAGE_ADAPTERS = {
     spanish: { language: 'Spanish', flag: '🇪🇸', speechCard: 'queSpeech', provider: 'SpanishDict', lyrics: true, usageShares: true },
-    portuguese: { language: 'Portuguese', flag: '🇵🇹', speechCard: 'ptBancoSpeech', provider: 'Wiktionary', lyrics: false, usageShares: true },
+    portuguese: { language: 'Portuguese', flag: '🇵🇹', speechCard: 'ptProvarSpeech', provider: 'Wiktionary', lyrics: false, usageShares: true },
     czech: { language: 'Czech', flag: '🇨🇿', speechCard: 'jeSpeech', provider: 'Wiktionary', lyrics: false, usageShares: true },
     french: { language: 'French', flag: '🇫🇷', speechCard: 'deSpeech', provider: 'Wiktionary', lyrics: false },
 };
@@ -51,7 +51,8 @@ function tutorialText(value) {
     const adapter = tutorialAdapter();
     return String(value || '')
         .replaceAll('{language}', adapter.language)
-        .replaceAll('{provider}', adapter.provider);
+        .replaceAll('{provider}', adapter.provider)
+        .replace(/\bTap\b/g, isMobileTutorial() ? 'Tap' : 'Click');
 }
 
 // The stored key names predate the tutorial/walkthrough split. Renaming them
@@ -116,7 +117,7 @@ const TUTORIAL_DECKS = [
                         anchor: '.meanings-scroll .meaning-row:nth-child(2)',
                         title: 'Tap a meaning to change the lyric',
                         text: 'On a Speech card the example changes too — but here it switches to a completely different song line.',
-                        interactive: true,
+                        actionHint: 'Click another meaning on the card',
                     },
                     {
                         side: 'left',
@@ -135,14 +136,14 @@ const TUTORIAL_DECKS = [
                         anchor: '.spotify-btn',
                         title: 'Play the line',
                         text: 'Plays that moment in your own Spotify. Spotify Premium required.',
-                        interactive: true,
+                        actionHint: 'Click the Spotify button on the card',
                     },
                     {
                         side: 'right',
                         anchor: '.example-ticks',
                         title: 'More examples',
                         text: 'If this meaning has more than one example, tap the lyric to see the next one.',
-                        interactive: true,
+                        actionHint: 'Click the sentence on the card for another example',
                     },
                 ],
             },
@@ -169,8 +170,8 @@ const TUTORIAL_DECKS = [
         faces: {
             back: {
                 title: 'The back of the card',
-                blurb: 'The back shows every meaning, how common each one is, and a real '
-                     + 'example from spoken {language}.',
+                blurb: 'The back shows the meanings, how common each one is, and a real '
+                     + 'example in {language}.',
                 notes: [
                     {
                         side: 'left',
@@ -182,15 +183,15 @@ const TUTORIAL_DECKS = [
                         side: 'left',
                         anchor: '.pos-section-head',
                         title: 'The meanings at a glance',
-                        text: 'The most common meanings come first. Tap the heading to open or close the group.',
-                        interactive: true,
+                        text: 'Meanings are grouped by part of speech, with the most common first.',
+                        actionHint: 'Click the highlighted heading on the card',
                     },
                     {
                         side: 'left',
                         anchor: '.meaning-row.is-current-sense',
                         title: 'The meaning you tapped',
                         text: 'The selected row shows the full wording. The others stay short so the card stays readable.',
-                        interactive: true,
+                        actionHint: 'Click another meaning on the card',
                     },
                     {
                         side: 'left',
@@ -203,8 +204,8 @@ const TUTORIAL_DECKS = [
                         side: 'right',
                         anchor: '.meaning-row.is-current-sense > .sense-note-trigger',
                         title: 'Useful extras',
-                        text: 'Tap the information icon for grammar, usage notes, and other details about this meaning.',
-                        interactive: true,
+                        text: 'Grammar, usage notes, and other details about this meaning are behind the information icon.',
+                        actionHint: 'Click the highlighted information icon on the card',
                     },
                     {
                         side: 'right',
@@ -215,9 +216,10 @@ const TUTORIAL_DECKS = [
                     },
                     {
                         side: 'right',
-                        anchor: '.example-word-highlight',
+                        anchor: '.sentence',
                         title: 'A real example',
-                        text: 'Tap a different meaning and this sentence changes to match it.',
+                        text: 'Each sentence matches the selected meaning. You can also cycle through several examples of the same meaning.',
+                        actionHint: 'Click the sentence on the card for another example',
                     },
                     {
                         side: 'right',
@@ -529,7 +531,8 @@ function fitCardToPhone(inner, height) {
         return;
     }
     const top = inner.getBoundingClientRect().top - body.getBoundingClientRect().top + body.scrollTop;
-    const room = window.innerHeight - PHONE_COACH_RESERVE - top;
+    const coachHeight = document.getElementById('cardTutorialMobileCoach')?.getBoundingClientRect().height || 0;
+    const room = window.innerHeight - Math.max(PHONE_COACH_RESERVE, coachHeight + 24) - top;
     const scale = Math.max(PHONE_MIN_CARD_SCALE, Math.min(1, room / height));
     inner.style.setProperty('--replica-card-scale', scale.toFixed(3));
 }
@@ -566,8 +569,17 @@ function setActiveNote(index) {
     // screen has once its rows wrap. Rather than clip it, bring whatever is
     // being explained into view inside its own scroll region. `nearest` keeps
     // this to the smallest scroll that works and never moves the page.
-    if (active) active.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    if (active) {
+        const rows = active.closest('.meaning-pos-rows');
+        const group = rows?.closest('.meaning-pos-section');
+        if (group && !group.classList.contains('is-open')) {
+            group.classList.add('is-open');
+            group.querySelector('.pos-section-head')?.setAttribute('aria-expanded', 'true');
+        }
+        active.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    }
     renderMobileCoach();
+    if (isMobileTutorial()) fitCardToContent();
     syncContinueButton();
     scheduleNextHint();
 }
@@ -609,8 +621,8 @@ function renderMobileCoach() {
     document.getElementById('cardTutorialMobileProgress').textContent =
         `Step ${progress.current} of ${progress.total} · ${state.flipped ? 'back of card' : 'front of card'}`;
     document.getElementById('cardTutorialMobileTitle').innerHTML =
-        `${esc(note.title)}${note.interactive ? '<span class="card-tutorial-try">tap it</span>' : ''}`;
-    document.getElementById('cardTutorialMobileText').innerHTML = tutorialText(note.text);
+        esc(note.title);
+    document.getElementById('cardTutorialMobileText').innerHTML = `${tutorialText(note.text)}${actionHintHTML(note)}`;
     const back = document.getElementById('cardTutorialMobileBack');
     const next = document.getElementById('cardTutorialMobileNext');
     back.hidden = state.stepIndex === 0 && index === 0;
@@ -659,12 +671,19 @@ function renderFaceCopy() {
         </p>`;
 }
 
+function actionHintHTML(note) {
+    if (!note.actionHint) return '';
+    const instruction = isMobileTutorial() ? note.actionHint.replace(/^Click /, 'Tap ') : note.actionHint;
+    return `<span class="card-tutorial-action-hint">${esc(instruction)}.</span>`;
+}
+
 function noteHTML(note, index) {
     return `
         <li class="card-tutorial-note" data-note="${index}">
             <div>
-                <strong>${note.title}${note.interactive ? '<span class="card-tutorial-try">try it</span>' : ''}</strong>
+                <strong>${note.title}</strong>
                 <span>${tutorialText(note.text)}</span>
+                ${actionHintHTML(note)}
             </div>
         </li>`;
 }
@@ -765,7 +784,7 @@ const TUTORIAL_BREAKS = {
         eyebrow: 'The other way to study',
         title: 'Lyrics mode',
         lead: 'Everything you have just seen works the same way with music. '
-            + 'You pick an artist, and Fluency builds a deck from the words they '
+            + 'You pick an artist, and this app builds a deck from the words they '
             + 'actually sing.',
         points: [
             {
