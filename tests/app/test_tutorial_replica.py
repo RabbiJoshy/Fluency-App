@@ -33,6 +33,9 @@ assert(back.includes('Information about this meaning'));
 assert(!back.includes('replica-dictionary-source'));
 assert(!back.includes('example-source-favicon--wikipedia'));
 assert(!back.includes('meaning-row-check'));
+assert(!back.includes('>tr.</span>'));
+assert(back.includes('meaning-row-sub sense-cue-area'));
+assert(!back.includes('· show that something is true'));
 for (const [index, meaning] of card.meanings.entries()) {
   for (let example = 0; example < meaning.examples.length; example++) {
     const html = renderBack(card, index, example);

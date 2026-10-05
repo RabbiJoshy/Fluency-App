@@ -151,7 +151,6 @@ const TUTORIAL_DECKS = [
                         anchor: '.pos-section-head',
                         title: 'The meanings at a glance',
                         text: 'Meanings are grouped by part of speech, with the most common first.',
-                        actionHint: 'Click the highlighted heading on the card',
                     },
                     {
                         side: 'left',

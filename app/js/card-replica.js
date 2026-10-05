@@ -4,7 +4,7 @@
 // are for different people:
 //
 //   * tutorial.js     — for LEARNERS. Guided, one element at a time, starts
-//                       from the setup screen. Opened by "?" and first run.
+//                       on the selected mode’s card. Opened by "?" and first run.
 //   * walkthrough.js  — for VISITORS (employers, anyone being shown the app).
 //                       Two screens, whole faces labelled at once. Opened from
 //                       About, which links it and never embeds the tutorial.
@@ -560,12 +560,13 @@ function replicaMetadata(meaning, selected) {
     const softRegister = new Set(['broadly', 'especially', 'figuratively', 'literally', 'metonymically', 'mildly', 'often', 'possibly', 'sometimes', 'specifically', 'standard', 'usually']);
     const isSupporting = item => item.family === 'functional'
         || (item.family === 'register' && softRegister.has(item.short.toLocaleLowerCase('en')));
-    const primary = meaning.metadata.filter(item => item.family !== 'grammar' && !isSupporting(item));
+    const primary = meaning.metadata.filter(item => item.family !== 'grammar' && item.short !== 'tr.' && !isSupporting(item));
     const grammar = meaning.metadata.filter(item => item.family === 'grammar');
     const primaryHTML = primary.length
         ? `<span class="sense-metadata-tier sense-metadata-tier--primary">${renderItems(primary, true)}</span>` : '';
     const grammarHTML = grammar.length
         ? `<span class="sense-metadata-tier sense-metadata-tier--grammar">${renderItems(grammar, false)}</span>` : '';
+    if (!primaryHTML && !grammarHTML) return '';
     return `<span class="sense-metadata-list" aria-label="Sense information">${primaryHTML}${grammarHTML}</span>`;
 }
 
@@ -596,7 +597,7 @@ function renderMeaningRows(card, selectedIdx) {
         const bg = 'rgba(var(--sense-match-rgb), 0.10)';
         const textColor = 'var(--text-primary)';
         const ctx = m.context
-            ? ` <span class="meaning-context">· ${esc(m.context)}</span>`
+            ? `<span class="meaning-row-sub sense-cue-area" style="text-align: center; width: 100%;"><span class="meaning-context">${esc(m.context)}</span></span>`
             : '';
         const prominence = replicaProminence(m.pct);
         const pct = prominence
@@ -605,10 +606,11 @@ function renderMeaningRows(card, selectedIdx) {
                 : `<button type="button" class="replica-pct sense-prominence-badge prominence-${esc(prominence.key)}" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%);">${esc(prominence.label)}</button>`)
             : '';
         return `
-            <div class="meaning-row meaning-row-regular${isSelected ? ' selected is-current-sense' : ''}" data-meaning-index="${idx}" style="position: relative; display: grid; grid-template-columns: 1fr; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${bg}; border-radius: 8px; cursor: pointer; min-height: 39px;">
+            <div class="meaning-row meaning-row-regular${isSelected ? ' selected is-current-sense' : ''}" data-meaning-index="${idx}" style="position: relative; display: grid; grid-template-columns: 1fr; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${bg}; border-radius: 8px; cursor: pointer; min-height: 44px;">
                 ${replicaSenseNote(m, isSelected)}
                 <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: stretch; justify-content: center; min-width: 0; padding: 0 ${prominence ? '32px' : '8px'} 0 8px;">
-                    <span class="meaning-row-translation row-adaptive-text" style="font-weight: ${isSelected ? 700 : 500}; color: ${textColor}; text-align: center; width: 100%;">${replicaSenseText(m, isSelected)}${ctx}</span>
+                    <span class="meaning-row-translation row-adaptive-text" style="font-weight: ${isSelected ? 700 : 500}; color: ${textColor}; text-align: center; width: 100%;">${replicaSenseText(m, isSelected)}</span>
+                    ${ctx}
                     ${replicaMetadata(m, isSelected)}
                 </div>
                 ${pct}

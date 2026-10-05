@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-05T22:31:49+01:00",
+      "date": "2026-10-05 22:31 BST",
+      "agent": "Codex",
+      "summary": "Make tutorial explanations easier to read and match real card context styling",
+      "detail": [
+        "Removed the purple tr. badge and the instruction to click the meaning heading.",
+        "Example contexts use the real card’s shaded cue areas.",
+        "Desktop explanation titles, body text, Back/Next buttons and progress count are larger and brighter."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-05T22:23:59+01:00",
       "date": "2026-10-05 22:23 BST",
       "agent": "Claude",
@@ -355,31 +367,6 @@
         "Adopted dynamic POS-accent coloring for active split pill highlighting and the front 'Card 1 of 2' note.",
         "Removed internal 1/2 and 2/2 tags from pills and removed 'Card 2 of 2' badge from the back of the card.",
         "Updated set scrubber to label split companion cards with letter suffixes (e.g. 7A, 7B)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-04T14:26:00+01:00",
-      "date": "2026-10-04 14:26 BST",
-      "agent": "Antigravity",
-      "summary": "Deterministic dictionary-attested pronominal card splitting across languages.",
-      "detail": [
-        "Replaced hardcoded RADICAL_REFLEXIVE_ROOTS whitelist with deterministic root pairing between base and attested pronominal headwords.",
-        "Automatically enables split companion cards for verbs with distinct pronominal semantics (e.g. hacer/hacerse, fazer/fazer-se) without manual lists.",
-        "Preserved Class 1 homograph and Class 2 reflexive parity across Python and JavaScript runtimes with complete test coverage."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-03T22:08:00+01:00",
-      "date": "2026-10-03 22:08 BST",
-      "agent": "Antigravity",
-      "summary": "Streamlined polysemous split cards: clean 'from [lemma]' pills, concise 'Card 1 of 2' labels, and removed back redundancy.",
-      "detail": [
-        "Prefixed lemmas differing from card surface form with a clean 'from ' label in front POS pills, avoiding confusing linguistic jargon.",
-        "Simplified split card note to 'Card 1 of 2' and labeled active vs companion pill capsules with '1/2' and '2/2'.",
-        "Unified all badges and tags to standard reading typography (--font-reading) without monospaced fonts.",
-        "Removed redundant companion footer box on card back, keeping a single clean header badge."
       ],
       "commit": "pending"
     }
