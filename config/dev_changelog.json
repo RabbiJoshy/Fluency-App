@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-05T23:22:47+01:00",
+      "date": "2026-10-05 23:22 BST",
+      "agent": "Claude",
+      "summary": "Remove the '+N' chip on folded senses",
+      "detail": [
+        "Folded senses no longer show a '+N' chip; tapping a folded sense makes it the current one, which shows its sub-rows",
+        "The current sense never folds"
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-05T23:18:37+01:00",
       "date": "2026-10-05 23:18 BST",
       "agent": "Claude",

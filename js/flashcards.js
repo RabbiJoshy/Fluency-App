@@ -1,27 +1,27 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=51dabc3f';
-import './speech.js?v=51dabc3f';
-import { goToRoute, routeCodeFor } from './routes.js?v=51dabc3f';
-import './side-dock.js?v=51dabc3f';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=51dabc3f';
+import './state.js?v=4322b7cb';
+import './speech.js?v=4322b7cb';
+import { goToRoute, routeCodeFor } from './routes.js?v=4322b7cb';
+import './side-dock.js?v=4322b7cb';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=4322b7cb';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=51dabc3f';
+} from './example-personalisation.js?v=4322b7cb';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=51dabc3f';
+} from './spanishdict-usage.js?v=4322b7cb';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=51dabc3f';
+} from './reverse-cues.js?v=4322b7cb';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -54,7 +54,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=51dabc3f';
+} from './card-metadata-pills.js?v=4322b7cb';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -1003,13 +1003,6 @@ function arrangeSenseCueAreas(root) {
         cues.className = 'sense-cue-area sense-cue-group';
         cues.append(...cells);
         body.append(cues);
-        // Shown only while sub-rows are folded to fit (collapseSubsensesToFit).
-        const folded = cells.filter(cell => !cell.classList.contains('is-active-subsense')).length;
-        const shared = body.querySelector('.group-card-shared');
-        if (folded > 0 && shared) {
-            shared.insertAdjacentHTML('beforeend',
-                `<button type="button" class="subsense-more" aria-label="Show ${folded} more" onclick="expandSubsenseGroup(event)">+${folded}</button>`);
-        }
     });
 }
 
@@ -1062,25 +1055,17 @@ function availableHeightForMeaningScroll(backEl, scroll) {
         - (parseFloat(backStyle.paddingTop) || 0) - (parseFloat(backStyle.paddingBottom) || 0);
 }
 
-// When two or more senses would need scrolling, grouped senses fold to their
-// main row so every sense shows at once: the other senses first, then, only if
-// that is not enough, the current one (keeping the sub-row its example belongs
-// to). A "+N" chip opens one group in place. A lone sense never folds; there
-// is nothing else to bring into view.
+// When two or more senses would need scrolling, the other grouped senses fold
+// to their main row so every sense shows at once. The current sense always
+// keeps its sub-rows; tapping a folded sense makes it the current one. A lone
+// sense never folds; there is nothing else to bring into view.
 function collapseSubsensesToFit(scroll, available) {
-    scroll.classList.remove('collapse-subsenses', 'collapse-current-subsenses');
+    scroll.classList.remove('collapse-subsenses');
     const senseRows = [...scroll.querySelectorAll('.meaning-row')]
         .filter(row => !row.closest('.pos-collapsible:not(.is-open)'));
     if (senseRows.length < 2 || scroll.scrollHeight <= available + 1) return;
     if (!scroll.querySelector('.sense-cue-group')) return;
     scroll.classList.add('collapse-subsenses');
-    if (scroll.scrollHeight > available + 1) scroll.classList.add('collapse-current-subsenses');
-}
-
-function expandSubsenseGroup(event) {
-    event.stopPropagation();
-    event.currentTarget.closest('.meaning-row-group')?.classList.add('is-expanded');
-    refitMeaningScroll();
 }
 
 // Disclosures change row height without rendering the card again. Release the
@@ -10111,7 +10096,6 @@ window.toggleMorphPopover = toggleMorphPopover;
 window.toggleMorphAlternatives = toggleMorphAlternatives;
 window.toggleFrontProductionHint = toggleFrontProductionHint;
 window.toggleSplitCardTip = toggleSplitCardTip;
-window.expandSubsenseGroup = expandSubsenseGroup;
 window.focusKnowledgeCardItem = focusKnowledgeCardItem;
 window.selectGroup = selectGroup;
 window.previousCard = previousCard;
@@ -10344,8 +10328,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '51dabc3f';
-const MODALS_ASSET_VERSION = '51dabc3f';
+const ASSET_VERSION = '4322b7cb';
+const MODALS_ASSET_VERSION = '4322b7cb';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

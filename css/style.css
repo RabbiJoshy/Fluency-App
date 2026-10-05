@@ -21994,28 +21994,8 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 .split-card-tip[hidden] { display: none; }
 
 /* Senses that would need scrolling fold their sub-rows (collapseSubsensesToFit):
-   a folded group shows its main row, plus the current sub-row if it has one,
-   and a "+N" chip that opens it. Other senses fold first; the current one
-   only under .collapse-current-subsenses. */
-.subsense-more { display: none; }
-.meanings-scroll.collapse-subsenses .meaning-row-group:not(.selected):not(.is-expanded) .sense-cue-group > .group-card-varying-cell:not(.is-active-subsense),
-.meanings-scroll.collapse-current-subsenses .meaning-row-group.selected:not(.is-expanded) .sense-cue-group > .group-card-varying-cell:not(.is-active-subsense) { display: none !important; }
-.meanings-scroll.collapse-subsenses .meaning-row-group:not(.selected):not(.is-expanded) .sense-cue-group:not(:has(> .is-active-subsense)),
-.meanings-scroll.collapse-current-subsenses .meaning-row-group.selected:not(.is-expanded) .sense-cue-group:not(:has(> .is-active-subsense)) { display: none !important; }
-.meanings-scroll.collapse-subsenses .meaning-row-group:not(.selected):not(.is-expanded) .subsense-more,
-.meanings-scroll.collapse-current-subsenses .meaning-row-group.selected:not(.is-expanded) .subsense-more {
-  display: inline-flex;
-  align-items: center;
-  margin-left: 8px;
-  padding: 2px 8px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 80%, transparent);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--bg-tertiary) 82%, transparent);
-  color: var(--text-secondary);
-  font: 650 12.5px/1.2 var(--font-reading);
-  vertical-align: middle;
-  cursor: pointer;
-}
+   every sense but the current one shows only its main row. */
+.meanings-scroll.collapse-subsenses .meaning-row-group:not(.selected) .sense-cue-group { display: none !important; }
 
 /* Give source annotations one complete box instead of outlining an inline
    wrapper's line fragment beside a taller icon. */
@@ -22189,10 +22169,8 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 }
 /* Sub-rows with their own meters: while folded, one total stands in for them. */
 .pct-column .pct-group-total { display: none; }
-.meanings-scroll.collapse-subsenses .meaning-row-group:not(.selected):not(.is-expanded) .pct-column .sense-prominence-cell,
-.meanings-scroll.collapse-current-subsenses .meaning-row-group.selected:not(.is-expanded) .pct-column .sense-prominence-cell { display: none !important; }
-.meanings-scroll.collapse-subsenses .meaning-row-group:not(.selected):not(.is-expanded) .pct-column .pct-group-total,
-.meanings-scroll.collapse-current-subsenses .meaning-row-group.selected:not(.is-expanded) .pct-column .pct-group-total { display: flex; }
+.meanings-scroll.collapse-subsenses .meaning-row-group:not(.selected) .pct-column .sense-prominence-cell { display: none !important; }
+.meanings-scroll.collapse-subsenses .meaning-row-group:not(.selected) .pct-column .pct-group-total { display: flex; }
 
 /* Keep the tutorial card compact while retaining its readable cue areas. */
 #cardTutorialStage .card-back { padding-top: 16px; padding-bottom: 14px; }
