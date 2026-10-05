@@ -207,11 +207,13 @@ export const REPLICA_CARDS = {
     },
     // The Portuguese tutorial card, replacing `tem`, whose four senses, grammar
     // pills and cross-reference made a first card too busy to read. Read out
-    // of the live release (pt-speech-v21-10000x30-slim): rank 793, 103 per
+    // of the live release (pt-speech-v23-10000x30-slim): rank 793, 103 per
     // million; of 30 assigned sentences 26 are the bank and 3 the bench (the
     // one left over is a third, rarer sense not shown). Examples are the
-    // release's own, sentence and translation unchanged.
+    // release's own, sentence and translation unchanged. Dialogue title IDs are
+    // preserved from the release; display titles come from source_titles.json.
     ptBancoSpeech: {
+        provider: 'Wiktionary',
         mode: 'speech', word: 'banco', pos: 'NOUN', lemma: 'banco', rank: 793, vocabSize: 10000, corpusCount: 103,
         defaultMeaningIndex: 1,
         meanings: [
@@ -227,9 +229,9 @@ export const REPLICA_CARDS = {
                 pos: 'NOUN', translation: 'bank', context: 'financial institution', pct: 90,
                 metadata: [{ short: 'masc.', full: 'masculine', family: 'grammar' }],
                 examples: [
-                    { target: 'Nem sequer sabia que havia ali um banco.', english: "I didn't even know there was a bank there.", sourceLabel: 'Speech example' },
+                    { target: 'Nem sequer sabia que havia ali um banco.', english: "I didn't even know there was a bank there.", sourceLabel: 'IMDb', titleId: '4743562', sourceTitle: 'The Last Heist (2016)' },
                     { target: 'Por que você não vai a um banco?', english: "Why don't you go to a bank?", sourceLabel: 'Tatoeba example' },
-                    { target: 'Achas que talvez tenha sido alguém do banco?', english: 'You think maybe it was someone at the bank?', sourceLabel: 'Speech example' },
+                    { target: 'Achas que talvez tenha sido alguém do banco?', english: 'You think maybe it was someone at the bank?', sourceLabel: 'IMDb', titleId: '6129120', sourceTitle: 'Imposters · S1 E5' },
                 ],
             },
         ],
@@ -298,7 +300,7 @@ const POS_CLASS = {
 
 // Every colour on the back of a card comes from one custom property. The live
 // card sets it per part of speech (getPosAccentRgb in flashcards.js) and the
-// stylesheet reads it for the sense-group tint, the selected row, the check,
+// stylesheet reads it for the sense-group tint, the selected row,
 // the prominence bars and the underline under the word in the example. The
 // replica used those same rules but never defined the variable, so all of it
 // resolved to nothing and the card came out grey. These are the live values.
@@ -452,21 +454,22 @@ function replicaMetadata(meaning, selected) {
         || (item.family === 'register' && softRegister.has(item.short.toLocaleLowerCase('en')));
     const primary = meaning.metadata.filter(item => item.family !== 'grammar' && !isSupporting(item));
     const grammar = meaning.metadata.filter(item => item.family === 'grammar');
-    const supporting = meaning.metadata.filter(isSupporting);
     const primaryHTML = primary.length
         ? `<span class="sense-metadata-tier sense-metadata-tier--primary">${renderItems(primary, true)}</span>` : '';
     const grammarHTML = grammar.length
         ? `<span class="sense-metadata-tier sense-metadata-tier--grammar">${renderItems(grammar, false)}</span>` : '';
-    const supportingNote = supporting.length
-        ? supporting.map(item => `<p>${esc(item.full || item.short)}</p>`).join('')
-        : '';
-    const more = supportingNote
-        ? `<button type="button" class="sense-note-trigger" aria-haspopup="dialog" aria-label="Information about this meaning" title="Information about this meaning"><span aria-hidden="true">i</span></button><template class="sense-note-template"><div class="sense-note-copy" data-sense-note-title="${esc(meaning.translation || 'This meaning')}"><section class="sense-note-section sense-note-section--usage"><h3>Usage</h3>${supportingNote}</section></div></template>`
-        : '';
-    return `<span class="sense-metadata-list" aria-label="Sense information">${primaryHTML}${grammarHTML}${more}</span>`;
+    return `<span class="sense-metadata-list" aria-label="Sense information">${primaryHTML}${grammarHTML}</span>`;
 }
 
-// Share → the live card's four-bar meter. Exported so About's animated demo
+function replicaSenseNote(meaning, selected) {
+    if (!selected) return '';
+    const context = meaning.context ? `<section class="sense-note-section sense-note-section--usage"><h3>Usage</h3><p>${esc(meaning.context)}</p></section>` : '';
+    const metadata = (meaning.metadata || []).map(item => `<p>${esc(item.full || item.short)}</p>`).join('');
+    if (!context && !metadata) return '';
+    return `<button type="button" class="sense-note-trigger" aria-haspopup="dialog" aria-label="Information about this meaning" title="Information about this meaning"><span aria-hidden="true">i</span></button><template class="sense-note-template"><div class="sense-note-copy" data-sense-note-title="${esc(meaning.translation)}">${context}${metadata ? `<section class="sense-note-section sense-note-section--grammar"><h3>Grammar</h3>${metadata}</section>` : ''}</div></template>`;
+}
+
+// Share → the live card's three-bar meter. Exported so About's animated demo
 // cards use the same thresholds as the walkthrough rather than a third copy.
 export function replicaProminence(pct) {
     if (!(Number(pct) < 100)) return null;
@@ -477,7 +480,10 @@ export function replicaProminence(pct) {
 }
 
 function renderMeaningRows(card, selectedIdx) {
-    const rows = card.meanings.map((m, idx) => {
+    // Sort the display without changing the indices used by sense selection.
+    const ordered = card.meanings.map((meaning, index) => ({ meaning, index }))
+        .sort((a, b) => (Number(b.meaning.pct) || 0) - (Number(a.meaning.pct) || 0));
+    const rows = ordered.map(({ meaning: m, index: idx }) => {
         const isSelected = idx === selectedIdx;
         const bg = 'rgba(var(--sense-match-rgb), 0.10)';
         const textColor = 'var(--text-primary)';
@@ -490,12 +496,9 @@ function renderMeaningRows(card, selectedIdx) {
                 ? window.prominenceBadgeHTML(prominence, 'position: absolute; right: 8px; top: 50%; transform: translateY(-50%);')
                 : `<button type="button" class="replica-pct sense-prominence-badge prominence-${esc(prominence.key)}" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%);">${esc(prominence.label)}</button>`)
             : '';
-        const check = isSelected
-            ? '<svg class="meaning-row-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgb(var(--sense-match-rgb))" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>'
-            : '';
         return `
             <div class="meaning-row meaning-row-regular${isSelected ? ' selected is-current-sense' : ''}" data-meaning-index="${idx}" style="position: relative; display: grid; grid-template-columns: 1fr; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${bg}; border-radius: 8px; cursor: pointer; min-height: 39px;">
-                ${check}
+                ${replicaSenseNote(m, isSelected)}
                 <div class="meaning-row-body" style="display: flex; flex-direction: column; align-items: stretch; justify-content: center; min-width: 0; padding: 0 ${prominence ? '32px' : '8px'} 0 8px;">
                     <span class="meaning-row-translation row-adaptive-text" style="font-weight: ${isSelected ? 700 : 500}; color: ${textColor}; text-align: center; width: 100%;">${replicaSenseText(m, isSelected)}${ctx}</span>
                     ${replicaMetadata(m, isSelected)}
@@ -504,7 +507,7 @@ function renderMeaningRows(card, selectedIdx) {
             </div>`;
     }).join('');
     const summaryLimit = Math.min(2, card.meanings.length);
-    const summaries = card.meanings.slice(0, summaryLimit).map(meaning => (
+    const summaries = ordered.slice(0, summaryLimit).map(({ meaning }) => (
         `<span class="pos-summary-sense">${esc(replicaSenseSummary(meaning.translation))}</span>`
     )).join('');
     const hiddenCount = card.meanings.length - summaryLimit;
@@ -514,7 +517,7 @@ function renderMeaningRows(card, selectedIdx) {
     return `
         <section class="meaning-pos-section pos-collapsible is-open" data-pos="${esc(card.pos)}"
                  style="--sense-match-rgb: ${posAccentRgb(card.pos)};">
-            <button type="button" class="pos-section-head" aria-label="${esc(`${posName(card.pos)}: ${card.meanings.map(m => replicaSenseSummary(m.translation)).join('; ')}`)}">
+            <button type="button" class="pos-section-head" aria-expanded="true" aria-label="${esc(`${posName(card.pos)}: ${ordered.map(({ meaning }) => replicaSenseSummary(meaning.translation)).join('; ')}`)}">
                 <span class="pos-section-label">${esc(posName(card.pos))}</span>
                 <span class="pos-pill-lemma">${esc(card.lemma || card.word)}</span>
                 <span class="pos-section-summary">${summaries}${more}</span>
@@ -535,7 +538,7 @@ function replicaExampleTicks(current, total) {
     return `<div class="example-ticks" role="img" aria-label="example ${current + 1} of ${total}">${ticks}</div>`;
 }
 
-function replicaSourceChip(sourceLabel) {
+function replicaSourceChip(sourceLabel, titleId = '', sourceTitle = '') {
     const raw = String(sourceLabel || '');
     const lower = raw.toLowerCase();
     let domain = '';
@@ -543,11 +546,15 @@ function replicaSourceChip(sourceLabel) {
     if (lower.includes('spanishdict')) domain = 'spanishdict.com';
     else if (lower.includes('wiktionary')) domain = 'wiktionary.org';
     else if (lower.includes('tatoeba')) domain = 'tatoeba.org';
-    else if (lower.includes('imdb') || lower.includes('opensubtitles')) domain = 'imdb.com';
+    else if (lower.includes('imdb')) domain = 'imdb.com';
+    else if (lower.includes('opensubtitles')) domain = 'opensubtitles.org';
+    if (titleId) label = `IMDb · ${sourceTitle || `tt${String(titleId).padStart(7, '0')}`} · OpenSubtitles`;
     if (!domain) {
         return `<span class="example-song-credit" style="margin-right:auto;">${esc(raw)}</span>`;
     }
-    return `<span class="example-song-credit" style="margin-right:auto;"><span class="example-source-chip example-source-chip--icon dictionary-provenance-badge" title="${esc(label)}" aria-label="${esc(label)}"><img class="example-source-favicon dict-provenance-icon" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64" width="28" height="28" alt="" aria-hidden="true"></span></span>`;
+    const icon = { 'tatoeba.org': 'icons/tatoeba.svg', 'wiktionary.org': 'icons/wikipedia-w.svg' }[domain]
+        || `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64`;
+    return `<span class="example-song-credit" style="margin-right:auto;"><span class="example-source-chip example-source-chip--${sourceTitle ? 'named' : 'icon'} dictionary-provenance-badge" title="${esc(label)}" aria-label="${esc(label)}"><img class="example-source-favicon dict-provenance-icon${domain === 'wiktionary.org' ? ' example-source-favicon--wikipedia' : ''}" src="${icon}" width="34" height="34" alt="" aria-hidden="true">${sourceTitle ? `<span class="example-source-text">${esc(sourceTitle)}</span>` : ''}</span></span>`;
 }
 
 function renderCredit(card, meaning, example, exampleIdx) {
@@ -569,7 +576,7 @@ function renderCredit(card, meaning, example, exampleIdx) {
     }
 
     const credit = example.sourceLabel
-        ? replicaSourceChip(example.sourceLabel)
+        ? replicaSourceChip(example.sourceLabel, example.titleId, example.sourceTitle)
         : '';
     const ticks = replicaExampleTicks(exampleIdx, meaning.examples.length);
     if (!credit && !ticks) return '';
@@ -592,6 +599,7 @@ export function renderBack(card, selectedIdx, exampleIdx) {
                     <div class="flip-back-area">
                         <div class="back-headword-row">
                             <span class="back-headword" style="font-size: 42px; font-weight: bold; line-height: 1.1;">${esc(card.word)}</span>
+                            ${card.provider ? `<span class="replica-dictionary-source">${replicaSourceChip(card.provider)}</span>` : ''}
                         </div>
                     </div>
                 </div>
@@ -613,7 +621,13 @@ export function wireReplicaBack(root, { onSelectMeaning, onCycleExample, onLayou
     root.querySelectorAll('.pos-section-head').forEach(head => {
         // One already-open group. Keep taps on its heading from being mistaken
         // for a request to flip the whole card.
-        head.addEventListener('click', e => e.stopPropagation());
+        head.addEventListener('click', e => {
+            e.stopPropagation();
+            const section = head.closest('.meaning-pos-section');
+            const open = section.classList.toggle('is-open');
+            head.setAttribute('aria-expanded', String(open));
+            onLayoutChange?.();
+        });
     });
 
     // Sense selection — the caller resets to that sense's first example, the

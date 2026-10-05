@@ -300,7 +300,7 @@ class ProductShellTests(unittest.TestCase):
         tutorial = (APP_ROOT / "js" / "tutorial.js").read_text(encoding="utf-8")
         self.assertNotIn('<div class="back-pos-legend"', replica)
         self.assertIn('class="pos-section-head"', replica)
-        self.assertIn('class="meaning-row-check"', replica)
+        self.assertNotIn('class="meaning-row-check"', replica)
         self.assertIn('class="example-ticks"', replica)
         self.assertNotIn('class="compact-example-counter-label"', replica)
         self.assertIn("speechCard: 'ptBancoSpeech'", tutorial)
@@ -518,7 +518,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("window.getCardTutorialLanguageKey?.()", main)
         self.assertIn("window.setCardTutorialLanguage?.(key)", main)
         self.assertIn("How common this meaning is", (APP_ROOT / "js" / "tutorial.js").read_text(encoding="utf-8"))
-        self.assertIn("Tap them to read Common, Uncommon, or Rare", (APP_ROOT / "js" / "tutorial.js").read_text(encoding="utf-8"))
+        self.assertIn("Tap them to read Dominant, Common, Uncommon, or Rare", (APP_ROOT / "js" / "tutorial.js").read_text(encoding="utf-8"))
 
     def test_sense_frequency_uses_readable_labels_not_mystery_dots(self) -> None:
         flashcards = (APP_ROOT / "js" / "flashcards.js").read_text(encoding="utf-8")
@@ -537,7 +537,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("window.loadConjugationData()", (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8"))
         self.assertIn("function replicaProminence(pct)", (APP_ROOT / "js" / "card-replica.js").read_text(encoding="utf-8"))
         self.assertIn("How common this meaning is", tutorial)
-        self.assertIn("Tap them to read Common, Uncommon, or Rare", tutorial)
+        self.assertIn("Tap them to read Dominant, Common, Uncommon, or Rare", tutorial)
 
     def test_in_app_tutorial_skips_language_choice_when_one_is_already_selected(self) -> None:
         main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")

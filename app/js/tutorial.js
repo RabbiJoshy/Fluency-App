@@ -20,7 +20,7 @@ import {
 // and one adapter entry instead of a forked tutorial.
 const TUTORIAL_LANGUAGE_ADAPTERS = {
     spanish: { language: 'Spanish', flag: '🇪🇸', speechCard: 'queSpeech', provider: 'SpanishDict', lyrics: true, usageShares: true },
-    portuguese: { language: 'Portuguese', flag: '🇵🇹', speechCard: 'ptBancoSpeech', provider: 'Wiktionary', lyrics: false, usageShares: true },
+    portuguese: { language: 'Portuguese', flag: '🇵🇹', speechCard: 'ptBancoSpeech', dictionarySource: true, provider: 'Wiktionary', lyrics: false, usageShares: true },
     czech: { language: 'Czech', flag: '🇨🇿', speechCard: 'jeSpeech', provider: 'Wiktionary', lyrics: false, usageShares: true },
     french: { language: 'French', flag: '🇫🇷', speechCard: 'deSpeech', provider: 'Wiktionary', lyrics: false },
 };
@@ -182,7 +182,7 @@ const TUTORIAL_DECKS = [
                         side: 'left',
                         anchor: '.pos-section-head',
                         title: 'The meanings at a glance',
-                        text: 'A short list of the senses. Tap the heading if you want to open or close the group.',
+                        text: 'The most common meanings come first. Tap the heading to open or close the group.',
                         interactive: true,
                     },
                     {
@@ -200,10 +200,17 @@ const TUTORIAL_DECKS = [
                         text: 'If the dictionary says “see this other word”, that is a real link here.',
                     },
                     {
+                        side: 'left',
+                        anchor: '.replica-dictionary-source .example-source-chip',
+                        requires: 'dictionarySource',
+                        title: 'Where the meaning is from',
+                        text: 'This icon identifies {provider}, the dictionary supplying the meanings. The example below has its own source.',
+                    },
+                    {
                         side: 'right',
-                        anchor: '.sense-metadata-list',
+                        anchor: '.meaning-row.is-current-sense > .sense-note-trigger',
                         title: 'Useful extras',
-                        text: 'Small notes such as grammar, what the word pairs with, or how formal it is. Extra ones hide behind More details.',
+                        text: 'Tap the information icon for grammar, usage notes, and other details about this meaning.',
                         interactive: true,
                     },
                     {
@@ -211,7 +218,7 @@ const TUTORIAL_DECKS = [
                         anchor: '.sense-prominence-badge',
                         requires: 'usageShares',
                         title: 'How common this meaning is',
-                        text: 'The bars show how often this meaning shows up in real speech. Tap them to read Common, Uncommon, or Rare.',
+                        text: 'The bars show how often this meaning shows up in real speech. Tap them to read Dominant, Common, Uncommon, or Rare.',
                     },
                     {
                         side: 'right',
@@ -221,9 +228,9 @@ const TUTORIAL_DECKS = [
                     },
                     {
                         side: 'right',
-                        anchor: '.example-song-credit',
+                        anchor: '.example-credit-start .example-source-chip, .example-credit-start .example-song-credit:not(:has(.example-source-chip))',
                         title: 'Where the example is from',
-                        text: 'Usually spoken {language}. A dictionary example is used only when speech does not have a good one.',
+                        text: 'The source icon identifies the example: IMDb for film or TV dialogue, Tatoeba for contributed sentences, or {provider} for dictionary examples.',
                     },
                 ],
             },
@@ -502,7 +509,7 @@ function syncContinueButton() {
 // three senses and `tem` has four with grammar pills under the selected one.
 function fitCardToContent() {
     const inner = document.querySelector('#cardTutorialStage .card-replica');
-    const height = fitReplicaCard(inner);
+    const height = fitReplicaCard(inner, { floor: isMobileTutorial() ? 430 : Math.min(520, Math.round(window.innerHeight * 0.68)) });
     fitCardToPhone(inner, height);
 }
 
@@ -567,9 +574,9 @@ function setActiveNote(index) {
 }
 
 // A first-time reader can stall on a step not knowing the tour moves on with
-// Next. After a few seconds on the same note, the Next button starts a slow,
-// faint glow; any step restarts the wait.
-const NEXT_HINT_DELAY_MS = 3500;
+// Next. After a few seconds on the same note, the Next button starts a clear,
+// pulsing ring; any step restarts the wait.
+const NEXT_HINT_DELAY_MS = 1800;
 let _nextHintTimer = null;
 
 function scheduleNextHint() {

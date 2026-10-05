@@ -22507,16 +22507,18 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 #settingsModal .settings-words-row small.settings-words-note { color: var(--text-secondary); }
 #settingsModal .settings-words-row small.settings-words-note:empty { display: none; }
 
-/* Tutorial: after a few idle seconds the Next button glows softly so a
+/* Tutorial: after a short pause the Next button gets a strong amber ring so a
    first-time reader sees how the tour moves on (tutorial.js adds
    .is-hinting). */
 @keyframes card-tutorial-next-hint {
-    0%, 100% { box-shadow: 0 0 0 0 transparent; }
-    50%      { box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent-primary) 24%, transparent); }
+    0%, 100% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-amber) 45%, transparent), 0 0 16px color-mix(in srgb, var(--accent-amber) 25%, transparent); }
+    50% { box-shadow: 0 0 0 9px color-mix(in srgb, var(--accent-amber) 65%, transparent), 0 0 30px color-mix(in srgb, var(--accent-amber) 45%, transparent); }
 }
 #cardTutorialContinue.is-hinting,
 #cardTutorialMobileNext.is-hinting {
-    animation: card-tutorial-next-hint 2.2s ease-in-out infinite;
+    outline: 2px solid var(--accent-amber);
+    outline-offset: 3px;
+    animation: card-tutorial-next-hint 1.6s ease-in-out infinite;
 }
 #cardTutorialContinue.is-hinting:hover,
 #cardTutorialMobileNext.is-hinting:hover { animation: none; }
@@ -22597,4 +22599,38 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
   font: 650 12.5px/1.2 var(--font-reading);
   vertical-align: middle;
   cursor: pointer;
+}
+
+/* Give source annotations one complete box instead of outlining an inline
+   wrapper's line fragment beside a taller icon. */
+#cardTutorialStage .example-song-credit,
+#cardTutorialStage .replica-dictionary-source {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+}
+#cardTutorialStage .back-headword-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+#cardTutorialStage .example-source-chip.is-annotation-active {
+    outline-offset: 5px;
+    border-radius: 8px;
+}
+@media (min-width: 701px) {
+    #cardTutorialContinue {
+        min-width: 112px;
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: 750;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, .18);
+    }
+    #cardTutorialStage .card-details { gap: 22px; }
+}
+
+#cardTutorialStage .example-credit-start:has(.example-source-chip),
+#cardTutorialStage .example-song-credit:has(.example-source-chip) {
+    overflow: visible;
 }

@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-05T19:08:00+01:00",
+      "date": "2026-10-05 19:08 BST",
+      "agent": "Codex",
+      "summary": "Polish the Portuguese card tutorial for desktop",
+      "detail": [
+        "Make Next larger with a stronger amber reminder highlight",
+        "Give desktop cards more height while retaining compact mobile fitting",
+        "Order meanings by commonness and remove the old selection tick",
+        "Add working meaning information and complete dictionary/source highlights",
+        "Show verified IMDb titles for Portuguese dialogue examples"
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-05T18:59:30+01:00",
       "date": "2026-10-05 18:59 BST",
       "agent": "Codex",
