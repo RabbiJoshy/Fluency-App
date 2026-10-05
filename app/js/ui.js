@@ -3287,15 +3287,14 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (adminLabel) adminLabel.hidden = !isJstAccount;
     document.getElementById('settingsAdminBtn').hidden = !isJstAccount;
     window.renderSavedWords?.();
-    const canImport = Boolean(currentUser && !currentUser.isGuest && selectedLanguage === 'spanish');
+    const canImport = Boolean(currentUser && !currentUser.isGuest);
     for (const id of ['settingsImportKnownBtn', 'progressImportKnownBtn']) {
         const button = document.getElementById(id);
         if (button) button.disabled = !canImport;
     }
     const importNote = document.getElementById('settingsImportNote');
     if (importNote) importNote.textContent = canImport ? ''
-        : currentUser?.isGuest ? 'Sign in to import known words.'
-        : 'Import is currently available for Spanish speech.';
+        : 'Sign in to import known words.';
 
     // Show/hide clear level estimate row
     const estimate = levelEstimates[selectedLanguage] || 0;
@@ -3418,7 +3417,7 @@ function setupSettingsOverview() {
         window.openAboutProjectModal?.({ returnTo: () => showSettingsModalWithTab('study') });
     });
     const runImport = () => {
-        if (!currentUser || currentUser.isGuest || selectedLanguage !== 'spanish') return;
+        if (!currentUser || currentUser.isGuest) return;
         window.openVocabularyImportModal?.();
     };
     const runExport = statusId => window.exportMistakes?.(statusId);
@@ -3745,10 +3744,10 @@ function hideSettingsModal() {
 
 async function showTotalStatsModal() {
     const importButton = document.getElementById('progressImportKnownBtn');
-    if (importButton) importButton.disabled = !currentUser || currentUser.isGuest || selectedLanguage !== 'spanish';
+    if (importButton) importButton.disabled = !currentUser || currentUser.isGuest;
     const importStatus = document.getElementById('progressDataActionStatus');
     if (importStatus) importStatus.textContent = importButton?.disabled
-        ? 'Import is available when signed in to Spanish speech.' : '';
+        ? 'Sign in to import known words.' : '';
     // Update language name in the header
     const langConfig = config.languages[selectedLanguage];
     const langName = activeArtist?.name || (langConfig ? langConfig.name : selectedLanguage);

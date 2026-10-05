@@ -9,6 +9,7 @@ import {
 
 let currentPlan = null;
 let previewAccount = '';
+let previewLanguage = '';
 
 function element(id) {
     return document.getElementById(id);
@@ -23,6 +24,7 @@ function setStatus(message, error = false) {
 function clearPreview() {
     currentPlan = null;
     previewAccount = '';
+    previewLanguage = '';
     element('vocabularyImportPreview').hidden = true;
     element('confirmVocabularyImportBtn').disabled = true;
 }
@@ -37,6 +39,7 @@ function openVocabularyImportModal() {
         () => closeVocabularyImportModal({ reopenSettings: false })) || null;
     element('settingsModal')?.classList.add('hidden');
     element('vocabularyImportModal').classList.remove('hidden');
+    element('vocabularyImportTitle').textContent = `Import ${config.languages[selectedLanguage]?.name || selectedLanguage} Speech vocabulary`;
     setStatus('');
     clearPreview();
     element('vocabularyImportText').focus();
@@ -105,7 +108,7 @@ function renderPreview(plan) {
     element('vocabularyImportPreview').hidden = false;
     element('confirmVocabularyImportBtn').disabled = plan.changedEntries.length === 0;
     if (!plan.matchedCount) {
-        setStatus('No rows matched an exact Spanish Speech surface.', true);
+        setStatus('No rows matched an exact Speech surface.', true);
     } else if (!plan.changedEntries.length) {
         setStatus(`${plan.matchedCount} matched card${plan.matchedCount === 1 ? ' is' : 's are'} already up to date.`);
     } else {
@@ -120,18 +123,25 @@ async function previewVocabularyImport() {
         return;
     }
     const text = element('vocabularyImportText').value;
-    setStatus('Matching exact surfaces against Spanish Speech…');
+    const language = selectedLanguage;
+    const languageName = config.languages[language]?.name || language;
+    setStatus(`Matching exact surfaces against ${languageName} Speech…`);
     element('previewVocabularyImportBtn').disabled = true;
     try {
         const parsed = parseVocabularyImport(text);
-        const normalConfig = window._normalModeLangConfigs?.spanish;
-        if (!normalConfig) throw new Error('Spanish Speech configuration is not ready yet.');
+        const normalConfig = window._normalModeLangConfigs?.[language];
+        if (!normalConfig) throw new Error(`${languageName} Speech configuration is not ready yet.`);
         // Always the Speech deck, even from inside an artist deck: the rows
         // are written as Speech ids, and artist cards reach them through the
         // shared surface (see progress-identity.js).
         const vocabulary = await window.fetchAndJoinIndex(normalConfig, { ignoreArtist: true });
-        currentPlan = buildVocabularyImportPlan(parsed, vocabulary, progressData, { now: Date.now() });
+        if (selectedLanguage !== language) throw new Error('The language changed. Preview the import again.');
+        currentPlan = buildVocabularyImportPlan(parsed, vocabulary, progressData, {
+            now: Date.now(), language,
+            languageCode: window.LANG_CODES?.[language] || language.slice(0, 2)
+        });
         previewAccount = currentUser.initials;
+        previewLanguage = language;
         renderPreview(currentPlan);
     } catch (error) {
         clearPreview();
@@ -148,6 +158,12 @@ async function confirmVocabularyImport() {
         setStatus('The signed-in account changed. Preview the import again.', true);
         return;
     }
+    if (selectedLanguage !== previewLanguage) {
+        clearPreview();
+        setStatus('The language changed. Preview the import again.', true);
+        return;
+    }
+    const languageName = config.languages[previewLanguage]?.name || previewLanguage;
     const button = element('confirmVocabularyImportBtn');
     button.disabled = true;
     setStatus('Saving on this device and queueing account sync…');
@@ -174,7 +190,8 @@ async function confirmVocabularyImport() {
         const count = currentPlan.changedEntries.length;
         currentPlan = null;
         previewAccount = '';
-        setStatus(`${count} Spanish Speech card${count === 1 ? '' : 's'} saved on this device and queued to sync.`);
+        previewLanguage = '';
+        setStatus(`${count} ${languageName} Speech card${count === 1 ? '' : 's'} saved on this device and queued to sync.`);
         element('confirmVocabularyImportBtn').disabled = true;
     } catch (error) {
         button.disabled = false;

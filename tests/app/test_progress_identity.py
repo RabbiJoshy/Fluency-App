@@ -77,6 +77,43 @@ class ProgressIdentityTests(unittest.TestCase):
             """
         )
 
+    def test_import_preserves_language_identity_and_sync_rows(self) -> None:
+        self.run_module_assertions(
+            """
+            const languages = [
+                ['spanish', 'es', 'sí'], ['portuguese', 'pt', 'não'],
+                ['czech', 'cs', 'příliš'], ['finnish', 'fi', 'hyvä'],
+                ['french', 'fr', 'été'], ['dutch', 'nl', 'huis']
+            ];
+            for (const [language, languageCode, word] of languages) {
+                const id = `surface_${languageCode}_12345678`;
+                const parsed = importCore.parseVocabularyImport(word.toUpperCase());
+                const plan = importCore.buildVocabularyImportPlan(parsed, [{id, word}], {}, {
+                    language, languageCode, now: Date.parse('2026-10-05T10:00:00Z')
+                });
+                const expectedId = `${languageCode}0${id}`;
+                const entry = plan.entries[0];
+                if (plan.entries.length !== 1 || entry.itemId !== expectedId ||
+                    entry.progress.language !== language) {
+                    throw new Error(`Wrong import identity for ${language}`);
+                }
+                const row = importCore.buildImportBulkChunks(plan, 'TEST')[0][0];
+                if (row.language !== language || row.itemId !== expectedId) {
+                    throw new Error(`Wrong sync language for ${language}`);
+                }
+                const again = importCore.buildVocabularyImportPlan(parsed, [{id, word}], {
+                    [expectedId]: entry.progress
+                }, {language, languageCode, now: Date.parse('2026-10-05T10:00:00Z')});
+                if (again.changedEntries.length) throw new Error('Repeated import changed progress');
+                const accented = importCore.buildVocabularyImportPlan(
+                    importCore.parseVocabularyImport('nao'), [{id, word: 'não'}], {},
+                    {language, languageCode}
+                );
+                if (accented.matchedCount) throw new Error('Accents were discarded');
+            }
+            """
+        )
+
     def test_alias_rows_merge_counts_but_newest_answer_owns_review_stage(self) -> None:
         self.run_module_assertions(
             """

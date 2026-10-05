@@ -1990,25 +1990,25 @@
         </div>
     </div>
 
-    <!-- Surface-keyed Spanish Speech vocabulary import -->
+    <!-- Surface-keyed Speech vocabulary import -->
     <div id="vocabularyImportModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="vocabularyImportTitle">
         <div class="modal-content vocabulary-import-modal-content">
             <div class="modal-header">
                 <div>
                     <span class="progress-modal-eyebrow">Account progress</span>
-                    <h3 id="vocabularyImportTitle">Import Spanish Speech vocabulary</h3>
+                    <h3 id="vocabularyImportTitle">Import known words</h3>
                 </div>
                 <button type="button" class="modal-close" id="closeVocabularyImportModal" aria-label="Close vocabulary import">✕</button>
             </div>
             <p class="settings-data-intro">
-                Paste one exact Spanish surface form per line, or use UTF-8 CSV/TSV with
+                Paste one exact surface form per line for the selected language, or use UTF-8 CSV/TSV with
                 <code>surface</code> and optional <code>lemma</code>, <code>last_correct</code>,
                 and <code>last_incorrect</code> columns. Accents and punctuation distinguish cards;
                 lemma is accepted for interoperability but never used to match.
             </p>
             <label class="vocabulary-import-input-label" for="vocabularyImportText">Vocabulary list</label>
             <textarea id="vocabularyImportText" class="vocabulary-import-text" rows="9"
-                      placeholder="hablo&#10;comieron&#10;sí" spellcheck="false"></textarea>
+                      placeholder="One word per line" spellcheck="false"></textarea>
             <div class="vocabulary-import-actions vocabulary-import-actions--source">
                 <label class="secondary-btn vocabulary-import-file-label" for="vocabularyImportFile">Choose .txt, .csv or .tsv</label>
                 <input type="file" id="vocabularyImportFile" accept=".txt,.csv,.tsv,text/plain,text/csv,text/tab-separated-values" hidden>
