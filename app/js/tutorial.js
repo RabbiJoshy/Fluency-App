@@ -20,7 +20,7 @@ import {
 // and one adapter entry instead of a forked tutorial.
 const TUTORIAL_LANGUAGE_ADAPTERS = {
     spanish: { language: 'Spanish', flag: '🇪🇸', speechCard: 'queSpeech', provider: 'SpanishDict', lyrics: true, usageShares: true },
-    portuguese: { language: 'Portuguese', flag: '🇵🇹', speechCard: 'ptBancoSpeech', dictionarySource: true, provider: 'Wiktionary', lyrics: false, usageShares: true },
+    portuguese: { language: 'Portuguese', flag: '🇵🇹', speechCard: 'ptBancoSpeech', provider: 'Wiktionary', lyrics: false, usageShares: true },
     czech: { language: 'Czech', flag: '🇨🇿', speechCard: 'jeSpeech', provider: 'Wiktionary', lyrics: false, usageShares: true },
     french: { language: 'French', flag: '🇫🇷', speechCard: 'deSpeech', provider: 'Wiktionary', lyrics: false },
 };
@@ -198,13 +198,6 @@ const TUTORIAL_DECKS = [
                         requires: 'crossReferences',
                         title: 'A link to another card',
                         text: 'If the dictionary says “see this other word”, that is a real link here.',
-                    },
-                    {
-                        side: 'left',
-                        anchor: '.replica-dictionary-source .example-source-chip',
-                        requires: 'dictionarySource',
-                        title: 'Where the meaning is from',
-                        text: 'This icon identifies {provider}, the dictionary supplying the meanings. The example below has its own source.',
                     },
                     {
                         side: 'right',

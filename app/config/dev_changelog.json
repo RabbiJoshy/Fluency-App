@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-05T19:15:28+01:00",
+      "date": "2026-10-05 19:15 BST",
+      "agent": "Codex",
+      "summary": "Remove the incorrect entity-style icon beside banco in the tutorial",
+      "detail": [
+        "Remove the dictionary icon added beside the Portuguese tutorial headword",
+        "Remove its extra explanation and unused header styling",
+        "Keep the verified example-source labels below the example sentence"
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-05T19:13:51+01:00",
       "date": "2026-10-05 19:13 BST",
       "agent": "Codex",

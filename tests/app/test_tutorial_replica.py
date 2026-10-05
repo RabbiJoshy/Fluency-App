@@ -25,8 +25,8 @@ assert.equal(rowIndices[0], selected);
 assert(bank.includes('Nem sequer sabia'));
 assert(bank.includes('The Last Heist (2016)'));
 assert(bank.includes('Information about this meaning'));
-assert(bank.includes('replica-dictionary-source'));
-assert(bank.includes('example-source-favicon--wikipedia'));
+assert(!bank.includes('replica-dictionary-source'));
+assert(!bank.includes('example-source-favicon--wikipedia'));
 assert(!bank.includes('meaning-row-check'));
 for (const [index, meaning] of card.meanings.entries()) {
   for (let example = 0; example < meaning.examples.length; example++) {
