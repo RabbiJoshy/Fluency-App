@@ -289,24 +289,14 @@
     background: rgba(var(--sense-match-rgb), 0.11) !important;
 }
 
-:root[data-theme="light"] .sense-prominence-badge.prominence-dominant {
-    background: transparent;
-    color: #0284c7;
-    border: 0;
-}
-:root[data-theme="light"] .sense-prominence-badge.prominence-common {
-    background: transparent;
-    color: #059669;
-    border: 0;
-}
-:root[data-theme="light"] .sense-prominence-badge.prominence-uncommon {
-    background: transparent;
-    color: var(--text-secondary);
-    border: 0;
-}
+:root[data-theme="light"] .sense-prominence-badge.prominence-dominant,
+:root[data-theme="light"] .sense-prominence-badge.prominence-common,
+:root[data-theme="light"] .sense-prominence-badge.prominence-uncommon,
 :root[data-theme="light"] .sense-prominence-badge.prominence-rare {
+    /* One ink for every level, as in dark mode: the number of filled bars is
+       the scale, and a colour per level read as a second one. */
     background: transparent;
-    color: #d97706;
+    color: var(--text-primary);
     border: 0;
 }
 
@@ -1287,9 +1277,6 @@
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .28);
 }
 
-:root[data-theme="light"] .sense-prominence-badge.prominence-uncommon {
-    color: #475569;
-}
 
 :root[data-theme="light"] .sense-prominence-badge[aria-expanded="true"] {
     background: transparent;
