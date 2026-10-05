@@ -6113,7 +6113,7 @@ function renderCardWikipediaBadge(card) {
                 + 'Learning them separately keeps one meaning from crowding out the other. '
                 + 'You see both, one after the other.</span>';
             const activePos = card.splitInfo.pos || card.partOfSpeech;
-            const posRgb = posAccentRgb(activePos);
+            const posRgb = getPosAccentRgb(activePos);
             frontSurfaceRelationEl.style.color = `rgb(${posRgb})`;
             frontSurfaceRelationEl.style.borderColor = '';
             frontSurfaceRelationEl.style.background = '';
