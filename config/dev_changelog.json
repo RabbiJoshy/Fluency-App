@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-05T19:18:15+01:00",
+      "date": "2026-10-05 19:18 BST",
+      "agent": "Claude",
+      "summary": "Search and word links open a split word as Flashcard 1 of 2, then 2 of 2",
+      "detail": [
+        "Search, word links, lyric-breakdown taps and homograph peeks used to open a split word (vamos, hay) as one combined card; they now open Flashcard 1 of 2",
+        "Moving on from it (swipe, flag or next) shows Flashcard 2 of 2 in the same place before returning; the Back-to button still leaves at once",
+        "When search focuses a particular meaning, the card that holds it opens first",
+        "Split cards are built by one shared function (buildSplitCardPair) for sets and single-word views alike"
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-05T19:15:28+01:00",
       "date": "2026-10-05 19:15 BST",
       "agent": "Codex",

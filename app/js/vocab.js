@@ -1086,6 +1086,102 @@ function detectSplitCardTuples(item, lang = 'es') {
 }
 
 // /lemma-merge-pure
+
+// A surface split into a companion pair (detectSplitCardTuples) becomes two
+// study cards, Flashcard 1 of 2 and 2 of 2, built from the finished card of
+// the whole surface. Shared by the deck builder and every path that opens one
+// word on its own (search, word links, lyric breakdown), so a split word is
+// never shown as one combined card. Returns null for a word that does not
+// split.
+function buildSplitCardPair(item, card, meanings, lang = selectedLanguage) {
+    const splitTuples = detectSplitCardTuples(item, lang);
+    if (!splitTuples || !splitTuples.tuple1 || !splitTuples.tuple2) return null;
+    const t1 = splitTuples.tuple1;
+    const t2 = splitTuples.tuple2;
+    const baseFullId = getWordId(item);
+    const baseId = item.id;
+
+    const firstEx1 = t1.meanings.length > 0
+        ? {
+            targetSentence: t1.meanings[0].targetSentence || '',
+            englishSentence: t1.meanings[0].englishSentence || '',
+        }
+        : { targetSentence: '', englishSentence: '' };
+    const firstEx2 = t2.meanings.length > 0
+        ? {
+            targetSentence: t2.meanings[0].targetSentence || '',
+            englishSentence: t2.meanings[0].englishSentence || '',
+        }
+        : { targetSentence: '', englishSentence: '' };
+
+    // Filter the formatted meanings for each tuple's headword/reading
+    const belongs1 = m => {
+        const hw = cleanHeadwordToken(m.headword || item.word);
+        return hw === t1.headword || (!t1.isReflexive && hw === cleanHeadwordToken(t1.headword));
+    };
+    const belongs2 = m => {
+        const hw = cleanHeadwordToken(m.headword || item.word);
+        return hw === t2.headword || (t2.isReflexive && normalizeLemmaToken(m.headword).endsWith('se'));
+    };
+    const m1 = meanings.filter(belongs1);
+    const m2 = meanings.filter(belongs2);
+    const rarerOf = belongs => (card.unusedMenuSenses || []).filter(m => m.lowShare && belongs(m));
+    const meanings1 = m1.length > 0 ? stampSplitShownShares(item, m1, rarerOf(belongs1)) : meanings;
+    const meanings2 = m2.length > 0 ? stampSplitShownShares(item, m2, rarerOf(belongs2)) : meanings;
+
+    const card1 = {
+        ...card,
+        id: `${baseId}::split::${t1.headword}_${t1.pos}`,
+        fullId: `${baseFullId}::split::${t1.headword}_${t1.pos}`,
+        citationForm: t1.headword,
+        partOfSpeech: t1.pos,
+        meanings: meanings1,
+        translation: meanings1[0]?.meaning || '',
+        targetSentence: meanings1[0]?.targetSentence || firstEx1.targetSentence,
+        englishSentence: meanings1[0]?.englishSentence || firstEx1.englishSentence,
+        splitInfo: {
+            index: 1,
+            total: 2,
+            kind: splitTuples.kind,
+            headword: t1.headword,
+            pos: t1.pos,
+            label: t1.label,
+            share: t1.share,
+            siblingHeadword: t2.headword,
+            siblingPos: t2.pos,
+            siblingLabel: t2.label,
+            siblingShare: t2.share
+        }
+    };
+
+    const card2 = {
+        ...card,
+        id: `${baseId}::split::${t2.headword}_${t2.pos}`,
+        fullId: `${baseFullId}::split::${t2.headword}_${t2.pos}`,
+        citationForm: t2.headword,
+        partOfSpeech: t2.pos,
+        meanings: meanings2,
+        translation: meanings2[0]?.meaning || '',
+        targetSentence: meanings2[0]?.targetSentence || firstEx2.targetSentence,
+        englishSentence: meanings2[0]?.englishSentence || firstEx2.englishSentence,
+        splitInfo: {
+            index: 2,
+            total: 2,
+            kind: splitTuples.kind,
+            headword: t2.headword,
+            pos: t2.pos,
+            label: t2.label,
+            share: t2.share,
+            siblingHeadword: t1.headword,
+            siblingPos: t1.pos,
+            siblingLabel: t1.label,
+            siblingShare: t1.share
+        }
+    };
+    return [card1, card2];
+}
+globalThis.buildSplitCardPair = buildSplitCardPair;
+
 // Cognate mode asks the same question per sense: an expression is never a
 // free cognate, so it reads the one definition of "expression" there is.
 globalThis.isExpressionSenseForLemma = isExpressionSenseForLemma;
@@ -3238,91 +3334,9 @@ async function loadVocabularyData(rangeString, opts = {}) {
             card.translationUnavailable = meanings.every(meaning => !String(meaning.meaning || '').trim());
             card.artistVocabularyScope = activeArtist ? artistVocabularyScope : null;
 
-            const splitTuples = detectSplitCardTuples(item, selectedLanguage);
-            if (splitTuples && splitTuples.tuple1 && splitTuples.tuple2) {
-                const t1 = splitTuples.tuple1;
-                const t2 = splitTuples.tuple2;
-                const baseFullId = getWordId(item);
-                const baseId = item.id;
-
-                const firstEx1 = t1.meanings.length > 0
-                    ? {
-                        targetSentence: t1.meanings[0].targetSentence || '',
-                        englishSentence: t1.meanings[0].englishSentence || '',
-                    }
-                    : { targetSentence: '', englishSentence: '' };
-                const firstEx2 = t2.meanings.length > 0
-                    ? {
-                        targetSentence: t2.meanings[0].targetSentence || '',
-                        englishSentence: t2.meanings[0].englishSentence || '',
-                    }
-                    : { targetSentence: '', englishSentence: '' };
-
-                // Filter the formatted meanings for each tuple's headword/reading
-                const belongs1 = m => {
-                    const hw = cleanHeadwordToken(m.headword || item.word);
-                    return hw === t1.headword || (!t1.isReflexive && hw === cleanHeadwordToken(t1.headword));
-                };
-                const belongs2 = m => {
-                    const hw = cleanHeadwordToken(m.headword || item.word);
-                    return hw === t2.headword || (t2.isReflexive && normalizeLemmaToken(m.headword).endsWith('se'));
-                };
-                const m1 = meanings.filter(belongs1);
-                const m2 = meanings.filter(belongs2);
-                const rarerOf = belongs => (card.unusedMenuSenses || []).filter(m => m.lowShare && belongs(m));
-                const meanings1 = m1.length > 0 ? stampSplitShownShares(item, m1, rarerOf(belongs1)) : meanings;
-                const meanings2 = m2.length > 0 ? stampSplitShownShares(item, m2, rarerOf(belongs2)) : meanings;
-
-                const card1 = {
-                    ...card,
-                    id: `${baseId}::split::${t1.headword}_${t1.pos}`,
-                    fullId: `${baseFullId}::split::${t1.headword}_${t1.pos}`,
-                    citationForm: t1.headword,
-                    partOfSpeech: t1.pos,
-                    meanings: meanings1,
-                    translation: meanings1[0]?.meaning || '',
-                    targetSentence: meanings1[0]?.targetSentence || firstEx1.targetSentence,
-                    englishSentence: meanings1[0]?.englishSentence || firstEx1.englishSentence,
-                    splitInfo: {
-                        index: 1,
-                        total: 2,
-                        kind: splitTuples.kind,
-                        headword: t1.headword,
-                        pos: t1.pos,
-                        label: t1.label,
-                        share: t1.share,
-                        siblingHeadword: t2.headword,
-                        siblingPos: t2.pos,
-                        siblingLabel: t2.label,
-                        siblingShare: t2.share
-                    }
-                };
-
-                const card2 = {
-                    ...card,
-                    id: `${baseId}::split::${t2.headword}_${t2.pos}`,
-                    fullId: `${baseFullId}::split::${t2.headword}_${t2.pos}`,
-                    citationForm: t2.headword,
-                    partOfSpeech: t2.pos,
-                    meanings: meanings2,
-                    translation: meanings2[0]?.meaning || '',
-                    targetSentence: meanings2[0]?.targetSentence || firstEx2.targetSentence,
-                    englishSentence: meanings2[0]?.englishSentence || firstEx2.englishSentence,
-                    splitInfo: {
-                        index: 2,
-                        total: 2,
-                        kind: splitTuples.kind,
-                        headword: t2.headword,
-                        pos: t2.pos,
-                        label: t2.label,
-                        share: t2.share,
-                        siblingHeadword: t1.headword,
-                        siblingPos: t1.pos,
-                        siblingLabel: t1.label,
-                        siblingShare: t1.share
-                    }
-                };
-
+            const splitPair = buildSplitCardPair(item, card, meanings);
+            if (splitPair) {
+                const [card1, card2] = splitPair;
                 const deckCard1 = buildKnowledgeAwareCard(card1, {
                     skipWhenNothingToPractise: studyMode === 'review'
                 });

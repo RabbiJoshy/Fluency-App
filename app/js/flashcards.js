@@ -2782,6 +2782,7 @@ function advanceAfterFlag() {
         card.classList.remove('swipe-flag');
         card.style.transform = '';
 
+        if (stepToSplitSibling()) return;
         if (cardNavStack.length > 0) {
             navigateBack();
             return;
@@ -2856,6 +2857,7 @@ function handleSwipeAction(result) {
         }
 
         // If we're on a linked card (nav stack), go back instead of advancing
+        if (stepToSplitSibling()) return;
         if (cardNavStack.length > 0) {
             navigateBack();
             return;
@@ -2863,6 +2865,21 @@ function handleSwipeAction(result) {
 
         advanceToNextDeckCard();
     }, 300);
+}
+
+// A split word opened on its own (search, word link) shows Flashcard 1 of 2
+// first (splitAwareTempCard); moving on brings up 2 of 2 in the same slot
+// before the way back. The return button still leaves at once.
+function stepToSplitSibling() {
+    const next = flashcards[currentIndex]?._splitNext;
+    if (!next || cardNavStack.length === 0) return false;
+    flashcards[currentIndex] = next;
+    currentMeaningIndex = 0;
+    currentExampleIndex = 0;
+    currentMWEIndex = 0;
+    document.getElementById('flashcard')?.classList.remove('flipped');
+    updateCard({ announceHeadword: true });
+    return true;
 }
 
 // Plain forward step through the deck, shared by the ordinary swipe path and
@@ -9263,6 +9280,7 @@ function previousCard() {
 }
 
 function nextCard() {
+    if (stepToSplitSibling()) return;
     if (flashcards[currentIndex]?.isChainChild) return goToDeckCard(cardChainReturnIndex + 1);
     if (currentIndex < flashcards.length - 1) _navCard('next');
 }

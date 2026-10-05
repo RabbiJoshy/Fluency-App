@@ -788,6 +788,23 @@ function navigateToCard(targetIndex) {
     updateCard();
 }
 
+// A word opened on its own (lyric breakdown, search, word link, homograph
+// peek) is studied as it is in a set: a split word opens as Flashcard 1 of 2,
+// with 2 of 2 waiting in `_splitNext` (stepToSplitSibling shows it). When the
+// path focuses one meaning, the card holding it opens first.
+function splitAwareTempCard(vocabEntry, baseCard, focusIndex = 0) {
+    const pair = window.buildSplitCardPair?.(vocabEntry, baseCard, baseCard.meanings);
+    if (!pair) return { card: baseCard, meaningIndex: focusIndex };
+    const focused = baseCard.meanings[focusIndex];
+    const same = m => m === focused || (focused && m.meaning === focused.meaning
+        && (m.senseId || '') === (focused.senseId || '') && (m.headword || '') === (focused.headword || ''));
+    const startOnSecond = focusIndex > 0 && pair[1].meanings.some(same);
+    const [first, second] = startOnSecond ? [pair[1], pair[0]] : pair;
+    first._splitNext = second;
+    const meaningIndex = focusIndex > 0 ? Math.max(0, first.meanings.findIndex(same)) : 0;
+    return { card: first, meaningIndex };
+}
+
 function navigateToVocabCard(tokenIndex) {
     // Cap at 1 level deep
     if (cardNavStack.length > 0) return;
@@ -846,7 +863,7 @@ function navigateToVocabCard(tokenIndex) {
 
     const firstExample = meanings.length > 0 ? { targetSentence: meanings[0].targetSentence, englishSentence: meanings[0].englishSentence } : { targetSentence: '', englishSentence: '' };
 
-    const tempCard = {
+    const tempCard = splitAwareTempCard(vocabEntry, {
         targetWord: vocabEntry.word,
         lemma: vocabEntry.lemma || '',
         ...(window.buildCardFormModel?.(vocabEntry, meanings) || {}),
@@ -861,7 +878,7 @@ function navigateToVocabCard(tokenIndex) {
         englishSentence: firstExample.englishSentence,
         links: generateLinks(vocabEntry.word, vocabEntry.lemma || vocabEntry.word, langConfig.referenceLinks || {}),
         isMultiMeaning: true
-    };
+    }).card;
 
     // Append temp card to end of flashcards array
     const tempIndex = flashcards.length;
@@ -1083,7 +1100,7 @@ async function popupFoundWord(entry, opts) {
             ? { targetSentence: meanings[0].targetSentence, englishSentence: meanings[0].englishSentence }
             : { targetSentence: '', englishSentence: '' };
 
-        const tempCard = {
+        const opened = splitAwareTempCard(vocabEntry, {
             targetWord: vocabEntry.word,
             lemma: vocabEntry.lemma || '',
             ...(window.buildCardFormModel?.(vocabEntry, meanings) || {}),
@@ -1105,7 +1122,9 @@ async function popupFoundWord(entry, opts) {
             derivationRelation: vocabEntry.derivation_relation || null,
             searchExclusionReason: entry.exclusionReason || null,
             searchExamplesOnly: entry.examplesOnly || meanings[0]?.exampleOnly || false
-        };
+        }, focusedMeaningIndex);
+        const tempCard = opened.card;
+        focusedMeaningIndex = opened.meaningIndex;
 
         // Keep search visible until the temporary card has rendered. Hiding it
         // early made any render exception look like an inert/dead result click.
@@ -1280,7 +1299,7 @@ function peekHomograph(siblingId) {
         ? { targetSentence: meanings[0].targetSentence, englishSentence: meanings[0].englishSentence }
         : { targetSentence: '', englishSentence: '' };
 
-    const tempCard = {
+    const tempCard = splitAwareTempCard(vocabEntry, {
         targetWord: vocabEntry.word,
         lemma: vocabEntry.lemma || '',
         ...(window.buildCardFormModel?.(vocabEntry, meanings) || {}),
@@ -1297,7 +1316,7 @@ function peekHomograph(siblingId) {
         isMultiMeaning: true,
         homographIds: vocabEntry.homograph_ids || null,
         isPeekCard: true
-    };
+    }).card;
 
     const tempIndex = flashcards.length;
     flashcards.push(tempCard);
