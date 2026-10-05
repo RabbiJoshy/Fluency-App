@@ -22051,7 +22051,7 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
         font-weight: 750;
         box-shadow: 0 3px 12px rgba(0, 0, 0, .18);
     }
-    #cardTutorialStage .card-details { gap: 22px; }
+    #cardTutorialStage .card-details { gap: 12px; }
 }
 
 #cardTutorialStage .example-credit-start:has(.example-source-chip),
@@ -22144,3 +22144,7 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
   border-color: color-mix(in srgb, var(--warning) 75%, var(--border-color));
   background: color-mix(in srgb, var(--warning) 16%, var(--bg-tertiary));
 }
+
+/* Keep the tutorial card compact while retaining its readable cue areas. */
+#cardTutorialStage .card-back { padding-top: 16px; padding-bottom: 14px; }
+#cardTutorialStage .sense-cue-area { padding: 4px 8px; }

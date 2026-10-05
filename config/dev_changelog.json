@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-05T23:12:27+01:00",
+      "date": "2026-10-05 23:12 BST",
+      "agent": "Codex",
+      "summary": "Shorten the tutorial card on desktop and mobile",
+      "detail": [
+        "Reduced card padding, context padding and desktop spacing between card sections.",
+        "Lowered the minimum tutorial card height.",
+        "Mobile leaves extra space above its tutorial controls."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-05T22:36:14+01:00",
       "date": "2026-10-05 22:36 BST",
       "agent": "Claude",
@@ -353,32 +365,6 @@
         "Reads flashcard misses from the last 7 days (signed in, this device) and matches them to any form or infinitive in the drill.",
         "Words the vocabulary treats as non-verbs (casa, para, entre) no longer pull a look-alike verb forward; lists built by scripts/build_conjugation_not_verbs.py for es, pt and cs.",
         "A line under the switch says how many verbs will come first."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-04T16:25:00+01:00",
-      "date": "2026-10-04 16:25 BST",
-      "agent": "Antigravity",
-      "summary": "Deterministic syntactic prominence splitting, symmetric POS-only pill padding, and split card meaning reconstruction.",
-      "detail": [
-        "Enforced strict deterministic syntactic/construction difference requirement for splitting prominence scores of senses sharing a gloss (never split on fuzzy register/slang/domain).",
-        "Made front POS pills perfectly symmetric when the lemma is hidden, adding dedicated is-pos-only pill padding rules.",
-        "Ensured split companion cards slice meanings from processed/formatted meanings rather than raw source index meanings."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-04T15:25:00+01:00",
-      "date": "2026-10-04 15:25 BST",
-      "agent": "Antigravity",
-      "summary": "Polished split card and POS pill UX: POS-colored highlights, scrubber 7A/7B, and removed redundant badges.",
-      "detail": [
-        "Hidden lemma text on front POS pills when the lemma is identical to the surface word, keeping only clean POS badges.",
-        "Ensured split card pills strictly mirror card order (Card 1 pill on left, Card 2 pill on right).",
-        "Adopted dynamic POS-accent coloring for active split pill highlighting and the front 'Card 1 of 2' note.",
-        "Removed internal 1/2 and 2/2 tags from pills and removed 'Card 2 of 2' badge from the back of the card.",
-        "Updated set scrubber to label split companion cards with letter suffixes (e.g. 7A, 7B)."
       ],
       "commit": "pending"
     }

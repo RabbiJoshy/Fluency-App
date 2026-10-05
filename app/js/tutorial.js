@@ -481,7 +481,7 @@ function syncContinueButton() {
 // three senses and `tem` has four with grammar pills under the selected one.
 function fitCardToContent() {
     const inner = document.querySelector('#cardTutorialStage .card-replica');
-    const height = fitReplicaCard(inner, { floor: isMobileTutorial() ? 430 : Math.min(520, Math.round(window.innerHeight * 0.68)) });
+    const height = fitReplicaCard(inner, { floor: isMobileTutorial() ? 400 : Math.min(480, Math.round(window.innerHeight * 0.64)) });
     fitCardToPhone(inner, height);
 }
 
@@ -491,7 +491,7 @@ function fitCardToContent() {
 // down until it fits, rather than making the reader scroll behind the sheet.
 // The space kept for the coach is its tallest usual size, so the card does not
 // change size from one step to the next.
-const PHONE_COACH_RESERVE = 168;
+const PHONE_COACH_RESERVE = 200;
 const PHONE_MIN_CARD_SCALE = 0.72;
 
 function fitCardToPhone(inner, height) {
