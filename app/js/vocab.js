@@ -1,11 +1,11 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=037c0cf4';
-import { validateVocabularyIndex } from './data-contracts.js?v=037c0cf4';
-import { formatRoute } from './routes.js?v=037c0cf4';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=037c0cf4';
-import { releaseUrl } from './release-host.js?v=037c0cf4';
+import './state.js?v=c265115a';
+import { validateVocabularyIndex } from './data-contracts.js?v=c265115a';
+import { formatRoute } from './routes.js?v=c265115a';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=c265115a';
+import { releaseUrl } from './release-host.js?v=c265115a';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -1687,25 +1687,42 @@ async function loadIndexShardManifest(langConfig) {
     if (indexShardManifestInflight && indexShardManifestInflightPath === indexPath) {
         return indexShardManifestInflight;
     }
+    // Only a definite answer is remembered for the session: a manifest, or a
+    // release that has none (404, or an empty manifest). A network failure or
+    // a server error is tried once more and then left unremembered, so the
+    // next load asks again. Remembering it sent every later load to the
+    // monolith vocabulary.index.json, which sharded releases do not publish.
+    const settle = manifest => {
+        if (manifest) loadedIndexRowShards.clear();
+        indexShardManifest = manifest;
+        indexShardManifestFor = indexPath;
+        indexShardsActive = Boolean(manifest);
+        return manifest;
+    };
     const pending = (async () => {
-        try {
-            const response = await fetch(`${indexDirectory(indexPath)}vocabulary.index.manifest.json`);
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const manifest = await response.json();
-            if (!manifest || !Array.isArray(manifest.shards) || !manifest.shards.length || !manifest.columns) {
-                throw new Error('empty index shard manifest');
+        const url = `${indexDirectory(indexPath)}vocabulary.index.manifest.json`;
+        for (let attempt = 0; attempt < 2; attempt++) {
+            let response;
+            try {
+                response = await fetch(url);
+            } catch (_) {
+                continue;
             }
-            loadedIndexRowShards.clear();
-            indexShardManifest = manifest;
-            indexShardManifestFor = indexPath;
-            indexShardsActive = true;
-            return manifest;
-        } catch (_) {
-            indexShardManifest = null;
-            indexShardManifestFor = indexPath;
-            indexShardsActive = false;
-            return null;
+            if (response.status === 404) return settle(null);
+            if (!response.ok) continue;
+            let manifest = null;
+            try {
+                manifest = await response.json();
+            } catch (_) {
+                return settle(null);
+            }
+            if (!manifest || !Array.isArray(manifest.shards) || !manifest.shards.length || !manifest.columns) {
+                return settle(null);
+            }
+            return settle(manifest);
         }
+        indexShardsActive = false;
+        return null;
     })();
     indexShardManifestInflight = pending;
     indexShardManifestInflightPath = indexPath;

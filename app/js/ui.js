@@ -1,7 +1,7 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=037c0cf4';
-import { readFastTrack } from './fast-track-preferences.js?v=037c0cf4';
+import './state.js?v=c265115a';
+import { readFastTrack } from './fast-track-preferences.js?v=c265115a';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -2808,7 +2808,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                     </span>
                     <span class="review-deck-summary-chevron" aria-hidden="true">›</span>
                 </button>
-                <button class="study-set-review" type="button" id="quickReviewBtn" ${quickCount > 0 ? '' : 'disabled'}>Quick practice${quickCount > 0 ? ` (${quickCount})` : ''}</button>
+                <button class="study-set-review" type="button" id="quickReviewBtn" aria-label="Quick practice: ${quickCount} cards" ${quickCount > 0 ? '' : 'disabled'}>Quick ${quickCount > 0 ? quickCount : ''}</button>
             </div>`;
     }
 
@@ -3265,7 +3265,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=037c0cf4')
+        import('./spotify.js?v=c265115a')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

@@ -22127,3 +22127,20 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
   white-space: normal;
 }
 .split-card-note-count { white-space: nowrap; }
+
+/* Quick practice on the setup screen: the Practice amber of the set legend,
+   not the error red, and large enough to read as the section's action. */
+#reviewDeckBody .study-set-review {
+  min-width: 112px;
+  padding: 10px 20px;
+  border: 1px solid color-mix(in srgb, var(--warning) 45%, var(--border-color));
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--warning) 10%, var(--bg-tertiary));
+  color: var(--text-primary);
+  font: 750 17px/1.2 var(--font-emphasis);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, .12);
+}
+#reviewDeckBody .study-set-review:not([disabled]):hover {
+  border-color: color-mix(in srgb, var(--warning) 75%, var(--border-color));
+  background: color-mix(in srgb, var(--warning) 16%, var(--bg-tertiary));
+}
