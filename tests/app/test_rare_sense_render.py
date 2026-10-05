@@ -17,7 +17,7 @@ class RareSenseRenderTests(unittest.TestCase):
             const vm = require('node:vm');
             const source = fs.readFileSync(process.argv[2], 'utf8');
             const start = source.indexOf('function posDisplayName(pos)');
-            const end = source.indexOf('// Backup example sentences', start);
+            const end = source.indexOf('// What navigateBack() will land on', start);
             if (start < 0 || end < 0) throw new Error('Rare-sense renderer missing');
             const context = {
                 cardChainQueue: [{kind: 'RARE_SENSE', pos: 'NOUN', translation: 'a rare meaning', examples: []}],

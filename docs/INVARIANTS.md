@@ -19,8 +19,9 @@ direction.
 Three obligations:
 
 - **Do not break call sites.** A relocated module leaves a re-export at the old
-  path. `wsd/menus.py`, `wsd/features.py`, `wsd/projection.py` and
-  `release/io.py` are all shims for this reason.
+  path. `wsd/menus.py`, `wsd/features.py` and `wsd/projection.py` are shims
+  for this reason. A shim with no remaining call sites can go
+  (`release/io.py`, removed 2026-10-05).
 - **Do not strand data.** Old artifacts are bridged into the new contract rather
   than discarded. `artist/wsd_bridge.py` lifts flattened Artist assignments into
   the v7 dual view.

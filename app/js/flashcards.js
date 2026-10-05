@@ -5068,80 +5068,6 @@ function closeRareUsesModal(event) {
 }
 if (typeof window !== 'undefined') window.closeRareUsesModal = closeRareUsesModal;
 
-// ---------------------------------------------------------------------------
-// Backup example sentences — the second chain child.
-//
-// Sense-free corpus sentences built by tool_5a_build_backup_examples, sharded
-// by deck position so opening the list costs one fetch per level rather than
-// one per card. Nothing here consults sense assignment; a sentence is attached
-// to a word, so this survives sense-assignment rework untouched.
-// ---------------------------------------------------------------------------
-const _backupExampleShards = new Map();   // shard index -> {wordId: [sentence]}
-let _backupExampleManifest = null;
-let _backupExampleShardById = null;       // wordId -> shard index
-let _backupExampleUnavailable = false;
-
-// Always the language directory, never the artist one. Artist decks share the
-// same word-id space as the language deck (4,479 of 4,481 overlapping ids
-// resolve to the same word), so a lyrics card can read the language's corpus
-// sentences directly — which is the point: a lyrics deck is often thin even on
-// common words, and seeing a word used outside it is most of the value.
-function backupExampleBaseDir() {
-    const indexPath = config?.languages?.[selectedLanguage]?.indexPath || '';
-    return indexPath.slice(0, indexPath.lastIndexOf('/') + 1);
-}
-
-// Resolves shards by word id, not by deck position. Position arithmetic only
-// held for the deck the shards were built from: an artist deck orders the same
-// ids differently, so the derived shard was wrong and the card silently showed
-// nothing. The id map costs ~44 KB gzipped once per session.
-async function loadBackupExampleShardForIds(wordIds) {
-    if (_backupExampleUnavailable || !wordIds.length) return null;
-    const base = backupExampleBaseDir();
-    if (!base) return null;
-    try {
-        if (!_backupExampleShardById) {
-            const manifestResponse = await fetch(`${base}vocabulary.backup_examples.index.json`);
-            if (!manifestResponse.ok) throw new Error(`HTTP ${manifestResponse.status}`);
-            _backupExampleManifest = await manifestResponse.json();
-            const indexFile = _backupExampleManifest.shardIndexFile;
-            if (!indexFile) throw new Error('manifest has no shardIndexFile');
-            const indexResponse = await fetch(`${base}${indexFile}`);
-            if (!indexResponse.ok) throw new Error(`HTTP ${indexResponse.status}`);
-            _backupExampleShardById = await indexResponse.json();
-        }
-        // A merged lemma family can straddle shards, so gather every shard the
-        // requested ids land in.
-        const needed = new Set();
-        for (const id of wordIds) {
-            const shard = _backupExampleShardById[id];
-            if (shard !== undefined) needed.add(shard);
-        }
-        if (needed.size === 0) return {};
-        const merged = {};
-        for (const shardIndex of needed) {
-            let payload = _backupExampleShards.get(shardIndex);
-            if (!payload) {
-                const entry = (_backupExampleManifest.shards || [])
-                    .find(item => item.shard === shardIndex);
-                if (!entry) continue;
-                const response = await fetch(`${base}${entry.file}`);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                payload = await response.json();
-                _backupExampleShards.set(shardIndex, payload);
-            }
-            Object.assign(merged, payload);
-        }
-        return merged;
-    } catch (error) {
-        // A missing layer is not an error worth blocking study for — the child
-        // simply doesn't offer itself.
-        console.warn('Backup examples unavailable:', error);
-        _backupExampleUnavailable = true;
-        return null;
-    }
-}
-
 // What navigateBack() will land on from the current child card, phrased for
 // the top-bar return control. The nav stack holds either a popup-only frame
 // (nothing underneath — back means the setup panel) or the index of the card
@@ -5169,26 +5095,6 @@ function getVocabByIdLookup() {
         if (entry.id) vocabByIdLookup.set(entry.id, entry);
     }
     return vocabByIdLookup;
-}
-
-// In Merge Lemmas mode the card stands for the whole lemma family, so pool the
-// siblings' sentences the way poolLemmaSiblingExamples does for sense examples.
-function backupExampleIdsFor(card) {
-    const ids = [card.id].filter(Boolean);
-    if (!card.mergedLemma || !card.lemma) return ids;
-    // The full source array, not the filtered deck: siblings of a merged lemma
-    // are excluded from the deck by definition, and their sentences are
-    // exactly what pooling is after.
-    const source = cachedVocabularyData || [];
-    for (const item of source) {
-        if (item.lemma === card.lemma && item.id && !ids.includes(item.id)) ids.push(item.id);
-    }
-    return ids;
-}
-
-async function collectBackupExamples(card) {
-    // Retired: WSD and authentic example scaling supersede un-disambiguated backup sentences.
-    return [];
 }
 
 function examplesChildCard(parentCard) {

@@ -1,6 +1,6 @@
 # Decision 0025 — Split Spanish attached clitics at tokenization (DRAFT)
 
-**Status:** Draft by MEND, 2026-09-23. **Proposed, not decided.** For the next full
+**Status:** Draft by MEND, 2026-09-23. **Proposed, not decided. To be decided inside UNISON** (`CHAT_ROADMAP.md`, 2026-10-05): splitting clitics changes what the shared engine sees as a token in every mode, so it is settled with the engine, not before it. For the next full
 Spanish rebuild; Joshua decides. It would reverse part of decision 0014 and
 `config/languages/es/tokenization.json` (`preserve_surface`,
 `may_replace_surface_card: false`), so if adopted it says which invariant it

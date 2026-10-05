@@ -133,6 +133,48 @@ unassigned rather than blocking. Portuguese and Spanish both have such releases.
 
 Languages with packages: `es`, `pt`, `cs`, `fi`, `fr`, `nl`, `pl` (plus stubs for `it`, `ru`, `sv`). Live: es, pt, cs, fi, fr. Modes: speech, lyrics, artist.
 
+## How Josh works
+
+Condensed from `docs/archive/WORKING_WITH_JOSH.md` (~930 of his messages).
+Quotes and reasons are there.
+
+**Frame first.** Get the architecture running end to end before any one piece
+is good. A placeholder is a legitimate answer when it unblocks structural work;
+judge it by what it unblocks. Contracts make placeholders safe: if a component
+can't be swapped later without a rewrite, say so now. **Label every
+placeholder where he'll see it** (version and stamp runs; make stubs visible in
+the deck). His most common bad surprise is "I thought we had changed that".
+Preserve information even when nothing uses it yet. One target per pass: count
+other problems, don't work on them. Show the small version first.
+
+**Assumptions.** His provisional ones stay behind a swappable seam; his settled
+ones are not reopened (say once if you disagree). Constraints you invented
+(cost, parsimony) must be said out loud, in one line where they change the answer.
+
+**Answering.** Answer the question asked, in the format asked, first; a length
+limit is a hard limit; answer every numbered question. Conclusions, not working.
+Plain English, no jargon; define a load-bearing term once, with an example.
+Concrete examples (the actual card, row or output, and what it changed from).
+When asked to choose, choose; otherwise at most one lean. Be candid about what a
+number was measured on and whether that test can see the effect. Push back. His
+messages are dictated: read through typos, ask only when the meaning is ambiguous.
+
+**Cadence.** Report after each discrete unit of work; never chain two silently.
+About ten lines: what was done, the number, a concrete example, next step or
+decision. Bring decisions one at a time, close to the work. Stop and ask before
+anything the brief doesn't name: changing a corpus or flag, spending money,
+deleting, or fixing an unrelated bug. If you may have drifted, re-read the brief.
+No handover prompts or paste-ready openers unless he asks.
+
+**Engineering.** Fix error classes, not the one word he named. The baseline is
+the thing to beat, not defend. Check upstream before building detection: the
+recurring bug is a right answer computed and then discarded downstream. Test
+harnesses are a few hundred labelled items, and you label them yourself. Don't
+silently drop something agreed. Cheap and fast at scale is a product
+requirement: expensive one-off offline work is fine, expensive per-sentence
+online work is not. **Done** means a described, tested change shown to improve
+named examples he can look at, not a commit or a passing test on its own.
+
 ## Working with Josh
 
 - **Token discipline on large files.** Consult `REPO_MAP.md` before exploring.
@@ -172,6 +214,8 @@ Languages with packages: `es`, `pt`, `cs`, `fi`, `fr`, `nl`, `pl` (plus stubs fo
      *Why:* The app's Settings → Developer tab renders this latest entry at the
      **very top of the section** so Josh can immediately verify what changed,
      who made the change, and whether the Service Worker cache is fresh or stale.
+     Keep at most the newest 30 entries (the tab shows 5; git keeps the rest).
+     `make deploy` enforces the cap when it merges changelogs.
   2. **Do not bump `?v=` tags or `CACHE_NAME`.** The deploy stamps every tag,
      `ASSET_VERSION` and `CACHE_NAME` with the commit id
      (`scripts/build_pages_site.py`), so every deploy busts the cache and no two

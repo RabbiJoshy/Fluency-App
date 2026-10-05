@@ -37,6 +37,9 @@ ACTIONS_URL = "https://github.com/RabbiJoshy/Fluency-App/actions/workflows/deplo
 # Every deploy prepends an entry to both changelogs, so two sessions deploying
 # close together always conflict there. Those merges are resolved here.
 CHANGELOGS = ("app/config/dev_changelog.json", "config/dev_changelog.json")
+# The app shows only the newest few entries; git keeps the rest. Capping the
+# merge stops a branch holding an older, longer file from restoring trimmed ones.
+CHANGELOG_KEEP = 30
 
 
 def git(*args: str, check: bool = True, cwd: Path = REPO_ROOT) -> subprocess.CompletedProcess[str]:
@@ -65,7 +68,7 @@ def resolve_changelog_conflicts(cwd: Path = REPO_ROOT) -> bool:
             if key not in seen:
                 seen.add(key)
                 entries.append(entry)
-        theirs["entries"] = sorted(entries, key=lambda e: e.get("timestamp", ""), reverse=True)
+        theirs["entries"] = sorted(entries, key=lambda e: e.get("timestamp", ""), reverse=True)[:CHANGELOG_KEEP]
         text = json.dumps(theirs, indent=2, ensure_ascii=False) + ("\n" if theirs_raw.endswith("\n") else "")
         (cwd / path).write_text(text, encoding="utf-8")
         git("add", path, cwd=cwd)
