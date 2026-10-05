@@ -21863,16 +21863,28 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 .card-tutorial-desktop-actions .card-tutorial-continue { margin-top: 0; }
 .card-tutorial-desktop-actions .card-tutorial-continue[hidden] { display: none; }
 .card-tutorial-desktop-progress {
-    min-width: 54px;
-    color: var(--text-muted);
-    font: 700 11px/1 var(--font-data);
-    letter-spacing: 0.06em;
+    min-width: 82px;
+    color: var(--text-secondary);
+    font: 600 17px/1.2 var(--font-reading);
+    letter-spacing: 0.02em;
     text-align: center;
 }
 @media (min-width: 701px) {
-    .card-tutorial-note { cursor: pointer; }
-    .card-tutorial-note:not(.is-active) { opacity: 0.5; }
-    .card-tutorial-note:not(.is-active):hover { opacity: 0.8; }
+    .card-tutorial-note { cursor: pointer; padding: 14px 16px; }
+    .card-tutorial-note strong { font-size: 19px; margin-bottom: 6px; }
+    .card-tutorial-note span:not(.card-tutorial-note-num):not(.card-tutorial-action-hint) {
+        font-size: 16px;
+        line-height: 1.5;
+        color: var(--text-secondary);
+    }
+    .card-tutorial-action-hint { font-size: 14px; }
+    .card-tutorial-desktop-actions .card-tutorial-continue {
+        padding: 13px 28px;
+        font-size: 18px;
+        min-height: 50px;
+    }
+    .card-tutorial-note:not(.is-active) { opacity: 0.82; }
+    .card-tutorial-note:not(.is-active):hover { opacity: 1; }
     .card-tutorial-note { transition: background 0.15s ease, border-color 0.15s ease, opacity 0.2s ease; }
 }
 

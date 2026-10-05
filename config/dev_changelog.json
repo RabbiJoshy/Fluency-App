@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-05T22:31:49+01:00",
+      "date": "2026-10-05 22:31 BST",
+      "agent": "Codex",
+      "summary": "Make tutorial explanations easier to read and match real card context styling",
+      "detail": [
+        "Removed the purple tr. badge and the instruction to click the meaning heading.",
+        "Example contexts use the real card’s shaded cue areas.",
+        "Desktop explanation titles, body text, Back/Next buttons and progress count are larger and brighter."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-05T22:23:59+01:00",
       "date": "2026-10-05 22:23 BST",
       "agent": "Claude",
@@ -357,31 +369,6 @@
         "Simplified split card note to 'Card 1 of 2' and labeled active vs companion pill capsules with '1/2' and '2/2'.",
         "Unified all badges and tags to standard reading typography (--font-reading) without monospaced fonts.",
         "Removed redundant companion footer box on card back, keeping a single clean header badge."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-03T21:49:52+01:00",
-      "date": "2026-10-03 21:49 BST",
-      "agent": "Codex",
-      "summary": "French and Portuguese Artist decks: fixed filtering by selected songs.",
-      "detail": [
-        "Built complete per-song card membership from all frozen lyric occurrences, rather than sampled examples.",
-        "Verified native profile summaries and preserved nine existing public release trees, including Spanish artists.",
-        "Updated catalog to the final French and Portuguese releases."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-03T16:09:24+01:00",
-      "date": "2026-10-03 16:09 BST",
-      "agent": "Codex",
-      "summary": "Artist mode: added reviewed French and Portuguese test decks.",
-      "detail": [
-        "French Test Playlist: 64 songs and 2,097 cards; Portuguese Test Playlist: 19 songs and 869 cards.",
-        "Added language adapters, reviewed morphology and phrase menus, native WSD provenance, and complete source/span validation.",
-        "Artist colours inherit language defaults when a release supplies no bespoke theme.",
-        "Existing Spanish artists and the older French playlist remain available. Sentence translations are explicitly unavailable."
       ],
       "commit": "pending"
     }

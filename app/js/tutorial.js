@@ -11,7 +11,7 @@
 
 import {
     REPLICA_CARDS, esc, renderBack, replicaCardHTML, wireReplicaBack, fitReplicaCard,
-} from './card-replica.js?v=a6af56b5';
+} from './card-replica.js?v=037c0cf4';
 
 
 // Each language selects its own representative card and dictionary wording.
@@ -151,7 +151,6 @@ const TUTORIAL_DECKS = [
                         anchor: '.pos-section-head',
                         title: 'The meanings at a glance',
                         text: 'Meanings are grouped by part of speech, with the most common first.',
-                        actionHint: 'Click the highlighted heading on the card',
                     },
                     {
                         side: 'left',
