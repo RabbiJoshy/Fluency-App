@@ -3259,16 +3259,19 @@ async function loadVocabularyData(rangeString, opts = {}) {
                     : { targetSentence: '', englishSentence: '' };
 
                 // Filter the formatted meanings for each tuple's headword/reading
-                const m1 = meanings.filter(m => {
+                const belongs1 = m => {
                     const hw = cleanHeadwordToken(m.headword || item.word);
                     return hw === t1.headword || (!t1.isReflexive && hw === cleanHeadwordToken(t1.headword));
-                });
-                const m2 = meanings.filter(m => {
+                };
+                const belongs2 = m => {
                     const hw = cleanHeadwordToken(m.headword || item.word);
                     return hw === t2.headword || (t2.isReflexive && normalizeLemmaToken(m.headword).endsWith('se'));
-                });
-                const meanings1 = m1.length > 0 ? m1 : meanings;
-                const meanings2 = m2.length > 0 ? m2 : meanings;
+                };
+                const m1 = meanings.filter(belongs1);
+                const m2 = meanings.filter(belongs2);
+                const rarerOf = belongs => (card.unusedMenuSenses || []).filter(m => m.lowShare && belongs(m));
+                const meanings1 = m1.length > 0 ? stampSplitShownShares(item, m1, rarerOf(belongs1)) : meanings;
+                const meanings2 = m2.length > 0 ? stampSplitShownShares(item, m2, rarerOf(belongs2)) : meanings;
 
                 const card1 = {
                     ...card,
@@ -4104,10 +4107,40 @@ function unusedMenuSensesOf(item) {
     }));
 }
 
+// Commonness is read against the senses a learner can see: everything except
+// expressions, which are studied on their own card. Rarer senses stay in the
+// base, so moving one to Rarer uses never inflates the rest. `percentage`
+// keeps the share of all assigned sentences; `shownShare` is the label's.
+function isShownSense(m, item) {
+    return !NON_SENSE_POS.has(String(m.pos || '').toUpperCase())
+        && !globalThis.isExpressionSenseForLemma?.(m, item);
+}
+
+function stampShownShares(item, meanings) {
+    const isSense = m => isShownSense(m, item);
+    const base = meanings.filter(isSense).reduce((sum, m) => sum + (Number(m.percentage) || 0), 0);
+    if (base <= 0) return meanings;
+    return meanings.map(m => (isSense(m) ? { ...m, shownShare: (Number(m.percentage) || 0) / base } : m));
+}
+
+// A split card shows one reading of its surface, so its shares are read
+// against that reading alone: its own senses plus its own rarer senses. The
+// sibling card's senses are not part of what this card shows. When a reading
+// is all expressions (vamos = "let's go"), those are what it shows.
+function stampSplitShownShares(item, meanings, rare) {
+    const pool = meanings.some(m => isShownSense(m, item))
+        ? meanings.filter(m => isShownSense(m, item))
+        : meanings;
+    const base = [...pool, ...rare].reduce((sum, m) => sum + (Number(m.percentage) || 0), 0);
+    if (base <= 0) return meanings;
+    return meanings.map(m => (pool.includes(m) ? { ...m, shownShare: (Number(m.percentage) || 0) / base } : m));
+}
+
 // The last step every card builder shares: shares over the card's assigned
 // sentences, then low-share senses moved beside the unused menu senses.
 function finishCardMeanings(item, meanings) {
-    const { meanings: kept, rare } = splitLowShareMeanings(normalizeMeaningShares(meanings));
+    const shares = stampShownShares(item, normalizeMeaningShares(meanings));
+    const { meanings: kept, rare } = splitLowShareMeanings(shares);
     return { meanings: kept, unusedMenuSenses: [...rare, ...unusedMenuSensesOf(item)] };
 }
 // /low-share-pure

@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-05T19:09:57+01:00",
+      "date": "2026-10-05 19:09 BST",
+      "agent": "Claude",
+      "summary": "Commonness is the share of the senses shown; grouped senses carry one meter under the gloss; 'N rarer senses' row",
+      "detail": [
+        "Commonness labels and percentages are read against the senses a learner can see: expressions (their own card) leave the base, rarer senses stay in it",
+        "Split cards read their shares against their own reading, not the sibling card's senses",
+        "A grouped sense whose sub-rows share one commonness shows its meter under the gloss; the side column goes and sub-rows get the width",
+        "A lone sense that is not Dominant gets an 'N rarer senses' row with their combined commonness; it opens Rarer uses"
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-05T19:08:00+01:00",
       "date": "2026-10-05 19:08 BST",
       "agent": "Codex",

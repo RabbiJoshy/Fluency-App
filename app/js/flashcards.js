@@ -957,6 +957,26 @@ function markCompactInactiveRows(root) {
     });
 }
 
+// A card with one sense that is not Dominant has its other uses in Rarer uses.
+// Say so in the list, with their combined commonness, so the one label does
+// not look wrong on its own. Tapping it opens Rarer uses.
+function addRarerSensesRow(root, card) {
+    const scroll = root?.querySelector('.meanings-scroll');
+    if (!scroll || !card || card.isChainChild) return;
+    const rows = scroll.querySelectorAll('.meaning-row');
+    if (rows.length !== 1) return;
+    const badge = rows[0].querySelector('.sense-prominence-badge');
+    if (!badge || badge.classList.contains('prominence-dominant')) return;
+    const rarer = (card.unusedMenuSenses || []).filter(m => m.lowShare);
+    const count = collectRareSenseItems(card).length;
+    if (!rarer.length || !count) return;
+    const info = prominenceInfoFromShare(rarer);
+    rows[0].insertAdjacentHTML('afterend',
+        `<button type="button" class="rarer-senses-row" aria-label="${count} rarer sense${count === 1 ? '' : 's'}: ${escapeCardText(info.label)}. Open Rarer uses." onclick="event.stopPropagation(); openRareAndExpressionsCard(event)">`
+        + `<span class="rarer-senses-row-label">${count} rarer sense${count === 1 ? '' : 's'}</span>`
+        + `${prominenceMeterHTML(info.key)}</button>`);
+}
+
 // Give both providers the same optional cue area, after moving disclosures out.
 function arrangeSenseCueAreas(root) {
     // A cue area is shaded only when it has words in it. A flag on its own
@@ -5636,11 +5656,18 @@ function getSenseProminenceInfo(meaning) {
 // must not fight Common vs Rare; sum the assigned members and bucket once.
 // 4-category scale: Rare (unassigned/dictionary-only), Uncommon (0-20%),
 // Common (20-60%), Dominant (>= 60%).
+// The share a label reads: of the senses the learner can see, expressions
+// excluded and rarer senses included (stampShownShares in vocab.js). Cards
+// built elsewhere fall back to the share of all assigned sentences.
+function shownShare(meaning) {
+    return Number(meaning?.shownShare ?? meaning?.percentage) || 0;
+}
+
 function prominenceInfoFromShare(meanings) {
     const list = Array.isArray(meanings) ? meanings.filter(Boolean) : [];
     const used = list.filter(m => !m.unassigned && !m.isRareSense);
     if (!used.length) return { label: 'Rare', key: 'rare' };
-    const p = used.reduce((acc, m) => acc + (Number(m.percentage) || 0), 0);
+    const p = used.reduce((acc, m) => acc + shownShare(m), 0);
     if (p <= 0) return { label: 'Rare', key: 'rare' };
     if (p >= 0.60) return { label: 'Dominant', key: 'dominant' };
     if (p >= 0.20) return { label: 'Common', key: 'common' };
@@ -5753,7 +5780,7 @@ function glossClusterProminenceState(card) {
         const members = indexes.map(index => card.meanings[index]);
         const pooled = indexes.length >= 2 && !withinGlossLeafSeparationIsReliable(members);
         const pooledInfo = prominenceInfoFromShare(members);
-        const pooledShare = members.reduce((acc, meaning) => acc + (Number(meaning.percentage) || 0), 0);
+        const pooledShare = members.reduce((acc, meaning) => acc + shownShare(meaning), 0);
         indexes.forEach(index => {
             const meaning = card.meanings[index];
             if (meaning.isRareSense || (meaning.prominenceLabel === 'Rare' && !pooled)) {
@@ -6744,7 +6771,7 @@ function renderCardWikipediaBadge(card) {
             }
             if (!m.unassigned) {
                 if (!m.isRareSense) {
-                    g.pct += Number(m.percentage || 0);
+                    g.pct += shownShare(m);
                     g.mainMeanings.push(m);
                 }
                 g.hasAssignedEvidence = true;
@@ -7056,7 +7083,7 @@ function renderCardWikipediaBadge(card) {
                 const allFoldIndices = [leaderIdx, ...followers];
                 const allFoldMeanings = allFoldIndices.map(i => card.meanings[i]);
                 const bestPromInfo = prominenceInfoFromShare(allFoldMeanings);
-                const sumPctVal = Math.min(100, Math.round(allFoldMeanings.reduce((acc, m) => acc + (Number(m.percentage) || 0), 0) * 100));
+                const sumPctVal = Math.min(100, Math.round(allFoldMeanings.reduce((acc, m) => acc + shownShare(m), 0) * 100));
                 const hasOnlyRare = allFoldMeanings.every(m => m.unassigned || m.isRareSense || m.prominenceLabel === 'Rare');
 
                 const pooled = dedupeExamples(allFoldMeanings.flatMap(m => m.allExamples || m.examples || []));
@@ -7325,7 +7352,7 @@ function renderCardWikipediaBadge(card) {
                 //                          varying list = translations
                 // Continuations of a group are skipped; the leader emits a
                 // single card containing all members.
-                const pctVal = Math.round(m.percentage * 100);
+                const pctVal = Math.round(shownShare(m) * 100);
                 const prominenceText = m.prominenceLabel
                     ? escapeCardText(m.prominenceLabel)
                     : '';
@@ -7681,7 +7708,7 @@ function renderCardWikipediaBadge(card) {
                     // unless the within-family leaf split is peaked and reliable.
                     const splitLeaves = withinGlossLeafSeparationIsReliable(groupMeanings);
                     const groupPromInfo = prominenceInfoFromShare(groupMeanings);
-                    const groupPctVal = Math.min(100, Math.round(groupMeanings.reduce((acc, mm) => acc + (Number(mm.percentage) || 0), 0) * 100));
+                    const groupPctVal = Math.min(100, Math.round(groupMeanings.reduce((acc, mm) => acc + shownShare(mm), 0) * 100));
                     let pctColumnHtml;
                     if (useProminenceLabels && splitLeaves) {
                         const pctStackHtml = displayMemberEntries.map((entry) => {
@@ -7699,7 +7726,7 @@ function renderCardWikipediaBadge(card) {
                         const pctStackHtml = displayMemberEntries.map((entry) => {
                             const memberIdx = entry.representative;
                             const clusteredMeanings = entry.memberIndices.map(index => card.meanings[index]);
-                            const memberPct = Math.min(100, Math.round(clusteredMeanings.reduce((sum, meaning) => sum + (meaning.percentage || 0), 0) * 100));
+                            const memberPct = Math.min(100, Math.round(clusteredMeanings.reduce((sum, meaning) => sum + shownShare(meaning), 0) * 100));
                             if (clusteredMeanings.every(meaning => meaning.unassigned) || memberPct >= 100) {
                                 return '<div style="min-height: 25px; padding: 2px 6px;"></div>';
                             }
@@ -7716,14 +7743,25 @@ function renderCardWikipediaBadge(card) {
                         pctColumnHtml = `<div class="pct-column pct-column--group" style="display: flex; align-items: center; padding-left: 4px;">${knownSenseTagHTML()}</div>`;
                     }
 
+                    // Sub-rows that cannot be told apart share one commonness,
+                    // so it belongs to the sense, not beside them: the meter
+                    // sits under the gloss and the side column goes. Sub-rows
+                    // that do separate keep their own meters in that column.
+                    let sharedMeterHTML = '';
+                    if (!groupKnown && !splitLeaves) {
+                        const inner = pctColumnHtml.match(/^<div class="pct-column pct-column--group"[^>]*>([\s\S]*)<\/div>$/)?.[1] || '';
+                        sharedMeterHTML = inner ? `<div class="group-shared-meter">${inner}</div>` : '';
+                        pctColumnHtml = '';
+                    }
+
                     // Shared cell — spans all body rows.
                     const sharedCol = isTransAxis ? 1 : 2;
                     const sharedSpan = `grid-column: ${sharedCol}; grid-row: 1 / span ${displayMemberEntries.length}; align-self: center;`;
                     const sharedContextHTML = sharedContextParts.length
                         ? `<span class="group-shared-context">${escapeCardText(sharedContextParts.join(' · '))}</span>` : '';
                     const sharedCellHtml = isTransAxis
-                        ? `<div class="group-card-shared row-adaptive-text" style="${sharedSpan} font-weight: 600; color: var(--text-primary); text-align: center; line-height: 1.25; min-width: 0; word-break: break-word;">${sharedTextHTML}${sharedContextHTML}${sharedNoteHTML}${modelProposalMarkerHTML(orderedMembers.some(memberIdx => card.meanings[memberIdx].modelProposed) ? { modelProposed: true } : null)}</div>`
-                        : `<div class="group-card-shared" style="${sharedSpan} text-align: center; line-height: 1.25; min-width: 0; word-break: break-word;">${renderSenseContextHTML(groupKey, { leadingDot: false })}</div>`;
+                        ? `<div class="group-card-shared row-adaptive-text" style="${sharedSpan} font-weight: 600; color: var(--text-primary); text-align: center; line-height: 1.25; min-width: 0; word-break: break-word;">${sharedTextHTML}${sharedContextHTML}${sharedNoteHTML}${modelProposalMarkerHTML(orderedMembers.some(memberIdx => card.meanings[memberIdx].modelProposed) ? { modelProposed: true } : null)}${sharedMeterHTML}</div>`
+                        : `<div class="group-card-shared" style="${sharedSpan} text-align: center; line-height: 1.25; min-width: 0; word-break: break-word;">${renderSenseContextHTML(groupKey, { leadingDot: false })}${sharedMeterHTML}</div>`;
 
                     // Body grid: shared + varying. The pct column lives in the
                     // outer grid; POS lives in the header legend.
@@ -7731,7 +7769,7 @@ function renderCardWikipediaBadge(card) {
 
                     // Outer row is body | pct stack. POS is represented once
                     // by the header legend and repeated through row colour.
-                    const outerGridCols = '1fr auto';
+                    const outerGridCols = pctColumnHtml ? '1fr auto' : '1fr';
 
                     target.push(`
                     <div class="meaning-row meaning-row-group ${groupedTextClass}${groupIsCurrent ? ' selected' : ''}${groupStateClasses}${groupKnown ? ' meaning-row-known' : ''}" data-axis="${axis}" onclick="selectGroup('${axis}', ${idx})" style="position: relative; display: grid; grid-template-columns: ${outerGridCols}; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${cardBg}; border-radius: 8px; cursor: pointer;">
@@ -8415,6 +8453,7 @@ function renderCardWikipediaBadge(card) {
         placeRowLeadMarks(renderedBack);
         arrangeSenseCueAreas(renderedBack);
         markCompactInactiveRows(renderedBack);
+        addRarerSensesRow(renderedBack, card);
         renderedBack._fluencyRenderedHTML = backHTML;
         bindGrammarPairChips(renderedBack);
     }
