@@ -1,26 +1,27 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=6ee1dd6f';
-import './speech.js?v=6ee1dd6f';
-import { goToRoute, routeCodeFor } from './routes.js?v=6ee1dd6f';
-import './side-dock.js?v=6ee1dd6f';
+import './state.js?v=f71b7b29';
+import './speech.js?v=f71b7b29';
+import { goToRoute, routeCodeFor } from './routes.js?v=f71b7b29';
+import './side-dock.js?v=f71b7b29';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=f71b7b29';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=6ee1dd6f';
+} from './example-personalisation.js?v=f71b7b29';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=6ee1dd6f';
+} from './spanishdict-usage.js?v=f71b7b29';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=6ee1dd6f';
+} from './reverse-cues.js?v=f71b7b29';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -53,7 +54,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=6ee1dd6f';
+} from './card-metadata-pills.js?v=f71b7b29';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -2537,9 +2538,21 @@ function toggleKeyboardShortcutsModal(force) {
     if (!modal) return;
     const shouldOpen = typeof force === 'boolean' ? force : modal.classList.contains('hidden');
     if (shouldOpen) {
+        refreshKeyboardGuide();
+        modal._shortcutReturnFocus = document.activeElement;
+        window.closeKeyboardGuidePopover?.();
         modal.classList.remove('hidden');
+        document.getElementById('closeKeyboardShortcutsModal')?.focus();
     } else {
         modal.classList.add('hidden');
+        // The dock removes its placement in a mutation observer. Restore
+        // focus after that has revealed the guide or its reopen button.
+        requestAnimationFrame(() => {
+            const previous = modal._shortcutReturnFocus;
+            if (previous?.isConnected && previous.getClientRects().length) previous.focus();
+            else if (document.getElementById('kbGuideToggle')?.getClientRects().length) document.getElementById('kbGuideToggle').focus();
+            else if (document.getElementById('keyboardGuideAll')?.getClientRects().length) document.getElementById('keyboardGuideAll').focus();
+        });
     }
 }
 window.toggleKeyboardShortcutsModal = toggleKeyboardShortcutsModal;
@@ -2616,6 +2629,10 @@ function setupKeyboardShortcuts() {
             window.showFlagMenu?.();
             return;
         }
+
+        // Reference controls keep normal focus/click behaviour. Card keys
+        // still apply when focus is back on the study surface.
+        if (e.key !== 'Escape' && e.target.closest?.('#desktopKeyboardGuide, #kbGuideToggle, #kbToggleSidebar, #keyboardShortcutsModal')) return;
 
         // Left arrow = previous card
         if (e.key === 'ArrowLeft') {
@@ -2694,6 +2711,7 @@ function setupKeyboardShortcuts() {
             e.preventDefault();
             // A side panel stays open while you study, so Escape must close
             // it rather than fall through to navigateBack and leave the set.
+            if (window.closeKeyboardGuidePopover?.()) return;
             if (window.sideDock?.closeTopmost()) return;
             const scModal = document.getElementById('keyboardShortcutsModal');
             const deckModal = document.getElementById('deckCompleteModal');
@@ -5856,12 +5874,7 @@ function updateCard({ announceHeadword = false } = {}) {
         : (cardHeadwords[0] || card.citationForm || card.lemma || displaySurface);
     const formNote = card.isPronominal ? 'verb with se' : '';
     window._currentDisplayedExample = null;
-    const reportShortcut = document.getElementById('cardMetaBtn');
-    if (reportShortcut) {
-        const canReport = Boolean(window.canUserFlag ? window.canUserFlag() : window.isAuditAccount?.());
-        const section = reportShortcut.closest('.kb-section');
-        if (section) section.style.display = canReport ? '' : 'none';
-    }
+    refreshKeyboardGuide();
 
     // A card entry starts from its structural group selection. An explicit
     // sub-sense choice lasts only while the learner remains on this card.
@@ -10335,65 +10348,18 @@ document.addEventListener('click', (e) => {
     el.classList.add('is-expanded');
 }, true);
 
-// Keyboard-shortcut guide: collapse/expand with localStorage persistence.
-// Toggled from the right-edge sidebar button (#kbToggleSidebar), which the
-// study menu now hides, so the guide is shown by default wherever the CSS
-// finds room for it. The old key defaulted every visitor to collapsed with
-// no way back, so it is not read.
-(function _initKbGuideCollapse() {
-    const LS_KEY = 'fluency.kbGuideCollapsedV2';
-    function attach() {
-        const guide = document.getElementById('desktopKeyboardGuide');
-        const btn = document.getElementById('kbToggleSidebar');
-        if (!guide || !btn) return;
-        const setCollapsed = (collapsed) => {
-            guide.classList.toggle('collapsed', collapsed);
-            btn.title = collapsed ? 'Show keyboard shortcuts' : 'Hide keyboard shortcuts';
-            btn.setAttribute('aria-label', btn.title);
-            try { localStorage.setItem(LS_KEY, collapsed ? '1' : '0'); } catch (e) {}
-        };
-        let initial = false;
-        try {
-            const stored = localStorage.getItem(LS_KEY);
-            if (stored !== null) initial = stored === '1';
-        } catch (e) {}
-        setCollapsed(initial);
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            setCollapsed(!guide.classList.contains('collapsed'));
-        });
-        _initKbGuidePopover(guide);
-    }
-    // Where the gutter is too small for the whole guide, CSS shows a keyboard
-    // button instead; it opens the guide as a popover. Anything that makes the
-    // button go away (more room, leaving the card) also closes the popover.
-    function _initKbGuidePopover(guide) {
-        const toggle = document.getElementById('kbGuideToggle');
-        if (!toggle) return;
-        const setOpen = open => {
-            guide.classList.toggle('kb-guide-popover-open', open);
-            document.body.classList.toggle('kb-guide-open', open);
-            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-        };
-        const toggleShown = () => getComputedStyle(toggle).display !== 'none';
-        toggle.addEventListener('click', event => {
-            event.stopPropagation();
-            setOpen(!guide.classList.contains('kb-guide-popover-open'));
-        });
-        document.addEventListener('click', event => {
-            if (!guide.classList.contains('kb-guide-popover-open')) return;
-            if (guide.contains(event.target) || toggle.contains(event.target)) return;
-            setOpen(false);
-        });
-        window.addEventListener('resize', () => {
-            if (!toggleShown()) setOpen(false);
-        });
-    }
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', attach, { once: true });
-    } else {
-        attach();
-    }
+// Render both shortcut references from the same catalogue.
+(function setupKeyboardGuide() {
+    const attach = () => initKeyboardGuide({
+        getContext: () => ({
+            card: flashcards[currentIndex],
+            canFlag: Boolean(window.canUserFlag ? window.canUserFlag() : window.isAuditAccount?.()),
+            isOwner: isJstOwner(),
+        }),
+        openReference: () => toggleKeyboardShortcutsModal(true),
+    });
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', attach, { once: true });
+    else attach();
 })();
 
 // ===========================================================================
@@ -10418,8 +10384,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '6ee1dd6f';
-const MODALS_ASSET_VERSION = '6ee1dd6f';
+const ASSET_VERSION = 'f71b7b29';
+const MODALS_ASSET_VERSION = 'f71b7b29';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
