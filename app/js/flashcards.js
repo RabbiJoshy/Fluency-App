@@ -972,6 +972,13 @@ function arrangeSenseCueAreas(root) {
         cues.className = 'sense-cue-area sense-cue-group';
         cues.append(...cells);
         body.append(cues);
+        // Shown only while sub-rows are folded to fit (collapseSubsensesToFit).
+        const folded = cells.filter(cell => !cell.classList.contains('is-active-subsense')).length;
+        const shared = body.querySelector('.group-card-shared');
+        if (folded > 0 && shared) {
+            shared.insertAdjacentHTML('beforeend',
+                `<button type="button" class="subsense-more" aria-label="Show ${folded} more" onclick="expandSubsenseGroup(event)">+${folded}</button>`);
+        }
     });
 }
 
@@ -1024,6 +1031,27 @@ function availableHeightForMeaningScroll(backEl, scroll) {
         - (parseFloat(backStyle.paddingTop) || 0) - (parseFloat(backStyle.paddingBottom) || 0);
 }
 
+// When two or more senses would need scrolling, grouped senses fold to their
+// main row so every sense shows at once: the other senses first, then, only if
+// that is not enough, the current one (keeping the sub-row its example belongs
+// to). A "+N" chip opens one group in place. A lone sense never folds; there
+// is nothing else to bring into view.
+function collapseSubsensesToFit(scroll, available) {
+    scroll.classList.remove('collapse-subsenses', 'collapse-current-subsenses');
+    const senseRows = [...scroll.querySelectorAll('.meaning-row')]
+        .filter(row => !row.closest('.pos-collapsible:not(.is-open)'));
+    if (senseRows.length < 2 || scroll.scrollHeight <= available + 1) return;
+    if (!scroll.querySelector('.sense-cue-group')) return;
+    scroll.classList.add('collapse-subsenses');
+    if (scroll.scrollHeight > available + 1) scroll.classList.add('collapse-current-subsenses');
+}
+
+function expandSubsenseGroup(event) {
+    event.stopPropagation();
+    event.currentTarget.closest('.meaning-row-group')?.classList.add('is-expanded');
+    refitMeaningScroll();
+}
+
 // Disclosures change row height without rendering the card again. Release the
 // previous cap before measuring so spare space can move the example down.
 function refitMeaningScroll(backEl = document.getElementById('backContent')) {
@@ -1031,6 +1059,7 @@ function refitMeaningScroll(backEl = document.getElementById('backContent')) {
     if (!scroll) return;
     scroll.style.maxHeight = '';
     const available = availableHeightForMeaningScroll(backEl, scroll);
+    collapseSubsensesToFit(scroll, available);
     if (scroll.scrollHeight > available) scroll.style.maxHeight = Math.max(100, available) + 'px';
 }
 document.addEventListener('sense-details-change', () => refitMeaningScroll());
@@ -4139,11 +4168,12 @@ function collectRareSenseItems(card) {
     return items;
 }
 
+// Rarer uses holds rare senses only. Expressions have their own card (the
+// phrase chain after a correct answer), and no expression is "rarer" than
+// another, so listing them here only repeated that card.
 function collectRareAndExpressionItems(card) {
     if (!card || card.isChainChild) return [];
-    const expressions = collectExpressionItems(card);
-    const rareSenses = collectRareSenseItems(card);
-    return [...expressions, ...rareSenses];
+    return collectRareSenseItems(card);
 }
 
 // Builds the synthetic card rendered after the parent — one card holding
@@ -8433,6 +8463,7 @@ function renderCardWikipediaBadge(card) {
                     updateCard();
                     return;
                 }
+                collapseSubsensesToFit(scroll, availableForScroll);
                 // Cap meanings-scroll whenever its natural content overflows
                 // the remaining room. Floor the cap value (not the gate) at
                 // 60px so the scroller stays usable even when overhead is
@@ -10107,6 +10138,7 @@ window.toggleMorphPopover = toggleMorphPopover;
 window.toggleMorphAlternatives = toggleMorphAlternatives;
 window.toggleFrontProductionHint = toggleFrontProductionHint;
 window.toggleSplitCardTip = toggleSplitCardTip;
+window.expandSubsenseGroup = expandSubsenseGroup;
 window.focusKnowledgeCardItem = focusKnowledgeCardItem;
 window.selectGroup = selectGroup;
 window.previousCard = previousCard;

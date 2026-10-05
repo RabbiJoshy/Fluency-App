@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-05T14:48:14+01:00",
+      "date": "2026-10-05 14:48 BST",
+      "agent": "Claude",
+      "summary": "Senses fold their sub-rows when they would need scrolling; Rarer uses is rare senses only; bigger gear tap area",
+      "detail": [
+        "When two or more senses would scroll, grouped senses fold to their main row with a '+N' chip that opens them; other senses fold before the current one, and a lone sense never folds",
+        "Rarer uses no longer lists expressions (they have their own card after a correct answer)",
+        "Back-of-card gear: tap area 52px wide (was 44)",
+        "Roadmap: TERSE row for shortening long Wiktionary contexts (e.g. pt não)"
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-05T14:11:16+01:00",
       "date": "2026-10-05 14:11 BST",
       "agent": "Claude",

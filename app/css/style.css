@@ -2118,8 +2118,8 @@
         }
 
         .cbs-gear {
-            flex: 0 0 44px;
-            width: 44px;
+            flex: 0 0 52px;
+            width: 52px;
             height: 100%;
             max-height: 62px;
             border-radius: 999px;
@@ -22744,3 +22744,27 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
   text-align: left;
 }
 .split-card-tip[hidden] { display: none; }
+
+/* Senses that would need scrolling fold their sub-rows (collapseSubsensesToFit):
+   a folded group shows its main row, plus the current sub-row if it has one,
+   and a "+N" chip that opens it. Other senses fold first; the current one
+   only under .collapse-current-subsenses. */
+.subsense-more { display: none; }
+.meanings-scroll.collapse-subsenses .meaning-row-group:not(.selected):not(.is-expanded) .sense-cue-group > .group-card-varying-cell:not(.is-active-subsense),
+.meanings-scroll.collapse-current-subsenses .meaning-row-group.selected:not(.is-expanded) .sense-cue-group > .group-card-varying-cell:not(.is-active-subsense) { display: none !important; }
+.meanings-scroll.collapse-subsenses .meaning-row-group:not(.selected):not(.is-expanded) .sense-cue-group:not(:has(> .is-active-subsense)),
+.meanings-scroll.collapse-current-subsenses .meaning-row-group.selected:not(.is-expanded) .sense-cue-group:not(:has(> .is-active-subsense)) { display: none !important; }
+.meanings-scroll.collapse-subsenses .meaning-row-group:not(.selected):not(.is-expanded) .subsense-more,
+.meanings-scroll.collapse-current-subsenses .meaning-row-group.selected:not(.is-expanded) .subsense-more {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border: 1px solid color-mix(in srgb, var(--border-color) 80%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-tertiary) 82%, transparent);
+  color: var(--text-secondary);
+  font: 650 12.5px/1.2 var(--font-reading);
+  vertical-align: middle;
+  cursor: pointer;
+}
