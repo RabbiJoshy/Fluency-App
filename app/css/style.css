@@ -19860,14 +19860,6 @@ body.rare-uses-open { overflow: hidden; }
   color: var(--text-muted);
   font: 500 13px/1.35 var(--font-reading);
 }
-/* Known / Review under each rare sense, same buttons as the meanings overview. */
-.rare-uses-modal .rare-use-marks {
-  display: flex;
-  justify-content: flex-end;
-  gap: 6px;
-  margin-top: 8px;
-  padding-right: 0;
-}
 .rare-uses-modal .rare-uses-body {
   flex: 1 1 auto;
   min-height: 0;
@@ -22025,13 +22017,6 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
   cursor: pointer;
 }
 
-/* A grouped sense's one commonness meter, under its gloss (see sharedMeterHTML). */
-.group-card-shared > .group-shared-meter {
-  display: flex;
-  justify-content: center;
-  margin-top: 4px;
-}
-
 /* Give source annotations one complete box instead of outlining an inline
    wrapper's line fragment beside a taller icon. */
 #cardTutorialStage .example-song-credit {
@@ -22144,6 +22129,70 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
   border-color: color-mix(in srgb, var(--warning) 75%, var(--border-color));
   background: color-mix(in srgb, var(--warning) 16%, var(--bg-tertiary));
 }
+
+/* Rarer uses: every sense at once, examples folded behind a small toggle. */
+.rare-use-examples { margin-top: 4px; }
+.rare-use-examples > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 0;
+  color: var(--text-muted);
+  font: 600 12.5px/1.3 var(--font-reading);
+  cursor: pointer;
+  list-style: none;
+}
+.rare-use-examples > summary::-webkit-details-marker { display: none; }
+.rare-use-examples > summary::before { content: '›'; display: inline-block; transition: transform .15s ease; }
+.rare-use-examples[open] > summary::before { transform: rotate(90deg); }
+.rare-use-examples > summary:hover { color: var(--text-primary); }
+
+/* The "or" between Everyday speech and Your music is the point of the screen:
+   one choice of two. A clear round badge on a stronger rule, in both the
+   stacked (phone) and side-by-side (wide) layouts. */
+#step1.language-summary-active #standardSourceCard .standard-source-or { gap: 14px; margin: 6px 0; }
+#step1.language-summary-active #standardSourceCard .standard-source-or > b {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border: 1.5px solid color-mix(in srgb, var(--accent-primary) 55%, var(--border-color));
+  border-radius: 50%;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font: 800 13px/1 var(--font-emphasis);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+#step1.language-summary-active #standardSourceCard .standard-source-or::before,
+#step1.language-summary-active #standardSourceCard .standard-source-or::after {
+  background: color-mix(in srgb, var(--text-muted) 45%, transparent);
+}
+@media (min-width: 900px) {
+  #step1.language-summary-active #standardSourceCard .standard-source-or { margin: 0; align-items: center; }
+}
+
+/* A grouped sense's meter sits at the row's right edge (pinned there like
+   every row's, see `.meaning-row > .pct-column`), level with the sense line
+   rather than its sub-rows: centred when the gloss stands beside the
+   sub-rows, at the top when the gloss stacks above them. */
+.meaning-row-group:has(> .group-card-body:is(.has-long-shared, .is-stacked)) > .pct-column--group {
+  top: 10px;
+  transform: none;
+}
+@container sense-row (max-width: 420px) {
+  .meaning-row-group:has(> .group-card-body.has-long-context) > .pct-column--group {
+    top: 10px;
+    transform: none;
+  }
+}
+/* Sub-rows with their own meters: while folded, one total stands in for them. */
+.pct-column .pct-group-total { display: none; }
+.meanings-scroll.collapse-subsenses .meaning-row-group:not(.selected):not(.is-expanded) .pct-column .sense-prominence-cell,
+.meanings-scroll.collapse-current-subsenses .meaning-row-group.selected:not(.is-expanded) .pct-column .sense-prominence-cell { display: none !important; }
+.meanings-scroll.collapse-subsenses .meaning-row-group:not(.selected):not(.is-expanded) .pct-column .pct-group-total,
+.meanings-scroll.collapse-current-subsenses .meaning-row-group.selected:not(.is-expanded) .pct-column .pct-group-total { display: flex; }
 
 /* Keep the tutorial card compact while retaining its readable cue areas. */
 #cardTutorialStage .card-back { padding-top: 16px; padding-bottom: 14px; }

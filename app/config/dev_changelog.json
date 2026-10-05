@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-05T23:13:08+01:00",
+      "date": "2026-10-05 23:13 BST",
+      "agent": "Claude",
+      "summary": "Rarer uses as one compact list; clearer OR on the source choice; one meter colour; grouped-sense meter level with the sense line",
+      "detail": [
+        "Rarer uses lists every sense at once with examples folded behind 'Examples · N'; the × / ✓ marks are gone",
+        "The OR between Everyday speech and Your music is a round badge on a stronger rule, on phones and wide screens",
+        "Light mode: the commonness meter is one ink colour at every level, as in dark mode",
+        "A grouped sense's meter is back at the row's right edge, level with the sense line (top when the gloss stacks above its sub-rows); a folded group with per-sub-row meters shows one total"
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-05T23:12:27+01:00",
       "date": "2026-10-05 23:12 BST",
       "agent": "Codex",

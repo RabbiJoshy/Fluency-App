@@ -4802,51 +4802,29 @@ function compactPhraseExampleHTML(example, posAccentRgb) {
 
 const RARE_SENSE_EXAMPLE_LIMIT = 3;
 
+// Rarer uses lists every sense at once; a sense's examples stay folded until
+// asked for, so the list reads as one short overview.
+function foldedExamplesHTML(examplesHTML, count) {
+    if (!examplesHTML) return '';
+    return `<details class="rare-use-examples" onclick="event.stopPropagation()">
+            <summary>Examples · ${count}</summary>
+            ${examplesHTML}
+        </details>`;
+}
+
 function rareSenseLeafHTML(item, posAccentRgb, { hideGloss = false, hideContext = false } = {}) {
     const gloss = item.translation || item.expression || '';
     // A handful, not one: a sense here may rest on two or three corpus lines,
     // and those are what show whether it belongs on the card at all.
-    const exampleHTML = (item.examples || []).slice(0, RARE_SENSE_EXAMPLE_LIMIT)
-        .map(example => compactPhraseExampleHTML(example, posAccentRgb)).join('');
+    const examples = (item.examples || []).slice(0, RARE_SENSE_EXAMPLE_LIMIT)
+        .map(example => compactPhraseExampleHTML(example, posAccentRgb)).filter(Boolean);
     const glossHTML = (!hideGloss && gloss)
         ? `<div class="other-uses-gloss">${escapeCardText(gloss)}</div>` : '';
     const ctxHTML = (!hideContext && item.context)
         ? `<div class="phrase-context">${escapeCardText(item.context)}</div>` : '';
-    if (!glossHTML && !ctxHTML && !exampleHTML) return '';
-    return `<div class="other-uses-leaf">${glossHTML}${ctxHTML}${exampleHTML}${rareSenseMarksHTML(item)}</div>`;
+    if (!glossHTML && !ctxHTML && !examples.length) return '';
+    return `<div class="other-uses-leaf">${glossHTML}${ctxHTML}${foldedExamplesHTML(examples.join(''), examples.length)}</div>`;
 }
-
-// Known / Review for one rare sense, right where it is read. The marks are
-// saved on the same knowledge item the meanings overview used to list under
-// "Show rarer senses" (knowledge.js findRareSenseKnowledgeItem), so marks made
-// there before still show here. Only on the Rarer uses sheet, and only for a
-// signed-in learner, as before.
-function rareSenseMarksHTML(item) {
-    if (typeof currentUser === 'undefined' || !currentUser || currentUser.isGuest) return '';
-    const index = _rareUsesItems.indexOf(item);
-    if (index < 0) return '';
-    const knowledgeItem = window.findRareSenseKnowledgeItem?.(item.parentCard, item);
-    if (!knowledgeItem) return '';
-    const state = window.getKnowledgeItemState?.(item.parentCard, knowledgeItem) || {};
-    const status = state.learned ? 'known' : (state.needsReview ? 'review' : 'unseen');
-    const label = escapeCardText(item.translation || '');
-    return `<div class="knowledge-overview-actions rare-use-marks is-${status}" aria-label="Knowledge for ${label}">
-        <button type="button" class="knowledge-overview-mark mark-review${status === 'review' ? ' is-active' : ''}" onclick="markRareUseKnowledge(event, ${index}, false)" aria-label="Mark for practice" title="Mark for practice">×</button>
-        <button type="button" class="knowledge-overview-mark mark-known${status === 'known' ? ' is-active' : ''}" onclick="markRareUseKnowledge(event, ${index}, true)" aria-label="Mark known" title="Mark known">✓</button>
-    </div>`;
-}
-
-async function markRareUseKnowledge(event, index, isCorrect) {
-    event?.stopPropagation?.();
-    const item = _rareUsesItems[index];
-    const card = item?.parentCard;
-    const knowledgeItem = card && window.findRareSenseKnowledgeItem?.(card, item);
-    if (!knowledgeItem || !window.saveKnowledgeProgress) return;
-    await window.saveKnowledgeProgress(card, [knowledgeItem], isCorrect);
-    renderRareUsesBody();
-    if (card === flashcards[currentIndex]) updateCard();
-}
-if (typeof window !== 'undefined') window.markRareUseKnowledge = markRareUseKnowledge;
 
 function cycleRarerShade(event, clusterKey, count, delta) {
     event?.stopPropagation?.();
@@ -4898,9 +4876,7 @@ function renderRareSenseCluster(group, pos, posAccentRgb, clusterId) {
             <div class="rarer-uses-cluster-meta">Matching senses</div>
             <div class="other-uses-gloss">${escapeCardText(sharedGloss)}</div>
             ${sharedContext ? `<div class="phrase-context">${escapeCardText(sharedContext)}</div>` : ''}
-            ${compactPhraseExampleHTML((item.examples || [])[0], posAccentRgb)}
-            ${pager}
-            ${rareSenseMarksHTML(item)}
+            ${foldedExamplesHTML(compactPhraseExampleHTML((item.examples || [])[0], posAccentRgb) + pager, group.length)}
         </div>`;
     }
 
@@ -7677,15 +7653,12 @@ function renderCardWikipediaBadge(card) {
                         pctColumnHtml = `<div class="pct-column pct-column--group" style="display: flex; align-items: center; padding-left: 4px;">${knownSenseTagHTML()}</div>`;
                     }
 
-                    // Sub-rows that cannot be told apart share one commonness,
-                    // so it belongs to the sense, not beside them: the meter
-                    // sits under the gloss and the side column goes. Sub-rows
-                    // that do separate keep their own meters in that column.
-                    let sharedMeterHTML = '';
-                    if (!groupKnown && !splitLeaves) {
-                        const inner = pctColumnHtml.match(/^<div class="pct-column pct-column--group"[^>]*>([\s\S]*)<\/div>$/)?.[1] || '';
-                        sharedMeterHTML = inner ? `<div class="group-shared-meter">${inner}</div>` : '';
-                        pctColumnHtml = '';
+                    // Sub-rows with their own meters keep a group total too,
+                    // shown in their place while the sub-rows are folded, so
+                    // a folded sense always reads as one total.
+                    if (!groupKnown && splitLeaves && useProminenceLabels) {
+                        pctColumnHtml = pctColumnHtml.replace(/<\/div>$/,
+                            `<div class="pct-group-total">${prominenceBadgeHTML(groupPromInfo)}</div></div>`);
                     }
 
                     // Shared cell — spans all body rows.
@@ -7694,8 +7667,8 @@ function renderCardWikipediaBadge(card) {
                     const sharedContextHTML = sharedContextParts.length
                         ? `<span class="group-shared-context">${escapeCardText(sharedContextParts.join(' · '))}</span>` : '';
                     const sharedCellHtml = isTransAxis
-                        ? `<div class="group-card-shared row-adaptive-text" style="${sharedSpan} font-weight: 600; color: var(--text-primary); text-align: center; line-height: 1.25; min-width: 0; word-break: break-word;">${sharedTextHTML}${sharedContextHTML}${sharedNoteHTML}${modelProposalMarkerHTML(orderedMembers.some(memberIdx => card.meanings[memberIdx].modelProposed) ? { modelProposed: true } : null)}${sharedMeterHTML}</div>`
-                        : `<div class="group-card-shared" style="${sharedSpan} text-align: center; line-height: 1.25; min-width: 0; word-break: break-word;">${renderSenseContextHTML(groupKey, { leadingDot: false })}${sharedMeterHTML}</div>`;
+                        ? `<div class="group-card-shared row-adaptive-text" style="${sharedSpan} font-weight: 600; color: var(--text-primary); text-align: center; line-height: 1.25; min-width: 0; word-break: break-word;">${sharedTextHTML}${sharedContextHTML}${sharedNoteHTML}${modelProposalMarkerHTML(orderedMembers.some(memberIdx => card.meanings[memberIdx].modelProposed) ? { modelProposed: true } : null)}</div>`
+                        : `<div class="group-card-shared" style="${sharedSpan} text-align: center; line-height: 1.25; min-width: 0; word-break: break-word;">${renderSenseContextHTML(groupKey, { leadingDot: false })}</div>`;
 
                     // Body grid: shared + varying. The pct column lives in the
                     // outer grid; POS lives in the header legend.
@@ -7703,7 +7676,7 @@ function renderCardWikipediaBadge(card) {
 
                     // Outer row is body | pct stack. POS is represented once
                     // by the header legend and repeated through row colour.
-                    const outerGridCols = pctColumnHtml ? '1fr auto' : '1fr';
+                    const outerGridCols = '1fr auto';
 
                     target.push(`
                     <div class="meaning-row meaning-row-group ${groupedTextClass}${groupIsCurrent ? ' selected' : ''}${groupStateClasses}${groupKnown ? ' meaning-row-known' : ''}" data-axis="${axis}" onclick="selectGroup('${axis}', ${idx})" style="position: relative; display: grid; grid-template-columns: ${outerGridCols}; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${cardBg}; border-radius: 8px; cursor: pointer;">
