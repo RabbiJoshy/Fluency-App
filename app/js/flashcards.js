@@ -6304,13 +6304,24 @@ function renderCardWikipediaBadge(card) {
 
                 const noteRgb = getPosAccentRgb(s.pos || card.partOfSpeech);
                 const splitNoteHTML = `<div class="split-card-note" style="color: rgb(${noteRgb});">`
-                    + `<button type="button" class="split-card-note-toggle" aria-expanded="false" onclick="toggleSplitCardTip(event)">Flashcard ${s.index} of ${s.total}</button>`
+                    + `<button type="button" class="split-card-note-toggle" aria-expanded="false" onclick="toggleSplitCardTip(event)">Flashcard <span class="split-card-note-count">${s.index} of ${s.total}</span></button>`
                     + '<span class="split-card-tip" role="tooltip" hidden>This word has two common, unrelated uses, so it gets a flashcard for each. '
                     + 'Learning them separately keeps one meaning from crowding out the other. '
                     + 'You see both, one after the other.</span></div>';
 
                 frontPOSEl.classList.add('is-lemma-map', 'pos-count-2', 'is-split-deck-map');
                 frontPOSEl.innerHTML = splitPairsHTML + splitNoteHTML;
+                // Side by side, the note runs under both pills; when they wrap
+                // onto two lines it moves to their right, level with the pair,
+                // so it never reads as a caption for the lower pill alone.
+                const [firstPill, secondPill] = frontPOSEl.querySelectorAll('.front-lemma-pair');
+                // Stacked means the second pill starts below the first one's
+                // bottom: side-by-side pills of different heights, centred on
+                // one line, also differ in top.
+                if (firstPill && secondPill
+                    && secondPill.offsetTop >= firstPill.offsetTop + firstPill.offsetHeight - 2) {
+                    frontPOSEl.classList.add('is-split-stacked');
+                }
             } else {
                 frontPOSEl.classList.add('is-lemma-map', `pos-count-${Math.min(pairs.length, 4)}`);
                 if (pairs.length > 4) frontPOSEl.classList.add('pos-count-many');

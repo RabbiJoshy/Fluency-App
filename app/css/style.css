@@ -22091,3 +22091,27 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
   #reviewDeckSection.review-deck-step { padding-right: 0; padding-left: 0; }
   #reviewDeckSection > .step-header { padding: 0; }
 }
+
+/* "Flashcard 1 of 2": its own line under side-by-side pills; beside them,
+   centred on the pair, when the pills stack (is-split-stacked). */
+.card-front .card-pos-list.is-split-deck-map > .split-card-note {
+  flex: 1 0 100%;
+  text-align: center;
+}
+.card-front .card-pos-list.is-split-deck-map.is-split-stacked {
+  display: grid !important;
+  grid-template-columns: auto auto;
+  justify-content: center;
+  align-items: center;
+  column-gap: 12px;
+}
+.card-front .card-pos-list.is-split-stacked > .front-lemma-pair { grid-column: 1; justify-self: center; }
+.card-front .card-pos-list.is-split-stacked > .split-card-note {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  max-width: 7.5em;
+  margin: 0;
+  text-align: left;
+  white-space: normal;
+}
+.split-card-note-count { white-space: nowrap; }
