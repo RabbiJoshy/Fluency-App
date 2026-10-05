@@ -758,7 +758,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertNotIn("switchConjMood", conj)
         # Hints sit beside the card: the full guide where there is room, a
         # keyboard button that opens it where there is less, never on the card.
-        self.assertIn("body:has([data-dock=\"left\"]) .desktop-keyboard-guide", css)
+        self.assertIn("body:has([data-dock=\"left\"]:not(.hidden):not([hidden])) .desktop-keyboard-guide", css)
         self.assertIn("body:has(#appContent:not(.hidden)) .kb-guide-toggle { display: grid; }", css)
         self.assertIn(".card-desktop-shortcuts {\n            display: none !important;", css)
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")

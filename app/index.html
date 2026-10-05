@@ -87,6 +87,7 @@
     <link rel="modulepreload" href="js/spanishdict-usage.js?v=20260825ak">
     <link rel="modulepreload" href="js/reverse-cues.js?v=20260927v24">
     <link rel="modulepreload" href="js/flashcards.js?v=20260929sense6">
+    <link rel="modulepreload" href="js/keyboard-guide.js?v=20261005kb">
     <link rel="modulepreload" href="js/example-personalisation.js?v=20260825ak">
     <script>
         // Fail open if a boot-time script error prevents main.js from taking
@@ -244,77 +245,25 @@
             <line x1="7" y1="14" x2="17" y2="14"></line>
         </svg>
     </button>
-    <div class="desktop-keyboard-guide" id="desktopKeyboardGuide">
+    <aside class="desktop-keyboard-guide" id="desktopKeyboardGuide" aria-label="Study shortcuts">
         <div class="kb-content">
-            <div class="kb-section">
-                <div class="kb-row">
-                    <kbd class="kb-key" title="Correct">Enter</kbd>
-                    <span class="kb-hint correct">✓</span>
-                </div>
-                <div class="kb-row">
-                    <kbd class="kb-key" title="Incorrect">X</kbd>
-                    <span class="kb-hint incorrect">✗</span>
-                </div>
+            <div class="kb-guide-header">
+                <h2>Study shortcuts</h2>
+                <button type="button" class="kb-guide-hide" id="keyboardGuideHide" aria-label="Hide keyboard shortcuts" title="Hide keyboard shortcuts">×</button>
             </div>
-            <div class="kb-section kb-arrows">
-                <div class="kb-arrow-row">
-                    <kbd class="kb-key arrow">↑</kbd>
-                </div>
-                <div class="kb-arrow-row">
-                    <kbd class="kb-key arrow">←</kbd>
-                    <kbd class="kb-key arrow">↓</kbd>
-                    <kbd class="kb-key arrow">→</kbd>
-                </div>
-                <div class="kb-arrow-labels">
-                    <span class="kb-hint">prev</span>
-                    <span class="kb-hint">meaning</span>
-                    <span class="kb-hint">next</span>
-                </div>
-            </div>
-            <div class="kb-section">
-                <kbd class="kb-key wide" title="Flip card">Space</kbd>
-                <span class="kb-hint">flip</span>
-            </div>
-            <div class="kb-section">
-                <kbd class="kb-key wide" title="Cycle examples / expressions">Tab</kbd>
-                <span class="kb-hint">cycle</span>
-            </div>
-            <div class="kb-section">
-                <kbd class="kb-key" title="Back to menu">Esc</kbd>
-                <span class="kb-hint">menu</span>
-            </div>
-            <div class="kb-section kb-command-section">
-                <div class="kb-row">
-                    <kbd class="kb-key combo" title="Open study progress">Ctrl S</kbd>
-                    <span class="kb-hint">progress</span>
-                </div>
-                <div class="kb-row">
-                    <kbd class="kb-key combo" title="Open study preferences">Ctrl P</kbd>
-                    <span class="kb-hint">preferences</span>
-                </div>
-            </div>
-            <div class="kb-section kb-command-section kb-flag-section">
-                <button id="cardMetaBtn" class="kb-key kb-info-btn" title="Report a card issue" aria-label="Report a card issue">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M5 21V4"></path><path d="M5 5h11l-2 4 2 4H5"></path>
-                    </svg>
-                </button>
-                <span class="kb-hint">flag menu</span>
-                <div class="kb-row">
-                    <kbd class="kb-key combo" title="Open data and model info (Command-I on Mac)">Ctrl I</kbd>
-                    <span class="kb-hint">model info</span>
-                </div>
-                <div class="kb-row">
-                    <kbd class="kb-key combo" title="Flag the whole card">Ctrl F</kbd>
-                    <span class="kb-hint">whole card</span>
-                </div>
-                <div class="kb-row">
-                    <kbd class="kb-key combo" title="Open the flag menu">Ctrl Shift F</kbd>
-                    <span class="kb-hint">flag menu</span>
+            <div id="keyboardGuideRows" class="kb-guide-rows"></div>
+            <p class="kb-guide-note">↑ ↓ for cards with multiple meanings.</p>
+            <div class="kb-guide-footer">
+                <button type="button" id="keyboardGuideAll" class="kb-guide-all">All shortcuts <kbd class="shortcut-kbd">?</kbd></button>
+                <div class="kb-section kb-flag-section" id="keyboardGuideReport" hidden>
+                    <button type="button" id="cardMetaBtn" class="kb-info-btn" title="Report a card issue" aria-label="Report a card issue">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4"></path><path d="M5 5h11l-2 4 2 4H5"></path></svg>
+                        Report an issue
+                    </button>
                 </div>
             </div>
         </div>
-    </div>
+    </aside>
     <!-- Audit flag menu: one note composer, a few direct classifications,
          a dedicated sense-pairing view, and one primary whole-card action. -->
     <div id="flagMenu" class="card-meta-popover flag-menu" role="dialog" aria-hidden="true" aria-label="Flag a card" hidden>
@@ -1531,68 +1480,14 @@
     <!-- Saved words from sentence breakdown. Not a study queue. -->
     <!-- Keyboard Shortcuts Modal -->
     <div id="keyboardShortcutsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="keyboardShortcutsTitle">
-        <div class="modal-content keyboard-shortcuts-content" style="max-width: 480px;">
+        <div class="modal-content keyboard-shortcuts-content">
             <div class="modal-header">
-                <h3 id="keyboardShortcutsTitle">Keyboard Shortcuts</h3>
-                <button class="modal-close" id="closeKeyboardShortcutsModal" aria-label="Close shortcuts modal">✕</button>
+                <h3 id="keyboardShortcutsTitle">Keyboard shortcuts</h3>
+                <button type="button" class="modal-close" id="closeKeyboardShortcutsModal" aria-label="Close shortcuts reference">✕</button>
             </div>
             <div class="keyboard-shortcuts-body">
-                <div class="shortcut-group">
-                    <span class="shortcut-group-title">Study & Navigation</span>
-                    <div class="shortcut-row">
-                        <span class="shortcut-desc">Flip flashcard</span>
-                        <kbd class="shortcut-kbd">Space</kbd>
-                    </div>
-                    <div class="shortcut-row">
-                        <span class="shortcut-desc">Previous / Next card</span>
-                        <div class="shortcut-kbd-group">
-                            <kbd class="shortcut-kbd">←</kbd>
-                            <kbd class="shortcut-kbd">→</kbd>
-                        </div>
-                    </div>
-                </div>
-                <div class="shortcut-group">
-                    <span class="shortcut-group-title">Card practice</span>
-                    <div class="shortcut-row">
-                        <span class="shortcut-desc">Got it / Mark known</span>
-                        <div class="shortcut-kbd-group">
-                            <kbd class="shortcut-kbd">Enter</kbd>
-                            <span class="shortcut-or">or</span>
-                            <kbd class="shortcut-kbd">C</kbd>
-                        </div>
-                    </div>
-                    <div class="shortcut-row">
-                        <span class="shortcut-desc">Again / Needs practice</span>
-                        <div class="shortcut-kbd-group">
-                            <kbd class="shortcut-kbd">X</kbd>
-                            <span class="shortcut-or">or</span>
-                            <kbd class="shortcut-kbd">1</kbd>
-                        </div>
-                    </div>
-                </div>
-                <div class="shortcut-group">
-                    <span class="shortcut-group-title">Audio & Tools</span>
-                    <div class="shortcut-row">
-                        <span class="shortcut-desc">Pronounce headword</span>
-                        <kbd class="shortcut-kbd">A</kbd>
-                    </div>
-                    <div class="shortcut-row">
-                        <span class="shortcut-desc">Find a word</span>
-                        <div class="shortcut-kbd-group">
-                            <kbd class="shortcut-kbd">⌘F</kbd>
-                            <span class="shortcut-or">or</span>
-                            <kbd class="shortcut-kbd">Ctrl+F</kbd>
-                        </div>
-                    </div>
-                    <div class="shortcut-row">
-                        <span class="shortcut-desc">Toggle shortcuts guide</span>
-                        <kbd class="shortcut-kbd">?</kbd>
-                    </div>
-                    <div class="shortcut-row">
-                        <span class="shortcut-desc">Close open modal</span>
-                        <kbd class="shortcut-kbd">Esc</kbd>
-                    </div>
-                </div>
+                <p class="shortcut-intro">Study keys work while a card is open and you’re not typing in a text field.</p>
+                <div id="keyboardShortcutGroups"></div>
             </div>
         </div>
     </div>

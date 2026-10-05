@@ -75,6 +75,7 @@ const urlsToCache = [
   '/js/flags.js?v=20260929flags',
   '/js/card-metadata-pills.js?v=20260929sense6',
   '/js/flashcards.js?v=20260929sense6',
+  '/js/keyboard-guide.js?v=20261005kb',
   '/icons/tatoeba.svg',
   '/icons/wikipedia-w.svg',
   `/js/example-personalisation.js?v=${ASSET_VERSION}`,
