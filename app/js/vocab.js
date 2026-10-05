@@ -1,11 +1,11 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=fdd6dda8';
-import { validateVocabularyIndex } from './data-contracts.js?v=fdd6dda8';
-import { formatRoute } from './routes.js?v=fdd6dda8';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=fdd6dda8';
-import { releaseUrl } from './release-host.js?v=fdd6dda8';
+import './state.js?v=a6af56b5';
+import { validateVocabularyIndex } from './data-contracts.js?v=a6af56b5';
+import { formatRoute } from './routes.js?v=a6af56b5';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=a6af56b5';
+import { releaseUrl } from './release-host.js?v=a6af56b5';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -1114,15 +1114,26 @@ function buildSplitCardPair(item, card, meanings, lang = selectedLanguage) {
         }
         : { targetSentence: '', englishSentence: '' };
 
-    // Filter the formatted meanings for each tuple's headword/reading
-    const belongs1 = m => {
+    // Each sense goes to the card its split put it on: detectSplitCardTuples
+    // assigned every sense id to one reading. Only a sense outside the split
+    // (an expression) falls back to its headword. Comparing cleaned headwords
+    // alone put ponerse's senses on poner's card too, since cleaning drops -se.
+    const ids1 = new Set(t1.meanings.map(m => m.sense_id || m.senseId).filter(Boolean));
+    const ids2 = new Set(t2.meanings.map(m => m.sense_id || m.senseId).filter(Boolean));
+    const readingOf = m => {
+        const id = m.senseId || m.sense_id;
+        if (id && ids1.has(id)) return 1;
+        if (id && ids2.has(id)) return 2;
+        if (splitTuples.kind === 'reflexive') {
+            return normalizeLemmaToken(m.headword || item.word).endsWith('se') ? 2 : 1;
+        }
         const hw = cleanHeadwordToken(m.headword || item.word);
-        return hw === t1.headword || (!t1.isReflexive && hw === cleanHeadwordToken(t1.headword));
+        if (hw === cleanHeadwordToken(t1.headword)) return 1;
+        if (hw === cleanHeadwordToken(t2.headword)) return 2;
+        return 0;
     };
-    const belongs2 = m => {
-        const hw = cleanHeadwordToken(m.headword || item.word);
-        return hw === t2.headword || (t2.isReflexive && normalizeLemmaToken(m.headword).endsWith('se'));
-    };
+    const belongs1 = m => readingOf(m) === 1;
+    const belongs2 = m => readingOf(m) === 2;
     const m1 = meanings.filter(belongs1);
     const m2 = meanings.filter(belongs2);
     const rarerOf = belongs => (card.unusedMenuSenses || []).filter(m => m.lowShare && belongs(m));

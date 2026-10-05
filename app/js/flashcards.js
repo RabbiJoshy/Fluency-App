@@ -1,27 +1,27 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=fdd6dda8';
-import './speech.js?v=fdd6dda8';
-import { goToRoute, routeCodeFor } from './routes.js?v=fdd6dda8';
-import './side-dock.js?v=fdd6dda8';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=fdd6dda8';
+import './state.js?v=a6af56b5';
+import './speech.js?v=a6af56b5';
+import { goToRoute, routeCodeFor } from './routes.js?v=a6af56b5';
+import './side-dock.js?v=a6af56b5';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=a6af56b5';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=fdd6dda8';
+} from './example-personalisation.js?v=a6af56b5';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=fdd6dda8';
+} from './spanishdict-usage.js?v=a6af56b5';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=fdd6dda8';
+} from './reverse-cues.js?v=a6af56b5';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -54,7 +54,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=fdd6dda8';
+} from './card-metadata-pills.js?v=a6af56b5';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -6304,13 +6304,24 @@ function renderCardWikipediaBadge(card) {
 
                 const noteRgb = getPosAccentRgb(s.pos || card.partOfSpeech);
                 const splitNoteHTML = `<div class="split-card-note" style="color: rgb(${noteRgb});">`
-                    + `<button type="button" class="split-card-note-toggle" aria-expanded="false" onclick="toggleSplitCardTip(event)">Flashcard ${s.index} of ${s.total}</button>`
+                    + `<button type="button" class="split-card-note-toggle" aria-expanded="false" onclick="toggleSplitCardTip(event)">Flashcard <span class="split-card-note-count">${s.index} of ${s.total}</span></button>`
                     + '<span class="split-card-tip" role="tooltip" hidden>This word has two common, unrelated uses, so it gets a flashcard for each. '
                     + 'Learning them separately keeps one meaning from crowding out the other. '
                     + 'You see both, one after the other.</span></div>';
 
                 frontPOSEl.classList.add('is-lemma-map', 'pos-count-2', 'is-split-deck-map');
                 frontPOSEl.innerHTML = splitPairsHTML + splitNoteHTML;
+                // Side by side, the note runs under both pills; when they wrap
+                // onto two lines it moves to their right, level with the pair,
+                // so it never reads as a caption for the lower pill alone.
+                const [firstPill, secondPill] = frontPOSEl.querySelectorAll('.front-lemma-pair');
+                // Stacked means the second pill starts below the first one's
+                // bottom: side-by-side pills of different heights, centred on
+                // one line, also differ in top.
+                if (firstPill && secondPill
+                    && secondPill.offsetTop >= firstPill.offsetTop + firstPill.offsetHeight - 2) {
+                    frontPOSEl.classList.add('is-split-stacked');
+                }
             } else {
                 frontPOSEl.classList.add('is-lemma-map', `pos-count-${Math.min(pairs.length, 4)}`);
                 if (pairs.length > 4) frontPOSEl.classList.add('pos-count-many');
@@ -10347,8 +10358,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'fdd6dda8';
-const MODALS_ASSET_VERSION = 'fdd6dda8';
+const ASSET_VERSION = 'a6af56b5';
+const MODALS_ASSET_VERSION = 'a6af56b5';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

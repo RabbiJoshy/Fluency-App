@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-05T22:23:59+01:00",
+      "date": "2026-10-05 22:23 BST",
+      "agent": "Claude",
+      "summary": "Reflexive split words put each sense on its own card; 'Flashcard 1 of 2' sits beside stacked pills",
+      "detail": [
+        "Senses go to the card their split assigned them (by sense id); 'pongan' no longer shows ponerse's senses and examples on poner's card",
+        "'Flashcard 1 of 2' runs under side-by-side pills, and moves to their right, centred on the pair, when the pills stack"
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-05T19:37:56+01:00",
       "date": "2026-10-05 19:37 BST",
       "agent": "Codex",
