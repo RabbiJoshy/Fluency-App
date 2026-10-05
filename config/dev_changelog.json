@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-05T22:36:14+01:00",
+      "date": "2026-10-05 22:36 BST",
+      "agent": "Claude",
+      "summary": "'Quick 20' button in Practice amber; fuller Practice errors info; index manifest retries after a failed fetch",
+      "detail": [
+        "The setup screen's quick practice button reads 'Quick 20', larger, in the amber of the Practice legend rather than error red",
+        "The Practice errors info sheet explains what collects there and the order Quick practice takes: Never correct, Needs attention, Due now",
+        "A failed request for a release's index manifest is retried once and not remembered, so one network blip no longer leaves every set load on a missing vocabulary.index.json until reload; a release with no manifest (404) is still remembered"
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-05T22:31:49+01:00",
       "date": "2026-10-05 22:31 BST",
       "agent": "Codex",
