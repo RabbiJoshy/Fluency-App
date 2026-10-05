@@ -50,3 +50,46 @@ assert(renderBack(card, selected, 8).includes('Tens de me ajudar'));
 ''', capture_output=True,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_tutorial_uses_one_selected_mode_and_waits_for_source_choice(self):
+        result = subprocess.run(
+            ['node', '--input-type=module', '-'], cwd=ROOT, text=True,
+            input=r'''
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+let speechChosen = false;
+const window = {};
+const document = {
+  readyState: 'loading', addEventListener() {}, querySelector() { return null; },
+  getElementById(id) { return id === 'step1' ? {classList: {contains: () => speechChosen}} : null; },
+};
+const source = fs.readFileSync('./app/js/tutorial.js', 'utf8').replace(/import \{[\s\S]*?\} from '[^']+';/, '');
+const context = vm.createContext({window, document, localStorage: {getItem() {return null;}}, assert});
+vm.runInContext(source + `
+assert.equal(selectedTutorialMode(), null);
+assert.equal(openFirstRunCardTutorial(), false);
+state.mode = 'speech';
+assert.equal(tutorialSteps().length, 2);
+assert(tutorialSteps().every(step => step.deck === 'speech'));
+`, context);
+speechChosen = true;
+assert.equal(window.getCardTutorialMode(), 'speech');
+window.activeArtist = {language: 'spanish'};
+assert.equal(window.getCardTutorialMode(), 'lyrics');
+vm.runInContext(`
+state.mode = 'lyrics';
+assert.equal(tutorialSteps().length, 2);
+assert(tutorialSteps().every(step => step.deck === 'lyrics'));
+const deck = deckById('lyrics');
+assert.equal(deck.card, 'cielo');
+assert(deck.faces.front.notes.some(note => note.title === 'Kind of word'));
+assert(deck.faces.front.notes.some(note => note.title === 'Song line count'));
+assert(deck.faces.back.notes.some(note => note.title === 'The meanings at a glance'));
+assert(deck.faces.back.notes.some(note => note.title === 'Which song it is from'));
+assert(deck.faces.back.notes.some(note => note.title === 'Play the line'));
+assert(!deck.faces.back.notes.some(note => note.title === 'Where the example is from'));
+`, context);
+''', capture_output=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)

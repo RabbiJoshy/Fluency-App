@@ -65,7 +65,7 @@ function renderTutorialLanguageChoices() {
         button.className = 'tutorial-language-choice';
         if (key === inheritedLanguage) button.classList.add('is-current');
         button.innerHTML = `<span class="tutorial-language-flag" aria-hidden="true">${flags[key] || '🌐'}</span>` +
-            `<span><strong>${language}</strong><small>${profile?.lyrics ? 'Speech and lyrics' : 'Speech tutorial'}</small></span>` +
+            `<span><strong>${language}</strong><small>${profile?.lyrics && window.getCardTutorialMode?.() === 'lyrics' ? 'Lyrics tutorial' : 'Speech tutorial'}</small></span>` +
             '<span class="tutorial-language-arrow" aria-hidden="true">→</span>';
         button.addEventListener('click', () => {
             window.setCardTutorialLanguage?.(key);
@@ -959,6 +959,7 @@ loadConfig().then(async () => {
                 hideAppLoading();
             }
         }
+        if (!window.maybeShowFrequencyIntro?.()) window.openFirstRunCardTutorial?.();
         if (promptForCustomSongs) window.showSongSetPicker?.();
         perfMark('after artist init');
     } else {
@@ -2335,6 +2336,7 @@ function frequencyIntroClosed() {
 }
 
 function maybeShowFrequencyIntro() {
+    if (!window.getCardTutorialMode?.()) return false;
     try {
         if (localStorage.getItem(FREQUENCY_INTRO_KEY) === '1') return false;
     } catch (_) {

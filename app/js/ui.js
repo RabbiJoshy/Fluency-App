@@ -966,6 +966,7 @@ function setupLanguageTabs() {
                     await deckOverviewHold;
                     window.hideAppLoading?.();
                 }
+                if (!window.maybeShowFrequencyIntro?.()) window.openFirstRunCardTutorial?.();
             };
             window.continueToSpeechAfterLive = continueToSpeech;
 

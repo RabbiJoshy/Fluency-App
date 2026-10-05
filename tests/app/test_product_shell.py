@@ -256,7 +256,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("function learningModeCopy(", ui)
         self.assertIn("window.learningModeCopy(language)", main)
         self.assertNotIn("What do you want to understand?", main)
-        self.assertEqual(html.count("Choose your flashcard vocabulary"), 2)
+        self.assertEqual(html.count("Choose your flashcard vocabulary"), 1)
         self.assertIn("From films and TV — the words people use when they talk.", ui)
         self.assertIn("Pick an artist, or build a deck from your Spotify playlists — the words in those songs.", ui)
         self.assertNotIn('id="learningContextMode"', html)
@@ -323,14 +323,11 @@ class ProductShellTests(unittest.TestCase):
         self.assertNotIn("answer side", tutorial)
         self.assertNotIn("question side", tutorial)
         self.assertIn("'Finish'", tutorial)
-        # The story is a flat list of steps: Speech front, Speech back, a slide
-        # about Lyrics mode, then a Lyrics card. Front before back throughout.
+        # One chosen mode, front then back; never both tutorials in sequence.
         self.assertIn("function tutorialSteps()", tutorial)
-        self.assertIn("{ kind: 'card', deck: 'speech', face: 'front' }", tutorial)
-        self.assertIn("{ kind: 'break', id: 'lyrics' }", tutorial)
-        self.assertIn("function renderBreakStep()", tutorial)
-        self.assertIn('id="cardTutorialBreak"', html)
-        self.assertIn(".card-tutorial-body.is-break-step", styles)
+        self.assertIn("{ kind: 'card', deck: state.mode, face: 'front' }", tutorial)
+        self.assertIn("{ kind: 'card', deck: state.mode, face: 'back' }", tutorial)
+        self.assertNotIn("steps.push({ kind: 'break'", tutorial)
         # No mode chrome in what the header renders: a first-time reader has
         # not met either mode yet. (The comment above the change still names
         # the old chip, so assert on the template, not on the file's prose.)
@@ -339,25 +336,16 @@ class ProductShellTests(unittest.TestCase):
         # both used to turn it mid-tour, which broke the guided order.
         self.assertNotIn("function wireCardShell", tutorial)
         self.assertNotIn("e.key === ' '", tutorial)
-        # A short mime of the setup flow runs before the first card.
-        self.assertIn('id="cardTutorialSetupAnim"', html)
-        self.assertIn("function playSetupIntro(onDone)", tutorial)
-        self.assertIn("function skipSetupIntro()", tutorial)
-        # The intro holds on its last step and waits to be dismissed by hand
-        # rather than pressing its own button and moving on.
-        self.assertIn("function startSetupIntroCard()", tutorial)
-        self.assertIn(".setup-anim-learn-btn.is-ready", styles)
-        # The intro is a replica of the real setup screen, so it reuses that
-        # screen's own class names rather than a lookalike.
-        self.assertIn('class="choice-sheet-item setup-anim-target"', html)
-        self.assertIn("learning-context-chip", html)
-        self.assertIn("function moveSetupPointer(target)", tutorial)
+        # No setup replay: the chosen card appears immediately.
+        self.assertNotIn('id="cardTutorialSetupAnim"', html)
+        self.assertNotIn("playSetupIntro", tutorial)
+        self.assertNotIn("setup-anim-screen", styles)
+        self.assertIn("    goToStep(0);", tutorial)
         # The numbered badges indexed a numbered note list; both are gone, and
         # the amber ring on the annotated element is the only link left.
         self.assertNotIn("card-tutorial-marker", tutorial)
         self.assertNotIn("card-tutorial-note-num", tutorial)
         self.assertIn(".card-tutorial-anchored.is-annotation-active", styles)
-        self.assertIn(".card-tutorial-body.is-setup-intro", styles)
         self.assertIn("@keyframes card-tutorial-mobile-spotlight", styles)
         self.assertIn("@media (prefers-reduced-motion: reduce)", styles)
 
@@ -421,6 +409,8 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("Step ${progress.current} of ${progress.total}", tutorial)
         self.assertIn("function explicitTutorialLanguageKey()", tutorial)
         self.assertIn("if (!explicitTutorialLanguageKey()) return false", tutorial)
+        self.assertIn("if (!selectedTutorialMode()) return false", tutorial)
+        self.assertIn("if (!window.getCardTutorialMode?.()) return false", main)
         self.assertNotIn("TUTORIAL_DECK_SEQUENCE", tutorial)
         self.assertIn("spanish: { language: 'Spanish'", tutorial)
         self.assertIn("portuguese: { language: 'Portuguese'", tutorial)

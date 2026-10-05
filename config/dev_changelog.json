@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-05T19:37:56+01:00",
+      "date": "2026-10-05 19:37 BST",
+      "agent": "Codex",
+      "summary": "Start the tutorial directly on the selected mode’s card",
+      "detail": [
+        "Removed the animated language, mode, level and set selection opening.",
+        "First-run onboarding waits until Speech or Lyrics is chosen.",
+        "Speech teaches one card; Spanish Lyrics reuses the same tour with song line count, song credit, English translation and playback explanations."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-05T19:32:19+01:00",
       "date": "2026-10-05 19:32 BST",
       "agent": "Claude",
@@ -357,18 +369,6 @@
         "Simplified split card note to 'Card 1 of 2' and labeled active vs companion pill capsules with '1/2' and '2/2'.",
         "Unified all badges and tags to standard reading typography (--font-reading) without monospaced fonts.",
         "Removed redundant companion footer box on card back, keeping a single clean header badge."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-03T21:49:52+01:00",
-      "date": "2026-10-03 21:49 BST",
-      "agent": "Codex",
-      "summary": "French and Portuguese Artist decks: fixed filtering by selected songs.",
-      "detail": [
-        "Built complete per-song card membership from all frozen lyric occurrences, rather than sampled examples.",
-        "Verified native profile summaries and preserved nine existing public release trees, including Spanish artists.",
-        "Updated catalog to the final French and Portuguese releases."
       ],
       "commit": "pending"
     }
