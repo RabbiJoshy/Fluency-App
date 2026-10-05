@@ -1,18 +1,16 @@
-const RECENT_MISTAKE_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
-
 function normaliseWord(value) {
     return String(value || '').trim().toLocaleLowerCase('es');
 }
 
-export function collectRecentWrongWords(progress, now = Date.now()) {
-    const cutoff = now - RECENT_MISTAKE_WINDOW_MS;
+// Words the learner is due to review, as one Set: examples containing one are
+// ranked up, and a personalised line is shown only for one. The review queue
+// already weighs misses, so this follows it rather than a separate
+// "wrong in the last week" list.
+export function collectReviewWords(dueReviewWords) {
     const words = new Set();
-    for (const data of Object.values(progress || {})) {
-        const lastWrong = data?.lastWrong ? new Date(data.lastWrong).getTime() : 0;
-        if (Number(data?.wrong || 0) > 0 && lastWrong > cutoff) {
-            const word = normaliseWord(data?.word);
-            if (word) words.add(word);
-        }
+    for (const entry of dueReviewWords || []) {
+        const word = normaliseWord(entry?.word);
+        if (word) words.add(word);
     }
     return words;
 }

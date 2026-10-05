@@ -2062,7 +2062,9 @@
             position: relative;
             flex: 1;
             height: 100%;
-            margin: 0 16px;
+            /* Left inset is half the thumb, so it never clips at card 1. The
+               right side only needs to keep the thumb off the gear icon. */
+            margin: 0 6px 0 16px;
         }
         .cbs-track,
         .cbs-fill {
@@ -2135,8 +2137,8 @@
             background: rgba(255, 255, 255, 0.08);
         }
         .cbs-gear svg {
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
         }
 
         /* Redundant on every breakpoint now — swiping already means grade,
@@ -2483,7 +2485,7 @@
             color: #fff;
             cursor: pointer;
         }
-        .phrase-example--compact {
+        .phrase-example.phrase-example--compact {
             margin-top: 2px;
             padding: 6px 8px 4px;
             border-radius: 8px;
@@ -4153,8 +4155,8 @@
         }
 
         .front-lemma-pair.is-companion-split {
-            opacity: 0.45;
-            filter: grayscale(40%);
+            opacity: 0.3;
+            filter: grayscale(100%);
         }
 
         .grammar-pair-chips {
@@ -22456,11 +22458,12 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 .card-ranking .card-stat-value { font-size: 30px; }
 
 /* An information button that explains a context sits on the context's right.
-   On a sub-row it ends the sub-row; on a single-sense row it sits just outside
-   the shaded context box. The row's side padding keeps it clear of the
+   Either way it sits just outside the shaded box: a sub-row gives up a gutter
+   on its right for it, as a single-sense row does beside its context. The row's side padding keeps it clear of the
    commonness meter at the far right. */
-.meaning-row .group-card-varying-cell.has-cell-information { position: relative; padding-left: 10px !important; padding-right: 32px !important; }
-.meaning-row .group-card-varying-cell.has-cell-information > .sense-note-trigger.is-context-info { left: auto; right: 4px; }
+.meaning-row .group-card-varying-cell.has-cell-information { position: relative; padding-left: 10px !important; padding-right: 10px !important; }
+.meaning-row .sense-cue-area:has(> .group-card-varying-cell.has-cell-information) { margin-right: 30px; }
+.meaning-row .group-card-varying-cell.has-cell-information > .sense-note-trigger.is-context-info { left: auto; right: -31px; }
 .meanings-scroll.has-compact-rows .group-card-varying-cell:not(.is-active-subsense) > .sense-note-trigger { display: inline-flex !important; }
 .meaning-row.has-context-information { padding-left: 38px !important; }
 .meaning-row .meaning-row-body > .sense-note-trigger.is-context-info {
@@ -22692,26 +22695,28 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
     #cardTutorialMobileNext.is-hinting { animation: none; }
 }
 
-/* Front lemma/POS map: the coloured POS pill and its "from x" stand on
-   their own, without a capsule behind them, and gain ~10% in size. */
+/* Front lemma/POS map, ~10% larger. A bare POS pill stands on its own; a
+   "POS from x" pair keeps its capsule so the "from x" plainly belongs to the
+   pill beside it and not to a neighbour. */
 .card-front .card-pos-list.is-lemma-map .front-lemma-pair {
+  zoom: 1.1;
+}
+.card-front .card-pos-list.is-lemma-map .front-lemma-pair.is-pos-only {
   background: none;
   border: 0;
   padding: 0;
   min-height: 0;
-  zoom: 1.1;
 }
 
-/* "Flashcard 1 of 2": plain text under the surface, tappable for a short
-   explanation. */
-.surface-relation-cue.split-card-note {
+/* "Flashcard 1 of 2": plain text directly under the lemma/POS pills,
+   tappable for a short explanation. */
+.card-pos-list .split-card-note {
+  grid-column: 1 / -1;
+  justify-self: center;
   position: relative;
-  border: 0;
-  background: none;
-  padding: 0;
-  margin: 0 auto 10px;
-  font-size: 15.5px;
-  white-space: normal;
+  margin-top: -4px;
+  font: 650 15.5px/1.2 var(--font-reading);
+  pointer-events: auto;
 }
 .split-card-note-toggle {
   appearance: none;
@@ -22720,9 +22725,7 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
   padding: 2px 0;
   color: inherit;
   font: inherit;
-  cursor: help;
-  text-decoration: underline dotted;
-  text-underline-offset: 3px;
+  cursor: pointer;
 }
 .split-card-tip {
   position: absolute;
