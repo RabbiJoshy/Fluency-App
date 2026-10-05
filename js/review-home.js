@@ -2,17 +2,16 @@
 // The queue and its ordering still belong to progress.js. Opening a group
 // only explains the queue; it must never start a study session.
 
-import './state.js?v=55ca5fe1';
+import './state.js?v=e7a99941';
 
-const QUICK_PRACTICE_LIMIT = 20;
 const LIST_PAGE_SIZE = 50;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 const GROUPS = [
-    { tier: 'never_right', key: 'neverRight', title: 'Not right yet',
+    { tier: 'never_right', key: 'neverRight', title: 'Never correct',
         blurb: 'Words you have answered, but have not got right yet.' },
     { tier: 'critical', key: 'critical', title: 'Needs attention',
-        blurb: 'Recent mistakes and words that are very late.' },
+        blurb: 'Recent mistakes and words that are long overdue another review.' },
     { tier: 'due', key: 'due', title: 'Due now',
         blurb: 'Scheduled words whose practice time has arrived.' }
 ];
@@ -121,30 +120,12 @@ function srsHTML() {
 }
 
 function renderOverview(body, summary) {
-    const total = Number(summary?.total) || 0;
-    const quickCount = Math.min(total, QUICK_PRACTICE_LIMIT);
-    const headline = total > 0
-        ? `${total.toLocaleString()} card${total === 1 ? '' : 's'} ready to practise`
-        : 'No cards need practice right now.';
-    const explanation = total > 0
-        ? 'Words you have not got right come first, followed by recent mistakes and the most overdue scheduled cards.'
-        : 'You are caught up. New mistakes and scheduled words will appear here when they need another attempt.';
     const groupsHTML = GROUPS
         .map(group => groupRow(group, cardsFor(summary, group).length))
         .join('');
 
+    // Quick practice lives on the setup screen; this sheet explains the queue.
     body.innerHTML = `
-        <div class="review-home-hero">
-            <strong>${headline}</strong>
-            <p>${explanation}</p>
-            <button type="button" class="study-set-review review-home-quick" data-action="quick-practice"
-                    ${quickCount > 0 ? '' : 'disabled'}>
-                Quick practice${quickCount > 0 ? ` · ${quickCount}` : ''}
-            </button>
-            <small>${quickCount > 0
-                ? `Starts with the first ${quickCount} cards in this order.`
-                : 'Quick practice will become available when a card needs attention.'}</small>
-        </div>
         ${srsHTML()}
         <section class="review-home-section" data-section="queue">
             <h4>Practice order</h4>
@@ -212,14 +193,6 @@ function closeReviewHome() {
     activeGroup = null;
 }
 
-async function startQuickPractice() {
-    const total = Number(queueSummary()?.total) || 0;
-    const limit = Math.min(total, QUICK_PRACTICE_LIMIT);
-    if (limit <= 0) return;
-    closeReviewHome();
-    await globalThis.startDailyReview?.({ limit, urgencyTier: 'all' });
-}
-
 function initReviewHome() {
     document.getElementById('closeReviewHomeModal')?.addEventListener('click', closeReviewHome);
     document.getElementById('reviewHomeModal')?.addEventListener('click', event => {
@@ -240,8 +213,6 @@ function initReviewHome() {
         } else if (action === 'show-more') {
             visibleWords += LIST_PAGE_SIZE;
             renderReviewHome();
-        } else if (action === 'quick-practice') {
-            await startQuickPractice();
         } else if (action === 'srs-info') {
             openSpacedRepetitionInfo();
         }

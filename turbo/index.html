@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TURBO v3 Auditor · Lyric-by-Lyric Token Inspector & Study Deck</title>
+    <style>
+        :root {
+            --bg-page: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-hover: #334155;
+            --border: #334155;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --accent: #38bdf8;
+            --accent-green: #34d399;
+            --accent-amber: #fbbf24;
+            --accent-rose: #f43f5e;
+            --tag-mwe: #a855f7;
+            --tag-entity: #ec4899;
+            --tag-word: #38bdf8;
+            --tag-unmatched: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            padding: 20px 24px;
+            line-height: 1.5;
+        }
+
+        header {
+            max-width: 1400px;
+            margin: 0 auto 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 14px;
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge-turbo {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: white;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 999px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: var(--text-sub);
+        }
+
+        .stat-item strong {
+            color: var(--accent);
+        }
+
+        .main-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .nav-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-sub);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-btn.active {
+            background: var(--accent);
+            color: #0f172a;
+            border-color: var(--accent);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .panel h2 {
+            font-size: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            background-color: var(--accent);
+            color: #0f172a;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .song-list {
+            list-style: none;
+            max-height: 480px;
+            overflow-y: auto;
+            margin-top: 8px;
+        }
+
+        .song-item {
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: 1px solid transparent;
+            margin-bottom: 5px;
+            background: rgba(15, 23, 42, 0.4);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .song-item:hover {
+            background: rgba(56, 189, 248, 0.1);
+            border-color: rgba(56, 189, 248, 0.3);
+        }
+
+        .song-item.is-selected {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: var(--accent);
+        }
+
+        .song-title {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .song-artist {
+            color: var(--text-sub);
+            font-size: 11px;
+        }
+
+        /* Views */
+        .view-content {
+            display: block;
+        }
+
+        .view-content.hidden {
+            display: none;
+        }
+
+        /* Deck View */
+        .deck-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 6px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-sub);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .tab-btn.active {
+            background: var(--border);
+            color: var(--text-main);
+            border-color: var(--accent);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 14px;
+            max-height: 750px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .card.is-mwe {
+            border-left: 4px solid var(--tag-mwe);
+        }
+
+        .card.is-entity {
+            border-left: 4px solid var(--tag-entity);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .card-word {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .card-rank {
+            font-size: 11px;
+            color: var(--text-sub);
+        }
+
+        .card-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .tag-pos {
+            background: #334155;
+            color: #cbd5e1;
+        }
+
+        .tag-mwe {
+            background: rgba(168, 85, 247, 0.2);
+            color: #d8b4fe;
+            border: 1px solid var(--tag-mwe);
+        }
+
+        .tag-entity {
+            background: rgba(236, 72, 153, 0.2);
+            color: #f472b6;
+            border: 1px solid var(--tag-entity);
+        }
+
+        .tag-poly {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fde047;
+        }
+
+        .tag-mono {
+            background: rgba(52, 211, 153, 0.2);
+            color: #6ee7b7;
+        }
+
+        .card-translation {
+            font-size: 13px;
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        .card-example {
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 12px;
+            border-left: 2px solid var(--accent);
+        }
+
+        .example-spanish {
+            color: #e2e8f0;
+            margin-bottom: 2px;
+        }
+
+        .example-meta {
+            font-size: 11px;
+            color: var(--text-sub);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Lyric-by-Lyric Audit Inspector */
+        .inspector-lines {
+            max-height: 750px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .audit-line-card {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 14px;
+        }
+
+        .audit-line-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+
+        .token-flow {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .token-chip {
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 11px;
+            display: inline-flex;
+            flex-direction: column;
+            border: 1px solid transparent;
+            cursor: default;
+        }
+
+        .token-chip.is-word {
+            background: rgba(56, 189, 248, 0.12);
+            border-color: rgba(56, 189, 248, 0.35);
+        }
+
+        .token-chip.is-mwe {
+            background: rgba(168, 85, 247, 0.18);
+            border-color: rgba(168, 85, 247, 0.5);
+        }
+
+        .token-chip.is-entity {
+            background: rgba(236, 72, 153, 0.18);
+            border-color: rgba(236, 72, 153, 0.5);
+        }
+
+        .token-chip.is-unmatched {
+            background: rgba(100, 116, 139, 0.15);
+            border-color: rgba(100, 116, 139, 0.3);
+            color: #94a3b8;
+        }
+
+        .chip-raw {
+            font-weight: 700;
+            font-size: 12px;
+            color: #ffffff;
+        }
+
+        .chip-sub {
+            font-size: 10px;
+            color: var(--text-sub);
+            margin-top: 1px;
+        }
+
+        .token-chip.is-word .chip-sub {
+            color: var(--accent);
+        }
+
+        .token-chip.is-mwe .chip-sub {
+            color: #d8b4fe;
+        }
+
+        .token-chip.is-entity .chip-sub {
+            color: #f472b6;
+        }
+
+        .log-box {
+            background: #000;
+            border-radius: 8px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 11px;
+            color: #4ade80;
+            height: 120px;
+            overflow-y: auto;
+            margin-top: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <h1>TURBO v3 Auditor & Playground <span class="badge-turbo">ZERO COST</span></h1>
+            <p style="font-size: 13px; color: var(--text-sub); margin-top: 4px;">
+                Instant 30-Song Spanish Intake · Lyric-by-Lyric Token Audit Inspector · Spanish Grounding with English Definitions
+            </p>
+        </div>
+        <div class="stats-bar" id="statsBar">
+            <div class="stat-item">Status: <strong id="statusText">Ready</strong></div>
+            <div class="stat-item">Speed: <strong id="speedText">--</strong></div>
+            <div class="stat-item">Cards: <strong id="cardsCountText">0</strong></div>
+        </div>
+    </header>
+
+    <div class="main-nav">
+        <button id="navDeckBtn" class="nav-btn active">🃏 Generated Study Deck</button>
+        <button id="navAuditBtn" class="nav-btn">🔍 Lyric-by-Lyric Token Auditor</button>
+    </div>
+
+    <div class="container">
+        <!-- Sidebar: Source & Controls -->
+        <aside class="panel">
+            <h2>
+                <span>30-Song Probe Playlist</span>
+                <span style="font-size: 12px; color: var(--text-sub);">Spanish</span>
+            </h2>
+            <div id="songsList" class="song-list">
+                <div style="color: var(--text-sub); font-size: 12px;">Loading probe songs...</div>
+            </div>
+
+            <button id="runTurboBtn" class="btn">⚡ Run TURBO v3 Intake</button>
+
+            <div class="log-box" id="logBox">
+                [TURBO v3 System Ready]
+            </div>
+        </aside>
+
+        <!-- Main Panel: Views -->
+        <main class="panel">
+            <!-- View 1: Study Deck -->
+            <div id="deckView" class="view-content">
+                <div class="deck-header">
+                    <div>
+                        <h2>Interactive Study Deck</h2>
+                        <span style="font-size: 12px; color: var(--text-sub);" id="deckSubtitle">Click 'Run TURBO v3 Intake' to process songs instantly</span>
+                    </div>
+                    <div class="filter-tabs">
+                        <button class="tab-btn active" data-filter="all">All (<span id="allCount">0</span>)</button>
+                        <button class="tab-btn" data-filter="mwe">MWEs (<span id="mweCount">0</span>)</button>
+                        <button class="tab-btn" data-filter="entity">Entities (<span id="entityCount">0</span>)</button>
+                        <button class="tab-btn" data-filter="words">Words (<span id="wordsCount">0</span>)</button>
+                    </div>
+                </div>
+
+                <div class="cards-grid" id="cardsGrid">
+                    <!-- Cards will render here -->
+                </div>
+            </div>
+
+            <!-- View 2: Lyric-by-Lyric Token Auditor -->
+            <div id="auditView" class="view-content hidden">
+                <div class="deck-header">
+                    <div>
+                        <h2 id="inspectorTitle">Lyric-by-Lyric Token Auditor</h2>
+                        <span style="font-size: 12px; color: var(--text-sub);" id="inspectorSubtitle">Select a song on the left to inspect every word & idiom</span>
+                    </div>
+                </div>
+
+                <div class="inspector-lines" id="inspectorLines">
+                    <div style="color: var(--text-sub); padding: 40px; text-align: center;">Run the intake first, then click any song on the left to inspect every line.</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { TurboEngine } from './turbo-engine.js';
+
+        let engine = null;
+        let probeSongs = [];
+        let generatedCards = [];
+        let annotatedSongs = [];
+        let selectedSongIndex = 0;
+        let currentFilter = 'all';
+        let currentView = 'deck';
+
+        const runBtn = document.getElementById('runTurboBtn');
+        const statusText = document.getElementById('statusText');
+        const speedText = document.getElementById('speedText');
+        const cardsCountText = document.getElementById('cardsCountText');
+        const logBox = document.getElementById('logBox');
+        const songsListEl = document.getElementById('songsList');
+        const cardsGrid = document.getElementById('cardsGrid');
+        const deckSubtitle = document.getElementById('deckSubtitle');
+        const deckView = document.getElementById('deckView');
+        const auditView = document.getElementById('auditView');
+        const navDeckBtn = document.getElementById('navDeckBtn');
+        const navAuditBtn = document.getElementById('navAuditBtn');
+        const inspectorLines = document.getElementById('inspectorLines');
+        const inspectorTitle = document.getElementById('inspectorTitle');
+        const inspectorSubtitle = document.getElementById('inspectorSubtitle');
+
+        function log(msg) {
+            const time = new Date().toLocaleTimeString();
+            logBox.innerHTML += `\n[${time}] ${msg}`;
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+        async function init() {
+            try {
+                log('Loading Turbo assets...');
+                engine = await TurboEngine.create('./turbo_assets.json');
+                log('Loaded dictionary & MWE assets.');
+
+                log('Loading 30-song probe playlist...');
+                const songsResp = await fetch('./probe_songs.json');
+                probeSongs = await songsResp.json();
+                
+                renderSongs(probeSongs);
+                log(`Loaded ${probeSongs.length} probe songs.`);
+                statusText.textContent = 'Engine Loaded';
+            } catch (err) {
+                log(`Init error: ${err.message}`);
+                statusText.textContent = 'Init Error';
+            }
+        }
+
+        function renderSongs(songs) {
+            songsListEl.innerHTML = '';
+            songs.forEach((s, idx) => {
+                const item = document.createElement('div');
+                item.className = `song-item ${idx === selectedSongIndex ? 'is-selected' : ''}`;
+                item.dataset.index = idx;
+                item.innerHTML = `
+                    <div class="song-title">${idx + 1}. ${s.title}</div>
+                    <div class="song-artist">${s.artist} · ${s.lyrics.split('\n').length} lines</div>
+                `;
+                item.addEventListener('click', async () => {
+                    document.querySelectorAll('.song-item').forEach(el => el.classList.remove('is-selected'));
+                    item.classList.add('is-selected');
+                    selectedSongIndex = idx;
+                    if (!annotatedSongs.length) {
+                        await runIntake();
+                    }
+                    if (annotatedSongs.length) {
+                        renderAuditView();
+                        // If user is clicking songs while on auditor tab, ensure auditor is visible
+                        if (currentView === 'audit') {
+                            auditView.classList.remove('hidden');
+                        }
+                    }
+                });
+                songsListEl.appendChild(item);
+            });
+        }
+
+        async function runIntake() {
+            if (!engine || !probeSongs.length) return;
+            runBtn.disabled = true;
+            statusText.textContent = 'Processing...';
+
+            log('Starting TURBO v3 intake pipeline...');
+
+            try {
+                const result = await engine.processPlaylist(probeSongs, {
+                    onProgress: ({ stage, message }) => {
+                        log(`Stage [${stage}]: ${message}`);
+                    }
+                });
+
+                log(`Intake complete in ${result.elapsedMs} ms!`);
+                log(`Total cards: ${result.totalCards} (Words: ${result.wordCardsCount}, MWEs: ${result.mweCardsCount}, Entities: ${result.entityCardsCount})`);
+
+                speedText.textContent = `${result.elapsedMs} ms`;
+                cardsCountText.textContent = result.totalCards;
+                statusText.textContent = 'Intake Complete';
+
+                document.getElementById('allCount').textContent = result.totalCards;
+                document.getElementById('mweCount').textContent = result.mweCardsCount;
+                document.getElementById('entityCount').textContent = result.entityCardsCount;
+                document.getElementById('wordsCount').textContent = result.wordCardsCount;
+
+                deckSubtitle.textContent = `Generated in ${result.elapsedMs} ms with zero API spend · Ranked by playlist frequency`;
+
+                generatedCards = result.cards || [];
+                annotatedSongs = result.annotatedSongs || [];
+
+                renderCards();
+                renderAuditView();
+            } catch (err) {
+                console.error('Turbo intake error:', err);
+                log(`ERROR during intake: ${err.message}`);
+                statusText.textContent = 'Error: ' + err.message;
+            } finally {
+                runBtn.disabled = false;
+            }
+        }
+
+        function renderCards() {
+            cardsGrid.innerHTML = '';
+            let filtered = generatedCards;
+            if (currentFilter === 'mwe') {
+                filtered = generatedCards.filter(c => c.type === 'mwe');
+            } else if (currentFilter === 'entity') {
+                filtered = generatedCards.filter(c => c.type === 'entity');
+            } else if (currentFilter === 'words') {
+                filtered = generatedCards.filter(c => c.type === 'word');
+            }
+
+            if (!filtered.length) {
+                cardsGrid.innerHTML = '<div style="color: var(--text-sub); padding: 40px; text-align: center;">No cards match this filter.</div>';
+                return;
+            }
+
+            filtered.forEach(card => {
+                const cardEl = document.createElement('div');
+                cardEl.className = `card ${card.type === 'mwe' ? 'is-mwe' : ''} ${card.type === 'entity' ? 'is-entity' : ''}`;
+
+                let tagsHtml = '';
+                if (card.type === 'mwe') {
+                    tagsHtml += `<span class="tag tag-mwe">IDIOM / MWE</span>`;
+                } else if (card.type === 'entity') {
+                    tagsHtml += `<span class="tag tag-entity">ENTITY (${card.entity?.entityType || 'PROPN'})</span>`;
+                } else {
+                    tagsHtml += `<span class="tag tag-pos">${card.pos || 'WORD'}</span>`;
+                    if (card.isPolysemous) {
+                        tagsHtml += `<span class="tag tag-poly">Polysemous (${card.meaningCount} senses)</span>`;
+                    } else {
+                        tagsHtml += `<span class="tag tag-mono">Monosemous</span>`;
+                    }
+                }
+
+                let examplesHtml = '';
+                (card.examples || []).slice(0, 2).forEach(ex => {
+                    const audioBadge = (ex.isSynced && ex.timestamp_ms != null)
+                        ? `<span style="color: var(--accent-green); font-size: 11px;">▶ Spotify [${Math.round(ex.timestamp_ms/1000)}s - ${Math.round((ex.end_timestamp_ms||ex.timestamp_ms+3000)/1000)}s]</span>`
+                        : '';
+                    examplesHtml += `
+                        <div class="card-example">
+                            <div class="example-spanish">"${ex.text}"</div>
+                            <div class="example-meta">
+                                <span>${ex.song} · ${ex.artist}</span>
+                                <div>${audioBadge}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                cardEl.innerHTML = `
+                    <div class="card-top">
+                        <div class="card-word">${card.word}</div>
+                        <div class="card-rank">#${card.rank} (${card.playlistCount}x)</div>
+                    </div>
+                    <div class="card-tags">
+                        ${tagsHtml}
+                    </div>
+                    <div class="card-translation">${card.translation || '—'}</div>
+                    ${examplesHtml}
+                `;
+
+                cardsGrid.appendChild(cardEl);
+            });
+        }
+
+        function renderAuditView() {
+            if (!annotatedSongs.length) return;
+            const song = annotatedSongs[selectedSongIndex];
+            if (!song) return;
+
+            inspectorTitle.textContent = `${song.title} — ${song.artist}`;
+            inspectorSubtitle.textContent = `${song.lineCount} lines analyzed · Hover chips to inspect exact token routing & card mapping`;
+
+            inspectorLines.innerHTML = '';
+            song.lines.forEach((l, idx) => {
+                const lineCard = document.createElement('div');
+                lineCard.className = 'audit-line-card';
+
+                const timeBadge = l.isSynced && l.timestamp_ms != null
+                    ? `<span style="color: var(--accent-green); font-size: 11px; font-weight: normal;">[${Math.round(l.timestamp_ms/1000)}s]</span>`
+                    : '';
+
+                let chipsHtml = '';
+                l.tokens.forEach(t => {
+                    let chipClass = 'is-word';
+                    let subText = t.translation || '';
+                    if (t.type === 'mwe') {
+                        chipClass = 'is-mwe';
+                        subText = `IDIOM: ${t.translation}`;
+                    } else if (t.type === 'entity') {
+                        chipClass = 'is-entity';
+                        subText = `ENTITY: ${t.translation}`;
+                    } else if (t.type === 'unmatched') {
+                        chipClass = 'is-unmatched';
+                        subText = 'unmatched';
+                    } else if (t.isElision) {
+                        subText = `→ ${t.word}: ${t.translation}`;
+                    }
+
+                    const rankBadge = t.rank ? `(#${t.rank})` : '';
+
+                    chipsHtml += `
+                        <div class="token-chip ${chipClass}" title="Card: ${t.word || t.raw} ${rankBadge} - ${t.translation}">
+                            <span class="chip-raw">${t.raw}</span>
+                            <span class="chip-sub">${subText}</span>
+                        </div>
+                    `;
+                });
+
+                lineCard.innerHTML = `
+                    <div class="audit-line-header">
+                        <span>Line ${idx + 1}: "${l.text}"</span>
+                        ${timeBadge}
+                    </div>
+                    <div class="token-flow">
+                        ${chipsHtml}
+                    </div>
+                `;
+
+                inspectorLines.appendChild(lineCard);
+            });
+        }
+
+        // Navigation listeners
+        navDeckBtn.addEventListener('click', () => {
+            navDeckBtn.classList.add('active');
+            navAuditBtn.classList.remove('active');
+            deckView.classList.remove('hidden');
+            auditView.classList.add('hidden');
+            currentView = 'deck';
+        });
+
+        navAuditBtn.addEventListener('click', async () => {
+            navAuditBtn.classList.add('active');
+            navDeckBtn.classList.remove('active');
+            deckView.classList.add('hidden');
+            auditView.classList.remove('hidden');
+            currentView = 'audit';
+            if (!annotatedSongs.length && probeSongs.length) {
+                await runIntake();
+            } else if (annotatedSongs.length) {
+                renderAuditView();
+            }
+        });
+
+        // Tab filter listeners
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                renderCards();
+            });
+        });
+
+        runBtn.addEventListener('click', runIntake);
+
+        init();
+    </script>
+</body>
+</html>

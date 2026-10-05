@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-05T19:30:07+01:00",
+      "date": "2026-10-05 19:30 BST",
+      "agent": "Claude",
+      "summary": "Main menu tidy: even header spacing, 'Practice errors' section, no app name in copy",
+      "detail": [
+        "Less space above Choose level and Choose a set, so each title sits evenly between the box above and its own box",
+        "Choose a set no longer says 'Level 1 · 1/4 sets studied'; the set buttons already show it",
+        "Practice is now a 'Practice errors' section with the same header and info button as the others ('Words you have not got right come first.'); it reads 'N cards ready to practise' and 'Quick practice (20)', with no explainer text",
+        "The Practice sheet drops its top block and holds spaced repetition and the three practice groups; 'Not right yet' is now 'Never correct' and 'very late' is 'long overdue another review'",
+        "'Fluency' is replaced with 'this app' (or reworded) in visible text across the app; the Spotify player's device name is unchanged"
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-05T19:26:50+01:00",
       "date": "2026-10-05 19:26 BST",
       "agent": "Codex",

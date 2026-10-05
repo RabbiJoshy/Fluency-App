@@ -1,6 +1,6 @@
 // Spotify OAuth PKCE + Web Playback SDK for in-browser playback.
 // Key functions: spotifyLogin(), spotifyPlayTrack(trackId, positionMs), isSpotifyConnected().
-import './state.js?v=55ca5fe1';
+import './state.js?v=e7a99941';
 
 const SPOTIFY_SCOPES = 'streaming user-modify-playback-state user-read-playback-state user-read-email user-read-private playlist-read-private playlist-read-collaborative';
 const _isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -735,7 +735,7 @@ function spotifyTryIphoneAppLogin() {
     if (!_isIphone || _isHomeScreenApp) {
         if (status) {
             status.textContent = _isHomeScreenApp
-                ? 'From the home screen icon, Connect uses Spotify\'s website so you stay in Fluency.'
+                ? 'From the home screen icon, Connect uses Spotify\'s website so you stay in this app.'
                 : 'On this computer, Connect uses Spotify\'s website.';
         }
         return;

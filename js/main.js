@@ -1,35 +1,35 @@
 // First: rewrites old ?artist=/?about= links to their #/ route before
 // anything below reads the address.
-import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=55ca5fe1';
-import { releaseUrl } from './release-host.js?v=55ca5fe1';
-import './theme.js?v=55ca5fe1';
-import { installFlagRendering } from './flags.js?v=55ca5fe1';
-import './state.js?v=55ca5fe1';
-import './offline-db.js?v=55ca5fe1';
-import './sync-queue.js?v=55ca5fe1';
-import { initOfflineContent } from './offline-content.js?v=55ca5fe1';
-import './speech.js?v=55ca5fe1';
-import './artist-ui.js?v=55ca5fe1';
-import './auth.js?v=55ca5fe1';
-import './tutorial.js?v=55ca5fe1';
-import './walkthrough.js?v=55ca5fe1';
-import './estimation.js?v=55ca5fe1';
-import './config.js?v=55ca5fe1';
-import './progress.js?v=55ca5fe1';
-import './knowledge.js?v=55ca5fe1';
-import './ui.js?v=55ca5fe1';
-import './vocab.js?v=55ca5fe1';
-import './cognates.js?v=55ca5fe1';
-import './coverage.js?v=55ca5fe1';
-import './fast-mode.js?v=55ca5fe1';
-import './extras.js?v=55ca5fe1';
-import './review-home.js?v=55ca5fe1';
-import './song-sets.js?v=55ca5fe1';
-import './playlist-live.js?v=55ca5fe1';
-import './spotify-playlist-import.js?v=55ca5fe1';
-import './vocabulary-import.js?v=55ca5fe1';
-import './flashcards.js?v=55ca5fe1';
-import { validateArtistCatalog } from './data-contracts.js?v=55ca5fe1';
+import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=e7a99941';
+import { releaseUrl } from './release-host.js?v=e7a99941';
+import './theme.js?v=e7a99941';
+import { installFlagRendering } from './flags.js?v=e7a99941';
+import './state.js?v=e7a99941';
+import './offline-db.js?v=e7a99941';
+import './sync-queue.js?v=e7a99941';
+import { initOfflineContent } from './offline-content.js?v=e7a99941';
+import './speech.js?v=e7a99941';
+import './artist-ui.js?v=e7a99941';
+import './auth.js?v=e7a99941';
+import './tutorial.js?v=e7a99941';
+import './walkthrough.js?v=e7a99941';
+import './estimation.js?v=e7a99941';
+import './config.js?v=e7a99941';
+import './progress.js?v=e7a99941';
+import './knowledge.js?v=e7a99941';
+import './ui.js?v=e7a99941';
+import './vocab.js?v=e7a99941';
+import './cognates.js?v=e7a99941';
+import './coverage.js?v=e7a99941';
+import './fast-mode.js?v=e7a99941';
+import './extras.js?v=e7a99941';
+import './review-home.js?v=e7a99941';
+import './song-sets.js?v=e7a99941';
+import './playlist-live.js?v=e7a99941';
+import './spotify-playlist-import.js?v=e7a99941';
+import './vocabulary-import.js?v=e7a99941';
+import './flashcards.js?v=e7a99941';
+import { validateArtistCatalog } from './data-contracts.js?v=e7a99941';
 
 // Emoji flags anywhere on the page render as rectangular pictures.
 installFlagRendering();
@@ -87,7 +87,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
 const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
-    ? import('./spotify.js?v=55ca5fe1').catch(error => {
+    ? import('./spotify.js?v=e7a99941').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })
@@ -1581,7 +1581,7 @@ function showAvailableMusicPicker(artists) {
     if (Object.values(artists || {}).some(cfg => cfg.songsPath)) {
         entries.push({
             label: 'Mix several artists',
-            description: 'Pick individual songs from any artists in Fluency.',
+            description: 'Pick individual songs from any artists in this app.',
             iconHTML: customSongsIcon(),
             accent: '#10B981',
             onSelect: () => {
@@ -1659,7 +1659,7 @@ async function showArtistPicker(anchorBtn, artists, targetLanguage = null) {
             {
                 label: 'Pick artists',
                 description: hasAvailableMusic
-                    ? 'One or more artists from the Fluency library — all their songs, or just the ones you choose.'
+                    ? 'One or more artists from this app’s library — all their songs, or just the ones you choose.'
                     : 'No music collection has been published for this language yet.',
                 iconHTML: artistsIcon(),
                 accent: 'var(--accent-primary)',
@@ -1671,7 +1671,7 @@ async function showArtistPicker(anchorBtn, artists, targetLanguage = null) {
             },
             {
                 label: 'Build from a Spotify playlist',
-                description: 'Use a playlist you made. Open a ready-made deck from songs Fluency has, or build a new one.',
+                description: 'Use a playlist you made. Open a ready-made deck from songs this app has, or build a new one.',
                 iconHTML: playlistIcon(),
                 accent: '#1DB954',
                 onSelect: () => window.openSpotifyPlaylistImport?.(resolvedArtists, language, { mode: 'choose' })
@@ -1712,7 +1712,7 @@ function spotifyStatusElement() {
         el.type = 'button';
         el.addEventListener('click', async event => {
             event.stopPropagation();
-            await (_spotifyModulePromise || import('./spotify.js?v=55ca5fe1')).catch(() => null);
+            await (_spotifyModulePromise || import('./spotify.js?v=e7a99941')).catch(() => null);
             window.spotifyLogin?.();
         });
     }
