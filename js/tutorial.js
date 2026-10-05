@@ -12,7 +12,7 @@
 
 import {
     REPLICA_CARDS, esc, renderBack, replicaCardHTML, wireReplicaBack, fitReplicaCard,
-} from './card-replica.js?v=e9ec75d0';
+} from './card-replica.js?v=0c2bac45';
 
 
 // Each language selects its own representative card and dictionary wording.
@@ -253,9 +253,15 @@ const TUTORIAL_DECKS = [
                     },
                     {
                         side: 'right',
-                        anchor: '.card-pos-list',
+                        anchor: '.front-pos-unit .card-pos',
                         title: 'Kind of word',
-                        text: 'A small hint. On the back it becomes the heading for the meanings.',
+                        text: 'The part of speech, such as noun or verb. On the back, meanings are grouped under this heading.',
+                    },
+                    {
+                        side: 'right',
+                        anchor: '.front-lemma-name',
+                        title: 'The dictionary form',
+                        text: 'The base form you would look up in a dictionary. It can differ from the word at the top when that word is an inflected form.',
                     },
                     {
                         side: 'right',
