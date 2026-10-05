@@ -964,11 +964,15 @@ function markSingleSenseSections(root) {
     root?.querySelectorAll('.pos-collapsible').forEach(section => {
         const rows = section.querySelectorAll(':scope > .meaning-pos-rows > .meaning-row');
         section.classList.toggle('is-single-sense', rows.length === 1);
+        // Every row already says how common it is: the head's total would be
+        // a fourth meter saying less, so it shows only while folded.
+        section.classList.toggle('rows-carry-meters', rows.length > 1
+            && [...rows].every(row => row.querySelector('.sense-prominence-badge, .known-sense-tag')));
     });
 }
 
 // A card with one sense that is not Dominant has its other uses in Rarer uses.
-// Say so in the list, with their combined commonness, so the one label does
+// Say so in the list, so the one label does
 // not look wrong on its own. Tapping it opens Rarer uses.
 function addRarerSensesRow(root, card) {
     const scroll = root?.querySelector('.meanings-scroll');
@@ -977,14 +981,13 @@ function addRarerSensesRow(root, card) {
     if (rows.length !== 1) return;
     const badge = rows[0].querySelector('.sense-prominence-badge');
     if (!badge || badge.classList.contains('prominence-dominant')) return;
-    const rarer = (card.unusedMenuSenses || []).filter(m => m.lowShare);
     const count = collectRareSenseItems(card).length;
-    if (!rarer.length || !count) return;
-    const info = prominenceInfoFromShare(rarer);
+    if (!count) return;
+    // No meter: their pooled share can reach Dominant though each one is
+    // rare, which reads as the opposite of "rarer".
     rows[0].insertAdjacentHTML('afterend',
-        `<button type="button" class="rarer-senses-row" aria-label="${count} rarer sense${count === 1 ? '' : 's'}: ${escapeCardText(info.label)}. Open Rarer uses." onclick="event.stopPropagation(); openRareAndExpressionsCard(event)">`
-        + `<span class="rarer-senses-row-label">${count} rarer sense${count === 1 ? '' : 's'}</span>`
-        + `${prominenceMeterHTML(info.key)}</button>`);
+        `<button type="button" class="rarer-senses-row" aria-label="${count} rarer sense${count === 1 ? '' : 's'}. Open Rarer uses." onclick="event.stopPropagation(); openRareAndExpressionsCard(event)">`
+        + `<span class="rarer-senses-row-label">${count} rarer sense${count === 1 ? '' : 's'}</span></button>`);
 }
 
 // Give both providers the same optional cue area, after moving disclosures out.

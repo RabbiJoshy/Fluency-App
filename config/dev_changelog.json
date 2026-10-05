@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-05T23:40:00+01:00",
+      "date": "2026-10-05 23:40 BST",
+      "agent": "Claude",
+      "summary": "Look-alikes skip again in Portuguese, Spanish and Czech; commonness labels open on hover; Quick 20 label",
+      "detail": [
+        "Cognate files rebound to the releases the app loads (pt/es v23, cs v22); they named v21, so Smart Skip found 0 look-alikes. A test now fails if they drift apart.",
+        "The 'N rarer senses' row no longer shows a meter (their pooled share could read as Dominant).",
+        "Commonness meters show their meaning on hover; the section-head label no longer opens outside the card.",
+        "When every row in an open section has its own meter, the section head drops its total.",
+        "Practice errors button always reads 'Quick N' with the number (20 at most)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-05T23:22:47+01:00",
       "date": "2026-10-05 23:22 BST",
       "agent": "Claude",
@@ -352,55 +366,6 @@
       "detail": [
         "The sense-prominence check read each meaning's metadata as a list, but releases store it as an object, so some sets stopped loading.",
         "It now reads the features inside the object and only counts a construction difference when a sibling sense lacks it."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-04T17:55:00+01:00",
-      "date": "2026-10-04 17:55 BST",
-      "agent": "Claude",
-      "summary": "About page now credits Wiktionary for conjugations.",
-      "detail": [
-        "The sources line read \"Spanish conjugations from Jehle\"; every conjugation table now comes from Wiktionary, so it reads \"conjugations from Wiktionary\"."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-04T17:35:00+01:00",
-      "date": "2026-10-04 17:35 BST",
-      "agent": "Claude",
-      "summary": "Spanish and Portuguese decks now tell reflexive verbs apart (hacer vs hacerse), and all conjugations come from Wiktionary.",
-      "detail": [
-        "New v23 speech decks for Spanish and Portuguese. On verbs with both a plain and a reflexive meaning, each example is checked for a reflexive pronoun that belongs to the verb (te vas a sentar, siéntate, virou-se) before a meaning is picked.",
-        "About 9,400 Spanish and 1,300 Portuguese examples changed meaning family, e.g. ¿No vas a sentarte? now shows sentarse and Me voy a casar shows casarse. Unclear cases (a 3rd-person se that may be passive) keep the previous choice.",
-        "Verb drills and card-back conjugation tables are rebuilt from Wiktionary: Spanish goes from 434 to 1,783 verbs (including reflexive verbs such as acostarse and compound tenses), Portuguese from 955 to 1,420 verbs with the pluperfect added.",
-        "Fixes the broken Portuguese 'nós' preterites in the drill (dan -> dançámos, ris) -> riscámos).",
-        "Spanish card backs now include the imperative and future subjunctive.",
-        "Verb-drill progress starts fresh (storage keys v2) because the Spanish tense names changed."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-04T16:44:00+01:00",
-      "date": "2026-10-04 16:44 BST",
-      "agent": "Claude",
-      "summary": "An information button that explains a context now sits to the right of that context.",
-      "detail": [
-        "Single-sense rows: the (i) sits just outside the shaded context box, clear of the commonness meter.",
-        "Sub-rows that share a translation: the (i) ends the sub-row on the right instead of leading it.",
-        "Rows without a context keep the button at the left edge."
-      ]
-    },
-    {
-      "timestamp": "2026-10-04T16:37:00+01:00",
-      "date": "2026-10-04 16:37 BST",
-      "agent": "Claude",
-      "summary": "Verb drills can start with the verbs you got wrong in your vocabulary flashcards this week.",
-      "detail": [
-        "New Set up switch under Progress, on by default: \"Start with verbs from your flashcard mistakes\".",
-        "Reads flashcard misses from the last 7 days (signed in, this device) and matches them to any form or infinitive in the drill.",
-        "Words the vocabulary treats as non-verbs (casa, para, entre) no longer pull a look-alike verb forward; lists built by scripts/build_conjugation_not_verbs.py for es, pt and cs.",
-        "A line under the switch says how many verbs will come first."
       ],
       "commit": "pending"
     }

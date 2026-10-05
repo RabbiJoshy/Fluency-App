@@ -2808,7 +2808,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                     </span>
                     <span class="review-deck-summary-chevron" aria-hidden="true">›</span>
                 </button>
-                <button class="study-set-review" type="button" id="quickReviewBtn" aria-label="Quick practice: ${quickCount} cards" ${quickCount > 0 ? '' : 'disabled'}>Quick ${quickCount > 0 ? quickCount : ''}</button>
+                <button class="study-set-review" type="button" id="quickReviewBtn" aria-label="Quick practice: ${quickCount || QUICK_REVIEW_LIMIT} cards" ${quickCount > 0 ? '' : 'disabled'}>Quick ${quickCount || QUICK_REVIEW_LIMIT}</button>
             </div>`;
     }
 
