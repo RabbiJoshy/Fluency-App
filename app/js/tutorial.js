@@ -3,16 +3,15 @@
 // Not the walkthrough (walkthrough.js), which is a two-screen demo for
 // visitors and opens from About. This one is opened by the "?" button, by the
 // first-run prompt and by Settings → How to Study, and it teaches someone who
-// is about to study: it starts from the setup screen they just used, steps
-// through a card one element at a time, owns the flip, and explains Lyrics
-// mode on its own slide before showing one. Desktop and phone are equal
+// is about to study: it steps through their chosen mode’s card one element
+// at a time and owns the flip. Desktop and phone are equal
 // targets; the phone gets a coach sheet instead of note columns.
 //
 // The card itself is drawn by card-replica.js, which both features share.
 
 import {
     REPLICA_CARDS, esc, renderBack, replicaCardHTML, wireReplicaBack, fitReplicaCard,
-} from './card-replica.js?v=0f191aeb';
+} from './card-replica.js?v=fdd6dda8';
 
 
 // Each language selects its own representative card and dictionary wording.
@@ -82,24 +81,8 @@ function rememberCardTutorial() {
 // Decks and their annotations
 // ---------------------------------------------------------------------------
 //
-// Two things are being selected independently, and conflating them was the
-// first version's mistake:
-//
-//   * The DECK (Lyrics / Speech) — chosen by the tab. This is the only thing
-//     the tab does.
-//   * The FACE (back / front) — chosen by flipping the card, like anywhere
-//     else in the app.
-//
-// Annotations belong to a FACE, not to a tab step. Flip the card and the whole
-// numbered set is replaced by the one describing the side now showing;
-// otherwise the labels stay behind pointing at elements that turned away.
-//
-// The back opens by default. It carries the senses, the shares and the
-// evidence — everything the app is actually for. The front is a prompt.
-//
-// `anchor` is a CSS selector resolved inside the rendered card; `side` puts
-// the note in the left or right column and pins its badge to the matching edge
-// of the element, so a badge never has to cross the card to reach its note.
+// Shared annotations explain the card; Lyrics adds only song-specific details.
+// `anchor` resolves inside the replica and `side` chooses the note column.
 
 const TUTORIAL_DECKS = [
     {
@@ -109,16 +92,8 @@ const TUTORIAL_DECKS = [
         faces: {
             back: {
                 title: 'The back of a Lyrics card',
-                blurb: 'The meanings work exactly as they did on the Speech card. '
-                     + 'These four things are new.',
+                blurb: 'The meanings and examples come from your chosen songs.',
                 notes: [
-                    {
-                        side: 'left',
-                        anchor: '.meanings-scroll .meaning-row:nth-child(2)',
-                        title: 'Tap a meaning to change the lyric',
-                        text: 'On a Speech card the example changes too — but here it switches to a completely different song line.',
-                        actionHint: 'Click another meaning on the card',
-                    },
                     {
                         side: 'left',
                         anchor: '.translation',
@@ -138,25 +113,17 @@ const TUTORIAL_DECKS = [
                         text: 'Plays that moment in your own Spotify. Spotify Premium required.',
                         actionHint: 'Click the Spotify button on the card',
                     },
-                    {
-                        side: 'right',
-                        anchor: '.example-ticks',
-                        title: 'More examples',
-                        text: 'If this meaning has more than one example, tap the lyric to see the next one.',
-                        actionHint: 'Click the sentence on the card for another example',
-                    },
                 ],
             },
             front: {
                 title: 'The front of a Lyrics card',
-                blurb: 'Identical to the Speech card you just saw, with one number '
-                     + 'measuring something different.',
+                blurb: 'Try to remember the word before flipping.',
                 notes: [
                     {
                         side: 'right',
                         anchor: '.card-freq-label',
                         title: 'Song line count',
-                        text: 'On a Speech card this says how often the word is spoken. Here it counts lyric lines instead.',
+                        text: 'How many lines in your chosen songs contain this word.',
                     },
                 ],
             },
@@ -262,7 +229,7 @@ const TUTORIAL_DECKS = [
                         side: 'right',
                         anchor: '.card-freq-label',
                         title: 'How often it is said',
-                        text: 'How often it appears in spoken {language}. On a song card this counts lyric lines instead.',
+                        text: 'How often it appears in spoken {language}.',
                     },
                 ],
             },
@@ -278,6 +245,7 @@ const TUTORIAL_DECKS = [
 // current step rather than owned: the step list decides which face is up, and
 // renderCard()/flipCardFace() read this to drive the real card CSS.
 const state = {
+    mode: 'speech',
     stepIndex: 0,
     flipped: false,
     meaningIndex: 0,
@@ -285,25 +253,19 @@ const state = {
     activeNote: -1,
 };
 
-// The tutorial is a flat list of steps, not a pair of decks with two faces
-// each. Read top to bottom it is the story a first-time visitor gets: learn
-// the card itself on an everyday Speech card, front then back; then a slide
-// that says what Lyrics mode is, in its own words, before a Lyrics card
-// appears. Reordering the story, or adding a slide to it, is a change to this
-// list and to nothing else.
+// Source selection precedes automatic onboarding. Explicit replays without
+// a chosen source use Speech; Lyrics extends the same card explanations.
+function selectedTutorialMode() {
+    if (window.activeArtist || window.playlistLiveActive?.()) return 'lyrics';
+    if (document.getElementById('step1')?.classList.contains('source-speech-active')) return 'speech';
+    return null;
+}
+
 function tutorialSteps() {
-    const steps = [
-        { kind: 'card', deck: 'speech', face: 'front' },
-        { kind: 'card', deck: 'speech', face: 'back' },
+    return [
+        { kind: 'card', deck: state.mode, face: 'front' },
+        { kind: 'card', deck: state.mode, face: 'back' },
     ];
-    // Only Spanish has a lyrics deck today. The others simply end after the
-    // Speech card rather than promising a mode they cannot show.
-    if (tutorialAdapter().lyrics) {
-        steps.push({ kind: 'break', id: 'lyrics' });
-        steps.push({ kind: 'card', deck: 'lyrics', face: 'front' });
-        steps.push({ kind: 'card', deck: 'lyrics', face: 'back' });
-    }
-    return steps;
 }
 
 function currentStep() {
@@ -319,8 +281,22 @@ function isMobileTutorial() {
 // The speech deck carries no card of its own: which one it shows depends on
 // the language being taught, so it is filled in here.
 function deckById(id) {
-    const deck = TUTORIAL_DECKS.find(d => d.id === id);
-    return deck.id === 'speech' ? { ...deck, card: tutorialAdapter().speechCard } : deck;
+    const speech = TUTORIAL_DECKS.find(d => d.id === 'speech');
+    if (id === 'speech') return { ...speech, card: tutorialAdapter().speechCard };
+    const lyrics = TUTORIAL_DECKS.find(d => d.id === 'lyrics');
+    const front = speech.faces.front.notes.map(note => note.anchor === '.card-freq-label'
+        ? lyrics.faces.front.notes[0] : note);
+    const back = speech.faces.back.notes
+        .filter(note => !['.example-credit-start .example-source-chip, .example-credit-start .example-song-credit:not(:has(.example-source-chip))'].includes(note.anchor))
+        .map(note => ({ ...note, text: note.text.replace('{language} speech', 'your chosen lyrics').replace('real speech', 'your chosen songs') }));
+    // Shared meanings and examples first; only song-specific details are added.
+    back.push(...lyrics.faces.back.notes.filter(note =>
+        ['.translation', '.example-song-credit', '.spotify-btn'].includes(note.anchor)));
+    return { ...lyrics, faces: {
+        front: { ...speech.faces.front, title: 'The front of a Lyrics card', notes: front },
+        back: { ...speech.faces.back, title: 'The back of a Lyrics card',
+            blurb: 'The meanings and examples come from the songs you chose.', notes: back },
+    } };
 }
 
 function currentDeck() {
@@ -355,15 +331,13 @@ function orderedNotes() {
     return stepNotes(currentStep());
 }
 
-// A card step is worth one position per annotation; a break slide is worth
-// one. Counting off the step list means the running total cannot drift out of
-// step with the story the way a hand-folded count did.
+// Progress counts every annotation across the two card faces.
 function tutorialStepPosition(noteIndex = state.activeNote) {
     const steps = tutorialSteps();
     let before = 0;
     let total = 0;
     steps.forEach((step, i) => {
-        const weight = step.kind === 'card' ? stepNotes(step).length : 1;
+        const weight = stepNotes(step).length;
         total += weight;
         if (i < state.stepIndex) before += weight;
     });
@@ -465,8 +439,6 @@ function syncContinueButton() {
     if (!btn) return;
     const steps = tutorialSteps();
     const step = steps[state.stepIndex];
-    // A break slide carries its own controls; the card's button would sit in a
-    // column that is hidden behind it.
     const ready = !isMobileTutorial() && step && step.kind === 'card';
     btn.hidden = !ready;
     if (actions) actions.hidden = !ready;
@@ -616,8 +588,7 @@ function renderMobileCoach() {
     if (coach.hidden) return;
 
     const progress = tutorialStepPosition(index);
-    // No deck name here. Which deck you are on is the story the tutorial is
-    // telling — the Lyrics slide announces it — not a label to carry around.
+    // Progress stays with the current face and annotation.
     document.getElementById('cardTutorialMobileProgress').textContent =
         `Step ${progress.current} of ${progress.total} · ${state.flipped ? 'back of card' : 'front of card'}`;
     document.getElementById('cardTutorialMobileTitle').innerHTML =
@@ -745,13 +716,6 @@ function goToStep(index, mobileNote = 0) {
     renderSequenceProgress();
     const body = document.getElementById('cardTutorialBody');
 
-    if (to.kind === 'break') {
-        renderBreakStep();
-        if (body) body.scrollTop = 0;
-        return;
-    }
-
-    showCardChrome();
     if (turnsInPlace) {
         flipCardFace(mobileNote);
         return;
@@ -772,279 +736,6 @@ function advanceStep() {
 }
 
 // ---------------------------------------------------------------------------
-// Break slides
-// ---------------------------------------------------------------------------
-
-// A step with no card. The tutorial used to change deck silently and hope
-// the reader noticed the tab, which meant the Lyrics chapter opened by
-// explaining itself in an annotation. A mode deserves its own moment: this
-// says what Lyrics mode is before showing one.
-const TUTORIAL_BREAKS = {
-    lyrics: {
-        eyebrow: 'The other way to study',
-        title: 'Lyrics mode',
-        lead: 'Everything you have just seen works the same way with music. '
-            + 'You pick an artist, and this app builds a deck from the words they '
-            + 'actually sing.',
-        points: [
-            {
-                title: 'The example is a real lyric',
-                text: 'Instead of a line from film or television, each meaning is '
-                    + 'shown with a line from one of their songs, English underneath.',
-            },
-            {
-                title: 'You can hear it',
-                text: 'A play button starts that exact line in Spotify, at the right '
-                    + 'second, so you learn the word as it is actually sung.',
-            },
-            {
-                title: 'Counted against the artist',
-                text: 'The number on the front is how many of their lines use the '
-                    + 'word, rather than how common it is in the language at large.',
-            },
-        ],
-        cta: 'Show me a Lyrics card →',
-    },
-};
-
-// Break slides borrow the info-sheet treatment the setup screens use for their
-// help panels, so a visitor who later opens one recognises the shape.
-function renderBreakStep() {
-    const host = document.getElementById('cardTutorialBreak');
-    if (!host) return;
-    const slide = TUTORIAL_BREAKS[currentStep().id];
-    if (!slide) return;
-
-    const first = state.stepIndex === 0;
-    host.innerHTML = `
-        <div class="card-tutorial-break-card">
-            <span class="card-tutorial-break-eyebrow">${esc(slide.eyebrow)}</span>
-            <h3 class="card-tutorial-break-title">${esc(slide.title)}</h3>
-            <p class="card-tutorial-break-lead">${tutorialText(slide.lead)}</p>
-            <ul class="card-tutorial-break-points">
-                ${slide.points.map(point => `
-                    <li>
-                        <strong>${esc(point.title)}</strong>
-                        <span>${tutorialText(point.text)}</span>
-                    </li>`).join('')}
-            </ul>
-            <div class="card-tutorial-break-actions">
-                ${first ? '' : '<button type="button" class="card-tutorial-break-back" id="cardTutorialBreakBack">Back</button>'}
-                <button type="button" class="card-tutorial-break-cta" id="cardTutorialBreakNext">${esc(slide.cta)}</button>
-            </div>
-        </div>`;
-
-    // The slide carries its own title, so the card's one-line header would be
-    // the previous step's copy left standing over it.
-    const intro = document.getElementById('cardTutorialIntro');
-    if (intro) intro.innerHTML = '';
-
-    showBreakChrome();
-    document.getElementById('cardTutorialBreakNext')?.addEventListener('click', advanceStep);
-    document.getElementById('cardTutorialBreakBack')
-        ?.addEventListener('click', () => goToStep(state.stepIndex - 1, Number.MAX_SAFE_INTEGER));
-}
-
-// The card and its note columns, or the slide — never both. The mobile coach
-// belongs to the card, so it goes with it.
-function showBreakChrome() {
-    clearNextHint();
-    document.getElementById('cardTutorialBody')?.classList.add('is-break-step');
-    const host = document.getElementById('cardTutorialBreak');
-    if (host) host.hidden = false;
-    const coach = document.getElementById('cardTutorialMobileCoach');
-    if (coach) coach.hidden = true;
-    const cont = document.getElementById('cardTutorialContinue');
-    if (cont) cont.hidden = true;
-}
-
-function showCardChrome() {
-    document.getElementById('cardTutorialBody')?.classList.remove('is-break-step');
-    const host = document.getElementById('cardTutorialBreak');
-    if (host) { host.hidden = true; host.innerHTML = ''; }
-}
-
-// ---------------------------------------------------------------------------
-// Setup-flow intro
-// ---------------------------------------------------------------------------
-
-// Three beats miming the real setup flow — language, level, study set — played
-// once before the first card, so the tutorial starts where a learner would
-// actually start rather than dropping them straight onto a flashcard. It is
-// purely presentational: the markup is static, nothing here reads or writes
-// real config, and only the language line follows the chosen tutorial.
-
-// Held so the skip button or a close can cut the sequence short. Null whenever
-// no intro is running.
-let _setupIntroFinish = null;
-let _setupIntroTimers = [];
-
-function resetSetupIntro() {
-    _setupIntroTimers.forEach(clearTimeout);
-    _setupIntroTimers = [];
-    _setupIntroFinish = null;
-    const host = document.getElementById('cardTutorialSetupAnim');
-    if (host) {
-        host.hidden = true;
-        host.querySelector('.setup-anim-screen')?.classList.remove('is-leaving');
-        host.querySelectorAll('.setup-anim-panel').forEach((el, i) => { el.hidden = i > 0; });
-        host.querySelectorAll('.setup-anim-target').forEach((el) => {
-            el.classList.remove('is-pressed', 'is-chosen', 'is-ready');
-        });
-        const pointer = document.getElementById('setupAnimPointer');
-        if (pointer) { pointer.classList.remove('is-visible', 'is-pressing'); pointer.removeAttribute('style'); }
-        const statusText = document.getElementById('setupAnimStatusText');
-        if (statusText) statusText.textContent = 'Choosing where you begin…';
-    }
-    document.getElementById('cardTutorialBody')?.classList.remove('is-setup-intro');
-}
-
-// Cutting in early lands on the card, not on a half-played animation.
-function skipSetupIntro() {
-    _setupIntroFinish?.();
-}
-
-// Park the pointer on an element, in the coordinate space of the replica
-// screen. Measuring rather than hard-coding keeps it on target when the panel
-// reflows at narrow widths. Offsets, not bounding boxes: a panel that has just
-// appeared is still sliding up into place, and a box measured mid-slide put
-// the pointer under its target. The point is inside the target, right of and
-// a little below centre, so it reads as a press without covering the label.
-function moveSetupPointer(target) {
-    const pointer = document.getElementById('setupAnimPointer');
-    const screen = document.querySelector('.setup-anim-screen');
-    if (!pointer || !screen || !target) return;
-    if (!target.offsetWidth && !target.offsetHeight) return;
-    let left = 0;
-    let top = 0;
-    for (let el = target; el && el !== screen; el = el.offsetParent) {
-        left += el.offsetLeft;
-        top += el.offsetTop;
-        if (el.offsetParent && !screen.contains(el.offsetParent)) return;
-    }
-    const x = left + Math.min(target.offsetWidth * 0.68, target.offsetWidth - 14);
-    const y = top + target.offsetHeight * 0.62;
-    pointer.style.left = `${x}px`;
-    pointer.style.top = `${y}px`;
-    pointer.classList.add('is-visible');
-}
-
-// The intro is a scripted pass through the real setup screen: pick a language,
-// pick what kind of language, pick a level, pick a set, press the button. An
-// earlier version showed three rows ticking themselves off, which told a
-// first-time visitor what the app had decided but not where any of it happens.
-function playSetupIntro(onDone) {
-    const host = document.getElementById('cardTutorialSetupAnim');
-    const body = document.getElementById('cardTutorialBody');
-    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    if (!host || !body || reduced) {
-        onDone();
-        return;
-    }
-
-    resetSetupIntro();
-
-    const adapter = tutorialAdapter();
-    const flag = document.getElementById('setupAnimLangFlag');
-    const name = document.getElementById('setupAnimLangName');
-    if (flag) flag.textContent = adapter.flag || '';
-    if (name) name.textContent = adapter.language;
-
-    host.hidden = false;
-    body.classList.add('is-setup-intro');
-
-    const el = id => document.getElementById(id);
-    const at = (ms, fn) => _setupIntroTimers.push(setTimeout(fn, ms));
-    const caption = el('setupAnimCaption');
-    const status = el('setupAnimStatusText');
-    const pointer = el('setupAnimPointer');
-
-    const finish = () => { resetSetupIntro(); onDone(); };
-    _setupIntroFinish = finish;
-
-    // Reach for a control, press it, and leave it looking chosen.
-    const press = (target, after) => {
-        moveSetupPointer(target);
-        _setupIntroTimers.push(setTimeout(() => {
-            pointer?.classList.add('is-pressing');
-            target?.classList.add('is-pressed');
-        }, 520));
-        _setupIntroTimers.push(setTimeout(() => {
-            pointer?.classList.remove('is-pressing');
-            target?.classList.remove('is-pressed');
-            target?.classList.add('is-chosen');
-            after?.();
-        }, 760));
-    };
-
-    // Each beat is one decision, held long enough to read the caption and see
-    // the thing being pressed before the next panel appears.
-    const BEAT = 2600;
-    let t = 600;
-
-    at(t, () => {
-        if (caption) caption.textContent = `First you pick a language.`;
-        press(el('setupAnimLangChip'));
-    });
-
-    t += BEAT;
-    at(t, () => {
-        if (caption) caption.textContent = 'Then what kind of language you want to understand.';
-        press(el('setupAnimModeSpeech'));
-    });
-
-    t += BEAT;
-    at(t, () => {
-        if (caption) caption.textContent = 'Then how far in to start. Level 1 is the most common words.';
-        el('setupAnimLevelPanel').hidden = false;
-        el('setupAnimModePanel').hidden = true;
-        press(el('setupAnimLevel1'));
-    });
-
-    t += BEAT;
-    at(t, () => {
-        if (caption) caption.textContent = 'Levels are split into small sets, so a session is finishable.';
-        el('setupAnimSetPanel').hidden = false;
-        el('setupAnimLevelPanel').hidden = true;
-        press(el('setupAnimSet1'));
-    });
-
-    // The last beat presses the start button itself after a pause long enough
-    // to read, and the first card follows. It used to stop and wait for the
-    // visitor to press it, which read as being hurried to a button; the
-    // button still works for anyone who wants to go sooner.
-    t += BEAT;
-    at(t, () => {
-        if (caption) caption.textContent = 'That is the whole setup. Here is what a card looks like.';
-        if (status) status.textContent = 'Opening your first card…';
-        el('setupAnimActionBtn')?.classList.add('is-ready');
-        moveSetupPointer(el('setupAnimActionBtn'));
-    });
-    t += BEAT;
-    at(t, () => pointer?.classList.add('is-pressing'));
-    at(t + 240, () => {
-        pointer?.classList.remove('is-pressing');
-        startSetupIntroCard();
-    });
-}
-
-// The explicit advance out of the intro: press the button the pointer has just
-// arrived at, watch it depress, then let the card come up behind it.
-function startSetupIntroCard() {
-    const host = document.getElementById('cardTutorialSetupAnim');
-    const btn = document.getElementById('setupAnimActionBtn');
-    if (!host || !_setupIntroFinish || !btn?.classList.contains('is-ready')) return;
-    const done = _setupIntroFinish;
-    _setupIntroTimers.forEach(clearTimeout);
-    _setupIntroTimers = [];
-    btn.classList.add('is-pressed');
-    _setupIntroTimers.push(setTimeout(() => {
-        host.querySelector('.setup-anim-screen')?.classList.add('is-leaving');
-    }, 220));
-    _setupIntroTimers.push(setTimeout(done, 620));
-}
-
-// ---------------------------------------------------------------------------
 // Open / close
 // ---------------------------------------------------------------------------
 
@@ -1055,19 +746,10 @@ function openCardTutorial() {
     if (!modal) return;
     rememberCardTutorial();
     modal.classList.remove('hidden');
-    // Start from the top every time. Without this a replay opens with whatever
-    // the last run finished on still on screen — a break slide, most visibly,
-    // sitting under the intro.
+    // Replays start directly on the chosen mode's card.
+    state.mode = tutorialAdapter().lyrics && selectedTutorialMode() === 'lyrics' ? 'lyrics' : 'speech';
     state.stepIndex = 0;
-    showCardChrome();
-    // Same for the top bar: it still held the last face's copy ("The back of
-    // the card") over an intro that is about the setup screen.
-    const intro = document.getElementById('cardTutorialIntro');
-    if (intro) intro.innerHTML = '';
-    // The card is rendered only once the intro is out of the way: marker
-    // placement measures real boxes, and those read zero while the columns
-    // are hidden behind the animation.
-    playSetupIntro(() => goToStep(0));
+    goToStep(0);
 
     if (!_resizeHandler) {
         _resizeHandler = () => {
@@ -1082,10 +764,12 @@ function openCardTutorial() {
 }
 
 function openFirstRunCardTutorial() {
+    if (['word', 'about', 'walkthrough'].includes(window.fluencyRoute?.kind)) return false;
     if (hasSeenCardTutorial()) return false;
     // The setup screen has a technical default before the learner chooses a
     // language. Do not mistake that for interest and launch the wrong tour.
     if (!explicitTutorialLanguageKey()) return false;
+    if (!selectedTutorialMode()) return false;
     // Never stack the automatic tour over authentication, About, settings, or
     // another onboarding sheet. Permanent replay links remain available.
     if (document.querySelector('.modal:not(.hidden), .knowledge-overview-modal:not([hidden])')) {
@@ -1102,8 +786,6 @@ function closeCardTutorial() {
     if (!modal) return;
     modal.classList.add('hidden');
     clearNextHint();
-    resetSetupIntro();
-    showCardChrome();
     // Leave any Spotify playback the visitor started running — they pressed
     // play deliberately, and closing the tutorial shouldn't stop their music.
     if (_resizeHandler) {
@@ -1118,11 +800,6 @@ function setupCardTutorial() {
     modal.dataset.ready = '1';
 
     document.getElementById('closeCardTutorialModal')?.addEventListener('click', closeCardTutorial);
-    // Start set is the deliberate way out of the intro and only works once the
-    // three steps have filled in; Skip intro leaves at any point. A stray click
-    // on the card does nothing, or "deliberate" would mean very little.
-    document.getElementById('setupAnimActionBtn')?.addEventListener('click', startSetupIntroCard);
-    document.getElementById('setupAnimSkipBtn')?.addEventListener('click', skipSetupIntro);
     document.getElementById('cardTutorialFlip')?.addEventListener('click', () => flipCardFace(0));
     document.getElementById('cardTutorialContinue')?.addEventListener('click', () => moveTour(1));
     document.getElementById('cardTutorialPrev')?.addEventListener('click', () => moveTour(-1));
@@ -1148,6 +825,7 @@ window.openFirstRunCardTutorial = openFirstRunCardTutorial;
 window.closeCardTutorial = closeCardTutorial;
 window.getCardTutorialProfile = tutorialAdapter;
 window.getCardTutorialLanguageKey = explicitTutorialLanguageKey;
+window.getCardTutorialMode = selectedTutorialMode;
 window.getCardTutorialLanguages = () => Object.entries(TUTORIAL_LANGUAGE_ADAPTERS)
     .map(([key, adapter]) => ({ key, language: adapter.language }));
 window.setCardTutorialLanguage = key => {
