@@ -1,26 +1,26 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=3b6be711';
-import './speech.js?v=3b6be711';
-import { goToRoute, routeCodeFor } from './routes.js?v=3b6be711';
-import './side-dock.js?v=3b6be711';
+import './state.js?v=6ee1dd6f';
+import './speech.js?v=6ee1dd6f';
+import { goToRoute, routeCodeFor } from './routes.js?v=6ee1dd6f';
+import './side-dock.js?v=6ee1dd6f';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=3b6be711';
+} from './example-personalisation.js?v=6ee1dd6f';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=3b6be711';
+} from './spanishdict-usage.js?v=6ee1dd6f';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=3b6be711';
+} from './reverse-cues.js?v=6ee1dd6f';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -53,7 +53,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=3b6be711';
+} from './card-metadata-pills.js?v=6ee1dd6f';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -972,6 +972,13 @@ function arrangeSenseCueAreas(root) {
         cues.className = 'sense-cue-area sense-cue-group';
         cues.append(...cells);
         body.append(cues);
+        // Shown only while sub-rows are folded to fit (collapseSubsensesToFit).
+        const folded = cells.filter(cell => !cell.classList.contains('is-active-subsense')).length;
+        const shared = body.querySelector('.group-card-shared');
+        if (folded > 0 && shared) {
+            shared.insertAdjacentHTML('beforeend',
+                `<button type="button" class="subsense-more" aria-label="Show ${folded} more" onclick="expandSubsenseGroup(event)">+${folded}</button>`);
+        }
     });
 }
 
@@ -1024,6 +1031,27 @@ function availableHeightForMeaningScroll(backEl, scroll) {
         - (parseFloat(backStyle.paddingTop) || 0) - (parseFloat(backStyle.paddingBottom) || 0);
 }
 
+// When two or more senses would need scrolling, grouped senses fold to their
+// main row so every sense shows at once: the other senses first, then, only if
+// that is not enough, the current one (keeping the sub-row its example belongs
+// to). A "+N" chip opens one group in place. A lone sense never folds; there
+// is nothing else to bring into view.
+function collapseSubsensesToFit(scroll, available) {
+    scroll.classList.remove('collapse-subsenses', 'collapse-current-subsenses');
+    const senseRows = [...scroll.querySelectorAll('.meaning-row')]
+        .filter(row => !row.closest('.pos-collapsible:not(.is-open)'));
+    if (senseRows.length < 2 || scroll.scrollHeight <= available + 1) return;
+    if (!scroll.querySelector('.sense-cue-group')) return;
+    scroll.classList.add('collapse-subsenses');
+    if (scroll.scrollHeight > available + 1) scroll.classList.add('collapse-current-subsenses');
+}
+
+function expandSubsenseGroup(event) {
+    event.stopPropagation();
+    event.currentTarget.closest('.meaning-row-group')?.classList.add('is-expanded');
+    refitMeaningScroll();
+}
+
 // Disclosures change row height without rendering the card again. Release the
 // previous cap before measuring so spare space can move the example down.
 function refitMeaningScroll(backEl = document.getElementById('backContent')) {
@@ -1031,6 +1059,7 @@ function refitMeaningScroll(backEl = document.getElementById('backContent')) {
     if (!scroll) return;
     scroll.style.maxHeight = '';
     const available = availableHeightForMeaningScroll(backEl, scroll);
+    collapseSubsensesToFit(scroll, available);
     if (scroll.scrollHeight > available) scroll.style.maxHeight = Math.max(100, available) + 'px';
 }
 document.addEventListener('sense-details-change', () => refitMeaningScroll());
@@ -4139,11 +4168,12 @@ function collectRareSenseItems(card) {
     return items;
 }
 
+// Rarer uses holds rare senses only. Expressions have their own card (the
+// phrase chain after a correct answer), and no expression is "rarer" than
+// another, so listing them here only repeated that card.
 function collectRareAndExpressionItems(card) {
     if (!card || card.isChainChild) return [];
-    const expressions = collectExpressionItems(card);
-    const rareSenses = collectRareSenseItems(card);
-    return [...expressions, ...rareSenses];
+    return collectRareSenseItems(card);
 }
 
 // Builds the synthetic card rendered after the parent — one card holding
@@ -8433,6 +8463,7 @@ function renderCardWikipediaBadge(card) {
                     updateCard();
                     return;
                 }
+                collapseSubsensesToFit(scroll, availableForScroll);
                 // Cap meanings-scroll whenever its natural content overflows
                 // the remaining room. Floor the cap value (not the gate) at
                 // 60px so the scroller stays usable even when overhead is
@@ -10107,6 +10138,7 @@ window.toggleMorphPopover = toggleMorphPopover;
 window.toggleMorphAlternatives = toggleMorphAlternatives;
 window.toggleFrontProductionHint = toggleFrontProductionHint;
 window.toggleSplitCardTip = toggleSplitCardTip;
+window.expandSubsenseGroup = expandSubsenseGroup;
 window.focusKnowledgeCardItem = focusKnowledgeCardItem;
 window.selectGroup = selectGroup;
 window.previousCard = previousCard;
@@ -10386,8 +10418,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '3b6be711';
-const MODALS_ASSET_VERSION = '3b6be711';
+const ASSET_VERSION = '6ee1dd6f';
+const MODALS_ASSET_VERSION = '6ee1dd6f';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
