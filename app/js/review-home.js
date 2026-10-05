@@ -2,7 +2,7 @@
 // The queue and its ordering still belong to progress.js. Opening a group
 // only explains the queue; it must never start a study session.
 
-import './state.js?v=59dc0bc1';
+import './state.js?v=51dabc3f';
 
 const LIST_PAGE_SIZE = 50;
 const DAY_MS = 24 * 60 * 60 * 1000;

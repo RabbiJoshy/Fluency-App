@@ -22197,3 +22197,11 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 /* Keep the tutorial card compact while retaining its readable cue areas. */
 #cardTutorialStage .card-back { padding-top: 16px; padding-bottom: 14px; }
 #cardTutorialStage .sense-cue-area { padding: 4px 8px; }
+
+/* Commonness lives in the section head (the sense row): open or folded it
+   shows the sense's total, pushed to the right before the chevron. A section
+   with one sense row does not repeat it on that row. */
+.pos-collapsible.is-open .pos-section-head > .sense-prominence-badge,
+.pos-collapsible.is-open .pos-section-head > .pos-pill-pct { margin-left: auto; }
+.pos-collapsible.is-single-sense > .meaning-pos-rows > .meaning-row > .pct-column,
+.pos-collapsible.is-single-sense > .meaning-pos-rows > .meaning-row > .sense-prominence-badge { display: none !important; }

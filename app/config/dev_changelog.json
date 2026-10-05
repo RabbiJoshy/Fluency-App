@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-05T23:18:37+01:00",
+      "date": "2026-10-05 23:18 BST",
+      "agent": "Claude",
+      "summary": "Commonness meter lives in the top sense row (the section head), open or folded",
+      "detail": [
+        "Each part-of-speech section head shows its sense's commonness whether open or folded",
+        "A section with one sense shows it only there; its row no longer repeats it",
+        "Sections with several senses keep a meter on each sense, since they can differ"
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-05T23:13:08+01:00",
       "date": "2026-10-05 23:13 BST",
       "agent": "Claude",

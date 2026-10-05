@@ -1,27 +1,27 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=59dc0bc1';
-import './speech.js?v=59dc0bc1';
-import { goToRoute, routeCodeFor } from './routes.js?v=59dc0bc1';
-import './side-dock.js?v=59dc0bc1';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=59dc0bc1';
+import './state.js?v=51dabc3f';
+import './speech.js?v=51dabc3f';
+import { goToRoute, routeCodeFor } from './routes.js?v=51dabc3f';
+import './side-dock.js?v=51dabc3f';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=51dabc3f';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=59dc0bc1';
+} from './example-personalisation.js?v=51dabc3f';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=59dc0bc1';
+} from './spanishdict-usage.js?v=51dabc3f';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=59dc0bc1';
+} from './reverse-cues.js?v=51dabc3f';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -54,7 +54,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=59dc0bc1';
+} from './card-metadata-pills.js?v=51dabc3f';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -954,6 +954,16 @@ function markCompactInactiveRows(root) {
         const visibleRows = [...scroll.querySelectorAll('.meaning-row-regular, .group-card-varying-cell')]
             .filter(row => !row.closest('.pos-collapsible:not(.is-open)'));
         scroll.classList.toggle('has-compact-rows', visibleRows.length >= COMPACT_ROWS_FROM);
+    });
+}
+
+// An open section with a single sense row already shows that sense's
+// commonness in its head; the row's own meter would repeat it. Rows keep
+// meters only where a section has several senses that can differ.
+function markSingleSenseSections(root) {
+    root?.querySelectorAll('.pos-collapsible').forEach(section => {
+        const rows = section.querySelectorAll(':scope > .meaning-pos-rows > .meaning-row');
+        section.classList.toggle('is-single-sense', rows.length === 1);
     });
 }
 
@@ -6765,13 +6775,15 @@ function renderCardWikipediaBadge(card) {
                 // Don't label genuine rare dictionary senses as "Unassigned"
                 const assignmentState = (!g.hasAssignedEvidence && !g.hasOnlyRareSenses)
                     ? '<span class="pos-pill-unassigned">Unassigned</span>'
-                    // A folded section still says how common it is.
+                    // The section head always says how common the sense is,
+                    // open or folded; a section with one sense shows it only
+                    // here (markSingleSenseSections hides the row's copy).
                     : (g.hasOnlyRareSenses
                         ? prominenceBadgeHTML({ label: 'Rare', key: 'rare' })
                         : (useProminenceLabels && g.pct > 0
                             ? prominenceBadgeHTML(prominenceInfoFromShare(g.mainMeanings)) : ''));
                 const collapsedSummary = open
-                    ? ''
+                    ? `${assignmentState}${pct}`
                     : `<span class="pos-section-summary">${summaryHTML}${extra}</span>${assignmentState}${pct}`;
                 // No known-tick here. A check mark on this row read as "you
                 // answered this", which is what the tick means everywhere else
@@ -8360,6 +8372,7 @@ function renderCardWikipediaBadge(card) {
         placeRowLeadMarks(renderedBack);
         arrangeSenseCueAreas(renderedBack);
         markCompactInactiveRows(renderedBack);
+        markSingleSenseSections(renderedBack);
         addRarerSensesRow(renderedBack, card);
         renderedBack._fluencyRenderedHTML = backHTML;
         bindGrammarPairChips(renderedBack);
@@ -10331,8 +10344,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '59dc0bc1';
-const MODALS_ASSET_VERSION = '59dc0bc1';
+const ASSET_VERSION = '51dabc3f';
+const MODALS_ASSET_VERSION = '51dabc3f';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
