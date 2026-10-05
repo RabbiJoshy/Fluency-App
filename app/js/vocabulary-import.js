@@ -257,7 +257,7 @@ function exportMistakes(statusId = 'settingsDataActionStatus') {
 // a dedicated review mode is a possible next step, not this one.
 function buildChatGptPrompt(rows) {
     const words = rows.map(row => row.word).filter(Boolean);
-    return `I'm learning a language with Fluency and want extra practice with words I keep getting wrong.\n\n`
+    return `I'm learning a language with a flashcard app and want extra practice with words I keep getting wrong.\n\n`
         + `Words: ${words.join(', ')}\n\n`
         + `For each word, write two short example sentences that make its meaning clear from context. `
         + `Then add three or four longer sentences that naturally combine several of these words together, `

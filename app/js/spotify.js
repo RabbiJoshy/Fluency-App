@@ -735,7 +735,7 @@ function spotifyTryIphoneAppLogin() {
     if (!_isIphone || _isHomeScreenApp) {
         if (status) {
             status.textContent = _isHomeScreenApp
-                ? 'From the home screen icon, Connect uses Spotify\'s website so you stay in Fluency.'
+                ? 'From the home screen icon, Connect uses Spotify\'s website so you stay in this app.'
                 : 'On this computer, Connect uses Spotify\'s website.';
         }
         return;

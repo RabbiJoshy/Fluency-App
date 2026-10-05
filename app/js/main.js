@@ -1581,7 +1581,7 @@ function showAvailableMusicPicker(artists) {
     if (Object.values(artists || {}).some(cfg => cfg.songsPath)) {
         entries.push({
             label: 'Mix several artists',
-            description: 'Pick individual songs from any artists in Fluency.',
+            description: 'Pick individual songs from any artists in this app.',
             iconHTML: customSongsIcon(),
             accent: '#10B981',
             onSelect: () => {
@@ -1659,7 +1659,7 @@ async function showArtistPicker(anchorBtn, artists, targetLanguage = null) {
             {
                 label: 'Pick artists',
                 description: hasAvailableMusic
-                    ? 'One or more artists from the Fluency library — all their songs, or just the ones you choose.'
+                    ? 'One or more artists from this app’s library — all their songs, or just the ones you choose.'
                     : 'No music collection has been published for this language yet.',
                 iconHTML: artistsIcon(),
                 accent: 'var(--accent-primary)',
@@ -1671,7 +1671,7 @@ async function showArtistPicker(anchorBtn, artists, targetLanguage = null) {
             },
             {
                 label: 'Build from a Spotify playlist',
-                description: 'Use a playlist you made. Open a ready-made deck from songs Fluency has, or build a new one.',
+                description: 'Use a playlist you made. Open a ready-made deck from songs this app has, or build a new one.',
                 iconHTML: playlistIcon(),
                 accent: '#1DB954',
                 onSelect: () => window.openSpotifyPlaylistImport?.(resolvedArtists, language, { mode: 'choose' })

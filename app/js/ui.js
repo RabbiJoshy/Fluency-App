@@ -143,7 +143,7 @@ function syncStudyPreferenceControls() {
     const vocabDesc = document.querySelector('#vocabularySettingsTitle + p');
     if (vocabDesc) {
         const langName = config?.languages?.[selectedLanguage]?.name || 'target language';
-        vocabDesc.textContent = `Already know some of these words from another app or course? Upload your list so Fluency starts you further in — paste it or choose a text, CSV or TSV file. Matches exact ${langName} word forms, previews every change first, and never overwrites a newer answer already saved here.`;
+        vocabDesc.textContent = `Already know some of these words from another app or course? Upload your list so this app starts you further in — paste it or choose a text, CSV or TSV file. Matches exact ${langName} word forms, previews every change first, and never overwrites a newer answer already saved here.`;
     }
     updateCognateSensitivityVisibility();
 }
@@ -1038,9 +1038,9 @@ function updateStep5Tooltip() {
     const setSize = `A set is ${STABLE_SET_SLOT_COUNT} cards, about 5–10 minutes.`;
     if (activeArtist) {
         const name = activeArtist.name;
-        description.textContent = `Fluency highlights the next unfinished set from ${name}'s lyrics, so you can jump right in. ${setSize}`;
+        description.textContent = `This app highlights the next unfinished set from ${name}'s lyrics, so you can jump right in. ${setSize}`;
     } else {
-        description.textContent = `Fluency highlights your next unfinished set so you can jump right in. ${setSize}`;
+        description.textContent = `This app highlights your next unfinished set so you can jump right in. ${setSize}`;
     }
 }
 
@@ -2745,8 +2745,6 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
             return renderRangeSelector({ landingRowsChecked: landingRowsChecked + 1 });
         }
     }
-    const completedCount = ranges.filter(range => range.available && range.pct === 100).length;
-    const availableCount = ranges.filter(range => range.available).length;
 
     const dotsHTML = ranges.map((range, index) => {
         const classes = [
@@ -2798,33 +2796,24 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     if (currentUser && !currentUser.isGuest) {
         const summary = window.getGlobalDueReviewSummary?.(selectedLanguage) || null;
         const globalTotal = Number(summary?.total) || 0;
-        const neverRight = Array.isArray(summary?.neverRight) ? summary.neverRight.length : 0;
         const reviewMeta = globalTotal === 0
             ? 'No cards need practice right now.'
             : `${globalTotal.toLocaleString()} card${globalTotal === 1 ? '' : 's'} ready to practise`;
-        const reviewDetail = globalTotal === 0
-            ? 'You are caught up for now.'
-            : neverRight > 0
-                ? `Fluency puts the cards that need you most first · ${neverRight.toLocaleString()} not right yet`
-                : 'Fluency puts the cards that need you most first.';
         const quickCount = Math.min(globalTotal, QUICK_REVIEW_LIMIT);
         reviewHTML = `<div class="review-deck-content">
                 <button class="review-deck-summary" type="button" id="openReviewHomeBtn">
                     <span class="review-deck-summary-copy">
-                        <h3 id="reviewDeckTitle">Practice</h3>
                         <strong>${reviewMeta}</strong>
-                        <small>${reviewDetail}</small>
                     </span>
                     <span class="review-deck-summary-chevron" aria-hidden="true">›</span>
                 </button>
-                <button class="study-set-review" type="button" id="quickReviewBtn" ${quickCount > 0 ? '' : 'disabled'}>Quick practice${quickCount > 0 ? ` · ${quickCount}` : ''}</button>
+                <button class="study-set-review" type="button" id="quickReviewBtn" ${quickCount > 0 ? '' : 'disabled'}>Quick practice${quickCount > 0 ? ` (${quickCount})` : ''}</button>
             </div>`;
     }
 
     container.innerHTML = `
         <div class="study-set-panel">
             <div class="study-set-level-context">
-                <strong class="study-set-overview">${levelNumber > 0 ? `Level ${levelNumber}` : 'This level'} · ${completedCount}/${availableCount} sets studied</strong>
                 <div class="study-set-legend" aria-label="Set progress colours">
                     <span><i class="is-known"></i>Known</span>
                     <span><i class="is-review"></i>Practice</span>
@@ -2841,7 +2830,8 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
             </div>
         </div>`;
     if (reviewSection) {
-        reviewSection.innerHTML = reviewHTML;
+        const reviewBody = document.getElementById('reviewDeckBody');
+        if (reviewBody) reviewBody.innerHTML = reviewHTML;
         reviewSection.hidden = !reviewHTML;
     }
     document.getElementById('step4').style.display = 'block';
@@ -3340,7 +3330,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     settingsModal.querySelectorAll('.settings-tab-content').forEach(c => c.classList.remove('active'));
     document.getElementById(tabContentIds[requestedTab]).classList.add('active');
     const title = studyOnly ? 'Study settings' : ({ study: 'Settings', vocabulary: 'Words & data', account: 'Account',
-        offline: 'Storage', appData: 'Owner tools', about: 'About Fluency' }[requestedTab] || 'Settings');
+        offline: 'Storage', appData: 'Owner tools', about: 'About this app' }[requestedTab] || 'Settings');
     document.getElementById('settingsTitle').textContent = title;
     settingsBackHandler = requestedTab === 'study' && typeof onBack === 'function' ? onBack : null;
     currentSettingsTab = requestedTab;

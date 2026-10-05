@@ -459,8 +459,8 @@ function renderDeckChoices(playlist, matchCount, trackCount, { onReady, onQuick,
         {
             label: 'Ready-made deck',
             description: matchCount
-                ? `${matchCount} of ${trackCount} songs are already in Fluency. Opens now.`
-                : 'None of these songs are in Fluency’s library yet.',
+                ? `${matchCount} of ${trackCount} songs are already in this app. Opens now.`
+                : 'None of these songs are in this app’s library yet.',
             disabled: !matchCount,
             onSelect: onReady
         },
@@ -553,8 +553,8 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
         intro.textContent = _importMode === 'choose'
             ? 'Choose a playlist you created — Spotify doesn’t let apps read ones you only follow. Then pick how to build its deck.'
             : _importMode === 'live'
-            ? 'Choose a playlist you created. Spotify no longer lets apps read mixes or playlists you only follow. Fluency then looks up lyrics, saves each song to your Fluency account, and builds a study deck.'
-            : 'Choose a playlist you created. Fluency keeps only the songs already in the published lyrics library.';
+            ? 'Choose a playlist you created. Spotify no longer lets apps read mixes or playlists you only follow. This app then looks up lyrics, saves each song to your account, and builds a study deck.'
+            : 'Choose a playlist you created. This app keeps only the songs already in the published lyrics library.';
     }
     element('spotifyPlaylistList').replaceChildren();
     element('spotifyPlaylistList').classList.remove('hidden');
@@ -655,7 +655,7 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
                 const matches = catalog.songs.filter(song => song.spotifyTrackId && trackIds.has(song.spotifyTrackId));
                 if (!matches.length) {
                     element('spotifyPlaylistList').classList.remove('hidden');
-                    status.textContent = `None of "${playlist.name}"'s tracks are in Fluency's library yet.`;
+                    status.textContent = `None of "${playlist.name}"'s tracks are in this app's library yet.`;
                     return;
                 }
                 _matchState = {
@@ -704,19 +704,19 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
                 return;
             }
             _liveState = { language, playlistName: playlist.name, matchedCount: deck.matchedCount };
-            status.textContent = `${parts.join('. ')}. Saving the deck to Fluency…`;
+            status.textContent = `${parts.join('. ')}. Saving the deck to your account…`;
             try {
                 const saved = await window.savePlaylistLiveDeckToServer?.(deck);
                 if (saved?.ok) {
-                    status.textContent = `${parts.join('. ')}. Saved to Fluency. Opening study…`;
+                    status.textContent = `${parts.join('. ')}. Saved to your account. Opening study…`;
                 } else if (namedSyncUser()) {
-                    status.textContent = `${parts.join('. ')}. Deck is ready here, but Fluency did not keep a copy.`;
+                    status.textContent = `${parts.join('. ')}. Deck is ready here, but no copy was saved to your account.`;
                 } else {
-                    status.textContent = `${parts.join('. ')}. Sign in with initials to keep this deck on Fluency.`;
+                    status.textContent = `${parts.join('. ')}. Sign in with initials to keep this deck.`;
                 }
             } catch (error) {
                 console.warn('Playlist deck save failed:', error);
-                status.textContent = `${parts.join('. ')}. Deck is ready here, but Fluency did not keep a copy.`;
+                status.textContent = `${parts.join('. ')}. Deck is ready here, but no copy was saved to your account.`;
             }
             if (liveBtn) liveBtn.hidden = false;
             confirmSpotifyLiveDeck();

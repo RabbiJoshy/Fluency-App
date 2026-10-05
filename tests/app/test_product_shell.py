@@ -959,8 +959,11 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("cardsFor(summary, group).length", practice)
         self.assertIn("const LIST_PAGE_SIZE = 50", practice)
         self.assertIn('data-action="open-group"', practice)
-        self.assertIn('data-action="quick-practice"', practice)
-        self.assertIn("Math.min(total, QUICK_PRACTICE_LIMIT)", practice)
+        # Quick practice starts from the setup screen; the sheet only explains
+        # the queue.
+        self.assertNotIn('data-action="quick-practice"', practice)
+        self.assertIn("Math.min(globalTotal, QUICK_REVIEW_LIMIT)", ui)
+        self.assertIn('id="practiceTooltip"', html)
         self.assertNotIn("startTier", practice)
         self.assertNotIn("startLevelReview", practice)
         self.assertIn("lastOutcome", progress)

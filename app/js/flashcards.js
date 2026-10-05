@@ -9501,7 +9501,7 @@ function ensureSynLeaveConfirmModal() {
         <div class="knowledge-overview-sheet syn-leave-sheet">
             <div class="knowledge-overview-header">
                 <div>
-                    <span class="knowledge-overview-kicker">Leaving Fluency</span>
+                    <span class="knowledge-overview-kicker">Leaving this app</span>
                     <h2 id="synLeaveConfirmTitle">No card for “<span class="syn-leave-word"></span>”</h2>
                 </div>
                 <button type="button" class="knowledge-overview-close" aria-label="Cancel" data-syn-leave="cancel">&times;</button>
