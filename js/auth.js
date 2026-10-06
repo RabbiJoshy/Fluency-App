@@ -1,10 +1,10 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=81cf2f42';
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=81cf2f42';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=81cf2f42';
-import { dbGet, dbPut } from './offline-db.js?v=81cf2f42';
-import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=81cf2f42';
+import './state.js?v=8d7a3d50';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=8d7a3d50';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=8d7a3d50';
+import { dbGet, dbPut } from './offline-db.js?v=8d7a3d50';
+import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=8d7a3d50';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -13,7 +13,7 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=81cf2f42';
+} from './sync-queue.js?v=8d7a3d50';
 
 const AUDIT_ACCOUNT_INITIALS = new Set(['JST', 'JSTA']);
 

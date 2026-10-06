@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-06T12:00:00+01:00",
+      "date": "2026-10-06 12:00 BST",
+      "agent": "Claude",
+      "summary": "Smart Skip page tidied; advanced switches moved into their own sheet; landing page spacing evened out",
+      "detail": [
+        "Smart Skip title is centred, level with the close button, with no dark bar or gap above it.",
+        "Pronouns & particles, slang & fillers and names & places now live behind a quiet 'Advanced options' row that opens a sheet marked optional.",
+        "The word list is headed 'Skipped words'; the search box and 'Study these' button are gone.",
+        "Combined-forms example now reads 'share one flashcard'.",
+        "Choose level / Choose a set / Practice errors: equal space above and below each title and a smaller gap between boxes."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-05T23:40:00+01:00",
       "date": "2026-10-05 23:40 BST",
       "agent": "Claude",
@@ -355,17 +369,6 @@
         "Replaced stop-gap edit-distance/v1 with pluggable learner-align/v1 across all cognate policies (es, pt, cs, fr, nl, fi).",
         "Learner-align/v1 recovers previously missed phonetic and morphological cognates (e.g. capitán/captain, número/number, eternidad/eternity, que/what) while strictly rejecting deceptive short look-alikes.",
         "Added cognate algorithm and scorer inspection to owner/admin tools in Settings Developer tab, Fast Track technical details, and Card Data (⌘I) provenance panel."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-04T18:20:00+01:00",
-      "date": "2026-10-04 18:20 BST",
-      "agent": "Claude",
-      "summary": "Fixed decks failing to load with \"items.some is not a function\".",
-      "detail": [
-        "The sense-prominence check read each meaning's metadata as a list, but releases store it as an object, so some sets stopped loading.",
-        "It now reads the features inside the object and only counts a construction difference when a sibling sense lacks it."
       ],
       "commit": "pending"
     }

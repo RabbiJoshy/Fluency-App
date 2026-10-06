@@ -16,8 +16,8 @@
 // Applies to Speech and Lyrics alike. A language whose release supports only one
 // of the two parts still gets fast mode — it just moves the part it has, and the
 // page says which part is missing.
-import './state.js?v=81cf2f42';
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=81cf2f42';
+import './state.js?v=8d7a3d50';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=8d7a3d50';
 
 let applyingMasterSwitch = false;
 let returnToSettings = false;
@@ -109,7 +109,10 @@ function applyFastMode(on) {
     setTimeout(refresh, 0);
 }
 
-let moreSkipOptionsOpen = false;
+function closeAdvancedSkip() {
+    const sheet = document.getElementById('smartSkipMore');
+    if (sheet) sheet.hidden = true;
+}
 
 function refresh() {
     const wrapper = document.getElementById('setupOptions');
@@ -129,19 +132,24 @@ function refresh() {
     // A shortcut is listed only where it can do something: look-alikes and
     // combined forms need the release's mapping, the other three need at least
     // one word of their kind in this deck.
-    // The two main shortcuts always show. The others sit behind "More skip
-    // options" until the learner opens it or turns one of them on.
-    let hiddenExtras = 0;
+    // The two main shortcuts sit on the page. The other three live in the
+    // Advanced options sheet, which is listed only where one can do something.
+    let advancedAvailable = 0;
+    let advancedOn = 0;
     for (const kind of ['grammar', 'slang', 'entity']) {
         const container = document.getElementById(`${kind}ToggleContainer`);
         if (!container) continue;
         const available = (extras.potential?.[kind] || 0) > 0;
-        const shown = available && (moreSkipOptionsOpen || shortcutOn(kind));
-        if (available && !shown) hiddenExtras++;
-        container.style.display = shown ? 'block' : 'none';
+        if (available) {
+            advancedAvailable++;
+            if (shortcutOn(kind)) advancedOn++;
+        }
+        container.style.display = available ? 'block' : 'none';
     }
     const moreButton = document.getElementById('smartSkipMoreOptions');
-    if (moreButton) moreButton.hidden = hiddenExtras === 0;
+    if (moreButton) moreButton.hidden = advancedAvailable === 0;
+    const moreState = document.getElementById('smartSkipMoreState');
+    if (moreState) moreState.textContent = advancedOn ? `${advancedOn} on` : '';
 
     const counts = {
         cognate: extras.cognates?.length || 0,
@@ -311,27 +319,27 @@ function updateMappingStatus() {
 const STREAMLINE_LANGUAGE_EXAMPLES = {
     spanish: {
         name: 'Spanish',
-        lemmaExplainer: '<em>hablo</em>, <em>habló</em> and <em>hablar</em> share one card.'
+        lemmaExplainer: '<em>hablo</em>, <em>habló</em> and <em>hablar</em> share one flashcard.'
     },
     french: {
         name: 'French',
-        lemmaExplainer: '<em>parle</em>, <em>parla</em> and <em>parler</em> share one card.'
+        lemmaExplainer: '<em>parle</em>, <em>parla</em> and <em>parler</em> share one flashcard.'
     },
     portuguese: {
         name: 'Portuguese',
-        lemmaExplainer: '<em>falo</em>, <em>falou</em> and <em>falar</em> share one card.'
+        lemmaExplainer: '<em>falo</em>, <em>falou</em> and <em>falar</em> share one flashcard.'
     },
     italian: {
         name: 'Italian',
-        lemmaExplainer: '<em>parlo</em>, <em>parlò</em> and <em>parlare</em> share one card.'
+        lemmaExplainer: '<em>parlo</em>, <em>parlò</em> and <em>parlare</em> share one flashcard.'
     },
     german: {
         name: 'German',
-        lemmaExplainer: '<em>spreche</em>, <em>sprach</em> and <em>sprechen</em> share one card.'
+        lemmaExplainer: '<em>spreche</em>, <em>sprach</em> and <em>sprechen</em> share one flashcard.'
     },
     czech: {
         name: 'Czech',
-        lemmaExplainer: '<em>dělám</em>, <em>dělal</em> and <em>dělat</em> share one card.'
+        lemmaExplainer: '<em>dělám</em>, <em>dělal</em> and <em>dělat</em> share one flashcard.'
     }
 };
 
@@ -417,7 +425,7 @@ function updateKnownLanguageCopy() {
     const phrase = knownLanguagePhrase();
     const callout = document.getElementById('streamlineRecCalloutText');
     if (callout) {
-        callout.textContent = `Related word forms share one card, and obvious look-alikes from ${phrase} are set aside, `
+        callout.textContent = `Related word forms share one flashcard, and obvious look-alikes from ${phrase} are set aside, `
             + 'so you study fewer cards without missing examples.';
     }
     const familiar = document.getElementById('cognateSettingExplanation');
@@ -438,7 +446,7 @@ function openFastModePage({ section } = {}) {
     returnToSettings = !document.getElementById('settingsModal')?.classList.contains('hidden');
     markFastTrackPageSeen();
     // Each visit starts from the defaults: open what is on, fold the rest.
-    moreSkipOptionsOpen = false;
+    closeAdvancedSkip();
     document.querySelectorAll('.smart-skip-shortcut').forEach(el => { delete el.dataset.userExpanded; });
     refresh();
     updateStreamlineLanguageExamples();
@@ -525,8 +533,17 @@ function init() {
         });
     });
     document.getElementById('smartSkipMoreOptions')?.addEventListener('click', () => {
-        moreSkipOptionsOpen = true;
-        refresh();
+        const sheet = document.getElementById('smartSkipMore');
+        if (!sheet) return;
+        sheet.hidden = false;
+        sheet.querySelector('.smart-skip-more-card')?.focus();
+    });
+    document.getElementById('smartSkipMoreDone')?.addEventListener('click', closeAdvancedSkip);
+    document.getElementById('smartSkipMore')?.addEventListener('click', event => {
+        if (event.target.id === 'smartSkipMore') closeAdvancedSkip();
+    });
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && !document.getElementById('smartSkipMore')?.hidden) closeAdvancedSkip();
     });
 
     document.querySelectorAll('.grammar-toggle-btn').forEach(btn => {
