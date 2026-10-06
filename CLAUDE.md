@@ -203,8 +203,8 @@ named examples he can look at, not a commit or a passing test on its own.
   sessions alike, whatever branch the session was given.
   Deploy procedure:
   1. **Record the change in changelog:** Before staging or committing, you MUST
-     prepend an entry to **BOTH** `app/config/dev_changelog.json` and
-     `config/dev_changelog.json`. The entry MUST include:
+     prepend an entry to `app/config/dev_changelog.json` (the only copy; the
+     root `config/dev_changelog.json` was retired 2026-10-06). The entry MUST include:
      - `"timestamp"`: exact ISO 8601 timestamp with timezone (e.g. `"2026-09-19T13:30:00+01:00"`)
      - `"date"`: formatted date/time with timezone (e.g. `"2026-09-19 13:30 BST"`)
      - `"agent"`: the name of the LLM agent making the change (`"Antigravity"`, `"Claude"`, `"Cursor"`, `"Codex"`, etc.)

@@ -34,9 +34,10 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 ACTIONS_URL = "https://github.com/RabbiJoshy/Fluency-App/actions/workflows/deploy-pages.yml"
-# Every deploy prepends an entry to both changelogs, so two sessions deploying
-# close together always conflict there. Those merges are resolved here.
-CHANGELOGS = ("app/config/dev_changelog.json", "config/dev_changelog.json")
+# Every deploy prepends an entry to the changelog, so two sessions deploying
+# close together always conflict there. Those merges are resolved here. (A
+# duplicate config/dev_changelog.json was retired on 2026-10-06.)
+CHANGELOGS = ("app/config/dev_changelog.json",)
 # The app shows only the newest few entries; git keeps the rest. Capping the
 # merge stops a branch holding an older, longer file from restoring trimmed ones.
 CHANGELOG_KEEP = 30

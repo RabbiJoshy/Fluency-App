@@ -102,7 +102,7 @@ def deploy_language_release(workspace: Path, language: str, release_id: str) -> 
     if not rel_dir.exists():
         raise RuntimeError(f"Release directory missing: {rel_dir}")
 
-    # 1. Update dev_changelog.json (both app/config and config)
+    # 1. Update app/config/dev_changelog.json
     card_count = "6,000" if language in ("pt", "es") else "4,000"
     now = datetime.datetime.now().astimezone()
     entry = {
@@ -115,7 +115,7 @@ def deploy_language_release(workspace: Path, language: str, release_id: str) -> 
             f"{card_count} cards with 10 display examples using WSD v12-1 with difficulty stratification and tail gating."
         ],
     }
-    for rel_p in ("app/config/dev_changelog.json", "config/dev_changelog.json"):
+    for rel_p in ("app/config/dev_changelog.json",):
         changelog_path = REPO_ROOT / rel_p
         if changelog_path.exists():
             changelog = json.loads(changelog_path.read_text(encoding="utf-8"))
@@ -141,7 +141,7 @@ def deploy_language_release(workspace: Path, language: str, release_id: str) -> 
 
     # 4. Commit the config and changelog, then deploy the app through main.
     # Cache versions are stamped at deploy; nothing to bump here.
-    run_cmd(["git", "add", "app/config/dev_changelog.json", "config/dev_changelog.json",
+    run_cmd(["git", "add", "app/config/dev_changelog.json",
              "app/config/config.json"], cwd=REPO_ROOT)
     run_cmd(["git", "commit", "-m", f"Point {language} at the V12 release {release_id}"], cwd=REPO_ROOT)
     run_cmd([sys.executable, "scripts/deploy.py"], cwd=REPO_ROOT)
