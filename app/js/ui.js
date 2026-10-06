@@ -2419,7 +2419,7 @@ function readableFlagColor(hex, theme) {
     const { h, s, l } = hexToHsl(hex);
     const sat = Math.min(1, Math.max(s, 0.82));
     const darker = theme === 'light';
-    const pageTarget = darker ? 5 : 4;
+    const pageTarget = darker ? 5 : 5.5;
     const limit = darker ? 0.16 : Math.max(l, 0.5);
     let lightness = l;
     let color = hslToHex(h, sat, lightness);
