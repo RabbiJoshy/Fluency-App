@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-06T13:00:00+01:00",
+      "date": "2026-10-06 13:00 BST",
+      "agent": "Claude",
+      "summary": "Landing page: near-black boxes on a lifted page; lighter language colours",
+      "detail": [
+        "Dark theme: setup boxes are near-black (#06090d) on a slightly lifted page (#151c25) so text stands out.",
+        "Language colours are lifted further against the dark page (contrast target 4 to 5.5), so Portugal's green and similar deep flag colours read lighter."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-06T12:00:00+01:00",
       "date": "2026-10-06 12:00 BST",
       "agent": "Claude",
@@ -357,18 +368,6 @@
       "detail": [
         "The Wiktionary tables are 250-330 KB compressed; they now load in the background on every route, as they already did after choosing a language.",
         "The first card may show an uninflected English gloss (\"to have\") for a moment, then switches to \"I have\" when the tables arrive."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-04T18:35:00+01:00",
-      "date": "2026-10-04 18:35 BST",
-      "agent": "KINDRED",
-      "summary": "Deployed learner-align/v1 cognate similarity scorer and owner audit diagnostics.",
-      "detail": [
-        "Replaced stop-gap edit-distance/v1 with pluggable learner-align/v1 across all cognate policies (es, pt, cs, fr, nl, fi).",
-        "Learner-align/v1 recovers previously missed phonetic and morphological cognates (e.g. capitán/captain, número/number, eternidad/eternity, que/what) while strictly rejecting deceptive short look-alikes.",
-        "Added cognate algorithm and scorer inspection to owner/admin tools in Settings Developer tab, Fast Track technical details, and Card Data (⌘I) provenance panel."
       ],
       "commit": "pending"
     }

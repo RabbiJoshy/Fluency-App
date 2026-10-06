@@ -1,7 +1,7 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=8d7a3d50';
-import { readFastTrack } from './fast-track-preferences.js?v=8d7a3d50';
+import './state.js?v=1c2743d3';
+import { readFastTrack } from './fast-track-preferences.js?v=1c2743d3';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -2419,7 +2419,7 @@ function readableFlagColor(hex, theme) {
     const { h, s, l } = hexToHsl(hex);
     const sat = Math.min(1, Math.max(s, 0.82));
     const darker = theme === 'light';
-    const pageTarget = darker ? 5 : 4;
+    const pageTarget = darker ? 5 : 5.5;
     const limit = darker ? 0.16 : Math.max(l, 0.5);
     let lightness = l;
     let color = hslToHex(h, sat, lightness);
@@ -3265,7 +3265,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=8d7a3d50')
+        import('./spotify.js?v=1c2743d3')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

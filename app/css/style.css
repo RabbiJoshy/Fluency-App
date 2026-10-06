@@ -22255,3 +22255,17 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 #step4 > .step-header > .step-title-trigger,
 #reviewDeckSection > .step-header > .step-title-trigger { min-height: 32px; padding-top: 4px; padding-bottom: 4px; }
 #step2 > .step-header { min-height: 32px; }
+
+/* Landing page, dark theme: boxes are the darkest surface and the page behind
+   them is lifted a step, so text sits on near-black and the boxes read as
+   inset wells rather than grey slabs. */
+:root:not([data-theme="light"]) body:has(#setupPanel:not(.hidden)) {
+  --bg-primary: #151c25;
+  background-color: #151c25;
+}
+:root:not([data-theme="light"]) #setupPanel {
+  --bg-card: #06090d;
+  --bg-card-hover: #0d1218;
+  --bg-tertiary: #090d12;
+  --border-color: #2a3542;
+}
