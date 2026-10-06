@@ -491,7 +491,7 @@
                         <div class="info-sheet-points">
                             <div><span>1</span><p><strong>Start anywhere.</strong> Begin at Level 1 for fundamentals, or jump ahead if you already know the basics.</p></div>
                             <div><span>2</span><p><strong>Bite-sized sets.</strong> Each level is broken into small sets so you can make fast, steady progress without getting overwhelmed.</p></div>
-                            <div><span>3</span><p><strong>Smart Skip saves time.</strong> Related word forms share one card, and obvious look-alikes are skipped, so you study fewer cards for the same coverage.</p></div>
+                            <div><span>3</span><p><strong>Smart Skip saves time.</strong> Related word forms share one flashcard, and obvious look-alikes are skipped, so you study fewer cards for the same coverage.</p></div>
                         </div>
                         <div class="level-estimate-modal-callout" id="step2LevelEstimateCallout">
                             <div class="level-estimate-modal-body">
@@ -1134,7 +1134,7 @@
                             <button type="button" class="smart-skip-switch" role="switch" aria-checked="false" aria-label="Combine word forms" data-ss-toggle="lemma"></button>
                         </div>
                         <div class="smart-skip-shortcut-detail" hidden>
-                            <p class="fast-mode-explainer"><em>hablo</em>, <em>habló</em> and <em>hablar</em> share one card.</p>
+                            <p class="fast-mode-explainer"><em>hablo</em>, <em>habló</em> and <em>hablar</em> share one flashcard.</p>
                         </div>
                         <p id="lemmaNoneLine" class="fast-mode-none" hidden></p>
                         <!-- The real control. ui.js and fast-mode.js own what changing
@@ -1144,6 +1144,42 @@
                             <button class="lemma-toggle-btn" data-lemma="on">On</button>
                         </div>
                     </div>
+                    <button type="button" id="smartSkipMoreOptions" class="smart-skip-more-options" aria-haspopup="dialog" hidden><span>Advanced options</span><span class="smart-skip-more-state" id="smartSkipMoreState"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></button>
+                </div>
+
+                <section class="fast-mode-section smart-skip-words" data-section="decks">
+                    <p class="smart-skip-label">Skipped words</p>
+                    <div class="smart-skip-toolbar">
+                        <div class="smart-skip-select-wrap">
+                            <select id="skippedCategorySelect" aria-label="Which skipped words"></select>
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+                        </div>
+                    </div>
+                    <div class="extras-deck-card" id="fastTrackDeckCard">
+                        <div id="skippedWordsBody"></div>
+                    </div>
+                </section>
+
+                <!-- Admin / Diagnostic Technical Details (strictly gated to owner/admin) -->
+                <div id="fastModeAdminDetails" class="fast-mode-admin-details" style="display: none;">
+                    <h4>Technical &amp; Audit Details (Admin Only)</h4>
+                    <p id="lemmaMappingStatus" class="fast-mode-mapping-status" hidden></p>
+                    <p id="cognateMappingStatus" class="fast-mode-mapping-status" hidden></p>
+                    <p id="cognateAlgorithmStatus" class="fast-mode-mapping-status"></p>
+                    <p>Inflected forms are grouped by dictionary lemma. Cognate thresholds are determined by cross-language phonetic/orthographic scoring.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Advanced Smart Skip options: optional extras, kept off the main page. -->
+    <div id="smartSkipMore" class="smart-skip-preview" hidden>
+        <div class="smart-skip-more-card" role="dialog" aria-modal="true" aria-labelledby="smartSkipMoreTitle" tabindex="-1">
+            <div class="smart-skip-more-head">
+                <h3 id="smartSkipMoreTitle">Advanced options</h3>
+                <p>Entirely optional. Smart Skip works well without these, so leave them off unless you want a leaner deck.</p>
+            </div>
+            <div class="fast-mode-controls smart-skip-shortcuts">
                     <div id="grammarToggleContainer" class="smart-skip-shortcut" data-ss-kind="grammar" style="display: none;">
                         <div class="smart-skip-shortcut-row">
                             <button type="button" class="smart-skip-shortcut-name" aria-expanded="false"><span>Skip pronouns &amp; particles</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
@@ -1195,31 +1231,9 @@
                             <button class="entity-toggle-btn" data-entity="include">Include</button>
                         </div>
                     </div>
-                    <button type="button" id="smartSkipMoreOptions" class="smart-skip-more-options" hidden>+ More skip options</button>
-                </div>
-
-                <section class="fast-mode-section smart-skip-words" data-section="decks">
-                    <p class="smart-skip-label">Words</p>
-                    <div class="smart-skip-toolbar">
-                        <div class="smart-skip-select-wrap">
-                            <select id="skippedCategorySelect" aria-label="Which words"></select>
-                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
-                        </div>
-                        <input type="search" id="skippedWordsSearch" class="smart-skip-search" placeholder="Search" autocomplete="off" aria-label="Search words">
-                    </div>
-                    <div class="extras-deck-card" id="fastTrackDeckCard">
-                        <div id="skippedWordsBody"></div>
-                    </div>
-                </section>
-
-                <!-- Admin / Diagnostic Technical Details (strictly gated to owner/admin) -->
-                <div id="fastModeAdminDetails" class="fast-mode-admin-details" style="display: none;">
-                    <h4>Technical &amp; Audit Details (Admin Only)</h4>
-                    <p id="lemmaMappingStatus" class="fast-mode-mapping-status" hidden></p>
-                    <p id="cognateMappingStatus" class="fast-mode-mapping-status" hidden></p>
-                    <p id="cognateAlgorithmStatus" class="fast-mode-mapping-status"></p>
-                    <p>Inflected forms are grouped by dictionary lemma. Cognate thresholds are determined by cross-language phonetic/orthographic scoring.</p>
-                </div>
+            </div>
+            <div class="smart-skip-preview-actions">
+                <button type="button" class="smart-skip-preview-close" id="smartSkipMoreDone">Done</button>
             </div>
         </div>
     </div>
@@ -2005,7 +2019,7 @@
             <!-- How to Study tab -->
             <div class="settings-tab-content" id="helpStudyTabContent">
                 <div class="help-content">
-                    <p><strong>Picking a set:</strong> Choose Everyday Speech or Music &amp; Lyrics, then pick a level. This app automatically highlights your next unfinished set. Turn on Smart Skip so related forms share one card and obvious look-alikes are skipped.</p>
+                    <p><strong>Picking a set:</strong> Choose Everyday Speech or Music &amp; Lyrics, then pick a level. This app automatically highlights your next unfinished set. Turn on Smart Skip so related forms share one flashcard and obvious look-alikes are skipped.</p>
                     <p><strong>Learning and practice:</strong> Learn new contains only cards you have not attempted. Incorrect, partly learned, and scheduled cards move into Practice. Correct recalls return after 1, 3, 7, 14, 30, 60, and 120 days; mistakes reset the schedule.</p>
                     <p><strong>Continuing:</strong> If you leave an unfinished set, a Welcome back prompt offers to restore the exact card, order, card side, and settings next time you enter. Finishing the set clears it.</p>
                     <p><strong>Tap card</strong> to flip and see the translation</p>

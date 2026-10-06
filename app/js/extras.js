@@ -761,13 +761,8 @@ function smartSkipLevelHtml(level, index) {
     const isLemma = level.category === 'lemma';
     const count = level.entries.length;
     const unit = isLemma ? (count === 1 ? 'card' : 'cards') : (count === 1 ? 'word' : 'words');
-    const study = isLemma ? ''
-        : (window.isAuditAccount?.()
-            // Admin only for now: loading a skipped level as a set confused
-            // learners more than it helped.
-            ? `<button type="button" class="smart-skip-study" data-ss-level="${index}">Study these</button>` : '');
     return `<li class="smart-skip-group" data-ss-group="${index}">
-        <div class="smart-skip-level"><b>${escapeHtml(level.label)}</b><span>${count.toLocaleString()} ${unit}</span>${study}</div>
+        <div class="smart-skip-level"><b>${escapeHtml(level.label)}</b><span>${count.toLocaleString()} ${unit}</span></div>
         <ul class="smart-skip-group-rows"></ul>
     </li>`;
 }
@@ -1144,8 +1139,6 @@ function openMergedForms() {
 // with the menu already on that category.
 function openSkippedWords(initialCategory = 'all') {
     _ssQuery = '';
-    const search = document.getElementById('skippedWordsSearch');
-    if (search) search.value = '';
     _activeSkippedCategory = initialCategory;
     if (g().openFastModePage) g().openFastModePage({ section: 'decks' });
     renderSkippedWords(initialCategory, { force: true });
@@ -1179,7 +1172,6 @@ function restoreSection(kind) {
 }
 
 function initExtras() {
-    document.getElementById('skippedWordsSearch')?.addEventListener('input', event => filterSkippedWords(event.currentTarget.value));
     document.getElementById('skippedCategorySelect')?.addEventListener('change', event => {
         closeSmartSkipPreview();
         renderSkippedWords(event.target.value);

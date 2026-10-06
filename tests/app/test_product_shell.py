@@ -608,11 +608,13 @@ class ProductShellTests(unittest.TestCase):
         extras = (APP_ROOT / "js" / "extras.js").read_text(encoding="utf-8")
         ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
         css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
-        self.assertIn('id="skippedWordsSearch"', html)
+        # No search box and no "Study these": the list is for looking, and the
+        # advanced switches sit in their own sheet.
+        self.assertNotIn('id="skippedWordsSearch"', html)
+        self.assertIn('id="smartSkipMore"', html)
         self.assertIn('id="skippedCategorySelect"', html)
-        # A level row in the list studies that level alone; nothing studies
-        # the whole list, which can run to thousands of cards.
-        self.assertIn('class="smart-skip-study" data-ss-level=', extras)
+        # Nothing studies the whole list, which can run to thousands of cards.
+        self.assertNotIn('class="smart-skip-study" data-ss-level=', extras)
         self.assertIn('entries || []).map(({ item }) => item)', extras)
         self.assertNotIn('start += 20', extras)
         self.assertNotIn('Study All', extras)
