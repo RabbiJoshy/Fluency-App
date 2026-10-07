@@ -15,7 +15,7 @@
 // module reads the same state the filter used and reports what it discarded.
 // That keeps one source of truth for the rules: if the filter changes, this
 // follows without edits.
-import './state.js?v=8e7a2dce';
+import './state.js?v=464a8bd4';
 
 // Every name below is read off globalThis rather than as a bare identifier.
 // state.js defines these lazily via defineProperty, and this module can run
@@ -992,7 +992,7 @@ function paintPreviewGloss(row) {
     if (!gloss) return;
     if (row.kind === 'cognate') {
         const choice = cognateEnglish(row.item);
-        gloss.textContent = choice.obvious ? `= ${choice.word}` : choice.word;
+        gloss.textContent = choice.word;
     } else if (row.kind === 'lemma') {
         gloss.textContent = shortGloss(row.group.lemma.translation || firstTranslation(row.item));
     } else {

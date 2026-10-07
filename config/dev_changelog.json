@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-07T16:00:00+01:00",
+      "date": "2026-10-07 16:00 BST",
+      "agent": "Claude",
+      "summary": "Smart Skip desktop: larger text; no extra Bigger-text zoom; no '=' in preview",
+      "detail": [
+        "On wide screens the Smart Skip page uses larger type and taller rows by default.",
+        "The Bigger text setting no longer zooms the Smart Skip page on desktop (it still applies elsewhere and on phones).",
+        "The word preview popup no longer shows '=' before a look-alike's English."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-07T15:30:00+01:00",
       "date": "2026-10-07 15:30 BST",
       "agent": "Claude",
@@ -355,21 +367,6 @@
         "Rarer uses no longer lists expressions (they have their own card after a correct answer)",
         "Back-of-card gear: tap area 52px wide (was 44)",
         "Roadmap: TERSE row for shortening long Wiktionary contexts (e.g. pt não)"
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-05T14:11:16+01:00",
-      "date": "2026-10-05 14:11 BST",
-      "agent": "Claude",
-      "summary": "Split-card note under the POS pills; info buttons outside shaded sub-rows; colour fixes; reinforcement follows the review queue",
-      "detail": [
-        "'Flashcard 1 of 2' sits directly under the lemma/POS pills, no underline; the other reading is greyed more clearly",
-        "'POS from x' pairs get their capsule back so the lemma reads as belonging to its pill; bare POS pills stay plain",
-        "Info buttons on grouped sub-rows now sit outside the shaded context area, as on single-sense rows",
-        "Rarer uses: example borders take the POS colour (a hard-coded teal overrode it); expression examples use the phrase purple, like the scrubber's phrase pip",
-        "Back of card: gear icon 28px; scrubber track no longer leaves a wide gap before the gear",
-        "Example reinforcement ranks sentences by words due in the review queue instead of words missed in the last 7 days"
       ],
       "commit": "pending"
     }
