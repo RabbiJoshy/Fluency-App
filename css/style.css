@@ -22304,3 +22304,43 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
   .smart-skip-row { column-gap: 8px; padding: 0 12px; }
   .smart-skip-row .smart-skip-tag { display: none; }
 }
+
+/* Smart Skip table: a header row (flags name the language of each column) and
+   columns that line up with it. Rank and Type show on desktop only; a phone
+   keeps the two word columns (and a forms count for combined forms). */
+.smart-skip-table { --ss-cols: minmax(0, 1fr) minmax(0, 1fr) 56px; }
+.smart-skip-table.has-tag { --ss-cols: minmax(0, 1fr) minmax(0, 1fr) 96px 56px; }
+.smart-skip-table[data-cat="lemma"] { --ss-cols: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.6fr) 56px; }
+.smart-skip-table .smart-skip-row,
+.smart-skip-table .smart-skip-row--lemma,
+.smart-skip-head { display: grid; grid-template-columns: var(--ss-cols); column-gap: 12px; align-items: center; padding: 0 14px; }
+.smart-skip-head {
+  height: 30px;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-muted);
+  font: 600 12px/1 var(--font-reading);
+}
+.smart-skip-head .ss-h-rank, .smart-skip-table .smart-skip-rank { text-align: right; }
+.smart-skip-table:not(.has-tag):not([data-cat="lemma"]) .ss-h-tag,
+.smart-skip-table:not(.has-tag) .smart-skip-tag { display: none; }
+.smart-skip-table:not(.has-tag):not([data-cat="lemma"]) .smart-skip-head { grid-template-columns: var(--ss-cols); }
+.smart-skip-nforms, .ss-h-nforms { display: none; }
+.smart-skip-nforms { color: var(--text-muted); font: 500 12px/1 var(--font-reading); text-align: right; white-space: nowrap; }
+.smart-skip-table .smart-skip-forms { text-align: left; }
+.smart-skip-row .smart-skip-g { min-width: 0; }
+@media (max-width: 600px) {
+  .smart-skip-table,
+  .smart-skip-table.has-tag { --ss-cols: minmax(0, 1fr) minmax(0, 1fr); }
+  .smart-skip-table[data-cat="lemma"] { --ss-cols: minmax(0, 1fr) minmax(0, 1fr) auto; }
+  .smart-skip-table .smart-skip-rank,
+  .smart-skip-table .smart-skip-tag,
+  .smart-skip-table .smart-skip-forms,
+  .smart-skip-head .ss-h-rank,
+  .smart-skip-head .ss-h-tag,
+  .smart-skip-head .ss-h-forms { display: none !important; }
+  .smart-skip-table .smart-skip-nforms, .smart-skip-head .ss-h-nforms { display: block; text-align: right; }
+}
+/* The header belongs to the card: the frame moves from the list to the table. */
+.smart-skip-table { border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-card); overflow: clip; }
+.smart-skip-table > .smart-skip-list { border: 0; border-radius: 0; background: none; }
+.smart-skip-table > .smart-skip-head { background: color-mix(in srgb, var(--bg-card) 88%, var(--text-primary) 12%); }

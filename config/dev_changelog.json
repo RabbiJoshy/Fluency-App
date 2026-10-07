@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-07T13:00:00+01:00",
+      "date": "2026-10-07 13:00 BST",
+      "agent": "Claude",
+      "summary": "Smart Skip list gets column headers; Rank and Type on desktop only",
+      "detail": [
+        "Header row: language flags name the word and English columns; Rank on desktop; Type under 'All skipped'.",
+        "Combined forms: Card | English | Combined forms | Rank on desktop; on phones just the card, English and a forms count.",
+        "On phones the Rank and Type columns are hidden."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-07T12:00:00+01:00",
       "date": "2026-10-07 12:00 BST",
       "agent": "Claude",
@@ -359,17 +371,6 @@
       "detail": [
         "Deduplicated study sets so polysemous/homograph split cards suppress redundant base/infinitive cards covering the same readings, ensuring only Card 1 of 2 and Card 2 of 2 are presented without an extra 3rd card.",
         "Balanced horizontal padding and centering on .front-lemma-pair.is-pos-only so standalone POS pills are perfectly symmetric."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-04T19:45:00+01:00",
-      "date": "2026-10-04 19:45 BST",
-      "agent": "Claude",
-      "summary": "The first visit after an update now reads the new config, not the previous one.",
-      "detail": [
-        "The service worker served config files from its cache, so new app code could run against the old release list until a second reload (seen with Czech loading v21 after v22 shipped).",
-        "Config files are now fetched from the network first; the cached copy is used only when offline."
       ],
       "commit": "pending"
     }

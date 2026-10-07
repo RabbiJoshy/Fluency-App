@@ -15,7 +15,7 @@
 // module reads the same state the filter used and reports what it discarded.
 // That keeps one source of truth for the rules: if the filter changes, this
 // follows without edits.
-import './state.js?v=732ba8d3';
+import './state.js?v=f9144c74';
 
 // Every name below is read off globalThis rather than as a bare identifier.
 // state.js defines these lazily via defineProperty, and this module can run
@@ -734,6 +734,19 @@ function smartSkipRankHtml(row) {
     return `<span class="smart-skip-rank">${Number.isFinite(rank) ? rank : ''}</span>`;
 }
 
+// Column headers. The flags say which language each column is in; Rank and the
+// category tag are desktop-only, so a phone keeps just the words.
+function smartSkipHeadHtml(category) {
+    const flag = g().config?.languages?.[g().selectedLanguage]?.flag || 'Word';
+    const lemma = category === 'lemma';
+    return `<div class="smart-skip-head" aria-hidden="true">
+        <span>${escapeHtml(flag)}</span>
+        <span>🇬🇧</span>
+        ${lemma ? '<span class="ss-h-forms">Combined forms</span><span class="ss-h-nforms">Forms</span>' : '<span class="ss-h-tag">Type</span>'}
+        <span class="ss-h-rank">Rank</span>
+    </div>`;
+}
+
 function smartSkipRowHtml(row, index, showTag) {
     const item = row.item;
     const id = escapeHtml(item.id || '');
@@ -744,6 +757,7 @@ function smartSkipRowHtml(row, index, showTag) {
             <span class="smart-skip-w">${escapeHtml(lemma.word)}</span>
             <span class="smart-skip-g extras-translation-slot">${escapeHtml(shortGloss(lemma.translation))}</span>
             <span class="smart-skip-forms">${forms}</span>
+            <span class="smart-skip-nforms">${row.group.surfaces.length} forms</span>
             ${smartSkipRankHtml(row)}
         </button></li>`;
     }
@@ -853,7 +867,7 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory, { force = f
         body.innerHTML = `<p class="smart-skip-empty">No matches for “${escapeHtml(_ssQuery.trim())}”.</p>`;
         return extras.cognates;
     }
-    body.innerHTML = '<ul class="smart-skip-list" id="extrasRowsList"><li class="smart-skip-sentinel" aria-hidden="true"></li></ul>';
+    body.innerHTML = `<div class="smart-skip-table${category === 'all' ? ' has-tag' : ''}" data-cat="${escapeHtml(category)}">${smartSkipHeadHtml(category)}<ul class="smart-skip-list" id="extrasRowsList"><li class="smart-skip-sentinel" aria-hidden="true"></li></ul></div>`;
     const list = body.querySelector('.smart-skip-list');
     _ssRendered = 0;
     appendSmartSkipChunk(list);
