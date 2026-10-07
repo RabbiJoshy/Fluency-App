@@ -22590,3 +22590,26 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 #step4 .study-set-current-copy strong { font-size: 18px; }
 #step4 .study-set-current-copy span { font-size: 14px; font-weight: 400; color: var(--text-secondary); }
 .study-set-stat { font-weight: 400; }
+
+/* Set progress, light-on-dark: pale green (known), pale yellow (practice) and
+   white for what is left, so the number reads in black on every segment. The
+   swatches in the counts line use the same three colours. */
+#step4 {
+  --set-known: #9fe8b4;
+  --set-review: #ffe27a;
+  --set-new: #ffffff;
+}
+#step4 .study-set-dot {
+  background: linear-gradient(
+    to right,
+    var(--set-known) 0 var(--set-known-end),
+    var(--set-review) var(--set-known-end) var(--set-review-end),
+    var(--set-new) var(--set-review-end) 100%
+  );
+  color: #0b0f14;
+}
+#step4 .study-set-dot:hover:not(:disabled),
+#step4 .study-set-dot.is-current { color: #0b0f14; }
+.study-set-stat i.is-known { background: var(--set-known, #9fe8b4); }
+.study-set-stat i.is-review { background: var(--set-review, #ffe27a); }
+.study-set-stat i.is-unseen { background: var(--set-new, #ffffff); }

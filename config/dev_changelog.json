@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-07T20:30:00+01:00",
+      "date": "2026-10-07 20:30 BST",
+      "agent": "Claude",
+      "summary": "Set progress pills: pale green, pale yellow and white with black numbers",
+      "detail": [
+        "Known is pale green, Practice pale yellow, and the unfinished part is white; the number is black on all three so it reads wherever the colours meet.",
+        "The swatches in the Known / Practice / New line use the same colours."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-07T20:00:00+01:00",
       "date": "2026-10-07 20:00 BST",
       "agent": "Claude",
@@ -344,19 +355,6 @@
         "Replace button-like Try it labels with instructions naming the card control to click or tap",
         "Highlight the whole example sentence when explaining example cycling",
         "Reveal closed meaning groups when the next explanation needs their rows and fit mobile cards to the instruction sheet"
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-05T19:18:15+01:00",
-      "date": "2026-10-05 19:18 BST",
-      "agent": "Claude",
-      "summary": "Search and word links open a split word as Flashcard 1 of 2, then 2 of 2",
-      "detail": [
-        "Search, word links, lyric-breakdown taps and homograph peeks used to open a split word (vamos, hay) as one combined card; they now open Flashcard 1 of 2",
-        "Moving on from it (swipe, flag or next) shows Flashcard 2 of 2 in the same place before returning; the Back-to button still leaves at once",
-        "When search focuses a particular meaning, the card that holds it opens first",
-        "Split cards are built by one shared function (buildSplitCardPair) for sets and single-word views alike"
       ],
       "commit": "pending"
     }
