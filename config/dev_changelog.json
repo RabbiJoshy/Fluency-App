@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-07T10:00:00+01:00",
+      "date": "2026-10-07 10:00 BST",
+      "agent": "Claude",
+      "summary": "Smart Skip: tighter vertical spacing, label beside the menu, look-alikes open first",
+      "detail": [
+        "Smaller gap between the Smart Skip title and the first box, and between the boxes and the word list.",
+        "'Skipped words' now sits on the same line as its dropdown, in the dropdown's font.",
+        "Dropdown entries are all 'Name (count)'; 'Combined forms' no longer says 'cards'.",
+        "The dropdown opens on Look-alikes whenever there are any."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-06T13:00:00+01:00",
       "date": "2026-10-06 13:00 BST",
       "agent": "Claude",
@@ -357,17 +370,6 @@
       "detail": [
         "The French Conjugate drawer reads a Wiktionary table (32 verbs, up from 29 from verbecc) published with release fr-speech-v7-dual-metadata-v6-20261004; the French deck itself is unchanged.",
         "Jehle and verbecc are no longer used anywhere: their source code and pin commands are removed."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-04T18:45:00+01:00",
-      "date": "2026-10-04 18:45 BST",
-      "agent": "Claude",
-      "summary": "Resuming a Speech session or opening a word link no longer waits for the conjugation tables.",
-      "detail": [
-        "The Wiktionary tables are 250-330 KB compressed; they now load in the background on every route, as they already did after choosing a language.",
-        "The first card may show an uninflected English gloss (\"to have\") for a moment, then switches to \"I have\" when the tables arrive."
       ],
       "commit": "pending"
     }
