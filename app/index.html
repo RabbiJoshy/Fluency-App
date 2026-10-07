@@ -911,9 +911,9 @@
             </div>
             <div id="tutorialWelcomeStep" class="tutorial-intro-step">
                 <div class="tutorial-principles">
-                    <p>A quick tour of a real flashcard, part by part.</p>
+                    <p>Learn with an example card: flip it, choose a meaning, and try another example.</p>
                 </div>
-                <button class="product-primary-action" id="startCardTutorialBtn" type="button">Start tutorial (2 minutes) <span aria-hidden="true">→</span></button>
+                <button class="product-primary-action" id="startCardTutorialBtn" type="button">Start the short lesson <span aria-hidden="true">→</span></button>
             </div>
             <div id="tutorialLanguageStep" class="tutorial-intro-step hidden">
                 <button type="button" id="tutorialLanguageBackBtn" class="product-back-action">← Back</button>
@@ -983,7 +983,7 @@
          Study, never from About. Rendered by js/tutorial.js; the card inside
          #cardTutorialStage is drawn by js/card-replica.js from the app's own
          .card CSS, so it is a true replica rather than a mock-up. -->
-    <div id="cardTutorialModal" class="modal hidden">
+    <div id="cardTutorialModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Card tutorial">
         <div class="modal-content fullscreen-modal card-tutorial-modal">
             <div class="card-tutorial-body" id="cardTutorialBody">
                 <!-- One row, not a banner above a summary: chapter progress left,
@@ -1003,7 +1003,8 @@
                     <div class="card-tutorial-notes card-tutorial-notes-left" id="cardTutorialNotesLeft"></div>
                     <div class="card-tutorial-stage-col">
                         <div class="card-tutorial-stage-wrap">
-                            <div class="card-tutorial-stage" id="cardTutorialStage"></div>
+                            <div class="card-tutorial-scroll-hint">Scroll to explore the example card</div>
+                            <div class="card-tutorial-stage" id="cardTutorialStage" tabindex="0" aria-label="Example card"></div>
                         </div>
                         <button type="button" class="card-tutorial-flip" id="cardTutorialFlip" style="display: none;" hidden>Flip to the answer side</button>
                         <!-- Desktop steps through the notes one at a time, the way the
@@ -1013,6 +1014,7 @@
                             <span class="card-tutorial-desktop-progress" id="cardTutorialDesktopProgress"></span>
                             <button type="button" class="card-tutorial-continue" id="cardTutorialContinue" hidden></button>
                         </div>
+                        <div class="card-tutorial-lesson-tools"><button type="button" class="card-tutorial-details-toggle" aria-pressed="false">Explore card details</button><button type="button" class="card-tutorial-skip-practice" hidden>Skip this practice</button></div>
                     </div>
                     <div class="card-tutorial-notes card-tutorial-notes-right" id="cardTutorialNotesRight"></div>
                 </div>
@@ -1024,6 +1026,7 @@
                         <button type="button" id="cardTutorialMobileBack">Back</button>
                         <button type="button" id="cardTutorialMobileNext">Next</button>
                     </div>
+                    <div class="card-tutorial-lesson-tools"><button type="button" class="card-tutorial-details-toggle" aria-pressed="false">Explore card details</button><button type="button" class="card-tutorial-skip-practice" hidden>Skip this practice</button></div>
                 </section>
             </div>
         </div>

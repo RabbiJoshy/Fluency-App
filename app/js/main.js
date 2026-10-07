@@ -47,6 +47,7 @@ function startCardTutorial() {
 }
 
 function openTutorialIntroduction() {
+    document.getElementById('resumeLastSetCard')?.remove();
     document.getElementById('tutorialWelcomeStep')?.classList.remove('hidden');
     document.getElementById('tutorialLanguageStep')?.classList.add('hidden');
     renderTutorialLanguageChoices();

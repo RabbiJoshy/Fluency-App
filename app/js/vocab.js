@@ -160,6 +160,11 @@ function getLastStudySession() {
 }
 
 function renderResumeLastSetCard() {
+    if (window.fluencyRoute?.kind === 'tutorial'
+        || document.querySelector('#tutorialIntroModal:not(.hidden), #cardTutorialModal:not(.hidden)')) {
+        document.getElementById('resumeLastSetCard')?.remove();
+        return;
+    }
     if (window.playlistLiveActive?.()) {
         document.getElementById('resumeLastSetCard')?.remove();
         return;

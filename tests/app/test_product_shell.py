@@ -322,7 +322,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("'Flip over'", tutorial)
         self.assertNotIn("answer side", tutorial)
         self.assertNotIn("question side", tutorial)
-        self.assertIn("'Finish'", tutorial)
+        self.assertIn("'Start studying'", tutorial)
         # One chosen mode, front then back; never both tutorials in sequence.
         self.assertIn("function tutorialSteps()", tutorial)
         self.assertIn("{ kind: 'card', deck: state.mode, face: 'front' }", tutorial)

@@ -96,3 +96,46 @@ assert(!deck.faces.back.notes.some(note => note.title === 'Where the example is 
 ''', capture_output=True,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_short_lesson_requires_practice_and_keeps_details_optional(self):
+        result = subprocess.run(
+            ['node', '--input-type=module', '-'], cwd=ROOT, text=True,
+            input=r'''import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+import { REPLICA_CARDS } from './app/js/card-replica.js';
+const source = fs.readFileSync('./app/js/tutorial.js', 'utf8').replace(/import \{[\s\S]*?\} from '[^']+';/, '');
+const context = vm.createContext({assert, REPLICA_CARDS,
+  window: {}, document: {readyState: 'loading', addEventListener() {}, querySelector() {return null;}, getElementById() {return null;}},
+  localStorage: {getItem() {return null;}}});
+vm.runInContext(source + `
+tutorialLanguageOverride = 'portuguese';
+state.mode = 'speech';
+assert.equal(tutorialStepPosition().total, 5);
+state.stepIndex = 1;
+state.activeNote = 1;
+assert.equal(practicePending(), true);
+renderNotes = () => {};
+markAnchors = () => {};
+completePractice('example');
+assert.equal(practicePending(), true);
+completePractice('meaning');
+assert.equal(practicePending(), false);
+state.activeNote = 2;
+assert.equal(practicePending(), true);
+completePractice('example');
+assert.equal(practicePending(), false);
+state.details = true;
+assert.equal(practicePending(), false);
+assert.equal(tutorialStepPosition().total, 12);
+assert(stepNotes(tutorialSteps()[0]).some(note => note.title === 'The dictionary form'));
+state.details = false;
+tutorialLanguageOverride = 'spanish';
+state.mode = 'lyrics';
+assert.equal(tutorialStepPosition().total, 7);
+assert(lessonNotes('back').some(note => note.title === 'Hear it in the song'));
+assert.equal(lessonNotes('front').length, 1);
+`, context);
+''', capture_output=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
