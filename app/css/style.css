@@ -22389,3 +22389,7 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
   #fastModeModal .smart-skip-body > .smart-skip-words { grid-column: 2; grid-row: 2 / span 2; min-width: 0; }
   #fastModeModal .smart-skip-body > .fast-mode-admin-details { grid-column: 1; grid-row: 3; }
 }
+
+/* The column headers' flags already say the English column is the same word, so
+   the "=" before an obvious look-alike's English is redundant in the table. */
+.smart-skip-table .cognate-pair-eq { display: none !important; }
