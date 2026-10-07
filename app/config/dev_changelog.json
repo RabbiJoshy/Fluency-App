@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-08T00:30:00+01:00",
+      "date": "2026-10-08 00:30 BST",
+      "agent": "Claude",
+      "summary": "Source chooser: no chevrons, Best for under the description, fuller speech card, shorter intro",
+      "detail": [
+        "Chevrons removed from Everyday speech and Your music (the whole card is the button); Spotify strip keeps its arrow.",
+        "'Best for' sits directly under the description in both cards at every width.",
+        "Speech: 'From films and TV shows — the everyday words people actually use when they talk to each other.' plus Best for 'Understanding films and TV shows'.",
+        "Intro: 'Your flashcards come from this source, most common words first.'"
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-08T00:05:00+01:00",
       "date": "2026-10-08 00:05 BST",
       "agent": "Claude",
@@ -330,20 +343,6 @@
       "detail": [
         "Dark theme: setup boxes are near-black (#06090d) on a slightly lifted page (#151c25) so text stands out.",
         "Language colours are lifted further against the dark page (contrast target 4 to 5.5), so Portugal's green and similar deep flag colours read lighter."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-06T12:00:00+01:00",
-      "date": "2026-10-06 12:00 BST",
-      "agent": "Claude",
-      "summary": "Smart Skip page tidied; advanced switches moved into their own sheet; landing page spacing evened out",
-      "detail": [
-        "Smart Skip title is centred, level with the close button, with no dark bar or gap above it.",
-        "Pronouns & particles, slang & fillers and names & places now live behind a quiet 'Advanced options' row that opens a sheet marked optional.",
-        "The word list is headed 'Skipped words'; the search box and 'Study these' button are gone.",
-        "Combined-forms example now reads 'share one flashcard'.",
-        "Choose level / Choose a set / Practice errors: equal space above and below each title and a smaller gap between boxes."
       ],
       "commit": "pending"
     }

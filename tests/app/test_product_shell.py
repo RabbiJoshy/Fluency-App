@@ -257,7 +257,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn("window.learningModeCopy(language)", main)
         self.assertNotIn("What do you want to understand?", main)
         self.assertEqual(html.count("Choose your flashcard vocabulary"), 1)
-        self.assertIn("From films and TV — the words people use when they talk.", ui)
+        self.assertIn("From films and TV shows — the everyday words people actually use when they talk to each other.", ui)
         self.assertIn("Pick an artist, or build a deck from your Spotify playlists — the words in those songs.", ui)
         self.assertNotIn('id="learningContextMode"', html)
         self.assertNotIn('id="learningContextCoverage"', html)

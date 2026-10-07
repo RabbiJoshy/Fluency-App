@@ -22876,3 +22876,9 @@ body:has(#cardTutorialModal:not(.hidden), #tutorialIntroModal:not(.hidden)) #res
   #step1.language-summary-active #standardSourceCard .choice-sheet-item { grid-template-rows: auto auto auto; align-content: start; }
   #step1.language-summary-active #standardSourceCard .choice-sheet-bestfor { align-self: start; }
 }
+/* The whole card is the button (and lights up on hover), so the chevron
+   beside each name said nothing new; only Spotify's strip keeps an arrow.
+   "Best for" sits right under the description at every width. */
+#step1.language-summary-active #standardSourceCard .choice-sheet-tail { display: none; }
+#step1.language-summary-active #standardSourceCard .choice-sheet-item { grid-template-columns: 38px minmax(0, 1fr); grid-template-areas: "icon name" "desc desc" "best best"; grid-template-rows: auto auto auto; align-content: start; }
+#step1.language-summary-active #standardSourceCard .choice-sheet-bestfor { align-self: start; }
