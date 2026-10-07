@@ -200,6 +200,19 @@ function refresh() {
             : skipped ? `${skipped.toLocaleString()} ${skipped === 1 ? 'word' : 'words'} skipped`
             : 'No words skipped';
     }
+    const hubExamples = document.getElementById('fastTrackHubExamples');
+    if (hubExamples) {
+        // Wide screens only (CSS hides it on phones). Off, it names the
+        // commonest look-alikes Smart Skip would set aside; on, the commonest
+        // words it is setting aside. Empty, it takes no room.
+        const words = on
+            ? (extras.allSkipped || []).map(entry => entry.item.word)
+            : lookAlikeCandidates();
+        const shown = words.slice(0, 3).map(word => `<em>${escapeExample(word)}</em>`).join(', ');
+        hubExamples.innerHTML = !shown ? ''
+            : on ? `Skipping ${shown}${words.length > 3 ? ', …' : ''}`
+            : `Look-alikes like ${shown}`;
+    }
 
     updateMappingStatus();
     updateStreamlineRecCallout();
@@ -380,6 +393,18 @@ function liveCognateExample(code) {
         if (best === null || (item.rank ?? Infinity) < (best.rank ?? Infinity)) best = item;
     }
     return best ? best.word : null;
+}
+
+// The look-alikes Smart Skip would set aside if it were on, commonest first:
+// the same decision the deck filter makes, run over the loaded vocabulary.
+function lookAlikeCandidates() {
+    const vocab = globalThis.setupVocabularySnapshot || globalThis.cachedVocabularyData;
+    const decide = globalThis.isCognateKnown;
+    if (!Array.isArray(vocab) || !decide || !globalThis.cognateFieldAvailable) return [];
+    return vocab
+        .filter(item => item?.word && !item.duplicate && decide(item))
+        .sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity))
+        .map(item => item.word);
 }
 
 function escapeExample(value) {

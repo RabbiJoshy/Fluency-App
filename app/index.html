@@ -507,20 +507,20 @@
                     <!-- One row, two controls: the switch turns Smart Skip on
                          without leaving the page, and everything left of it opens
                          the page with the details. A button cannot nest inside a
-                         button, hence the container. The count and chevron are
-                         what say there is more behind the row. -->
+                         button, hence the container. The info icon, the same one
+                         beside "Choose level", says there is more behind the row;
+                         on wide screens a line of example words fills the middle. -->
                     <div id="setupOptions" class="setup-options" style="display: none;">
                         <div class="fast-track-hub-row">
                             <button type="button" id="fastTrackHubBtn" class="fast-track-hub-btn" aria-label="Smart Skip details" aria-describedby="fastTrackHubSummary">
-                                <svg class="fast-mode-master-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.5v13l8-6.5-8-6.5Z"></path><path d="M12 5.5v13l8-6.5-8-6.5Z"></path></svg>
                                 <span class="fast-track-hub-copy">
                                     <strong>Smart Skip</strong>
                                     <span class="streamline-rec-badge">Recommended</span>
                                     <small id="fastTrackHubSummary" class="fast-track-hub-state">Fewer cards, same coverage</small>
                                 </span>
+                                <span id="fastTrackHubExamples" class="fast-track-hub-examples"></span>
                                 <span class="fast-track-hub-meta">
                                     <svg class="fast-track-hub-info" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg>
-                                    <span class="fast-track-hub-chevron" aria-hidden="true">›</span>
                                 </span>
                             </button>
                             <span class="fast-track-hub-switch-cell">
