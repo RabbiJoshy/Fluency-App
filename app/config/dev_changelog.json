@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-07T23:40:00+01:00",
+      "date": "2026-10-07 23:40 BST",
+      "agent": "Claude",
+      "summary": "Small text raised to 11px everywhere; bigger Smart Skip switch target; heading order fixed",
+      "detail": [
+        "117 style rules below 11px (8-10.5px labels like WELCOME, BEST FOR, RECOMMENDED, stats labels) now 11px; plus the card's 'Possible meanings' label.",
+        "Smart Skip switch answers taps across its whole cell (about 74x50) without looking bigger.",
+        "'Send a note' and the Smart Skip admin heading are h3, not h4, so screen readers get the right order.",
+        "From an Impeccable audit: undersized-text flags at phone width 31 -> 0, skipped headings 2 -> 0."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-07T23:15:00+01:00",
       "date": "2026-10-07 23:15 BST",
       "agent": "Claude",
@@ -328,18 +341,6 @@
       "detail": [
         "Folded senses no longer show a '+N' chip; tapping a folded sense makes it the current one, which shows its sub-rows",
         "The current sense never folds"
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-05T23:18:37+01:00",
-      "date": "2026-10-05 23:18 BST",
-      "agent": "Claude",
-      "summary": "Commonness meter lives in the top sense row (the section head), open or folded",
-      "detail": [
-        "Each part-of-speech section head shows its sense's commonness whether open or folded",
-        "A section with one sense shows it only there; its row no longer repeats it",
-        "Sections with several senses keep a meter on each sense, since they can differ"
       ],
       "commit": "pending"
     }

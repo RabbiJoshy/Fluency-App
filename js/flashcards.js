@@ -1,27 +1,27 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=3463f004';
-import './speech.js?v=3463f004';
-import { goToRoute, routeCodeFor } from './routes.js?v=3463f004';
-import './side-dock.js?v=3463f004';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=3463f004';
+import './state.js?v=34096434';
+import './speech.js?v=34096434';
+import { goToRoute, routeCodeFor } from './routes.js?v=34096434';
+import './side-dock.js?v=34096434';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=34096434';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=3463f004';
+} from './example-personalisation.js?v=34096434';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=3463f004';
+} from './spanishdict-usage.js?v=34096434';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=3463f004';
+} from './reverse-cues.js?v=34096434';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -54,7 +54,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=3463f004';
+} from './card-metadata-pills.js?v=34096434';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -7248,7 +7248,7 @@ function renderCardWikipediaBadge(card) {
                 target.push(`
                 <div class="meaning-row meaning-row-cycle ${cycleTextClass}${isSelected ? ' selected' : ''}${rowStateClasses}${m.isKnownSense ? ' meaning-row-known' : ''}" style="position: relative; display: flex; align-items: center; padding: 1px 2px; margin-bottom: 4px; background: ${bgColor}; ${borderStyle} border-radius: 8px; cursor: pointer; min-height: 39px; opacity: 0.75;" onclick="selectMeaning(${idx})">
                     ${renderRowCheckSlot(isSelected)}
-                    <span class="row-adaptive-text sense-cycle-notes" aria-label="Possible meanings" style="flex: 1; font-weight: 600; color: white; min-width: 0; text-align: center; line-height: 1.4; padding: 4px 8px;"><span class="sense-cycle-label" style="display: block; font-size: 10px; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-secondary);">Possible meanings</span><span class="sense-cycle-short">${escapeCardText(joinedDisplay)}</span>${informationButton}</span>
+                    <span class="row-adaptive-text sense-cycle-notes" aria-label="Possible meanings" style="flex: 1; font-weight: 600; color: white; min-width: 0; text-align: center; line-height: 1.4; padding: 4px 8px;"><span class="sense-cycle-label" style="display: block; font-size: 11px; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-secondary);">Possible meanings</span><span class="sense-cycle-short">${escapeCardText(joinedDisplay)}</span>${informationButton}</span>
                     ${m.isKnownSense ? knownSenseTagHTML('position: absolute; right: 8px; top: 50%; transform: translateY(-50%);') : ''}
                 </div>
                 `);
@@ -10331,8 +10331,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '3463f004';
-const MODALS_ASSET_VERSION = '3463f004';
+const ASSET_VERSION = '34096434';
+const MODALS_ASSET_VERSION = '34096434';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
