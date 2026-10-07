@@ -22659,3 +22659,23 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
   .fast-track-hub-row .fast-mode-master-switch i { width: 22px; height: 22px; }
   .fast-track-hub-row .fast-mode-master-switch.selected i { transform: translateX(20px); }
 }
+
+/* Smart Skip row, one control: the name with its badge, a state line under it
+   (Off / On · N words skipped), the switch on the right and a "Details" cue on
+   the way to the page. The Recommended pill is solid red with white text. */
+.fast-track-hub-copy .streamline-rec-badge {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: #fff;
+}
+.fast-track-hub-copy { row-gap: 2px; }
+.fast-track-hub-state {
+  flex-basis: 100%;
+  order: 3;
+  color: var(--text-secondary);
+  font: 500 14px/1.2 var(--font-reading);
+  font-variant-numeric: tabular-nums;
+}
+.fast-track-hub-row.is-on .fast-track-hub-state { color: var(--accent-primary); font-weight: 650; }
+.fast-track-hub-meta small.fast-track-hub-details { display: inline; color: var(--text-muted); font: 500 13px/1 var(--font-reading); }
+@container (max-width: 250px) { .fast-track-hub-meta small.fast-track-hub-details { display: none; } }
