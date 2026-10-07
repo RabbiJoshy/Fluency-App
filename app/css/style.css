@@ -22583,3 +22583,10 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 
 /* The set's start button reads at the same size as Quick N. */
 #step4 .range-btn-new.study-set-start { font: 750 17px/1.2 var(--font-emphasis); min-height: 54px; }
+
+/* Set box type: bigger numbers on the pills and the set name; the counts
+   line is lighter in weight and brighter in colour so it reads at a glance. */
+#step4 .study-set-dot { font-size: 18px; font-weight: 700; height: 46px; }
+#step4 .study-set-current-copy strong { font-size: 18px; }
+#step4 .study-set-current-copy span { font-size: 14px; font-weight: 400; color: var(--text-secondary); }
+.study-set-stat { font-weight: 400; }

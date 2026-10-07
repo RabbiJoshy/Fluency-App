@@ -2848,9 +2848,9 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         document.getElementById('studySetCurrentTitle').textContent = `Set ${index + 1}`;
         // The colours are the legend: each count wears its own swatch.
         document.getElementById('studySetCurrentMeta').innerHTML =
-            `<b class="study-set-stat"><i class="is-known"></i>${range.knownCount} known</b>`
-            + `<b class="study-set-stat"><i class="is-review"></i>${range.reviewCount} practice</b>`
-            + `<b class="study-set-stat"><i class="is-unseen"></i>${range.unseenCount} new</b>`;
+            `<b class="study-set-stat"><i class="is-known"></i>${range.knownCount} Known</b>`
+            + `<b class="study-set-stat"><i class="is-review"></i>${range.reviewCount} Practice</b>`
+            + `<b class="study-set-stat"><i class="is-unseen"></i>${range.unseenCount} New</b>`;
         const startBtn = document.getElementById('studySetStartBtn');
         // Three distinct states, because collapsing the last two is what made
         // finished sets hand back every card in them. studyMode 'all' keeps no
