@@ -22580,3 +22580,6 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 .lsw-readout { font-size: 17px; gap: 4px 14px; }
 .lsw-readout .lsw-rank { font-size: 22px; }
 .lsw-readout .lsw-deck-total { font-size: 0.85em; }
+
+/* The set's start button reads at the same size as Quick N. */
+#step4 .range-btn-new.study-set-start { font: 750 17px/1.2 var(--font-emphasis); min-height: 54px; }
