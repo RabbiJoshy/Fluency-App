@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-08T00:05:00+01:00",
+      "date": "2026-10-08 00:05 BST",
+      "agent": "Claude",
+      "summary": "Source chooser: Spotify now sits inside the Your music card",
+      "detail": [
+        "'Connect your Spotify' is the footer of the Your music card (full width, green tint, arrow) instead of a loose pill under the page, on phone and desktop.",
+        "Desktop: 'Best for' follows the description in both cards so the two line up.",
+        "The note under 'Choose your flashcard vocabulary source' is one step brighter.",
+        "These changes shipped inside commit 24201107 (shared staging area with another session); this entry records them."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-07T23:19:40+01:00",
       "date": "2026-10-07 23:19 BST",
       "agent": "Codex",
@@ -331,20 +344,6 @@
         "The word list is headed 'Skipped words'; the search box and 'Study these' button are gone.",
         "Combined-forms example now reads 'share one flashcard'.",
         "Choose level / Choose a set / Practice errors: equal space above and below each title and a smaller gap between boxes."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-05T23:40:00+01:00",
-      "date": "2026-10-05 23:40 BST",
-      "agent": "Claude",
-      "summary": "Look-alikes skip again in Portuguese, Spanish and Czech; commonness labels open on hover; Quick 20 label",
-      "detail": [
-        "Cognate files rebound to the releases the app loads (pt/es v23, cs v22); they named v21, so Smart Skip found 0 look-alikes. A test now fails if they drift apart.",
-        "The 'N rarer senses' row no longer shows a meter (their pooled share could read as Dominant).",
-        "Commonness meters show their meaning on hover; the section-head label no longer opens outside the card.",
-        "When every row in an open section has its own meter, the section head drops its total.",
-        "Practice errors button always reads 'Quick N' with the number (20 at most)."
       ],
       "commit": "pending"
     }
