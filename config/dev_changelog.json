@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-07T23:00:00+01:00",
+      "date": "2026-10-07 23:00 BST",
+      "agent": "Claude",
+      "summary": "Set pills lose their outline and spread out; Smart Skip 'Details' becomes an info icon",
+      "detail": [
+        "No yellow or green outline on set pills; only the chosen set has a ring. Gap 8 to 9px.",
+        "The 'Details' word on the Smart Skip row is now an information icon."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-07T22:30:00+01:00",
       "date": "2026-10-07 22:30 BST",
       "agent": "Claude",
@@ -334,18 +345,6 @@
         "The setup screen's quick practice button reads 'Quick 20', larger, in the amber of the Practice legend rather than error red",
         "The Practice errors info sheet explains what collects there and the order Quick practice takes: Never correct, Needs attention, Due now",
         "A failed request for a release's index manifest is retried once and not remembered, so one network blip no longer leaves every set load on a missing vocabulary.index.json until reload; a release with no manifest (404) is still remembered"
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-05T22:31:49+01:00",
-      "date": "2026-10-05 22:31 BST",
-      "agent": "Codex",
-      "summary": "Make tutorial explanations easier to read and match real card context styling",
-      "detail": [
-        "Removed the purple tr. badge and the instruction to click the meaning heading.",
-        "Example contexts use the real card’s shaded cue areas.",
-        "Desktop explanation titles, body text, Back/Next buttons and progress count are larger and brighter."
       ],
       "commit": "pending"
     }
