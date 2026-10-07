@@ -212,6 +212,7 @@
 }
 
 :root[data-theme="light"] .card-meta-section h4,
+:root[data-theme="light"] .flag-simple-note-section h3,
 :root[data-theme="light"] .card-meta-kv dt,
 :root[data-theme="light"] .card-meta-ex,
 :root[data-theme="light"] .card-meta-empty,
