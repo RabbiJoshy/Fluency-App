@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-08T00:40:44+01:00",
+      "date": "2026-10-08 00:40 BST",
+      "agent": "Codex",
+      "summary": "Restore all card explanations to the main tutorial",
+      "detail": [
+        "The full Portuguese tutorial again includes word rank, part of speech, dictionary form, frequency, meanings, useful extras, commonness, examples, and source explanations.",
+        "Meaning and example practice are part of the full sequence; no explanations require an optional details detour.",
+        "Retains the larger controls, improved contrast, full-size phone tap targets, and scrollable card layout."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-08T09:30:00+01:00",
       "date": "2026-10-08 09:30 BST",
       "agent": "Claude",
@@ -335,16 +347,6 @@
         "The 'Level N' bands are gone; the list is one run of rows in frequency order.",
         "Each row ends in its rank, a narrow right-aligned number. On phones the category tag is hidden to make room.",
         "The word preview no longer names a level."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-07T11:00:00+01:00",
-      "date": "2026-10-07 11:00 BST",
-      "agent": "Claude",
-      "summary": "Smart Skip list: level headers no longer show a word count",
-      "detail": [
-        "Each level divider now reads just 'Level N'."
       ],
       "commit": "pending"
     }

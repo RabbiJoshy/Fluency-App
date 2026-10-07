@@ -97,7 +97,7 @@ assert(!deck.faces.back.notes.some(note => note.title === 'Where the example is 
         )
         self.assertEqual(result.returncode, 0, result.stderr)
 
-    def test_short_lesson_requires_practice_and_keeps_details_optional(self):
+    def test_full_tutorial_includes_metadata_and_practice(self):
         result = subprocess.run(
             ['node', '--input-type=module', '-'], cwd=ROOT, text=True,
             input=r'''import assert from 'node:assert/strict';
@@ -111,9 +111,13 @@ const context = vm.createContext({assert, REPLICA_CARDS,
 vm.runInContext(source + `
 tutorialLanguageOverride = 'portuguese';
 state.mode = 'speech';
-assert.equal(tutorialStepPosition().total, 5);
+assert.equal(tutorialStepPosition().total, 13);
+const front = stepNotes(tutorialSteps()[0]);
+for (const title of ['How common the word is', 'Kind of word', 'The dictionary form', 'How often it is said']) assert(front.some(note => note.title === title));
+const back = stepNotes(tutorialSteps()[1]);
+for (const title of ['Useful extras', 'How common this meaning is', 'Where the example is from', 'You’re ready to study']) assert(back.some(note => note.title === title));
 state.stepIndex = 1;
-state.activeNote = 1;
+state.activeNote = back.findIndex(note => note.practice === 'meaning');
 assert.equal(practicePending(), true);
 renderNotes = () => {};
 markAnchors = () => {};
@@ -121,20 +125,15 @@ completePractice('example');
 assert.equal(practicePending(), true);
 completePractice('meaning');
 assert.equal(practicePending(), false);
-state.activeNote = 2;
+state.activeNote = back.findIndex(note => note.practice === 'example');
 assert.equal(practicePending(), true);
 completePractice('example');
 assert.equal(practicePending(), false);
-state.details = true;
-assert.equal(practicePending(), false);
-assert.equal(tutorialStepPosition().total, 12);
-assert(stepNotes(tutorialSteps()[0]).some(note => note.title === 'The dictionary form'));
-state.details = false;
 tutorialLanguageOverride = 'spanish';
 state.mode = 'lyrics';
-assert.equal(tutorialStepPosition().total, 7);
-assert(lessonNotes('back').some(note => note.title === 'Hear it in the song'));
-assert.equal(lessonNotes('front').length, 1);
+assert(tutorialStepPosition().total > 13);
+assert(stepNotes(tutorialSteps()[1]).some(note => note.title === 'Play the line'));
+assert.equal(stepNotes(tutorialSteps()[0]).length, 5);
 `, context);
 ''', capture_output=True,
         )
