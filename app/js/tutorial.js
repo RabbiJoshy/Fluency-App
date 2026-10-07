@@ -11,7 +11,7 @@
 
 import {
     REPLICA_CARDS, esc, renderBack, replicaCardHTML, wireReplicaBack, fitReplicaCard,
-} from './card-replica.js?v=1bd66184';
+} from './card-replica.js?v=24201107';
 
 
 // Each language selects its own representative card and dictionary wording.
@@ -277,7 +277,7 @@ function currentStep() {
     return tutorialSteps()[state.stepIndex] || null;
 }
 
-const MOBILE_TUTORIAL_QUERY = '(max-width: 700px)';
+const MOBILE_TUTORIAL_QUERY = '(max-width: 1180px)';
 
 function isMobileTutorial() {
     return window.matchMedia?.(MOBILE_TUTORIAL_QUERY).matches === true;
