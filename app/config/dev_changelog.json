@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-07T14:00:00+01:00",
+      "date": "2026-10-07 14:00 BST",
+      "agent": "Claude",
+      "summary": "Combined forms: tap a row to see every form; '+N' instead of '…'",
+      "detail": [
+        "The forms column shows three forms and '+N' for the rest.",
+        "Tapping a combined-forms row opens it in place with every form as a chip and a 'Preview card' link.",
+        "Other categories still open the preview popup."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-07T13:00:00+01:00",
       "date": "2026-10-07 13:00 BST",
       "agent": "Claude",
@@ -360,17 +372,6 @@
         "Any other card for the same surface is dropped when the surface is split; replaces the lemma-based filter, which could drop unrelated words",
         "'Card 1 of 2' is now plain 'Flashcard 1 of 2' text, larger, with a tap-for-explanation tooltip",
         "Front lemma/POS labels lose the capsule behind them and grow ~10%"
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-04T21:35:00+01:00",
-      "date": "2026-10-04 21:35 BST",
-      "agent": "Antigravity",
-      "summary": "Fix 3rd card in split-card sets and balance POS-only pill padding.",
-      "detail": [
-        "Deduplicated study sets so polysemous/homograph split cards suppress redundant base/infinitive cards covering the same readings, ensuring only Card 1 of 2 and Card 2 of 2 are presented without an extra 3rd card.",
-        "Balanced horizontal padding and centering on .front-lemma-pair.is-pos-only so standalone POS pills are perfectly symmetric."
       ],
       "commit": "pending"
     }

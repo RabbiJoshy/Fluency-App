@@ -752,14 +752,22 @@ function smartSkipRowHtml(row, index, showTag) {
     const id = escapeHtml(item.id || '');
     if (row.kind === 'lemma') {
         const lemma = row.group.lemma;
-        const forms = row.group.surfaces.map(surface => escapeHtml(surface.word)).join(' · ');
-        return `<li><button type="button" class="smart-skip-row smart-skip-row--lemma" data-ss-row="${index}" data-extras-id="${id}">
+        const words = row.group.surfaces.map(surface => escapeHtml(surface.word));
+        // A few forms and "+N" for the rest; tapping the row lists them all.
+        const SHOWN = 3;
+        const forms = words.slice(0, SHOWN).join(' · ')
+            + (words.length > SHOWN ? ` <span class="smart-skip-more">+${words.length - SHOWN}</span>` : '');
+        return `<li class="smart-skip-lemma-item"><button type="button" class="smart-skip-row smart-skip-row--lemma" aria-expanded="false" data-ss-row="${index}" data-extras-id="${id}">
             <span class="smart-skip-w">${escapeHtml(lemma.word)}</span>
             <span class="smart-skip-g extras-translation-slot">${escapeHtml(shortGloss(lemma.translation))}</span>
             <span class="smart-skip-forms">${forms}</span>
-            <span class="smart-skip-nforms">${row.group.surfaces.length} forms</span>
+            <span class="smart-skip-nforms">${words.length} forms</span>
             ${smartSkipRankHtml(row)}
-        </button></li>`;
+        </button>
+        <div class="smart-skip-expand" hidden>
+            ${words.map(word => `<span class="smart-skip-chip">${word}</span>`).join('')}
+            <button type="button" class="smart-skip-expand-open" data-ss-preview="${index}">Preview card</button>
+        </div></li>`;
     }
     const tag = showTag ? escapeHtml(KIND_BY_ID[row.kind]?.tag || '') : '';
     const more = row.extra.length ? `<span class="smart-skip-more">+${row.extra.length}</span>` : '';
@@ -1204,8 +1212,22 @@ function initExtras() {
             if (level) startFastTrackSkippedSet(level.category, 0, level.index, g().getActiveLevelRanges?.() || []);
             return;
         }
+        const previewLink = event.target.closest('[data-ss-preview]');
+        if (previewLink) {
+            openSmartSkipPreview(Number(previewLink.dataset.ssPreview));
+            return;
+        }
         const row = event.target.closest('.smart-skip-row');
-        if (row) openSmartSkipPreview(Number(row.dataset.ssRow));
+        if (!row) return;
+        if (row.classList.contains('smart-skip-row--lemma')) {
+            // Combined forms open in place to list every form on the card.
+            const panel = row.parentElement.querySelector('.smart-skip-expand');
+            const open = panel.hidden;
+            panel.hidden = !open;
+            row.setAttribute('aria-expanded', String(open));
+            return;
+        }
+        openSmartSkipPreview(Number(row.dataset.ssRow));
     });
     document.getElementById('smartSkipPreviewClose')?.addEventListener('click', closeSmartSkipPreview);
     document.getElementById('smartSkipPreviewOpen')?.addEventListener('click', openSmartSkipCard);
