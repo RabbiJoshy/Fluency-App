@@ -16,8 +16,8 @@
 // Applies to Speech and Lyrics alike. A language whose release supports only one
 // of the two parts still gets fast mode — it just moves the part it has, and the
 // page says which part is missing.
-import './state.js?v=64d17932';
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=64d17932';
+import './state.js?v=ef48c2d1';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=ef48c2d1';
 
 let applyingMasterSwitch = false;
 let returnToSettings = false;
@@ -194,9 +194,11 @@ function refresh() {
     }
     const hubSummary = document.getElementById('fastTrackHubSummary');
     if (hubSummary) {
-        hubSummary.textContent = !on ? 'Off'
-            : skipped ? `On · ${skipped.toLocaleString()} ${skipped === 1 ? 'word' : 'words'} skipped`
-            : 'On · No words skipped';
+        // The switch already says on or off, so this line says something else:
+        // what turning it on does, then what it is doing.
+        hubSummary.textContent = !on ? 'Fewer cards, same coverage'
+            : skipped ? `${skipped.toLocaleString()} ${skipped === 1 ? 'word' : 'words'} skipped`
+            : 'No words skipped';
     }
 
     updateMappingStatus();
