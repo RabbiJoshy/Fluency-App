@@ -1465,9 +1465,11 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
             incorrectEl.textContent = String(stats.incorrect || 0);
             statsContainer.hidden = false;
             const pct = Math.round(((stats.correct || 0) / totalAnswered) * 100);
+            // The ring already says "N% accuracy"; the line under the title
+            // stays only for a layout without the ring.
             if (accuracyEl) {
                 accuracyEl.textContent = `${pct}% accuracy`;
-                accuracyEl.hidden = false;
+                accuracyEl.hidden = Boolean(scoreContainer);
             }
             if (scoreContainer) {
                 scoreContainer.hidden = false;

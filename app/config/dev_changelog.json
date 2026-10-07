@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-08T00:50:00+01:00",
+      "date": "2026-10-08 00:50 BST",
+      "agent": "Claude",
+      "summary": "Progress screens show one percentage each",
+      "detail": [
+        "Deck overview (on load / back to menu): the ring now fills to '% of speech understood' (lyrics: 'of these lyrics understood'); the separate '% cards known' figure is gone.",
+        "Its legend keeps the card counts (Known / Practice / New) as plain numbers, without colour keys.",
+        "Loading a set is unchanged: the ring counts cards known in that set.",
+        "End of set: the '72% accuracy' line under the title is gone; the ring already says it."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-08T00:30:00+01:00",
       "date": "2026-10-08 00:30 BST",
       "agent": "Claude",
@@ -332,17 +345,6 @@
         "'Skipped words' now sits on the same line as its dropdown, in the dropdown's font.",
         "Dropdown entries are all 'Name (count)'; 'Combined forms' no longer says 'cards'.",
         "The dropdown opens on Look-alikes whenever there are any."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-06T13:00:00+01:00",
-      "date": "2026-10-06 13:00 BST",
-      "agent": "Claude",
-      "summary": "Landing page: near-black boxes on a lifted page; lighter language colours",
-      "detail": [
-        "Dark theme: setup boxes are near-black (#06090d) on a slightly lifted page (#151c25) so text stands out.",
-        "Language colours are lifted further against the dark page (contrast target 4 to 5.5), so Portugal's green and similar deep flag colours read lighter."
       ],
       "commit": "pending"
     }

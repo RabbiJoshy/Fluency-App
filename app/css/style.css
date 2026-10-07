@@ -6081,19 +6081,6 @@
             animation: app-loading-mark-pop 0.36s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .app-loading-speech {
-            margin: -8px 0 18px;
-            color: var(--text-muted);
-            font: 600 13px/1.3 var(--font-emphasis);
-        }
-
-        .app-loading-speech b {
-            color: var(--text-primary);
-            font-size: 16px;
-            font-weight: 800;
-        }
-
-        .app-loading-speech[hidden] { display: none; }
 
         .app-loading-mark-art.is-popping {
             animation: app-loading-mark-pop 0.28s ease-out;
@@ -22882,3 +22869,8 @@ body:has(#cardTutorialModal:not(.hidden), #tutorialIntroModal:not(.hidden)) #res
 #step1.language-summary-active #standardSourceCard .choice-sheet-tail { display: none; }
 #step1.language-summary-active #standardSourceCard .choice-sheet-item { grid-template-columns: 38px minmax(0, 1fr); grid-template-areas: "icon name" "desc desc" "best best"; grid-template-rows: auto auto auto; align-content: start; }
 #step1.language-summary-active #standardSourceCard .choice-sheet-bestfor { align-self: start; }
+
+/* Deck overview ring: when it shows how much speech is understood, the
+   legend's card counts are plain numbers, not a key to the ring's colours. */
+.app-loading-visual[data-measure="speech"] ~ .app-loading-ring-legend i { display: none; }
+.app-loading-ring-centre span { max-width: 100px; line-height: 1.25; text-align: center; justify-self: center; }

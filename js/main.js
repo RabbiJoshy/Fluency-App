@@ -1,35 +1,35 @@
 // First: rewrites old ?artist=/?about= links to their #/ route before
 // anything below reads the address.
-import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=0884cf64';
-import { releaseUrl } from './release-host.js?v=0884cf64';
-import './theme.js?v=0884cf64';
-import { installFlagRendering } from './flags.js?v=0884cf64';
-import './state.js?v=0884cf64';
-import './offline-db.js?v=0884cf64';
-import './sync-queue.js?v=0884cf64';
-import { initOfflineContent } from './offline-content.js?v=0884cf64';
-import './speech.js?v=0884cf64';
-import './artist-ui.js?v=0884cf64';
-import './auth.js?v=0884cf64';
-import './tutorial.js?v=0884cf64';
-import './walkthrough.js?v=0884cf64';
-import './estimation.js?v=0884cf64';
-import './config.js?v=0884cf64';
-import './progress.js?v=0884cf64';
-import './knowledge.js?v=0884cf64';
-import './ui.js?v=0884cf64';
-import './vocab.js?v=0884cf64';
-import './cognates.js?v=0884cf64';
-import './coverage.js?v=0884cf64';
-import './fast-mode.js?v=0884cf64';
-import './extras.js?v=0884cf64';
-import './review-home.js?v=0884cf64';
-import './song-sets.js?v=0884cf64';
-import './playlist-live.js?v=0884cf64';
-import './spotify-playlist-import.js?v=0884cf64';
-import './vocabulary-import.js?v=0884cf64';
-import './flashcards.js?v=0884cf64';
-import { validateArtistCatalog } from './data-contracts.js?v=0884cf64';
+import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=8292aaba';
+import { releaseUrl } from './release-host.js?v=8292aaba';
+import './theme.js?v=8292aaba';
+import { installFlagRendering } from './flags.js?v=8292aaba';
+import './state.js?v=8292aaba';
+import './offline-db.js?v=8292aaba';
+import './sync-queue.js?v=8292aaba';
+import { initOfflineContent } from './offline-content.js?v=8292aaba';
+import './speech.js?v=8292aaba';
+import './artist-ui.js?v=8292aaba';
+import './auth.js?v=8292aaba';
+import './tutorial.js?v=8292aaba';
+import './walkthrough.js?v=8292aaba';
+import './estimation.js?v=8292aaba';
+import './config.js?v=8292aaba';
+import './progress.js?v=8292aaba';
+import './knowledge.js?v=8292aaba';
+import './ui.js?v=8292aaba';
+import './vocab.js?v=8292aaba';
+import './cognates.js?v=8292aaba';
+import './coverage.js?v=8292aaba';
+import './fast-mode.js?v=8292aaba';
+import './extras.js?v=8292aaba';
+import './review-home.js?v=8292aaba';
+import './song-sets.js?v=8292aaba';
+import './playlist-live.js?v=8292aaba';
+import './spotify-playlist-import.js?v=8292aaba';
+import './vocabulary-import.js?v=8292aaba';
+import './flashcards.js?v=8292aaba';
+import { validateArtistCatalog } from './data-contracts.js?v=8292aaba';
 
 // Emoji flags anywhere on the page render as rectangular pictures.
 installFlagRendering();
@@ -88,7 +88,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
 const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
-    ? import('./spotify.js?v=0884cf64').catch(error => {
+    ? import('./spotify.js?v=8292aaba').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })
@@ -280,8 +280,6 @@ function resetDeckLoadingVisual() {
     if (visual) visual.dataset.mode = 'spinner';
     const legend = document.getElementById('appLoadingRingLegend');
     if (legend) legend.hidden = true;
-    const speech = document.getElementById('appLoadingSpeech');
-    if (speech) speech.hidden = true;
     for (const id of ['appLoadingRingSeen', 'appLoadingRingKnown']) {
         const arc = document.getElementById(id);
         if (!arc) continue;
@@ -345,21 +343,22 @@ function showDeckLoading(stats, { title, detail, holdMs = MIN_DECK_LOADING_BEAT_
     const pctOf = count => 100 * count / cardCount;
     const offsetFor = pct => DECK_RING_CIRCUMFERENCE * (1 - Math.min(100, Math.max(0, pct)) / 100);
 
-    // The ring and its centre both count cards, so the arc and the number agree.
-    // How much of the language those cards cover is frequency-weighted, a
-    // different quantity, and gets its own line rather than sharing the ring.
+    // One number on this screen. Where the deck knows how much of the
+    // language its known words cover (frequency-weighted), the ring shows
+    // that; a set on its own has no such figure, so the ring counts cards.
+    // Either way the arc and the number in its centre are the same quantity,
+    // and the card split is left to the legend as plain counts.
+    const speechPct = stats?.speechPercentage !== undefined
+        ? Math.min(100, Math.max(0, Number(stats.speechPercentage) || 0))
+        : null;
+    const showsSpeech = speechPct !== null;
+    visual.dataset.measure = showsSpeech ? 'speech' : 'cards';
     const value = document.getElementById('appLoadingRingValue');
-    if (value) value.textContent = `${Math.round(pctOf(knownCount))}%`;
+    if (value) value.textContent = `${Math.round(showsSpeech ? speechPct : pctOf(knownCount))}%`;
     const unit = document.getElementById('appLoadingRingUnit');
     if (unit) {
-        unit.textContent = 'cards known';
+        unit.textContent = showsSpeech ? (stats.speechUnit || 'of speech understood') : 'cards known';
         unit.hidden = false;
-    }
-    const speech = document.getElementById('appLoadingSpeech');
-    if (speech && stats?.speechPercentage !== undefined) {
-        document.getElementById('appLoadingSpeechValue').textContent = `${Math.round(Number(stats.speechPercentage))}%`;
-        document.getElementById('appLoadingSpeechLabel').textContent = stats.speechLabel || 'of speech understood';
-        speech.hidden = false;
     }
 
     // The numbers are in, so the pictures stop and the mark settles on the flag.
@@ -377,8 +376,8 @@ function showDeckLoading(stats, { title, detail, holdMs = MIN_DECK_LOADING_BEAT_
     const seenArc = document.getElementById('appLoadingRingSeen');
     const knownArc = document.getElementById('appLoadingRingKnown');
     const paint = () => {
-        if (seenArc) seenArc.style.strokeDashoffset = String(offsetFor(pctOf(seenCount)));
-        if (knownArc) knownArc.style.strokeDashoffset = String(offsetFor(pctOf(knownCount)));
+        if (seenArc) seenArc.style.strokeDashoffset = String(offsetFor(showsSpeech ? 0 : pctOf(seenCount)));
+        if (knownArc) knownArc.style.strokeDashoffset = String(offsetFor(showsSpeech ? speechPct : pctOf(knownCount)));
     };
 
     visual.dataset.mode = 'progress';
@@ -1714,7 +1713,7 @@ function spotifyStatusElement() {
         el.type = 'button';
         el.addEventListener('click', async event => {
             event.stopPropagation();
-            await (_spotifyModulePromise || import('./spotify.js?v=0884cf64')).catch(() => null);
+            await (_spotifyModulePromise || import('./spotify.js?v=8292aaba')).catch(() => null);
             window.spotifyLogin?.();
         });
     }
