@@ -95,7 +95,27 @@ class LearnerAlignTests(unittest.TestCase):
         self.assertEqual(form_score("můj", "mój", self.cs_pl), 1.0)
         self.assertEqual(form_score("bůh", "bóg", self.cs_pl), 1.0)
 
+    def test_short_root_stretch_pairs_stay_below_cutoff(self) -> None:
+        # 4-character roots with single letter differences are stretch pairs
+        # and should not clear the 0.75 cognate threshold (saving learners from skipping them).
+        self.assertLess(form_score("nome", "name", self.pt), 0.75)
+        self.assertLess(form_score("três", "three", self.pt), 0.75)
+        self.assertLess(form_score("veia", "vein", self.pt), 0.75)
+        self.assertLess(form_score("soco", "sock", self.pt), 0.75)
+
+    def test_phonetic_dampening_when_sounds_diverge(self) -> None:
+        # When policy uses pronunciation, words with diverging IPA get dampened
+        pt_phon = replace(self.pt, use_pronunciation=True)
+        score_with_ipa = form_score(
+            "nome",
+            "name",
+            pt_phon,
+            target_sounds=["ˈnõmi"],
+            known_sounds=["neɪm"],
+        )
+        self.assertLess(score_with_ipa, 0.70)
 
 
 if __name__ == "__main__":
     unittest.main()
+

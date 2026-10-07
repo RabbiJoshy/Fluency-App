@@ -118,10 +118,12 @@ def _score(
         return strip_accents(_rewrite(word, rules))
 
     left = spell(target_word)
+    ending_matched = False
     for source, target in endings:
         source, target = spell(source), spell(target)
         if left.endswith(source) and len(left) > len(source):
             left = left[: -len(source)] + target
+            ending_matched = True
             break
     left = _DOUBLED.sub(r"\1", left)
     right = _DOUBLED.sub(r"\1", spell(known_word))
@@ -131,7 +133,18 @@ def _score(
         return 0.0
 
     dist = _cognate_align_distance(left, right)
-    return max(0.0, 1.0 - dist / max(len(left), len(right)))
+    max_len = max(len(left), len(right))
+    if max_len == 0:
+        return 0.0
+    if dist == 0.0:
+        return 1.0
+
+    # Short roots (len < 5) without a regular morphological ending rule carry higher
+    # information density per character. A 1-letter change alters 25-33% of the word,
+    # so we scale the penalty factor to prevent marginal stretch pairs (e.g. nome/name,
+    # três/three) from hitting the threshold.
+    penalty_scale = 1.0 + max(0.0, 5 - max_len) * 0.15 if not ending_matched else 1.0
+    return max(0.0, 1.0 - (dist * penalty_scale) / max_len)
 
 
 def score(
@@ -155,5 +168,11 @@ def score(
         from fluency.features.phonetics import best_pronunciation_similarity
 
         phon = best_pronunciation_similarity(target_sounds, known_sounds)
+        # Pronunciation can confirm/escalate (e.g. Czech čas vs Polish czas)
+        # or dampen when written forms are marginal (base < 1.0) but sounds diverge widely (phon < 0.65).
+        if base < 1.0 and phon > 0.0 and phon < 0.65:
+            dampener = 0.85 + 0.15 * (phon / 0.65)
+            return base * dampener
         return max(base, phon)
     return base
+
