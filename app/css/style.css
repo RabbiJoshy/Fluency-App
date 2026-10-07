@@ -22628,3 +22628,34 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
   z-index: 2;
 }
 #step4 .study-set-dots { padding: 8px 6px 6px; }
+
+/* Smart Skip row: the name and its switch read as the main control of the
+   level box. Larger type, a larger and lighter "Recommended" badge, a larger
+   switch, and the whole row tinted once it is on. */
+.fast-track-hub-btn { min-height: 66px; gap: 14px; }
+.fast-track-hub-btn .fast-mode-master-icon { width: 28px; height: 28px; stroke-width: 2; }
+.fast-track-hub-copy { gap: 10px; flex-wrap: wrap; row-gap: 4px; }
+.fast-track-hub-copy strong { font-size: 21px; font-weight: 800; }
+.fast-track-hub-copy .streamline-rec-badge {
+  font-size: 12px;
+  padding: 4px 9px;
+  color: color-mix(in srgb, var(--accent-primary) 62%, #fff);
+  background: color-mix(in srgb, var(--accent-primary) 20%, transparent);
+  border-color: color-mix(in srgb, var(--accent-primary) 50%, #fff 12%);
+}
+.fast-track-hub-meta small { font-size: 14px; color: var(--text-secondary); }
+.fast-track-hub-chevron { font-size: 24px; }
+.fast-track-hub-switch-cell { padding: 0 16px; }
+.fast-track-hub-row .fast-mode-master-switch { width: 54px; height: 32px; }
+.fast-track-hub-row .fast-mode-master-switch i { top: 4px; left: 4px; width: 24px; height: 24px; }
+.fast-track-hub-row .fast-mode-master-switch.selected i { transform: translateX(22px); }
+.fast-track-hub-row.is-on { background: color-mix(in srgb, var(--accent-primary) 10%, transparent); box-shadow: inset 3px 0 0 var(--accent-primary); }
+@media (max-width: 767px) {
+  .fast-track-hub-btn { min-height: 60px; gap: 10px; padding-left: 12px; }
+  .fast-track-hub-copy strong { font-size: 19px; }
+  #setupOptions .fast-track-hub-copy .streamline-rec-badge { font-size: 10.5px; padding: 3px 7px; }
+  .fast-track-hub-switch-cell { padding: 0 12px; }
+  .fast-track-hub-row .fast-mode-master-switch { width: 50px; height: 30px; }
+  .fast-track-hub-row .fast-mode-master-switch i { width: 22px; height: 22px; }
+  .fast-track-hub-row .fast-mode-master-switch.selected i { transform: translateX(20px); }
+}

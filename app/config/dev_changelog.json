@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-07T22:00:00+01:00",
+      "date": "2026-10-07 22:00 BST",
+      "agent": "Claude",
+      "summary": "Smart Skip row on the main page: bigger name, lighter larger Recommended badge, bigger switch",
+      "detail": [
+        "'Smart Skip' 16 to 21px (19px on phones), heavier weight; icon 22 to 28px.",
+        "'Recommended' 10 to 12px (10.5px on phones) in a lighter red.",
+        "Switch 42x24 to 54x32; the row tints and gets an accent edge once Smart Skip is on."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-07T21:40:00+01:00",
       "date": "2026-10-07 21:40 BST",
       "agent": "Claude",
@@ -333,18 +345,6 @@
       "detail": [
         "Senses go to the card their split assigned them (by sense id); 'pongan' no longer shows ponerse's senses and examples on poner's card",
         "'Flashcard 1 of 2' runs under side-by-side pills, and moves to their right, centred on the pair, when the pills stack"
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-05T19:37:56+01:00",
-      "date": "2026-10-05 19:37 BST",
-      "agent": "Codex",
-      "summary": "Start the tutorial directly on the selected mode’s card",
-      "detail": [
-        "Removed the animated language, mode, level and set selection opening.",
-        "First-run onboarding waits until Speech or Lyrics is chosen.",
-        "Speech teaches one card; Spanish Lyrics reuses the same tour with song line count, song credit, English translation and playback explanations."
       ],
       "commit": "pending"
     }
