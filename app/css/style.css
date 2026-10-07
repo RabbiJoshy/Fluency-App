@@ -22393,3 +22393,39 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 /* The column headers' flags already say the English column is the same word, so
    the "=" before an obvious look-alike's English is redundant in the table. */
 .smart-skip-table .cognate-pair-eq { display: none !important; }
+
+/* Smart Skip on desktop: larger, clearer type by default, and no "Bigger text"
+   zoom on top of it (that setting is one page-wide zoom, so it is switched
+   off for this page only). */
+@media (min-width: 900px) {
+  html[data-text-size="large"] body:has(#fastModeModal:not(.hidden)) { zoom: 1; }
+  #fastModeModal .smart-skip-body { max-width: 1240px; grid-template-columns: 400px minmax(0, 1fr); column-gap: 32px; }
+  #fastModeModal .smart-skip-body h2 { font-size: 30px; }
+  .smart-skip-shortcut-row { min-height: 56px; }
+  .smart-skip-shortcut-name { font-size: 16.5px; }
+  .smart-skip-shortcut-name svg { width: 16px; height: 16px; }
+  .smart-skip-shortcut-count { font-size: 14px; }
+  #fastModeModal .smart-skip-shortcut-detail .fast-mode-explainer { font-size: 15px; line-height: 1.55; }
+  .smart-skip-switch { width: 42px; height: 24px; }
+  .smart-skip-switch::after { width: 18px; height: 18px; }
+  .smart-skip-switch[aria-checked="true"]::after { transform: translateX(18px); }
+  .smart-skip-body .smart-skip-more-options { font-size: 15px; padding: 16px 14px; }
+  .smart-skip-toolbar .smart-skip-label { font-size: 17px; }
+  .smart-skip-select-wrap select { font-size: 16px; padding: 12px 38px 12px 14px; }
+  .smart-skip-head { height: 38px; font-size: 14px; }
+  .smart-skip-row { height: 54px; }
+  .smart-skip-w { font-size: 18px; }
+  .smart-skip-g { font-size: 16.5px; }
+  .smart-skip-rank { font-size: 14px; }
+  .smart-skip-tag { font-size: 13.5px; }
+  .smart-skip-forms { font-size: 15px; }
+  .smart-skip-nforms { font-size: 14px; }
+  .smart-skip-chip { font-size: 15px; padding: 5px 11px; }
+  .smart-skip-expand-open { font-size: 14px; }
+  .smart-skip-table { --ss-cols: minmax(0, 1fr) minmax(0, 1fr) 72px; }
+  .smart-skip-table.has-tag { --ss-cols: minmax(0, 1fr) minmax(0, 1fr) 120px 72px; }
+  .smart-skip-table[data-cat="lemma"] { --ss-cols: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.6fr) 72px; }
+  .smart-skip-more-card { width: min(520px, 100%); }
+  .smart-skip-more-head h3 { font-size: 20px; }
+  .smart-skip-more-head p { font-size: 15px; }
+}
