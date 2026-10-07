@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-08T00:44:58+01:00",
+      "date": "2026-10-08 00:44 BST",
+      "agent": "Codex",
+      "summary": "Keep the tutorial card height fixed while meanings expand",
+      "detail": [
+        "Tutorial cards retain their height across flips, opening or closing meaning groups, selecting a meaning, and cycling examples.",
+        "Overflowing meanings scroll inside the card; long examples scroll within their own area.",
+        "Card height responds only to viewport size; Back and Next stay outside the card and visible.",
+        "Preserves meaning-list scroll position when selecting a meaning or another example."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-08T00:40:44+01:00",
       "date": "2026-10-08 00:40 BST",
       "agent": "Codex",
@@ -335,18 +348,6 @@
         "Header row: language flags name the word and English columns; Rank on desktop; Type under 'All skipped'.",
         "Combined forms: Card | English | Combined forms | Rank on desktop; on phones just the card, English and a forms count.",
         "On phones the Rank and Type columns are hidden."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-07T12:00:00+01:00",
-      "date": "2026-10-07 12:00 BST",
-      "agent": "Claude",
-      "summary": "Smart Skip list: levels replaced by each word's frequency rank",
-      "detail": [
-        "The 'Level N' bands are gone; the list is one run of rows in frequency order.",
-        "Each row ends in its rank, a narrow right-aligned number. On phones the category tag is hidden to make room.",
-        "The word preview no longer names a level."
       ],
       "commit": "pending"
     }

@@ -111,6 +111,16 @@ const context = vm.createContext({assert, REPLICA_CARDS,
 vm.runInContext(source + `
 tutorialLanguageOverride = 'portuguese';
 state.mode = 'speech';
+window.innerHeight = 900;
+window.matchMedia = () => ({matches: false});
+assert.equal(tutorialCardHeight(), 540);
+state.meaningIndex = 2;
+state.exampleIndex = 1;
+assert.equal(tutorialCardHeight(), 540);
+window.innerHeight = 680;
+assert.equal(tutorialCardHeight(), 480);
+window.matchMedia = () => ({matches: true});
+assert.equal(tutorialCardHeight(), 440);
 assert.equal(tutorialStepPosition().total, 13);
 const front = stepNotes(tutorialSteps()[0]);
 for (const title of ['How common the word is', 'Kind of word', 'The dictionary form', 'How often it is said']) assert(front.some(note => note.title === title));

@@ -10,7 +10,7 @@
 // The card itself is drawn by card-replica.js, which both features share.
 
 import {
-    REPLICA_CARDS, esc, renderBack, replicaCardHTML, wireReplicaBack, fitReplicaCard,
+    REPLICA_CARDS, esc, renderBack, replicaCardHTML, wireReplicaBack,
 } from './card-replica.js?v=20260929sense6';
 
 
@@ -404,9 +404,11 @@ function refreshBack() {
     const stage = document.getElementById('cardTutorialStage');
     const back = stage?.querySelector('.card-back');
     if (!stage || !back) return;
+    const meaningsScrollTop = back.querySelector('.meanings-scroll')?.scrollTop || 0;
     back.outerHTML = renderBack(currentCard(), state.meaningIndex, state.exampleIndex);
     wireBack(stage);
     fitCardToContent();
+    stage.querySelector('.meanings-scroll').scrollTop = meaningsScrollTop;
     markAnchors();
 }
 
@@ -518,17 +520,17 @@ function syncContinueButton() {
 // explained. This used to also pin a numbered badge outside the card edge for
 // each note; the numbers indexed nothing a reader needed once the tour walked
 // them through one note at a time, so the amber outline is the only link now.
-// Both faces live in the same fixed-height box, so the box has to be tall
-// enough for whichever is taller — in practice always the back. Measuring the
-// back's own content beats guessing a height that suits one card: `que` has
-// three senses and `tem` has four with grammar pills under the selected one.
+// Both faces share a viewport-sized box. Opening meanings or changing an
+// example never changes its height; only a viewport resize can do that.
+function tutorialCardHeight() {
+    return isMobileTutorial() ? 440 : Math.max(320, Math.min(540, window.innerHeight - 200));
+}
+
 function fitCardToContent() {
     const inner = document.querySelector('#cardTutorialStage .card-replica');
     if (!inner) return;
-    // Full content height on a phone; its dedicated card pane scrolls above
-    // the coach. Never shrink controls or hide meanings inside a second pane.
     inner.style.removeProperty('--replica-card-scale');
-    fitReplicaCard(inner, { floor: isMobileTutorial() ? 360 : Math.min(480, Math.round(window.innerHeight * 0.64)), ceiling: 10 });
+    inner.style.setProperty('--replica-card-h', `${tutorialCardHeight()}px`);
 }
 
 function markAnchors() {
