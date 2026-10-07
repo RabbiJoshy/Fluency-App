@@ -22429,3 +22429,62 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
   .smart-skip-more-head h3 { font-size: 20px; }
   .smart-skip-more-head p { font-size: 15px; }
 }
+
+/* ---- Landing page clear-up ------------------------------------------------ */
+/* 1. More air between the sections (level, set, practice), a little less on
+   a phone. */
+#topBar, #step2, #step4, #reviewDeckSection.review-deck-step { margin-bottom: 18px; }
+@media (max-width: 767px) {
+  #topBar, #step2, #step4, #reviewDeckSection.review-deck-step { margin-bottom: 12px; }
+}
+
+/* 2. Tighter top bar and a thinner coloured ring. */
+#topBar { padding: 6px 8px; }
+#topBar .top-bar-header { min-height: 44px; gap: 8px; }
+#topBar .learning-context-chip { min-height: 44px; padding: 4px 10px; }
+#topBar .top-bar-icon-btn,
+#topBar .gear-btn { width: 44px; height: 44px; flex: 0 0 44px; }
+#topBar .top-bar-icon-btn svg,
+#topBar .gear-btn svg { width: 24px; height: 24px; }
+#topBar::before { padding: 1.5px; }
+@media (max-width: 480px) {
+  #topBar { padding: 5px 6px; }
+  #topBar .top-bar-icon-btn,
+  #topBar .gear-btn { width: 40px; height: 40px; flex: 0 0 40px; }
+}
+
+/* 3. The set colours are the legend: each count in the line under the dots
+   carries its own swatch, so the separate legend is gone. */
+.study-set-stat { font-weight: inherit; white-space: nowrap; }
+.study-set-stat i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 6px;
+  border-radius: 3px;
+  vertical-align: -1px;
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+.study-set-stat i.is-known { background: color-mix(in srgb, var(--success) 58%, var(--bg-card)); }
+.study-set-stat i.is-review { background: color-mix(in srgb, var(--warning) 66%, var(--bg-card)); }
+
+/* 4. Level scrubber: the chosen level is biggest and boldest, and each step
+   away shrinks and fades (JS sets --dist = distance from the chosen level). */
+.lsw-segments.lsw-scrubber .lsw-seg:not(.selected) {
+  transform: scale(max(0.6, calc(1.45 - 0.27 * var(--dist, 3))));
+  opacity: max(0.18, calc(1 - 0.3 * var(--dist, 3)));
+}
+.lsw-segments.lsw-scrubber .lsw-seg:not(.selected):hover { opacity: max(0.5, calc(1 - 0.3 * var(--dist, 3))); }
+/* Coverage sits at the bottom right of the level box, just under the examples. */
+.level-slider-wrap > .lsw-coverage {
+  align-self: flex-end;
+  margin: 2px 2px 0 0;
+  color: var(--text-muted);
+  font: 500 12px/1.2 var(--font-emphasis);
+}
+.level-slider-wrap > .lsw-coverage strong { color: var(--text-primary); font-weight: 700; }
+.level-slider-wrap > .lsw-coverage[hidden] { display: none; }
+.study-set-stat + .study-set-stat { margin-left: 12px; }
+#step4 .study-set-current-copy span::before { content: none; margin: 0; }
+.lsw-segments.lsw-scrubber .lsw-seg { width: 92px; }
