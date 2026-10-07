@@ -1330,16 +1330,16 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
                 <div class="lsw-readout">
                     <span class="lsw-rank"><strong id="lswLevelVal">Level ${initialIdx + 1}</strong></span>
                     <span class="lsw-range">Words <strong id="lswRankVal">${initialMetrics.start.toLocaleString()}–${initialMetrics.end.toLocaleString()}</strong> <span class="lsw-deck-total" id="lswDeckTotal" aria-label="${initialDeckTotal.toLocaleString()} cards in deck">/ ${initialDeckTotal.toLocaleString()}</span></span>
-                    <span class="lsw-coverage"${initialCoverage ? '' : ' hidden'}>~<strong id="lswCovVal">${initialCoverage}</strong> ${coverageType}</span>
                 </div>
                 <div id="lswSlider" class="lsw-segments lsw-scrubber" role="radiogroup" aria-label="Level scrubber" data-value="${initialIdx}">
                     ${percentageRanges.map((lv, i) => {
                         const segLabel = `Level ${i + 1}`;
-                        return `<button type="button" class="lsw-seg${i <= initialIdx ? ' filled' : ''}${i === initialIdx ? ' selected' : ''}" data-i="${i}" role="radio" aria-checked="${i === initialIdx}"><span class="lsw-seg-label">${segLabel}</span></button>`;
+                        return `<button type="button" class="lsw-seg${i <= initialIdx ? ' filled' : ''}${i === initialIdx ? ' selected' : ''}" data-i="${i}" style="--dist:${Math.abs(i - initialIdx)}" role="radio" aria-checked="${i === initialIdx}"><span class="lsw-seg-label">${segLabel}</span></button>`;
                     }).join('')}
                 </div>
                 <div class="lsw-ticks lsw-ticks--hidden">${ticksHTML}</div>
                 <div class="lsw-examples" id="lswExamples">&nbsp;</div>
+                <span class="lsw-coverage"${initialCoverage ? '' : ' hidden'}>~<strong id="lswCovVal">${initialCoverage}</strong> ${coverageType}</span>
             </div>
             <div class="level-selector-buttons" style="display:none">${buttonsHTML}</div>
         `;
@@ -1898,6 +1898,7 @@ function setLevelSegmentSelection(idx) {
         const i = parseInt(seg.dataset.i, 10);
         seg.classList.toggle('filled', i <= idx);
         seg.classList.toggle('selected', i === idx);
+        seg.style.setProperty('--dist', String(Math.abs(i - idx)));
         seg.setAttribute('aria-checked', i === idx ? 'true' : 'false');
     });
     const levelEl = document.getElementById('lswLevelVal');
@@ -2814,13 +2815,6 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
 
     container.innerHTML = `
         <div class="study-set-panel">
-            <div class="study-set-level-context">
-                <div class="study-set-legend" aria-label="Set progress colours">
-                    <span><i class="is-known"></i>Known</span>
-                    <span><i class="is-review"></i>Practice</span>
-                    <span><i class="is-unseen"></i>New</span>
-                </div>
-            </div>
             <div class="study-set-choice">
                 <div class="study-set-dots" role="radiogroup" aria-label="Sets in this level">${dotsHTML}</div>
                 <div class="study-set-current-copy">
@@ -2850,11 +2844,13 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
             dot.classList.toggle('is-current', selected);
             dot.setAttribute('aria-checked', selected ? 'true' : 'false');
         });
-        // One line: which set, and what is in it. The legend above names the
-        // three colours, so the counts use the same three words.
+        // One line: which set, and what is in it. 
         document.getElementById('studySetCurrentTitle').textContent = `Set ${index + 1}`;
-        document.getElementById('studySetCurrentMeta').textContent =
-            `${range.knownCount} known · ${range.reviewCount} practice · ${range.unseenCount} new`;
+        // The colours are the legend: each count wears its own swatch.
+        document.getElementById('studySetCurrentMeta').innerHTML =
+            `<b class="study-set-stat"><i class="is-known"></i>${range.knownCount} known</b>`
+            + `<b class="study-set-stat"><i class="is-review"></i>${range.reviewCount} practice</b>`
+            + `<b class="study-set-stat"><i class="is-unseen"></i>${range.unseenCount} new</b>`;
         const startBtn = document.getElementById('studySetStartBtn');
         // Three distinct states, because collapsing the last two is what made
         // finished sets hand back every card in them. studyMode 'all' keeps no

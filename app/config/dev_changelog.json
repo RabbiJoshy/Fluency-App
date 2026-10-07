@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-07T17:00:00+01:00",
+      "date": "2026-10-07 17:00 BST",
+      "agent": "Claude",
+      "summary": "Main page clear-up: spacing, tighter top bar, set colours as legend, tapering levels",
+      "detail": [
+        "More space between Choose level, Choose a set and Practice errors (a little less on phones).",
+        "Top bar is tighter with a thinner coloured ring.",
+        "Choose a set: the Known/Practice/New legend is gone; each count under the set numbers carries its own coloured swatch.",
+        "Level scrubber: the chosen level is biggest and each level away shrinks and fades.",
+        "The '~46.3% of speech' figure moved to the bottom right of the level box, under the example words."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-07T16:00:00+01:00",
       "date": "2026-10-07 16:00 BST",
       "agent": "Claude",
@@ -354,19 +368,6 @@
         "Shared shortcut definitions show accurate Mac/Windows labels and eligible audit tools",
         "Keyboard focus works on guide controls; existing study keys and reference-only rows are preserved",
         "Guide adapts to smaller windows and larger text and returns after a docked panel closes"
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-05T14:48:14+01:00",
-      "date": "2026-10-05 14:48 BST",
-      "agent": "Claude",
-      "summary": "Senses fold their sub-rows when they would need scrolling; Rarer uses is rare senses only; bigger gear tap area",
-      "detail": [
-        "When two or more senses would scroll, grouped senses fold to their main row with a '+N' chip that opens them; other senses fold before the current one, and a lone sense never folds",
-        "Rarer uses no longer lists expressions (they have their own card after a correct answer)",
-        "Back-of-card gear: tap area 52px wide (was 44)",
-        "Roadmap: TERSE row for shortening long Wiktionary contexts (e.g. pt não)"
       ],
       "commit": "pending"
     }
