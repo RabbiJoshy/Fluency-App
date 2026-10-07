@@ -15,7 +15,7 @@
 // module reads the same state the filter used and reports what it discarded.
 // That keeps one source of truth for the rules: if the filter changes, this
 // follows without edits.
-import './state.js?v=57eedbc0';
+import './state.js?v=732ba8d3';
 
 // Every name below is read off globalThis rather than as a bare identifier.
 // state.js defines these lazily via defineProperty, and this module can run
@@ -727,6 +727,13 @@ function buildSmartSkipItems(extras, category, combined, needle) {
     return { items, rows, levels };
 }
 
+// Frequency rank, the one number that places a word in the list. Plain digits
+// in a fixed-width trailing slot keep the rows narrow on a phone.
+function smartSkipRankHtml(row) {
+    const rank = Number(row.kind === 'lemma' ? (row.group?.rank ?? row.item?.rank) : row.item?.rank);
+    return `<span class="smart-skip-rank">${Number.isFinite(rank) ? rank : ''}</span>`;
+}
+
 function smartSkipRowHtml(row, index, showTag) {
     const item = row.item;
     const id = escapeHtml(item.id || '');
@@ -737,6 +744,7 @@ function smartSkipRowHtml(row, index, showTag) {
             <span class="smart-skip-w">${escapeHtml(lemma.word)}</span>
             <span class="smart-skip-g extras-translation-slot">${escapeHtml(shortGloss(lemma.translation))}</span>
             <span class="smart-skip-forms">${forms}</span>
+            ${smartSkipRankHtml(row)}
         </button></li>`;
     }
     const tag = showTag ? escapeHtml(KIND_BY_ID[row.kind]?.tag || '') : '';
@@ -752,6 +760,7 @@ function smartSkipRowHtml(row, index, showTag) {
         <span class="smart-skip-w">${escapeHtml(item.word)}${more}</span>
         ${gloss}
         <span class="smart-skip-tag">${tag}</span>
+        ${smartSkipRankHtml(row)}
     </button></li>`;
 }
 
@@ -759,7 +768,6 @@ function smartSkipRowHtml(row, index, showTag) {
 // next one instead of staying stuck above it.
 function smartSkipLevelHtml(level, index) {
     return `<li class="smart-skip-group" data-ss-group="${index}">
-        <div class="smart-skip-level"><b>${escapeHtml(level.label)}</b></div>
         <ul class="smart-skip-group-rows"></ul>
     </li>`;
 }
@@ -976,10 +984,9 @@ async function openSmartSkipPreview(rowIndex) {
     if (!row || !modal) return;
     _ssPreviewRow = row;
     const token = ++_ssPreviewToken;
-    const level = _ssLevels[row.levelIndex];
     const why = row.kind === 'lemma' ? 'Combined forms' : (KIND_BY_ID[row.kind]?.why || 'Skipped');
     const word = row.kind === 'lemma' ? row.group.lemma.word : row.item.word;
-    document.getElementById('smartSkipPreviewWhy').textContent = level ? `${why} · ${level.label}` : why;
+    document.getElementById('smartSkipPreviewWhy').textContent = why;
     document.getElementById('smartSkipPreviewWord').textContent = word;
     paintPreviewGloss(row);
     const forms = document.getElementById('smartSkipPreviewForms');
