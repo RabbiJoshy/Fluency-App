@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-07T19:45:00+01:00",
+      "date": "2026-10-07 19:45 BST",
+      "agent": "Claude",
+      "summary": "Learn / Practise button text matches Quick N",
+      "detail": [
+        "The set start button ('Learn N new cards') is 17px, weight 750, like the Quick N button (was 15px, 700)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-07T19:30:00+01:00",
       "date": "2026-10-07 19:30 BST",
       "agent": "Claude",
@@ -347,17 +357,6 @@
         "Remove the dictionary icon added beside the Portuguese tutorial headword",
         "Remove its extra explanation and unused header styling",
         "Keep the verified example-source labels below the example sentence"
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-05T19:13:51+01:00",
-      "date": "2026-10-05 19:13 BST",
-      "agent": "Codex",
-      "summary": "Explain part of speech and dictionary form separately in the tutorial",
-      "detail": [
-        "Give the part-of-speech label and dictionary form their own explanation boxes",
-        "Highlight each part of the front-card pill separately while stepping through the tutorial"
       ],
       "commit": "pending"
     }
