@@ -48,11 +48,12 @@ def _char_sub_cost(c1: str, c2: str, word_len: int) -> float:
     for cls in NATURAL_CONSONANT_CLASSES:
         if c1 in cls and c2 in cls:
             return 0.35
-    # Vowel shifts: discounted only for longer words (len >= 5)
-    # On short words (len <= 4), vowel changes cost full 1.0 to protect short lookalikes
+    # Vowel shifts: discounted moderately for longer words (len >= 5)
+    # On short words (len <= 4), vowel changes cost full 1.0 to protect short lookalikes.
     if c1 in VOWEL_CHARS and c2 in VOWEL_CHARS and word_len >= 5:
-        return 0.35
+        return 0.50
     return 1.0
+
 
 
 def _cognate_align_distance(s1: str, s2: str) -> float:
@@ -143,7 +144,17 @@ def _score(
     # information density per character. A 1-letter change alters 25-33% of the word,
     # so we scale the penalty factor to prevent marginal stretch pairs (e.g. nome/name,
     # três/three) from hitting the threshold.
-    penalty_scale = 1.0 + max(0.0, 5 - max_len) * 0.15 if not ending_matched else 1.0
+    penalty_scale = 1.0
+    if not ending_matched:
+        if max_len < 5:
+            penalty_scale += max(0.0, 5 - max_len) * 0.15
+        # Initial syllable / onset anchor: on short/medium words (len <= 6), if the
+        # opening onset and nucleus differ (e.g. canal/channel 'ca' vs 'ch', pueblo/people 'pu' vs 'pe'),
+        # the words do not share a common perceptual syllable envelope.
+        onset_match = len(left) >= 2 and len(right) >= 2 and left[:2] == right[:2]
+        if max_len <= 6 and not onset_match:
+            penalty_scale += 0.20
+
     return max(0.0, 1.0 - (dist * penalty_scale) / max_len)
 
 

@@ -103,6 +103,13 @@ class LearnerAlignTests(unittest.TestCase):
         self.assertLess(form_score("veia", "vein", self.pt), 0.75)
         self.assertLess(form_score("soco", "sock", self.pt), 0.75)
 
+    def test_syllable_mismatched_and_onset_deviant_pairs_stay_below_cutoff(self) -> None:
+        # pueblo/people, brisa/breeze, canal/channel are not obvious cognates
+        # due to onset divergence and syllable structure differences.
+        self.assertLess(form_score("pueblo", "people", self.es), 0.75)
+        self.assertLess(form_score("brisa", "breeze", self.es), 0.75)
+        self.assertLess(form_score("canal", "channel", self.es), 0.75)
+
     def test_phonetic_dampening_when_sounds_diverge(self) -> None:
         # When policy uses pronunciation, words with diverging IPA get dampened
         pt_phon = replace(self.pt, use_pronunciation=True)
@@ -114,6 +121,7 @@ class LearnerAlignTests(unittest.TestCase):
             known_sounds=["neɪm"],
         )
         self.assertLess(score_with_ipa, 0.70)
+
 
 
 if __name__ == "__main__":
