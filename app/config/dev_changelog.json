@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-07T21:00:00+01:00",
+      "date": "2026-10-07 21:00 BST",
+      "agent": "Claude",
+      "summary": "Chosen set is much more obvious",
+      "detail": [
+        "The set you are on has a thick accent-coloured ring set off by a dark gap, is lifted and enlarged, and no longer pulses."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-07T20:30:00+01:00",
       "date": "2026-10-07 20:30 BST",
       "agent": "Claude",
@@ -341,20 +351,6 @@
         "Practice is now a 'Practice errors' section with the same header and info button as the others ('Words you have not got right come first.'); it reads 'N cards ready to practise' and 'Quick practice (20)', with no explainer text",
         "The Practice sheet drops its top block and holds spaced repetition and the three practice groups; 'Not right yet' is now 'Never correct' and 'very late' is 'long overdue another review'",
         "'Fluency' is replaced with 'this app' (or reworded) in visible text across the app; the Spotify player's device name is unchanged"
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-05T19:26:50+01:00",
-      "date": "2026-10-05 19:26 BST",
-      "agent": "Codex",
-      "summary": "Use a richer Portuguese tutorial card and make practice instructions explicit",
-      "detail": [
-        "Replace banco with provar: prove, taste and try on, with 14 curated release examples",
-        "Keep the dominant meaning first and preserve verified IMDb and Tatoeba sources",
-        "Replace button-like Try it labels with instructions naming the card control to click or tap",
-        "Highlight the whole example sentence when explaining example cycling",
-        "Reveal closed meaning groups when the next explanation needs their rows and fit mobile cards to the instruction sheet"
       ],
       "commit": "pending"
     }

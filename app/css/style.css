@@ -22613,3 +22613,18 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 .study-set-stat i.is-known { background: var(--set-known, #9fe8b4); }
 .study-set-stat i.is-review { background: var(--set-review, #ffe27a); }
 .study-set-stat i.is-unseen { background: var(--set-new, #ffffff); }
+
+/* The chosen set must be unmistakable: a thick accent ring set off from the
+   pill by a dark gap, lifted and enlarged, with no pulse to wash it out. The
+   other pills stay flat. */
+#step4 .study-set-dot.is-current {
+  animation: none;
+  transform: translateY(-2px) scale(1.08);
+  border-color: var(--accent-primary);
+  box-shadow:
+    0 0 0 3px var(--bg-card),
+    0 0 0 6px var(--accent-primary),
+    0 8px 20px rgba(var(--accent-primary-rgb), 0.45);
+  z-index: 2;
+}
+#step4 .study-set-dots { padding: 8px 6px 6px; }
