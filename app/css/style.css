@@ -22283,3 +22283,24 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
   letter-spacing: 0;
   text-transform: none;
 }
+
+/* Smart Skip list: one run of rows in frequency order. The level bands are
+   gone; each row ends in its rank, a narrow right-aligned number. On a phone
+   the category tag (only shown under "All skipped") gives way to it. */
+.smart-skip-row { grid-template-columns: minmax(0, max-content) minmax(0, 1fr) auto auto; }
+.smart-skip-row--lemma { grid-template-columns: minmax(0, max-content) minmax(0, max-content) minmax(0, 1fr) auto; }
+.smart-skip-row .smart-skip-tag:empty { display: none; }
+.smart-skip-rank {
+  min-width: 2.6ch;
+  text-align: right;
+  color: var(--text-muted);
+  font: 500 12px/1 var(--font-reading);
+  font-variant-numeric: tabular-nums;
+  opacity: 0.85;
+}
+.smart-skip-group-rows > li:first-child > .smart-skip-row { border-top: 1px solid var(--border-color); }
+.smart-skip-list > .smart-skip-group:first-child > .smart-skip-group-rows > li:first-child > .smart-skip-row { border-top: 0; }
+@media (max-width: 520px) {
+  .smart-skip-row { column-gap: 8px; padding: 0 12px; }
+  .smart-skip-row .smart-skip-tag { display: none; }
+}

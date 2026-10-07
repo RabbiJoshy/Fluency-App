@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-07T12:00:00+01:00",
+      "date": "2026-10-07 12:00 BST",
+      "agent": "Claude",
+      "summary": "Smart Skip list: levels replaced by each word's frequency rank",
+      "detail": [
+        "The 'Level N' bands are gone; the list is one run of rows in frequency order.",
+        "Each row ends in its rank, a narrow right-aligned number. On phones the category tag is hidden to make room.",
+        "The word preview no longer names a level."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-07T11:00:00+01:00",
       "date": "2026-10-07 11:00 BST",
       "agent": "Claude",
@@ -358,17 +370,6 @@
       "detail": [
         "The service worker served config files from its cache, so new app code could run against the old release list until a second reload (seen with Czech loading v21 after v22 shipped).",
         "Config files are now fetched from the network first; the cached copy is used only when offline."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-04T19:25:00+01:00",
-      "date": "2026-10-04 19:25 BST",
-      "agent": "Claude",
-      "summary": "Czech speech deck updated to v22: fixed verbal expressions are now recognised.",
-      "detail": [
-        "About 730 Czech examples now show the expression they belong to, e.g. dávat pozor, v pohodě, ve skutečnosti, mít rád, dát vědět.",
-        "Everything else in the Czech deck is unchanged from v21."
       ],
       "commit": "pending"
     }
