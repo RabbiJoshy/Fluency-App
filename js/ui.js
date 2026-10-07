@@ -1,7 +1,7 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=bc71490c';
-import { readFastTrack } from './fast-track-preferences.js?v=bc71490c';
+import './state.js?v=d136dd80';
+import { readFastTrack } from './fast-track-preferences.js?v=d136dd80';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -2848,9 +2848,9 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         document.getElementById('studySetCurrentTitle').textContent = `Set ${index + 1}`;
         // The colours are the legend: each count wears its own swatch.
         document.getElementById('studySetCurrentMeta').innerHTML =
-            `<b class="study-set-stat"><i class="is-known"></i>${range.knownCount} known</b>`
-            + `<b class="study-set-stat"><i class="is-review"></i>${range.reviewCount} practice</b>`
-            + `<b class="study-set-stat"><i class="is-unseen"></i>${range.unseenCount} new</b>`;
+            `<b class="study-set-stat"><i class="is-known"></i>${range.knownCount} Known</b>`
+            + `<b class="study-set-stat"><i class="is-review"></i>${range.reviewCount} Practice</b>`
+            + `<b class="study-set-stat"><i class="is-unseen"></i>${range.unseenCount} New</b>`;
         const startBtn = document.getElementById('studySetStartBtn');
         // Three distinct states, because collapsing the last two is what made
         // finished sets hand back every card in them. studyMode 'all' keeps no
@@ -3261,7 +3261,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=bc71490c')
+        import('./spotify.js?v=d136dd80')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

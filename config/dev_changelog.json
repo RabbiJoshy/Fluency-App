@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-07T20:00:00+01:00",
+      "date": "2026-10-07 20:00 BST",
+      "agent": "Claude",
+      "summary": "Set box: bigger set numbers and title, lighter counts line, capitalised labels",
+      "detail": [
+        "Set pill numbers 13 to 18px; 'Set N' 15 to 18px.",
+        "The counts line is 14px, regular weight, brighter colour.",
+        "'Known · Practice · New' are capitalised."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-07T19:45:00+01:00",
       "date": "2026-10-07 19:45 BST",
       "agent": "Claude",
@@ -345,18 +357,6 @@
         "Moving on from it (swipe, flag or next) shows Flashcard 2 of 2 in the same place before returning; the Back-to button still leaves at once",
         "When search focuses a particular meaning, the card that holds it opens first",
         "Split cards are built by one shared function (buildSplitCardPair) for sets and single-word views alike"
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-05T19:15:28+01:00",
-      "date": "2026-10-05 19:15 BST",
-      "agent": "Codex",
-      "summary": "Remove the incorrect entity-style icon beside banco in the tutorial",
-      "detail": [
-        "Remove the dictionary icon added beside the Portuguese tutorial headword",
-        "Remove its extra explanation and unused header styling",
-        "Keep the verified example-source labels below the example sentence"
       ],
       "commit": "pending"
     }
