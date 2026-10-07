@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-07T22:30:00+01:00",
+      "date": "2026-10-07 22:30 BST",
+      "agent": "Claude",
+      "summary": "Smart Skip row reads as one control: state line, Details cue, solid red Recommended pill",
+      "detail": [
+        "Under the name: 'Off', or 'On · N words skipped' (accent coloured when on).",
+        "'Details ›' on the right says the row opens the details page; the switch alone turns it on.",
+        "'Recommended' is a solid red pill with white text."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-07T22:00:00+01:00",
       "date": "2026-10-07 22:00 BST",
       "agent": "Claude",
@@ -334,17 +346,6 @@
         "Removed the purple tr. badge and the instruction to click the meaning heading.",
         "Example contexts use the real card’s shaded cue areas.",
         "Desktop explanation titles, body text, Back/Next buttons and progress count are larger and brighter."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-05T22:23:59+01:00",
-      "date": "2026-10-05 22:23 BST",
-      "agent": "Claude",
-      "summary": "Reflexive split words put each sense on its own card; 'Flashcard 1 of 2' sits beside stacked pills",
-      "detail": [
-        "Senses go to the card their split assigned them (by sense id); 'pongan' no longer shows ponerse's senses and examples on poner's card",
-        "'Flashcard 1 of 2' runs under side-by-side pills, and moves to their right, centred on the pair, when the pills stack"
       ],
       "commit": "pending"
     }

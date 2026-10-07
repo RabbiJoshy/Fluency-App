@@ -194,9 +194,9 @@ function refresh() {
     }
     const hubSummary = document.getElementById('fastTrackHubSummary');
     if (hubSummary) {
-        hubSummary.textContent = !on ? ''
-            : skipped ? `${skipped.toLocaleString()} ${skipped === 1 ? 'word' : 'words'} skipped`
-            : 'No words skipped';
+        hubSummary.textContent = !on ? 'Off'
+            : skipped ? `On · ${skipped.toLocaleString()} ${skipped === 1 ? 'word' : 'words'} skipped`
+            : 'On · No words skipped';
     }
 
     updateMappingStatus();
