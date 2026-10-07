@@ -5,7 +5,7 @@
 // Bump CACHE_NAME alongside any change to ASSET_VERSION below — old caches
 // are deleted in the activate handler, so a bump forces the new pre-cache
 // list to be rebuilt on next install.
-const CACHE_NAME = 'flashcards-v580-e722355c';
+const CACHE_NAME = 'flashcards-v580-e8a9ca9a';
 const SHELL_CACHE_PREFIX = 'flashcards-v';
 const CONTENT_CACHE_PREFIX = 'fluency-content-';
 const CONTENT_STAGING_PREFIX = `${CONTENT_CACHE_PREFIX}staging-`;
@@ -15,7 +15,7 @@ const scopedPath = path => `${SCOPE_PATH}${path}`;
 // Single source of truth for the module/CSS version tags. Must match
 // js/main.js's import URLs and index.html's modulepreload links. When you
 // bump the ?v= tags, change this and bump CACHE_NAME above.
-const ASSET_VERSION = 'e722355c';
+const ASSET_VERSION = 'e8a9ca9a';
 
 // Pre-cache the boot-critical static assets on install. Without this, the
 // first install populates the cache lazily — visit 1 doesn't go through
@@ -26,8 +26,8 @@ const ASSET_VERSION = 'e722355c';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/css/style.css?v=e722355c',
-  '/css/light-theme.css?v=e722355c',
+  '/css/style.css?v=e8a9ca9a',
+  '/css/light-theme.css?v=e8a9ca9a',
   '/config/config.json',
   '/data/speech-frequency/es.json',
   '/data/speech-frequency/fr.json',
@@ -35,54 +35,54 @@ const urlsToCache = [
   '/data/speech-frequency/cs.json',
   '/config/cefr_levels.json',
   '/config/offline-content-manifest.json',
-  '/js/routes.js?v=e722355c',
-  '/js/main.js?v=e722355c',
-  '/js/theme.js?v=e722355c',
-  '/js/state.js?v=e722355c',
+  '/js/routes.js?v=e8a9ca9a',
+  '/js/main.js?v=e8a9ca9a',
+  '/js/theme.js?v=e8a9ca9a',
+  '/js/state.js?v=e8a9ca9a',
   `/js/data-contracts.js?v=${ASSET_VERSION}`,
   `/js/offline-db.js?v=${ASSET_VERSION}`,
   `/js/sync-queue.js?v=${ASSET_VERSION}`,
   `/js/offline-content.js?v=${ASSET_VERSION}`,
-  '/js/speech.js?v=e722355c',
+  '/js/speech.js?v=e8a9ca9a',
   `/js/artist-ui.js?v=${ASSET_VERSION}`,
-  '/js/auth.js?v=e722355c',
-  '/js/card-replica.js?v=e722355c',
-  '/js/tutorial.js?v=e722355c',
-  '/js/walkthrough.js?v=e722355c',
-  '/js/spotify.js?v=e722355c',
+  '/js/auth.js?v=e8a9ca9a',
+  '/js/card-replica.js?v=e8a9ca9a',
+  '/js/tutorial.js?v=e8a9ca9a',
+  '/js/walkthrough.js?v=e8a9ca9a',
+  '/js/spotify.js?v=e8a9ca9a',
   `/js/estimation.js?v=${ASSET_VERSION}`,
-  '/js/release-host.js?v=e722355c',
-  '/js/config.js?v=e722355c',
-  '/js/progress.js?v=e722355c',
-  '/js/progress-identity.js?v=e722355c',
-  '/js/knowledge.js?v=e722355c',
-  '/js/ui.js?v=e722355c',
-  '/js/fast-track-preferences.js?v=e722355c',
-  '/js/vocab.js?v=e722355c',
-  '/js/grammar-cards.js?v=e722355c',
-  '/js/cognates.js?v=e722355c',
-  '/js/coverage.js?v=e722355c',
-  '/js/fast-mode.js?v=e722355c',
-  '/js/extras.js?v=e722355c',
+  '/js/release-host.js?v=e8a9ca9a',
+  '/js/config.js?v=e8a9ca9a',
+  '/js/progress.js?v=e8a9ca9a',
+  '/js/progress-identity.js?v=e8a9ca9a',
+  '/js/knowledge.js?v=e8a9ca9a',
+  '/js/ui.js?v=e8a9ca9a',
+  '/js/fast-track-preferences.js?v=e8a9ca9a',
+  '/js/vocab.js?v=e8a9ca9a',
+  '/js/grammar-cards.js?v=e8a9ca9a',
+  '/js/cognates.js?v=e8a9ca9a',
+  '/js/coverage.js?v=e8a9ca9a',
+  '/js/fast-mode.js?v=e8a9ca9a',
+  '/js/extras.js?v=e8a9ca9a',
   `/js/song-sets-core.js?v=${ASSET_VERSION}`,
-  '/js/song-sets.js?v=e722355c',
-  '/js/spotify-playlist-import.js?v=e722355c',
-  '/js/playlist-live.js?v=e722355c',
+  '/js/song-sets.js?v=e8a9ca9a',
+  '/js/spotify-playlist-import.js?v=e8a9ca9a',
+  '/js/playlist-live.js?v=e8a9ca9a',
   `/js/vocabulary-import-core.js?v=${ASSET_VERSION}`,
-  '/js/vocabulary-import.js?v=e722355c',
+  '/js/vocabulary-import.js?v=e8a9ca9a',
   `/js/spanishdict-usage.js?v=${ASSET_VERSION}`,
-  '/js/reverse-cues.js?v=e722355c',
-  '/js/flags.js?v=e722355c',
-  '/js/card-metadata-pills.js?v=e722355c',
-  '/js/flashcards.js?v=e722355c',
-  '/js/keyboard-guide.js?v=e722355c',
+  '/js/reverse-cues.js?v=e8a9ca9a',
+  '/js/flags.js?v=e8a9ca9a',
+  '/js/card-metadata-pills.js?v=e8a9ca9a',
+  '/js/flashcards.js?v=e8a9ca9a',
+  '/js/keyboard-guide.js?v=e8a9ca9a',
   '/icons/tatoeba.svg',
   '/icons/wikipedia-w.svg',
   `/js/example-personalisation.js?v=${ASSET_VERSION}`,
-  '/js/flashcards-modals.js?v=e722355c',
-  '/js/flashcards-conj.js?v=e722355c',
-  '/js/side-dock.js?v=e722355c',
-  '/js/review-home.js?v=e722355c'
+  '/js/flashcards-modals.js?v=e8a9ca9a',
+  '/js/flashcards-conj.js?v=e8a9ca9a',
+  '/js/side-dock.js?v=e8a9ca9a',
+  '/js/review-home.js?v=e8a9ca9a'
 ];
 
 self.addEventListener('install', event => {
