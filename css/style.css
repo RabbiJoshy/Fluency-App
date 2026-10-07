@@ -22548,3 +22548,13 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 .sense-prominence-badge[class*="prominence-"],
 :root[data-theme="light"] .sense-prominence-badge[class*="prominence-"] { color: var(--text-primary) !important; }
 .sense-prominence-meter i { background: currentColor !important; }
+
+/* The taper has to beat `.lsw-seg.filled:not(.selected)` (levels already
+   passed), which was pinning those to a flat 62% and hiding the effect. */
+.lsw-segments.lsw-scrubber .lsw-seg:not(.selected),
+.lsw-segments.lsw-scrubber .lsw-seg.filled:not(.selected) {
+  transform: scale(max(0.55, calc(1.5 - 0.3 * var(--dist, 3))));
+  opacity: max(0.15, calc(1 - 0.32 * var(--dist, 3)));
+}
+.lsw-segments.lsw-scrubber .lsw-seg:not(.selected):hover,
+.lsw-segments.lsw-scrubber .lsw-seg.filled:not(.selected):hover { opacity: max(0.55, calc(1 - 0.32 * var(--dist, 3))); }

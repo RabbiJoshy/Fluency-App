@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-07T18:30:00+01:00",
+      "date": "2026-10-07 18:30 BST",
+      "agent": "Claude",
+      "summary": "Level scrubber taper now works on both sides",
+      "detail": [
+        "Levels you have passed were pinned to a flat 62% opacity and hid the taper; now every level shrinks and fades with its distance from the chosen one (about 120%, 90%, 60% size; 68%, 36%, 15% opacity)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-07T18:00:00+01:00",
       "date": "2026-10-07 18:00 BST",
       "agent": "Claude",
@@ -354,18 +364,6 @@
         "Order meanings by commonness and remove the old selection tick",
         "Add working meaning information and complete dictionary/source highlights",
         "Show verified IMDb titles for Portuguese dialogue examples"
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-05T18:59:30+01:00",
-      "date": "2026-10-05 18:59 BST",
-      "agent": "Codex",
-      "summary": "Import known words is available for every language",
-      "detail": [
-        "Enable import in Settings, progress and placement for all signed-in learners",
-        "Match against the selected language’s Speech deck and save its language and card IDs",
-        "Accept current surface card IDs and preserve exact accents, preview and repeat-import behaviour"
       ],
       "commit": "pending"
     }
