@@ -1,4 +1,4 @@
-import { flagImgHTML, regionFlagCode } from './flags.js?v=c3736a54';
+import { flagImgHTML, regionFlagCode } from './flags.js?v=93aef8dd';
 
 // Card metadata badges, chips, and sense-detail formatting.
 // Handles canonical features, qualifier formatting, and grammar pill presentation
