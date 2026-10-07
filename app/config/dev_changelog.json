@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-07T21:40:00+01:00",
+      "date": "2026-10-07 21:40 BST",
+      "agent": "Claude",
+      "summary": "Set progress colours a bit deeper",
+      "detail": [
+        "Known #3fdc78 to #22c55e; Practice #ffd426 to #f5b800."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-07T21:20:00+01:00",
       "date": "2026-10-07 21:20 BST",
       "agent": "Claude",
@@ -335,18 +345,6 @@
         "Removed the animated language, mode, level and set selection opening.",
         "First-run onboarding waits until Speech or Lyrics is chosen.",
         "Speech teaches one card; Spanish Lyrics reuses the same tour with song line count, song credit, English translation and playback explanations."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-05T19:32:19+01:00",
-      "date": "2026-10-05 19:32 BST",
-      "agent": "Claude",
-      "summary": "Housekeeping: removed unused backup-sentence loading code from the card script; the changelog now keeps the latest 30 entries.",
-      "detail": [
-        "Removed the never-called backup example loader from flashcards.js (no visible change).",
-        "Trimmed this changelog to the newest 30 entries; older ones stay in git history.",
-        "Deploy merges now keep at most 30 entries, so trimmed entries cannot return."
       ],
       "commit": "pending"
     }

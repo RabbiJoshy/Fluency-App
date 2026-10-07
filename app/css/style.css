@@ -22595,8 +22595,8 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
    white for what is left, so the number reads in black on every segment. The
    swatches in the counts line use the same three colours. */
 #step4 {
-  --set-known: #3fdc78;
-  --set-review: #ffd426;
+  --set-known: #22c55e;
+  --set-review: #f5b800;
   --set-new: #ffffff;
 }
 #step4 .study-set-dot {
@@ -22610,8 +22610,8 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 }
 #step4 .study-set-dot:hover:not(:disabled),
 #step4 .study-set-dot.is-current { color: #0b0f14; }
-.study-set-stat i.is-known { background: var(--set-known, #3fdc78); }
-.study-set-stat i.is-review { background: var(--set-review, #ffd426); }
+.study-set-stat i.is-known { background: var(--set-known, #22c55e); }
+.study-set-stat i.is-review { background: var(--set-review, #f5b800); }
 .study-set-stat i.is-unseen { background: var(--set-new, #ffffff); }
 
 /* The chosen set must be unmistakable: a thick accent ring set off from the
