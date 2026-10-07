@@ -645,7 +645,7 @@ const SKIP_KINDS = [
 const KIND_BY_ID = Object.fromEntries(SKIP_KINDS.map(kind => [kind.id, kind]));
 const PAGE_CHUNK = 80;
 
-let _activeSkippedCategory = 'all';
+let _activeSkippedCategory = 'cognate';
 let _ssQuery = '';
 let _ssItems = [];          // flat display list: level dividers and rows
 let _ssRows = [];           // row payloads, indexed by data-ss-row
@@ -671,7 +671,7 @@ function smartSkipMenu(extras) {
     skips.forEach(kind => options.push({ id: kind.id, label: `${kind.menu} (${kind.count.toLocaleString()})` }));
     const combined = groupMergedLemmas(extras.lemmas || []);
     if (combined.length) {
-        options.push({ id: 'lemma', label: `Combined forms (${combined.length.toLocaleString()} cards)` });
+        options.push({ id: 'lemma', label: `Combined forms (${combined.length.toLocaleString()})` });
     }
     return { options, combined };
 }
@@ -813,7 +813,10 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory, { force = f
     const { options, combined } = smartSkipMenu(extras);
     const category = options.some(option => option.id === filterCategory)
         ? filterCategory
-        : (options[0]?.id || 'all');
+        // Look-alikes are the skip a learner can check at a glance, so they open first.
+        : (options.find(option => option.id === 'cognate')?.id
+            || options.find(option => option.id !== 'all')?.id
+            || options[0]?.id || 'all');
     const needle = _ssQuery.trim().toLocaleLowerCase();
     const signature = JSON.stringify([
         g().selectedLanguage, Boolean(g().activeArtist), category, needle, extras.ready,
@@ -1137,7 +1140,7 @@ function openMergedForms() {
 
 // The word lists live on the Smart Skip page now. Opening one opens the page
 // with the menu already on that category.
-function openSkippedWords(initialCategory = 'all') {
+function openSkippedWords(initialCategory = 'cognate') {
     _ssQuery = '';
     _activeSkippedCategory = initialCategory;
     if (g().openFastModePage) g().openFastModePage({ section: 'decks' });

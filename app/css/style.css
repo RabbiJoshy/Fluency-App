@@ -22269,3 +22269,17 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
   --bg-tertiary: #090d12;
   --border-color: #2a3542;
 }
+
+/* Smart Skip: vertical room. The title sits close to the first box, and the
+   "Skipped words" label shares a line with its menu, in the menu's own font. */
+#fastModeModal .smart-skip-body { gap: 8px; }
+#fastModeModal:not([data-dock]) .smart-skip-body h2 { padding-bottom: 0; }
+#fastModeModal .smart-skip-words { gap: 6px; }
+.smart-skip-toolbar { gap: 10px; }
+.smart-skip-toolbar .smart-skip-label {
+  flex: none;
+  color: var(--text-primary);
+  font: 600 14px/1.1 var(--font-reading);
+  letter-spacing: 0;
+  text-transform: none;
+}
