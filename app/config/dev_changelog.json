@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-07T15:00:00+01:00",
+      "date": "2026-10-07 15:00 BST",
+      "agent": "Claude",
+      "summary": "Smart Skip: two channels on desktop; clearer look-alike and combined-forms wording",
+      "detail": [
+        "Wide screens: settings in a left column that stays put, the word list on the right. Phones keep one column.",
+        "Look-alikes now read 'Words that look similar and mean the same in English'.",
+        "Combined forms notes that forms with a meaning of their own (fue, al) keep their own card."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-07T14:00:00+01:00",
       "date": "2026-10-07 14:00 BST",
       "agent": "Claude",
@@ -359,19 +371,6 @@
       "detail": [
         "Split cards called an undefined colour function (posAccentRgb), so rendering stopped after the 'Flashcard 1 of 2' label and the previous card's word, POS, rank and frequency stayed on screen",
         "Now uses getPosAccentRgb; vamos and hay each render as exactly two full cards with the word's full rank and frequency"
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-04T23:22:00+01:00",
-      "date": "2026-10-04 23:22 BST",
-      "agent": "Claude",
-      "summary": "Split words show only Flashcard 1 of 2 and 2 of 2; lighter front POS labels",
-      "detail": [
-        "No phrase follow-up card after a split companion card (it read as a third card)",
-        "Any other card for the same surface is dropped when the surface is split; replaces the lemma-based filter, which could drop unrelated words",
-        "'Card 1 of 2' is now plain 'Flashcard 1 of 2' text, larger, with a tap-for-explanation tooltip",
-        "Front lemma/POS labels lose the capsule behind them and grow ~10%"
       ],
       "commit": "pending"
     }

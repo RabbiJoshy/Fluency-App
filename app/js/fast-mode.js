@@ -16,8 +16,8 @@
 // Applies to Speech and Lyrics alike. A language whose release supports only one
 // of the two parts still gets fast mode — it just moves the part it has, and the
 // page says which part is missing.
-import './state.js?v=0962bbc1';
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=0962bbc1';
+import './state.js?v=12774937';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=12774937';
 
 let applyingMasterSwitch = false;
 let returnToSettings = false;
@@ -319,19 +319,23 @@ function updateMappingStatus() {
 const STREAMLINE_LANGUAGE_EXAMPLES = {
     spanish: {
         name: 'Spanish',
-        lemmaExplainer: '<em>hablo</em>, <em>habló</em> and <em>hablar</em> share one flashcard.'
+        lemmaExplainer: '<em>hablo</em>, <em>habló</em> and <em>hablar</em> share one flashcard.',
+        lemmaKeeps: '<em>fue</em> or <em>al</em>'
     },
     french: {
         name: 'French',
-        lemmaExplainer: '<em>parle</em>, <em>parla</em> and <em>parler</em> share one flashcard.'
+        lemmaExplainer: '<em>parle</em>, <em>parla</em> and <em>parler</em> share one flashcard.',
+        lemmaKeeps: '<em>au</em> or <em>aux</em>'
     },
     portuguese: {
         name: 'Portuguese',
-        lemmaExplainer: '<em>falo</em>, <em>falou</em> and <em>falar</em> share one flashcard.'
+        lemmaExplainer: '<em>falo</em>, <em>falou</em> and <em>falar</em> share one flashcard.',
+        lemmaKeeps: '<em>no</em> or <em>do</em>'
     },
     italian: {
         name: 'Italian',
-        lemmaExplainer: '<em>parlo</em>, <em>parlò</em> and <em>parlare</em> share one flashcard.'
+        lemmaExplainer: '<em>parlo</em>, <em>parlò</em> and <em>parlare</em> share one flashcard.',
+        lemmaKeeps: '<em>al</em> or <em>del</em>'
     },
     german: {
         name: 'German',
@@ -404,15 +408,14 @@ function updateStreamlineLanguageExamples() {
 
     const lemmaExplainer = document.querySelector('#lemmaToggleContainer .fast-mode-explainer');
     if (lemmaExplainer) {
-        lemmaExplainer.innerHTML = config.lemmaExplainer;
+        // Forms with a meaning of their own (fue, al, au) are never combined.
+        const keeps = config.lemmaKeeps ? `, like ${config.lemmaKeeps},` : '';
+        lemmaExplainer.innerHTML = `${config.lemmaExplainer} Forms with a meaning of their own${keeps} keep their own card.`;
     }
     const cognateExplainer = document.querySelector('#cognateToggleContainer .fast-mode-explainer');
     if (cognateExplainer) {
         const word = cognateExampleWord(langKey);
-        const labels = knownLanguageLabels();
-        const from = labels.length && !(labels.length === 1 && labels[0] === 'English')
-            ? ` from ${escapeExample(knownLanguagePhrase())}` : '';
-        cognateExplainer.innerHTML = `Words you can already read${from}`
+        cognateExplainer.innerHTML = `Words that look similar <em>and</em> mean the same in ${escapeExample(knownLanguagePhrase())}`
             + (word ? `, like <em>${escapeExample(word)}</em>.` : '.');
     }
     updateKnownLanguageCopy();
