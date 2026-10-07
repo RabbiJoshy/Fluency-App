@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-08T09:30:00+01:00",
+      "date": "2026-10-08 09:30 BST",
+      "agent": "Claude",
+      "summary": "End of a new-word set shows what happened, not an accuracy score",
+      "detail": [
+        "Ring centre '20/25 known'; green known arc over an amber Practice track.",
+        "Boxes read '✓ Known' and '→ Added to Practice' (amber) instead of Correct / Missed.",
+        "Each card counts once, by its last answer (attempt totals double-counted re-shown cards).",
+        "Perfect Set and confetti when every card is known. Practice sessions keep the accuracy ring."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-08T00:50:00+01:00",
       "date": "2026-10-08 00:50 BST",
       "agent": "Claude",
@@ -332,19 +345,6 @@
       "summary": "Smart Skip list: level headers no longer show a word count",
       "detail": [
         "Each level divider now reads just 'Level N'."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-07T10:00:00+01:00",
-      "date": "2026-10-07 10:00 BST",
-      "agent": "Claude",
-      "summary": "Smart Skip: tighter vertical spacing, label beside the menu, look-alikes open first",
-      "detail": [
-        "Smaller gap between the Smart Skip title and the first box, and between the boxes and the word list.",
-        "'Skipped words' now sits on the same line as its dropdown, in the dropdown's font.",
-        "Dropdown entries are all 'Name (count)'; 'Combined forms' no longer says 'cards'.",
-        "The dropdown opens on Look-alikes whenever there are any."
       ],
       "commit": "pending"
     }

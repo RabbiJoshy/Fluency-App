@@ -22874,3 +22874,15 @@ body:has(#cardTutorialModal:not(.hidden), #tutorialIntroModal:not(.hidden)) #res
    legend's card counts are plain numbers, not a key to the ring's colours. */
 .app-loading-visual[data-measure="speech"] ~ .app-loading-ring-legend i { display: none; }
 .app-loading-ring-centre span { max-width: 100px; line-height: 1.25; text-align: center; justify-self: center; }
+
+/* End of a new-word set: the ring is the set's outcome, not a score. The
+   known arc runs over a Practice-coloured track, so the two parts read as
+   Known and Practice, the same colours as the loading screen and set dots. */
+.deck-complete-score-container.is-outcome {
+  --ring-known: color-mix(in srgb, var(--success) 66%, var(--bg-card));
+  --ring-review: color-mix(in srgb, var(--warning) 72%, var(--bg-card));
+}
+.deck-complete-score-container.is-outcome .deck-score-ring-bg { stroke: var(--ring-review); }
+.deck-complete-score-container.is-outcome .deck-score-ring-fill { stroke: var(--ring-known); stroke-linecap: butt; filter: none; }
+.deck-complete-content:has(.is-outcome:not([hidden])) .incorrect-stat .deck-stat-badge,
+.deck-complete-content:has(.is-outcome:not([hidden])) .incorrect-stat .deck-stat-label { color: var(--warning); }

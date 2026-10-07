@@ -1459,7 +1459,66 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
     const scoreNum = document.getElementById('completeAccuracyNumber');
     const ringFill = document.getElementById('deckScoreRingFill');
 
-    if (statsContainer && correctEl && incorrectEl) {
+    // A set of new words reports what happened to them, not a score: missing
+    // a word never seen before is the system working, so "accuracy" there
+    // mostly measured what the learner already knew. Each card counts once,
+    // by its last answer. Practice keeps the accuracy ring: those cards were
+    // all seen before, so getting them right is real recall.
+    const isNewSet = stats.studyMode === 'new' && !stats.isDailyReview;
+    let knownCards = 0;
+    let practiceCards = 0;
+    for (const entry of Object.values(stats.cardStats || {})) {
+        const last = entry?.attempts?.[entry.attempts.length - 1]?.result;
+        if (last === 'correct') knownCards++;
+        else if (last === 'incorrect') practiceCards++;
+    }
+    const answeredCards = knownCards + practiceCards;
+    scoreContainer?.classList.toggle('is-outcome', isNewSet);
+    const correctLabel = statsContainer?.querySelector('.correct-stat .deck-stat-label');
+    const incorrectLabel = statsContainer?.querySelector('.incorrect-stat .deck-stat-label');
+    const incorrectEmoji = statsContainer?.querySelector('.incorrect-stat .deck-stat-emoji');
+    const scoreLabel = scoreContainer?.querySelector('.deck-score-label');
+    if (correctLabel) correctLabel.textContent = isNewSet ? 'Known' : 'Correct';
+    if (incorrectLabel) incorrectLabel.textContent = isNewSet ? 'Added to Practice' : 'Missed';
+    if (incorrectEmoji) incorrectEmoji.textContent = isNewSet ? '→' : '✗';
+    if (scoreLabel) scoreLabel.textContent = isNewSet ? 'known' : 'accuracy';
+
+    if (statsContainer && correctEl && incorrectEl && isNewSet) {
+        if (!isLevelCompletion && answeredCards > 0) {
+            correctEl.textContent = String(knownCards);
+            incorrectEl.textContent = String(practiceCards);
+            statsContainer.hidden = false;
+            if (accuracyEl) accuracyEl.hidden = true;
+            if (scoreContainer) {
+                scoreContainer.hidden = false;
+                if (defaultIcon) defaultIcon.hidden = true;
+                if (scoreNum) scoreNum.textContent = `${knownCards}/${answeredCards}`;
+                const allKnown = practiceCards === 0;
+                scoreContainer.classList.toggle('is-perfect', allKnown);
+                if (allKnown) {
+                    if (titleEl) titleEl.textContent = '🌟 Perfect Set!';
+                    triggerDeckCompleteConfetti();
+                }
+                if (ringFill) {
+                    const circumference = 264;
+                    const offset = circumference * (1 - knownCards / answeredCards);
+                    ringFill.style.strokeDasharray = `${circumference}`;
+                    ringFill.style.strokeDashoffset = `${circumference}`;
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            ringFill.style.transition = 'stroke-dashoffset 1s cubic-bezier(0.16, 1, 0.3, 1)';
+                            ringFill.style.strokeDashoffset = `${offset}`;
+                        });
+                    });
+                }
+            }
+        } else {
+            statsContainer.hidden = true;
+            if (accuracyEl) accuracyEl.hidden = true;
+            if (scoreContainer) scoreContainer.hidden = true;
+            if (defaultIcon) defaultIcon.hidden = false;
+        }
+    } else if (statsContainer && correctEl && incorrectEl) {
         if (!isLevelCompletion && totalAnswered > 0) {
             correctEl.textContent = String(stats.correct || 0);
             incorrectEl.textContent = String(stats.incorrect || 0);
