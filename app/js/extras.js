@@ -15,7 +15,7 @@
 // module reads the same state the filter used and reports what it discarded.
 // That keeps one source of truth for the rules: if the filter changes, this
 // follows without edits.
-import './state.js?v=ec4e3b0c';
+import './state.js?v=57eedbc0';
 
 // Every name below is read off globalThis rather than as a bare identifier.
 // state.js defines these lazily via defineProperty, and this module can run
@@ -758,11 +758,8 @@ function smartSkipRowHtml(row, index, showTag) {
 // Each level is its own group so its sticky header is pushed off by the
 // next one instead of staying stuck above it.
 function smartSkipLevelHtml(level, index) {
-    const isLemma = level.category === 'lemma';
-    const count = level.entries.length;
-    const unit = isLemma ? (count === 1 ? 'card' : 'cards') : (count === 1 ? 'word' : 'words');
     return `<li class="smart-skip-group" data-ss-group="${index}">
-        <div class="smart-skip-level"><b>${escapeHtml(level.label)}</b><span>${count.toLocaleString()} ${unit}</span></div>
+        <div class="smart-skip-level"><b>${escapeHtml(level.label)}</b></div>
         <ul class="smart-skip-group-rows"></ul>
     </li>`;
 }

@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-07T11:00:00+01:00",
+      "date": "2026-10-07 11:00 BST",
+      "agent": "Claude",
+      "summary": "Smart Skip list: level headers no longer show a word count",
+      "detail": [
+        "Each level divider now reads just 'Level N'."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-07T10:00:00+01:00",
       "date": "2026-10-07 10:00 BST",
       "agent": "Claude",
@@ -359,17 +369,6 @@
       "detail": [
         "About 730 Czech examples now show the expression they belong to, e.g. dávat pozor, v pohodě, ve skutečnosti, mít rád, dát vědět.",
         "Everything else in the Czech deck is unchanged from v21."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-04T19:10:00+01:00",
-      "date": "2026-10-04 19:10 BST",
-      "agent": "Claude",
-      "summary": "French card-back conjugation tables now come from Wiktionary as well.",
-      "detail": [
-        "The French Conjugate drawer reads a Wiktionary table (32 verbs, up from 29 from verbecc) published with release fr-speech-v7-dual-metadata-v6-20261004; the French deck itself is unchanged.",
-        "Jehle and verbecc are no longer used anywhere: their source code and pin commands are removed."
       ],
       "commit": "pending"
     }
