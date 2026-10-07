@@ -11,7 +11,7 @@
 
 import {
     REPLICA_CARDS, esc, renderBack, replicaCardHTML, wireReplicaBack, fitReplicaCard,
-} from './card-replica.js?v=34096434';
+} from './card-replica.js?v=1bd66184';
 
 
 // Each language selects its own representative card and dictionary wording.
@@ -51,6 +51,9 @@ function tutorialText(value) {
     return String(value || '')
         .replaceAll('{language}', adapter.language)
         .replaceAll('{provider}', adapter.provider)
+        .replaceAll('{posExample}', tutorialLanguageKey() === 'portuguese' ? 'For example, Portuguese “como” can be a verb (“I eat”) or a conjunction (“as”).' : '')
+        .replaceAll('{demoLemma}', currentCard()?.lemma || currentCard()?.word || '')
+        .replaceAll('{lemmaExample}', ({ portuguese: '“tenho” (I have) comes from “ter” (to have)', spanish: '“tengo” (I have) comes from “tener” (to have)', czech: '“jsem” (I am) comes from “být” (to be)', french: '“ai” (I have) comes from “avoir” (to have)' })[tutorialLanguageKey()] || '')
         .replace(/\bTap\b/g, isMobileTutorial() ? 'Tap' : 'Click');
 }
 
@@ -156,7 +159,7 @@ const TUTORIAL_DECKS = [
                         side: 'left',
                         anchor: '.meaning-row.is-current-sense',
                         title: 'The meaning you tapped',
-                        text: 'The selected row shows the full wording. The others stay short so the card stays readable.',
+                        text: 'Choosing a meaning changes the example below. The shaded cue explains when that meaning is used.',
                         actionHint: 'Click another meaning on the card',
                     },
                     {
@@ -175,7 +178,7 @@ const TUTORIAL_DECKS = [
                     },
                     {
                         side: 'right',
-                        anchor: '.sense-prominence-badge',
+                        anchor: '.meaning-row.is-current-sense .sense-prominence-badge',
                         requires: 'usageShares',
                         title: 'How common this meaning is',
                         text: 'The bars show how often this meaning shows up in real speech. Tap them to read Dominant, Common, Uncommon, or Rare.',
@@ -216,13 +219,13 @@ const TUTORIAL_DECKS = [
                         side: 'right',
                         anchor: '.front-pos-unit .card-pos',
                         title: 'Kind of word',
-                        text: 'The part of speech, such as noun or verb. On the back, meanings are grouped under this heading.',
+                        text: 'The label names the kind of word, such as a noun or verb. Different kinds of use get separate groups on the back. {posExample}',
                     },
                     {
                         side: 'right',
                         anchor: '.front-lemma-name',
                         title: 'The dictionary form',
-                        text: 'The base form you would look up in a dictionary. It can differ from the word at the top when that word is an inflected form.',
+                        text: 'Here the word and dictionary form are both “{demoLemma}”. Inflected words can differ: {lemmaExample}. The small label tells you which dictionary entry to look up.',
                     },
                     {
                         side: 'right',
@@ -245,6 +248,9 @@ const TUTORIAL_DECKS = [
 // renderCard()/flipCardFace() read this to drive the real card CSS.
 const state = {
     mode: 'speech',
+    details: false,
+    lessonPosition: null,
+    practiced: new Set(),
     stepIndex: 0,
     flipped: false,
     meaningIndex: 0,
@@ -316,14 +322,83 @@ function currentFace() {
 
 // Left column first, then right, so each note sits on the same side as the
 // element it explains.
+function lessonNotes(face) {
+    if (face === 'front') return [{ side: 'left', anchor: '.card-word',
+        title: 'Try to recall the word',
+        text: 'This is an example card. Think of a meaning for the word, then flip to check it.' }];
+    const notes = [
+        { side: 'left', anchor: '.meanings-scroll', title: 'Check the meanings',
+          text: 'The most common meanings come first. Shaded cues explain when each meaning is used; the example below matches the selected row.' },
+        { side: 'left', anchor: '.meaning-row.is-current-sense', title: 'Choose another meaning',
+          text: 'Watch the example change to match your choice.',
+          actionHint: 'Click a different meaning on the card', practice: 'meaning',
+          success: 'The example now matches your chosen meaning.' },
+        { side: 'right', anchor: '.sentence', title: 'Try another example',
+          text: 'One meaning can have several examples. The dots show which one you are reading.',
+          actionHint: 'Click the example on the card', practice: 'example',
+          success: 'You found another example of the same meaning.' },
+    ];
+    if (state.mode === 'lyrics') notes.push(
+        { side: 'right', anchor: '.example-song-credit', title: 'From your chosen songs',
+          text: 'The credit names the song and singer. The English line helps you understand the whole lyric.' },
+        { side: 'right', anchor: '.spotify-btn', title: 'Hear it in the song',
+          text: 'The Spotify button plays this moment in your Spotify. Playback needs Spotify Premium; you can continue without connecting it.',
+          actionHint: 'Click the Spotify button to hear the line' });
+    notes.push({ side: 'right', anchor: '.card-back', title: 'You’re ready to study',
+        text: 'On your own cards: recall a meaning, flip to check, then record how you did. You can explore the extra card details whenever you like.' });
+    return notes;
+}
+
 function stepNotes(step) {
     if (!step || step.kind !== 'card') return [];
+    if (!state.details) return lessonNotes(step.face);
     const notes = deckById(step.deck).faces[step.face].notes
         .filter(note => !note.requires || tutorialAdapter()[note.requires]);
-    return [
-        ...notes.filter(n => n.side !== 'right'),
-        ...notes.filter(n => n.side === 'right'),
-    ];
+    return [...notes.filter(n => n.side !== 'right'), ...notes.filter(n => n.side === 'right')];
+}
+
+function activeLessonNote() {
+    return orderedNotes()[Math.max(0, state.activeNote)];
+}
+
+function practicePending() {
+    const practice = activeLessonNote()?.practice;
+    return !state.details && practice && !state.practiced.has(practice);
+}
+
+function completePractice(practice) {
+    if (activeLessonNote()?.practice !== practice || state.details) return;
+    state.practiced.add(practice);
+    renderNotes();
+    markAnchors();
+}
+
+function toggleTutorialDetails() {
+    if (!state.details) {
+        state.lessonPosition = { step: state.stepIndex, note: state.activeNote,
+            meaning: state.meaningIndex, example: state.exampleIndex };
+        state.details = true;
+        goToStep(state.stepIndex);
+    } else {
+        state.details = false;
+        const saved = state.lessonPosition || { step: 0, note: 0 };
+        goToStep(saved.step, saved.note);
+        state.meaningIndex = saved.meaning ?? currentCard().defaultMeaningIndex ?? 0;
+        state.exampleIndex = saved.example ?? 0;
+        refreshBack();
+    }
+}
+
+function syncLessonTools() {
+    document.querySelectorAll('.card-tutorial-details-toggle').forEach(button => {
+        button.textContent = state.details ? 'Back to the lesson' : 'Explore card details';
+        button.setAttribute('aria-pressed', String(state.details));
+    });
+    document.querySelectorAll('.card-tutorial-skip-practice').forEach(button => { button.hidden = !practicePending(); });
+    ['cardTutorialContinue', 'cardTutorialMobileNext'].forEach(id => {
+        const button = document.getElementById(id);
+        if (button) button.disabled = Boolean(practicePending());
+    });
 }
 
 function orderedNotes() {
@@ -357,8 +432,7 @@ function renderCard() {
     });
 
     wireBack(stage);
-    // The summary first: on a phone the card is fitted to the space left
-    // under it.
+    // On a phone the full-size card scrolls above the lesson controls.
     renderFaceCopy();
     fitCardToContent();
     renderNotes();
@@ -389,34 +463,46 @@ function flipCardFace(mobileNote = 0) {
     const cardEl = stage?.querySelector('.card');
     if (!cardEl) return;
 
-    state.activeNote = -1;
+    state.activeNote = Math.min(mobileNote, Math.max(0, orderedNotes().length - 1));
     cardEl.classList.toggle('flipped', state.flipped);
 
     renderFaceCopy();
     renderNotes();
     syncFlipButton();
     syncContinueButton();
+    markAnchors();
     // Re-place once the transform has settled, so boxes are measured flat.
     setTimeout(() => {
         fitCardToContent();
         markAnchors();
-        const finalIndex = Math.max(0, orderedNotes().length - 1);
-        setActiveNote(Math.min(mobileNote, finalIndex));
     }, 640);
 }
 
 // Handlers for everything inside the back face. Called again after every
 // back-face rebuild, since those nodes are replaced wholesale.
 function wireBack(stage) {
+    stage.querySelectorAll('.meaning-row, .sentence[data-replica-cycle="1"]').forEach(control => {
+        control.tabIndex = 0;
+        control.setAttribute('role', 'button');
+        control.setAttribute('aria-label', control.classList.contains('meaning-row')
+            ? `Choose meaning: ${control.querySelector('.meaning-row-translation')?.textContent.trim()}` : 'Show another example');
+        control.addEventListener('keydown', event => {
+            if (event.target !== control || !['Enter', ' '].includes(event.key)) return;
+            event.preventDefault(); control.click();
+        });
+    });
     wireReplicaBack(stage, {
         onSelectMeaning: idx => {
+            const changed = idx !== state.meaningIndex;
             state.meaningIndex = idx;
             state.exampleIndex = 0;
             refreshBack();
+            if (changed) completePractice('meaning');
         },
         onCycleExample: () => {
             state.exampleIndex += 1;
             refreshBack();
+            completePractice('example');
         },
         onLayoutChange: markAnchors,
     });
@@ -448,7 +534,7 @@ function syncContinueButton() {
     const next = steps[state.stepIndex + 1];
     const turningSameCard = next && next.kind === 'card' && next.deck === step.deck;
     btn.textContent = index < notes.length - 1 ? 'Next →'
-        : !next ? 'Finish tutorial'
+        : !next ? (state.details ? 'Back to the lesson' : 'Start studying')
         : turningSameCard ? 'Flip the card over →'
         : 'Next →';
     btn.classList.remove('is-secondary');
@@ -460,6 +546,7 @@ function syncContinueButton() {
         const position = tutorialStepPosition(index);
         progress.textContent = `${position.current} of ${position.total}`;
     }
+    syncLessonTools();
 }
 
 // ---------------------------------------------------------------------------
@@ -481,37 +568,20 @@ function syncContinueButton() {
 // three senses and `tem` has four with grammar pills under the selected one.
 function fitCardToContent() {
     const inner = document.querySelector('#cardTutorialStage .card-replica');
-    const height = fitReplicaCard(inner, { floor: isMobileTutorial() ? 400 : Math.min(480, Math.round(window.innerHeight * 0.64)) });
-    fitCardToPhone(inner, height);
-}
-
-// On a phone the card shares the screen with the summary above it and the
-// coach sheet pinned below, and the back of a card can be taller than the gap
-// between them, leaving its example under the coach. Scale the whole card
-// down until it fits, rather than making the reader scroll behind the sheet.
-// The space kept for the coach is its tallest usual size, so the card does not
-// change size from one step to the next.
-const PHONE_COACH_RESERVE = 200;
-const PHONE_MIN_CARD_SCALE = 0.72;
-
-function fitCardToPhone(inner, height) {
     if (!inner) return;
-    const body = document.getElementById('cardTutorialBody');
-    if (!isMobileTutorial() || !height || !body) {
-        inner.style.removeProperty('--replica-card-scale');
-        return;
-    }
-    const top = inner.getBoundingClientRect().top - body.getBoundingClientRect().top + body.scrollTop;
-    const coachHeight = document.getElementById('cardTutorialMobileCoach')?.getBoundingClientRect().height || 0;
-    const room = window.innerHeight - Math.max(PHONE_COACH_RESERVE, coachHeight + 24) - top;
-    const scale = Math.max(PHONE_MIN_CARD_SCALE, Math.min(1, room / height));
-    inner.style.setProperty('--replica-card-scale', scale.toFixed(3));
+    // Full content height on a phone; its dedicated card pane scrolls above
+    // the coach. Never shrink controls or hide meanings inside a second pane.
+    inner.style.removeProperty('--replica-card-scale');
+    fitReplicaCard(inner, { floor: isMobileTutorial() ? 360 : Math.min(480, Math.round(window.innerHeight * 0.64)), ceiling: 10 });
 }
-
 
 function markAnchors() {
     const stage = document.getElementById('cardTutorialStage');
     if (!stage) return;
+    stage.querySelectorAll('.card-tutorial-anchored').forEach(el => {
+        el.classList.remove('card-tutorial-anchored', 'is-annotation-active');
+        delete el.dataset.cardTutorialNote;
+    });
     orderedNotes().forEach((note, i) => {
         const target = stage.querySelector(note.anchor);
         if (!target) return;
@@ -524,6 +594,7 @@ function markAnchors() {
 // Hovering either a badge or its note lights up both, plus the element itself.
 function setActiveNote(index) {
     state.activeNote = index;
+    renderNotes();
     renderSequenceProgress();
     const root = document.getElementById('cardTutorialModal');
     if (!root) return;
@@ -564,7 +635,7 @@ let _nextHintTimer = null;
 function scheduleNextHint() {
     clearTimeout(_nextHintTimer);
     const buttons = ['cardTutorialContinue', 'cardTutorialMobileNext']
-        .map(id => document.getElementById(id)).filter(Boolean);
+        .map(id => document.getElementById(id)).filter(btn => btn && !btn.disabled);
     buttons.forEach(btn => btn.classList.remove('is-hinting'));
     _nextHintTimer = setTimeout(() => {
         buttons.forEach(btn => btn.classList.add('is-hinting'));
@@ -601,16 +672,17 @@ function renderMobileCoach() {
     const after = steps[state.stepIndex + 1];
     const turningSameCard = after && after.kind === 'card' && after.deck === steps[state.stepIndex].deck;
     next.textContent = index < notes.length - 1 ? 'Next'
-        : !after ? 'Finish'
+        : !after ? (state.details ? 'Back to lesson' : 'Start studying')
         : turningSameCard ? 'Flip over'
         : 'Continue';
+    syncLessonTools();
 }
 
 // One note forwards or back, on either layout; past either end of a face it
 // moves to the neighbouring step.
 function moveTour(direction) {
     const step = currentStep();
-    if (!step) return;
+    if (!step || (direction > 0 && practicePending())) return;
     const notes = orderedNotes();
     const index = Math.max(0, Math.min(state.activeNote, notes.length - 1));
     const candidate = index + direction;
@@ -642,6 +714,9 @@ function renderFaceCopy() {
 }
 
 function actionHintHTML(note) {
+    if (note.practice && state.practiced.has(note.practice)) {
+        return `<span class="card-tutorial-practice-success" role="status">${esc(note.success)}</span>`;
+    }
     if (!note.actionHint) return '';
     const instruction = isMobileTutorial() ? note.actionHint.replace(/^Click /, 'Tap ') : note.actionHint;
     return `<span class="card-tutorial-action-hint">${esc(instruction)}.</span>`;
@@ -652,8 +727,8 @@ function noteHTML(note, index) {
         <li class="card-tutorial-note" data-note="${index}">
             <div>
                 <strong>${note.title}</strong>
-                <span>${tutorialText(note.text)}</span>
-                ${actionHintHTML(note)}
+                <span class="card-tutorial-note-copy">${tutorialText(note.text)}</span>
+                ${index === state.activeNote ? actionHintHTML(note) : ''}
             </div>
         </li>`;
 }
@@ -677,8 +752,15 @@ function renderNotes() {
         ?.querySelectorAll('.card-tutorial-note')
         .forEach((el) => {
             const i = Number(el.dataset.note);
-            // Every note stays readable; clicking one jumps the tour to it.
-            el.addEventListener('click', () => setActiveNote(i));
+            // Optional details can be opened directly; the core lesson stays sequential.
+            el.addEventListener('click', () => { if (state.details) setActiveNote(i); });
+            if (state.details) {
+                el.tabIndex = 0;
+                el.setAttribute('role', 'button');
+                el.addEventListener('keydown', event => {
+                    if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setActiveNote(i); }
+                });
+            }
         });
 }
 
@@ -731,19 +813,33 @@ function goToStep(index, mobileNote = 0) {
 
 function advanceStep() {
     if (state.stepIndex < tutorialSteps().length - 1) goToStep(state.stepIndex + 1);
-    else closeCardTutorial();
+    else if (state.details) toggleTutorialDetails();
+    else finishTutorialLesson();
 }
 
 // ---------------------------------------------------------------------------
 // Open / close
 // ---------------------------------------------------------------------------
 
+function finishTutorialLesson() {
+    closeCardTutorial();
+    const studying = !document.getElementById('appContent')?.classList.contains('hidden');
+    const target = studying ? document.getElementById('flipBtn')
+        : document.querySelector('#rangeSelector .study-set-dot:not(:disabled)')
+            || document.getElementById('standardSourceSpeechBtn');
+    target?.scrollIntoView({ block: 'center' });
+    target?.focus();
+}
+
 let _resizeHandler = null;
 
 function openCardTutorial() {
     const modal = document.getElementById('cardTutorialModal');
     if (!modal) return;
+    document.getElementById('resumeLastSetCard')?.remove();
     rememberCardTutorial();
+    state.details = false;
+    state.practiced.clear();
     modal.classList.remove('hidden');
     // Replays start directly on the chosen mode's card.
     state.mode = tutorialAdapter().lyrics && selectedTutorialMode() === 'lyrics' ? 'lyrics' : 'speech';
@@ -799,6 +895,12 @@ function setupCardTutorial() {
     modal.dataset.ready = '1';
 
     document.getElementById('closeCardTutorialModal')?.addEventListener('click', closeCardTutorial);
+    document.querySelectorAll('.card-tutorial-details-toggle').forEach(button => button.addEventListener('click', toggleTutorialDetails));
+    document.querySelectorAll('.card-tutorial-skip-practice').forEach(button => button.addEventListener('click', () => {
+        const practice = activeLessonNote()?.practice;
+        if (practice) state.practiced.add(practice);
+        moveTour(1);
+    }));
     document.getElementById('cardTutorialFlip')?.addEventListener('click', () => flipCardFace(0));
     document.getElementById('cardTutorialContinue')?.addEventListener('click', () => moveTour(1));
     document.getElementById('cardTutorialPrev')?.addEventListener('click', () => moveTour(-1));

@@ -22733,3 +22733,68 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
   position: absolute;
   inset: -10px -12px;
 }
+
+/* A short hands-on lesson, with an optional reference tour. */
+#cardTutorialModal .card-tutorial-note:not(.is-active) .card-tutorial-note-copy { display: none; }
+#cardTutorialModal .card-tutorial-note:not(.is-active) { cursor: default; opacity: .7; }
+#cardTutorialModal .card-tutorial-note[role="button"] { cursor: pointer; }
+#cardTutorialModal .card-tutorial-note:focus-visible { outline: 2px solid var(--accent-amber); }
+#cardTutorialModal .card-tutorial-practice-success {
+    display: block; margin-top: 8px; font-size: 15px; color: var(--accent-green);
+}
+.card-tutorial-lesson-tools { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 16px; }
+#cardTutorialModal .card-tutorial-lesson-tools button {
+    min-height: 44px; padding: 8px 12px; border: 1px solid var(--border-light);
+    border-radius: 10px; background: transparent; color: var(--text-secondary);
+    font: 600 14px/1.3 var(--font-reading); cursor: pointer;
+}
+#cardTutorialModal .card-tutorial-lesson-tools button[hidden] { display: none; }
+#cardTutorialContinue, #cardTutorialMobileNext {
+    background: var(--accent-primary) !important; color: var(--accent-primary-text) !important;
+    min-height: 44px; font-size: 16px;
+}
+#cardTutorialContinue:disabled, #cardTutorialMobileNext:disabled { opacity: .45; cursor: default; }
+.card-tutorial-scroll-hint { display: none; }
+#cardTutorialStage .meanings-scroll { flex: 0 0 auto; overflow: visible !important; max-height: none !important; }
+#cardTutorialStage .meaning-row { padding-left: 44px !important; }
+#cardTutorialStage .sense-note-trigger { left: 2px; width: 44px; height: 44px; min-width: 44px; border: 0; background: transparent; }
+#cardTutorialStage .sense-note-trigger > span { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border: 1px solid var(--border-light); border-radius: 50%; background: var(--bg-card); }
+#cardTutorialStage .sense-prominence-badge { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+#cardTutorialStage .meaning-row-body { padding-right: 48px !important; }
+#cardTutorialStage .meaning-row .sense-cue-area { max-width: 100%; }
+#cardTutorialStage .sentence[data-replica-cycle="1"] { cursor: pointer; }
+body:has(#cardTutorialModal:not(.hidden), #tutorialIntroModal:not(.hidden)) #resumeLastSetCard { display: none !important; }
+@media (max-width: 700px) {
+    #cardTutorialModal .card-tutorial-modal { height: 100dvh; max-height: 100dvh; }
+    #cardTutorialBody {
+        display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 10px;
+        padding: 10px 10px max(10px, env(safe-area-inset-bottom)); min-height: 0; overflow: hidden;
+    }
+    #cardTutorialBody .card-tutorial-topbar { margin: 0; grid-template-columns: 1fr auto; gap: 8px; }
+    #cardTutorialIntro { display: none; }
+    #cardTutorialBody .card-tutorial-columns {
+        display: block; min-height: 0; width: 100%; overflow-y: auto; overflow-x: hidden;
+        overscroll-behavior: contain; scrollbar-gutter: stable; padding: 6px 8px 12px;
+    }
+    #cardTutorialBody .card-tutorial-stage-col { display: block; width: 100%; }
+    #cardTutorialBody .card-tutorial-stage-wrap { width: 100%; }
+    #cardTutorialStage .card-replica { width: 100%; transform: none; margin-bottom: 0; }
+    #cardTutorialBody .card-tutorial-stage-col > .card-tutorial-lesson-tools { display: none; }
+    #cardTutorialStage .card-back { padding: 14px 10px; }
+    #cardTutorialStage .card-details { gap: 10px; }
+    #cardTutorialBody .card-tutorial-scroll-hint { display: block; margin: 0 0 10px; text-align: center; color: var(--text-secondary); font-size: 13px; }
+    #cardTutorialMobileCoach:not([hidden]) {
+        position: static; display: grid; grid-template-columns: 1fr; gap: 8px;
+        padding: 12px; margin: 0; min-width: 0; max-height: none; animation: none;
+        background: var(--bg-card); backdrop-filter: none;
+    }
+    #cardTutorialMobileCoach .card-tutorial-mobile-progress { font: 600 12px/1.3 var(--font-reading); letter-spacing: 0; color: var(--text-secondary); text-transform: none; }
+    #cardTutorialMobileCoach > strong { font-size: 18px; }
+    #cardTutorialMobileCoach > p { font-size: 14px; grid-column: 1; }
+    #cardTutorialMobileCoach .card-tutorial-mobile-actions { grid-column: 1; grid-row: auto; justify-content: space-between; }
+    #cardTutorialMobileCoach .card-tutorial-mobile-actions button { min-height: 44px; min-width: 80px; font-size: 15px; }
+    #cardTutorialMobileCoach .card-tutorial-lesson-tools { grid-column: 1; gap: 4px; justify-content: flex-start; }
+    #cardTutorialMobileCoach .card-tutorial-lesson-tools button { padding: 4px 8px; font-size: 13px; }
+    #cardTutorialStage .card-face { font-size: 16px; }
+    #cardTutorialStage .sense-note-trigger.is-annotation-active { outline-offset: 0; }
+}

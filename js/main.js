@@ -1,35 +1,35 @@
 // First: rewrites old ?artist=/?about= links to their #/ route before
 // anything below reads the address.
-import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=34096434';
-import { releaseUrl } from './release-host.js?v=34096434';
-import './theme.js?v=34096434';
-import { installFlagRendering } from './flags.js?v=34096434';
-import './state.js?v=34096434';
-import './offline-db.js?v=34096434';
-import './sync-queue.js?v=34096434';
-import { initOfflineContent } from './offline-content.js?v=34096434';
-import './speech.js?v=34096434';
-import './artist-ui.js?v=34096434';
-import './auth.js?v=34096434';
-import './tutorial.js?v=34096434';
-import './walkthrough.js?v=34096434';
-import './estimation.js?v=34096434';
-import './config.js?v=34096434';
-import './progress.js?v=34096434';
-import './knowledge.js?v=34096434';
-import './ui.js?v=34096434';
-import './vocab.js?v=34096434';
-import './cognates.js?v=34096434';
-import './coverage.js?v=34096434';
-import './fast-mode.js?v=34096434';
-import './extras.js?v=34096434';
-import './review-home.js?v=34096434';
-import './song-sets.js?v=34096434';
-import './playlist-live.js?v=34096434';
-import './spotify-playlist-import.js?v=34096434';
-import './vocabulary-import.js?v=34096434';
-import './flashcards.js?v=34096434';
-import { validateArtistCatalog } from './data-contracts.js?v=34096434';
+import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=1bd66184';
+import { releaseUrl } from './release-host.js?v=1bd66184';
+import './theme.js?v=1bd66184';
+import { installFlagRendering } from './flags.js?v=1bd66184';
+import './state.js?v=1bd66184';
+import './offline-db.js?v=1bd66184';
+import './sync-queue.js?v=1bd66184';
+import { initOfflineContent } from './offline-content.js?v=1bd66184';
+import './speech.js?v=1bd66184';
+import './artist-ui.js?v=1bd66184';
+import './auth.js?v=1bd66184';
+import './tutorial.js?v=1bd66184';
+import './walkthrough.js?v=1bd66184';
+import './estimation.js?v=1bd66184';
+import './config.js?v=1bd66184';
+import './progress.js?v=1bd66184';
+import './knowledge.js?v=1bd66184';
+import './ui.js?v=1bd66184';
+import './vocab.js?v=1bd66184';
+import './cognates.js?v=1bd66184';
+import './coverage.js?v=1bd66184';
+import './fast-mode.js?v=1bd66184';
+import './extras.js?v=1bd66184';
+import './review-home.js?v=1bd66184';
+import './song-sets.js?v=1bd66184';
+import './playlist-live.js?v=1bd66184';
+import './spotify-playlist-import.js?v=1bd66184';
+import './vocabulary-import.js?v=1bd66184';
+import './flashcards.js?v=1bd66184';
+import { validateArtistCatalog } from './data-contracts.js?v=1bd66184';
 
 // Emoji flags anywhere on the page render as rectangular pictures.
 installFlagRendering();
@@ -47,6 +47,7 @@ function startCardTutorial() {
 }
 
 function openTutorialIntroduction() {
+    document.getElementById('resumeLastSetCard')?.remove();
     document.getElementById('tutorialWelcomeStep')?.classList.remove('hidden');
     document.getElementById('tutorialLanguageStep')?.classList.add('hidden');
     renderTutorialLanguageChoices();
@@ -87,7 +88,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
 const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
-    ? import('./spotify.js?v=34096434').catch(error => {
+    ? import('./spotify.js?v=1bd66184').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })
@@ -1713,7 +1714,7 @@ function spotifyStatusElement() {
         el.type = 'button';
         el.addEventListener('click', async event => {
             event.stopPropagation();
-            await (_spotifyModulePromise || import('./spotify.js?v=34096434')).catch(() => null);
+            await (_spotifyModulePromise || import('./spotify.js?v=1bd66184')).catch(() => null);
             window.spotifyLogin?.();
         });
     }

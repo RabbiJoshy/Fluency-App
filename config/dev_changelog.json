@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-07T23:19:40+01:00",
+      "date": "2026-10-07 23:19 BST",
+      "agent": "Codex",
+      "summary": "Short hands-on card tutorial, clearer controls, and full-size phone cards",
+      "detail": [
+        "Five-step speech lesson: recall, flip, choose a meaning, cycle an example, then start studying; optional card details remain available.",
+        "Lyrics shares the lesson and adds song credits and playback, without a second tutorial.",
+        "Phone cards scroll above the coach without shrinking text or tap targets; all meanings remain accessible on small screens.",
+        "Clear finish and Next buttons, focused explanation text, honest grammar examples, and no resume prompt covering the tutorial.",
+        "Practice works by keyboard; returning from card details preserves the learner’s selected meaning and example."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-07T23:40:00+01:00",
       "date": "2026-10-07 23:40 BST",
       "agent": "Claude",
@@ -330,17 +344,6 @@
         "Commonness meters show their meaning on hover; the section-head label no longer opens outside the card.",
         "When every row in an open section has its own meter, the section head drops its total.",
         "Practice errors button always reads 'Quick N' with the number (20 at most)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-05T23:22:47+01:00",
-      "date": "2026-10-05 23:22 BST",
-      "agent": "Claude",
-      "summary": "Remove the '+N' chip on folded senses",
-      "detail": [
-        "Folded senses no longer show a '+N' chip; tapping a folded sense makes it the current one, which shows its sub-rows",
-        "The current sense never folds"
       ],
       "commit": "pending"
     }

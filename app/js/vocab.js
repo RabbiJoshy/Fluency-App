@@ -1,11 +1,11 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=34096434';
-import { validateVocabularyIndex } from './data-contracts.js?v=34096434';
-import { formatRoute } from './routes.js?v=34096434';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=34096434';
-import { releaseUrl } from './release-host.js?v=34096434';
+import './state.js?v=1bd66184';
+import { validateVocabularyIndex } from './data-contracts.js?v=1bd66184';
+import { formatRoute } from './routes.js?v=1bd66184';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=1bd66184';
+import { releaseUrl } from './release-host.js?v=1bd66184';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -160,6 +160,11 @@ function getLastStudySession() {
 }
 
 function renderResumeLastSetCard() {
+    if (window.fluencyRoute?.kind === 'tutorial'
+        || document.querySelector('#tutorialIntroModal:not(.hidden), #cardTutorialModal:not(.hidden)')) {
+        document.getElementById('resumeLastSetCard')?.remove();
+        return;
+    }
     if (window.playlistLiveActive?.()) {
         document.getElementById('resumeLastSetCard')?.remove();
         return;
