@@ -1,10 +1,10 @@
-import './state.js?v=f936ff2e';
+import './state.js?v=6397d843';
 import {
     crossModeProgressId,
     matchingProgressRecords,
     mergeProgressRecords,
     normalizeProgressSurface
-} from './progress-identity.js?v=f936ff2e';
+} from './progress-identity.js?v=6397d843';
 
 const SRS_DAY_MS = 24 * 60 * 60 * 1000;
 const SRS_INTERVAL_DAYS = [1, 3, 7, 14, 30, 60, 120, 240, 365];

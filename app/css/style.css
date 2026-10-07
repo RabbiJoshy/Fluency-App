@@ -22558,3 +22558,20 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 }
 .lsw-segments.lsw-scrubber .lsw-seg:not(.selected):hover,
 .lsw-segments.lsw-scrubber .lsw-seg.filled:not(.selected):hover { opacity: max(0.55, calc(1 - 0.32 * var(--dist, 3))); }
+
+/* The scrubber shows level numbers only. "Level N" already sits in the readout
+   above, so repeating the word on every slot was noise; numbers sit closer,
+   the chosen one can be large, and the taper reads as a dial. */
+.lsw-segments.lsw-scrubber .lsw-seg { width: 56px; font-size: 1.05rem; }
+.lsw-segments.lsw-scrubber .lsw-seg.selected { transform: scale(1.9); }
+.lsw-segments.lsw-scrubber .lsw-seg:not(.selected),
+.lsw-segments.lsw-scrubber .lsw-seg.filled:not(.selected) {
+  transform: scale(max(0.55, calc(1.9 - 0.45 * var(--dist, 3))));
+}
+.lsw-segments.lsw-scrubber { padding-top: 14px; padding-bottom: 8px; }
+/* Level readout and example words read a step larger. */
+.lsw-readout .lsw-rank { font-size: 18px; }
+.lsw-examples { font-size: 14px; }
+.lsw-examples .lsw-freq-sentence { font-size: 14px; }
+.lsw-examples .lsw-egs { font-size: 14px; }
+.level-slider-wrap > .lsw-coverage { font-size: 13px; }

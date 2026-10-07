@@ -1,7 +1,7 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=f936ff2e';
-import { readFastTrack } from './fast-track-preferences.js?v=f936ff2e';
+import './state.js?v=6397d843';
+import { readFastTrack } from './fast-track-preferences.js?v=6397d843';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -1333,8 +1333,8 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
                 </div>
                 <div id="lswSlider" class="lsw-segments lsw-scrubber" role="radiogroup" aria-label="Level scrubber" data-value="${initialIdx}">
                     ${percentageRanges.map((lv, i) => {
-                        const segLabel = `Level ${i + 1}`;
-                        return `<button type="button" class="lsw-seg${i <= initialIdx ? ' filled' : ''}${i === initialIdx ? ' selected' : ''}" data-i="${i}" style="--dist:${Math.abs(i - initialIdx)}" role="radio" aria-checked="${i === initialIdx}"><span class="lsw-seg-label">${segLabel}</span></button>`;
+                        const segLabel = `${i + 1}`;
+                        return `<button type="button" class="lsw-seg${i <= initialIdx ? ' filled' : ''}${i === initialIdx ? ' selected' : ''}" data-i="${i}" style="--dist:${Math.abs(i - initialIdx)}" aria-label="Level ${i + 1}" role="radio" aria-checked="${i === initialIdx}"><span class="lsw-seg-label">${segLabel}</span></button>`;
                     }).join('')}
                 </div>
                 <div class="lsw-ticks lsw-ticks--hidden">${ticksHTML}</div>
@@ -3261,7 +3261,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=f936ff2e')
+        import('./spotify.js?v=6397d843')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
