@@ -22696,7 +22696,8 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 /* Smart Skip row, slimmed for phones: no fast-forward icon, no chevron, no
    divider before the switch. The info icon is red, like the ones beside
    "Choose level" and "Choose a set", and is the one cue that the row opens a
-   page. Name and badge share a line; the subtitle sits under them. */
+   page. Name and badge share a line; the subtitle sits under them. The
+   fast-forward icon returns on wide rows only (below). */
 .fast-track-hub-btn { padding-left: 16px; }
 .fast-track-hub-copy { flex-wrap: wrap; column-gap: 10px; }
 .fast-track-hub-info { width: 22px; height: 22px; stroke: var(--accent-primary); }
@@ -22716,7 +22717,11 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
   text-overflow: ellipsis;
 }
 .fast-track-hub-examples em { font-style: normal; color: var(--text-secondary); }
+/* The fast-forward icon is a wide-row extra too: it anchors the row where
+   there is room and is the first thing to go where there is not. */
+.fast-track-hub-btn .fast-mode-master-icon { display: none; }
 @container (min-width: 600px) {
+  .fast-track-hub-btn .fast-mode-master-icon { display: block; }
   .fast-track-hub-copy { flex: none; }
   .fast-track-hub-examples:not(:empty) { display: block; }
 }
