@@ -11,7 +11,7 @@
 
 import {
     REPLICA_CARDS, esc, renderBack, replicaCardHTML, wireReplicaBack, fitReplicaCard,
-} from './card-replica.js?v=b46688f3';
+} from './card-replica.js?v=24eb47ba';
 
 
 // Each language selects its own representative card and dictionary wording.
@@ -160,7 +160,8 @@ const TUTORIAL_DECKS = [
                         anchor: '.meaning-row.is-current-sense',
                         title: 'The meaning you tapped',
                         text: 'Choosing a meaning changes the example below. The shaded cue explains when that meaning is used.',
-                        actionHint: 'Click another meaning on the card',
+                        actionHint: 'Click a different meaning on the card',
+                        practice: 'meaning', success: 'The example now matches your chosen meaning.',
                     },
                     {
                         side: 'left',
@@ -189,6 +190,7 @@ const TUTORIAL_DECKS = [
                         title: 'A real example',
                         text: 'Each sentence matches the selected meaning. You can also cycle through several examples of the same meaning.',
                         actionHint: 'Click the sentence on the card for another example',
+                        practice: 'example', success: 'You found another example of the same meaning.',
                     },
                     {
                         side: 'right',
@@ -248,8 +250,6 @@ const TUTORIAL_DECKS = [
 // renderCard()/flipCardFace() read this to drive the real card CSS.
 const state = {
     mode: 'speech',
-    details: false,
-    lessonPosition: null,
     practiced: new Set(),
     stepIndex: 0,
     flipped: false,
@@ -322,39 +322,15 @@ function currentFace() {
 
 // Left column first, then right, so each note sits on the same side as the
 // element it explains.
-function lessonNotes(face) {
-    if (face === 'front') return [{ side: 'left', anchor: '.card-word',
-        title: 'Try to recall the word',
-        text: 'This is an example card. Think of a meaning for the word, then flip to check it.' }];
-    const notes = [
-        { side: 'left', anchor: '.meanings-scroll', title: 'Check the meanings',
-          text: 'The most common meanings come first. Shaded cues explain when each meaning is used; the example below matches the selected row.' },
-        { side: 'left', anchor: '.meaning-row.is-current-sense', title: 'Choose another meaning',
-          text: 'Watch the example change to match your choice.',
-          actionHint: 'Click a different meaning on the card', practice: 'meaning',
-          success: 'The example now matches your chosen meaning.' },
-        { side: 'right', anchor: '.sentence', title: 'Try another example',
-          text: 'One meaning can have several examples. The dots show which one you are reading.',
-          actionHint: 'Click the example on the card', practice: 'example',
-          success: 'You found another example of the same meaning.' },
-    ];
-    if (state.mode === 'lyrics') notes.push(
-        { side: 'right', anchor: '.example-song-credit', title: 'From your chosen songs',
-          text: 'The credit names the song and singer. The English line helps you understand the whole lyric.' },
-        { side: 'right', anchor: '.spotify-btn', title: 'Hear it in the song',
-          text: 'The Spotify button plays this moment in your Spotify. Playback needs Spotify Premium; you can continue without connecting it.',
-          actionHint: 'Click the Spotify button to hear the line' });
-    notes.push({ side: 'right', anchor: '.card-back', title: 'You’re ready to study',
-        text: 'On your own cards: recall a meaning, flip to check, then record how you did. You can explore the extra card details whenever you like.' });
-    return notes;
-}
-
 function stepNotes(step) {
     if (!step || step.kind !== 'card') return [];
-    if (!state.details) return lessonNotes(step.face);
     const notes = deckById(step.deck).faces[step.face].notes
         .filter(note => !note.requires || tutorialAdapter()[note.requires]);
-    return [...notes.filter(n => n.side !== 'right'), ...notes.filter(n => n.side === 'right')];
+    const ordered = [...notes.filter(n => n.side !== 'right'), ...notes.filter(n => n.side === 'right')];
+    if (step.face === 'back') ordered.push({ side: 'right', anchor: '.card-back',
+        title: 'You’re ready to study',
+        text: 'On your own cards: recall a meaning, flip to check, then record how you did.' });
+    return ordered;
 }
 
 function activeLessonNote() {
@@ -363,37 +339,17 @@ function activeLessonNote() {
 
 function practicePending() {
     const practice = activeLessonNote()?.practice;
-    return !state.details && practice && !state.practiced.has(practice);
+    return Boolean(practice && !state.practiced.has(practice));
 }
 
 function completePractice(practice) {
-    if (activeLessonNote()?.practice !== practice || state.details) return;
+    if (activeLessonNote()?.practice !== practice) return;
     state.practiced.add(practice);
     renderNotes();
     markAnchors();
 }
 
-function toggleTutorialDetails() {
-    if (!state.details) {
-        state.lessonPosition = { step: state.stepIndex, note: state.activeNote,
-            meaning: state.meaningIndex, example: state.exampleIndex };
-        state.details = true;
-        goToStep(state.stepIndex);
-    } else {
-        state.details = false;
-        const saved = state.lessonPosition || { step: 0, note: 0 };
-        goToStep(saved.step, saved.note);
-        state.meaningIndex = saved.meaning ?? currentCard().defaultMeaningIndex ?? 0;
-        state.exampleIndex = saved.example ?? 0;
-        refreshBack();
-    }
-}
-
 function syncLessonTools() {
-    document.querySelectorAll('.card-tutorial-details-toggle').forEach(button => {
-        button.textContent = state.details ? 'Back to the lesson' : 'Explore card details';
-        button.setAttribute('aria-pressed', String(state.details));
-    });
     document.querySelectorAll('.card-tutorial-skip-practice').forEach(button => { button.hidden = !practicePending(); });
     ['cardTutorialContinue', 'cardTutorialMobileNext'].forEach(id => {
         const button = document.getElementById(id);
@@ -534,7 +490,7 @@ function syncContinueButton() {
     const next = steps[state.stepIndex + 1];
     const turningSameCard = next && next.kind === 'card' && next.deck === step.deck;
     btn.textContent = index < notes.length - 1 ? 'Next →'
-        : !next ? (state.details ? 'Back to the lesson' : 'Start studying')
+        : !next ? 'Start studying'
         : turningSameCard ? 'Flip the card over →'
         : 'Next →';
     btn.classList.remove('is-secondary');
@@ -672,7 +628,7 @@ function renderMobileCoach() {
     const after = steps[state.stepIndex + 1];
     const turningSameCard = after && after.kind === 'card' && after.deck === steps[state.stepIndex].deck;
     next.textContent = index < notes.length - 1 ? 'Next'
-        : !after ? (state.details ? 'Back to lesson' : 'Start studying')
+        : !after ? 'Start studying'
         : turningSameCard ? 'Flip over'
         : 'Continue';
     syncLessonTools();
@@ -752,9 +708,9 @@ function renderNotes() {
         ?.querySelectorAll('.card-tutorial-note')
         .forEach((el) => {
             const i = Number(el.dataset.note);
-            // Optional details can be opened directly; the core lesson stays sequential.
-            el.addEventListener('click', () => { if (state.details) setActiveNote(i); });
-            if (state.details) {
+            // Every explanation is part of the tutorial and can be revisited directly.
+            el.addEventListener('click', () => setActiveNote(i));
+            {
                 el.tabIndex = 0;
                 el.setAttribute('role', 'button');
                 el.addEventListener('keydown', event => {
@@ -813,7 +769,6 @@ function goToStep(index, mobileNote = 0) {
 
 function advanceStep() {
     if (state.stepIndex < tutorialSteps().length - 1) goToStep(state.stepIndex + 1);
-    else if (state.details) toggleTutorialDetails();
     else finishTutorialLesson();
 }
 
@@ -838,7 +793,6 @@ function openCardTutorial() {
     if (!modal) return;
     document.getElementById('resumeLastSetCard')?.remove();
     rememberCardTutorial();
-    state.details = false;
     state.practiced.clear();
     modal.classList.remove('hidden');
     // Replays start directly on the chosen mode's card.
@@ -895,7 +849,6 @@ function setupCardTutorial() {
     modal.dataset.ready = '1';
 
     document.getElementById('closeCardTutorialModal')?.addEventListener('click', closeCardTutorial);
-    document.querySelectorAll('.card-tutorial-details-toggle').forEach(button => button.addEventListener('click', toggleTutorialDetails));
     document.querySelectorAll('.card-tutorial-skip-practice').forEach(button => button.addEventListener('click', () => {
         const practice = activeLessonNote()?.practice;
         if (practice) state.practiced.add(practice);
