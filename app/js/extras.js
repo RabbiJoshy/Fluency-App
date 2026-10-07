@@ -758,11 +758,8 @@ function smartSkipRowHtml(row, index, showTag) {
 // Each level is its own group so its sticky header is pushed off by the
 // next one instead of staying stuck above it.
 function smartSkipLevelHtml(level, index) {
-    const isLemma = level.category === 'lemma';
-    const count = level.entries.length;
-    const unit = isLemma ? (count === 1 ? 'card' : 'cards') : (count === 1 ? 'word' : 'words');
     return `<li class="smart-skip-group" data-ss-group="${index}">
-        <div class="smart-skip-level"><b>${escapeHtml(level.label)}</b><span>${count.toLocaleString()} ${unit}</span></div>
+        <div class="smart-skip-level"><b>${escapeHtml(level.label)}</b></div>
         <ul class="smart-skip-group-rows"></ul>
     </li>`;
 }
