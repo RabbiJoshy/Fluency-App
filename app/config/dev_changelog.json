@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-07T18:00:00+01:00",
+      "date": "2026-10-07 18:00 BST",
+      "agent": "Claude",
+      "summary": "Source choice: summary, then two matching option cards; commonness meter forced to one ink",
+      "detail": [
+        "Everyday speech and Your music are now twin cards: icon and name, description, then a ruled 'Best for' line. On desktop the cards are equal height with the rules aligned.",
+        "The summary sits above a thin divider; Connect your Spotify sits under Your music.",
+        "The commonness meter's colour is now forced to the text colour (!important) in both themes, in case a light-theme rule was still tinting it."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-07T17:00:00+01:00",
       "date": "2026-10-07 17:00 BST",
       "agent": "Claude",
@@ -354,20 +366,6 @@
         "Enable import in Settings, progress and placement for all signed-in learners",
         "Match against the selected language’s Speech deck and save its language and card IDs",
         "Accept current surface card IDs and preserve exact accents, preview and repeat-import behaviour"
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-05T14:52:50+01:00",
-      "date": "2026-10-05 14:52 BST",
-      "agent": "Codex",
-      "summary": "Refresh the desktop shortcut guide and full keyboard reference",
-      "detail": [
-        "Six essential study shortcuts in a compact panel with flat, theme-aware key badges",
-        "Hide and reopen controls remember the existing preference; All shortcuts opens the full reference",
-        "Shared shortcut definitions show accurate Mac/Windows labels and eligible audit tools",
-        "Keyboard focus works on guide controls; existing study keys and reference-only rows are preserved",
-        "Guide adapts to smaller windows and larger text and returns after a docked panel closes"
       ],
       "commit": "pending"
     }
