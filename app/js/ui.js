@@ -409,7 +409,7 @@ function showDeckOverviewLoading() {
             reviewCount,
             unseenCount,
             speechPercentage: percent,
-            speechLabel: activeArtist ? 'of these lyrics understood' : 'of everyday speech understood'
+            speechUnit: activeArtist ? 'of these lyrics understood' : 'of speech understood'
         },
         {
             title,
