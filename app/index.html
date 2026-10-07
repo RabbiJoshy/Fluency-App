@@ -403,13 +403,18 @@
                                 <span class="choice-sheet-tail" aria-hidden="true">›</span>
                             </button>
                             <span class="standard-source-or" aria-hidden="true"><b>or</b></span>
-                            <button type="button" id="standardSourcePickerBtn" class="choice-sheet-item" data-source="lyrics">
-                                <span class="choice-sheet-icon" aria-hidden="true"></span>
-                                <span class="choice-sheet-copy"><strong>Your music</strong><small>Pick an artist, or build a deck from your Spotify playlists — the words in those songs.</small></span>
-                                <span id="standardLyricsStatus" class="choice-sheet-tail" aria-hidden="true">›</span>
-                            </button>
+                            <!-- One card for Your music: the option itself, and Spotify
+                                 as its footer. Two buttons, so a wrapper carries the
+                                 card's border (a button cannot hold a button). -->
+                            <div class="standard-source-music">
+                                <button type="button" id="standardSourcePickerBtn" class="choice-sheet-item" data-source="lyrics">
+                                    <span class="choice-sheet-icon" aria-hidden="true"></span>
+                                    <span class="choice-sheet-copy"><strong>Your music</strong><small>Pick an artist, or build a deck from your Spotify playlists — the words in those songs.</small></span>
+                                    <span id="standardLyricsStatus" class="choice-sheet-tail" aria-hidden="true">›</span>
+                                </button>
+                                <div id="standardSourceSpotify" class="standard-source-spotify"></div>
+                            </div>
                         </div>
-                        <div id="standardSourceSpotify" class="standard-source-spotify"></div>
                     </div>
                     <div id="standardSourceProgress" class="standard-source-progress"></div>
                 </div>

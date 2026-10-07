@@ -277,7 +277,7 @@ function currentStep() {
     return tutorialSteps()[state.stepIndex] || null;
 }
 
-const MOBILE_TUTORIAL_QUERY = '(max-width: 700px)';
+const MOBILE_TUTORIAL_QUERY = '(max-width: 1180px)';
 
 function isMobileTutorial() {
     return window.matchMedia?.(MOBILE_TUTORIAL_QUERY).matches === true;

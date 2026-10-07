@@ -22798,3 +22798,80 @@ body:has(#cardTutorialModal:not(.hidden), #tutorialIntroModal:not(.hidden)) #res
     #cardTutorialStage .card-face { font-size: 16px; }
     #cardTutorialStage .sense-note-trigger.is-annotation-active { outline-offset: 0; }
 }
+
+/* Your music is one card: the option on top, Spotify as its footer, so the
+   connect button reads as part of that choice rather than a stray pill under
+   the page. The wrapper draws the card; the option inside it goes flat. */
+#step1.language-summary-active #standardSourceCard .standard-source-music {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  min-width: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  background: var(--bg-tertiary);
+  overflow: hidden;
+  transition: border-color .16s ease;
+}
+#step1.language-summary-active #standardSourceCard .standard-source-music > .choice-sheet-item {
+  flex: 1;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+#step1.language-summary-active #standardSourceCard .standard-source-music:has(> .choice-sheet-item:hover:not(:disabled)) {
+  border-color: color-mix(in srgb, var(--accent-primary) 55%, var(--border-color));
+}
+#step1.language-summary-active #standardSourceCard .standard-source-music > .choice-sheet-item:hover:not(:disabled) {
+  border: 0;
+}
+#step1.language-summary-active #standardSourceCard .standard-source-music .standard-source-spotify {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--border-color);
+}
+#step1.language-summary-active #standardSourceCard .standard-source-music .spotify-status {
+  display: flex;
+  width: 100%;
+  min-height: 48px;
+  margin: 0;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 0;
+  background: color-mix(in srgb, #1DB954 7%, transparent);
+  color: var(--text-primary);
+  font: 600 14px/1.2 var(--font-emphasis);
+  text-align: left;
+}
+#step1.language-summary-active #standardSourceCard .standard-source-music button.spotify-status::after {
+  content: '›';
+  margin-left: auto;
+  color: #1DB954;
+  font-size: 20px;
+  line-height: 1;
+}
+#step1.language-summary-active #standardSourceCard .standard-source-music button.spotify-status:hover {
+  background: color-mix(in srgb, #1DB954 15%, transparent);
+}
+#step1.language-summary-active #standardSourceCard .standard-source-music .spotify-status:focus-visible { outline-offset: -2px; }
+#step1.language-summary-active #standardSourceCard .standard-source-music .spotify-status.is-connected {
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+@media (min-width: 900px) {
+  #step1.language-summary-active #standardSourceCard .standard-source-music .standard-source-spotify { margin: 0; }
+  #step1.language-summary-active #standardSourceCard .standard-source-music > .choice-sheet-item { padding: 18px; }
+}
+/* Legibility: the note under the title was muted grey; one step brighter. */
+#step1.language-summary-active #standardSourceCard .standard-source-choice-intro p { color: var(--text-secondary); }
+#step1.language-summary-active #standardSourceCard .standard-source-music .standard-source-spotify:empty { display: none; }
+/* Side by side, the Spotify footer makes the music option shorter than the
+   speech card, so "Best for" can no longer be pinned to each card's bottom
+   and still line up. It follows the description instead; the description's
+   two-line minimum keeps the two rules level. */
+@media (min-width: 900px) {
+  #step1.language-summary-active #standardSourceCard .choice-sheet-item { grid-template-rows: auto auto auto; align-content: start; }
+  #step1.language-summary-active #standardSourceCard .choice-sheet-bestfor { align-self: start; }
+}
