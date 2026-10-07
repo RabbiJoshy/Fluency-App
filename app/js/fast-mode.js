@@ -194,9 +194,11 @@ function refresh() {
     }
     const hubSummary = document.getElementById('fastTrackHubSummary');
     if (hubSummary) {
-        hubSummary.textContent = !on ? 'Off'
-            : skipped ? `On · ${skipped.toLocaleString()} ${skipped === 1 ? 'word' : 'words'} skipped`
-            : 'On · No words skipped';
+        // The switch already says on or off, so this line says something else:
+        // what turning it on does, then what it is doing.
+        hubSummary.textContent = !on ? 'Fewer cards, same coverage'
+            : skipped ? `${skipped.toLocaleString()} ${skipped === 1 ? 'word' : 'words'} skipped`
+            : 'No words skipped';
     }
 
     updateMappingStatus();
