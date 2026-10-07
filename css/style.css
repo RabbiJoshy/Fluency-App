@@ -22742,7 +22742,9 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 }
 #cardTutorialContinue:disabled, #cardTutorialMobileNext:disabled { opacity: .45; cursor: default; }
 .card-tutorial-scroll-hint { display: none; }
-#cardTutorialStage .meanings-scroll { flex: 0 0 auto; overflow: visible !important; max-height: none !important; }
+#cardTutorialStage .meanings-scroll { flex: 0 1 auto; min-height: 0; overflow-y: auto !important; overflow-x: hidden; max-height: none !important; }
+#cardTutorialStage .card-details { height: 100%; overflow: hidden; }
+#cardTutorialStage .sentence { flex: 0 1 auto; min-height: 0; max-height: 55%; overflow-y: auto; }
 #cardTutorialStage .meaning-row { padding-left: 44px !important; }
 #cardTutorialStage .sense-note-trigger { left: 2px; width: 44px; height: 44px; min-width: 44px; border: 0; background: transparent; }
 #cardTutorialStage .sense-note-trigger > span { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border: 1px solid var(--border-light); border-radius: 50%; background: var(--bg-card); }
