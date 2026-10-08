@@ -324,9 +324,12 @@ class ProductShellTests(unittest.TestCase):
         self.assertNotIn("question side", tutorial)
         self.assertIn("'Start studying'", tutorial)
         # One chosen mode, front then back; never both tutorials in sequence.
+        # Smart Skip and the vocabulary source follow as pages of their own.
         self.assertIn("function tutorialSteps()", tutorial)
-        self.assertIn("{ kind: 'card', deck: state.mode, face: 'front' }", tutorial)
-        self.assertIn("{ kind: 'card', deck: state.mode, face: 'back' }", tutorial)
+        self.assertIn("{ kind: 'card', deck: state.mode, face: 'front', chapter: 'card' }", tutorial)
+        self.assertIn("{ kind: 'card', deck: state.mode, face: 'back', chapter: 'card' }", tutorial)
+        self.assertIn("{ kind: 'page', page: 'smartSkip', chapter: 'smartSkip' }", tutorial)
+        self.assertIn("{ kind: 'page', page: 'modes', chapter: 'modes' }", tutorial)
         self.assertNotIn("steps.push({ kind: 'break'", tutorial)
         # No mode chrome in what the header renders: a first-time reader has
         # not met either mode yet. (The comment above the change still names
@@ -340,7 +343,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertNotIn('id="cardTutorialSetupAnim"', html)
         self.assertNotIn("playSetupIntro", tutorial)
         self.assertNotIn("setup-anim-screen", styles)
-        self.assertIn("    goToStep(0);", tutorial)
+        self.assertIn("    goToStep(Math.max(0, tutorialSteps().findIndex(step => step.chapter === chapter)));", tutorial)
         # The numbered badges indexed a numbered note list; both are gone, and
         # the amber ring on the annotated element is the only link left.
         self.assertNotIn("card-tutorial-marker", tutorial)
@@ -496,17 +499,18 @@ class ProductShellTests(unittest.TestCase):
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
         main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
         intro = html.index('id="tutorialIntroModal"')
-        start = html.index('id="startCardTutorialBtn"', intro)
-        choices = html.index('id="tutorialLanguageChoices"', intro)
-        self.assertLess(start, choices)
+        self.assertIn('id="tutorialLanguageChoices"', html[intro:])
         self.assertNotIn('id="tutorialLanguageSelect"', html)
+        # No "quick or full?" screen: the tutorial lists its own chapters.
+        self.assertNotIn('id="tutorialWelcomeStep"', html)
+        self.assertNotIn('id="startFullCardTutorialBtn"', html)
 
-        self.assertIn("window.openCardTutorial?.({ quick: !fullCardTutorialRequested })", main)
-        self.assertIn("function startCardTutorial()", main)
+        self.assertIn("window.openCardTutorial?.()", main)
+        self.assertIn("function startCardTutorial(language)", main)
         self.assertIn("function renderTutorialLanguageChoices()", main)
-        self.assertIn("tutorialLanguageStep')?.classList.remove('hidden')", main)
         self.assertIn("window.getCardTutorialLanguageKey?.()", main)
-        self.assertIn("window.setCardTutorialLanguage?.(key)", main)
+        self.assertIn("window.setCardTutorialLanguage?.(language)", main)
+        self.assertIn("startCardTutorial(key)", main)
         self.assertIn("How common this meaning is", (APP_ROOT / "js" / "tutorial.js").read_text(encoding="utf-8"))
         self.assertIn("Tap them to read Dominant, Common, Uncommon, or Rare", (APP_ROOT / "js" / "tutorial.js").read_text(encoding="utf-8"))
 
@@ -531,11 +535,10 @@ class ProductShellTests(unittest.TestCase):
 
     def test_in_app_tutorial_skips_language_choice_when_one_is_already_selected(self) -> None:
         main = (APP_ROOT / "js" / "main.js").read_text(encoding="utf-8")
-        self.assertIn("function startCardTutorial()", main)
-        start = main.index("function startCardTutorial()")
-        language_step = main.index("tutorialLanguageStep')?.classList.remove('hidden')", start)
+        start = main.index("function openTutorialIntroduction()")
+        language_step = main.index("getElementById('tutorialIntroModal')?.classList.remove('hidden')", start)
         self.assertLess(main.index("getCardTutorialLanguageKey?.()", start), language_step)
-        self.assertLess(main.index("setCardTutorialLanguage?.(knownLanguage)", start), language_step)
+        self.assertLess(main.index("startCardTutorial(knownLanguage)", start), language_step)
 
     def test_fast_track_has_one_language_switch_and_fine_tuning(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")

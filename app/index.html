@@ -919,22 +919,15 @@
         </div>
     </div>
 
-    <!-- Short learner-facing introduction to the card tutorial. -->
+    <!-- Asks which language to teach with, when the page has not chosen one.
+         With a language already chosen, the tutorial opens directly. -->
     <div id="tutorialIntroModal" class="modal hidden product-modal" role="dialog" aria-modal="true" aria-labelledby="tutorialIntroTitle">
         <div class="modal-content tutorial-intro-sheet">
             <div class="tutorial-intro-close-row">
                 <h2 id="tutorialIntroTitle" class="visually-hidden">Tutorial</h2>
                 <button class="modal-close" id="closeTutorialIntroModal" aria-label="Close tutorial introduction">&#10005;</button>
             </div>
-            <div id="tutorialWelcomeStep" class="tutorial-intro-step">
-                <div class="tutorial-principles">
-                    <p>Learn the essentials: reveal a card, hear the pronunciation, grade your answer, and move on.</p>
-                </div>
-                <button class="product-primary-action" id="startCardTutorialBtn" type="button">Start the quick tutorial <span aria-hidden="true">→</span></button>
-                <button class="product-back-action" id="startFullCardTutorialBtn" type="button">Open the full card tour</button>
-            </div>
-            <div id="tutorialLanguageStep" class="tutorial-intro-step hidden">
-                <button type="button" id="tutorialLanguageBackBtn" class="product-back-action">← Back</button>
+            <div id="tutorialLanguageStep" class="tutorial-intro-step">
                 <h3>Choose the language you’re learning</h3>
                 <p>We’ll use an example card and only show features available for that language.</p>
                 <div id="tutorialLanguageChoices" class="tutorial-language-grid" role="list"></div>
@@ -1009,11 +1002,11 @@
                      space is the scarce thing here — the card and its
                      annotations have to fit on screen together, so nothing
                      gets a whole band of its own.
-                     Speech leads naturally into Lyrics; which face you are
-                     reading is decided by flipping the card, and the
-                     annotations follow the face. -->
+                     The chapters sit on the left and open directly; which
+                     face you are reading is decided by flipping the card, and
+                     the annotations follow the face. -->
                 <div class="card-tutorial-topbar">
-                    <div class="card-tutorial-sequence" id="cardTutorialSequence" aria-live="polite"></div>
+                    <div class="card-tutorial-sequence" id="cardTutorialSequence"></div>
                     <div class="card-tutorial-intro" id="cardTutorialIntro"></div>
                     <button class="modal-close card-tutorial-close" id="closeCardTutorialModal" aria-label="Close tutorial" title="Close tutorial">✕</button>
                 </div>
@@ -1030,6 +1023,7 @@
                         <div class="card-tutorial-desktop-actions" id="cardTutorialDesktopActions" hidden>
                             <button type="button" class="card-tutorial-continue is-secondary" id="cardTutorialPrev">Back</button>
                             <span class="card-tutorial-desktop-progress" id="cardTutorialDesktopProgress"></span>
+                            <button type="button" class="card-tutorial-continue is-secondary" id="cardTutorialFinish" hidden>Start studying</button>
                             <button type="button" class="card-tutorial-continue" id="cardTutorialContinue" hidden></button>
                         </div>
                         
@@ -1042,6 +1036,7 @@
                     <p id="cardTutorialMobileText"></p>
                     <div class="card-tutorial-mobile-actions">
                         <button type="button" id="cardTutorialMobileBack">Back</button>
+                        <button type="button" id="cardTutorialMobileFinish" hidden>Start studying</button>
                         <button type="button" id="cardTutorialMobileNext">Next</button>
                     </div>
                     

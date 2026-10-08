@@ -34,27 +34,21 @@ import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 // Emoji flags anywhere on the page render as rectangular pictures.
 installFlagRendering();
 
-let fullCardTutorialRequested = false;
-
-function startCardTutorial() {
-    const knownLanguage = window.getCardTutorialLanguageKey?.();
-    if (knownLanguage) {
-        window.setCardTutorialLanguage?.(knownLanguage);
-        closeTutorialIntroduction();
-        window.openCardTutorial?.({ quick: !fullCardTutorialRequested });
-        return;
-    }
-    document.getElementById('tutorialWelcomeStep')?.classList.add('hidden');
-    document.getElementById('tutorialLanguageStep')?.classList.remove('hidden');
+function startCardTutorial(language) {
+    window.setCardTutorialLanguage?.(language);
+    closeTutorialIntroduction();
+    window.openCardTutorial?.();
 }
 
-function openTutorialIntroduction({ full = false } = {}) {
-    fullCardTutorialRequested = full;
-    const startButton = document.getElementById('startCardTutorialBtn');
-    if (startButton) startButton.textContent = full ? 'Start the full card tour →' : 'Start the quick tutorial →';
+// The tutorial lists its own chapters, so there is nothing to choose before
+// it opens — except the language, when the page has not settled one.
+function openTutorialIntroduction() {
     document.getElementById('resumeLastSetCard')?.remove();
-    document.getElementById('tutorialWelcomeStep')?.classList.remove('hidden');
-    document.getElementById('tutorialLanguageStep')?.classList.add('hidden');
+    const knownLanguage = window.getCardTutorialLanguageKey?.();
+    if (knownLanguage) {
+        startCardTutorial(knownLanguage);
+        return;
+    }
     renderTutorialLanguageChoices();
     document.getElementById('tutorialIntroModal')?.classList.remove('hidden');
 }
@@ -73,11 +67,7 @@ function renderTutorialLanguageChoices() {
         button.innerHTML = `<span class="tutorial-language-flag" aria-hidden="true">${flags[key] || '🌐'}</span>` +
             `<span><strong>${language}</strong><small>${profile?.lyrics && window.getCardTutorialMode?.() === 'lyrics' ? 'Lyrics tutorial' : 'Speech tutorial'}</small></span>` +
             '<span class="tutorial-language-arrow" aria-hidden="true">→</span>';
-        button.addEventListener('click', () => {
-            window.setCardTutorialLanguage?.(key);
-            closeTutorialIntroduction();
-            window.openCardTutorial?.({ quick: !fullCardTutorialRequested });
-        });
+        button.addEventListener('click', () => startCardTutorial(key));
         container.appendChild(button);
     });
 }
@@ -811,15 +801,6 @@ loadConfig().then(async () => {
     // walkthrough instead and never opens this.
     document.getElementById('helpBtn').addEventListener('click', openTutorialIntroduction);
     document.getElementById('closeTutorialIntroModal')?.addEventListener('click', closeTutorialIntroduction);
-    document.getElementById('startCardTutorialBtn')?.addEventListener('click', startCardTutorial);
-    document.getElementById('startFullCardTutorialBtn')?.addEventListener('click', () => {
-        fullCardTutorialRequested = true;
-        startCardTutorial();
-    });
-    document.getElementById('tutorialLanguageBackBtn')?.addEventListener('click', () => {
-        document.getElementById('tutorialLanguageStep')?.classList.add('hidden');
-        document.getElementById('tutorialWelcomeStep')?.classList.remove('hidden');
-    });
     document.getElementById('tutorialIntroModal')?.addEventListener('click', event => {
         if (event.target === event.currentTarget) closeTutorialIntroduction();
     });
@@ -863,11 +844,11 @@ loadConfig().then(async () => {
     if (helpStudyContent && !document.getElementById('helpCardTutorialBtn')) {
         const tutorialAction = document.createElement('p');
         tutorialAction.className = 'help-card-tutorial-action';
-        tutorialAction.innerHTML = '<button class="help-more-info-btn" id="helpCardTutorialBtn" type="button">Open the full card tour →</button>';
+        tutorialAction.innerHTML = '<button class="help-more-info-btn" id="helpCardTutorialBtn" type="button">Open the tutorial →</button>';
         helpStudyContent.appendChild(tutorialAction);
         tutorialAction.querySelector('button').addEventListener('click', () => {
             document.getElementById('helpModal').classList.add('hidden');
-            openTutorialIntroduction({ full: true });
+            openTutorialIntroduction();
         });
     }
     // Hide floating gear — replaced by gear in the top bar

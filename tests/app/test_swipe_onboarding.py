@@ -29,9 +29,12 @@ context.showSwipeHint();assert.equal(hint,null);
         result=subprocess.run(['node','-'],input=script,text=True,capture_output=True,cwd=ROOT)
         self.assertEqual(result.returncode,0,result.stderr)
 
-    def test_quick_tour_keeps_full_help_tour(self):
+    def test_one_tutorial_teaches_grading_and_offers_to_stop(self):
         source=(ROOT/'app/js/tutorial.js').read_text()
-        self.assertIn('openCardTutorial({ quick: true })',source)
-        self.assertIn('function openCardTutorial({ quick = false } = {})',source)
-        for title in ['Recall, then reveal','Hear the pronunciation','Grade your answer','Move on']:
-            self.assertIn(title,source)
+        self.assertIn('    openCardTutorial();\n    return true;',source)
+        self.assertIn("function openCardTutorial({ chapter = 'card' } = {})",source)
+        self.assertIn("title: 'Grade your answer'",source)
+        self.assertIn('← Needs practice · Got it →',source)
+        self.assertIn("'cardTutorialFinish', 'cardTutorialMobileFinish'",source)
+        for gone in ['quick','Recall, then reveal','Hear the pronunciation']:
+            self.assertNotIn(gone,source)

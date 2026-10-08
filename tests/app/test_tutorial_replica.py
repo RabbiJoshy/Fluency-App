@@ -73,8 +73,10 @@ vm.runInContext(source + `
 assert.equal(selectedTutorialMode(), null);
 assert.equal(openFirstRunCardTutorial(), false);
 state.mode = 'speech';
-assert.equal(tutorialSteps().length, 2);
-assert(tutorialSteps().every(step => step.deck === 'speech'));
+const cardSteps = () => tutorialSteps().filter(step => step.kind === 'card');
+assert.equal(cardSteps().length, 2);
+assert(cardSteps().every(step => step.deck === 'speech'));
+assert.deepEqual(tutorialSteps().map(step => step.chapter), ['card', 'card', 'smartSkip', 'modes']);
 `, context);
 speechChosen = true;
 assert.equal(window.getCardTutorialMode(), 'speech');
@@ -82,12 +84,12 @@ window.activeArtist = {language: 'spanish'};
 assert.equal(window.getCardTutorialMode(), 'lyrics');
 vm.runInContext(`
 state.mode = 'lyrics';
-assert.equal(tutorialSteps().length, 2);
-assert(tutorialSteps().every(step => step.deck === 'lyrics'));
+assert.equal(cardSteps().length, 2);
+assert(cardSteps().every(step => step.deck === 'lyrics'));
 const deck = deckById('lyrics');
 assert.equal(deck.card, 'cielo');
 assert(deck.faces.front.notes.some(note => note.title === 'Kind of word'));
-assert(deck.faces.front.notes.some(note => note.title === 'Song line count'));
+assert(deck.faces.front.notes.find(note => note.title === 'How common the word is').text.includes('your chosen songs'));
 assert(deck.faces.back.notes.some(note => note.title === 'The meanings at a glance'));
 assert(deck.faces.back.notes.some(note => note.title === 'Which song it is from'));
 assert(deck.faces.back.notes.some(note => note.title === 'Play the line'));
@@ -103,9 +105,9 @@ assert(!deck.faces.back.notes.some(note => note.title === 'Where the example is 
             input=r'''import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
-import { REPLICA_CARDS } from './app/js/card-replica.js';
+import { REPLICA_CARDS, esc } from './app/js/card-replica.js';
 const source = fs.readFileSync('./app/js/tutorial.js', 'utf8').replace(/import \{[\s\S]*?\} from '[^']+';/, '');
-const context = vm.createContext({assert, REPLICA_CARDS,
+const context = vm.createContext({assert, REPLICA_CARDS, esc,
   window: {}, document: {readyState: 'loading', addEventListener() {}, querySelector() {return null;}, getElementById() {return null;}},
   localStorage: {getItem() {return null;}}});
 vm.runInContext(source + `
@@ -149,29 +151,35 @@ assert.equal(tutorialCardHeight(), 342);
 state.meaningIndex = 0;
 assert.equal(tutorialCardHeight(), 342);
 document.querySelector = () => null;
-assert.equal(tutorialStepPosition().total, 15);
+// Progress counts the chapter on show: the card's two faces.
+assert.equal(tutorialStepPosition().total, 9);
 const front = stepNotes(tutorialSteps()[0]);
-for (const title of ['How common the word is', 'Kind of word', 'The dictionary form', 'How often it is said']) assert(front.some(note => note.title === title));
+assert.deepEqual(front.map(note => note.title), ['The word', 'How common the word is', 'Kind of word', 'The dictionary form']);
 const back = stepNotes(tutorialSteps()[1]);
-for (const title of ['Useful extras', 'How common this meaning is', 'Where the example is from', 'Smart Skip saves time', 'Switch modes anytime', 'You’re ready to study']) assert(back.some(note => note.title === title));
-state.stepIndex = 1;
-state.activeNote = back.findIndex(note => note.practice === 'meaning');
-assert.equal(practicePending(), true);
-renderNotes = () => {};
-markAnchors = () => {};
-completePractice('example');
-assert.equal(practicePending(), true);
-completePractice('meaning');
-assert.equal(practicePending(), false);
-state.activeNote = back.findIndex(note => note.practice === 'example');
-assert.equal(practicePending(), true);
-completePractice('example');
-assert.equal(practicePending(), false);
+assert.deepEqual(back.map(note => note.title), ['The meanings at a glance', 'The selected meaning', 'How common this meaning is', 'A real example', 'Grade your answer']);
+// Notes explain; none sets a task that holds Next back.
+for (const step of tutorialSteps()) for (const note of stepNotes(step)) {
+  assert.equal(note.practice, undefined);
+  assert.equal(note.actionHint, undefined);
+}
+// Smart Skip and the vocabulary source are pages, each in the language taught.
+const skip = stepNotes(tutorialSteps()[2]);
+assert.deepEqual(skip.map(note => note.title), ['Turn it on', 'Word forms share a card', 'Look-alikes are skipped']);
+assert(tutorialText(skip[1].text).startsWith('“falo”, “falou” and “falar”'));
+assert(TUTORIAL_PAGES.smartSkip.html(tutorialAdapter()).includes('falou'));
+assert.equal(stepNotes(tutorialSteps()[3]).length, 2);
+assert(TUTORIAL_PAGES.modes.html(tutorialAdapter()).includes('Your music'));
+state.stepIndex = 2;
+assert.deepEqual(tutorialStepPosition(0), {current: 1, total: 3});
+state.stepIndex = 0;
 tutorialLanguageOverride = 'spanish';
 state.mode = 'lyrics';
-assert(tutorialStepPosition().total > 15);
-assert(stepNotes(tutorialSteps()[1]).some(note => note.title === 'Play the line'));
-assert.equal(stepNotes(tutorialSteps()[0]).length, 5);
+assert.equal(tutorialStepPosition().total, 12);
+const lyricsBack = stepNotes(tutorialSteps()[1]);
+assert(lyricsBack.some(note => note.title === 'Play the line'));
+// Grading closes the face even after the song details are added.
+assert.equal(lyricsBack[lyricsBack.length - 1].title, 'Grade your answer');
+assert.equal(stepNotes(tutorialSteps()[0]).length, 4);
 `, context);
 ''', capture_output=True,
         )
