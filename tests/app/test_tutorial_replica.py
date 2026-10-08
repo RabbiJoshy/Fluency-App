@@ -119,6 +119,29 @@ state.exampleIndex = 1;
 assert.equal(tutorialCardHeight(), 740);
 window.innerHeight = 680;
 assert.equal(tutorialCardHeight(), 520);
+// The actual tutorial area can be shorter than the window (text zoom,
+// browser chrome, or a wrapped header). Its measured budget wins.
+window.innerWidth = 1440;
+const pane = {clientHeight: 590};
+const column = {};
+document.querySelector = selector => selector.includes('stage-col') ? column : pane;
+document.getElementById = () => ({offsetHeight: 46});
+this.getComputedStyle = element => element === pane
+    ? {paddingTop: '0', paddingBottom: '0'} : {gap: '14'};
+assert.equal(tutorialCardHeight(), 522);
+state.meaningIndex = 1;
+assert.equal(tutorialCardHeight(), 522);
+pane.clientHeight = 410;
+state.cardHeight = null;
+assert.equal(tutorialCardHeight(), 342);
+window.innerWidth = 913;
+state.cardHeight = null;
+window.matchMedia = () => ({matches: true});
+assert.equal(tutorialCardHeight(), 402);
+window.innerWidth = 375;
+state.cardHeight = null;
+document.querySelector = () => null;
+document.getElementById = () => null;
 window.matchMedia = () => ({matches: true});
 assert.equal(tutorialCardHeight(), 440);
 document.querySelector = () => ({clientHeight: 360});
