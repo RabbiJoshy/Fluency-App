@@ -9,7 +9,9 @@ was left untouched. Existing progress, events, settings and playlist protocols
 are unchanged.
 
 `learning_profiles` is an additional directory, not authentication. Names and
-birthday day/month identify possible matches. An exact match can always create
+an optional birthday day/month identify possible matches. Omitting the birthday
+shows all matches for that name; supplying it narrows the matches while retaining
+profiles that never set a birthday. An exact match can always create
 another UUID-backed progress identity. Birth years are never collected.
 
 Legacy initials are offered with study context and linked only on explicit

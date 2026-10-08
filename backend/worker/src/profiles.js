@@ -1,8 +1,9 @@
 // A recognisable progress directory, not secure authentication. No birth year.
 export function profileFields(params) {
   const name = String(params.name || '').normalize('NFKC').trim().replace(/\s+/g, ' ');
-  const birthday = String(params.birthday || '');
+  const birthday = String(params.birthday || '').trim();
   if (!name || name.length > 40 || /[\u0000-\u001f\u007f]/u.test(name)) throw new Error('Enter a name or username (up to 40 characters).');
+  if (!birthday) return { name, nameKey: name.toLocaleLowerCase('en'), birthday: '' };
   const match = /^(\d{2})-(\d{2})$/.exec(birthday);
   const month = Number(match?.[1]), day = Number(match?.[2]);
   const days = [31,29,31,30,31,30,31,31,30,31,30,31];
@@ -15,7 +16,7 @@ async function contextFor(db, row) {
     COUNT(*) AS studied_items FROM item_state WHERE user_id=?1 GROUP BY language
     ORDER BY last_studied DESC`).bind(row.user_id).all();
   return { id: row.user_id, name: row.display_name, birthday: row.birthday || '',
-    legacy: row.origin === 'legacy', languages: results.map(item => item.language).filter(Boolean),
+    legacy: row.origin === 'legacy', needsLink: Boolean(row.unlinked), languages: results.map(item => item.language).filter(Boolean),
     lastStudied: results[0]?.last_studied || null,
     studiedItems: results.reduce((sum, item) => sum + item.studied_items, 0) };
 }
@@ -23,7 +24,7 @@ async function contextFor(db, row) {
 export async function lookupProfiles(db, params) {
   const fields = profileFields(params);
   const { results } = await db.prepare(`SELECT * FROM learning_profiles
-    WHERE name_key=?1 AND birthday=?2 ORDER BY created_at`).bind(fields.nameKey, fields.birthday).all();
+    WHERE name_key=?1 AND (?2='' OR birthday=?2 OR birthday='') ORDER BY created_at`).bind(fields.nameKey, fields.birthday).all();
   // Old profiles have no birthday. Offer their existing progress once, with
   // explicit recognition; registering it leaves every progress row untouched.
   const legacyId = fields.name.toUpperCase();
@@ -31,7 +32,7 @@ export async function lookupProfiles(db, params) {
     const claimed = await db.prepare('SELECT user_id FROM learning_profiles WHERE user_id=?1').bind(legacyId).first();
     const existing = await db.prepare(`SELECT user_id FROM users WHERE user_id=?1
       UNION SELECT user_id FROM item_state WHERE user_id=?1 LIMIT 1`).bind(legacyId).first();
-    if (!claimed && existing) results.push({ user_id: legacyId, display_name: legacyId, origin:'legacy' });
+    if (!claimed && existing) results.push({ user_id: legacyId, display_name: legacyId, origin:'legacy', unlinked:true });
   }
   return { profiles: await Promise.all(results.map(row => contextFor(db, row))) };
 }

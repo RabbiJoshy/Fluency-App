@@ -855,7 +855,7 @@
                     <p id="profileNameError" class="auth-form-error" role="alert" hidden></p>
                     <p id="profileNameHelp" class="auth-profile-help">Studied here before? Use your original name or initials.</p>
                     <fieldset class="auth-birthday-group">
-                        <legend class="auth-input-label">Birthday (day and month only)</legend>
+                        <legend class="auth-input-label">Birthday <span class="auth-optional-tag">(optional)</span></legend>
                         <div class="auth-birthday-fields">
                             <label>Day<input id="birthdayDay" type="number" min="1" max="31" inputmode="numeric" autocomplete="bday-day" aria-describedby="profileBirthdayHelp loginFormError" placeholder="DD" /></label>
                             <label>Month<select id="birthdayMonth" aria-label="Month" autocomplete="bday-month" aria-describedby="profileBirthdayHelp loginFormError">
@@ -867,7 +867,7 @@
                             </select></label>
                         </div>
                     </fieldset>
-                    <p id="profileBirthdayHelp" class="auth-profile-help">Your birthday helps tell matching names apart.</p>
+                    <p id="profileBirthdayHelp" class="auth-profile-help">Day and month only, to help tell matching names apart.</p>
                     <p id="loginFormError" class="auth-form-error" role="alert" hidden></p>
                     <div id="profileMatches" class="auth-profile-matches" aria-live="polite"></div>
                     <div class="login-form-actions">

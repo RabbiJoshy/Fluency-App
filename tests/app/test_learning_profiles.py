@@ -14,8 +14,11 @@ class LearningProfileTests(unittest.TestCase):
     def test_client_identity_and_fields(self):
         self.run_node(r'''
 import assert from 'node:assert/strict';
-import {birthdayValue,userForProfile,profileContext} from './app/js/learning-profiles.js';
+import {birthdayValue,optionalBirthdayValue,userForProfile,profileContext} from './app/js/learning-profiles.js';
 assert.equal(birthdayValue(29,2),'02-29');
+assert.equal(optionalBirthdayValue('',''),'');
+assert.equal(optionalBirthdayValue('29','2'),'02-29');
+for (const [day,month] of [['29',''],['','2'],['30','2']]) assert.throws(()=>optionalBirthdayValue(day,month));
 for (const [day,month] of [[30,2],[31,4],[0,1],[1,13],[1.5,1],['','']]) assert.equal(birthdayValue(day,month),'');
 const first=userForProfile({id:'profile_a',name:'Josh',birthday:'10-08'});
 const second=userForProfile({id:'profile_b',name:'Josh',birthday:'10-08'});
@@ -51,9 +54,10 @@ const db={prepare(sql){let args=[];return {bind(...values){args=values;return th
  async all(){return {results:execute(sql,args)};},async first(){return execute(sql,args)[0]||null;},async run(){execute(sql,args);}};}};
 try {
  assert.throws(()=>profileFields({name:'J',birthday:'02-30'}));
+ assert.equal(profileFields({name:'J'}).birthday,'');
  const fields={name:'JST',birthday:'10-08'};
  const legacy=(await lookupProfiles(db,fields)).profiles[0];
- assert.equal(legacy.id,'JST');assert.equal(legacy.legacy,true);assert.deepEqual(legacy.languages,['spanish']);
+ assert.equal(legacy.id,'JST');assert.equal(legacy.legacy,true);assert.equal(legacy.needsLink,true);assert.deepEqual(legacy.languages,['spanish']);
  assert.equal(legacy.lastStudied,'2026-10-01T12:00:00Z');
  await claimLegacyProfile(db,{...fields,id:'JST'});
  assert.equal(execute("SELECT COUNT(*) AS n FROM item_state WHERE user_id='JST'")[0].n,1);
@@ -65,5 +69,17 @@ try {
  assert.equal(matches.length,3);assert.equal(new Set(matches.map(p=>p.id)).size,3);
  await createProfile(db,{...fields,id:a});assert.equal((await lookupProfiles(db,fields)).profiles.length,3);
  await assert.rejects(createProfile(db,{...fields,id:a,birthday:'10-09'}));
+ const c='profile_00000000-0000-4000-8000-000000000003';
+ await createProfile(db,{name:'JST',id:c});
+ assert.equal((await lookupProfiles(db,{name:'JST'})).profiles.length,4);
+ const dated=(await lookupProfiles(db,fields)).profiles;
+ assert.equal(dated.length,4); // A supplied birthday still finds birthday-free profiles.
+ assert.equal(dated.find(p=>p.id===c).birthday,'');
+ assert.equal((await lookupProfiles(db,{name:'JST',birthday:'10-09'})).profiles.length,1);
+ execute("INSERT INTO users VALUES ('NEW');INSERT INTO item_state VALUES ('NEW','czech','2026-10-08');",[],true);
+ await claimLegacyProfile(db,{name:'NEW',id:'NEW'});
+ const undatedLegacy=(await lookupProfiles(db,{name:'NEW',birthday:'10-08'})).profiles[0];
+ assert.equal(undatedLegacy.id,'NEW');assert.equal(undatedLegacy.needsLink,false);
+ assert.equal(execute("SELECT COUNT(*) AS n FROM item_state WHERE user_id='NEW'")[0].n,1);
 } finally {fs.rmSync(temp,{recursive:true,force:true});}
 ''')
