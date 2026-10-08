@@ -2070,8 +2070,10 @@ function updateLevelSliderReadout(i) {
         // illustrative of "what you'll be learning here".
         const rankOf = _levelRankAccessor(lv.rankBasis);
         const start = Math.max(1, Math.floor(lv.startRank + (lv.endRank - lv.startRank) * 0.6));
-        const inRange = samples.filter(s => rankOf(s) >= start && rankOf(s) < lv.endRank);
-        const pick = (inRange.length ? inRange : samples.filter(s => rankOf(s) < lv.endRank))
+        // Examples illustrate individual words, even when the deck includes MWEs.
+        const words = samples.filter(s => !/\s/u.test(s.word.trim()));
+        const inRange = words.filter(s => rankOf(s) >= start && rankOf(s) < lv.endRank);
+        const pick = (inRange.length ? inRange : words.filter(s => rankOf(s) < lv.endRank))
             .slice(-12);
         const out = [];
         const n = Math.min(5, pick.length);
