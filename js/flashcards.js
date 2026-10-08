@@ -1,28 +1,28 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=9908142c';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js';
-import './speech.js?v=9908142c';
-import { goToRoute, routeCodeFor } from './routes.js?v=9908142c';
-import './side-dock.js?v=9908142c';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=9908142c';
+import './state.js?v=da5a117c';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=da5a117c';
+import './speech.js?v=da5a117c';
+import { goToRoute, routeCodeFor } from './routes.js?v=da5a117c';
+import './side-dock.js?v=da5a117c';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=da5a117c';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=9908142c';
+} from './example-personalisation.js?v=da5a117c';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=9908142c';
+} from './spanishdict-usage.js?v=da5a117c';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=9908142c';
+} from './reverse-cues.js?v=da5a117c';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -55,7 +55,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=9908142c';
+} from './card-metadata-pills.js?v=da5a117c';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -2870,6 +2870,25 @@ function handleSwipeAction(result, { gesture = false } = {}) {
 
         advanceToNextDeckCard();
     }, 300);
+}
+
+// Position labels for the set's cards: a split word's two cards share one
+// number with A and B (7A, 7B), so the count is of words, not cards.
+function deckCardLabels(count = flashcards.length) {
+    let wordCount = 0;
+    const labels = [];
+    for (let i = 0; i < count; i++) {
+        const split = flashcards[i]?.splitInfo;
+        if (split) {
+            if (split.index === 1) wordCount++;
+            const letter = split.index === 1 ? 'A' : (split.index === 2 ? 'B' : String(split.index));
+            labels.push(`${wordCount}${letter}`);
+        } else {
+            wordCount++;
+            labels.push(String(wordCount));
+        }
+    }
+    return { labels, wordCount };
 }
 
 // A split word opened on its own (search, word link) shows Flashcard 1 of 2
@@ -6275,7 +6294,13 @@ function renderCardWikipediaBadge(card) {
                         ? `<span class="front-lemma-name">${fromPrefix}${escapeCardText(pair.lemma)}</span>`
                         : '';
                     const posOnlyClass = !lemmaHTML ? ' is-pos-only' : '';
-                    return `<span class="front-lemma-pair ${statusClass}${posOnlyClass}">${posUnit}${lemmaHTML}</span>`;
+                    // Each pill names its own card, so the count can only mean
+                    // that card, and the dimmed "Card 2" says another is coming.
+                    // The active one opens the explanation.
+                    const countHTML = isActive
+                        ? `<button type="button" class="split-pill-count" aria-expanded="false" aria-label="Card ${cardNum} of ${s.total}: why two cards?" onclick="toggleSplitCardTip(event)">Card ${cardNum} of ${s.total}</button>`
+                        : `<span class="split-pill-count">Card ${cardNum}</span>`;
+                    return `<span class="front-lemma-pair ${statusClass}${posOnlyClass}">${posUnit}${lemmaHTML}${countHTML}</span>`;
                 };
 
                 const splitPairsHTML = [
@@ -6284,8 +6309,8 @@ function renderCardWikipediaBadge(card) {
                 ].join('');
 
                 const noteRgb = getPosAccentRgb(s.pos || card.partOfSpeech);
-                const splitNoteHTML = `<div class="split-card-note" style="color: rgb(${noteRgb});">`
-                    + `<button type="button" class="split-card-note-toggle" aria-expanded="false" onclick="toggleSplitCardTip(event)">Flashcard <span class="split-card-note-count">${s.index} of ${s.total}</span></button>`
+                frontPOSEl.style.setProperty('--split-accent', noteRgb);
+                const splitNoteHTML = '<div class="split-card-note is-tip-only">'
                     + '<span class="split-card-tip" role="tooltip" hidden>This word has two common, unrelated uses, so it gets a flashcard for each. '
                     + 'Learning them separately keeps one meaning from crowding out the other. '
                     + 'You see both, one after the other.</span></div>';
@@ -8504,20 +8529,7 @@ function renderCardWikipediaBadge(card) {
         const segmentCount = scrubCount;
         progressSegments.classList.toggle('is-single', segmentCount <= 1);
         if (progressSegments.childElementCount !== segmentCount) {
-            // Compute base item number and split suffix (e.g. 7A, 7B) for each card in the deck
-            let baseItemNum = 0;
-            const segmentLabels = [];
-            for (let i = 0; i < segmentCount; i++) {
-                const c = flashcards[i];
-                if (c && c.splitInfo) {
-                    if (c.splitInfo.index === 1) baseItemNum++;
-                    const letter = c.splitInfo.index === 1 ? 'A' : (c.splitInfo.index === 2 ? 'B' : String(c.splitInfo.index));
-                    segmentLabels.push(`${baseItemNum}${letter}`);
-                } else {
-                    baseItemNum++;
-                    segmentLabels.push(String(baseItemNum));
-                }
-            }
+            const { labels: segmentLabels, wordCount: baseItemNum } = deckCardLabels(segmentCount);
 
             progressSegments.replaceChildren(...Array.from({ length: segmentCount }, (_, i) => {
                 const segment = document.createElement('button');
@@ -8577,7 +8589,8 @@ function renderCardWikipediaBadge(card) {
         cardBackPips.classList.toggle('is-single', scrubCount <= 1);
         const thumb = cardBackPips.querySelector('.cbs-thumb');
         const thumbNum = cardBackPips.querySelector('.cbs-thumb-num');
-        if (thumbNum) thumbNum.textContent = String(scrubIndex + 1);
+        // A split word's two cards share a number: 25A, 25B, then 26.
+        if (thumbNum) thumbNum.textContent = deckCardLabels(scrubCount).labels[scrubIndex] || String(scrubIndex + 1);
         thumb?.classList.toggle('is-phrases', onPhraseCard);
         cardBackPips.setAttribute('aria-valuenow', String(scrubIndex + 1));
         cardBackPips.setAttribute('aria-valuemax', String(Math.max(1, scrubCount)));
@@ -9024,7 +9037,8 @@ function toggleMorphAlternatives(event) {
 function toggleSplitCardTip(event) {
     event.stopPropagation();
     const button = event.currentTarget;
-    const tip = button.parentElement?.querySelector('.split-card-tip');
+    const tip = button.closest('.card-pos-list')?.querySelector('.split-card-tip')
+        || button.parentElement?.querySelector('.split-card-tip');
     if (!tip) return;
     tip.hidden = !tip.hidden;
     button.setAttribute('aria-expanded', String(!tip.hidden));
@@ -10344,8 +10358,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '9908142c';
-const MODALS_ASSET_VERSION = '9908142c';
+const ASSET_VERSION = 'da5a117c';
+const MODALS_ASSET_VERSION = 'da5a117c';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

@@ -1,7 +1,7 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=9908142c';
-import { readFastTrack } from './fast-track-preferences.js?v=9908142c';
+import './state.js?v=da5a117c';
+import { readFastTrack } from './fast-track-preferences.js?v=da5a117c';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -642,7 +642,7 @@ function unmergeStandardProgressFromLanguageStep() {
 
     title.after(inlinePill);
     anchor.after(wrapper);
-    title.textContent = 'Choose your language';
+    title.textContent = 'Choose the language you’re learning';
     step.classList.remove('language-summary-active');
     header.setAttribute('role', 'button');
     header.setAttribute('tabindex', '0');
@@ -966,7 +966,9 @@ function setupLanguageTabs() {
                     await deckOverviewHold;
                     window.hideAppLoading?.();
                 }
-                if (!window.maybeShowFrequencyIntro?.()) window.openFirstRunCardTutorial?.();
+                if (!window.maybeShowKnownLanguagesIntro?.(newLanguage)) {
+                    if (!window.maybeShowFrequencyIntro?.()) window.openFirstRunCardTutorial?.();
+                }
             };
             window.continueToSpeechAfterLive = continueToSpeech;
 
@@ -988,7 +990,9 @@ function setupLanguageTabs() {
                 continueToSpeech();
             };
 
-            window.maybeShowFrequencyIntro?.();
+            if (!window.maybeShowKnownLanguagesIntro?.(newLanguage)) {
+                window.maybeShowFrequencyIntro?.();
+            }
 
             const pendingSpeechLanguage = sessionStorage.getItem('fluencyPendingSpeechLanguage');
             if (pendingSpeechLanguage === newLanguage) {
@@ -1431,12 +1435,20 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
         if (!_setupLevelSelectionWasManual && (!selectedLevel || preferActionable)) {
             target.click();
             await target._rangeRenderPromise;
+            const targetIdx = levelButtons.indexOf(target);
+            if (targetIdx >= 0) {
+                requestAnimationFrame(() => _scrollLevelSegToCenter(targetIdx, false));
+            }
         }
     } else {
         const matchingBtn = levelButtons.find(b => b.dataset.level === selectedLevel);
         if (matchingBtn && !document.querySelector('.level-btn.selected')) {
             matchingBtn.click();
             await matchingBtn._rangeRenderPromise;
+            const matchIdx = levelButtons.indexOf(matchingBtn);
+            if (matchIdx >= 0) {
+                requestAnimationFrame(() => _scrollLevelSegToCenter(matchIdx, false));
+            }
         }
         levelProgressPromise.catch(err =>
             console.warn('Level progress indicators unavailable', err));
@@ -3263,7 +3275,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=9908142c')
+        import('./spotify.js?v=da5a117c')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
@@ -4120,7 +4132,7 @@ function getNormalHelpContent() {
         <p><strong>Why frequency order?</strong></p>
         <p>Language follows a power law: a small number of words make up the vast majority of everyday speech. In Spanish, the top 1,000 words cover roughly 81% of spoken language, and the top 3,000 cover around 91%. By learning frequent words first, you build practical comprehension faster.</p>
         <p><strong>How does it work?</strong></p>
-        <p>Choose a language, then choose whether to learn from Speech or Lyrics. Speech opens the frequency-ranked language release; Lyrics lets you select an artist, playlist, or your own mix before any large vocabulary file is loaded. The app selects a level's first small set containing unseen cards, while incorrect and partly learned cards collect in that level's separate review. When Spaced repetition is enabled in Study settings, due cards join that review and correct recalls graduate through 1, 3, 7, 14, 30, 60, and 120-day intervals; mistakes reset the schedule. Merge Lemmas and Cognate exclusions can shorten sets without moving cards between them. Examples retain source and translation evidence when the active release provides it. If you leave an unfinished set, a Welcome back prompt offers to restore the exact card and settings next time you enter; finishing the set clears it.</p>
+        <p>Choose the language you’re learning, then choose whether to learn from Speech or Lyrics. Speech opens the frequency-ranked language release; Lyrics lets you select an artist, playlist, or your own mix before any large vocabulary file is loaded. The app selects a level's first small set containing unseen cards, while incorrect and partly learned cards collect in that level's separate review. When Spaced repetition is enabled in Study settings, due cards join that review and correct recalls graduate through 1, 3, 7, 14, 30, 60, and 120-day intervals; mistakes reset the schedule. Merge Lemmas and Cognate exclusions can shorten sets without moving cards between them. Examples retain source and translation evidence when the active release provides it. If you leave an unfinished set, a Welcome back prompt offers to restore the exact card and settings next time you enter; finishing the set clears it.</p>
         <p>The progress bar tracks your coverage based on the frequency of words you've learned — learning a common word contributes more to your coverage than a rare one.</p>
     `;
 }

@@ -2,6 +2,31 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-08T21:18:00+01:00",
+      "date": "2026-10-08 21:18 BST",
+      "agent": "Antigravity",
+      "summary": "Clarify learning language prompt, add known-languages primer, and expand tutorial notes",
+      "detail": [
+        "Prompt explicitly asks for 'Choose the language you’re learning' to avoid confusion for non-native English speakers.",
+        "Add post-language selection primer asking which languages the learner already knows to filter look-alikes via Smart Skip.",
+        "Expand tutorial with Smart Skip explanation and reassure learners that they can switch between Speech and Lyrics anytime with progress saved."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-08T21:16:05+01:00",
+      "date": "2026-10-08 21:16 BST",
+      "agent": "Codex",
+      "summary": "Names and birthdays identify separate learning profiles",
+      "detail": [
+        "Enter a username/name and birthday day/month, with inline validation and no birth year.",
+        "Matching profiles show language and last study date; an exact match can always create a separate profile.",
+        "Existing initials and all progress keep their original IDs; selected profiles remain remembered on this device.",
+        "Saved sets are isolated by profile; the progress backend now includes a shared profile directory."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-08T21:08:51+01:00",
       "date": "2026-10-08 21:08 BST",
       "agent": "Codex",
@@ -346,16 +371,6 @@
         "Set pill numbers 13 to 18px; 'Set N' 15 to 18px.",
         "The counts line is 14px, regular weight, brighter colour.",
         "'Known · Practice · New' are capitalised."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-07T19:45:00+01:00",
-      "date": "2026-10-07 19:45 BST",
-      "agent": "Claude",
-      "summary": "Learn / Practise button text matches Quick N",
-      "detail": [
-        "The set start button ('Learn N new cards') is 17px, weight 750, like the Quick N button (was 15px, 700)."
       ],
       "commit": "pending"
     }

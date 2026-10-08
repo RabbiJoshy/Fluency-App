@@ -1,11 +1,11 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=9908142c';
-import { validateVocabularyIndex } from './data-contracts.js?v=9908142c';
-import { formatRoute } from './routes.js?v=9908142c';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=9908142c';
-import { releaseUrl } from './release-host.js?v=9908142c';
+import './state.js?v=da5a117c';
+import { validateVocabularyIndex } from './data-contracts.js?v=da5a117c';
+import { formatRoute } from './routes.js?v=da5a117c';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=da5a117c';
+import { releaseUrl } from './release-host.js?v=da5a117c';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -90,9 +90,23 @@ function projectedSenseFrequency(indexRow, sense, fallbackFrequency) {
     return (Number(counts[senseId]) || 0) / denominator;
 }
 
+function studySessionStorageKey(key) {
+    return `${key}:user:${currentUser?.initials || 'guest'}`;
+}
+
 function readStudySession(key) {
     try {
-        const parsed = JSON.parse(localStorage.getItem(key) || 'null');
+        let raw = localStorage.getItem(studySessionStorageKey(key));
+        // Earlier snapshots had no account scope. Preserve them only for
+        // legacy initials profiles, never for a newly separated profile.
+        if (!raw && currentUser && !currentUser.isGuest && !String(currentUser.initials).startsWith('profile_')) {
+            raw = localStorage.getItem(key);
+            if (raw) {
+                localStorage.setItem(studySessionStorageKey(key), raw);
+                localStorage.removeItem(key);
+            }
+        }
+        const parsed = JSON.parse(raw || 'null');
         return parsed && parsed.range && Array.isArray(parsed.order) ? parsed : null;
     } catch (error) {
         return null;
@@ -231,10 +245,10 @@ function clearStudySessionSnapshot() {
     // time the learner reopened that deck.
     try {
         const previous = readStudySession(LAST_STUDY_SESSION_KEY);
-        localStorage.removeItem(LAST_STUDY_SESSION_KEY);
-        if (previous) localStorage.removeItem(`${LAST_STUDY_SESSION_KEY}:${studySessionScope(previous)}`);
+        localStorage.removeItem(studySessionStorageKey(LAST_STUDY_SESSION_KEY));
+        if (previous) localStorage.removeItem(studySessionStorageKey(`${LAST_STUDY_SESSION_KEY}:${studySessionScope(previous)}`));
         const scope = activeStudySessionScope();
-        if (scope) localStorage.removeItem(`${LAST_STUDY_SESSION_KEY}:${scope}`);
+        if (scope) localStorage.removeItem(studySessionStorageKey(`${LAST_STUDY_SESSION_KEY}:${scope}`));
     } catch (_) {}
     document.getElementById('resumeLastSetCard')?.remove();
 }
@@ -318,8 +332,8 @@ function _writeStudySessionSnapshot() {
         // offers. The scoped copy is what a deck resumes from, so switching
         // between Bad Bunny and Speech no longer overwrites the other's
         // place in its set.
-        localStorage.setItem(LAST_STUDY_SESSION_KEY, serialized);
-        localStorage.setItem(`${LAST_STUDY_SESSION_KEY}:${studySessionScope(snapshot)}`, serialized);
+        localStorage.setItem(studySessionStorageKey(LAST_STUDY_SESSION_KEY), serialized);
+        localStorage.setItem(studySessionStorageKey(`${LAST_STUDY_SESSION_KEY}:${studySessionScope(snapshot)}`), serialized);
     } catch (error) {
         // Storage can be unavailable in hardened/private contexts.
     }

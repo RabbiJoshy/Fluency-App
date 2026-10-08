@@ -18894,6 +18894,96 @@ body.artist-mode #flashcardMode::before {
 .front-meaning-pos {
   font-size: 11px;
 }
+#knownLanguagesModal {
+  z-index: 1200;
+}
+.known-languages-sheet {
+  max-width: 480px;
+}
+.known-languages-modal-header {
+  margin-bottom: 12px;
+}
+.known-languages-modal-header h2 {
+  margin: 4px 0 0;
+  color: var(--text-primary);
+  font: 700 22px/1.25 var(--font-emphasis);
+}
+.known-languages-modal-intro {
+  margin: 0 0 16px;
+  color: var(--text-secondary);
+  font: 400 15px/1.5 var(--font-reading);
+}
+.known-languages-modal-selection {
+  margin-bottom: 14px;
+}
+.known-languages-modal-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+  font: 700 12px/1.3 var(--font-emphasis);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.known-languages-choice-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.known-language-choice-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font: 600 14px/1.3 var(--font-reading);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.known-language-choice-btn:hover {
+  border-color: var(--accent-primary);
+  background: var(--bg-card-hover);
+}
+.known-language-choice-btn.selected {
+  border-color: var(--accent-primary);
+  background: rgba(var(--accent-primary-rgb), 0.14);
+  color: var(--text-primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.known-language-choice-flag {
+  font-size: 20px;
+  line-height: 1;
+}
+.known-language-choice-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-color);
+  font-size: 11px;
+  font-weight: 700;
+  transition: all 0.18s ease;
+  margin-left: 2px;
+}
+.known-language-choice-btn.selected .known-language-choice-check {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: #10141b;
+}
+.known-languages-modal-footnote {
+  margin: 0 0 18px;
+  color: var(--text-muted);
+  font: 400 12px/1.45 var(--font-reading);
+}
+.known-languages-modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 #frequencyIntroModal {
   z-index: 1200;
 }
