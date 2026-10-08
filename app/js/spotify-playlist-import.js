@@ -712,7 +712,7 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
                 } else if (namedSyncUser()) {
                     status.textContent = `${parts.join('. ')}. Deck is ready here, but no copy was saved to your account.`;
                 } else {
-                    status.textContent = `${parts.join('. ')}. Sign in with initials to keep this deck.`;
+                    status.textContent = `${parts.join('. ')}. Sign in with your username to keep this deck.`;
                 }
             } catch (error) {
                 console.warn('Playlist deck save failed:', error);

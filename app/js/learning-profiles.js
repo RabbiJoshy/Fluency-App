@@ -24,7 +24,7 @@ export function profileContext(profile) {
     const date = profile.lastStudied ? new Date(profile.lastStudied) : null;
     return [languages || 'No study sessions yet', date && !Number.isNaN(date.getTime())
         ? `Last studied ${date.toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'})}` : '',
-        profile.legacy ? 'Existing initials profile — your progress will be kept' : ''].filter(Boolean).join(' · ');
+        profile.legacy ? 'Existing profile — your progress will be kept' : ''].filter(Boolean).join(' · ');
 }
 
 export function showLoginError(message, field = null) {
@@ -96,7 +96,7 @@ export async function submitProfileLogin(onSelected) {
     let birthday;
     showLoginError('');
     if (!name || name.length > 40 || /[\u0000-\u001f\u007f]/u.test(name)) {
-        showLoginError('Enter a username or name (up to 40 characters).', 'userInitials'); return;
+        showLoginError('Enter a username (up to 40 characters).', 'userInitials'); return;
     }
     try {
         birthday = optionalBirthdayValue(document.getElementById('birthdayDay').value,

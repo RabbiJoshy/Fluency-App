@@ -826,7 +826,7 @@
                     </button>
                 </div>
                 <div id="loginInfoNote" class="auth-info-note hidden">
-                    Your name and birthday day and month help you recognise your learning progress across devices. They prevent accidental sharing; they are not secure authentication. No email or birth year is needed.
+                    Your username and optional birthday help you recognise your learning progress across devices. They prevent accidental sharing; they are not secure authentication. No email or birth year is needed.
                 </div>
 
                 <button class="auth-btn guest-btn" id="guestModeBtn" type="button" onclick="window.fluencyAuthFallback.guest()">
@@ -848,12 +848,12 @@
                         <h4>Your profile</h4>
                         <p>Create a profile or continue learning.</p>
                     </div>
-                    <label for="userInitials" class="auth-input-label">Username or name</label>
+                    <label for="userInitials" class="auth-input-label">Username</label>
                     <input type="text" id="userInitials" class="initials-input" placeholder="e.g. Alex"
                         maxlength="40" name="username" autocomplete="username" autocapitalize="off"
                         aria-describedby="profileNameHelp profileNameError" style="letter-spacing: normal; text-transform: none; font-size: 18px;" />
                     <p id="profileNameError" class="auth-form-error" role="alert" hidden></p>
-                    <p id="profileNameHelp" class="auth-profile-help">Studied here before? Use your original name or initials.</p>
+                    <p id="profileNameHelp" class="auth-profile-help">Studied here before? Use your existing username.</p>
                     <fieldset class="auth-birthday-group">
                         <legend class="auth-input-label">Birthday <span class="auth-optional-tag">(optional)</span></legend>
                         <div class="auth-birthday-fields">
@@ -867,7 +867,7 @@
                             </select></label>
                         </div>
                     </fieldset>
-                    <p id="profileBirthdayHelp" class="auth-profile-help">Day and month only, to help tell matching names apart.</p>
+                    <p id="profileBirthdayHelp" class="auth-profile-help">Day and month only, to help tell matching usernames apart.</p>
                     <p id="loginFormError" class="auth-form-error" role="alert" hidden></p>
                     <div id="profileMatches" class="auth-profile-matches" aria-live="polite"></div>
                     <div class="login-form-actions">
@@ -1848,7 +1848,7 @@
                 </section>
                 <!-- The password lives on this device only (auth.js). It stops
                      someone else on this device from studying under your
-                     initials and overwriting your progress; it is not an
+                     username and overwriting your progress; it is not an
                      account secret, so it can be shown and changed here. -->
                 <section class="account-password" id="accountPasswordRow" hidden>
                     <span class="account-password-label">Secret word</span>

@@ -2,7 +2,7 @@
 export function profileFields(params) {
   const name = String(params.name || '').normalize('NFKC').trim().replace(/\s+/g, ' ');
   const birthday = String(params.birthday || '').trim();
-  if (!name || name.length > 40 || /[\u0000-\u001f\u007f]/u.test(name)) throw new Error('Enter a name or username (up to 40 characters).');
+  if (!name || name.length > 40 || /[\u0000-\u001f\u007f]/u.test(name)) throw new Error('Enter a username (up to 40 characters).');
   if (!birthday) return { name, nameKey: name.toLocaleLowerCase('en'), birthday: '' };
   const match = /^(\d{2})-(\d{2})$/.exec(birthday);
   const month = Number(match?.[1]), day = Number(match?.[2]);

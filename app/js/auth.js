@@ -359,7 +359,7 @@ function wireAccountPassword() {
         if (next) {
             localStorage.setItem(key, next);
         } else {
-            if (!confirm('Remove the secret word? Anyone on this device could then use your initials.')) return;
+            if (!confirm('Remove the secret word? Anyone on this device could then use your profile.')) return;
             localStorage.removeItem(key);
         }
         currentUser.hasPassword = Boolean(next);
