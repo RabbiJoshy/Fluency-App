@@ -53,6 +53,28 @@ class LowShareSenseTests(unittest.TestCase):
         self.assertEqual(out["main"], ["of", "from", "in", "in"])
         self.assertEqual(out["rare"], ["by", "with"])
 
+    def test_each_subsense_row_needs_the_bar(self) -> None:
+        # estuve: five "I was" rows hold 35% together; "to fit" rests on one
+        # misread "estuve pensando" and must not ride on its siblings.
+        out = self.run_js(r"""
+            const m = (context, n) => ({ pos: 'VERB', meaning: 'to be', headword: 'estar', context, percentage: n / 80 });
+            const meanings = [m('quality', 9), m('emotion', 7), m('located', 2), m('present', 9), m('to fit', 1)];
+            const done = finishCardMeanings({}, meanings);
+            console.log(JSON.stringify({ main: done.meanings.map(x => x.context),
+                                         rare: done.unusedMenuSenses.map(x => x.context) }));
+        """)
+        self.assertEqual(out["main"], ["quality", "emotion", "present"])
+        self.assertEqual(out["rare"], ["located", "to fit"])
+
+    def test_a_translation_that_clears_the_bar_keeps_its_largest_row(self) -> None:
+        out = self.run_js(r"""
+            const m = (meaning, context, n) => ({ pos: 'VERB', meaning, headword: 'ter', context, percentage: n / 30 });
+            const meanings = [m('to have', 'to own', 2), m('to have', 'perfect', 1), m('to say', '', 27)];
+            const done = finishCardMeanings({}, meanings);
+            console.log(JSON.stringify(done.meanings.map(x => x.context)));
+        """)
+        self.assertEqual(out, ["to own", ""])
+
     def test_a_card_is_never_left_without_a_sense(self) -> None:
         out = self.run_js(r"""
             const meanings = [{ pos: 'adv', meaning: 'how', percentage: 0.05 },

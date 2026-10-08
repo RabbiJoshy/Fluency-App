@@ -4104,7 +4104,9 @@ async function mergeArtistVocabularies(artistConfigs, master) {
 // main card; below it, it moves to Rarer uses with its sentences. With ~30
 // assigned sentences per card that is three: a sense resting on one or two is
 // as often a WSD slip as a real use (que "how", from a single "that" line).
-// Near-synonym leaves count together, as prominence labels do.
+// The bar is per subsense row: estuve "I was (to fit)" rested on one
+// misread "estuve pensando" while its "I was" siblings held 35% between them.
+// Function words keep pooling by translation; their grouping is curated.
 const MAIN_CARD_MIN_SHARE = 0.10;
 const NON_SENSE_POS = new Set(['PHRASE', 'MWE', 'CLITIC', 'SENSE_CYCLE', 'EXAMPLE_ONLY']);
 
@@ -4118,18 +4120,32 @@ function normalizeMeaningShares(meanings) {
     return meanings;
 }
 
+const POOLED_FLOOR_POS = /^(?:adp|prep|preposition|det|determiner|article|pron|pronoun|cconj|sconj|conj|conjunction|part|particle)$/i;
+
 function splitLowShareMeanings(meanings) {
     const eligible = m => m && !m.unassigned && !m.exampleOnly
         && !NON_SENSE_POS.has(String(m.pos || '').toUpperCase()) && Number(m.percentage) > 0;
-    const key = m => [m.pos, m.headword, m.meaning]
-        .map(v => String(v || '').trim().toLocaleLowerCase('en')).join('\u0000');
+    const fold = values => values.map(v => String(v || '').trim().toLocaleLowerCase('en')).join('\u0000');
+    const poolKey = m => fold([m.pos, m.headword, m.meaning]);
+    const key = m => (POOLED_FLOOR_POS.test(String(m.pos || '')) ? poolKey(m) : fold([m.pos, m.headword, m.meaning, m.context]));
     const shares = new Map();
     for (const m of meanings) {
         if (eligible(m)) shares.set(key(m), (shares.get(key(m)) || 0) + Number(m.percentage));
     }
     // Shares are ratios of small counts: 3 of 30 arrives as 0.0999…, and three
     // sentences is exactly the bar.
-    const low = m => eligible(m) && shares.get(key(m)) < MAIN_CARD_MIN_SHARE - 1e-9;
+    const below = m => eligible(m) && shares.get(key(m)) < MAIN_CARD_MIN_SHARE - 1e-9;
+    // A translation whose rows clear the bar together keeps its largest row.
+    const byPool = new Map();
+    for (const m of meanings) if (eligible(m)) byPool.set(poolKey(m), [...(byPool.get(poolKey(m)) || []), m]);
+    const rescued = new Set();
+    for (const rows of byPool.values()) {
+        const total = rows.reduce((sum, m) => sum + Number(m.percentage), 0);
+        if (total >= MAIN_CARD_MIN_SHARE - 1e-9 && rows.every(below)) {
+            rescued.add(rows.reduce((a, b) => (Number(b.percentage) > Number(a.percentage) ? b : a)));
+        }
+    }
+    const low = m => below(m) && !rescued.has(m);
     const kept = meanings.filter(m => !low(m));
     // Never leave a card without a sense of its own on the front.
     if (!kept.some(eligible)) return { meanings, rare: [] };

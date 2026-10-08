@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-08T09:12:39+01:00",
+      "date": "2026-10-08 09:12 BST",
+      "agent": "Claude",
+      "summary": "Each subsense row now needs 10% of a card's sentences to stay on the main card",
+      "detail": [
+        "The 10% floor used to pool rows sharing an English translation, so a one-sentence slip rode on its siblings: estuve \"I was (to fit)\" rested on a misread \"estuve pensando\" while the five \"I was\" rows held 35% together.",
+        "Now each subsense row is measured on its own and anything under 10% moves to Rarer uses with its sentences. estuve drops \"to fit\" and \"to be located\"; darte drops \"to give (to generate / to motivate)\"; pt tem keeps \"to own\" and \"general use\".",
+        "If a translation's rows clear 10% together but each is under it, its largest row stays.",
+        "Function words (prepositions, articles, pronouns, conjunctions) keep pooling by translation, since their grouping is curated.",
+        "Both providers (SpanishDict and Wiktionary)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-08T08:38:15+01:00",
       "date": "2026-10-08 08:38 BST",
       "agent": "Codex",
