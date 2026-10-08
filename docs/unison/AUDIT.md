@@ -3,6 +3,15 @@
 Read 2026-10-08 by UNISON-1, as a learner sees the cards (app display rules
 applied). Nothing was fixed. Josh picks the fix list from this page.
 
+## TL;DR
+
+- v23 picks the right sense 83% of the time in Spanish and 71% in Portuguese
+  (blind sample).
+- Five fix families cover most errors: **phrases** (~190 cards), **context and
+  pills** (~125), **grammar verbs** (~70, a WSD fix), **Portuguese menu gaps**
+  (~40), **junk cards** (surface ledger).
+- A frozen panel (`research/unison/gold/`) scores any future run.
+
 ## What was read
 
 | | Spanish (`es-speech-v23-10000x30-slim`) | Portuguese (`pt-speech-v23-10000x30-slim`) |
@@ -33,7 +42,7 @@ change with a re-run, a day or two; **L** = redesign.
 | # | Cause | Cards es / pt (sentences) | Layer | Two examples | Fix cost |
 |---|---|---|---|---|---|
 | 1 | **Wrong sense** (plainly different meaning) | 104 / 105 (785) | wsd | pt *cara* "guy" shown as "face" (68%) and "resemblance" (#220); pt *embora* (*ir embora* = leave) shown as "although" on 93% (#238) | L (the classifier; partly fixed by the families below) |
-| 2 | **Same English gloss, wrong context** — the gloss is right, the context note under it is not | 55 / 58 (592) | wsd + menu | pt *ser* "to be ⟨indicates a point in time⟩" on *a culpa não foi minha*, *não foi muito divertido* (#37, also *era*, *somos*, *sido*); pt *em* "in" with the pill "indicates a language, script" on *na nossa casa* (#31, *num*, *numa*, *nas*) | M (merge senses with one gloss, or hide unreliable contexts) |
+| 2 | **Right gloss, wrong context or pill** — the English is right; the context (the grey text under a meaning) or a pill shown with it is not | 55 / 58 (592) | wsd + menu | pt *ser* "to be ⟨indicates a point in time⟩" on *a culpa não foi minha*, *não foi muito divertido* (#37, also *era*, *somos*, *sido*); pt *em* "in" with the pill "indicates a language, script" on *na nossa casa* (#31, *num*, *numa*, *nas*) | M (merge senses with one gloss, or hide unreliable contexts) |
 | 3 | **Phrase missing from the menu** | 46 / 32 (218) | menu | es *a veces* not on the *vez* menu (17 of 18 examples); pt *ter certeza* "to be sure" shown as "are you sure?" (95% of *certeza*, #211) and under "to own" on *tenho/tens/ter* | M (add phrases; pt Wiktionary phrase coverage is thin) |
 | 4 | **Phrase matched where it is literal** | 24 / 48 (183) | wsd | pt *qual é* "no way" on 94% of *qual* (*qual é o seu nome?*, #185); es *de cabeza* "headfirst" on *dolor de cabeza* | S–M (literal-use guard on the MWE matcher) |
 | 5 | **Wrong part of speech** | 19 / 27 (229) | wsd | pt *preciso* (I need) shown as adj "necessary" 80% (#162); pt *as* article shown as "them" (#29); es *estos* as PRON | M |
@@ -58,27 +67,56 @@ contexts (pt 1), topic chips (pt 1), companion misattributed (es 1).
 
 ## Fix families (where one change clears several causes)
 
-1. **Phrase handling** — causes 3, 4, 6 (≈190 cards). Add the missing phrases,
-   guard literal uses (*qual é o problema*, *em um dia*, *o mesmo que*), match
-   through contractions (*depois do*, *fora da*, *por volta das* are missed
-   today), and fix the phrase glosses.
-2. **Grammar verbs** — causes 8–11 (≈70 cards). Deterministic rules for
-   *ir* + infinitive (future), *estar/andar* + gerund or *a* + infinitive,
-   *ter/haver* + participle, *ter que/de*, passive *ser* + participle, and
-   reflexive forms. These are the seeded cases (*irte*, *estuve*).
-3. **Portuguese menu coverage** — causes 7, 13 (≈40 cards). Clitics (*nos, lhe*),
-   contractions (*dele, dela, disso, daqui, dali, num*), formal *o senhor / a
-   senhora / si* = "you", *melhor*, *oh*; replace the "…determiner." and
-   spelling-note glosses.
-4. **Context notes** — causes 2, 14 (≈125 cards). The biggest learner-visible
-   noise: many Wiktionary senses share a gloss and differ only in a context the
-   classifier cannot see (*de* "of ⟨place following its hypernym⟩", *ser* "to
-   be ⟨point in time⟩"). Merge or stop showing those contexts (part 3).
-5. **Inventory hygiene** — causes 15–17. Names and foreign words as cards.
+Terms as in `docs/NOMENCLATURE.md`: **context** is the grey text under a meaning
+on the card (the menu's `context` field); **pills** are the small inline labels.
 
-Portuguese is 12 points behind Spanish on the blind sample, and families 1–3
-account for most of the gap. A large share of pt "wrong sense" lines are
+1. **Phrases** — causes 3, 4, 6 (≈190 cards). Add the missing phrases, guard
+   literal uses (*qual é o problema*, *em um dia*, *o mesmo que*), match through
+   contractions (*depois do*, *fora da*, *por volta das* are missed today), and
+   fix the phrase glosses.
+2. **Context and pills** — causes 2, 14 (≈125 cards). The English is right but
+   the context or pill shown with it is wrong. Many Wiktionary senses share a
+   gloss and differ only in a context the classifier cannot see (*de* "of"
+   with the context "introduces the name of a place following its hypernym";
+   *ser* "to be" with "indicates a point in time"; *em* "in" with the pill
+   "indicates a language, script"). Merge those senses or stop showing those
+   contexts. Owner: part 3 (metadata).
+3. **Grammar verbs** — causes 8–11 (≈70 cards). A **WSD** error, not a display
+   one: the right sense is on the menu and WSD picks another (*vou fazer* gets
+   "to go (to begin an action)" although "will; to be going to" is offered;
+   *estou a fazer* gets "to stand" although "to be; forms the progressive" is
+   offered; *tenho que* gets "to own"). Fix with deterministic construction
+   rules before or inside WSD: *ir* + infinitive → future, *estar/andar* +
+   gerund or *a* + infinitive → progressive, *ter/haver* + participle →
+   perfect, *ter que/de* → obligation, *ser* + participle → passive, and
+   reflexive forms. Covers the seeded *irte*, *darte*, *estuve*. Josh
+   (2026-10-08): a worthwhile step for the next WSD pass.
+4. **Portuguese menu gaps** — causes 7, 13 (≈40 cards). Three kinds of fix:
+   - *by hand* (~10 frequent words): clitics *nos*, *lhe*; formal "you" *o
+     senhor*, *a senhora*, *si*; *melhor*; *oh*;
+   - *one rule*: contractions (*dele, dela, disso, daqui, dali, num*) are a
+     preposition plus a word, so a small table ("de + ele = his / of him")
+     covers the set;
+   - *one Wiktionary adapter fix*: the *seu* senses are glossed "Second-person
+     singular possessive determiner." while the English ("your") sits in the
+     context; read the gloss from there. Fixes *seu, sua, seus, suas*, so "you"
+     stops winning on them.
+5. **Junk cards** — causes 15–17. Names and foreign words. Owner: the surface
+   ledger, at two levels:
+   - *card verdict* (reason code proper name / foreign word) where the whole
+     card is junk: *Cal* (always the name, shown as "lime"), Spanish *mi*;
+   - *sentence rejects* where the word is real but some sentences are not:
+     *Nora* (name / daughter-in-law), *una* (Spanish / subjunctive of *unir*),
+     *mortal* (the title "Taça Mortal").
+
+Portuguese is 12 points behind Spanish on the blind sample, and families 1, 3
+and 4 account for most of the gap. A large share of pt "wrong sense" lines are
 function words, where the Wiktionary menu offers ten near-identical senses.
+
+**Separate, not logged:** the English is always the dictionary form ("to go")
+and never matches the form on the card ("I go", "I'm going to"). That is a
+display question for later, outside WSD; it affects every verb card, so it was
+not logged as a problem.
 
 ## Seeded problems (from CHAT_ROADMAP)
 
