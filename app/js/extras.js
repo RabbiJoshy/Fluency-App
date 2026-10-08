@@ -654,9 +654,19 @@ let _ssRendered = 0;
 let _ssObserver = null;
 let _ssSignature = '';
 
+let _activeCognateFilterLang = 'all';
+
 function skipEntriesFor(extras, category) {
     if (category === 'all') return extras.allSkipped || [];
-    return extras.byCategory?.[category] || [];
+    const entries = extras.byCategory?.[category] || [];
+    if (category === 'cognate' && _activeCognateFilterLang !== 'all') {
+        const lang = _activeCognateFilterLang;
+        const check = g().isCognateKnownForLanguage;
+        if (check) {
+            return entries.filter(({ item }) => check(item, lang));
+        }
+    }
+    return entries;
 }
 
 function smartSkipMenu(extras) {
@@ -844,9 +854,27 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory, { force = f
         : (options.find(option => option.id === 'cognate')?.id
             || options.find(option => option.id !== 'all')?.id
             || options[0]?.id || 'all');
+    const activeKnown = g().activeKnownLanguages?.() || [];
+    const showLangBtn = category === 'cognate' && activeKnown.length > 1;
+    const langBtn = document.getElementById('smartSkipCognateLangFilter');
+    if (langBtn) {
+        langBtn.hidden = !showLangBtn;
+        if (showLangBtn) {
+            const flag = _activeCognateFilterLang === 'all'
+                ? '🌐'
+                : (g().knownLanguageFlag?.(_activeCognateFilterLang) || _activeCognateFilterLang.toUpperCase());
+            const label = _activeCognateFilterLang === 'all'
+                ? 'All languages'
+                : (g().knownLanguageLabel?.(_activeCognateFilterLang) || _activeCognateFilterLang);
+            langBtn.innerHTML = `<span aria-hidden="true">${flag}</span>`;
+            langBtn.title = `Filtered by ${label} (click to switch)`;
+            langBtn.setAttribute('aria-label', `Filtered by ${label}`);
+        }
+    }
+
     const needle = _ssQuery.trim().toLocaleLowerCase();
     const signature = JSON.stringify([
-        g().selectedLanguage, Boolean(g().activeArtist), category, needle, extras.ready,
+        g().selectedLanguage, Boolean(g().activeArtist), category, _activeCognateFilterLang, needle, extras.ready,
         options.map(option => option.label), (g().getActiveLevelRanges?.() || []).length,
     ]);
     if (!force && signature === _ssSignature) return extras.cognates;
@@ -1198,9 +1226,17 @@ function restoreSection(kind) {
         renderExtras();
         refreshExtrasButtons();
     }, 0);
-}
-
 function initExtras() {
+    document.getElementById('smartSkipCognateLangFilter')?.addEventListener('click', () => {
+        const activeKnown = g().activeKnownLanguages?.() || [];
+        if (activeKnown.length <= 1) return;
+        const cycle = ['all', ...activeKnown];
+        const currentIndex = cycle.indexOf(_activeCognateFilterLang);
+        const nextIndex = (currentIndex + 1) % cycle.length;
+        _activeCognateFilterLang = cycle[nextIndex];
+        closeSmartSkipPreview();
+        renderSkippedWords('cognate', { force: true });
+    });
     document.getElementById('skippedCategorySelect')?.addEventListener('change', event => {
         closeSmartSkipPreview();
         renderSkippedWords(event.target.value);

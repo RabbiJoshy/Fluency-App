@@ -19519,6 +19519,26 @@ button.wbw-word:focus-visible { outline: 2px solid var(--accent-primary); outlin
 }
 .smart-skip-toolbar { display: flex; gap: 8px; align-items: center; }
 .smart-skip-toolbar[hidden] { display: none; }
+.smart-skip-lang-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  min-height: 38px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font: 600 13px/1 var(--font-reading);
+  cursor: pointer;
+  white-space: nowrap;
+  flex: none;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.smart-skip-lang-btn:hover {
+  background: var(--bg-hover, color-mix(in srgb, var(--bg-card) 90%, var(--text-primary) 10%));
+}
+.smart-skip-lang-btn[hidden] { display: none; }
 .smart-skip-select-wrap { position: relative; flex: 0 1 auto; min-width: 0; }
 .smart-skip-select-wrap select {
   appearance: none;
@@ -22888,6 +22908,37 @@ body:has(#cardTutorialModal:not(.hidden), #tutorialIntroModal:not(.hidden)) #res
 .deck-complete-score-container.is-outcome .deck-score-ring-fill { stroke: var(--ring-known); stroke-linecap: butt; filter: none; }
 .deck-complete-content:has(.is-outcome:not([hidden])) .incorrect-stat .deck-stat-badge,
 .deck-complete-content:has(.is-outcome:not([hidden])) .incorrect-stat .deck-stat-label { color: var(--warning); }
+
+/* Seek-bar thumb: a circle for "25", a pill for "25A" so the letter fits. */
+.cbs-thumb { width: auto; min-width: 32px; padding: 0 6px; border-radius: 999px; box-sizing: border-box; }
+
+/* Split words: "Card 1 of 2" sits on its own pill instead of a "Flashcard 1 of 2"
+   line floating between the two, so the count can only mean that card. The
+   active pill's count opens the "why two cards?" note; the companion pill is
+   dimmed as before, its "Card 2" with it. Pills keep their order (1 left,
+   2 right) on both cards, matching 25A / 25B on the seek bar. */
+.split-pill-count {
+  appearance: none;
+  flex: none;
+  margin-left: 2px;
+  padding: 3px 7px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(var(--split-accent, 160, 160, 160), 0.18);
+  color: rgb(var(--split-accent, 200, 200, 200));
+  font: 750 12px/1 var(--font-reading);
+  font-variant-numeric: tabular-nums;
+  pointer-events: auto;
+}
+button.split-pill-count { cursor: pointer; }
+button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accent, 200, 200, 200)); outline-offset: 2px; }
+.card-pos-list .split-card-note.is-tip-only { margin: 0; height: 0; padding: 0; }
+.card-front .card-pos-list.is-split-stacked > .split-card-note.is-tip-only { grid-column: 1; grid-row: auto; }
+.card-front .card-pos-list.is-split-deck-map.is-split-stacked { grid-template-columns: auto; }
+.card-pos-list.is-lemma-map .front-lemma-pair.is-pos-only:has(.split-pill-count) { gap: 6px; padding-right: 6px; width: max-content; }
+.card-pos-list.is-split-deck-map .split-pill-count { padding: 2px 6px; font-size: 11.5px; margin-left: 0; }
+.card-pos-list.is-split-deck-map .front-lemma-pair { gap: 5px; }
+.split-pill-count { white-space: nowrap; }
 
 /* Compact desktop: use the width for the coach so the card can stay tall. */
 @media (min-width: 701px) and (max-width: 1180px) {

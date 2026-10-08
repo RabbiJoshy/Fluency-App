@@ -573,6 +573,11 @@ class ProductShellTests(unittest.TestCase):
         self.assertLess(html.index('id="fastModeFineTune"'), html.index('id="fastTrackDeckCard"'))
         self.assertLess(html.index('id="fastTrackDeckCard"'), html.index('id="skippedWordsBody"'))
 
+        fast_mode_js = (APP_ROOT / "js" / "fast-mode.js").read_text(encoding="utf-8")
+        self.assertIn("skippedCardsCount = (extras.allSkipped ? extras.allSkipped.length : (extras.cognates?.length || 0))", fast_mode_js)
+        self.assertIn("+ (extras.lemmas?.length || 0)", fast_mode_js)
+        self.assertIn("? (extras.cognates || []).map(entry => entry.item.word)", fast_mode_js)
+
     def test_settings_are_organised_around_learner_tasks(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
         ui = (APP_ROOT / "js" / "ui.js").read_text(encoding="utf-8")
@@ -1699,3 +1704,19 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("const singletonFoldLeaders = new Map();", flashcards)
         self.assertIn("if (singletonFoldFollowers.has(idx)) return;", flashcards)
         self.assertIn("foldInfo.allIndices.includes(currentMeaningIndex)", flashcards)
+
+    def test_smart_skip_cognate_language_filter(self) -> None:
+        html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
+        cognates = (APP_ROOT / "js" / "cognates.js").read_text(encoding="utf-8")
+        extras = (APP_ROOT / "js" / "extras.js").read_text(encoding="utf-8")
+        css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
+
+        self.assertIn('id="smartSkipCognateLangFilter"', html)
+        self.assertIn('class="smart-skip-lang-btn"', html)
+        self.assertIn(".smart-skip-lang-btn", css)
+        self.assertIn("KNOWN_LANGUAGE_FLAGS", cognates)
+        self.assertIn("knownLanguageFlag", cognates)
+        self.assertIn("isCognateKnownForLanguage", cognates)
+        self.assertIn("_activeCognateFilterLang", extras)
+        self.assertIn("smartSkipCognateLangFilter", extras)
+
