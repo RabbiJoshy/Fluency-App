@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-08T22:24:44+01:00",
+      "date": "2026-10-08 22:24 BST",
+      "agent": "Codex",
+      "summary": "Birthday is optional when choosing a learning profile",
+      "detail": [
+        "Leave day and month blank to look up profiles by name alone.",
+        "A supplied birthday narrows matching names; profiles without a birthday remain discoverable.",
+        "Partially entered or invalid birthdays still receive inline feedback."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-08T22:21:02+01:00",
       "date": "2026-10-08 22:21 BST",
       "agent": "Codex",
@@ -351,16 +363,6 @@
       "summary": "Set progress colours a bit deeper",
       "detail": [
         "Known #3fdc78 to #22c55e; Practice #ffd426 to #f5b800."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-07T21:20:00+01:00",
-      "date": "2026-10-07 21:20 BST",
-      "agent": "Claude",
-      "summary": "Set progress colours: greener green, yellower yellow",
-      "detail": [
-        "Known #9fe8b4 to #3fdc78 and Practice #ffe27a to #ffd426 on the set pills and the Known / Practice / New swatches; numbers stay black."
       ],
       "commit": "pending"
     }

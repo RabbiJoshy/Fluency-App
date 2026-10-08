@@ -12,6 +12,13 @@ export function birthdayValue(day, month) {
     return `${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
 }
 
+export function optionalBirthdayValue(day, month) {
+    if (!String(day).trim() && !String(month).trim()) return '';
+    const birthday = birthdayValue(day, month);
+    if (!birthday) throw new Error('Choose a valid birthday day and month, or leave both blank.');
+    return birthday;
+}
+
 export function profileContext(profile) {
     const languages = (profile.languages || []).join(', ');
     const date = profile.lastStudied ? new Date(profile.lastStudied) : null;
@@ -86,12 +93,15 @@ export async function submitProfileLogin(onSelected) {
     }
     if (busy) return;
     const name = document.getElementById('userInitials').value.normalize('NFKC').trim().replace(/\s+/g,' ');
-    const birthday = birthdayValue(document.getElementById('birthdayDay').value, document.getElementById('birthdayMonth').value);
+    let birthday;
     showLoginError('');
     if (!name || name.length > 40 || /[\u0000-\u001f\u007f]/u.test(name)) {
         showLoginError('Enter a username or name (up to 40 characters).', 'userInitials'); return;
     }
-    if (!birthday) { showLoginError('Choose a valid birthday day and month.', 'birthdayDay'); return; }
+    try {
+        birthday = optionalBirthdayValue(document.getElementById('birthdayDay').value,
+            document.getElementById('birthdayMonth').value);
+    } catch (error) { showLoginError(error.message, 'birthdayDay'); return; }
     const fields = {name,birthday};
     const attempt = ++epoch;
     document.getElementById('profileMatches')?.replaceChildren();
@@ -100,7 +110,7 @@ export async function submitProfileLogin(onSelected) {
         if (attempt !== epoch || busy) return;
         setBusy(true);
         try {
-            if (profile.legacy && !profile.birthday) {
+            if (profile.needsLink) {
                 profile = (await requestProfiles('claimLegacyProfile',{...fields,id:profile.id})).profile;
             }
             if (attempt !== epoch) return;
