@@ -504,6 +504,7 @@ function toggleKnownLanguage(code) {
     globalThis.updateExclusionBars?.();
     globalThis.updateLevelSelector?.();
     globalThis.refreshFastMode?.();
+    globalThis.renderSkippedWords?.('cognate', { force: true });
 }
 
 // The cutoff a single language decides at. Exposed because the explainer copy
@@ -560,5 +561,6 @@ globalThis.renderKnownLanguagePicker = renderKnownLanguagePicker;
 globalThis.knownLemmas = knownLemmas;
 globalThis.knownLanguageLabel = languageLabel;
 globalThis.getCognateAlgorithmInfo = getCognateAlgorithmInfo;
+globalThis.cardSenseCognate = cardSenseCognate;
 globalThis.writeKnownLanguages = writeSelected;
 globalThis.readKnownLanguages = readSelected;
