@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T01:00:00+01:00",
+      "date": "2026-10-09 01:00 BST",
+      "agent": "Claude",
+      "summary": "Vocabulary choice: switching and progress carry-over stated; hover text says words start most common first",
+      "detail": [
+        "Intro under 'Choose your flashcard vocabulary source' now ends: You can switch at any time, and the words you learn carry over between the two modes.",
+        "Desktop hover text on Everyday speech: 'Starts with the most common words in films and TV shows'; on Your music: 'Starts with the most common words in the music you listen to'.",
+        "The in-study vocabulary picker shares the intro wording."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T00:59:00+01:00",
       "date": "2026-10-09 00:59 BST",
       "agent": "Claude",
@@ -353,19 +365,6 @@
         "Clear finish and Next buttons, focused explanation text, honest grammar examples, and no resume prompt covering the tutorial.",
         "Practice works by keyboard; returning from card details preserves the learner’s selected meaning and example.",
         "Narrow desktop windows keep their active instruction and navigation visible beside the scrollable card area."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-07T23:40:00+01:00",
-      "date": "2026-10-07 23:40 BST",
-      "agent": "Claude",
-      "summary": "Small text raised to 11px everywhere; bigger Smart Skip switch target; heading order fixed",
-      "detail": [
-        "117 style rules below 11px (8-10.5px labels like WELCOME, BEST FOR, RECOMMENDED, stats labels) now 11px; plus the card's 'Possible meanings' label.",
-        "Smart Skip switch answers taps across its whole cell (about 74x50) without looking bigger.",
-        "'Send a note' and the Smart Skip admin heading are h3, not h4, so screen readers get the right order.",
-        "From an Impeccable audit: undersized-text flags at phone width 31 -> 0, skipped headings 2 -> 0."
       ],
       "commit": "pending"
     }
