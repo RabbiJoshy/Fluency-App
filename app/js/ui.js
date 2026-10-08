@@ -2822,7 +2822,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                     role="radio" aria-checked="${index === initialIndex ? 'true' : 'false'}"
                     aria-label="Set ${index + 1}: ${range.knownCount} known, ${range.reviewCount} to practise, ${range.unseenCount} new"
                     title="Set ${index + 1} · ${range.knownCount} known · ${range.reviewCount} practice · ${range.unseenCount} new"
-                    ${range.available ? '' : 'disabled'}><span>${index + 1}</span></button>`;
+                    ${range.available ? '' : 'disabled'}><span class="set-num">${index + 1}</span><span class="set-ranks">${range.start.toLocaleString()}–${(range.end - 1).toLocaleString()}</span></button>`;
     }).join('');
 
     const levelReviewCount = ranges.reduce((sum, range) => sum + range.reviewCount, 0);

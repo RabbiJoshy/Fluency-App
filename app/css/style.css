@@ -23143,3 +23143,12 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 }
 .smart-skip-more-card .smart-skip-preview-close:hover { filter: brightness(1.08); }
 .smart-skip-body .smart-skip-more-options { padding: 15px 14px 15px 16px; font-size: 14px; color: var(--text-secondary); }
+
+/* Set pills: the set number on a phone, the word ranks (frequency ranks) it
+   covers where there is room. */
+.study-set-dot .set-ranks { display: none; }
+@media (min-width: 760px) {
+  .study-set-dot .set-num { display: none; }
+  .study-set-dot .set-ranks { display: inline; white-space: nowrap; }
+  #step4 .study-set-dot { font-size: 16px; }
+}
