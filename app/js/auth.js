@@ -1,11 +1,11 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=4707b55b';
-import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=4707b55b';
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=4707b55b';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=4707b55b';
-import { dbGet, dbPut } from './offline-db.js?v=4707b55b';
-import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=4707b55b';
+import './state.js?v=2a5f1501';
+import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=2a5f1501';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=2a5f1501';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=2a5f1501';
+import { dbGet, dbPut } from './offline-db.js?v=2a5f1501';
+import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=2a5f1501';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -14,7 +14,7 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=4707b55b';
+} from './sync-queue.js?v=2a5f1501';
 
 const AUDIT_ACCOUNT_INITIALS = new Set(['JST', 'JSTA']);
 
@@ -359,7 +359,7 @@ function wireAccountPassword() {
         if (next) {
             localStorage.setItem(key, next);
         } else {
-            if (!confirm('Remove the secret word? Anyone on this device could then use your initials.')) return;
+            if (!confirm('Remove the secret word? Anyone on this device could then use your profile.')) return;
             localStorage.removeItem(key);
         }
         currentUser.hasPassword = Boolean(next);

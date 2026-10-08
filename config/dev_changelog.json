@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-08T22:28:06+01:00",
+      "date": "2026-10-08 22:28 BST",
+      "agent": "Codex",
+      "summary": "Consistent username wording throughout the profile flow",
+      "detail": [
+        "Profile labels, guidance, validation and playlist sign-in messages now say username.",
+        "Existing usernames, saved profiles and learning progress are preserved."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-08T22:24:44+01:00",
       "date": "2026-10-08 22:24 BST",
       "agent": "Codex",
@@ -353,16 +364,6 @@
         "'Smart Skip' 16 to 21px (19px on phones), heavier weight; icon 22 to 28px.",
         "'Recommended' 10 to 12px (10.5px on phones) in a lighter red.",
         "Switch 42x24 to 54x32; the row tints and gets an accent edge once Smart Skip is on."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-07T21:40:00+01:00",
-      "date": "2026-10-07 21:40 BST",
-      "agent": "Claude",
-      "summary": "Set progress colours a bit deeper",
-      "detail": [
-        "Known #3fdc78 to #22c55e; Practice #ffd426 to #f5b800."
       ],
       "commit": "pending"
     }
