@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-08T22:21:02+01:00",
+      "date": "2026-10-08 22:21 BST",
+      "agent": "Codex",
+      "summary": "A clearer, quieter welcome and profile screen",
+      "detail": [
+        "Welcome offers a clear saved-progress path and a lighter guest option.",
+        "The profile form has one heading, shorter guidance and no repeated welcome pitch."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-08T21:21:45+01:00",
       "date": "2026-10-08 21:21 BST",
       "agent": "Codex",
@@ -350,16 +361,6 @@
       "summary": "Set progress colours: greener green, yellower yellow",
       "detail": [
         "Known #9fe8b4 to #3fdc78 and Practice #ffe27a to #ffd426 on the set pills and the Known / Practice / New swatches; numbers stay black."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-07T21:00:00+01:00",
-      "date": "2026-10-07 21:00 BST",
-      "agent": "Claude",
-      "summary": "Chosen set is much more obvious",
-      "detail": [
-        "The set you are on has a thick accent-coloured ring set off by a dark gap, is lifted and enlarged, and no longer pulses."
       ],
       "commit": "pending"
     }

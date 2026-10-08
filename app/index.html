@@ -805,9 +805,9 @@
         <div class="modal-content auth-modal-content">
             <div class="auth-welcome-mark" aria-hidden="true">F</div>
             <div class="auth-welcome-copy">
-                <span class="auth-welcome-eyebrow">Welcome</span>
-                <h3>Learn from language<br>you actually hear.</h3>
-                <p>Build useful vocabulary from speech and lyrics, one finishable set at a time.</p>
+                <span class="auth-welcome-eyebrow">Fluency</span>
+                <h3>Learn words you’ll<br>actually use.</h3>
+                <p>From everyday speech and songs.</p>
             </div>
             <div class="auth-body">
                 <div class="auth-btn-row" id="loginModeRow">
@@ -816,8 +816,8 @@
                             <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c.6-4 3-6 7-6s6.4 2 7 6"></path></svg>
                         </span>
                         <div class="auth-btn-content">
-                            <span class="auth-btn-title">Continue with a profile</span>
-                            <span class="auth-btn-desc">Keep your progress across devices</span>
+                            <span class="auth-btn-title">Save my progress</span>
+                            <span class="auth-btn-desc">Create a profile or return to yours</span>
                         </div>
                         <span class="auth-choice-arrow" aria-hidden="true">→</span>
                     </button>
@@ -834,8 +834,8 @@
                         <svg viewBox="0 0 24 24"><path d="M4 12h16"></path><path d="m14 6 6 6-6 6"></path></svg>
                     </span>
                     <div class="auth-btn-content">
-                        <span class="auth-btn-title">Explore as a guest</span>
-                        <span class="auth-btn-desc">Try the app without saving progress</span>
+                        <span class="auth-btn-title">Try it first</span>
+                        <span class="auth-btn-desc">Explore without saving progress</span>
                     </div>
                 </button>
 
@@ -845,21 +845,20 @@
 
                 <form id="loginForm" class="login-form hidden" action="#" autocomplete="on" novalidate onsubmit="event.preventDefault(); window.fluencyAuthFallback.submit();">
                     <div class="auth-form-heading">
-                        <span class="auth-welcome-eyebrow">Your learning profile</span>
-                        <h4>Find your learning profile</h4>
-                        <p>Your name and birthday help keep your progress separate from other learners.</p>
+                        <h4>Your profile</h4>
+                        <p>Create a profile or continue learning.</p>
                     </div>
                     <label for="userInitials" class="auth-input-label">Username or name</label>
-                    <input type="text" id="userInitials" class="initials-input" placeholder="Name, nickname or initials"
+                    <input type="text" id="userInitials" class="initials-input" placeholder="e.g. Alex"
                         maxlength="40" name="username" autocomplete="username" autocapitalize="off"
                         aria-describedby="profileNameHelp profileNameError" style="letter-spacing: normal; text-transform: none; font-size: 18px;" />
                     <p id="profileNameError" class="auth-form-error" role="alert" hidden></p>
-                    <p id="profileNameHelp" class="auth-profile-help">Use a username, first name, nickname, or your existing initials to find earlier progress.</p>
+                    <p id="profileNameHelp" class="auth-profile-help">Studied here before? Use your original name or initials.</p>
                     <fieldset class="auth-birthday-group">
                         <legend class="auth-input-label">Birthday (day and month only)</legend>
                         <div class="auth-birthday-fields">
                             <label>Day<input id="birthdayDay" type="number" min="1" max="31" inputmode="numeric" autocomplete="bday-day" aria-describedby="profileBirthdayHelp loginFormError" placeholder="DD" /></label>
-                            <label>Month<select id="birthdayMonth" autocomplete="bday-month" aria-describedby="profileBirthdayHelp loginFormError">
+                            <label>Month<select id="birthdayMonth" aria-label="Month" autocomplete="bday-month" aria-describedby="profileBirthdayHelp loginFormError">
                                 <option value="">Month</option>
                                 <option value="1">January</option><option value="2">February</option><option value="3">March</option>
                                 <option value="4">April</option><option value="5">May</option><option value="6">June</option>
@@ -868,7 +867,7 @@
                             </select></label>
                         </div>
                     </fieldset>
-                    <p id="profileBirthdayHelp" class="auth-profile-help">No birth year. This helps identify your profile; it is not a password.</p>
+                    <p id="profileBirthdayHelp" class="auth-profile-help">Your birthday helps tell matching names apart.</p>
                     <p id="loginFormError" class="auth-form-error" role="alert" hidden></p>
                     <div id="profileMatches" class="auth-profile-matches" aria-live="polite"></div>
                     <div class="login-form-actions">
