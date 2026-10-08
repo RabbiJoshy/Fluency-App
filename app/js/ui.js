@@ -2757,6 +2757,8 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
             if (state?.needsReview) reviewCount++;
             if (state?.reviewReason === 'due') dueCount++;
         }
+        const skippedCount = smartSkipOn ? Math.max(0, baselineSlotCounts[slotIdx] - words.length) : 0;
+        const slotTotal = words.length + skippedCount;
         const knownCount = Math.max(0, seenCount - reviewCount);
         const unseenCount = words.length - seenCount;
         ranges.push({
@@ -2770,10 +2772,13 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
             unseenCount,
             reviewCount,
             dueCount,
-            skippedCount: Math.max(0, baselineSlotCounts[slotIdx] - words.length),
+            skippedCount,
             pct: words.length > 0 ? Math.round(100 * seenCount / words.length) : 100,
-            knownPct: words.length > 0 ? 100 * knownCount / words.length : 100,
-            reviewEndPct: words.length > 0 ? 100 * (knownCount + reviewCount) / words.length : 100
+            // The bar covers the whole slot: skipped cards take the right-hand
+            // share, so a level with Smart Skip on starts partly filled.
+            knownPct: slotTotal > 0 ? 100 * knownCount / slotTotal : 100,
+            reviewEndPct: slotTotal > 0 ? 100 * (knownCount + reviewCount) / slotTotal : 100,
+            newEndPct: slotTotal > 0 ? 100 * words.length / slotTotal : 100
         });
     }
     // Land on the first set that actually has something new, then fall back to
@@ -2818,7 +2823,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                     data-index="${index}" data-range="${range.range}"
                     data-rank-basis="${rankBasis}" data-pct="${range.pct}"
                     data-unseen="${range.unseenCount}" data-review="${range.reviewCount}"
-                    style="--set-known-end: ${range.knownPct}%; --set-review-end: ${range.reviewEndPct}%"
+                    style="--set-known-end: ${range.knownPct}%; --set-review-end: ${range.reviewEndPct}%; --set-new-end: ${range.newEndPct}%"
                     role="radio" aria-checked="${index === initialIndex ? 'true' : 'false'}"
                     aria-label="Set ${index + 1}: ${range.knownCount} known, ${range.reviewCount} to practise, ${range.unseenCount} new"
                     title="Set ${index + 1} · ${range.knownCount} known · ${range.reviewCount} practice · ${range.unseenCount} new"
@@ -2909,7 +2914,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
             `<b class="study-set-stat"><i class="is-unseen"></i>${range.unseenCount} New</b>`
             + `<b class="study-set-stat"><i class="is-review"></i>${range.reviewCount} Practice</b>`
             + `<b class="study-set-stat"><i class="is-known"></i>${range.knownCount} Known</b>`
-            + (smartSkipOn && range.skippedCount > 0
+            + (range.skippedCount > 0
                 ? `<b class="study-set-stat"><i class="is-skipped"></i>${range.skippedCount} Skipped</b>`
                 : '');
         const startBtn = document.getElementById('studySetStartBtn');

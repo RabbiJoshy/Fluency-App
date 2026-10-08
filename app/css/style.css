@@ -23152,3 +23152,17 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   .study-set-dot .set-ranks { display: inline; white-space: nowrap; }
   #step4 .study-set-dot { font-size: 16px; }
 }
+
+/* Skipped cards fill each set bar from the right in light grey, so with Smart
+   Skip on a set is already partly done before a card is studied. */
+#step4 { --set-skipped: #b4bcc7; }
+#step4 .study-set-dot {
+  background: linear-gradient(
+    to right,
+    var(--set-known) 0 var(--set-known-end),
+    var(--set-review) var(--set-known-end) var(--set-review-end),
+    var(--set-new) var(--set-review-end) var(--set-new-end, 100%),
+    var(--set-skipped) var(--set-new-end, 100%) 100%
+  );
+}
+.study-set-stat i.is-skipped { background: var(--set-skipped, #b4bcc7); }
