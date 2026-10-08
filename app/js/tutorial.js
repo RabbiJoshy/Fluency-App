@@ -330,7 +330,7 @@ function stepNotes(step) {
         { side: 'left', anchor: '.card-word', title: 'Recall, then reveal',
           text: 'Try to remember the meaning. Tap the card to reveal the answer; on a computer, press Space.' },
         { side: 'right', anchor: '.card-word', title: 'Hear the pronunciation',
-          text: 'Tap the speaker beside the word to hear it. On a computer, press A.' },
+          text: 'Cards read aloud when pronunciation is on. Use the speaker control to turn it on or off. On a computer, press A to hear the word again.' },
     ] : [
         { side: 'left', anchor: '.card-back', title: 'Grade your answer',
           text: '← Needs practice · Got it →. Swipe left if you need practice, or right if you remembered. On a computer, use X or Enter.' },

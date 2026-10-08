@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-08T21:21:45+01:00",
+      "date": "2026-10-08 21:21 BST",
+      "agent": "Codex",
+      "summary": "Quick tutorial first, with the full card tour in Help",
+      "detail": [
+        "The tutorial introduction now starts with the essential lesson, including the correct pronunciation controls.",
+        "The full card tour remains an explicit option in Help and the introduction.",
+        "All five first-time UX audit recommendations are implemented and recorded."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-08T21:18:00+01:00",
       "date": "2026-10-08 21:18 BST",
       "agent": "Antigravity",
@@ -348,29 +360,6 @@
       "summary": "Chosen set is much more obvious",
       "detail": [
         "The set you are on has a thick accent-coloured ring set off by a dark gap, is lifted and enlarged, and no longer pulses."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-07T20:30:00+01:00",
-      "date": "2026-10-07 20:30 BST",
-      "agent": "Claude",
-      "summary": "Set progress pills: pale green, pale yellow and white with black numbers",
-      "detail": [
-        "Known is pale green, Practice pale yellow, and the unfinished part is white; the number is black on all three so it reads wherever the colours meet.",
-        "The swatches in the Known / Practice / New line use the same colours."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-07T20:00:00+01:00",
-      "date": "2026-10-07 20:00 BST",
-      "agent": "Claude",
-      "summary": "Set box: bigger set numbers and title, lighter counts line, capitalised labels",
-      "detail": [
-        "Set pill numbers 13 to 18px; 'Set N' 15 to 18px.",
-        "The counts line is 14px, regular weight, brighter colour.",
-        "'Known · Practice · New' are capitalised."
       ],
       "commit": "pending"
     }

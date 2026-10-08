@@ -34,19 +34,24 @@ import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 // Emoji flags anywhere on the page render as rectangular pictures.
 installFlagRendering();
 
+let fullCardTutorialRequested = false;
+
 function startCardTutorial() {
     const knownLanguage = window.getCardTutorialLanguageKey?.();
     if (knownLanguage) {
         window.setCardTutorialLanguage?.(knownLanguage);
         closeTutorialIntroduction();
-        window.openCardTutorial?.();
+        window.openCardTutorial?.({ quick: !fullCardTutorialRequested });
         return;
     }
     document.getElementById('tutorialWelcomeStep')?.classList.add('hidden');
     document.getElementById('tutorialLanguageStep')?.classList.remove('hidden');
 }
 
-function openTutorialIntroduction() {
+function openTutorialIntroduction({ full = false } = {}) {
+    fullCardTutorialRequested = full;
+    const startButton = document.getElementById('startCardTutorialBtn');
+    if (startButton) startButton.textContent = full ? 'Start the full card tour →' : 'Start the quick tutorial →';
     document.getElementById('resumeLastSetCard')?.remove();
     document.getElementById('tutorialWelcomeStep')?.classList.remove('hidden');
     document.getElementById('tutorialLanguageStep')?.classList.add('hidden');
@@ -71,7 +76,7 @@ function renderTutorialLanguageChoices() {
         button.addEventListener('click', () => {
             window.setCardTutorialLanguage?.(key);
             closeTutorialIntroduction();
-            window.openCardTutorial?.();
+            window.openCardTutorial?.({ quick: !fullCardTutorialRequested });
         });
         container.appendChild(button);
     });
@@ -807,6 +812,10 @@ loadConfig().then(async () => {
     document.getElementById('helpBtn').addEventListener('click', openTutorialIntroduction);
     document.getElementById('closeTutorialIntroModal')?.addEventListener('click', closeTutorialIntroduction);
     document.getElementById('startCardTutorialBtn')?.addEventListener('click', startCardTutorial);
+    document.getElementById('startFullCardTutorialBtn')?.addEventListener('click', () => {
+        fullCardTutorialRequested = true;
+        startCardTutorial();
+    });
     document.getElementById('tutorialLanguageBackBtn')?.addEventListener('click', () => {
         document.getElementById('tutorialLanguageStep')?.classList.add('hidden');
         document.getElementById('tutorialWelcomeStep')?.classList.remove('hidden');
@@ -854,11 +863,11 @@ loadConfig().then(async () => {
     if (helpStudyContent && !document.getElementById('helpCardTutorialBtn')) {
         const tutorialAction = document.createElement('p');
         tutorialAction.className = 'help-card-tutorial-action';
-        tutorialAction.innerHTML = '<button class="help-more-info-btn" id="helpCardTutorialBtn" type="button">Open tutorial introduction →</button>';
+        tutorialAction.innerHTML = '<button class="help-more-info-btn" id="helpCardTutorialBtn" type="button">Open the full card tour →</button>';
         helpStudyContent.appendChild(tutorialAction);
         tutorialAction.querySelector('button').addEventListener('click', () => {
             document.getElementById('helpModal').classList.add('hidden');
-            openTutorialIntroduction();
+            openTutorialIntroduction({ full: true });
         });
     }
     // Hide floating gear — replaced by gear in the top bar

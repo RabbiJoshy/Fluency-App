@@ -501,7 +501,7 @@ class ProductShellTests(unittest.TestCase):
         self.assertLess(start, choices)
         self.assertNotIn('id="tutorialLanguageSelect"', html)
 
-        self.assertIn("window.openCardTutorial?.()", main)
+        self.assertIn("window.openCardTutorial?.({ quick: !fullCardTutorialRequested })", main)
         self.assertIn("function startCardTutorial()", main)
         self.assertIn("function renderTutorialLanguageChoices()", main)
         self.assertIn("tutorialLanguageStep')?.classList.remove('hidden')", main)
