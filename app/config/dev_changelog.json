@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-08T08:38:15+01:00",
+      "date": "2026-10-08 08:38 BST",
+      "agent": "Codex",
+      "summary": "Keep the tutorial example and source visible; scroll overflow instead of clipping",
+      "detail": [
+        "Example boxes no longer shrink or impose a height cap, so their source icons and footer remain intact.",
+        "Compact cards fit the space above the coach and navigation, without their bottom falling outside the visible card area.",
+        "Meaning rows scroll when expanded content exceeds available space; very short screens also allow scrolling through the card contents.",
+        "Retains the complete 13-step Portuguese tutorial."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-08T00:44:58+01:00",
       "date": "2026-10-08 00:44 BST",
       "agent": "Codex",
@@ -336,18 +349,6 @@
         "The forms column shows three forms and '+N' for the rest.",
         "Tapping a combined-forms row opens it in place with every form as a chip and a 'Preview card' link.",
         "Other categories still open the preview popup."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-07T13:00:00+01:00",
-      "date": "2026-10-07 13:00 BST",
-      "agent": "Claude",
-      "summary": "Smart Skip list gets column headers; Rank and Type on desktop only",
-      "detail": [
-        "Header row: language flags name the word and English columns; Rank on desktop; Type under 'All skipped'.",
-        "Combined forms: Card | English | Combined forms | Rank on desktop; on phones just the card, English and a forms count.",
-        "On phones the Rank and Type columns are hidden."
       ],
       "commit": "pending"
     }
