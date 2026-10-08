@@ -1,27 +1,27 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=eb033b81';
-import './speech.js?v=eb033b81';
-import { goToRoute, routeCodeFor } from './routes.js?v=eb033b81';
-import './side-dock.js?v=eb033b81';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=eb033b81';
+import './state.js?v=7403c8df';
+import './speech.js?v=7403c8df';
+import { goToRoute, routeCodeFor } from './routes.js?v=7403c8df';
+import './side-dock.js?v=7403c8df';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=7403c8df';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=eb033b81';
+} from './example-personalisation.js?v=7403c8df';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=eb033b81';
+} from './spanishdict-usage.js?v=7403c8df';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=eb033b81';
+} from './reverse-cues.js?v=7403c8df';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -54,7 +54,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=eb033b81';
+} from './card-metadata-pills.js?v=7403c8df';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -10331,8 +10331,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'eb033b81';
-const MODALS_ASSET_VERSION = 'eb033b81';
+const ASSET_VERSION = '7403c8df';
+const MODALS_ASSET_VERSION = '7403c8df';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

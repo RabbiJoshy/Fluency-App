@@ -1,11 +1,11 @@
-import './state.js?v=eb033b81';
-import { sendOrQueue } from './sync-queue.js?v=eb033b81';
+import './state.js?v=7403c8df';
+import { sendOrQueue } from './sync-queue.js?v=7403c8df';
 import {
     buildImportBulkChunks,
     buildVocabularyImportPlan,
     importPlanFingerprint,
     parseVocabularyImport
-} from './vocabulary-import-core.js?v=eb033b81';
+} from './vocabulary-import-core.js?v=7403c8df';
 
 let currentPlan = null;
 let previewAccount = '';
