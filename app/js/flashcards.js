@@ -2,6 +2,7 @@
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
 import './state.js?v=20260825ak';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js';
 import './speech.js?v=20260825ak';
 import { goToRoute, routeCodeFor } from './routes.js?v=20260923cj';
 import './side-dock.js?v=20260927pa';
@@ -2449,7 +2450,7 @@ function setupSwipeGestures() {
 
         // If indicator was visible, auto-complete the swipe
         if (indicatorWasVisible) {
-            handleSwipeAction(swipeDirection);
+            handleSwipeAction(swipeDirection, { gesture: true });
             return;
         }
 
@@ -2481,7 +2482,7 @@ function setupSwipeGestures() {
             const isEdgeSwipe = Math.abs(diffX) > edgeSwipeThreshold && Math.abs(diffX) > Math.abs(diffY);
 
             if (isEdgeSwipe) {
-                handleSwipeAction(diffX > 0 ? 'correct' : 'incorrect');
+                handleSwipeAction(diffX > 0 ? 'correct' : 'incorrect', { gesture: true });
             } else if (isTap) {
                 flipCard(); // Tap on edge still flips
             }
@@ -2495,7 +2496,7 @@ function setupSwipeGestures() {
 
         if (isHorizontalSwipe) {
             // Horizontal swipe - correct/incorrect
-            handleSwipeAction(diffX > 0 ? 'correct' : 'incorrect');
+            handleSwipeAction(diffX > 0 ? 'correct' : 'incorrect', { gesture: true });
         } else if (isVerticalSwipe) {
             // Vertical swipe - cycle through meanings for multi-meaning cards
             const currentCard = flashcards[currentIndex];
@@ -2807,7 +2808,8 @@ function advanceAfterFlag() {
 }
 window.advanceAfterFlag = advanceAfterFlag;
 
-function handleSwipeAction(result) {
+function handleSwipeAction(result, { gesture = false } = {}) {
+    if (gesture && flashcards[currentIndex]) rememberGradingSwipe();
     stopExampleAutoplay(true);
     const card = document.getElementById('flashcard');
     const isFlipped = card.classList.contains('flipped');
@@ -8757,7 +8759,9 @@ function flipCard() {
             speakWord(getDisplayedTargetHeadword(card), false);
         }
     }
-    if (!wasFlipped && isNowFlipped) setTimeout(maybeShowCardTutorialPrompt, 650);
+    if (!wasFlipped && isNowFlipped) {
+        showSwipeHint({ realCard: !card.isChainChild && cardNavStack.length === 0 });
+    }
     window.saveStudySessionSnapshot?.();
 }
 

@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-08T21:08:51+01:00",
+      "date": "2026-10-08 21:08 BST",
+      "agent": "Codex",
+      "summary": "A shorter first lesson and one-time swipe guidance",
+      "detail": [
+        "Automatic onboarding covers reveal, pronunciation, grading and moving on; Help retains the full card tour.",
+        "The first real card reveal shows swipe guidance outside the card until a successful grading swipe."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-08T21:06:23+01:00",
       "date": "2026-10-08 21:06 BST",
       "agent": "Codex",
@@ -345,16 +356,6 @@
       "summary": "Learn / Practise button text matches Quick N",
       "detail": [
         "The set start button ('Learn N new cards') is 17px, weight 750, like the Quick N button (was 15px, 700)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-07T19:30:00+01:00",
-      "date": "2026-10-07 19:30 BST",
-      "agent": "Claude",
-      "summary": "Level readout larger",
-      "detail": [
-        "'Level N · Words a–b / total' is bigger: level 22px, words 17px, deck total about 14px."
       ],
       "commit": "pending"
     }
