@@ -11,7 +11,7 @@
 
 import {
     REPLICA_CARDS, esc, renderBack, replicaCardHTML, wireReplicaBack,
-} from './card-replica.js?v=e636aedb';
+} from './card-replica.js?v=9908142c';
 
 
 // Each language selects its own representative card and dictionary wording.
@@ -250,6 +250,7 @@ const TUTORIAL_DECKS = [
 // renderCard()/flipCardFace() read this to drive the real card CSS.
 const state = {
     mode: 'speech',
+    quick: false,
     practiced: new Set(),
     cardHeight: null,
     stepIndex: 0,
@@ -325,12 +326,23 @@ function currentFace() {
 // element it explains.
 function stepNotes(step) {
     if (!step || step.kind !== 'card') return [];
+    if (state.quick) return step.face === 'front' ? [
+        { side: 'left', anchor: '.card-word', title: 'Recall, then reveal',
+          text: 'Try to remember the meaning. Tap the card to reveal the answer; on a computer, press Space.' },
+        { side: 'right', anchor: '.card-word', title: 'Hear the pronunciation',
+          text: 'Tap the speaker beside the word to hear it. On a computer, press A.' },
+    ] : [
+        { side: 'left', anchor: '.card-back', title: 'Grade your answer',
+          text: '← Needs practice · Got it →. Swipe left if you need practice, or right if you remembered. On a computer, use X or Enter.' },
+        { side: 'right', anchor: '.card-back', title: 'Move on',
+          text: 'Grading moves you to the next card, sometimes through a phrases panel first. The full card tour is always available through Help.' },
+    ];
     const notes = deckById(step.deck).faces[step.face].notes
         .filter(note => !note.requires || tutorialAdapter()[note.requires]);
     const ordered = [...notes.filter(n => n.side !== 'right'), ...notes.filter(n => n.side === 'right')];
     if (step.face === 'back') ordered.push({ side: 'right', anchor: '.card-back',
         title: 'You’re ready to study',
-        text: 'On your own cards: recall a meaning, flip to check, then record how you did.' });
+        text: 'Recall a meaning, flip to check, then swipe: ← Needs practice · Got it →. Grading moves to the next card.' });
     return ordered;
 }
 
@@ -849,7 +861,8 @@ function finishTutorialLesson() {
 
 let _resizeHandler = null;
 
-function openCardTutorial() {
+function openCardTutorial({ quick = false } = {}) {
+    state.quick = quick;
     const modal = document.getElementById('cardTutorialModal');
     if (!modal) return;
     document.getElementById('resumeLastSetCard')?.remove();
@@ -887,7 +900,7 @@ function openFirstRunCardTutorial() {
     if (document.querySelector('.modal:not(.hidden), .knowledge-overview-modal:not([hidden])')) {
         return false;
     }
-    openCardTutorial();
+    openCardTutorial({ quick: true });
     return true;
 }
 

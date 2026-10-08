@@ -1,27 +1,28 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=e636aedb';
-import './speech.js?v=e636aedb';
-import { goToRoute, routeCodeFor } from './routes.js?v=e636aedb';
-import './side-dock.js?v=e636aedb';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=e636aedb';
+import './state.js?v=9908142c';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js';
+import './speech.js?v=9908142c';
+import { goToRoute, routeCodeFor } from './routes.js?v=9908142c';
+import './side-dock.js?v=9908142c';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=9908142c';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=e636aedb';
+} from './example-personalisation.js?v=9908142c';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=e636aedb';
+} from './spanishdict-usage.js?v=9908142c';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=e636aedb';
+} from './reverse-cues.js?v=9908142c';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -54,7 +55,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=e636aedb';
+} from './card-metadata-pills.js?v=9908142c';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -2449,7 +2450,7 @@ function setupSwipeGestures() {
 
         // If indicator was visible, auto-complete the swipe
         if (indicatorWasVisible) {
-            handleSwipeAction(swipeDirection);
+            handleSwipeAction(swipeDirection, { gesture: true });
             return;
         }
 
@@ -2481,7 +2482,7 @@ function setupSwipeGestures() {
             const isEdgeSwipe = Math.abs(diffX) > edgeSwipeThreshold && Math.abs(diffX) > Math.abs(diffY);
 
             if (isEdgeSwipe) {
-                handleSwipeAction(diffX > 0 ? 'correct' : 'incorrect');
+                handleSwipeAction(diffX > 0 ? 'correct' : 'incorrect', { gesture: true });
             } else if (isTap) {
                 flipCard(); // Tap on edge still flips
             }
@@ -2495,7 +2496,7 @@ function setupSwipeGestures() {
 
         if (isHorizontalSwipe) {
             // Horizontal swipe - correct/incorrect
-            handleSwipeAction(diffX > 0 ? 'correct' : 'incorrect');
+            handleSwipeAction(diffX > 0 ? 'correct' : 'incorrect', { gesture: true });
         } else if (isVerticalSwipe) {
             // Vertical swipe - cycle through meanings for multi-meaning cards
             const currentCard = flashcards[currentIndex];
@@ -2588,6 +2589,11 @@ function setupKeyboardShortcuts() {
     }
 
     document.addEventListener('keydown', function(e) {
+        // Signing in owns all keys, including Enter on the submit button.
+        // A previous study deck can still exist behind this modal after logout.
+        const authModal = document.getElementById('authModal');
+        if (authModal && !authModal.classList.contains('hidden')) return;
+
         // Ignore if typing in an input field
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
             return;
@@ -2802,7 +2808,8 @@ function advanceAfterFlag() {
 }
 window.advanceAfterFlag = advanceAfterFlag;
 
-function handleSwipeAction(result) {
+function handleSwipeAction(result, { gesture = false } = {}) {
+    if (gesture && flashcards[currentIndex]) rememberGradingSwipe();
     stopExampleAutoplay(true);
     const card = document.getElementById('flashcard');
     const isFlipped = card.classList.contains('flipped');
@@ -8752,7 +8759,9 @@ function flipCard() {
             speakWord(getDisplayedTargetHeadword(card), false);
         }
     }
-    if (!wasFlipped && isNowFlipped) setTimeout(maybeShowCardTutorialPrompt, 650);
+    if (!wasFlipped && isNowFlipped) {
+        showSwipeHint({ realCard: !card.isChainChild && cardNavStack.length === 0 });
+    }
     window.saveStudySessionSnapshot?.();
 }
 
@@ -10335,8 +10344,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'e636aedb';
-const MODALS_ASSET_VERSION = 'e636aedb';
+const ASSET_VERSION = '9908142c';
+const MODALS_ASSET_VERSION = '9908142c';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
