@@ -19,7 +19,7 @@
 //
 // The old scalar still works. Where a release predates this, `cognate_score`
 // is read as the English entry, so Spanish is untouched.
-import './state.js?v=8cf1ebaf';
+import './state.js?v=65991b8b';
 
 const SELECTED_KEY = 'fluency_known_languages_v1';
 
@@ -504,6 +504,7 @@ function toggleKnownLanguage(code) {
     globalThis.updateExclusionBars?.();
     globalThis.updateLevelSelector?.();
     globalThis.refreshFastMode?.();
+    globalThis.renderSkippedWords?.('cognate', { force: true });
 }
 
 // The cutoff a single language decides at. Exposed because the explainer copy
@@ -560,5 +561,6 @@ globalThis.renderKnownLanguagePicker = renderKnownLanguagePicker;
 globalThis.knownLemmas = knownLemmas;
 globalThis.knownLanguageLabel = languageLabel;
 globalThis.getCognateAlgorithmInfo = getCognateAlgorithmInfo;
+globalThis.cardSenseCognate = cardSenseCognate;
 globalThis.writeKnownLanguages = writeSelected;
 globalThis.readKnownLanguages = readSelected;
