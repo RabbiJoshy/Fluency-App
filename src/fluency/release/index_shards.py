@@ -14,6 +14,7 @@ reads a slim row exactly as a full one; the monolith keeps everything.
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -60,7 +61,7 @@ def _json_bytes(value: object) -> bytes:
 
 
 def assigned_headword(meanings: Any) -> str:
-    """Match the app's assignedHeadwordOf grouping key for Merge Lemmas."""
+    """The app's assignedHeadwordOf: the headword of the most frequent meaning."""
 
     scored: list[tuple[float, str]] = []
     first = ""
@@ -81,6 +82,36 @@ def assigned_headword(meanings: Any) -> str:
     if scored:
         return max(scored, key=lambda item: item[0])[1]
     return first
+
+
+def _spelling(value: str) -> str:
+    return re.sub(r"[\s\-‐]+", "", value).casefold()
+
+
+def card_lemma(card: dict[str, Any]) -> str:
+    """The shipped ``lemma`` column: the assigned headword among the meanings
+    that can name this word's lemma.
+
+    A headword with more words than the card's surface names an expression the
+    word occurs in, not its lemma: ``não é`` on é, ``por qué`` on por. It used to
+    win whenever the phrase was the single most frequent meaning, so é shipped
+    lemma ``não é`` though its six ``ser`` meanings outweigh it. The same
+    spelling written apart still counts (porfavor, ``por favor``). With no
+    meaning left the column is empty and the app keeps the card on its own.
+    """
+
+    word = str(card.get("word") or "")
+    words = max(len(word.split()), 1)
+    meanings = [
+        meaning
+        for meaning in card.get("meanings") or []
+        if isinstance(meaning, dict)
+        and (
+            len(str(meaning.get("headword") or "").split()) <= words
+            or _spelling(str(meaning.get("headword"))) == _spelling(word)
+        )
+    ]
+    return assigned_headword(meanings)
 
 
 def _slim_sense(sense: Any) -> Any:
@@ -168,7 +199,7 @@ def shard_app_index(release_app_dir: Path, *, slim: bool = False) -> dict[str, A
                 values.append(None)
                 continue
             if field == "lemma" and "lemma" not in card:
-                values.append(assigned_headword(card.get("meanings")) or None)
+                values.append(card_lemma(card) or None)
             else:
                 values.append(card.get(field))
         columns[field] = values
