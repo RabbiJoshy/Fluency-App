@@ -16,8 +16,8 @@
 // Applies to Speech and Lyrics alike. A language whose release supports only one
 // of the two parts still gets fast mode — it just moves the part it has, and the
 // page says which part is missing.
-import './state.js?v=5f676c9f';
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=5f676c9f';
+import './state.js?v=caf2624b';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=caf2624b';
 
 let applyingMasterSwitch = false;
 let returnToSettings = false;
@@ -208,12 +208,15 @@ function refresh() {
         // Wide screens only (CSS hides it on phones). Off, it names the
         // commonest look-alikes Smart Skip would set aside; on, the look-alikes
         // (cognates) it is setting aside. Empty, it takes no room.
-        const words = on
-            ? (extras.cognates || []).map(entry => entry.item.word)
-            : lookAlikeCandidates();
-        const shown = words.slice(0, 3).map(word => `<em>${escapeExample(word)}</em>`).join(', ');
+        // English, as the level box's examples are; the row's own ellipsis
+        // trims whatever the width cannot hold.
+        const english = item => globalThis.cognateEnglishWord?.(item) || item.word;
+        const words = [...new Set((on
+            ? (extras.cognates || []).map(entry => entry.item)
+            : lookAlikeCandidates()).slice(0, 12).map(english))];
+        const shown = words.slice(0, 8).map(word => `<em>${escapeExample(word)}</em>`).join(', ');
         hubExamples.innerHTML = !shown ? ''
-            : on ? `Skipping ${shown}${words.length > 3 ? ', …' : ''}`
+            : on ? `Skipping ${shown}${words.length > 8 ? ', …' : ''}`
             : `Look-alikes like ${shown}`;
     }
 
@@ -406,8 +409,7 @@ function lookAlikeCandidates() {
     if (!Array.isArray(vocab) || !decide || !globalThis.cognateFieldAvailable) return [];
     return vocab
         .filter(item => item?.word && !item.duplicate && decide(item))
-        .sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity))
-        .map(item => item.word);
+        .sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity));
 }
 
 function escapeExample(value) {

@@ -15,7 +15,7 @@
 // module reads the same state the filter used and reports what it discarded.
 // That keeps one source of truth for the rules: if the filter changes, this
 // follows without edits.
-import './state.js?v=5f676c9f';
+import './state.js?v=caf2624b';
 
 // Every name below is read off globalThis rather than as a bare identifier.
 // state.js defines these lazily via defineProperty, and this module can run
@@ -1457,6 +1457,8 @@ globalThis.renderSavedWords = renderSavedWords;
 globalThis.toggleSavedWord = toggleSavedWord;
 globalThis.isWordSaved = isWordSaved;
 globalThis.collectExtras = collectExtras;
+// The English side of a look-alike, for the Smart Skip row's example words.
+globalThis.cognateEnglishWord = item => cognateEnglish(item).word;
 globalThis.startFastTrackSkippedSet = startFastTrackSkippedSet;
 globalThis.renderSkippedWords = renderSkippedWords;
 globalThis.closeSmartSkipPreview = closeSmartSkipPreview;

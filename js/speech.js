@@ -1,4 +1,4 @@
-import './state.js?v=5f676c9f';
+import './state.js?v=caf2624b';
 
 // One scorer for every language. English used to have its own selector that
 // scored premium/enhanced/siri/apple but had no rule for Google or Microsoft
