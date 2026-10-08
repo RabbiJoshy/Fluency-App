@@ -5,55 +5,25 @@ each section.
 
 ## Status
 
-Part 1 (audit): in progress (UNISON-1). Pilot reviewed by Josh 2026-10-08.
+Part 1 (audit): **done** 2026-10-08 (UNISON-1). Results and causes in
+`docs/unison/AUDIT.md`; problem list `docs/unison/audit-300.jsonl` (771 lines);
+frozen panel `research/unison/gold/` (scorer `research/unison/score_panel.py`).
 
-**Done:** es complete (t01–t12, r01–r04, s01: 403 cards, 1,209 blind labels;
-v23 1000/1209 = 82.7% strict, 90.3% same gloss; 442 problem lines). pt t01–t12 (t02 on: read the `.short.txt` copies from `research/unison/condense.py`).
+- es: 403 cards read in full, 1,209 blind labels, v23 right 1,000/1,209 = 82.7%.
+- pt: 350 cards (top 300 + random r01–r02), 1,050 blind labels, v23 right
+  742/1,050 = 70.7%. pt r03–r04 (50 random cards) not read: Josh asked to
+  finish. pt card views from t02 on were read condensed
+  (`research/unison/condense.py`), so pt found-wrong is a lower bound.
+- Mechanical card records were not re-run; AUDIT.md cites the pilot counts.
 
-**Resume here:** pt r01 → r04 (top 300 done: 630/900 = 70.0%). Report pt to Josh, then the
-write-up (below). Per chunk, in this order:
-1. Read `<W>/reviews/unison/pt-speech-v23-10000x30-slim/blind-<chunk>.txt`;
-   append one line per item to `research/unison/labels/pt-blind.jsonl`:
-   `{"id":"pt-t02-0001","gold":"m4","alt":[],"conf":"sure","note":""}`.
-   Special golds: `phrase:<mwe>`, `none:<meaning>`, `not_target:<why>`
-   (proper names, wrong language, broken pair). Blind labels are final.
-2. `.venv/bin/python research/unison/compare_blind.py --language pt --chunk t02 --show`.
-3. Read `view-<chunk>.txt` (~1,000 lines; read 400–450 lines at a time).
-4. Append problems to `research/unison/labels/pt-audit.jsonl`, one per
-   (card, cause, shown → should): `{"rank":26,"cause":"…","layer":"wsd",
-   "scope":"example|row|card","shows":"…","should":"…","ids":["8-hex",…],
-   "gold":"m3" | {"id":"m3",…},"alt":[…],"note":"…"}`; then
-   `.venv/bin/python research/unison/audit.py build` (validates ids and labels).
-5. Update the line above.
+**Fix list: Josh to pick** (from AUDIT.md "Fix families").
 
-Cause codes in use: wsd_wrong_sense, same_gloss_wrong_context (same English
-gloss, wrong context), missing_phrase, missing_sense, mwe_false_positive,
-phrase_gloss_wrong_use, construction_misread (ir a + inf, tener que…),
-pos_confusion, pronoun_function_confusion, reflexive_slip,
-progressive_as_lexical, auxiliary_as_lexical, governed_preposition,
-companion_misattributed, duplicate_sense_across_headwords,
-sense_split_across_translations, untranslated_sense, junk_gloss,
-wrong_language_entry, proper_noun_sense, topic_chip_noise, duplicated_context,
-bad_example (harvest: proper-name or broken sentences), empty_row,
-split_label_mismatch, split_drops_expressions, example_bucket_drift.
-Layers: menu, features, wsd, selection, display, inventory, harvest.
-Not logged (Josh): senses moved to Rarer uses by the floor; long Wiktionary
+Part 1 working rules (kept for reference): blind labels first and final;
+special golds `phrase:`, `none:`, `not_target:`; one audit line per
+(card, cause, shown → should); `audit.py build` validates ids and labels.
+Not logged (Josh): senses the 10% floor moves to Rarer uses; long Wiktionary
 glosses (TERSE); phrase card lemmas (separate task). Reader artefact, not a
 problem: "PHRASE … — 0%" (the app falls back to the raw share).
-
-**Write-up after pt:** (1) mechanical card records, deduped against hand
-records: split card repeating the whole card, rows with share but no example,
-untranslated senses, non-standard POS labels ('transitive verb', 'pronominal
-verb', 'intransitive verb phrase', lowercase 'noun'/'adverb'; seen on es
-reunirme, pedírselo, dársela, salirte, aparcamiento, emocionalmente);
-(2) `research/unison/gold/{es,pt}-panel.jsonl` (strata sample / found_wrong /
-seeded = es s01) + `gold/README.md`; (3) `research/unison/score_panel.py`
-(scores a run's assignments or a release's shards against the panel, by
-stratum, language and cause; v23 must reproduce the blind numbers);
-(4) `docs/unison/AUDIT.md` (causes ranked by cards, layer, two named examples,
-rough fix cost, seeded items with ranks); (5) PROGRESS: Part 1 done, "Fix
-list: Josh to pick"; (6) commit only `docs/unison/` and `research/unison/`;
-stop for Josh.
 
 Cause codes added after the pilot: `auxiliary_as_lexical`,
 `duplicate_sense_across_headwords`, `companion_misattributed`,
@@ -107,7 +77,7 @@ Part 3 (metadata): waiting on part 1.
   es held 1.0000 (241/300 decisive), es subs 0.9976 (414/500, 1 error);
   pt dev 1.0000 (255/300), pt held 1.0000 (269/300), pt blind2 0.9950
   (200/250, 1 error), pt blind3 0.9940 (166/200, 1 error).
-- Audit panel: frozen at the end of part 1 (`research/unison/gold/`).
+- Audit panel: frozen 2026-10-08 (`research/unison/gold/`); v23 sample es 84.9% / pt 72.1% on menu golds (README there).
 
 ## Decisions (approved by Josh)
 
