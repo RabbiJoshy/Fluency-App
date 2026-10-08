@@ -1226,6 +1226,8 @@ function restoreSection(kind) {
         renderExtras();
         refreshExtrasButtons();
     }, 0);
+}
+
 function initExtras() {
     document.getElementById('smartSkipCognateLangFilter')?.addEventListener('click', () => {
         const activeKnown = g().activeKnownLanguages?.() || [];

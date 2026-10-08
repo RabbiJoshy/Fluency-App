@@ -560,3 +560,5 @@ globalThis.renderKnownLanguagePicker = renderKnownLanguagePicker;
 globalThis.knownLemmas = knownLemmas;
 globalThis.knownLanguageLabel = languageLabel;
 globalThis.getCognateAlgorithmInfo = getCognateAlgorithmInfo;
+globalThis.writeKnownLanguages = writeSelected;
+globalThis.readKnownLanguages = readSelected;

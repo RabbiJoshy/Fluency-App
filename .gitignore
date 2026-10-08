@@ -31,3 +31,6 @@ research/**/results/
 # Local-only overrides for app/js/auth.js. The real values are public and live
 # in app/config/config.json (publicServices); nothing here is deployed.
 app/backend/secrets.json
+
+# Local Cloudflare development state
+backend/worker/.wrangler/

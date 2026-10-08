@@ -1,0 +1,12 @@
+.auth-profile-help { margin: 8px 0 16px; color: var(--text-secondary); font-size: 13px; line-height: 1.5; text-align: left; }
+.auth-birthday-group { border: 0; padding: 0; margin: 16px 0 0; text-align: left; }
+.auth-birthday-fields { display: flex; gap: 12px; }
+.auth-birthday-fields label { display: flex; flex-direction: column; gap: 6px; flex: 1; font-size: 13px; color: var(--text-secondary); }
+.auth-birthday-fields label:first-child { flex: 0 0 80px; }
+.auth-birthday-fields input, .auth-birthday-fields select { width: 100%; min-height: 44px; box-sizing: border-box; border: 1px solid var(--border-color, #666); border-radius: 10px; padding: 10px; background: var(--bg-secondary, #242330); color: var(--text-primary, white); font: inherit; font-size: 16px; }
+.auth-form-error { color: var(--accent-incorrect, #ff9999); font-size: 14px; line-height: 1.5; text-align: left; }
+.auth-profile-matches section { padding: 14px 0; border-bottom: 1px solid var(--border-color, #666); }
+.auth-profile-matches p { font-size: 13px; line-height: 1.5; color: var(--text-secondary); }
+.auth-profile-matches > .auth-cancel-btn { margin-top: 14px; width: 100%; }
+.auth-profile-matches section .auth-submit-btn { width: 100%; }
+.auth-profile-matches h4 { margin-top: 20px; }

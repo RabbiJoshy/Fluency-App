@@ -1,6 +1,7 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
 import './state.js?v=20260825ak';
+import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=1';
 import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=20260929sense6';
 import { applyRemoteFastTrack } from './fast-track-preferences.js?v=20260920a';
 import { dbGet, dbPut } from './offline-db.js?v=20260825ak';
@@ -111,6 +112,7 @@ function _markAuthReady() { _resolveAuthReady?.(); }
 // linked word sees that card first and the tour on a later visit.
 function _openFirstRunTutorialUnlessLinked() {
     if (window.fluencyRoute?.kind === 'word') return;
+    if (window.maybeShowKnownLanguagesIntro?.(window.selectedLanguage)) return;
     if (window.maybeShowFrequencyIntro?.()) return;
     window.openFirstRunCardTutorial?.();
 }
@@ -197,6 +199,9 @@ function hideAuthModal() {
 // Show user info badge — no longer unhides #userInfo here;
 // the floating toolbar is shown/hidden by showFloatingBtns() in flashcard mode.
 function showUserInfo() {
+    const label = document.getElementById('topBarUserName');
+    if (label) label.textContent = currentUser?.isGuest ? 'GUEST'
+        : (currentUser?.username || currentUser?.initials || '');
 }
 
 // Guest mode handler.
@@ -223,6 +228,7 @@ function enterGuestMode() {
 
 // Show login form
 function showLoginForm() {
+    resetProfileLogin();
     document.getElementById('guestModeBtn').style.display = 'none';
     document.getElementById('loginModeRow').style.display = 'none';
     document.getElementById('aboutProjectBtn').style.display = 'none';
@@ -234,54 +240,24 @@ function showLoginForm() {
 
 // Hide login form
 function hideLoginForm() {
+    resetProfileLogin();
     document.getElementById('guestModeBtn').style.display = 'flex';
     document.getElementById('loginModeRow').style.display = 'flex';
     document.getElementById('aboutProjectBtn').style.display = '';
     document.querySelector('#authModal .auth-modal-content')?.classList.remove('is-login-form');
     document.getElementById('loginForm').classList.add('hidden');
     document.getElementById('userInitials').value = '';
-    const pwd = document.getElementById('userPassword');
-    if (pwd) pwd.value = '';
+    document.getElementById('birthdayDay').value = '';
+    document.getElementById('birthdayMonth').value = '';
 }
 
 // Submit initials and login
 async function submitLogin() {
-    const initials = document.getElementById('userInitials').value.trim().toUpperCase();
-    const passwordInput = document.getElementById('userPassword');
-    const password = (passwordInput?.value || '').trim();
+    return submitProfileLogin(completeProfileLogin);
+}
 
-    if (initials.length < 2 || initials.length > 4 || !/^[A-Z]+$/.test(initials)) {
-        alert('Please enter 2-4 letters (A-Z only)');
-        return;
-    }
-
-    const savedPasswordKey = `auth_pwd_${initials}`;
-    const storedPassword = localStorage.getItem(savedPasswordKey);
-
-    if (storedPassword) {
-        if (!password) {
-            alert(`A secret word is set for ${initials}. Enter it to continue.`);
-            passwordInput?.focus();
-            return;
-        }
-        if (password !== storedPassword) {
-            alert(`That is not the secret word for ${initials}. Try again.`);
-            passwordInput?.focus();
-            return;
-        }
-    } else if (password) {
-        localStorage.setItem(savedPasswordKey, password);
-    }
-
-    // Offer to save the initials and secret word where the browser supports
-    // asking explicitly (Chrome, Edge, Android); Safari and Firefox pick the
-    // form submission up themselves.
-    if (password && typeof window.PasswordCredential === 'function' && navigator.credentials?.store) {
-        navigator.credentials.store(new window.PasswordCredential({ id: initials, password, name: initials }))
-            .catch(() => {});
-    }
-
-    currentUser = { initials: initials, isGuest: false, hasPassword: Boolean(password || storedPassword) };
+async function completeProfileLogin(user) {
+    currentUser = user;
     window.applyGlobalStudyDefaults?.();
     localStorage.setItem('flashcardUser', JSON.stringify(currentUser));
     showUserInfo();
@@ -320,18 +296,18 @@ function renderAccountPanel() {
     const named = Boolean(currentUser && !currentUser.isGuest);
     const badge = document.getElementById('accountUserBadge');
     if (badge) {
-        badge.textContent = named ? currentUser.initials : '?';
+        badge.textContent = named ? (currentUser.username || currentUser.initials) : '?';
         badge.classList.toggle('is-guest', !named);
     }
     const name = document.getElementById('accountProfileName');
-    if (name) name.textContent = named ? currentUser.initials : 'Guest';
+    if (name) name.textContent = named ? (currentUser.username || currentUser.initials) : 'Guest';
     const note = document.getElementById('accountProfileNote');
     if (note) note.textContent = named ? 'Progress syncs across devices' : 'Progress is not saved';
 
     const row = document.getElementById('accountPasswordRow');
     if (!row) return;
-    row.hidden = !named;
-    if (!named) return;
+    row.hidden = !named || Boolean(currentUser?.profileId);
+    if (row.hidden) return;
     const stored = localStorage.getItem(devicePasswordKey()) || '';
     const input = document.getElementById('accountPasswordInput');
     if (document.activeElement === input) input.blur();
@@ -1340,11 +1316,12 @@ function _appendAboutCTAs(body) {
     cta.className = 'about-ctas';
 
     if (currentUser) {
-        const name = currentUser.isGuest ? 'Guest' : (currentUser.initials || 'Back');
-        cta.innerHTML =
-            '<button type="button" class="about-cta-btn primary" id="aboutCTABack">'
-            + (_aboutReturnTo ? 'Back to Settings'
-                : 'Back to the app' + (currentUser.isGuest ? '' : ' (' + name + ')')) + '</button>';
+        const name = currentUser.isGuest ? 'Guest' : (currentUser.username || currentUser.initials || 'Back');
+        const back = document.createElement('button');
+        back.type = 'button'; back.className = 'about-cta-btn primary'; back.id = 'aboutCTABack';
+        back.textContent = _aboutReturnTo ? 'Back to Settings'
+            : 'Back to the app' + (currentUser.isGuest ? '' : ' (' + name + ')');
+        cta.appendChild(back);
         body.appendChild(cta);
         document.getElementById('aboutCTABack').addEventListener('click', hideAboutProjectModal);
     } else {
@@ -1847,49 +1824,6 @@ function setupAuthEventListeners() {
     document.getElementById('loginForm').addEventListener('submit', (event) => {
         event.preventDefault();
         submitLogin();
-    });
-
-    // Enter in the initials field moves on to the secret word when one is set.
-    document.getElementById('userInitials').addEventListener('keydown', (e) => {
-        if (e.key !== 'Enter') return;
-        const pwd = document.getElementById('userPassword');
-        const initials = e.target.value.trim().toUpperCase();
-        if (pwd && !pwd.value.trim() && localStorage.getItem(`auth_pwd_${initials}`)) {
-            e.preventDefault();
-            pwd.focus();
-        }
-    });
-
-    // The note about the optional password appears once, on the first
-    // character typed, and hands focus straight back to the field.
-    const passwordNote = document.getElementById('authPasswordNote');
-    let passwordNoteShown = false;
-    document.getElementById('userPassword')?.addEventListener('input', (e) => {
-        if (passwordNoteShown || !passwordNote || !e.target.value) return;
-        passwordNoteShown = true;
-        passwordNote.hidden = false;
-        document.getElementById('authPasswordNoteOk')?.focus();
-    });
-    document.getElementById('authPasswordNoteOk')?.addEventListener('click', () => {
-        passwordNote.hidden = true;
-        document.getElementById('userPassword')?.focus();
-    });
-
-
-    // Enable/disable submit button based on input, and reflect password requirement
-    document.getElementById('userInitials').addEventListener('input', (e) => {
-        const initials = e.target.value.trim().toUpperCase();
-        const submitBtn = document.getElementById('submitInitialsBtn');
-        const isValid = initials.length >= 2 && initials.length <= 4 && /^[A-Z]+$/.test(initials);
-        submitBtn.disabled = !isValid;
-
-        const pwdLabel = document.getElementById('userPasswordLabel');
-        if (pwdLabel) {
-            const hasStored = isValid && Boolean(localStorage.getItem(`auth_pwd_${initials}`));
-            pwdLabel.innerHTML = hasStored
-                ? 'Secret word <span class="auth-optional-tag" style="color: var(--accent-primary); font-weight: 600;">(required)</span>'
-                : 'Secret word <span class="auth-optional-tag" style="font-weight: normal; opacity: 0.7;">(optional)</span>';
-        }
     });
 
     // Clear level estimate button

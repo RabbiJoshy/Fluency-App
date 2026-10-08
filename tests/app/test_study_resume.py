@@ -27,7 +27,7 @@ const context = {
  excludeProperNouns:true,excludeNoise:true,excludeSlang:false,excludeGrammarParticles:false,
  excludeEnglishLoanwords:true, isFlipped:false,speechEnabled:true,
  currentMeaningIndex:0,currentExampleIndex:0,currentMWEIndex:0,
- LAST_STUDY_SESSION_KEY:'session', studySessionScope:()=> 'speech:Spanish',
+ LAST_STUDY_SESSION_KEY:'session', studySessionStorageKey:key=>key, studySessionScope:()=> 'speech:Spanish',
  localStorage:{setItem:(key,value)=>saved.set(key,JSON.parse(value))}
 };
 const start = source.indexOf('function _writeStudySessionSnapshot()');

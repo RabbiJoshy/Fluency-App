@@ -127,7 +127,8 @@ function refresh() {
 
     const on = state === 'on';
     const extras = globalThis.collectExtras?.() || {};
-    const skipped = extras.allSkipped ? extras.allSkipped.length : (extras.cognates?.length || 0);
+    const skippedCardsCount = (extras.allSkipped ? extras.allSkipped.length : (extras.cognates?.length || 0))
+        + (extras.lemmas?.length || 0);
 
     // A shortcut is listed only where it can do something: look-alikes and
     // combined forms need the release's mapping, the other three need at least
@@ -181,7 +182,7 @@ function refresh() {
 
     // The home row: the switch is the real master control, and the count next
     // to the chevron is what tells a learner there is more behind the row.
-    // Combined forms are still studied, so only skipped words are counted.
+    // Total skipped cards counts all cards set aside or merged.
     const hubSwitch = document.getElementById('fastTrackHubSwitch');
     if (hubSwitch) {
         hubSwitch.classList.toggle('selected', on);
@@ -197,16 +198,16 @@ function refresh() {
         // The switch already says on or off, so this line says something else:
         // what turning it on does, then what it is doing.
         hubSummary.textContent = !on ? 'Fewer cards, same coverage'
-            : skipped ? `${skipped.toLocaleString()} ${skipped === 1 ? 'word' : 'words'} skipped`
+            : skippedCardsCount ? `${skippedCardsCount.toLocaleString()} ${skippedCardsCount === 1 ? 'word' : 'words'} skipped`
             : 'No words skipped';
     }
     const hubExamples = document.getElementById('fastTrackHubExamples');
     if (hubExamples) {
         // Wide screens only (CSS hides it on phones). Off, it names the
-        // commonest look-alikes Smart Skip would set aside; on, the commonest
-        // words it is setting aside. Empty, it takes no room.
+        // commonest look-alikes Smart Skip would set aside; on, the look-alikes
+        // (cognates) it is setting aside. Empty, it takes no room.
         const words = on
-            ? (extras.allSkipped || []).map(entry => entry.item.word)
+            ? (extras.cognates || []).map(entry => entry.item.word)
             : lookAlikeCandidates();
         const shown = words.slice(0, 3).map(word => `<em>${escapeExample(word)}</em>`).join(', ');
         hubExamples.innerHTML = !shown ? ''

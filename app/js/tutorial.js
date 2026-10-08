@@ -334,15 +334,36 @@ function stepNotes(step) {
     ] : [
         { side: 'left', anchor: '.card-back', title: 'Grade your answer',
           text: '← Needs practice · Got it →. Swipe left if you need practice, or right if you remembered. On a computer, use X or Enter.' },
+        { side: 'right', anchor: '.card-back', title: 'Smart Skip & mode switching',
+          text: 'Smart Skip sets aside look-alikes from languages you know. You can switch between Everyday Speech and Music & Lyrics anytime — your progress is saved.' },
         { side: 'right', anchor: '.card-back', title: 'Move on',
           text: 'Grading moves you to the next card, sometimes through a phrases panel first. The full card tour is always available through Help.' },
     ];
     const notes = deckById(step.deck).faces[step.face].notes
         .filter(note => !note.requires || tutorialAdapter()[note.requires]);
     const ordered = [...notes.filter(n => n.side !== 'right'), ...notes.filter(n => n.side === 'right')];
-    if (step.face === 'back') ordered.push({ side: 'right', anchor: '.card-back',
-        title: 'You’re ready to study',
-        text: 'Recall a meaning, flip to check, then swipe: ← Needs practice · Got it →. Grading moves to the next card.' });
+    if (step.face === 'back') {
+        ordered.push({
+            side: 'right',
+            anchor: '.card-back',
+            title: 'Smart Skip saves time',
+            text: 'Look-alikes you already recognize from languages you know are set aside, and related word forms share one card so you study fewer cards.'
+        });
+        const currentMode = step.deck === 'lyrics' ? 'Music & Lyrics' : 'Everyday Speech';
+        const otherMode = step.deck === 'lyrics' ? 'Everyday Speech' : 'Music & Lyrics';
+        ordered.push({
+            side: 'right',
+            anchor: '.card-back',
+            title: 'Switch modes anytime',
+            text: `You’re currently exploring ${currentMode}. You can switch to ${otherMode} anytime from the top bar, and all your words and progress are saved across both modes.`
+        });
+        ordered.push({
+            side: 'right',
+            anchor: '.card-back',
+            title: 'You’re ready to study',
+            text: 'Recall a meaning, flip to check, then swipe: ← Needs practice · Got it →. Grading moves to the next card.'
+        });
+    }
     return ordered;
 }
 
