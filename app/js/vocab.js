@@ -263,7 +263,11 @@ function _writeStudySessionSnapshot() {
     if (!flashcards.length || cardNavStack.length > 0 || !stats.rangeString) return;
     const appContent = document.getElementById('appContent');
     if (!appContent || appContent.classList.contains('hidden')) return;
-    const card = flashcards[currentIndex];
+    // A phrases panel occupies a temporary slot with no vocabulary identity.
+    // Persist its parent so reloading returns to that word, on its answer side.
+    const displayedCard = flashcards[currentIndex];
+    const card = displayedCard?.isChainChild
+        ? flashcards[cardChainReturnIndex] : displayedCard;
     if (!card) return;
     const levelButtons = Array.from(document.querySelectorAll('.level-selector-buttons .level-btn, #levelSelector > .level-btn'));
     const levelNumber = Math.max(0, levelButtons.findIndex(btn => btn.dataset.level === selectedLevel)) + 1;
@@ -306,7 +310,7 @@ function _writeStudySessionSnapshot() {
         currentMWEIndex,
         setSize: stats.setSize,
         previouslyKnown: stats.previouslyKnown,
-        order: flashcards.map(item => item.fullId)
+        order: flashcards.filter(item => !item.isChainChild).map(item => item.fullId)
     };
     try {
         const serialized = JSON.stringify(snapshot);
@@ -3508,7 +3512,13 @@ async function loadVocabularyData(rangeString, opts = {}) {
 
         if (resumeSnapshot) {
             let resumeIndex = flashcards.findIndex(card => card.fullId === resumeSnapshot.currentFullId);
-            if (resumeIndex < 0 && Number.isFinite(Number(resumeSnapshot.currentVocabularyRank))) {
+            // Older phrases-panel snapshots had no full ID or rank, but did
+            // keep the parent word. Recover those rather than jumping to card 1.
+            if (resumeIndex < 0 && resumeSnapshot.currentWord) {
+                resumeIndex = flashcards.findIndex(card => card.targetWord === resumeSnapshot.currentWord);
+            }
+            if (resumeIndex < 0 && resumeSnapshot.currentVocabularyRank != null
+                && Number.isFinite(Number(resumeSnapshot.currentVocabularyRank))) {
                 const targetRank = Number(resumeSnapshot.currentVocabularyRank);
                 resumeIndex = flashcards.reduce((best, card, index) => {
                     const distance = Math.abs(Number(card.vocabularyRank || card.rank) - targetRank);

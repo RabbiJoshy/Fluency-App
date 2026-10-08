@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-08T21:06:23+01:00",
+      "date": "2026-10-08 21:06 BST",
+      "agent": "Codex",
+      "summary": "Reliable keyboard sign-in and phrases-panel resume",
+      "detail": [
+        "Study shortcuts pause while signing in, so Enter submits Continue normally.",
+        "Stopping on a phrases panel saves the parent word; older panel snapshots recover by word."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-08T19:02:22+01:00",
       "date": "2026-10-08 19:02 BST",
       "agent": "Codex",
@@ -344,17 +355,6 @@
       "summary": "Level readout larger",
       "detail": [
         "'Level N · Words a–b / total' is bigger: level 22px, words 17px, deck total about 14px."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-07T19:00:00+01:00",
-      "date": "2026-10-07 19:00 BST",
-      "agent": "Claude",
-      "summary": "Level scrubber shows numbers only; larger chosen level and example words",
-      "detail": [
-        "The scrubber no longer repeats the word 'Level': it shows 1 2 3 4 5…, with the chosen number large and the rest tapering away. 'Level N' stays in the readout above (and as each slot's accessible name).",
-        "Readout 'Level N' 16 to 18px; frequency line, 'e.g.' words and coverage figure up to 14/13px."
       ],
       "commit": "pending"
     }

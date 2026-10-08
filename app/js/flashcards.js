@@ -2588,6 +2588,11 @@ function setupKeyboardShortcuts() {
     }
 
     document.addEventListener('keydown', function(e) {
+        // Signing in owns all keys, including Enter on the submit button.
+        // A previous study deck can still exist behind this modal after logout.
+        const authModal = document.getElementById('authModal');
+        if (authModal && !authModal.classList.contains('hidden')) return;
+
         // Ignore if typing in an input field
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
             return;
