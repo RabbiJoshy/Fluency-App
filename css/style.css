@@ -22910,3 +22910,11 @@ body:has(#cardTutorialModal:not(.hidden), #tutorialIntroModal:not(.hidden)) #res
 }
 
 #cardTutorialModal { padding: 0; }
+
+/* Budget card height inside the rendered tutorial, including text zoom. */
+#cardTutorialModal .card-tutorial-modal { width: 100%; height: calc(100dvh / var(--ui-zoom, 1)); max-height: calc(100dvh / var(--ui-zoom, 1)); }
+@media (min-width: 1181px) {
+    #cardTutorialBody { display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: 0; overflow: hidden; }
+    #cardTutorialBody .card-tutorial-columns { min-height: 0; height: 100%; }
+    #cardTutorialBody .card-tutorial-notes { max-height: 100%; overflow-y: auto; }
+}

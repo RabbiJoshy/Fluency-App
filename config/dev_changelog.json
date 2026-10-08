@@ -2,6 +2,30 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-08T12:48:08+01:00",
+      "date": "2026-10-08 12:48 BST",
+      "agent": "Codex",
+      "summary": "Tutorial fits its actual available space, including Bigger text",
+      "detail": [
+        "Measured card height from the rendered tutorial area after navigation appears, replacing fixed window-height allowances.",
+        "Reserved header and button space, including app text zoom, and held card dimensions steady between steps.",
+        "Kept scrolling inside card content and independently inside desktop explanations when needed."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-08T12:47:30+01:00",
+      "date": "2026-10-08 12:47 BST",
+      "agent": "Codex",
+      "summary": "Clearer main-page level and account controls",
+      "detail": [
+        "Level example words exclude phrases and multi-word expressions, with slightly brighter text.",
+        "Selected level is larger with less vertical padding.",
+        "Language and learner initials are larger; tutorial and settings icons are white."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-08T12:45:59+01:00",
       "date": "2026-10-08 12:45 BST",
       "agent": "Claude",
@@ -329,44 +353,6 @@
       "summary": "Level scrubber taper now works on both sides",
       "detail": [
         "Levels you have passed were pinned to a flat 62% opacity and hid the taper; now every level shrinks and fades with its distance from the chosen one (about 120%, 90%, 60% size; 68%, 36%, 15% opacity)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-07T18:00:00+01:00",
-      "date": "2026-10-07 18:00 BST",
-      "agent": "Claude",
-      "summary": "Source choice: summary, then two matching option cards; commonness meter forced to one ink",
-      "detail": [
-        "Everyday speech and Your music are now twin cards: icon and name, description, then a ruled 'Best for' line. On desktop the cards are equal height with the rules aligned.",
-        "The summary sits above a thin divider; Connect your Spotify sits under Your music.",
-        "The commonness meter's colour is now forced to the text colour (!important) in both themes, in case a light-theme rule was still tinting it."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-07T17:00:00+01:00",
-      "date": "2026-10-07 17:00 BST",
-      "agent": "Claude",
-      "summary": "Main page clear-up: spacing, tighter top bar, set colours as legend, tapering levels",
-      "detail": [
-        "More space between Choose level, Choose a set and Practice errors (a little less on phones).",
-        "Top bar is tighter with a thinner coloured ring.",
-        "Choose a set: the Known/Practice/New legend is gone; each count under the set numbers carries its own coloured swatch.",
-        "Level scrubber: the chosen level is biggest and each level away shrinks and fades.",
-        "The '~46.3% of speech' figure moved to the bottom right of the level box, under the example words."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-07T16:00:00+01:00",
-      "date": "2026-10-07 16:00 BST",
-      "agent": "Claude",
-      "summary": "Smart Skip desktop: larger text; no extra Bigger-text zoom; no '=' in preview",
-      "detail": [
-        "On wide screens the Smart Skip page uses larger type and taller rows by default.",
-        "The Bigger text setting no longer zooms the Smart Skip page on desktop (it still applies elsewhere and on phones).",
-        "The word preview popup no longer shows '=' before a look-alike's English."
       ],
       "commit": "pending"
     }

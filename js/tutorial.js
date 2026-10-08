@@ -11,7 +11,7 @@
 
 import {
     REPLICA_CARDS, esc, renderBack, replicaCardHTML, wireReplicaBack,
-} from './card-replica.js?v=32e637c1';
+} from './card-replica.js?v=96d69d67';
 
 
 // Each language selects its own representative card and dictionary wording.
@@ -390,10 +390,10 @@ function renderCard() {
     wireBack(stage);
     // On a phone the full-size card scrolls above the lesson controls.
     renderFaceCopy();
-    fitCardToContent();
     renderNotes();
-    markAnchors();
     syncContinueButton();
+    fitCardToContent();
+    markAnchors();
 }
 
 // Sense and example changes replace only the back face, leaving the .card
@@ -524,8 +524,21 @@ function syncContinueButton() {
 // examples cannot grow it; compact layouts also reserve room for the coach.
 function tutorialCardHeight() {
     if (!isMobileTutorial() || window.innerWidth > 700) {
-        const reserve = window.innerWidth > 700 && window.innerWidth <= 1180 ? 90 : 160;
-        return Math.max(320, Math.min(860, window.innerHeight - reserve));
+        const pane = document.querySelector('#cardTutorialBody .card-tutorial-columns');
+        const actions = document.getElementById('cardTutorialDesktopActions');
+        const column = document.querySelector('#cardTutorialBody .card-tutorial-stage-col');
+        const compact = isMobileTutorial();
+        if (pane && column) {
+            if (state.cardHeight !== null) return state.cardHeight;
+            const styles = getComputedStyle(pane);
+            const padding = parseFloat(styles.paddingTop) + parseFloat(styles.paddingBottom);
+            const actionStyle = actions ? getComputedStyle(actions) : null;
+            const footer = compact ? 0 : actions.offsetHeight + parseFloat(actionStyle.marginTop || 0)
+                + parseFloat(actionStyle.marginBottom || 0) + parseFloat(getComputedStyle(column).gap);
+            state.cardHeight = Math.max(80, Math.min(860, Math.floor(pane.clientHeight - padding - footer - 8)));
+            return state.cardHeight;
+        }
+        return Math.max(80, Math.min(860, window.innerHeight - 160));
     }
     const pane = document.querySelector('#cardTutorialBody .card-tutorial-columns');
     const coach = document.getElementById('cardTutorialMobileCoach');
@@ -544,7 +557,7 @@ function tutorialCardHeight() {
         probe.querySelector('#cardTutorialMobileProgress').textContent = 'Step 13 of 13 · back of card';
         probe.querySelector('#cardTutorialMobileTitle').textContent = note.title;
         probe.querySelector('#cardTutorialMobileText').innerHTML = tutorialText(note.text) + actionHintHTML(note);
-        tallest = Math.max(tallest, probe.getBoundingClientRect().height);
+        tallest = Math.max(tallest, probe.offsetHeight);
     }));
     probe.remove();
     state.cardHeight = Math.min(440, Math.max(160, pane.clientHeight + coach.offsetHeight - tallest - 18));
@@ -555,10 +568,27 @@ function fitCardToContent() {
     const inner = document.querySelector('#cardTutorialStage .card-replica');
     if (!inner) return;
     inner.style.removeProperty('--replica-card-scale');
+    // Measure both face summaries so the header never changes the card's budget.
+    const intro = document.getElementById('cardTutorialIntro');
+    if (!isMobileTutorial() && intro?.cloneNode) {
+        const probe = intro.cloneNode(true);
+        Object.assign(probe.style, {position: 'fixed', visibility: 'hidden', left: '-10000px',
+            top: '0', bottom: 'auto', right: 'auto', width: `${intro.clientWidth}px`, minHeight: '0'});
+        intro.parentElement.appendChild(probe);
+        let tallest = 0;
+        tutorialSteps().forEach(step => {
+            const face = deckById(step.deck).faces[step.face];
+            probe.innerHTML = `<p class="card-tutorial-blurb"><strong class="card-tutorial-lede">${tutorialText(face.title)}</strong> ${tutorialText(face.blurb)}</p>`;
+            tallest = Math.max(tallest, probe.offsetHeight);
+        });
+        probe.remove();
+        intro.style.minHeight = `${tallest}px`;
+    }
     const height = tutorialCardHeight();
     inner.style.setProperty('--replica-card-h', `${height}px`);
     const compactDesktop = window.innerWidth > 700 && window.innerWidth <= 1180;
-    const width = Math.min(640, height * (compactDesktop ? .85 : .78), window.innerWidth * (compactDesktop ? .57 : .4));
+    const pane = document.querySelector('#cardTutorialBody .card-tutorial-columns');
+    const width = Math.min(640, (compactDesktop ? height * .85 : Math.max(440, height * .78)), (pane?.clientWidth || window.innerWidth) * (compactDesktop ? .95 : .4));
     document.getElementById('cardTutorialBody')?.style.setProperty('--tutorial-card-width', `${Math.round(width)}px`);
 }
 
