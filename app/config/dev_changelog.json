@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T00:15:00+01:00",
+      "date": "2026-10-09 00:15 BST",
+      "agent": "Claude",
+      "summary": "Vocabulary choice now says progress carries over and you can switch any time",
+      "detail": [
+        "The line under 'Choose your flashcard vocabulary source' adds: What you learn carries over, and you can switch at any time.",
+        "Shown on the inline choose screen (desktop and mobile) and in the in-study vocabulary picker; both read the same wording."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-08T22:28:06+01:00",
       "date": "2026-10-08 22:28 BST",
       "agent": "Codex",
@@ -352,18 +363,6 @@
         "Under the name: 'Off', or 'On · N words skipped' (accent coloured when on).",
         "'Details ›' on the right says the row opens the details page; the switch alone turns it on.",
         "'Recommended' is a solid red pill with white text."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-07T22:00:00+01:00",
-      "date": "2026-10-07 22:00 BST",
-      "agent": "Claude",
-      "summary": "Smart Skip row on the main page: bigger name, lighter larger Recommended badge, bigger switch",
-      "detail": [
-        "'Smart Skip' 16 to 21px (19px on phones), heavier weight; icon 22 to 28px.",
-        "'Recommended' 10 to 12px (10.5px on phones) in a lighter red.",
-        "Switch 42x24 to 54x32; the row tints and gets an accent edge once Smart Skip is on."
       ],
       "commit": "pending"
     }

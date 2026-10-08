@@ -719,7 +719,7 @@ function learningModeCopy(language = selectedLanguage) {
     const lyricsCatalog = config?.languages?.[language]?.capabilities?.lyrics !== false;
     return {
         title: 'Choose your flashcard vocabulary source',
-        intro: 'Your flashcards come from this source, most common words first.',
+        intro: 'Your flashcards come from this source, most common words first. What you learn carries over, and you can switch at any time.',
         speech: {
             label: 'Everyday speech',
             description: 'From films and TV shows — the everyday words people actually use when they talk to each other.',
