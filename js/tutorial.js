@@ -3,25 +3,33 @@
 // Not the walkthrough (walkthrough.js), which is a two-screen demo for
 // visitors and opens from About. This one is opened by the "?" button, by the
 // first-run prompt and by Settings → How to Study, and it teaches someone who
-// is about to study: it steps through their chosen mode’s card one element
-// at a time and owns the flip. Desktop and phone are equal
-// targets; the phone gets a coach sheet instead of note columns.
+// is about to study. Three chapters, most needed first: the card in their
+// chosen mode, one element at a time (the tutorial owns the flip), then Smart
+// Skip, then switching between speech and music. Each chapter ends with the
+// choice to start studying. Desktop and phone are equal targets; the phone
+// gets a coach sheet instead of note columns.
 //
 // The card itself is drawn by card-replica.js, which both features share.
 
 import {
     REPLICA_CARDS, esc, renderBack, replicaCardHTML, wireReplicaBack,
-} from './card-replica.js?v=f4fb62b8';
+} from './card-replica.js?v=038cf273';
 
 
 // Each language selects its own representative card and dictionary wording.
 // The controller below remains shared, so another language needs only a card
 // and one adapter entry instead of a forked tutorial.
+// The Smart Skip examples are the ones its own page uses (fast-mode.js), so
+// the tutorial and the setting never show a learner different words.
 const TUTORIAL_LANGUAGE_ADAPTERS = {
-    spanish: { language: 'Spanish', flag: '🇪🇸', speechCard: 'queSpeech', provider: 'SpanishDict', lyrics: true, usageShares: true },
-    portuguese: { language: 'Portuguese', flag: '🇵🇹', speechCard: 'ptProvarSpeech', provider: 'Wiktionary', lyrics: false, usageShares: true },
-    czech: { language: 'Czech', flag: '🇨🇿', speechCard: 'jeSpeech', provider: 'Wiktionary', lyrics: false, usageShares: true },
-    french: { language: 'French', flag: '🇫🇷', speechCard: 'deSpeech', provider: 'Wiktionary', lyrics: false },
+    spanish: { language: 'Spanish', flag: '🇪🇸', speechCard: 'queSpeech', provider: 'SpanishDict', lyrics: true, usageShares: true,
+        smartSkip: { forms: ['hablo', 'habló', 'hablar'], lookalike: 'chocolate' } },
+    portuguese: { language: 'Portuguese', flag: '🇵🇹', speechCard: 'ptProvarSpeech', provider: 'Wiktionary', lyrics: false, usageShares: true,
+        smartSkip: { forms: ['falo', 'falou', 'falar'], lookalike: 'hotel' } },
+    czech: { language: 'Czech', flag: '🇨🇿', speechCard: 'jeSpeech', provider: 'Wiktionary', lyrics: false, usageShares: true,
+        smartSkip: { forms: ['dělám', 'dělal', 'dělat'], lookalike: 'film' } },
+    french: { language: 'French', flag: '🇫🇷', speechCard: 'deSpeech', provider: 'Wiktionary', lyrics: false,
+        smartSkip: { forms: ['parle', 'parla', 'parler'], lookalike: 'important' } },
 };
 
 let tutorialLanguageOverride = null;
@@ -54,7 +62,13 @@ function tutorialText(value) {
         .replaceAll('{posExample}', tutorialLanguageKey() === 'portuguese' ? 'For example, Portuguese “como” can be a verb (“I eat”) or a conjunction (“as”).' : '')
         .replaceAll('{demoLemma}', currentCard()?.lemma || currentCard()?.word || '')
         .replaceAll('{lemmaExample}', ({ portuguese: '“tenho” (I have) comes from “ter” (to have)', spanish: '“tengo” (I have) comes from “tener” (to have)', czech: '“jsem” (I am) comes from “být” (to be)', french: '“ai” (I have) comes from “avoir” (to have)' })[tutorialLanguageKey()] || '')
+        .replaceAll('{smartSkipForms}', listPhrase(adapter.smartSkip.forms.map(form => `“${form}”`)))
+        .replaceAll('{smartSkipLookalike}', `“${adapter.smartSkip.lookalike}”`)
         .replace(/\bTap\b/g, isMobileTutorial() ? 'Tap' : 'Click');
+}
+
+function listPhrase(items) {
+    return items.length > 1 ? `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}` : items.join('');
 }
 
 // The stored key names predate the tutorial/walkthrough split. Renaming them
@@ -84,8 +98,13 @@ function rememberCardTutorial() {
 // Decks and their annotations
 // ---------------------------------------------------------------------------
 //
-// Shared annotations explain the card; Lyrics adds only song-specific details.
-// `anchor` resolves inside the replica and `side` chooses the note column.
+// Shared annotations explain the card; Lyrics adds only song-specific details
+// and swaps in `lyricsText` where a note's wording is about speech.
+// `anchor` resolves inside the replica and `side` chooses the note column. A
+// `closing` note comes last on its face whichever column it sits in.
+//
+// Notes explain; they do not set tasks. The card stays live, so a reader can
+// tap a meaning or an example, but nothing waits for them to.
 
 const TUTORIAL_DECKS = [
     {
@@ -94,8 +113,6 @@ const TUTORIAL_DECKS = [
         tab: 'Lyrics',
         faces: {
             back: {
-                title: 'The back of a Lyrics card',
-                blurb: 'The meanings and examples come from your chosen songs.',
                 notes: [
                     {
                         side: 'left',
@@ -114,19 +131,6 @@ const TUTORIAL_DECKS = [
                         anchor: '.spotify-btn',
                         title: 'Play the line',
                         text: 'Plays that moment in your own Spotify. Spotify Premium required.',
-                        actionHint: 'Click the Spotify button on the card',
-                    },
-                ],
-            },
-            front: {
-                title: 'The front of a Lyrics card',
-                blurb: 'Try to remember the word before flipping.',
-                notes: [
-                    {
-                        side: 'right',
-                        anchor: '.card-freq-label',
-                        title: 'Song line count',
-                        text: 'How many lines in your chosen songs contain this word.',
                     },
                 ],
             },
@@ -145,23 +149,15 @@ const TUTORIAL_DECKS = [
                 notes: [
                     {
                         side: 'left',
-                        anchor: '.back-headword',
-                        title: 'The word',
-                        text: 'Exactly as it appears in {language} speech — not always the dictionary’s base form.',
-                    },
-                    {
-                        side: 'left',
                         anchor: '.pos-section-head',
                         title: 'The meanings at a glance',
-                        text: 'Meanings are grouped by part of speech, with the most common first.',
+                        text: 'Meanings are grouped by kind of word, with the most common first.',
                     },
                     {
                         side: 'left',
                         anchor: '.meaning-row.is-current-sense',
-                        title: 'The meaning you tapped',
-                        text: 'Choosing a meaning changes the example below. The shaded cue explains when that meaning is used.',
-                        actionHint: 'Click a different meaning on the card',
-                        practice: 'meaning', success: 'The example now matches your chosen meaning.',
+                        title: 'The selected meaning',
+                        text: 'Tap any meaning to change the example below. The shaded cue explains when that meaning is used.',
                     },
                     {
                         side: 'left',
@@ -172,31 +168,25 @@ const TUTORIAL_DECKS = [
                     },
                     {
                         side: 'right',
-                        anchor: '.meaning-row.is-current-sense > .sense-note-trigger',
-                        title: 'Useful extras',
-                        text: 'Grammar, usage notes, and other details about this meaning are behind the information icon.',
-                        actionHint: 'Click the highlighted information icon on the card',
-                    },
-                    {
-                        side: 'right',
                         anchor: '.meaning-row.is-current-sense .sense-prominence-badge',
                         requires: 'usageShares',
                         title: 'How common this meaning is',
                         text: 'The bars show how often this meaning shows up in real speech. Tap them to read Dominant, Common, Uncommon, or Rare.',
+                        lyricsText: 'The bars show how often this meaning shows up in your chosen songs. Tap them to read Dominant, Common, Uncommon, or Rare.',
                     },
                     {
                         side: 'right',
                         anchor: '.sentence',
                         title: 'A real example',
-                        text: 'Each sentence matches the selected meaning. You can also cycle through several examples of the same meaning.',
-                        actionHint: 'Click the sentence on the card for another example',
-                        practice: 'example', success: 'You found another example of the same meaning.',
+                        text: 'Each sentence matches the selected meaning; where there are several, tap it for the next. Beneath it is where it comes from: film or TV dialogue (IMDb), Tatoeba for contributed sentences, or {provider} for dictionary examples.',
+                        lyricsText: 'Each lyric matches the selected meaning; where there are several, tap it for the next.',
                     },
                     {
                         side: 'right',
-                        anchor: '.example-credit-start .example-source-chip, .example-credit-start .example-song-credit:not(:has(.example-source-chip))',
-                        title: 'Where the example is from',
-                        text: 'The source icon identifies the example: IMDb for film or TV dialogue, Tatoeba for contributed sentences, or {provider} for dictionary examples.',
+                        anchor: '.card-back',
+                        closing: true,
+                        title: 'Grade your answer',
+                        text: 'Swipe right if you knew it, or left if you need practice: ← Needs practice · Got it →. The next card follows. On a computer, press Enter for Got it or X for Needs practice.',
                     },
                 ],
             },
@@ -209,13 +199,14 @@ const TUTORIAL_DECKS = [
                         side: 'left',
                         anchor: '.card-word',
                         title: 'The word',
-                        text: 'Try to recall it before you flip.',
+                        text: 'Try to recall what it means, then tap the card to flip it. On a computer, press Space.',
                     },
                     {
                         side: 'left',
-                        anchor: '.card-rank-label',
+                        anchor: '.card-ranking',
                         title: 'How common the word is',
-                        text: 'Where this word sits in the {language} deck. More common words come first.',
+                        text: 'Its place in the {language} deck, and how often it is said per million words. The most common words come first.',
+                        lyricsText: 'Its place in your deck, and how many lines in your chosen songs contain it. The most common words come first.',
                     },
                     {
                         side: 'right',
@@ -229,17 +220,121 @@ const TUTORIAL_DECKS = [
                         title: 'The dictionary form',
                         text: 'Here the word and dictionary form are both “{demoLemma}”. Inflected words can differ: {lemmaExample}. The small label tells you which dictionary entry to look up.',
                     },
-                    {
-                        side: 'right',
-                        anchor: '.card-freq-label',
-                        title: 'How often it is said',
-                        text: 'How often it appears in spoken {language}.',
-                    },
                 ],
             },
         },
     },
 ];
+
+// Smart Skip and the vocabulary source are not on the card, so each gets a
+// page of its own: a copy of the real control, annotated the way the card is.
+const TUTORIAL_PAGES = {
+    smartSkip: {
+        title: 'Smart Skip',
+        blurb: 'Study fewer cards for the same coverage.',
+        notes: [
+            {
+                side: 'left',
+                anchor: '.tutorial-page-switch-row',
+                title: 'Turn it on',
+                text: 'Smart Skip is the switch under Choose level. It is recommended, and you can turn it off at any time.',
+            },
+            {
+                side: 'right',
+                anchor: '.tutorial-page-forms',
+                title: 'Word forms share a card',
+                text: '{smartSkipForms} share one flashcard, so you learn the word once.',
+            },
+            {
+                side: 'right',
+                anchor: '.tutorial-page-lookalike',
+                title: 'Look-alikes are skipped',
+                text: 'Words that look and mean the same as in a language you know, like {smartSkipLookalike} in English. Tap Smart Skip to see every word it set aside; you can still study them.',
+            },
+        ],
+        html: smartSkipPageHTML,
+    },
+    modes: {
+        title: 'Speech or music',
+        blurb: 'Choose where your words come from, and switch whenever you like.',
+        notes: [
+            {
+                side: 'left',
+                anchor: '.tutorial-page-topbar',
+                title: 'Switch at any time',
+                text: 'Tap the language name at the top, then Vocabulary, and choose Everyday speech or Your music.',
+            },
+            {
+                side: 'right',
+                anchor: '.tutorial-page-sources',
+                title: 'Your progress comes with you',
+                text: 'A word you learn in one counts in the other.',
+            },
+        ],
+        html: modesPageHTML,
+    },
+};
+
+function smartSkipPageHTML(adapter) {
+    const { forms, lookalike } = adapter.smartSkip;
+    const word = value => `<span class="tutorial-page-word">${esc(value)}</span>`;
+    return `
+        <div class="tutorial-page" aria-label="Example of Smart Skip">
+            <div class="tutorial-page-switch-row">
+                <svg class="tutorial-page-skip-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.5v13l8-6.5-8-6.5Z"></path><path d="M12 5.5v13l8-6.5-8-6.5Z"></path></svg>
+                <span class="tutorial-page-switch-copy">
+                    <strong>Smart Skip <span class="streamline-rec-badge">Recommended</span></strong>
+                    <small>Fewer cards, same coverage</small>
+                </span>
+                <span class="tutorial-page-switch" aria-hidden="true"><i></i></span>
+            </div>
+            <div class="tutorial-page-example tutorial-page-forms">
+                <span class="tutorial-page-label">Combine word forms</span>
+                <div class="tutorial-page-flow">
+                    <span class="tutorial-page-words">${forms.map(word).join('')}</span>
+                    <span class="tutorial-page-arrow" aria-hidden="true">→</span>
+                    <span class="tutorial-page-result">1 card</span>
+                </div>
+            </div>
+            <div class="tutorial-page-example tutorial-page-lookalike">
+                <span class="tutorial-page-label">Skip look-alikes</span>
+                <div class="tutorial-page-flow">
+                    <span class="tutorial-page-words">${word(lookalike)}<span class="tutorial-page-gloss">English: ${esc(lookalike)}</span></span>
+                    <span class="tutorial-page-arrow" aria-hidden="true">→</span>
+                    <span class="tutorial-page-result is-skipped">Skipped</span>
+                </div>
+            </div>
+        </div>`;
+}
+
+// The two sources in the app's own words (ui.js learningModeCopy), so the
+// copy cannot drift from the picker it shows. The fallback is for tests.
+function modesPageHTML(adapter) {
+    const copy = window.learningModeCopy?.(tutorialLanguageKey()) || {
+        speech: { label: 'Everyday speech', description: 'From films and TV shows.' },
+        lyrics: { label: 'Your music', description: 'The words in the songs you choose.' },
+    };
+    const current = state.mode === 'lyrics' ? 'lyrics' : 'speech';
+    const source = id => `
+        <div class="tutorial-page-source${id === current ? ' is-current' : ''}">
+            <span class="tutorial-page-source-icon" aria-hidden="true">${copy[id].iconHTML || ''}</span>
+            <span class="tutorial-page-source-copy"><strong>${esc(copy[id].label)}</strong><small>${esc(copy[id].description)}</small></span>
+            <span class="tutorial-page-source-tail" aria-hidden="true">${id === current ? '✓' : '›'}</span>
+        </div>`;
+    return `
+        <div class="tutorial-page" aria-label="Example of switching vocabulary">
+            <div class="tutorial-page-topbar">
+                <span class="tutorial-page-flag" aria-hidden="true">${adapter.flag}</span>
+                <strong>${esc(adapter.language)}</strong>
+                <span class="tutorial-page-chevron" aria-hidden="true">›</span>
+            </div>
+            <div class="tutorial-page-sources">
+                <span class="tutorial-page-label">Vocabulary</span>
+                ${source('speech')}
+                ${source('lyrics')}
+            </div>
+        </div>`;
+}
 
 // ---------------------------------------------------------------------------
 // Tutorial controller
@@ -250,8 +345,6 @@ const TUTORIAL_DECKS = [
 // renderCard()/flipCardFace() read this to drive the real card CSS.
 const state = {
     mode: 'speech',
-    quick: false,
-    practiced: new Set(),
     cardHeight: null,
     stepIndex: 0,
     flipped: false,
@@ -268,15 +361,37 @@ function selectedTutorialMode() {
     return null;
 }
 
+// Most needed first. Each chapter ends with the choice to start studying, so
+// stopping after the card is a normal way through, not a skip.
+const TUTORIAL_CHAPTERS = [
+    { id: 'card', label: 'Studying a card' },
+    { id: 'smartSkip', label: 'Smart Skip' },
+    { id: 'modes', label: 'Speech or music' },
+];
+
 function tutorialSteps() {
     return [
-        { kind: 'card', deck: state.mode, face: 'front' },
-        { kind: 'card', deck: state.mode, face: 'back' },
+        { kind: 'card', deck: state.mode, face: 'front', chapter: 'card' },
+        { kind: 'card', deck: state.mode, face: 'back', chapter: 'card' },
+        { kind: 'page', page: 'smartSkip', chapter: 'smartSkip' },
+        { kind: 'page', page: 'modes', chapter: 'modes' },
     ];
 }
 
 function currentStep() {
     return tutorialSteps()[state.stepIndex] || null;
+}
+
+function chapterById(id) {
+    return TUTORIAL_CHAPTERS.find(chapter => chapter.id === id) || null;
+}
+
+// The chapter the next step opens, or null while this one continues.
+function nextChapter() {
+    const steps = tutorialSteps();
+    const step = steps[state.stepIndex];
+    const next = steps[state.stepIndex + 1];
+    return step && next && next.chapter !== step.chapter ? chapterById(next.chapter) : null;
 }
 
 const MOBILE_TUTORIAL_QUERY = '(max-width: 1180px)';
@@ -291,16 +406,11 @@ function deckById(id) {
     const speech = TUTORIAL_DECKS.find(d => d.id === 'speech');
     if (id === 'speech') return { ...speech, card: tutorialAdapter().speechCard };
     const lyrics = TUTORIAL_DECKS.find(d => d.id === 'lyrics');
-    const front = speech.faces.front.notes.map(note => note.anchor === '.card-freq-label'
-        ? lyrics.faces.front.notes[0] : note);
-    const back = speech.faces.back.notes
-        .filter(note => !['.example-credit-start .example-source-chip, .example-credit-start .example-song-credit:not(:has(.example-source-chip))'].includes(note.anchor))
-        .map(note => ({ ...note, text: note.text.replace('{language} speech', 'your chosen lyrics').replace('real speech', 'your chosen songs') }));
+    const forLyrics = note => (note.lyricsText ? { ...note, text: note.lyricsText } : note);
     // Shared meanings and examples first; only song-specific details are added.
-    back.push(...lyrics.faces.back.notes.filter(note =>
-        ['.translation', '.example-song-credit', '.spotify-btn'].includes(note.anchor)));
+    const back = [...speech.faces.back.notes.map(forLyrics), ...lyrics.faces.back.notes];
     return { ...lyrics, faces: {
-        front: { ...speech.faces.front, title: 'The front of a Lyrics card', notes: front },
+        front: { ...speech.faces.front, title: 'The front of a Lyrics card', notes: speech.faces.front.notes.map(forLyrics) },
         back: { ...speech.faces.back, title: 'The back of a Lyrics card',
             blurb: 'The meanings and examples come from the songs you chose.', notes: back },
     } };
@@ -312,94 +422,45 @@ function currentDeck() {
 }
 
 function currentCard() {
-    return REPLICA_CARDS[currentDeck().card];
+    const deck = currentDeck();
+    return deck ? REPLICA_CARDS[deck.card] : null;
 }
 
-// The annotation set is a property of the face on show. This is the whole
-// reason flipping re-renders the notes.
+// A card face or a page: whichever is on stage owns the title, the summary
+// and the notes. This is the whole reason flipping re-renders the notes.
+function stepFace(step) {
+    if (!step) return null;
+    return step.kind === 'page' ? TUTORIAL_PAGES[step.page] : deckById(step.deck).faces[step.face];
+}
+
 function currentFace() {
-    const step = currentStep();
-    return step && step.kind === 'card' ? deckById(step.deck).faces[step.face] : null;
+    return stepFace(currentStep());
 }
 
 // Left column first, then right, so each note sits on the same side as the
-// element it explains.
+// element it explains; a closing note ends the face.
 function stepNotes(step) {
-    if (!step || step.kind !== 'card') return [];
-    if (state.quick) return step.face === 'front' ? [
-        { side: 'left', anchor: '.card-word', title: 'Recall, then reveal',
-          text: 'Try to remember the meaning. Tap the card to reveal the answer; on a computer, press Space.' },
-        { side: 'right', anchor: '.card-word', title: 'Hear the pronunciation',
-          text: 'Cards read aloud when pronunciation is on. Use the speaker control to turn it on or off. On a computer, press A to hear the word again.' },
-    ] : [
-        { side: 'left', anchor: '.card-back', title: 'Grade your answer',
-          text: '← Needs practice · Got it →. Swipe left if you need practice, or right if you remembered. On a computer, use X or Enter.' },
-        { side: 'right', anchor: '.card-back', title: 'Smart Skip & mode switching',
-          text: 'Smart Skip sets aside look-alikes from languages you know. You can switch between Everyday Speech and Music & Lyrics anytime — your progress is saved.' },
-        { side: 'right', anchor: '.card-back', title: 'Move on',
-          text: 'Grading moves you to the next card, sometimes through a phrases panel first. The full card tour is always available through Help.' },
-    ];
-    const notes = deckById(step.deck).faces[step.face].notes
-        .filter(note => !note.requires || tutorialAdapter()[note.requires]);
-    const ordered = [...notes.filter(n => n.side !== 'right'), ...notes.filter(n => n.side === 'right')];
-    if (step.face === 'back') {
-        ordered.push({
-            side: 'right',
-            anchor: '.card-back',
-            title: 'Smart Skip saves time',
-            text: 'Look-alikes you already recognize from languages you know are set aside, and related word forms share one card so you study fewer cards.'
-        });
-        const currentMode = step.deck === 'lyrics' ? 'Music & Lyrics' : 'Everyday Speech';
-        const otherMode = step.deck === 'lyrics' ? 'Everyday Speech' : 'Music & Lyrics';
-        ordered.push({
-            side: 'right',
-            anchor: '.card-back',
-            title: 'Switch modes anytime',
-            text: `You’re currently exploring ${currentMode}. You can switch to ${otherMode} anytime from the top bar, and all your words and progress are saved across both modes.`
-        });
-        ordered.push({
-            side: 'right',
-            anchor: '.card-back',
-            title: 'You’re ready to study',
-            text: 'Recall a meaning, flip to check, then swipe: ← Needs practice · Got it →. Grading moves to the next card.'
-        });
-    }
-    return ordered;
-}
-
-function activeLessonNote() {
-    return orderedNotes()[Math.max(0, state.activeNote)];
-}
-
-function practicePending() {
-    const practice = activeLessonNote()?.practice;
-    return Boolean(practice && !state.practiced.has(practice));
-}
-
-function completePractice(practice) {
-    if (activeLessonNote()?.practice !== practice) return;
-    state.practiced.add(practice);
-    renderNotes();
-    markAnchors();
-}
-
-function syncLessonTools() {
-    ['cardTutorialContinue', 'cardTutorialMobileNext'].forEach(id => {
-        const button = document.getElementById(id);
-        if (button) button.disabled = Boolean(practicePending());
-    });
+    const face = stepFace(step);
+    if (!face) return [];
+    const notes = face.notes.filter(note => !note.requires || tutorialAdapter()[note.requires]);
+    const body = notes.filter(n => !n.closing);
+    return [...body.filter(n => n.side !== 'right'), ...body.filter(n => n.side === 'right'),
+        ...notes.filter(n => n.closing)];
 }
 
 function orderedNotes() {
     return stepNotes(currentStep());
 }
 
-// Progress counts every annotation across the two card faces.
+// Progress counts the annotations in the current chapter only, so each
+// chapter reads as its own short sequence.
 function tutorialStepPosition(noteIndex = state.activeNote) {
     const steps = tutorialSteps();
+    const chapter = steps[state.stepIndex]?.chapter;
     let before = 0;
     let total = 0;
     steps.forEach((step, i) => {
+        if (step.chapter !== chapter) return;
         const weight = stepNotes(step).length;
         total += weight;
         if (i < state.stepIndex) before += weight;
@@ -408,19 +469,23 @@ function tutorialStepPosition(noteIndex = state.activeNote) {
     return { current: before + within + 1, total };
 }
 
-// Full rebuild — used when the deck changes.
+// Full rebuild — used when the deck changes or a page comes on stage. A page
+// sits in the card's own box, so moving between them never shifts the layout.
 function renderCard() {
     const stage = document.getElementById('cardTutorialStage');
     if (!stage) return;
-    const card = currentCard();
+    const step = currentStep();
 
-    stage.innerHTML = replicaCardHTML(card, {
-        flipped: state.flipped,
-        meaningIndex: state.meaningIndex,
-        exampleIndex: state.exampleIndex,
-    });
-
-    wireBack(stage);
+    if (step.kind === 'page') {
+        stage.innerHTML = `<div class="card-replica tutorial-page-replica">${TUTORIAL_PAGES[step.page].html(tutorialAdapter())}</div>`;
+    } else {
+        stage.innerHTML = replicaCardHTML(currentCard(), {
+            flipped: state.flipped,
+            meaningIndex: state.meaningIndex,
+            exampleIndex: state.exampleIndex,
+        });
+        wireBack(stage);
+    }
     // On a phone the full-size card scrolls above the lesson controls.
     renderFaceCopy();
     renderNotes();
@@ -484,16 +549,13 @@ function wireBack(stage) {
     });
     wireReplicaBack(stage, {
         onSelectMeaning: idx => {
-            const changed = idx !== state.meaningIndex;
             state.meaningIndex = idx;
             state.exampleIndex = 0;
             refreshBack();
-            if (changed) completePractice('meaning');
         },
         onCycleExample: () => {
             state.exampleIndex += 1;
             refreshBack();
-            completePractice('example');
         },
         onLayoutChange: markAnchors,
     });
@@ -505,39 +567,54 @@ function syncFlipButton() {
     btn.textContent = state.flipped ? 'Flip to the front' : 'Flip to the back';
 }
 
+// Where the tour stands: the note showing, whether it ends its chapter, and
+// what pressing Next will do. Both layouts label their buttons from this.
+function tourPosition() {
+    const steps = tutorialSteps();
+    const step = steps[state.stepIndex];
+    const notes = orderedNotes();
+    const index = Math.max(0, Math.min(state.activeNote, notes.length - 1));
+    const next = steps[state.stepIndex + 1];
+    const lastNote = index >= notes.length - 1;
+    return {
+        step, index, lastNote,
+        finished: lastNote && !next,
+        chapterEnd: lastNote && Boolean(next) && next.chapter !== step.chapter,
+        turningSameCard: Boolean(next) && next.kind === 'card' && step.kind === 'card' && next.deck === step.deck,
+    };
+}
+
 // One button, one job: go to the next step. Its label says what that step is,
 // so the reader always knows what pressing it will do.
 // On desktop it walks the notes first, one at a time, and only once the last
-// note on this face is showing does it flip the card or move on.
+// note on this face is showing does it flip the card or move on. At the end
+// of a chapter a second button offers to stop there and study.
 function syncContinueButton() {
     const btn = document.getElementById('cardTutorialContinue');
     const actions = document.getElementById('cardTutorialDesktopActions');
     if (!btn) return;
-    const steps = tutorialSteps();
-    const step = steps[state.stepIndex];
-    const ready = !isMobileTutorial() && step && step.kind === 'card';
+    const ready = !isMobileTutorial() && Boolean(currentStep());
     btn.hidden = !ready;
     if (actions) actions.hidden = !ready;
     if (!ready) return;
 
-    const notes = orderedNotes();
-    const index = Math.max(0, Math.min(state.activeNote, notes.length - 1));
-    const next = steps[state.stepIndex + 1];
-    const turningSameCard = next && next.kind === 'card' && next.deck === step.deck;
-    btn.textContent = index < notes.length - 1 ? 'Next →'
-        : !next ? 'Start studying'
-        : turningSameCard ? 'Flip the card over →'
+    const at = tourPosition();
+    btn.textContent = !at.lastNote ? 'Next →'
+        : at.finished ? 'Start studying'
+        : at.chapterEnd ? `Next: ${nextChapter().label} →`
+        : at.turningSameCard ? 'Flip the card over →'
         : 'Next →';
     btn.classList.remove('is-secondary');
+    const finish = document.getElementById('cardTutorialFinish');
+    if (finish) finish.hidden = !at.chapterEnd;
 
     const prev = document.getElementById('cardTutorialPrev');
-    if (prev) prev.hidden = state.stepIndex === 0 && index === 0;
+    if (prev) prev.hidden = state.stepIndex === 0 && at.index === 0;
     const progress = document.getElementById('cardTutorialDesktopProgress');
     if (progress) {
-        const position = tutorialStepPosition(index);
+        const position = tutorialStepPosition(at.index);
         progress.textContent = `${position.current} of ${position.total}`;
     }
-    syncLessonTools();
 }
 
 // ---------------------------------------------------------------------------
@@ -589,7 +666,7 @@ function tutorialCardHeight() {
     tutorialSteps().forEach(step => stepNotes(step).forEach(note => {
         probe.querySelector('#cardTutorialMobileProgress').textContent = 'Step 13 of 13 · back of card';
         probe.querySelector('#cardTutorialMobileTitle').textContent = note.title;
-        probe.querySelector('#cardTutorialMobileText').innerHTML = tutorialText(note.text) + actionHintHTML(note);
+        probe.querySelector('#cardTutorialMobileText').innerHTML = tutorialText(note.text);
         tallest = Math.max(tallest, probe.offsetHeight);
     }));
     probe.remove();
@@ -601,7 +678,7 @@ function fitCardToContent() {
     const inner = document.querySelector('#cardTutorialStage .card-replica');
     if (!inner) return;
     inner.style.removeProperty('--replica-card-scale');
-    // Measure both face summaries so the header never changes the card's budget.
+    // Measure every step's summary so the header never changes the card's budget.
     const intro = document.getElementById('cardTutorialIntro');
     if (!isMobileTutorial() && intro?.cloneNode) {
         const probe = intro.cloneNode(true);
@@ -610,7 +687,7 @@ function fitCardToContent() {
         intro.parentElement.appendChild(probe);
         let tallest = 0;
         tutorialSteps().forEach(step => {
-            const face = deckById(step.deck).faces[step.face];
+            const face = stepFace(step);
             probe.innerHTML = `<p class="card-tutorial-blurb"><strong class="card-tutorial-lede">${tutorialText(face.title)}</strong> ${tutorialText(face.blurb)}</p>`;
             tallest = Math.max(tallest, probe.offsetHeight);
         });
@@ -708,31 +785,35 @@ function renderMobileCoach() {
     if (coach.hidden) return;
 
     const progress = tutorialStepPosition(index);
-    // Progress stays with the current face and annotation.
+    const at = tourPosition();
+    // Progress stays with the current face, or the page, and annotation.
+    const where = at.step.kind === 'page' ? chapterById(at.step.chapter).label
+        : state.flipped ? 'back of card' : 'front of card';
     document.getElementById('cardTutorialMobileProgress').textContent =
-        `Step ${progress.current} of ${progress.total} · ${state.flipped ? 'back of card' : 'front of card'}`;
+        `Step ${progress.current} of ${progress.total} · ${where}`;
     document.getElementById('cardTutorialMobileTitle').innerHTML =
         esc(note.title);
-    document.getElementById('cardTutorialMobileText').innerHTML = `${tutorialText(note.text)}${actionHintHTML(note)}`;
+    document.getElementById('cardTutorialMobileText').innerHTML = tutorialText(note.text);
     const back = document.getElementById('cardTutorialMobileBack');
     const next = document.getElementById('cardTutorialMobileNext');
-    back.hidden = state.stepIndex === 0 && index === 0;
+    const finish = document.getElementById('cardTutorialMobileFinish');
+    // A phone has room for two buttons. At a chapter's end they are the two
+    // ways on — study now, or the next chapter — and Back steps aside.
+    back.hidden = at.chapterEnd || (state.stepIndex === 0 && index === 0);
     back.disabled = false;
-    const steps = tutorialSteps();
-    const after = steps[state.stepIndex + 1];
-    const turningSameCard = after && after.kind === 'card' && after.deck === steps[state.stepIndex].deck;
-    next.textContent = index < notes.length - 1 ? 'Next'
-        : !after ? 'Start studying'
-        : turningSameCard ? 'Flip over'
+    if (finish) finish.hidden = !at.chapterEnd;
+    next.textContent = !at.lastNote ? 'Next'
+        : at.finished ? 'Start studying'
+        : at.chapterEnd ? `${nextChapter().label} →`
+        : at.turningSameCard ? 'Flip over'
         : 'Continue';
-    syncLessonTools();
 }
 
 // One note forwards or back, on either layout; past either end of a face it
 // moves to the neighbouring step.
 function moveTour(direction) {
     const step = currentStep();
-    if (!step || (direction > 0 && practicePending())) return;
+    if (!step) return;
     const notes = orderedNotes();
     const index = Math.max(0, Math.min(state.activeNote, notes.length - 1));
     const candidate = index + direction;
@@ -763,22 +844,12 @@ function renderFaceCopy() {
         </p>`;
 }
 
-function actionHintHTML(note) {
-    if (note.practice && state.practiced.has(note.practice)) {
-        return `<span class="card-tutorial-practice-success" role="status">${esc(note.success)}</span>`;
-    }
-    if (!note.actionHint) return '';
-    const instruction = isMobileTutorial() ? note.actionHint.replace(/^Click /, 'Tap ') : note.actionHint;
-    return `<span class="card-tutorial-action-hint">${esc(instruction)}.</span>`;
-}
-
 function noteHTML(note, index) {
     return `
         <li class="card-tutorial-note" data-note="${index}">
             <div>
                 <strong>${note.title}</strong>
                 <span class="card-tutorial-note-copy">${tutorialText(note.text)}</span>
-                ${index === state.activeNote ? actionHintHTML(note) : ''}
             </div>
         </li>`;
 }
@@ -818,12 +889,29 @@ function renderNotes() {
 // Linear tutorial chapters
 // ---------------------------------------------------------------------------
 
-function renderSequenceProgress() {
+// The chapters double as the table of contents: any one can be opened
+// directly, which is how a replay skips to the part it came for.
+function renderChapters() {
     const host = document.getElementById('cardTutorialSequence');
     if (!host) return;
-    // Just the language. "Speech → Lyrics" named two modes before the reader
-    // had met either, which is a label for someone who already knows the app.
-    host.innerHTML = `<strong>${esc(tutorialAdapter().language)} tutorial</strong>`;
+    host.innerHTML = `<nav class="card-tutorial-chapters" aria-label="Tutorial chapters">${TUTORIAL_CHAPTERS.map(chapter =>
+        `<button type="button" class="card-tutorial-chapter" data-chapter="${chapter.id}">${esc(chapter.label)}</button>`).join('')}</nav>`;
+    renderSequenceProgress();
+}
+
+function renderSequenceProgress() {
+    const current = currentStep()?.chapter;
+    document.querySelectorAll('#cardTutorialSequence [data-chapter]').forEach(button => {
+        const on = button.dataset.chapter === current;
+        button.classList.toggle('is-current', on);
+        if (on) button.setAttribute('aria-current', 'step');
+        else button.removeAttribute('aria-current');
+    });
+}
+
+function goToChapter(id) {
+    const index = tutorialSteps().findIndex(step => step.chapter === id);
+    if (index >= 0) goToStep(index);
 }
 
 // Moving between the two faces of one card turns it; anything else is a new
@@ -837,6 +925,7 @@ function goToStep(index, mobileNote = 0) {
     const from = steps[state.stepIndex];
     const to = steps[index];
     const onStage = document.querySelector('#cardTutorialStage .card');
+    // Only two faces of one card turn; a page, or a card after a page, is built.
     const turnsInPlace = index !== state.stepIndex && onStage
         && from && from.kind === 'card' && to.kind === 'card'
         && from.deck === to.deck && from.face !== to.face;
@@ -852,7 +941,7 @@ function goToStep(index, mobileNote = 0) {
         return;
     }
 
-    state.meaningIndex = currentCard().defaultMeaningIndex || 0;
+    state.meaningIndex = currentCard()?.defaultMeaningIndex || 0;
     state.exampleIndex = 0;
     state.activeNote = Math.min(mobileNote, Math.max(0, stepNotes(to).length - 1));
     renderCard();
@@ -882,19 +971,18 @@ function finishTutorialLesson() {
 
 let _resizeHandler = null;
 
-function openCardTutorial({ quick = false } = {}) {
-    state.quick = quick;
+function openCardTutorial({ chapter = 'card' } = {}) {
     const modal = document.getElementById('cardTutorialModal');
     if (!modal) return;
     document.getElementById('resumeLastSetCard')?.remove();
     rememberCardTutorial();
-    state.practiced.clear();
     state.cardHeight = null;
     modal.classList.remove('hidden');
     // Replays start directly on the chosen mode's card.
     state.mode = tutorialAdapter().lyrics && selectedTutorialMode() === 'lyrics' ? 'lyrics' : 'speech';
     state.stepIndex = 0;
-    goToStep(0);
+    renderChapters();
+    goToStep(Math.max(0, tutorialSteps().findIndex(step => step.chapter === chapter)));
 
     if (!_resizeHandler) {
         _resizeHandler = () => {
@@ -921,7 +1009,7 @@ function openFirstRunCardTutorial() {
     if (document.querySelector('.modal:not(.hidden), .knowledge-overview-modal:not([hidden])')) {
         return false;
     }
-    openCardTutorial({ quick: true });
+    openCardTutorial();
     return true;
 }
 
@@ -951,6 +1039,12 @@ function setupCardTutorial() {
     document.getElementById('cardTutorialPrev')?.addEventListener('click', () => moveTour(-1));
     document.getElementById('cardTutorialMobileBack')?.addEventListener('click', () => moveTour(-1));
     document.getElementById('cardTutorialMobileNext')?.addEventListener('click', () => moveTour(1));
+    ['cardTutorialFinish', 'cardTutorialMobileFinish'].forEach(id =>
+        document.getElementById(id)?.addEventListener('click', finishTutorialLesson));
+    document.getElementById('cardTutorialSequence')?.addEventListener('click', event => {
+        const chapter = event.target.closest('[data-chapter]')?.dataset.chapter;
+        if (chapter) goToChapter(chapter);
+    });
 
     // Escape closes; left/right step through the tour like Back and Next.
     // Space deliberately does nothing: the tutorial owns the flip, so the card
