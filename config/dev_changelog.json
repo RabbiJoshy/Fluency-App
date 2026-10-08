@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-08T12:19:13+01:00",
+      "date": "2026-10-08 12:19 BST",
+      "agent": "Codex",
+      "summary": "Taller desktop tutorial cards and no practice-skip button",
+      "detail": [
+        "Removed Skip this practice; the top-right close button remains available.",
+        "Wide desktop cards are about 17% taller while preserving space for Back and Next.",
+        "Narrow desktop layouts put the explanation and navigation beside the card, allowing a taller card without pushing buttons off-screen.",
+        "Phone cards reserve space for the longest explanation and remain the same height throughout the tutorial."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-08T09:12:39+01:00",
       "date": "2026-10-08 09:12 BST",
       "agent": "Claude",
@@ -339,30 +352,6 @@
       "summary": "Smart Skip table: dropped the '=' before obvious look-alikes",
       "detail": [
         "The flag column headers already say the second column is the English word."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-07T15:00:00+01:00",
-      "date": "2026-10-07 15:00 BST",
-      "agent": "Claude",
-      "summary": "Smart Skip: two channels on desktop; clearer look-alike and combined-forms wording",
-      "detail": [
-        "Wide screens: settings in a left column that stays put, the word list on the right. Phones keep one column.",
-        "Look-alikes now read 'Words that look similar and mean the same in English'.",
-        "Combined forms notes that forms with a meaning of their own (fue, al) keep their own card."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-07T14:00:00+01:00",
-      "date": "2026-10-07 14:00 BST",
-      "agent": "Claude",
-      "summary": "Combined forms: tap a row to see every form; '+N' instead of '…'",
-      "detail": [
-        "The forms column shows three forms and '+N' for the rest.",
-        "Tapping a combined-forms row opens it in place with every form as a chip and a 'Preview card' link.",
-        "Other categories still open the preview popup."
       ],
       "commit": "pending"
     }

@@ -11,7 +11,7 @@
 
 import {
     REPLICA_CARDS, esc, renderBack, replicaCardHTML, wireReplicaBack,
-} from './card-replica.js?v=846d6048';
+} from './card-replica.js?v=eb033b81';
 
 
 // Each language selects its own representative card and dictionary wording.
@@ -251,6 +251,7 @@ const TUTORIAL_DECKS = [
 const state = {
     mode: 'speech',
     practiced: new Set(),
+    cardHeight: null,
     stepIndex: 0,
     flipped: false,
     meaningIndex: 0,
@@ -350,7 +351,6 @@ function completePractice(practice) {
 }
 
 function syncLessonTools() {
-    document.querySelectorAll('.card-tutorial-skip-practice').forEach(button => { button.hidden = !practicePending(); });
     ['cardTutorialContinue', 'cardTutorialMobileNext'].forEach(id => {
         const button = document.getElementById(id);
         if (button) button.disabled = Boolean(practicePending());
@@ -523,11 +523,31 @@ function syncContinueButton() {
 // Both faces share the available card box. Opening meanings and changing
 // examples cannot grow it; compact layouts also reserve room for the coach.
 function tutorialCardHeight() {
-    if (isMobileTutorial()) {
-        const pane = document.querySelector('#cardTutorialBody .card-tutorial-columns');
-        return pane ? Math.min(440, Math.max(160, pane.clientHeight - 18)) : 440;
+    if (!isMobileTutorial() || window.innerWidth > 700) {
+        return Math.max(320, Math.min(630, window.innerHeight - 150));
     }
-    return Math.max(320, Math.min(540, window.innerHeight - 200));
+    const pane = document.querySelector('#cardTutorialBody .card-tutorial-columns');
+    const coach = document.getElementById('cardTutorialMobileCoach');
+    if (!pane || !coach?.cloneNode) return pane ? Math.min(440, Math.max(160, pane.clientHeight - 18)) : 440;
+    if (state.cardHeight !== null) return state.cardHeight;
+    // Reserve the tallest explanation once, so changing steps cannot move
+    // the card's bottom or the navigation on a phone.
+    const probe = coach.cloneNode(true);
+    probe.hidden = false;
+    Object.assign(probe.style, {position: 'fixed', visibility: 'hidden', left: '-10000px',
+        top: '0', bottom: 'auto', right: 'auto', width: `${pane.clientWidth}px`, height: 'auto'});
+    probe.querySelector('#cardTutorialMobileBack').hidden = false;
+    coach.parentElement.appendChild(probe);
+    let tallest = 0;
+    tutorialSteps().forEach(step => stepNotes(step).forEach(note => {
+        probe.querySelector('#cardTutorialMobileProgress').textContent = 'Step 13 of 13 · back of card';
+        probe.querySelector('#cardTutorialMobileTitle').textContent = note.title;
+        probe.querySelector('#cardTutorialMobileText').innerHTML = tutorialText(note.text) + actionHintHTML(note);
+        tallest = Math.max(tallest, probe.getBoundingClientRect().height);
+    }));
+    probe.remove();
+    state.cardHeight = Math.min(440, Math.max(160, pane.clientHeight + coach.offsetHeight - tallest - 18));
+    return state.cardHeight;
 }
 
 function fitCardToContent() {
@@ -800,6 +820,7 @@ function openCardTutorial() {
     document.getElementById('resumeLastSetCard')?.remove();
     rememberCardTutorial();
     state.practiced.clear();
+    state.cardHeight = null;
     modal.classList.remove('hidden');
     // Replays start directly on the chosen mode's card.
     state.mode = tutorialAdapter().lyrics && selectedTutorialMode() === 'lyrics' ? 'lyrics' : 'speech';
@@ -808,6 +829,7 @@ function openCardTutorial() {
 
     if (!_resizeHandler) {
         _resizeHandler = () => {
+            state.cardHeight = null;
             if (isMobileTutorial() && state.activeNote < 0) state.activeNote = 0;
             fitCardToContent();
             markAnchors();
@@ -855,11 +877,6 @@ function setupCardTutorial() {
     modal.dataset.ready = '1';
 
     document.getElementById('closeCardTutorialModal')?.addEventListener('click', closeCardTutorial);
-    document.querySelectorAll('.card-tutorial-skip-practice').forEach(button => button.addEventListener('click', () => {
-        const practice = activeLessonNote()?.practice;
-        if (practice) state.practiced.add(practice);
-        moveTour(1);
-    }));
     document.getElementById('cardTutorialFlip')?.addEventListener('click', () => flipCardFace(0));
     document.getElementById('cardTutorialContinue')?.addEventListener('click', () => moveTour(1));
     document.getElementById('cardTutorialPrev')?.addEventListener('click', () => moveTour(-1));

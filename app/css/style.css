@@ -22888,3 +22888,11 @@ body:has(#cardTutorialModal:not(.hidden), #tutorialIntroModal:not(.hidden)) #res
 .deck-complete-score-container.is-outcome .deck-score-ring-fill { stroke: var(--ring-known); stroke-linecap: butt; filter: none; }
 .deck-complete-content:has(.is-outcome:not([hidden])) .incorrect-stat .deck-stat-badge,
 .deck-complete-content:has(.is-outcome:not([hidden])) .incorrect-stat .deck-stat-label { color: var(--warning); }
+
+/* Compact desktop: use the width for the coach so the card can stay tall. */
+@media (min-width: 701px) and (max-width: 1180px) {
+    #cardTutorialBody { grid-template-columns: minmax(0, 1fr) minmax(230px, .65fr); grid-template-rows: auto minmax(0, 1fr); }
+    #cardTutorialBody .card-tutorial-topbar { grid-column: 1 / -1; }
+    #cardTutorialBody .card-tutorial-columns { grid-column: 1; grid-row: 2; }
+    #cardTutorialMobileCoach:not([hidden]) { grid-column: 2; grid-row: 2; align-self: start; }
+}
