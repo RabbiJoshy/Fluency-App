@@ -1,7 +1,7 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=96d69d67';
-import { readFastTrack } from './fast-track-preferences.js?v=96d69d67';
+import './state.js?v=f3334f0e';
+import { readFastTrack } from './fast-track-preferences.js?v=f3334f0e';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -2070,8 +2070,10 @@ function updateLevelSliderReadout(i) {
         // illustrative of "what you'll be learning here".
         const rankOf = _levelRankAccessor(lv.rankBasis);
         const start = Math.max(1, Math.floor(lv.startRank + (lv.endRank - lv.startRank) * 0.6));
-        const inRange = samples.filter(s => rankOf(s) >= start && rankOf(s) < lv.endRank);
-        const pick = (inRange.length ? inRange : samples.filter(s => rankOf(s) < lv.endRank))
+        // Examples illustrate individual words, even when the deck includes MWEs.
+        const words = samples.filter(s => !/\s/u.test(s.word.trim()));
+        const inRange = words.filter(s => rankOf(s) >= start && rankOf(s) < lv.endRank);
+        const pick = (inRange.length ? inRange : words.filter(s => rankOf(s) < lv.endRank))
             .slice(-12);
         const out = [];
         const n = Math.min(5, pick.length);
@@ -3261,7 +3263,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=96d69d67')
+        import('./spotify.js?v=f3334f0e')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
