@@ -8,9 +8,9 @@ each section.
 Part 1 (audit): in progress (UNISON-1). Pilot reviewed by Josh 2026-10-08.
 
 **Done:** es complete (t01–t12, r01–r04, s01: 403 cards, 1,209 blind labels;
-v23 1000/1209 = 82.7% strict, 90.3% same gloss; 442 problem lines). pt t01–t07 (t02 on: read the `.short.txt` copies from `research/unison/condense.py`).
+v23 1000/1209 = 82.7% strict, 90.3% same gloss; 442 problem lines). pt t01–t12 (t02 on: read the `.short.txt` copies from `research/unison/condense.py`).
 
-**Resume here:** pt t08 → t12, then pt r01 → r04. Report pt to Josh, then the
+**Resume here:** pt r01 → r04 (top 300 done: 630/900 = 70.0%). Report pt to Josh, then the
 write-up (below). Per chunk, in this order:
 1. Read `<W>/reviews/unison/pt-speech-v23-10000x30-slim/blind-<chunk>.txt`;
    append one line per item to `research/unison/labels/pt-blind.jsonl`:

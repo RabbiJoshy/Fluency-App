@@ -523,3 +523,378 @@
 {"id": "pt-t07-0073", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
 {"id": "pt-t07-0074", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
 {"id": "pt-t07-0075", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0001", "gold": "m8", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0002", "gold": "m8", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0003", "gold": "m1", "alt": ["m8"], "conf": "sure", "note": "da outra vez = that other time"}
+{"id": "pt-t08-0004", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0005", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0006", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0007", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0008", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0009", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0010", "gold": "m42", "alt": ["m3"], "conf": "sure", "note": ""}
+{"id": "pt-t08-0011", "gold": "m42", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0012", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0013", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0014", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0015", "gold": "m8", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0016", "gold": "m5", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0017", "gold": "m3", "alt": ["m6"], "conf": "sure", "note": ""}
+{"id": "pt-t08-0018", "gold": "m5", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0019", "gold": "m7", "alt": ["m5"], "conf": "sure", "note": ""}
+{"id": "pt-t08-0020", "gold": "m7", "alt": ["m5"], "conf": "sure", "note": ""}
+{"id": "pt-t08-0021", "gold": "m7", "alt": ["m5"], "conf": "sure", "note": ""}
+{"id": "pt-t08-0022", "gold": "m4", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0023", "gold": "m4", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0024", "gold": "m4", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0025", "gold": "phrase:todo mundo", "alt": ["m3"], "conf": "sure", "note": ""}
+{"id": "pt-t08-0026", "gold": "m1", "alt": ["m3"], "conf": "sure", "note": ""}
+{"id": "pt-t08-0027", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0028", "gold": "m2", "alt": ["m1"], "conf": "sure", "note": ""}
+{"id": "pt-t08-0029", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0030", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0031", "gold": "m3", "alt": ["m7"], "conf": "sure", "note": "disso = of that"}
+{"id": "pt-t08-0032", "gold": "m7", "alt": ["m12"], "conf": "sure", "note": "fora de"}
+{"id": "pt-t08-0033", "gold": "m7", "alt": ["m3"], "conf": "sure", "note": "a respeito de"}
+{"id": "pt-t08-0034", "gold": "m30", "alt": ["m23"], "conf": "sure", "note": ""}
+{"id": "pt-t08-0035", "gold": "m18", "alt": ["m20"], "conf": "sure", "note": ""}
+{"id": "pt-t08-0036", "gold": "m18", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0037", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0038", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0039", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0040", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0041", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0042", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0043", "gold": "m4", "alt": ["m2"], "conf": "sure", "note": ""}
+{"id": "pt-t08-0044", "gold": "m4", "alt": ["m2"], "conf": "sure", "note": ""}
+{"id": "pt-t08-0045", "gold": "m4", "alt": ["m2"], "conf": "sure", "note": ""}
+{"id": "pt-t08-0046", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0047", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0048", "gold": "m7", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0049", "gold": "m10", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0050", "gold": "m10", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0051", "gold": "m10", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0052", "gold": "m7", "alt": ["m15"], "conf": "sure", "note": ""}
+{"id": "pt-t08-0053", "gold": "m15", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0054", "gold": "phrase:seja lá o que", "alt": ["m3"], "conf": "sure", "note": "whatever"}
+{"id": "pt-t08-0055", "gold": "phrase:ir embora", "alt": ["m14"], "conf": "sure", "note": ""}
+{"id": "pt-t08-0056", "gold": "phrase:ir em frente", "alt": [], "conf": "sure", "note": "go ahead"}
+{"id": "pt-t08-0057", "gold": "m17", "alt": ["m11"], "conf": "sure", "note": ""}
+{"id": "pt-t08-0058", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0059", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0060", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0061", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0062", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0063", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0064", "gold": "m11", "alt": ["m9"], "conf": "sure", "note": ""}
+{"id": "pt-t08-0065", "gold": "m12", "alt": ["m9", "m11"], "conf": "sure", "note": ""}
+{"id": "pt-t08-0066", "gold": "m12", "alt": ["m9"], "conf": "sure", "note": ""}
+{"id": "pt-t08-0067", "gold": "m7", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0068", "gold": "m7", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0069", "gold": "m8", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0070", "gold": "m5", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0071", "gold": "m5", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0072", "gold": "m5", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t08-0073", "gold": "m3", "alt": ["m1", "m4", "m5"], "conf": "sure", "note": ""}
+{"id": "pt-t08-0074", "gold": "m3", "alt": ["m1", "m4", "m5"], "conf": "sure", "note": ""}
+{"id": "pt-t08-0075", "gold": "m3", "alt": ["m1", "m4", "m5"], "conf": "sure", "note": ""}
+{"id": "pt-t09-0001", "gold": "m4", "alt": ["m2", "m5", "m6"], "conf": "sure", "note": ""}
+{"id": "pt-t09-0002", "gold": "m4", "alt": ["m2", "m5", "m6"], "conf": "sure", "note": ""}
+{"id": "pt-t09-0003", "gold": "m4", "alt": ["m2", "m5", "m6"], "conf": "sure", "note": ""}
+{"id": "pt-t09-0004", "gold": "m5", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0005", "gold": "m7", "alt": ["m10"], "conf": "sure", "note": ""}
+{"id": "pt-t09-0006", "gold": "m5", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0007", "gold": "none:daqui = from here / out of here", "alt": ["m12"], "conf": "sure", "note": "menu has only de senses"}
+{"id": "pt-t09-0008", "gold": "m19", "alt": [], "conf": "sure", "note": "daqui a = in"}
+{"id": "pt-t09-0009", "gold": "none:daqui = from here / out of here", "alt": ["m12"], "conf": "sure", "note": ""}
+{"id": "pt-t09-0010", "gold": "m4", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0011", "gold": "m6", "alt": ["m4"], "conf": "sure", "note": ""}
+{"id": "pt-t09-0012", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0013", "gold": "m1", "alt": ["m2"], "conf": "sure", "note": ""}
+{"id": "pt-t09-0014", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0015", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0016", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0017", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0018", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0019", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0020", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0021", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0022", "gold": "m1", "alt": ["m5"], "conf": "unsure", "note": "discourse pois = yeah"}
+{"id": "pt-t09-0023", "gold": "m5", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0024", "gold": "none:tag 'pois não?' = is it?", "alt": ["m4"], "conf": "sure", "note": ""}
+{"id": "pt-t09-0025", "gold": "m14", "alt": ["m2"], "conf": "sure", "note": ""}
+{"id": "pt-t09-0026", "gold": "m7", "alt": ["m5"], "conf": "sure", "note": ""}
+{"id": "pt-t09-0027", "gold": "m3", "alt": ["m5"], "conf": "sure", "note": ""}
+{"id": "pt-t09-0028", "gold": "m15", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0029", "gold": "not_target:part of compound mal-entendido", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0030", "gold": "m2", "alt": ["m5"], "conf": "sure", "note": "sentir-se mal"}
+{"id": "pt-t09-0031", "gold": "m5", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0032", "gold": "phrase:ter certeza", "alt": ["m4"], "conf": "sure", "note": ""}
+{"id": "pt-t09-0033", "gold": "m5", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0034", "gold": "m4", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0035", "gold": "m9", "alt": [], "conf": "sure", "note": "phrase right, gloss wrong (how long)"}
+{"id": "pt-t09-0036", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0037", "gold": "m17", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0038", "gold": "m17", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0039", "gold": "m14", "alt": ["m6"], "conf": "sure", "note": ""}
+{"id": "pt-t09-0040", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0041", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0042", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0043", "gold": "m17", "alt": [], "conf": "sure", "note": "dela = hers"}
+{"id": "pt-t09-0044", "gold": "m7", "alt": [], "conf": "sure", "note": "atrás de"}
+{"id": "pt-t09-0045", "gold": "m17", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0046", "gold": "m4", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0047", "gold": "m4", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0048", "gold": "m4", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0049", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0050", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0051", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0052", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0053", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0054", "gold": "phrase:parte alguma = anywhere", "alt": ["m2"], "conf": "sure", "note": ""}
+{"id": "pt-t09-0055", "gold": "m8", "alt": ["m6"], "conf": "sure", "note": ""}
+{"id": "pt-t09-0056", "gold": "m8", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0057", "gold": "m8", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0058", "gold": "m5", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0059", "gold": "m4", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0060", "gold": "m5", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0061", "gold": "m17", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0062", "gold": "m17", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0063", "gold": "m17", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0064", "gold": "m8", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0065", "gold": "m5", "alt": ["m2"], "conf": "sure", "note": ""}
+{"id": "pt-t09-0066", "gold": "m4", "alt": ["m2"], "conf": "sure", "note": ""}
+{"id": "pt-t09-0067", "gold": "m1", "alt": [], "conf": "sure", "note": "pedir desculpa"}
+{"id": "pt-t09-0068", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0069", "gold": "m3", "alt": ["m1"], "conf": "unsure", "note": "Desculpa = sorry"}
+{"id": "pt-t09-0070", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0071", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0072", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0073", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0074", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t09-0075", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0001", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0002", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0003", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0004", "gold": "m4", "alt": [], "conf": "sure", "note": "ter que"}
+{"id": "pt-t10-0005", "gold": "m6", "alt": ["m9"], "conf": "sure", "note": ""}
+{"id": "pt-t10-0006", "gold": "m5", "alt": ["m6"], "conf": "sure", "note": ""}
+{"id": "pt-t10-0007", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0008", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0009", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0010", "gold": "m1", "alt": [], "conf": "sure", "note": "há uma hora = an hour ago"}
+{"id": "pt-t10-0011", "gold": "m2", "alt": [], "conf": "sure", "note": "na hora do = at the time of"}
+{"id": "pt-t10-0012", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0013", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0014", "gold": "m15", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0015", "gold": "m9", "alt": ["m8"], "conf": "unsure", "note": ""}
+{"id": "pt-t10-0016", "gold": "m11", "alt": ["m6"], "conf": "sure", "note": ""}
+{"id": "pt-t10-0017", "gold": "m11", "alt": ["m6"], "conf": "sure", "note": ""}
+{"id": "pt-t10-0018", "gold": "m11", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0019", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0020", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0021", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0022", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0023", "gold": "m1", "alt": ["m2"], "conf": "sure", "note": ""}
+{"id": "pt-t10-0024", "gold": "m1", "alt": ["m3"], "conf": "sure", "note": ""}
+{"id": "pt-t10-0025", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0026", "gold": "m1", "alt": ["m2"], "conf": "sure", "note": ""}
+{"id": "pt-t10-0027", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0028", "gold": "m6", "alt": [], "conf": "sure", "note": "a gente = us"}
+{"id": "pt-t10-0029", "gold": "m6", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0030", "gold": "m6", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0031", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0032", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0033", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0034", "gold": "m4", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0035", "gold": "m4", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0036", "gold": "m4", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0037", "gold": "m1", "alt": [], "conf": "sure", "note": "ir embora"}
+{"id": "pt-t10-0038", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0039", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0040", "gold": "m4", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0041", "gold": "m4", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0042", "gold": "m4", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0043", "gold": "m6", "alt": ["m29", "m8"], "conf": "unsure", "note": "literal in her hands"}
+{"id": "pt-t10-0044", "gold": "m8", "alt": ["m13"], "conf": "sure", "note": ""}
+{"id": "pt-t10-0045", "gold": "m8", "alt": ["m6"], "conf": "sure", "note": ""}
+{"id": "pt-t10-0046", "gold": "m4", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0047", "gold": "m4", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0048", "gold": "m6", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0049", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0050", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0051", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0052", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0053", "gold": "m2", "alt": ["m1"], "conf": "sure", "note": ""}
+{"id": "pt-t10-0054", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0055", "gold": "m7", "alt": ["m6"], "conf": "sure", "note": ""}
+{"id": "pt-t10-0056", "gold": "m10", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0057", "gold": "m10", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0058", "gold": "m14", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0059", "gold": "m21", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0060", "gold": "m21", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0061", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0062", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0063", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0064", "gold": "m5", "alt": ["m20", "m7"], "conf": "sure", "note": ""}
+{"id": "pt-t10-0065", "gold": "m1", "alt": [], "conf": "sure", "note": "dar uma olhada"}
+{"id": "pt-t10-0066", "gold": "phrase:dar nos nervos", "alt": ["m21"], "conf": "sure", "note": ""}
+{"id": "pt-t10-0067", "gold": "m20", "alt": ["m13"], "conf": "sure", "note": ""}
+{"id": "pt-t10-0068", "gold": "m24", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0069", "gold": "m24", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0070", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0071", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0072", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0073", "gold": "m8", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0074", "gold": "m8", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t10-0075", "gold": "m8", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0001", "gold": "m4", "alt": ["m14"], "conf": "sure", "note": ""}
+{"id": "pt-t11-0002", "gold": "m5", "alt": [], "conf": "sure", "note": "deixar em paz"}
+{"id": "pt-t11-0003", "gold": "phrase:deixar a desejar", "alt": ["m9"], "conf": "sure", "note": ""}
+{"id": "pt-t11-0004", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0005", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0006", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0007", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0008", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0009", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0010", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0011", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0012", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0013", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0014", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0015", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0016", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0017", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0018", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0019", "gold": "m6", "alt": [], "conf": "sure", "note": "me sinto muito melhor: not sinto muito"}
+{"id": "pt-t11-0020", "gold": "m11", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0021", "gold": "m6", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0022", "gold": "m5", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0023", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0024", "gold": "m6", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0025", "gold": "m5", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0026", "gold": "m5", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0027", "gold": "m5", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0028", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0029", "gold": "m5", "alt": ["m7"], "conf": "sure", "note": ""}
+{"id": "pt-t11-0030", "gold": "m5", "alt": ["m7"], "conf": "sure", "note": ""}
+{"id": "pt-t11-0031", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0032", "gold": "m1", "alt": ["m3"], "conf": "sure", "note": ""}
+{"id": "pt-t11-0033", "gold": "m1", "alt": ["m3"], "conf": "sure", "note": ""}
+{"id": "pt-t11-0034", "gold": "m4", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0035", "gold": "none:desde que + subjunctive = as long as", "alt": ["m4"], "conf": "sure", "note": ""}
+{"id": "pt-t11-0036", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0037", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0038", "gold": "m5", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0039", "gold": "m5", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0040", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0041", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0042", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0043", "gold": "m4", "alt": [], "conf": "sure", "note": "at (age)"}
+{"id": "pt-t11-0044", "gold": "m13", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0045", "gold": "m36", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0046", "gold": "m1", "alt": ["m2"], "conf": "sure", "note": ""}
+{"id": "pt-t11-0047", "gold": "m1", "alt": ["m2"], "conf": "sure", "note": ""}
+{"id": "pt-t11-0048", "gold": "m1", "alt": ["m2"], "conf": "sure", "note": ""}
+{"id": "pt-t11-0049", "gold": "m18", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0050", "gold": "m12", "alt": ["m33"], "conf": "unsure", "note": ""}
+{"id": "pt-t11-0051", "gold": "m22", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0052", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0053", "gold": "m4", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0054", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0055", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0056", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0057", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0058", "gold": "m1", "alt": ["m4"], "conf": "sure", "note": ""}
+{"id": "pt-t11-0059", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0060", "gold": "m4", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0061", "gold": "m13", "alt": ["m14", "m11"], "conf": "sure", "note": ""}
+{"id": "pt-t11-0062", "gold": "m13", "alt": ["m14", "m11"], "conf": "sure", "note": ""}
+{"id": "pt-t11-0063", "gold": "m13", "alt": ["m14", "m11"], "conf": "sure", "note": ""}
+{"id": "pt-t11-0064", "gold": "m12", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0065", "gold": "m6", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0066", "gold": "m14", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0067", "gold": "m4", "alt": ["m2"], "conf": "sure", "note": ""}
+{"id": "pt-t11-0068", "gold": "m4", "alt": ["m2"], "conf": "sure", "note": ""}
+{"id": "pt-t11-0069", "gold": "m10", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0070", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0071", "gold": "m7", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0072", "gold": "m8", "alt": ["m7"], "conf": "sure", "note": ""}
+{"id": "pt-t11-0073", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0074", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t11-0075", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0001", "gold": "m2", "alt": ["m1"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0002", "gold": "m2", "alt": ["m5"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0003", "gold": "m2", "alt": ["m5"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0004", "gold": "m1", "alt": ["m4"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0005", "gold": "m1", "alt": ["m4"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0006", "gold": "m1", "alt": ["m4"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0007", "gold": "m5", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0008", "gold": "m5", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0009", "gold": "m5", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0010", "gold": "m10", "alt": ["m9"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0011", "gold": "m10", "alt": ["m9"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0012", "gold": "m10", "alt": ["m9"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0013", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0014", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0015", "gold": "m9", "alt": ["m2"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0016", "gold": "m1", "alt": ["m3"], "conf": "sure", "note": "literal 24 hours"}
+{"id": "pt-t12-0017", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0018", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0019", "gold": "m1", "alt": ["m15"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0020", "gold": "m15", "alt": ["m14"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0021", "gold": "m14", "alt": ["m15"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0022", "gold": "m7", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0023", "gold": "m9", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0024", "gold": "m9", "alt": ["m11"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0025", "gold": "m9", "alt": ["m12"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0026", "gold": "m9", "alt": ["m12"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0027", "gold": "m11", "alt": ["m9"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0028", "gold": "m2", "alt": ["m1"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0029", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0030", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0031", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0032", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0033", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0034", "gold": "m5", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0035", "gold": "m7", "alt": ["m1"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0036", "gold": "none:tanto … quanto = both … and", "alt": ["m5"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0037", "gold": "m7", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0038", "gold": "m7", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0039", "gold": "m7", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0040", "gold": "m2", "alt": [], "conf": "sure", "note": "ter razão = be right"}
+{"id": "pt-t12-0041", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0042", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0043", "gold": "m14", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0044", "gold": "m4", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0045", "gold": "m6", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0046", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0047", "gold": "m8", "alt": [], "conf": "sure", "note": "em forma = in shape"}
+{"id": "pt-t12-0048", "gold": "m8", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0049", "gold": "m3", "alt": ["m6"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0050", "gold": "m3", "alt": ["m6"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0051", "gold": "m3", "alt": ["m6"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0052", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0053", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0054", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0055", "gold": "m4", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0056", "gold": "m4", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0057", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0058", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0059", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0060", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0061", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0062", "gold": "m2", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0063", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0064", "gold": "m8", "alt": ["m12"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0065", "gold": "m10", "alt": [], "conf": "sure", "note": "anda! = come on"}
+{"id": "pt-t12-0066", "gold": "m6", "alt": [], "conf": "unsure", "note": "como anda = how is she doing"}
+{"id": "pt-t12-0067", "gold": "m3", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0068", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0069", "gold": "m1", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0070", "gold": "m3", "alt": ["m4"], "conf": "unsure", "note": "figurative front"}
+{"id": "pt-t12-0071", "gold": "phrase:pela frente = ahead", "alt": ["m6"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0072", "gold": "phrase:à frente de = in front of", "alt": ["m6", "m5"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0073", "gold": "m9", "alt": [], "conf": "sure", "note": ""}
+{"id": "pt-t12-0074", "gold": "m3", "alt": ["m7"], "conf": "sure", "note": ""}
+{"id": "pt-t12-0075", "gold": "m3", "alt": ["m9"], "conf": "sure", "note": ""}
