@@ -1,11 +1,11 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=7403c8df';
-import { validateVocabularyIndex } from './data-contracts.js?v=7403c8df';
-import { formatRoute } from './routes.js?v=7403c8df';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=7403c8df';
-import { releaseUrl } from './release-host.js?v=7403c8df';
+import './state.js?v=32e637c1';
+import { validateVocabularyIndex } from './data-contracts.js?v=32e637c1';
+import { formatRoute } from './routes.js?v=32e637c1';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=32e637c1';
+import { releaseUrl } from './release-host.js?v=32e637c1';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -4127,7 +4127,11 @@ function splitLowShareMeanings(meanings) {
         && !NON_SENSE_POS.has(String(m.pos || '').toUpperCase()) && Number(m.percentage) > 0;
     const fold = values => values.map(v => String(v || '').trim().toLocaleLowerCase('en')).join('\u0000');
     const poolKey = m => fold([m.pos, m.headword, m.meaning]);
-    const key = m => (POOLED_FLOOR_POS.test(String(m.pos || '')) ? poolKey(m) : fold([m.pos, m.headword, m.meaning, m.context]));
+    // A SpanishDict context is one meaning however many English words it
+    // lists (kilo / kilogram), so it is measured whole, as the card shows it.
+    const key = m => (POOLED_FLOOR_POS.test(String(m.pos || '')) ? poolKey(m)
+        : m.source === 'spanishdict' && m.context ? fold([m.pos, m.headword, '', m.context])
+        : fold([m.pos, m.headword, m.meaning, m.context]));
     const shares = new Map();
     for (const m of meanings) {
         if (eligible(m)) shares.set(key(m), (shares.get(key(m)) || 0) + Number(m.percentage));

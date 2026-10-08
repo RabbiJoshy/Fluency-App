@@ -1,4 +1,4 @@
-import { flagImgHTML, regionFlagCode } from './flags.js?v=7403c8df';
+import { flagImgHTML, regionFlagCode } from './flags.js?v=32e637c1';
 
 // Card metadata badges, chips, and sense-detail formatting.
 // Handles canonical features, qualifier formatting, and grammar pill presentation
@@ -500,7 +500,20 @@ export function compactLearnerSenseMetadata(items, meaning, options = {}) {
     const topicParents = { 'card games': ['games'], linguistics: ['human sciences'], anatomy: ['biology'] };
     const domains = new Set(kept.filter(i => i.family === 'domain').map(i => i.value.replace(/-/g, ' ').toLowerCase()));
     const redundantTopics = new Set([...domains].flatMap(value => topicParents[value] || []));
+    // A topic earns a chip only when it tells this row from another row with
+    // the same translation (garganta "throat": anatomy on both rows says
+    // nothing; raio "ray" vs "radius" is told apart by the translation
+    // already). It stays in the row's note. Wiktionary lists a topic with its
+    // broader categories, most specific first ("cooking", "food",
+    // "lifestyle"), so only the first is shown.
+    const translationKey = m => String(m?.meaning || m?.translation || '').trim().toLocaleLowerCase('en');
+    const sameTranslationPeers = peers.filter(peer => translationKey(peer) === translationKey(meaning));
+    const sameTranslationTopics = sameTranslationPeers.map(peer => new Set(senseMetadataItems(peer)
+        .filter(item => item.family === 'domain').map(metadataItemKey)));
+    const topicTellsApart = item => sameTranslationTopics.some(keys => !keys.has(metadataItemKey(item)));
+    const firstTopic = kept.find(item => item.family === 'domain' && topicTellsApart(item));
     return kept.filter(item => item.family !== 'domain' || !redundantTopics.has(item.value.replace(/-/g, ' ').toLowerCase()))
+        .filter(item => item.family !== 'domain' || item === firstTopic)
         .sort((a, b) => Number(usefulRegister(b)) - Number(usefulRegister(a))
             || scoreSenseMetadata(b) - scoreSenseMetadata(a)
             || (a.sourceIndex ?? 0) - (b.sourceIndex ?? 0));
@@ -1361,6 +1374,9 @@ export function learnerGlossPresentation(meaning, active, options = {}) {
 export function learnerSensePresentation(meaning, active, options = {}) {
     const sourceItems = senseMetadataItems(meaning);
     const compact = compactLearnerSenseMetadata(sourceItems, meaning, options);
+    // Topics that earn no chip are still the sense's topics: the note keeps them.
+    const compactKeys = new Set(compact.map(metadataItemKey));
+    const unchippedTopics = sourceItems.filter(item => item.family === 'domain' && !compactKeys.has(metadataItemKey(item)));
     let candidates = combineLearnerMetadata(compact, meaning, options);
     const senseCount = Math.max(1, Number(options.senseCount) || 1);
     const partOfSpeech = String(meaning?.pos || meaning?.part_of_speech || '').toLowerCase();
@@ -1542,9 +1558,11 @@ export function learnerSensePresentation(meaning, active, options = {}) {
             && !SUPPORTING_REGISTER_VALUES.has(String(item.value || '').toLocaleLowerCase('en')));
     }
     const noteKeys = new Set(registerForNote.map(metadataItemKey));
+    const remainingKeys = new Set(remainingNoteworthyItems.map(metadataItemKey));
     const noteItems = [
         ...registerForNote,
         ...remainingNoteworthyItems.filter(item => !noteKeys.has(metadataItemKey(item))),
+        ...unchippedTopics.filter(item => !noteKeys.has(metadataItemKey(item)) && !remainingKeys.has(metadataItemKey(item))),
         ...((glossPresentation.noteGloss || noteContext || supportingItems.length >= 2)
             ? supportingItems : []),
     ];

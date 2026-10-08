@@ -1,27 +1,27 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=7403c8df';
-import './speech.js?v=7403c8df';
-import { goToRoute, routeCodeFor } from './routes.js?v=7403c8df';
-import './side-dock.js?v=7403c8df';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=7403c8df';
+import './state.js?v=32e637c1';
+import './speech.js?v=32e637c1';
+import { goToRoute, routeCodeFor } from './routes.js?v=32e637c1';
+import './side-dock.js?v=32e637c1';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=32e637c1';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=7403c8df';
+} from './example-personalisation.js?v=32e637c1';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=7403c8df';
+} from './spanishdict-usage.js?v=32e637c1';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=7403c8df';
+} from './reverse-cues.js?v=32e637c1';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -54,7 +54,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=7403c8df';
+} from './card-metadata-pills.js?v=32e637c1';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -6847,6 +6847,11 @@ function renderCardWikipediaBadge(card) {
                 withoutGrammarLabels(presentation.key.text) || withoutGrammarLabels(groupingGloss.key.text) || metadataLabel
             );
         });
+        // A SpanishDict context is the sense, and its translations are English
+        // alternatives (kilo / kilogram under "kilogram"), so a shared context
+        // is a shared meaning. A Wiktionary context is a label ("intransitive",
+        // "figurative") that different meanings share, so it never groups.
+        const contextIsSense = m => m.source === 'spanishdict';
         // Per-meaning-idx axis assignment: 'translation' | 'context' |
         // 'singleton' | 'special' (MWE/CLITIC/SENSE_CYCLE — opted out).
         // Cached on the card after first compute — meanings don't mutate
@@ -6875,7 +6880,7 @@ function renderCardWikipediaBadge(card) {
                     const tk = `${groupPrefix}${groupingGlossByMeaning.get(idx)?.groupingKey || ''}`;
                     transRawSize.set(tk, (transRawSize.get(tk) || 0) + 1);
                     const learnerContext = contextLabelByMeaning.get(idx) || '';
-                    if (learnerContext) {
+                    if (learnerContext && contextIsSense(m)) {
                         const ck = `${groupPrefix}${learnerContext}`;
                         ctxRawSize.set(ck, (ctxRawSize.get(ck) || 0) + 1);
                     }
@@ -6890,8 +6895,7 @@ function renderCardWikipediaBadge(card) {
                     const groupPrefix = `${m.pos}\u0000${m.headword || ''}\u0000`;
                     const ts = transRawSize.get(`${groupPrefix}${tk}`) || 0;
                     const ck = contextLabelByMeaning.get(idx) || null;
-                    // A shared grammatical/context label is not a shared meaning.
-                    const cs = 0;
+                    const cs = ck && contextIsSense(m) ? (ctxRawSize.get(`${groupPrefix}${ck}`) || 0) : 0;
                     if (ts > 1 && cs > 1) {
                         if (ts >= cs) { axisOf.set(idx, 'translation'); groupKeyOf.set(idx, tk); }
                         else { axisOf.set(idx, 'context'); groupKeyOf.set(idx, ck); }
@@ -10331,8 +10335,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '7403c8df';
-const MODALS_ASSET_VERSION = '7403c8df';
+const ASSET_VERSION = '32e637c1';
+const MODALS_ASSET_VERSION = '32e637c1';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
