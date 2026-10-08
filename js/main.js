@@ -1,52 +1,57 @@
 // First: rewrites old ?artist=/?about= links to their #/ route before
 // anything below reads the address.
-import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=da5a117c';
-import { releaseUrl } from './release-host.js?v=da5a117c';
-import './theme.js?v=da5a117c';
-import { installFlagRendering } from './flags.js?v=da5a117c';
-import './state.js?v=da5a117c';
-import './offline-db.js?v=da5a117c';
-import './sync-queue.js?v=da5a117c';
-import { initOfflineContent } from './offline-content.js?v=da5a117c';
-import './speech.js?v=da5a117c';
-import './artist-ui.js?v=da5a117c';
-import './auth.js?v=da5a117c';
-import './tutorial.js?v=da5a117c';
-import './walkthrough.js?v=da5a117c';
-import './estimation.js?v=da5a117c';
-import './config.js?v=da5a117c';
-import './progress.js?v=da5a117c';
-import './knowledge.js?v=da5a117c';
-import './ui.js?v=da5a117c';
-import './vocab.js?v=da5a117c';
-import './cognates.js?v=da5a117c';
-import './coverage.js?v=da5a117c';
-import './fast-mode.js?v=da5a117c';
-import './extras.js?v=da5a117c';
-import './review-home.js?v=da5a117c';
-import './song-sets.js?v=da5a117c';
-import './playlist-live.js?v=da5a117c';
-import './spotify-playlist-import.js?v=da5a117c';
-import './vocabulary-import.js?v=da5a117c';
-import './flashcards.js?v=da5a117c';
-import { validateArtistCatalog } from './data-contracts.js?v=da5a117c';
+import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=8cf1ebaf';
+import { releaseUrl } from './release-host.js?v=8cf1ebaf';
+import './theme.js?v=8cf1ebaf';
+import { installFlagRendering } from './flags.js?v=8cf1ebaf';
+import './state.js?v=8cf1ebaf';
+import './offline-db.js?v=8cf1ebaf';
+import './sync-queue.js?v=8cf1ebaf';
+import { initOfflineContent } from './offline-content.js?v=8cf1ebaf';
+import './speech.js?v=8cf1ebaf';
+import './artist-ui.js?v=8cf1ebaf';
+import './auth.js?v=8cf1ebaf';
+import './tutorial.js?v=8cf1ebaf';
+import './walkthrough.js?v=8cf1ebaf';
+import './estimation.js?v=8cf1ebaf';
+import './config.js?v=8cf1ebaf';
+import './progress.js?v=8cf1ebaf';
+import './knowledge.js?v=8cf1ebaf';
+import './ui.js?v=8cf1ebaf';
+import './vocab.js?v=8cf1ebaf';
+import './cognates.js?v=8cf1ebaf';
+import './coverage.js?v=8cf1ebaf';
+import './fast-mode.js?v=8cf1ebaf';
+import './extras.js?v=8cf1ebaf';
+import './review-home.js?v=8cf1ebaf';
+import './song-sets.js?v=8cf1ebaf';
+import './playlist-live.js?v=8cf1ebaf';
+import './spotify-playlist-import.js?v=8cf1ebaf';
+import './vocabulary-import.js?v=8cf1ebaf';
+import './flashcards.js?v=8cf1ebaf';
+import { validateArtistCatalog } from './data-contracts.js?v=8cf1ebaf';
 
 // Emoji flags anywhere on the page render as rectangular pictures.
 installFlagRendering();
+
+let fullCardTutorialRequested = false;
 
 function startCardTutorial() {
     const knownLanguage = window.getCardTutorialLanguageKey?.();
     if (knownLanguage) {
         window.setCardTutorialLanguage?.(knownLanguage);
         closeTutorialIntroduction();
-        window.openCardTutorial?.();
+        window.openCardTutorial?.({ quick: !fullCardTutorialRequested });
         return;
     }
     document.getElementById('tutorialWelcomeStep')?.classList.add('hidden');
     document.getElementById('tutorialLanguageStep')?.classList.remove('hidden');
 }
 
-function openTutorialIntroduction() {
+function openTutorialIntroduction({ full = false } = {}) {
+    fullCardTutorialRequested = full;
+    const startButton = document.getElementById('startCardTutorialBtn');
+    if (startButton) startButton.textContent = full ? 'Start the full card tour →' : 'Start the quick tutorial →';
     document.getElementById('resumeLastSetCard')?.remove();
     document.getElementById('tutorialWelcomeStep')?.classList.remove('hidden');
     document.getElementById('tutorialLanguageStep')?.classList.add('hidden');
@@ -71,7 +76,7 @@ function renderTutorialLanguageChoices() {
         button.addEventListener('click', () => {
             window.setCardTutorialLanguage?.(key);
             closeTutorialIntroduction();
-            window.openCardTutorial?.();
+            window.openCardTutorial?.({ quick: !fullCardTutorialRequested });
         });
         container.appendChild(button);
     });
@@ -88,7 +93,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
 const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
-    ? import('./spotify.js?v=da5a117c').catch(error => {
+    ? import('./spotify.js?v=8cf1ebaf').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })
@@ -807,6 +812,10 @@ loadConfig().then(async () => {
     document.getElementById('helpBtn').addEventListener('click', openTutorialIntroduction);
     document.getElementById('closeTutorialIntroModal')?.addEventListener('click', closeTutorialIntroduction);
     document.getElementById('startCardTutorialBtn')?.addEventListener('click', startCardTutorial);
+    document.getElementById('startFullCardTutorialBtn')?.addEventListener('click', () => {
+        fullCardTutorialRequested = true;
+        startCardTutorial();
+    });
     document.getElementById('tutorialLanguageBackBtn')?.addEventListener('click', () => {
         document.getElementById('tutorialLanguageStep')?.classList.add('hidden');
         document.getElementById('tutorialWelcomeStep')?.classList.remove('hidden');
@@ -854,11 +863,11 @@ loadConfig().then(async () => {
     if (helpStudyContent && !document.getElementById('helpCardTutorialBtn')) {
         const tutorialAction = document.createElement('p');
         tutorialAction.className = 'help-card-tutorial-action';
-        tutorialAction.innerHTML = '<button class="help-more-info-btn" id="helpCardTutorialBtn" type="button">Open tutorial introduction →</button>';
+        tutorialAction.innerHTML = '<button class="help-more-info-btn" id="helpCardTutorialBtn" type="button">Open the full card tour →</button>';
         helpStudyContent.appendChild(tutorialAction);
         tutorialAction.querySelector('button').addEventListener('click', () => {
             document.getElementById('helpModal').classList.add('hidden');
-            openTutorialIntroduction();
+            openTutorialIntroduction({ full: true });
         });
     }
     // Hide floating gear — replaced by gear in the top bar
@@ -1718,7 +1727,7 @@ function spotifyStatusElement() {
         el.type = 'button';
         el.addEventListener('click', async event => {
             event.stopPropagation();
-            await (_spotifyModulePromise || import('./spotify.js?v=da5a117c')).catch(() => null);
+            await (_spotifyModulePromise || import('./spotify.js?v=8cf1ebaf')).catch(() => null);
             window.spotifyLogin?.();
         });
     }
