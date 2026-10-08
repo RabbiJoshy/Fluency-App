@@ -46,6 +46,8 @@ function currentState() {
     return readFastTrack(selectedLanguage).enabled ? 'on' : 'off';
 }
 
+globalThis.isFastTrackOn = () => currentState() === 'on';
+
 function setToggleState(prefix, value) {
     const buttons = document.querySelectorAll(`.${prefix}-toggle-btn`);
     buttons.forEach(btn => {
@@ -476,6 +478,7 @@ function updateKnownLanguageCopy() {
 function openFastModePage({ section } = {}) {
     returnToSettings = !document.getElementById('settingsModal')?.classList.contains('hidden');
     markFastTrackPageSeen();
+    if (!section) globalThis.resetSkippedCategory?.();
     // Each visit starts from the defaults: open what is on, fold the rest.
     closeAdvancedSkip();
     document.querySelectorAll('.smart-skip-shortcut').forEach(el => { delete el.dataset.userExpanded; });

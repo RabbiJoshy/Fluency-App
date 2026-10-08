@@ -23072,3 +23072,74 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 @media (max-width: 400px) {
   #topBar .learning-context-chip-copy strong { font-size: 19px; }
 }
+
+/* Landing page, 2026-10-09: the set legend reads at the size of "Set 1" (a touch
+   smaller on a phone so four counts still fit), the level readout's two halves
+   share one size, and the level box's example words fill desktop width. */
+#step4 .study-set-current-copy span { font-size: 16px; }
+#step4 .study-set-current-copy { gap: 2px 12px; }
+.study-set-stat + .study-set-stat { margin-left: 14px; }
+.study-set-stat i { width: 12px; height: 12px; }
+.study-set-stat i.is-skipped {
+  background: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0 2px, transparent 2px 4px);
+}
+.lsw-readout,
+.lsw-readout .lsw-rank { font-size: 20px; }
+.lsw-examples .lsw-eg-extra { display: none; }
+@media (min-width: 760px) {
+  #step4 .study-set-current-copy span { font-size: 18px; }
+  .lsw-readout,
+  .lsw-readout .lsw-rank { font-size: 22px; }
+  .lsw-examples .lsw-eg-extra { display: inline; }
+  .lsw-examples .lsw-egs { max-width: 92%; }
+}
+@media (max-width: 480px) {
+  #step4 .study-set-current-copy span { font-size: 15px; }
+  .study-set-stat + .study-set-stat { margin-left: 10px; }
+  .study-set-stat i { margin-right: 5px; }
+  .lsw-readout,
+  .lsw-readout .lsw-rank { font-size: 18px; }
+}
+
+/* Smart Skip page and Advanced options sheet, 2026-10-09: the shortcuts sit in
+   one bordered card with even rows, counts read as quiet pills, and the sheet's
+   Done is a full-width button instead of a bare word. */
+#fastModeModal .smart-skip-shortcuts {
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  background: var(--bg-card);
+  overflow: hidden;
+}
+.smart-skip-shortcut-row { min-height: 54px; padding: 0 14px 0 16px; }
+.smart-skip-shortcut-detail { padding: 0 16px 14px; }
+.smart-skip-shortcut > .fast-mode-none { padding: 0 16px 14px; }
+.smart-skip-shortcut-name { font-weight: 650; }
+.smart-skip-shortcut-count:not(:empty) {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-secondary);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.smart-skip-more-card { gap: 16px; padding: 22px 20px 18px; border-radius: 18px; }
+.smart-skip-more-head h3 { font-size: 19px; margin-bottom: 6px; }
+.smart-skip-more-card .smart-skip-shortcuts {
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--bg-card) 70%, transparent);
+  overflow: hidden;
+}
+.smart-skip-more-card .smart-skip-preview-actions { display: block; margin: 0; }
+.smart-skip-more-card .smart-skip-preview-close {
+  width: 100%;
+  min-height: 46px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--accent-primary);
+  color: #fff;
+  font: 700 15px/1 var(--font-emphasis);
+  cursor: pointer;
+}
+.smart-skip-more-card .smart-skip-preview-close:hover { filter: brightness(1.08); }
+.smart-skip-body .smart-skip-more-options { padding: 15px 14px 15px 16px; font-size: 14px; color: var(--text-secondary); }

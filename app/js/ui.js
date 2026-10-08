@@ -1724,6 +1724,16 @@ function _setupVocabularySignature(language) {
     ].join('|');
 }
 
+let _levelExamplesSeq = 0;
+
+// The bare first English sense of a card, for the level box's example words:
+// no qualifiers, no second sense. Empty while the card's meanings are unloaded.
+function _plainEnglishGloss(item) {
+    const meaning = (item?.meanings || []).find(m => String(m?.translation || '').trim());
+    if (!meaning) return '';
+    return meaning.translation.replace(/\([^)]*\)/g, ' ').split(/[,;/]/)[0].replace(/\s+/g, ' ').trim();
+}
+
 function getPreparedSetupVocabulary(language, rawVocab) {
     if (!rawVocab) return null;
     const signature = _setupVocabularySignature(language);
@@ -1742,7 +1752,8 @@ function getPreparedSetupVocabulary(language, rawVocab) {
         rank: item.rank,
         displayRank: item.displayRank,
         stableRank: item.stableRank,
-        word: item.lemma || item.targetWord || item.word || ''
+        word: item.lemma || item.targetWord || item.word || '',
+        item
     })).filter(sample => sample.word);
     _preparedSetupVocabulary = {
         raw: rawVocab,
@@ -2087,11 +2098,35 @@ function updateLevelSliderReadout(i) {
         const inRange = words.filter(s => rankOf(s) >= start && rankOf(s) < lv.endRank);
         const pick = (inRange.length ? inRange : words.filter(s => rankOf(s) < lv.endRank))
             .slice(-12);
-        const out = [];
-        const n = Math.min(5, pick.length);
-        for (let k = 0; k < n; k++) out.push(pick[Math.floor(k * pick.length / n)].word);
-        const examples = out.length ? 'e.g. ' + out.join(', ') : '';
-        _renderLine(examples);
+        // English meanings, not the target-language words. The index ships
+        // without meanings until a card's row shard loads, so fetch the shards
+        // for just these few cards first. Desktop has room for eight; the CSS
+        // hides the last three on a phone.
+        const render = labels => {
+            const out = [];
+            for (const label of labels) if (label && !out.includes(label)) out.push(label);
+            const shown = out.slice(0, 8);
+            _renderLine(shown.length
+                ? 'e.g. ' + shown.map((label, k) => `<span class="${k >= 5 ? 'lsw-eg-extra' : 'lsw-eg'}">${k ? ', ' : ''}${String(label).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))}</span>`).join('')
+                : '');
+        };
+        const candidates = [];
+        const total = Math.min(12, pick.length);
+        for (let k = 0; k < total; k++) candidates.push(pick[Math.floor(k * pick.length / total)]);
+        const targetWords = candidates.map(sample => sample.word);
+        const seq = ++_levelExamplesSeq;
+        const baseConfig = config.languages[selectedLanguage] || {};
+        const langConfig = activeArtist ? { ...baseConfig, ...activeArtist } : baseConfig;
+        Promise.resolve(window.ensureIndexRowsForRange?.(langConfig, 0, 0, candidates.map(sample => sample.rank)))
+            .catch(() => false)
+            .then(() => {
+                // A newer level was picked while the shards loaded.
+                if (seq !== _levelExamplesSeq) return;
+                const glosses = candidates
+                    .map(sample => _plainEnglishGloss(sample.item))
+                    .filter(gloss => gloss && gloss.length <= 24);
+                render(glosses.length >= 5 ? glosses : targetWords);
+            });
     });
 }
 
@@ -2696,6 +2731,14 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         }
     }
 
+    const smartSkipOn = Boolean(window.isFastTrackOn?.());
+    // Cards Smart Skip set aside, per slot: what the unfiltered baseline holds
+    // in the slot that the filtered deck does not.
+    const baselineSlotCounts = new Array(slotCount).fill(0);
+    for (const item of (preparedVocabulary?.stableBaseline || [])) {
+        const slotIdx = Math.floor((rankOf(item) - minWord) / STABLE_SET_SLOT_COUNT);
+        if (slotIdx >= 0 && slotIdx < slotCount) baselineSlotCounts[slotIdx]++;
+    }
     const ranges = [];
     for (let slotIdx = 0; slotIdx < slotCount; slotIdx++) {
         const start = minWord + slotIdx * STABLE_SET_SLOT_COUNT;
@@ -2727,6 +2770,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
             unseenCount,
             reviewCount,
             dueCount,
+            skippedCount: Math.max(0, baselineSlotCounts[slotIdx] - words.length),
             pct: words.length > 0 ? Math.round(100 * seenCount / words.length) : 100,
             knownPct: words.length > 0 ? 100 * knownCount / words.length : 100,
             reviewEndPct: words.length > 0 ? 100 * (knownCount + reviewCount) / words.length : 100
@@ -2862,9 +2906,12 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         document.getElementById('studySetCurrentTitle').textContent = `Set ${index + 1}`;
         // The colours are the legend: each count wears its own swatch.
         document.getElementById('studySetCurrentMeta').innerHTML =
-            `<b class="study-set-stat"><i class="is-known"></i>${range.knownCount} Known</b>`
+            `<b class="study-set-stat"><i class="is-unseen"></i>${range.unseenCount} New</b>`
             + `<b class="study-set-stat"><i class="is-review"></i>${range.reviewCount} Practice</b>`
-            + `<b class="study-set-stat"><i class="is-unseen"></i>${range.unseenCount} New</b>`;
+            + `<b class="study-set-stat"><i class="is-known"></i>${range.knownCount} Known</b>`
+            + (smartSkipOn && range.skippedCount > 0
+                ? `<b class="study-set-stat"><i class="is-skipped"></i>${range.skippedCount} Skipped</b>`
+                : '');
         const startBtn = document.getElementById('studySetStartBtn');
         // Three distinct states, because collapsing the last two is what made
         // finished sets hand back every card in them. studyMode 'all' keeps no

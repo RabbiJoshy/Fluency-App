@@ -1448,6 +1448,8 @@ if (document.readyState === 'loading') {
 globalThis.refreshExtrasButtons = refreshExtrasButtons;
 globalThis.refreshExtrasButton = refreshExtrasButtons;
 globalThis.openMergedForms = openMergedForms;
+// Each visit to the Smart Skip page opens on look-alikes, whatever was chosen last.
+globalThis.resetSkippedCategory = () => { _ssQuery = ''; _activeSkippedCategory = 'cognate'; };
 globalThis.openSkippedWords = openSkippedWords;
 globalThis.openExtras = openExtras;
 globalThis.openSavedWords = openSavedWords;
