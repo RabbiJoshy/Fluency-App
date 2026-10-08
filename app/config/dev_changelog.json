@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-08T12:31:50+01:00",
+      "date": "2026-10-08 12:31 BST",
+      "agent": "Codex",
+      "summary": "Tutorial layout grows with the browser while card size stays steady",
+      "detail": [
+        "Desktop cards use the available window height and width, with room reserved for navigation.",
+        "The tutorial header stays fully visible, and explanations spread across wider screens.",
+        "Opening meanings keeps the card size constant; mobile retains its separate height budget and internal scrolling."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-08T12:19:13+01:00",
       "date": "2026-10-08 12:19 BST",
       "agent": "Codex",
@@ -342,16 +354,6 @@
         "On wide screens the Smart Skip page uses larger type and taller rows by default.",
         "The Bigger text setting no longer zooms the Smart Skip page on desktop (it still applies elsewhere and on phones).",
         "The word preview popup no longer shows '=' before a look-alike's English."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-07T15:30:00+01:00",
-      "date": "2026-10-07 15:30 BST",
-      "agent": "Claude",
-      "summary": "Smart Skip table: dropped the '=' before obvious look-alikes",
-      "detail": [
-        "The flag column headers already say the second column is the English word."
       ],
       "commit": "pending"
     }

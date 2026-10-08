@@ -22896,3 +22896,17 @@ body:has(#cardTutorialModal:not(.hidden), #tutorialIntroModal:not(.hidden)) #res
     #cardTutorialBody .card-tutorial-columns { grid-column: 1; grid-row: 2; }
     #cardTutorialMobileCoach:not([hidden]) { grid-column: 2; grid-row: 2; align-self: start; }
 }
+
+/* Size the tutorial from the window, preserving room for its navigation. */
+#cardTutorialBody .card-tutorial-columns { max-width: 1800px; width: 100%; gap: clamp(16px, 2vw, 36px); }
+@media (min-width: 1181px) {
+    #cardTutorialBody { padding: 20px clamp(20px, 2.2vw, 44px); }
+    #cardTutorialBody .card-tutorial-stage-wrap { width: var(--tutorial-card-width, 440px); }
+    #cardTutorialStage .card-replica { width: 100%; }
+}
+@media (min-width: 701px) and (max-width: 1180px) {
+    #cardTutorialBody .card-tutorial-stage-col { max-width: var(--tutorial-card-width, 440px); }
+    #cardTutorialBody .card-tutorial-columns { padding-top: 6px; }
+}
+
+#cardTutorialModal { padding: 0; }

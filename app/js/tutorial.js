@@ -524,7 +524,8 @@ function syncContinueButton() {
 // examples cannot grow it; compact layouts also reserve room for the coach.
 function tutorialCardHeight() {
     if (!isMobileTutorial() || window.innerWidth > 700) {
-        return Math.max(320, Math.min(630, window.innerHeight - 150));
+        const reserve = window.innerWidth > 700 && window.innerWidth <= 1180 ? 90 : 160;
+        return Math.max(320, Math.min(860, window.innerHeight - reserve));
     }
     const pane = document.querySelector('#cardTutorialBody .card-tutorial-columns');
     const coach = document.getElementById('cardTutorialMobileCoach');
@@ -554,7 +555,11 @@ function fitCardToContent() {
     const inner = document.querySelector('#cardTutorialStage .card-replica');
     if (!inner) return;
     inner.style.removeProperty('--replica-card-scale');
-    inner.style.setProperty('--replica-card-h', `${tutorialCardHeight()}px`);
+    const height = tutorialCardHeight();
+    inner.style.setProperty('--replica-card-h', `${height}px`);
+    const compactDesktop = window.innerWidth > 700 && window.innerWidth <= 1180;
+    const width = Math.min(640, height * (compactDesktop ? .85 : .78), window.innerWidth * (compactDesktop ? .57 : .4));
+    document.getElementById('cardTutorialBody')?.style.setProperty('--tutorial-card-width', `${Math.round(width)}px`);
 }
 
 function markAnchors() {
