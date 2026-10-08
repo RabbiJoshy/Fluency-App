@@ -22742,9 +22742,9 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 }
 #cardTutorialContinue:disabled, #cardTutorialMobileNext:disabled { opacity: .45; cursor: default; }
 .card-tutorial-scroll-hint { display: none; }
-#cardTutorialStage .meanings-scroll { flex: 0 1 auto; min-height: 0; overflow-y: auto !important; overflow-x: hidden; max-height: none !important; }
-#cardTutorialStage .card-details { height: 100%; overflow: hidden; }
-#cardTutorialStage .sentence { flex: 0 1 auto; min-height: 0; max-height: 55%; overflow-y: auto; }
+#cardTutorialStage .meanings-scroll { flex: 0 1 auto; min-height: 72px; overflow-y: auto !important; overflow-x: hidden; max-height: none !important; }
+#cardTutorialStage .card-details { height: 100%; overflow-y: auto; overflow-x: hidden; }
+#cardTutorialStage .sentence { flex: 0 0 auto; max-height: none; overflow: visible; }
 #cardTutorialStage .meaning-row { padding-left: 44px !important; }
 #cardTutorialStage .sense-note-trigger { left: 2px; width: 44px; height: 44px; min-width: 44px; border: 0; background: transparent; }
 #cardTutorialStage .sense-note-trigger > span { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border: 1px solid var(--border-light); border-radius: 50%; background: var(--bg-card); }
@@ -22772,7 +22772,7 @@ body:has(#cardTutorialModal:not(.hidden), #tutorialIntroModal:not(.hidden)) #res
     #cardTutorialBody .card-tutorial-stage-col > .card-tutorial-lesson-tools { display: none; }
     #cardTutorialStage .card-back { padding: 14px 10px; }
     #cardTutorialStage .card-details { gap: 10px; }
-    #cardTutorialBody .card-tutorial-scroll-hint { display: block; margin: 0 0 10px; text-align: center; color: var(--text-secondary); font-size: 13px; }
+    #cardTutorialBody .card-tutorial-scroll-hint { display: none; margin: 0 0 10px; text-align: center; color: var(--text-secondary); font-size: 13px; }
     #cardTutorialMobileCoach:not([hidden]) {
         position: static; display: grid; grid-template-columns: 1fr; gap: 8px;
         padding: 12px; margin: 0; min-width: 0; max-height: none; animation: none;

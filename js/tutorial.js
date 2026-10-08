@@ -11,7 +11,7 @@
 
 import {
     REPLICA_CARDS, esc, renderBack, replicaCardHTML, wireReplicaBack,
-} from './card-replica.js?v=c9832adc';
+} from './card-replica.js?v=824a1efb';
 
 
 // Each language selects its own representative card and dictionary wording.
@@ -520,10 +520,14 @@ function syncContinueButton() {
 // explained. This used to also pin a numbered badge outside the card edge for
 // each note; the numbers indexed nothing a reader needed once the tour walked
 // them through one note at a time, so the amber outline is the only link now.
-// Both faces share a viewport-sized box. Opening meanings or changing an
-// example never changes its height; only a viewport resize can do that.
+// Both faces share the available card box. Opening meanings and changing
+// examples cannot grow it; compact layouts also reserve room for the coach.
 function tutorialCardHeight() {
-    return isMobileTutorial() ? 440 : Math.max(320, Math.min(540, window.innerHeight - 200));
+    if (isMobileTutorial()) {
+        const pane = document.querySelector('#cardTutorialBody .card-tutorial-columns');
+        return pane ? Math.min(440, Math.max(160, pane.clientHeight - 18)) : 440;
+    }
+    return Math.max(320, Math.min(540, window.innerHeight - 200));
 }
 
 function fitCardToContent() {
