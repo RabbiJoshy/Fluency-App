@@ -16,8 +16,8 @@
 // Applies to Speech and Lyrics alike. A language whose release supports only one
 // of the two parts still gets fast mode — it just moves the part it has, and the
 // page says which part is missing.
-import './state.js?v=32d85974';
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=32d85974';
+import './state.js?v=65785564';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=65785564';
 
 let applyingMasterSwitch = false;
 let returnToSettings = false;
@@ -45,6 +45,8 @@ function cognatesExcluded() {
 function currentState() {
     return readFastTrack(selectedLanguage).enabled ? 'on' : 'off';
 }
+
+globalThis.isFastTrackOn = () => currentState() === 'on';
 
 function setToggleState(prefix, value) {
     const buttons = document.querySelectorAll(`.${prefix}-toggle-btn`);
@@ -476,6 +478,7 @@ function updateKnownLanguageCopy() {
 function openFastModePage({ section } = {}) {
     returnToSettings = !document.getElementById('settingsModal')?.classList.contains('hidden');
     markFastTrackPageSeen();
+    if (!section) globalThis.resetSkippedCategory?.();
     // Each visit starts from the defaults: open what is on, fold the rest.
     closeAdvancedSkip();
     document.querySelectorAll('.smart-skip-shortcut').forEach(el => { delete el.dataset.userExpanded; });

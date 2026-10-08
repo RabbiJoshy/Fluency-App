@@ -15,7 +15,7 @@
 // module reads the same state the filter used and reports what it discarded.
 // That keeps one source of truth for the rules: if the filter changes, this
 // follows without edits.
-import './state.js?v=32d85974';
+import './state.js?v=65785564';
 
 // Every name below is read off globalThis rather than as a bare identifier.
 // state.js defines these lazily via defineProperty, and this module can run
@@ -1448,6 +1448,8 @@ if (document.readyState === 'loading') {
 globalThis.refreshExtrasButtons = refreshExtrasButtons;
 globalThis.refreshExtrasButton = refreshExtrasButtons;
 globalThis.openMergedForms = openMergedForms;
+// Each visit to the Smart Skip page opens on look-alikes, whatever was chosen last.
+globalThis.resetSkippedCategory = () => { _ssQuery = ''; _activeSkippedCategory = 'cognate'; };
 globalThis.openSkippedWords = openSkippedWords;
 globalThis.openExtras = openExtras;
 globalThis.openSavedWords = openSavedWords;

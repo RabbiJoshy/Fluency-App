@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T00:45:00+01:00",
+      "date": "2026-10-09 00:45 BST",
+      "agent": "Claude",
+      "summary": "Landing page: English example words, set legend reordered with a Skipped count, tidier Smart Skip pages",
+      "detail": [
+        "Level box: example words are now English meanings, up to eight on desktop (five on phones); 'Level N' and 'Words a–b' share one font size.",
+        "Choose a set: legend reads New, Practice, Known at the size of 'Set 1', and adds a hatched Skipped count when Smart Skip is on.",
+        "Smart Skip page: the Skipped words menu always opens on Look-alikes (or the first category when look-alikes are off).",
+        "Smart Skip page and Advanced options sheet: bordered card rows, quiet count pills, full-width Done button."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T00:15:00+01:00",
       "date": "2026-10-09 00:15 BST",
       "agent": "Claude",
@@ -351,18 +364,6 @@
       "detail": [
         "No yellow or green outline on set pills; only the chosen set has a ring. Gap 8 to 9px.",
         "The 'Details' word on the Smart Skip row is now an information icon."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-07T22:30:00+01:00",
-      "date": "2026-10-07 22:30 BST",
-      "agent": "Claude",
-      "summary": "Smart Skip row reads as one control: state line, Details cue, solid red Recommended pill",
-      "detail": [
-        "Under the name: 'Off', or 'On · N words skipped' (accent coloured when on).",
-        "'Details ›' on the right says the row opens the details page; the switch alone turns it on.",
-        "'Recommended' is a solid red pill with white text."
       ],
       "commit": "pending"
     }
