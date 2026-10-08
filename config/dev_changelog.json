@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T01:05:00+01:00",
+      "date": "2026-10-09 01:05 BST",
+      "agent": "Claude",
+      "summary": "Set pills show their word ranks on desktop",
+      "detail": [
+        "Choose a set: on screens 760px and wider each pill reads its frequency-rank range (e.g. 26–50) instead of the set number; phones keep the number."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T00:45:00+01:00",
       "date": "2026-10-09 00:45 BST",
       "agent": "Claude",
@@ -353,17 +363,6 @@
       "summary": "Smart Skip row: line under the name says what it does, not Off",
       "detail": [
         "Off: 'Fewer cards, same coverage'. On: 'N words skipped'. The switch alone shows on or off."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-07T23:00:00+01:00",
-      "date": "2026-10-07 23:00 BST",
-      "agent": "Claude",
-      "summary": "Set pills lose their outline and spread out; Smart Skip 'Details' becomes an info icon",
-      "detail": [
-        "No yellow or green outline on set pills; only the chosen set has a ring. Gap 8 to 9px.",
-        "The 'Details' word on the Smart Skip row is now an information icon."
       ],
       "commit": "pending"
     }
