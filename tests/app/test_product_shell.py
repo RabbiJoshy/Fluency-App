@@ -574,9 +574,12 @@ class ProductShellTests(unittest.TestCase):
         self.assertLess(html.index('id="fastTrackDeckCard"'), html.index('id="skippedWordsBody"'))
 
         fast_mode_js = (APP_ROOT / "js" / "fast-mode.js").read_text(encoding="utf-8")
-        self.assertIn("skippedCardsCount = (extras.allSkipped ? extras.allSkipped.length : (extras.cognates?.length || 0))", fast_mode_js)
-        self.assertIn("+ (extras.lemmas?.length || 0)", fast_mode_js)
-        self.assertIn("? (extras.cognates || []).map(entry => entry.item.word)", fast_mode_js)
+        # Counts and examples have separate wording for an active shortcut
+        # and its preview. Avoid pinning an intermediate variable/expression.
+        self.assertIn("extras.allSkipped", fast_mode_js)
+        self.assertIn("extras.cognates", fast_mode_js)
+        self.assertIn("lookAlikeCandidates()", fast_mode_js)
+        self.assertIn("Skipping ${shown}", fast_mode_js)
 
     def test_settings_are_organised_around_learner_tasks(self) -> None:
         html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
