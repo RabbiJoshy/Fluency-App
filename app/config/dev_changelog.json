@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-08T12:45:59+01:00",
+      "date": "2026-10-08 12:45 BST",
+      "agent": "Claude",
+      "summary": "SpanishDict senses sharing a context are one row again; topic chips show only when they tell rows apart",
+      "detail": [
+        "kilo: \"kilo\" and \"kilogram\" are one SpanishDict meaning (context \"kilogram\") and now share one row instead of two rows with separate meters; irse \"to go\" / \"to leave\" (to exit a place) likewise. Context grouping had been switched off for every provider on 2026-09-29 because Wiktionary contexts are labels (\"intransitive\"); it is back for SpanishDict only.",
+        "The 10% main-card floor measures a SpanishDict context as a whole, as the card shows it, so a meaning split 2 + 2 between kilo and kilogram is not dropped.",
+        "Topic chips (mostly Portuguese Wiktionary) appear only when they tell a row from another row with the same translation, and only the most specific one: massa \"dough\" lost \"cooking | food | lifestyle\", garganta's two \"throat\" rows lost \"anatomy | medicine | sciences\". The topics stay in each row's (i) note.",
+        "Display only: no WSD, release or menu change."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-08T12:31:50+01:00",
       "date": "2026-10-08 12:31 BST",
       "agent": "Codex",

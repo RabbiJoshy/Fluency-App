@@ -4127,7 +4127,11 @@ function splitLowShareMeanings(meanings) {
         && !NON_SENSE_POS.has(String(m.pos || '').toUpperCase()) && Number(m.percentage) > 0;
     const fold = values => values.map(v => String(v || '').trim().toLocaleLowerCase('en')).join('\u0000');
     const poolKey = m => fold([m.pos, m.headword, m.meaning]);
-    const key = m => (POOLED_FLOOR_POS.test(String(m.pos || '')) ? poolKey(m) : fold([m.pos, m.headword, m.meaning, m.context]));
+    // A SpanishDict context is one meaning however many English words it
+    // lists (kilo / kilogram), so it is measured whole, as the card shows it.
+    const key = m => (POOLED_FLOOR_POS.test(String(m.pos || '')) ? poolKey(m)
+        : m.source === 'spanishdict' && m.context ? fold([m.pos, m.headword, '', m.context])
+        : fold([m.pos, m.headword, m.meaning, m.context]));
     const shares = new Map();
     for (const m of meanings) {
         if (eligible(m)) shares.set(key(m), (shares.get(key(m)) || 0) + Number(m.percentage));

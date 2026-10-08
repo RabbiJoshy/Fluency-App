@@ -6847,6 +6847,11 @@ function renderCardWikipediaBadge(card) {
                 withoutGrammarLabels(presentation.key.text) || withoutGrammarLabels(groupingGloss.key.text) || metadataLabel
             );
         });
+        // A SpanishDict context is the sense, and its translations are English
+        // alternatives (kilo / kilogram under "kilogram"), so a shared context
+        // is a shared meaning. A Wiktionary context is a label ("intransitive",
+        // "figurative") that different meanings share, so it never groups.
+        const contextIsSense = m => m.source === 'spanishdict';
         // Per-meaning-idx axis assignment: 'translation' | 'context' |
         // 'singleton' | 'special' (MWE/CLITIC/SENSE_CYCLE — opted out).
         // Cached on the card after first compute — meanings don't mutate
@@ -6875,7 +6880,7 @@ function renderCardWikipediaBadge(card) {
                     const tk = `${groupPrefix}${groupingGlossByMeaning.get(idx)?.groupingKey || ''}`;
                     transRawSize.set(tk, (transRawSize.get(tk) || 0) + 1);
                     const learnerContext = contextLabelByMeaning.get(idx) || '';
-                    if (learnerContext) {
+                    if (learnerContext && contextIsSense(m)) {
                         const ck = `${groupPrefix}${learnerContext}`;
                         ctxRawSize.set(ck, (ctxRawSize.get(ck) || 0) + 1);
                     }
@@ -6890,8 +6895,7 @@ function renderCardWikipediaBadge(card) {
                     const groupPrefix = `${m.pos}\u0000${m.headword || ''}\u0000`;
                     const ts = transRawSize.get(`${groupPrefix}${tk}`) || 0;
                     const ck = contextLabelByMeaning.get(idx) || null;
-                    // A shared grammatical/context label is not a shared meaning.
-                    const cs = 0;
+                    const cs = ck && contextIsSense(m) ? (ctxRawSize.get(`${groupPrefix}${ck}`) || 0) : 0;
                     if (ts > 1 && cs > 1) {
                         if (ts >= cs) { axisOf.set(idx, 'translation'); groupKeyOf.set(idx, tk); }
                         else { axisOf.set(idx, 'context'); groupKeyOf.set(idx, ck); }

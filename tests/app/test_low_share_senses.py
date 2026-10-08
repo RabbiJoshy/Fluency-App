@@ -66,6 +66,19 @@ class LowShareSenseTests(unittest.TestCase):
         self.assertEqual(out["main"], ["quality", "emotion", "present"])
         self.assertEqual(out["rare"], ["located", "to fit"])
 
+    def test_a_spanishdict_context_is_measured_whole(self) -> None:
+        # kilo: "kilo" and "kilogram" are one meaning under "kilogram"; WSD
+        # splits its sentences at random, so neither half may fall alone.
+        out = self.run_js(r"""
+            const m = (meaning, context, n, source = 'spanishdict') =>
+                ({ pos: 'NOUN', meaning, headword: 'kilo', context, source, percentage: n / 30 });
+            const meanings = [m('kilo', 'kilogram', 2), m('kilogram', 'kilogram', 2), m('loads', 'a lot', 26),
+                              m('x', 'shared label', 2, 'wiktionary'), m('y', 'shared label', 2, 'wiktionary')];
+            const done = finishCardMeanings({}, meanings);
+            console.log(JSON.stringify(done.meanings.map(x => x.meaning)));
+        """)
+        self.assertEqual(out, ["kilo", "kilogram", "loads"])
+
     def test_a_translation_that_clears_the_bar_keeps_its_largest_row(self) -> None:
         out = self.run_js(r"""
             const m = (meaning, context, n) => ({ pos: 'VERB', meaning, headword: 'ter', context, percentage: n / 30 });
