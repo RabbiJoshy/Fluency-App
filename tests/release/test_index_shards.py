@@ -88,6 +88,71 @@ class IndexShardTests(unittest.TestCase):
             self.assertNotIn("word", first["aaaa0001"])
             self.assertTrue((app / "vocabulary.index.json").is_file())
 
+    def test_lemma_column_skips_expressions_the_word_occurs_in(self) -> None:
+        # Shapes from pt-speech-v23: é shipped lemma "não é" because the phrase
+        # was its single most frequent meaning, though ser outweighs it.
+        cards = {
+            "é": [
+                {"headword": "ser", "pos": "verb", "frequency": "0.2"},
+                {"headword": "ser", "pos": "verb", "frequency": "0.2"},
+                {"headword": "não é", "pos": "PHRASE", "frequency": "0.3"},
+            ],
+            # Wiktionary tags some multiword headwords with an ordinary part of speech.
+            "cinto": [
+                {"headword": "cinto", "pos": "noun", "frequency": "0.28"},
+                {"headword": "cinto de segurança", "pos": "noun", "frequency": "0.42"},
+            ],
+            "repente": [{"headword": "de repente", "pos": "adv", "frequency": "1.0"}],
+            "porfavor": [{"headword": "por favor", "pos": "PHRASE", "frequency": "1.0"}],
+            "casa-de-banho": [{"headword": "casa de banho", "pos": "noun", "frequency": "1.0"}],
+            "por favor": [{"headword": "por favor", "pos": "MWE", "frequency": "1.0"}],
+        }
+        index = [
+            {
+                "id": f"{rank:08x}",
+                "word": word,
+                "rank": rank,
+                "surface_card_id": f"card_pt_{rank:08x}",
+                "meanings": meanings,
+            }
+            for rank, (word, meanings) in enumerate(cards.items(), start=1)
+        ]
+        structure = {
+            "structure_version": "study-structure/v1",
+            "levels": [
+                {
+                    "level_id": "level-001",
+                    "sets": [
+                        {
+                            "set_id": "level-001-set-01",
+                            "start_rank": 1,
+                            "end_rank": len(index),
+                            "card_ids": [card["surface_card_id"] for card in index],
+                        }
+                    ],
+                }
+            ],
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            app = Path(directory)
+            (app / "vocabulary.index.json").write_text(json.dumps(index), encoding="utf-8")
+            (app / "study-structure.json").write_text(json.dumps(structure), encoding="utf-8")
+
+            shard_app_index(app)
+            columns = json.loads((app / "vocabulary.index.columns.json").read_text(encoding="utf-8"))
+
+        self.assertEqual(
+            dict(zip(columns["word"], columns["lemma"])),
+            {
+                "é": "ser",
+                "cinto": "cinto",
+                "repente": None,
+                "porfavor": "por favor",
+                "casa-de-banho": "casa de banho",
+                "por favor": "por favor",
+            },
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
