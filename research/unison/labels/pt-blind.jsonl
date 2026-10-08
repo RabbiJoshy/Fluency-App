@@ -1,0 +1,75 @@
+{"id":"pt-t01-0001","gold":"m10","alt":[],"conf":"sure","note":"isso que = that which"}
+{"id":"pt-t01-0002","gold":"phrase:ter que","alt":["m4"],"conf":"sure","note":"ter que = have to"}
+{"id":"pt-t01-0003","gold":"m4","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0004","gold":"m30","alt":["m27","m29","m30","m31","m32","m33","m34","m35","m36","m37","m38"],"conf":"sure","note":"definite article; the article senses are indistinguishable"}
+{"id":"pt-t01-0005","gold":"m30","alt":["m27","m29","m30","m31","m32","m33","m34","m35","m36","m37","m38"],"conf":"sure","note":"definite article"}
+{"id":"pt-t01-0006","gold":"m36","alt":["m27","m29","m30","m31","m32","m33","m34","m35","m36","m37","m38"],"conf":"sure","note":"article before a person's name"}
+{"id":"pt-t01-0007","gold":"m15","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0008","gold":"m15","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0009","gold":"m16","alt":["m17"],"conf":"sure","note":""}
+{"id":"pt-t01-0010","gold":"m12","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0011","gold":"phrase:ter de","alt":[],"conf":"sure","note":"ter de = have to"}
+{"id":"pt-t01-0012","gold":"m22","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0013","gold":"m2","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0014","gold":"m2","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0015","gold":"m10","alt":["m6","m5"],"conf":"sure","note":"tag question não é?"}
+{"id":"pt-t01-0016","gold":"m20","alt":[],"conf":"sure","note":"tag não é?"}
+{"id":"pt-t01-0017","gold":"m2","alt":[],"conf":"sure","note":"interrogative cleft 'quando é que'; the phrase é que 'the thing is' is a different use"}
+{"id":"pt-t01-0018","gold":"m6","alt":["m14"],"conf":"sure","note":""}
+{"id":"pt-t01-0019","gold":"m6","alt":["m3"],"conf":"sure","note":""}
+{"id":"pt-t01-0020","gold":"m6","alt":["m3"],"conf":"sure","note":""}
+{"id":"pt-t01-0021","gold":"m3","alt":["m6"],"conf":"sure","note":""}
+{"id":"pt-t01-0022","gold":"m1","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0023","gold":"m1","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0024","gold":"m9","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0025","gold":"m4","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0026","gold":"m5","alt":["m3","m6"],"conf":"unsure","note":"mentir para = lie to"}
+{"id":"pt-t01-0027","gold":"m3","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0028","gold":"m4","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0029","gold":"m4","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0030","gold":"m4","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0031","gold":"m8","alt":["m3","m4","m5","m6","m7"],"conf":"sure","note":"conditional if"}
+{"id":"pt-t01-0032","gold":"m13","alt":["m14","m16"],"conf":"unsure","note":"juntar-se, pronominal"}
+{"id":"pt-t01-0033","gold":"m8","alt":["m3","m4","m5","m6","m7"],"conf":"sure","note":"conditional if"}
+{"id":"pt-t01-0034","gold":"m2","alt":["m1"],"conf":"unsure","note":"recordar: reminds me"}
+{"id":"pt-t01-0035","gold":"m2","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0036","gold":"m3","alt":["m4"],"conf":"sure","note":"arrepender-se, pronominal"}
+{"id":"pt-t01-0037","gold":"m34","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0038","gold":"m3","alt":["m5","m7","m8"],"conf":"sure","note":""}
+{"id":"pt-t01-0039","gold":"m3","alt":["m5","m7","m8"],"conf":"sure","note":""}
+{"id":"pt-t01-0040","gold":"m1","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0041","gold":"m6","alt":["m1"],"conf":"sure","note":"sequer uma palavra = not even one word"}
+{"id":"pt-t01-0042","gold":"m10","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0043","gold":"m5","alt":["m8"],"conf":"sure","note":"tudo está bem = all is well"}
+{"id":"pt-t01-0044","gold":"m5","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0045","gold":"m3","alt":[],"conf":"sure","note":"estar a + infinitive, progressive"}
+{"id":"pt-t01-0046","gold":"m13","alt":["m6"],"conf":"sure","note":""}
+{"id":"pt-t01-0047","gold":"m26","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0048","gold":"m26","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0049","gold":"none:about (preocupar-se com)","alt":[],"conf":"sure","note":"verb-governed com = about; the phrase com tudo 'with total power' does not apply"}
+{"id":"pt-t01-0050","gold":"none:with (continuar com)","alt":["m7","m4"],"conf":"unsure","note":"verb-governed com"}
+{"id":"pt-t01-0051","gold":"m7","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0052","gold":"m3","alt":["m1","m3","m4","m5","m6","m7","m8","m9","m10","m11","m12"],"conf":"sure","note":"generic plural article"}
+{"id":"pt-t01-0053","gold":"none:you (plural object, = vocês)","alt":["m16"],"conf":"unsure","note":"EN says 'help you'; menu has only 'them'"}
+{"id":"pt-t01-0054","gold":"m4","alt":["m1","m3","m4","m5","m6","m7","m8","m9","m10","m11","m12"],"conf":"sure","note":"definite article"}
+{"id":"pt-t01-0055","gold":"m12","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0056","gold":"m1","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0057","gold":"m19","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0058","gold":"m1","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0059","gold":"m1","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0060","gold":"m1","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0061","gold":"m12","alt":["m11","m7","m8"],"conf":"unsure","note":"acreditar em = believe in"}
+{"id":"pt-t01-0062","gold":"m21","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0063","gold":"m16","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0064","gold":"m2","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0065","gold":"m2","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0066","gold":"m2","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0067","gold":"m19","alt":["m12"],"conf":"sure","note":""}
+{"id":"pt-t01-0068","gold":"m20","alt":["m14"],"conf":"sure","note":""}
+{"id":"pt-t01-0069","gold":"m16","alt":["m12","m13"],"conf":"unsure","note":"reproachful how"}
+{"id":"pt-t01-0070","gold":"m4","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0071","gold":"m4","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0072","gold":"m15","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0073","gold":"m3","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0074","gold":"m3","alt":[],"conf":"sure","note":""}
+{"id":"pt-t01-0075","gold":"m3","alt":[],"conf":"sure","note":""}
