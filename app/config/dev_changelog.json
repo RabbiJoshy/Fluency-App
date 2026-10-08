@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-08T12:48:32+01:00",
+      "date": "2026-10-08 12:48 BST",
+      "agent": "Codex",
+      "summary": "Clearer main-page level and account controls",
+      "detail": [
+        "Level example words exclude phrases and multi-word expressions, with slightly brighter text.",
+        "Selected level is larger with less vertical padding.",
+        "Language and learner initials are larger; tutorial and settings icons are white."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-08T12:48:08+01:00",
       "date": "2026-10-08 12:48 BST",
       "agent": "Codex",
@@ -10,18 +22,6 @@
         "Measured card height from the rendered tutorial area after navigation appears, replacing fixed window-height allowances.",
         "Reserved header and button space, including app text zoom, and held card dimensions steady between steps.",
         "Kept scrolling inside card content and independently inside desktop explanations when needed."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T12:47:30+01:00",
-      "date": "2026-10-08 12:47 BST",
-      "agent": "Codex",
-      "summary": "Clearer main-page level and account controls",
-      "detail": [
-        "Level example words exclude phrases and multi-word expressions, with slightly brighter text.",
-        "Selected level is larger with less vertical padding.",
-        "Language and learner initials are larger; tutorial and settings icons are white."
       ],
       "commit": "pending"
     },
