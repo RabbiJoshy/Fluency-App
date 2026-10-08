@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-08T19:02:22+01:00",
+      "date": "2026-10-08 19:02 BST",
+      "agent": "Codex",
+      "summary": "Spanish cognate mapping for Portuguese learners",
+      "detail": [
+        "Spanish is now available as a known language for Portuguese cognate filtering.",
+        "Maps each shown meaning through the Spanish dictionary and CogNet; 4,257 of 10,000 current Portuguese cards qualify at the initial 0.80 cutoff.",
+        "English mappings are preserved; false friends and cards with unmatched meanings remain in study."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-08T12:48:32+01:00",
       "date": "2026-10-08 12:48 BST",
       "agent": "Codex",
@@ -343,16 +355,6 @@
       "detail": [
         "The scrubber no longer repeats the word 'Level': it shows 1 2 3 4 5…, with the chosen number large and the rest tapering away. 'Level N' stays in the readout above (and as each slot's accessible name).",
         "Readout 'Level N' 16 to 18px; frequency line, 'e.g.' words and coverage figure up to 14/13px."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-07T18:30:00+01:00",
-      "date": "2026-10-07 18:30 BST",
-      "agent": "Claude",
-      "summary": "Level scrubber taper now works on both sides",
-      "detail": [
-        "Levels you have passed were pinned to a flat 62% opacity and hid the taper; now every level shrinks and fades with its distance from the chosen one (about 120%, 90%, 60% size; 68%, 36%, 15% opacity)."
       ],
       "commit": "pending"
     }

@@ -94,6 +94,29 @@ class SenseMapTests(unittest.TestCase):
         self.assertNotIn("chyba", payload["scores"])
         self.assertEqual(payload["cards"]["problém"]["pl"], [1.0, "problem"])
 
+    def test_portuguese_for_spanish_speakers_preserves_false_friends_and_mixed_cards(self) -> None:
+        payload = self.build(
+            "pt", [row("informação", ("informação", "information")),
+                   row("família", ("família", "family")),
+                   row("cidade", ("cidade", "city")),
+                   row("oficina", ("oficina", "workshop")),
+                   row("famílias", ("família", "family"), ("família", "household"))],
+            None,
+            {"por-spa.tsv": [("informação", "información"), ("família", "familia"),
+                             ("cidade", "ciudad"), ("oficina", "oficina")]},
+            known={"es": [entry("información", "information"), entry("familia", "family"),
+                          entry("ciudad", "city"), entry("oficina", "office", "workshop")]},
+        )
+        self.assertEqual(payload["known_languages"], ["es"])
+        for surface, match in [("informação", "información"), ("família", "familia"),
+                               ("cidade", "ciudad")]:
+            with self.subTest(surface=surface):
+                score, word = payload["cards"][surface]["es"]
+                self.assertGreaterEqual(score, payload["thresholds"]["es"])
+                self.assertEqual(word, match)
+        self.assertNotIn("oficina", payload["scores"])
+        self.assertNotIn("famílias", payload["cards"])
+
     def test_only_a_primary_sense_of_the_known_word_counts(self) -> None:
         # Polish czerstwy is "stale" first; "fresh" is a minor sense. A Polish
         # reader takes Czech čerstvý (fresh) for its opposite, so it is not free.
