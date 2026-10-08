@@ -1457,6 +1457,8 @@ globalThis.renderSavedWords = renderSavedWords;
 globalThis.toggleSavedWord = toggleSavedWord;
 globalThis.isWordSaved = isWordSaved;
 globalThis.collectExtras = collectExtras;
+// The English side of a look-alike, for the Smart Skip row's example words.
+globalThis.cognateEnglishWord = item => cognateEnglish(item).word;
 globalThis.startFastTrackSkippedSet = startFastTrackSkippedSet;
 globalThis.renderSkippedWords = renderSkippedWords;
 globalThis.closeSmartSkipPreview = closeSmartSkipPreview;
