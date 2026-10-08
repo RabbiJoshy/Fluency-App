@@ -62,6 +62,33 @@ class BothProvidersEmitTheSameFamilyTests(unittest.TestCase):
             ("construction", "optional_companion", "often used with de")
         ])
 
+    def companions(self, expansion):
+        sense = {"info_templates": [{"name": "+obj", "expansion": expansion}]}
+        return [f.value for f in wiktionary_extract(sense) if f.family == "companion"]
+
+    def test_every_alternative_in_a_wiktionary_note_is_a_companion(self) -> None:
+        """falar: "falar sobre o filme" must not lose the "about" sense for lacking de."""
+
+        self.assertEqual(self.companions("[with de or sobre ‘about something’]"), ["de", "sobre"])
+        self.assertEqual(self.companions("[with com or para ‘to someone’]"), ["com", "para"])
+        self.assertEqual(self.companions("[with sur; or with à; or with dans]"), ["sur", "à", "dans"])
+        self.assertEqual(
+            self.companions("[with a favor de ‘in favor of’; or with contra ‘against’]"),
+            ["a", "contra"])
+
+    def test_region_labels_inside_a_note_are_not_companions(self) -> None:
+        self.assertEqual(self.companions("[with (Portugal) a or (Brazil) em ‘a destination’]"), ["a", "em"])
+
+    def test_a_lone_a_is_the_preposition_not_the_article(self) -> None:
+        self.assertEqual(self.companions("[with a ‘to someone’]"), ["a"])
+        self.assertEqual(self.companions("[with a noun]"), [])
+
+    def test_a_form_alternative_means_no_word_is_required(self) -> None:
+        for note in ("[with direct object; or with de]", "[with em or transitive ‘a result’]",
+                     "[with para or indirect object pronoun ‘someone’]", "[with past participle]",
+                     "[with accusative]", "[with gerund or a (+ infinitive) ‘doing something’]"):
+            self.assertEqual(self.companions(note), [], note)
+
     def test_wiktionary_form_notes_are_construction_too(self) -> None:
         sense = {"info_templates": [{"name": "+obj", "expansion": "[with adjective]"}]}
         self.assertEqual(families(wiktionary_extract(sense))[0][0], "construction")

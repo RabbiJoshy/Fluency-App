@@ -31,8 +31,52 @@ from fluency.features.metadata import MetadataAccounting
 from fluency.features.parenthetical import leading_parenthetical, split_top_level_commas
 
 
-# "[with com 'with something']", "[with gerund (Brazil) ...]"
-_WITH_HEAD = re.compile(r"^\[with\s+(?P<word>[^\W\d_]+)", re.UNICODE)
+# "[with com 'with something']", "[with de or sobre 'about something']",
+# "[with (Portugal) a or (Brazil) em 'a destination']", "[with direct object; or with de]"
+_GLOSS_START = re.compile(r"\s[‘'“\"]")
+_PARENTHETICAL = re.compile(r"\([^()]*\)")
+_ALTERNATIVE_SPLIT = re.compile(r"\s*(?:;|\bor\b)\s*(?:with\b)?\s*", re.UNICODE)
+# Forms Kaikki names beside companion words; GRAMMATICAL_FORMS covers the rest.
+_COMPANION_FORM_WORDS = frozenset(
+    {"transitive", "intransitive", "copulative", "dative", "accusative", "genitive",
+     "instrumental", "locative", "past", "personal", "subject"}
+)
+_ENGLISH_ARTICLES = frozenset({"a", "an", "the"})
+
+
+def _companion_alternatives(expansion: str) -> tuple[str, ...] | None:
+    """Return the companion words a +obj note offers, or None if any is a form.
+
+    The note is a list of alternatives: any one of them satisfies the sense, so
+    each becomes a companion and the gate accepts whichever is present. One
+    alternative that is a form ("direct object", "gerund") means the sense can
+    be met with no word at all, so no word is required.
+    """
+
+    body = expansion.strip().removeprefix("[").removesuffix("]").strip()
+    if not body.lower().startswith("with "):
+        return None
+    # Each "; or with …" clause carries its own gloss, so cut glosses per clause.
+    clauses = []
+    for clause in body[5:].split(";"):
+        gloss = _GLOSS_START.search(clause)
+        clauses.append(_PARENTHETICAL.sub(" ", clause[:gloss.start()] if gloss else clause))
+    words: list[str] = []
+    for alternative in _ALTERNATIVE_SPLIT.split(" ; ".join(clauses)):
+        tokens = re.findall(r"[^\W\d_]+", alternative.casefold(), flags=re.UNICODE)
+        if not tokens:
+            continue
+        # "a noun", "an infinitive": the English article before a form. A lone
+        # "a" is the Portuguese or Spanish preposition.
+        head = tokens[1] if len(tokens) > 1 and tokens[0] in _ENGLISH_ARTICLES else tokens[0]
+        if len(tokens) > 1 and tokens[0] in _ENGLISH_ARTICLES and head in GRAMMATICAL_FORMS:
+            return None
+        if head in _COMPANION_FORM_WORDS or (head in GRAMMATICAL_FORMS and head not in _ENGLISH_ARTICLES):
+            return None
+        # A phrase ("para cima de", "à ce que") is required through its first
+        # word: looser than the phrase, never stricter.
+        words.append(tokens[0])
+    return tuple(dict.fromkeys(words)) or None
 
 # Fallbacks used when a language policy declares no vocabulary of its own.
 DEFAULT_REGISTER_TAGS = frozenset(
@@ -376,12 +420,10 @@ def extract(
         # extra_data.words is fragments of it, so the first alpha token there is
         # as likely to be "or" or "(Brazil)" as the companion.
         expansion = str(template.get("expansion") or "").strip()
-        head = _WITH_HEAD.match(expansion)
-        companion = head.group("word") if head else None
-        if companion and companion.lower() in GRAMMATICAL_FORMS:
-            companion = None
-        if companion:
-            add("companion", "required_word", companion.strip().lower())
+        companions = _companion_alternatives(expansion)
+        if companions:
+            for companion in companions:
+                add("companion", "required_word", companion)
         elif expansion:
             # "[with adjective]", "[with gerund]" -- a form, not a word to look
             # for, so it constrains construction rather than companionship.
