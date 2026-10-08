@@ -719,7 +719,7 @@ function learningModeCopy(language = selectedLanguage) {
     const lyricsCatalog = config?.languages?.[language]?.capabilities?.lyrics !== false;
     return {
         title: 'Choose your flashcard vocabulary source',
-        intro: 'Your flashcards come from this source, most common words first. What you learn carries over, and you can switch at any time.',
+        intro: 'Your flashcards come from this source, most common words first. You can switch at any time, and the words you learn carry over between the two modes.',
         speech: {
             label: 'Everyday speech',
             description: 'From films and TV shows — the everyday words people actually use when they talk to each other.',
@@ -836,7 +836,7 @@ function setupLanguageTabs() {
             if (speechSourceButton) {
                 speechSourceButton.disabled = !speechAvailable;
                 speechSourceButton.title = speechAvailable
-                    ? 'Start with general-purpose vocabulary'
+                    ? 'Starts with the most common words in films and TV shows'
                     : `Speech vocabulary is not ready for ${langConfig?.name || newLanguage} yet`;
             }
             const modeCopy = learningModeCopy(newLanguage);
@@ -850,7 +850,7 @@ function setupLanguageTabs() {
             if (sourceCardButton) {
                 sourceCardButton.disabled = !lyricsAvailable;
                 sourceCardButton.title = lyricsCatalog
-                    ? 'Build vocabulary around music you choose'
+                    ? 'Starts with the most common words in the music you listen to'
                     : 'Look up lyrics from a playlist and study a live deck';
             }
             // Nothing belonging to a deck shows until a vocabulary is chosen.
