@@ -81,38 +81,47 @@ body {
   flex-shrink: 0;
 }
 
-.back-to-study {
+.back-to-library-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  color: var(--text-muted);
+  gap: 5px;
+  color: var(--text-primary);
   text-decoration: none;
   font-size: 13px;
   font-weight: 600;
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: var(--radius-full);
   background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.back-to-library-btn:hover {
+  background: var(--bg-card);
+  border-color: var(--border-light);
+  color: #ffffff;
+}
+
+.menu-back-to-vocab {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-color);
   transition: all 0.15s ease;
 }
 
-.back-to-study:hover {
+.menu-back-to-vocab:hover {
   color: var(--text-primary);
-  background: var(--bg-card);
+  background: rgba(255, 255, 255, 0.1);
   border-color: var(--border-light);
-}
-
-.brand-badge {
-  font-family: var(--font-emphasis);
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: var(--accent-blue);
-  background: rgba(74, 158, 255, 0.1);
-  border: 1px solid rgba(74, 158, 255, 0.25);
-  padding: 3px 8px;
-  border-radius: var(--radius-full);
 }
 
 /* Center: Spotify-style Song Pill */
@@ -355,70 +364,86 @@ main {
   color: #ffffff;
 }
 
-/* Clean, non-distracting entity / idiom / interjection cues */
+/* Clean, non-distracting entity / idiom / elision cues */
 .lyric-token.token-entity {
-  color: inherit;
-  text-decoration: underline;
-  text-decoration-color: rgba(255, 255, 255, 0.4);
-  text-underline-offset: 4px;
-  text-decoration-thickness: 1.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: var(--radius-full);
+  padding: 1px 9px 1px 7px;
+  margin: 0 2px;
+  color: var(--text-primary);
+  font-weight: 600;
+  vertical-align: baseline;
 }
 
 .lyric-token.token-entity:hover {
-  background: rgba(255, 255, 255, 0.08);
-  text-decoration-color: #ffffff;
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
-.entity-wiki-icon {
+/* Authentic Wiktionary Icon: White circle with black 'W' */
+.entity-wiktionary-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: 3px;
-  vertical-align: middle;
-  opacity: 0.75;
-  color: var(--text-muted);
-  font-size: 11px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #000000;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 9px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.2px;
+  flex-shrink: 0;
+  user-select: none;
 }
 
-.lyric-token.token-entity:hover .entity-wiki-icon {
-  opacity: 1;
-  color: var(--text-primary);
-}
-
+/* Multi-Word Expression (MWE / Idiom): Clean enclosing pill */
 .lyric-token.token-mwe {
-  color: inherit;
-  text-decoration: underline;
-  text-decoration-color: rgba(255, 255, 255, 0.5);
-  text-underline-offset: 4px;
-  text-decoration-thickness: 1.5px;
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-full);
+  padding: 1px 8px;
+  margin: 0 2px;
+  color: var(--text-primary);
+  font-weight: 500;
+  vertical-align: baseline;
 }
 
 .lyric-token.token-mwe:hover {
-  background: rgba(255, 255, 255, 0.08);
-  text-decoration-color: #ffffff;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
+/* Ad-libs / Interjections: Normal styling, no distracting colors */
 .lyric-token.token-interjection {
-  color: #fde047;
-  border-bottom: 2px solid var(--accent-amber);
+  color: inherit;
 }
 
 .lyric-token.token-interjection:hover {
-  background: rgba(245, 166, 35, 0.18);
-  box-shadow: 0 0 10px rgba(245, 166, 35, 0.3);
+  background: rgba(255, 255, 255, 0.1);
 }
 
+/* Elisions: Elided letter in brackets in blue */
 .lyric-token.token-elision {
   color: inherit;
 }
 
-.lyric-token.token-elision:hover {
-  background: rgba(255, 255, 255, 0.08);
+.elision-bracket {
+  color: #38bdf8;
+  font-weight: 600;
 }
 
-.apostrophe-tint {
+.elision-letter {
   color: #38bdf8;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 /* Dimmed when filter active */

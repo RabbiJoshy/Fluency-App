@@ -1,4 +1,4 @@
-import { TurboEngine } from '../turbo/turbo-engine.js?v=81e5ba02';
+import { TurboEngine } from '../turbo/turbo-engine.js?v=bc02eadf';
 
 // Common Spanish & Latin urban ad-libs, interjections, and exclamations
 const INTERJECTIONS_SET = new Set([
@@ -23,6 +23,58 @@ function escapeRegExp(str) {
   return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/**
+ * Formats an elided word displaying the elided letter(s) in brackets in blue, e.g.:
+ * sabemo' -> sabemo<span class="elision-bracket">(</span><span class="elision-letter">s</span><span class="elision-bracket">)</span>
+ * 'tás -> <span class="elision-bracket">(</span><span class="elision-letter">es</span><span class="elision-bracket">)</span>tás
+ * estudia'o -> estudia<span class="elision-bracket">(</span><span class="elision-letter">d</span><span class="elision-bracket">)</span>o
+ */
+function formatElisionToken(raw, fullWord) {
+  if (!raw) return '';
+  if (!fullWord) return escapeHtml(raw);
+
+  const normRaw = raw.replace(/[’]/g, "'");
+  const match = normRaw.match(/^(.*?)([.,;:!?"¿¡)]*)$/);
+  const core = match ? match[1] : normRaw;
+  const trail = match ? match[2] : '';
+
+  const cleanFull = fullWord.trim().toLowerCase();
+  const cleanCore = core.toLowerCase();
+
+  // Case 1: Trailing apostrophe (sabemo' -> sabemos, e' -> es, to' -> todo)
+  if (cleanCore.endsWith("'")) {
+    const stem = core.slice(0, -1);
+    if (cleanFull.startsWith(stem.toLowerCase())) {
+      const elided = fullWord.slice(stem.length);
+      return `${escapeHtml(stem)}<span class="elision-bracket">(</span><span class="elision-letter">${escapeHtml(elided)}</span><span class="elision-bracket">)</span>${escapeHtml(trail)}`;
+    }
+  }
+
+  // Case 2: Leading apostrophe ('tás -> estás, 'toy -> estoy)
+  if (cleanCore.startsWith("'")) {
+    const stem = core.slice(1);
+    if (cleanFull.endsWith(stem.toLowerCase())) {
+      const elided = fullWord.slice(0, fullWord.length - stem.length);
+      return `<span class="elision-bracket">(</span><span class="elision-letter">${escapeHtml(elided)}</span><span class="elision-bracket">)</span>${escapeHtml(stem)}${escapeHtml(trail)}`;
+    }
+  }
+
+  // Case 3: Medial apostrophe (estudia'o -> estudiado, cansa'o -> cansado)
+  if (core.includes("'")) {
+    const parts = core.split("'");
+    if (parts.length === 2) {
+      const p1 = parts[0];
+      const p2 = parts[1];
+      if (cleanFull.startsWith(p1.toLowerCase()) && cleanFull.endsWith(p2.toLowerCase())) {
+        const elided = fullWord.slice(p1.length, fullWord.length - p2.length);
+        return `${escapeHtml(p1)}<span class="elision-bracket">(</span><span class="elision-letter">${escapeHtml(elided)}</span><span class="elision-bracket">)</span>${escapeHtml(p2)}${escapeHtml(trail)}`;
+      }
+    }
+  }
+
+  return escapeHtml(raw);
+}
+
 let engine = null;
 let probeSongs = [];
 let customSongs = [];
@@ -37,6 +89,7 @@ let songTokensFlatList = [];
 let currentModalTokenIndex = -1;
 
 // DOM Elements
+const backToLibraryBtn = document.getElementById('backToLibraryBtn');
 const topbarSongTitle = document.getElementById('topbarSongTitle');
 const topbarSongArtist = document.getElementById('topbarSongArtist');
 const songSelectorBtn = document.getElementById('songSelectorBtn');
@@ -374,42 +427,22 @@ function renderLyrics(song) {
       if (token.type === 'entity') {
         span.classList.add('token-entity');
         span.title = `Entity: ${token.word} (${token.translation || 'Cultural referent'})`;
-        // Render word with wiktionary book icon
-        span.innerHTML = `${escapeHtml(token.raw)}<span class="entity-wiki-icon" title="Entity (Wiktionary / Cultural)">📖</span>`;
-        lineAutoBadges.push({
-          type: 'entity',
-          label: `📖 ${token.raw}`,
-          sub: token.card?.entity?.entityType || 'Entity',
-          token
-        });
+        // Enclosing pill with authentic Wiktionary icon (white circle with black W)
+        span.innerHTML = `${escapeHtml(token.raw)}<span class="entity-wiktionary-icon" aria-hidden="true" title="Wiktionary / Cultural Entity">W</span>`;
       } else if (token.type === 'mwe') {
         span.classList.add('token-mwe');
-        span.title = `Idiom: ${token.word} (${token.translation})`;
+        span.title = `Idiom: ${token.word} (${token.translation || 'Idiom'})`;
         span.textContent = token.raw;
-        // User requested: MWEs should not have translation underneath the lyric line, only underline to indicate they go together
       } else if (token.type === 'interjection') {
         span.classList.add('token-interjection');
         span.title = `Ad-lib: ${token.translation || token.raw}`;
         span.textContent = token.raw;
-        lineAutoBadges.push({
-          type: 'interjection',
-          label: token.raw,
-          sub: 'ad-lib',
-          token
-        });
       } else {
         span.classList.add('token-word');
         if (token.isElision) {
           span.classList.add('token-elision');
           span.title = `Elision: ${token.raw} → ${token.word}`;
-          // Normal coloured text, only the apostrophe is coloured/tinted
-          const parts = token.raw.split(/(['’])/);
-          span.innerHTML = parts.map(part => {
-            if (part === "'" || part === "’") {
-              return `<span class="apostrophe-tint">${part}</span>`;
-            }
-            return escapeHtml(part);
-          }).join('');
+          span.innerHTML = formatElisionToken(token.raw, token.word);
         } else {
           span.title = `${token.word}: ${token.translation || 'Word'}`;
           span.textContent = token.raw;
@@ -430,32 +463,13 @@ function renderLyrics(song) {
     const englishGloss = buildLineEnglishGloss(line);
     if (englishGloss) {
       const englishLine = document.createElement('div');
-      englishLine.className = `lyric-line-english ${showEnglishUnderneath ? '' : 'is-hidden'}`;
+      englishLine.className = 'lyric-line-english';
 
       const textSpan = document.createElement('span');
       textSpan.textContent = englishGloss;
       englishLine.appendChild(textSpan);
 
       lineBody.appendChild(englishLine);
-    }
-
-    // Subtle inline line badges if line contains entities or ad-libs (MWEs omitted per user request)
-    if (lineAutoBadges.length > 0) {
-      const badgesRow = document.createElement('div');
-      badgesRow.className = 'line-auto-badges';
-
-      lineAutoBadges.forEach(item => {
-        const badge = document.createElement('span');
-        badge.className = `line-auto-badge badge-${item.type}`;
-        badge.innerHTML = `<strong>${item.label}</strong> <small style="opacity:0.75;">· ${item.sub}</small>`;
-        badge.addEventListener('click', (e) => {
-          e.stopPropagation();
-          openTokenModal(item.token);
-        });
-        badgesRow.appendChild(badge);
-      });
-
-      lineBody.appendChild(badgesRow);
     }
 
     lineItem.appendChild(lineBody);
@@ -604,22 +618,25 @@ function openTokenModal(token) {
     }
   }
 
-  // Context Lyric Quote
-  if (modalContextQuoteText) modalContextQuoteText.innerHTML = highlightTokenInLine(token.lineText || '', token.raw);
-  if (modalContextQuoteMeta) modalContextQuoteMeta.textContent = `Line ${(token.lineIndex || 0) + 1} · ${token.songTitle || ''} (${token.songArtist || ''})`;
-
-  // Other occurrences of the word in the same song (excluding the exact current lyric line)
+  // Other occurrences of the word in the same song (excluding the exact current lyric line and duplicate copies)
   if (modalSongOccurrencesBox && modalSongOccurrencesList) {
     const songToSearch = currentAnnotatedSong || (currentSongIndex >= 0 ? allSongs[currentSongIndex] : null);
     const targetWord = (token.word || token.raw || '').toLowerCase();
     const targetRaw = (token.raw || '').toLowerCase();
     const currentLineIdx = token.lineIndex;
+    const currentCleanLine = (token.lineText || '').trim().toLowerCase();
 
     const occurrences = [];
+    const seenLineTexts = new Set();
+    if (currentCleanLine) seenLineTexts.add(currentCleanLine); // Never show duplicates of the current line
+
     if (songToSearch && Array.isArray(songToSearch.lines)) {
       songToSearch.lines.forEach((lineObj, idx) => {
-        if (idx === currentLineIdx) return; // Skip the current lyric line
-        const lineText = lineObj.text || '';
+        if (idx === currentLineIdx) return; // Skip current lyric line
+        const lineText = (lineObj.text || '').trim();
+        const cleanText = lineText.toLowerCase();
+        if (!lineText || seenLineTexts.has(cleanText)) return; // Deduplicate copies
+
         const lineTokens = lineObj.tokens || [];
         
         // Check if line contains this word
@@ -637,6 +654,7 @@ function openTokenModal(token) {
         }
 
         if (matched) {
+          seenLineTexts.add(cleanText);
           occurrences.push({
             lineIndex: idx,
             text: lineText,
@@ -1054,6 +1072,7 @@ async function handleRunTurbo(options = {}) {
 // ───────────────────────────────────────────────
 // Event Listeners
 // ───────────────────────────────────────────────
+if (backToLibraryBtn) backToLibraryBtn.addEventListener('click', () => openSongPicker());
 if (songSelectorBtn) songSelectorBtn.addEventListener('click', () => openSongPicker());
 if (topbarTurboBtn) topbarTurboBtn.addEventListener('click', () => openSongPicker());
 if (closeSongPickerBtn) closeSongPickerBtn.addEventListener('click', closeSongPicker);
