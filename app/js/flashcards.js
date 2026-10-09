@@ -5,6 +5,7 @@ import './state.js?v=20260825ak';
 import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=1';
 import './speech.js?v=20260825ak';
 import { goToRoute, routeCodeFor } from './routes.js?v=20260923cj';
+import { memoryTipTileHTML } from './memory-tips.js?v=1';
 import './side-dock.js?v=20260927pa';
 import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=20261005kb';
 import {
@@ -8273,6 +8274,8 @@ function renderCardWikipediaBadge(card) {
             <span class="ref-tile-label">Rarer uses</span>
         </button>`;
     }
+
+    backHTML += memoryTipTileHTML(card, typeof language !== 'undefined' ? language : '');
 
     // Granular sense/expression knowledge belongs in one card-wide overview,
     // not a persistent two-button strip under every meaning. The compact

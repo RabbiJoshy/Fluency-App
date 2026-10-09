@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T23:40:00+01:00",
+      "date": "2026-10-09 23:40 BST",
+      "agent": "Claude",
+      "summary": "Memory tip tile on the card back shows how a word's ending maps to English (rápidamente → rapidly)",
+      "detail": [
+        "New Memory tip tile beside Rarer uses; opens a small sheet naming the shift, e.g. -mente becomes -ly, -ción becomes -tion.",
+        "Spanish, Portuguese and French endings; a tip appears only when the card's own English gloss really wears the English ending, so false friends such as actualmente and chica get none.",
+        "Shown on any matching card, not only with Smart Skip off."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T23:20:00+01:00",
       "date": "2026-10-09 23:20 BST",
       "agent": "Codex",
@@ -361,18 +373,6 @@
       "detail": [
         "Profile labels, guidance, validation and playlist sign-in messages now say username.",
         "Existing usernames, saved profiles and learning progress are preserved."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T22:24:44+01:00",
-      "date": "2026-10-08 22:24 BST",
-      "agent": "Codex",
-      "summary": "Birthday is optional when choosing a learning profile",
-      "detail": [
-        "Leave day and month blank to look up profiles by name alone.",
-        "A supplied birthday narrows matching names; profiles without a birthday remain discoverable.",
-        "Partially entered or invalid birthdays still receive inline feedback."
       ],
       "commit": "pending"
     }
