@@ -392,6 +392,76 @@ function buildLineEnglishGloss(line) {
   return null;
 }
 
+/**
+ * Copies prompt to clipboard and opens Claude or ChatGPT web app
+ */
+async function handleAiLinePrompt(platform, lineText, songTitle, songArtist, triggerBtn) {
+  const cleanLine = (lineText || '').trim();
+  const artistInfo = songArtist ? ` by ${songArtist}` : '';
+  const trackInfo = songTitle ? ` from the song "${songTitle}"${artistInfo}` : (artistInfo ? ` by ${songArtist}` : '');
+
+  const promptText = `Please translate this Spanish lyric line into English, break down any slang, idioms, or cultural nuances, and tell me anything essential one needs to know about the artist or context behind it:\n\n"${cleanLine}"${trackInfo ? ` (${trackInfo})` : ''}`;
+
+  // Copy to clipboard
+  let copied = false;
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(promptText);
+      copied = true;
+    } else {
+      const textarea = document.createElement('textarea');
+      textarea.value = promptText;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      copied = document.execCommand('copy');
+      document.body.removeChild(textarea);
+    }
+  } catch (err) {
+    console.warn('Clipboard write failed:', err);
+  }
+
+  // Visual feedback on button
+  if (triggerBtn) {
+    triggerBtn.classList.add('copied');
+    setTimeout(() => triggerBtn.classList.remove('copied'), 1500);
+  }
+
+  showAiToast(copied ? `Prompt copied! Opening ${platform === 'claude' ? 'Claude' : 'ChatGPT'}…` : `Opening ${platform === 'claude' ? 'Claude' : 'ChatGPT'}…`);
+
+  // Target URLs
+  const encodedPrompt = encodeURIComponent(promptText);
+  let targetUrl = '';
+  if (platform === 'claude') {
+    targetUrl = `https://claude.ai/new?q=${encodedPrompt}`;
+  } else {
+    targetUrl = `https://chatgpt.com/?q=${encodedPrompt}`;
+  }
+
+  // Open in new tab/app window
+  window.open(targetUrl, '_blank', 'noopener,noreferrer');
+}
+
+let aiToastTimeout = null;
+function showAiToast(message) {
+  let toast = document.getElementById('aiPromptToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'aiPromptToast';
+    toast.className = 'ai-prompt-toast';
+    document.body.appendChild(toast);
+  }
+
+  toast.textContent = message;
+  toast.classList.add('visible');
+
+  if (aiToastTimeout) clearTimeout(aiToastTimeout);
+  aiToastTimeout = setTimeout(() => {
+    toast.classList.remove('visible');
+  }, 2400);
+}
+
 // ───────────────────────────────────────────────
 // Render Spotify-Style Lyrics View
 // ───────────────────────────────────────────────
@@ -427,6 +497,46 @@ function renderLyrics(song) {
         lineItem.appendChild(spacer);
       }
     }
+
+    // 1b. Line AI actions (Claude and ChatGPT quick ask buttons)
+    const aiActions = document.createElement('div');
+    aiActions.className = 'lyric-line-ai-actions';
+    aiActions.setAttribute('role', 'group');
+    aiActions.setAttribute('aria-label', 'Ask AI about this lyric line');
+
+    const claudeBtn = document.createElement('button');
+    claudeBtn.type = 'button';
+    claudeBtn.className = 'lyric-ai-btn lyric-ai-btn-claude';
+    claudeBtn.title = 'Ask Claude about this line';
+    claudeBtn.setAttribute('aria-label', 'Ask Claude about this line');
+    claudeBtn.innerHTML = `
+      <svg class="ai-icon" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.45 14.85l-1.09-3.26h-2.72l-1.09 3.26H6.8l3.6-9.7h1.2l3.6 9.7h-1.75zm-1.54-4.6l-.91-2.73-.91 2.73h1.82z"/>
+      </svg>
+    `;
+    claudeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      handleAiLinePrompt('claude', line.text, song.title, song.artist, claudeBtn);
+    });
+
+    const gptBtn = document.createElement('button');
+    gptBtn.type = 'button';
+    gptBtn.className = 'lyric-ai-btn lyric-ai-btn-gpt';
+    gptBtn.title = 'Ask ChatGPT about this line';
+    gptBtn.setAttribute('aria-label', 'Ask ChatGPT about this line');
+    gptBtn.innerHTML = `
+      <svg class="ai-icon" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true">
+        <path d="M22.28 10.42a5.75 5.75 0 0 0-.49-4.7 5.86 5.86 0 0 0-4.06-2.9 5.82 5.82 0 0 0-5.18 1.1A5.79 5.79 0 0 0 8.3 2.75a5.86 5.86 0 0 0-4.43 2.27 5.8 5.8 0 0 0-.96 4.98 5.78 5.78 0 0 0-2.48 4.09 5.85 5.85 0 0 0 1.25 4.86 5.82 5.82 0 0 0 5.18 2.78v-.03a5.75 5.75 0 0 0 4.25 1.17 5.86 5.86 0 0 0 4.43-2.27 5.78 5.78 0 0 0 3.44-.89 5.86 5.86 0 0 0 2.48-4.09 5.82 5.82 0 0 0 .82-5.28zm-8.8 10.36a4.4 4.4 0 0 1-3.23-.74 4.54 4.54 0 0 1 .49-.3l3.85-2.22a.7.7 0 0 0 .36-.61v-5.43l1.63.94v4.49a4.42 4.42 0 0 1-3.1 3.87zm-7.66-2.58a4.39 4.39 0 0 1-.68-3.24 4.5 4.5 0 0 1 .47.34l3.85 2.22a.7.7 0 0 0 .7 0l4.7-2.71v1.88l-3.89 2.25a4.43 4.43 0 0 1-5.15-.74zm-2.43-7.7a4.38 4.38 0 0 1 2.55-2.06v.58l.01 4.44a.7.7 0 0 0 .35.61l4.7 2.72-1.63.94-3.89-2.25a4.43 4.43 0 0 1-2.09-4.98zm14.65-1.4l-4.7-2.72 1.63-.94 3.89 2.25a4.43 4.43 0 0 1 2.08 4.98 4.39 4.39 0 0 1-2.55 2.06v-5.02a.7.7 0 0 0-.35-.61zm2.43 4.14a4.45 4.45 0 0 1-.48-.34l-3.85-2.22a.7.7 0 0 0-.7 0l-4.7 2.71v-1.88l3.89-2.25a4.43 4.43 0 0 1 5.15.74 4.39 4.39 0 0 1 .69 3.24zm-8.24-1.62l-2.05-1.18 2.05-1.18 2.05 1.18-2.05 1.18z"/>
+      </svg>
+    `;
+    gptBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      handleAiLinePrompt('chatgpt', line.text, song.title, song.artist, gptBtn);
+    });
+
+    aiActions.appendChild(claudeBtn);
+    aiActions.appendChild(gptBtn);
+    lineItem.appendChild(aiActions);
 
     // 2. Main Body Column (Target Spanish + English underneath perfectly aligned)
     const lineBody = document.createElement('div');
