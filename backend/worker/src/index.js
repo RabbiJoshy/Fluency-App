@@ -553,6 +553,127 @@ async function loadPlaylistLiveDeck(db, params) {
   });
 }
 
+/**
+ * Live Genius English translation lookup & scraper.
+ * Queries Genius internal search for the human English translation page,
+ * scrapes the lyric containers, and returns an array of translated lines.
+ */
+async function fetchGeniusTranslation(params) {
+  const title = String(params.title || '').trim();
+  const artist = String(params.artist || '').trim();
+  if (!title) return response(false, 'Missing required title');
+
+  const query = `${title} ${artist} English Translation`.trim();
+  const searchUrl = `https://genius.com/api/search/multi?q=${encodeURIComponent(query)}`;
+
+  let searchJson = null;
+  try {
+    const sResp = await fetch(searchUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      }
+    });
+    if (sResp.ok) {
+      searchJson = await sResp.json();
+    }
+  } catch (err) {
+    return response(false, `Genius search failed: ${err?.message || err}`);
+  }
+
+  let translationPath = null;
+  let matchedTitle = '';
+  const searchSections = searchJson?.response?.sections || [];
+  for (const sec of searchSections) {
+    for (const hit of sec?.hits || []) {
+      const res = hit?.result;
+      if (!res?.path) continue;
+      const t = (res.title || '').toLowerCase();
+      const ft = (res.full_title || '').toLowerCase();
+      if (t.includes('english translation') || ft.includes('english translation')) {
+        translationPath = res.path;
+        matchedTitle = res.full_title || res.title;
+        break;
+      }
+    }
+    if (translationPath) break;
+  }
+
+  if (!translationPath) {
+    return response(true, 'No Genius translation found', { found: false, lines: [] });
+  }
+
+  const pageUrl = `https://genius.com${translationPath}`;
+  let html = '';
+  try {
+    const pResp = await fetch(pageUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      }
+    });
+    if (!pResp.ok) {
+      return response(false, `Failed to load Genius page: HTTP ${pResp.status}`);
+    }
+    html = await pResp.text();
+  } catch (err) {
+    return response(false, `Genius page fetch failed: ${err?.message || err}`);
+  }
+
+  // Extract text from data-lyrics-container="true"
+  const containerMatches = [...html.matchAll(/<div[^>]*data-lyrics-container="true"[^>]*>([\s\S]*?)<\/div>/g)];
+  if (!containerMatches.length) {
+    return response(true, 'Genius page had no lyrics containers', { found: false, lines: [], sections: [] });
+  }
+
+  const lines = [];
+  const sections = [];
+  let currentSection = { header: '', lines: [] };
+
+  for (const m of containerMatches) {
+    let chunk = m[1] || '';
+    chunk = chunk.replace(/<br\s*\/?>/gi, '\n');
+    chunk = chunk.replace(/<[^>]+>/g, '');
+    // Decode HTML entities
+    chunk = chunk
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&#x27;/g, "'")
+      .replace(/&rsquo;/g, "’")
+      .replace(/&lsquo;/g, "‘")
+      .replace(/&rdquo;/g, "”")
+      .replace(/&ldquo;/g, "“")
+      .replace(/&nbsp;/g, ' ');
+
+    for (let l of chunk.split('\n')) {
+      l = l.trim();
+      if (!l) continue;
+      if (l.includes('Contributors') && l.includes('Translations')) continue;
+      if (l.startsWith('[') && l.endsWith(']')) {
+        if (currentSection.lines.length > 0) {
+          sections.push(currentSection);
+        }
+        currentSection = { header: l.slice(1, -1).trim(), lines: [] };
+        continue;
+      }
+      lines.push(l);
+      currentSection.lines.push(l);
+    }
+  }
+  if (currentSection.lines.length > 0) {
+    sections.push(currentSection);
+  }
+
+  return response(true, 'Genius translation retrieved', {
+    found: lines.length > 0,
+    translationTitle: matchedTitle,
+    url: pageUrl,
+    lines,
+    sections
+  });
+}
+
 /** Legacy positional dump, kept so sync_sheets.py / push_sheets.py still work. */
 const PROGRESS_HEADERS = [
   'User', 'ItemId', 'ItemType', 'Mode', 'Source', 'ParentWordId', 'Label',
@@ -651,6 +772,7 @@ export default {
         case 'savePlaylistLiveTracks': return await savePlaylistLiveTracks(db, params);
         case 'savePlaylistLiveDeck':   return await savePlaylistLiveDeck(db, params);
         case 'loadPlaylistLiveDeck':   return await loadPlaylistLiveDeck(db, params);
+        case 'getGeniusTranslation':   return await fetchGeniusTranslation(params);
         case 'capabilities':
           return response(true, 'Backend capabilities', {
             schemaVersion: PROGRESS_SCHEMA_VERSION,
