@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T13:54:00+01:00",
+      "date": "2026-10-09 13:54 BST",
+      "agent": "Antigravity",
+      "summary": "Song lyrics view: Spotify-style minimalist layout with target lyrics, English subtitles underneath, mobile bottom-sheet, and Fluency design integration",
+      "detail": [
+        "Replaced dense audit layout with Spotify-style minimalist lyrics flow: prominent target text in Space Grotesk with clean English gloss directly underneath.",
+        "Unified design system with Fluency's industrial dark palette (--bg-primary, --bg-card, --border-color, --font-emphasis).",
+        "Added mobile-first responsive bottom-sheet modal with drag handle and safe-area padding for one-handed inspection on phones.",
+        "Added topbar subtitle toggle pill ('EN line') to switch English line translation visibility."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T13:48:00+01:00",
       "date": "2026-10-09 13:48 BST",
       "agent": "Antigravity",
