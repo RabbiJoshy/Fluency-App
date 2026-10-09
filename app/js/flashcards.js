@@ -1818,13 +1818,13 @@ function initializeApp() {
         // little here, and saved words lives in Settings → Words & data.
         const entries = [
             { label: 'Main menu', iconHTML: icon('<path d="M9 7H5v12h12v-4"></path><path d="m9 11-4-4 4-4"></path><path d="M5 7h9a5 5 0 0 1 5 5"></path>'), onSelect: () => goBackToSetup() },
+            { label: 'Study settings', iconHTML: icon('<path d="M4 6h10"></path><path d="M18 6h2"></path><circle cx="16" cy="6" r="2"></circle><path d="M4 12h2"></path><path d="M10 12h10"></path><circle cx="8" cy="12" r="2"></circle><path d="M4 18h8"></path><path d="M16 18h4"></path><circle cx="14" cy="18" r="2"></circle>'), onSelect: () => showSettingsModalWithTab('study', { singleTab: true, onBack: () => showStudyMenu() }) },
             { ...directionRow(), keepOpen: true, tail: '', refresh: directionRow, onSelect: () => flipDirection() },
             { ...speechRow(), keepOpen: true, tail: '', refresh: speechRow, onSelect: () => toggleAutoSpeak() },
             { ...darkModeRow(), keepOpen: true, tail: '', refresh: darkModeRow, onSelect: () => window.applyThemePreference?.(
                 document.documentElement.dataset.theme === 'light' ? 'dark' : 'light', { persist: true }) },
             { ...textSizeRow(), keepOpen: true, tail: '', refresh: textSizeRow, onSelect: () => window.applyTextSize?.(
                 document.documentElement.dataset.textSize === 'large' ? 'normal' : 'large', { persist: true }) },
-            { label: 'Study settings', iconHTML: icon('<path d="M4 6h10"></path><path d="M18 6h2"></path><circle cx="16" cy="6" r="2"></circle><path d="M4 12h2"></path><path d="M10 12h10"></path><circle cx="8" cy="12" r="2"></circle><path d="M4 18h8"></path><path d="M16 18h4"></path><circle cx="14" cy="18" r="2"></circle>'), onSelect: () => showSettingsModalWithTab('study', { singleTab: true, onBack: () => showStudyMenu() }) }
         ];
         // Card data is a product-level audit surface: it stays available when
         // optional model stamps are absent and does not require an owner login.
