@@ -2,6 +2,7 @@ import './state.js?v=20260825ak';
 
 const ESTIMATION_QUESTION_LIMIT = 30;
 const ESTIMATION_BAND_TARGET = 10;
+const ESTIMATION_SET_DETAIL_MAX_LEVEL = 10;
 const ESTIMATION_CONFIDENCE_Z = 1.645; // Approximate 90% interval.
 const ESTIMATION_PRIOR = 0.5;          // Jeffreys prior for adaptive selection.
 const ESTIMATION_PICK_ATTEMPTS = 48;   // Candidates tried per question before giving up.
@@ -314,9 +315,17 @@ function buildEstimationBands(words) {
         Math.floor(words.length / 40) || 1
     ));
 
+    // Narrower early bands give the first few sets meaningful resolution,
+    // while still sampling the entire pool within the same 30-question check.
+    const edges = [0];
+    for (let index = 0; index < bandCount; index++) {
+        const end = bandCount === 1 || index === bandCount - 1 ? words.length
+            : Math.round(40 * Math.pow(words.length / 40, index / (bandCount - 1)));
+        edges.push(Math.min(words.length, Math.max(edges[index] + 1, end)));
+    }
     return Array.from({ length: bandCount }, (_, index) => {
-        const start = Math.floor(index * words.length / bandCount);
-        const end = Math.floor((index + 1) * words.length / bandCount);
+        const start = edges[index];
+        const end = edges[index + 1];
         return {
             index,
             start,
@@ -861,22 +870,33 @@ function interpolateRecognition(anchors, position) {
     return anchors[anchors.length - 1].probability;
 }
 
+// Only the early levels need set detail. Beyond the cutoff, retain the
+// whole-level boundary and avoid implying finer placement precision.
+function buildEstimationPlacementRegions(levels) {
+    return levels.flatMap(level => {
+        const sets = level.number <= ESTIMATION_SET_DETAIL_MAX_LEVEL
+            ? window.buildStableSetRanges?.(level.startRank, level.endRank, level.rankBasis) || [] : [];
+        return sets.length > 1 ? sets.map(set => ({ ...level, ...set })) : [{ ...level, setNumber: null }];
+    });
+}
+
 // Every eligible group counts once within a level, regardless of how many
 // inflections it has. Split siblings remain distinct groups. The recognition
 // curve is interpolated between sampled bands so a sparse sample cannot turn
 // a single answer into a sharp placement cliff.
 function calculateRecognitionPlacement(items, bands, levels, baseline) {
+    const regions = buildEstimationPlacementRegions(levels);
     const sampled = bands.filter(band => (band.sampleSize ?? band.size) > 0);
     const fitted = fitMonotonicProbabilities(sampled.map(band =>
         band.answers ? band.known / band.answers : 0.5), sampled.map(band => Math.max(1, band.answers)));
     const anchors = sampled.map((band, index) => ({
         position: (band.start + band.end - 1) / 2, probability: fitted[index]
     }));
-    const perLevel = levels.map(() => new Map());
+    const perLevel = regions.map(() => new Map());
     items.forEach((item, index) => {
         const probability = item.estimationAssumedKnown ? 1 : interpolateRecognition(anchors, index);
         item.estimationMembers.forEach(member => {
-            const levelIndex = levels.findIndex(level => {
+            const levelIndex = regions.findIndex(level => {
                 const rank = level.rankBasis === 'stable' ? levelRankOf(member.source) : Number(member.source.rank);
                 return rank >= level.startRank && rank < level.endRank;
             });
@@ -896,7 +916,7 @@ function calculateRecognitionPlacement(items, bands, levels, baseline) {
         [...groups.values()].reduce((sum, group) => sum + group.total / group.weight, 0) / groups.size),
         occupied.map(({ groups }) => groups.size));
     const levelAnchors = occupied.map((row, index) => ({ position: row.index, probability: probabilities[index] }));
-    const profile = levels.map((level, index) => ({ ...level,
+    const profile = regions.map((level, index) => ({ ...level,
         probability: interpolateRecognition(levelAnchors, index), groups: perLevel[index].size }));
     const choices = [0.9, 0.8].map(target => {
         const index = profile.findIndex(level => level.probability + 1e-10 < target);
@@ -905,7 +925,7 @@ function calculateRecognitionPlacement(items, bands, levels, baseline) {
         const earlier = baseline.filter(source =>
             (level.rankBasis === 'stable' ? levelRankOf(source) : Number(source.rank)) < level.startRank);
         const sourceRank = earlier.reduce((rank, source) => Math.max(rank, Number(source.rank) || 0), 0);
-        return { target, levelNumber: level.number, sourceRank,
+        return { target, levelNumber: level.number, setNumber: level.setNumber, sourceRank,
             startRank: level.startRank, rankBasis: level.rankBasis, probability: level.probability };
     }).filter(Boolean);
     return { profile, choices: choices.filter((choice, index) =>
@@ -918,6 +938,10 @@ function calculateGroupEstimate(bands, maxLevel) {
         .map(band => ({ ...band, size: band.sampleSize ?? band.size }));
     const counts = calculateEstimationResult(sampled, maxLevel - assumed);
     return Object.fromEntries(Object.entries(counts).map(([key, value]) => [key, value + assumed]));
+}
+
+function estimationChoiceLocation(choice) {
+    return `Level ${choice.levelNumber}${choice.setNumber ? ` · Set ${choice.setNumber}` : ''}`;
 }
 
 function showEstimationResult() {
@@ -942,7 +966,7 @@ function showEstimationResult() {
     document.getElementById('estimationResult').style.display = 'block';
     const levelEl = document.getElementById('estimationResultLevel');
     levelEl.textContent = placement.choices.length > 1 ? 'Choose where to begin'
-        : (isSpeechMode() && first ? `Start at Level ${first.levelNumber}` : 'Your starting point');
+        : (isSpeechMode() && first ? `Start at ${estimationChoiceLocation(first)}` : 'Your starting point');
     const range = `${Math.round(counts.low).toLocaleString()}–${Math.round(counts.high).toLocaleString()}`;
     const shortCheck = estimationState.wordsTestedCount < ESTIMATION_QUESTION_LIMIT
         ? ` The check used ${estimationState.wordsTestedCount} groups.` : '';
@@ -951,7 +975,7 @@ function showEstimationResult() {
     const multiple = placement.choices.length > 1;
     document.getElementById('estimationPlacementOptions').innerHTML = placement.choices.map((choice, index) => {
         const percentage = Math.round(choice.probability * 100 / 5) * 5;
-        const title = isSpeechMode() ? `Start at Level ${choice.levelNumber}` : 'Use this starting point';
+        const title = isSpeechMode() ? `Start at ${estimationChoiceLocation(choice)}` : 'Use this starting point';
         const label = multiple ? (index === 0 ? 'Start earlier · More review' : 'Start further ahead · More new vocabulary') : 'Your suggested starting point';
         const detail = multiple ? (index === 0 ? 'More review, with fewer gaps left behind.' : 'More new vocabulary, with less review.') : 'A useful place to begin; you can change levels at any time.';
         return `<button type="button" class="estimation-placement-choice" onclick="useEstimatedLevel(${index})"><span class="estimation-choice-label">${label}</span><strong>${title}</strong><span>Around ${percentage}% of the vocabulary here is likely familiar. ${detail}</span></button>`;
@@ -991,7 +1015,7 @@ async function useEstimatedLevel(choiceIndex = 0) {
     await window.renderLevelSelector?.(selectedLanguage, { preferActionable: true });
     if (isSpeechMode()) {
         const targetRank = choice?.startRank ?? ((estimationState.estimatedLevelRank || level) + 1);
-        selectLevelForRank(targetRank);
+        await selectLevelForRank(targetRank, choice?.setNumber);
     }
 }
 
@@ -1003,10 +1027,18 @@ function retryEstimation() {
     startEstimation();
 }
 
-// Open the level containing a given rank; the level's own routing then lands
-// on its first set with unseen cards.
-function selectLevelForRank(rank) {
-    levelButtonForRank(rank)?.button.click();
+// Set selection must wait for the new level's dots, not accidentally click
+// the previous level's set controls while its replacement is loading.
+async function selectLevelForRank(rank, setNumber = null) {
+    const target = levelButtonForRank(rank);
+    if (!target) return false;
+    target.button.click();
+    await target.button._rangeRenderPromise;
+    if (Number.isInteger(setNumber) && setNumber > 0) {
+        const dot = document.querySelector(`#rangeSelector .study-set-dot[data-index="${setNumber - 1}"]`);
+        if (dot && !dot.disabled) dot.click();
+    }
+    return true;
 }
 
 // Handle keyboard interaction when estimation modal is open
@@ -1086,5 +1118,6 @@ export {
     fitMonotonicProbabilities,
     calculateEstimationResult,
     calculateRecognitionPlacement,
+    buildEstimationPlacementRegions,
     calculateGroupEstimate
 };
