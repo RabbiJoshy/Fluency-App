@@ -1,28 +1,28 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=fd9890e0';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=fd9890e0';
-import './speech.js?v=fd9890e0';
-import { goToRoute, routeCodeFor } from './routes.js?v=fd9890e0';
-import './side-dock.js?v=fd9890e0';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=fd9890e0';
+import './state.js?v=45c871c3';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=45c871c3';
+import './speech.js?v=45c871c3';
+import { goToRoute, routeCodeFor } from './routes.js?v=45c871c3';
+import './side-dock.js?v=45c871c3';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=45c871c3';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=fd9890e0';
+} from './example-personalisation.js?v=45c871c3';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=fd9890e0';
+} from './spanishdict-usage.js?v=45c871c3';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=fd9890e0';
+} from './reverse-cues.js?v=45c871c3';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -55,7 +55,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=fd9890e0';
+} from './card-metadata-pills.js?v=45c871c3';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -1818,13 +1818,13 @@ function initializeApp() {
         // little here, and saved words lives in Settings → Words & data.
         const entries = [
             { label: 'Main menu', iconHTML: icon('<path d="M9 7H5v12h12v-4"></path><path d="m9 11-4-4 4-4"></path><path d="M5 7h9a5 5 0 0 1 5 5"></path>'), onSelect: () => goBackToSetup() },
+            { label: 'Study settings', iconHTML: icon('<path d="M4 6h10"></path><path d="M18 6h2"></path><circle cx="16" cy="6" r="2"></circle><path d="M4 12h2"></path><path d="M10 12h10"></path><circle cx="8" cy="12" r="2"></circle><path d="M4 18h8"></path><path d="M16 18h4"></path><circle cx="14" cy="18" r="2"></circle>'), onSelect: () => showSettingsModalWithTab('study', { singleTab: true, onBack: () => showStudyMenu() }) },
             { ...directionRow(), keepOpen: true, tail: '', refresh: directionRow, onSelect: () => flipDirection() },
             { ...speechRow(), keepOpen: true, tail: '', refresh: speechRow, onSelect: () => toggleAutoSpeak() },
             { ...darkModeRow(), keepOpen: true, tail: '', refresh: darkModeRow, onSelect: () => window.applyThemePreference?.(
                 document.documentElement.dataset.theme === 'light' ? 'dark' : 'light', { persist: true }) },
             { ...textSizeRow(), keepOpen: true, tail: '', refresh: textSizeRow, onSelect: () => window.applyTextSize?.(
                 document.documentElement.dataset.textSize === 'large' ? 'normal' : 'large', { persist: true }) },
-            { label: 'Study settings', iconHTML: icon('<path d="M4 6h10"></path><path d="M18 6h2"></path><circle cx="16" cy="6" r="2"></circle><path d="M4 12h2"></path><path d="M10 12h10"></path><circle cx="8" cy="12" r="2"></circle><path d="M4 18h8"></path><path d="M16 18h4"></path><circle cx="14" cy="18" r="2"></circle>'), onSelect: () => showSettingsModalWithTab('study', { singleTab: true, onBack: () => showStudyMenu() }) }
         ];
         // Card data is a product-level audit surface: it stays available when
         // optional model stamps are absent and does not require an owner login.
@@ -10363,8 +10363,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'fd9890e0';
-const MODALS_ASSET_VERSION = 'fd9890e0';
+const ASSET_VERSION = '45c871c3';
+const MODALS_ASSET_VERSION = '45c871c3';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

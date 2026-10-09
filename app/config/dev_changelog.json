@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T14:40:54+01:00",
+      "date": "2026-10-09 14:40 BST",
+      "agent": "Codex",
+      "summary": "Clearer return-to-study prompt, readable settings, and easier main-menu access.",
+      "detail": [
+        "Centre the return prompt on phones and desktops, show the username and last card, and simplify the saved-set summary.",
+        "Keep last-card restoration and let the loading spinner paint before rebuilding the saved deck.",
+        "Use larger settings text and high-contrast neutral selections in dark and light themes.",
+        "Replace study gear icons with three dots and put Main menu and Study settings first."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T14:26:02+01:00",
       "date": "2026-10-09 14:26 BST",
       "agent": "Codex",

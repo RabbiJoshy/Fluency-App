@@ -1,11 +1,11 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=fd9890e0';
-import { validateVocabularyIndex } from './data-contracts.js?v=fd9890e0';
-import { formatRoute } from './routes.js?v=fd9890e0';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=fd9890e0';
-import { releaseUrl } from './release-host.js?v=fd9890e0';
+import './state.js?v=45c871c3';
+import { validateVocabularyIndex } from './data-contracts.js?v=45c871c3';
+import { formatRoute } from './routes.js?v=45c871c3';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=45c871c3';
+import { releaseUrl } from './release-host.js?v=45c871c3';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -203,28 +203,33 @@ function renderResumeLastSetCard() {
     card.setAttribute('role', 'dialog');
     card.setAttribute('aria-modal', 'true');
     card.setAttribute('aria-labelledby', 'resumeEntryTitle');
-    const source = snapshot.mode === 'lyrics' ? 'Lyrics' : 'Speech';
     const level = snapshot.levelNumber ? `Level ${snapshot.levelNumber}` : 'Saved level';
     const set = snapshot.setNumber ? `Set ${snapshot.setNumber}` : 'Saved set';
     const track = snapshot.studyMode === 'review' ? 'Practice' : 'Learn new';
-    const forms = snapshot.useLemmaMode ? 'Merged lemmas' : 'Forms';
-    const cognates = snapshot.excludeCognates ? 'Cognates excluded' : 'Cognates included';
     const title = snapshot.mode === 'lyrics'
         ? `${snapshot.artistName || 'Lyrics'}${snapshot.artistVocabularyScope === 'extra' ? ' Extra' : ''}`
         : `${snapshot.languageName || snapshot.language} speech`;
     card.innerHTML = `
         <div class="modal-content resume-entry-content">
-            <span class="resume-set-eyebrow">Welcome back</span>
-            <h3 id="resumeEntryTitle">Continue where you stopped?</h3>
-            <strong>${title}</strong>
-            <p>${source} · ${level} · ${set} · ${track}</p>
-            <small>${forms} · ${cognates} · last card: ${snapshot.currentWord || 'saved card'}</small>
+            <span class="resume-set-eyebrow" id="resumeEntryGreeting"></span>
+            <h3 id="resumeEntryTitle">Pick up where you left off</h3>
+            <div class="resume-entry-summary">
+                <strong id="resumeEntryDeck"></strong>
+                <p id="resumeEntrySet"></p>
+                <p class="resume-entry-position">Your last card: <strong id="resumeEntryWord"></strong></p>
+            </div>
             <div class="resume-entry-actions">
-                <button type="button" class="resume-entry-secondary" id="dismissResumeLastSetBtn">Choose a new set</button>
-                <button type="button" class="resume-entry-primary" id="resumeLastSetBtn">Continue set</button>
+                <button type="button" class="resume-entry-primary" id="resumeLastSetBtn">Continue studying</button>
+                <button type="button" class="resume-entry-secondary" id="dismissResumeLastSetBtn">Main menu</button>
             </div>
         </div>`;
+    card.querySelector('#resumeEntryGreeting').textContent = currentUser && !currentUser.isGuest
+        ? `Welcome back, ${currentUser.username || currentUser.initials || 'learner'}` : 'Welcome back';
+    card.querySelector('#resumeEntryDeck').textContent = title;
+    card.querySelector('#resumeEntrySet').textContent = `${level} · ${set} · ${track}`;
+    card.querySelector('#resumeEntryWord').textContent = snapshot.currentWord || 'Saved card';
     document.body.appendChild(card);
+    document.getElementById('resumeLastSetBtn')?.focus({ preventScroll: true });
     const markSeenAndClose = () => {
         try { sessionStorage.setItem('fluency_resume_prompt_seen_v1', snapshot.savedAt); } catch (_) {}
         card.remove();
@@ -236,6 +241,9 @@ function renderResumeLastSetCard() {
     document.getElementById('dismissResumeLastSetBtn')?.addEventListener('click', markSeenAndClose);
     card.addEventListener('click', event => {
         if (event.target === card) markSeenAndClose();
+    });
+    card.addEventListener('keydown', event => {
+        if (event.key === 'Escape') markSeenAndClose();
     });
 }
 
@@ -352,6 +360,8 @@ async function resumeLastStudySession() {
     window.showAppLoading?.('Continuing Your Set', 'Returning to the card where you stopped…', true);
     try { sessionStorage.setItem('fluency_resume_prompt_seen_v1', snapshot.savedAt); } catch (_) {}
     document.getElementById('resumeLastSetCard')?.remove();
+    // Let the spinner paint before rebuilding a cached deck on the main thread.
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     const currentMode = activeArtist ? 'lyrics' : 'speech';
     const currentArtist = window._urlArtistSlug || null;
     if (snapshot.mode !== currentMode || (snapshot.mode === 'lyrics' && snapshot.artistSlug !== currentArtist)) {
