@@ -150,11 +150,11 @@ function buildEstimationPool(vocabulary, frequencyData = null, { includeAssumed 
         const frequency = estimationSurfaceFrequency(source, frequencyData);
         if (pair) {
             const tuples = window.detectSplitCardTuples(source, selectedLanguage);
-            const weights = [tuples.tuple1, tuples.tuple2].map(tuple => tuple.meanings
+            const weights = (tuples.tuples || [tuples.tuple1, tuples.tuple2]).map(tuple => tuple.meanings
                 .reduce((sum, meaning) => sum + assignedSenseWeight(source, meaning), 0));
             const total = weights.reduce((sum, value) => sum + value, 0);
-            // Sense-count heuristics decide whether the deck splits, but cannot
-            // allocate corpus frequency. Missing evidence leaves it untested.
+            // Allocate corpus frequency using assigned usage on each companion.
+            // Missing evidence leaves it untested.
             if (total <= 0) continue;
             pair.forEach((card, index) => {
                 const share = weights[index] / total;

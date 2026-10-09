@@ -2206,9 +2206,11 @@ function initializeApp() {
         const nextRange = stats.nextRange;
         const nextRankBasis = stats.nextRankBasis || stats.rangeBasis || 'stable';
         const nextSetNumber = stats.nextSetNumber;
-        const levelSetCount = stats.levelSetCount;
-        const loadingTitle = action === 'next-set' && nextSetNumber
-            ? `Loading Set ${nextSetNumber}`
+        const nextRangeLabel = nextRange
+            ? `${nextRange.split('-')[0]}–${parseInt(nextRange.split('-')[1]) - 1}`
+            : '';
+        const loadingTitle = action === 'next-set' && nextRangeLabel
+            ? `Loading ${nextRangeLabel}`
             : 'Loading the Next Level';
         hideDeckCompleteModal();
         if (action === 'next-daily-review') {
@@ -2875,7 +2877,7 @@ function handleSwipeAction(result, { gesture = false } = {}) {
     }, 300);
 }
 
-// Position labels for the set's cards: a split word's two cards share one
+// Position labels for the set's cards: a split word's companions share one
 // number with A and B (7A, 7B), so the count is of words, not cards.
 function deckCardLabels(count = flashcards.length) {
     let wordCount = 0;
@@ -2884,7 +2886,7 @@ function deckCardLabels(count = flashcards.length) {
         const split = flashcards[i]?.splitInfo;
         if (split) {
             if (split.index === 1) wordCount++;
-            const letter = split.index === 1 ? 'A' : (split.index === 2 ? 'B' : String(split.index));
+            const letter = split.index <= 26 ? String.fromCharCode(64 + split.index) : String(split.index);
             labels.push(`${wordCount}${letter}`);
         } else {
             wordCount++;
@@ -2894,9 +2896,8 @@ function deckCardLabels(count = flashcards.length) {
     return { labels, wordCount };
 }
 
-// A split word opened on its own (search, word link) shows Flashcard 1 of 2
-// first (splitAwareTempCard); moving on brings up 2 of 2 in the same slot
-// before the way back. The return button still leaves at once.
+// A split word opened on its own (search, word link) shows each companion
+// in the same slot before the way back. The return button still leaves at once.
 function stepToSplitSibling() {
     const next = flashcards[currentIndex]?._splitNext;
     if (!next || cardNavStack.length === 0) return false;
@@ -6278,17 +6279,12 @@ function renderCardWikipediaBadge(card) {
             const isSplitCard = Boolean(card.splitInfo);
             if (isSplitCard) {
                 const s = card.splitInfo;
-                // Card 1 is always tuple 1; Card 2 is always tuple 2.
-                // The order of the pills is strictly [Card 1 Reading, Card 2 Reading].
-                const card1Pair = {
-                    lemma: s.index === 1 ? s.headword : s.siblingHeadword,
-                    pos: s.index === 1 ? s.pos : s.siblingPos
-                };
-                const card2Pair = {
-                    lemma: s.index === 2 ? s.headword : s.siblingHeadword,
-                    pos: s.index === 2 ? s.pos : s.siblingPos
-                };
-
+                const readings = s.readings || [
+                    { headword: s.index === 1 ? s.headword : s.siblingHeadword,
+                        pos: s.index === 1 ? s.pos : s.siblingPos },
+                    { headword: s.index === 2 ? s.headword : s.siblingHeadword,
+                        pos: s.index === 2 ? s.pos : s.siblingPos }
+                ];
                 const renderSplitPill = (pair, cardNum, isActive) => {
                     const posUnit = renderFrontPosUnit(pair.pos, isVerbPos(pair.pos));
                     const statusClass = isActive ? 'is-active-split' : 'is-companion-split';
@@ -6303,24 +6299,26 @@ function renderCardWikipediaBadge(card) {
                     // that card, and the dimmed "Card 2" says another is coming.
                     // The active one opens the explanation.
                     const countHTML = isActive
-                        ? `<button type="button" class="split-pill-count" aria-expanded="false" aria-label="Card ${cardNum} of ${s.total}: why two cards?" onclick="toggleSplitCardTip(event)">Card ${cardNum} of ${s.total}</button>`
+                        ? `<button type="button" class="split-pill-count" aria-expanded="false" aria-label="Card ${cardNum} of ${s.total}: why separate cards?" onclick="toggleSplitCardTip(event)">Card ${cardNum} of ${s.total}</button>`
                         : `<span class="split-pill-count">Card ${cardNum}</span>`;
                     return `<span class="front-lemma-pair ${statusClass}${posOnlyClass}">${posUnit}${lemmaHTML}${countHTML}</span>`;
                 };
 
-                const splitPairsHTML = [
-                    renderSplitPill(card1Pair, 1, s.index === 1),
-                    renderSplitPill(card2Pair, 2, s.index === 2)
-                ].join('');
+                const splitPairsHTML = readings.map((reading, index) =>
+                    renderSplitPill({ lemma: reading.headword, pos: reading.pos }, index + 1,
+                        s.index === index + 1)).join('');
 
                 const noteRgb = getPosAccentRgb(s.pos || card.partOfSpeech);
                 frontPOSEl.style.setProperty('--split-accent', noteRgb);
                 const splitNoteHTML = '<div class="split-card-note is-tip-only">'
-                    + '<span class="split-card-tip" role="tooltip" hidden>This word has two common, unrelated uses, so it gets a flashcard for each. '
-                    + 'Learning them separately keeps one meaning from crowding out the other. '
-                    + 'You see both, one after the other.</span></div>';
+                    + '<span class="split-card-tip" role="tooltip" hidden>'
+                    + (s.kind === 'reflexive'
+                        ? 'This verb has ordinary and pronominal uses, so each gets its own flashcard. '
+                        : 'This spelling represents different headwords, so each main reading gets its own flashcard. ')
+                    + 'Learning them separately keeps one reading from crowding out another. '
+                    + 'You see the cards one after the other.</span></div>';
 
-                frontPOSEl.classList.add('is-lemma-map', 'pos-count-2', 'is-split-deck-map');
+                frontPOSEl.classList.add('is-lemma-map', `pos-count-${Math.min(readings.length, 4)}`, 'is-split-deck-map');
                 frontPOSEl.innerHTML = splitPairsHTML + splitNoteHTML;
                 // Side by side, the note runs under both pills; when they wrap
                 // onto two lines it moves to their right, level with the pair,

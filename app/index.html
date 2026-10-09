@@ -376,7 +376,7 @@
             <!-- Step 1: Language Selection (non-Bad-Bunny mode) -->
             <div id="step1" class="setup-step">
                 <div class="step-header step-header-with-help" id="step1Header">
-                    <span class="step-title" id="step1Title">Choose the language you’re learning</span>
+                    <span class="step-title" id="step1Title">Choose the Language You’re Learning</span>
                     <span id="selectedLanguageInline" class="selection-pill-inline" style="display: none;"></span>
                     <span id="step1PromptArrow" class="language-step-prompt-arrow" aria-hidden="true">›</span>
                 </div>
@@ -486,26 +486,26 @@
             <div id="step2" class="setup-step" style="display: none;">
                 <div class="step-header step-header-with-help">
                     <span class="step-number">2</span>
-                    <button type="button" class="step-title step-title-trigger" data-tooltip="step2Tooltip" aria-controls="step2Tooltip" title="About levels">Choose level <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
+                    <button type="button" class="step-title step-title-trigger" data-tooltip="step2Tooltip" aria-controls="step2Tooltip" title="About levels">Choose a Level <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
                     <div class="step-header-actions">
                         <span id="levelInfoLine" class="level-info-line" style="display: none;"></span>
                         <button type="button" id="levelModeToggle" class="level-mode-btn" style="display: none;" aria-hidden="true" tabindex="-1">CEFR</button>
                     </div>
                     <div id="step2Tooltip" class="step-info-tooltip setup-info-modal" role="dialog" aria-modal="true" aria-labelledby="levelHelpTitle"><div class="step-info-tooltip-inner">
                         <div class="info-sheet-header">
-                            <div><span class="info-sheet-eyebrow">Levels</span><h3 id="levelHelpTitle">Choose where to begin</h3></div>
+                            <div><span class="info-sheet-eyebrow">Levels</span><h3 id="levelHelpTitle">Choose Where to Begin</h3></div>
                             <button type="button" class="info-sheet-close" aria-label="Close level information">&#10005;</button>
                         </div>
-                        <p class="info-sheet-lead" id="step2LevelDescription">Levels arrange vocabulary from the most common daily words to less frequent ones.</p>
+                        <p class="info-sheet-lead" id="step2LevelDescription">Vocabulary is ordered by frequency, from daily essentials to less common words.</p>
                         <div class="info-sheet-points">
-                            <div><span>1</span><p><strong>Start anywhere.</strong> Begin at Level 1 for fundamentals, or jump ahead if you already know the basics.</p></div>
-                            <div><span>2</span><p><strong>Bite-sized sets.</strong> Each level is broken into small sets so you can make fast, steady progress without getting overwhelmed.</p></div>
-                            <div><span>3</span><p><strong>Smart Skip saves time.</strong> Related word forms share one flashcard, and obvious look-alikes are skipped, so you study fewer cards for the same coverage.</p></div>
+                            <div><span class="info-point-badge">1</span><p><strong>Start anywhere:</strong> Begin at Level 1 or jump ahead to words you don’t know yet.</p></div>
+                            <div><span class="info-point-badge">2</span><p><strong>Bite-sized sets:</strong> Each level is split into 25-card sets for steady progress.</p></div>
+                            <div><span class="info-point-badge">3</span><p><strong>Smart Skip:</strong> Related forms and obvious look-alikes are skipped to save time.</p></div>
                         </div>
                         <div class="level-estimate-modal-callout" id="step2LevelEstimateCallout">
                             <div class="level-estimate-modal-body">
-                                <strong>Not sure which level is right for you?</strong>
-                                <p>Take a quick adaptive check (up to 30 prompts) to estimate your vocabulary and find a useful starting level.</p>
+                                <strong>Not sure where to begin?</strong>
+                                <p>Take a quick adaptive check to estimate your vocabulary and find a useful starting level.</p>
                             </div>
                             <button type="button" class="level-estimate-modal-btn" id="openEstimationFromLevelHelpBtn">Estimate my level →</button>
                         </div>
@@ -517,7 +517,7 @@
                          without leaving the page, and everything left of it opens
                          the page with the details. A button cannot nest inside a
                          button, hence the container. The info icon, the same one
-                         beside "Choose level", says there is more behind the row;
+                         beside "Choose a Level", says there is more behind the row;
                          on wide screens a line of example words fills the middle. -->
                     <div id="setupOptions" class="setup-options" style="display: none;">
                         <div class="fast-track-hub-row">
@@ -545,39 +545,38 @@
             <div id="step4" class="setup-step" style="display: none;">
                 <div class="step-header step-header-with-help">
                     <span class="step-number" id="rangeStepNumber">3</span>
-                    <button type="button" class="step-title step-title-trigger" data-tooltip="step5Tooltip" aria-controls="step5Tooltip" title="About study sets">Choose a set <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
+                    <button type="button" class="step-title step-title-trigger" data-tooltip="step5Tooltip" aria-controls="step5Tooltip" title="About study sets">Choose a Set <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
                     <div id="step5Tooltip" class="step-info-tooltip setup-info-modal" role="dialog" aria-modal="true" aria-labelledby="setHelpTitle"><div class="step-info-tooltip-inner">
                         <div class="info-sheet-header">
-                            <div><span class="info-sheet-eyebrow">Study sets</span><h3 id="setHelpTitle">One finishable set at a time</h3></div>
+                            <div><span class="info-sheet-eyebrow">Study Sets</span><h3 id="setHelpTitle">Bite-Sized Study Sessions</h3></div>
                             <button type="button" class="info-sheet-close" aria-label="Close set information">&#10005;</button>
                         </div>
-                        <p class="info-sheet-lead" id="step5Description">Each level is split into short sets of up to 25 cards, each designed to take 5–10 minutes. This app highlights your next unfinished one.</p>
+                        <p class="info-sheet-lead" id="step5Description">Each level is split into 25-card sets taking 5–10 minutes. The next unfinished set is highlighted automatically.</p>
                         <div class="info-sheet-points">
-                            <div><span>New</span><p>Learn fresh words you haven't seen before, card by card.</p></div>
-                            <div><span>Practice</span><p>Tricky and scheduled cards come back when they need another attempt.</p></div>
-                            <div><span>Done</span><p>Finishing a set saves your progress and unlocks the next one.</p></div>
+                            <div><span class="info-point-badge is-new">New</span><p><strong>Learn new:</strong> Fresh words to master card by card.</p></div>
+                            <div><span class="info-point-badge is-practice">Rev</span><p><strong>Practice:</strong> Missed and scheduled cards return for review.</p></div>
+                            <div><span class="info-point-badge is-done">Done</span><p><strong>Done:</strong> Finishing a set unlocks the next card range.</p></div>
                         </div>
                     </div></div>
                 </div>
                 <div id="rangeSelector" class="range-selector"></div>
             </div>
 
-            <!-- Practice errors: same header format as Choose level / Choose a set.
+            <!-- Practice errors: same header format as Choose a Level / Choose a Set.
                  The header and its info sheet are static so setupTooltipHandlers
                  binds them; ui.js fills #reviewDeckBody. -->
             <div id="reviewDeckSection" class="setup-step review-deck-step" hidden>
                 <div class="step-header step-header-with-help">
-                    <button type="button" class="step-title step-title-trigger" id="reviewDeckTitle" data-tooltip="practiceTooltip" aria-controls="practiceTooltip" title="About practice">Practice errors <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
+                    <button type="button" class="step-title step-title-trigger" id="reviewDeckTitle" data-tooltip="practiceTooltip" aria-controls="practiceTooltip" title="About practice">Practice Errors <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
                     <div id="practiceTooltip" class="step-info-tooltip setup-info-modal" role="dialog" aria-modal="true" aria-labelledby="practiceHelpTitle"><div class="step-info-tooltip-inner">
                         <div class="info-sheet-header">
-                            <div><span class="info-sheet-eyebrow">Practice</span><h3 id="practiceHelpTitle">Practice errors</h3></div>
+                            <div><span class="info-sheet-eyebrow">Practice</span><h3 id="practiceHelpTitle">Practice Errors</h3></div>
                             <button type="button" class="info-sheet-close" aria-label="Close practice information">&#10005;</button>
                         </div>
-                        <p class="info-sheet-lead">Cards you've got wrong, or that are due for another look, collect here. Quick practice takes the first 20 in this order:</p>
+                        <p class="info-sheet-lead">Cards you missed or scheduled for review collect here. Quick Practice reviews top cards by priority:</p>
                         <div class="info-sheet-points">
-                            <div><span>1</span><p><strong>Never correct:</strong> words you've answered but never got right.</p></div>
-                            <div><span>2</span><p><strong>Needs attention:</strong> recent mistakes, and words that are long overdue another review.</p></div>
-                            <div><span>3</span><p><strong>Due now:</strong> words whose next scheduled review has arrived.</p></div>
+                            <div><span class="info-point-badge">1</span><p><strong>Mistakes:</strong> Words you recently missed or haven't mastered yet.</p></div>
+                            <div><span class="info-point-badge">2</span><p><strong>Due for review:</strong> Words scheduled for spaced repetition.</p></div>
                         </div>
                     </div></div>
                 </div>

@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T22:58:00+01:00",
+      "date": "2026-10-09 22:58 BST",
+      "agent": "Antigravity",
+      "summary": "Polish landing layout: prominent titles, level scrubber badge, target example words, card range nomenclature, centered modals",
+      "detail": [
+        "Header titles are enlarged and capitalized (Choose a Level, Choose a Set, Practice Errors).",
+        "Level picker features an illuminated focal badge on the active level, removes redundant header level label, and places speech coverage inline after target-language example words.",
+        "Retired 'Set 1, 2, ...' in favor of card ranges (e.g. 1–25) across selectors, buttons, loading screens, and completion modals.",
+        "Refactored setup tooltip modals to be concise, scannable, and cleanly centered across both mobile and desktop viewports."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T20:32:00+01:00",
       "date": "2026-10-09 20:32 BST",
       "agent": "Claude",

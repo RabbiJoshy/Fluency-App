@@ -208,12 +208,11 @@ function refresh() {
         // Wide screens only (CSS hides it on phones). Off, it names the
         // commonest look-alikes Smart Skip would set aside; on, the look-alikes
         // (cognates) it is setting aside. Empty, it takes no room.
-        // English, as the level box's examples are; the row's own ellipsis
-        // trims whatever the width cannot hold.
-        const english = item => globalThis.cognateEnglishWord?.(item) || item.word;
+        // Target language words (e.g. Spanish) as the level box examples are.
+        const targetWord = item => item?.word || '';
         const words = [...new Set((on
             ? (extras.cognates || []).map(entry => entry.item)
-            : lookAlikeCandidates()).slice(0, 12).map(english))];
+            : lookAlikeCandidates()).slice(0, 12).map(targetWord).filter(Boolean))];
         const shown = words.slice(0, 8).map(word => `<em>${escapeExample(word)}</em>`).join(', ');
         hubExamples.innerHTML = !shown ? ''
             : on ? `Skipping ${shown}${words.length > 8 ? ', …' : ''}`
