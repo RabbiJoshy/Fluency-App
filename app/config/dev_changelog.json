@@ -2,6 +2,22 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T16:09:00+01:00",
+      "date": "2026-10-09 16:09 BST",
+      "agent": "Claude",
+      "summary": "INFLECT pass 1: conjugated verb rows read as natural English (era → 'I was', parece → 'he/she seems')",
+      "detail": [
+        "Imperfect and past subjunctive are simple past, never progressive: era 'I/he/she was being' → 'I/he/she was', tenía 'was having' → 'had'.",
+        "A form that is both a statement and a command shows the statement: parece 'seem! / he/she seems' → 'he/she seems'. The command shows only when the example is one ('Let's go!' → let's go!).",
+        "When the example says I or he/she, the row uses that person: era + 'I was a very different person then.' → 'I was'.",
+        "English spelling fixed: meaned → meant, runing → running, planed → planned, lended → lent, hurted → hurt (full irregular table + consonant doubling).",
+        "Wiktionary glosses keep every clause and whole brackets: vi 'I saw (to be able to see' → 'I saw (to be able to see; not to be blind or blinded)'; faço 'I play' → 'I play; pretend to be'.",
+        "Measured on live v23 decks: command clutter 2,264 → 0 (es) and 2,169 → 0 (pt); progressive imperfects 760/705 → 0; misspellings and broken brackets → 0.",
+        "Not yet: -se verbs (siento under sentirse), agreeing participles (feita), clitic forms (dime) still show the infinitive — counted for pass 2."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T15:52:00+01:00",
       "date": "2026-10-09 15:52 BST",
       "agent": "Antigravity",
@@ -351,30 +367,6 @@
       "detail": [
         "Study shortcuts pause while signing in, so Enter submits Continue normally.",
         "Stopping on a phrases panel saves the parent word; older panel snapshots recover by word."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T19:02:22+01:00",
-      "date": "2026-10-08 19:02 BST",
-      "agent": "Codex",
-      "summary": "Spanish cognate mapping for Portuguese learners",
-      "detail": [
-        "Spanish is now available as a known language for Portuguese cognate filtering.",
-        "Maps each shown meaning through the Spanish dictionary and CogNet; 4,257 of 10,000 current Portuguese cards qualify at the initial 0.80 cutoff.",
-        "English mappings are preserved; false friends and cards with unmatched meanings remain in study."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T12:48:32+01:00",
-      "date": "2026-10-08 12:48 BST",
-      "agent": "Codex",
-      "summary": "Clearer main-page level and account controls",
-      "detail": [
-        "Level example words exclude phrases and multi-word expressions, with slightly brighter text.",
-        "Selected level is larger with less vertical padding.",
-        "Language and learner initials are larger; tutorial and settings icons are white."
       ],
       "commit": "pending"
     }

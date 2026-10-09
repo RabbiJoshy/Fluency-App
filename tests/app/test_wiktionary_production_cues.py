@@ -109,10 +109,10 @@ const verb = (headword, translation) => ({
 const cases = [
     [{ targetWord: 'hablo' }, verb('hablar', 'to speak'), tables, 'I speak'],
     [{ targetWord: 'habló' }, verb('hablar', 'to speak'), tables, 'he/she spoke'],
-    [{ targetWord: 'hablaba' }, verb('hablar', 'to speak'), tables, 'I/he/she was speaking'],
+    [{ targetWord: 'hablaba' }, verb('hablar', 'to speak'), tables, 'I/he/she spoke'],
     [{ targetWord: 'hablaré' }, verb('hablar', 'to speak'), tables, 'I will speak'],
     [{ targetWord: 'hablaría' }, verb('hablar', 'to speak'), tables, 'I/he/she would speak'],
-    [{ targetWord: 'habla' }, verb('hablar', 'to speak'), tables, 'he/she speaks / speak!'],
+    [{ targetWord: 'habla' }, verb('hablar', 'to speak'), tables, 'he/she speaks'],
     [{ targetWord: 'hablando' }, verb('hablar', 'to speak'), tables, 'speaking'],
     [{ targetWord: 'hablado' }, verb('hablar', 'to speak'), tables, 'spoken'],
     [{ targetWord: 'hablar' }, verb('hablar', 'to speak'), tables, null],
@@ -195,7 +195,7 @@ const cases = [
     [{ targetWord: 'es' }, verb('ser', 'to be', { context: 'used to talk about a characteristic' }), 'he/she is'],
     [{ targetWord: 'fue' }, verb('ser', 'to be', { context: 'used to express time' }), 'it was'],
     [{ targetWord: 'será' }, verb('ser', 'to be; indicates a point in time'), 'it will be'],
-    [{ targetWord: 'était' }, verb('être', 'to be; indicates a point in time'), 'it was being'],
+    [{ targetWord: 'était' }, verb('être', 'to be; indicates a point in time'), 'it was'],
     [{ targetWord: 'fait' }, verb('faire', 'to be', { context: 'weather' }), 'it is'],
     [{ targetWord: 'faz' }, verb('fazer', 'to be; to occur (said of a weather phenomenon)'), 'it is'],
     [{ targetWord: 'faz' }, verb('fazer', 'to pass (said of time)'), 'it passes'],
@@ -284,20 +284,22 @@ for (const [input, expected] of compressCases) {
 
 // 3. Dynamic 3sg resolution and factoring through englishProductionCue
 const cueCases = [
-    // 3sg present with imperative fallback: switches he vs she vs default
-    [{ targetWord: 'habla' }, verb('hablar', 'to speak'), { conjugationData: tables }, 'he/she speaks / speak!'],
-    [{ targetWord: 'habla' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'She speaks Spanish.' } }, 'she speaks / speak!'],
-    [{ targetWord: 'habla' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'He speaks Spanish.' } }, 'he speaks / speak!'],
-    // 1s/3s homophonous imperfect: factors into I/he/she, I/she, or I/he
-    [{ targetWord: 'hablaba' }, verb('hablar', 'to speak'), { conjugationData: tables }, 'I/he/she was speaking'],
-    [{ targetWord: 'hablaba' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'She was speaking Spanish.' } }, 'I/she was speaking'],
-    [{ targetWord: 'hablaba' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'He was speaking Spanish.' } }, 'I/he was speaking'],
+    // 3sg present: the command reading is dropped; he vs she follows the example
+    [{ targetWord: 'habla' }, verb('hablar', 'to speak'), { conjugationData: tables }, 'he/she speaks'],
+    [{ targetWord: 'habla' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'She speaks Spanish.' } }, 'she speaks'],
+    [{ targetWord: 'habla' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'He speaks Spanish.' } }, 'he speaks'],
+    // 1s/3s homophonous imperfect: the example's subject picks one person
+    [{ targetWord: 'hablaba' }, verb('hablar', 'to speak'), { conjugationData: tables }, 'I/he/she spoke'],
+    [{ targetWord: 'hablaba' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'She was speaking Spanish.' } }, 'she spoke'],
+    [{ targetWord: 'hablaba' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'He was speaking Spanish.' } }, 'he spoke'],
+    [{ targetWord: 'hablaba' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'I was speaking to him.' } }, 'I spoke'],
+    [{ targetWord: 'hablaba' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'He said I was speaking.' } }, 'I/he spoke'],
     // Card with card._activeExample set directly
-    [{ targetWord: 'hablaba', _activeExample: { english: 'She was speaking.' } }, verb('hablar', 'to speak'), { conjugationData: tables }, 'I/she was speaking'],
-    [{ targetWord: 'hablaba', _activeExample: { english: 'He was speaking.' } }, verb('hablar', 'to speak'), { conjugationData: tables }, 'I/he was speaking'],
+    [{ targetWord: 'hablaba', _activeExample: { english: 'She was speaking.' } }, verb('hablar', 'to speak'), { conjugationData: tables }, 'she spoke'],
+    [{ targetWord: 'hablaba', _activeExample: { english: 'He was speaking.' } }, verb('hablar', 'to speak'), { conjugationData: tables }, 'he spoke'],
     // Conditional
-    [{ targetWord: 'hablaría' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'She would speak to him.' } }, 'I/she would speak'],
-    [{ targetWord: 'hablaría' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'He would speak to her.' } }, 'I/he would speak'],
+    [{ targetWord: 'hablaría' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'She would speak to him.' } }, 'she would speak'],
+    [{ targetWord: 'hablaría' }, verb('hablar', 'to speak'), { conjugationData: tables, activeExample: { english: 'He would speak to her.' } }, 'he would speak'],
 ];
 
 const results = cueCases.map(([card, sense, options, expected]) => ({
@@ -305,6 +307,128 @@ const results = cueCases.map(([card, sense, options, expected]) => ({
     actual: englishProductionCue(card, sense, null, options),
 }));
 console.log(JSON.stringify(results));
+""" % json.dumps(REVERSE_CUES.as_uri())
+        result = subprocess.run(
+            [node, "--input-type=module", "-e", script],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        rows = json.loads(result.stdout)
+        for row in rows:
+            self.assertEqual(row["actual"], row["expected"], row)
+
+    def test_inflected_rows_read_as_natural_english(self) -> None:
+        """INFLECT: cases taken from the live es/pt v23 decks (old row in comments)."""
+        node = shutil.which("node")
+        if not node:
+            self.skipTest("node is required to execute reverse-cues.js")
+        script = r"""
+import { englishProductionCue } from %s;
+
+const tables = {
+    ser: { tenses: {
+        Presente: ['soy', 'eres', 'es', 'somos', 'sois', 'son'],
+        Imperfecto: ['era', 'eras', 'era', 'éramos', 'erais', 'eran'],
+        'Subj. Presente': ['sea', 'seas', 'sea', 'seamos', 'seáis', 'sean'],
+        'Subj. Imperfecto': ['fuera', 'fueras', 'fuera', 'fuéramos', 'fuerais', 'fueran'],
+        Imperativo: ['—', 'sé', 'sea', 'seamos', 'sed', 'sean'],
+    } },
+    tener: { tenses: {
+        Imperfecto: ['tenía', 'tenías', 'tenía', 'teníamos', 'teníais', 'tenían'],
+        'Subj. Imperfecto': ['tuviera', 'tuvieras', 'tuviera', 'tuviéramos', 'tuvierais', 'tuvieran'],
+    } },
+    parecer: { tenses: {
+        Presente: ['parezco', 'pareces', 'parece', 'parecemos', 'parecéis', 'parecen'],
+        Imperativo: ['—', 'parece', 'parezca', 'parezcamos', 'pareced', 'parezcan'],
+    } },
+    ir: { tenses: {
+        Presente: ['voy', 'vas', 'va', 'vamos', 'vais', 'van'],
+        Imperativo: ['—', 've', 'vaya', 'vamos', 'id', 'vayan'],
+    } },
+    esperar: { tenses: {
+        Presente: ['espero', 'esperas', 'espera', 'esperamos', 'esperáis', 'esperan'],
+        Imperativo: ['—', 'espera', 'espere', 'esperemos', 'esperad', 'esperen'],
+    } },
+    venir: { tenses: { Imperativo: ['—', 'ven', 'venga', 'vengamos', 'venid', 'vengan'] } },
+    hablar: { tenses: {
+        'Subj. Presente': ['hable', 'hables', 'hable', 'hablemos', 'habléis', 'hablen'],
+        'Imp. Negativo': ['—', 'no hables', 'no hable', 'no hablemos', 'no habléis', 'no hablen'],
+    } },
+    querer: { tenses: { Pretérito: ['quise', 'quisiste', 'quiso', 'quisimos', 'quisisteis', 'quisieron'] } },
+    correr: { gerund: 'corriendo', tenses: {} },
+    pensar: { past_participle: 'pensado', tenses: {} },
+    dejar: { tenses: { Pretérito: ['dejé', 'dejaste', 'dejó', 'dejamos', 'dejasteis', 'dejaron'] } },
+    golpear: { tenses: { Pretérito: ['golpeé', 'golpeaste', 'golpeó', 'golpeamos', 'golpeasteis', 'golpearon'] } },
+    valer: { tenses: { Imperfecto: ['valía', 'valías', 'valía', 'valíamos', 'valíais', 'valían'] } },
+    ver: { tenses: { Pretérito: ['vi', 'viste', 'viu', 'vimos', 'vistes', 'viram'] } },
+    pertencer: { tenses: {
+        Presente: ['pertenço', 'pertences', 'pertence', 'pertencemos', 'pertenceis', 'pertencem'],
+        Imperativo: ['—', 'pertence', 'pertença', 'pertençamos', 'pertencei', 'pertençam'],
+    } },
+    fazer: { tenses: { Presente: ['faço', 'fazes', 'faz', 'fazemos', 'fazeis', 'fazem'] } },
+    respeitar: { tenses: { Presente: ['respeito', 'respeitas', 'respeita', 'respeitamos', 'respeitais', 'respeitam'] } },
+    pegar: { tenses: { Presente: ['pego', 'pegas', 'pega', 'pegamos', 'pegais', 'pegam'] } },
+    tomar: { tenses: { 'Subj. Presente': ['tome', 'tomes', 'tome', 'tomemos', 'tomeis', 'tomem'] } },
+    'ser-pt': { tenses: { 'Subj. Futuro': ['for', 'fores', 'for', 'formos', 'fordes', 'forem'] } },
+    fumar: { gerund: 'fumando', tenses: {} },
+    explodir: { tenses: { Pretérito: ['explodi', 'explodiste', 'explodiu', 'explodimos', 'explodistes', 'explodiram'] } },
+};
+const verb = (headword, translation) => ({ pos: 'verb', translation, headword });
+const ex = english => ({ conjugationData: tables, activeExample: { english } });
+const plain = { conjugationData: tables };
+const cases = [
+    // imperfect is simple past (was: "I/he/she was being", "was having")
+    ['era', verb('ser', 'to be'), plain, 'I/he/she was'],
+    ['era', verb('ser', 'to be'), ex('I was a very different person then.'), 'I was'],
+    ['tenía', verb('tener', 'to have'), plain, 'I/he/she had'],
+    // past subjunctive is simple past; be is "were" (was: "I/he/she was being")
+    ['fuera', verb('ser', 'to be'), plain, 'I/he/she were'],
+    ['tuviera', verb('tener', 'to have'), plain, 'I/he/she had'],
+    // present subjunctive is plain present; the usted command is dropped (was: "be! / I am / he/she is")
+    ['sea', verb('ser', 'to be'), plain, 'I am / he/she is'],
+    // a statement wins over an identical command (was: "seem! / he/she seems")
+    ['parece', verb('parecer', 'to seem'), plain, 'he/she seems'],
+    ['parece', verb('parecer', 'to seem'), ex("It's not at all what it looks like, all right?"), 'he/she seems'],
+    ['vamos', verb('ir', 'to go'), plain, 'we go'],
+    // ...unless the example is a command
+    ['vamos', verb('ir', 'to go'), ex("Come on, let's go!"), "let's go!"],
+    ['espera', verb('esperar', 'to wait'), ex('Wait here, please.'), 'wait!'],
+    ['hables', verb('hablar', 'to speak'), ex("Don't speak to me like that."), "don't speak!"],
+    ['hables', verb('hablar', 'to speak'), plain, 'you speak'],
+    // a form that is only a command stays one
+    ['ven', verb('venir', 'to come'), plain, 'come!'],
+    // English spelling (was: "I meaned", "runing", "planed", "I lended")
+    ['quise', verb('querer', 'to mean'), plain, 'I meant'],
+    ['corriendo', verb('correr', 'to run'), plain, 'running'],
+    ['pensado', verb('pensar', 'to plan'), plain, 'planned'],
+    ['dejé', verb('dejar', 'to lend'), plain, 'I lent'],
+    ['golpeé', verb('golpear', 'to hit oneself'), plain, 'I hit myself'],
+    ['explodiu', verb('explodir', 'to cause/suffer an explosion'), plain, 'he/she caused/suffered an explosion'],
+    // brackets stay whole and are written once (was: "I saw (to be able to see")
+    ['vi', verb('ver', 'to see (to be able to see; not to be blind or blinded)'), plain,
+        'I saw (to be able to see; not to be blind or blinded)'],
+    ['pertence', verb('pertencer', 'to belong (to be property (of); to be owned (by))'), plain,
+        'he/she belongs (to be property (of); to be owned (by))'],
+    // every gloss is kept (was: "I play", "revere! / he/she reveres")
+    ['faço', verb('fazer', 'to play; to pretend to be'), plain, 'I play; pretend to be'],
+    ['respeita', verb('respeitar', 'to revere, venerate'), plain, 'he/she reveres, venerates'],
+    ['pega', verb('pegar', 'to start an engine, vehicle'), plain, 'he/she starts an engine, vehicle'],
+    ['fumando', verb('fumar', 'to smoke, to deliberately inhale smoke'), plain, 'smoking, deliberately inhaling smoke'],
+    // two readings show one clause each
+    ['tome', verb('tomar', 'to take; to experience, undergo (to put oneself into, to be subjected to)'), plain,
+        'I/he/she take(s)'],
+    // Portuguese future subjunctive reads as present (was: "I/he/she will be")
+    ['for', verb('ser-pt', 'to be'), plain, 'I am / he/she is'],
+    // no verb in front: no inflection rather than "I/he/she was noting care less"
+    ['valía', verb('valer', 'to not care less'), plain, null],
+];
+const out = cases.map(([surface, sense, options, expected]) => ({
+    surface,
+    expected,
+    actual: englishProductionCue({ targetWord: surface }, sense, null, options),
+}));
+console.log(JSON.stringify(out));
 """ % json.dumps(REVERSE_CUES.as_uri())
         result = subprocess.run(
             [node, "--input-type=module", "-e", script],
