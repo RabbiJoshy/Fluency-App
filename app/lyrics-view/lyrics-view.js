@@ -182,6 +182,9 @@ async function init() {
       offlineCountBadge.textContent = String(probeSongs.length);
     }
 
+    renderSongPickerItems(allSongs);
+
+    // If a specific song was requested in URL query, load it; otherwise open the library modal
     if (paramSong) {
       const parsedIdx = parseInt(paramSong, 10);
       if (!isNaN(parsedIdx) && parsedIdx >= 0 && parsedIdx < allSongs.length) {
@@ -193,10 +196,12 @@ async function init() {
         );
         if (foundIdx >= 0) currentSongIndex = foundIdx;
       }
+      await selectSong(currentSongIndex);
+    } else {
+      // Default initial view: Open the Song Library menu so user can choose a track
+      await selectSong(0, false); // select song 0 in background without forcing URL param
+      openSongPicker('offline');
     }
-
-    renderSongPickerItems(allSongs);
-    await selectSong(currentSongIndex);
   } catch (err) {
     console.error('Failed to init Lyrics View:', err);
     if (loadingBox) {
@@ -211,7 +216,7 @@ async function init() {
 // ───────────────────────────────────────────────
 // Song Processing & Selection
 // ───────────────────────────────────────────────
-async function selectSong(index) {
+async function selectSong(index, syncUrl = true) {
   if (index < 0 || index >= allSongs.length) return;
   currentSongIndex = index;
 
@@ -230,12 +235,14 @@ async function selectSong(index) {
   if (prevSongBtn) prevSongBtn.disabled = (index === 0);
   if (nextSongBtn) nextSongBtn.disabled = (index === allSongs.length - 1);
 
-  // Sync URL query without reloading
-  try {
-    const newUrl = new URL(window.location.href);
-    newUrl.searchParams.set('song', index);
-    window.history.replaceState({}, '', newUrl.toString());
-  } catch (_) {}
+  // Sync URL query without reloading (if requested)
+  if (syncUrl) {
+    try {
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.set('song', index);
+      window.history.replaceState({}, '', newUrl.toString());
+    } catch (_) {}
+  }
 
   if (lyricsFlow) lyricsFlow.style.display = 'none';
   if (loadingBox) loadingBox.style.display = 'block';
@@ -334,24 +341,37 @@ function renderLyrics(song) {
     toggleEnglishBtn.style.display = hasAnyEnglish ? 'inline-flex' : 'none';
   }
 
+  const songHasTimestamps = song.lines.some(l => l.isSynced && l.timestamp_ms != null);
+
   song.lines.forEach((line, lineIdx) => {
     const lineItem = document.createElement('div');
     lineItem.className = 'lyric-line-item';
     lineItem.dataset.lineIndex = lineIdx;
 
-    // 1. Target Spanish Line (Large, bold)
+    // 1. Optional Left Gutter: Timestamp (only rendered if track has synced timestamps)
+    if (songHasTimestamps) {
+      if (line.isSynced && line.timestamp_ms != null) {
+        const totalSec = Math.floor(line.timestamp_ms / 1000);
+        const m = Math.floor(totalSec / 60);
+        const s = totalSec % 60;
+        const timeSpan = document.createElement('span');
+        timeSpan.className = 'lyric-line-timestamp';
+        timeSpan.textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
+        lineItem.appendChild(timeSpan);
+      } else {
+        const spacer = document.createElement('span');
+        spacer.className = 'lyric-line-timestamp-spacer';
+        lineItem.appendChild(spacer);
+      }
+    }
+
+    // 2. Main Body Column (Target Spanish + English underneath perfectly aligned)
+    const lineBody = document.createElement('div');
+    lineBody.className = 'lyric-line-body';
+
+    // Target Spanish Line (Large, bold)
     const targetLine = document.createElement('div');
     targetLine.className = 'lyric-line-target';
-
-    if (line.isSynced && line.timestamp_ms != null) {
-      const totalSec = Math.floor(line.timestamp_ms / 1000);
-      const m = Math.floor(totalSec / 60);
-      const s = totalSec % 60;
-      const timeSpan = document.createElement('span');
-      timeSpan.className = 'lyric-line-timestamp';
-      timeSpan.textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
-      targetLine.appendChild(timeSpan);
-    }
 
     // Auto entities / idioms / ad-libs found in this line
     const lineAutoBadges = [];
@@ -423,9 +443,9 @@ function renderLyrics(song) {
       targetLine.appendChild(span);
     });
 
-    lineItem.appendChild(targetLine);
+    lineBody.appendChild(targetLine);
 
-    // 2. English Line Underneath (Only if genuine hand-translated line exists)
+    // English Line Underneath (Only if genuine hand-translated line exists)
     const englishGloss = buildLineEnglishGloss(line);
     if (englishGloss) {
       const englishLine = document.createElement('div');
@@ -435,10 +455,10 @@ function renderLyrics(song) {
       textSpan.textContent = englishGloss;
       englishLine.appendChild(textSpan);
 
-      lineItem.appendChild(englishLine);
+      lineBody.appendChild(englishLine);
     }
 
-    // 3. Subtle inline line badges if line contains entities or ad-libs (MWEs omitted per user request)
+    // Subtle inline line badges if line contains entities or ad-libs (MWEs omitted per user request)
     if (lineAutoBadges.length > 0) {
       const badgesRow = document.createElement('div');
       badgesRow.className = 'line-auto-badges';
@@ -454,8 +474,10 @@ function renderLyrics(song) {
         badgesRow.appendChild(badge);
       });
 
-      lineItem.appendChild(badgesRow);
+      lineBody.appendChild(badgesRow);
     }
+
+    lineItem.appendChild(lineBody);
 
     lyricsFlow.appendChild(lineItem);
   });
