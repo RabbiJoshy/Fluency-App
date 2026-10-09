@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./lyrics-view.css?v=20261009c">
+  <link rel="stylesheet" href="./lyrics-view.css?v=20261009d">
 </head>
 <body>
 
@@ -42,6 +42,9 @@
       </div>
 
       <div class="topbar-right">
+        <button class="action-pill-btn" id="topbarTurboBtn" type="button" title="Generate any song with TURBO">
+          ⚡ Online TURBO
+        </button>
         <button class="action-pill-btn active" id="toggleEnglishBtn" type="button" title="Toggle English line translation underneath">
           EN line
         </button>
@@ -61,26 +64,95 @@
     <div class="lyrics-flow" id="lyricsFlow" style="display: none;"></div>
   </main>
 
-  <!-- Offline Playlist Picker Sheet (Fluency Style) -->
+  <!-- Song Picker Modal (Offline Playlist OR Online TURBO) -->
   <div class="modal-backdrop" id="songPickerModal" role="dialog" aria-modal="true" aria-labelledby="songPickerTitle">
     <div class="modal-dialog">
       <div class="modal-drag-handle" aria-hidden="true"></div>
       <div class="modal-header">
         <div>
-          <h3 id="songPickerTitle">Offline playlist</h3>
-          <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
-            Choose a song to inspect its lyrics, senses, and entities
+          <h3 id="songPickerTitle">Song Library</h3>
+          <p id="songPickerSubtitle" style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+            Choose from offline playlist or generate any song with TURBO
           </p>
         </div>
         <button class="modal-close" id="closeSongPickerBtn" aria-label="Close modal">&#10005;</button>
       </div>
 
-      <div class="song-picker-search">
-        <input type="text" id="songSearchInput" class="song-search-input" placeholder="Search 30 songs by title, artist, or lyrics…" autocomplete="off">
+      <!-- Segmented Tabs: Offline vs Online TURBO -->
+      <div class="picker-tabs-row" role="tablist">
+        <button type="button" class="picker-tab-btn active" id="tabOfflineBtn" role="tab" aria-selected="true" aria-controls="tabOfflinePane">
+          <span>📁 Offline Playlist</span>
+          <span class="tab-badge" id="offlineCountBadge">30</span>
+        </button>
+        <button type="button" class="picker-tab-btn" id="tabOnlineBtn" role="tab" aria-selected="false" aria-controls="tabOnlinePane">
+          <span>⚡ Online / Spotify</span>
+          <span class="tab-badge turbo-badge">TURBO</span>
+        </button>
       </div>
 
-      <div class="song-picker-list" id="songPickerList">
-        <!-- Songs will be rendered here -->
+      <!-- Pane 1: Offline Playlist -->
+      <div class="picker-pane" id="tabOfflinePane" role="tabpanel">
+        <div class="song-picker-search">
+          <input type="text" id="songSearchInput" class="song-search-input" placeholder="Search songs by title, artist, or lyrics…" autocomplete="off">
+        </div>
+        <div class="song-picker-list" id="songPickerList">
+          <!-- Songs rendered here -->
+        </div>
+      </div>
+
+      <!-- Pane 2: Online / Spotify TURBO Generator -->
+      <div class="picker-pane" id="tabOnlinePane" role="tabpanel" style="display: none;">
+        <div class="turbo-intake-container">
+          <div class="turbo-input-group">
+            <label for="turboTrackInput" class="turbo-input-label">Spotify link, Track ID, or Song title & artist</label>
+            <div class="turbo-input-wrap">
+              <span class="turbo-input-icon">🎵</span>
+              <input type="text" id="turboTrackInput" class="turbo-text-input" placeholder="https://open.spotify.com/track/... or Tití Me Preguntó" autocomplete="off" />
+              <button type="button" id="turboClearInputBtn" class="turbo-clear-btn" style="display:none;" aria-label="Clear input">✕</button>
+            </div>
+            <div class="turbo-hints">
+              <span>✓ Spotify Track URL</span>
+              <span>✓ Spotify ID</span>
+              <span>✓ Title &amp; Artist search</span>
+            </div>
+          </div>
+
+          <!-- Manual Paste Fallback Details -->
+          <details class="turbo-manual-details" id="turboManualDetails">
+            <summary class="turbo-manual-summary">
+              <span>Or paste custom Spanish lyrics manually</span>
+              <span class="turbo-arrow">▾</span>
+            </summary>
+            <div class="turbo-manual-body">
+              <div class="turbo-manual-inputs">
+                <input type="text" id="turboManualTitle" class="turbo-text-input" placeholder="Track title (optional)" />
+                <input type="text" id="turboManualArtist" class="turbo-text-input" placeholder="Artist name (optional)" />
+              </div>
+              <textarea id="turboManualLyrics" class="turbo-textarea" rows="5" placeholder="Paste Spanish lyrics here..."></textarea>
+            </div>
+          </details>
+
+          <!-- Error Alert -->
+          <div class="turbo-alert-box" id="turboAlertBox" style="display: none;">
+            <span class="turbo-alert-icon">⚠️</span>
+            <div class="turbo-alert-text" id="turboAlertText">Error message here</div>
+          </div>
+
+          <!-- Status / Progress Box -->
+          <div class="turbo-status-card" id="turboStatusCard" style="display: none;">
+            <div class="turbo-spinner"></div>
+            <div class="turbo-status-meta">
+              <span class="turbo-status-title" id="turboStatusTitle">Processing with TURBO</span>
+              <span class="turbo-status-sub" id="turboStatusSub">Fetching track and lyrics…</span>
+            </div>
+          </div>
+
+          <!-- Submit Action Button -->
+          <button type="button" id="runTurboBtn" class="turbo-submit-btn">
+            <span class="turbo-btn-icon">⚡</span>
+            <span>Generate Lyrics with TURBO</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -147,6 +219,6 @@
     <span id="totalTokensText"></span>
   </div>
 
-  <script type="module" src="./lyrics-view.js?v=20261009c"></script>
+  <script type="module" src="./lyrics-view.js?v=20261009d"></script>
 </body>
 </html>

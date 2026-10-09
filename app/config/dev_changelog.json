@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T14:18:00+01:00",
+      "date": "2026-10-09 14:18 BST",
+      "agent": "Antigravity",
+      "summary": "Song lyrics view: dual song selector with offline probe songs and live online TURBO intake (Spotify URL, track ID, search query, or manual paste)",
+      "detail": [
+        "Added segmented picker tabs: choose between curated offline playlist (30 songs) or generate custom songs online with TURBO.",
+        "Online intake supports Spotify track URLs, Spotify track IDs (22 chars), song title & artist searches via LRCLIB, and direct manual lyrics paste.",
+        "Integrated client TURBO engine execution on the fly with live status progress, caching newly generated songs for seamless switching.",
+        "Added topbar shortcut pill '⚡ Online TURBO' and auto-detection of Spotify URLs in search inputs."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T14:11:11+01:00",
       "date": "2026-10-09 14:11 BST",
       "agent": "Codex",
