@@ -22744,7 +22744,7 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
    line is lighter in weight and brighter in colour so it reads at a glance. */
 #step4 .study-set-dot { font-size: 18px; font-weight: 700; height: 37px; }
 #step4 .study-set-current-copy strong { font-size: 18px; }
-#step4 .study-set-current-copy span { font-size: 14px; font-weight: 400; color: var(--text-secondary); }
+#step4 .study-set-current-copy span { font-size: 14px; font-weight: 400; color: var(--text-primary); }
 .study-set-stat { font-weight: 400; }
 
 /* Set progress, light-on-dark: pale green (known), pale yellow (practice) and
@@ -23206,13 +23206,13 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 
 /* Frequency ranges identify each set; its number remains in the summary
    and accessible label, leaving room for five-digit ranks on small phones. */
-#step4 .study-set-dot { gap: 8px; padding: 0 6px; }
+#step4 .study-set-dot { container-type: inline-size; gap: 8px; padding: 6px; }
 .study-set-dot .set-num { display: none; }
-.study-set-dot .set-ranks { display: inline; white-space: nowrap; font-size: 14px; font-weight: 600; }
+.study-set-dot .set-ranks { display: inline; white-space: nowrap; font-size: clamp(16px, 14cqi, 22px); line-height: 1.1; letter-spacing: -0.035em; font-weight: 750; }
 
-/* Skipped cards fill each set bar from the right in light grey, so with Smart
+/* Skipped cards fill each set bar from the right in slate grey, so with Smart
    Skip on a set is already partly done before a card is studied. */
-#step4 { --set-skipped: #b4bcc7; }
+#step4 { --set-skipped: #7b8797; }
 #step4 .study-set-dot {
   background: linear-gradient(
     to right,
@@ -23222,7 +23222,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     var(--set-skipped) var(--set-new-end, 100%) 100%
   );
 }
-.study-set-stat i.is-skipped { background: var(--set-skipped, #b4bcc7); }
+.study-set-stat i.is-skipped { background: var(--set-skipped, #7b8797); }
 
 /* ===== Tutorial chapters and pages =====
    The chapters sit where the language label was, and open directly. Smart
@@ -23385,4 +23385,90 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     .tutorial-page { gap: 16px; padding: 20px 16px; }
     .card-tutorial-chapters { gap: 4px; }
     .card-tutorial-chapter { padding: 6px 8px; font-size: 12px; }
+}
+
+/* Return to study is the main entry decision, including on phones. */
+#resumeLastSetCard.resume-entry-modal {
+  align-items: center !important;
+  justify-content: center;
+  padding: max(20px, env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom)) !important;
+}
+#resumeLastSetCard .resume-entry-content {
+  width: min(100%, 500px);
+  max-width: 500px;
+  max-height: calc(100dvh / var(--ui-zoom, 1) - 40px);
+  overflow-y: auto;
+  padding: clamp(24px, 5vw, 36px);
+  margin: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  text-align: left;
+}
+#resumeLastSetCard .resume-set-eyebrow {
+  color: var(--text-secondary);
+  font: 600 16px/1.5 var(--font-reading);
+  text-transform: none;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+#resumeLastSetCard h3 { margin: 10px 0 24px; font-size: clamp(28px, 6vw, 34px); line-height: 1.15; text-wrap: balance; }
+.resume-entry-summary { padding: 20px; border: 1px solid var(--border-color); border-radius: 16px; background: var(--bg-tertiary); }
+.resume-entry-summary > strong { color: var(--text-primary); font: 700 20px/1.4 var(--font-reading); }
+#resumeLastSetCard p { margin: 8px 0 0; color: var(--text-secondary); font: 16px/1.5 var(--font-reading); }
+#resumeLastSetCard .resume-entry-position { margin-top: 16px; }
+.resume-entry-position strong { color: var(--text-primary); overflow-wrap: anywhere; }
+#resumeLastSetCard .resume-entry-actions { grid-template-columns: 1fr; margin-top: 24px; gap: 10px; }
+#resumeLastSetCard .resume-entry-actions button { min-height: 52px; font-size: 16px; border-radius: 14px; }
+#resumeLastSetCard .resume-entry-primary { background: var(--text-primary); border-color: var(--text-primary); color: var(--bg-card); }
+#resumeLastSetCard .resume-entry-secondary { color: var(--text-primary); }
+#resumeLastSetCard button:focus-visible { outline: 3px solid var(--accent-primary); outline-offset: 3px; }
+
+/* Settings use neutral surfaces and explicit selected states in both themes. */
+#settingsModal .settings-pane-tabs {
+  gap: 6px;
+  padding: 5px;
+  margin-bottom: 24px;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  background: var(--bg-tertiary);
+  box-shadow: none;
+}
+#settingsModal .settings-pane-tab {
+  min-height: 46px;
+  padding: 10px 12px;
+  border-radius: 11px;
+  color: var(--text-secondary);
+  font-size: 16px;
+  letter-spacing: 0;
+}
+#settingsModal .settings-pane-tab.selected {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  box-shadow: 0 2px 6px rgba(0,0,0,.12);
+  outline: 1px solid var(--border-color);
+}
+#settingsModal .settings-default-row { padding: 20px 0; gap: 20px; }
+#settingsModal .settings-row-label { color: var(--text-primary); font-size: 17px; line-height: 1.4; }
+#settingsModal .settings-row-explanation,
+#settingsModal .settings-compact-note { color: var(--text-secondary); font-size: 14px; line-height: 1.55; }
+#settingsModal .settings-row-explanation { margin-top: 5px; max-width: 42ch; }
+#settingsModal .settings-toggle { padding: 4px; background: var(--bg-tertiary); border: 1px solid var(--border-color); box-shadow: none; }
+#settingsModal .settings-toggle .group-size-btn { min-height: 40px; padding: 8px 14px; color: var(--text-secondary); font-size: 14px; }
+#settingsModal .settings-toggle .group-size-btn.selected {
+  background: var(--text-primary);
+  color: var(--bg-card);
+  box-shadow: none;
+}
+#settingsModal .settings-link-row { padding: 18px 0; }
+#settingsModal .settings-link-row strong,
+#settingsModal .settings-overview-footer .appearance-settings-copy strong { font-size: 17px; line-height: 1.4; }
+#settingsModal .settings-link-row small { font-size: 14px; line-height: 1.5; color: var(--text-secondary); }
+#settingsModal .settings-footer-link { font-size: 14px; padding: 10px 0; color: var(--text-secondary); }
+#settingsModal button:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 3px; }
+#settingsModal .settings-link-row:hover { background: var(--bg-tertiary); border-radius: 10px; }
+@media (max-width: 600px) {
+  #settingsModal .settings-pane-tab { padding: 10px 6px; font-size: 14px; }
+  #settingsModal .settings-default-row { flex-wrap: wrap; gap: 12px; }
+  #settingsModal .settings-row-label-block { flex: 1 1 180px; }
+  #settingsModal .settings-toggle { flex-shrink: 0; }
 }
