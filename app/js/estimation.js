@@ -653,12 +653,53 @@ function calculateEstimationResult(bands, maxLevel) {
     };
 }
 
-// Update progress display. Avoid presenting a volatile pseudo-precise rank while
-// the sample is still being collected.
+// Update progress display with dynamic phase status and progress bar.
 function updateEstimationProgress() {
-    document.getElementById('estimationLevel').textContent = 'Finding your range';
-    document.getElementById('estimationCount').textContent =
-        `${estimationState.wordsTestedCount}/${ESTIMATION_QUESTION_LIMIT}`;
+    const count = estimationState.wordsTestedCount;
+    let phase = 'Broad sampling';
+    if (count > 20) {
+        phase = 'Calibrating level';
+    } else if (count > 10) {
+        phase = 'Narrowing range';
+    }
+    const levelEl = document.getElementById('estimationLevel');
+    if (levelEl) levelEl.textContent = phase;
+
+    const countEl = document.getElementById('estimationCount');
+    if (countEl) countEl.textContent = `${count}/${ESTIMATION_QUESTION_LIMIT}`;
+
+    const fillEl = document.getElementById('estimationProgressFill');
+    if (fillEl) {
+        const pct = Math.min(100, Math.round((count / ESTIMATION_QUESTION_LIMIT) * 100));
+        fillEl.style.width = `${pct}%`;
+    }
+}
+
+// Map estimated vocabulary rank to the corresponding CEFR proficiency stage
+function getCefrStageForRank(rank) {
+    if (!Number.isFinite(rank) || rank <= 0) return null;
+    try {
+        const lang = selectedLanguage || 'spanish';
+        const cefrLevels = typeof window.getCefrLevels === 'function'
+            ? window.getCefrLevels(lang)
+            : config?.languages?.[lang]?.cefrLevels;
+        if (!Array.isArray(cefrLevels) || !cefrLevels.length) return null;
+
+        for (const item of cefrLevels) {
+            const countStr = String(item.wordCount || '');
+            const match = countStr.match(/(\d+)\s*-\s*(\d+)/);
+            if (match) {
+                const min = parseInt(match[1], 10);
+                const max = parseInt(match[2], 10);
+                if (rank >= min && rank <= max) {
+                    return `${item.level} · ${item.description || ''}`.trim();
+                }
+            }
+        }
+        const last = cefrLevels[cefrLevels.length - 1];
+        if (last && rank > 0) return `${last.level} · ${last.description || ''}`.trim();
+    } catch (_) {}
+    return null;
 }
 
 // Show the estimation result
@@ -695,8 +736,13 @@ function showEstimationResult() {
     const levelEl = document.getElementById('estimationResultLevel');
     const descEl = document.getElementById('estimationResultDesc');
     const speech = isSpeechMode();
-    const pointLevel = speech ? levelButtonForRank(estimationState.estimatedLevelRank) : null;
+    // The learner already knows words up to estimatedLevelRank.
+    // The level to start learning is the one containing the first unseen word (+1).
+    const targetRank = (estimationState.estimatedLevelRank || result.point) + 1;
+    const pointLevel = speech ? levelButtonForRank(targetRank) : null;
     const ranOut = estimationState.wordsTestedCount < ESTIMATION_QUESTION_LIMIT;
+    const cefrStage = speech ? getCefrStageForRank(result.point) : null;
+
     if (!speech) {
         // Speech knowledge is not a run of this artist's levels. The estimate
         // marks the Speech words within it as known here instead.
@@ -712,21 +758,23 @@ function showEstimationResult() {
         levelEl.textContent = 'Start at Level 1';
         descEl.textContent = ranOut
             ? `The check ran out of words after ${estimationState.wordsTestedCount}, so it could not place you.`
-            : 'Most of the words sampled were new to you.';
+            : 'Most of the words sampled were new to you (A1 Beginner).';
     } else if (pointLevel) {
-        // The estimate is stored as a rank; the level is only derived here,
-        // against the levels on screen, so it follows any change to level size.
-        const lowLevel = levelButtonForRank(levelRankFor(counts.low))?.number ?? pointLevel.number;
-        const highLevel = levelButtonForRank(levelRankFor(counts.high))?.number ?? pointLevel.number;
+        // The estimate is stored as a rank; the level is derived for the first unseen card.
+        const lowRank = levelRankFor(counts.low) + 1;
+        const highRank = levelRankFor(counts.high) + 1;
+        const lowLevel = levelButtonForRank(lowRank)?.number ?? pointLevel.number;
+        const highLevel = levelButtonForRank(highRank)?.number ?? pointLevel.number;
         const words = `${shown(result.low)}–${shown(result.high)} words`;
-        levelEl.textContent = `Start at Level ${pointLevel.number}`;
+        const cefrSuffix = cefrStage ? ` (${cefrStage})` : '';
+        levelEl.textContent = `Start at Level ${pointLevel.number}${cefrSuffix}`;
         descEl.textContent = lowLevel === highLevel
             ? `About ${words} you'd recognise.`
             : `Likely somewhere in Levels ${lowLevel}–${highLevel} (about ${words}).`;
     } else {
         levelEl.textContent = `${shown(result.low)}–${shown(result.high)} words`;
         descEl.textContent =
-            `Best estimate: about ${shown(result.point)} receptive words. ` +
+            `Best estimate: about ${shown(result.point)} receptive words${cefrStage ? ` (${cefrStage})` : ''}. ` +
             'The range reflects uncertainty from a short check.';
     }
 }
@@ -762,13 +810,17 @@ function useEstimatedLevel() {
     } else if (level === 0) {
         document.querySelector('.level-btn')?.click();
     } else {
-        selectLevelForRank(estimationState.estimatedLevelRank || level);
+        // Place the learner in the level containing their first unseen card
+        const targetRank = (estimationState.estimatedLevelRank || level) + 1;
+        selectLevelForRank(targetRank);
     }
 }
 
 function retryEstimation() {
     estimationState = createEstimationState();
     document.getElementById('estimationResult').style.display = 'none';
+    const fillEl = document.getElementById('estimationProgressFill');
+    if (fillEl) fillEl.style.width = '0%';
     startEstimation();
 }
 
@@ -776,6 +828,62 @@ function retryEstimation() {
 // on its first set with unseen cards.
 function selectLevelForRank(rank) {
     levelButtonForRank(rank)?.button.click();
+}
+
+// Handle keyboard interaction when estimation modal is open
+function handleEstimationKeydown(event) {
+    const modal = document.getElementById('estimationModal');
+    if (!modal || modal.classList.contains('hidden')) return;
+
+    if (event.key === 'Escape') {
+        event.preventDefault();
+        closeEstimationModal();
+        return;
+    }
+
+    const intro = document.getElementById('estimationIntro');
+    const test = document.getElementById('estimationTest');
+    const result = document.getElementById('estimationResult');
+
+    if (intro && intro.style.display !== 'none') {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            startEstimation();
+        }
+        return;
+    }
+
+    if (test && test.style.display !== 'none' && estimationState.active && !estimationState.loading) {
+        if (!estimationState.translationRevealed) {
+            if (event.key === ' ' || event.key === 'Enter' || event.key === 'ArrowDown') {
+                event.preventDefault();
+                revealTranslation();
+            }
+        } else {
+            if (event.key === 'ArrowRight' || event.key === 'Enter' || event.key === '2' || event.key === 'y' || event.key === 'Y') {
+                event.preventDefault();
+                handleAnswer(true);
+            } else if (event.key === 'ArrowLeft' || event.key === '1' || event.key === 'x' || event.key === 'X' || event.key === 'n' || event.key === 'N') {
+                event.preventDefault();
+                handleAnswer(false);
+            }
+        }
+        return;
+    }
+
+    if (result && result.style.display !== 'none') {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            useEstimatedLevel();
+        } else if (event.key === 'r' || event.key === 'R') {
+            event.preventDefault();
+            retryEstimation();
+        }
+    }
+}
+
+if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
+    document.addEventListener('keydown', handleEstimationKeydown);
 }
 
 window.openEstimationModal = openEstimationModal;
