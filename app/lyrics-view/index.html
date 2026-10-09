@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./lyrics-view.css?v=20261009i">
+  <link rel="stylesheet" href="./lyrics-view.css?v=20261009j">
 </head>
 <body>
 
@@ -15,16 +15,14 @@
   <header class="topbar">
     <div class="topbar-content">
       <div class="topbar-left">
-        <a class="back-to-study" id="backToStudy" href="../" aria-label="Return to study">
-          <span aria-hidden="true">‹</span> Vocabulary
-        </a>
-        <span class="brand-badge">Lyrics</span>
+        <button class="back-to-library-btn" id="backToLibraryBtn" type="button" aria-label="Open song library menu">
+          <span aria-hidden="true">‹</span> Songs
+        </button>
       </div>
 
-      <!-- Spotify-style Centered Song Pill -->
+      <!-- Centered Song Pill: Click to switch or search songs -->
       <div class="topbar-center">
-        <button class="song-nav-btn" id="prevSongBtn" title="Previous song" aria-label="Previous song">‹</button>
-        <button class="song-selector-pill" id="songSelectorBtn" type="button" aria-haspopup="dialog" aria-label="Choose song from offline playlist">
+        <button class="song-selector-pill" id="songSelectorBtn" type="button" aria-haspopup="dialog" aria-label="Choose song">
           <div class="song-icon" aria-hidden="true">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <path d="M9 18V5l12-2v13"></path>
@@ -38,16 +36,10 @@
           </div>
           <span class="song-pill-chevron" aria-hidden="true">▾</span>
         </button>
-        <button class="song-nav-btn" id="nextSongBtn" title="Next song" aria-label="Next song">›</button>
       </div>
 
       <div class="topbar-right">
-        <button class="action-pill-btn" id="topbarTurboBtn" type="button" title="Search catalog or add track">
-          Search / Add
-        </button>
-        <button class="action-pill-btn active" id="toggleEnglishBtn" type="button" title="Toggle English line translation underneath">
-          EN line
-        </button>
+        <!-- Kept minimal and clean -->
       </div>
     </div>
   </header>
@@ -57,22 +49,27 @@
     <!-- Loading State Indicator -->
     <div class="loading-box" id="loadingBox">
       <div class="loading-spinner"></div>
-      <p>Loading offline playlist…</p>
+      <p>Loading lyrics…</p>
     </div>
 
     <!-- Lyrics Stream: Target with English Underneath -->
     <div class="lyrics-flow" id="lyricsFlow" style="display: none;"></div>
   </main>
 
-  <!-- Song Picker Modal (Offline Playlist OR Online TURBO) -->
+  <!-- Song Picker Modal (Song Library) -->
   <div class="modal-backdrop" id="songPickerModal" role="dialog" aria-modal="true" aria-labelledby="songPickerTitle">
     <div class="modal-dialog">
       <div class="modal-drag-handle" aria-hidden="true"></div>
       <div class="modal-header">
         <div>
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <a class="menu-back-to-vocab" id="backToStudy" href="../" aria-label="Return to vocabulary study">
+              <span aria-hidden="true">‹</span> Vocabulary
+            </a>
+          </div>
           <h3 id="songPickerTitle">Song Library</h3>
           <p id="songPickerSubtitle" style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
-            Choose from offline playlist or generate any song with TURBO
+            Choose a track or paste a Spotify link
           </p>
         </div>
         <button class="modal-close" id="closeSongPickerBtn" aria-label="Close modal">&#10005;</button>
@@ -177,14 +174,7 @@
           <div id="modalPolySensesList"></div>
         </div>
 
-        <!-- Context Lyric Quote -->
-        <div class="modal-quote-box">
-          <div class="modal-quote-label">Current Lyric Line</div>
-          <div class="modal-quote-text" id="modalContextQuoteText">"Ambos sabemo' lo que sigue"</div>
-          <div class="modal-quote-meta" id="modalContextQuoteMeta">Line 1 · La Nota (Manuel Turizo)</div>
-        </div>
-
-        <!-- Other uses of this word in the same song -->
+        <!-- Other occurrences of this word in the same song -->
         <div class="song-occurrences-card" id="modalSongOccurrencesBox" style="display: none;">
           <h4>Other occurrences in this song</h4>
           <div id="modalSongOccurrencesList" class="song-occurrences-list"></div>
@@ -213,6 +203,6 @@
     <span id="totalTokensText"></span>
   </div>
 
-  <script type="module" src="./lyrics-view.js?v=20261009i"></script>
+  <script type="module" src="./lyrics-view.js?v=20261009j"></script>
 </body>
 </html>
