@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T13:48:00+01:00",
+      "date": "2026-10-09 13:48 BST",
+      "agent": "Antigravity",
+      "summary": "Level Estimator audit: starting level placement fix, SENSE_CYCLE POS resolution, keyboard controls, and CEFR indicators",
+      "detail": [
+        "Fixed off-by-one level placement where learners were routed to a 100% completed level; now routes to first unseen card.",
+        "Resolved SENSE_CYCLE part-of-speech handling so grouped nouns and verbs are sampled and labelled properly.",
+        "Increased shard candidate attempts to 48 to prevent premature aborts on columnar releases.",
+        "Added full keyboard shortcuts (Space/Enter to flip, 1/2 or Arrow keys to answer, Escape to close) and modal backdrop dismissal.",
+        "Added visual progress track and CEFR stage mapping on results screen."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T13:35:00+01:00",
       "date": "2026-10-09 13:35 BST",
       "agent": "Antigravity",
