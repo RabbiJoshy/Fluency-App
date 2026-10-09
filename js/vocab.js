@@ -1,11 +1,11 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=0993c1ad';
-import { validateVocabularyIndex } from './data-contracts.js?v=0993c1ad';
-import { formatRoute } from './routes.js?v=0993c1ad';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=0993c1ad';
-import { releaseUrl } from './release-host.js?v=0993c1ad';
+import './state.js?v=83c83306';
+import { validateVocabularyIndex } from './data-contracts.js?v=83c83306';
+import { formatRoute } from './routes.js?v=83c83306';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=83c83306';
+import { releaseUrl } from './release-host.js?v=83c83306';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -204,7 +204,9 @@ function renderResumeLastSetCard() {
     card.setAttribute('aria-modal', 'true');
     card.setAttribute('aria-labelledby', 'resumeEntryTitle');
     const level = snapshot.levelNumber ? `Level ${snapshot.levelNumber}` : 'Saved level';
-    const set = snapshot.setNumber ? `Set ${snapshot.setNumber}` : 'Saved set';
+    const rangeLabel = snapshot.rangeLabel
+        || (snapshot.range ? `${snapshot.range.split('-')[0]}–${parseInt(snapshot.range.split('-')[1]) - 1}` : null);
+    const set = rangeLabel || (snapshot.setNumber ? `Set ${snapshot.setNumber}` : 'Saved set');
     const track = snapshot.studyMode === 'review' ? 'Practice' : 'Learn new';
     const title = snapshot.mode === 'lyrics'
         ? `${snapshot.artistName || 'Lyrics'}${snapshot.artistVocabularyScope === 'extra' ? ' Extra' : ''}`
@@ -308,6 +310,7 @@ function _writeStudySessionSnapshot() {
         selectedLevel,
         levelNumber,
         range: stats.rangeString,
+        rangeLabel: stats.rangeLabel,
         rangeBasis: stats.rangeBasis || 'display',
         setNumber: stats.setNumber || null,
         levelSetCount: stats.levelSetCount || null,
@@ -729,6 +732,7 @@ function joinWithMaster(indexData, master) {
             id: idx.id,
             word: m.word,
             lemma: m.lemma,
+            ...(m.noun_merge ? { noun_merge: m.noun_merge } : {}),
             meanings,
             _base_meanings: meanings.map(meaning => ({ ...meaning, examples: [] })),
             most_frequent_lemma_instance: idx.most_frequent_lemma_instance,
@@ -954,13 +958,29 @@ function lemmaGroupKey(item) {
     // shipped lemma or a yes on casado would clear casó.
     const headwords = lemmaHeadwordsOf(item);
     if (headwords.length > 1) return '';
+    // Compare complete source menus before display inflection or WSD filtering.
+    // A subset of shown meanings cannot approve a noun merge.
+    const proof = item?.noun_merge;
+    if (proof && (proof.rule_version !== 'noun-merge/v2' || proof.allowed !== true)) return '';
+    const dictionarySenses = [...(item?.meanings || []), ...(item?.unused_menu_senses || []),
+        ...(item?.meanings || []).flatMap(meaning => meaning.allSenses || [])];
+    if (proof && dictionarySenses.some(meaning => {
+        const pos = normalizeLemmaToken(meaning?.pos || meaning?.part_of_speech);
+        if (['phrase', 'sense_cycle'].includes(pos) || isExpressionSenseForLemma(meaning, item)) return false;
+        return (pos && !/\bnoun\b/iu.test(pos)) || (meaning?.headword
+            && normalizeLemmaToken(meaning.headword) !== normalizeLemmaToken(proof.lemma));
+    })) return '';
     // A Speech card whose senses have not loaded yet carries the key the
     // pipeline computed from those same senses by this same rule
     // (fluency.enrichments.card_rules); without it only the shipped lemma
     // column would be left, and fue would fold into ser.
     if (headwords.length === 0 && typeof item?.merge_key === 'string') return item.merge_key;
-    const lemma = headwords[0] || normalizeLemmaToken(item?.lemma);
+    const lemma = headwords[0] || normalizeLemmaToken(proof?.lemma || item?.lemma);
     if (!lemma) return '';
+    if (proof && normalizeLemmaToken(proof.lemma) !== lemma) return '';
+    if (!proof && (!(item?.meanings?.length) || dictionarySenses.some(meaning =>
+        /\bnoun\b/iu.test(String(meaning?.pos || meaning?.part_of_speech || ''))
+        && !isExpressionSenseForLemma(meaning, item)))) return '';
     if (isContractionForLemma(item) || hasFrozenFormExpression(item, lemma)) return '';
     return lemma;
 }
@@ -1030,235 +1050,182 @@ function cleanHeadwordToken(hw) {
     return token;
 }
 
+// Only represented lexical senses decide companions. The dictionary's unused
+// menu cannot create a card or defeat the same-meaning exception.
+function companionSenseWeight(item, meaning) {
+    if (meaning.unassigned || meaning.exampleOnly
+        || ['SENSE_CYCLE', 'EXAMPLE_ONLY'].includes(String(meaning.pos || '').toUpperCase())
+        || meaning.assignment_method === 'unassigned') return 0;
+    const frequency = meaning.frequency ?? meaning.percentage;
+    if (frequency != null && !(Number(frequency) > 0)) return 0;
+    const counts = item?.wsd_distribution?.published_leaf_counts;
+    const id = meaning.sense_id || meaning.senseId || meaning.id;
+    if (counts && id) return Math.max(0, Number(counts[id]) || 0);
+    // Legacy rows without a distribution still carry assigned frequency.
+    return frequency == null ? 1 : Math.max(0, Number(frequency) || 0);
+}
+
+function companionSenseConstruction(meaning, lang = 'es') {
+    const headword = normalizeLemmaToken(meaning.headword);
+    const pos = String(meaning.pos || meaning.part_of_speech || '').toUpperCase();
+    const verb = pos === 'VERB' || pos === 'AUX' || pos.includes(' VERB');
+    if (!verb) return { base: headword, pronominal: false, shared: false };
+    const metadata = meaning.metadata || {};
+    const contract = metadata.sense_metadata || {};
+    const provider = metadata.sense_provider_metadata || contract.source_metadata || {};
+    const features = [...(metadata.specialist_features || []), ...(contract.features || [])];
+    const marks = new Set([...(meaning.tags || []), ...(provider.tags || []),
+        ...features.filter(f => f.family === 'construction' || f.family === 'grammar')
+            .map(f => f.value),
+        ...String(meaning.context || '').split(/[,;]/u)]
+        .map(v => normalizeLemmaToken(v)));
+    const has = value => marks.has(value);
+    const suffix = lang === 'pt' ? /(?:ar|er|ir|or|ôr)(-?se)$/u
+        : lang === 'es' ? /(?:ar|er|ir|ír)(se)$/u : null;
+    const match = suffix && headword.match(suffix);
+    const base = match ? headword.slice(0, -match[1].length) : headword;
+    const passive = has('passive') || has('impersonal') || has('voice=passive');
+    const tagged = has('pronominal') || has('reflexive') || has('reflexive=true')
+        || has('pronominal verb') || has('reflexive verb');
+    const pronominal = !passive && Boolean(match || tagged);
+    // A single definition explicitly marked for both constructions is shared.
+    const shared = pronominal && !match && (has('transitive') || has('ambitransitive')
+        || has('ditransitive') || has('transitive verb'));
+    return { base, pronominal, shared };
+}
+
+function companionDefinitionKey(value) {
+    return normalizeLemmaToken(value).replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+}
+
+function companionSemanticContext(meaning) {
+    const grammar = new Set(['transitive', 'intransitive', 'ambitransitive', 'ditransitive',
+        'pronominal', 'reflexive', 'transitive verb', 'intransitive verb',
+        'pronominal verb', 'reflexive verb']);
+    return String(meaning.context || '').split(/[,;]/u)
+        .map(companionDefinitionKey).filter(v => v && !grammar.has(v)).join(' ');
+}
+
+function companionSameDefinition(a, b) {
+    const gloss = companionDefinitionKey(a.translation || a.meaning);
+    if (!gloss || gloss !== companionDefinitionKey(b.translation || b.meaning)) return false;
+    const ca = companionSemanticContext(a), cb = companionSemanticContext(b);
+    // Retained semantic context can distinguish two otherwise identical glosses.
+    return !ca || !cb || ca === cb;
+}
+
 function detectSplitCardTuples(item, lang = 'es') {
     const word = normalizeLemmaToken(item?.word || item?.targetWord);
-    const meanings = Array.isArray(item?.meanings) ? item.meanings : [];
-    const lex = meanings.filter(m => m && !isExpressionSenseForLemma(m, item));
-    if (lex.length < 4) return null;
-
-    // Class 1: True Homograph (Distinct base headwords, e.g. ser vs ir, paso vs pasar)
-    const hws = new Map();
+    const seen = new Set();
+    const lex = (item?.meanings || []).filter(m => {
+        if (!m || isExpressionSenseForLemma(m, item) || companionSenseWeight(item, m) <= 0) return false;
+        const id = m.sense_id || m.senseId || m.id;
+        if (id && seen.has(id)) return false;
+        if (id) seen.add(id);
+        return true;
+    });
+    if (!lex.length) return null;
+    const weight = ms => ms.reduce((sum, m) => sum + companionSenseWeight(item, m), 0);
+    const total = weight(lex);
+    const groups = new Map();
     for (const m of lex) {
-        const hw = cleanHeadwordToken(m.headword || word);
-        if (!hws.has(hw)) hws.set(hw, []);
-        hws.get(hw).push(m);
+        const hw = companionSenseConstruction(m, lang).base || word;
+        if (!groups.has(hw)) groups.set(hw, []);
+        groups.get(hw).push(m);
+    }
+    const tuple = (headword, ms, isReflexive = false) => ({
+        headword, pos: String(ms[0]?.pos || 'X').toUpperCase(),
+        label: `${headword} (${String(ms[0]?.translation || ms[0]?.meaning || '').trim()})`,
+        meanings: ms, share: Math.round(weight(ms) / total * 100) / 100, isReflexive
+    });
+    const result = (kind, tuples, root = null) => ({
+        kind, ...(root ? { root } : {}), tuples, tuple1: tuples[0], tuple2: tuples[1]
+    });
+
+    // Four represented senses, distinct lemmas, and 10% assigned usage each.
+    // Pronominal variants belong to their base lemma for this test.
+    const viable = [...groups].filter(([, ms]) => weight(ms) / total >= 0.10 - 1e-9)
+        .sort((a, b) => weight(b[1]) - weight(a[1]));
+    if (lex.length >= 4 && viable.length >= 2) {
+        const tuples = viable.map(([hw, ms]) => tuple(hw, [...ms]));
+        // Minor lemma readings remain available on the primary card as rarer uses.
+        for (const [hw, ms] of groups) {
+            if (!viable.some(([key]) => key === hw)) tuples[0].meanings.push(...ms);
+        }
+        tuples[0].share = Math.round(weight(tuples[0].meanings) / total * 100) / 100;
+        return result('homograph', tuples);
     }
 
-    const collapsed = new Map();
-    for (const [hw, ms] of hws.entries()) {
-        let matched = false;
-        for (const c of collapsed.keys()) {
-            const cRoot = c.replace(/[osae]+$/u, '');
-            const hwRoot = hw.replace(/[osae]+$/u, '');
-            if (cRoot === hwRoot && cRoot.length >= 3) {
-                collapsed.get(c).push(...ms);
-                matched = true;
-                break;
-            }
-        }
-        if (!matched) collapsed.set(hw, [...ms]);
-    }
-
-    const totalLen = lex.length;
-    const viable = [];
-    for (const [hw, ms] of collapsed.entries()) {
-        if (ms.length / totalLen >= 0.14 && ms.length >= 1) {
-            viable.push([hw, ms]);
-        }
-    }
-
-    if (viable.length >= 2) {
-        viable.sort((a, b) => b[1].length - a[1].length);
-        const [hw1, ms1] = viable[0];
-        const [hw2, ms2] = viable[1];
-        const tr1 = String(ms1[0]?.translation || ms1[0]?.meaning || '').trim();
-        const tr2 = String(ms2[0]?.translation || ms2[0]?.meaning || '').trim();
-        const pos1 = String(ms1[0]?.pos || 'X').toUpperCase();
-        const pos2 = String(ms2[0]?.pos || 'X').toUpperCase();
-        return {
-            kind: 'homograph',
-            tuple1: {
-                headword: hw1,
-                pos: pos1,
-                label: `${hw1} (${tr1})`,
-                meanings: ms1,
-                share: Math.round((ms1.length / totalLen) * 100) / 100,
-                isReflexive: false
-            },
-            tuple2: {
-                headword: hw2,
-                pos: pos2,
-                label: `${hw2} (${tr2})`,
-                meanings: ms2,
-                share: Math.round((ms2.length / totalLen) * 100) / 100,
-                isReflexive: false
-            }
-        };
-    }
-
-    // Class 2: Pronominal / Reflexive Shift (Attested base vs pronominal headword)
-    const baseM = lex.filter(m => !normalizeLemmaToken(m.headword).endsWith('se'));
-    const reflM = lex.filter(m => normalizeLemmaToken(m.headword).endsWith('se'));
-    if (baseM.length >= 1 && reflM.length >= 1) {
-        const baseHws = baseM.map(m => normalizeLemmaToken(m.headword || word));
-        const reflHws = reflM.map(m => normalizeLemmaToken(m.headword));
-        let matchedRoot = null;
-        for (const rHw of reflHws) {
-            const rBase = rHw.endsWith('se') && rHw.length > 3 ? rHw.slice(0, -2) : null;
-            if (rBase && (baseHws.includes(rBase) || rBase === word || baseHws.some(b => b.startsWith(rBase)))) {
-                matchedRoot = rBase;
-                break;
-            }
-        }
-        if (!matchedRoot && baseHws.length > 0) {
-            for (const bHw of baseHws) {
-                if (reflHws.includes(`${bHw}se`)) {
-                    matchedRoot = bHw;
-                    break;
-                }
-            }
-        }
-        if (matchedRoot && (reflM.length / totalLen >= 0.14)) {
-            const tr1 = String(baseM[0]?.translation || baseM[0]?.meaning || '').trim();
-            const tr2 = String(reflM[0]?.translation || reflM[0]?.meaning || '').trim();
-            const pos1 = String(baseM[0]?.pos || 'VERB').toUpperCase();
-            const pos2 = String(reflM[0]?.pos || 'VERB').toUpperCase();
-            return {
-                kind: 'reflexive',
-                root: matchedRoot,
-                tuple1: {
-                    headword: matchedRoot,
-                    pos: pos1,
-                    label: `${matchedRoot} (${tr1})`,
-                    meanings: baseM,
-                    share: Math.round((baseM.length / totalLen) * 100) / 100,
-                    isReflexive: false
-                },
-                tuple2: {
-                    headword: `${matchedRoot}se`,
-                    pos: pos2,
-                    label: `${matchedRoot}se (${tr2})`,
-                    meanings: reflM,
-                    share: Math.round((reflM.length / totalLen) * 100) / 100,
-                    isReflexive: true
-                }
-            };
-        }
-    }
-
-    return null;
+    // No four-sense or usage-share minimum for pronominal companions. Both
+    // constructions must actually be represented for the same base lemma.
+    if (!['es', 'pt'].includes(lang) || groups.size !== 1) return null;
+    const root = [...groups.keys()][0];
+    const plain = lex.filter(m => {
+        const info = companionSenseConstruction(m, lang);
+        return !info.pronominal || info.shared;
+    });
+    const pron = lex.filter(m => {
+        const info = companionSenseConstruction(m, lang);
+        return info.pronominal && !info.shared;
+    });
+    if (!plain.length || !pron.length) return null;
+    if (pron.every(m => plain.some(b => companionSameDefinition(m, b)))) return null;
+    const pronHeadword = normalizeLemmaToken(pron[0].headword) || root;
+    const displayPron = pronHeadword !== root ? pronHeadword
+        : lang === 'pt' ? `${root}-se` : `${root}se`;
+    return result('reflexive', [tuple(root, plain), tuple(displayPron, pron, true)], root);
 }
 
 // /lemma-merge-pure
 
-// A surface split into a companion pair (detectSplitCardTuples) becomes two
-// study cards, Flashcard 1 of 2 and 2 of 2, built from the finished card of
-// the whole surface. Shared by the deck builder and every path that opens one
-// word on its own (search, word links, lyric breakdown), so a split word is
-// never shown as one combined card. Returns null for a word that does not
-// split.
+// Shared by study sets, search, word links and vocabulary estimation. Keep
+// every represented sense on exactly one card, including low-share senses.
 function buildSplitCardPair(item, card, meanings, lang = selectedLanguage) {
-    const splitTuples = detectSplitCardTuples(item, lang);
-    if (!splitTuples || !splitTuples.tuple1 || !splitTuples.tuple2) return null;
-    const t1 = splitTuples.tuple1;
-    const t2 = splitTuples.tuple2;
+    const split = detectSplitCardTuples(item, lang);
+    if (!split) return null;
+    const tuples = split.tuples;
     const baseFullId = card.fullId || getWordId(item);
-    const baseId = item.id;
-
-    const firstEx1 = t1.meanings.length > 0
-        ? {
-            targetSentence: t1.meanings[0].targetSentence || '',
-            englishSentence: t1.meanings[0].englishSentence || '',
-        }
-        : { targetSentence: '', englishSentence: '' };
-    const firstEx2 = t2.meanings.length > 0
-        ? {
-            targetSentence: t2.meanings[0].targetSentence || '',
-            englishSentence: t2.meanings[0].englishSentence || '',
-        }
-        : { targetSentence: '', englishSentence: '' };
-
-    // Each sense goes to the card its split put it on: detectSplitCardTuples
-    // assigned every sense id to one reading. Only a sense outside the split
-    // (an expression) falls back to its headword. Comparing cleaned headwords
-    // alone put ponerse's senses on poner's card too, since cleaning drops -se.
-    const ids1 = new Set(t1.meanings.map(m => m.sense_id || m.senseId).filter(Boolean));
-    const ids2 = new Set(t2.meanings.map(m => m.sense_id || m.senseId).filter(Boolean));
     const readingOf = m => {
-        const id = m.senseId || m.sense_id;
-        if (id && ids1.has(id)) return 1;
-        if (id && ids2.has(id)) return 2;
-        if (splitTuples.kind === 'reflexive') {
-            return normalizeLemmaToken(m.headword || item.word).endsWith('se') ? 2 : 1;
-        }
-        const hw = cleanHeadwordToken(m.headword || item.word);
-        if (hw === cleanHeadwordToken(t1.headword)) return 1;
-        if (hw === cleanHeadwordToken(t2.headword)) return 2;
-        return 1;
+        const id = m.senseId || m.sense_id || m.id;
+        const assigned = tuples.findIndex(t => t.meanings.some(s =>
+            s === m || (id && id === (s.sense_id || s.senseId || s.id))));
+        if (assigned >= 0) return assigned;
+        const info = companionSenseConstruction(m, lang);
+        if (split.kind === 'reflexive') return info.pronominal && !info.shared ? 1 : 0;
+        const index = tuples.findIndex(t => t.headword === info.base);
+        return index >= 0 ? index : 0;
     };
-    const belongs1 = m => readingOf(m) === 1;
-    const belongs2 = m => readingOf(m) === 2;
-    const m1 = meanings.filter(belongs1);
-    const m2 = meanings.filter(belongs2);
-    const rarerOf = belongs => (card.unusedMenuSenses || []).filter(m => m.lowShare && belongs(m));
-    const r1 = rarerOf(belongs1);
-    const r2 = rarerOf(belongs2);
-    if ((m1.length === 0 && r1.length === 0) || (m2.length === 0 && r2.length === 0)) {
-        return null;
-    }
-    const meanings1 = m1.length > 0 ? stampSplitShownShares(item, m1, r1) : stampSplitShownShares(item, r1, []);
-    const meanings2 = m2.length > 0 ? stampSplitShownShares(item, m2, r2) : stampSplitShownShares(item, r2, []);
-
-    const card1 = {
-        ...card,
-        id: `${baseId}::split::${t1.headword}_${t1.pos}`,
-        fullId: `${baseFullId}::split::${t1.headword}_${t1.pos}`,
-        citationForm: t1.headword,
-        partOfSpeech: t1.pos,
-        meanings: meanings1,
-        translation: meanings1[0]?.meaning || '',
-        targetSentence: meanings1[0]?.targetSentence || firstEx1.targetSentence,
-        englishSentence: meanings1[0]?.englishSentence || firstEx1.englishSentence,
-        splitInfo: {
-            index: 1,
-            total: 2,
-            kind: splitTuples.kind,
-            headword: t1.headword,
-            pos: t1.pos,
-            label: t1.label,
-            share: t1.share,
-            siblingHeadword: t2.headword,
-            siblingPos: t2.pos,
-            siblingLabel: t2.label,
-            siblingShare: t2.share
-        }
-    };
-
-    const card2 = {
-        ...card,
-        id: `${baseId}::split::${t2.headword}_${t2.pos}`,
-        fullId: `${baseFullId}::split::${t2.headword}_${t2.pos}`,
-        citationForm: t2.headword,
-        partOfSpeech: t2.pos,
-        meanings: meanings2,
-        translation: meanings2[0]?.meaning || '',
-        targetSentence: meanings2[0]?.targetSentence || firstEx2.targetSentence,
-        englishSentence: meanings2[0]?.englishSentence || firstEx2.englishSentence,
-        splitInfo: {
-            index: 2,
-            total: 2,
-            kind: splitTuples.kind,
-            headword: t2.headword,
-            pos: t2.pos,
-            label: t2.label,
-            share: t2.share,
-            siblingHeadword: t1.headword,
-            siblingPos: t1.pos,
-            siblingLabel: t1.label,
-            siblingShare: t1.share
-        }
-    };
-    return [card1, card2];
+    const buckets = tuples.map((t, index) => {
+        const main = meanings.filter(m => readingOf(m) === index);
+        const unused = (card.unusedMenuSenses || []).filter(m => readingOf(m) === index);
+        const rare = unused.filter(m => m.lowShare);
+        // Promote an assigned rare sense when it is this companion's only one.
+        const shown = main.length ? main : rare;
+        return { main: stampSplitShownShares(item, shown, main.length ? rare : []),
+            unused: main.length ? unused : unused.filter(m => !m.lowShare) };
+    });
+    if (buckets.some(b => !b.main.length)) return null;
+    const readings = tuples.map(t => ({ headword: t.headword, pos: t.pos, label: t.label, share: t.share }));
+    return tuples.map((t, index) => {
+        const bucket = buckets[index];
+        const sibling = tuples[index === 0 ? 1 : 0];
+        return {
+            ...card,
+            id: `${item.id}::split::${t.headword}_${t.pos}`,
+            fullId: `${baseFullId}::split::${t.headword}_${t.pos}`,
+            citationForm: t.headword, partOfSpeech: t.pos,
+            meanings: bucket.main, unusedMenuSenses: bucket.unused,
+            translation: bucket.main[0]?.meaning || '',
+            targetSentence: bucket.main[0]?.targetSentence || '',
+            englishSentence: bucket.main[0]?.englishSentence || '',
+            splitInfo: {
+                index: index + 1, total: tuples.length, kind: split.kind,
+                ...readings[index], readings,
+                siblingHeadword: sibling.headword, siblingPos: sibling.pos,
+                siblingLabel: sibling.label, siblingShare: sibling.share
+            }
+        };
+    });
 }
 globalThis.buildSplitCardPair = buildSplitCardPair;
 
@@ -2092,11 +2059,13 @@ async function fetchActiveVocabularyData(langConfig) {
 // A small per-language file carries what Merge Lemmas cannot read from a card
 // whose senses have not loaded: the Wiktionary contractions (pt no = em + o),
 // and each release card's merge key, computed from its full senses. A language
-// without one keeps the old behaviour; stamps are cleared, never carried over
-// from the previous language.
+// without current keys keeps unloaded cards separate until their senses load;
+// stamps are cleared, never carried over from the previous language.
 let _mergeExceptionsFor;
 let _contractionSurfaces = null;
 let _mergeKeys = null;
+let _nounMergeVerdicts = null;
+let _mergeKeysRelease = null;
 
 async function stampContractions(vocabulary, langConfig, { detached = false } = {}) {
     const path = langConfig?.mergeExceptionsPath || null;
@@ -2111,13 +2080,17 @@ async function stampContractions(vocabulary, langConfig, { detached = false } = 
         const built = payload?.release_id;
         const sameRelease = !built || [langConfig?.indexPath, langConfig?.releaseManifestPath]
             .some(value => String(value || '').includes(`/${built}/`));
-        stampMergeExceptionValues(vocabulary, contractions, sameRelease ? payload?.keys : null);
+        stampMergeExceptionValues(vocabulary, contractions,
+            sameRelease && payload?.noun_merge_rule === 'noun-merge/v2' ? payload?.keys : null,
+            sameRelease && payload?.noun_merge_rule === 'noun-merge/v2' ? payload?.noun_verdicts : null);
         return;
     }
     if (_mergeExceptionsFor !== path) {
         _mergeExceptionsFor = path;
         _contractionSurfaces = null;
         _mergeKeys = null;
+        _nounMergeVerdicts = null;
+        _mergeKeysRelease = null;
         if (path) {
             try {
                 const response = await fetch(path);
@@ -2127,22 +2100,42 @@ async function stampContractions(vocabulary, langConfig, { detached = false } = 
                 // The keys describe one release's senses; another release's
                 // deck falls back to reading senses as they load.
                 const built = payload?.release_id;
+                _mergeKeysRelease = built;
                 const sameRelease = !built || [langConfig?.indexPath, langConfig?.releaseManifestPath]
                     .some(value => String(value || '').includes(`/${built}/`));
-                _mergeKeys = (sameRelease && payload?.keys && typeof payload.keys === 'object') ? payload.keys : null;
+                _mergeKeys = (sameRelease && payload?.noun_merge_rule === 'noun-merge/v2'
+                    && payload?.keys && typeof payload.keys === 'object') ? payload.keys : null;
+                _nounMergeVerdicts = sameRelease && payload?.noun_merge_rule === 'noun-merge/v2'
+                    ? payload?.noun_verdicts : null;
                 if (!sameRelease) console.warn(`Merge keys were built for ${built}; ignoring them for this release.`);
             } catch (error) {
                 console.warn('Merge exceptions unavailable:', error);
             }
         }
     }
-    stampMergeExceptionValues(vocabulary, _contractionSurfaces, _mergeKeys);
+    // The exceptions URL may stay the same when the selected release changes.
+    // Re-check the cached decisions against the current release on every use.
+    const sameRelease = !_mergeKeysRelease || [langConfig?.indexPath, langConfig?.releaseManifestPath]
+        .some(value => String(value || '').includes(`/${_mergeKeysRelease}/`));
+    stampMergeExceptionValues(vocabulary, _contractionSurfaces,
+        sameRelease ? _mergeKeys : null, sameRelease ? _nounMergeVerdicts : null);
 }
 
-function stampMergeExceptionValues(vocabulary, contractions, keys) {
+function stampMergeExceptionValues(vocabulary, contractions, keys, nounVerdicts = null) {
     if (!Array.isArray(vocabulary)) return;
     for (const item of vocabulary) {
         const surface = normalizeLemmaToken(item?.word);
+        if (item._nounMergeOverlay) {
+            if (item._nounMergeOriginal) item.noun_merge = item._nounMergeOriginal;
+            else delete item.noun_merge;
+            delete item._nounMergeOverlay;
+            delete item._nounMergeOriginal;
+        }
+        if (nounVerdicts?.[surface]) {
+            item._nounMergeOriginal = item.noun_merge;
+            item._nounMergeOverlay = true;
+            item.noun_merge = nounVerdicts[surface];
+        }
         item.is_contraction = Boolean(contractions?.has(surface));
         const key = keys?.[surface];
         if (typeof key === 'string') item.merge_key = key;
@@ -3590,6 +3583,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
         // Inclusive label for display, e.g. "475-499" for rangeString "475-500"
         // (rangeEnd is exclusive in the filter above).
         const rankLabel = `${rangeStart}-${rangeEnd - 1}`;
+        stats.rangeLabel = `${rangeStart}–${rangeEnd - 1}`;
         if (opts.setLabel) {
             stats.setLabel = opts.setLabel;
             stats.isFastTrack = Boolean(opts.isFastTrack);
@@ -3609,10 +3603,8 @@ async function loadVocabularyData(rangeString, opts = {}) {
             stats.remainingDueCount = Math.max(0, remaining);
         } else {
             stats.setLabel = stats.studyMode === 'review'
-                ? `Level ${stats.levelNumber || ''} review · ranks ${rankLabel}`.replace('Level  review', 'Level review')
-                : stats.setNumber
-                ? `Set ${stats.setNumber}${stats.levelSetCount ? `/${stats.levelSetCount}` : ''} · ranks ${rankLabel}`
-                : rankLabel;
+                ? `Level ${stats.levelNumber || ''} review · ${stats.rangeLabel}`.replace('Level  review · ', 'Level review · ')
+                : stats.rangeLabel;
         }
         const statsWords = stats.studyMode === 'review' ? filteredData : allInRange;
         stats.allWords = statsWords.map(it => ({
@@ -3972,6 +3964,15 @@ async function mergeArtistVocabularies(artistConfigs, master) {
                 // Merge into an existing entry. Master-based senses retain
                 // their stable source index across artists.
                 const existing = byId.get(id);
+                if (existing.noun_merge || entry.noun_merge) {
+                    const a = existing.noun_merge, b = entry.noun_merge;
+                    if (!a || !b || a.allowed !== true || b.allowed !== true
+                        || a.rule_version !== b.rule_version || a.lemma !== b.lemma
+                        || !a.sense_set || a.sense_set !== b.sense_set) {
+                        existing.noun_merge = { rule_version: 'noun-merge/v2', allowed: false,
+                            lemma: a?.lemma || b?.lemma || '', reason: 'inconsistent_artist_menus' };
+                    }
+                }
                 existing.corpus_count = (existing.corpus_count || 0) + (entry.corpus_count || 0);
 
                 if (master && isNewFormat) {

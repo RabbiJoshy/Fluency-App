@@ -2,6 +2,31 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T23:20:00+01:00",
+      "date": "2026-10-09 23:20 BST",
+      "agent": "Codex",
+      "summary": "Noun forms merge only when every dictionary sense matches and both words have one noun entry",
+      "detail": [
+        "Keep ser/seres and poder/poderes separate: noun and verb entries remain distinct even when their headword spelling matches.",
+        "Compare complete original SpanishDict and Wiktionary menus before filtering or display inflection; reject missing evidence and number-specific senses.",
+        "Invalidate earlier noun approvals and preserve the same decision in Smart Skip, deck grouping and early-loading indexes. Existing releases need refreshed source metadata to approve noun pairs."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-09T22:58:00+01:00",
+      "date": "2026-10-09 22:58 BST",
+      "agent": "Antigravity",
+      "summary": "Polish landing layout: prominent titles, level scrubber badge, target example words, card range nomenclature, centered modals",
+      "detail": [
+        "Header titles are enlarged and capitalized (Choose a Level, Choose a Set, Practice Errors).",
+        "Level picker features an illuminated focal badge on the active level, removes redundant header level label, and places speech coverage inline after target-language example words.",
+        "Retired 'Set 1, 2, ...' in favor of card ranges (e.g. 1–25) across selectors, buttons, loading screens, and completion modals.",
+        "Refactored setup tooltip modals to be concise, scannable, and cleanly centered across both mobile and desktop viewports."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T20:32:00+01:00",
       "date": "2026-10-09 20:32 BST",
       "agent": "Claude",
@@ -348,29 +373,6 @@
         "Leave day and month blank to look up profiles by name alone.",
         "A supplied birthday narrows matching names; profiles without a birthday remain discoverable.",
         "Partially entered or invalid birthdays still receive inline feedback."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T22:21:02+01:00",
-      "date": "2026-10-08 22:21 BST",
-      "agent": "Codex",
-      "summary": "A clearer, quieter welcome and profile screen",
-      "detail": [
-        "Welcome offers a clear saved-progress path and a lighter guest option.",
-        "The profile form has one heading, shorter guidance and no repeated welcome pitch."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T21:21:45+01:00",
-      "date": "2026-10-08 21:21 BST",
-      "agent": "Codex",
-      "summary": "Quick tutorial first, with the full card tour in Help",
-      "detail": [
-        "The tutorial introduction now starts with the essential lesson, including the correct pronunciation controls.",
-        "The full card tour remains an explicit option in Help and the introduction.",
-        "All five first-time UX audit recommendations are implemented and recorded."
       ],
       "commit": "pending"
     }

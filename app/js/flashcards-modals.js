@@ -852,8 +852,8 @@ function navigateToCard(targetIndex) {
 }
 
 // A word opened on its own (lyric breakdown, search, word link, homograph
-// peek) is studied as it is in a set: a split word opens as Flashcard 1 of 2,
-// with 2 of 2 waiting in `_splitNext` (stepToSplitSibling shows it). When the
+// peek) is studied as it is in a set: companions wait in `_splitNext`
+// (stepToSplitSibling shows each in turn). When the
 // path focuses one meaning, the card holding it opens first.
 function splitAwareTempCard(vocabEntry, baseCard, focusIndex = 0) {
     const pair = window.buildSplitCardPair?.(vocabEntry, baseCard, baseCard.meanings);
@@ -861,9 +861,11 @@ function splitAwareTempCard(vocabEntry, baseCard, focusIndex = 0) {
     const focused = baseCard.meanings[focusIndex];
     const same = m => m === focused || (focused && m.meaning === focused.meaning
         && (m.senseId || '') === (focused.senseId || '') && (m.headword || '') === (focused.headword || ''));
-    const startOnSecond = focusIndex > 0 && pair[1].meanings.some(same);
-    const [first, second] = startOnSecond ? [pair[1], pair[0]] : pair;
-    first._splitNext = second;
+    const focusCard = focusIndex > 0 ? pair.findIndex(card => card.meanings.some(same)) : 0;
+    const start = Math.max(0, focusCard);
+    const ordered = [...pair.slice(start), ...pair.slice(0, start)];
+    ordered.forEach((card, index) => { card._splitNext = ordered[index + 1] || null; });
+    const first = ordered[0];
     const meaningIndex = focusIndex > 0 ? Math.max(0, first.meanings.findIndex(same)) : 0;
     return { card: first, meaningIndex };
 }
@@ -1493,13 +1495,15 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
     // Update modal content. Ordinary decks are intentionally small stable
     // sets, so completion is a frequent reward inside the larger level.
     const titleEl = document.getElementById('deckCompleteTitle');
+    const rangeLabel = stats.rangeLabel
+        || (stats.rangeString ? `${stats.rangeString.split('-')[0]}–${parseInt(stats.rangeString.split('-')[1]) - 1}` : null);
     if (titleEl) {
         titleEl.textContent = isLevelCompletion
             ? `Level ${stats.levelNumber} complete`
             : stats.studyMode === 'review'
             ? 'Practice complete'
-            : stats.setNumber
-            ? `Set ${stats.setNumber} complete`
+            : rangeLabel
+            ? `${rangeLabel} complete`
             : 'Set complete';
     }
 
@@ -1651,7 +1655,10 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
                 finishBtn.style.display = 'none';
             }
         } else if (stats.nextRange) {
-            finishLabel.textContent = `Start Set ${stats.nextSetNumber}`;
+            const nextRangeLabel = stats.nextRange
+                ? `${stats.nextRange.split('-')[0]}–${parseInt(stats.nextRange.split('-')[1]) - 1}`
+                : '';
+            finishLabel.textContent = nextRangeLabel ? `Start ${nextRangeLabel}` : 'Start next cards';
             finishIcon.textContent = '→';
             finishBtn.dataset.action = 'next-set';
             finishBtn.classList.add('has-next-set');
@@ -1660,7 +1667,7 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
         } else if (nextLevel) {
             finishLabel.textContent = (nextLevel.scope === 'extra' || nextLevel.label)
                 ? `Start ${nextLevel.label}`
-                : `Start Level ${nextLevel.levelNumber}, Set 1`;
+                : `Start Level ${nextLevel.levelNumber}`;
             finishIcon.textContent = '→';
             finishBtn.dataset.action = 'next-level';
             finishBtn.classList.add('has-next-set');
@@ -1686,8 +1693,8 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
                 : 'All caught up on this Practice queue!')
             : isLevelCompletion
             ? ''
-            : stats.levelSetCount && stats.setNumber
-                ? `Set ${stats.setNumber} of ${stats.levelSetCount} finished.`
+            : rangeLabel
+                ? `${rangeLabel} finished.`
                 : '';
 
     // Show the modal
