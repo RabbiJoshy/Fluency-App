@@ -271,6 +271,7 @@
       "name": "Finnish",
       "dataPath": "Data/Finnish/vocabulary.json",
       "indexPath": "releases/fi/speech/fi-speech-v21-2000x30-slim/app/vocabulary.index.json",
+      "frequencyPath": "data/speech-frequency/fi.json",
       "examplesPath": "releases/fi/speech/fi-speech-v21-2000x30-slim/app/vocabulary.examples.json",
       "studyStructurePath": "releases/fi/speech/fi-speech-v21-2000x30-slim/app/study-structure.json",
       "releaseManifestPath": "releases/fi/speech/fi-speech-v21-2000x30-slim/manifest.json",

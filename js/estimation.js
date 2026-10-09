@@ -1,4 +1,4 @@
-import './state.js?v=5e1f4e9a';
+import './state.js?v=6635377f';
 
 const ESTIMATION_QUESTION_LIMIT = 30;
 const ESTIMATION_BAND_TARGET = 10;
@@ -24,13 +24,15 @@ function createEstimationState() {
     return {
         active: false,
         vocabularyData: null,
+        placementWords: [],
+        langConfig: null,
+        groupEstimate: null,
         validWords: [],
         bands: [],
         coverageOrder: [],
         maxLevel: 0,
         wordsTestedCount: 0,
         shownWordIds: new Set(),
-        shownLemmaKeys: new Set(),
         prefetched: new Map(),
         currentWord: null,
         loading: false,
@@ -63,42 +65,141 @@ function openEstimationModal() {
 function closeEstimationModal() {
     document.getElementById('estimationModal').classList.add('hidden');
     estimationState.active = false;
+    estimationState.loading = false;
     estimationState.sequence = ++estimationSequence;
     if (estimationState.autoAdvanceTimer) {
         clearTimeout(estimationState.autoAdvanceTimer);
     }
 }
 
-// Keep the estimator independent of optional pipeline enrichments. It uses the
-// same broad exclusions as before, but does not require CEFR labels, calibrated
-// item difficulty, morphology, or sense-assignment metadata.
-function buildEstimationWordList() {
-    const vocabData = estimationState.vocabularyData;
-    if (!vocabData) return [];
+// Keep the historical exclusions, but resolve the same merge/split decisions
+// as the study deck before constructing the sampling distribution.
+function estimationSurfaceEligible(item) {
+    return item.word && item.word.trim() !== '' && !item.duplicate
+        && hasTranslatedMeaning(item) && (item.cognate_score ?? 0) < 0.83
+        && !item.is_noise && !item.is_interjection && !item.is_propernoun
+        && !item.is_english && !isFunctionWord(item)
+        && ESTIMATION_CONTENT_POS.has(mainSensePos(item))
+        && (!hideSingleOccurrence || !Object.hasOwn(item, 'corpus_count') || item.corpus_count > 1);
+}
 
-    // Lean columnar indexes ship every card with empty meanings until its
-    // study-set row shard lands, so a pending row counts as a candidate and is
-    // hydrated just before it is shown. Requiring meanings here left only the
-    // landing set's cards -- for Spanish, a pool of clitics and pronouns.
-    const valid = vocabData.filter(item =>
-        item.word && item.word.trim() !== '' &&
-        !item.duplicate &&
-        (item._indexRowsPending === true || hasTranslatedMeaning(item)) &&
-        (item.cognate_score ?? 0) < 0.83 &&
-        !item.is_noise && !item.is_interjection &&
-        !item.is_propernoun &&
-        !item.is_english &&
-        !isFunctionWord(item) &&
-        (item._indexRowsPending === true || ESTIMATION_CONTENT_POS.has(mainSensePos(item))) &&
-        (!hideSingleOccurrence || !item.hasOwnProperty('corpus_count') || item.corpus_count > 1)
-    );
+function assignedSenseWeight(item, meaning) {
+    const id = meaning.sense_id || meaning.senseId;
+    const count = item.wsd_distribution?.published_leaf_counts?.[id]
+        ?? item.wsd_distribution?.supported_leaf_counts?.[id];
+    const value = Number(meaning.frequency ?? meaning.percentage ?? meaning.display_frequency ?? count);
+    return Number.isFinite(value) && value > 0 ? value : 0;
+}
 
-    // Candidates keep a reference to the deck card rather than a copy, so the
-    // meanings a row shard merges into the deck reach the estimator too.
-    // estimationRank is the position among candidates; results are mapped back
-    // to deck ranks by deckRankForCount.
+function estimationExampleText(meaning, example) {
+    return String(example?.target || example?.spanish || example?.sentence
+        || example?.text || meaning?.targetSentence || meaning?.canonical_example?.text || '').trim();
+}
+
+function attachEstimationExample(item, examples = {}) {
+    if (!item.splitInfo) return;
+    const source = item.estimationMembers[0].source;
+    for (const meaning of item.meanings) {
+        const index = meaning._masterSenseIndex ?? meaning._estimationSourceIndex;
+        const candidates = [...(meaning.examples || []), ...(examples[source.id]?.m?.[index] || [])];
+        for (const example of [null, ...candidates]) {
+            const text = estimationExampleText(meaning, example);
+            if (text) {
+                item.estimationExample = text;
+                return;
+            }
+        }
+    }
+}
+
+function estimationSurfaceFrequency(item, frequencyData) {
+    const surface = String(item.word).normalize('NFC').toLocaleLowerCase();
+    const value = Number(frequencyData?.values?.[surface] ?? item.corpus_count);
+    return Number.isFinite(value) && value > 0 ? value : 0;
+}
+
+// This pool is independent of the user's Merge Forms toggle. The toggle
+// changes study presentation, not what a vocabulary estimate measures.
+function buildEstimationPool(vocabulary, frequencyData = null) {
+    const eligible = vocabulary.filter(estimationSurfaceEligible);
+    const groups = new Map();
+    const items = [];
+    for (const source of eligible) {
+        const meanings = source.meanings.map((meaning, index) => ({
+            ...meaning, meaning: meaning.translation,
+            senseId: meaning.sense_id || meaning.senseId,
+            percentage: assignedSenseWeight(source, meaning),
+            _estimationAssignedWeight: assignedSenseWeight(source, meaning),
+            _estimationSourceIndex: index
+        }));
+        const finished = window.finishCardMeanings(source, meanings);
+        const pair = window.buildSplitCardPair(source, {
+            ...source, ...finished, targetWord: source.word,
+            // Detached Speech questions must not register artist progress IDs.
+            fullId: `${window.LANG_CODES[selectedLanguage] || selectedLanguage.slice(0, 2)}0${source.id}`
+        }, finished.meanings, selectedLanguage);
+        const frequency = estimationSurfaceFrequency(source, frequencyData);
+        if (pair) {
+            const tuples = window.detectSplitCardTuples(source, selectedLanguage);
+            const weights = [tuples.tuple1, tuples.tuple2].map(tuple => tuple.meanings
+                .reduce((sum, meaning) => sum + assignedSenseWeight(source, meaning), 0));
+            const total = weights.reduce((sum, value) => sum + value, 0);
+            // Sense-count heuristics decide whether the deck splits, but cannot
+            // allocate corpus frequency. Missing evidence leaves it untested.
+            if (total <= 0) continue;
+            pair.forEach((card, index) => {
+                const share = weights[index] / total;
+                if (share <= 0) return;
+                const item = {
+                    ...source, id: card.id, lemma: card.citationForm,
+                    meanings: card.meanings.map(m => ({ ...m, translation: m.meaning })),
+                    splitInfo: card.splitInfo,
+                    estimationKey: `split:${card.id}`,
+                    estimationFrequency: frequency * share,
+                    estimationMembers: [{ source, weight: share }]
+                };
+                if (!estimationSurfaceEligible(item)) return;
+                attachEstimationExample(item);
+                items.push(item);
+            });
+            continue;
+        }
+        const lemma = window.lemmaGroupKey(source);
+        if (!lemma) {
+            items.push({ ...source, estimationKey: `surface:${source.id || source.word}`,
+                estimationFrequency: frequency, estimationMembers: [{ source, weight: 1 }] });
+            continue;
+        }
+        const key = `lemma:${lemma}`;
+        let group = groups.get(key);
+        if (!group) {
+            group = { ...source, estimationKey: key, estimationFrequency: 0,
+                estimationRepresentativeFrequency: -1, estimationMembers: [] };
+            groups.set(key, group);
+            items.push(group);
+        }
+        group.estimationMembers.push({ source, weight: 1 });
+        group.estimationFrequency += frequency;
+        if (frequency > group.estimationRepresentativeFrequency
+            || (frequency === group.estimationRepresentativeFrequency && Number(source.rank) < Number(group.rank))) {
+            Object.assign(group, { word: source.word, id: source.id, lemma: source.lemma,
+                meanings: source.meanings, rank: source.rank, stableRank: source.stableRank,
+                estimationRepresentativeFrequency: frequency });
+        }
+    }
+    items.sort((a, b) => b.estimationFrequency - a.estimationFrequency
+        || Number(a.rank) - Number(b.rank) || a.estimationKey.localeCompare(b.estimationKey));
+    return items;
+}
+
+function finalizeEstimationPool(items) {
+    const valid = items.filter(item => !item.splitInfo || item.estimationExample);
     valid.forEach((item, index) => { item.estimationRank = index + 1; });
-    return valid;
+    const surfaces = new Map();
+    for (const item of valid) {
+        for (const { source } of item.estimationMembers) surfaces.set(source.id || source.word, source);
+    }
+    return { items: valid, placementWords: [...surfaces.values()].sort((a, b) => Number(a.rank) - Number(b.rank)) };
 }
 
 function hasTranslatedMeaning(item) {
@@ -130,20 +231,15 @@ function mainSensePos(word) {
 
 // A candidate is ready once its meanings are loaded and it still qualifies.
 function isShowableWord(word) {
-    return word && word._indexRowsPending !== true
+    return word && (!word.splitInfo || Boolean(word.estimationExample)) && word._indexRowsPending !== true
         && hasTranslatedMeaning(word) && !isFunctionWord(word)
         && ESTIMATION_CONTENT_POS.has(mainSensePos(word));
 }
 
 async function hydrateEstimationWord(word) {
-    if (!word || word._indexRowsPending !== true) return;
-    try {
-        await window.ensureIndexRowsForRange?.(
-            getEstimationLangConfig(), 0, 0, [Number(word.rank)]
-        );
-    } catch (error) {
-        console.warn('Level check could not load a word:', error);
-    }
+    // Metadata is complete before bands are built; examples for split readings
+    // were fetched separately without hydrating the rest of the deck.
+    return word;
 }
 
 function isSpeechMode() {
@@ -205,11 +301,7 @@ function buildEstimationBands(words) {
 }
 
 function getWordKey(word) {
-    return String(word.id || `${word.word}|${word.lemma || ''}|${word.estimationRank}`);
-}
-
-function getLemmaKey(word) {
-    return String(word.lemma || word.word || '').trim().toLocaleLowerCase();
+    return word.estimationKey || String(word.id || `${word.word}|${word.estimationRank}`);
 }
 
 // Pool adjacent violations so estimated knowledge cannot rise as words become
@@ -329,14 +421,7 @@ function pickWordFromBand(bandIndex) {
     const unused = words.filter(word => !estimationState.shownWordIds.has(getWordKey(word)));
     if (!unused.length) return null;
 
-    // Never test the same lemma twice unless this band has no other unused
-    // vocabulary left. Surface forms are otherwise sampled without pipeline-
-    // specific preferences so the check reflects the deck it will place into.
-    const freshLemmas = unused.filter(word =>
-        !estimationState.shownLemmaKeys.has(getLemmaKey(word))
-    );
-    const candidates = freshLemmas.length ? freshLemmas : unused;
-    return candidates[Math.floor(Math.random() * candidates.length)];
+    return unused[Math.floor(Math.random() * unused.length)];
 }
 
 function findAvailableWord(preferredBandIndex) {
@@ -418,34 +503,59 @@ function getWordRankLabel(word) {
 // Start the estimation test
 async function startEstimation() {
     estimationState = createEstimationState();
-
-    try {
-        // Conjugation tables inflect the glosses; Speech setup loads them in
-        // the background, so start them now rather than show "to have".
-        Promise.resolve(window.loadConjugationData?.()).catch(() => {});
-        estimationState.vocabularyData = await fetchAndJoinIndex(
-            getEstimationLangConfig(), { ignoreArtist: true }
-        );
-    } catch (error) {
-        alert('Failed to load vocabulary for estimation.');
-        return;
-    }
-
-    estimationState.validWords = buildEstimationWordList();
-    estimationState.maxLevel = estimationState.validWords.length;
-    estimationState.bands = buildEstimationBands(estimationState.validWords);
-    estimationState.coverageOrder = buildCoverageOrder(estimationState.bands.length);
-
-    if (!estimationState.validWords.length) {
-        alert('There are not enough vocabulary entries to run the level check.');
-        return;
-    }
-
-    estimationState.active = true;
+    const state = estimationState;
+    const sequence = state.sequence;
+    state.langConfig = { ...getEstimationLangConfig() };
+    state.loading = true;
     document.getElementById('estimationIntro').style.display = 'none';
     document.getElementById('estimationTest').style.display = 'flex';
     document.getElementById('estimationResult').style.display = 'none';
-    showNextWord();
+    setEstimationLoading(true);
+    const current = () => estimationState === state && state.sequence === sequence;
+    const progress = text => {
+        if (current()) document.getElementById('estimationLevel').textContent = text;
+    };
+    progress('Preparing vocabulary groups…');
+    try {
+        Promise.resolve(window.loadConjugationData?.()).catch(() => {});
+        const [vocabulary, frequency] = await Promise.all([
+            window.loadEstimationVocabulary(state.langConfig, (done, total) =>
+                progress(`Preparing vocabulary groups · ${Math.round(done / total * 100)}%`)),
+            window.loadSpeechSourceFrequency(state.langConfig, { detached: true })
+        ]);
+        if (!current()) return;
+        if (state.langConfig.frequencyPath && !frequency) {
+            throw new Error('Speech source frequencies are unavailable or do not match this release');
+        }
+        state.vocabularyData = vocabulary;
+        const pool = buildEstimationPool(vocabulary, frequency);
+        const ranks = [...new Set(pool.filter(item => item.splitInfo && !item.estimationExample)
+            .map(item => Number(item.rank)))];
+        if (ranks.length) {
+            progress('Preparing examples for separate readings…');
+            const examples = await window.loadEstimationExamples(state.langConfig, ranks);
+            if (!current()) return;
+            pool.forEach(item => attachEstimationExample(item, examples));
+        }
+        const prepared = finalizeEstimationPool(pool);
+        state.validWords = prepared.items;
+        state.placementWords = prepared.placementWords;
+        state.maxLevel = state.validWords.length;
+        state.bands = buildEstimationBands(state.validWords);
+        state.coverageOrder = buildCoverageOrder(state.bands.length);
+        if (!state.validWords.length) throw new Error('No eligible vocabulary groups');
+        state.active = true;
+        setEstimationLoading(false);
+        await showNextWord();
+    } catch (error) {
+        if (!current()) return;
+        console.warn('Level check preparation failed:', error);
+        state.active = false;
+        setEstimationLoading(false);
+        document.getElementById('estimationTest').style.display = 'none';
+        document.getElementById('estimationIntro').style.display = 'block';
+        alert('The level check could not prepare the vocabulary. Please try again.');
+    }
 }
 
 // Pick the next word, loading its meanings if the index shipped it lean. A
@@ -497,6 +607,8 @@ function setEstimationLoading(loading, showPlaceholder = loading) {
     estimationState.loading = loading;
     if (showPlaceholder) {
         document.getElementById('estimationWord').textContent = 'Loading…';
+        const exampleEl = document.getElementById('estimationExample');
+        if (exampleEl) { exampleEl.textContent = ''; exampleEl.hidden = true; }
         document.getElementById('estimationLemma').style.visibility = 'hidden';
         const posEl = document.getElementById('estimationPOS');
         if (posEl) {
@@ -541,17 +653,18 @@ async function showNextWord() {
     estimationState.currentBandIndex = bandIndex;
     estimationState.translationRevealed = false;
     estimationState.shownWordIds.add(getWordKey(word));
-    estimationState.shownLemmaKeys.add(getLemmaKey(word));
 
     document.getElementById('estimationWord').textContent = word.word;
     const lemmaEl = document.getElementById('estimationLemma');
-    const lemma = word.lemma || '';
-    if (lemma && lemma !== word.word) {
-        lemmaEl.textContent = lemma;
-        lemmaEl.style.visibility = 'visible';
-    } else {
-        lemmaEl.textContent = '';
-        lemmaEl.style.visibility = 'hidden';
+    // Recognition is of this form in this reading. A dictionary headword on
+    // the front would give away an irregular form before the learner answers.
+    lemmaEl.textContent = '';
+    lemmaEl.style.visibility = 'hidden';
+
+    const exampleEl = document.getElementById('estimationExample');
+    if (exampleEl) {
+        exampleEl.textContent = word.estimationExample || '';
+        exampleEl.hidden = !word.estimationExample;
     }
 
     const displayPos = mainSensePos(word);
@@ -614,7 +727,7 @@ function handleAnswer(known) {
 }
 
 function roundEstimate(value, maxLevel) {
-    const increment = maxLevel >= 2000 ? 100 : 50;
+    const increment = maxLevel >= 2000 ? 100 : (maxLevel >= 100 ? 50 : 1);
     return Math.max(0, Math.min(maxLevel, Math.round(value / increment) * increment));
 }
 
@@ -675,33 +788,6 @@ function updateEstimationProgress() {
     }
 }
 
-// Map estimated vocabulary rank to the corresponding CEFR proficiency stage
-function getCefrStageForRank(rank) {
-    if (!Number.isFinite(rank) || rank <= 0) return null;
-    try {
-        const lang = selectedLanguage || 'spanish';
-        const cefrLevels = typeof window.getCefrLevels === 'function'
-            ? window.getCefrLevels(lang)
-            : config?.languages?.[lang]?.cefrLevels;
-        if (!Array.isArray(cefrLevels) || !cefrLevels.length) return null;
-
-        for (const item of cefrLevels) {
-            const countStr = String(item.wordCount || '');
-            const match = countStr.match(/(\d+)\s*-\s*(\d+)/);
-            if (match) {
-                const min = parseInt(match[1], 10);
-                const max = parseInt(match[2], 10);
-                if (rank >= min && rank <= max) {
-                    return `${item.level} · ${item.description || ''}`.trim();
-                }
-            }
-        }
-        const last = cefrLevels[cefrLevels.length - 1];
-        if (last && rank > 0) return `${last.level} · ${last.description || ''}`.trim();
-    } catch (_) {}
-    return null;
-}
-
 // Show the estimation result
 function showEstimationResult() {
     estimationState.active = false;
@@ -710,19 +796,24 @@ function showEstimationResult() {
         estimationState.bands,
         estimationState.maxLevel
     );
+    const placementBands = estimationState.bands.map(band => ({ ...band,
+        size: estimationState.validWords.slice(band.start, band.end).reduce((sum, item) =>
+            sum + item.estimationMembers.reduce((total, member) => total + member.weight, 0), 0)
+    }));
+    const surfaceCounts = calculateEstimationResult(placementBands, estimationState.placementWords.length);
+    estimationState.groupEstimate = counts;
     // The fit counts known candidates; the saved estimate is a Speech source
     // rank and the level a stable rank, both covering the cognates and
     // function words left out here.
-    const candidates = estimationState.validWords;
+    const candidates = estimationState.placementWords;
     const levelRankFor = count => levelRankOf(candidateForCount(candidates, count));
     const result = {
-        point: deckRankForCount(candidates, counts.point),
-        low: deckRankForCount(candidates, counts.low),
-        high: deckRankForCount(candidates, counts.high)
+        point: deckRankForCount(candidates, surfaceCounts.point),
+        low: deckRankForCount(candidates, surfaceCounts.low),
+        high: deckRankForCount(candidates, surfaceCounts.high)
     };
-    const shown = value => roundEstimate(value, Infinity).toLocaleString();
     estimationState.estimatedLevel = result.point;
-    estimationState.estimatedLevelRank = levelRankFor(counts.point);
+    estimationState.estimatedLevelRank = levelRankFor(surfaceCounts.point);
     estimationState.estimateInterval = result;
 
     if (estimationState.autoAdvanceTimer) {
@@ -740,42 +831,16 @@ function showEstimationResult() {
     // The level to start learning is the one containing the first unseen word (+1).
     const targetRank = (estimationState.estimatedLevelRank || result.point) + 1;
     const pointLevel = speech ? levelButtonForRank(targetRank) : null;
-    const ranOut = estimationState.wordsTestedCount < ESTIMATION_QUESTION_LIMIT;
-    const cefrStage = speech ? getCefrStageForRank(result.point) : null;
-
+    const range = `${Math.round(counts.low).toLocaleString()}–${Math.round(counts.high).toLocaleString()}`;
+    const estimate = `Estimated vocabulary groups: about ${Math.round(counts.point).toLocaleString()} (range ${range}).`;
+    const shortCheck = estimationState.wordsTestedCount < ESTIMATION_QUESTION_LIMIT
+        ? ` The check used ${estimationState.wordsTestedCount} groups.` : '';
     if (!speech) {
-        // Speech knowledge is not a run of this artist's levels. The estimate
-        // marks the Speech words within it as known here instead.
-        levelEl.textContent = result.point > 0
-            ? `About ${shown(result.point)} Speech words`
-            : 'Most of the words sampled were new to you';
-        descEl.textContent = result.point > 0
-            ? `Range ${shown(result.low)}–${shown(result.high)}. Words you likely know are skipped in this deck.`
-            : (ranOut
-                ? `The check ran out of words after ${estimationState.wordsTestedCount}, so it could not place you.`
-                : 'Nothing will be skipped in this deck.');
-    } else if (result.point <= 0) {
-        levelEl.textContent = 'Start at Level 1';
-        descEl.textContent = ranOut
-            ? `The check ran out of words after ${estimationState.wordsTestedCount}, so it could not place you.`
-            : 'Most of the words sampled were new to you (A1 Beginner).';
-    } else if (pointLevel) {
-        // The estimate is stored as a rank; the level is derived for the first unseen card.
-        const lowRank = levelRankFor(counts.low) + 1;
-        const highRank = levelRankFor(counts.high) + 1;
-        const lowLevel = levelButtonForRank(lowRank)?.number ?? pointLevel.number;
-        const highLevel = levelButtonForRank(highRank)?.number ?? pointLevel.number;
-        const words = `${shown(result.low)}–${shown(result.high)} words`;
-        const cefrSuffix = cefrStage ? ` (${cefrStage})` : '';
-        levelEl.textContent = `Start at Level ${pointLevel.number}${cefrSuffix}`;
-        descEl.textContent = lowLevel === highLevel
-            ? `About ${words} you'd recognise.`
-            : `Likely somewhere in Levels ${lowLevel}–${highLevel} (about ${words}).`;
+        levelEl.textContent = `About ${Math.round(counts.point).toLocaleString()} vocabulary groups`;
+        descEl.textContent = `${estimate} Words you likely know are skipped in this deck.${shortCheck}`;
     } else {
-        levelEl.textContent = `${shown(result.low)}–${shown(result.high)} words`;
-        descEl.textContent =
-            `Best estimate: about ${shown(result.point)} receptive words${cefrStage ? ` (${cefrStage})` : ''}. ` +
-            'The range reflects uncertainty from a short check.';
+        levelEl.textContent = pointLevel ? `Start at Level ${pointLevel.number}` : 'Your vocabulary estimate';
+        descEl.textContent = `${estimate} The range reflects uncertainty from a short check.${shortCheck}`;
     }
 }
 
@@ -898,6 +963,10 @@ window.selectLevelForRank = selectLevelForRank;
 
 // Pure helpers are exported for lightweight regression checks without a DOM.
 export {
+    buildEstimationPool,
+    finalizeEstimationPool,
+    attachEstimationExample,
+    deckRankForCount,
     buildCoverageOrder,
     buildEstimationBands,
     fitMonotonicProbabilities,
