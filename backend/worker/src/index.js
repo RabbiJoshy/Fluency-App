@@ -618,9 +618,33 @@ async function fetchGeniusTranslation(params) {
     return response(false, `Genius page fetch failed: ${err?.message || err}`);
   }
 
-  // Extract text from data-lyrics-container="true"
-  const containerMatches = [...html.matchAll(/<div[^>]*data-lyrics-container="true"[^>]*>([\s\S]*?)<\/div>/g)];
-  if (!containerMatches.length) {
+  // Extract lyrics HTML from data-lyrics-container="true" elements using balanced-div parsing
+  let lyricsHtmlChunks = [];
+  const containerRegex = /<div[^>]*data-lyrics-container="true"[^>]*>/g;
+  let containerMatch;
+  while ((containerMatch = containerRegex.exec(html)) !== null) {
+    const startIdx = containerMatch.index + containerMatch[0].length;
+    let depth = 1;
+    let pos = startIdx;
+    while (depth > 0 && pos < html.length) {
+      const nextOpen = html.indexOf('<div', pos);
+      const nextClose = html.indexOf('</div>', pos);
+      if (nextClose === -1) break;
+      if (nextOpen !== -1 && nextOpen < nextClose) {
+        depth++;
+        pos = nextOpen + 4;
+      } else {
+        depth--;
+        if (depth === 0) {
+          lyricsHtmlChunks.push(html.slice(startIdx, nextClose));
+          break;
+        }
+        pos = nextClose + 6;
+      }
+    }
+  }
+
+  if (!lyricsHtmlChunks.length) {
     return response(true, 'Genius page had no lyrics containers', { found: false, lines: [], sections: [] });
   }
 
@@ -628,8 +652,10 @@ async function fetchGeniusTranslation(params) {
   const sections = [];
   let currentSection = { header: '', lines: [] };
 
-  for (const m of containerMatches) {
-    let chunk = m[1] || '';
+  for (const chunkRaw of lyricsHtmlChunks) {
+    let chunk = chunkRaw || '';
+    // Strip header widgets like Contributors/Translations dropdowns
+    chunk = chunk.replace(/<div[^>]*data-exclude-from-selection="true"[\s\S]*?<\/div>/gi, '');
     chunk = chunk.replace(/<br\s*\/?>/gi, '\n');
     chunk = chunk.replace(/<[^>]+>/g, '');
     // Decode HTML entities
@@ -650,6 +676,15 @@ async function fetchGeniusTranslation(params) {
       l = l.trim();
       if (!l) continue;
       if (l.includes('Contributors') && l.includes('Translations')) continue;
+      // Strip leading title/Lyrics banner like "Song Title Lyrics[Chorus: ...]"
+      const headerMatch = l.match(/^(?:.*?\s+)?Lyrics(\[.*\])?$/i);
+      if (headerMatch) {
+        if (headerMatch[1]) {
+          l = headerMatch[1].trim();
+        } else {
+          continue;
+        }
+      }
       if (l.startsWith('[') && l.endsWith(']')) {
         if (currentSection.lines.length > 0) {
           sections.push(currentSection);

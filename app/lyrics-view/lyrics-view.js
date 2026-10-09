@@ -8,6 +8,16 @@ const INTERJECTIONS_SET = new Set([
   'carajo', 'dios', 'mami'
 ]);
 
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 let engine = null;
 let probeSongs = [];
 let customSongs = [];
@@ -135,10 +145,11 @@ async function init() {
 
     // Robust asset paths relative to this module
     const assetsUrl = new URL('../turbo/turbo_assets.json', import.meta.url).href;
+    const extra50kUrl = new URL('../turbo/es_50k_data.json', import.meta.url).href;
     const songsUrl = new URL('../turbo/probe_songs.json', import.meta.url).href;
 
     // Load assets (read-only)
-    engine = await TurboEngine.create(assetsUrl);
+    engine = await TurboEngine.create(assetsUrl, extra50kUrl);
 
     // Load 30 offline songs (read-only)
     const songsResp = await fetch(songsUrl);
@@ -275,19 +286,24 @@ function postProcessAnnotatedSong(song) {
       if (token.type !== 'entity' && token.type !== 'mwe') {
         if (isPosIntj || hasIntjMeaning || isAdLibPhrase || isInAdlibSet) {
           token.type = 'interjection';
-          if (!token.translation || token.translation === 'out of 10k supply / noise') {
+          if (!token.translation || token.translation === 'out of 10k supply / noise' || token.translation === 'Uncatalogued lyric') {
             token.translation = 'ad-lib / vocal exclamation';
           }
-        } else if (token.type === 'unmatched' && engine?.dictionary) {
-          // Rescue tokens that exist in the engine dictionary
-          const dictEntry = engine.dictionary[lowerNorm] || engine.dictionary[lowerRaw];
-          if (dictEntry) {
+        } else if (token.type === 'unmatched' && engine && typeof engine.resolveWordInfo === 'function') {
+          // Rescue tokens that exist in the engine 50k ranks or dictionary
+          const resolved = engine.resolveWordInfo(lowerNorm || lowerRaw);
+          if (resolved) {
             token.type = 'word';
-            token.word = lowerNorm || lowerRaw;
-            token.translation = dictEntry.top_translation;
-            token.pos = dictEntry.top_pos;
-            token.speechRank = dictEntry.rank;
-            token.card = { ...dictEntry, word: token.word, translation: dictEntry.top_translation };
+            token.word = resolved.word;
+            token.rank = resolved.rank;
+            token.speechRank = resolved.speechRank;
+            if (resolved.dictEntry) {
+              token.translation = resolved.translation;
+              token.pos = resolved.pos;
+              token.card = { ...resolved.dictEntry, word: resolved.word, translation: resolved.translation };
+            } else if (resolved.rank) {
+              token.translation = `Top ${Math.ceil(resolved.rank / 1000) * 1000} Spanish word`;
+            }
           }
         }
       }
@@ -353,29 +369,27 @@ function renderLyrics(song) {
       span.className = 'lyric-token';
       span.dataset.flatIndex = flatIndex;
       span.dataset.type = token.type;
-      span.textContent = token.raw;
 
       if (token.type === 'entity') {
         span.classList.add('token-entity');
-        span.title = `🌸 Entity: ${token.word} (${token.translation || 'Cultural referent'})`;
+        span.title = `Entity: ${token.word} (${token.translation || 'Cultural referent'})`;
+        // Render word with wiktionary book icon
+        span.innerHTML = `${escapeHtml(token.raw)}<span class="entity-wiki-icon" title="Entity (Wiktionary / Cultural)">📖</span>`;
         lineAutoBadges.push({
           type: 'entity',
-          label: `🌸 ${token.raw}`,
+          label: `📖 ${token.raw}`,
           sub: token.card?.entity?.entityType || 'Entity',
           token
         });
       } else if (token.type === 'mwe') {
         span.classList.add('token-mwe');
-        span.title = `🟣 Idiom: ${token.word} (${token.translation})`;
-        lineAutoBadges.push({
-          type: 'mwe',
-          label: `🟣 ${token.raw}`,
-          sub: token.translation,
-          token
-        });
+        span.title = `Idiom: ${token.word} (${token.translation})`;
+        span.textContent = token.raw;
+        // User requested: MWEs should not have translation underneath the lyric line, only underline to indicate they go together
       } else if (token.type === 'interjection') {
         span.classList.add('token-interjection');
-        span.title = `⚡ Ad-lib: ${token.translation || token.raw}`;
+        span.title = `Ad-lib: ${token.translation || token.raw}`;
+        span.textContent = token.raw;
         lineAutoBadges.push({
           type: 'interjection',
           label: `⚡ ${token.raw}`,
@@ -387,8 +401,17 @@ function renderLyrics(song) {
         if (token.isElision) {
           span.classList.add('token-elision');
           span.title = `Elision: ${token.raw} → ${token.word}`;
+          // Normal coloured text, only the apostrophe is coloured/tinted
+          const parts = token.raw.split(/(['’])/);
+          span.innerHTML = parts.map(part => {
+            if (part === "'" || part === "’") {
+              return `<span class="apostrophe-tint">${part}</span>`;
+            }
+            return escapeHtml(part);
+          }).join('');
         } else {
           span.title = `${token.word}: ${token.translation || 'Word'}`;
+          span.textContent = token.raw;
         }
       }
 
@@ -415,7 +438,7 @@ function renderLyrics(song) {
       lineItem.appendChild(englishLine);
     }
 
-    // 3. Subtle inline line badges if line contains entities or idioms
+    // 3. Subtle inline line badges if line contains entities or ad-libs (MWEs omitted per user request)
     if (lineAutoBadges.length > 0) {
       const badgesRow = document.createElement('div');
       badgesRow.className = 'line-auto-badges';
@@ -465,10 +488,10 @@ function openTokenModal(token) {
     if (token.type === 'entity') {
       typeBadge.classList.add('pill-entity-style');
       const entType = token.card?.entity?.entityType || 'Cultural Entity';
-      typeBadge.textContent = `🌸 ${entType}`;
+      typeBadge.textContent = `📖 ${entType}`;
     } else if (token.type === 'mwe') {
       typeBadge.classList.add('pill-mwe-style');
-      typeBadge.textContent = `🟣 Idiom / MWE`;
+      typeBadge.textContent = `Idiom`;
     } else if (token.type === 'interjection') {
       typeBadge.classList.add('pill-intj-style');
       typeBadge.textContent = `⚡ Ad-lib / Interjection`;
