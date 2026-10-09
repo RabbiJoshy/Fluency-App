@@ -1135,16 +1135,21 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
         lastAvailable = btn;
         let seenCount = 0;
         let reviewCount = 0;
+        let estimatedCount = 0;
         for (let w = 0; w < wordsInLevel.length; w++) {
             const st = getSetupLearningState(wordsInLevel[w], { seenLemmas, estimatedIds, estimate });
             if (st?.seen) seenCount++;
             if (st?.needsReview) reviewCount++;
+            if (st?.estimated) estimatedCount++;
         }
         const completion = Math.round(100 * seenCount / wordsInLevel.length);
         const hasUnseen = seenCount < wordsInLevel.length;
         const isPartial = seenCount > 0 && hasUnseen;
         const isComplete = seenCount > 0 && !hasUnseen;
         const hasProgress = seenCount > 0;
+        const autoCompleted = isComplete && estimatedCount > 0;
+        btn.classList.toggle('is-auto-complete', autoCompleted);
+        btn.dataset.autoCompleted = String(autoCompleted);
         btn.dataset.progressPct = String(completion);
         btn.dataset.reviewCount = String(reviewCount);
         btn.classList.toggle('has-progress', hasProgress);
@@ -1154,6 +1159,8 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
 
         const visibleSegment = sliderSegmentMap.get(String(buttonIndex));
         if (visibleSegment) {
+            visibleSegment.classList.toggle('is-auto-complete', autoCompleted);
+            visibleSegment.dataset.autoCompleted = String(autoCompleted);
             visibleSegment.dataset.progressPct = String(completion);
             visibleSegment.classList.toggle('has-progress', hasProgress);
             visibleSegment.classList.toggle('has-partial-progress', isPartial);
@@ -1161,7 +1168,7 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
             visibleSegment.style.setProperty('--level-progress', `${completion}%`);
             visibleSegment.setAttribute(
                 'aria-label',
-                `Level ${buttonIndex + 1}, ${completion}% complete`
+                autoCompleted ? `Level ${buttonIndex + 1}, AUTO` : `Level ${buttonIndex + 1}, ${completion}% complete`
             );
         }
         if (!firstIncomplete && hasUnseen) firstIncomplete = btn;
@@ -1741,6 +1748,8 @@ function _plainEnglishGloss(item) {
     if (!meaning) return '';
     return meaning.translation.replace(/\([^)]*\)/g, ' ').split(/[,;/]/)[0].replace(/\s+/g, ' ').trim();
 }
+
+window.computeSmartLevelRanges = computeSmartLevelRanges;
 
 function getPreparedSetupVocabulary(language, rawVocab) {
     if (!rawVocab) return null;

@@ -1,0 +1,15 @@
+# Recognition-based starting points
+
+Implemented 9 October 2026. The estimator offers an earlier starting point near 90% recognition and a later point near 80%, combining them when both land in one level. These percentages are product choices, not validated learning optima.
+
+The counting unit remains a safe merged group, an independent surface, or one qualifying split reading. The check uses Speech vocabulary in every mode. Up to 30 answers fit a non-increasing recognition curve across pooled-frequency bands. Between band centres the curve is interpolated; outside the centres it holds the nearest fitted probability. A qualifying cognate group is assumed recognised and never asked. Mixed merged groups are asked using their most frequent non-cognate member. Cognate decisions come from the same per-sense and known-language helper as Smart Skip, regardless of that toggle. Split readings are evaluated independently.
+
+For each actual Speech level, every eligible group represented in that level counts once; multiple inflections do not give that group extra weight. In a mixed group, assumed cognate members receive recognition 1 and other members receive the fitted probability, averaged within that group for that level. A split's probability applies to its own reading. Level recognition averages those groups, then fits a non-increasing profile. Levels without measurable groups interpolate from neighbouring measured levels.
+
+Each option starts at the first level below its target recognition rate. If every level exceeds the target, it starts at the final available level. The UI shows the fitted recognition rate rounded to the nearest five percentage points, rather than claiming exactly 90% or 80% when the nearest level differs. A small or exhausted sampling pool still produces a result; the UI states how many groups were checked.
+
+Applying an option stores the Speech source rank immediately before that level. This preserves the existing saved-rank contract. Existing saved estimates keep their interpretation until a new option is applied. Artist and playlist decks derive the boundary from detached Speech levels and use the saved Speech surfaces to find their next actionable cards.
+
+No sampled answer writes card or group learning progress. Earlier vocabulary is covered provisionally by the estimate. A level completed partly or wholly through that estimate displays AUTO in place of its progress bar. Real progress remains saved; removing the estimate restores its normal display, and a level fully covered by recorded progress retains its progress bar.
+
+The total vocabulary-group estimate is separate from placement. It now includes assumed cognate groups; its uncertainty describes the sampled groups and treats the cognate assumption as fixed. The older pool audit describes a previous non-cognate pool and is not a universal count for this revised check. Pool sizes now also depend on the learner's selected known languages and the cognate definitions. No numerical CEFR thresholds are implemented by this change.

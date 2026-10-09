@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T19:43:12+01:00",
+      "date": "2026-10-09 19:43 BST",
+      "agent": "Codex",
+      "summary": "Choose an earlier or later estimated starting point",
+      "detail": [
+        "Offer a more conservative starting level near 90% recognition and a later level near 80%, showing how familiar the vocabulary is likely to be.",
+        "Use the same cognate decisions as Smart Skip for estimation even when Smart Skip is off; qualifying cognates never appear as questions.",
+        "Show AUTO under levels covered by the saved estimate, without recording estimator answers as learned cards or changing actual study progress."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T16:09:00+01:00",
       "date": "2026-10-09 16:09 BST",
       "agent": "Claude",
@@ -356,17 +368,6 @@
       "detail": [
         "Automatic onboarding covers reveal, pronunciation, grading and moving on; Help retains the full card tour.",
         "The first real card reveal shows swipe guidance outside the card until a successful grading swipe."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T21:06:23+01:00",
-      "date": "2026-10-08 21:06 BST",
-      "agent": "Codex",
-      "summary": "Reliable keyboard sign-in and phrases-panel resume",
-      "detail": [
-        "Study shortcuts pause while signing in, so Enter submits Continue normally.",
-        "Stopping on a phrases panel saves the parent word; older panel snapshots recover by word."
       ],
       "commit": "pending"
     }

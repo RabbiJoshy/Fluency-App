@@ -20,3 +20,10 @@ class EstimationTests(unittest.TestCase):
             capture_output=True, text=True,
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_recognition_choices_cognates_and_auto(self):
+        result = subprocess.run(
+            ['node', str(Path(__file__).with_name('estimation_placement_checks.cjs'))],
+            capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)

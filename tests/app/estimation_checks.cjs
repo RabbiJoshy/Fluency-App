@@ -92,20 +92,20 @@ function setup(items, values = {}) {
         estimationState.bands[0].answers = 3; estimationState.bands[0].known = 3;
         showEstimationResult();`);
     assert.equal(h.estimationState.groupEstimate.point, 2);
-    assert.equal(h.estimationState.estimatedLevel, 150);
+    assert.equal(h.estimationState.estimatedLevel, 20);
     assert.match(h.elements.get('estimationResultDesc').textContent, /vocabulary groups: about 2/);
     assert.equal(/CEFR|A1|B2|C2/.test(h.elements.get('estimationResultDesc').textContent), false);
-    h.useEstimatedLevel();
-    assert.equal(h.savedRank, 150);
+    await h.useEstimatedLevel();
+    assert.equal(h.savedRank, 20);
     assert.equal(h.clickedLevel, 2);
     h.run('estimationState.bands[0].known = 0; showEstimationResult();');
     assert.equal(h.estimationState.estimatedLevel, 0);
-    h.useEstimatedLevel(); assert.equal(h.clickedLevel, 1);
+    await h.useEstimatedLevel(); assert.equal(h.clickedLevel, 1);
     h.run('estimationState.bands[0].known = 1; showEstimationResult();');
-    assert.equal(h.estimationState.estimatedLevel, 10);
+    assert.equal(h.estimationState.estimatedLevel, 0);
     h.activeArtist = { name: 'Artist' };
     h.renderLevelSelector = (_, options) => { h.renderedArtist = options.preferActionable; };
-    h.showEstimationResult(); h.useEstimatedLevel(); assert.equal(h.renderedArtist, true);
+    h.showEstimationResult(); await h.useEstimatedLevel(); assert.equal(h.renderedArtist, true);
     assert.deepEqual(JSON.parse(JSON.stringify(h.calculateEstimationResult([], 0))), { point: 0, low: 0, high: 0 });
 
     // Async preparation must not reopen a closed or superseded check.
