@@ -768,7 +768,7 @@ loadConfig().then(async () => {
     learningContextModal?.addEventListener('click', event => {
         if (event.target === event.currentTarget) closeLearningContext();
     });
-    document.getElementById('learningContextProgressBtn')?.addEventListener('click', () => {
+    document.getElementById('topBarProgressBtn')?.addEventListener('click', () => {
         closeLearningContext();
         showTotalStatsModal();
     });

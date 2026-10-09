@@ -47,6 +47,7 @@
         })();
     </script>
     <link rel="stylesheet" href="css/style.css?v=20260929sense6">
+    <link rel="stylesheet" href="css/progress-overview.css?v=20260927pa">
     <link rel="stylesheet" href="css/light-theme.css?v=20260927m3">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
@@ -354,6 +355,9 @@
                     </button>
                     <div class="top-bar-right-controls">
                     <button id="topBarUserName" class="top-bar-user-name" type="button" title="Open account settings"></button>
+                    <button id="topBarProgressBtn" class="top-bar-icon-btn" type="button" hidden title="Your progress" aria-label="Open your progress" aria-haspopup="dialog" aria-controls="totalStatsModal">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V4M4 20h16M9 16v-5M14 16V7M19 16V4"></path></svg>
+                    </button>
                     <button id="helpBtn" class="top-bar-icon-btn" type="button" title="Tutorial" aria-label="Open tutorial">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.8 9a2.3 2.3 0 0 1 4.45.8c0 1.7-2.25 1.95-2.25 3.45"></path><path d="M12 17h.01"></path></svg>
                     </button>
@@ -795,14 +799,6 @@
                     <span aria-hidden="true">›</span>
                 </button>
             </div>
-            <button id="learningContextProgressBtn" class="learning-context-progress" type="button">
-                <div class="learning-context-progress-copy">
-                    <span id="learningContextProgressLabel">Speech understood</span>
-                    <strong id="learningContextProgressValue">0%</strong>
-                </div>
-                <div class="learning-context-progress-track"><i id="learningContextProgressFill"></i></div>
-                <span class="learning-context-progress-link">View progress <span aria-hidden="true">›</span></span>
-            </button>
         </div>
     </div>
 
@@ -1659,34 +1655,39 @@
         </div>
     </div>
 
-    <!-- Total Stats Modal (All-time stats for the current language) -->
-    <div id="totalStatsModal" class="modal hidden">
+    <!-- Current source progress: rendered from local card knowledge. -->
+    <div id="totalStatsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="progressOverviewTitle">
         <div class="modal-content progress-modal-content total-progress-modal-content">
             <div class="modal-header">
-                <div>
-                    <span class="progress-modal-eyebrow">All-time progress</span>
-                    <h3><span id="totalStatsLanguage">Spanish</span></h3>
-                </div>
-                <button class="modal-close" id="closeTotalStatsModal">✕</button>
+                <div><span class="progress-modal-eyebrow">Your progress</span><h2 id="progressOverviewTitle">Your words, so far</h2><p id="totalStatsLanguage" class="progress-source-name"></p></div>
+                <button class="modal-close" id="closeTotalStatsModal" type="button" aria-label="Close progress">✕</button>
             </div>
             <div class="stats-body total-progress-body">
-                <p class="progress-modal-explainer">Coverage weights common words more heavily, so it estimates how much real language you can understand—not merely how many cards you have seen.</p>
-                <div class="total-progress-hero">
-                    <span id="totalStatsCoverageLabel">Comprehension</span>
-                    <strong id="totalStatsCoverage">—</strong>
-                </div>
-                <div class="total-progress-grid">
-                    <div class="stat-row" id="totalStatsLinesRow"><span id="totalStatsLinesLabel">Full sentences:</span><span id="totalStatsLinesUnderstood">—</span></div>
-                    <div class="stat-row"><span>Words understood:</span><span id="totalStatsWords">—</span></div>
-                    <div class="stat-row"><span>Correct:</span><span id="totalWordsCorrect">0</span></div>
-                    <div class="stat-row"><span>Incorrect:</span><span id="totalWordsIncorrect">0</span></div>
+                <p id="progressOverviewStatus" role="status" aria-live="polite"></p>
+                <div id="progressOverviewContent" hidden>
+                    <section class="progress-coverage-card" aria-labelledby="totalStatsCoverageLabel">
+                        <div class="progress-coverage-ring" id="progressCoverageRing"><strong id="totalStatsCoverage">0%</strong></div>
+                        <div><h3 id="totalStatsCoverageLabel">Estimated coverage</h3><p id="progressCoverageDescription"></p><small>Common words count more. This is an estimate of vocabulary coverage, not a fluency score.</small></div>
+                    </section>
+                    <section class="progress-word-section" aria-labelledby="progressWordsTitle">
+                        <div class="progress-section-heading"><h3 id="progressWordsTitle">Your study cards</h3><span id="totalStatsWords"></span></div>
+                        <div class="progress-word-track" role="img" id="progressWordTrack"><i class="is-known"></i><i class="is-practice"></i><i class="is-new"></i></div>
+                        <div class="progress-count-grid">
+                            <div><i class="is-known"></i><strong id="progressKnownCount">0</strong><span>Known</span><small>Up to date</small></div>
+                            <div><i class="is-practice"></i><strong id="progressPracticeCount">0</strong><span>Practice</span><small id="progressPracticeDetail">Mistakes or due</small></div>
+                            <div><i class="is-new"></i><strong id="progressNewCount">0</strong><span>New</span><small>Not answered yet</small></div>
+                        </div>
+                        <p id="progressScopeNote" class="progress-scope-note"></p>
+                    </section>
+                    <details class="progress-history"><summary>Study history <span id="progressAttemptCount"></span></summary><div><p>These are answer attempts in this vocabulary, including repeat practice. They are separate from the card counts above.</p><div class="progress-history-counts"><span><strong id="totalWordsCorrect">0</strong> correct answers</span><span><strong id="totalWordsIncorrect">0</strong> incorrect answers</span></div></div></details>
                 </div>
                 <div class="progress-data-actions">
+                    <button type="button" id="progressWordsDataBtn">Your words ›</button>
                     <button type="button" id="progressImportKnownBtn">Import known words</button>
                     <button type="button" id="progressExportMistakesBtn">Export mistakes</button>
-                    <button type="button" id="progressWordsDataBtn">Your words ›</button>
                 </div>
                 <p id="progressDataActionStatus" role="status" aria-live="polite"></p>
+                <button type="button" id="progressRefreshBtn" class="progress-refresh-btn">Refresh progress</button>
             </div>
         </div>
     </div>
