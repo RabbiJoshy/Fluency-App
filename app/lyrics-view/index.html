@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./lyrics-view.css?v=20261009P">
+  <link rel="stylesheet" href="./lyrics-view.css?v=20261009R">
 </head>
 <body>
 
@@ -218,36 +218,6 @@
     </div>
   </div>
 
-  <!-- Leave Site Confirmation Modal for AI lookups -->
-  <div class="modal-backdrop" id="aiLeaveModal" role="dialog" aria-modal="true" aria-labelledby="aiLeaveTitle">
-    <div class="modal-dialog ai-leave-dialog">
-      <div class="modal-header">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <div class="ai-leave-target-icon" id="aiLeaveTargetIcon"></div>
-          <div>
-            <h3 id="aiLeaveTitle" style="font-size: 17px;">Open External AI</h3>
-            <span id="aiLeaveSubtitle" style="font-size: 11px; color: var(--text-muted);">Leaving Fluency</span>
-          </div>
-        </div>
-        <button class="modal-close" id="closeAiLeaveBtn" aria-label="Cancel">&#10005;</button>
-      </div>
-      <div class="modal-body" style="gap: 12px; padding: 18px 20px;">
-        <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.45;">
-          The Spanish lyric line and full translation prompt have been copied to your clipboard.
-          Continuing will open <strong id="aiLeavePlatformName" style="color: #ffffff;">Claude</strong> in a new tab.
-        </p>
-        <div class="ai-leave-quote-box" id="aiLeaveQuoteBox">
-          <div class="ai-leave-quote-label">Copied Prompt Preview</div>
-          <div class="ai-leave-quote-text" id="aiLeaveQuoteText"></div>
-        </div>
-      </div>
-      <div class="modal-footer" style="justify-content: flex-end; gap: 10px;">
-        <button type="button" class="btn-subtle" id="aiLeaveCancelBtn">Stay Here</button>
-        <button type="button" class="ai-leave-continue-btn" id="aiLeaveContinueBtn">Continue to App ↗</button>
-      </div>
-    </div>
-  </div>
-
   <!-- Compatibility anchors for cached scripts -->
   <div style="display:none;" aria-hidden="true">
     <span id="mainSongTitle"></span>
@@ -260,6 +230,6 @@
     <span id="totalTokensText"></span>
   </div>
 
-  <script type="module" src="./lyrics-view.js?v=20261009P"></script>
+  <script type="module" src="./lyrics-view.js?v=20261009R"></script>
 </body>
 </html>

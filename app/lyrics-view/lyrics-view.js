@@ -184,14 +184,7 @@ const modalContextQuoteMeta = document.getElementById('modalContextQuoteMeta');
 const tokenPrevBtn = document.getElementById('tokenPrevBtn');
 const tokenNextBtn = document.getElementById('tokenNextBtn');
 
-// Leave site confirmation modal for external AI
-const aiLeaveModal = document.getElementById('aiLeaveModal');
-const closeAiLeaveBtn = document.getElementById('closeAiLeaveBtn');
-const aiLeaveCancelBtn = document.getElementById('aiLeaveCancelBtn');
-const aiLeaveContinueBtn = document.getElementById('aiLeaveContinueBtn');
-const aiLeavePlatformName = document.getElementById('aiLeavePlatformName');
-const aiLeaveQuoteText = document.getElementById('aiLeaveQuoteText');
-const aiLeaveTargetIcon = document.getElementById('aiLeaveTargetIcon');
+
 
 // ───────────────────────────────────────────────
 // Helpers & Tab Switching
@@ -395,34 +388,21 @@ function postProcessAnnotatedSong(song) {
   }
 }
 
-/**
- * Returns genuine, hand-translated English line if available; otherwise null.
- * Never constructs synthetic word-by-word gloss strings.
- */
-function buildLineEnglishGloss(line) {
-  if (line.english && typeof line.english === 'string' && line.english.trim().length > 0) {
-    return line.english.trim();
-  }
-  return null;
-}
+// Official brand SVGs
+const CLAUDE_SVG = `<svg class="ai-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><title>Claude</title><path d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z"/></svg>`;
 
-const CLAUDE_SVG = `<svg class="ai-icon" viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M17.55 3.5c-.4 0-.78.18-1.03.49L12 9.07 7.48 3.99A1.34 1.34 0 0 0 6.45 3.5C5.65 3.5 5 4.15 5 4.95c0 .35.13.7.37.96l4.63 5.21-4.63 5.21a1.34 1.34 0 0 0-.37.96c0 .8.65 1.45 1.45 1.45.4 0 .78-.18 1.03-.49L12 13.17l4.52 5.08c.25.31.63.49 1.03.49.8 0 1.45-.65 1.45-1.45 0-.35-.13-.7-.37-.96l-4.63-5.21 4.63-5.21c.24-.26.37-.61.37-.96 0-.8-.65-1.45-1.45-1.45z"/></svg>`;
+const CHATGPT_SVG = `<svg class="ai-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><title>ChatGPT</title><path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1683a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4947zm-9.66-4.1354a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1402-1.6564zm-1.6704-9.3364a4.4755 4.4755 0 0 1 2.3418-1.9729v5.6725a.7901.7901 0 0 0 .388.6813l5.8428 3.3685-2.02 1.1683a.071.071 0 0 1-.071 0l-4.8303-2.7913a4.4944 4.4944 0 0 1-1.6513-6.1264zM16.598 12.012l-5.8428-3.3685 2.02-1.1683a.071.071 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1 1.6513 6.1264 4.4755 4.4755 0 0 1-2.3418 1.9729v-5.6725a.7901.7901 0 0 0-.388-.6813zm4.6568-1.6366l-.142-.0852-4.783-2.7582a.7712.7712 0 0 0-.7806 0l-5.8428 3.3685v-2.3324a.0804.0804 0 0 1 .0332-.0615L14.26 4.0498a4.4992 4.4992 0 0 1 6.1402 1.6564 4.4708 4.4708 0 0 1 .5346 3.0137zm-9.518-2.6186a.7948.7948 0 0 0-.3927.6813v6.7369l-2.02-1.1683a.071.071 0 0 1-.038-.052V9.0498a4.504 4.504 0 0 1 4.4945-4.4947 4.4755 4.4755 0 0 1 2.8764 1.0408l-.1419.0804zm-1.2588 5.795l2.7677-1.5979 2.7677 1.5979v3.1957l-2.7677 1.5979-2.7677-1.5979z"/></svg>`;
 
-const CHATGPT_SVG = `<svg class="ai-icon" viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M22.28 10.42a5.75 5.75 0 0 0-.49-4.7 5.86 5.86 0 0 0-4.06-2.9 5.82 5.82 0 0 0-5.18 1.1A5.79 5.79 0 0 0 8.3 2.75a5.86 5.86 0 0 0-4.43 2.27 5.8 5.8 0 0 0-.96 4.98 5.78 5.78 0 0 0-2.48 4.09 5.85 5.85 0 0 0 1.25 4.86 5.82 5.82 0 0 0 5.18 2.78v-.03a5.75 5.75 0 0 0 4.25 1.17 5.86 5.86 0 0 0 4.43-2.27 5.78 5.78 0 0 0 3.44-.89 5.86 5.86 0 0 0 2.48-4.09 5.82 5.82 0 0 0 .82-5.28zm-8.8 10.36a4.4 4.4 0 0 1-3.23-.74 4.54 4.54 0 0 1 .49-.3l3.85-2.22a.7.7 0 0 0 .36-.61v-5.43l1.63.94v4.49a4.42 4.42 0 0 1-3.1 3.87zm-7.66-2.58a4.39 4.39 0 0 1-.68-3.24 4.5 4.5 0 0 1 .47.34l3.85 2.22a.7.7 0 0 0 .7 0l4.7-2.71v1.88l-3.89 2.25a4.43 4.43 0 0 1-5.15-.74zm-2.43-7.7a4.38 4.38 0 0 1 2.55-2.06v.58l.01 4.44a.7.7 0 0 0 .35.61l4.7 2.72-1.63.94-3.89-2.25a4.43 4.43 0 0 1-2.09-4.98zm14.65-1.4l-4.7-2.72 1.63-.94 3.89 2.25a4.43 4.43 0 0 1 2.08 4.98 4.39 4.39 0 0 1-2.55 2.06v-5.02a.7.7 0 0 0-.35-.61zm2.43 4.14a4.45 4.45 0 0 1-.48-.34l-3.85-2.22a.7.7 0 0 0-.7 0l-4.7 2.71v-1.88l3.89-2.25a4.43 4.43 0 0 1 5.15.74 4.39 4.39 0 0 1 .69 3.24zm-8.24-1.62l-2.05-1.18 2.05-1.18 2.05 1.18-2.05 1.18z"/></svg>`;
+const OUTBOUND_ARROW_SVG = `<svg class="lyric-ai-leave-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>`;
 
-let pendingAiTargetUrl = null;
-
-/**
- * Copies prompt to clipboard, gives visual feedback, and presents the leave warning modal
- */
-async function handleAiLinePrompt(platform, lineText, songTitle, songArtist, triggerBtn) {
+function buildAiPromptText(lineText, songTitle, songArtist) {
   const cleanLine = (lineText || '').trim();
   const artistInfo = songArtist ? ` by ${songArtist}` : '';
   const trackInfo = songTitle ? ` from the song "${songTitle}"${artistInfo}` : (artistInfo ? ` by ${songArtist}` : '');
+  return `Please translate this Spanish lyric line into English, break down any slang, idioms, or cultural nuances, and tell me anything essential one needs to know about the artist or context behind it:\n\n"${cleanLine}"${trackInfo ? ` (${trackInfo})` : ''}`;
+}
 
-  const promptText = `Please translate this Spanish lyric line into English, break down any slang, idioms, or cultural nuances, and tell me anything essential one needs to know about the artist or context behind it:\n\n"${cleanLine}"${trackInfo ? ` (${trackInfo})` : ''}`;
-
-  // Copy to clipboard immediately
+async function copyPromptToClipboard(promptText) {
   try {
     if (navigator.clipboard && navigator.clipboard.writeText) {
       await navigator.clipboard.writeText(promptText);
@@ -439,41 +419,72 @@ async function handleAiLinePrompt(platform, lineText, songTitle, songArtist, tri
   } catch (err) {
     console.warn('Clipboard write failed:', err);
   }
+}
 
-  // Visual feedback on button
-  if (triggerBtn) {
-    triggerBtn.classList.add('copied');
-    setTimeout(() => triggerBtn.classList.remove('copied'), 1500);
-  }
+function disarmAllAiChips(exceptChip = null) {
+  document.querySelectorAll('.lyric-ai-sheet-chip.is-armed-outbound').forEach(chip => {
+    if (chip === exceptChip) return;
+    chip.classList.remove('is-armed-outbound');
+    const pill = chip.querySelector('.lyric-ai-leave-pill');
+    if (pill) pill.hidden = true;
+  });
+}
 
-  // Prepare destination URL
+function closeAllAiSheets(exceptWrap = null) {
+  document.querySelectorAll('.lyric-ai-wrap').forEach(wrap => {
+    if (wrap === exceptWrap) return;
+    wrap.classList.remove('is-open');
+    const sheet = wrap.querySelector('.lyric-ai-sheet');
+    if (sheet) sheet.hidden = true;
+  });
+  disarmAllAiChips();
+}
+
+/**
+ * Handles tap on Claude / ChatGPT chip in the pull-up sheet.
+ * Tap 1: Copies prompt to clipboard and arms outbound leave warning pill.
+ * Tap 2: Executes outbound navigation directly to the AI app.
+ */
+async function armLyricAiLink(event, platform, lineText, songTitle, songArtist, chipEl) {
+  event.stopPropagation();
+  const promptText = buildAiPromptText(lineText, songTitle, songArtist);
   const encodedPrompt = encodeURIComponent(promptText);
-  pendingAiTargetUrl = platform === 'claude'
+  const targetUrl = platform === 'claude'
     ? `https://claude.ai/new?q=${encodedPrompt}`
     : `https://chatgpt.com/?q=${encodedPrompt}`;
 
-  // Open leave site confirmation modal
-  if (aiLeaveModal) {
-    if (aiLeavePlatformName) {
-      aiLeavePlatformName.textContent = platform === 'claude' ? 'Claude' : 'ChatGPT';
-    }
-    if (aiLeaveQuoteText) {
-      aiLeaveQuoteText.textContent = promptText;
-    }
-    if (aiLeaveTargetIcon) {
-      aiLeaveTargetIcon.className = `ai-leave-target-icon ${platform === 'claude' ? 'is-claude' : 'is-chatgpt'}`;
-      aiLeaveTargetIcon.innerHTML = platform === 'claude' ? CLAUDE_SVG : CHATGPT_SVG;
-    }
-    aiLeaveModal.classList.add('open');
-  } else {
-    // Fallback if modal absent
-    window.open(pendingAiTargetUrl, '_blank', 'noopener,noreferrer');
+  const leavePill = chipEl.querySelector('.lyric-ai-leave-pill');
+  if (!leavePill) return;
+
+  const isArmed = chipEl.classList.contains('is-armed-outbound');
+
+  if (isArmed) {
+    // Second tap: Leave the app immediately
+    window.open(targetUrl, '_blank', 'noopener,noreferrer');
+    disarmAllAiChips();
+    closeAllAiSheets();
+    return;
   }
+
+  // First tap: Disarm other chips, copy prompt, arm this chip
+  disarmAllAiChips(chipEl);
+  await copyPromptToClipboard(promptText);
+
+  chipEl.classList.add('is-armed-outbound');
+  leavePill.hidden = false;
+  showAiToast(`Prompt copied! Tap again to open ${platform === 'claude' ? 'Claude' : 'ChatGPT'}`);
 }
 
-function closeAiLeaveModal() {
-  if (aiLeaveModal) aiLeaveModal.classList.remove('open');
-  pendingAiTargetUrl = null;
+function toggleLyricAiSheet(event, wrapEl) {
+  event.stopPropagation();
+  const sheet = wrapEl.querySelector('.lyric-ai-sheet');
+  if (!sheet) return;
+
+  const isHidden = sheet.hidden;
+  closeAllAiSheets(isHidden ? wrapEl : null);
+
+  sheet.hidden = !isHidden;
+  wrapEl.classList.toggle('is-open', isHidden);
 }
 
 let aiToastTimeout = null;
@@ -533,93 +544,82 @@ function renderLyrics(song) {
       }
     }
 
-    // AI action buttons:
-    // If translation exists -> show both Anthropic & OpenAI icons directly below timestamp
-    // If no translation -> single compact AI button that pops up both options
-    const aiActions = document.createElement('div');
-    aiActions.className = 'lyric-line-ai-actions';
-    aiActions.setAttribute('role', 'group');
+    // AI Look up Action: Single circular "AI" button
+    // Pressing it pulls up Claude & ChatGPT icons in a sheet directly above it (exact flashcard lookup pattern).
+    // Tapping an icon arms it ("Visit Claude ↗"), and tapping again leaves the app.
+    const aiWrap = document.createElement('div');
+    aiWrap.className = 'lyric-ai-wrap';
 
-    if (hasLineTranslation) {
-      const claudeBtn = document.createElement('button');
-      claudeBtn.type = 'button';
-      claudeBtn.className = 'lyric-ai-btn lyric-ai-btn-claude';
-      claudeBtn.title = 'Ask Claude about this line';
-      claudeBtn.setAttribute('aria-label', 'Ask Claude about this line');
-      claudeBtn.innerHTML = CLAUDE_SVG;
-      claudeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        handleAiLinePrompt('claude', line.text, song.title, song.artist, claudeBtn);
-      });
+    const aiCircleBtn = document.createElement('button');
+    aiCircleBtn.type = 'button';
+    aiCircleBtn.className = 'lyric-ai-circle-btn';
+    aiCircleBtn.title = 'Look up with AI';
+    aiCircleBtn.setAttribute('aria-label', 'Look up with AI');
+    aiCircleBtn.textContent = 'AI';
+    aiCircleBtn.addEventListener('click', (e) => {
+      toggleLyricAiSheet(e, aiWrap);
+    });
 
-      const gptBtn = document.createElement('button');
-      gptBtn.type = 'button';
-      gptBtn.className = 'lyric-ai-btn lyric-ai-btn-gpt';
-      gptBtn.title = 'Ask ChatGPT about this line';
-      gptBtn.setAttribute('aria-label', 'Ask ChatGPT about this line');
-      gptBtn.innerHTML = CHATGPT_SVG;
-      gptBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        handleAiLinePrompt('chatgpt', line.text, song.title, song.artist, gptBtn);
-      });
+    // Sheet holding the two circular brand icons
+    const aiSheet = document.createElement('div');
+    aiSheet.className = 'lyric-ai-sheet';
+    aiSheet.hidden = true;
 
-      aiActions.appendChild(claudeBtn);
-      aiActions.appendChild(gptBtn);
-    } else {
-      // Single button that pops up options
-      const popoverWrap = document.createElement('div');
-      popoverWrap.className = 'lyric-ai-popover-wrap';
+    // Claude Chip
+    const claudeChip = document.createElement('span');
+    claudeChip.className = 'lyric-ai-sheet-chip is-claude';
+    claudeChip.role = 'button';
+    claudeChip.tabIndex = 0;
+    claudeChip.title = 'Claude';
+    claudeChip.setAttribute('aria-label', 'Look up with Claude');
+    claudeChip.innerHTML = `
+      ${CLAUDE_SVG}
+      <span class="lyric-ai-leave-pill" hidden aria-label="Visit Claude">
+        <span>Visit Claude</span>
+        ${OUTBOUND_ARROW_SVG}
+      </span>
+    `;
+    claudeChip.addEventListener('click', (e) => {
+      armLyricAiLink(e, 'claude', line.text, song.title, song.artist, claudeChip);
+    });
+    claudeChip.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        armLyricAiLink(e, 'claude', line.text, song.title, song.artist, claudeChip);
+      }
+    });
 
-      const triggerBtn = document.createElement('button');
-      triggerBtn.type = 'button';
-      triggerBtn.className = 'lyric-ai-btn lyric-ai-trigger-btn';
-      triggerBtn.title = 'Translate & explain line with AI';
-      triggerBtn.setAttribute('aria-label', 'Ask AI about this line');
-      triggerBtn.textContent = 'AI';
+    // ChatGPT Chip
+    const gptChip = document.createElement('span');
+    gptChip.className = 'lyric-ai-sheet-chip is-chatgpt';
+    gptChip.role = 'button';
+    gptChip.tabIndex = 0;
+    gptChip.title = 'ChatGPT';
+    gptChip.setAttribute('aria-label', 'Look up with ChatGPT');
+    gptChip.innerHTML = `
+      ${CHATGPT_SVG}
+      <span class="lyric-ai-leave-pill" hidden aria-label="Visit ChatGPT">
+        <span>Visit ChatGPT</span>
+        ${OUTBOUND_ARROW_SVG}
+      </span>
+    `;
+    gptChip.addEventListener('click', (e) => {
+      armLyricAiLink(e, 'chatgpt', line.text, song.title, song.artist, gptChip);
+    });
+    gptChip.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        armLyricAiLink(e, 'chatgpt', line.text, song.title, song.artist, gptChip);
+      }
+    });
 
-      const menu = document.createElement('div');
-      menu.className = 'lyric-ai-popover-menu';
-      menu.style.display = 'none';
+    aiSheet.appendChild(claudeChip);
+    aiSheet.appendChild(gptChip);
 
-      const cOption = document.createElement('button');
-      cOption.type = 'button';
-      cOption.className = 'lyric-ai-btn lyric-ai-btn-claude';
-      cOption.title = 'Ask Claude';
-      cOption.innerHTML = CLAUDE_SVG;
-      cOption.addEventListener('click', (e) => {
-        e.stopPropagation();
-        menu.style.display = 'none';
-        handleAiLinePrompt('claude', line.text, song.title, song.artist, cOption);
-      });
+    aiWrap.appendChild(aiCircleBtn);
+    aiWrap.appendChild(aiSheet);
 
-      const gOption = document.createElement('button');
-      gOption.type = 'button';
-      gOption.className = 'lyric-ai-btn lyric-ai-btn-gpt';
-      gOption.title = 'Ask ChatGPT';
-      gOption.innerHTML = CHATGPT_SVG;
-      gOption.addEventListener('click', (e) => {
-        e.stopPropagation();
-        menu.style.display = 'none';
-        handleAiLinePrompt('chatgpt', line.text, song.title, song.artist, gOption);
-      });
-
-      menu.appendChild(cOption);
-      menu.appendChild(gOption);
-
-      triggerBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isOpen = menu.style.display === 'flex';
-        // Close any other open popovers
-        document.querySelectorAll('.lyric-ai-popover-menu').forEach(m => m.style.display = 'none');
-        menu.style.display = isOpen ? 'none' : 'flex';
-      });
-
-      popoverWrap.appendChild(triggerBtn);
-      popoverWrap.appendChild(menu);
-      aiActions.appendChild(popoverWrap);
-    }
-
-    gutter.appendChild(aiActions);
+    gutter.appendChild(aiWrap);
     lineItem.appendChild(gutter);
 
     // 2. Main Body Column (Target Spanish + English underneath perfectly aligned)
@@ -1463,28 +1463,10 @@ if (openSpotifyInputBtn) {
   });
 }
 
-// AI Leave Site Modal Listeners
-if (closeAiLeaveBtn) closeAiLeaveBtn.addEventListener('click', closeAiLeaveModal);
-if (aiLeaveCancelBtn) aiLeaveCancelBtn.addEventListener('click', closeAiLeaveModal);
-if (aiLeaveContinueBtn) {
-  aiLeaveContinueBtn.addEventListener('click', () => {
-    const url = pendingAiTargetUrl;
-    closeAiLeaveModal();
-    if (url) {
-      window.open(url, '_blank', 'noopener,noreferrer');
-    }
-  });
-}
-if (aiLeaveModal) {
-  aiLeaveModal.addEventListener('click', (e) => {
-    if (e.target === aiLeaveModal) closeAiLeaveModal();
-  });
-}
-
-// Global click to close any active popovers
+// Global click outside to dismiss any open lyric AI sheet and disarm chips
 document.addEventListener('click', (e) => {
-  if (!e.target.closest('.lyric-ai-popover-wrap')) {
-    document.querySelectorAll('.lyric-ai-popover-menu').forEach(m => m.style.display = 'none');
+  if (!e.target.closest('.lyric-ai-wrap')) {
+    closeAllAiSheets();
   }
 });
 
@@ -1493,7 +1475,7 @@ window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     closeTokenModal();
     closeSongPicker();
-    closeAiLeaveModal();
+    closeAllAiSheets();
   } else if (tokenQuickViewModal && tokenQuickViewModal.classList.contains('open')) {
     if (e.key === 'ArrowLeft' && currentModalTokenIndex > 0) {
       openTokenModal(songTokensFlatList[currentModalTokenIndex - 1]);
