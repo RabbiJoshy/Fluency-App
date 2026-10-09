@@ -1,28 +1,29 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=83c83306';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=83c83306';
-import './speech.js?v=83c83306';
-import { goToRoute, routeCodeFor } from './routes.js?v=83c83306';
-import './side-dock.js?v=83c83306';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=83c83306';
+import './state.js?v=15fb1572';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=15fb1572';
+import './speech.js?v=15fb1572';
+import { goToRoute, routeCodeFor } from './routes.js?v=15fb1572';
+import { memoryTipTileHTML } from './memory-tips.js?v=15fb1572';
+import './side-dock.js?v=15fb1572';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=15fb1572';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=83c83306';
+} from './example-personalisation.js?v=15fb1572';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=83c83306';
+} from './spanishdict-usage.js?v=15fb1572';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=83c83306';
+} from './reverse-cues.js?v=15fb1572';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -55,7 +56,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=83c83306';
+} from './card-metadata-pills.js?v=15fb1572';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -8274,6 +8275,8 @@ function renderCardWikipediaBadge(card) {
         </button>`;
     }
 
+    backHTML += memoryTipTileHTML(card, typeof language !== 'undefined' ? language : '');
+
     // Granular sense/expression knowledge belongs in one card-wide overview,
     // not a persistent two-button strip under every meaning. The compact
     // trigger keeps the full inventory reachable without stealing sentence
@@ -10361,8 +10364,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '83c83306';
-const MODALS_ASSET_VERSION = '83c83306';
+const ASSET_VERSION = '15fb1572';
+const MODALS_ASSET_VERSION = '15fb1572';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
