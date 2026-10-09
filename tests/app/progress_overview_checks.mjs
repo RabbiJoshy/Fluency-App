@@ -12,6 +12,9 @@ const methods = {getId:c=>c.id,getState:c=>c.state,getProgress:c=>c.record};
 const summary = summarizeProgress([...cards,cards[0]],methods);
 assert.deepEqual(summary,{total:4,known:1,practice:2,new:1,due:1,correct:5,wrong:1,coverage:80});
 assert.equal(summarizeProgress([],methods).coverage,0);
+const granular = summarizeProgress([{id:'sense-due',state:{known:true,seen:true,needsReview:true,reviewReason:'due'}},{id:'sense-wrong',state:{known:true,seen:true,needsReview:true,reviewReason:'incorrect'}}],methods);
+assert.equal(granular.due,1);
+assert.equal(granular.coverage,50,'An unresolved sense must not count as covered vocabulary');
 assert.equal(summarizeProgress([{id:'bad',corpus_count:-1},{id:'nan',corpus_count:'bad'}],methods).new,2);
 
 class Element {
