@@ -78,12 +78,18 @@ function control(dataset = {}) {
 
     // Mixed groups use their most frequent non-cognate form, even when a
     // cognate is the group's frequency leader.
+    const nounProof={rule_version:'noun-merge/v2',allowed:true,lemma:'hospital',sense_set:'same-complete-menu'};
     const mixed=h.buildEstimationPool([
-        word('hospital',1,[meaning('hospital','hospital')],{cognate_score:1}),
-        word('hospitales',2,[meaning('hospital','hospitals')])
+        word('hospital',1,[meaning('hospital','hospital')],{cognate_score:1,noun_merge:nounProof}),
+        word('hospitales',2,[meaning('hospital','hospitals')],{noun_merge:nounProof})
     ],{values:{hospital:100,hospitales:5}},{includeAssumed:true});
     assert.equal(mixed.length,1); assert.equal(mixed[0].word,'hospitales');
     assert.equal(mixed[0].estimationAssumedKnown,false); assert.equal(mixed[0].estimationFrequency,105);
+    const blocked=h.buildEstimationPool([
+        word('hospital',1,[meaning('hospital','hospital')],{noun_merge:{...nounProof,allowed:false}}),
+        word('hospitales',2,[meaning('hospital','hospitals')],{noun_merge:{...nounProof,allowed:false}})
+    ],{values:{hospital:100,hospitales:5}},{includeAssumed:true});
+    assert.equal(blocked.length,2);
 
     // Use the actual per-sense/per-known-language cognate engine. A split's
     // transparent reading must not hide the opaque sibling.

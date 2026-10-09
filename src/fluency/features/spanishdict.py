@@ -169,6 +169,9 @@ def extract(sense: Mapping[str, Any]) -> tuple[SpecialistFeature, ...]:
 
     features: list[SpecialistFeature] = []
     pos = str(sense.get("pos") or "").upper()
+    pos_label = str(sense.get("part_of_speech_label") or sense.get("pos") or "")
+    if "PLURAL" in pos_label.upper().split() and "NOUN" in pos_label.upper().split():
+        features.append(SpecialistFeature("grammar", "sense_mark", "number=plural-only", pos_label))
     context = sense.get("context")
     if isinstance(context, str) and context.strip():
         for clause in _clauses(context):

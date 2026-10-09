@@ -8,6 +8,16 @@ from fluency.release.pilot import build_pilot_deck, default_seed_path
 
 
 class AppCompatibilityTests(unittest.TestCase):
+    def test_complete_menu_noun_verdict_survives_assignment_filtering(self) -> None:
+        seed = json.loads(default_seed_path().read_text(encoding="utf-8"))
+        deck = build_pilot_deck(seed)
+        proof = {"rule_version": "noun-merge/v2", "lemma": "gato", "allowed": False,
+                 "reason": "different_sense_sets"}
+        deck["cards"][0]["noun_merge"] = proof
+        deck["cards"][0]["meanings"][0]["assignment_status"] = "unassigned"
+        index, _ = build_app_compatibility_assets(deck)
+        self.assertEqual(index[0]["noun_merge"], proof)
+
     def test_clean_deck_maps_to_existing_app_contract_without_lemmas(self) -> None:
         seed = json.loads(default_seed_path().read_text(encoding="utf-8"))
         deck = build_pilot_deck(seed)

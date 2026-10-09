@@ -961,7 +961,15 @@ function lemmaGroupKey(item) {
     // Compare complete source menus before display inflection or WSD filtering.
     // A subset of shown meanings cannot approve a noun merge.
     const proof = item?.noun_merge;
-    if (proof && (proof.rule_version !== 'noun-merge/v1' || proof.allowed !== true)) return '';
+    if (proof && (proof.rule_version !== 'noun-merge/v2' || proof.allowed !== true)) return '';
+    const dictionarySenses = [...(item?.meanings || []), ...(item?.unused_menu_senses || []),
+        ...(item?.meanings || []).flatMap(meaning => meaning.allSenses || [])];
+    if (proof && dictionarySenses.some(meaning => {
+        const pos = normalizeLemmaToken(meaning?.pos || meaning?.part_of_speech);
+        if (['phrase', 'sense_cycle'].includes(pos) || isExpressionSenseForLemma(meaning, item)) return false;
+        return (pos && !/\bnoun\b/iu.test(pos)) || (meaning?.headword
+            && normalizeLemmaToken(meaning.headword) !== normalizeLemmaToken(proof.lemma));
+    })) return '';
     // A Speech card whose senses have not loaded yet carries the key the
     // pipeline computed from those same senses by this same rule
     // (fluency.enrichments.card_rules); without it only the shipped lemma
@@ -970,8 +978,6 @@ function lemmaGroupKey(item) {
     const lemma = headwords[0] || normalizeLemmaToken(proof?.lemma || item?.lemma);
     if (!lemma) return '';
     if (proof && normalizeLemmaToken(proof.lemma) !== lemma) return '';
-    const dictionarySenses = [...(item?.meanings || []), ...(item?.unused_menu_senses || []),
-        ...(item?.meanings || []).flatMap(meaning => meaning.allSenses || [])];
     if (!proof && (!(item?.meanings?.length) || dictionarySenses.some(meaning =>
         /\bnoun\b/iu.test(String(meaning?.pos || meaning?.part_of_speech || ''))
         && !isExpressionSenseForLemma(meaning, item)))) return '';
@@ -2075,8 +2081,8 @@ async function stampContractions(vocabulary, langConfig, { detached = false } = 
         const sameRelease = !built || [langConfig?.indexPath, langConfig?.releaseManifestPath]
             .some(value => String(value || '').includes(`/${built}/`));
         stampMergeExceptionValues(vocabulary, contractions,
-            sameRelease && payload?.noun_merge_rule === 'noun-merge/v1' ? payload?.keys : null,
-            sameRelease && payload?.noun_merge_rule === 'noun-merge/v1' ? payload?.noun_verdicts : null);
+            sameRelease && payload?.noun_merge_rule === 'noun-merge/v2' ? payload?.keys : null,
+            sameRelease && payload?.noun_merge_rule === 'noun-merge/v2' ? payload?.noun_verdicts : null);
         return;
     }
     if (_mergeExceptionsFor !== path) {
@@ -2097,9 +2103,9 @@ async function stampContractions(vocabulary, langConfig, { detached = false } = 
                 _mergeKeysRelease = built;
                 const sameRelease = !built || [langConfig?.indexPath, langConfig?.releaseManifestPath]
                     .some(value => String(value || '').includes(`/${built}/`));
-                _mergeKeys = (sameRelease && payload?.noun_merge_rule === 'noun-merge/v1'
+                _mergeKeys = (sameRelease && payload?.noun_merge_rule === 'noun-merge/v2'
                     && payload?.keys && typeof payload.keys === 'object') ? payload.keys : null;
-                _nounMergeVerdicts = sameRelease && payload?.noun_merge_rule === 'noun-merge/v1'
+                _nounMergeVerdicts = sameRelease && payload?.noun_merge_rule === 'noun-merge/v2'
                     ? payload?.noun_verdicts : null;
                 if (!sameRelease) console.warn(`Merge keys were built for ${built}; ignoring them for this release.`);
             } catch (error) {
@@ -3963,7 +3969,7 @@ async function mergeArtistVocabularies(artistConfigs, master) {
                     if (!a || !b || a.allowed !== true || b.allowed !== true
                         || a.rule_version !== b.rule_version || a.lemma !== b.lemma
                         || !a.sense_set || a.sense_set !== b.sense_set) {
-                        existing.noun_merge = { rule_version: 'noun-merge/v1', allowed: false,
+                        existing.noun_merge = { rule_version: 'noun-merge/v2', allowed: false,
                             lemma: a?.lemma || b?.lemma || '', reason: 'inconsistent_artist_menus' };
                     }
                 }

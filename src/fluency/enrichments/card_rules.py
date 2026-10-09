@@ -76,11 +76,37 @@ def lemma_group_key(row: Mapping[str, Any], contractions: Iterable[str] = ()) ->
     headwords = lemma_headwords(row)
     if len(headwords) > 1:
         return ""
-    lemma = headwords[0] if headwords else normal_token(row.get("lemma"))
+    proof = row.get("noun_merge")
+    if proof is not None and not isinstance(proof, dict):
+        return ""
+    if isinstance(proof, dict):
+        if proof.get("rule_version") != "noun-merge/v2" or proof.get("allowed") is not True:
+            return ""
+    meanings = row.get("meanings") or []
+    dictionary_senses = [*meanings, *(row.get("unused_menu_senses") or [])]
+    dictionary_senses.extend(s for m in meanings for s in m.get("allSenses") or [])
+    if proof:
+        for sense in dictionary_senses:
+            pos = normal_token(sense.get("pos") or sense.get("part_of_speech"))
+            if pos in {"phrase", "sense_cycle"} or is_expression_sense(sense, str(row.get("word") or "")):
+                continue
+            if (pos and "noun" not in pos.split()) or (
+                sense.get("headword") and normal_token(sense["headword"]) != normal_token(proof.get("lemma"))
+            ):
+                return ""
+    if not headwords and isinstance(row.get("merge_key"), str):
+        return row["merge_key"]
+    lemma = headwords[0] if headwords else normal_token((proof or {}).get("lemma") or row.get("lemma"))
     if not lemma:
         return ""
     surface = normal_token(row.get("word"))
-    meanings = row.get("meanings") or []
+    if proof and normal_token(proof.get("lemma")) != lemma:
+        return ""
+    if not proof and (not meanings or any(
+        "noun" in str(m.get("pos") or m.get("part_of_speech") or "").lower().split()
+        and not is_expression_sense(m, str(row.get("word") or "")) for m in dictionary_senses
+    )):
+        return ""
     if surface in set(contractions) or any(
         str(m.get("pos") or m.get("part_of_speech") or "").upper() == "CONTRACTION" for m in meanings
     ):

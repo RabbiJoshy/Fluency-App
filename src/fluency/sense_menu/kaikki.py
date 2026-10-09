@@ -29,6 +29,7 @@ from fluency.features.wiktionary import (
 from fluency.features.wiktionary_gloss import project_gloss
 from fluency.menus import MenuAnalysis, SenseLeaf, build_analysis_id
 from fluency.sense_menu.declared_menu import declared_entity_analyses, declared_gloss_analyses
+from fluency.sense_menu.noun_merge import stamp_noun_merge
 from fluency.surfaces import trust as _trust
 from fluency.surfaces.resolver import (
     ABSENT, COMPLETE_DUMP, DECLARED_GLOSS, ENTITY, EXPANSION, HEADWORDS, MENU,
@@ -399,6 +400,7 @@ def _metadata(
     metadata: dict[str, Any] = {
         "part_of_speech": row.get("pos"),
         "tags": sorted(_sense_tags(sense)),
+        "entry_tags": list(row.get("tags") or []),
         "topics": [value for value in sense.get("topics", []) if isinstance(value, str)],
         "raw_glosses": _glosses(sense, "raw_glosses"),
         # Declared for every language so the shape does not vary by provider.
@@ -846,6 +848,7 @@ class KaikkiSenseMenuAdapter:
             menu_cards.append(menu_card)
             per_surface.append(surface_report)
 
+        stamp_noun_merge(menu_cards)
         payload = {
             "menu_version": MENU_VERSION,
             "metadata_contract": METADATA_CONTRACT_VERSION,

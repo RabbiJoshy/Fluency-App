@@ -689,6 +689,8 @@ def build_inactive_run_candidate(
                 }
             )
         card_payload = {**card, "meanings": meanings, "examples": examples}
+        if "noun_merge" in menu_card:
+            card_payload["noun_merge"] = menu_card["noun_merge"]
         resolved = menu_card.get("resolution") or {}
         if resolved.get("word_class"):
             # The tag the app shows: what kind of word this is (proposal 0003 §2a).

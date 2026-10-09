@@ -26,6 +26,7 @@ from fluency.sense_menu.config import load_sense_menu_language_policy
 from fluency.sense_menu.kaikki import KaikkiHeadwordSource, KaikkiSenseMenuAdapter
 from fluency.sense_menu.spanishdict import SpanishDictSenseMenuAdapter
 from fluency.sense_menu.spanishdict_lemmas import SpanishDictHeadwordSource, SpanishDictLemmaRule
+from fluency.sense_menu.noun_merge import stamp_noun_merge
 from fluency.surfaces.declared import Context, DeclaredRegistry
 from fluency.surfaces.provider_chain import FixedResolutions, ProviderChain
 from fluency.surfaces.resolver import (
@@ -39,6 +40,7 @@ class ChainMenu:
     resolution: Resolution
     provider: str | None          # whose entries the menu was read from ("a+b" when both); None when declared or empty
     analyses: tuple[dict[str, Any], ...]
+    noun_merge: dict[str, Any] | None = None
 
 
 def _cards(surfaces: Iterable[str]) -> list[dict[str, Any]]:
@@ -126,9 +128,15 @@ def build_chain_menus(
         for card in menu["cards"]:
             built[card["surface_form"]].extend(card["analyses"])
 
+    # Compare the combined provider menus, never one reader's partial view.
+    merge_cards = [{"surface_form": s, "analyses": built[s]} for s in sorted(surfaces)]
+    stamp_noun_merge(merge_cards)
     menus = {
-        s: ChainMenu(s, resolutions[s], "+".join(readers_of[s]) or None, tuple(built[s]))
-        for s in surfaces
+        card["surface_form"]: ChainMenu(
+            card["surface_form"], resolutions[card["surface_form"]],
+            "+".join(readers_of[card["surface_form"]]) or None, tuple(card["analyses"]),
+            card.get("noun_merge"))
+        for card in merge_cards
     }
     pinned = {
         "spanishdict_snapshot_id": sd.snapshot_id,
