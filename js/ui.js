@@ -1,7 +1,8 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=2abbe085';
-import { readFastTrack } from './fast-track-preferences.js?v=2abbe085';
+import './state.js?v=367825a2';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=367825a2';
+import { readFastTrack } from './fast-track-preferences.js?v=367825a2';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -508,8 +509,6 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
                 ? 'Everyday speech'
                 : 'Choose…';
     const flag = languageConfig.flag || LEARNING_CONTEXT_FLAGS[selectedLanguage] || selectedLanguage.slice(0, 2).toUpperCase();
-    const coverage = Number(snapshot?.percentage || 0);
-    const coverageLabel = snapshot?.label || (activeArtist ? 'Lyrics understood' : 'Speech understood');
 
     button.hidden = false;
     const flagEl = document.getElementById('learningContextFlag');
@@ -543,7 +542,7 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
         lyricsViewRow.dataset.href = 'lyrics-view/';
     }
     // No vocabulary chosen yet means no deck to measure.
-    const progressButton = document.getElementById('learningContextProgressBtn');
+    const progressButton = document.getElementById('topBarProgressBtn');
     if (progressButton) progressButton.hidden = !modeKey;
     if (activeArtist) {
         const artistName = activeArtist.name || 'Artist';
@@ -565,9 +564,6 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
         artistRow.hidden = true;
         songsRow.hidden = true;
     }
-    document.getElementById('learningContextProgressLabel').textContent = coverageLabel;
-    document.getElementById('learningContextProgressValue').textContent = `${coverage.toFixed(1)}%`;
-    document.getElementById('learningContextProgressFill').style.width = `${Math.min(coverage, 100)}%`;
 }
 
 function mergeStandardProgressIntoLanguageStep() {
@@ -3342,7 +3338,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=2abbe085')
+        import('./spotify.js?v=367825a2')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
@@ -3811,167 +3807,33 @@ function hideSettingsModal() {
 }
 
 async function showTotalStatsModal() {
-    const importButton = document.getElementById('progressImportKnownBtn');
-    if (importButton) importButton.disabled = !currentUser || currentUser.isGuest;
-    const importStatus = document.getElementById('progressDataActionStatus');
-    if (importStatus) importStatus.textContent = importButton?.disabled
-        ? 'Sign in to import known words.' : '';
-    // Update language name in the header
-    const langConfig = config.languages[selectedLanguage];
-    const langName = activeArtist?.name || (langConfig ? langConfig.name : selectedLanguage);
-    document.getElementById('totalStatsLanguage').textContent = langName;
-
-    // Ensure vocabulary index is loaded (needed for comprehension + words understood)
-    if (!cachedVocabularyData && langConfig) {
-        try {
-            const vocab = await fetchActiveVocabularyData(langConfig);
-            vocab.forEach((item, index) => { item.rank = index + 1; });
-            cachedVocabularyData = vocab;
-        } catch (e) {
-            console.warn('Could not load vocab for stats:', e);
-        }
-    }
-
-    // Lazy-load the examples corpus + Spanish ranks needed for the
-    // "Full sentences / Full lyric lines" row. Both files are normally
-    // pulled when the user picks a set; the stats button can be tapped
-    // before that, so fetch them here on demand. Failures are non-fatal —
-    // the row just stays hidden.
-    if (langConfig && langConfig.examplesPath && (
-        !window._cachedExamplesData
-        || window._cachedExamplesDataPath !== langConfig.examplesPath
-    ) && !window.exampleShardsActive?.()) {
-        try {
-            if (window.ensureExamplesForRange) {
-                await window.ensureExamplesForRange(langConfig, 1, 21);
-            } else {
-                const r = await fetch(langConfig.examplesPath);
-                if (r.ok) {
-                    const examples = await r.json();
-                    window.setActiveExamplesData?.(examples, langConfig.examplesPath)
-                        || (window._cachedExamplesData = examples);
-                }
-            }
-        } catch (e) {
-            console.warn('Could not load examples for stats:', e);
-        }
-    }
-    // loadSpanishRanks() is idempotent (internal guard); call unconditionally
-    // for Spanish so the lines/sentences metric has rank data to work with.
-    if (selectedLanguage === 'spanish' && window.loadSpanishRanks) {
-        try { await window.loadSpanishRanks(); } catch (e) { /* ignore */ }
-    }
-
-    // Calculate all stats in a single pass
-    // "Words understood" = last answer was correct (current knowledge, cross-mode)
-    // "Correct" / "Incorrect" = all-time totals from progressData
-    // "Comprehension" = frequency-weighted % based on current knowledge
-    const vocab = cachedVocabularyData
-        ? buildFilteredVocab(cachedVocabularyData).vocab
-        : null;
-    const coverageEl = document.getElementById('totalStatsCoverage');
-    const wordsEl = document.getElementById('totalStatsWords');
-
-    // Check if a word is currently understood (most recent answer was correct)
-    // across both modes, using timestamps. Falls back to correct > 0 if no timestamps.
-    const isCurrentlyUnderstood = (id, word) => {
-        const merged = getMergedWordProgress(id, word);
-        return merged ? getProgressState(merged).known : false;
-    };
-
-    if (vocab && vocab.length > 0 && progressData) {
-        let coveredFreq = 0, totalFreq = 0, coveredCount = 0;
-        for (const item of vocab) {
-            const freq = item.corpus_count || 1;
-            totalFreq += freq;
-            const id = getWordId(item);
-            if (isCurrentlyUnderstood(id, item.word)) {
-                coveredFreq += freq;
-                coveredCount++;
-            }
-        }
-        const coverageType = activeArtist
-            ? (artistVocabularyScope === 'extra' ? `${activeArtist.name || 'Artist'} Extra` : 'lyrics')
-            : 'speech';
-        if (coveredCount > 0) {
-            const pct = (coveredFreq / totalFreq * 100).toFixed(1);
-            coverageEl.textContent = `${pct}% ${coverageType}`;
-            const wordPct = (coveredCount / vocab.length * 100).toFixed(1);
-            wordsEl.textContent = `${wordPct}% (${coveredCount} / ${vocab.length})`;
-        } else {
-            coverageEl.textContent = '—';
-            wordsEl.textContent = '—';
-        }
-    } else {
-        coverageEl.textContent = '—';
-        wordsEl.textContent = '—';
-    }
-
-    // Correct / Incorrect: all-time totals across both modes, deduped
-    let totalCorrect = 0, totalIncorrect = 0;
-    if (vocab) {
-        const counted = new Set();
-        for (const item of vocab) {
-            const surface = normalizeProgressSurface(item.word);
-            if (!surface || counted.has(surface)) continue;
-            counted.add(surface);
-            const data = getMergedWordProgress(getWordId(item), item.word);
-            if (!data) continue;
-            totalCorrect += Number(data.correct) || 0;
-            totalIncorrect += Number(data.wrong) || 0;
-        }
-    } else if (progressData) {
-        for (const data of Object.values(progressData)) {
-            if (data.language !== selectedLanguage) continue;
-            totalCorrect += Number(data.correct) || 0;
-            totalIncorrect += Number(data.wrong) || 0;
-        }
-    }
-    document.getElementById('totalWordsCorrect').textContent = totalCorrect;
-    document.getElementById('totalWordsIncorrect').textContent = totalIncorrect;
-
-    // Two comprehension rows. The first row shows frequency-weighted word
-    // comprehension (set above). The second row shows what fraction of full
-    // sentences/lines are 100% known — a stricter, more practical measure
-    // ("how often will I read a whole line and understand every word").
-    //
-    // Labels switch by mode:
-    //   artist mode  → "Lyrics word comprehension" + "Full lyric lines"
-    //   normal mode  → "Comprehension: speech"     + "Full sentences"
-    const coverageLabelEl = document.getElementById('totalStatsCoverageLabel');
-    const linesLabelEl    = document.getElementById('totalStatsLinesLabel');
-    const linesEl         = document.getElementById('totalStatsLinesUnderstood');
-    const linesRow        = document.getElementById('totalStatsLinesRow');
-    if (coverageLabelEl) {
-        coverageLabelEl.textContent = activeArtist
-            ? (artistVocabularyScope === 'extra' ? `${activeArtist.name || 'Artist'} Extra explored` : 'Lyrics comprehension')
-            : 'Speech comprehension';
-    }
-    if (linesLabelEl) {
-        linesLabelEl.textContent = activeArtist ? 'Complete lyric lines' : 'Complete sentences';
-    }
-
-    // Both modes share the same computation: walk every example sentence in
-    // _cachedExamplesData and count the lines where every in-vocab token is
-    // either in the user's known set or below their level estimate.
-    // computeLinesUnderstood() handles the iteration; we lazy-loaded the
-    // examples corpus and rank data above so it has what it needs.
-    const activeExampleIds = activeArtist && vocab
-        ? new Set(vocab.map(item => String(item.id || '')))
-        : null;
-    let linesResult = computeLinesUnderstood(activeExampleIds);
-    if (linesResult && linesResult.total > 0) {
-        linesRow.style.display = '';
-        linesEl.textContent = `${linesResult.pct.toFixed(1)}% (${linesResult.understood} / ${linesResult.total})`;
-    } else {
-        linesRow.style.display = 'none';
-    }
-
-    document.getElementById('totalStatsModal').classList.remove('hidden');
+    const language = selectedLanguage;
+    const artist = activeArtist;
+    const scope = artistVocabularyScope;
+    const user = currentUser;
+    const langConfig = config.languages?.[language];
+    const mode = currentLearningMode();
+    return openProgressOverview({
+        source: artist?.name || langConfig?.name || language,
+        mode: mode === 'speech' ? 'Everyday speech' : mode === 'live' ? 'Your playlist' : scope === 'extra' ? 'Extra vocabulary' : 'Your music',
+        coverageLabel: mode === 'live' ? 'Estimated playlist coverage' : artist ? (scope === 'extra' ? 'Extra vocabulary explored' : 'Estimated lyrics coverage') : 'Estimated speech coverage',
+        isCurrent: () => selectedLanguage === language && activeArtist === artist && artistVocabularyScope === scope && currentLearningMode() === mode && currentUser === user,
+        loadVocabulary: async () => {
+            if (!langConfig || !mode) throw new Error('Choose a vocabulary source first.');
+            const raw = await fetchActiveVocabularyData(langConfig);
+            if (selectedLanguage !== language || activeArtist !== artist || artistVocabularyScope !== scope) return [];
+            return getPreparedSetupVocabulary(language, raw).vocab;
+        },
+        getId: item => getWordId(item),
+        getState: item => getRecordedSetupState(item),
+        getProgress: item => getMergedWordProgress(getWordId(item), item.word),
+        canImport: Boolean(currentUser && !currentUser.isGuest),
+        guest: Boolean(currentUser?.isGuest)
+    });
 }
 
 function hideTotalStatsModal() {
-    document.getElementById('totalStatsModal').classList.add('hidden');
+    closeProgressOverview();
 }
 
 function updateTotalStatsButtonVisibility() {

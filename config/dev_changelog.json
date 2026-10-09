@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T14:23:21+01:00",
+      "date": "2026-10-09 14:23 BST",
+      "agent": "Codex",
+      "summary": "Progress gets its own top-bar icon and a rebuilt overview",
+      "detail": [
+        "Progress opens directly from the landing page top bar instead of the language settings chip.",
+        "A coverage ring, Known / Practice / New breakdown and expandable answer history replace the old statistics grid.",
+        "The dialog opens immediately, handles empty data and failures, supports retry and keyboard closing, and ignores stale requests after closing or changing source.",
+        "Removed the misleading complete-sentence percentage calculated from a partially loaded example corpus.",
+        "Coverage and counts share one deduplicated snapshot from the current vocabulary and recorded knowledge."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T14:18:00+01:00",
       "date": "2026-10-09 14:18 BST",
       "agent": "Antigravity",
@@ -349,33 +363,6 @@
         "Wide desktop cards are about 17% taller while preserving space for Back and Next.",
         "Narrow desktop layouts put the explanation and navigation beside the card, allowing a taller card without pushing buttons off-screen.",
         "Phone cards reserve space for the longest explanation and remain the same height throughout the tutorial."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T09:12:39+01:00",
-      "date": "2026-10-08 09:12 BST",
-      "agent": "Claude",
-      "summary": "Each subsense row now needs 10% of a card's sentences to stay on the main card",
-      "detail": [
-        "The 10% floor used to pool rows sharing an English translation, so a one-sentence slip rode on its siblings: estuve \"I was (to fit)\" rested on a misread \"estuve pensando\" while the five \"I was\" rows held 35% together.",
-        "Now each subsense row is measured on its own and anything under 10% moves to Rarer uses with its sentences. estuve drops \"to fit\" and \"to be located\"; darte drops \"to give (to generate / to motivate)\"; pt tem keeps \"to own\" and \"general use\".",
-        "If a translation's rows clear 10% together but each is under it, its largest row stays.",
-        "Function words (prepositions, articles, pronouns, conjunctions) keep pooling by translation, since their grouping is curated.",
-        "Both providers (SpanishDict and Wiktionary)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T08:38:15+01:00",
-      "date": "2026-10-08 08:38 BST",
-      "agent": "Codex",
-      "summary": "Keep the tutorial example and source visible; scroll overflow instead of clipping",
-      "detail": [
-        "Example boxes no longer shrink or impose a height cap, so their source icons and footer remain intact.",
-        "Compact cards fit the space above the coach and navigation, without their bottom falling outside the visible card area.",
-        "Meaning rows scroll when expanded content exceeds available space; very short screens also allow scrolling through the card contents.",
-        "Retains the complete 13-step Portuguese tutorial."
       ],
       "commit": "pending"
     }

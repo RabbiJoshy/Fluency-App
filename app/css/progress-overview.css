@@ -1,0 +1,70 @@
+/* Dedicated progress view, scoped so study-session statistics stay separate. */
+#topBar .top-bar-icon-btn { flex-shrink: 0; }
+#topBarProgressBtn[hidden] { display: none; }
+#topBarProgressBtn { color: var(--text-primary); }
+#topBarProgressBtn svg { width: 22px; height: 22px; }
+#topBarProgressBtn:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
+#totalStatsModal .total-progress-modal-content {
+    width: min(100%, 680px); max-width: 680px; max-height: min(90dvh, 920px);
+    display: flex; flex-direction: column; padding: 0; overflow: hidden;
+    border: 1px solid var(--border-color); border-radius: 22px; background: var(--bg-card);
+}
+#totalStatsModal .modal-header { flex: none; padding: 24px 24px 18px; margin: 0; align-items: flex-start; border-bottom: 1px solid var(--border-color); }
+#totalStatsModal h2 { margin: 4px 0 8px; color: var(--text-primary); font: 750 28px/1.15 var(--font-emphasis); }
+#totalStatsModal .modal-close { flex-shrink: 0; width: 44px; height: 44px; }
+#totalStatsModal .progress-source-name { margin: 0; color: var(--text-secondary); font: 500 15px/1.4 var(--font-reading); overflow-wrap: anywhere; }
+#totalStatsModal .total-progress-body { min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 24px; }
+#totalStatsModal [hidden] { display: none !important; }
+#progressOverviewStatus:not(:empty) { padding: 18px; border-radius: 12px; background: var(--bg-tertiary); color: var(--text-primary); }
+#progressOverviewStatus:empty, #progressDataActionStatus:empty { display: none; }
+#progressOverviewContent { display: grid; gap: 22px; }
+#totalStatsModal .progress-coverage-card { display: grid; grid-template-columns: 132px minmax(0, 1fr); align-items: center; gap: 24px; padding: 20px; border-radius: 18px; background: var(--bg-tertiary); }
+.progress-coverage-ring { position: relative; display: grid; place-items: center; width: 132px; height: 132px; border-radius: 50%; background: conic-gradient(var(--accent-primary) var(--progress-coverage, 0%), var(--border-color) 0); }
+.progress-coverage-ring::before { content: ''; position: absolute; inset: 9px; background: var(--bg-tertiary); border-radius: 50%; }
+#totalStatsCoverage { position: relative; color: var(--text-primary); font: 750 28px/1 var(--font-emphasis); font-variant-numeric: tabular-nums; }
+#totalStatsModal h3 { margin: 0; color: var(--text-primary); font: 700 19px/1.3 var(--font-emphasis); }
+#totalStatsModal .progress-coverage-card p { color: var(--text-secondary); font: 400 15px/1.5 var(--font-reading); margin: 8px 0; }
+#totalStatsModal .progress-coverage-card small { color: var(--text-muted); font: 400 13px/1.5 var(--font-reading); }
+.progress-section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+#totalStatsWords { color: var(--text-secondary); font-size: 14px; white-space: nowrap; }
+#totalStatsModal { --progress-known: #22c55e; --progress-practice: #efb830; --progress-new: #8997ad; }
+.progress-word-track { display: flex; overflow: hidden; height: 10px; border-radius: 999px; background: var(--border-color); }
+.progress-word-track i { height: 100%; flex: none; }
+#totalStatsModal .is-known { background: var(--progress-known); }
+#totalStatsModal .is-practice { background: var(--progress-practice); }
+#totalStatsModal .is-new { background: var(--progress-new); }
+.progress-count-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+.progress-count-grid > div { display: grid; grid-template-columns: 9px minmax(0, 1fr); gap: 5px 8px; padding: 14px 10px; border: 1px solid var(--border-color); border-radius: 12px; }
+.progress-count-grid i { width: 8px; height: 8px; border-radius: 50%; align-self: center; }
+.progress-count-grid strong { color: var(--text-primary); font: 750 25px/1.15 var(--font-emphasis); font-variant-numeric: tabular-nums; }
+.progress-count-grid span, .progress-count-grid small { grid-column: 2; }
+.progress-count-grid span { color: var(--text-primary); font-size: 14px; }
+.progress-count-grid small { color: var(--text-muted); font-size: 12px; line-height: 1.4; }
+.progress-scope-note { margin: 14px 0 0; color: var(--text-muted); font: 400 13px/1.5 var(--font-reading); }
+.progress-history { border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; }
+.progress-history summary { cursor: pointer; padding: 16px; color: var(--text-primary); font: 600 15px/1.4 var(--font-reading); }
+#progressAttemptCount { margin-left: 8px; color: var(--text-secondary); font-weight: 400; }
+.progress-history > div { padding: 0 16px 16px; }
+.progress-history p { margin: 0 0 14px; color: var(--text-secondary); font-size: 14px; line-height: 1.5; }
+.progress-history-counts { display: flex; flex-wrap: wrap; gap: 14px; color: var(--text-secondary); font-size: 14px; }
+.progress-history-counts strong { color: var(--text-primary); }
+#totalStatsModal .progress-data-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+#totalStatsModal .progress-data-actions button, .progress-refresh-btn { min-height: 44px; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 10px; background: var(--bg-tertiary); color: var(--text-primary); font: 600 14px/1.4 var(--font-reading); cursor: pointer; }
+#totalStatsModal button:disabled { opacity: .5; cursor: default; }
+#totalStatsModal button:focus-visible, #totalStatsModal summary:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
+.progress-refresh-btn { margin-top: 16px; width: 100%; background: transparent; }
+#progressDataActionStatus { color: var(--text-secondary); font-size: 13px; line-height: 1.5; }
+@media (max-width: 520px) {
+    #totalStatsModal { padding: 12px; }
+    #totalStatsModal .total-progress-modal-content { max-height: calc(100dvh - 24px); border-radius: 18px; }
+    #totalStatsModal .modal-header { padding: 18px 16px 14px; }
+    #totalStatsModal h2 { font-size: 23px; }
+    #totalStatsModal .total-progress-body { padding: 16px; }
+    #totalStatsModal .progress-coverage-card { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 16px; padding: 18px; }
+    .progress-count-grid { gap: 6px; }
+    .progress-count-grid > div { padding: 12px 8px; grid-template-columns: 1fr; }
+    .progress-count-grid i { display: none; }
+    .progress-count-grid span, .progress-count-grid small { grid-column: 1; }
+    .progress-count-grid strong { font-size: 23px; }
+    #totalStatsModal .progress-data-actions button { flex: 1 1 120px; }
+}
