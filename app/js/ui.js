@@ -1,8 +1,8 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=0d278944';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=0d278944';
-import { readFastTrack } from './fast-track-preferences.js?v=0d278944';
+import './state.js?v=fd9890e0';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=fd9890e0';
+import { readFastTrack } from './fast-track-preferences.js?v=fd9890e0';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -3338,7 +3338,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=0d278944')
+        import('./spotify.js?v=fd9890e0')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

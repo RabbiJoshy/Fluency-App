@@ -2,27 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
-      "timestamp": "2026-10-09T14:24:49+01:00",
-      "date": "2026-10-09 14:24 BST",
-      "agent": "Codex",
-      "summary": "Progress overview also accounts for reviews of individual meanings",
-      "detail": [
-        "Scheduled reviews of individual meanings count as due practice.",
-        "Words with an unresolved meaning do not inflate the coverage ring."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T14:23:21+01:00",
-      "date": "2026-10-09 14:23 BST",
+      "timestamp": "2026-10-09T14:26:02+01:00",
+      "date": "2026-10-09 14:26 BST",
       "agent": "Codex",
       "summary": "Progress gets its own top-bar icon and a rebuilt overview",
       "detail": [
-        "Progress opens directly from the landing page top bar instead of the language settings chip.",
-        "A coverage ring, Known / Practice / New breakdown and expandable answer history replace the old statistics grid.",
-        "The dialog opens immediately, handles empty data and failures, supports retry and keyboard closing, and ignores stale requests after closing or changing source.",
-        "Removed the misleading complete-sentence percentage calculated from a partially loaded example corpus.",
-        "Coverage and counts share one deduplicated snapshot from the current vocabulary and recorded knowledge."
+        "Open progress directly from the top bar; language settings now focus on language and vocabulary.",
+        "A centred coverage ring, Known / Practice / New breakdown and expandable answer history replace the old statistics grid.",
+        "Immediate opening, retry, keyboard closing, phone scrolling and stale-response protection make the overview reliable.",
+        "Removed the misleading complete-sentence percentage based on a partially loaded example corpus.",
+        "Counts and coverage use deduplicated recorded knowledge, including reviews of individual meanings."
       ],
       "commit": "pending"
     },

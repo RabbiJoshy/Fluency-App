@@ -1,28 +1,28 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=0d278944';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=0d278944';
-import './speech.js?v=0d278944';
-import { goToRoute, routeCodeFor } from './routes.js?v=0d278944';
-import './side-dock.js?v=0d278944';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=0d278944';
+import './state.js?v=fd9890e0';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=fd9890e0';
+import './speech.js?v=fd9890e0';
+import { goToRoute, routeCodeFor } from './routes.js?v=fd9890e0';
+import './side-dock.js?v=fd9890e0';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=fd9890e0';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=0d278944';
+} from './example-personalisation.js?v=fd9890e0';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=0d278944';
+} from './spanishdict-usage.js?v=fd9890e0';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=0d278944';
+} from './reverse-cues.js?v=fd9890e0';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -55,7 +55,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=0d278944';
+} from './card-metadata-pills.js?v=fd9890e0';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -10363,8 +10363,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '0d278944';
-const MODALS_ASSET_VERSION = '0d278944';
+const ASSET_VERSION = 'fd9890e0';
+const MODALS_ASSET_VERSION = 'fd9890e0';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

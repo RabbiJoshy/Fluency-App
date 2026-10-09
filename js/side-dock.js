@@ -135,6 +135,7 @@ const OCCUPANTS = [
       open: isShown, close: closeButtonFor('settingsModal') },
     ...['statsModal', 'totalStatsModal', 'reviewHomeModal', 'spacedRepetitionInfoModal', 'keyboardShortcutsModal', 'helpModal'].map(id => ({
         id, home: 'left', stacks: true,
+        centred: id === 'totalStatsModal' ? () => true : undefined,
         stackOver: id === 'spacedRepetitionInfoModal' ? 'reviewHomeModal' : null,
         open: isShown, close: closeButtonFor(id) })),
     // Setup-page reference sheets: word lists and rules.
