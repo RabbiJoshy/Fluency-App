@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T19:49:00+01:00",
+      "date": "2026-10-09 19:49 BST",
+      "agent": "Claude",
+      "summary": "INFLECT pass 2: reflexive rows and feminine/plural participles get inflected English; conjugation table finds -se forms",
+      "detail": [
+        "Spanish -se rows inflect: siento (sentirse) 'to feel' → 'I feel'; fue (irse) 'to leave' → 'he/she left'; acuerdo (acordarse) → 'I remember'. 2,000 rows on 1,183 card/verb pairs.",
+        "Feminine and plural participles inflect: pt feita → 'made', querida → 'loved', mortos → 'killed'; es muertos → 'died'. 341 pt rows, 77 es rows. Only when the word is not also an ordinary verb form (pt pega stays 'he/she catches').",
+        "Conjugation table on a -se verb opens on the card's tense and highlights its form: fue with irse selected now opens Pretérito on 'se fue' (was: present tense, nothing highlighted). The pronoun stays in the table: 'me siento'.",
+        "Measured on live v23 decks: no existing row changed and none lost its English; only rows that showed the infinitive gained one.",
+        "Known: 3 pt rows read 'been' (feita under fazer's weather sense) — a sentence-assignment issue upstream, not inflection."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T19:43:12+01:00",
       "date": "2026-10-09 19:43 BST",
       "agent": "Codex",
@@ -357,17 +371,6 @@
         "Matching profiles show language and last study date; an exact match can always create a separate profile.",
         "Existing initials and all progress keep their original IDs; selected profiles remain remembered on this device.",
         "Saved sets are isolated by profile; the progress backend now includes a shared profile directory."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T21:08:51+01:00",
-      "date": "2026-10-08 21:08 BST",
-      "agent": "Codex",
-      "summary": "A shorter first lesson and one-time swipe guidance",
-      "detail": [
-        "Automatic onboarding covers reveal, pronunciation, grading and moving on; Help retains the full card tour.",
-        "The first real card reveal shows swipe guidance outside the card until a successful grading swipe."
       ],
       "commit": "pending"
     }

@@ -252,6 +252,53 @@ function conjugationEntry(conjugationData, lemma) {
     return null;
 }
 
+// Our table builder writes a Spanish -se verb as its base verb's forms with
+// the reflexive pronoun in front ("me siento"), and Wiktionary does the same
+// for a few always-pronominal verbs (pt arrepender). A card's word is the
+// bare verb, so a cell is matched on its form without that pronoun. The
+// conjugation table matches cells through the same two functions.
+const LEADING_REFLEXIVE = /^(?:me|te|se|nos|os)\s+/u;
+
+export function splitReflexiveCell(form) {
+    const value = String(form || '').trim();
+    const match = LEADING_REFLEXIVE.exec(value.toLocaleLowerCase());
+    if (!match) return { pronoun: '', bare: value };
+    return { pronoun: value.slice(0, match[0].length), bare: value.slice(match[0].length) };
+}
+
+export function conjugationCellMatches(form, surface) {
+    if (!form || form === '—') return false;
+    const target = foldCueForm(surface);
+    if (!target) return false;
+    return foldCueForm(form) === target || foldCueForm(splitReflexiveCell(form).bare) === target;
+}
+
+// Tables list the masculine singular participle; feita and hechas agree with
+// their noun. Only an -o participle (Spanish, Portuguese) takes -a/-os/-as,
+// so a Czech l-form (byl) is never read as one. The caller tries this only
+// after every finite cell: pt pegar's short participle is pego, and pega is
+// still "he/she catches".
+function agreeingParticipleMatches(participle, surface) {
+    const base = foldCueForm(participle);
+    const target = foldCueForm(surface);
+    if (!base || !target || base === target) return false;
+    if (!base.endsWith('o')) return false;
+    const stem = base.slice(0, -1);
+    return target === `${stem}a` || target === `${stem}os` || target === `${stem}as`;
+}
+
+// A -se verb's gerund carries its pronoun and the accent that comes with it
+// (sintiéndose); "me estoy sintiendo" shows the bare form.
+function gerundMatches(gerund, surface) {
+    const base = foldCueForm(gerund);
+    const target = foldCueForm(surface);
+    if (!base || !target) return false;
+    if (base === target) return true;
+    if (!base.endsWith('se') || base.length < 6) return false;
+    const bare = base.slice(0, -2).normalize('NFD').replace(/\u0301/gu, '').normalize('NFC');
+    return bare === target;
+}
+
 export function conjugationLookupSurface(card) {
     if (!card) return '';
     const lemma = String(card.citationForm || card.lemma || '').trim();
@@ -761,24 +808,23 @@ function conjugationTableCue(card, meaning, translation, conjugationData, option
     if (!entry || typeof entry !== 'object') return null;
     const gloss = inflectableGloss(translation, meaning);
     if (!gloss) return null;
-    const surfaceFold = foldCueForm(surface);
-    if (entry.gerund && foldCueForm(entry.gerund) === surfaceFold) {
+    if (entry.gerund && gerundMatches(entry.gerund, surface)) {
         return withGlossTail(renderGlossClauses(gloss.clauses,
             (head, rest, first, lead) => `${lead}${eachVerb(head, englishIng)}${rest}`), gloss);
     }
-    if (entry.past_participle && foldCueForm(entry.past_participle) === surfaceFold) {
-        return withGlossTail(renderGlossClauses(gloss.clauses,
-            (head, rest, first, lead) => `${lead}${eachVerb(head, verb => englishPastParticiple(verb, rest))}${rest}`), gloss);
-    }
+    const participleCue = () => withGlossTail(renderGlossClauses(gloss.clauses,
+        (head, rest, first, lead) => `${lead}${eachVerb(head, verb => englishPastParticiple(verb, rest))}${rest}`), gloss);
+    if (entry.past_participle && foldCueForm(entry.past_participle) === foldCueForm(surface)) return participleCue();
     const readings = [];
     for (const [tenseName, forms] of Object.entries(entry.tenses || {})) {
         const kind = TENSE_KIND[tenseName];
         if (!kind || !Array.isArray(forms)) continue;
         forms.forEach((form, personIdx) => {
-            if (!form || form === '—' || foldCueForm(form) !== surfaceFold) return;
+            if (!conjugationCellMatches(form, surface)) return;
             readings.push({ kind, personIdx });
         });
     }
+    if (!readings.length && agreeingParticipleMatches(entry.past_participle, surface)) return participleCue();
     const chosen = chooseTableReadings(readings, gloss, options);
     const render = rowGloss => {
         const cues = [];

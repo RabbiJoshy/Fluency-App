@@ -14,6 +14,10 @@
 // (e.g. "soy" → "eres" for ser). Cards are torn down on every updateCard,
 // so the cache lives in this module's scope, not on the DOM.
 
+// Cells are matched to the card's word exactly as the sense-row English is,
+// so a -se table ("me siento") opens on the card's tense and marks its form.
+import { conjugationCellMatches, splitReflexiveCell } from './reverse-cues.js?v=e0b5c1c2';
+
 const CONJ_UI = {
     spanish: {
         pronouns: ['yo', 'tú', 'él / ella', 'nosotros', 'vosotros', 'ellos / ellas'],
@@ -168,7 +172,7 @@ function splitStemEnding(form, infinitive, endings) {
     return { stem: form.slice(0, i), ending: form.slice(i) };
 }
 
-function buildConjugationTableHTML(conjEntry, targetWord, lemma, opts) {
+export function buildConjugationTableHTML(conjEntry, targetWord, lemma, opts) {
     opts = opts || {};
     const relatedLemma = opts.relatedLemma || null;
     const isRelatedParadigm = !!opts.isRelatedParadigm;
@@ -209,12 +213,14 @@ function buildConjugationTableHTML(conjEntry, targetWord, lemma, opts) {
     const targetLower = foldConjForm(targetWord);
     const conjOwnerLemma = isRelatedParadigm ? (relatedLemma || lemma || targetWord || '') : (lemma || targetWord || '');
     const infinitive = (conjEntry.infinitive || conjOwnerLemma).toLowerCase();
+    // A -se verb's forms are coloured against its base verb: me s|iento.
+    const stemInfinitive = /[aeií]rse$/u.test(infinitive) ? infinitive.slice(0, -2) : infinitive;
 
     // The drawer only shows tenses that contain this card's surface. The
     // full paradigm lives in conjugation mode.
     const matchingTenses = Object.keys(tenses).filter(name => {
         const forms = tenses[name];
-        return Array.isArray(forms) && forms.some(f => f && f !== '—' && foldConjForm(f) === targetLower);
+        return Array.isArray(forms) && forms.some(f => conjugationCellMatches(f, targetWord));
     });
     const shownTenses = matchingTenses.length
         ? matchingTenses
@@ -236,12 +242,14 @@ function buildConjugationTableHTML(conjEntry, targetWord, lemma, opts) {
         let rows = '';
         for (let i = 0; i < forms.length; i++) {
             const form = forms[i];
-            const isActive = !!(targetLower && form && form !== '—' && foldConjForm(form) === targetLower);
+            const isActive = !!(targetLower && conjugationCellMatches(form, targetWord));
             const cls = isActive ? ' conj-active' : '';
-            const { stem, ending } = splitStemEnding(form, infinitive, ui.infinitiveEndings);
+            const { pronoun, bare } = splitReflexiveCell(form);
+            const { stem, ending } = splitStemEnding(bare, stemInfinitive, ui.infinitiveEndings);
+            const pronounHTML = pronoun ? `<span class="conj-stem">${pronoun}</span>` : '';
             const formHTML = stem
-                ? `<span class="conj-stem">${stem}</span><span class="conj-ending">${ending}</span>`
-                : `<span class="conj-ending conj-ending-full">${ending}</span>`;
+                ? `${pronounHTML}<span class="conj-stem">${stem}</span><span class="conj-ending">${ending}</span>`
+                : `${pronounHTML}<span class="conj-ending conj-ending-full">${ending}</span>`;
             rows += `<tr class="${cls}"><td class="conj-pronoun">${pronouns[i] || ''}</td><td class="conj-form">${formHTML}</td></tr>`;
         }
         tenseTables += `<table class="conj-table" data-tense="${tenseName}"${hidden}>${rows}</table>`;
