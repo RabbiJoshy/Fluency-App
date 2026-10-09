@@ -2594,6 +2594,9 @@ function setupKeyboardShortcuts() {
         const authModal = document.getElementById('authModal');
         if (authModal && !authModal.classList.contains('hidden')) return;
 
+        const estimationModal = document.getElementById('estimationModal');
+        if (estimationModal && !estimationModal.classList.contains('hidden')) return;
+
         // Ignore if typing in an input field
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
             return;

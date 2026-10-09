@@ -442,6 +442,7 @@
                             <span class="language-picker-btn-arrow" aria-hidden="true">›</span>
                         </button>
                         <div class="artist-source-secondary-actions">
+                            <button type="button" id="artistSourceLyricsViewBtn" class="artist-source-action-btn">Lyrics view ›</button>
                             <button type="button" id="artistSourceArtistBtn" class="artist-source-action-btn">Change artist</button>
                             <button type="button" id="artistSourceSpeechBtn" class="artist-source-action-btn">Speech ›</button>
                         </div>
@@ -781,6 +782,11 @@
                 <button id="learningContextSongsBtn" class="learning-context-choice" type="button" hidden>
                     <span class="learning-context-mode-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h11M4 12h11M4 18h7"></path><path d="M18 8v9"></path><circle cx="16" cy="17" r="2"></circle></svg></span>
                     <span><small>Songs</small><strong id="learningContextSheetSongs"></strong></span>
+                    <span aria-hidden="true">›</span>
+                </button>
+                <button id="learningContextLyricsViewBtn" class="learning-context-choice" type="button" hidden>
+                    <span class="learning-context-mode-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></span>
+                    <span><small>Song lyrics</small><strong>Lyrics & token view</strong></span>
                     <span aria-hidden="true">›</span>
                 </button>
                 <button id="learningContextVerbsBtn" class="learning-context-choice" type="button" hidden>
@@ -1410,8 +1416,13 @@
                 </div>
                 <div id="estimationTest" style="display: none;">
                     <div class="estimation-progress">
-                        <span id="estimationLevel">Finding your range</span>
-                        <span id="estimationCount">0/30</span>
+                        <div class="estimation-progress-header">
+                            <span id="estimationLevel">Finding your range</span>
+                            <span id="estimationCount">0/30</span>
+                        </div>
+                        <div class="estimation-progress-bar-track">
+                            <div class="estimation-progress-bar-fill" id="estimationProgressFill" style="width: 0%;"></div>
+                        </div>
                     </div>
                     <div class="estimation-word-area">
                         <div class="estimation-word" id="estimationWord">palabra</div>
@@ -1419,11 +1430,11 @@
                         <div class="estimation-pos" id="estimationPOS">noun</div>
                         <div class="estimation-translation" id="estimationTranslation"></div>
                         <div class="estimation-rank" id="estimationRank"></div>
-                        <button class="estimation-reveal" id="estimationReveal" type="button" onclick="revealTranslation()">Check meaning</button>
+                        <button class="estimation-reveal" id="estimationReveal" type="button" onclick="revealTranslation()">Check meaning <kbd class="estimation-kbd">Space</kbd></button>
                     </div>
                     <div class="estimation-buttons" id="estimationButtons" style="display: none;">
-                        <button class="estimation-btn know-btn" onclick="handleAnswer(true)">I knew it before</button>
-                        <button class="estimation-btn dont-know-btn" onclick="handleAnswer(false)">I didn't know</button>
+                        <button class="estimation-btn know-btn" onclick="handleAnswer(true)">I knew it before <kbd class="estimation-kbd">↵</kbd></button>
+                        <button class="estimation-btn dont-know-btn" onclick="handleAnswer(false)">I didn't know <kbd class="estimation-kbd">X</kbd></button>
                     </div>
                 </div>
                 <div id="estimationResult" style="display: none;">

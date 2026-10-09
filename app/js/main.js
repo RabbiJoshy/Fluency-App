@@ -792,6 +792,13 @@ loadConfig().then(async () => {
         const href = event.currentTarget.dataset.href;
         if (href) window.location.href = href;
     });
+    document.getElementById('learningContextLyricsViewBtn')?.addEventListener('click', event => {
+        const href = event.currentTarget.dataset.href || 'lyrics-view/';
+        window.location.href = href;
+    });
+    document.getElementById('artistSourceLyricsViewBtn')?.addEventListener('click', () => {
+        window.location.href = 'lyrics-view/';
+    });
     document.getElementById('learningContextSongsBtn')?.addEventListener('click', () => {
         closeLearningContext();
         document.getElementById('artistSourcePickerBtn')?.click();

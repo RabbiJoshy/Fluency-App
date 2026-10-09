@@ -536,6 +536,12 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
         verbsRow.hidden = !drillHref;
         verbsRow.dataset.href = drillHref || '';
     }
+    const lyricsViewRow = document.getElementById('learningContextLyricsViewBtn');
+    if (lyricsViewRow) {
+        const lyricsActive = Boolean(activeArtist) || modeKey === 'lyrics' || selectedLanguage === 'spanish';
+        lyricsViewRow.hidden = !lyricsActive;
+        lyricsViewRow.dataset.href = 'lyrics-view/';
+    }
     // No vocabulary chosen yet means no deck to measure.
     const progressButton = document.getElementById('learningContextProgressBtn');
     if (progressButton) progressButton.hidden = !modeKey;
@@ -2292,8 +2298,11 @@ function setupPercentModeButton() {
 }
 
 function setupEstimationModal() {
-    // Close modal
+    // Close modal on X button or backdrop click
     document.getElementById('closeEstimationModal').addEventListener('click', closeEstimationModal);
+    document.getElementById('estimationModal')?.addEventListener('click', event => {
+        if (event.target === event.currentTarget) closeEstimationModal();
+    });
 
     // Start estimation button
     document.getElementById('startEstimationBtn').addEventListener('click', function() {

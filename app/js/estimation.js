@@ -4,7 +4,7 @@ const ESTIMATION_QUESTION_LIMIT = 30;
 const ESTIMATION_BAND_TARGET = 10;
 const ESTIMATION_CONFIDENCE_Z = 1.645; // Approximate 90% interval.
 const ESTIMATION_PRIOR = 0.5;          // Jeffreys prior for adaptive selection.
-const ESTIMATION_PICK_ATTEMPTS = 8;    // Candidates tried per question before giving up.
+const ESTIMATION_PICK_ATTEMPTS = 48;   // Candidates tried per question before giving up.
 
 // Always use the Speech vocabulary for placement. Artist ordering measures
 // familiarity with one corpus, not general vocabulary size. In an artist deck
@@ -50,6 +50,8 @@ function openEstimationModal() {
     document.getElementById('estimationIntro').style.display = 'block';
     document.getElementById('estimationTest').style.display = 'none';
     document.getElementById('estimationResult').style.display = 'none';
+    const fillEl = document.getElementById('estimationProgressFill');
+    if (fillEl) fillEl.style.width = '0%';
     // Words you already know can come in by list instead. Import only exists
     // for signed-in learners; it does not feed the estimate.
     const importLink = document.getElementById('estimationImportKnownBtn');
@@ -122,7 +124,8 @@ function mainSensePos(word) {
     if (!meanings.length) return '';
     const share = m => parseFloat(m.display_frequency ?? m.frequency ?? m.percentage) || 0;
     const main = meanings.reduce((best, m) => (share(m) > share(best) ? m : best), meanings[0]);
-    return String(main.pos || '').toUpperCase();
+    const rawPos = (main.pos === 'SENSE_CYCLE' ? main.cycle_pos : main.pos) || '';
+    return String(rawPos).toUpperCase();
 }
 
 // A candidate is ready once its meanings are loaded and it still qualifies.
@@ -391,10 +394,12 @@ function getWordTranslation(word) {
             } catch (_) {}
         }
         gloss = String(gloss).trim();
-        const key = `${meaning.pos || ''}|${gloss.toLocaleLowerCase()}`;
+        const rawPos = (meaning.pos === 'SENSE_CYCLE' ? meaning.cycle_pos : meaning.pos) || '';
+        const cleanPos = rawPos && rawPos !== 'SENSE_CYCLE' ? rawPos : '';
+        const key = `${cleanPos}|${gloss.toLocaleLowerCase()}`;
         if (!gloss || seen.has(key)) continue;
         seen.add(key);
-        parts.push(meaning.pos ? `(${meaning.pos}) ${gloss}` : gloss);
+        parts.push(cleanPos ? `(${cleanPos}) ${gloss}` : gloss);
     }
     return parts.join(', ');
 }
@@ -493,7 +498,11 @@ function setEstimationLoading(loading, showPlaceholder = loading) {
     if (showPlaceholder) {
         document.getElementById('estimationWord').textContent = 'Loading…';
         document.getElementById('estimationLemma').style.visibility = 'hidden';
-        document.getElementById('estimationPOS').textContent = '';
+        const posEl = document.getElementById('estimationPOS');
+        if (posEl) {
+            posEl.textContent = '';
+            posEl.style.display = 'none';
+        }
         document.getElementById('estimationTranslation').classList.remove('visible');
         document.getElementById('estimationRank')?.classList.remove('visible');
         document.getElementById('estimationReveal').style.display = 'none';
@@ -545,7 +554,17 @@ async function showNextWord() {
         lemmaEl.style.visibility = 'hidden';
     }
 
-    document.getElementById('estimationPOS').textContent = word.meanings?.[0]?.pos || '';
+    const displayPos = mainSensePos(word);
+    const posEl = document.getElementById('estimationPOS');
+    if (posEl) {
+        if (displayPos && displayPos !== 'SENSE_CYCLE') {
+            posEl.textContent = displayPos.toLowerCase();
+            posEl.style.display = 'inline-block';
+        } else {
+            posEl.textContent = '';
+            posEl.style.display = 'none';
+        }
+    }
     // The gloss is written at reveal, by which time the conjugation tables
     // that inflect it have usually arrived.
     const translationEl = document.getElementById('estimationTranslation');
