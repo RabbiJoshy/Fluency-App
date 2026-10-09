@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Song Lyrics View · Fluency</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Lyrics · Fluency</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -11,107 +11,72 @@
 </head>
 <body>
 
-  <!-- Topbar -->
+  <!-- Minimalist Topbar (Fluency Style) -->
   <header class="topbar">
     <div class="topbar-content">
       <div class="topbar-left">
         <a class="back-to-study" id="backToStudy" href="../" aria-label="Return to study">
           <span aria-hidden="true">‹</span> Vocabulary
         </a>
-        <span class="brand-badge">Lyrics View</span>
+        <span class="brand-badge">Lyrics</span>
       </div>
 
+      <!-- Spotify-style Centered Song Pill -->
       <div class="topbar-center">
         <button class="song-nav-btn" id="prevSongBtn" title="Previous song" aria-label="Previous song">‹</button>
-        <button class="song-selector-btn" id="songSelectorBtn" type="button" aria-haspopup="dialog" aria-label="Choose a song from playlist">
-          <div class="song-selector-icon" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <button class="song-selector-pill" id="songSelectorBtn" type="button" aria-haspopup="dialog" aria-label="Choose song from offline playlist">
+          <div class="song-icon" aria-hidden="true">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <path d="M9 18V5l12-2v13"></path>
               <circle cx="6" cy="18" r="3"></circle>
               <circle cx="18" cy="16" r="3"></circle>
             </svg>
           </div>
-          <div class="song-selector-text">
-            <span class="song-selector-title" id="topbarSongTitle">Loading songs…</span>
-            <span class="song-selector-artist" id="topbarSongArtist">Offline Playlist</span>
+          <div class="song-pill-info">
+            <span class="song-pill-title" id="topbarSongTitle">Loading songs…</span>
+            <span class="song-pill-artist" id="topbarSongArtist">Offline</span>
           </div>
-          <span class="song-selector-chevron" aria-hidden="true">▾</span>
+          <span class="song-pill-chevron" aria-hidden="true">▾</span>
         </button>
         <button class="song-nav-btn" id="nextSongBtn" title="Next song" aria-label="Next song">›</button>
       </div>
 
       <div class="topbar-right">
-        <span class="filter-pill" id="songsCountPill" title="Offline songs available">30 songs</span>
+        <button class="action-pill-btn active" id="toggleEnglishBtn" type="button" title="Toggle English line translation underneath">
+          EN line
+        </button>
       </div>
     </div>
   </header>
 
-  <!-- Filter & Sub-bar Controls -->
-  <div class="sub-bar">
-    <div class="sub-bar-content">
-      <div class="filter-pills" role="radiogroup" aria-label="Filter token highlights">
-        <button class="filter-pill active" data-filter="all" type="button">All Words</button>
-        <button class="filter-pill pill-entity" data-filter="entity" type="button">
-          🌸 Entities <span class="pill-count" id="entitiesCountBadge">0</span>
-        </button>
-        <button class="filter-pill pill-mwe" data-filter="mwe" type="button">
-          🟣 Idioms <span class="pill-count" id="mwesCountBadge">0</span>
-        </button>
-        <button class="filter-pill pill-interjection" data-filter="interjection" type="button">
-          ⚡ Ad-libs / Interjections <span class="pill-count" id="interjectionsCountBadge">0</span>
-        </button>
-        <button class="filter-pill" data-filter="word" type="button">
-          Vocabulary
-        </button>
-      </div>
-
-      <div class="meta-stats">
-        <div class="meta-stat-item"><span id="totalLinesText">0 lines</span></div>
-        <div class="meta-stat-item">· <strong id="totalTokensText">0 tokens</strong></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main Lyrics View Canvas -->
+  <!-- Main Spotify-Style Lyrics Flow -->
   <main>
-    <div class="lyrics-container">
-      <div class="song-header-card" id="songHeaderCard">
-        <div class="song-header-info">
-          <h1 id="mainSongTitle">Loading song lyrics…</h1>
-          <p id="mainSongArtist">Offline Spanish Playlist</p>
-        </div>
-        <div class="song-header-badges">
-          <span class="header-badge header-badge-offline">⚡ 100% Offline Intake</span>
-          <span class="header-badge header-badge-turbo">TURBO Engine</span>
-        </div>
-      </div>
-
-      <!-- Loading State Indicator -->
-      <div class="loading-box" id="loadingBox">
-        <div class="loading-spinner"></div>
-        <p>Loading offline playlist and token models…</p>
-      </div>
-
-      <!-- Flow of Lyric Lines -->
-      <div class="lyrics-flow" id="lyricsFlow" style="display: none;"></div>
+    <!-- Loading State Indicator -->
+    <div class="loading-box" id="loadingBox">
+      <div class="loading-spinner"></div>
+      <p>Loading offline playlist…</p>
     </div>
+
+    <!-- Lyrics Stream: Target with English Underneath -->
+    <div class="lyrics-flow" id="lyricsFlow" style="display: none;"></div>
   </main>
 
-  <!-- Song Picker Modal / Bottom Sheet -->
+  <!-- Offline Playlist Picker Sheet (Fluency Style) -->
   <div class="modal-backdrop" id="songPickerModal" role="dialog" aria-modal="true" aria-labelledby="songPickerTitle">
     <div class="modal-dialog">
+      <div class="modal-drag-handle" aria-hidden="true"></div>
       <div class="modal-header">
         <div>
-          <h2 id="songPickerTitle" style="font-size: 18px; font-weight: 700;">Offline Playlist</h2>
-          <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">
-            Choose a song to inspect its lyrics, senses, idioms, and entities
+          <h3 id="songPickerTitle">Offline playlist</h3>
+          <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+            Choose a song to inspect its lyrics, senses, and entities
           </p>
         </div>
-        <button class="modal-close-btn" id="closeSongPickerBtn" aria-label="Close modal">✕</button>
+        <button class="modal-close" id="closeSongPickerBtn" aria-label="Close modal">&#10005;</button>
       </div>
 
       <div class="song-picker-search">
-        <input type="text" id="songSearchInput" class="song-search-input" placeholder="Search by title, artist, or lyric phrase…" autocomplete="off">
+        <input type="text" id="songSearchInput" class="song-search-input" placeholder="Search 30 songs by title, artist, or lyrics…" autocomplete="off">
       </div>
 
       <div class="song-picker-list" id="songPickerList">
@@ -120,51 +85,50 @@
     </div>
   </div>
 
-  <!-- Quick-View Token Modal -->
+  <!-- Quick-View Token Modal (Fluency Card Style / Bottom Sheet on Mobile) -->
   <div class="modal-backdrop" id="tokenQuickViewModal" role="dialog" aria-modal="true" aria-labelledby="tokenModalWord">
     <div class="modal-dialog">
+      <div class="modal-drag-handle" aria-hidden="true"></div>
       <div class="modal-header">
         <div>
-          <div class="token-modal-title-row">
-            <h2 class="token-modal-word" id="tokenModalWord">palabra</h2>
-            <span class="token-modal-elision-hint" id="tokenModalElisionHint" style="display: none;"></span>
-          </div>
+          <div class="token-modal-word" id="tokenModalWord">palabra</div>
+          <span class="token-modal-elision-hint" id="tokenModalElisionHint" style="display: none;"></span>
           <div class="token-modal-badges" id="tokenModalBadges"></div>
         </div>
-        <button class="modal-close-btn" id="closeTokenModalBtn" aria-label="Close modal">✕</button>
+        <button class="modal-close" id="closeTokenModalBtn" aria-label="Close modal">&#10005;</button>
       </div>
 
       <div class="modal-body">
-        <!-- Primary Meaning / Sense Assignment -->
-        <div class="meaning-callout" id="modalMeaningCallout">
+        <!-- Sense Assignment / Meaning Callout -->
+        <div class="meaning-card" id="modalMeaningCallout">
           <div class="meaning-label" id="modalMeaningLabel">Sense Assignment</div>
           <div class="meaning-primary" id="modalMeaningPrimary">to know</div>
           <div class="meaning-context" id="modalMeaningContext">General definition / context</div>
         </div>
 
         <!-- Entity Information (if Entity) -->
-        <div class="entity-details-box" id="modalEntityBox" style="display: none;">
+        <div class="entity-details-card" id="modalEntityBox" style="display: none;">
           <h4 id="modalEntityTitle">Entity Details</h4>
           <p id="modalEntityDesc"></p>
         </div>
 
         <!-- Polysemous Sense Breakdown (if multi-meaning word) -->
-        <div class="poly-senses-box" id="modalPolySensesBox" style="display: none;">
-          <h4>Other Senses in Spanish</h4>
+        <div class="poly-senses-card" id="modalPolySensesBox" style="display: none;">
+          <h4>Other senses in Spanish</h4>
           <div id="modalPolySensesList"></div>
         </div>
 
-        <!-- Lyric Context Quote -->
-        <div class="modal-context-quote">
-          <div class="modal-context-quote-text" id="modalContextQuoteText">"Ambos sabemo' lo que sigue"</div>
-          <div class="modal-context-quote-meta" id="modalContextQuoteMeta">Line 1 · La Nota (Manuel Turizo)</div>
+        <!-- Context Lyric Quote -->
+        <div class="modal-quote-box">
+          <div class="modal-quote-text" id="modalContextQuoteText">"Ambos sabemo' lo que sigue"</div>
+          <div class="modal-quote-meta" id="modalContextQuoteMeta">Line 1 · La Nota (Manuel Turizo)</div>
         </div>
       </div>
 
       <div class="modal-footer">
-        <div class="modal-nav-group">
-          <button class="modal-nav-btn" id="tokenPrevBtn" type="button" aria-label="Previous token">‹ Previous word</button>
-          <button class="modal-nav-btn" id="tokenNextBtn" type="button" aria-label="Next token">Next word ›</button>
+        <div class="modal-nav-btns">
+          <button class="modal-step-btn" id="tokenPrevBtn" type="button" aria-label="Previous word">‹ Previous</button>
+          <button class="modal-step-btn" id="tokenNextBtn" type="button" aria-label="Next word">Next ›</button>
         </div>
         <span style="font-size: 11px; color: var(--text-muted);">Press Esc to close</span>
       </div>

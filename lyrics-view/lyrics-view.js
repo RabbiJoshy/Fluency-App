@@ -12,7 +12,7 @@ let engine = null;
 let probeSongs = [];
 let annotatedCache = new Map(); // songIndex -> annotatedSong
 let currentSongIndex = 0;
-let currentFilter = 'all';
+let showEnglishUnderneath = true;
 
 // Flat list of all tokens in current song for modal next/previous stepping
 let songTokensFlatList = [];
@@ -24,18 +24,10 @@ const topbarSongArtist = document.getElementById('topbarSongArtist');
 const songSelectorBtn = document.getElementById('songSelectorBtn');
 const prevSongBtn = document.getElementById('prevSongBtn');
 const nextSongBtn = document.getElementById('nextSongBtn');
-const songsCountPill = document.getElementById('songsCountPill');
+const toggleEnglishBtn = document.getElementById('toggleEnglishBtn');
 
-const mainSongTitle = document.getElementById('mainSongTitle');
-const mainSongArtist = document.getElementById('mainSongArtist');
 const loadingBox = document.getElementById('loadingBox');
 const lyricsFlow = document.getElementById('lyricsFlow');
-
-const entitiesCountBadge = document.getElementById('entitiesCountBadge');
-const mwesCountBadge = document.getElementById('mwesCountBadge');
-const interjectionsCountBadge = document.getElementById('interjectionsCountBadge');
-const totalLinesText = document.getElementById('totalLinesText');
-const totalTokensText = document.getElementById('totalTokensText');
 
 // Modals
 const songPickerModal = document.getElementById('songPickerModal');
@@ -67,14 +59,13 @@ const tokenNextBtn = document.getElementById('tokenNextBtn');
 // ───────────────────────────────────────────────
 async function init() {
   try {
-    // Read initial song from query param if provided
     const urlParams = new URLSearchParams(window.location.search);
     const paramSong = urlParams.get('song');
 
-    // 1. Load engine assets
+    // Load assets (read-only)
     engine = await TurboEngine.create('../turbo/turbo_assets.json');
 
-    // 2. Load offline songs playlist
+    // Load 30 offline songs (read-only)
     const songsResp = await fetch('../turbo/probe_songs.json');
     probeSongs = await songsResp.json();
 
@@ -91,16 +82,13 @@ async function init() {
       }
     }
 
-    songsCountPill.textContent = `${probeSongs.length} songs`;
     renderSongPickerItems(probeSongs);
-
-    // 3. Render current song
     await selectSong(currentSongIndex);
   } catch (err) {
     console.error('Failed to init Lyrics View:', err);
     loadingBox.innerHTML = `
-      <p style="color: #f43f5e; font-weight: 600;">Failed to load lyrics data: ${err.message}</p>
-      <p style="font-size: 13px; margin-top: 8px;">Check that assets exist under app/turbo/.</p>
+      <p style="color: #ff5252; font-weight: 600;">Failed to load lyrics: ${err.message}</p>
+      <p style="font-size: 13px; margin-top: 8px;">Ensure files exist under app/turbo/.</p>
     `;
   }
 }
@@ -113,10 +101,8 @@ async function selectSong(index) {
   currentSongIndex = index;
 
   const song = probeSongs[index];
-  topbarSongTitle.textContent = `${index + 1}. ${song.title}`;
+  topbarSongTitle.textContent = song.title;
   topbarSongArtist.textContent = song.artist;
-  mainSongTitle.textContent = song.title;
-  mainSongArtist.textContent = `${song.artist} · Spanish`;
 
   prevSongBtn.disabled = (index === 0);
   nextSongBtn.disabled = (index === probeSongs.length - 1);
@@ -126,13 +112,11 @@ async function selectSong(index) {
   newUrl.searchParams.set('song', index);
   window.history.replaceState({}, '', newUrl.toString());
 
-  // Show loading while analyzing if not cached
   lyricsFlow.style.display = 'none';
   loadingBox.style.display = 'block';
 
   let annotatedSong = annotatedCache.get(index);
   if (!annotatedSong) {
-    // Process this song through TurboEngine
     const result = await engine.processPlaylist([song]);
     annotatedSong = result.annotatedSongs?.[0];
     if (annotatedSong) {
@@ -150,9 +134,8 @@ async function selectSong(index) {
 }
 
 /**
- * Enhances TurboEngine token classification:
+ * Enhances token classification:
  * - Detects interjections / ad-libs
- * - Detects entities
  * - Classifies elisions
  */
 function postProcessAnnotatedSong(song) {
@@ -161,7 +144,6 @@ function postProcessAnnotatedSong(song) {
       const lowerRaw = token.raw.toLowerCase().replace(/^[¿¡"'(]+|[.,;:!?"')]+$/g, '');
       const lowerNorm = (token.word || '').toLowerCase();
 
-      // Check if this token is an interjection / ad-lib
       const isPosIntj = token.pos === 'INTJ' || token.pos === 'interjection';
       const hasIntjMeaning = token.card?.meanings && token.card.meanings.some(m => m.pos === 'INTJ' || m.pos === 'interjection');
       const isAdLibPhrase = (token.translation || '').toLowerCase().includes('ad-lib') || (token.translation || '').toLowerCase().includes('interjection');
@@ -179,46 +161,65 @@ function postProcessAnnotatedSong(song) {
   }
 }
 
+/**
+ * Generates a clean, natural English gloss line for a lyric row
+ */
+function buildLineEnglishGloss(line) {
+  const parts = [];
+  for (const t of line.tokens) {
+    if (t.type === 'unmatched') {
+      parts.push(t.raw);
+      continue;
+    }
+    if (t.type === 'entity') {
+      parts.push(t.word || t.raw);
+      continue;
+    }
+    let tr = t.translation || t.word || '';
+    if (t.type === 'mwe') {
+      tr = tr.split(';')[0].split(',')[0].trim();
+      tr = tr.replace(/^Used for explanations:\s*/i, '');
+      parts.push(tr);
+      continue;
+    }
+    // Clean dictionary clutter
+    tr = tr.replace(/\(inflection of[^)]*\)/gi, '').trim();
+    tr = tr.replace(/\([^)]*\)/g, '').trim();
+    if (tr.includes(';')) tr = tr.split(';')[0].trim();
+    if (tr.includes(',')) tr = tr.split(',')[0].trim();
+    // Drop leading infinitive "to " unless it's a stand-alone dictionary cue
+    tr = tr.replace(/^to\s+/i, '').trim();
+    if (tr) parts.push(tr);
+  }
+
+  let text = parts.join(' ').trim();
+  if (text.length > 0) {
+    // Capitalize first letter
+    text = text.charAt(0).toUpperCase() + text.slice(1);
+  }
+  return text;
+}
+
 // ───────────────────────────────────────────────
-// Render Lyrics View
+// Render Spotify-Style Lyrics View
 // ───────────────────────────────────────────────
 function renderLyrics(song) {
   lyricsFlow.innerHTML = '';
   songTokensFlatList = [];
-
-  let countEntities = 0;
-  let countMwes = 0;
-  let countInterjections = 0;
-  let countTokens = 0;
 
   song.lines.forEach((line, lineIdx) => {
     const lineItem = document.createElement('div');
     lineItem.className = 'lyric-line-item';
     lineItem.dataset.lineIndex = lineIdx;
 
-    // Line number or audio timestamp
-    const lineNum = document.createElement('span');
-    lineNum.className = 'lyric-line-number';
-    if (line.isSynced && line.timestamp_ms != null) {
-      const totalSec = Math.floor(line.timestamp_ms / 1000);
-      const m = Math.floor(totalSec / 60);
-      const s = totalSec % 60;
-      lineNum.textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
-      lineNum.title = `Synced line [${line.timestamp_ms}ms]`;
-    } else {
-      lineNum.textContent = (lineIdx + 1 < 10 ? '0' : '') + (lineIdx + 1);
-    }
-    lineItem.appendChild(lineNum);
+    // 1. Target Spanish Line (Large, bold)
+    const targetLine = document.createElement('div');
+    targetLine.className = 'lyric-line-target';
 
-    // Line text container
-    const lineText = document.createElement('div');
-    lineText.className = 'lyric-line-text';
+    // Auto entities / idioms / ad-libs found in this line
+    const lineAutoBadges = [];
 
-    // Auto-breakdown chips for this line
-    const autoBreakdownList = [];
-
-    line.tokens.forEach((token, tokenIdx) => {
-      countTokens++;
+    line.tokens.forEach(token => {
       const flatIndex = songTokensFlatList.length;
       token.flatIndex = flatIndex;
       token.lineText = line.text;
@@ -233,22 +234,19 @@ function renderLyrics(song) {
       span.dataset.type = token.type;
       span.textContent = token.raw;
 
-      // Styling based on classification
       if (token.type === 'entity') {
         span.classList.add('token-entity');
-        countEntities++;
         span.title = `🌸 Entity: ${token.word} (${token.translation || 'Cultural referent'})`;
-        autoBreakdownList.push({
+        lineAutoBadges.push({
           type: 'entity',
           label: `🌸 ${token.raw}`,
-          sub: token.translation,
+          sub: token.card?.entity?.entityType || 'Entity',
           token
         });
       } else if (token.type === 'mwe') {
         span.classList.add('token-mwe');
-        countMwes++;
         span.title = `🟣 Idiom: ${token.word} (${token.translation})`;
-        autoBreakdownList.push({
+        lineAutoBadges.push({
           type: 'mwe',
           label: `🟣 ${token.raw}`,
           sub: token.translation,
@@ -256,33 +254,21 @@ function renderLyrics(song) {
         });
       } else if (token.type === 'interjection') {
         span.classList.add('token-interjection');
-        countInterjections++;
-        span.title = `⚡ Ad-lib / Interjection: ${token.translation || token.raw}`;
-        autoBreakdownList.push({
+        span.title = `⚡ Ad-lib: ${token.translation || token.raw}`;
+        lineAutoBadges.push({
           type: 'interjection',
           label: `⚡ ${token.raw}`,
-          sub: token.translation,
+          sub: 'ad-lib',
           token
         });
       } else {
         span.classList.add('token-word');
         if (token.isElision) {
           span.classList.add('token-elision');
-          span.title = `Elision: ${token.raw} → ${token.word} (${token.translation})`;
-          autoBreakdownList.push({
-            type: 'elision',
-            label: `→ ${token.raw} (${token.word})`,
-            sub: token.translation,
-            token
-          });
+          span.title = `Elision: ${token.raw} → ${token.word}`;
         } else {
           span.title = `${token.word}: ${token.translation || 'Word'}`;
         }
-      }
-
-      // Filter dimming
-      if (currentFilter !== 'all' && currentFilter !== token.type) {
-        span.classList.add('is-dimmed');
       }
 
       span.addEventListener('click', (e) => {
@@ -290,39 +276,55 @@ function renderLyrics(song) {
         openTokenModal(token);
       });
 
-      lineText.appendChild(span);
+      targetLine.appendChild(span);
     });
 
-    lineItem.appendChild(lineText);
+    lineItem.appendChild(targetLine);
 
-    // If this line has auto items (entities, idioms, interjections, elisions), show breakdown row
-    if (autoBreakdownList.length > 0) {
-      const autoRow = document.createElement('div');
-      autoRow.className = 'line-auto-breakdown';
+    // 2. English Line Underneath (Spotify Subtitle Style)
+    const englishGloss = buildLineEnglishGloss(line);
+    if (englishGloss) {
+      const englishLine = document.createElement('div');
+      englishLine.className = `lyric-line-english ${showEnglishUnderneath ? '' : 'is-hidden'}`;
 
-      autoBreakdownList.forEach(item => {
-        const chip = document.createElement('span');
-        chip.className = `auto-chip auto-chip-${item.type}`;
-        chip.innerHTML = `<strong>${item.label}</strong> ${item.sub ? `<small style="opacity:0.8;">· ${item.sub}</small>` : ''}`;
-        chip.addEventListener('click', (e) => {
+      if (line.isSynced && line.timestamp_ms != null) {
+        const totalSec = Math.floor(line.timestamp_ms / 1000);
+        const m = Math.floor(totalSec / 60);
+        const s = totalSec % 60;
+        const timeSpan = document.createElement('span');
+        timeSpan.className = 'lyric-line-timestamp';
+        timeSpan.textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
+        englishLine.appendChild(timeSpan);
+      }
+
+      const textSpan = document.createElement('span');
+      textSpan.textContent = englishGloss;
+      englishLine.appendChild(textSpan);
+
+      lineItem.appendChild(englishLine);
+    }
+
+    // 3. Subtle inline line badges if line contains entities or idioms
+    if (lineAutoBadges.length > 0) {
+      const badgesRow = document.createElement('div');
+      badgesRow.className = 'line-auto-badges';
+
+      lineAutoBadges.forEach(item => {
+        const badge = document.createElement('span');
+        badge.className = `line-auto-badge badge-${item.type}`;
+        badge.innerHTML = `<strong>${item.label}</strong> <small style="opacity:0.75;">· ${item.sub}</small>`;
+        badge.addEventListener('click', (e) => {
           e.stopPropagation();
           openTokenModal(item.token);
         });
-        autoRow.appendChild(chip);
+        badgesRow.appendChild(badge);
       });
 
-      lineItem.appendChild(autoRow);
+      lineItem.appendChild(badgesRow);
     }
 
     lyricsFlow.appendChild(lineItem);
   });
-
-  // Update metrics badges
-  entitiesCountBadge.textContent = countEntities;
-  mwesCountBadge.textContent = countMwes;
-  interjectionsCountBadge.textContent = countInterjections;
-  totalLinesText.textContent = `${song.lines.length} lines`;
-  totalTokensText.textContent = `${countTokens} tokens`;
 }
 
 // ───────────────────────────────────────────────
@@ -335,7 +337,7 @@ function openTokenModal(token) {
   // Title & Elision
   tokenModalWord.textContent = token.raw;
   if (token.isElision && token.word && token.word !== token.raw.toLowerCase()) {
-    tokenModalElisionHint.textContent = `Contraction → ${token.word}`;
+    tokenModalElisionHint.textContent = `Contraction of: ${token.word}`;
     tokenModalElisionHint.style.display = 'inline-block';
   } else {
     tokenModalElisionHint.style.display = 'none';
@@ -344,33 +346,33 @@ function openTokenModal(token) {
   // Badges
   tokenModalBadges.innerHTML = '';
   const typeBadge = document.createElement('span');
-  typeBadge.className = 'token-type-badge';
+  typeBadge.className = 'token-type-pill';
 
   if (token.type === 'entity') {
-    typeBadge.classList.add('badge-entity');
+    typeBadge.classList.add('pill-entity-style');
     const entType = token.card?.entity?.entityType || 'Cultural Entity';
     typeBadge.textContent = `🌸 ${entType}`;
   } else if (token.type === 'mwe') {
-    typeBadge.classList.add('badge-mwe');
+    typeBadge.classList.add('pill-mwe-style');
     typeBadge.textContent = `🟣 Idiom / MWE`;
   } else if (token.type === 'interjection') {
-    typeBadge.classList.add('badge-interjection');
-    typeBadge.textContent = `⚡ Interjection / Ad-lib`;
+    typeBadge.classList.add('pill-intj-style');
+    typeBadge.textContent = `⚡ Ad-lib / Interjection`;
   } else {
-    typeBadge.classList.add('badge-word');
+    typeBadge.classList.add('pill-word-style');
     typeBadge.textContent = `🔷 ${token.pos || 'Vocabulary'}`;
   }
   tokenModalBadges.appendChild(typeBadge);
 
   if (token.rank) {
     const rankBadge = document.createElement('span');
-    rankBadge.className = 'token-type-badge badge-rank';
+    rankBadge.className = 'token-type-pill pill-rank-style';
     rankBadge.textContent = `#${token.rank} in frequency`;
     tokenModalBadges.appendChild(rankBadge);
   }
 
-  // Meaning Callout Styling & Text
-  modalMeaningCallout.className = 'meaning-callout';
+  // Meaning Callout
+  modalMeaningCallout.className = 'meaning-card';
   if (token.type === 'entity') {
     modalMeaningCallout.classList.add('is-entity');
     modalMeaningLabel.textContent = 'Entity Sense';
@@ -389,7 +391,7 @@ function openTokenModal(token) {
     ? `Context: ${token.card.meanings[0].context}`
     : (token.pos ? `Part of speech: ${token.pos}` : '');
 
-  // Entity Details Box
+  // Entity Details
   if (token.type === 'entity' && token.card?.entity) {
     modalEntityBox.style.display = 'block';
     modalEntityTitle.textContent = token.card.entity.canonicalTitle || token.word;
@@ -435,7 +437,7 @@ function highlightTokenInLine(lineText, rawToken) {
   if (!lineText || !rawToken) return `"${lineText}"`;
   const escaped = rawToken.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const regex = new RegExp(`(${escaped})`, 'gi');
-  const highlighted = lineText.replace(regex, `<span style="color: var(--accent-cyan); font-weight: 700; text-decoration: underline;">$1</span>`);
+  const highlighted = lineText.replace(regex, `<span style="color: var(--accent-blue); font-weight: 700; text-decoration: underline;">$1</span>`);
   return `"${highlighted}"`;
 }
 
@@ -451,12 +453,12 @@ function renderSongPickerItems(songs) {
     item.innerHTML = `
       <div class="song-picker-item-left">
         <span class="song-picker-num">${idx + 1}</span>
-        <div class="song-picker-details">
+        <div>
           <div class="song-picker-name">${s.title}</div>
           <div class="song-picker-artist">${s.artist}</div>
         </div>
       </div>
-      <span class="song-picker-lines-badge">${(s.lyrics || '').split('\n').length} lines</span>
+      <span class="song-picker-lines">${(s.lyrics || '').split('\n').length} lines</span>
     `;
 
     item.addEventListener('click', () => {
@@ -496,6 +498,14 @@ nextSongBtn.addEventListener('click', () => {
   if (currentSongIndex < probeSongs.length - 1) selectSong(currentSongIndex + 1);
 });
 
+toggleEnglishBtn.addEventListener('click', () => {
+  showEnglishUnderneath = !showEnglishUnderneath;
+  toggleEnglishBtn.classList.toggle('active', showEnglishUnderneath);
+  document.querySelectorAll('.lyric-line-english').forEach(el => {
+    el.classList.toggle('is-hidden', !showEnglishUnderneath);
+  });
+});
+
 songSearchInput.addEventListener('input', (e) => {
   const q = e.target.value.toLowerCase().trim();
   if (!q) {
@@ -527,7 +537,7 @@ tokenNextBtn.addEventListener('click', () => {
   }
 });
 
-// Keyboard controls (Esc to close, Arrow keys to navigate)
+// Keyboard controls
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     closeTokenModal();
@@ -539,25 +549,6 @@ window.addEventListener('keydown', (e) => {
       openTokenModal(songTokensFlatList[currentModalTokenIndex + 1]);
     }
   }
-});
-
-// Filter pill buttons
-document.querySelectorAll('.filter-pill[data-filter]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-pill[data-filter]').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentFilter = btn.dataset.filter;
-
-    // Apply dimming to tokens
-    document.querySelectorAll('.lyric-token').forEach(tokenEl => {
-      const type = tokenEl.dataset.type;
-      if (currentFilter === 'all' || currentFilter === type) {
-        tokenEl.classList.remove('is-dimmed');
-      } else {
-        tokenEl.classList.add('is-dimmed');
-      }
-    });
-  });
 });
 
 // Boot
