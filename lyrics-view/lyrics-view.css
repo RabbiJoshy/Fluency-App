@@ -308,12 +308,12 @@ main {
   width: 0;
 }
 
-/* ───────────────────────── LEFT GUTTER (TIMESTAMP & AI ACTIONS) ───────────────────────── */
+/* ───────────────────────── LEFT GUTTER (TIMESTAMP & AI LOOKUP BUTTON) ───────────────────────── */
 .lyric-line-gutter {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 4px;
+  gap: 6px;
   width: 44px;
   min-width: 44px;
   flex-shrink: 0;
@@ -330,169 +330,156 @@ main {
   line-height: 1;
 }
 
-.lyric-line-ai-actions {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  opacity: 0.32;
-  transition: opacity 0.15s ease, transform 0.15s ease;
-}
-
-.lyric-line-item:hover .lyric-line-ai-actions {
-  opacity: 1;
-}
-
-/* AI Action Icon Buttons */
-.lyric-ai-btn {
-  width: 22px;
-  height: 22px;
-  border-radius: var(--radius-sm);
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  color: var(--text-muted);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 0;
-  transition: all 0.15s ease;
-  user-select: none;
-}
-
-.lyric-ai-btn:hover {
-  background: var(--bg-card-hover);
-  border-color: var(--border-light);
-  transform: translateY(-1px);
-}
-
-.lyric-ai-btn:active {
-  transform: translateY(0);
-}
-
-/* Claude Brand Tint on Hover */
-.lyric-ai-btn-claude:hover {
-  color: #d97706; /* Warm Anthropic terracotta */
-  border-color: rgba(217, 119, 6, 0.45);
-  background: rgba(217, 119, 6, 0.12);
-}
-
-/* ChatGPT Brand Tint on Hover */
-.lyric-ai-btn-gpt:hover {
-  color: #10a37f; /* OpenAI signature emerald */
-  border-color: rgba(16, 163, 127, 0.45);
-  background: rgba(16, 163, 127, 0.12);
-}
-
-.lyric-ai-btn.copied {
-  color: #00d4aa !important;
-  border-color: #00d4aa !important;
-  background: rgba(0, 212, 170, 0.15) !important;
-}
-
-/* Compact Popover Trigger (When no translation line is present) */
-.lyric-ai-popover-wrap {
+/* Master circular AI button in gutter */
+.lyric-ai-wrap {
   position: relative;
   display: inline-flex;
 }
 
-.lyric-ai-trigger-btn {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
+.lyric-ai-circle-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-emphasis);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.35;
+  transition: all 0.15s cubic-bezier(0.2, 0.85, 0.25, 1.25);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
-.lyric-ai-popover-menu {
+.lyric-line-item:hover .lyric-ai-circle-btn,
+.lyric-ai-wrap.is-open .lyric-ai-circle-btn {
+  opacity: 1;
+}
+
+.lyric-ai-circle-btn:hover,
+.lyric-ai-wrap.is-open .lyric-ai-circle-btn {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-blue);
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+/* Lookup Sheet rising above the AI button (exact flashcard back style) */
+.lyric-ai-sheet {
   position: absolute;
-  top: 100%;
-  left: 0;
-  margin-top: 4px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
-  padding: 5px;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.65);
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
   display: flex;
-  gap: 4px;
-  z-index: 100;
-  animation: popoverFadeIn 0.15s ease-out;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  background: none;
+  border: none;
+  box-shadow: none;
 }
 
-@keyframes popoverFadeIn {
-  from { opacity: 0; transform: translateY(-4px) scale(0.96); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+.lyric-ai-sheet[hidden] {
+  display: none !important;
 }
 
-/* External Leave Confirmation Modal */
-.ai-leave-dialog {
-  max-width: 440px;
-}
-
-.ai-leave-target-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
+/* Two Circular Site Icons */
+.lyric-ai-sheet-chip {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
-}
-
-.ai-leave-target-icon.is-claude {
-  color: #d97706;
-  border-color: rgba(217, 119, 6, 0.4);
-  background: rgba(217, 119, 6, 0.12);
-}
-
-.ai-leave-target-icon.is-chatgpt {
-  color: #10a37f;
-  border-color: rgba(16, 163, 127, 0.4);
-  background: rgba(16, 163, 127, 0.12);
-}
-
-.ai-leave-quote-box {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 10px 14px;
-  max-height: 120px;
-  overflow-y: auto;
-}
-
-.ai-leave-quote-label {
-  font-family: var(--font-data);
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 4px;
-}
-
-.ai-leave-quote-text {
-  font-size: 12px;
-  color: var(--text-primary);
-  line-height: 1.45;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-.ai-leave-continue-btn {
-  background: var(--accent-blue);
-  color: #ffffff;
-  border: none;
-  font-family: var(--font-reading);
-  font-size: 13px;
-  font-weight: 600;
-  padding: 7px 16px;
-  border-radius: var(--radius-sm);
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  overflow: visible;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 50%;
+  background: #1b232e;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  color: #e6eaf0;
   cursor: pointer;
-  transition: all 0.15s ease;
+  animation: lookup-icon-rise 180ms cubic-bezier(0.2, 0.85, 0.25, 1.25) both;
+  transition: border-color 0.15s ease, transform 0.15s ease;
 }
 
-.ai-leave-continue-btn:hover {
-  background: #3b82f6;
-  transform: translateY(-1px);
+.lyric-ai-sheet-chip:nth-child(2) {
+  animation-delay: 45ms;
+}
+
+.lyric-ai-sheet-chip:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: translateY(-2px);
+}
+
+.lyric-ai-sheet-chip.is-claude {
+  color: #d97757;
+}
+
+.lyric-ai-sheet-chip.is-chatgpt {
+  color: #10a37f;
+}
+
+@keyframes lookup-icon-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Second tap arming / leaving indicator (exact flashcard .outbound-leave-btn pattern) */
+.lyric-ai-leave-pill {
+  position: absolute;
+  left: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%);
+  width: max-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 55%, var(--border-color));
+  border-radius: 10px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
+  font: 650 12px/1.2 var(--font-reading);
+  white-space: nowrap;
+  z-index: 60;
+  cursor: pointer;
+  animation: lookup-icon-rise 140ms ease-out both;
+}
+
+.lyric-ai-leave-pill[hidden] {
+  display: none !important;
+}
+
+.lyric-ai-leave-pill:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-primary);
+}
+
+.lyric-ai-sheet-chip.is-armed-outbound {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-primary) 70%, transparent), 0 6px 18px rgba(0, 0, 0, 0.45);
+  border-color: var(--accent-primary);
+}
+
+.lyric-ai-leave-arrow {
+  width: 13px;
+  height: 13px;
+  opacity: 0.85;
 }
 
 /* Subtle Toast Notification */
