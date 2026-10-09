@@ -2,6 +2,7 @@
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
 import './state.js?v=20260825ak';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=1';
 import './speech.js?v=20260825ak';
 import { goToRoute, routeCodeFor } from './routes.js?v=20260923cj';
 import './side-dock.js?v=20260927pa';
@@ -2449,7 +2450,7 @@ function setupSwipeGestures() {
 
         // If indicator was visible, auto-complete the swipe
         if (indicatorWasVisible) {
-            handleSwipeAction(swipeDirection);
+            handleSwipeAction(swipeDirection, { gesture: true });
             return;
         }
 
@@ -2481,7 +2482,7 @@ function setupSwipeGestures() {
             const isEdgeSwipe = Math.abs(diffX) > edgeSwipeThreshold && Math.abs(diffX) > Math.abs(diffY);
 
             if (isEdgeSwipe) {
-                handleSwipeAction(diffX > 0 ? 'correct' : 'incorrect');
+                handleSwipeAction(diffX > 0 ? 'correct' : 'incorrect', { gesture: true });
             } else if (isTap) {
                 flipCard(); // Tap on edge still flips
             }
@@ -2495,7 +2496,7 @@ function setupSwipeGestures() {
 
         if (isHorizontalSwipe) {
             // Horizontal swipe - correct/incorrect
-            handleSwipeAction(diffX > 0 ? 'correct' : 'incorrect');
+            handleSwipeAction(diffX > 0 ? 'correct' : 'incorrect', { gesture: true });
         } else if (isVerticalSwipe) {
             // Vertical swipe - cycle through meanings for multi-meaning cards
             const currentCard = flashcards[currentIndex];
@@ -2588,6 +2589,11 @@ function setupKeyboardShortcuts() {
     }
 
     document.addEventListener('keydown', function(e) {
+        // Signing in owns all keys, including Enter on the submit button.
+        // A previous study deck can still exist behind this modal after logout.
+        const authModal = document.getElementById('authModal');
+        if (authModal && !authModal.classList.contains('hidden')) return;
+
         // Ignore if typing in an input field
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
             return;
@@ -2802,7 +2808,8 @@ function advanceAfterFlag() {
 }
 window.advanceAfterFlag = advanceAfterFlag;
 
-function handleSwipeAction(result) {
+function handleSwipeAction(result, { gesture = false } = {}) {
+    if (gesture && flashcards[currentIndex]) rememberGradingSwipe();
     stopExampleAutoplay(true);
     const card = document.getElementById('flashcard');
     const isFlipped = card.classList.contains('flipped');
@@ -2863,6 +2870,25 @@ function handleSwipeAction(result) {
 
         advanceToNextDeckCard();
     }, 300);
+}
+
+// Position labels for the set's cards: a split word's two cards share one
+// number with A and B (7A, 7B), so the count is of words, not cards.
+function deckCardLabels(count = flashcards.length) {
+    let wordCount = 0;
+    const labels = [];
+    for (let i = 0; i < count; i++) {
+        const split = flashcards[i]?.splitInfo;
+        if (split) {
+            if (split.index === 1) wordCount++;
+            const letter = split.index === 1 ? 'A' : (split.index === 2 ? 'B' : String(split.index));
+            labels.push(`${wordCount}${letter}`);
+        } else {
+            wordCount++;
+            labels.push(String(wordCount));
+        }
+    }
+    return { labels, wordCount };
 }
 
 // A split word opened on its own (search, word link) shows Flashcard 1 of 2
@@ -6193,13 +6219,15 @@ function renderCardWikipediaBadge(card) {
         let html = '';
         for (const m of fMeanings) {
             const productionGloss = getProductionEnglishCue(card, m) || m.meaning;
+            const isExpr = Boolean(m.isMWE || m.pos === 'MWE' || m.pos === 'PHRASE' || (typeof isExpressionSenseForLemma === 'function' && isExpressionSenseForLemma(m, card)));
+            const phraseBadge = isExpr ? `<span class="front-phrase-cue" style="opacity: 0.7; font-size: 0.75em; margin-left: 6px; font-weight: normal;">[phrase]</span>` : '';
             const posChip = m.pos && !['MWE', 'CLITIC', 'SENSE_CYCLE', 'EXAMPLE_ONLY'].includes(m.pos)
                 && !isHiddenExpressionOnParent(card, m)
                 ? renderFrontPosUnit(m.pos, isVerbPos(m.pos), 'card-pos front-meaning-pos')
                 : '';
             html += `<div class="front-meaning-row">
                 ${posChip}
-                <span class="front-meaning-text" style="font-size: ${fontSize}px;">${escapeCardText(productionGloss)}</span>
+                <span class="front-meaning-text" style="font-size: ${fontSize}px;">${escapeCardText(productionGloss)}${phraseBadge}</span>
             </div>`;
         }
         frontMeaningsEl.innerHTML = html;
@@ -6268,7 +6296,13 @@ function renderCardWikipediaBadge(card) {
                         ? `<span class="front-lemma-name">${fromPrefix}${escapeCardText(pair.lemma)}</span>`
                         : '';
                     const posOnlyClass = !lemmaHTML ? ' is-pos-only' : '';
-                    return `<span class="front-lemma-pair ${statusClass}${posOnlyClass}">${posUnit}${lemmaHTML}</span>`;
+                    // Each pill names its own card, so the count can only mean
+                    // that card, and the dimmed "Card 2" says another is coming.
+                    // The active one opens the explanation.
+                    const countHTML = isActive
+                        ? `<button type="button" class="split-pill-count" aria-expanded="false" aria-label="Card ${cardNum} of ${s.total}: why two cards?" onclick="toggleSplitCardTip(event)">Card ${cardNum} of ${s.total}</button>`
+                        : `<span class="split-pill-count">Card ${cardNum}</span>`;
+                    return `<span class="front-lemma-pair ${statusClass}${posOnlyClass}">${posUnit}${lemmaHTML}${countHTML}</span>`;
                 };
 
                 const splitPairsHTML = [
@@ -6277,8 +6311,8 @@ function renderCardWikipediaBadge(card) {
                 ].join('');
 
                 const noteRgb = getPosAccentRgb(s.pos || card.partOfSpeech);
-                const splitNoteHTML = `<div class="split-card-note" style="color: rgb(${noteRgb});">`
-                    + `<button type="button" class="split-card-note-toggle" aria-expanded="false" onclick="toggleSplitCardTip(event)">Flashcard <span class="split-card-note-count">${s.index} of ${s.total}</span></button>`
+                frontPOSEl.style.setProperty('--split-accent', noteRgb);
+                const splitNoteHTML = '<div class="split-card-note is-tip-only">'
                     + '<span class="split-card-tip" role="tooltip" hidden>This word has two common, unrelated uses, so it gets a flashcard for each. '
                     + 'Learning them separately keeps one meaning from crowding out the other. '
                     + 'You see both, one after the other.</span></div>';
@@ -8497,20 +8531,7 @@ function renderCardWikipediaBadge(card) {
         const segmentCount = scrubCount;
         progressSegments.classList.toggle('is-single', segmentCount <= 1);
         if (progressSegments.childElementCount !== segmentCount) {
-            // Compute base item number and split suffix (e.g. 7A, 7B) for each card in the deck
-            let baseItemNum = 0;
-            const segmentLabels = [];
-            for (let i = 0; i < segmentCount; i++) {
-                const c = flashcards[i];
-                if (c && c.splitInfo) {
-                    if (c.splitInfo.index === 1) baseItemNum++;
-                    const letter = c.splitInfo.index === 1 ? 'A' : (c.splitInfo.index === 2 ? 'B' : String(c.splitInfo.index));
-                    segmentLabels.push(`${baseItemNum}${letter}`);
-                } else {
-                    baseItemNum++;
-                    segmentLabels.push(String(baseItemNum));
-                }
-            }
+            const { labels: segmentLabels, wordCount: baseItemNum } = deckCardLabels(segmentCount);
 
             progressSegments.replaceChildren(...Array.from({ length: segmentCount }, (_, i) => {
                 const segment = document.createElement('button');
@@ -8570,7 +8591,8 @@ function renderCardWikipediaBadge(card) {
         cardBackPips.classList.toggle('is-single', scrubCount <= 1);
         const thumb = cardBackPips.querySelector('.cbs-thumb');
         const thumbNum = cardBackPips.querySelector('.cbs-thumb-num');
-        if (thumbNum) thumbNum.textContent = String(scrubIndex + 1);
+        // A split word's two cards share a number: 25A, 25B, then 26.
+        if (thumbNum) thumbNum.textContent = deckCardLabels(scrubCount).labels[scrubIndex] || String(scrubIndex + 1);
         thumb?.classList.toggle('is-phrases', onPhraseCard);
         cardBackPips.setAttribute('aria-valuenow', String(scrubIndex + 1));
         cardBackPips.setAttribute('aria-valuemax', String(Math.max(1, scrubCount)));
@@ -8752,7 +8774,9 @@ function flipCard() {
             speakWord(getDisplayedTargetHeadword(card), false);
         }
     }
-    if (!wasFlipped && isNowFlipped) setTimeout(maybeShowCardTutorialPrompt, 650);
+    if (!wasFlipped && isNowFlipped) {
+        showSwipeHint({ realCard: !card.isChainChild && cardNavStack.length === 0 });
+    }
     window.saveStudySessionSnapshot?.();
 }
 
@@ -9015,7 +9039,8 @@ function toggleMorphAlternatives(event) {
 function toggleSplitCardTip(event) {
     event.stopPropagation();
     const button = event.currentTarget;
-    const tip = button.parentElement?.querySelector('.split-card-tip');
+    const tip = button.closest('.card-pos-list')?.querySelector('.split-card-tip')
+        || button.parentElement?.querySelector('.split-card-tip');
     if (!tip) return;
     tip.hidden = !tip.hidden;
     button.setAttribute('aria-expanded', String(!tip.hidden));

@@ -48,6 +48,7 @@ from fluency.sense_menu.chain_menus import ChainMenu, build_chain_menus
 from fluency.surfaces.declared import Context
 from fluency.surfaces.resolver import DECLARED_GLOSS, ENTITY, NO_MENU, ModePolicy
 from fluency.surfaces.stores import stack
+from fluency.wsd.lyrics_adapter import LyricsWSDAdapter
 from fluency.wsd.pos_bridge import acceptable_categories
 
 PROFILE_ID = "es-lyrics-v20-1"
@@ -597,7 +598,14 @@ def plant_artist(artist: str, *, workspace: Path = WORKSPACE, polysemous_fallbac
     run_ts = datetime.now(UTC).strftime("%Y-%m-%dT%H:%MZ")
     prompt_poly = f"lyrics-v20-polysemous-{polysemous_fallback}"
 
-    print(f"\n[{artist}] ClosedMenu WSD ({PROFILE_ID})...")
+    wsd_adapter = LyricsWSDAdapter(
+        profile_id="es-lyrics-v23-1",
+        workspace=workspace,
+        vectors=embed.vectors,
+        nlp=nlp,
+    )
+
+    print(f"\n[{artist}] ClosedMenu WSD (es-lyrics-v23-1 via LyricsWSDAdapter)...")
     for item in raw_index:
         cid = item["id"]
         card = resolved_cards[cid]
@@ -616,54 +624,17 @@ def plant_artist(artist: str, *, workspace: Path = WORKSPACE, polysemous_fallbac
                 "song": "unknown", "song_name": "Lyrical Context",
                 "spanish": f"{word} en la letra", "english": f"{word} in lyrics"}]
 
-        sense_buckets: list[list[dict[str, Any]]] = [[] for _ in senses]
-        sense_confidences: list[list[float]] = [[] for _ in senses]
-        card_decisions: list[dict[str, Any]] = []
+        wsd_res = wsd_adapter.assign_examples_for_card(
+            card, senses, examples_to_assign, doc_cache=trf_doc_cache
+        )
+        sense_buckets = wsd_res["sense_buckets"]
+        sense_confidences = wsd_res["sense_confidences"]
+        card_decisions = wsd_res["card_decisions"]
+        stats.update(wsd_res["stats"])
         if len(senses) == 1:
-            sense = senses[0]
             monosemous += len(examples_to_assign)
-            for ex_idx, ex in enumerate(examples_to_assign):
-                sense_buckets[0].append({**ex, "assignment_method": PROFILE_ID,
-                                         "prompt_id": "lyrics-v20-monosemous-deterministic",
-                                         "run_ts": run_ts, "confidence": 1.0, "band": "high"})
-                sense_confidences[0].append(1.0)
-                card_decisions.append({
-                    "decision_id": f"decision_{cid}_{ex_idx}",
-                    "forced_selection": {"selected_tuple": {"headword": sense["headword"], "part_of_speech": sense["pos"]},
-                                         "sense_id": sense["sense_id"]},
-                    "provenance": {"assignment_method": PROFILE_ID,
-                                   "prompt_id": "lyrics-v20-monosemous-deterministic", "run_ts": run_ts},
-                    "subject": {"bucket_index": 0, "example_index": ex_idx, "kind": "materialized_example"},
-                })
         else:
             polysemous += len(examples_to_assign)
-            for ex_idx, ex in enumerate(examples_to_assign):
-                stext = ex.get("spanish", "").strip()
-                if stext not in trf_doc_cache:
-                    trf_doc_cache[stext] = nlp(stext)
-                observed_pos = target_pos(trf_doc_cache[stext], word)
-                stats["pos_observed"] += observed_pos is not None
-                scores = score_senses(stext, senses, observed_pos, embed, wsd_cfg, polysemous_fallback, ex.get("english"))
-                best_idx, conf, band, fell_back, margin = decide(scores, senses, observed_pos, wsd_cfg)
-                stats["fallback"] += fell_back
-                chosen = senses[best_idx]
-                provenance = {"assignment_method": PROFILE_ID, "prompt_id": prompt_poly, "run_ts": run_ts,
-                              "margin": margin}
-                if fell_back:
-                    # Too close to call: the dictionary's own order decides, and says so.
-                    provenance["fallback"] = "first_listed_dictionary_sense"
-                sense_buckets[best_idx].append({**ex, "assignment_method": PROFILE_ID, "prompt_id": prompt_poly,
-                                                "run_ts": run_ts, "confidence": conf, "band": band,
-                                                **({"fallback": provenance["fallback"]} if fell_back else {})})
-                sense_confidences[best_idx].append(conf)
-                card_decisions.append({
-                    "decision_id": f"decision_{cid}_{ex_idx}",
-                    "forced_selection": {"selected_tuple": {"headword": chosen["headword"], "part_of_speech": chosen["pos"]},
-                                         "sense_id": chosen["sense_id"]},
-                    "provenance": provenance,
-                    "subject": {"bucket_index": best_idx, "example_index": len(sense_buckets[best_idx]) - 1,
-                                "kind": "materialized_example"},
-                })
 
         active = [(s, b, c) for s, b, c in zip(senses, sense_buckets, sense_confidences) if b]
         if not active:
@@ -724,8 +695,8 @@ def plant_artist(artist: str, *, workspace: Path = WORKSPACE, polysemous_fallbac
                   for i, cid in enumerate(final_master)},
         "decision_count": assigned, "evidence_version": "artist-wsd-evidence/v1",
         "publication_views": {"assigned": len(final_master), "total": len(final_master)},
-        "selection_projection": "mwe_augmented", "source_kind": "lyrics_wsd_v20_pipeline",
-        "profile_id": PROFILE_ID, "menu_provenance": plan["resolved"]["pinned"],
+        "selection_projection": "mwe_augmented", "source_kind": "lyrics_wsd_v23_pipeline",
+        "profile_id": "es-lyrics-v23-1", "menu_provenance": plan["resolved"]["pinned"],
         "embedding_pairs": {"scored": embed.pairs_scored, "without_vector": embed.pairs_uncached},
         "polysemous_fallback": polysemous_fallback,
         "confidence": wsd_cfg.get("confidence", {"kind": "raw_best_score"}),

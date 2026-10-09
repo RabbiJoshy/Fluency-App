@@ -27,13 +27,13 @@ class ContextDerivationTests(unittest.TestCase):
         }
         self.assertEqual(_context(sense), "interrogative")
 
-    def test_topics_used_when_no_parenthetical(self) -> None:
+    def test_topics_are_labels_not_sense_context(self) -> None:
         sense = {"glosses": ["bank"], "topics": ["finance", "business"]}
-        self.assertEqual(_context(sense), "finance, business")
+        self.assertEqual(_context(sense), "")
 
-    def test_qualifier_is_the_last_resort(self) -> None:
+    def test_qualifier_is_label_not_sense_context(self) -> None:
         sense = {"glosses": ["thing"], "qualifier": "archaic"}
-        self.assertEqual(_context(sense), "archaic")
+        self.assertEqual(_context(sense), "")
 
     def test_absent_context_is_empty_not_missing(self) -> None:
         self.assertEqual(_context({"glosses": ["thing"]}), "")
@@ -49,17 +49,31 @@ class ContextDerivationTests(unittest.TestCase):
 
     def test_nested_parenthetical_is_balanced_not_truncated(self) -> None:
         sense = {
-            "glosses": ["to score"],
-            "raw_glosses": ["(transitive (Portugal), slang) to score"],
+            "glosses": ["to misbehave"],
+            "raw_glosses": ["(said of people (especially children), slang) to misbehave"],
         }
-        self.assertEqual(_context(sense), "transitive (Portugal), slang")
+        self.assertEqual(_context(sense), "said of people (especially children)")
 
-    def test_leading_parenthetical_takes_priority_over_secondary_glosses(self) -> None:
+    def test_pure_label_parenthetical_leaves_secondary_glosses_as_context(self) -> None:
         sense = {
             "glosses": ["to abandon", "to desert", "to leave behind"],
             "raw_glosses": ["(transitive) to abandon, to desert, to leave behind"],
         }
-        self.assertEqual(_context(sense), "transitive")
+        self.assertEqual(_context(sense), "to desert | to leave behind")
+
+    def test_leading_semantic_parenthetical_takes_priority_over_secondary_glosses(self) -> None:
+        sense = {
+            "glosses": ["to abandon", "to desert", "to leave behind"],
+            "raw_glosses": ["(of a child) to abandon, to desert, to leave behind"],
+        }
+        self.assertEqual(_context(sense), "of a child")
+
+    def test_companion_takes_precedence_as_context(self) -> None:
+        sense = {
+            "glosses": ["to talk"],
+            "raw_glosses": ["(intransitive) to talk [with com ‘to, with’]"],
+        }
+        self.assertEqual(_context(sense), "+ com")
 
     def test_overlong_secondary_glosses_not_used_as_context(self) -> None:
         sense = {

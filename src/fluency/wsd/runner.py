@@ -402,6 +402,62 @@ class ClosedMenuWSDRunner:
             + (["multiword"] if multiword_records else [])
             + ["gloss"]
         )
+        features_scored: list[str] = []
+        features_abstained: list[str] = []
+
+        if raw_combined_ranked:
+            features_scored.append("gloss_similarity")
+        else:
+            features_abstained.append("gloss_similarity")
+
+        trans_text = (request.translation or "").strip()
+        trans_ev = (request.observed_pos_evidence or {}).get("translation") or {}
+        if not trans_text:
+            translation_state = "absent"
+            features_abstained.append("translation_overlap")
+        elif trans_ev.get("source") == "machine" or trans_text.startswith("[MT]"):
+            translation_state = "machine"
+            features_scored.append("translation_overlap")
+        else:
+            translation_state = "human"
+            features_scored.append("translation_overlap")
+
+        if request.observed_pos:
+            features_scored.append("occurrence_pos")
+        else:
+            features_abstained.append("occurrence_pos")
+
+        if preparation_evidence and (
+            preparation_evidence.get("grammar_rejected_leaf_refs")
+            or (request.observed_pos_evidence or {}).get("observed_grammar")
+        ):
+            features_scored.append("grammar_gate")
+        else:
+            features_abstained.append("grammar_gate")
+
+        if preparation_evidence and preparation_evidence.get("construction_diag"):
+            features_scored.append("construction_gate")
+        else:
+            features_abstained.append("construction_gate")
+
+        if preparation_evidence and (
+            preparation_evidence.get("companion_matched_leaf_refs")
+            or preparation_evidence.get("companion_rejected_leaf_refs")
+        ):
+            features_scored.append("companion_gate")
+        else:
+            features_abstained.append("companion_gate")
+
+        if preparation_evidence and preparation_evidence.get("reflexive_tag") in ("NO_SE", "SE_FIRM"):
+            features_scored.append("reflexive_tag")
+        else:
+            features_abstained.append("reflexive_tag")
+
+        if multiword_records:
+            features_scored.append("multiword")
+        else:
+            features_abstained.append("multiword")
+
         evidence: dict[str, Any] = {
             "target_occurrences": [
                 {"start": item.start, "end": item.end, "observed_text": item.observed_text}
@@ -415,6 +471,10 @@ class ClosedMenuWSDRunner:
                 }
                 for item in combined_ranked
             ],
+            "features_scored": sorted(features_scored),
+            "features_abstained": sorted(features_abstained),
+            "translation_state": translation_state,
+            "evidence_combination": "+".join(sorted(features_scored)),
         }
         if request.observed_pos_evidence is not None:
             evidence["occurrence_pos"] = dict(request.observed_pos_evidence)

@@ -6706,6 +6706,7 @@
             position: relative;
         }
 
+        .level-btn.has-progress::after,
         .level-btn.has-partial-progress::after {
             content: '';
             position: absolute;
@@ -6719,6 +6720,9 @@
                 var(--accent-secondary) var(--level-progress),
                 rgba(var(--accent-secondary-rgb), 0.2) var(--level-progress),
                 rgba(var(--accent-secondary-rgb), 0.2) 100%);
+        }
+        .level-btn.is-complete::after {
+            background: var(--accent-secondary);
         }
 
         .level-btn:hover {
@@ -6875,20 +6879,26 @@
             font: 700 0.82rem/1 var(--font-data, var(--font-emphasis, monospace));
             position: relative;
         }
+        .lsw-segments.lsw-scrubber .lsw-seg.has-progress::after,
         .lsw-segments.lsw-scrubber .lsw-seg.has-partial-progress::after {
             content: '';
             position: absolute;
-            left: 18px;
-            right: 18px;
-            bottom: 7px;
+            left: 14px;
+            right: 14px;
+            bottom: 4px;
             height: 3px;
             border-radius: 999px;
             background: linear-gradient(to right,
                 var(--accent-secondary) 0,
                 var(--accent-secondary) var(--level-progress),
-                rgba(var(--accent-secondary-rgb), 0.22) var(--level-progress),
-                rgba(var(--accent-secondary-rgb), 0.22) 100%);
-            box-shadow: 0 0 5px rgba(var(--accent-secondary-rgb), 0.2);
+                rgba(255, 255, 255, 0.14) var(--level-progress),
+                rgba(255, 255, 255, 0.14) 100%);
+            box-shadow: 0 0 4px rgba(var(--accent-secondary-rgb), 0.25);
+            pointer-events: none;
+        }
+        .lsw-segments.lsw-scrubber .lsw-seg.is-complete::after {
+            background: var(--accent-secondary);
+            box-shadow: 0 0 5px rgba(var(--accent-secondary-rgb), 0.35);
         }
         .lsw-segments.lsw-scrubber .lsw-seg .lsw-seg-label { pointer-events: none; }
         .lsw-segments.lsw-scrubber .lsw-seg.filled:not(.selected) {
@@ -18894,6 +18904,96 @@ body.artist-mode #flashcardMode::before {
 .front-meaning-pos {
   font-size: 11px;
 }
+#knownLanguagesModal {
+  z-index: 1200;
+}
+.known-languages-sheet {
+  max-width: 480px;
+}
+.known-languages-modal-header {
+  margin-bottom: 12px;
+}
+.known-languages-modal-header h2 {
+  margin: 4px 0 0;
+  color: var(--text-primary);
+  font: 700 22px/1.25 var(--font-emphasis);
+}
+.known-languages-modal-intro {
+  margin: 0 0 16px;
+  color: var(--text-secondary);
+  font: 400 15px/1.5 var(--font-reading);
+}
+.known-languages-modal-selection {
+  margin-bottom: 14px;
+}
+.known-languages-modal-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+  font: 700 12px/1.3 var(--font-emphasis);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.known-languages-choice-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.known-language-choice-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font: 600 14px/1.3 var(--font-reading);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.known-language-choice-btn:hover {
+  border-color: var(--accent-primary);
+  background: var(--bg-card-hover);
+}
+.known-language-choice-btn.selected {
+  border-color: var(--accent-primary);
+  background: rgba(var(--accent-primary-rgb), 0.14);
+  color: var(--text-primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.known-language-choice-flag {
+  font-size: 20px;
+  line-height: 1;
+}
+.known-language-choice-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-color);
+  font-size: 11px;
+  font-weight: 700;
+  transition: all 0.18s ease;
+  margin-left: 2px;
+}
+.known-language-choice-btn.selected .known-language-choice-check {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: #10141b;
+}
+.known-languages-modal-footnote {
+  margin: 0 0 18px;
+  color: var(--text-muted);
+  font: 400 12px/1.45 var(--font-reading);
+}
+.known-languages-modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 #frequencyIntroModal {
   z-index: 1200;
 }
@@ -19519,6 +19619,26 @@ button.wbw-word:focus-visible { outline: 2px solid var(--accent-primary); outlin
 }
 .smart-skip-toolbar { display: flex; gap: 8px; align-items: center; }
 .smart-skip-toolbar[hidden] { display: none; }
+.smart-skip-lang-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  min-height: 38px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font: 600 13px/1 var(--font-reading);
+  cursor: pointer;
+  white-space: nowrap;
+  flex: none;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.smart-skip-lang-btn:hover {
+  background: var(--bg-hover, color-mix(in srgb, var(--bg-card) 90%, var(--text-primary) 10%));
+}
+.smart-skip-lang-btn[hidden] { display: none; }
 .smart-skip-select-wrap { position: relative; flex: 0 1 auto; min-width: 0; }
 .smart-skip-select-wrap select {
   appearance: none;
@@ -22889,6 +23009,37 @@ body:has(#cardTutorialModal:not(.hidden), #tutorialIntroModal:not(.hidden)) #res
 .deck-complete-content:has(.is-outcome:not([hidden])) .incorrect-stat .deck-stat-badge,
 .deck-complete-content:has(.is-outcome:not([hidden])) .incorrect-stat .deck-stat-label { color: var(--warning); }
 
+/* Seek-bar thumb: a circle for "25", a pill for "25A" so the letter fits. */
+.cbs-thumb { width: auto; min-width: 32px; padding: 0 6px; border-radius: 999px; box-sizing: border-box; }
+
+/* Split words: "Card 1 of 2" sits on its own pill instead of a "Flashcard 1 of 2"
+   line floating between the two, so the count can only mean that card. The
+   active pill's count opens the "why two cards?" note; the companion pill is
+   dimmed as before, its "Card 2" with it. Pills keep their order (1 left,
+   2 right) on both cards, matching 25A / 25B on the seek bar. */
+.split-pill-count {
+  appearance: none;
+  flex: none;
+  margin-left: 2px;
+  padding: 3px 7px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(var(--split-accent, 160, 160, 160), 0.18);
+  color: rgb(var(--split-accent, 200, 200, 200));
+  font: 750 12px/1 var(--font-reading);
+  font-variant-numeric: tabular-nums;
+  pointer-events: auto;
+}
+button.split-pill-count { cursor: pointer; }
+button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accent, 200, 200, 200)); outline-offset: 2px; }
+.card-pos-list .split-card-note.is-tip-only { margin: 0; height: 0; padding: 0; }
+.card-front .card-pos-list.is-split-stacked > .split-card-note.is-tip-only { grid-column: 1; grid-row: auto; }
+.card-front .card-pos-list.is-split-deck-map.is-split-stacked { grid-template-columns: auto; }
+.card-pos-list.is-lemma-map .front-lemma-pair.is-pos-only:has(.split-pill-count) { gap: 6px; padding-right: 6px; width: max-content; }
+.card-pos-list.is-split-deck-map .split-pill-count { padding: 2px 6px; font-size: 11.5px; margin-left: 0; }
+.card-pos-list.is-split-deck-map .front-lemma-pair { gap: 5px; }
+.split-pill-count { white-space: nowrap; }
+
 /* Compact desktop: use the width for the coach so the card can stay tall. */
 @media (min-width: 701px) and (max-width: 1180px) {
     #cardTutorialBody { grid-template-columns: minmax(0, 1fr) minmax(230px, .65fr); grid-template-rows: auto minmax(0, 1fr); }
@@ -22930,4 +23081,261 @@ body:has(#cardTutorialModal:not(.hidden), #tutorialIntroModal:not(.hidden)) #res
 }
 @media (max-width: 400px) {
   #topBar .learning-context-chip-copy strong { font-size: 19px; }
+}
+
+/* Landing page, 2026-10-09: the set legend reads at the size of "Set 1" (a touch
+   smaller on a phone so four counts still fit), the level readout's two halves
+   share one size, and the level box's example words fill desktop width. */
+#step4 .study-set-current-copy span { font-size: 16px; }
+#step4 .study-set-current-copy { gap: 2px 12px; }
+.study-set-stat + .study-set-stat { margin-left: 14px; }
+.study-set-stat i { width: 12px; height: 12px; }
+.study-set-stat i.is-skipped {
+  background: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0 2px, transparent 2px 4px);
+}
+.lsw-readout,
+.lsw-readout .lsw-rank { font-size: 20px; }
+.lsw-examples .lsw-eg-extra { display: none; }
+@media (min-width: 760px) {
+  #step4 .study-set-current-copy span { font-size: 18px; }
+  .lsw-readout,
+  .lsw-readout .lsw-rank { font-size: 22px; }
+  .lsw-examples .lsw-eg-extra { display: inline; }
+  .lsw-examples .lsw-egs { max-width: 92%; }
+}
+@media (max-width: 480px) {
+  #step4 .study-set-current-copy span { font-size: 15px; }
+  .study-set-stat + .study-set-stat { margin-left: 10px; }
+  .study-set-stat i { margin-right: 5px; }
+  .lsw-readout,
+  .lsw-readout .lsw-rank { font-size: 18px; }
+}
+
+/* Smart Skip page and Advanced options sheet, 2026-10-09: the shortcuts sit in
+   one bordered card with even rows, counts read as quiet pills, and the sheet's
+   Done is a full-width button instead of a bare word. */
+#fastModeModal .smart-skip-shortcuts {
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  background: var(--bg-card);
+  overflow: hidden;
+}
+.smart-skip-shortcut-row { min-height: 54px; padding: 0 14px 0 16px; }
+.smart-skip-shortcut-detail { padding: 0 16px 14px; }
+.smart-skip-shortcut > .fast-mode-none { padding: 0 16px 14px; }
+.smart-skip-shortcut-name { font-weight: 650; }
+.smart-skip-shortcut-count:not(:empty) {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-secondary);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.smart-skip-more-card { gap: 16px; padding: 22px 20px 18px; border-radius: 18px; }
+.smart-skip-more-head h3 { font-size: 19px; margin-bottom: 6px; }
+.smart-skip-more-card .smart-skip-shortcuts {
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--bg-card) 70%, transparent);
+  overflow: hidden;
+}
+.smart-skip-more-card .smart-skip-preview-actions { display: block; margin: 0; }
+.smart-skip-more-card .smart-skip-preview-close {
+  width: 100%;
+  min-height: 46px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--accent-primary);
+  color: #fff;
+  font: 700 15px/1 var(--font-emphasis);
+  cursor: pointer;
+}
+.smart-skip-more-card .smart-skip-preview-close:hover { filter: brightness(1.08); }
+.smart-skip-body .smart-skip-more-options { padding: 15px 14px 15px 16px; font-size: 14px; color: var(--text-secondary); }
+
+/* Set pills: the set number on a phone, the word ranks (frequency ranks) it
+   covers where there is room. */
+.study-set-dot .set-ranks { display: none; }
+@media (min-width: 760px) {
+  .study-set-dot .set-num { display: none; }
+  .study-set-dot .set-ranks { display: inline; white-space: nowrap; }
+  #step4 .study-set-dot { font-size: 16px; }
+}
+
+/* Skipped cards fill each set bar from the right in light grey, so with Smart
+   Skip on a set is already partly done before a card is studied. */
+#step4 { --set-skipped: #b4bcc7; }
+#step4 .study-set-dot {
+  background: linear-gradient(
+    to right,
+    var(--set-known) 0 var(--set-known-end),
+    var(--set-review) var(--set-known-end) var(--set-review-end),
+    var(--set-new) var(--set-review-end) var(--set-new-end, 100%),
+    var(--set-skipped) var(--set-new-end, 100%) 100%
+  );
+}
+.study-set-stat i.is-skipped { background: var(--set-skipped, #b4bcc7); }
+
+/* ===== Tutorial chapters and pages =====
+   The chapters sit where the language label was, and open directly. Smart
+   Skip and Speech or music are pages in the card's own box: a copy of the
+   real control, so the amber ring points at what the learner will tap. */
+.card-tutorial-sequence { min-width: 0; }
+.card-tutorial-chapters {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+.card-tutorial-chapters::-webkit-scrollbar { display: none; }
+.card-tutorial-chapter {
+    flex: 0 0 auto;
+    padding: 7px 13px;
+    border: 1px solid var(--border-light);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text-muted);
+    font: 600 13px/1.2 var(--font-emphasis);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.card-tutorial-chapter:hover { color: var(--text-primary); border-color: var(--text-muted); }
+.card-tutorial-chapter.is-current {
+    border-color: color-mix(in srgb, var(--accent-primary) 55%, transparent);
+    background: color-mix(in srgb, var(--accent-primary) 16%, transparent);
+    color: var(--text-primary);
+}
+.card-tutorial-desktop-actions .card-tutorial-continue[hidden] { display: none; }
+
+.tutorial-page {
+    box-sizing: border-box;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 22px;
+    padding: 28px 24px;
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+    background: var(--bg-card);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    overflow-y: auto;
+}
+.tutorial-page .card-tutorial-anchored.is-annotation-active { border-radius: 12px; outline-offset: 5px; }
+.tutorial-page-label {
+    color: var(--text-muted);
+    font: 700 11px/1.2 var(--font-data);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.tutorial-page-switch-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    background: var(--bg-secondary);
+}
+.tutorial-page-skip-icon {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: var(--accent-primary);
+    stroke-width: 1.8;
+    stroke-linejoin: round;
+}
+.tutorial-page-switch-copy { display: grid; gap: 4px; flex: 1 1 auto; min-width: 0; }
+.tutorial-page-switch-copy strong {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-primary);
+    font: 700 16px/1.2 var(--font-emphasis);
+}
+.tutorial-page-switch-copy small { color: var(--text-secondary); font: 500 13px/1.3 var(--font-reading); }
+.tutorial-page-switch {
+    position: relative;
+    flex: none;
+    width: 34px;
+    height: 20px;
+    border-radius: 999px;
+    background: var(--accent-primary);
+}
+.tutorial-page-switch i {
+    position: absolute;
+    top: 3px;
+    left: 17px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #10141b;
+}
+.tutorial-page-example { display: grid; gap: 10px; padding: 4px; }
+.tutorial-page-flow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.tutorial-page-words { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.tutorial-page-word {
+    padding: 5px 10px;
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font: 600 15px/1.2 var(--font-reading);
+}
+.tutorial-page-gloss { color: var(--text-muted); font: 500 13px/1.2 var(--font-reading); }
+.tutorial-page-arrow { color: var(--text-muted); }
+.tutorial-page-result {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--accent-green) 16%, transparent);
+    color: var(--accent-green);
+    font: 700 13px/1.2 var(--font-reading);
+}
+.tutorial-page-result.is-skipped {
+    background: color-mix(in srgb, var(--text-muted) 18%, transparent);
+    color: var(--text-secondary);
+}
+
+.tutorial-page-topbar {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 14px;
+    border: 1px solid color-mix(in srgb, var(--accent-primary) 50%, var(--border-light));
+    border-radius: 12px;
+    color: var(--text-primary);
+    font: 700 16px/1.2 var(--font-emphasis);
+}
+.tutorial-page-chevron { color: var(--text-muted); }
+.tutorial-page-sources { display: grid; gap: 8px; padding: 4px; }
+.tutorial-page-source {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+}
+.tutorial-page-source.is-current {
+    border-color: color-mix(in srgb, var(--accent-primary) 50%, transparent);
+    background: color-mix(in srgb, var(--accent-primary) 8%, transparent);
+}
+.tutorial-page-source-icon svg { display: block; width: 22px; height: 22px; stroke: var(--accent-primary); }
+.tutorial-page-source-copy { display: grid; gap: 3px; min-width: 0; }
+.tutorial-page-source-copy strong { color: var(--text-primary); font: 700 15px/1.2 var(--font-emphasis); }
+.tutorial-page-source.is-current .tutorial-page-source-copy strong { color: var(--accent-primary); }
+.tutorial-page-source-copy small { color: var(--text-secondary); font: 500 13px/1.35 var(--font-reading); }
+.tutorial-page-source-tail { color: var(--text-muted); font-size: 18px; }
+.tutorial-page-source.is-current .tutorial-page-source-tail { color: var(--accent-primary); }
+
+@media (max-width: 700px) {
+    .tutorial-page { gap: 16px; padding: 20px 16px; }
+    .card-tutorial-chapters { gap: 4px; }
+    .card-tutorial-chapter { padding: 6px 8px; font-size: 12px; }
 }

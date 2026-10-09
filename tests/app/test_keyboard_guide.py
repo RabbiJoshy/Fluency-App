@@ -52,8 +52,9 @@ const source = fs.readFileSync('app/js/flashcards.js', 'utf8');
 const setup = source.slice(source.indexOf('function setupKeyboardShortcuts()'), source.indexOf('function handleFlagAction()'));
 const calls = [];
 let handler;
+let signingIn = false;
 const context = {
- document: {getElementById:()=>null, addEventListener:(type, fn)=>{handler=fn;}},
+ document: {getElementById:id=>id === 'authModal' ? {classList:{contains:()=>!signingIn}} : null, addEventListener:(type, fn)=>{handler=fn;}},
  window: {canUserFlag:()=>true, speakWord:word=>calls.push(['speak',word]), showFlagMenu:()=>calls.push(['flagMenu'])},
  flashcards:[{targetWord:'hola',meanings:[{},{}]}], currentIndex:0, currentMeaningIndex:0,
  isJstOwner:()=>true,
@@ -75,6 +76,11 @@ function press(key, modifiers={}, focusedReference=false, tagName='DIV') {
  handler({key,...modifiers,target:{tagName,closest:()=>focusedReference},preventDefault(){}});
  return [...calls];
 }
+signingIn = true;
+for (const key of ['Enter',' ','Tab','c','x','ArrowRight','Escape']) {
+ assert.deepEqual(press(key,{},false,'BUTTON'),[]);
+}
+signingIn = false;
 assert.deepEqual(press(' '),[['flip']]);
 for (const key of ['Enter','c','C']) assert.deepEqual(press(key),[['grade','correct']]);
 for (const key of ['x','X','1']) assert.deepEqual(press(key),[['grade','incorrect']]);

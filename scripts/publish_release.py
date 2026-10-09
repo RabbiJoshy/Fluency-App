@@ -115,7 +115,7 @@ def main() -> None:
     releases: list[tuple[Path, str]] = []
     for spec in args.release:
         src_text, _, dest = spec.partition(":")
-        src = Path(src_text)
+        src = Path(src_text).resolve()
         if not (src / "app").is_dir():
             sys.exit(f"{src} is not a release directory (no app/ inside)")
         releases.append((src, dest.strip("/") or destination(src, segment)))

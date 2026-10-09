@@ -1,0 +1,36 @@
+{
+  "config_version": "wsd-model-profile/v1",
+  "profile_id": "es-lyrics-v23-1",
+  "language": "es",
+  "execution_status": "ready",
+  "extends": "es-v23-1",
+  "source_method_id": "lyrics-v23-unified-engine",
+  "method_summary": "Lyrics WSD v23 extending es-v23-1 through the shared fluency.wsd engine. Inherits multi-word phrases, grammar gate, and reflexive filtering while maintaining lyrics lookup scope, artist layers and margin confidence cut-offs.",
+  "plant_script": "scripts/plant_artist_v20.py",
+  "mode": "lyrics",
+  "confidence": {
+    "kind": "margin",
+    "low": 0.01,
+    "high": 0.02,
+    "fallback": "none"
+  },
+  "menu": {
+    "resolver": "surface-resolver/v1",
+    "mode": "lyrics",
+    "strategy_policy": "config/surfaces/strategy.json",
+    "declared_stores": [
+      "language",
+      "artist"
+    ],
+    "headword_sources": [
+      "spanishdict",
+      "wiktionary"
+    ],
+    "spanishdict_snapshot": "raw/dictionaries/es/spanishdict/spanishdict-complete-menu-2026-09-23-v7",
+    "spanishdict_policy_id": "es-spanishdict-v1",
+    "wiktionary_snapshot": "raw/wiktionary/enwiktionary-2026-09-13/kaikki.org-dictionary-Spanish.jsonl",
+    "wiktionary_policy_id": "es-wiktionary-v1",
+    "max_senses_per_headword": 6,
+    "declared_gloss_competes_as_overlay": true
+  }
+}

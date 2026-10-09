@@ -90,9 +90,23 @@ function projectedSenseFrequency(indexRow, sense, fallbackFrequency) {
     return (Number(counts[senseId]) || 0) / denominator;
 }
 
+function studySessionStorageKey(key) {
+    return `${key}:user:${currentUser?.initials || 'guest'}`;
+}
+
 function readStudySession(key) {
     try {
-        const parsed = JSON.parse(localStorage.getItem(key) || 'null');
+        let raw = localStorage.getItem(studySessionStorageKey(key));
+        // Earlier snapshots had no account scope. Preserve them only for
+        // legacy initials profiles, never for a newly separated profile.
+        if (!raw && currentUser && !currentUser.isGuest && !String(currentUser.initials).startsWith('profile_')) {
+            raw = localStorage.getItem(key);
+            if (raw) {
+                localStorage.setItem(studySessionStorageKey(key), raw);
+                localStorage.removeItem(key);
+            }
+        }
+        const parsed = JSON.parse(raw || 'null');
         return parsed && parsed.range && Array.isArray(parsed.order) ? parsed : null;
     } catch (error) {
         return null;
@@ -231,10 +245,10 @@ function clearStudySessionSnapshot() {
     // time the learner reopened that deck.
     try {
         const previous = readStudySession(LAST_STUDY_SESSION_KEY);
-        localStorage.removeItem(LAST_STUDY_SESSION_KEY);
-        if (previous) localStorage.removeItem(`${LAST_STUDY_SESSION_KEY}:${studySessionScope(previous)}`);
+        localStorage.removeItem(studySessionStorageKey(LAST_STUDY_SESSION_KEY));
+        if (previous) localStorage.removeItem(studySessionStorageKey(`${LAST_STUDY_SESSION_KEY}:${studySessionScope(previous)}`));
         const scope = activeStudySessionScope();
-        if (scope) localStorage.removeItem(`${LAST_STUDY_SESSION_KEY}:${scope}`);
+        if (scope) localStorage.removeItem(studySessionStorageKey(`${LAST_STUDY_SESSION_KEY}:${scope}`));
     } catch (_) {}
     document.getElementById('resumeLastSetCard')?.remove();
 }
@@ -263,7 +277,11 @@ function _writeStudySessionSnapshot() {
     if (!flashcards.length || cardNavStack.length > 0 || !stats.rangeString) return;
     const appContent = document.getElementById('appContent');
     if (!appContent || appContent.classList.contains('hidden')) return;
-    const card = flashcards[currentIndex];
+    // A phrases panel occupies a temporary slot with no vocabulary identity.
+    // Persist its parent so reloading returns to that word, on its answer side.
+    const displayedCard = flashcards[currentIndex];
+    const card = displayedCard?.isChainChild
+        ? flashcards[cardChainReturnIndex] : displayedCard;
     if (!card) return;
     const levelButtons = Array.from(document.querySelectorAll('.level-selector-buttons .level-btn, #levelSelector > .level-btn'));
     const levelNumber = Math.max(0, levelButtons.findIndex(btn => btn.dataset.level === selectedLevel)) + 1;
@@ -306,7 +324,7 @@ function _writeStudySessionSnapshot() {
         currentMWEIndex,
         setSize: stats.setSize,
         previouslyKnown: stats.previouslyKnown,
-        order: flashcards.map(item => item.fullId)
+        order: flashcards.filter(item => !item.isChainChild).map(item => item.fullId)
     };
     try {
         const serialized = JSON.stringify(snapshot);
@@ -314,8 +332,8 @@ function _writeStudySessionSnapshot() {
         // offers. The scoped copy is what a deck resumes from, so switching
         // between Bad Bunny and Speech no longer overwrites the other's
         // place in its set.
-        localStorage.setItem(LAST_STUDY_SESSION_KEY, serialized);
-        localStorage.setItem(`${LAST_STUDY_SESSION_KEY}:${studySessionScope(snapshot)}`, serialized);
+        localStorage.setItem(studySessionStorageKey(LAST_STUDY_SESSION_KEY), serialized);
+        localStorage.setItem(studySessionStorageKey(`${LAST_STUDY_SESSION_KEY}:${studySessionScope(snapshot)}`), serialized);
     } catch (error) {
         // Storage can be unavailable in hardened/private contexts.
     }
@@ -1135,15 +1153,20 @@ function buildSplitCardPair(item, card, meanings, lang = selectedLanguage) {
         const hw = cleanHeadwordToken(m.headword || item.word);
         if (hw === cleanHeadwordToken(t1.headword)) return 1;
         if (hw === cleanHeadwordToken(t2.headword)) return 2;
-        return 0;
+        return 1;
     };
     const belongs1 = m => readingOf(m) === 1;
     const belongs2 = m => readingOf(m) === 2;
     const m1 = meanings.filter(belongs1);
     const m2 = meanings.filter(belongs2);
     const rarerOf = belongs => (card.unusedMenuSenses || []).filter(m => m.lowShare && belongs(m));
-    const meanings1 = m1.length > 0 ? stampSplitShownShares(item, m1, rarerOf(belongs1)) : meanings;
-    const meanings2 = m2.length > 0 ? stampSplitShownShares(item, m2, rarerOf(belongs2)) : meanings;
+    const r1 = rarerOf(belongs1);
+    const r2 = rarerOf(belongs2);
+    if ((m1.length === 0 && r1.length === 0) || (m2.length === 0 && r2.length === 0)) {
+        return null;
+    }
+    const meanings1 = m1.length > 0 ? stampSplitShownShares(item, m1, r1) : stampSplitShownShares(item, r1, []);
+    const meanings2 = m2.length > 0 ? stampSplitShownShares(item, m2, r2) : stampSplitShownShares(item, r2, []);
 
     const card1 = {
         ...card,
@@ -3508,7 +3531,13 @@ async function loadVocabularyData(rangeString, opts = {}) {
 
         if (resumeSnapshot) {
             let resumeIndex = flashcards.findIndex(card => card.fullId === resumeSnapshot.currentFullId);
-            if (resumeIndex < 0 && Number.isFinite(Number(resumeSnapshot.currentVocabularyRank))) {
+            // Older phrases-panel snapshots had no full ID or rank, but did
+            // keep the parent word. Recover those rather than jumping to card 1.
+            if (resumeIndex < 0 && resumeSnapshot.currentWord) {
+                resumeIndex = flashcards.findIndex(card => card.targetWord === resumeSnapshot.currentWord);
+            }
+            if (resumeIndex < 0 && resumeSnapshot.currentVocabularyRank != null
+                && Number.isFinite(Number(resumeSnapshot.currentVocabularyRank))) {
                 const targetRank = Number(resumeSnapshot.currentVocabularyRank);
                 resumeIndex = flashcards.reduce((best, card, index) => {
                     const distance = Math.abs(Number(card.vocabularyRank || card.rank) - targetRank);

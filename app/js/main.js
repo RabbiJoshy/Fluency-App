@@ -34,22 +34,21 @@ import { validateArtistCatalog } from './data-contracts.js?v=20260825ak';
 // Emoji flags anywhere on the page render as rectangular pictures.
 installFlagRendering();
 
-function startCardTutorial() {
-    const knownLanguage = window.getCardTutorialLanguageKey?.();
-    if (knownLanguage) {
-        window.setCardTutorialLanguage?.(knownLanguage);
-        closeTutorialIntroduction();
-        window.openCardTutorial?.();
-        return;
-    }
-    document.getElementById('tutorialWelcomeStep')?.classList.add('hidden');
-    document.getElementById('tutorialLanguageStep')?.classList.remove('hidden');
+function startCardTutorial(language) {
+    window.setCardTutorialLanguage?.(language);
+    closeTutorialIntroduction();
+    window.openCardTutorial?.();
 }
 
+// The tutorial lists its own chapters, so there is nothing to choose before
+// it opens — except the language, when the page has not settled one.
 function openTutorialIntroduction() {
     document.getElementById('resumeLastSetCard')?.remove();
-    document.getElementById('tutorialWelcomeStep')?.classList.remove('hidden');
-    document.getElementById('tutorialLanguageStep')?.classList.add('hidden');
+    const knownLanguage = window.getCardTutorialLanguageKey?.();
+    if (knownLanguage) {
+        startCardTutorial(knownLanguage);
+        return;
+    }
     renderTutorialLanguageChoices();
     document.getElementById('tutorialIntroModal')?.classList.remove('hidden');
 }
@@ -68,11 +67,7 @@ function renderTutorialLanguageChoices() {
         button.innerHTML = `<span class="tutorial-language-flag" aria-hidden="true">${flags[key] || '🌐'}</span>` +
             `<span><strong>${language}</strong><small>${profile?.lyrics && window.getCardTutorialMode?.() === 'lyrics' ? 'Lyrics tutorial' : 'Speech tutorial'}</small></span>` +
             '<span class="tutorial-language-arrow" aria-hidden="true">→</span>';
-        button.addEventListener('click', () => {
-            window.setCardTutorialLanguage?.(key);
-            closeTutorialIntroduction();
-            window.openCardTutorial?.();
-        });
+        button.addEventListener('click', () => startCardTutorial(key));
         container.appendChild(button);
     });
 }
@@ -806,11 +801,6 @@ loadConfig().then(async () => {
     // walkthrough instead and never opens this.
     document.getElementById('helpBtn').addEventListener('click', openTutorialIntroduction);
     document.getElementById('closeTutorialIntroModal')?.addEventListener('click', closeTutorialIntroduction);
-    document.getElementById('startCardTutorialBtn')?.addEventListener('click', startCardTutorial);
-    document.getElementById('tutorialLanguageBackBtn')?.addEventListener('click', () => {
-        document.getElementById('tutorialLanguageStep')?.classList.add('hidden');
-        document.getElementById('tutorialWelcomeStep')?.classList.remove('hidden');
-    });
     document.getElementById('tutorialIntroModal')?.addEventListener('click', event => {
         if (event.target === event.currentTarget) closeTutorialIntroduction();
     });
@@ -825,9 +815,12 @@ loadConfig().then(async () => {
         showTotalStatsModal();
     });
     setupFindWord();
+    setupKnownLanguagesIntro();
     setupFrequencyIntro();
     if (currentUser && document.getElementById('authModal')?.classList.contains('hidden')) {
-        window.maybeShowFrequencyIntro?.();
+        if (!window.maybeShowKnownLanguagesIntro?.(selectedLanguage)) {
+            window.maybeShowFrequencyIntro?.();
+        }
     }
     document.getElementById('topBarUserName').addEventListener('click', () => {
         if (currentUser && !currentUser.isGuest) showSettingsModalWithTab('account');
@@ -851,7 +844,7 @@ loadConfig().then(async () => {
     if (helpStudyContent && !document.getElementById('helpCardTutorialBtn')) {
         const tutorialAction = document.createElement('p');
         tutorialAction.className = 'help-card-tutorial-action';
-        tutorialAction.innerHTML = '<button class="help-more-info-btn" id="helpCardTutorialBtn" type="button">Open tutorial introduction →</button>';
+        tutorialAction.innerHTML = '<button class="help-more-info-btn" id="helpCardTutorialBtn" type="button">Open the tutorial →</button>';
         helpStudyContent.appendChild(tutorialAction);
         tutorialAction.querySelector('button').addEventListener('click', () => {
             document.getElementById('helpModal').classList.add('hidden');
@@ -862,7 +855,7 @@ loadConfig().then(async () => {
     document.getElementById('gearBtn').style.display = 'none';
 
     // Set user name in top bar immediately (don't wait for progress load).
-    const userName = currentUser ? (currentUser.isGuest ? 'GUEST' : currentUser.initials) : '';
+    const userName = currentUser ? (currentUser.isGuest ? 'GUEST' : (currentUser.username || currentUser.initials)) : '';
     document.getElementById('topBarUserName').textContent = userName;
 
     // Shareable page links open on top of whatever state the app lands in.
@@ -959,7 +952,9 @@ loadConfig().then(async () => {
                 hideAppLoading();
             }
         }
-        if (!window.maybeShowFrequencyIntro?.()) window.openFirstRunCardTutorial?.();
+        if (!window.maybeShowKnownLanguagesIntro?.(activeArtist.language || 'spanish')) {
+            if (!window.maybeShowFrequencyIntro?.()) window.openFirstRunCardTutorial?.();
+        }
         if (promptForCustomSongs) window.showSongSetPicker?.();
         perfMark('after artist init');
     } else {
@@ -1896,10 +1891,10 @@ function showLanguagePicker(languages) {
     });
     showChoiceSheet({
         id: 'languageChoiceSheet',
-        ariaLabel: 'Choose a language',
-        title: 'Choose a language',
+        ariaLabel: 'Choose the language you’re learning',
+        title: 'Choose the language you’re learning',
         intro: 'You’ll choose where your words come from next.',
-        stepLabel: 'Language',
+        stepLabel: 'Language to learn',
         variant: 'grid',
         entries
     });
@@ -2352,6 +2347,172 @@ function maybeShowFrequencyIntro() {
     window.closeChoiceSheet?.('languageChoiceSheet');
     modal.classList.remove('hidden');
     return true;
+}
+
+// ---------------------------------------------------------------------------
+// Known languages intro (Smart Skip primer shown after picking a language)
+// ---------------------------------------------------------------------------
+
+const KNOWN_LANGUAGES_SEEN_KEY = 'fluencySeenKnownLanguagesIntroV1';
+let currentKnownLanguagesIntroTarget = null;
+let introSelectedCodes = new Set();
+
+function getKnownLanguagesForTarget(targetLang) {
+    const fromCognates = window.availableKnownLanguages?.();
+    if (Array.isArray(fromCognates) && fromCognates.length > 0) return fromCognates;
+
+    const mapping = {
+        portuguese: ['en', 'es'],
+        pt: ['en', 'es'],
+        czech: ['en', 'pl'],
+        cs: ['en', 'pl'],
+        spanish: ['en'],
+        es: ['en'],
+        french: ['en'],
+        fr: ['en'],
+        finnish: ['en'],
+        fi: ['en'],
+        dutch: ['en'],
+        nl: ['en']
+    };
+    const key = String(targetLang || '').toLowerCase();
+    return mapping[key] || ['en'];
+}
+
+function hasSeenKnownLanguagesIntro(lang) {
+    try {
+        const raw = localStorage.getItem(KNOWN_LANGUAGES_SEEN_KEY);
+        if (!raw) return false;
+        const list = JSON.parse(raw);
+        return Array.isArray(list) && list.includes(lang);
+    } catch (_) {
+        return false;
+    }
+}
+
+function markKnownLanguagesIntroSeen(lang) {
+    try {
+        const raw = localStorage.getItem(KNOWN_LANGUAGES_SEEN_KEY);
+        let list = [];
+        try { list = JSON.parse(raw) || []; } catch (_) {}
+        if (!Array.isArray(list)) list = [];
+        if (lang && !list.includes(lang)) list.push(lang);
+        localStorage.setItem(KNOWN_LANGUAGES_SEEN_KEY, JSON.stringify(list));
+    } catch (_) {}
+}
+
+function closeKnownLanguagesModal() {
+    const modal = document.getElementById('knownLanguagesModal');
+    if (!modal) return;
+    modal.classList.add('hidden');
+}
+
+function renderKnownLanguagesModalChoices(availableCodes) {
+    const container = document.getElementById('knownLanguagesModalChoices');
+    if (!container) return;
+    container.innerHTML = '';
+
+    availableCodes.forEach(code => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'known-language-choice-btn';
+        button.dataset.code = code;
+        button.setAttribute('role', 'checkbox');
+
+        const isSelected = introSelectedCodes.has(code);
+        if (isSelected) button.classList.add('selected');
+        button.setAttribute('aria-checked', isSelected ? 'true' : 'false');
+
+        const flag = window.knownLanguageFlag?.(code) || '🌐';
+        const label = window.knownLanguageLabel?.(code) || code.toUpperCase();
+
+        button.innerHTML = `
+            <span class="known-language-choice-flag" aria-hidden="true">${flag}</span>
+            <span class="known-language-choice-label">${label}</span>
+            <span class="known-language-choice-check" aria-hidden="true">${isSelected ? '✓' : ''}</span>
+        `;
+
+        button.addEventListener('click', () => {
+            if (introSelectedCodes.has(code)) {
+                introSelectedCodes.delete(code);
+                button.classList.remove('selected');
+                button.setAttribute('aria-checked', 'false');
+                const checkEl = button.querySelector('.known-language-choice-check');
+                if (checkEl) checkEl.textContent = '';
+            } else {
+                introSelectedCodes.add(code);
+                button.classList.add('selected');
+                button.setAttribute('aria-checked', 'true');
+                const checkEl = button.querySelector('.known-language-choice-check');
+                if (checkEl) checkEl.textContent = '✓';
+            }
+        });
+
+        container.appendChild(button);
+    });
+}
+
+function maybeShowKnownLanguagesIntro(targetLang) {
+    const lang = targetLang || selectedLanguage;
+    if (!lang) return false;
+    if (hasSeenKnownLanguagesIntro(lang)) return false;
+
+    const available = getKnownLanguagesForTarget(lang);
+    if (!available || available.length === 0) return false;
+
+    const route = window.fluencyRoute?.kind;
+    if (route === 'about' || route === 'tutorial' || route === 'walkthrough' || route === 'word') return false;
+    const auth = document.getElementById('authModal');
+    if (auth && !auth.classList.contains('hidden')) return false;
+
+    const modal = document.getElementById('knownLanguagesModal');
+    if (!modal || !modal.classList.contains('hidden')) return false;
+    if (document.querySelector('.modal:not(.hidden)')) return false;
+
+    window.closeChoiceSheet?.('languageChoiceSheet');
+    window.closeChoiceSheet?.('portugueseVarietyChoiceSheet');
+
+    currentKnownLanguagesIntroTarget = lang;
+    const existingSelected = window.readKnownLanguages?.() || ['en'];
+    introSelectedCodes = new Set(existingSelected.filter(c => available.includes(c)));
+    if (introSelectedCodes.size === 0 && available.includes('en')) {
+        introSelectedCodes.add('en');
+    }
+
+    renderKnownLanguagesModalChoices(available);
+    modal.classList.remove('hidden');
+    return true;
+}
+
+function setupKnownLanguagesIntro() {
+    const continueBtn = document.getElementById('continueKnownLanguagesBtn');
+    if (continueBtn) {
+        continueBtn.addEventListener('click', () => {
+            const selectedArr = Array.from(introSelectedCodes);
+            window.writeKnownLanguages?.(selectedArr);
+            window.updateKnownLanguageCopy?.();
+            window.updateExclusionBars?.();
+            window.updateLevelSelector?.();
+            window.refreshFastMode?.();
+
+            if (currentKnownLanguagesIntroTarget) {
+                markKnownLanguagesIntroSeen(currentKnownLanguagesIntroTarget);
+            }
+            closeKnownLanguagesModal();
+
+            if (!maybeShowFrequencyIntro()) {
+                window.openFirstRunCardTutorial?.();
+            }
+        });
+    }
+
+    document.getElementById('knownLanguagesModal')?.addEventListener('click', event => {
+        if (event.target === event.currentTarget) {
+            continueBtn?.click();
+        }
+    });
+
+    window.maybeShowKnownLanguagesIntro = maybeShowKnownLanguagesIntro;
 }
 
 function setupFrequencyIntro() {

@@ -504,6 +504,7 @@ function toggleKnownLanguage(code) {
     globalThis.updateExclusionBars?.();
     globalThis.updateLevelSelector?.();
     globalThis.refreshFastMode?.();
+    globalThis.renderSkippedWords?.('cognate', { force: true });
 }
 
 // The cutoff a single language decides at. Exposed because the explainer copy
@@ -514,8 +515,41 @@ function cognateThresholdFor(code) {
     return Number.isFinite(Number(shipped)) ? Number(shipped) : null;
 }
 
+const KNOWN_LANGUAGE_FLAGS = {
+    en: '🇬🇧',
+    es: '🇪🇸',
+    pl: '🇵🇱',
+    fr: '🇫🇷',
+    pt: '🇵🇹',
+    de: '🇩🇪',
+    it: '🇮🇹',
+    ru: '🇷🇺',
+    sk: '🇸🇰',
+    uk: '🇺🇦',
+    nl: '🇳🇱',
+    sv: '🇸🇪',
+    cs: '🇨🇿',
+};
+
+function knownLanguageFlag(code) {
+    return KNOWN_LANGUAGE_FLAGS[code] || '🌐';
+}
+
+function isCognateKnownForLanguage(item, code) {
+    if (!item || !code) return false;
+    const cutoff = Number(cognateThresholds[code] ?? globalThis.cognateThreshold ?? 1);
+    if (isSenseItem(item)) {
+        return cognateScoreFor(item, code) >= cutoff;
+    }
+    if (!hasCardLookalikeGloss(item)) return false;
+    const score = Number(item.cognate_scores?.[code] || (code === 'en' ? item.cognate_score : 0) || 0);
+    return score >= cutoff;
+}
+
 globalThis.cognateThresholdFor = cognateThresholdFor;
 globalThis.isCognateKnown = isCognateKnown;
+globalThis.isCognateKnownForLanguage = isCognateKnownForLanguage;
+globalThis.knownLanguageFlag = knownLanguageFlag;
 globalThis.cognateScoreFor = cognateScoreFor;
 globalThis.strongestKnownLanguage = strongestKnownLanguage;
 globalThis.matchedKnownWord = matchedKnownWord;
@@ -527,3 +561,6 @@ globalThis.renderKnownLanguagePicker = renderKnownLanguagePicker;
 globalThis.knownLemmas = knownLemmas;
 globalThis.knownLanguageLabel = languageLabel;
 globalThis.getCognateAlgorithmInfo = getCognateAlgorithmInfo;
+globalThis.cardSenseCognate = cardSenseCognate;
+globalThis.writeKnownLanguages = writeSelected;
+globalThis.readKnownLanguages = readSelected;

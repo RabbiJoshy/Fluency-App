@@ -642,7 +642,7 @@ function unmergeStandardProgressFromLanguageStep() {
 
     title.after(inlinePill);
     anchor.after(wrapper);
-    title.textContent = 'Choose your language';
+    title.textContent = 'Choose the language you’re learning';
     step.classList.remove('language-summary-active');
     header.setAttribute('role', 'button');
     header.setAttribute('tabindex', '0');
@@ -719,7 +719,7 @@ function learningModeCopy(language = selectedLanguage) {
     const lyricsCatalog = config?.languages?.[language]?.capabilities?.lyrics !== false;
     return {
         title: 'Choose your flashcard vocabulary source',
-        intro: 'Your flashcards come from this source, most common words first.',
+        intro: 'Your flashcards come from this source, most common words first. You can switch at any time, and the words you learn carry over between the two modes.',
         speech: {
             label: 'Everyday speech',
             description: 'From films and TV shows — the everyday words people actually use when they talk to each other.',
@@ -836,7 +836,7 @@ function setupLanguageTabs() {
             if (speechSourceButton) {
                 speechSourceButton.disabled = !speechAvailable;
                 speechSourceButton.title = speechAvailable
-                    ? 'Start with general-purpose vocabulary'
+                    ? 'Starts with the most common words in films and TV shows'
                     : `Speech vocabulary is not ready for ${langConfig?.name || newLanguage} yet`;
             }
             const modeCopy = learningModeCopy(newLanguage);
@@ -850,7 +850,7 @@ function setupLanguageTabs() {
             if (sourceCardButton) {
                 sourceCardButton.disabled = !lyricsAvailable;
                 sourceCardButton.title = lyricsCatalog
-                    ? 'Build vocabulary around music you choose'
+                    ? 'Starts with the most common words in the music you listen to'
                     : 'Look up lyrics from a playlist and study a live deck';
             }
             // Nothing belonging to a deck shows until a vocabulary is chosen.
@@ -966,7 +966,9 @@ function setupLanguageTabs() {
                     await deckOverviewHold;
                     window.hideAppLoading?.();
                 }
-                if (!window.maybeShowFrequencyIntro?.()) window.openFirstRunCardTutorial?.();
+                if (!window.maybeShowKnownLanguagesIntro?.(newLanguage)) {
+                    if (!window.maybeShowFrequencyIntro?.()) window.openFirstRunCardTutorial?.();
+                }
             };
             window.continueToSpeechAfterLive = continueToSpeech;
 
@@ -988,7 +990,9 @@ function setupLanguageTabs() {
                 continueToSpeech();
             };
 
-            window.maybeShowFrequencyIntro?.();
+            if (!window.maybeShowKnownLanguagesIntro?.(newLanguage)) {
+                window.maybeShowFrequencyIntro?.();
+            }
 
             const pendingSpeechLanguage = sessionStorage.getItem('fluencyPendingSpeechLanguage');
             if (pendingSpeechLanguage === newLanguage) {
@@ -1137,15 +1141,21 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
         const completion = Math.round(100 * seenCount / wordsInLevel.length);
         const hasUnseen = seenCount < wordsInLevel.length;
         const isPartial = seenCount > 0 && hasUnseen;
+        const isComplete = seenCount > 0 && !hasUnseen;
+        const hasProgress = seenCount > 0;
         btn.dataset.progressPct = String(completion);
         btn.dataset.reviewCount = String(reviewCount);
+        btn.classList.toggle('has-progress', hasProgress);
         btn.classList.toggle('has-partial-progress', isPartial);
+        btn.classList.toggle('is-complete', isComplete);
         btn.style.setProperty('--level-progress', `${completion}%`);
 
         const visibleSegment = sliderSegmentMap.get(String(buttonIndex));
         if (visibleSegment) {
             visibleSegment.dataset.progressPct = String(completion);
+            visibleSegment.classList.toggle('has-progress', hasProgress);
             visibleSegment.classList.toggle('has-partial-progress', isPartial);
+            visibleSegment.classList.toggle('is-complete', isComplete);
             visibleSegment.style.setProperty('--level-progress', `${completion}%`);
             visibleSegment.setAttribute(
                 'aria-label',
@@ -1431,12 +1441,20 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
         if (!_setupLevelSelectionWasManual && (!selectedLevel || preferActionable)) {
             target.click();
             await target._rangeRenderPromise;
+            const targetIdx = levelButtons.indexOf(target);
+            if (targetIdx >= 0) {
+                requestAnimationFrame(() => _scrollLevelSegToCenter(targetIdx, false));
+            }
         }
     } else {
         const matchingBtn = levelButtons.find(b => b.dataset.level === selectedLevel);
         if (matchingBtn && !document.querySelector('.level-btn.selected')) {
             matchingBtn.click();
             await matchingBtn._rangeRenderPromise;
+            const matchIdx = levelButtons.indexOf(matchingBtn);
+            if (matchIdx >= 0) {
+                requestAnimationFrame(() => _scrollLevelSegToCenter(matchIdx, false));
+            }
         }
         levelProgressPromise.catch(err =>
             console.warn('Level progress indicators unavailable', err));
@@ -1712,6 +1730,16 @@ function _setupVocabularySignature(language) {
     ].join('|');
 }
 
+let _levelExamplesSeq = 0;
+
+// The bare first English sense of a card, for the level box's example words:
+// no qualifiers, no second sense. Empty while the card's meanings are unloaded.
+function _plainEnglishGloss(item) {
+    const meaning = (item?.meanings || []).find(m => String(m?.translation || '').trim());
+    if (!meaning) return '';
+    return meaning.translation.replace(/\([^)]*\)/g, ' ').split(/[,;/]/)[0].replace(/\s+/g, ' ').trim();
+}
+
 function getPreparedSetupVocabulary(language, rawVocab) {
     if (!rawVocab) return null;
     const signature = _setupVocabularySignature(language);
@@ -1730,7 +1758,8 @@ function getPreparedSetupVocabulary(language, rawVocab) {
         rank: item.rank,
         displayRank: item.displayRank,
         stableRank: item.stableRank,
-        word: item.lemma || item.targetWord || item.word || ''
+        word: item.lemma || item.targetWord || item.word || '',
+        item
     })).filter(sample => sample.word);
     _preparedSetupVocabulary = {
         raw: rawVocab,
@@ -2075,11 +2104,35 @@ function updateLevelSliderReadout(i) {
         const inRange = words.filter(s => rankOf(s) >= start && rankOf(s) < lv.endRank);
         const pick = (inRange.length ? inRange : words.filter(s => rankOf(s) < lv.endRank))
             .slice(-12);
-        const out = [];
-        const n = Math.min(5, pick.length);
-        for (let k = 0; k < n; k++) out.push(pick[Math.floor(k * pick.length / n)].word);
-        const examples = out.length ? 'e.g. ' + out.join(', ') : '';
-        _renderLine(examples);
+        // English meanings, not the target-language words. The index ships
+        // without meanings until a card's row shard loads, so fetch the shards
+        // for just these few cards first. Desktop has room for eight; the CSS
+        // hides the last three on a phone.
+        const render = labels => {
+            const out = [];
+            for (const label of labels) if (label && !out.includes(label)) out.push(label);
+            const shown = out.slice(0, 8);
+            _renderLine(shown.length
+                ? 'e.g. ' + shown.map((label, k) => `<span class="${k >= 5 ? 'lsw-eg-extra' : 'lsw-eg'}">${k ? ', ' : ''}${String(label).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))}</span>`).join('')
+                : '');
+        };
+        const candidates = [];
+        const total = Math.min(12, pick.length);
+        for (let k = 0; k < total; k++) candidates.push(pick[Math.floor(k * pick.length / total)]);
+        const targetWords = candidates.map(sample => sample.word);
+        const seq = ++_levelExamplesSeq;
+        const baseConfig = config.languages[selectedLanguage] || {};
+        const langConfig = activeArtist ? { ...baseConfig, ...activeArtist } : baseConfig;
+        Promise.resolve(window.ensureIndexRowsForRange?.(langConfig, 0, 0, candidates.map(sample => sample.rank)))
+            .catch(() => false)
+            .then(() => {
+                // A newer level was picked while the shards loaded.
+                if (seq !== _levelExamplesSeq) return;
+                const glosses = candidates
+                    .map(sample => _plainEnglishGloss(sample.item))
+                    .filter(gloss => gloss && gloss.length <= 24);
+                render(glosses.length >= 5 ? glosses : targetWords);
+            });
     });
 }
 
@@ -2684,6 +2737,14 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         }
     }
 
+    const smartSkipOn = Boolean(window.isFastTrackOn?.());
+    // Cards Smart Skip set aside, per slot: what the unfiltered baseline holds
+    // in the slot that the filtered deck does not.
+    const baselineSlotCounts = new Array(slotCount).fill(0);
+    for (const item of (preparedVocabulary?.stableBaseline || [])) {
+        const slotIdx = Math.floor((rankOf(item) - minWord) / STABLE_SET_SLOT_COUNT);
+        if (slotIdx >= 0 && slotIdx < slotCount) baselineSlotCounts[slotIdx]++;
+    }
     const ranges = [];
     for (let slotIdx = 0; slotIdx < slotCount; slotIdx++) {
         const start = minWord + slotIdx * STABLE_SET_SLOT_COUNT;
@@ -2702,6 +2763,8 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
             if (state?.needsReview) reviewCount++;
             if (state?.reviewReason === 'due') dueCount++;
         }
+        const skippedCount = smartSkipOn ? Math.max(0, baselineSlotCounts[slotIdx] - words.length) : 0;
+        const slotTotal = words.length + skippedCount;
         const knownCount = Math.max(0, seenCount - reviewCount);
         const unseenCount = words.length - seenCount;
         ranges.push({
@@ -2715,9 +2778,13 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
             unseenCount,
             reviewCount,
             dueCount,
+            skippedCount,
             pct: words.length > 0 ? Math.round(100 * seenCount / words.length) : 100,
-            knownPct: words.length > 0 ? 100 * knownCount / words.length : 100,
-            reviewEndPct: words.length > 0 ? 100 * (knownCount + reviewCount) / words.length : 100
+            // The bar covers the whole slot: skipped cards take the right-hand
+            // share, so a level with Smart Skip on starts partly filled.
+            knownPct: slotTotal > 0 ? 100 * knownCount / slotTotal : 100,
+            reviewEndPct: slotTotal > 0 ? 100 * (knownCount + reviewCount) / slotTotal : 100,
+            newEndPct: slotTotal > 0 ? 100 * words.length / slotTotal : 100
         });
     }
     // Land on the first set that actually has something new, then fall back to
@@ -2762,11 +2829,11 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                     data-index="${index}" data-range="${range.range}"
                     data-rank-basis="${rankBasis}" data-pct="${range.pct}"
                     data-unseen="${range.unseenCount}" data-review="${range.reviewCount}"
-                    style="--set-known-end: ${range.knownPct}%; --set-review-end: ${range.reviewEndPct}%"
+                    style="--set-known-end: ${range.knownPct}%; --set-review-end: ${range.reviewEndPct}%; --set-new-end: ${range.newEndPct}%"
                     role="radio" aria-checked="${index === initialIndex ? 'true' : 'false'}"
                     aria-label="Set ${index + 1}: ${range.knownCount} known, ${range.reviewCount} to practise, ${range.unseenCount} new"
                     title="Set ${index + 1} · ${range.knownCount} known · ${range.reviewCount} practice · ${range.unseenCount} new"
-                    ${range.available ? '' : 'disabled'}><span>${index + 1}</span></button>`;
+                    ${range.available ? '' : 'disabled'}><span class="set-num">${index + 1}</span><span class="set-ranks">${range.start.toLocaleString()}–${(range.end - 1).toLocaleString()}</span></button>`;
     }).join('');
 
     const levelReviewCount = ranges.reduce((sum, range) => sum + range.reviewCount, 0);
@@ -2850,9 +2917,12 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
         document.getElementById('studySetCurrentTitle').textContent = `Set ${index + 1}`;
         // The colours are the legend: each count wears its own swatch.
         document.getElementById('studySetCurrentMeta').innerHTML =
-            `<b class="study-set-stat"><i class="is-known"></i>${range.knownCount} Known</b>`
+            `<b class="study-set-stat"><i class="is-unseen"></i>${range.unseenCount} New</b>`
             + `<b class="study-set-stat"><i class="is-review"></i>${range.reviewCount} Practice</b>`
-            + `<b class="study-set-stat"><i class="is-unseen"></i>${range.unseenCount} New</b>`;
+            + `<b class="study-set-stat"><i class="is-known"></i>${range.knownCount} Known</b>`
+            + (range.skippedCount > 0
+                ? `<b class="study-set-stat"><i class="is-skipped"></i>${range.skippedCount} Skipped</b>`
+                : '');
         const startBtn = document.getElementById('studySetStartBtn');
         // Three distinct states, because collapsing the last two is what made
         // finished sets hand back every card in them. studyMode 'all' keeps no
@@ -4120,7 +4190,7 @@ function getNormalHelpContent() {
         <p><strong>Why frequency order?</strong></p>
         <p>Language follows a power law: a small number of words make up the vast majority of everyday speech. In Spanish, the top 1,000 words cover roughly 81% of spoken language, and the top 3,000 cover around 91%. By learning frequent words first, you build practical comprehension faster.</p>
         <p><strong>How does it work?</strong></p>
-        <p>Choose a language, then choose whether to learn from Speech or Lyrics. Speech opens the frequency-ranked language release; Lyrics lets you select an artist, playlist, or your own mix before any large vocabulary file is loaded. The app selects a level's first small set containing unseen cards, while incorrect and partly learned cards collect in that level's separate review. When Spaced repetition is enabled in Study settings, due cards join that review and correct recalls graduate through 1, 3, 7, 14, 30, 60, and 120-day intervals; mistakes reset the schedule. Merge Lemmas and Cognate exclusions can shorten sets without moving cards between them. Examples retain source and translation evidence when the active release provides it. If you leave an unfinished set, a Welcome back prompt offers to restore the exact card and settings next time you enter; finishing the set clears it.</p>
+        <p>Choose the language you’re learning, then choose whether to learn from Speech or Lyrics. Speech opens the frequency-ranked language release; Lyrics lets you select an artist, playlist, or your own mix before any large vocabulary file is loaded. The app selects a level's first small set containing unseen cards, while incorrect and partly learned cards collect in that level's separate review. When Spaced repetition is enabled in Study settings, due cards join that review and correct recalls graduate through 1, 3, 7, 14, 30, 60, and 120-day intervals; mistakes reset the schedule. Merge Lemmas and Cognate exclusions can shorten sets without moving cards between them. Examples retain source and translation evidence when the active release provides it. If you leave an unfinished set, a Welcome back prompt offers to restore the exact card and settings next time you enter; finishing the set clears it.</p>
         <p>The progress bar tracks your coverage based on the frequency of words you've learned — learning a common word contributes more to your coverage than a rare one.</p>
     `;
 }

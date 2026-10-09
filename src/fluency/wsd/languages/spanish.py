@@ -19,6 +19,7 @@ from fluency.wsd.companion_gate import (
     required_companions,
 )
 from fluency.wsd.candidate_policy import CandidatePreparation
+from fluency.wsd.construction_gate import evaluate_construction
 from fluency.wsd.grammar_gate import filter_by_grammar
 from fluency.wsd.gloss_scoring import LeafScore
 from fluency.wsd.languages.base import TargetOccurrence
@@ -434,14 +435,20 @@ class SpanishV5CandidatePolicy:
         self_restored: list[str] = []
         if self.keep_self_reading_pos and str(observed_pos or "").upper() not in {"SCONJ", "CCONJ"}:
             gated = set(pos_removed) | set(lemma_removed)
-            self_restored = sorted(
-                analysis.menu_analysis_id
-                for analysis in analyses
-                if analysis.menu_analysis_id in gated
-                and analysis.headword.casefold() == surface_form.casefold()
-                and str(analysis.part_of_speech or "").casefold() in self.keep_self_reading_pos
-            )
-            keep_ids |= set(self_restored)
+            exact_self = {
+                a.menu_analysis_id for a in analyses
+                if str(a.part_of_speech or "").upper() == str(observed_pos).upper()
+                and a.headword.casefold() == surface_form.casefold()
+            }
+            if not exact_self:
+                self_restored = sorted(
+                    analysis.menu_analysis_id
+                    for analysis in analyses
+                    if analysis.menu_analysis_id in gated
+                    and analysis.headword.casefold() == surface_form.casefold()
+                    and str(analysis.part_of_speech or "").casefold() in self.keep_self_reading_pos
+                )
+                keep_ids |= set(self_restored)
 
         contextual_removed: list[str] = []
         if contextual_headwords:
@@ -572,6 +579,32 @@ class SpanishV5CandidatePolicy:
             observed_grammar or {},
             features_of=lambda item: item[1].specialist_features,
         )
+        const_supported, const_rejected, const_diag = evaluate_construction(
+            sentence=sentence,
+            surface_form=surface_form,
+            analyses=structurally_kept,
+            language=self.language,
+            observed_pos=observed_pos,
+            observed_grammar=observed_grammar,
+        )
+        construction_rejected = ()
+        if const_supported or const_rejected:
+            cand_kept = []
+            cand_rejected = []
+            for item in grammar_kept:
+                ref = (item[0].menu_analysis_id, item[1].sense_id)
+                if const_supported is not None:
+                    if ref in const_supported:
+                        cand_kept.append(item)
+                    else:
+                        cand_rejected.append(item)
+                elif ref in const_rejected:
+                    cand_rejected.append(item)
+                else:
+                    cand_kept.append(item)
+            if cand_kept:
+                construction_rejected = tuple(cand_rejected)
+                grammar_kept = tuple(cand_kept)
         pronominal_rejected = ()
         reflexive_rejected = ()
         if (
@@ -638,6 +671,7 @@ class SpanishV5CandidatePolicy:
                 self.normalized_leaf_gates
                 or (self.pronominal_gate and pronominal_rejected)
                 or reflexive_rejected
+                or construction_rejected
             )
             else structurally_kept
         )
@@ -682,6 +716,8 @@ class SpanishV5CandidatePolicy:
                 "companion_rejected_leaf_refs": refs(companion_rejected_evidence),
                 "companion_matched_leaf_refs": refs(companion_matched),
                 "grammar_rejected_leaf_refs": refs(grammar_rejected),
+                "construction_diag": const_diag,
+                "construction_rejected_leaf_refs": refs(construction_rejected),
                 "pronominal_rejected_leaf_refs": refs(pronominal_rejected),
                 "constraint_supported_leaf_refs": refs(grammar_kept),
                 "indistinguishable_leaf_refs": _indistinguishable_leaf_refs(

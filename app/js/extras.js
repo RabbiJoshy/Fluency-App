@@ -181,11 +181,23 @@ function glossTokens(text) {
 
 function cognateEnglish(item) {
     if (!item) return { word: '', obvious: false };
-    if (item._cachedCognateEnglish) return item._cachedCognateEnglish;
-    const matched = g().matchedKnownWord?.(item);
+    const lang = _activeCognateFilterLang !== 'all'
+        ? _activeCognateFilterLang
+        : ((g().activeKnownLanguages?.() || [])[0] || 'en');
+    const cacheKey = `_cachedCognate_${lang}`;
+    if (item[cacheKey]) return item[cacheKey];
+
+    let matched = null;
+    if (_activeCognateFilterLang !== 'all') {
+        const word = item?.cognate_match_words?.[_activeCognateFilterLang]
+            || (isSenseItem(item) ? g().cardSenseCognate?.(item, _activeCognateFilterLang)?.word : null);
+        if (word) matched = { code: _activeCognateFilterLang, word: String(word) };
+    }
+    if (!matched) matched = g().matchedKnownWord?.(item);
+
     if (matched?.word) {
         const res = { word: String(matched.word), obvious: true };
-        item._cachedCognateEnglish = res;
+        item[cacheKey] = res;
         return res;
     }
     const surface = String(item?.word || '');
@@ -209,7 +221,7 @@ function cognateEnglish(item) {
         const gloss = shortGloss(firstTranslation(item));
         res = { word: gloss, obvious: false };
     }
-    item._cachedCognateEnglish = res;
+    item[cacheKey] = res;
     return res;
 }
 
@@ -654,9 +666,19 @@ let _ssRendered = 0;
 let _ssObserver = null;
 let _ssSignature = '';
 
+let _activeCognateFilterLang = 'all';
+
 function skipEntriesFor(extras, category) {
     if (category === 'all') return extras.allSkipped || [];
-    return extras.byCategory?.[category] || [];
+    const entries = extras.byCategory?.[category] || [];
+    if (category === 'cognate' && _activeCognateFilterLang !== 'all') {
+        const lang = _activeCognateFilterLang;
+        const check = g().isCognateKnownForLanguage;
+        if (check) {
+            return entries.filter(({ item }) => check(item, lang));
+        }
+    }
+    return entries;
 }
 
 function smartSkipMenu(extras) {
@@ -739,9 +761,20 @@ function smartSkipRankHtml(row) {
 function smartSkipHeadHtml(category) {
     const flag = g().config?.languages?.[g().selectedLanguage]?.flag || 'Word';
     const lemma = category === 'lemma';
+    let knownFlag = '🇬🇧';
+    if (category === 'cognate') {
+        const activeKnown = g().activeKnownLanguages?.() || [];
+        if (_activeCognateFilterLang !== 'all') {
+            knownFlag = g().knownLanguageFlag?.(_activeCognateFilterLang) || '🌐';
+        } else if (activeKnown.length === 1) {
+            knownFlag = g().knownLanguageFlag?.(activeKnown[0]) || '🌐';
+        } else {
+            knownFlag = '🌐';
+        }
+    }
     return `<div class="smart-skip-head" aria-hidden="true">
         <span>${escapeHtml(flag)}</span>
-        <span>🇬🇧</span>
+        <span>${escapeHtml(knownFlag)}</span>
         ${lemma ? '<span class="ss-h-forms">Combined forms</span><span class="ss-h-nforms">Forms</span>' : '<span class="ss-h-tag">Type</span>'}
         <span class="ss-h-rank">Rank</span>
     </div>`;
@@ -844,9 +877,30 @@ function renderSkippedWords(filterCategory = _activeSkippedCategory, { force = f
         : (options.find(option => option.id === 'cognate')?.id
             || options.find(option => option.id !== 'all')?.id
             || options[0]?.id || 'all');
+    const activeKnown = g().activeKnownLanguages?.() || [];
+    if (_activeCognateFilterLang !== 'all' && !activeKnown.includes(_activeCognateFilterLang)) {
+        _activeCognateFilterLang = 'all';
+    }
+    const showLangBtn = category === 'cognate' && activeKnown.length > 1;
+    const langBtn = document.getElementById('smartSkipCognateLangFilter');
+    if (langBtn) {
+        langBtn.hidden = !showLangBtn;
+        if (showLangBtn) {
+            const flag = _activeCognateFilterLang === 'all'
+                ? '🌐'
+                : (g().knownLanguageFlag?.(_activeCognateFilterLang) || _activeCognateFilterLang.toUpperCase());
+            const label = _activeCognateFilterLang === 'all'
+                ? 'All languages'
+                : (g().knownLanguageLabel?.(_activeCognateFilterLang) || _activeCognateFilterLang);
+            langBtn.innerHTML = `<span aria-hidden="true">${flag}</span>`;
+            langBtn.title = `Filtered by ${label} (click to switch)`;
+            langBtn.setAttribute('aria-label', `Filtered by ${label}`);
+        }
+    }
+
     const needle = _ssQuery.trim().toLocaleLowerCase();
     const signature = JSON.stringify([
-        g().selectedLanguage, Boolean(g().activeArtist), category, needle, extras.ready,
+        g().selectedLanguage, Boolean(g().activeArtist), category, _activeCognateFilterLang, activeKnown.join(','), needle, extras.ready,
         options.map(option => option.label), (g().getActiveLevelRanges?.() || []).length,
     ]);
     if (!force && signature === _ssSignature) return extras.cognates;
@@ -1201,6 +1255,16 @@ function restoreSection(kind) {
 }
 
 function initExtras() {
+    document.getElementById('smartSkipCognateLangFilter')?.addEventListener('click', () => {
+        const activeKnown = g().activeKnownLanguages?.() || [];
+        if (activeKnown.length <= 1) return;
+        const cycle = ['all', ...activeKnown];
+        const currentIndex = cycle.indexOf(_activeCognateFilterLang);
+        const nextIndex = (currentIndex + 1) % cycle.length;
+        _activeCognateFilterLang = cycle[nextIndex];
+        closeSmartSkipPreview();
+        renderSkippedWords('cognate', { force: true });
+    });
     document.getElementById('skippedCategorySelect')?.addEventListener('change', event => {
         closeSmartSkipPreview();
         renderSkippedWords(event.target.value);
@@ -1384,6 +1448,8 @@ if (document.readyState === 'loading') {
 globalThis.refreshExtrasButtons = refreshExtrasButtons;
 globalThis.refreshExtrasButton = refreshExtrasButtons;
 globalThis.openMergedForms = openMergedForms;
+// Each visit to the Smart Skip page opens on look-alikes, whatever was chosen last.
+globalThis.resetSkippedCategory = () => { _ssQuery = ''; _activeSkippedCategory = 'cognate'; };
 globalThis.openSkippedWords = openSkippedWords;
 globalThis.openExtras = openExtras;
 globalThis.openSavedWords = openSavedWords;
@@ -1391,6 +1457,8 @@ globalThis.renderSavedWords = renderSavedWords;
 globalThis.toggleSavedWord = toggleSavedWord;
 globalThis.isWordSaved = isWordSaved;
 globalThis.collectExtras = collectExtras;
+// The English side of a look-alike, for the Smart Skip row's example words.
+globalThis.cognateEnglishWord = item => cognateEnglish(item).word;
 globalThis.startFastTrackSkippedSet = startFastTrackSkippedSet;
 globalThis.renderSkippedWords = renderSkippedWords;
 globalThis.closeSmartSkipPreview = closeSmartSkipPreview;

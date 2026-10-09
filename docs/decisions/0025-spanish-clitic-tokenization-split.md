@@ -1,10 +1,6 @@
 # Decision 0025 — Split Spanish attached clitics at tokenization (DRAFT)
 
-**Status:** Draft by MEND, 2026-09-23. **Proposed, not decided. To be decided inside UNISON** (`CHAT_ROADMAP.md`, 2026-10-05): splitting clitics changes what the shared engine sees as a token in every mode, so it is settled with the engine, not before it. For the next full
-Spanish rebuild; Joshua decides. It would reverse part of decision 0014 and
-`config/languages/es/tokenization.json` (`preserve_surface`,
-`may_replace_surface_card: false`), so if adopted it says which invariant it
-touches and how (Invariant 1).
+**Status:** **Rejected in UNISON-2 (2026-10-08).** Splitting attached clitics at tokenization is rejected. Semantic reflexive slips (*irte* showing *ir*, *darte* showing *darse*) are solved directly in the unified WSD engine (`fluency.wsd`) via `ConstructionGate`, reflexive tag filtering, and candidate policy without altering surface card identity, invalidating learner progress, or requiring a full corpus re-harvest. Tokenization maintains `preserve_surface` per decision 0014 and Invariant 1.
 
 ## Proposal
 
@@ -25,13 +21,19 @@ surface. The pronouns count toward their own cards.
   spelling (`dé`, never the preposition `de`). Folding `coge` into `coger` is
   the separate lemma merge Fast Track already offers.
 
-## Why now is not the time
+## Outcome in UNISON-2
+ 
+Splitting attached clitics at tokenization was rejected during UNISON-2.
+The underlying motivation was addressing reflexive slips (*irte* picking *ir*
+instead of *irse*, *darte* picking *darse* instead of *dar*). In UNISON-2,
+these slips were eliminated directly in the unified WSD engine (`fluency.wsd`)
+via the `ConstructionGate`, reflexive tag filtering, and candidate policy
+adjustments without touching stage 01 tokenization or card identity.
 
-MEND fixed the empty clitic cards without touching identity: the resolver's
-enclitic host rule gives each one its verb's menu. The split changes stage 01
-(tokenization → frequencies → ranks), so it needs a re-harvest (a SCAR-level
-decision), full WSD, and a progress migration. It belongs to the next full
-Spanish rebuild, taken on its merits.
+Preserving existing tokenization preserves Invariant 1 (preserving learners'
+study progress without migrating 1,167 cards) and avoids a costly SCAR-level
+corpus re-harvest. Attached enclitics remain cards with menus provided by the
+resolver's enclitic host rule.
 
 ## For and against
 

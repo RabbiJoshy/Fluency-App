@@ -46,6 +46,8 @@ function currentState() {
     return readFastTrack(selectedLanguage).enabled ? 'on' : 'off';
 }
 
+globalThis.isFastTrackOn = () => currentState() === 'on';
+
 function setToggleState(prefix, value) {
     const buttons = document.querySelectorAll(`.${prefix}-toggle-btn`);
     buttons.forEach(btn => {
@@ -127,7 +129,8 @@ function refresh() {
 
     const on = state === 'on';
     const extras = globalThis.collectExtras?.() || {};
-    const skipped = extras.allSkipped ? extras.allSkipped.length : (extras.cognates?.length || 0);
+    const skippedCardsCount = (extras.allSkipped ? extras.allSkipped.length : (extras.cognates?.length || 0))
+        + (extras.lemmas?.length || 0);
 
     // A shortcut is listed only where it can do something: look-alikes and
     // combined forms need the release's mapping, the other three need at least
@@ -181,7 +184,7 @@ function refresh() {
 
     // The home row: the switch is the real master control, and the count next
     // to the chevron is what tells a learner there is more behind the row.
-    // Combined forms are still studied, so only skipped words are counted.
+    // Total skipped cards counts all cards set aside or merged.
     const hubSwitch = document.getElementById('fastTrackHubSwitch');
     if (hubSwitch) {
         hubSwitch.classList.toggle('selected', on);
@@ -197,20 +200,23 @@ function refresh() {
         // The switch already says on or off, so this line says something else:
         // what turning it on does, then what it is doing.
         hubSummary.textContent = !on ? 'Fewer cards, same coverage'
-            : skipped ? `${skipped.toLocaleString()} ${skipped === 1 ? 'word' : 'words'} skipped`
+            : skippedCardsCount ? `${skippedCardsCount.toLocaleString()} ${skippedCardsCount === 1 ? 'word' : 'words'} skipped`
             : 'No words skipped';
     }
     const hubExamples = document.getElementById('fastTrackHubExamples');
     if (hubExamples) {
         // Wide screens only (CSS hides it on phones). Off, it names the
-        // commonest look-alikes Smart Skip would set aside; on, the commonest
-        // words it is setting aside. Empty, it takes no room.
-        const words = on
-            ? (extras.allSkipped || []).map(entry => entry.item.word)
-            : lookAlikeCandidates();
-        const shown = words.slice(0, 3).map(word => `<em>${escapeExample(word)}</em>`).join(', ');
+        // commonest look-alikes Smart Skip would set aside; on, the look-alikes
+        // (cognates) it is setting aside. Empty, it takes no room.
+        // English, as the level box's examples are; the row's own ellipsis
+        // trims whatever the width cannot hold.
+        const english = item => globalThis.cognateEnglishWord?.(item) || item.word;
+        const words = [...new Set((on
+            ? (extras.cognates || []).map(entry => entry.item)
+            : lookAlikeCandidates()).slice(0, 12).map(english))];
+        const shown = words.slice(0, 8).map(word => `<em>${escapeExample(word)}</em>`).join(', ');
         hubExamples.innerHTML = !shown ? ''
-            : on ? `Skipping ${shown}${words.length > 3 ? ', …' : ''}`
+            : on ? `Skipping ${shown}${words.length > 8 ? ', …' : ''}`
             : `Look-alikes like ${shown}`;
     }
 
@@ -403,8 +409,7 @@ function lookAlikeCandidates() {
     if (!Array.isArray(vocab) || !decide || !globalThis.cognateFieldAvailable) return [];
     return vocab
         .filter(item => item?.word && !item.duplicate && decide(item))
-        .sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity))
-        .map(item => item.word);
+        .sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity));
 }
 
 function escapeExample(value) {
@@ -475,6 +480,7 @@ function updateKnownLanguageCopy() {
 function openFastModePage({ section } = {}) {
     returnToSettings = !document.getElementById('settingsModal')?.classList.contains('hidden');
     markFastTrackPageSeen();
+    if (!section) globalThis.resetSkippedCategory?.();
     // Each visit starts from the defaults: open what is on, fold the rest.
     closeAdvancedSkip();
     document.querySelectorAll('.smart-skip-shortcut').forEach(el => { delete el.dataset.userExpanded; });

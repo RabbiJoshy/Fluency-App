@@ -1,0 +1,44 @@
+{
+  "target_language": "pt",
+  "known_language": "es",
+  "surface_scorer": "learner-align/v1",
+  "cognet_pairs": "cognet/pairs/por-spa.tsv",
+  "cognet_target_column": 0,
+  "target_skeleton": [
+    [
+      "nh",
+      "ñ"
+    ],
+    [
+      "lh",
+      "ll"
+    ]
+  ],
+  "known_skeleton": [],
+  "ending_rules": [
+    [
+      "ções",
+      "ciones"
+    ],
+    [
+      "ção",
+      "ción"
+    ],
+    [
+      "idades",
+      "idades"
+    ],
+    [
+      "idade",
+      "idad"
+    ]
+  ],
+  "minimum_length": 3,
+  "length_guard": 0.7,
+  "gloss_maximum_words": 6,
+  "meaning_floor": 0.75,
+  "meaning_weight": 0.25,
+  "candidate_budget": 400,
+  "default_threshold": 0.8,
+  "notes": "Portuguese read by a Spanish speaker. Uses the shared per-sense engine and Spanish English-glossed Wiktionary extract, with Portuguese in column 0 of CogNet por-spa. Regular nh/ñ, lh/ll and nominal endings are aligned. Shared English glosses and the Spanish word's primary reading are required; every shown sense must qualify before a card is skipped. Minimum length 3 and conservative initial cutoff 0.80. Built against pt-speech-v23-10000x30-slim on 2026-10-08 using enwiktionary-2026-09-13 Spanish: 4,257/10,000 cards qualify, including 40/300 first cards. Checked informação/información, família/familia, cidade/ciudad; oficina and esquisito do not qualify. This is an initial cutoff, not a comprehensive manual calibration; dictionary coverage and inherited inflection glosses limit matching precision."
+}

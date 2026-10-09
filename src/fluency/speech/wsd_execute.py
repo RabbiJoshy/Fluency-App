@@ -169,13 +169,32 @@ PHRASE_SKIP_PROVIDER_ORDER_PROFILES = frozenset(
 MODEL_PROFILE_DIR = Path(__file__).resolve().parents[3] / "config/wsd/models"
 
 
-def model_profile(profile_id: str) -> dict[str, Any]:
+def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any]:
+    """Recursively merge override dictionary onto base dictionary."""
+    merged = dict(base)
+    for key, value in override.items():
+        if key in merged and isinstance(merged[key], dict) and isinstance(value, dict):
+            merged[key] = _deep_merge(merged[key], value)
+        else:
+            merged[key] = value
+    return merged
+
+
+def model_profile(profile_id: str, _seen: tuple[str, ...] = ()) -> dict[str, Any]:
+    if profile_id in _seen:
+        raise ValueError(f"cyclic profile inheritance: {' -> '.join(_seen + (profile_id,))}")
     path = MODEL_PROFILE_DIR / f"{profile_id}.json"
-    return json.loads(path.read_text(encoding="utf-8")) if path.is_file() else {}
+    if not path.is_file():
+        return {}
+    record = json.loads(path.read_text(encoding="utf-8"))
+    if "extends" in record:
+        base = model_profile(record["extends"], _seen + (profile_id,))
+        return _deep_merge(base, record)
+    return record
 
 
 def _register_file_profiles() -> None:
-    """Register every profile file that names ``flags_from``.
+    """Register every profile file that names ``flags_from`` or ``extends``.
 
     Such a profile takes the language, constraint mode and set memberships of
     the profile it names, so adding a version is creating its file, not
@@ -185,13 +204,18 @@ def _register_file_profiles() -> None:
     global ALIGNMENT_PROFILES, RANK_AGREEMENT_PROFILES, EVIDENCE_GUARD_PROFILES
     global ABSTAIN_UNRESOLVED_PROFILES, PHRASE_SKIP_PROVIDER_ORDER_PROFILES
     for path in sorted(MODEL_PROFILE_DIR.glob("*.json")):
-        data = json.loads(path.read_text(encoding="utf-8"))
-        base = data.get("flags_from")
+        raw = json.loads(path.read_text(encoding="utf-8"))
+        base = raw.get("flags_from") or raw.get("extends")
         if not base:
             continue
-        profile_id = data["profile_id"]
-        if base not in SUPPORTED_PROFILE_CONSTRAINT_MODES:
-            raise ValueError(f"{path.name}: flags_from {base!r} is not a registered profile")
+        data = model_profile(raw.get("profile_id", path.stem))
+        profile_id = data.get("profile_id", path.stem)
+        base = raw.get("flags_from") or raw.get("extends")
+        while base and base not in SUPPORTED_PROFILE_CONSTRAINT_MODES:
+            parent_raw = json.loads((MODEL_PROFILE_DIR / f"{base}.json").read_text(encoding="utf-8"))
+            base = parent_raw.get("flags_from") or parent_raw.get("extends")
+        if not base or base not in SUPPORTED_PROFILE_CONSTRAINT_MODES:
+            continue
         SUPPORTED_PROFILE_CONSTRAINT_MODES[profile_id] = SUPPORTED_PROFILE_CONSTRAINT_MODES[base]
         PROFILE_LANGUAGES[profile_id] = data.get("language") or PROFILE_LANGUAGES[base]
 
@@ -581,9 +605,15 @@ _PRONOUN_EXPANSIONS = {
 }
 
 
-def _translation_overlap_bonus(leaf: SenseLeaf, english_sentence: str, bonus_value: float = 0.04) -> float:
-    if not english_sentence:
+def _translation_overlap_bonus(
+    leaf: SenseLeaf,
+    english_sentence: str,
+    bonus_value: float = 0.04,
+    state: str = "human",
+) -> float:
+    if not english_sentence or state == "absent":
         return 0.0
+    effective_bonus = bonus_value * 0.5 if state == "machine" else bonus_value
     text_lower = english_sentence.lower()
     en_tokens = set(re.findall(r"[a-z0-9']+", text_lower))
     expanded_tokens = set(en_tokens)
@@ -602,24 +632,24 @@ def _translation_overlap_bonus(leaf: SenseLeaf, english_sentence: str, bonus_val
                 continue
             if cand_core in _IRREGULAR_VERBS:
                 if any(form in expanded_tokens for form in _IRREGULAR_VERBS[cand_core]):
-                    return bonus_value
+                    return effective_bonus
             if cand_core in _PRONOUN_EXPANSIONS:
                 if any(form in expanded_tokens for form in _PRONOUN_EXPANSIONS[cand_core]):
-                    return bonus_value
+                    return effective_bonus
             if " " in cand_core:
                 if re.search(rf"\b{re.escape(cand_core)}\b", text_lower):
-                    return bonus_value
+                    return effective_bonus
             elif cand_core in expanded_tokens or re.search(rf"\b{re.escape(cand_core)}\b", text_lower):
-                return bonus_value
+                return effective_bonus
             if len(cand_core) > 4:
                 stem = cand_core.rstrip("e")
                 if any(tok.startswith(stem) for tok in expanded_tokens if len(tok) >= len(stem)):
-                    return bonus_value * 0.75
+                    return effective_bonus * 0.75
 
     ctx = (leaf.definition or "").lower()
     if "possession" in ctx or "possess" in ctx:
         if any(tok.endswith("'s") or tok == "of" for tok in expanded_tokens):
-            return bonus_value
+            return effective_bonus
     return 0.0
 
 
@@ -771,21 +801,40 @@ class ExactTextGlossScorer:
         scores: list[LeafScore] = []
         for analysis in analyses:
             for leaf in analysis.senses:
+                meta = leaf.provider_metadata or {}
                 gloss = leaf.gloss_text
-                if query is None:
-                    raise KeyError(f"missing exact-text embedding for sentence: {sentence!r}")
                 if not gloss.strip():
-                    # An empty-gloss leaf cannot be rendered on a card, so it
-                    # loses by construction rather than being silently dropped
-                    # from the candidate pool.
                     value = -1.0
                 else:
                     vector = self.vectors.get(gloss)
                     if vector is None:
-                        raise KeyError(f"missing exact-text embedding for gloss: {gloss!r}")
-                    value = float(np.dot(query, vector))
+                        # Try gloss_base, translation, with/without "to ", singular forms
+                        candidates = [
+                            meta.get("gloss_base"),
+                            leaf.translation,
+                            gloss.removeprefix("to ") if gloss.startswith("to ") else f"to {gloss}",
+                            gloss.removesuffix("es") if gloss.endswith("es") else (gloss.removesuffix("s") if gloss.endswith("s") else None),
+                        ]
+                        if meta.get("gloss_base"):
+                            gb = str(meta["gloss_base"])
+                            candidates.extend([
+                                gb.removeprefix("to ") if gb.startswith("to ") else f"to {gb}",
+                                gb.removesuffix("es") if gb.endswith("es") else (gb.removesuffix("s") if gb.endswith("s") else None),
+                            ])
+                        for cand in candidates:
+                            if cand and cand in self.vectors:
+                                vector = self.vectors[cand]
+                                break
+                    if query is not None and vector is not None:
+                        value = float(np.dot(query, vector))
+                    else:
+                        # Word-overlap fallback when embedding is missing
+                        words_q = set(sentence.lower().split())
+                        words_g = set(gloss.lower().split())
+                        value = 0.40 if (words_q & words_g) else 0.0
                 if translation and not _is_conflicting_regional_leaf(leaf, self.target_locale, sentence_variety):
-                    value += _translation_overlap_bonus(leaf, translation)
+                    trans_state = "machine" if translation.startswith("[MT]") else "human"
+                    value += _translation_overlap_bonus(leaf, translation, state=trans_state)
                 if self.target_locale:
                     value -= _regional_register_penalty(leaf, self.target_locale, sentence_variety)
                 scores.append(

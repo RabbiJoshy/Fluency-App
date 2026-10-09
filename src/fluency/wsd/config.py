@@ -22,9 +22,22 @@ class WSDProfileError(ValueError):
     """Raised when selected WSD profiles are missing, inconsistent, or unready."""
 
 
-def _load(root: Path, family: str, profile_id: str) -> dict[str, Any]:
+def deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any]:
+    """Recursively merge override dictionary onto base dictionary."""
+    merged = dict(base)
+    for key, value in override.items():
+        if key in merged and isinstance(merged[key], dict) and isinstance(value, dict):
+            merged[key] = deep_merge(merged[key], value)
+        else:
+            merged[key] = value
+    return merged
+
+
+def _load(root: Path, family: str, profile_id: str, _seen: tuple[str, ...] = ()) -> dict[str, Any]:
     if _PROFILE_ID.fullmatch(profile_id) is None:
         raise WSDProfileError(f"invalid WSD {family} profile ID: {profile_id!r}")
+    if profile_id in _seen:
+        raise WSDProfileError(f"cyclic WSD {family} profile inheritance: {' -> '.join(_seen + (profile_id,))}")
     path = root / "config" / "wsd" / family / f"{profile_id}.json"
     try:
         record = json.loads(path.read_text(encoding="utf-8"))
@@ -38,6 +51,13 @@ def _load(root: Path, family: str, profile_id: str) -> dict[str, Any]:
         raise WSDProfileError(f"unsupported WSD profile version: {path}")
     if record.get("profile_id") != profile_id:
         raise WSDProfileError(f"WSD profile ID does not match its filename: {path}")
+    if family == "models" and "extends" in record:
+        base_id = record["extends"]
+        if not isinstance(base_id, str) or not base_id.strip():
+            raise WSDProfileError(f"extends must be a non-empty string profile ID: {path}")
+        base_record = _load(root, family, base_id, _seen + (profile_id,))
+        merged = deep_merge(base_record, record)
+        return merged
     return record
 
 
