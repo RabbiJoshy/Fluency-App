@@ -1,28 +1,28 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=666ad371';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=666ad371';
-import './speech.js?v=666ad371';
-import { goToRoute, routeCodeFor } from './routes.js?v=666ad371';
-import './side-dock.js?v=666ad371';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=666ad371';
+import './state.js?v=f9742bf6';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=f9742bf6';
+import './speech.js?v=f9742bf6';
+import { goToRoute, routeCodeFor } from './routes.js?v=f9742bf6';
+import './side-dock.js?v=f9742bf6';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=f9742bf6';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=666ad371';
+} from './example-personalisation.js?v=f9742bf6';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=666ad371';
+} from './spanishdict-usage.js?v=f9742bf6';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=666ad371';
+} from './reverse-cues.js?v=f9742bf6';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -55,7 +55,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=666ad371';
+} from './card-metadata-pills.js?v=f9742bf6';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -6219,13 +6219,15 @@ function renderCardWikipediaBadge(card) {
         let html = '';
         for (const m of fMeanings) {
             const productionGloss = getProductionEnglishCue(card, m) || m.meaning;
+            const isExpr = Boolean(m.isMWE || m.pos === 'MWE' || m.pos === 'PHRASE' || (typeof isExpressionSenseForLemma === 'function' && isExpressionSenseForLemma(m, card)));
+            const phraseBadge = isExpr ? `<span class="front-phrase-cue" style="opacity: 0.7; font-size: 0.75em; margin-left: 6px; font-weight: normal;">[phrase]</span>` : '';
             const posChip = m.pos && !['MWE', 'CLITIC', 'SENSE_CYCLE', 'EXAMPLE_ONLY'].includes(m.pos)
                 && !isHiddenExpressionOnParent(card, m)
                 ? renderFrontPosUnit(m.pos, isVerbPos(m.pos), 'card-pos front-meaning-pos')
                 : '';
             html += `<div class="front-meaning-row">
                 ${posChip}
-                <span class="front-meaning-text" style="font-size: ${fontSize}px;">${escapeCardText(productionGloss)}</span>
+                <span class="front-meaning-text" style="font-size: ${fontSize}px;">${escapeCardText(productionGloss)}${phraseBadge}</span>
             </div>`;
         }
         frontMeaningsEl.innerHTML = html;
@@ -10358,8 +10360,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '666ad371';
-const MODALS_ASSET_VERSION = '666ad371';
+const ASSET_VERSION = 'f9742bf6';
+const MODALS_ASSET_VERSION = 'f9742bf6';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

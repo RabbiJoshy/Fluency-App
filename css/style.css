@@ -6706,6 +6706,7 @@
             position: relative;
         }
 
+        .level-btn.has-progress::after,
         .level-btn.has-partial-progress::after {
             content: '';
             position: absolute;
@@ -6719,6 +6720,9 @@
                 var(--accent-secondary) var(--level-progress),
                 rgba(var(--accent-secondary-rgb), 0.2) var(--level-progress),
                 rgba(var(--accent-secondary-rgb), 0.2) 100%);
+        }
+        .level-btn.is-complete::after {
+            background: var(--accent-secondary);
         }
 
         .level-btn:hover {
@@ -6875,20 +6879,26 @@
             font: 700 0.82rem/1 var(--font-data, var(--font-emphasis, monospace));
             position: relative;
         }
+        .lsw-segments.lsw-scrubber .lsw-seg.has-progress::after,
         .lsw-segments.lsw-scrubber .lsw-seg.has-partial-progress::after {
             content: '';
             position: absolute;
-            left: 18px;
-            right: 18px;
-            bottom: 7px;
+            left: 14px;
+            right: 14px;
+            bottom: 4px;
             height: 3px;
             border-radius: 999px;
             background: linear-gradient(to right,
                 var(--accent-secondary) 0,
                 var(--accent-secondary) var(--level-progress),
-                rgba(var(--accent-secondary-rgb), 0.22) var(--level-progress),
-                rgba(var(--accent-secondary-rgb), 0.22) 100%);
-            box-shadow: 0 0 5px rgba(var(--accent-secondary-rgb), 0.2);
+                rgba(255, 255, 255, 0.14) var(--level-progress),
+                rgba(255, 255, 255, 0.14) 100%);
+            box-shadow: 0 0 4px rgba(var(--accent-secondary-rgb), 0.25);
+            pointer-events: none;
+        }
+        .lsw-segments.lsw-scrubber .lsw-seg.is-complete::after {
+            background: var(--accent-secondary);
+            box-shadow: 0 0 5px rgba(var(--accent-secondary-rgb), 0.35);
         }
         .lsw-segments.lsw-scrubber .lsw-seg .lsw-seg-label { pointer-events: none; }
         .lsw-segments.lsw-scrubber .lsw-seg.filled:not(.selected) {

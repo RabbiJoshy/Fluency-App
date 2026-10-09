@@ -1,4 +1,4 @@
-import { flagImgHTML, regionFlagCode } from './flags.js?v=666ad371';
+import { flagImgHTML, regionFlagCode } from './flags.js?v=f9742bf6';
 
 // Card metadata badges, chips, and sense-detail formatting.
 // Handles canonical features, qualifier formatting, and grammar pill presentation
@@ -482,11 +482,9 @@ export function compactLearnerSenseMetadata(items, meaning, options = {}) {
         if (grammarIsAlreadyInGloss(item, gloss)) return false;
         if (item.family === 'register' && item.value.toLowerCase() === 'colloquial'
             && /^informal form of\b/i.test(gloss)) return false;
-        if (gloss && [display.short, display.full, item.value].some(value => metadataTextIsRedundant(value, gloss))) return false;
         if (item.family === 'functional' && functionalAlreadyInGloss(item, gloss)) return false;
         if (isInflectionalPersonNumber(item) && !differs(item) && !/\byour\b/i.test(gloss)) return false;
-        if (item.family === 'construction' && /^(?:intransitive|transitive|ditransitive)$/.test(item.value)
-            && !differs(item) && (hasCompanion || (peers.length && meaning?.context))) return false;
+        if (item.family === 'construction' && /^(?:intransitive|transitive|ditransitive|copulative|copular|ambitransitive|ergative|pronominal)$/i.test(item.value)) return false;
         if (usefulRegister(item)) return true;
         // A routine grammatical mark may be useful in details, but is not a
         // substitute for the semantic context that distinguishes these rows.
