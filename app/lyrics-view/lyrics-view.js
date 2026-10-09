@@ -244,10 +244,6 @@ async function init() {
     customSongs = loadSavedCustomSongs();
     allSongs = [...customSongs, ...probeSongs];
 
-    if (offlineCountBadge) {
-      offlineCountBadge.textContent = String(probeSongs.length);
-    }
-
     renderSongPickerItems(allSongs);
 
     // If a specific song was requested in URL query, load it; otherwise open the library modal
