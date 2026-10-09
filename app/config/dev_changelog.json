@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T11:31:20+01:00",
+      "date": "2026-10-09 11:31 BST",
+      "agent": "Codex",
+      "summary": "Landing page: centred section labels and wider set cards in a 2 × 2 grid",
+      "detail": [
+        "Choose level, Choose a set and Practice errors have equal spacing above and below their labels.",
+        "Set cards are about 20% shorter and arranged in two columns, with frequency rank ranges visible on phones and desktop.",
+        "The selected set retains its accent ring without enlarging or shifting the card."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T09:07:00+01:00",
       "date": "2026-10-09 09:07 BST",
       "agent": "Claude",
@@ -350,19 +362,6 @@
         "Its legend keeps the card counts (Known / Practice / New) as plain numbers, without colour keys.",
         "Loading a set is unchanged: the ring counts cards known in that set.",
         "End of set: the '72% accuracy' line under the title is gone; the ring already says it."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T00:30:00+01:00",
-      "date": "2026-10-08 00:30 BST",
-      "agent": "Claude",
-      "summary": "Source chooser: no chevrons, Best for under the description, fuller speech card, shorter intro",
-      "detail": [
-        "Chevrons removed from Everyday speech and Your music (the whole card is the button); Spotify strip keeps its arrow.",
-        "'Best for' sits directly under the description in both cards at every width.",
-        "Speech: 'From films and TV shows — the everyday words people actually use when they talk to each other.' plus Best for 'Understanding films and TV shows'.",
-        "Intro: 'Your flashcards come from this source, most common words first.'"
       ],
       "commit": "pending"
     }
