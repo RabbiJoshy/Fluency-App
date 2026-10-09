@@ -1,4 +1,4 @@
-import { TurboEngine } from '../turbo/turbo-engine.js';
+import { TurboEngine } from '../turbo/turbo-engine.js?v=2abbe085';
 
 // Common Spanish & Latin urban ad-libs, interjections, and exclamations
 const INTERJECTIONS_SET = new Set([
@@ -10,7 +10,9 @@ const INTERJECTIONS_SET = new Set([
 
 let engine = null;
 let probeSongs = [];
-let annotatedCache = new Map(); // songIndex -> annotatedSong
+let customSongs = [];
+let allSongs = [];
+let annotatedCache = new Map(); // songCacheKey -> annotatedSong
 let currentSongIndex = 0;
 let showEnglishUnderneath = true;
 
@@ -22,6 +24,7 @@ let currentModalTokenIndex = -1;
 const topbarSongTitle = document.getElementById('topbarSongTitle');
 const topbarSongArtist = document.getElementById('topbarSongArtist');
 const songSelectorBtn = document.getElementById('songSelectorBtn');
+const topbarTurboBtn = document.getElementById('topbarTurboBtn');
 const prevSongBtn = document.getElementById('prevSongBtn');
 const nextSongBtn = document.getElementById('nextSongBtn');
 const toggleEnglishBtn = document.getElementById('toggleEnglishBtn');
@@ -29,11 +32,30 @@ const toggleEnglishBtn = document.getElementById('toggleEnglishBtn');
 const loadingBox = document.getElementById('loadingBox');
 const lyricsFlow = document.getElementById('lyricsFlow');
 
-// Modals
+// Modals & Picker Elements
 const songPickerModal = document.getElementById('songPickerModal');
 const closeSongPickerBtn = document.getElementById('closeSongPickerBtn');
 const songPickerList = document.getElementById('songPickerList');
 const songSearchInput = document.getElementById('songSearchInput');
+const tabOfflineBtn = document.getElementById('tabOfflineBtn');
+const tabOnlineBtn = document.getElementById('tabOnlineBtn');
+const tabOfflinePane = document.getElementById('tabOfflinePane');
+const tabOnlinePane = document.getElementById('tabOnlinePane');
+const offlineCountBadge = document.getElementById('offlineCountBadge');
+
+// Online TURBO Elements
+const turboTrackInput = document.getElementById('turboTrackInput');
+const turboClearInputBtn = document.getElementById('turboClearInputBtn');
+const turboManualDetails = document.getElementById('turboManualDetails');
+const turboManualTitle = document.getElementById('turboManualTitle');
+const turboManualArtist = document.getElementById('turboManualArtist');
+const turboManualLyrics = document.getElementById('turboManualLyrics');
+const turboAlertBox = document.getElementById('turboAlertBox');
+const turboAlertText = document.getElementById('turboAlertText');
+const turboStatusCard = document.getElementById('turboStatusCard');
+const turboStatusTitle = document.getElementById('turboStatusTitle');
+const turboStatusSub = document.getElementById('turboStatusSub');
+const runTurboBtn = document.getElementById('runTurboBtn');
 
 const tokenQuickViewModal = document.getElementById('tokenQuickViewModal');
 const closeTokenModalBtn = document.getElementById('closeTokenModalBtn');
@@ -55,6 +77,55 @@ const tokenPrevBtn = document.getElementById('tokenPrevBtn');
 const tokenNextBtn = document.getElementById('tokenNextBtn');
 
 // ───────────────────────────────────────────────
+// Helpers & Tab Switching
+// ───────────────────────────────────────────────
+function songCacheKey(song) {
+  if (!song) return '';
+  if (song.id) return song.id;
+  return `${song.title || ''}:::${song.artist || ''}`;
+}
+
+function loadSavedCustomSongs() {
+  try {
+    const raw = sessionStorage.getItem('fluency_turbo_custom_songs');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    }
+  } catch (_) {}
+  return [];
+}
+
+function switchPickerTab(tab) {
+  hideTurboError();
+  if (tab === 'offline') {
+    if (tabOfflineBtn) {
+      tabOfflineBtn.classList.add('active');
+      tabOfflineBtn.setAttribute('aria-selected', 'true');
+    }
+    if (tabOnlineBtn) {
+      tabOnlineBtn.classList.remove('active');
+      tabOnlineBtn.setAttribute('aria-selected', 'false');
+    }
+    if (tabOfflinePane) tabOfflinePane.style.display = 'block';
+    if (tabOnlinePane) tabOnlinePane.style.display = 'none';
+    if (songSearchInput) setTimeout(() => songSearchInput.focus(), 50);
+  } else {
+    if (tabOnlineBtn) {
+      tabOnlineBtn.classList.add('active');
+      tabOnlineBtn.setAttribute('aria-selected', 'true');
+    }
+    if (tabOfflineBtn) {
+      tabOfflineBtn.classList.remove('active');
+      tabOfflineBtn.setAttribute('aria-selected', 'false');
+    }
+    if (tabOfflinePane) tabOfflinePane.style.display = 'none';
+    if (tabOnlinePane) tabOnlinePane.style.display = 'block';
+    if (turboTrackInput) setTimeout(() => turboTrackInput.focus(), 50);
+  }
+}
+
+// ───────────────────────────────────────────────
 // Initialisation
 // ───────────────────────────────────────────────
 async function init() {
@@ -73,21 +144,33 @@ async function init() {
     const songsResp = await fetch(songsUrl);
     if (!songsResp.ok) throw new Error(`HTTP ${songsResp.status} loading offline songs`);
     probeSongs = await songsResp.json();
+    probeSongs.forEach((s, idx) => {
+      s.id = `offline_${idx}`;
+      s.isOffline = true;
+    });
+
+    // Load session-generated songs
+    customSongs = loadSavedCustomSongs();
+    allSongs = [...customSongs, ...probeSongs];
+
+    if (offlineCountBadge) {
+      offlineCountBadge.textContent = String(probeSongs.length);
+    }
 
     if (paramSong) {
       const parsedIdx = parseInt(paramSong, 10);
-      if (!isNaN(parsedIdx) && parsedIdx >= 0 && parsedIdx < probeSongs.length) {
+      if (!isNaN(parsedIdx) && parsedIdx >= 0 && parsedIdx < allSongs.length) {
         currentSongIndex = parsedIdx;
       } else {
-        const foundIdx = probeSongs.findIndex(s =>
-          s.title.toLowerCase().includes(paramSong.toLowerCase()) ||
-          s.artist.toLowerCase().includes(paramSong.toLowerCase())
+        const foundIdx = allSongs.findIndex(s =>
+          (s.title || '').toLowerCase().includes(paramSong.toLowerCase()) ||
+          (s.artist || '').toLowerCase().includes(paramSong.toLowerCase())
         );
         if (foundIdx >= 0) currentSongIndex = foundIdx;
       }
     }
 
-    renderSongPickerItems(probeSongs);
+    renderSongPickerItems(allSongs);
     await selectSong(currentSongIndex);
   } catch (err) {
     console.error('Failed to init Lyrics View:', err);
@@ -104,12 +187,14 @@ async function init() {
 // Song Processing & Selection
 // ───────────────────────────────────────────────
 async function selectSong(index) {
-  if (index < 0 || index >= probeSongs.length) return;
+  if (index < 0 || index >= allSongs.length) return;
   currentSongIndex = index;
 
-  const song = probeSongs[index];
+  const song = allSongs[index];
   if (topbarSongTitle) topbarSongTitle.textContent = song.title || '';
-  if (topbarSongArtist) topbarSongArtist.textContent = song.artist || '';
+  if (topbarSongArtist) {
+    topbarSongArtist.textContent = (song.artist || '') + (song.isOnline ? ' · ⚡ TURBO' : '');
+  }
 
   // Also populate compatibility anchors if present
   const mainSongTitle = document.getElementById('mainSongTitle');
@@ -118,7 +203,7 @@ async function selectSong(index) {
   if (mainSongArtist) mainSongArtist.textContent = song.artist || '';
 
   if (prevSongBtn) prevSongBtn.disabled = (index === 0);
-  if (nextSongBtn) nextSongBtn.disabled = (index === probeSongs.length - 1);
+  if (nextSongBtn) nextSongBtn.disabled = (index === allSongs.length - 1);
 
   // Sync URL query without reloading
   try {
@@ -130,13 +215,14 @@ async function selectSong(index) {
   if (lyricsFlow) lyricsFlow.style.display = 'none';
   if (loadingBox) loadingBox.style.display = 'block';
 
-  let annotatedSong = annotatedCache.get(index);
+  const cacheKey = songCacheKey(song);
+  let annotatedSong = annotatedCache.get(cacheKey);
   if (!annotatedSong) {
     const result = await engine.processPlaylist([song]);
     annotatedSong = result.annotatedSongs?.[0];
     if (annotatedSong) {
       postProcessAnnotatedSong(annotatedSong);
-      annotatedCache.set(index, annotatedSong);
+      annotatedCache.set(cacheKey, annotatedSong);
     }
   }
 
@@ -467,107 +553,374 @@ function highlightTokenInLine(lineText, rawToken) {
 }
 
 // ───────────────────────────────────────────────
-// Song Picker Modal
+// Song Picker Modal & List Rendering
 // ───────────────────────────────────────────────
 function renderSongPickerItems(songs) {
+  if (!songPickerList) return;
   songPickerList.innerHTML = '';
-  songs.forEach((s, idx) => {
+  songs.forEach((s) => {
+    const originalIndex = allSongs.indexOf(s);
     const item = document.createElement('div');
-    item.className = `song-picker-item ${idx === currentSongIndex ? 'active' : ''}`;
-    item.dataset.index = idx;
+    item.className = `song-picker-item ${originalIndex === currentSongIndex ? 'active' : ''} ${s.isOnline ? 'is-online' : ''}`;
+    item.dataset.index = originalIndex;
+
+    const onlineBadge = s.isOnline ? `<span class="song-picker-online-badge">⚡ ONLINE</span>` : '';
+    const lineCount = (s.lyrics || s.plainLyrics || '').split('\n').filter(l => l.trim()).length || (s.syncedLyrics ? s.syncedLyrics.split('\n').length : 0);
+
     item.innerHTML = `
       <div class="song-picker-item-left">
-        <span class="song-picker-num">${idx + 1}</span>
+        <span class="song-picker-num">${originalIndex + 1}</span>
         <div>
-          <div class="song-picker-name">${s.title}</div>
+          <div class="song-picker-name">${s.title}${onlineBadge}</div>
           <div class="song-picker-artist">${s.artist}</div>
         </div>
       </div>
-      <span class="song-picker-lines">${(s.lyrics || '').split('\n').length} lines</span>
+      <span class="song-picker-lines">${lineCount} lines</span>
     `;
 
     item.addEventListener('click', () => {
       closeSongPicker();
-      selectSong(idx);
+      selectSong(originalIndex);
     });
 
     songPickerList.appendChild(item);
   });
 }
 
-function openSongPicker() {
-  songSearchInput.value = '';
-  renderSongPickerItems(probeSongs);
-  songPickerModal.classList.add('open');
-  setTimeout(() => songSearchInput.focus(), 50);
+function openSongPicker(initialTab = 'offline') {
+  if (songSearchInput) songSearchInput.value = '';
+  renderSongPickerItems(allSongs);
+  switchPickerTab(initialTab);
+  if (songPickerModal) songPickerModal.classList.add('open');
 }
 
 function closeSongPicker() {
-  songPickerModal.classList.remove('open');
+  if (songPickerModal) songPickerModal.classList.remove('open');
+  hideTurboStatus();
+  hideTurboError();
+}
+
+// ───────────────────────────────────────────────
+// Online TURBO Intake Logic
+// ───────────────────────────────────────────────
+function setTurboStatus(title, sub = '') {
+  if (turboStatusCard) turboStatusCard.style.display = 'flex';
+  if (turboStatusTitle) turboStatusTitle.textContent = title;
+  if (turboStatusSub) turboStatusSub.textContent = sub;
+}
+
+function hideTurboStatus() {
+  if (turboStatusCard) turboStatusCard.style.display = 'none';
+}
+
+function showTurboError(msg) {
+  if (turboAlertBox) turboAlertBox.style.display = 'flex';
+  if (turboAlertText) turboAlertText.textContent = msg;
+}
+
+function hideTurboError() {
+  if (turboAlertBox) turboAlertBox.style.display = 'none';
+}
+
+function pickLyricsRecord(records) {
+  if (!Array.isArray(records) || records.length === 0) return null;
+  const usable = records.filter(r => !r.instrumental || (r.plainLyrics || '').trim() || (r.syncedLyrics || '').trim());
+  if (usable.length === 0) return records[0] || null;
+  // Prefer syncedLyrics first, else plainLyrics
+  return usable.find(r => (r.syncedLyrics || '').trim()) ||
+         usable.find(r => (r.plainLyrics || '').trim()) ||
+         usable[0];
+}
+
+async function resolveOnlineTrack({ input, manualTitle, manualArtist, manualLyrics }) {
+  // Check manual lyrics first
+  if (manualLyrics && manualLyrics.trim().length > 0) {
+    return {
+      title: (manualTitle || '').trim() || 'Custom Track',
+      artist: (manualArtist || '').trim() || 'User Lyrics',
+      lyrics: manualLyrics.trim(),
+      syncedLyrics: '',
+      isOnline: true
+    };
+  }
+
+  const query = (input || '').trim();
+  if (!query) {
+    throw new Error('Please enter a Spotify URL, track ID, song title & artist, or paste lyrics.');
+  }
+
+  // Detect Spotify ID or URL
+  let spotifyTrackId = null;
+  const urlMatch = query.match(/spotify\.com\/track\/([A-Za-z0-9]{22})/i);
+  const uriMatch = query.match(/spotify:track:([A-Za-z0-9]{22})/i);
+  const idMatch = query.match(/^([A-Za-z0-9]{22})$/);
+
+  if (urlMatch) spotifyTrackId = urlMatch[1];
+  else if (uriMatch) spotifyTrackId = uriMatch[1];
+  else if (idMatch) spotifyTrackId = idMatch[1];
+
+  let resolvedTitle = '';
+  let resolvedArtist = '';
+
+  if (spotifyTrackId) {
+    setTurboStatus('Resolving Spotify track...', `Track ID: ${spotifyTrackId}`);
+    // If Spotify access token in localStorage
+    const token = localStorage.getItem('spotify_access_token');
+    if (token) {
+      try {
+        const resp = await fetch(`https://api.spotify.com/v1/tracks/${spotifyTrackId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (resp.ok) {
+          const trackData = await resp.json();
+          resolvedTitle = trackData.name || '';
+          resolvedArtist = trackData.artists?.map(a => a.name).join(', ') || '';
+        }
+      } catch (e) {
+        console.warn('Spotify API track query failed:', e);
+      }
+    }
+
+    // Try Spotify oEmbed (public CORS)
+    if (!resolvedTitle) {
+      try {
+        const oembedUrl = `https://open.spotify.com/oembed?url=https://open.spotify.com/track/${spotifyTrackId}`;
+        const resp = await fetch(oembedUrl);
+        if (resp.ok) {
+          const data = await resp.json();
+          if (data.title) resolvedTitle = data.title;
+        }
+      } catch (e) {
+        console.warn('Spotify oEmbed query failed:', e);
+      }
+    }
+  }
+
+  // Search LRCLIB
+  setTurboStatus('Searching LRCLIB for lyrics...', resolvedTitle ? `"${resolvedTitle}"` : query);
+  let lrclibRecord = null;
+
+  if (resolvedTitle && resolvedArtist) {
+    try {
+      const primaryArtist = resolvedArtist.split(',')[0].trim();
+      const params = new URLSearchParams({ track_name: resolvedTitle, artist_name: primaryArtist });
+      const resp = await fetch(`https://lrclib.net/api/search?${params}`, {
+        headers: { 'Lrclib-Client': 'Fluency/0.1 (https://github.com/JoshuaThomasAmar/Fluency-Next)' }
+      });
+      if (resp.ok) {
+        const list = await resp.json();
+        lrclibRecord = pickLyricsRecord(list);
+      }
+    } catch (e) {
+      console.warn('LRCLIB specific search failed:', e);
+    }
+  }
+
+  if (!lrclibRecord) {
+    const searchQuery = resolvedTitle ? (resolvedArtist ? `${resolvedTitle} ${resolvedArtist}` : resolvedTitle) : query;
+    try {
+      const resp = await fetch(`https://lrclib.net/api/search?q=${encodeURIComponent(searchQuery)}`, {
+        headers: { 'Lrclib-Client': 'Fluency/0.1 (https://github.com/JoshuaThomasAmar/Fluency-Next)' }
+      });
+      if (resp.ok) {
+        const list = await resp.json();
+        lrclibRecord = pickLyricsRecord(list);
+      }
+    } catch (e) {
+      console.warn('LRCLIB search failed:', e);
+    }
+  }
+
+  if (!lrclibRecord || (!lrclibRecord.plainLyrics && !lrclibRecord.syncedLyrics)) {
+    if (resolvedTitle) {
+      throw new Error(`Found Spotify track "${resolvedTitle}", but no lyrics were found on LRCLIB. Please paste the lyrics in the section below to run TURBO!`);
+    }
+    throw new Error('No lyrics found on LRCLIB for this search. Try "Song Title - Artist" or paste lyrics directly.');
+  }
+
+  return {
+    title: lrclibRecord.name || lrclibRecord.trackName || resolvedTitle || query,
+    artist: lrclibRecord.artistName || resolvedArtist || 'Unknown Artist',
+    lyrics: (lrclibRecord.plainLyrics || '').trim(),
+    syncedLyrics: (lrclibRecord.syncedLyrics || '').trim(),
+    spotifyId: spotifyTrackId || null,
+    isOnline: true
+  };
+}
+
+async function handleRunTurbo() {
+  hideTurboError();
+  const input = turboTrackInput ? turboTrackInput.value.trim() : '';
+  const manualTitle = turboManualTitle ? turboManualTitle.value.trim() : '';
+  const manualArtist = turboManualArtist ? turboManualArtist.value.trim() : '';
+  const manualLyrics = turboManualLyrics ? turboManualLyrics.value.trim() : '';
+
+  if (!input && !manualLyrics) {
+    showTurboError('Please enter a Spotify URL, track ID, song search, or paste lyrics.');
+    if (turboTrackInput) turboTrackInput.focus();
+    return;
+  }
+
+  if (runTurboBtn) runTurboBtn.disabled = true;
+
+  try {
+    const songData = await resolveOnlineTrack({ input, manualTitle, manualArtist, manualLyrics });
+    setTurboStatus('Running TURBO engine...', 'Tokenizing, analyzing Caribbean elisions, entities & senses...');
+
+    const result = await engine.processPlaylist([songData]);
+    const annotatedSong = result.annotatedSongs?.[0];
+    if (!annotatedSong || !annotatedSong.lines || annotatedSong.lines.length === 0) {
+      throw new Error('TURBO processed 0 lines for this track.');
+    }
+    postProcessAnnotatedSong(annotatedSong);
+
+    songData.id = 'online_' + Date.now();
+    customSongs.unshift(songData);
+    try {
+      sessionStorage.setItem('fluency_turbo_custom_songs', JSON.stringify(customSongs));
+    } catch (_) {}
+
+    allSongs = [...customSongs, ...probeSongs];
+    annotatedCache.set(songCacheKey(songData), annotatedSong);
+
+    hideTurboStatus();
+    if (runTurboBtn) runTurboBtn.disabled = false;
+
+    // Reset input fields
+    if (turboTrackInput) turboTrackInput.value = '';
+    if (turboManualLyrics) turboManualLyrics.value = '';
+    if (turboManualTitle) turboManualTitle.value = '';
+    if (turboManualArtist) turboManualArtist.value = '';
+    if (turboClearInputBtn) turboClearInputBtn.style.display = 'none';
+
+    renderSongPickerItems(allSongs);
+    closeSongPicker();
+    await selectSong(0); // Select the newly generated song
+  } catch (err) {
+    console.error('TURBO online intake error:', err);
+    hideTurboStatus();
+    if (runTurboBtn) runTurboBtn.disabled = false;
+    showTurboError(err.message || 'Failed to process track with TURBO.');
+    // If lyrics missing, open manual details
+    if (turboManualDetails && err.message.includes('paste')) {
+      turboManualDetails.open = true;
+      if (turboManualLyrics) turboManualLyrics.focus();
+    }
+  }
 }
 
 // ───────────────────────────────────────────────
 // Event Listeners
 // ───────────────────────────────────────────────
-songSelectorBtn.addEventListener('click', openSongPicker);
-closeSongPickerBtn.addEventListener('click', closeSongPicker);
-songPickerModal.addEventListener('click', (e) => {
-  if (e.target === songPickerModal) closeSongPicker();
-});
+if (songSelectorBtn) songSelectorBtn.addEventListener('click', () => openSongPicker('offline'));
+if (topbarTurboBtn) topbarTurboBtn.addEventListener('click', () => openSongPicker('online'));
+if (closeSongPickerBtn) closeSongPickerBtn.addEventListener('click', closeSongPicker);
 
-prevSongBtn.addEventListener('click', () => {
-  if (currentSongIndex > 0) selectSong(currentSongIndex - 1);
-});
+if (tabOfflineBtn) tabOfflineBtn.addEventListener('click', () => switchPickerTab('offline'));
+if (tabOnlineBtn) tabOnlineBtn.addEventListener('click', () => switchPickerTab('online'));
 
-nextSongBtn.addEventListener('click', () => {
-  if (currentSongIndex < probeSongs.length - 1) selectSong(currentSongIndex + 1);
-});
-
-toggleEnglishBtn.addEventListener('click', () => {
-  showEnglishUnderneath = !showEnglishUnderneath;
-  toggleEnglishBtn.classList.toggle('active', showEnglishUnderneath);
-  document.querySelectorAll('.lyric-line-english').forEach(el => {
-    el.classList.toggle('is-hidden', !showEnglishUnderneath);
+if (runTurboBtn) runTurboBtn.addEventListener('click', handleRunTurbo);
+if (turboTrackInput) {
+  turboTrackInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') handleRunTurbo();
   });
-});
+  turboTrackInput.addEventListener('input', () => {
+    if (turboClearInputBtn) {
+      turboClearInputBtn.style.display = turboTrackInput.value ? 'block' : 'none';
+    }
+  });
+}
+if (turboClearInputBtn) {
+  turboClearInputBtn.addEventListener('click', () => {
+    if (turboTrackInput) {
+      turboTrackInput.value = '';
+      turboTrackInput.focus();
+    }
+    turboClearInputBtn.style.display = 'none';
+  });
+}
 
-songSearchInput.addEventListener('input', (e) => {
-  const q = e.target.value.toLowerCase().trim();
-  if (!q) {
-    renderSongPickerItems(probeSongs);
-    return;
-  }
-  const filtered = probeSongs.filter(s =>
-    s.title.toLowerCase().includes(q) ||
-    s.artist.toLowerCase().includes(q) ||
-    (s.lyrics || '').toLowerCase().includes(q)
-  );
-  renderSongPickerItems(filtered);
-});
+if (songPickerModal) {
+  songPickerModal.addEventListener('click', (e) => {
+    if (e.target === songPickerModal) closeSongPicker();
+  });
+}
 
-closeTokenModalBtn.addEventListener('click', closeTokenModal);
-tokenQuickViewModal.addEventListener('click', (e) => {
-  if (e.target === tokenQuickViewModal) closeTokenModal();
-});
+if (prevSongBtn) {
+  prevSongBtn.addEventListener('click', () => {
+    if (currentSongIndex > 0) selectSong(currentSongIndex - 1);
+  });
+}
 
-tokenPrevBtn.addEventListener('click', () => {
-  if (currentModalTokenIndex > 0) {
-    openTokenModal(songTokensFlatList[currentModalTokenIndex - 1]);
-  }
-});
+if (nextSongBtn) {
+  nextSongBtn.addEventListener('click', () => {
+    if (currentSongIndex < allSongs.length - 1) selectSong(currentSongIndex + 1);
+  });
+}
 
-tokenNextBtn.addEventListener('click', () => {
-  if (currentModalTokenIndex < songTokensFlatList.length - 1) {
-    openTokenModal(songTokensFlatList[currentModalTokenIndex + 1]);
-  }
-});
+if (toggleEnglishBtn) {
+  toggleEnglishBtn.addEventListener('click', () => {
+    showEnglishUnderneath = !showEnglishUnderneath;
+    toggleEnglishBtn.classList.toggle('active', showEnglishUnderneath);
+    document.querySelectorAll('.lyric-line-english').forEach(el => {
+      el.classList.toggle('is-hidden', !showEnglishUnderneath);
+    });
+  });
+}
+
+if (songSearchInput) {
+  songSearchInput.addEventListener('input', (e) => {
+    const q = e.target.value.trim();
+    if (q.startsWith('http') || q.startsWith('spotify:')) {
+      // User pasted a Spotify URL into search! Switch to online tab automatically!
+      if (turboTrackInput) turboTrackInput.value = q;
+      if (turboClearInputBtn) turboClearInputBtn.style.display = 'block';
+      switchPickerTab('online');
+      return;
+    }
+    const lower = q.toLowerCase();
+    if (!lower) {
+      renderSongPickerItems(allSongs);
+      return;
+    }
+    const filtered = allSongs.filter(s =>
+      (s.title || '').toLowerCase().includes(lower) ||
+      (s.artist || '').toLowerCase().includes(lower) ||
+      (s.lyrics || '').toLowerCase().includes(lower)
+    );
+    renderSongPickerItems(filtered);
+  });
+}
+
+if (closeTokenModalBtn) closeTokenModalBtn.addEventListener('click', closeTokenModal);
+if (tokenQuickViewModal) {
+  tokenQuickViewModal.addEventListener('click', (e) => {
+    if (e.target === tokenQuickViewModal) closeTokenModal();
+  });
+}
+
+if (tokenPrevBtn) {
+  tokenPrevBtn.addEventListener('click', () => {
+    if (currentModalTokenIndex > 0) {
+      openTokenModal(songTokensFlatList[currentModalTokenIndex - 1]);
+    }
+  });
+}
+
+if (tokenNextBtn) {
+  tokenNextBtn.addEventListener('click', () => {
+    if (currentModalTokenIndex < songTokensFlatList.length - 1) {
+      openTokenModal(songTokensFlatList[currentModalTokenIndex + 1]);
+    }
+  });
+}
 
 // Keyboard controls
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     closeTokenModal();
     closeSongPicker();
-  } else if (tokenQuickViewModal.classList.contains('open')) {
+  } else if (tokenQuickViewModal && tokenQuickViewModal.classList.contains('open')) {
     if (e.key === 'ArrowLeft' && currentModalTokenIndex > 0) {
       openTokenModal(songTokensFlatList[currentModalTokenIndex - 1]);
     } else if (e.key === 'ArrowRight' && currentModalTokenIndex < songTokensFlatList.length - 1) {
@@ -578,3 +931,4 @@ window.addEventListener('keydown', (e) => {
 
 // Boot
 init();
+
