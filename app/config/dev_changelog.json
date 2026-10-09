@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T14:11:11+01:00",
+      "date": "2026-10-09 14:11 BST",
+      "agent": "Codex",
+      "summary": "Study sets: larger rank numbers, brighter legend and darker skipped progress",
+      "detail": [
+        "Removed the hash from each frequency range and enlarged the numbers with heavier weight and vertical padding.",
+        "Legend counts use the main text colour for clearer contrast.",
+        "Skipped cards use a darker slate-grey fill in set progress bars and the matching legend swatch."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T13:54:00+01:00",
       "date": "2026-10-09 13:54 BST",
       "agent": "Antigravity",
@@ -351,57 +363,6 @@
         "Compact cards fit the space above the coach and navigation, without their bottom falling outside the visible card area.",
         "Meaning rows scroll when expanded content exceeds available space; very short screens also allow scrolling through the card contents.",
         "Retains the complete 13-step Portuguese tutorial."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T00:44:58+01:00",
-      "date": "2026-10-08 00:44 BST",
-      "agent": "Codex",
-      "summary": "Keep the tutorial card height fixed while meanings expand",
-      "detail": [
-        "Tutorial cards retain their height across flips, opening or closing meaning groups, selecting a meaning, and cycling examples.",
-        "Overflowing meanings scroll inside the card; long examples scroll within their own area.",
-        "Card height responds only to viewport size; Back and Next stay outside the card and visible.",
-        "Preserves meaning-list scroll position when selecting a meaning or another example."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T00:40:44+01:00",
-      "date": "2026-10-08 00:40 BST",
-      "agent": "Codex",
-      "summary": "Restore all card explanations to the main tutorial",
-      "detail": [
-        "The full Portuguese tutorial again includes word rank, part of speech, dictionary form, frequency, meanings, useful extras, commonness, examples, and source explanations.",
-        "Meaning and example practice are part of the full sequence; no explanations require an optional details detour.",
-        "Retains the larger controls, improved contrast, full-size phone tap targets, and scrollable card layout."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T09:30:00+01:00",
-      "date": "2026-10-08 09:30 BST",
-      "agent": "Claude",
-      "summary": "End of a new-word set shows what happened, not an accuracy score",
-      "detail": [
-        "Ring centre '20/25 known'; green known arc over an amber Practice track.",
-        "Boxes read '✓ Known' and '→ Added to Practice' (amber) instead of Correct / Missed.",
-        "Each card counts once, by its last answer (attempt totals double-counted re-shown cards).",
-        "Perfect Set and confetti when every card is known. Practice sessions keep the accuracy ring."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T00:50:00+01:00",
-      "date": "2026-10-08 00:50 BST",
-      "agent": "Claude",
-      "summary": "Progress screens show one percentage each",
-      "detail": [
-        "Deck overview (on load / back to menu): the ring now fills to '% of speech understood' (lyrics: 'of these lyrics understood'); the separate '% cards known' figure is gone.",
-        "Its legend keeps the card counts (Known / Practice / New) as plain numbers, without colour keys.",
-        "Loading a set is unchanged: the ring counts cards known in that set.",
-        "End of set: the '72% accuracy' line under the title is gone; the ring already says it."
       ],
       "commit": "pending"
     }
