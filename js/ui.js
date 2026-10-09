@@ -1,7 +1,7 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=e2a12acf';
-import { readFastTrack } from './fast-track-preferences.js?v=e2a12acf';
+import './state.js?v=2d4515f1';
+import { readFastTrack } from './fast-track-preferences.js?v=2d4515f1';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -535,6 +535,12 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
         const drillHref = window.fluencyRoutes?.conjugationDrillHref?.(drillLanguage, null, config.languages);
         verbsRow.hidden = !drillHref;
         verbsRow.dataset.href = drillHref || '';
+    }
+    const lyricsViewRow = document.getElementById('learningContextLyricsViewBtn');
+    if (lyricsViewRow) {
+        const lyricsActive = Boolean(activeArtist) || modeKey === 'lyrics' || selectedLanguage === 'spanish';
+        lyricsViewRow.hidden = !lyricsActive;
+        lyricsViewRow.dataset.href = 'lyrics-view/';
     }
     // No vocabulary chosen yet means no deck to measure.
     const progressButton = document.getElementById('learningContextProgressBtn');
@@ -2292,8 +2298,11 @@ function setupPercentModeButton() {
 }
 
 function setupEstimationModal() {
-    // Close modal
+    // Close modal on X button or backdrop click
     document.getElementById('closeEstimationModal').addEventListener('click', closeEstimationModal);
+    document.getElementById('estimationModal')?.addEventListener('click', event => {
+        if (event.target === event.currentTarget) closeEstimationModal();
+    });
 
     // Start estimation button
     document.getElementById('startEstimationBtn').addEventListener('click', function() {
@@ -3333,7 +3342,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=e2a12acf')
+        import('./spotify.js?v=2d4515f1')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

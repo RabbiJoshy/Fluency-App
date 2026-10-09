@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T13:35:00+01:00",
+      "date": "2026-10-09 13:35 BST",
+      "agent": "Antigravity",
+      "summary": "Song lyrics view: interactive lyric reader with token quick-view, sense assignments, entities, and ad-libs",
+      "detail": [
+        "Added lyrics-view mode accessible from learning settings and the artist setup card in lyrics mode.",
+        "Browse the 30-song offline playlist with searchable picker and song-by-song navigation.",
+        "Interactive lyric lines with automatic classification and inline badges for entities, idioms/MWEs, interjections/ad-libs, and vocabulary.",
+        "Quick-view modal inspecting surface elisions, primary sense assignments, entity cultural descriptions, and alternate Spanish senses with keyboard navigation."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T11:31:20+01:00",
       "date": "2026-10-09 11:31 BST",
       "agent": "Codex",

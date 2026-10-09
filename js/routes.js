@@ -134,6 +134,12 @@ export function conjugationDrillHref(key, verb, languages) {
     return `conjugation/?${params}`;
 }
 
+export function lyricsViewHref(songIndex = null) {
+    if (songIndex === null || songIndex === undefined) return 'lyrics-view/';
+    const params = new URLSearchParams({ song: String(songIndex) });
+    return `lyrics-view/?${params}`;
+}
+
 // Rewrite the address bar from an old query link to its route, once, before
 // anything else reads the URL. Returns the route now in force.
 export function adoptLegacyUrl(loc = window.location) {
@@ -185,7 +191,7 @@ function installBrowserHooks() {
     const route = adoptLegacyUrl();
     window.fluencyRoute = route;
     window.fluencyRoutes = {
-        parseRoute, formatRoute, legacyRoute, languageKeyFor, routeCodeFor, conjugationDrillHref,
+        parseRoute, formatRoute, legacyRoute, languageKeyFor, routeCodeFor, conjugationDrillHref, lyricsViewHref,
         routeHref, goToRoute, replaceRoute, clearRoute, consumeRouteNavigation
     };
     // Someone edited the fragment of an open tab, or pasted a link into it.
