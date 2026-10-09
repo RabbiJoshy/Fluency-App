@@ -451,6 +451,173 @@ export class TurboEngine {
     }
 
     /**
+     * UNISON WSD Decision Logic for Turbo Engine:
+     * Disambiguates which meaning index in dictEntry.meanings best fits the context line.
+     * Implements UNISON Decision 0030 / es-turbo-v1 rules:
+     * - Rule 1: Progressive auxiliary (estar/andar + gerund) -> progressive / continuous meaning
+     * - Rule 2: Modal obligation (tener que + infinitive) -> obligation ("have to", "must")
+     * - Rule 3: Future auxiliary (ir a + infinitive) -> future ("will", "going to")
+     * - Rule 4: Perfect auxiliary (haber + past participle) -> compound/perfect ("to have", "auxiliary")
+     * - Rule 5: Personal pronouns (yo, tú, él, ella, nosotros, ellos) -> subject nominative
+     * - Rule 6: Clitic / Pronominal reflection (me, te, se, nos, os) -> pronominal meaning
+     */
+    disambiguateWord(word, dictEntry, lineText) {
+        if (!dictEntry || !dictEntry.polysemous || !dictEntry.meanings || dictEntry.meanings.length <= 1) {
+            return 0; // Monosemous: deterministic single meaning
+        }
+
+        const meanings = dictEntry.meanings;
+        const textLower = lineText.toLowerCase();
+        const rawTokens = textLower.match(/[\p{L}\p{N}]+/gu) || [];
+        const cleanWord = word.toLowerCase().trim();
+        const targetIdx = rawTokens.indexOf(cleanWord);
+
+        // --- Rule 1: Progressive auxiliary (estar + gerund) ---
+        const estarForms = new Set([
+            'estoy', 'estas', 'estás', 'esta', 'está', 'estamos', 'estais', 'estáis', 'estan', 'están',
+            'estuve', 'estuviste', 'estuvo', 'estuvimos', 'estuvisteis', 'estuvieron',
+            'estaba', 'estabas', 'estabamos', 'estábamos', 'estabais', 'estaban',
+            'este', 'esté', 'estes', 'estés', 'estemos', 'esteis', 'estéis', 'esten', 'estén',
+            'estuviera', 'estuvieras', 'estuvieramos', 'estuviéramos', 'estuvieran',
+            'estar', 'estando'
+        ]);
+        if (estarForms.has(cleanWord)) {
+            let hasGerund = false;
+            const gerundRegex = /\b\w+(?:ando|iendo|yendo)\b/i;
+            if (targetIdx >= 0 && targetIdx + 1 < rawTokens.length) {
+                const window = rawTokens.slice(targetIdx + 1, targetIdx + 4).join(' ');
+                hasGerund = gerundRegex.test(window);
+            } else {
+                hasGerund = gerundRegex.test(textLower);
+            }
+            if (hasGerund) {
+                const progIdx = meanings.findIndex(m => {
+                    const ctx = (m.context || '').toLowerCase();
+                    const trans = (m.translation || '').toLowerCase();
+                    return (ctx.includes('progressive') || ctx.includes('gerund') || trans.includes('progressive') || trans.includes('to be'))
+                        && !trans.includes('to fit') && !trans.includes('to stand') && !trans.includes('to stay');
+                });
+                if (progIdx >= 0) return progIdx;
+            }
+        }
+
+        // --- Rule 2: Modal obligation (tener que + inf) ---
+        const tenerForms = new Set([
+            'tengo', 'tienes', 'tiene', 'tenemos', 'teneis', 'tenéis', 'tienen',
+            'tuve', 'tuviste', 'tuvo', 'tuvimos', 'tuvisteis', 'tuvieron',
+            'tenia', 'tenía', 'tenias', 'tenías', 'teniamos', 'teníamos', 'tenian', 'tenían',
+            'tenga', 'tengas', 'tengamos', 'tengan', 'tener', 'teniendo'
+        ]);
+        if (tenerForms.has(cleanWord)) {
+            let hasObligation = false;
+            if (targetIdx >= 0 && targetIdx + 1 < rawTokens.length) {
+                const nextWords = rawTokens.slice(targetIdx + 1, targetIdx + 4);
+                if (nextWords[0] === 'que') {
+                    if (nextWords.length > 1 && /(?:ar|er|ir)$/.test(nextWords[1])) {
+                        hasObligation = true;
+                    } else if (nextWords.length > 2 && /(?:ar|er|ir)$/.test(nextWords[2])) {
+                        hasObligation = true;
+                    }
+                }
+            }
+            if (!hasObligation) {
+                hasObligation = /\btener\s+que\s+\w+[aei]r\b/i.test(textLower);
+            }
+            if (hasObligation) {
+                const oblgIdx = meanings.findIndex(m => {
+                    const trans = (m.translation || '').toLowerCase();
+                    const ctx = (m.context || '').toLowerCase();
+                    return trans.includes('have to') || trans.includes('must') || ctx.includes('obligation') || ctx.includes('have to');
+                });
+                if (oblgIdx >= 0) return oblgIdx;
+            }
+        }
+
+        // --- Rule 3: Future auxiliary (ir a + inf) ---
+        const irForms = new Set([
+            'voy', 'vas', 'va', 'vamos', 'vais', 'van',
+            'iba', 'ibas', 'ibamos', 'íbamos', 'ibais', 'iban',
+            'fui', 'fuiste', 'fue', 'fuimos', 'fuisteis', 'fueron',
+            'vaya', 'vayas', 'vayamos', 'vayan', 'ir', 'yendo'
+        ]);
+        if (irForms.has(cleanWord)) {
+            let hasFuture = false;
+            if (targetIdx >= 0 && targetIdx + 1 < rawTokens.length) {
+                const nextWords = rawTokens.slice(targetIdx + 1, targetIdx + 4);
+                if (nextWords[0] === 'a' && nextWords.length > 1 && /(?:ar|er|ir)$/.test(nextWords[1])) {
+                    hasFuture = true;
+                }
+            }
+            if (hasFuture) {
+                const futIdx = meanings.findIndex(m => {
+                    const trans = (m.translation || '').toLowerCase();
+                    const ctx = (m.context || '').toLowerCase();
+                    return trans.includes('going to') || trans.includes('will') || ctx.includes('future') || ctx.includes('going to');
+                });
+                if (futIdx >= 0) return futIdx;
+            }
+        }
+
+        // --- Rule 4: Perfect / compound auxiliary (haber + participle) ---
+        const haberForms = new Set([
+            'he', 'has', 'ha', 'hemos', 'habeis', 'habéis', 'han',
+            'habia', 'había', 'habias', 'habías', 'habiamos', 'habíamos', 'habian', 'habían',
+            'hube', 'hubiste', 'hubo', 'hubimos', 'hubieron',
+            'haya', 'hayas', 'hayamos', 'hayan', 'haber', 'habiendo'
+        ]);
+        const pastParticipleRegex = /\b(?:\w+(?:ado|ido)|sido|visto|hecho|dicho|puesto|escrito|abierto|muerto)\b/i;
+        if (haberForms.has(cleanWord)) {
+            let hasParticiple = false;
+            if (targetIdx >= 0 && targetIdx + 1 < rawTokens.length) {
+                const nextWords = rawTokens.slice(targetIdx + 1, targetIdx + 4);
+                hasParticiple = nextWords.some(w => pastParticipleRegex.test(w));
+            } else {
+                hasParticiple = pastParticipleRegex.test(textLower);
+            }
+            if (hasParticiple) {
+                const perfIdx = meanings.findIndex(m => {
+                    const trans = (m.translation || '').toLowerCase();
+                    const ctx = (m.context || '').toLowerCase();
+                    return (ctx.includes('compound') || ctx.includes('auxiliary') || ctx.includes('perfect') || trans.includes('to have') || trans.includes('have'))
+                        && !trans.includes('there is') && !trans.includes('exist');
+                });
+                if (perfIdx >= 0) return perfIdx;
+            }
+        }
+
+        // --- Rule 5: Personal pronouns / case distinction ---
+        if (cleanWord === 'ella' || cleanWord === 'yo' || cleanWord === 'tú' || cleanWord === 'él' || cleanWord === 'nosotros') {
+            const preps = new Set(['para', 'por', 'de', 'con', 'a', 'en', 'hacia', 'hasta', 'sin', 'sobre']);
+            const isPrepositional = targetIdx > 0 && preps.has(rawTokens[targetIdx - 1]);
+            const pronIdx = meanings.findIndex(m => {
+                const trans = (m.translation || '').toLowerCase();
+                const ctx = (m.context || '').toLowerCase();
+                if (isPrepositional && cleanWord === 'ella') {
+                    return trans === 'her' || ctx.includes('prepositional');
+                }
+                return (trans === 'she' || trans === 'i' || trans === 'you' || trans === 'he' || trans === 'we')
+                    || ctx.includes('subject') || ctx.includes('nominative');
+            });
+            if (pronIdx >= 0) return pronIdx;
+        }
+
+        // --- Rule 6: Pronominal / Reflexive routing ---
+        const clitics = new Set(['me', 'te', 'se', 'nos', 'os']);
+        const hasClitic = rawTokens.some(t => clitics.has(t));
+        if (hasClitic) {
+            const reflexIdx = meanings.findIndex(m => {
+                const ctx = (m.context || '').toLowerCase();
+                const trans = (m.translation || '').toLowerCase();
+                return ctx.includes('reflexive') || ctx.includes('pronominal') || trans.includes('oneself') || trans.includes('myself') || trans.includes('yourself');
+            });
+            if (reflexIdx >= 0) return reflexIdx;
+        }
+
+        // Fallback: Default to primary meaning (highest prior frequency)
+        return 0;
+    }
+
+    /**
      * Master Pipeline: Process a playlist of songs
      */
     async processPlaylist(songs, options = {}) {
@@ -692,30 +859,43 @@ export class TurboEngine {
             entry.lines.sort((a, b) => b.score - a.score);
             const bestLines = entry.lines.slice(0, 2);
 
+            // WSD bucket routing: Assign each best example to its disambiguated meaning bucket
+            const meaningBuckets = dictEntry.meanings.map(m => ({ ...m, examples: [] }));
+            for (const l of bestLines) {
+                const chosenIdx = this.disambiguateWord(word, dictEntry, l.text);
+                const exampleObj = {
+                    target: l.text,
+                    spanish: l.text,
+                    song: l.song,
+                    artist: l.artist,
+                    spotify_track_id: l.spotify_track_id,
+                    timestamp_ms: l.timestamp_ms,
+                    end_timestamp_ms: l.end_timestamp_ms,
+                    isSynced: l.isSynced
+                };
+                if (meaningBuckets[chosenIdx]) {
+                    meaningBuckets[chosenIdx].examples.push(exampleObj);
+                } else if (meaningBuckets[0]) {
+                    meaningBuckets[0].examples.push(exampleObj);
+                }
+            }
+
+            // Ensure primary meaning has examples if secondary received them all
+            const topMeaning = meaningBuckets[0];
+            const topTranslation = (topMeaning?.translation) || dictEntry.top_translation;
+
             finalCards.push({
                 type: 'word',
                 id: dictEntry.id,
                 word,
-                translation: dictEntry.top_translation,
-                pos: dictEntry.top_pos,
+                translation: topTranslation,
+                pos: topMeaning?.pos || dictEntry.top_pos,
                 speechRank: dictEntry.rank,
                 isPolysemous: dictEntry.polysemous,
                 meaningCount: dictEntry.meaningCount,
                 playlistCount: entry.count,
                 songCount: entry.songs.size,
-                meanings: dictEntry.meanings.map((m, idx) => ({
-                    ...m,
-                    examples: idx === 0 ? bestLines.map(l => ({
-                        target: l.text,
-                        spanish: l.text,
-                        song: l.song,
-                        artist: l.artist,
-                        spotify_track_id: l.spotify_track_id,
-                        timestamp_ms: l.timestamp_ms,
-                        end_timestamp_ms: l.end_timestamp_ms,
-                        isSynced: l.isSynced
-                    })) : []
-                })),
+                meanings: meaningBuckets,
                 examples: bestLines
             });
         }

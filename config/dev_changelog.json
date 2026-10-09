@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T15:40:00+01:00",
+      "date": "2026-10-09 15:40 BST",
+      "agent": "Antigravity",
+      "summary": "TURBO-2: Web Worker WSD pipeline and live Spotify playlist study deck generation",
+      "detail": [
+        "Integrated unified UNISON WSD decision logic directly into client turbo-engine: progressive auxiliary, modal obligation, future auxiliary, perfect auxiliary, and reflexive clitic routing.",
+        "Created dedicated background Web Worker (app/js/turbo-worker.js) for non-blocking intake, normalization, and semantic sense assignment.",
+        "Updated live playlist import to stream background progress and assign playable Spotify clip timestamps to matched card senses."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T14:40:54+01:00",
       "date": "2026-10-09 14:40 BST",
       "agent": "Codex",
