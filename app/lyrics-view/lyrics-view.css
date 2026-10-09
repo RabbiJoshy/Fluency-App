@@ -336,23 +336,45 @@ main {
 
 /* Clean, non-distracting entity / idiom / interjection cues */
 .lyric-token.token-entity {
-  color: #f9a8d4;
-  border-bottom: 2px solid var(--accent-pink);
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.4);
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1.5px;
 }
 
 .lyric-token.token-entity:hover {
-  background: rgba(244, 114, 182, 0.18);
-  box-shadow: 0 0 10px rgba(244, 114, 182, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  text-decoration-color: #ffffff;
+}
+
+.entity-wiki-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 3px;
+  vertical-align: middle;
+  opacity: 0.75;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.lyric-token.token-entity:hover .entity-wiki-icon {
+  opacity: 1;
+  color: var(--text-primary);
 }
 
 .lyric-token.token-mwe {
-  color: #d8b4fe;
-  border-bottom: 2px solid var(--accent-phrases);
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.5);
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1.5px;
 }
 
 .lyric-token.token-mwe:hover {
-  background: rgba(167, 139, 250, 0.18);
-  box-shadow: 0 0 10px rgba(167, 139, 250, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  text-decoration-color: #ffffff;
 }
 
 .lyric-token.token-interjection {
@@ -366,11 +388,16 @@ main {
 }
 
 .lyric-token.token-elision {
-  color: #7dd3fc;
+  color: inherit;
 }
 
 .lyric-token.token-elision:hover {
-  background: rgba(125, 211, 252, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.apostrophe-tint {
+  color: #38bdf8;
+  font-weight: 700;
 }
 
 /* Dimmed when filter active */
@@ -560,15 +587,15 @@ main {
 }
 
 .pill-entity-style {
-  background: rgba(244, 114, 182, 0.15);
-  color: #f9a8d4;
-  border: 1px solid rgba(244, 114, 182, 0.35);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  border: 1px solid var(--border-light);
 }
 
 .pill-mwe-style {
-  background: rgba(167, 139, 250, 0.15);
-  color: #d8b4fe;
-  border: 1px solid rgba(167, 139, 250, 0.35);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  border: 1px solid var(--border-light);
 }
 
 .pill-intj-style {
@@ -599,11 +626,11 @@ main {
 }
 
 .meaning-card.is-entity {
-  border-left-color: var(--accent-pink);
+  border-left-color: var(--border-light);
 }
 
 .meaning-card.is-mwe {
-  border-left-color: var(--accent-phrases);
+  border-left-color: var(--text-muted);
 }
 
 .meaning-card.is-interjection {
@@ -633,14 +660,14 @@ main {
 
 /* Entity Details Box */
 .entity-details-card {
-  background: rgba(244, 114, 182, 0.08);
-  border: 1px solid rgba(244, 114, 182, 0.25);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 12px 14px;
 }
 
 .entity-details-card h4 {
-  color: #f9a8d4;
+  color: var(--text-primary);
   font-size: 13px;
   margin-bottom: 3px;
   font-weight: 700;

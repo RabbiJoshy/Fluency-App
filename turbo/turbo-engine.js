@@ -17,21 +17,94 @@
  */
 
 export class TurboEngine {
-    constructor(assets = {}) {
+    constructor(assets = {}, extra50k = {}) {
         this.elisions = assets.elisions || {};
         this.mwes = assets.mwes || {};
         this.curatedEntities = assets.curatedEntities || {};
         this.dictionary = assets.dictionary || {};
+        this.ranks50k = extra50k.ranks || {};
+        this.lemmas50k = extra50k.lemmas || {};
         this.entityCache = new Map(); // query -> entity object or null
     }
 
-    static async create(assetsUrl = './turbo_assets.json') {
+    static async create(assetsUrl = './turbo_assets.json', extra50kUrl = './es_50k_data.json') {
         const resp = await fetch(assetsUrl);
         if (!resp.ok) {
             throw new Error(`Failed to load Turbo assets from ${assetsUrl}: HTTP ${resp.status}`);
         }
         const data = await resp.json();
-        return new TurboEngine(data);
+
+        let extra50kData = {};
+        try {
+            const r50 = await fetch(extra50kUrl);
+            if (r50.ok) {
+                extra50kData = await r50.json();
+            }
+        } catch (e) {
+            console.warn('Failed to load 50k wordlist data, falling back to 10k dictionary only:', e);
+        }
+
+        return new TurboEngine(data, extra50kData);
+    }
+
+    /**
+     * Resolves a word or conjugated form to its dictionary entry and authentic frequency rank.
+     */
+    resolveWordInfo(rawWord) {
+        if (!rawWord) return null;
+        const norm = rawWord.toLowerCase();
+
+        // 1. Exact match in curated 10k dictionary
+        if (this.dictionary[norm]) {
+            const entry = this.dictionary[norm];
+            const rank = this.ranks50k[norm] || entry.rank || null;
+            return {
+                word: norm,
+                dictEntry: entry,
+                translation: entry.top_translation,
+                pos: entry.top_pos,
+                rank,
+                speechRank: entry.rank,
+                isPolysemous: entry.polysemous,
+                meaningCount: entry.meaningCount,
+                meanings: entry.meanings
+            };
+        }
+
+        // 2. Inflected form whose lemma exists in dictionary
+        const lemma = this.lemmas50k[norm];
+        if (lemma && this.dictionary[lemma]) {
+            const entry = this.dictionary[lemma];
+            const rank = this.ranks50k[norm] || entry.rank || null;
+            return {
+                word: lemma,
+                originalWord: norm,
+                dictEntry: entry,
+                translation: entry.top_translation,
+                pos: entry.top_pos,
+                rank,
+                speechRank: entry.rank,
+                isPolysemous: entry.polysemous,
+                meaningCount: entry.meaningCount,
+                meanings: entry.meanings
+            };
+        }
+
+        // 3. Fallback: Check if word exists in 50k frequency list without dictionary meaning
+        const freqRank = this.ranks50k[norm] || null;
+        if (freqRank) {
+            return {
+                word: norm,
+                dictEntry: null,
+                translation: null,
+                pos: null,
+                rank: freqRank,
+                speechRank: freqRank,
+                isPolysemous: false
+            };
+        }
+
+        return null;
     }
 
     /**
@@ -853,8 +926,16 @@ export class TurboEngine {
 
         // 5c. Standard Word Cards
         for (const [word, entry] of wordCandidates.entries()) {
-            const dictEntry = this.dictionary[word];
-            if (!dictEntry) continue; // Out of 10k speech dictionary
+            let dictEntry = this.dictionary[word];
+            let effectiveWord = word;
+            if (!dictEntry) {
+                const lemma = this.lemmas50k[word];
+                if (lemma && this.dictionary[lemma]) {
+                    dictEntry = this.dictionary[lemma];
+                    effectiveWord = lemma;
+                }
+            }
+            if (!dictEntry) continue; // Out of 50k / unknown dictionary
 
             entry.lines.sort((a, b) => b.score - a.score);
             const bestLines = entry.lines.slice(0, 2);
@@ -1005,14 +1086,43 @@ export class TurboEngine {
                             isPolysemous: wordCard.isPolysemous
                         });
                     } else {
-                        tokenBreakdowns.push({
-                            startIndex: i,
-                            raw: token.raw,
-                            type: 'unmatched',
-                            isElision: token.isElision,
-                            word: norm,
-                            translation: 'out of 10k supply / noise'
-                        });
+                        const resolved = this.resolveWordInfo(norm);
+                        if (resolved && resolved.dictEntry) {
+                            tokenBreakdowns.push({
+                                startIndex: i,
+                                raw: token.raw,
+                                type: 'word',
+                                isElision: token.isElision,
+                                card: { ...resolved.dictEntry, word: resolved.word, translation: resolved.translation },
+                                word: resolved.word,
+                                translation: resolved.translation,
+                                pos: resolved.pos,
+                                rank: resolved.rank,
+                                speechRank: resolved.speechRank,
+                                isPolysemous: resolved.isPolysemous
+                            });
+                        } else if (resolved && resolved.rank) {
+                            tokenBreakdowns.push({
+                                startIndex: i,
+                                raw: token.raw,
+                                type: 'word',
+                                isElision: token.isElision,
+                                word: norm,
+                                translation: `Top ${Math.ceil(resolved.rank / 1000) * 1000} Spanish word`,
+                                rank: resolved.rank,
+                                speechRank: resolved.rank,
+                                isPolysemous: false
+                            });
+                        } else {
+                            tokenBreakdowns.push({
+                                startIndex: i,
+                                raw: token.raw,
+                                type: 'unmatched',
+                                isElision: token.isElision,
+                                word: norm,
+                                translation: 'Uncatalogued lyric'
+                            });
+                        }
                     }
                 }
 
