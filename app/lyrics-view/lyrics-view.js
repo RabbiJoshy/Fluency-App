@@ -1,4 +1,4 @@
-import { TurboEngine } from '../turbo/turbo-engine.js?v=6635377f';
+import { TurboEngine } from '../turbo/turbo-engine.js?v=06e3d555';
 
 // Common Spanish & Latin urban ad-libs, interjections, and exclamations
 const INTERJECTIONS_SET = new Set([
@@ -274,42 +274,14 @@ function postProcessAnnotatedSong(song) {
 }
 
 /**
- * Generates a clean, natural English gloss line for a lyric row
+ * Returns genuine, hand-translated English line if available; otherwise null.
+ * Never constructs synthetic word-by-word gloss strings.
  */
 function buildLineEnglishGloss(line) {
-  const parts = [];
-  for (const t of line.tokens) {
-    if (t.type === 'unmatched') {
-      parts.push(t.raw);
-      continue;
-    }
-    if (t.type === 'entity') {
-      parts.push(t.word || t.raw);
-      continue;
-    }
-    let tr = t.translation || t.word || '';
-    if (t.type === 'mwe') {
-      tr = tr.split(';')[0].split(',')[0].trim();
-      tr = tr.replace(/^Used for explanations:\s*/i, '');
-      parts.push(tr);
-      continue;
-    }
-    // Clean dictionary clutter
-    tr = tr.replace(/\(inflection of[^)]*\)/gi, '').trim();
-    tr = tr.replace(/\([^)]*\)/g, '').trim();
-    if (tr.includes(';')) tr = tr.split(';')[0].trim();
-    if (tr.includes(',')) tr = tr.split(',')[0].trim();
-    // Drop leading infinitive "to " unless it's a stand-alone dictionary cue
-    tr = tr.replace(/^to\s+/i, '').trim();
-    if (tr) parts.push(tr);
+  if (line.english && typeof line.english === 'string' && line.english.trim().length > 0) {
+    return line.english.trim();
   }
-
-  let text = parts.join(' ').trim();
-  if (text.length > 0) {
-    // Capitalize first letter
-    text = text.charAt(0).toUpperCase() + text.slice(1);
-  }
-  return text;
+  return null;
 }
 
 // ───────────────────────────────────────────────
@@ -319,6 +291,11 @@ function renderLyrics(song) {
   lyricsFlow.innerHTML = '';
   songTokensFlatList = [];
 
+  const hasAnyEnglish = song.lines.some(l => l.english && typeof l.english === 'string' && l.english.trim());
+  if (toggleEnglishBtn) {
+    toggleEnglishBtn.style.display = hasAnyEnglish ? 'inline-flex' : 'none';
+  }
+
   song.lines.forEach((line, lineIdx) => {
     const lineItem = document.createElement('div');
     lineItem.className = 'lyric-line-item';
@@ -327,6 +304,16 @@ function renderLyrics(song) {
     // 1. Target Spanish Line (Large, bold)
     const targetLine = document.createElement('div');
     targetLine.className = 'lyric-line-target';
+
+    if (line.isSynced && line.timestamp_ms != null) {
+      const totalSec = Math.floor(line.timestamp_ms / 1000);
+      const m = Math.floor(totalSec / 60);
+      const s = totalSec % 60;
+      const timeSpan = document.createElement('span');
+      timeSpan.className = 'lyric-line-timestamp';
+      timeSpan.textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
+      targetLine.appendChild(timeSpan);
+    }
 
     // Auto entities / idioms / ad-libs found in this line
     const lineAutoBadges = [];
@@ -393,21 +380,11 @@ function renderLyrics(song) {
 
     lineItem.appendChild(targetLine);
 
-    // 2. English Line Underneath (Spotify Subtitle Style)
+    // 2. English Line Underneath (Only if genuine hand-translated line exists)
     const englishGloss = buildLineEnglishGloss(line);
     if (englishGloss) {
       const englishLine = document.createElement('div');
       englishLine.className = `lyric-line-english ${showEnglishUnderneath ? '' : 'is-hidden'}`;
-
-      if (line.isSynced && line.timestamp_ms != null) {
-        const totalSec = Math.floor(line.timestamp_ms / 1000);
-        const m = Math.floor(totalSec / 60);
-        const s = totalSec % 60;
-        const timeSpan = document.createElement('span');
-        timeSpan.className = 'lyric-line-timestamp';
-        timeSpan.textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
-        englishLine.appendChild(timeSpan);
-      }
 
       const textSpan = document.createElement('span');
       textSpan.textContent = englishGloss;
