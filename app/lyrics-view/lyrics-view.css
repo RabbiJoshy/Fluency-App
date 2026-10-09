@@ -308,24 +308,44 @@ main {
   width: 0;
 }
 
-/* AI Action Buttons Gutter (Claude & ChatGPT) */
+/* ───────────────────────── LEFT GUTTER (TIMESTAMP & AI ACTIONS) ───────────────────────── */
+.lyric-line-gutter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  width: 44px;
+  min-width: 44px;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.lyric-line-timestamp {
+  font-family: var(--font-data);
+  font-size: 11px;
+  color: var(--accent-green);
+  opacity: 0.8;
+  padding-top: 6px; /* Aligned with large Spanish lyric text baseline */
+  text-align: right;
+  line-height: 1;
+}
+
 .lyric-line-ai-actions {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 4px;
-  padding-top: 6px;
-  flex-shrink: 0;
-  opacity: 0.28;
+  opacity: 0.32;
   transition: opacity 0.15s ease, transform 0.15s ease;
 }
 
 .lyric-line-item:hover .lyric-line-ai-actions {
-  opacity: 0.95;
+  opacity: 1;
 }
 
+/* AI Action Icon Buttons */
 .lyric-ai-btn {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   border-radius: var(--radius-sm);
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
@@ -351,22 +371,128 @@ main {
 
 /* Claude Brand Tint on Hover */
 .lyric-ai-btn-claude:hover {
-  color: #d97706; /* Warm Anthropic terracotta / amber */
-  border-color: rgba(217, 119, 6, 0.4);
-  background: rgba(217, 119, 6, 0.1);
+  color: #d97706; /* Warm Anthropic terracotta */
+  border-color: rgba(217, 119, 6, 0.45);
+  background: rgba(217, 119, 6, 0.12);
 }
 
 /* ChatGPT Brand Tint on Hover */
 .lyric-ai-btn-gpt:hover {
   color: #10a37f; /* OpenAI signature emerald */
-  border-color: rgba(16, 163, 127, 0.4);
-  background: rgba(16, 163, 127, 0.1);
+  border-color: rgba(16, 163, 127, 0.45);
+  background: rgba(16, 163, 127, 0.12);
 }
 
 .lyric-ai-btn.copied {
   color: #00d4aa !important;
   border-color: #00d4aa !important;
   background: rgba(0, 212, 170, 0.15) !important;
+}
+
+/* Compact Popover Trigger (When no translation line is present) */
+.lyric-ai-popover-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.lyric-ai-trigger-btn {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.lyric-ai-popover-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 5px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.65);
+  display: flex;
+  gap: 4px;
+  z-index: 100;
+  animation: popoverFadeIn 0.15s ease-out;
+}
+
+@keyframes popoverFadeIn {
+  from { opacity: 0; transform: translateY(-4px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* External Leave Confirmation Modal */
+.ai-leave-dialog {
+  max-width: 440px;
+}
+
+.ai-leave-target-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+}
+
+.ai-leave-target-icon.is-claude {
+  color: #d97706;
+  border-color: rgba(217, 119, 6, 0.4);
+  background: rgba(217, 119, 6, 0.12);
+}
+
+.ai-leave-target-icon.is-chatgpt {
+  color: #10a37f;
+  border-color: rgba(16, 163, 127, 0.4);
+  background: rgba(16, 163, 127, 0.12);
+}
+
+.ai-leave-quote-box {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.ai-leave-quote-label {
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.ai-leave-quote-text {
+  font-size: 12px;
+  color: var(--text-primary);
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.ai-leave-continue-btn {
+  background: var(--accent-blue);
+  color: #ffffff;
+  border: none;
+  font-family: var(--font-reading);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 16px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ai-leave-continue-btn:hover {
+  background: #3b82f6;
+  transform: translateY(-1px);
 }
 
 /* Subtle Toast Notification */
@@ -619,9 +745,10 @@ main {
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   width: 100%;
-  max-width: 480px;
+  max-width: 540px;
   max-height: 85vh;
   overflow-y: auto;
+  overflow-x: hidden; /* Prevent horizontal scroll */
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.65);
   transform: translateY(12px) scale(0.98);
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -986,6 +1113,201 @@ main {
 }
 
 /* ───────────────────────── SONG PICKER SHEET (FLUENCY STYLE) ───────────────────────── */
+/* ───────────────────────── SPOTIFY BANNER & IMPORT TRAY ───────────────────────── */
+.spotify-import-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: linear-gradient(135deg, rgba(29, 185, 84, 0.12) 0%, rgba(18, 24, 32, 0.8) 100%);
+  border-bottom: 1px solid rgba(29, 185, 84, 0.25);
+  padding: 12px 18px;
+}
+
+.spotify-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.spotify-banner-icon {
+  color: #1ed760;
+  flex-shrink: 0;
+}
+
+.spotify-banner-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.spotify-banner-title {
+  font-family: var(--font-emphasis);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.spotify-banner-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spotify-banner-action-btn {
+  background: #1ed760;
+  color: #000000;
+  border: none;
+  font-family: var(--font-emphasis);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.spotify-banner-action-btn:hover {
+  background: #1fdf64;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+}
+
+.spotify-input-tray {
+  padding: 14px 18px;
+  background: rgba(18, 24, 32, 0.95);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.spotify-input-tray-inner {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.spotify-input-tray-inner .turbo-input-wrap {
+  flex: 1;
+}
+
+.spotify-input-tray-inner .turbo-submit-btn {
+  padding: 10px 16px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* ───────────────────────── RECENT SONG SHELF ───────────────────────── */
+.recent-song-shelf {
+  padding: 12px 18px 6px;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.recent-shelf-header {
+  font-family: var(--font-reading);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.recent-song-card {
+  background: var(--bg-secondary);
+  border: 1px solid rgba(74, 158, 255, 0.35);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.recent-song-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-blue);
+  transform: translateY(-1px);
+}
+
+.recent-card-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.recent-badge-pill {
+  font-family: var(--font-data);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+  background: rgba(74, 158, 255, 0.15);
+  color: var(--accent-blue);
+  border: 1px solid rgba(74, 158, 255, 0.3);
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.recent-card-title {
+  font-family: var(--font-emphasis);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recent-card-artist {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.recent-resume-btn {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent-blue);
+  background: rgba(74, 158, 255, 0.1);
+  border: 1px solid rgba(74, 158, 255, 0.25);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ───────────────────────── CATALOG SECTION HEADER ───────────────────────── */
+.catalog-section-header {
+  padding: 12px 18px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-reading);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-dim);
+}
+
+.catalog-count {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+/* ───────────────────────── SONG PICKER SHEET (FLUENCY STYLE) ───────────────────────── */
 .song-picker-search-wrap {
   padding: 12px 18px;
   background: var(--bg-secondary);
@@ -1340,32 +1662,14 @@ main {
   transform: none;
 }
 
-.song-picker-search {
-  padding: 14px 18px 10px;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.song-search-input {
-  width: 100%;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 9px 12px;
-  color: var(--text-primary);
-  font-family: var(--font-reading);
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.15s ease;
-}
-
-.song-search-input:focus {
-  border-color: var(--accent-blue);
-}
-
 .song-picker-list {
-  max-height: 420px;
+  max-height: 440px;
   overflow-y: auto;
-  padding: 6px;
+  overflow-x: hidden;
+  padding: 6px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
 .song-picker-item {
