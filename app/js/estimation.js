@@ -1,4 +1,4 @@
-import './state.js?v=db59b470';
+import './state.js?v=61d6a2da';
 
 const ESTIMATION_QUESTION_LIMIT = 30;
 const ESTIMATION_BAND_TARGET = 10;
@@ -25,6 +25,9 @@ function createEstimationState() {
         active: false,
         vocabularyData: null,
         placementWords: [],
+        placementBaseline: [],
+        placementLevels: [],
+        placementChoices: [],
         langConfig: null,
         groupEstimate: null,
         validWords: [],
@@ -74,9 +77,14 @@ function closeEstimationModal() {
 
 // Keep the historical exclusions, but resolve the same merge/split decisions
 // as the study deck before constructing the sampling distribution.
+function estimationAssumesKnown(item) {
+    if (typeof window.isCognateKnown === 'function') return window.isCognateKnown(item);
+    return (item.cognate_score ?? (item.is_transparent_cognate ? 1 : 0)) >= 0.83;
+}
+
 function estimationSurfaceEligible(item) {
     return item.word && item.word.trim() !== '' && !item.duplicate
-        && hasTranslatedMeaning(item) && (item.cognate_score ?? 0) < 0.83
+        && hasTranslatedMeaning(item)
         && !item.is_noise && !item.is_interjection && !item.is_propernoun
         && !item.is_english && !isFunctionWord(item)
         && ESTIMATION_CONTENT_POS.has(mainSensePos(item))
@@ -120,7 +128,7 @@ function estimationSurfaceFrequency(item, frequencyData) {
 
 // This pool is independent of the user's Merge Forms toggle. The toggle
 // changes study presentation, not what a vocabulary estimate measures.
-function buildEstimationPool(vocabulary, frequencyData = null) {
+function buildEstimationPool(vocabulary, frequencyData = null, { includeAssumed = false } = {}) {
     const eligible = vocabulary.filter(estimationSurfaceEligible);
     const groups = new Map();
     const items = [];
@@ -187,9 +195,29 @@ function buildEstimationPool(vocabulary, frequencyData = null) {
                 estimationRepresentativeFrequency: frequency });
         }
     }
-    items.sort((a, b) => b.estimationFrequency - a.estimationFrequency
+    for (const item of items) {
+        item.estimationMembers.forEach(member => { member.assumedKnown = estimationAssumesKnown(member.source); });
+        if (item.splitInfo) {
+            item.estimationAssumedKnown = estimationAssumesKnown(item);
+        } else {
+            item.estimationAssumedKnown = item.estimationMembers.every(({ source }) => estimationAssumesKnown(source));
+            // A mixed group is asked through its most frequent non-cognate
+            // member. A transparent prompt must not stand in for harder forms.
+            if (!item.estimationAssumedKnown) {
+                const prompts = item.estimationMembers.map(member => member.source)
+                    .filter(source => !estimationAssumesKnown(source))
+                    .sort((a, b) => estimationSurfaceFrequency(b, frequencyData) - estimationSurfaceFrequency(a, frequencyData)
+                        || Number(a.rank) - Number(b.rank));
+                const source = prompts[0];
+                if (source) Object.assign(item, { word: source.word, id: source.id, meanings: source.meanings,
+                    lemma: source.lemma, rank: source.rank, stableRank: source.stableRank });
+            }
+        }
+    }
+    const included = includeAssumed ? items : items.filter(item => !item.estimationAssumedKnown);
+    included.sort((a, b) => b.estimationFrequency - a.estimationFrequency
         || Number(a.rank) - Number(b.rank) || a.estimationKey.localeCompare(b.estimationKey));
-    return items;
+    return included;
 }
 
 function finalizeEstimationPool(items) {
@@ -231,7 +259,7 @@ function mainSensePos(word) {
 
 // A candidate is ready once its meanings are loaded and it still qualifies.
 function isShowableWord(word) {
-    return word && (!word.splitInfo || Boolean(word.estimationExample)) && word._indexRowsPending !== true
+    return word && !word.estimationAssumedKnown && (!word.splitInfo || Boolean(word.estimationExample)) && word._indexRowsPending !== true
         && hasTranslatedMeaning(word) && !isFunctionWord(word)
         && ESTIMATION_CONTENT_POS.has(mainSensePos(word));
 }
@@ -294,6 +322,8 @@ function buildEstimationBands(words) {
             start,
             end,
             size: end - start,
+            sampleSize: words.slice(start, end).filter(item => !item.estimationAssumedKnown).length,
+            assumedCount: words.slice(start, end).filter(item => item.estimationAssumedKnown).length,
             answers: 0,
             known: 0
         };
@@ -356,7 +386,7 @@ function chooseNextBandIndex() {
 
     // First cover the whole frequency distribution in a centre-out order. A
     // learner is never estimated from a narrow run of unusually easy/hard words.
-    const untested = estimationState.coverageOrder.find(index => bands[index].answers === 0);
+    const untested = estimationState.coverageOrder.find(index => bands[index].answers === 0 && bands[index].sampleSize !== 0);
     if (untested !== undefined) return untested;
 
     const fitted = getPosteriorBandProbabilities(bands);
@@ -381,6 +411,7 @@ function chooseNextBandIndex() {
     let bestIndex = 0;
     let bestScore = -Infinity;
     bands.forEach((band, index) => {
+        if (band.sampleSize === 0) return;
         const alpha = band.known + ESTIMATION_PRIOR;
         const beta = (band.answers - band.known) + ESTIMATION_PRIOR;
         const total = alpha + beta;
@@ -418,7 +449,7 @@ function pickWordFromBand(bandIndex) {
     }
 
     const words = estimationState.validWords.slice(band.start, band.end);
-    const unused = words.filter(word => !estimationState.shownWordIds.has(getWordKey(word)));
+    const unused = words.filter(word => !word.estimationAssumedKnown && !estimationState.shownWordIds.has(getWordKey(word)));
     if (!unused.length) return null;
 
     return unused[Math.floor(Math.random() * unused.length)];
@@ -527,8 +558,16 @@ async function startEstimation() {
         if (state.langConfig.frequencyPath && !frequency) {
             throw new Error('Speech source frequencies are unavailable or do not match this release');
         }
-        state.vocabularyData = vocabulary;
-        const pool = buildEstimationPool(vocabulary, frequency);
+        // The cached detached release is reused on retry; keep per-check
+        // scoring and rank preparation on fresh rows.
+        const rows = vocabulary.map(item => ({ ...item }));
+        await window.prepareEstimationCognates?.(rows, state.langConfig);
+        if (!current()) return;
+        state.vocabularyData = rows;
+        state.placementBaseline = window.assignStableVocabularyRanks
+            ? window.assignStableVocabularyRanks(rows, new Set(), { detached: true }) : rows;
+        state.placementLevels = getEstimationPlacementLevels(state.placementBaseline);
+        const pool = buildEstimationPool(rows, frequency, { includeAssumed: true });
         const ranks = [...new Set(pool.filter(item => item.splitInfo && !item.estimationExample)
             .map(item => Number(item.rank)))];
         if (ranks.length) {
@@ -788,60 +827,136 @@ function updateEstimationProgress() {
     }
 }
 
-// Show the estimation result
+// Speech placement uses the same level boundaries as the picker. Artist and
+// playlist checks use detached Speech boundaries, never the active corpus.
+function getEstimationPlacementLevels(baseline) {
+    if (isSpeechMode()) {
+        const buttons = Array.from(document.querySelectorAll(
+            '.level-selector-buttons .level-btn, #levelSelector > .level-btn'));
+        const levels = buttons.map((button, index) => ({
+            number: index + 1, startRank: Number(button.dataset.startRank),
+            endRank: Number(button.dataset.endRank), rankBasis: button.dataset.rankBasis || 'source'
+        })).filter(level => level.startRank > 0 && level.endRank > level.startRank
+            && baseline.some(source => {
+                const rank = level.rankBasis === 'stable' ? levelRankOf(source) : Number(source.rank);
+                return rank >= level.startRank && rank < level.endRank;
+            }));
+        if (levels.length) return levels;
+    }
+    return (window.computeSmartLevelRanges?.(baseline) || []).map((level, index) =>
+        ({ ...level, number: index + 1 }));
+}
+
+function interpolateRecognition(anchors, position) {
+    if (!anchors.length) return 0;
+    if (position <= anchors[0].position) return anchors[0].probability;
+    for (let index = 1; index < anchors.length; index++) {
+        const right = anchors[index];
+        if (position <= right.position) {
+            const left = anchors[index - 1];
+            const fraction = (position - left.position) / (right.position - left.position);
+            return left.probability + fraction * (right.probability - left.probability);
+        }
+    }
+    return anchors[anchors.length - 1].probability;
+}
+
+// Every eligible group counts once within a level, regardless of how many
+// inflections it has. Split siblings remain distinct groups. The recognition
+// curve is interpolated between sampled bands so a sparse sample cannot turn
+// a single answer into a sharp placement cliff.
+function calculateRecognitionPlacement(items, bands, levels, baseline) {
+    const sampled = bands.filter(band => (band.sampleSize ?? band.size) > 0);
+    const fitted = fitMonotonicProbabilities(sampled.map(band =>
+        band.answers ? band.known / band.answers : 0.5), sampled.map(band => Math.max(1, band.answers)));
+    const anchors = sampled.map((band, index) => ({
+        position: (band.start + band.end - 1) / 2, probability: fitted[index]
+    }));
+    const perLevel = levels.map(() => new Map());
+    items.forEach((item, index) => {
+        const probability = item.estimationAssumedKnown ? 1 : interpolateRecognition(anchors, index);
+        item.estimationMembers.forEach(member => {
+            const levelIndex = levels.findIndex(level => {
+                const rank = level.rankBasis === 'stable' ? levelRankOf(member.source) : Number(member.source.rank);
+                return rank >= level.startRank && rank < level.endRank;
+            });
+            if (levelIndex < 0) return;
+            const map = perLevel[levelIndex];
+            const group = map.get(getWordKey(item)) || { total: 0, weight: 0 };
+            // For an unsplit mixed group only the qualifying surfaces receive
+            // assumed recognition. A split is scored from its own meanings.
+            const known = item.estimationAssumedKnown || (!item.splitInfo && member.assumedKnown);
+            group.total += member.weight * (known ? 1 : probability);
+            group.weight += member.weight;
+            map.set(getWordKey(item), group);
+        });
+    });
+    const occupied = perLevel.map((groups, index) => ({ index, groups })).filter(row => row.groups.size);
+    const probabilities = fitMonotonicProbabilities(occupied.map(({ groups }) =>
+        [...groups.values()].reduce((sum, group) => sum + group.total / group.weight, 0) / groups.size),
+        occupied.map(({ groups }) => groups.size));
+    const levelAnchors = occupied.map((row, index) => ({ position: row.index, probability: probabilities[index] }));
+    const profile = levels.map((level, index) => ({ ...level,
+        probability: interpolateRecognition(levelAnchors, index), groups: perLevel[index].size }));
+    const choices = [0.9, 0.8].map(target => {
+        const index = profile.findIndex(level => level.probability + 1e-10 < target);
+        const level = profile[index < 0 ? profile.length - 1 : index];
+        if (!level) return null;
+        const earlier = baseline.filter(source =>
+            (level.rankBasis === 'stable' ? levelRankOf(source) : Number(source.rank)) < level.startRank);
+        const sourceRank = earlier.reduce((rank, source) => Math.max(rank, Number(source.rank) || 0), 0);
+        return { target, levelNumber: level.number, sourceRank,
+            startRank: level.startRank, rankBasis: level.rankBasis, probability: level.probability };
+    }).filter(Boolean);
+    return { profile, choices: choices.filter((choice, index) =>
+        !index || choice.sourceRank !== choices[0].sourceRank || choice.startRank !== choices[0].startRank) };
+}
+
+function calculateGroupEstimate(bands, maxLevel) {
+    const assumed = bands.reduce((sum, band) => sum + (band.assumedCount || 0), 0);
+    const sampled = bands.filter(band => (band.sampleSize ?? band.size) > 0)
+        .map(band => ({ ...band, size: band.sampleSize ?? band.size }));
+    const counts = calculateEstimationResult(sampled, maxLevel - assumed);
+    return Object.fromEntries(Object.entries(counts).map(([key, value]) => [key, value + assumed]));
+}
+
 function showEstimationResult() {
     estimationState.active = false;
     estimationState.sequence = ++estimationSequence;
-    const counts = calculateEstimationResult(
-        estimationState.bands,
-        estimationState.maxLevel
-    );
-    const placementBands = estimationState.bands.map(band => ({ ...band,
-        size: estimationState.validWords.slice(band.start, band.end).reduce((sum, item) =>
-            sum + item.estimationMembers.reduce((total, member) => total + member.weight, 0), 0)
-    }));
-    const surfaceCounts = calculateEstimationResult(placementBands, estimationState.placementWords.length);
+    const counts = calculateGroupEstimate(estimationState.bands, estimationState.maxLevel);
     estimationState.groupEstimate = counts;
-    // The fit counts known candidates; the saved estimate is a Speech source
-    // rank and the level a stable rank, both covering the cognates and
-    // function words left out here.
-    const candidates = estimationState.placementWords;
-    const levelRankFor = count => levelRankOf(candidateForCount(candidates, count));
-    const result = {
-        point: deckRankForCount(candidates, surfaceCounts.point),
-        low: deckRankForCount(candidates, surfaceCounts.low),
-        high: deckRankForCount(candidates, surfaceCounts.high)
-    };
-    estimationState.estimatedLevel = result.point;
-    estimationState.estimatedLevelRank = levelRankFor(surfaceCounts.point);
-    estimationState.estimateInterval = result;
-
+    const baseline = estimationState.placementBaseline.length
+        ? estimationState.placementBaseline : estimationState.placementWords;
+    const levels = estimationState.placementLevels.length
+        ? estimationState.placementLevels : getEstimationPlacementLevels(baseline);
+    const placement = calculateRecognitionPlacement(estimationState.validWords, estimationState.bands, levels, baseline);
+    estimationState.placementChoices = placement.choices;
+    const first = placement.choices[0];
+    estimationState.estimatedLevel = first?.sourceRank || 0;
+    estimationState.estimatedLevelRank = Math.max(0, (first?.startRank || 1) - 1);
     if (estimationState.autoAdvanceTimer) {
         clearTimeout(estimationState.autoAdvanceTimer);
         estimationState.autoAdvanceTimer = null;
     }
-
     document.getElementById('estimationTest').style.display = 'none';
     document.getElementById('estimationResult').style.display = 'block';
-
     const levelEl = document.getElementById('estimationResultLevel');
-    const descEl = document.getElementById('estimationResultDesc');
-    const speech = isSpeechMode();
-    // The learner already knows words up to estimatedLevelRank.
-    // The level to start learning is the one containing the first unseen word (+1).
-    const targetRank = (estimationState.estimatedLevelRank || result.point) + 1;
-    const pointLevel = speech ? levelButtonForRank(targetRank) : null;
+    levelEl.textContent = placement.choices.length > 1 ? 'Choose where to begin'
+        : (isSpeechMode() && first ? `Start at Level ${first.levelNumber}` : 'Your starting point');
     const range = `${Math.round(counts.low).toLocaleString()}–${Math.round(counts.high).toLocaleString()}`;
-    const estimate = `Estimated vocabulary groups: about ${Math.round(counts.point).toLocaleString()} (range ${range}).`;
     const shortCheck = estimationState.wordsTestedCount < ESTIMATION_QUESTION_LIMIT
         ? ` The check used ${estimationState.wordsTestedCount} groups.` : '';
-    if (!speech) {
-        levelEl.textContent = `About ${Math.round(counts.point).toLocaleString()} vocabulary groups`;
-        descEl.textContent = `${estimate} Words you likely know are skipped in this deck.${shortCheck}`;
-    } else {
-        levelEl.textContent = pointLevel ? `Start at Level ${pointLevel.number}` : 'Your vocabulary estimate';
-        descEl.textContent = `${estimate} The range reflects uncertainty from a short check.${shortCheck}`;
-    }
+    document.getElementById('estimationResultDesc').textContent =
+        `Estimated vocabulary groups: about ${Math.round(counts.point).toLocaleString()} (range ${range}). The range reflects uncertainty from a short check.${shortCheck}`;
+    const multiple = placement.choices.length > 1;
+    document.getElementById('estimationPlacementOptions').innerHTML = placement.choices.map((choice, index) => {
+        const percentage = Math.round(choice.probability * 100 / 5) * 5;
+        const title = isSpeechMode() ? `Start at Level ${choice.levelNumber}` : 'Use this starting point';
+        const label = multiple ? (index === 0 ? 'Start earlier · More review' : 'Start further ahead · More new vocabulary') : 'Your suggested starting point';
+        const detail = multiple ? (index === 0 ? 'More review, with fewer gaps left behind.' : 'More new vocabulary, with less review.') : 'A useful place to begin; you can change levels at any time.';
+        return `<button type="button" class="estimation-placement-choice" onclick="useEstimatedLevel(${index})"><span class="estimation-choice-label">${label}</span><strong>${title}</strong><span>Around ${percentage}% of the vocabulary here is likely familiar. ${detail}</span></button>`;
+    }).join('');
+    document.getElementById('useEstimatedLevelBtn').hidden = placement.choices.length > 0;
 }
 
 // The level button whose [startRank, endRank) span holds a rank, clamped to the
@@ -862,21 +977,20 @@ function levelButtonForRank(rank) {
 
 // Apply the point estimate. The interval remains explanatory UI; the existing
 // progress contract intentionally stores one backwards-compatible rank value.
-function useEstimatedLevel() {
-    const level = estimationState.estimatedLevel;
+async function useEstimatedLevel(choiceIndex = 0) {
+    const index = Number.isInteger(choiceIndex) ? choiceIndex : 0;
+    const choice = estimationState.placementChoices[index];
+    const level = choice?.sourceRank ?? estimationState.estimatedLevel;
+    estimationState.estimatedLevel = level;
+    if (choice) estimationState.estimatedLevelRank = Math.max(0, choice.startRank - 1);
     levelEstimates[selectedLanguage] = level;
     saveLevelEstimateToSheet(level);
     closeEstimationModal();
-
-    if (!isSpeechMode()) {
-        // Land on the first level whose cards are not all covered by the
-        // estimate (findFirstIncompleteLevelBtn reads buildEstimatedKnownIds).
-        window.renderLevelSelector?.(selectedLanguage, { preferActionable: true });
-    } else if (level === 0) {
-        document.querySelector('.level-btn')?.click();
-    } else {
-        // Place the learner in the level containing their first unseen card
-        const targetRank = (estimationState.estimatedLevelRank || level) + 1;
+    // Rebuild completion annotations immediately, without altering real
+    // progress. Answers to this check are never written as learned words.
+    await window.renderLevelSelector?.(selectedLanguage, { preferActionable: true });
+    if (isSpeechMode()) {
+        const targetRank = choice?.startRank ?? ((estimationState.estimatedLevelRank || level) + 1);
         selectLevelForRank(targetRank);
     }
 }
@@ -970,5 +1084,7 @@ export {
     buildCoverageOrder,
     buildEstimationBands,
     fitMonotonicProbabilities,
-    calculateEstimationResult
+    calculateEstimationResult,
+    calculateRecognitionPlacement,
+    calculateGroupEstimate
 };

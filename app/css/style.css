@@ -23481,3 +23481,32 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
   #settingsModal .settings-row-label-block { flex: 1 1 180px; }
   #settingsModal .settings-toggle { flex-shrink: 0; }
 }
+
+/* Estimated placement is distinct from earned study progress. */
+.level-btn.is-auto-complete::after,
+.lsw-segments.lsw-scrubber .lsw-seg.is-auto-complete::after {
+    content: 'AUTO';
+    height: auto;
+    background: none;
+    box-shadow: none;
+    color: var(--text-secondary);
+    font-size: 7px;
+    line-height: 1;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-align: center;
+    bottom: 3px;
+}
+.estimation-placement-options { display: grid; gap: 12px; max-width: 540px; margin: 0 auto 18px; }
+.estimation-placement-choice {
+    display: grid; gap: 7px; width: 100%; padding: 18px 20px; text-align: left;
+    border: 1px solid var(--border-color); border-radius: 14px;
+    background: var(--bg-secondary); color: var(--text-primary); cursor: pointer;
+    font: inherit; line-height: 1.45;
+}
+.estimation-placement-choice:hover { border-color: var(--accent-secondary); }
+.estimation-placement-choice:focus-visible { outline: 2px solid var(--accent-secondary); outline-offset: 3px; }
+.estimation-placement-choice strong { font-size: 18px; }
+.estimation-placement-choice span { color: var(--text-secondary); font-size: 14px; }
+.estimation-placement-choice .estimation-choice-label { color: var(--text-primary); font-weight: 600; }
+#useEstimatedLevelBtn[hidden] { display: none; }

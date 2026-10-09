@@ -1,11 +1,11 @@
 // Vocabulary loading, filtering, and ID generation.
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
-import './state.js?v=db59b470';
-import { validateVocabularyIndex } from './data-contracts.js?v=db59b470';
-import { formatRoute } from './routes.js?v=db59b470';
-import { applyGrammarCardOverlay } from './grammar-cards.js?v=db59b470';
-import { releaseUrl } from './release-host.js?v=db59b470';
+import './state.js?v=61d6a2da';
+import { validateVocabularyIndex } from './data-contracts.js?v=61d6a2da';
+import { formatRoute } from './routes.js?v=61d6a2da';
+import { applyGrammarCardOverlay } from './grammar-cards.js?v=61d6a2da';
+import { releaseUrl } from './release-host.js?v=61d6a2da';
 
 const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
@@ -2048,8 +2048,9 @@ let _cognateScoresLoading = null;
 // reported nothing to skip.
 let _cognateScoresLoadingFor = null;
 
-async function fetchActiveVocabularyData(langConfig) {
-    const vocabulary = await fetchActiveVocabularyIndex(langConfig);
+// Share the exact cognate verdicts with detached level checks, independently
+// of the Smart Skip switch. No active vocabulary/example cache is replaced.
+async function prepareEstimationCognates(vocabulary, langConfig) {
     // Switching to a language with no mapping must CLEAR the previous one, not
     // skip the loader and leave it in place. Scores are keyed by bare surface,
     // so a stale Czech map scored six Spanish words — a, to, je and friends
@@ -2072,6 +2073,11 @@ async function fetchActiveVocabularyData(langConfig) {
     // speechLang is the only language code the app config carries ("cs-CZ").
     const languageCode = String(langConfig?.speechLang || '').split('-')[0] || null;
     globalThis.applyCognateScores?.(vocabulary, languageCode);
+}
+
+async function fetchActiveVocabularyData(langConfig) {
+    const vocabulary = await fetchActiveVocabularyIndex(langConfig);
+    await prepareEstimationCognates(vocabulary, langConfig);
     // Corpus shares are per-language and tiny; load them on the same pass so
     // the level readout has them before the first render.
     const coveragePath = langConfig?.coveragePath || null;
@@ -2377,7 +2383,7 @@ function findSpuriousSelfInfinitives(vocabData) {
     return rejected;
 }
 
-function assignStableVocabularyRanks(vocabData, spuriousSelfInfinitives = new Set()) {
+function assignStableVocabularyRanks(vocabData, spuriousSelfInfinitives = new Set(), { detached = false } = {}) {
     vocabData.forEach((item, index) => {
         item.rank = index + 1;
         if (item.cognate_score === undefined && item.is_transparent_cognate) {
@@ -2387,7 +2393,7 @@ function assignStableVocabularyRanks(vocabData, spuriousSelfInfinitives = new Se
     const candidates = vocabData.filter(item => {
         if (!item.word || item.word.trim() === '' || item.duplicate || item.is_english
             || spuriousSelfInfinitives.has(item)) return false;
-        if (!artistItemMatchesScope(item)) return false;
+        if (!detached && !artistItemMatchesScope(item)) return false;
         // Skinny index columns ship with empty meanings until the study-set
         // row shard lands; those cards still hold their place in the order.
         const hasTranslation = item._indexRowsPending === true || (Array.isArray(item.meanings)
@@ -2395,7 +2401,7 @@ function assignStableVocabularyRanks(vocabData, spuriousSelfInfinitives = new Se
         // Artist Extra deliberately includes raw lyric-only entries. A one-off
         // surface form inside a recurring lemma stays in Main and receives the
         // same fallback treatment, so it must also keep its stable slot.
-        return hasTranslation || (activeArtist && (
+        return hasTranslation || (!detached && activeArtist && (
             artistVocabularyScope === 'extra' || Number(item.corpus_count) <= 1
         ));
     });
@@ -4456,6 +4462,7 @@ window.mergeArtistVocabularies = mergeArtistVocabularies;
 window.joinWithMaster = joinWithMaster;
 window.fetchAndJoinIndex = fetchAndJoinIndex;
 window.loadEstimationVocabulary = loadEstimationVocabulary;
+window.prepareEstimationCognates = prepareEstimationCognates;
 window.loadEstimationExamples = loadEstimationExamples;
 window.loadSpeechSourceFrequency = loadSpeechSourceFrequency;
 window.fetchActiveVocabularyData = fetchActiveVocabularyData;
