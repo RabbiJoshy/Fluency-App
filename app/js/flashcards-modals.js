@@ -207,6 +207,8 @@ const ELISION_MAP = {
     "uste": ["usted"],
     "uste'": ["usted"],
     "usté": ["usted"],
+    "vo'": ["voy", "vos"],
+    "vo": ["voy", "vos"],
     "vo'a": ["voy a"],
     "voya": ["voy a"],
 };

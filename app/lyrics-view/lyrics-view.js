@@ -1,4 +1,4 @@
-import { TurboEngine } from '../turbo/turbo-engine.js?v=6f77dca3';
+import { TurboEngine } from '../turbo/turbo-engine.js?v=f8a9048e';
 
 // Common Spanish & Latin urban ad-libs, interjections, and exclamations
 const INTERJECTIONS_SET = new Set([
@@ -69,8 +69,12 @@ function formatElisionToken(raw, fullWord) {
     const stem = core.slice(0, -1);
     if (cleanFull.startsWith(stem.toLowerCase())) {
       const elided = fullWord.slice(stem.length);
-      return `${escapeHtml(lead)}${escapeHtml(stem)}<span class="elision-bracket">(</span><span class="elision-letter">${escapeHtml(elided)}</span><span class="elision-bracket">)</span>${escapeHtml(trail)}`;
+      if (elided.length > 0) {
+        return `${escapeHtml(lead)}${escapeHtml(stem)}<span class="elision-bracket">(</span><span class="elision-letter">${escapeHtml(elided)}</span><span class="elision-bracket">)</span>${escapeHtml(trail)}`;
+      }
     }
+    // Stray apostrophe or no extra letters (e.g. quitaba'): tint the apostrophe blue without empty brackets
+    return `${escapeHtml(lead)}${escapeHtml(stem)}<span class="apostrophe-tint">'</span>${escapeHtml(trail)}`;
   }
 
   // Case 2: Leading apostrophe ('tás -> estás, 'toy -> estoy)
@@ -78,8 +82,11 @@ function formatElisionToken(raw, fullWord) {
     const stem = core.slice(1);
     if (cleanFull.endsWith(stem.toLowerCase())) {
       const elided = fullWord.slice(0, fullWord.length - stem.length);
-      return `${escapeHtml(lead)}<span class="elision-bracket">(</span><span class="elision-letter">${escapeHtml(elided)}</span><span class="elision-bracket">)</span>${escapeHtml(stem)}${escapeHtml(trail)}`;
+      if (elided.length > 0) {
+        return `${escapeHtml(lead)}<span class="elision-bracket">(</span><span class="elision-letter">${escapeHtml(elided)}</span><span class="elision-bracket">)</span>${escapeHtml(stem)}${escapeHtml(trail)}`;
+      }
     }
+    return `${escapeHtml(lead)}<span class="apostrophe-tint">'</span>${escapeHtml(stem)}${escapeHtml(trail)}`;
   }
 
   // Case 3: Medial apostrophe (estudia'o -> estudiado, cansa'o -> cansado)
@@ -90,8 +97,11 @@ function formatElisionToken(raw, fullWord) {
       const p2 = parts[1];
       if (cleanFull.startsWith(p1.toLowerCase()) && cleanFull.endsWith(p2.toLowerCase())) {
         const elided = fullWord.slice(p1.length, fullWord.length - p2.length);
-        return `${escapeHtml(lead)}${escapeHtml(p1)}<span class="elision-bracket">(</span><span class="elision-letter">${escapeHtml(elided)}</span><span class="elision-bracket">)</span>${escapeHtml(p2)}${escapeHtml(trail)}`;
+        if (elided.length > 0) {
+          return `${escapeHtml(lead)}${escapeHtml(p1)}<span class="elision-bracket">(</span><span class="elision-letter">${escapeHtml(elided)}</span><span class="elision-bracket">)</span>${escapeHtml(p2)}${escapeHtml(trail)}`;
+        }
       }
+      return `${escapeHtml(lead)}${escapeHtml(p1)}<span class="apostrophe-tint">'</span>${escapeHtml(p2)}${escapeHtml(trail)}`;
     }
   }
 

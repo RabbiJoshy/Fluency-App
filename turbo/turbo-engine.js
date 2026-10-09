@@ -191,7 +191,8 @@ export class TurboEngine {
         // Match tokens including words ending with an apostrophe (Caribbean s-aspiration: sabemo', no', vemo')
         const rawTokens = lineText.match(/[\p{L}\p{N}]+(?:['’\-][\p{L}\p{N}]+)*['’]?|['’][\p{L}\p{N}]+/gu) || [];
         const tokens = [];
-        for (const raw of rawTokens) {
+        for (let rawIdx = 0; rawIdx < rawTokens.length; rawIdx++) {
+            const raw = rawTokens[rawIdx];
             const cleaned = raw.replace(/[’]/g, "'").toLowerCase();
             let expanded = this.elisions[cleaned] || null;
             let isElision = Boolean(this.elisions[cleaned] && this.elisions[cleaned] !== cleaned);
@@ -201,7 +202,8 @@ export class TurboEngine {
             // 2. "no'" -> "nos" (no' vemo' -> nos vemos, no' perdemo' -> nos perdemos)
             // 3. 1st person plural verbs: "sabemo'" -> "sabemos", "llevamo'" -> "llevamos", "perdemo'" -> "perdemos"
             // 4. Participle contractions: "pegao'" -> "pegado", "obligao'" -> "obligado", "separao'" -> "separado"
-            // 5. Plural/verb aspiration: "ojo'" -> "ojos", "lo'" -> "los", "tiene'" -> "tienes"
+            // 5. Ambiguous contractions: "vo'" -> "voy" vs "vos"
+            // 6. Plural/verb aspiration: "ojo'" -> "ojos", "lo'" -> "los", "tiene'" -> "tienes"
             if (!expanded && cleaned.endsWith("'")) {
                 const stem = cleaned.slice(0, -1);
                 if (stem === 'e') {
@@ -209,6 +211,20 @@ export class TurboEngine {
                     isElision = true;
                 } else if (stem === 'no') {
                     expanded = 'nos';
+                    isElision = true;
+                } else if (stem === 'vo') {
+                    // Ambiguity resolver for vo':
+                    // In urban/Caribbean lyrics, vo' is overwhelmingly 'voy' (#80 in frequency, 'vo' a raptar', 'me vo'')
+                    // vs Argentine voseo 'vos' (#1,351).
+                    const nextToken = rawTokens[rawIdx + 1] ? rawTokens[rawIdx + 1].toLowerCase().replace(/[’]/g, "'") : '';
+                    const prevToken = rawIdx > 0 && rawTokens[rawIdx - 1] ? rawTokens[rawIdx - 1].toLowerCase().replace(/[’]/g, "'") : '';
+                    if (nextToken === 'a' || prevToken === 'yo' || prevToken === 'me' || prevToken === 'te') {
+                        expanded = 'voy';
+                    } else if (/és$|ás$/.test(nextToken)) {
+                        expanded = 'vos';
+                    } else {
+                        expanded = 'voy'; // 80/20 default in urban music
+                    }
                     isElision = true;
                 } else if (/(?:amo|emo|imo|ámo|émo|ímo)$/.test(stem)) {
                     expanded = stem + 's';
