@@ -999,7 +999,7 @@ export class TurboEngine {
         }
 
         const annotatedSongs = parsedSongs.map(song => {
-            const auditLines = song.lines.map(lineObj => {
+            const auditLines = song.lines.map((lineObj, lineIdx) => {
                 const tokens = this.tokenizeLine(lineObj.text);
                 const mweSpans = this.findMweSpans(tokens);
                 const mweIndices = new Set();
@@ -1131,7 +1131,7 @@ export class TurboEngine {
 
                 return {
                     text: lineObj.text,
-                    english: lineObj.english || song.englishLines?.[auditLines.length] || null,
+                    english: lineObj.english || song.englishLines?.[lineIdx] || null,
                     timestamp_ms: lineObj.timestamp_ms,
                     end_timestamp_ms: lineObj.end_timestamp_ms,
                     isSynced: lineObj.isSynced,
