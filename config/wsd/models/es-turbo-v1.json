@@ -1,0 +1,16 @@
+{
+  "config_version": "wsd-model-profile/v1",
+  "profile_id": "es-turbo-v1",
+  "language": "es",
+  "execution_status": "ready",
+  "extends": "es-v23-1",
+  "source_method_id": "turbo-v1-unified-engine",
+  "method_summary": "TURBO Spanish profile extending es-v23-1 through the shared fluency.wsd decision logic for browser/worker live playlist processing.",
+  "mode": "turbo",
+  "confidence": {
+    "kind": "margin",
+    "low": 0.01,
+    "high": 0.02,
+    "fallback": "none"
+  }
+}

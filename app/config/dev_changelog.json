@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T01:30:00+01:00",
+      "date": "2026-10-09 01:30 BST",
+      "agent": "Antigravity",
+      "summary": "UNISON post-audit release: metadata contract, clean possessives, split card partitioning, and MWE production cues",
+      "detail": [
+        "Split cards: prevent Card 2 from repeating the whole Card 1 menu when it has no distinct primary senses; retain expression senses on base cards.",
+        "Card metadata pills: suppress grammatical jargon tags (transitive, intransitive, copular) while keeping companion prepositions, register, and regional badges intact.",
+        "English to target production: display [phrase] scope badge on multi-word expression prompts so learners know a phrase is expected.",
+        "Portuguese & Spanish decks: updated with Decision 0030 sense/metadata contract, cleaner possessives (seu -> your/his/her), and companion disambiguation (falar + com / + de)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T01:00:00+01:00",
       "date": "2026-10-09 01:00 BST",
       "agent": "Claude",

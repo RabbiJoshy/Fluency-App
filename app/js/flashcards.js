@@ -6219,13 +6219,15 @@ function renderCardWikipediaBadge(card) {
         let html = '';
         for (const m of fMeanings) {
             const productionGloss = getProductionEnglishCue(card, m) || m.meaning;
+            const isExpr = Boolean(m.isMWE || m.pos === 'MWE' || m.pos === 'PHRASE' || (typeof isExpressionSenseForLemma === 'function' && isExpressionSenseForLemma(m, card)));
+            const phraseBadge = isExpr ? `<span class="front-phrase-cue" style="opacity: 0.7; font-size: 0.75em; margin-left: 6px; font-weight: normal;">[phrase]</span>` : '';
             const posChip = m.pos && !['MWE', 'CLITIC', 'SENSE_CYCLE', 'EXAMPLE_ONLY'].includes(m.pos)
                 && !isHiddenExpressionOnParent(card, m)
                 ? renderFrontPosUnit(m.pos, isVerbPos(m.pos), 'card-pos front-meaning-pos')
                 : '';
             html += `<div class="front-meaning-row">
                 ${posChip}
-                <span class="front-meaning-text" style="font-size: ${fontSize}px;">${escapeCardText(productionGloss)}</span>
+                <span class="front-meaning-text" style="font-size: ${fontSize}px;">${escapeCardText(productionGloss)}${phraseBadge}</span>
             </div>`;
         }
         frontMeaningsEl.innerHTML = html;

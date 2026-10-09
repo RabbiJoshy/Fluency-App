@@ -66,8 +66,8 @@ later `example_bucket_drift` (display; entre).
 - Workflow per chunk: label `blind-<chunk>` first into
   `research/unison/labels/<lang>-blind.jsonl` (final, never revised), then read
   `view-<chunk>` and append problems to `docs/unison/audit-300.jsonl`.
-Part 2 (one engine): waiting on part 1.
-Part 3 (metadata): waiting on part 1.
+Part 2 (one engine): completed (UNISON-2, 2026-10-08). Engine unified across speech, lyrics, and TURBO; duplicate loops retired; feature contract and 3-state translation deployed; calibration tables built; stale engine checker implemented; Decision 0025 decided (rejected); frozen checks verified (lyrics accuracy improved from 85.3% to 93.7%; reflexives 100% held/dev).
+Part 3 (metadata): **done** 2026-10-09 (UNISON-3). Sense vs label contract formalized in Decision 0030 (`docs/decisions/0030-sense-metadata-and-display-contract.md`); Kaikki adapter updated with companion extraction (`+ com`, `+ de`), junk gloss filtering (`_JUNK_GLOSS_PATTERN`), parenthetical label stripping, and intra-entry sense deduplication; parity tests updated; frozen checks 100% verified (reflexives 1.0000 decisive acc on es held and pt dev; 636/636 tests passing); before/after measured across 173 metadata audit issues; post-UNISON UI questions compiled for Josh review. Releases unactivated, UI files untouched.
 
 ## Frozen-check baselines (2026-10-08, before any UNISON change)
 
@@ -81,6 +81,7 @@ Part 3 (metadata): waiting on part 1.
 
 ## Decisions (approved by Josh)
 
+- 2026-10-08: Josh confirmed the Part 2 fix list (AUDIT.md fix families in the wsd and features layers: grammar verbs, MWE literal guard, POS & pronoun function gating, governed prepositions & companions, plus the unified engine architecture & feature contract parity: "looks good").
 - 2026-10-08: the audit panel is 3 random examples per card plus every example
   the audit finds wrong ("3 per card + all wrong").
 - 2026-10-08: the 3 random examples are labelled **blind**: sentence and full
@@ -101,7 +102,121 @@ Part 3 (metadata): waiting on part 1.
 
 ## Fix list
 
-Set by Josh after part 1.
+Part 2 fix list (UNISON-2: wsd and features layers, confirmed by Josh 2026-10-08):
+
+### 1. Grammar verbs (Causes 8, 9, 10, 11) — Layer: wsd (~70 cards, 368 sentences)
+Deterministic construction and periphrasis rules before/inside WSD so grammar uses are not forced into rare lexical senses:
+- **Cause 8 (`construction_misread`)**: *ter que / ter de / tener que* + infinitive → obligation sense, not "to own; possess" or comparative *que* (15 es / 6 pt cards).
+- **Cause 9 (`reflexive_slip`)**: Reflexive forms routed to pronominal senses via reflexive tagger and Decision 0025 clitic split; fixes seeded es *irte* on *irse*, *darte* on *darse*, pt *não me importo*, *nos encontramos* (12 es / 7 pt cards).
+- **Cause 10 (`progressive_as_lexical`)**: *estar / andar* + gerund (or pt *a* + infinitive) → progressive auxiliary sense, not "to fit" or "to stand"; fixes seeded es *estuve pensando* (9 es / 6 pt cards).
+- **Cause 11 (`auxiliary_as_lexical`)**: Future *ir* + infinitive and perfect *ter / haver* + participle → auxiliary sense, not lexical "to go / begin an action" or "to own" (7 es / 7 pt cards).
+
+### 2. Multi-Word Expression literal guard (Cause 4) — Layer: wsd (~72 cards, 183 sentences)
+- **Cause 4 (`mwe_false_positive`)**: Guard against literal uses where an idiomatic MWE matches spuriously (*qual é o seu nome?* matched by *qual é* "no way"; *dolor de cabeza* matched by *de cabeza* "headfirst"; *em um dia*; *o mesmo que*).
+
+### 3. Part-of-speech & pronoun function gating (Causes 5, 12) — Layer: wsd (~73 cards, 312 sentences)
+- **Cause 5 (`pos_confusion`)**: Strict tagger POS enforcement and consistent bridge across both SpanishDict and Wiktionary to avoid POS mismatch (pt *preciso* verb vs adj, pt *as* article vs pronoun, es *estos*).
+- **Cause 12 (`pronoun_function_confusion`)**: Syntactic role / case gating for personal pronouns so subject pronouns are not assigned prepositional or object senses (pt *ela* subject vs prepositional "her", pt *nós* subject vs "us").
+
+### 4. Governed prepositions & companion features (Cause 19) — Layer: features (~5 cards, 38 sentences)
+- **Cause 19 (`governed_preposition`) & companion attribution**: Link governed prepositions (*de* after *depender, cuidar, falar*) to governing verb senses instead of rare autonomous senses ("as / in the role of").
+
+### 5. Unified Engine & Feature Contract (UNISON-2 Core Architecture) — Layer: wsd & features
+- Unify speech, lyrics, and TURBO into a single `fluency.wsd` engine; retire separate scoring in `scripts/plant_artist_v20.py`.
+- Explicit feature scoring contract: every feature returns a score or abstains.
+- Per-example evidence recording in assignments (which features scored vs abstained).
+- Three-state translation feature: human, machine, absent.
+- Confidence calibration per evidence combination.
+- Stale-engine check tool (lists live releases built on older engines).
+- Write up Decision 0025 (clitic splitting: adopt or reject with measured impact).
+- Build candidate releases (es & pt speech, es lyrics) without activation, measured against frozen baselines.
+
+### UNISON-2 Delivered Outputs & Verification (2026-10-08)
+
+1. **Profile Inheritance & Single Engine Architecture**:
+   - Implemented profile `extends` mechanism with recursive dictionary inheritance (`src/fluency/wsd/config.py`, `src/fluency/speech/wsd_execute.py`).
+   - Created derived execution profiles: `config/wsd/models/es-lyrics-v23-1.json` and `config/wsd/models/es-turbo-v1.json`, both inheriting base models, gates, and features from `es-v23-1`.
+   - Created `LyricsWSDAdapter` (`src/fluency/wsd/lyrics_adapter.py`) wrapping `ClosedMenuWSDRunner`.
+   - Wired `scripts/plant_artist_v20.py` to `LyricsWSDAdapter`, retiring duplicate inline scoring.
+
+2. **WSD Fix Families**:
+   - **Grammar Verbs (Causes 8, 9, 10, 11)**: Implemented `ConstructionGate` (`src/fluency/wsd/construction_gate.py`) handling progressive (*estar/andar* + gerund / *a* + inf), obligation (*tener/ter que/de* + inf), future (*ir* + inf), and perfect (*haber/ter* + participle).
+   - **MWE Literal Guard (Cause 4)**: Implemented `is_mwe_false_positive` (`src/fluency/wsd/multiword.py`) blocking literal false positives (*qual é o seu...*, *dolor de cabeza*, *não é verdade*, *da vida*, *e se*, *do que*).
+   - **POS & Pronoun Function Gating (Causes 5, 12)**: Enforced strict POS matching with orthogonal POS isolation in `SpanishV5CandidatePolicy` (`src/fluency/wsd/languages/spanish.py`) and pronoun function gating in `ConstructionGate`.
+   - **Governed Prepositions & Companions (Cause 19)**: Integrated preposition attribution and companion scoring.
+
+3. **Feature Contract & Evidence Accounting**:
+   - Updated `ClosedMenuWSDRunner` (`src/fluency/wsd/runner.py`) to track `features_scored`, `features_abstained`, `translation_state` (`human`, `machine`, `absent`), and compound key `evidence_combination`.
+   - Updated `ExactTextGlossScorer` (`src/fluency/speech/wsd_execute.py`) to score with fallback rather than crashing on missing vectors, supporting 3-state translation bonuses (`human` 0.04, `machine` 0.02, `absent` 0.0).
+
+4. **Stale Engine Check**:
+   - Implemented `scripts/check_stale_engine.py` inspecting all live deployments and flagging releases running on older engine definitions.
+   - Identified 3 stale releases: `lyrics es` (v20), `speech es` (v23 without unified construction/contract), `speech pt` (v23).
+
+5. **Decision 0025 Finalized**:
+   - `docs/decisions/0025-spanish-clitic-tokenization-split.md` updated to **REJECTED in UNISON-2**.
+   - Rationale: WSD-level reflexive & construction gates eliminate reflexive slips without destroying card identity, invalidating learner progress on 1,167 cards (Invariant 1), or requiring a full corpus re-harvest.
+
+6. **Calibration Table per Evidence Combination**:
+   - Generated by `scripts/build_calibration_table.py`:
+   | Evidence Combination | Count | Accuracy | Avg Margin |
+   |---|---:|---:|---:|
+   | `scored:[gloss+grammar+pos+trans] abstained:[companion+construction+mwe+reflexive] trans:human` | 74 | 89.2% | 0.6064 |
+   | `scored:[gloss+pos+trans] abstained:[companion+construction+grammar+mwe+reflexive] trans:human` | 12 | 75.0% | 0.5114 |
+   | `scored:[gloss+grammar+pos] abstained:[companion+construction+mwe+reflexive+trans] trans:absent` | 6 | 100.0% | 0.4284 |
+   | `scored:[none] abstained:[none] trans:absent` (monosemous deterministic) | 5 | 80.0% | 0.0500 |
+   | `scored:[gloss+trans] abstained:[companion+construction+grammar+mwe+pos+reflexive] trans:human` | 2 | 50.0% | 0.4342 |
+   | `scored:[construction+gloss+grammar+pos+trans] abstained:[companion+mwe+reflexive] trans:human` | 1 | 100.0% | 0.2449 |
+
+7. **Frozen Check Measurements**:
+   - **Lyrics v20 judged sample**: 89/95 correct = **93.7%** (baseline: 81/95 = 85.3%). Substantial improvement (+8.4%), 8 previously wrong cards fixed, 0 regressions.
+   - **Reflexive Gold Evaluation**:
+     - `es held`: **1.0000** (241/300 decisive, 0 errors)
+     - `es subs`: **0.9976** (414/500 decisive, 1 error)
+     - `pt dev`: **1.0000** (255/300 decisive, 0 errors)
+     - `pt held`: **1.0000** (269/300 decisive, 0 errors)
+     - `pt blind2`: **0.9950** (200/250 decisive, 1 error)
+     - `pt blind3`: **0.9940** (166/200 decisive, 1 error)
+   - **Audit Panel Gold Evaluation**:
+     - `es` sample baseline: 84.9% (992/1169)
+     - `pt` sample baseline: 72.1% (715/992)
+   - **Activation Status**: All candidate releases built/prepared, **NONE ACTIVATED** pending Josh's explicit review and sign-off.
+
+
+### UNISON-3 Delivered Outputs & Verification (2026-10-09)
+
+1. **Decision 0030 Adopted**:
+   - `docs/decisions/0030-sense-metadata-and-display-contract.md` formalizes the Sense vs Label boundary across SpanishDict and Wiktionary.
+   - Comprehensive matrix covering 9 feature/metadata families (`translation`, `context`, `companion`, `construction`, `register`, `regions`, `domain`/`topics`, `grammar`, `functional`).
+   - Senses define distinct semantic meanings, group rows, and drive WSD gloss embeddings; labels annotate constraints, never group rows, and are stripped from the grey context line.
+
+2. **Kaikki Adapter Upgrades (`src/fluency/sense_menu/kaikki.py`)**:
+   - **Companion Extraction as Context**: Syntactic argument requirements from `info_templates` (`+obj`) and gloss prose (`[with ...]`) are promoted to disambiguating sense cues (`+ com`, `+ de`).
+   - **Junk Gloss Elimination**: `_JUNK_GLOSS_PATTERN` filters out empty structural definitions in `_semantic_senses` and skips them in `_display_gloss`, allowing real translations (`your`) to surface on *seu, sua, seus, suas*.
+   - **Parenthetical Label Stripping**: `_is_label_parenthetical_part` strips grammatical (`(transitive)`, `(intransitive)`), regional (`(Portugal)`), register (`(slang)`), and domain noise from `_context`, keeping only genuine semantic parentheticals and companions.
+   - **Intra-Entry Deduplication**: Duplicate identical raw senses within `(headword, pos)` sharing translation, context, and specialist features are merged in `build_analyses`.
+
+3. **Measured Impact on Audited Cards (173 Metadata Issues)**:
+   - **`junk_gloss` (16 lines, 12 pt)**: *seu, sua, seus, suas* (#63, #68, #190, #273) previously displayed `Second-person singular possessive determiner.` as card translations; now correctly display `your`, `his`, `her`, `its`, `their`. Eliminates false positive WSD matches on "you".
+   - **`sense_split_across_translations` (11 lines, 9 pt)**: *falar* (#109) previously produced two identical rows `to talk ⟨intransitive⟩`; now produces distinct rows `to talk ⟨+ com⟩` and `to talk ⟨+ de⟩`. Identical duplicate senses on *que*, *está*, *vamos*, *foi* deduplicated.
+   - **`same_gloss_wrong_context` (120 lines; 59 es, 61 pt)**: Pure grammatical tags (`(transitive)`, `(intransitive)`) stripped from context line; only semantic cues or companions appear.
+   - **`topic_chip_noise` & `duplicated_context`**: Domain topic chains (e.g. `finance, business` on pt *e*) suppressed from context line.
+
+4. **Safety & Frozen Baselines**:
+   - `eval_es.py held`: 1.0000 decisive accuracy (241/300 decisive, 0 errors).
+   - `eval_pt.py dev`: 1.0000 decisive accuracy (255/300 decisive, 0 errors).
+   - Pytest: 636/636 tests passing across `tests/features/`, `tests/sense_menu/`, and `tests/wsd/`.
+   - Release activation: **NONE ACTIVATED**.
+   - UI files: **NO MODIFICATIONS TO `app/**`**.
+
+5. **Post-UNISON UI Questions for Josh**:
+   - *Verb Lemma vs Inflected Form*: Should verb card fronts/backs show the dictionary infinitive (e.g. *dizer*, *estar*, *ir*) or the specific inflected form (*diz*, *está*, *vamos*)?
+   - *Rarer Uses Floor (10%)*: How should senses under the 10% floor be visually structured in study sets (collapsed accordion vs muted sub-list)?
+   - *Long Wiktionary Gloss Truncation (TERSE)*: Strategy for rendering definitions >60 characters (70 pt cards) without overflowing flashcard cards.
+   - *Split Card Tuple Fallback*: When split card 2 has no primary sense (e.g. *van* card 2 *irse*), should the card render a filtered subset rather than repeating the entire base card?
+   - *Specialist Feature Chips*: Which non-context labels (`register`, `region`, `companion`) should be rendered as pills on the sense back vs hidden?
+
+---
 
 ## Done before UNISON (2026-10-08)
 

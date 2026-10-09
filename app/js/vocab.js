@@ -1153,15 +1153,20 @@ function buildSplitCardPair(item, card, meanings, lang = selectedLanguage) {
         const hw = cleanHeadwordToken(m.headword || item.word);
         if (hw === cleanHeadwordToken(t1.headword)) return 1;
         if (hw === cleanHeadwordToken(t2.headword)) return 2;
-        return 0;
+        return 1;
     };
     const belongs1 = m => readingOf(m) === 1;
     const belongs2 = m => readingOf(m) === 2;
     const m1 = meanings.filter(belongs1);
     const m2 = meanings.filter(belongs2);
     const rarerOf = belongs => (card.unusedMenuSenses || []).filter(m => m.lowShare && belongs(m));
-    const meanings1 = m1.length > 0 ? stampSplitShownShares(item, m1, rarerOf(belongs1)) : meanings;
-    const meanings2 = m2.length > 0 ? stampSplitShownShares(item, m2, rarerOf(belongs2)) : meanings;
+    const r1 = rarerOf(belongs1);
+    const r2 = rarerOf(belongs2);
+    if ((m1.length === 0 && r1.length === 0) || (m2.length === 0 && r2.length === 0)) {
+        return null;
+    }
+    const meanings1 = m1.length > 0 ? stampSplitShownShares(item, m1, r1) : stampSplitShownShares(item, r1, []);
+    const meanings2 = m2.length > 0 ? stampSplitShownShares(item, m2, r2) : stampSplitShownShares(item, r2, []);
 
     const card1 = {
         ...card,

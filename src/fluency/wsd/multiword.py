@@ -233,6 +233,62 @@ def _discontiguous_match_span(
     return m.span() if m else None
 
 
+def is_mwe_false_positive(expression: str, sentence: str, span: tuple[int, int]) -> bool:
+    """Guard against literal uses that falsely match idiomatic multiword expressions (Cause 4)."""
+    expr = expression.casefold()
+    text = sentence.casefold()
+    start, end = span
+
+    if expr in ("qual é", "cuál es"):
+        # If followed by article, possessive, or determiner: interrogative copula "what is the/your...", not idiom
+        remainder = text[end:].strip()
+        if re.match(r"^(?:o|a|os|as|el|la|los|las|seu|sua|seus|suas|teu|tua|tu|este|esta|esse|essa|un|una|um|uma)\b", remainder):
+            return True
+
+    if expr == "de cabeza":
+        # Preceded by dolor -> noun phrase "headache", not adverb "headfirst"
+        prefix = text[:start].strip()
+        if prefix.endswith("dolor") or any(w == "dolor" for w in prefix.split()[-2:]):
+            return True
+
+    if expr == "não é":
+        # Literal copula when followed by predicate, unless it's a tag question at sentence end
+        remainder = text[end:].strip()
+        if remainder and not remainder.startswith("?"):
+            if re.match(r"^(?:verdade|fácil|difícil|segredo|um|uma|o|a|bom|boa|possível|nada|isso)\b", remainder):
+                return True
+
+    if expr == "da vida":
+        # "trabalho da vida", "fim da vida", "resto da vida" -> literal genitive "of life"
+        prefix = text[:start].strip()
+        if any(w in prefix.split()[-2:] for w in ("trabalho", "fim", "resto", "tempo", "dono", "coisa")):
+            return True
+
+    if expr == "bem feito":
+        # Participle: "trabalho bem feito", "muito bem feito"
+        prefix = text[:start].strip()
+        if any(w in prefix.split()[-2:] for w in ("tão", "muito", "mais", "trabalho", "tudo", "nada")):
+            return True
+
+    if expr == "e se":
+        # "e se matou", "e se foi" -> conjunction e + reflexive verb
+        remainder = text[end:].strip()
+        if re.match(r"^(?:matou|foi|tornou|chamou|deitou|levantou|passou|viu)\b", remainder):
+            return True
+
+    if expr in ("do que", "no que"):
+        prefix = text[:start].strip()
+        if any(prefix.endswith(w) for w in ("sabe", "gosto", "gosta", "pensar", "crer", "acredito")):
+            return True
+
+    if expr == "quién va":
+        remainder = text[end:].strip()
+        if remainder.startswith("a "):
+            return True
+
+    return False
+
+
 def multiword_matches(
     *,
     surface_form: str,
@@ -249,7 +305,8 @@ def multiword_matches(
         if f" {entry.expression} " in flattened:
             start = lowered.find(entry.expression)
             span = (start, start + len(entry.expression)) if start >= 0 else (0, len(sentence))
-            found.append((entry, span))
+            if not is_mwe_false_positive(entry.expression, sentence, span):
+                found.append((entry, span))
             continue
 
         # 2. Flexible path: inflected head or discontiguous token match
@@ -257,7 +314,7 @@ def multiword_matches(
             span = _discontiguous_match_span(
                 entry.expression, sentence, template_gap_limit=entry.template_gap_limit
             )
-            if span is not None:
+            if span is not None and not is_mwe_false_positive(entry.expression, sentence, span):
                 found.append((entry, span))
 
     return tuple(found)

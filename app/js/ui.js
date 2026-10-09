@@ -1141,15 +1141,21 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
         const completion = Math.round(100 * seenCount / wordsInLevel.length);
         const hasUnseen = seenCount < wordsInLevel.length;
         const isPartial = seenCount > 0 && hasUnseen;
+        const isComplete = seenCount > 0 && !hasUnseen;
+        const hasProgress = seenCount > 0;
         btn.dataset.progressPct = String(completion);
         btn.dataset.reviewCount = String(reviewCount);
+        btn.classList.toggle('has-progress', hasProgress);
         btn.classList.toggle('has-partial-progress', isPartial);
+        btn.classList.toggle('is-complete', isComplete);
         btn.style.setProperty('--level-progress', `${completion}%`);
 
         const visibleSegment = sliderSegmentMap.get(String(buttonIndex));
         if (visibleSegment) {
             visibleSegment.dataset.progressPct = String(completion);
+            visibleSegment.classList.toggle('has-progress', hasProgress);
             visibleSegment.classList.toggle('has-partial-progress', isPartial);
+            visibleSegment.classList.toggle('is-complete', isComplete);
             visibleSegment.style.setProperty('--level-progress', `${completion}%`);
             visibleSegment.setAttribute(
                 'aria-label',

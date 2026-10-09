@@ -10,7 +10,7 @@ from pathlib import Path
 import re
 from typing import Any, Callable, Iterable, Iterator
 
-from fluency.features.parenthetical import leading_parenthetical
+from fluency.features.parenthetical import leading_parenthetical, split_top_level_commas
 from fluency.core.hashing import canonical_content_id, file_content_id
 from fluency.languages.surfaces import (
     normalizer_for_language,
@@ -19,6 +19,9 @@ from fluency.languages.surfaces import (
 from fluency.features import SpecialistFeature
 from fluency.features.metadata import METADATA_CONTRACT_VERSION
 from fluency.features.wiktionary import (
+    DEFAULT_CONSTRUCTION_TAGS,
+    DEFAULT_REGISTER_TAGS,
+    _companion_alternatives,
     extract as extract_wiktionary_features,
     extract_surface_grammar,
     metadata_accounting,
@@ -143,11 +146,26 @@ def _surface_grammar(row: dict[str, Any], normalize: Callable[[str], str]) -> di
     return grammar
 
 
+_JUNK_GLOSS_PATTERN = re.compile(
+    r"^(?:(?:first|second|third)-person|[123](?:st|nd|rd)\s+person)\s+.*?(?:determiner|pronoun)\.?$",
+    re.IGNORECASE,
+)
+
+
+def _has_meaningful_gloss(sense: dict[str, Any]) -> bool:
+    glosses = _glosses(sense)
+    if not glosses:
+        return False
+    if len(glosses) == 1 and _JUNK_GLOSS_PATTERN.match(glosses[0].strip()):
+        return False
+    return True
+
+
 def _semantic_senses(row: dict[str, Any]) -> list[dict[str, Any]]:
     return [
         sense
         for sense in _json_values(row.get("senses"))
-        if not (_sense_tags(sense) & FORM_TAGS) and _glosses(sense)
+        if not (_sense_tags(sense) & FORM_TAGS) and _has_meaningful_gloss(sense)
     ]
 
 
@@ -202,35 +220,87 @@ def _cross_references(sense: dict[str, Any]) -> list[dict[str, str]]:
     ]
 
 
+
 def _display_gloss(sense: dict[str, Any]) -> str:
     glosses = _glosses(sense)
-    return project_gloss(glosses[0]).display_text if glosses else ""
+    if not glosses:
+        return ""
+    if len(glosses) > 1 and _JUNK_GLOSS_PATTERN.match(glosses[0].strip()):
+        return project_gloss(glosses[1]).display_text
+    return project_gloss(glosses[0]).display_text
 
 
-def _context(sense: dict[str, Any]) -> str:
-    """Return a short disambiguating label, the equivalent of SpanishDict's context.
+def _is_label_parenthetical_part(part: str, all_label_tags: set[str]) -> bool:
+    cleaned = part.strip().casefold()
+    if cleaned in all_label_tags:
+        return True
+    stripped = re.sub(r"\([^)]+\)", "", part).strip().casefold()
+    if stripped in all_label_tags:
+        return True
+    disjuncts = [d.strip() for d in re.split(r"\s+or\s+", stripped) if d.strip()]
+    if disjuncts and all(d in all_label_tags for d in disjuncts):
+        return True
+    return False
 
-    SpanishDict publishes ``context`` on every sense; Wiktionary carries the same
-    information but embedded in the prose. Explicit disambiguating labels --
-    the leading parenthetical of a raw gloss (e.g. ``(interrogative)``,
-    ``(transitive)``, ``(only in subordinate clauses)``), topics, and qualifiers --
-    are preferred first. A short nested sub-gloss (<= 60 characters) is used
-    as a fallback when no explicit context tags exist.
+
+def _context(sense: dict[str, Any], policy: dict[str, Any] | None = None) -> str:
+    """Return a short disambiguating definition/cue, equivalent to SpanishDict's context.
+
+    Senses and labels follow Decision 0030:
+    - Pure labels (construction tags like 'intransitive', register tags like 'colloquial',
+      region tags like 'Brazil', or topic chains) must NEVER crowd or group cards.
+    - If a sense carries a companion requirement (e.g. [with com]), its companion
+      is exposed as the distinguishing cue ('+ com').
+    - Semantic parentheticals or sub-glosses provide real sense disambiguation.
     """
+
+    # 1. Companion requirement (+obj template or [with ...] in gloss)
+    for template in sense.get("info_templates", []) or []:
+        if isinstance(template, dict) and template.get("name") == "+obj":
+            expansion = str(template.get("expansion") or "").strip()
+            companions = _companion_alternatives(expansion)
+            if companions:
+                return f"+ {companions[0]}"
+    for raw in _glosses(sense, "raw_glosses"):
+        bracket = re.search(r"\[with\s+[^\]]+\]", raw, re.IGNORECASE)
+        if bracket:
+            companions = _companion_alternatives(bracket.group(0))
+            if companions:
+                return f"+ {companions[0]}"
+
+    # 2. Leading parenthetical in raw glosses: strip pure label tags
+    construction_tags = set((policy or {}).get("construction_tags") or DEFAULT_CONSTRUCTION_TAGS) | {
+        "transitive", "intransitive", "copulative", "auxiliary", "pronominal",
+        "impersonal", "reflexive", "ambitransitive", "ergative", "postpositional", "predicative"
+    }
+    register_tags = set((policy or {}).get("register_tags") or DEFAULT_REGISTER_TAGS) | {
+        "colloquial", "archaic", "dated", "slang", "vulgar", "poetic", "rare",
+        "figurative", "figuratively", "literally", "informal", "formal", "obsolete"
+    }
+    region_tags = set((policy or {}).get("region_tags") or [])
+    grammar_tags = set((policy or {}).get("grammar_tags") or {}) | {
+        "masculine", "feminine", "singular", "plural", "uncountable", "countable",
+        "personal", "invariable", "neuter"
+    }
+    all_label_tags = {t.casefold() for t in construction_tags | register_tags | region_tags | grammar_tags}
 
     for raw in _glosses(sense, "raw_glosses"):
         parenthetical = leading_parenthetical(raw, max_length=60)
         if parenthetical:
-            return parenthetical
-    topics = [value for value in sense.get("topics", []) if isinstance(value, str)]
-    if topics:
-        return ", ".join(topics)
-    qualifier = sense.get("qualifier")
-    if isinstance(qualifier, str) and qualifier.strip():
-        return qualifier.strip()
+            parts = split_top_level_commas(parenthetical)
+            non_label_parts = [
+                p.strip()
+                for p in parts
+                if not _is_label_parenthetical_part(p, all_label_tags)
+            ]
+            if non_label_parts:
+                return ", ".join(non_label_parts)
+
+    # 3. Short sub-gloss (<= 60 characters) when no leading semantic parenthetical exists
     glosses = _glosses(sense)
-    if len(glosses) > 1:
-        sub = " | ".join(glosses[1:])
+    start_idx = 2 if (len(glosses) > 1 and _JUNK_GLOSS_PATTERN.match(glosses[0].strip())) else 1
+    if len(glosses) > start_idx:
+        sub = " | ".join(glosses[start_idx:])
         if len(sub) <= 60:
             return sub
     return ""
@@ -334,7 +404,7 @@ def _metadata(
         # Declared for every language so the shape does not vary by provider.
         # Empty is a statement that this language has no regional marking, not
         # an absence of the concept.
-        "context": _context(sense),
+        "context": _context(sense, policy),
         "regions": _regions(sense, policy or {}),
         "examples": [
             item for item in (sense.get("examples") or []) if isinstance(item, dict)
@@ -595,6 +665,7 @@ class KaikkiSenseMenuAdapter:
                 _sense_keys(sense) for _, sense in row_senses
             )
             leaves: dict[str, SenseLeaf] = {}
+            seen_signatures: dict[tuple[str, str, tuple], str] = {}
             for row, sense in row_senses:
                 glosses = _glosses(sense)
                 raw_provider_id = sense.get("id")
@@ -610,20 +681,26 @@ class KaikkiSenseMenuAdapter:
                     provider_id_collides=provider_id_collides,
                     sense_keys_collide=sense_key_counts[_sense_keys(sense)] > 1,
                 )
+                trans = _display_gloss(sense)
+                defn = _context(sense, self.language_policy)
+                spec_features = tuple(dict.fromkeys((
+                    *_specialist_features(
+                        sense,
+                        self.language_policy,
+                        part_of_speech=part_of_speech,
+                    ),
+                    *analysis_grammar,
+                )))
+                sig = (trans, defn, spec_features)
+                if sig in seen_signatures:
+                    continue
                 leaf = SenseLeaf(
                     sense_id=sense_id,
-                    translation=_display_gloss(sense),
-                    definition=_context(sense),
+                    translation=trans,
+                    definition=defn,
                     source_reference=source_reference,
                     provider_metadata=_metadata(row, sense, self.language_policy),
-                    specialist_features=tuple(dict.fromkeys((
-                        *_specialist_features(
-                            sense,
-                            self.language_policy,
-                            part_of_speech=part_of_speech,
-                        ),
-                        *analysis_grammar,
-                    ))),
+                    specialist_features=spec_features,
                     metadata_accounting=metadata_accounting(
                         {**sense, "part_of_speech": part_of_speech},
                         tags=sorted(_sense_tags(sense)),
@@ -636,6 +713,7 @@ class KaikkiSenseMenuAdapter:
                         f"provider sense ID is not unique: {sense_id}"
                     )
                 leaves[sense_id] = leaf
+                seen_signatures[sig] = sense_id
             analysis = MenuAnalysis(
                 menu_analysis_id=build_analysis_id(
                     card_id=card["card_id"],
