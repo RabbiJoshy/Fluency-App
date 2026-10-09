@@ -19246,8 +19246,8 @@ button.wbw-word:focus-visible { outline: 2px solid var(--accent-primary); outlin
 .study-set-choice { display: grid; gap: 12px; padding: 16px; background: color-mix(in srgb, var(--accent-primary) 5%, var(--bg-card)); }
 .study-set-choice-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 4px 12px; }
 .study-set-choice-heading small { color: var(--text-muted); font: 500 11px/1.35 var(--font-reading); }
-/* A level holds a handful of sets (four at 100 cards); they share one row. */
-#step4 .study-set-dots { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 8px; }
+/* Four sets fill two rows; larger levels continue in the same two columns. */
+#step4 .study-set-dots { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: row; grid-auto-columns: auto; gap: 8px; }
 #step4 .study-set-dot { height: 40px; font-size: 13px; border-radius: 9px; }
 #step4 .range-btn-new.study-set-start { min-height: 52px; }
 
@@ -22349,19 +22349,16 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 .smart-skip-more-head p { margin: 0; color: var(--text-muted); font: 400 13px/1.45 var(--font-reading); }
 .smart-skip-more-card .smart-skip-shortcuts { border-color: var(--border-light); background: transparent; }
 
-/* Landing page rhythm: the three boxes (level, set, practice) put 21px of air
-   above each title but 15px below it, and the gap between boxes stacked the
-   padding, margin and the title button's tall hit area. The title button is
-   now 32px tall and the space above and below the title text is the same
-   (12px) in every box, on desktop and phone. */
-#step2, #step4, #reviewDeckSection.review-deck-step { padding-top: 0; padding-bottom: 0; margin-bottom: 4px; }
+/* Each header owns the whole gap between surfaces, with equal space on
+   either side of its title. Section margins must not add extra space above. */
+#setupPanel > #step1 { margin-bottom: 0; }
+#step2, #step4, #reviewDeckSection.review-deck-step { padding-top: 0; padding-bottom: 0; margin-bottom: 0; }
 #step2 > .step-header,
 #step4 > .step-header,
-#reviewDeckSection > .step-header { margin-top: 0; margin-bottom: 4px; }
+#reviewDeckSection > .step-header { margin: 0; padding: 8px 4px; }
 #step2 > .step-header > .step-title-trigger,
 #step4 > .step-header > .step-title-trigger,
-#reviewDeckSection > .step-header > .step-title-trigger { min-height: 32px; padding-top: 4px; padding-bottom: 4px; }
-#step2 > .step-header { min-height: 32px; }
+#reviewDeckSection > .step-header > .step-title-trigger { min-height: 44px; padding-top: 4px; padding-bottom: 4px; }
 
 /* Landing page, dark theme: boxes are the darkest surface and the page behind
    them is lifted a step, so text sits on near-black and the boxes read as
@@ -22538,12 +22535,8 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 }
 
 /* ---- Landing page clear-up ------------------------------------------------ */
-/* 1. More air between the sections (level, set, practice), a little less on
-   a phone. */
-#topBar, #step2, #step4, #reviewDeckSection.review-deck-step { margin-bottom: 18px; }
-@media (max-width: 767px) {
-  #topBar, #step2, #step4, #reviewDeckSection.review-deck-step { margin-bottom: 12px; }
-}
+/* The section headers supply the space after the top bar too. */
+#topBar { margin-bottom: 0; }
 
 /* 2. Tighter top bar and a thinner coloured ring. */
 #topBar { padding: 6px 8px; }
@@ -22693,7 +22686,7 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 
 /* Set box type: bigger numbers on the pills and the set name; the counts
    line is lighter in weight and brighter in colour so it reads at a glance. */
-#step4 .study-set-dot { font-size: 18px; font-weight: 700; height: 46px; }
+#step4 .study-set-dot { font-size: 18px; font-weight: 700; height: 37px; }
 #step4 .study-set-current-copy strong { font-size: 18px; }
 #step4 .study-set-current-copy span { font-size: 14px; font-weight: 400; color: var(--text-secondary); }
 .study-set-stat { font-weight: 400; }
@@ -22726,7 +22719,7 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
    other pills stay flat. */
 #step4 .study-set-dot.is-current {
   animation: none;
-  transform: translateY(-2px) scale(1.08);
+  transform: none;
   border-color: var(--accent-primary);
   box-shadow:
     0 0 0 3px var(--bg-card),
@@ -22793,7 +22786,8 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 #step4 .study-set-dot.is-partial,
 #step4 .study-set-dot.is-complete { border-color: transparent; }
 #step4 .study-set-dot:hover:not(:disabled):not(.is-current) { border-color: transparent; box-shadow: 0 0 0 2px var(--accent-primary); }
-#step4 .study-set-dots { gap: 9px; }
+#step4 .study-set-dots { gap: 14px; }
+#step4 .study-set-dot:hover:not(:disabled) { transform: none; }
 /* Info icon in place of the "Details" word. */
 .fast-track-hub-info { flex: none; width: 20px; height: 20px; fill: none; stroke: var(--text-muted); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 /* The fill runs edge to edge now the outline is gone (otherwise the gradient
@@ -23154,14 +23148,11 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .smart-skip-more-card .smart-skip-preview-close:hover { filter: brightness(1.08); }
 .smart-skip-body .smart-skip-more-options { padding: 15px 14px 15px 16px; font-size: 14px; color: var(--text-secondary); }
 
-/* Set pills: the set number on a phone, the word ranks (frequency ranks) it
-   covers where there is room. */
-.study-set-dot .set-ranks { display: none; }
-@media (min-width: 760px) {
-  .study-set-dot .set-num { display: none; }
-  .study-set-dot .set-ranks { display: inline; white-space: nowrap; }
-  #step4 .study-set-dot { font-size: 16px; }
-}
+/* Frequency ranges identify each set; its number remains in the summary
+   and accessible label, leaving room for five-digit ranks on small phones. */
+#step4 .study-set-dot { gap: 8px; padding: 0 6px; }
+.study-set-dot .set-num { display: none; }
+.study-set-dot .set-ranks { display: inline; white-space: nowrap; font-size: 14px; font-weight: 600; }
 
 /* Skipped cards fill each set bar from the right in light grey, so with Smart
    Skip on a set is already partly done before a card is studied. */

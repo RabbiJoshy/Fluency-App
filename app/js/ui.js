@@ -1,7 +1,7 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=d3992be5';
-import { readFastTrack } from './fast-track-preferences.js?v=d3992be5';
+import './state.js?v=e2a12acf';
+import { readFastTrack } from './fast-track-preferences.js?v=e2a12acf';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -2831,9 +2831,9 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                     data-unseen="${range.unseenCount}" data-review="${range.reviewCount}"
                     style="--set-known-end: ${range.knownPct}%; --set-review-end: ${range.reviewEndPct}%; --set-new-end: ${range.newEndPct}%"
                     role="radio" aria-checked="${index === initialIndex ? 'true' : 'false'}"
-                    aria-label="Set ${index + 1}: ${range.knownCount} known, ${range.reviewCount} to practise, ${range.unseenCount} new"
-                    title="Set ${index + 1} · ${range.knownCount} known · ${range.reviewCount} practice · ${range.unseenCount} new"
-                    ${range.available ? '' : 'disabled'}><span class="set-num">${index + 1}</span><span class="set-ranks">${range.start.toLocaleString()}–${(range.end - 1).toLocaleString()}</span></button>`;
+                    aria-label="Set ${index + 1}, frequency ranks ${range.start.toLocaleString()} to ${(range.end - 1).toLocaleString()}: ${range.knownCount} known, ${range.reviewCount} to practise, ${range.unseenCount} new"
+                    title="Set ${index + 1} · Frequency ranks ${range.start.toLocaleString()}–${(range.end - 1).toLocaleString()} · ${range.knownCount} known · ${range.reviewCount} practice · ${range.unseenCount} new"
+                    ${range.available ? '' : 'disabled'}><span class="set-num">${index + 1}</span><span class="set-ranks">#${range.start.toLocaleString()}–${(range.end - 1).toLocaleString()}</span></button>`;
     }).join('');
 
     const levelReviewCount = ranges.reduce((sum, range) => sum + range.reviewCount, 0);
@@ -3333,7 +3333,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=d3992be5')
+        import('./spotify.js?v=e2a12acf')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
