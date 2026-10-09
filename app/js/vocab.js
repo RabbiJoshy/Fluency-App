@@ -960,6 +960,37 @@ function lemmaSeenKey(item) {
     return lemmaGroupKey(item);
 }
 
+function spellingWithoutBreaks(value) {
+    return String(value || '').replace(/[\s\-‐]+/gu, '').toLocaleLowerCase();
+}
+
+// The headword of the sense the card is actually about, weighted by assigned
+// frequency: the card's citation form. A headword with more words than the
+// card's own spelling names an expression the word occurs in, not its lemma
+// (não é on é, por qué on por), unless it is the same spelling written apart
+// (porfavor). The release's lemma column follows the same rule
+// (fluency.release.index_shards.card_lemma).
+function assignedHeadwordOf(meanings, word = '') {
+    const surface = String(word || '').trim();
+    const words = Math.max(surface.split(/\s+/u).filter(Boolean).length, 1);
+    const ownLemma = mn => {
+        const head = String(mn.headword).trim();
+        return head.split(/\s+/u).length <= words
+            || spellingWithoutBreaks(head) === spellingWithoutBreaks(surface);
+    };
+    const named = (meanings || []).filter(mn => mn && mn.headword && ownLemma(mn));
+    const scored = named
+        .filter(mn => Number(mn.percentage ?? mn.frequency ?? 0) > 0)
+        .map(mn => [Number(mn.percentage ?? mn.frequency ?? 0), String(mn.headword).trim()])
+        .filter(pair => pair[1]);
+    if (!scored.length) {
+        // No frequencies yet (an unassigned deck): fall back to the first
+        // headword the provider gave rather than losing the grouping entirely.
+        return named.length ? String(named[0].headword).trim() : '';
+    }
+    return scored.reduce((a, b) => (b[0] > a[0] ? b : a))[1];
+}
+
 function lemmaSenseDedupeKey(meaning) {
     const ref = String(meaning?.source_reference || '').trim();
     if (ref && ref !== 'mwe-merged/v1') return `ref:${ref}`;
@@ -1350,23 +1381,6 @@ function poolLemmaSiblingExamples(filteredData, allVocabData, examplesData) {
  * The snake_case aliases make this an adapter for future pipeline fields while
  * the lemma/word fallbacks preserve every currently shipped deck.
  */
-// The headword of the sense the card is actually about, weighted by assigned
-// frequency. Display and grouping both read this, so a merged card can never be
-// filed under one lemma and titled with another.
-function assignedHeadwordOf(meanings) {
-    const scored = (meanings || [])
-        .filter(mn => mn && mn.headword && Number(mn.percentage ?? mn.frequency ?? 0) > 0)
-        .map(mn => [Number(mn.percentage ?? mn.frequency ?? 0), String(mn.headword).trim()])
-        .filter(pair => pair[1]);
-    if (!scored.length) {
-        // No frequencies yet (an unassigned deck): fall back to the first
-        // headword the provider gave rather than losing the grouping entirely.
-        const first = (meanings || []).find(mn => mn && mn.headword);
-        return first ? String(first.headword).trim() : '';
-    }
-    return scored.reduce((a, b) => (b[0] > a[0] ? b : a))[1];
-}
-
 function buildCardFormModel(item, meanings = [], options = {}) {
     const representativeSurface = String(
         item?.dominant_surface
@@ -1384,7 +1398,7 @@ function buildCardFormModel(item, meanings = [], options = {}) {
     // There must not be two lemmatisations telling the learner different things,
     // and the assigned sense is the one with evidence behind it, so it wins.
     // Ties are broken by assigned frequency — the sense the card is actually about.
-    const assignedHeadword = assignedHeadwordOf(meanings);
+    const assignedHeadword = assignedHeadwordOf(meanings, representativeSurface);
     const citationForm = String(
         assignedHeadword
         || item?.citation_form

@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T09:07:00+01:00",
+      "date": "2026-10-09 09:07 BST",
+      "agent": "Claude",
+      "summary": "Cards are no longer named after a phrase they appear in: é cites ser, not \"não é\"",
+      "detail": [
+        "A card's dictionary form skips headwords with more words than the card's own word (não é on é, por qué on por, cinto de segurança on cinto), unless it is the same spelling written apart (porfavor).",
+        "Look up links on é now open WordReference and Reverso for ser; they searched \"não é\".",
+        "With Merge Lemmas on, the back of é reads ser, not \"não é · ser\"; não, por and do read não, por and de.",
+        "Same rule as the release's lemma column (11276edc), already live on es and pt v23."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T01:30:00+01:00",
       "date": "2026-10-09 01:30 BST",
       "agent": "Antigravity",
@@ -350,34 +363,6 @@
         "'Best for' sits directly under the description in both cards at every width.",
         "Speech: 'From films and TV shows — the everyday words people actually use when they talk to each other.' plus Best for 'Understanding films and TV shows'.",
         "Intro: 'Your flashcards come from this source, most common words first.'"
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T00:05:00+01:00",
-      "date": "2026-10-08 00:05 BST",
-      "agent": "Claude",
-      "summary": "Source chooser: Spotify now sits inside the Your music card",
-      "detail": [
-        "'Connect your Spotify' is the footer of the Your music card (full width, green tint, arrow) instead of a loose pill under the page, on phone and desktop.",
-        "Desktop: 'Best for' follows the description in both cards so the two line up.",
-        "The note under 'Choose your flashcard vocabulary source' is one step brighter.",
-        "These changes shipped inside commit 24201107 (shared staging area with another session); this entry records them."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-07T23:19:40+01:00",
-      "date": "2026-10-07 23:19 BST",
-      "agent": "Codex",
-      "summary": "Short hands-on card tutorial, clearer controls, and full-size phone cards",
-      "detail": [
-        "Five-step speech lesson: recall, flip, choose a meaning, cycle an example, then start studying; optional card details remain available.",
-        "Lyrics shares the lesson and adds song credits and playback, without a second tutorial.",
-        "Phone cards scroll above the coach without shrinking text or tap targets; all meanings remain accessible on small screens.",
-        "Clear finish and Next buttons, focused explanation text, honest grammar examples, and no resume prompt covering the tutorial.",
-        "Practice works by keyboard; returning from card details preserves the learner’s selected meaning and example.",
-        "Narrow desktop windows keep their active instruction and navigation visible beside the scrollable card area."
       ],
       "commit": "pending"
     }
