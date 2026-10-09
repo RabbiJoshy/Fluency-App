@@ -13,7 +13,7 @@
 
 import {
     REPLICA_CARDS, esc, renderBack, replicaCardHTML, wireReplicaBack,
-} from './card-replica.js?v=d6d85ded';
+} from './card-replica.js?v=f925640d';
 
 
 // Each language selects its own representative card and dictionary wording.
