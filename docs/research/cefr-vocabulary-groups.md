@@ -67,3 +67,25 @@ Fit an ordered CEFR prediction from the vocabulary-group score and frequency-ban
 A high score in a restricted pool means “you recognise most of this pool.” It must not automatically mean C2. Do not scale CEFR thresholds by a language's total pool size: 50% of 131 French surfaces and 50% of 7,585 Spanish groups measure different vocabulary coverage.
 
 **Decision:** keep the implemented group estimate and practical placement, withhold legacy CEFR labels, and derive language-specific CEFR ranges from external learner validation. The literature supplies useful methodology and comparison points, but no defensible off-the-shelf numerical thresholds for these exact groups.
+
+
+## Quick provisional cutoffs requested after implementation
+
+These are product heuristics proposed on 9 October 2026, not fitted or validated thresholds. No numerical thresholds have been added to the app. Each number is the minimum estimated vocabulary-group count for that provisional label; below A1 is “Getting started”. Do not compare them with saved Speech ranks.
+
+| Language | A1 | A2 | B1 | B2 | C1 | C2 |
+|---|---:|---:|---:|---:|---:|---:|
+| Spanish | 500 | 1,200 | 2,200 | 3,600 | 5,000 | 6,500 |
+| Portuguese | 500 | 1,000 | 1,800 | 3,000 | 4,200 | 5,400 |
+| Czech | 400 | 900 | 1,600 | 2,500 | 3,500 | 4,800 |
+| Finnish | 500 | 1,100 | 2,000 | 3,200 | 4,500 | 6,000 |
+| French | 500 | 1,000 | 1,800 | 2,800 | 4,000 | 5,200 |
+| Swedish, Italian, Dutch, Polish, Russian, Brazilian Portuguese (future starting set) | 500 | 1,000 | 2,000 | 3,500 | 5,000 | 6,500 |
+
+**How these were chosen.** Finlayson et al.'s review suggests typical A1 knowledge near 1,000 lemmas, A2 near 1,000–2,000, and B1 near 2,000–3,000. Those are broad observed associations, not lower boundaries. The suggested entry cutoffs are lower than typical within-level scores, and allow for Fluency's content-word and cognate exclusions. Milton/Alexiou's French results use a restricted 5,000-lemma test and show considerable adjacent-level overlap, so their scores are a scale check rather than values to copy. Spanish's greater reading splitting raises its proposed thresholds relative to Portuguese; Czech's pool collapses many inflections. These adjustments are judgement, not measured conversion factors. The higher-level widening is a deliberately conservative product choice, not a research finding.
+
+There is no direct benchmark for Fluency groups in Finnish or Czech, and no resolved group pool for the future languages. Their numbers are especially tentative. Russian lexical minima are defined for a different examination vocabulary; do not silently substitute those requirements for this recognition measure. The shared future set avoids pretending that unmeasured language differences have been quantified.
+
+**Ceiling and uncertainty rules.** If the point estimate or upper interval reaches 90% of the available pool, prefer “Near the top of this vocabulary check; level may be higher” over a precise CEFR label. This 90% guard is a heuristic. At present Finnish cannot reach the proposed A2 boundary, French cannot reach A1, and Czech cannot reach C2. Do not compress the boundaries to make every language display all six labels. Label French as a short vocabulary preview; a capped Finnish score needs a larger pool to distinguish A2 and above. When the existing group interval crosses a boundary, display the adjacent vocabulary bands rather than a precise level; broad uncertainty may require withholding the label. Wording should be “Rough vocabulary level”, not an overall proficiency assessment.
+
+**Current recommendation:** use these as the next reviewable starting set if a rough label is desired, retaining the ceiling rules and the ability to swap calibration later. This supersedes the earlier recommendation to wait for learner validation only for the purpose of a visibly provisional product estimate; it does not establish empirical accuracy.
