@@ -16,7 +16,7 @@ export function summarizeProgress(cards, { getId, getState, getProgress }) {
         result.total++;
         if (state.needsReview) {
             result.practice++;
-            if (state.isDue) result.due++;
+            if (state.isDue || state.reviewReason === 'due') result.due++;
         } else if (state.seen) {
             result.known++;
         } else {
@@ -24,7 +24,7 @@ export function summarizeProgress(cards, { getId, getState, getProgress }) {
         }
         // A scheduled review does not erase vocabulary knowledge. A more
         // recent mistake does, as decided by the shared progress engine.
-        if (state.known) covered += freq;
+        if (state.known && !['incorrect', 'partial'].includes(state.reviewReason)) covered += freq;
         result.correct += Math.max(0, Number(record.correct) || 0);
         result.wrong += Math.max(0, Number(record.wrong) || 0);
     }
