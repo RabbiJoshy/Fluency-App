@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T15:48:00+01:00",
+      "date": "2026-10-09 15:48 BST",
+      "agent": "Antigravity",
+      "summary": "Song lyrics view: clean underline-free elision styling and contextual TURBO-2 WSD sense disambiguation in lyrics inspector",
+      "detail": [
+        "Removed dashed underlines on elided words in favor of clean text with soft-cyan styling, keeping lyric flow natural without hyperlink-like baselines.",
+        "Wired newly deployed TURBO-2 unified WSD decision logic into the lyrics quick-view modal so contextual senses (obligation, progressive, future, perfect, reflexive) are prioritized for each lyric line.",
+        "Added dictionary fallback in postProcess to match tokens against the engine dictionary even when filtered out of high-frequency playlist card cuts."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T15:40:00+01:00",
       "date": "2026-10-09 15:40 BST",
       "agent": "Antigravity",
