@@ -62,11 +62,16 @@ async function init() {
     const urlParams = new URLSearchParams(window.location.search);
     const paramSong = urlParams.get('song');
 
+    // Robust asset paths relative to this module
+    const assetsUrl = new URL('../turbo/turbo_assets.json', import.meta.url).href;
+    const songsUrl = new URL('../turbo/probe_songs.json', import.meta.url).href;
+
     // Load assets (read-only)
-    engine = await TurboEngine.create('../turbo/turbo_assets.json');
+    engine = await TurboEngine.create(assetsUrl);
 
     // Load 30 offline songs (read-only)
-    const songsResp = await fetch('../turbo/probe_songs.json');
+    const songsResp = await fetch(songsUrl);
+    if (!songsResp.ok) throw new Error(`HTTP ${songsResp.status} loading offline songs`);
     probeSongs = await songsResp.json();
 
     if (paramSong) {
@@ -86,10 +91,12 @@ async function init() {
     await selectSong(currentSongIndex);
   } catch (err) {
     console.error('Failed to init Lyrics View:', err);
-    loadingBox.innerHTML = `
-      <p style="color: #ff5252; font-weight: 600;">Failed to load lyrics: ${err.message}</p>
-      <p style="font-size: 13px; margin-top: 8px;">Ensure files exist under app/turbo/.</p>
-    `;
+    if (loadingBox) {
+      loadingBox.innerHTML = `
+        <p style="color: #ff5252; font-weight: 600;">Failed to load lyrics: ${err.message}</p>
+        <p style="font-size: 13px; margin-top: 8px;">Ensure files exist under app/turbo/.</p>
+      `;
+    }
   }
 }
 
@@ -101,19 +108,27 @@ async function selectSong(index) {
   currentSongIndex = index;
 
   const song = probeSongs[index];
-  topbarSongTitle.textContent = song.title;
-  topbarSongArtist.textContent = song.artist;
+  if (topbarSongTitle) topbarSongTitle.textContent = song.title || '';
+  if (topbarSongArtist) topbarSongArtist.textContent = song.artist || '';
 
-  prevSongBtn.disabled = (index === 0);
-  nextSongBtn.disabled = (index === probeSongs.length - 1);
+  // Also populate compatibility anchors if present
+  const mainSongTitle = document.getElementById('mainSongTitle');
+  if (mainSongTitle) mainSongTitle.textContent = song.title || '';
+  const mainSongArtist = document.getElementById('mainSongArtist');
+  if (mainSongArtist) mainSongArtist.textContent = song.artist || '';
+
+  if (prevSongBtn) prevSongBtn.disabled = (index === 0);
+  if (nextSongBtn) nextSongBtn.disabled = (index === probeSongs.length - 1);
 
   // Sync URL query without reloading
-  const newUrl = new URL(window.location.href);
-  newUrl.searchParams.set('song', index);
-  window.history.replaceState({}, '', newUrl.toString());
+  try {
+    const newUrl = new URL(window.location.href);
+    newUrl.searchParams.set('song', index);
+    window.history.replaceState({}, '', newUrl.toString());
+  } catch (_) {}
 
-  lyricsFlow.style.display = 'none';
-  loadingBox.style.display = 'block';
+  if (lyricsFlow) lyricsFlow.style.display = 'none';
+  if (loadingBox) loadingBox.style.display = 'block';
 
   let annotatedSong = annotatedCache.get(index);
   if (!annotatedSong) {
@@ -125,8 +140,8 @@ async function selectSong(index) {
     }
   }
 
-  loadingBox.style.display = 'none';
-  lyricsFlow.style.display = 'flex';
+  if (loadingBox) loadingBox.style.display = 'none';
+  if (lyricsFlow) lyricsFlow.style.display = 'flex';
 
   if (annotatedSong) {
     renderLyrics(annotatedSong);
@@ -335,98 +350,108 @@ function openTokenModal(token) {
   currentModalTokenIndex = token.flatIndex;
 
   // Title & Elision
-  tokenModalWord.textContent = token.raw;
-  if (token.isElision && token.word && token.word !== token.raw.toLowerCase()) {
-    tokenModalElisionHint.textContent = `Contraction of: ${token.word}`;
-    tokenModalElisionHint.style.display = 'inline-block';
-  } else {
-    tokenModalElisionHint.style.display = 'none';
+  if (tokenModalWord) tokenModalWord.textContent = token.raw;
+  if (tokenModalElisionHint) {
+    if (token.isElision && token.word && token.word !== token.raw.toLowerCase()) {
+      tokenModalElisionHint.textContent = `Contraction of: ${token.word}`;
+      tokenModalElisionHint.style.display = 'inline-block';
+    } else {
+      tokenModalElisionHint.style.display = 'none';
+    }
   }
 
   // Badges
-  tokenModalBadges.innerHTML = '';
-  const typeBadge = document.createElement('span');
-  typeBadge.className = 'token-type-pill';
+  if (tokenModalBadges) {
+    tokenModalBadges.innerHTML = '';
+    const typeBadge = document.createElement('span');
+    typeBadge.className = 'token-type-pill';
 
-  if (token.type === 'entity') {
-    typeBadge.classList.add('pill-entity-style');
-    const entType = token.card?.entity?.entityType || 'Cultural Entity';
-    typeBadge.textContent = `🌸 ${entType}`;
-  } else if (token.type === 'mwe') {
-    typeBadge.classList.add('pill-mwe-style');
-    typeBadge.textContent = `🟣 Idiom / MWE`;
-  } else if (token.type === 'interjection') {
-    typeBadge.classList.add('pill-intj-style');
-    typeBadge.textContent = `⚡ Ad-lib / Interjection`;
-  } else {
-    typeBadge.classList.add('pill-word-style');
-    typeBadge.textContent = `🔷 ${token.pos || 'Vocabulary'}`;
-  }
-  tokenModalBadges.appendChild(typeBadge);
+    if (token.type === 'entity') {
+      typeBadge.classList.add('pill-entity-style');
+      const entType = token.card?.entity?.entityType || 'Cultural Entity';
+      typeBadge.textContent = `🌸 ${entType}`;
+    } else if (token.type === 'mwe') {
+      typeBadge.classList.add('pill-mwe-style');
+      typeBadge.textContent = `🟣 Idiom / MWE`;
+    } else if (token.type === 'interjection') {
+      typeBadge.classList.add('pill-intj-style');
+      typeBadge.textContent = `⚡ Ad-lib / Interjection`;
+    } else {
+      typeBadge.classList.add('pill-word-style');
+      typeBadge.textContent = `🔷 ${token.pos || 'Vocabulary'}`;
+    }
+    tokenModalBadges.appendChild(typeBadge);
 
-  if (token.rank) {
-    const rankBadge = document.createElement('span');
-    rankBadge.className = 'token-type-pill pill-rank-style';
-    rankBadge.textContent = `#${token.rank} in frequency`;
-    tokenModalBadges.appendChild(rankBadge);
+    if (token.rank) {
+      const rankBadge = document.createElement('span');
+      rankBadge.className = 'token-type-pill pill-rank-style';
+      rankBadge.textContent = `#${token.rank} in frequency`;
+      tokenModalBadges.appendChild(rankBadge);
+    }
   }
 
   // Meaning Callout
-  modalMeaningCallout.className = 'meaning-card';
-  if (token.type === 'entity') {
-    modalMeaningCallout.classList.add('is-entity');
-    modalMeaningLabel.textContent = 'Entity Sense';
-  } else if (token.type === 'mwe') {
-    modalMeaningCallout.classList.add('is-mwe');
-    modalMeaningLabel.textContent = 'Idiomatic Sense';
-  } else if (token.type === 'interjection') {
-    modalMeaningCallout.classList.add('is-interjection');
-    modalMeaningLabel.textContent = 'Ad-lib & Usage';
-  } else {
-    modalMeaningLabel.textContent = 'Sense Assignment';
+  if (modalMeaningCallout) {
+    modalMeaningCallout.className = 'meaning-card';
+    if (token.type === 'entity') modalMeaningCallout.classList.add('is-entity');
+    else if (token.type === 'mwe') modalMeaningCallout.classList.add('is-mwe');
+    else if (token.type === 'interjection') modalMeaningCallout.classList.add('is-interjection');
   }
 
-  modalMeaningPrimary.textContent = token.translation || token.word;
-  modalMeaningContext.textContent = token.card?.meanings?.[0]?.context
-    ? `Context: ${token.card.meanings[0].context}`
-    : (token.pos ? `Part of speech: ${token.pos}` : '');
+  if (modalMeaningLabel) {
+    if (token.type === 'entity') modalMeaningLabel.textContent = 'Entity Sense';
+    else if (token.type === 'mwe') modalMeaningLabel.textContent = 'Idiomatic Sense';
+    else if (token.type === 'interjection') modalMeaningLabel.textContent = 'Ad-lib & Usage';
+    else modalMeaningLabel.textContent = 'Sense Assignment';
+  }
+
+  if (modalMeaningPrimary) modalMeaningPrimary.textContent = token.translation || token.word;
+  if (modalMeaningContext) {
+    modalMeaningContext.textContent = token.card?.meanings?.[0]?.context
+      ? `Context: ${token.card.meanings[0].context}`
+      : (token.pos ? `Part of speech: ${token.pos}` : '');
+  }
 
   // Entity Details
-  if (token.type === 'entity' && token.card?.entity) {
-    modalEntityBox.style.display = 'block';
-    modalEntityTitle.textContent = token.card.entity.canonicalTitle || token.word;
-    modalEntityDesc.textContent = token.card.entity.description || 'Cultural figure, urban artist, brand, or location referenced in Spanish music.';
-  } else {
-    modalEntityBox.style.display = 'none';
+  if (modalEntityBox) {
+    if (token.type === 'entity' && token.card?.entity) {
+      modalEntityBox.style.display = 'block';
+      if (modalEntityTitle) modalEntityTitle.textContent = token.card.entity.canonicalTitle || token.word;
+      if (modalEntityDesc) modalEntityDesc.textContent = token.card.entity.description || 'Cultural figure, urban artist, brand, or location referenced in Spanish music.';
+    } else {
+      modalEntityBox.style.display = 'none';
+    }
   }
 
   // Polysemous Breakdown Box
-  const cardMeanings = token.card?.meanings || [];
-  if (cardMeanings.length > 1) {
-    modalPolySensesBox.style.display = 'block';
-    modalPolySensesList.innerHTML = '';
-    cardMeanings.slice(1).forEach(m => {
-      const item = document.createElement('div');
-      item.className = 'sense-item';
-      item.innerHTML = `
-        <span class="sense-trans">${m.translation}</span>
-        <span class="sense-meta">${m.pos} ${m.context ? `· ${m.context}` : ''}</span>
-      `;
-      modalPolySensesList.appendChild(item);
-    });
-  } else {
-    modalPolySensesBox.style.display = 'none';
+  if (modalPolySensesBox && modalPolySensesList) {
+    const cardMeanings = token.card?.meanings || [];
+    if (cardMeanings.length > 1) {
+      modalPolySensesBox.style.display = 'block';
+      modalPolySensesList.innerHTML = '';
+      cardMeanings.slice(1).forEach(m => {
+        const item = document.createElement('div');
+        item.className = 'sense-item';
+        item.innerHTML = `
+          <span class="sense-trans">${m.translation}</span>
+          <span class="sense-meta">${m.pos} ${m.context ? `· ${m.context}` : ''}</span>
+        `;
+        modalPolySensesList.appendChild(item);
+      });
+    } else {
+      modalPolySensesBox.style.display = 'none';
+    }
   }
 
   // Context Quote
-  modalContextQuoteText.innerHTML = highlightTokenInLine(token.lineText || '', token.raw);
-  modalContextQuoteMeta.textContent = `Line ${(token.lineIndex || 0) + 1} · ${token.songTitle || ''} (${token.songArtist || ''})`;
+  if (modalContextQuoteText) modalContextQuoteText.innerHTML = highlightTokenInLine(token.lineText || '', token.raw);
+  if (modalContextQuoteMeta) modalContextQuoteMeta.textContent = `Line ${(token.lineIndex || 0) + 1} · ${token.songTitle || ''} (${token.songArtist || ''})`;
 
   // Navigation button states
-  tokenPrevBtn.disabled = (currentModalTokenIndex <= 0);
-  tokenNextBtn.disabled = (currentModalTokenIndex >= songTokensFlatList.length - 1);
+  if (tokenPrevBtn) tokenPrevBtn.disabled = (currentModalTokenIndex <= 0);
+  if (tokenNextBtn) tokenNextBtn.disabled = (currentModalTokenIndex >= songTokensFlatList.length - 1);
 
-  tokenQuickViewModal.classList.add('open');
+  if (tokenQuickViewModal) tokenQuickViewModal.classList.add('open');
 }
 
 function closeTokenModal() {

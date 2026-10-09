@@ -16,8 +16,8 @@
 // Applies to Speech and Lyrics alike. A language whose release supports only one
 // of the two parts still gets fast mode — it just moves the part it has, and the
 // page says which part is missing.
-import './state.js?v=dcd2a8c9';
-import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=dcd2a8c9';
+import './state.js?v=30d6b6a9';
+import { readFastTrack, saveFastTrack } from './fast-track-preferences.js?v=30d6b6a9';
 
 let applyingMasterSwitch = false;
 let returnToSettings = false;

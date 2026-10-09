@@ -19,7 +19,7 @@
 //
 // The old scalar still works. Where a release predates this, `cognate_score`
 // is read as the English entry, so Spanish is untouched.
-import './state.js?v=dcd2a8c9';
+import './state.js?v=30d6b6a9';
 
 const SELECTED_KEY = 'fluency_known_languages_v1';
 
