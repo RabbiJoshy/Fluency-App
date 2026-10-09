@@ -571,18 +571,43 @@ function verbClause(core) {
     const head = cleanVerb(words[0]);
     // "to not care less" has no verb to inflect in front.
     if (!head || /^(?:not|never)$/iu.test(head)) return null;
+    // "to stick or attach": both verbs inflect ("sticks or attaches").
+    if (words.length === 3 && words[1] === 'or' && head !== 'be' && /^[a-z]+$/u.test(words[2])) {
+        return { lead, head: `${head} or ${words[2]}`, rest: '' };
+    }
     return { lead, head, rest: words.length > 1 ? ` ${words.slice(1).join(' ')}` : '' };
 }
 
+// A dictionary note beside the meanings ("to be; forms the progressive
+// aspect", "to cost, especially of something whose price changes often") is
+// not English to learn; an inflected row leaves it out.
+const GLOSS_NOTE = /^(?:forms?\s+the|formula|introduc(?:es|ing)|especially|esp\.|contrasting|usually|often|typically|generally|mainly|mostly|chiefly|such as|in order to|as in|not necessarily|causing|why|even|used\s+(?:as|for|in|to|when|with)|indicat(?:es|ing)|express(?:es|ing)|denot(?:es|ing)|e\.g\.|i\.e\.|~)(?![\p{L}])/iu;
+// Words that never open a verb phrase: "valid or acceptable", "not present",
+// "on the fritz", a modal such as "can" or "must".
 const BARE_ALTERNATE_STOPWORDS = new Set([
-    'again', 'also', 'can', 'could', 'esp', 'especially', 'etc', 'may', 'might',
-    'must', 'often', 'oneself', 'ought', 'shall', 'should', 'someone', 'something',
-    'somebody', 'too', 'usually', 'will', 'would',
+    'a', 'again', 'also', 'an', 'and', 'as', 'at', 'by', 'can', 'could', 'esp', 'etc',
+    'for', 'in', 'may', 'might', 'more', 'must', 'no', 'not', 'of', 'off', 'on', 'one',
+    'oneself', 'or', 'ought', 'shall', 'should', 'so', 'someone', 'something',
+    'somebody', 'the', 'too', 'very', 'will', 'with', 'would',
 ]);
-// A bare alternate is a verb only after a verb that has no object of its own:
-// "to revere, venerate", "to send off, dismiss" — but not "to start an
-// engine, vehicle", where the alternate is another object.
-const VERB_PARTICLE_REST = /^(?:\s+(?:about|around|away|back|down|in|off|on|out|over|up))?$/u;
+// A one-word alternate is another object, not a verb, when the "to" verb
+// before it has one: "to start an engine, vehicle". A prepositional or
+// particle tail is not an object: "to say with rhythm, chant", "to go
+// forward, advance".
+const NON_OBJECT_REST = /^(?:\s+(?:about|across|after|again|ahead|along|apart|around|at|away|back|by|down|for|forward|from|in|into|off|on|out|over|through|to|together|up|upon|with)\b.*)?$/u;
+
+// A meaning written without "to" ("to fetch, pick up"; "to occur, take
+// place, happen") is a verb when it follows one. After "to be" the
+// alternates are predicates ("to be absent, not present") and stay as they
+// are unless they repeat be.
+function bareAlternateClause(core, anchor) {
+    if (!anchor) return null;
+    if (lowerVerb(anchor.head) === 'be' && !/^be\b/u.test(core)) return null;
+    const first = (/^([a-z]+)(?:\s|$)/u.exec(core) || [])[1];
+    if (!first || /ly$/u.test(first) && !ENGLISH_LY_VERBS.has(first) || BARE_ALTERNATE_STOPWORDS.has(first)) return null;
+    if (!core.includes(' ') && !NON_OBJECT_REST.test(anchor.rest)) return null;
+    return verbClause(core);
+}
 
 /**
  * Parse an infinitive gloss into clauses the renderer can inflect.
@@ -601,19 +626,25 @@ function inflectableGloss(translation, meaning) {
     if (dummyIt && /^to be\b/iu.test(value)) return { clauses: [{ head: 'be', rest: '' }], tail: '' };
 
     const clauses = [];
-    let previousVerb = null;
-    splitTopLevelClauses(value).forEach((part, index, all) => {
-        const precedingSep = index > 0 ? all[index - 1].sep : '';
+    let anchor = null;      // the latest "to" verb
+    let previousVerb = false;
+    for (const part of splitTopLevelClauses(value)) {
         const { core, paren } = peelTrailingParenthetical(part.text);
+        if (clauses.length && GLOSS_NOTE.test(core)) {
+            // Drop the note and keep the separator that followed it.
+            clauses[clauses.length - 1].sep = part.sep;
+            continue;
+        }
         let verb = null;
-        if (core.startsWith('to ')) verb = verbClause(core.slice(3).trim());
-        else if (previousVerb && precedingSep === ',' && !previousVerb.paren
-            && VERB_PARTICLE_REST.test(previousVerb.rest) && /^[a-z]+$/u.test(core)
-            && !/ly$/u.test(core) && !BARE_ALTERNATE_STOPWORDS.has(core)) verb = verbClause(core);
-        const clause = verb ? { ...verb, paren, sep: part.sep } : { text: part.text, sep: part.sep };
-        clauses.push(clause);
-        previousVerb = verb ? clause : null;
-    });
+        if (core.startsWith('to ')) {
+            verb = verbClause(core.slice(3).trim());
+            anchor = verb;
+        } else if (previousVerb) {
+            verb = bareAlternateClause(core, anchor);
+        }
+        clauses.push(verb ? { ...verb, paren, sep: part.sep } : { text: part.text, sep: part.sep });
+        previousVerb = Boolean(verb);
+    }
     if (!clauses[0]?.head) return null;
     if (dummyIt) return { clauses: [{ lead: clauses[0].lead, head: clauses[0].head, rest: clauses[0].rest }], tail: '' };
 
@@ -645,7 +676,8 @@ function firstClauseGloss(gloss) {
 
 // "to cause/suffer" inflects both verbs: "causes/suffers".
 function eachVerb(head, inflect) {
-    return String(head || '').split('/').map(part => inflect(part)).join('/');
+    return String(head || '').split(/(\/| or )/u)
+        .map(part => (part === '/' || part === ' or ' ? part : inflect(part))).join('');
 }
 
 function withGlossTail(cue, gloss) {
@@ -744,7 +776,7 @@ function sentenceOpening(text) {
  */
 function commandReadingsShownByExample(readings, gloss, options) {
     const text = sentenceOpening(exampleEnglishText(options));
-    const head = lowerVerb(gloss?.clauses?.[0]?.head);
+    const head = lowerVerb(String(gloss?.clauses?.[0]?.head || '').split(/\/| or /u)[0]);
     if (!text || !head) return null;
     const lower = text.toLocaleLowerCase('en');
     if (/\blet['’]?s\b|\blet us\b/u.test(lower)) {

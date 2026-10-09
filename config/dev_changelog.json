@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T20:32:00+01:00",
+      "date": "2026-10-09 20:32 BST",
+      "agent": "Claude",
+      "summary": "Inflected Portuguese rows drop dictionary notes and inflect every meaning: está 'he/she is', not 'he/she is; forms the progressive aspect'",
+      "detail": [
+        "Notes beside the meanings are left off inflected rows: 'forms the progressive aspect', 'formula used in greetings', 'especially…', 'usually', 'such as…'. vai: 'he/she is doing; formula used in greetings' → 'he/she is doing'.",
+        "Meanings written without 'to' now inflect too: busca 'he/she fetches, pick up' → 'he/she fetches, picks up'; tira 'takes, take out, take away' → 'takes, takes out, takes away'; cola 'sticks or attach' → 'sticks or attaches'.",
+        "Alternatives after 'to be' stay as they are ('he/she is absent, not present'); an object alternate stays ('starts an engine, vehicle').",
+        "Measured on live v23: 232 Portuguese rows changed, no Spanish row changed, none lost its English."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T19:59:45+01:00",
       "date": "2026-10-09 19:59 BST",
       "agent": "Codex",
@@ -358,18 +371,6 @@
         "The tutorial introduction now starts with the essential lesson, including the correct pronunciation controls.",
         "The full card tour remains an explicit option in Help and the introduction.",
         "All five first-time UX audit recommendations are implemented and recorded."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T21:18:00+01:00",
-      "date": "2026-10-08 21:18 BST",
-      "agent": "Antigravity",
-      "summary": "Clarify learning language prompt, add known-languages primer, and expand tutorial notes",
-      "detail": [
-        "Prompt explicitly asks for 'Choose the language you’re learning' to avoid confusion for non-native English speakers.",
-        "Add post-language selection primer asking which languages the learner already knows to filter look-alikes via Smart Skip.",
-        "Expand tutorial with Smart Skip explanation and reassure learners that they can switch between Speech and Lyrics anytime with progress saved."
       ],
       "commit": "pending"
     }
