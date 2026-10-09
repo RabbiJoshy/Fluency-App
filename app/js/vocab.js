@@ -11,10 +11,10 @@ const LAST_STUDY_SESSION_KEY = 'fluency_last_study_session_v1';
 const WSD_PUBLICATION_PROJECTION_KEY = 'fluency_wsd_publication_projection_v1';
 const speechSourceFrequencyCache = new Map();
 
-async function loadSpeechSourceFrequency(langConfig) {
+async function loadSpeechSourceFrequency(langConfig, { detached = false } = {}) {
     const path = langConfig?.frequencyPath;
     const indexPath = langConfig?.indexPath;
-    if (!path || !indexPath || activeArtist || window.playlistLiveActive?.()) return null;
+    if (!path || !indexPath || (!detached && (activeArtist || window.playlistLiveActive?.()))) return null;
     if (!speechSourceFrequencyCache.has(path)) {
         const pending = fetch(path).then(async response => {
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -1162,7 +1162,7 @@ function buildSplitCardPair(item, card, meanings, lang = selectedLanguage) {
     if (!splitTuples || !splitTuples.tuple1 || !splitTuples.tuple2) return null;
     const t1 = splitTuples.tuple1;
     const t2 = splitTuples.tuple2;
-    const baseFullId = getWordId(item);
+    const baseFullId = card.fullId || getWordId(item);
     const baseId = item.id;
 
     const firstEx1 = t1.meanings.length > 0
@@ -1958,6 +1958,82 @@ async function fetchDetachedIndex(langConfig) {
     return data;
 }
 
+// Placement needs every grouping/split decision before sampling. Keep this
+// preparation detached from the active deck and its lazy row/example caches.
+const estimationVocabularyCache = new Map();
+async function loadEstimationVocabulary(langConfig, onProgress = () => {}) {
+    const path = langConfig.indexPath || langConfig.dataPath;
+    if (!path) throw new Error('No Speech vocabulary configured');
+    if (!estimationVocabularyCache.has(path)) {
+        const pending = (async () => {
+            const directory = indexDirectory(path);
+            const response = await fetch(`${directory}vocabulary.index.manifest.json`);
+            let data;
+            if (response.status === 404) {
+                data = await fetchDetachedIndex(langConfig);
+            } else {
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const manifest = await response.json();
+                if (!manifest.columns || !manifest.shards?.length) throw new Error('Invalid Speech index manifest');
+                const columns = await fetch(`${directory}${manifest.columns}`);
+                if (!columns.ok) throw new Error(`HTTP ${columns.status}`);
+                data = hydrateIndexColumns(await columns.json());
+                const byId = new Map(data.map(item => [item.id, item]));
+                const hydrated = new Set();
+                for (let start = 0; start < manifest.shards.length; start += 8) {
+                    await Promise.all(manifest.shards.slice(start, start + 8).map(async shard => {
+                        const rows = await fetch(`${directory}${shard.path}`);
+                        if (!rows.ok) throw new Error(`HTTP ${rows.status}`);
+                        for (const [id, row] of Object.entries(await rows.json())) {
+                            const item = byId.get(id);
+                            if (item) {
+                                Object.assign(item, row);
+                                hydrated.add(id);
+                            }
+                        }
+                    }));
+                    onProgress(Math.min(start + 8, manifest.shards.length), manifest.shards.length);
+                }
+                if (hydrated.size !== data.length) throw new Error('Speech grouping metadata is incomplete');
+            }
+            validateVocabularyIndex(data, { source: path });
+            await stampContractions(data, langConfig, { detached: true });
+            return data;
+        })().catch(error => {
+            estimationVocabularyCache.delete(path);
+            throw error;
+        });
+        estimationVocabularyCache.set(path, pending);
+    }
+    return estimationVocabularyCache.get(path);
+}
+
+// Only split prompts need examples. Fetch those shards without changing the
+// artist/Speech examples currently used by search or the study deck.
+async function loadEstimationExamples(langConfig, ranks) {
+    const path = langConfig.examplesPath;
+    if (!path || !ranks.length) return {};
+    const directory = examplesDirectory(path);
+    const response = await fetch(`${directory}vocabulary.examples.manifest.json`);
+    if (response.status === 404) {
+        const monolith = await fetch(path);
+        if (!monolith.ok) throw new Error(`HTTP ${monolith.status}`);
+        return monolith.json();
+    }
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const manifest = await response.json();
+    const shards = exampleShardsForRanks(manifest, ranks);
+    const examples = {};
+    for (let start = 0; start < shards.length; start += 8) {
+        await Promise.all(shards.slice(start, start + 8).map(async shard => {
+            const rows = await fetch(`${directory}${shard.path}`);
+            if (!rows.ok) throw new Error(`HTTP ${rows.status}`);
+            Object.assign(examples, expandSlimExamplePayload(await rows.json(), manifest));
+        }));
+    }
+    return examples;
+}
+
 // Every route to a deck — setup counts, deck build, resume — passes through
 // here, so this is the one place per-language cognate scores have to be
 // attached. Loading is memoised per language config; a release without a
@@ -2016,8 +2092,22 @@ let _mergeExceptionsFor;
 let _contractionSurfaces = null;
 let _mergeKeys = null;
 
-async function stampContractions(vocabulary, langConfig) {
+async function stampContractions(vocabulary, langConfig, { detached = false } = {}) {
     const path = langConfig?.mergeExceptionsPath || null;
+    if (detached) {
+        let payload = null;
+        if (path) {
+            const response = await fetch(path);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            payload = await response.json();
+        }
+        const contractions = new Set((payload?.contractions || []).map(normalizeLemmaToken));
+        const built = payload?.release_id;
+        const sameRelease = !built || [langConfig?.indexPath, langConfig?.releaseManifestPath]
+            .some(value => String(value || '').includes(`/${built}/`));
+        stampMergeExceptionValues(vocabulary, contractions, sameRelease ? payload?.keys : null);
+        return;
+    }
     if (_mergeExceptionsFor !== path) {
         _mergeExceptionsFor = path;
         _contractionSurfaces = null;
@@ -2040,11 +2130,15 @@ async function stampContractions(vocabulary, langConfig) {
             }
         }
     }
+    stampMergeExceptionValues(vocabulary, _contractionSurfaces, _mergeKeys);
+}
+
+function stampMergeExceptionValues(vocabulary, contractions, keys) {
     if (!Array.isArray(vocabulary)) return;
     for (const item of vocabulary) {
         const surface = normalizeLemmaToken(item?.word);
-        item.is_contraction = Boolean(_contractionSurfaces?.has(surface));
-        const key = _mergeKeys?.[surface];
+        item.is_contraction = Boolean(contractions?.has(surface));
+        const key = keys?.[surface];
         if (typeof key === 'string') item.merge_key = key;
         else delete item.merge_key;
     }
@@ -4361,6 +4455,9 @@ window.buildCardFormModel = buildCardFormModel;
 window.mergeArtistVocabularies = mergeArtistVocabularies;
 window.joinWithMaster = joinWithMaster;
 window.fetchAndJoinIndex = fetchAndJoinIndex;
+window.loadEstimationVocabulary = loadEstimationVocabulary;
+window.loadEstimationExamples = loadEstimationExamples;
+window.loadSpeechSourceFrequency = loadSpeechSourceFrequency;
 window.fetchActiveVocabularyData = fetchActiveVocabularyData;
 window.ensureLemmaPoolingData = ensureLemmaPoolingData;
 window.getWordId = getWordId;

@@ -505,7 +505,7 @@
                         <div class="level-estimate-modal-callout" id="step2LevelEstimateCallout">
                             <div class="level-estimate-modal-body">
                                 <strong>Not sure which level is right for you?</strong>
-                                <p>Take a quick adaptive test (~30 words) to estimate your current vocabulary and start at the right level.</p>
+                                <p>Take a quick adaptive check (up to 30 prompts) to estimate your vocabulary and find a useful starting level.</p>
                             </div>
                             <button type="button" class="level-estimate-modal-btn" id="openEstimationFromLevelHelpBtn">Estimate my level →</button>
                         </div>
@@ -1393,10 +1393,10 @@
             <div class="estimation-body">
                 <div id="estimationIntro">
                     <p style="text-align: center; color: var(--text-secondary); margin-bottom: 20px;">
-                        Check 30 words sampled across the frequency range to find a useful starting level.
+                        Check up to 30 vocabulary groups sampled across the frequency range to find a useful starting level.
                     </p>
                     <p style="text-align: center; color: var(--text-muted); margin-bottom: 20px; font-size: 14px;">
-                        Think of the meaning first, then reveal it and say whether you knew it beforehand.
+                        Think of the meaning first, then reveal it and say whether you knew it beforehand. When a sentence is shown, judge the word's meaning in that sentence.
                     </p>
                     <button class="estimation-start-btn" id="startEstimationBtn">Start</button>
                     <button type="button" class="estimation-import-link" id="estimationImportKnownBtn" hidden>Already have a list of words you know? Import them ›</button>
@@ -1415,6 +1415,7 @@
                         <div class="estimation-word" id="estimationWord">palabra</div>
                         <div class="estimation-lemma" id="estimationLemma"></div>
                         <div class="estimation-pos" id="estimationPOS">noun</div>
+                        <div class="estimation-example" id="estimationExample" hidden></div>
                         <div class="estimation-translation" id="estimationTranslation"></div>
                         <div class="estimation-rank" id="estimationRank"></div>
                         <button class="estimation-reveal" id="estimationReveal" type="button" onclick="revealTranslation()">Check meaning <kbd class="estimation-kbd">Space</kbd></button>

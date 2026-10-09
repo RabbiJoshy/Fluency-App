@@ -10798,6 +10798,15 @@
             opacity: 1;
         }
 
+        .estimation-example {
+            max-width: 560px;
+            margin: 12px auto;
+            font-size: 17px;
+            line-height: 1.5;
+            color: var(--text-secondary);
+            overflow-wrap: anywhere;
+        }
+
         .estimation-rank {
             text-align: center;
             font-family: var(--font-data);
