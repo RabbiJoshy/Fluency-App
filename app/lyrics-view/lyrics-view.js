@@ -210,9 +210,9 @@ async function init() {
     const paramSong = urlParams.get('song');
 
     // Robust asset paths relative to this module
-    const assetsUrl = new URL('../turbo/turbo_assets.json', import.meta.url).href;
-    const extra50kUrl = new URL('../turbo/es_50k_data.json', import.meta.url).href;
-    const songsUrl = new URL('../turbo/probe_songs.json', import.meta.url).href;
+    const assetsUrl = new URL('../turbo/turbo_assets.json?v=20261009M', import.meta.url).href;
+    const extra50kUrl = new URL('../turbo/es_50k_data.json?v=20261009M', import.meta.url).href;
+    const songsUrl = new URL('../turbo/probe_songs.json?v=20261009M', import.meta.url).href;
 
     // Load assets (read-only)
     engine = await TurboEngine.create(assetsUrl, extra50kUrl);
