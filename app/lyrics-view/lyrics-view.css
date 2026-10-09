@@ -268,7 +268,9 @@ main {
 .lyric-line-item {
   position: relative;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 14px;
   padding: 6px 12px;
   border-radius: var(--radius-md);
   transition: background-color 0.15s ease;
@@ -276,6 +278,33 @@ main {
 
 .lyric-line-item:hover {
   background: rgba(255, 255, 255, 0.03);
+}
+
+/* Timestamp Gutter (Fixed-width column on left) */
+.lyric-line-timestamp {
+  font-family: var(--font-data);
+  font-size: 11px;
+  color: var(--accent-green);
+  opacity: 0.8;
+  width: 38px;
+  min-width: 38px;
+  padding-top: 8px; /* Perfectly aligned with large text baseline */
+  text-align: right;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.lyric-line-timestamp-spacer {
+  display: none; /* Only occupies space when timestamps exist in song */
+  width: 0;
+}
+
+/* Line Body (Stacked Spanish target & English line perfectly aligned on left) */
+.lyric-line-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
 }
 
 /* Target Line (Bold, large, Space Grotesk) */
@@ -300,7 +329,7 @@ main {
   line-height: 1.45;
   font-weight: 400;
   color: var(--text-muted);
-  margin-top: 5px;
+  margin-top: 4px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -309,14 +338,6 @@ main {
 
 .lyric-line-english.is-hidden {
   display: none;
-}
-
-.lyric-line-timestamp {
-  font-family: var(--font-data);
-  font-size: 11px;
-  color: var(--accent-green);
-  opacity: 0.8;
-  margin-right: 4px;
 }
 
 /* ───────────────────────── WORD / TOKEN HIGHLIGHTING ───────────────────────── */
