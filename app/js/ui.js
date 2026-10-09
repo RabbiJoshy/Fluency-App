@@ -1,8 +1,8 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=e0b5c1c2';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=e0b5c1c2';
-import { readFastTrack } from './fast-track-preferences.js?v=e0b5c1c2';
+import './state.js?v=6f77dca3';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=6f77dca3';
+import { readFastTrack } from './fast-track-preferences.js?v=6f77dca3';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -1609,6 +1609,18 @@ const STABLE_SET_SLOT_COUNT = 25;
 // Boundaries always use the form-level corpus frequency baseline. Merge
 // Lemmas anchors a merged card to its highest-frequency form, and every
 // optional exclusion simply leaves a hole inside the fixed region.
+// The estimator and picker share these exact half-open, fixed baseline slots.
+function buildStableSetRanges(startRank, endRank, rankBasis = 'stable') {
+    if (!Number.isFinite(startRank) || !Number.isFinite(endRank) || endRank <= startRank) return [];
+    return Array.from({ length: Math.ceil((endRank - startRank) / STABLE_SET_SLOT_COUNT) }, (_, index) => ({
+        setNumber: index + 1,
+        startRank: startRank + index * STABLE_SET_SLOT_COUNT,
+        endRank: Math.min(startRank + (index + 1) * STABLE_SET_SLOT_COUNT, endRank),
+        rankBasis
+    }));
+}
+window.buildStableSetRanges = buildStableSetRanges;
+
 function computeSmartLevelRanges(filteredVocab) {
     if (!filteredVocab || filteredVocab.length === 0) return [];
     const items = filteredVocab;
@@ -2740,7 +2752,8 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     // Sets use fixed baseline slots. Filters can make a set shorter, but
     // never refill it from its neighbour; this preserves membership, progress,
     // and the nearby-rank example neighbourhood across setting changes.
-    const slotCount = Math.max(0, Math.ceil((maxWord - minWord) / STABLE_SET_SLOT_COUNT));
+    const slotRanges = buildStableSetRanges(minWord, maxWord, rankBasis);
+    const slotCount = slotRanges.length;
     const slots = Array.from({ length: slotCount }, () => []);
     for (let i = 0; i < wordsInLevel.length; i++) {
         const item = wordsInLevel[i];
@@ -2761,8 +2774,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     }
     const ranges = [];
     for (let slotIdx = 0; slotIdx < slotCount; slotIdx++) {
-        const start = minWord + slotIdx * STABLE_SET_SLOT_COUNT;
-        const end = Math.min(start + STABLE_SET_SLOT_COUNT, maxWord);
+        const { startRank: start, endRank: end } = slotRanges[slotIdx];
         const words = slots[slotIdx];
         let seenCount = 0;
         let reviewCount = 0;
@@ -3347,7 +3359,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=e0b5c1c2')
+        import('./spotify.js?v=6f77dca3')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }

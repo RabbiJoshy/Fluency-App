@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T19:59:45+01:00",
+      "date": "2026-10-09 19:59 BST",
+      "agent": "Codex",
+      "summary": "Early level estimates suggest a particular study set",
+      "detail": [
+        "Suggest a level and set within Levels 1–10, using the same 25-position set boundaries as the study picker; from Level 11 suggest whole levels.",
+        "Keep earlier and later options separate when they land in different sets of the same level, and select the chosen set after its controls finish loading.",
+        "Sample more finely near the start of the frequency range while keeping the adaptive check at up to 30 questions and preserving saved Speech-rank placement."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T19:49:00+01:00",
       "date": "2026-10-09 19:49 BST",
       "agent": "Claude",
@@ -358,19 +370,6 @@
         "Prompt explicitly asks for 'Choose the language you’re learning' to avoid confusion for non-native English speakers.",
         "Add post-language selection primer asking which languages the learner already knows to filter look-alikes via Smart Skip.",
         "Expand tutorial with Smart Skip explanation and reassure learners that they can switch between Speech and Lyrics anytime with progress saved."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T21:16:05+01:00",
-      "date": "2026-10-08 21:16 BST",
-      "agent": "Codex",
-      "summary": "Names and birthdays identify separate learning profiles",
-      "detail": [
-        "Enter a username/name and birthday day/month, with inline validation and no birth year.",
-        "Matching profiles show language and last study date; an exact match can always create a separate profile.",
-        "Existing initials and all progress keep their original IDs; selected profiles remain remembered on this device.",
-        "Saved sets are isolated by profile; the progress backend now includes a shared profile directory."
       ],
       "commit": "pending"
     }
