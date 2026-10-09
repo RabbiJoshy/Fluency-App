@@ -167,14 +167,48 @@ function showPOSInfo(event, pos, pct) {
 // Common Spanish elisions: elided form → possible full forms
 const ELISION_MAP = {
     "pa": ["para"],
+    "pa'": ["para"],
     "to": ["todo"],
+    "to'": ["todo"],
+    "'to": ["todo"],
     "na": ["nada"],
-    "ta": ["esta", "estar"],
-    "toy": ["estoy"],
+    "na'": ["nada"],
+    "'na": ["nada"],
+    "ta": ["está", "estar"],
+    "ta'": ["está"],
+    "'tá": ["está"],
+    "tas": ["estás"],
+    "tas'": ["estás"],
+    "'tás": ["estás"],
     "tan": ["están"],
+    "tan'": ["están"],
+    "'tan": ["están"],
+    "'tán": ["están"],
+    "toy": ["estoy"],
+    "'toy": ["estoy"],
+    "taba": ["estaba"],
+    "'taba": ["estaba"],
     "tamo": ["estamos"],
+    "'tamo": ["estamos"],
+    "tamos": ["estamos"],
+    "'tamos": ["estamos"],
     "pal": ["para el"],
+    "pa'l": ["para el"],
+    "pa'la": ["para la"],
     "po": ["por"],
+    "e'": ["es"],
+    "'e": ["es"],
+    "onde": ["donde"],
+    "toa": ["toda"],
+    "toa'": ["toda"],
+    "to'a": ["toda"],
+    "toas": ["todas"],
+    "to'as": ["todas"],
+    "uste": ["usted"],
+    "uste'": ["usted"],
+    "usté": ["usted"],
+    "vo'a": ["voy a"],
+    "voya": ["voy a"],
 };
 
 function getFullVocabLookup() {
@@ -223,16 +257,7 @@ function resolveToken(token) {
         return { token, source: 'deck', entry: flashcards[deckIdx], deckIndex: deckIdx };
     }
 
-    // 2. Try stripping trailing apostrophe (ere' → eres, etc.)
-    if (lower.endsWith("'") || lower.endsWith("’")) {
-        const stripped = lower.replace(/['’]+$/, '');
-        deckIdx = lookupMap.get(stripped + 's');
-        if (deckIdx !== undefined) return { token, source: 'deck', entry: flashcards[deckIdx], deckIndex: deckIdx };
-        deckIdx = lookupMap.get(stripped);
-        if (deckIdx !== undefined) return { token, source: 'deck', entry: flashcards[deckIdx], deckIndex: deckIdx };
-    }
-
-    // 3. Try elision map
+    // 2. Try elision map directly
     const elisions = ELISION_MAP[lower];
     if (elisions) {
         for (const full of elisions) {
@@ -241,24 +266,60 @@ function resolveToken(token) {
         }
     }
 
-    // 4. Check full vocabulary
+    // 3. Try trailing apostrophe (ere' → eres, sabemo' → sabemos, obligao' → obligado)
+    if (lower.endsWith("'") || lower.endsWith("’")) {
+        const stripped = lower.replace(/['’]+$/, '');
+        // Check participle contraction (-ao -> -ado)
+        if (stripped.endsWith('ao')) {
+            const partForm = stripped.slice(0, -2) + 'ado';
+            deckIdx = lookupMap.get(partForm);
+            if (deckIdx !== undefined) return { token, source: 'deck', entry: flashcards[deckIdx], deckIndex: deckIdx };
+        }
+        deckIdx = lookupMap.get(stripped + 's');
+        if (deckIdx !== undefined) return { token, source: 'deck', entry: flashcards[deckIdx], deckIndex: deckIdx };
+        deckIdx = lookupMap.get(stripped);
+        if (deckIdx !== undefined) return { token, source: 'deck', entry: flashcards[deckIdx], deckIndex: deckIdx };
+    }
+
+    // 4. Try leading apostrophe ('tás → estás, 'toy → estoy)
+    if (lower.startsWith("'") || lower.startsWith("’")) {
+        const stripped = lower.replace(/^['’]+/, '');
+        deckIdx = lookupMap.get('es' + stripped);
+        if (deckIdx !== undefined) return { token, source: 'deck', entry: flashcards[deckIdx], deckIndex: deckIdx };
+        deckIdx = lookupMap.get(stripped);
+        if (deckIdx !== undefined) return { token, source: 'deck', entry: flashcards[deckIdx], deckIndex: deckIdx };
+    }
+
+    // 5. Check full vocabulary
     const fullLookup = getFullVocabLookup();
     let vocabEntry = fullLookup.get(lower);
     if (vocabEntry) return { token, source: 'vocab', entry: vocabEntry, deckIndex: null };
 
-    // 5. Try elision recovery against full vocab
-    if (lower.endsWith("'") || lower.endsWith("’")) {
-        const stripped = lower.replace(/['’]+$/, '');
-        vocabEntry = fullLookup.get(stripped + 's');
-        if (vocabEntry) return { token, source: 'vocab', entry: vocabEntry, deckIndex: null };
-        vocabEntry = fullLookup.get(stripped);
-        if (vocabEntry) return { token, source: 'vocab', entry: vocabEntry, deckIndex: null };
-    }
+    // 6. Try elision recovery against full vocab
     if (elisions) {
         for (const full of elisions) {
             vocabEntry = fullLookup.get(full);
             if (vocabEntry) return { token, source: 'vocab', entry: vocabEntry, deckIndex: null };
         }
+    }
+    if (lower.endsWith("'") || lower.endsWith("’")) {
+        const stripped = lower.replace(/['’]+$/, '');
+        if (stripped.endsWith('ao')) {
+            const partForm = stripped.slice(0, -2) + 'ado';
+            vocabEntry = fullLookup.get(partForm);
+            if (vocabEntry) return { token, source: 'vocab', entry: vocabEntry, deckIndex: null };
+        }
+        vocabEntry = fullLookup.get(stripped + 's');
+        if (vocabEntry) return { token, source: 'vocab', entry: vocabEntry, deckIndex: null };
+        vocabEntry = fullLookup.get(stripped);
+        if (vocabEntry) return { token, source: 'vocab', entry: vocabEntry, deckIndex: null };
+    }
+    if (lower.startsWith("'") || lower.startsWith("’")) {
+        const stripped = lower.replace(/^['’]+/, '');
+        vocabEntry = fullLookup.get('es' + stripped);
+        if (vocabEntry) return { token, source: 'vocab', entry: vocabEntry, deckIndex: null };
+        vocabEntry = fullLookup.get(stripped);
+        if (vocabEntry) return { token, source: 'vocab', entry: vocabEntry, deckIndex: null };
     }
 
     return { token, source: 'unknown', entry: null, deckIndex: null };

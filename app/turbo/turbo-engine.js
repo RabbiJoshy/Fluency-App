@@ -200,38 +200,51 @@ export class TurboEngine {
             // 1. "e'" -> "es" (e' libre -> es libre, e' que -> es que)
             // 2. "no'" -> "nos" (no' vemo' -> nos vemos, no' perdemo' -> nos perdemos)
             // 3. 1st person plural verbs: "sabemo'" -> "sabemos", "llevamo'" -> "llevamos", "perdemo'" -> "perdemos"
-            // 4. Any other word ending in apostrophe where stem + 's' exists in dictionary (tiene' -> tienes, lo' -> los)
+            // 4. Participle contractions: "pegao'" -> "pegado", "obligao'" -> "obligado", "separao'" -> "separado"
+            // 5. Plural/verb aspiration: "ojo'" -> "ojos", "lo'" -> "los", "tiene'" -> "tienes"
             if (!expanded && cleaned.endsWith("'")) {
                 const stem = cleaned.slice(0, -1);
-                if (/(?:amo|emo|imo)$/.test(stem)) {
-                    expanded = stem + 's';
-                    isElision = true;
-                } else if (stem === 'e') {
+                if (stem === 'e') {
                     expanded = 'es';
                     isElision = true;
                 } else if (stem === 'no') {
                     expanded = 'nos';
                     isElision = true;
-                } else if (this.dictionary[stem + 's']) {
+                } else if (/(?:amo|emo|imo|ámo|émo|ímo)$/.test(stem)) {
                     expanded = stem + 's';
                     isElision = true;
-                } else if (this.dictionary[stem]) {
-                    expanded = stem;
+                } else if (stem.endsWith('ao')) {
+                    const partForm = stem.slice(0, -2) + 'ado';
+                    expanded = partForm;
+                    isElision = true;
+                } else if (stem.endsWith('ío')) {
+                    const partForm = stem.slice(0, -2) + 'ido';
+                    expanded = partForm;
                     isElision = true;
                 } else {
-                    expanded = stem;
-                    isElision = true;
+                    const sForm = stem + 's';
+                    // Check stem + 's' in dictionary or 50k ranks FIRST
+                    if (this.dictionary[sForm] || this.ranks50k[sForm]) {
+                        expanded = sForm;
+                        isElision = true;
+                    } else if (this.dictionary[stem] || this.ranks50k[stem]) {
+                        expanded = stem;
+                        isElision = true;
+                    } else {
+                        expanded = stem;
+                        isElision = true;
+                    }
                 }
             } else if (!expanded && cleaned.startsWith("'")) {
                 const stem = cleaned.slice(1);
                 if (this.elisions[stem]) {
                     expanded = this.elisions[stem];
                     isElision = true;
-                } else if (this.dictionary[stem]) {
-                    expanded = stem;
-                    isElision = true;
-                } else if (this.dictionary['es' + stem]) {
+                } else if (this.dictionary['es' + stem] || this.ranks50k['es' + stem]) {
                     expanded = 'es' + stem;
+                    isElision = true;
+                } else if (this.dictionary[stem] || this.ranks50k[stem]) {
+                    expanded = stem;
                     isElision = true;
                 } else {
                     expanded = stem;

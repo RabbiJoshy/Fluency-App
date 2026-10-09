@@ -1,4 +1,4 @@
-import { TurboEngine } from '../turbo/turbo-engine.js?v=bc02eadf';
+import { TurboEngine } from '../turbo/turbo-engine.js?v=76b07815';
 
 // Common Spanish & Latin urban ad-libs, interjections, and exclamations
 const INTERJECTIONS_SET = new Set([
@@ -34,19 +34,42 @@ function formatElisionToken(raw, fullWord) {
   if (!fullWord) return escapeHtml(raw);
 
   const normRaw = raw.replace(/[’]/g, "'");
-  const match = normRaw.match(/^(.*?)([.,;:!?"¿¡)]*)$/);
-  const core = match ? match[1] : normRaw;
-  const trail = match ? match[2] : '';
+  // Separate leading and trailing punctuation (excluding apostrophes which belong to the word)
+  const match = normRaw.match(/^([¿¡\"(]*)(.*?)([\"?!.,:;)]*)$/);
+  if (!match) return escapeHtml(raw);
+  const lead = match[1];
+  const core = match[2];
+  const trail = match[3];
+  if (!core) return escapeHtml(raw);
 
   const cleanFull = fullWord.trim().toLowerCase();
   const cleanCore = core.toLowerCase();
 
-  // Case 1: Trailing apostrophe (sabemo' -> sabemos, e' -> es, to' -> todo)
+  if (cleanCore === cleanFull) {
+    return escapeHtml(raw);
+  }
+
+  // Irregular / common fixed contractions
+  if (cleanCore === "pa'") return `${escapeHtml(lead)}pa<span class="elision-bracket">(</span><span class="elision-letter">ra</span><span class="elision-bracket">)</span>${escapeHtml(trail)}`;
+  if (cleanCore === "to'") return `${escapeHtml(lead)}to<span class="elision-bracket">(</span><span class="elision-letter">do</span><span class="elision-bracket">)</span>${escapeHtml(trail)}`;
+  if (cleanCore === "na'") return `${escapeHtml(lead)}na<span class="elision-bracket">(</span><span class="elision-letter">da</span><span class="elision-bracket">)</span>${escapeHtml(trail)}`;
+  if (cleanCore === "e'") return `${escapeHtml(lead)}e<span class="elision-bracket">(</span><span class="elision-letter">s</span><span class="elision-bracket">)</span>${escapeHtml(trail)}`;
+  if (cleanCore === "'e") return `${escapeHtml(lead)}<span class="elision-bracket">(</span><span class="elision-letter">es</span><span class="elision-bracket">)</span>${escapeHtml(trail)}`;
+  if (cleanCore === "toa'" || cleanCore === "toa") return `${escapeHtml(lead)}to<span class="elision-bracket">(</span><span class="elision-letter">d</span><span class="elision-bracket">)</span>a${escapeHtml(trail)}`;
+  if (cleanCore === "'tamo" || cleanCore === "tamo") return `${escapeHtml(lead)}<span class="elision-bracket">(</span><span class="elision-letter">es</span><span class="elision-bracket">)</span>tamo<span class="elision-bracket">(</span><span class="elision-letter">s</span><span class="elision-bracket">)</span>${escapeHtml(trail)}`;
+  if (cleanCore === "'tamos" || cleanCore === "tamos") return `${escapeHtml(lead)}<span class="elision-bracket">(</span><span class="elision-letter">es</span><span class="elision-bracket">)</span>tamos${escapeHtml(trail)}`;
+  if (cleanCore === "'toy" || cleanCore === "toy") return `${escapeHtml(lead)}<span class="elision-bracket">(</span><span class="elision-letter">es</span><span class="elision-bracket">)</span>toy${escapeHtml(trail)}`;
+  if (cleanCore === "'tá" || cleanCore === "ta'" || cleanCore === "ta") return `${escapeHtml(lead)}<span class="elision-bracket">(</span><span class="elision-letter">es</span><span class="elision-bracket">)</span>tá${escapeHtml(trail)}`;
+  if (cleanCore === "'tás" || cleanCore === "tas'" || cleanCore === "tas") return `${escapeHtml(lead)}<span class="elision-bracket">(</span><span class="elision-letter">es</span><span class="elision-bracket">)</span>tás${escapeHtml(trail)}`;
+  if (cleanCore === "'tan" || cleanCore === "tan'") return `${escapeHtml(lead)}<span class="elision-bracket">(</span><span class="elision-letter">es</span><span class="elision-bracket">)</span>tán${escapeHtml(trail)}`;
+  if (cleanCore === "'taba" || cleanCore === "taba") return `${escapeHtml(lead)}<span class="elision-bracket">(</span><span class="elision-letter">es</span><span class="elision-bracket">)</span>taba${escapeHtml(trail)}`;
+
+  // Case 1: Trailing apostrophe (sabemo' -> sabemos, ere' -> eres, ojo' -> ojos)
   if (cleanCore.endsWith("'")) {
     const stem = core.slice(0, -1);
     if (cleanFull.startsWith(stem.toLowerCase())) {
       const elided = fullWord.slice(stem.length);
-      return `${escapeHtml(stem)}<span class="elision-bracket">(</span><span class="elision-letter">${escapeHtml(elided)}</span><span class="elision-bracket">)</span>${escapeHtml(trail)}`;
+      return `${escapeHtml(lead)}${escapeHtml(stem)}<span class="elision-bracket">(</span><span class="elision-letter">${escapeHtml(elided)}</span><span class="elision-bracket">)</span>${escapeHtml(trail)}`;
     }
   }
 
@@ -55,7 +78,7 @@ function formatElisionToken(raw, fullWord) {
     const stem = core.slice(1);
     if (cleanFull.endsWith(stem.toLowerCase())) {
       const elided = fullWord.slice(0, fullWord.length - stem.length);
-      return `<span class="elision-bracket">(</span><span class="elision-letter">${escapeHtml(elided)}</span><span class="elision-bracket">)</span>${escapeHtml(stem)}${escapeHtml(trail)}`;
+      return `${escapeHtml(lead)}<span class="elision-bracket">(</span><span class="elision-letter">${escapeHtml(elided)}</span><span class="elision-bracket">)</span>${escapeHtml(stem)}${escapeHtml(trail)}`;
     }
   }
 
@@ -67,7 +90,7 @@ function formatElisionToken(raw, fullWord) {
       const p2 = parts[1];
       if (cleanFull.startsWith(p1.toLowerCase()) && cleanFull.endsWith(p2.toLowerCase())) {
         const elided = fullWord.slice(p1.length, fullWord.length - p2.length);
-        return `${escapeHtml(p1)}<span class="elision-bracket">(</span><span class="elision-letter">${escapeHtml(elided)}</span><span class="elision-bracket">)</span>${escapeHtml(p2)}${escapeHtml(trail)}`;
+        return `${escapeHtml(lead)}${escapeHtml(p1)}<span class="elision-bracket">(</span><span class="elision-letter">${escapeHtml(elided)}</span><span class="elision-bracket">)</span>${escapeHtml(p2)}${escapeHtml(trail)}`;
       }
     }
   }
