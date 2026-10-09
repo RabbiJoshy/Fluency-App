@@ -1,4 +1,4 @@
-import { TurboEngine } from '../turbo/turbo-engine.js?v=46ef386b';
+import { TurboEngine } from '../turbo/turbo-engine.js?v=d677a2c6';
 
 // Common Spanish & Latin urban ad-libs, interjections, and exclamations
 const INTERJECTIONS_SET = new Set([
@@ -149,6 +149,20 @@ async function init() {
       s.isOffline = true;
     });
 
+    // Hydrate offline curated songs with verified human English translations from the local audit catalog
+    try {
+      const yonResp = await fetch('../lyrics-audit/data/yonaguni.json');
+      if (yonResp.ok) {
+        const yonData = await yonResp.json();
+        const yLines = yonData.song?.lines || [];
+        const yonProbe = probeSongs.find(s => (s.title || '').toLowerCase() === 'yonaguni');
+        if (yonProbe && yLines.length > 0) {
+          yonProbe.englishLines = yLines.map(l => l.translation?.english || null);
+          yonProbe.translationSource = 'genius';
+        }
+      }
+    } catch (_) {}
+
     // Load session-generated songs
     customSongs = loadSavedCustomSongs();
     allSongs = [...customSongs, ...probeSongs];
@@ -218,9 +232,17 @@ async function selectSong(index) {
   const cacheKey = songCacheKey(song);
   let annotatedSong = annotatedCache.get(cacheKey);
   if (!annotatedSong) {
+    // If song has known English translation lines attached, pass them through
     const result = await engine.processPlaylist([song]);
     annotatedSong = result.annotatedSongs?.[0];
     if (annotatedSong) {
+      if (song.englishLines && Array.isArray(song.englishLines)) {
+        annotatedSong.lines.forEach((l, idx) => {
+          if (idx < song.englishLines.length && !l.english) {
+            l.english = song.englishLines[idx];
+          }
+        });
+      }
       postProcessAnnotatedSong(annotatedSong);
       annotatedCache.set(cacheKey, annotatedSong);
     }
@@ -768,6 +790,31 @@ async function handleRunTurbo() {
 
   try {
     const songData = await resolveOnlineTrack({ input, manualTitle, manualArtist, manualLyrics });
+    setTurboStatus('Searching Genius for verified English translation...', `"${songData.title}" by ${songData.artist}`);
+
+    // Check Cloudflare Worker proxy for authentic Genius human English translation
+    try {
+      const gResp = await fetch('https://fluency-api.rabbijoshy.workers.dev', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'getGeniusTranslation',
+          title: songData.title,
+          artist: songData.artist
+        })
+      });
+      if (gResp.ok) {
+        const gData = await gResp.json();
+        if (gData.success && gData.data?.found && Array.isArray(gData.data?.lines) && gData.data.lines.length > 0) {
+          songData.englishLines = gData.data.lines;
+          songData.translationSource = 'genius';
+          songData.translationTitle = gData.data.translationTitle || '';
+        }
+      }
+    } catch (gErr) {
+      console.warn('Genius translation lookup failed, continuing with Spanish only:', gErr);
+    }
+
     setTurboStatus('Running TURBO engine...', 'Tokenizing, analyzing Caribbean elisions, entities & senses...');
 
     const result = await engine.processPlaylist([songData]);
@@ -775,6 +822,16 @@ async function handleRunTurbo() {
     if (!annotatedSong || !annotatedSong.lines || annotatedSong.lines.length === 0) {
       throw new Error('TURBO processed 0 lines for this track.');
     }
+
+    // Attach verified English translation lines if available
+    if (songData.englishLines && songData.englishLines.length > 0) {
+      annotatedSong.lines.forEach((l, idx) => {
+        if (idx < songData.englishLines.length) {
+          l.english = songData.englishLines[idx];
+        }
+      });
+    }
+
     postProcessAnnotatedSong(annotatedSong);
 
     songData.id = 'online_' + Date.now();

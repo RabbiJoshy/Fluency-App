@@ -1021,6 +1021,7 @@ export class TurboEngine {
 
                 return {
                     text: lineObj.text,
+                    english: lineObj.english || song.englishLines?.[auditLines.length] || null,
                     timestamp_ms: lineObj.timestamp_ms,
                     end_timestamp_ms: lineObj.end_timestamp_ms,
                     isSynced: lineObj.isSynced,
