@@ -987,9 +987,10 @@ export class TurboEngine {
             return (a.speechRank || 9999) - (b.speechRank || 9999);
         });
 
-        // Assign ranks to cards FIRST so they propagate to token breakdowns
+        // Store playlist-level rank separately without overwriting authentic Spanish rank
         finalCards.forEach((c, idx) => {
-            c.rank = idx + 1;
+            c.playlistRank = idx + 1;
+            c.rank = c.speechRank || c.rank || null;
         });
 
         // 6. Build Lyric-by-Lyric Audit Breakdown for every song

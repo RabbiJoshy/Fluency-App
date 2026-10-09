@@ -1,4 +1,4 @@
-import { TurboEngine } from '../turbo/turbo-engine.js?v=9e814385';
+import { TurboEngine } from '../turbo/turbo-engine.js?v=81e5ba02';
 
 // Common Spanish & Latin urban ad-libs, interjections, and exclamations
 const INTERJECTIONS_SET = new Set([
@@ -18,12 +18,18 @@ function escapeHtml(str) {
     .replace(/'/g, '&#39;');
 }
 
+function escapeRegExp(str) {
+  if (!str) return '';
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 let engine = null;
 let probeSongs = [];
 let customSongs = [];
 let allSongs = [];
 let annotatedCache = new Map(); // songCacheKey -> annotatedSong
 let currentSongIndex = 0;
+let currentAnnotatedSong = null;
 let showEnglishUnderneath = true;
 
 // Flat list of all tokens in current song for modal next/previous stepping
@@ -80,6 +86,8 @@ const modalEntityTitle = document.getElementById('modalEntityTitle');
 const modalEntityDesc = document.getElementById('modalEntityDesc');
 const modalPolySensesBox = document.getElementById('modalPolySensesBox');
 const modalPolySensesList = document.getElementById('modalPolySensesList');
+const modalSongOccurrencesBox = document.getElementById('modalSongOccurrencesBox');
+const modalSongOccurrencesList = document.getElementById('modalSongOccurrencesList');
 const modalContextQuoteText = document.getElementById('modalContextQuoteText');
 const modalContextQuoteMeta = document.getElementById('modalContextQuoteMeta');
 const tokenPrevBtn = document.getElementById('tokenPrevBtn');
@@ -242,6 +250,7 @@ async function selectSong(index, syncUrl = true) {
   if (lyricsFlow) lyricsFlow.style.display = 'flex';
 
   if (annotatedSong) {
+    currentAnnotatedSong = annotatedSong;
     renderLyrics(annotatedSong);
   }
 }
@@ -473,6 +482,21 @@ function openTokenModal(token) {
     }
   }
 
+  // Disambiguate context meaning for polysemous words using engine's unified WSD logic
+  const cardMeanings = token.card?.meanings || [];
+  let chosenMeaning = cardMeanings[0] || null;
+  let chosenIdx = 0;
+
+  if (cardMeanings.length > 1 && engine && typeof engine.disambiguateWord === 'function') {
+    const dictEntry = (token.word && engine.dictionary?.[token.word.toLowerCase()]) || token.card;
+    if (dictEntry) {
+      chosenIdx = engine.disambiguateWord(token.word || token.raw, dictEntry, token.lineText || '');
+      if (cardMeanings[chosenIdx]) {
+        chosenMeaning = cardMeanings[chosenIdx];
+      }
+    }
+  }
+
   // Badges
   if (tokenModalBadges) {
     tokenModalBadges.innerHTML = '';
@@ -491,14 +515,26 @@ function openTokenModal(token) {
       typeBadge.textContent = 'Ad-lib / Interjection';
     } else {
       typeBadge.classList.add('pill-word-style');
-      typeBadge.textContent = token.pos || 'Vocabulary';
+      // Reflect the specific disambiguated sense's POS if available
+      typeBadge.textContent = chosenMeaning?.pos || token.pos || 'Vocabulary';
     }
     tokenModalBadges.appendChild(typeBadge);
 
-    if (token.rank) {
-      const rankBadge = document.createElement('span');
-      rankBadge.className = 'token-type-pill pill-rank-style';
-      rankBadge.textContent = `#${token.rank} in frequency`;
+    // Authentic Frequency in Spanish (Corpus 50k / Speech mode)
+    const authenticRank = token.rank || token.speechRank || token.card?.speechRank || null;
+    const rankBadge = document.createElement('span');
+    rankBadge.className = 'token-type-pill pill-rank-style';
+    if (token.type === 'entity') {
+      rankBadge.textContent = 'Named Entity';
+      tokenModalBadges.appendChild(rankBadge);
+    } else if (token.type === 'mwe') {
+      rankBadge.textContent = 'Multi-Word Expression';
+      tokenModalBadges.appendChild(rankBadge);
+    } else if (authenticRank && authenticRank > 0 && authenticRank <= 50000) {
+      rankBadge.textContent = `#${Number(authenticRank).toLocaleString()} in Spanish frequency`;
+      tokenModalBadges.appendChild(rankBadge);
+    } else {
+      rankBadge.textContent = '50,000+ Spanish frequency';
       tokenModalBadges.appendChild(rankBadge);
     }
   }
@@ -512,32 +548,18 @@ function openTokenModal(token) {
   }
 
   if (modalMeaningLabel) {
-    if (token.type === 'entity') modalMeaningLabel.textContent = 'Entity Sense';
-    else if (token.type === 'mwe') modalMeaningLabel.textContent = 'Idiomatic Sense';
-    else if (token.type === 'interjection') modalMeaningLabel.textContent = 'Ad-lib & Usage';
-    else modalMeaningLabel.textContent = 'Sense Assignment';
-  }
-
-  // Disambiguate context meaning for polysemous words using engine's unified WSD logic
-  const cardMeanings = token.card?.meanings || [];
-  let chosenMeaning = cardMeanings[0] || null;
-  let chosenIdx = 0;
-
-  if (cardMeanings.length > 1 && engine && typeof engine.disambiguateWord === 'function') {
-    const dictEntry = (token.word && engine.dictionary?.[token.word.toLowerCase()]) || token.card;
-    if (dictEntry) {
-      chosenIdx = engine.disambiguateWord(token.word || token.raw, dictEntry, token.lineText || '');
-      if (cardMeanings[chosenIdx]) {
-        chosenMeaning = cardMeanings[chosenIdx];
-      }
-    }
+    if (token.type === 'entity') modalMeaningLabel.textContent = 'Entity in this instance';
+    else if (token.type === 'mwe') modalMeaningLabel.textContent = 'Idiom in this instance';
+    else if (token.type === 'interjection') modalMeaningLabel.textContent = 'Ad-lib in this instance';
+    else modalMeaningLabel.textContent = 'Sense in this instance';
   }
 
   if (modalMeaningPrimary) modalMeaningPrimary.textContent = chosenMeaning?.translation || token.translation || token.word;
   if (modalMeaningContext) {
+    const posStr = chosenMeaning?.pos || token.pos || '';
     modalMeaningContext.textContent = chosenMeaning?.context
-      ? `Context: ${chosenMeaning.context}`
-      : (token.pos ? `Part of speech: ${token.pos}` : '');
+      ? `Context: ${chosenMeaning.context}${posStr ? ` (${posStr})` : ''}`
+      : (posStr ? `Part of speech: ${posStr}` : '');
   }
 
   // Entity Details
@@ -551,7 +573,7 @@ function openTokenModal(token) {
     }
   }
 
-  // Polysemous Breakdown Box (Show all other alternative senses)
+  // Polysemous Breakdown Box (Show all other alternative senses cleanly one-by-one with click-to-expand)
   if (modalPolySensesBox && modalPolySensesList) {
     const otherMeanings = cardMeanings.filter((_, idx) => idx !== chosenIdx);
     if (otherMeanings.length > 0) {
@@ -561,9 +583,20 @@ function openTokenModal(token) {
         const item = document.createElement('div');
         item.className = 'sense-item';
         item.innerHTML = `
-          <span class="sense-trans">${m.translation}</span>
-          <span class="sense-meta">${m.pos} ${m.context ? `· ${m.context}` : ''}</span>
+          <div class="sense-row">
+            <span class="sense-trans">${escapeHtml(m.translation)}</span>
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <span class="sense-meta">${escapeHtml(m.pos || '')}</span>
+              <span class="sense-chevron" aria-hidden="true">›</span>
+            </div>
+          </div>
+          <div class="sense-details-drawer">
+            <div><strong>Context / Usage:</strong> ${escapeHtml(m.context || 'Standard general usage')}</div>
+          </div>
         `;
+        item.addEventListener('click', () => {
+          item.classList.toggle('is-expanded');
+        });
         modalPolySensesList.appendChild(item);
       });
     } else {
@@ -571,9 +604,65 @@ function openTokenModal(token) {
     }
   }
 
-  // Context Quote
+  // Context Lyric Quote
   if (modalContextQuoteText) modalContextQuoteText.innerHTML = highlightTokenInLine(token.lineText || '', token.raw);
   if (modalContextQuoteMeta) modalContextQuoteMeta.textContent = `Line ${(token.lineIndex || 0) + 1} · ${token.songTitle || ''} (${token.songArtist || ''})`;
+
+  // Other occurrences of the word in the same song (excluding the exact current lyric line)
+  if (modalSongOccurrencesBox && modalSongOccurrencesList) {
+    const songToSearch = currentAnnotatedSong || (currentSongIndex >= 0 ? allSongs[currentSongIndex] : null);
+    const targetWord = (token.word || token.raw || '').toLowerCase();
+    const targetRaw = (token.raw || '').toLowerCase();
+    const currentLineIdx = token.lineIndex;
+
+    const occurrences = [];
+    if (songToSearch && Array.isArray(songToSearch.lines)) {
+      songToSearch.lines.forEach((lineObj, idx) => {
+        if (idx === currentLineIdx) return; // Skip the current lyric line
+        const lineText = lineObj.text || '';
+        const lineTokens = lineObj.tokens || [];
+        
+        // Check if line contains this word
+        let matched = false;
+        if (lineTokens.length > 0) {
+          matched = lineTokens.some(t => {
+            const w = (t.word || '').toLowerCase();
+            const r = (t.raw || '').toLowerCase();
+            return (w && w === targetWord) || (r && r === targetRaw);
+          });
+        } else {
+          // Fallback string search
+          const regex = new RegExp(`\\b${escapeRegExp(targetWord)}\\b`, 'i');
+          matched = regex.test(lineText);
+        }
+
+        if (matched) {
+          occurrences.push({
+            lineIndex: idx,
+            text: lineText,
+            timestamp_ms: lineObj.timestamp_ms
+          });
+        }
+      });
+    }
+
+    if (occurrences.length > 0) {
+      modalSongOccurrencesBox.style.display = 'block';
+      modalSongOccurrencesList.innerHTML = '';
+      occurrences.forEach(occ => {
+        const occItem = document.createElement('div');
+        occItem.className = 'occurrence-item';
+        const highlightedText = highlightTokenInLine(occ.text, token.raw || token.word);
+        occItem.innerHTML = `
+          <div class="occurrence-text">${highlightedText}</div>
+          <div class="occurrence-meta">Line ${occ.lineIndex + 1}</div>
+        `;
+        modalSongOccurrencesList.appendChild(occItem);
+      });
+    } else {
+      modalSongOccurrencesBox.style.display = 'none';
+    }
+  }
 
   // Navigation button states
   if (tokenPrevBtn) tokenPrevBtn.disabled = (currentModalTokenIndex <= 0);
