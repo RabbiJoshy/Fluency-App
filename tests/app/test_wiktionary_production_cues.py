@@ -541,3 +541,56 @@ console.log(JSON.stringify({
         self.assertEqual(out["siento"]["active"], ["me siento"])
         self.assertTrue(out["siento"]["pronounKept"])
         self.assertEqual(out["hablo"]["active"], ["hablo"])
+
+    def test_gloss_notes_drop_and_bare_meanings_inflect(self) -> None:
+        """A dictionary note is left off an inflected row; a meaning without "to" inflects."""
+        node = shutil.which("node")
+        if not node:
+            self.skipTest("node is required to execute reverse-cues.js")
+        script = r"""
+import { englishProductionCue } from %s;
+
+const pres3 = forms => ({ tenses: { Presente: forms } });
+const tables = {
+    estar: pres3(['estou', 'estás', 'está', 'estamos', 'estais', 'estão']),
+    ir: pres3(['vou', 'vais', 'vai', 'vamos', 'ides', 'vão']),
+    buscar: pres3(['busco', 'buscas', 'busca', 'buscamos', 'buscais', 'buscam']),
+    tirar: pres3(['tiro', 'tiras', 'tira', 'tiramos', 'tirais', 'tiram']),
+    colar: pres3(['colo', 'colas', 'cola', 'colamos', 'colais', 'colam']),
+    pegar: pres3(['pego', 'pegas', 'pega', 'pegamos', 'pegais', 'pegam']),
+    faltar: pres3(['falto', 'faltas', 'falta', 'faltamos', 'faltais', 'faltam']),
+    cantar: pres3(['canto', 'cantas', 'canta', 'cantamos', 'cantais', 'cantam']),
+    moldar: pres3(['moldo', 'moldas', 'molda', 'moldamos', 'moldais', 'moldam']),
+    olhar: pres3(['olho', 'olhas', 'olha', 'olhamos', 'olhais', 'olham']),
+};
+const verb = (headword, translation) => ({ pos: 'verb', translation, headword });
+const plain = { conjugationData: tables };
+const cases = [
+    // notes leave the row (was: "he/she is; forms the progressive aspect")
+    ['está', verb('estar', 'to be; forms the progressive aspect'), 'he/she is'],
+    ['vai', verb('ir', 'to be doing; formula used in greetings'), 'he/she is doing'],
+    ['vou', verb('ir', 'to keep on; to go on; ~ on; forms the continuative aspect'), 'I keep on; go on'],
+    ['cola', verb('colar', 'to stick or attach, not necessarily using glue'), 'he/she sticks or attaches'],
+    // meanings without "to" inflect (was: "he/she fetches, pick up")
+    ['busca', verb('buscar', 'to fetch, pick up'), 'he/she fetches, picks up'],
+    ['tira', verb('tirar', 'to take, take out, take away'), 'he/she takes, takes out, takes away'],
+    ['canta', verb('cantar', 'to say with rhythm, chant'), 'he/she says with rhythm, chants'],
+    // an object alternate and "be" predicates stay as they are
+    ['pega', verb('pegar', 'to start an engine, vehicle'), 'he/she starts an engine, vehicle'],
+    ['falta', verb('faltar', 'to be absent, not present'), 'he/she is absent, not present'],
+    // "form" and "see" are verbs, not notes
+    ['molda', verb('moldar', 'to shape, form'), 'he/she shapes, forms'],
+    ['olha', verb('olhar', 'to look, see'), 'he/she looks, sees'],
+];
+console.log(JSON.stringify(cases.map(([surface, sense, expected]) => ({
+    surface, expected, actual: englishProductionCue({ targetWord: surface }, sense, null, plain),
+}))));
+""" % json.dumps(REVERSE_CUES.as_uri())
+        result = subprocess.run(
+            [node, "--input-type=module", "-e", script],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        for row in json.loads(result.stdout):
+            self.assertEqual(row["actual"], row["expected"], row)
