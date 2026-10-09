@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-09T15:52:00+01:00",
+      "date": "2026-10-09 15:52 BST",
+      "agent": "Antigravity",
+      "summary": "Song lyrics view: removed synthetic word-by-word line translations in favor of strictly authentic hand-translated lyrics",
+      "detail": [
+        "Removed synthetic dictionary word concatenation from lyric lines: only verified hand-translated English subtitles are rendered underneath.",
+        "When no authentic human translation exists for a line, lyrics render in pure Spanish without artificial glosses.",
+        "Synced audio timestamps render directly alongside the original lyric text; topbar 'EN line' toggle button hides automatically when a song has no hand-translated lines.",
+        "Word, idiom, and entity quick-view modals retain full access to Fluency's hand-curated definitions and WSD sense assignments."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T15:49:16+01:00",
       "date": "2026-10-09 15:49 BST",
       "agent": "Codex",
