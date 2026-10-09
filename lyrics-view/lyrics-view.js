@@ -1,4 +1,4 @@
-import { TurboEngine } from '../turbo/turbo-engine.js?v=47d29421';
+import { TurboEngine } from '../turbo/turbo-engine.js?v=9e814385';
 
 // Common Spanish & Latin urban ad-libs, interjections, and exclamations
 const INTERJECTIONS_SET = new Set([
@@ -47,13 +47,12 @@ const songPickerModal = document.getElementById('songPickerModal');
 const closeSongPickerBtn = document.getElementById('closeSongPickerBtn');
 const songPickerList = document.getElementById('songPickerList');
 const songSearchInput = document.getElementById('songSearchInput');
-const tabOfflineBtn = document.getElementById('tabOfflineBtn');
-const tabOnlineBtn = document.getElementById('tabOnlineBtn');
-const tabOfflinePane = document.getElementById('tabOfflinePane');
-const tabOnlinePane = document.getElementById('tabOnlinePane');
-const offlineCountBadge = document.getElementById('offlineCountBadge');
+const songSearchClearBtn = document.getElementById('songSearchClearBtn');
+const catalogEmptyGuidance = document.getElementById('catalogEmptyGuidance');
+const openManualPasteBtn = document.getElementById('openManualPasteBtn');
+const goWithoutLyricsBtn = document.getElementById('goWithoutLyricsBtn');
 
-// Online TURBO Elements
+// Track Intake Elements
 const turboTrackInput = document.getElementById('turboTrackInput');
 const turboClearInputBtn = document.getElementById('turboClearInputBtn');
 const turboManualDetails = document.getElementById('turboManualDetails');
@@ -106,34 +105,7 @@ function loadSavedCustomSongs() {
   return [];
 }
 
-function switchPickerTab(tab) {
-  hideTurboError();
-  if (tab === 'offline') {
-    if (tabOfflineBtn) {
-      tabOfflineBtn.classList.add('active');
-      tabOfflineBtn.setAttribute('aria-selected', 'true');
-    }
-    if (tabOnlineBtn) {
-      tabOnlineBtn.classList.remove('active');
-      tabOnlineBtn.setAttribute('aria-selected', 'false');
-    }
-    if (tabOfflinePane) tabOfflinePane.style.display = 'block';
-    if (tabOnlinePane) tabOnlinePane.style.display = 'none';
-    if (songSearchInput) setTimeout(() => songSearchInput.focus(), 50);
-  } else {
-    if (tabOnlineBtn) {
-      tabOnlineBtn.classList.add('active');
-      tabOnlineBtn.setAttribute('aria-selected', 'true');
-    }
-    if (tabOfflineBtn) {
-      tabOfflineBtn.classList.remove('active');
-      tabOfflineBtn.setAttribute('aria-selected', 'false');
-    }
-    if (tabOfflinePane) tabOfflinePane.style.display = 'none';
-    if (tabOnlinePane) tabOnlinePane.style.display = 'block';
-    if (turboTrackInput) setTimeout(() => turboTrackInput.focus(), 50);
-  }
-}
+
 
 // ───────────────────────────────────────────────
 // Initialisation
@@ -200,7 +172,7 @@ async function init() {
     } else {
       // Default initial view: Open the Song Library menu so user can choose a track
       await selectSong(0, false); // select song 0 in background without forcing URL param
-      openSongPicker('offline');
+      openSongPicker();
     }
   } catch (err) {
     console.error('Failed to init Lyrics View:', err);
@@ -223,7 +195,7 @@ async function selectSong(index, syncUrl = true) {
   const song = allSongs[index];
   if (topbarSongTitle) topbarSongTitle.textContent = song.title || '';
   if (topbarSongArtist) {
-    topbarSongArtist.textContent = (song.artist || '') + (song.isOnline ? ' · ⚡ TURBO' : '');
+    topbarSongArtist.textContent = (song.artist || '') + (song.isOnline ? ' · Online' : '');
   }
 
   // Also populate compatibility anchors if present
@@ -412,7 +384,7 @@ function renderLyrics(song) {
         span.textContent = token.raw;
         lineAutoBadges.push({
           type: 'interjection',
-          label: `⚡ ${token.raw}`,
+          label: token.raw,
           sub: 'ad-lib',
           token
         });
@@ -510,16 +482,16 @@ function openTokenModal(token) {
     if (token.type === 'entity') {
       typeBadge.classList.add('pill-entity-style');
       const entType = token.card?.entity?.entityType || 'Cultural Entity';
-      typeBadge.textContent = `📖 ${entType}`;
+      typeBadge.textContent = entType;
     } else if (token.type === 'mwe') {
       typeBadge.classList.add('pill-mwe-style');
-      typeBadge.textContent = `Idiom`;
+      typeBadge.textContent = 'Idiom';
     } else if (token.type === 'interjection') {
       typeBadge.classList.add('pill-intj-style');
-      typeBadge.textContent = `⚡ Ad-lib / Interjection`;
+      typeBadge.textContent = 'Ad-lib / Interjection';
     } else {
       typeBadge.classList.add('pill-word-style');
-      typeBadge.textContent = `🔷 ${token.pos || 'Vocabulary'}`;
+      typeBadge.textContent = token.pos || 'Vocabulary';
     }
     tokenModalBadges.appendChild(typeBadge);
 
@@ -628,13 +600,33 @@ function highlightTokenInLine(lineText, rawToken) {
 function renderSongPickerItems(songs) {
   if (!songPickerList) return;
   songPickerList.innerHTML = '';
+
+  if (songs.length === 0) {
+    // Show guided fallback pane
+    songPickerList.style.display = 'none';
+    if (catalogEmptyGuidance) {
+      catalogEmptyGuidance.style.display = 'block';
+      // Auto-populate input with search term if it looks like a query or link
+      const curQuery = (songSearchInput ? songSearchInput.value.trim() : '');
+      if (curQuery && turboTrackInput && !turboTrackInput.value) {
+        turboTrackInput.value = curQuery;
+        if (turboClearInputBtn) turboClearInputBtn.style.display = 'block';
+      }
+    }
+    return;
+  }
+
+  // Catalogue matches exist: Show list, hide guidance
+  songPickerList.style.display = 'flex';
+  if (catalogEmptyGuidance) catalogEmptyGuidance.style.display = 'none';
+
   songs.forEach((s) => {
     const originalIndex = allSongs.indexOf(s);
     const item = document.createElement('div');
     item.className = `song-picker-item ${originalIndex === currentSongIndex ? 'active' : ''} ${s.isOnline ? 'is-online' : ''}`;
     item.dataset.index = originalIndex;
 
-    const onlineBadge = s.isOnline ? `<span class="song-picker-online-badge">⚡ ONLINE</span>` : '';
+    const onlineBadge = s.isOnline ? `<span class="song-picker-online-badge">ONLINE</span>` : '';
     const lineCount = (s.lyrics || s.plainLyrics || '').split('\n').filter(l => l.trim()).length || (s.syncedLyrics ? s.syncedLyrics.split('\n').length : 0);
 
     item.innerHTML = `
@@ -657,17 +649,58 @@ function renderSongPickerItems(songs) {
   });
 }
 
-function openSongPicker(initialTab = 'offline') {
-  if (songSearchInput) songSearchInput.value = '';
-  renderSongPickerItems(allSongs);
-  switchPickerTab(initialTab);
+function openSongPicker(initialQuery = '') {
+  hideTurboStatus();
+  hideTurboError();
+  if (catalogEmptyGuidance) catalogEmptyGuidance.style.display = 'none';
+  if (turboManualDetails) turboManualDetails.style.display = 'none';
+
+  if (songSearchInput) {
+    songSearchInput.value = initialQuery;
+    if (songSearchClearBtn) songSearchClearBtn.style.display = initialQuery ? 'block' : 'none';
+  }
+
+  if (initialQuery) {
+    filterCatalog(initialQuery);
+  } else {
+    renderSongPickerItems(allSongs);
+  }
+
   if (songPickerModal) songPickerModal.classList.add('open');
+  if (songSearchInput) setTimeout(() => songSearchInput.focus(), 60);
 }
 
 function closeSongPicker() {
   if (songPickerModal) songPickerModal.classList.remove('open');
   hideTurboStatus();
   hideTurboError();
+}
+
+function filterCatalog(query) {
+  const q = (query || '').trim();
+  if (songSearchClearBtn) songSearchClearBtn.style.display = q ? 'block' : 'none';
+
+  if (!q) {
+    renderSongPickerItems(allSongs);
+    return;
+  }
+
+  if (q.startsWith('http') || q.startsWith('spotify:')) {
+    // Directly guide to paste link
+    if (turboTrackInput) turboTrackInput.value = q;
+    if (turboClearInputBtn) turboClearInputBtn.style.display = 'block';
+    renderSongPickerItems([]); // Triggers guidance pane
+    return;
+  }
+
+  const lower = q.toLowerCase();
+  const filtered = allSongs.filter(s =>
+    (s.title || '').toLowerCase().includes(lower) ||
+    (s.artist || '').toLowerCase().includes(lower) ||
+    (s.lyrics || '').toLowerCase().includes(lower)
+  );
+
+  renderSongPickerItems(filtered);
 }
 
 // ───────────────────────────────────────────────
@@ -702,7 +735,7 @@ function pickLyricsRecord(records) {
          usable[0];
 }
 
-async function resolveOnlineTrack({ input, manualTitle, manualArtist, manualLyrics }) {
+async function resolveOnlineTrack({ input, manualTitle, manualArtist, manualLyrics, allowEmptyLyrics = false }) {
   // Check manual lyrics first
   if (manualLyrics && manualLyrics.trim().length > 0) {
     return {
@@ -715,7 +748,7 @@ async function resolveOnlineTrack({ input, manualTitle, manualArtist, manualLyri
   }
 
   const query = (input || '').trim();
-  if (!query) {
+  if (!query && !manualTitle) {
     throw new Error('Please enter a Spotify URL, track ID, song title & artist, or paste lyrics.');
   }
 
@@ -729,12 +762,11 @@ async function resolveOnlineTrack({ input, manualTitle, manualArtist, manualLyri
   else if (uriMatch) spotifyTrackId = uriMatch[1];
   else if (idMatch) spotifyTrackId = idMatch[1];
 
-  let resolvedTitle = '';
-  let resolvedArtist = '';
+  let resolvedTitle = (manualTitle || '').trim();
+  let resolvedArtist = (manualArtist || '').trim();
 
   if (spotifyTrackId) {
     setTurboStatus('Resolving Spotify track...', `Track ID: ${spotifyTrackId}`);
-    // If Spotify access token in localStorage
     const token = localStorage.getItem('spotify_access_token');
     if (token) {
       try {
@@ -743,8 +775,8 @@ async function resolveOnlineTrack({ input, manualTitle, manualArtist, manualLyri
         });
         if (resp.ok) {
           const trackData = await resp.json();
-          resolvedTitle = trackData.name || '';
-          resolvedArtist = trackData.artists?.map(a => a.name).join(', ') || '';
+          resolvedTitle = trackData.name || resolvedTitle;
+          resolvedArtist = trackData.artists?.map(a => a.name).join(', ') || resolvedArtist;
         }
       } catch (e) {
         console.warn('Spotify API track query failed:', e);
@@ -801,11 +833,24 @@ async function resolveOnlineTrack({ input, manualTitle, manualArtist, manualLyri
     }
   }
 
-  if (!lrclibRecord || (!lrclibRecord.plainLyrics && !lrclibRecord.syncedLyrics)) {
-    if (resolvedTitle) {
-      throw new Error(`Found Spotify track "${resolvedTitle}", but no lyrics were found on LRCLIB. Please paste the lyrics in the section below to run TURBO!`);
+  const hasLyrics = lrclibRecord && ((lrclibRecord.plainLyrics || '').trim() || (lrclibRecord.syncedLyrics || '').trim());
+
+  if (!hasLyrics) {
+    if (allowEmptyLyrics) {
+      return {
+        title: resolvedTitle || query || 'Unknown Track',
+        artist: resolvedArtist || 'Unknown Artist',
+        lyrics: '(Instrumental / No lyrics available)',
+        syncedLyrics: '',
+        spotifyId: spotifyTrackId || null,
+        isOnline: true
+      };
     }
-    throw new Error('No lyrics found on LRCLIB for this search. Try "Song Title - Artist" or paste lyrics directly.');
+    // Remember resolved title & artist for manual paste or go-without options
+    if (turboManualTitle && resolvedTitle && !turboManualTitle.value) turboManualTitle.value = resolvedTitle;
+    if (turboManualArtist && resolvedArtist && !turboManualArtist.value) turboManualArtist.value = resolvedArtist;
+
+    throw new Error('Lyrics not found for this track.');
   }
 
   return {
@@ -818,14 +863,15 @@ async function resolveOnlineTrack({ input, manualTitle, manualArtist, manualLyri
   };
 }
 
-async function handleRunTurbo() {
+async function handleRunTurbo(options = {}) {
   hideTurboError();
-  const input = turboTrackInput ? turboTrackInput.value.trim() : '';
+  const input = turboTrackInput ? turboTrackInput.value.trim() : (songSearchInput ? songSearchInput.value.trim() : '');
   const manualTitle = turboManualTitle ? turboManualTitle.value.trim() : '';
   const manualArtist = turboManualArtist ? turboManualArtist.value.trim() : '';
   const manualLyrics = turboManualLyrics ? turboManualLyrics.value.trim() : '';
+  const allowEmpty = Boolean(options.allowEmptyLyrics);
 
-  if (!input && !manualLyrics) {
+  if (!input && !manualLyrics && !manualTitle) {
     showTurboError('Please enter a Spotify URL, track ID, song search, or paste lyrics.');
     if (turboTrackInput) turboTrackInput.focus();
     return;
@@ -834,7 +880,14 @@ async function handleRunTurbo() {
   if (runTurboBtn) runTurboBtn.disabled = true;
 
   try {
-    const songData = await resolveOnlineTrack({ input, manualTitle, manualArtist, manualLyrics });
+    const songData = await resolveOnlineTrack({
+      input,
+      manualTitle,
+      manualArtist,
+      manualLyrics,
+      allowEmptyLyrics: allowEmpty
+    });
+
     setTurboStatus('Searching Genius for verified English translation...', `"${songData.title}" by ${songData.artist}`);
 
     // Check Cloudflare Worker proxy for authentic Genius human English translation
@@ -860,12 +913,12 @@ async function handleRunTurbo() {
       console.warn('Genius translation lookup failed, continuing with Spanish only:', gErr);
     }
 
-    setTurboStatus('Running TURBO engine...', 'Tokenizing, analyzing Caribbean elisions, entities & senses...');
+    setTurboStatus('Running intake engine...', 'Tokenizing and analyzing vocabulary...');
 
     const result = await engine.processPlaylist([songData]);
     const annotatedSong = result.annotatedSongs?.[0];
     if (!annotatedSong || !annotatedSong.lines || annotatedSong.lines.length === 0) {
-      throw new Error('TURBO processed 0 lines for this track.');
+      throw new Error('Processed 0 lines for this track.');
     }
 
     // Attach verified English translation lines if available
@@ -902,29 +955,36 @@ async function handleRunTurbo() {
     closeSongPicker();
     await selectSong(0); // Select the newly generated song
   } catch (err) {
-    console.error('TURBO online intake error:', err);
+    console.error('Intake error:', err);
     hideTurboStatus();
     if (runTurboBtn) runTurboBtn.disabled = false;
-    showTurboError(err.message || 'Failed to process track with TURBO.');
-    // If lyrics missing, open manual details
-    if (turboManualDetails && err.message.includes('paste')) {
-      turboManualDetails.open = true;
-      if (turboManualLyrics) turboManualLyrics.focus();
-    }
+    showTurboError(err.message || 'Lyrics not found for this track.');
   }
 }
 
 // ───────────────────────────────────────────────
 // Event Listeners
 // ───────────────────────────────────────────────
-if (songSelectorBtn) songSelectorBtn.addEventListener('click', () => openSongPicker('offline'));
-if (topbarTurboBtn) topbarTurboBtn.addEventListener('click', () => openSongPicker('online'));
+if (songSelectorBtn) songSelectorBtn.addEventListener('click', () => openSongPicker());
+if (topbarTurboBtn) topbarTurboBtn.addEventListener('click', () => openSongPicker());
 if (closeSongPickerBtn) closeSongPickerBtn.addEventListener('click', closeSongPicker);
 
-if (tabOfflineBtn) tabOfflineBtn.addEventListener('click', () => switchPickerTab('offline'));
-if (tabOnlineBtn) tabOnlineBtn.addEventListener('click', () => switchPickerTab('online'));
+if (openManualPasteBtn) {
+  openManualPasteBtn.addEventListener('click', () => {
+    if (turboManualDetails) {
+      turboManualDetails.style.display = 'flex';
+      if (turboManualLyrics) turboManualLyrics.focus();
+    }
+  });
+}
 
-if (runTurboBtn) runTurboBtn.addEventListener('click', handleRunTurbo);
+if (goWithoutLyricsBtn) {
+  goWithoutLyricsBtn.addEventListener('click', () => {
+    handleRunTurbo({ allowEmptyLyrics: true });
+  });
+}
+
+if (runTurboBtn) runTurboBtn.addEventListener('click', () => handleRunTurbo());
 if (turboTrackInput) {
   turboTrackInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') handleRunTurbo();
@@ -975,25 +1035,26 @@ if (toggleEnglishBtn) {
 
 if (songSearchInput) {
   songSearchInput.addEventListener('input', (e) => {
-    const q = e.target.value.trim();
-    if (q.startsWith('http') || q.startsWith('spotify:')) {
-      // User pasted a Spotify URL into search! Switch to online tab automatically!
-      if (turboTrackInput) turboTrackInput.value = q;
-      if (turboClearInputBtn) turboClearInputBtn.style.display = 'block';
-      switchPickerTab('online');
-      return;
+    filterCatalog(e.target.value);
+  });
+  songSearchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const q = e.target.value.trim();
+      if (q.startsWith('http') || q.startsWith('spotify:')) {
+        handleRunTurbo();
+      }
     }
-    const lower = q.toLowerCase();
-    if (!lower) {
-      renderSongPickerItems(allSongs);
-      return;
+  });
+}
+
+if (songSearchClearBtn) {
+  songSearchClearBtn.addEventListener('click', () => {
+    if (songSearchInput) {
+      songSearchInput.value = '';
+      filterCatalog('');
+      songSearchInput.focus();
     }
-    const filtered = allSongs.filter(s =>
-      (s.title || '').toLowerCase().includes(lower) ||
-      (s.artist || '').toLowerCase().includes(lower) ||
-      (s.lyrics || '').toLowerCase().includes(lower)
-    );
-    renderSongPickerItems(filtered);
+    songSearchClearBtn.style.display = 'none';
   });
 }
 

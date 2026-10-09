@@ -781,67 +781,105 @@ main {
 }
 
 /* ───────────────────────── SONG PICKER SHEET (FLUENCY STYLE) ───────────────────────── */
-.picker-tabs-row {
-  display: flex;
+.song-picker-search-wrap {
+  padding: 12px 18px;
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border-color);
-  padding: 8px 14px;
-  gap: 8px;
 }
 
-.picker-tab-btn {
-  flex: 1;
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: var(--radius-md);
-  padding: 8px 12px;
-  color: var(--text-muted);
-  font-family: var(--font-emphasis);
-  font-size: 13px;
-  font-weight: 600;
-  display: inline-flex;
+.song-picker-search {
+  position: relative;
+  display: flex;
   align-items: center;
-  justify-content: center;
+}
+
+.song-picker-search .song-search-input {
+  width: 100%;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 11px 36px 11px 14px;
+  color: var(--text-primary);
+  font-family: var(--font-reading);
+  font-size: 14px;
+  outline: none;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+}
+
+.song-picker-search .song-search-input:focus {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.15);
+}
+
+.catalog-empty-guidance {
+  padding: 20px;
+}
+
+.guidance-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.guidance-title {
+  font-family: var(--font-emphasis);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.guidance-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.fallback-action-buttons {
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px;
+  margin-top: 10px;
+}
+
+.btn-subtle {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
-.picker-tab-btn:hover {
-  color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.picker-tab-btn.active {
+.btn-subtle:hover {
   background: var(--bg-card);
-  color: var(--text-primary);
-  border-color: var(--border-color);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  border-color: var(--border-light);
 }
 
-.tab-badge {
-  font-family: var(--font-data);
-  font-size: 11px;
-  font-weight: 600;
-  padding: 1px 7px;
-  border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text-secondary);
-}
-
-.tab-badge.turbo-badge {
-  background: rgba(245, 158, 11, 0.15);
-  color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.3);
+.turbo-manual-box {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .song-picker-online-badge {
   font-family: var(--font-data);
   font-size: 10px;
-  font-weight: 700;
-  color: #fbbf24;
-  background: rgba(245, 158, 11, 0.15);
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  font-weight: 600;
+  color: var(--accent-blue);
+  background: rgba(74, 158, 255, 0.1);
+  border: 1px solid rgba(74, 158, 255, 0.25);
   padding: 1px 6px;
   border-radius: var(--radius-full);
   margin-left: 6px;
