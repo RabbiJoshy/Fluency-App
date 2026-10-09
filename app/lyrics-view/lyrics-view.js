@@ -1,4 +1,4 @@
-import { TurboEngine } from '../turbo/turbo-engine.js?v=f925640d';
+import { TurboEngine } from '../turbo/turbo-engine.js?v=cba7191d';
 
 // Common Spanish & Latin urban ad-libs, interjections, and exclamations
 const INTERJECTIONS_SET = new Set([
@@ -243,10 +243,6 @@ async function init() {
     // Load session-generated songs
     customSongs = loadSavedCustomSongs();
     allSongs = [...customSongs, ...probeSongs];
-
-    if (offlineCountBadge) {
-      offlineCountBadge.textContent = String(probeSongs.length);
-    }
 
     renderSongPickerItems(allSongs);
 
