@@ -144,3 +144,65 @@ class LemmaMergeExceptionTests(unittest.TestCase):
         )
         if completed.returncode != 0:
             self.fail(completed.stderr or completed.stdout)
+
+
+class CitationFormTests(unittest.TestCase):
+    """A card's citation form is never an expression the word occurs in."""
+
+    @unittest.skipUnless(shutil.which("node"), "Node.js is needed to run JS vm tests")
+    def test_phrase_senses_do_not_name_the_card(self) -> None:
+        script = r"""
+            const fs = require('node:fs');
+            const vm = require('node:vm');
+            const source = fs.readFileSync(process.env.LEMMA_VOCAB, 'utf8');
+            const pure = source.slice(source.indexOf('// lemma-merge-pure'), source.indexOf('// /lemma-merge-pure'));
+            const modelStart = source.indexOf('function buildCardFormModel');
+            const model = source.slice(modelStart, source.indexOf('\n}\n', modelStart) + 3);
+            const context = { selectedLanguage: 'portuguese' };
+            vm.runInNewContext(pure + model, context);
+            const { assignedHeadwordOf, buildCardFormModel } = context;
+            const fail = message => { throw new Error(message); };
+            const merged = item => buildCardFormModel(item, item.meanings, { mergedLemma: true });
+
+            // pt-speech-v23: "não é" was é's single most frequent meaning.
+            const e = { word: 'é', meanings: [
+                { headword: 'ser', pos: 'verb', frequency: '0.2' },
+                { headword: 'ser', pos: 'verb', frequency: '0.2' },
+                { headword: 'não é', pos: 'PHRASE', frequency: '0.3' },
+            ]};
+            if (assignedHeadwordOf(e.meanings, 'é') !== 'ser') fail('é cites ser, not não é');
+            const eForm = buildCardFormModel(e, e.meanings, { mergedLemma: false });
+            if (eForm.citationForm !== 'ser' || eForm.displaySurface !== 'é') fail(`é: ${JSON.stringify(eForm)}`);
+            const nao = { word: 'não', meanings: [
+                { headword: 'não', pos: 'adv', frequency: '0.2' },
+                { headword: 'não é', pos: 'PHRASE', frequency: '0.3' },
+            ]};
+            const naoForm = merged(nao);
+            if (naoForm.displaySurface !== 'não' || naoForm.productionAnswer !== 'não') fail('merged não is titled não');
+            // Wiktionary gives some multiword headwords an ordinary part of speech.
+            const cinto = [
+                { headword: 'cinto', pos: 'noun', frequency: '0.28' },
+                { headword: 'cinto de segurança', pos: 'noun', frequency: '0.42' },
+            ];
+            if (assignedHeadwordOf(cinto, 'cinto') !== 'cinto') fail('cinto cites cinto');
+            const repente = { word: 'repente', meanings: [{ headword: 'de repente', pos: 'adv', frequency: '1' }] };
+            if (assignedHeadwordOf(repente.meanings, 'repente') !== '') fail('only an expression: no citation');
+            if (merged(repente).citationForm !== 'repente') fail('repente falls back to its own spelling');
+            if (assignedHeadwordOf([{ headword: 'por favor', pos: 'PHRASE', frequency: '1' }], 'porfavor') !== 'por favor') {
+                fail('the same spelling written apart is the citation');
+            }
+
+            // A spelling that merges still wears the lemma.
+            const estaba = { word: 'estaba', meanings: [{ headword: 'estar', pos: 'VERB', frequency: '1' }] };
+            const estabaForm = merged(estaba);
+            if (estabaForm.displaySurface !== 'estar' || !estabaForm.mergedLemma) fail('estaba merges into estar');
+        """
+        completed = subprocess.run(
+            ["node", "-e", script],
+            check=False,
+            capture_output=True,
+            text=True,
+            env={**os.environ, "LEMMA_VOCAB": str(VOCAB)},
+        )
+        if completed.returncode != 0:
+            self.fail(completed.stderr or completed.stdout)
