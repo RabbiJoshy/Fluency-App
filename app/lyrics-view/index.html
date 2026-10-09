@@ -42,8 +42,8 @@
       </div>
 
       <div class="topbar-right">
-        <button class="action-pill-btn" id="topbarTurboBtn" type="button" title="Generate any song with TURBO">
-          ⚡ Online TURBO
+        <button class="action-pill-btn" id="topbarTurboBtn" type="button" title="Search catalog or add track">
+          Search / Add
         </button>
         <button class="action-pill-btn active" id="toggleEnglishBtn" type="button" title="Toggle English line translation underneath">
           EN line
@@ -78,79 +78,66 @@
         <button class="modal-close" id="closeSongPickerBtn" aria-label="Close modal">&#10005;</button>
       </div>
 
-      <!-- Segmented Tabs: Offline vs Online TURBO -->
-      <div class="picker-tabs-row" role="tablist">
-        <button type="button" class="picker-tab-btn active" id="tabOfflineBtn" role="tab" aria-selected="true" aria-controls="tabOfflinePane">
-          <span>📁 Offline Playlist</span>
-          <span class="tab-badge" id="offlineCountBadge">30</span>
-        </button>
-        <button type="button" class="picker-tab-btn" id="tabOnlineBtn" role="tab" aria-selected="false" aria-controls="tabOnlinePane">
-          <span>⚡ Online / Spotify</span>
-          <span class="tab-badge turbo-badge">TURBO</span>
-        </button>
-      </div>
-
-      <!-- Pane 1: Offline Playlist -->
-      <div class="picker-pane" id="tabOfflinePane" role="tabpanel">
+      <!-- Unified Single-Search Bar -->
+      <div class="song-picker-search-wrap">
         <div class="song-picker-search">
-          <input type="text" id="songSearchInput" class="song-search-input" placeholder="Search songs by title, artist, or lyrics…" autocomplete="off">
-        </div>
-        <div class="song-picker-list" id="songPickerList">
-          <!-- Songs rendered here -->
+          <input type="text" id="songSearchInput" class="song-search-input" placeholder="Search catalog by title, artist, or paste a Spotify link…" autocomplete="off">
+          <button type="button" id="songSearchClearBtn" class="turbo-clear-btn" style="display:none;" aria-label="Clear search">✕</button>
         </div>
       </div>
 
-      <!-- Pane 2: Online / Spotify TURBO Generator -->
-      <div class="picker-pane" id="tabOnlinePane" role="tabpanel" style="display: none;">
-        <div class="turbo-intake-container">
+      <!-- Catalog Song List -->
+      <div class="song-picker-list" id="songPickerList">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Guided Fallback Pane: When search yields no catalogue matches -->
+      <div class="catalog-empty-guidance" id="catalogEmptyGuidance" style="display: none;">
+        <div class="guidance-card">
+          <h4 class="guidance-title">Track not found in offline catalog</h4>
+          <p class="guidance-desc">
+            Paste a Spotify track link or title &amp; artist below to fetch lyrics automatically.
+          </p>
+
           <div class="turbo-input-group">
-            <label for="turboTrackInput" class="turbo-input-label">Spotify link, Track ID, or Song title & artist</label>
             <div class="turbo-input-wrap">
-              <span class="turbo-input-icon">🎵</span>
               <input type="text" id="turboTrackInput" class="turbo-text-input" placeholder="https://open.spotify.com/track/... or Tití Me Preguntó" autocomplete="off" />
               <button type="button" id="turboClearInputBtn" class="turbo-clear-btn" style="display:none;" aria-label="Clear input">✕</button>
             </div>
-            <div class="turbo-hints">
-              <span>✓ Spotify Track URL</span>
-              <span>✓ Spotify ID</span>
-              <span>✓ Title &amp; Artist search</span>
-            </div>
-          </div>
-
-          <!-- Manual Paste Fallback Details -->
-          <details class="turbo-manual-details" id="turboManualDetails">
-            <summary class="turbo-manual-summary">
-              <span>Or paste custom Spanish lyrics manually</span>
-              <span class="turbo-arrow">▾</span>
-            </summary>
-            <div class="turbo-manual-body">
-              <div class="turbo-manual-inputs">
-                <input type="text" id="turboManualTitle" class="turbo-text-input" placeholder="Track title (optional)" />
-                <input type="text" id="turboManualArtist" class="turbo-text-input" placeholder="Artist name (optional)" />
-              </div>
-              <textarea id="turboManualLyrics" class="turbo-textarea" rows="5" placeholder="Paste Spanish lyrics here..."></textarea>
-            </div>
-          </details>
-
-          <!-- Error Alert -->
-          <div class="turbo-alert-box" id="turboAlertBox" style="display: none;">
-            <span class="turbo-alert-icon">⚠️</span>
-            <div class="turbo-alert-text" id="turboAlertText">Error message here</div>
           </div>
 
           <!-- Status / Progress Box -->
           <div class="turbo-status-card" id="turboStatusCard" style="display: none;">
             <div class="turbo-spinner"></div>
             <div class="turbo-status-meta">
-              <span class="turbo-status-title" id="turboStatusTitle">Processing with TURBO</span>
+              <span class="turbo-status-title" id="turboStatusTitle">Processing</span>
               <span class="turbo-status-sub" id="turboStatusSub">Fetching track and lyrics…</span>
             </div>
           </div>
 
-          <!-- Submit Action Button -->
+          <!-- Lyrics Not Found & Fallback Options -->
+          <div class="turbo-alert-box" id="turboAlertBox" style="display: none;">
+            <div class="turbo-alert-content">
+              <div class="turbo-alert-text" id="turboAlertText">Lyrics not found for this track.</div>
+              <div class="fallback-action-buttons">
+                <button type="button" class="btn-subtle" id="openManualPasteBtn">Paste your own lyrics</button>
+                <button type="button" class="btn-subtle" id="goWithoutLyricsBtn">Continue without lyrics</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Manual Paste Accordion / Form -->
+          <div class="turbo-manual-box" id="turboManualDetails" style="display: none;">
+            <div class="turbo-manual-inputs">
+              <input type="text" id="turboManualTitle" class="turbo-text-input" placeholder="Track title (optional)" />
+              <input type="text" id="turboManualArtist" class="turbo-text-input" placeholder="Artist name (optional)" />
+            </div>
+            <textarea id="turboManualLyrics" class="turbo-textarea" rows="4" placeholder="Paste Spanish lyrics here..."></textarea>
+          </div>
+
+          <!-- Action Button -->
           <button type="button" id="runTurboBtn" class="turbo-submit-btn">
-            <span class="turbo-btn-icon">⚡</span>
-            <span>Generate Lyrics with TURBO</span>
+            <span>Find and Load Lyrics</span>
           </button>
         </div>
       </div>
