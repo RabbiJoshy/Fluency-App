@@ -439,3 +439,105 @@ console.log(JSON.stringify(out));
         rows = json.loads(result.stdout)
         for row in rows:
             self.assertEqual(row["actual"], row["expected"], row)
+
+    def test_reflexive_tables_and_agreeing_participles_inflect(self) -> None:
+        """INFLECT pass 2: -se tables are "me siento"; participles agree (feita)."""
+        node = shutil.which("node")
+        if not node:
+            self.skipTest("node is required to execute reverse-cues.js")
+        script = r"""
+import { englishProductionCue, conjugationCellMatches } from %s;
+
+const tables = {
+    sentirse: { gerund: 'sintiéndose', past_participle: 'sentido', tenses: {
+        Presente: ['me siento', 'te sientes', 'se siente', 'nos sentimos', 'os sentís', 'se sienten'],
+    } },
+    irse: { tenses: {
+        Pretérito: ['me fui', 'te fuiste', 'se fue', 'nos fuimos', 'os fuisteis', 'se fueron'],
+        Imperativo: ['—', 'vete', 'váyase', 'vámonos', 'idos', 'váyanse'],
+    } },
+    acordarse: { tenses: { Presente: ['me acuerdo', 'te acuerdas', 'se acuerda', 'nos acordamos', 'os acordáis', 'se acuerdan'] } },
+    lastimarse: { tenses: { Pretérito: ['me lastimé', 'te lastimaste', 'se lastimó', 'nos lastimamos', 'os lastimasteis', 'se lastimaron'] } },
+    arrepender: { tenses: { 'Subj. Presente': ['me arrependa', 'te arrependas', 'se arrependa', 'nos arrependamos', 'vos arrependais', 'se arrependam'] } },
+    fazer: { past_participle: 'feito', tenses: {} },
+    hacer: { past_participle: 'hecho', tenses: {} },
+    morir: { past_participle: 'muerto', tenses: {} },
+    'být': { past_participle: 'byl', tenses: {} },
+};
+const verb = (headword, translation) => ({ pos: 'verb', translation, headword });
+const plain = { conjugationData: tables };
+const cases = [
+    // -se rows (were: the infinitive)
+    ['siento', verb('sentirse', 'to feel'), 'I feel'],
+    ['fue', verb('irse', 'to leave'), 'he/she left'],
+    ['acuerdo', verb('acordarse', 'to remember'), 'I remember'],
+    ['lastimé', verb('lastimarse', 'to hurt oneself'), 'I hurt myself'],
+    ['sintiendo', verb('sentirse', 'to feel'), 'feeling'],
+    ['vete', verb('irse', 'to leave'), 'leave!'],
+    ['arrependa', verb('arrepender', 'to regret'), 'I/he/she regret(s)'],
+    // agreeing participles (were: the infinitive)
+    ['feita', verb('fazer', 'to make'), 'made'],
+    ['feitos', verb('fazer', 'to make'), 'made'],
+    ['hechas', verb('hacer', 'to do'), 'done'],
+    ['muertos', verb('morir', 'to die'), 'died'],
+    // a Czech l-form is not a participle with an ending
+    ['byla', verb('být', 'to be'), null],
+];
+const out = cases.map(([surface, sense, expected]) => ({
+    surface, expected, actual: englishProductionCue({ targetWord: surface }, sense, null, plain),
+}));
+const matches = [
+    ['me siento', 'siento', true], ['se fue', 'fue', true], ['siento', 'siento', true],
+    ['no te sientas', 'sientas', false], ['—', 'siento', false], ['meto', 'to', false],
+].map(([form, surface, expected]) => ({ surface: `${form} ~ ${surface}`, expected, actual: conjugationCellMatches(form, surface) }));
+console.log(JSON.stringify([...out, ...matches]));
+""" % json.dumps(REVERSE_CUES.as_uri())
+        result = subprocess.run(
+            [node, "--input-type=module", "-e", script],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        for row in json.loads(result.stdout):
+            self.assertEqual(row["actual"], row["expected"], row)
+
+    def test_conjugation_table_opens_on_a_reflexive_form(self) -> None:
+        """The table matches cells as the sense rows do: fue opens irse's Pretérito."""
+        node = shutil.which("node")
+        if not node:
+            self.skipTest("node is required to execute flashcards-conj.js")
+        conj = REPOSITORY_ROOT / "app" / "js" / "flashcards-conj.js"
+        script = r"""
+globalThis.window = globalThis;
+globalThis.selectedLanguage = 'spanish';
+const { buildConjugationTableHTML } = await import(%s);
+const irse = { tenses: {
+    Presente: ['me voy', 'te vas', 'se va', 'nos vamos', 'os vais', 'se van'],
+    Pretérito: ['me fui', 'te fuiste', 'se fue', 'nos fuimos', 'os fuisteis', 'se fueron'],
+} };
+const sentirse = { tenses: { Presente: ['me siento', 'te sientes', 'se siente', 'nos sentimos', 'os sentís', 'se sienten'] } };
+const hablar = { tenses: { Presente: ['hablo', 'hablas', 'habla', 'hablamos', 'habláis', 'hablan'] } };
+const read = html => ({
+    shown: [...html.matchAll(/class="conj-table" data-tense="([^"]+)"/g)].map(m => m[1]),
+    active: [...html.matchAll(/<tr class=" conj-active">(.*?)<\/tr>/g)]
+        .map(m => m[1].replace(/<td class="conj-pronoun">[^<]*<\/td>/, '').replace(/<[^>]+>/g, '')),
+    pronounKept: html.includes('<span class="conj-stem">me </span><span class="conj-stem">s</span><span class="conj-ending">iento</span>'),
+});
+console.log(JSON.stringify({
+    fue: read(buildConjugationTableHTML(irse, 'fue', 'irse')),
+    siento: read(buildConjugationTableHTML(sentirse, 'siento', 'sentirse')),
+    hablo: read(buildConjugationTableHTML(hablar, 'hablo', 'hablar')),
+}));
+""" % json.dumps(conj.as_uri())
+        result = subprocess.run(
+            [node, "--input-type=module", "-e", script],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        out = json.loads(result.stdout)
+        self.assertEqual(out["fue"]["shown"], ["Pretérito"])
+        self.assertEqual(out["fue"]["active"], ["se fue"])
+        self.assertEqual(out["siento"]["active"], ["me siento"])
+        self.assertTrue(out["siento"]["pronounKept"])
+        self.assertEqual(out["hablo"]["active"], ["hablo"])
