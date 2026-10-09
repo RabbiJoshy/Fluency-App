@@ -366,7 +366,11 @@ main {
 }
 
 .lyric-token.token-elision {
-  border-bottom: 1px dashed var(--accent-blue);
+  color: #7dd3fc;
+}
+
+.lyric-token.token-elision:hover {
+  background: rgba(125, 211, 252, 0.15);
 }
 
 /* Dimmed when filter active */

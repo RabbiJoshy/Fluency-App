@@ -1,4 +1,4 @@
-import { TurboEngine } from '../turbo/turbo-engine.js?v=8200a567';
+import { TurboEngine } from '../turbo/turbo-engine.js?v=5e1f4e9a';
 
 // Common Spanish & Latin urban ad-libs, interjections, and exclamations
 const INTERJECTIONS_SET = new Set([
@@ -256,6 +256,17 @@ function postProcessAnnotatedSong(song) {
           if (!token.translation || token.translation === 'out of 10k supply / noise') {
             token.translation = 'ad-lib / vocal exclamation';
           }
+        } else if (token.type === 'unmatched' && engine?.dictionary) {
+          // Rescue tokens that exist in the engine dictionary
+          const dictEntry = engine.dictionary[lowerNorm] || engine.dictionary[lowerRaw];
+          if (dictEntry) {
+            token.type = 'word';
+            token.word = lowerNorm || lowerRaw;
+            token.translation = dictEntry.top_translation;
+            token.pos = dictEntry.top_pos;
+            token.speechRank = dictEntry.rank;
+            token.card = { ...dictEntry, word: token.word, translation: dictEntry.top_translation };
+          }
         }
       }
     }
@@ -491,10 +502,25 @@ function openTokenModal(token) {
     else modalMeaningLabel.textContent = 'Sense Assignment';
   }
 
-  if (modalMeaningPrimary) modalMeaningPrimary.textContent = token.translation || token.word;
+  // Disambiguate context meaning for polysemous words using engine's unified WSD logic
+  const cardMeanings = token.card?.meanings || [];
+  let chosenMeaning = cardMeanings[0] || null;
+  let chosenIdx = 0;
+
+  if (cardMeanings.length > 1 && engine && typeof engine.disambiguateWord === 'function') {
+    const dictEntry = (token.word && engine.dictionary?.[token.word.toLowerCase()]) || token.card;
+    if (dictEntry) {
+      chosenIdx = engine.disambiguateWord(token.word || token.raw, dictEntry, token.lineText || '');
+      if (cardMeanings[chosenIdx]) {
+        chosenMeaning = cardMeanings[chosenIdx];
+      }
+    }
+  }
+
+  if (modalMeaningPrimary) modalMeaningPrimary.textContent = chosenMeaning?.translation || token.translation || token.word;
   if (modalMeaningContext) {
-    modalMeaningContext.textContent = token.card?.meanings?.[0]?.context
-      ? `Context: ${token.card.meanings[0].context}`
+    modalMeaningContext.textContent = chosenMeaning?.context
+      ? `Context: ${chosenMeaning.context}`
       : (token.pos ? `Part of speech: ${token.pos}` : '');
   }
 
@@ -509,13 +535,13 @@ function openTokenModal(token) {
     }
   }
 
-  // Polysemous Breakdown Box
+  // Polysemous Breakdown Box (Show all other alternative senses)
   if (modalPolySensesBox && modalPolySensesList) {
-    const cardMeanings = token.card?.meanings || [];
-    if (cardMeanings.length > 1) {
+    const otherMeanings = cardMeanings.filter((_, idx) => idx !== chosenIdx);
+    if (otherMeanings.length > 0) {
       modalPolySensesBox.style.display = 'block';
       modalPolySensesList.innerHTML = '';
-      cardMeanings.slice(1).forEach(m => {
+      otherMeanings.forEach(m => {
         const item = document.createElement('div');
         item.className = 'sense-item';
         item.innerHTML = `
