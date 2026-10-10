@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T21:52:18+01:00",
+      "date": "2026-10-10 21:52 BST",
+      "agent": "Claude",
+      "summary": "Tutorial: back of the card builds up too; spotlight ring follows its element",
+      "detail": [
+        "The back of the card starts blank: meanings, rare uses, review meanings, usage bars, example and look-up each appear as they are explained.",
+        "The spotlight ring is re-measured continuously and corrects for page zoom, so it stays around its element after rows open, flips settle or text size changes."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T20:17:03+01:00",
       "date": "2026-10-10 20:17 BST",
       "agent": "Claude",
@@ -363,22 +374,6 @@
         "Offer a more conservative starting level near 90% recognition and a later level near 80%, showing how familiar the vocabulary is likely to be.",
         "Use the same cognate decisions as Smart Skip for estimation even when Smart Skip is off; qualifying cognates never appear as questions.",
         "Show AUTO under levels covered by the saved estimate, without recording estimator answers as learned cards or changing actual study progress."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T16:09:00+01:00",
-      "date": "2026-10-09 16:09 BST",
-      "agent": "Claude",
-      "summary": "INFLECT pass 1: conjugated verb rows read as natural English (era → 'I was', parece → 'he/she seems')",
-      "detail": [
-        "Imperfect and past subjunctive are simple past, never progressive: era 'I/he/she was being' → 'I/he/she was', tenía 'was having' → 'had'.",
-        "A form that is both a statement and a command shows the statement: parece 'seem! / he/she seems' → 'he/she seems'. The command shows only when the example is one ('Let's go!' → let's go!).",
-        "When the example says I or he/she, the row uses that person: era + 'I was a very different person then.' → 'I was'.",
-        "English spelling fixed: meaned → meant, runing → running, planed → planned, lended → lent, hurted → hurt (full irregular table + consonant doubling).",
-        "Wiktionary glosses keep every clause and whole brackets: vi 'I saw (to be able to see' → 'I saw (to be able to see; not to be blind or blinded)'; faço 'I play' → 'I play; pretend to be'.",
-        "Measured on live v23 decks: command clutter 2,264 → 0 (es) and 2,169 → 0 (pt); progressive imperfects 760/705 → 0; misspellings and broken brackets → 0.",
-        "Not yet: -se verbs (siento under sentirse), agreeing participles (feita), clitic forms (dime) still show the infinitive — counted for pass 2."
       ],
       "commit": "pending"
     }

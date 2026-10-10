@@ -16000,20 +16000,24 @@
     border: 2.5px solid var(--accent-amber);
     box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-amber) 18%, transparent);
     pointer-events: none;
-    transition: left 0.22s ease, top 0.22s ease, width 0.22s ease, height 0.22s ease;
 }
 
 .card-tutorial-ring[hidden] { display: none; }
 
 /* The front builds up: each element fades in as its note comes up. */
-.card-front .card-tutorial-anchored,
-.card-front .front-lemma-pair {
-    transition: opacity 0.45s ease, transform 0.45s ease;
+.card-face .card-tutorial-anchored,
+.card-front .front-lemma-pair,
+.card-back .meanings-scroll {
+    transition: opacity 0.45s ease;
 }
 
 .card-tutorial-anchored.card-tutorial-unrevealed,
-.front-lemma-pair.card-tutorial-unrevealed {
+.front-lemma-pair.card-tutorial-unrevealed,
+.meanings-scroll.card-tutorial-unrevealed {
     opacity: 0;
+}
+
+.card-front .card-tutorial-unrevealed {
     transform: translateY(8px);
 }
 
@@ -16320,8 +16324,9 @@
     }
 
     .card-tutorial-ring,
-    .card-front .card-tutorial-anchored,
-    .card-front .front-lemma-pair {
+    .card-face .card-tutorial-anchored,
+    .card-front .front-lemma-pair,
+    .card-back .meanings-scroll {
         transition: none;
     }
 }

@@ -525,10 +525,10 @@ function renderCard() {
     syncContinueButton();
     fitCardToContent();
     markAnchors();
-    // A front starts blank; its first element fades in a beat later so the
+    // A face starts blank; its first element fades in a beat later so the
     // card visibly builds rather than appearing complete.
-    if (step.kind === 'card' && step.face === 'front') {
-        stage.querySelectorAll('.card-tutorial-anchored').forEach(el =>
+    if (step.kind === 'card') {
+        stage.querySelectorAll('.card-tutorial-anchored:not(.card-back), .meanings-scroll').forEach(el =>
             el.classList.add('card-tutorial-unrevealed'));
         setTimeout(syncReveal, 60);
     }
@@ -760,17 +760,28 @@ function markAnchors() {
     else syncReveal();
 }
 
-// The front of the card starts blank and each element appears as its note
-// comes up. Elements keep their space (opacity, not display) so the card does
-// not reflow as they arrive. Going back keeps everything already seen.
+// Both faces start blank and each element appears as its note comes up.
+// Elements keep their space (opacity, not display) so the card does not
+// reflow as they arrive. Going back keeps everything already seen. The whole
+// back face is itself annotated (the closing note), so it is never hidden;
+// the meanings list, which holds several notes' targets, appears with the
+// first of them.
 function syncReveal() {
     const stage = document.getElementById('cardTutorialStage');
     if (!stage) return;
     const step = currentStep();
-    const building = step?.kind === 'card' && step.face === 'front';
+    const building = step?.kind === 'card';
+    const first = new Map();
     stage.querySelectorAll('.card-tutorial-anchored').forEach(el => {
         const index = Number(el.dataset.cardTutorialNote);
+        if (el.classList.contains('card-back')) return;
         el.classList.toggle('card-tutorial-unrevealed', building && index > state.activeNote);
+        const group = el.closest('.meanings-scroll');
+        if (group) first.set(group, Math.min(index, first.has(group) ? first.get(group) : Infinity));
+    });
+    stage.querySelectorAll('.meanings-scroll').forEach(group => {
+        const index = first.has(group) ? first.get(group) : -1;
+        group.classList.toggle('card-tutorial-unrevealed', building && index > state.activeNote);
     });
     // The capsule that holds the kind-of-word pill and the dictionary form
     // belongs to the pill: it should not sit there empty before the pill does.
@@ -818,11 +829,14 @@ function positionRing() {
     const top = Math.max(box.top - pad, bounds.top + edge);
     const right = Math.min(box.right + pad, bounds.right - edge);
     const bottom = Math.min(box.bottom + pad, bounds.bottom - edge);
+    // Page zoom ("Bigger" text) and the phone's scale transform change the
+    // viewport size of a CSS pixel; ring coordinates are in the stage's own.
+    const scale = (stage.offsetWidth && frame.width) ? frame.width / stage.offsetWidth : 1;
     ring.hidden = false;
-    ring.style.left = `${left - frame.left}px`;
-    ring.style.top = `${top - frame.top}px`;
-    ring.style.width = `${Math.max(0, right - left)}px`;
-    ring.style.height = `${Math.max(0, bottom - top)}px`;
+    ring.style.left = `${(left - frame.left) / scale}px`;
+    ring.style.top = `${(top - frame.top) / scale}px`;
+    ring.style.width = `${Math.max(0, right - left) / scale}px`;
+    ring.style.height = `${Math.max(0, bottom - top) / scale}px`;
     const radius = parseFloat(getComputedStyle(target).borderTopLeftRadius) || 0;
     ring.style.borderRadius = `${Math.max(8, radius + pad)}px`;
 }
@@ -860,8 +874,26 @@ function setActiveNote(index) {
     renderMobileCoach();
     if (isMobileTutorial()) fitCardToContent();
     positionRing();
+    settleRing();
     syncContinueButton();
     scheduleNextHint();
+}
+
+// Rows and groups animate open and the card re-fits after fonts and flips, so
+// the first measurement can be taken mid-move. Measure again as things settle.
+let _ringSettle = [];
+function settleRing() {
+    _ringSettle.forEach(clearTimeout);
+    _ringSettle = [120, 300, 700].map(ms => setTimeout(positionRing, ms));
+}
+
+// Whatever moves the target (a row opening, a font arriving, a flip, the page
+// zooming) the ring follows: while the tutorial is open it is re-measured
+// every 100ms, which costs one box read.
+let _ringWatch = null;
+function watchRing() {
+    clearInterval(_ringWatch);
+    _ringWatch = setInterval(positionRing, 100);
 }
 
 // A first-time reader can stall on a step not knowing the tour moves on with
@@ -1087,6 +1119,7 @@ function openCardTutorial({ chapter = 'card' } = {}) {
     // Replays start directly on the chosen mode's card.
     state.mode = tutorialAdapter().lyrics && selectedTutorialMode() === 'lyrics' ? 'lyrics' : 'speech';
     state.stepIndex = 0;
+    watchRing();
     renderChapters();
     goToStep(Math.max(0, tutorialSteps().findIndex(step => step.chapter === chapter)));
 
@@ -1126,6 +1159,8 @@ function closeCardTutorial() {
     if (!modal) return;
     modal.classList.add('hidden');
     clearNextHint();
+    clearInterval(_ringWatch);
+    _ringSettle.forEach(clearTimeout);
     // Leave any Spotify playback the visitor started running — they pressed
     // play deliberately, and closing the tutorial shouldn't stop their music.
     if (_resizeHandler) {
