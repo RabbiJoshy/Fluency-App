@@ -2,13 +2,13 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
-      "timestamp": "2026-10-10T23:02:28+01:00",
-      "date": "2026-10-10 23:02 BST",
+      "timestamp": "2026-10-10T23:05:47+01:00",
+      "date": "2026-10-10 23:05 BST",
       "agent": "Codex",
       "summary": "SEAM: correct kept-apart titles, hydrated search cues and checked noun merging",
       "detail": [
         "Kept-apart forms use their surface title; merged titles and answers follow the existing merge key.",
-        "Search cards judge Examples only from the loaded menu rather than the stale search list.",
+        "Search cards judge Examples only from the loaded menu; unloaded search results no longer claim their meanings are absent.",
         "Restored complete-menu evidence for Spanish and Portuguese noun pairs; row loading retains that evidence. Matching estimator pools and cache-safe supporting URLs updated.",
         "Existing merging policy and saved learner progress are preserved; staging review only."
       ],

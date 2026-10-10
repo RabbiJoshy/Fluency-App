@@ -2010,7 +2010,7 @@ async function buildFindWordIndex() {
             firstMeaning: firstMeaning ? firstMeaning.translation : '',
             firstMeaningObj: firstMeaning || null,
             exclusionReason: window.getVocabularyExclusionReason?.(item) || null,
-            examplesOnly: matchedMeanings.length === 0,
+            examplesOnly: !item._indexRowsPending && matchedMeanings.length === 0,
             sourceEntry: item
         };
     });

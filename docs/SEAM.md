@@ -22,6 +22,7 @@ Other languages are deferred to the later SEAM/CONVOY pass.
    for déjalo on this newer build. The stale pre-hydration `entry.examplesOnly`
    flag nevertheless suppresses its English-first cue. The popup now derives
    that flag from the loaded menu; genuinely empty menus remain examples-only.
+   Pending search-list rows no longer claim to have no meanings.
    Regression tests open both cold and warm retained search entries, including
    a changed active-cache pointer and a genuinely empty menu.
 3. **Noun evidence lost in default rollout.** Both default merge files carried
@@ -102,3 +103,14 @@ Remaining: 79 es / 142 pt unresolved source surfaces stay with HEADWAY;
 Portuguese contextual-tag filtering stays with TAGLINE. Broad cs/fi/fr auditing,
 providers without stable references, and physical-phone/two-device checks are
 not verified here. Phrase-list tightening remains deferred as instructed.
+
+## Staging review, 2026-10-10
+
+Build 246301a7 published successfully. Browser DOM confirms stamped
+`main.js?v=stg-246301a7`. Cold Portuguese és search opened VERB ser with
+“you are / you exist”, plus the noun é companion, without an Examples-only
+card flag. Smart Skip with only Combine word forms enabled reports 6,871
+cards, matching the full cold/loaded representative audit; its list shows
+ano → anos/ano and hora → hora/horas. Screenshot:
+`../Fluency-Workspace/audits/seam/staging-pt-es.jpg`.
+The final search-list flag correction is being published in a follow-up build.

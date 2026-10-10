@@ -50,3 +50,23 @@ async function open(warm, genuineEmpty) {
         self.assertEqual(cold['loads'], 1)
         self.assertEqual(warm['loads'], 0)
         self.assertTrue(empty['flag'])
+
+    def test_unloaded_search_rows_do_not_claim_missing_meanings(self):
+        source = (ROOT / 'app/js/main.js').read_text()
+        start = source.index('async function buildFindWordIndex(')
+        end = source.index('\n}\n', start) + 3
+        script = """
+const vm=require('vm');
+const context={selectedLanguage:'portuguese',config:{languages:{portuguese:{}}},activeArtist:null,
+_findWordIndex:null,_findWordIndexKey:null,findWordCacheKey:()=> 'pt'};
+context.window={fetchAndJoinIndex:async()=>[
+{id:'pending',word:'és',_indexRowsPending:true,meanings:[]},
+{id:'empty',word:'lha',_indexRowsPending:false,meanings:[]},
+{id:'loaded',word:'horas',meanings:[{pos:'noun',translation:'hours'}]}
+],buildFilteredVocab:items=>({vocab:items}),getWordId:item=>item.id};
+vm.createContext(context);vm.runInContext(JSON.parse(process.argv[1]),context);
+context.buildFindWordIndex().then(rows=>console.log(JSON.stringify(rows.map(r=>r.examplesOnly))));
+"""
+        result = subprocess.run(['node','-e',script,json.dumps(source[start:end])],capture_output=True,text=True)
+        self.assertEqual(result.returncode,0,result.stderr)
+        self.assertEqual(json.loads(result.stdout),[False,True,False])
