@@ -32,6 +32,7 @@ import re
 from pathlib import Path
 
 from fluency.enrichments.card_rules import lemma_group_key, lemma_headwords, normal_token
+from fluency.core.hashing import file_content_id
 from fluency.sense_menu.noun_merge import RULE_VERSION, stamp_noun_merge
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -122,6 +123,12 @@ def main() -> int:
         "keys": keys,
         "noun_verdicts": noun_verdicts,
     }
+    if args.release_index:
+        payload["release_index_content_id"] = file_content_id(args.release_index)
+    if args.sense_menu:
+        payload["sense_menu_content_id"] = file_content_id(args.sense_menu)
+        if menu.get("noun_merge_refresh"):
+            payload["evidence"] = menu["noun_merge_refresh"]
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(payload, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     separate = sum(1 for key in keys.values() if not key)

@@ -59,6 +59,30 @@ without a complete-menu verdict remain separate.
 Version 2 invalidates version 1 approvals that could merge mixed noun/verb
 entries. Loaded-card guards also check unused and nested senses for another entry.
 
+## Refreshing existing Speech releases
+
+`scripts/refresh_noun_merge_metadata.py` copies the release's original stage-02
+menu and supplements evidence without changing senses, references or examples.
+For Wiktionary, a rebuilt menu must match the complete original references,
+definitions, translations and lexical features before entry tags and form
+relationships are copied. SpanishDict responses must match the complete original
+headword, translation, source context and region sets before original POS labels
+and explicit plural relationships are recovered. New plural-only labels are
+retained as number restrictions. An extra fresh sense, a rejected response,
+missing relationship or mismatched release references keeps the group separate.
+
+Refresh failures are recorded on the supplemental menu and remain blocking when
+the merge-exceptions builder recomputes verdicts. Outputs carry content hashes of
+the original menu, release index and evidence; the final metadata also identifies
+its release and supplemental menu. Published releases and their progress IDs are
+not edited.
+
+The 2026-10-10 refresh for es/pt Speech v23 approves 314 Spanish and 335 Portuguese
+groups under the full app rules. Spanish evidence covers all 773 candidate
+spellings; Portuguese uses the pinned 2026-08-20 Wiktionary dump. The detailed
+evidence, rejected groups and pair lists live outside Git under
+`Fluency-Workspace/audits/noun-merge/2026-10-10-v2/`.
+
 ## Validation
 
 Tests cover equal menus with surface grammar differences, reordered and duplicate

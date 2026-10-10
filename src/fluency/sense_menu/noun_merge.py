@@ -139,6 +139,9 @@ def stamp_noun_merge(cards: list[dict]) -> None:
         reason = "same_complete_menu"
         if any(_headwords(analyses) != {lemma} for _, analyses in members):
             reason = "ambiguous_headwords"
+        elif any(c.get("noun_merge_refresh_failure") for c, _ in members):
+            reason = next(c["noun_merge_refresh_failure"] for c, _ in members
+                          if c.get("noun_merge_refresh_failure"))
         elif any(_entries(analyses) != {(lemma, "noun")} for _, analyses in members):
             reason = "multiple_dictionary_entries"
         elif not any(_token(c.get("surface_form")) == lemma for c, _ in members):
