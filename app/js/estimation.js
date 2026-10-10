@@ -1,4 +1,4 @@
-import './state.js?v=d206993a';
+import './state.js?v=b0fa5451';
 
 const ESTIMATION_QUESTION_LIMIT = 30;
 const ESTIMATION_BAND_TARGET = 10;

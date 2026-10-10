@@ -1,12 +1,12 @@
-import './state.js?v=d206993a';
-import { sendOrQueue } from './sync-queue.js?v=d206993a';
-import { validateExamplesSplit } from './data-contracts.js?v=d206993a';
+import './state.js?v=b0fa5451';
+import { sendOrQueue } from './sync-queue.js?v=b0fa5451';
+import { validateExamplesSplit } from './data-contracts.js?v=b0fa5451';
 import {
     combineSongCatalogs,
     filterExamplesForSongs,
     filterVocabularyForSongs,
     selectedSongIdSet
-} from './song-sets-core.js?v=d206993a';
+} from './song-sets-core.js?v=b0fa5451';
 
 const STORAGE_PREFIX = 'fluency_song_set_v1:';
 let draftSongIds = new Set();
