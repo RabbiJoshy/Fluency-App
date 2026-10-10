@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T18:15:00+01:00",
+      "date": "2026-10-10 18:15 BST",
+      "agent": "Antigravity",
+      "summary": "Simpler progress modal, tidier level and set explainers, and you can now step back through companion cards.",
+      "detail": [
+        "Progress modal: single title row with language flag; removed Study history, action buttons and Refresh; coverage says it is based on speech you understand, not cards answered; Skipped box shown when Smart Skip is on",
+        "Level explainer: title is 'Choose where to begin' (centred), levels described as 100 cards, shorter centred estimate box with time hint",
+        "Set explainer: titles removed; New, Rev, Known and Skip pills with coloured labels",
+        "Left arrow/button now steps back between companion cards of a word opened from search or lyrics"
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T17:50:00+01:00",
       "date": "2026-10-10 17:50 BST",
       "agent": "Antigravity",
@@ -367,33 +380,6 @@
         "Integrated unified UNISON WSD decision logic directly into client turbo-engine: progressive auxiliary, modal obligation, future auxiliary, perfect auxiliary, and reflexive clitic routing.",
         "Created dedicated background Web Worker (app/js/turbo-worker.js) for non-blocking intake, normalization, and semantic sense assignment.",
         "Updated live playlist import to stream background progress and assign playable Spotify clip timestamps to matched card senses."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T14:40:54+01:00",
-      "date": "2026-10-09 14:40 BST",
-      "agent": "Codex",
-      "summary": "Clearer return-to-study prompt, readable settings, and easier main-menu access.",
-      "detail": [
-        "Centre the return prompt on phones and desktops, show the username and last card, and simplify the saved-set summary.",
-        "Keep last-card restoration and let the loading spinner paint before rebuilding the saved deck.",
-        "Use larger settings text and high-contrast neutral selections in dark and light themes.",
-        "Replace study gear icons with three dots and put Main menu and Study settings first."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T14:26:02+01:00",
-      "date": "2026-10-09 14:26 BST",
-      "agent": "Codex",
-      "summary": "Progress gets its own top-bar icon and a rebuilt overview",
-      "detail": [
-        "Open progress directly from the top bar; language settings now focus on language and vocabulary.",
-        "A centred coverage ring, Known / Practice / New breakdown and expandable answer history replace the old statistics grid.",
-        "Immediate opening, retry, keyboard closing, phone scrolling and stale-response protection make the overview reliable.",
-        "Removed the misleading complete-sentence percentage based on a partially loaded example corpus.",
-        "Counts and coverage use deduplicated recorded knowledge, including reviews of individual meanings."
       ],
       "commit": "pending"
     }

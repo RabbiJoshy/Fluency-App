@@ -24041,3 +24041,19 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 /* Log in asks only for a username; the birthday (password) appears when needed. */
 #loginForm[data-mode="login"]:not(.needs-birthday) .auth-birthday-group,
 #loginForm[data-mode="login"]:not(.needs-birthday) #profileBirthdayHelp { display: none; }
+
+/* Level / set explainer sheets */
+.info-sheet-header.is-centered { position: relative; justify-content: center; align-items: center; min-height: 40px; padding: 0 48px; }
+.info-sheet-header.is-centered h3 { text-align: center; }
+.info-sheet-header.is-centered .info-sheet-close { position: absolute; right: 0; top: 0; }
+.info-sheet-header.is-close-only { justify-content: flex-end; }
+.info-sheet-header.is-close-only + .info-sheet-lead { margin-top: 0 !important; }
+.info-point-badge.is-skip { min-width: 40px; background: rgba(148, 163, 184, 0.16); color: var(--text-secondary); }
+.info-point-badge.is-done { min-width: 40px; }
+.info-sheet-points strong.is-new { color: var(--accent-secondary, #ffcc00); }
+.info-sheet-points strong.is-practice { color: #ff6b35; }
+.info-sheet-points strong.is-done { color: #22c55e; }
+.info-sheet-points strong.is-skip { color: var(--text-secondary); }
+.level-estimate-modal-callout { align-items: center; text-align: center; }
+.level-estimate-modal-body { text-align: center; }
+.level-estimate-modal-btn { align-self: center; text-align: center; }

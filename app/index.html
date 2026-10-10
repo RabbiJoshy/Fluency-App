@@ -520,22 +520,21 @@
                         <button type="button" id="levelModeToggle" class="level-mode-btn" style="display: none;" aria-hidden="true" tabindex="-1">CEFR</button>
                     </div>
                     <div id="step2Tooltip" class="step-info-tooltip setup-info-modal" role="dialog" aria-modal="true" aria-labelledby="levelHelpTitle"><div class="step-info-tooltip-inner">
-                        <div class="info-sheet-header">
-                            <div><span class="info-sheet-eyebrow">Levels</span><h3 id="levelHelpTitle">Choose Where to Begin</h3></div>
+                        <div class="info-sheet-header is-centered">
+                            <h3 id="levelHelpTitle">Choose where to begin</h3>
                             <button type="button" class="info-sheet-close" aria-label="Close level information">&#10005;</button>
                         </div>
                         <p class="info-sheet-lead" id="step2LevelDescription">Vocabulary is ordered by frequency, from daily essentials to less common words.</p>
                         <div class="info-sheet-points">
                             <div><span class="info-point-badge">1</span><p><strong>Start anywhere:</strong> Begin at Level 1 or jump ahead to words you don’t know yet.</p></div>
-                            <div><span class="info-point-badge">2</span><p><strong>Bite-sized sets:</strong> Each level is split into 25-card sets for steady progress.</p></div>
+                            <div><span class="info-point-badge">2</span><p><strong>Bite-sized sets:</strong> Each level is 100 cards, split into four 25-card sets.</p></div>
                             <div><span class="info-point-badge">3</span><p><strong>Smart Skip:</strong> Related forms and obvious look-alikes are skipped to save time.</p></div>
                         </div>
                         <div class="level-estimate-modal-callout" id="step2LevelEstimateCallout">
                             <div class="level-estimate-modal-body">
                                 <strong>Not sure where to begin?</strong>
-                                <p>Take a quick adaptive check to estimate your vocabulary and find a useful starting level.</p>
                             </div>
-                            <button type="button" class="level-estimate-modal-btn" id="openEstimationFromLevelHelpBtn">Estimate my level →</button>
+                            <button type="button" class="level-estimate-modal-btn" id="openEstimationFromLevelHelpBtn">Estimate my level · about 2 min →</button>
                         </div>
                     </div></div>
                 </div>
@@ -574,16 +573,16 @@
                 <div class="step-header step-header-with-help">
                     <span class="step-number" id="rangeStepNumber">3</span>
                     <button type="button" class="step-title step-title-trigger" data-tooltip="step5Tooltip" aria-controls="step5Tooltip" title="About study sets">Choose a Set <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
-                    <div id="step5Tooltip" class="step-info-tooltip setup-info-modal" role="dialog" aria-modal="true" aria-labelledby="setHelpTitle"><div class="step-info-tooltip-inner">
-                        <div class="info-sheet-header">
-                            <div><span class="info-sheet-eyebrow">Study Sets</span><h3 id="setHelpTitle">Bite-Sized Study Sessions</h3></div>
+                    <div id="step5Tooltip" class="step-info-tooltip setup-info-modal" role="dialog" aria-modal="true" aria-label="About study sets"><div class="step-info-tooltip-inner">
+                        <div class="info-sheet-header is-close-only">
                             <button type="button" class="info-sheet-close" aria-label="Close set information">&#10005;</button>
                         </div>
-                        <p class="info-sheet-lead" id="step5Description">Each level is split into 25-card sets taking 5–10 minutes. The next unfinished set is highlighted automatically.</p>
+                        <p class="info-sheet-lead" id="step5Description">A set is 25 cards, about 5–10 minutes. Your next unfinished set is highlighted.</p>
                         <div class="info-sheet-points">
-                            <div><span class="info-point-badge is-new">New</span><p><strong>Learn new:</strong> Fresh words to master card by card.</p></div>
-                            <div><span class="info-point-badge is-practice">Rev</span><p><strong>Practice:</strong> Missed and scheduled cards return for review.</p></div>
-                            <div><span class="info-point-badge is-done">Done</span><p><strong>Done:</strong> Finishing a set unlocks the next card range.</p></div>
+                            <div><span class="info-point-badge is-new">New</span><p><strong class="is-new">New:</strong> Fresh words to learn.</p></div>
+                            <div><span class="info-point-badge is-practice">Rev</span><p><strong class="is-practice">Practice:</strong> Missed and scheduled cards return for review.</p></div>
+                            <div><span class="info-point-badge is-done">Known</span><p><strong class="is-done">Known:</strong> Answered correctly and up to date.</p></div>
+                            <div><span class="info-point-badge is-skip">Skip</span><p><strong class="is-skip">Skipped:</strong> Related forms Smart Skip leaves out when it is on.</p></div>
                         </div>
                     </div></div>
                 </div>
@@ -1713,7 +1712,7 @@
     <div id="totalStatsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="progressOverviewTitle">
         <div class="modal-content progress-modal-content total-progress-modal-content">
             <div class="modal-header">
-                <div><span class="progress-modal-eyebrow">Your progress</span><h2 id="progressOverviewTitle">Your words, so far</h2><p id="totalStatsLanguage" class="progress-source-name"></p></div>
+                <div class="progress-title-row"><span id="progressOverviewFlag" class="progress-title-flag" aria-hidden="true"></span><h2 id="progressOverviewTitle">Your words so far</h2></div>
                 <button class="modal-close" id="closeTotalStatsModal" type="button" aria-label="Close progress">✕</button>
             </div>
             <div class="stats-body total-progress-body">
@@ -1721,7 +1720,7 @@
                 <div id="progressOverviewContent" hidden>
                     <section class="progress-coverage-card" aria-labelledby="totalStatsCoverageLabel">
                         <div class="progress-coverage-ring" id="progressCoverageRing"><strong id="totalStatsCoverage">0%</strong></div>
-                        <div><h3 id="totalStatsCoverageLabel">Estimated coverage</h3><p id="progressCoverageDescription"></p><small>Common words count more. This is an estimate of vocabulary coverage, not a fluency score.</small></div>
+                        <div><h3 id="totalStatsCoverageLabel">Estimated coverage</h3><p id="progressCoverageDescription"></p><small id="progressCoverageNote"></small></div>
                     </section>
                     <section class="progress-word-section" aria-labelledby="progressWordsTitle">
                         <div class="progress-section-heading"><h3 id="progressWordsTitle">Your study cards</h3><span id="totalStatsWords"></span></div>
@@ -1730,18 +1729,12 @@
                             <div><i class="is-known"></i><strong id="progressKnownCount">0</strong><span>Known</span><small>Up to date</small></div>
                             <div><i class="is-practice"></i><strong id="progressPracticeCount">0</strong><span>Practice</span><small id="progressPracticeDetail">Mistakes or due</small></div>
                             <div><i class="is-new"></i><strong id="progressNewCount">0</strong><span>New</span><small>Not answered yet</small></div>
+                            <div id="progressSkippedCard" hidden><i class="is-skipped"></i><strong id="progressSkippedCount">0</strong><span>Skipped</span><small>Smart Skip</small></div>
                         </div>
                         <p id="progressScopeNote" class="progress-scope-note"></p>
                     </section>
-                    <details class="progress-history"><summary>Study history <span id="progressAttemptCount"></span></summary><div><p>These are answer attempts in this vocabulary, including repeat practice. They are separate from the card counts above.</p><div class="progress-history-counts"><span><strong id="totalWordsCorrect">0</strong> correct answers</span><span><strong id="totalWordsIncorrect">0</strong> incorrect answers</span></div></div></details>
                 </div>
-                <div class="progress-data-actions">
-                    <button type="button" id="progressWordsDataBtn">Your words ›</button>
-                    <button type="button" id="progressImportKnownBtn">Import known words</button>
-                    <button type="button" id="progressExportMistakesBtn">Export mistakes</button>
-                </div>
-                <p id="progressDataActionStatus" role="status" aria-live="polite"></p>
-                <button type="button" id="progressRefreshBtn" class="progress-refresh-btn">Refresh progress</button>
+                <button type="button" id="progressRefreshBtn" class="progress-refresh-btn" hidden>Try again</button>
             </div>
         </div>
     </div>

@@ -2898,8 +2898,8 @@ function deckCardLabels(count = flashcards.length) {
 
 // A split word opened on its own (search, word link) shows each companion
 // in the same slot before the way back. The return button still leaves at once.
-function stepToSplitSibling() {
-    const next = flashcards[currentIndex]?._splitNext;
+function stepToSplitSibling(direction = 'next') {
+    const next = flashcards[currentIndex]?.[direction === 'prev' ? '_splitPrev' : '_splitNext'];
     if (!next || cardNavStack.length === 0) return false;
     flashcards[currentIndex] = next;
     currentMeaningIndex = 0;
@@ -9199,6 +9199,7 @@ function cardOffsetFromScrubDelta(dx) {
 // plain index arithmetic would strand it. Resolve both directions against the
 // parent's real position and let goToDeckCard do the cleanup.
 function previousCard() {
+    if (stepToSplitSibling('prev')) return;
     if (flashcards[currentIndex]?.isChainChild) return goToDeckCard(cardChainReturnIndex);
     if (currentIndex > 0) _navCard('prev');
 }

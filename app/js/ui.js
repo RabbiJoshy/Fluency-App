@@ -1042,13 +1042,7 @@ function updateStep2Tooltip() {
 function updateStep5Tooltip() {
     const description = document.getElementById('step5Description');
     if (!description) return;
-    const setSize = `A set is ${STABLE_SET_SLOT_COUNT} cards, about 5–10 minutes.`;
-    if (activeArtist) {
-        const name = activeArtist.name;
-        description.textContent = `This app highlights the next unfinished set from ${name}'s lyrics, so you can jump right in. ${setSize}`;
-    } else {
-        description.textContent = `This app highlights your next unfinished set so you can jump right in. ${setSize}`;
-    }
+    description.textContent = `A set is ${STABLE_SET_SLOT_COUNT} cards, about 5–10 minutes. Your next unfinished set is highlighted.`;
 }
 
 // Annotates every level control with its completion percentage and returns
@@ -3380,7 +3374,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     document.getElementById('settingsAdminBtn').hidden = !isJstAccount;
     window.renderSavedWords?.();
     const canImport = Boolean(currentUser && !currentUser.isGuest);
-    for (const id of ['settingsImportKnownBtn', 'progressImportKnownBtn']) {
+    for (const id of ['settingsImportKnownBtn']) {
         const button = document.getElementById(id);
         if (button) button.disabled = !canImport;
     }
@@ -3515,15 +3509,6 @@ function setupSettingsOverview() {
     const runExport = statusId => window.exportMistakes?.(statusId);
     document.getElementById('settingsImportKnownBtn')?.addEventListener('click', runImport);
     document.getElementById('settingsExportMistakesBtn')?.addEventListener('click', () => runExport('settingsDataActionStatus'));
-    document.getElementById('progressImportKnownBtn')?.addEventListener('click', () => {
-        hideTotalStatsModal();
-        runImport();
-    });
-    document.getElementById('progressExportMistakesBtn')?.addEventListener('click', () => runExport('progressDataActionStatus'));
-    document.getElementById('progressWordsDataBtn')?.addEventListener('click', () => {
-        hideTotalStatsModal();
-        showSettingsModalWithTab('vocabulary');
-    });
 }
 
 window.addEventListener('fast-track-preference-change', event => {
@@ -3841,7 +3826,11 @@ async function showTotalStatsModal() {
     const user = currentUser;
     const langConfig = config.languages?.[language];
     const mode = currentLearningMode();
-    return openProgressOverview({
+    const smartSkipOn = Boolean(window.isFastTrackOn?.());
+    const options = {
+        flag: langConfig?.flag || LEARNING_CONTEXT_FLAGS[language] || '',
+        contentNoun: mode === 'speech' ? 'everyday speech' : mode === 'live' ? 'your playlist' : 'lyrics',
+        smartSkipOn,
         source: artist?.name || langConfig?.name || language,
         mode: mode === 'speech' ? 'Everyday speech' : mode === 'live' ? 'Your playlist' : scope === 'extra' ? 'Extra vocabulary' : 'Your music',
         coverageLabel: mode === 'live' ? 'Estimated playlist coverage' : artist ? (scope === 'extra' ? 'Extra vocabulary explored' : 'Estimated lyrics coverage') : 'Estimated speech coverage',
@@ -3850,14 +3839,17 @@ async function showTotalStatsModal() {
             if (!langConfig || !mode) throw new Error('Choose a vocabulary source first.');
             const raw = await fetchActiveVocabularyData(langConfig);
             if (selectedLanguage !== language || activeArtist !== artist || artistVocabularyScope !== scope) return [];
-            return getPreparedSetupVocabulary(language, raw).vocab;
+            const prepared = getPreparedSetupVocabulary(language, raw);
+            options.skippedCount = smartSkipOn
+                ? Math.max(0, (prepared.stableBaseline?.length || 0) - prepared.vocab.length) : 0;
+            return prepared.vocab;
         },
         getId: item => getWordId(item),
         getState: item => getRecordedSetupState(item),
         getProgress: item => getMergedWordProgress(getWordId(item), item.word),
-        canImport: Boolean(currentUser && !currentUser.isGuest),
-        guest: Boolean(currentUser?.isGuest)
-    });
+        skippedCount: 0
+    };
+    return openProgressOverview(options);
 }
 
 function hideTotalStatsModal() {

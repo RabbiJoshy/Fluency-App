@@ -18,25 +18,25 @@ assert.equal(granular.coverage,50,'An unresolved sense must not count as covered
 assert.equal(summarizeProgress([{id:'bad',corpus_count:-1},{id:'nan',corpus_count:'bad'}],methods).new,2);
 
 class Element {
-    constructor(id) { this.id=id; this.hidden=false; this.disabled=false; this.textContent=''; this.isConnected=true; this.listeners={}; this.attrs={}; this.classes=new Set(); this.classList={contains:c=>this.classes.has(c),add:c=>this.classes.add(c),remove:c=>this.classes.delete(c)}; this.style={setProperty:(k,v)=>this.attrs[k]=v}; }
+    constructor(id) { this.id=id; this.hidden=false; this.disabled=false; this.textContent=''; this.isConnected=true; this.listeners={}; this.attrs={}; this.classes=new Set(); this.classList={contains:c=>this.classes.has(c),add:c=>this.classes.add(c),remove:c=>this.classes.delete(c),toggle:(c,on)=>on?this.classes.add(c):this.classes.delete(c)}; this.style={setProperty:(k,v)=>this.attrs[k]=v}; }
     addEventListener(k,fn) { (this.listeners[k] ||= []).push(fn); }
     setAttribute(k,v) { this.attrs[k]=v; }
     removeAttribute(k) { delete this.attrs[k]; }
     focus() { document.activeElement=this; }
     getClientRects() { return [{}]; }
     closest() { return null; }
-    querySelector(selector) { return elements.get(selector); }
+    querySelector(selector) { return elements.get(selector) || new Element(selector); }
     querySelectorAll() { return [elements.get('closeTotalStatsModal'),elements.get('progressRefreshBtn')]; }
     contains(el) { return this.querySelectorAll().includes(el); }
 }
-const ids=['totalStatsModal','closeTotalStatsModal','progressRefreshBtn','progressOverviewContent','totalStatsLanguage','progressOverviewStatus','progressDataActionStatus','progressImportKnownBtn','totalStatsCoverage','totalStatsCoverageLabel','progressCoverageDescription','progressCoverageRing','totalStatsWords','progressKnownCount','progressPracticeCount','progressNewCount','progressPracticeDetail','progressWordTrack','progressScopeNote','totalWordsCorrect','totalWordsIncorrect','progressAttemptCount','.is-known','.is-practice','.is-new','trigger'];
+const ids=['totalStatsModal','closeTotalStatsModal','progressRefreshBtn','progressOverviewContent','progressOverviewFlag','progressCoverageNote','progressSkippedCard','progressSkippedCount','progressOverviewStatus','totalStatsCoverage','totalStatsCoverageLabel','progressCoverageDescription','progressCoverageRing','totalStatsWords','progressKnownCount','progressPracticeCount','progressNewCount','progressPracticeDetail','progressWordTrack','progressScopeNote','.is-known','.is-practice','.is-new','trigger'];
 const elements=new Map(ids.map(id=>[id,new Element(id)]));
 globalThis.document={getElementById:id=>elements.get(id),activeElement:elements.get('trigger')};
 const modal=elements.get('totalStatsModal');modal.classList.add('hidden');
 const options={...methods,source:'Spanish',mode:'Everyday speech',coverageLabel:'Estimated speech coverage',isCurrent:()=>true,canImport:true,loadVocabulary:async()=>cards};
 await openProgressOverview(options);
 assert.equal(elements.get('totalStatsCoverage').textContent,'80.0%');
-assert.equal(elements.get('progressOverviewContent').hidden,false);
+assert.equal(elements.get('progressOverviewContent').hidden,false,elements.get('progressOverviewStatus').textContent);
 assert.equal(document.activeElement.id,'closeTotalStatsModal');
 const keys=modal.listeners.keydown;
 keys[0]({key:'Escape',preventDefault(){},stopPropagation(){}});

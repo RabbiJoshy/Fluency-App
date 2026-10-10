@@ -88,10 +88,9 @@ export async function openProgressOverview(options) {
     const content = byId('progressOverviewContent');
     const refresh = byId('progressRefreshBtn');
     content.hidden = true;
-    setText('totalStatsLanguage', `${options.source} · ${options.mode}`);
+    setText('progressOverviewFlag', options.flag || '');
     setText('progressOverviewStatus', 'Loading your progress…');
-    setText('progressDataActionStatus', options.guest ? 'Guest mode: progress is not saved to a profile.' : '');
-    byId('progressImportKnownBtn').disabled = !options.canImport;
+    refresh.hidden = true;
     refresh.disabled = true;
     modal.setAttribute('aria-busy', 'true');
     modal.classList.remove('hidden');
@@ -107,25 +106,26 @@ export async function openProgressOverview(options) {
         setText('totalStatsCoverage', `${data.coverage.toFixed(1)}%`);
         setText('totalStatsCoverageLabel', options.coverageLabel);
         setText('progressCoverageDescription', data.total
-            ? 'Based on your recorded knowledge in the current study vocabulary.'
+            ? `The share of ${options.contentNoun || 'speech'} you can understand, based on the words you know.`
             : 'Coverage will appear as you answer cards.');
+        setText('progressCoverageNote', 'This is not based on how many cards you have answered. Common words count more, and it is an estimate, not a fluency score.');
         byId('progressCoverageRing').style.setProperty('--progress-coverage', `${data.coverage}%`);
         setText('totalStatsWords', `${count(data.total)} cards`);
         for (const [key, id] of [['known', 'progressKnownCount'], ['practice', 'progressPracticeCount'], ['new', 'progressNewCount']]) {
             setText(id, count(data[key]));
         }
+        const skipped = Math.max(0, Number(options.skippedCount) || 0);
+        byId('progressSkippedCard').hidden = !options.smartSkipOn;
+        setText('progressSkippedCount', count(skipped));
+        modal.querySelector('.progress-count-grid')?.classList.toggle('has-skipped', Boolean(options.smartSkipOn));
         setText('progressPracticeDetail', data.due ? `${count(data.due)} scheduled for review` : 'Mistakes to revisit');
         const track = byId('progressWordTrack');
         track.setAttribute('aria-label', `${data.known} known, ${data.practice} practice, ${data.new} new cards`);
         for (const key of ['known', 'practice', 'new']) {
             track.querySelector(`.is-${key}`).style.width = `${data.total ? data[key] / data.total * 100 : 0}%`;
         }
-        setText('progressScopeNote', 'Counts follow your current source and Smart Skip settings. Practice includes mistakes and scheduled reviews; due cards can still contribute to coverage. Level estimates are not counted as recorded knowledge.');
-        setText('totalWordsCorrect', count(data.correct));
-        setText('totalWordsIncorrect', count(data.wrong));
-        setText('progressAttemptCount', `${count(data.correct + data.wrong)} answers`);
+        setText('progressScopeNote', 'Practice includes mistakes and scheduled reviews.');
         content.hidden = false;
-        refresh.textContent = 'Refresh progress';
     } catch (error) {
         if (!current()) {
             if (token === request && !options.isCurrent()) closeProgressOverview();
@@ -133,6 +133,7 @@ export async function openProgressOverview(options) {
         }
         setText('progressOverviewStatus', 'Progress could not be loaded. Your saved progress is unchanged. Try again.');
         refresh.textContent = 'Try again';
+        refresh.hidden = false;
         console.warn('Progress overview could not load:', error);
     } finally {
         if (token === request) {
