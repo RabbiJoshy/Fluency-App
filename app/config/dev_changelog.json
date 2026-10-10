@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T20:17:03+01:00",
+      "date": "2026-10-10 20:17 BST",
+      "agent": "Claude",
+      "summary": "Tutorial: one banner, a card that builds up, clearer Speech or music, tighter grading note, whole spotlight ring",
+      "detail": [
+        "Banner now reads Section · Title — Text on one line; the section is no longer repeated beside the title.",
+        "The front of the card starts blank and each element fades in as its note is explained.",
+        "Speech or music explains each source from first principles, including the two ways to choose music (pick artists, or build from a Spotify playlist).",
+        "Grade your answer note cut to one short sentence.",
+        "The yellow spotlight is now a ring drawn over the card and clamped inside it, so it is never clipped or pushed off screen (desktop and phone)."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T19:13:33+01:00",
       "date": "2026-10-10 19:13 BST",
       "agent": "Codex",
@@ -365,19 +379,6 @@
         "Wiktionary glosses keep every clause and whole brackets: vi 'I saw (to be able to see' → 'I saw (to be able to see; not to be blind or blinded)'; faço 'I play' → 'I play; pretend to be'.",
         "Measured on live v23 decks: command clutter 2,264 → 0 (es) and 2,169 → 0 (pt); progressive imperfects 760/705 → 0; misspellings and broken brackets → 0.",
         "Not yet: -se verbs (siento under sentirse), agreeing participles (feita), clitic forms (dime) still show the infinitive — counted for pass 2."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T15:52:00+01:00",
-      "date": "2026-10-09 15:52 BST",
-      "agent": "Antigravity",
-      "summary": "Song lyrics view: removed synthetic word-by-word line translations in favor of strictly authentic hand-translated lyrics",
-      "detail": [
-        "Removed synthetic dictionary word concatenation from lyric lines: only verified hand-translated English subtitles are rendered underneath.",
-        "When no authentic human translation exists for a line, lyrics render in pure Spanish without artificial glosses.",
-        "Synced audio timestamps render directly alongside the original lyric text; topbar 'EN line' toggle button hides automatically when a song has no hand-translated lines.",
-        "Word, idiom, and entity quick-view modals retain full access to Fluency's hand-curated definitions and WSD sense assignments."
       ],
       "commit": "pending"
     }

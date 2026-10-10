@@ -15985,12 +15985,36 @@
 
 /* -------- Numbered badges and the elements they point at ----------------- */
 
-/* Ring the annotated element itself. outline (not border) so no card element
-   changes size when it lights up. */
+/* The spotlight is .card-tutorial-ring, drawn over the card by tutorial.js
+   from the element's measured box and clamped inside the card. An outline on
+   the element itself was clipped by the card faces' overflow and the card
+   edge, so it vanished on one side or ran off screen. */
 .card-tutorial-anchored.is-annotation-active {
-    outline: 2px solid var(--accent-amber);
-    outline-offset: 3px;
-    border-radius: 6px;
+    outline: none;
+}
+
+.card-tutorial-ring {
+    position: absolute;
+    z-index: 6;
+    box-sizing: border-box;
+    border: 2.5px solid var(--accent-amber);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-amber) 18%, transparent);
+    pointer-events: none;
+    transition: left 0.22s ease, top 0.22s ease, width 0.22s ease, height 0.22s ease;
+}
+
+.card-tutorial-ring[hidden] { display: none; }
+
+/* The front builds up: each element fades in as its note comes up. */
+.card-front .card-tutorial-anchored,
+.card-front .front-lemma-pair {
+    transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+.card-tutorial-anchored.card-tutorial-unrevealed,
+.front-lemma-pair.card-tutorial-unrevealed {
+    opacity: 0;
+    transform: translateY(8px);
 }
 
 /* -------- Notes column ---------------------------------------------------- */
@@ -16210,10 +16234,9 @@
         display: none;
     }
 
-    .card-tutorial-anchored.is-annotation-active {
-        outline-width: 3px;
-        box-shadow: 0 0 0 7px color-mix(in srgb, var(--accent-amber) 18%, transparent);
-        animation: card-tutorial-mobile-spotlight 280ms ease-out;
+    .card-tutorial-ring {
+        border-width: 3px;
+        box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent-amber) 18%, transparent);
     }
 
     .card-tutorial-mobile-coach:not([hidden]) {
@@ -16287,18 +16310,19 @@
     }
 }
 
-@keyframes card-tutorial-mobile-spotlight {
-    from { box-shadow: 0 0 0 18px transparent; }
-}
-
 @keyframes card-tutorial-mobile-coach-in {
     from { opacity: 0; transform: translateY(18px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .card-tutorial-anchored.is-annotation-active,
     .card-tutorial-mobile-coach:not([hidden]) {
         animation: none;
+    }
+
+    .card-tutorial-ring,
+    .card-front .card-tutorial-anchored,
+    .card-front .front-lemma-pair {
+        transition: none;
     }
 }
 

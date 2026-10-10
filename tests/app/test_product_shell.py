@@ -365,7 +365,8 @@ class ProductShellTests(unittest.TestCase):
         self.assertNotIn("card-tutorial-marker", tutorial)
         self.assertNotIn("card-tutorial-note-num", tutorial)
         self.assertIn(".card-tutorial-anchored.is-annotation-active", styles)
-        self.assertIn("@keyframes card-tutorial-mobile-spotlight", styles)
+        self.assertIn(".card-tutorial-ring", styles)
+        self.assertIn("card-tutorial-unrevealed", styles)
         self.assertIn("@media (prefers-reduced-motion: reduce)", styles)
 
     def test_speech_cards_keep_dictionary_examples_separate_from_usage_share(self) -> None:

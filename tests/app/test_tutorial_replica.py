@@ -167,7 +167,8 @@ const skip = stepNotes(tutorialSteps()[2]);
 assert.deepEqual(skip.map(note => note.title), ['Turn it on', 'Word forms share a card', 'Look-alikes are skipped']);
 assert(tutorialText(skip[1].text).startsWith('“falo”, “falou” and “falar”'));
 assert(TUTORIAL_PAGES.smartSkip.html(tutorialAdapter()).includes('falou'));
-assert.equal(stepNotes(tutorialSteps()[3]).length, 2);
+// Portuguese has no music catalogue, so the artist/playlist note is absent.
+assert.equal(stepNotes(tutorialSteps()[3]).length, 3);
 assert(TUTORIAL_PAGES.modes.html(tutorialAdapter()).includes('Your music'));
 state.stepIndex = 2;
 assert.deepEqual(tutorialStepPosition(0), {current: 1, total: 3});

@@ -34,7 +34,7 @@ context.showSwipeHint();assert.equal(hint,null);
         self.assertIn('    openCardTutorial();\n    return true;',source)
         self.assertIn("function openCardTutorial({ chapter = 'card' } = {})",source)
         self.assertIn("title: 'Grade your answer'",source)
-        self.assertIn('← Needs practice · Got it →',source)
+        self.assertIn('press Enter for Got it or X for Needs practice',source)
         self.assertIn("'cardTutorialFinish', 'cardTutorialMobileFinish'",source)
         for gone in ['quick','Recall, then reveal','Hear the pronunciation']:
             self.assertNotIn(gone,source)

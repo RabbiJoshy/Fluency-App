@@ -204,7 +204,7 @@ const TUTORIAL_DECKS = [
                         anchor: '.card-back',
                         closing: true,
                         title: 'Grade your answer',
-                        text: 'Swipe right for Got it, left for Needs practice (← Needs practice · Got it →). On desktop, press Enter or X.',
+                        text: 'Swipe right if you knew it, left if you need more practice. On a computer, press Enter for Got it or X for Needs practice.',
                     },
                 ],
             },
@@ -274,19 +274,32 @@ const TUTORIAL_PAGES = {
     },
     modes: {
         title: 'Speech or music',
-        blurb: 'Everyday speech teaches words ranked by spoken frequency from movies and TV for natural daily conversation, while Your music curates the vocabulary appearing in the songs and artists you choose. Switch whenever you like.',
+        blurb: 'Both teach the same words in the same way. What differs is where the words, and the example sentences on the back of each card, come from.',
         notes: [
             {
                 side: 'left',
-                anchor: '.tutorial-page-topbar',
-                title: 'Switch at any time',
-                text: 'Everyday speech ranks vocabulary by real-world spoken frequency from thousands of films and series, giving you the foundation for spontaneous conversation. Your music focuses exclusively on lyrics from your favorite artists.',
+                anchor: '.tutorial-page-source:nth-of-type(1)',
+                title: 'Everyday speech',
+                text: 'Words are ranked by how often people actually say them, counted across thousands of films and TV series. It is the fastest route to the words you need for ordinary conversation, and the examples are lines of real dialogue.',
+            },
+            {
+                side: 'left',
+                anchor: '.tutorial-page-source:nth-of-type(2)',
+                title: 'Your music',
+                text: 'You choose the songs, and the words are ranked by how often they appear in those lyrics. Song lyrics use different vocabulary from speech, so the deck changes with your taste, and every example is a real line from one of your songs, with the artist and a button to play it in Spotify.',
             },
             {
                 side: 'right',
                 anchor: '.tutorial-page-sources',
-                title: 'Your progress comes with you',
-                text: 'A word you learn in one counts in the other. If you master a word in Everyday speech, it is already marked known when it appears in your songs.',
+                requires: 'lyrics',
+                title: 'Two ways to choose your music',
+                text: 'Pick artists from the app’s library, taking all of their songs or just the ones you choose. Or connect Spotify and build a deck from one of your own playlists, either from songs the app already has or from a new import.',
+            },
+            {
+                side: 'right',
+                anchor: '.tutorial-page-topbar',
+                title: 'Switch at any time',
+                text: 'You can change between them whenever you like, from the language header at the top of the screen. Your progress comes with you: a word you learn in one is already marked known when it appears in the other.',
             },
         ],
         html: modesPageHTML,
@@ -369,6 +382,7 @@ const state = {
     meaningIndex: 0,
     exampleIndex: 0,
     activeNote: -1,
+    flipping: false,
 };
 
 // Source selection precedes automatic onboarding. Explicit replays without
@@ -493,6 +507,7 @@ function renderCard() {
     const stage = document.getElementById('cardTutorialStage');
     if (!stage) return;
     const step = currentStep();
+    state.flipping = false;
 
     if (step.kind === 'page') {
         stage.innerHTML = `<div class="card-replica tutorial-page-replica">${TUTORIAL_PAGES[step.page].html(tutorialAdapter())}</div>`;
@@ -510,6 +525,13 @@ function renderCard() {
     syncContinueButton();
     fitCardToContent();
     markAnchors();
+    // A front starts blank; its first element fades in a beat later so the
+    // card visibly builds rather than appearing complete.
+    if (step.kind === 'card' && step.face === 'front') {
+        stage.querySelectorAll('.card-tutorial-anchored').forEach(el =>
+            el.classList.add('card-tutorial-unrevealed'));
+        setTimeout(syncReveal, 60);
+    }
 }
 
 // Sense and example changes replace only the back face, leaving the .card
@@ -538,6 +560,7 @@ function flipCardFace(mobileNote = 0) {
     if (!cardEl) return;
 
     state.activeNote = Math.min(mobileNote, Math.max(0, orderedNotes().length - 1));
+    state.flipping = true;
     cardEl.classList.toggle('flipped', state.flipped);
 
     renderFaceCopy();
@@ -547,6 +570,7 @@ function flipCardFace(mobileNote = 0) {
     markAnchors();
     // Re-place once the transform has settled, so boxes are measured flat.
     setTimeout(() => {
+        state.flipping = false;
         fitCardToContent();
         markAnchors();
     }, 640);
@@ -705,8 +729,7 @@ function fitCardToContent() {
         intro.parentElement.appendChild(probe);
         let tallest = 0;
         tutorialSteps().forEach(step => {
-            const face = stepFace(step);
-            probe.innerHTML = `<p class="card-tutorial-blurb"><strong class="card-tutorial-lede">${tutorialText(face.title)}</strong> ${tutorialText(face.blurb)}</p>`;
+            probe.innerHTML = bannerHTML(step);
             tallest = Math.max(tallest, probe.offsetHeight);
         });
         probe.remove();
@@ -734,6 +757,74 @@ function markAnchors() {
         target.dataset.cardTutorialNote = String(i);
     });
     if (state.activeNote >= 0) setActiveNote(state.activeNote);
+    else syncReveal();
+}
+
+// The front of the card starts blank and each element appears as its note
+// comes up. Elements keep their space (opacity, not display) so the card does
+// not reflow as they arrive. Going back keeps everything already seen.
+function syncReveal() {
+    const stage = document.getElementById('cardTutorialStage');
+    if (!stage) return;
+    const step = currentStep();
+    const building = step?.kind === 'card' && step.face === 'front';
+    stage.querySelectorAll('.card-tutorial-anchored').forEach(el => {
+        const index = Number(el.dataset.cardTutorialNote);
+        el.classList.toggle('card-tutorial-unrevealed', building && index > state.activeNote);
+    });
+    // The capsule that holds the kind-of-word pill and the dictionary form
+    // belongs to the pill: it should not sit there empty before the pill does.
+    const pair = stage.querySelector('.front-lemma-pair');
+    const pill = pair?.querySelector('.card-tutorial-anchored.card-pos');
+    if (pair) pair.classList.toggle('card-tutorial-unrevealed', building && Boolean(pill?.classList.contains('card-tutorial-unrevealed')));
+    positionRing();
+}
+
+// The spotlight is a ring drawn over the card rather than an outline on the
+// element. An outline is clipped by every overflow:hidden ancestor (the card
+// faces, the sense box) and by the card edge, which is how it used to go
+// missing on one side or run off the screen. The ring is measured from the
+// element's box and clamped inside the card, so it is always whole.
+function positionRing() {
+    const stage = document.getElementById('cardTutorialStage');
+    if (!stage) return;
+    let ring = stage.querySelector('.card-tutorial-ring');
+    const target = stage.querySelector('.card-tutorial-anchored.is-annotation-active');
+    const card = stage.querySelector('.card-replica');
+    if (!target || !card || state.flipping || target.classList.contains('card-tutorial-unrevealed')) {
+        if (ring) ring.hidden = true;
+        return;
+    }
+    if (!ring) {
+        ring = document.createElement('div');
+        ring.className = 'card-tutorial-ring';
+        ring.setAttribute('aria-hidden', 'true');
+        stage.appendChild(ring);
+    }
+    const frame = stage.getBoundingClientRect();
+    const bounds = card.getBoundingClientRect();
+    // A headword's box is the full card width; ring the word, not the row.
+    let box = target.getBoundingClientRect();
+    if (target.matches('.card-word')) {
+        const range = document.createRange();
+        range.selectNodeContents(target);
+        const text = range.getBoundingClientRect();
+        if (text.width) box = { left: text.left - 8, right: text.right + 8, top: box.top, bottom: box.bottom, width: text.width, height: box.height };
+    }
+    if (!box.width || !box.height) { ring.hidden = true; return; }
+    const pad = 5;
+    const edge = 3;
+    const left = Math.max(box.left - pad, bounds.left + edge);
+    const top = Math.max(box.top - pad, bounds.top + edge);
+    const right = Math.min(box.right + pad, bounds.right - edge);
+    const bottom = Math.min(box.bottom + pad, bounds.bottom - edge);
+    ring.hidden = false;
+    ring.style.left = `${left - frame.left}px`;
+    ring.style.top = `${top - frame.top}px`;
+    ring.style.width = `${Math.max(0, right - left)}px`;
+    ring.style.height = `${Math.max(0, bottom - top)}px`;
+    const radius = parseFloat(getComputedStyle(target).borderTopLeftRadius) || 0;
+    ring.style.borderRadius = `${Math.max(8, radius + pad)}px`;
 }
 
 // Hovering either a badge or its note lights up both, plus the element itself.
@@ -765,8 +856,10 @@ function setActiveNote(index) {
         }
         active.scrollIntoView({ block: 'nearest', inline: 'nearest' });
     }
+    syncReveal();
     renderMobileCoach();
     if (isMobileTutorial()) fitCardToContent();
+    positionRing();
     syncContinueButton();
     scheduleNextHint();
 }
@@ -846,20 +939,20 @@ function moveTour(direction) {
     else goToStep(state.stepIndex - 1, Number.MAX_SAFE_INTEGER);
 }
 
+// The banner reads Section · Title — Text on one line: the section chip is
+// beside it (renderSequenceProgress), this is the title and text. A page's
+// title is its section, so it is not said twice.
+function bannerHTML(step) {
+    const face = stepFace(step);
+    const lede = step.kind === 'page' ? ''
+        : `<strong class="card-tutorial-lede">${tutorialText(face.title)}</strong> `;
+    return `<p class="card-tutorial-blurb">${lede}${tutorialText(face.blurb)}</p>`;
+}
+
 function renderFaceCopy() {
-    const face = currentFace();
     const host = document.getElementById('cardTutorialIntro');
-    if (!host) return;
-    // The title is a lead-in to the summary, not a heading over it — one
-    // line instead of two, because the card and its annotations have to share
-    // the screen. No "Lyrics · Bad Bunny · back of card" line either: the tab
-    // already says which deck, and the card in front of you already says
-    // which side you are looking at.
-    host.innerHTML = `
-        <p class="card-tutorial-blurb">
-            <strong class="card-tutorial-lede">${tutorialText(face.title)}</strong>
-            ${tutorialText(face.blurb)}
-        </p>`;
+    if (!host || !currentStep()) return;
+    host.innerHTML = bannerHTML(currentStep());
 }
 
 function noteHTML(note, index) {
@@ -919,9 +1012,7 @@ function renderSequenceProgress() {
     const step = currentStep();
     if (!step) return;
     const chapter = chapterById(step.chapter);
-    const face = stepFace(step);
-    const subLabel = step.kind === 'page' ? '' : ` — ${face.title}`;
-    host.innerHTML = `<div class="card-tutorial-chapters" aria-label="Tutorial step"><span class="card-tutorial-chapter is-current">${esc(chapter.label)}${esc(subLabel)}</span></div>`;
+    host.innerHTML = `<div class="card-tutorial-chapters" aria-label="Tutorial section"><span class="card-tutorial-chapter is-current">${esc(chapter.label)}</span></div>`;
 }
 
 function goToChapter(id) {
