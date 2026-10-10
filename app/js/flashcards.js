@@ -1,29 +1,29 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=9b943ab4';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=9b943ab4';
-import './speech.js?v=9b943ab4';
-import { goToRoute, routeCodeFor } from './routes.js?v=9b943ab4';
-import { memoryTipTileHTML } from './memory-tips.js?v=9b943ab4';
-import './side-dock.js?v=9b943ab4';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=9b943ab4';
+import './state.js?v=5e2c6e6b';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=5e2c6e6b';
+import './speech.js?v=5e2c6e6b';
+import { goToRoute, routeCodeFor } from './routes.js?v=5e2c6e6b';
+import { memoryTipTileHTML } from './memory-tips.js?v=5e2c6e6b';
+import './side-dock.js?v=5e2c6e6b';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=5e2c6e6b';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=9b943ab4';
+} from './example-personalisation.js?v=5e2c6e6b';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=9b943ab4';
+} from './spanishdict-usage.js?v=5e2c6e6b';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=9b943ab4';
+} from './reverse-cues.js?v=5e2c6e6b';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -56,7 +56,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=9b943ab4';
+} from './card-metadata-pills.js?v=5e2c6e6b';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -2898,8 +2898,8 @@ function deckCardLabels(count = flashcards.length) {
 
 // A split word opened on its own (search, word link) shows each companion
 // in the same slot before the way back. The return button still leaves at once.
-function stepToSplitSibling() {
-    const next = flashcards[currentIndex]?._splitNext;
+function stepToSplitSibling(direction = 'next') {
+    const next = flashcards[currentIndex]?.[direction === 'prev' ? '_splitPrev' : '_splitNext'];
     if (!next || cardNavStack.length === 0) return false;
     flashcards[currentIndex] = next;
     currentMeaningIndex = 0;
@@ -9199,6 +9199,7 @@ function cardOffsetFromScrubDelta(dx) {
 // plain index arithmetic would strand it. Resolve both directions against the
 // parent's real position and let goToDeckCard do the cleanup.
 function previousCard() {
+    if (stepToSplitSibling('prev')) return;
     if (flashcards[currentIndex]?.isChainChild) return goToDeckCard(cardChainReturnIndex);
     if (currentIndex > 0) _navCard('prev');
 }
@@ -10364,8 +10365,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = '9b943ab4';
-const MODALS_ASSET_VERSION = '9b943ab4';
+const ASSET_VERSION = '5e2c6e6b';
+const MODALS_ASSET_VERSION = '5e2c6e6b';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =

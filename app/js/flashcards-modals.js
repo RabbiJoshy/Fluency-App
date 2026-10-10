@@ -852,8 +852,8 @@ function navigateToCard(targetIndex) {
 }
 
 // A word opened on its own (lyric breakdown, search, word link, homograph
-// peek) is studied as it is in a set: companions wait in `_splitNext`
-// (stepToSplitSibling shows each in turn). When the
+// peek) is studied as it is in a set: companions wait in `_splitNext`/`_splitPrev`
+// (stepToSplitSibling shows each in turn, in either direction). When the
 // path focuses one meaning, the card holding it opens first.
 function splitAwareTempCard(vocabEntry, baseCard, focusIndex = 0) {
     const pair = window.buildSplitCardPair?.(vocabEntry, baseCard, baseCard.meanings);
@@ -864,7 +864,10 @@ function splitAwareTempCard(vocabEntry, baseCard, focusIndex = 0) {
     const focusCard = focusIndex > 0 ? pair.findIndex(card => card.meanings.some(same)) : 0;
     const start = Math.max(0, focusCard);
     const ordered = [...pair.slice(start), ...pair.slice(0, start)];
-    ordered.forEach((card, index) => { card._splitNext = ordered[index + 1] || null; });
+    ordered.forEach((card, index) => {
+        card._splitNext = ordered[index + 1] || null;
+        card._splitPrev = ordered[index - 1] || null;
+    });
     const first = ordered[0];
     const meaningIndex = focusIndex > 0 ? Math.max(0, first.meanings.findIndex(same)) : 0;
     return { card: first, meaningIndex };

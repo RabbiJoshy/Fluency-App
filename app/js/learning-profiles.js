@@ -45,6 +45,8 @@ export function resetProfileLogin() {
     busy = false;
     pendingId = null;
     document.getElementById('profileMatches')?.replaceChildren();
+    document.getElementById('profileMatchCards')?.replaceChildren();
+    document.getElementById('profileMatchModal')?.classList.add('hidden');
     showLoginError('');
     setBusy(false);
 }
@@ -58,6 +60,9 @@ function setBusy(value) {
         if (field) field.disabled = value;
     }
     document.getElementById('profileMatches')?.querySelectorAll('button').forEach(button => { button.disabled = value; });
+    document.getElementById('profileMatchCards')?.querySelectorAll('button').forEach(button => { button.disabled = value; });
+    const createBtn = document.getElementById('profileMatchCreateBtn');
+    if (createBtn) createBtn.disabled = value;
 }
 
 async function requestProfiles(action, fields) {
@@ -86,9 +91,11 @@ export async function submitProfileLogin(onSelected) {
     const form = document.getElementById('loginForm');
     if (form && !form.dataset.profilesWired) {
         form.dataset.profilesWired = '1';
-        ['userInitials','birthdayDay','birthdayMonth'].forEach(id => {
+        ['userInitials','birthdayInput','birthdayDay','birthdayMonth'].forEach(id => {
             document.getElementById(id)?.addEventListener('input', resetProfileLogin);
         });
+        // A different username may not have a birthday password at all.
+        document.getElementById('userInitials')?.addEventListener('input', () => form.classList.remove('needs-birthday'));
         document.getElementById('cancelLoginBtn')?.addEventListener('click', resetProfileLogin);
     }
     if (busy) return;
@@ -98,13 +105,15 @@ export async function submitProfileLogin(onSelected) {
     if (!name || name.length > 40 || /[\u0000-\u001f\u007f]/u.test(name)) {
         showLoginError('Enter a username (up to 40 characters).', 'userInitials'); return;
     }
+    const bdayDay = document.getElementById('birthdayDay');
+    const bdayMonth = document.getElementById('birthdayMonth');
     try {
-        birthday = optionalBirthdayValue(document.getElementById('birthdayDay').value,
-            document.getElementById('birthdayMonth').value);
+        birthday = optionalBirthdayValue(bdayDay?.value, bdayMonth?.value);
     } catch (error) { showLoginError(error.message, 'birthdayDay'); return; }
     const fields = {name,birthday};
     const attempt = ++epoch;
     document.getElementById('profileMatches')?.replaceChildren();
+    document.getElementById('profileMatchCards')?.replaceChildren();
     setBusy(true);
     const choose = async profile => {
         if (attempt !== epoch || busy) return;
@@ -138,20 +147,70 @@ export async function submitProfileLogin(onSelected) {
         const {profiles} = await requestProfiles('lookupProfiles',fields);
         if (attempt !== epoch) return;
         setBusy(false);
-        if (!profiles.length) { await create(); return; }
-        const host = document.getElementById('profileMatches');
-        const title = document.createElement('h4'); title.textContent = 'Is this you?'; host.appendChild(title);
-        for (const profile of profiles) {
-            const section = document.createElement('section');
-            const nameLabel = document.createElement('strong'); nameLabel.textContent = profile.name;
-            const context = document.createElement('p'); context.textContent = profileContext(profile);
-            const button = document.createElement('button'); button.type='button'; button.className='auth-submit-btn';
-            button.textContent='Yes, continue'; button.addEventListener('click',()=>choose(profile));
-            section.append(nameLabel,context,button); host.appendChild(section);
+        const loggingIn = form?.dataset.mode === 'login';
+        if (loggingIn) {
+            // Logging in asks only for the username. The birthday is a password,
+            // so it is requested only when a matching profile has one set.
+            if (!profiles.length) {
+                const hadBirthday = Boolean(birthday);
+                showLoginError(hadBirthday
+                    ? 'That birthday does not match this username.'
+                    : 'No account found with that username. Use Create account instead.',
+                    hadBirthday ? 'birthdayDay' : 'userInitials');
+                return;
+            }
+            const protectedProfile = profiles.some(p => p.birthday);
+            const unlocked = profiles.some(p => !p.birthday || p.birthday === birthday);
+            if (protectedProfile && !birthday && !profiles.some(p => !p.birthday)) {
+                form.classList.add('needs-birthday');
+                showLoginError('Enter your birthday to continue.', 'birthdayDay');
+                return;
+            }
+            if (!unlocked) {
+                form.classList.add('needs-birthday');
+                showLoginError('That birthday does not match this username.', 'birthdayDay');
+                return;
+            }
         }
-        const separate = document.createElement('button'); separate.type='button'; separate.className='auth-cancel-btn';
-        separate.textContent='No, create a separate profile'; separate.addEventListener('click',create);host.appendChild(separate);
-        host.querySelector('button')?.focus();
+        if (!profiles.length) { await create(); return; }
+        const modal = document.getElementById('profileMatchModal');
+        const cardsHost = document.getElementById('profileMatchCards') || document.getElementById('profileMatches');
+        if (cardsHost) cardsHost.replaceChildren();
+        for (const profile of profiles) {
+            const card = document.createElement('div'); card.className = 'profile-match-card';
+            const info = document.createElement('div'); info.className = 'profile-match-info';
+            const nameLabel = document.createElement('strong'); nameLabel.className = 'profile-match-name'; nameLabel.textContent = profile.name;
+            const context = document.createElement('p'); context.className = 'profile-match-context'; context.textContent = profileContext(profile);
+            info.append(nameLabel, context);
+            const button = document.createElement('button'); button.type = 'button'; button.className = 'product-primary-action profile-match-choose-btn';
+            button.textContent = 'Yes, continue';
+            button.addEventListener('click', async () => {
+                modal?.classList.add('hidden');
+                await choose(profile);
+            });
+            card.append(info, button);
+            cardsHost.appendChild(card);
+        }
+        const separateBtn = document.getElementById('profileMatchCreateBtn');
+        if (separateBtn) {
+            separateBtn.onclick = async () => {
+                modal?.classList.add('hidden');
+                await create();
+            };
+        }
+        const closeBtn = document.getElementById('closeProfileMatchModal');
+        if (closeBtn) {
+            closeBtn.onclick = () => {
+                modal?.classList.add('hidden');
+                setBusy(false);
+            };
+        }
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.querySelector('button')?.focus();
+        } else {
+            cardsHost?.querySelector('button')?.focus();
+        }
     } catch (error) { if (attempt === epoch) showLoginError(error.message); }
     finally { if (attempt === epoch) setBusy(false); }
 }

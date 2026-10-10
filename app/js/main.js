@@ -1,36 +1,36 @@
 // First: rewrites old ?artist=/?about= links to their #/ route before
 // anything below reads the address.
-import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=9b943ab4';
-import { releaseUrl } from './release-host.js?v=9b943ab4';
-import './theme.js?v=9b943ab4';
-import { installFlagRendering } from './flags.js?v=9b943ab4';
-import { IS_STAGING } from './env.js?v=9b943ab4';
-import './state.js?v=9b943ab4';
-import './offline-db.js?v=9b943ab4';
-import './sync-queue.js?v=9b943ab4';
-import { initOfflineContent } from './offline-content.js?v=9b943ab4';
-import './speech.js?v=9b943ab4';
-import './artist-ui.js?v=9b943ab4';
-import './auth.js?v=9b943ab4';
-import './tutorial.js?v=9b943ab4';
-import './walkthrough.js?v=9b943ab4';
-import './estimation.js?v=9b943ab4';
-import './config.js?v=9b943ab4';
-import './progress.js?v=9b943ab4';
-import './knowledge.js?v=9b943ab4';
-import './ui.js?v=9b943ab4';
-import './vocab.js?v=9b943ab4';
-import './cognates.js?v=9b943ab4';
-import './coverage.js?v=9b943ab4';
-import './fast-mode.js?v=9b943ab4';
-import './extras.js?v=9b943ab4';
-import './review-home.js?v=9b943ab4';
-import './song-sets.js?v=9b943ab4';
-import './playlist-live.js?v=9b943ab4';
-import './spotify-playlist-import.js?v=9b943ab4';
-import './vocabulary-import.js?v=9b943ab4';
-import './flashcards.js?v=9b943ab4';
-import { validateArtistCatalog } from './data-contracts.js?v=9b943ab4';
+import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=5e2c6e6b';
+import { releaseUrl } from './release-host.js?v=5e2c6e6b';
+import './theme.js?v=5e2c6e6b';
+import { installFlagRendering } from './flags.js?v=5e2c6e6b';
+import { IS_STAGING } from './env.js?v=5e2c6e6b';
+import './state.js?v=5e2c6e6b';
+import './offline-db.js?v=5e2c6e6b';
+import './sync-queue.js?v=5e2c6e6b';
+import { initOfflineContent } from './offline-content.js?v=5e2c6e6b';
+import './speech.js?v=5e2c6e6b';
+import './artist-ui.js?v=5e2c6e6b';
+import './auth.js?v=5e2c6e6b';
+import './tutorial.js?v=5e2c6e6b';
+import './walkthrough.js?v=5e2c6e6b';
+import './estimation.js?v=5e2c6e6b';
+import './config.js?v=5e2c6e6b';
+import './progress.js?v=5e2c6e6b';
+import './knowledge.js?v=5e2c6e6b';
+import './ui.js?v=5e2c6e6b';
+import './vocab.js?v=5e2c6e6b';
+import './cognates.js?v=5e2c6e6b';
+import './coverage.js?v=5e2c6e6b';
+import './fast-mode.js?v=5e2c6e6b';
+import './extras.js?v=5e2c6e6b';
+import './review-home.js?v=5e2c6e6b';
+import './song-sets.js?v=5e2c6e6b';
+import './playlist-live.js?v=5e2c6e6b';
+import './spotify-playlist-import.js?v=5e2c6e6b';
+import './vocabulary-import.js?v=5e2c6e6b';
+import './flashcards.js?v=5e2c6e6b';
+import { validateArtistCatalog } from './data-contracts.js?v=5e2c6e6b';
 
 // Emoji flags anywhere on the page render as rectangular pictures.
 installFlagRendering();
@@ -84,7 +84,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
 const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
-    ? import('./spotify.js?v=9b943ab4').catch(error => {
+    ? import('./spotify.js?v=5e2c6e6b').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })
@@ -852,7 +852,9 @@ loadConfig().then(async () => {
         }
     }
     document.getElementById('topBarUserName').addEventListener('click', () => {
-        if (currentUser && !currentUser.isGuest) showSettingsModalWithTab('account');
+        if (!currentUser) return;
+        if (currentUser.isGuest) { window.logout?.(); return; } // guests land on log in / create account
+        showSettingsModalWithTab('account');
     });
     document.getElementById('closeHelpModal').addEventListener('click', () => {
         document.getElementById('helpModal').classList.add('hidden');
@@ -884,8 +886,7 @@ loadConfig().then(async () => {
     document.getElementById('gearBtn').style.display = 'none';
 
     // Set user name in top bar immediately (don't wait for progress load).
-    const userName = currentUser ? (currentUser.isGuest ? 'GUEST' : (currentUser.username || currentUser.initials)) : '';
-    document.getElementById('topBarUserName').textContent = userName;
+    window.showUserInfo?.();
 
     // Shareable page links open on top of whatever state the app lands in.
     const pageRoute = window.fluencyRoute?.kind;
@@ -1737,7 +1738,7 @@ function spotifyStatusElement() {
         el.type = 'button';
         el.addEventListener('click', async event => {
             event.stopPropagation();
-            await (_spotifyModulePromise || import('./spotify.js?v=9b943ab4')).catch(() => null);
+            await (_spotifyModulePromise || import('./spotify.js?v=5e2c6e6b')).catch(() => null);
             window.spotifyLogin?.();
         });
     }

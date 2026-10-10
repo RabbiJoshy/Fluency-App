@@ -68,3 +68,12 @@
     .progress-count-grid strong { font-size: 23px; }
     #totalStatsModal .progress-data-actions button { flex: 1 1 120px; }
 }
+.progress-title-row { display: flex; align-items: center; gap: 10px; }
+.progress-title-flag { display: inline-flex; align-items: center; line-height: 1; }
+.progress-title-flag .flag-img { height: 18px; width: auto; border-radius: 3px; }
+.progress-count-grid.has-skipped { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.progress-count-grid > div[hidden] { display: none; }
+.progress-count-grid i.is-skipped { background: var(--text-muted); }
+@media (max-width: 560px) {
+    .progress-count-grid.has-skipped { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

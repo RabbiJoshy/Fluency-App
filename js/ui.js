@@ -1,8 +1,8 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=9b943ab4';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=9b943ab4';
-import { readFastTrack } from './fast-track-preferences.js?v=9b943ab4';
+import './state.js?v=5e2c6e6b';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=5e2c6e6b';
+import { readFastTrack } from './fast-track-preferences.js?v=5e2c6e6b';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -720,20 +720,20 @@ const MODE_ICON_MUSIC = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" s
 function learningModeCopy(language = selectedLanguage) {
     const lyricsCatalog = config?.languages?.[language]?.capabilities?.lyrics !== false;
     return {
-        title: 'Choose your flashcard vocabulary source',
-        intro: 'Your flashcards come from this source, most common words first. You can switch at any time, and the words you learn carry over between the two modes.',
+        title: 'Choose your vocabulary',
+        intro: 'You learn words in order of how often they appear in real life. Because people use different vocabulary when speaking than in song lyrics, your flashcards and example sentences are tailored to what you pick. You can switch between them at any time.',
         speech: {
             label: 'Everyday speech',
-            description: 'From films and TV shows — the everyday words people actually use when they talk to each other.',
-            bestFor: ['Starting a new language', 'Understanding films and TV shows'],
+            description: 'Words and examples from films and TV shows — how people actually talk.',
+            bestFor: ['Starting a new language', 'Understanding everyday conversations'],
             iconHTML: MODE_ICON_SPEECH
         },
         lyrics: {
             label: 'Your music',
             description: lyricsCatalog
-                ? 'Pick an artist, or build a deck from your Spotify playlists — the words in those songs.'
-                : 'Build a deck from your Spotify playlists — the words in those songs.',
-            bestFor: ['Understanding the artists you listen to', 'Hearing words sung in real songs'],
+                ? 'Words and examples from songs, artists, and your Spotify playlists.'
+                : 'Words and examples from your Spotify playlists.',
+            bestFor: ['Understanding your favourite artists', 'Learning by listening to music'],
             iconHTML: MODE_ICON_MUSIC
         }
     };
@@ -1042,13 +1042,7 @@ function updateStep2Tooltip() {
 function updateStep5Tooltip() {
     const description = document.getElementById('step5Description');
     if (!description) return;
-    const setSize = `A set is ${STABLE_SET_SLOT_COUNT} cards, about 5–10 minutes.`;
-    if (activeArtist) {
-        const name = activeArtist.name;
-        description.textContent = `This app highlights the next unfinished set from ${name}'s lyrics, so you can jump right in. ${setSize}`;
-    } else {
-        description.textContent = `This app highlights your next unfinished set so you can jump right in. ${setSize}`;
-    }
+    description.textContent = `A set is ${STABLE_SET_SLOT_COUNT} cards, about 5–10 minutes. Your next unfinished set is highlighted.`;
 }
 
 // Annotates every level control with its completion percentage and returns
@@ -1149,6 +1143,10 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
         const hasProgress = seenCount > 0;
         const hasReview = reviewCount > 0;
         const autoCompleted = isComplete && estimatedCount > 0;
+        const hasStarted = seenCount > 0;
+        const allGreen = wordsInLevel.length > 0 && isComplete && reviewCount === 0;
+        const hasYellow = hasReview;
+        const isWhite = hasStarted && !allGreen && !hasYellow;
         btn.classList.toggle('is-auto-complete', autoCompleted);
         btn.dataset.autoCompleted = String(autoCompleted);
         btn.dataset.progressPct = String(completion);
@@ -1157,6 +1155,9 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
         btn.classList.toggle('has-partial-progress', isPartial);
         btn.classList.toggle('has-review', hasReview);
         btn.classList.toggle('is-complete', isComplete);
+        btn.classList.toggle('dot-green', allGreen);
+        btn.classList.toggle('dot-yellow', hasYellow);
+        btn.classList.toggle('dot-white', isWhite);
         btn.style.setProperty('--level-progress', `${completion}%`);
 
         const visibleSegment = sliderSegmentMap.get(String(buttonIndex));
@@ -1168,6 +1169,9 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
             visibleSegment.classList.toggle('has-partial-progress', isPartial);
             visibleSegment.classList.toggle('has-review', hasReview);
             visibleSegment.classList.toggle('is-complete', isComplete);
+            visibleSegment.classList.toggle('dot-green', allGreen);
+            visibleSegment.classList.toggle('dot-yellow', hasYellow);
+            visibleSegment.classList.toggle('dot-white', isWhite);
             visibleSegment.style.setProperty('--level-progress', `${completion}%`);
             visibleSegment.setAttribute(
                 'aria-label',
@@ -3356,7 +3360,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=9b943ab4')
+        import('./spotify.js?v=5e2c6e6b')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
@@ -3370,7 +3374,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     document.getElementById('settingsAdminBtn').hidden = !isJstAccount;
     window.renderSavedWords?.();
     const canImport = Boolean(currentUser && !currentUser.isGuest);
-    for (const id of ['settingsImportKnownBtn', 'progressImportKnownBtn']) {
+    for (const id of ['settingsImportKnownBtn']) {
         const button = document.getElementById(id);
         if (button) button.disabled = !canImport;
     }
@@ -3505,15 +3509,6 @@ function setupSettingsOverview() {
     const runExport = statusId => window.exportMistakes?.(statusId);
     document.getElementById('settingsImportKnownBtn')?.addEventListener('click', runImport);
     document.getElementById('settingsExportMistakesBtn')?.addEventListener('click', () => runExport('settingsDataActionStatus'));
-    document.getElementById('progressImportKnownBtn')?.addEventListener('click', () => {
-        hideTotalStatsModal();
-        runImport();
-    });
-    document.getElementById('progressExportMistakesBtn')?.addEventListener('click', () => runExport('progressDataActionStatus'));
-    document.getElementById('progressWordsDataBtn')?.addEventListener('click', () => {
-        hideTotalStatsModal();
-        showSettingsModalWithTab('vocabulary');
-    });
 }
 
 window.addEventListener('fast-track-preference-change', event => {
@@ -3831,7 +3826,11 @@ async function showTotalStatsModal() {
     const user = currentUser;
     const langConfig = config.languages?.[language];
     const mode = currentLearningMode();
-    return openProgressOverview({
+    const smartSkipOn = Boolean(window.isFastTrackOn?.());
+    const options = {
+        flag: langConfig?.flag || LEARNING_CONTEXT_FLAGS[language] || '',
+        contentNoun: mode === 'speech' ? 'everyday speech' : mode === 'live' ? 'your playlist' : 'lyrics',
+        smartSkipOn,
         source: artist?.name || langConfig?.name || language,
         mode: mode === 'speech' ? 'Everyday speech' : mode === 'live' ? 'Your playlist' : scope === 'extra' ? 'Extra vocabulary' : 'Your music',
         coverageLabel: mode === 'live' ? 'Estimated playlist coverage' : artist ? (scope === 'extra' ? 'Extra vocabulary explored' : 'Estimated lyrics coverage') : 'Estimated speech coverage',
@@ -3840,14 +3839,17 @@ async function showTotalStatsModal() {
             if (!langConfig || !mode) throw new Error('Choose a vocabulary source first.');
             const raw = await fetchActiveVocabularyData(langConfig);
             if (selectedLanguage !== language || activeArtist !== artist || artistVocabularyScope !== scope) return [];
-            return getPreparedSetupVocabulary(language, raw).vocab;
+            const prepared = getPreparedSetupVocabulary(language, raw);
+            options.skippedCount = smartSkipOn
+                ? Math.max(0, (prepared.stableBaseline?.length || 0) - prepared.vocab.length) : 0;
+            return prepared.vocab;
         },
         getId: item => getWordId(item),
         getState: item => getRecordedSetupState(item),
         getProgress: item => getMergedWordProgress(getWordId(item), item.word),
-        canImport: Boolean(currentUser && !currentUser.isGuest),
-        guest: Boolean(currentUser?.isGuest)
-    });
+        skippedCount: 0
+    };
+    return openProgressOverview(options);
 }
 
 function hideTotalStatsModal() {

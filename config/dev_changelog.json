@@ -2,6 +2,107 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T18:27:55+01:00",
+      "date": "2026-10-10 18:27 BST",
+      "agent": "Codex",
+      "summary": "Plan TAGLINE: evaluate Portuguese sentence tagging and WSD safeguards",
+      "detail": [
+        "Added a named roadmap job to compare contextual POS taggers with a no-tagger baseline, starting with verified Portuguese és classification failures.",
+        "Keep source lemma corrections separate from sentence tagging and app display; use existing frozen evidence before any approved regeneration."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T18:15:00+01:00",
+      "date": "2026-10-10 18:15 BST",
+      "agent": "Antigravity",
+      "summary": "Simpler progress modal, tidier level and set explainers, and you can now step back through companion cards.",
+      "detail": [
+        "Progress modal: single title row with language flag; removed Study history, action buttons and Refresh; coverage says it is based on speech you understand, not cards answered; Skipped box shown when Smart Skip is on",
+        "Level explainer: title is 'Choose where to begin' (centred), levels described as 100 cards, shorter centred estimate box with time hint",
+        "Set explainer: titles removed; New, Rev, Known and Skip pills with coloured labels",
+        "Left arrow/button now steps back between companion cards of a word opened from search or lyrics"
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T17:50:00+01:00",
+      "date": "2026-10-10 17:50 BST",
+      "agent": "Antigravity",
+      "summary": "Log in now asks only for a username; the birthday appears only if the account has one set.",
+      "detail": [
+        "Birthday fields hidden in Log in mode until a matching profile has a birthday password",
+        "Wrong or missing birthday shows an inline message",
+        "Unknown username on Log in says to use Create account instead of silently creating one"
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T17:50:00+01:00",
+      "date": "2026-10-10 17:50 BST",
+      "agent": "Antigravity",
+      "summary": "Account modal: Spotify row now matches the profile row (circle, text, pill); top bar shows an account icon instead of the username.",
+      "detail": [
+        "Spotify circle is the same size as the profile avatar, no embedded card background",
+        "Connect to Spotify pill is green; Disconnect is red, styled like Log out",
+        "Account avatar shows only the first letter of the username",
+        "Top bar shows an account icon for named users; guests still see GUEST and tapping it opens log in / create account"
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T17:41:00+01:00",
+      "date": "2026-10-10 17:41 BST",
+      "agent": "Antigravity",
+      "summary": "Yearless birthday selects, separate 'Is this you?' modal, centered F logo, and guest button parity",
+      "detail": [
+        "Replace native date picker inputs with day and month dropdown selectors in both the profile login form and account settings, eliminating unwanted year prompts.",
+        "Surface profile collisions in a dedicated 'Is this you?' modal dialog with 'Yes, continue' and 'No, create an account' choices instead of filling up the landing page.",
+        "Remove 'Fluency' title text and center the 'F' app logo and header copy on the authentication landing sheet.",
+        "Give 'Try as guest' identical card formatting and typography to Log in and Create account, with an arrow indicator and temporary guest icon."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T17:38:07+01:00",
+      "date": "2026-10-10 17:38 BST",
+      "agent": "Codex",
+      "summary": "HEADWAY: constrain Portuguese forms to their supported source meanings",
+      "detail": [
+        "Corrected Portuguese form imports that pulled unrelated parts of speech from the base word; preserved genuine separate meanings and left missing evidence unresolved.",
+        "Reprocessed only affected cards using existing frozen sentences. Final candidate decks are reviewed through staging release selection; this checkpoint does not redeploy or replace the staging interface.",
+        "Save release files in chunks to reduce avoidable memory spikes."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T17:21:00+01:00",
+      "date": "2026-10-10 17:21 BST",
+      "agent": "Antigravity",
+      "summary": "Vocabulary source layout, level scrubber dots, Smart Skip primer, and streamlined auth & settings",
+      "detail": [
+        "Simplify vocabulary source card: remove outer border box, widen desktop spacing around OR divider, enlarge Spotify icon, and clarify title and frequency copy.",
+        "Scrubber dots: suppress dot under the active level and show status dots (green for completed, yellow for review needed, white for in-progress) on other levels.",
+        "Refine Smart Skip primer modal: remove redundant headers and look-alike footnote text, focusing directly on language choices.",
+        "Swap button emphasis in frequency intro modal so tutorial is primary and skip intro is secondary.",
+        "Streamline account settings with single Connect to Spotify button and native date-of-birth input.",
+        "Introduce distinct Log in and Create account entry points on authentication modal with native date picker."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T17:04:09+01:00",
+      "date": "2026-10-10 17:04 BST",
+      "agent": "Codex",
+      "summary": "HEADWAY: Spanish and Portuguese headword candidates ready for staging",
+      "detail": [
+        "Corrected source lemma analyses and carried the supported fixes into new candidate decks, preserving surface identities, source evidence and genuine multiword expressions.",
+        "Candidate staging decks use their own study structure and existing Merge Lemmas data. Production deck choices and merging policy remain unchanged.",
+        "Save existing word-sense results gradually and read sentences and assignments as needed, reducing local memory use."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T16:03:00+01:00",
       "date": "2026-10-10 16:03 BST",
       "agent": "Antigravity",
@@ -278,122 +379,6 @@
         "Removed dashed underlines on elided words in favor of clean text with soft-cyan styling, keeping lyric flow natural without hyperlink-like baselines.",
         "Wired newly deployed TURBO-2 unified WSD decision logic into the lyrics quick-view modal so contextual senses (obligation, progressive, future, perfect, reflexive) are prioritized for each lyric line.",
         "Added dictionary fallback in postProcess to match tokens against the engine dictionary even when filtered out of high-frequency playlist card cuts."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T15:40:00+01:00",
-      "date": "2026-10-09 15:40 BST",
-      "agent": "Antigravity",
-      "summary": "TURBO-2: Web Worker WSD pipeline and live Spotify playlist study deck generation",
-      "detail": [
-        "Integrated unified UNISON WSD decision logic directly into client turbo-engine: progressive auxiliary, modal obligation, future auxiliary, perfect auxiliary, and reflexive clitic routing.",
-        "Created dedicated background Web Worker (app/js/turbo-worker.js) for non-blocking intake, normalization, and semantic sense assignment.",
-        "Updated live playlist import to stream background progress and assign playable Spotify clip timestamps to matched card senses."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T14:40:54+01:00",
-      "date": "2026-10-09 14:40 BST",
-      "agent": "Codex",
-      "summary": "Clearer return-to-study prompt, readable settings, and easier main-menu access.",
-      "detail": [
-        "Centre the return prompt on phones and desktops, show the username and last card, and simplify the saved-set summary.",
-        "Keep last-card restoration and let the loading spinner paint before rebuilding the saved deck.",
-        "Use larger settings text and high-contrast neutral selections in dark and light themes.",
-        "Replace study gear icons with three dots and put Main menu and Study settings first."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T14:26:02+01:00",
-      "date": "2026-10-09 14:26 BST",
-      "agent": "Codex",
-      "summary": "Progress gets its own top-bar icon and a rebuilt overview",
-      "detail": [
-        "Open progress directly from the top bar; language settings now focus on language and vocabulary.",
-        "A centred coverage ring, Known / Practice / New breakdown and expandable answer history replace the old statistics grid.",
-        "Immediate opening, retry, keyboard closing, phone scrolling and stale-response protection make the overview reliable.",
-        "Removed the misleading complete-sentence percentage based on a partially loaded example corpus.",
-        "Counts and coverage use deduplicated recorded knowledge, including reviews of individual meanings."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T14:18:00+01:00",
-      "date": "2026-10-09 14:18 BST",
-      "agent": "Antigravity",
-      "summary": "Song lyrics view: dual song selector with offline probe songs and live online TURBO intake (Spotify URL, track ID, search query, or manual paste)",
-      "detail": [
-        "Added segmented picker tabs: choose between curated offline playlist (30 songs) or generate custom songs online with TURBO.",
-        "Online intake supports Spotify track URLs, Spotify track IDs (22 chars), song title & artist searches via LRCLIB, and direct manual lyrics paste.",
-        "Integrated client TURBO engine execution on the fly with live status progress, caching newly generated songs for seamless switching.",
-        "Added topbar shortcut pill '⚡ Online TURBO' and auto-detection of Spotify URLs in search inputs."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T14:11:11+01:00",
-      "date": "2026-10-09 14:11 BST",
-      "agent": "Codex",
-      "summary": "Study sets: larger rank numbers, brighter legend and darker skipped progress",
-      "detail": [
-        "Removed the hash from each frequency range and enlarged the numbers with heavier weight and vertical padding.",
-        "Legend counts use the main text colour for clearer contrast.",
-        "Skipped cards use a darker slate-grey fill in set progress bars and the matching legend swatch."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T13:54:00+01:00",
-      "date": "2026-10-09 13:54 BST",
-      "agent": "Antigravity",
-      "summary": "Song lyrics view: Spotify-style minimalist layout with target lyrics, English subtitles underneath, mobile bottom-sheet, and Fluency design integration",
-      "detail": [
-        "Replaced dense audit layout with Spotify-style minimalist lyrics flow: prominent target text in Space Grotesk with clean English gloss directly underneath.",
-        "Unified design system with Fluency's industrial dark palette (--bg-primary, --bg-card, --border-color, --font-emphasis).",
-        "Added mobile-first responsive bottom-sheet modal with drag handle and safe-area padding for one-handed inspection on phones.",
-        "Added topbar subtitle toggle pill ('EN line') to switch English line translation visibility."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T13:48:00+01:00",
-      "date": "2026-10-09 13:48 BST",
-      "agent": "Antigravity",
-      "summary": "Level Estimator audit: starting level placement fix, SENSE_CYCLE POS resolution, keyboard controls, and CEFR indicators",
-      "detail": [
-        "Fixed off-by-one level placement where learners were routed to a 100% completed level; now routes to first unseen card.",
-        "Resolved SENSE_CYCLE part-of-speech handling so grouped nouns and verbs are sampled and labelled properly.",
-        "Increased shard candidate attempts to 48 to prevent premature aborts on columnar releases.",
-        "Added full keyboard shortcuts (Space/Enter to flip, 1/2 or Arrow keys to answer, Escape to close) and modal backdrop dismissal.",
-        "Added visual progress track and CEFR stage mapping on results screen."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T13:35:00+01:00",
-      "date": "2026-10-09 13:35 BST",
-      "agent": "Antigravity",
-      "summary": "Song lyrics view: interactive lyric reader with token quick-view, sense assignments, entities, and ad-libs",
-      "detail": [
-        "Added lyrics-view mode accessible from learning settings and the artist setup card in lyrics mode.",
-        "Browse the 30-song offline playlist with searchable picker and song-by-song navigation.",
-        "Interactive lyric lines with automatic classification and inline badges for entities, idioms/MWEs, interjections/ad-libs, and vocabulary.",
-        "Quick-view modal inspecting surface elisions, primary sense assignments, entity cultural descriptions, and alternate Spanish senses with keyboard navigation."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T11:31:20+01:00",
-      "date": "2026-10-09 11:31 BST",
-      "agent": "Codex",
-      "summary": "Landing page: centred section labels and wider set cards in a 2 × 2 grid",
-      "detail": [
-        "Choose level, Choose a set and Practice errors have equal spacing above and below their labels.",
-        "Set cards are about 20% shorter and arranged in two columns, with frequency rank ranges visible on phones and desktop.",
-        "The selected set retains its accent ring without enlarging or shifting the card."
       ],
       "commit": "pending"
     }

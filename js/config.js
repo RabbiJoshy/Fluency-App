@@ -1,6 +1,6 @@
-import './state.js?v=9b943ab4';
-import { releaseUrl } from './release-host.js?v=9b943ab4';
-import { IS_STAGING, getCandidateDeckOverrides } from './env.js?v=9b943ab4';
+import './state.js?v=5e2c6e6b';
+import { releaseUrl } from './release-host.js?v=5e2c6e6b';
+import { IS_STAGING, getCandidateDeckOverrides } from './env.js?v=5e2c6e6b';
 
 async function loadConfig() {
     try {
@@ -46,10 +46,11 @@ async function loadConfig() {
                         : `releases/${routeCode}/speech/${encodeURIComponent(releaseId)}`;
                     languageConfig.releaseManifestPath = `${base}/manifest.json`;
                     languageConfig.releaseCompositionPath = `${base}/composition.json`;
-                    languageConfig.studyStructurePath = `${base}/study-structure.json`;
+                    languageConfig.studyStructurePath = `${base}/app/study-structure.json`;
                     languageConfig.indexPath = `${base}/app/vocabulary.index.json`;
                     languageConfig.examplesPath = `${base}/app/vocabulary.examples.json`;
                     languageConfig.conjugationsPath = `${base}/app/conjugations.json`;
+                    languageConfig.mergeExceptionsPath = `${base}/app/merge-exceptions.json`;
                 }
             }
         }

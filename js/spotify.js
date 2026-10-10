@@ -1,6 +1,6 @@
 // Spotify OAuth PKCE + Web Playback SDK for in-browser playback.
 // Key functions: spotifyLogin(), spotifyPlayTrack(trackId, positionMs), isSpotifyConnected().
-import './state.js?v=9b943ab4';
+import './state.js?v=5e2c6e6b';
 
 const SPOTIFY_SCOPES = 'streaming user-modify-playback-state user-read-playback-state user-read-email user-read-private playlist-read-private playlist-read-collaborative';
 const _isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -553,18 +553,27 @@ async function refreshSpotifyConnectionUI() {
     const icon = document.getElementById('spotifyConnectionIcon');
     if (!button) return;
     if (!isSpotifyConnected()) {
-        button.textContent = 'Connect';
-        button.classList.remove('settings-feature-action--danger');
-        if (status) status.textContent = 'Connect to Spotify';
+        button.textContent = 'Connect to Spotify';
+        button.classList.add('account-logout--connect');
+        if (status) {
+            status.textContent = '';
+            status.style.display = 'none';
+        }
         if (icon) icon.classList.remove('is-connected');
         return;
     }
     button.textContent = 'Disconnect';
-    button.classList.add('settings-feature-action--danger');
+    button.classList.remove('account-logout--connect');
     if (icon) icon.classList.add('is-connected');
-    if (status) status.textContent = 'Connected';
+    if (status) {
+        status.style.display = '';
+        status.textContent = 'Connected';
+    }
     const profile = await getSpotifyProfile();
-    if (status && profile) status.textContent = `Connected as ${profile.displayName}`;
+    if (status && profile) {
+        status.style.display = '';
+        status.textContent = `Connected as ${profile.displayName}`;
+    }
 }
 
 function setupSpotifyConnectionUI() {

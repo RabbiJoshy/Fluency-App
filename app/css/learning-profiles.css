@@ -1,15 +1,10 @@
 .auth-profile-help { margin: 8px 0 16px; color: var(--text-secondary); font-size: 13px; line-height: 1.5; text-align: left; }
 .auth-birthday-group { border: 0; padding: 0; margin: 16px 0 0; text-align: left; }
-.auth-birthday-fields { display: flex; gap: 12px; }
-.auth-birthday-fields label { display: flex; flex-direction: column; gap: 6px; flex: 1; font-size: 13px; color: var(--text-secondary); }
-.auth-birthday-fields label:first-child { flex: 0 0 80px; }
-.auth-birthday-fields input, .auth-birthday-fields select { width: 100%; min-height: 44px; box-sizing: border-box; border: 1px solid var(--border-color, #666); border-radius: 10px; padding: 10px; background: var(--bg-secondary, #242330); color: var(--text-primary, white); font: inherit; font-size: 16px; }
+.auth-birthday-fields { display: grid; grid-template-columns: 110px 1fr; gap: 10px; width: 100%; }
+.auth-date-select { width: 100%; min-height: 48px; box-sizing: border-box; border: 1px solid var(--border-color, #666); border-radius: 12px; padding: 10px 14px; background: var(--bg-tertiary, #242330); color: var(--text-primary, white); font: inherit; font-size: 15px; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+.auth-date-select:focus { border-color: var(--accent-primary); outline: none; }
 .auth-form-error { color: var(--accent-incorrect, #ff9999); font-size: 14px; line-height: 1.5; text-align: left; }
-.auth-profile-matches section { padding: 14px 0; border-bottom: 1px solid var(--border-color, #666); }
-.auth-profile-matches p { font-size: 13px; line-height: 1.5; color: var(--text-secondary); }
-.auth-profile-matches > .auth-cancel-btn { margin-top: 14px; width: 100%; }
-.auth-profile-matches section .auth-submit-btn { width: 100%; }
-.auth-profile-matches h4 { margin-top: 20px; }
+.auth-profile-matches:empty { display: none; }
 
 /* A single heading per screen: the profile form replaces the welcome pitch. */
 .auth-modal-content.is-login-form .auth-welcome-copy,
@@ -21,7 +16,92 @@
 .auth-modal-content .auth-birthday-group { margin-top: 20px; }
 .auth-modal-content .auth-birthday-group + .auth-profile-help { margin-top: 8px; }
 .auth-modal-content .initials-input { text-align: left; font-weight: 500; }
-.auth-modal-content .guest-btn { min-height: 56px; border-color: transparent; background: transparent; padding-top: 8px; padding-bottom: 8px; }
-.auth-modal-content .guest-btn .auth-choice-icon { display: none; }
-.auth-modal-content .guest-btn .auth-btn-title { font-size: 14px; }
 .auth-modal-content .login-form-actions .auth-cancel-btn { background: transparent; border-color: transparent; }
+.auth-modal-content .create-btn { border-color: var(--border-color); }
+
+/* Separate "Is this you?" modal */
+#profileMatchModal { z-index: 30005; }
+.profile-match-sheet {
+    width: min(100%, 420px);
+    max-width: 420px;
+    padding: 26px 22px 22px;
+    border-radius: 24px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-card);
+    box-shadow: 0 24px 70px rgba(0,0,0,0.55);
+    text-align: left;
+}
+.profile-match-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.profile-match-header h3 {
+    margin: 0;
+    font-family: var(--font-emphasis);
+    font-size: 23px;
+    font-weight: 750;
+    color: var(--text-primary);
+}
+.profile-match-intro {
+    margin: 0 0 18px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+}
+.profile-match-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+.profile-match-card {
+    padding: 15px;
+    border-radius: 16px;
+    border: 1px solid color-mix(in srgb, var(--accent-primary) 32%, var(--border-color));
+    background: color-mix(in srgb, var(--accent-primary) 6%, var(--bg-tertiary));
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.profile-match-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+.profile-match-context {
+    margin: 4px 0 0;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--text-secondary);
+}
+.profile-match-card .profile-match-choose-btn {
+    width: 100%;
+    min-height: 44px;
+    font-weight: 700;
+    justify-content: center;
+}
+.profile-match-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.profile-match-create-btn {
+    width: 100%;
+    min-height: 44px;
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.profile-match-create-btn:hover {
+    color: var(--text-primary);
+    border-color: var(--text-secondary);
+    background: rgba(255,255,255,0.05);
+}
+

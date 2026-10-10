@@ -11,6 +11,7 @@
     "spanish": {
       "name": "Spanish",
       "indexPath": "releases/es/speech/es-speech-v23-10000x30-slim/app/vocabulary.index.json",
+      "estimationPoolPath": "data/estimation-pools/spanish.json",
       "frequencyPath": "data/speech-frequency/es.json",
       "examplesPath": "releases/es/speech/es-speech-v23-10000x30-slim/app/vocabulary.examples.json",
       "studyStructurePath": "releases/es/speech/es-speech-v23-10000x30-slim/app/study-structure.json",
@@ -271,6 +272,7 @@
       "name": "Finnish",
       "dataPath": "Data/Finnish/vocabulary.json",
       "indexPath": "releases/fi/speech/fi-speech-v21-2000x30-slim/app/vocabulary.index.json",
+      "estimationPoolPath": "data/estimation-pools/finnish.json",
       "frequencyPath": "data/speech-frequency/fi.json",
       "examplesPath": "releases/fi/speech/fi-speech-v21-2000x30-slim/app/vocabulary.examples.json",
       "studyStructurePath": "releases/fi/speech/fi-speech-v21-2000x30-slim/app/study-structure.json",
@@ -306,6 +308,7 @@
     "french": {
       "name": "French",
       "indexPath": "releases/fr/speech/fr-speech-v7-dual-metadata-v5-20260918/app/vocabulary.index.json",
+      "estimationPoolPath": "data/estimation-pools/french.json",
       "frequencyPath": "data/speech-frequency/fr.json",
       "examplesPath": "releases/fr/speech/fr-speech-v7-dual-metadata-v5-20260918/app/vocabulary.examples.json",
       "studyStructurePath": "releases/fr/speech/fr-speech-v7-dual-metadata-v5-20260918/app/study-structure.json",
@@ -498,6 +501,7 @@
     "portuguese": {
       "name": "Portuguese",
       "indexPath": "releases/pt/speech/pt-speech-v23-10000x30-slim/app/vocabulary.index.json",
+      "estimationPoolPath": "data/estimation-pools/portuguese.json",
       "frequencyPath": "data/speech-frequency/pt.json",
       "examplesPath": "releases/pt/speech/pt-speech-v23-10000x30-slim/app/vocabulary.examples.json",
       "studyStructurePath": "releases/pt/speech/pt-speech-v23-10000x30-slim/app/study-structure.json",
@@ -651,6 +655,7 @@
         "conjugation": "https://en.wiktionary.org/wiki/{word}#Czech"
       },
       "indexPath": "releases/cs/speech/cs-speech-v22-10000x30-slim/app/vocabulary.index.json",
+      "estimationPoolPath": "data/estimation-pools/czech.json",
       "frequencyPath": "data/speech-frequency/cs.json",
       "examplesPath": "releases/cs/speech/cs-speech-v22-10000x30-slim/app/vocabulary.examples.json",
       "studyStructurePath": "releases/cs/speech/cs-speech-v22-10000x30-slim/app/study-structure.json",

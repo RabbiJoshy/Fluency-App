@@ -1,11 +1,11 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=9b943ab4';
-import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=9b943ab4';
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=9b943ab4';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=9b943ab4';
-import { dbGet, dbPut } from './offline-db.js?v=9b943ab4';
-import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=9b943ab4';
+import './state.js?v=5e2c6e6b';
+import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=5e2c6e6b';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=5e2c6e6b';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=5e2c6e6b';
+import { dbGet, dbPut } from './offline-db.js?v=5e2c6e6b';
+import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=5e2c6e6b';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -14,8 +14,8 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=9b943ab4';
-import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=9b943ab4';
+} from './sync-queue.js?v=5e2c6e6b';
+import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=5e2c6e6b';
 
 const AUDIT_ACCOUNT_INITIALS = new Set(['JST', 'JSTA']);
 
@@ -201,8 +201,21 @@ function hideAuthModal() {
 // the floating toolbar is shown/hidden by showFloatingBtns() in flashcard mode.
 function showUserInfo() {
     const label = document.getElementById('topBarUserName');
-    if (label) label.textContent = currentUser?.isGuest ? 'GUEST'
-        : (currentUser?.username || currentUser?.initials || '');
+    if (!label) return;
+    if (!currentUser) { label.textContent = ''; return; }
+    if (currentUser.isGuest) {
+        label.classList.remove('is-icon');
+        label.textContent = 'GUEST';
+        label.title = 'Log in or create an account';
+        label.setAttribute('aria-label', 'Log in or create an account');
+        return;
+    }
+    // Usernames can be long, so the top bar shows an account icon, not the name.
+    const name = currentUser.username || currentUser.initials || '';
+    label.classList.add('is-icon');
+    label.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>';
+    label.title = name ? `Account: ${name}` : 'Open account settings';
+    label.setAttribute('aria-label', name ? `Account settings for ${name}` : 'Open account settings');
 }
 
 // Guest mode handler.
@@ -228,13 +241,32 @@ function enterGuestMode() {
 }
 
 // Show login form
-function showLoginForm() {
+function showLoginForm(mode = 'login') {
     resetProfileLogin();
-    document.getElementById('guestModeBtn').style.display = 'none';
+    const guestRow = document.getElementById('guestModeRow');
+    if (guestRow) guestRow.style.display = 'none';
+    else if (document.getElementById('guestModeBtn')) document.getElementById('guestModeBtn').style.display = 'none';
     document.getElementById('loginModeRow').style.display = 'none';
+    const createRow = document.getElementById('createModeRow');
+    if (createRow) createRow.style.display = 'none';
     document.getElementById('aboutProjectBtn').style.display = 'none';
     document.getElementById('loginInfoNote').classList.add('hidden');
     document.querySelector('#authModal .auth-modal-content')?.classList.add('is-login-form');
+    const heading = document.querySelector('#loginForm .auth-form-heading h4');
+    const subtext = document.querySelector('#loginForm .auth-form-heading p');
+    const submit = document.getElementById('submitInitialsBtn');
+    const loginFormEl = document.getElementById('loginForm');
+    loginFormEl.dataset.mode = mode === 'create' ? 'create' : 'login';
+    loginFormEl.classList.remove('needs-birthday');
+    if (mode === 'create') {
+        if (heading) heading.textContent = 'Create account';
+        if (subtext) subtext.textContent = 'Choose a username and optional birthday to save progress.';
+        if (submit) submit.textContent = 'Create account';
+    } else {
+        if (heading) heading.textContent = 'Log in';
+        if (subtext) subtext.textContent = 'Enter your username to continue.';
+        if (submit) submit.textContent = 'Log in';
+    }
     document.getElementById('loginForm').classList.remove('hidden');
     document.getElementById('userInitials').focus();
 }
@@ -242,14 +274,21 @@ function showLoginForm() {
 // Hide login form
 function hideLoginForm() {
     resetProfileLogin();
-    document.getElementById('guestModeBtn').style.display = 'flex';
+    const guestRow = document.getElementById('guestModeRow');
+    if (guestRow) guestRow.style.display = 'flex';
+    else if (document.getElementById('guestModeBtn')) document.getElementById('guestModeBtn').style.display = 'flex';
     document.getElementById('loginModeRow').style.display = 'flex';
+    const createRow = document.getElementById('createModeRow');
+    if (createRow) createRow.style.display = 'flex';
     document.getElementById('aboutProjectBtn').style.display = '';
     document.querySelector('#authModal .auth-modal-content')?.classList.remove('is-login-form');
     document.getElementById('loginForm').classList.add('hidden');
+    document.getElementById('loginForm').classList.remove('needs-birthday');
     document.getElementById('userInitials').value = '';
-    document.getElementById('birthdayDay').value = '';
-    document.getElementById('birthdayMonth').value = '';
+    const bdayDay = document.getElementById('birthdayDay');
+    if (bdayDay) bdayDay.value = '';
+    const bdayMonth = document.getElementById('birthdayMonth');
+    if (bdayMonth) bdayMonth.value = '';
 }
 
 // Submit initials and login
@@ -310,7 +349,7 @@ function renderAccountPanel() {
     const named = Boolean(currentUser && !currentUser.isGuest);
     const badge = document.getElementById('accountUserBadge');
     if (badge) {
-        badge.textContent = named ? (currentUser.username || currentUser.initials) : '?';
+        badge.textContent = named ? String(currentUser.username || currentUser.initials || '?').trim().charAt(0).toUpperCase() : '?';
         badge.classList.toggle('is-guest', !named);
     }
     const name = document.getElementById('accountProfileName');
@@ -343,27 +382,58 @@ function renderAccountPanel() {
 function wireAccountPassword() {
     const input = document.getElementById('accountPasswordInput');
     const show = document.getElementById('accountPasswordShowBtn');
+    const save = document.getElementById('accountPasswordSaveBtn');
     const status = document.getElementById('accountPasswordStatus');
+    const pickerFields = document.getElementById('accountBirthdayPickerFields');
+    const daySelect = document.getElementById('accountBirthdayDay');
+    const monthSelect = document.getElementById('accountBirthdayMonth');
     if (!input || !show) return;
+
+    let isEditing = false;
+    const setEditing = (editing) => {
+        isEditing = editing;
+        if (pickerFields) pickerFields.hidden = !editing;
+        input.hidden = editing;
+        if (save) save.hidden = !editing;
+        show.textContent = editing ? 'Cancel' : (currentUser?.birthday ? 'Change' : 'Set');
+        if (editing && daySelect && monthSelect) {
+            const bday = currentUser?.birthday || '';
+            if (bday && bday.includes('-')) {
+                const [m, d] = bday.split('-');
+                monthSelect.value = String(parseInt(m, 10));
+                daySelect.value = String(parseInt(d, 10));
+            } else {
+                daySelect.value = '';
+                monthSelect.value = '';
+            }
+        }
+    };
+
     show.addEventListener('click', () => {
         if (!currentUser) return;
-        const currentBday = currentUser.birthday || '';
-        const day = prompt('Enter birthday day (1-31):', currentBday ? currentBday.split('-')[1] : '');
-        if (day === null) return;
-        const month = prompt('Enter birthday month (1-12):', currentBday ? currentBday.split('-')[0] : '');
-        if (month === null) return;
-        const d = parseInt(day, 10);
-        const m = parseInt(month, 10);
-        if (!d || !m || d < 1 || d > 31 || m < 1 || m > 12) {
-            alert('Please enter a valid day (1-31) and month (1-12).');
-            return;
-        }
-        const formatted = `${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-        currentUser.birthday = formatted;
-        localStorage.setItem('flashcardUser', JSON.stringify(currentUser));
-        renderAccountPanel();
-        if (status) status.textContent = 'Birthday updated! This is used as your password.';
+        setEditing(!isEditing);
+        if (status) status.textContent = 'This is used as your password';
     });
+
+    if (save) {
+        save.addEventListener('click', () => {
+            if (!currentUser) return;
+            const d = parseInt(daySelect?.value, 10);
+            const m = parseInt(monthSelect?.value, 10);
+            if (!daySelect?.value && !monthSelect?.value) {
+                currentUser.birthday = '';
+            } else if (d >= 1 && d <= 31 && m >= 1 && m <= 12) {
+                currentUser.birthday = `${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+            } else {
+                if (status) status.textContent = 'Please choose both a day and month.';
+                return;
+            }
+            localStorage.setItem('flashcardUser', JSON.stringify(currentUser));
+            setEditing(false);
+            renderAccountPanel();
+            if (status) status.textContent = 'Birthday updated! This is used as your password.';
+        });
+    }
 }
 
 // Logout handler. Guests skip the confirm (nothing to lose); named users get
@@ -1795,8 +1865,9 @@ function setupAuthEventListeners() {
     // Guest mode button
     document.getElementById('guestModeBtn').addEventListener('click', enterGuestMode);
 
-    // Login mode button
-    document.getElementById('loginModeBtn').addEventListener('click', showLoginForm);
+    // Login and create mode buttons
+    document.getElementById('loginModeBtn')?.addEventListener('click', () => showLoginForm('login'));
+    document.getElementById('createAccountBtn')?.addEventListener('click', () => showLoginForm('create'));
 
     // Login info button: toggle the no-password explanation
     const loginInfoBtn = document.getElementById('loginInfoBtn');
@@ -1896,6 +1967,7 @@ window.migrateLocalStorageIdsV2 = migrateLocalStorageIdsV2;
 window.loadSecrets = loadSecrets;
 window.checkAuthentication = checkAuthentication;
 window.showAuthModal = showAuthModal;
+window.showUserInfo = showUserInfo;
 window.hideAuthModal = hideAuthModal;
 window.showUserInfo = showUserInfo;
 window.enterGuestMode = enterGuestMode;
