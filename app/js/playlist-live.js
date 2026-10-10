@@ -93,7 +93,147 @@ async function loadSpeechSurfaces(language) {
     return words;
 }
 
-async function buildPlaylistLiveDeck({ playlist, language, records }) {
+let _turboWorker = null;
+
+function getTurboWorker() {
+    if (!_turboWorker) {
+        _turboWorker = new Worker(new URL('./turbo-worker.js', import.meta.url), { type: 'module' });
+    }
+    return _turboWorker;
+}
+
+async function runTurboWorkerIntake(songs, onProgress = null) {
+    const worker = getTurboWorker();
+    const reqId = `turbo_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+
+    return new Promise((resolve, reject) => {
+        const handler = (e) => {
+            const { type, id, result, progress, error } = e.data;
+            if (id !== reqId) return;
+
+            if (type === 'PROGRESS') {
+                if (typeof onProgress === 'function') onProgress(progress);
+            } else if (type === 'PROCESS_SUCCESS') {
+                worker.removeEventListener('message', handler);
+                resolve(result);
+            } else if (type === 'ERROR') {
+                worker.removeEventListener('message', handler);
+                reject(new Error(error || 'Turbo worker execution error'));
+            }
+        };
+
+        worker.addEventListener('message', handler);
+        worker.postMessage({
+            type: 'PROCESS_PLAYLIST',
+            id: reqId,
+            payload: { songs }
+        });
+    });
+}
+
+async function buildPlaylistLiveDeck({ playlist, language, records, onProgress }) {
+    const isSpanish = (language === 'spanish' || language === 'es');
+
+    // For Spanish, run fast background TURBO worker pipeline
+    if (isSpanish && typeof Worker !== 'undefined') {
+        try {
+            if (typeof onProgress === 'function') {
+                onProgress({ stage: 'turbo_start', message: 'Starting Turbo intake & WSD engine...' });
+            }
+
+            const validRecords = (records || []).filter(r =>
+                r && (r.plainLyrics || r.syncedLyrics) && r.status !== 'instrumental' && r.status !== 'miss' && r.status !== 'error'
+            );
+
+            const turboSongs = validRecords.map(r => ({
+                title: r.title || 'Unknown track',
+                artist: r.artist || '',
+                lyrics: r.plainLyrics || '',
+                syncedLyrics: r.syncedLyrics || '',
+                spotifyTrackId: r.spotifyId || null
+            }));
+
+            const turboResult = await runTurboWorkerIntake(turboSongs, onProgress);
+            const surfaces = new Map();
+            let tokenCount = 0;
+
+            for (const card of turboResult.cards || []) {
+                const normKey = normalizeSurface(card.word);
+                if (!normKey) continue;
+                tokenCount += (card.playlistCount || 1);
+
+                // Collect best examples from card meanings or root examples
+                const cardExamples = [];
+                for (const m of card.meanings || []) {
+                    for (const ex of m.examples || []) {
+                        if (!cardExamples.some(e => e.text === ex.spanish || e.text === ex.target)) {
+                            cardExamples.push({
+                                text: ex.spanish || ex.target,
+                                song: ex.song,
+                                artist: ex.artist,
+                                timestamp_ms: ex.timestamp_ms,
+                                end_timestamp_ms: ex.end_timestamp_ms,
+                                isSynced: ex.isSynced,
+                                spotify_track_id: ex.spotify_track_id
+                            });
+                        }
+                    }
+                }
+                if (!cardExamples.length && card.examples) {
+                    for (const ex of card.examples) {
+                        cardExamples.push({
+                            text: ex.text,
+                            song: ex.song,
+                            artist: ex.artist,
+                            timestamp_ms: ex.timestamp_ms,
+                            end_timestamp_ms: ex.end_timestamp_ms,
+                            isSynced: ex.isSynced,
+                            spotify_track_id: ex.spotify_track_id
+                        });
+                    }
+                }
+
+                surfaces.set(normKey, {
+                    count: card.playlistCount || 1,
+                    lines: cardExamples.slice(0, MAX_LINES_PER_SURFACE),
+                    turboCard: card
+                });
+            }
+
+            const deck = {
+                id: LIVE_DECK_ID,
+                playlistId: playlist.id,
+                playlistName: playlist.name,
+                language,
+                builtAt: new Date().toISOString(),
+                trackCount: (records || []).length,
+                lyricsTrackCount: validRecords.length,
+                tokenCount,
+                matchedCount: surfaces.size,
+                surfaces: Object.fromEntries(surfaces),
+                isTurboEngine: true,
+                turboMetadata: {
+                    mweCount: turboResult.mweCardsCount,
+                    entityCount: turboResult.entityCardsCount,
+                    wordCount: turboResult.wordCardsCount,
+                    elapsedMs: turboResult.elapsedMs
+                }
+            };
+
+            const db = await openLiveDb();
+            try {
+                await idbRequest(db.transaction(DECK_STORE, 'readwrite').objectStore(DECK_STORE).put(deck));
+            } finally {
+                db.close();
+            }
+            _liveDeck = deck;
+            return deck;
+        } catch (err) {
+            console.warn('Turbo worker failed, falling back to synchronous baseline:', err);
+        }
+    }
+
+    // Default / fallback live pipeline
     const speechSurfaces = await loadSpeechSurfaces(language);
     const surfaces = new Map();
     let tokenCount = 0;
@@ -247,40 +387,61 @@ function lyricExample(line) {
     return {
         target: line.text,
         spanish: line.text,
-        english: '',
+        english: line.english || '',
         song: line.song || '',
         song_name: line.artist ? `${line.song} — ${line.artist}` : (line.song || ''),
         artist: line.artist || '',
-        unassigned: true
+        timestamp_ms: line.timestamp_ms ?? null,
+        end_timestamp_ms: line.end_timestamp_ms ?? null,
+        isSynced: Boolean(line.isSynced),
+        spotify_track_id: line.spotify_track_id || null,
+        unassigned: !line.assigned
     };
 }
 
 function applyPlaylistLiveVocabulary(items) {
     if (!playlistLiveActive() || !Array.isArray(items)) return items;
     const ranked = [];
+    const isTurbo = Boolean(_liveDeck?.isTurboEngine);
+
     for (const item of items) {
         const entry = _liveDeck.surfaces[normalizeSurface(item.word)];
         if (!entry) continue;
         const lyricExamples = entry.lines.map(lyricExample);
         const next = { ...item, meanings: [...(item.meanings || [])], playlist_count: entry.count };
-        const kept = next.meanings.filter(keepCommonOrUncommon);
-        const meanings = kept.length ? kept : next.meanings.slice(0, 4);
-        if (meanings.length) {
-            next.meanings = meanings.map((m, idx) => ({
-                ...m,
-                examples: idx === 0
-                    ? [...lyricExamples, ...(m.examples || [])]
-                    : (m.examples || [])
-            }));
+
+        // For Turbo engine decks with disambiguated senses
+        if (isTurbo && entry.turboCard?.meanings) {
+            const turboMeanings = entry.turboCard.meanings;
+            // Match card's existing meanings with turbo meanings where possible
+            next.meanings = next.meanings.map((m, idx) => {
+                const tMeaning = turboMeanings[idx];
+                const matchingExamples = (tMeaning?.examples || []).map(lyricExample);
+                return {
+                    ...m,
+                    examples: matchingExamples.length ? matchingExamples : (idx === 0 ? lyricExamples : (m.examples || []))
+                };
+            });
         } else {
-            next.meanings = [{
-                pos: '',
-                translation: '',
-                frequency: '0',
-                unassigned: true,
-                assignment_method: 'unassigned',
-                examples: lyricExamples
-            }];
+            const kept = next.meanings.filter(keepCommonOrUncommon);
+            const meanings = kept.length ? kept : next.meanings.slice(0, 4);
+            if (meanings.length) {
+                next.meanings = meanings.map((m, idx) => ({
+                    ...m,
+                    examples: idx === 0
+                        ? [...lyricExamples, ...(m.examples || [])]
+                        : (m.examples || [])
+                }));
+            } else {
+                next.meanings = [{
+                    pos: '',
+                    translation: '',
+                    frequency: '0',
+                    unassigned: true,
+                    assignment_method: 'unassigned',
+                    examples: lyricExamples
+                }];
+            }
         }
         ranked.push(next);
     }

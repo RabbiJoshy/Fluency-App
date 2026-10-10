@@ -57,6 +57,28 @@ SPLIT_ROWS = [
 ]
 
 ROWS = [
+    {"word": "seres", "noun_merge": {
+        "rule_version": "noun-merge/v2", "allowed": True, "lemma": "ser"}, "meanings": [
+        {"headword": "ser", "pos": "noun", "translation": "beings"},
+        {"headword": "ser", "pos": "verb", "translation": "to be"}]},
+    {"word": "seres", "noun_merge": {
+        "rule_version": "noun-merge/v2", "allowed": True, "lemma": "ser"}, "meanings": [
+        {"headword": "ser", "pos": "noun", "translation": "beings"}], "unused_menu_senses": [
+        {"headword": "ser", "pos": "verb", "translation": "to be"}]},
+    {"word": "seres", "merge_key": "ser", "noun_merge": {
+        "rule_version": "noun-merge/v1", "allowed": True, "lemma": "ser"}, "meanings": []},
+    {"word": "gatos", "lemma": "gato", "meanings": [{"pos": "SENSE_CYCLE", "allSenses": [
+        {"headword": "gato", "pos": "noun", "translation": "cat"}]}]},
+    {"word": "gatos", "lemma": "gato", "noun_merge": {
+        "rule_version": "noun-merge/v2", "allowed": True, "lemma": "gato"}, "meanings": [
+        {"headword": "gato", "pos": "NOUN", "translation": "cats"}]},
+    {"word": "gato", "noun_merge": {
+        "rule_version": "noun-merge/v2", "allowed": False, "lemma": "gato"}, "meanings": [
+        {"headword": "gato", "pos": "NOUN", "translation": "cat"}]},
+    {"word": "gatos", "noun_merge": {
+        "rule_version": "noun-merge/v2", "allowed": True, "lemma": "gato"}, "meanings": []},
+    {"word": "gatos", "merge_key": "gato", "noun_merge": {
+        "rule_version": "noun-merge/v0", "allowed": True, "lemma": "gato"}, "meanings": []},
     {"word": "fue", "meanings": [
         {"headword": "ser", "pos": "VERB", "translation": "to be"},
         {"headword": "ir", "pos": "VERB", "translation": "to go"}]},

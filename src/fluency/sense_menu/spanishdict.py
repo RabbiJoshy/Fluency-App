@@ -22,6 +22,7 @@ from fluency.features.spanishdict import extract as extract_spanishdict_features
 from fluency.menus import MenuAnalysis, SenseLeaf, build_analysis_id
 from fluency.sense_menu.declared_menu import declared_entity_analyses, declared_gloss_analyses
 from fluency.sense_menu.spanishdict_lemmas import has_translation
+from fluency.sense_menu.noun_merge import stamp_noun_merge
 from fluency.surfaces.resolver import DECLARED_GLOSS, ENTITY, EXPANSION, HEADWORDS
 
 
@@ -590,6 +591,18 @@ class SpanishDictSenseMenuAdapter:
                                 "query": surface,
                                 "response_headword": headword,
                                 "entry_language": (self.surface_cache.get(surface) or {}).get("entry_lang"),
+                                "declared_plural": any(
+                                    isinstance(result, dict)
+                                    and result.get("heuristic") == "inflection"
+                                    and str(result.get("headword") or result.get("word_source") or "").casefold() == headword.casefold()
+                                    and "plural" in str(result.get("inflection_type") or "").casefold().split()
+                                    for result in (self.surface_cache.get(surface) or {}).get("possible_results", [])
+                                ),
+                                "inflection_types": [str(result.get("inflection_type"))
+                                    for result in (self.surface_cache.get(surface) or {}).get("possible_results", [])
+                                    if isinstance(result, dict) and result.get("heuristic") == "inflection"
+                                    and str(result.get("headword") or result.get("word_source") or "").casefold() == headword.casefold()
+                                    and result.get("inflection_type")],
                                 "resolution": (
                                     "retained_normalized_menu"
                                     if surface in self.normalized_menu
@@ -661,6 +674,7 @@ class SpanishDictSenseMenuAdapter:
             menu_cards.append(menu_card)
             per_surface.append(surface_report)
 
+        stamp_noun_merge(menu_cards)
         payload = {
             "menu_version": MENU_VERSION,
             "metadata_contract": METADATA_CONTRACT_VERSION,

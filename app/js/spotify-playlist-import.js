@@ -689,7 +689,11 @@ async function openSpotifyPlaylistImport(matchingArtists, language, options = {}
             const deck = await window.buildPlaylistLiveDeck({
                 playlist,
                 language,
-                records: results
+                records: results,
+                onProgress: ({ stage, message }) => {
+                    if (nowEl && message) nowEl.textContent = message;
+                    if (status && message) status.textContent = message;
+                }
             });
             if (abort.signal.aborted) return;
             const missCount = counts.miss + counts.error;

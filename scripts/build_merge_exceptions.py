@@ -32,6 +32,8 @@ import re
 from pathlib import Path
 
 from fluency.enrichments.card_rules import lemma_group_key, lemma_headwords, normal_token
+from fluency.core.hashing import file_content_id
+from fluency.sense_menu.noun_merge import RULE_VERSION, stamp_noun_merge
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACTION = re.compile(r"^\s*contraction of\b", re.IGNORECASE)
@@ -64,33 +66,69 @@ def main() -> int:
     parser.add_argument("--language", required=True)
     parser.add_argument("--extract", type=Path, help="Wiktionary extract (not needed for SpanishDict)")
     parser.add_argument("--release-index", type=Path, help="release whose cards get a merge key")
+    parser.add_argument("--sense-menu", type=Path, help="complete uninflected stage-02 menu for that release")
     parser.add_argument("--out", type=Path)
     args = parser.parse_args()
+    if args.sense_menu and not args.release_index:
+        parser.error("--sense-menu requires --release-index")
 
     out = args.out or ROOT / "app" / "data" / "merge-exceptions" / f"{args.language}.json"
     words = contractions(args.extract) if args.extract else []
     keys = {}
+    noun_verdicts = {}
     release = None
     if args.release_index:
         rows = json.loads(args.release_index.read_text(encoding="utf-8"))
+        if args.sense_menu:
+            menu = json.loads(args.sense_menu.read_text(encoding="utf-8"))
+            if menu.get("language") != args.language:
+                raise ValueError("sense menu language does not match --language")
+            cards = menu["cards"]
+            stamp_noun_merge(cards)
+            by_id = {card["card_id"]: card for card in cards}
+            for row in rows:
+                card = by_id.get(row.get("surface_card_id"))
+                if card is None or normal_token(card.get("surface_form")) != normal_token(row.get("word")):
+                    raise ValueError("sense menu does not match the release's surface cards")
+                if "noun_merge" in card:
+                    if card["noun_merge"]["allowed"]:
+                        senses = [*(row.get("meanings") or []), *(row.get("unused_menu_senses") or [])]
+                        senses.extend(s for m in row.get("meanings") or [] for s in m.get("allSenses") or [])
+                        references = {s["source_reference"] for s in senses if s.get("source_reference")
+                                      and s["source_reference"] != "mwe-merged/v1"}
+                        menu_references = {s["source_reference"] for a in card["analyses"]
+                                           for s in a["senses"]}
+                        if references != menu_references:
+                            raise ValueError("approved noun menu does not match the release's complete source senses")
+                    row["noun_merge"] = card["noun_merge"]
+        noun_verdicts = {normal_token(row["word"]): row["noun_merge"] for row in rows
+                         if row.get("word") and "noun_merge" in row}
         # Only rows whose senses name a headword: a headword-less row falls
         # back in the app to the lemma column the release ships, which the
         # full rows here do not carry.
         keys = {
             normal_token(row["word"]): lemma_group_key(row, words)
             for row in rows
-            if row.get("word") and lemma_headwords(row)
+            if row.get("word") and (lemma_headwords(row) or row.get("noun_merge"))
         }
         release = args.release_index.parent.parent.name
     payload = {
-        "schema": "merge-exceptions/v2",
+        "schema": "merge-exceptions/v3",
+        "noun_merge_rule": RULE_VERSION,
         "language": args.language,
         "source": f"wiktionary:{args.extract.parent.name}/{args.extract.name}" if args.extract else None,
         "release_id": release,
         "contractions": words,
         # surface -> the lemma it merges into, "" for its own card
         "keys": keys,
+        "noun_verdicts": noun_verdicts,
     }
+    if args.release_index:
+        payload["release_index_content_id"] = file_content_id(args.release_index)
+    if args.sense_menu:
+        payload["sense_menu_content_id"] = file_content_id(args.sense_menu)
+        if menu.get("noun_merge_refresh"):
+            payload["evidence"] = menu["noun_merge_refresh"]
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(payload, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     separate = sum(1 for key in keys.values() if not key)

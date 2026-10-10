@@ -1,0 +1,110 @@
+[
+  {
+    "language": "spanish",
+    "status": "measured",
+    "release": "releases/es/speech/es-speech-v23-10000x30-slim/app/vocabulary.index.json",
+    "surfaces": 10000,
+    "eligibleSurfaces": 9009,
+    "groups": 7585,
+    "mergedGroups": 3958,
+    "standaloneSurfaces": 994,
+    "splitReadings": 2633,
+    "missingSplitExamples": 0,
+    "frequencySource": "EsPal Spanish subtitles frequency",
+    "missingFrequencies": 0,
+    "hay": [
+      {
+        "key": "split:0bd90243::split::hay_VERB",
+        "members": [
+          "hay"
+        ]
+      },
+      {
+        "key": "split:0bd90243::split::haber_VERB",
+        "members": [
+          "hay"
+        ]
+      }
+    ]
+  },
+  {
+    "language": "swedish",
+    "status": "not_shipped"
+  },
+  {
+    "language": "italian",
+    "status": "not_shipped"
+  },
+  {
+    "language": "dutch",
+    "status": "not_shipped"
+  },
+  {
+    "language": "finnish",
+    "status": "measured",
+    "release": "releases/fi/speech/fi-speech-v21-2000x30-slim/app/vocabulary.index.json",
+    "surfaces": 2000,
+    "eligibleSurfaces": 1657,
+    "groups": 856,
+    "mergedGroups": 736,
+    "standaloneSurfaces": 59,
+    "splitReadings": 61,
+    "missingSplitExamples": 0,
+    "frequencySource": "FrequencyWords Finnish OpenSubtitles 2018 list",
+    "missingFrequencies": 0
+  },
+  {
+    "language": "french",
+    "status": "measured",
+    "release": "releases/fr/speech/fr-speech-v7-dual-metadata-v5-20260918/app/vocabulary.index.json",
+    "surfaces": 200,
+    "eligibleSurfaces": 131,
+    "groups": 131,
+    "mergedGroups": 0,
+    "standaloneSurfaces": 131,
+    "splitReadings": 0,
+    "missingSplitExamples": 0,
+    "frequencySource": "Lexique 4 FreqOrtho",
+    "missingFrequencies": 0
+  },
+  {
+    "language": "russian",
+    "status": "not_shipped"
+  },
+  {
+    "language": "polish",
+    "status": "not_shipped"
+  },
+  {
+    "language": "portuguese",
+    "status": "measured",
+    "release": "releases/pt/speech/pt-speech-v23-10000x30-slim/app/vocabulary.index.json",
+    "surfaces": 10000,
+    "eligibleSurfaces": 9570,
+    "groups": 6007,
+    "mergedGroups": 4723,
+    "standaloneSurfaces": 592,
+    "splitReadings": 692,
+    "missingSplitExamples": 1,
+    "frequencySource": "FrequencyWords Portuguese (European) list",
+    "missingFrequencies": 12
+  },
+  {
+    "language": "portuguese_brazilian",
+    "status": "not_shipped"
+  },
+  {
+    "language": "czech",
+    "status": "measured",
+    "release": "releases/cs/speech/cs-speech-v22-10000x30-slim/app/vocabulary.index.json",
+    "surfaces": 10000,
+    "eligibleSurfaces": 9040,
+    "groups": 4129,
+    "mergedGroups": 3566,
+    "standaloneSurfaces": 426,
+    "splitReadings": 137,
+    "missingSplitExamples": 0,
+    "frequencySource": "FrequencyWords Czech list",
+    "missingFrequencies": 0
+  }
+]

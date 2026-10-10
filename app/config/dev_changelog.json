@@ -2,6 +2,305 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T11:35:14+01:00",
+      "date": "2026-10-10 11:35 BST",
+      "agent": "Codex",
+      "summary": "Activate verified noun merges in Spanish and Portuguese Speech decks",
+      "detail": [
+        "Publish matching v23 metadata for 314 Spanish and 335 Portuguese noun groups, shared by Smart Skip, the level estimator and deck grouping.",
+        "Recover SpanishDict evidence for 773 candidate spellings and Wiktionary entry tags from the saved dump; keep changed, incomplete or ambiguous menus separate.",
+        "Preserve card IDs, saved progress, definitions and examples; verify all 20,000 full and early-loading decisions agree."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T00:35:00+01:00",
+      "date": "2026-10-10 00:35 BST",
+      "agent": "Claude",
+      "summary": "Memory tip sheet text gets side padding",
+      "detail": [
+        "Text no longer touches the sheet's left edge."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T00:20:00+01:00",
+      "date": "2026-10-10 00:20 BST",
+      "agent": "Claude",
+      "summary": "Fix: Memory tip sheet now shows its explanation (the body had collapsed to nothing)",
+      "detail": [
+        "The sheet's text area had no height, so only the title showed. It now sizes to its content."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T00:05:00+01:00",
+      "date": "2026-10-10 00:05 BST",
+      "agent": "Claude",
+      "summary": "Fix: Memory tip tile now actually appears (it was reading the wrong language variable)",
+      "detail": [
+        "The first release looked up the language by a name that does not exist, so no card ever got a tip. It now uses selectedLanguage."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-09T23:40:00+01:00",
+      "date": "2026-10-09 23:40 BST",
+      "agent": "Claude",
+      "summary": "Memory tip tile on the card back shows how a word's ending maps to English (rápidamente → rapidly)",
+      "detail": [
+        "New Memory tip tile beside Rarer uses; opens a small sheet naming the shift, e.g. -mente becomes -ly, -ción becomes -tion.",
+        "Spanish, Portuguese and French endings; a tip appears only when the card's own English gloss really wears the English ending, so false friends such as actualmente and chica get none.",
+        "Shown on any matching card, not only with Smart Skip off."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-09T23:20:00+01:00",
+      "date": "2026-10-09 23:20 BST",
+      "agent": "Codex",
+      "summary": "Noun forms merge only when every dictionary sense matches and both words have one noun entry",
+      "detail": [
+        "Keep ser/seres and poder/poderes separate: noun and verb entries remain distinct even when their headword spelling matches.",
+        "Compare complete original SpanishDict and Wiktionary menus before filtering or display inflection; reject missing evidence and number-specific senses.",
+        "Invalidate earlier noun approvals and preserve the same decision in Smart Skip, deck grouping and early-loading indexes. Existing releases need refreshed source metadata to approve noun pairs."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-09T22:58:00+01:00",
+      "date": "2026-10-09 22:58 BST",
+      "agent": "Antigravity",
+      "summary": "Polish landing layout: prominent titles, level scrubber badge, target example words, card range nomenclature, centered modals",
+      "detail": [
+        "Header titles are enlarged and capitalized (Choose a Level, Choose a Set, Practice Errors).",
+        "Level picker features an illuminated focal badge on the active level, removes redundant header level label, and places speech coverage inline after target-language example words.",
+        "Retired 'Set 1, 2, ...' in favor of card ranges (e.g. 1–25) across selectors, buttons, loading screens, and completion modals.",
+        "Refactored setup tooltip modals to be concise, scannable, and cleanly centered across both mobile and desktop viewports."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-09T20:32:00+01:00",
+      "date": "2026-10-09 20:32 BST",
+      "agent": "Claude",
+      "summary": "Inflected Portuguese rows drop dictionary notes and inflect every meaning: está 'he/she is', not 'he/she is; forms the progressive aspect'",
+      "detail": [
+        "Notes beside the meanings are left off inflected rows: 'forms the progressive aspect', 'formula used in greetings', 'especially…', 'usually', 'such as…'. vai: 'he/she is doing; formula used in greetings' → 'he/she is doing'.",
+        "Meanings written without 'to' now inflect too: busca 'he/she fetches, pick up' → 'he/she fetches, picks up'; tira 'takes, take out, take away' → 'takes, takes out, takes away'; cola 'sticks or attach' → 'sticks or attaches'.",
+        "Alternatives after 'to be' stay as they are ('he/she is absent, not present'); an object alternate stays ('starts an engine, vehicle').",
+        "Measured on live v23: 232 Portuguese rows changed, no Spanish row changed, none lost its English."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-09T19:59:45+01:00",
+      "date": "2026-10-09 19:59 BST",
+      "agent": "Codex",
+      "summary": "Early level estimates suggest a particular study set",
+      "detail": [
+        "Suggest a level and set within Levels 1–10, using the same 25-position set boundaries as the study picker; from Level 11 suggest whole levels.",
+        "Keep earlier and later options separate when they land in different sets of the same level, and select the chosen set after its controls finish loading.",
+        "Sample more finely near the start of the frequency range while keeping the adaptive check at up to 30 questions and preserving saved Speech-rank placement."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-09T19:49:00+01:00",
+      "date": "2026-10-09 19:49 BST",
+      "agent": "Claude",
+      "summary": "INFLECT pass 2: reflexive rows and feminine/plural participles get inflected English; conjugation table finds -se forms",
+      "detail": [
+        "Spanish -se rows inflect: siento (sentirse) 'to feel' → 'I feel'; fue (irse) 'to leave' → 'he/she left'; acuerdo (acordarse) → 'I remember'. 2,000 rows on 1,183 card/verb pairs.",
+        "Feminine and plural participles inflect: pt feita → 'made', querida → 'loved', mortos → 'killed'; es muertos → 'died'. 341 pt rows, 77 es rows. Only when the word is not also an ordinary verb form (pt pega stays 'he/she catches').",
+        "Conjugation table on a -se verb opens on the card's tense and highlights its form: fue with irse selected now opens Pretérito on 'se fue' (was: present tense, nothing highlighted). The pronoun stays in the table: 'me siento'.",
+        "Measured on live v23 decks: no existing row changed and none lost its English; only rows that showed the infinitive gained one.",
+        "Known: 3 pt rows read 'been' (feita under fazer's weather sense) — a sentence-assignment issue upstream, not inflection."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-09T19:43:12+01:00",
+      "date": "2026-10-09 19:43 BST",
+      "agent": "Codex",
+      "summary": "Choose an earlier or later estimated starting point",
+      "detail": [
+        "Offer a more conservative starting level near 90% recognition and a later level near 80%, showing how familiar the vocabulary is likely to be.",
+        "Use the same cognate decisions as Smart Skip for estimation even when Smart Skip is off; qualifying cognates never appear as questions.",
+        "Show AUTO under levels covered by the saved estimate, without recording estimator answers as learned cards or changing actual study progress."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-09T16:09:00+01:00",
+      "date": "2026-10-09 16:09 BST",
+      "agent": "Claude",
+      "summary": "INFLECT pass 1: conjugated verb rows read as natural English (era → 'I was', parece → 'he/she seems')",
+      "detail": [
+        "Imperfect and past subjunctive are simple past, never progressive: era 'I/he/she was being' → 'I/he/she was', tenía 'was having' → 'had'.",
+        "A form that is both a statement and a command shows the statement: parece 'seem! / he/she seems' → 'he/she seems'. The command shows only when the example is one ('Let's go!' → let's go!).",
+        "When the example says I or he/she, the row uses that person: era + 'I was a very different person then.' → 'I was'.",
+        "English spelling fixed: meaned → meant, runing → running, planed → planned, lended → lent, hurted → hurt (full irregular table + consonant doubling).",
+        "Wiktionary glosses keep every clause and whole brackets: vi 'I saw (to be able to see' → 'I saw (to be able to see; not to be blind or blinded)'; faço 'I play' → 'I play; pretend to be'.",
+        "Measured on live v23 decks: command clutter 2,264 → 0 (es) and 2,169 → 0 (pt); progressive imperfects 760/705 → 0; misspellings and broken brackets → 0.",
+        "Not yet: -se verbs (siento under sentirse), agreeing participles (feita), clitic forms (dime) still show the infinitive — counted for pass 2."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-09T15:52:00+01:00",
+      "date": "2026-10-09 15:52 BST",
+      "agent": "Antigravity",
+      "summary": "Song lyrics view: removed synthetic word-by-word line translations in favor of strictly authentic hand-translated lyrics",
+      "detail": [
+        "Removed synthetic dictionary word concatenation from lyric lines: only verified hand-translated English subtitles are rendered underneath.",
+        "When no authentic human translation exists for a line, lyrics render in pure Spanish without artificial glosses.",
+        "Synced audio timestamps render directly alongside the original lyric text; topbar 'EN line' toggle button hides automatically when a song has no hand-translated lines.",
+        "Word, idiom, and entity quick-view modals retain full access to Fluency's hand-curated definitions and WSD sense assignments."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-09T15:49:16+01:00",
+      "date": "2026-10-09 15:49 BST",
+      "agent": "Codex",
+      "summary": "Level estimation follows merged forms and separate reading cards",
+      "detail": [
+        "Estimate vocabulary groups using the same merge and selective split rules as Smart Skip, with pooled Speech frequency and the most common eligible prompt.",
+        "Split readings show a matching sentence and divide surface frequency; sibling answers remain independent.",
+        "Keep saved Speech-rank placement compatible, show preparation progress, and withhold legacy CEFR labels pending calibration."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-09T15:48:00+01:00",
+      "date": "2026-10-09 15:48 BST",
+      "agent": "Antigravity",
+      "summary": "Song lyrics view: clean underline-free elision styling and contextual TURBO-2 WSD sense disambiguation in lyrics inspector",
+      "detail": [
+        "Removed dashed underlines on elided words in favor of clean text with soft-cyan styling, keeping lyric flow natural without hyperlink-like baselines.",
+        "Wired newly deployed TURBO-2 unified WSD decision logic into the lyrics quick-view modal so contextual senses (obligation, progressive, future, perfect, reflexive) are prioritized for each lyric line.",
+        "Added dictionary fallback in postProcess to match tokens against the engine dictionary even when filtered out of high-frequency playlist card cuts."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-09T15:40:00+01:00",
+      "date": "2026-10-09 15:40 BST",
+      "agent": "Antigravity",
+      "summary": "TURBO-2: Web Worker WSD pipeline and live Spotify playlist study deck generation",
+      "detail": [
+        "Integrated unified UNISON WSD decision logic directly into client turbo-engine: progressive auxiliary, modal obligation, future auxiliary, perfect auxiliary, and reflexive clitic routing.",
+        "Created dedicated background Web Worker (app/js/turbo-worker.js) for non-blocking intake, normalization, and semantic sense assignment.",
+        "Updated live playlist import to stream background progress and assign playable Spotify clip timestamps to matched card senses."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-09T14:40:54+01:00",
+      "date": "2026-10-09 14:40 BST",
+      "agent": "Codex",
+      "summary": "Clearer return-to-study prompt, readable settings, and easier main-menu access.",
+      "detail": [
+        "Centre the return prompt on phones and desktops, show the username and last card, and simplify the saved-set summary.",
+        "Keep last-card restoration and let the loading spinner paint before rebuilding the saved deck.",
+        "Use larger settings text and high-contrast neutral selections in dark and light themes.",
+        "Replace study gear icons with three dots and put Main menu and Study settings first."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-09T14:26:02+01:00",
+      "date": "2026-10-09 14:26 BST",
+      "agent": "Codex",
+      "summary": "Progress gets its own top-bar icon and a rebuilt overview",
+      "detail": [
+        "Open progress directly from the top bar; language settings now focus on language and vocabulary.",
+        "A centred coverage ring, Known / Practice / New breakdown and expandable answer history replace the old statistics grid.",
+        "Immediate opening, retry, keyboard closing, phone scrolling and stale-response protection make the overview reliable.",
+        "Removed the misleading complete-sentence percentage based on a partially loaded example corpus.",
+        "Counts and coverage use deduplicated recorded knowledge, including reviews of individual meanings."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-09T14:18:00+01:00",
+      "date": "2026-10-09 14:18 BST",
+      "agent": "Antigravity",
+      "summary": "Song lyrics view: dual song selector with offline probe songs and live online TURBO intake (Spotify URL, track ID, search query, or manual paste)",
+      "detail": [
+        "Added segmented picker tabs: choose between curated offline playlist (30 songs) or generate custom songs online with TURBO.",
+        "Online intake supports Spotify track URLs, Spotify track IDs (22 chars), song title & artist searches via LRCLIB, and direct manual lyrics paste.",
+        "Integrated client TURBO engine execution on the fly with live status progress, caching newly generated songs for seamless switching.",
+        "Added topbar shortcut pill '⚡ Online TURBO' and auto-detection of Spotify URLs in search inputs."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-09T14:11:11+01:00",
+      "date": "2026-10-09 14:11 BST",
+      "agent": "Codex",
+      "summary": "Study sets: larger rank numbers, brighter legend and darker skipped progress",
+      "detail": [
+        "Removed the hash from each frequency range and enlarged the numbers with heavier weight and vertical padding.",
+        "Legend counts use the main text colour for clearer contrast.",
+        "Skipped cards use a darker slate-grey fill in set progress bars and the matching legend swatch."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-09T13:54:00+01:00",
+      "date": "2026-10-09 13:54 BST",
+      "agent": "Antigravity",
+      "summary": "Song lyrics view: Spotify-style minimalist layout with target lyrics, English subtitles underneath, mobile bottom-sheet, and Fluency design integration",
+      "detail": [
+        "Replaced dense audit layout with Spotify-style minimalist lyrics flow: prominent target text in Space Grotesk with clean English gloss directly underneath.",
+        "Unified design system with Fluency's industrial dark palette (--bg-primary, --bg-card, --border-color, --font-emphasis).",
+        "Added mobile-first responsive bottom-sheet modal with drag handle and safe-area padding for one-handed inspection on phones.",
+        "Added topbar subtitle toggle pill ('EN line') to switch English line translation visibility."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-09T13:48:00+01:00",
+      "date": "2026-10-09 13:48 BST",
+      "agent": "Antigravity",
+      "summary": "Level Estimator audit: starting level placement fix, SENSE_CYCLE POS resolution, keyboard controls, and CEFR indicators",
+      "detail": [
+        "Fixed off-by-one level placement where learners were routed to a 100% completed level; now routes to first unseen card.",
+        "Resolved SENSE_CYCLE part-of-speech handling so grouped nouns and verbs are sampled and labelled properly.",
+        "Increased shard candidate attempts to 48 to prevent premature aborts on columnar releases.",
+        "Added full keyboard shortcuts (Space/Enter to flip, 1/2 or Arrow keys to answer, Escape to close) and modal backdrop dismissal.",
+        "Added visual progress track and CEFR stage mapping on results screen."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-09T13:35:00+01:00",
+      "date": "2026-10-09 13:35 BST",
+      "agent": "Antigravity",
+      "summary": "Song lyrics view: interactive lyric reader with token quick-view, sense assignments, entities, and ad-libs",
+      "detail": [
+        "Added lyrics-view mode accessible from learning settings and the artist setup card in lyrics mode.",
+        "Browse the 30-song offline playlist with searchable picker and song-by-song navigation.",
+        "Interactive lyric lines with automatic classification and inline badges for entities, idioms/MWEs, interjections/ad-libs, and vocabulary.",
+        "Quick-view modal inspecting surface elisions, primary sense assignments, entity cultural descriptions, and alternate Spanish senses with keyboard navigation."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-09T11:31:20+01:00",
+      "date": "2026-10-09 11:31 BST",
+      "agent": "Codex",
+      "summary": "Landing page: centred section labels and wider set cards in a 2 × 2 grid",
+      "detail": [
+        "Choose level, Choose a set and Practice errors have equal spacing above and below their labels.",
+        "Set cards are about 20% shorter and arranged in two columns, with frequency rank ranges visible on phones and desktop.",
+        "The selected set retains its accent ring without enlarging or shifting the card."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T09:07:00+01:00",
       "date": "2026-10-09 09:07 BST",
       "agent": "Claude",
@@ -71,298 +370,6 @@
       "summary": "Smart Skip row on the level box shows more example words, in English",
       "detail": [
         "The 'Skipping …' / 'Look-alikes like …' line now lists up to eight words (the row trims to fit), as English words (family, minute, important) instead of the Spanish forms."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T01:05:00+01:00",
-      "date": "2026-10-09 01:05 BST",
-      "agent": "Claude",
-      "summary": "Set pills show their word ranks on desktop",
-      "detail": [
-        "Choose a set: on screens 760px and wider each pill reads its frequency-rank range (e.g. 26–50) instead of the set number; phones keep the number."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T00:45:00+01:00",
-      "date": "2026-10-09 00:45 BST",
-      "agent": "Claude",
-      "summary": "Landing page: English example words, set legend reordered with a Skipped count, tidier Smart Skip pages",
-      "detail": [
-        "Level box: example words are now English meanings, up to eight on desktop (five on phones); 'Level N' and 'Words a–b' share one font size.",
-        "Choose a set: legend reads New, Practice, Known at the size of 'Set 1', and adds a hatched Skipped count when Smart Skip is on.",
-        "Smart Skip page: the Skipped words menu always opens on Look-alikes (or the first category when look-alikes are off).",
-        "Smart Skip page and Advanced options sheet: bordered card rows, quiet count pills, full-width Done button."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T00:15:00+01:00",
-      "date": "2026-10-09 00:15 BST",
-      "agent": "Claude",
-      "summary": "Vocabulary choice now says progress carries over and you can switch any time",
-      "detail": [
-        "The line under 'Choose your flashcard vocabulary source' adds: What you learn carries over, and you can switch at any time.",
-        "Shown on the inline choose screen (desktop and mobile) and in the in-study vocabulary picker; both read the same wording."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T22:28:06+01:00",
-      "date": "2026-10-08 22:28 BST",
-      "agent": "Codex",
-      "summary": "Consistent username wording throughout the profile flow",
-      "detail": [
-        "Profile labels, guidance, validation and playlist sign-in messages now say username.",
-        "Existing usernames, saved profiles and learning progress are preserved."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T22:24:44+01:00",
-      "date": "2026-10-08 22:24 BST",
-      "agent": "Codex",
-      "summary": "Birthday is optional when choosing a learning profile",
-      "detail": [
-        "Leave day and month blank to look up profiles by name alone.",
-        "A supplied birthday narrows matching names; profiles without a birthday remain discoverable.",
-        "Partially entered or invalid birthdays still receive inline feedback."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T22:21:02+01:00",
-      "date": "2026-10-08 22:21 BST",
-      "agent": "Codex",
-      "summary": "A clearer, quieter welcome and profile screen",
-      "detail": [
-        "Welcome offers a clear saved-progress path and a lighter guest option.",
-        "The profile form has one heading, shorter guidance and no repeated welcome pitch."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T21:21:45+01:00",
-      "date": "2026-10-08 21:21 BST",
-      "agent": "Codex",
-      "summary": "Quick tutorial first, with the full card tour in Help",
-      "detail": [
-        "The tutorial introduction now starts with the essential lesson, including the correct pronunciation controls.",
-        "The full card tour remains an explicit option in Help and the introduction.",
-        "All five first-time UX audit recommendations are implemented and recorded."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T21:18:00+01:00",
-      "date": "2026-10-08 21:18 BST",
-      "agent": "Antigravity",
-      "summary": "Clarify learning language prompt, add known-languages primer, and expand tutorial notes",
-      "detail": [
-        "Prompt explicitly asks for 'Choose the language you’re learning' to avoid confusion for non-native English speakers.",
-        "Add post-language selection primer asking which languages the learner already knows to filter look-alikes via Smart Skip.",
-        "Expand tutorial with Smart Skip explanation and reassure learners that they can switch between Speech and Lyrics anytime with progress saved."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T21:16:05+01:00",
-      "date": "2026-10-08 21:16 BST",
-      "agent": "Codex",
-      "summary": "Names and birthdays identify separate learning profiles",
-      "detail": [
-        "Enter a username/name and birthday day/month, with inline validation and no birth year.",
-        "Matching profiles show language and last study date; an exact match can always create a separate profile.",
-        "Existing initials and all progress keep their original IDs; selected profiles remain remembered on this device.",
-        "Saved sets are isolated by profile; the progress backend now includes a shared profile directory."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T21:08:51+01:00",
-      "date": "2026-10-08 21:08 BST",
-      "agent": "Codex",
-      "summary": "A shorter first lesson and one-time swipe guidance",
-      "detail": [
-        "Automatic onboarding covers reveal, pronunciation, grading and moving on; Help retains the full card tour.",
-        "The first real card reveal shows swipe guidance outside the card until a successful grading swipe."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T21:06:23+01:00",
-      "date": "2026-10-08 21:06 BST",
-      "agent": "Codex",
-      "summary": "Reliable keyboard sign-in and phrases-panel resume",
-      "detail": [
-        "Study shortcuts pause while signing in, so Enter submits Continue normally.",
-        "Stopping on a phrases panel saves the parent word; older panel snapshots recover by word."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T19:02:22+01:00",
-      "date": "2026-10-08 19:02 BST",
-      "agent": "Codex",
-      "summary": "Spanish cognate mapping for Portuguese learners",
-      "detail": [
-        "Spanish is now available as a known language for Portuguese cognate filtering.",
-        "Maps each shown meaning through the Spanish dictionary and CogNet; 4,257 of 10,000 current Portuguese cards qualify at the initial 0.80 cutoff.",
-        "English mappings are preserved; false friends and cards with unmatched meanings remain in study."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T12:48:32+01:00",
-      "date": "2026-10-08 12:48 BST",
-      "agent": "Codex",
-      "summary": "Clearer main-page level and account controls",
-      "detail": [
-        "Level example words exclude phrases and multi-word expressions, with slightly brighter text.",
-        "Selected level is larger with less vertical padding.",
-        "Language and learner initials are larger; tutorial and settings icons are white."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T12:48:08+01:00",
-      "date": "2026-10-08 12:48 BST",
-      "agent": "Codex",
-      "summary": "Tutorial fits its actual available space, including Bigger text",
-      "detail": [
-        "Measured card height from the rendered tutorial area after navigation appears, replacing fixed window-height allowances.",
-        "Reserved header and button space, including app text zoom, and held card dimensions steady between steps.",
-        "Kept scrolling inside card content and independently inside desktop explanations when needed."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T12:45:59+01:00",
-      "date": "2026-10-08 12:45 BST",
-      "agent": "Claude",
-      "summary": "SpanishDict senses sharing a context are one row again; topic chips show only when they tell rows apart",
-      "detail": [
-        "kilo: \"kilo\" and \"kilogram\" are one SpanishDict meaning (context \"kilogram\") and now share one row instead of two rows with separate meters; irse \"to go\" / \"to leave\" (to exit a place) likewise. Context grouping had been switched off for every provider on 2026-09-29 because Wiktionary contexts are labels (\"intransitive\"); it is back for SpanishDict only.",
-        "The 10% main-card floor measures a SpanishDict context as a whole, as the card shows it, so a meaning split 2 + 2 between kilo and kilogram is not dropped.",
-        "Topic chips (mostly Portuguese Wiktionary) appear only when they tell a row from another row with the same translation, and only the most specific one: massa \"dough\" lost \"cooking | food | lifestyle\", garganta's two \"throat\" rows lost \"anatomy | medicine | sciences\". The topics stay in each row's (i) note.",
-        "Display only: no WSD, release or menu change."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T12:31:50+01:00",
-      "date": "2026-10-08 12:31 BST",
-      "agent": "Codex",
-      "summary": "Tutorial layout grows with the browser while card size stays steady",
-      "detail": [
-        "Desktop cards use the available window height and width, with room reserved for navigation.",
-        "The tutorial header stays fully visible, and explanations spread across wider screens.",
-        "Opening meanings keeps the card size constant; mobile retains its separate height budget and internal scrolling."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T12:19:13+01:00",
-      "date": "2026-10-08 12:19 BST",
-      "agent": "Codex",
-      "summary": "Taller desktop tutorial cards and no practice-skip button",
-      "detail": [
-        "Removed Skip this practice; the top-right close button remains available.",
-        "Wide desktop cards are about 17% taller while preserving space for Back and Next.",
-        "Narrow desktop layouts put the explanation and navigation beside the card, allowing a taller card without pushing buttons off-screen.",
-        "Phone cards reserve space for the longest explanation and remain the same height throughout the tutorial."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T09:12:39+01:00",
-      "date": "2026-10-08 09:12 BST",
-      "agent": "Claude",
-      "summary": "Each subsense row now needs 10% of a card's sentences to stay on the main card",
-      "detail": [
-        "The 10% floor used to pool rows sharing an English translation, so a one-sentence slip rode on its siblings: estuve \"I was (to fit)\" rested on a misread \"estuve pensando\" while the five \"I was\" rows held 35% together.",
-        "Now each subsense row is measured on its own and anything under 10% moves to Rarer uses with its sentences. estuve drops \"to fit\" and \"to be located\"; darte drops \"to give (to generate / to motivate)\"; pt tem keeps \"to own\" and \"general use\".",
-        "If a translation's rows clear 10% together but each is under it, its largest row stays.",
-        "Function words (prepositions, articles, pronouns, conjunctions) keep pooling by translation, since their grouping is curated.",
-        "Both providers (SpanishDict and Wiktionary)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T08:38:15+01:00",
-      "date": "2026-10-08 08:38 BST",
-      "agent": "Codex",
-      "summary": "Keep the tutorial example and source visible; scroll overflow instead of clipping",
-      "detail": [
-        "Example boxes no longer shrink or impose a height cap, so their source icons and footer remain intact.",
-        "Compact cards fit the space above the coach and navigation, without their bottom falling outside the visible card area.",
-        "Meaning rows scroll when expanded content exceeds available space; very short screens also allow scrolling through the card contents.",
-        "Retains the complete 13-step Portuguese tutorial."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T00:44:58+01:00",
-      "date": "2026-10-08 00:44 BST",
-      "agent": "Codex",
-      "summary": "Keep the tutorial card height fixed while meanings expand",
-      "detail": [
-        "Tutorial cards retain their height across flips, opening or closing meaning groups, selecting a meaning, and cycling examples.",
-        "Overflowing meanings scroll inside the card; long examples scroll within their own area.",
-        "Card height responds only to viewport size; Back and Next stay outside the card and visible.",
-        "Preserves meaning-list scroll position when selecting a meaning or another example."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T00:40:44+01:00",
-      "date": "2026-10-08 00:40 BST",
-      "agent": "Codex",
-      "summary": "Restore all card explanations to the main tutorial",
-      "detail": [
-        "The full Portuguese tutorial again includes word rank, part of speech, dictionary form, frequency, meanings, useful extras, commonness, examples, and source explanations.",
-        "Meaning and example practice are part of the full sequence; no explanations require an optional details detour.",
-        "Retains the larger controls, improved contrast, full-size phone tap targets, and scrollable card layout."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T09:30:00+01:00",
-      "date": "2026-10-08 09:30 BST",
-      "agent": "Claude",
-      "summary": "End of a new-word set shows what happened, not an accuracy score",
-      "detail": [
-        "Ring centre '20/25 known'; green known arc over an amber Practice track.",
-        "Boxes read '✓ Known' and '→ Added to Practice' (amber) instead of Correct / Missed.",
-        "Each card counts once, by its last answer (attempt totals double-counted re-shown cards).",
-        "Perfect Set and confetti when every card is known. Practice sessions keep the accuracy ring."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T00:50:00+01:00",
-      "date": "2026-10-08 00:50 BST",
-      "agent": "Claude",
-      "summary": "Progress screens show one percentage each",
-      "detail": [
-        "Deck overview (on load / back to menu): the ring now fills to '% of speech understood' (lyrics: 'of these lyrics understood'); the separate '% cards known' figure is gone.",
-        "Its legend keeps the card counts (Known / Practice / New) as plain numbers, without colour keys.",
-        "Loading a set is unchanged: the ring counts cards known in that set.",
-        "End of set: the '72% accuracy' line under the title is gone; the ring already says it."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T00:30:00+01:00",
-      "date": "2026-10-08 00:30 BST",
-      "agent": "Claude",
-      "summary": "Source chooser: no chevrons, Best for under the description, fuller speech card, shorter intro",
-      "detail": [
-        "Chevrons removed from Everyday speech and Your music (the whole card is the button); Spotify strip keeps its arrow.",
-        "'Best for' sits directly under the description in both cards at every width.",
-        "Speech: 'From films and TV shows — the everyday words people actually use when they talk to each other.' plus Best for 'Understanding films and TV shows'.",
-        "Intro: 'Your flashcards come from this source, most common words first.'"
       ],
       "commit": "pending"
     }

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Lyrics · Fluency</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./lyrics-view.css?v=20261010A">
+</head>
+<body>
+
+  <!-- Minimalist Topbar (Fluency Style) -->
+  <header class="topbar">
+    <div class="topbar-content">
+      <div class="topbar-left">
+        <button class="back-to-library-btn" id="backToLibraryBtn" type="button" aria-label="Open song library menu">
+          <span aria-hidden="true">‹</span> Songs
+        </button>
+      </div>
+
+      <!-- Centered Song Pill: Click to switch or search songs -->
+      <div class="topbar-center">
+        <button class="song-selector-pill" id="songSelectorBtn" type="button" aria-haspopup="dialog" aria-label="Choose song">
+          <div class="song-icon" aria-hidden="true">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18V5l12-2v13"></path>
+              <circle cx="6" cy="18" r="3"></circle>
+              <circle cx="18" cy="16" r="3"></circle>
+            </svg>
+          </div>
+          <div class="song-pill-info">
+            <span class="song-pill-title" id="topbarSongTitle">Loading songs…</span>
+            <span class="song-pill-artist" id="topbarSongArtist">Offline</span>
+          </div>
+          <span class="song-pill-chevron" aria-hidden="true">▾</span>
+        </button>
+      </div>
+
+      <div class="topbar-right">
+        <!-- Kept minimal and clean -->
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Spotify-Style Lyrics Flow -->
+  <main>
+    <!-- Loading State Indicator -->
+    <div class="loading-box" id="loadingBox">
+      <div class="loading-spinner"></div>
+      <p>Loading lyrics…</p>
+    </div>
+
+    <!-- Lyrics Stream: Target with English Underneath -->
+    <div class="lyrics-flow" id="lyricsFlow" style="display: none;"></div>
+  </main>
+
+  <!-- Song Picker Modal (Song Library) -->
+  <div class="modal-backdrop" id="songPickerModal" role="dialog" aria-modal="true" aria-labelledby="songPickerTitle">
+    <div class="modal-dialog">
+      <div class="modal-drag-handle" aria-hidden="true"></div>
+      <div class="modal-header">
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <a class="menu-back-to-vocab" id="backToStudy" href="../" aria-label="Return to vocabulary study">
+              <span aria-hidden="true">‹</span> Vocabulary
+            </a>
+          </div>
+          <h3 id="songPickerTitle">Choose Song</h3>
+          <p id="songPickerSubtitle" style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+            Pick a track from the catalog or load any song from Spotify
+          </p>
+        </div>
+        <button class="modal-close" id="closeSongPickerBtn" aria-label="Close modal">&#10005;</button>
+      </div>
+
+      <!-- Quick Action: Can't find what you're looking for? Choose from Spotify -->
+      <div class="spotify-import-banner" id="spotifyImportBanner">
+        <div class="spotify-banner-left">
+          <svg class="spotify-banner-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+            <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424c-.18.295-.563.387-.857.207-2.348-1.435-5.304-1.76-8.785-.963-.335.077-.67-.133-.746-.468-.077-.334.132-.67.467-.746 3.808-.87 7.076-.506 9.714 1.113.295.18.387.562.207.857zm1.225-2.723c-.226.368-.71.482-1.078.256-2.687-1.652-6.785-2.131-9.965-1.166-.413.126-.85-.11-1-.523-.125-.413.11-.85.524-.976 3.633-1.103 8.147-.568 11.263 1.341.368.226.482.71.256 1.078zm.106-2.836C14.692 8.93 9.38 8.753 6.3 9.688c-.494.15-1.018-.13-1.168-.624-.15-.494.13-1.018.624-1.168 3.532-1.072 9.404-.863 13.116 1.34.444.264.59.84.327 1.284-.264.444-.838.59-1.282.327z"/>
+          </svg>
+          <div class="spotify-banner-text">
+            <span class="spotify-banner-title">Can't find what you're looking for?</span>
+            <span class="spotify-banner-sub">Load any track from Spotify with lyrics &amp; vocab</span>
+          </div>
+        </div>
+        <button type="button" class="spotify-banner-action-btn" id="openSpotifyInputBtn">Paste Spotify Link</button>
+      </div>
+
+      <!-- Collapsible Spotify / Custom Intake Tray -->
+      <div class="spotify-input-tray" id="spotifyInputTray" style="display: none;">
+        <div class="spotify-input-tray-inner">
+          <div class="turbo-input-wrap">
+            <input type="text" id="turboTrackInput" class="turbo-text-input" placeholder="Paste Spotify track URL (or search title & artist)…" autocomplete="off" />
+            <button type="button" id="turboClearInputBtn" class="turbo-clear-btn" style="display:none;" aria-label="Clear input">✕</button>
+          </div>
+          <button type="button" id="runTurboBtn" class="turbo-submit-btn">
+            <span>Load Song</span>
+          </button>
+        </div>
+
+        <!-- Status / Progress Box -->
+        <div class="turbo-status-card" id="turboStatusCard" style="display: none;">
+          <div class="turbo-spinner"></div>
+          <div class="turbo-status-meta">
+            <span class="turbo-status-title" id="turboStatusTitle">Processing</span>
+            <span class="turbo-status-sub" id="turboStatusSub">Fetching track and lyrics…</span>
+          </div>
+        </div>
+
+        <!-- Lyrics Not Found & Fallback Options -->
+        <div class="turbo-alert-box" id="turboAlertBox" style="display: none;">
+          <div class="turbo-alert-content">
+            <div class="turbo-alert-text" id="turboAlertText">Lyrics not found for this track.</div>
+            <div class="fallback-action-buttons">
+              <button type="button" class="btn-subtle" id="openManualPasteBtn">Paste your own lyrics</button>
+              <button type="button" class="btn-subtle" id="goWithoutLyricsBtn">Continue without lyrics</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Manual Paste Accordion / Form -->
+        <div class="turbo-manual-box" id="turboManualDetails" style="display: none;">
+          <div class="turbo-manual-inputs">
+            <input type="text" id="turboManualTitle" class="turbo-text-input" placeholder="Track title (optional)" />
+            <input type="text" id="turboManualArtist" class="turbo-text-input" placeholder="Artist name (optional)" />
+          </div>
+          <textarea id="turboManualLyrics" class="turbo-textarea" rows="4" placeholder="Paste Spanish lyrics here..."></textarea>
+        </div>
+      </div>
+
+      <!-- Unified Vertical Search Bar -->
+      <div class="song-picker-search-wrap">
+        <div class="song-picker-search">
+          <input type="text" id="songSearchInput" class="song-search-input" placeholder="Search catalog by song title or artist…" autocomplete="off">
+          <button type="button" id="songSearchClearBtn" class="turbo-clear-btn" style="display:none;" aria-label="Clear search">✕</button>
+        </div>
+      </div>
+
+      <!-- Recent / Last Loaded Song Shelf (only appears if user has a previously loaded song) -->
+      <div class="recent-song-shelf" id="recentSongShelf" style="display: none;">
+        <div class="recent-shelf-header">Last Loaded Song</div>
+        <div class="recent-song-card" id="recentSongCard"></div>
+      </div>
+
+      <!-- Section Title for Catalog -->
+      <div class="catalog-section-header" id="catalogSectionHeader">
+        <span>Curated Catalog</span>
+        <span class="catalog-count" id="catalogCount">30 songs</span>
+      </div>
+
+      <!-- Catalog Song List (Strict vertical scrolling top-to-bottom) -->
+      <div class="song-picker-list" id="songPickerList">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Guided Fallback Pane: When search yields no catalogue matches -->
+      <div class="catalog-empty-guidance" id="catalogEmptyGuidance" style="display: none;">
+        <div class="guidance-card">
+          <h4 class="guidance-title">Track not found in curated catalog</h4>
+          <p class="guidance-desc">
+            Try clicking <strong>Paste Spotify Link</strong> above to load any song from Spotify.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick-View Token Modal (Fluency Card Style / Bottom Sheet on Mobile) -->
+  <div class="modal-backdrop" id="tokenQuickViewModal" role="dialog" aria-modal="true" aria-labelledby="tokenModalWord">
+    <div class="modal-dialog">
+      <div class="modal-drag-handle" aria-hidden="true"></div>
+      <div class="modal-header">
+        <div>
+          <div class="token-modal-word" id="tokenModalWord">palabra</div>
+          <span class="token-modal-elision-hint" id="tokenModalElisionHint" style="display: none;"></span>
+          <div class="token-modal-badges" id="tokenModalBadges"></div>
+        </div>
+        <button class="modal-close" id="closeTokenModalBtn" aria-label="Close modal">&#10005;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Sense Assignment / Meaning Callout -->
+        <div class="meaning-card" id="modalMeaningCallout">
+          <div class="meaning-label" id="modalMeaningLabel">Sense Assignment</div>
+          <div class="meaning-primary" id="modalMeaningPrimary">to know</div>
+          <div class="meaning-context" id="modalMeaningContext">General definition / context</div>
+        </div>
+
+        <!-- Entity Information (if Entity) -->
+        <div class="entity-details-card" id="modalEntityBox" style="display: none;">
+          <h4 id="modalEntityTitle">Entity Details</h4>
+          <p id="modalEntityDesc"></p>
+        </div>
+
+        <!-- Polysemous Sense Breakdown (if multi-meaning word) -->
+        <div class="poly-senses-card" id="modalPolySensesBox" style="display: none;">
+          <h4>Other senses in Spanish</h4>
+          <div id="modalPolySensesList"></div>
+        </div>
+
+        <!-- Other occurrences of this word in the same song -->
+        <div class="song-occurrences-card" id="modalSongOccurrencesBox" style="display: none;">
+          <h4>Other occurrences in this song</h4>
+          <div id="modalSongOccurrencesList" class="song-occurrences-list"></div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <div class="modal-nav-btns">
+          <button class="modal-step-btn" id="tokenPrevBtn" type="button" aria-label="Previous word">‹ Previous</button>
+          <button class="modal-step-btn" id="tokenNextBtn" type="button" aria-label="Next word">Next ›</button>
+        </div>
+        <span style="font-size: 11px; color: var(--text-muted);">Press Esc to close</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compatibility anchors for cached scripts -->
+  <div style="display:none;" aria-hidden="true">
+    <span id="mainSongTitle"></span>
+    <span id="mainSongArtist"></span>
+    <span id="songsCountPill"></span>
+    <span id="entitiesCountBadge"></span>
+    <span id="mwesCountBadge"></span>
+    <span id="interjectionsCountBadge"></span>
+    <span id="totalLinesText"></span>
+    <span id="totalTokensText"></span>
+  </div>
+
+  <script type="module" src="./lyrics-view.js?v=20261010A"></script>
+</body>
+</html>

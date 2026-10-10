@@ -16,6 +16,7 @@ class IndexShardTests(unittest.TestCase):
                         {
                             "id": "aaaa0001",
                             "word": "um",
+                            "noun_merge": {"rule_version": "noun-merge/v2", "allowed": False},
                             "rank": 1,
                             "surface_card_id": "card_pt_aaaa0001deadbeef",
                             "wsd_distribution": {"denominator": 1},
@@ -80,6 +81,7 @@ class IndexShardTests(unittest.TestCase):
             self.assertEqual(columns["n"], 2)
             self.assertEqual(columns["id"], ["aaaa0001", "bbbb0002"])
             self.assertEqual(columns["lemma"], ["um", "dois"])
+            self.assertEqual(columns["noun_merge"], [{"rule_version": "noun-merge/v2", "allowed": False}, None])
             self.assertNotIn("meanings", columns)
             self.assertNotIn("synonyms", columns)
             self.assertIn("meanings", first["aaaa0001"])

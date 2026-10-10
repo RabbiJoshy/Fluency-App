@@ -225273,7 +225273,7 @@
     },
     "copiado": {
       "id": "ba652d5c",
-      "rank": 8500,
+      "rank": 8993,
       "polysemous": true,
       "meaning_count": 5,
       "top_translation": "to copy",
@@ -262109,7 +262109,7 @@
     },
     "reality": {
       "id": "w_reality",
-      "rank": 8500,
+      "rank": 16133,
       "polysemous": false,
       "top_translation": "reality show",
       "top_pos": "NOUN",
@@ -262122,7 +262122,7 @@
     },
     "safari": {
       "id": "w_safari",
-      "rank": 8500,
+      "rank": 21289,
       "polysemous": false,
       "top_translation": "safari",
       "top_pos": "NOUN",
@@ -262135,7 +262135,7 @@
     },
     "hard": {
       "id": "w_hard",
-      "rank": 8500,
+      "rank": 20739,
       "polysemous": false,
       "top_translation": "hard, heavy, hardcore",
       "top_pos": "ADJ",
@@ -262148,7 +262148,7 @@
     },
     "pin": {
       "id": "w_pin",
-      "rank": 8500,
+      "rank": 19643,
       "polysemous": true,
       "top_translation": "pin, lapel pin, badge",
       "top_pos": "NOUN",
@@ -262169,7 +262169,7 @@
     },
     "hold": {
       "id": "w_hold",
-      "rank": 8500,
+      "rank": 23175,
       "polysemous": false,
       "top_translation": "hold",
       "top_pos": "NOUN",
@@ -262182,7 +262182,7 @@
     },
     "lean": {
       "id": "w_lean",
-      "rank": 8500,
+      "rank": 15918,
       "polysemous": false,
       "top_translation": "to read (inflection of leer:)",
       "top_pos": "VERB",
@@ -262198,7 +262198,6 @@
     },
     "crush": {
       "id": "w_crush",
-      "rank": 8500,
       "polysemous": true,
       "top_translation": "crush (an infatuation with somebody one is not dating)",
       "top_pos": "NOUN",
@@ -262215,7 +262214,6 @@
     },
     "flow": {
       "id": "w_flow",
-      "rank": 8500,
       "polysemous": true,
       "top_translation": "flow (the ability to rap skillfully)",
       "top_pos": "NOUN",
@@ -262236,7 +262234,7 @@
     },
     "full": {
       "id": "w_full",
-      "rank": 8500,
+      "rank": 17292,
       "polysemous": false,
       "top_translation": "full house",
       "top_pos": "NOUN",
@@ -262249,7 +262247,7 @@
     },
     "bo": {
       "id": "w_bo",
-      "rank": 8500,
+      "rank": 5225,
       "polysemous": false,
       "top_translation": "hey, mate, dude",
       "top_pos": "INTJ",
@@ -262262,7 +262260,7 @@
     },
     "g": {
       "id": "w_g",
-      "rank": 8500,
+      "rank": 5682,
       "polysemous": false,
       "top_translation": "The seventh letter of the Spanish alphabet, written in the Latin script.",
       "top_pos": "CHARACTER",
@@ -262275,7 +262273,7 @@
     },
     "j": {
       "id": "w_j",
-      "rank": 8500,
+      "rank": 5900,
       "polysemous": false,
       "top_translation": "The tenth letter of the Spanish alphabet, written in the Latin script.",
       "top_pos": "CHARACTER",
@@ -262288,7 +262286,7 @@
     },
     "k": {
       "id": "w_k",
-      "rank": 8500,
+      "rank": 7345,
       "polysemous": true,
       "top_translation": "The eleventh letter of the Spanish alphabet, written in the Latin script.",
       "top_pos": "CHARACTER",
@@ -262309,7 +262307,7 @@
     },
     "t": {
       "id": "w_t",
-      "rank": 8500,
+      "rank": 1632,
       "polysemous": true,
       "top_translation": "The twenty-first letter of the Spanish alphabet, written in the Latin script.",
       "top_pos": "CHARACTER",
@@ -262330,7 +262328,7 @@
     },
     "mm": {
       "id": "w_mm",
-      "rank": 8500,
+      "rank": 3925,
       "polysemous": true,
       "top_translation": "abbreviation of milímetro",
       "top_pos": "NOUN",
@@ -262347,7 +262345,7 @@
     },
     "micro": {
       "id": "w_micro",
-      "rank": 8500,
+      "rank": 11249,
       "polysemous": true,
       "top_translation": "clipping of micrófono (“microphone”): mic",
       "top_pos": "NOUN",
@@ -262368,7 +262366,7 @@
     },
     "nice": {
       "id": "w_nice",
-      "rank": 8500,
+      "rank": 26644,
       "polysemous": false,
       "top_translation": "nice",
       "top_pos": "ADJ",
@@ -262381,7 +262379,6 @@
     },
     "promo": {
       "id": "w_promo",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "promo",
       "top_pos": "NOUN",
@@ -262394,7 +262391,7 @@
     },
     "anaconda": {
       "id": "w_anaconda",
-      "rank": 8500,
+      "rank": 43237,
       "polysemous": true,
       "top_translation": "anaconda",
       "top_pos": "NOUN",
@@ -262411,7 +262408,7 @@
     },
     "lady": {
       "id": "w_lady",
-      "rank": 8500,
+      "rank": 2673,
       "polysemous": false,
       "top_translation": "lady (wife of a lord; important woman)",
       "top_pos": "NOUN",
@@ -262424,7 +262421,7 @@
     },
     "like": {
       "id": "w_like",
-      "rank": 8500,
+      "rank": 7325,
       "polysemous": false,
       "top_translation": "like",
       "top_pos": "NOUN",
@@ -262437,7 +262434,7 @@
     },
     "porta": {
       "id": "w_porta",
-      "rank": 8500,
+      "rank": 13575,
       "polysemous": false,
       "top_translation": "to bear, to carry (inflection of portar:)",
       "top_pos": "VERB",
@@ -262453,7 +262450,7 @@
     },
     "pal": {
       "id": "w_pal",
-      "rank": 8500,
+      "rank": 22571,
       "polysemous": true,
       "top_translation": "contraction of para (“for”) + el (“the”)",
       "top_pos": "CONTRACTION",
@@ -262470,7 +262467,7 @@
     },
     "toy": {
       "id": "w_toy",
-      "rank": 8500,
+      "rank": 33195,
       "polysemous": false,
       "top_translation": "apheretic form of estoy",
       "top_pos": "VERB",
@@ -262483,7 +262480,7 @@
     },
     "feeling": {
       "id": "w_feeling",
-      "rank": 8500,
+      "rank": 37839,
       "polysemous": true,
       "top_translation": "feeling, hunch",
       "top_pos": "NOUN",
@@ -262500,7 +262497,6 @@
     },
     "guagua": {
       "id": "w_guagua",
-      "rank": 8500,
       "polysemous": true,
       "top_translation": "baby, infant",
       "top_pos": "NOUN",
@@ -262517,7 +262513,7 @@
     },
     "pote": {
       "id": "w_pote",
-      "rank": 8500,
+      "rank": 33984,
       "polysemous": false,
       "top_translation": "to puke, to throw up (inflection of potar:)",
       "top_pos": "VERB",
@@ -262533,7 +262529,7 @@
     },
     "blunt": {
       "id": "w_blunt",
-      "rank": 8500,
+      "rank": 23970,
       "polysemous": false,
       "top_translation": "blunt (a marijuana cigar)",
       "top_pos": "NOUN",
@@ -262546,7 +262542,7 @@
     },
     "ere": {
       "id": "w_ere",
-      "rank": 8500,
+      "rank": 39045,
       "polysemous": true,
       "top_translation": "The name of the Latin script letter R/r.",
       "top_pos": "NOUN",
@@ -262563,7 +262559,7 @@
     },
     "mai": {
       "id": "w_mai",
-      "rank": 8500,
+      "rank": 14380,
       "polysemous": false,
       "top_translation": "mother, mom",
       "top_pos": "NOUN",
@@ -262576,7 +262572,7 @@
     },
     "viral": {
       "id": "w_viral",
-      "rank": 8500,
+      "rank": 17237,
       "polysemous": true,
       "top_translation": "viral (of or relating to a biologic virus)",
       "top_pos": "ADJ",
@@ -262597,7 +262593,7 @@
     },
     "borra": {
       "id": "w_borra",
-      "rank": 8500,
+      "rank": 14412,
       "polysemous": false,
       "top_translation": "to delete (inflection of borrar:)",
       "top_pos": "VERB",
@@ -262613,7 +262609,7 @@
     },
     "cana": {
       "id": "w_cana",
-      "rank": 8500,
+      "rank": 27879,
       "polysemous": true,
       "top_translation": "white or gray hair",
       "top_pos": "NOUN",
@@ -262634,7 +262630,6 @@
     },
     "ubi": {
       "id": "w_ubi",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "location",
       "top_pos": "NOUN",
@@ -262647,7 +262642,7 @@
     },
     "carnal": {
       "id": "w_carnal",
-      "rank": 8500,
+      "rank": 22144,
       "polysemous": true,
       "top_translation": "carnal (relating to the physical, especially sexual, appetites)",
       "top_pos": "ADJ",
@@ -262668,7 +262663,6 @@
     },
     "outfit": {
       "id": "w_outfit",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "outfit (set of clothing)",
       "top_pos": "NOUN",
@@ -262681,7 +262675,7 @@
     },
     "atenta": {
       "id": "w_atenta",
-      "rank": 8500,
+      "rank": 16690,
       "polysemous": false,
       "top_translation": "to commit a violent or criminal attack, to strike (inflection of atentar (“to attack, to strike”):)",
       "top_pos": "VERB",
@@ -262697,7 +262691,7 @@
     },
     "pose": {
       "id": "w_pose",
-      "rank": 8500,
+      "rank": 14869,
       "polysemous": false,
       "top_translation": "to pose (inflection of posar:)",
       "top_pos": "VERB",
@@ -262713,7 +262707,7 @@
     },
     "tá": {
       "id": "w_tá",
-      "rank": 8500,
+      "rank": 47985,
       "polysemous": true,
       "top_translation": "okay",
       "top_pos": "INTJ",
@@ -262730,7 +262724,7 @@
     },
     "robe": {
       "id": "w_robe",
-      "rank": 8500,
+      "rank": 13227,
       "polysemous": false,
       "top_translation": "to steal (inflection of robar:)",
       "top_pos": "VERB",
@@ -262746,7 +262740,7 @@
     },
     "pecar": {
       "id": "w_pecar",
-      "rank": 8500,
+      "rank": 27189,
       "polysemous": false,
       "top_translation": "to sin",
       "top_pos": "VERB",
@@ -262759,7 +262753,6 @@
     },
     "yola": {
       "id": "w_yola",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "yawl; small boat with oars and sail",
       "top_pos": "NOUN",
@@ -262772,7 +262765,7 @@
     },
     "sábana": {
       "id": "w_sábana",
-      "rank": 8500,
+      "rank": 15927,
       "polysemous": false,
       "top_translation": "sheet; bedsheet",
       "top_pos": "NOUN",
@@ -262785,7 +262778,7 @@
     },
     "jaja": {
       "id": "w_jaja",
-      "rank": 8500,
+      "rank": 31694,
       "polysemous": false,
       "top_translation": "haha",
       "top_pos": "INTJ",
@@ -262798,7 +262791,7 @@
     },
     "jaque": {
       "id": "w_jaque",
-      "rank": 8500,
+      "rank": 12274,
       "polysemous": false,
       "top_translation": "to forsake, to abandon (inflection of jaquir:)",
       "top_pos": "VERB",
@@ -262814,7 +262807,7 @@
     },
     "shopping": {
       "id": "w_shopping",
-      "rank": 8500,
+      "rank": 36514,
       "polysemous": true,
       "top_translation": "shopping (the leisure activity of going shopping)",
       "top_pos": "NOUN",
@@ -262831,7 +262824,7 @@
     },
     "mari": {
       "id": "w_mari",
-      "rank": 8500,
+      "rank": 15995,
       "polysemous": true,
       "top_translation": "Mari",
       "top_pos": "ADJ",
@@ -262848,7 +262841,7 @@
     },
     "dato": {
       "id": "w_dato",
-      "rank": 8500,
+      "rank": 10906,
       "polysemous": false,
       "top_translation": "to date, assign a date to (first-person singular present indicative of datar)",
       "top_pos": "VERB",
@@ -262864,7 +262857,7 @@
     },
     "bermuda": {
       "id": "w_bermuda",
-      "rank": 8500,
+      "rank": 49711,
       "polysemous": false,
       "top_translation": "Bermuda shorts",
       "top_pos": "NOUN",
@@ -262877,7 +262870,6 @@
     },
     "chola": {
       "id": "w_chola",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "feminine singular of cholo",
       "top_pos": "ADJ",
@@ -262890,7 +262882,7 @@
     },
     "plutón": {
       "id": "w_plutón",
-      "rank": 8500,
+      "rank": 25871,
       "polysemous": false,
       "top_translation": "pluton",
       "top_pos": "NOUN",
@@ -262903,7 +262895,7 @@
     },
     "pitcher": {
       "id": "w_pitcher",
-      "rank": 8500,
+      "rank": 35154,
       "polysemous": false,
       "top_translation": "alternative spelling of pícher",
       "top_pos": "NOUN",
@@ -262916,7 +262908,7 @@
     },
     "graba": {
       "id": "w_graba",
-      "rank": 8500,
+      "rank": 15233,
       "polysemous": false,
       "top_translation": "to record (inflection of grabar:)",
       "top_pos": "VERB",
@@ -262932,7 +262924,7 @@
     },
     "seta": {
       "id": "w_seta",
-      "rank": 8500,
+      "rank": 43595,
       "polysemous": false,
       "top_translation": "mushroom",
       "top_pos": "NOUN",
@@ -262945,7 +262937,7 @@
     },
     "peine": {
       "id": "w_peine",
-      "rank": 8500,
+      "rank": 15929,
       "polysemous": false,
       "top_translation": "to comb (inflection of peinar:)",
       "top_pos": "VERB",
@@ -262961,7 +262953,6 @@
     },
     "panty": {
       "id": "w_panty",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "pantyhose",
       "top_pos": "NOUN",
@@ -262974,7 +262965,7 @@
     },
     "diva": {
       "id": "w_diva",
-      "rank": 8500,
+      "rank": 17773,
       "polysemous": true,
       "top_translation": "diva",
       "top_pos": "NOUN",
@@ -262991,7 +262982,7 @@
     },
     "vitrina": {
       "id": "w_vitrina",
-      "rank": 8500,
+      "rank": 27186,
       "polysemous": true,
       "top_translation": "showcase, vitrine, display cabinet",
       "top_pos": "NOUN",
@@ -263008,7 +262999,7 @@
     },
     "retrovisor": {
       "id": "w_retrovisor",
-      "rank": 8500,
+      "rank": 24424,
       "polysemous": false,
       "top_translation": "rear-view mirror (mirror in a vehicle giving view of the traffic behind)",
       "top_pos": "NOUN",
@@ -263021,7 +263012,6 @@
     },
     "aguacero": {
       "id": "w_aguacero",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "downpour",
       "top_pos": "NOUN",
@@ -263034,7 +263024,7 @@
     },
     "carril": {
       "id": "w_carril",
-      "rank": 8500,
+      "rank": 14619,
       "polysemous": true,
       "top_translation": "lane (a lengthwise division of roadway intended for a single line of vehicles)",
       "top_pos": "NOUN",
@@ -263055,7 +263045,7 @@
     },
     "produciendo": {
       "id": "w_produciendo",
-      "rank": 8500,
+      "rank": 17359,
       "polysemous": false,
       "top_translation": "to produce (gerund of producir)",
       "top_pos": "VERB",
@@ -263071,7 +263061,7 @@
     },
     "compositor": {
       "id": "w_compositor",
-      "rank": 8500,
+      "rank": 12848,
       "polysemous": false,
       "top_translation": "composer",
       "top_pos": "NOUN",
@@ -263084,7 +263074,7 @@
     },
     "records": {
       "id": "w_records",
-      "rank": 8500,
+      "rank": 16066,
       "polysemous": true,
       "top_translation": "misspelling of récords",
       "top_pos": "NOUN",
@@ -263101,7 +263091,7 @@
     },
     "vega": {
       "id": "w_vega",
-      "rank": 8500,
+      "rank": 9861,
       "polysemous": true,
       "top_translation": "meadow",
       "top_pos": "NOUN",
@@ -263122,7 +263112,7 @@
     },
     "combo": {
       "id": "w_combo",
-      "rank": 8500,
+      "rank": 30001,
       "polysemous": false,
       "top_translation": "to curve (first-person singular present indicative of combar)",
       "top_pos": "VERB",
@@ -263138,7 +263128,7 @@
     },
     "crie": {
       "id": "w_crie",
-      "rank": 8500,
+      "rank": 35730,
       "polysemous": false,
       "top_translation": "to raise (first-person singular preterite indicative of criar)",
       "top_pos": "VERB",
@@ -263154,7 +263144,7 @@
     },
     "honda": {
       "id": "w_honda",
-      "rank": 8500,
+      "rank": 16241,
       "polysemous": true,
       "top_translation": "sling, slingshot",
       "top_pos": "NOUN",
@@ -263171,7 +263161,7 @@
     },
     "ole": {
       "id": "w_ole",
-      "rank": 8500,
+      "rank": 18422,
       "polysemous": false,
       "top_translation": "alternative form of olé",
       "top_pos": "INTJ",
@@ -263184,7 +263174,6 @@
     },
     "chichar": {
       "id": "w_chichar",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to have sex with, to fuck",
       "top_pos": "VERB",
@@ -263197,7 +263186,7 @@
     },
     "toto": {
       "id": "w_toto",
-      "rank": 8500,
+      "rank": 18041,
       "polysemous": false,
       "top_translation": "cunt, pussy, twat",
       "top_pos": "NOUN",
@@ -263210,7 +263199,7 @@
     },
     "pana": {
       "id": "w_pana",
-      "rank": 8500,
+      "rank": 31390,
       "polysemous": true,
       "top_translation": "velour, corduroy",
       "top_pos": "NOUN",
@@ -263231,7 +263220,6 @@
     },
     "meno": {
       "id": "w_meno",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to turn the rope in the game of jump rope (first-person singular present indicative of menar)",
       "top_pos": "VERB",
@@ -263247,7 +263235,7 @@
     },
     "conga": {
       "id": "w_conga",
-      "rank": 8500,
+      "rank": 37415,
       "polysemous": false,
       "top_translation": "conga (dance)",
       "top_pos": "NOUN",
@@ -263260,7 +263248,7 @@
     },
     "mera": {
       "id": "w_mera",
-      "rank": 8500,
+      "rank": 13988,
       "polysemous": false,
       "top_translation": "merer (inflection of merer:)",
       "top_pos": "VERB",
@@ -263276,7 +263264,6 @@
     },
     "maman": {
       "id": "w_maman",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to suckle (third-person plural present indicative of mamar)",
       "top_pos": "VERB",
@@ -263292,7 +263279,6 @@
     },
     "toa": {
       "id": "w_toa",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to tow (inflection of toar:)",
       "top_pos": "VERB",
@@ -263308,7 +263294,7 @@
     },
     "fiera": {
       "id": "w_fiera",
-      "rank": 8500,
+      "rank": 16679,
       "polysemous": true,
       "top_translation": "wild animal, beast",
       "top_pos": "NOUN",
@@ -263329,7 +263315,7 @@
     },
     "yerba": {
       "id": "w_yerba",
-      "rank": 8500,
+      "rank": 25110,
       "polysemous": true,
       "top_translation": "grass (plant of the family Poaceae or plant that resembles grasses)",
       "top_pos": "NOUN",
@@ -263350,7 +263336,7 @@
     },
     "adulterio": {
       "id": "w_adulterio",
-      "rank": 8500,
+      "rank": 15606,
       "polysemous": false,
       "top_translation": "adultery",
       "top_pos": "NOUN",
@@ -263363,7 +263349,7 @@
     },
     "ende": {
       "id": "w_ende",
-      "rank": 8500,
+      "rank": 32515,
       "polysemous": true,
       "top_translation": "there",
       "top_pos": "ADV",
@@ -263384,7 +263370,7 @@
     },
     "jajaja": {
       "id": "w_jajaja",
-      "rank": 8500,
+      "rank": 37158,
       "polysemous": false,
       "top_translation": "hahaha",
       "top_pos": "INTJ",
@@ -263397,7 +263383,6 @@
     },
     "mariachi": {
       "id": "w_mariachi",
-      "rank": 8500,
       "polysemous": true,
       "top_translation": "a traditional form of music from the Mexican state of Jalisco",
       "top_pos": "NOUN",
@@ -263418,7 +263403,7 @@
     },
     "pibe": {
       "id": "w_pibe",
-      "rank": 8500,
+      "rank": 27308,
       "polysemous": true,
       "top_translation": "kid, young person",
       "top_pos": "NOUN",
@@ -263439,7 +263424,6 @@
     },
     "tete": {
       "id": "w_tete",
-      "rank": 8500,
       "polysemous": true,
       "top_translation": "a nice person, dude, friend, brother",
       "top_pos": "NOUN",
@@ -263456,7 +263440,7 @@
     },
     "negrito": {
       "id": "w_negrito",
-      "rank": 8500,
+      "rank": 29187,
       "polysemous": true,
       "top_translation": "a person of African descent",
       "top_pos": "NOUN",
@@ -263477,7 +263461,7 @@
     },
     "contesto": {
       "id": "w_contesto",
-      "rank": 8500,
+      "rank": 14707,
       "polysemous": false,
       "top_translation": "to answer (first-person singular present indicative of contestar)",
       "top_pos": "VERB",
@@ -263493,7 +263477,7 @@
     },
     "disimular": {
       "id": "w_disimular",
-      "rank": 8500,
+      "rank": 23649,
       "polysemous": true,
       "top_translation": "to hide, to conceal",
       "top_pos": "VERB",
@@ -263510,7 +263494,7 @@
     },
     "raptar": {
       "id": "w_raptar",
-      "rank": 8500,
+      "rank": 36465,
       "polysemous": false,
       "top_translation": "to kidnap; to abduct",
       "top_pos": "VERB",
@@ -263523,7 +263507,7 @@
     },
     "tapar": {
       "id": "w_tapar",
-      "rank": 8500,
+      "rank": 16813,
       "polysemous": true,
       "top_translation": "to cover",
       "top_pos": "VERB",
@@ -263544,7 +263528,7 @@
     },
     "amarrar": {
       "id": "w_amarrar",
-      "rank": 8500,
+      "rank": 39133,
       "polysemous": true,
       "top_translation": "to moor",
       "top_pos": "VERB",
@@ -263561,7 +263545,7 @@
     },
     "asimilar": {
       "id": "w_asimilar",
-      "rank": 8500,
+      "rank": 22832,
       "polysemous": true,
       "top_translation": "to assimilate, to absorb, to take in, to digest, to grasp",
       "top_pos": "VERB",
@@ -263578,7 +263562,7 @@
     },
     "aburro": {
       "id": "w_aburro",
-      "rank": 8500,
+      "rank": 15584,
       "polysemous": false,
       "top_translation": "to bore; to tire (first-person singular present indicative of aburrir)",
       "top_pos": "VERB",
@@ -263594,7 +263578,7 @@
     },
     "acumulado": {
       "id": "w_acumulado",
-      "rank": 8500,
+      "rank": 23657,
       "polysemous": false,
       "top_translation": "to accumulate (to heap up in a mass) (past participle of acumular)",
       "top_pos": "VERB",
@@ -263610,7 +263594,7 @@
     },
     "aguante": {
       "id": "w_aguante",
-      "rank": 8500,
+      "rank": 11912,
       "polysemous": false,
       "top_translation": "to hold (inflection of aguantar:)",
       "top_pos": "VERB",
@@ -263626,7 +263610,7 @@
     },
     "alejando": {
       "id": "w_alejando",
-      "rank": 8500,
+      "rank": 18224,
       "polysemous": false,
       "top_translation": "to remove to a distance, put farther away, to lead away, to draw away (gerund of alejar)",
       "top_pos": "VERB",
@@ -263642,7 +263626,6 @@
     },
     "alineo": {
       "id": "w_alineo",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to line up, align (first-person singular present indicative of alinear)",
       "top_pos": "VERB",
@@ -263658,7 +263641,7 @@
     },
     "amarre": {
       "id": "w_amarre",
-      "rank": 8500,
+      "rank": 45290,
       "polysemous": false,
       "top_translation": "to moor (inflection of amarrar:)",
       "top_pos": "VERB",
@@ -263674,7 +263657,7 @@
     },
     "apena": {
       "id": "w_apena",
-      "rank": 8500,
+      "rank": 28299,
       "polysemous": false,
       "top_translation": "to sadden (inflection of apenar:)",
       "top_pos": "VERB",
@@ -263690,7 +263673,7 @@
     },
     "aprenden": {
       "id": "w_aprenden",
-      "rank": 8500,
+      "rank": 13779,
       "polysemous": false,
       "top_translation": "to learn (third-person plural present indicative of aprender)",
       "top_pos": "VERB",
@@ -263706,7 +263689,7 @@
     },
     "aprovecha": {
       "id": "w_aprovecha",
-      "rank": 8500,
+      "rank": 12211,
       "polysemous": false,
       "top_translation": "to take advantage of (inflection of aprovechar:)",
       "top_pos": "VERB",
@@ -263722,7 +263705,7 @@
     },
     "arrebato": {
       "id": "w_arrebato",
-      "rank": 8500,
+      "rank": 24688,
       "polysemous": false,
       "top_translation": "arrebatar (first-person singular present indicative of arrebatar)",
       "top_pos": "VERB",
@@ -263738,7 +263721,7 @@
     },
     "aseguré": {
       "id": "w_aseguré",
-      "rank": 8500,
+      "rank": 18328,
       "polysemous": false,
       "top_translation": "to assure (first-person singular preterite indicative of asegurar)",
       "top_pos": "VERB",
@@ -263754,7 +263737,7 @@
     },
     "bailaste": {
       "id": "w_bailaste",
-      "rank": 8500,
+      "rank": 36148,
       "polysemous": false,
       "top_translation": "to dance (second-person singular preterite indicative of bailar)",
       "top_pos": "VERB",
@@ -263770,7 +263753,7 @@
     },
     "besaste": {
       "id": "w_besaste",
-      "rank": 8500,
+      "rank": 11822,
       "polysemous": false,
       "top_translation": "to kiss (second-person singular preterite indicative of besar)",
       "top_pos": "VERB",
@@ -263786,7 +263769,7 @@
     },
     "borraré": {
       "id": "w_borraré",
-      "rank": 8500,
+      "rank": 39702,
       "polysemous": false,
       "top_translation": "to delete (first-person singular future indicative of borrar)",
       "top_pos": "VERB",
@@ -263802,7 +263785,7 @@
     },
     "botando": {
       "id": "w_botando",
-      "rank": 8500,
+      "rank": 47956,
       "polysemous": false,
       "top_translation": "to bounce (gerund of botar)",
       "top_pos": "VERB",
@@ -263818,7 +263801,7 @@
     },
     "brillando": {
       "id": "w_brillando",
-      "rank": 8500,
+      "rank": 14333,
       "polysemous": false,
       "top_translation": "to shine (gerund of brillar)",
       "top_pos": "VERB",
@@ -263834,7 +263817,6 @@
     },
     "cabecea": {
       "id": "w_cabecea",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to shake (one's head, especially in disagreement) (inflection of cabecear:)",
       "top_pos": "VERB",
@@ -263850,7 +263832,6 @@
     },
     "calibrando": {
       "id": "w_calibrando",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to calibrate (gerund of calibrar)",
       "top_pos": "VERB",
@@ -263866,7 +263847,7 @@
     },
     "cansa": {
       "id": "w_cansa",
-      "rank": 8500,
+      "rank": 15644,
       "polysemous": false,
       "top_translation": "to tire (inflection of cansar:)",
       "top_pos": "VERB",
@@ -263882,7 +263863,6 @@
     },
     "capeando": {
       "id": "w_capeando",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to take part in a capea (gerund of capear)",
       "top_pos": "VERB",
@@ -263898,7 +263878,7 @@
     },
     "censura": {
       "id": "w_censura",
-      "rank": 8500,
+      "rank": 16156,
       "polysemous": false,
       "top_translation": "to censure (inflection of censurar:)",
       "top_pos": "VERB",
@@ -263914,7 +263894,6 @@
     },
     "chequearon": {
       "id": "w_chequearon",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to check (third-person plural preterite indicative of chequear)",
       "top_pos": "VERB",
@@ -263930,7 +263909,6 @@
     },
     "colaboremos": {
       "id": "w_colaboremos",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to collaborate (inflection of colaborar:)",
       "top_pos": "VERB",
@@ -263946,7 +263924,7 @@
     },
     "compromete": {
       "id": "w_compromete",
-      "rank": 8500,
+      "rank": 24161,
       "polysemous": false,
       "top_translation": "to promise, to engage to be married (inflection of comprometer:)",
       "top_pos": "VERB",
@@ -263962,7 +263940,6 @@
     },
     "confundía": {
       "id": "w_confundía",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to confuse, to throw off, to baffle, to perplex (first/third-person singular imperfect indicative of confundir)",
       "top_pos": "VERB",
@@ -263978,7 +263955,6 @@
     },
     "consumí": {
       "id": "w_consumí",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to consume (inflection of consumir:)",
       "top_pos": "VERB",
@@ -263994,7 +263970,7 @@
     },
     "contestaste": {
       "id": "w_contestaste",
-      "rank": 8500,
+      "rank": 18363,
       "polysemous": false,
       "top_translation": "to answer (second-person singular preterite indicative of contestar)",
       "top_pos": "VERB",
@@ -264010,7 +263986,7 @@
     },
     "controlo": {
       "id": "w_controlo",
-      "rank": 8500,
+      "rank": 14968,
       "polysemous": false,
       "top_translation": "to control (first-person singular present indicative of controlar)",
       "top_pos": "VERB",
@@ -264026,7 +264002,7 @@
     },
     "descuido": {
       "id": "w_descuido",
-      "rank": 8500,
+      "rank": 17116,
       "polysemous": false,
       "top_translation": "to relieve from care (first-person singular present indicative of descuidar)",
       "top_pos": "VERB",
@@ -264042,7 +264018,6 @@
     },
     "desespero": {
       "id": "w_desespero",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to despair, exasperate (first-person singular present indicative of desesperar)",
       "top_pos": "VERB",
@@ -264058,7 +264033,6 @@
     },
     "desmantela": {
       "id": "w_desmantela",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to dismantle (inflection of desmantelar:)",
       "top_pos": "VERB",
@@ -264074,7 +264048,6 @@
     },
     "detono": {
       "id": "w_detono",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to detonate, trigger (catalyze) (first-person singular present indicative of detonar)",
       "top_pos": "VERB",
@@ -264090,7 +264063,7 @@
     },
     "disfrutamos": {
       "id": "w_disfrutamos",
-      "rank": 8500,
+      "rank": 21170,
       "polysemous": false,
       "top_translation": "to enjoy (first-person plural present/preterite indicative of disfrutar)",
       "top_pos": "VERB",
@@ -264106,7 +264079,7 @@
     },
     "fichar": {
       "id": "w_fichar",
-      "rank": 8500,
+      "rank": 37488,
       "polysemous": true,
       "top_translation": "to clock in (US), clock on (UK), to punch in (US); (leaving) to clock out (US), clock off (UK), to punch out (US) (to enter or leave a workplace by punching a time card)",
       "top_pos": "VERB",
@@ -264127,7 +264100,6 @@
     },
     "emocionen": {
       "id": "w_emocionen",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to thrill, to excite (inflection of emocionar:)",
       "top_pos": "VERB",
@@ -264143,7 +264115,7 @@
     },
     "enamorando": {
       "id": "w_enamorando",
-      "rank": 8500,
+      "rank": 18153,
       "polysemous": false,
       "top_translation": "to enamor (gerund of enamorar)",
       "top_pos": "VERB",
@@ -264159,7 +264131,7 @@
     },
     "gangsters": {
       "id": "w_gangsters",
-      "rank": 8500,
+      "rank": 31432,
       "polysemous": false,
       "top_translation": "plural of gangster",
       "top_pos": "NOUN",
@@ -264172,7 +264144,7 @@
     },
     "faltaban": {
       "id": "w_faltaban",
-      "rank": 8500,
+      "rank": 19830,
       "polysemous": false,
       "top_translation": "to be lacking, to lack, to not have (of a quality or circumstance) (third-person plural imperfect indicative of faltar)",
       "top_pos": "VERB",
@@ -264188,7 +264160,7 @@
     },
     "envidian": {
       "id": "w_envidian",
-      "rank": 8500,
+      "rank": 49388,
       "polysemous": false,
       "top_translation": "to envy (third-person plural present indicative of envidiar)",
       "top_pos": "VERB",
@@ -264204,7 +264176,7 @@
     },
     "escamas": {
       "id": "w_escamas",
-      "rank": 8500,
+      "rank": 26383,
       "polysemous": false,
       "top_translation": "to remove the scales from (second-person singular present indicative of escamar)",
       "top_pos": "VERB",
@@ -264220,7 +264192,7 @@
     },
     "esconda": {
       "id": "w_esconda",
-      "rank": 8500,
+      "rank": 22842,
       "polysemous": false,
       "top_translation": "to hide (inflection of esconder:)",
       "top_pos": "VERB",
@@ -264236,7 +264208,7 @@
     },
     "escupo": {
       "id": "w_escupo",
-      "rank": 8500,
+      "rank": 34140,
       "polysemous": false,
       "top_translation": "to spit, to spit out (evacuate saliva or another substance from the mouth) (first-person singular present indicative of escupir)",
       "top_pos": "VERB",
@@ -264252,7 +264224,7 @@
     },
     "frena": {
       "id": "w_frena",
-      "rank": 8500,
+      "rank": 14242,
       "polysemous": false,
       "top_translation": "to brake (a vehicle) (inflection of frenar:)",
       "top_pos": "VERB",
@@ -264268,7 +264240,7 @@
     },
     "fumé": {
       "id": "w_fumé",
-      "rank": 8500,
+      "rank": 28120,
       "polysemous": false,
       "top_translation": "to smoke (first-person singular preterite indicative of fumar)",
       "top_pos": "VERB",
@@ -264284,7 +264256,6 @@
     },
     "fumemos": {
       "id": "w_fumemos",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to smoke (inflection of fumar:)",
       "top_pos": "VERB",
@@ -264300,7 +264271,7 @@
     },
     "funcionamos": {
       "id": "w_funcionamos",
-      "rank": 8500,
+      "rank": 44746,
       "polysemous": false,
       "top_translation": "to work (first-person plural present/preterite indicative of funcionar)",
       "top_pos": "VERB",
@@ -264316,7 +264287,6 @@
     },
     "fundo": {
       "id": "w_fundo",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to found (first-person singular present indicative of fundar)",
       "top_pos": "VERB",
@@ -264332,7 +264302,6 @@
     },
     "espose": {
       "id": "w_espose",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to handcuff, manacle (inflection of esposar:)",
       "top_pos": "VERB",
@@ -264348,7 +264317,6 @@
     },
     "esquives": {
       "id": "w_esquives",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to dodge, to duck, to evade (second-person singular present subjunctive of esquivar)",
       "top_pos": "VERB",
@@ -264364,7 +264332,7 @@
     },
     "gustando": {
       "id": "w_gustando",
-      "rank": 8500,
+      "rank": 18033,
       "polysemous": false,
       "top_translation": "to like (gerund of gustar)",
       "top_pos": "VERB",
@@ -264380,7 +264348,7 @@
     },
     "gustamos": {
       "id": "w_gustamos",
-      "rank": 8500,
+      "rank": 24253,
       "polysemous": false,
       "top_translation": "to like (first-person plural present/preterite indicative of gustar)",
       "top_pos": "VERB",
@@ -264396,7 +264364,7 @@
     },
     "gusté": {
       "id": "w_gusté",
-      "rank": 8500,
+      "rank": 33403,
       "polysemous": false,
       "top_translation": "to like (first-person singular preterite indicative of gustar)",
       "top_pos": "VERB",
@@ -264412,7 +264380,6 @@
     },
     "jalo": {
       "id": "w_jalo",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to pull (first-person singular present indicative of jalar)",
       "top_pos": "VERB",
@@ -264428,7 +264395,6 @@
     },
     "jaló": {
       "id": "w_jaló",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to pull (third-person singular preterite indicative of jalar)",
       "top_pos": "VERB",
@@ -264444,7 +264410,6 @@
     },
     "lambí": {
       "id": "w_lambí",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "alternative form of lamer (first-person singular preterite indicative of lamber)",
       "top_pos": "VERB",
@@ -264460,7 +264425,7 @@
     },
     "levantando": {
       "id": "w_levantando",
-      "rank": 8500,
+      "rank": 13438,
       "polysemous": false,
       "top_translation": "to lift (gerund of levantar)",
       "top_pos": "VERB",
@@ -264476,7 +264441,6 @@
     },
     "peló": {
       "id": "w_peló",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to peel (fruits, vegetables) (third-person singular preterite indicative of pelar)",
       "top_pos": "VERB",
@@ -264492,7 +264456,7 @@
     },
     "penetra": {
       "id": "w_penetra",
-      "rank": 8500,
+      "rank": 27889,
       "polysemous": false,
       "top_translation": "to penetrate (inflection of penetrar:)",
       "top_pos": "VERB",
@@ -264508,7 +264472,7 @@
     },
     "llenó": {
       "id": "w_llenó",
-      "rank": 8500,
+      "rank": 13933,
       "polysemous": false,
       "top_translation": "to fill (third-person singular preterite indicative of llenar)",
       "top_pos": "VERB",
@@ -264524,7 +264488,7 @@
     },
     "permití": {
       "id": "w_permití",
-      "rank": 8500,
+      "rank": 18475,
       "polysemous": false,
       "top_translation": "to allow (inflection of permitir:)",
       "top_pos": "VERB",
@@ -264540,7 +264504,7 @@
     },
     "pilla": {
       "id": "w_pilla",
-      "rank": 8500,
+      "rank": 15957,
       "polysemous": false,
       "top_translation": "to get (inflection of pillar:)",
       "top_pos": "VERB",
@@ -264556,7 +264520,6 @@
     },
     "malgastaste": {
       "id": "w_malgastaste",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to waste, to squander, to blow, to fritter away (second-person singular preterite indicative of malgastar)",
       "top_pos": "VERB",
@@ -264572,7 +264535,6 @@
     },
     "mamando": {
       "id": "w_mamando",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to suckle (gerund of mamar)",
       "top_pos": "VERB",
@@ -264588,7 +264550,7 @@
     },
     "mejore": {
       "id": "w_mejore",
-      "rank": 8500,
+      "rank": 13637,
       "polysemous": false,
       "top_translation": "to improve (inflection of mejorar:)",
       "top_pos": "VERB",
@@ -264604,7 +264566,6 @@
     },
     "modela": {
       "id": "w_modela",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to model (inflection of modelar:)",
       "top_pos": "VERB",
@@ -264620,7 +264581,7 @@
     },
     "mojas": {
       "id": "w_mojas",
-      "rank": 8500,
+      "rank": 49924,
       "polysemous": false,
       "top_translation": "to make wet, to wet (second-person singular present indicative of mojar)",
       "top_pos": "VERB",
@@ -264636,7 +264597,7 @@
     },
     "moja": {
       "id": "w_moja",
-      "rank": 8500,
+      "rank": 27277,
       "polysemous": false,
       "top_translation": "to make wet, to wet (inflection of mojar:)",
       "top_pos": "VERB",
@@ -264652,7 +264613,7 @@
     },
     "montaste": {
       "id": "w_montaste",
-      "rank": 8500,
+      "rank": 35786,
       "polysemous": false,
       "top_translation": "to ride (second-person singular preterite indicative of montar)",
       "top_pos": "VERB",
@@ -264668,7 +264629,7 @@
     },
     "motiva": {
       "id": "w_motiva",
-      "rank": 8500,
+      "rank": 24841,
       "polysemous": false,
       "top_translation": "to motivate (inflection of motivar:)",
       "top_pos": "VERB",
@@ -264684,7 +264645,7 @@
     },
     "murmura": {
       "id": "w_murmura",
-      "rank": 8500,
+      "rank": 34496,
       "polysemous": false,
       "top_translation": "to murmur, to mutter (inflection of murmurar:)",
       "top_pos": "VERB",
@@ -264700,7 +264661,7 @@
     },
     "notó": {
       "id": "w_notó",
-      "rank": 8500,
+      "rank": 11466,
       "polysemous": false,
       "top_translation": "to notice (third-person singular preterite indicative of notar)",
       "top_pos": "VERB",
@@ -264716,7 +264677,7 @@
     },
     "olvidan": {
       "id": "w_olvidan",
-      "rank": 8500,
+      "rank": 12210,
       "polysemous": false,
       "top_translation": "to forget (third-person plural present indicative of olvidar)",
       "top_pos": "VERB",
@@ -264732,7 +264693,7 @@
     },
     "regalando": {
       "id": "w_regalando",
-      "rank": 8500,
+      "rank": 27062,
       "polysemous": false,
       "top_translation": "to give as a present, to gift (gerund of regalar)",
       "top_pos": "VERB",
@@ -264748,7 +264709,7 @@
     },
     "resista": {
       "id": "w_resista",
-      "rank": 8500,
+      "rank": 21571,
       "polysemous": false,
       "top_translation": "to resist (inflection of resistir:)",
       "top_pos": "VERB",
@@ -264764,7 +264725,7 @@
     },
     "respondo": {
       "id": "w_respondo",
-      "rank": 8500,
+      "rank": 11744,
       "polysemous": false,
       "top_translation": "to answer (first-person singular present indicative of responder)",
       "top_pos": "VERB",
@@ -264780,7 +264741,7 @@
     },
     "robaría": {
       "id": "w_robaría",
-      "rank": 8500,
+      "rank": 22320,
       "polysemous": false,
       "top_translation": "to steal (first/third-person singular conditional of robar)",
       "top_pos": "VERB",
@@ -264796,7 +264757,6 @@
     },
     "sanan": {
       "id": "w_sanan",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to cure; to heal (third-person plural present indicative of sanar)",
       "top_pos": "VERB",
@@ -264812,7 +264772,7 @@
     },
     "subían": {
       "id": "w_subían",
-      "rank": 8500,
+      "rank": 41590,
       "polysemous": false,
       "top_translation": "to go up (third-person plural imperfect indicative of subir)",
       "top_pos": "VERB",
@@ -264828,7 +264788,7 @@
     },
     "subiste": {
       "id": "w_subiste",
-      "rank": 8500,
+      "rank": 18568,
       "polysemous": false,
       "top_translation": "to go up (second-person singular preterite indicative of subir)",
       "top_pos": "VERB",
@@ -264844,7 +264804,7 @@
     },
     "traba": {
       "id": "w_traba",
-      "rank": 8500,
+      "rank": 25171,
       "polysemous": false,
       "top_translation": "to connect, to join (pieces of wood) (inflection of trabar:)",
       "top_pos": "VERB",
@@ -264860,7 +264820,7 @@
     },
     "suda": {
       "id": "w_suda",
-      "rank": 8500,
+      "rank": 22549,
       "polysemous": false,
       "top_translation": "to sweat (inflection of sudar:)",
       "top_pos": "VERB",
@@ -264876,7 +264836,6 @@
     },
     "vacacione": {
       "id": "w_vacacione",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to go on vacation (inflection of vacacionar:)",
       "top_pos": "VERB",
@@ -264892,7 +264851,7 @@
     },
     "vacilando": {
       "id": "w_vacilando",
-      "rank": 8500,
+      "rank": 27475,
       "polysemous": false,
       "top_translation": "to hesitate, waver, dither (UK), vacillate (gerund of vacilar)",
       "top_pos": "VERB",
@@ -264908,7 +264867,6 @@
     },
     "vacilo": {
       "id": "w_vacilo",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to hesitate, waver, dither (UK), vacillate (first-person singular present indicative of vacilar)",
       "top_pos": "VERB",
@@ -264924,7 +264882,7 @@
     },
     "viajo": {
       "id": "w_viajo",
-      "rank": 8500,
+      "rank": 13579,
       "polysemous": false,
       "top_translation": "to travel (first-person singular present indicative of viajar)",
       "top_pos": "VERB",
@@ -264940,7 +264898,6 @@
     },
     "vocea": {
       "id": "w_vocea",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to shout (inflection of vocear:)",
       "top_pos": "VERB",
@@ -264956,7 +264913,7 @@
     },
     "jumbo": {
       "id": "w_jumbo",
-      "rank": 8500,
+      "rank": 23349,
       "polysemous": true,
       "top_translation": "jumbo",
       "top_pos": "ADJ",
@@ -264973,7 +264930,7 @@
     },
     "condominio": {
       "id": "w_condominio",
-      "rank": 8500,
+      "rank": 20642,
       "polysemous": true,
       "top_translation": "apartment building, condominium, condo",
       "top_pos": "NOUN",
@@ -264990,7 +264947,7 @@
     },
     "cartón": {
       "id": "w_cartón",
-      "rank": 8500,
+      "rank": 12681,
       "polysemous": true,
       "top_translation": "cardboard, paperboard",
       "top_pos": "NOUN",
@@ -265011,7 +264968,6 @@
     },
     "remix": {
       "id": "w_remix",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "remix",
       "top_pos": "NOUN",
@@ -265024,7 +264980,7 @@
     },
     "pantera": {
       "id": "w_pantera",
-      "rank": 8500,
+      "rank": 16434,
       "polysemous": true,
       "top_translation": "panther",
       "top_pos": "NOUN",
@@ -265041,7 +264997,7 @@
     },
     "cotorra": {
       "id": "w_cotorra",
-      "rank": 8500,
+      "rank": 47048,
       "polysemous": true,
       "top_translation": "small parrot",
       "top_pos": "NOUN",
@@ -265062,7 +265018,6 @@
     },
     "popola": {
       "id": "w_popola",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "vagina",
       "top_pos": "NOUN",
@@ -265075,7 +265030,7 @@
     },
     "romanticismo": {
       "id": "w_romanticismo",
-      "rank": 8500,
+      "rank": 24310,
       "polysemous": false,
       "top_translation": "romanticism",
       "top_pos": "NOUN",
@@ -265088,7 +265043,7 @@
     },
     "insista": {
       "id": "w_insista",
-      "rank": 8500,
+      "rank": 27826,
       "polysemous": false,
       "top_translation": "to insist (inflection of insistir:)",
       "top_pos": "VERB",
@@ -265104,7 +265059,7 @@
     },
     "amores": {
       "id": "w_amores",
-      "rank": 8500,
+      "rank": 12643,
       "polysemous": false,
       "top_translation": "plural of amor",
       "top_pos": "NOUN",
@@ -265117,7 +265072,7 @@
     },
     "compone": {
       "id": "w_compone",
-      "rank": 8500,
+      "rank": 26448,
       "polysemous": false,
       "top_translation": "to compose (write music) (third-person singular present indicative of componer)",
       "top_pos": "VERB",
@@ -265133,7 +265088,7 @@
     },
     "pesco": {
       "id": "w_pesco",
-      "rank": 8500,
+      "rank": 38476,
       "polysemous": false,
       "top_translation": "to fish (first-person singular present indicative of pescar)",
       "top_pos": "VERB",
@@ -265149,7 +265104,7 @@
     },
     "estanco": {
       "id": "w_estanco",
-      "rank": 8500,
+      "rank": 42885,
       "polysemous": false,
       "top_translation": "to detain, staunch, or hold back the flow of water (first-person singular present indicative of estancar)",
       "top_pos": "VERB",
@@ -265165,7 +265120,7 @@
     },
     "cónsul": {
       "id": "w_cónsul",
-      "rank": 8500,
+      "rank": 14873,
       "polysemous": true,
       "top_translation": "consul (official residing in major foreign towns to represent and protect the interests of the merchants and citizens of their country)",
       "top_pos": "NOUN",
@@ -265182,7 +265137,6 @@
     },
     "haters": {
       "id": "w_haters",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "plural of hater",
       "top_pos": "NOUN",
@@ -265195,7 +265149,7 @@
     },
     "prosperidad": {
       "id": "w_prosperidad",
-      "rank": 8500,
+      "rank": 13611,
       "polysemous": false,
       "top_translation": "prosperity",
       "top_pos": "NOUN",
@@ -265208,7 +265162,7 @@
     },
     "motociclista": {
       "id": "w_motociclista",
-      "rank": 8500,
+      "rank": 30497,
       "polysemous": false,
       "top_translation": "motorcyclist, biker",
       "top_pos": "NOUN",
@@ -265221,7 +265175,7 @@
     },
     "gama": {
       "id": "w_gama",
-      "rank": 8500,
+      "rank": 13957,
       "polysemous": true,
       "top_translation": "color scale, palette",
       "top_pos": "NOUN",
@@ -265242,7 +265196,7 @@
     },
     "perverso": {
       "id": "w_perverso",
-      "rank": 8500,
+      "rank": 15134,
       "polysemous": true,
       "top_translation": "bad, mean, wicked",
       "top_pos": "ADJ",
@@ -265263,7 +265217,7 @@
     },
     "sicario": {
       "id": "w_sicario",
-      "rank": 8500,
+      "rank": 26075,
       "polysemous": false,
       "top_translation": "hitman (hired killer)",
       "top_pos": "NOUN",
@@ -265276,7 +265230,7 @@
     },
     "romo": {
       "id": "w_romo",
-      "rank": 8500,
+      "rank": 47070,
       "polysemous": true,
       "top_translation": "blunt, dull",
       "top_pos": "ADJ",
@@ -265297,7 +265251,6 @@
     },
     "tamo": {
       "id": "w_tamo",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "fluff; dust",
       "top_pos": "NOUN",
@@ -265310,7 +265263,6 @@
     },
     "pasola": {
       "id": "w_pasola",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "motor scooter",
       "top_pos": "NOUN",
@@ -265323,7 +265275,6 @@
     },
     "complico": {
       "id": "w_complico",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to complicate (first-person singular present indicative of complicar)",
       "top_pos": "VERB",
@@ -265339,7 +265290,6 @@
     },
     "taba": {
       "id": "w_taba",
-      "rank": 8500,
       "polysemous": true,
       "top_translation": "anklebone",
       "top_pos": "NOUN",
@@ -265360,7 +265310,7 @@
     },
     "sartén": {
       "id": "w_sartén",
-      "rank": 8500,
+      "rank": 14313,
       "polysemous": false,
       "top_translation": "frying pan",
       "top_pos": "NOUN",
@@ -265373,7 +265323,6 @@
     },
     "vato": {
       "id": "w_vato",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "guy; dude; boyfriend; significant other",
       "top_pos": "NOUN",
@@ -265386,7 +265335,6 @@
     },
     "virale": {
       "id": "w_virale",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to veer (turn) in a vehicle (second-person singular voseo imperative of virar combined with le)",
       "top_pos": "VERB",
@@ -265402,7 +265350,7 @@
     },
     "dilema": {
       "id": "w_dilema",
-      "rank": 8500,
+      "rank": 11887,
       "polysemous": false,
       "top_translation": "dilemma, quandary",
       "top_pos": "NOUN",
@@ -265415,7 +265363,7 @@
     },
     "bajan": {
       "id": "w_bajan",
-      "rank": 8500,
+      "rank": 13397,
       "polysemous": false,
       "top_translation": "to go down (third-person plural present indicative of bajar)",
       "top_pos": "VERB",
@@ -265431,7 +265379,6 @@
     },
     "piqué": {
       "id": "w_piqué",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "picar (first-person singular preterite indicative of picar)",
       "top_pos": "VERB",
@@ -265447,7 +265394,7 @@
     },
     "merced": {
       "id": "w_merced",
-      "rank": 8500,
+      "rank": 12694,
       "polysemous": false,
       "top_translation": "mercy",
       "top_pos": "NOUN",
@@ -265460,7 +265407,7 @@
     },
     "boletín": {
       "id": "w_boletín",
-      "rank": 8500,
+      "rank": 13469,
       "polysemous": true,
       "top_translation": "bulletin",
       "top_pos": "NOUN",
@@ -265477,7 +265424,6 @@
     },
     "sismo": {
       "id": "w_sismo",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "earthquake",
       "top_pos": "NOUN",
@@ -265490,7 +265436,6 @@
     },
     "cabro": {
       "id": "w_cabro",
-      "rank": 8500,
       "polysemous": true,
       "top_translation": "male goat",
       "top_pos": "NOUN",
@@ -265511,7 +265456,6 @@
     },
     "mangó": {
       "id": "w_mangó",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to nick, pinch, swipe, nab (steal) (third-person singular preterite indicative of mangar)",
       "top_pos": "VERB",
@@ -265527,7 +265471,6 @@
     },
     "timbrando": {
       "id": "w_timbrando",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to ring, to make sound a ring (gerund of timbrar)",
       "top_pos": "VERB",
@@ -265543,7 +265486,6 @@
     },
     "maquillar": {
       "id": "w_maquillar",
-      "rank": 8500,
       "polysemous": true,
       "top_translation": "to apply makeup or cosmetics to",
       "top_pos": "VERB",
@@ -265564,7 +265506,7 @@
     },
     "caminante": {
       "id": "w_caminante",
-      "rank": 8500,
+      "rank": 27151,
       "polysemous": true,
       "top_translation": "traveling",
       "top_pos": "ADJ",
@@ -265585,7 +265527,7 @@
     },
     "sentaba": {
       "id": "w_sentaba",
-      "rank": 8500,
+      "rank": 12329,
       "polysemous": false,
       "top_translation": "to sit (first/third-person singular imperfect indicative of sentar)",
       "top_pos": "VERB",
@@ -265601,7 +265543,7 @@
     },
     "dolido": {
       "id": "w_dolido",
-      "rank": 8500,
+      "rank": 14143,
       "polysemous": false,
       "top_translation": "to hurt (past participle of doler)",
       "top_pos": "VERB",
@@ -265617,7 +265559,7 @@
     },
     "despertaste": {
       "id": "w_despertaste",
-      "rank": 8500,
+      "rank": 13563,
       "polysemous": false,
       "top_translation": "to wake up (second-person singular preterite indicative of despertar)",
       "top_pos": "VERB",
@@ -265633,7 +265575,7 @@
     },
     "engañes": {
       "id": "w_engañes",
-      "rank": 8500,
+      "rank": 18430,
       "polysemous": false,
       "top_translation": "to deceive (second-person singular present subjunctive of engañar)",
       "top_pos": "VERB",
@@ -265649,7 +265591,6 @@
     },
     "acribillan": {
       "id": "w_acribillan",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to riddle, pepper (with holes, bullets etc.) (third-person plural present indicative of acribillar)",
       "top_pos": "VERB",
@@ -265665,7 +265606,7 @@
     },
     "extrañe": {
       "id": "w_extrañe",
-      "rank": 8500,
+      "rank": 21325,
       "polysemous": false,
       "top_translation": "to miss (inflection of extrañar:)",
       "top_pos": "VERB",
@@ -265681,7 +265622,7 @@
     },
     "coincidimos": {
       "id": "w_coincidimos",
-      "rank": 8500,
+      "rank": 29397,
       "polysemous": false,
       "top_translation": "to coincide (first-person plural present/preterite indicative of coincidir)",
       "top_pos": "VERB",
@@ -265697,7 +265638,7 @@
     },
     "convierto": {
       "id": "w_convierto",
-      "rank": 8500,
+      "rank": 17865,
       "polysemous": false,
       "top_translation": "to turn into (first-person singular present indicative of convertir)",
       "top_pos": "VERB",
@@ -265713,7 +265654,7 @@
     },
     "apareciste": {
       "id": "w_apareciste",
-      "rank": 8500,
+      "rank": 13639,
       "polysemous": false,
       "top_translation": "to appear (second-person singular preterite indicative of aparecer)",
       "top_pos": "VERB",
@@ -265729,7 +265670,7 @@
     },
     "apago": {
       "id": "w_apago",
-      "rank": 8500,
+      "rank": 20154,
       "polysemous": false,
       "top_translation": "to turn off (inflection of apagar:)",
       "top_pos": "VERB",
@@ -265745,7 +265686,7 @@
     },
     "desaparezco": {
       "id": "w_desaparezco",
-      "rank": 8500,
+      "rank": 31455,
       "polysemous": false,
       "top_translation": "to disappear (first-person singular present indicative of desaparecer)",
       "top_pos": "VERB",
@@ -265761,7 +265702,7 @@
     },
     "encendí": {
       "id": "w_encendí",
-      "rank": 8500,
+      "rank": 25211,
       "polysemous": false,
       "top_translation": "to turn on (first-person singular preterite indicative of encender)",
       "top_pos": "VERB",
@@ -265777,7 +265718,7 @@
     },
     "pegando": {
       "id": "w_pegando",
-      "rank": 8500,
+      "rank": 15278,
       "polysemous": false,
       "top_translation": "to hit (gerund of pegar)",
       "top_pos": "VERB",
@@ -265793,7 +265734,7 @@
     },
     "pegan": {
       "id": "w_pegan",
-      "rank": 8500,
+      "rank": 15798,
       "polysemous": false,
       "top_translation": "to hit (third-person plural present indicative of pegar)",
       "top_pos": "VERB",
@@ -265809,7 +265750,7 @@
     },
     "pego": {
       "id": "w_pego",
-      "rank": 8500,
+      "rank": 12081,
       "polysemous": false,
       "top_translation": "to hit (first-person singular present indicative of pegar)",
       "top_pos": "VERB",
@@ -265825,7 +265766,7 @@
     },
     "aprieto": {
       "id": "w_aprieto",
-      "rank": 8500,
+      "rank": 12207,
       "polysemous": false,
       "top_translation": "to press (first-person singular present indicative of apretar)",
       "top_pos": "VERB",
@@ -265841,7 +265782,7 @@
     },
     "bañe": {
       "id": "w_bañe",
-      "rank": 8500,
+      "rank": 46641,
       "polysemous": false,
       "top_translation": "to bathe (to clean a person by immersion in water or using water; to give someone a bath) (inflection of bañar:)",
       "top_pos": "VERB",
@@ -265857,7 +265798,6 @@
     },
     "eduquen": {
       "id": "w_eduquen",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to educate, instruct (inflection of educar:)",
       "top_pos": "VERB",
@@ -265873,7 +265813,7 @@
     },
     "ronco": {
       "id": "w_ronco",
-      "rank": 8500,
+      "rank": 32398,
       "polysemous": false,
       "top_translation": "to snore (first-person singular present indicative of roncar)",
       "top_pos": "VERB",
@@ -265889,7 +265829,7 @@
     },
     "rehúso": {
       "id": "w_rehúso",
-      "rank": 8500,
+      "rank": 32280,
       "polysemous": false,
       "top_translation": "to refuse (first-person singular present indicative of rehusar)",
       "top_pos": "VERB",
@@ -265905,7 +265845,6 @@
     },
     "gradúo": {
       "id": "w_gradúo",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to graduate (first-person singular present indicative of graduar)",
       "top_pos": "VERB",
@@ -265921,7 +265860,7 @@
     },
     "engreído": {
       "id": "w_engreído",
-      "rank": 8500,
+      "rank": 14356,
       "polysemous": true,
       "top_translation": "conceited, smug, self-satisfied, self-important, stuck-up, cocky, full of oneself",
       "top_pos": "ADJ",
@@ -265938,7 +265877,7 @@
     },
     "equivocamos": {
       "id": "w_equivocamos",
-      "rank": 8500,
+      "rank": 14890,
       "polysemous": false,
       "top_translation": "to mistake, mix up (first-person plural present/preterite indicative of equivocar)",
       "top_pos": "VERB",
@@ -265954,7 +265893,7 @@
     },
     "muerden": {
       "id": "w_muerden",
-      "rank": 8500,
+      "rank": 22251,
       "polysemous": false,
       "top_translation": "to bite (third-person plural present indicative of morder)",
       "top_pos": "VERB",
@@ -265970,7 +265909,7 @@
     },
     "acaricia": {
       "id": "w_acaricia",
-      "rank": 8500,
+      "rank": 28536,
       "polysemous": false,
       "top_translation": "to caress (inflection of acariciar:)",
       "top_pos": "VERB",
@@ -265986,7 +265925,7 @@
     },
     "despide": {
       "id": "w_despide",
-      "rank": 8500,
+      "rank": 17789,
       "polysemous": false,
       "top_translation": "to fire (inflection of despedir:)",
       "top_pos": "VERB",
@@ -266002,7 +265941,7 @@
     },
     "practicas": {
       "id": "w_practicas",
-      "rank": 8500,
+      "rank": 21453,
       "polysemous": false,
       "top_translation": "to practice (second-person singular present indicative of practicar)",
       "top_pos": "VERB",
@@ -266018,7 +265957,7 @@
     },
     "arrodillado": {
       "id": "w_arrodillado",
-      "rank": 8500,
+      "rank": 36138,
       "polysemous": false,
       "top_translation": "to make someone kneel (past participle of arrodillar)",
       "top_pos": "VERB",
@@ -266034,7 +265973,6 @@
     },
     "gocen": {
       "id": "w_gocen",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "gozar (inflection of gozar:)",
       "top_pos": "VERB",
@@ -266050,7 +265988,7 @@
     },
     "abraza": {
       "id": "w_abraza",
-      "rank": 8500,
+      "rank": 17422,
       "polysemous": false,
       "top_translation": "to hug, to embrace (a person, an animal) (inflection of abrazar:)",
       "top_pos": "VERB",
@@ -266066,7 +266004,7 @@
     },
     "cuela": {
       "id": "w_cuela",
-      "rank": 8500,
+      "rank": 33573,
       "polysemous": false,
       "top_translation": "to sift, to strain, to filter (inflection of colar (“to sift; to dupe; to missay”):)",
       "top_pos": "VERB",
@@ -266082,7 +266020,6 @@
     },
     "bregando": {
       "id": "w_bregando",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to toil, struggle (gerund of bregar)",
       "top_pos": "VERB",
@@ -266098,7 +266035,6 @@
     },
     "bregan": {
       "id": "w_bregan",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to toil, struggle (third-person plural present indicative of bregar)",
       "top_pos": "VERB",
@@ -266114,7 +266050,6 @@
     },
     "singando": {
       "id": "w_singando",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to have sex (gerund of singar)",
       "top_pos": "VERB",
@@ -266130,7 +266065,6 @@
     },
     "caduquen": {
       "id": "w_caduquen",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to expire (inflection of caducar:)",
       "top_pos": "VERB",
@@ -266146,7 +266080,6 @@
     },
     "atracando": {
       "id": "w_atracando",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "atracar (gerund of atracar)",
       "top_pos": "VERB",
@@ -266162,7 +266095,7 @@
     },
     "distraído": {
       "id": "w_distraído",
-      "rank": 8500,
+      "rank": 11367,
       "polysemous": false,
       "top_translation": "to entertain, distract (past participle of distraer)",
       "top_pos": "VERB",
@@ -266178,7 +266111,7 @@
     },
     "calentando": {
       "id": "w_calentando",
-      "rank": 8500,
+      "rank": 15640,
       "polysemous": false,
       "top_translation": "to heat, to warm up (cause an increase in temperature) (gerund of calentar)",
       "top_pos": "VERB",
@@ -266194,7 +266127,7 @@
     },
     "tentado": {
       "id": "w_tentado",
-      "rank": 8500,
+      "rank": 19793,
       "polysemous": false,
       "top_translation": "to tempt (past participle of tentar)",
       "top_pos": "VERB",
@@ -266210,7 +266143,7 @@
     },
     "dañaron": {
       "id": "w_dañaron",
-      "rank": 8500,
+      "rank": 43399,
       "polysemous": false,
       "top_translation": "to damage (third-person plural preterite indicative of dañar)",
       "top_pos": "VERB",
@@ -266226,7 +266159,7 @@
     },
     "dañe": {
       "id": "w_dañe",
-      "rank": 8500,
+      "rank": 34357,
       "polysemous": false,
       "top_translation": "to damage (inflection of dañar:)",
       "top_pos": "VERB",
@@ -266242,7 +266175,7 @@
     },
     "besito": {
       "id": "w_besito",
-      "rank": 8500,
+      "rank": 15027,
       "polysemous": false,
       "top_translation": "diminutive of beso",
       "top_pos": "NOUN",
@@ -266255,7 +266188,7 @@
     },
     "descarto": {
       "id": "w_descarto",
-      "rank": 8500,
+      "rank": 48016,
       "polysemous": false,
       "top_translation": "to rule out, to discard, to discount, to dismiss, to reject (first-person singular present indicative of descartar)",
       "top_pos": "VERB",
@@ -266271,7 +266204,7 @@
     },
     "ignorado": {
       "id": "w_ignorado",
-      "rank": 8500,
+      "rank": 17059,
       "polysemous": false,
       "top_translation": "to ignore (past participle of ignorar)",
       "top_pos": "VERB",
@@ -266287,7 +266220,6 @@
     },
     "ilusioné": {
       "id": "w_ilusioné",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to excite (first-person singular preterite indicative of ilusionar)",
       "top_pos": "VERB",
@@ -266303,7 +266235,6 @@
     },
     "incomode": {
       "id": "w_incomode",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to bother; to annoy; to vex (inflection of incomodar:)",
       "top_pos": "VERB",
@@ -266319,7 +266250,6 @@
     },
     "inyecto": {
       "id": "w_inyecto",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to inject (first-person singular present indicative of inyectar)",
       "top_pos": "VERB",
@@ -266335,7 +266265,7 @@
     },
     "extinguieron": {
       "id": "w_extinguieron",
-      "rank": 8500,
+      "rank": 44926,
       "polysemous": false,
       "top_translation": "to extinguish, to put out (third-person plural preterite indicative of extinguir)",
       "top_pos": "VERB",
@@ -266351,7 +266281,7 @@
     },
     "soleado": {
       "id": "w_soleado",
-      "rank": 8500,
+      "rank": 13966,
       "polysemous": false,
       "top_translation": "to sunbathe (past participle of solear)",
       "top_pos": "VERB",
@@ -266367,7 +266297,6 @@
     },
     "boza": {
       "id": "w_boza",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "boza",
       "top_pos": "NOUN",
@@ -266380,7 +266309,7 @@
     },
     "pasarela": {
       "id": "w_pasarela",
-      "rank": 8500,
+      "rank": 15726,
       "polysemous": true,
       "top_translation": "catwalk",
       "top_pos": "NOUN",
@@ -266401,7 +266330,7 @@
     },
     "éxitos": {
       "id": "w_éxitos",
-      "rank": 8500,
+      "rank": 12094,
       "polysemous": false,
       "top_translation": "plural of éxito",
       "top_pos": "NOUN",
@@ -266414,7 +266343,7 @@
     },
     "secuela": {
       "id": "w_secuela",
-      "rank": 8500,
+      "rank": 25312,
       "polysemous": true,
       "top_translation": "consequence, result",
       "top_pos": "NOUN",
@@ -266435,7 +266364,7 @@
     },
     "doctorado": {
       "id": "w_doctorado",
-      "rank": 8500,
+      "rank": 12187,
       "polysemous": false,
       "top_translation": "to give/grant a doctorate (past participle of doctorar)",
       "top_pos": "VERB",
@@ -266451,7 +266380,6 @@
     },
     "bandida": {
       "id": "w_bandida",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "female equivalent of bandido",
       "top_pos": "NOUN",
@@ -266464,7 +266392,7 @@
     },
     "tóxicos": {
       "id": "w_tóxicos",
-      "rank": 8500,
+      "rank": 15884,
       "polysemous": false,
       "top_translation": "masculine plural of tóxico",
       "top_pos": "ADJ",
@@ -266477,7 +266405,6 @@
     },
     "milonga": {
       "id": "w_milonga",
-      "rank": 8500,
       "polysemous": true,
       "top_translation": "milonga",
       "top_pos": "NOUN",
@@ -266498,7 +266425,7 @@
     },
     "rescatarla": {
       "id": "w_rescatarla",
-      "rank": 8500,
+      "rank": 28691,
       "polysemous": false,
       "top_translation": "to rescue (infinitive of rescatar combined with la)",
       "top_pos": "VERB",
@@ -266514,7 +266441,7 @@
     },
     "lujuria": {
       "id": "w_lujuria",
-      "rank": 8500,
+      "rank": 11989,
       "polysemous": true,
       "top_translation": "lust",
       "top_pos": "NOUN",
@@ -266531,7 +266458,7 @@
     },
     "búscame": {
       "id": "w_búscame",
-      "rank": 8500,
+      "rank": 17921,
       "polysemous": false,
       "top_translation": "to look for (second-person singular imperative of buscar combined with me)",
       "top_pos": "VERB",
@@ -266547,7 +266474,6 @@
     },
     "paramo": {
       "id": "w_paramo",
-      "rank": 8500,
       "polysemous": true,
       "top_translation": "wasteland, badlands",
       "top_pos": "NOUN",
@@ -266568,7 +266494,7 @@
     },
     "malicia": {
       "id": "w_malicia",
-      "rank": 8500,
+      "rank": 24763,
       "polysemous": false,
       "top_translation": "to suspect; be suspicious of (inflection of maliciar:)",
       "top_pos": "VERB",
@@ -266584,7 +266510,7 @@
     },
     "mirándote": {
       "id": "w_mirándote",
-      "rank": 8500,
+      "rank": 17669,
       "polysemous": false,
       "top_translation": "to look at (gerund of mirar combined with te)",
       "top_pos": "VERB",
@@ -266600,7 +266526,7 @@
     },
     "confesarte": {
       "id": "w_confesarte",
-      "rank": 8500,
+      "rank": 20161,
       "polysemous": false,
       "top_translation": "to confess (infinitive of confesar combined with te)",
       "top_pos": "VERB",
@@ -266616,7 +266542,7 @@
     },
     "golosina": {
       "id": "w_golosina",
-      "rank": 8500,
+      "rank": 34673,
       "polysemous": false,
       "top_translation": "candy",
       "top_pos": "NOUN",
@@ -266629,7 +266555,7 @@
     },
     "dándote": {
       "id": "w_dándote",
-      "rank": 8500,
+      "rank": 19975,
       "polysemous": false,
       "top_translation": "to give (gerund of dar combined with te)",
       "top_pos": "VERB",
@@ -266645,7 +266571,7 @@
     },
     "mándame": {
       "id": "w_mándame",
-      "rank": 8500,
+      "rank": 18370,
       "polysemous": false,
       "top_translation": "to send (second-person singular imperative of mandar combined with me)",
       "top_pos": "VERB",
@@ -266661,7 +266587,6 @@
     },
     "cachete": {
       "id": "w_cachete",
-      "rank": 8500,
       "polysemous": true,
       "top_translation": "cheek",
       "top_pos": "NOUN",
@@ -266682,7 +266607,7 @@
     },
     "atrevida": {
       "id": "w_atrevida",
-      "rank": 8500,
+      "rank": 19043,
       "polysemous": true,
       "top_translation": "feminine singular of atrevido",
       "top_pos": "ADJ",
@@ -266699,7 +266624,7 @@
     },
     "alejarnos": {
       "id": "w_alejarnos",
-      "rank": 8500,
+      "rank": 18875,
       "polysemous": false,
       "top_translation": "to remove to a distance, put farther away, to lead away, to draw away (infinitive of alejar combined with nos)",
       "top_pos": "VERB",
@@ -266715,7 +266640,7 @@
     },
     "somo": {
       "id": "w_somo",
-      "rank": 8500,
+      "rank": 33946,
       "polysemous": false,
       "top_translation": "summit; peak",
       "top_pos": "NOUN",
@@ -266728,7 +266653,6 @@
     },
     "kiko": {
       "id": "w_kiko",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "a fried kernel of corn",
       "top_pos": "NOUN",
@@ -266741,7 +266665,7 @@
     },
     "gángster": {
       "id": "w_gángster",
-      "rank": 8500,
+      "rank": 18625,
       "polysemous": false,
       "top_translation": "gangster",
       "top_pos": "NOUN",
@@ -266754,7 +266678,7 @@
     },
     "roce": {
       "id": "w_roce",
-      "rank": 8500,
+      "rank": 24417,
       "polysemous": false,
       "top_translation": "to clear or scrape land (inflection of rozar:)",
       "top_pos": "VERB",
@@ -266770,7 +266694,7 @@
     },
     "cabrona": {
       "id": "w_cabrona",
-      "rank": 8500,
+      "rank": 22293,
       "polysemous": true,
       "top_translation": "female equivalent of cabrón",
       "top_pos": "NOUN",
@@ -266787,7 +266711,7 @@
     },
     "cachonda": {
       "id": "w_cachonda",
-      "rank": 8500,
+      "rank": 21010,
       "polysemous": true,
       "top_translation": "female equivalent of cachondo",
       "top_pos": "NOUN",
@@ -266804,7 +266728,7 @@
     },
     "gánster": {
       "id": "w_gánster",
-      "rank": 8500,
+      "rank": 22588,
       "polysemous": false,
       "top_translation": "alternative form of gángster",
       "top_pos": "NOUN",
@@ -266817,7 +266741,7 @@
     },
     "ilógico": {
       "id": "w_ilógico",
-      "rank": 8500,
+      "rank": 30246,
       "polysemous": false,
       "top_translation": "illogical",
       "top_pos": "ADJ",
@@ -266830,7 +266754,7 @@
     },
     "culito": {
       "id": "w_culito",
-      "rank": 8500,
+      "rank": 21818,
       "polysemous": true,
       "top_translation": "diminutive of culo",
       "top_pos": "NOUN",
@@ -266847,7 +266771,7 @@
     },
     "piquete": {
       "id": "w_piquete",
-      "rank": 8500,
+      "rank": 35617,
       "polysemous": true,
       "top_translation": "prick (in the skin)",
       "top_pos": "NOUN",
@@ -266868,7 +266792,6 @@
     },
     "entramo": {
       "id": "w_entramo",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to make a framework for (first-person singular present indicative of entramar)",
       "top_pos": "VERB",
@@ -266884,7 +266807,7 @@
     },
     "balada": {
       "id": "w_balada",
-      "rank": 8500,
+      "rank": 27559,
       "polysemous": true,
       "top_translation": "ballad",
       "top_pos": "NOUN",
@@ -266901,7 +266824,7 @@
     },
     "ponértelo": {
       "id": "w_ponértelo",
-      "rank": 8500,
+      "rank": 29368,
       "polysemous": false,
       "top_translation": "infinitive of poner combined with indirect object te and direct object lo",
       "top_pos": "VERB",
@@ -266914,7 +266837,7 @@
     },
     "malla": {
       "id": "w_malla",
-      "rank": 8500,
+      "rank": 23191,
       "polysemous": false,
       "top_translation": "synonym of enmallar (inflection of mallar:)",
       "top_pos": "VERB",
@@ -266930,7 +266853,6 @@
     },
     "bacano": {
       "id": "w_bacano",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "cool; sweet; wicked",
       "top_pos": "ADJ",
@@ -266943,7 +266865,6 @@
     },
     "expósito": {
       "id": "w_expósito",
-      "rank": 8500,
       "polysemous": true,
       "top_translation": "abandoned at birth",
       "top_pos": "ADJ",
@@ -266960,7 +266881,6 @@
     },
     "dize": {
       "id": "w_dize",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "archaic spelling of dice",
       "top_pos": "VERB",
@@ -266973,7 +266893,7 @@
     },
     "himnos": {
       "id": "w_himnos",
-      "rank": 8500,
+      "rank": 28791,
       "polysemous": false,
       "top_translation": "plural of himno",
       "top_pos": "NOUN",
@@ -266986,7 +266906,7 @@
     },
     "timidez": {
       "id": "w_timidez",
-      "rank": 8500,
+      "rank": 27177,
       "polysemous": false,
       "top_translation": "shyness",
       "top_pos": "NOUN",
@@ -266999,7 +266919,6 @@
     },
     "chiquitita": {
       "id": "w_chiquitita",
-      "rank": 8500,
       "polysemous": true,
       "top_translation": "female equivalent of chiquitito",
       "top_pos": "NOUN",
@@ -267016,7 +266935,7 @@
     },
     "tony": {
       "id": "w_tony",
-      "rank": 8500,
+      "rank": 1345,
       "polysemous": false,
       "top_translation": "circus clown",
       "top_pos": "NOUN",
@@ -267029,7 +266948,7 @@
     },
     "desleal": {
       "id": "w_desleal",
-      "rank": 8500,
+      "rank": 26586,
       "polysemous": false,
       "top_translation": "not adhering to the rules of propriety, dishonest, unfair, disloyal, not true",
       "top_pos": "ADJ",
@@ -267042,7 +266961,6 @@
     },
     "polola": {
       "id": "w_polola",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "female equivalent of pololo",
       "top_pos": "NOUN",
@@ -267055,7 +266973,6 @@
     },
     "solitas": {
       "id": "w_solitas",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "feminine plural of solito",
       "top_pos": "ADJ",
@@ -267068,7 +266985,6 @@
     },
     "pelito": {
       "id": "w_pelito",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "diminutive of pelo",
       "top_pos": "NOUN",
@@ -267081,7 +266997,6 @@
     },
     "perreando": {
       "id": "w_perreando",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to deceive (gerund of perrear)",
       "top_pos": "VERB",
@@ -267097,7 +267012,6 @@
     },
     "perreo": {
       "id": "w_perreo",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to deceive (first-person singular present indicative of perrear)",
       "top_pos": "VERB",
@@ -267113,7 +267027,6 @@
     },
     "cerquita": {
       "id": "w_cerquita",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "diminutive of cerca: very near",
       "top_pos": "ADV",
@@ -267126,7 +267039,6 @@
     },
     "pasate": {
       "id": "w_pasate",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to happen (second-person singular voseo imperative of pasar combined with te)",
       "top_pos": "VERB",
@@ -267142,7 +267054,7 @@
     },
     "coqueta": {
       "id": "w_coqueta",
-      "rank": 8500,
+      "rank": 29611,
       "polysemous": true,
       "top_translation": "female equivalent of coqueto",
       "top_pos": "NOUN",
@@ -267163,7 +267075,6 @@
     },
     "explícitos": {
       "id": "w_explícitos",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "masculine plural of explícito",
       "top_pos": "ADJ",
@@ -267176,7 +267087,7 @@
     },
     "maleante": {
       "id": "w_maleante",
-      "rank": 8500,
+      "rank": 44067,
       "polysemous": true,
       "top_translation": "malicious",
       "top_pos": "ADJ",
@@ -267197,7 +267108,7 @@
     },
     "frenesí": {
       "id": "w_frenesí",
-      "rank": 8500,
+      "rank": 28134,
       "polysemous": false,
       "top_translation": "frenzy (state of wild activity or panic)",
       "top_pos": "NOUN",
@@ -267210,7 +267121,6 @@
     },
     "ojito": {
       "id": "w_ojito",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "diminutive of ojo",
       "top_pos": "NOUN",
@@ -267223,7 +267133,6 @@
     },
     "manito": {
       "id": "w_manito",
-      "rank": 8500,
       "polysemous": true,
       "top_translation": "diminutive of mano (“hand”)",
       "top_pos": "NOUN",
@@ -267240,7 +267149,7 @@
     },
     "atadura": {
       "id": "w_atadura",
-      "rank": 8500,
+      "rank": 49553,
       "polysemous": true,
       "top_translation": "fastening, binding, tie, tying up, bondage, attachment",
       "top_pos": "NOUN",
@@ -267261,7 +267170,6 @@
     },
     "hijueputa": {
       "id": "w_hijueputa",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "alternative form of hijo de puta",
       "top_pos": "NOUN",
@@ -267274,7 +267182,6 @@
     },
     "endulza": {
       "id": "w_endulza",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to sweeten (make sweeter) (inflection of endulzar:)",
       "top_pos": "VERB",
@@ -267290,7 +267197,6 @@
     },
     "tatúo": {
       "id": "w_tatúo",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to tattoo (first-person singular present indicative of tatuar)",
       "top_pos": "VERB",
@@ -267306,7 +267212,6 @@
     },
     "jeje": {
       "id": "w_jeje",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "hehe (imitating laughter)",
       "top_pos": "INTJ",
@@ -267319,7 +267224,7 @@
     },
     "loquito": {
       "id": "w_loquito",
-      "rank": 8500,
+      "rank": 43507,
       "polysemous": true,
       "top_translation": "diminutive of loco",
       "top_pos": "ADJ",
@@ -267336,7 +267241,7 @@
     },
     "capricornio": {
       "id": "w_capricornio",
-      "rank": 8500,
+      "rank": 34526,
       "polysemous": false,
       "top_translation": "Capricorn",
       "top_pos": "ADJ",
@@ -267349,7 +267254,7 @@
     },
     "copita": {
       "id": "w_copita",
-      "rank": 8500,
+      "rank": 23309,
       "polysemous": false,
       "top_translation": "diminutive of copa, little glass",
       "top_pos": "NOUN",
@@ -267362,7 +267267,6 @@
     },
     "lleca": {
       "id": "w_lleca",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "street",
       "top_pos": "NOUN",
@@ -267375,7 +267279,6 @@
     },
     "rastafari": {
       "id": "w_rastafari",
-      "rank": 8500,
       "polysemous": true,
       "top_translation": "Rastafarian",
       "top_pos": "ADJ",
@@ -267392,7 +267295,6 @@
     },
     "pucho": {
       "id": "w_pucho",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to push (first-person singular present indicative of puchar)",
       "top_pos": "VERB",
@@ -267408,7 +267310,6 @@
     },
     "culote": {
       "id": "w_culote",
-      "rank": 8500,
       "polysemous": true,
       "top_translation": "culottes",
       "top_pos": "NOUN",
@@ -267429,7 +267330,6 @@
     },
     "hipnotizada": {
       "id": "w_hipnotizada",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "feminine singular of hipnotizado",
       "top_pos": "VERB",
@@ -267442,7 +267342,6 @@
     },
     "empalagando": {
       "id": "w_empalagando",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to sicken (cause to feel sick) (gerund of empalagar)",
       "top_pos": "VERB",
@@ -267458,7 +267357,7 @@
     },
     "yankee": {
       "id": "w_yankee",
-      "rank": 8500,
+      "rank": 21501,
       "polysemous": true,
       "top_translation": "alternative spelling of yanqui",
       "top_pos": "ADJ",
@@ -267475,7 +267374,6 @@
     },
     "varear": {
       "id": "w_varear",
-      "rank": 8500,
       "polysemous": true,
       "top_translation": "to hit with a pole",
       "top_pos": "VERB",
@@ -267496,7 +267394,7 @@
     },
     "blanquita": {
       "id": "w_blanquita",
-      "rank": 8500,
+      "rank": 48406,
       "polysemous": false,
       "top_translation": "feminine singular of blanquito",
       "top_pos": "ADJ",
@@ -267509,7 +267407,6 @@
     },
     "hijueputas": {
       "id": "w_hijueputas",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "plural of hijueputa",
       "top_pos": "NOUN",
@@ -267522,7 +267419,7 @@
     },
     "palomo": {
       "id": "w_palomo",
-      "rank": 8500,
+      "rank": 21557,
       "polysemous": true,
       "top_translation": "male dove, male pigeon, cock pigeon",
       "top_pos": "NOUN",
@@ -267539,7 +267436,6 @@
     },
     "bellaca": {
       "id": "w_bellaca",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "female equivalent of bellaco",
       "top_pos": "NOUN",
@@ -267552,7 +267448,6 @@
     },
     "tetilla": {
       "id": "w_tetilla",
-      "rank": 8500,
       "polysemous": true,
       "top_translation": "diminutive of teta; small breast",
       "top_pos": "NOUN",
@@ -267569,7 +267464,6 @@
     },
     "pepero": {
       "id": "w_pepero",
-      "rank": 8500,
       "polysemous": true,
       "top_translation": "of the Partido Popular (a Spanish political party)",
       "top_pos": "ADJ",
@@ -267590,7 +267484,6 @@
     },
     "cansá": {
       "id": "w_cansá",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to tire (second-person singular voseo imperative of cansar)",
       "top_pos": "VERB",
@@ -267606,7 +267499,6 @@
     },
     "jugá": {
       "id": "w_jugá",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to play (second-person singular voseo imperative of jugar)",
       "top_pos": "VERB",
@@ -267622,7 +267514,6 @@
     },
     "mojá": {
       "id": "w_mojá",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to make wet, to wet (second-person singular voseo imperative of mojar)",
       "top_pos": "VERB",
@@ -267638,7 +267529,6 @@
     },
     "rodeá": {
       "id": "w_rodeá",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to round up (second-person singular voseo imperative of rodear)",
       "top_pos": "VERB",
@@ -267654,7 +267544,6 @@
     },
     "reggaetón": {
       "id": "w_reggaetón",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "alternative spelling of reggaeton",
       "top_pos": "NOUN",
@@ -267667,7 +267556,7 @@
     },
     "compararse": {
       "id": "w_compararse",
-      "rank": 8500,
+      "rank": 35418,
       "polysemous": false,
       "top_translation": "to compare (infinitive of comparar combined with se)",
       "top_pos": "VERB",
@@ -267683,7 +267572,6 @@
     },
     "inconforme": {
       "id": "w_inconforme",
-      "rank": 8500,
       "polysemous": true,
       "top_translation": "rebellious, nonconformist",
       "top_pos": "ADJ",
@@ -267704,7 +267592,6 @@
     },
     "puntazo": {
       "id": "w_puntazo",
-      "rank": 8500,
       "polysemous": true,
       "top_translation": "injury caused by a sharp pointed object",
       "top_pos": "NOUN",
@@ -267725,7 +267612,7 @@
     },
     "tírate": {
       "id": "w_tírate",
-      "rank": 8500,
+      "rank": 23603,
       "polysemous": false,
       "top_translation": "to throw (second-person singular imperative of tirar combined with te)",
       "top_pos": "VERB",
@@ -267741,7 +267628,6 @@
     },
     "dembow": {
       "id": "w_dembow",
-      "rank": 8500,
       "polysemous": true,
       "top_translation": "a rhythmic Caribbean music genre, akin to dancehall",
       "top_pos": "NOUN",
@@ -267758,7 +267644,6 @@
     },
     "sicariato": {
       "id": "w_sicariato",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "the hiring of a hitman to kill someone",
       "top_pos": "NOUN",
@@ -267771,7 +267656,6 @@
     },
     "chamaquito": {
       "id": "w_chamaquito",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "kid, guy, kiddo",
       "top_pos": "NOUN",
@@ -267784,7 +267668,7 @@
     },
     "muévelo": {
       "id": "w_muévelo",
-      "rank": 8500,
+      "rank": 20699,
       "polysemous": false,
       "top_translation": "to move (second-person singular imperative of mover combined with lo)",
       "top_pos": "VERB",
@@ -267800,7 +267684,7 @@
     },
     "poniéndome": {
       "id": "w_poniéndome",
-      "rank": 8500,
+      "rank": 23623,
       "polysemous": false,
       "top_translation": "to put (gerund of poner combined with me)",
       "top_pos": "VERB",
@@ -267816,7 +267700,6 @@
     },
     "enviciaste": {
       "id": "w_enviciaste",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to corrupt (second-person singular preterite indicative of enviciar)",
       "top_pos": "VERB",
@@ -267832,7 +267715,6 @@
     },
     "tarjetero": {
       "id": "w_tarjetero",
-      "rank": 8500,
       "polysemous": true,
       "top_translation": "card-operated",
       "top_pos": "ADJ",
@@ -267849,7 +267731,6 @@
     },
     "orillita": {
       "id": "w_orillita",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "diminutive of orilla",
       "top_pos": "NOUN",
@@ -267862,7 +267743,6 @@
     },
     "tamos": {
       "id": "w_tamos",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "plural of tamo",
       "top_pos": "NOUN",
@@ -267875,7 +267755,6 @@
     },
     "secarla": {
       "id": "w_secarla",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to dry (infinitive of secar combined with la)",
       "top_pos": "VERB",
@@ -267891,7 +267770,7 @@
     },
     "maría": {
       "id": "w_maría",
-      "rank": 8500,
+      "rank": 1571,
       "polysemous": true,
       "top_translation": "magpie (bird)",
       "top_pos": "NOUN",
@@ -267912,7 +267791,7 @@
     },
     "fallarle": {
       "id": "w_fallarle",
-      "rank": 8500,
+      "rank": 47902,
       "polysemous": false,
       "top_translation": "to fail (infinitive of fallar combined with le)",
       "top_pos": "VERB",
@@ -267928,7 +267807,6 @@
     },
     "viniéndote": {
       "id": "w_viniéndote",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to come (gerund of venir combined with te)",
       "top_pos": "VERB",
@@ -267944,7 +267822,6 @@
     },
     "botarla": {
       "id": "w_botarla",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to bounce (infinitive of botar combined with la)",
       "top_pos": "VERB",
@@ -267960,7 +267837,6 @@
     },
     "tocándote": {
       "id": "w_tocándote",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to play (gerund of tocar combined with te)",
       "top_pos": "VERB",
@@ -267976,7 +267852,7 @@
     },
     "tomándome": {
       "id": "w_tomándome",
-      "rank": 8500,
+      "rank": 28435,
       "polysemous": false,
       "top_translation": "to take (gerund of tomar combined with me)",
       "top_pos": "VERB",
@@ -267992,7 +267868,6 @@
     },
     "extraerme": {
       "id": "w_extraerme",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to extract (infinitive of extraer combined with me)",
       "top_pos": "VERB",
@@ -268008,7 +267883,7 @@
     },
     "pelearnos": {
       "id": "w_pelearnos",
-      "rank": 8500,
+      "rank": 30831,
       "polysemous": false,
       "top_translation": "to fight (infinitive of pelear combined with nos)",
       "top_pos": "VERB",
@@ -268024,7 +267899,6 @@
     },
     "mojarte": {
       "id": "w_mojarte",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to make wet, to wet (infinitive of mojar combined with te)",
       "top_pos": "VERB",
@@ -268040,7 +267914,6 @@
     },
     "conquistándome": {
       "id": "w_conquistándome",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to conquer (gerund of conquistar combined with me)",
       "top_pos": "VERB",
@@ -268056,7 +267929,6 @@
     },
     "conquistarte": {
       "id": "w_conquistarte",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to conquer (infinitive of conquistar combined with te)",
       "top_pos": "VERB",
@@ -268072,7 +267944,6 @@
     },
     "calentándote": {
       "id": "w_calentándote",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to heat, to warm up (cause an increase in temperature) (gerund of calentar combined with te)",
       "top_pos": "VERB",
@@ -268088,7 +267959,6 @@
     },
     "jalarte": {
       "id": "w_jalarte",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to pull (infinitive of jalar combined with te)",
       "top_pos": "VERB",
@@ -268104,7 +267974,6 @@
     },
     "desprenderme": {
       "id": "w_desprenderme",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to detach (infinitive of desprender combined with me)",
       "top_pos": "VERB",
@@ -268120,7 +267989,6 @@
     },
     "móntate": {
       "id": "w_móntate",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to ride (second-person singular imperative of montar combined with te)",
       "top_pos": "VERB",
@@ -268136,7 +268004,6 @@
     },
     "pachá": {
       "id": "w_pachá",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "pasha",
       "top_pos": "NOUN",
@@ -268149,7 +268016,6 @@
     },
     "pistolón": {
       "id": "w_pistolón",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "musket",
       "top_pos": "NOUN",
@@ -268162,7 +268028,7 @@
     },
     "entonce": {
       "id": "w_entonce",
-      "rank": 8500,
+      "rank": 41345,
       "polysemous": false,
       "top_translation": "obsolete form of entonces",
       "top_pos": "ADV",
@@ -268175,7 +268041,6 @@
     },
     "ricota": {
       "id": "w_ricota",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "ricotta",
       "top_pos": "NOUN",
@@ -268188,7 +268053,6 @@
     },
     "devorándonos": {
       "id": "w_devorándonos",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to devour (gerund of devorar combined with nos)",
       "top_pos": "VERB",
@@ -268204,7 +268068,6 @@
     },
     "comoquiera": {
       "id": "w_comoquiera",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "anyhow; however; any which way",
       "top_pos": "ADV",
@@ -268217,7 +268080,6 @@
     },
     "setear": {
       "id": "w_setear",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to set (put as a setting)",
       "top_pos": "VERB",
@@ -268230,7 +268092,6 @@
     },
     "explotándome": {
       "id": "w_explotándome",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to explode (gerund of explotar combined with me)",
       "top_pos": "VERB",
@@ -268246,7 +268107,6 @@
     },
     "mahón": {
       "id": "w_mahón",
-      "rank": 8500,
       "polysemous": true,
       "top_translation": "a type of cheese from Mahón, Minorca (Catalan maó)",
       "top_pos": "NOUN",
@@ -268263,7 +268123,6 @@
     },
     "remojarte": {
       "id": "w_remojarte",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to steep, soak (infinitive of remojar combined with te)",
       "top_pos": "VERB",
@@ -268279,7 +268138,6 @@
     },
     "misione": {
       "id": "w_misione",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to mission, do missionary work (inflection of misionar:)",
       "top_pos": "VERB",
@@ -268295,7 +268153,6 @@
     },
     "diciéndoselo": {
       "id": "w_diciéndoselo",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "gerund of decir combined with indirect object le/les and direct object lo",
       "top_pos": "VERB",
@@ -268308,7 +268165,7 @@
     },
     "prepa": {
       "id": "w_prepa",
-      "rank": 8500,
+      "rank": 49151,
       "polysemous": true,
       "top_translation": "clipping of preparatoria (“high school”)",
       "top_pos": "NOUN",
@@ -268325,7 +268182,7 @@
     },
     "futón": {
       "id": "w_futón",
-      "rank": 8500,
+      "rank": 45407,
       "polysemous": false,
       "top_translation": "futon",
       "top_pos": "NOUN",
@@ -268338,7 +268195,6 @@
     },
     "picheo": {
       "id": "w_picheo",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "pitch (throw)",
       "top_pos": "NOUN",
@@ -268351,7 +268207,6 @@
     },
     "joseando": {
       "id": "w_joseando",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to hustle (work hard) (gerund of josear)",
       "top_pos": "VERB",
@@ -268367,7 +268222,7 @@
     },
     "hacértelo": {
       "id": "w_hacértelo",
-      "rank": 8500,
+      "rank": 30050,
       "polysemous": false,
       "top_translation": "infinitive of hacer combined with indirect object te and direct object lo",
       "top_pos": "VERB",
@@ -268380,7 +268235,6 @@
     },
     "mujerón": {
       "id": "w_mujerón",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "augmentative of mujer",
       "top_pos": "NOUN",
@@ -268393,7 +268247,6 @@
     },
     "hueá": {
       "id": "w_hueá",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "alternative spelling of huevada",
       "top_pos": "NOUN",
@@ -268406,7 +268259,6 @@
     },
     "chingarte": {
       "id": "w_chingarte",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "chingar (infinitive of chingar combined with te)",
       "top_pos": "VERB",
@@ -268422,7 +268274,7 @@
     },
     "entiéndelo": {
       "id": "w_entiéndelo",
-      "rank": 8500,
+      "rank": 23502,
       "polysemous": false,
       "top_translation": "to understand (second-person singular imperative of entender combined with lo)",
       "top_pos": "VERB",
@@ -268438,7 +268290,6 @@
     },
     "textearte": {
       "id": "w_textearte",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to text or communicate through a written form using a cell phone (infinitive of textear combined with te)",
       "top_pos": "VERB",
@@ -268454,7 +268305,6 @@
     },
     "devórame": {
       "id": "w_devórame",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to devour (second-person singular imperative of devorar combined with me)",
       "top_pos": "VERB",
@@ -268470,7 +268320,7 @@
     },
     "concédeme": {
       "id": "w_concédeme",
-      "rank": 8500,
+      "rank": 36460,
       "polysemous": false,
       "top_translation": "to grant, to concede, to admit, to bestow (second-person singular imperative of conceder combined with me)",
       "top_pos": "VERB",
@@ -268486,7 +268336,6 @@
     },
     "jeepeta": {
       "id": "w_jeepeta",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "alternative spelling of yipeta",
       "top_pos": "NOUN",
@@ -268499,7 +268348,6 @@
     },
     "destendida": {
       "id": "w_destendida",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "feminine singular of destendido",
       "top_pos": "VERB",
@@ -268512,7 +268360,6 @@
     },
     "enchulo": {
       "id": "w_enchulo",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "only used in me enchulo, first-person singular present indicative of enchularse",
       "top_pos": "VERB",
@@ -268525,7 +268372,6 @@
     },
     "tás": {
       "id": "w_tás",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "apheretic form of estás",
       "top_pos": "VERB",
@@ -268538,7 +268384,6 @@
     },
     "alfombrita": {
       "id": "w_alfombrita",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "diminutive of alfombra",
       "top_pos": "NOUN",
@@ -268551,7 +268396,6 @@
     },
     "terio": {
       "id": "w_terio",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "therian",
       "top_pos": "NOUN",
@@ -268564,7 +268408,6 @@
     },
     "regálame": {
       "id": "w_regálame",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to give as a present, to gift (second-person singular imperative of regalar combined with me)",
       "top_pos": "VERB",
@@ -268580,7 +268423,6 @@
     },
     "carmona": {
       "id": "w_carmona",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "pond water-crowfoot, Ranunculus peltatus",
       "top_pos": "NOUN",
@@ -268593,7 +268435,7 @@
     },
     "tírame": {
       "id": "w_tírame",
-      "rank": 8500,
+      "rank": 33641,
       "polysemous": false,
       "top_translation": "to throw (second-person singular imperative of tirar combined with me)",
       "top_pos": "VERB",
@@ -268609,7 +268451,6 @@
     },
     "jangueando": {
       "id": "w_jangueando",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "alternative form of hanguear (gerund of janguear)",
       "top_pos": "VERB",
@@ -268625,7 +268466,6 @@
     },
     "mientra": {
       "id": "w_mientra",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "obsolete spelling of mientras",
       "top_pos": "ADV",
@@ -268638,7 +268478,6 @@
     },
     "pichear": {
       "id": "w_pichear",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "to ignore",
       "top_pos": "VERB",
@@ -268651,7 +268490,6 @@
     },
     "pelúa": {
       "id": "w_pelúa",
-      "rank": 8500,
       "polysemous": false,
       "top_translation": "feminine singular of pelú",
       "top_pos": "ADJ",
@@ -268664,7 +268502,6 @@
     },
     "calentura": {
       "id": "w_calentura",
-      "rank": 7500,
       "polysemous": true,
       "top_translation": "heat, horniness, fever",
       "top_pos": "NOUN",
@@ -268688,7 +268525,6 @@
     },
     "repitamos": {
       "id": "w_repitamos",
-      "rank": 5108,
       "polysemous": false,
       "top_translation": "let's repeat (first-person plural present subjunctive / imperative of repetir)",
       "top_pos": "VERB",

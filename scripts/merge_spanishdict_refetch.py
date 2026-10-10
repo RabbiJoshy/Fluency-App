@@ -71,7 +71,9 @@ def main() -> int:
             # relation was lost, and are merged exactly as before.
             possible = [
                 ({"headword": item.get("headword") or item.get("result"),
-                  "heuristic": item.get("heuristic") or ""}
+                  "heuristic": item.get("heuristic") or "",
+                  "inflection_type": item.get("inflection_type"),
+                  "word_source": item.get("word_source")}
                  if isinstance(item, dict) else {"result": item})
                 for item in row.get("possible_results") or []
             ]
@@ -84,6 +86,7 @@ def main() -> int:
                 "dictionary_analyses": [
                     {"headword": a.get("headword") or row["word"],
                      "senses": [{"pos": a.get("part") or "", "translation": a.get("translation") or "",
+                                 "part_of_speech_label": a.get("part_of_speech_label") or a.get("part") or "",
                                  "source": "spanishdict", "headword": a.get("headword") or row["word"],
                                  "context": a.get("context") or "",
                                  "regions": a.get("regions") or []}]}

@@ -768,7 +768,7 @@ loadConfig().then(async () => {
     learningContextModal?.addEventListener('click', event => {
         if (event.target === event.currentTarget) closeLearningContext();
     });
-    document.getElementById('learningContextProgressBtn')?.addEventListener('click', () => {
+    document.getElementById('topBarProgressBtn')?.addEventListener('click', () => {
         closeLearningContext();
         showTotalStatsModal();
     });
@@ -791,6 +791,13 @@ loadConfig().then(async () => {
     document.getElementById('learningContextVerbsBtn')?.addEventListener('click', event => {
         const href = event.currentTarget.dataset.href;
         if (href) window.location.href = href;
+    });
+    document.getElementById('learningContextLyricsViewBtn')?.addEventListener('click', event => {
+        const href = event.currentTarget.dataset.href || 'lyrics-view/';
+        window.location.href = href;
+    });
+    document.getElementById('artistSourceLyricsViewBtn')?.addEventListener('click', () => {
+        window.location.href = 'lyrics-view/';
     });
     document.getElementById('learningContextSongsBtn')?.addEventListener('click', () => {
         closeLearningContext();

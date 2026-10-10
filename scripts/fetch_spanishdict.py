@@ -109,6 +109,7 @@ def rows_from(component: dict) -> tuple[list[dict], list[str], str]:
                         "headword": (sense.get("subheadword") or "").strip(),
                         "translation": (tr.get("translation") or "").strip(),
                         "part": part,
+                        "part_of_speech_label": part,
                         "context": (sense.get("context") or "").strip(),
                         "regions": [r.get("nameEn", "") for r in
                                     (sense.get("regions") or []) + (tr.get("regions") or [])
@@ -124,7 +125,8 @@ def rows_from(component: dict) -> tuple[list[dict], list[str], str]:
         head = source if heuristic in {"conjugation", "inflection"} and source else (result or source)
         if head:
             possible.append({"headword": head, "heuristic": heuristic,
-                             "result": result, "word_source": source})
+                             "result": result, "word_source": source,
+                             "inflection_type": item.get("inflectionType") or item.get("inflection_type")})
     return rows, possible, lang
 
 

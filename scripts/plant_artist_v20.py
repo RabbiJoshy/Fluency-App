@@ -217,6 +217,8 @@ def finish_card(orig_card: dict[str, Any], resolved: dict[str, Any], conj_rev: d
     inflect_as = r.expanded_to or resolved["inflect_as"]
     card = {**orig_card, "word_class": r.word_class, "resolution": resolution_record(menu),
             "headwords": r.headword_names}
+    if menu.noun_merge is not None:
+        card["noun_merge"] = menu.noun_merge
     if r.strategy == ENTITY:
         card.update(extra_category="proper_noun", is_propernoun=True)
     if not resolved["senses"]:

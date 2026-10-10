@@ -1,6 +1,7 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
 import './state.js?v=20260825ak';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=20260927pa';
 import { readFastTrack } from './fast-track-preferences.js?v=20260920a';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
@@ -508,8 +509,6 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
                 ? 'Everyday speech'
                 : 'Choose…';
     const flag = languageConfig.flag || LEARNING_CONTEXT_FLAGS[selectedLanguage] || selectedLanguage.slice(0, 2).toUpperCase();
-    const coverage = Number(snapshot?.percentage || 0);
-    const coverageLabel = snapshot?.label || (activeArtist ? 'Lyrics understood' : 'Speech understood');
 
     button.hidden = false;
     const flagEl = document.getElementById('learningContextFlag');
@@ -536,8 +535,14 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
         verbsRow.hidden = !drillHref;
         verbsRow.dataset.href = drillHref || '';
     }
+    const lyricsViewRow = document.getElementById('learningContextLyricsViewBtn');
+    if (lyricsViewRow) {
+        const lyricsActive = Boolean(activeArtist) || modeKey === 'lyrics' || selectedLanguage === 'spanish';
+        lyricsViewRow.hidden = !lyricsActive;
+        lyricsViewRow.dataset.href = 'lyrics-view/';
+    }
     // No vocabulary chosen yet means no deck to measure.
-    const progressButton = document.getElementById('learningContextProgressBtn');
+    const progressButton = document.getElementById('topBarProgressBtn');
     if (progressButton) progressButton.hidden = !modeKey;
     if (activeArtist) {
         const artistName = activeArtist.name || 'Artist';
@@ -559,9 +564,6 @@ function updateLearningContextUI(snapshot = window.currentCoverageSnapshot) {
         artistRow.hidden = true;
         songsRow.hidden = true;
     }
-    document.getElementById('learningContextProgressLabel').textContent = coverageLabel;
-    document.getElementById('learningContextProgressValue').textContent = `${coverage.toFixed(1)}%`;
-    document.getElementById('learningContextProgressFill').style.width = `${Math.min(coverage, 100)}%`;
 }
 
 function mergeStandardProgressIntoLanguageStep() {
@@ -1133,16 +1135,21 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
         lastAvailable = btn;
         let seenCount = 0;
         let reviewCount = 0;
+        let estimatedCount = 0;
         for (let w = 0; w < wordsInLevel.length; w++) {
             const st = getSetupLearningState(wordsInLevel[w], { seenLemmas, estimatedIds, estimate });
             if (st?.seen) seenCount++;
             if (st?.needsReview) reviewCount++;
+            if (st?.estimated) estimatedCount++;
         }
         const completion = Math.round(100 * seenCount / wordsInLevel.length);
         const hasUnseen = seenCount < wordsInLevel.length;
         const isPartial = seenCount > 0 && hasUnseen;
         const isComplete = seenCount > 0 && !hasUnseen;
         const hasProgress = seenCount > 0;
+        const autoCompleted = isComplete && estimatedCount > 0;
+        btn.classList.toggle('is-auto-complete', autoCompleted);
+        btn.dataset.autoCompleted = String(autoCompleted);
         btn.dataset.progressPct = String(completion);
         btn.dataset.reviewCount = String(reviewCount);
         btn.classList.toggle('has-progress', hasProgress);
@@ -1152,6 +1159,8 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
 
         const visibleSegment = sliderSegmentMap.get(String(buttonIndex));
         if (visibleSegment) {
+            visibleSegment.classList.toggle('is-auto-complete', autoCompleted);
+            visibleSegment.dataset.autoCompleted = String(autoCompleted);
             visibleSegment.dataset.progressPct = String(completion);
             visibleSegment.classList.toggle('has-progress', hasProgress);
             visibleSegment.classList.toggle('has-partial-progress', isPartial);
@@ -1159,7 +1168,7 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
             visibleSegment.style.setProperty('--level-progress', `${completion}%`);
             visibleSegment.setAttribute(
                 'aria-label',
-                `Level ${buttonIndex + 1}, ${completion}% complete`
+                autoCompleted ? `Level ${buttonIndex + 1}, AUTO` : `Level ${buttonIndex + 1}, ${completion}% complete`
             );
         }
         if (!firstIncomplete && hasUnseen) firstIncomplete = btn;
@@ -1338,18 +1347,16 @@ async function renderLevelSelector(language, { preferActionable = false } = {}) 
         container.innerHTML = `
             <div class="level-slider-wrap">
                 <div class="lsw-readout">
-                    <span class="lsw-rank"><strong id="lswLevelVal">Level ${initialIdx + 1}</strong></span>
                     <span class="lsw-range">Words <strong id="lswRankVal">${initialMetrics.start.toLocaleString()}–${initialMetrics.end.toLocaleString()}</strong> <span class="lsw-deck-total" id="lswDeckTotal" aria-label="${initialDeckTotal.toLocaleString()} cards in deck">/ ${initialDeckTotal.toLocaleString()}</span></span>
                 </div>
                 <div id="lswSlider" class="lsw-segments lsw-scrubber" role="radiogroup" aria-label="Level scrubber" data-value="${initialIdx}">
                     ${percentageRanges.map((lv, i) => {
                         const segLabel = `${i + 1}`;
-                        return `<button type="button" class="lsw-seg${i <= initialIdx ? ' filled' : ''}${i === initialIdx ? ' selected' : ''}" data-i="${i}" style="--dist:${Math.abs(i - initialIdx)}" aria-label="Level ${i + 1}" role="radio" aria-checked="${i === initialIdx}"><span class="lsw-seg-label">${segLabel}</span></button>`;
+                        return `<button type="button" class="lsw-seg${i <= initialIdx ? ' filled' : ''}${i === initialIdx ? ' selected' : ''}" data-i="${i}" style="--dist:${Math.abs(i - initialIdx)}" aria-label="Level ${i + 1}" role="radio" aria-checked="${i === initialIdx}"><span class="lsw-seg-label"><span class="lsw-seg-eyebrow">Level</span><span class="lsw-seg-num">${segLabel}</span></span></button>`;
                     }).join('')}
                 </div>
                 <div class="lsw-ticks lsw-ticks--hidden">${ticksHTML}</div>
                 <div class="lsw-examples" id="lswExamples">&nbsp;</div>
-                <span class="lsw-coverage"${initialCoverage ? '' : ' hidden'}>~<strong id="lswCovVal">${initialCoverage}</strong> ${coverageType}</span>
             </div>
             <div class="level-selector-buttons" style="display:none">${buttonsHTML}</div>
         `;
@@ -1600,6 +1607,18 @@ const STABLE_SET_SLOT_COUNT = 25;
 // Boundaries always use the form-level corpus frequency baseline. Merge
 // Lemmas anchors a merged card to its highest-frequency form, and every
 // optional exclusion simply leaves a hole inside the fixed region.
+// The estimator and picker share these exact half-open, fixed baseline slots.
+function buildStableSetRanges(startRank, endRank, rankBasis = 'stable') {
+    if (!Number.isFinite(startRank) || !Number.isFinite(endRank) || endRank <= startRank) return [];
+    return Array.from({ length: Math.ceil((endRank - startRank) / STABLE_SET_SLOT_COUNT) }, (_, index) => ({
+        setNumber: index + 1,
+        startRank: startRank + index * STABLE_SET_SLOT_COUNT,
+        endRank: Math.min(startRank + (index + 1) * STABLE_SET_SLOT_COUNT, endRank),
+        rankBasis
+    }));
+}
+window.buildStableSetRanges = buildStableSetRanges;
+
 function computeSmartLevelRanges(filteredVocab) {
     if (!filteredVocab || filteredVocab.length === 0) return [];
     const items = filteredVocab;
@@ -1739,6 +1758,8 @@ function _plainEnglishGloss(item) {
     if (!meaning) return '';
     return meaning.translation.replace(/\([^)]*\)/g, ' ').split(/[,;/]/)[0].replace(/\s+/g, ' ').trim();
 }
+
+window.computeSmartLevelRanges = computeSmartLevelRanges;
 
 function getPreparedSetupVocabulary(language, rawVocab) {
     if (!rawVocab) return null;
@@ -2030,20 +2051,23 @@ function updateLevelSliderReadout(i) {
         const metrics = _levelBandMetrics(lv, _syncSamples);
         rankEl.textContent = `${metrics.start.toLocaleString()}–${metrics.end.toLocaleString()}`;
     }
-    if (covEl) {
-        // Release levels have no threshold of their own; their figure comes
-        // from the shipped corpus shares, and the whole span hides when the
-        // language ships none rather than showing a level id as a percentage.
-        const shipped = lv.threshold == null
-            ? globalThis.levelCoverage?.(_syncSamples, lv.startRank, lv.endRank)
-            : null;
-        const text = lv.threshold != null
-            ? `${(lv.threshold * 100).toFixed(1)}%`
-            : (shipped != null ? `${(shipped * 100).toFixed(1)}%` : '');
-        covEl.textContent = text;
-        const span = covEl.closest('.lsw-coverage');
-        if (span) span.hidden = !text;
-    }
+    const usingReleaseLevels = !activeArtist && !window.playlistLiveActive?.() && Array.isArray(releaseStudyStructure?.levels) && releaseStudyStructure.levels.length > 0;
+    const coverageType = activeArtist
+        ? 'lyrics comprehension'
+        : (window.playlistLiveActive?.()
+            ? 'playlist words'
+            : (globalThis.coverageAvailable?.()
+                && (usingReleaseLevels || ranges[0]?.threshold == null)
+                ? globalThis.coverageLabel()
+                : 'speech comprehension'));
+
+    const shipped = lv.threshold == null
+        ? globalThis.levelCoverage?.(_syncSamples, lv.startRank, lv.endRank)
+        : null;
+    const coveragePct = lv.threshold != null
+        ? `${(lv.threshold * 100).toFixed(1)}%`
+        : (shipped != null ? `${(shipped * 100).toFixed(1)}%` : '');
+    if (covEl) covEl.textContent = coveragePct;
 
     // Patch tick labels too if the cache is warm — keeps the row of
     // "100, 300, 700, 1.5k…" honest about how many cards each snap point
@@ -2077,13 +2101,17 @@ function updateLevelSliderReadout(i) {
 
     const _renderLine = (examplesText) => {
         // Frequency as a full sentence on its own line, then the example
-        // words for this level on a new line underneath (stacked via the
-        // .lsw-examples column layout in CSS).
+        // words with speech coverage directly after them.
         const wordLabel = `${displayedWordCount.toLocaleString()} word${displayedWordCount === 1 ? '' : 's'}`;
         const freqHTML = freqValue !== null
             ? `<div class="lsw-freq-sentence"><strong>${wordLabel}</strong> appear${displayedWordCount === 1 ? 's' : ''} <strong>${freqValue.toLocaleString()}</strong> ${freqUnit}</div>`
             : '';
-        const egHTML = examplesText ? `<div class="lsw-egs">${examplesText}</div>` : '';
+        const covHTML = coveragePct
+            ? `<span class="lsw-coverage-inline"> · ~<strong>${coveragePct}</strong> ${coverageType}</span>`
+            : '';
+        const egHTML = (examplesText || covHTML)
+            ? `<div class="lsw-egs">${examplesText || ''}${covHTML}</div>`
+            : '';
         exEl.innerHTML = freqHTML + egHTML;
     };
     _renderLine('');
@@ -2094,20 +2122,20 @@ function updateLevelSliderReadout(i) {
         // that we've actually loaded the vocab.
         _applyFilteredRankCounts(samples);
         displayedWordCount = _levelBandMetrics(lv, samples).count;
-        // Pick 5 words from the upper portion of this level's range — the
-        // ones that just qualified at this coverage threshold are the most
-        // illustrative of "what you'll be learning here".
+        // Pick 5-8 words from the upper portion of this level's range — in the
+        // target language (e.g. Spanish), not English glosses.
         const rankOf = _levelRankAccessor(lv.rankBasis);
         const start = Math.max(1, Math.floor(lv.startRank + (lv.endRank - lv.startRank) * 0.6));
-        // Examples illustrate individual words, even when the deck includes MWEs.
         const words = samples.filter(s => !/\s/u.test(s.word.trim()));
         const inRange = words.filter(s => rankOf(s) >= start && rankOf(s) < lv.endRank);
         const pick = (inRange.length ? inRange : words.filter(s => rankOf(s) < lv.endRank))
             .slice(-12);
-        // English meanings, not the target-language words. The index ships
-        // without meanings until a card's row shard loads, so fetch the shards
-        // for just these few cards first. Desktop has room for eight; the CSS
-        // hides the last three on a phone.
+
+        const candidates = [];
+        const total = Math.min(12, pick.length);
+        for (let k = 0; k < total; k++) candidates.push(pick[Math.floor(k * pick.length / total)]);
+        const targetWords = candidates.map(sample => sample.word);
+
         const render = labels => {
             const out = [];
             for (const label of labels) if (label && !out.includes(label)) out.push(label);
@@ -2116,23 +2144,7 @@ function updateLevelSliderReadout(i) {
                 ? 'e.g. ' + shown.map((label, k) => `<span class="${k >= 5 ? 'lsw-eg-extra' : 'lsw-eg'}">${k ? ', ' : ''}${String(label).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))}</span>`).join('')
                 : '');
         };
-        const candidates = [];
-        const total = Math.min(12, pick.length);
-        for (let k = 0; k < total; k++) candidates.push(pick[Math.floor(k * pick.length / total)]);
-        const targetWords = candidates.map(sample => sample.word);
-        const seq = ++_levelExamplesSeq;
-        const baseConfig = config.languages[selectedLanguage] || {};
-        const langConfig = activeArtist ? { ...baseConfig, ...activeArtist } : baseConfig;
-        Promise.resolve(window.ensureIndexRowsForRange?.(langConfig, 0, 0, candidates.map(sample => sample.rank)))
-            .catch(() => false)
-            .then(() => {
-                // A newer level was picked while the shards loaded.
-                if (seq !== _levelExamplesSeq) return;
-                const glosses = candidates
-                    .map(sample => _plainEnglishGloss(sample.item))
-                    .filter(gloss => gloss && gloss.length <= 24);
-                render(glosses.length >= 5 ? glosses : targetWords);
-            });
+        render(targetWords);
     });
 }
 
@@ -2292,8 +2304,11 @@ function setupPercentModeButton() {
 }
 
 function setupEstimationModal() {
-    // Close modal
+    // Close modal on X button or backdrop click
     document.getElementById('closeEstimationModal').addEventListener('click', closeEstimationModal);
+    document.getElementById('estimationModal')?.addEventListener('click', event => {
+        if (event.target === event.currentTarget) closeEstimationModal();
+    });
 
     // Start estimation button
     document.getElementById('startEstimationBtn').addEventListener('click', function() {
@@ -2726,7 +2741,8 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     // Sets use fixed baseline slots. Filters can make a set shorter, but
     // never refill it from its neighbour; this preserves membership, progress,
     // and the nearby-rank example neighbourhood across setting changes.
-    const slotCount = Math.max(0, Math.ceil((maxWord - minWord) / STABLE_SET_SLOT_COUNT));
+    const slotRanges = buildStableSetRanges(minWord, maxWord, rankBasis);
+    const slotCount = slotRanges.length;
     const slots = Array.from({ length: slotCount }, () => []);
     for (let i = 0; i < wordsInLevel.length; i++) {
         const item = wordsInLevel[i];
@@ -2747,8 +2763,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
     }
     const ranges = [];
     for (let slotIdx = 0; slotIdx < slotCount; slotIdx++) {
-        const start = minWord + slotIdx * STABLE_SET_SLOT_COUNT;
-        const end = Math.min(start + STABLE_SET_SLOT_COUNT, maxWord);
+        const { startRank: start, endRank: end } = slotRanges[slotIdx];
         const words = slots[slotIdx];
         let seenCount = 0;
         let reviewCount = 0;
@@ -2831,9 +2846,9 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                     data-unseen="${range.unseenCount}" data-review="${range.reviewCount}"
                     style="--set-known-end: ${range.knownPct}%; --set-review-end: ${range.reviewEndPct}%; --set-new-end: ${range.newEndPct}%"
                     role="radio" aria-checked="${index === initialIndex ? 'true' : 'false'}"
-                    aria-label="Set ${index + 1}: ${range.knownCount} known, ${range.reviewCount} to practise, ${range.unseenCount} new"
-                    title="Set ${index + 1} · ${range.knownCount} known · ${range.reviewCount} practice · ${range.unseenCount} new"
-                    ${range.available ? '' : 'disabled'}><span class="set-num">${index + 1}</span><span class="set-ranks">${range.start.toLocaleString()}–${(range.end - 1).toLocaleString()}</span></button>`;
+                    aria-label="${range.start.toLocaleString()} to ${(range.end - 1).toLocaleString()}: ${range.knownCount} known, ${range.reviewCount} to practise, ${range.unseenCount} new"
+                    title="${range.start.toLocaleString()}–${(range.end - 1).toLocaleString()} · ${range.knownCount} known · ${range.reviewCount} practice · ${range.unseenCount} new"
+                    ${range.available ? '' : 'disabled'}><span class="set-ranks">${range.start.toLocaleString()}–${(range.end - 1).toLocaleString()}</span></button>`;
     }).join('');
 
     const levelReviewCount = ranges.reduce((sum, range) => sum + range.reviewCount, 0);
@@ -2913,8 +2928,9 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
             dot.classList.toggle('is-current', selected);
             dot.setAttribute('aria-checked', selected ? 'true' : 'false');
         });
-        // One line: which set, and what is in it. 
-        document.getElementById('studySetCurrentTitle').textContent = `Set ${index + 1}`;
+        // One line: which card range, and what is in it.
+        const rangeLabel = `${range.start.toLocaleString()}–${(range.end - 1).toLocaleString()}`;
+        document.getElementById('studySetCurrentTitle').textContent = rangeLabel;
         // The colours are the legend: each count wears its own swatch.
         document.getElementById('studySetCurrentMeta').innerHTML =
             `<b class="study-set-stat"><i class="is-unseen"></i>${range.unseenCount} New</b>`
@@ -2939,10 +2955,11 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                 `Practise ${range.reviewCount} card${range.reviewCount === 1 ? '' : 's'}`;
             startBtn.dataset.studyMode = 'review';
         } else {
-            startBtn.textContent = `Study Set ${index + 1} again`;
+            startBtn.textContent = `Study ${rangeLabel} again`;
             startBtn.dataset.studyMode = 'all';
         }
         startBtn.dataset.range = range.range;
+        startBtn.dataset.rangeLabel = rangeLabel;
         startBtn.dataset.rankBasis = rankBasis;
         startBtn.dataset.setNumber = String(index + 1);
         startBtn.dataset.levelSetCount = String(ranges.length);
@@ -2963,16 +2980,17 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
 
     document.getElementById('studySetStartBtn').addEventListener('click', async function() {
         const selectedRange = this.dataset.range;
+        const rangeLabel = this.dataset.rangeLabel || selectedRange?.replace('-', '–') || '';
         const loadingMessage = document.getElementById('loadingMessage');
         loadingMessage.style.display = 'block';
-        loadingMessage.textContent = `Loading Set ${this.dataset.setNumber}...`;
+        loadingMessage.textContent = rangeLabel ? `Loading ${rangeLabel}...` : 'Loading...';
         // The overlay already covers the atomic swap into #appContent, so the
         // ring's minimum beat is awaited after the load rather than before it.
         // showDeckLoading falls back to the plain spinner at 0% progress.
         const beat = window.showDeckLoading?.(
             SHOW_SET_PROGRESS_RING ? selectedRangeStats : null,
             {
-                title: `Loading Set ${this.dataset.setNumber}`,
+                title: rangeLabel ? `Loading ${rangeLabel}` : 'Loading...',
                 detail: selectedRangeStats?.seenCount > 0
                     ? 'Picking up where you left off…'
                     : 'Preparing your next cards…',
@@ -2985,6 +3003,7 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
             await window.progressRefreshSettled?.(5000);
             const fromButton = button => ({
                 rankBasis: button.dataset.rankBasis,
+                rangeLabel: button.dataset.rangeLabel,
                 setNumber: Number(button.dataset.setNumber),
                 levelSetCount: Number(button.dataset.levelSetCount),
                 studyMode: button.dataset.studyMode,
@@ -2998,11 +3017,12 @@ async function renderRangeSelector({ landingRowsChecked = 0 } = {}) {
                 await window.refreshSetupAfterProgress?.();
                 const next = document.getElementById('studySetStartBtn');
                 if (next && next.dataset.studyMode === 'new' && next.dataset.range !== selectedRange) {
-                    const note = `Set ${this.dataset.setNumber} is already done. Starting Set ${next.dataset.setNumber}…`;
+                    const nextRangeLabel = next.dataset.rangeLabel || next.dataset.range?.replace('-', '–') || '';
+                    const note = `${rangeLabel} is already done. Starting ${nextRangeLabel}…`; // is already done. Starting Set
                     loadingMessage.textContent = note;
                     const overlayTitle = document.getElementById('appLoadingTitle');
                     const overlayDetail = document.getElementById('appLoadingDetail');
-                    if (overlayTitle) overlayTitle.textContent = `Loading Set ${next.dataset.setNumber}`;
+                    if (overlayTitle) overlayTitle.textContent = `Loading ${nextRangeLabel}`;
                     if (overlayDetail) overlayDetail.textContent = note;
                     await loadVocabularyData(next.dataset.range, fromButton(next));
                 }
@@ -3802,167 +3822,33 @@ function hideSettingsModal() {
 }
 
 async function showTotalStatsModal() {
-    const importButton = document.getElementById('progressImportKnownBtn');
-    if (importButton) importButton.disabled = !currentUser || currentUser.isGuest;
-    const importStatus = document.getElementById('progressDataActionStatus');
-    if (importStatus) importStatus.textContent = importButton?.disabled
-        ? 'Sign in to import known words.' : '';
-    // Update language name in the header
-    const langConfig = config.languages[selectedLanguage];
-    const langName = activeArtist?.name || (langConfig ? langConfig.name : selectedLanguage);
-    document.getElementById('totalStatsLanguage').textContent = langName;
-
-    // Ensure vocabulary index is loaded (needed for comprehension + words understood)
-    if (!cachedVocabularyData && langConfig) {
-        try {
-            const vocab = await fetchActiveVocabularyData(langConfig);
-            vocab.forEach((item, index) => { item.rank = index + 1; });
-            cachedVocabularyData = vocab;
-        } catch (e) {
-            console.warn('Could not load vocab for stats:', e);
-        }
-    }
-
-    // Lazy-load the examples corpus + Spanish ranks needed for the
-    // "Full sentences / Full lyric lines" row. Both files are normally
-    // pulled when the user picks a set; the stats button can be tapped
-    // before that, so fetch them here on demand. Failures are non-fatal —
-    // the row just stays hidden.
-    if (langConfig && langConfig.examplesPath && (
-        !window._cachedExamplesData
-        || window._cachedExamplesDataPath !== langConfig.examplesPath
-    ) && !window.exampleShardsActive?.()) {
-        try {
-            if (window.ensureExamplesForRange) {
-                await window.ensureExamplesForRange(langConfig, 1, 21);
-            } else {
-                const r = await fetch(langConfig.examplesPath);
-                if (r.ok) {
-                    const examples = await r.json();
-                    window.setActiveExamplesData?.(examples, langConfig.examplesPath)
-                        || (window._cachedExamplesData = examples);
-                }
-            }
-        } catch (e) {
-            console.warn('Could not load examples for stats:', e);
-        }
-    }
-    // loadSpanishRanks() is idempotent (internal guard); call unconditionally
-    // for Spanish so the lines/sentences metric has rank data to work with.
-    if (selectedLanguage === 'spanish' && window.loadSpanishRanks) {
-        try { await window.loadSpanishRanks(); } catch (e) { /* ignore */ }
-    }
-
-    // Calculate all stats in a single pass
-    // "Words understood" = last answer was correct (current knowledge, cross-mode)
-    // "Correct" / "Incorrect" = all-time totals from progressData
-    // "Comprehension" = frequency-weighted % based on current knowledge
-    const vocab = cachedVocabularyData
-        ? buildFilteredVocab(cachedVocabularyData).vocab
-        : null;
-    const coverageEl = document.getElementById('totalStatsCoverage');
-    const wordsEl = document.getElementById('totalStatsWords');
-
-    // Check if a word is currently understood (most recent answer was correct)
-    // across both modes, using timestamps. Falls back to correct > 0 if no timestamps.
-    const isCurrentlyUnderstood = (id, word) => {
-        const merged = getMergedWordProgress(id, word);
-        return merged ? getProgressState(merged).known : false;
-    };
-
-    if (vocab && vocab.length > 0 && progressData) {
-        let coveredFreq = 0, totalFreq = 0, coveredCount = 0;
-        for (const item of vocab) {
-            const freq = item.corpus_count || 1;
-            totalFreq += freq;
-            const id = getWordId(item);
-            if (isCurrentlyUnderstood(id, item.word)) {
-                coveredFreq += freq;
-                coveredCount++;
-            }
-        }
-        const coverageType = activeArtist
-            ? (artistVocabularyScope === 'extra' ? `${activeArtist.name || 'Artist'} Extra` : 'lyrics')
-            : 'speech';
-        if (coveredCount > 0) {
-            const pct = (coveredFreq / totalFreq * 100).toFixed(1);
-            coverageEl.textContent = `${pct}% ${coverageType}`;
-            const wordPct = (coveredCount / vocab.length * 100).toFixed(1);
-            wordsEl.textContent = `${wordPct}% (${coveredCount} / ${vocab.length})`;
-        } else {
-            coverageEl.textContent = '—';
-            wordsEl.textContent = '—';
-        }
-    } else {
-        coverageEl.textContent = '—';
-        wordsEl.textContent = '—';
-    }
-
-    // Correct / Incorrect: all-time totals across both modes, deduped
-    let totalCorrect = 0, totalIncorrect = 0;
-    if (vocab) {
-        const counted = new Set();
-        for (const item of vocab) {
-            const surface = normalizeProgressSurface(item.word);
-            if (!surface || counted.has(surface)) continue;
-            counted.add(surface);
-            const data = getMergedWordProgress(getWordId(item), item.word);
-            if (!data) continue;
-            totalCorrect += Number(data.correct) || 0;
-            totalIncorrect += Number(data.wrong) || 0;
-        }
-    } else if (progressData) {
-        for (const data of Object.values(progressData)) {
-            if (data.language !== selectedLanguage) continue;
-            totalCorrect += Number(data.correct) || 0;
-            totalIncorrect += Number(data.wrong) || 0;
-        }
-    }
-    document.getElementById('totalWordsCorrect').textContent = totalCorrect;
-    document.getElementById('totalWordsIncorrect').textContent = totalIncorrect;
-
-    // Two comprehension rows. The first row shows frequency-weighted word
-    // comprehension (set above). The second row shows what fraction of full
-    // sentences/lines are 100% known — a stricter, more practical measure
-    // ("how often will I read a whole line and understand every word").
-    //
-    // Labels switch by mode:
-    //   artist mode  → "Lyrics word comprehension" + "Full lyric lines"
-    //   normal mode  → "Comprehension: speech"     + "Full sentences"
-    const coverageLabelEl = document.getElementById('totalStatsCoverageLabel');
-    const linesLabelEl    = document.getElementById('totalStatsLinesLabel');
-    const linesEl         = document.getElementById('totalStatsLinesUnderstood');
-    const linesRow        = document.getElementById('totalStatsLinesRow');
-    if (coverageLabelEl) {
-        coverageLabelEl.textContent = activeArtist
-            ? (artistVocabularyScope === 'extra' ? `${activeArtist.name || 'Artist'} Extra explored` : 'Lyrics comprehension')
-            : 'Speech comprehension';
-    }
-    if (linesLabelEl) {
-        linesLabelEl.textContent = activeArtist ? 'Complete lyric lines' : 'Complete sentences';
-    }
-
-    // Both modes share the same computation: walk every example sentence in
-    // _cachedExamplesData and count the lines where every in-vocab token is
-    // either in the user's known set or below their level estimate.
-    // computeLinesUnderstood() handles the iteration; we lazy-loaded the
-    // examples corpus and rank data above so it has what it needs.
-    const activeExampleIds = activeArtist && vocab
-        ? new Set(vocab.map(item => String(item.id || '')))
-        : null;
-    let linesResult = computeLinesUnderstood(activeExampleIds);
-    if (linesResult && linesResult.total > 0) {
-        linesRow.style.display = '';
-        linesEl.textContent = `${linesResult.pct.toFixed(1)}% (${linesResult.understood} / ${linesResult.total})`;
-    } else {
-        linesRow.style.display = 'none';
-    }
-
-    document.getElementById('totalStatsModal').classList.remove('hidden');
+    const language = selectedLanguage;
+    const artist = activeArtist;
+    const scope = artistVocabularyScope;
+    const user = currentUser;
+    const langConfig = config.languages?.[language];
+    const mode = currentLearningMode();
+    return openProgressOverview({
+        source: artist?.name || langConfig?.name || language,
+        mode: mode === 'speech' ? 'Everyday speech' : mode === 'live' ? 'Your playlist' : scope === 'extra' ? 'Extra vocabulary' : 'Your music',
+        coverageLabel: mode === 'live' ? 'Estimated playlist coverage' : artist ? (scope === 'extra' ? 'Extra vocabulary explored' : 'Estimated lyrics coverage') : 'Estimated speech coverage',
+        isCurrent: () => selectedLanguage === language && activeArtist === artist && artistVocabularyScope === scope && currentLearningMode() === mode && currentUser === user,
+        loadVocabulary: async () => {
+            if (!langConfig || !mode) throw new Error('Choose a vocabulary source first.');
+            const raw = await fetchActiveVocabularyData(langConfig);
+            if (selectedLanguage !== language || activeArtist !== artist || artistVocabularyScope !== scope) return [];
+            return getPreparedSetupVocabulary(language, raw).vocab;
+        },
+        getId: item => getWordId(item),
+        getState: item => getRecordedSetupState(item),
+        getProgress: item => getMergedWordProgress(getWordId(item), item.word),
+        canImport: Boolean(currentUser && !currentUser.isGuest),
+        guest: Boolean(currentUser?.isGuest)
+    });
 }
 
 function hideTotalStatsModal() {
-    document.getElementById('totalStatsModal').classList.add('hidden');
+    closeProgressOverview();
 }
 
 function updateTotalStatsButtonVisibility() {

@@ -6645,9 +6645,10 @@
 
         .step-title {
             font-family: var(--font-emphasis);
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 20px;
+            font-weight: 700;
             color: var(--text-primary);
+            letter-spacing: -0.015em;
         }
 
         .level-selector {
@@ -10706,15 +10707,37 @@
 
         .estimation-progress {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 8px;
             margin-bottom: 20px;
-            padding: 10px 15px;
+            padding: 12px 16px;
             background: var(--bg-tertiary);
             border-radius: 8px;
             font-family: var(--font-data);
             font-size: 13px;
             color: var(--text-muted);
+        }
+
+        .estimation-progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .estimation-progress-bar-track {
+            width: 100%;
+            height: 4px;
+            background: color-mix(in srgb, var(--border-color) 70%, transparent);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .estimation-progress-bar-fill {
+            height: 100%;
+            background: var(--accent-primary);
+            border-radius: 999px;
+            transition: width 0.3s ease;
         }
 
         .estimation-word-area {
@@ -10729,7 +10752,8 @@
         .estimation-word {
             text-align: center;
             font-family: var(--font-emphasis);
-            font-size: 48px;
+            font-size: clamp(28px, 7vw, 48px);
+            word-break: break-word;
             font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 6px;
@@ -10757,6 +10781,10 @@
             border-radius: 6px;
         }
 
+        .estimation-pos:empty {
+            display: none !important;
+        }
+
         .estimation-translation {
             text-align: center;
             font-family: var(--font-emphasis);
@@ -10769,6 +10797,15 @@
 
         .estimation-translation.visible {
             opacity: 1;
+        }
+
+        .estimation-example {
+            max-width: 560px;
+            margin: 12px auto;
+            font-size: 17px;
+            line-height: 1.5;
+            color: var(--text-secondary);
+            overflow-wrap: anywhere;
         }
 
         .estimation-rank {
@@ -10851,6 +10888,35 @@
         .estimation-btn.dont-know-btn:hover {
             background: rgba(255, 82, 82, 0.3);
             transform: scale(1.02);
+        }
+
+        .estimation-kbd {
+            display: inline-block;
+            font-family: var(--font-data);
+            font-size: 11px;
+            font-weight: 500;
+            padding: 2px 6px;
+            margin-left: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 4px;
+            vertical-align: middle;
+            color: inherit;
+            opacity: 0.85;
+        }
+
+        @media (max-width: 600px) {
+            .estimation-kbd {
+                display: none;
+            }
+            .estimation-buttons {
+                gap: 10px;
+                margin-top: 15px;
+            }
+            .estimation-btn {
+                padding: 14px 10px;
+                font-size: 15px;
+            }
         }
 
         .estimation-result-level {
@@ -17592,37 +17658,85 @@ body {
 .product-modal .modal-close:hover,
 .info-sheet-close:hover { color: var(--text-primary); border-color: var(--border-light); }
 
-/* Setup explainers are deliberately short: title, one sentence, three ideas. */
-.setup-info-modal { padding: 18px; }
+/* Setup explainers: concise, punchy, cleanly centered on screen */
+.setup-info-modal {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(3, 7, 12, 0.76) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  display: none;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 16px !important;
+  box-sizing: border-box !important;
+  z-index: 10000 !important;
+}
+.setup-info-modal.visible {
+  display: flex !important;
+}
 .setup-info-modal .step-info-tooltip-inner {
-  width: min(100%, 460px);
-  max-width: 460px;
-  padding: 24px;
+  margin: auto !important;
+  width: min(100%, 430px) !important;
+  max-width: 430px !important;
+  max-height: min(90vh, 580px);
+  overflow-y: auto;
+  border-radius: 20px !important;
+  border: 1px solid color-mix(in srgb, var(--border-light) 65%, transparent) !important;
+  background: color-mix(in srgb, var(--bg-card) 96%, #111827) !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.52), 0 1px 0 rgba(255, 255, 255, 0.06) inset !important;
+  padding: 22px 22px !important;
   font-size: 14px;
   line-height: 1.5;
 }
 .info-sheet-lead {
-  margin: 17px 0 18px !important;
+  margin: 14px 0 14px !important;
   color: var(--text-secondary);
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.5;
 }
-.info-sheet-points { display: grid; gap: 2px; }
+.info-sheet-points {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
 .info-sheet-points > div {
-  display: grid;
-  grid-template-columns: 42px minmax(0, 1fr);
-  gap: 12px;
-  align-items: start;
-  padding: 12px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 9px 0;
   border-top: 1px solid var(--border-color);
 }
-.info-sheet-points > div > span {
+.info-point-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 6px;
+  background: rgba(var(--accent-primary-rgb, 135, 149, 255), 0.14);
   color: var(--accent-primary);
-  font: 700 11px/1.35 var(--font-reading);
-  text-transform: uppercase;
+  font: 750 11px/1 var(--font-reading, monospace);
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
 }
-.info-sheet-points p { margin: 0 !important; color: var(--text-secondary); }
-.info-sheet-points strong { display: block; margin-bottom: 2px; }
+.info-point-badge.is-new {
+  background: rgba(var(--accent-secondary-rgb, 255, 204, 0), 0.16);
+  color: var(--accent-secondary, #ffcc00);
+}
+.info-point-badge.is-practice {
+  background: rgba(255, 107, 53, 0.16);
+  color: #ff6b35;
+}
+.info-point-badge.is-done {
+  background: rgba(34, 197, 94, 0.16);
+  color: #22c55e;
+}
+.info-sheet-points p { margin: 0 !important; color: var(--text-secondary); font-size: 13.5px; line-height: 1.45; }
+.info-sheet-points strong { color: var(--text-primary); margin-right: 3px; }
 
 .level-estimate-modal-callout {
   margin-top: 16px;
@@ -17830,16 +17944,13 @@ body {
 
 @media (max-width: 600px) {
   .product-modal { align-items: flex-end; padding: 0; }
-  .product-modal .modal-content,
-  .setup-info-modal .step-info-tooltip-inner {
+  .product-modal .modal-content {
     width: 100%;
     max-width: none;
     margin: 0;
     border-width: 1px 0 0;
     border-radius: 24px 24px 0 0;
   }
-  .setup-info-modal { align-items: flex-end; padding: 0; }
-  .setup-info-modal .step-info-tooltip-inner { padding: 22px 20px max(24px, env(safe-area-inset-bottom)); }
   .tutorial-intro-sheet { padding: 22px 20px max(24px, env(safe-area-inset-bottom)); }
   .tutorial-language-grid { grid-template-columns: 1fr; }
   .settings-modal-content {
@@ -18230,14 +18341,12 @@ body {
 @media (max-width: 600px) {
   .modal,
   .product-modal,
-  .setup-info-modal,
   .flag-menu {
     align-items: flex-start !important;
     padding: 0 !important;
   }
   .modal > .modal-content,
-  .product-modal > .modal-content,
-  .setup-info-modal > .step-info-tooltip-inner {
+  .product-modal > .modal-content {
     margin: 0;
     border-width: 0 0 1px;
     border-radius: 0 0 24px 24px;
@@ -19246,8 +19355,8 @@ button.wbw-word:focus-visible { outline: 2px solid var(--accent-primary); outlin
 .study-set-choice { display: grid; gap: 12px; padding: 16px; background: color-mix(in srgb, var(--accent-primary) 5%, var(--bg-card)); }
 .study-set-choice-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 4px 12px; }
 .study-set-choice-heading small { color: var(--text-muted); font: 500 11px/1.35 var(--font-reading); }
-/* A level holds a handful of sets (four at 100 cards); they share one row. */
-#step4 .study-set-dots { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 8px; }
+/* Four sets fill two rows; larger levels continue in the same two columns. */
+#step4 .study-set-dots { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: row; grid-auto-columns: auto; gap: 8px; }
 #step4 .study-set-dot { height: 40px; font-size: 13px; border-radius: 9px; }
 #step4 .range-btn-new.study-set-start { min-height: 52px; }
 
@@ -20016,16 +20125,20 @@ body.rare-uses-open { overflow: hidden; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
+  gap: 8px;
   min-height: 44px;
-  padding: 5px 12px;
+  padding: 5px 14px;
   border: 1px solid transparent;
   border-radius: 10px;
   background: transparent;
   color: var(--text-primary);
+  font-family: var(--font-emphasis);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
   cursor: pointer;
 }
-.step-title-trigger svg { width: 19px; height: 19px; fill: none; stroke: var(--accent-primary); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.step-title-trigger svg { width: 20px; height: 20px; fill: none; stroke: var(--accent-primary); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .step-title-trigger:hover,
 .step-title-trigger:focus-visible { border-color: var(--border-color); background: var(--bg-tertiary); outline: none; }
 
@@ -22349,19 +22462,16 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 .smart-skip-more-head p { margin: 0; color: var(--text-muted); font: 400 13px/1.45 var(--font-reading); }
 .smart-skip-more-card .smart-skip-shortcuts { border-color: var(--border-light); background: transparent; }
 
-/* Landing page rhythm: the three boxes (level, set, practice) put 21px of air
-   above each title but 15px below it, and the gap between boxes stacked the
-   padding, margin and the title button's tall hit area. The title button is
-   now 32px tall and the space above and below the title text is the same
-   (12px) in every box, on desktop and phone. */
-#step2, #step4, #reviewDeckSection.review-deck-step { padding-top: 0; padding-bottom: 0; margin-bottom: 4px; }
+/* Each header owns the whole gap between surfaces, with equal space on
+   either side of its title. Section margins must not add extra space above. */
+#setupPanel > #step1 { margin-bottom: 0; }
+#step2, #step4, #reviewDeckSection.review-deck-step { padding-top: 0; padding-bottom: 0; margin-bottom: 0; }
 #step2 > .step-header,
 #step4 > .step-header,
-#reviewDeckSection > .step-header { margin-top: 0; margin-bottom: 4px; }
+#reviewDeckSection > .step-header { margin: 0; padding: 8px 4px; }
 #step2 > .step-header > .step-title-trigger,
 #step4 > .step-header > .step-title-trigger,
-#reviewDeckSection > .step-header > .step-title-trigger { min-height: 32px; padding-top: 4px; padding-bottom: 4px; }
-#step2 > .step-header { min-height: 32px; }
+#reviewDeckSection > .step-header > .step-title-trigger { min-height: 44px; padding-top: 4px; padding-bottom: 4px; }
 
 /* Landing page, dark theme: boxes are the darkest surface and the page behind
    them is lifted a step, so text sits on near-black and the boxes read as
@@ -22538,12 +22648,8 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 }
 
 /* ---- Landing page clear-up ------------------------------------------------ */
-/* 1. More air between the sections (level, set, practice), a little less on
-   a phone. */
-#topBar, #step2, #step4, #reviewDeckSection.review-deck-step { margin-bottom: 18px; }
-@media (max-width: 767px) {
-  #topBar, #step2, #step4, #reviewDeckSection.review-deck-step { margin-bottom: 12px; }
-}
+/* The section headers supply the space after the top bar too. */
+#topBar { margin-bottom: 0; }
 
 /* 2. Tighter top bar and a thinner coloured ring. */
 #topBar { padding: 6px 8px; }
@@ -22576,25 +22682,8 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 .study-set-stat i.is-known { background: color-mix(in srgb, var(--success) 58%, var(--bg-card)); }
 .study-set-stat i.is-review { background: color-mix(in srgb, var(--warning) 66%, var(--bg-card)); }
 
-/* 4. Level scrubber: the chosen level is biggest and boldest, and each step
-   away shrinks and fades (JS sets --dist = distance from the chosen level). */
-.lsw-segments.lsw-scrubber .lsw-seg:not(.selected) {
-  transform: scale(max(0.6, calc(1.45 - 0.27 * var(--dist, 3))));
-  opacity: max(0.18, calc(1 - 0.3 * var(--dist, 3)));
-}
-.lsw-segments.lsw-scrubber .lsw-seg:not(.selected):hover { opacity: max(0.5, calc(1 - 0.3 * var(--dist, 3))); }
-/* Coverage sits at the bottom right of the level box, just under the examples. */
-.level-slider-wrap > .lsw-coverage {
-  align-self: flex-end;
-  margin: 2px 2px 0 0;
-  color: var(--text-muted);
-  font: 500 12px/1.2 var(--font-emphasis);
-}
-.level-slider-wrap > .lsw-coverage strong { color: var(--text-primary); font-weight: 700; }
-.level-slider-wrap > .lsw-coverage[hidden] { display: none; }
 .study-set-stat + .study-set-stat { margin-left: 12px; }
 #step4 .study-set-current-copy span::before { content: none; margin: 0; }
-.lsw-segments.lsw-scrubber .lsw-seg { width: 92px; }
 
 /* ---- Source choice: summary, then two matching options -------------------
    One summary on top, then Everyday speech and Your music as twin cards built
@@ -22658,44 +22747,131 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 
 /* The taper has to beat `.lsw-seg.filled:not(.selected)` (levels already
    passed), which was pinning those to a flat 62% and hiding the effect. */
+/* Level Scrubber: chosen level is prominently framed with its own distinct capsule badge;
+   non-selected levels dial cleanly without crowded scaling or overlapping numbers. */
+.lsw-segments.lsw-scrubber {
+  padding: 12px 50% 10px;
+  gap: 10px;
+  align-items: center;
+}
+.lsw-segments.lsw-scrubber .lsw-seg {
+  width: 52px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1.15rem;
+  font-weight: 650;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.lsw-segments.lsw-scrubber .lsw-seg .lsw-seg-eyebrow { display: none; }
+.lsw-segments.lsw-scrubber .lsw-seg .lsw-seg-num { display: block; line-height: 1; }
+
+/* Non-selected levels fall off gently without extreme scale distortions */
 .lsw-segments.lsw-scrubber .lsw-seg:not(.selected),
 .lsw-segments.lsw-scrubber .lsw-seg.filled:not(.selected) {
-  transform: scale(max(0.55, calc(1.5 - 0.3 * var(--dist, 3))));
-  opacity: max(0.15, calc(1 - 0.32 * var(--dist, 3)));
+  transform: scale(max(0.72, calc(1 - 0.09 * var(--dist, 3))));
+  opacity: max(0.18, calc(0.85 - 0.22 * var(--dist, 3)));
+  color: var(--text-muted);
 }
 .lsw-segments.lsw-scrubber .lsw-seg:not(.selected):hover,
-.lsw-segments.lsw-scrubber .lsw-seg.filled:not(.selected):hover { opacity: max(0.55, calc(1 - 0.32 * var(--dist, 3))); }
-
-/* The scrubber shows level numbers only. "Level N" already sits in the readout
-   above, so repeating the word on every slot was noise; numbers sit closer,
-   the chosen one can be large, and the taper reads as a dial. */
-.lsw-segments.lsw-scrubber .lsw-seg { width: 56px; font-size: 1.05rem; }
-.lsw-segments.lsw-scrubber .lsw-seg.selected { transform: scale(2.4); }
-.lsw-segments.lsw-scrubber .lsw-seg:not(.selected),
-.lsw-segments.lsw-scrubber .lsw-seg.filled:not(.selected) {
-  transform: scale(max(0.55, calc(1.9 - 0.45 * var(--dist, 3))));
+.lsw-segments.lsw-scrubber .lsw-seg.filled:not(.selected):hover {
+  opacity: 0.95;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
 }
-.lsw-segments.lsw-scrubber { padding-top: 4px; padding-bottom: 2px; }
-/* Level readout and example words read a step larger. */
-.lsw-readout .lsw-rank { font-size: 18px; }
-.lsw-examples { font-size: 14px; }
-.lsw-examples .lsw-freq-sentence { font-size: 14px; }
-.lsw-examples .lsw-egs { font-size: 14px; color: color-mix(in srgb, var(--text-muted) 75%, var(--text-primary)); }
-.level-slider-wrap > .lsw-coverage { font-size: 13px; }
 
-/* Readout line ("Level 1 · Words 1–100 / 10,000") a clear step larger. */
-.lsw-readout { font-size: 17px; gap: 4px 14px; }
-.lsw-readout .lsw-rank { font-size: 22px; }
-.lsw-readout .lsw-deck-total { font-size: 0.85em; }
+/* The chosen level: framed in its own glowing capsule badge */
+.lsw-segments.lsw-scrubber .lsw-seg.selected {
+  width: 74px;
+  height: 56px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--accent-primary) 15%, var(--bg-card, #111827));
+  border: 2px solid var(--accent-primary);
+  box-shadow: 0 0 20px rgba(var(--accent-primary-rgb), 0.35), 0 4px 14px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  color: var(--accent-primary);
+  transform: scale(1.15);
+  opacity: 1;
+  z-index: 3;
+}
+.lsw-segments.lsw-scrubber .lsw-seg.selected .lsw-seg-eyebrow {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+  line-height: 1;
+  margin-bottom: 2px;
+  opacity: 0.9;
+}
+.lsw-segments.lsw-scrubber .lsw-seg.selected .lsw-seg-num {
+  font-size: 24px;
+  font-weight: 850;
+  line-height: 1;
+  color: var(--accent-primary);
+}
+
+/* Readout line: words range centered & clean */
+.lsw-readout {
+  justify-content: center;
+  font-size: 15px;
+  gap: 4px 10px;
+  padding: 2px 0;
+}
+.lsw-readout .lsw-range {
+  color: var(--text-secondary);
+  font-size: 15px;
+  font-weight: 500;
+}
+.lsw-readout .lsw-range strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+.lsw-readout .lsw-deck-total {
+  font-size: 0.88em;
+  color: var(--text-muted);
+}
+
+/* Example words and inline coverage */
+.lsw-examples {
+  font-size: 14px;
+  margin-top: 4px;
+  gap: 3px;
+}
+.lsw-examples .lsw-freq-sentence {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+}
+.lsw-examples .lsw-egs {
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.45;
+}
+.lsw-coverage-inline {
+  color: var(--text-muted);
+  font-size: 13.5px;
+  font-weight: 500;
+}
+.lsw-coverage-inline strong {
+  color: var(--accent-primary);
+  font-weight: 700;
+}
 
 /* The set's start button reads at the same size as Quick N. */
 #step4 .range-btn-new.study-set-start { font: 750 17px/1.2 var(--font-emphasis); min-height: 54px; }
 
 /* Set box type: bigger numbers on the pills and the set name; the counts
    line is lighter in weight and brighter in colour so it reads at a glance. */
-#step4 .study-set-dot { font-size: 18px; font-weight: 700; height: 46px; }
+#step4 .study-set-dot { font-size: 18px; font-weight: 700; height: 37px; }
 #step4 .study-set-current-copy strong { font-size: 18px; }
-#step4 .study-set-current-copy span { font-size: 14px; font-weight: 400; color: var(--text-secondary); }
+#step4 .study-set-current-copy span { font-size: 14px; font-weight: 400; color: var(--text-primary); }
 .study-set-stat { font-weight: 400; }
 
 /* Set progress, light-on-dark: pale green (known), pale yellow (practice) and
@@ -22726,7 +22902,7 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
    other pills stay flat. */
 #step4 .study-set-dot.is-current {
   animation: none;
-  transform: translateY(-2px) scale(1.08);
+  transform: none;
   border-color: var(--accent-primary);
   box-shadow:
     0 0 0 3px var(--bg-card),
@@ -22793,7 +22969,8 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 #step4 .study-set-dot.is-partial,
 #step4 .study-set-dot.is-complete { border-color: transparent; }
 #step4 .study-set-dot:hover:not(:disabled):not(.is-current) { border-color: transparent; box-shadow: 0 0 0 2px var(--accent-primary); }
-#step4 .study-set-dots { gap: 9px; }
+#step4 .study-set-dots { gap: 14px; }
+#step4 .study-set-dot:hover:not(:disabled) { transform: none; }
 /* Info icon in place of the "Details" word. */
 .fast-track-hub-info { flex: none; width: 20px; height: 20px; fill: none; stroke: var(--text-muted); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 /* The fill runs edge to edge now the outline is gone (otherwise the gradient
@@ -23154,18 +23331,15 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 .smart-skip-more-card .smart-skip-preview-close:hover { filter: brightness(1.08); }
 .smart-skip-body .smart-skip-more-options { padding: 15px 14px 15px 16px; font-size: 14px; color: var(--text-secondary); }
 
-/* Set pills: the set number on a phone, the word ranks (frequency ranks) it
-   covers where there is room. */
-.study-set-dot .set-ranks { display: none; }
-@media (min-width: 760px) {
-  .study-set-dot .set-num { display: none; }
-  .study-set-dot .set-ranks { display: inline; white-space: nowrap; }
-  #step4 .study-set-dot { font-size: 16px; }
-}
+/* Frequency ranges identify each set; its number remains in the summary
+   and accessible label, leaving room for five-digit ranks on small phones. */
+#step4 .study-set-dot { container-type: inline-size; gap: 8px; padding: 6px; }
+.study-set-dot .set-num { display: none; }
+.study-set-dot .set-ranks { display: inline; white-space: nowrap; font-size: clamp(16px, 14cqi, 22px); line-height: 1.1; letter-spacing: -0.035em; font-weight: 750; }
 
-/* Skipped cards fill each set bar from the right in light grey, so with Smart
+/* Skipped cards fill each set bar from the right in slate grey, so with Smart
    Skip on a set is already partly done before a card is studied. */
-#step4 { --set-skipped: #b4bcc7; }
+#step4 { --set-skipped: #7b8797; }
 #step4 .study-set-dot {
   background: linear-gradient(
     to right,
@@ -23175,7 +23349,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     var(--set-skipped) var(--set-new-end, 100%) 100%
   );
 }
-.study-set-stat i.is-skipped { background: var(--set-skipped, #b4bcc7); }
+.study-set-stat i.is-skipped { background: var(--set-skipped, #7b8797); }
 
 /* ===== Tutorial chapters and pages =====
    The chapters sit where the language label was, and open directly. Smart
@@ -23339,3 +23513,118 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     .card-tutorial-chapters { gap: 4px; }
     .card-tutorial-chapter { padding: 6px 8px; font-size: 12px; }
 }
+
+/* Return to study is the main entry decision, including on phones. */
+#resumeLastSetCard.resume-entry-modal {
+  align-items: center !important;
+  justify-content: center;
+  padding: max(20px, env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom)) !important;
+}
+#resumeLastSetCard .resume-entry-content {
+  width: min(100%, 500px);
+  max-width: 500px;
+  max-height: calc(100dvh / var(--ui-zoom, 1) - 40px);
+  overflow-y: auto;
+  padding: clamp(24px, 5vw, 36px);
+  margin: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  text-align: left;
+}
+#resumeLastSetCard .resume-set-eyebrow {
+  color: var(--text-secondary);
+  font: 600 16px/1.5 var(--font-reading);
+  text-transform: none;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+#resumeLastSetCard h3 { margin: 10px 0 24px; font-size: clamp(28px, 6vw, 34px); line-height: 1.15; text-wrap: balance; }
+.resume-entry-summary { padding: 20px; border: 1px solid var(--border-color); border-radius: 16px; background: var(--bg-tertiary); }
+.resume-entry-summary > strong { color: var(--text-primary); font: 700 20px/1.4 var(--font-reading); }
+#resumeLastSetCard p { margin: 8px 0 0; color: var(--text-secondary); font: 16px/1.5 var(--font-reading); }
+#resumeLastSetCard .resume-entry-position { margin-top: 16px; }
+.resume-entry-position strong { color: var(--text-primary); overflow-wrap: anywhere; }
+#resumeLastSetCard .resume-entry-actions { grid-template-columns: 1fr; margin-top: 24px; gap: 10px; }
+#resumeLastSetCard .resume-entry-actions button { min-height: 52px; font-size: 16px; border-radius: 14px; }
+#resumeLastSetCard .resume-entry-primary { background: var(--text-primary); border-color: var(--text-primary); color: var(--bg-card); }
+#resumeLastSetCard .resume-entry-secondary { color: var(--text-primary); }
+#resumeLastSetCard button:focus-visible { outline: 3px solid var(--accent-primary); outline-offset: 3px; }
+
+/* Settings use neutral surfaces and explicit selected states in both themes. */
+#settingsModal .settings-pane-tabs {
+  gap: 6px;
+  padding: 5px;
+  margin-bottom: 24px;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  background: var(--bg-tertiary);
+  box-shadow: none;
+}
+#settingsModal .settings-pane-tab {
+  min-height: 46px;
+  padding: 10px 12px;
+  border-radius: 11px;
+  color: var(--text-secondary);
+  font-size: 16px;
+  letter-spacing: 0;
+}
+#settingsModal .settings-pane-tab.selected {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  box-shadow: 0 2px 6px rgba(0,0,0,.12);
+  outline: 1px solid var(--border-color);
+}
+#settingsModal .settings-default-row { padding: 20px 0; gap: 20px; }
+#settingsModal .settings-row-label { color: var(--text-primary); font-size: 17px; line-height: 1.4; }
+#settingsModal .settings-row-explanation,
+#settingsModal .settings-compact-note { color: var(--text-secondary); font-size: 14px; line-height: 1.55; }
+#settingsModal .settings-row-explanation { margin-top: 5px; max-width: 42ch; }
+#settingsModal .settings-toggle { padding: 4px; background: var(--bg-tertiary); border: 1px solid var(--border-color); box-shadow: none; }
+#settingsModal .settings-toggle .group-size-btn { flex: 1 0 auto; min-width: max-content; min-height: 40px; padding: 8px 14px; color: var(--text-secondary); font-size: 14px; }
+#settingsModal .settings-toggle .group-size-btn.selected {
+  background: var(--text-primary);
+  color: var(--bg-card);
+  box-shadow: none;
+}
+#settingsModal .settings-link-row { padding: 18px 0; }
+#settingsModal .settings-link-row strong,
+#settingsModal .settings-overview-footer .appearance-settings-copy strong { font-size: 17px; line-height: 1.4; }
+#settingsModal .settings-link-row small { font-size: 14px; line-height: 1.5; color: var(--text-secondary); }
+#settingsModal .settings-footer-link { font-size: 14px; padding: 10px 0; color: var(--text-secondary); }
+#settingsModal button:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 3px; }
+#settingsModal .settings-link-row:hover { background: var(--bg-tertiary); border-radius: 10px; }
+@media (max-width: 600px) {
+  #settingsModal .settings-pane-tab { padding: 10px 6px; font-size: 14px; }
+  #settingsModal .settings-default-row { flex-wrap: wrap; gap: 12px; }
+  #settingsModal .settings-row-label-block { flex: 1 1 180px; }
+  #settingsModal .settings-toggle { flex-shrink: 0; }
+}
+
+/* Estimated placement is distinct from earned study progress. */
+.level-btn.is-auto-complete::after,
+.lsw-segments.lsw-scrubber .lsw-seg.is-auto-complete::after {
+    content: 'AUTO';
+    height: auto;
+    background: none;
+    box-shadow: none;
+    color: var(--text-secondary);
+    font-size: 7px;
+    line-height: 1;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-align: center;
+    bottom: 3px;
+}
+.estimation-placement-options { display: grid; gap: 12px; max-width: 540px; margin: 0 auto 18px; }
+.estimation-placement-choice {
+    display: grid; gap: 7px; width: 100%; padding: 18px 20px; text-align: left;
+    border: 1px solid var(--border-color); border-radius: 14px;
+    background: var(--bg-secondary); color: var(--text-primary); cursor: pointer;
+    font: inherit; line-height: 1.45;
+}
+.estimation-placement-choice:hover { border-color: var(--accent-secondary); }
+.estimation-placement-choice:focus-visible { outline: 2px solid var(--accent-secondary); outline-offset: 3px; }
+.estimation-placement-choice strong { font-size: 18px; }
+.estimation-placement-choice span { color: var(--text-secondary); font-size: 14px; }
+.estimation-placement-choice .estimation-choice-label { color: var(--text-primary); font-weight: 600; }
+#useEstimatedLevelBtn[hidden] { display: none; }

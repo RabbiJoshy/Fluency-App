@@ -167,14 +167,50 @@ function showPOSInfo(event, pos, pct) {
 // Common Spanish elisions: elided form → possible full forms
 const ELISION_MAP = {
     "pa": ["para"],
+    "pa'": ["para"],
     "to": ["todo"],
+    "to'": ["todo"],
+    "'to": ["todo"],
     "na": ["nada"],
-    "ta": ["esta", "estar"],
-    "toy": ["estoy"],
+    "na'": ["nada"],
+    "'na": ["nada"],
+    "ta": ["está", "estar"],
+    "ta'": ["está"],
+    "'tá": ["está"],
+    "tas": ["estás"],
+    "tas'": ["estás"],
+    "'tás": ["estás"],
     "tan": ["están"],
+    "tan'": ["están"],
+    "'tan": ["están"],
+    "'tán": ["están"],
+    "toy": ["estoy"],
+    "'toy": ["estoy"],
+    "taba": ["estaba"],
+    "'taba": ["estaba"],
     "tamo": ["estamos"],
+    "'tamo": ["estamos"],
+    "tamos": ["estamos"],
+    "'tamos": ["estamos"],
     "pal": ["para el"],
+    "pa'l": ["para el"],
+    "pa'la": ["para la"],
     "po": ["por"],
+    "e'": ["es"],
+    "'e": ["es"],
+    "onde": ["donde"],
+    "toa": ["toda"],
+    "toa'": ["toda"],
+    "to'a": ["toda"],
+    "toas": ["todas"],
+    "to'as": ["todas"],
+    "uste": ["usted"],
+    "uste'": ["usted"],
+    "usté": ["usted"],
+    "vo'": ["voy", "vos"],
+    "vo": ["voy", "vos"],
+    "vo'a": ["voy a"],
+    "voya": ["voy a"],
 };
 
 function getFullVocabLookup() {
@@ -223,16 +259,7 @@ function resolveToken(token) {
         return { token, source: 'deck', entry: flashcards[deckIdx], deckIndex: deckIdx };
     }
 
-    // 2. Try stripping trailing apostrophe (ere' → eres, etc.)
-    if (lower.endsWith("'") || lower.endsWith("’")) {
-        const stripped = lower.replace(/['’]+$/, '');
-        deckIdx = lookupMap.get(stripped + 's');
-        if (deckIdx !== undefined) return { token, source: 'deck', entry: flashcards[deckIdx], deckIndex: deckIdx };
-        deckIdx = lookupMap.get(stripped);
-        if (deckIdx !== undefined) return { token, source: 'deck', entry: flashcards[deckIdx], deckIndex: deckIdx };
-    }
-
-    // 3. Try elision map
+    // 2. Try elision map directly
     const elisions = ELISION_MAP[lower];
     if (elisions) {
         for (const full of elisions) {
@@ -241,24 +268,60 @@ function resolveToken(token) {
         }
     }
 
-    // 4. Check full vocabulary
+    // 3. Try trailing apostrophe (ere' → eres, sabemo' → sabemos, obligao' → obligado)
+    if (lower.endsWith("'") || lower.endsWith("’")) {
+        const stripped = lower.replace(/['’]+$/, '');
+        // Check participle contraction (-ao -> -ado)
+        if (stripped.endsWith('ao')) {
+            const partForm = stripped.slice(0, -2) + 'ado';
+            deckIdx = lookupMap.get(partForm);
+            if (deckIdx !== undefined) return { token, source: 'deck', entry: flashcards[deckIdx], deckIndex: deckIdx };
+        }
+        deckIdx = lookupMap.get(stripped + 's');
+        if (deckIdx !== undefined) return { token, source: 'deck', entry: flashcards[deckIdx], deckIndex: deckIdx };
+        deckIdx = lookupMap.get(stripped);
+        if (deckIdx !== undefined) return { token, source: 'deck', entry: flashcards[deckIdx], deckIndex: deckIdx };
+    }
+
+    // 4. Try leading apostrophe ('tás → estás, 'toy → estoy)
+    if (lower.startsWith("'") || lower.startsWith("’")) {
+        const stripped = lower.replace(/^['’]+/, '');
+        deckIdx = lookupMap.get('es' + stripped);
+        if (deckIdx !== undefined) return { token, source: 'deck', entry: flashcards[deckIdx], deckIndex: deckIdx };
+        deckIdx = lookupMap.get(stripped);
+        if (deckIdx !== undefined) return { token, source: 'deck', entry: flashcards[deckIdx], deckIndex: deckIdx };
+    }
+
+    // 5. Check full vocabulary
     const fullLookup = getFullVocabLookup();
     let vocabEntry = fullLookup.get(lower);
     if (vocabEntry) return { token, source: 'vocab', entry: vocabEntry, deckIndex: null };
 
-    // 5. Try elision recovery against full vocab
-    if (lower.endsWith("'") || lower.endsWith("’")) {
-        const stripped = lower.replace(/['’]+$/, '');
-        vocabEntry = fullLookup.get(stripped + 's');
-        if (vocabEntry) return { token, source: 'vocab', entry: vocabEntry, deckIndex: null };
-        vocabEntry = fullLookup.get(stripped);
-        if (vocabEntry) return { token, source: 'vocab', entry: vocabEntry, deckIndex: null };
-    }
+    // 6. Try elision recovery against full vocab
     if (elisions) {
         for (const full of elisions) {
             vocabEntry = fullLookup.get(full);
             if (vocabEntry) return { token, source: 'vocab', entry: vocabEntry, deckIndex: null };
         }
+    }
+    if (lower.endsWith("'") || lower.endsWith("’")) {
+        const stripped = lower.replace(/['’]+$/, '');
+        if (stripped.endsWith('ao')) {
+            const partForm = stripped.slice(0, -2) + 'ado';
+            vocabEntry = fullLookup.get(partForm);
+            if (vocabEntry) return { token, source: 'vocab', entry: vocabEntry, deckIndex: null };
+        }
+        vocabEntry = fullLookup.get(stripped + 's');
+        if (vocabEntry) return { token, source: 'vocab', entry: vocabEntry, deckIndex: null };
+        vocabEntry = fullLookup.get(stripped);
+        if (vocabEntry) return { token, source: 'vocab', entry: vocabEntry, deckIndex: null };
+    }
+    if (lower.startsWith("'") || lower.startsWith("’")) {
+        const stripped = lower.replace(/^['’]+/, '');
+        vocabEntry = fullLookup.get('es' + stripped);
+        if (vocabEntry) return { token, source: 'vocab', entry: vocabEntry, deckIndex: null };
+        vocabEntry = fullLookup.get(stripped);
+        if (vocabEntry) return { token, source: 'vocab', entry: vocabEntry, deckIndex: null };
     }
 
     return { token, source: 'unknown', entry: null, deckIndex: null };
@@ -789,8 +852,8 @@ function navigateToCard(targetIndex) {
 }
 
 // A word opened on its own (lyric breakdown, search, word link, homograph
-// peek) is studied as it is in a set: a split word opens as Flashcard 1 of 2,
-// with 2 of 2 waiting in `_splitNext` (stepToSplitSibling shows it). When the
+// peek) is studied as it is in a set: companions wait in `_splitNext`
+// (stepToSplitSibling shows each in turn). When the
 // path focuses one meaning, the card holding it opens first.
 function splitAwareTempCard(vocabEntry, baseCard, focusIndex = 0) {
     const pair = window.buildSplitCardPair?.(vocabEntry, baseCard, baseCard.meanings);
@@ -798,9 +861,11 @@ function splitAwareTempCard(vocabEntry, baseCard, focusIndex = 0) {
     const focused = baseCard.meanings[focusIndex];
     const same = m => m === focused || (focused && m.meaning === focused.meaning
         && (m.senseId || '') === (focused.senseId || '') && (m.headword || '') === (focused.headword || ''));
-    const startOnSecond = focusIndex > 0 && pair[1].meanings.some(same);
-    const [first, second] = startOnSecond ? [pair[1], pair[0]] : pair;
-    first._splitNext = second;
+    const focusCard = focusIndex > 0 ? pair.findIndex(card => card.meanings.some(same)) : 0;
+    const start = Math.max(0, focusCard);
+    const ordered = [...pair.slice(start), ...pair.slice(0, start)];
+    ordered.forEach((card, index) => { card._splitNext = ordered[index + 1] || null; });
+    const first = ordered[0];
     const meaningIndex = focusIndex > 0 ? Math.max(0, first.meanings.findIndex(same)) : 0;
     return { card: first, meaningIndex };
 }
@@ -1430,13 +1495,15 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
     // Update modal content. Ordinary decks are intentionally small stable
     // sets, so completion is a frequent reward inside the larger level.
     const titleEl = document.getElementById('deckCompleteTitle');
+    const rangeLabel = stats.rangeLabel
+        || (stats.rangeString ? `${stats.rangeString.split('-')[0]}–${parseInt(stats.rangeString.split('-')[1]) - 1}` : null);
     if (titleEl) {
         titleEl.textContent = isLevelCompletion
             ? `Level ${stats.levelNumber} complete`
             : stats.studyMode === 'review'
             ? 'Practice complete'
-            : stats.setNumber
-            ? `Set ${stats.setNumber} complete`
+            : rangeLabel
+            ? `${rangeLabel} complete`
             : 'Set complete';
     }
 
@@ -1588,7 +1655,10 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
                 finishBtn.style.display = 'none';
             }
         } else if (stats.nextRange) {
-            finishLabel.textContent = `Start Set ${stats.nextSetNumber}`;
+            const nextRangeLabel = stats.nextRange
+                ? `${stats.nextRange.split('-')[0]}–${parseInt(stats.nextRange.split('-')[1]) - 1}`
+                : '';
+            finishLabel.textContent = nextRangeLabel ? `Start ${nextRangeLabel}` : 'Start next cards';
             finishIcon.textContent = '→';
             finishBtn.dataset.action = 'next-set';
             finishBtn.classList.add('has-next-set');
@@ -1597,7 +1667,7 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
         } else if (nextLevel) {
             finishLabel.textContent = (nextLevel.scope === 'extra' || nextLevel.label)
                 ? `Start ${nextLevel.label}`
-                : `Start Level ${nextLevel.levelNumber}, Set 1`;
+                : `Start Level ${nextLevel.levelNumber}`;
             finishIcon.textContent = '→';
             finishBtn.dataset.action = 'next-level';
             finishBtn.classList.add('has-next-set');
@@ -1623,8 +1693,8 @@ function showEndOfDeckOptions({ autoContinue = true } = {}) {
                 : 'All caught up on this Practice queue!')
             : isLevelCompletion
             ? ''
-            : stats.levelSetCount && stats.setNumber
-                ? `Set ${stats.setNumber} of ${stats.levelSetCount} finished.`
+            : rangeLabel
+                ? `${rangeLabel} finished.`
                 : '';
 
     // Show the modal

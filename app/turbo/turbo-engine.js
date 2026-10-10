@@ -17,21 +17,94 @@
  */
 
 export class TurboEngine {
-    constructor(assets = {}) {
+    constructor(assets = {}, extra50k = {}) {
         this.elisions = assets.elisions || {};
         this.mwes = assets.mwes || {};
         this.curatedEntities = assets.curatedEntities || {};
         this.dictionary = assets.dictionary || {};
+        this.ranks50k = extra50k.ranks || {};
+        this.lemmas50k = extra50k.lemmas || {};
         this.entityCache = new Map(); // query -> entity object or null
     }
 
-    static async create(assetsUrl = './turbo_assets.json') {
+    static async create(assetsUrl = './turbo_assets.json', extra50kUrl = './es_50k_data.json') {
         const resp = await fetch(assetsUrl);
         if (!resp.ok) {
             throw new Error(`Failed to load Turbo assets from ${assetsUrl}: HTTP ${resp.status}`);
         }
         const data = await resp.json();
-        return new TurboEngine(data);
+
+        let extra50kData = {};
+        try {
+            const r50 = await fetch(extra50kUrl);
+            if (r50.ok) {
+                extra50kData = await r50.json();
+            }
+        } catch (e) {
+            console.warn('Failed to load 50k wordlist data, falling back to 10k dictionary only:', e);
+        }
+
+        return new TurboEngine(data, extra50kData);
+    }
+
+    /**
+     * Resolves a word or conjugated form to its dictionary entry and authentic frequency rank.
+     */
+    resolveWordInfo(rawWord) {
+        if (!rawWord) return null;
+        const norm = rawWord.toLowerCase();
+
+        // 1. Exact match in curated 10k dictionary
+        if (this.dictionary[norm]) {
+            const entry = this.dictionary[norm];
+            const rank = this.ranks50k[norm] || entry.rank || null;
+            return {
+                word: norm,
+                dictEntry: entry,
+                translation: entry.top_translation,
+                pos: entry.top_pos,
+                rank,
+                speechRank: entry.rank,
+                isPolysemous: entry.polysemous,
+                meaningCount: entry.meaningCount,
+                meanings: entry.meanings
+            };
+        }
+
+        // 2. Inflected form whose lemma exists in dictionary
+        const lemma = this.lemmas50k[norm];
+        if (lemma && this.dictionary[lemma]) {
+            const entry = this.dictionary[lemma];
+            const rank = this.ranks50k[norm] || entry.rank || null;
+            return {
+                word: lemma,
+                originalWord: norm,
+                dictEntry: entry,
+                translation: entry.top_translation,
+                pos: entry.top_pos,
+                rank,
+                speechRank: entry.rank,
+                isPolysemous: entry.polysemous,
+                meaningCount: entry.meaningCount,
+                meanings: entry.meanings
+            };
+        }
+
+        // 3. Fallback: Check if word exists in 50k frequency list without dictionary meaning
+        const freqRank = this.ranks50k[norm] || null;
+        if (freqRank) {
+            return {
+                word: norm,
+                dictEntry: null,
+                translation: null,
+                pos: null,
+                rank: freqRank,
+                speechRank: freqRank,
+                isPolysemous: false
+            };
+        }
+
+        return null;
     }
 
     /**
@@ -118,7 +191,8 @@ export class TurboEngine {
         // Match tokens including words ending with an apostrophe (Caribbean s-aspiration: sabemo', no', vemo')
         const rawTokens = lineText.match(/[\p{L}\p{N}]+(?:['’\-][\p{L}\p{N}]+)*['’]?|['’][\p{L}\p{N}]+/gu) || [];
         const tokens = [];
-        for (const raw of rawTokens) {
+        for (let rawIdx = 0; rawIdx < rawTokens.length; rawIdx++) {
+            const raw = rawTokens[rawIdx];
             const cleaned = raw.replace(/[’]/g, "'").toLowerCase();
             let expanded = this.elisions[cleaned] || null;
             let isElision = Boolean(this.elisions[cleaned] && this.elisions[cleaned] !== cleaned);
@@ -127,38 +201,66 @@ export class TurboEngine {
             // 1. "e'" -> "es" (e' libre -> es libre, e' que -> es que)
             // 2. "no'" -> "nos" (no' vemo' -> nos vemos, no' perdemo' -> nos perdemos)
             // 3. 1st person plural verbs: "sabemo'" -> "sabemos", "llevamo'" -> "llevamos", "perdemo'" -> "perdemos"
-            // 4. Any other word ending in apostrophe where stem + 's' exists in dictionary (tiene' -> tienes, lo' -> los)
+            // 4. Participle contractions: "pegao'" -> "pegado", "obligao'" -> "obligado", "separao'" -> "separado"
+            // 5. Ambiguous contractions: "vo'" -> "voy" vs "vos"
+            // 6. Plural/verb aspiration: "ojo'" -> "ojos", "lo'" -> "los", "tiene'" -> "tienes"
             if (!expanded && cleaned.endsWith("'")) {
                 const stem = cleaned.slice(0, -1);
-                if (/(?:amo|emo|imo)$/.test(stem)) {
-                    expanded = stem + 's';
-                    isElision = true;
-                } else if (stem === 'e') {
+                if (stem === 'e') {
                     expanded = 'es';
                     isElision = true;
                 } else if (stem === 'no') {
                     expanded = 'nos';
                     isElision = true;
-                } else if (this.dictionary[stem + 's']) {
+                } else if (stem === 'vo') {
+                    // Ambiguity resolver for vo':
+                    // In urban/Caribbean lyrics, vo' is overwhelmingly 'voy' (#80 in frequency, 'vo' a raptar', 'me vo'')
+                    // vs Argentine voseo 'vos' (#1,351).
+                    const nextToken = rawTokens[rawIdx + 1] ? rawTokens[rawIdx + 1].toLowerCase().replace(/[’]/g, "'") : '';
+                    const prevToken = rawIdx > 0 && rawTokens[rawIdx - 1] ? rawTokens[rawIdx - 1].toLowerCase().replace(/[’]/g, "'") : '';
+                    if (nextToken === 'a' || prevToken === 'yo' || prevToken === 'me' || prevToken === 'te') {
+                        expanded = 'voy';
+                    } else if (/és$|ás$/.test(nextToken)) {
+                        expanded = 'vos';
+                    } else {
+                        expanded = 'voy'; // 80/20 default in urban music
+                    }
+                    isElision = true;
+                } else if (/(?:amo|emo|imo|ámo|émo|ímo)$/.test(stem)) {
                     expanded = stem + 's';
                     isElision = true;
-                } else if (this.dictionary[stem]) {
-                    expanded = stem;
+                } else if (stem.endsWith('ao')) {
+                    const partForm = stem.slice(0, -2) + 'ado';
+                    expanded = partForm;
+                    isElision = true;
+                } else if (stem.endsWith('ío')) {
+                    const partForm = stem.slice(0, -2) + 'ido';
+                    expanded = partForm;
                     isElision = true;
                 } else {
-                    expanded = stem;
-                    isElision = true;
+                    const sForm = stem + 's';
+                    // Check stem + 's' in dictionary or 50k ranks FIRST
+                    if (this.dictionary[sForm] || this.ranks50k[sForm]) {
+                        expanded = sForm;
+                        isElision = true;
+                    } else if (this.dictionary[stem] || this.ranks50k[stem]) {
+                        expanded = stem;
+                        isElision = true;
+                    } else {
+                        expanded = stem;
+                        isElision = true;
+                    }
                 }
             } else if (!expanded && cleaned.startsWith("'")) {
                 const stem = cleaned.slice(1);
                 if (this.elisions[stem]) {
                     expanded = this.elisions[stem];
                     isElision = true;
-                } else if (this.dictionary[stem]) {
-                    expanded = stem;
-                    isElision = true;
-                } else if (this.dictionary['es' + stem]) {
+                } else if (this.dictionary['es' + stem] || this.ranks50k['es' + stem]) {
                     expanded = 'es' + stem;
+                    isElision = true;
+                } else if (this.dictionary[stem] || this.ranks50k[stem]) {
+                    expanded = stem;
                     isElision = true;
                 } else {
                     expanded = stem;
@@ -451,6 +553,173 @@ export class TurboEngine {
     }
 
     /**
+     * UNISON WSD Decision Logic for Turbo Engine:
+     * Disambiguates which meaning index in dictEntry.meanings best fits the context line.
+     * Implements UNISON Decision 0030 / es-turbo-v1 rules:
+     * - Rule 1: Progressive auxiliary (estar/andar + gerund) -> progressive / continuous meaning
+     * - Rule 2: Modal obligation (tener que + infinitive) -> obligation ("have to", "must")
+     * - Rule 3: Future auxiliary (ir a + infinitive) -> future ("will", "going to")
+     * - Rule 4: Perfect auxiliary (haber + past participle) -> compound/perfect ("to have", "auxiliary")
+     * - Rule 5: Personal pronouns (yo, tú, él, ella, nosotros, ellos) -> subject nominative
+     * - Rule 6: Clitic / Pronominal reflection (me, te, se, nos, os) -> pronominal meaning
+     */
+    disambiguateWord(word, dictEntry, lineText) {
+        if (!dictEntry || !dictEntry.polysemous || !dictEntry.meanings || dictEntry.meanings.length <= 1) {
+            return 0; // Monosemous: deterministic single meaning
+        }
+
+        const meanings = dictEntry.meanings;
+        const textLower = lineText.toLowerCase();
+        const rawTokens = textLower.match(/[\p{L}\p{N}]+/gu) || [];
+        const cleanWord = word.toLowerCase().trim();
+        const targetIdx = rawTokens.indexOf(cleanWord);
+
+        // --- Rule 1: Progressive auxiliary (estar + gerund) ---
+        const estarForms = new Set([
+            'estoy', 'estas', 'estás', 'esta', 'está', 'estamos', 'estais', 'estáis', 'estan', 'están',
+            'estuve', 'estuviste', 'estuvo', 'estuvimos', 'estuvisteis', 'estuvieron',
+            'estaba', 'estabas', 'estabamos', 'estábamos', 'estabais', 'estaban',
+            'este', 'esté', 'estes', 'estés', 'estemos', 'esteis', 'estéis', 'esten', 'estén',
+            'estuviera', 'estuvieras', 'estuvieramos', 'estuviéramos', 'estuvieran',
+            'estar', 'estando'
+        ]);
+        if (estarForms.has(cleanWord)) {
+            let hasGerund = false;
+            const gerundRegex = /\b\w+(?:ando|iendo|yendo)\b/i;
+            if (targetIdx >= 0 && targetIdx + 1 < rawTokens.length) {
+                const window = rawTokens.slice(targetIdx + 1, targetIdx + 4).join(' ');
+                hasGerund = gerundRegex.test(window);
+            } else {
+                hasGerund = gerundRegex.test(textLower);
+            }
+            if (hasGerund) {
+                const progIdx = meanings.findIndex(m => {
+                    const ctx = (m.context || '').toLowerCase();
+                    const trans = (m.translation || '').toLowerCase();
+                    return (ctx.includes('progressive') || ctx.includes('gerund') || trans.includes('progressive') || trans.includes('to be'))
+                        && !trans.includes('to fit') && !trans.includes('to stand') && !trans.includes('to stay');
+                });
+                if (progIdx >= 0) return progIdx;
+            }
+        }
+
+        // --- Rule 2: Modal obligation (tener que + inf) ---
+        const tenerForms = new Set([
+            'tengo', 'tienes', 'tiene', 'tenemos', 'teneis', 'tenéis', 'tienen',
+            'tuve', 'tuviste', 'tuvo', 'tuvimos', 'tuvisteis', 'tuvieron',
+            'tenia', 'tenía', 'tenias', 'tenías', 'teniamos', 'teníamos', 'tenian', 'tenían',
+            'tenga', 'tengas', 'tengamos', 'tengan', 'tener', 'teniendo'
+        ]);
+        if (tenerForms.has(cleanWord)) {
+            let hasObligation = false;
+            if (targetIdx >= 0 && targetIdx + 1 < rawTokens.length) {
+                const nextWords = rawTokens.slice(targetIdx + 1, targetIdx + 4);
+                if (nextWords[0] === 'que') {
+                    if (nextWords.length > 1 && /(?:ar|er|ir)$/.test(nextWords[1])) {
+                        hasObligation = true;
+                    } else if (nextWords.length > 2 && /(?:ar|er|ir)$/.test(nextWords[2])) {
+                        hasObligation = true;
+                    }
+                }
+            }
+            if (!hasObligation) {
+                hasObligation = /\btener\s+que\s+\w+[aei]r\b/i.test(textLower);
+            }
+            if (hasObligation) {
+                const oblgIdx = meanings.findIndex(m => {
+                    const trans = (m.translation || '').toLowerCase();
+                    const ctx = (m.context || '').toLowerCase();
+                    return trans.includes('have to') || trans.includes('must') || ctx.includes('obligation') || ctx.includes('have to');
+                });
+                if (oblgIdx >= 0) return oblgIdx;
+            }
+        }
+
+        // --- Rule 3: Future auxiliary (ir a + inf) ---
+        const irForms = new Set([
+            'voy', 'vas', 'va', 'vamos', 'vais', 'van',
+            'iba', 'ibas', 'ibamos', 'íbamos', 'ibais', 'iban',
+            'fui', 'fuiste', 'fue', 'fuimos', 'fuisteis', 'fueron',
+            'vaya', 'vayas', 'vayamos', 'vayan', 'ir', 'yendo'
+        ]);
+        if (irForms.has(cleanWord)) {
+            let hasFuture = false;
+            if (targetIdx >= 0 && targetIdx + 1 < rawTokens.length) {
+                const nextWords = rawTokens.slice(targetIdx + 1, targetIdx + 4);
+                if (nextWords[0] === 'a' && nextWords.length > 1 && /(?:ar|er|ir)$/.test(nextWords[1])) {
+                    hasFuture = true;
+                }
+            }
+            if (hasFuture) {
+                const futIdx = meanings.findIndex(m => {
+                    const trans = (m.translation || '').toLowerCase();
+                    const ctx = (m.context || '').toLowerCase();
+                    return trans.includes('going to') || trans.includes('will') || ctx.includes('future') || ctx.includes('going to');
+                });
+                if (futIdx >= 0) return futIdx;
+            }
+        }
+
+        // --- Rule 4: Perfect / compound auxiliary (haber + participle) ---
+        const haberForms = new Set([
+            'he', 'has', 'ha', 'hemos', 'habeis', 'habéis', 'han',
+            'habia', 'había', 'habias', 'habías', 'habiamos', 'habíamos', 'habian', 'habían',
+            'hube', 'hubiste', 'hubo', 'hubimos', 'hubieron',
+            'haya', 'hayas', 'hayamos', 'hayan', 'haber', 'habiendo'
+        ]);
+        const pastParticipleRegex = /\b(?:\w+(?:ado|ido)|sido|visto|hecho|dicho|puesto|escrito|abierto|muerto)\b/i;
+        if (haberForms.has(cleanWord)) {
+            let hasParticiple = false;
+            if (targetIdx >= 0 && targetIdx + 1 < rawTokens.length) {
+                const nextWords = rawTokens.slice(targetIdx + 1, targetIdx + 4);
+                hasParticiple = nextWords.some(w => pastParticipleRegex.test(w));
+            } else {
+                hasParticiple = pastParticipleRegex.test(textLower);
+            }
+            if (hasParticiple) {
+                const perfIdx = meanings.findIndex(m => {
+                    const trans = (m.translation || '').toLowerCase();
+                    const ctx = (m.context || '').toLowerCase();
+                    return (ctx.includes('compound') || ctx.includes('auxiliary') || ctx.includes('perfect') || trans.includes('to have') || trans.includes('have'))
+                        && !trans.includes('there is') && !trans.includes('exist');
+                });
+                if (perfIdx >= 0) return perfIdx;
+            }
+        }
+
+        // --- Rule 5: Personal pronouns / case distinction ---
+        if (cleanWord === 'ella' || cleanWord === 'yo' || cleanWord === 'tú' || cleanWord === 'él' || cleanWord === 'nosotros') {
+            const preps = new Set(['para', 'por', 'de', 'con', 'a', 'en', 'hacia', 'hasta', 'sin', 'sobre']);
+            const isPrepositional = targetIdx > 0 && preps.has(rawTokens[targetIdx - 1]);
+            const pronIdx = meanings.findIndex(m => {
+                const trans = (m.translation || '').toLowerCase();
+                const ctx = (m.context || '').toLowerCase();
+                if (isPrepositional && cleanWord === 'ella') {
+                    return trans === 'her' || ctx.includes('prepositional');
+                }
+                return (trans === 'she' || trans === 'i' || trans === 'you' || trans === 'he' || trans === 'we')
+                    || ctx.includes('subject') || ctx.includes('nominative');
+            });
+            if (pronIdx >= 0) return pronIdx;
+        }
+
+        // --- Rule 6: Pronominal / Reflexive routing ---
+        const clitics = new Set(['me', 'te', 'se', 'nos', 'os']);
+        const hasClitic = rawTokens.some(t => clitics.has(t));
+        if (hasClitic) {
+            const reflexIdx = meanings.findIndex(m => {
+                const ctx = (m.context || '').toLowerCase();
+                const trans = (m.translation || '').toLowerCase();
+                return ctx.includes('reflexive') || ctx.includes('pronominal') || trans.includes('oneself') || trans.includes('myself') || trans.includes('yourself');
+            });
+            if (reflexIdx >= 0) return reflexIdx;
+        }
+
+        // Fallback: Default to primary meaning (highest prior frequency)
+        return 0;
+    }
+
+    /**
      * Master Pipeline: Process a playlist of songs
      */
     async processPlaylist(songs, options = {}) {
@@ -686,36 +955,57 @@ export class TurboEngine {
 
         // 5c. Standard Word Cards
         for (const [word, entry] of wordCandidates.entries()) {
-            const dictEntry = this.dictionary[word];
-            if (!dictEntry) continue; // Out of 10k speech dictionary
+            let dictEntry = this.dictionary[word];
+            let effectiveWord = word;
+            if (!dictEntry) {
+                const lemma = this.lemmas50k[word];
+                if (lemma && this.dictionary[lemma]) {
+                    dictEntry = this.dictionary[lemma];
+                    effectiveWord = lemma;
+                }
+            }
+            if (!dictEntry) continue; // Out of 50k / unknown dictionary
 
             entry.lines.sort((a, b) => b.score - a.score);
             const bestLines = entry.lines.slice(0, 2);
+
+            // WSD bucket routing: Assign each best example to its disambiguated meaning bucket
+            const meaningBuckets = dictEntry.meanings.map(m => ({ ...m, examples: [] }));
+            for (const l of bestLines) {
+                const chosenIdx = this.disambiguateWord(word, dictEntry, l.text);
+                const exampleObj = {
+                    target: l.text,
+                    spanish: l.text,
+                    song: l.song,
+                    artist: l.artist,
+                    spotify_track_id: l.spotify_track_id,
+                    timestamp_ms: l.timestamp_ms,
+                    end_timestamp_ms: l.end_timestamp_ms,
+                    isSynced: l.isSynced
+                };
+                if (meaningBuckets[chosenIdx]) {
+                    meaningBuckets[chosenIdx].examples.push(exampleObj);
+                } else if (meaningBuckets[0]) {
+                    meaningBuckets[0].examples.push(exampleObj);
+                }
+            }
+
+            // Ensure primary meaning has examples if secondary received them all
+            const topMeaning = meaningBuckets[0];
+            const topTranslation = (topMeaning?.translation) || dictEntry.top_translation;
 
             finalCards.push({
                 type: 'word',
                 id: dictEntry.id,
                 word,
-                translation: dictEntry.top_translation,
-                pos: dictEntry.top_pos,
+                translation: topTranslation,
+                pos: topMeaning?.pos || dictEntry.top_pos,
                 speechRank: dictEntry.rank,
                 isPolysemous: dictEntry.polysemous,
                 meaningCount: dictEntry.meaningCount,
                 playlistCount: entry.count,
                 songCount: entry.songs.size,
-                meanings: dictEntry.meanings.map((m, idx) => ({
-                    ...m,
-                    examples: idx === 0 ? bestLines.map(l => ({
-                        target: l.text,
-                        spanish: l.text,
-                        song: l.song,
-                        artist: l.artist,
-                        spotify_track_id: l.spotify_track_id,
-                        timestamp_ms: l.timestamp_ms,
-                        end_timestamp_ms: l.end_timestamp_ms,
-                        isSynced: l.isSynced
-                    })) : []
-                })),
+                meanings: meaningBuckets,
                 examples: bestLines
             });
         }
@@ -726,9 +1016,10 @@ export class TurboEngine {
             return (a.speechRank || 9999) - (b.speechRank || 9999);
         });
 
-        // Assign ranks to cards FIRST so they propagate to token breakdowns
+        // Store playlist-level rank separately without overwriting authentic Spanish rank
         finalCards.forEach((c, idx) => {
-            c.rank = idx + 1;
+            c.playlistRank = idx + 1;
+            c.rank = c.speechRank || c.rank || null;
         });
 
         // 6. Build Lyric-by-Lyric Audit Breakdown for every song
@@ -738,7 +1029,7 @@ export class TurboEngine {
         }
 
         const annotatedSongs = parsedSongs.map(song => {
-            const auditLines = song.lines.map(lineObj => {
+            const auditLines = song.lines.map((lineObj, lineIdx) => {
                 const tokens = this.tokenizeLine(lineObj.text);
                 const mweSpans = this.findMweSpans(tokens);
                 const mweIndices = new Set();
@@ -825,14 +1116,43 @@ export class TurboEngine {
                             isPolysemous: wordCard.isPolysemous
                         });
                     } else {
-                        tokenBreakdowns.push({
-                            startIndex: i,
-                            raw: token.raw,
-                            type: 'unmatched',
-                            isElision: token.isElision,
-                            word: norm,
-                            translation: 'out of 10k supply / noise'
-                        });
+                        const resolved = this.resolveWordInfo(norm);
+                        if (resolved && resolved.dictEntry) {
+                            tokenBreakdowns.push({
+                                startIndex: i,
+                                raw: token.raw,
+                                type: 'word',
+                                isElision: token.isElision,
+                                card: { ...resolved.dictEntry, word: resolved.word, translation: resolved.translation },
+                                word: resolved.word,
+                                translation: resolved.translation,
+                                pos: resolved.pos,
+                                rank: resolved.rank,
+                                speechRank: resolved.speechRank,
+                                isPolysemous: resolved.isPolysemous
+                            });
+                        } else if (resolved && resolved.rank) {
+                            tokenBreakdowns.push({
+                                startIndex: i,
+                                raw: token.raw,
+                                type: 'word',
+                                isElision: token.isElision,
+                                word: norm,
+                                translation: `Top ${Math.ceil(resolved.rank / 1000) * 1000} Spanish word`,
+                                rank: resolved.rank,
+                                speechRank: resolved.rank,
+                                isPolysemous: false
+                            });
+                        } else {
+                            tokenBreakdowns.push({
+                                startIndex: i,
+                                raw: token.raw,
+                                type: 'unmatched',
+                                isElision: token.isElision,
+                                word: norm,
+                                translation: 'Uncatalogued lyric'
+                            });
+                        }
                     }
                 }
 
@@ -841,6 +1161,7 @@ export class TurboEngine {
 
                 return {
                     text: lineObj.text,
+                    english: lineObj.english || song.englishLines?.[lineIdx] || null,
                     timestamp_ms: lineObj.timestamp_ms,
                     end_timestamp_ms: lineObj.end_timestamp_ms,
                     isSynced: lineObj.isSynced,

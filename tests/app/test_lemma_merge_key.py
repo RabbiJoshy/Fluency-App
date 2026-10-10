@@ -53,11 +53,12 @@ class LemmaMergeKeyTests(unittest.TestCase):
             if (lemmaGroupKey(casar) !== 'casar') throw new Error('casar should join casar');
             if (lemmaGroupKey(casado) !== '') throw new Error('casado must stay outside both lemmas');
             if (lemmaSeenKey(casado) !== '') throw new Error('casado must not inherit casar from the shipped lemma');
-            if (lemmaGroupKey(casada) !== 'casado') throw new Error('noun and adjective casado are one lemma');
+            if (lemmaGroupKey(casada) !== '') throw new Error('noun merging needs complete-menu proof');
             if (lemmaHeadwordsOf(casada).length !== 1) throw new Error('POS must not split the headword');
             if (lemmaGroupKey(fue) !== '') throw new Error('fue must not fold into ser or ir');
+            withPhrase.noun_merge = { rule_version: 'noun-merge/v2', allowed: true, lemma: 'favor' };
             if (lemmaGroupKey(withPhrase) !== 'favor') throw new Error('a phrase sense must not count as a second lemma');
-            if (lemmaGroupKey(legacy) !== 'casar') throw new Error('a headword-less row keeps the shipped lemma');
+            if (lemmaGroupKey(legacy) !== '') throw new Error('unloaded rows need a verified merge key');
 
             const menu = dedupeLemmaMenu([
                 { pos: 'VERB', translation: 'to give', source_reference: 'spanishdict-menu:dar:1' },
@@ -119,13 +120,14 @@ class LemmaMergeExceptionTests(unittest.TestCase):
                 { headword: 'favor', pos: 'NOUN', translation: 'favor' },
                 { headword: 'por favor', pos: 'PHRASE', translation: 'please' },
             ]};
+            favor.noun_merge = { rule_version: 'noun-merge/v2', allowed: true, lemma: 'favor' };
             if (lemmaGroupKey(favor) !== 'favor') fail('por favor must not keep favor apart');
 
             // A Speech card whose senses have not loaded uses the shipped key.
             const pending = { word: 'fue', lemma: 'ser', merge_key: '', meanings: [] };
             if (lemmaGroupKey(pending) !== '') fail('a shipped key beats the lemma column');
             const columnOnly = { word: 'fue', lemma: 'ser', meanings: [] };
-            if (lemmaGroupKey(columnOnly) !== 'ser') fail('without a key the lemma column still applies');
+            if (lemmaGroupKey(columnOnly) !== '') fail('unloaded rows cannot approve a merge from the lemma alone');
 
             // The lemma's own spelling fronts the merged card.
             const estaba = { word: 'estaba', stableRank: 1, rank: 1, meanings: [{ headword: 'estar', pos: 'VERB', translation: 'to be' }] };

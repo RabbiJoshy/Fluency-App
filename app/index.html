@@ -47,6 +47,7 @@
         })();
     </script>
     <link rel="stylesheet" href="css/style.css?v=20260929sense6">
+    <link rel="stylesheet" href="css/progress-overview.css?v=20260927pa">
     <link rel="stylesheet" href="css/light-theme.css?v=20260927m3">
     <!-- Module preloads. Without these the browser waits to discover the
          imports inside main.js before kicking off the per-module fetches,
@@ -354,6 +355,9 @@
                     </button>
                     <div class="top-bar-right-controls">
                     <button id="topBarUserName" class="top-bar-user-name" type="button" title="Open account settings"></button>
+                    <button id="topBarProgressBtn" class="top-bar-icon-btn" type="button" hidden title="Your progress" aria-label="Open your progress" aria-haspopup="dialog" aria-controls="totalStatsModal">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V4M4 20h16M9 16v-5M14 16V7M19 16V4"></path></svg>
+                    </button>
                     <button id="helpBtn" class="top-bar-icon-btn" type="button" title="Tutorial" aria-label="Open tutorial">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.8 9a2.3 2.3 0 0 1 4.45.8c0 1.7-2.25 1.95-2.25 3.45"></path><path d="M12 17h.01"></path></svg>
                     </button>
@@ -372,7 +376,7 @@
             <!-- Step 1: Language Selection (non-Bad-Bunny mode) -->
             <div id="step1" class="setup-step">
                 <div class="step-header step-header-with-help" id="step1Header">
-                    <span class="step-title" id="step1Title">Choose the language you’re learning</span>
+                    <span class="step-title" id="step1Title">Choose the Language You’re Learning</span>
                     <span id="selectedLanguageInline" class="selection-pill-inline" style="display: none;"></span>
                     <span id="step1PromptArrow" class="language-step-prompt-arrow" aria-hidden="true">›</span>
                 </div>
@@ -442,6 +446,7 @@
                             <span class="language-picker-btn-arrow" aria-hidden="true">›</span>
                         </button>
                         <div class="artist-source-secondary-actions">
+                            <button type="button" id="artistSourceLyricsViewBtn" class="artist-source-action-btn">Lyrics view ›</button>
                             <button type="button" id="artistSourceArtistBtn" class="artist-source-action-btn">Change artist</button>
                             <button type="button" id="artistSourceSpeechBtn" class="artist-source-action-btn">Speech ›</button>
                         </div>
@@ -481,26 +486,26 @@
             <div id="step2" class="setup-step" style="display: none;">
                 <div class="step-header step-header-with-help">
                     <span class="step-number">2</span>
-                    <button type="button" class="step-title step-title-trigger" data-tooltip="step2Tooltip" aria-controls="step2Tooltip" title="About levels">Choose level <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
+                    <button type="button" class="step-title step-title-trigger" data-tooltip="step2Tooltip" aria-controls="step2Tooltip" title="About levels">Choose a Level <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
                     <div class="step-header-actions">
                         <span id="levelInfoLine" class="level-info-line" style="display: none;"></span>
                         <button type="button" id="levelModeToggle" class="level-mode-btn" style="display: none;" aria-hidden="true" tabindex="-1">CEFR</button>
                     </div>
                     <div id="step2Tooltip" class="step-info-tooltip setup-info-modal" role="dialog" aria-modal="true" aria-labelledby="levelHelpTitle"><div class="step-info-tooltip-inner">
                         <div class="info-sheet-header">
-                            <div><span class="info-sheet-eyebrow">Levels</span><h3 id="levelHelpTitle">Choose where to begin</h3></div>
+                            <div><span class="info-sheet-eyebrow">Levels</span><h3 id="levelHelpTitle">Choose Where to Begin</h3></div>
                             <button type="button" class="info-sheet-close" aria-label="Close level information">&#10005;</button>
                         </div>
-                        <p class="info-sheet-lead" id="step2LevelDescription">Levels arrange vocabulary from the most common daily words to less frequent ones.</p>
+                        <p class="info-sheet-lead" id="step2LevelDescription">Vocabulary is ordered by frequency, from daily essentials to less common words.</p>
                         <div class="info-sheet-points">
-                            <div><span>1</span><p><strong>Start anywhere.</strong> Begin at Level 1 for fundamentals, or jump ahead if you already know the basics.</p></div>
-                            <div><span>2</span><p><strong>Bite-sized sets.</strong> Each level is broken into small sets so you can make fast, steady progress without getting overwhelmed.</p></div>
-                            <div><span>3</span><p><strong>Smart Skip saves time.</strong> Related word forms share one flashcard, and obvious look-alikes are skipped, so you study fewer cards for the same coverage.</p></div>
+                            <div><span class="info-point-badge">1</span><p><strong>Start anywhere:</strong> Begin at Level 1 or jump ahead to words you don’t know yet.</p></div>
+                            <div><span class="info-point-badge">2</span><p><strong>Bite-sized sets:</strong> Each level is split into 25-card sets for steady progress.</p></div>
+                            <div><span class="info-point-badge">3</span><p><strong>Smart Skip:</strong> Related forms and obvious look-alikes are skipped to save time.</p></div>
                         </div>
                         <div class="level-estimate-modal-callout" id="step2LevelEstimateCallout">
                             <div class="level-estimate-modal-body">
-                                <strong>Not sure which level is right for you?</strong>
-                                <p>Take a quick adaptive test (~30 words) to estimate your current vocabulary and start at the right level.</p>
+                                <strong>Not sure where to begin?</strong>
+                                <p>Take a quick adaptive check to estimate your vocabulary and find a useful starting level.</p>
                             </div>
                             <button type="button" class="level-estimate-modal-btn" id="openEstimationFromLevelHelpBtn">Estimate my level →</button>
                         </div>
@@ -512,7 +517,7 @@
                          without leaving the page, and everything left of it opens
                          the page with the details. A button cannot nest inside a
                          button, hence the container. The info icon, the same one
-                         beside "Choose level", says there is more behind the row;
+                         beside "Choose a Level", says there is more behind the row;
                          on wide screens a line of example words fills the middle. -->
                     <div id="setupOptions" class="setup-options" style="display: none;">
                         <div class="fast-track-hub-row">
@@ -540,39 +545,38 @@
             <div id="step4" class="setup-step" style="display: none;">
                 <div class="step-header step-header-with-help">
                     <span class="step-number" id="rangeStepNumber">3</span>
-                    <button type="button" class="step-title step-title-trigger" data-tooltip="step5Tooltip" aria-controls="step5Tooltip" title="About study sets">Choose a set <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
+                    <button type="button" class="step-title step-title-trigger" data-tooltip="step5Tooltip" aria-controls="step5Tooltip" title="About study sets">Choose a Set <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
                     <div id="step5Tooltip" class="step-info-tooltip setup-info-modal" role="dialog" aria-modal="true" aria-labelledby="setHelpTitle"><div class="step-info-tooltip-inner">
                         <div class="info-sheet-header">
-                            <div><span class="info-sheet-eyebrow">Study sets</span><h3 id="setHelpTitle">One finishable set at a time</h3></div>
+                            <div><span class="info-sheet-eyebrow">Study Sets</span><h3 id="setHelpTitle">Bite-Sized Study Sessions</h3></div>
                             <button type="button" class="info-sheet-close" aria-label="Close set information">&#10005;</button>
                         </div>
-                        <p class="info-sheet-lead" id="step5Description">Each level is split into short sets of up to 25 cards, each designed to take 5–10 minutes. This app highlights your next unfinished one.</p>
+                        <p class="info-sheet-lead" id="step5Description">Each level is split into 25-card sets taking 5–10 minutes. The next unfinished set is highlighted automatically.</p>
                         <div class="info-sheet-points">
-                            <div><span>New</span><p>Learn fresh words you haven't seen before, card by card.</p></div>
-                            <div><span>Practice</span><p>Tricky and scheduled cards come back when they need another attempt.</p></div>
-                            <div><span>Done</span><p>Finishing a set saves your progress and unlocks the next one.</p></div>
+                            <div><span class="info-point-badge is-new">New</span><p><strong>Learn new:</strong> Fresh words to master card by card.</p></div>
+                            <div><span class="info-point-badge is-practice">Rev</span><p><strong>Practice:</strong> Missed and scheduled cards return for review.</p></div>
+                            <div><span class="info-point-badge is-done">Done</span><p><strong>Done:</strong> Finishing a set unlocks the next card range.</p></div>
                         </div>
                     </div></div>
                 </div>
                 <div id="rangeSelector" class="range-selector"></div>
             </div>
 
-            <!-- Practice errors: same header format as Choose level / Choose a set.
+            <!-- Practice errors: same header format as Choose a Level / Choose a Set.
                  The header and its info sheet are static so setupTooltipHandlers
                  binds them; ui.js fills #reviewDeckBody. -->
             <div id="reviewDeckSection" class="setup-step review-deck-step" hidden>
                 <div class="step-header step-header-with-help">
-                    <button type="button" class="step-title step-title-trigger" id="reviewDeckTitle" data-tooltip="practiceTooltip" aria-controls="practiceTooltip" title="About practice">Practice errors <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
+                    <button type="button" class="step-title step-title-trigger" id="reviewDeckTitle" data-tooltip="practiceTooltip" aria-controls="practiceTooltip" title="About practice">Practice Errors <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7.5h.01"></path></svg></button>
                     <div id="practiceTooltip" class="step-info-tooltip setup-info-modal" role="dialog" aria-modal="true" aria-labelledby="practiceHelpTitle"><div class="step-info-tooltip-inner">
                         <div class="info-sheet-header">
-                            <div><span class="info-sheet-eyebrow">Practice</span><h3 id="practiceHelpTitle">Practice errors</h3></div>
+                            <div><span class="info-sheet-eyebrow">Practice</span><h3 id="practiceHelpTitle">Practice Errors</h3></div>
                             <button type="button" class="info-sheet-close" aria-label="Close practice information">&#10005;</button>
                         </div>
-                        <p class="info-sheet-lead">Cards you've got wrong, or that are due for another look, collect here. Quick practice takes the first 20 in this order:</p>
+                        <p class="info-sheet-lead">Cards you missed or scheduled for review collect here. Quick Practice reviews top cards by priority:</p>
                         <div class="info-sheet-points">
-                            <div><span>1</span><p><strong>Never correct:</strong> words you've answered but never got right.</p></div>
-                            <div><span>2</span><p><strong>Needs attention:</strong> recent mistakes, and words that are long overdue another review.</p></div>
-                            <div><span>3</span><p><strong>Due now:</strong> words whose next scheduled review has arrived.</p></div>
+                            <div><span class="info-point-badge">1</span><p><strong>Mistakes:</strong> Words you recently missed or haven't mastered yet.</p></div>
+                            <div><span class="info-point-badge">2</span><p><strong>Due for review:</strong> Words scheduled for spaced repetition.</p></div>
                         </div>
                     </div></div>
                 </div>
@@ -606,12 +610,9 @@
                                             <path d="M20 20v-7a4 4 0 0 0-4-4H4"></path>
                                         </svg>
                                     </button>
-                                    <button class="gear-btn nav-row-icon" id="actionsGearFront" title="More actions" style="pointer-events: auto;">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                            <circle cx="12" cy="12" r="3"></circle>
-                                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                                        </svg>
-                                    </button>
+                                    <button class="gear-btn nav-row-icon" id="actionsGearFront" aria-label="More actions: main menu and settings" aria-haspopup="dialog" title="More actions" style="pointer-events: auto;">
+                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle></svg>
+                        </button>
                                 </div>
                                 <button class="nav-btn-inline" id="nextBtnFrontMobile" style="pointer-events: auto;">→</button>
                             </div>
@@ -686,11 +687,8 @@
                          redesign, which sits in this same reserved strip above the card. -->
                     <div id="deckProgressTrack" class="deck-progress-track" aria-label="Card position in active set">
                         <div id="deckProgressSegments" class="deck-progress-segments" role="group" aria-label="Cards in this set"></div>
-                        <button type="button" id="studyMenuBtn" class="gear-btn study-menu-btn" aria-label="Open study options" title="Study options">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <circle cx="12" cy="12" r="3"></circle>
-                                <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.05.05-2.86 2.86-.05-.05A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 1.55V21h-4v-.05a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.88.34l-.05.05-2.86-2.86.05-.05A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3v-4h.05A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.88l-.05-.05 2.86-2.86.05.05A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3h4v.05a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.88-.34l.05-.05 2.86 2.86-.05.05A1.7 1.7 0 0 0 19.4 9a1.7 1.7 0 0 0 1.55 1H21v4h-.05A1.7 1.7 0 0 0 19.4 15z"></path>
-                            </svg>
+                        <button type="button" id="studyMenuBtn" class="gear-btn study-menu-btn" aria-label="More actions: main menu and settings" title="More actions" aria-haspopup="dialog">
+                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle></svg>
                         </button>
                     </div>
                     <!-- Inline set scrubber — mobile only, replaces #deckProgressTrack in
@@ -716,11 +714,8 @@
                                 </span>
                             </button>
                         </div>
-                        <button type="button" class="cbs-gear" id="actionsGearBack" title="More actions" aria-label="More actions">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="3"></circle>
-                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                            </svg>
+                        <button type="button" class="cbs-gear" id="actionsGearBack" title="More actions" aria-label="More actions: main menu and settings" aria-haspopup="dialog">
+                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle></svg>
                         </button>
                     </div>
                 </div>
@@ -783,20 +778,17 @@
                     <span><small>Songs</small><strong id="learningContextSheetSongs"></strong></span>
                     <span aria-hidden="true">›</span>
                 </button>
+                <button id="learningContextLyricsViewBtn" class="learning-context-choice" type="button" hidden>
+                    <span class="learning-context-mode-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></span>
+                    <span><small>Song lyrics</small><strong>Lyrics & token view</strong></span>
+                    <span aria-hidden="true">›</span>
+                </button>
                 <button id="learningContextVerbsBtn" class="learning-context-choice" type="button" hidden>
                     <span class="learning-context-mode-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10"></path><path d="M4 12h7"></path><path d="M4 17h10"></path><path d="m16 10 4 2-4 2"></path></svg></span>
                     <span><small>Verb drills</small><strong>Practise conjugations</strong></span>
                     <span aria-hidden="true">›</span>
                 </button>
             </div>
-            <button id="learningContextProgressBtn" class="learning-context-progress" type="button">
-                <div class="learning-context-progress-copy">
-                    <span id="learningContextProgressLabel">Speech understood</span>
-                    <strong id="learningContextProgressValue">0%</strong>
-                </div>
-                <div class="learning-context-progress-track"><i id="learningContextProgressFill"></i></div>
-                <span class="learning-context-progress-link">View progress <span aria-hidden="true">›</span></span>
-            </button>
         </div>
     </div>
 
@@ -1400,30 +1392,36 @@
             <div class="estimation-body">
                 <div id="estimationIntro">
                     <p style="text-align: center; color: var(--text-secondary); margin-bottom: 20px;">
-                        Check 30 words sampled across the frequency range to find a useful starting level.
+                        Check up to 30 vocabulary groups sampled across the frequency range to find a useful starting level.
                     </p>
                     <p style="text-align: center; color: var(--text-muted); margin-bottom: 20px; font-size: 14px;">
-                        Think of the meaning first, then reveal it and say whether you knew it beforehand.
+                        Think of the meaning first, then reveal it and say whether you knew it beforehand. When a sentence is shown, judge the word's meaning in that sentence.
                     </p>
                     <button class="estimation-start-btn" id="startEstimationBtn">Start</button>
                     <button type="button" class="estimation-import-link" id="estimationImportKnownBtn" hidden>Already have a list of words you know? Import them ›</button>
                 </div>
                 <div id="estimationTest" style="display: none;">
                     <div class="estimation-progress">
-                        <span id="estimationLevel">Finding your range</span>
-                        <span id="estimationCount">0/30</span>
+                        <div class="estimation-progress-header">
+                            <span id="estimationLevel">Finding your range</span>
+                            <span id="estimationCount">0/30</span>
+                        </div>
+                        <div class="estimation-progress-bar-track">
+                            <div class="estimation-progress-bar-fill" id="estimationProgressFill" style="width: 0%;"></div>
+                        </div>
                     </div>
                     <div class="estimation-word-area">
                         <div class="estimation-word" id="estimationWord">palabra</div>
                         <div class="estimation-lemma" id="estimationLemma"></div>
                         <div class="estimation-pos" id="estimationPOS">noun</div>
+                        <div class="estimation-example" id="estimationExample" hidden></div>
                         <div class="estimation-translation" id="estimationTranslation"></div>
                         <div class="estimation-rank" id="estimationRank"></div>
-                        <button class="estimation-reveal" id="estimationReveal" type="button" onclick="revealTranslation()">Check meaning</button>
+                        <button class="estimation-reveal" id="estimationReveal" type="button" onclick="revealTranslation()">Check meaning <kbd class="estimation-kbd">Space</kbd></button>
                     </div>
                     <div class="estimation-buttons" id="estimationButtons" style="display: none;">
-                        <button class="estimation-btn know-btn" onclick="handleAnswer(true)">I knew it before</button>
-                        <button class="estimation-btn dont-know-btn" onclick="handleAnswer(false)">I didn't know</button>
+                        <button class="estimation-btn know-btn" onclick="handleAnswer(true)">I knew it before <kbd class="estimation-kbd">↵</kbd></button>
+                        <button class="estimation-btn dont-know-btn" onclick="handleAnswer(false)">I didn't know <kbd class="estimation-kbd">X</kbd></button>
                     </div>
                 </div>
                 <div id="estimationResult" style="display: none;">
@@ -1434,7 +1432,8 @@
                     <p style="text-align: center; color: var(--text-muted); margin-bottom: 25px; font-size: 14px;" id="estimationResultDesc">
                         A short check gives a useful range rather than an exact score.
                     </p>
-                    <button class="estimation-start-btn" id="useEstimatedLevelBtn">Use Suggested Level</button>
+                    <div class="estimation-placement-options" id="estimationPlacementOptions"></div>
+                    <button class="estimation-start-btn" id="useEstimatedLevelBtn" hidden>Use Suggested Level</button>
                     <button class="estimation-retry-btn" id="retryEstimationBtn" onclick="retryEstimation()">Try Again</button>
                 </div>
             </div>
@@ -1648,34 +1647,39 @@
         </div>
     </div>
 
-    <!-- Total Stats Modal (All-time stats for the current language) -->
-    <div id="totalStatsModal" class="modal hidden">
+    <!-- Current source progress: rendered from local card knowledge. -->
+    <div id="totalStatsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="progressOverviewTitle">
         <div class="modal-content progress-modal-content total-progress-modal-content">
             <div class="modal-header">
-                <div>
-                    <span class="progress-modal-eyebrow">All-time progress</span>
-                    <h3><span id="totalStatsLanguage">Spanish</span></h3>
-                </div>
-                <button class="modal-close" id="closeTotalStatsModal">✕</button>
+                <div><span class="progress-modal-eyebrow">Your progress</span><h2 id="progressOverviewTitle">Your words, so far</h2><p id="totalStatsLanguage" class="progress-source-name"></p></div>
+                <button class="modal-close" id="closeTotalStatsModal" type="button" aria-label="Close progress">✕</button>
             </div>
             <div class="stats-body total-progress-body">
-                <p class="progress-modal-explainer">Coverage weights common words more heavily, so it estimates how much real language you can understand—not merely how many cards you have seen.</p>
-                <div class="total-progress-hero">
-                    <span id="totalStatsCoverageLabel">Comprehension</span>
-                    <strong id="totalStatsCoverage">—</strong>
-                </div>
-                <div class="total-progress-grid">
-                    <div class="stat-row" id="totalStatsLinesRow"><span id="totalStatsLinesLabel">Full sentences:</span><span id="totalStatsLinesUnderstood">—</span></div>
-                    <div class="stat-row"><span>Words understood:</span><span id="totalStatsWords">—</span></div>
-                    <div class="stat-row"><span>Correct:</span><span id="totalWordsCorrect">0</span></div>
-                    <div class="stat-row"><span>Incorrect:</span><span id="totalWordsIncorrect">0</span></div>
+                <p id="progressOverviewStatus" role="status" aria-live="polite"></p>
+                <div id="progressOverviewContent" hidden>
+                    <section class="progress-coverage-card" aria-labelledby="totalStatsCoverageLabel">
+                        <div class="progress-coverage-ring" id="progressCoverageRing"><strong id="totalStatsCoverage">0%</strong></div>
+                        <div><h3 id="totalStatsCoverageLabel">Estimated coverage</h3><p id="progressCoverageDescription"></p><small>Common words count more. This is an estimate of vocabulary coverage, not a fluency score.</small></div>
+                    </section>
+                    <section class="progress-word-section" aria-labelledby="progressWordsTitle">
+                        <div class="progress-section-heading"><h3 id="progressWordsTitle">Your study cards</h3><span id="totalStatsWords"></span></div>
+                        <div class="progress-word-track" role="img" id="progressWordTrack"><i class="is-known"></i><i class="is-practice"></i><i class="is-new"></i></div>
+                        <div class="progress-count-grid">
+                            <div><i class="is-known"></i><strong id="progressKnownCount">0</strong><span>Known</span><small>Up to date</small></div>
+                            <div><i class="is-practice"></i><strong id="progressPracticeCount">0</strong><span>Practice</span><small id="progressPracticeDetail">Mistakes or due</small></div>
+                            <div><i class="is-new"></i><strong id="progressNewCount">0</strong><span>New</span><small>Not answered yet</small></div>
+                        </div>
+                        <p id="progressScopeNote" class="progress-scope-note"></p>
+                    </section>
+                    <details class="progress-history"><summary>Study history <span id="progressAttemptCount"></span></summary><div><p>These are answer attempts in this vocabulary, including repeat practice. They are separate from the card counts above.</p><div class="progress-history-counts"><span><strong id="totalWordsCorrect">0</strong> correct answers</span><span><strong id="totalWordsIncorrect">0</strong> incorrect answers</span></div></div></details>
                 </div>
                 <div class="progress-data-actions">
+                    <button type="button" id="progressWordsDataBtn">Your words ›</button>
                     <button type="button" id="progressImportKnownBtn">Import known words</button>
                     <button type="button" id="progressExportMistakesBtn">Export mistakes</button>
-                    <button type="button" id="progressWordsDataBtn">Your words ›</button>
                 </div>
                 <p id="progressDataActionStatus" role="status" aria-live="polite"></p>
+                <button type="button" id="progressRefreshBtn" class="progress-refresh-btn">Refresh progress</button>
             </div>
         </div>
     </div>
@@ -1719,7 +1723,7 @@
                     <div class="settings-defaults-heading">
                         <strong id="studyDefaultsTitle">Study</strong>
                     </div>
-                    <p class="settings-compact-note">Choose how you study. Smart Skip lives with the level picker, because it changes which cards a level contains.</p>
+                    <p class="settings-compact-note">Choose how your cards work. Change Smart Skip when choosing a level.</p>
                     <div class="settings-preference-group">
                         <div class="settings-default-row">
                             <span class="settings-row-label-block">
