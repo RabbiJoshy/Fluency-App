@@ -4,6 +4,7 @@ import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCod
 import { releaseUrl } from './release-host.js?v=20260921rh';
 import './theme.js?v=20260922ui';
 import { installFlagRendering } from './flags.js?v=20260929flags';
+import { IS_STAGING } from './env.js?v=20261010airlock';
 import './state.js?v=20260921x';
 import './offline-db.js?v=20260825ak';
 import './sync-queue.js?v=20260825ak';
@@ -682,6 +683,27 @@ if (activeArtist) {
 loadConfig().then(async () => {
     const isResumeNavigation = new URLSearchParams(window.location.search).get('resume') === '1';
     perfMark('after loadConfig');
+
+    if (IS_STAGING) {
+        if (!document.title.startsWith('[STAGING]')) {
+            document.title = `[STAGING] ${document.title}`;
+        }
+        const envBadge = document.getElementById('envBadge');
+        if (envBadge) {
+            envBadge.hidden = false;
+            envBadge.addEventListener('click', () => {
+                if (window.showSettingsModalWithTab) {
+                    window.showSettingsModalWithTab('appData');
+                } else if (window.openSettingsModal) {
+                    window.openSettingsModal();
+                }
+            });
+        }
+        const appDataTabBtn = document.getElementById('appDataTabBtn');
+        const settingsAdminLabel = document.getElementById('settingsAdminLabel');
+        if (appDataTabBtn) appDataTabBtn.hidden = false;
+        if (settingsAdminLabel) settingsAdminLabel.hidden = false;
+    }
     // #/es/conjugate[/verb] names the drill page, which is its own document.
     // A language with no drill deck opens that language instead.
     if (window.fluencyRoute?.kind === 'conjugate') {

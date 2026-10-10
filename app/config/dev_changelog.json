@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T14:00:00+01:00",
+      "date": "2026-10-10 14:00 BST",
+      "agent": "Antigravity",
+      "summary": "AIRLOCK: Establish isolated staging deployment and deliberate promotion workflow",
+      "detail": [
+        "Staging hosted at https://fluency-staging.pages.dev/ with clear amber environment identification and title badge.",
+        "Browser and backend isolation: separate IndexedDB database ('fluency-offline-staging') and wire sync namespacing ('stg_*') ensure real learning progress is 100% protected.",
+        "Candidate deck selection: staging can select candidate deck versions via config, query parameters, or interactive Developer settings without replacing production data.",
+        "Repeatable publication and promotion: `make stage` publishes proposed changes to Cloudflare Pages; `make promote` deliberately promotes only the reviewed commit, blocking unreviewed changes.",
+        "Staging service worker skipWaiting enables immediate asset loading on phone and laptop."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T12:43:57+01:00",
       "date": "2026-10-10 12:43 BST",
       "agent": "Codex",

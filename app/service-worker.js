@@ -57,6 +57,7 @@ const urlsToCache = [
   '/js/spotify.js?v=20260923su',
   '/js/estimation.js?v=20260825ak',
   '/js/release-host.js?v=20260921rh',
+  '/js/env.js?v=20261010airlock',
   '/js/config.js?v=20260921rh',
   '/js/progress.js?v=20260927pa',
   '/js/progress-identity.js?v=20260831a',
@@ -101,11 +102,12 @@ self.addEventListener('install', event => {
     caches.open(CACHE_NAME).then(cache => cache.addAll(
       urlsToCache.map(url => new Request(scopedPath(url), { cache: 'reload' }))
     )).then(() => {
-      // Development tabs change rapidly and mixing yesterday's controller
+      // Development and staging tabs change rapidly and mixing yesterday's controller
       // with today's HTML produces controls that visibly exist but cannot
-      // route. Activate local builds immediately; production still uses the
+      // route. Activate local and staging builds immediately; production still uses the
       // explicit, learner-controlled "Update ready" handoff above.
-      if (self.location.hostname === '127.0.0.1' || self.location.hostname === 'localhost') {
+      const host = self.location.hostname;
+      if (host === '127.0.0.1' || host === 'localhost' || host.includes('pages.dev') || host.includes('staging')) {
         return self.skipWaiting();
       }
       return undefined;

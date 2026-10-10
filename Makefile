@@ -4,7 +4,7 @@ VENV_PYTHON := $(VENV)/bin/python
 RUN_PYTHON := $(if $(wildcard $(VENV_PYTHON)),$(VENV_PYTHON),$(PYTHON))
 FLUENCY_WORKSPACE ?= /Users/joshuathomasamar/PycharmProjects/Fluency-Workspace
 
-.PHONY: bootstrap test pilot dev deploy sync clean-venv
+.PHONY: bootstrap test pilot dev stage promote deploy sync clean-venv
 
 bootstrap:
 	$(PYTHON) -m venv $(VENV)
@@ -20,7 +20,15 @@ pilot:
 dev:
 	PYTHONPATH=src $(RUN_PYTHON) -m fluency dev --workspace $(FLUENCY_WORKSPACE)
 
-# Push HEAD to main; .github/workflows/deploy-pages.yml publishes app/.
+# Publish current changes to Staging (https://fluency-staging.pages.dev) for review
+stage:
+	python3 scripts/deploy_staging.py
+
+# Deliberately promote the reviewed staging version to production (https://rabbijoshy.github.io/Fluency-App/)
+promote:
+	python3 scripts/promote_to_production.py
+
+# Legacy deploy alias — changes should go to staging first (`make stage`)
 deploy:
 	python3 scripts/deploy.py
 

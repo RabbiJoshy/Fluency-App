@@ -23738,3 +23738,52 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     #knowledgeOverviewModal .knowledge-overview-sheet,
     #knowledgeOverviewModal.is-closing .knowledge-overview-sheet { animation: none; }
 }
+
+/* Staging environment badge & identification */
+.env-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    line-height: 1.2;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+    user-select: none;
+    margin-right: 4px;
+}
+.env-badge.env-staging {
+    background-color: #f59e0b;
+    color: #1a1a1a;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+.env-badge.env-staging:hover {
+    background-color: #d97706;
+}
+.env-badge.env-staging:active {
+    transform: scale(0.96);
+}
+.staging-env-panel {
+    background: var(--card-bg, #1e293b);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+}
+.staging-env-pill {
+    display: inline-block;
+    background: #f59e0b;
+    color: #1a1a1a;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+}
+

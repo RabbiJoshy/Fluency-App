@@ -76,7 +76,7 @@ def tracked_app_files(ref: str) -> list[tuple[str, str]]:
     return files
 
 
-def build(dest: Path, ref: str, version: str | None = None) -> int:
+def build(dest: Path, ref: str, version: str | None = None, env: str = "production") -> int:
     files = tracked_app_files(ref)
     if not any(rel == "index.html" for _, rel in files):
         raise SystemExit(f"{ref}:app/index.html missing; refusing to build the site")
@@ -85,6 +85,8 @@ def build(dest: Path, ref: str, version: str | None = None) -> int:
         content = git("cat-file", "blob", sha)
         if version and rel.endswith(STAMPED_SUFFIXES):
             content = stamp(content.decode("utf-8"), version).encode("utf-8")
+        if env == "staging" and rel == "index.html":
+            content = content.replace(b"<head>", b"<head>\n    <script>window.__FLUENCY_ENV__ = 'staging';</script>")
         for target in (dest / rel, dest / "app" / rel):
             if target.exists() and target.read_bytes() == content:
                 continue
@@ -92,7 +94,23 @@ def build(dest: Path, ref: str, version: str | None = None) -> int:
             target.write_bytes(content)
             written += 1
     (dest / ".nojekyll").touch()
-    shipped = {".nojekyll"} | {rel for _, rel in files} | {f"app/{rel}" for _, rel in files}
+    extra_shipped = set()
+    if env == "staging":
+        import datetime
+        import json
+        env_meta = json.dumps({
+            "environment": "staging",
+            "ref": ref,
+            "version": version or "",
+            "built_at": datetime.datetime.now(datetime.timezone.utc).isoformat()
+        }, indent=2).encode("utf-8")
+        for target in (dest / "config" / "app_environment.json", dest / "app" / "config" / "app_environment.json"):
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(env_meta)
+            written += 1
+        extra_shipped.update({"config/app_environment.json", "app/config/app_environment.json"})
+
+    shipped = {".nojekyll"} | {rel for _, rel in files} | {f"app/{rel}" for _, rel in files} | extra_shipped
     for path in sorted(p for p in dest.rglob("*") if p.is_file() and ".git" not in p.relative_to(dest).parts):
         rel = path.relative_to(dest).as_posix()
         if rel in shipped or rel.startswith(EXTERNAL_DATA):
@@ -105,18 +123,22 @@ def build(dest: Path, ref: str, version: str | None = None) -> int:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--dest", required=True, type=Path, help="gh-pages checkout")
+    parser.add_argument("--dest", required=True, type=Path, help="site destination directory")
     parser.add_argument("--ref", default="HEAD", help="commit whose app/ to publish")
     parser.add_argument("--stamp", help="version stamped into ?v= tags and CACHE_NAME "
                         "(default: the ref's short commit id; pass '' to keep the committed tags)")
+    parser.add_argument("--env", default="production", choices=["production", "staging"],
+                        help="environment being built (production or staging)")
+    parser.add_argument("--allow-dir", action="store_true",
+                        help="allow output destination without a .git checkout (used for staging exports)")
     args = parser.parse_args()
-    if not (args.dest / ".git").exists():
-        raise SystemExit(f"{args.dest} is not a git checkout of gh-pages")
+    if not (args.dest / ".git").exists() and not args.allow_dir and args.env == "production":
+        raise SystemExit(f"{args.dest} is not a git checkout of gh-pages (pass --allow-dir to override)")
     version = args.stamp
     if version is None:
         version = git("rev-parse", "--short=8", args.ref).decode().strip()
-    written = build(args.dest, args.ref, version or None)
-    print(f"{written} site files updated from {args.ref}, stamped {version or '(none)'}")
+    written = build(args.dest, args.ref, version or None, env=args.env)
+    print(f"{written} site files updated from {args.ref} ({args.env}), stamped {version or '(none)'}")
 
 
 if __name__ == "__main__":

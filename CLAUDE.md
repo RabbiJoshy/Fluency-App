@@ -193,20 +193,20 @@ named examples he can look at, not a commit or a passing test on its own.
 - **Concurrent sessions are normal.** Check `git status` before committing;
   commit only your own paths. Others' uncommitted work is routinely present.
   Named jobs: **`CHAT_ROADMAP.md`** — do only your codename.
-- **Deploy every UI change.** Any edit to files under `app/` must reach `main`
-  at the end of the response — don't wait to be asked. Josh needs to see the
-  result on the live site to judge it. **`main` is the only source of the live
-  site**: `.github/workflows/deploy-pages.yml` publishes the whole committed
-  `app/` tree to `gh-pages` (root + `app/` mirror) on every push to `main`.
-  Never write to `gh-pages` yourself; the next run overwrites it. Standing
-  permission: pushing to `main` to deploy is authorised for local and cloud
-  sessions alike, whatever branch the session was given.
-  Deploy procedure:
+- **Stage every change for review (AIRLOCK workflow).** Any edit to files under `app/`
+  or candidate decks must reach **STAGING** (`https://fluency-staging.pages.dev/`) so Josh
+  can review proposed changes in the full app on his laptop and actual phone while production
+  remains stable and usable.
+  **Do NOT push or deploy directly to production `main` without Josh's explicit approval.**
+  Production (`https://rabbijoshy.github.io/Fluency-App/`) is updated only via deliberate
+  promotion of the reviewed staging build.
+  
+  Staging procedure:
   1. **Record the change in changelog:** Before staging or committing, you MUST
      prepend an entry to `app/config/dev_changelog.json` (the only copy; the
      root `config/dev_changelog.json` was retired 2026-10-06). The entry MUST include:
-     - `"timestamp"`: exact ISO 8601 timestamp with timezone (e.g. `"2026-09-19T13:30:00+01:00"`)
-     - `"date"`: formatted date/time with timezone (e.g. `"2026-09-19 13:30 BST"`)
+     - `"timestamp"`: exact ISO 8601 timestamp with timezone (e.g. `"2026-10-10T14:00:00+01:00"`)
+     - `"date"`: formatted date/time with timezone (e.g. `"2026-10-10 14:00 BST"`)
      - `"agent"`: the name of the LLM agent making the change (`"Antigravity"`, `"Claude"`, `"Cursor"`, `"Codex"`, etc.)
      - `"summary"`: a concise human summary in normal text font describing the most recent change
      - `"detail"`: array of specific change bullets
@@ -215,29 +215,24 @@ named examples he can look at, not a commit or a passing test on its own.
      **very top of the section** so Josh can immediately verify what changed,
      who made the change, and whether the Service Worker cache is fresh or stale.
      Keep at most the newest 30 entries (the tab shows 5; git keeps the rest).
-     `make deploy` enforces the cap when it merges changelogs.
-  2. **Do not bump `?v=` tags or `CACHE_NAME`.** The deploy stamps every tag,
-     `ASSET_VERSION` and `CACHE_NAME` with the commit id
-     (`scripts/build_pages_site.py`), so every deploy busts the cache and no two
-     sessions can claim one version. Leave the committed tags alone; editing
-     them only makes merge conflicts. Run the app tests:
-     `PYTHONPATH=src python3 -m unittest discover -s tests/app -t .` — the
-     workflow runs them too and will not deploy if they fail.
+  2. **Do not bump `?v=` tags or `CACHE_NAME`.** The staging/production builds stamp every tag,
+     `ASSET_VERSION` and `CACHE_NAME` automatically (`scripts/build_pages_site.py`),
+     so every deploy busts the cache. Run the app tests:
+     `PYTHONPATH=src python3 -m unittest discover -s tests/app -t .`
   3. `git add` only the files you changed. Do not stage other sessions'
      uncommitted work. Commit.
-  4. `make deploy` (or `python3 scripts/deploy.py`). It merges `origin/main`
-     into HEAD and pushes HEAD to `main`, from any branch. Changelog-only
-     conflicts (two sessions deploying close together) it resolves itself,
-     keeping both entries; any other conflict stops it for you to resolve.
-     Other sessions' uncommitted edits in files `main` changed are carried
-     across the merge (rehearsed first; untouched if they would clash).
-     Never push to `main` from a side worktree to get round a stop: it
-     lands the change but leaves this checkout behind `main`. `make sync`
-     brings `main` in without deploying.
-  5. Check the run at
-     https://github.com/RabbiJoshy/Fluency-App/actions/workflows/deploy-pages.yml
-     (then ~30 s for the Pages build). A deploy is done when that run is green,
-     not when the commit exists.
+  4. **Publish to Staging:** Run `make stage` (or `python3 scripts/deploy_staging.py`).
+     This builds the staging site with isolated storage (`fluency-offline-staging`),
+     namespaced sync (`stg_*`), and staging service-worker cache busting, then deploys
+     it to Cloudflare Pages: `https://fluency-staging.pages.dev/`.
+  5. **Review:** Josh reviews the changes in the full app on his laptop and actual phone.
+  6. **Deliberate Promotion to Production:** When Josh explicitly approves promoting the
+     reviewed version, run `make promote` (or `python3 scripts/promote_to_production.py`).
+     Promotion verifies the exact reviewed commit SHA and pushes it to `main`, triggering
+     `.github/workflows/deploy-pages.yml`. Unrelated commits made after staging are
+     detected and blocked from silently entering production. Direct production deploys
+     via `scripts/deploy.py` remain as an internal engine, but `make stage` + `make promote`
+     is the required workflow for proposed product changes.
 - **Releases are not on `gh-pages`.** The app is repo `RabbiJoshy/Fluency-App`
   (served at `rabbijoshy.github.io/Fluency-App/`; it was `Fluency-Next`, and a
   tiny `Fluency-Next` repo now only forwards old links). Release files live in

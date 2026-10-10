@@ -1,5 +1,6 @@
 import './state.js?v=20260825ak';
 import { releaseUrl } from './release-host.js?v=20260921rh';
+import { IS_STAGING, getCandidateDeckOverrides } from './env.js?v=20261010airlock';
 
 async function loadConfig() {
     try {
@@ -22,6 +23,34 @@ async function loadConfig() {
                 languageConfig.releaseCompositionPath = `${base}/composition.json`;
                 languageConfig.studyStructurePath = `${base}/study-structure.json`;
                 languageConfig.dataPath = `${base}/vocabulary.json`;
+            }
+        }
+
+        // In staging, allow candidate deck overrides (from query params or staging storage)
+        // so candidate deck versions can be reviewed independently of production.
+        window._activeCandidateDeckOverrides = {};
+        const isStaging = typeof IS_STAGING !== 'undefined' ? IS_STAGING : (typeof window !== 'undefined' && window.__FLUENCY_ENV__ === 'staging');
+        if (isStaging) {
+            const candidateOverrides = typeof getCandidateDeckOverrides === 'function' ? getCandidateDeckOverrides() : {};
+            for (const [langKey, languageConfig] of Object.entries(config.languages || {})) {
+                const routeCode = languageConfig.routeCode || langKey;
+                const queryOverride = params.get(`${routeCode}Release`) ||
+                                      params.get(`${langKey}Release`) ||
+                                      candidateOverrides[langKey] ||
+                                      candidateOverrides[routeCode];
+                if (queryOverride) {
+                    const releaseId = String(queryOverride).trim();
+                    window._activeCandidateDeckOverrides[langKey] = releaseId;
+                    const base = releaseId.startsWith('releases/')
+                        ? releaseId
+                        : `releases/${routeCode}/speech/${encodeURIComponent(releaseId)}`;
+                    languageConfig.releaseManifestPath = `${base}/manifest.json`;
+                    languageConfig.releaseCompositionPath = `${base}/composition.json`;
+                    languageConfig.studyStructurePath = `${base}/study-structure.json`;
+                    languageConfig.indexPath = `${base}/app/vocabulary.index.json`;
+                    languageConfig.examplesPath = `${base}/app/vocabulary.examples.json`;
+                    languageConfig.conjugationsPath = `${base}/app/conjugations.json`;
+                }
             }
         }
 
