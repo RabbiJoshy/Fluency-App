@@ -743,8 +743,9 @@ function renderKnowledgeOverviewButton(card) {
     const displayItems = meaningItems.length > 0 ? meaningItems : items;
     if (displayItems.length <= 1) return '';
     return `<button type="button" class="ref-tile knowledge-overview-trigger" aria-label="Review meaning(s)" aria-haspopup="dialog" onclick="showKnowledgeOverview(event)">
-        <svg class="ref-tile-icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M6 4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17l-6-4-6 4V4Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+        <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path>
+            <path d="M21 3v5h-5"></path>
         </svg>
         <span class="ref-tile-label">Review meaning(s)</span>
     </button>`;

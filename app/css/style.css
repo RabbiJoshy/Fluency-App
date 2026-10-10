@@ -2038,24 +2038,7 @@
         }
         @media (hover: hover) and (pointer: fine) {
             .card-desktop-shortcuts {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 8px;
-                position: absolute;
-                bottom: 10px;
-                left: 0;
-                right: 0;
-                font-family: var(--font-reading);
-                font-size: 11px;
-                color: var(--text-muted);
-                opacity: 0.7;
-                pointer-events: none;
-                z-index: 4;
-                transition: opacity 0.2s ease;
-            }
-            .flashcard:hover .card-desktop-shortcuts {
-                opacity: 0.95;
+                display: none !important;
             }
             .desktop-shortcut-item {
                 display: inline-flex;
@@ -2788,15 +2771,16 @@
             right: calc(100% + 8px);
             top: 50%;
             transform: translateY(-50%);
-            font-size: 11px;
+            font-size: 16px;
             font-weight: 600;
+            line-height: 1.35;
             white-space: nowrap;
-            background: rgba(15, 23, 42, 0.95);
+            background: rgba(15, 23, 42, 0.96);
             color: #f8fafc;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            border-radius: 6px;
-            padding: 4px 8px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 8px 14px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
             pointer-events: none;
             z-index: 100;
         }
@@ -20994,7 +20978,7 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
   border: 0;
   border-radius: 10px;
   background: transparent;
-  grid-template-columns: 28px minmax(0, 1fr) 18px;
+  grid-template-columns: 36px minmax(0, 1fr) 18px;
   gap: 14px;
 }
 #studyChoiceSheet .choice-sheet-item + .choice-sheet-item { margin-top: 2px; }
@@ -21002,13 +20986,13 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
   background: rgba(255, 255, 255, 0.06);
 }
 #studyChoiceSheet .choice-sheet-icon {
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   background: none;
   box-shadow: none;
   color: var(--accent-primary);
 }
-#studyChoiceSheet .choice-sheet-icon svg { width: 22px; height: 22px; }
+#studyChoiceSheet .choice-sheet-icon svg { width: 28px; height: 28px; }
 :root[data-theme="light"] #studyChoiceSheet .choice-sheet-item:hover:not(:disabled) {
   background: rgba(0, 0, 0, 0.05);
 }

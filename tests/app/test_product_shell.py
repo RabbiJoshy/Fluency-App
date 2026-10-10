@@ -603,7 +603,8 @@ class ProductShellTests(unittest.TestCase):
         self.assertIn('function setupSettingsOverview()', ui)
         self.assertIn('> .settings-tabs { display: none !important; }', css)
         self.assertIn("Show first", html)
-        self.assertIn("Speak the word", html)
+        self.assertIn("Spaced repetition", html)
+        self.assertNotIn("Speak the word", overview)
         self.assertIn('Bring back learned words', overview)
         # Rare senses open from the card's "Rarer uses" tile as a sheet, so
         # there is no longer a setting that chains them as a child card.

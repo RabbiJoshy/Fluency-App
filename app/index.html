@@ -633,7 +633,7 @@
                                  and turn every pill press into a card flip. -->
                             <div class="card-pos-list" id="frontPOS"></div>
                             <div class="card-ranking" id="frontRanking"></div>
-                            <div class="card-desktop-shortcuts desktop-front-shortcuts" aria-hidden="true">
+                            <div class="card-desktop-shortcuts desktop-front-shortcuts" aria-hidden="true" style="display: none !important;">
                                 <span class="desktop-shortcut-item"><kbd class="desktop-kbd">Space</kbd> Flip</span>
                                 <span class="desktop-shortcut-sep">·</span>
                                 <span class="desktop-shortcut-item"><kbd class="desktop-kbd">←</kbd> Prev</span>
@@ -663,14 +663,14 @@
                                 </svg>
                             </button>
                             <div class="card-details" id="backContent"></div>
-                            <div class="card-desktop-shortcuts desktop-back-shortcuts" aria-hidden="true">
+                            <div class="card-desktop-shortcuts desktop-back-shortcuts" aria-hidden="true" style="display: none !important;">
                                 <span class="desktop-shortcut-item"><kbd class="desktop-kbd">Space</kbd> Flip</span>
                                 <span class="desktop-shortcut-sep">·</span>
                                 <span class="desktop-shortcut-item desktop-shortcut-wrong"><kbd class="desktop-kbd">X</kbd> Again</span>
                                 <span class="desktop-shortcut-sep">·</span>
                                 <span class="desktop-shortcut-item desktop-shortcut-right">Got it <kbd class="desktop-kbd">Enter</kbd></span>
                             </div>
-                            <div class="swipe-legend" aria-hidden="true">
+                            <div class="swipe-legend" aria-hidden="true" style="display: none !important;">
                                 <span class="swipe-legend-wrong">← Again</span>
                                 <span class="swipe-legend-sep"></span>
                                 <span class="swipe-legend-right">Got it →</span>
@@ -1731,6 +1731,16 @@
                     <div class="settings-preference-group">
                         <div class="settings-default-row">
                             <span class="settings-row-label-block">
+                                <span class="settings-row-label">Spaced repetition <button type="button" class="review-home-srs-info settings-row-info" id="settingsSrsInfoBtn" aria-label="How learned words come back"><span aria-hidden="true">?</span></button></span>
+                                <small class="settings-row-explanation">Bring back learned words</small>
+                            </span>
+                            <div class="group-size-selector settings-toggle" role="group" aria-label="Spaced repetition: Bring back learned words">
+                                <button type="button" class="group-size-btn global-study-default-btn" data-setting="spacedRepetitionEnabled" data-value="off" aria-pressed="false">Off</button>
+                                <button type="button" class="group-size-btn global-study-default-btn selected" data-setting="spacedRepetitionEnabled" data-value="on" aria-pressed="true">On</button>
+                            </div>
+                        </div>
+                        <div class="settings-default-row">
+                            <span class="settings-row-label-block">
                                 <span class="settings-row-label">Show first</span>
                                 <small class="settings-row-explanation">The word first: guess the English. English first: say the word.</small>
                             </span>
@@ -1738,23 +1748,6 @@
                                 <button type="button" class="group-size-btn global-study-default-btn selected" id="cardFrontTargetBtn" data-setting="directionFlipped" data-value="off" aria-pressed="true">Language</button>
                                 <button type="button" class="group-size-btn global-study-default-btn" data-setting="directionFlipped" data-value="on" aria-pressed="false">English</button>
                             </div>
-                        </div>
-                        <div class="settings-default-row">
-                            <span class="settings-row-label-block">
-                                <span class="settings-row-label">Speak the word</span>
-                                <small class="settings-row-explanation">Reads it out when a new card appears. You can still tap the speaker when this is off.</small>
-                            </span>
-                            <div class="group-size-selector settings-toggle" role="group" aria-label="Speak the word when a card appears">
-                                <button type="button" class="group-size-btn global-study-default-btn" data-setting="speechEnabled" data-value="off" aria-pressed="false">Off</button>
-                                <button type="button" class="group-size-btn global-study-default-btn selected" data-setting="speechEnabled" data-value="on" aria-pressed="true">On</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="settings-default-row">
-                        <span class="settings-row-label-block"><span class="settings-row-label">Bring back learned words <button type="button" class="review-home-srs-info settings-row-info" id="settingsSrsInfoBtn" aria-label="How learned words come back"><span aria-hidden="true">?</span></button></span></span>
-                        <div class="group-size-selector settings-toggle" role="group" aria-label="Bring back learned words later">
-                            <button type="button" class="group-size-btn global-study-default-btn" data-setting="spacedRepetitionEnabled" data-value="off" aria-pressed="false">Off</button>
-                            <button type="button" class="group-size-btn global-study-default-btn selected" data-setting="spacedRepetitionEnabled" data-value="on" aria-pressed="true">On</button>
                         </div>
                     </div>
                     
