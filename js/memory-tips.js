@@ -207,7 +207,7 @@ function ensureModal() {
                 </div>
                 <button type="button" class="knowledge-overview-close" aria-label="Close memory tip" onclick="closeMemoryTip(event)">×</button>
             </header>
-            <div class="phrase-summary-scroll" id="memoryTipBody"></div>
+            <div class="phrase-summary-scroll" id="memoryTipBody" style="flex:0 1 auto;padding:4px 2px 8px;"></div>
         </div>`;
     modal.addEventListener('click', event => {
         event.stopPropagation();

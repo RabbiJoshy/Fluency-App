@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T00:20:00+01:00",
+      "date": "2026-10-10 00:20 BST",
+      "agent": "Claude",
+      "summary": "Fix: Memory tip sheet now shows its explanation (the body had collapsed to nothing)",
+      "detail": [
+        "The sheet's text area had no height, so only the title showed. It now sizes to its content."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T00:05:00+01:00",
       "date": "2026-10-10 00:05 BST",
       "agent": "Claude",
@@ -361,17 +371,6 @@
         "Choose a set: legend reads New, Practice, Known at the size of 'Set 1', and adds a hatched Skipped count when Smart Skip is on.",
         "Smart Skip page: the Skipped words menu always opens on Look-alikes (or the first category when look-alikes are off).",
         "Smart Skip page and Advanced options sheet: bordered card rows, quiet count pills, full-width Done button."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T00:15:00+01:00",
-      "date": "2026-10-09 00:15 BST",
-      "agent": "Claude",
-      "summary": "Vocabulary choice now says progress carries over and you can switch any time",
-      "detail": [
-        "The line under 'Choose your flashcard vocabulary source' adds: What you learn carries over, and you can switch at any time.",
-        "Shown on the inline choose screen (desktop and mobile) and in the in-study vocabulary picker; both read the same wording."
       ],
       "commit": "pending"
     }
