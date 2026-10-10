@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T17:41:00+01:00",
+      "date": "2026-10-10 17:41 BST",
+      "agent": "Antigravity",
+      "summary": "Yearless birthday selects, separate 'Is this you?' modal, centered F logo, and guest button parity",
+      "detail": [
+        "Replace native date picker inputs with day and month dropdown selectors in both the profile login form and account settings, eliminating unwanted year prompts.",
+        "Surface profile collisions in a dedicated 'Is this you?' modal dialog with 'Yes, continue' and 'No, create an account' choices instead of filling up the landing page.",
+        "Remove 'Fluency' title text and center the 'F' app logo and header copy on the authentication landing sheet.",
+        "Give 'Try as guest' identical card formatting and typography to Log in and Create account, with an arrow indicator and temporary guest icon."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T17:38:07+01:00",
       "date": "2026-10-10 17:38 BST",
       "agent": "Codex",

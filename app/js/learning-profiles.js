@@ -33,7 +33,7 @@ export function showLoginError(message, field = null) {
         const active = field === 'userInitials' ? id === 'profileNameError' : id === 'loginFormError';
         if (error) { error.textContent = active ? message : ''; error.hidden = !active || !message; }
     }
-    for (const id of ['userInitials','birthdayInput','birthdayDay','birthdayMonth']) {
+    for (const id of ['userInitials','birthdayDay','birthdayMonth']) {
         document.getElementById(id)?.setAttribute('aria-invalid', field === id ? 'true' : 'false');
     }
     if (field) document.getElementById(field)?.focus();
@@ -45,6 +45,8 @@ export function resetProfileLogin() {
     busy = false;
     pendingId = null;
     document.getElementById('profileMatches')?.replaceChildren();
+    document.getElementById('profileMatchCards')?.replaceChildren();
+    document.getElementById('profileMatchModal')?.classList.add('hidden');
     showLoginError('');
     setBusy(false);
 }
@@ -53,11 +55,14 @@ function setBusy(value) {
     busy = value;
     const submit = document.getElementById('submitInitialsBtn');
     if (submit) { submit.disabled = value; submit.textContent = value ? 'Checking…' : 'Continue'; }
-    for (const id of ['userInitials','birthdayInput','birthdayDay','birthdayMonth']) {
+    for (const id of ['userInitials','birthdayDay','birthdayMonth']) {
         const field = document.getElementById(id);
         if (field) field.disabled = value;
     }
     document.getElementById('profileMatches')?.querySelectorAll('button').forEach(button => { button.disabled = value; });
+    document.getElementById('profileMatchCards')?.querySelectorAll('button').forEach(button => { button.disabled = value; });
+    const createBtn = document.getElementById('profileMatchCreateBtn');
+    if (createBtn) createBtn.disabled = value;
 }
 
 async function requestProfiles(action, fields) {
@@ -98,22 +103,15 @@ export async function submitProfileLogin(onSelected) {
     if (!name || name.length > 40 || /[\u0000-\u001f\u007f]/u.test(name)) {
         showLoginError('Enter a username (up to 40 characters).', 'userInitials'); return;
     }
-    const bdayInput = document.getElementById('birthdayInput');
-    let dayVal = document.getElementById('birthdayDay')?.value;
-    let monthVal = document.getElementById('birthdayMonth')?.value;
-    if (bdayInput?.value) {
-        const parts = bdayInput.value.split('-');
-        if (parts.length >= 3) {
-            monthVal = parts[1];
-            dayVal = parts[2];
-        }
-    }
+    const bdayDay = document.getElementById('birthdayDay');
+    const bdayMonth = document.getElementById('birthdayMonth');
     try {
-        birthday = optionalBirthdayValue(dayVal, monthVal);
-    } catch (error) { showLoginError(error.message, bdayInput ? 'birthdayInput' : 'birthdayDay'); return; }
+        birthday = optionalBirthdayValue(bdayDay?.value, bdayMonth?.value);
+    } catch (error) { showLoginError(error.message, 'birthdayDay'); return; }
     const fields = {name,birthday};
     const attempt = ++epoch;
     document.getElementById('profileMatches')?.replaceChildren();
+    document.getElementById('profileMatchCards')?.replaceChildren();
     setBusy(true);
     const choose = async profile => {
         if (attempt !== epoch || busy) return;
@@ -148,19 +146,44 @@ export async function submitProfileLogin(onSelected) {
         if (attempt !== epoch) return;
         setBusy(false);
         if (!profiles.length) { await create(); return; }
-        const host = document.getElementById('profileMatches');
-        const title = document.createElement('h4'); title.textContent = 'Is this you?'; host.appendChild(title);
+        const modal = document.getElementById('profileMatchModal');
+        const cardsHost = document.getElementById('profileMatchCards') || document.getElementById('profileMatches');
+        if (cardsHost) cardsHost.replaceChildren();
         for (const profile of profiles) {
-            const section = document.createElement('section');
-            const nameLabel = document.createElement('strong'); nameLabel.textContent = profile.name;
-            const context = document.createElement('p'); context.textContent = profileContext(profile);
-            const button = document.createElement('button'); button.type='button'; button.className='auth-submit-btn';
-            button.textContent='Yes, continue'; button.addEventListener('click',()=>choose(profile));
-            section.append(nameLabel,context,button); host.appendChild(section);
+            const card = document.createElement('div'); card.className = 'profile-match-card';
+            const info = document.createElement('div'); info.className = 'profile-match-info';
+            const nameLabel = document.createElement('strong'); nameLabel.className = 'profile-match-name'; nameLabel.textContent = profile.name;
+            const context = document.createElement('p'); context.className = 'profile-match-context'; context.textContent = profileContext(profile);
+            info.append(nameLabel, context);
+            const button = document.createElement('button'); button.type = 'button'; button.className = 'product-primary-action profile-match-choose-btn';
+            button.textContent = 'Yes, continue';
+            button.addEventListener('click', async () => {
+                modal?.classList.add('hidden');
+                await choose(profile);
+            });
+            card.append(info, button);
+            cardsHost.appendChild(card);
         }
-        const separate = document.createElement('button'); separate.type='button'; separate.className='auth-cancel-btn';
-        separate.textContent='No, create a separate profile'; separate.addEventListener('click',create);host.appendChild(separate);
-        host.querySelector('button')?.focus();
+        const separateBtn = document.getElementById('profileMatchCreateBtn');
+        if (separateBtn) {
+            separateBtn.onclick = async () => {
+                modal?.classList.add('hidden');
+                await create();
+            };
+        }
+        const closeBtn = document.getElementById('closeProfileMatchModal');
+        if (closeBtn) {
+            closeBtn.onclick = () => {
+                modal?.classList.add('hidden');
+                setBusy(false);
+            };
+        }
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.querySelector('button')?.focus();
+        } else {
+            cardsHost?.querySelector('button')?.focus();
+        }
     } catch (error) { if (attempt === epoch) showLoginError(error.message); }
     finally { if (attempt === epoch) setBusy(false); }
 }

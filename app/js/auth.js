@@ -230,7 +230,9 @@ function enterGuestMode() {
 // Show login form
 function showLoginForm(mode = 'login') {
     resetProfileLogin();
-    document.getElementById('guestModeBtn').style.display = 'none';
+    const guestRow = document.getElementById('guestModeRow');
+    if (guestRow) guestRow.style.display = 'none';
+    else if (document.getElementById('guestModeBtn')) document.getElementById('guestModeBtn').style.display = 'none';
     document.getElementById('loginModeRow').style.display = 'none';
     const createRow = document.getElementById('createModeRow');
     if (createRow) createRow.style.display = 'none';
@@ -256,7 +258,9 @@ function showLoginForm(mode = 'login') {
 // Hide login form
 function hideLoginForm() {
     resetProfileLogin();
-    document.getElementById('guestModeBtn').style.display = 'flex';
+    const guestRow = document.getElementById('guestModeRow');
+    if (guestRow) guestRow.style.display = 'flex';
+    else if (document.getElementById('guestModeBtn')) document.getElementById('guestModeBtn').style.display = 'flex';
     document.getElementById('loginModeRow').style.display = 'flex';
     const createRow = document.getElementById('createModeRow');
     if (createRow) createRow.style.display = 'flex';
@@ -264,8 +268,6 @@ function hideLoginForm() {
     document.querySelector('#authModal .auth-modal-content')?.classList.remove('is-login-form');
     document.getElementById('loginForm').classList.add('hidden');
     document.getElementById('userInitials').value = '';
-    const bdayInput = document.getElementById('birthdayInput');
-    if (bdayInput) bdayInput.value = '';
     const bdayDay = document.getElementById('birthdayDay');
     if (bdayDay) bdayDay.value = '';
     const bdayMonth = document.getElementById('birthdayMonth');
@@ -363,43 +365,58 @@ function renderAccountPanel() {
 function wireAccountPassword() {
     const input = document.getElementById('accountPasswordInput');
     const show = document.getElementById('accountPasswordShowBtn');
+    const save = document.getElementById('accountPasswordSaveBtn');
     const status = document.getElementById('accountPasswordStatus');
-    const picker = document.getElementById('accountPasswordDatePicker');
+    const pickerFields = document.getElementById('accountBirthdayPickerFields');
+    const daySelect = document.getElementById('accountBirthdayDay');
+    const monthSelect = document.getElementById('accountBirthdayMonth');
     if (!input || !show) return;
 
-    if (picker) {
-        picker.addEventListener('change', () => {
-            if (!currentUser || !picker.value) return;
-            const parts = picker.value.split('-');
-            if (parts.length < 3) return;
-            const m = parseInt(parts[1], 10);
-            const d = parseInt(parts[2], 10);
-            if (!d || !m || d < 1 || d > 31 || m < 1 || m > 12) return;
-            const formatted = `${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-            currentUser.birthday = formatted;
+    let isEditing = false;
+    const setEditing = (editing) => {
+        isEditing = editing;
+        if (pickerFields) pickerFields.hidden = !editing;
+        input.hidden = editing;
+        if (save) save.hidden = !editing;
+        show.textContent = editing ? 'Cancel' : (currentUser?.birthday ? 'Change' : 'Set');
+        if (editing && daySelect && monthSelect) {
+            const bday = currentUser?.birthday || '';
+            if (bday && bday.includes('-')) {
+                const [m, d] = bday.split('-');
+                monthSelect.value = String(parseInt(m, 10));
+                daySelect.value = String(parseInt(d, 10));
+            } else {
+                daySelect.value = '';
+                monthSelect.value = '';
+            }
+        }
+    };
+
+    show.addEventListener('click', () => {
+        if (!currentUser) return;
+        setEditing(!isEditing);
+        if (status) status.textContent = 'This is used as your password';
+    });
+
+    if (save) {
+        save.addEventListener('click', () => {
+            if (!currentUser) return;
+            const d = parseInt(daySelect?.value, 10);
+            const m = parseInt(monthSelect?.value, 10);
+            if (!daySelect?.value && !monthSelect?.value) {
+                currentUser.birthday = '';
+            } else if (d >= 1 && d <= 31 && m >= 1 && m <= 12) {
+                currentUser.birthday = `${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+            } else {
+                if (status) status.textContent = 'Please choose both a day and month.';
+                return;
+            }
             localStorage.setItem('flashcardUser', JSON.stringify(currentUser));
+            setEditing(false);
             renderAccountPanel();
             if (status) status.textContent = 'Birthday updated! This is used as your password.';
         });
     }
-
-    show.addEventListener('click', () => {
-        if (!currentUser) return;
-        if (picker) {
-            const currentBday = currentUser.birthday || '';
-            if (currentBday && currentBday.includes('-')) {
-                const [m, d] = currentBday.split('-');
-                picker.value = `2000-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
-            }
-            if (typeof picker.showPicker === 'function') {
-                try {
-                    picker.showPicker();
-                    return;
-                } catch (_) {}
-            }
-            picker.click();
-        }
-    });
 }
 
 // Logout handler. Guests skip the confirm (nothing to lose); named users get

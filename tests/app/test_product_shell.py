@@ -1743,3 +1743,36 @@ class StudySetProgressConsistencyTests(unittest.TestCase):
         self.assertIn("_activeCognateFilterLang", extras)
         self.assertIn("smartSkipCognateLangFilter", extras)
 
+    def test_auth_modal_branding_guest_format_and_match_modal(self) -> None:
+        html = (APP_ROOT / "index.html").read_text(encoding="utf-8")
+        profiles_js = (APP_ROOT / "js" / "learning-profiles.js").read_text(encoding="utf-8")
+        auth_js = (APP_ROOT / "js" / "auth.js").read_text(encoding="utf-8")
+        css = (APP_ROOT / "css" / "style.css").read_text(encoding="utf-8")
+        profiles_css = (APP_ROOT / "css" / "learning-profiles.css").read_text(encoding="utf-8")
+
+        # 1. No "Fluency" branding in authModal; centered F mark
+        self.assertNotIn('<span class="auth-welcome-eyebrow">Fluency</span>', html)
+        self.assertIn('.auth-welcome-mark {\n            width: 48px;\n            height: 48px;\n            display: grid;\n            place-items: center;\n            margin: 0 auto 20px;', css)
+
+        # 2. Try as guest matches auth button formatting with guest icon
+        self.assertIn('id="guestModeRow"', html)
+        self.assertIn('class="auth-btn guest-btn"', html)
+        self.assertIn('class="auth-choice-icon auth-choice-icon--guest"', html)
+        self.assertNotIn('.guest-btn .auth-choice-icon { display: none; }', profiles_css)
+
+        # 3. Birthday uses day and month dropdowns without asking for year
+        self.assertIn('id="birthdayDay" class="auth-date-select"', html)
+        self.assertIn('id="birthdayMonth" class="auth-date-select"', html)
+        self.assertNotIn('<input type="date" id="birthdayInput"', html)
+        self.assertIn('id="accountBirthdayDay"', html)
+        self.assertIn('id="accountBirthdayMonth"', html)
+        self.assertNotIn('<input type="date" id="accountPasswordDatePicker"', html)
+
+        # 4. Profile Match modal ("Is this you?") exists with separate dialog
+        self.assertIn('id="profileMatchModal"', html)
+        self.assertIn('id="profileMatchTitle">Is this you?</h3>', html)
+        self.assertIn('id="profileMatchCards"', html)
+        self.assertIn('id="profileMatchCreateBtn">No, create an account</button>', html)
+        self.assertIn("modal.classList.remove('hidden')", profiles_js)
+
+

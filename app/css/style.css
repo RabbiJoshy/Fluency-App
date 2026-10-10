@@ -13833,21 +13833,22 @@
             background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
         }
         .auth-welcome-mark {
-            width: 42px;
-            height: 42px;
+            width: 48px;
+            height: 48px;
             display: grid;
             place-items: center;
-            margin-bottom: 22px;
+            margin: 0 auto 20px;
             border: 1px solid color-mix(in srgb, var(--accent-primary) 48%, transparent);
-            border-radius: 13px;
+            border-radius: 14px;
             background: color-mix(in srgb, var(--accent-primary) 14%, transparent);
             color: var(--accent-primary);
             font-family: var(--font-emphasis);
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 800;
         }
         .auth-welcome-copy {
             margin-bottom: 25px;
+            text-align: center;
         }
         .auth-welcome-eyebrow {
             display: block;
@@ -13870,7 +13871,7 @@
         }
         .auth-welcome-copy p {
             max-width: 34em;
-            margin: 0;
+            margin: 0 auto;
             color: var(--text-secondary);
             font-family: var(--font-reading);
             font-size: 13px;
@@ -14066,7 +14067,7 @@
                 border-radius: 22px;
             }
             .auth-welcome-mark {
-                margin-bottom: 17px;
+                margin: 0 auto 17px;
             }
             .auth-welcome-copy {
                 margin-bottom: 20px;
@@ -21405,6 +21406,31 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
 .account-password-input:focus { outline: none; border-color: var(--accent-primary); }
 .account-password-input.is-concealed { filter: blur(6px); user-select: none; }
 .account-password-input::placeholder { color: var(--text-muted); font-family: var(--font-reading); font-weight: 500; font-size: 13px; }
+.account-birthday-picker-fields {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+.account-birthday-picker-fields[hidden] { display: none; }
+.account-bday-select {
+  min-height: 34px;
+  padding: 4px 24px 4px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-tertiary, rgba(255,255,255,0.06));
+  color: var(--text-primary);
+  font: 500 13px/1 var(--font-reading);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+.account-bday-select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
 .account-password-action {
   padding: 7px 12px;
   border: 1px solid var(--border-color);
@@ -21425,7 +21451,7 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
 #step4 .study-set-legend i { width: 10px; height: 10px; border-radius: 3px; }
 @media (max-width: 480px) {
   .account-password { grid-template-columns: minmax(0, 1fr) auto auto; }
-  .account-password-input { grid-column: 1 / -1; grid-row: 2; }
+  .account-password-input, .account-birthday-picker-fields { grid-column: 1 / -1; grid-row: 2; }
 }
 
 /* Top bar trim: the language's two colours run the whole way round the bar
