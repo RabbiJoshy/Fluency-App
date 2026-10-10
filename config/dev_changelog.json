@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T00:05:00+01:00",
+      "date": "2026-10-10 00:05 BST",
+      "agent": "Claude",
+      "summary": "Fix: Memory tip tile now actually appears (it was reading the wrong language variable)",
+      "detail": [
+        "The first release looked up the language by a name that does not exist, so no card ever got a tip. It now uses selectedLanguage."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-09T23:40:00+01:00",
       "date": "2026-10-09 23:40 BST",
       "agent": "Claude",
@@ -362,17 +372,6 @@
       "detail": [
         "The line under 'Choose your flashcard vocabulary source' adds: What you learn carries over, and you can switch at any time.",
         "Shown on the inline choose screen (desktop and mobile) and in the in-study vocabulary picker; both read the same wording."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-08T22:28:06+01:00",
-      "date": "2026-10-08 22:28 BST",
-      "agent": "Codex",
-      "summary": "Consistent username wording throughout the profile flow",
-      "detail": [
-        "Profile labels, guidance, validation and playlist sign-in messages now say username.",
-        "Existing usernames, saved profiles and learning progress are preserved."
       ],
       "commit": "pending"
     }
