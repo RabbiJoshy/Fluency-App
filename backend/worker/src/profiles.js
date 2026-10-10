@@ -37,13 +37,34 @@ export async function lookupProfiles(db, params) {
   return { profiles: await Promise.all(results.map(row => contextFor(db, row))) };
 }
 
+const NAME_TAKEN = 'That username is already taken. Choose it from the list to continue, or pick a different name.';
+
 export async function createProfile(db, params) {
   const fields = profileFields(params);
   const id = String(params.id || '');
   if (!/^profile_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) throw new Error('Invalid profile ID.');
-  await db.prepare(`INSERT INTO learning_profiles
-    (user_id,display_name,name_key,birthday,origin,created_at) VALUES (?1,?2,?3,?4,'new',?5)
-    ON CONFLICT(user_id) DO NOTHING`).bind(id,fields.name,fields.nameKey,fields.birthday,new Date().toISOString()).run();
+  // One identity per name, compared case-insensitively (name_key is lowercased).
+  // A retry of the same ID is not a collision: it falls through to the
+  // idempotent insert below.
+  const holder = await db.prepare('SELECT user_id FROM learning_profiles WHERE name_key=?1').bind(fields.nameKey).first();
+  if (holder && holder.user_id !== id) throw new Error(NAME_TAKEN);
+  // An unclaimed legacy progress identity ("JP") owns its name too; creating a
+  // new profile under it would split one learner's progress in two.
+  const legacyId = fields.name.toUpperCase();
+  if (/^[A-Z]{2,4}$/.test(legacyId) && !holder) {
+    const legacy = await db.prepare(`SELECT user_id FROM users WHERE user_id=?1
+      UNION SELECT user_id FROM item_state WHERE user_id=?1 LIMIT 1`).bind(legacyId).first();
+    if (legacy) throw new Error(NAME_TAKEN);
+  }
+  try {
+    await db.prepare(`INSERT INTO learning_profiles
+      (user_id,display_name,name_key,birthday,origin,created_at) VALUES (?1,?2,?3,?4,'new',?5)
+      ON CONFLICT(user_id) DO NOTHING`).bind(id,fields.name,fields.nameKey,fields.birthday,new Date().toISOString()).run();
+  } catch (error) {
+    // Two creates racing past the check above: the unique index decides.
+    if (/UNIQUE/i.test(String(error?.message || error))) throw new Error(NAME_TAKEN);
+    throw error;
+  }
   const row = await db.prepare('SELECT * FROM learning_profiles WHERE user_id=?1').bind(id).first();
   if (row.name_key !== fields.nameKey || row.birthday !== fields.birthday) throw new Error('Profile ID already in use.');
   return { profile: await contextFor(db,row) };

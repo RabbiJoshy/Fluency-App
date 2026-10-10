@@ -57,7 +57,7 @@ const context = {
  document: {getElementById:id=>id === 'authModal' ? {classList:{contains:()=>!signingIn}} : null, addEventListener:(type, fn)=>{handler=fn;}},
  window: {canUserFlag:()=>true, speakWord:word=>calls.push(['speak',word]), showFlagMenu:()=>calls.push(['flagMenu'])},
  flashcards:[{targetWord:'hola',meanings:[{},{}]}], currentIndex:0, currentMeaningIndex:0,
- isJstOwner:()=>true,
+ isJstOwner:()=>true, canOpenModelInfo:()=>true,
  toggleKeyboardShortcutsModal:()=>calls.push(['reference']),
  showStatsModal:()=>calls.push(['progress']),
  showSettingsModalWithTab:()=>calls.push(['preferences']),

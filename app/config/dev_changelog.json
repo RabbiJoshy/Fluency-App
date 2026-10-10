@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T23:05:00+01:00",
+      "date": "2026-10-10 23:05 BST",
+      "agent": "Claude",
+      "summary": "Reviewer access for the JOSHUA profile; one profile per username",
+      "detail": [
+        "JOSHUA (profile_028abec8…) can flag cards and open the data and model panel with Cmd/Ctrl+I, but sees no admin settings, changelog modal, provenance pills or scrape inspector. It is allow-listed by profile ID, not display name.",
+        "A username now belongs to one profile, compared case-insensitively. The worker refuses a second profile with the same name or with an unclaimed legacy name (needs migration 0007 and a worker deploy).",
+        "The sign-in match dialog no longer offers 'No, create an account' for a name that already exists."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T22:14:49+01:00",
       "date": "2026-10-10 22:14 BST",
       "agent": "Claude",
@@ -361,20 +373,6 @@
         "Suggest a level and set within Levels 1–10, using the same 25-position set boundaries as the study picker; from Level 11 suggest whole levels.",
         "Keep earlier and later options separate when they land in different sets of the same level, and select the chosen set after its controls finish loading.",
         "Sample more finely near the start of the frequency range while keeping the adaptive check at up to 30 questions and preserving saved Speech-rank placement."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T19:49:00+01:00",
-      "date": "2026-10-09 19:49 BST",
-      "agent": "Claude",
-      "summary": "INFLECT pass 2: reflexive rows and feminine/plural participles get inflected English; conjugation table finds -se forms",
-      "detail": [
-        "Spanish -se rows inflect: siento (sentirse) 'to feel' → 'I feel'; fue (irse) 'to leave' → 'he/she left'; acuerdo (acordarse) → 'I remember'. 2,000 rows on 1,183 card/verb pairs.",
-        "Feminine and plural participles inflect: pt feita → 'made', querida → 'loved', mortos → 'killed'; es muertos → 'died'. 341 pt rows, 77 es rows. Only when the word is not also an ordinary verb form (pt pega stays 'he/she catches').",
-        "Conjugation table on a -se verb opens on the card's tense and highlights its form: fue with irse selected now opens Pretérito on 'se fue' (was: present tense, nothing highlighted). The pronoun stays in the table: 'me siento'.",
-        "Measured on live v23 decks: no existing row changed and none lost its English; only rows that showed the infinitive gained one.",
-        "Known: 3 pt rows read 'been' (feita under fazer's weather sense) — a sentence-assignment issue upstream, not inflection."
       ],
       "commit": "pending"
     }

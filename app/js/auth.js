@@ -29,12 +29,26 @@ function isJpAccount(user = currentUser) {
     return Boolean(user && !user.isGuest && String(user.initials || '').trim().toUpperCase() === 'JP');
 }
 
+// Reviewer profiles: flag cards and open the data/model panel with the Cmd/Ctrl+I
+// shortcut, but see every other surface exactly as an ordinary user does (no
+// Admin settings, changelog modal, provenance pills or scrape inspector). New
+// profiles are keyed by their profile ID, never by display name, because
+// anyone can register a display name. Keep this list to explicit IDs.
+const REVIEWER_PROFILE_IDS = new Set([
+    'profile_028abec8-a887-469a-9772-424e78ff9397' // JOSHUA
+]);
+
+function isReviewerAccount(user = currentUser) {
+    return Boolean(user && !user.isGuest && REVIEWER_PROFILE_IDS.has(String(user.initials || '')));
+}
+
 function canUserFlag(user = currentUser) {
-    return isAuditAccount(user) || isJpAccount(user);
+    return isAuditAccount(user) || isJpAccount(user) || isReviewerAccount(user);
 }
 
 window.isAuditAccount = isAuditAccount;
 window.isJpAccount = isJpAccount;
+window.isReviewerAccount = isReviewerAccount;
 window.canUserFlag = canUserFlag;
 
 function createFlagId() {

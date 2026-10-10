@@ -2638,7 +2638,7 @@ function setupKeyboardShortcuts() {
         const commandModifier = e.ctrlKey || e.metaKey;
         const commandKey = String(e.key || '').toLowerCase();
         const canFlag = Boolean(window.canUserFlag ? window.canUserFlag() : window.isAuditAccount?.());
-        if (commandModifier && !e.altKey && commandKey === 'i' && !e.shiftKey && isJstOwner()) {
+        if (commandModifier && !e.altKey && commandKey === 'i' && !e.shiftKey && canOpenModelInfo()) {
             e.preventDefault();
             toggleProvenancePanel();
             return;
@@ -9493,6 +9493,12 @@ function isJstOwner() {
     return Boolean(window.isAuditAccount?.());
 }
 
+// The Cmd/Ctrl+I data and model panel: admin plus explicitly listed reviewer
+// profiles. Everything else gated on isJstOwner() stays admin-only.
+function canOpenModelInfo() {
+    return Boolean(window.isAuditAccount?.() || window.isReviewerAccount?.());
+}
+
 function modelProposalMarkerHTML(meaning) {
     if (!isJstOwner() || !meaning?.modelProposed) return '';
     return `<span class="model-proposed-marker" title="Gemini proposed this definition because it was not in the SpanishDict sense menu" aria-label="Gemini-proposed definition">AI</span>`;
@@ -10335,7 +10341,7 @@ document.addEventListener('click', (e) => {
         getContext: () => ({
             card: flashcards[currentIndex],
             canFlag: Boolean(window.canUserFlag ? window.canUserFlag() : window.isAuditAccount?.()),
-            isOwner: isJstOwner(),
+            isOwner: canOpenModelInfo(),
         }),
         openReference: () => toggleKeyboardShortcutsModal(true),
     });

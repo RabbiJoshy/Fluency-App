@@ -49,7 +49,8 @@ c.commit();print(json.dumps(rows))
 `,dbPath,JSON.stringify([sql,args,script])],{encoding:'utf8'}));
 execute(`CREATE TABLE users(user_id TEXT PRIMARY KEY);CREATE TABLE item_state(user_id TEXT,language TEXT,last_seen_at TEXT);
 INSERT INTO users VALUES ('JST');INSERT INTO item_state VALUES('JST','spanish','2026-10-01T12:00:00Z');`
-+fs.readFileSync('backend/worker/migrations/0006_learning_profiles.sql','utf8'),[],true);
++fs.readFileSync('backend/worker/migrations/0006_learning_profiles.sql','utf8')
++fs.readFileSync('backend/worker/migrations/0007_unique_profile_names.sql','utf8'),[],true);
 const db={prepare(sql){let args=[];return {bind(...values){args=values;return this;},
  async all(){return {results:execute(sql,args)};},async first(){return execute(sql,args)[0]||null;},async run(){execute(sql,args);}};}};
 try {
@@ -64,19 +65,29 @@ try {
  assert.equal((await lookupProfiles(db,{...fields,birthday:'10-09'})).profiles.length,0);
  await assert.rejects(claimLegacyProfile(db,{...fields,id:'JST',birthday:'10-09'}));
  const a='profile_00000000-0000-4000-8000-000000000001',b='profile_00000000-0000-4000-8000-000000000002';
- await createProfile(db,{...fields,id:a});await createProfile(db,{...fields,id:b});
- const matches=(await lookupProfiles(db,{name:'jst',birthday:'10-08'})).profiles;
- assert.equal(matches.length,3);assert.equal(new Set(matches.map(p=>p.id)).size,3);
- await createProfile(db,{...fields,id:a});assert.equal((await lookupProfiles(db,fields)).profiles.length,3);
- await assert.rejects(createProfile(db,{...fields,id:a,birthday:'10-09'}));
+ // One identity per name, in any case. The claimed legacy profile owns "JST".
+ await assert.rejects(createProfile(db,{...fields,id:a}),/already taken/);
+ await assert.rejects(createProfile(db,{name:'jst',id:a}),/already taken/);
+ // A new name works, and retrying the same ID is idempotent rather than a collision.
+ await createProfile(db,{name:'Josh',birthday:'10-08',id:a});
+ await createProfile(db,{name:'Josh',birthday:'10-08',id:a});
+ assert.equal(execute("SELECT COUNT(*) AS n FROM learning_profiles WHERE name_key='josh'")[0].n,1);
+ // Same name in another case, with or without another birthday, is refused.
+ await assert.rejects(createProfile(db,{name:'JOSH',birthday:'03-04',id:b}),/already taken/);
+ await assert.rejects(createProfile(db,{name:'josh',id:b}),/already taken/);
+ await assert.rejects(createProfile(db,{name:'Josh',id:a,birthday:'10-09'}));
+ assert.equal(execute("SELECT COUNT(*) AS n FROM learning_profiles")[0].n,2);
+ // The database enforces it too, for creates that race past the check.
+ assert.throws(()=>execute("INSERT INTO learning_profiles VALUES ('profile_x','josh','josh','','new','2026-10-10')"));
+ // A supplied birthday still finds birthday-free profiles.
  const c='profile_00000000-0000-4000-8000-000000000003';
- await createProfile(db,{name:'JST',id:c});
- assert.equal((await lookupProfiles(db,{name:'JST'})).profiles.length,4);
- const dated=(await lookupProfiles(db,fields)).profiles;
- assert.equal(dated.length,4); // A supplied birthday still finds birthday-free profiles.
- assert.equal(dated.find(p=>p.id===c).birthday,'');
- assert.equal((await lookupProfiles(db,{name:'JST',birthday:'10-09'})).profiles.length,1);
+ await createProfile(db,{name:'Ann',id:c});
+ const dated=(await lookupProfiles(db,{name:'Ann',birthday:'10-08'})).profiles;
+ assert.equal(dated.length,1);assert.equal(dated[0].birthday,'');
+ assert.equal((await lookupProfiles(db,{name:'ANN',birthday:'10-09'})).profiles.length,1);
+ // An unclaimed legacy identity owns its name until it is claimed.
  execute("INSERT INTO users VALUES ('NEW');INSERT INTO item_state VALUES ('NEW','czech','2026-10-08');",[],true);
+ await assert.rejects(createProfile(db,{name:'New',id:b}),/already taken/);
  await claimLegacyProfile(db,{name:'NEW',id:'NEW'});
  const undatedLegacy=(await lookupProfiles(db,{name:'NEW',birthday:'10-08'})).profiles[0];
  assert.equal(undatedLegacy.id,'NEW');assert.equal(undatedLegacy.needsLink,false);
