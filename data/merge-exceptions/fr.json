@@ -1,5 +1,6 @@
 {
- "schema": "merge-exceptions/v2",
+ "schema": "merge-exceptions/v3",
+ "noun_merge_rule": "noun-merge/v2",
  "language": "fr",
  "source": "wiktionary:enwiktionary-2026-08-05/kaikki.org-dictionary-French.jsonl",
  "release_id": "fr-speech-v7-dual-metadata-v5-20260918",
@@ -61,5 +62,7 @@
   "çui-ci",
   "çui-là"
  ],
- "keys": {}
+ "keys": {},
+ "noun_verdicts": {},
+ "release_index_content_id": "sha256:6b27b05b26e510cafc8b7b86c40b8f0c43bdf5a77964956e9b5adae6671ac709"
 }

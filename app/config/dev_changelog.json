@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T12:13:00+01:00",
+      "date": "2026-10-10 12:13 BST",
+      "agent": "Claude",
+      "summary": "Merge Lemmas works again in Czech and Finnish before a set opens",
+      "detail": [
+        "Czech, Finnish and French Merge Lemmas lists rebuilt for their live decks. The app had ignored them (Czech's was built for v21; Finnish's and French's predated the plural/singular rule), so nothing merged until a set's senses loaded.",
+        "Verb forms merge from the start again: 4,179 Czech cards (into být, jít…) and 862 Finnish (into olla, saada…). Nouns stay separate until the plural/singular check runs for those languages (roadmap CONVOY).",
+        "French has nothing to merge yet: its 200-card deck carries no headwords.",
+        "A new app test stops any deploy whose live deck lacks a list built for it."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T11:35:14+01:00",
       "date": "2026-10-10 11:35 BST",
       "agent": "Codex",
@@ -360,16 +373,6 @@
       "detail": [
         "Choose a set: with Smart Skip on, the cards it sets aside take a light-grey share of each set pill from the right, so a level starts partly filled.",
         "The Skipped legend swatch is the same grey; known/practice/new shares are now measured against the full slot."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T01:20:00+01:00",
-      "date": "2026-10-09 01:20 BST",
-      "agent": "Claude",
-      "summary": "Smart Skip row on the level box shows more example words, in English",
-      "detail": [
-        "The 'Skipping …' / 'Look-alikes like …' line now lists up to eight words (the row trims to fit), as English words (family, minute, important) instead of the Spanish forms."
       ],
       "commit": "pending"
     }
