@@ -1,7 +1,7 @@
 # HEADWAY — Spanish/Portuguese source lemma audit, 2026-10-10
 
 Source/import fixes, previewed ledger corrections and targeted WSD are complete.
-Final candidate decks are built and validated; final Portuguese staging review is in progress. Production remains unchanged.
+Final candidate decks are built, validated, published and reviewed in staging. Production remains unchanged.
 App merging, kept-apart cards and titles remain SEAM's responsibility.
 
 ## Evidence and preview
@@ -176,10 +176,16 @@ this document is the concrete handoff. SEAM should not compensate for unresolved
 changing merging policy.
 
 Staging publication/review status: Spanish r4 is published and browser-reviewed on
-staging app commit f51cb60e. Portuguese r2 is built, validated and being published; the r1 browser
-review identified the further source constraint defect below. The latest staging app
-(04321919 at this checkpoint) already supports candidate selection, so HEADWAY
-will not redeploy or replace other chats’ staging changes.
+staging app commit f51cb60e. Portuguese r2 is published (release-site commit
+69a565b6) and browser-reviewed on the newer staging app 04321919. Its normal
+study route shows verb és → ser (“you are”) and separately noun és → é, with
+the unsupported noun ser removed. `staging-pt-r2-es.png` is the final screenshot;
+old r1 screenshots are historical evidence only. Hosted columns, study structure,
+Merge Lemmas and selected card shards match validated local bytes.
+The newer staging app already supports candidate selection; HEADWAY did not
+redeploy or replace other chats’ staging changes. Review the final pair at
+https://fluency-staging.pages.dev/?esRelease=es-speech-v24-headway-r4-10000x30-slim&ptRelease=pt-speech-v24-headway-r2-10000x30-slim .
+Default staging and production deck choices have not been activated.
 Production pointers, production storage and active releases remain unchanged.
 Other-language findings (Czech navěky and older cs/fi/fr rollout gaps) are recorded
 in the roadmap for later CONVOY work; no parity work was performed.
@@ -246,3 +252,19 @@ memory; packaging took 205.28 seconds with about 4.4 GB maximum resident memory.
 Both reported zero swaps. Final objects and validation still use substantial memory;
 these changes reduce the avoidable full-file copies rather than guaranteeing a
 small-memory build. All heavy processing is complete.
+
+## Final SEAM review limitations
+
+On staging 04321919, a cold Find a word search for és opens an examples-only
+card and omits its meanings. Loading level 2, set 126–150 through normal study
+and navigating to card 21 shows the correct verb meaning and noun companion.
+The search jump still omits meanings even after set loading. This reproduces an
+app loading/display boundary issue; supported meanings are present in the hosted
+row shard. `staging-pt-r2-search-missing-meanings.png` and
+`final-staging-review.json` record the exact observation. SEAM should verify and
+fix search hydration without changing source analyses or merging policy.
+The cognate/coverage warnings above remain pre-promotion review items.
+
+Final app checks: 234 tests passed. The source/release code is committed as
+1a83f788, locally; no app redeploy or production push was performed for that
+checkpoint. Other chats’ uncommitted app edits were left untouched.
