@@ -252,9 +252,16 @@ Two visible consequences follow and are accepted:
   per-form breakdown is carried for the tooltip rather than collapsed to a
   count.
 
-## Open
+## Open questions reconciled by SEAM (2026-10-10)
 
-- `α` for rule 5, pending the per-sense evidence-count distribution.
-- Whether the two surviving multiword keys warrant a rule or are accepted.
-- Near-duplicate senses under the content-signature fallback are unmeasured on
-  a provider that supplies no stable id; both releases examined here supply one.
+- `α`: **superseded** by decision 0028's whole-surface grouping. Ambiguous
+  surfaces stay separate; current ordering does not split counts across lemmas.
+- `el pentágono` / `no obstante`: **resolved for current Spanish defaults**;
+  neither remains a merge key. Portuguese's two remaining phrase-shaped keys
+  await source adjudication; other-language checks are deferred.
+- Content-signature near duplicates: **still relevant, unverified for providers
+  without stable references**. All shown lexical senses in current es/pt decks
+  have references; fallback rows belong to special/expression senses. No fuzzy
+  deduplication rule is justified by this audit.
+
+See [SEAM](../SEAM.md) for releases, counts, examples and limitations.

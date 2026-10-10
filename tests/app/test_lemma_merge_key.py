@@ -194,6 +194,14 @@ class CitationFormTests(unittest.TestCase):
                 fail('the same spelling written apart is the citation');
             }
 
+            if (merged(e).displaySurface !== 'é' || merged(e).mergedLemma) fail('frozen é stays é');
+            const contraction = { word: 'no', is_contraction: true, meanings: [{headword: 'em', pos: 'prep'}] };
+            if (merged(contraction).displaySurface !== 'no') fail('contraction title stays no');
+            const hay = { word: 'hay', meanings: [{headword: 'haber', pos: 'VERB'}, {headword: 'hay que', pos: 'PHRASE'}] };
+            if (merged(hay).productionAnswer !== 'hay') fail('frozen hay tests hay');
+            const noun = { word: 'casas', noun_merge: {rule_version: 'noun-merge/v2', allowed: true, lemma: 'casa'}, meanings: [{headword: 'casa', pos: 'NOUN'}] };
+            if (merged(noun).displaySurface !== 'casa') fail('approved noun title merges');
+
             // A spelling that merges still wears the lemma.
             const estaba = { word: 'estaba', meanings: [{ headword: 'estar', pos: 'VERB', frequency: '1' }] };
             const estabaForm = merged(estaba);

@@ -1772,7 +1772,15 @@ function mergeIndexRowPayload(payload) {
     for (const card of window._cachedJoinedIndex) {
         const fat = payload[card.id];
         if (!fat) continue;
+        // Supplemental complete-menu proof belongs to this release too. A
+        // row shard carries the original verdict; retain the checked overlay
+        // and remember the hydrated original for a later release change.
+        const nounOverlay = card._nounMergeOverlay ? card.noun_merge : null;
         Object.assign(card, fat);
+        if (nounOverlay) {
+            card._nounMergeOriginal = fat.noun_merge;
+            card.noun_merge = nounOverlay;
+        }
         card._indexRowsPending = false;
     }
 }
