@@ -2,6 +2,16 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T00:35:00+01:00",
+      "date": "2026-10-10 00:35 BST",
+      "agent": "Claude",
+      "summary": "Memory tip sheet text gets side padding",
+      "detail": [
+        "Text no longer touches the sheet's left edge."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T00:20:00+01:00",
       "date": "2026-10-10 00:20 BST",
       "agent": "Claude",
@@ -358,19 +368,6 @@
       "summary": "Set pills show their word ranks on desktop",
       "detail": [
         "Choose a set: on screens 760px and wider each pill reads its frequency-rank range (e.g. 26–50) instead of the set number; phones keep the number."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T00:45:00+01:00",
-      "date": "2026-10-09 00:45 BST",
-      "agent": "Claude",
-      "summary": "Landing page: English example words, set legend reordered with a Skipped count, tidier Smart Skip pages",
-      "detail": [
-        "Level box: example words are now English meanings, up to eight on desktop (five on phones); 'Level N' and 'Words a–b' share one font size.",
-        "Choose a set: legend reads New, Practice, Known at the size of 'Set 1', and adds a hatched Skipped count when Smart Skip is on.",
-        "Smart Skip page: the Skipped words menu always opens on Look-alikes (or the first category when look-alikes are off).",
-        "Smart Skip page and Advanced options sheet: bordered card rows, quiet count pills, full-width Done button."
       ],
       "commit": "pending"
     }
