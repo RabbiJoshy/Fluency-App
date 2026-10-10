@@ -718,6 +718,33 @@ export function renderBack(card, selectedIdx, exampleIdx) {
                     <div class="translation">${esc(example.english)}</div>
                     ${renderCredit(card, meaning, example, exampleIdx % meaning.examples.length)}
                 </div>
+                <div class="links-section" id="replicaLinksSection">
+                    <button type="button" class="ref-tile ref-rare-uses-btn" aria-label="Rare uses" title="Rare uses">
+                        <div class="ref-tile-icon-wrap">
+                            <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="3.5" y="14" width="4" height="6" rx="1.5"></rect>
+                                <rect x="10" y="9" width="4" height="11" rx="1.5"></rect>
+                                <rect x="16.5" y="4" width="4" height="16" rx="1.5"></rect>
+                            </svg>
+                            <span class="ref-tile-count-badge">2</span>
+                        </div>
+                        <span class="ref-tile-label">Rare uses</span>
+                    </button>
+                    <button type="button" class="ref-tile knowledge-overview-trigger" aria-label="Review meaning(s)" aria-haspopup="dialog">
+                        <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path>
+                            <path d="M21 3v5h-5"></path>
+                        </svg>
+                        <span class="ref-tile-label">Review meaning(s)</span>
+                    </button>
+                    <button type="button" class="ref-tile ref-lookup-btn" aria-label="Look up" title="Look up">
+                        <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="11" cy="11" r="7"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <span class="ref-tile-label">Look up</span>
+                    </button>
+                </div>
             </div>
             <div class="card-tint" aria-hidden="true"></div>
         </div>`;

@@ -1,5 +1,5 @@
 {
-  "built_from_release_id": "pt-speech-v24-headway-r2-10000x30-slim",
+  "built_from_release_id": "pt-speech-v23-10000x30-slim",
   "cards": {
     "abaixa": {
       "es": [
@@ -537,6 +537,12 @@
       "es": [
         0.8,
         "adiós"
+      ]
+    },
+    "adeusinho": {
+      "es": [
+        0.75,
+        "adiosito"
       ]
     },
     "adicional": {
@@ -1551,6 +1557,12 @@
         "amantes"
       ]
     },
+    "amarela": {
+      "es": [
+        0.929,
+        "amarilla"
+      ]
+    },
     "amarelo": {
       "es": [
         0.929,
@@ -1683,12 +1695,6 @@
         "amigos"
       ]
     },
-    "amiguinho": {
-      "es": [
-        0.875,
-        "amiguito"
-      ]
-    },
     "amigável": {
       "es": [
         0.912,
@@ -1787,8 +1793,8 @@
     },
     "ancestrais": {
       "en": [
-        0.8,
-        "ancestral"
+        0.65,
+        "ancestor"
       ],
       "es": [
         0.864,
@@ -2343,6 +2349,12 @@
         "aqui"
       ]
     },
+    "aquilo": {
+      "es": [
+        0.833,
+        "aquella"
+      ]
+    },
     "aquário": {
       "es": [
         0.857,
@@ -2395,12 +2407,6 @@
       "en": [
         1.0,
         "arena"
-      ]
-    },
-    "ares": {
-      "es": [
-        0.76,
-        "aires"
       ]
     },
     "argumento": {
@@ -2903,12 +2909,6 @@
         "astuto"
       ]
     },
-    "atacada": {
-      "es": [
-        1.0,
-        "atacada"
-      ]
-    },
     "atacam": {
       "es": [
         0.942,
@@ -3333,6 +3333,16 @@
         "auxiliar"
       ]
     },
+    "auxilio": {
+      "en": [
+        0.722,
+        "auxiliary"
+      ],
+      "es": [
+        1.0,
+        "auxilio"
+      ]
+    },
     "avaliar": {
       "en": [
         0.625,
@@ -3447,12 +3457,6 @@
       "es": [
         1.0,
         "aves"
-      ]
-    },
-    "avisa": {
-      "es": [
-        1.0,
-        "avisa"
       ]
     },
     "avisar": {
@@ -3679,16 +3683,6 @@
       "es": [
         0.875,
         "bandera"
-      ]
-    },
-    "bandidos": {
-      "en": [
-        0.706,
-        "bandit"
-      ],
-      "es": [
-        1.0,
-        "bandidos"
       ]
     },
     "bando": {
@@ -4035,12 +4029,6 @@
         "beisbol"
       ]
     },
-    "bela": {
-      "es": [
-        1.0,
-        "bella"
-      ]
-    },
     "beleza": {
       "es": [
         1.0,
@@ -4281,12 +4269,6 @@
         "bienvenidas"
       ]
     },
-    "boba": {
-      "es": [
-        1.0,
-        "boba"
-      ]
-    },
     "bobagem": {
       "es": [
         0.643,
@@ -4377,12 +4359,6 @@
         "bonitos"
       ]
     },
-    "bons": {
-      "es": [
-        0.713,
-        "bono"
-      ]
-    },
     "bonzinho": {
       "es": [
         0.787,
@@ -4449,6 +4425,12 @@
       "es": [
         0.8,
         "boxeo"
+      ]
+    },
+    "branca": {
+      "es": [
+        0.93,
+        "blanca"
       ]
     },
     "brancas": {
@@ -4645,30 +4627,16 @@
         "burros"
       ]
     },
-    "bárbara": {
-      "es": [
-        1.0,
-        "bárbara"
-      ]
-    },
     "básica": {
       "en": [
-        1.0,
-        "basic"
-      ],
-      "es": [
-        1.0,
-        "básica"
+        0.833,
+        "basics"
       ]
     },
     "básicas": {
       "en": [
         0.714,
         "basic"
-      ],
-      "es": [
-        1.0,
-        "básicas"
       ]
     },
     "bêbado": {
@@ -4917,12 +4885,6 @@
         "camello"
       ]
     },
-    "caminha": {
-      "es": [
-        0.833,
-        "camita"
-      ]
-    },
     "caminhada": {
       "es": [
         1.0,
@@ -4995,12 +4957,6 @@
       "es": [
         1.0,
         "campo"
-      ]
-    },
-    "campos": {
-      "es": [
-        1.0,
-        "campos"
       ]
     },
     "camuflagem": {
@@ -5077,6 +5033,12 @@
       "es": [
         1.0,
         "cantar"
+      ]
+    },
+    "cante": {
+      "es": [
+        0.9,
+        "canto"
       ]
     },
     "cantina": {
@@ -5627,12 +5589,6 @@
       "es": [
         0.93,
         "cazas"
-      ]
-    },
-    "caí": {
-      "es": [
-        1.0,
-        "caí"
       ]
     },
     "caído": {
@@ -6337,6 +6293,12 @@
         "claramente"
       ]
     },
+    "claras": {
+      "es": [
+        1.0,
+        "claras"
+      ]
+    },
     "clareza": {
       "en": [
         0.714,
@@ -6863,6 +6825,12 @@
       "es": [
         1.0,
         "comes"
+      ]
+    },
+    "comeste": {
+      "es": [
+        0.929,
+        "comiste"
       ]
     },
     "cometa": {
@@ -7427,8 +7395,8 @@
     },
     "comunistas": {
       "en": [
-        0.8,
-        "communist"
+        0.915,
+        "communistic"
       ],
       "es": [
         1.0,
@@ -8691,8 +8659,8 @@
     },
     "convidada": {
       "es": [
-        1.0,
-        "convidada"
+        0.794,
+        "invitada"
       ]
     },
     "convidado": {
@@ -8703,8 +8671,8 @@
     },
     "convidados": {
       "es": [
-        1.0,
-        "convidados"
+        0.815,
+        "invitados"
       ]
     },
     "convidar": {
@@ -9429,8 +9397,8 @@
     },
     "críticas": {
       "en": [
-        0.875,
-        "critical"
+        0.75,
+        "critic"
       ],
       "es": [
         1.0,
@@ -9449,8 +9417,8 @@
     },
     "críticos": {
       "en": [
-        0.812,
-        "critical"
+        0.75,
+        "critic"
       ],
       "es": [
         1.0,
@@ -11093,6 +11061,12 @@
         "dioses"
       ]
     },
+    "devas": {
+      "es": [
+        0.93,
+        "debas"
+      ]
+    },
     "dever": {
       "es": [
         0.93,
@@ -11105,16 +11079,34 @@
         "deberes"
       ]
     },
+    "deverias": {
+      "es": [
+        0.956,
+        "deberías"
+      ]
+    },
     "deves": {
       "es": [
         0.93,
         "debes"
       ]
     },
+    "devesses": {
+      "es": [
+        0.831,
+        "debieses"
+      ]
+    },
     "deviam": {
       "es": [
         0.883,
         "debían"
+      ]
+    },
+    "devias": {
+      "es": [
+        0.942,
+        "debías"
       ]
     },
     "devolva": {
@@ -11695,16 +11687,6 @@
         "divertimento"
       ]
     },
-    "divina": {
-      "en": [
-        0.917,
-        "divine"
-      ],
-      "es": [
-        1.0,
-        "divina"
-      ]
-    },
     "divisão": {
       "en": [
         0.875,
@@ -11879,6 +11861,12 @@
         "doler"
       ]
     },
+    "doidos": {
+      "es": [
+        0.643,
+        "colados"
+      ]
+    },
     "dois": {
       "es": [
         0.713,
@@ -11889,12 +11877,6 @@
       "es": [
         1.0,
         "domingo"
-      ]
-    },
-    "domingos": {
-      "es": [
-        1.0,
-        "domingos"
       ]
     },
     "doméstica": {
@@ -12701,12 +12683,6 @@
       "es": [
         1.0,
         "encanta"
-      ]
-    },
-    "encantada": {
-      "es": [
-        1.0,
-        "encantada"
       ]
     },
     "encantador": {
@@ -13725,12 +13701,6 @@
       "es": [
         0.706,
         "escobilla"
-      ]
-    },
-    "escrava": {
-      "es": [
-        0.95,
-        "esclava"
       ]
     },
     "escravo": {
@@ -15531,16 +15501,6 @@
         "expulso"
       ]
     },
-    "externa": {
-      "en": [
-        0.875,
-        "external"
-      ],
-      "es": [
-        1.0,
-        "externa"
-      ]
-    },
     "extinção": {
       "en": [
         0.9,
@@ -15731,10 +15691,22 @@
         "hablamos"
       ]
     },
+    "falando": {
+      "es": [
+        0.75,
+        "hablando"
+      ]
+    },
     "falar": {
       "es": [
         0.833,
         "fablar"
+      ]
+    },
+    "falarei": {
+      "es": [
+        0.667,
+        "hablareis"
       ]
     },
     "falaremos": {
@@ -15743,16 +15715,22 @@
         "hablaremos"
       ]
     },
-    "falares": {
+    "falarmos": {
       "es": [
-        0.75,
-        "hablares"
+        0.739,
+        "hablarnos"
       ]
     },
     "falará": {
       "es": [
         0.714,
         "hablara"
+      ]
+    },
+    "falasse": {
+      "es": [
+        0.714,
+        "hablase"
       ]
     },
     "falava": {
@@ -15843,12 +15821,6 @@
       "es": [
         1.0,
         "falso"
-      ]
-    },
-    "falámos": {
-      "es": [
-        0.75,
-        "hablamos"
       ]
     },
     "fama": {
@@ -16381,26 +16353,6 @@
         "finalmente"
       ]
     },
-    "financeira": {
-      "en": [
-        0.765,
-        "financial"
-      ],
-      "es": [
-        0.965,
-        "financiera"
-      ]
-    },
-    "financeiros": {
-      "en": [
-        0.695,
-        "financial"
-      ],
-      "es": [
-        0.968,
-        "financieros"
-      ]
-    },
     "financiar": {
       "en": [
         0.722,
@@ -16571,6 +16523,12 @@
         "foja"
       ]
     },
+    "fomos": {
+      "es": [
+        0.76,
+        "somos"
+      ]
+    },
     "fonte": {
       "es": [
         0.7,
@@ -16593,6 +16551,12 @@
         "forense"
       ]
     },
+    "fores": {
+      "es": [
+        0.7,
+        "fueres"
+      ]
+    },
     "formal": {
       "en": [
         1.0,
@@ -16613,12 +16577,6 @@
       "es": [
         1.0,
         "formas"
-      ]
-    },
-    "formigas": {
-      "es": [
-        0.875,
-        "hormigas"
       ]
     },
     "formulário": {
@@ -16667,12 +16625,6 @@
         "fortuna"
       ]
     },
-    "forçada": {
-      "es": [
-        0.95,
-        "forzada"
-      ]
-    },
     "forçado": {
       "en": [
         0.736,
@@ -16717,6 +16669,12 @@
       "es": [
         0.775,
         "forzó"
+      ]
+    },
+    "foste": {
+      "es": [
+        0.7,
+        "fuiste"
       ]
     },
     "foto": {
@@ -16807,6 +16765,12 @@
       "es": [
         1.0,
         "fragmentos"
+      ]
+    },
+    "franca": {
+      "es": [
+        1.0,
+        "franca"
       ]
     },
     "francesa": {
@@ -16919,10 +16883,10 @@
         "fresco"
       ]
     },
-    "fria": {
+    "frescos": {
       "es": [
         1.0,
-        "fría"
+        "frescos"
       ]
     },
     "frias": {
@@ -16949,10 +16913,10 @@
         "fríos"
       ]
     },
-    "fritas": {
+    "frita": {
       "es": [
         1.0,
-        "fritas"
+        "frita"
       ]
     },
     "frota": {
@@ -17399,6 +17363,12 @@
         "fórmula"
       ]
     },
+    "fôssemos": {
+      "es": [
+        0.812,
+        "fuésemos"
+      ]
+    },
     "gajo": {
       "es": [
         0.713,
@@ -17484,10 +17454,6 @@
       ]
     },
     "ganhas": {
-      "en": [
-        0.692,
-        "gained"
-      ],
       "es": [
         0.714,
         "ganadas"
@@ -17703,6 +17669,16 @@
       "es": [
         1.0,
         "gene"
+      ]
+    },
+    "generais": {
+      "en": [
+        0.75,
+        "general"
+      ],
+      "es": [
+        0.833,
+        "generalas"
       ]
     },
     "general": {
@@ -19415,6 +19391,12 @@
         "imposible"
       ]
     },
+    "impressionada": {
+      "es": [
+        1.0,
+        "impresionada"
+      ]
+    },
     "impressionado": {
       "es": [
         1.0,
@@ -19655,8 +19637,8 @@
     },
     "indiana": {
       "en": [
-        0.857,
-        "indian"
+        1.0,
+        "indiana"
       ]
     },
     "indiano": {
@@ -19889,6 +19871,16 @@
       "es": [
         1.0,
         "informador"
+      ]
+    },
+    "informados": {
+      "en": [
+        0.75,
+        "informed"
+      ],
+      "es": [
+        1.0,
+        "informados"
       ]
     },
     "informante": {
@@ -20203,16 +20195,6 @@
         "instalaciones"
       ]
     },
-    "instantes": {
-      "en": [
-        0.778,
-        "instant"
-      ],
-      "es": [
-        1.0,
-        "instantes"
-      ]
-    },
     "instinto": {
       "en": [
         0.75,
@@ -20520,10 +20502,6 @@
       ]
     },
     "interna": {
-      "en": [
-        0.875,
-        "internal"
-      ],
       "es": [
         1.0,
         "interna"
@@ -20566,13 +20544,9 @@
       ]
     },
     "internos": {
-      "en": [
-        0.812,
-        "internal"
-      ],
       "es": [
-        1.0,
-        "internos"
+        0.938,
+        "internas"
       ]
     },
     "interpretar": {
@@ -20843,6 +20817,12 @@
         "innúmeras"
       ]
     },
+    "inúteis": {
+      "es": [
+        0.75,
+        "inútiles"
+      ]
+    },
     "irlandeses": {
       "es": [
         1.0,
@@ -21075,6 +21055,12 @@
         "judía"
       ]
     },
+    "judeus": {
+      "es": [
+        0.833,
+        "judías"
+      ]
+    },
     "judia": {
       "es": [
         1.0,
@@ -21117,20 +21103,14 @@
     },
     "juntos": {
       "es": [
-        1.0,
-        "juntos"
+        0.917,
+        "juntas"
       ]
     },
     "jura": {
       "es": [
         1.0,
         "jura"
-      ]
-    },
-    "jurados": {
-      "es": [
-        1.0,
-        "jurados"
       ]
     },
     "juramento": {
@@ -21615,12 +21595,6 @@
         "leones"
       ]
     },
-    "lia": {
-      "es": [
-        0.663,
-        "leía"
-      ]
-    },
     "liberal": {
       "en": [
         1.0,
@@ -22023,6 +21997,12 @@
         "loco"
       ]
     },
+    "loucos": {
+      "es": [
+        0.833,
+        "locos"
+      ]
+    },
     "louvado": {
       "es": [
         0.714,
@@ -22397,8 +22377,8 @@
     },
     "malucas": {
       "es": [
-        0.714,
-        "mafufas"
+        0.664,
+        "causas"
       ]
     },
     "maluco": {
@@ -22619,12 +22599,6 @@
       "es": [
         0.7,
         "maquillajes"
-      ]
-    },
-    "mar": {
-      "es": [
-        1.0,
-        "mar"
       ]
     },
     "maravilha": {
@@ -23021,12 +22995,6 @@
         "miel"
       ]
     },
-    "melhor": {
-      "es": [
-        0.8,
-        "mejor"
-      ]
-    },
     "melhora": {
       "es": [
         0.833,
@@ -23247,6 +23215,12 @@
         "mentirás"
       ]
     },
+    "mentirosa": {
+      "es": [
+        1.0,
+        "mentirosa"
+      ]
+    },
     "mentirosos": {
       "es": [
         1.0,
@@ -23303,6 +23277,12 @@
       "es": [
         1.0,
         "mercurio"
+      ]
+    },
+    "merdas": {
+      "es": [
+        0.857,
+        "mierdas"
       ]
     },
     "merecem": {
@@ -23365,10 +23345,16 @@
         "meses"
       ]
     },
-    "mesma": {
+    "mesmas": {
       "es": [
         0.9,
-        "mesmo"
+        "mismas"
+      ]
+    },
+    "mesmos": {
+      "es": [
+        0.9,
+        "mismos"
       ]
     },
     "mestres": {
@@ -23883,12 +23869,6 @@
         "montañas"
       ]
     },
-    "montes": {
-      "es": [
-        0.75,
-        "montones"
-      ]
-    },
     "mora": {
       "es": [
         1.0,
@@ -23937,6 +23917,12 @@
         "morder"
       ]
     },
+    "mordida": {
+      "es": [
+        1.0,
+        "mordida"
+      ]
+    },
     "mordido": {
       "es": [
         1.0,
@@ -23973,12 +23959,6 @@
       "es": [
         1.0,
         "morgue"
-      ]
-    },
-    "moro": {
-      "es": [
-        1.0,
-        "moro"
       ]
     },
     "morra": {
@@ -24069,12 +24049,6 @@
       "es": [
         0.858,
         "morite"
-      ]
-    },
-    "morta": {
-      "es": [
-        0.7,
-        "muerta"
       ]
     },
     "mortais": {
@@ -24383,12 +24357,6 @@
         "mujer"
       ]
     },
-    "mulheres": {
-      "es": [
-        0.857,
-        "mujeres"
-      ]
-    },
     "multa": {
       "es": [
         1.0,
@@ -24517,6 +24485,16 @@
       "es": [
         1.0,
         "médico"
+      ]
+    },
+    "médicos": {
+      "en": [
+        0.786,
+        "medical"
+      ],
+      "es": [
+        1.0,
+        "médicos"
       ]
     },
     "mérito": {
@@ -24977,16 +24955,16 @@
         "negro"
       ]
     },
+    "negros": {
+      "es": [
+        1.0,
+        "negros"
+      ]
+    },
     "negócios": {
       "es": [
         1.0,
         "negocios"
-      ]
-    },
-    "nenhuma": {
-      "es": [
-        0.736,
-        "ninguna"
       ]
     },
     "nenhumas": {
@@ -25012,12 +24990,6 @@
       ]
     },
     "nervosa": {
-      "en": [
-        1.0,
-        "nervous"
-      ]
-    },
-    "nervosos": {
       "en": [
         1.0,
         "nervous"
@@ -26101,8 +26073,8 @@
     },
     "pacote": {
       "en": [
-        0.75,
-        "package"
+        0.775,
+        "packet"
       ]
     },
     "pacto": {
@@ -26457,12 +26429,6 @@
         "pareciendo"
       ]
     },
-    "pareces": {
-      "es": [
-        1.0,
-        "pareces"
-      ]
-    },
     "parecesse": {
       "es": [
         0.889,
@@ -26491,12 +26457,6 @@
       "es": [
         1.0,
         "parecida"
-      ]
-    },
-    "parecido": {
-      "es": [
-        1.0,
-        "parecido"
       ]
     },
     "parecidos": {
@@ -26529,22 +26489,10 @@
         "paren"
       ]
     },
-    "parentes": {
-      "es": [
-        0.889,
-        "parientes"
-      ]
-    },
     "pares": {
       "es": [
         0.714,
         "parejas"
-      ]
-    },
-    "pareço": {
-      "es": [
-        0.917,
-        "parece"
       ]
     },
     "parlamento": {
@@ -26745,6 +26693,12 @@
       "es": [
         0.833,
         "paséis"
+      ]
+    },
+    "passos": {
+      "es": [
+        1.0,
+        "pasos"
       ]
     },
     "pata": {
@@ -27043,28 +26997,10 @@
         "pequeña"
       ]
     },
-    "pequenas": {
-      "es": [
-        1.0,
-        "pequeñas"
-      ]
-    },
-    "pequenino": {
-      "es": [
-        0.889,
-        "pequeñito"
-      ]
-    },
     "pequeno": {
       "es": [
         1.0,
         "pequeño"
-      ]
-    },
-    "pequenos": {
-      "es": [
-        1.0,
-        "pequeños"
       ]
     },
     "percepção": {
@@ -27943,16 +27879,28 @@
         "pobreza"
       ]
     },
-    "poderem": {
+    "podem": {
       "es": [
-        0.95,
-        "poderme"
+        0.833,
+        "podeme"
+      ]
+    },
+    "podemos": {
+      "es": [
+        1.0,
+        "podemos"
       ]
     },
     "poderes": {
       "es": [
         1.0,
         "poderes"
+      ]
+    },
+    "poderias": {
+      "es": [
+        0.875,
+        "poderlas"
       ]
     },
     "poderosa": {
@@ -28005,6 +27953,12 @@
       "es": [
         1.0,
         "podía"
+      ]
+    },
+    "podias": {
+      "es": [
+        1.0,
+        "podías"
       ]
     },
     "podido": {
@@ -28479,16 +28433,6 @@
         "rezos"
       ]
     },
-    "preciosa": {
-      "en": [
-        1.0,
-        "precious"
-      ],
-      "es": [
-        1.0,
-        "preciosa"
-      ]
-    },
     "precisamente": {
       "en": [
         0.944,
@@ -28859,6 +28803,12 @@
         "pretexto"
       ]
     },
+    "pretos": {
+      "es": [
+        0.7,
+        "tetros"
+      ]
+    },
     "prevenir": {
       "es": [
         1.0,
@@ -28895,18 +28845,6 @@
       "es": [
         1.0,
         "primavera"
-      ]
-    },
-    "primeiras": {
-      "es": [
-        0.889,
-        "primeras"
-      ]
-    },
-    "primeiros": {
-      "es": [
-        0.889,
-        "primeros"
       ]
     },
     "primitivo": {
@@ -29777,12 +29715,6 @@
         "príncipe"
       ]
     },
-    "próprios": {
-      "es": [
-        0.875,
-        "propios"
-      ]
-    },
     "próxima": {
       "es": [
         1.0,
@@ -29913,6 +29845,12 @@
         "publicidad"
       ]
     },
+    "puder": {
+      "es": [
+        0.88,
+        "poder"
+      ]
+    },
     "puderes": {
       "es": [
         0.929,
@@ -29923,6 +29861,12 @@
       "es": [
         0.894,
         "podernos"
+      ]
+    },
+    "pudesses": {
+      "es": [
+        0.875,
+        "pudieses"
       ]
     },
     "pudeste": {
@@ -30101,12 +30045,6 @@
         "pésimo"
       ]
     },
-    "péssimo": {
-      "es": [
-        1.0,
-        "pésimo"
-      ]
-    },
     "pílula": {
       "es": [
         0.736,
@@ -30147,20 +30085,16 @@
         "pública"
       ]
     },
-    "públicas": {
-      "en": [
-        0.75,
-        "public"
-      ],
-      "es": [
-        1.0,
-        "públicas"
-      ]
-    },
     "público": {
       "es": [
         1.0,
         "público"
+      ]
+    },
+    "públicos": {
+      "es": [
+        1.0,
+        "públicos"
       ]
     },
     "quadrados": {
@@ -30501,12 +30435,6 @@
         "rama"
       ]
     },
-    "ramos": {
-      "es": [
-        0.9,
-        "ramas"
-      ]
-    },
     "rampa": {
       "en": [
         0.8,
@@ -30559,30 +30487,10 @@
         "rapto"
       ]
     },
-    "rara": {
-      "en": [
-        0.713,
-        "rare"
-      ],
-      "es": [
-        1.0,
-        "rara"
-      ]
-    },
     "raramente": {
       "es": [
         1.0,
         "raramente"
-      ]
-    },
-    "raras": {
-      "en": [
-        0.6,
-        "rare"
-      ],
-      "es": [
-        1.0,
-        "raras"
       ]
     },
     "rasgar": {
@@ -31983,16 +31891,6 @@
         "resumen"
       ]
     },
-    "resíduos": {
-      "en": [
-        0.812,
-        "residue"
-      ],
-      "es": [
-        1.0,
-        "residuos"
-      ]
-    },
     "retardado": {
       "es": [
         0.85,
@@ -32363,6 +32261,12 @@
         "rock"
       ]
     },
+    "rodada": {
+      "es": [
+        0.714,
+        "redonda"
+      ]
+    },
     "rodar": {
       "es": [
         1.0,
@@ -32601,16 +32505,16 @@
         "saberes"
       ]
     },
-    "saberem": {
-      "es": [
-        0.95,
-        "saberme"
-      ]
-    },
     "saberemos": {
       "es": [
         0.889,
         "sabremos"
+      ]
+    },
+    "saberes": {
+      "es": [
+        1.0,
+        "saberes"
       ]
     },
     "saberia": {
@@ -32641,12 +32545,6 @@
       "es": [
         0.857,
         "saberlo"
-      ]
-    },
-    "sabes": {
-      "es": [
-        1.0,
-        "sabes"
       ]
     },
     "sabia": {
@@ -32739,12 +32637,6 @@
       "es": [
         1.0,
         "sagrado"
-      ]
-    },
-    "saiba": {
-      "es": [
-        0.93,
-        "sabía"
       ]
     },
     "saibam": {
@@ -32855,8 +32747,8 @@
     },
     "salvos": {
       "es": [
-        1.0,
-        "salvos"
+        0.917,
+        "salvas"
       ]
     },
     "salvou": {
@@ -33227,12 +33119,6 @@
         "seis"
       ]
     },
-    "sejam": {
-      "es": [
-        0.73,
-        "sean"
-      ]
-    },
     "selo": {
       "es": [
         1.0,
@@ -33341,12 +33227,6 @@
       "es": [
         1.0,
         "senadora"
-      ]
-    },
-    "sendo": {
-      "es": [
-        0.8,
-        "siendo"
       ]
     },
     "senhorita": {
@@ -33503,44 +33383,10 @@
         "secuestro"
       ]
     },
-    "serei": {
-      "es": [
-        0.833,
-        "seréis"
-      ]
-    },
-    "serem": {
-      "es": [
-        0.93,
-        "serme"
-      ]
-    },
-    "seremos": {
-      "es": [
-        1.0,
-        "seremos"
-      ]
-    },
-    "serena": {
-      "en": [
-        0.917,
-        "serene"
-      ],
-      "es": [
-        1.0,
-        "serena"
-      ]
-    },
     "seres": {
       "es": [
         1.0,
         "seres"
-      ]
-    },
-    "seria": {
-      "es": [
-        1.0,
-        "sería"
       ]
     },
     "serial": {
@@ -33551,6 +33397,12 @@
       "es": [
         1.0,
         "serial"
+      ]
+    },
+    "seriam": {
+      "es": [
+        0.942,
+        "serían"
       ]
     },
     "seriamente": {
@@ -34337,12 +34189,6 @@
         "sofá"
       ]
     },
-    "sois": {
-      "es": [
-        1.0,
-        "sois"
-      ]
-    },
     "soja": {
       "es": [
         0.713,
@@ -34467,12 +34313,6 @@
         "solamente"
       ]
     },
-    "somos": {
-      "es": [
-        1.0,
-        "somos"
-      ]
-    },
     "sonar": {
       "en": [
         1.0,
@@ -34577,16 +34417,22 @@
         "saberme"
       ]
     },
-    "soubesse": {
-      "es": [
-        0.664,
-        "supiese"
-      ]
-    },
     "soubessem": {
       "es": [
         0.662,
         "supiesen"
+      ]
+    },
+    "soubesses": {
+      "es": [
+        0.706,
+        "supieses"
+      ]
+    },
+    "soubeste": {
+      "es": [
+        0.769,
+        "supiste"
       ]
     },
     "soviética": {
@@ -34931,6 +34777,12 @@
       "es": [
         0.857,
         "sujeto"
+      ]
+    },
+    "sujeitos": {
+      "es": [
+        0.875,
+        "sujetos"
       ]
     },
     "sujo": {
@@ -35989,6 +35841,12 @@
         "tierra"
       ]
     },
+    "terras": {
+      "es": [
+        0.8,
+        "tierras"
+      ]
+    },
     "terrestre": {
       "en": [
         0.75,
@@ -36313,8 +36171,8 @@
     },
     "tola": {
       "es": [
-        1.0,
-        "tolla"
+        0.6,
+        "tonta"
       ]
     },
     "tolerar": {
@@ -36419,12 +36277,6 @@
       "es": [
         1.0,
         "torre"
-      ]
-    },
-    "torres": {
-      "es": [
-        1.0,
-        "torres"
       ]
     },
     "tortura": {
@@ -37369,12 +37221,6 @@
         "taxi"
       ]
     },
-    "técnica": {
-      "es": [
-        1.0,
-        "técnica"
-      ]
-    },
     "ténis": {
       "es": [
         1.0,
@@ -37787,18 +37633,6 @@
         "buscarla"
       ]
     },
-    "vazia": {
-      "es": [
-        0.93,
-        "vacía"
-      ]
-    },
-    "vazios": {
-      "es": [
-        0.942,
-        "vacíos"
-      ]
-    },
     "veado": {
       "es": [
         0.833,
@@ -37823,6 +37657,16 @@
       "es": [
         0.713,
         "vena"
+      ]
+    },
+    "veias": {
+      "en": [
+        0.6,
+        "vein"
+      ],
+      "es": [
+        0.8,
+        "venas"
       ]
     },
     "veja": {
@@ -37853,12 +37697,6 @@
       "es": [
         0.713,
         "velo"
-      ]
-    },
-    "vela": {
-      "es": [
-        1.0,
-        "vela"
       ]
     },
     "velas": {
@@ -38403,12 +38241,6 @@
         "vienes"
       ]
     },
-    "virgens": {
-      "es": [
-        0.875,
-        "vírgenes"
-      ]
-    },
     "virgindade": {
       "en": [
         0.765,
@@ -38629,12 +38461,6 @@
       "es": [
         1.0,
         "vives"
-      ]
-    },
-    "viveu": {
-      "es": [
-        0.8,
-        "vive"
       ]
     },
     "vivia": {
@@ -38945,6 +38771,12 @@
         "varias"
       ]
     },
+    "vários": {
+      "es": [
+        1.0,
+        "varios"
+      ]
+    },
     "véspera": {
       "es": [
         0.929,
@@ -39095,16 +38927,6 @@
       "en": [
         1.0,
         "alibi"
-      ]
-    },
-    "ámen": {
-      "en": [
-        1.0,
-        "amen"
-      ],
-      "es": [
-        1.0,
-        "amén"
       ]
     },
     "árabe": {

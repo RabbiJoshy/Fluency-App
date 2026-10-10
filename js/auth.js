@@ -1,11 +1,11 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=699d12c6';
-import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=699d12c6';
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=699d12c6';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=699d12c6';
-import { dbGet, dbPut } from './offline-db.js?v=699d12c6';
-import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=699d12c6';
+import './state.js?v=2d348f0a';
+import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=2d348f0a';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=2d348f0a';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=2d348f0a';
+import { dbGet, dbPut } from './offline-db.js?v=2d348f0a';
+import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=2d348f0a';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -14,8 +14,8 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=699d12c6';
-import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=699d12c6';
+} from './sync-queue.js?v=2d348f0a';
+import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=2d348f0a';
 
 const AUDIT_ACCOUNT_INITIALS = new Set(['JST', 'JSTA']);
 
@@ -353,7 +353,11 @@ function renderAccountPanel() {
         badge.classList.toggle('is-guest', !named);
     }
     const name = document.getElementById('accountProfileName');
-    if (name) name.textContent = named ? (currentUser.username || currentUser.initials) : 'Guest';
+    if (name) {
+        name.textContent = named ? (currentUser.username || currentUser.initials) : 'Guest';
+        name.hidden = false;
+        name.style.display = '';
+    }
     const note = document.getElementById('accountProfileNote');
     if (note) note.textContent = named ? 'Progress syncs across devices' : 'Progress is not saved';
 
@@ -365,9 +369,9 @@ function renderAccountPanel() {
     const input = document.getElementById('accountPasswordInput');
     if (document.activeElement === input) input.blur();
     input.value = birthday ? formatBirthdayDisplay(birthday) : '';
-    input.placeholder = 'None set';
+    input.placeholder = 'Not set';
     input.readOnly = true;
-    input.classList.toggle('is-concealed', Boolean(birthday));
+    input.classList.remove('is-concealed');
     const show = document.getElementById('accountPasswordShowBtn');
     if (show) {
         show.textContent = birthday ? 'Change' : 'Set';
@@ -376,7 +380,11 @@ function renderAccountPanel() {
     const save = document.getElementById('accountPasswordSaveBtn');
     if (save) save.hidden = true;
     const status = document.getElementById('accountPasswordStatus');
-    if (status) status.textContent = 'This is used as your password';
+    if (status) {
+        status.textContent = birthday
+            ? 'Used as an optional password to protect your account'
+            : 'You have the option to set a birthday as an optional password to protect your account';
+    }
 }
 
 function wireAccountPassword() {
@@ -406,13 +414,15 @@ function wireAccountPassword() {
                 daySelect.value = '';
                 monthSelect.value = '';
             }
+            if (status) status.textContent = 'Choose your birthday as an optional password to protect your account';
+        } else if (!editing) {
+            renderAccountPanel();
         }
     };
 
     show.addEventListener('click', () => {
         if (!currentUser) return;
         setEditing(!isEditing);
-        if (status) status.textContent = 'This is used as your password';
     });
 
     if (save) {
@@ -431,7 +441,11 @@ function wireAccountPassword() {
             localStorage.setItem('flashcardUser', JSON.stringify(currentUser));
             setEditing(false);
             renderAccountPanel();
-            if (status) status.textContent = 'Birthday updated! This is used as your password.';
+            if (status) {
+                status.textContent = currentUser.birthday
+                    ? 'Birthday updated! Used as an optional password to protect your account.'
+                    : 'Birthday removed. You have the option to set one anytime.';
+            }
         });
     }
 }

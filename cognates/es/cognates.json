@@ -1,5 +1,5 @@
 {
-  "built_from_release_id": "es-speech-v24-headway-r4-10000x30-slim",
+  "built_from_release_id": "es-speech-v23-10000x30-slim",
   "cards": {
     "abril": {
       "en": [
@@ -3185,6 +3185,12 @@
       "en": [
         0.75,
         "honest"
+      ]
+    },
+    "honra": {
+      "en": [
+        0.6,
+        "honor"
       ]
     },
     "horizonte": {

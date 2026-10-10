@@ -11,8 +11,8 @@
     "spanish": {
       "name": "Spanish",
       "indexPath": "releases/es/speech/es-speech-v24-headway-r4-10000x30-slim/app/vocabulary.index.json",
-      "estimationPoolPath": "data/estimation-pools/spanish.json",
-      "frequencyPath": "data/speech-frequency/es.json",
+      "estimationPoolPath": "data/estimation-pools/spanish-headway-r4.json",
+      "frequencyPath": "data/speech-frequency/es-headway-r4.json",
       "examplesPath": "releases/es/speech/es-speech-v24-headway-r4-10000x30-slim/app/vocabulary.examples.json",
       "studyStructurePath": "releases/es/speech/es-speech-v24-headway-r4-10000x30-slim/app/study-structure.json",
       "releaseManifestPath": "releases/es/speech/es-speech-v24-headway-r4-10000x30-slim/manifest.json",
@@ -86,8 +86,8 @@
       "conjugationDrill": "es",
       "shortCode": "ES",
       "speechLang": "es-ES",
-      "cognatesPath": "cognates/es/cognates.json",
-      "mergeExceptionsPath": "data/merge-exceptions/es.json",
+      "cognatesPath": "cognates/es/cognates-headway-r4.json",
+      "mergeExceptionsPath": "data/merge-exceptions/es-headway-r4.json",
       "coveragePath": null
     },
     "swedish": {
@@ -501,8 +501,8 @@
     "portuguese": {
       "name": "Portuguese",
       "indexPath": "releases/pt/speech/pt-speech-v24-headway-r2-10000x30-slim/app/vocabulary.index.json",
-      "estimationPoolPath": "data/estimation-pools/portuguese.json",
-      "frequencyPath": "data/speech-frequency/pt.json",
+      "estimationPoolPath": "data/estimation-pools/portuguese-headway-r2.json",
+      "frequencyPath": "data/speech-frequency/pt-headway-r2.json",
       "examplesPath": "releases/pt/speech/pt-speech-v24-headway-r2-10000x30-slim/app/vocabulary.examples.json",
       "studyStructurePath": "releases/pt/speech/pt-speech-v24-headway-r2-10000x30-slim/app/study-structure.json",
       "releaseManifestPath": "releases/pt/speech/pt-speech-v24-headway-r2-10000x30-slim/manifest.json",
@@ -571,8 +571,8 @@
       "conjugationDrill": "pt",
       "shortCode": "PT",
       "speechLang": "pt-PT",
-      "cognatesPath": "cognates/pt/cognates.json",
-      "mergeExceptionsPath": "data/merge-exceptions/pt.json",
+      "cognatesPath": "cognates/pt/cognates-headway-r2.json",
+      "mergeExceptionsPath": "data/merge-exceptions/pt-headway-r2.json",
       "coveragePath": null
     },
     "portuguese_brazilian": {

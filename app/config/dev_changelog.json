@@ -2,6 +2,17 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T19:13:33+01:00",
+      "date": "2026-10-10 19:13 BST",
+      "agent": "Codex",
+      "summary": "Use distinct URLs for the corrected decks’ supporting files",
+      "detail": [
+        "Version the Spanish/Portuguese Merge Lemmas, cognate verdicts, frequencies and estimation pools so browser caches cannot substitute old v23 files.",
+        "Preserve the latest UI and all existing source scores, frequencies and merging rules."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T19:07:01+01:00",
       "date": "2026-10-10 19:07 BST",
       "agent": "Codex",
@@ -367,18 +378,6 @@
         "When no authentic human translation exists for a line, lyrics render in pure Spanish without artificial glosses.",
         "Synced audio timestamps render directly alongside the original lyric text; topbar 'EN line' toggle button hides automatically when a song has no hand-translated lines.",
         "Word, idiom, and entity quick-view modals retain full access to Fluency's hand-curated definitions and WSD sense assignments."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T15:49:16+01:00",
-      "date": "2026-10-09 15:49 BST",
-      "agent": "Codex",
-      "summary": "Level estimation follows merged forms and separate reading cards",
-      "detail": [
-        "Estimate vocabulary groups using the same merge and selective split rules as Smart Skip, with pooled Speech frequency and the most common eligible prompt.",
-        "Split readings show a matching sentence and divide surface frequency; sibling answers remain independent.",
-        "Keep saved Speech-rank placement compatible, show preparation progress, and withhold legacy CEFR labels pending calibration."
       ],
       "commit": "pending"
     }
