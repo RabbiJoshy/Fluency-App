@@ -202,33 +202,34 @@ function renderResumeLastSetCard() {
     card.className = 'modal resume-entry-modal';
     card.setAttribute('role', 'dialog');
     card.setAttribute('aria-modal', 'true');
-    card.setAttribute('aria-labelledby', 'resumeEntryTitle');
+    card.setAttribute('aria-labelledby', 'resumeEntryGreeting');
     const level = snapshot.levelNumber ? `Level ${snapshot.levelNumber}` : 'Saved level';
     const rangeLabel = snapshot.rangeLabel
         || (snapshot.range ? `${snapshot.range.split('-')[0]}–${parseInt(snapshot.range.split('-')[1]) - 1}` : null);
     const set = rangeLabel || (snapshot.setNumber ? `Set ${snapshot.setNumber}` : 'Saved set');
-    const track = snapshot.studyMode === 'review' ? 'Practice' : 'Learn new';
     const title = snapshot.mode === 'lyrics'
         ? `${snapshot.artistName || 'Lyrics'}${snapshot.artistVocabularyScope === 'extra' ? ' Extra' : ''}`
-        : `${snapshot.languageName || snapshot.language} speech`;
+        : (snapshot.languageName || snapshot.language);
     card.innerHTML = `
         <div class="modal-content resume-entry-content">
-            <span class="resume-set-eyebrow" id="resumeEntryGreeting"></span>
-            <h3 id="resumeEntryTitle">Pick up where you left off</h3>
+            <div class="resume-entry-header">
+                <h3 id="resumeEntryGreeting"></h3>
+                <p class="resume-set-eyebrow" id="resumeEntryTitle">Pick up where you left off</p>
+            </div>
             <div class="resume-entry-summary">
                 <strong id="resumeEntryDeck"></strong>
                 <p id="resumeEntrySet"></p>
                 <p class="resume-entry-position">Your last card: <strong id="resumeEntryWord"></strong></p>
             </div>
             <div class="resume-entry-actions">
-                <button type="button" class="resume-entry-primary" id="resumeLastSetBtn">Continue studying</button>
+                <button type="button" class="resume-entry-primary" id="resumeLastSetBtn">Continue set</button>
                 <button type="button" class="resume-entry-secondary" id="dismissResumeLastSetBtn">Main menu</button>
             </div>
         </div>`;
     card.querySelector('#resumeEntryGreeting').textContent = currentUser && !currentUser.isGuest
         ? `Welcome back, ${currentUser.username || currentUser.initials || 'learner'}` : 'Welcome back';
     card.querySelector('#resumeEntryDeck').textContent = title;
-    card.querySelector('#resumeEntrySet').textContent = `${level} · ${set} · ${track}`;
+    card.querySelector('#resumeEntrySet').textContent = `${level} · ${set}`;
     card.querySelector('#resumeEntryWord').textContent = snapshot.currentWord || 'Saved card';
     document.body.appendChild(card);
     document.getElementById('resumeLastSetBtn')?.focus({ preventScroll: true });

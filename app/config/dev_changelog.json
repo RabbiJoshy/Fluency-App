@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T15:23:00+01:00",
+      "date": "2026-10-10 15:23 BST",
+      "agent": "Antigravity",
+      "summary": "Refine resume set modal hierarchy and remove mobile language chip chevron",
+      "detail": [
+        "Invert resume modal hierarchy: 'Welcome back' is now the primary centered heading and 'Pick up where you left off' is a subtle subtitle.",
+        "Enlarge language name, level/set, and last card word readouts, and center the resume modal layout.",
+        "Remove redundant 'Learn new'/'Practice' track tag and strip 'speech' suffix from language name in resume prompt.",
+        "Rename resume action to 'Continue set' and remove colored accent outline in favor of clean solid focus styling.",
+        "Remove top bar language chevron so long language names like 'Portuguese' are never obscured on mobile."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T14:00:00+01:00",
       "date": "2026-10-10 14:00 BST",
       "agent": "Antigravity",

@@ -75,7 +75,7 @@ vm.runInNewContext(source.slice(source.indexOf('function renderResumeLastSetCard
 context.renderResumeLastSetCard();
 assert.equal(nodes.get('resumeEntryGreeting').textContent,'Welcome back, <Alex>');
 assert.equal(nodes.get('resumeEntryWord').textContent,'<saved word>');
-assert.equal(nodes.get('resumeEntrySet').textContent,'Level 2 · Set 3 · Learn new');
+assert.equal(nodes.get('resumeEntrySet').textContent,'Level 2 · Set 3');
 assert.ok(!card.innerHTML.includes('<Alex>'));
 assert.ok(nodes.get('resumeLastSetBtn').focused);
 nodes.get('resumeLastSetBtn').click();
