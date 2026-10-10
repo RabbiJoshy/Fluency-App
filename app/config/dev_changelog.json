@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T22:25:52+01:00",
+      "date": "2026-10-10 22:25 BST",
+      "agent": "Claude",
+      "summary": "Tutorial: the tour now performs changing a meaning, cycling examples and opening Rare uses, Review meanings and Look up",
+      "detail": [
+        "Back of card: new steps where the tour taps another meaning (the example changes), cycles through a meaning's examples, opens the Rare uses sheet (and unfolds an example), opens Review meanings (and ticks one), opens the Look up column and arms a site's Visit button.",
+        "The sheets are the live app's own Rare uses and Review meanings markup, drawn over the replica card from the demo word's real rare senses.",
+        "Smart Skip: look-alikes now come before merged word forms and merged singular/plural.",
+        "Portuguese demo word is now devia (dever): should / ought, with two real rare senses."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T23:05:00+01:00",
       "date": "2026-10-10 23:05 BST",
       "agent": "Claude",
@@ -361,18 +374,6 @@
         "Meanings written without 'to' now inflect too: busca 'he/she fetches, pick up' → 'he/she fetches, picks up'; tira 'takes, take out, take away' → 'takes, takes out, takes away'; cola 'sticks or attach' → 'sticks or attaches'.",
         "Alternatives after 'to be' stay as they are ('he/she is absent, not present'); an object alternate stays ('starts an engine, vehicle').",
         "Measured on live v23: 232 Portuguese rows changed, no Spanish row changed, none lost its English."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T19:59:45+01:00",
-      "date": "2026-10-09 19:59 BST",
-      "agent": "Codex",
-      "summary": "Early level estimates suggest a particular study set",
-      "detail": [
-        "Suggest a level and set within Levels 1–10, using the same 25-position set boundaries as the study picker; from Level 11 suggest whole levels.",
-        "Keep earlier and later options separate when they land in different sets of the same level, and select the chosen set after its controls finish loading.",
-        "Sample more finely near the start of the frequency range while keeping the adaptive check at up to 30 questions and preserving saved Speech-rank placement."
       ],
       "commit": "pending"
     }

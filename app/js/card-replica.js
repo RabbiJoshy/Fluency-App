@@ -44,6 +44,8 @@ export const REPLICA_CARDS = {
         word: 'cielo',
         lemma: 'cielo',
         pos: 'NOUN',
+        lookup: ['spanishDict', 'reverso'],
+        rareUses: [],
         rank: 344,
         vocabSize: 2000,
         corpusCount: 33,
@@ -205,29 +207,33 @@ export const REPLICA_CARDS = {
             },
         ],
     },
-    // Portuguese learner tutorial: `parece` (rank 127), a form of `parecer`
-    // with two short senses, so every row fits a narrow phone untruncated.
-    // Senses, shares (28 vs 2 assigned examples) and examples are read out of
-    // pt-speech-v24-headway-r2-10000x30-slim; IMDb titles come from the
-    // shipped source_titles.json mapping.
-    ptParecerSpeech: {
-        mode: 'speech', word: 'parece', pos: 'VERB', lemma: 'parecer', rank: 127, vocabSize: 10000, corpusCount: 926,
+    // Portuguese learner tutorial: `devia` (rank 332), a form of `dever`, with
+    // two short senses. Read out of pt-speech-v24-headway-r2-10000x30-slim:
+    // 28 and 2 assigned examples, plus two rare senses; IMDb titles come from
+    // the shipped source_titles.json mapping.
+    ptDeviaSpeech: {
+        mode: 'speech', word: 'devia', pos: 'VERB', lemma: 'dever', rank: 332, vocabSize: 10000, corpusCount: 412,
         defaultMeaningIndex: 0,
+        lookup: ['reverso'],
+        rareUses: [
+            { pos: 'VERB', translation: 'owe', context: 'to be in debt', example: null },
+            { pos: 'VERB', translation: 'will likely', context: null,
+              example: { target: 'Deve chover.', english: "(It looks like) it's going to rain." } },
+        ],
         meanings: [
             {
-                pos: 'VERB', translation: 'to seem', context: null, pct: 93,
+                pos: 'VERB', translation: 'should', context: null, pct: 93,
                 examples: [
-                    { target: 'Parece que você não se lembra de mim.', english: "It seems like you don't remember me.", sourceLabel: 'Tatoeba example' },
-                    { target: 'Ele parece saber tudo sobre o seu passado.', english: 'He seems to know everything about your past.', sourceLabel: 'Tatoeba example' },
-                    { target: 'Mas parece que ainda não estavas pronto.', english: "But it appears you weren't ready yet.", sourceLabel: 'IMDb', titleId: '6063486', sourceTitle: 'Once Upon a Time · S6 E8' },
+                    { target: 'Isto é um filme que toda a gente devia ver.', english: 'This is a film that everybody should see.', sourceLabel: 'Tatoeba example' },
+                    { target: 'Você devia ter feito isso na semana passada.', english: "You should've done that last week.", sourceLabel: 'Tatoeba example' },
+                    { target: 'Sei que isto parece loucura, mas o que eu devia fazer?', english: "I know this all sounds loco, but what am I supposed to do?", sourceLabel: 'IMDb', titleId: '6385978', sourceTitle: 'Criminal Minds: Beyond Borders · S2 E3' },
                 ],
             },
             {
-                pos: 'VERB', translation: 'to resemble', context: '+ com', pct: 7,
-                metadata: [{ short: 'pron.', full: 'pronominal', family: 'construction' }],
+                pos: 'VERB', translation: 'ought', context: null, pct: 7,
                 examples: [
-                    { target: 'Tom se parece muito com o pai.', english: 'Tom looks a lot like his father.', sourceLabel: 'Tatoeba example' },
-                    { target: 'Você não se parece muito com seu pai.', english: "You don't look very much like your father.", sourceLabel: 'Tatoeba example' },
+                    { target: 'Desculpa, eu sei que não devia estar aqui.', english: "I'm sorry. I know I'm not supposed to be here.", sourceLabel: 'IMDb', titleId: '4168598', sourceTitle: 'Rectify · S3 E3' },
+                    { target: 'Você ainda não fez tudo o que devia ter feito.', english: "You haven't yet done everything that you were supposed to do.", sourceLabel: 'Tatoeba example' },
                 ],
             },
         ],
@@ -238,6 +244,26 @@ export const REPLICA_CARDS = {
     quieroSpeech: {
         mode: 'speech', word: 'quiero', pos: 'VERB', lemma: 'querer', rank: 64, vocabSize: 10000, corpusCount: 1925,
         defaultMeaningIndex: 0,
+        lookup: ['spanishDict', 'reverso'],
+        // The word's unused menu senses in the live deck: what Rare uses lists.
+        rareUses: [
+            { pos: 'NOUN', translation: 'beloved', context: "object of one's affection",
+              example: { target: 'Llora por el hombre que fue su querer.', english: 'She cries for the man that was her beloved.' } },
+            { pos: 'NOUN', translation: 'love', context: "object of one's affection",
+              example: { target: 'El primer querer siempre es el más fuerte.', english: 'First love is always the deepest.' } },
+            { pos: 'NOUN', translation: 'love affair', context: 'romance',
+              example: { target: 'Cuando salió a relucir su querer, el gobernador renunció.', english: 'When his love affair was exposed, the governor resigned.' } },
+            { pos: 'VERB', translation: 'to like', context: 'to feel affection for',
+              example: { target: 'El perro te quiere mucho.', english: 'The dog likes you a lot.' } },
+            { pos: 'VERB', translation: 'to be fond of', context: 'to feel affection for',
+              example: { target: 'Quiero mucho a mis estudiantes.', english: 'I am very fond of my students.' } },
+            { pos: 'VERB', translation: 'to try', context: 'to have as intention',
+              example: { target: 'Hace años que quiero ir a París, pero es demasiado caro.', english: "I've been trying to go to Paris for years, but it's too expensive." } },
+            { pos: 'VERB', translation: 'to love each other', context: 'to feel affection for',
+              example: { target: 'Dejaron de quererse.', english: 'They no longer love each other.' } },
+            { pos: 'VERB', translation: 'to love oneself', context: 'to appreciate oneself',
+              example: { target: 'Necesitas empezar a quererte más.', english: 'You need to learn to love yourself more.' } },
+        ],
         meanings: [
             {
                 pos: 'VERB', translation: 'to want', context: 'to wish', pct: 90,
@@ -264,6 +290,15 @@ export const REPLICA_CARDS = {
     },
     jeSpeech: {
         mode: 'speech', word: 'je', pos: 'VERB', lemma: 'být', rank: 3, vocabSize: 4000, corpusCount: 12890,
+        lookup: ['reverso'],
+        rareUses: [
+            { pos: 'VERB', translation: 'used to form passive voice forms of verbs with passive participles', context: 'auxiliary',
+              example: { target: 'Jsem překvapen.', english: 'I am surprised.' } },
+            { pos: 'VERB', translation: 'used to form past tense forms of verbs with past participles', context: 'auxiliary',
+              example: { target: 'Jel jsem do Prahy.', english: 'I went to Prague.' } },
+            { pos: 'VERB', translation: 'used to form future tense forms of verbs with infinitives', context: 'auxiliary',
+              example: { target: 'Budu ti pomáhat.', english: 'I will be helping you.' } },
+        ],
         meanings: [
             {
                 pos: 'VERB', translation: 'he/she is (exists)', pct: 40,
@@ -279,6 +314,8 @@ export const REPLICA_CARDS = {
     },
     deSpeech: {
         mode: 'speech', word: 'de', pos: 'PREP', lemma: 'de', rank: 1, vocabSize: 6000, corpusCount: 26810,
+        lookup: ['reverso'],
+        rareUses: [],
         meanings: [
             {
                 pos: 'PREP', translation: 'of', context: 'possession, association or relationship',
@@ -340,7 +377,7 @@ const POS_NAME = {
 };
 
 const posClass = (pos) => POS_CLASS[String(pos || '').toUpperCase()] || '';
-const posName = (pos) => POS_NAME[String(pos || '').toUpperCase()] || String(pos || '').toLowerCase();
+export const posName = (pos) => POS_NAME[String(pos || '').toUpperCase()] || String(pos || '').toLowerCase();
 
 export function esc(s) {
     return String(s ?? '')
@@ -596,6 +633,31 @@ function renderCredit(card, meaning, example, exampleIdx) {
         </div>`;
 }
 
+// A card with no `rareUses` list keeps the tile (the walkthrough's cards
+// predate the list); an explicit empty list means the word has none, and the
+// live card then draws no tile at all.
+function hasRareUses(card) {
+    return !Array.isArray(card.rareUses) || card.rareUses.length > 0;
+}
+
+// The sites the live card's Look up sheet offers, as it builds them
+// (flashcards.js: every reference link but WordReference and conjugation).
+const LOOKUP_SITES = {
+    spanishDict: { label: 'SpanishDict', domain: 'spanishdict.com' },
+    reverso: { label: 'Reverso Context', domain: 'reverso.net' },
+};
+
+function lookupSheetHTML(card) {
+    const sites = (card.lookup || []).map(key => LOOKUP_SITES[key]).filter(Boolean);
+    if (!sites.length) return '';
+    const leaveIcon = '<svg class="outbound-leave-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>';
+    return `<div class="lookup-sheet" hidden>${sites.map(site => `
+        <span role="button" tabindex="0" class="lookup-sheet-icon" title="${esc(site.label)}" aria-label="${esc(site.label)}" aria-expanded="false" data-replica-lookup>
+            <img src="https://www.google.com/s2/favicons?domain=${site.domain}&sz=64" width="40" height="40" alt="${esc(site.label)}" style="border-radius:4px">
+            <button type="button" class="outbound-leave-btn outbound-leave-btn--label" hidden aria-label="Visit ${esc(site.label)}"><span class="outbound-visit-label">Visit ${esc(site.label)}</span>${leaveIcon}</button>
+        </span>`).join('')}</div>`;
+}
+
 export function renderBack(card, selectedIdx, exampleIdx) {
     const meaning = card.meanings[selectedIdx];
     const example = meaning.examples[exampleIdx % meaning.examples.length];
@@ -618,17 +680,17 @@ export function renderBack(card, selectedIdx, exampleIdx) {
                     ${renderCredit(card, meaning, example, exampleIdx % meaning.examples.length)}
                 </div>
                 <div class="links-section" id="replicaLinksSection">
-                    <button type="button" class="ref-tile ref-rare-uses-btn" aria-label="Rare uses" title="Rare uses">
+                    ${hasRareUses(card) ? `<button type="button" class="ref-tile ref-rare-uses-btn" aria-label="Rare uses" title="Rare uses">
                         <div class="ref-tile-icon-wrap">
                             <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <rect x="3.5" y="14" width="4" height="6" rx="1.5"></rect>
                                 <rect x="10" y="9" width="4" height="11" rx="1.5"></rect>
                                 <rect x="16.5" y="4" width="4" height="16" rx="1.5"></rect>
                             </svg>
-                            <span class="ref-tile-count-badge">2</span>
+                            <span class="ref-tile-count-badge">${Array.isArray(card.rareUses) ? card.rareUses.length : 2}</span>
                         </div>
                         <span class="ref-tile-label">Rare uses</span>
-                    </button>
+                    </button>` : ''}
                     <button type="button" class="ref-tile knowledge-overview-trigger" aria-label="Review meaning(s)" aria-haspopup="dialog">
                         <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path>
@@ -643,6 +705,7 @@ export function renderBack(card, selectedIdx, exampleIdx) {
                         </svg>
                         <span class="ref-tile-label">Look up</span>
                     </button>
+                    ${lookupSheetHTML(card)}
                 </div>
             </div>
             <div class="card-tint" aria-hidden="true"></div>

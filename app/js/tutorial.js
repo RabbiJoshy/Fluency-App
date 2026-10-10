@@ -12,7 +12,7 @@
 // The card itself is drawn by card-replica.js, which both features share.
 
 import {
-    REPLICA_CARDS, esc, renderBack, replicaCardHTML, wireReplicaBack,
+    REPLICA_CARDS, esc, posAccentRgb, posName, renderBack, replicaCardHTML, wireReplicaBack,
 } from './card-replica.js?v=20260929sense6';
 
 
@@ -24,7 +24,7 @@ import {
 const TUTORIAL_LANGUAGE_ADAPTERS = {
     spanish: { language: 'Spanish', flag: '🇪🇸', speechCard: 'quieroSpeech', provider: 'SpanishDict', lyrics: true, usageShares: true,
         smartSkip: { forms: ['hablo', 'habló', 'hablar'], plurals: ['vida', 'vidas'], lookalike: 'chocolate' } },
-    portuguese: { language: 'Portuguese', flag: '🇵🇹', speechCard: 'ptParecerSpeech', provider: 'Wiktionary', lyrics: false, usageShares: true,
+    portuguese: { language: 'Portuguese', flag: '🇵🇹', speechCard: 'ptDeviaSpeech', provider: 'Wiktionary', lyrics: false, usageShares: true,
         smartSkip: { forms: ['falo', 'falou', 'falar'], plurals: ['noite', 'noites'], lookalike: 'hotel' } },
     czech: { language: 'Czech', flag: '🇨🇿', speechCard: 'jeSpeech', provider: 'Wiktionary', lyrics: false, usageShares: true,
         smartSkip: { forms: ['dělám', 'dělal', 'dělat'], lookalike: 'film' } },
@@ -68,6 +68,7 @@ function tutorialText(value) {
                 ? `Here the word is “${card.word}” but its dictionary form is “${card.lemma}”, the form you would find in a dictionary.`
                 : `Here the word and dictionary form are both “${card.lemma || card.word}”. Inflected words can differ: {lemmaExample}.`;
         })())
+        .replaceAll('{altMeaning}', esc(orderedMeanings(currentCard())[1]?.translation || ''))
         .replaceAll('{demoWord}', currentCard()?.word || '')
         .replaceAll('{rank}', (currentCard()?.rank || '').toLocaleString())
         .replaceAll('{vocabSize}', (currentCard()?.vocabSize || '').toLocaleString())
@@ -202,23 +203,54 @@ const TUTORIAL_DECKS = [
                         text: 'Film or TV dialogue (IMDb), Tatoeba for contributed sentences, or {provider} for dictionary examples.',
                         lyricsText: 'The song, plus any guest artist singing that line.',
                     },
+                    // The next two do something: the tour performs the tap.
                     {
                         side: 'right',
+                        demo: 'selectMeaning',
+                        when: card => (card?.meanings?.length || 0) > 1,
+                        find: stage => [stage.querySelector(`.meaning-row[data-meaning-index="${altMeaningIndex()}"]`),
+                            stage.querySelector('.sentence')],
+                        title: 'Change the meaning',
+                        text: 'Tap another meaning, here “{altMeaning}”, and the example below changes to a sentence that uses that meaning. The highlighted row is always the one being illustrated.',
+                    },
+                    {
+                        side: 'right',
+                        demo: 'cycleExample',
+                        when: card => (card?.meanings || []).some(m => m.examples.length > 1),
+                        anchor: '.sentence',
+                        title: 'Cycle through the examples',
+                        text: 'Tap the sentence and the next example of the same meaning takes its place; the little dots beneath mark which one you are on. After the last it goes back to the first.',
+                    },
+                    {
+                        side: 'right',
+                        demo: 'openRare',
+                        when: card => Boolean(card?.rareUses?.length),
                         anchor: '.ref-rare-uses-btn',
                         title: 'Rare uses',
-                        text: 'Less common definitions and expressions collected in one place, so you can explore them without cluttering normal study.',
+                        text: 'Opens a sheet over the card listing the word’s less common meanings, each with an example folded under it (tap “Examples”). They are for browsing and are not tested in daily reviews. Tap × to close.',
                     },
                     {
                         side: 'right',
+                        demo: 'openReview',
                         anchor: '.knowledge-overview-trigger',
                         title: 'Review meanings',
-                        text: 'Know the word, but not every definition? Choose the specific meanings you want future review sessions to focus on.',
+                        text: 'Know the word, but not every meaning? Opens a list of its meanings; tick the ones you want future review sessions to focus on and the rest are left alone.',
                     },
                     {
                         side: 'right',
-                        anchor: '.ref-lookup-btn',
+                        demo: 'openLookup',
+                        when: card => Boolean(card?.lookup?.length),
+                        find: stage => [stage.querySelector('.ref-lookup-btn'), stage.querySelector('.lookup-sheet')],
                         title: 'Look up',
-                        text: 'Instant links to authoritative external dictionaries and references for deeper study whenever you need it.',
+                        text: 'Opens a short column of dictionary sites above the button, for when you want more than the card gives.',
+                    },
+                    {
+                        side: 'right',
+                        demo: 'armLookup',
+                        when: card => Boolean(card?.lookup?.length),
+                        find: stage => [stage.querySelector('.lookup-sheet-icon'), stage.querySelector('.lookup-sheet')],
+                        title: 'Open a dictionary',
+                        text: 'Tap a site and a Visit button appears; tap that and the word’s dictionary form (“{demoLemma}”) opens there in a new tab. Nothing leaves the app until you confirm.',
                     },
                     {
                         side: 'right',
@@ -287,6 +319,12 @@ const TUTORIAL_PAGES = {
                 text: 'Smart Skip is the switch under Choose level. It is recommended, and you can turn it off at any time.',
             },
             {
+                side: 'left',
+                anchor: '.tutorial-page-lookalike',
+                title: 'Look-alikes are skipped',
+                text: 'Words that look and mean the same as in a language you know, like {smartSkipLookalike} in English. Tap Smart Skip to see every word it set aside; you can still study them.',
+            },
+            {
                 side: 'right',
                 anchor: '.tutorial-page-forms',
                 title: 'Word forms share a card',
@@ -298,12 +336,6 @@ const TUTORIAL_PAGES = {
                 when: () => Boolean(tutorialAdapter().smartSkip.plurals),
                 title: 'Singular and plural share a card',
                 text: '{pluralForms} are one noun, so they share one flashcard. This happens only when the singular and the plural mean exactly the same things; if either has an extra meaning they stay separate.',
-            },
-            {
-                side: 'right',
-                anchor: '.tutorial-page-lookalike',
-                title: 'Look-alikes are skipped',
-                text: 'Words that look and mean the same as in a language you know, like {smartSkipLookalike} in English. Tap Smart Skip to see every word it set aside; you can still study them.',
             },
         ],
         html: smartSkipPageHTML,
@@ -355,6 +387,14 @@ function smartSkipPageHTML(adapter) {
                 </span>
                 <span class="tutorial-page-switch" aria-hidden="true"><i></i></span>
             </div>
+            <div class="tutorial-page-example tutorial-page-lookalike">
+                <span class="tutorial-page-label">Skip look-alikes</span>
+                <div class="tutorial-page-flow">
+                    <span class="tutorial-page-words">${word(lookalike)}<span class="tutorial-page-gloss">English: ${esc(lookalike)}</span></span>
+                    <span class="tutorial-page-arrow" aria-hidden="true">→</span>
+                    <span class="tutorial-page-result is-skipped">Skipped</span>
+                </div>
+            </div>
             <div class="tutorial-page-example tutorial-page-forms">
                 <span class="tutorial-page-label">Combine word forms</span>
                 <div class="tutorial-page-flow">
@@ -371,14 +411,6 @@ function smartSkipPageHTML(adapter) {
                     <span class="tutorial-page-result">1 card</span>
                 </div>
             </div>` : ''}
-            <div class="tutorial-page-example tutorial-page-lookalike">
-                <span class="tutorial-page-label">Skip look-alikes</span>
-                <div class="tutorial-page-flow">
-                    <span class="tutorial-page-words">${word(lookalike)}<span class="tutorial-page-gloss">English: ${esc(lookalike)}</span></span>
-                    <span class="tutorial-page-arrow" aria-hidden="true">→</span>
-                    <span class="tutorial-page-result is-skipped">Skipped</span>
-                </div>
-            </div>
         </div>`;
 }
 
@@ -427,6 +459,7 @@ const state = {
     exampleIndex: 0,
     activeNote: -1,
     flipping: false,
+    demoKey: '',
 };
 
 // Source selection precedes automatic onboarding. Explicit replays without
@@ -518,6 +551,18 @@ function currentFace() {
     return stepFace(currentStep());
 }
 
+// Meanings in the order the card draws them: most common first.
+function orderedMeanings(card) {
+    return [...(card?.meanings || [])].sort((a, b) => (Number(b.pct) || 0) - (Number(a.pct) || 0));
+}
+
+// The row the tour taps to show a change of meaning: the second most common.
+function altMeaningIndex() {
+    const card = currentCard();
+    const alt = orderedMeanings(card)[1];
+    return card ? card.meanings.indexOf(alt) : -1;
+}
+
 // The meaning the card opens on, as the card data says.
 function selectedMeaning(card) {
     return card?.meanings?.[card.defaultMeaningIndex || 0] || null;
@@ -586,6 +631,8 @@ function renderCard() {
     if (!stage) return;
     const step = currentStep();
     state.flipping = false;
+    state.demoKey = '';
+    clearDemoTimers();
 
     if (step.kind === 'page') {
         stage.innerHTML = `<div class="card-replica tutorial-page-replica">${TUTORIAL_PAGES[step.page].html(tutorialAdapter())}</div>`;
@@ -638,6 +685,7 @@ function flipCardFace(mobileNote = 0) {
     if (!cardEl) return;
 
     state.activeNote = Math.min(mobileNote, Math.max(0, orderedNotes().length - 1));
+    state.demoKey = '';
     state.flipping = true;
     cardEl.classList.toggle('flipped', state.flipped);
 
@@ -850,12 +898,14 @@ function markAnchors() {
         delete el.dataset.cardTutorialNote;
     });
     orderedNotes().forEach((note, i) => {
-        const found = note.find ? [note.find(stage)]
+        const found = note.find ? [].concat(note.find(stage))
             : note.all ? [...stage.querySelectorAll(note.anchor)]
             : [stage.querySelector(note.anchor)];
         found.filter(Boolean).forEach(target => {
             target.classList.add('card-tutorial-anchored');
-            target.dataset.cardTutorialNote = String(i);
+            // One element can be the subject of several notes.
+            const seen = target.dataset.cardTutorialNote ? target.dataset.cardTutorialNote.split(',') : [];
+            target.dataset.cardTutorialNote = [...seen, String(i)].join(',');
         });
     });
     if (state.activeNote >= 0) setActiveNote(state.activeNote);
@@ -872,7 +922,7 @@ function syncReveal() {
     const step = currentStep();
     const building = step?.kind === 'card';
     stage.querySelectorAll('.card-tutorial-anchored').forEach(el => {
-        const index = Number(el.dataset.cardTutorialNote);
+        const index = Math.min(...el.dataset.cardTutorialNote.split(',').map(Number));
         if (el.classList.contains('card-back')) return;
         el.classList.toggle('card-tutorial-unrevealed', building && index > state.activeNote);
     });
@@ -893,10 +943,13 @@ function positionRing() {
     const stage = document.getElementById('cardTutorialStage');
     if (!stage) return;
     let ring = stage.querySelector('.card-tutorial-ring');
-    const targets = [...stage.querySelectorAll('.card-tutorial-anchored.is-annotation-active')];
+    const targets = [...stage.querySelectorAll('.card-tutorial-anchored.is-annotation-active')]
+        .filter(el => el.getBoundingClientRect().width > 0);
     const target = targets[0];
     const card = stage.querySelector('.card-replica');
-    if (!target || !card || state.flipping || target.classList.contains('card-tutorial-unrevealed')) {
+    // While a demo sheet covers the card, the sheet is the thing on show.
+    if (!target || !card || state.flipping || stage.querySelector('.tutorial-demo-sheet')
+        || target.classList.contains('card-tutorial-unrevealed')) {
         if (ring) ring.hidden = true;
         return;
     }
@@ -945,6 +998,7 @@ function positionRing() {
 // Hovering either a badge or its note lights up both, plus the element itself.
 function setActiveNote(index) {
     state.activeNote = index;
+    enterNoteDemo(index);
     renderNotes();
     renderSequenceProgress();
     const root = document.getElementById('cardTutorialModal');
@@ -954,7 +1008,7 @@ function setActiveNote(index) {
     });
     let active = null;
     root.querySelectorAll('.card-tutorial-anchored').forEach((el) => {
-        const on = Number(el.dataset.cardTutorialNote) === index;
+        const on = el.dataset.cardTutorialNote.split(',').map(Number).includes(index);
         el.classList.toggle('is-annotation-active', on);
         if (on) active = el;
     });
@@ -1010,6 +1064,275 @@ function keepInView(el) {
     const box = el.getBoundingClientRect();
     if (box.top < view.top + 8) scroller.scrollTop -= view.top + 8 - box.top;
     else if (box.bottom > view.bottom - 8) scroller.scrollTop += box.bottom - view.bottom + 8;
+}
+
+// ---------------------------------------------------------------------------
+// Demonstrations
+// ---------------------------------------------------------------------------
+//
+// A few notes describe something the card *does* rather than something it
+// shows. Those notes carry `demo`, and on arriving at one the tour performs
+// the action itself: it changes the meaning, cycles the example, opens the
+// sheets. The same controls stay live, so the reader can do it again. Arriving
+// at any other note puts the card back as it was.
+
+let _demoTimers = [];
+
+function clearDemoTimers() {
+    _demoTimers.forEach(clearTimeout);
+    _demoTimers = [];
+}
+
+function later(ms, fn) {
+    _demoTimers.push(setTimeout(fn, ms));
+}
+
+function closeDemoSheet() {
+    document.querySelectorAll('#cardTutorialStage .tutorial-demo-sheet').forEach(el => el.remove());
+}
+
+function closeLookupDemo() {
+    const stage = document.getElementById('cardTutorialStage');
+    stage?.querySelectorAll('.lookup-sheet').forEach(sheet => { sheet.hidden = true; });
+    stage?.querySelectorAll('.lookup-sheet-icon').forEach(icon => {
+        icon.classList.remove('is-armed-outbound');
+        icon.setAttribute('aria-expanded', 'false');
+        icon.querySelector('.outbound-leave-btn')?.setAttribute('hidden', '');
+    });
+}
+
+function closeDemo() {
+    clearDemoTimers();
+    closeDemoSheet();
+    closeLookupDemo();
+}
+
+const RARE_POS_ORDER = ['NOUN', 'VERB', 'ADJ', 'ADV'];
+
+// Markup follows the live sheets (flashcards.js ensureRareUsesModal and
+// renderRareSenseGroups, knowledge.js renderKnowledgeOverview) class for
+// class, so the real stylesheet draws them.
+function rareSheetHTML(card) {
+    const byPos = new Map();
+    (card.rareUses || []).forEach(item => {
+        const pos = String(item.pos || 'OTHER').toUpperCase();
+        if (!byPos.has(pos)) byPos.set(pos, []);
+        byPos.get(pos).push(item);
+    });
+    const order = [...byPos.keys()].sort((a, b) => {
+        const ia = RARE_POS_ORDER.indexOf(a);
+        const ib = RARE_POS_ORDER.indexOf(b);
+        return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+    });
+    const body = order.map(pos => {
+        const accent = posAccentRgb(pos);
+        const leaves = byPos.get(pos).map(item => {
+            const example = item.example
+                ? `<details class="rare-use-examples"><summary>Examples · 1</summary>
+                    <div class="phrase-example phrase-example--compact" style="--sense-match-rgb: ${accent};">
+                        <div class="phrase-example-target">${esc(item.example.target)}</div>
+                        <div class="phrase-example-translation">${esc(item.example.english)}</div>
+                    </div></details>` : '';
+            return `<div class="other-uses-gloss-group"><div class="other-uses-leaf">
+                <div class="other-uses-gloss">${esc(item.translation)}</div>
+                ${item.context ? `<div class="phrase-context">${esc(item.context)}</div>` : ''}${example}
+            </div></div>`;
+        }).join('');
+        return `<section class="other-uses-pos"><h4 class="other-uses-pos-heading" style="color: rgb(${accent});">${esc(posName(pos))}</h4>${leaves}</section>`;
+    }).join('');
+    return `<div class="knowledge-overview-modal rare-uses-modal tutorial-demo-sheet" role="dialog" aria-label="Rare uses">
+        <div class="knowledge-overview-sheet rare-uses-sheet">
+            <header class="knowledge-overview-header">
+                <div>
+                    <div class="rare-uses-title-row"><h2>${esc(card.word)}</h2><span class="rare-uses-pill">Rare uses</span></div>
+                    <p class="rare-uses-subtitle">Low-frequency senses not tested in daily reviews</p>
+                </div>
+                <button type="button" class="knowledge-overview-close" aria-label="Close rare uses" data-demo-close>×</button>
+            </header>
+            <div class="phrase-summary-scroll rare-uses-body">${body}</div>
+        </div>
+    </div>`;
+}
+
+function reviewSheetHTML(card) {
+    const rows = orderedMeanings(card);
+    const accent = posAccentRgb(card.pos);
+    const list = rows.map((meaning, i) => `<label class="knowledge-overview-row" data-demo-row="${i}">
+            <span class="knowledge-overview-focus is-static">
+                <span class="knowledge-overview-status" aria-label="Unmarked"></span>
+                <span class="knowledge-overview-copy"><strong>${esc(meaning.translation)}</strong>${meaning.context ? `<small>${esc(meaning.context)}</small>` : ''}</span>
+            </span>
+            <input type="checkbox" class="knowledge-overview-checkbox" aria-label="Review ${esc(meaning.translation)} later">
+        </label>`).join('');
+    return `<div class="knowledge-overview-modal tutorial-demo-sheet" role="dialog" aria-label="Review meanings">
+        <div class="knowledge-overview-sheet">
+            <header class="knowledge-overview-header">
+                <p class="knowledge-overview-hint">Know the word, but not every meaning? Select the meaning(s) you’d like to revisit, and future reviews will focus on those.</p>
+                <button type="button" class="knowledge-overview-close" aria-label="Close" data-demo-close>×</button>
+            </header>
+            <div class="knowledge-overview-list"><section class="knowledge-overview-section">
+                <div class="knowledge-overview-group" style="--sense-match-rgb: ${accent};">
+                    <div class="knowledge-overview-group-head">
+                        <span class="knowledge-overview-group-pos">${esc(posName(card.pos))}</span>
+                        <span class="knowledge-overview-group-lemma">${esc(card.lemma || card.word)}</span>
+                        <span class="knowledge-overview-group-count">0/${rows.length}</span>
+                    </div>
+                    <div class="knowledge-overview-rows">${list}</div>
+                </div>
+            </section></div>
+        </div>
+    </div>`;
+}
+
+function openDemoSheet(kind) {
+    const replica = document.querySelector('#cardTutorialStage .card-replica');
+    const card = currentCard();
+    if (!replica || !card) return;
+    closeLookupDemo();
+    closeDemoSheet();
+    replica.insertAdjacentHTML('beforeend', kind === 'rare' ? rareSheetHTML(card) : reviewSheetHTML(card));
+    positionRing();
+}
+
+// Tick the second meaning, the way a learner marks one to revisit.
+function tickReviewRow() {
+    const row = document.querySelector('#cardTutorialStage .tutorial-demo-sheet [data-demo-row="1"]')
+        || document.querySelector('#cardTutorialStage .tutorial-demo-sheet [data-demo-row="0"]');
+    if (!row) return;
+    row.classList.add('is-selected');
+    const box = row.querySelector('input');
+    if (box) box.checked = true;
+    const status = row.querySelector('.knowledge-overview-status');
+    if (status) status.setAttribute('aria-label', 'Practice');
+}
+
+function openLookupDemo({ arm = false } = {}) {
+    closeDemoSheet();
+    const stage = document.getElementById('cardTutorialStage');
+    const sheet = stage?.querySelector('.lookup-sheet');
+    if (!sheet) return;
+    sheet.hidden = false;
+    if (arm) armLookupIcon(sheet.querySelector('.lookup-sheet-icon'));
+    positionRing();
+}
+
+function armLookupIcon(icon) {
+    if (!icon) return;
+    const leave = icon.querySelector('.outbound-leave-btn');
+    const opening = !icon.classList.contains('is-armed-outbound');
+    icon.parentElement.querySelectorAll('.lookup-sheet-icon').forEach(other => {
+        if (other === icon) return;
+        other.classList.remove('is-armed-outbound');
+        other.querySelector('.outbound-leave-btn')?.setAttribute('hidden', '');
+    });
+    icon.classList.toggle('is-armed-outbound', opening);
+    icon.setAttribute('aria-expanded', String(opening));
+    if (leave) leave.hidden = !opening;
+}
+
+// Put the card back to the meaning and example it opened on.
+function resetDemoSelection() {
+    const card = currentCard();
+    if (!card) return;
+    const home = card.defaultMeaningIndex || 0;
+    if (state.meaningIndex === home && state.exampleIndex === 0) return;
+    state.meaningIndex = home;
+    state.exampleIndex = 0;
+    refreshBack();
+}
+
+function goToMeaning(index) {
+    if (state.meaningIndex === index && state.exampleIndex === 0) return;
+    state.meaningIndex = index;
+    state.exampleIndex = 0;
+    refreshBack();
+}
+
+// Called as a note becomes the active one. Re-entry for the same note (every
+// re-render calls setActiveNote) must not start the demo again.
+function enterNoteDemo(index) {
+    const step = currentStep();
+    const key = `${state.stepIndex}:${index}:${state.flipped ? 'b' : 'f'}`;
+    if (state.demoKey === key) return;
+    state.demoKey = key;
+    closeDemo();
+    if (!step || step.kind !== 'card' || !state.flipped) return;
+    const note = orderedNotes()[index];
+    const card = currentCard();
+    if (!note || !card) return;
+
+    const keepsSelection = note.demo === 'selectMeaning' || note.demo === 'cycleExample';
+    if (!keepsSelection) resetDemoSelection();
+
+    switch (note.demo) {
+        case 'selectMeaning':
+            resetDemoSelection();
+            later(750, () => goToMeaning(altMeaningIndex()));
+            break;
+        case 'cycleExample': {
+            const current = card.meanings[state.meaningIndex];
+            if (!current || current.examples.length < 2) {
+                const richest = card.meanings.reduce((best, m, i) =>
+                    (m.examples.length > (card.meanings[best]?.examples.length || 0) ? i : best), 0);
+                goToMeaning(richest);
+            }
+            const next = () => { state.exampleIndex += 1; refreshBack(); };
+            later(800, next);
+            later(2100, next);
+            break;
+        }
+        case 'openRare':
+            later(700, () => openDemoSheet('rare'));
+            later(2100, () => {
+                const details = document.querySelector('#cardTutorialStage .tutorial-demo-sheet details');
+                if (details) details.open = true;
+            });
+            break;
+        case 'openReview':
+            later(700, () => openDemoSheet('review'));
+            later(1900, tickReviewRow);
+            break;
+        case 'openLookup':
+            later(600, () => openLookupDemo());
+            break;
+        case 'armLookup':
+            later(100, () => openLookupDemo());
+            later(900, () => armLookupIcon(document.querySelector('#cardTutorialStage .lookup-sheet-icon')));
+            break;
+        default:
+    }
+}
+
+// The card's own controls work during the tour too.
+function onStageClick(event) {
+    const stage = document.getElementById('cardTutorialStage');
+    if (!stage) return;
+    const target = event.target;
+    if (target.closest('[data-demo-close]')) {
+        event.stopPropagation();
+        closeDemoSheet();
+        positionRing();
+        return;
+    }
+    const row = target.closest('.tutorial-demo-sheet [data-demo-row]');
+    if (row) {
+        event.preventDefault();
+        const on = !row.classList.contains('is-selected');
+        row.classList.toggle('is-selected', on);
+        const box = row.querySelector('input');
+        if (box) box.checked = on;
+        return;
+    }
+    if (target.closest('.tutorial-demo-sheet')) return;
+    if (target.closest('.ref-rare-uses-btn')) { openDemoSheet('rare'); return; }
+    if (target.closest('.knowledge-overview-trigger')) { openDemoSheet('review'); return; }
+    if (target.closest('.ref-lookup-btn')) {
+        const sheet = stage.querySelector('.lookup-sheet');
+        if (sheet) { closeDemoSheet(); sheet.hidden = !sheet.hidden; positionRing(); }
+        return;
+    }
+    const icon = target.closest('.lookup-sheet-icon');
+    if (icon && !target.closest('.outbound-leave-btn')) armLookupIcon(icon);
 }
 
 // A first-time reader can stall on a step not knowing the tour moves on with
@@ -1275,6 +1598,8 @@ function closeCardTutorial() {
     if (!modal) return;
     modal.classList.add('hidden');
     clearNextHint();
+    closeDemo();
+    state.demoKey = '';
     clearInterval(_ringWatch);
     _ringSettle.forEach(clearTimeout);
     // Leave any Spotify playback the visitor started running — they pressed
@@ -1291,6 +1616,7 @@ function setupCardTutorial() {
     modal.dataset.ready = '1';
 
     document.getElementById('closeCardTutorialModal')?.addEventListener('click', closeCardTutorial);
+    document.getElementById('cardTutorialStage')?.addEventListener('click', onStageClick);
     document.getElementById('cardTutorialFlip')?.addEventListener('click', () => flipCardFace(0));
     document.getElementById('cardTutorialContinue')?.addEventListener('click', () => moveTour(1));
     document.getElementById('cardTutorialPrev')?.addEventListener('click', () => moveTour(-1));

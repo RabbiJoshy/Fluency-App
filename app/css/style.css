@@ -16004,6 +16004,31 @@
 
 .card-tutorial-ring[hidden] { display: none; }
 
+/* The Rare uses and Review meanings sheets the tour opens. They are the live
+   app's own sheets (same classes, same look), confined to the replica card
+   instead of covering the viewport. */
+.card-replica > .knowledge-overview-modal.tutorial-demo-sheet {
+    position: absolute;
+    inset: 0;
+    z-index: 8;
+    display: grid;
+    place-items: start center;
+    padding: 6px;
+    border-radius: inherit;
+    overflow: hidden;
+}
+
+.card-replica > .knowledge-overview-modal.tutorial-demo-sheet .knowledge-overview-sheet {
+    width: 100%;
+    max-height: 100%;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+}
+
+.card-replica > .knowledge-overview-modal.tutorial-demo-sheet .knowledge-overview-header {
+    padding-top: 12px;
+}
+
 /* The front builds up: each element fades in as its note comes up. */
 .card-face .card-tutorial-anchored,
 .card-front .front-lemma-pair,

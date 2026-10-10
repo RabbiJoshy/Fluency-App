@@ -16,13 +16,13 @@ class TutorialReplicaTests(unittest.TestCase):
 import assert from 'node:assert/strict';
 import { REPLICA_CARDS, renderBack } from './app/js/card-replica.js';
 globalThis.window = {};
-for (const key of ['ptParecerSpeech', 'quieroSpeech']) {
+for (const key of ['ptDeviaSpeech', 'quieroSpeech']) {
   const card = REPLICA_CARDS[key];
   // A form whose dictionary form differs, with more than one meaning, early
   // in its deck, and glosses short enough for a narrow phone.
   assert.notEqual(card.word, card.lemma);
   assert(card.meanings.length >= 2);
-  assert(card.rank <= 150);
+  assert(card.rank <= 350);
   assert(card.meanings.every(m => m.translation.length <= 14));
   const back = renderBack(card, card.defaultMeaningIndex, 0);
   const rowIndices = [...back.matchAll(/data-meaning-index="(\d+)"/g)].map(m => +m[1]);
@@ -40,7 +40,7 @@ for (const key of ['ptParecerSpeech', 'quieroSpeech']) {
   }
 }
 assert.equal(REPLICA_CARDS.quieroSpeech.lemma, 'querer');
-assert.equal(REPLICA_CARDS.ptParecerSpeech.lemma, 'parecer');
+assert.equal(REPLICA_CARDS.ptDeviaSpeech.lemma, 'dever');
 assert(renderBack(REPLICA_CARDS.quieroSpeech, 0, 0).includes('Information about this meaning'));
 assert(!renderBack(REPLICA_CARDS.quieroSpeech, 0, 0).includes('meaning-row-check'));
 ''', capture_output=True,
@@ -146,13 +146,13 @@ state.meaningIndex = 0;
 assert.equal(tutorialCardHeight(), 342);
 document.querySelector = () => null;
 // Progress counts the chapter on show: the card's two faces.
-assert.equal(tutorialStepPosition().total, 16);
+assert.equal(tutorialStepPosition().total, 19);
 const front = stepNotes(tutorialSteps()[0]);
 assert.deepEqual(front.map(note => note.title), ['The word', 'Vocabulary rank', 'How often it is said', 'Kind of word', 'The dictionary form']);
 const back = stepNotes(tutorialSteps()[1]);
 // One note per meaning row (parece has two), then the card's other parts.
 // parece's opening meaning has no usage line or grammar, so no "More about a meaning" note.
-assert.deepEqual(back.map(note => note.title), ['The kind of word', 'The most common meaning', 'The next meaning', 'How common each meaning is', 'A real example', 'The sentence in English', 'Where it comes from', 'Rare uses', 'Review meanings', 'Look up', 'Grade your answer']);
+assert.deepEqual(back.map(note => note.title), ['The kind of word', 'The most common meaning', 'The next meaning', 'How common each meaning is', 'A real example', 'The sentence in English', 'Where it comes from', 'Change the meaning', 'Cycle through the examples', 'Rare uses', 'Review meanings', 'Look up', 'Open a dictionary', 'Grade your answer']);
 // Notes explain; none sets a task that holds Next back.
 for (const step of tutorialSteps()) for (const note of stepNotes(step)) {
   assert.equal(note.practice, undefined);
@@ -160,8 +160,8 @@ for (const step of tutorialSteps()) for (const note of stepNotes(step)) {
 }
 // Smart Skip and the vocabulary source are pages, each in the language taught.
 const skip = stepNotes(tutorialSteps()[2]);
-assert.deepEqual(skip.map(note => note.title), ['Turn it on', 'Word forms share a card', 'Singular and plural share a card', 'Look-alikes are skipped']);
-assert(tutorialText(skip[1].text).startsWith('“falo”, “falou” and “falar”'));
+assert.deepEqual(skip.map(note => note.title), ['Turn it on', 'Look-alikes are skipped', 'Word forms share a card', 'Singular and plural share a card']);
+assert(tutorialText(skip[2].text).startsWith('“falo”, “falou” and “falar”'));
 assert(TUTORIAL_PAGES.smartSkip.html(tutorialAdapter()).includes('falou'));
 // Portuguese has no music catalogue, so the artist/playlist note is absent.
 assert.equal(stepNotes(tutorialSteps()[3]).length, 3);
@@ -171,7 +171,7 @@ assert.deepEqual(tutorialStepPosition(0), {current: 1, total: 4});
 state.stepIndex = 0;
 tutorialLanguageOverride = 'spanish';
 state.mode = 'lyrics';
-assert.equal(tutorialStepPosition().total, 18);
+assert.equal(tutorialStepPosition().total, 20);
 const lyricsBack = stepNotes(tutorialSteps()[1]);
 assert(lyricsBack.some(note => note.title === 'Play the line'));
 // Grading closes the face even after the song details are added.
