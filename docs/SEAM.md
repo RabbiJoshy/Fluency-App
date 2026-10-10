@@ -113,4 +113,20 @@ card flag. Smart Skip with only Combine word forms enabled reports 6,871
 cards, matching the full cold/loaded representative audit; its list shows
 ano → anos/ano and hora → hora/horas. Screenshot:
 `../Fluency-Workspace/audits/seam/staging-pt-es.jpg`.
-The final search-list flag correction is being published in a follow-up build.
+Final build **b9467ace** is published and browser-reviewed in a fresh guest tab.
+Cold és and dejalo result lists show their ranks without false Examples-only
+labels. Opening and flipping shows “you are / you exist” and
+“let him / let it / leave it”, respectively. Screenshots in the evidence folder:
+`staging-pt-es-final.jpg` and `staging-es-dejalo-final.jpg`.
+The final deployment suite passes all 243 app tests. All four hosted revised
+merge/estimator assets match local bytes (`staging-bindings.json`). The normal
+staging URL selects HEADWAY es r4 / pt r2; no candidate-query override is used.
+The representative audit also verifies identical elected surface IDs and order
+for full and cold menus: 7,729 es / 6,871 pt representatives before other filters.
+
+An initial final-build reload took a long time to initialise in the in-app
+browser. A fresh tab eventually loaded the correct stamped build without
+warning/error console logs; the cause/duration was not measured. Earlier one-tab
+crash and slow startup remain browser observations, not claims of a repaired app
+problem. Physical phone and live two-device checks remain TOUCHPOINT's scope.
+No production promotion was performed; Josh's approval is required.
