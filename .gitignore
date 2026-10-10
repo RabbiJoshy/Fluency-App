@@ -34,3 +34,6 @@ app/backend/secrets.json
 
 # Local Cloudflare development state
 backend/worker/.wrangler/
+
+# Airlock deployment records
+.airlock/
