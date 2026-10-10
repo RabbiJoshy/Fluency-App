@@ -24,6 +24,7 @@ from fluency.surfaces.events import by_surface, read, scope, store_path  # noqa:
 from fluency.surfaces.ledger import LEDGER_VERSION, ledger_write_path  # noqa: E402
 from fluency.surfaces.policy import load_policy, verdict  # noqa: E402
 from fluency.surfaces import prewsd  # noqa: E402
+from fluency.surfaces.lemma_revision import active_lemma_events, project_revision, REVISION_PROVIDER, compatible_reviewed_pos
 from fluency.wsd.sampling import order_candidates_for_wsd  # noqa: E402
 
 # Whoever supplies a language's sense menus is the authority on its lemmas,
@@ -39,7 +40,7 @@ AUTHORITY = {
     # undoes the stress accent they force, and looks the base form up. It is
     # still SpanishDict's own answer about a verb SpanishDict files -- just
     # reached in two steps, which the provenance label says.
-    "es": ("spanishdict-clitic-dephrased", "spanishdict-surface-cache", "spanishdict-refetch",
+    "es": ("spanishdict-declared", "spanishdict-clitic-dephrased", "spanishdict-surface-cache", "spanishdict-refetch",
            "spanishdict-reverse-conjugation", "spanishdict-clitic-stripping"),
     "pt": ("enwiktionary-closed-class-headword", "enwiktionary-form-of",
            "enwiktionary-is-headword"),
@@ -51,6 +52,7 @@ AUTHORITY = {
            "enwiktionary-is-headword"),
 }
 PROVENANCE_LABEL = {
+    "spanishdict-declared": "spanishdict declared lemma",
     "spanishdict-clitic-dephrased": "spanishdict clitic de-phrased",
     "spanishdict-surface-cache": "spanishdict headword",
     "spanishdict-refetch": "spanishdict headword (refetched)",
@@ -243,7 +245,8 @@ def main() -> int:
         found = verdict(items, policy)
         lemmas, pos, evidence = [], [], {}
         candidates: list[str] = []
-        for event in items:
+        lemma_items = active_lemma_events(items)
+        for event in lemma_items:
             code, data = event["reason_code"], event.get("evidence") or {}
             if code in ("lemma_resolved", "lemma_is_headword"):
                 provider = data.get("provider") or ""
@@ -317,6 +320,15 @@ def main() -> int:
         # exactly that. The harvest counts stay, so the row still explains
         # itself.
         entry = surfaces[surface]
+        revision = next((e.get("evidence") for e in reversed(lemma_items)
+                         if e.get("evidence", {}).get("provider") == REVISION_PROVIDER or
+                         (e.get('evidence', {}).get('provider') == 'hand-written' and
+                          'analyses' in e.get('evidence', {}))), None)
+        if revision:
+            surfaces[surface] = entry = project_revision(entry, revision)
+        approved_pos = compatible_reviewed_pos(items, entry['lemmas'])
+        if approved_pos is not None:
+            entry['part_of_speech'] = approved_pos
         if entry["verdict"] == "exclude" and entry["supply"]:
             entry["supply"] = {
                 **entry["supply"],

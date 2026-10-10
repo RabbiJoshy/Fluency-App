@@ -16,6 +16,7 @@ from fluency.core.workspace import Workspace
 from fluency.harvest.inventory import load_harvest_inventory
 from fluency.pipeline.planning import load_pipeline_profile
 from fluency.surfaces.ledger import ledger_path
+from fluency.surfaces.lemma_revision import stale_carried_analyses
 from fluency.core.io import atomic_write, json_bytes
 from fluency.sense_menu.config import load_sense_menu_language_policy
 from fluency.sense_menu.kaikki import (
@@ -80,6 +81,8 @@ def _implementation_content_id() -> str:
         package / "config.py",
         package / "kaikki.py",
         package / "spanishdict.py",
+        package / "spanishdict_lemmas.py",
+        package.parent / "surfaces" / "lemma_revision.py",
         package.parent / "wsd" / "menus.py",
     )
     return canonical_content_id(
@@ -167,6 +170,15 @@ def _build_and_carry(workspace, adapter, cards, *, snapshot_id, language, mode, 
     source = workspace.root / "runs" / language / mode / carry_run / STAGE_RELATIVE / "output"
     source_menu = _load_object(source / "sense-menu.json")
     source_report = _load_object(source / "report.json")
+    view_path = ledger_path(workspace.root, language)
+    ledger = _load_object(view_path).get("surfaces", {}) if view_path.exists() else {}
+    stale = [c["surface_form"] for c in source_menu.get("cards", [])
+             if c.get("surface_form") not in resolved
+             and stale_carried_analyses(c, ledger.get(c.get("surface_form"), {}))]
+    if stale:
+        raise SenseMenuRunError(
+            f"{len(stale)} carried menus contain superseded source analyses; "
+            f"include these surfaces in a new profile's resolver scope: {', '.join(stale[:20])}")
     built_cards = [card for card in cards if card.get("surface_key") in resolved]
     menu, report = adapter.build(built_cards, snapshot_id=snapshot_id)
     fresh = {card["card_id"]: card for card in menu["cards"]}
@@ -274,7 +286,7 @@ def build_sense_menu_stage(
         if isinstance(adapter, SpanishDictSenseMenuAdapter):
             reverse = json.loads((resolved_snapshot / "conjugation_reverse.json").read_text(encoding="utf-8"))
             source = SpanishDictHeadwordSource(
-                SpanishDictLemmaRule(reverse, known_headwords=frozenset(adapter.headword_cache)),
+                adapter.lemma_rule,
                 adapter.surface_cache, adapter.headword_cache)
             pinned["lemma_rule"] = SPANISHDICT_LEMMA_RULE
         else:

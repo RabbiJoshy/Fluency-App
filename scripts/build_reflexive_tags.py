@@ -87,6 +87,8 @@ def main() -> int:
     ap.add_argument("--workspace", type=Path, default=REPO.parent / "Fluency-Workspace")
     ap.add_argument("--batch-size", type=int, default=32)
     ap.add_argument("--limit", type=int, help="tag only the first N parse-needing texts (pilot)")
+    ap.add_argument('--assignment-source', type=Path, help='Existing frozen run supplying occurrences before new stage 04 exists')
+    ap.add_argument('--target-surfaces', nargs='+', help='Restrict tagging to corrected cards')
     args = ap.parse_args()
     warnings.filterwarnings("ignore")
     import spacy
@@ -96,6 +98,9 @@ def main() -> int:
     stage = args.run_dir / "stages"
     menu = json.loads((stage / "02_sense_menu/output/sense-menu.json").read_text(encoding="utf-8"))
     pairs = pair_cards(menu)
+    if args.target_surfaces:
+        targets = set(args.target_surfaces)
+        pairs &= {c['card_id'] for c in menu['cards'] if c['surface_form'] in targets}
     examples = json.loads((args.prewsd / "examples.json").read_text(encoding="utf-8"))
     cols = examples["columns"]
     text_of = {
@@ -103,7 +108,8 @@ def main() -> int:
         for sid, text in zip(cols["sentence_id"], cols["target"])
     }
     rows = []
-    with (stage / "04_wsd_assignments/output/assignments.jsonl").open(encoding="utf-8") as handle:
+    assignment_stage = (args.assignment_source / 'stages') if args.assignment_source else stage
+    with (assignment_stage / "04_wsd_assignments/output/assignments.jsonl").open(encoding="utf-8") as handle:
         for line in handle:
             row = json.loads(line)
             if row["card_id"] in pairs and row["status"] in ("assigned", "abstained"):
@@ -184,6 +190,7 @@ def main() -> int:
         "schema": SCHEMA,
         "language": lang,
         "source_run": args.run_dir.name,
+        'occurrence_source_run': (args.assignment_source or args.run_dir).name,
         "prewsd": args.prewsd.name,
         "detector_id": det,
         "parser": reflexive.PARSERS[lang],

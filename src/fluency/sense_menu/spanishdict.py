@@ -21,7 +21,7 @@ from fluency.features.spanishdict_metadata import (
 from fluency.features.spanishdict import extract as extract_spanishdict_features
 from fluency.menus import MenuAnalysis, SenseLeaf, build_analysis_id
 from fluency.sense_menu.declared_menu import declared_entity_analyses, declared_gloss_analyses
-from fluency.sense_menu.spanishdict_lemmas import has_translation
+from fluency.sense_menu.spanishdict_lemmas import SpanishDictLemmaRule, entry_index, has_translation, page_lemma_analyses
 from fluency.sense_menu.noun_merge import stamp_noun_merge
 from fluency.surfaces.resolver import DECLARED_GLOSS, ENTITY, EXPANSION, HEADWORDS
 
@@ -174,7 +174,7 @@ def _legacy_sense_ids(
             used_ids.add(retained_id)
             continue
         digest = hashlib.md5(
-            f"{headword}|{sense.get('pos', '')}|{sense.get('translation', '')}".encode("utf-8"),
+            f"{headword}|{sense.get('_source_pos', sense.get('pos', ''))}|{sense.get('translation', '')}".encode("utf-8"),
             usedforsecurity=False,
         ).hexdigest()
         sense_id = digest
@@ -206,6 +206,8 @@ class SpanishDictSenseMenuAdapter:
     snapshot_id: str = field(init=False)
     surface_cache: dict[str, Any] = field(init=False)
     headword_cache: dict[str, Any] = field(init=False)
+    lemma_rule: Any = field(init=False, default=None)
+    entries: Any = field(init=False, default=None)
     normalized_menu: dict[str, Any] = field(init=False)
     spanish_forms: set[str] = field(init=False)
     conjugation_deaccented: dict[str, set[str]] = field(init=False)
@@ -263,6 +265,8 @@ class SpanishDictSenseMenuAdapter:
         )
         forms = _load_object(self.path / "spanish_forms.json")
         reverse = _load_object(self.path / "conjugation_reverse.json")
+        self.entries = entry_index(self.surface_cache, self.headword_cache)
+        self.lemma_rule = SpanishDictLemmaRule(reverse, frozenset(self.entries))
         self.spanish_forms = {_deaccent(str(value)) for value in forms}
         self.conjugation_deaccented = defaultdict(set)
         self.conjugation_original = defaultdict(set)
@@ -490,13 +494,16 @@ class SpanishDictSenseMenuAdapter:
             return []
         page_surface = resolution.expanded_to or surface
         page = self.surface_cache.get(page_surface)
-        page_analyses = _normalize_analyses((page or {}).get("dictionary_analyses")) if isinstance(page, dict) else []
+        page_analyses = page_lemma_analyses(page_surface, {**(page or {}),
+            "dictionary_analyses": _normalize_analyses((page or {}).get("dictionary_analyses"))}, self.lemma_rule) if isinstance(page, dict) else []
         out: list[dict[str, Any]] = []
         for item in resolution.headwords:
             record = {"headword_provenance": item.provenance, "headword_trust": item.trust,
                       "headword_detail": item.detail or None}
             own = [a for a in page_analyses if str(a.get("headword") or "").strip() == item.headword]
             if not has_translation(own):  # the same places, in the same order, as has_entry
+                own = _normalize_analyses(self.entries.get(item.headword))
+            if not has_translation(own):
                 entry = self.headword_cache.get(item.headword)
                 own = _normalize_analyses(entry.get("dictionary_analyses")) if isinstance(entry, dict) else []
                 if not own:
@@ -529,11 +536,18 @@ class SpanishDictSenseMenuAdapter:
         carry none, so their output is byte-identical to before.
         """
         normalized: list[MenuAnalysis] = []
+        split = self.lemma_rule.enclitic_split(surface) if self.lemma_rule else None
         used_sense_ids: set[str] = set()
+        raw_analyses = page_lemma_analyses(surface, {
+            **(self.surface_cache.get(surface) or {}), "dictionary_analyses": raw_analyses}, self.lemma_rule)
         for raw_index, raw in enumerate(raw_analyses):
             headword = str(raw.get("headword") or surface).strip()
+            # Phrases are supplied by the MWE overlay, never as word lemmas.
+            if (len(headword.split()) > len(surface.split())
+                    and "".join(headword.split()).casefold() != surface.casefold()):
+                continue
             legacy = _legacy_sense_ids(
-                headword,
+                raw.get("_source_headword") or headword,
                 raw.get("senses", []),
                 used_sense_ids,
             )
@@ -549,7 +563,7 @@ class SpanishDictSenseMenuAdapter:
                         sense_id=sense_id,
                         translation=str(sense["translation"]).strip(),
                         definition=str(sense.get("context", "")).strip(),
-                        source_reference=f"spanishdict-menu:{headword}:{sense_id}",
+                        source_reference=f"spanishdict-menu:{raw.get('_source_headword') or headword}:{sense_id}",
                         provider_metadata={
                             "spanishdict": {
                                 key: deepcopy(value)
@@ -611,6 +625,11 @@ class SpanishDictSenseMenuAdapter:
                                 ),
                             },
                             "menu_order_prior": len(normalized),
+                            **({'surface_morphology': split} if split and
+                               headword in {split['lemma'], split['lemma'] + 'se'} else {}),
+                            **({"lemma_correction": raw["_lemma_correction"],
+                                "source_headword": raw["_source_headword"]}
+                               if raw.get("_lemma_correction") else {}),
                             **(
                                 {"resolver": {**stamp, **(raw.get("_resolver_headword") or {})}}
                                 if stamp else {}

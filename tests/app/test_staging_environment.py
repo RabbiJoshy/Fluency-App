@@ -14,6 +14,39 @@ APP = ROOT / "app"
 
 @unittest.skipUnless(shutil.which("node"), "Node.js required for JS evaluation checks")
 class StagingEnvJsTests(unittest.TestCase):
+    def test_candidate_paths_use_matching_deck_and_merge_data_only_in_staging(self) -> None:
+        script = r"""
+        const fs = require('node:fs');
+        const vm = require('node:vm');
+        const source = fs.readFileSync(process.argv[2], 'utf8').replace(/^import .*\n/gm, '');
+        async function run(staging) {
+            const original = { languages: { spanish: { routeCode: 'es',
+                indexPath: 'production-index', mergeExceptionsPath: 'production-merges' } } };
+            const context = { URLSearchParams, IS_STAGING: staging,
+                window: { location: { search: '?esRelease=es-headway-candidate' } },
+                config: {}, cefrLevelsConfig: null, activeArtist: null,
+                getCandidateDeckOverrides: () => ({}), releaseUrl: p => p,
+                fetch: async p => ({ json: async () => p.startsWith('config/config.json')
+                    ? structuredClone(original) : {} }),
+                console, alert: m => { throw Error(m); } };
+            vm.runInNewContext(source, context);
+            await context.window.loadConfig();
+            return context.config.languages.spanish;
+        }
+        Promise.all([run(true), run(false)]).then(([staging, production]) =>
+            console.log(JSON.stringify({ staging, production })));
+        """
+        res = subprocess.run(['node', '-', str(APP / 'js/config.js')], input=script,
+                             text=True, capture_output=True)
+        self.assertEqual(res.returncode, 0, res.stderr)
+        data = json.loads(res.stdout)
+        base = 'releases/es/speech/es-headway-candidate/app/'
+        self.assertEqual(data['staging']['indexPath'], base + 'vocabulary.index.json')
+        self.assertEqual(data['staging']['studyStructurePath'], base + 'study-structure.json')
+        self.assertEqual(data['staging']['mergeExceptionsPath'], base + 'merge-exceptions.json')
+        self.assertEqual(data['production']['indexPath'], 'production-index')
+        self.assertEqual(data['production']['mergeExceptionsPath'], 'production-merges')
+
     def test_environment_detection_and_user_isolation(self) -> None:
         script = r"""
         const fs = require('node:fs');

@@ -166,8 +166,24 @@ def _semantic_senses(row: dict[str, Any]) -> list[dict[str, Any]]:
     return [
         sense
         for sense in _json_values(row.get("senses"))
-        if not (_sense_tags(sense) & FORM_TAGS) and _has_meaningful_gloss(sense)
+        if not (_sense_tags(sense) & FORM_TAGS) and not sense.get("form_of")
+        and not sense.get("alt_of") and _has_meaningful_gloss(sense)
     ]
+
+
+def semantic_headword(row: dict[str, Any]) -> str:
+    """A specialised definition on a verb-form page still belongs to its verb.
+
+    Only a unique structured form_of in that same POS row licenses this. A
+    noun or interjection homograph is a separate row and remains independent.
+    Multiple targets (ser/ir) are deliberately not guessed.
+    """
+    targets = {str(t.get("word", "")).strip()
+               for s in _json_values(row.get("senses"))
+               for t in _json_values(s.get("form_of")) if t.get("word")}
+    if row.get("pos") == "verb" and len(targets) == 1:
+        return next(iter(targets))
+    return str(row.get("word") or "")
 
 
 def _open_jsonl(path: Path):
@@ -636,8 +652,11 @@ class KaikkiSenseMenuAdapter:
         """
         grouped: dict[tuple[str, str], list[tuple[dict[str, Any], dict[str, Any]]]] = defaultdict(list)
         entry_counts: dict[tuple[str, str], int] = defaultdict(int)
-        for headword in headwords:
-            for row in rows_by_word.get(headword, []):
+        for source_headword in dict.fromkeys([*headwords, surface]):
+            for row in rows_by_word.get(source_headword, []):
+                headword = semantic_headword(row) or source_headword
+                if headword not in headwords or len(headword.split()) > len(surface.split()):
+                    continue
                 part_of_speech = row.get("pos")
                 if not isinstance(part_of_speech, str) or not part_of_speech:
                     continue
@@ -701,7 +720,10 @@ class KaikkiSenseMenuAdapter:
                     translation=trans,
                     definition=defn,
                     source_reference=source_reference,
-                    provider_metadata=_metadata(row, sense, self.language_policy),
+                    provider_metadata={**_metadata(row, sense, self.language_policy),
+                        **({"source_headword": row.get("word"),
+                            "lemma_correction": "wiktionary-row-form-of/v1"}
+                           if row.get("word") != headword else {})},
                     specialist_features=spec_features,
                     metadata_accounting=metadata_accounting(
                         {**sense, "part_of_speech": part_of_speech},
@@ -914,6 +936,7 @@ class KaikkiHeadwordSource:
         return any(
             isinstance(row.get("pos"), str) and row.get("pos")
             and (allowed is None or row.get("pos") in allowed)
+            and semantic_headword(row) == headword
             and _semantic_senses(row)
             for row in self.rows_by_word.get(headword, [])
         )
@@ -922,7 +945,11 @@ class KaikkiHeadwordSource:
         if not self._bound:
             raise KaikkiMenuError("KaikkiHeadwordSource used before the adapter scanned the dump")
         heads = []
+        mwe_heads = []
         for headword, path in sorted((self.paths.get(surface) or {}).items()):
+            if len(headword.split()) > len(surface.split()):
+                mwe_heads.append(headword)
+                continue
             if not self._has_senses(headword, (self.allowed.get(surface) or {}).get(headword)):
                 continue
             if headword == surface:
@@ -934,7 +961,8 @@ class KaikkiHeadwordSource:
                 provenance, detail, relation = "wiktionary-form-of", " -> ".join(path), "form"
             heads.append(Headword(headword, provenance, _trust.PROVIDER, detail, relation))
         return ProviderDeclaration(surface, tuple(heads), MENU if heads else ABSENT,
-                                   {"paths": len(self.paths.get(surface) or {})})
+                                   {"paths": len(self.paths.get(surface) or {}),
+                                    **({"mwe_headwords": mwe_heads} if mwe_heads else {})})
 
     def has_entry(self, headword: str, surface: str | None = None) -> bool:
         return self._has_senses(headword)

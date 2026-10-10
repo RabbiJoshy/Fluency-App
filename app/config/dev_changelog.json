@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T17:04:09+01:00",
+      "date": "2026-10-10 17:04 BST",
+      "agent": "Codex",
+      "summary": "HEADWAY: Spanish and Portuguese headword candidates ready for staging",
+      "detail": [
+        "Corrected source lemma analyses and carried the supported fixes into new candidate decks, preserving surface identities, source evidence and genuine multiword expressions.",
+        "Candidate staging decks use their own study structure and existing Merge Lemmas data. Production deck choices and merging policy remain unchanged.",
+        "Save existing word-sense results gradually and read sentences and assignments as needed, reducing local memory use."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T16:03:00+01:00",
       "date": "2026-10-10 16:03 BST",
       "agent": "Antigravity",

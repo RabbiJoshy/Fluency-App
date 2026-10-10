@@ -886,6 +886,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-dir", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument('--embedding-preview', type=Path,
+                        help='Write exact cache misses and projected input size before any paid call')
     parser.add_argument("--multiword-inventory", type=Path)
     parser.add_argument(
         "--profile-id",
@@ -1335,6 +1337,15 @@ def main() -> None:
     cached_vectors = load_cache(cache_path)
     cached_before = len(cached_vectors)
     uncached = sorted(needed - set(cached_vectors))
+    if args.embedding_preview:
+        args.embedding_preview.parent.mkdir(parents=True, exist_ok=True)
+        args.embedding_preview.write_text(json.dumps({
+            'model': EMBED_MODEL, 'task_type': TASK_TYPE,
+            'cache_path': str(cache_path), 'missing_texts': uncached,
+            'missing_count': len(uncached),
+            'utf8_bytes': sum(len(t.encode('utf-8')) for t in uncached),
+            'selected_occurrences': report['occurrences_selected'], 'scored_occurrences': len(work),
+        }, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
     if args.offline_only:
         if uncached:
             preview = "\n".join(f"  {text!r}" for text in uncached[:20])

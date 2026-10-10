@@ -22,6 +22,18 @@ pools. Append-only and deduplicated by content hash, so re-running is safe.
 .venv/bin/python scripts/observe_lemmas.py --workspace $W --language LANG
 ```
 
+For Spanish, `observe_lemmas.py` requires `--spanishdict-snapshot` pointing to the
+snapshot pinned by the intended run profile. For Portuguese, pass
+`--wiktionary-snapshot` with that profile's pinned Kaikki dump. Do not silently
+fall back to an older snapshot.
+
+For HEADWAY source-analysis corrections, use `scripts/audit_headway.py` with an
+explicit snapshot and `--preview` first, then `--apply-preview` on that reviewed
+file. It verifies all input hashes, appends revisions and changes only lemma
+metadata, preserving inline sentence supply. Do not run the general materialiser
+to apply this correction: it also writes examples and frozen pre-WSD documents.
+See `docs/HEADWAY.md` for unresolved cases and the targeted rollout boundary.
+
 ### 2. Materialise the ledger
 
 Folds the event log through the policy table into `ledger.json`.

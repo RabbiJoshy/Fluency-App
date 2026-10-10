@@ -31,6 +31,7 @@ from fluency.release.sentences import has_placeholder_name, near_duplicate, sent
 from fluency.release.composition import compose_release
 from fluency.core.io import atomic_write, json_bytes
 from fluency.release.study_structure import build_study_structure
+from fluency.release.assignment_store import AssignmentFile, SentenceFile
 from fluency.release.validation import SPEECH_DECK_VERSION
 from fluency.pipeline.budget import display_examples_for_rank
 from fluency.sense_menu.canonical import choose as choose_canonical_example
@@ -103,13 +104,18 @@ def _sentence_bank(path: Path) -> dict[str, dict[str, Any]]:
 
 
 def _load_assignments(
-    run: Path, *, selection_projection: str
-) -> dict[tuple[str, str], dict[str, Any]]:
+    run: Path, *, selection_projection: str, memory_bounded: bool = False
+) -> dict[tuple[str, str], dict[str, Any]] | AssignmentFile:
     """Stage 04 keyed by (card_id, sentence_id); empty when WSD did not run."""
 
     path = run / "stages/04_wsd_assignments/output/assignments.jsonl"
     if not path.exists():
         return {}
+    if memory_bounded:
+        try:
+            return AssignmentFile(path, selection_projection)
+        except ValueError as error:
+            raise RunCandidateError(str(error)) from error
     rows: dict[tuple[str, str], dict[str, Any]] = {}
     for number, line in enumerate(path.read_text(encoding="utf-8").split("\n"), start=1):
         if not line.strip():
@@ -270,6 +276,7 @@ def build_inactive_run_candidate(
     source_titles_path: Path | None = None,
     wsd_selection_projection: str = "provider_only",
     wsd_publication_projection: str = "forced_leaf",
+    memory_bounded: bool = False,
 ) -> Path:
     """Select harvested examples and compose a non-activated release."""
 
@@ -313,7 +320,13 @@ def build_inactive_run_candidate(
     inventory = _object(paths["inventory"])
     menus = _object(paths["sense_menu"])
     candidates = _object(paths["candidates"])
-    sentences = _sentence_bank(paths["sentence_bank"])
+    if memory_bounded:
+        try:
+            sentences = SentenceFile(paths["sentence_bank"])
+        except (ValueError, OSError) as error:
+            raise RunCandidateError(str(error)) from error
+    else:
+        sentences = _sentence_bank(paths["sentence_bank"])
     source_titles: dict[str, dict[str, Any]] = {}
     source_titles_content_id: str | None = None
     if source_titles_path is not None:
@@ -328,7 +341,7 @@ def build_inactive_run_candidate(
                 raise RunCandidateError("source titles snapshot contains an invalid record")
         source_titles_content_id = file_content_id(source_titles_path)
     assignments = _load_assignments(
-        run, selection_projection=wsd_selection_projection
+        run, selection_projection=wsd_selection_projection, memory_bounded=memory_bounded
     )
     if assignments:
         # Stage 04 becomes an input to the release, so a deck can be traced back
@@ -356,9 +369,12 @@ def build_inactive_run_candidate(
         if int(entry.get("rank", 0)) <= _SELECTION_FUNCTION_WORD_RANK
     )
 
-    assignments_by_card: dict[str, dict[str, Any]] = defaultdict(dict)
-    for key, row in assignments.items():
-        assignments_by_card[key[0]][key[1]] = row
+    if isinstance(assignments, AssignmentFile):
+        assignments_by_card = assignments
+    else:
+        assignments_by_card: dict[str, dict[str, Any]] = defaultdict(dict)
+        for key, row in assignments.items():
+            assignments_by_card[key[0]][key[1]] = row
 
     selection_cards: list[dict[str, Any]] = []
     cards: list[dict[str, Any]] = []
@@ -890,7 +906,8 @@ def build_inactive_run_candidate(
         # contradiction that makes every other provenance claim untrustworthy.
         layers["wsd_assignments"] = layer(
             "wsd_assignments",
-            sum(1 for row in assignments.values() if row.get("status") == "assigned"),
+            (assignments.counts["assigned"] if isinstance(assignments, AssignmentFile) else
+             sum(1 for row in assignments.values() if row.get("status") == "assigned")),
             {"sense_menu": inputs["sense_menu"], "sentences": inputs["sentence_bank"]},
         )
         layers["wsd_assignments"]["parameters"] = {

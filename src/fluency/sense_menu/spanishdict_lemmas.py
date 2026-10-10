@@ -37,6 +37,7 @@ is ``curated``.
 from __future__ import annotations
 
 import unicodedata
+from copy import deepcopy
 from dataclasses import dataclass
 from typing import Any, Iterable, Mapping, Sequence
 
@@ -45,7 +46,7 @@ from fluency.surfaces.resolver import (
     ABSENT, FETCHED_CACHE, MENU, UNFETCHED, Headword, ProviderDeclaration,
 )
 
-RULE_VERSION = "spanishdict-declared-lemma/v1"
+RULE_VERSION = "spanishdict-declared-lemma/v5"
 
 OVERRIDE = "override"
 PAGE_SELF = "spanishdict-page-self"
@@ -81,6 +82,123 @@ def deaccent(word: str) -> str:
             continue
         out.append(ch)
     return unicodedata.normalize("NFC", "".join(out))
+
+
+def entry_index(*caches):
+    """Index actual entries, including pronominal entries nested on a base page."""
+    out = {}
+    for cache in caches:
+        for page in cache.values():
+            if not isinstance(page, dict):
+                continue
+            for analysis in page.get('dictionary_analyses', ()):
+                head = analysis.get('headword')
+                if head and has_translation([analysis]):
+                    entries = out.setdefault(head, [])
+                    if analysis not in entries:
+                        entries.append(analysis)
+    return out
+
+
+def page_lemma_analyses(surface: str, page: Mapping[str, Any], rule=None) -> list[dict[str, Any]]:
+    """Keep page senses, but file verbal surface entries under an explicit lemma.
+
+    A dictionary title is not necessarily a lemma: hay and hacerlo have their
+    own pages. Only an unambiguous, declared verbal relation licenses moving
+    their VERB senses. Noun homographs and ambiguous relations stay untouched.
+    Original titles and sense IDs remain provider evidence.
+    """
+    relations = [r for r in page.get("possible_results", ()) if isinstance(r, dict)
+                 and (r.get("heuristic") == "conjugation" or
+                      (r.get("heuristic") == "inflection" and
+                       any(x in str(r.get("inflection_type", "")).lower()
+                           for x in ("infinitive", "gerund", "imperative"))))
+                 and r.get("headword") and headword_key(r["headword"]) != headword_key(surface)]
+    targets = {r["headword"] for r in relations}
+    split = rule.enclitic_split(surface) if rule is not None else None
+    safe_page = (page.get('entry_lang') in (None, '', 'es') and
+                 not any(str(f).startswith('spelling_substitution') for f in page.get('flags', ())))
+    out = []
+    for raw in page.get("dictionary_analyses", ()):
+        if not isinstance(raw, dict):
+            continue
+        analysis = deepcopy(raw)
+        head = str(analysis.get("headword") or "")
+        # A one-token command may be labelled PHRASE by SpanishDict. A unique
+        # mood-checked host plus pronouns establishes its verb analysis without
+        # discarding its specialised translations (e.g. dime = phone "hello").
+        if (safe_page and split and (not targets or split['lemma'] in targets)
+                and headword_key(head) == headword_key(surface)
+                and analysis.get('senses') and
+                all(str(s.get('pos', '')).upper() == 'PHRASE' for s in analysis['senses'])):
+            analysis['_source_headword'] = head
+            _, derived, _ = rule._enclitic(surface)
+            analysis['headword'] = next((a.lemma for a in derived if a.provenance == REFLEXIVE_HEADWORD), split['lemma'])
+            analysis['_lemma_correction'] = {'rule': RULE_VERSION,
+                'evidence_kind': ENCLITIC_HOST, 'host': split['host'],
+                'attached_pronouns': split['pronouns'], 'original_pos': 'PHRASE'}
+            for sense in analysis['senses']:
+                sense['_source_pos'] = sense['pos']
+                sense['pos'] = 'VERB'
+            out.append(analysis)
+            continue
+        if rule is not None and safe_page and headword_key(head) == headword_key(surface):
+            groups, remaining = {}, []
+            persons = {'first person singular': '1s', 'second person singular': '2s',
+                       'third person singular': '3s', 'first person plural': '1p',
+                       'second person plural': '2p', 'third person plural': '3p'}
+            for sense in analysis.get('senses', ()):
+                context = str(sense.get('context', '')).lower()
+                person = next((v for k, v in persons.items() if k in context), None)
+                if str(sense.get('pos', '')).upper() != 'PHRASE' or not person:
+                    remaining.append(sense)
+                    continue
+                mood = next((v for k, v in [('imperative', 'imperativo'), ('subjunctive', 'subjuntivo'),
+                            ('in statements', 'indicativo'), ('in questions', 'indicativo')]
+                             if k in context), None)
+                rows = [r for r in rule.conjugation_reverse.get(surface, ())
+                        if r.get('person') == person and (not mood or r.get('mood') == mood)
+                        and r.get('lemma') in targets]
+                candidates = {r['lemma'] for r in rows}
+                translation = str(sense.get('translation', '')).strip().casefold()
+                labelled = {r['headword'] for r in relations if r['headword'] in candidates
+                            and str(r.get('translation', '')).strip().casefold() == translation and translation}
+                if len(labelled) == 1:
+                    candidates = labelled
+                if len(candidates) != 1:
+                    remaining.append(sense)
+                    continue
+                target = next(iter(candidates))
+                sense['_source_pos'], sense['pos'] = sense['pos'], 'VERB'
+                groups.setdefault(target, []).append(sense)
+            for target, senses in groups.items():
+                out.append({**analysis, 'headword': target, 'senses': senses,
+                            '_source_headword': head, '_lemma_correction': {
+                                'rule': RULE_VERSION, 'evidence_kind': 'spanishdict-page-person-conjugation',
+                                'original_pos': 'PHRASE', 'relations': deepcopy(relations),
+                                'table_rows': deepcopy(rule.conjugation_reverse.get(surface, [])),
+                                'attached_pronouns': []}})
+            if groups:
+                if not remaining:
+                    continue
+                analysis['senses'] = remaining
+        if headword_key(head) == headword_key(surface) and len(targets) == 1:
+            verbal, other = [], []
+            for sense in analysis.get("senses", ()):
+                pos = str(sense.get("pos", "")).lower()
+                (verbal if pos == "verb" or pos.endswith(" verb") else other).append(sense)
+            if verbal:
+                moved = {**analysis, "headword": next(iter(targets)), "senses": verbal,
+                         "_source_headword": head,
+                         "_lemma_correction": {"rule": RULE_VERSION, "relations": deepcopy(relations),
+                             "attached_pronouns": [p.strip() for p in str(relations[0].get("inflection_type", "")).split("+")[1:]
+                                                   if p.strip() in ENCLITICS]}}
+                out.append(moved)
+                if not other:
+                    continue
+                analysis["senses"] = other
+        out.append(analysis)
+    return out
 
 
 RELATION = {
@@ -233,16 +351,29 @@ class SpanishDictLemmaRule:
                 seen.add(lemma)
                 declared.append(DeclaredLemma(lemma, provenance, detail))
 
-        for analysis in page.get("dictionary_analyses") or []:
+        for analysis in page_lemma_analyses(surface, page, self):
             head = str((analysis or {}).get("headword") or "").strip() if isinstance(analysis, dict) else ""
             if not head:
                 continue
             if headword_key(head) == key:
                 add(head, PAGE_SELF)
+            elif (analysis.get('_lemma_correction') or {}).get('evidence_kind') == ENCLITIC_HOST:
+                _, derived, _ = self._enclitic(surface)
+                for item in derived:
+                    add(item.lemma, item.provenance, item.detail)
             elif head in stated:
                 add(head, PAGE_RELATION, stated[head])
             elif head not in unknown and head not in rejected:
                 rejected.append(head)
+        # A grammatical surface entry proves this is a verbal homograph.
+        # Keep every exact-table verb, e.g. di = dar/decir and ve = ver/ir;
+        # ordinary noun pages do not license adding verb homographs.
+        if any((a.get('_lemma_correction') or {}).get('evidence_kind') ==
+               'spanishdict-page-person-conjugation'
+               for a in page_lemma_analyses(surface, page, self)):
+            for row in self.conjugation_reverse.get(surface, ()):
+                if row.get('lemma'):
+                    add(row['lemma'], CONJUGATION_TABLE)
         for head, relation in stated.items():
             add(head, PAGE_RELATION, relation)
         unknown = [head for head in unknown if head not in seen]
@@ -404,6 +535,7 @@ class SpanishDictHeadwordSource:
         self.rule = rule
         self.surface_cache = surface_cache
         self.headword_cache = headword_cache
+        self.entries = entry_index(surface_cache, headword_cache)
         self.flags = flags or {}
 
     def page(self, surface: str) -> Mapping[str, Any] | None:
@@ -437,7 +569,7 @@ class SpanishDictHeadwordSource:
     def page_analyses(self, surface: str, headword: str) -> list[dict[str, Any]]:
         """The surface page's own analyses under ``headword`` (self or declared relation)."""
         page = self.page(surface) or {}
-        return [a for a in page.get("dictionary_analyses") or []
+        return [a for a in page_lemma_analyses(surface, page, self.rule)
                 if isinstance(a, dict) and str(a.get("headword") or "").strip() == headword]
 
     def has_entry(self, headword: str, surface: str | None = None) -> bool:
@@ -456,6 +588,8 @@ class SpanishDictHeadwordSource:
         """
         cached = self.headword_cache.get(headword)
         if isinstance(cached, dict) and has_translation(cached.get("dictionary_analyses")):
+            return True
+        if has_translation(self.entries.get(headword)):
             return True
         if surface and has_translation(self.page_analyses(surface, headword)):
             return True

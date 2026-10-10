@@ -1,0 +1,177 @@
+{
+ "harvest": {
+  "budget_note": "Tail raised from 30 to 40. At 30 the budget was cutting exactly at the measured mean pool of 29, so it was the binding constraint rather than the corpus; the English-side form gates then remove another 1-2%. Retaining more costs harvest time and disk only -- what reaches WSD is execution_cap_per_card. This is the number that cannot be raised later without harvesting again.",
+  "language_policy": "pt-v1",
+  "shared_policy": "speech-v1",
+  "source_note": "Fresh Tatoeba + OpenSubtitles. pt v10-2000x3 reads opensubtitles exclusively; this deck matches the audited policy.",
+  "source_policy": "explicit_union",
+  "source_share": {
+   "opensubtitles": 0.4,
+   "tatoeba": 0.6
+  },
+  "sources": [
+   "tatoeba",
+   "opensubtitles"
+  ],
+  "wsd_budget_per_card": [
+   {
+    "budget": 80,
+    "through_rank": 1000
+   },
+   {
+    "budget": 50,
+    "through_rank": 3000
+   },
+   {
+    "budget": 40,
+    "through_rank": 10000
+   }
+  ]
+ },
+ "identity": {
+  "allow_lemma_identity": false,
+  "identity_version": "surface-card/v1",
+  "unit_type": "surface"
+ },
+ "inventory": {
+  "frequency_measure": "surface_token_occurrences",
+  "identity_unit": "surface",
+  "language_policy": "pt-v1",
+  "lemma_role": "excluded",
+  "output_schema": "surface-inventory/v1",
+  "source_adapter": "published-surface-frequency-list/v1",
+  "source_edition": "FrequencyWords OpenSubtitles 2018 pt 50k (European)"
+ },
+ "language": "pt",
+ "locale": "pt-PT",
+ "mode": "speech",
+ "profile_id": "pt-speech-v24-headway-10000x30",
+ "profile_version": "speech-pipeline-profile/v1",
+ "release": {
+  "activation": "manual",
+  "fallback_policy": "none"
+ },
+ "scope": {
+  "display_examples_per_card": 30,
+  "note": "HEADWAY: existing 10k inventory/pools; targeted source corrections and WSD only",
+  "shortfall_policy": "publish_explicit",
+  "surface_limit": 10000
+ },
+ "sense_menu": {
+  "gloss_language": "en",
+  "join_key": "surface_card_id",
+  "language_policy": "pt-v1",
+  "lemma_role": "lookup_metadata_only",
+  "output_schema": "sense-menu/v1",
+  "resolver": {
+   "surfaces": [
+    "acaba",
+    "acabe",
+    "americana",
+    "anjos",
+    "ares",
+    "avisa",
+    "bela",
+    "bárbara",
+    "caminha",
+    "campos",
+    "caí",
+    "chaves",
+    "colinas",
+    "cristais",
+    "datas",
+    "dias",
+    "digamos",
+    "domingos",
+    "dão",
+    "extrema",
+    "faria",
+    "flores",
+    "franca",
+    "graciosa",
+    "gémeos",
+    "indiana",
+    "indo",
+    "iria",
+    "irão",
+    "juízes",
+    "lençóis",
+    "lhe",
+    "lia",
+    "maravilhas",
+    "marcos",
+    "milagres",
+    "moedas",
+    "morava",
+    "moro",
+    "números",
+    "palmas",
+    "paredes",
+    "passos",
+    "peixes",
+    "prazeres",
+    "prometeu",
+    "queimados",
+    "ramos",
+    "romanos",
+    "santos",
+    "saudades",
+    "terceira",
+    "tiros",
+    "tomei",
+    "torres",
+    "una",
+    "vamos",
+    "velas",
+    "índia"
+   ],
+   "carry_from_run": "20261004T160042Z-b4bc9acd"
+  },
+  "snapshot_id": "enwiktionary-2026-08-20",
+  "source_adapter": "wiktionary-sense-menu/v1",
+  "source_edition": "enwiktionary"
+ },
+ "source_policy": {
+  "allow_legacy_inputs": false,
+  "allow_recovered_inputs": false,
+  "fallback_policy": "none",
+  "fresh_snapshots_only": true
+ },
+ "stage_order": [
+  "inventory",
+  "sense_menu",
+  "sentence_harvest",
+  "wsd_assignments",
+  "example_selection",
+  "release_build"
+ ],
+ "wsd": {
+  "execution_cap_per_card": 30,
+  "execution_status": "ready",
+  "language_profile": "pt-v1",
+  "max_wsd_units_per_run": 310000,
+  "max_wsd_units_per_run_note": "10,000 surfaces x execution cap 20 = 200,000 units, plus margin. The cap was 10 and the display count was 10, which meant WSD scored exactly the ten sentences the easiness ranker already picked and selection had no choice to make. Twenty is what gives a translation-quality filter somewhere to reject into.",
+  "model_profile": "pt-v23-1",
+  "model_revisions": {
+   "gloss.model_revision": "gemini-embedding-001",
+   "occurrence_pos.model_revision": "pt_core_news_lg@3.8.0"
+  },
+  "require_model_pins": true,
+  "shared_profile": "closed-menu-provider-prior-v1",
+  "strategy": "language-adapted-closed-menu/v1"
+ },
+ "headway": {
+  "source_run_id": "20261004T160042Z-b4bc9acd",
+  "named_pool": "pt-10k-speech",
+  "prewsd": "/Users/joshuathomasamar/PycharmProjects/Fluency-Workspace/raw/surfaces/pt/prewsd/20260914T222723Z-e43a0469-v2",
+  "inputs": {
+   "/Users/joshuathomasamar/PycharmProjects/Fluency-Workspace/raw/surfaces/pt/ledger.json": "sha256:029291e52a1a64a04f46bda1961e595c5efeca87cd2d595b84433d8e6a80407b",
+   "/Users/joshuathomasamar/PycharmProjects/Fluency-Workspace/pools/pt/pt-10k-speech/pool.json": "sha256:498376f9e9e8bc0aa76a9694627bbc3370ad3c8e88b2faf7873da1ba85f5a433",
+   "/Users/joshuathomasamar/PycharmProjects/Fluency-Workspace/runs/pt/speech/20261004T160042Z-b4bc9acd/profile.json": "sha256:bf3c32ba4d37ec500709f658d692589b8b3a1b57bb662c2bd6987579e0f21d1c",
+   "/Users/joshuathomasamar/PycharmProjects/Fluency-Workspace/runs/pt/speech/20261004T160042Z-b4bc9acd/stages/02_sense_menu/output/sense-menu.json": "sha256:40f8103d61999d1488bd29002bea618aaa288a761e3d513b1e0fe37734d8bba7",
+   "/Users/joshuathomasamar/PycharmProjects/Fluency-Workspace/runs/pt/speech/20261004T160042Z-b4bc9acd/stages/04_wsd_assignments/output/assignments.jsonl": "sha256:f852deb88dbe545d697ddd723ad486b98f2ddd747ac39c8e229db9e881bf8435",
+   "/Users/joshuathomasamar/PycharmProjects/Fluency-Workspace/raw/surfaces/pt/prewsd/20260914T222723Z-e43a0469-v2/examples.json": "sha256:8f50fc06946a6f36d5b97a42709761b8a22c09550d1617b27ba0bf3fef46d060",
+   "/Users/joshuathomasamar/PycharmProjects/Fluency-Workspace/raw/surfaces/pt/prewsd/20260914T222723Z-e43a0469-v2/pairs.json": "sha256:0437b3e3acaf615aec9f63a11865931576e7ee8af47343886d51d2b80ad404b4"
+  }
+ }
+}

@@ -23,21 +23,17 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from fluency.surfaces.events import append, build_event, store_path  # noqa: E402
 from fluency.surfaces.ledger import ledger_path  # noqa: E402
+from fluency.sense_menu.kaikki import _semantic_senses, semantic_headword
+from fluency.sense_menu.spanishdict_lemmas import SpanishDictLemmaRule
 
 WIKTIONARY = {
     "pt": "enwiktionary-2026-08-20/kaikki.org-dictionary-Portuguese.jsonl",
     "es": "enwiktionary-2026-09-13/kaikki.org-dictionary-Spanish.jsonl",
     "cs": "enwiktionary-2026-09-06/kaikki.org-dictionary-Czech.jsonl",
 }
-# The merged snapshot, which already contains every refetch that was not
-# withheld. Reading it rather than the base snapshot plus a list of refetch
-# files means a new refetch reaches the lemmas by being merged, not by being
-# named here -- the hardcoded filename is exactly what silently dropped 3,237
-# answers once already.
-SD = "raw/dictionaries/es/spanishdict/spanishdict-complete-menu-2026-09-15-v3"
 
 
-def wiktionary_forms(path: Path) -> tuple[dict[str, set[str]], set[str]]:
+def wiktionary_forms(path: Path) -> tuple[dict[str, set[str]], set[str], set[str]]:
     """surface -> lemma, from the form_of and alt_of links in the dump.
 
     Two things the naive reading gets wrong, both visible on the commonest
@@ -74,14 +70,19 @@ def wiktionary_forms(path: Path) -> tuple[dict[str, set[str]], set[str]]:
             word = row.get("word") or ""
             if not word:
                 continue
-            heads_exact.add(word)
-            if (row.get("pos") or "") in CLOSED_POS:
+            semantic = _semantic_senses(row)
+            lemma = semantic_headword(row)
+            if semantic and lemma == word:
+                heads_exact.add(word)
+            elif semantic and lemma:
+                forms.setdefault(word, set()).add(lemma)
+            if semantic and lemma == word and (row.get("pos") or "") in CLOSED_POS:
                 closed.add(word)
             for sense in row.get("senses") or []:
                 for key in ("form_of", "alt_of"):
                     for item in sense.get(key) or []:
                         target = (item.get("word") or "").strip()
-                        if target and target != word:
+                        if target and target != word and len(target.split()) <= len(word.split()):
                             forms.setdefault(word, set()).add(target)
     # Note: an inflected form has a headword entry of its own -- that is how
     # form_of is expressed at all, the entry's word being the inflection and
@@ -89,7 +90,7 @@ def wiktionary_forms(path: Path) -> tuple[dict[str, set[str]], set[str]]:
     # therefore deletes the resolutions worth having: "é" stopped resolving to
     # "ser" and "está" to "estar". Precedence is handled by ordering the
     # closed-class source first, not by deleting links.
-    return forms, {w.lower() for w in heads_exact} | heads_exact, closed
+    return forms, heads_exact, closed
 
 
 def _priority(provider: str) -> int:
@@ -114,8 +115,17 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--workspace", type=Path, required=True)
     ap.add_argument("--language", required=True)
+    ap.add_argument("--wiktionary-snapshot", type=Path,
+                    help="explicit pinned dump; required for pt")
+    ap.add_argument("--spanishdict-snapshot", type=Path,
+                    help="explicit pinned snapshot; required for es (never silently use the old v3 cache)")
     args = ap.parse_args()
     ws, lang = args.workspace, args.language
+    if lang == "es" and args.spanishdict_snapshot is None:
+        ap.error("es requires --spanishdict-snapshot from the intended run profile")
+
+    if lang == "pt" and args.wiktionary_snapshot is None:
+        ap.error("pt requires --wiktionary-snapshot from the intended run profile")
 
     view = json.loads(ledger_path(ws, lang).read_text())
     cards = {w for w, r in view["surfaces"].items() if r["rank"]}
@@ -123,7 +133,7 @@ def main() -> int:
     sources: list[tuple[str, dict[str, set[str]]]] = []
     headwords: set[str] = set()
 
-    wikt = ws / "raw/wiktionary" / WIKTIONARY[lang]
+    wikt = args.wiktionary_snapshot or ws / "raw/wiktionary" / WIKTIONARY[lang]
     if wikt.exists():
         forms, headwords, closed_class = wiktionary_forms(wikt)
         # Recorded before every other source, so a closed-class word keeps its
@@ -134,27 +144,13 @@ def main() -> int:
         sources.append((f"enwiktionary-form-of:{wikt.parent.name}", forms))
 
     if lang == "es":
-        reverse = json.loads((ws / SD / "conjugation_reverse.json").read_text())
-        table: dict[str, set[str]] = {}
-        for surface, entries in reverse.items():
-            for entry in entries or []:
-                lemma = (entry.get("lemma") or "").lower()
-                if lemma:
-                    table.setdefault(surface.lower(), set()).add(lemma)
-        sources.append(("spanishdict-reverse-conjugation", table))
-
-        # A surface SpanishDict lists under its own spelling is its own lemma.
-        # Skipping that case asked the store for resolutions only and left 45%
-        # of Spanish with no authoritative lemma at all, when SpanishDict knew
-        # the word perfectly well.
-        cache = json.loads((ws / SD / "surface_cache.json").read_text())
-        heads: dict[str, set[str]] = {}
-        for surface, entry in cache.items():
-            for analysis in entry.get("dictionary_analyses") or []:
-                head = (analysis.get("headword") or "").strip()
-                if head:
-                    heads.setdefault(surface.lower(), set()).add(head)
-        sources.append(("spanishdict-surface-cache", heads))
+        snapshot = args.spanishdict_snapshot
+        reverse = json.loads((snapshot / "conjugation_reverse.json").read_text())
+        cache = json.loads((snapshot / "surface_cache.json").read_text())
+        known = json.loads((snapshot / "headword_cache.json").read_text())
+        rule = SpanishDictLemmaRule(reverse, frozenset(known))
+        heads = {s: set(rule.resolve(s, cache.get(s)).lemma_names) for s in cards}
+        sources.append((f"spanishdict-declared:{snapshot.name}", heads))
 
         # Refetches are not read separately any more. A row withheld from the
         # merge was withheld for a reason -- SpanishDict substituted a spelling
@@ -172,7 +168,7 @@ def main() -> int:
     events, resolved = [], set()
     for provider, table in sources:
         for surface in cards:
-            lemmas = table.get(surface) or table.get(surface.lower())
+            lemmas = table.get(surface)
             if not lemmas:
                 continue
             resolved.add(surface)

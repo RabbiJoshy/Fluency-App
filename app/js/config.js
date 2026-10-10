@@ -46,10 +46,11 @@ async function loadConfig() {
                         : `releases/${routeCode}/speech/${encodeURIComponent(releaseId)}`;
                     languageConfig.releaseManifestPath = `${base}/manifest.json`;
                     languageConfig.releaseCompositionPath = `${base}/composition.json`;
-                    languageConfig.studyStructurePath = `${base}/study-structure.json`;
+                    languageConfig.studyStructurePath = `${base}/app/study-structure.json`;
                     languageConfig.indexPath = `${base}/app/vocabulary.index.json`;
                     languageConfig.examplesPath = `${base}/app/vocabulary.examples.json`;
                     languageConfig.conjugationsPath = `${base}/app/conjugations.json`;
+                    languageConfig.mergeExceptionsPath = `${base}/app/merge-exceptions.json`;
                 }
             }
         }

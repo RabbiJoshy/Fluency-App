@@ -20,6 +20,7 @@ from fluency.core.io import atomic_write, json_bytes
 from fluency.wsd.contracts import SelectionProjection, WSDAssignment
 from fluency.wsd.menus import build_analysis_id
 from fluency.wsd.multiword import MULTIWORD_SOURCE_ADAPTER
+from fluency.wsd.streaming import load_streamed_bundle, StreamedRows, SpooledAssignments
 
 
 BUNDLE_VERSION = "wsd-assignment-bundle/v1"
@@ -244,7 +245,7 @@ def _inside(path: Path, parent: Path) -> bool:
 
 def _implementation_content_id() -> str:
     package = Path(__file__).resolve().parent
-    paths = (Path(__file__).resolve(), package / "contracts.py")
+    paths = (Path(__file__).resolve(), package / "contracts.py", package / "streaming.py")
     return canonical_content_id(
         {str(path.relative_to(package)): file_content_id(path) for path in paths}
     )
@@ -352,6 +353,7 @@ def import_wsd_assignments(
     bundle_path: Path,
     started_at: datetime | None = None,
     overwrite: bool = False,
+    streaming: bool = False,
 ) -> Path:
     """Validate and publish a complete external assignment bundle exactly once."""
 
@@ -381,7 +383,10 @@ def import_wsd_assignments(
         raise WSDAssignmentImportError(
             f"WSD bundle must be inside the workspace raw/wsd directory: {bundle_path}"
         )
-    bundle = _load_object(bundle_path)
+    try:
+        bundle = load_streamed_bundle(bundle_path) if streaming else _load_object(bundle_path)
+    except (ValueError, OSError) as error:
+        raise WSDAssignmentImportError(str(error)) from error
     expected_bundle_fields = {
         "bundle_version",
         "run_id",
@@ -442,10 +447,18 @@ def import_wsd_assignments(
     multiword_inventory_id = inputs.get("multiword_inventory")
 
     raw_assignments = bundle.get("assignments")
-    if not isinstance(raw_assignments, list):
+    if not isinstance(raw_assignments, (list, StreamedRows)):
         raise WSDAssignmentImportError("WSD bundle assignments must be an array")
-    assignments: dict[tuple[str, str], WSDAssignment] = {}
+    assignments = SpooledAssignments(workspace.root / ".fluency/temporary") if streaming else {}
+    used_multiword = False
     counts: Counter[str] = Counter()
+    if isinstance(raw_assignments, StreamedRows):
+        def checked_rows(rows):
+            try:
+                yield from rows
+            except (ValueError, OSError) as error:
+                raise WSDAssignmentImportError(str(error)) from error
+        raw_assignments = checked_rows(raw_assignments)
     for index, raw in enumerate(raw_assignments):
         try:
             assignment = WSDAssignment.from_dict(raw)
@@ -510,15 +523,10 @@ def import_wsd_assignments(
                 )
         assignments[pair] = assignment
         counts[assignment.status] += 1
-
-    used_multiword = any(
-        (row.evidence or {}).get("selected_multiword")
-        or any(
+        used_multiword |= bool((assignment.evidence or {}).get("selected_multiword") or any(
             projection.source_kind == "multiword"
-            for projection in (row.selection_projections or {}).values()
-        )
-        for row in assignments.values()
-    )
+            for projection in (assignment.selection_projections or {}).values()))
+
     if used_multiword and not str(declared_inputs.get("multiword_inventory") or "").startswith("sha256:"):
         raise WSDAssignmentImportError(
             "bundle selected multiword senses without pinning its inventory as an input"
@@ -580,8 +588,11 @@ def import_wsd_assignments(
     try:
         with (temporary / "assignments.jsonl").open("w", encoding="utf-8") as stream:
             for pair in ordered_pairs:
-                stream.write(canonical_json(assignments[pair].to_dict()))
-                stream.write("\n")
+                if isinstance(assignments, SpooledAssignments):
+                    stream.write(assignments.serialized(pair))
+                else:
+                    stream.write(canonical_json(assignments[pair].to_dict()))
+                    stream.write("\n")
         (temporary / "method.json").write_bytes(json_bytes(method_payload))
         (temporary / "report.json").write_bytes(json_bytes(report))
         stage = StageManifest(
@@ -618,6 +629,8 @@ def import_wsd_assignments(
             shutil.rmtree(output)
         os.replace(temporary, output)
     finally:
+        if isinstance(assignments, SpooledAssignments):
+            assignments.close()
         if temporary.exists():
             shutil.rmtree(temporary)
 
