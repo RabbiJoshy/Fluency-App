@@ -5,6 +5,18 @@
       "timestamp": "2026-10-10T17:50:00+01:00",
       "date": "2026-10-10 17:50 BST",
       "agent": "Antigravity",
+      "summary": "Log in now asks only for a username; the birthday appears only if the account has one set.",
+      "detail": [
+        "Birthday fields hidden in Log in mode until a matching profile has a birthday password",
+        "Wrong or missing birthday shows an inline message",
+        "Unknown username on Log in says to use Create account instead of silently creating one"
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T17:50:00+01:00",
+      "date": "2026-10-10 17:50 BST",
+      "agent": "Antigravity",
       "summary": "Account modal: Spotify row now matches the profile row (circle, text, pill); top bar shows an account icon instead of the username.",
       "detail": [
         "Spotify circle is the same size as the profile avatar, no embedded card background",

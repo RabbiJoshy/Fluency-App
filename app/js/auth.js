@@ -255,13 +255,16 @@ function showLoginForm(mode = 'login') {
     const heading = document.querySelector('#loginForm .auth-form-heading h4');
     const subtext = document.querySelector('#loginForm .auth-form-heading p');
     const submit = document.getElementById('submitInitialsBtn');
+    const loginFormEl = document.getElementById('loginForm');
+    loginFormEl.dataset.mode = mode === 'create' ? 'create' : 'login';
+    loginFormEl.classList.remove('needs-birthday');
     if (mode === 'create') {
         if (heading) heading.textContent = 'Create account';
         if (subtext) subtext.textContent = 'Choose a username and optional birthday to save progress.';
         if (submit) submit.textContent = 'Create account';
     } else {
         if (heading) heading.textContent = 'Log in';
-        if (subtext) subtext.textContent = 'Enter your username and birthday to continue.';
+        if (subtext) subtext.textContent = 'Enter your username to continue.';
         if (submit) submit.textContent = 'Log in';
     }
     document.getElementById('loginForm').classList.remove('hidden');
@@ -280,6 +283,7 @@ function hideLoginForm() {
     document.getElementById('aboutProjectBtn').style.display = '';
     document.querySelector('#authModal .auth-modal-content')?.classList.remove('is-login-form');
     document.getElementById('loginForm').classList.add('hidden');
+    document.getElementById('loginForm').classList.remove('needs-birthday');
     document.getElementById('userInitials').value = '';
     const bdayDay = document.getElementById('birthdayDay');
     if (bdayDay) bdayDay.value = '';

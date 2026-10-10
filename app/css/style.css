@@ -24037,3 +24037,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     margin-bottom: 6px;
 }
 
+
+/* Log in asks only for a username; the birthday (password) appears when needed. */
+#loginForm[data-mode="login"]:not(.needs-birthday) .auth-birthday-group,
+#loginForm[data-mode="login"]:not(.needs-birthday) #profileBirthdayHelp { display: none; }

@@ -94,6 +94,8 @@ export async function submitProfileLogin(onSelected) {
         ['userInitials','birthdayInput','birthdayDay','birthdayMonth'].forEach(id => {
             document.getElementById(id)?.addEventListener('input', resetProfileLogin);
         });
+        // A different username may not have a birthday password at all.
+        document.getElementById('userInitials')?.addEventListener('input', () => form.classList.remove('needs-birthday'));
         document.getElementById('cancelLoginBtn')?.addEventListener('click', resetProfileLogin);
     }
     if (busy) return;
@@ -145,6 +147,31 @@ export async function submitProfileLogin(onSelected) {
         const {profiles} = await requestProfiles('lookupProfiles',fields);
         if (attempt !== epoch) return;
         setBusy(false);
+        const loggingIn = form?.dataset.mode === 'login';
+        if (loggingIn) {
+            // Logging in asks only for the username. The birthday is a password,
+            // so it is requested only when a matching profile has one set.
+            if (!profiles.length) {
+                const hadBirthday = Boolean(birthday);
+                showLoginError(hadBirthday
+                    ? 'That birthday does not match this username.'
+                    : 'No account found with that username. Use Create account instead.',
+                    hadBirthday ? 'birthdayDay' : 'userInitials');
+                return;
+            }
+            const protectedProfile = profiles.some(p => p.birthday);
+            const unlocked = profiles.some(p => !p.birthday || p.birthday === birthday);
+            if (protectedProfile && !birthday && !profiles.some(p => !p.birthday)) {
+                form.classList.add('needs-birthday');
+                showLoginError('Enter your birthday to continue.', 'birthdayDay');
+                return;
+            }
+            if (!unlocked) {
+                form.classList.add('needs-birthday');
+                showLoginError('That birthday does not match this username.', 'birthdayDay');
+                return;
+            }
+        }
         if (!profiles.length) { await create(); return; }
         const modal = document.getElementById('profileMatchModal');
         const cardsHost = document.getElementById('profileMatchCards') || document.getElementById('profileMatches');

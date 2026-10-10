@@ -126,13 +126,16 @@
                 var heading = document.querySelector('#loginForm .auth-form-heading h4');
                 var subtext = document.querySelector('#loginForm .auth-form-heading p');
                 var submit = document.getElementById('submitInitialsBtn');
+                var lf = document.getElementById('loginForm');
+                lf.dataset.mode = mode === 'create' ? 'create' : 'login';
+                lf.classList.remove('needs-birthday');
                 if (mode === 'create') {
                     if (heading) heading.textContent = 'Create account';
                     if (subtext) subtext.textContent = 'Choose a username and optional birthday to save progress.';
                     if (submit) submit.textContent = 'Create account';
                 } else {
                     if (heading) heading.textContent = 'Log in';
-                    if (subtext) subtext.textContent = 'Enter your username and birthday to continue.';
+                    if (subtext) subtext.textContent = 'Enter your username to continue.';
                     if (submit) submit.textContent = 'Log in';
                 }
                 document.getElementById('loginForm').classList.remove('hidden');
