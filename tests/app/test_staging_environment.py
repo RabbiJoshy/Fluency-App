@@ -157,6 +157,11 @@ class StagingBuildTests(unittest.TestCase):
             self.assertEqual(env_data["environment"], "staging")
             self.assertEqual(env_data["version"], "stg-test1234")
 
+    def test_env_badge_hidden_in_css(self) -> None:
+        css = (APP / "css/style.css").read_text(encoding="utf-8")
+        self.assertIn(".env-badge[hidden]", css)
+        self.assertIn("display: none !important;", css)
+
 
 class StagingScriptsTests(unittest.TestCase):
     def test_staging_scripts_exist_and_are_executable(self) -> None:
