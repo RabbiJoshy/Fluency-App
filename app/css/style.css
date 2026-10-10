@@ -2036,8 +2036,14 @@
         .card-desktop-shortcuts {
             display: none !important;
         }
+        #firstSwipeHint {
+            display: none !important;
+        }
         @media (hover: hover) and (pointer: fine) {
             .card-desktop-shortcuts {
+                display: none !important;
+            }
+            #firstSwipeHint {
                 display: none !important;
             }
             .desktop-shortcut-item {

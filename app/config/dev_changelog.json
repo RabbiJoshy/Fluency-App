@@ -8,6 +8,7 @@
       "summary": "Active card controls cleanup, prominence meter visual linking, and study options simplification",
       "detail": [
         "Permanently remove bottom-middle shortcuts and suggestions on active desktop cards to eliminate pill occlusion.",
+        "Permanently disable swipe onboarding pill ('← Needs practice · Got it →') on desktop devices via CSS and JS platform detection.",
         "Replace review meanings bookmark icon with a circular redo/review curved arrow icon.",
         "Replace rare uses tile icon with 0-of-3 empty bars to visually link with the card prominence meter.",
         "Significantly enlarge the commonness tooltip (16px font, comfortable padding) for clear legibility.",

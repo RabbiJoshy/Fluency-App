@@ -2,7 +2,7 @@
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
 import './state.js?v=20260825ak';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=1';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=2';
 import './speech.js?v=20260825ak';
 import { goToRoute, routeCodeFor } from './routes.js?v=20260923cj';
 import { memoryTipTileHTML } from './memory-tips.js?v=1';
@@ -2814,7 +2814,7 @@ function advanceAfterFlag() {
 window.advanceAfterFlag = advanceAfterFlag;
 
 function handleSwipeAction(result, { gesture = false } = {}) {
-    if (gesture && flashcards[currentIndex]) rememberGradingSwipe();
+    if (flashcards[currentIndex]) rememberGradingSwipe();
     stopExampleAutoplay(true);
     const card = document.getElementById('flashcard');
     const isFlipped = card.classList.contains('flipped');

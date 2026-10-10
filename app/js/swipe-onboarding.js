@@ -4,8 +4,15 @@ let learned = false;
 try { learned = localStorage.getItem(LEARNED_KEY) === '1'; } catch (_) {}
 let revealed = false;
 
+function isDesktopPlatform() {
+    return typeof window !== 'undefined' && Boolean(window.matchMedia && (
+        window.matchMedia('(min-width: 769px)').matches ||
+        window.matchMedia('(hover: hover) and (pointer: fine)').matches
+    ));
+}
+
 export function showSwipeHint({ realCard = true } = {}) {
-    if (learned || !realCard) return;
+    if (learned || !realCard || isDesktopPlatform()) return;
     revealed = true;
     let hint = document.getElementById('firstSwipeHint');
     if (!hint) {
@@ -37,6 +44,10 @@ export function rememberGradingSwipe() {
 export function refreshSwipeHint() {
     const hint = document.getElementById('firstSwipeHint');
     if (!hint) return;
+    if (isDesktopPlatform()) {
+        hint.remove();
+        return;
+    }
     const hidden = Boolean(document.getElementById('appContent')?.classList.contains('hidden')
         || document.querySelector('.modal:not(.hidden), .knowledge-overview-modal:not([hidden])'));
     if (hint.hidden !== hidden) hint.hidden = hidden;
@@ -45,4 +56,7 @@ if (typeof MutationObserver !== 'undefined') {
     new MutationObserver(refreshSwipeHint).observe(document.body, {
         subtree: true, attributes: true, attributeFilter: ['class', 'hidden'], childList: true
     });
+}
+if (typeof document !== 'undefined' && isDesktopPlatform()) {
+    document.getElementById('firstSwipeHint')?.remove();
 }
