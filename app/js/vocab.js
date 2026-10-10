@@ -1926,6 +1926,66 @@ async function fetchDetachedIndex(langConfig) {
     return data;
 }
 
+// Fast-path: Precomputed estimation pools provide immediate startup for
+// vocabulary estimation without fetching hundreds of per-set row shards.
+const estimationPoolCache = new Map();
+
+function hydratePrecomputedEstimationPool(data) {
+    if (!data?.items || !Array.isArray(data.items)) return null;
+    const items = data.items.map(raw => ({
+        id: raw.id,
+        word: raw.word,
+        rank: raw.rank,
+        stableRank: raw.stableRank,
+        estimationKey: raw.k || `surface:${raw.id || raw.word}`,
+        estimationFrequency: raw.f || 0,
+        estimationRank: raw.r,
+        estimationAssumedKnown: Boolean(raw.ak),
+        estimationExample: raw.ex || '',
+        splitInfo: raw.split ? true : null,
+        meanings: (raw.m || []).map(([pos, translation]) => ({
+            pos,
+            translation,
+            meaning: translation
+        })),
+        estimationMembers: (raw.mem || []).map(([rank, stableRank, weight, assumedKnown]) => ({
+            source: { rank, stableRank },
+            weight,
+            assumedKnown: Boolean(assumedKnown)
+        }))
+    }));
+    const placementWords = (data.baseline || []).map(([rank, stableRank]) => ({ rank, stableRank }));
+    return {
+        items,
+        placementWords,
+        release: data.release
+    };
+}
+
+async function loadPrecomputedEstimationPool(langConfig) {
+    const poolPath = langConfig?.estimationPoolPath;
+    if (!poolPath) return null;
+    if (estimationPoolCache.has(poolPath)) {
+        return estimationPoolCache.get(poolPath);
+    }
+    const pending = (async () => {
+        try {
+            const response = await fetch(poolPath);
+            if (!response.ok) return null;
+            trackDataFreshness(response);
+            const data = await response.json();
+            if (data?.schema !== 'estimation-pool/v1') return null;
+            return hydratePrecomputedEstimationPool(data);
+        } catch (_) {
+            return null;
+        }
+    })();
+    estimationPoolCache.set(poolPath, pending);
+    const result = await pending;
+    if (!result) estimationPoolCache.delete(poolPath);
+    return result;
+}
+
 // Placement needs every grouping/split decision before sampling. Keep this
 // preparation detached from the active deck and its lazy row/example caches.
 const estimationVocabularyCache = new Map();
@@ -4464,6 +4524,7 @@ window.mergeArtistVocabularies = mergeArtistVocabularies;
 window.joinWithMaster = joinWithMaster;
 window.fetchAndJoinIndex = fetchAndJoinIndex;
 window.loadEstimationVocabulary = loadEstimationVocabulary;
+window.loadPrecomputedEstimationPool = loadPrecomputedEstimationPool;
 window.prepareEstimationCognates = prepareEstimationCognates;
 window.loadEstimationExamples = loadEstimationExamples;
 window.loadSpeechSourceFrequency = loadSpeechSourceFrequency;

@@ -63,6 +63,11 @@ function openEstimationModal() {
     const importLink = document.getElementById('estimationImportKnownBtn');
     if (importLink) importLink.hidden = !(currentUser && !currentUser.isGuest);
     estimationState = createEstimationState();
+    // Pre-warm estimation pool in background while user views intro
+    const langConfig = getEstimationLangConfig();
+    if (langConfig?.estimationPoolPath) {
+        window.loadPrecomputedEstimationPool?.(langConfig)?.catch(() => {});
+    }
 }
 
 // Close estimation modal
@@ -558,6 +563,26 @@ async function startEstimation() {
     progress('Preparing vocabulary groups…');
     try {
         Promise.resolve(window.loadConjugationData?.()).catch(() => {});
+
+        // Fast-path: use precomputed estimation pool if available
+        if (state.langConfig.estimationPoolPath) {
+            const precomputed = await window.loadPrecomputedEstimationPool?.(state.langConfig);
+            if (precomputed && current()) {
+                state.validWords = precomputed.items;
+                state.placementWords = precomputed.placementWords;
+                state.placementBaseline = precomputed.placementWords;
+                state.placementLevels = getEstimationPlacementLevels(state.placementBaseline);
+                state.maxLevel = state.validWords.length;
+                state.bands = buildEstimationBands(state.validWords);
+                state.coverageOrder = buildCoverageOrder(state.bands.length);
+                if (!state.validWords.length) throw new Error('No eligible vocabulary groups');
+                state.active = true;
+                setEstimationLoading(false);
+                await showNextWord();
+                return;
+            }
+        }
+
         const [vocabulary, frequency] = await Promise.all([
             window.loadEstimationVocabulary(state.langConfig, (done, total) =>
                 progress(`Preparing vocabulary groups · ${Math.round(done / total * 100)}%`)),

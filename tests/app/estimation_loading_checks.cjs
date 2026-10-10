@@ -54,5 +54,73 @@ const {createHarness} = require('./estimation_harness.cjs');
     };
     await assert.rejects(incomplete.loadEstimationVocabulary({indexPath:'partial/index.json'}), /incomplete/);
 
-    console.log('Detached metadata, bounded loading, frequency matching, lazy examples and retry checks passed.');
+    // Precomputed estimation pool fast-path tests
+    const precomputedHarness = createHarness();
+    let precomputedFetches = 0;
+    precomputedHarness.fetch = async url => {
+        if (url === 'pools/es.json') {
+            precomputedFetches++;
+            return {
+                ok: true,
+                json: async () => ({
+                    schema: 'estimation-pool/v1',
+                    release: 'speech/index.json',
+                    language: 'spanish',
+                    n: 1,
+                    items: [{
+                        id: 'fast_word', word: 'rápido', rank: 1, stableRank: 1,
+                        k: 'lemma:rápido', f: 50, r: 1, ak: 0,
+                        m: [['ADJ', 'fast']],
+                        mem: [[1, 1, 1, 0]]
+                    }],
+                    baseline: [[1, 1]]
+                })
+            };
+        }
+        throw new Error('Unexpected fetch in precomputed harness: ' + url);
+    };
+
+    // Missing estimationPoolPath returns null cleanly
+    assert.equal(await precomputedHarness.loadPrecomputedEstimationPool({}), null);
+
+    // 404 returns null cleanly
+    precomputedHarness.fetch = async () => ({ ok: false, status: 404 });
+    assert.equal(await precomputedHarness.loadPrecomputedEstimationPool({ estimationPoolPath: 'missing.json' }), null);
+
+    // Valid precomputed pool hydrates cleanly and caches
+    precomputedHarness.fetch = async url => ({
+        ok: true,
+        json: async () => ({
+            schema: 'estimation-pool/v1',
+            release: 'speech/index.json',
+            language: 'spanish',
+            n: 1,
+            items: [{
+                id: 'fast_word', word: 'rápido', rank: 1, stableRank: 1,
+                k: 'lemma:rápido', f: 50, r: 1, ak: 0,
+                m: [['ADJ', 'fast']],
+                mem: [[1, 1, 1, 0]]
+            }],
+            baseline: [[1, 1]]
+        })
+    });
+    const poolConfig = { estimationPoolPath: 'pools/es.json' };
+    const pool = await precomputedHarness.loadPrecomputedEstimationPool(poolConfig);
+    assert.ok(pool);
+    assert.equal(pool.items.length, 1);
+    assert.equal(pool.items[0].word, 'rápido');
+    assert.equal(pool.items[0].meanings[0].translation, 'fast');
+    assert.equal(pool.placementWords.length, 1);
+
+    // Fast-path in startEstimation skips loadEstimationVocabulary completely
+    let dynamicCalled = false;
+    precomputedHarness.loadEstimationVocabulary = () => { dynamicCalled = true; throw new Error('Should not be called'); };
+    precomputedHarness.config.languages.spanish = poolConfig;
+    await precomputedHarness.startEstimation();
+    assert.equal(dynamicCalled, false);
+    assert.equal(precomputedHarness.estimationState.active, true);
+    assert.equal(precomputedHarness.estimationState.currentWord.word, 'rápido');
+    precomputedHarness.closeEstimationModal();
+
+    console.log('Detached metadata, precomputed pool fast-path, bounded loading, frequency matching, lazy examples and retry checks passed.');
 })().catch(error=>{console.error(error);process.exitCode=1;});
