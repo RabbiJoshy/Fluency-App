@@ -353,7 +353,11 @@ function renderAccountPanel() {
         badge.classList.toggle('is-guest', !named);
     }
     const name = document.getElementById('accountProfileName');
-    if (name) name.textContent = named ? (currentUser.username || currentUser.initials) : 'Guest';
+    if (name) {
+        name.textContent = named ? (currentUser.username || currentUser.initials) : 'Guest';
+        name.hidden = false;
+        name.style.display = '';
+    }
     const note = document.getElementById('accountProfileNote');
     if (note) note.textContent = named ? 'Progress syncs across devices' : 'Progress is not saved';
 
@@ -365,9 +369,9 @@ function renderAccountPanel() {
     const input = document.getElementById('accountPasswordInput');
     if (document.activeElement === input) input.blur();
     input.value = birthday ? formatBirthdayDisplay(birthday) : '';
-    input.placeholder = 'None set';
+    input.placeholder = 'Not set';
     input.readOnly = true;
-    input.classList.toggle('is-concealed', Boolean(birthday));
+    input.classList.remove('is-concealed');
     const show = document.getElementById('accountPasswordShowBtn');
     if (show) {
         show.textContent = birthday ? 'Change' : 'Set';
@@ -376,7 +380,11 @@ function renderAccountPanel() {
     const save = document.getElementById('accountPasswordSaveBtn');
     if (save) save.hidden = true;
     const status = document.getElementById('accountPasswordStatus');
-    if (status) status.textContent = 'This is used as your password';
+    if (status) {
+        status.textContent = birthday
+            ? 'Used as an optional password to protect your account'
+            : 'You have the option to set a birthday as an optional password to protect your account';
+    }
 }
 
 function wireAccountPassword() {
@@ -406,13 +414,15 @@ function wireAccountPassword() {
                 daySelect.value = '';
                 monthSelect.value = '';
             }
+            if (status) status.textContent = 'Choose your birthday as an optional password to protect your account';
+        } else if (!editing) {
+            renderAccountPanel();
         }
     };
 
     show.addEventListener('click', () => {
         if (!currentUser) return;
         setEditing(!isEditing);
-        if (status) status.textContent = 'This is used as your password';
     });
 
     if (save) {
@@ -431,7 +441,11 @@ function wireAccountPassword() {
             localStorage.setItem('flashcardUser', JSON.stringify(currentUser));
             setEditing(false);
             renderAccountPanel();
-            if (status) status.textContent = 'Birthday updated! This is used as your password.';
+            if (status) {
+                status.textContent = currentUser.birthday
+                    ? 'Birthday updated! Used as an optional password to protect your account.'
+                    : 'Birthday removed. You have the option to set one anytime.';
+            }
         });
     }
 }

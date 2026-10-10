@@ -556,8 +556,8 @@ async function refreshSpotifyConnectionUI() {
         button.textContent = 'Connect to Spotify';
         button.classList.add('account-logout--connect');
         if (status) {
-            status.textContent = '';
-            status.style.display = 'none';
+            status.style.display = '';
+            status.textContent = 'Use for Lyrics Mode';
         }
         if (icon) icon.classList.remove('is-connected');
         return;
@@ -567,12 +567,12 @@ async function refreshSpotifyConnectionUI() {
     if (icon) icon.classList.add('is-connected');
     if (status) {
         status.style.display = '';
-        status.textContent = 'Connected';
+        status.textContent = 'Connected · Use for Lyrics Mode';
     }
     const profile = await getSpotifyProfile();
-    if (status && profile) {
+    if (status && profile?.displayName) {
         status.style.display = '';
-        status.textContent = `Connected as ${profile.displayName}`;
+        status.textContent = `Connected as ${profile.displayName} · Use for Lyrics Mode`;
     }
 }
 
