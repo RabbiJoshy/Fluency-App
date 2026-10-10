@@ -312,3 +312,39 @@ Missing es/pt coverage assets are explicitly null rather than fetched as HTML.
 check requires all es/pt default release-bound assets to agree. No WSD, harvest,
 paid calls, model download, or other-language regeneration is needed.
 Rollout is based on latest UI commit d1515300; staging review is the next step.
+
+
+## Final default rollout and cache verification (2026-10-10)
+
+The apparent déjalo regression in the default app was an incomplete rollout:
+review links selected the corrected candidates, while normal app defaults still
+selected v23. Commit 699d12c6 changed the defaults and aligned their supporting
+assets. A browser review then found older supporting JSON still cached under
+unchanged URLs. The correction assigns distinct es r4 / pt r2 URLs to frequency,
+estimator, cognate and merge-exception files, with matching service-worker
+precache paths. Original generic files remain available for older releases.
+
+Those cache-safe changes were included by a concurrent UI chat in 2d348f0a,
+which has successfully deployed to production. No further production push is
+needed from HEADWAY, and the newer tutorial build 6afd78cc remains on staging.
+HEADWAY did not overwrite or roll back those UI changes. Fresh normal-URL staging
+review on that build shows déjalo as VERB from dejar, with leave it / let him /
+let it meanings, and no warning/error logs. Screenshot:
+workspace raw/surfaces/headway/default-staging-dejalo-cache-safe.png.
+
+SEAM handoff: verify search-result card hydration (earlier cold searches omitted
+meanings despite correct hosted rows), plus kept-apart titles and existing merge
+behaviour against these now-default decks. HEADWAY made no merging-policy change.
+TAGLINE owns the demonstrated Portuguese contextual-tag filtering failure; fresh
+HEADWAY WSD is complete, but rerunning the same tags/filter will not repair it.
+79 es / 142 pt surfaces remain explicitly unresolved; other-language findings
+remain deferred. No new harvest, paid operation or broad rebuild was performed
+for the default/cache rollout.
+
+Final verification: 237 app tests passed on the combined 6afd78cc worktree
+(70.522 seconds). Production config selects es r4 / pt r2, and all eight
+release-bound supporting files match local SHA-256 hashes. Evidence:
+workspace raw/surfaces/headway/default-rollout-live-bindings.json. Published
+Spanish rank-748 row 84fa7942 independently confirms active VERB / dejar
+analyses; original PHRASE remains only in preserved source provenance. Earlier
+source/release regression checks passed 549 tests plus 177 subtests.
