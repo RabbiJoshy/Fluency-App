@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T12:43:57+01:00",
+      "date": "2026-10-10 12:43 BST",
+      "agent": "Codex",
+      "summary": "Select particular meanings to review in a centered, scrollable modal",
+      "detail": [
+        "Replace the known-count control with a bookmark and Review meaning(s).",
+        "Select meanings using one checkbox per row; retain selections automatically without Save or Next Card buttons.",
+        "Center the dialog on mobile and desktop, with scrolling for long lists and keyboard focus handling.",
+        "Preserve individually marked meanings when answering the whole card; keep the existing review-card presentation."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T12:13:00+01:00",
       "date": "2026-10-10 12:13 BST",
       "agent": "Claude",
@@ -362,17 +375,6 @@
         "Cut: Useful extras and Hear it. Merged: the back's repeated 'The word', 'How often it is said' into 'How common the word is', and 'Where the example is from' into the example note. No more tap-to-continue tasks.",
         "Smart Skip and Speech or music are now pages of their own, showing a copy of the real switch and the Vocabulary picker, with examples in the language being taught.",
         "Each chapter ends with Start studying or Next: <chapter> →."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T01:40:00+01:00",
-      "date": "2026-10-09 01:40 BST",
-      "agent": "Claude",
-      "summary": "Skipped cards fill each set bar from the right in light grey",
-      "detail": [
-        "Choose a set: with Smart Skip on, the cards it sets aside take a light-grey share of each set pill from the right, so a level starts partly filled.",
-        "The Skipped legend swatch is the same grey; known/practice/new shares are now measured against the full slot."
       ],
       "commit": "pending"
     }

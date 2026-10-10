@@ -137,6 +137,38 @@ RUNNER = r"""
         out.afterLeaving = [0, 1, 2].map(i => [freshState(i).learned, freshState(i).needsReview]);
         out.cornerNeverKnownThenWrong = context.itemProgressData[freshItems[2].itemId].correct;
 
+
+        // A fresh card with no greyed senses must preserve a checkbox answer
+        // when the learner subsequently swipes yes on the whole card.
+        const selectedCard = { ...fresh, fullId: 'es00003' };
+        const selectedItems = context.getKnowledgeOverviewItems(selectedCard);
+        context.beginKnowledgeCardVisit(selectedCard);
+        context.flashcards = [selectedCard];
+        context.document.activeElement = null;
+        context.document.getElementById = () => ({ hidden: true });
+        vm.runInContext('knowledgeOverviewCard = globalThis.__selected', Object.assign(context, { __selected: selectedCard }));
+        out.newRowsUnchecked = !context.knowledgeOverviewRowsHTML(selectedCard,
+            selectedItems.map((item, index) => ({ item, index }))).includes(' checked');
+        const selectEvent = { target: { checked: true }, stopPropagation() {} };
+        await context.toggleKnowledgeOverviewReview(selectEvent, 1);
+        const selectedBefore = JSON.stringify(context.itemProgressData[selectedItems[1].itemId]);
+        await context.toggleKnowledgeOverviewReview(selectEvent, 1);
+        out.duplicateSelectionIgnored = selectedBefore === JSON.stringify(context.itemProgressData[selectedItems[1].itemId]);
+        out.checkboxReopensChecked = context.knowledgeOverviewRowsHTML(selectedCard,
+            [{ item: selectedItems[1], index: 1 }]).includes(' checked');
+        out.freshSwipeHandled = await context.saveWholeCardKnowledgeAnswer(selectedCard, true);
+        out.freshSwipePreservesSelection = selectedBefore === JSON.stringify(context.itemProgressData[selectedItems[1].itemId]);
+        await new Promise(resolve => setTimeout(resolve, 5));
+        await context.toggleKnowledgeOverviewReview({ target: { checked: false }, stopPropagation() {} }, 1);
+        out.deselectionResolves = context.getKnowledgeItemState(selectedCard, selectedItems[1]).learned;
+
+        // Time-based review is not an explicit request to revisit a meaning.
+        context.itemProgressData[selectedItems[0].itemId] = {
+            correct: 1, lastCorrect: iso(3 * DAY), lastSeen: iso(3 * DAY), srsStage: 1,
+        };
+        out.dueIsNotSelected = !context.knowledgeOverviewRowsHTML(selectedCard,
+            [{ item: selectedItems[0], index: 0 }]).includes(' checked');
+
         console.log(JSON.stringify(out));
     })().catch(error => { console.error(error); process.exit(1); });
 """
@@ -188,6 +220,13 @@ class KnownSenseTests(unittest.TestCase):
             [[False, True], [True, False], [False, True]],
         )
         self.assertEqual(self.out["cornerNeverKnownThenWrong"], 0)
+
+    def test_meaning_review_checkboxes_preserve_choices(self) -> None:
+        for key in ["newRowsUnchecked", "duplicateSelectionIgnored", "checkboxReopensChecked",
+                    "freshSwipeHandled", "freshSwipePreservesSelection", "deselectionResolves",
+                    "dueIsNotSelected"]:
+            with self.subTest(key=key):
+                self.assertTrue(self.out[key])
 
 
 if __name__ == "__main__":

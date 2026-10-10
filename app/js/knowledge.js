@@ -10,6 +10,7 @@ let indexedItemProgressSource = null;
 let indexedItemProgressSize = -1;
 let itemProgressByParent = new Map();
 let knowledgeOverviewCard = null;
+let knowledgeOverviewReturnFocus = null;
 // The card whose one-tap exception still owes its untouched siblings a
 // "known" mark (see commitPendingKnowledgeSiblings).
 let knowledgeSiblingsPendingCard = null;
@@ -686,12 +687,15 @@ function answeredDuringVisit(card, item) {
 // A whole-card answer on a part-known card is an answer about the senses it
 // was testing: every sense not greyed as known, less those answered one by
 // one on this visit. Greyed senses keep their own schedules. Returns false
-// when the card has no known senses and the answer belongs to the card.
+// when there are no known senses or individual answers from this visit.
 async function saveWholeCardKnowledgeAnswer(card, isCorrect) {
     // The whole-card answer supersedes a pending one-tap exception.
     if (knowledgeSiblingsPendingCard === card) knowledgeSiblingsPendingCard = null;
     if (!currentUser || currentUser.isGuest) return false;
-    if (!card?.meanings?.some(meaning => meaning.isKnownSense)) return false;
+    const hasKnownSenses = card?.meanings?.some(meaning => meaning.isKnownSense);
+    const hasIndividualAnswers = card && getKnowledgeOverviewItems(card)
+        .some(item => answeredDuringVisit(card, item));
+    if (!hasKnownSenses && !hasIndividualAnswers) return false;
     const items = card.meanings
         .flatMap((meaning, index) => meaning.isKnownSense ? [] : knowledgeItemsForMeaning(card, meaning, index))
         .filter(item => !answeredDuringVisit(card, item));
@@ -738,14 +742,11 @@ function renderKnowledgeOverviewButton(card) {
     const meaningItems = items.filter(item => knowledgeSectionLabel(item) === 'Meanings');
     const displayItems = meaningItems.length > 0 ? meaningItems : items;
     if (displayItems.length <= 1) return '';
-    const learned = displayItems.filter(item => getKnowledgeItemState(card, item).learned).length;
-    const total = displayItems.length;
-    return `<button type="button" class="ref-tile knowledge-overview-trigger" aria-label="Meanings: ${learned}/${total} known" onclick="showKnowledgeOverview(event)">
-        <svg class="ref-tile-icon" viewBox="10 10 26 26" aria-hidden="true">
-            <path d="M12 13.5h18M12 21h18M12 28.5h11" class="knowledge-overview-icon-lines"/>
-            <path d="m27 29 2.4 2.4L34 26.8" class="knowledge-overview-icon-check"/>
+    return `<button type="button" class="ref-tile knowledge-overview-trigger" aria-label="Review meaning(s)" aria-haspopup="dialog" onclick="showKnowledgeOverview(event)">
+        <svg class="ref-tile-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17l-6-4-6 4V4Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
         </svg>
-        <span class="ref-tile-label">${learned}/${total} known</span>
+        <span class="ref-tile-label">Review meaning(s)</span>
     </button>`;
 }
 
@@ -759,18 +760,16 @@ function ensureKnowledgeOverviewModal() {
     modal.setAttribute('role', 'dialog');
     modal.setAttribute('aria-modal', 'true');
     modal.setAttribute('aria-labelledby', 'knowledgeOverviewTitle');
+    modal.setAttribute('aria-describedby', 'knowledgeOverviewHint');
     modal.innerHTML = `
         <div class="knowledge-overview-sheet">
             <header class="knowledge-overview-header">
-                <h2 id="knowledgeOverviewTitle">Meanings</h2>
+                <h2 id="knowledgeOverviewTitle" class="visually-hidden">Review meaning(s)</h2>
+                <p id="knowledgeOverviewHint" class="knowledge-overview-hint">Know the word, but not every meaning? Select the meaning(s) you’d like to revisit, and future reviews will focus on those.</p>
                 <button type="button" class="knowledge-overview-close" aria-label="Close" onclick="closeKnowledgeOverview(event)">×</button>
             </header>
-            <p class="knowledge-overview-hint">✓ the meanings you already know; × the ones you want to practise.</p>
             <div id="knowledgeOverviewSummary" class="knowledge-overview-summary"></div>
             <div id="knowledgeOverviewList" class="knowledge-overview-list"></div>
-            <div class="knowledge-overview-footer" style="display: flex; justify-content: flex-end; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-color, rgba(255,255,255,0.1));">
-                <button type="button" class="knowledge-overview-advance-btn" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: var(--accent, #10b981); color: #fff; border: none; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer;" onclick="saveAndNextCardFromKnowledge(event)">Save &amp; Next Card →</button>
-            </div>
         </div>`;
     modal.addEventListener('click', event => {
         if (event.target === modal) closeKnowledgeOverview(event);
@@ -794,16 +793,12 @@ function knowledgeOverviewRowsHTML(card, rows, { groupedByPos = false } = {}) {
             : [item.detail, item.isRare ? item.example : ''].filter(Boolean).join(' · ');
         const copy = `<span class="knowledge-overview-status" aria-label="${statusText}"></span>
             <span class="knowledge-overview-copy">${pos}<strong>${escapeKnowledgeHTML(label)}</strong>${detail ? `<small>${escapeKnowledgeHTML(detail)}</small>` : ''}</span>`;
-        const lead = item.isRare
-            ? `<div class="knowledge-overview-focus is-static">${copy}</div>`
-            : `<button type="button" class="knowledge-overview-focus" onclick="focusKnowledgeOverviewItem(event, ${index})" title="Show this item on the card">${copy}</button>`;
-        return `<div class="knowledge-overview-row is-${status}">
-            ${lead}
-            <div class="knowledge-overview-actions" aria-label="Knowledge for ${escapeKnowledgeHTML(item.label)}">
-                <button type="button" class="knowledge-overview-mark mark-review${status === 'review' ? ' is-active' : ''}" onclick="markKnowledgeOverviewItem(event, ${index}, false)" aria-label="Mark for practice" title="Mark for practice">×</button>
-                <button type="button" class="knowledge-overview-mark mark-known${status === 'known' ? ' is-active' : ''}" onclick="markKnowledgeOverviewItem(event, ${index}, true)" aria-label="Mark known" title="Mark known">✓</button>
-            </div>
-        </div>`;
+        const selected = state.needsReview && state.reviewReason === 'incorrect';
+        return `<label class="knowledge-overview-row${selected ? ' is-selected' : ''}">
+            <span class="knowledge-overview-focus is-static">${copy}</span>
+            <input type="checkbox" class="knowledge-overview-checkbox" data-knowledge-index="${index}" ${selected ? 'checked' : ''}
+                aria-label="Review ${escapeKnowledgeHTML(label)} later" onchange="toggleKnowledgeOverviewReview(event, ${index})">
+        </label>`;
     }).join('');
 }
 
@@ -813,9 +808,6 @@ function renderKnowledgeOverview(card) {
     const summaryEl = modal.querySelector('#knowledgeOverviewSummary');
     const listEl = modal.querySelector('#knowledgeOverviewList');
 
-    // Title: the word itself
-    const titleEl = modal.querySelector('#knowledgeOverviewTitle');
-    if (titleEl) titleEl.textContent = card.targetWord || 'Meanings';
 
     // Build sections but only show Meanings (hide Expressions to simplify).
     // Expression knowledge is preserved in the data model; only the UI hides it.
@@ -910,7 +902,10 @@ function showKnowledgeOverview(event, options = {}) {
     knowledgeOverviewCard = card;
     const modal = ensureKnowledgeOverviewModal();
     renderKnowledgeOverview(card);
-    modal.querySelector('.knowledge-overview-footer').hidden = card !== flashcards[currentIndex];
+    if (modal.hidden || modal.classList.contains('is-closing')) {
+        knowledgeOverviewReturnFocus = event?.currentTarget instanceof HTMLElement
+            ? event.currentTarget : document.activeElement;
+    }
     modal.classList.remove('is-closing');
     modal.hidden = false;
     document.body.classList.add('knowledge-overview-open');
@@ -930,9 +925,11 @@ function closeKnowledgeOverview(event) {
         if (requireClosing && !modal.classList.contains('is-closing')) return;
         modal.hidden = true;
         modal.classList.remove('is-closing');
+        if (knowledgeOverviewReturnFocus?.isConnected) knowledgeOverviewReturnFocus.focus();
+        else document.querySelector('.knowledge-overview-trigger')?.focus();
+        knowledgeOverviewReturnFocus = null;
     };
-    // The sheet exits back through the top edge it entered from; hide it only
-    // once that animation has played (or immediately for reduced motion).
+    // Hide after the fade completes, or immediately for reduced motion.
     const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
     if (!sheet || reducedMotion) {
         finish();
@@ -961,6 +958,21 @@ function focusKnowledgeOverviewItem(event, index) {
     if (!card || !item || item.isRare) return;
     closeKnowledgeOverview();
     window.focusKnowledgeCardItem?.(item.meaningIndex, item.cycleIndex || 0);
+}
+
+async function toggleKnowledgeOverviewReview(event, index) {
+    event?.stopPropagation();
+    const card = knowledgeOverviewCard;
+    const item = card && getKnowledgeOverviewItems(card)[index];
+    if (!item) return;
+    const state = getKnowledgeItemState(card, item);
+    const selected = state.needsReview && state.reviewReason === 'incorrect';
+    if (selected === event.target.checked) return;
+    const restoreFocus = document.activeElement === event.target;
+    await markKnowledgeOverviewItem(event, index, !event.target.checked);
+    if (restoreFocus && !document.getElementById('knowledgeOverviewModal')?.hidden) {
+        document.querySelector(`#knowledgeOverviewList [data-knowledge-index="${index}"]`)?.focus();
+    }
 }
 
 async function markKnowledgeOverviewItem(event, index, isCorrect) {
@@ -1030,12 +1042,37 @@ window.findRareSenseKnowledgeItem = findRareSenseKnowledgeItem;
 window.closeKnowledgeOverview = closeKnowledgeOverview;
 window.focusKnowledgeOverviewItem = focusKnowledgeOverviewItem;
 window.markKnowledgeOverviewItem = markKnowledgeOverviewItem;
+window.toggleKnowledgeOverviewReview = toggleKnowledgeOverviewReview;
 window.selectKnowledgeOverviewTab = selectKnowledgeOverviewTab;
 window.saveAndNextCardFromKnowledge = saveAndNextCardFromKnowledge;
 window.cacheItemProgress = cacheItemProgress;
 
 document.addEventListener('keydown', event => {
-    if (event.key !== 'Escape') return;
     const modal = document.getElementById('knowledgeOverviewModal');
-    if (modal && !modal.hidden) closeKnowledgeOverview(event);
+    if (!modal || modal.hidden || modal.classList.contains('is-closing')) return;
+    // Keep card shortcuts from grading or navigating behind the dialog.
+    event.stopImmediatePropagation();
+    if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        closeKnowledgeOverview(event);
+    } else if (event.key === 'Tab') {
+        const controls = [...modal.querySelectorAll('button:not([disabled]), input:not([disabled])')];
+        const first = controls[0];
+        const last = controls[controls.length - 1];
+        if (event.shiftKey && (document.activeElement === first || !modal.contains(document.activeElement))) {
+            event.preventDefault();
+            last?.focus();
+        } else if (!event.shiftKey && (document.activeElement === last || !modal.contains(document.activeElement))) {
+            event.preventDefault();
+            first?.focus();
+        }
+    }
+}, true);
+
+document.addEventListener('focusin', event => {
+    const modal = document.getElementById('knowledgeOverviewModal');
+    if (modal && !modal.hidden && !modal.classList.contains('is-closing') && !modal.contains(event.target)) {
+        modal.querySelector('.knowledge-overview-close')?.focus();
+    }
 });
