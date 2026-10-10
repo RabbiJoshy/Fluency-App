@@ -23350,7 +23350,8 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 .card-tutorial-scroll-hint { display: none; }
 #cardTutorialStage .meanings-scroll { flex: 0 1 auto; min-height: 72px; overflow-y: auto !important; overflow-x: hidden; max-height: none !important; }
 #cardTutorialStage .card-details { height: 100%; overflow-y: auto; overflow-x: hidden; }
-#cardTutorialStage .sentence { flex: 0 0 auto; max-height: none; overflow: visible; }
+#cardTutorialStage .sentence { flex: 0 0 auto; max-height: none; overflow: visible; box-sizing: border-box; }
+#cardTutorialStage .sentence.is-annotation-active { outline: 2px solid var(--accent-amber); outline-offset: -1px; border-radius: 10px; }
 #cardTutorialStage .meaning-row { padding-left: 44px !important; }
 #cardTutorialStage .sense-note-trigger { left: 2px; width: 44px; height: 44px; min-width: 44px; border: 0; background: transparent; }
 #cardTutorialStage .sense-note-trigger > span { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border: 1px solid var(--border-light); border-radius: 50%; background: var(--bg-card); }
@@ -23688,10 +23689,10 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     color: var(--text-muted);
     font: 600 13px/1.2 var(--font-emphasis);
     white-space: nowrap;
-    cursor: pointer;
-    transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    cursor: default;
+    pointer-events: none;
+    user-select: none;
 }
-.card-tutorial-chapter:hover { color: var(--text-primary); border-color: var(--text-muted); }
 .card-tutorial-chapter.is-current {
     border-color: color-mix(in srgb, var(--accent-primary) 55%, transparent);
     background: color-mix(in srgb, var(--accent-primary) 16%, transparent);

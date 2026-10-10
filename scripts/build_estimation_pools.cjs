@@ -33,6 +33,8 @@ async function buildPoolForLanguage(language, langConfig) {
         h.loadSpeechSourceFrequency(langConfig, { detached: true })
     ]);
 
+    h.assignStableVocabularyRanks(vocabulary, new Set(), { detached: true });
+
     const pool = h.buildEstimationPool(vocabulary, frequency, { includeAssumed: true });
     const needingExamples = pool.filter(item => item.splitInfo && !item.estimationExample);
     const ranks = [...new Set(needingExamples.map(item => Number(item.rank)))];
@@ -91,7 +93,9 @@ async function buildPoolForLanguage(language, langConfig) {
         console.log(`Building estimation pool for ${language}...`);
         try {
             const payload = await buildPoolForLanguage(language, langConfig);
-            const outFile = path.join(outputDir, `${language}.json`);
+            const outFile = langConfig.estimationPoolPath
+                ? path.join(ROOT, 'app', langConfig.estimationPoolPath)
+                : path.join(outputDir, `${language}.json`);
             const content = JSON.stringify(payload);
             await fs.writeFile(outFile, content, 'utf8');
             console.log(`  -> Wrote ${outFile} (${payload.n} groups, ${(content.length / 1024).toFixed(1)} KB)`);

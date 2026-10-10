@@ -152,11 +152,11 @@ state.meaningIndex = 0;
 assert.equal(tutorialCardHeight(), 342);
 document.querySelector = () => null;
 // Progress counts the chapter on show: the card's two faces.
-assert.equal(tutorialStepPosition().total, 9);
+assert.equal(tutorialStepPosition().total, 12);
 const front = stepNotes(tutorialSteps()[0]);
 assert.deepEqual(front.map(note => note.title), ['The word', 'How common the word is', 'Kind of word', 'The dictionary form']);
 const back = stepNotes(tutorialSteps()[1]);
-assert.deepEqual(back.map(note => note.title), ['The meanings at a glance', 'The selected meaning', 'How common this meaning is', 'A real example', 'Grade your answer']);
+assert.deepEqual(back.map(note => note.title), ['The meanings at a glance', 'The selected meaning', 'Rare uses', 'Review meanings', 'How common this meaning is', 'A real example', 'Look up', 'Grade your answer']);
 // Notes explain; none sets a task that holds Next back.
 for (const step of tutorialSteps()) for (const note of stepNotes(step)) {
   assert.equal(note.practice, undefined);
@@ -174,7 +174,7 @@ assert.deepEqual(tutorialStepPosition(0), {current: 1, total: 3});
 state.stepIndex = 0;
 tutorialLanguageOverride = 'spanish';
 state.mode = 'lyrics';
-assert.equal(tutorialStepPosition().total, 12);
+assert.equal(tutorialStepPosition().total, 15);
 const lyricsBack = stepNotes(tutorialSteps()[1]);
 assert(lyricsBack.some(note => note.title === 'Play the line'));
 // Grading closes the face even after the song details are added.

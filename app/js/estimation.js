@@ -400,7 +400,7 @@ function chooseNextBandIndex() {
 
     // First cover the whole frequency distribution in a centre-out order. A
     // learner is never estimated from a narrow run of unusually easy/hard words.
-    const untested = estimationState.coverageOrder.find(index => bands[index].answers === 0 && bands[index].sampleSize !== 0);
+    const untested = estimationState.coverageOrder.find(index => bands[index] && bands[index].answers === 0 && bands[index].sampleSize !== 0);
     if (untested !== undefined) return untested;
 
     const fitted = getPosteriorBandProbabilities(bands);

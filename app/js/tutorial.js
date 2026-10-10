@@ -182,11 +182,29 @@ const TUTORIAL_DECKS = [
                         lyricsText: 'Each lyric matches the selected meaning; where there are several, tap it for the next.',
                     },
                     {
+                        side: 'left',
+                        anchor: '.ref-rare-uses-btn',
+                        title: 'Rare uses',
+                        text: 'Less common definitions and expressions collected in one place, so you can explore them without cluttering normal study.',
+                    },
+                    {
+                        side: 'left',
+                        anchor: '.knowledge-overview-trigger',
+                        title: 'Review meanings',
+                        text: 'Know the word, but not every definition? Choose the specific meanings you want future review sessions to focus on.',
+                    },
+                    {
+                        side: 'right',
+                        anchor: '.ref-lookup-btn',
+                        title: 'Look up',
+                        text: 'Instant links to authoritative external dictionaries and references for deeper study whenever you need it.',
+                    },
+                    {
                         side: 'right',
                         anchor: '.card-back',
                         closing: true,
                         title: 'Grade your answer',
-                        text: 'Swipe right if you knew it, or left if you need practice: ← Needs practice · Got it →. The next card follows. On a computer, press Enter for Got it or X for Needs practice.',
+                        text: 'Swipe right for Got it, left for Needs practice (← Needs practice · Got it →). On desktop, press Enter or X.',
                     },
                 ],
             },
@@ -256,19 +274,19 @@ const TUTORIAL_PAGES = {
     },
     modes: {
         title: 'Speech or music',
-        blurb: 'Choose where your words come from, and switch whenever you like.',
+        blurb: 'Everyday speech teaches words ranked by spoken frequency from movies and TV for natural daily conversation, while Your music curates the vocabulary appearing in the songs and artists you choose. Switch whenever you like.',
         notes: [
             {
                 side: 'left',
                 anchor: '.tutorial-page-topbar',
                 title: 'Switch at any time',
-                text: 'Tap the language name at the top, then Vocabulary, and choose Everyday speech or Your music.',
+                text: 'Everyday speech ranks vocabulary by real-world spoken frequency from thousands of films and series, giving you the foundation for spontaneous conversation. Your music focuses exclusively on lyrics from your favorite artists.',
             },
             {
                 side: 'right',
                 anchor: '.tutorial-page-sources',
                 title: 'Your progress comes with you',
-                text: 'A word you learn in one counts in the other.',
+                text: 'A word you learn in one counts in the other. If you master a word in Everyday speech, it is already marked known when it appears in your songs.',
             },
         ],
         html: modesPageHTML,
@@ -892,21 +910,18 @@ function renderNotes() {
 // The chapters double as the table of contents: any one can be opened
 // directly, which is how a replay skips to the part it came for.
 function renderChapters() {
-    const host = document.getElementById('cardTutorialSequence');
-    if (!host) return;
-    host.innerHTML = `<nav class="card-tutorial-chapters" aria-label="Tutorial chapters">${TUTORIAL_CHAPTERS.map(chapter =>
-        `<button type="button" class="card-tutorial-chapter" data-chapter="${chapter.id}">${esc(chapter.label)}</button>`).join('')}</nav>`;
     renderSequenceProgress();
 }
 
 function renderSequenceProgress() {
-    const current = currentStep()?.chapter;
-    document.querySelectorAll('#cardTutorialSequence [data-chapter]').forEach(button => {
-        const on = button.dataset.chapter === current;
-        button.classList.toggle('is-current', on);
-        if (on) button.setAttribute('aria-current', 'step');
-        else button.removeAttribute('aria-current');
-    });
+    const host = document.getElementById('cardTutorialSequence');
+    if (!host) return;
+    const step = currentStep();
+    if (!step) return;
+    const chapter = chapterById(step.chapter);
+    const face = stepFace(step);
+    const subLabel = step.kind === 'page' ? '' : ` — ${face.title}`;
+    host.innerHTML = `<div class="card-tutorial-chapters" aria-label="Tutorial step"><span class="card-tutorial-chapter is-current">${esc(chapter.label)}${esc(subLabel)}</span></div>`;
 }
 
 function goToChapter(id) {
@@ -1041,10 +1056,6 @@ function setupCardTutorial() {
     document.getElementById('cardTutorialMobileNext')?.addEventListener('click', () => moveTour(1));
     ['cardTutorialFinish', 'cardTutorialMobileFinish'].forEach(id =>
         document.getElementById(id)?.addEventListener('click', finishTutorialLesson));
-    document.getElementById('cardTutorialSequence')?.addEventListener('click', event => {
-        const chapter = event.target.closest('[data-chapter]')?.dataset.chapter;
-        if (chapter) goToChapter(chapter);
-    });
 
     // Escape closes; left/right step through the tour like Back and Next.
     // Space deliberately does nothing: the tutorial owns the flip, so the card

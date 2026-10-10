@@ -122,5 +122,70 @@ const {createHarness} = require('./estimation_harness.cjs');
     assert.equal(precomputedHarness.estimationState.currentWord.word, 'rápido');
     precomputedHarness.closeEstimationModal();
 
+    // Shipped estimation pools contain valid, non-null stable ranks
+    const fs = require('node:fs');
+    const path = require('node:path');
+    const { ROOT } = require('./estimation_harness.cjs');
+    const shippedPools = ['spanish.json', 'portuguese.json', 'finnish.json', 'czech.json', 'french.json'];
+    for (const poolFile of shippedPools) {
+        const poolPath = path.join(ROOT, 'app/data/estimation-pools', poolFile);
+        if (!fs.existsSync(poolPath)) continue;
+        const poolJson = JSON.parse(fs.readFileSync(poolPath, 'utf8'));
+        assert.ok(poolJson.items.length > 0, `Pool ${poolFile} should have items`);
+        assert.ok(poolJson.baseline.length > 0, `Pool ${poolFile} should have baseline`);
+        // Verify all baseline and item members have valid positive integer stableRank
+        const nullBaseline = poolJson.baseline.filter(b => !Number.isInteger(b[1]) || b[1] <= 0);
+        assert.equal(nullBaseline.length, 0, `Pool ${poolFile} has invalid baseline stable ranks`);
+        const nullMem = poolJson.items.filter(i => (i.mem || []).some(m => !Number.isInteger(m[1]) || m[1] <= 0));
+        assert.equal(nullMem.length, 0, `Pool ${poolFile} has invalid member stable ranks`);
+    }
+
+    // Hydrated precomputed pool produces differentiated placements across proficiency levels
+    const spanishPoolData = JSON.parse(fs.readFileSync(path.join(ROOT, 'app/data/estimation-pools/spanish.json'), 'utf8'));
+    const allButtons = Array.from({ length: 92 }, (_, i) => ({
+        dataset: { startRank: String(i * 100 + 1), endRank: String((i + 1) * 100 + 1), rankBasis: 'stable' }
+    }));
+    const testHarness = createHarness({
+        selectedLanguage: 'spanish',
+        document: {
+            querySelectorAll: sel => (sel.includes('level-btn') ? allButtons : []),
+            querySelector: () => allButtons[0],
+            getElementById: () => ({ textContent: '', hidden: false, style: {}, classList: { add() {}, remove() {}, contains: () => false } })
+        }
+    });
+    testHarness.loadModule('ui.js');
+    const preparedPool = testHarness.hydratePrecomputedEstimationPool(spanishPoolData);
+    const testLevels = testHarness.getEstimationPlacementLevels(preparedPool.placementWords);
+    assert.equal(testLevels.length, 92, 'Should resolve 92 speech placement levels');
+
+    // Advanced learner (100% known) should place at highest levels
+    const advancedBands = testHarness.buildEstimationBands(preparedPool.items);
+    advancedBands.forEach(b => { b.answers = 2; b.known = 2; });
+    const advancedPlacement = testHarness.calculateRecognitionPlacement(
+        preparedPool.items, advancedBands, testLevels, preparedPool.placementWords
+    );
+    assert.ok(advancedPlacement.choices.length > 0, 'Advanced learner should have choices');
+    assert.ok(advancedPlacement.choices[0].levelNumber > 50, 'Advanced learner should place in high levels');
+
+    // Intermediate learner (known in early bands, unknown in late bands) should place in intermediate levels
+    const intermediateBands = testHarness.buildEstimationBands(preparedPool.items);
+    intermediateBands.forEach((b, i) => { b.answers = 2; b.known = i < 4 ? 2 : 0; });
+    const intermediatePlacement = testHarness.calculateRecognitionPlacement(
+        preparedPool.items, intermediateBands, testLevels, preparedPool.placementWords
+    );
+    assert.ok(intermediatePlacement.choices.length > 0, 'Intermediate learner should have choices');
+    assert.ok(intermediatePlacement.choices[0].levelNumber >= 2 && intermediatePlacement.choices[0].levelNumber <= 15,
+        'Intermediate learner should place in early-intermediate levels');
+
+    // Beginner learner (0% known) should place at Level 1 Set 1
+    const beginnerBands = testHarness.buildEstimationBands(preparedPool.items);
+    beginnerBands.forEach(b => { b.answers = 2; b.known = 0; });
+    const beginnerPlacement = testHarness.calculateRecognitionPlacement(
+        preparedPool.items, beginnerBands, testLevels, preparedPool.placementWords
+    );
+    assert.ok(beginnerPlacement.choices.length > 0, 'Beginner learner should have choices');
+    assert.equal(beginnerPlacement.choices[0].levelNumber, 1, 'Beginner learner should place at level 1');
+    assert.equal(beginnerPlacement.choices[0].setNumber, 1, 'Beginner learner should place at set 1');
+
     console.log('Detached metadata, precomputed pool fast-path, bounded loading, frequency matching, lazy examples and retry checks passed.');
 })().catch(error=>{console.error(error);process.exitCode=1;});
