@@ -555,7 +555,7 @@ async function refreshSpotifyConnectionUI() {
     if (!isSpotifyConnected()) {
         button.textContent = 'Connect';
         button.classList.remove('settings-feature-action--danger');
-        if (status) status.textContent = '';
+        if (status) status.textContent = 'Connect to Spotify';
         if (icon) icon.classList.remove('is-connected');
         return;
     }

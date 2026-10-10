@@ -1695,7 +1695,9 @@
                     <h2 id="settingsTitle">Settings</h2>
                 </div>
                 <div class="settings-header-actions">
-                    <button class="modal-close" id="closeSettingsModal" aria-label="Close settings">✕</button>
+                    <button class="modal-close" id="closeSettingsModal" aria-label="Close settings">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
                 </div>
             </div>
             <nav class="settings-tabs" aria-label="Settings sections">
@@ -1718,7 +1720,7 @@
                      it is the Study tab alone, without the bar. -->
                 <div class="settings-pane-tabs group-size-selector" role="tablist" aria-label="Settings">
                     <button type="button" class="group-size-btn settings-pane-tab selected" role="tab" id="settingsPaneTabStudy" data-settings-pane="study" aria-controls="settingsPaneStudy" aria-selected="true">Study</button>
-                    <button type="button" class="group-size-btn settings-pane-tab" role="tab" id="settingsPaneTabApp" data-settings-pane="app" aria-controls="settingsPaneApp" aria-selected="false" tabindex="-1">Account</button>
+                    <button type="button" class="group-size-btn settings-pane-tab" role="tab" id="settingsPaneTabApp" data-settings-pane="app" aria-controls="settingsPaneApp" aria-selected="false" tabindex="-1">App</button>
                     <button type="button" class="group-size-btn settings-pane-tab" role="tab" id="settingsPaneTabWords" data-settings-pane="words" aria-controls="settingsPaneWords" aria-selected="false" tabindex="-1">Your words</button>
                 </div>
                 <section class="settings-defaults-card settings-pane is-active" id="settingsPaneStudy" role="tabpanel" data-settings-pane="study" aria-labelledby="studyDefaultsTitle">
@@ -1759,18 +1761,33 @@
                 </section>
                 <section class="settings-overview-section settings-pane" id="settingsPaneWords" role="tabpanel" data-settings-pane="words" aria-labelledby="settingsWordsTitle">
                     <div class="settings-defaults-heading"><strong id="settingsWordsTitle">Your words</strong></div>
-                    <!-- One pattern for every item: what it is, what it does, and
-                         the action on the right. -->
-                    <button type="button" class="settings-link-row settings-words-row is-primary" id="settingsImportKnownBtn"><span><strong>Import known words</strong><small>Paste words or upload a text, CSV or TSV file. Review changes before importing.</small><small class="settings-words-note" id="settingsImportNote"></small></span><span class="settings-words-action">Import</span></button>
-                    <button type="button" class="settings-link-row settings-words-row is-primary" id="settingsExportMistakesBtn"><span><strong>Export mistakes</strong><small>Download your mistake history as a CSV.</small></span><span class="settings-words-action">Download</span></button>
+                    <button type="button" class="settings-link-row settings-words-row is-primary" id="settingsImportKnownBtn">
+                        <span><strong>Import known words</strong><small>Paste words or upload a text, CSV or TSV file. Review changes before importing.</small><small class="settings-words-note" id="settingsImportNote"></small></span>
+                        <span class="settings-words-action" title="Import" aria-label="Import">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        </span>
+                    </button>
+                    <button type="button" class="settings-link-row settings-words-row is-primary" id="settingsExportMistakesBtn">
+                        <span><strong>Export mistakes</strong><small>Download your mistake history as a CSV.</small></span>
+                        <span class="settings-words-action" title="Download" aria-label="Download">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        </span>
+                    </button>
                     <p id="settingsDataActionStatus" class="settings-compact-note settings-words-status" role="status" aria-live="polite"></p>
-                    <button type="button" class="settings-link-row settings-words-row" id="settingsFindWordBtn" data-open-find-word><span><strong>Find a word</strong><small>Look up any word in this language. On a computer, press Cmd+F or Ctrl+F.</small></span><span class="settings-words-action">Search</span></button>
+                    <button type="button" class="settings-link-row settings-words-row" id="settingsFindWordBtn" data-open-find-word>
+                        <span><strong>Find a word</strong><small>Look up any word in this language. On a computer, press Cmd+F or Ctrl+F.</small></span>
+                        <span class="settings-words-action" title="Search" aria-label="Search">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        </span>
+                    </button>
                     <div class="settings-words-saved" aria-labelledby="savedWordsTitle">
                         <div class="settings-words-row settings-words-saved-head">
                             <span><strong id="savedWordsTitle">Saved words</strong><small>Words you saved from a sentence. They are not study cards.</small></span>
-                            <button type="button" class="settings-words-action" id="downloadSavedWordsBtn" hidden>Download</button>
+                            <button type="button" class="settings-words-action" id="downloadSavedWordsBtn" title="Download" aria-label="Download" hidden>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            </button>
                         </div>
-                        <div class="settings-words-saved-list" id="savedWordsBody"></div>
+                        <div class="settings-words-saved-list" id="savedWordsBody" hidden style="display: none;"></div>
                     </div>
                     <!-- Hidden for everyone for now; may come back. -->
                     <section class="settings-feature-card" id="chatgptPromptCard" aria-labelledby="chatgptPromptTitle" hidden>
@@ -1786,7 +1803,6 @@
                 </section>
                 <section class="settings-overview-section settings-overview-footer settings-pane" id="settingsPaneApp" role="tabpanel" data-settings-pane="app" aria-labelledby="settingsAppTitle">
                     <div class="settings-defaults-heading"><strong id="settingsAppTitle">App</strong></div>
-                    <button type="button" class="settings-link-row" id="settingsAccountBtn"><span><strong>Account</strong><small>Your profile and connections</small></span><span aria-hidden="true">›</span></button>
                     <div class="appearance-settings-card" aria-labelledby="appearanceSettingsTitle">
                         <div class="appearance-settings-copy"><strong id="appearanceSettingsTitle">Theme</strong></div>
                         <div class="group-size-selector settings-toggle appearance-selector" role="radiogroup" aria-label="App appearance">
@@ -1802,6 +1818,7 @@
                             <button type="button" class="group-size-btn text-size-btn" data-text-size="large" role="radio" aria-checked="false" tabindex="-1">Bigger</button>
                         </div>
                     </div>
+                    <button type="button" class="settings-link-row" id="settingsAccountBtn"><span><strong>Account</strong><small>Your profile and connections</small></span><span aria-hidden="true">›</span></button>
                     <div class="settings-overview-links">
                         <button type="button" class="settings-footer-link" id="settingsAboutBtn">About this app</button>
                         <button type="button" class="settings-footer-link" id="settingsAdminBtn" hidden>Owner tools</button>
@@ -1839,7 +1856,7 @@
                 <section class="account-profile" aria-label="Your profile">
                     <span class="account-avatar" id="accountUserBadge" aria-hidden="true">G</span>
                     <span class="account-profile-copy">
-                        <strong id="accountProfileName">Guest</strong>
+                        <strong id="accountProfileName" hidden style="display: none;">Guest</strong>
                         <small id="accountProfileNote">Progress is not saved</small>
                     </span>
                     <button type="button" class="account-logout" id="logoutBtn">
@@ -1847,22 +1864,22 @@
                         <span>Log out</span>
                     </button>
                 </section>
-                <!-- The password lives on this device only (auth.js). It stops
-                     someone else on this device from studying under your
-                     username and overwriting your progress; it is not an
-                     account secret, so it can be shown and changed here. -->
-                <section class="account-password" id="accountPasswordRow" hidden>
-                    <span class="account-password-label">Secret word</span>
-                    <input type="text" id="accountPasswordInput" class="account-password-input is-concealed" autocomplete="off" autocapitalize="off" spellcheck="false" readonly aria-label="Secret word">
-                    <button type="button" class="account-password-action" id="accountPasswordShowBtn">Show</button>
+                <section class="account-password" id="accountPasswordRow">
+                    <span class="account-password-label" id="accountPasswordLabel">Birthday</span>
+                    <input type="text" id="accountPasswordInput" class="account-password-input is-concealed" autocomplete="off" autocapitalize="off" spellcheck="false" readonly aria-label="Birthday" placeholder="Set birthday">
+                    <button type="button" class="account-password-action" id="accountPasswordShowBtn">Set</button>
                     <button type="button" class="account-password-action account-password-save" id="accountPasswordSaveBtn" hidden>Save</button>
-                    <p class="account-password-status" id="accountPasswordStatus" role="status" aria-live="polite"></p>
+                    <p class="account-password-status" id="accountPasswordStatus" role="status" aria-live="polite">This is used as your password</p>
                 </section>
-                <section class="settings-feature-card" aria-labelledby="spotifyConnectionTitle">
-                    <span class="settings-feature-icon" id="spotifyConnectionIcon" aria-hidden="true">♫</span>
-                    <div><strong id="spotifyConnectionTitle">Spotify</strong><p>Connect for lyric playback and playlist decks.</p></div>
+                <section class="settings-feature-card spotify-connection-card" aria-labelledby="spotifyConnectionStatus">
+                    <div class="spotify-status-row">
+                        <span class="spotify-logo-icon" id="spotifyConnectionIcon" aria-hidden="true">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="#1DB954"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.42 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+                        </span>
+                        <strong id="spotifyConnectionStatus" class="spotify-connection-label">Connect to Spotify</strong>
+                    </div>
                     <button type="button" class="settings-feature-action" id="spotifyConnectBtn">Connect</button>
-                    <p id="spotifyConnectionStatus" class="settings-feature-note"></p>
+                    <p class="settings-feature-note spotify-feature-note">Used for lyrics mode</p>
                 </section>
             </div>
             <div class="settings-tab-content" id="aboutTabContent">

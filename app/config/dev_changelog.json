@@ -2,6 +2,20 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T15:37:00+01:00",
+      "date": "2026-10-10 15:37 BST",
+      "agent": "Antigravity",
+      "summary": "Settings modal enhancements: App tab, birthday passwords, Spotify SVG branding, Your Words icons, and full-width modals",
+      "detail": [
+        "Rename Settings 'Account' tab to 'App' and move the Account section button to the bottom.",
+        "Clean up Account modal: user name inside avatar circle without repetition, larger logout pill, and replace secret word with Birthday password.",
+        "Replace music note with official Spotify SVG logo inline with connection status, drop redundant 'Spotify' heading, and add 'Used for lyrics mode' note.",
+        "Refine 'Your words': remove saved words list, fix font size consistency across all rows, and replace text pills with circular SVG action icons.",
+        "Make settings modals full width (edge-to-edge on mobile, 860px on desktop) with a prominent circular SVG close button."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T15:23:00+01:00",
       "date": "2026-10-10 15:23 BST",
       "agent": "Antigravity",

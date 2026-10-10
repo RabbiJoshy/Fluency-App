@@ -293,6 +293,19 @@ function devicePasswordKey() {
     return currentUser && !currentUser.isGuest ? `auth_pwd_${currentUser.initials}` : null;
 }
 
+function formatBirthdayDisplay(value) {
+    if (!value) return '';
+    const parts = String(value).split('-');
+    if (parts.length !== 2) return String(value);
+    const m = parseInt(parts[0], 10);
+    const d = parseInt(parts[1], 10);
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    if (m >= 1 && m <= 12 && d >= 1 && d <= 31) {
+        return `${d} ${months[m - 1]}`;
+    }
+    return String(value);
+}
+
 function renderAccountPanel() {
     const named = Boolean(currentUser && !currentUser.isGuest);
     const badge = document.getElementById('accountUserBadge');
@@ -307,66 +320,49 @@ function renderAccountPanel() {
 
     const row = document.getElementById('accountPasswordRow');
     if (!row) return;
-    row.hidden = !named || Boolean(currentUser?.profileId);
+    row.hidden = !named;
     if (row.hidden) return;
-    const stored = localStorage.getItem(devicePasswordKey()) || '';
+    const birthday = currentUser?.birthday || '';
     const input = document.getElementById('accountPasswordInput');
     if (document.activeElement === input) input.blur();
-    input.value = stored;
-    input.placeholder = 'None on this device';
+    input.value = birthday ? formatBirthdayDisplay(birthday) : '';
+    input.placeholder = 'None set';
     input.readOnly = true;
-    input.classList.toggle('is-concealed', Boolean(stored));
+    input.classList.toggle('is-concealed', Boolean(birthday));
     const show = document.getElementById('accountPasswordShowBtn');
-    show.textContent = stored ? 'Show' : 'Set';
-    show.hidden = false;
-    document.getElementById('accountPasswordSaveBtn').hidden = true;
-    document.getElementById('accountPasswordStatus').textContent = '';
+    if (show) {
+        show.textContent = birthday ? 'Change' : 'Set';
+        show.hidden = false;
+    }
+    const save = document.getElementById('accountPasswordSaveBtn');
+    if (save) save.hidden = true;
+    const status = document.getElementById('accountPasswordStatus');
+    if (status) status.textContent = 'This is used as your password';
 }
 
 function wireAccountPassword() {
     const input = document.getElementById('accountPasswordInput');
     const show = document.getElementById('accountPasswordShowBtn');
-    const save = document.getElementById('accountPasswordSaveBtn');
     const status = document.getElementById('accountPasswordStatus');
-    if (!input || !show || !save) return;
-    const stored = () => localStorage.getItem(devicePasswordKey()) || '';
-    const syncSave = () => {
-        save.hidden = input.readOnly || input.value.trim() === stored();
-    };
+    if (!input || !show) return;
     show.addEventListener('click', () => {
-        if (input.readOnly) {
-            // Revealed means editable: the owner sees it and can change it.
-            input.readOnly = false;
-            input.classList.remove('is-concealed');
-            show.textContent = 'Hide';
-            input.focus();
-            input.setSelectionRange(input.value.length, input.value.length);
-        } else {
-            renderAccountPanel();
+        if (!currentUser) return;
+        const currentBday = currentUser.birthday || '';
+        const day = prompt('Enter birthday day (1-31):', currentBday ? currentBday.split('-')[1] : '');
+        if (day === null) return;
+        const month = prompt('Enter birthday month (1-12):', currentBday ? currentBday.split('-')[0] : '');
+        if (month === null) return;
+        const d = parseInt(day, 10);
+        const m = parseInt(month, 10);
+        if (!d || !m || d < 1 || d > 31 || m < 1 || m > 12) {
+            alert('Please enter a valid day (1-31) and month (1-12).');
             return;
         }
-        status.textContent = '';
-        syncSave();
-    });
-    input.addEventListener('input', syncSave);
-    input.addEventListener('keydown', event => {
-        if (event.key === 'Enter' && !save.hidden) save.click();
-        if (event.key === 'Escape') { event.stopPropagation(); renderAccountPanel(); }
-    });
-    save.addEventListener('click', () => {
-        const key = devicePasswordKey();
-        if (!key) return;
-        const next = input.value.trim();
-        if (next) {
-            localStorage.setItem(key, next);
-        } else {
-            if (!confirm('Remove the secret word? Anyone on this device could then use your profile.')) return;
-            localStorage.removeItem(key);
-        }
-        currentUser.hasPassword = Boolean(next);
+        const formatted = `${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        currentUser.birthday = formatted;
         localStorage.setItem('flashcardUser', JSON.stringify(currentUser));
         renderAccountPanel();
-        status.textContent = next ? 'Secret word saved on this device.' : 'Secret word removed.';
+        if (status) status.textContent = 'Birthday updated! This is used as your password.';
     });
 }
 

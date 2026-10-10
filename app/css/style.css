@@ -17622,20 +17622,31 @@ body {
   position: static;
   display: grid;
   place-items: center;
-  flex: 0 0 34px;
-  width: 34px;
-  height: 34px;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
   margin: 0;
   padding: 0;
   border: 1px solid var(--border-color);
-  border-radius: 10px;
+  border-radius: 50%;
   background: var(--bg-tertiary);
-  color: var(--text-muted);
-  font: 500 14px/1 var(--font-reading);
+  color: var(--text-primary);
+  font: 500 16px/1 var(--font-reading);
   cursor: pointer;
+  transition: all 0.15s ease;
 }
 .product-modal .modal-close:hover,
-.info-sheet-close:hover { color: var(--text-primary); border-color: var(--border-light); }
+.info-sheet-close:hover {
+  background: color-mix(in srgb, var(--text-primary) 12%, var(--bg-tertiary));
+  color: #fff;
+  border-color: var(--border-light);
+  transform: scale(1.05);
+}
+.product-modal .modal-close svg,
+.info-sheet-close svg {
+  width: 18px;
+  height: 18px;
+}
 
 /* Setup explainers: concise, punchy, cleanly centered on screen */
 .setup-info-modal {
@@ -18394,7 +18405,7 @@ body {
 
 /* Compact learner settings; detail screens reuse the same modal without tabs. */
 #settingsModal .settings-modal-content > .settings-tabs { display: none; }
-#settingsModal .settings-modal-content { width: min(94vw, 590px); max-width: 590px; }
+#settingsModal .settings-modal-content { width: min(96vw, 860px); max-width: 860px; }
 #settingsModal .settings-title-block { display: flex; align-items: center; gap: 12px; }
 #settingsModal .settings-back {
   border: 0; background: transparent; color: var(--text-primary);
@@ -20233,18 +20244,18 @@ body.rare-uses-open { overflow: hidden; }
 @media (min-width: 701px) {
   #settingsModal .settings-modal-content {
     display: block;
-    width: min(94vw, 590px);
-    max-width: 590px;
+    width: min(96vw, 860px);
+    max-width: 860px;
     height: auto;
-    max-height: min(calc(90dvh / var(--ui-zoom, 1)), 780px);
-    padding: 0 24px 26px;
+    max-height: min(calc(90dvh / var(--ui-zoom, 1)), 840px);
+    padding: 0 32px 30px;
     overflow-y: auto;
   }
   #settingsModal .settings-modal-content > .settings-tabs-header {
     position: sticky;
     top: 0;
-    margin: 0 -24px 16px;
-    padding: 18px 24px 14px;
+    margin: 0 -32px 18px;
+    padding: 20px 32px 16px;
   }
   #settingsModal .settings-tab-content {
     display: none;
@@ -20253,6 +20264,25 @@ body.rare-uses-open { overflow: hidden; }
     overflow: visible;
   }
   #settingsModal .settings-tab-content.active { display: block; }
+}
+
+@media (max-width: 700px) {
+  #settingsModal.product-modal {
+    align-items: flex-end;
+    padding: 0;
+  }
+  #settingsModal .settings-modal-content {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    border-radius: 24px 24px 0 0 !important;
+    padding: 0 20px max(24px, env(safe-area-inset-bottom)) !important;
+    box-sizing: border-box !important;
+  }
+  #settingsModal .settings-modal-content > .settings-tabs-header {
+    margin: 0 -20px 16px !important;
+    padding: 18px 20px 14px !important;
+  }
 }
 
 /* ---- Side-docked sheets ----------------------------------------------------
@@ -21240,12 +21270,17 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
   display: grid;
   place-items: center;
   flex: none;
-  width: 64px;
-  height: 64px;
+  width: 72px;
+  height: 72px;
+  padding: 4px;
   border-radius: 50%;
   background: var(--accent-primary);
   color: #fff;
-  font: 700 22px/1 var(--font-emphasis);
+  font: 700 20px/1.15 var(--font-emphasis);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
   letter-spacing: .02em;
 }
 .account-avatar.is-guest {
@@ -21254,22 +21289,62 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
 }
 .account-profile-copy { display: grid; gap: 3px; min-width: 0; margin-right: auto; }
 .account-profile-copy strong { font: 700 20px/1.2 var(--font-emphasis); color: var(--text-primary); }
-.account-profile-copy small { color: var(--text-muted); font-size: 12px; }
+.account-profile-copy small { color: var(--text-secondary); font-size: 14px; }
 .account-logout {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 9px;
   flex: none;
-  padding: 9px 14px;
+  min-height: 44px;
+  padding: 10px 20px;
   border: 1px solid color-mix(in srgb, var(--error, #e5484d) 45%, var(--border-color));
   border-radius: 999px;
-  background: transparent;
+  background: color-mix(in srgb, var(--error, #e5484d) 8%, transparent);
   color: var(--error, #e5484d);
-  font: 650 13px/1 var(--font-reading);
+  font: 650 15px/1 var(--font-reading);
   cursor: pointer;
+  transition: all 0.15s ease;
 }
-.account-logout svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.account-logout:hover { background: color-mix(in srgb, var(--error, #e5484d) 10%, transparent); }
+.account-logout svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.account-logout:hover {
+  background: color-mix(in srgb, var(--error, #e5484d) 16%, transparent);
+  border-color: var(--error, #e5484d);
+  transform: translateY(-1px);
+}
+.spotify-connection-card {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+  padding: 16px 20px !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 16px !important;
+  background: var(--bg-tertiary) !important;
+}
+.spotify-status-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.spotify-logo-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.spotify-connection-label {
+  font-size: 16px;
+  font-weight: 650;
+  color: var(--text-primary);
+  font-family: var(--font-reading);
+}
+.spotify-feature-note {
+  width: 100%;
+  margin: 2px 0 0 0 !important;
+  font-size: 13px !important;
+  color: var(--text-secondary) !important;
+}
 .account-password {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto auto;
@@ -22102,7 +22177,7 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
    Saved words is the same row with its list beneath. */
 #settingsModal .settings-words-row {
   display: flex; align-items: center; justify-content: space-between; gap: 14px;
-  width: 100%; padding: 13px 0;
+  width: 100%; padding: 16px 0;
   border: 0; border-top: 1px solid var(--border-color);
   background: transparent; color: var(--text-primary); text-align: left;
 }
@@ -22110,21 +22185,41 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 #settingsModal .settings-words-row > span:first-child { min-width: 0; }
 #settingsModal .settings-words-row strong,
 #settingsModal .settings-words-row small { display: block; }
-#settingsModal .settings-words-row strong { font-size: 13px; }
-#settingsModal .settings-words-row small { margin-top: 3px; color: var(--text-muted); font-size: 11px; line-height: 1.4; }
+#settingsModal .settings-words-row strong { font-size: 18px; font-family: var(--font-reading); font-weight: 600; color: var(--text-primary); }
+#settingsModal .settings-words-row small { margin-top: 4px; color: var(--text-secondary); font-size: 14px; line-height: 1.5; }
+#settingsModal .settings-words-saved-head strong { font-size: 18px !important; font-family: var(--font-reading) !important; font-weight: 600 !important; color: var(--text-primary) !important; }
+#settingsModal .settings-words-saved-head small { font-size: 14px !important; line-height: 1.5 !important; color: var(--text-secondary) !important; }
 #settingsModal .settings-words-action,
 #settingsModal .settings-link-row.settings-words-row > span.settings-words-action {
-  flex: none; padding: 7px 13px;
-  border: 1px solid var(--border-color); border-radius: 999px;
-  background: var(--bg-tertiary); color: var(--text-primary);
-  font: 650 12px/1 var(--font-reading); text-transform: none; letter-spacing: 0; cursor: pointer;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+#settingsModal .settings-words-action svg,
+#settingsModal .settings-link-row.settings-words-row > span.settings-words-action svg {
+  width: 18px;
+  height: 18px;
 }
 #settingsModal .settings-link-row.settings-words-row.is-primary > span.settings-words-action {
   border-color: color-mix(in srgb, var(--accent-primary) 55%, var(--border-color));
   background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
   color: var(--accent-primary);
 }
-#settingsModal button.settings-words-row:hover .settings-words-action { border-color: var(--accent-primary); }
+#settingsModal button.settings-words-row:hover .settings-words-action {
+  border-color: var(--accent-primary);
+  background: color-mix(in srgb, var(--accent-primary) 20%, transparent);
+  color: var(--accent-primary);
+  transform: scale(1.06);
+}
 #settingsModal button.settings-words-row:disabled { cursor: not-allowed; }
 #settingsModal button.settings-words-row:disabled .settings-words-action { opacity: .45; }
 #settingsModal .settings-words-action[hidden] { display: none; }
