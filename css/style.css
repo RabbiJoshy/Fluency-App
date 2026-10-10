@@ -6880,27 +6880,6 @@
             font: 700 0.82rem/1 var(--font-data, var(--font-emphasis, monospace));
             position: relative;
         }
-        .lsw-segments.lsw-scrubber .lsw-seg.has-progress::after,
-        .lsw-segments.lsw-scrubber .lsw-seg.has-partial-progress::after {
-            content: '';
-            position: absolute;
-            left: 14px;
-            right: 14px;
-            bottom: 4px;
-            height: 3px;
-            border-radius: 999px;
-            background: linear-gradient(to right,
-                var(--accent-secondary) 0,
-                var(--accent-secondary) var(--level-progress),
-                rgba(255, 255, 255, 0.14) var(--level-progress),
-                rgba(255, 255, 255, 0.14) 100%);
-            box-shadow: 0 0 4px rgba(var(--accent-secondary-rgb), 0.25);
-            pointer-events: none;
-        }
-        .lsw-segments.lsw-scrubber .lsw-seg.is-complete::after {
-            background: var(--accent-secondary);
-            box-shadow: 0 0 5px rgba(var(--accent-secondary-rgb), 0.35);
-        }
         .lsw-segments.lsw-scrubber .lsw-seg .lsw-seg-label { pointer-events: none; }
         .lsw-segments.lsw-scrubber .lsw-seg.filled:not(.selected) {
             opacity: 0.62; color: var(--text-secondary, #b7bcc4);
@@ -22755,6 +22734,7 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
   align-items: center;
 }
 .lsw-segments.lsw-scrubber .lsw-seg {
+  position: relative;
   width: 52px;
   height: 44px;
   border-radius: 12px;
@@ -22816,6 +22796,48 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
   font-weight: 850;
   line-height: 1;
   color: var(--accent-primary);
+}
+
+/* Scrubber level status dots */
+.lsw-segments.lsw-scrubber .lsw-seg.is-complete::after,
+.lsw-segments.lsw-scrubber .lsw-seg.has-progress:not(.is-complete)::after,
+.lsw-segments.lsw-scrubber .lsw-seg.has-partial-progress:not(.is-complete)::after,
+.lsw-segments.lsw-scrubber .lsw-seg.is-auto-complete::after {
+  content: '';
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  pointer-events: none;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.lsw-segments.lsw-scrubber .lsw-seg.selected::after {
+  bottom: 5px;
+  width: 5px;
+  height: 5px;
+}
+
+/* Green dot: 100% completed by study */
+.lsw-segments.lsw-scrubber .lsw-seg.is-complete:not(.is-auto-complete)::after {
+  background: var(--set-known, #22c55e);
+  box-shadow: 0 0 4px rgba(34, 197, 94, 0.45);
+}
+
+/* Yellow dot: In-progress / has study activity */
+.lsw-segments.lsw-scrubber .lsw-seg.has-progress:not(.is-complete)::after,
+.lsw-segments.lsw-scrubber .lsw-seg.has-partial-progress:not(.is-complete)::after {
+  background: var(--set-review, #f5b800);
+  box-shadow: 0 0 4px rgba(245, 184, 0, 0.45);
+}
+
+/* Slate grey dot: Auto-completed / placed via initial estimate */
+.lsw-segments.lsw-scrubber .lsw-seg.is-auto-complete::after {
+  background: var(--set-skipped, #7b8797);
+  box-shadow: 0 0 2px rgba(123, 135, 151, 0.35);
 }
 
 /* Readout line: words range centered & clean */
@@ -23601,8 +23623,7 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
 }
 
 /* Estimated placement is distinct from earned study progress. */
-.level-btn.is-auto-complete::after,
-.lsw-segments.lsw-scrubber .lsw-seg.is-auto-complete::after {
+.level-btn.is-auto-complete::after {
     content: 'AUTO';
     height: auto;
     background: none;

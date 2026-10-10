@@ -1,8 +1,8 @@
 // Setup panel UI: language tabs, stable level selector, and automatic set progress.
 // Key functions: renderLanguageTabs(), renderLevelSelector(), renderRangeSelector().
-import './state.js?v=dc6bb58a';
-import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=dc6bb58a';
-import { readFastTrack } from './fast-track-preferences.js?v=dc6bb58a';
+import './state.js?v=da579f48';
+import { openProgressOverview, closeProgressOverview } from './progress-overview.js?v=da579f48';
+import { readFastTrack } from './fast-track-preferences.js?v=da579f48';
 
 const GLOBAL_STUDY_DEFAULTS_KEY = 'fluency_global_study_defaults_v1';
 // One tap, one finishable sitting. The pool is already ordered by needfulness
@@ -1147,6 +1147,7 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
         const isPartial = seenCount > 0 && hasUnseen;
         const isComplete = seenCount > 0 && !hasUnseen;
         const hasProgress = seenCount > 0;
+        const hasReview = reviewCount > 0;
         const autoCompleted = isComplete && estimatedCount > 0;
         btn.classList.toggle('is-auto-complete', autoCompleted);
         btn.dataset.autoCompleted = String(autoCompleted);
@@ -1154,6 +1155,7 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
         btn.dataset.reviewCount = String(reviewCount);
         btn.classList.toggle('has-progress', hasProgress);
         btn.classList.toggle('has-partial-progress', isPartial);
+        btn.classList.toggle('has-review', hasReview);
         btn.classList.toggle('is-complete', isComplete);
         btn.style.setProperty('--level-progress', `${completion}%`);
 
@@ -1164,6 +1166,7 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
             visibleSegment.dataset.progressPct = String(completion);
             visibleSegment.classList.toggle('has-progress', hasProgress);
             visibleSegment.classList.toggle('has-partial-progress', isPartial);
+            visibleSegment.classList.toggle('has-review', hasReview);
             visibleSegment.classList.toggle('is-complete', isComplete);
             visibleSegment.style.setProperty('--level-progress', `${completion}%`);
             visibleSegment.setAttribute(
@@ -3353,7 +3356,7 @@ function showSettingsModalWithTab(tabName, { singleTab = false, onBack = null } 
     if (window.refreshSpotifyConnectionUI) {
         window.refreshSpotifyConnectionUI();
     } else {
-        import('./spotify.js?v=dc6bb58a')
+        import('./spotify.js?v=da579f48')
             .then(() => window.refreshSpotifyConnectionUI?.())
             .catch(error => console.warn('Spotify controls deferred:', error));
     }
