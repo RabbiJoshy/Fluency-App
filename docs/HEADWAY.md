@@ -293,3 +293,22 @@ No staging redeploy was performed. The current shared worktree app suite had
 `tests/app/estimation_checks.cjs:118`) while another chat’s estimation changes
 were uncommitted. This documentation-only checkpoint does not modify that code
 or claim a fresh passing app suite.
+
+## Default-deck rollout authorised by Josh
+
+Promoting the app previously left production on v23 because HEADWAY candidates
+were selected only by review URL. Josh authorised making the corrected decks
+the defaults, reviewing staging and promoting that configuration.
+The default es/pt index, examples, study structure, manifests, composition and
+conjugation pointers now select es r4 / pt r2. Surface identities/ranks are
+unchanged. Existing policy Merge Lemmas lists are copied from the validated
+candidates; no merging policy is changed. Frequency values/source hashes are
+preserved and their index bindings/hashes updated. Cognate card verdicts are
+recomputed from existing reviewed score/match tables; these tables are unchanged
+and no new scores are invented or claimed. Newly unsupported score pairs remain
+absent. Only es/pt estimator pools are regenerated using current grouping rules.
+Missing es/pt coverage assets are explicitly null rather than fetched as HTML.
+`default-rollout-preview.json` records the bindings/counts. A new app regression
+check requires all es/pt default release-bound assets to agree. No WSD, harvest,
+paid calls, model download, or other-language regeneration is needed.
+Rollout is based on latest UI commit d1515300; staging review is the next step.

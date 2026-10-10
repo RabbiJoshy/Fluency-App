@@ -2,11 +2,12 @@
 // Reads release files from local Fluency-Workspace and generates single-file JSON
 // payloads in app/data/estimation-pools/<language>.json.
 //
-// Usage: node scripts/build_estimation_pools.cjs [/path/to/Fluency-Workspace]
+// Usage: node scripts/build_estimation_pools.cjs [/path/to/Fluency-Workspace] [language ...]
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const { createHarness, ROOT } = require('../tests/app/estimation_harness.cjs');
 const workspace = path.resolve(process.argv[2] || '../Fluency-Workspace');
+const selectedLanguages = new Set(process.argv.slice(3));
 
 async function localFetch(url) {
     const value = String(url).split('?')[0];
@@ -82,6 +83,7 @@ async function buildPoolForLanguage(language, langConfig) {
     await fs.mkdir(outputDir, { recursive: true });
 
     for (const [language, langConfig] of Object.entries(config.languages)) {
+        if (selectedLanguages.size && !selectedLanguages.has(language)) continue;
         if (!langConfig.capabilities?.speech || !langConfig.indexPath) {
             continue;
         }

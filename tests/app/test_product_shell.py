@@ -128,15 +128,15 @@ class ProductShellTests(unittest.TestCase):
         self.assertEqual(config["languages"]["portuguese_brazilian"]["speechLang"], "pt-BR")
         self.assertEqual(
             config["languages"]["spanish"]["studyStructurePath"],
-            "releases/es/speech/es-speech-v23-10000x30-slim/app/study-structure.json",
+            "releases/es/speech/es-speech-v24-headway-r4-10000x30-slim/app/study-structure.json",
         )
         self.assertEqual(
             config["languages"]["spanish"]["releaseManifestPath"],
-            "releases/es/speech/es-speech-v23-10000x30-slim/manifest.json",
+            "releases/es/speech/es-speech-v24-headway-r4-10000x30-slim/manifest.json",
         )
         self.assertEqual(
             config["languages"]["spanish"]["releaseCompositionPath"],
-            "releases/es/speech/es-speech-v23-10000x30-slim/composition.json",
+            "releases/es/speech/es-speech-v24-headway-r4-10000x30-slim/composition.json",
         )
         for legacy_path in (
             "conjugatedEnglishPath",
@@ -145,15 +145,15 @@ class ProductShellTests(unittest.TestCase):
             self.assertNotIn(legacy_path, config["languages"]["spanish"])
         self.assertEqual(
             config["languages"]["spanish"]["conjugationsPath"],
-            "releases/es/speech/es-speech-v23-10000x30-slim/app/conjugations.json",
+            "releases/es/speech/es-speech-v24-headway-r4-10000x30-slim/app/conjugations.json",
         )
         self.assertEqual(
             config["languages"]["portuguese"]["indexPath"],
-            "releases/pt/speech/pt-speech-v23-10000x30-slim/app/vocabulary.index.json",
+            "releases/pt/speech/pt-speech-v24-headway-r2-10000x30-slim/app/vocabulary.index.json",
         )
         self.assertEqual(
             config["languages"]["portuguese"]["conjugationsPath"],
-            "releases/pt/speech/pt-speech-v23-10000x30-slim/app/conjugations.json",
+            "releases/pt/speech/pt-speech-v24-headway-r2-10000x30-slim/app/conjugations.json",
         )
         self.assertEqual(
             config["languages"]["czech"]["indexPath"],
