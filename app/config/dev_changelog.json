@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T11:35:14+01:00",
+      "date": "2026-10-10 11:35 BST",
+      "agent": "Codex",
+      "summary": "Activate verified noun merges in Spanish and Portuguese Speech decks",
+      "detail": [
+        "Publish matching v23 metadata for 314 Spanish and 335 Portuguese noun groups, shared by Smart Skip, the level estimator and deck grouping.",
+        "Recover SpanishDict evidence for 773 candidate spellings and Wiktionary entry tags from the saved dump; keep changed, incomplete or ambiguous menus separate.",
+        "Preserve card IDs, saved progress, definitions and examples; verify all 20,000 full and early-loading decisions agree."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T00:35:00+01:00",
       "date": "2026-10-10 00:35 BST",
       "agent": "Claude",
@@ -358,16 +370,6 @@
       "summary": "Smart Skip row on the level box shows more example words, in English",
       "detail": [
         "The 'Skipping …' / 'Look-alikes like …' line now lists up to eight words (the row trims to fit), as English words (family, minute, important) instead of the Spanish forms."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T01:05:00+01:00",
-      "date": "2026-10-09 01:05 BST",
-      "agent": "Claude",
-      "summary": "Set pills show their word ranks on desktop",
-      "detail": [
-        "Choose a set: on screens 760px and wider each pill reads its frequency-rank range (e.g. 26–50) instead of the set number; phones keep the number."
       ],
       "commit": "pending"
     }
