@@ -2,6 +2,77 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T16:03:00+01:00",
+      "date": "2026-10-10 16:03 BST",
+      "agent": "Antigravity",
+      "summary": "Active card controls cleanup, prominence meter visual linking, and study options simplification",
+      "detail": [
+        "Permanently remove bottom-middle shortcuts and suggestions on active desktop cards to eliminate pill occlusion.",
+        "Permanently disable swipe onboarding pill ('← Needs practice · Got it →') on desktop devices via CSS and JS platform detection.",
+        "Replace review meanings bookmark icon with a circular redo/review curved arrow icon.",
+        "Replace rare uses tile icon with 0-of-3 empty bars to visually link with the card prominence meter.",
+        "Significantly enlarge the commonness tooltip (16px font, comfortable padding) for clear legibility.",
+        "Simplify card study options sheet: remove redundant 'Study settings' button, rename to 'Speak text', and enlarge menu icons.",
+        "Clean up main Settings Study tab: remove 'Speak the word' and promote Spaced repetition to the top with explainer 'Bring back learned words'."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T15:48:48+01:00",
+      "date": "2026-10-10 15:48 BST",
+      "agent": "Codex",
+      "summary": "HEADWAY: corrected Spanish and Portuguese headwords prepared for staging review",
+      "detail": [
+        "Correct source lemma imports and preserve attached pronouns, specialised meanings and distinct verb/noun analyses.",
+        "Restore supported earlier Spanish clitic corrections and preserve curated overrides.",
+        "Re-score affected cards on existing frozen sentences; production decks remain unchanged.",
+        "Staging candidate selection loads the candidate’s study structure and Merge Lemmas data."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T15:37:00+01:00",
+      "date": "2026-10-10 15:37 BST",
+      "agent": "Antigravity",
+      "summary": "Settings modal enhancements: App tab, birthday passwords, Spotify SVG branding, Your Words icons, and full-width modals",
+      "detail": [
+        "Rename Settings 'Account' tab to 'App' and move the Account section button to the bottom.",
+        "Clean up Account modal: user name inside avatar circle without repetition, larger logout pill, and replace secret word with Birthday password.",
+        "Replace music note with official Spotify SVG logo inline with connection status, drop redundant 'Spotify' heading, and add 'Used for lyrics mode' note.",
+        "Refine 'Your words': remove saved words list, fix font size consistency across all rows, and replace text pills with circular SVG action icons.",
+        "Make settings modals full width (edge-to-edge on mobile, 860px on desktop) with a prominent circular SVG close button."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T15:23:00+01:00",
+      "date": "2026-10-10 15:23 BST",
+      "agent": "Antigravity",
+      "summary": "Refine resume set modal hierarchy and remove mobile language chip chevron",
+      "detail": [
+        "Invert resume modal hierarchy: 'Welcome back' is now the primary centered heading and 'Pick up where you left off' is a subtle subtitle.",
+        "Enlarge language name, level/set, and last card word readouts, and center the resume modal layout.",
+        "Remove redundant 'Learn new'/'Practice' track tag and strip 'speech' suffix from language name in resume prompt.",
+        "Rename resume action to 'Continue set' and remove colored accent outline in favor of clean solid focus styling.",
+        "Remove top bar language chevron so long language names like 'Portuguese' are never obscured on mobile."
+      ],
+      "commit": "pending"
+    },
+    {
+      "timestamp": "2026-10-10T14:00:00+01:00",
+      "date": "2026-10-10 14:00 BST",
+      "agent": "Antigravity",
+      "summary": "AIRLOCK: Establish isolated staging deployment and deliberate promotion workflow",
+      "detail": [
+        "Staging hosted at https://fluency-staging.pages.dev/ with clear amber environment identification and title badge.",
+        "Browser and backend isolation: separate IndexedDB database ('fluency-offline-staging') and wire sync namespacing ('stg_*') ensure real learning progress is 100% protected.",
+        "Candidate deck selection: staging can select candidate deck versions via config, query parameters, or interactive Developer settings without replacing production data.",
+        "Repeatable publication and promotion: `make stage` publishes proposed changes to Cloudflare Pages; `make promote` deliberately promotes only the reviewed commit, blocking unreviewed changes.",
+        "Staging service worker skipWaiting enables immediate asset loading on phone and laptop."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T12:43:57+01:00",
       "date": "2026-10-10 12:43 BST",
       "agent": "Codex",
@@ -323,58 +394,6 @@
         "Choose level, Choose a set and Practice errors have equal spacing above and below their labels.",
         "Set cards are about 20% shorter and arranged in two columns, with frequency rank ranges visible on phones and desktop.",
         "The selected set retains its accent ring without enlarging or shifting the card."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T09:07:00+01:00",
-      "date": "2026-10-09 09:07 BST",
-      "agent": "Claude",
-      "summary": "Cards are no longer named after a phrase they appear in: é cites ser, not \"não é\"",
-      "detail": [
-        "A card's dictionary form skips headwords with more words than the card's own word (não é on é, por qué on por, cinto de segurança on cinto), unless it is the same spelling written apart (porfavor).",
-        "Look up links on é now open WordReference and Reverso for ser; they searched \"não é\".",
-        "With Merge Lemmas on, the back of é reads ser, not \"não é · ser\"; não, por and do read não, por and de.",
-        "Same rule as the release's lemma column (11276edc), already live on es and pt v23."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T01:30:00+01:00",
-      "date": "2026-10-09 01:30 BST",
-      "agent": "Antigravity",
-      "summary": "UNISON post-audit release: metadata contract, clean possessives, split card partitioning, and MWE production cues",
-      "detail": [
-        "Split cards: prevent Card 2 from repeating the whole Card 1 menu when it has no distinct primary senses; retain expression senses on base cards.",
-        "Card metadata pills: suppress grammatical jargon tags (transitive, intransitive, copular) while keeping companion prepositions, register, and regional badges intact.",
-        "English to target production: display [phrase] scope badge on multi-word expression prompts so learners know a phrase is expected.",
-        "Portuguese & Spanish decks: updated with Decision 0030 sense/metadata contract, cleaner possessives (seu -> your/his/her), and companion disambiguation (falar + com / + de)."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T01:00:00+01:00",
-      "date": "2026-10-09 01:00 BST",
-      "agent": "Claude",
-      "summary": "Vocabulary choice: switching and progress carry-over stated; hover text says words start most common first",
-      "detail": [
-        "Intro under 'Choose your flashcard vocabulary source' now ends: You can switch at any time, and the words you learn carry over between the two modes.",
-        "Desktop hover text on Everyday speech: 'Starts with the most common words in films and TV shows'; on Your music: 'Starts with the most common words in the music you listen to'.",
-        "The in-study vocabulary picker shares the intro wording."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T00:59:00+01:00",
-      "date": "2026-10-09 00:59 BST",
-      "agent": "Claude",
-      "summary": "One tutorial in three chapters: Studying a card, Smart Skip, Speech or music",
-      "detail": [
-        "Replaces the separate quick tutorial and full card tour. The ? button and Help open it directly; chapter names along the top jump to any chapter.",
-        "Studying a card (9 steps): the full card tour with the essentials folded in — recall and flip, how common the word is, kind of word, dictionary form, meanings, choosing a meaning, how common each meaning is, examples and where they come from, swipe to grade.",
-        "Cut: Useful extras and Hear it. Merged: the back's repeated 'The word', 'How often it is said' into 'How common the word is', and 'Where the example is from' into the example note. No more tap-to-continue tasks.",
-        "Smart Skip and Speech or music are now pages of their own, showing a copy of the real switch and the Vocabulary picker, with examples in the language being taught.",
-        "Each chapter ends with Start studying or Next: <chapter> →."
       ],
       "commit": "pending"
     }

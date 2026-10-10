@@ -1,6 +1,13 @@
 // Shared durable storage for offline content, local-first state, and sync.
 // Keep this module dependency-free so it can be tested and migrated safely.
-const DB_NAME = 'fluency-offline';
+function resolveDbName() {
+    if (typeof window === 'undefined') return 'fluency-offline';
+    const isStaging = window.__FLUENCY_ENV__ === 'staging' ||
+        window.location.hostname.includes('pages.dev') ||
+        window.location.hostname.includes('staging');
+    return isStaging ? 'fluency-offline-staging' : 'fluency-offline';
+}
+const DB_NAME = resolveDbName();
 const DB_VERSION = 3;
 const STORES = ['operations', 'receipts', 'downloads', 'localState', 'migrations'];
 

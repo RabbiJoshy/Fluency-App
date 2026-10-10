@@ -1,35 +1,36 @@
 // First: rewrites old ?artist=/?about= links to their #/ route before
 // anything below reads the address.
-import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=be4d96f2';
-import { releaseUrl } from './release-host.js?v=be4d96f2';
-import './theme.js?v=be4d96f2';
-import { installFlagRendering } from './flags.js?v=be4d96f2';
-import './state.js?v=be4d96f2';
-import './offline-db.js?v=be4d96f2';
-import './sync-queue.js?v=be4d96f2';
-import { initOfflineContent } from './offline-content.js?v=be4d96f2';
-import './speech.js?v=be4d96f2';
-import './artist-ui.js?v=be4d96f2';
-import './auth.js?v=be4d96f2';
-import './tutorial.js?v=be4d96f2';
-import './walkthrough.js?v=be4d96f2';
-import './estimation.js?v=be4d96f2';
-import './config.js?v=be4d96f2';
-import './progress.js?v=be4d96f2';
-import './knowledge.js?v=be4d96f2';
-import './ui.js?v=be4d96f2';
-import './vocab.js?v=be4d96f2';
-import './cognates.js?v=be4d96f2';
-import './coverage.js?v=be4d96f2';
-import './fast-mode.js?v=be4d96f2';
-import './extras.js?v=be4d96f2';
-import './review-home.js?v=be4d96f2';
-import './song-sets.js?v=be4d96f2';
-import './playlist-live.js?v=be4d96f2';
-import './spotify-playlist-import.js?v=be4d96f2';
-import './vocabulary-import.js?v=be4d96f2';
-import './flashcards.js?v=be4d96f2';
-import { validateArtistCatalog } from './data-contracts.js?v=be4d96f2';
+import { conjugationDrillHref, goToRoute, languageKeyFor, replaceRoute, routeCodeFor } from './routes.js?v=9b943ab4';
+import { releaseUrl } from './release-host.js?v=9b943ab4';
+import './theme.js?v=9b943ab4';
+import { installFlagRendering } from './flags.js?v=9b943ab4';
+import { IS_STAGING } from './env.js?v=9b943ab4';
+import './state.js?v=9b943ab4';
+import './offline-db.js?v=9b943ab4';
+import './sync-queue.js?v=9b943ab4';
+import { initOfflineContent } from './offline-content.js?v=9b943ab4';
+import './speech.js?v=9b943ab4';
+import './artist-ui.js?v=9b943ab4';
+import './auth.js?v=9b943ab4';
+import './tutorial.js?v=9b943ab4';
+import './walkthrough.js?v=9b943ab4';
+import './estimation.js?v=9b943ab4';
+import './config.js?v=9b943ab4';
+import './progress.js?v=9b943ab4';
+import './knowledge.js?v=9b943ab4';
+import './ui.js?v=9b943ab4';
+import './vocab.js?v=9b943ab4';
+import './cognates.js?v=9b943ab4';
+import './coverage.js?v=9b943ab4';
+import './fast-mode.js?v=9b943ab4';
+import './extras.js?v=9b943ab4';
+import './review-home.js?v=9b943ab4';
+import './song-sets.js?v=9b943ab4';
+import './playlist-live.js?v=9b943ab4';
+import './spotify-playlist-import.js?v=9b943ab4';
+import './vocabulary-import.js?v=9b943ab4';
+import './flashcards.js?v=9b943ab4';
+import { validateArtistCatalog } from './data-contracts.js?v=9b943ab4';
 
 // Emoji flags anywhere on the page render as rectangular pictures.
 installFlagRendering();
@@ -83,7 +84,7 @@ window.openTutorialIntroduction = openTutorialIntroduction;
 // entirely out of normal Speech startup. Card/modal code already has its own
 // lazy module stubs in flashcards.js.
 const _spotifyModulePromise = ['artist', 'songs'].includes(window.fluencyRoute?.kind)
-    ? import('./spotify.js?v=be4d96f2').catch(error => {
+    ? import('./spotify.js?v=9b943ab4').catch(error => {
         console.warn('Spotify controls deferred:', error);
         return null;
     })
@@ -682,6 +683,27 @@ if (activeArtist) {
 loadConfig().then(async () => {
     const isResumeNavigation = new URLSearchParams(window.location.search).get('resume') === '1';
     perfMark('after loadConfig');
+
+    if (IS_STAGING) {
+        if (!document.title.startsWith('[STAGING]')) {
+            document.title = `[STAGING] ${document.title}`;
+        }
+        const envBadge = document.getElementById('envBadge');
+        if (envBadge) {
+            envBadge.hidden = false;
+            envBadge.addEventListener('click', () => {
+                if (window.showSettingsModalWithTab) {
+                    window.showSettingsModalWithTab('appData');
+                } else if (window.openSettingsModal) {
+                    window.openSettingsModal();
+                }
+            });
+        }
+        const appDataTabBtn = document.getElementById('appDataTabBtn');
+        const settingsAdminLabel = document.getElementById('settingsAdminLabel');
+        if (appDataTabBtn) appDataTabBtn.hidden = false;
+        if (settingsAdminLabel) settingsAdminLabel.hidden = false;
+    }
     // #/es/conjugate[/verb] names the drill page, which is its own document.
     // A language with no drill deck opens that language instead.
     if (window.fluencyRoute?.kind === 'conjugate') {
@@ -1715,7 +1737,7 @@ function spotifyStatusElement() {
         el.type = 'button';
         el.addEventListener('click', async event => {
             event.stopPropagation();
-            await (_spotifyModulePromise || import('./spotify.js?v=be4d96f2')).catch(() => null);
+            await (_spotifyModulePromise || import('./spotify.js?v=9b943ab4')).catch(() => null);
             window.spotifyLogin?.();
         });
     }

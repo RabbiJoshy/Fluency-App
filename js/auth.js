@@ -1,11 +1,11 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
-import './state.js?v=be4d96f2';
-import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=be4d96f2';
-import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=be4d96f2';
-import { applyRemoteFastTrack } from './fast-track-preferences.js?v=be4d96f2';
-import { dbGet, dbPut } from './offline-db.js?v=be4d96f2';
-import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=be4d96f2';
+import './state.js?v=9b943ab4';
+import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=9b943ab4';
+import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=9b943ab4';
+import { applyRemoteFastTrack } from './fast-track-preferences.js?v=9b943ab4';
+import { dbGet, dbPut } from './offline-db.js?v=9b943ab4';
+import { consumeRouteNavigation, formatRoute, parseRoute } from './routes.js?v=9b943ab4';
 // Offline-durable write path. sendOrQueue() write-throughs when online and
 // enqueues to IndexedDB when offline/failed. The overlay helpers keep
 // un-synced card and granular knowledge answers visible after a Sheets reload.
@@ -14,7 +14,8 @@ import {
     applyPendingProgressOverlay,
     applyPendingItemProgressOverlay,
     applyPendingMetaProgressOverlay
-} from './sync-queue.js?v=be4d96f2';
+} from './sync-queue.js?v=9b943ab4';
+import { IS_STAGING, getIsolatedSyncUser } from './env.js?v=9b943ab4';
 
 const AUDIT_ACCOUNT_INITIALS = new Set(['JST', 'JSTA']);
 
@@ -292,6 +293,19 @@ function devicePasswordKey() {
     return currentUser && !currentUser.isGuest ? `auth_pwd_${currentUser.initials}` : null;
 }
 
+function formatBirthdayDisplay(value) {
+    if (!value) return '';
+    const parts = String(value).split('-');
+    if (parts.length !== 2) return String(value);
+    const m = parseInt(parts[0], 10);
+    const d = parseInt(parts[1], 10);
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    if (m >= 1 && m <= 12 && d >= 1 && d <= 31) {
+        return `${d} ${months[m - 1]}`;
+    }
+    return String(value);
+}
+
 function renderAccountPanel() {
     const named = Boolean(currentUser && !currentUser.isGuest);
     const badge = document.getElementById('accountUserBadge');
@@ -306,66 +320,49 @@ function renderAccountPanel() {
 
     const row = document.getElementById('accountPasswordRow');
     if (!row) return;
-    row.hidden = !named || Boolean(currentUser?.profileId);
+    row.hidden = !named;
     if (row.hidden) return;
-    const stored = localStorage.getItem(devicePasswordKey()) || '';
+    const birthday = currentUser?.birthday || '';
     const input = document.getElementById('accountPasswordInput');
     if (document.activeElement === input) input.blur();
-    input.value = stored;
-    input.placeholder = 'None on this device';
+    input.value = birthday ? formatBirthdayDisplay(birthday) : '';
+    input.placeholder = 'None set';
     input.readOnly = true;
-    input.classList.toggle('is-concealed', Boolean(stored));
+    input.classList.toggle('is-concealed', Boolean(birthday));
     const show = document.getElementById('accountPasswordShowBtn');
-    show.textContent = stored ? 'Show' : 'Set';
-    show.hidden = false;
-    document.getElementById('accountPasswordSaveBtn').hidden = true;
-    document.getElementById('accountPasswordStatus').textContent = '';
+    if (show) {
+        show.textContent = birthday ? 'Change' : 'Set';
+        show.hidden = false;
+    }
+    const save = document.getElementById('accountPasswordSaveBtn');
+    if (save) save.hidden = true;
+    const status = document.getElementById('accountPasswordStatus');
+    if (status) status.textContent = 'This is used as your password';
 }
 
 function wireAccountPassword() {
     const input = document.getElementById('accountPasswordInput');
     const show = document.getElementById('accountPasswordShowBtn');
-    const save = document.getElementById('accountPasswordSaveBtn');
     const status = document.getElementById('accountPasswordStatus');
-    if (!input || !show || !save) return;
-    const stored = () => localStorage.getItem(devicePasswordKey()) || '';
-    const syncSave = () => {
-        save.hidden = input.readOnly || input.value.trim() === stored();
-    };
+    if (!input || !show) return;
     show.addEventListener('click', () => {
-        if (input.readOnly) {
-            // Revealed means editable: the owner sees it and can change it.
-            input.readOnly = false;
-            input.classList.remove('is-concealed');
-            show.textContent = 'Hide';
-            input.focus();
-            input.setSelectionRange(input.value.length, input.value.length);
-        } else {
-            renderAccountPanel();
+        if (!currentUser) return;
+        const currentBday = currentUser.birthday || '';
+        const day = prompt('Enter birthday day (1-31):', currentBday ? currentBday.split('-')[1] : '');
+        if (day === null) return;
+        const month = prompt('Enter birthday month (1-12):', currentBday ? currentBday.split('-')[0] : '');
+        if (month === null) return;
+        const d = parseInt(day, 10);
+        const m = parseInt(month, 10);
+        if (!d || !m || d < 1 || d > 31 || m < 1 || m > 12) {
+            alert('Please enter a valid day (1-31) and month (1-12).');
             return;
         }
-        status.textContent = '';
-        syncSave();
-    });
-    input.addEventListener('input', syncSave);
-    input.addEventListener('keydown', event => {
-        if (event.key === 'Enter' && !save.hidden) save.click();
-        if (event.key === 'Escape') { event.stopPropagation(); renderAccountPanel(); }
-    });
-    save.addEventListener('click', () => {
-        const key = devicePasswordKey();
-        if (!key) return;
-        const next = input.value.trim();
-        if (next) {
-            localStorage.setItem(key, next);
-        } else {
-            if (!confirm('Remove the secret word? Anyone on this device could then use your profile.')) return;
-            localStorage.removeItem(key);
-        }
-        currentUser.hasPassword = Boolean(next);
+        const formatted = `${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        currentUser.birthday = formatted;
         localStorage.setItem('flashcardUser', JSON.stringify(currentUser));
         renderAccountPanel();
-        status.textContent = next ? 'Secret word saved on this device.' : 'Secret word removed.';
+        if (status) status.textContent = 'Birthday updated! This is used as your password.';
     });
 }
 
@@ -379,6 +376,7 @@ function logout() {
 
     if (currentUser?.initials) {
         localStorage.removeItem(`progress_cache_${currentUser.initials}`);
+        localStorage.removeItem(`progress_cache_${getIsolatedSyncUser(currentUser.initials)}`);
     }
     localStorage.removeItem('flashcardUser');
     // Clean the legacy sessionStorage guest marker too, in case it's lingering.
@@ -587,8 +585,9 @@ function flushProgressCache() {
     progressCacheTimer = null;
     progressCacheIdleHandle = null;
     if (!currentUser || currentUser.isGuest) return;
+    const effectiveUser = getIsolatedSyncUser(currentUser.initials);
     const record = {
-        key: `progress|${currentUser.initials}`,
+        key: `progress|${effectiveUser}`,
         progress: progressData,
         itemProgress: itemProgressData,
         estimates: levelEstimates,
@@ -606,7 +605,7 @@ function flushProgressCache() {
         .then(() => dbPut('localState', record))
         .catch(error => console.warn('Could not persist local progress to IndexedDB', error));
     try {
-        localStorage.setItem(`progress_cache_${currentUser.initials}`, JSON.stringify({
+        localStorage.setItem(`progress_cache_${effectiveUser}`, JSON.stringify({
             progress: record.progress, itemProgress: record.itemProgress,
             estimates: record.estimates,
             backendSchema: record.backendSchema,
@@ -667,16 +666,17 @@ async function detectProgressBackendSchema() {
 }
 
 async function loadLegacyProgress(cacheKey, cached) {
+    const effectiveUser = getIsolatedSyncUser(currentUser.initials);
     const fetchSheet = sheet => fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
-        body: JSON.stringify({ action: 'load', user: currentUser.initials, sheet })
+        body: JSON.stringify({ action: 'load', user: effectiveUser, sheet })
     }).then(response => response.json()).catch(() => null);
     const [normalResult, artistResult, itemResult] = await Promise.all([
         fetchSheet('UserProgress'),
         fetchSheet('Lyrics'),
         fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
-            body: JSON.stringify({ action: 'loadItems', user: currentUser.initials })
+            body: JSON.stringify({ action: 'loadItems', user: effectiveUser })
         }).then(response => response.json()).catch(() => null)
     ]);
     if (!normalResult?.success && !artistResult?.success) {
@@ -784,13 +784,14 @@ async function loadUserProgressFromSheetNow() {
     // 1. Apply localStorage synchronously before the first await so initial
     // setup routing cannot briefly choose Level 1 from empty progress. Then
     // prefer the durable IndexedDB snapshot when it becomes available.
-    const cacheKey = `progress_cache_${currentUser.initials}`;
+    const effectiveUser = getIsolatedSyncUser(currentUser.initials);
+    const cacheKey = `progress_cache_${effectiveUser}`;
     let cached = localStorage.getItem(cacheKey);
     if (applyCachedProgress(cached)) {
         console.log(`Loaded ${Object.keys(progressData).length} cached card entries and ${Object.keys(itemProgressData).length} knowledge items`);
     }
     try {
-        const durable = await dbGet('localState', `progress|${currentUser.initials}`);
+        const durable = await dbGet('localState', `progress|${effectiveUser}`);
         if (durable) {
             cached = JSON.stringify(durable);
             applyCachedProgress(durable);
@@ -827,7 +828,7 @@ async function loadUserProgressFromSheetNow() {
                     action: 'load',
                     sheet: 'Progress',
                     mode: 'all',
-                    user: currentUser.initials,
+                    user: effectiveUser,
                     ...(since ? { since } : {})
                 })
             }).then(r => r.json()).catch(() => null),
@@ -837,7 +838,7 @@ async function loadUserProgressFromSheetNow() {
                     action: 'loadItems',
                     sheet: 'Progress',
                     mode: 'all',
-                    user: currentUser.initials,
+                    user: effectiveUser,
                     ...(since ? { since } : {})
                 })
             }).then(r => r.json()).catch(() => null)
@@ -951,12 +952,13 @@ async function loadUserProgressFromSheetNow() {
 // Save the level estimate as metadata in the unified Progress tab.
 async function saveLevelEstimateToSheet(rank) {
     if (!currentUser || currentUser.isGuest) return;
+    const effectiveUser = getIsolatedSyncUser(currentUser.initials);
     const language = selectedLanguage;
     const unified = progressBackendSchemaVersion >= 4;
     sendOrQueue(unified ? {
         action: 'saveMeta',
         sheet: 'Progress',
-        user: currentUser.initials,
+        user: effectiveUser,
         metaKey: 'level-estimate',
         metaId: language,
         mode: 'normal',
@@ -967,11 +969,11 @@ async function saveLevelEstimateToSheet(rank) {
     } : {
         action: 'save',
         sheet: getProgressSheetName(),
-        user: currentUser.initials,
+        user: effectiveUser,
         word: '_LEVEL_ESTIMATE_',
         wordId: rank,
         language
-    }, `meta|level-estimate|${currentUser.initials}|${language}`);
+    }, `meta|level-estimate|${effectiveUser}|${language}`);
 }
 
 // Save progress for a single word to Google Sheets
@@ -983,6 +985,7 @@ async function saveWordProgress(card, isCorrect) {
 
     // Guest sessions are ephemeral — nothing to persist.
     if (!currentUser || currentUser.isGuest) return;
+    const effectiveUser = getIsolatedSyncUser(currentUser.initials);
 
     // Update local progress data
     if (!progressData[wordId]) {
@@ -1027,7 +1030,7 @@ async function saveWordProgress(card, isCorrect) {
         action: 'save',
         sheet,
         mode,
-        user: currentUser.initials,
+        user: effectiveUser,
         word: word,
         language: language,
         wordId: wordId,
@@ -1109,17 +1112,19 @@ async function flagWord(card, fieldPath, fieldValue, fields = null) {
         schemaVersion: 4,
         flagId,
         clientBuild: currentClientBuild(),
-        status: 'Open',
+        status: IS_STAGING ? 'Staging' : 'Open',
+        environment: IS_STAGING ? 'staging' : 'production',
         provenanceJson: JSON.stringify(provenance).slice(0, 20000)
     };
 
     // Route through the offline-durable queue so flags raised offline aren't
     // lost. The event ID is also the queue de-dupe key: retries of this gesture
     // collapse safely, while a later flag on the same card remains separate.
+    const effectiveUser = getIsolatedSyncUser(currentUser.initials);
     await sendOrQueue({
         action: 'save',
         sheet: 'FlaggedWords',
-        user: currentUser.initials,
+        user: effectiveUser,
         word: word,
         language: language,
         wordId: wordId,
