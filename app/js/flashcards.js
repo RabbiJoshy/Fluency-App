@@ -1,29 +1,29 @@
 // Card rendering, flip, swipe, keyboard shortcuts.
 // Main function: updateCard() (~line 950) renders the current flashcard front + back.
 // Key exports: updateCard, flipCard, nextCard, handleSwipeAction, selectMeaning, cycleExample.
-import './state.js?v=da579f48';
-import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=da579f48';
-import './speech.js?v=da579f48';
-import { goToRoute, routeCodeFor } from './routes.js?v=da579f48';
-import { memoryTipTileHTML } from './memory-tips.js?v=da579f48';
-import './side-dock.js?v=da579f48';
-import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=da579f48';
+import './state.js?v=be4d96f2';
+import { showSwipeHint, rememberGradingSwipe } from './swipe-onboarding.js?v=be4d96f2';
+import './speech.js?v=be4d96f2';
+import { goToRoute, routeCodeFor } from './routes.js?v=be4d96f2';
+import { memoryTipTileHTML } from './memory-tips.js?v=be4d96f2';
+import './side-dock.js?v=be4d96f2';
+import { initKeyboardGuide, refreshKeyboardGuide } from './keyboard-guide.js?v=be4d96f2';
 import {
     collectReviewWords,
     exampleReinforcesRecentMistake,
     filterPersonalisedExamples,
-} from './example-personalisation.js?v=da579f48';
+} from './example-personalisation.js?v=be4d96f2';
 import {
     parseSpanishDictUsageContext,
     spanishDictUsageCandidateForms,
-} from './spanishdict-usage.js?v=da579f48';
+} from './spanishdict-usage.js?v=be4d96f2';
 import {
     conjugationLookupSurface,
     englishProductionCue,
     retainProductionPromptAttempt,
     selectReverseCueMeanings,
     splitProductionCloze,
-} from './reverse-cues.js?v=da579f48';
+} from './reverse-cues.js?v=be4d96f2';
 import {
     compactConstructionMetadata,
     escapeCardText,
@@ -56,7 +56,7 @@ import {
     SENSE_CONSTRUCTION_TAGS,
     SENSE_REGISTER_TAGS,
     SENSE_CONSTRUCTION_SHORT,
-} from './card-metadata-pills.js?v=da579f48';
+} from './card-metadata-pills.js?v=be4d96f2';
 
 // --- Spanish rank lookup for personal easiness ---
 let _spanishRanks = null;  // word -> rank (loaded once)
@@ -5003,11 +5003,11 @@ function phraseSummaryContent(items) {
     const phraseCount = items.length - rareCount;
     let subtitle;
     if (rareCount && !phraseCount) {
-        subtitle = 'Meanings that show up less often in speech';
+        subtitle = 'Low-frequency senses not tested in daily reviews';
     } else if (phraseCount && !rareCount) {
-        subtitle = 'Expressions that use this word';
+        subtitle = 'Expressions and idioms using this word';
     } else {
-        subtitle = 'Less common meanings, and expressions that use this word';
+        subtitle = 'Low-frequency senses and expressions not tested in daily reviews';
     }
     return { subtitle, bodyHTML: `${rareHTML}${phraseHTML}${cliticHTML}` };
 }
@@ -5043,11 +5043,13 @@ function ensureRareUsesModal() {
         <div class="knowledge-overview-sheet rare-uses-sheet">
             <header class="knowledge-overview-header">
                 <div>
-                    <span class="knowledge-overview-kicker">Rarer uses</span>
-                    <h2 id="rareUsesTitle"></h2>
+                    <div class="rare-uses-title-row">
+                        <h2 id="rareUsesTitle"></h2>
+                        <span class="rare-uses-pill">Rare uses</span>
+                    </div>
                     <p class="rare-uses-subtitle" id="rareUsesSubtitle"></p>
                 </div>
-                <button type="button" class="knowledge-overview-close" aria-label="Close rarer uses" onclick="closeRareUsesModal(event)">×</button>
+                <button type="button" class="knowledge-overview-close" aria-label="Close rare uses" onclick="closeRareUsesModal(event)">×</button>
             </header>
             <div class="phrase-summary-scroll rare-uses-body" id="rareUsesBody"></div>
         </div>`;
@@ -8262,16 +8264,15 @@ function renderCardWikipediaBadge(card) {
         if (rCount) parts.push(`${rCount} rare sense${rCount === 1 ? '' : 's'}`);
         if (eCount) parts.push(`${eCount} expression${eCount === 1 ? '' : 's'}`);
         const detail = parts.join(' and ');
-        backHTML += `<button type="button" class="ref-tile ref-rare-uses-btn" aria-label="Rarer uses: ${escapeCardText(detail)}" title="${escapeCardText(detail)}" onclick="event.stopPropagation(); openRareAndExpressionsCard(event);">
+        backHTML += `<button type="button" class="ref-tile ref-rare-uses-btn" aria-label="Rare uses: ${escapeCardText(detail)}" title="${escapeCardText(detail)}" onclick="event.stopPropagation(); openRareAndExpressionsCard(event);">
             <div class="ref-tile-icon-wrap">
-                <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M12 3 13.2 8.1 18 9.3 13.2 10.5 12 15.6 10.8 10.5 6 9.3 10.8 8.1 12 3z"></path>
-                    <path d="M19 14.2 19.6 16.4 21.8 17 19.6 17.6 19 19.8 18.4 17.6 16.2 17 18.4 16.4 19 14.2z"></path>
-                    <path d="M16.4 4.2 16.8 5.6 18.2 6 16.8 6.4 16.4 7.8 16 6.4 14.6 6 16 5.6 16.4 4.2z"></path>
+                <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
                 ${rareAndExprItems.length > 0 ? `<span class="ref-tile-count-badge">${rareAndExprItems.length}</span>` : ''}
             </div>
-            <span class="ref-tile-label">Rarer uses</span>
+            <span class="ref-tile-label">Rare uses</span>
         </button>`;
     }
 
@@ -8327,9 +8328,8 @@ function renderCardWikipediaBadge(card) {
     if (lookupLinks.length > 0) {
         backHTML += `<button class="ref-tile ref-lookup-btn" onclick="event.stopPropagation(); toggleLookupSheet(event);">
             <svg class="ref-tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                <polyline points="15 3 21 3 21 9"></polyline>
-                <line x1="10" y1="14" x2="21" y2="3"></line>
+                <circle cx="11" cy="11" r="7"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
             <span class="ref-tile-label">Look up</span>
         </button>
@@ -10364,8 +10364,8 @@ document.addEventListener('click', (e) => {
 // Keep this in lockstep with service-worker.js. These lazy modules own search
 // result cards and conjugation; a stale URL here can keep running an old modal
 // implementation even after the eagerly loaded app has updated.
-const ASSET_VERSION = 'da579f48';
-const MODALS_ASSET_VERSION = 'da579f48';
+const ASSET_VERSION = 'be4d96f2';
+const MODALS_ASSET_VERSION = 'be4d96f2';
 
 let _modalsModulePromise = null;
 const lazyModals = () => _modalsModulePromise || (_modalsModulePromise =
