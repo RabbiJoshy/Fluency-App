@@ -24007,6 +24007,9 @@ button.split-pill-count:focus-visible { outline: 2px solid rgb(var(--split-accen
     user-select: none;
     margin-right: 4px;
 }
+.env-badge[hidden] {
+    display: none !important;
+}
 .env-badge.env-staging {
     background-color: #f59e0b;
     color: #1a1a1a;
