@@ -228,13 +228,27 @@ function enterGuestMode() {
 }
 
 // Show login form
-function showLoginForm() {
+function showLoginForm(mode = 'login') {
     resetProfileLogin();
     document.getElementById('guestModeBtn').style.display = 'none';
     document.getElementById('loginModeRow').style.display = 'none';
+    const createRow = document.getElementById('createModeRow');
+    if (createRow) createRow.style.display = 'none';
     document.getElementById('aboutProjectBtn').style.display = 'none';
     document.getElementById('loginInfoNote').classList.add('hidden');
     document.querySelector('#authModal .auth-modal-content')?.classList.add('is-login-form');
+    const heading = document.querySelector('#loginForm .auth-form-heading h4');
+    const subtext = document.querySelector('#loginForm .auth-form-heading p');
+    const submit = document.getElementById('submitInitialsBtn');
+    if (mode === 'create') {
+        if (heading) heading.textContent = 'Create account';
+        if (subtext) subtext.textContent = 'Choose a username and optional birthday to save progress.';
+        if (submit) submit.textContent = 'Create account';
+    } else {
+        if (heading) heading.textContent = 'Log in';
+        if (subtext) subtext.textContent = 'Enter your username and birthday to continue.';
+        if (submit) submit.textContent = 'Log in';
+    }
     document.getElementById('loginForm').classList.remove('hidden');
     document.getElementById('userInitials').focus();
 }
@@ -244,12 +258,18 @@ function hideLoginForm() {
     resetProfileLogin();
     document.getElementById('guestModeBtn').style.display = 'flex';
     document.getElementById('loginModeRow').style.display = 'flex';
+    const createRow = document.getElementById('createModeRow');
+    if (createRow) createRow.style.display = 'flex';
     document.getElementById('aboutProjectBtn').style.display = '';
     document.querySelector('#authModal .auth-modal-content')?.classList.remove('is-login-form');
     document.getElementById('loginForm').classList.add('hidden');
     document.getElementById('userInitials').value = '';
-    document.getElementById('birthdayDay').value = '';
-    document.getElementById('birthdayMonth').value = '';
+    const bdayInput = document.getElementById('birthdayInput');
+    if (bdayInput) bdayInput.value = '';
+    const bdayDay = document.getElementById('birthdayDay');
+    if (bdayDay) bdayDay.value = '';
+    const bdayMonth = document.getElementById('birthdayMonth');
+    if (bdayMonth) bdayMonth.value = '';
 }
 
 // Submit initials and login
@@ -344,25 +364,41 @@ function wireAccountPassword() {
     const input = document.getElementById('accountPasswordInput');
     const show = document.getElementById('accountPasswordShowBtn');
     const status = document.getElementById('accountPasswordStatus');
+    const picker = document.getElementById('accountPasswordDatePicker');
     if (!input || !show) return;
+
+    if (picker) {
+        picker.addEventListener('change', () => {
+            if (!currentUser || !picker.value) return;
+            const parts = picker.value.split('-');
+            if (parts.length < 3) return;
+            const m = parseInt(parts[1], 10);
+            const d = parseInt(parts[2], 10);
+            if (!d || !m || d < 1 || d > 31 || m < 1 || m > 12) return;
+            const formatted = `${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+            currentUser.birthday = formatted;
+            localStorage.setItem('flashcardUser', JSON.stringify(currentUser));
+            renderAccountPanel();
+            if (status) status.textContent = 'Birthday updated! This is used as your password.';
+        });
+    }
+
     show.addEventListener('click', () => {
         if (!currentUser) return;
-        const currentBday = currentUser.birthday || '';
-        const day = prompt('Enter birthday day (1-31):', currentBday ? currentBday.split('-')[1] : '');
-        if (day === null) return;
-        const month = prompt('Enter birthday month (1-12):', currentBday ? currentBday.split('-')[0] : '');
-        if (month === null) return;
-        const d = parseInt(day, 10);
-        const m = parseInt(month, 10);
-        if (!d || !m || d < 1 || d > 31 || m < 1 || m > 12) {
-            alert('Please enter a valid day (1-31) and month (1-12).');
-            return;
+        if (picker) {
+            const currentBday = currentUser.birthday || '';
+            if (currentBday && currentBday.includes('-')) {
+                const [m, d] = currentBday.split('-');
+                picker.value = `2000-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+            }
+            if (typeof picker.showPicker === 'function') {
+                try {
+                    picker.showPicker();
+                    return;
+                } catch (_) {}
+            }
+            picker.click();
         }
-        const formatted = `${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-        currentUser.birthday = formatted;
-        localStorage.setItem('flashcardUser', JSON.stringify(currentUser));
-        renderAccountPanel();
-        if (status) status.textContent = 'Birthday updated! This is used as your password.';
     });
 }
 
@@ -1795,8 +1831,9 @@ function setupAuthEventListeners() {
     // Guest mode button
     document.getElementById('guestModeBtn').addEventListener('click', enterGuestMode);
 
-    // Login mode button
-    document.getElementById('loginModeBtn').addEventListener('click', showLoginForm);
+    // Login and create mode buttons
+    document.getElementById('loginModeBtn')?.addEventListener('click', () => showLoginForm('login'));
+    document.getElementById('createAccountBtn')?.addEventListener('click', () => showLoginForm('create'));
 
     // Login info button: toggle the no-password explanation
     const loginInfoBtn = document.getElementById('loginInfoBtn');

@@ -553,18 +553,27 @@ async function refreshSpotifyConnectionUI() {
     const icon = document.getElementById('spotifyConnectionIcon');
     if (!button) return;
     if (!isSpotifyConnected()) {
-        button.textContent = 'Connect';
+        button.textContent = 'Connect to Spotify';
         button.classList.remove('settings-feature-action--danger');
-        if (status) status.textContent = 'Connect to Spotify';
+        if (status) {
+            status.textContent = '';
+            status.style.display = 'none';
+        }
         if (icon) icon.classList.remove('is-connected');
         return;
     }
     button.textContent = 'Disconnect';
     button.classList.add('settings-feature-action--danger');
     if (icon) icon.classList.add('is-connected');
-    if (status) status.textContent = 'Connected';
+    if (status) {
+        status.style.display = '';
+        status.textContent = 'Connected';
+    }
     const profile = await getSpotifyProfile();
-    if (status && profile) status.textContent = `Connected as ${profile.displayName}`;
+    if (status && profile) {
+        status.style.display = '';
+        status.textContent = `Connected as ${profile.displayName}`;
+    }
 }
 
 function setupSpotifyConnectionUI() {

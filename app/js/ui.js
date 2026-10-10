@@ -720,20 +720,20 @@ const MODE_ICON_MUSIC = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" s
 function learningModeCopy(language = selectedLanguage) {
     const lyricsCatalog = config?.languages?.[language]?.capabilities?.lyrics !== false;
     return {
-        title: 'Choose your flashcard vocabulary source',
-        intro: 'Your flashcards come from this source, most common words first. You can switch at any time, and the words you learn carry over between the two modes.',
+        title: 'Choose your vocabulary',
+        intro: 'You learn words in order of how often they appear in real life. Because people use different vocabulary when speaking than in song lyrics, your flashcards and example sentences are tailored to what you pick. You can switch between them at any time.',
         speech: {
             label: 'Everyday speech',
-            description: 'From films and TV shows — the everyday words people actually use when they talk to each other.',
-            bestFor: ['Starting a new language', 'Understanding films and TV shows'],
+            description: 'Words and examples from films and TV shows — how people actually talk.',
+            bestFor: ['Starting a new language', 'Understanding everyday conversations'],
             iconHTML: MODE_ICON_SPEECH
         },
         lyrics: {
             label: 'Your music',
             description: lyricsCatalog
-                ? 'Pick an artist, or build a deck from your Spotify playlists — the words in those songs.'
-                : 'Build a deck from your Spotify playlists — the words in those songs.',
-            bestFor: ['Understanding the artists you listen to', 'Hearing words sung in real songs'],
+                ? 'Words and examples from songs, artists, and your Spotify playlists.'
+                : 'Words and examples from your Spotify playlists.',
+            bestFor: ['Understanding your favourite artists', 'Learning by listening to music'],
             iconHTML: MODE_ICON_MUSIC
         }
     };
@@ -1149,6 +1149,10 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
         const hasProgress = seenCount > 0;
         const hasReview = reviewCount > 0;
         const autoCompleted = isComplete && estimatedCount > 0;
+        const hasStarted = seenCount > 0;
+        const allGreen = wordsInLevel.length > 0 && isComplete && reviewCount === 0;
+        const hasYellow = hasReview;
+        const isWhite = hasStarted && !allGreen && !hasYellow;
         btn.classList.toggle('is-auto-complete', autoCompleted);
         btn.dataset.autoCompleted = String(autoCompleted);
         btn.dataset.progressPct = String(completion);
@@ -1157,6 +1161,9 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
         btn.classList.toggle('has-partial-progress', isPartial);
         btn.classList.toggle('has-review', hasReview);
         btn.classList.toggle('is-complete', isComplete);
+        btn.classList.toggle('dot-green', allGreen);
+        btn.classList.toggle('dot-yellow', hasYellow);
+        btn.classList.toggle('dot-white', isWhite);
         btn.style.setProperty('--level-progress', `${completion}%`);
 
         const visibleSegment = sliderSegmentMap.get(String(buttonIndex));
@@ -1168,6 +1175,9 @@ async function findFirstIncompleteLevelBtn(language, buttons) {
             visibleSegment.classList.toggle('has-partial-progress', isPartial);
             visibleSegment.classList.toggle('has-review', hasReview);
             visibleSegment.classList.toggle('is-complete', isComplete);
+            visibleSegment.classList.toggle('dot-green', allGreen);
+            visibleSegment.classList.toggle('dot-yellow', hasYellow);
+            visibleSegment.classList.toggle('dot-white', isWhite);
             visibleSegment.style.setProperty('--level-progress', `${completion}%`);
             visibleSegment.setAttribute(
                 'aria-label',

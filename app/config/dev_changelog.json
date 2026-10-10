@@ -2,6 +2,21 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T17:21:00+01:00",
+      "date": "2026-10-10 17:21 BST",
+      "agent": "Antigravity",
+      "summary": "Vocabulary source layout, level scrubber dots, Smart Skip primer, and streamlined auth & settings",
+      "detail": [
+        "Simplify vocabulary source card: remove outer border box, widen desktop spacing around OR divider, enlarge Spotify icon, and clarify title and frequency copy.",
+        "Scrubber dots: suppress dot under the active level and show status dots (green for completed, yellow for review needed, white for in-progress) on other levels.",
+        "Refine Smart Skip primer modal: remove redundant headers and look-alike footnote text, focusing directly on language choices.",
+        "Swap button emphasis in frequency intro modal so tutorial is primary and skip intro is secondary.",
+        "Streamline account settings with single Connect to Spotify button and native date-of-birth input.",
+        "Introduce distinct Log in and Create account entry points on authentication modal with native date picker."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T17:04:09+01:00",
       "date": "2026-10-10 17:04 BST",
       "agent": "Codex",

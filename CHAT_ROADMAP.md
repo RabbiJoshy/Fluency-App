@@ -19,6 +19,51 @@ not start a harvest, WSD run or release from a settings tweak.
 
 After editing, copy this file to `../Fluency-Workspace/raw/surfaces/DECK_CHAT_ROADMAP.md`.
 
+## Current direction (2026-10-10)
+
+**Priority: make Spanish and Portuguese shippable first; other-language parity
+comes later.** This is a changeable planning order, not a rigid queue or a new
+authorisation to start another chat's work. Josh can reprioritise at any time.
+The Open table's row order is not priority order. Existing job scopes remain;
+complete their es/pt portion first and record deferred language work explicitly.
+
+AIRLOCK is done: review proposed app and deck changes in staging before deliberate
+production promotion, following the current deployment instructions.
+
+| Suggested order | Work | Shipping focus / dependency |
+|---|---|---|
+| 1 | HEADWAY | Establish and correct es/pt lemma-analysis problems that affect shipped cards. Owns source analyses, not app merging policy. |
+| 2 | SEAM | Check es/pt merging, kept-apart forms and titles. Auditing can overlap HEADWAY; finalise affected behaviour against corrected analyses. Other-language checks follow later, before their CONVOY rebuilds. |
+| 3, starting alongside 1–2 | TOUCHPOINT | Check actual-phone usability and two-device progress early. Record gesture and sync outcomes separately; recheck affected behaviour if later UI changes invalidate the observations. |
+| 4 | TERSE-2 | Make long/confusing pt definitions and equivalent es problems readable while preserving meaning and original source text. |
+| 5 | LITERAL, focused first pass | Audit a small es/pt sample using the required frozen evidence. Only verified, material learner-visible gaps become pre-launch fixes; broader investigation need not hold up shipping. |
+| 6 | Spanish/Portuguese release review | Review the candidate app and decks together in staging, resolve genuine launch blockers, and obtain Josh's approval for promotion. This is a release checkpoint, not a new implementation job or the full multilingual ROLLCALL. |
+
+**Work alongside this sequence:**
+
+- General UI fixes can proceed now. Coordinate card titles, merging, known counts
+  and progress displays with SEAM; card-back content/layout with TERSE-2 and
+  ACCORDION; swiping, grading and mobile interaction with TOUCHPOINT. Keep chat
+  scopes distinct and avoid simultaneous edits to the same component. Review the
+  combined result in staging before shipping.
+- Decide ACCORDION after TERSE-2 clarifies the remaining layout problem. If the
+  existing modal is satisfactory, defer it; an accordion is not an assumed blocker.
+- TURBO can continue independently. Playlist uploads are a launch prerequisite
+  only if Josh includes them in the immediate launch scope; that decision is not
+  settled by calling TURBO the last big piece of the app.
+- These priorities do not require unrelated audits or implementation to wait.
+  The immediate shipping criteria are correct cards, understandable meanings,
+  usable phone interaction and dependable saved progress, not completion of every
+  open feature or research question.
+
+**After es/pt shipping:** default attention order is ROLLCALL → CONVOY, then
+BRIDGE and DUTCH as prioritised, with MIRROR-CS kept as separate research.
+ROLLCALL establishes the current cross-language gaps; CONVOY uses that inventory
+and checked SEAM rules rather than repeating the whole readiness audit. BRIDGE
+can be developed before French completion, which gates the full es/fr experience
+only. DUTCH needs its own readiness sign-off, not completion of all CONVOY work.
+MIRROR-CS must not block unrelated Czech improvements. `LATER.md` stays eventual.
+
 ## Open
 
 Everything open is listed here. If it is not in this table, it is either

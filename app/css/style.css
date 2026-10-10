@@ -17072,26 +17072,47 @@
   display: none !important;
 }
 #step1.language-summary-active #step1Title::before { content: none; }
-#step1.language-summary-active .standard-source-card {
+#step1.language-summary-active .standard-source-card,
+#step1.language-summary-active #standardSourceCard {
   display: block;
-  padding: 14px;
-  border-radius: 16px;
-  background: color-mix(in srgb, var(--bg-card) 96%, var(--accent-primary) 4%);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 #step1.language-summary-active .standard-source-choice {
   gap: 13px;
   padding: 0;
   border: 0;
 }
-.standard-source-choice-intro { display: grid; gap: 5px; }
+.standard-source-choice-intro { display: grid; gap: 8px; }
+.standard-source-choice-heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
 .standard-source-choice-intro .standard-source-choice-title {
   color: var(--text-primary);
   font: 700 16px/1.25 var(--font-emphasis);
   letter-spacing: -0.01em;
   text-transform: none;
 }
+.standard-source-choice-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-primary) 8%, var(--bg-tertiary));
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 22%, var(--border-color));
+  color: var(--text-secondary);
+  font: 600 12px/1.2 var(--font-emphasis);
+  letter-spacing: 0.02em;
+}
 .standard-source-choice-intro p {
-  max-width: 52ch;
+  width: 100%;
+  max-width: 100%;
   margin: 0;
   color: var(--text-secondary);
   font: 400 14px/1.5 var(--font-reading);
@@ -19089,8 +19110,8 @@ body.artist-mode #flashcardMode::before {
 .frequency-intro-sheet {
   max-width: 420px;
 }
-#frequencyIntroModal .frequency-intro-skip {
-  background: var(--lang-trim, #8795ff);
+#frequencyIntroModal .frequency-intro-tutorial {
+  background: var(--accent-primary);
   color: var(--accent-primary-text, #10141b);
 }
 .frequency-intro-sheet p {
@@ -19104,23 +19125,45 @@ body.artist-mode #flashcardMode::before {
   gap: 10px;
   margin-top: 18px;
 }
-.frequency-intro-skip {
-  width: 100%;
-}
 .frequency-intro-tutorial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 15px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--accent-primary);
+  color: var(--accent-primary-text, #10141b);
+  font: 750 14px/1.2 var(--font-reading);
+  cursor: pointer;
+  text-align: center;
+}
+.frequency-intro-tutorial:hover,
+.frequency-intro-tutorial:focus-visible {
+  filter: brightness(1.08);
+  outline: none;
+}
+.frequency-intro-skip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   min-height: 44px;
   padding: 10px 14px;
   border: 1px solid var(--border-light);
   border-radius: 12px;
   background: transparent;
-  color: var(--text-primary);
-  font: 650 14px/1.2 var(--font-reading);
+  color: var(--text-secondary);
+  font: 600 14px/1.2 var(--font-reading);
   cursor: pointer;
+  text-align: center;
 }
-.frequency-intro-tutorial:hover,
-.frequency-intro-tutorial:focus-visible {
+.frequency-intro-skip:hover,
+.frequency-intro-skip:focus-visible {
   border-color: var(--text-secondary);
+  color: var(--text-primary);
   outline: none;
 }
 html[data-text-size="large"] {
@@ -21162,7 +21205,7 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
 .spotify-status {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
+  gap: 11px;
   margin: 10px 0 2px 6px;
   padding: 8px 14px 8px 10px;
   border: 1px solid color-mix(in srgb, #1DB954 45%, var(--border-color));
@@ -21172,7 +21215,7 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
   font: 600 13px/1.2 var(--font-emphasis);
   cursor: pointer;
 }
-.spotify-status svg { width: 20px; height: 20px; color: #1DB954; flex: none; }
+.spotify-status svg { width: 24px; height: 24px; color: #1DB954; flex: none; }
 .spotify-status:hover { background: color-mix(in srgb, #1DB954 10%, transparent); }
 .spotify-status:focus-visible { outline: 2px solid #1DB954; outline-offset: 2px; }
 .spotify-status.is-connected {
@@ -22053,11 +22096,16 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 #step1.language-summary-active #standardSourceCard .standard-source-choice-intro {
   justify-items: center;
   text-align: center;
+  width: 100%;
+  max-width: 920px;
+  margin-inline: auto;
 }
-#step1.language-summary-active #standardSourceCard .standard-source-choice-title { max-width: 22ch; text-wrap: balance; }
-/* The intro is as wide as the title: the note does not count towards it. */
-#step1.language-summary-active #standardSourceCard .standard-source-choice-intro { width: fit-content; max-width: 100%; margin-inline: auto; }
-#step1.language-summary-active #standardSourceCard .standard-source-choice-intro p { contain: inline-size; width: 100%; max-width: none; text-wrap: balance; }
+#step1.language-summary-active #standardSourceCard .standard-source-choice-title { max-width: none; }
+#step1.language-summary-active #standardSourceCard .standard-source-choice-intro p {
+  width: 100%;
+  max-width: 100%;
+  text-wrap: pretty;
+}
 #step1.language-summary-active #standardSourceCard .choice-sheet-item + .standard-source-or + .choice-sheet-item { border-top: 0; }
 #step1.language-summary-active #standardSourceCard .standard-source-or {
   display: flex; align-items: center; gap: 12px;
@@ -22077,16 +22125,17 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
     max-width: 920px; margin: 0 auto;
   }
   #step1.language-summary-active #standardSourceCard .standard-source-choice-title { max-width: none; }
-  #step1.language-summary-active #standardSourceCard .standard-source-choice-intro p { contain: none; width: auto; max-width: 46ch; }
+  #step1.language-summary-active #standardSourceCard .standard-source-choice-intro p { contain: none; width: 100%; max-width: 100%; }
   #step1.language-summary-active #standardSourceCard .standard-source-choice-buttons {
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: start;
-    column-gap: 20px;
+    column-gap: 32px;
     margin-top: 8px;
   }
   #step1.language-summary-active #standardSourceCard .choice-sheet-item { border-top: 0; border-bottom: 0; padding: 14px 10px; border-radius: 14px; }
   #step1.language-summary-active #standardSourceCard .standard-source-or {
     flex-direction: column; align-self: stretch; gap: 10px;
+    padding: 0 4px;
   }
   #step1.language-summary-active #standardSourceCard .standard-source-or::before,
   #step1.language-summary-active #standardSourceCard .standard-source-or::after { width: 1px; height: auto; }
@@ -22812,8 +22861,13 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 #step1.language-summary-active #standardSourceCard .standard-source-or > b { width: 36px; height: 36px; font-size: 11px; }
 #step1.language-summary-active #standardSourceCard .standard-source-spotify { padding-left: 0; margin-top: 12px; }
 @media (min-width: 900px) {
+  #step1.language-summary-active #standardSourceCard .standard-source-choice-buttons {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    column-gap: 32px;
+    align-items: start;
+  }
   #step1.language-summary-active #standardSourceCard .choice-sheet-item { padding: 18px; }
-  #step1.language-summary-active #standardSourceCard .standard-source-or { margin: 0; }
+  #step1.language-summary-active #standardSourceCard .standard-source-or { margin: 0; padding: 0 4px; }
   #step1.language-summary-active #standardSourceCard .standard-source-spotify { margin-left: calc(50% + 18px); padding-left: 0; }
   /* Two lines of description in both cards, so the "Best for" rules line up. */
   #step1.language-summary-active #standardSourceCard .choice-sheet-copy small { min-height: 2.9em; }
@@ -22901,10 +22955,9 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
 }
 
 /* Scrubber level status dots */
-.lsw-segments.lsw-scrubber .lsw-seg.is-complete::after,
-.lsw-segments.lsw-scrubber .lsw-seg.has-progress:not(.is-complete)::after,
-.lsw-segments.lsw-scrubber .lsw-seg.has-partial-progress:not(.is-complete)::after,
-.lsw-segments.lsw-scrubber .lsw-seg.is-auto-complete::after {
+.lsw-segments.lsw-scrubber .lsw-seg:not(.selected).dot-green::after,
+.lsw-segments.lsw-scrubber .lsw-seg:not(.selected).dot-yellow::after,
+.lsw-segments.lsw-scrubber .lsw-seg:not(.selected).dot-white::after {
   content: '';
   position: absolute;
   bottom: 6px;
@@ -22917,29 +22970,32 @@ body:has(#appContent.hidden) #reviewHomeModal[data-dock] > .review-home-content 
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
+/* Active level currently looking at: no dot underneath to avoid clutter */
 .lsw-segments.lsw-scrubber .lsw-seg.selected::after {
-  bottom: 5px;
-  width: 5px;
-  height: 5px;
+  display: none !important;
 }
 
-/* Green dot: 100% completed by study */
-.lsw-segments.lsw-scrubber .lsw-seg.is-complete:not(.is-auto-complete)::after {
+/* Green dot: everything in the level is green (all words known/done) */
+.lsw-segments.lsw-scrubber .lsw-seg:not(.selected).dot-green::after {
   background: var(--set-known, #22c55e);
   box-shadow: 0 0 4px rgba(34, 197, 94, 0.45);
 }
 
-/* Yellow dot: In-progress / has study activity */
-.lsw-segments.lsw-scrubber .lsw-seg.has-progress:not(.is-complete)::after,
-.lsw-segments.lsw-scrubber .lsw-seg.has-partial-progress:not(.is-complete)::after {
+/* Yellow dot: has any words to review / in practice */
+.lsw-segments.lsw-scrubber .lsw-seg:not(.selected).dot-yellow::after {
   background: var(--set-review, #f5b800);
   box-shadow: 0 0 4px rgba(245, 184, 0, 0.45);
 }
 
-/* Slate grey dot: Auto-completed / placed via initial estimate */
-.lsw-segments.lsw-scrubber .lsw-seg.is-auto-complete::after {
-  background: var(--set-skipped, #7b8797);
-  box-shadow: 0 0 2px rgba(123, 135, 151, 0.35);
+/* White dot: started, but not yellow and not all green */
+.lsw-segments.lsw-scrubber .lsw-seg:not(.selected).dot-white::after {
+  background: var(--set-new, #ffffff);
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.45);
+}
+
+:root[data-theme="light"] .lsw-segments.lsw-scrubber .lsw-seg:not(.selected).dot-white::after {
+  background: #ffffff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.28), 0 0 3px rgba(0, 0, 0, 0.12);
 }
 
 /* Readout line: words range centered & clean */
@@ -23244,6 +23300,8 @@ body:has(#cardTutorialModal:not(.hidden), #tutorialIntroModal:not(.hidden)) #res
 }
 #step1.language-summary-active #standardSourceCard .standard-source-music .spotify-status {
   display: flex;
+  align-items: center;
+  gap: 12px;
   width: 100%;
   min-height: 48px;
   margin: 0;
@@ -23254,6 +23312,11 @@ body:has(#cardTutorialModal:not(.hidden), #tutorialIntroModal:not(.hidden)) #res
   color: var(--text-primary);
   font: 600 14px/1.2 var(--font-emphasis);
   text-align: left;
+}
+#step1.language-summary-active #standardSourceCard .standard-source-music .spotify-status svg {
+  width: 24px;
+  height: 24px;
+  flex: none;
 }
 #step1.language-summary-active #standardSourceCard .standard-source-music button.spotify-status::after {
   content: '›';

@@ -25,3 +25,7 @@
 .auth-modal-content .guest-btn .auth-choice-icon { display: none; }
 .auth-modal-content .guest-btn .auth-btn-title { font-size: 14px; }
 .auth-modal-content .login-form-actions .auth-cancel-btn { background: transparent; border-color: transparent; }
+.auth-date-input { width: 100%; min-height: 48px; box-sizing: border-box; border: 1px solid var(--border-color, #666); border-radius: 10px; padding: 10px 14px; background: var(--bg-tertiary, #242330); color: var(--text-primary, white); font: inherit; font-size: 16px; }
+.auth-date-input:focus { border-color: var(--accent-primary); outline: none; }
+.auth-modal-content .create-btn { border-color: var(--border-color); }
+

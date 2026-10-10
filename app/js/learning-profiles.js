@@ -33,7 +33,7 @@ export function showLoginError(message, field = null) {
         const active = field === 'userInitials' ? id === 'profileNameError' : id === 'loginFormError';
         if (error) { error.textContent = active ? message : ''; error.hidden = !active || !message; }
     }
-    for (const id of ['userInitials','birthdayDay','birthdayMonth']) {
+    for (const id of ['userInitials','birthdayInput','birthdayDay','birthdayMonth']) {
         document.getElementById(id)?.setAttribute('aria-invalid', field === id ? 'true' : 'false');
     }
     if (field) document.getElementById(field)?.focus();
@@ -53,7 +53,7 @@ function setBusy(value) {
     busy = value;
     const submit = document.getElementById('submitInitialsBtn');
     if (submit) { submit.disabled = value; submit.textContent = value ? 'Checking…' : 'Continue'; }
-    for (const id of ['userInitials','birthdayDay','birthdayMonth']) {
+    for (const id of ['userInitials','birthdayInput','birthdayDay','birthdayMonth']) {
         const field = document.getElementById(id);
         if (field) field.disabled = value;
     }
@@ -86,7 +86,7 @@ export async function submitProfileLogin(onSelected) {
     const form = document.getElementById('loginForm');
     if (form && !form.dataset.profilesWired) {
         form.dataset.profilesWired = '1';
-        ['userInitials','birthdayDay','birthdayMonth'].forEach(id => {
+        ['userInitials','birthdayInput','birthdayDay','birthdayMonth'].forEach(id => {
             document.getElementById(id)?.addEventListener('input', resetProfileLogin);
         });
         document.getElementById('cancelLoginBtn')?.addEventListener('click', resetProfileLogin);
@@ -98,10 +98,19 @@ export async function submitProfileLogin(onSelected) {
     if (!name || name.length > 40 || /[\u0000-\u001f\u007f]/u.test(name)) {
         showLoginError('Enter a username (up to 40 characters).', 'userInitials'); return;
     }
+    const bdayInput = document.getElementById('birthdayInput');
+    let dayVal = document.getElementById('birthdayDay')?.value;
+    let monthVal = document.getElementById('birthdayMonth')?.value;
+    if (bdayInput?.value) {
+        const parts = bdayInput.value.split('-');
+        if (parts.length >= 3) {
+            monthVal = parts[1];
+            dayVal = parts[2];
+        }
+    }
     try {
-        birthday = optionalBirthdayValue(document.getElementById('birthdayDay').value,
-            document.getElementById('birthdayMonth').value);
-    } catch (error) { showLoginError(error.message, 'birthdayDay'); return; }
+        birthday = optionalBirthdayValue(dayVal, monthVal);
+    } catch (error) { showLoginError(error.message, bdayInput ? 'birthdayInput' : 'birthdayDay'); return; }
     const fields = {name,birthday};
     const attempt = ++epoch;
     document.getElementById('profileMatches')?.replaceChildren();
