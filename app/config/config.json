@@ -10,14 +10,14 @@
   "languages": {
     "spanish": {
       "name": "Spanish",
-      "indexPath": "releases/es/speech/es-speech-v23-10000x30-slim/app/vocabulary.index.json",
+      "indexPath": "releases/es/speech/es-speech-v24-headway-r4-10000x30-slim/app/vocabulary.index.json",
       "estimationPoolPath": "data/estimation-pools/spanish.json",
       "frequencyPath": "data/speech-frequency/es.json",
-      "examplesPath": "releases/es/speech/es-speech-v23-10000x30-slim/app/vocabulary.examples.json",
-      "studyStructurePath": "releases/es/speech/es-speech-v23-10000x30-slim/app/study-structure.json",
-      "releaseManifestPath": "releases/es/speech/es-speech-v23-10000x30-slim/manifest.json",
-      "releaseCompositionPath": "releases/es/speech/es-speech-v23-10000x30-slim/composition.json",
-      "conjugationsPath": "releases/es/speech/es-speech-v23-10000x30-slim/app/conjugations.json",
+      "examplesPath": "releases/es/speech/es-speech-v24-headway-r4-10000x30-slim/app/vocabulary.examples.json",
+      "studyStructurePath": "releases/es/speech/es-speech-v24-headway-r4-10000x30-slim/app/study-structure.json",
+      "releaseManifestPath": "releases/es/speech/es-speech-v24-headway-r4-10000x30-slim/manifest.json",
+      "releaseCompositionPath": "releases/es/speech/es-speech-v24-headway-r4-10000x30-slim/composition.json",
+      "conjugationsPath": "releases/es/speech/es-speech-v24-headway-r4-10000x30-slim/app/conjugations.json",
       "exampleTargetField": "example_spanish",
       "exampleEnglishField": "example_english",
       "pipelineDefaults": {
@@ -88,7 +88,7 @@
       "speechLang": "es-ES",
       "cognatesPath": "cognates/es/cognates.json",
       "mergeExceptionsPath": "data/merge-exceptions/es.json",
-      "coveragePath": "coverage/es/coverage.json"
+      "coveragePath": null
     },
     "swedish": {
       "name": "Swedish",
@@ -500,14 +500,14 @@
     },
     "portuguese": {
       "name": "Portuguese",
-      "indexPath": "releases/pt/speech/pt-speech-v23-10000x30-slim/app/vocabulary.index.json",
+      "indexPath": "releases/pt/speech/pt-speech-v24-headway-r2-10000x30-slim/app/vocabulary.index.json",
       "estimationPoolPath": "data/estimation-pools/portuguese.json",
       "frequencyPath": "data/speech-frequency/pt.json",
-      "examplesPath": "releases/pt/speech/pt-speech-v23-10000x30-slim/app/vocabulary.examples.json",
-      "studyStructurePath": "releases/pt/speech/pt-speech-v23-10000x30-slim/app/study-structure.json",
-      "releaseManifestPath": "releases/pt/speech/pt-speech-v23-10000x30-slim/manifest.json",
-      "releaseCompositionPath": "releases/pt/speech/pt-speech-v23-10000x30-slim/composition.json",
-      "conjugationsPath": "releases/pt/speech/pt-speech-v23-10000x30-slim/app/conjugations.json",
+      "examplesPath": "releases/pt/speech/pt-speech-v24-headway-r2-10000x30-slim/app/vocabulary.examples.json",
+      "studyStructurePath": "releases/pt/speech/pt-speech-v24-headway-r2-10000x30-slim/app/study-structure.json",
+      "releaseManifestPath": "releases/pt/speech/pt-speech-v24-headway-r2-10000x30-slim/manifest.json",
+      "releaseCompositionPath": "releases/pt/speech/pt-speech-v24-headway-r2-10000x30-slim/composition.json",
+      "conjugationsPath": "releases/pt/speech/pt-speech-v24-headway-r2-10000x30-slim/app/conjugations.json",
       "exampleTargetField": "example_portuguese",
       "exampleEnglishField": "example_english",
       "hasData": true,
@@ -573,7 +573,7 @@
       "speechLang": "pt-PT",
       "cognatesPath": "cognates/pt/cognates.json",
       "mergeExceptionsPath": "data/merge-exceptions/pt.json",
-      "coveragePath": "coverage/pt/coverage.json"
+      "coveragePath": null
     },
     "portuguese_brazilian": {
       "name": "Brazilian Portuguese",

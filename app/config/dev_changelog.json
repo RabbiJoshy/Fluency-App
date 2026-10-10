@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T19:07:01+01:00",
+      "date": "2026-10-10 19:07 BST",
+      "agent": "Codex",
+      "summary": "Make corrected Spanish and Portuguese speech decks the defaults",
+      "detail": [
+        "Default speech decks now use HEADWAY Spanish r4 and Portuguese r2, including déjalo → dejar / Verb; no special review URL is required.",
+        "Refresh deck-bound Merge Lemmas, cognate card decisions, frequency bindings and estimation pools using existing data and existing policies.",
+        "Keep the current staging UI; no new WSD, harvest or model download. Missing coverage assets are explicitly declared absent."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T18:27:55+01:00",
       "date": "2026-10-10 18:27 BST",
       "agent": "Codex",
@@ -367,18 +379,6 @@
         "Estimate vocabulary groups using the same merge and selective split rules as Smart Skip, with pooled Speech frequency and the most common eligible prompt.",
         "Split readings show a matching sentence and divide surface frequency; sibling answers remain independent.",
         "Keep saved Speech-rank placement compatible, show preparation progress, and withhold legacy CEFR labels pending calibration."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T15:48:00+01:00",
-      "date": "2026-10-09 15:48 BST",
-      "agent": "Antigravity",
-      "summary": "Song lyrics view: clean underline-free elision styling and contextual TURBO-2 WSD sense disambiguation in lyrics inspector",
-      "detail": [
-        "Removed dashed underlines on elided words in favor of clean text with soft-cyan styling, keeping lyric flow natural without hyperlink-like baselines.",
-        "Wired newly deployed TURBO-2 unified WSD decision logic into the lyrics quick-view modal so contextual senses (obligation, progressive, future, perfect, reflexive) are prioritized for each lyric line.",
-        "Added dictionary fallback in postProcess to match tokens against the engine dictionary even when filtered out of high-frequency playlist card cuts."
       ],
       "commit": "pending"
     }
