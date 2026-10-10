@@ -506,6 +506,52 @@ function showAiToast(message) {
   }, 2400);
 }
 
+/**
+ * Generates a clean, natural English gloss line for a lyric row.
+ * Prefers human English translation attached to the line; otherwise
+ * synthesizes a readable gloss from token translations.
+ */
+function buildLineEnglishGloss(line) {
+  if (!line) return '';
+  if (line.english && typeof line.english === 'string' && line.english.trim()) {
+    return line.english.trim();
+  }
+  if (!line.tokens || !Array.isArray(line.tokens)) return '';
+
+  const parts = [];
+  for (const t of line.tokens) {
+    if (t.type === 'unmatched') {
+      parts.push(t.raw);
+      continue;
+    }
+    if (t.type === 'entity') {
+      parts.push(t.word || t.raw);
+      continue;
+    }
+    let tr = t.translation || t.word || '';
+    if (t.type === 'mwe') {
+      tr = tr.split(';')[0].split(',')[0].trim();
+      tr = tr.replace(/^Used for explanations:\s*/i, '');
+      parts.push(tr);
+      continue;
+    }
+    // Clean dictionary clutter
+    tr = tr.replace(/\(inflection of[^)]*\)/gi, '').trim();
+    tr = tr.replace(/\([^)]*\)/g, '').trim();
+    if (tr.includes(';')) tr = tr.split(';')[0].trim();
+    if (tr.includes(',')) tr = tr.split(',')[0].trim();
+    // Drop leading infinitive "to " unless it's a stand-alone dictionary cue
+    tr = tr.replace(/^to\s+/i, '').trim();
+    if (tr) parts.push(tr);
+  }
+
+  let text = parts.join(' ').trim();
+  if (text.length > 0) {
+    text = text.charAt(0).toUpperCase() + text.slice(1);
+  }
+  return text;
+}
+
 // ───────────────────────────────────────────────
 // Render Spotify-Style Lyrics View
 // ───────────────────────────────────────────────
