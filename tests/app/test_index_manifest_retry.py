@@ -26,6 +26,7 @@ class IndexManifestRetryTests(unittest.TestCase):
     def run_js(self, body: str) -> dict:
         script = (
             "const loadedIndexRowShards = new Set();\n"
+            + (APP_ROOT / "js" / "read-request.js").read_text().replace("export ", "")
             + manifest_loader_source()
             + "\n(async () => {\n" + body + "\n})().catch(e => { console.error(e); process.exit(1); });"
         )

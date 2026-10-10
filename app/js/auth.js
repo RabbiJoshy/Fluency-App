@@ -1,6 +1,7 @@
 // Authentication, Google Sheets sync, and progress persistence.
 // Key functions: saveWordProgress(), loadUserProgressFromSheet(), submitLogin().
 import './state.js?v=20260825ak';
+import { readJsonWithTimeout } from './read-request.js?v=1';
 import { submitProfileLogin, resetProfileLogin } from './learning-profiles.js?v=1';
 import { REPLICA_CARDS, replicaProminence, posAccentRgb } from './card-replica.js?v=20260929sense6';
 import { applyRemoteFastTrack } from './fast-track-preferences.js?v=20260920a';
@@ -748,13 +749,28 @@ function getProgressUiFingerprint() {
     });
 }
 
+function setProgressReadFailed(failed) {
+    const button = document.getElementById('progressReadRetry');
+    if (!button) return;
+    button.hidden = !failed;
+    button.classList.toggle('hidden', !failed);
+    button.onclick = async () => {
+        button.disabled = true;
+        try {
+            const changed = await loadUserProgressFromSheet();
+            if (changed) await window.refreshSetupAfterProgress?.();
+        } finally {
+            button.disabled = false;
+        }
+    };
+}
+
 async function detectProgressBackendSchema() {
     try {
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
+        const { data: result } = await readJsonWithTimeout(GOOGLE_SCRIPT_URL, {
             method: 'POST',
             body: JSON.stringify({ action: 'capabilities' })
-        });
-        const result = await response.json();
+        }, 5000);
         const version = Number(result?.data?.schemaVersion) || 0;
         progressBackendSchemaVersion = result?.success && version >= 4 ? version : 3;
     } catch (_) {
@@ -765,25 +781,28 @@ async function detectProgressBackendSchema() {
 
 async function loadLegacyProgress(cacheKey, cached) {
     const effectiveUser = getIsolatedSyncUser(currentUser.initials);
-    const fetchSheet = sheet => fetch(GOOGLE_SCRIPT_URL, {
+    const fetchSheet = sheet => readJsonWithTimeout(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify({ action: 'load', user: effectiveUser, sheet })
-    }).then(response => response.json()).catch(() => null);
+    }, 12000).then(({ data }) => data).catch(() => null);
     const [normalResult, artistResult, itemResult] = await Promise.all([
         fetchSheet('UserProgress'),
         fetchSheet('Lyrics'),
-        fetch(GOOGLE_SCRIPT_URL, {
+        readJsonWithTimeout(GOOGLE_SCRIPT_URL, {
             method: 'POST',
             body: JSON.stringify({ action: 'loadItems', user: effectiveUser })
-        }).then(response => response.json()).catch(() => null)
+        }, 12000).then(({ data }) => data).catch(() => null)
     ]);
-    if (!normalResult?.success && !artistResult?.success) {
+    if (!normalResult?.success || !artistResult?.success) {
+        setProgressReadFailed(true);
+        window.markProgressLoaded?.();
         applyPendingProgressOverlay(progressData);
         applyPendingItemProgressOverlay(itemProgressData);
         applyPendingMetaProgressOverlay(levelEstimates);
         return false;
     }
 
+    setProgressReadFailed(!normalResult?.success || !artistResult?.success || !itemResult?.success);
     const previousUiState = getProgressUiFingerprint();
     progressData = {}; window.bumpProgressEpoch?.();
     const mergeWords = result => {
@@ -920,7 +939,7 @@ async function loadUserProgressFromSheetNow() {
             || (Date.now() - progressLastFullSyncAt) > FULL_SYNC_INTERVAL_MS;
         const since = fullSyncDue ? null : progressSyncVersion;
         const [progressResult, itemResult] = await Promise.all([
-            fetch(GOOGLE_SCRIPT_URL, {
+            readJsonWithTimeout(GOOGLE_SCRIPT_URL, {
                 method: 'POST',
                 body: JSON.stringify({
                     action: 'load',
@@ -929,8 +948,8 @@ async function loadUserProgressFromSheetNow() {
                     user: effectiveUser,
                     ...(since ? { since } : {})
                 })
-            }).then(r => r.json()).catch(() => null),
-            fetch(GOOGLE_SCRIPT_URL, {
+            }, 12000).then(({ data }) => data).catch(() => null),
+            readJsonWithTimeout(GOOGLE_SCRIPT_URL, {
                 method: 'POST',
                 body: JSON.stringify({
                     action: 'loadItems',
@@ -939,7 +958,7 @@ async function loadUserProgressFromSheetNow() {
                     user: effectiveUser,
                     ...(since ? { since } : {})
                 })
-            }).then(r => r.json()).catch(() => null)
+            }, 12000).then(({ data }) => data).catch(() => null)
         ]);
 
         // The unified load failed (offline, or endpoint unreachable). Keep the
@@ -947,6 +966,7 @@ async function loadUserProgressFromSheetNow() {
         // then overlay any writes still queued locally so freshly-answered
         // offline cards remain visible. Returning false leaves the UI on cache.
         if (!progressResult?.success) {
+            setProgressReadFailed(true);
             applyPendingProgressOverlay(progressData);
             applyPendingItemProgressOverlay(itemProgressData);
             applyPendingMetaProgressOverlay(levelEstimates);
@@ -958,6 +978,7 @@ async function loadUserProgressFromSheetNow() {
             return false;
         }
 
+        setProgressReadFailed(!itemResult?.success);
         const previousUiState = getProgressUiFingerprint();
         // A delta reply describes only what changed, so the cached rows must
         // survive. Only a full reply is authoritative enough to replace them.
@@ -1024,8 +1045,11 @@ async function loadUserProgressFromSheetNow() {
         const newest = [progressResult?.data?.version, itemResult?.data?.version]
             .filter(v => typeof v === 'string' && v)
             .reduce((a, b) => (a > b ? a : b), progressSyncVersion || '');
-        if (newest) progressSyncVersion = newest;
-        if (!gotDelta) progressLastFullSyncAt = Date.now();
+        // A timed-out half must be fetched again; do not skip its rows on retry.
+        if (itemResult?.success) {
+            if (newest) progressSyncVersion = newest;
+            if (!gotDelta) progressLastFullSyncAt = Date.now();
+        }
         window.markProgressLoaded?.();
         window.bumpProgressEpoch?.();
 
@@ -1038,6 +1062,10 @@ async function loadUserProgressFromSheetNow() {
         return getProgressUiFingerprint() !== previousUiState || !cached;
     } catch (error) {
         console.error('Failed to load progress from Google Sheets:', error);
+        setProgressReadFailed(true);
+        applyPendingProgressOverlay(progressData);
+        applyPendingItemProgressOverlay(itemProgressData);
+        applyPendingMetaProgressOverlay(levelEstimates);
         // A thrown fetch settles the question too. Leaving the setup screen
         // waiting on a promise that can never resolve is worse than laying it
         // out from whatever cache we have.

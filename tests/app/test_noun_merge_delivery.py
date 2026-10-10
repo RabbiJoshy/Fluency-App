@@ -15,9 +15,10 @@ const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/st
 const source=fs.readFileSync(process.env.VOCAB,'utf8');
 const pure=source.slice(source.indexOf('// lemma-merge-pure'),source.indexOf('// /lemma-merge-pure'));
 const loading=source.slice(source.indexOf('let _mergeExceptionsFor'),source.indexOf('async function fetchActiveVocabularyIndex'));
+const requests=fs.readFileSync(process.env.VOCAB.replace(/vocab\.js$/, 'read-request.js'),'utf8').replace(/^export /gm,'');
 let payload={release_id:'release-a',keys:{gatos:'gato'},contractions:[]};
-const context={console,fetch:async()=>({ok:true,json:async()=>payload})};
-vm.runInNewContext(pure+loading,context);
+const context={console,AbortController,setTimeout,clearTimeout,fetch:async()=>({ok:true,json:async()=>payload})};
+vm.runInNewContext(requests+pure+loading,context);
 (async()=>{
  const item={word:'gatos',lemma:'gato',meanings:[]};
  const config={mergeExceptionsPath:'old.json',indexPath:'/release-a/app/index.json'};

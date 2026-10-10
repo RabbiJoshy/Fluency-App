@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T22:57:57+01:00",
+      "date": "2026-10-10 22:57 BST",
+      "agent": "Codex",
+      "summary": "Stalled progress and deck downloads now time out with a way to retry",
+      "detail": [
+        "Progress reads stop after 12 seconds per request; capability checks stop after 5 seconds. Failed reads retain cached progress and queued answers, and offer Retry progress load.",
+        "Deck JSON downloads stop after 20 seconds per request, including a stalled response body. Failed deck loads explain how to retry.",
+        "A partial progress refresh retains its previous sync watermark so retrying can recover the missing rows."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T22:25:52+01:00",
       "date": "2026-10-10 22:25 BST",
       "agent": "Claude",
@@ -361,19 +373,6 @@
         "Level picker features an illuminated focal badge on the active level, removes redundant header level label, and places speech coverage inline after target-language example words.",
         "Retired 'Set 1, 2, ...' in favor of card ranges (e.g. 1–25) across selectors, buttons, loading screens, and completion modals.",
         "Refactored setup tooltip modals to be concise, scannable, and cleanly centered across both mobile and desktop viewports."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T20:32:00+01:00",
-      "date": "2026-10-09 20:32 BST",
-      "agent": "Claude",
-      "summary": "Inflected Portuguese rows drop dictionary notes and inflect every meaning: está 'he/she is', not 'he/she is; forms the progressive aspect'",
-      "detail": [
-        "Notes beside the meanings are left off inflected rows: 'forms the progressive aspect', 'formula used in greetings', 'especially…', 'usually', 'such as…'. vai: 'he/she is doing; formula used in greetings' → 'he/she is doing'.",
-        "Meanings written without 'to' now inflect too: busca 'he/she fetches, pick up' → 'he/she fetches, picks up'; tira 'takes, take out, take away' → 'takes, takes out, takes away'; cola 'sticks or attach' → 'sticks or attaches'.",
-        "Alternatives after 'to be' stay as they are ('he/she is absent, not present'); an object alternate stays ('starts an engine, vehicle').",
-        "Measured on live v23: 232 Portuguese rows changed, no Spanish row changed, none lost its English."
       ],
       "commit": "pending"
     }

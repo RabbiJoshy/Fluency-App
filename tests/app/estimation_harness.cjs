@@ -9,7 +9,7 @@ function createHarness(overrides = {}) {
         click() { context.clickedLevel = index + 1; }
     }));
     const context = {
-        console, URL, URLSearchParams, setTimeout, clearTimeout, addEventListener() {},
+        console, URL, URLSearchParams, AbortController, setTimeout, clearTimeout, addEventListener() {},
         localStorage: { getItem() { return null; }, setItem() {} },
         selectedLanguage: 'spanish', activeArtist: null, hideSingleOccurrence: false,
         config: { languages: { spanish: {} } }, levelEstimates: {},
@@ -32,11 +32,11 @@ function createHarness(overrides = {}) {
     vm.createContext(context);
     context.loadModule = file => {
         let source = fs.readFileSync(path.join(ROOT, 'app/js', file), 'utf8');
-        source = source.replace(/^import .*;\s*$/gm, '').replace(/export \{[\s\S]*?\};/g, '');
+        source = source.replace(/^import .*;\s*$/gm, '').replace(/export \{[\s\S]*?\};/g, '').replace(/^export /gm, '');
         if (file === 'ui.js') source = source.replace(/^applyGlobalStudyDefaults\(\);$/m, '');
         vm.runInContext(source, context, { filename: file });
     };
-    for (const file of ['vocab.js', 'estimation.js']) context.loadModule(file);
+    for (const file of ['read-request.js', 'vocab.js', 'estimation.js']) context.loadModule(file);
     context.elements = elements;
     context.run = code => vm.runInContext(code, context);
     return context;

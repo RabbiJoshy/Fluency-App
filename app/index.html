@@ -388,6 +388,7 @@
                     </button>
                     <!-- Offline / sync-pending status pill. Hidden when online with an empty queue. -->
                     <button id="syncStatusIndicator" class="sync-status is-synced" type="button" title="Open synchronization details" onclick="showSettingsModalWithTab('offline')">Synced</button>
+                    <button id="progressReadRetry" class="sync-status is-failed hidden" type="button" hidden title="Progress could not be refreshed. Saved progress stays available; tap to retry.">Retry progress load</button>
                     <button class="gear-btn top-bar-gear" id="topBarGearBtn" title="Settings">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="12" cy="12" r="3"></circle>

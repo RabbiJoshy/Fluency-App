@@ -2,6 +2,7 @@
 // Key functions: buildFilteredVocab() (central filter), loadVocabularyData(), getWordId(),
 // mergeArtistVocabularies() (multi-artist merge by hex ID).
 import './state.js?v=20260825ak';
+import { readJsonWithTimeout } from './read-request.js?v=1';
 import { validateVocabularyIndex } from './data-contracts.js?v=20260825ak';
 import { formatRoute } from './routes.js?v=20260923cj';
 import { applyGrammarCardOverlay } from './grammar-cards.js?v=20260923gn';
@@ -16,9 +17,9 @@ async function loadSpeechSourceFrequency(langConfig, { detached = false } = {}) 
     const indexPath = langConfig?.indexPath;
     if (!path || !indexPath || (!detached && (activeArtist || window.playlistLiveActive?.()))) return null;
     if (!speechSourceFrequencyCache.has(path)) {
-        const pending = fetch(path).then(async response => {
+        const pending = readJsonWithTimeout(path).then(async ({ response, data: responseData }) => {
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const data = await response.json();
+            const data = responseData;
             // config.js maps every release path onto the release site, so the
             // deck's indexPath is a full URL on the live app while this file
             // names the release as `releases/…`. Compare them on the same
@@ -1390,9 +1391,9 @@ function buildCardFormModel(item, meanings = [], options = {}) {
     // retaining targetWord/representativeSurface for IDs and exact examples.
     // Only an unambiguous spelling is a merged lemma. Casado names casar and
     // casado, so it stays the surface card and does not wear the verb's title.
-    const unambiguousLemma = lemmaHeadwordsOf(item).length === 1;
-    const mergedLemma = options.mergedLemma === true && unambiguousLemma && Boolean(citationForm);
-    const displaySurface = mergedLemma ? citationForm : representativeSurface;
+    const mergeKey = lemmaGroupKey(item);
+    const mergedLemma = options.mergedLemma === true && Boolean(mergeKey);
+    const displaySurface = mergedLemma ? mergeKey : representativeSurface;
     const hasVerbSense = meanings.some(meaning => {
         const pos = String(meaning?.pos || '').toLocaleLowerCase('en');
         return pos === 'v' || pos === 'vb' || pos.includes('verb');
@@ -1410,7 +1411,7 @@ function buildCardFormModel(item, meanings = [], options = {}) {
         // tests the shared lemma. Pronominal verbs fall back to their complete
         // `-se` citation rather than presenting an incomplete bare form when
         // old data lacks enough morphology to choose me/te/se/nos/os safely.
-        || (mergedLemma || isPronominal ? citationForm : representativeSurface)
+        || (mergedLemma ? mergeKey : isPronominal ? citationForm : representativeSurface)
         || citationForm
         || displaySurface
     ).trim();
@@ -1483,9 +1484,9 @@ async function loadExampleShardManifest(langConfig) {
     const pending = (async () => {
         const manifestPath = `${examplesDirectory(examplesPath)}vocabulary.examples.manifest.json`;
         try {
-            const response = await fetch(manifestPath);
+            const { response, data: responseData } = await readJsonWithTimeout(manifestPath);
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const manifest = await response.json();
+            const manifest = responseData;
             if (!manifest || !Array.isArray(manifest.shards) || !manifest.shards.length) {
                 throw new Error('empty example shard manifest');
             }
@@ -1494,9 +1495,9 @@ async function loadExampleShardManifest(langConfig) {
             exampleShardManifestFor = examplesPath;
             exampleShardsActive = true;
             return manifest;
-        } catch (_) {
+        } catch (error) {
             exampleShardManifest = null;
-            exampleShardManifestFor = examplesPath;
+            exampleShardManifestFor = error.name === 'TimeoutError' ? null : examplesPath;
             exampleShardsActive = false;
             return null;
         }
@@ -1625,11 +1626,11 @@ async function fetchExampleShard(langConfig, shard) {
     const key = `${examplesPath}:${shard.path}`;
     if (loadedExampleShards.has(key)) return;
     if (exampleShardInflight.has(key)) return exampleShardInflight.get(key);
-    const pending = fetch(`${examplesDirectory(examplesPath)}${shard.path}`).then(async response => {
+    const pending = readJsonWithTimeout(`${examplesDirectory(examplesPath)}${shard.path}`).then(async ({ response, data: responseData }) => {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         trackDataFreshness(response);
         const manifest = exampleShardManifestFor === examplesPath ? exampleShardManifest : null;
-        mergeExamplePayload(expandSlimExamplePayload(await response.json(), manifest), examplesPath);
+        mergeExamplePayload(expandSlimExamplePayload(responseData, manifest), examplesPath);
         loadedExampleShards.add(key);
     }).finally(() => exampleShardInflight.delete(key));
     exampleShardInflight.set(key, pending);
@@ -1666,15 +1667,15 @@ async function loadMonolithExamples(langConfig) {
     if (window._cachedExamplesData && window._cachedExamplesDataPath === examplesPath && !exampleShardsActive) {
         return window._cachedExamplesData;
     }
-    const [response] = await Promise.all([
-        fetch(examplesPath),
+    const [{ response, data: responseData }] = await Promise.all([
+        readJsonWithTimeout(examplesPath),
         window.loadSourceTitles?.() || Promise.resolve(),
     ]);
     if (!response.ok) {
         throw new Error(`Configured examples file ${examplesPath} returned HTTP ${response.status}`);
     }
     trackDataFreshness(response);
-    const examples = await response.json();
+    const examples = responseData;
     return window.setActiveExamplesData?.(examples, examplesPath)
         || (window._cachedExamplesData = examples);
 }
@@ -1722,20 +1723,15 @@ async function loadIndexShardManifest(langConfig) {
     const pending = (async () => {
         const url = `${indexDirectory(indexPath)}vocabulary.index.manifest.json`;
         for (let attempt = 0; attempt < 2; attempt++) {
-            let response;
+            let response, responseData;
             try {
-                response = await fetch(url);
+                ({ response, data: responseData } = await readJsonWithTimeout(url));
             } catch (_) {
                 continue;
             }
             if (response.status === 404) return settle(null);
             if (!response.ok) continue;
-            let manifest = null;
-            try {
-                manifest = await response.json();
-            } catch (_) {
-                return settle(null);
-            }
+            const manifest = responseData;
             if (!manifest || !Array.isArray(manifest.shards) || !manifest.shards.length || !manifest.columns) {
                 return settle(null);
             }
@@ -1786,10 +1782,10 @@ async function fetchIndexRowShard(langConfig, shard) {
     const key = `${indexPath}:${shard.path}`;
     if (loadedIndexRowShards.has(key)) return;
     if (indexRowShardInflight.has(key)) return indexRowShardInflight.get(key);
-    const pending = fetch(`${indexDirectory(indexPath)}${shard.path}`).then(async response => {
+    const pending = readJsonWithTimeout(`${indexDirectory(indexPath)}${shard.path}`).then(async ({ response, data: responseData }) => {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         trackDataFreshness(response);
-        mergeIndexRowPayload(await response.json());
+        mergeIndexRowPayload(responseData);
         loadedIndexRowShards.add(key);
     }).finally(() => indexRowShardInflight.delete(key));
     indexRowShardInflight.set(key, pending);
@@ -1809,10 +1805,10 @@ async function ensureIndexRowsForRange(langConfig, rangeStart, rangeEnd, ranks) 
 async function loadColumnarIndex(langConfig, indexPath) {
     const manifest = await loadIndexShardManifest(langConfig);
     if (!manifest) return null;
-    const response = await fetch(`${indexDirectory(indexPath)}${manifest.columns}`);
+    const { response, data: responseData } = await readJsonWithTimeout(`${indexDirectory(indexPath)}${manifest.columns}`);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     trackDataFreshness(response);
-    const cards = hydrateIndexColumns(await response.json());
+    const cards = hydrateIndexColumns(responseData);
     if (!cards.length) throw new Error('empty index columns');
     cards.forEach(card => { card._indexRowsPending = true; });
     return cards;
@@ -1877,10 +1873,10 @@ async function fetchAndJoinIndex(langConfig, { ignoreArtist = false } = {}) {
         }
     }
     if (!data) {
-        const response = await fetch(indexPath);
+        const { response, data: responseData } = await readJsonWithTimeout(indexPath);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         trackDataFreshness(response);
-        data = await response.json();
+        data = responseData;
     }
 
     // Detect new master-based format and join if needed
@@ -1888,10 +1884,10 @@ async function fetchAndJoinIndex(langConfig, { ignoreArtist = false } = {}) {
     if (activeArtist && masterPath && data.length > 0 && data[0].sense_frequencies) {
         if (!window._cachedMasterVocab || window._cachedMasterVocabPath !== masterPath) {
             try {
-                const masterResp = await fetch(masterPath);
+                const { response: masterResp, data: masterRespData } = await readJsonWithTimeout(masterPath);
                 if (masterResp.ok) {
                     trackDataFreshness(masterResp);
-                    window._cachedMasterVocab = await masterResp.json();
+                    window._cachedMasterVocab = masterRespData;
                     window._cachedMasterVocabPath = masterPath;
                 }
             } catch (e) {
@@ -1917,10 +1913,10 @@ async function fetchDetachedIndex(langConfig) {
     if (!indexPath) throw new Error('No index path');
     const cacheKey = `${indexPath}:detached`;
     if (joinedIndexCacheByPath.has(cacheKey)) return joinedIndexCacheByPath.get(cacheKey);
-    const response = await fetch(indexPath);
+    const { response, data: responseData } = await readJsonWithTimeout(indexPath);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     trackDataFreshness(response);
-    const data = await response.json();
+    const data = responseData;
     validateVocabularyIndex(data, { source: indexPath });
     joinedIndexCacheByPath.set(cacheKey, data);
     return data;
@@ -1970,10 +1966,10 @@ async function loadPrecomputedEstimationPool(langConfig) {
     }
     const pending = (async () => {
         try {
-            const response = await fetch(poolPath);
+            const { response, data: responseData } = await readJsonWithTimeout(poolPath);
             if (!response.ok) return null;
             trackDataFreshness(response);
-            const data = await response.json();
+            const data = responseData;
             if (data?.schema !== 'estimation-pool/v1') return null;
             return hydratePrecomputedEstimationPool(data);
         } catch (_) {
@@ -1995,24 +1991,24 @@ async function loadEstimationVocabulary(langConfig, onProgress = () => {}) {
     if (!estimationVocabularyCache.has(path)) {
         const pending = (async () => {
             const directory = indexDirectory(path);
-            const response = await fetch(`${directory}vocabulary.index.manifest.json`);
+            const { response, data: responseData } = await readJsonWithTimeout(`${directory}vocabulary.index.manifest.json`);
             let data;
             if (response.status === 404) {
                 data = await fetchDetachedIndex(langConfig);
             } else {
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const manifest = await response.json();
+                const manifest = responseData;
                 if (!manifest.columns || !manifest.shards?.length) throw new Error('Invalid Speech index manifest');
-                const columns = await fetch(`${directory}${manifest.columns}`);
+                const { response: columns, data: columnsData } = await readJsonWithTimeout(`${directory}${manifest.columns}`);
                 if (!columns.ok) throw new Error(`HTTP ${columns.status}`);
-                data = hydrateIndexColumns(await columns.json());
+                data = hydrateIndexColumns(columnsData);
                 const byId = new Map(data.map(item => [item.id, item]));
                 const hydrated = new Set();
                 for (let start = 0; start < manifest.shards.length; start += 8) {
                     await Promise.all(manifest.shards.slice(start, start + 8).map(async shard => {
-                        const rows = await fetch(`${directory}${shard.path}`);
+                        const { response: rows, data: rowsData } = await readJsonWithTimeout(`${directory}${shard.path}`);
                         if (!rows.ok) throw new Error(`HTTP ${rows.status}`);
-                        for (const [id, row] of Object.entries(await rows.json())) {
+                        for (const [id, row] of Object.entries(rowsData)) {
                             const item = byId.get(id);
                             if (item) {
                                 Object.assign(item, row);
@@ -2042,21 +2038,21 @@ async function loadEstimationExamples(langConfig, ranks) {
     const path = langConfig.examplesPath;
     if (!path || !ranks.length) return {};
     const directory = examplesDirectory(path);
-    const response = await fetch(`${directory}vocabulary.examples.manifest.json`);
+    const { response, data: responseData } = await readJsonWithTimeout(`${directory}vocabulary.examples.manifest.json`);
     if (response.status === 404) {
-        const monolith = await fetch(path);
+        const { response: monolith, data: monolithData } = await readJsonWithTimeout(path);
         if (!monolith.ok) throw new Error(`HTTP ${monolith.status}`);
-        return monolith.json();
+        return monolithData;
     }
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const manifest = await response.json();
+    const manifest = responseData;
     const shards = exampleShardsForRanks(manifest, ranks);
     const examples = {};
     for (let start = 0; start < shards.length; start += 8) {
         await Promise.all(shards.slice(start, start + 8).map(async shard => {
-            const rows = await fetch(`${directory}${shard.path}`);
+            const { response: rows, data: rowsData } = await readJsonWithTimeout(`${directory}${shard.path}`);
             if (!rows.ok) throw new Error(`HTTP ${rows.status}`);
-            Object.assign(examples, expandSlimExamplePayload(await rows.json(), manifest));
+            Object.assign(examples, expandSlimExamplePayload(rowsData, manifest));
         }));
     }
     return examples;
@@ -2133,9 +2129,9 @@ async function stampContractions(vocabulary, langConfig, { detached = false } = 
     if (detached) {
         let payload = null;
         if (path) {
-            const response = await fetch(path);
+            const { response, data: responseData } = await readJsonWithTimeout(path);
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            payload = await response.json();
+            payload = responseData;
         }
         const contractions = new Set((payload?.contractions || []).map(normalizeLemmaToken));
         const built = payload?.release_id;
@@ -2154,9 +2150,9 @@ async function stampContractions(vocabulary, langConfig, { detached = false } = 
         _mergeKeysRelease = null;
         if (path) {
             try {
-                const response = await fetch(path);
+                const { response, data: responseData } = await readJsonWithTimeout(path);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const payload = await response.json();
+                const payload = responseData;
                 _contractionSurfaces = new Set((payload?.contractions || []).map(normalizeLemmaToken));
                 // The keys describe one release's senses; another release's
                 // deck falls back to reading senses as they load.
@@ -3132,7 +3128,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
         // Load Spotify track mapping (fire-and-forget, non-blocking)
         if (!window._spotifyTracks) {
             const spotifyPath = activeArtist?.spotifyPath || 'Artists/spotify_tracks.json';
-            fetch(spotifyPath).then(r => r.ok ? r.json() : {}).then(d => {
+            readJsonWithTimeout(spotifyPath).then(({ response, data }) => response.ok ? data : {}).then(d => {
                 window._spotifyTracks = d;
             }).catch(() => { window._spotifyTracks = {}; });
         }
@@ -3751,7 +3747,7 @@ async function loadVocabularyData(rangeString, opts = {}) {
         const detail = error instanceof Error && error.message
             ? `\n\n${error.message}`
             : '';
-        alert(`This deck could not be loaded.${detail}`);
+        alert(`This deck could not be loaded. Check your connection and select the set again to retry.${detail}`);
         return false;
     }
 }
@@ -3939,9 +3935,10 @@ async function mergeArtistVocabularies(artistConfigs, master) {
         const indexPath = cfg.indexPath || cfg.dataPath;
         let indexData;
         try {
-            const resp = await fetch(indexPath);
+            const { response: resp, data: respData } = await readJsonWithTimeout(indexPath);
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
             trackDataFreshness(resp);
-            indexData = await resp.json();
+            indexData = respData;
         } catch (e) {
             console.warn(`Failed to load index for ${cfg.name}:`, e);
             continue;
@@ -3974,9 +3971,10 @@ async function mergeArtistVocabularies(artistConfigs, master) {
         let examplesData = null;
         if (cfg.examplesPath) {
             try {
-                const resp = await fetch(cfg.examplesPath);
+                const { response: resp, data: respData } = await readJsonWithTimeout(cfg.examplesPath);
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
                 trackDataFreshness(resp);
-                examplesData = await resp.json();
+                examplesData = respData;
             } catch (e) {
                 console.warn(`Failed to load examples for ${cfg.name}:`, e);
             }
