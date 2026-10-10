@@ -203,6 +203,7 @@ class KaikkiSenseMenuTests(unittest.TestCase):
             {(item["headword"], item["part_of_speech"]) for item in suis},
             {("être", "verb"), ("suivre", "verb")},
         )
+
         self.assertEqual(
             {item["senses"][0]["translation"] for item in suis},
             {"to be", "to follow"},
@@ -218,6 +219,47 @@ class KaikkiSenseMenuTests(unittest.TestCase):
         self.assertIn(("grammar", "surface_mark", "mood=indicative"), surface_features)
         self.assertEqual(report["fallbacks"], [])
         self.assertEqual(report["cards_without_menu"], 0)
+
+    def test_external_lemma_does_not_broaden_a_declared_verb_form_to_noun(self):
+        adapter = KaikkiSenseMenuAdapter(self.snapshot, language_policy=self.policy,
+                                        external_lemmas={'suis': ['être', 'suivre']})
+        cards = [{**create_card_record('fr', 'suis').to_dict(), 'rank': 1}]
+        menu, _ = adapter.build(cards, snapshot_id='fixture')
+        self.assertEqual({(a['headword'], a['part_of_speech']) for a in menu['cards'][0]['analyses']},
+                         {('être', 'verb'), ('suivre', 'verb')})
+        self.assertEqual(adapter.direct_form_positions({'suis'})['suis']['être'], {'verb'})
+
+    def test_external_missing_first_hop_is_not_given_an_invented_pos(self):
+        adapter = KaikkiSenseMenuAdapter(self.snapshot, language_policy=self.policy,
+                                        external_lemmas={'unknown': ['être']})
+        cards = [{**create_card_record('fr', 'unknown').to_dict(), 'rank': 1}]
+        menu, _ = adapter.build(cards, snapshot_id='fixture')
+        self.assertEqual({a['part_of_speech'] for a in menu['cards'][0]['analyses']}, {'noun', 'verb'})
+
+    def test_multiple_explicit_pos_relations_to_same_lemma_are_preserved(self):
+        with self.snapshot.open('a') as f:
+            f.write(json.dumps({'word':'suis','lang_code':'fr','pos':'noun',
+                                'senses':[form_sense('être','noun-form')]})+'\n')
+        adapter = KaikkiSenseMenuAdapter(self.snapshot, language_policy=self.policy,
+                                        external_lemmas={'suis': ['être']})
+        cards = [{**create_card_record('fr', 'suis').to_dict(), 'rank': 1}]
+        menu, _ = adapter.build(cards, snapshot_id='fixture')
+        self.assertEqual({a['part_of_speech'] for a in menu['cards'][0]['analyses'] if a['headword']=='être'},
+                         {'noun', 'verb'})
+
+    def test_separate_indirect_noun_path_survives_direct_verb_constraint(self):
+        with self.snapshot.open('a') as f:
+            for row in [
+                {'word':'suis','lang_code':'fr','pos':'noun','senses':[form_sense('variant','noun-variant')]},
+                {'word':'variant','lang_code':'fr','pos':'noun','senses':[form_sense('être','noun-base')]},
+            ]:
+                f.write(json.dumps(row)+'\n')
+        adapter = KaikkiSenseMenuAdapter(self.snapshot, language_policy=self.policy,
+                                        external_lemmas={'suis':['être','suivre']})
+        cards = [{**create_card_record('fr','suis').to_dict(),'rank':1}]
+        menu,_ = adapter.build(cards,snapshot_id='fixture')
+        self.assertEqual({a['part_of_speech'] for a in menu['cards'][0]['analyses'] if a['headword']=='être'},
+                         {'noun','verb'})
 
     def test_direct_homograph_and_form_of_headword_both_survive(self):
         cards = [{**create_card_record("fr", "est").to_dict(), "rank": 1}]

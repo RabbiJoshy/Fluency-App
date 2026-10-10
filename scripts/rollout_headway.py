@@ -47,7 +47,7 @@ def carry(source, run, stage):
                     carried_note='HEADWAY: unchanged inventory and existing named-pool sentences; no harvest')
     write(run / 'stages' / stage / 'contract.json', contract)
 
-def prepare(ws, lang, state_path, revision):
+def prepare(ws, lang, state_path, revision, additional_preview=None):
     from fluency.pipeline.planning import create_pipeline_plan
     from fluency.sense_menu.runner import build_sense_menu_stage
     if state_path.exists():
@@ -59,6 +59,21 @@ def prepare(ws, lang, state_path, revision):
     old_menu = read(source / 'stages/02_sense_menu/output/sense-menu.json')
     targets = sorted(c['surface_form'] for c in old_menu['cards']
                      if stale_carried_analyses(c, ledger.get(c['surface_form'], {})))
+    preview_inputs = []
+    if additional_preview is not None:
+        additional_preview = additional_preview.resolve()
+        preview = read(additional_preview)
+        if preview.get('version') != 'headway-form-pos-preview/v1' or preview.get('language') != lang:
+            raise ValueError('additional preview must be a matching HEADWAY form-POS audit')
+        for p, expected in preview['inputs'].items():
+            if file_content_id(Path(p)) != expected:
+                raise ValueError(f'preview input changed: {p}')
+        by_card = {c['card_id']: c['surface_form'] for c in old_menu['cards']}
+        for correction in preview['changes']:
+            if by_card.get(correction['card_id']) != correction['surface']:
+                raise ValueError('preview card does not belong to pinned source menu')
+        targets = sorted(set(targets) | {c['surface'] for c in preview['changes']})
+        preview_inputs = [additional_preview, *map(Path, preview['inputs'])]
     if not targets:
         raise ValueError('no superseded cards found')
     profile = read(source / 'profile.json')
@@ -71,7 +86,7 @@ def prepare(ws, lang, state_path, revision):
     inputs = [ledger_path(ws.root, lang), pool, source / 'profile.json',
               source / 'stages/02_sense_menu/output/sense-menu.json',
               source / 'stages/04_wsd_assignments/output/assignments.jsonl',
-              *[freeze / x['path'] for x in read(freeze / 'manifest.json')['documents']]]
+              *[freeze / x['path'] for x in read(freeze / 'manifest.json')['documents']], *preview_inputs]
     profile['headway'] = {'source_run_id': source.name, 'named_pool': read(pool)['pool_id'],
                          'prewsd': str(freeze), 'inputs': {str(p): file_content_id(p) for p in inputs}}
     profile_path = REPO / 'config/pipelines' / lang / 'speech' / f'{profile["profile_id"]}.json'
@@ -139,20 +154,32 @@ def execute(ws, state, approved_usd=0):
     commands.append([sys.executable, '-m', 'fluency.speech.wsd_execute', '--run-dir', str(run),
                      '--out', str(bundle), '--profile-id', f'{lang}-v23-1',
                      '--prewsd', state['freeze'], '--reflexive-tags', str(tags),
-                     '--embedding-preview', str(ws.root / 'raw/surfaces/headway' / f'{lang}-embedding-preview.json'),
+                     '--embedding-preview', str(ws.root / 'raw/surfaces/headway' / f'{state.get("prefix", lang)}-embedding-preview.json'),
                      '--multiword-inventory', str(ws.root / 'raw/mwe' / f'mwe-{lang}-10k-sieve/mwe_merged.json'),
                      '--target-surfaces', *targets])
     if not approved_usd:
         commands[-1].append('--offline-only')
     else:
-        preflight = ws.root / 'raw/surfaces/headway' / f'{lang}-embedding-preview.json'
+        preflight = ws.root / 'raw/surfaces/headway' / f'{state.get("prefix", lang)}-embedding-preview.json'
         if not preflight.exists():
             raise ValueError('offline preflight required before paid execution')
         misses = read(preflight)
-        # Conservative envelope includes 1000 overhead tokens/text and all retries.
-        envelope = (misses['utf8_bytes'] + 1000 * misses['missing_count']) * .15 / 1_000_000 * 13
-        if envelope > approved_usd:
-            raise ValueError(f'projected conservative spend ${envelope:.3f} exceeds approval')
+        # The embedding request contains only contents=texts and a task-type
+        # enum, with no generated output or per-text instruction prompt. Use
+        # one token per UTF-8 byte, 64 padding tokens/text and all 13 attempts.
+        # Track reservations across this campaign, including failed attempts.
+        envelope = (misses['utf8_bytes'] + 64 * misses['missing_count']) * .15 / 1_000_000 * 13
+        spend_path = ws.root / 'raw/surfaces/headway/spend-envelope.json'
+        if not spend_path.exists():
+            raise ValueError('campaign spend reservations must be recorded before paid execution')
+        spend = read(spend_path)
+        total = sum(item['reserved_usd'] for item in spend['reservations']) + envelope
+        if total > approved_usd:
+            raise ValueError(f'combined conservative spend ${total:.3f} exceeds approval')
+        spend['reservations'].append({'run_id': run.name, 'missing_count': misses['missing_count'],
+            'utf8_bytes': misses['utf8_bytes'], 'reserved_usd': envelope,
+            'preflight_content_id': file_content_id(preflight)})
+        write(spend_path, spend)
         print(f"Embedding preflight: {misses['missing_count']} texts, {misses['utf8_bytes']} UTF-8 bytes; conservative retry envelope ${envelope:.3f}; approval ${approved_usd:.2f}", flush=True)
     print(f'{lang}: targeted WSD on {len(targets)} cards; paid cache misses allowed: {bool(approved_usd)}', flush=True)
     for n, command in enumerate(commands):
@@ -195,6 +222,7 @@ def import_rows(ws, state):
             sampling_policy=(report.get('occurrence_sampling') or {}).get('policy') or {},
             carried=carried(), fresh=fresh['assignments'], declared=(), progress=lambda s: print(s, flush=True))
         write(report_path, splice_report)
+    del fresh, preview
     import_wsd_assignments(ws, run_id=run.name, language=lang, mode='speech', bundle_path=path, streaming=True)
     print(f'{lang}: complete assignment bundle imported; {splice_report["rows_by_origin"]}', flush=True)
 
@@ -240,6 +268,7 @@ def main():
     ap.add_argument('--workspace', type=Path, required=True)
     ap.add_argument('--language', choices=SOURCES, required=True)
     ap.add_argument('--revision', type=int, default=1)
+    ap.add_argument('--additional-preview', type=Path)
     ap.add_argument('--spend-approved-usd', type=float, default=0)
     ap.add_argument('--step', choices=['prepare','menus','wsd','import','release'], required=True)
     args = ap.parse_args()
@@ -247,7 +276,7 @@ def main():
     suffix = '' if args.revision == 1 else f'-r{args.revision}'
     path = ws.root / 'raw/surfaces/headway' / f'{args.language}{suffix}-rollout-state.json'
     if args.step == 'prepare':
-        prepare(ws, args.language, path, args.revision)
+        prepare(ws, args.language, path, args.revision, args.additional_preview)
     else:
         state = read(path)
         for input_path, expected in state['inputs'].items():

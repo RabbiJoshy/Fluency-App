@@ -580,6 +580,21 @@ class KaikkiSenseMenuAdapter:
 
             for surface, by_headword in paths.items():
                 additions: dict[str, tuple[str, ...]] = {}
+                # A ledger first hop requests a lemma's rows; it does not
+                # license every POS of that lemma. Honour the dictionary's
+                # narrower direct form-of relation even when the lemma was
+                # already seeded with unrestricted lookup metadata.
+                direct_positions: dict[str, set[str]] = defaultdict(set)
+                for row in rows_by_word.get(surface, []):
+                    for edge in _redirect_edges(
+                        row, self.language_policy, source_surface=surface,
+                        normalize=self._normalize, canonicalize=self._canonicalize,
+                    ):
+                        direct_positions[edge.target].update(edge.target_parts_of_speech)
+                for target, positions in direct_positions.items():
+                    if (by_headword.get(target) == (surface, target)
+                            and allowed_positions[surface].get(target) is None):
+                        allowed_positions[surface][target] = set(positions)
                 for row in found.get(surface, []):
                     for target, tags in _surface_grammar(row, self._normalize).items():
                         merged = set(surface_grammar[surface].get(target, ())) | set(tags)
@@ -631,6 +646,20 @@ class KaikkiSenseMenuAdapter:
             dict(surface_grammar),
             {"passes": passes, "rows_read": rows_read},
         )
+
+    def direct_form_positions(self, surfaces: set[str]) -> dict[str, dict[str, set[str]]]:
+        """Pinned dictionary constraints for validating a carried first hop."""
+        positions: dict[str, dict[str, set[str]]] = defaultdict(lambda: defaultdict(set))
+        for row in _iter_rows(self.path, language_code=self.language_code):
+            surface = _safe_surface(row.get("word"), self._normalize)
+            if surface not in surfaces:
+                continue
+            for edge in _redirect_edges(
+                row, self.language_policy, source_surface=surface,
+                normalize=self._normalize, canonicalize=self._canonicalize,
+            ):
+                positions[surface][edge.target].update(edge.target_parts_of_speech)
+        return {surface: dict(targets) for surface, targets in positions.items()}
 
     def _card_analyses(
         self,

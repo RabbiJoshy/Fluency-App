@@ -812,7 +812,9 @@ def build_inactive_run_candidate(
         atomic_write(report_path, report, temporary_root)
     if not stage_manifest_path.exists():
         implementation_hash = canonical_content_id(
-            {"run_candidate": file_content_id(Path(__file__).resolve())}
+            {"run_candidate": file_content_id(Path(__file__).resolve()),
+             "assignment_store": file_content_id(Path(__file__).with_name('assignment_store.py')),
+             "composition": file_content_id(Path(__file__).with_name('composition.py'))}
         )
         config_hash = canonical_content_id(
             {"policy": POLICY_VERSION, "max_examples_per_surface": limit}
@@ -952,4 +954,7 @@ def build_inactive_run_candidate(
         "layers": layers,
         "omitted_layers": omitted_layers,
     }
-    return compose_release(workspace, composition, deck)
+    if memory_bounded:
+        del assignments, assignments_by_card, inventory, menus, candidates
+        del candidates_by_card, menu_by_card, sentences
+    return compose_release(workspace, composition, deck, memory_bounded=memory_bounded)

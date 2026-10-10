@@ -2,6 +2,18 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T17:38:07+01:00",
+      "date": "2026-10-10 17:38 BST",
+      "agent": "Codex",
+      "summary": "HEADWAY: constrain Portuguese forms to their supported source meanings",
+      "detail": [
+        "Corrected Portuguese form imports that pulled unrelated parts of speech from the base word; preserved genuine separate meanings and left missing evidence unresolved.",
+        "Reprocessed only affected cards using existing frozen sentences. Final candidate decks are reviewed through staging release selection; this checkpoint does not redeploy or replace the staging interface.",
+        "Save release files in chunks to reduce avoidable memory spikes."
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T17:21:00+01:00",
       "date": "2026-10-10 17:21 BST",
       "agent": "Antigravity",
@@ -369,58 +381,6 @@
         "Removed the hash from each frequency range and enlarged the numbers with heavier weight and vertical padding.",
         "Legend counts use the main text colour for clearer contrast.",
         "Skipped cards use a darker slate-grey fill in set progress bars and the matching legend swatch."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T13:54:00+01:00",
-      "date": "2026-10-09 13:54 BST",
-      "agent": "Antigravity",
-      "summary": "Song lyrics view: Spotify-style minimalist layout with target lyrics, English subtitles underneath, mobile bottom-sheet, and Fluency design integration",
-      "detail": [
-        "Replaced dense audit layout with Spotify-style minimalist lyrics flow: prominent target text in Space Grotesk with clean English gloss directly underneath.",
-        "Unified design system with Fluency's industrial dark palette (--bg-primary, --bg-card, --border-color, --font-emphasis).",
-        "Added mobile-first responsive bottom-sheet modal with drag handle and safe-area padding for one-handed inspection on phones.",
-        "Added topbar subtitle toggle pill ('EN line') to switch English line translation visibility."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T13:48:00+01:00",
-      "date": "2026-10-09 13:48 BST",
-      "agent": "Antigravity",
-      "summary": "Level Estimator audit: starting level placement fix, SENSE_CYCLE POS resolution, keyboard controls, and CEFR indicators",
-      "detail": [
-        "Fixed off-by-one level placement where learners were routed to a 100% completed level; now routes to first unseen card.",
-        "Resolved SENSE_CYCLE part-of-speech handling so grouped nouns and verbs are sampled and labelled properly.",
-        "Increased shard candidate attempts to 48 to prevent premature aborts on columnar releases.",
-        "Added full keyboard shortcuts (Space/Enter to flip, 1/2 or Arrow keys to answer, Escape to close) and modal backdrop dismissal.",
-        "Added visual progress track and CEFR stage mapping on results screen."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T13:35:00+01:00",
-      "date": "2026-10-09 13:35 BST",
-      "agent": "Antigravity",
-      "summary": "Song lyrics view: interactive lyric reader with token quick-view, sense assignments, entities, and ad-libs",
-      "detail": [
-        "Added lyrics-view mode accessible from learning settings and the artist setup card in lyrics mode.",
-        "Browse the 30-song offline playlist with searchable picker and song-by-song navigation.",
-        "Interactive lyric lines with automatic classification and inline badges for entities, idioms/MWEs, interjections/ad-libs, and vocabulary.",
-        "Quick-view modal inspecting surface elisions, primary sense assignments, entity cultural descriptions, and alternate Spanish senses with keyboard navigation."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T11:31:20+01:00",
-      "date": "2026-10-09 11:31 BST",
-      "agent": "Codex",
-      "summary": "Landing page: centred section labels and wider set cards in a 2 × 2 grid",
-      "detail": [
-        "Choose level, Choose a set and Practice errors have equal spacing above and below their labels.",
-        "Set cards are about 20% shorter and arranged in two columns, with frequency rank ranges visible on phones and desktop.",
-        "The selected set retains its accent ring without enlarging or shifting the card."
       ],
       "commit": "pending"
     }

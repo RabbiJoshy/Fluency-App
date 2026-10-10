@@ -11,7 +11,7 @@ import tempfile
 from typing import Any
 
 from fluency.core.artifacts import artifact_directory, verify_artifact
-from fluency.core.hashing import content_id
+from fluency.core.hashing import content_id, file_content_id
 from fluency.core.workspace import Workspace
 from fluency.enrichments.lexical_relations import apply_lexical_relations_to_index
 from fluency.release.app_compat import (
@@ -38,8 +38,47 @@ def load_json_object(path: Path) -> dict[str, Any]:
     return value
 
 
-def compose_release(workspace: Workspace, composition: dict[str, Any], deck: dict[str, Any]) -> Path:
+def compose_release(workspace: Workspace, composition: dict[str, Any], deck: dict[str, Any],
+                    *, memory_bounded: bool = False) -> Path:
+    if not memory_bounded:
+        return _compose_release(workspace, composition, deck)
+    temporary_root = workspace.root / '.fluency/temporary'
+    temporary_root.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix='serialized-release-', dir=temporary_root) as directory:
+        return _compose_release(workspace, composition, deck, payload_directory=Path(directory))
+
+
+def _compose_release(workspace: Workspace, composition: dict[str, Any], deck: dict[str, Any],
+                     *, payload_directory: Path | None = None) -> Path:
     """Publish a new immutable bundle; never activate it implicitly."""
+
+    encoded_count = 0
+
+    def encode(value):
+        nonlocal encoded_count
+        if payload_directory is None:
+            return json_bytes(value)
+        path = payload_directory / f'{encoded_count}.json'
+        encoded_count += 1
+        encoder = json.JSONEncoder(allow_nan=False, ensure_ascii=False,
+                                   separators=(',', ':'), sort_keys=True)
+        # Exactly canonical JSON bytes, written in bounded chunks. Holding
+        # complete deck/index/example strings and byte copies caused large
+        # memory spikes even after the input readers were streamed.
+        with path.open('w', encoding='utf-8', newline='\n') as stream:
+            chunks, size = [], 0
+            for fragment in encoder.iterencode(value):
+                chunks.append(fragment)
+                size += len(fragment)
+                if size >= 1_048_576:
+                    stream.write(''.join(chunks))
+                    chunks, size = [], 0
+            stream.write(''.join(chunks))
+            stream.write('\n')
+        return path
+
+    def encoded_id(payload):
+        return file_content_id(payload) if isinstance(payload, Path) else content_id(payload)
 
     validate_composition(composition)
     validate_deck(deck)
@@ -50,8 +89,8 @@ def compose_release(workspace: Workspace, composition: dict[str, Any], deck: dic
         if deck.get(field) != composition.get(field):
             raise ValueError(f"deck and composition {field} disagree")
 
-    deck_bytes = json_bytes(deck)
-    composition_bytes = json_bytes(composition)
+    deck_bytes = encode(deck)
+    composition_bytes = encode(composition)
     app_index, app_examples = build_app_compatibility_assets(deck)
     lexical_selection = composition["layers"].get("lexical_relations")
     if lexical_selection is not None:
@@ -65,10 +104,12 @@ def compose_release(workspace: Workspace, composition: dict[str, Any], deck: dic
         if relations_layer.get("inputs", {}).get("sense_menu_content_id") != composition["layers"]["sense_menu"]["artifact_id"]:
             raise ValueError("selected lexical-relations artifact was built from another sense menu")
         apply_lexical_relations_to_index(app_index, relations_layer)
-    app_index_bytes = json_bytes(app_index)
-    app_examples_bytes = json_bytes(app_examples)
-    study_structure_bytes = json_bytes(deck["study_structure"])
-    optional_app_assets: dict[str, bytes] = {}
+    app_index_bytes = encode(app_index)
+    app_examples_bytes = encode(app_examples)
+    study_structure_bytes = encode(deck["study_structure"])
+    if payload_directory is not None:
+        del app_index, app_examples
+    optional_app_assets: dict[str, bytes | Path] = {}
     conjugations_selection = composition["layers"].get("conjugations")
     if conjugations_selection is not None:
         metadata = verify_artifact(workspace, conjugations_selection["artifact_id"])
@@ -83,7 +124,7 @@ def compose_release(workspace: Workspace, composition: dict[str, Any], deck: dic
             raise ValueError("selected conjugations artifact has the wrong language/locale")
         if conjugations_layer.get("inputs", {}).get("sense_menu_content_id") != composition["layers"]["sense_menu"]["artifact_id"]:
             raise ValueError("selected conjugations artifact was built from another sense menu")
-        optional_app_assets["app/conjugations.json"] = json_bytes(
+        optional_app_assets["app/conjugations.json"] = encode(
             build_app_conjugations(conjugations_layer)
         )
     wsd_selection = composition["layers"].get("wsd_assignments")
@@ -96,16 +137,16 @@ def compose_release(workspace: Workspace, composition: dict[str, Any], deck: dic
         "contract_version": APP_CONTRACT_VERSION,
         "sense_metadata_contract": deck.get("metadata_contract"),
         "index_path": "app/vocabulary.index.json",
-        "index_content_id": content_id(app_index_bytes),
+        "index_content_id": encoded_id(app_index_bytes),
         "examples_path": "app/vocabulary.examples.json",
-        "examples_content_id": content_id(app_examples_bytes),
+        "examples_content_id": encoded_id(app_examples_bytes),
         "study_structure_path": "app/study-structure.json",
-        "study_structure_content_id": content_id(study_structure_bytes),
+        "study_structure_content_id": encoded_id(study_structure_bytes),
     }
     if "app/conjugations.json" in optional_app_assets:
         app_contract.update({
             "conjugations_path": "app/conjugations.json",
-            "conjugations_content_id": content_id(optional_app_assets["app/conjugations.json"]),
+            "conjugations_content_id": encoded_id(optional_app_assets["app/conjugations.json"]),
         })
     manifest = {
         "manifest_version": RELEASE_MANIFEST_VERSION,
@@ -118,14 +159,14 @@ def compose_release(workspace: Workspace, composition: dict[str, Any], deck: dic
         "publication_status": composition["publication_status"],
         "card_count": len(deck["cards"]),
         "deck_path": "deck.json",
-        "deck_content_id": content_id(deck_bytes),
+        "deck_content_id": encoded_id(deck_bytes),
         "composition_path": "composition.json",
-        "composition_content_id": content_id(composition_bytes),
+        "composition_content_id": encoded_id(composition_bytes),
         "progress_namespace": composition["progress_namespace"],
         "wsd": wsd,
         "app_contract": app_contract,
     }
-    manifest_bytes = json_bytes(manifest)
+    manifest_bytes = encode(manifest)
 
     release_root = workspace.root / "releases" / composition["language"] / composition["mode"]
     release_directory = release_root / release_id
@@ -142,7 +183,7 @@ def compose_release(workspace: Workspace, composition: dict[str, Any], deck: dic
         **optional_app_assets,
     }
     if release_directory.exists():
-        if any(not (release_directory / name).is_file() or (release_directory / name).read_bytes() != payload for name, payload in expected.items()):
+        if any(not (release_directory / name).is_file() or file_content_id(release_directory / name) != encoded_id(payload) for name, payload in expected.items()):
             raise ValueError(f"immutable release already exists with different content: {release_directory}")
     else:
         temporary = Path(tempfile.mkdtemp(prefix="compose-release-", dir=temporary_root))
@@ -150,7 +191,10 @@ def compose_release(workspace: Workspace, composition: dict[str, Any], deck: dic
             for name, payload in expected.items():
                 path = temporary / name
                 path.parent.mkdir(parents=True, exist_ok=True)
-                path.write_bytes(payload)
+                if isinstance(payload, Path):
+                    shutil.copyfile(payload, path)
+                else:
+                    path.write_bytes(payload)
             os.replace(temporary, release_directory)
         finally:
             if temporary.exists():

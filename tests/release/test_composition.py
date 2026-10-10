@@ -8,6 +8,7 @@ from fluency.core.workspace import Workspace
 from fluency.release.activation import activate_release
 from fluency.release.catalog import build_catalog
 from fluency.release.pilot import build_pilot_release
+from fluency.release.composition import compose_release
 from fluency.release.validation import ReleaseValidationError, validate_composition
 
 
@@ -65,6 +66,20 @@ class CompositionTests(unittest.TestCase):
         with self.assertRaises(ReleaseValidationError):
             activate_release(self.workspace, "fr", "speech", "missing-release")
         self.assertEqual(active.read_bytes(), before)
+
+    def test_streamed_composition_matches_every_existing_payload_byte(self):
+        deck = json.loads((self.release / 'deck.json').read_text())
+        before = {p.relative_to(self.release): p.read_bytes() for p in self.release.rglob('*') if p.is_file()}
+        result = compose_release(self.workspace, self.composition, deck, memory_bounded=True)
+        self.assertEqual(result, self.release)
+        self.assertEqual(before, {p.relative_to(result): p.read_bytes() for p in result.rglob('*') if p.is_file()})
+        # Exercise publication to a new directory too, not just validation of
+        # an existing immutable bundle.
+        import shutil
+        shutil.rmtree(self.release)
+        result = compose_release(self.workspace, self.composition, deck, memory_bounded=True)
+        self.assertEqual(before, {p.relative_to(result): p.read_bytes() for p in result.rglob('*') if p.is_file()})
+        self.assertFalse(list((self.workspace.root / '.fluency/temporary').glob('serialized-release-*')))
 
 
 if __name__ == "__main__":

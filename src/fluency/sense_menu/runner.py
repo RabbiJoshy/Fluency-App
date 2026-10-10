@@ -175,6 +175,21 @@ def _build_and_carry(workspace, adapter, cards, *, snapshot_id, language, mode, 
     stale = [c["surface_form"] for c in source_menu.get("cards", [])
              if c.get("surface_form") not in resolved
              and stale_carried_analyses(c, ledger.get(c.get("surface_form"), {}))]
+    if isinstance(adapter, KaikkiSenseMenuAdapter):
+        carried = [c for c in source_menu.get("cards", []) if c["surface_form"] not in resolved]
+        # Include supported indirect paths too: a separate noun form chain
+        # can legitimately reach a lemma also reached by a direct verb link.
+        constraints = adapter._collect({c["surface_form"] for c in carried})[2]
+        for card in carried:
+            surface = card["surface_form"]
+            for analysis in card.get("analyses", []):
+                target = analysis.get("headword")
+                allowed = constraints.get(surface, {}).get(target)
+                path = analysis.get("provider_metadata", {}).get("resolution_path")
+                if target != surface and allowed and path == [surface, target] and analysis.get("part_of_speech") not in allowed:
+                    stale.append(surface)
+                    break
+        stale = sorted(set(stale))
     if stale:
         raise SenseMenuRunError(
             f"{len(stale)} carried menus contain superseded source analyses; "

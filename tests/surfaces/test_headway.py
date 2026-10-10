@@ -252,3 +252,19 @@ class HeadwayTests(unittest.TestCase):
             with self.assertRaisesRegex(SenseMenuRunError, 'superseded source analyses.*hay'):
                 _build_and_carry(SimpleNamespace(root=root), None, [], snapshot_id='snapshot',
                                  language='es', mode='speech', resolved=set(), carry_run='prior')
+
+    def test_carry_guard_rejects_wrong_pos_even_when_lemma_is_correct(self):
+        from types import SimpleNamespace
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / 'runs/pt/speech/prior/stages/02_sense_menu/output'
+            source.mkdir(parents=True)
+            card = {'surface_form':'és','analyses':[{'headword':'ser','part_of_speech':'noun',
+                    'provider_metadata':{'resolution_path':['és','ser']}}]}
+            (source/'sense-menu.json').write_text(json.dumps({'cards':[card]}))
+            (source/'report.json').write_text('{}')
+            adapter = object.__new__(KaikkiSenseMenuAdapter)
+            adapter._collect = lambda surfaces: ({}, {}, {'és': {'ser': {'verb'}}}, {}, {})
+            with self.assertRaisesRegex(SenseMenuRunError, 'és'):
+                _build_and_carry(SimpleNamespace(root=root), adapter, [], snapshot_id='snapshot',
+                                 language='pt', mode='speech', resolved=set(), carry_run='prior')
