@@ -852,7 +852,9 @@ loadConfig().then(async () => {
         }
     }
     document.getElementById('topBarUserName').addEventListener('click', () => {
-        if (currentUser && !currentUser.isGuest) showSettingsModalWithTab('account');
+        if (!currentUser) return;
+        if (currentUser.isGuest) { window.logout?.(); return; } // guests land on log in / create account
+        showSettingsModalWithTab('account');
     });
     document.getElementById('closeHelpModal').addEventListener('click', () => {
         document.getElementById('helpModal').classList.add('hidden');
@@ -884,8 +886,7 @@ loadConfig().then(async () => {
     document.getElementById('gearBtn').style.display = 'none';
 
     // Set user name in top bar immediately (don't wait for progress load).
-    const userName = currentUser ? (currentUser.isGuest ? 'GUEST' : (currentUser.username || currentUser.initials)) : '';
-    document.getElementById('topBarUserName').textContent = userName;
+    window.showUserInfo?.();
 
     // Shareable page links open on top of whatever state the app lands in.
     const pageRoute = window.fluencyRoute?.kind;

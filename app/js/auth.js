@@ -201,8 +201,21 @@ function hideAuthModal() {
 // the floating toolbar is shown/hidden by showFloatingBtns() in flashcard mode.
 function showUserInfo() {
     const label = document.getElementById('topBarUserName');
-    if (label) label.textContent = currentUser?.isGuest ? 'GUEST'
-        : (currentUser?.username || currentUser?.initials || '');
+    if (!label) return;
+    if (!currentUser) { label.textContent = ''; return; }
+    if (currentUser.isGuest) {
+        label.classList.remove('is-icon');
+        label.textContent = 'GUEST';
+        label.title = 'Log in or create an account';
+        label.setAttribute('aria-label', 'Log in or create an account');
+        return;
+    }
+    // Usernames can be long, so the top bar shows an account icon, not the name.
+    const name = currentUser.username || currentUser.initials || '';
+    label.classList.add('is-icon');
+    label.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>';
+    label.title = name ? `Account: ${name}` : 'Open account settings';
+    label.setAttribute('aria-label', name ? `Account settings for ${name}` : 'Open account settings');
 }
 
 // Guest mode handler.
@@ -332,7 +345,7 @@ function renderAccountPanel() {
     const named = Boolean(currentUser && !currentUser.isGuest);
     const badge = document.getElementById('accountUserBadge');
     if (badge) {
-        badge.textContent = named ? (currentUser.username || currentUser.initials) : '?';
+        badge.textContent = named ? String(currentUser.username || currentUser.initials || '?').trim().charAt(0).toUpperCase() : '?';
         badge.classList.toggle('is-guest', !named);
     }
     const name = document.getElementById('accountProfileName');
@@ -1950,6 +1963,7 @@ window.migrateLocalStorageIdsV2 = migrateLocalStorageIdsV2;
 window.loadSecrets = loadSecrets;
 window.checkAuthentication = checkAuthentication;
 window.showAuthModal = showAuthModal;
+window.showUserInfo = showUserInfo;
 window.hideAuthModal = hideAuthModal;
 window.showUserInfo = showUserInfo;
 window.enterGuestMode = enterGuestMode;

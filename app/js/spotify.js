@@ -554,7 +554,7 @@ async function refreshSpotifyConnectionUI() {
     if (!button) return;
     if (!isSpotifyConnected()) {
         button.textContent = 'Connect to Spotify';
-        button.classList.remove('settings-feature-action--danger');
+        button.classList.add('account-logout--connect');
         if (status) {
             status.textContent = '';
             status.style.display = 'none';
@@ -563,7 +563,7 @@ async function refreshSpotifyConnectionUI() {
         return;
     }
     button.textContent = 'Disconnect';
-    button.classList.add('settings-feature-action--danger');
+    button.classList.remove('account-logout--connect');
     if (icon) icon.classList.add('is-connected');
     if (status) {
         status.style.display = '';

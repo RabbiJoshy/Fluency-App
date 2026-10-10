@@ -2,6 +2,19 @@
   "_readme": "User-visible changes in the replacement app, newest first.",
   "entries": [
     {
+      "timestamp": "2026-10-10T17:50:00+01:00",
+      "date": "2026-10-10 17:50 BST",
+      "agent": "Antigravity",
+      "summary": "Account modal: Spotify row now matches the profile row (circle, text, pill); top bar shows an account icon instead of the username.",
+      "detail": [
+        "Spotify circle is the same size as the profile avatar, no embedded card background",
+        "Connect to Spotify pill is green; Disconnect is red, styled like Log out",
+        "Account avatar shows only the first letter of the username",
+        "Top bar shows an account icon for named users; guests still see GUEST and tapping it opens log in / create account"
+      ],
+      "commit": "pending"
+    },
+    {
       "timestamp": "2026-10-10T17:41:00+01:00",
       "date": "2026-10-10 17:41 BST",
       "agent": "Antigravity",
@@ -369,31 +382,6 @@
         "Immediate opening, retry, keyboard closing, phone scrolling and stale-response protection make the overview reliable.",
         "Removed the misleading complete-sentence percentage based on a partially loaded example corpus.",
         "Counts and coverage use deduplicated recorded knowledge, including reviews of individual meanings."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T14:18:00+01:00",
-      "date": "2026-10-09 14:18 BST",
-      "agent": "Antigravity",
-      "summary": "Song lyrics view: dual song selector with offline probe songs and live online TURBO intake (Spotify URL, track ID, search query, or manual paste)",
-      "detail": [
-        "Added segmented picker tabs: choose between curated offline playlist (30 songs) or generate custom songs online with TURBO.",
-        "Online intake supports Spotify track URLs, Spotify track IDs (22 chars), song title & artist searches via LRCLIB, and direct manual lyrics paste.",
-        "Integrated client TURBO engine execution on the fly with live status progress, caching newly generated songs for seamless switching.",
-        "Added topbar shortcut pill '⚡ Online TURBO' and auto-detection of Spotify URLs in search inputs."
-      ],
-      "commit": "pending"
-    },
-    {
-      "timestamp": "2026-10-09T14:11:11+01:00",
-      "date": "2026-10-09 14:11 BST",
-      "agent": "Codex",
-      "summary": "Study sets: larger rank numbers, brighter legend and darker skipped progress",
-      "detail": [
-        "Removed the hash from each frequency range and enlarged the numbers with heavier weight and vertical padding.",
-        "Legend counts use the main text colour for clearer contrast.",
-        "Skipped cards use a darker slate-grey fill in set progress bars and the matching legend swatch."
       ],
       "commit": "pending"
     }

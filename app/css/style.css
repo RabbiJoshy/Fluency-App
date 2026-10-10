@@ -21345,6 +21345,19 @@ body > .provenance-panel.is-docked[data-dock="left"] { animation-name: dock-pane
   border-color: var(--error, #e5484d);
   transform: translateY(-1px);
 }
+.account-avatar--spotify { background: #121212; padding: 0; }
+.account-avatar--spotify svg { width: 40px; height: 40px; }
+.account-logout--connect {
+  border-color: color-mix(in srgb, #1DB954 50%, var(--border-color));
+  background: color-mix(in srgb, #1DB954 10%, transparent);
+  color: #1DB954;
+}
+.account-logout--connect:hover {
+  background: color-mix(in srgb, #1DB954 20%, transparent);
+  border-color: #1DB954;
+}
+#topBar .top-bar-user-name.is-icon { padding: 0; width: 44px; justify-content: center; max-width: none; }
+#topBar .top-bar-user-name svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .spotify-connection-card {
   display: flex !important;
   align-items: center !important;
