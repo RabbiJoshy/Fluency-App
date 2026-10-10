@@ -176,113 +176,124 @@ def clean_headword(hw: Any) -> str:
     return token
 
 
-def detect_split_card_tuples(
-    row: Mapping[str, Any],
-    language: str = "es",
-) -> dict[str, Any] | None:
-    word = normal_token(row.get("word"))
-    meanings = row.get("meanings") or []
-    lex = [m for m in meanings if not is_expression_sense(m, word)]
-    if len(lex) < 4:
+def companion_sense_weight(row: Mapping[str, Any], meaning: Mapping[str, Any]) -> float:
+    if (meaning.get("unassigned") or meaning.get("exampleOnly")
+            or str(meaning.get("pos") or "").upper() in {"SENSE_CYCLE", "EXAMPLE_ONLY"}
+            or meaning.get("assignment_method") == "unassigned"):
+        return 0
+    frequency = meaning.get("frequency", meaning.get("percentage"))
+    if frequency is not None and not float(frequency or 0) > 0:
+        return 0
+    counts = (row.get("wsd_distribution") or {}).get("published_leaf_counts")
+    sense_id = meaning.get("sense_id") or meaning.get("senseId") or meaning.get("id")
+    if counts is not None and sense_id:
+        return max(0, float(counts.get(sense_id) or 0))
+    return 1 if frequency is None else max(0, float(frequency or 0))
+
+
+def companion_sense_construction(meaning: Mapping[str, Any], language: str = "es") -> dict[str, Any]:
+    headword = normal_token(meaning.get("headword"))
+    pos = str(meaning.get("pos") or meaning.get("part_of_speech") or "").upper()
+    if pos not in {"VERB", "AUX"} and " VERB" not in pos:
+        return {"base": headword, "pronominal": False, "shared": False}
+    metadata = meaning.get("metadata") or {}
+    contract = metadata.get("sense_metadata") or {}
+    provider = metadata.get("sense_provider_metadata") or contract.get("source_metadata") or {}
+    features = [*(metadata.get("specialist_features") or []), *(contract.get("features") or [])]
+    marks = {normal_token(v) for v in [
+        *(meaning.get("tags") or []), *(provider.get("tags") or []),
+        *(f.get("value") for f in features if f.get("family") in {"construction", "grammar"}),
+        *re.split(r"[,;]", str(meaning.get("context") or "")),
+    ]}
+    suffix = r"(?:ar|er|ir|or|ôr)(-?se)$" if language == "pt" else r"(?:ar|er|ir|ír)(se)$" if language == "es" else None
+    match = re.search(suffix, headword) if suffix else None
+    base = headword[:-len(match[1])] if match else headword
+    passive = bool(marks & {"passive", "impersonal", "voice=passive"})
+    tagged = bool(marks & {"pronominal", "reflexive", "reflexive=true", "pronominal verb", "reflexive verb"})
+    pronominal = not passive and bool(match or tagged)
+    shared = pronominal and not match and bool(marks & {"transitive", "ambitransitive", "ditransitive", "transitive verb"})
+    return {"base": base, "pronominal": pronominal, "shared": shared}
+
+
+def companion_definition_key(value: Any) -> str:
+    # Unicode letters and numbers, matching the app's punctuation/space fold.
+    return re.sub(r"[^\w]+|_+", " ", normal_token(value)).strip()
+
+
+def companion_semantic_context(meaning: Mapping[str, Any]) -> str:
+    grammar = {"transitive", "intransitive", "ambitransitive", "ditransitive", "pronominal", "reflexive",
+               "transitive verb", "intransitive verb", "pronominal verb", "reflexive verb"}
+    parts = [companion_definition_key(v) for v in re.split(r"[,;]", str(meaning.get("context") or ""))]
+    return " ".join(v for v in parts if v and v not in grammar)
+
+
+def companion_same_definition(a: Mapping[str, Any], b: Mapping[str, Any]) -> bool:
+    gloss = companion_definition_key(a.get("translation") or a.get("meaning"))
+    if not gloss or gloss != companion_definition_key(b.get("translation") or b.get("meaning")):
+        return False
+    ca, cb = companion_semantic_context(a), companion_semantic_context(b)
+    return not ca or not cb or ca == cb
+
+
+def detect_split_card_tuples(row: Mapping[str, Any], language: str = "es") -> dict[str, Any] | None:
+    """Assigned senses only: substantial distinct lemmas, or two constructions.
+
+    Polysemy: four lexical sense rows and >=10% assigned usage per major lemma.
+    Pronominal: both constructions, independent of sense count/share, unless all
+    represented pronominal definitions are shared with an ordinary reading.
+    Three major lemmas produce three cards. HEADWAY owns provider lemma cleanup.
+    """
+    word = normal_token(row.get("word") or row.get("targetWord"))
+    seen: set[str] = set()
+    lex = []
+    for m in row.get("meanings") or []:
+        if not m or is_expression_sense(m, word) or companion_sense_weight(row, m) <= 0:
+            continue
+        sense_id = m.get("sense_id") or m.get("senseId") or m.get("id")
+        if sense_id and sense_id in seen:
+            continue
+        if sense_id:
+            seen.add(sense_id)
+        lex.append(m)
+    if not lex:
         return None
-
-    # Class 1: True Homograph (Distinct base headwords, e.g. ser vs ir, paso vs pasar)
-    hws: dict[str, list[dict[str, Any]]] = {}
+    def weight(ms):
+        return sum(companion_sense_weight(row, m) for m in ms)
+    total = weight(lex)
+    groups: dict[str, list] = {}
     for m in lex:
-        hw = clean_headword(m.get("headword") or word)
-        hws.setdefault(hw, []).append(m)
-
-    collapsed: dict[str, list[dict[str, Any]]] = {}
-    for hw, ms in hws.items():
-        matched = False
-        for c in collapsed:
-            c_root = c.rstrip("osae")
-            hw_root = hw.rstrip("osae")
-            if c_root == hw_root and len(c_root) >= 3:
-                collapsed[c].extend(ms)
-                matched = True
-                break
-        if not matched:
-            collapsed[hw] = ms
-
-    total_len = len(lex)
-    viable = {
-        hw: ms for hw, ms in collapsed.items()
-        if (len(ms) / total_len >= 0.14 and len(ms) >= 1)
-    }
-    if len(viable) >= 2:
-        sorted_v = sorted(viable.items(), key=lambda x: len(x[1]), reverse=True)[:2]
-        hw1, ms1 = sorted_v[0]
-        hw2, ms2 = sorted_v[1]
-        tr1 = ms1[0].get("translation") or ms1[0].get("meaning") or ""
-        tr2 = ms2[0].get("translation") or ms2[0].get("meaning") or ""
-        pos1 = str(ms1[0].get("pos") or "X").upper()
-        pos2 = str(ms2[0].get("pos") or "X").upper()
-        return {
-            "kind": "homograph",
-            "tuple1": {
-                "headword": hw1,
-                "pos": pos1,
-                "label": f"{hw1} ({tr1})",
-                "meanings": ms1,
-                "share": round(len(ms1) / total_len, 2),
-                "isReflexive": False,
-            },
-            "tuple2": {
-                "headword": hw2,
-                "pos": pos2,
-                "label": f"{hw2} ({tr2})",
-                "meanings": ms2,
-                "share": round(len(ms2) / total_len, 2),
-                "isReflexive": False,
-            },
-        }
-
-    # Class 2: Pronominal / Reflexive Shift (Attested base vs pronominal headword)
-    base_m = [m for m in lex if not normal_token(m.get("headword")).endswith("se")]
-    refl_m = [m for m in lex if normal_token(m.get("headword")).endswith("se")]
-    if len(base_m) >= 1 and len(refl_m) >= 1:
-        base_hws = [normal_token(m.get("headword") or word) for m in base_m]
-        refl_hws = [normal_token(m.get("headword")) for m in refl_m]
-        # Find matching base and pronominal headword pair (e.g. hacer and hacerse, llamar and llamarse)
-        matched_root = None
-        for r_hw in refl_hws:
-            r_base = r_hw[:-2] if r_hw.endswith("se") and len(r_hw) > 3 else None
-            if r_base and (r_base in base_hws or r_base == word or any(b.startswith(r_base) for b in base_hws)):
-                matched_root = r_base
-                break
-        if not matched_root and base_hws:
-            # Fallback check: any base headword whose +se form matches a reflexive headword
-            for b_hw in base_hws:
-                if f"{b_hw}se" in refl_hws:
-                    matched_root = b_hw
-                    break
-
-        if matched_root and (len(refl_m) / total_len >= 0.14):
-            tr1 = base_m[0].get("translation") or base_m[0].get("meaning") or ""
-            tr2 = refl_m[0].get("translation") or refl_m[0].get("meaning") or ""
-            pos1 = str(base_m[0].get("pos") or "VERB").upper()
-            pos2 = str(refl_m[0].get("pos") or "VERB").upper()
-            return {
-                "kind": "reflexive",
-                "root": matched_root,
-                "tuple1": {
-                    "headword": matched_root,
-                    "pos": pos1,
-                    "label": f"{matched_root} ({tr1})",
-                    "meanings": base_m,
-                    "share": round(len(base_m) / total_len, 2),
-                    "isReflexive": False,
-                },
-                "tuple2": {
-                    "headword": f"{matched_root}se",
-                    "pos": pos2,
-                    "label": f"{matched_root}se ({tr2})",
-                    "meanings": refl_m,
-                    "share": round(len(refl_m) / total_len, 2),
-                    "isReflexive": True,
-                },
-            }
-
-    return None
-
+        hw = companion_sense_construction(m, language)["base"] or word
+        groups.setdefault(hw, []).append(m)
+    def rounded_share(ms):
+        # JS Math.round for positive numbers (Python round uses ties-to-even).
+        return int(weight(ms) / total * 100 + 0.5) / 100
+    def tuple_for(hw, ms, reflexive=False):
+        tr = str(ms[0].get("translation") or ms[0].get("meaning") or "").strip()
+        return {"headword": hw, "pos": str(ms[0].get("pos") or "X").upper(),
+                "label": f"{hw} ({tr})", "meanings": ms, "share": rounded_share(ms), "isReflexive": reflexive}
+    def result(kind, tuples, root=None):
+        return {"kind": kind, **({"root": root} if root else {}), "tuples": tuples,
+                "tuple1": tuples[0], "tuple2": tuples[1]}
+    viable = sorted(((hw, ms) for hw, ms in groups.items() if weight(ms) / total >= 0.10 - 1e-9),
+                    key=lambda pair: -weight(pair[1]))
+    if len(lex) >= 4 and len(viable) >= 2:
+        tuples = [tuple_for(hw, list(ms)) for hw, ms in viable]
+        major = {hw for hw, _ in viable}
+        for hw, ms in groups.items():
+            if hw not in major:
+                tuples[0]["meanings"].extend(ms)
+        tuples[0]["share"] = rounded_share(tuples[0]["meanings"])
+        return result("homograph", tuples)
+    if language not in {"es", "pt"} or len(groups) != 1:
+        return None
+    root = next(iter(groups))
+    info = [(m, companion_sense_construction(m, language)) for m in lex]
+    plain = [m for m, flags in info if not flags["pronominal"] or flags["shared"]]
+    pron = [m for m, flags in info if flags["pronominal"] and not flags["shared"]]
+    if not plain or not pron:
+        return None
+    if all(any(companion_same_definition(m, b) for b in plain) for m in pron):
+        return None
+    pron_hw = normal_token(pron[0].get("headword")) or root
+    display_pron = pron_hw if pron_hw != root else f"{root}-se" if language == "pt" else f"{root}se"
+    return result("reflexive", [tuple_for(root, plain), tuple_for(display_pron, pron, True)], root)
