@@ -8275,7 +8275,7 @@ function renderCardWikipediaBadge(card) {
         </button>`;
     }
 
-    backHTML += memoryTipTileHTML(card, typeof language !== 'undefined' ? language : '');
+    backHTML += memoryTipTileHTML(card, selectedLanguage);
 
     // Granular sense/expression knowledge belongs in one card-wide overview,
     // not a persistent two-button strip under every meaning. The compact
